@@ -1,116 +1,100 @@
-Return-Path: <linux-kernel+bounces-815746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A7EB56AB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 19:04:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F5DB56ABC
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 19:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3821E189CB59
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6B73BC3DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1200E2DCF45;
-	Sun, 14 Sep 2025 17:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6048D2DCF6C;
+	Sun, 14 Sep 2025 17:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SFL4RnNg"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vg6q5pOO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262AD19C560;
-	Sun, 14 Sep 2025 17:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A475625EFBE;
+	Sun, 14 Sep 2025 17:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757869438; cv=none; b=JvOa9hc9dKlliKDGuazv7cqJGQCYSbH2kIP7MfzYs2snav39HrismiVVMXjVEMbaxlnOIa2+KDB3iawjpayM2G/+yjHLAm0HMrYmHeCJ27txKnUB9em+wksH+jaThFpTYgKb7OtNz6bBqxh8OOke1k5V0ELNSTBV8LKsKJ43jjs=
+	t=1757869575; cv=none; b=uXF5krzw/6W8NB7fkEfRgCXgiCtOyJvOkNKBhrpmPpaKyqVH6klGekpbA7RAfiKFRKhs5qPib1QQ1dDr1H/LQw/Aias/pI6qdwJuw9qRcC3tNr4Gmop2dsqYQ9wSDZ+i5S8JVKDXYRmYAJdhtKpMtvX/WChzbeJKRw9nuS1curw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757869438; c=relaxed/simple;
-	bh=jJD1PLKgscuHcdkTTdVPzDMrJvlY5RFXwvnNuKjZ4yE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u6CrJocBd07Ca9OaNLxoTHcVVTj+ttEyNFgb/pOQAyxgYQYGIKjyVTy3NAxGSODJWVx3NDWw1HX3T135fnSCOGrf5SyZmyIqjHZJaf1H70GPR9ulBN3LRLhp6y8HRt16DQ37KHoJQdUKqT6JuTHuEeoCJv7jcGUOIIhzUSEDmZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SFL4RnNg; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=OZF43+VllNLQUeKcMt+n5So3Zh9+TQrMX0kTZiqDfGU=; b=SFL4RnNgyx5FOPUlz8vOqeslm9
-	RBtlzBvgJ3+XlsQMwsIw634XZNQhXpWnYTLHIqdT8d/X5JtJ/c9hJlLRleiFcXmfs6B58HZcH9TQH
-	3vQZ9X9mLPtpCRjLz0CWZvANzwP1K0wi11cpEVmdFC3v1MDkw5q08KvG+2Q5ccmdo4QuPUHYJUFGt
-	i1Idqos+2SM/JDsS0f75KU1qUx7TvRrhaiAtiujefiOzcaxNXd4lZBP4sipBHAhkJe+3BbYMFahNE
-	bnza4EowvLMmEiL3djoroj+tQdq5Yjl/wkOrNYEA3QoE+MpJHgIElY0GJxOGsEGPBk7bkS5fmqBCt
-	HGHMOLaw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uxq8k-00000001tyv-3nAV;
-	Sun, 14 Sep 2025 17:03:50 +0000
-Message-ID: <5214509d-a2e6-4e55-823b-49f2dbfb5971@infradead.org>
-Date: Sun, 14 Sep 2025 10:03:50 -0700
+	s=arc-20240116; t=1757869575; c=relaxed/simple;
+	bh=QTWm3SlTvXKB49umrEkl2ESw+wFMXCFy0QzNstwdSrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftyCn2C9Q0wV2z6B5qluIuPs7q2Yj9Loq5c+UpmHqDDJVpy7RstH3YfLY5vJ0Id3sCbl5ZkZSHLt83wqszHmOzEJXBHgGvIb368sHGpx3TtduDTLZ7gdeHrTJQELp2n5GpekzG+wr9jxXlqZP8PX9kiO7mXfl9sIRq2FnsEJBrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vg6q5pOO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B80E2C4CEF0;
+	Sun, 14 Sep 2025 17:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757869575;
+	bh=QTWm3SlTvXKB49umrEkl2ESw+wFMXCFy0QzNstwdSrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vg6q5pOOrkbzJLe4Yk7575k9s0+3bBv2XvtrkfkiX1w6K0ZX+fqlMonsEcQtUuuTo
+	 LnJJtpMCGB6n1Zaxwaf9cUohUyFRGm5wbNxxzughRjVTzcDeR5ivj1jYLUREnSastd
+	 GuOsz1U3PfU+C6z+cEsW94mSWFUEcJAyl37jrWY+3c5V4vJW/ANONjy0IlhStirGCG
+	 WwsG94HAYOSFyKPmDiuV70FWHS+Ru4NAV0DNxF3L0Q2ZaB2gCbikZLudeQLMmo3CeR
+	 jQ7ig5fn6945HkBzN3CIvrSiuGRK6I1uOVkExSCh83D3z3INtAaN9IB3ogu7OLVD1t
+	 Tsh4FQCFJURmA==
+Date: Sun, 14 Sep 2025 20:06:11 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Mark Brown <broonie@kernel.org>,
+	linux-integrity@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: tpm: SLM9670 does not work on T1023
+Message-ID: <aMb2A5KzQJNx3daG@kernel.org>
+References: <aMLUIVjHZ6CFvd33@fue-alewi-winx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: staging: fix spelling error in
- remoteproc.rst
-To: Taimoor Zaeem <taimoorzaeem@gmail.com>, andersson@kernel.org,
- "corbet@lwn.net" <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <CANQcFN1s_iM8p5tYNz3Q_WyZki6Aw9_3HyoKwyoCVA9JeqG0eA@mail.gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CANQcFN1s_iM8p5tYNz3Q_WyZki6Aw9_3HyoKwyoCVA9JeqG0eA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMLUIVjHZ6CFvd33@fue-alewi-winx>
 
-Hi--
-
-On 9/14/25 4:46 AM, Taimoor Zaeem wrote:
+On Thu, Sep 11, 2025 at 03:52:33PM +0200, Alexander Wilhelm wrote:
+> Hello devs,
 > 
+> I'm trying to bring up the SLM9670 TPM 2.0 device connected via SPI on a QorIQ
+> T1023-based board. Pin control is fully configured through the RCW, so I haven't
+> added any additional properties in the device tree. The SPI controller accesses
+> the TPM using `#CS0`.
+> 
+> However, the driver reads an incorrect vendor ID (0x1000000) and hangs during
+> the startup sequence. A logic analyzer shows that the chip select line goes high
+> immediately after transmitting 4 bytes, which, according to various forum
+> discussions, does not comply with the TPM specification. Unfortunately, I
+> haven't found a definitive solution to this issue.
 
-(pasting email from
-https://lore.kernel.org/linux-doc/CANQcFN1s_iM8p5tYNz3Q_WyZki6Aw9_3HyoKwyoCVA9JeqG0eA@mail.gmail.com/T/#u
-)
+So, at least the vendor ID is bogus meaning that TPM driver is doing
+right thing.
 
-From 10321c75f8fc1296775942f13cb3af78fdc8dcc8 Mon Sep 17 00:00:00 2001
-From: Taimoor Zaeem <taimoorzaeem@gmail.com>
-Date: Sun, 14 Sep 2025 16:31:56 +0500
-Subject: [PATCH] Documentation: staging: fix spelling error in remoteproc.rst
+> 
+> Could this be a bug in the `spi-fsl-espi` driver, or is it possibly a hardware
+> limitation of the T1023? I've come across some suggestions that involve using a
+> GPIO as an alternative chip select instead of the one provided by the SPI
+> controller. Can anyone confirm whether this workaround is viable? I’d prefer to
+> avoid a PCB redesign unless it's absolutely necessary.
 
-Fix typo 'implementors' to 'implementers' in remote processor framework
-documentation.
+My first guess would be that the firmware inside TPM actually does throw
+a broken vendor ID but it is exactly a guess :-)
 
-Signed-off-by: Taimoor Zaeem <taimoorzaeem@gmail.com>
----
- Documentation/staging/remoteproc.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll follow this, and please cc me also to future threads but right now
+I'm clueless.
 
-diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-index 348ee7e508ac..5c226fa076d6 100644
---- a/Documentation/staging/remoteproc.rst
-+++ b/Documentation/staging/remoteproc.rst
-@@ -104,7 +104,7 @@ Typical usage
- 	rproc_shutdown(my_rproc);
-   }
- 
--API for implementors
-+API for implementers
- ====================
- 
- ::
--- 
-2.51.0
------------------ end of copy/paste --------------------
+> 
+> 
+> Best regards
+> Alexander Wilhelm
 
-How do you know that's a typo?
 
-Did you check on the internet to see if both spellings
-are acceptable?
-
-thanks.
--- 
-~Randy
-
+BR, Jarkko
 
