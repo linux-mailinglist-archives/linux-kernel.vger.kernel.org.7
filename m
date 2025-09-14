@@ -1,132 +1,232 @@
-Return-Path: <linux-kernel+bounces-815639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD549B5694A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:23:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890B7B56951
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8BE17CCD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9B4189D3B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A4D221FAE;
-	Sun, 14 Sep 2025 13:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E291DDA09;
+	Sun, 14 Sep 2025 13:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvMmUtNl"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjjIl8rx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EFA1D9663
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C359D19D087;
+	Sun, 14 Sep 2025 13:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757856225; cv=none; b=DQYhcroHom02AYyhkZKEJ/UvkTd4Hx/1b1RAIOcMAKa+cdrPoW35R6im+Un9Q/fEPgc7t0hA61yP+acMy+kESmg/vMq84Ixm8oWxfNFN/U1Gk5D8zWtutmuNws0RojklS0Tkm5+P2Jj56alNGcvtMHzvFWyvnrACQ9kOzdHnbHA=
+	t=1757856516; cv=none; b=UrM4kxzJKKvcF5dAP+4KVz5HSZkqrzGPTmsh/YQMvtqE4OOJK+EhAPQaekw2Slk3kPF0JSK63pVbPKgl6NNIhGwsHZ+H7FxTrV7JnORlpMwEHz63utgMSs/1EYzFskOTMrVomXentxEaoh0tsB4C1JrQMe9yfQ4cF0DrhWzJRHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757856225; c=relaxed/simple;
-	bh=noXhz4Y24g4PHVqA3gPgMnDwLUm3u7HC/TSG+gMVjrg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gsjwR/uZtY3dqjZlzy34Btrf77LEOPtMcKi9ZI7ZEK26EoxxyJ8wfvZmTqbCsUTkBAFFVNmpK7sd6PX93DgeB2vVbf4yKB9TDZGFgShLzCfeUGzHjfwjvaRj9eyrhAp1oZKe9bK1ztzTSKHNB9aMhJaPbJIssA3347Ma0rfgh+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvMmUtNl; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45f2a69d876so3086655e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757856222; x=1758461022; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kaljxPkcfQHPyVYy5h8ZrWxk1AbMPnNmiDPm6nh1Er8=;
-        b=PvMmUtNl902pqZ+1PCWZWhFfD26WqEdkDtx5KNSHi6DMvpS+qGn3Lmdi+AHAl5dAMO
-         pQc3OHxArbWhcSv5cDNq1og4WbP4HMYRXMVsB2WvxccAMBVJxCAC4S+Id4xnVeSy03CY
-         gYUx9Xx2uPUnEnA80lpLNMIVKcOYANPovYfQkcNwl+s+xxpO6x9wcINV1nFG6v47vPKq
-         JMyW3Pld9PXmyGWrcV4E9eOaO7AtbS0YiPQOWHVgSGzQq/UoU2EUhjr4QkU/nKmecVmj
-         zLW+dT/j+BsDIdBSPd1Tw/N6dPKy/pqzmKyImDhkv4uQyCpcWFjJhFU/Nq7fkV0HQnR4
-         WQyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757856222; x=1758461022;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kaljxPkcfQHPyVYy5h8ZrWxk1AbMPnNmiDPm6nh1Er8=;
-        b=o/NHO5IIaqw6xgWt0RBGcvRQAX2I8EXDQmvRb9gLH+YB630Qkm8W0tJyPlgyj6z9ul
-         aCB/P/whz6BGrM3TLFiBPrmFmD/P/oqpXRlo8Se3GifObwsYL9yf2fuCoobsVf6ldwCJ
-         1eA8vfUaQoISDAOrCAIwG+hCjhHzAWaMSp9Hvrsr0rqMl/Eygjy6TyvwVT3ZqulNoJVV
-         1z2AevpCUT/s1zQ2Wpe3Ip6H3FdOq8y6MVLVFtWXMmVjKfAhz+nQCYSIG4/rCTrWBtJ0
-         6QMpsqwdm6oujdV70PlVyhHobGzrQZ5ZNUZ2/d0woUu2i2AE1Wc5yIzXhhUhgFBxCjTY
-         msFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRXdQR2iR8hC7gY2To3jcd5Dkt4MNvA6gvruSpRnQxVYxihMk87d6DXeWe4F1sOe4HLNJGVGvWqOQ4buw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkLn5PXlZ23IAZeZqmfY8Q5nOHwv9nZTyH+Ve16g7Fo/82sHsx
-	J4C8uNTRi5/GEl0Cg+21qdswEU0s+Jnf+8NelM46mL3tG0FO9HX+e0fd
-X-Gm-Gg: ASbGncsLA2PQiLnTvYSe4N35hVIQwT7SOwZylRGd5fM+CBpW4p2S35t8ny9IfeeWG0C
-	xfIIDriRTOqlxAv+VVI7Vgxgw8k3ty6pGbkObTvW2JcFtSjhFSIaOnUTX1lW/WwNGtJNgJx+rdf
-	2hLE+cXKZ4WWRrSF04Qj+BA+6ikY/YEjB8pxam3bWQFxSRMFZj0p4gloyOy2FCRWM43xO4MeD61
-	FWhBWa/MGeydIX6oNWYReDIq/jP17Rk0LpfqSveYCjX94ov1I3RarAap8B+7AZGNaGG+/jrfsp0
-	0c2QUNTypCGdFRMxq8WIrrvdlow9Shjule0PhzbTHXRyc/AC6KfMZeki1ItnlWlYOWwXMiXaNzB
-	uSSO1VRpDqkHZilDmtoXXV4AgCAvn936cjMsP4zn9CpEHLqLV+UASi2q73wSiSE941MPXysueT3
-	pq4Q9RZdrn
-X-Google-Smtp-Source: AGHT+IEDzY27XIjmb+pnfP0KAuMr1rdHFrYSHqkjaYiv+DONBXw4koHR1jE3FQkMkK1VOsljfrgsZA==
-X-Received: by 2002:a05:600c:1c0b:b0:45d:2ac9:4240 with SMTP id 5b1f17b1804b1-45f211f7099mr102931935e9.17.1757856221985;
-        Sun, 14 Sep 2025 06:23:41 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f27f44093sm61736025e9.24.2025.09.14.06.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:23:41 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: timer: exynos4210-mct: Add samsung,exynos8890-mct compatible
-Date: Sun, 14 Sep 2025 16:23:39 +0300
-Message-ID: <20250914132339.2623006-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757856516; c=relaxed/simple;
+	bh=bi2EiYLS+A8f/w7jCWkTyo4nLGGJbpc175iFxjzkCG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sIc1RDzIKsnHWNEMHYgGvhp9VTslLBiVP0Mc5m+ZL4C7CU/Rq69mRw1PIcHJcD6d7SyNofvpVJLPzuhXJIKcdfPcNmJ5GqEZDKAO8Pa7cvaOukXBsckUg01pYV0Wl5rSWfeDCcWxolO1Zk61djPRfnVNVBxzriuQZsQpfDZcH+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjjIl8rx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB6EC4CEF0;
+	Sun, 14 Sep 2025 13:28:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757856516;
+	bh=bi2EiYLS+A8f/w7jCWkTyo4nLGGJbpc175iFxjzkCG8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gjjIl8rxHh/A+Rj5iCmVil4FvhlqvxqSjvzIrrX+iGIg5tLPjjBVIembnsVoZvzQp
+	 5be5fGB3/gB+x3bDN63Kka9CVZCQ6zJIc0m1Oyqu/79rd540xp8gPZM0GRF/XhN33K
+	 IBcBrWJ5f40VSBavkO4PuVHxXiSlQSthFe9ZWugpGn0VyifkWMXEh6ijxVx0nu1h3i
+	 +g/KsRkNBX3IeAX+sc6Br/XeFeE4GBTqrBwxipi/OcuN5sQ2ZaaaW2SzzuQJgGSzXu
+	 phUufiwv89X6n0xUsfTqzVCS+LEwnUiocUJaxjhoKDCqor6uE79NB2hxGHex5ljzRb
+	 VW59hY8cxFLYw==
+Message-ID: <8c298465-893a-4a18-9955-4769288ec010@kernel.org>
+Date: Sun, 14 Sep 2025 15:28:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] remoterpoc: mediatek: vcp: Add vcp remoteproc
+ driver
+To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "irving.ch.lin" <irving-ch.lin@mediatek.com>,
+ =?UTF-8?B?VmluY2UtV0wgTGl1ICjlionmlofpvo0p?= <vince-wl.liu@mediatek.com>,
+ =?UTF-8?B?SmggSHN1ICjoqLHluIzlrZwp?= <jh.hsu@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <sirius.wang@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Jjian Zhou <Jjian.Zhou@mediatek.com>,
+ Hailong Fan <Hailong.Fan@mediatek.com>
+References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+ <20250914122943.10412-3-xiangzhi.tang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250914122943.10412-3-xiangzhi.tang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Just like most Samsung Exynos SoCs, exynos8890 has functionally the same
-multicore timer.
+On 14/09/2025 14:29, Xiangzhi Tang wrote:
+> +
+> +static const struct rproc_ops mtk_vcp_ops = {
+> +	.load		= mtk_vcp_load,
+> +	.start		= mtk_vcp_start,
+> +	.stop		= mtk_vcp_stop,
+> +};
+> +
+> +static int vcp_multi_core_init(struct platform_device *pdev,
+> +			       struct mtk_vcp_of_cluster *vcp_cluster,
+> +			       enum vcp_core_id core_id)
+> +{
+> +	int ret;
+> +
+> +	ret = of_property_read_u32(pdev->dev.of_node, "mtk,vcp-core-twohart",
+> +				   &vcp_cluster->twohart[core_id]);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to twohart property\n");
+> +		return ret;
+> +	}
+> +	ret = of_property_read_u32(pdev->dev.of_node, "mtk,core-sram-offset",
 
-Add a dedicated samsung,exynos8890-mct compatible to the dt-schema for
-representing the MCT timer of exynos8890.
+Undocumented ABI, if you ever bothered to test your DTS you would see
+clear warning.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml       | 2 ++
- 1 file changed, 2 insertions(+)
+> +				   &vcp_cluster->sram_offset[core_id]);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to sram-offset property\n");
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static struct mtk_vcp_device *vcp_rproc_init(struct platform_device *pdev,
+> +					     struct mtk_vcp_of_cluster *vcp_cluster)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev_of_node(dev);
+> +	struct device_node *child;
+> +	struct platform_device *cpdev;
+> +	struct mtk_vcp_device *vcp;
+> +	struct rproc *rproc;
+> +	const struct mtk_vcp_of_data *vcp_of_data;
+> +	u32 core_id;
+> +	int ret;
+> +
+> +	vcp_of_data = of_device_get_match_data(dev);
+> +	rproc = devm_rproc_alloc(dev, np->name, &mtk_vcp_ops,
+> +				 vcp_of_data->platdata.fw_name,
+> +				 sizeof(struct mtk_vcp_device));
+> +	if (!rproc) {
+> +		dev_err(dev, "unable to allocate remoteproc\n");
 
-diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-index 10578f544..2c01e8bdb 100644
---- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-+++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-@@ -34,6 +34,7 @@ properties:
-               - samsung,exynos5420-mct
-               - samsung,exynos5433-mct
-               - samsung,exynos850-mct
-+              - samsung,exynos8890-mct
-               - samsung,exynos8895-mct
-               - samsung,exynos990-mct
-               - tesla,fsd-mct
-@@ -137,6 +138,7 @@ allOf:
-               - samsung,exynos5420-mct
-               - samsung,exynos5433-mct
-               - samsung,exynos850-mct
-+              - samsung,exynos8890-mct
-               - samsung,exynos8895-mct
-               - samsung,exynos990-mct
-     then:
--- 
-2.43.0
+No, you never do this.
 
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	vcp  = rproc->priv;
+> +	vcp->rproc = rproc;
+> +	vcp->pdev = pdev;
+> +	vcp->dev = dev;
+> +	vcp->ops = &vcp_of_data->ops;
+> +	vcp->platdata = &vcp_of_data->platdata;
+> +	vcp->vcp_cluster = vcp_cluster;
+> +
+> +	rproc->auto_boot = vcp_of_data->platdata.auto_boot;
+> +	rproc->sysfs_read_only = vcp_of_data->platdata.sysfs_read_only;
+> +	mutex_init(&vcp->vcp_cluster->vcp_feature_mutex);
+> +	mutex_init(&vcp->vcp_cluster->vcp_pw_clk_mutex);
+> +	platform_set_drvdata(pdev, vcp);
+> +
+> +	ret = vcp_reserve_memory_ioremap(vcp);
+> +	if (ret) {
+> +		dev_err(dev, "vcp_reserve_memory_ioremap failed ret = %d\n", ret);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	core_id = 0;
+> +	for_each_available_child_of_node(np, child) {
+> +		if (of_device_is_compatible(child, "mediatek,vcp-core")) {
+> +			cpdev = of_find_device_by_node(child);
+> +			if (!cpdev) {
+> +				ret = -ENODEV;
+> +				dev_err(dev, "Not found platform device for core\n");
+
+1. That's probe path, so why are you using this old style? The syntax is
+return dev_err_probe and I am dissapointed that your internal review did
+not ask for that.
+
+2. You just leak here everywhere device.
+
+This patchset has trivial errors, which should be spotted easily by
+internal review. Plus your other patch ignored EXITING feedback, so what
+is even point of posting this if you are just going to ignore us?
+
+Please confirm that you received extensive internal review before
+posting this?
+
+Mediatek posts so many patches, I complained so many times about poor
+quality, things a bit improved two years ago and for a year the quality
+deteriorated and Mediatek posts poor code again. It's huge company with
+huge resources, so I do not understand why trivial bugs like this cannot
+be found inside first, to offload the community reviewers.
+
+NAK
+
+Best regards,
+Krzysztof
 
