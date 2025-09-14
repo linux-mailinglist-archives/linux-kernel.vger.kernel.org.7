@@ -1,77 +1,203 @@
-Return-Path: <linux-kernel+bounces-815740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1967DB56A95
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:30:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF9AB56AA7
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A574F4E04CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5837717B052
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AE82DCF6C;
-	Sun, 14 Sep 2025 16:29:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19D72DCF5F;
+	Sun, 14 Sep 2025 16:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Hn+TQJVM"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263B12DA743;
-	Sun, 14 Sep 2025 16:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD30A25E813;
+	Sun, 14 Sep 2025 16:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757867390; cv=none; b=KWJTBfT2tQHf1PXME6lA3/bcfEDOrDb3fTxr2MAdDb596wMp1wqs6APxLZamfPZIL8YkoyCTxzDlLhtsz9Td8fwyDMSWOy3H1Bh7Dl7vu2121T2pTTnRzrnwFam3pFJd3gLHkARys/lyEQ5Y65MuSEwQ+9zmzGX0yfvdlmThHeY=
+	t=1757867722; cv=none; b=gUtLC7byH62M6F/5VMwCLO6ggqOyLSl+QCDWILecvtegSapyFLMCDBw+9cGOwcQlc6RebBwmR+dGSKTaha1JzNXslo242ycwXlHKJ9j4b+uXKftjM8vJyoLOlpw5FM9LYVqRaoz7y1IxRwOQ9GQP8CSdXFeCt6AVMs81uIK12+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757867390; c=relaxed/simple;
-	bh=YyH1Uahwdyyl4mm2zVGY0J8U8B3cqxrkCachjuFnnb0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rGhPQJRhAVdIcb75u/aUehjMbWMk19YUaPqlwpeFjQQxPNipTAREKr+YzCx+eRuDBVG3uP9ZXEsjQJAD1SpEdliOJkU8zx5Sg2M0SgeNEqFJWXVtxTunqYh5E2B77dyQpLkHkLQRwkoDW17arHvlpnFb6Uol0DpQ2uhioAdWLWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4606C4CEFB;
-	Sun, 14 Sep 2025 16:29:49 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 33F675FDF8;
-	Mon, 15 Sep 2025 00:29:47 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: Jernej Skrabec <jernej@kernel.org>, 
- Samuel Holland <samuel@sholland.org>, 
- Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@kernel.org>
-Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250913173511.4064176-1-wens@kernel.org>
-References: <20250913173511.4064176-1-wens@kernel.org>
-Subject: Re: [PATCH] arm64: dts: allwinner: sun55i: Complete AXP717A
- sub-functions
-Message-Id: <175786738720.280883.7937974112078886568.b4-ty@csie.org>
-Date: Mon, 15 Sep 2025 00:29:47 +0800
+	s=arc-20240116; t=1757867722; c=relaxed/simple;
+	bh=d/DksVt1jOUUNg1guB1c26u/tAnFGmp64Nkbi1kNFUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkMlldDq971z8hhcBL7kESHwhZ5ypAL7x/oyrOEkaGZ61P29bq6zEsbrvm/zyyzf27i2lSpJOyOywjkvu6zsbyIIQbPVwz9oczFD6VbP0cM/3RbOKFGCtSRBgxE0pVLQ/BZtOqDjTKGNqhgxavfLZ3JlqNWBpttEpc2HW2doNcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Hn+TQJVM; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 7AE3F4E40BD1;
+	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 452446063F;
+	Sun, 14 Sep 2025 16:35:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E2DC5102F29EC;
+	Sun, 14 Sep 2025 18:35:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757867707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=vXWzLeRrS8rJvdtCJ4XG5FPGmNASV270FtQzQBagios=;
+	b=Hn+TQJVM/yb935GC19LuIgIYljMxAJmsmLz7UaedBGkBq/dhvPV2kQcBfy3bsc+VYXcPvq
+	4XUFb6o+qmnPzfVk378L06lKM+0Hwh+WAzIpJHjswaV58/hO9T1QUoRI0PMih9eIsarw1E
+	RWXDHDGZUvfBkPlD5M1A57aL01icQ+8Oi/dPRiq0n7sQvMJnCQi029NnobOzpevUcLjmIS
+	5bxND2CPJVCPzKcaZU/42UyHVvpvIGDjW85vIXyx9QxPCKQBdBBu50iWY8OOIh6k6oflLB
+	WT/l5aXKGv2IA0teOtyOhhBPaCsU/F2mgRhdhGXJrWwvcUFzxk9AWq+G8dMZXg==
+Date: Sun, 14 Sep 2025 18:35:00 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 6/7] rtc: s5m: add support for S2MPS16 RTC
+Message-ID: <2025091416350055a27358@mail.local>
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914124227.2619925-7-ivo.ivanov.ivanov1@gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, 14 Sep 2025 01:35:11 +0800, Chen-Yu Tsai wrote:
-> When the AXP717A PMIC is missing nodes for the sub-functions, the kernel
-> complains about not found nodes.
+On 14/09/2025 15:42:26+0300, Ivaylo Ivanov wrote:
+> Add support for Samsung's S2MPS16 PMIC RTC, which has pretty much
+> identical functionality to the existing S2MPS15 support, with the
+> difference being the ST2 register.
 > 
-> Add all the remaining nodes corresponding to the defined functions for
-> the dev boards, which have publicly available schematics to base this
-> change on. The battery charger on all of them are disabled. Also add
-> an "iio-hwmon" node to express some of the ADC channels as hwmon
-> sensors.
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+> ---
+>  drivers/rtc/rtc-s5m.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> [...]
+> diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> index a7220b4d0..910248731 100644
+> --- a/drivers/rtc/rtc-s5m.c
+> +++ b/drivers/rtc/rtc-s5m.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/mfd/samsung/irq.h>
+>  #include <linux/mfd/samsung/rtc.h>
+>  #include <linux/mfd/samsung/s2mps14.h>
+> +#include <linux/mfd/samsung/s2mps16.h>
+>  
+>  /*
+>   * Maximum number of retries for checking changes in UDR field
+> @@ -254,6 +255,11 @@ static int s5m_check_pending_alarm_interrupt(struct s5m_rtc_info *info,
+>  		ret = regmap_read(info->regmap, S5M_RTC_STATUS, &val);
+>  		val &= S5M_ALARM0_STATUS;
+>  		break;
+> +	case S2MPS16X:
+> +		ret = regmap_read(info->s5m87xx->regmap_pmic, S2MPS16_REG_ST2,
+> +				  &val);
+> +		val &= S2MPS_ALARM0_STATUS;
+> +		break;
+>  	case S2MPG10:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+> @@ -303,6 +309,7 @@ static int s5m8767_rtc_set_alarm_reg(struct s5m_rtc_info *info)
+>  		udr_mask |= S5M_RTC_TIME_EN_MASK;
+>  		break;
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -354,6 +361,7 @@ static int s5m_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -378,6 +386,7 @@ static int s5m_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -416,6 +425,7 @@ static int s5m_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -455,6 +465,7 @@ static int s5m_rtc_stop_alarm(struct s5m_rtc_info *info)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -494,6 +505,7 @@ static int s5m_rtc_start_alarm(struct s5m_rtc_info *info)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -532,6 +544,7 @@ static int s5m_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	switch (info->device_type) {
+>  	case S5M8767X:
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -613,6 +626,7 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info *info)
+>  		break;
+>  
+>  	case S2MPG10:
+> +	case S2MPS16X:
+>  	case S2MPS15X:
+>  	case S2MPS14X:
+>  	case S2MPS13X:
+> @@ -680,6 +694,7 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+>  		struct i2c_client *i2c;
+>  
+>  		switch (device_type) {
+> +		case S2MPS16X:
+>  		case S2MPS15X:
+>  			regmap_cfg = &s2mps14_rtc_regmap_config;
+>  			info->regs = &s2mps15_rtc_regs;
+> @@ -817,6 +832,7 @@ static const struct platform_device_id s5m_rtc_id[] = {
+>  	{ "s2mps13-rtc",	S2MPS13X },
+>  	{ "s2mps14-rtc",	S2MPS14X },
+>  	{ "s2mps15-rtc",	S2MPS15X },
+> +	{ "s2mps16-rtc",	S2MPS16X },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(platform, s5m_rtc_id);
+> -- 
+> 2.43.0
+> 
 
-Applied to sunxi/dt-for-6.18 in local tree, thanks!
-
-[1/1] arm64: dts: allwinner: sun55i: Complete AXP717A sub-functions
-      commit: cca07ac2b5f7838b8ff612b53b9f82ac8cb58312
-
-Best regards,
 -- 
-Chen-Yu Tsai <wens@csie.org>
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
