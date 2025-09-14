@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-815533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6668B567CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:31:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5A1B5679E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D776176723
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403EE1890A42
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0742405FD;
-	Sun, 14 Sep 2025 10:31:02 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B48723BCF8;
+	Sun, 14 Sep 2025 10:11:27 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEF4487BE;
-	Sun, 14 Sep 2025 10:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B6A1C5496;
+	Sun, 14 Sep 2025 10:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757845861; cv=none; b=nMPn+OE2za/+PeaV1faFupfnj9e93RSBEK16zU+7X2iYEWMxfWeLM4h6pIbJzvAfD955KfSywzWGQMqpuhbSAh+YG8JUeqLKnsRKMn2MNT4PaEAhqUcZlRnG9QRWIiNNH/i+X1Iyl05cE3LjLwqhA8dzOA4ReVcoNezepGnu8EA=
+	t=1757844686; cv=none; b=e3ZhyarjwyRegpQhJ2tQB75QDOHicBdcnUe9EJqFS+VAXl4vpJOrq1p6KSfDHLa/R4dIbPhmrPaMJZ8e0WSCpXdB38vy0hap7HVBWAJsC8ug+RCklVA9WxSUl9WPpuYHlfRIDnjQIOSmWp/yeWsGuXq8/ZTyuSPFtyPPytTYQg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757845861; c=relaxed/simple;
-	bh=YFMVFVKRndRZpMY+xLg+MtDUEnvjTsFhtHdbGuHbBTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yz4peapzkV8qMsta0nZEgf2M+vdr2UugqeWYilwHn04reb5gqPS7MKmmjoDV6Io/LjbWXRkNQ6oQVWUa9d9Jd+wNthu6T81tb8GFGgrIt5B9ktTheYc14Ucvl3Q8GJGYp5sBVqwRsbHjbIqKhGdPbFWvApR9djFhnd8yiyCBlDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id E745F340EE4;
-	Sun, 14 Sep 2025 10:30:58 +0000 (UTC)
-Date: Sun, 14 Sep 2025 18:30:49 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <uwu@dram.page>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Junhui Liu <junhui.liu@pigmoral.tech>,
-	Simon Horman <horms@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH net-next v12 0/5] Add Ethernet MAC support for SpacemiT K1
-Message-ID: <20250914103049-GYA1238190@gentoo.org>
-References: <20250914-net-k1-emac-v12-0-65b31b398f44@iscas.ac.cn>
+	s=arc-20240116; t=1757844686; c=relaxed/simple;
+	bh=onoab6PpBgIgGqMZ5cSo33JVzJIuK0Xb7SYU04LrUSA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ECGlFQrkXZA2jeNBwHOPS/jZCALWxORCBZIrOgs6Whkf6gB5tPxUpWBiE1J+mGOsiHSaDzASRJxzYIJeePsMfreMi+JK8DmiHF+Q3djW/yEIhti9T3JsBuXSJCZ/H0nzPCGThvHw9R6Xren+DB7q9sHE+E9S7FNFKE13zxspUL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cPkN16CTKz2Cg5J;
+	Sun, 14 Sep 2025 18:06:41 +0800 (CST)
+Received: from kwepemk500001.china.huawei.com (unknown [7.202.194.86])
+	by mail.maildlp.com (Postfix) with ESMTPS id DBED6140145;
+	Sun, 14 Sep 2025 18:11:15 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.170) by
+ kwepemk500001.china.huawei.com (7.202.194.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sun, 14 Sep 2025 18:11:15 +0800
+From: JiangJianJun <jiangjianjun3@huawei.com>
+To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <hare@suse.de>, <dlemoal@kernel.org>,
+	<hewenliang4@huawei.com>, <yangyun50@huawei.com>, <wuyifeng10@huawei.com>,
+	<yangxingui@h-partners.com>
+Subject: [RFC PATCH v4 0/9] scsi: scsi_error: Introduce new error handle mechanism
+Date: Sun, 14 Sep 2025 18:41:36 +0800
+Message-ID: <20250914104145.2239901-1-jiangjianjun3@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <17230842-0a7a-403e-abc7-a15e3aa5d424@suse.de>
+References: <17230842-0a7a-403e-abc7-a15e3aa5d424@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914-net-k1-emac-v12-0-65b31b398f44@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemk500001.china.huawei.com (7.202.194.86)
 
-Hi Andrew, Jakub
+> Additionally: TARGET RESET TMF is dead, and has been removed from SAM
+> since several years. It really is not worthwhile implementing.
 
-On 12:23 Sun 14 Sep     , Vivian Wang wrote:
-> SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
-> Add devicetree bindings, driver, and DTS for it.
-> 
-> Tested primarily on BananaPi BPI-F3. Basic TX/RX functionality also
-> tested on Milk-V Jupiter.
-> 
-> I would like to note that even though some bit field names superficially
-> resemble that of DesignWare MAC, all other differences point to it in
-> fact being a custom design.
-> 
-> Based on SpacemiT drivers [1]. These patches are also available at:
-> 
+Hannes suggested removing the faulty handler on the target, so I revised
+a version and submitted it as a proposal.
 
-I know this series has been iterated several versions, and Vivian is working
-hard on this.. but since it's quite close to rc6, I'd like to query if
-there is any chance to take it in for v6.18? don't want to be pushy, so I'm
-totally fine if it's too late and have to postpone to next merge window..
+> Also, was this all tested with libata and libsas attached devices as well ?
+> They all depend on scsi EH.
 
-P.S. I'd just want to see emac/ethernet accepted since it's last bit for
-a minimal headless system..
+And I removed the settings for iscsi_tcp and virtio_scsi, maybe that
+adding this proposal to specific drivers before the plan is finalized is
+not appropriate. Keep the setting of scsi_debug for test the solution.
 
-Thanks
+The introduction can be simplified as follows: This tmf only blocks IO
+on the current device and does not interfere with IO or tmf on other
+devices. 
+
+
+JiangJianJun (1):
+  scsi: scsi_debug: Add params for configuring the error handler
+
+Wenchao Hao (8):
+  scsi: scsi_error: Define framework for LUN based error handle
+  scsi: scsi_error: Move complete variable eh_action from shost to
+    sdevice
+  scsi: scsi_error: Check if to do reset in scsi_try_xxx_reset
+  scsi: scsi_error: Add helper scsi_eh_sdev_stu to do START_UNIT
+  scsi: scsi_error: Add helper scsi_eh_sdev_reset to do lun reset
+  scsi: scsi_error: Add flags to mark error handle steps has done
+  scsi: scsi_error: Add helper to handle scsi device's error command
+    list
+  scsi: scsi_error: Add a general LUN based error handler
+
+ drivers/scsi/scsi_debug.c  |  15 +-
+ drivers/scsi/scsi_error.c  | 422 ++++++++++++++++++++++++++++++++-----
+ drivers/scsi/scsi_lib.c    |   7 +
+ drivers/scsi/scsi_priv.h   |   8 +
+ drivers/scsi/scsi_scan.c   |   7 +
+ drivers/scsi/scsi_sysfs.c  |   2 +
+ include/scsi/scsi_device.h |  49 +++++
+ include/scsi/scsi_eh.h     |   4 +
+ include/scsi/scsi_host.h   |  18 +-
+ 9 files changed, 476 insertions(+), 56 deletions(-)
 
 -- 
-Yixun Lan (dlan)
+2.33.0
+
 
