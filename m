@@ -1,94 +1,105 @@
-Return-Path: <linux-kernel+bounces-815711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56186B56A40
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:32:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A72B56A44
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF5567A2983
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:30:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C717189AA9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69673288C26;
-	Sun, 14 Sep 2025 15:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CE12DAFBB;
+	Sun, 14 Sep 2025 15:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nti6juMf"
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGrCk1KX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8E7287258
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46C819DF8D;
+	Sun, 14 Sep 2025 15:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757863951; cv=none; b=mMdFFpwluDmN8HJZ9mzlnubTxQRQLbjY3i4O+C6IdS3ogJj2p3IaTSgLjd8kAGVBFmZ+AkOX5e6Ed2X9vgHJk3xNUfrGdRPZH7Wx92P6rfK+GSyKq+frm4aVo7Al0Tu7MmLQw2m413VJAxtvKMS752tflbeKgzoq6YodE+wCD+Q=
+	t=1757864317; cv=none; b=nYGAkomMr6EHoVHA9Qs4FBJB68d+ggNAV/OPqoXmytJB6O5/yEx7/yv5X0SueU2d0JE136luv0ThxeoRcK2LKj3zwJG+LHO9Xt618Mv7GQ85/q2lXl85D+vNdoG6Lggx/sWoxS7wR1xTbmZhOAAEWeqK1bTdBt2toZG44DiYUUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757863951; c=relaxed/simple;
-	bh=2vpXEaurrZuepM/zf5ULQrdCsg83MzNcbDDxN3LM3Mo=;
-	h=MIME-Version:Message-ID:Date:Subject:From:To:Content-Type; b=DmYlx7JNk2+X/Vi1Dnt7VgZYbu+hOrrkNW2ngrEVF/LfF/6QQwDmwHfjSpTG+L55mKXJq0gewveamv2Zrfjd55+bVV8/IZ+nYycgKBPMliGQ3fq/MEqb3mXxKFXqK9tOzwi+QWG0dAhOXgXW2UT+WERsWfkdUwJzEQnsiwyTTS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nti6juMf; arc=none smtp.client-ip=209.85.210.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-7472428e27bso3666008a34.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 08:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757863949; x=1758468749; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:from:subject:date:message-id
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2vpXEaurrZuepM/zf5ULQrdCsg83MzNcbDDxN3LM3Mo=;
-        b=nti6juMf6Qgekw35/G7YQCMgtbRITxDJHA4ye1S61MlopVIRwY2eBd0zUxBgLQDD4P
-         lsR3Bi4zO+Yq+2HPVzjZylKE2uw3QRO8WgLnQq9WO/K9Fk2hJ97Svr96FJ+PeYWY1g+o
-         fL/+XjGONt0ZXTz06Y1ciKJKin6GnES/AN6d2Jbmq8V2jTMVS8rMWUNk/E7qWO10szI4
-         0x0CjXQZLXm+JZEyq3qsa4aoEaOTBA7LnSSscnjZEOc/ptPEJkWpzcydPQFP+6I15j/O
-         L/ae3KNLtLtZaV56n/zU8YOX8DYcaC38suc0SksP6EBWJ6/xwhdqJjyEHmm2OJY8sMG7
-         DdwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757863949; x=1758468749;
-        h=content-transfer-encoding:to:from:subject:date:message-id
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2vpXEaurrZuepM/zf5ULQrdCsg83MzNcbDDxN3LM3Mo=;
-        b=TWW1aiIuAkiWytMgrj+swYe0WH4n4mif7QgHegrUfeOstKZ74NlVp21Eszqc2PKiH1
-         BSM1cfaIkbsIfNP1ybAKIsqx44vWnN139fQiHnSRWSwRiicjwZDk8iZJFsgV/Y5SSB1a
-         WD7tBGepSjoYblbA2bbYoNetz3buHZzuX5LSpUu36UOJJY/iS/oZQQF9xcuymGwOxwP/
-         +SzsMZlK/GrmiVdeYxx+JcDV09hBidC+daf9D76GFIznXbIsOL46zBzSs2C/oX0eWZ+z
-         qjlzzmII91m9M+fgcN4PSk2F2swJKMYVbM6/6KBnnGS84MeJNvR3be6yMvpv6UWUw+ho
-         g3QQ==
-X-Gm-Message-State: AOJu0YzIiRPYaqL8o88/meLfFivvw32R2Fs6BWmqve6sx9lxWZCYf/6h
-	3Nosw8v+gqnbhDNKezWGgWd8A//H7T+m+EIJc8BFIzVqMBiThoMhsdAAlWPPTOugYypcnRlliQR
-	T4FDVZg==
-X-Google-Smtp-Source: AGHT+IEJUICPrFuiQxjBlB/p6R9oaC2VZDIHbUG2JjsTlIe6W0FybmQ9ccT5zr7Kh4vAR+PCaOLvfOqniA==
+	s=arc-20240116; t=1757864317; c=relaxed/simple;
+	bh=ihW47HHuEW0kivT0LtQDfndFpj4gQlPyOZ8ChekheGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dcnklD3PtabUIE05b8UDdmZINdY3xrjsPI+kLq/7n4SNU7/Hkhvn33rOCUs0odoJ9kB9iCgOcHlwWO3JKCSMMtrTyolSrV+l4xoPZLM52dAqKArDrFTxsYTky+Bv2bcEVUGebNdUIMLnRQdPqoEG5IP8MvU1fxQf4vQIBuVD+8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGrCk1KX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D7FC4CEF0;
+	Sun, 14 Sep 2025 15:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757864317;
+	bh=ihW47HHuEW0kivT0LtQDfndFpj4gQlPyOZ8ChekheGs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UGrCk1KXR+kac/5OvXpvMS9DC7fpHqSkremvp3fzsvyb6prDigqDylpNSPElqidS8
+	 2otZXTknq+IJzTf5PFAMGbUSxGzxhWpaKhkmOQrn+AgAeY7zJtG5GJBBx5b2ZgfLA4
+	 KHWVBm/EMps/giN+yPji/JWLF5ESMN0zLZgjtT8uX25haYBS7eQRy2q0QTZeuR1AgC
+	 U0QhhxpiJ0NovZt8fUsZNnErPb477tzXnicb3fCOaGxLE/DO7Y4OBBMQ82TvQyR7yW
+	 /xsM67WgIOTtNXCzlJNRFq7IXj7X4QlJmgiq7XSOq4oXJtHlf94QGVuz1QHRwydKOM
+	 D0pF/zMF4y4QQ==
+From: Conor Dooley <conor@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Yixun Lan <dlan@gentoo.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	duje@dujemihanovic.xyz,
+	Guodong Xu <guodong@riscstar.com>
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Alex Elder <elder@riscstar.com>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: (subset) [PATCH v5 0/8] dmaengine: mmp_pdma: Add SpacemiT K1 SoC support with 64-bit addressing
+Date: Sun, 14 Sep 2025 16:38:27 +0100
+Message-ID: <20250914-crushed-blinker-9827464897d2@spud>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250822-working_dma_0701_v2-v5-0-f5c0eda734cc@riscstar.com>
+References: <20250822-working_dma_0701_v2-v5-0-f5c0eda734cc@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6830:490b:b0:747:23cb:5c30 with SMTP id
- 46e09a7af769-7535377f368mr5254317a34.13.1757863949547; Sun, 14 Sep 2025
- 08:32:29 -0700 (PDT)
-Message-ID: <autogen-java-bd2ed6fb-a5d1-451e-a773-7fb4d3ba052c@google.com>
-Date: Sun, 14 Sep 2025 15:32:29 +0000
-Subject: Reliable Review Service for Your Business.
-From: alberthawkins666@gmail.com
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=682; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=W90YfP75Cf8fElnrlN+vBYi5av5KHOKCWFABavcr0+U=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBnHHpaICZuwn2a+79lfyGly/JXfDkGVa9m7o3VK/p+2c DvWUc/WUcrCIMbFICumyJJ4u69Fav0flx3OPW9h5rAygQxh4OIUgIlMtWT4Z5bI8PIWX4pvgvcz yYkPbJi33Tc82/TjbO4tBf0I34nNcxkZXvoc+cP8oOHAIyPPU222uyv9jMTe6ik9fPelq8PqQ7E ECwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-SGksDQoNCkkgaG9wZSB5b3UncmUgZG9pbmcgd2VsbC4gSSB3YW50ZWQgdG8gcmVhY2ggb3V0IGFu
-ZCBvZmZlciBzdXBwb3J0IHdpdGggIA0Kc29tZXRoaW5nIG1hbnkgYnVzaW5lc3NlcyBvdmVybG9v
-ayBidXQgdGhhdCBtYWtlcyBhIGh1Z2UgZGlmZmVyZW5jZTogIA0KcmV2aWV3cy4NCg0KSSBwcm92
-aWRlIHJlYWwsIGhpZ2gtcXVhbGl0eSByZXZpZXdzIG9uIHBsYXRmb3JtcyBsaWtlIEdvb2dsZSwg
-VHJ1c3RwaWxvdCwgIA0KRmFjZWJvb2ssIFNpdGVqYWJiZXIsIEJCQiwgYW5kIG90aGVycy4gVGhl
-c2UgcmV2aWV3cyBhcmUgd3JpdHRlbiB0byBzb3VuZCAgDQpnZW51aW5lIGFuZCByZWZsZWN0IHJl
-YWwgY3VzdG9tZXIgZXhwZXJpZW5jZXMsIGhlbHBpbmcgdG8gYnVpbGQgdHJ1c3QsICANCmltcHJv
-dmUgdmlzaWJpbGl0eSwgYW5kIHN0cmVuZ3RoZW4geW91ciBicmFuZOKAmXMgcmVwdXRhdGlvbi4N
-Cg0K4pyFIE5vbi1kcm9wLCB2ZXJpZmllZCBwb3N0cyB0aGF0IHN0YXkgdXANCuKchSBGbGV4aWJs
-ZSBkZWxpdmVyeeKAlGRhaWx5LCB3ZWVrbHksIG9yIGhvd2V2ZXIgc3VpdHMgeW91DQoNCkV2ZXJ5
-dGhpbmcgaXMgaGFuZGxlZCB3aXRoIGNhcmUgYW5kIGRpc2NyZXRpb24uIEkgZG9u4oCZdCB1c2Ug
-dGVtcGxhdGVzIG9yICANCnNob3J0Y3V0cy4gRWFjaCByZXZpZXcgaXMgdW5pcXVlIGFuZCB3cml0
-dGVuIHdpdGggeW91ciBicmFuZCBvciBzZXJ2aWNlcyBpbiAgDQptaW5kLg0KDQpMb29raW5nIGZv
-cndhcmQgdG8gaGVhcmluZyBmcm9tIHlvdS4NCg0KQmVzdCByZWdhcmRzLA0KUmV2aWV3IFByb3Zp
-ZGVycw0KDQpUbyBvcHQgb3V0IG9mIGZ1dHVyZSBlbWFpbHMsIGp1c3QgcmVwbHkgd2l0aCAiTm8g
-bW9yZSBlbWFpbC4iIFRoYW5rIHlvdSENCg==
+From: Conor Dooley <conor.dooley@microchip.com>
+
+On Fri, 22 Aug 2025 11:06:26 +0800, Guodong Xu wrote:
+> This patchset adds support for SpacemiT K1 PDMA controller to the existing
+> mmp_pdma driver. The K1 PDMA controller is compatible with Marvell MMP PDMA
+> but extends it with 64-bit addressing capabilities through LPAE (Long
+> Physical Address Extension) bit and higher 32-bit address registers (DDADRH,
+> DSADRH and DTADRH).
+> 
+> In v5, two smatch warnings reported by kernel test bot and Dan Carpenter were
+> fixed.
+> 
+> [...]
+
+Applied to riscv-config-for-next, thanks!
+
+[8/8] riscv: defconfig: Enable MMP_PDMA support for SpacemiT K1 SoC
+      https://git.kernel.org/conor/c/3df7ce0e43ad
+
+Thanks,
+Conor.
 
