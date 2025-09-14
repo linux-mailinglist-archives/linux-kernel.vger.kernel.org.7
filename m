@@ -1,152 +1,121 @@
-Return-Path: <linux-kernel+bounces-815497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FF1B5675D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:18:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3667B5675E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A74F07A18C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 09:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57EF917A744
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 09:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D173C238142;
-	Sun, 14 Sep 2025 09:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367DC237713;
+	Sun, 14 Sep 2025 09:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M58e0Ex+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F+INlNgK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RcDwmHkK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260281684B0;
-	Sun, 14 Sep 2025 09:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9AC1D554
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 09:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757841516; cv=none; b=XVdFRp95duoYfxf8LMF5ZaZ/oJBIHGpIo+ksfweZN9HNXkH+/retKVGt//iX80dSHXEsLbhmFaTf1+IbT/O8924Dx8i9sZFJhgNFacbVrCdHPsS4KTKpcIUYzlVarxNB4vNOuyFHas1exu4nMpg/vYc8hQWcf2h5z2Wzd3nJP8s=
+	t=1757841833; cv=none; b=TTITWRCzQWgasFhE38iezPBkajtCF4poXU7GiAPwgq9FagiPu87Ifi2TU2eFD6fFR/UTevqjXnUakTeqPYlbWzuk8SulR6JrkZPOausB0iLInVxyyCmVv5Bbry8Ndrwx6TJUyc6VfzBoc5odVMWoKmNdT69LvWjUQ2qPlRKX0+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757841516; c=relaxed/simple;
-	bh=q3IoJvqx4JW9jNqkMbSKv/nFIhhDIdi2nZRgRhdwL+8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=apVpxgwZXK2Fsyu2LK5NHsXuGThnN0mQkt97E/KgLnsjDyVxWxLHAXMz/I1muCEGiGo4h4NPmo7k55dxeSYFfwK/uLR3Rhm15XWnHO5CUFdd99F4+LFRwqbh9E5XjI0TSjFlYAsJuXDjga0D5zJZUXrXvDbonsw2PEAfSBvEql0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M58e0Ex+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D59FC4CEF5;
-	Sun, 14 Sep 2025 09:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757841515;
-	bh=q3IoJvqx4JW9jNqkMbSKv/nFIhhDIdi2nZRgRhdwL+8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M58e0Ex+WdT9CBB/uNZqIdhWAc8Dqwb7Ez1AldGs7Nl6ZWV3WPv5ojEU/RvvuzGXA
-	 aDO265BmZo7ElcIKe1D5LCTIojm4JDKaFhBJPXuxQ+7bYoGMFi+W6m5QJnV81AdyU/
-	 eWYg12V+O3iFc4G4hXbqvpLhFEQYuDrA5xKz5w0TXjvGEaHZhUSz/8Rj5soJDolhqm
-	 PK6M768IE4KgIR9DvkvxavnSd4hT376jTc2ilY3t8C6Cm3SRKs4ZaTijq9Hd2IrGw2
-	 ux9IKRa78FX25ReaHEBuPtt6HlYaWzDt06EB1MoVpC3luf3JKM5KL4ocywf7TlRQGR
-	 j4t1wvR6piiyg==
-Date: Sun, 14 Sep 2025 18:18:23 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-btrace@vger.kernel.org, John Garry <john.g.garry@oracle.com>, Hannes
- Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>, Christoph
- Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>, Shinichiro
- Kawasaki <shinichiro.kawasaki@wdc.com>, Chaitanya Kulkarni
- <chaitanyak@nvidia.com>, "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 00/21] blktrace: Add user-space support for zoned
- command tracing
-Message-Id: <20250914181823.a17382ac3a039dc4a8257578@kernel.org>
-In-Reply-To: <20250909110723.75676-1-johannes.thumshirn@wdc.com>
-References: <20250909110723.75676-1-johannes.thumshirn@wdc.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757841833; c=relaxed/simple;
+	bh=GXRX7LHYfbcoSNDFBxV9Vpg0Im36TCsj96j3SOvixuc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yqc98ECs7A0X9yfM8AAX0Wg86oWTBefTeyJpV4HpKH2OTosIGk1EVqLD63PQ/QDMEsZfgKCJ305efLSY3djvdZKChE2wHKqgbwRe0RL1zbPLlo38veGh28XwEdtWXlWV6xQFUweJR6feCr7yte1BqDj+KTpYgSfLfsOWVn5OBvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F+INlNgK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RcDwmHkK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757841829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8yh3+f19sVxKDCB6M1To0MGsF1AfRAID24Z12rxfKk=;
+	b=F+INlNgKLgvDL4fFV5mSzHN4KTsfE+m1KMsbVj2XUHQ63F45UakNrWCYobNb1Dx2wjhTgd
+	LG7C3VLsoSySQHpw4xvSkWvLIX+pt/MgFBcrWhRZBajGX0y1l5pZNCGTQg169Io//SRZA6
+	3hFm+QPN2SzcKHx1O7/6ELwTfN+u0Vd4jFI7ktXoiqGX3CP4hKWfnPJya0QK5wXuSpVWmH
+	BctOdyVsKcTRZ1W6LlgBbujSlWuOLQQZHrV7m3EPcVQZbSISaH49zV1gTxvUVZUq4SHNqn
+	f9032YVkDhof735sLdUH8meWtpaKYciMvzHxcHwjcOF/4oEkwKr8GDnUkudJdw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757841829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8yh3+f19sVxKDCB6M1To0MGsF1AfRAID24Z12rxfKk=;
+	b=RcDwmHkKAmkuWG4+VOANHrVY/5G7UFuZF0kTJCa3+2Haj+kulpJbWCIANe4BldgiBJX5xu
+	lomhNm+pWwTQLNCw==
+To: Daniil Tatianin <d-tatianin@yandex-team.ru>, Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
+ blocks around
+In-Reply-To: <20cbb02b-762f-4a3f-ba40-aae018388b3b@yandex-team.ru>
+References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
+ <aMLrGCQSyC8odlFZ@pathway.suse.cz> <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
+ <84bjnhx91r.fsf@jogness.linutronix.de> <aMPm8ter0KYBpyoW@pathway.suse.cz>
+ <aMPt8y-8Wazh6ZmO@pathway.suse.cz> <aMQzD9CLP1F01Rry@pathway.suse.cz>
+ <84a52zy0iu.fsf@jogness.linutronix.de>
+ <20cbb02b-762f-4a3f-ba40-aae018388b3b@yandex-team.ru>
+Date: Sun, 14 Sep 2025 11:29:48 +0206
+Message-ID: <84348pqtej.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Hi Johannes,
+On 2025-09-13, Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
+>> The problem comes from the function data_make_reusable(). The job of
+>> this function is to push the data_ring tail forward, one data block at a
+>> time, while setting the related descriptors to reusable.
+>>
+>> After pushing the tail forward, if it still has not pushed it far enough
+>> for new requested reservation, it must push it further. For this it
+>> _assumes the current position of the tail is a descriptor ID for the
+>> next data block_. But what if the tail was pushed all the way to the
+>> head? Then there is no next data block and it will read in garbage,
+>> thinking it is the next descriptor ID to set reusable. And from there it
+>> just goes crazy because it is reading garbage to determine how big the
+>> data block is so that it can continue pushing the tail (beyond the
+>> head!).
+>>
+>> Example: Assume the 96 byte ringbuffer has a single message of 64
+>> bytes. Then we try to reserve space for a 72-byte
+>> message. data_make_reusable() will first set the descriptor of the
+>> 64-byte message to reusable and push the tail forward to index 64. But
+>> the new message needs 72 bytes, so data_make_reusable() will keep going
+>> and read the descriptor ID at index 64, but there is only random garbage
+>> at that position. 64 is the head and there is nothing valid after it.
+>
+> Good catch, although I'm not sure i understand why this produces the 
+> error Petr is seeing.
+>
+> Why would it see garbage in a zeroed .bss buffer? Is this because of
+> the previous test runs dirtying the same data ring or something?
 
-On Tue,  9 Sep 2025 13:07:02 +0200
-Johannes Thumshirn <johannes.thumshirn@wdc.com> wrote:
+Correct. The explosions don't start happening until after about 5-6
+wraps. So the data ring is full of somewhat random data that will then
+be randomly interpretted once it attempts to push the tail beyond the
+head.
 
-> This patch series extends the user-space blktrace tools to support the new
-> trace events for zoned block device commands introduced in the corresponding
-> kernel patch series.
+> Either way, I guess after your patch is accepted i'm going to resend
+> mine to only strip the trailing id, but the records must still be less
+> than half of the data ring size so that data_make_reusable never
+> invalidates past the current head.
 
-I guess this series are patches against for user-space blktrace tool
+After applying your patch, can you provide an example where a maximum
+size of exactly half causes the tail to be pushed beyond the head? Keep
+in mind that data_check_size() accounts for the meta-data. It only
+doesn't account for the extra ID on wrapping data blocks.
 
-https://git.kernel.dk/?p=blktrace.git
-
-And the updates depends on the kernel side update of your series;
-
-https://lore.kernel.org/all/20250909110611.75559-1-johannes.thumshirn@wdc.com/
-
-Right?
-I'm not sure how the blktrace tool development is managed, but please make
-sure this series is not for the kernel. (ah, both has blktrace: tag, hmmm)
-
-Thank you,
-
-> 
-> The updates include:
-> 
-> - Introduction of a new ioctl requesting the v2 version of the trace
-> - Definitions for new zoned operation trace events.
-> - Parsing support in blkparse for these events.
-> - Display of the new events with clear labeling (e.g., ZO, ZA, ZR).
-> - Backward-compatible changes that do not affect existing functionality.
-> 
-> These changes complement the kernel patches and allow full visibility into
-> zone management commands in blktrace output, enabling better analysis and
-> debugging of zoned storage workloads.
-> 
-> The updated blktrace utility will first issue the BLKTRACESETUP2 ioctl and if
-> it fails transpartently fall back to BLKTRACESETUP allowing backwards
-> compatibility.
-> 
-> Feedback and testing on additional device types are appreciated.
-> 
-> Johannes Thumshirn (21):
->   fix comment for struct blk_trace_setup:
->   add definitions for BLKTRACESETUP2
->   call BLKTRACESETUP2 ioctl per default to setup a trace
->   blktrace: change size of action to 64 bits
->   blktrace: add definitions for blk_io_trace2
->   blktrace: support protocol version 8
->   blkparse: pass magic to get_magic
->   blkparse: read 'magic' first
->   blkparse: factor out reading of a singe blk_io_trace event
->   blkparse: skip unsupported protocol versions
->   blkparse: make get_pdulen() take the pdu_len
->   blkiomon: read 'magic' first
->   blktrace: pass magic to CHECK_MAGIC macro
->   blktrace: pass magic to verify_trace
->   blktrace: rename trace_to_cpu to bit_trace_to_cpu
->   blkparse: use blk_io_trace2 internally
->   blkparse: natively parse blk_io_trace2
->   blkparse: parse zone (un)plug actions
->   blkparse: add zoned commands to fill_rwbs()
->   blkparse: parse zone management commands
->   blkparse: parse zone append completions
-> 
->  act_mask.c     |   4 +-
->  blkiomon.c     |  15 +-
->  blkparse.c     | 450 ++++++++++++++++++++++++++++++++++---------------
->  blkparse_fmt.c | 105 +++++++++---
->  blkrawverify.c |  14 +-
->  blktrace.c     |  40 ++++-
->  blktrace.h     |  64 +++++--
->  blktrace_api.h |  54 +++++-
->  8 files changed, 560 insertions(+), 186 deletions(-)
-> 
-> -- 
-> 2.51.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+John
 
