@@ -1,64 +1,70 @@
-Return-Path: <linux-kernel+bounces-815886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD265B56C4B
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:53:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD2BB56C4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 736FB3BF454
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A6F17B7F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090302DF139;
-	Sun, 14 Sep 2025 20:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276221F3BA9;
+	Sun, 14 Sep 2025 20:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OvTMYaCU"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QeyRXE6G"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A941A1F3BA9
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 20:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A188E2DCF69;
+	Sun, 14 Sep 2025 20:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757883219; cv=none; b=RN1Q0Xhsi8En75op+2aK5SDy5xzpjOz1dwYQKCt5qE0degqnTey/rRF+PnPqWyJW3iJe+4kurt7K75mVqb6GdjrfI8kUYiCdaUTbT8h2spOvbPrwQ79zqGi28gy53pED27fMW5sMKqXB+jtH+EiSr/lCGpHdVAaE1maXCz3Tvw8=
+	t=1757883237; cv=none; b=h5BuUlbzWLUx2QkSb31HjgUG9xsLPFzZDkv5pptqpbuk1veMP4fOrrRjTRM87/OWQ/0b3RETd9+wjgqUxcOFuXPa6V+aMUU4sRD7Ws0wa+ZnbLfb2nYRLewb1Kb0SotpUgmE/fAs8g+7s3XZYvDSK7Q79GQ4BfGG4Bfw4iz2zEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757883219; c=relaxed/simple;
-	bh=ZY4Mm/BP3aJRJMxeHI3KlaRUTso3RRxwyd/vaq6/zM4=;
+	s=arc-20240116; t=1757883237; c=relaxed/simple;
+	bh=JDdCHIxDfQ3AJnTMXc0VF5Q2RCCsvH4MDbxZQYKi8EE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EG/M+r/E4aPedWkrsFnZFzabOcITN9m+WjAZF6y3RbKFMcAyvpSl/HnihIiRkfs5otGF/YX0JKGLxqxbOfeEWNnrpRkUZBdJ7GJXvvc98R8Thhy1ad1UFM/R03SGnqMY/9UP5OdcgaDa1jLWAAD0c4E9wJdnXHsyzp8nTnV5qkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OvTMYaCU; arc=none smtp.client-ip=185.246.84.56
+	 Content-Type:Content-Disposition:In-Reply-To; b=IlsRfmUmmPq9f3PsILMICW1MYw4Z36zpyZrI3EMY9nuu7EZIXpzd9vzqi3WkuhN953cnjLgHMSsEhIsY942jWkxx0SVAnMYBIuNNOp0Jbj1Cfdk2AvhpJ3amMWwS/IRK6H6T+2HNh9QqyBpMBVzyQLjRIM/ToCeII/fLRNYImtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QeyRXE6G; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 016E21A0DE4;
-	Sun, 14 Sep 2025 20:53:36 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id EAF5A4E40BD1;
+	Sun, 14 Sep 2025 20:53:53 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C89AE6063F;
-	Sun, 14 Sep 2025 20:53:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 79765102F2A78;
-	Sun, 14 Sep 2025 22:53:30 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BEB056063F;
+	Sun, 14 Sep 2025 20:53:53 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 694A4102F2A7F;
+	Sun, 14 Sep 2025 22:53:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757883214; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=HQ8T6B+ejU/9vBjSV6TLHtN/dHQwDrZIyXpYbfx8+7U=;
-	b=OvTMYaCU4uOgzwZQUCoMBIDkK8d+4DjCL7bI2dSxVoy4N3hO5XgB+rmZVwJBwSnpDk0KJ+
-	qQ7l0eiF9flOJuoNoO2Yk7rwxJgqzNAVkVKhbIbUXujsjLyqBR0L50zszoq+U61iC7sVI7
-	OYt7aWxYwE4YWzEh9hDM1gpqs92grfmY8hXI347nfEI05WeyS5UWTFps7sTIC91jh6o/Fh
-	e4KN1pUJ5c3E3OYiaDC6DAjrLGrmlgN7Zm6VhvY1RQYFQAxo5HavHPHVNzRr4qLTMSlhce
-	2AiSposyRXSMtqH+agrQct8HnXQBDK4rEypSIuXlKRyohT0ezjZIvj+vlxjEUA==
-Date: Sun, 14 Sep 2025 22:53:30 +0200
+	t=1757883233; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=7xQaSzl/TxXQwIRozChDy9Tm+5Lzv6IuUtQ4mWGkAgY=;
+	b=QeyRXE6GcF8lBbDkyGWh9+amy8cLIw7ntDBnRdyEXuiNgbP/aYoh6ADxf6vNCPzUiLbz0F
+	pqaiy+sbbdG2o9oKZktxDx1dDI4uxN0/sBFrVxSnvD83SBEysQ0avybyiKOjr5sYTE9tPe
+	b/1oKLTWKDHonJo0H/Wd3K/QCeRRn/80eSjNCN5V1/Kd0F2XnNaWyabckJAKCr6WVPxrpa
+	sUKz/kGVXdZ683iF5BVJ14YiLuBUNjUEmCYxgNMh9spHX+pvpKCxk8MOB+iMMJF08n7oEw
+	HybkFAX8QwxSbaRFsKk6frbQdI0zK8I0ijJ3jv9xtp6ONwqVKKvRmp8aYnVPcw==
+Date: Sun, 14 Sep 2025 22:53:46 +0200
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: git@amd.com, Frank.Li@nxp.com, wsa+renesas@sang-engineering.com,
-	quic_msavaliy@quicinc.com, Shyam-sundar.S-k@amd.com,
-	xiaopei01@kylinos.cn, billy_tsai@aspeedtech.com,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-Cc: michal.simek@amd.com, radhey.shyam.pandey@amd.com,
-	srinivas.goud@amd.com, shubhrajyoti.datta@amd.com,
-	manion05gk@gmail.com
-Subject: Re: [PATCH V2] i3c: dw: Add shutdown support to dw_i3c_master driver
-Message-ID: <175788312847.382502.8673903984944138470.b4-ty@bootlin.com>
-References: <20250730151207.4113708-1-manikanta.guntupalli@amd.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Prabhakar <prabhakar.csengg@gmail.com>
+Cc: linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and
+ RZ/V2N support
+Message-ID: <175788312845.382502.12492963502213477306.b4-ty@bootlin.com>
+References: <20250908093930.12591-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,23 +73,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250730151207.4113708-1-manikanta.guntupalli@amd.com>
+In-Reply-To: <20250908093930.12591-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, 30 Jul 2025 20:42:07 +0530, Manikanta Guntupalli wrote:
-> Add shutdown handler to the Synopsys DesignWare I3C master driver,
-> ensuring the device is gracefully disabled during system shutdown.
+On Mon, 08 Sep 2025 10:39:30 +0100, Prabhakar wrote:
+> Add device tree binding support for the I3C Bus Interface on Renesas
+> RZ/V2H(P) and RZ/V2N SoCs. The I3C IP on these SoCs is identical to
+> that found on the RZ/G3E SoC.
 > 
-> The shutdown handler cancels any pending hot-join work and disables
-> interrupts.
-> 
+> Add new compatible strings "renesas,r9a09g056-i3c" for RZ/V2N and
+> "renesas,r9a09g057-i3c" for RZ/V2H(P). Both variants use
+> "renesas,r9a09g047-i3c" as a fallback compatible to indicate hardware
+> compatibility with the RZ/G3E implementation.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] i3c: dw: Add shutdown support to dw_i3c_master driver
-      https://git.kernel.org/i3c/c/0b1493337935
+[1/1] dt-bindings: i3c: renesas,i3c: Add RZ/V2H(P) and RZ/V2N support
+      https://git.kernel.org/i3c/c/12ba31828681
 
 Best regards,
 
