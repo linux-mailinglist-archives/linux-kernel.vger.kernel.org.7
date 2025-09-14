@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-815912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F156B56CBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96661B56CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 00:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5E2177747
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4432189132A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722232E7165;
-	Sun, 14 Sep 2025 21:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABAE2DCF6A;
+	Sun, 14 Sep 2025 22:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIfT072Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="N4sjPjQB"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0BB1D7E4A;
-	Sun, 14 Sep 2025 21:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BE4221703;
+	Sun, 14 Sep 2025 22:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757887059; cv=none; b=YgCmCA+Vn8IfmOWifkYrbKJxdqGLrvaAVFviM964kdh0fkd0ZUra+QFoU4GEJfrQuSrsqGkmLNyYvjQOU8cj/Z0ecETZoPwSXIuZiAdWZwdhLMJYZQRfwG6MxWyGe3XrTO8jpfNNnn4o/i8qMXXx2H9kPECDYqe38tk7+3+fIrs=
+	t=1757887547; cv=none; b=oo27Sdw8wOMEIH7BW+kcuyik+LGJxCZucztlYz951coXwKcAKcex7BTvFDc0VKNbosBiisK8FmUbvSj1k44ZwbQaOji9vd4kNim+krljq4OAOjyP39YxXwktgw/1uTKQ4GI5mgAg0RgtG9/Ab1ksisNB9lUVEEtwM2LOX2qSQpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757887059; c=relaxed/simple;
-	bh=UzomXMO2OVf/W47Q+4CtX5NoW3MYQVWQvopO9CDJOjc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=J+JQgt09/sGyhMJTI1aZZLJgGMCqJDtAvZA620D7e0V+a1mGYXymOIZO3A9FmOx/MHqEzfNSZ7huDzhcQdvgk3p0bDF5DX9VyyO/DpqoSiFKIBcVV69x3ldQbmw1X3aIxp3FDD86vgBiMYF1v3ZemwebeDzMF781C2A/PeTQNjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIfT072Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 651FEC4CEF0;
-	Sun, 14 Sep 2025 21:57:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757887059;
-	bh=UzomXMO2OVf/W47Q+4CtX5NoW3MYQVWQvopO9CDJOjc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=DIfT072ZUKWuwafbT+XzNyblKmtqMiLwjIe2LsTqvzKFVgkD24Hil6F9doh8y3HN5
-	 RBiGg4uRdZK3CtZiPyKr5uVsP6N/LDKF+FzhiurEBJM+4hxaYkS2POFMncjxOiKEIE
-	 k8hKs8rKCaxqjEpT+EZAyTbDij3gjHnyvxFxXe5T2BkLt6NhBGurpnWhLp4oppvUZK
-	 xLMk0HIWgRlKr1CTpkx6w7zI8YC7HsSBfyDX7rgGRYwdpCJiK3GM7SK7X6oN0X1Fzu
-	 +b1HnZhGitHed6KFpMgxJusg5De/AlcTNy8iezumCH1hA1lwQ+X94hSDfgqttsqCSU
-	 LNHOBCO5hj25g==
-Date: Sun, 14 Sep 2025 16:57:39 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1757887547; c=relaxed/simple;
+	bh=qFiPkWat8cdpZBzK/3FKHWpNrgeiJ1tBgvun827YDfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKI3VTyQAV89t42xpZ8R/Ndl16hXQFkQxn9EAcNaPqV3prkpUI+7CQa6wsRm29pCZQ0FCZz1mnSnwGCXBzZr48WRSrAmBje7G4azagihFjf/58oDuoFS6vX3AJpBzi6iKpDfAbbGkBxwTFIjgT5Bb4YoGBtceksCYh26Eg7oc+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=N4sjPjQB; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cQ2KX2zYmz9t26;
+	Mon, 15 Sep 2025 00:05:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757887536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p2Lb0eDUU+reyEvRitOZ46ibWVAxjEfgUhYXpxgOT+0=;
+	b=N4sjPjQB47a78EErnipynxhPYj+1VWofg6sXGDISMZ9wEso32SmoVla1qIeUXdrTk03Dnw
+	8HoXJMh1o3y7gWaXJuohCX1ydePw7/jjjFQYRyhuihCjXwndrvg/jgtVz+LoKaQoQsUdMG
+	PHKFNkI9OjMMMjeTuU/3E4XfMgwr3jX/qY+41T/iTaNPOcMjU60Llns9zi25ZOc0I5mc8k
+	9QIUHH28T77jVuYUTL9aevQH30h7lwSLPoClr+oONn9Gu5auLamNN1ARzPawzQLOzqUuuQ
+	3O23ouqQ4vMXeQeC7GwQ/qGsHAYa0fgfGdxbbA4ElYktCJxMBUTJslaWWpqSbA==
+Date: Mon, 15 Sep 2025 00:05:32 +0200
+From: Anthony Ruhier <aruhier@mailbox.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 0/4] arm64: dts: qcom: x1e80100: Add IRIS video codec
+Message-ID: <yw7fr67vmkdrjovtrf6pmjqsbwhfft425krl2j46xmrlc3jkmn@m5iysnhq6m7f>
+References: <rPv92n3EVkoRrO1v7nlw_tPMn-nHUhpYhQP_FjmQsESL752mly20FWQqPHLs8JHGC4mklm9wfPABc5kd-x4LYg==@protonmail.internalid>
+ <20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org>
+ <980b7247-e8a5-40bd-ba20-c9c72c8a397a@linaro.org>
+ <aMQJ8Nb7TZNmD1Vq@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jjian Zhou <Jjian.Zhou@mediatek.com>, 
- Xiangzhi Tang <Xiangzhi.Tang@mediatek.com>, 
- linux-mediatek@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hailong Fan <Hailong.Fan@mediatek.com>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
-In-Reply-To: <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
-References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
- <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
-Message-Id: <175788697866.1955455.17302760216827607004.robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add VCP support for
- mt8196
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMQJ8Nb7TZNmD1Vq@linaro.org>
+X-MBO-RS-ID: d0ba793f0241d45ddbe
+X-MBO-RS-META: opok1qnuq7hyfdss6hwcxo1gwwcs9zfi
 
+Thanks Stephan!
 
-On Sun, 14 Sep 2025 20:29:24 +0800, Xiangzhi Tang wrote:
-> Add the new binding document for MediaTek Video Companion
-> Processor(VCP) on MediaTek mt8196.
-> 
-> Signed-off-by: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
-> ---
->  .../remoteproc/mediatek,mt8196-vcp.yaml       | 165 ++++++++++++++++++
->  1 file changed, 165 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
-> 
+Tested-by: Anthony Ruhier <aruhier@mailbox.org>
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Here is the diff for the Slim 7x (with a Signed-off-by, not sure if it's necessary):
 
-yamllint warnings/errors:
+Signed-off-by: Anthony Ruhier <aruhier@mailbox.org>
+---
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml: patternProperties:^vcp@[a-f0-9]+$:properties:mtk,vcp-core-twohart: 'anyOf' conditional failed, one must be fixed:
-	'description' is a dependency of '$ref'
-	'/schemas/types.yaml#/definitions/uint32' does not match '^#/(definitions|\\$defs)/'
-		hint: A vendor property can have a $ref to a a $defs schema
-	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
-	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dts:26:18: fatal error: dt-bindings/power/mt8196-power.h: No such file or directory
-   26 |         #include <dt-bindings/power/mt8196-power.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+index b7dc436a99da..6fe93d0a05a4 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+@@ -1102,6 +1102,11 @@ touchscreen@14 {
+ 	};
+ };
 
-doc reference errors (make refcheckdocs):
++&iris {
++	firmware-name = "qcom/x1e80100/LENOVO/83ED/qcvss8380.mbn";
++	status = "okay";
++};
++
+ &lpass_tlmm {
+ 	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
+ 		pins = "gpio12";
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250914122943.10412-2-xiangzhi.tang@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--
+Anthony Ruhier
 
