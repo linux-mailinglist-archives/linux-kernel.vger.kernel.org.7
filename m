@@ -1,92 +1,125 @@
-Return-Path: <linux-kernel+bounces-815556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBE8B56820
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F7DB56821
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D0D3AE6EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D124189AD47
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BA523AB95;
-	Sun, 14 Sep 2025 11:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F8124728F;
+	Sun, 14 Sep 2025 11:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxC8xq/7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTkjKwx5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845DB1D54D8;
-	Sun, 14 Sep 2025 11:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C880E169AD2
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757850503; cv=none; b=OpJhznkV9usGnvZvS673u6kTGWypnPkUcShwB84dG+oUfb9a6HgqkP8LX/hRd+KL/QmK7yh09bztLnLjCO5dWkOqjY9vigYP/ZewQLOfqMgdoIIfmTFDou1Zx5bwoh5R4bj3FJxUslIR+YJRQ5z5EmVJ1Meg8Y4TvuYggO3oD20=
+	t=1757850714; cv=none; b=XcEqptOIdGt1xZqAtaS/uCwjLsU5x62yFoWn8yDRKwZY6W2RBFaKD6xxXJ9Nu5Ai3fpYmG33WmI5QiXuT+ZZMxM53QywB6iGoKFlzgZ7CB1SkD0tWNd8KtrRubWYZju8CX2Xov3yjD0b7bjOk+UDcdsvI+uH/NJcsTrD8mQ9IvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757850503; c=relaxed/simple;
-	bh=tUZL+0BtcfH9b06XoJzrl+8WStX11Tdi7rsFZKkGtQs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BmrET0d8PPAapLk5y7gMalUbrNdrQzgivM8MeYtebazlIVA+tUaIBUaoFxG4/YdA++Xe5mLMNKi22BlA524Do6VRc92soowOsFl7/6ncDAUw4xmb+7b1StAAbJhvHv2oVVDZt+OrXj0oS6gtQQdWc2UM9ixl9acYJ+icV2D1ej8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxC8xq/7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5461FC4CEF0;
-	Sun, 14 Sep 2025 11:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757850503;
-	bh=tUZL+0BtcfH9b06XoJzrl+8WStX11Tdi7rsFZKkGtQs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GxC8xq/7jO+uZ3u9s8OZZtITC9F0571hDHVJVyAkvwozKxcTo936ZzqWFwKcIodXM
-	 J7xnJ+P+UJcOetMiYMcCa2z5Oh7x/M06L22+a1ZJifIQqZSruqvlIzuBkCkb5vihiF
-	 zPxD2DZW0cxTMf4R73lzbbwh7EsB+DrVlp1cTAQnJTSjN6mOt74k39ul6IY9oJQjjq
-	 F24Bw8DJGaqUwwFyusqwaIakboTkEwfKWDRjQgcyNipwFb5KOPX+H2Z1So1DBXrfMW
-	 rA7ChMcujPw5/k1xGeP0UEqn8nXiZYCaf5X4YHbugcHp2sn9yaWHWLsWARXcm4ZFr4
-	 eg7ztrKEbmhQQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Onur =?utf-8?Q?=C3=96zkan?= <work@onurozkan.dev>,
- rust-for-linux@vger.kernel.org,
- ojeda@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
- masahiroy@kernel.org, aliceryhl@google.com,
- thomas.weissschuh@linutronix.de, tamird@gmail.com,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
- dakr@kernel.org
-Subject: Re: [PATCH] rust: add `rustcheck` make target for check-only builds
-In-Reply-To: <CANiq72=zP0TLCjM+ySOu3Zbn_UnU8ntqb2MH58cN60O0Voe+hA@mail.gmail.com>
-References: <-ebVaoKp9tTjZGmdSRi8rrH1o7SgmGyyzk-g2ALSCBKPJP44z7dSPCplhwKt-sibwLwqP7IPEml6qCkSpJhd8g==@protonmail.internalid>
- <20250913100847.9234-1-work@onurozkan.dev> <87bjnei6tn.fsf@kernel.org>
- <3bzW7kdvPf7hqSGi-0XYj6_lzi-eNXlOoy2luis1EVghl8OV-IHyZbm4KRf06z73T3sNjPeYDoYbeHXijRAFZg==@protonmail.internalid>
- <CANiq72=zP0TLCjM+ySOu3Zbn_UnU8ntqb2MH58cN60O0Voe+hA@mail.gmail.com>
-Date: Sun, 14 Sep 2025 13:48:11 +0200
-Message-ID: <87tt15gsqs.fsf@kernel.org>
+	s=arc-20240116; t=1757850714; c=relaxed/simple;
+	bh=AIPYSOx0428xiqsH5Zw0f1PRbiXpWTgmcLOnuEvukws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAd9rHOrNDdaaMGWSNJjiZtgtha8gTKg59+H34PrvrSFGvwLK2Bt07f5wV54VD27wFgAmebAKRsCGd3jpchnVZutnJptDyBr17OKiN/JWlA5membCazGxpP5sDV+VGA5qLzMfa8GvGhT3FQHrARSt3wAJB2OhiGlcPPxiJZzT1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gTkjKwx5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757850711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=05ZWoSoCpXTd7kMo2D7eZ+9NOL3Ymr4GMs5H07grvQg=;
+	b=gTkjKwx56HG3L/6Jd8p8Zge5zRjHrLS1m4v3+nYZxqxyIOsbJYkcQtSR3FvHTV/3bAkH9l
+	qxM5L7Oson5P2UoxpOILEXTUscojoy75ZahCLE7kV9Vdbu3LvHgZOVmSZxYbxRe3a4wz3L
+	NfLO7jNYT+bT6OyO50CzINcoKHjX/zw=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-475-6VjYuVOXPBWJfjljpgpUrw-1; Sun, 14 Sep 2025 07:51:50 -0400
+X-MC-Unique: 6VjYuVOXPBWJfjljpgpUrw-1
+X-Mimecast-MFC-AGG-ID: 6VjYuVOXPBWJfjljpgpUrw_1757850710
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-827a6eaaf18so226569285a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 04:51:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757850709; x=1758455509;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=05ZWoSoCpXTd7kMo2D7eZ+9NOL3Ymr4GMs5H07grvQg=;
+        b=tvfHnH0lp13/4orBZEfrgpesm9sCgFqDtvOQFiWVo9vgz+tWIlkXh5Me7v7Gn39CQS
+         PkAF5jpmcS/QQMxF7fNsoZ6Xq1vr5qkQwFg0SfbC0wK9o8WwQerHSUyL5xxkEQ84R5WU
+         N345ZeBQ/UxsSKPr7XIsRKgSGx4r92CfeOh/N/AUOM7NffmMw0dwSOb5VJLbwvnqvkls
+         OliFzafHbK2q7Br/7DU1KBnkN+6O8/3WBSUgSqMagUQyiLHy/lITG6XTWpsfQVHuZjD2
+         1iFUYTTmYkAM54/T1OagFCSa+IF+IZV5Z9JGzgqtHCt/gAF3CPjkKbKuNtFfUF8KlI0A
+         TFYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUburgc6HiMJqCkWAvNXCv9gGT/jdRYsF2ABYIonH2miGCAzdlMB6a85BXkr31PHCOmewn8pRYPE8k/PSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzsk+/cZ5m91ftlByRUAamq9jXd+POCuqZl8jUQO3OUeZp9rQC5
+	Spfc61sZ455LQcyKtvtd/TL9Tmz1+xKdAqje7arqXUqhimGQkL4ieFmQfcXVOus4PzBpl8KLI/d
+	MCMR0yw9gUohmcqHnw43qzqnethJUpXMO6LlRvwcQTv4ptBjMKDPLiMOdsZZMOICKrQ==
+X-Gm-Gg: ASbGncuB0utscdjTGgMMTFUfc0krlWoxkeG7h1E+iCr9lkYYOA0/OvNs657sHOSyanC
+	tdKatMcTSfdbWgujzMSBNniISUaYfbK7Onv+Npm3S5H7tVuP7V4W7Zq3On3zbbvwUl17lAYvuZp
+	IlpUGtv67aX26xLESTuXx4FQFUwKIBtCx+r5MlJ8/wgT39T9bod2OtAObqZ6yjMwU/+tfx4aH5e
+	TGuCFS+rzPRbiKXGbdfgc3id9hCul+0HgmyKp8FaUESmyGThCyFKZE3ET5Gprb0fFV321oQZsZ0
+	TizHiQpqvB1gnke3Zn6YIgmFIOKgtQBR09A5DQSwiOodSN8mEK4yXn1yQmeMsT1sghsOMhpnORY
+	xOpz0vu6BSIY3dP+EZTMtdJf42VoeGZI=
+X-Received: by 2002:a05:622a:409:b0:4b4:8eb7:a461 with SMTP id d75a77b69052e-4b77d14bab4mr135163581cf.58.1757850709656;
+        Sun, 14 Sep 2025 04:51:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHL+XRwnX6jGuwsu4a3hT4crD8COQvyH3Zc5Sbne0Nd2VMEI38oG/sulJqcdFsNqwfss3aWZQ==
+X-Received: by 2002:a05:622a:409:b0:4b4:8eb7:a461 with SMTP id d75a77b69052e-4b77d14bab4mr135163311cf.58.1757850709265;
+        Sun, 14 Sep 2025 04:51:49 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639da9e99sm51613881cf.29.2025.09.14.04.51.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 04:51:48 -0700 (PDT)
+Date: Sun, 14 Sep 2025 07:51:45 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] pmdomain: mediatek: airoha: convert from round_rate() to
+ determine_rate()
+Message-ID: <aMasUV14w0Dc1ki0@redhat.com>
+References: <20250810-pmdomain-round-rate-v1-1-1a90dbacdeb6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250810-pmdomain-round-rate-v1-1-1a90dbacdeb6@redhat.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+Hi Ulf,
 
-> On Sat, Sep 13, 2025 at 7:46=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> I think this is a good idea! However, it looks like this target only
->> checks rust code that live in rust/. Can we also check code that lives
->> elsewhere, like drivers?
->
-> That is more involved, and I don't plan to add features to the current
-> system, sorry.
+On Sun, Aug 10, 2025 at 06:16:19PM -0400, Brian Masney wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> appended to the "under-the-cut" portion of the patch.
+> 
+> Note that prior to running the Coccinelle,
+> airoha_cpu_pmdomain_clk_round() was renamed to
+> airoha_cpu_pmdomain_clk_round_rate().
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
-I assume you are referring to the upcoming rust build system changes. Any
-idea when these will land? Will it be possible to implement a check
-feature when the changes land?
+Would it be possible to get this picked up for v6.18? I'd like to remove
+this API from drivers/clk in v6.19.
 
-Best regards,
-Andreas Hindborg
+Thanks,
 
-
+Brian
 
 
