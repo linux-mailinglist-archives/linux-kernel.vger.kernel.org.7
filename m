@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-815786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25BFB56B1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:14:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6DEB56B20
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2D33BF142
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C107D17B210
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8D62E6CC2;
-	Sun, 14 Sep 2025 18:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE542E7BDB;
+	Sun, 14 Sep 2025 18:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z/+dDghz"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JCQhdvr5"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885742E612E
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451D4635
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757873519; cv=none; b=pc2TtKF/2kXAQeI5xTJlb/2K5CKg/8FYJ/imjf6LtlikNBibr95GYVDKebv4PwfKrHnsOGRpc9n98/zRvZkRG9ofg7q/WOQACIEj3ZrsRbEx1C88PMY/qPAzoPXpIXwlr1XCqXg8G/ahbdrrMm70b0DR18F/0Y0do+iprmNWq1Y=
+	t=1757873522; cv=none; b=R86EP8oe5+z6sxZmPwaH6Oj3GsU4jf1SLKhh2rTkBLSKowPzqnqOk02Au9qWwu2zsd1xeqwDaybjId7kEmj4Wf+Q+uM3cw/qjaLzbGmyEHxr8tbCOVnyS6ceAf/gkGRn/cikHFeZZHsu8lIGGKJgY2Ve4adOGm7GzRAmLG4uCBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757873519; c=relaxed/simple;
-	bh=ljI0WTUYOuJFrnJBziodRTXhC0o8YtCEikX70wIWVdw=;
+	s=arc-20240116; t=1757873522; c=relaxed/simple;
+	bh=k9ZldP0/SVz9h/5AqDx45Gk8Qm/IOPK3wPViOLuKkOA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=TPbwqgZK/Dfmqya7lGPO7n33cRghI9cxn0ZthCBLdEP53exJq/9kooUkZEruQoeyWYMY5X3wj4PKnad87tq5nxhjIWS3EOfcJYo7l0RrQ0sXoZvdKEu72mn9HWUH/PscPFOWE2ckdSO3dnzO3fGd0094Y81k1KBCZTAIvvvlubs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z/+dDghz; arc=none smtp.client-ip=209.85.216.74
+	 To:Content-Type; b=BlLXUmaDUoSD1y1ww3jmFtxBSNR1NompQEyoHggv9oTMWK/cuTvq8J5sQuNQAWhgWwzceA3YjPb8DmNrGYeM9l57pRRl9KbS6PwQaJWlWxsqAJ+S2fJUuPfAlxNr7oqBgIY0fj8dYjzdErjOZPQMu1yWe/QyKzeHcQQMn5KSKSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JCQhdvr5; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32e43b0f038so274123a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:11:57 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-265c4769c9eso2482425ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:11:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757873517; x=1758478317; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757873518; x=1758478318; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cszoCuCF/4pJ27efpqxPpEc9IoYBZusH2U1UEnIjtyY=;
-        b=z/+dDghzMv/PHsPKe3ey0ynoflELVXTzq1fRkk7aFbKu0Ndbi8+bLtubBqq3Dib45L
-         CRyZaDyuz/Iqrol1ksH4ZXXtFH7J5c4d4SaA0HZ27O3/6yzFLPHyd9daU0IDZFK5AjH7
-         LkBENj4XBGtXiUHkpaN+DjFSHoBghay/5F0wdsMVlMntp3ufdS9QuA7hCDBR99phxDx2
-         DLhG4XauYBAE9g+v9O60dsJAusGYcTaxEVfAIZtvOZjUHWIFbrAppsvsbyoehblg7+/2
-         Mg+056tFyPC93/i+vK/J1shPUiBQWnj2Ub7FnKRpHBUsPIRA6UkHdbaGEd3P+tmCQX4A
-         Y2Mw==
+        bh=rnAf+Rem08cXbs+wXch3cnb2eg6uZShB+fau+Osjdyg=;
+        b=JCQhdvr5KxZ8IkS0bLA25oEC7GP+mjRMEiHYeH04GXFBh1+fiC870qh+vRIBjQ+s4h
+         c04v59ZXUi0HR+CBRXRs3OJwxQOIoWxbcmdhl5v7R4CTHE1J5kRlQKY0OkEP2vRdWEO4
+         vPo+HTibQ+VUq5siBanLMUdCDtSvFB/tXMi+lP0ZKCdYPBDzrHfwuWQbgzHtukTYeCBj
+         7q3ephiTnwIaB1bHt/h+qjFbG7QDoat38gzoG9tWGeS6cyC9JZIQGurc0wb18y4sPgAx
+         G2bw5cIQgCHedVCt2RVSD1ju1TjmsK5pyepcDIHKmK5shzaViEg0mFPVpRSYADf/IkYw
+         4+Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757873517; x=1758478317;
+        d=1e100.net; s=20230601; t=1757873518; x=1758478318;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cszoCuCF/4pJ27efpqxPpEc9IoYBZusH2U1UEnIjtyY=;
-        b=CtHSRd39v2ubj8nmLwx9FSewrHCF1fCiBxPTSC2bUPhfc07hw8vWZmSTVxjna8GrGY
-         j+z4pLkECqsZ/XrucrlVw6f/duVyto0CxP/NIvFcCgF5jPBSyBGaTqFvfsQKIh/YW4DQ
-         zUliQyUvbdkRZoFL3De9aVnKJECA8v6EUqoxpKnNxbT67HPaZ/ScleppQXs3C+KS1/Av
-         4mUPPxHu6tp0UxSjWjRI0ZyH9yqlgcAgOayCs3YSIbn5ioXsY0v5YGu4I2vf732KlyET
-         QjZkN1/ZOZvAFaGINbElts5ms5rVbdl5E/HR3bfygsiEM5NjmwVzKTmUoAYPWTuKEVQ8
-         LCOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiREsDcCtR6oFidahVz5jWc12HFfi6QtzjdszD6YVN+GYxHfk5u5jNu7CcVdwJpQnO6KBjA89KYDmrtdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0IMqR+kJsRF5JWjhl6i3Gio2vyHc6Cyd3XBayU4b33lB528zO
-	sIwKmC6mNTkxf1c58MLLSvEh12JuE/orKqhZBQygBuaIhRmSF9PLCeiqnbqI2sNxOsWsMUTS29F
-	8+URAxBmXCQ==
-X-Google-Smtp-Source: AGHT+IFOWE0dHH6/DPzHfcurS//5mAYhaRLp8T8QI8OCJte54DrklhIzwzjTyHhmS/wBztTimb1vUq4Y01Ng
-X-Received: from plbd3.prod.google.com ([2002:a17:902:f143:b0:246:727:7f8f])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc4c:b0:263:d6b5:fbe1
- with SMTP id d9443c01a7336-263d6b60724mr38223545ad.55.1757873516786; Sun, 14
- Sep 2025 11:11:56 -0700 (PDT)
-Date: Sun, 14 Sep 2025 11:11:16 -0700
+        bh=rnAf+Rem08cXbs+wXch3cnb2eg6uZShB+fau+Osjdyg=;
+        b=pdYiaK2eBdOAGcyAWvLhA+Wq9577/SrkUlpB0zo4X6xv8wM/6os9+R6yq2pPmtgCsg
+         4hhKkYJYKIWuvNL40qXLQB+PIK2fF3D8U8YUOZasXve+y95E5afwYds4PU6YMvyK5VBS
+         bz4E5uCzJzXtFCk3/3EJnqymz450zX+yyxWQftOtCQTZxYEOnwiiOTquUc5qWkenU8AD
+         /VsK9KaMRhgY1roCAxZtNMEPgZ6MDOF/emF944GrjCS47wJ+UREU6/EdICGpGp9GZ7GZ
+         +zas8zs9mfKtu5cGYwRfC2WH3wz5dNduAZQygyX0MHjQ3ww8/oyMjt0C14ZFjTptY1Jo
+         F18Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWFIbiO8UbYJ8o8sV1szYlR5o0JcSdRpz0Vy2OEzZVxnSGjkXDsPZpiboYJ2kK+PCGTmlZIWG4l/k5EG20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzapKa3BCqmacBvVJp6WabHiBu99XHfLeF/+1F3RZu4H5wPPfun
+	wdxdizYFgjF176ZoRhpkyPKl7pSH7v/ipwT35raFLLgxXWz/jJ8+VKfGMcb1wiKmX8G/GIlyHuQ
+	swZMQqJeq0w==
+X-Google-Smtp-Source: AGHT+IGxhychhrWRfiCMHOdHSTzWtf1nrmSSoRnHNe7nXE0q5y82P53EwLDheSjVi9tvYLuwibnTik0KWayw
+X-Received: from plbmn7.prod.google.com ([2002:a17:903:a47:b0:265:d4bc:38cb])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce0d:b0:261:6d61:f28d
+ with SMTP id d9443c01a7336-2616d61f5f4mr61952365ad.50.1757873518423; Sun, 14
+ Sep 2025 11:11:58 -0700 (PDT)
+Date: Sun, 14 Sep 2025 11:11:17 -0700
 In-Reply-To: <20250914181121.1952748-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250914181121.1952748-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250914181121.1952748-17-irogers@google.com>
-Subject: [PATCH v4 16/21] perf record: Use evlist__new_default when no events specified
+Message-ID: <20250914181121.1952748-18-irogers@google.com>
+Subject: [PATCH v4 17/21] perf top: Use evlist__new_default when no events specified
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -95,29 +95,30 @@ wildcard scanning can be optimized.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-record.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/perf/builtin-top.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 8e289f352fc8..d29a3bec1a5f 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -4346,9 +4346,13 @@ int cmd_record(int argc, const char **argv)
- 		record.opts.tail_synthesize = true;
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 30a7b55335df..067af9b7be1a 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1698,11 +1698,13 @@ int cmd_top(int argc, const char **argv)
+ 		goto out_delete_evlist;
  
- 	if (rec->evlist->core.nr_entries == 0) {
--		err = parse_event(rec->evlist, "cycles:P");
--		if (err)
+ 	if (!top.evlist->core.nr_entries) {
+-		bool can_profile_kernel = perf_event_paranoid_check(1);
+-		int err = parse_event(top.evlist, can_profile_kernel ? "cycles:P" : "cycles:Pu");
 +		struct evlist *def_evlist = evlist__new_default();
-+
+ 
+-		if (err)
 +		if (!def_evlist)
- 			goto out;
+ 			goto out_delete_evlist;
 +
-+		evlist__splice_list_tail(rec->evlist, &def_evlist->core.entries);
++		evlist__splice_list_tail(top.evlist, &def_evlist->core.entries);
 +		evlist__delete(def_evlist);
  	}
  
- 	if (rec->opts.target.tid && !rec->opts.no_inherit_set)
+ 	status = evswitch__init(&top.evswitch, top.evlist, stderr);
 -- 
 2.51.0.384.g4c02a37b29-goog
 
