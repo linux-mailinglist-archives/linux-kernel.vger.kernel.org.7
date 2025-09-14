@@ -1,225 +1,142 @@
-Return-Path: <linux-kernel+bounces-815889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC92B56C55
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:57:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC72B56C56
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32111895DB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:57:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A9DD3B0196
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5E22DF6F9;
-	Sun, 14 Sep 2025 20:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5542427817F;
+	Sun, 14 Sep 2025 21:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTcjB1gH"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cf5G4Ppe"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12C2219EB
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 20:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCAE1FC8
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 21:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757883433; cv=none; b=sj/YfYMT16tia8SEm4yjX+gmFVl0t24tYZd55/I5DVhJjquiv7vp0KzobtrKrZp+/UVjnakemAL84aC6Mexj3JstmASUQhAl5U4OmnrAEauVuaWZ5UxO7RanebqYIsPBcIQ/9SXyo/MMy/U00D3dQvpeyZP7FRLCWIvJ6jyXJn8=
+	t=1757883630; cv=none; b=PUnNSfsBZz98azL+CnZWGRHleiq9iIkFpZE6KV3ufPaGIsG5yrETsHkBl4E+CdH592tA+Rg0Uor0Q9Ekd3tFSvYizJImSwS7iu53y5ocIc4c8KiHB3Hr8hYq9Kl8bE3WK11vtYzHyvlUSpXD9A410wusq7zpPQ++WsWq5IcD6H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757883433; c=relaxed/simple;
-	bh=E+1Rhf4TtAslOVEyRfpCz7urUP1VaTu8F6OjeI/pzV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCoeZ4byrCZX1n1Uxke8w1SSjL1r1hNvP7CJh7/6UJSn5ue1nD5O1uF1ks/0Dn6Fo5iJdYHoCsxa1XBEBFL+KuExagTkNvUokS8dHci+z2jUlaWi2dTO6c3Sdd8X7QpxUHKOLGXeaCctV7lCDLz++ZQQ0++5ox8gSX4yQ1xC8uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTcjB1gH; arc=none smtp.client-ip=209.85.219.51
+	s=arc-20240116; t=1757883630; c=relaxed/simple;
+	bh=uEiYwiQoAW8hMQLGLN7/ysrpPGt17wGdOfYRNEL7B5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dj4tnrfk0O3FhdoJVj6SFrsxUQW67a+pbZ7DX4G/33cq4J3wrAgkz8F//dBysQbmArZ2ZxM/mTlogz+OA5m4a/f0J4Al4yeykFHlI2YyrE6KfNNaJHcxmdZmydQVhfKxvmmkjEt7Rc2dLoQxggzxPNf3/1dwB9duvBEdZo9I65Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cf5G4Ppe; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-7748879b06aso12020866d6.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:57:11 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b04271cfc3eso448146866b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757883431; x=1758488231; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lYzC7DTlBazYH/vrpI5c9K3KG0tzYBKVkyZN0WJVZs0=;
-        b=CTcjB1gH7S5mGlHx91tzrqZkCiaZtqZQSlOlv0s9MeUOE60zzW5MRYp3jU1DO1gZCV
-         dhiXdSDUY2ZwkbGbRI+YCwRPKfFOmjTKTrjPJ7pGFagOX/fthJ1cQufcY1h6JM6tiDcU
-         ieNUC/0CXwB9R0Na9bgx4GvhgaKdQs40PHlIx6VzFcParNR3FRaFslGZ7IMPySA+wXLU
-         i+KuMrev0K7/WkQ6SUNLfnoYDHj9N9twfhSjWHwE2psw3rYTJaMwzCKqBDBTuXnJkQOw
-         hkPMEIMsfWXOeYgVZMXWbxe+JfpZFQDXyKhR1MK13GZOeeZE8lkiMThyph8oi9gb3OaC
-         y/tA==
+        d=gmail.com; s=20230601; t=1757883627; x=1758488427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6o99YyuBnjUFUiAgMBZrvlSAftiV3PzBtzxmR7sfJvE=;
+        b=Cf5G4Ppehg36u9sWecyzYGd676S7LosMo9Iwq2P8HPoRrPv7x6lbac3W88L6igWYbG
+         9VW+/JATc6ZnZIJR4TB7TWhDBbOMx44kFI2d2kAUG5aQlXQtuNmAGrd8UABriOuyapxu
+         8qTqG6y172X7x6Vk2E+Y6MW6byGQkZGaa0Ik1/bOf3BTmFlLVXd3vSbAw6jzlYccamEI
+         8saS3cjd+Xh4RmTqS1aow4yVlM8bMif5i1f3fqFXwBwkoSUVKxrys5joeO7pGwaqvf1W
+         NAaTXo8zvEpyT/111ihUuIho3RAKAGcDdiK6HbN5Xiiuv5zPFR3GoB25ABAj1zcmmkjz
+         +gBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757883431; x=1758488231;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757883627; x=1758488427;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lYzC7DTlBazYH/vrpI5c9K3KG0tzYBKVkyZN0WJVZs0=;
-        b=ld0P92vfFAjSeLqJgvZvbO6mU0pgaPCeYGAIn2iDxv3SyRO0M6jqbAIKVTlBR7jrv1
-         nrFCUGUy4CvkYpleqk6OELZ9p9bVIZcUAY483EA7XKp306mRUeWM6OFZZaRFEWdrjsF/
-         +LIQlOqnUsqvTpsvnu3P+q17tY6y/7R6T48XbVGyzmjqRYKDBWL1mj+Nzl71lMh14K0t
-         E9AiIaG2+4wfby7UcNS368Ni8zXK8wnRhizZ3FeQtymyhJsYVb8rVla/8BBwWteHVOkZ
-         SgrsONHZvxc2NeSPX4KX8L3t+OUqzRQxN6OGmRwXmhLFU0j0zWy6UTqsoUmdx7gwQ3gF
-         gRiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhUUusqjLVdiw7NbRqAgLTSihwUGlhIC/CmgBgb0Jz4xspxs/2nSQPR2wXBZkAEWD7lOAHB3mCDvKVP4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Ap1UcSAxz7znQ8ZJn/odw8OEYRn/UDkFwxlU+2iTw1/bO7YT
-	XUOErwZ3968YIwHOnL3UlZeziq5zkprtMEbLDnTnO9CxRSTDj6HHN8bQ
-X-Gm-Gg: ASbGnct8Kv0PWmK536sury+Iq6eKMjA5cfmqIpHSGWUsPakRW8Ezx7oBQekQNbywj5P
-	Gr/rza0hmbCvlRMDQpLzV/r6XXcLHbQP5b7d6DxmuCunJb/DqmJO2QdDj1XoaQY1OTt11TLhNOA
-	44VggdFPWt2YmjUXIsX0C7hhL8pbMIA3985f5vHNwIJjm7wZJtYBkMzRLhhQiVW+io5Yz63LoLD
-	dMKI37JHPZSyb65ifsElT87LfRwyuBMEs5aZqn/rpCkw27NQnlAgpMNkREXmVQixmfJ8pWYP+vx
-	442nJPwsoRgl11cpsddtIxUGTLP48kt1j7iWAbA/U/vZCmLQR5P0Vc4In5JLy6B1Q8OoMnqIaVe
-	JcijBHTzLkkomgywtJ9bwgWNjCW/ANkoqzg6dUIZSH0WeV2QZ79aOW3pdxQdIeN6bw2eZ33cNcK
-	bRv5fxzMUBQWuIcpHtHAaWHWo=
-X-Google-Smtp-Source: AGHT+IFwb8QYA51dTPTDUlRdj4ZuYKyJJ+3+ho4CbwnE8QXUiHnNdyvgLPli+R0c1GQPsHhdkVTnuw==
-X-Received: by 2002:a05:6214:5018:b0:77c:394f:4580 with SMTP id 6a1803df08f44-77c394f5105mr37329426d6.51.1757883430705;
-        Sun, 14 Sep 2025 13:57:10 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763b6800370sm63337246d6.33.2025.09.14.13.57.09
+        bh=6o99YyuBnjUFUiAgMBZrvlSAftiV3PzBtzxmR7sfJvE=;
+        b=FlpUDHQkO+6VMsy1BDhraJ1472e2MCgPFvVSLPi73rzbF9929RJ7WBji0a+W5R0vsl
+         xuPiYGk6Xn2jrZoO1RiuGPCqnijTtSMR05n86f7taXryvwpxd79IdPagMjnmZsVnPtt2
+         DOZ9hfEfOrct6+3L2VjqIghUu/pqiphTIlr9OYpSrOeHLOYsWrxKKs8JbV9C987fCt32
+         JqyCUgtgfEoniI6gf9BXQXxhlDNabw/3ymfvfgqamCafOM2RHVFCZyM3C3JoFsT42b9s
+         cHwknZsp3pSqzpheaeatmzFYRu4ggn8GMBxlVSjTp5bu4GlVpCKf1qaAD55Qloms5N+I
+         ih7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWU0VlMW8Ji07Bn4zHbJAOVAxcP/6yVmTvZAvUc/jUU35eQMn6Y7jRZQ38q+dqud4nOKldW7xeed8863xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycHTlYs24Cd26/noOkwQuaJ349wy25xN6eenoEwePeg32t6mMZ
+	pw4A/LT6nIpv7VlCNuss47ifg2w8itrKjppx8iRRh5D8L+a5MhCMG0+OROtZ1+o=
+X-Gm-Gg: ASbGnctf27LnFg0HrWNBZDIiO/5vsViX2hazepjZgYVv60MHQeOhwXLo4gkgLp4WyY4
+	+LMuck4P2euX08lIMhQkX+f3307fA+cKbwVhpEtXklur4V/9F1wk2Y27DJqsMSG60USEYhiUlw+
+	SgDVcjQhgf4S5YS5kyK3rD4F9G88njqVkTF1gO1Q/8AB8F7dXmGkf6ryrrn4qjZyuTmMwZ2uJXN
+	KbD5lQ4MkEXD2Kdl/rUFE0F5wst8YWOoRoLsD24kXLFHgDhfL69i3Q9sp5cq0Czw7ypqZEXAJf5
+	NN4I2PWuR05VN2EeW2TkxjnyxdGpJj1ZtELIxXpO6qJxdnSpxlLZ7xgA49pTCf+p7Ox/SyzOWXn
+	B0RrDokxf6fHZL/k3yOd5rEzmpHHYH+MeXTFdGFdOZoCtQV4=
+X-Google-Smtp-Source: AGHT+IEJTfAOE4SXVvnMZJXfSiCXUP+glB0hAyajLfStm/gZeUg5YzgdetRjeZvlFu0Ssqcih7xpBw==
+X-Received: by 2002:a17:907:2d26:b0:b11:3cd3:a46f with SMTP id a640c23a62f3a-b113cd3a774mr65570166b.53.1757883627260;
+        Sun, 14 Sep 2025 14:00:27 -0700 (PDT)
+Received: from localhost.localdomain ([2a0d:e487:226e:7d72:f695:46fd:3aef:7487])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32dd6f3sm798516066b.67.2025.09.14.14.00.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 13:57:10 -0700 (PDT)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id A2F69F40068;
-	Sun, 14 Sep 2025 16:57:09 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Sun, 14 Sep 2025 16:57:09 -0400
-X-ME-Sender: <xms:JSzHaOIRsv71NhpZLHqXUc3JKAlS9Ah_ieKzQYgv8HOSIlXtBAgfTQ>
-    <xme:JSzHaBXnObaCztPZKhQkyK5mGMi5MgVzCW6yhpwo8aah5JRL73g4z0x6xc-m3_fNY
-    fbW75lawyS69E1pIA>
-X-ME-Received: <xmr:JSzHaCjA2BULm25Bri64ocYQvXpP-HyCzdTk8tfWfoc7nCNlprW7NyWFxjimHgorLErUVh_xNz62_9_u8Lh_zyuY9lo46WXD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefheekfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeffiefhtdeiudeigfeviedvgeduueekfeegvdelhffhkeekgfdufeeugfefjefg
-    udenucffohhmrghinheplhhotghkrdgurghtrgdpkhgvrhhnvghlrdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
-    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
-    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-    pdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
-    grnhhivghlrdgrlhhmvghiuggrsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohep
-    lhhoshhsihhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdp
-    rhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmh
-    grnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtph
-    htthhopehgrghrhiesghgrrhihghhuohdrnhgvth
-X-ME-Proxy: <xmx:JSzHaNvGer0ixFUgKKlDhw0LW9B04pndaPJeIldcJA00vo03TGYBdg>
-    <xmx:JSzHaCw3VeV2-R-f7KMA66fZwlYWvIErwTVE1xvJa78Adb3n2-uWkw>
-    <xmx:JSzHaCaoX_Oh9PjABqJEKtn0fjooiLTW8bv4zGFUPmXpLVt93pGT3Q>
-    <xmx:JSzHaBV7GdF6-sM8vNRLc-hXyrntYZKmQvTVJyBztX30JGp4vH3HRg>
-    <xmx:JSzHaDHiq1zp2fQ2qxGFx9wXFc8lKIVzj9V7aFHRtCK0NT8Ra40nNg7K>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 16:57:09 -0400 (EDT)
-Date: Sun, 14 Sep 2025 13:57:07 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Benno Lossin <lossin@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] rust: lock: add a Pin<&mut T> accessor
-Message-ID: <aMcsI14mzwubhT6e@tardis.local>
-References: <20250828-lock-t-when-t-is-pinned-v2-0-b067c4b93fd6@collabora.com>
- <20250828-lock-t-when-t-is-pinned-v2-3-b067c4b93fd6@collabora.com>
- <DCK43W485VCY.3KE72NNMDP32D@kernel.org>
- <BD4724FF-4AB7-4551-B71C-C22E6E709F19@collabora.com>
- <aL47zBoNpvjYxec5@tardis-2.local>
- <A2534940-B847-40F6-8420-4ABEAE1D9A39@collabora.com>
+        Sun, 14 Sep 2025 14:00:26 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: tiwai@suse.com
+Cc: kuninori.morimoto.gx@renesas.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH] ALSA: asihpi: Simplify error handling in PCM substream setup
+Date: Sun, 14 Sep 2025 22:59:45 +0200
+Message-Id: <20250914205945.214179-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <A2534940-B847-40F6-8420-4ABEAE1D9A39@collabora.com>
 
-On Tue, Sep 09, 2025 at 04:50:19PM -0300, Daniel Almeida wrote:
-> Hi Boqun, sorry for the delay,
-> 
-> >>>> +
-> >>>> +    /// Returns a pinned mutable reference to the protected data.
-> >>>> +    ///
-> >>>> +    /// The guard implements [`DerefMut`] when `T: Unpin`, so for [`Unpin`]
-> >>>> +    /// types [`DerefMut`] should be used instead of this function.
-> >>>> +    ///
-> >>>> +    /// [`DerefMut`]: core::ops::DerefMut
-> >>>> +    /// [`Unpin`]: core::marker::Unpin
-> >>>> +    ///
-> >>>> +    /// # Examples
-> >>>> +    ///
-> >>>> +    /// ```
-> >>>> +    /// # use kernel::sync::{Mutex, MutexGuard};
-> >>>> +    /// # use core::pin::Pin;
-> >>>> +    /// struct Data;
-> >>>> +    ///
-> >>>> +    /// fn example(mutex: &Mutex<Data>) {
-> >>>> +    ///   let mut data: MutexGuard<'_, Data> = mutex.lock();
-> >>>> +    ///   let mut data: Pin<&mut Data> = data.as_mut();
-> >>>> +    ///  }
-> >>> 
-> >>> The formatting looks off in this one, there should be 4 spaces of
-> >>> indentation here; there are also 2 spaces in front of the `}`.
-> >>> 
-> >>> Also `Data` implements `Unpin`, so you're not following your own
-> >>> recommendation from above :)
-> >> 
-> >> I´ll fix this :)
-> >> 
-> > 
-> > If the fix is small, feel free to send a diff and I can fold it when
-> > queueing (i.e. no need to resend the whole series). I'm trying to send
-> > it to tip before -rc6 so there will be some more tests. Thanks!
-> > 
-> > Regards,
-> > Boqun
-> > 
-> 
-> 
-> This should address what Benno pointed out:
-> 
-> 
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index 7191804a244d..cb00fdb94ffd 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -258,13 +258,13 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnOnce() -> U) -> U {
->      ///
->      /// ```
->      /// # use kernel::sync::{Mutex, MutexGuard};
-> -    /// # use core::pin::Pin;
-> -    /// struct Data;
-> +    /// # use core::{pin::Pin, marker::PhantomPinned};
-> +    /// struct Data(PhantomPinned);
->      ///
->      /// fn example(mutex: &Mutex<Data>) {
-> -    ///   let mut data: MutexGuard<'_, Data> = mutex.lock();
-> -    ///   let mut data: Pin<&mut Data> = data.as_mut();
-> -    ///  }
-> +    ///     let mut data: MutexGuard<'_, Data> = mutex.lock();
-> +    ///     let mut data: Pin<&mut Data> = data.as_mut();
-> +    /// }
->      /// ```
->      pub fn as_mut(&mut self) -> Pin<&mut T> {
->          // SAFETY: `self.lock.data` is structurally pinned.
+Refactor error handling in the PCM substream setup to combine redundant
+checks and improve code readability. Free the dpcm structure and return
+appropriate error codes (-EBUSY for HPI_ERROR_OBJ_ALREADY_OPEN, -EIO
+for other errors) in a single block.
 
-Applied and queued:
+Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+---
+ sound/pci/asihpi/asihpi.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git locking
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index 8419f2b6e58..fd0a67b772d 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -982,12 +982,12 @@ static int snd_card_asihpi_playback_open(struct snd_pcm_substream *substream)
+ 	err = hpi_outstream_open(card->hpi->adapter->index,
+ 			      substream->number, &dpcm->h_stream);
+ 	hpi_handle_error(err);
+-	if (err)
++	if (err) {
+ 		kfree(dpcm);
+-	if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
+-		return -EBUSY;
+-	if (err)
++		if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
++			return -EBUSY;
+ 		return -EIO;
++	}
+ 
+ 	/*? also check ASI5000 samplerate source
+ 	    If external, only support external rate.
+@@ -1156,12 +1156,12 @@ static int snd_card_asihpi_capture_open(struct snd_pcm_substream *substream)
+ 	err = hpi_handle_error(
+ 	    hpi_instream_open(card->hpi->adapter->index,
+ 			     substream->number, &dpcm->h_stream));
+-	if (err)
++	if (err) {
+ 		kfree(dpcm);
+-	if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
+-		return -EBUSY;
+-	if (err)
++		if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
++			return -EBUSY;
+ 		return -EIO;
++	}
+ 
+ 	timer_setup(&dpcm->timer, snd_card_asihpi_timer_function, 0);
+ 	dpcm->substream = substream;
+-- 
+2.39.5
 
-I also remove the part in the commit log where it mentioned about pin
-projection, since the pull request for that is already created and
-merged. Thanks!
-
-I will give it some tests and see if I could send a pull request to tip
-early next week, so it can be in v6.18.
-
-Regards,
-Boqun
 
