@@ -1,614 +1,340 @@
-Return-Path: <linux-kernel+bounces-815652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE2BB56974
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:46:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E812B56978
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C744D3B043F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6830B189532E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271AD1F7575;
-	Sun, 14 Sep 2025 13:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA361F09AD;
+	Sun, 14 Sep 2025 13:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERUlvflY"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bECoVG1z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E981EA7DD
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB9842A96;
+	Sun, 14 Sep 2025 13:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757857528; cv=none; b=sYOI4TXMjXupcL3PRF+rCi05SRJzG3OaO56ys3Apmbb8+A9yBqA/49c+t6pAnSAm5ufONqTaN7Wr5JnfKATvO6np3DMua/2jLqb+LnvkNT4Ofv2Eivq6JiT6lDF4PN90EM/V+aykEUO8Jbj67YsfLYnQ0goki7DVVuGQyHqHP/A=
+	t=1757857979; cv=none; b=LD9NiuKCSsVa1DBcxAGZx2kz93m8jJzx+wFmeeZ6qvOX/cEqTvJ46T9E/0MzucHgLVRFi9A277aFuuOEVWka+s03yy5vMjct4RcwlM5wOfVrhu0BeTkJsKt5kiHEJmZKzl6rVJvVNyx7fgFRL7gcMvBUg7eSOvLgXavdeP6ezRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757857528; c=relaxed/simple;
-	bh=mhlqPe+rYAdqQ2489lVPW8Nz3WhM6I/OuGV4Y0trFXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S4lD2NGx4vf5xjOcQFFJdbk3FGpwshoxFo/psHyxcBg+rwUYwRRoa6MpGTnIA/cyDImhscE3tgDHNmH0dYmMqZSUCW1BPWC/56Id9NZhR8KH8VeOXQD4s6fVUVXDf/lEEBiUM1rcV05tFKcWcOXj99vzKLX8+v0FUfjcAHdWJhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERUlvflY; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so1997313f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757857525; x=1758462325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z1C66At/iPHB+YbOfF0ahn3G5fgbhry39+iH3jn1wwY=;
-        b=ERUlvflYYGBSummwCm8InAPQRET0dtwD/5uN0cuclq8KZ3CLDl4+sTxsmUbflhnPMV
-         9/4vYIWQqDSPg1rxk8v+o5x/pZqIhdKJrM/WePAIg5SlbiuwRLM4P+sgB0QQ5c5T5nAs
-         J8ftvydhVckkrs3/0wGldr0jJc31gEJc/frwyA3F0ypmPVPPSWp+2BN58tu2gT4WzQtq
-         /AcAl9m+IcduahL+q3/Im+atrB/9/YJO2r8PLK/3trK0YxHK8Ff29ctZWpgEpcGTPbJu
-         EtNVqpIk/m6HuScJ8Wchfa9CxW2RqFiyAfTMtVlY9lqsukdsp8Goj8kNtGhaH8Q4BjzS
-         I5ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757857525; x=1758462325;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z1C66At/iPHB+YbOfF0ahn3G5fgbhry39+iH3jn1wwY=;
-        b=LxS7wgID19OuZxT8NIvq2NsIN6TPcDEiOh2iy0da7nVypfHXYB+q9ztbAWHWg0D1Op
-         uJ0VuBrp+WKUmDvyKPAXNsjqTbRu2jixDQDFz9vj5E3VqcnIdQpWR8M8zjjOXzgiCxCI
-         VSd7lnDGcCeOwzpKGc+FaqrEuha8t+GlH5gOkCuNODZ3kAdxPY1PYQuGU0xB+/So4mY+
-         +w/GT1FNWlRxg8TwiZOeNqpcyeEPYM6j7Rx5mfXRVZiIOXuDQsghofHDR3wlzmCW4k52
-         Pik60ArbP71KP470n6I7XmklraWoz1fjbslEWpUX46BZhEcQwfHLuvkFcLJSL+2nfqOb
-         H/YA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN+mVK+mRT/kBcifaPRz1E6Kscp0QQkA9laRhHVAEv2uSs6GwPVisDfDiJBmmvvWUVWrx+mBZbRkhup6A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB4yw3ENv8+PvIoqV8dDst6VvEKV2d68VpehA8j3Mru9k8OABV
-	GBKPlP6Cij+5adohOCJqRVST0tUSM8fF7Gs21B+LRKhqlEdcrunpTVQ2
-X-Gm-Gg: ASbGncv3VVGn/5brHjxbs3mes8vCfLJRqdY37kf1lLwbf0CUmgYSCWQr3iJPzZHZ9lB
-	NkAIsf0gR3LaiJkRgfaosbDL1bSdEkLT4YG8M+7siXLHFGliRMcMLy3TX6lpLGFQV9/Bs8S85Ud
-	iO7XI7gj134IDTNvYZUCnqVjmoM5cfE4KRyS4b5NcH1+SStahwFQ7YXKGjXRMaT9g4dtFVvQpU5
-	MPVgRQfbWN8/hkokao9vDWWf+TwL95GvMf8BwA691HcoTPlhqcoKwdo4+wI66dgNQouCDvQcq+v
-	4q+NJQJ/F8prSrobiZgv9wqPTt0JeKw/kit3luKUMOOYfrtK/naSuWlNH8eKOMykW02GoNCWZru
-	X1d7s0yx6IZwZsddphfI8Wl+d+EfRvoWp9oiCClAHodfa516RKeNDKDMYhO52dYSyGmC4BV4yiN
-	3NJcXmzioP
-X-Google-Smtp-Source: AGHT+IGY5Y2KTdaZaAd3HnAGXpedRNw4b12KEMkqN57ZikiQBKfKGS5CdY+ghvCof9iN933uImvqEQ==
-X-Received: by 2002:a05:6000:22ca:b0:3e9:2fea:6795 with SMTP id ffacd0b85a97d-3e92fea6b35mr2699385f8f.53.1757857524471;
-        Sun, 14 Sep 2025 06:45:24 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ea4b52b7fcsm1467591f8f.33.2025.09.14.06.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:45:24 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Henrik Rydberg <rydberg@bitmath.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] Input: s6sa552 - add a driver for the Samsung A552 touchscreen controller
-Date: Sun, 14 Sep 2025 16:44:57 +0300
-Message-ID: <20250914134458.2624176-3-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250914134458.2624176-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250914134458.2624176-1-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1757857979; c=relaxed/simple;
+	bh=37L/puyV0GzSe9BaFG26DDCjfs3MDxprvSq5MtRjnW0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=pZ8WMnQNlGpFw1qoBdZ5+rvoWc+rpcNZ4JOkDsVnHVoYF7Q1uVClA3tat19yrD3Mxn6SX8GlK3WCD1PcEgfXm53foNEXZDAo+k+fAyxq6DOcwvoQFKDy8hZWe35UEaZjCysicg4rhuTYA13P79u8QEKCJLkCAE825NUnL33MRUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bECoVG1z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA19C4CEF0;
+	Sun, 14 Sep 2025 13:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757857979;
+	bh=37L/puyV0GzSe9BaFG26DDCjfs3MDxprvSq5MtRjnW0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bECoVG1zEMs+vWcw9+n+EsirVXp9fVwqwBw8pr1cnMHuKwtnpguud39cSqncKvSlM
+	 5P9AiNSsWL0BS2rssgcNDHMdNOGjVL8INd/wucFte+qZQ7R2QOJ60Vem2/J0HBJRJ2
+	 5uTK5KpwKceGpShpNyBM7I/EnLOKtJ4xmivDiE02IDf0PulJ0Je+Cn55zNvLvbdq8m
+	 hQPJym74sUDYZL9SHdiuuXHEpfjdiBB3h2M5apKhi/dFDQog4u9Z0B0UMfkxrPjpuo
+	 PzYNu+Q6q9N1EXXBzeVSfXGGbGDe31fYxRBO6+PjM23P+lNTUjX9ZAkT3i6TqMCK0c
+	 GtI8DNHL7jraw==
+Date: Sun, 14 Sep 2025 22:52:42 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jinchao Wang <wangjinchao600@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>, Alexander
+ Potapenko <glider@google.com>, Jonathan Corbet <corbet@lwn.net>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli
+ <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, David Hildenbrand
+ <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, Justin
+ Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Sami Tolvanen <samitolvanen@google.com>, Miguel
+ Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Rong Xu
+ <xur@google.com>, Naveen N Rao <naveen@kernel.org>, David Kaplan
+ <david.kaplan@amd.com>, Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan
+ <ruanjinjie@huawei.com>, Nam Cao <namcao@linutronix.de>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-mm@kvack.org, llvm@lists.linux.dev, Andrey Ryabinin
+ <ryabinin.a.a@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry
+ Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ kasan-dev@googlegroups.com, "David S. Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/21] x86/hw_breakpoint: Unify breakpoint
+ install/uninstall
+Message-Id: <20250914225242.b289de4a30557fec718b8cc8@kernel.org>
+In-Reply-To: <20250912101145.465708-2-wangjinchao600@gmail.com>
+References: <20250912101145.465708-1-wangjinchao600@gmail.com>
+	<20250912101145.465708-2-wangjinchao600@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The S6SA552 touchscreen is a capacitive multi-touch controller for
-mobile use. It connects via i2c at the address 0x48.
+On Fri, 12 Sep 2025 18:11:11 +0800
+Jinchao Wang <wangjinchao600@gmail.com> wrote:
 
-Introduce a basic driver, which can handle initialization, touch events
-and power states.
+> Consolidate breakpoint management to reduce code duplication.
+> The diffstat was misleading, so the stripped code size is compared instead.
+> After refactoring, it is reduced from 11976 bytes to 11448 bytes on my
+> x86_64 system built with clang.
+> 
+> This also makes it easier to introduce arch_reinstall_hw_breakpoint().
+> 
+> In addition, including linux/types.h to fix a missing build dependency.
+> 
 
-At least the firmware for this IC on Galaxy S7 differs from S6SY761
-in register layout and bits, as well as some missing registers/functions,
-for example for retrieving the max X/Y coordinates and the amount
-of TX/RX channels.
+Looks good to me.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
----
-Samsung almost completely didn't mention the IC name in the vendor
-drivers.. I retrieved it from a fw-update function that checks a
-firmware bit and matches it with an IC model string. Otherwise
-everywhere else it's called sec_ts. I believe the main difference
-between samsung touchscreen controllers is the firmware they're
-running on, but this one is a bit different from s6sy761, featuring
-different registers and bits, as well as some missing features. I
-went with calling it s6sa552 to follow the "s6s" convention, because
-as far as I know, s6sy661 also exists, and the important part is after
-"s6s".
----
- drivers/input/touchscreen/Kconfig   |  11 +
- drivers/input/touchscreen/Makefile  |   1 +
- drivers/input/touchscreen/s6sa552.c | 439 ++++++++++++++++++++++++++++
- 3 files changed, 451 insertions(+)
- create mode 100644 drivers/input/touchscreen/s6sa552.c
+Thanks,
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 196905162..2d65dd13e 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -505,6 +505,17 @@ config TOUCHSCREEN_IPROC
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called bcm_iproc_tsc.
- 
-+config TOUCHSCREEN_S6SA552
-+	tristate "Samsung S6SA552 Touchscreen driver"
-+	depends on I2C
-+	help
-+	  Say Y if you have the Samsung S6SA552 driver
-+
-+	  If unsure, say N
-+
-+	  To compile this driver as module, choose M here: the
-+	  module will be called s6sa552.
-+
- config TOUCHSCREEN_S6SY761
- 	tristate "Samsung S6SY761 Touchscreen driver"
- 	depends on I2C
-diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-index 97a025c6a..d3be3e21a 100644
---- a/drivers/input/touchscreen/Makefile
-+++ b/drivers/input/touchscreen/Makefile
-@@ -77,6 +77,7 @@ obj-$(CONFIG_TOUCHSCREEN_PCAP)		+= pcap_ts.o
- obj-$(CONFIG_TOUCHSCREEN_PENMOUNT)	+= penmount.o
- obj-$(CONFIG_TOUCHSCREEN_PIXCIR)	+= pixcir_i2c_ts.o
- obj-$(CONFIG_TOUCHSCREEN_RM_TS)		+= raydium_i2c_ts.o
-+obj-$(CONFIG_TOUCHSCREEN_S6SA552)	+= s6sa552.o
- obj-$(CONFIG_TOUCHSCREEN_S6SY761)	+= s6sy761.o
- obj-$(CONFIG_TOUCHSCREEN_SILEAD)	+= silead.o
- obj-$(CONFIG_TOUCHSCREEN_SIS_I2C)	+= sis_i2c.o
-diff --git a/drivers/input/touchscreen/s6sa552.c b/drivers/input/touchscreen/s6sa552.c
-new file mode 100644
-index 000000000..32ef338de
---- /dev/null
-+++ b/drivers/input/touchscreen/s6sa552.c
-@@ -0,0 +1,439 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Samsung S6SA552 Touchscreen device driver
-+//
-+// Copyright (c) 2025 Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+//
-+// Based on the s6sy761 driver:
-+//   Copyright (c) 2017 Samsung Electronics Co., Ltd.
-+//   Copyright (c) 2017 Andi Shyti <andi@etezian.org>
-+
-+#include <linux/unaligned.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/input/mt.h>
-+#include <linux/input/touchscreen.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/module.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
-+
-+/* commands */
-+#define S6SA552_SENSE_ON		0x40
-+#define S6SA552_SENSE_OFF		0x41
-+#define S6SA552_TOUCH_FUNCTION		0x63
-+#define S6SA552_DEVICE_ID		0x52
-+#define S6SA552_BOOT_STATUS		0x55
-+#define S6SA552_READ_ONE_EVENT		0x71
-+#define S6SA552_CLEAR_EVENT_STACK	0x60
-+#define S6SA552_PANEL_INFO		0x23
-+
-+/* acknowledge events */
-+#define S6SA552_EVENT_ACK_BOOT		0x0c
-+
-+/* status event types */
-+#define S6SA552_EVENT_TYPE_ACK		0x01
-+#define S6SA552_EVENT_TYPE_ERR		0x02
-+#define S6SA552_EVENT_TYPE_INFO		0x03
-+#define S6SA552_EVENT_TYPE_GEST		0x06
-+#define S6SA552_EVENT_TYPE_SPONGE	0x5a
-+
-+/* boot status (BS) */
-+#define S6SA552_BS_APPLICATION		0x20
-+
-+/* event id */
-+#define S6SA552_EVENT_ID_COORDINATE	0x01
-+#define S6SA552_EVENT_ID_STATUS		0x00
-+
-+/* event register masks */
-+#define S6SA552_MASK_TID		0x0f  /* byte 1, lower 4 bits */
-+#define S6SA552_MASK_NT			0xf0  /* byte 1, upper 4 bits */
-+#define S6SA552_MASK_EID		0xc0  /* byte 0, bits 6-7 */
-+#define S6SA552_MASK_TOUCH_STATE	0x07  /* byte 0, bits 0-2 */
-+#define S6SA552_MASK_TOUCH_TYPE		0x38  /* byte 0, bits 3-5 */
-+
-+/* touch states */
-+#define S6SA552_TS_NONE			0x00
-+#define S6SA552_TS_PRESS		0x01
-+#define S6SA552_TS_MOVE			0x02
-+#define S6SA552_TS_RELEASE		0x03
-+
-+#define S6SA552_EVENT_SIZE		8
-+#define S6SA552_DEVID_SIZE		3
-+#define S6SA552_PANEL_ID_SIZE		11
-+#define S6SA552_MAX_FINGERS		10
-+
-+/*
-+ * Hardcoded values, since at least on herolte, the subid register doesn't
-+ * read/exist.
-+ */
-+#define S6SA552_MAX_X			4095
-+#define S6SA552_MAX_Y			4095
-+#define S6SA552_TX_CHANNELS		16
-+
-+#define S6SA552_DEV_NAME		"s6sa552"
-+
-+enum s6sa552_regulators {
-+	S6SA552_REGULATOR_VDD,
-+	S6SA552_REGULATOR_AVDD,
-+};
-+
-+struct s6sa552_data {
-+	struct i2c_client *client;
-+	struct regulator_bulk_data regulators[2];
-+	struct input_dev *input;
-+	struct touchscreen_properties prop;
-+
-+	u8 data[S6SA552_EVENT_SIZE];
-+
-+	u16 devid;
-+	u8 tx_channel;
-+};
-+
-+static void s6sa552_report_coordinates(struct s6sa552_data *sdata,
-+				       u8 *event, u8 tid)
-+{
-+	u8 major = event[6];
-+	u8 minor = event[7];
-+	u8 z = event[5];
-+	u16 x = (event[2] << 4) | ((event[4] >> 4) & 0x0F);
-+	u16 y = (event[3] << 4) | (event[4] & 0x0F);
-+
-+	input_mt_slot(sdata->input, tid);
-+
-+	input_mt_report_slot_state(sdata->input, MT_TOOL_FINGER, true);
-+	input_report_abs(sdata->input, ABS_MT_POSITION_X, x);
-+	input_report_abs(sdata->input, ABS_MT_POSITION_Y, y);
-+	input_report_abs(sdata->input, ABS_MT_TOUCH_MAJOR, major);
-+	input_report_abs(sdata->input, ABS_MT_TOUCH_MINOR, minor);
-+	input_report_abs(sdata->input, ABS_MT_PRESSURE, z);
-+
-+	input_sync(sdata->input);
-+}
-+
-+static void s6sa552_report_release(struct s6sa552_data *sdata, u8 tid)
-+{
-+	input_mt_slot(sdata->input, tid);
-+	input_mt_report_slot_state(sdata->input, MT_TOOL_FINGER, false);
-+
-+	input_sync(sdata->input);
-+}
-+
-+static void s6sa552_handle_coordinates(struct s6sa552_data *sdata, u8 *event)
-+{
-+	u8 tid;
-+	u8 touch_state;
-+
-+	if (unlikely(!(event[1] & S6SA552_MASK_TID)))
-+		return;
-+
-+	tid = (event[1] & S6SA552_MASK_TID) - 1;
-+	touch_state = event[0] & S6SA552_MASK_TOUCH_STATE;
-+
-+	switch (touch_state) {
-+	case S6SA552_TS_PRESS:
-+	case S6SA552_TS_MOVE:
-+		s6sa552_report_coordinates(sdata, event, tid);
-+		break;
-+	case S6SA552_TS_RELEASE:
-+		s6sa552_report_release(sdata, tid);
-+		break;
-+	case S6SA552_TS_NONE:
-+	default:
-+		break;
-+	}
-+}
-+
-+static irqreturn_t s6sa552_irq_handler(int irq, void *dev)
-+{
-+	struct s6sa552_data *sdata = dev;
-+	int ret;
-+	u8 event_id;
-+
-+	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-+					    S6SA552_READ_ONE_EVENT,
-+					    S6SA552_EVENT_SIZE,
-+					    sdata->data);
-+	if (ret < 0) {
-+		dev_err(&sdata->client->dev, "failed to read event\n");
-+		return IRQ_HANDLED;
-+	}
-+
-+	if (!sdata->data[0])
-+		return IRQ_HANDLED;
-+
-+	event_id = sdata->data[0] >> 6;
-+
-+	switch (event_id) {
-+	case S6SA552_EVENT_ID_COORDINATE:
-+		s6sa552_handle_coordinates(sdata, sdata->data);
-+		break;
-+	case S6SA552_EVENT_ID_STATUS:
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int s6sa552_input_open(struct input_dev *dev)
-+{
-+	struct s6sa552_data *sdata = input_get_drvdata(dev);
-+
-+	return i2c_smbus_write_byte(sdata->client, S6SA552_SENSE_ON);
-+}
-+
-+static void s6sa552_input_close(struct input_dev *dev)
-+{
-+	struct s6sa552_data *sdata = input_get_drvdata(dev);
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte(sdata->client, S6SA552_SENSE_OFF);
-+	if (ret)
-+		dev_err(&sdata->client->dev, "failed to turn off sensing\n");
-+}
-+
-+static ssize_t s6sa552_sysfs_devid(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
-+{
-+	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%#x\n", sdata->devid);
-+}
-+
-+static DEVICE_ATTR(devid, 0444, s6sa552_sysfs_devid, NULL);
-+
-+static struct attribute *s6sa552_sysfs_attrs[] = {
-+	&dev_attr_devid.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(s6sa552_sysfs);
-+
-+static int s6sa552_power_on(struct s6sa552_data *sdata)
-+{
-+	u8 buffer[S6SA552_EVENT_SIZE];
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(sdata->regulators),
-+				    sdata->regulators);
-+	if (ret)
-+		return ret;
-+
-+	msleep(140);
-+
-+	/* double check whether the touch is functional */
-+	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-+					    S6SA552_READ_ONE_EVENT,
-+					    S6SA552_EVENT_SIZE,
-+					    buffer);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (buffer[0] != S6SA552_EVENT_TYPE_ACK ||
-+	    buffer[1] != S6SA552_EVENT_ACK_BOOT) {
-+		return -ENODEV;
-+	}
-+
-+	ret = i2c_smbus_read_byte_data(sdata->client, S6SA552_BOOT_STATUS);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* for some reasons the device might be stuck in the bootloader */
-+	if (ret != S6SA552_BS_APPLICATION)
-+		return -ENODEV;
-+
-+	/* enable touch functionality */
-+	ret = i2c_smbus_write_byte_data(sdata->client,
-+					S6SA552_TOUCH_FUNCTION, 0x01);
-+	if (ret)
-+		return ret;
-+
-+	mdelay(20); /* make sure everything is up */
-+
-+	return 0;
-+}
-+
-+static int s6sa552_hw_init(struct s6sa552_data *sdata)
-+{
-+	u8 buffer[S6SA552_DEVID_SIZE];
-+	int ret;
-+
-+	ret = s6sa552_power_on(sdata);
-+	if (ret)
-+		return ret;
-+
-+	ret = i2c_smbus_read_i2c_block_data(sdata->client,
-+					    S6SA552_DEVICE_ID,
-+					    S6SA552_DEVID_SIZE,
-+					    buffer);
-+	if (ret < 0)
-+		return ret;
-+
-+	sdata->devid = get_unaligned_be16(buffer + 1);
-+
-+	return 0;
-+}
-+
-+static void s6sa552_power_off(void *data)
-+{
-+	struct s6sa552_data *sdata = data;
-+
-+	disable_irq(sdata->client->irq);
-+	regulator_bulk_disable(ARRAY_SIZE(sdata->regulators),
-+			       sdata->regulators);
-+}
-+
-+static int s6sa552_probe(struct i2c_client *client)
-+{
-+	struct s6sa552_data *sdata;
-+	int err;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
-+						I2C_FUNC_SMBUS_BYTE_DATA |
-+						I2C_FUNC_SMBUS_I2C_BLOCK))
-+		return -ENODEV;
-+
-+	sdata = devm_kzalloc(&client->dev, sizeof(*sdata), GFP_KERNEL);
-+	if (!sdata)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(client, sdata);
-+	sdata->client = client;
-+
-+	sdata->regulators[S6SA552_REGULATOR_VDD].supply = "vdd";
-+	sdata->regulators[S6SA552_REGULATOR_AVDD].supply = "avdd";
-+	err = devm_regulator_bulk_get(&client->dev,
-+				      ARRAY_SIZE(sdata->regulators),
-+				      sdata->regulators);
-+	if (err)
-+		return err;
-+
-+	err = devm_add_action_or_reset(&client->dev, s6sa552_power_off, sdata);
-+	if (err)
-+		return err;
-+
-+	err = s6sa552_hw_init(sdata);
-+	if (err)
-+		return err;
-+
-+	sdata->input = devm_input_allocate_device(&client->dev);
-+	if (!sdata->input)
-+		return -ENOMEM;
-+
-+	sdata->input->name = S6SA552_DEV_NAME;
-+	sdata->input->id.bustype = BUS_I2C;
-+	sdata->input->open = s6sa552_input_open;
-+	sdata->input->close = s6sa552_input_close;
-+
-+	input_set_abs_params(sdata->input, ABS_MT_POSITION_X, 0, S6SA552_MAX_X,
-+			     0, 0);
-+	input_set_abs_params(sdata->input, ABS_MT_POSITION_Y, 0, S6SA552_MAX_Y,
-+			     0, 0);
-+	input_set_abs_params(sdata->input, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
-+	input_set_abs_params(sdata->input, ABS_MT_TOUCH_MINOR, 0, 255, 0, 0);
-+	input_set_abs_params(sdata->input, ABS_MT_PRESSURE, 0, 255, 0, 0);
-+
-+	touchscreen_parse_properties(sdata->input, true, &sdata->prop);
-+
-+	if (!input_abs_get_max(sdata->input, ABS_X) ||
-+	    !input_abs_get_max(sdata->input, ABS_Y)) {
-+		dev_warn(&client->dev, "the axis have not been set\n");
-+	}
-+
-+	err = input_mt_init_slots(sdata->input, S6SA552_TX_CHANNELS,
-+				  INPUT_MT_DIRECT);
-+	if (err)
-+		return err;
-+
-+	input_set_drvdata(sdata->input, sdata);
-+
-+	err = input_register_device(sdata->input);
-+	if (err)
-+		return err;
-+
-+	err = devm_request_threaded_irq(&client->dev, client->irq, NULL,
-+					s6sa552_irq_handler,
-+					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+					"s6sa552_irq", sdata);
-+	if (err)
-+		return err;
-+
-+	pm_runtime_enable(&client->dev);
-+
-+	return 0;
-+}
-+
-+static void s6sa552_remove(struct i2c_client *client)
-+{
-+	pm_runtime_disable(&client->dev);
-+}
-+
-+static int s6sa552_runtime_suspend(struct device *dev)
-+{
-+	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-+
-+	return i2c_smbus_write_byte(sdata->client, S6SA552_SENSE_OFF);
-+}
-+
-+static int s6sa552_runtime_resume(struct device *dev)
-+{
-+	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-+
-+	return i2c_smbus_write_byte(sdata->client, S6SA552_SENSE_ON);
-+}
-+
-+static int s6sa552_suspend(struct device *dev)
-+{
-+	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-+
-+	s6sa552_power_off(sdata);
-+
-+	return 0;
-+}
-+
-+static int s6sa552_resume(struct device *dev)
-+{
-+	struct s6sa552_data *sdata = dev_get_drvdata(dev);
-+
-+	enable_irq(sdata->client->irq);
-+
-+	return s6sa552_power_on(sdata);
-+}
-+
-+static const struct dev_pm_ops s6sa552_pm_ops = {
-+	SYSTEM_SLEEP_PM_OPS(s6sa552_suspend, s6sa552_resume)
-+	RUNTIME_PM_OPS(s6sa552_runtime_suspend, s6sa552_runtime_resume, NULL)
-+};
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id s6sa552_of_match[] = {
-+	{ .compatible = "samsung,s6sa552", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, s6sa552_of_match);
-+#endif
-+
-+static const struct i2c_device_id s6sa552_id[] = {
-+	{ "s6sa552" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, s6sa552_id);
-+
-+static struct i2c_driver s6sa552_driver = {
-+	.driver = {
-+		.name = S6SA552_DEV_NAME,
-+		.dev_groups = s6sa552_sysfs_groups,
-+		.of_match_table = of_match_ptr(s6sa552_of_match),
-+		.pm = pm_ptr(&s6sa552_pm_ops),
-+	},
-+	.probe = s6sa552_probe,
-+	.remove = s6sa552_remove,
-+	.id_table = s6sa552_id,
-+};
-+
-+module_i2c_driver(s6sa552_driver);
-+
-+MODULE_AUTHOR("Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>");
-+MODULE_DESCRIPTION("Samsung S6SA552 Touch Screen");
-+MODULE_LICENSE("GPL");
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  arch/x86/include/asm/hw_breakpoint.h |   6 ++
+>  arch/x86/kernel/hw_breakpoint.c      | 141 +++++++++++++++------------
+>  2 files changed, 84 insertions(+), 63 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
+> index 0bc931cd0698..aa6adac6c3a2 100644
+> --- a/arch/x86/include/asm/hw_breakpoint.h
+> +++ b/arch/x86/include/asm/hw_breakpoint.h
+> @@ -5,6 +5,7 @@
+>  #include <uapi/asm/hw_breakpoint.h>
+>  
+>  #define	__ARCH_HW_BREAKPOINT_H
+> +#include <linux/types.h>
+>  
+>  /*
+>   * The name should probably be something dealt in
+> @@ -18,6 +19,11 @@ struct arch_hw_breakpoint {
+>  	u8		type;
+>  };
+>  
+> +enum bp_slot_action {
+> +	BP_SLOT_ACTION_INSTALL,
+> +	BP_SLOT_ACTION_UNINSTALL,
+> +};
+> +
+>  #include <linux/kdebug.h>
+>  #include <linux/percpu.h>
+>  #include <linux/list.h>
+> diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+> index b01644c949b2..3658ace4bd8d 100644
+> --- a/arch/x86/kernel/hw_breakpoint.c
+> +++ b/arch/x86/kernel/hw_breakpoint.c
+> @@ -48,7 +48,6 @@ static DEFINE_PER_CPU(unsigned long, cpu_debugreg[HBP_NUM]);
+>   */
+>  static DEFINE_PER_CPU(struct perf_event *, bp_per_reg[HBP_NUM]);
+>  
+> -
+>  static inline unsigned long
+>  __encode_dr7(int drnum, unsigned int len, unsigned int type)
+>  {
+> @@ -85,96 +84,112 @@ int decode_dr7(unsigned long dr7, int bpnum, unsigned *len, unsigned *type)
+>  }
+>  
+>  /*
+> - * Install a perf counter breakpoint.
+> - *
+> - * We seek a free debug address register and use it for this
+> - * breakpoint. Eventually we enable it in the debug control register.
+> - *
+> - * Atomic: we hold the counter->ctx->lock and we only handle variables
+> - * and registers local to this cpu.
+> + * We seek a slot and change it or keep it based on the action.
+> + * Returns slot number on success, negative error on failure.
+> + * Must be called with IRQs disabled.
+>   */
+> -int arch_install_hw_breakpoint(struct perf_event *bp)
+> +static int manage_bp_slot(struct perf_event *bp, enum bp_slot_action action)
+>  {
+> -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> -	unsigned long *dr7;
+> -	int i;
+> -
+> -	lockdep_assert_irqs_disabled();
+> +	struct perf_event *old_bp;
+> +	struct perf_event *new_bp;
+> +	int slot;
+> +
+> +	switch (action) {
+> +	case BP_SLOT_ACTION_INSTALL:
+> +		old_bp = NULL;
+> +		new_bp = bp;
+> +		break;
+> +	case BP_SLOT_ACTION_UNINSTALL:
+> +		old_bp = bp;
+> +		new_bp = NULL;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+>  
+> -	for (i = 0; i < HBP_NUM; i++) {
+> -		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
+> +	for (slot = 0; slot < HBP_NUM; slot++) {
+> +		struct perf_event **curr = this_cpu_ptr(&bp_per_reg[slot]);
+>  
+> -		if (!*slot) {
+> -			*slot = bp;
+> -			break;
+> +		if (*curr == old_bp) {
+> +			*curr = new_bp;
+> +			return slot;
+>  		}
+>  	}
+>  
+> -	if (WARN_ONCE(i == HBP_NUM, "Can't find any breakpoint slot"))
+> -		return -EBUSY;
+> +	if (old_bp) {
+> +		WARN_ONCE(1, "Can't find matching breakpoint slot");
+> +		return -EINVAL;
+> +	}
+> +
+> +	WARN_ONCE(1, "No free breakpoint slots");
+> +	return -EBUSY;
+> +}
+> +
+> +static void setup_hwbp(struct arch_hw_breakpoint *info, int slot, bool enable)
+> +{
+> +	unsigned long dr7;
+>  
+> -	set_debugreg(info->address, i);
+> -	__this_cpu_write(cpu_debugreg[i], info->address);
+> +	set_debugreg(info->address, slot);
+> +	__this_cpu_write(cpu_debugreg[slot], info->address);
+>  
+> -	dr7 = this_cpu_ptr(&cpu_dr7);
+> -	*dr7 |= encode_dr7(i, info->len, info->type);
+> +	dr7 = this_cpu_read(cpu_dr7);
+> +	if (enable)
+> +		dr7 |= encode_dr7(slot, info->len, info->type);
+> +	else
+> +		dr7 &= ~__encode_dr7(slot, info->len, info->type);
+>  
+>  	/*
+> -	 * Ensure we first write cpu_dr7 before we set the DR7 register.
+> -	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
+> +	 * Enabling:
+> +	 *   Ensure we first write cpu_dr7 before we set the DR7 register.
+> +	 *   This ensures an NMI never see cpu_dr7 0 when DR7 is not.
+>  	 */
+> +	if (enable)
+> +		this_cpu_write(cpu_dr7, dr7);
+> +
+>  	barrier();
+>  
+> -	set_debugreg(*dr7, 7);
+> +	set_debugreg(dr7, 7);
+> +
+>  	if (info->mask)
+> -		amd_set_dr_addr_mask(info->mask, i);
+> +		amd_set_dr_addr_mask(enable ? info->mask : 0, slot);
+>  
+> -	return 0;
+> +	/*
+> +	 * Disabling:
+> +	 *   Ensure the write to cpu_dr7 is after we've set the DR7 register.
+> +	 *   This ensures an NMI never see cpu_dr7 0 when DR7 is not.
+> +	 */
+> +	if (!enable)
+> +		this_cpu_write(cpu_dr7, dr7);
+>  }
+>  
+>  /*
+> - * Uninstall the breakpoint contained in the given counter.
+> - *
+> - * First we search the debug address register it uses and then we disable
+> - * it.
+> - *
+> - * Atomic: we hold the counter->ctx->lock and we only handle variables
+> - * and registers local to this cpu.
+> + * find suitable breakpoint slot and set it up based on the action
+>   */
+> -void arch_uninstall_hw_breakpoint(struct perf_event *bp)
+> +static int arch_manage_bp(struct perf_event *bp, enum bp_slot_action action)
+>  {
+> -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> -	unsigned long dr7;
+> -	int i;
+> +	struct arch_hw_breakpoint *info;
+> +	int slot;
+>  
+>  	lockdep_assert_irqs_disabled();
+>  
+> -	for (i = 0; i < HBP_NUM; i++) {
+> -		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
+> -
+> -		if (*slot == bp) {
+> -			*slot = NULL;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (WARN_ONCE(i == HBP_NUM, "Can't find any breakpoint slot"))
+> -		return;
+> +	slot = manage_bp_slot(bp, action);
+> +	if (slot < 0)
+> +		return slot;
+>  
+> -	dr7 = this_cpu_read(cpu_dr7);
+> -	dr7 &= ~__encode_dr7(i, info->len, info->type);
+> +	info = counter_arch_bp(bp);
+> +	setup_hwbp(info, slot, action != BP_SLOT_ACTION_UNINSTALL);
+>  
+> -	set_debugreg(dr7, 7);
+> -	if (info->mask)
+> -		amd_set_dr_addr_mask(0, i);
+> +	return 0;
+> +}
+>  
+> -	/*
+> -	 * Ensure the write to cpu_dr7 is after we've set the DR7 register.
+> -	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
+> -	 */
+> -	barrier();
+> +int arch_install_hw_breakpoint(struct perf_event *bp)
+> +{
+> +	return arch_manage_bp(bp, BP_SLOT_ACTION_INSTALL);
+> +}
+>  
+> -	this_cpu_write(cpu_dr7, dr7);
+> +void arch_uninstall_hw_breakpoint(struct perf_event *bp)
+> +{
+> +	arch_manage_bp(bp, BP_SLOT_ACTION_UNINSTALL);
+>  }
+>  
+>  static int arch_bp_generic_len(int x86_len)
+> -- 
+> 2.43.0
+> 
+> 
+
+
 -- 
-2.43.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
