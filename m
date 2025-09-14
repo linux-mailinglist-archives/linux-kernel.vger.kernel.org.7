@@ -1,117 +1,112 @@
-Return-Path: <linux-kernel+bounces-815481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3270B5670F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F13A3B5671C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5381A20913
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54DEF1897EC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF77C275106;
-	Sun, 14 Sep 2025 06:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED61279918;
+	Sun, 14 Sep 2025 06:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYQf7AAb"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxPo1rCC"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499CB1F419B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A0B23C503
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757831203; cv=none; b=E3tb9mMY5/dchiPN3NP5AT+6u2d0H4A9wVLgYIjx7vch7v7h5QWUA7N5N2GPfl+2bFaUmVLEh40C/nw/7mWfb28an+IDBCoiLNMQlqm5nouYkOwzyHyjVPx85IWYUbNSbr3ZkG7onXF0uXTm7HK0aqXJrO5WEGJHkabclPEVdWk=
+	t=1757832037; cv=none; b=czWkjQimTHSGzOWPyywu1vqKswH+jg6rE4X5dp7CI2NHhr2wvflDqkIJsIwLAKJr2weQLwiiagNkOjI8sLOV7a/Z757mQ0JUvCpxoYFfqKLNIWnip0YNv9B3NyaQcIsLIp3JPH5KaaGU9o85GDYvhemxxnrySC9Xpsa54HRinPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757831203; c=relaxed/simple;
-	bh=YpuAcY5BhVGhX+vCzPkKqiO0eWSE/MtMicMqARPCFKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DKAcbEWEr/IJfBAfcYu82HiSLXH2DMJFrBUBlfrC1M3t/eKBz5bWhAXJ7naxLQzBCTAQOUWXkxOMnaq3apjBkcalUyXn0HbYPBvREoOarj+UtxCuCf6ELnY6BKoPEvV9ajbwXegaiitBxBN5xDKB80ZKL0TC3ww3C+6RHJ/x3l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYQf7AAb; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1757832037; c=relaxed/simple;
+	bh=W9mBKKhO1nDG9kgofix3fJ5jAhsSVWPySySJxafsDg4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nz25P28fMhnDd+ahsnmyhRxWCTTTgKCFU6NkcTRaIScVXUYwSObAuI++SL3nWYMu1qEVCl/1xYy+v06n1TUDDbmk4FFKnFQbLDlau19rMncl14nsixJSDZExejZ49ISSZ8ARYsLSjp1ZlOSuJry+iNvqWHx8yetKcLghx/HZ7ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxPo1rCC; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07dac96d1eso220343966b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 23:26:40 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e4aeaa57b9so2766123f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 23:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757831198; x=1758435998; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1757832034; x=1758436834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YpuAcY5BhVGhX+vCzPkKqiO0eWSE/MtMicMqARPCFKg=;
-        b=HYQf7AAb2VdLSAhRPfFCkuW+fJDww4LE9zGBUOVdhsQ+H2ZXNPygNMgKhwFEt0ImVC
-         9eJ9eqQ/rfCY7D8arV3l2b+bVbGxl8mpiA8ranw9ZLY57gXJgCtuszfRgv+DbhwyJS/2
-         yib3Iozuvd0a5QoovnYo0CgS4v9fW928pAZmReDZEVWPXw1WzcCeUhvBnIP9JkfsgTLm
-         rrgP73e+oBTs+7WWujv+ATL6eAIfzBTCMHdIk6vGKXydV1jzj5tanw3NR1Up3nrd7C0Q
-         Via2Q5H8xxsUuWkoArjNQb0uyL/ifxJIiCFcfjV/DYGgE4vxLtauhnsrh52gdiYMRoQi
-         5XBQ==
+        bh=W9mBKKhO1nDG9kgofix3fJ5jAhsSVWPySySJxafsDg4=;
+        b=ZxPo1rCCkZgBARQNa0334DlqqyphPP7cfa00eKMT4TNHqSX/ec5xVB/PdU7KJhJ9WX
+         stjGWdo6g+CcxnV3fNWNptJMZNrLUcYXDv0lLQLhKCDllMfb3C3fFm+2BLE3VC2Mfiji
+         QpdE9y97Wf5RGh9Lu1shjrLITGs9ulo3B/Or1A+byhZTgydNgLMvm9V5O3XRP1EKnp+i
+         VGwg2//+0/VmBlB1bFjOZQ2NI7Sc1OkV35RgSIJJaBluhuNWUBtlJCGf3TSssnwqS4f6
+         9GyGz38O3ZgJb3ToqqSB98v2R+okQjUh7jV0knzn0NPYAIMXpE5LQ/z9fvP+AXX7VZsp
+         EJaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757831198; x=1758435998;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757832034; x=1758436834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YpuAcY5BhVGhX+vCzPkKqiO0eWSE/MtMicMqARPCFKg=;
-        b=d/pcXQ/qR6fIg2nwVZPIu0Qf6dfdE0V3bzMQtxsl24yGgtUAQRqf240CCC4Sp6ZO6E
-         JOd3GSlPDoJ0/Hpc9/nJnbAXMk1FVAOx2oUHrb2lmxgeDe1QgFuBSgEe6vBQ15s2ZK3f
-         AGySxtl+id1Xfhf/8XqAWJRCvqHgsUKT0xD72U2iXnRQsdv3F1JJlq4QrSbbsE2t/Hzu
-         ULQflBtJOQxVmZ386tnYHCHobmIrEGQtN1MjjR8dU2isagZrDaSE/obWe1KljO8ti2eA
-         EhOt6JCg0Bw0C5xcxn4mSE2tmlDjwaLnlO4Pl60kARf8mx0ldoGv/6RBtKtmi74p+jaN
-         Q9cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnrdLPvjfNI7+A8feI028Y70qBfJ5i47n2hnvUCgKfc5PZtW3Ag6h8K+nlmpGQz/4l71aD58alv2KaerE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKktJHRugX82t1/yqsTI3gSjVKZNW9T6ArGfHebg2Km86yp3Yk
-	fb1HCwJFu20cdvc53y3YtCQcimOvDYuxQhS5BtoEeTg26f0l+yZ3s9Jh
-X-Gm-Gg: ASbGnctmcWK4H2itXS3SCHyBHEucse/HHzlk54ulE91MsKBqFUrbrFBUyY6feuYHXBe
-	WAF96GSeuCgECqWYwdvcQ7LblqcopaE75/mh+/cCb1w9ymo85hTTzm257XEY95DGMUlpnsEen/o
-	5dGBTssV86ih0uATvQt014TX3LbH3AND5VmyPM7e6LD1/KvknOkJNBzXIgzsC6Hd2AqFR3Xl4Al
-	ubmHfvf1UZIFRQDivnQAcYNBD/DPJzbl8g15wwBJ/2txEeRrXLp7urvNq77w5sEMxFF7j/5dcO8
-	LwaYyPIKXqXuAkNhzb2mghKMtH1Sy5N6nVpCktqnucGXWOqQbxD8n9IYjrpPqsp3tM5WF0QQ0oR
-	msw3QbexehjMZ0vKlBwve0VbHUWiP7ALDKVdQCa0FBrdhXENDaHdXf18=
-X-Google-Smtp-Source: AGHT+IFgeECwBC/iiy6U4djD4RbKGuu6VUzMWKgjTe6SxUwypL1QszvVkCmMnx5qTasPZMrBF3ONRQ==
-X-Received: by 2002:a17:907:7f94:b0:ae1:a69c:ea76 with SMTP id a640c23a62f3a-b07a68b646amr1170055866b.23.1757831198374;
-        Sat, 13 Sep 2025 23:26:38 -0700 (PDT)
-Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da427sm699505566b.7.2025.09.13.23.26.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 23:26:37 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
- Samuel Holland <samuel@sholland.org>,
- Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@kernel.org>
-Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] arm64: dts: allwinner: sun55i: Complete AXP717A sub-functions
-Date: Sun, 14 Sep 2025 08:26:36 +0200
-Message-ID: <2235173.irdbgypaU6@jernej-laptop>
-In-Reply-To: <20250913173511.4064176-1-wens@kernel.org>
-References: <20250913173511.4064176-1-wens@kernel.org>
+        bh=W9mBKKhO1nDG9kgofix3fJ5jAhsSVWPySySJxafsDg4=;
+        b=izOX5zrsLBFbRuMHOZqXa9A1bVwfDfHFtmST0eBLsZhq9Gxzo8zg6CnKdid4guB83X
+         T8C69WektoqlM7Qhp3TyW/G7nACjnXiw+1jVQACDY9jGs0tSw7EZN7UtxDgyBAXOc9T6
+         C4dZ/MlSfdD6piOmWkiw8pyPd4ephK3KSfnqRf+kxDraVJg5opaTdiytDBEw23lFOnBm
+         mOV5FVFeKERpPNnwgJq5yk4wSTOVtvPMpQgbxZTalHJS91X4YZDfta0lXcJbnA/94qgr
+         LsyOnN/xeih/8th7DSssf+TcQOaTgeyvBwRT4aKqW6rrfmcgxups3EqnKw2jtSgYrlWH
+         n1VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsubDMO58ei18I3T3T1U1RAgSNkNzAirPyODBrXSlWFg+66dZ3W7wMlfzsQdo0sjpcavb7GtNvkYjCD8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIoawnPofM1UkyLpD3ClTLjyhnP8rkebhAJDZYVwIzoo6eZq4j
+	tJgQNnMJtUENh2uXi4EP6Huy9Se/MqwARURFpqrQGHI34nMDBHYkELuldfmu9/PD6ahPBT/1yUc
+	8btcvNWEtyPw9tZ9znI9orJLj18OFJh4=
+X-Gm-Gg: ASbGncsjhwl2GtQOCfSdbvw1mcJ/Xsf8U2sMZ5cOi8dPBJ8FT/5m+Uo4h7fmvPBH5hY
+	inFKFeWuzUII3U7ByBsDxEBclKBo3T2Cae0P0X7JJRNTMcZWIhKoB8fzZrq6PEcLOQM3jpnjePa
+	+l6omPQpyFIAMwQeYBpJQXgzIITxo9e6LbAqd2ZU4IRdxjDEHJXCNv5OOIWztecMiPqhwQIyJYG
+	FRW98xevuOlkmVvgP1/g2QS4cQvq/b5EOwX8Q==
+X-Google-Smtp-Source: AGHT+IG7BfAN8YgdMhPRHfWg9au31LmiMJ4FCAqPBRvsfgGJrVZfq2uKb4GWTOHEh/+vDSJLANy6x4rVX46AhqFQA44=
+X-Received: by 2002:adf:edd1:0:b0:3e7:ff60:cace with SMTP id
+ ffacd0b85a97d-3e7ff60cba5mr3742532f8f.56.1757832033848; Sat, 13 Sep 2025
+ 23:40:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250912163043.329233-1-eladwf@gmail.com> <aMXZm_UL58OkoHlG@strlen.de>
+In-Reply-To: <aMXZm_UL58OkoHlG@strlen.de>
+From: Elad Yifee <eladwf@gmail.com>
+Date: Sun, 14 Sep 2025 09:40:22 +0300
+X-Gm-Features: AS18NWDanC3VAORRnntTzRI-0ysMkY5yJY0vhKytcbLTgHpDzFeIHXwTC1H6sDI
+Message-ID: <CA+SN3sqzRMWVF5ZTW+hjsKjGfvsGzCn2qUt+uvNWAzeYD-54hw@mail.gmail.com>
+Subject: Re: [PATCH net-next RFC] netfilter: flowtable: add CT metadata action
+ for nft flowtables
+To: Florian Westphal <fw@strlen.de>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Phil Sutter <phil@nwl.cc>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Dne sobota, 13. september 2025 ob 19:35:11 Srednjeevropski poletni =C4=8Das=
- je Chen-Yu Tsai napisal(a):
-> From: Chen-Yu Tsai <wens@csie.org>
->=20
-> When the AXP717A PMIC is missing nodes for the sub-functions, the kernel
-> complains about not found nodes.
->=20
-> Add all the remaining nodes corresponding to the defined functions for
-> the dev boards, which have publicly available schematics to base this
-> change on. The battery charger on all of them are disabled. Also add
-> an "iio-hwmon" node to express some of the ADC channels as hwmon
-> sensors.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+On Sat, Sep 13, 2025 at 11:52=E2=80=AFPM Florian Westphal <fw@strlen.de> wr=
+ote:
+>
+> Under what circumstances can flow->ct be NULL?
+I thought it could be NULL in a few cases. I=E2=80=99ll verify this on the
+inet/IPv4/IPv6 path and report back in the next spin.
+In any case, the null-guard is harmless, so I kept it.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> This looks almost identical tcf_ct_flow_table_add_action_meta().
+>
+> Any chance to make it a common helper function? act_ct already depends
+> on nf_flow_table anyway.
+agreed. If there are no objections to the main idea (exporting CT
+metadata on the nft flowtable path),
+I=E2=80=99ll prepare a new series that factors the fill logic into a shared
+helper and converts both act_ct and the nft exporter to use it
 
-Best regards,
-Jernej
-
-
+Thanks for your feedback
 
