@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-815923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CB3B56CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:19:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D5B56CF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBB217A0BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA6189AA48
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E61245021;
-	Sun, 14 Sep 2025 23:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039A21E1DEC;
+	Sun, 14 Sep 2025 23:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnMJM/rT"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwrEDDwU"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DD510A1E
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03AD23C50C
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757891972; cv=none; b=aPTWY3Bpa3hsXltU42x0jOjEJ8EesSGrHASBY95MeM7rZBhBBeO77GYoEdqey1/odurI9L+6X8QlG4Jb57VnSu3bOaG8Ac6AIM55ez1zy6T4kPR84ObNuR20lWiZVPYXUSv45CpXRkGFCLO+sbLdcoHSLGcJamVh0P8B1laWw2E=
+	t=1757891981; cv=none; b=InylbV7yAybitZ8mMl640NhEcV3xVwy6X5w5hSu6iAzOX1hWesZ6ffk8KUDzYqDbxSNSihb7NuT0APIa1KYp0ymH0SKFdl7C1A8MIJ8ZkHUQOsrSuOAY9zASncyHqGq923olrZKOskjp8Tyedxj4Y5HXhL5FbQLvPRAF6YQIGxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757891972; c=relaxed/simple;
-	bh=m0I/xnWWzA/0fP8qZdIDb3sUbPySbToI/7+4msNB60s=;
+	s=arc-20240116; t=1757891981; c=relaxed/simple;
+	bh=pHXoHH5RRUugrHmOu9g05vKyxCyEE7WNLmye7njoGms=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g8Njx/zJr2tQQs81GCrg8WFUEDAT0XRaLAWS0tuTUmb4hAY6nikZkbBcjXvheppmJ367/OoO949xFe2Sg35XPtrsahpsK1tC0U0r5iyLVWHFnI7fYN01WL+lAwKVdj8POomv5yNne/lB0pZ8YMaoBXZAuHt+8nihVAKpAyn7cYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bnMJM/rT; arc=none smtp.client-ip=209.85.214.172
+	 To:Cc:Content-Type; b=gD3GSvR+adR27G3j8DdHf5Oh6ZdoHWxnABoiO9ecQ5VqSPNZCsWS+Qa7zJnXde2qy60pI81mj0TjVY69Xiub8DdnoN3PseS7lrvHTFAXcnOWgF+WR0cSIPOzEHo4HB+UDTTZURPFhCHJbHd9KoawXC0dLz9FMgK5wECxTQbUFgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwrEDDwU; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-262346a67c9so3022775ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 16:19:30 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-25f897894bfso3832625ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 16:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757891970; x=1758496770; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757891979; x=1758496779; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m0I/xnWWzA/0fP8qZdIDb3sUbPySbToI/7+4msNB60s=;
-        b=bnMJM/rTPU9AGT9BmhGFpqpmERJzCpd/yWi9kjtXpkbkZa9gSxmjnR+zuzrHftwlgD
-         giRtHQcC9GP82vLKynxcUwRQAFA3GBIefdjaxYgxX3XW+n7xSDfXLXWABJDSoheY7DlP
-         qZenBaYIW+7otHfzorDAXxYj5SZqZRHhuPTdtE1Xqzz2a+rFOPFsF4bn0DYSsPfR6HRF
-         yNtB322mlDv3YU3li9WuQuLc9Qvi4t02oz7qu1DncEpnvUbcNMQblAJYjpfJMbKyK3e1
-         FCGBZ9zmdWaXs+2IqfJazP0CxtZXSWiW+oEXttBD609F9jAgeI7/jyg0bdsUViJUIMx+
-         eUNw==
+        bh=wr1SRhKN9RJNHAY9fHUf/uZeZSb2ann41OGAwqEckBk=;
+        b=PwrEDDwU3WQ5ezDeqxpBM7emjnq2AHFKoJwVFfGX+e0XbuyoT/9bFS7ot/137z1u6L
+         BT6hN1QPIQmBQQyUe4fzYpOcrdAR0FW4IjSApibK7d9AdBghstvPnysw5lam4B3Jg51w
+         oFJsCQJumHejz23F0RTq0GrE8x8J/HIs2R2R8WvDofYOUafED4tWdyjSO/WerTz+bgdK
+         scoDXdqZhVN5bzXYW/srl7I4Q6mdVg1TIdgpCmUmhkNdEM6YaAA3pVQgNEdu2cSg6J8/
+         9wOkWYvvXm9apTyf70oEWhjKba3Aa/cHRm+SCLODsIhLUOSMQ7Z80ahCq66AiM6cJdfP
+         XPnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757891970; x=1758496770;
+        d=1e100.net; s=20230601; t=1757891979; x=1758496779;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m0I/xnWWzA/0fP8qZdIDb3sUbPySbToI/7+4msNB60s=;
-        b=S6YpTgG1f4BGGnJSniuTYD0omgQulH7DkTfh2mSGTmw3LZbnL7PyQIQxdlzIMiNP3o
-         DIniP64vgpwayQpdRsD9z4WY7rjx+ajgdAIGZfI/j0116gdB0mJ9uQBjR8ADWHHq/iWV
-         F2oQ1HNIqEi8p1SHolZvJt61KWLaHGMybYA4gCcSvfcmDyi/eiz+bwvvsLTO6b1bxh8m
-         E9RSjN5QU/TQWWvTCNW6Hb8JNQ/C85J/ewB5oEvCByd3JzRziS7E/q7IZgZW/S2sd7tx
-         XtisT2ZYPFEXeushw1tXgx3Fin2t0lOwkn2io5/zJTSaOxGgGDhjTJO+QnedlW7huLZz
-         YjtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR+14kiC0JptCdmMetle+uH7hV2zPKAMQcPFmqvUX1E2eTMp3pc6YNzZfR5iNS8q2TExrbklDRRuPPIvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+/1f/S6R6869EHRn58CXdSeLImVTkJNWyV84WHx/xZlzdWpIr
-	PeTiMMm5mOT0nD0v8xVTZBBtD8mRHqotO1PDpr8dHRnsxaWRfT7cYPEjEyLp2qKznIJWGdxRTnq
-	3+M1X+xcslXP7AHibjpnk7SdH7D6++A4=
-X-Gm-Gg: ASbGncsERz3TaeL5nGnY/nVoDu/r4mVGkeUQQAzLL4UZUZ+0eFn51c7651ASB+iw3zn
-	GTlrU6Jv/kOPPWeaXkf2WI47qxFT/PWNocFhQDUbUMETdvDTvTRgoJ0GPY4R8rAEp9/z0vgj4BB
-	FRa+qI6108LCXcEUGnn0qomR+b3dHpY4pWhj3D7SlAUsV/oO6tArEfDy6EeQxal90kucRB+Hk6R
-	yPKkilgZJBEs5eeLzNgJ7rkwAPl9sJa/yK4iL+a7ZH+8yA6yTO5X4cYkvnCbTwfsiByF/usJf4N
-	DkYZX/GDjpRcWj0/aHpcnVwFXkCK/9B9eIx5
-X-Google-Smtp-Source: AGHT+IEL4fTrsytJhQUaldsh+1WXyGODbkNk8V4WUTM+8P8Hw+jJU6kT/D3QhsNp2JyUY/ta0A6bPAm5mVBqkbwu3H8=
-X-Received: by 2002:a17:903:708:b0:267:8b4f:df1f with SMTP id
- d9443c01a7336-2678b4fe1d2mr309415ad.1.1757891970032; Sun, 14 Sep 2025
- 16:19:30 -0700 (PDT)
+        bh=wr1SRhKN9RJNHAY9fHUf/uZeZSb2ann41OGAwqEckBk=;
+        b=RW5gh347yZOIQugK8ifmgf1DOzxd/A2QU0pJzB0xANppT3gXydArCa+58tMqikGt2J
+         R+QojHl217p77VWNoRLcVLMuzacfvw4GkYb9WaJrkHHJiS/FI3Ztk8IxbF+PCkr/5Y7B
+         YTm1JtXWPgjAHUZ/KgFpNHeQXMy/lqL4xD+M5CvKhwvlSLGbqPTS5e+WIMGpXfzYtnNB
+         2oSwWy00qjJ9MdqJsaKlb8dQrhCTFRjBUvNJP1+SfXesM7wOlAYYfOh38kxKZ/1uQqcZ
+         EjRjmbbOq78qhkbrRt13UAL1P0qkdmRWqpd9QYmEmLULwZmOt/Mt/ca5ff05vsp95jNa
+         NDsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpHvWUB3LPUujTl6kscQ/mdGr1KyuOOchHebOwLwz+Y7HmRc460doFXNq5Ddl3TZ6j/XhC7hYezgIyqn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaYSeD1qiBvHu9YpyY5vPMzZytmx9ZQEVOx/ZVH3FPaj6ogP/m
+	vZX208z+VW6+4MZUsiRE5UXHHV1QpV5YibnOW91iwWxIxfz0Dl6j2s+O4m4ThCX1jV1PfqC3Z6D
+	653XQsWFzdJIdAtPgmzO3wiTey6GAS3A=
+X-Gm-Gg: ASbGncvn+ZHsi6sJgodbmN9i8izuxwEwPAKIEGQSwSPqCCwwWg/ztb+lfORFPTu0QWm
+	ADSbtP8HmremHdjDhnImp9OLWAK8bis8+guRSTLOextmyhFXT7KeWKPMv0joPDWVGlw2xIXAUX9
+	m1sHdcKwhe6AOEsnERnz5ZTPs2Kxg2CA9FsZ3apGtGfC4EekILFhyR8xppzNkd6tyGR5hHxJHh0
+	J0lPEtINs35suzANGNKd8AVSOdCA/thB66/SxCbrkOLb0n1jKUy+ZXjy1sHpVBfxv+bkf8/HtCV
+	9h1fa8Q/yFpuZmr+gr5rNpRP1A==
+X-Google-Smtp-Source: AGHT+IGhpkmNSnE/555/rmLedmEw7I+1SCyv5XhUvG9ewb3MUhstOJJKEYHDfT7SRZL2g28uuiuKafYeYRMNCxOJ2uw=
+X-Received: by 2002:a17:902:ce83:b0:265:98c5:3efc with SMTP id
+ d9443c01a7336-26598c54355mr15027375ad.9.1757891979049; Sun, 14 Sep 2025
+ 16:19:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722121441.224439-1-lossin@kernel.org>
-In-Reply-To: <20250722121441.224439-1-lossin@kernel.org>
+References: <20250724172005.11641-1-boqun.feng@gmail.com>
+In-Reply-To: <20250724172005.11641-1-boqun.feng@gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 15 Sep 2025 01:19:14 +0200
-X-Gm-Features: AS18NWApSI_6yUDnJg9YwpBR_rWNHqaJWiXdYcO5dNgirLlwr2sfICJcrOinX3w
-Message-ID: <CANiq72nD6qb425Ujkey7KBoGHT=cmgOcAmWHThd5+BktGeQWPA@mail.gmail.com>
-Subject: Re: [PATCH] rust: sync: extend module documentation of aref
-To: Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+Date: Mon, 15 Sep 2025 01:19:25 +0200
+X-Gm-Features: AS18NWBLpcVZaz0uXp5qhEnAAfVLnpu8P6jVe1KdZV4E_JnrY3DZ1aw-Ou0NaW8
+Message-ID: <CANiq72=5gPRSFEDZCL5kSiinZVJCFd6UX+vzkx+oM+AvotCXsw@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: list: Add an example for `ListLinksSelfPtr` usage
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
 	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Shankari Anand <shankari.ak0208@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, I Hsin Cheng <richard120310@gmail.com>, 
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>, Tamir Duberstein <tamird@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2025 at 2:14=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
-ote:
+On Thu, Jul 24, 2025 at 7:20=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
 >
-> Commit 07dad44aa9a9 ("rust: kernel: move ARef and AlwaysRefCounted to
-> sync::aref") moved `ARef` and `AlwaysRefCounted` into their own module.
-> In that process only a short, single line description of the module was
-> added. Extend the description by explaining what is meant by "internal
-> reference counting", the two items in the trait & the difference to
-> `Arc`.
+> It appears that the support for `ListLinksSelfPtr` is dead code at the
+> moment [1]. Altough some tests were added at [2] for impl `ListItem`
+> using `ListLinksSelfPtr` field, still we could use more examples
+> demonstrating and testing the usage of `ListLinksSelfPtr`. Hence add an
+> example similar to `ListLinks` usage.
 >
-> Signed-off-by: Benno Lossin <lossin@kernel.org>
+> The example is mostly based on Alice's usage in binder driver [3].
+>
+> Link: https://lore.kernel.org/rust-for-linux/20250719183649.596051-1-ojed=
+a@kernel.org/ [1]
+> Link: https://lore.kernel.org/rust-for-linux/20250709-list-no-offset-v4-5=
+-a429e75840a9@gmail.com/ [2]
+> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-4-08=
+ba9197f637@google.com/ [3]
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 
 Applied to `rust-next` -- thanks everyone!
+
+    [ Fixed typo. - Miguel ]
 
 Cheers,
 Miguel
