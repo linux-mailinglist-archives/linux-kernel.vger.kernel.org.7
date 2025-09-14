@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-815432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351E2B56426
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 03:05:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6A1B5642E
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 03:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 211184E04B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 01:05:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36288420895
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 01:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09D31E260C;
-	Sun, 14 Sep 2025 01:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A87202F8E;
+	Sun, 14 Sep 2025 01:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EukDtsiu"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ8DDpY9"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1F38DE1
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF45E20296E
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757811906; cv=none; b=Z2OLPzusS/5s+Z2WGwIWvDfi6fVbbzQEavMiTwKxDHsjeFI013Mp1SAoW+X5eLYRADknuLiWXAk9b7I9LZHWIDSMLU2DbPKRdtyYmM1oForf/Nzt1J7LbTUIAzx+rETm0GS77pYo+vi7RVr4jc9p5XIp7x4389AZnIBG1zDgm2A=
+	t=1757812844; cv=none; b=KTUheHqTdUvZpc5BkdTadqaZAuV3cYO9nrgAMNm2Eo6BvbgelKJg8xnxl6Wd8L9f1WXmRgofS9QfNlU69J84E0PX7mzP09XJYHBESRKIS+c0jjQ7pTjlOC5B4XGXz+2ttwneEH+dY4iCndwdptQz6weAPshd4yY3IFPWtAei6aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757811906; c=relaxed/simple;
-	bh=KwCI67wzBCMSE+sGNwxoXxj0NxENSx9BrFmgM+/HkqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dve2CAmnXhfaqg4PJYxTfrngp0Sy1uK40QAIULTIPcu+LyOeDjP5+y3VmizkLhJlGV8qidhsKe077pAhBy5g5B+lM9yFVtPWQjGgut15FigouJ+umjhfchwHeTyX4cCC2pscfKIECrYtHNOTvj5gMIzau69krwK2WUb1TDslYMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EukDtsiu; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1757812844; c=relaxed/simple;
+	bh=FkpJKDeauvQC6Z9YoUkrAnt4nd1U5i8M0RF3HkbD/5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=SY3cWK2wi9602Nczpl6ftTYlTMLjZfJfWRbyC/Cs55xyj+ezDvC8jvpcMrzAQM0hxJxeKm6TRFCecsb7Ci5TxpgwvfbkKawsQg+kY8utsAMyCrNc2XZOG1P0wu1k7O+rh5D0+WOQ/tHGh45taFZzAZYNtdg8WGVMkcmcKtJNmNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQ8DDpY9; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7725de6b57dso3857909b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:05:04 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2570bf6058aso41499495ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:20:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757811904; x=1758416704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2H1DEIqxcw9L6IzZmS40PiTXQNGrmQIDZ9w4fzliZPs=;
-        b=EukDtsiu4TYMBENT3Jz1pJqoRCMTLFTnyWsIw+7igIOh4Dhqotm6lW3oio9vk1zhpn
-         7nNtztHfqPin0GgfXi9czeBVNAv8aHYtjutw7KZt1P4gqy3WGdL2L0TgwieGLqQGfbEM
-         1Hwu4dv6MFp0NMEo7KDybWcfOgTse1P8l7HD5sTs7ZpxNkjfW65VFlKujrj419IEMuPI
-         MwHMG5ckatft/Q0OLzAkiateIhnNcWTLggYICuorF2gNADoQ1CK7xmFrQYRMp8OfwJwz
-         chnw3+8nfT7MsnZgl/6L0c4mtCtUHLmV+gIqJrSsJ5AfrhEbb/UGKHHJZxmZgW6MLQiY
-         3rfg==
+        d=gmail.com; s=20230601; t=1757812842; x=1758417642; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4i6bDVD5hwBYMgRX2DgkJN197oaGlVqOUQIQ1shHYA=;
+        b=cQ8DDpY9uxGPQijczXBBI+U6dFECAFLl3wOSVrCebZTU4q89sOs/e6EPXsSS9IbJUd
+         CDDaEE4Q8lB16fYfGRxX5WzeVzM/ijKaT8OMfrwHSlIxwfXGFB1238U1v1c/8pk/gG7+
+         VQEOgsYbPmy+xMXf0iq1fqFFghq6Dp9MvAK6GJJgrZ+aePzTKE9jmbPEogCBoret8C3J
+         liW6nJtsbDe6ved6ZDh2VL9pqwGTZ9wy0EZZC2cwYhJ1/PN3m8Cu7EwTVq1Ejt0CSRmK
+         jhYAq+hIST3zGxn1h040wRZpLrbIcovm0U4v1ZoGYmdBtuYB96GuOWHiojM7Fx/FaOoJ
+         vdXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757811904; x=1758416704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2H1DEIqxcw9L6IzZmS40PiTXQNGrmQIDZ9w4fzliZPs=;
-        b=ESRsLiz6TqB++WUnSmBknbP/cU2LWYaBaUbU91YB4iicN0YVmDZqZ1ECi4R2IwloxU
-         HxxHjZsoESPDnrJruKyVMhcVdE84kIbklTOEeQd+kIgJYHJd7uEXdhhr49LS0DB8BqPE
-         +Doy1i5HrsDoUpVlr/ro31r/zCi9fPQ9xFxYqEl0Pd/taDuZbX8GlSMRIWq2gPR8QQZb
-         /IZky95VSBgV4Kuq5OcNciUu5qv+nbNN3NgBSnfnKJKybby2PCcqj/grXXLkYJ4CmLWA
-         2Ed5laRGO+cbFjeNVOfso/JlA15JCgUpoanvr8m3xu7aFX8sdGbV3zgUxSUox4MeIXqB
-         RuPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVw3pjO59bRP8JHn1fLEjRL9HfQUpSIloQNhWQzDMszPpaJlOsZDj4qe+qs0v9Mh/VhEc4NQyvhWdDxz9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD0qBJVUU4KfNJUMpn6rXISjOhPFWdtjhsvlxp9PMsv8A6pGYM
-	fUtQCC9IkclXNKPRBb8eSeZxD3ccJuXfasZlRKQ/AGoPyXuq/Z0fRV7E
-X-Gm-Gg: ASbGncuilx0wGtMg4PXxk4G6aeWLlwP8Lj9B3oZyyCtZi7p5gb6GH4LVc5e3Nex1tdB
-	jPgybOJ+EtUkyusNuTdfYnoJyGHsjxpmcXw+lKmCjJ5lu7rmo3aR58MzfeBekrOJrR18GCokwuc
-	ctR9d8EJnYRplNSci3aEPp3m8VUZg0xmMDQ94OWfwO13P9zowzz99Sg3a3NJcmacLSYa2+hd2y4
-	WhJ5E8Eyxl+Mjr8fR2Oj1IYWNg6hY5D1hp4yRNrz3TRKWqLYPBPwbsiUM67N7PXgKAK3Q6ZwiHG
-	WQ4YQj4X4VlE2l6ezG01gIdAaa+YKm+tlQ4vzNwTCgB8FPCMP99d50jsdEBPwM/kxyJkHP12E4O
-	N5keOK0u8+H6dR1+2xd6SJzyJH5m9VIewBTqF9zXJ0xM=
-X-Google-Smtp-Source: AGHT+IH2JCR/UgWVMA5jNgjyGNIJ90r5/YIM6Tob3LS+1FHup5VN/X2Uo8gbBRUdy3Aa1wBnWJSvCQ==
-X-Received: by 2002:a05:6a00:1806:b0:774:1ef3:78ec with SMTP id d2e1a72fcca58-776120957e2mr8003853b3a.9.1757811903861;
-        Sat, 13 Sep 2025 18:05:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757812842; x=1758417642;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q4i6bDVD5hwBYMgRX2DgkJN197oaGlVqOUQIQ1shHYA=;
+        b=hWqTjFO5RV2FbfPeBty4UmQaxjGnlYadJB6lQPDg0khm7lyfRuBf7BgUz8socNH0tq
+         hwICv3Cph4s5VuTr3ql0BEYVTNIOupSy/zjcLyZq+9zMTEFjVUglHQ4EK4bKw5dq7lGn
+         NsIK0qSYLgcZraGIdUPg3qr/bN4g1pLqlq5H0ihvyzwujai94Enxr1MP15Q2OfOPgJS4
+         D/Ex4lQ9A4Q7C6BxREMiNAkyfqc94ILvXTLKFHznTqzIxGN3KHB/Y4xeVjHzPaVwsbNL
+         RBVh4IvWcLp92LbvQrHEx2qf0+XtAk2pP679MT3OUokwuZmFdEi2b0s5nJIdPWEyRGpa
+         R3OA==
+X-Gm-Message-State: AOJu0YxL0S+GJKGAbT7TL4MxHQEt2g88Lqm9N5w4B37yC8I0bRojqPGl
+	g7A+yLlHCb/qoB+OhJW7FUlpd6bbu56FKhIeFfdzChPy4n5Q6p6jVLs8
+X-Gm-Gg: ASbGncstlNRyR6vEbTyGHr8IBUnIQMu2LOD/Z3c4yLeo53PsG8ZRkojvqhrBZd5k/r8
+	JeUkt96ZmjRDeOx1GJXIrrLHT0QnHF+TU5pQPEZwwPZTTI3zPRx6RETb7Zhqvo3be/VV4s/OJmT
+	xQWGBuBz3EvQYJu5nsKIHpMjaEgsPVxWoIF3TyO2BwL4UtabnWrxWwLbQqFrZQFQYyitkK3YCGF
+	8foKD28XgrxdZ9QU/Mqq/qG6FcBPAj31uBB+hW9rXoFnNTzB0NaSOY4BPUmsHA6hcFcDneR4Z+Z
+	Eh41OtcwDhwREeSdHOMgYDSjlft5PnFVW0sjH5EVLW4dVgOw65+xNbr3k2favQZ5FrWtX7scPPa
+	MS6pPkUogWZOtnrAdC9wEzPVPMpyTwAMD
+X-Google-Smtp-Source: AGHT+IGpnDRI201c71fNLQkFyHJumgspF2T5sIyMovVhhCFRDsFqRg0trRxQAB31uKyVOuiBxMFVMw==
+X-Received: by 2002:a17:903:2c6:b0:24b:bbf2:4791 with SMTP id d9443c01a7336-25d2646f828mr100742185ad.39.1757812842046;
+        Sat, 13 Sep 2025 18:20:42 -0700 (PDT)
 Received: from google.com ([2620:15c:9d:2:81bf:abc:6590:f690])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b346dasm9531512b3a.68.2025.09.13.18.05.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a7a0sm89268285ad.89.2025.09.13.18.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 18:05:03 -0700 (PDT)
-Date: Sat, 13 Sep 2025 18:05:01 -0700
+        Sat, 13 Sep 2025 18:20:41 -0700 (PDT)
+Date: Sat, 13 Sep 2025 18:20:39 -0700
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Jonathan Denose <jdenose@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
-	Sean O'Brien <seobrien@google.com>, Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [PATCH v3 00/11] HID: Implement haptic touchpad support
-Message-ID: <shsgwirjtyyo53lrczih3x3fracqtbwrlcfbdc6e44eddnglzb@ht7tyyngww2z>
-References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
- <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com>
- <vyhhm3x6nfdfw6gbgluq3sjr6bzamhear7nec6xdi5wfxq7wcz@cx2egj4yr5sp>
- <4267074p-78q9-54p9-8q43-2ro1n03259os@xreary.bet>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v6.17-rc5
+Message-ID: <pr27r442uxseunxtnoko5fquveeb2qg7kxue7uht4marr45ais@ce4alsq7hatm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,59 +83,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4267074p-78q9-54p9-8q43-2ro1n03259os@xreary.bet>
 
-On Fri, Sep 12, 2025 at 05:28:03PM +0200, Jiri Kosina wrote:
-> On Thu, 4 Sep 2025, Benjamin Tissoires wrote:
-> 
-> > > > Angela Czubak (11):
-> > > >       HID: add haptics page defines
-> > > >       Input: add FF_HAPTIC effect type
-> > > >       Input: add INPUT_PROP_HAPTIC_TOUCHPAD
-> > > >       HID: haptic: introduce hid_haptic_device
-> > > >       HID: input: allow mapping of haptic output
-> > > >       HID: haptic: initialize haptic device
-> > > >       HID: input: calculate resolution for pressure
-> > > >       HID: haptic: add functions handling events
-> > > >       Input: MT - add INPUT_MT_TOTAL_FORCE flags
-> > > >       HID: haptic: add hid_haptic_switch_mode
-> > > >       HID: multitouch: add haptic multitouch support
-> > > >
-> > > >  Documentation/input/event-codes.rst    |  14 +
-> > > >  drivers/hid/Kconfig                    |  11 +
-> > > >  drivers/hid/Makefile                   |   1 +
-> > > >  drivers/hid/hid-haptic.c               | 580 +++++++++++++++++++++++++++++++++
-> > > >  drivers/hid/hid-haptic.h               | 127 ++++++++
-> > > >  drivers/hid/hid-input.c                |  18 +-
-> > > >  drivers/hid/hid-multitouch.c           |  47 +++
-> > > >  drivers/input/input-mt.c               |  14 +-
-> > > >  include/linux/hid.h                    |  29 ++
-> > > >  include/linux/input/mt.h               |   1 +
-> > > >  include/uapi/linux/input-event-codes.h |   1 +
-> > > >  include/uapi/linux/input.h             |  22 +-
-> > > >  12 files changed, 858 insertions(+), 7 deletions(-)
-> > > > ---
-> > > > base-commit: 86731a2a651e58953fc949573895f2fa6d456841
-> > > > change-id: 20250625-support-forcepads-0b4f74fd3d0a
-> > > >
-> > > > Best regards,
-> > > > --
-> > > > Jonathan Denose <jdenose@google.com>
-> > > >
-> > > Hi all,
-> > > 
-> > > Please let me know if there is anything else needed from me.
-> > > 
-> > 
-> > Dmitry, I've just re-reviewed and tested this series. I'm fine with it.
-> > Can you give us your ack on the input bits?
-> 
-> Dmitry, did you have time to review the input bits, please?
+Hi Linus,
 
-Sorry was traveling. I acked the relevant patches, please merge with the
-rest through HID.
+Please pull from:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.17-rc5
+
+to receive updates for the input subsystem. You will get:
+
+- a quirk to i8042 for yet another TUXEDO laptop
+
+- a fix to mtk-pmic-keys driver to properly handle MT6359
+
+- a fix to iqs7222 driver to only enable proximity interrupt if it is
+  mapper to a key or a switch event
+
+- an update to xpad controller driver to recognize Flydigi Apex 5
+  controller
+
+- an update to maintainers file to drop bounding entry for Melfas touch
+  controller.
+
+Changelog:
+---------
+
+Antheas Kapenekakis (1):
+      Input: xpad - add support for Flydigi Apex 5
+
+Christoffer Sandberg (1):
+      Input: i8042 - add TUXEDO InfinityBook Pro Gen10 AMD to i8042 quirk table
+
+Jeff LaBundy (1):
+      Input: iqs7222 - avoid enabling unused interrupts
+
+Julien Massot (1):
+      Input: mtk-pmic-keys - MT6359 has a specific release irq
+
+Krzysztof Kozlowski (1):
+      MAINTAINERS: Input: Drop melfas-mip4 section
+
+Diffstat:
+--------
+
+ MAINTAINERS                            |  7 -------
+ drivers/input/joystick/xpad.c          |  2 ++
+ drivers/input/keyboard/mtk-pmic-keys.c |  5 ++++-
+ drivers/input/misc/iqs7222.c           |  3 +++
+ drivers/input/serio/i8042-acpipnpio.h  | 14 ++++++++++++++
+ 5 files changed, 23 insertions(+), 8 deletions(-)
 
 Thanks.
+
 
 -- 
 Dmitry
