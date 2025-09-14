@@ -1,224 +1,174 @@
-Return-Path: <linux-kernel+bounces-815526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0AFB567B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDABB567B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20FBF17377C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:18:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE84117367A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A7520FA81;
-	Sun, 14 Sep 2025 10:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7A42153C1;
+	Sun, 14 Sep 2025 10:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i5kzzAdX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J1wlaOJi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="STBBzT4x";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J1wlaOJi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="STBBzT4x"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D865321CC47
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 10:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9E223ABA0
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 10:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757845100; cv=none; b=IpNnz/AOd8XjgQ/mfkG8vhN72RahSbtZ/TDFwXvbecaMqLWQqR0OCBWBgQO7I0WOL+qrcPYtcB5mBUbutXLThZKRNpkgtZq7wxchDIwCladCex0tAZGWtw8RF2lSMs1EzKUtU/F08YJJ5MypuGSBHYZlCFBgtoSG9Ug2/vDS4vk=
+	t=1757845079; cv=none; b=ildYsVlxD1FwxPrUL8BdRF5YglLulpOD8lFsuLRy2R3ey5qkOdvvgPbqOlbE1UPzmlERG8cRlSuqeBfxgwmGWJB2PkSo+MQWbECSz5lh4eEE7QaZxgVx1KerMBkG7KRmqVFZvmMrOCxDjvCmlEjZSTH7+OTW26xHrC7i75aNIvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757845100; c=relaxed/simple;
-	bh=3Af6wjhQd8PowiYIuVs92T7NTenwdgnO7i9dMcLF1Kk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=G0htvEUjLutaBRcV8z+V8zpWKP/QJeqCE6QIzNVX7BoqYz8X1JhcDWemnrM7Iv84WLjj6HYbDp0q7jMRyI/J7DzHaVo/l9dcXHu70tzYMhFVSg3Fb6xnhy5dC58vfRk7CDTDAmSqEDrbIMh8Aucc6RoFBgD6/0paKWCbgAX6N3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i5kzzAdX; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757845099; x=1789381099;
-  h=date:from:to:cc:subject:message-id;
-  bh=3Af6wjhQd8PowiYIuVs92T7NTenwdgnO7i9dMcLF1Kk=;
-  b=i5kzzAdXtx2EFCHqIGuuN7IRJJ9UHeZz4u84CkQAghvYvUP3yI6Jsg3u
-   TkXdX8kNgva+VNze1ptCEmi+HebHTjmZm8mEVl7hzaoIy7uyKOnCrsnkA
-   L7izK8jOxjMCSgiNIQEPqiBFi6zY2PTH0ximpRM8Z3oav8czIYvV5Zg4Q
-   ApnOQmXVj3VxzOXkVz4h8KsJU7Oeylm6brofQ+vvlHy5AbmOm/IsOuG3Y
-   Fv8h2ZXJMhRlf90OXLjU2iLhCbprurK8dDXrJ7PzYwbiEavpyvDH5xGFY
-   g3WdyECimSAwp+/1qKsy0wVCLSvR5Buqo4huGfKmCCZeo0L+/hzmanEeE
-   w==;
-X-CSE-ConnectionGUID: y6wRQPtTSAeTuinYzHXzBQ==
-X-CSE-MsgGUID: KKsDFQVGSQmhDQidPnDg+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="82711447"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="82711447"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 03:18:16 -0700
-X-CSE-ConnectionGUID: fPMKvI0qTj6YIqmf1H/XWg==
-X-CSE-MsgGUID: jZgsFOVMRQe8a4ddulQ3Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,263,1751266800"; 
-   d="scan'208";a="173981482"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 14 Sep 2025 03:18:15 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uxjoD-0002Jq-19;
-	Sun, 14 Sep 2025 10:18:13 +0000
-Date: Sun, 14 Sep 2025 18:17:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- 881799d60af71d37c56836ed080e03a4db9b2ae1
-Message-ID: <202509141803.LzRS8qrX-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1757845079; c=relaxed/simple;
+	bh=mGfpSpakfjPEZM1BQvEd3pakooWh3QXLhegsRctOleQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sHSLiHZyNTWiVR7gbMIA2CrbcDLHSwNamrNDeL1i9yEO9mb3FLuL1hpf4lD1SCzCzOIc42+syYZ1m7OZmdK/0vZQKyizB6ci2CvnCnXdQsKSZOrOOVcFBN8V9OUzvPhjMk8plgpUilKAOwp8AWCG9XqF0okG4ZRrXArBolZIcYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J1wlaOJi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=STBBzT4x; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J1wlaOJi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=STBBzT4x; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 660FD33A58;
+	Sun, 14 Sep 2025 10:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757845075; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZRtmuuLJNY0eFn4o37DH75Nt0/UBeEFqflVBKia38Q=;
+	b=J1wlaOJix2Ig8So0gj0kSc8+4/lHvegn8UM2LUNa6aOfQ4c8v7brcrBfj6s1lr2zyRzK19
+	ZQb6m4WQej6HpAYHGPly/EZZzqchd4l75m/Is6cV3ZCb85QoxcfnX9KShsIjGMz11O6ffE
+	J8F0WgPspgvoYQxiIQoa86WtyezLJF4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757845075;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZRtmuuLJNY0eFn4o37DH75Nt0/UBeEFqflVBKia38Q=;
+	b=STBBzT4x8vrtEovhTjS/3q/VfqK/rGs3+AozZWBIYdzLD43yTVYb0NvgfWeyNMowM+Tqa5
+	23UEfyyzvuzvkLBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757845075; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZRtmuuLJNY0eFn4o37DH75Nt0/UBeEFqflVBKia38Q=;
+	b=J1wlaOJix2Ig8So0gj0kSc8+4/lHvegn8UM2LUNa6aOfQ4c8v7brcrBfj6s1lr2zyRzK19
+	ZQb6m4WQej6HpAYHGPly/EZZzqchd4l75m/Is6cV3ZCb85QoxcfnX9KShsIjGMz11O6ffE
+	J8F0WgPspgvoYQxiIQoa86WtyezLJF4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757845075;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QZRtmuuLJNY0eFn4o37DH75Nt0/UBeEFqflVBKia38Q=;
+	b=STBBzT4x8vrtEovhTjS/3q/VfqK/rGs3+AozZWBIYdzLD43yTVYb0NvgfWeyNMowM+Tqa5
+	23UEfyyzvuzvkLBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 29C3813419;
+	Sun, 14 Sep 2025 10:17:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oZ5oCFOWxmhGIgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 14 Sep 2025 10:17:55 +0000
+Date: Sun, 14 Sep 2025 12:17:54 +0200
+Message-ID: <87ldmhpcbx.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Bou-Saan Che <yungmeat@inboxia.org>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH] ALSA: hda/realtek: Fix volume adjustment issue on Lenovo Thinkbook 13x Gen 4
+In-Reply-To: <20250913225344.12822-1-yungmeat@inboxia.org>
+References: <20250913225344.12822-1-yungmeat@inboxia.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: 881799d60af71d37c56836ed080e03a4db9b2ae1  Merge branch into tip/master: 'x86/urgent'
+On Sun, 14 Sep 2025 00:53:44 +0200,
+Bou-Saan Che wrote:
+> 
+> This patch fixes the volume adjustment issue on this laptop by applying
+> the necessary quirk configuration for the Realtek ALC287 codec.
+> 
+> The issue was caused by incorrect configuration in the driver,
+> which prevented proper volume control on certain systems.
+> 
+> Signed-off-by: Bou-Saan Che <yungmeat@inboxia.org>
 
-elapsed time: 1445m
+The HD-audio driver code was largely refactored since 6.17.  e.g. the
+driver code is now found in sound/hda/codecs/realtek/alc269.c.
+Could you rebase to the latest 6.17-rc kernel, verify that it's still
+working and resubmit?
 
-configs tested: 132
-configs skipped: 4
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+thanks,
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250913    gcc-10.5.0
-arc                   randconfig-002-20250913    gcc-11.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                                 defconfig    clang-22
-arm                       netwinder_defconfig    gcc-15.1.0
-arm                   randconfig-001-20250913    clang-20
-arm                   randconfig-002-20250913    clang-22
-arm                   randconfig-003-20250913    clang-22
-arm                   randconfig-004-20250913    gcc-14.3.0
-arm                         s3c6400_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20250913    clang-22
-arm64                 randconfig-002-20250913    gcc-14.3.0
-arm64                 randconfig-003-20250913    clang-22
-arm64                 randconfig-004-20250913    gcc-8.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250913    gcc-11.5.0
-csky                  randconfig-002-20250913    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20250913    clang-16
-hexagon               randconfig-002-20250913    clang-22
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386                             allyesconfig    gcc-14
-i386        buildonly-randconfig-001-20250913    gcc-14
-i386        buildonly-randconfig-002-20250913    clang-20
-i386        buildonly-randconfig-003-20250913    clang-20
-i386        buildonly-randconfig-004-20250913    clang-20
-i386        buildonly-randconfig-005-20250913    clang-20
-i386        buildonly-randconfig-006-20250913    gcc-14
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20250913    clang-18
-loongarch             randconfig-002-20250913    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                            gpr_defconfig    clang-18
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250913    gcc-8.5.0
-nios2                 randconfig-002-20250913    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250913    gcc-12.5.0
-parisc                randconfig-002-20250913    gcc-9.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                       ppc64_defconfig    clang-22
-powerpc               randconfig-001-20250913    gcc-8.5.0
-powerpc               randconfig-002-20250913    clang-22
-powerpc               randconfig-003-20250913    gcc-10.5.0
-powerpc                     sequoia_defconfig    clang-17
-powerpc64             randconfig-001-20250913    gcc-10.5.0
-powerpc64             randconfig-002-20250913    clang-22
-powerpc64             randconfig-003-20250913    gcc-8.5.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250913    gcc-13.4.0
-riscv                 randconfig-002-20250913    clang-20
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250913    clang-22
-s390                  randconfig-002-20250913    gcc-8.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                             espt_defconfig    gcc-15.1.0
-sh                    randconfig-001-20250913    gcc-9.5.0
-sh                    randconfig-002-20250913    gcc-14.3.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250913    gcc-15.1.0
-sparc                 randconfig-002-20250913    gcc-8.5.0
-sparc                       sparc32_defconfig    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250913    gcc-8.5.0
-sparc64               randconfig-002-20250913    clang-20
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20250913    gcc-14
-um                    randconfig-002-20250913    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250913    clang-20
-x86_64      buildonly-randconfig-002-20250913    gcc-14
-x86_64      buildonly-randconfig-003-20250913    gcc-12
-x86_64      buildonly-randconfig-004-20250913    gcc-14
-x86_64      buildonly-randconfig-005-20250913    clang-20
-x86_64      buildonly-randconfig-006-20250913    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250913    gcc-14.3.0
-xtensa                randconfig-002-20250913    gcc-13.4.0
+Takashi
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  sound/pci/hda/patch_realtek.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+> index 2627e2f49316..1981e3374b3e 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -11346,8 +11346,8 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+>  	SND_PCI_QUIRK(0x17aa, 0x38be, "Yoga S980-14.5 proX YC Dual", ALC287_FIXUP_TAS2781_I2C),
+>  	SND_PCI_QUIRK(0x17aa, 0x38bf, "Yoga S980-14.5 proX LX Dual", ALC287_FIXUP_TAS2781_I2C),
+>  	SND_PCI_QUIRK(0x17aa, 0x38c3, "Y980 DUAL", ALC287_FIXUP_TAS2781_I2C),
+> -	SND_PCI_QUIRK(0x17aa, 0x38c7, "Thinkbook 13x Gen 4", ALC287_FIXUP_CS35L41_I2C_4),
+> -	SND_PCI_QUIRK(0x17aa, 0x38c8, "Thinkbook 13x Gen 4", ALC287_FIXUP_CS35L41_I2C_4),
+> +	SND_PCI_QUIRK(0x17aa, 0x38c7, "Thinkbook 13x Gen 4", ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD),
+> +	SND_PCI_QUIRK(0x17aa, 0x38c8, "Thinkbook 13x Gen 4", ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD),
+>  	SND_PCI_QUIRK(0x17aa, 0x38cb, "Y790 YG DUAL", ALC287_FIXUP_TAS2781_I2C),
+>  	SND_PCI_QUIRK(0x17aa, 0x38cd, "Y790 VECO DUAL", ALC287_FIXUP_TAS2781_I2C),
+>  	SND_PCI_QUIRK(0x17aa, 0x38d2, "Lenovo Yoga 9 14IMH9", ALC287_FIXUP_YOGA9_14IMH9_BASS_SPK_PIN),
+> -- 
+> 2.51.0
+> 
+> 
 
