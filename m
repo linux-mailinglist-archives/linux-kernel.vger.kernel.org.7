@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-815603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E52BB568DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:44:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F94FB568E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FA13AB0A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79703BF07A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0002594B7;
-	Sun, 14 Sep 2025 12:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37871DDA09;
+	Sun, 14 Sep 2025 12:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UGck00hg"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AZuVY1SE"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E132325F973
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF1C1D554
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757853833; cv=none; b=ggMY//vF+WLUlkGHfICkoLtUQA1eecbFIIp5Mq3Tqi4HplZU6rHx6QCA/r7A88OsgFAuxAGq8U5dmsoRvdG/U4EKsNstE4GazMmMDeBT+sKAQGl7qu1dy1TamtXefi6CRGLk8xCBfAqDvRjIa69AsAJVOLuRNUEsHz9V0yoyGxE=
+	t=1757853893; cv=none; b=C+6RpuvHMyHrAa/BbBU+bb2go91L0ZpiwXMUZLUrX0ddrwGoLQBsW34wMlr2cZq7bH+qpBZdNjxAkHMj7racB1dQQU6R+EKWJWUMJddHinqNfyRwYQ1ntvt8NIzs7iYYzpyhdxux/K60WEpwnIJ4PR321C3E4QKroGTtiEJtnnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757853833; c=relaxed/simple;
-	bh=dobWVe4i1FMGK9eSIlzkiWbWJCfleFYNOK9LtkbVQso=;
+	s=arc-20240116; t=1757853893; c=relaxed/simple;
+	bh=TTFnu68yb+Au9LixYPUGJrBKfQnoNpwW/TLJGeCsG3k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JNU3rliRg3XVinQ9aPehyGQJwaQMDy5LgWPz6D905Jkr+9Y4SejkPzZIOHzhYAOuuhT5VRsR/C3nHJDeJtov70PdzzICG30rotqKzoaSOAMwjOhBMoe6AqxvKAMBrYxW0MHPugEObafo8A8B6RHZcRCUo6Wjb6oQlSNHbnSiSog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UGck00hg; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=su/f9ePcuoF8NwRK55Elqo2iAJEf1TsPHy3IpvvVCdC7BO9LqSkLqLKzwFAEGytjss2mQ1SZSqBItygETJEj+U5LTTGSpVt91aLrIcwx2MFnJV7Gin25oFXuq40/4atb5HbvRmBI5npz0Lsx9SB+0WSbX2Vw5mdF6pdKuGh3zD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AZuVY1SE; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so3886579a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:43:49 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b07c28f390eso400701166b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757853828; x=1758458628; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757853889; x=1758458689; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uy+cd2lbAR50ajGef2hlnG8fQ1RbkXqMoeFyiCl2OoQ=;
-        b=UGck00hgPsmZ2aiohgyM0vr3lh/qraeN65uqjU2STZoq00SvGQgcU3s/z9oNchDp5z
-         NJhG7sHtwkN+QrpRtDjpTA4lyIS5y4v201K44CX9fv0TNQyb4H+nOBb8D1gbsTFWpIPV
-         w/BrHb8wPMjj4lgsOqu+d/90BoyWN22itioODBFSZC09pRUj1l4ro+dyNDth4XuHYZoW
-         KEoqa0nxL3goREAil6yyVA/NU4I/kxaHoy3dILJfCtNYq97vJ3yAbVeOxbhPcwcgJbwp
-         1ElruQK4YkTeDS6HGrzl3ikiaOtHGVawp4WXiNNU4hL6MkACc4cC+sG26xc0XfTqnMHS
-         AagQ==
+        bh=3jarG5W9v/tiwJ7KYHhBO2xAhW53n/q4HgYQtmBrgqQ=;
+        b=AZuVY1SEIV5zgKivCney/xKWU4cXUpWxw4sI8dUdiX16+zn2uw4LFPoGpsn0qbjvXZ
+         Sb28DHfClqW/23euv/rjrBUOS1U6ZBqpqU3wqAi0BAUz0A388klJOuMkC1EePG95obMW
+         GwdkDAMXtOfUQ8s/kl3pbvYUBbNOhbyGbRpAQ03fESg6TtzNHu3A75jW+1ui86jvdfi9
+         wyG1Ti/l17/Tr1nmpwK+Hsp5GK6viFz4mng+jSjxDBD6HxKXVImMFd1IeRpkaHf9R287
+         UERzXdGBC9uamDoyHlEH4vdJJlFEQr5Jun2/j7CietUbwyflWVcJRPQW115i//jsvy+w
+         hn+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757853828; x=1758458628;
+        d=1e100.net; s=20230601; t=1757853889; x=1758458689;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uy+cd2lbAR50ajGef2hlnG8fQ1RbkXqMoeFyiCl2OoQ=;
-        b=tiljn7FymbKO1T0vTBOq86mTRL+xJgM++UE9YzzgEetV/EsFbYy1wlkOfYTHTJz5OY
-         2mFfWGnpxgw7UlQz2nXi7TL40z5Z94gSXY+Z7dnJXiuGpnNFwgJlpe2gJmXa6RjskgDM
-         FNnMtORNp45roAneu3EnpnQKg290AxYpV3Kk9OJaR5qmrc7UVDmthlBHII8PR05HTOuX
-         fx/VCIj/Qr7K5Ygfl+HLbSXph0XkQ9aEZk9d56531WC/jXAo3fP91U+vMwRvxLxCVFpO
-         S69rBbSnH1ISKRZgE6bfj1vMWdEi02LIciF1edwE68m0L2I8poOadUqFm003Sk8D5PcX
-         DcRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj9a7158Bqw1hkK9+ZZc0U7PJCzplDdh2y7AKSkmkR7O7o5gotxZJBSsQ63gwnVHTN1xUv0e4aY6a1hxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC3QstylBWlm35myTih1OOAtGf2D47bUHLMgXape/bMOnMoYAF
-	LqgONhiZanac9Kf3+3XJBsqeGiekYkJ6+aciJIfikwZZjrxG7Mgqj0XRsw2wmHrdu0EsnqGP5TM
-	mj/318mhgHa8y0WDfboQHBLNC34H9n4y+8W2M+cslvw==
-X-Gm-Gg: ASbGncuniQuDV8Y9/+SaKBbYZKJ9Cndj7TU4q21BE3B9U4kipt4Z5O8kUk3mAnWjOqP
-	knZ8S0mb3/MTwiBiLln1zNqez4Fkl/m3uaecm8LWOI8qULILESAqWfOD15QVnf9e/qnWI/1FuIF
-	+CHkXAvO8p7JV5elfW0Xwn8QLZ8anIZIJiWSHCz9Mdbv7uKWzPTQQxHlf71oz77HWFOaVcrsgd4
-	C2jccD7P80k5eUV5cNV2BhnyhK2dMJMziEIEMN7/MH6xto=
-X-Google-Smtp-Source: AGHT+IF0+cMm0m1j0KWd+MnKwHHdp6AZ30WPyeA9VH0YZdhu1m4FfBCmr/HiFz9OfJzY55rCubQi7bscp7GWFYE+3cA=
-X-Received: by 2002:a05:6402:454e:b0:615:78c6:7aed with SMTP id
- 4fb4d7f45d1cf-62ed8619168mr7646484a12.32.1757853828043; Sun, 14 Sep 2025
- 05:43:48 -0700 (PDT)
+        bh=3jarG5W9v/tiwJ7KYHhBO2xAhW53n/q4HgYQtmBrgqQ=;
+        b=jDd3gN+N7ocduorRh4bVCgJAyTdYWvUlToXwN7dJG41+qZPRdkKjxbV43IKoJzIuIi
+         taQCT63JOAz08CbWKADDp817NkuiB9lbOjdFS1hcf0yoRCdgIbIOBh+TzzORa5y/pLgN
+         LBgszSXFMptbutLfvoCMepilZmtBZZXCCv4CfOHVcgXevMZkAV6NjeFzZToVUI9a0KEF
+         yRC/ICrJc0c6RUuWA1rlKXo7I/OZ00L+q9SKGT9jTXDzSzQtb4RWjszeT+ybZ9DFnp8G
+         QJE210Vazi3YMmzHSkQxTtI3z5VHy6eDQj8JDpKa3kxJc1c8OoHUAyvEm+Yr8dl5I0j+
+         HPFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPRvEtjiTf/xGZIQo1RqDKRqfoO375rw0W6XYR4ayi4t+1VPdav2R3DAWCcx0OWGxowYJkyNULUxS58aI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx14WrJ95Ar1oZvx1VcCcOoZiwDy0ocQzhGpP967HB6gNgnjbe3
+	i589uyoxOtmeeagt0dyPGDmYHBJReu47U/55yO/w4jg6VZpA2C2cDuUBZ7SgZDuaYJWZ3pYsAO6
+	AB6KiOdGMMThbbbBX4Isxrs0VdQO3xBGsH25S0zfAzQ==
+X-Gm-Gg: ASbGncsRqzX8qRZ3ueJM7s0Wpd+M+BNKDkqa4HPMkZ25luBkwVSX8LUBlrYoht/FLbf
+	FPZEbp3kF5iFE6s5Q13FPR22yvu7CgllcMyEp0S/0fGozCAeepDpl/BvCRYoQyVpl10SdJ/uC9M
+	xbXsL3j42b+rZsxPXeqXCJvrS/M3kkAgjt1CZFYPiLAb8kBG8jZUFuL7W7RYpE+sIjR2rikHKph
+	WHbzoQSFfY9pbFA27VeN8ENfNlVlr60o0NbDePaqzLSZ40=
+X-Google-Smtp-Source: AGHT+IE9eAQD+G1SRpZULH79spXVrYWnoM/RUchKtYl+AmPG6QEUapYbgUztUJxf+kTU0Jaaj6Ctvzv2Epz/ufXiT+U=
+X-Received: by 2002:a17:907:930b:b0:b04:4975:e648 with SMTP id
+ a640c23a62f3a-b07c37fd7cemr890704666b.35.1757853888447; Sun, 14 Sep 2025
+ 05:44:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912141436.2347852-1-vincent.guittot@linaro.org>
- <20250912141436.2347852-4-vincent.guittot@linaro.org> <aMSQ+CWz/rUoap2u@lizhi-Precision-Tower-5810>
-In-Reply-To: <aMSQ+CWz/rUoap2u@lizhi-Precision-Tower-5810>
+References: <20250912141436.2347852-4-vincent.guittot@linaro.org> <20250912230236.GA1650055@bhelgaas>
+In-Reply-To: <20250912230236.GA1650055@bhelgaas>
 From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Sun, 14 Sep 2025 14:43:36 +0200
-X-Gm-Features: Ac12FXxWimjpHL5bggBdXUjYa05b4pawK7VJrjWOHLmsBfbyANBkdNbMhZ52qqU
-Message-ID: <CAKfTPtC8qm5XTpxj7BCG4MjKYHmFE4qRMdxdcm5X6jVCUpGOxg@mail.gmail.com>
+Date: Sun, 14 Sep 2025 14:44:36 +0200
+X-Gm-Features: Ac12FXwgPDN7Jkf5BHLA_3G8vhZznN8l0SVIXAy3GO80o-BlChQL_IMcOsAzjt0
+Message-ID: <CAKfTPtDzL1A0KuOdP1vNaiE03cSrzE_+Nb5iC0cLQLtCC6_GLQ@mail.gmail.com>
 Subject: Re: [PATCH 3/4] pcie: s32g: Add initial PCIe support (RC)
-To: Frank Li <Frank.li@nxp.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
 Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
 	s32@nxp.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
@@ -91,41 +90,18 @@ Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 12 Sept 2025 at 23:30, Frank Li <Frank.li@nxp.com> wrote:
+On Sat, 13 Sept 2025 at 01:02, Bjorn Helgaas <helgaas@kernel.org> wrote:
 >
-> On Fri, Sep 12, 2025 at 04:14:35PM +0200, Vincent Guittot wrote:
-> > Add initial support of the PCIe controller for S32G Soc family. Only
-> > host mode is supported.
-> >
-> > Co-developed-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
-> > Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
-> > Co-developed-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> > Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> > Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
-> > Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  drivers/pci/controller/dwc/Kconfig         |  12 +
-> >  drivers/pci/controller/dwc/Makefile        |   1 +
-> >  drivers/pci/controller/dwc/pci-s32g-regs.h | 105 ++++
-> >  drivers/pci/controller/dwc/pci-s32g.c      | 697 +++++++++++++++++++++
-> >  drivers/pci/controller/dwc/pci-s32g.h      |  45 ++
->
-> pcie-s32g.*, previous pci-* is wrong added.
+> Run "git log --oneline drivers/pci/controller/dwc" and follow the
+> subject line convention.
 
 Ok
 
 >
-> >  5 files changed, 860 insertions(+)
-> >  create mode 100644 drivers/pci/controller/dwc/pci-s32g-regs.h
-> >  create mode 100644 drivers/pci/controller/dwc/pci-s32g.c
-> >  create mode 100644 drivers/pci/controller/dwc/pci-s32g.h
-> >
-> > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> > index ff6b6d9e18ec..39d9a47f6fea 100644
-> > --- a/drivers/pci/controller/dwc/Kconfig
+> On Fri, Sep 12, 2025 at 04:14:35PM +0200, Vincent Guittot wrote:
+> > Add initial support of the PCIe controller for S32G Soc family. Only
+> > host mode is supported.
+>
 > > +++ b/drivers/pci/controller/dwc/Kconfig
 > > @@ -255,6 +255,18 @@ config PCIE_TEGRA194_EP
 > >         in order to enable device-specific features PCIE_TEGRA194_EP must be
@@ -141,40 +117,35 @@ Ok
 > > +       can work either as RC or EP. In order to enable host-specific
 > > +       features PCI_S32G must be selected and in order to enable
 > > +       device-specific features PCI_S32G_EP must be selected.
-> > +
-> > +
-> >  config PCIE_DW_PLAT
-> >       bool
-> >
-> > diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-> > index 6919d27798d1..69f8e80fdae4 100644
-> > --- a/drivers/pci/controller/dwc/Makefile
-> > +++ b/drivers/pci/controller/dwc/Makefile
-> > @@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
-> >  obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone.o
-> >  obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
-> >  obj-$(CONFIG_PCI_LAYERSCAPE_EP) += pci-layerscape-ep.o
-> > +obj-$(CONFIG_PCI_S32G) += pci-s32g.o
-> >  obj-$(CONFIG_PCIE_QCOM_COMMON) += pcie-qcom-common.o
-> >  obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
-> >  obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o
-> > diff --git a/drivers/pci/controller/dwc/pci-s32g-regs.h b/drivers/pci/controller/dwc/pci-s32g-regs.h
-> > new file mode 100644
-> > index 000000000000..e7ad1b6b7aa5
-> > --- /dev/null
+>
+> s/Designware/DesignWare/
+>
+> "enable host-specific features" is oddly specific.  You need PCI_S32G
+> to make S32G PCIe work at all.
+>
+> Remove PCI_S32G_EP since you didn't add that.  There are several
+> references to endpoint mode in the code below; you should probably
+> remove those as well until you add that support.
+
+Ok
+
+>
 > > +++ b/drivers/pci/controller/dwc/pci-s32g-regs.h
-> > @@ -0,0 +1,105 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +/*
-> > + * Copyright 2015-2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2016-2023, 2025 NXP
-> > + */
-> > +
-> > +#ifndef PCI_S32G_REGS_H
-> > +#define PCI_S32G_REGS_H
-> > +
+>
+> Squash this into pcie-s32g.c.  No need to add a separate include file.
+> Maybe if/when you add endpoint support, but no need now.
+
+Yeah, i will get it back when adding EP support
+
+>
 > > +/* Instance PCIE_SS - CTRL register offsets (ctrl base) */
 > > +#define LINK_INT_CTRL_STS                    (0x40U)
+>
+> Unnecessary parens.  Unnecessary "U".
+
+Ok
+
+>
 > > +#define LINK_REQ_RST_NOT_INT_EN                      BIT(1)
 > > +#define LINK_REQ_RST_NOT_CLR                 BIT(2)
 > > +
@@ -187,6 +158,12 @@ Ok
 > > +     PCIE_EP_VAL = 0x0,
 > > +     PCIE_RC_VAL = 0x4
 > > +};
+>
+> Use the existing PCI_EXP_TYPE_ENDPOINT, PCI_EXP_TYPE_ROOT_PORT.
+
+Thanks, I haven't been able to find them
+
+>
 > > +
 > > +#define SRIS_MODE_EN                         BIT(8)
 > > +
@@ -204,12 +181,6 @@ Ok
 > > +#define LTSSM_STATE_L0S                              0x12U /* L0S state */
 > > +#define LTSSM_STATE_L1_IDLE                  0x14U /* L1_IDLE state */
 > > +#define LTSSM_STATE_HOT_RESET                        0x1FU /* HOT_RESET state */
->
-> does common dw_pcie_get_ltssm() work for it, why need new macro for it.
-
-We are not checking the same reg. I need to check why
-
->
 > > +
 > > +/* PCIe Controller 0  Interrupt Status (ctrl base) */
 > > +#define PE0_INT_STS                          (0xE8U)
@@ -219,12 +190,18 @@ We are not checking the same reg. I need to check why
 > > +
 > > +/* Instance PCIE_CAP */
 > > +#define PCIE_CAP_BASE                                (0x70U)
-> > +
+>
+> Should be able to use dw_pcie_find_capability() or similar to avoid
+> hard-coding this.
+
+Ok
+
+>
 > > +/* Device Control and Status Register. */
 > > +#define CAP_DEVICE_CONTROL_DEVICE_STATUS     (PCIE_CAP_BASE + PCI_EXP_DEVCTL)
 >
-> You use standard method to search PCI_EXP_DEVCTL instead of hardcode CAP_BASE
-> to 70
+> Use PCI_EXP_DEVCTL and PCI_EXP_DEVSTA directly in the code so grep
+> finds the uses easily.  Same for link, slot, etc. below.
 
 Ok
 
@@ -238,7 +215,13 @@ Ok
 > > +#define CAP_MAX_PAYLOAD_SIZE_CS(x)           FIELD_PREP(CAP_MAX_PAYLOAD_SIZE_CS_MASK, x)
 > > +#define CAP_MAX_READ_REQ_SIZE_MASK           GENMASK(14, 12)
 > > +#define CAP_MAX_READ_REQ_SIZE(x)             FIELD_PREP(CAP_MAX_READ_REQ_SIZE_MASK, x)
-> > +
+>
+> Use existing PCI_EXP_DEVCTL_CERE, PCI_EXP_DEVCTL_NFERE, etc. so grep
+> finds these easily.
+
+Ok
+
+>
 > > +/* Link Control and Status Register. */
 > > +#define PCIE_CTRL_LINK_STATUS                        (PCIE_CAP_BASE + PCI_EXP_LNKCTL)
 > > +#define PCIE_CAP_RETRAIN_LINK                        BIT(5)
@@ -254,12 +237,6 @@ Ok
 > > +#define CAP_LINK_CONTROL2_LINK_STATUS2               (PCIE_CAP_BASE + PCI_EXP_LNKCTL2)
 > > +#define PCIE_CAP_TARGET_LINK_SPEED_MASK              GENMASK(3, 0)
 > > +#define PCIE_CAP_TARGET_LINK_SPEED(x)                FIELD_PREP(PCIE_CAP_TARGET_LINK_SPEED_MASK, x)
->
-> I think these should be standard. if not, add S32_ prefix.
-
-Ok
-
->
 > > +
 > > +/* Instance PCIE_PORT_LOGIC - DBI register offsets */
 > > +#define PCIE_PORT_LOGIC_BASE                 (0x700U)
@@ -277,6 +254,9 @@ Ok
 > > +#define PORT_LOGIC_COHERENCY_CONTROL_1               (PCIE_PORT_LOGIC_BASE + 0x1E0U)
 > > +#define PORT_LOGIC_COHERENCY_CONTROL_2               (PCIE_PORT_LOGIC_BASE + 0x1E4U)
 > > +#define PORT_LOGIC_COHERENCY_CONTROL_3               (PCIE_PORT_LOGIC_BASE + 0x1E8U)
+>
+> Add blank line before comment.
+>
 > > +/*
 > > + * See definition of register "ACE Cache Coherency Control Register 1"
 > > + * (COHERENCY_CONTROL_1_OFF) in the SoC RM
@@ -312,7 +292,12 @@ Ok
 > > +#include <linux/pm_runtime.h>
 > > +#include <linux/io.h>
 > > +#include <linux/sizes.h>
-> > +
+>
+> Alphabetize the includes above.
+
+Ok
+
+>
 > > +#include "pcie-designware.h"
 > > +#include "pci-s32g-regs.h"
 > > +#include "pci-s32g.h"
@@ -378,9 +363,6 @@ Ok
 > > +
 > > +static struct pci_bus *s32g_get_child_downstream_bus(struct pci_bus *bus)
 > > +{
->
-> what's this, why need it?
->
 > > +     struct pci_bus *child, *root_bus = NULL;
 > > +
 > > +     list_for_each_entry(child, &bus->children, node) {
@@ -397,33 +379,43 @@ Ok
 > > +}
 > > +
 > > +static bool s32g_pcie_link_is_up(struct dw_pcie *pcie)
+>
+> Use names similar to other drivers, "s32g_pcie_link_up" in this case.
+
+Ok
+
+>
 > > +{
 > > +     struct s32g_pcie *s32g_pp = to_s32g_from_dw_pcie(pcie);
 > > +
 > > +     if (!is_s32g_pcie_ltssm_enabled(s32g_pp))
 > > +             return 0;
->
-> This function check if linkup, why enable ltssm here, suppose it should
-> enable before call it.
-
-it is also used by features not yet upstream, but I agree it's not
-necessary there and i will check if it's really required for other
-features. will remove for now
-
->
 > > +
 > > +     return has_data_phy_link(s32g_pp);
 > > +}
 > > +
 > > +/* Use 200ms for PHY link timeout (slightly larger than 100ms, which PCIe standard requests
 > > + * to wait "before sending a Configuration Request to the device")
+>
+> Use same comment style as other drivers, e.g.,
+
+It's a mistake, will fix it
+
+>
+>   /*
+>    * Use 200ms ...
+>    */
+>
 > > + */
 > > +#define PCIE_LINK_TIMEOUT_US         (200 * USEC_PER_MSEC)
->
-> define SPEC's defined PCIE_LINK_TIMEOUT_US in pci.h.
->
 > > +#define PCIE_LINK_WAIT_US            1000
-> > +
+>
+> Instead of defining your own, use #defines from drivers/pci/pci.h for
+> values from the PCIe spec.
+
+Ok
+
+>
 > > +static int s32g_pcie_start_link(struct dw_pcie *pcie)
 > > +{
 > > +     struct s32g_pcie *s32g_pp = to_s32g_from_dw_pcie(pcie);
@@ -441,12 +433,6 @@ features. will remove for now
 > > +             reg |= PCIE_CAP_TARGET_LINK_SPEED(pcie->max_link_speed);
 > > +             dw_pcie_writel_dbi(pcie, CAP_LINK_CONTROL2_LINK_STATUS2, reg);
 > > +
->
-> use dw_pcie_wait_for_link();
-
-ok
-
->
 > > +             if (is_s32g_pcie_ltssm_enabled(s32g_pp)) {
 > > +                     ret = read_poll_timeout(dw_pcie_readl_dbi, tmp,
 > > +                                             !(tmp & PCIE_CAP_LINK_TRAINING),
@@ -482,7 +468,15 @@ ok
 > > +};
 > > +
 > > +static struct dw_pcie_host_ops s32g_pcie_host_ops;
-> > +
+>
+> Probably should be const.  I guess you don't need anything filled in?
+
+Yes, we don't need anything.
+Will make it const
+
+> That would be unusual, but there are a couple drivers like that
+> (amd_mdb_pcie_host_ops, dw_plat_pcie_host_ops, keembay_pcie_host_ops).
+>
 > > +static void s32g_pcie_set_phy_mode(struct s32g_pcie *s32g_pp)
 > > +{
 > > +     struct dw_pcie *pcie = &s32g_pp->pcie;
@@ -507,13 +501,6 @@ ok
 > > +             dev_warn(dev, "Unsupported 'nxp,phy-mode' specified, using default CRNS\n");
 > > +             s32g_pp->phy_mode = CRNS;
 > > +     }
->
-> most likely it is ref clk property, not phy mode. You can check if there
-> are standard clk property for it.
-
-Ok I will
-
->
 > > +}
 > > +
 > > +static void disable_equalization(struct dw_pcie *pcie)
@@ -537,6 +524,13 @@ Ok I will
 > > +
 > > +     dw_pcie_dbi_ro_wr_en(pcie);
 > > +     dw_pcie_writel_dbi(pcie, PORT_LOGIC_COHERENCY_CONTROL_3, 0x0);
+>
+> Add blank line here before comment and use conventional comment style
+> (first line is "/*" only).
+
+It's a mistake, i will fix it
+
+>
 > > +     /* Transactions to peripheral targets should be non-coherent,
 > > +      * or Ncore might drop them. Define the start of DDR as seen by Linux
 > > +      * as the boundary between "memory" and "peripherals", with peripherals
@@ -715,6 +709,20 @@ Ok I will
 > > +      * if they are not in D0 state. So, we need to make sure that immediate
 > > +      * downstream devices are in D0 state before sending PME_TurnOff to put
 > > +      * link into L2 state.
+>
+> s/EndPoint/Endpoint/ to match PCIe spec usage.  More cases below.
+>
+> Wrap comments to fill 78 columns.
+
+Ok
+
+>
+> I'm doubtful about the need for this function since most drivers don't
+> do this.
+
+I will double check
+
+>
 > > +      */
 > > +
 > > +     root_bus = s32g_get_child_downstream_bus(pp->bridge->bus);
@@ -800,7 +808,22 @@ Ok I will
 > > +
 > > +     /* Set dw host ops */
 > > +     pp->ops = &s32g_pcie_host_ops;
-> > +
+>
+> Seems overkill to make this a separate function.  Most do it in
+> *_add_pcie_port() or *_pcie_probe():
+
+The function will be filled with additional features later but I agree
+it's overkill for now
+
+>
+>   git grep -p "pp->ops =" drivers/pci/controller/
+>
+> Follow the structure and function names of other drivers whenever
+> possible.
+
+I will have a look
+
+>
 > > +     return 0;
 > > +}
 > > +
@@ -808,7 +831,11 @@ Ok I will
 > > +                                struct s32g_pcie *s32g_pp)
 > > +{
 > > +     int ret = 0;
-> > +
+>
+> Unnecessary init.
+
+yes
+>
 > > +     s32g_pcie_disable_ltssm(s32g_pp);
 > > +
 > > +     ret = init_pcie_phy(s32g_pp);
@@ -836,9 +863,17 @@ Ok I will
 > > +                              struct s32g_pcie *s32g_pp)
 > > +{
 > > +     struct dw_pcie *pcie = &s32g_pp->pcie;
+>
+> Typical struct dw_pcie * variable name is "pci".
+>
 > > +     struct dw_pcie_rp *pp = &pcie->pp;
 > > +     int ret = 0;
-> > +
+>
+> Pointless init.
+
+yes
+
+>
 > > +     ret = wait_phy_data_link(s32g_pp);
 > > +     if ((ret) && (!phy_validate(s32g_pp->phy, PHY_MODE_PCIE, 0, NULL))) {
 > > +             dev_err(pcie->dev, "Failed to get link up with EP connected\n");
@@ -862,18 +897,20 @@ Ok I will
 > > +{
 > > +     struct device *dev = &pdev->dev;
 > > +     struct s32g_pcie *s32g_pp;
+>
+> Typical driver struct pointers are named "pcie".
+
+Ok
+
+>
 > > +     const struct s32g_pcie_data *data;
 > > +     int ret = 0;
-> > +
+>
+> Pointless init.
+>
 > > +     data = of_device_get_match_data(dev);
 > > +     if (!data)
 > > +             return -EINVAL;
->
-> Needn't check it now. never happen.
-
-ok
-
->
 > > +
 > > +     s32g_pp = devm_kzalloc(dev, sizeof(*s32g_pp), GFP_KERNEL);
 > > +     if (!s32g_pp)
@@ -888,12 +925,6 @@ ok
 > > +             return ret;
 > > +
 > > +     pm_runtime_enable(dev);
->
-> devm_pm_runtime_enable()
-
-yes
-
->
 > > +     ret = pm_runtime_get_sync(dev);
 > > +     if (ret < 0)
 > > +             goto err_pm_runtime_put;
@@ -952,13 +983,6 @@ yes
 > > +}
 > > +
 > > +static int s32g_pcie_resume(struct device *dev)
->
-> does common dw_pcie_resume_noirq()/dw_pcie_suspend_noirq() work for you?
-
-I will check
-
-
->
 > > +{
 > > +     struct s32g_pcie *s32g_pp = dev_get_drvdata(dev);
 > > +     struct dw_pcie *pcie = &s32g_pp->pcie;
@@ -1015,7 +1039,14 @@ I will check
 > > +static const struct s32g_pcie_data rc_of_data = {
 > > +     .mode = DW_PCIE_RC_TYPE,
 > > +};
-> > +
+>
+> Looks like you don't need this yet, since you only support RC mode.
+> Don't add data structures or code that isn't exercised yet.
+
+Ok, will add it with EP support
+
+
+>
 > > +static const struct of_device_id s32g_pcie_of_match[] = {
 > > +     { .compatible = "nxp,s32g2-pcie", .data = &rc_of_data },
 > > +     { /* sentinel */ },
@@ -1089,10 +1120,6 @@ I will check
 > > +}
 > > +
 > > +#endif       /*      PCIE_S32G_H     */
->
-> unnecessary for seperte file now. You can put to c file.
->
-> Frank
 > > --
 > > 2.43.0
 > >
