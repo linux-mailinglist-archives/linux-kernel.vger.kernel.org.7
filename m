@@ -1,711 +1,206 @@
-Return-Path: <linux-kernel+bounces-815700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9899AB56A02
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:04:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3404B56A06
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450E2173E51
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6339C1893D15
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A14C2C375E;
-	Sun, 14 Sep 2025 15:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651172C376B;
+	Sun, 14 Sep 2025 15:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJymhXqv"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n1faTB5N"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0542D0616
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1628A1E6
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757862224; cv=none; b=pXSNZ6NmZA0Ca8i+ygSLEiQLgGUU2/Ei9CpU0yuiAo5R52kNp4WHL0/bE8pqJduWLZhk6cghQ2rXF4Wup7bMS6b2cR6u5CdTt6D3eqhJQD/xgvR4S7hN5LPx219ot985vfnI7NfUT0EsrPUvDNuUaidAIrZDYety6xGYGMVa+Dk=
+	t=1757862446; cv=none; b=tZoIzVL9KOFqZgcYdcWBVoKUXi0lKegb4+CYdBaFCRFWYrmyXP67KjEvSXSyGuI6qB90nrA90FJp2UU5RyyPvcQJwiU+6mxLFKEdHVCTqxZCmOqM/NkexRJMkU+RCqUySqCcNRS4tcAorhDM59XuYQ7UNwvv6lILViIll3VqlnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757862224; c=relaxed/simple;
-	bh=M6ZMSsxK4+YAPKl8s8J80KaNHxqid7sV7Hyqrg12pec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RjzEQuq+VzxM7RtNW5CsHkkgfdwERyvPUbpmdNtHnVZFsS4C6qzVmtt8r5FxPkXvBZpcut5yU6GAmheKaUCT6bHo7RRVMf+Hw1QbJvMI62opoZsvcOtgCXxOOgHs6VqkzBa1UBfHPH2TG+qiKOMZFvmkT8KztxrpODe7Hy94O5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJymhXqv; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e9ca387425so390856f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 08:03:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757862220; x=1758467020; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5KDhUOmRpPma708zXeoi8+mVcbu/SNTTJAjK5XHafPk=;
-        b=EJymhXqvMQA5kczFtMIy6QHgZkupkqUiYsSFWDukQEXnd6ETaY28jpS0dHmvR6DUKo
-         MfGgrjorhpFa9YtQo4Qy+jXZX2EiOzQCmdq4ymX7mgxyuGtJK8Ezh/guo4ZNRpJmmVdl
-         vn+V//Iz4vQLK30aQG4Yqk0Oxmlg7aA33qVr9KZ18f0QLKgEhvzg9wpkLPeRzxnjpM3o
-         4T9bCu2ZVxgx5iWWqNmWw3a6FdavREAL7oly9w2PbE6yfFxPKLppqJ9Yiy5sFy1gQfTl
-         lwhubJp9ISRaQQGipaJL6nWPCX0mhMuDreDkBUw2R01XN5GQtGM7Hr5amQE6FwFMgc57
-         3ycA==
+	s=arc-20240116; t=1757862446; c=relaxed/simple;
+	bh=Xm04sNqg6M8XDtv4CgRhGuHsDDCT4cUD0lbe9sIdlTY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JWOJvFD5Ta2fomPjrwAAe+k0yHf2PQL/H1SaKkN6eqgPrfKKuKtp9E2pPdVaAh3jN7LrFnunSz1u2FpgAlgM4K4ulDWUXxBh7ReDPW4vxQrzbVXubBuEUeP1AnrHQdNfHi2CRK1DVq4UdKwsfSjY3IAS6zW6QFXxlcTBRhYl6XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n1faTB5N; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58E9fZe1028356
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:07:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=mpnZTgEP6/zsg99dZFw1ct
+	tV1r11s4EWbty3YUt72oc=; b=n1faTB5NTnl6tRExu54P9tzy9KvFhYyMvlEfrF
+	wnxZlqO9dAUICiL1731xglQpvu0vM41eTbQ90ifE1kzFxPMxKRFp7XbClvWaVYoa
+	9HnI63WW4IvKMKZNmROy/chuEbaYv6OJDIh4J66A017hCexjDtbkBAmEjTuZCEPu
+	1e2elaXGixg7S65lunzMmumzkmAExdK1hfTOB4HAggCpSyfp3RmpaOJoad80AUC2
+	ykQ1DngyA8soEYp81sXbpszozrM0HAbWaj/PHkDliI7NyriMmy2DthidHaBeeL5j
+	PvgtaxQnlq2GOBDimDoCkpCJjwUFjfJdoulY3WWDv/+FuLow==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495072jbwu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:07:23 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-265b1c650a0so3218005ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 08:07:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757862220; x=1758467020;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5KDhUOmRpPma708zXeoi8+mVcbu/SNTTJAjK5XHafPk=;
-        b=Bf06XyDWYDVw4cfb+bay64iSFle5FdMWFK/s/L7s2UwwufAExisgydU4frnvK9Jzu6
-         C0Tswoh/LkmJyyQ0FxrCaTEHyk1Vy5VTEtyILYS9LCp4FIImHh6i2FDGnPS6aumlyVwj
-         qfMLCbyxllrOxhH4O8DijQVYftqyPam3o4qb6s4eJLEwTJysBBOvmJYL65TvQSSfY5EP
-         W/EARaUcXJfGYURIYPrS6w+eaxnK+lzeqnZyDDDvfdmJd1Us72UYKgCYaYdJ4kmjwzAq
-         tPxwUDzE1trGlIGCXv7omCpFSrS90+EhAMEVZkEZ2I/1JLKi2vC8Zu2aR7Kq4Zg/szES
-         d3Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpoAsevQ4+liXBz1q/qh5ZvzAtbj1GnRj4qFjTJiDMMtynKvxAA4pjsSqnVHS+T61mNFSHsAqHkMRrIk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5pymow2xb8oTlHsKk46HT1w0/0u2EuUgWpf8zTaxJonAtW6wJ
-	WQtbY//X6W1thi7d7IHREHYrOmbF9beBXshqt3DQwrbUNQisYhF7eo7i
-X-Gm-Gg: ASbGncsqQHl8eg/T+Li6u1UkXBA7h5VygJEN9B3mzFDjJgieWqGSjEjjgmsQxNbccb/
-	C7rOr17Oh3FzJLOVd0At3W/NG7R5lykysff3cnlrKy/l27WgNQNVGhclJfsi0huZfUU3LcQ77TT
-	mndUFohiZGpphyqVZuxP+Bf9xarMJzUjbsVqQs0kAq+lznU1AE2TI+ndc/M9qz47t/sx9+mHFVT
-	U43ffeD1jUO/75tJQpNyZsdjHpPtGPpFWWh7qgC0a3usEFP+NP477GVIcc+IaSYtVsQd4xWhRpD
-	tsPd5UoI+IxA88hcUsbmxk3zWAzXRq06q4n3NYAiUVlMnc9VfphOd/y0S5GBBgdORGaVf4cgf9D
-	3Li/Uq3sExE/P+yDRvO7yFvuZy26DdpIWXeoL7G8FvGjATTqGfpBotZN3kgBE18na/7hdlpNZ4A
-	==
-X-Google-Smtp-Source: AGHT+IHRJ/8AOJVZsii76GUZ0HhcxqLkQ5DDL2gMAC1KKsMtOo84S/mslUv0y+ZEmI3HI/gKPPIbFA==
-X-Received: by 2002:a5d:5885:0:b0:3ea:dd2b:5d3 with SMTP id ffacd0b85a97d-3eadd2b07cemr66292f8f.17.1757862219613;
-        Sun, 14 Sep 2025 08:03:39 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f2acbeee0sm32780385e9.0.2025.09.14.08.03.38
+        d=1e100.net; s=20230601; t=1757862442; x=1758467242;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mpnZTgEP6/zsg99dZFw1cttV1r11s4EWbty3YUt72oc=;
+        b=h3pbTr+Ma2e++NO4XxXQa4jx7eVtEYqrGM4vLBon7igAY7Voer4NKLwU2a0R/98B9i
+         RTP0Mj50Qnypt8xoWVhKuTeT7sbncLaQdk+rJ4E1FejCNHWV4nOolibZtqfS/qJBLuZr
+         p4QMZyNp1mD/H2oDoEEyNuyUOV32gCBh8SnJhIbLsxmMEhDK5ZpG0LZglYQ3DEAGsNuD
+         3o5dN+AgAwp8FZh6AwmYFuuS8iBlWO+DbJww4ijwQ87giOwV39Hxc7gHgF5naQ+BMhmv
+         1qGTX3RLyAEK3gHqGhwPYclDk0sZ5c9Zi8S72wqwn/A6RHbBZ1jOBtO9tOdVEley/9+F
+         GMag==
+X-Forwarded-Encrypted: i=1; AJvYcCVG8dIPHHAr59Ac47qYgcs8wOLVl2TPGpL4spuBtum3p/6EpEBsV5NU3dRKas6vUyQ3cl6t9XIvUGiR1Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnfbNCwCkvcWdcveBPO9Mq1+rDiybyykofaC73kU5mvd//Nnwp
+	fIWcYbjd3PrIuUI2CfcaSur6zUptIlDxd3noFh68h7WO2QRYPKti29LQHN5qYtcN1Yvg3DxO7CQ
+	to0EoEtenQnO2j1wcqq4J4Sub5tXhb61u1SlbAvEVy6ESYJ9/OPCCotav14DLn6ny8Js=
+X-Gm-Gg: ASbGncvAwqz4Qtpn7lmJ7VcqubDOJX6rpOhTpwrW5YscMAT4NQe9+oliM0jOSwtm4DX
+	nt8KMO/kej9IuSNtQGocT8DcvLWgv8WZ/8E+bwOgCldl3C/B58lDxLpRfhbUAVFrVhWU+qLj/Ib
+	YwER0kVAb1i7xkMijXiRz6JUH874rA4IaPftV/iFRAKDq4UywszRp8hJuTISP5H9L2lM1f2qqiT
+	//H30toyBM/X+rPotoEd8IP5c7xHSyoTAFjheW6jm+PcpBbePeb2qh+1toxqmnBGpK1rN8V4kRL
+	CoYf1dieHqU9zg6V1cNWkEn7TIIFTB5yTxJHIjx501GdyWopc7Xz5S6UzObgq63+YPU23A==
+X-Received: by 2002:a17:903:1acf:b0:25f:9682:74ae with SMTP id d9443c01a7336-25f9682760bmr74240905ad.29.1757862442271;
+        Sun, 14 Sep 2025 08:07:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFM2SEI/4RHZARg2DjwJIXHfkwPqpsE8n4zdcMsj54ea6iU2s7Mz+jWRjVuhZf130ZMHHhOOQ==
+X-Received: by 2002:a17:903:1acf:b0:25f:9682:74ae with SMTP id d9443c01a7336-25f9682760bmr74240645ad.29.1757862441744;
+        Sun, 14 Sep 2025 08:07:21 -0700 (PDT)
+Received: from hu-mohdayaa-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-261d3dd029bsm41290835ad.25.2025.09.14.08.07.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 08:03:39 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] arm64: dts: exynos: add initial support for Samsung Galaxy S7
-Date: Sun, 14 Sep 2025 18:03:21 +0300
-Message-ID: <20250914150321.2632019-4-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250914150321.2632019-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250914150321.2632019-1-ivo.ivanov.ivanov1@gmail.com>
+        Sun, 14 Sep 2025 08:07:21 -0700 (PDT)
+From: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
+Date: Sun, 14 Sep 2025 20:36:48 +0530
+Subject: [PATCH net-next] net: phy: qcom: qca808x: Add .get_rate_matching
+ support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250914-qca808x_rate_match-v1-1-0f9e6a331c3b@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAAfaxmgC/x3MTQqAIBBA4avErBNGSfq5SkSYTTWLrFRCiO6et
+ PwW7z0QyDMF6IoHPN0c+HAZsizAbsatJHjOBoVKYyuVuKxpsEmjN5HG3US7CV3jXFWLljgpyOH
+ paeH0T3twFIWjFGF43w+AXFmxbgAAAA==
+X-Change-ID: 20250912-qca808x_rate_match-570d44f510b2
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757862438; l=2388;
+ i=mohd.anwar@oss.qualcomm.com; s=20250907; h=from:subject:message-id;
+ bh=Xm04sNqg6M8XDtv4CgRhGuHsDDCT4cUD0lbe9sIdlTY=;
+ b=yxKm8rrtwIeIwjA72uec0u0qsefs0G7ye/yy0CscNZpqsuIxMj3rdWgjPilCqrX59l/JKDvQQ
+ qvP/8f6UxZQCD/nSWnt5401kDVSBftS5L4uMGuX6zwt7uB7F2SIcqMr
+X-Developer-Key: i=mohd.anwar@oss.qualcomm.com; a=ed25519;
+ pk=7JNY72mz7r6hQstsamPYlUbLhQ5+W64pY4LgfSh9DJU=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyNSBTYWx0ZWRfX59J+B9Jn+3yo
+ 7g8YT/HO2Co3/DssTuMn+YsuvUveMd26VDKWZKeZpCOauOl4ak4BZFR6Sg5UNEmD1jUXmIn+Uyo
+ G4qXPx9WRcRpxTIi4WKV9XkIm5hcAQSo2ON1GAPq4JMWhjjP+MVFBoUPPd34EoT77uoEGrFdDJ1
+ dNtJcITzyC+v4mC8aXXJVGv9l+JbYB3D4PdM0PqvxKdPUbpY5NX4HrSFiklHyWWVITZ0uMgurkl
+ Is175QNtVeY3q2Yl/Jp+diqDfT1nXbCsya52rPEY3UZvM9KtJVv3yJtKmGVaPlOpnTHK76mYddu
+ QpihzPpQ5Hi1LQwTWkygffXsHY/wt7G8xKgmQJGlWAnmV7DUFrD5jQkgMQ89InXVfhcZHwqONr8
+ J1Jhsiw2
+X-Proofpoint-GUID: enfR2BvRh7-x_MndmxW5-RFrimgJM0tx
+X-Authority-Analysis: v=2.4 cv=WcsMa1hX c=1 sm=1 tr=0 ts=68c6da2b cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=QNaXVSbgLMPUDDG8BmgA:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-ORIG-GUID: enfR2BvRh7-x_MndmxW5-RFrimgJM0tx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-14_06,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 phishscore=0 clxscore=1011 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130025
 
-Samsung Galaxy S7 (SM-G930F), codenamed herolte, is a mobile phone from
-2016. It features 4GB RAM, 32/64GB UFS 2.0, Exynos 8890 SoC and a
-1440x2960 Super AMOLED display.
+Add support for rate matching to the QCA8081 PHY driver to correctly
+report its capabilities. Some boards[0][1] with this PHY currently
+report support only for 2.5G.
 
-Implement initial support for this device, including:
-- simple-framebuffer
-- gpio-keys
-- s2mps16 and max77838
-- mmc
-- usb, configured to be in peripheral mode
+Implement the .get_rate_matching callback to allow phylink to determine
+the actual PHY capabilities and report them accurately.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Before:
+ # ethtool eth0
+  Settings for eth0:
+         Supported ports: [  ]
+         Supported link modes:   2500baseT/Full
+         Supported pause frame use: Symmetric Receive-only
+         ...
+
+After:
+ # ethtool eth0
+  Settings for eth0:
+         Supported ports: [  ]
+         Supported link modes:   10baseT/Half 10baseT/Full
+                                 100baseT/Half 100baseT/Full
+                                 1000baseT/Full
+                                 2500baseT/Full
+         Supported pause frame use: Symmetric Receive-only
+         ...
+
+[0] https://lore.kernel.org/all/20250905192350.1223812-3-umang.chheda@oss.qualcomm.com/
+[1] https://lore.kernel.org/all/20250908-lemans-evk-bu-v4-12-5c319c696a7d@oss.qualcomm.com/
+
+Signed-off-by: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
 ---
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../boot/dts/exynos/exynos8890-herolte.dts    | 573 ++++++++++++++++++
- 2 files changed, 574 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos8890-herolte.dts
+ drivers/net/phy/qcom/qca808x.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index bdb9e9813..80e9901af 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos7870-on7xelte.dtb		\
- 	exynos7885-jackpotlte.dtb	\
- 	exynos850-e850-96.dtb		\
-+	exynos8890-herolte.dtb		\
- 	exynos8895-dreamlte.dtb		\
- 	exynos9810-starlte.dtb		\
- 	exynos990-c1s.dtb		\
-diff --git a/arch/arm64/boot/dts/exynos/exynos8890-herolte.dts b/arch/arm64/boot/dts/exynos/exynos8890-herolte.dts
-new file mode 100644
-index 000000000..461fa256d
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos8890-herolte.dts
-@@ -0,0 +1,573 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S7 (herolte/SM-G930F) device tree source
-+ *
-+ * Copyright (c) 2025 Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+ */
-+
-+/dts-v1/;
-+#include "exynos8890.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy S7 (SM-G930F)";
-+	compatible = "samsung,herolte", "samsung,exynos8890";
-+	chassis-type = "handset";
-+
-+	aliases {
-+		mmc0 = &mmc;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer@e2a00000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0xe2a00000 (1440 * 2560 * 4)>;
-+
-+			width = <1440>;
-+			height = <2560>;
-+			stride = <(1440 * 4)>;
-+			format = "a8r8g8b8";
-+
-+			/* these are required until there's a display driver */
-+			vci-supply = <&max77838_ldo1>;
-+			vdd3-supply = <&max77838_ldo3>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+			linux,code = <KEY_POWER>;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x7e400000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@92000000 {
-+			compatible = "ramoops";
-+			reg = <0x0 0x92000000 0x8000>;
-+			console-size = <0x4000>;
-+			record-size = <0x4000>;
-+		};
-+
-+		cont_splash_mem: framebuffer@e2a00000 {
-+			reg = <0x0 0xe2a00000 (1440 * 2560 * 4)>;
-+			no-map;
-+		};
-+	};
-+
-+	vdd_fixed_mmc: regulator-fixed-mmc {
-+		compatible = "regulator-fixed";
-+
-+		enable-active-high;
-+		gpio = <&gpa3 7 GPIO_ACTIVE_HIGH>;
-+
-+		regulator-max-microvolt = <2800000>;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-name = "vdd_fixed_mmc";
-+	};
-+};
-+
-+&gpu {
-+	/* we can only afford a slightly higher rate till there's dvfs */
-+	assigned-clocks = <&cmu_top CLK_FOUT_G3D_PLL>;
-+	assigned-clock-rates = <455000000>;
-+
-+	mali-supply = <&s2mps16_buck6>;
-+
-+	status = "okay";
-+};
-+
-+&hsi2c_7 {
-+	status = "okay";
-+
-+	touchscreen@48 {
-+		compatible = "samsung,s6sa552";
-+		reg = <0x48>;
-+
-+		avdd-supply = <&s2mps16_ldo33>;
-+		vdd-supply = <&s2mps16_ldo32>;
-+
-+		interrupt-parent = <&gpa1>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&ts_int>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&hsi2c_10 {
-+	status = "okay";
-+
-+	pmic@60 {
-+		compatible = "maxim,max77838";
-+		reg = <0x60>;
-+
-+		regulators {
-+			max77838_ldo1: ldo1 {
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "max77838_ldo1";
-+			};
-+
-+			max77838_ldo2: ldo2 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "max77838_ldo2";
-+			};
-+
-+			max77838_ldo3: ldo3 {
-+				regulator-boot-on;
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-name = "max77838_ldo3";
-+			};
-+
-+			max77838_ldo4: ldo4 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "max77838_ldo4";
-+			};
-+
-+			max77838_buck: buck {
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1600000>;
-+				regulator-max-microvolt = <1600000>;
-+				regulator-name = "max77838_buck";
-+			};
-+		};
-+	};
-+};
-+
-+&hsi2c_15 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	pmic@66 {
-+		compatible = "samsung,s2mps16-pmic";
-+		reg = <0x66>;
-+		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpa0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq>;
-+		wakeup-source;
-+
-+		s2mps16_osc: clocks {
-+			compatible = "samsung,s2mps16-clk";
-+			#clock-cells = <1>;
-+			clock-output-names = "s2mps16_ap", "s2mps16_cp",
-+					     "s2mps16_bt";
-+		};
-+
-+		regulators {
-+			s2mps16_buck1: buck1 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_buck1";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck2: buck2 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1575000>;
-+				regulator-name = "vdd_buck2";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck3: buck3 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1475000>;
-+				regulator-name = "vdd_buck3";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck4: buck4 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_buck4";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck5: buck5 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_buck5";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck6: buck6 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_buck6";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck7: buck7 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-name = "vdd_buck7";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_buck8: buck8 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-name = "vdd_buck8";
-+				regulator-ramp-delay = <2000>;
-+			};
-+
-+			s2mps16_buck9: buck9 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2100000>;
-+				regulator-name = "vdd_buck9";
-+				regulator-ramp-delay = <2700>;
-+			};
-+
-+			/* buck10 is used for CP but lacks documentation */
-+
-+			s2mps16_buck11: buck11 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-name = "vdd_buck11";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo1: ldo1 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <900000>;
-+				regulator-name = "vdd_ldo1";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo2: ldo2 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-name = "vdd_ldo2";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo3: ldo3 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <1620000>;
-+				regulator-max-microvolt = <1980000>;
-+				regulator-name = "vdd_ldo3";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo4: ldo4 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1110000>;
-+				regulator-name = "vdd_ldo4";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo5: ldo5 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <1625000>;
-+				regulator-max-microvolt = <1975000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-name = "vdd_ldo5";
-+			};
-+
-+			s2mps16_ldo6: ldo6 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <2250000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-name = "vdd_ldo6";
-+			};
-+
-+			s2mps16_ldo7: ldo7 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1250000>;
-+				regulator-ramp-delay = <12000>;
-+				regulator-name = "vdd_ldo7";
-+			};
-+
-+			s2mps16_ldo8: ldo8 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_ldo8";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo9: ldo9 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_ldo9";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo10: ldo10 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-name = "vdd_ldo10";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo11: ldo11 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_ldo11";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo12: ldo12 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-name = "vdd_ldo12";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo13: ldo13 {
-+				regulator-always-on;
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-name = "vdd_ldo13";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			/* ldo14-24 are used for CP but lack documentation */
-+
-+			s2mps16_ldo25: ldo25 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-name = "vdd_ldo25";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo26: ldo26 {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-name = "vdd_ldo26";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo27: ldo27 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-name = "vdd_ldo27";
-+				regulator-ramp-delay = <12000>;
-+			};
-+
-+			s2mps16_ldo28: ldo28 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-name = "vdd_ldo28";
-+			};
-+
-+			s2mps16_ldo29: ldo29 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vdd_ldo29";
-+			};
-+
-+			s2mps16_ldo30: ldo30 {
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vdd_ldo30";
-+			};
-+
-+			s2mps16_ldo31: ldo31 {
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-name = "vdd_ldo31";
-+			};
-+
-+			s2mps16_ldo32: ldo32 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vdd_ldo32";
-+			};
-+
-+			s2mps16_ldo33: ldo33 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vdd_ldo33";
-+			};
-+
-+			s2mps16_ldo34: ldo34 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-name = "vdd_ldo34";
-+			};
-+
-+			s2mps16_ldo35: ldo35 {
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-name = "vdd_ldo35";
-+			};
-+
-+			s2mps16_ldo36: ldo36 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vdd_ldo36";
-+			};
-+
-+			s2mps16_ldo37: ldo37 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-name = "vdd_ldo37";
-+			};
-+		};
-+	};
-+};
-+
-+&mmc {
-+	bus-width = <4>;
-+
-+	card-detect-delay = <200>;
-+	cd-gpios = <&gpa1 5 GPIO_ACTIVE_LOW>;
-+
-+	clock-frequency = <800000000>;
-+
-+	disable-wp;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus1 &sd2_bus4 &sd2_cd>;
-+
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+
-+	vmmc-supply = <&vdd_fixed_mmc>;
-+	vqmmc-supply = <&s2mps16_ldo2>;
-+
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 2>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+
-+	status = "okay";
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pins = "gpa2-4";
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pins = "gpa0-4";
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pins = "gpa0-3";
-+	};
-+
-+	pmic_irq: pmic-irq-pins {
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV4>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-+		samsung,pins = "gpa0-3";
-+	};
-+
-+	sd2_cd: sd2-cd-pins {
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pins = "gpa1-5";
-+	};
-+
-+	ts_int: ts-int-pins {
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pins = "gpa1-0";
-+	};
-+};
-+
-+&usbdrd30 {
-+	vdd10-supply = <&s2mps16_ldo4>;
-+	vdd33-supply = <&s2mps16_ldo6>;
-+	status = "okay";
-+};
-+
-+&usbdrd30_dwc3 {
-+	dr_mode = "otg";
-+	maximum-speed = "high-speed";
-+	role-switch-default-mode = "peripheral";
-+	usb-role-switch;
-+	status = "okay";
-+};
-+
-+&usbdrd30_phy {
-+	/* TODO: connect with muic, add regulators */
-+	status = "okay";
-+};
-+
-+&serial_4 {
-+	/* multiplexed over muic */
-+	status = "okay";
-+};
+diff --git a/drivers/net/phy/qcom/qca808x.c b/drivers/net/phy/qcom/qca808x.c
+index 8eb51b1a006c4c68ddce26c97d7d4f87a68158b0..9d9e93d2fa8f57b1535bc83e169eb011ae549040 100644
+--- a/drivers/net/phy/qcom/qca808x.c
++++ b/drivers/net/phy/qcom/qca808x.c
+@@ -643,6 +643,15 @@ static void qca808x_get_phy_stats(struct phy_device *phydev,
+ 	qcom_phy_get_stats(stats, priv->hw_stats);
+ }
+ 
++static int qca808x_get_rate_matching(struct phy_device *phydev,
++				     phy_interface_t iface)
++{
++	if (iface == PHY_INTERFACE_MODE_2500BASEX)
++		return RATE_MATCH_PAUSE;
++
++	return RATE_MATCH_NONE;
++}
++
+ static struct phy_driver qca808x_driver[] = {
+ {
+ 	/* Qualcomm QCA8081 */
+@@ -674,6 +683,7 @@ static struct phy_driver qca808x_driver[] = {
+ 	.led_polarity_set	= qca808x_led_polarity_set,
+ 	.update_stats		= qca808x_update_stats,
+ 	.get_phy_stats		= qca808x_get_phy_stats,
++	.get_rate_matching	= qca808x_get_rate_matching,
+ }, };
+ 
+ module_phy_driver(qca808x_driver);
+
+---
+base-commit: 5adf6f2b9972dbb69f4dd11bae52ba251c64ecb7
+change-id: 20250912-qca808x_rate_match-570d44f510b2
+
+Best regards,
 -- 
-2.43.0
+Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
 
 
