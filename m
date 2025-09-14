@@ -1,79 +1,98 @@
-Return-Path: <linux-kernel+bounces-815908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F00BB56C98
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A73F9B56C9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5331899F69
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70ACB1898D2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180212C3255;
-	Sun, 14 Sep 2025 21:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D1F2E6CA2;
+	Sun, 14 Sep 2025 21:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VYiMzvbZ"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6BElGVE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC9C217722
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 21:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73569289E17;
+	Sun, 14 Sep 2025 21:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757885829; cv=none; b=dUF96VfP3h9u2sxKvd1/eir67gtWcjLhEa/C+8ALHXUCBGOC41D3IS0KdJ4elLLmUd3LRqyTTnsJpVvOTF3I9ufvZA0jwNtTD3VbtE/1ZP71dNvMrtNuVZjNL3vlXvYfchedRGx09UGif1s8MTPTA6S0xu4D8oPJYlx34YlllEA=
+	t=1757886007; cv=none; b=U/btRKnijs+hZBM5DZhL0i7lMvJ8njSzp/Au2oe807SKvbMPP6CqF/BEV1kKgdKgWP1IfMcURYQQRfNOd7PLwXPFNKArN+1UiOZB9GF07xIiWy8rbMjDsq4+hEFcfr5lNg3zMr7uTEfUoFZ6vDFEb+EgTHFTnnRfdylawy5zhUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757885829; c=relaxed/simple;
-	bh=0obPgRQ7Hm+Bb6cPAVsNuDVbFrVrACx8vDeCaH/fyOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaS7fDmbyhnjAJciohgWRv1mTRo/uRjvZcTJ3voJS7Q5nPhviYCBZvSEfvvpyrz8M4cZFQOcNHhjc3/7iVo/RQQAYEUqWxLUA58F6FX0tJGEx2fKzsOuW7HTeED1655D1IAO70FMAeLit9SacRXl7Ih4br7E19w0HoP4EyNl17A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VYiMzvbZ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=lAh2
-	9qMOUXQ/TP64YFXHyhbZt3V0AZYWq1eFjSQXKFA=; b=VYiMzvbZwOlSk+oqTTcB
-	OcVCIEbpJJAWaXZjzI13t6dPwMlOVbqbBxqh4OOxBGXazX1+6deHIWvLf3Km7A5a
-	0zMhsHkc1a1/pQI5xi7b5K8/8elJ0Oy9hlJNCNiG0PfdfxbheqJWRTlGwkn6zYsi
-	sq0n0iobgmiNtPsLWVsHxMiiim3e3KyhTK0C1wkF9YYi9nsPpASBH5je7Bc6zpiR
-	0rWN4bgk+2hxEkjYUva2e//plPVeVg0d2/mBZXk4b/xA39YJgp8qWw5nDJhWNKBT
-	yYsHWftZ23IJkeE/rHibXdOy6zr2gm2IcwPOn+LtyzoHJb5eOHiHIWualtHVq6gw
-	ww==
-Received: (qmail 2122476 invoked from network); 14 Sep 2025 23:36:57 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2025 23:36:57 +0200
-X-UD-Smtp-Session: l3s3148p1@th6sr8k+CIQgAQnoAHzAAGOD5Y6fT3HK
-Date: Sun, 14 Sep 2025 23:36:56 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] i3c: master: Remove ternary operator on return
- statement
-Message-ID: <aMc1eMXynVbozUMz@shikoro>
-References: <20250902135239.2632286-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1757886007; c=relaxed/simple;
+	bh=fFoTBzYY/Y4wGukFdKJpceVN2SwaaFe6OdyADb7VuWk=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bVII1lY++aap1xFoLwGUezJFnZ+zypXMw9m2zVAZcFtyevGpyffV3JATJUyg+75Rfw48iB6cqJOH3/2pcKIufhe/LVGU+jEiDzppJQJxb4j7gowao4duU+5m8vtZaX+bekjJ+DIBxn7wPUaUocDk9yXdWp912jZ1LpVu92yvtaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6BElGVE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D30C4CEF0;
+	Sun, 14 Sep 2025 21:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757886007;
+	bh=fFoTBzYY/Y4wGukFdKJpceVN2SwaaFe6OdyADb7VuWk=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=m6BElGVEewbhw82WXRh+Q8GhAsRKkWaAmFJXK72tS6N8J0Uc7cVf5WEcbBBx9DKZR
+	 7sdo4e6Owitrr2d+xY0zOZKEBm85rSuayl9FJhduDYzj0xyXU9lcS7r/Ad2bQHdNd6
+	 qv3WT9xh0c+C3f6A3NAAY+asyJaObKrT+Nc3rjdgxfUysa9eLqelbhxgLoGwTT7yaU
+	 L3dOM+ByhUiKPUQBf3kEEJNFADYQyExfDyYDpABqEyV9WzS2c5cVcEx/tDoSPDemAi
+	 0EAndWIIO4Td88nY6YYYooiw7LyONobGnLKYzdnV0HlA4bVu3IMBCnHvvyeJhemT4d
+	 51FCiqzZ3FnUQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACD239B167D;
+	Sun, 14 Sep 2025 21:40:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902135239.2632286-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2 0/2] net: dst_metadata: fix DF flag extraction on
+ tunnel rx
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175788600875.3557884.5011136723968202976.git-patchwork-notify@kernel.org>
+Date: Sun, 14 Sep 2025 21:40:08 +0000
+References: <20250909165440.229890-1-i.maximets@ovn.org>
+In-Reply-To: <20250909165440.229890-1-i.maximets@ovn.org>
+To: Ilya Maximets <i.maximets@ovn.org>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ dev@openvswitch.org, echaudro@redhat.com, aconole@redhat.com,
+ shuah@kernel.org, jhs@mojatatu.com, dcaratti@redhat.com, idosch@idosch.org
 
-On Tue, Sep 02, 2025 at 02:52:39PM +0100, Colin Ian King wrote:
-> The value of ret at the end of the function renesas_i3c_daa
-> is always zero since previous checks for less than zero have already
-> exited via return paths. Hence the final ternary operator checking
-> for a less than zero value for ret is redundant and can be removed.
+Hello:
+
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue,  9 Sep 2025 18:54:14 +0200 you wrote:
+> Two patches here, first fixes the issue where tunnel core doesn't
+> actually extract DF bit from the outer IP header, even though both
+> OVS and TC flower allow matching on it.  More details in the commit
+> message.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> The second is a selftest for openvswitch that reproduces the issue,
+> but also just adds some basic coverage for the tunnel metadata
+> extraction and related openvswitch uAPI.
+> 
+> [...]
 
-Already sent (and applied just today):
+Here is the summary with links:
+  - [net,v2,1/2] net: dst_metadata: fix IP_DF bit not extracted from tunnel headers
+    https://git.kernel.org/netdev/net/c/a9888628cb2c
+  - [net,v2,2/2] selftests: openvswitch: add a simple test for tunnel metadata
+    https://git.kernel.org/netdev/net/c/6cafb93c1f2a
 
-https://lore.kernel.org/r/20250803211256.18513-2-wsa+renesas@sang-engineering.com
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
