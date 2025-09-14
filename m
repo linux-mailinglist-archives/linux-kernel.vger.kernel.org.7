@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-815593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749DDB568AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:36:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D7CB568B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897293B62B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26A703A5C94
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8091EEA31;
-	Sun, 14 Sep 2025 12:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF36C264614;
+	Sun, 14 Sep 2025 12:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L2tfi+L4"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQuRA5o2"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3841E1922DD
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDED19E98C
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757853386; cv=none; b=kpkmqGs1eVT4ZQ8xuMX96qLHi0mgbx41ZOzfLaYiJ5Z0ZdBNfcyQne136lIP4jrhhK5R5CpYa6bXbyFooQkAjQmswL4EtpVclfBve7ahyje3ZgF4/QC1WUvpV3cDDhtH9u6t20ewaZKMFDmMrnBb3BTh3wyfwbehiDVndogYp1A=
+	t=1757853610; cv=none; b=ANw1+XBpg3DxnqAP5FdF0VQb/EoX3gvXOxvaL2wtMZjuujVq5taJSRxcSzacuFjSEa2HTergJdSB/zyyq21YgL4cZJ3ZAGfI5Ah28i9oMEPNJip5ywPq2nMNTWCNOppQljc+43KcMSwQf2dy+Zl64kvapvPuIZIYbSqa4AYY5mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757853386; c=relaxed/simple;
-	bh=z5cXpDMyuJ+Ht6r3/PhJmTnt5q2Pgn8JuraH6UOXQks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D3K4LlH6vaBxusdqICXdXCcaEmX+78nAGm8wDprbgsrFkvmdlikReKXiZFF4a9jplzjdopP9e/zPcsLE03t7C1snzg/OdbOTHAIBGOUCYMCvs16cU+OB6I0ao0Bc9KyZC6KuBqCkjVTYvm0F2CHgq8jWemM2NADUmzSFk49h9Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L2tfi+L4; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62f1eb1abb9so1103532a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:36:23 -0700 (PDT)
+	s=arc-20240116; t=1757853610; c=relaxed/simple;
+	bh=Dh+wk2yoqrWCD8TB+uPwRbLtPIr4/5QsJ+QbZo4yO/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cHGUkVsSBqfrHGDb7tKlTZmRHUUbLitJHOQZlq6djrvi5l26YRVxbNB3qr2M1nvzhx/XRb8XiG+rzRqFeyo1/JbR5mhHd20AAvWgugDhq/QnL/Gj9WfYlVSWfrKQtr91lKMSYDUUVBH4Q/tCCayrD+g6KEyZ0Jwgj2bOcWUByJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQuRA5o2; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4fb8d3a2dbso2309167a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:40:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757853382; x=1758458182; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XzitEMhuyn3awzPo2ebuyIpUU8Id0dDSX6YSKZOv+ZU=;
-        b=L2tfi+L45Q4ArYvTDKAG+/aw3/V0DGGZGDakemCBzIEGGszvfinIsdNBdgvWL6/+1k
-         zuUSAJvZbtaGLUUdaU4+7+3s+rTkI4om4L9rCfLhD+SWOXXfuMKX7/bL2NfBUSlS+8+6
-         +peN1CDmRYP/GTSU5xFR0zoirEt2REFSAQQJ9zqst3zkDtAr4HCRAeRnCBrbk9oOa+nU
-         DSzWMTNCL32L5lEXNovAmWe4QO6zuUMobNly6VHRRmhb3+AE+RR9+W8bjc/VqbtasyxV
-         qX/J+0ygNf3v9Kx0jk4HfjtHqxk4A2F3/W+0CwX/u5wllyMVTcqhLnZZa7vaxr1oKRMf
-         5AKg==
+        d=gmail.com; s=20230601; t=1757853608; x=1758458408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FQf2AGsnl6vclYwp9c3+fOFIkP4apfGdDfRnsEWxb3w=;
+        b=cQuRA5o2MTkN4YKbYLM3zCEfwS4QWMKylpaAOPTH1jHZXCQsyFSE7fIE/rGGaRdTX+
+         BYGXZBQNRZo2qOY9g1Sz2RKD4QniFAuXUC0nJoU8OUfGwjhPdFLp0eM17IT5wJ6pnBJt
+         56dY+s98IWWfFybwKywcKLcx5AqYBQzxRp2mRZnz0Y5iXgav8wuMeiMjY1qSz/M5kxyy
+         0eMPi3lxWPPM0Kchfl7XEYUViR0fe34WTIZaqnYxQcgGuQufC2N0MPSCQJCViOW4UeVN
+         u/P3YEHyr48v72K+ihyj9gTSJlEQeRvVnWwq9Tnq+nQIXZVB4nJk8WOqa3gKQx/NIV+D
+         3cuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757853382; x=1758458182;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XzitEMhuyn3awzPo2ebuyIpUU8Id0dDSX6YSKZOv+ZU=;
-        b=L+nekTvS7IsNZd9qLOHU33xH+4BOLGRwfsJbqdKYoFD4KQsFMENhykX2515mQV+fsT
-         Tj8zSFKr3HyHWTUeog6Rmw8zkZQiwb2bqsN6vBPAn9+lOhANIibAVCvYxN1+JQgDe/Kf
-         IuxVSZCyI0XkH9E+i+CYiFWDVjgodHT2AhPXyHeqlIrdJ65Egesme/LCkZlBaIkE9pSj
-         1GMRy6D+IxCdha7y55cBIQvUqlAkiH0t25ILZhUbuNHAKszOVysmLKkG1LFs44gqdWTd
-         8u/+XVKOIun7mcWf1mBzUF6iJevRLEdB9BLDCigA3p1kBw2WdEbhJ9HD3KwOuw6XM9aa
-         R/xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjVRDKb+ab9eoPIa6sdLmtX8TJOlZjh8KZjZdO0hcvTNME1yWStnvGnhyMF4pyLCTzOArId1PmG1L1O34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysx2G8xn7ybbJY8vas3WPD4R+NvH9nGK3UzlTbsrB1ivOoWaUs
-	dXLIG7HfcKCjXD2oumca41ZN0Djv6My5epCacPplPlIGU3oBdZRPVKF2mEC8Jn/PkGyLz0XQMew
-	s3vga1Aolz6qgR7ruaveay06w+I35oJ+cOKL1ldGn9w==
-X-Gm-Gg: ASbGncuRkSX8KDVFsbZdx8X66PzBc2XxN4wcW7dml5YoCZlQjlNKUjXIZsmb4Xf9tv3
-	Un6fPAxsX0gLXuFkTXSZl61QZsjEQZIL+4Sp5Jjxs0aM6Pm22Lzxs3VPIz8izCNLdN+ZxB1baB1
-	I4beAH7RNqAM9bLVk3c30CaykC2iD9MVFwH4KysRHqgqSB9wt0/hT6IgK1h4/D/DQn8ThxcdL2O
-	EA2JcTVqJA7029HNkOD9HIK3ZG4r5hRynQ0iPnZ6QOi76KzWFmbMLMLXQ==
-X-Google-Smtp-Source: AGHT+IGLgebxMOwJM71zc3D3ToXnk7YnVzCirJGRT8ZrnA27mi4s1untjNEF1bLojbZ0S1PNlaf1GTIT/qLxGso+faQ=
-X-Received: by 2002:a05:6402:84c:b0:625:ec92:9cb9 with SMTP id
- 4fb4d7f45d1cf-62ed97f056amr9211931a12.6.1757853382608; Sun, 14 Sep 2025
- 05:36:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757853608; x=1758458408;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FQf2AGsnl6vclYwp9c3+fOFIkP4apfGdDfRnsEWxb3w=;
+        b=o4YRQdi184Br8yAneW+TACZMkrP57Ry/COPuueTS8aYjR6mC1OnD/ZoxVqVqgkfDRm
+         HIyMCc+WE22hZR2/awQ7itIup1Be5d0r8pEFp5oWya48qu5C6Bx7XPP2p8SXEiYXXxDY
+         sh7KJSJHsCSS3IntEaAvZwlpxMB8hQwUPpCRqJVCEku93CHU3tz/63+iMYkWHniB3Z4O
+         j/6ig7SU/lmBjnLB8QGyJ68QqJyV3qtQhnsFTe3Bm43Je+2ymqJ048WfO3YNDzo6EcGx
+         5C5mhGTpoqZzMA+cvJWtlMHgU/E3dlFhrS6vYqoWzyMb9MXT9Db95opZOW29S8LwXiIW
+         PUkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuWs9k7Pfm5jzkEd08T/AVxyuAtObHCIDdt3B5H2y+YNGtaziw5oyxKc4Ge0K1Hj8VlpVMn727wTjQCX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ6g78IiQ6QXUk6YyuF/LFC849qRXbDjDh9wBEwV98qnVMfY73
+	rxShGOV4IzzFeITkQq++ts3bh14DtSTCOqmTdfnpAMT2IajIqKU6E74Q
+X-Gm-Gg: ASbGncu+i+eqHE802MGO9rk+l8qfD4ZPXxhw0/DBf/GGRrUVfepiU+goG8kEgIEmJ+E
+	ZteddYvJI9g0yTLNcjBAgWIIS8dg3M2/GSLrK12rwPr+iQGb4L9boDw5dFhsQo0QQRL1uSEiRSG
+	c71aMy/Tb2JDNjDciKJSrcLGvVUCMAcF5HeUbfzCNaf0UztUF7RXdvpQFFoUZt5IYW5dPnEPw1f
+	6a3H4mf6b9uU8eimTgMsPqvfRlY9tpBlfDriV9EFrx33OwlotQR2nvxhuWPUIIg4DDZA5SDrfJu
+	SBo0Gdeq4Q4PtJk0Zid4A4/OIQwDwYPkNNuIZQ12J0b5e+v/imF0cyKaM/puoNPOPWZ7sbjA7Jn
+	IfW7IyIPjFrUucXuX/UZTzsQLkstHYqUDCSY8K+ZPhaTBa6cU2AS5hYs=
+X-Google-Smtp-Source: AGHT+IEqALl6Dr8zeTny4Ila1tLRwXJarsJ+CPNRvQ0gp8DtgtwVdOv93ajULAIsNdfEu/GQETTTtg==
+X-Received: by 2002:a17:902:ced2:b0:23f:fa79:15d0 with SMTP id d9443c01a7336-25d27142f24mr114645185ad.46.1757853607940;
+        Sun, 14 Sep 2025 05:40:07 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25fc8285639sm49876965ad.134.2025.09.14.05.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 05:40:07 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: kernel@pankajraghav.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH 1/4] iomap: make sure iomap_adjust_read_range() are aligned with block_size
+Date: Sun, 14 Sep 2025 20:40:06 +0800
+Message-ID: <20250914124006.3597588-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <vath6pctmyay5ruk43zwj3jd274sx2kqbjkfgvhg3bnmn75oar@373wvrue5pal>
+References: <vath6pctmyay5ruk43zwj3jd274sx2kqbjkfgvhg3bnmn75oar@373wvrue5pal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912141436.2347852-3-vincent.guittot@linaro.org> <20250912221817.GA1650405@bhelgaas>
-In-Reply-To: <20250912221817.GA1650405@bhelgaas>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Sun, 14 Sep 2025 14:36:11 +0200
-X-Gm-Features: Ac12FXyJQFQuZhjlTZQnQvt2nz8ZamVHOj5HVBPrh9aJUXB8J86pKRnbeO0Lw-0
-Message-ID: <CAKfTPtCm8QLrMv6CF9KWRf__39bRnx7VOA=rf6M5zJmHL-ekgQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] pcie: s32g: Add Phy clock definition
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
-	s32@nxp.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com, 
-	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 13 Sept 2025 at 00:18, Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Fri, Sep 12, 2025 at 04:14:34PM +0200, Vincent Guittot wrote:
-> > From: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> >
-> > Define the list of Clock mode supported by PCIe
-> >
-> > Signed-off-by: Ciprian Costea <ciprianmarian.costea@nxp.com>
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+On Sun, 14 Sep 2025 13:45:16 +0200, kernel@pankajraghav.com wrote:
+> On Sat, Sep 14, 2025 at 11:37:15AM +0800, alexjlzheng@gmail.com wrote:
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> > 
+> > iomap_folio_state marks the uptodate state in units of block_size, so
+> > it is better to check that pos and length are aligned with block_size.
+> > 
+> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 > > ---
-> >  include/linux/pcie/nxp-s32g-pcie-phy-submode.h | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> >  create mode 100644 include/linux/pcie/nxp-s32g-pcie-phy-submode.h
-> >
-> > diff --git a/include/linux/pcie/nxp-s32g-pcie-phy-submode.h b/include/linux/pcie/nxp-s32g-pcie-phy-submode.h
-> > new file mode 100644
-> > index 000000000000..2b96b5fd68c0
-> > --- /dev/null
-> > +++ b/include/linux/pcie/nxp-s32g-pcie-phy-submode.h
-> > @@ -0,0 +1,15 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/**
-> > + * Copyright 2021, 2025 NXP
-> > + */
-> > +#ifndef NXP_S32G_PCIE_PHY_SUBMODE_H
-> > +#define NXP_S32G_PCIE_PHY_SUBMODE_H
-> > +
-> > +enum pcie_phy_mode {
-> > +     CRNS = 0, /* Common Reference Clock, No Spread Spectrum */
-> > +     CRSS = 1, /* Common Reference Clock, Spread Spectrum */
-> > +     SRNS = 2, /* Separate Reference Clock, No Spread Spectrum */
-> > +     SRIS = 3  /* Separate Reference Clock, Independent Spread Spectrum */
-> > +};
-> > +
-> > +#endif
->
-> I doubt this belongs in include/linux/.  It looks like it should be in
-> pci-s32g.c since that's the only use.
+> >  fs/iomap/buffered-io.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index fd827398afd2..0c38333933c6 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+> >  	unsigned first = poff >> block_bits;
+> >  	unsigned last = (poff + plen - 1) >> block_bits;
+> >  
+> > +	WARN_ON(*pos & (block_size - 1));
+> > +	WARN_ON(length & (block_size - 1));
+> Any reason you chose WARN_ON instead of WARN_ON_ONCE?
 
-The header will be used by other driver so I didn't want to manage the
-transition and a patchset which would includes drivers from different
-areas
+I just think it's a fatal error that deserves attention every time
+it's triggered.
+
+> 
+> I don't see WARN_ON being used in iomap/buffered-io.c.
+
+I'm not sure if there are any community guidelines for using these
+two macros. If there are, please let me know and I'll be happy to
+follow them as a guide.
+
+thanks,
+Jinliang Zheng. :)
+
+> --
+> Pankaj
 
