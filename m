@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-815581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7D5B5687A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AADF4B5687F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AF23BE773
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623553BE824
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B433F267B02;
-	Sun, 14 Sep 2025 12:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86A026C3A5;
+	Sun, 14 Sep 2025 12:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8i2fInP"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/rx6r0u"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ABD262D0B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827BF265298
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757852487; cv=none; b=qie/1JV/0kvI/GdK69gGqFElYBhwyX+35DfYEYy2a2EZgdbdQP/0JCXBIJ1UIiNJ/c9KnV6nb09R6mU+ia2yXEH00c7IyAn+jX9TrXTkW6MgD5TkiAaANOlbOMvIUBSMzmjY2sC14ptrS2vUeTdR9brvDwFkbEEzmfmp7QamIr0=
+	t=1757852488; cv=none; b=NWmhz4Hjei3Kz8GeWtPZy9O3I8gvFl6GK+chWvNmQAjw+1nc3KWEhcGz5IBdv+JFjdxMzjwnddF9AP+AoUy1BDicPibs9ufCeRfJnEAFOIe7PRldbzDUfZibT2V7aQoGthjLrjFqJjxguA4dlwVfnQvNl4hfkBBYhn97dfWZWYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757852487; c=relaxed/simple;
-	bh=+ARkTTfgYAV8lq+cpguXWwMOib8tysz+VwmQ4xeFl5g=;
+	s=arc-20240116; t=1757852488; c=relaxed/simple;
+	bh=hyEa/GySa/6Ls75v6+v9jFgXVHwsTBG2UIuaqEWAzoI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dljHkX2XsYZaXqQ0IAvh0fZk41TDvcXAPefAKS36uft058U+yzK/FyhVD2UbmNac7Th7Qyaq6MdnKFGsQSzVVzUXgWkqRuUgSji+JzQpzdTeSSKQ7DwKDIp1tKA2rAb/uXwQVcSkS1rwvqv5f5HpjgnwoAzEpO8M5SB1j/BkKxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8i2fInP; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=O2V4P9jt8Nszm6BS/0bGBgiFh3QT1Li0n3KC6Xonq4u4Q1QGfPAYN5qA6L9xK9prWzhM+S8DfFgloN7mK4PaLQABGi98QPX4EeKaguGh+VAe2odlnw/PpKEpxFw/789fGxp2q3rDbIatXrOkoEZh28DacRiDDlrSwfz8vpbnSEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/rx6r0u; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3d3ff4a4d6fso2362174f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:21:24 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so29360105e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757852483; x=1758457283; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757852484; x=1758457284; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/o/CmP3Rg70MppvTZL3UgHlhdGprRSi/0bRMfCqA7ss=;
-        b=X8i2fInPVWgbF0VhpKD2Soj5sBQbSsjvijxy4gGKB7pMm+u8ZdYr2AfX2kfAUk8aG5
-         qerugikVWvZeSNAsnkvLFjs4jgiXCAJ71r/BVreVhEQ3ekh9zQGjBXF92hcj1/aOAiM+
-         uZMrZ67J8D5Ikjt3mTekzAn+QqzvVnk0bdPUi6hX1alDH/hjwRpaC7qDg11sYDTc7Vza
-         6psuANFgw94UyPCJ/jAACE3drmqcqsvz1SPWB4Z5yM7gwyfx0JSIl0i/KMIk1n/H/1mc
-         ByMeA0n4F3VnzvaqVizYvxpOrllWF/Z3eh8lYKDZFEMLG8/hnY4kGJV1V3TwEKDdeuhT
-         m1IA==
+        bh=I5V5EvIIFmYlE3GyO/jzMM5XnNife2k0lUvzm2HmsfY=;
+        b=D/rx6r0uFSdJtz2w12P1kmfl/F1yXRfsAVUI8lEK+M0KNftzb2UkM0SFDtRIff4FSZ
+         BUR9MNPr3NwBx0kqY2iX6M7wTXtLuKGN2kVZyqzRz5YU/5wg0I+aG4Ctq19VEqIfcwvL
+         n01aqwHiRjH7zyi1/NsoRLHtL051eEktR5TRF0g/gUfR2oIyDKDrjZCjpkadEuH00zLj
+         N/WqSoQ+pf8U+4VUm8GlmqpQR0fv0ldfTjEiAMJeNzUSoinQCWFYZ3B/ABlcOBsT7hFA
+         6qbf2fP7FpBZwBtztwBTZqSKbEE+FjMMhTDdwkKv2ERD92CR40hF043bSXjKo1EbU65L
+         oDHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757852483; x=1758457283;
+        d=1e100.net; s=20230601; t=1757852484; x=1758457284;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/o/CmP3Rg70MppvTZL3UgHlhdGprRSi/0bRMfCqA7ss=;
-        b=Sj/g+rHg9Z8DESrU495MYCZfFV5AxX3cR+9yK/+m9TqpsUgL3Hm1RhLJiWaQHPJWFs
-         ow3avdozvfQ4U1x9AG76jVyEdWMU2aVDxk65rxAFLOhr+ZjCYeai20XfO7AocOM61xjh
-         QqCsnycVWX7kDEvxjBkgofIlpPvBGf0G/SujpUmdxr6wRHfZR6ExZWKR7LKYZppXexIo
-         O1JEN9GaIKTJipne2Kt+JvjTQgM8tfkMLnm0X4LWLA9+Qr8bGYOjXBNPqUKBftU5rRKx
-         YNQzY0EIe0KP8r1k+r6pl+xFTioTpKF3CdeNVazb88O18x5d4hlUHg+0PQWQnHm+vpA/
-         oaaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1l7jFIV0LbvNZ7LWmCmgPiSALenvlehmwUwLYAcbtsPDbk64boAvzXtKcu6SE7BI3ShXp97u3ObUkys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi2Jl8i6d4JwarS2XJgvRPahPa/GbUfgcpxPV+zrLDOS2JH9wB
-	+rPrfndOf32lGO0CbLHNWOrfi7d6aMWPH04w4Xj0XJAfFEuojXIvOqaj
-X-Gm-Gg: ASbGnctWpRy1hv66f3aQmuK6A4WUubNge15WfQEylCjN+T0rAiUkZVeG9kP8YKsvOm4
-	lGEkwmcNer+6XfFJELXq6OEr+h4/otoTvQvl2J1lTswhNTHxEfFOSy217Jp2znftnP0gtd7ZPo5
-	+LOu/IFgDunfzGA3KroylNuNJ5SjFaXykLLGRIuSx2XMTHhDfxXKvs9aB4/ty3C7clGlIvjBdlD
-	EFHIvqfBJnmInDUWPKiITrZf1aeFoaRJf3/NgPoQ6FEhLhySjQxD12TxjTSCKgM8BHj3HJJn/s4
-	atQnxCWDnp647uch6mcOLtybtVf8TugqUT+ehN0usVik+kDuW4LsHdRuTIwrqtPclRs/gtmMfe2
-	sI/6mk+abuKOtUbAgOS5zyPba7TUyrJhP2iHkclPw2Qwh1efTXZSjyXu46A+bkgsbU6YUXgS2TV
-	o1niOf0cCP
-X-Google-Smtp-Source: AGHT+IF65054uWgaEnZnjo3739WPkXpFwENVCRBSnh2RLQhMQq0qfIAS99sWpws28e4M/hCiCQUjLQ==
-X-Received: by 2002:a05:6000:178c:b0:3e7:63dc:1ff6 with SMTP id ffacd0b85a97d-3e7658bc908mr6223136f8f.8.1757852482965;
-        Sun, 14 Sep 2025 05:21:22 -0700 (PDT)
+        bh=I5V5EvIIFmYlE3GyO/jzMM5XnNife2k0lUvzm2HmsfY=;
+        b=LREK+25lpi4/eRGWZpN7Vrlpn9pv+1D4W5U6X5Z+jrbpiMHQfm9OtifNjT/msxUPNj
+         umyyRMgyWIAMXhcKuHUoFq5ZW7vIP+FANtaxVRRKP1B1f6WqhsHGaMlgcIILJOqY+t54
+         9UO5lVbxde5bMi2KEj7PFDluS5+nKifnEtBSDN3JHXSM2JVHkHfRwecaX0+2cqaF99Gv
+         /FQz75xK/DOtwPo4o2aIbeQnCUJZ7T7Ump200rzv1qJvafCdEa/WlUJuTSaFscijyHMj
+         zSxeL1UVgeNk1YeEXHoGRw53F+itOks2FF/h0dt57HzS1wlYIr4mAWS0EQOu207ReqpZ
+         ntIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMq3M+VpnafkV7MKwsDCCH6Q7UbScSRJB1abCDOnUIwj/t9N1pnm3SApAv0ch+dE5yiMpxwPXGrC3Rw6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8pyp0YWzcxZbp55XP3xD4iOuB99DczAMXszvFw03a5kCNNShV
+	rGDgP7EcWC750E87fPlt9flPs+ibJo+U7NLCsVHpId/QatQtRza9ITCU
+X-Gm-Gg: ASbGnct2KjJ4at6oJ2j69tXa67JXNh5e5wI2HZVBj/v8XatHvTexKbSfV3VbbHVpM4y
+	OQ2H/DCT6T3ZoZFmIaIFypjUm2BfjfG/SQV4gZ74Ajud97DREuVTJT9hXiiFR885QpTRggoceqL
+	SZxVFnspm0Xj2LS1NoHeyM9YurIBjtjZo/7jsZ56nJR7NMIySuoDkaNzo6Og6Wsn17SQhq27m+h
+	9dHYHd49r46badgkzjjlyBOHJf/fTKj493nh2tH8Elt3Bs1n26AmQomUOtCAYB4hidZJg3F7BPk
+	p1j1yYMcmOqWJdJgASb71mH4SBH/u3yZ+phx4CLTGN/hh7Ljlq747MT/CyAJg+nfNp49N19FIws
+	wjNC6Mz8yTAhXlsIRzVxDVhLsOH9lWm1hmHCfTg9WYP7C4ie7wAr6AI7zCvvKc+6breJZWrbQAA
+	==
+X-Google-Smtp-Source: AGHT+IG0ZXg0sjBbUNfdeanXFe0dMTX//arWD3IfNQ77haSimowawRn8wcMXpw44W5JXi1TEnscc4w==
+X-Received: by 2002:a05:600c:468a:b0:45d:5c71:769d with SMTP id 5b1f17b1804b1-45f2126253emr91249815e9.8.1757852484220;
+        Sun, 14 Sep 2025 05:21:24 -0700 (PDT)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b4222sm136476615e9.20.2025.09.14.05.21.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b4222sm136476615e9.20.2025.09.14.05.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 05:21:22 -0700 (PDT)
+        Sun, 14 Sep 2025 05:21:23 -0700 (PDT)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -87,9 +87,9 @@ Cc: linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/5] clk: samsung: clk-pll: Add support for pll_1419x
-Date: Sun, 14 Sep 2025 15:21:14 +0300
-Message-ID: <20250914122116.2616801-4-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 4/5] clk: samsung: clk-pll: Add support for pll_1431x
+Date: Sun, 14 Sep 2025 15:21:15 +0300
+Message-ID: <20250914122116.2616801-5-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250914122116.2616801-1-ivo.ivanov.ivanov1@gmail.com>
 References: <20250914122116.2616801-1-ivo.ivanov.ivanov1@gmail.com>
@@ -101,86 +101,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The PLL is similar to pll_35xx, with the following differences:
-- different locktime - 150 instead of 270, as with pll_142xx
-- different rate calculation
+The PLL is similar enough to pll_36xx that the same code can be used.
 
 When defining a PLL, the "con" parameter should be set to CON0
 register, like this:
 
-PLL(pll_1419x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
-    PLL_LOCKTIME_PLL_SHARED0, PLL_CON0_PLL_SHARED0,
-    pll_shared0_rate_table),
+PLL(pll_1431x, CLK_FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
+     PLL_LOCKTIME_PLL_SHARED0, PLL_CON0_PLL_SHARED0,
+     pll_shared0_rate_table),
 
 Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 ---
- drivers/clk/samsung/clk-pll.c | 10 ++++++++--
- drivers/clk/samsung/clk-pll.h | 10 ++++++++++
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-pll.c | 1 +
+ drivers/clk/samsung/clk-pll.h | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index acb366f14..6b3593445 100644
+index 6b3593445..e52e010ad 100644
 --- a/drivers/clk/samsung/clk-pll.c
 +++ b/drivers/clk/samsung/clk-pll.c
-@@ -229,7 +229,11 @@ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
- 	pdiv = (pll_con >> PLL35XX_PDIV_SHIFT) & PLL35XX_PDIV_MASK;
- 	sdiv = (pll_con >> PLL35XX_SDIV_SHIFT) & PLL35XX_SDIV_MASK;
- 
--	fvco *= mdiv;
-+	if (pll->type == pll_1419x)
-+		fvco *= (2 * mdiv);
-+	else
-+		fvco *= mdiv;
-+
- 	do_div(fvco, (pdiv << sdiv));
- 
- 	return (unsigned long)fvco;
-@@ -273,7 +277,8 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	}
- 
- 	/* Set PLL lock time. */
--	if (pll->type == pll_142xx || pll->type == pll_141xx)
-+	if (pll->type == pll_142xx || pll->type == pll_141xx ||
-+	    pll->type == pll_1419x)
- 		writel_relaxed(rate->pdiv * PLL142XX_LOCK_FACTOR,
- 			pll->lock_reg);
- 	else
-@@ -1373,6 +1378,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 	case pll_1450x:
- 	case pll_1451x:
- 	case pll_1452x:
-+	case pll_1419x:
- 	case pll_141xx:
- 	case pll_142xx:
- 		pll->enable_offs = PLL35XX_ENABLE_SHIFT;
+@@ -1420,6 +1420,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	/* clk_ops for 36xx and 2650 are similar */
+ 	case pll_36xx:
+ 	case pll_2650:
++	case pll_1431x:
+ 		pll->enable_offs = PLL36XX_ENABLE_SHIFT;
+ 		pll->lock_offs = PLL36XX_LOCK_STAT_SHIFT;
+ 		if (!pll->rate_table)
 diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index 989addfdb..c07d76121 100644
+index c07d76121..964c35ddc 100644
 --- a/drivers/clk/samsung/clk-pll.h
 +++ b/drivers/clk/samsung/clk-pll.h
-@@ -50,6 +50,7 @@ enum samsung_pll_type {
- 	pll_0732x,
+@@ -51,6 +51,7 @@ enum samsung_pll_type {
  	pll_4311,
  	pll_141xx,
-+	pll_1419x,
+ 	pll_1419x,
++	pll_1431x,
  };
  
  #define PLL_RATE(_fin, _m, _p, _s, _k, _ks) \
-@@ -57,6 +58,15 @@ enum samsung_pll_type {
- #define PLL_VALID_RATE(_fin, _fout, _m, _p, _s, _k, _ks) ((_fout) + \
- 	BUILD_BUG_ON_ZERO(PLL_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
- 
-+#define PLL_1419X_RATE(_fin, _rate, _m, _p, _s)			\
-+	{							\
-+		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
-+				2 * _m, _p, _s, 0, 16),		\
-+		.mdiv	=	(_m),				\
-+		.pdiv	=	(_p),				\
-+		.sdiv	=	(_s),				\
-+	}
-+
- #define PLL_35XX_RATE(_fin, _rate, _m, _p, _s)			\
- 	{							\
- 		.rate	=	PLL_VALID_RATE(_fin, _rate,	\
 -- 
 2.43.0
 
