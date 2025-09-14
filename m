@@ -1,125 +1,367 @@
-Return-Path: <linux-kernel+bounces-815590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7B1B568A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:34:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C78B568AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0069D163D63
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAEE188AE35
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42139261B6C;
-	Sun, 14 Sep 2025 12:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC42260580;
+	Sun, 14 Sep 2025 12:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="ZHnFQ9WV"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CAFE55A;
-	Sun, 14 Sep 2025 12:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dO4mM1Z7"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B6E19E98C
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757853280; cv=none; b=JqiSRYEnLWggJaH94kHFw4ZRzUGx5gzP1GjE1Ttnxj79STLsNhigfySAchESYSbbvNIUrt1m5xsOMfRbwc82DVEJM4HnnK7oqYA5BevITRBLCu5WGtzzPkkTYnlv1TLGZdVULjjB01iPFKi9KJCKb3OVR5bdaysqVphRp+2QyPQ=
+	t=1757853300; cv=none; b=Pn3gLzZzpwyaOZneqo1mjBJanx+RsavGsHJYA6NMYFDXqa1LoGoCG1VMbiJ/GNG78bWwRgLYV8qpYe/pPKjPg7ZuVbs+17+qOK7+ePjnoJyBdn6VtY2udhs09gvknSlTcEVnwnX5V/ReEa2qvNnVMMCIvZ3srJVpCJGAAOCbZns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757853280; c=relaxed/simple;
-	bh=8iABwI2C5d5wA5EN6xiW+XM3Ij/JuAeh7KwDh27HM2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ldgq0SlqUUjbj9GBmxEY1YaNVjEVo40xWEdiRBY4I6nkVAXgRCssjdTss/NXz7KR652eikdAAZBXqrqaowLc5cMA4vWEGeQh6jwCfBS4fljAD/GsEzzD+2rCxPfR0Q5kaZdWC6TeE/f6M1A/60mqk2ebSr4Rr1Gjuu5ntWi/M9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=ZHnFQ9WV; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 3336F14C2D3;
-	Sun, 14 Sep 2025 14:34:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1757853270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jsU2AE2o9h39I/bC+6REsgHkBZzgTz+eEtU5Pz4oB3M=;
-	b=ZHnFQ9WVH7uQ7JXSaJgSdCwGPWEZeOAULgp+YfZaQOyBWL0r//EvgB0uLCrDe5ZqeNAyQq
-	BBuSWtP91z9MYE6EqQmIOVndtjXW581sYCxDbiPTpXp5A00gbrISdjrOXIULuuHW3nPPP5
-	9h9GtQPdeo+c+wZBJ+e6nE8BEAzevKKxo20Hcses+KxzeSB8JI+c/lrfyIzh+fjQwYJ8LW
-	uQq1S8Snlg8jRSdO12JaCVms+ic5oReXoMKjcCaVMc7JSuYkyMg6dWx11YNf2mhGZZim4L
-	Pvo479pRFWyDJLelnVGs2IdgLsbxVGXppkJ+pkQgjDpry7jify9yXyQ+Qcdy2g==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id a8ee2d0a;
-	Sun, 14 Sep 2025 12:34:26 +0000 (UTC)
-Date: Sun, 14 Sep 2025 21:34:11 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Remi Pommarel <repk@triplefau.lt>
-Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [RFC PATCH 0/5] 9p: Performance improvements for build workloads
-Message-ID: <aMa2Q_BUNonUSOjA@codewreck.org>
-References: <cover.1756635044.git.repk@triplefau.lt>
+	s=arc-20240116; t=1757853300; c=relaxed/simple;
+	bh=fRxf354j9p5dLkCyRRpVnIzv7RmHa2wj/7G8YB2Kzos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JIsk1juAsuqKBcmKKGClCKGOUQfQNzR105LxC6ivSYEfNcRm7EOFi91YP1kQQphh5PkW4DWknjZG5lfb/cHqrhQqFuukkvfeumMOZIs8VpZ8goDamfKZeElRrhQxaNZ1G1mhyDlP7AaUc1Ciiq+N0ObaVUHRZ2vf5Qn3WWA0muY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dO4mM1Z7; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0428b537e5so454981066b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757853297; x=1758458097; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6My8g8ijlC6ggM3Nx6OmXgJVfqUSxwxL444mCRnJ11g=;
+        b=dO4mM1Z7bieQEVV9pvJtiYB1n2s3M0sxuhEiKCi0QlhfFt6rOlNCbu1upgPSxukMyt
+         00ZEN6lV6ryAfyb30zprRNm/OwvDldlBEcNfCtj4BWvoE0J3/xB+C9S+sp9i1dWYEgTx
+         VdLgVaDbQYSuT/lQ//Hj15xByBHE/070bIskFk3z757O68AbtbmZuUbnui+VncOEm911
+         7yeWSQzI7TdNEH5zKev5RS7RDQRzs/9A6Rvw0lo4m/8F++54wChp62Wa2AdTa6qjhdVE
+         ZzahHFCd5IqzeSVACdZPSasIE609mg8wpHUIBhBiFYr+EKYNhmyu3FlLvyhNbJXyM8Cf
+         EJ2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757853297; x=1758458097;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6My8g8ijlC6ggM3Nx6OmXgJVfqUSxwxL444mCRnJ11g=;
+        b=L1gZmxbqbWAuBdpGLBtB1vGlG8e3lWmIT3AOWT1qM7/DCAaq8uy6PZT6kzrkYARDHG
+         SVACs10HsN1nuVeQNKKqsu4813Lbay9xJU/H4Nl55W/qE40Q0ylg4Foupub4Uum16XsY
+         f9UtxkOcdKMCDWsp0u35zDqZJa64IWu6RBKXj6RQKgpH2l152JutqSc99sB4tCH3VQi5
+         IdqkZnTMneAtaxuLcDbMFTv2QtiVvbr30E+oSupaEpMUSmdgwzykS6fZbfEdpu7lgP6z
+         Tm3ChcDmOsxXyjh8earJziadaZDiFREz9x0JLW1aAITFjQcsFUUQgYkondZKclI6+9s6
+         5Ktw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkDT8wxPJ/3BWiKnrUlkIzdcbVpeSGQk9put0xiTMVDgoLTDU5hQ7WQzfo4mAemppeTksnigv3ZQd3pew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRePQu04TtYEqDE6AMfITpLlVw3R3Z07QgKs5eu75ImD/pF5Fb
+	uNzqJTTn+dKTbo/D2yMGFtYWznfps1EaMlKLDcP5wkXQ7+9CAgibDx4ibgsZiLwC8dW4+i7w1qH
+	+ahujhq54YhSGSfMVgVt+czbJQGS5YNL7srrAFki5Pw==
+X-Gm-Gg: ASbGncvTOzfgtc7LVjCJcP1Hm13mBXbt/apYhjIn/MdcyM7hkYBYMLRGLdo/950zUWj
+	tYcij9s9XLU3WVsa+De4/IsTd4sFT0al7BlIneSllSAmWYQ3Mb6G6oMrRSpZnFama5BPefctkFI
+	wXUFuznv4jJmNQkp9YejLDk4Rk2Cc/yutjyJk9JwDmPHv4rirLpRH26L8Zf6BqeGVEie0UebwQI
+	hnE2IqN0ABeZ3Aco9ARdEgp3tnZWkjkdO7TRe9keaK9/EY=
+X-Google-Smtp-Source: AGHT+IE9iMZLipi8SbmYOlVHFkjWHvFeGW1GqsUB94IHXcDFtD/+YhZqBpHxrpl4wzzT0r2J3Pq8q72gpM+PxQoXhrE=
+X-Received: by 2002:a17:907:7f87:b0:b0e:d477:4961 with SMTP id
+ a640c23a62f3a-b0ed477740fmr113747966b.23.1757853296988; Sun, 14 Sep 2025
+ 05:34:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1756635044.git.repk@triplefau.lt>
+References: <20250912141436.2347852-1-vincent.guittot@linaro.org>
+ <20250912141436.2347852-2-vincent.guittot@linaro.org> <aMSHsoLHGUBoWX8e@lizhi-Precision-Tower-5810>
+In-Reply-To: <aMSHsoLHGUBoWX8e@lizhi-Precision-Tower-5810>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Sun, 14 Sep 2025 14:34:44 +0200
+X-Gm-Features: Ac12FXyj3Q4Ir_GGRHAULDx1O8xgannDkGizhiAuLvket8uRGtmjSHnXquF9Gho
+Message-ID: <CAKfTPtBh3jvEQF09sL8g7Zeru+WvtQO31UFZEZDx1DYJ8RCK3w@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: pcie: Add the NXP PCIe controller
+To: Frank Li <Frank.li@nxp.com>
+Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
+	s32@nxp.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com, 
+	ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com, 
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Remi Pommarel wrote on Sun, Aug 31, 2025 at 09:03:38PM +0200:
-> This patchset introduces several performance optimizations for the 9p
-> filesystem when used with cache=loose option (exclusive or read only
-> mounts). These improvements particularly target workloads with frequent
-> lookups of non-existent paths and repeated symlink resolutions.
+On Fri, 12 Sept 2025 at 22:51, Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Sep 12, 2025 at 04:14:33PM +0200, Vincent Guittot wrote:
+> > Describe the PCIe controller available on the S32G platforms.
+>
+> can you cc imx@lists.linux.dev next time? suppose most part is similar with
+> imx and layerscape chips.
 
-Sorry for slow reply, I think a negative cache and symlink cache make
-sense.
-I haven't tested these yet, and there's a conversion to the "new" mount
-API that's brewing and will conflict with 2nd patch, but I'll be happy
-to take these patches as time allows.
-What was the reason this was sent as RFC, does something require more work?
+Ok will do
 
-I can't comment on io_wait_event_killable, it makes sense to me as well
-but it's probably more appropriate to send through the scheduler tree.
+>
+> >
+> > Co-developed-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+> > Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
+> > Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
+> > Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> > Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> > Co-developed-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
+> > Co-developed-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > Signed-off-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  .../devicetree/bindings/pci/nxp,s32-pcie.yaml | 169 ++++++++++++++++++
+> >  1 file changed, 169 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml b/Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml
+> > new file mode 100644
+> > index 000000000000..287596d7162d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml
+> > @@ -0,0 +1,169 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/nxp,s32-pcie.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: NXP S32G2xx/S32G3xx PCIe controller
+> > +
+> > +maintainers:
+> > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
+> > +  - Ionut Vicovan <ionut.vicovan@nxp.com>
+> > +
+> > +description:
+> > +  This PCIe controller is based on the Synopsys DesignWare PCIe IP.
+> > +  The S32G SoC family has two PCIe controllers, which can be configured as
+> > +  either Root Complex or End Point.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - enum:
+> > +          - nxp,s32g2-pcie     # S32G2 SoCs RC mode
+> > +      - items:
+> > +          - const: nxp,s32g3-pcie
+> > +          - const: nxp,s32g2-pcie
+> > +
+> > +  reg:
+> > +    minItems: 7
+>
+> If minItems is the same maxItems, needn't minItems.
+
+Ok, I didn't know that
+
+>
+> > +    maxItems: 7
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: dbi
+> > +      - const: dbi2
+> > +      - const: atu
+> > +      - const: dma
+> > +      - const: ctrl
+> > +      - const: config
+> > +      - const: addr_space
+> > +
+> > +  interrupts:
+> > +    minItems: 8
+> > +    maxItems: 8
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: link_req_stat
+> > +      - const: dma
+> > +      - const: msi
+> > +      - const: phy_link_down
+> > +      - const: phy_link_up
+> > +      - const: misc
+> > +      - const: pcs
+> > +      - const: tlp_req_no_comp
+>
+> use - for names
+
+Yes, I forgot to change this
+
+>
+> > +
+> > +  msi-parent:
+> > +    description:
+> > +      Use this option to reference the GIC controller node which will
+> > +      handle the MSIs. This property can be used only in Root Complex mode.
+> > +      The msi-parent node must be declared as "msi-controller" and the list of
+> > +      available SPIs that can be used must be declared using "mbi-ranges".
+> > +      If "msi-parent" is not present in the PCIe node, MSIs will be handled
+> > +      by iMSI-RX -Integrated MSI Receiver [AXI Bridge]-, an integrated
+> > +      MSI reception module in the PCIe controller's AXI Bridge which
+> > +      detects and terminates inbound MSI requests (received on the RX wire).
+> > +      These MSIs no longer appear on the AXI bus, instead a hard-wired
+> > +      interrupt is raised, documented as "DSP AXI MSI Interrupt" in the SoC
+> > +      Reference Manual.
+>
+> Don't need description for this common property.
+>
+> msi-parent for pcie devices is most likely wrong. It should use msi-map.
+
+Ok, I'm going to have a look.
+
+>
+> > +
+> > +  nxp,phy-mode:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    description: Select PHY mode for PCIe controller
+> > +    enum:
+> > +      - crns  # Common Reference Clock, No Spread Spectrum
+> > +      - crss  # Common Reference Clock, Spread Spectrum
+> > +      - srns  # Separate reference Clock, No Spread Spectrum
+> > +      - sris  # Separate Reference Clock, Independent Spread Spectrum
+> > +
+> > +  max-link-speed:
+> > +    description:
+> > +      The max link speed is normaly Gen3, but can be enforced to a lower value
+> > +      in case of special limitations.
+>
+> needn't description here.
+
+ok
+
+>
+> > +    maximum: 3
+> > +
+> > +  num-lanes:
+> > +    description:
+> > +      Max bus width (1 or 2); it is the number of physical lanes
+>
+> needn't description here.
+
+ok
+
+>
+> > +    minimum: 1
+> > +    maximum: 2
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - interrupts
+> > +  - interrupt-names
+> > +  - ranges
+> > +  - nxp,phy-mode
+> > +  - num-lanes
+> > +  - phys
+> > +
+> > +additionalProperties: true
+>
+> unevaluatedProperties: false
+>
+> because you refs to /schemas/pci/snps,dw-pcie-common.yaml
+>
+> You can send to me do internal review before you post to upstream.
+
+ok, thanks
+
+>
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/phy/phy.h>
+> > +
+> > +    bus {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        pcie0: pcie@40400000 {
+>
+> Needn't label "pcie0"
+
+ok
+
+>
+> > +            compatible = "nxp,s32g3-pcie",
+> > +                         "nxp,s32g2-pcie";
+> > +            dma-coherent;
+> > +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
+> > +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
+> > +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
+> > +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
+> > +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
+> > +                  /* RC configuration space, 4KB each for cfg0 and cfg1
+> > +                   * at the end of the outbound memory map
+> > +                   */
+> > +                  <0x5f 0xffffe000 0x0 0x00002000>,
+> > +                  <0x58 0x00000000 0x0 0x40000000>; /* 1GB EP addr space */
+> > +                  reg-names = "dbi", "dbi2", "atu", "dma", "ctrl",
+> > +                              "config", "addr_space";
+> > +                  #address-cells = <3>;
+> > +                  #size-cells = <2>;
+> > +                  device_type = "pci";
+> > +                  ranges =
+> > +                  /* downstream I/O, 64KB and aligned naturally just
+> > +                   * before the config space to minimize fragmentation
+> > +                   */
+> > +                  <0x81000000 0x0 0x00000000 0x5f 0xfffe0000 0x0 0x00010000>,
+> > +                  /* non-prefetchable memory, with best case size and
+> > +                  * alignment
+> > +                   */
+> > +                  <0x82000000 0x0 0x00000000 0x58 0x00000000 0x7 0xfffe0000>;
+> > +
+> > +                  nxp,phy-mode = "crns";
+> > +                  bus-range = <0x0 0xff>;
+> > +                  interrupts =  <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
+> > +                  interrupt-names = "link_req_stat", "dma", "msi",
+> > +                                    "phy_link_down", "phy_link_up", "misc",
+> > +                                    "pcs", "tlp_req_no_comp";
+> > +                  #interrupt-cells = <1>;
+> > +                  interrupt-map-mask = <0 0 0 0x7>;
+> > +                  interrupt-map = <0 0 0 1 &gic 0 0 0 128 4>,
+> > +                                  <0 0 0 2 &gic 0 0 0 129 4>,
+> > +                                  <0 0 0 3 &gic 0 0 0 130 4>,
+> > +                                  <0 0 0 4 &gic 0 0 0 131 4>;
+>
+> use pre define macro
+>
+> <0 0 0 1 &gic GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
+
+yes
+
+>
+> > +                  msi-parent = <&gic>;
+>
+> Suppose it is wrong for pcie
 
 
-> The third patch extends page cache usage to symlinks by allowing
-> p9_client_readlink() results to be cached. Resolving symlink is
-> apparently something done quite frequently during the build process and
-> avoiding the cost of a 9P RPC call round trip for already known symlinks
-> helps reduce the build time to 1m26.602s, outperforming the virtiofs
-> setup.
 
-That's rather impressive!
-(I assume virtiofs does not have such negative lookup or symlink cache so
-they'll catch up soon enough if someone cares? But that's no reason to
-refuse this with cache=loose)
-
-> Further investigation may be needed to address the remaining gap with
-> native build performance. Using the last two patches it appears there is
-> still a fair amount of time spent waiting for I/O, though. This could be
-> related to the two systematic RPC calls made when opening a file (one to
-> clone the fid and another one to open the file). Maybe reusing fids or
-> openned files could potentially reduce client/server transactions and
-> bring performance even closer to native levels ? But that are just
-> random thoughs I haven't dig enough yet.
-
-Another thing I tried ages ago was making clunk asynchronous,
-but that didn't go well;
-protocol-wise clunk errors are ignored so I figured it was safe enough
-to just fire it in the background, but it caused some regressions I
-never had time to look into...
-
-As for reusing fids, I'm not sure it's obvious because of things like
-locking that basically consider one open file = one fid;
-I think we're already re-using fids when we can, but I guess it's
-technically possible to mark a fid as shared and only clone it if an
-operation that requires an exclusive fid is done...?
-I'm not sure I want to go down that hole though, sounds like an easy way
-to mess up and give someone access to data they shouldn't be able to
-access by sharing a fid opened by another user or something more
-subtle..
-
--- 
-Dominique Martinet | Asmadeus
+>
+> you should use msi-map
+>
+> Frank
+> > +
+> > +                  num-lanes = <2>;
+> > +                  phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
+> > +        };
+> > +    };
+> > --
+> > 2.43.0
+> >
 
