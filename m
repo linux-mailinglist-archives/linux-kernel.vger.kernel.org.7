@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-815437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C61B56446
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:23:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA26B56447
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B2517D299
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7729342434D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC6124A06D;
-	Sun, 14 Sep 2025 02:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F6D24728F;
+	Sun, 14 Sep 2025 02:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XtgqFScy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="pZ/sCFcR"
+Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F9E2459E5
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 02:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A382E6FBF
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 02:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757816572; cv=none; b=aXV9BdxNOQdJvO46Ix202apvEvF3myRkHLhgcG6QZO8tSvFZOJr2uV8YP1WgedLKCAT2CfiT18LL8anqfC+zExTeA0Z36caFVpXbAjDewBqxydkA+KLOSy16yyubLYFGyiUv9jRPGdxt+PWksytT/zjrTpe07uHTi+RyLGMKsKw=
+	t=1757816638; cv=none; b=YBroiddylWbya2/VJjKcgVljlnD52rrPtrARPb5CuzUEh3UBcvP99SUHDwwW0/NTYe9hXJBLo6s/RLuQB5lAYHb3aqG+CzIkqrpFp7Y74mGc25cYToToJ5x+BbPIG1th6b6ORnpcgCSyBSSuFrF3jM/a5EbHdQaOuZKmXQb3IR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757816572; c=relaxed/simple;
-	bh=EX3TyOfBuaXKwQxkn392r7BCMjWDwZpQoG4WIyx3PWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmL5CmZ/WLO9gWBAg+PM046rudwgfWnxCMkFYLe7SBwcCManDDf3n12SIeX+yab++WJyGv1zg4DlZxiA0XVjR0OzAAgyk05oQ7uOGF2nydki3BU/pk6XLcYZ8wSrilVlcSY+6eGFYyQNa9MZy3K4JE6e/Ai2NOUOlFHF5U4ZBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XtgqFScy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757816569;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EX3TyOfBuaXKwQxkn392r7BCMjWDwZpQoG4WIyx3PWI=;
-	b=XtgqFScyhPMV4e4PiBwmnzAW0m80TjHOv7Q30y2+5/93j4HlSjZo40SH86o24yZvI1LNon
-	sWGrokUpkBbZ81gHzNuxJQsnbgQtnzPVMT3CcrZJVV0L7aWiDoV5cMhc7OsADEprWhjCAK
-	DcAXvxOWbV+R8AD5pR+e4drxDptRwhQ=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-sPL7IEAKM1KvjoYkAJp9Hw-1; Sat, 13 Sep 2025 22:22:48 -0400
-X-MC-Unique: sPL7IEAKM1KvjoYkAJp9Hw-1
-X-Mimecast-MFC-AGG-ID: sPL7IEAKM1KvjoYkAJp9Hw_1757816567
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-571c4a20da8so1566922e87.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 19:22:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757816567; x=1758421367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EX3TyOfBuaXKwQxkn392r7BCMjWDwZpQoG4WIyx3PWI=;
-        b=V0pk3M9/YAb9xmKWFJIaNncEsS2alJ0kD+0m01e34hvCiQhBRLv+/GMxY0hQqq84lm
-         oV32+HqZ/jsGtlPfGJ0s/YUKDg5qox8N4G9Zn2vEkAEDE2IOWug2qLAX+hxQ5YNr2cPX
-         fMFw3PRQmyt6wU/f+1A78ThDYX/E8GbuPABnP3yTQMu5IBF5x1Vyjo4A7wcXIzK5rVzK
-         iM+Ep3WnoMxd3Bf6G/qoV7bAzjGAo8yT6c+9f1EN09HoClkE5p+TrCEymBIMUD3omlbi
-         yI4nMujp8Hq4mDD+AgujfiDcSlEZsu/l0Z6El+gVahyMdbT2ywlzh/NL0M7Z2lnuLqUo
-         NTWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkadojL+RfHs96Fw7qLIC3+OXtFv/NBS6IXLZqC3G9T5tWkUWEnvJNB4end6mdN4ke/sHvYiZgof6Y2E4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1e95NIBghi1T7E+V9y9K+80RoTUw5nSNSdsSYbxTzNCG670jK
-	KsDv9vms1WaAAidmHTsGbJd4vZxuiChkpIXcAsWuRwAwSHEIufNxeZntBJ+YbF95BD2+S4dsr5l
-	AS8pg93VSBjVfecqPzt1EJumppZWXIB7kuForz8UVQzaZUPpx26qPX8WazJZtAn5mYiUhElNtqI
-	pUurTeBZmYQo1msyW5LrOSXTUnq02stZUH4/pc/vgD
-X-Gm-Gg: ASbGnctmv+vPivdepHVJDwNuc0bQWg5U+TtTuZZEXFa4iZWJstc6hyJ/VOqELVzT+xF
-	ciSI20AesrqXPVbWjv8eqLHFs09owOLEQF55FtQL9A/9K7UWjvMcaZC9ptn6xRCX5q/SIPTkV0R
-	rD0C1sl9oi5FRdGVCrsNxrNQ==
-X-Received: by 2002:a05:6512:61cf:20b0:560:9993:f14d with SMTP id 2adb3069b0e04-5704a3e6909mr2406233e87.3.1757816566876;
-        Sat, 13 Sep 2025 19:22:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6LBuQC+0fECjQxQjn7BzUOWmOXhHvsIC5jjwUVw3z05iv8yLPovYye6qdflldAjCnE1SB/JiNJw+Ng3RRT8o=
-X-Received: by 2002:a05:6512:61cf:20b0:560:9993:f14d with SMTP id
- 2adb3069b0e04-5704a3e6909mr2406223e87.3.1757816566498; Sat, 13 Sep 2025
- 19:22:46 -0700 (PDT)
+	s=arc-20240116; t=1757816638; c=relaxed/simple;
+	bh=02HLFsIIRx8d3iRj/vA5zzDKr1/xXzpo1w1/vekRvxM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dlJ+ULhO6VBu0p1NtkYSy0EbUjIIQRSl/oApD4WI3lA3s29aZzot5XkDDmFZ6c23l0uWkjX7tCxulKgqZmFf/ZLW5JL/vDtrR7i/eDiLhdulxZ2Cq5+gt8JoDBJuZrn8n/vjs4kjdWxaaMH/dkWvFxcrAFAOVJYMYWmolfR1WG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=pZ/sCFcR; arc=none smtp.client-ip=202.108.3.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757816633;
+	bh=soAVKL/6gGlvs7NpC/kFx/027hfgadBenVwkVqhKBAo=;
+	h=From:Subject:Date:Message-ID;
+	b=pZ/sCFcRPTRBhEXq1F+AraPGW+MsH2QZXJu3Fi4fRMptNqWSy3FWWGakfRCYwLONX
+	 iAzOTgaC1NU7RxsrL83xOgJTEDVs2XgSkncWblOlLqsz0Mgc2WPKFWmR4BAgBO7W39
+	 uBwJ62rpoEpufbtir/uAVxZM14OMnxDFd1bja9yY=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68C6270A00007BBD; Sun, 14 Sep 2025 10:23:07 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9737014456621
+X-SMAIL-UIID: 2DC8645A57844B7B918BD48ADEA49B19-20250914-102307-1
+From: Hillf Danton <hdanton@sina.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 01/14] slab: add opt-in caching layer of percpu sheaves
+Date: Sun, 14 Sep 2025 10:22:57 +0800
+Message-ID: <20250914022258.7062-1-hdanton@sina.com>
+In-Reply-To: <20250723-slub-percpu-caches-v5-1-b792cd830f5d@suse.cz>
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913062810.11141-1-litian@redhat.com> <bacbeaf2-104f-4da5-a66b-b8aee2b2de12@lunn.ch>
-In-Reply-To: <bacbeaf2-104f-4da5-a66b-b8aee2b2de12@lunn.ch>
-From: Li Tian <litian@redhat.com>
-Date: Sun, 14 Sep 2025 10:22:35 +0800
-X-Gm-Features: AS18NWARZWkoG_VR78fDtIJydZ_R8xlJD5gNpW5l3SKmCv3wXuhvflXEKdZ8Jf8
-Message-ID: <CAHhBTWvcd45s5P-TfKBVzHy00jofbgoWtX+z3Uaj+5ZEBTNLfQ@mail.gmail.com>
-Subject: Re: [PATCH net] net/mlx5: report duplex full when speed is known
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>, 
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
-	linux-rdma@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 13, 2025 at 10:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
-:
+On Wed, 23 Jul 2025 15:34:34 +0200 Vlastimil Babka wrote:
+> +
+> +/*
+> + * Caller needs to make sure migration is disabled in order to fully flush
+> + * single cpu's sheaves
+> + *
+This misguides, see below for a workqueue case.
 
-> I'm confused with your commit message. You say DUPLEX used to be
-> reported as Full if the speed is known. How does c268ca6087f55 change
-> this?
+> + * must not be called from an irq
+> + *
+> + * flushing operations are rare so let's keep it simple and flush to slabs
+> + * directly, skipping the barn
+> + */
+> +static void pcs_flush_all(struct kmem_cache *s)
+> +{
+> +	struct slub_percpu_sheaves *pcs;
+> +	struct slab_sheaf *spare;
+> +
+> +	local_lock(&s->cpu_sheaves->lock);
+> +	pcs = this_cpu_ptr(s->cpu_sheaves);
+> +
+> +	spare = pcs->spare;
+> +	pcs->spare = NULL;
+> +
+> +	local_unlock(&s->cpu_sheaves->lock);
+> +
+> +	if (spare) {
+> +		sheaf_flush_unused(s, spare);
+> +		free_empty_sheaf(s, spare);
+> +	}
+> +
+> +	sheaf_flush_main(s);
+> +}
+> +
+> @@ -3326,30 +3755,18 @@ struct slub_flush_work {
+>  static void flush_cpu_slab(struct work_struct *w)
+>  {
+>  	struct kmem_cache *s;
+> -	struct kmem_cache_cpu *c;
+>  	struct slub_flush_work *sfw;
+>  
+>  	sfw = container_of(w, struct slub_flush_work, work);
+>  
+>  	s = sfw->s;
+> -	c = this_cpu_ptr(s->cpu_slab);
+>  
+> -	if (c->slab)
+> -		flush_slab(s, c);
+> +	if (s->cpu_sheaves)
+> +		pcs_flush_all(s);
+>  
+Migration is not disabled.
 
-Because in some circumstances like Azure, mlx5e_port_ptys2speed (now
-mlx5_port_ptys2info) does not return a speed. And thus it relies on
-data_rate_oper. It reads to me as long as there's no issue acquiring
-the speed duplex should be set to full.
-
-> You don't say in the commit message. Why is Half duplex
-> important to this fix? I don't see Half anywhere in the code.
-
-It does not return half duplex at all. It would be unknown. I'm just
-saying that half duplex shouldn't exist in modern Mellanox 5.
-
-> Also, what sort of problems do you see with duplex unknown?
-
-There were reports of RHEL seeing duplex unknown in ethtool
-on Azure Mellanox 5. The intention is to fix this.
-
-Thanks for reviewing.
-
-Li Tian
-
+> -	put_partials(s);
+> +	flush_this_cpu_slab(s);
+>  }
 
