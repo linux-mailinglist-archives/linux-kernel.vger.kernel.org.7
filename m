@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-815749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33370B56ABF
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 19:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2489B56AC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 19:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C9D7A5A61
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:07:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6372017793A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA492DCF6F;
-	Sun, 14 Sep 2025 17:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AECD2DE6EF;
+	Sun, 14 Sep 2025 17:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYQ3Kc1r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gn8lK8zI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AF736D;
-	Sun, 14 Sep 2025 17:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4ADE571;
+	Sun, 14 Sep 2025 17:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757869733; cv=none; b=fTzQA/gf8NrdeAxFt/G/zkbl+EDh/fnb/JFfNFqOiGCKMDZ74mB+J12zUMEcSWnwvutIASDs2T90Qpz76zvOmKNOUfCVW6FC3Fqzl6dFhrG+lLdMDiSJ7kqCzmPAU7JCYXDf5kIm7qmPGQklvchIeSbIuH2kyst4mHMobJYj3cg=
+	t=1757870060; cv=none; b=Uq9vdCrXukm8No+7Mx+oPLTk/GXr1Kwaqs+8f6Hkymq2HIu5yUsQWlv2uYg/TFxRqjA3rdKVSSc+tR6cSO83qHV6dIDnBoao9mBD4JJAs5bHn/2FvnBVEqrxV40Xq5cbEaTNExfKwa+aGz/LvUp2RNuPIAbTUD2mrBLCDq7toH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757869733; c=relaxed/simple;
-	bh=fGRi7r7UGdfTvtG9WrDVbW6OFN2VqaZtKsuCj4RwQJo=;
+	s=arc-20240116; t=1757870060; c=relaxed/simple;
+	bh=79hZ03aZ3ULIA5jNq7oCUuCVpZomDYMNWn6jgNL2fRE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkAe17k1lIuTFZCONaGDwskwBYT/XmkrP7yKfy6s5M1xH/Cy61QvqVoAJK6iprWY8BvrP1OnXPsNzDOFt6sNkUYOlqHLXMhkeP0HfHJC4w2zkPDdPayvEHClUwPTwdSZgWb8V3VXR4mvSZnSaD+gqeAWT/q6PDp/p12fT10ydEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYQ3Kc1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80387C4CEF0;
-	Sun, 14 Sep 2025 17:08:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PS8ov+41UuVrdnoOzmIYZwqh5KBvL0/B6mX0BsDwiTXCsoJIifd9jJPNDw9KK68Wf1hFPe4XG+oLfiN1pALEw94d6gaCkDiDTCBmDOINoA6/gHl7ZtCE08SCevJRWRUCPKM4b1OrrHZjDDttc81OZIFqVflPJU18XKTMuvcqou4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gn8lK8zI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0145C4CEF0;
+	Sun, 14 Sep 2025 17:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757869731;
-	bh=fGRi7r7UGdfTvtG9WrDVbW6OFN2VqaZtKsuCj4RwQJo=;
+	s=k20201202; t=1757870060;
+	bh=79hZ03aZ3ULIA5jNq7oCUuCVpZomDYMNWn6jgNL2fRE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NYQ3Kc1rdfz64Zw6jS1oG6Isaz5iT8f9/5lLGLoGRuOowmZlHExNqrqofr08pn3j2
-	 d1NiVlgOgRb4CQWez5s+tNLIAGNBYLdbhJtGJLypmZOOp4vVIhc8V28GKBfF8MOcLQ
-	 IcyQZz/WePKMKxHVtKV7Yk3QUM4Ulph8ga9ERBZe2vuFG9BUg2npgHMGQeqAee0JNU
-	 UhKtWnXuom1t7y7IvS+B7KIyHMun17+shetZlM3f4p7UUQJs+/f+842KdeYUbXPSJQ
-	 CDq1deWz4OG9orumLhUYKkCXyHLIGw/Xgxob0RkyPX7D7JKoI2/jcVfISPZhegWhGo
-	 1+4Xt5aesMMoQ==
-Date: Sun, 14 Sep 2025 20:08:48 +0300
+	b=Gn8lK8zITBNoujifAnN/YDL3jVvSwojtmH06N5sHIQ+vf93H/q66LbOKZ85V0oO69
+	 RTjfbVwbgi52WdYyfxW6MmXiMNb2HVJ5y6ARcH7pfVikMs9Rf7A6MVzD1DSNxAKFme
+	 Sa3iKOQHp6m3WxoRu+aqA4Uyce8QCQr7hwxeTq7M7HwHlxD6QG/1bN7CkbklRNakZ5
+	 laTJ61rpOj0gkvXRSCKCW80hIGNh0FnQxEgq9T2Kv1vQDkJgsPu2tvGSwoF22GLX+U
+	 P6AJfXjzIihiYFeHSwAyHRxV65CzfXA7PivWI+ESevcyfpfbgn+e3i7kbIwNlRYltw
+	 YYRjv6SW2Whjw==
+Date: Sun, 14 Sep 2025 20:14:16 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Mark Brown <broonie@kernel.org>,
-	linux-integrity@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: tpm: SLM9670 does not work on T1023
-Message-ID: <aMb2oEN7HPeqQjQE@kernel.org>
-References: <aMLUIVjHZ6CFvd33@fue-alewi-winx>
- <aMb2A5KzQJNx3daG@kernel.org>
+To: Paul Moore <paul@paul-moore.com>, David Howells <dhowells@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH] security: keys: use menuconfig for KEYS symbol
+Message-ID: <aMb36LPkJgM29P7-@kernel.org>
+References: <20250824222813.92300-1-rdunlap@infradead.org>
+ <aKzot67f7F3wtHs7@kernel.org>
+ <CAHC9VhQsVMKN6YyHFF81rPvxirtM7UwwAJSpOZdeybGCuO1c2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,39 +62,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMb2A5KzQJNx3daG@kernel.org>
+In-Reply-To: <CAHC9VhQsVMKN6YyHFF81rPvxirtM7UwwAJSpOZdeybGCuO1c2g@mail.gmail.com>
 
-On Sun, Sep 14, 2025 at 08:06:15PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Sep 11, 2025 at 03:52:33PM +0200, Alexander Wilhelm wrote:
-> > Hello devs,
-> > 
-> > I'm trying to bring up the SLM9670 TPM 2.0 device connected via SPI on a QorIQ
-> > T1023-based board. Pin control is fully configured through the RCW, so I haven't
-> > added any additional properties in the device tree. The SPI controller accesses
-> > the TPM using `#CS0`.
-> > 
-> > However, the driver reads an incorrect vendor ID (0x1000000) and hangs during
-> > the startup sequence. A logic analyzer shows that the chip select line goes high
-> > immediately after transmitting 4 bytes, which, according to various forum
-> > discussions, does not comply with the TPM specification. Unfortunately, I
-> > haven't found a definitive solution to this issue.
+On Thu, Sep 11, 2025 at 04:34:15PM -0400, Paul Moore wrote:
+> On Mon, Aug 25, 2025 at 6:50 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > On Sun, Aug 24, 2025 at 03:28:13PM -0700, Randy Dunlap wrote:
+> > > Give the KEYS kconfig symbol and its associated symbols a separate
+> > > menu space under Security options by using "menuconfig" instead of
+> > > "config".
+> > >
+> > > This also makes it easier to find the security and LSM options.
+> > >
+> > > Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> > > ---
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> > > Cc: keyrings@vger.kernel.org
+> > > Cc: linux-security-module@vger.kernel.org
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: James Morris <jmorris@namei.org>
+> > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> > >
+> > >  security/keys/Kconfig |   14 ++++++--------
+> > >  1 file changed, 6 insertions(+), 8 deletions(-)
 > 
-> So, at least the vendor ID is bogus meaning that TPM driver is doing
-> right thing.
+> ...
 > 
-> > 
-> > Could this be a bug in the `spi-fsl-espi` driver, or is it possibly a hardware
-> > limitation of the T1023? I've come across some suggestions that involve using a
-> > GPIO as an alternative chip select instead of the one provided by the SPI
-> > controller. Can anyone confirm whether this workaround is viable? I’d prefer to
-> > avoid a PCB redesign unless it's absolutely necessary.
+> > I wote for this at least. Definitely an improvement:
+> >
+> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 > 
-> My first guess would be that the firmware inside TPM actually does throw
-> a broken vendor ID but it is exactly a guess :-)
+> I'm guessing you're planning to take this patch Jarkko?
 
-Ugh, no. Probably it is device tree given false data. I recall we have
-some ways to override device tree, so find the data sheet for the TPM
-and rewrite the ids I suppose.
+
+I'm doing PRs early week to this can easily go to my queue
+(neither mind if David picks it).
+
+David?
+
+> 
+> -- 
+> paul-moore.com
 
 BR, Jarkko
 
