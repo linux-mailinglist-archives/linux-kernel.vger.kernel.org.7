@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-815558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1242B56826
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:55:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4923FB56828
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11C9218911EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:55:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F472176B47
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6E22475CF;
-	Sun, 14 Sep 2025 11:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA3B2550CA;
+	Sun, 14 Sep 2025 11:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="B6c33VgV"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KUOH/N1O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE721DE2B4;
-	Sun, 14 Sep 2025 11:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815E124291B;
+	Sun, 14 Sep 2025 11:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757850891; cv=none; b=QW9FqlYhdRGJNs6+UQCQORwJd4uCSHqhIfMNvp11qHXnU7sGMHqBh5ARkP7FCQaVY9ybNx10CLJAO+5B8YlaGWCAOEDGtfuzHGP07+GTfxi6yL7E8/HPXaturZLdio5TyAKj8vCBcsAYAx0kPhuajlmshlMY1w283BC3c/XKM1Q=
+	t=1757850919; cv=none; b=rWrE6IH7aX+0jlrJ52fPOSJFfCSPOQ1lTwp7XXfEB9NhiprGqqX0BGGCmWL80XDd9bgns+laTXyZM9qZdtud18PDKrnqmRpD+OCGtK2qsH0WGOJaz8Sw+P/41IGkLdW85bO/UVOy6qSuKdumCLrNa0xD9uw1TQ9XJTjMU4R+iGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757850891; c=relaxed/simple;
-	bh=GOXPOqzQuRntabt4eueE99lOc9bd94jNtNwxBGOe7dU=;
+	s=arc-20240116; t=1757850919; c=relaxed/simple;
+	bh=taIHnvxPpKsVVdKxNWQcAxD/Y7kDSuAL2dKrQGpl7+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nbgOWhtoM3MMUGbHcyaHYX9q6d6Y6sIUAuzNQRmypRugyVjDYKwnrFek9nm6IsFt/eeiL6VSFPt+ZrNws3ZOasIT2M7+4Jdz5Sl3pSRXDib0pb70D1uHdXtTRtReAKqHiB+m95QtHo/YArvNpFpGwLKNo3kD0utzmH5cKd6T55c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=B6c33VgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10C7AC4CEF0;
-	Sun, 14 Sep 2025 11:54:49 +0000 (UTC)
+	 Content-Disposition; b=VznLmUa7SXFoJFipd+YkE54LxxlsiFyovP0NPOl7/mbUhWGndKSNpFx/oYvcy7CoIgsYmOkriVQ/2vtw0QyPXmVriXkkbND0dPY+lzTn5lIAVDvotCq60lobldYBki6vuBYmzsLd6leBTTT86rwCwP005QTJvjok32Sd/TgAMGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KUOH/N1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D6AC4CEF0;
+	Sun, 14 Sep 2025 11:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757850890;
-	bh=GOXPOqzQuRntabt4eueE99lOc9bd94jNtNwxBGOe7dU=;
+	s=korg; t=1757850918;
+	bh=taIHnvxPpKsVVdKxNWQcAxD/Y7kDSuAL2dKrQGpl7+g=;
 	h=Date:From:To:Cc:Subject:From;
-	b=B6c33VgVq8Jbqo1guaWrHbfz4BvMQ99KuJ5f3u+q1M5GJgJb1wEsCuNkLFc6OIb6o
-	 ituH6FoENfXifZw9C1PIXMXbOQARQbdDcdDKFyghMSgWsIlBOzeGKZbPE06t0ou42c
-	 0HzPR/fudD51TULbmIS72/ovtQ729iF6ZxkhHvxg=
-Date: Sun, 14 Sep 2025 13:54:46 +0200
+	b=KUOH/N1O2iZZrT5oOHL7+dQBHihuWYapSsqdxfTetDuxyhwrt/ki+4wsbNIHaphyA
+	 g5xG4aI6Ye8n9W+YymvNpUy1Z1MV8MS8g3FAR9mNCoPsCk6cKKqsNxPh+egR4thG4g
+	 Bj1O3ZgzkqKAqAeh52SzZVU+wfd8CmwOvhzUrjAU=
+Date: Sun, 14 Sep 2025 13:55:14 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 6.17-rc6
-Message-ID: <aMatBsRj8kbv4VoO@kroah.com>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY / Serial driver fixes for 6.17-rc6
+Message-ID: <aMatIn1m6zRXmzC-@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,71 +54,55 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.17-rc6
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.17-rc6
 
-for you to fetch changes up to 9dfec4a51df9cf0dcc23cb4ac6fc314bf9e999d0:
+for you to fetch changes up to b5e3277c0f1c3439dd02b58997c06201d0ee8dbf:
 
-  USB: core: remove the move buf action (2025-09-12 13:41:55 +0200)
+  serial: xilinx_uartps: read reg size from DTS (2025-09-06 15:51:47 +0200)
 
 ----------------------------------------------------------------
-USB fixes for 6.17-rc6
+TTY/Serial fixes for 6.17-rc6
 
-Here are some small USB driver fixes and new device ids for 6.17-rc6.
-Included in here are:
-  - new usb-serial driver device ids
-  - dummy-hcd locking bugfix for rt-enabled systems (which is crazy, but
-    people have odd testing requirements at times...)
-  - xhci driver bugfixes for reported issues
-  - typec driver bugfix
-  - midi2 gadget driver bugfixes
-  - usb core sysfs file regression fix from -rc1
+Here are some small tty and serial driver fixes for 6.17-rc6 that
+resolve some reported problems.  Included in here are:
+  - 8250 driver dt bindings fixes
+  - broadcom serial driver binding fixes
+  - hvc_console bugfix
+  - xilinx serial driver bugfix
+  - sc16is7xx serial driver bugfix
 
-All of these, except for the last usb sysfs file fix, have been in
-linux-next with no reported issues.  The sysfs fix was added to the tree
-on Friday, and is "obviously correct" and should not have any problems
-either, it just didn't have any time for linux-next to pick up (0-day
-had no problems with it.)
+All of these have been in linux-next for the past week with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alan Stern (1):
-      USB: gadget: dummy-hcd: Fix locking bug in RT-enabled kernels
+Alex Elder (2):
+      dt-bindings: serial: 8250: move a constraint
+      dt-bindings: serial: 8250: allow "main" and "uart" as clock names
 
-Edward Adam Davis (1):
-      USB: core: remove the move buf action
+Fabian Vogt (1):
+      tty: hvc_console: Call hvc_kick in hvc_write unconditionally
 
-Fabio Porcedda (2):
-      USB: serial: option: add Telit Cinterion FN990A w/audio compositions
-      USB: serial: option: add Telit Cinterion LE910C4-WWX new compositions
+Harshit Shah (1):
+      serial: xilinx_uartps: read reg size from DTS
 
-Greg Kroah-Hartman (1):
-      Merge tag 'usb-serial-6.17-rc6' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
+Hugo Villeneuve (1):
+      serial: sc16is7xx: fix bug in flow control levels init
 
-Mathias Nyman (3):
-      xhci: dbc: decouple endpoint allocation from initialization
-      xhci: dbc: Fix full DbC transfer ring after several reconnects
-      xhci: fix memory leak regression when freeing xhci vdev devices depth first
+Krzysztof Kozlowski (1):
+      dt-bindings: serial: brcm,bcm7271-uart: Constrain clocks
 
-RD Babiera (1):
-      usb: typec: tcpm: properly deliver cable vdms to altmode drivers
-
-Takashi Iwai (2):
-      usb: gadget: midi2: Fix missing UMP group attributes initialization
-      usb: gadget: midi2: Fix MIDI2 IN EP max packet size
-
- drivers/usb/core/driver.c             |  4 +-
- drivers/usb/gadget/function/f_midi2.c | 11 +++-
- drivers/usb/gadget/udc/dummy_hcd.c    |  8 +--
- drivers/usb/host/xhci-dbgcap.c        | 94 +++++++++++++++++++++++++----------
- drivers/usb/host/xhci-mem.c           |  2 +-
- drivers/usb/serial/option.c           | 17 +++++++
- drivers/usb/typec/tcpm/tcpm.c         | 12 +++--
- 7 files changed, 108 insertions(+), 40 deletions(-)
+ Documentation/devicetree/bindings/serial/8250.yaml | 56 ++++++++++++----------
+ .../bindings/serial/brcm,bcm7271-uart.yaml         |  2 +-
+ drivers/tty/hvc/hvc_console.c                      |  6 +--
+ drivers/tty/serial/sc16is7xx.c                     | 14 +-----
+ drivers/tty/serial/xilinx_uartps.c                 | 10 ++--
+ 5 files changed, 42 insertions(+), 46 deletions(-)
 
