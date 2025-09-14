@@ -1,132 +1,128 @@
-Return-Path: <linux-kernel+bounces-815494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86248B56754
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:40:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FFDB56757
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E96917AC254
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0BDC7AFBAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF12423027C;
-	Sun, 14 Sep 2025 08:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90E622C355;
+	Sun, 14 Sep 2025 08:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="At8o9FRl"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nh/TIy0Z"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ED2222585
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 08:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3631C695
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 08:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757839227; cv=none; b=MQqIjTEU1xKLlkZnvm+EOB8r0duqLACD8az361CL/FO107/PEOxP1GhHBfR9qOa/KCNcFYk1PngHBN3OCw2aMS7ujgub4OKpJ1bI+dyEnm1tjPgwkrvlGC2EfbR80t5TI5mcLQbhgoazVT6cjstrh2/9DvUMMvlXuSUwALDj9go=
+	t=1757839920; cv=none; b=LZXdXPAcSARriKab46/WWD0g+AL9NKPdOOC4XkENorePbisTlFxs7lB0hTQhRHijq1FfTQ3QM7fA9nRET+bfsoS8XoOAsc1qLl/3qj/8YCzPGpwYq59a+Aty7se0ZIFwrSQS6zZtsdR+9vS1Ji+MWyvds9k1Bnut7mDpPqrJmgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757839227; c=relaxed/simple;
-	bh=hvqqhKDwn0KttZ7YI/pFa/dPygt7+4qJkMXYteumt+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lieSp9Ml3ikjptHb9Xebqp4AaGwBRTg/+Twfcg35ipeTmD1rlA6CPfB0+TqBQppgn1Du34dHn0oXGNzeml1aXhA91xLUuHm1JZF88LmO475Tllw9ize7/9twx1sUxFx9RkV6XvLjc6MyZGX6XhPbkd6vNtwmuNVH8XbkEMUH648=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=At8o9FRl; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1757839920; c=relaxed/simple;
+	bh=pu0GrjYYfzlRG9ePNGfLSB1xjWRol2JFlYQ+Bg4jd5Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=EcBRcMCIpHHwmhOPcrLG258BvD3xsD7DbdKF0tv447b+4rFWRmAPjtBppdAFiVBamIDRi9ynPS64sTfW992kmYBsbeGeIC2czOLfXp4DB8Q2CFo56WLEGqiIhge/jXchkWWC9eRSx8+mvmLkinf5PIS880sghQh0AIwPvSUVFVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nh/TIy0Z; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0428b537e5so444019266b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:40:25 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77616dce48cso1351924b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757839224; x=1758444024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t8jAyzV+acKcWO9q4mFH0eEwR5GYgn/NUD1fgTglKnI=;
-        b=At8o9FRl2eAk38KzuOlRAiZ/cRwD8tV1W6ynXM17DfpuMari9+LTOfGeZAH8Ll7RZm
-         QILe7XZ95daOSh6ypaZoYjMNGQYilv4YuLKN9g9gxQlCanSsGhDeks/+MiXvaoAWlEJb
-         nZxnK8vCC2xVKXcdx6IdYdS5SKyAmN12H+f28GEqLpkJRiRIhYYzARP8HuGpT4wANb7L
-         IDKy2SvqfGAvkv7b+Z/GRb8+E9N5Pwin8T0rsWMml4RGqymhYe2GRrcFrJ1WofniLIWh
-         IwL4DQzg1NpMrMkTIJWxQHADCR6lvNLz3wH/UF+q3pnhpShWnVnZBGI4hokEYk+x+3NX
-         JMTw==
+        d=gmail.com; s=20230601; t=1757839918; x=1758444718; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:subject:from:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9xYB2/4f3FmpIxcEv4UNcJMbm9iSz8Dk35nkey4DobA=;
+        b=nh/TIy0ZC+LHXN0xeF8ymZPWBOzecpqfCtZLHmKhRNthcfS2IaYYp0pu36JWxizD8Q
+         GC4BysKgm7HNivJvOb8SaL5CqWR6REy27rbKezKw8FwfhXt0pIPSZj5+KPPyliTqfAHR
+         /xO/kKMNfAmcEw1gateIfAb7T/V6OzI6jPeQpFYpx0h+PO2CjGVIdnaOe0wPfsAM6Q5J
+         LnoQ1pULLfrQPoO0HtOVgqRfQO7lGR68zVXK+v/uqzg2c9aWNE95AEICT9H0qO86HN2P
+         Gqot6QuwMUJJiAvAp4YrHk7JWrL1IoD7IO6dKFOqtkgCiA409gg4qv/3XjnNpgttcvqP
+         wwfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757839224; x=1758444024;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t8jAyzV+acKcWO9q4mFH0eEwR5GYgn/NUD1fgTglKnI=;
-        b=EvDdz+o9WZmlNY6VdiiTFwzsQ1aL+bhRsRKHqyun5nN0gajcZDK3CT6bpLCUqBfMSI
-         bup5Z2TKR6XuxzHqOtj1mz99YsMbAEUw8I3gVyYFJ6RzCx9+cjcEc/9xRImOQzbVuCS/
-         WYbIRJxdYZRWz+QFSd/dCPMtlZvHRtMf6OwuSUESMpGAcodwoX05AjzGrsGLNPBAHxFn
-         I4n9JGPNGRaOa8DoYGASd7WSPPIJw9eK+HTZSYzgsr4x+8+CZBDP8n9ubN+9LtbJlI5d
-         HEwmxIAKAoy7b8GQcFGVZIxUytuW+xQOSXgl01ExDaw8fGymswDcTNmIFutZ0J0wWv30
-         zSAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUlfpFXOQKCUCBvp/XPtt7H+bClTS94lLccPAb9tSrxFQfd6/e693Vb3Jk5OeU1SgvkrbM0aJ+op0tVIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNWcQaw/crXd1H6zVdHylw+HWC2my4qoEoWLn1ghhwxITpLqRd
-	E5PdI7x0e1TJt8mcHEoFC2E7i+QJ+z5PvNLIRB+LfsBkmPlFybcth6yX
-X-Gm-Gg: ASbGncuTtuJKTJ1DL9sMyOeCjNMtPZ91bIhAUSUTC/6z+Ap+E+pJMhphOkg8p8FDUpu
-	PV+HdTXaX/4Z0jXIlKkuR2X5DWCkhDYed6Hv+mt6WqU4tEw3IpX+iuZ6G/QtAzfElROqO8QzQNP
-	cXWLOeDu53x7l/ZVpmwLKml7Bghv3TXz/VB5H4TQorUUwHaNlSUfpk3pU89UdyvGc6lBPXdPU+M
-	Rye2t1hM7xVumeeGPpKwKQSrp3mODkj2RvnjpAX0hReTX24fN8B5lq0h3jWf08YwKB0LRGnjtXe
-	5sBrk/uafJNJ8iV5batRpddOvmNikD+0CZT+GXmOuDjLPBb7HFNbzVuI8nkj3ChN6iLBVh0WcaQ
-	F9s2jGiTti2AIE+a1dKWmbmOVrmnkygYZmjEhv5WsCGh7xMZ0uZseqw==
-X-Google-Smtp-Source: AGHT+IH5BreF0jNdm1JhmaZYhd36b3wPJHK9s5ZiIRSzQP1rPJTWRUoxQcoEakCnqIxdeYIuh1MxAQ==
-X-Received: by 2002:a17:907:9621:b0:b0e:d477:4972 with SMTP id a640c23a62f3a-b0ed4777388mr94391266b.25.1757839223690;
-        Sun, 14 Sep 2025 01:40:23 -0700 (PDT)
-Received: from puma.museclub.art ([2a00:6020:b3ea:9c00:26e7:b56a:5a2d:1d72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f21a2sm721370466b.83.2025.09.14.01.40.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 01:40:23 -0700 (PDT)
-From: Eugene Shalygin <eugene.shalygin@gmail.com>
-To: eugene.shalygin@gmail.com
-Cc: Mohamad Kamal <mohamad.kamal.85@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (asus-ec-sensors) add TUF GAMING X670E PLUS WIFI
-Date: Sun, 14 Sep 2025 10:40:10 +0200
-Message-ID: <20250914084019.1108941-1-eugene.shalygin@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1757839918; x=1758444718;
+        h=in-reply-to:references:cc:subject:from:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9xYB2/4f3FmpIxcEv4UNcJMbm9iSz8Dk35nkey4DobA=;
+        b=ILORpDC8un1KqGE5z5SZy5i6exkU1Nmi24G9i74RmJalBVrrnsrCrSyZ6mLbjCzUCq
+         3CkiQGyVSW3MAaV3gpeZ5TXueximDCJwKd/8AgZcxjDlHJHqTJ5DH3rvqR0DJ4TuJLEn
+         3KKKhn/SkMeieRzJqnqru/dPaHhJSNk6uwVLOZ1S28VU6J1cqbe8QQQ7sYlsaYosT2l/
+         7dI0i+WyNvmHwYnzrJS9mGhgMWFt6utBnrxNRtROUpjaz15z6ujUglKMIh/MLVSrIEzs
+         /TT242EUepOVl27CWL7vOJhq7OGELcQU9YxTpOGzwExvh92uy8Z4i5QQNKIoJGb6R5g3
+         2JYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcCp5nP4OW6982TQEQOZz2hziNGK6pRzP2482Fqm8lLiwCHJWVsGfngU48WeFA7j1xiDHI4YSUIrAjehs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYc49s495s6C8r7TukPVcsbXNyJHm3j/mc4eiHN361cQ7pFtSA
+	zuaQT1lMkpO4ofpT7INsK9qYzwYaFf+urdivjk9xE/94tvLSjzzFdo7G
+X-Gm-Gg: ASbGncuUD8gLMV+BshEu1bSId0T0ZRSk1NHNtdb0rAWzHZz4MxX5EKBk91aZy6hUczZ
+	/8WG6h7RXapJJ5RU8QV0v51p+pWtq8z+MXVZV/lYxDqg/Ojs0agYpjrbkmKxD8SNuVAhsIuC0EN
+	oW5w8jPOc4Z7BwlcmpnfhaRjn2b09vGQVA4opUrl3g+lN99dfVC8+qdWfV4+tFWwQc8AL1P+AT7
+	zQ1ijCWvmYhEohCx2cJfLcOZEcF+qn9B9Ho+N+fngwyGWZBvTdI/wofa+WMSlafVBykPQPth7Zh
+	VIyDMAibr9b08aN7AoCYbIsPXyKLweQkrAHad7GG9IyKH7fDxqp7X9dDvlUiJ4RRRzNKAwg3Wqp
+	zd9FRNoUhc8IMogGjc2opR1XHW7tke6KS1qzSlGICrwqlN6u347opB4G0rQMuGRU=
+X-Google-Smtp-Source: AGHT+IGBCGF/62swHad3RbhGMxjfqONlAZq9ze+mDcHFiwssxclDQ9ZkAqX+WR2tZzKT+yzYuyr5Pw==
+X-Received: by 2002:a05:6a20:a10a:b0:24c:c33e:8df0 with SMTP id adf61e73a8af0-2602c72030emr10783930637.45.1757839917945;
+        Sun, 14 Sep 2025 01:51:57 -0700 (PDT)
+Received: from localhost ([121.159.229.173])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a387cc21sm8937206a12.28.2025.09.14.01.51.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 Sep 2025 01:51:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 14 Sep 2025 17:51:54 +0900
+Message-Id: <DCSE8SBC2ZD1.Z7BOJYSEIELY@gmail.com>
+To: "Andrew Lunn" <andrew@lunn.ch>
+From: "Yeounsu Moon" <yyyynoom@gmail.com>
+Subject: Re: [PATCH net] net: dlink: handle copy_thresh allocation failure
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250912145339.67448-2-yyyynoom@gmail.com>
+ <57d58296-c656-4dab-a2e2-faf2452fb4de@lunn.ch>
+In-Reply-To: <57d58296-c656-4dab-a2e2-faf2452fb4de@lunn.ch>
 
-From: Mohamad Kamal <mohamad.kamal.85@gmail.com>
+On Sat Sep 13, 2025 at 5:39 AM KST, Andrew Lunn wrote:
+>> -				skb_copy_to_linear_data (skb,
+>> +				skb_copy_to_linear_data(skb,
+>>  						  np->rx_skbuff[entry]->data,
+>>  						  pkt_len);
+>> -				skb_put (skb, pkt_len);
+>> +				skb_put(skb, pkt_len);
+>
+> Please don't include white space changes with other changes. It makes
+> the patch harder to review.
+>
+>     Andrew
+Thank you for reviewing!
 
-Add support for TUF GAMING X670E PLUS WIFI
+As you mentioned, it indeed becomes harder to see what the real changes
+are. I have a few questions related to that:
 
-Signed-off-by: Mohamad Kamal <mohamad.kamal.85@gmail.com>
-Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
----
- Documentation/hwmon/asus_ec_sensors.rst | 1 +
- drivers/hwmon/asus-ec-sensors.c         | 2 ++
- 2 files changed, 3 insertions(+)
+1. If I remove the whitespace between the funciton name and the
+parenthesis, `checkpatch.pl` will warn about it. Of course, I understand
+that we don't need to follow such rules in a mindessly robotic way.
 
-diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
-index 836d41373848..4a99b65338bf 100644
---- a/Documentation/hwmon/asus_ec_sensors.rst
-+++ b/Documentation/hwmon/asus_ec_sensors.rst
-@@ -45,6 +45,7 @@ Supported boards:
-  * ROG ZENITH II EXTREME
-  * ROG ZENITH II EXTREME ALPHA
-  * TUF GAMING X670E PLUS
-+ * TUF GAMING X670E PLUS WIFI
- 
- Authors:
-     - Eugene Shalygin <eugene.shalygin@gmail.com>
-diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
-index 3f6d89bcc8a2..dff13132847c 100644
---- a/drivers/hwmon/asus-ec-sensors.c
-+++ b/drivers/hwmon/asus-ec-sensors.c
-@@ -795,6 +795,8 @@ static const struct dmi_system_id dmi_table[] = {
- 					&board_info_zenith_ii_extreme),
- 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("TUF GAMING X670E-PLUS",
- 					&board_info_tuf_gaming_x670e_plus),
-+	DMI_EXACT_MATCH_ASUS_BOARD_NAME("TUF GAMING X670E-PLUS WIFI",
-+					&board_info_tuf_gaming_x670e_plus),
- 	{},
- };
- 
--- 
-2.51.0
+2. However, I also read in the netdev FAQ that cleanup-only patches are
+discouraged. So I thought it would be better to include the cleanup
+together with the patch. But I see your point, and I'll be more careful
+not to send patches that cause such confusion in the future.
+
+3. This is more of a personal curiosity: in that case, what would be the
+proper way to handle cleanup patches?
+
+	Yeounsu Moon
 
 
