@@ -1,143 +1,125 @@
-Return-Path: <linux-kernel+bounces-815670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C54B569A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:17:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7AEB569A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0F1899B86
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:17:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC37189A0AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948F620102B;
-	Sun, 14 Sep 2025 14:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BD8202960;
+	Sun, 14 Sep 2025 14:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JTYB9lZj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYr1itAM"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2D8287E;
-	Sun, 14 Sep 2025 14:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918378287E
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757859396; cv=none; b=QXGCGwIUmiA7rfFSlYxX3XmuRCAq42vPkS1koA/CgDP2WcU164+o/v0L23FlbfbQSk3n7zXl/1wBdrWTMm1bmun4cejlo044RwZtzpdDHkbOscCT51aC69CJnO037FYupqYEihILDYypcXojgpkZj+Kq/7dV/Ea0VkqhSe86kWo=
+	t=1757859479; cv=none; b=PgREOUkUcBoDViSwTc3W9msCJfHZSUq7JAmhgmgr3Oxjsy8MG12NWGeH31uBgg9pijL9ClbnP89CX6g/5+ycZo7E0cbEs3KP9HTPaERjDruQNgLg1mz7V8RPtCkRK2Zpvu+i6hK08oPr6VG/RbRpdditrpOF454pKj5kcmcYYT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757859396; c=relaxed/simple;
-	bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJVjXj5dAn/KElCMuCNeIRFS6iEW+A3EgtQx8iv1+JCVKhlG71Q8F+SAPrk4GTO9OAQ9/rCApRWxC6umKvvuB5wnwU0ElkLVPSyWdH5ziYQBMImzBh0ICoMsfMxGOBV47rtuhvGzDv1JTpgc945kDrU2YEnNxQriE0Xnuh7/Jrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JTYB9lZj; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757859394; x=1789395394;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
-  b=JTYB9lZjPD+zk2eMHjOaN5wVD+7PC7Rnr4CifeHV8Blj4ixpOhz1fnzn
-   s5Og+SFO4aoFaWsXyU5XghEW17N1XPEotKSbpAiEzUE7eCtCP1DByVoXm
-   33QJr00lDj4DY2YKY/BtN76ugsx9ZG/L7O/Jh0hJAGIzTasQPNxqE8avM
-   N1scrIDBqSAeKJoo6V/pIjK+ENJ6VW38ZMyStcmzIkztWCcggRqb2b7l5
-   DmyEg7cTxibD+DnCNxBdVtiRjlQhE3Dy73druFUnmvTRQ7XhL8oVAqouL
-   pi9qGf/q0g4ncn1pA8fn+hp49vmL1t+66S7UEo9DaQUPfwhHkdXFEZQ6l
-   w==;
-X-CSE-ConnectionGUID: hKcCLeKvQ6+/p9MEzuBpRw==
-X-CSE-MsgGUID: XOlwq7e4TIukCBqyfFjvoQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="71503324"
-X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
-   d="scan'208";a="71503324"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 07:16:33 -0700
-X-CSE-ConnectionGUID: fKFq+2jnSAaSeZDt1z3VvQ==
-X-CSE-MsgGUID: Zi1Q9B4xRvyVk5+bxvVdOw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
-   d="scan'208";a="174224891"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 14 Sep 2025 07:16:30 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uxnWi-0002Sy-0K;
-	Sun, 14 Sep 2025 14:16:24 +0000
-Date: Sun, 14 Sep 2025 22:16:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+	s=arc-20240116; t=1757859479; c=relaxed/simple;
+	bh=oanHDB/HU2SsYAo3QKajuMOnq/wtBoc5Vph6yvBts6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e4nWdeAl5d+YbpbAJ6oVK31bKMAudmoNxAcWSVKYdlohEOiLvLlRoWTcdUNI2MXtRWmqIW3d3XyeJ4FFJBlyasUpFxDo2Q5OCDj9xpqu/iindy/T4bCeIMgtNUQfjrR91DMqRsSSAz1/zVYaXU2APARlx0omXvqngS6xV2omIfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYr1itAM; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ea7af25f42so129377f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 07:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757859476; x=1758464276; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rsUHVkzZaZp36viUnZ0K/EbyNwm+EVEnUQ5b1FzHDOg=;
+        b=EYr1itAMOIfdrCpe2HS62umcPEJL6+uAcVycupbYnWKiGsxhiehGGIN19MMcP1ricl
+         mgJJr1nScQRJ2FN2KIFvX7kODSpUEE3KvK141IJWVR0+AkoWVTdwqlH/pxvKr3c1vxsh
+         U76N7XBdMtMlZD5tgmGk56ybae8SKd/FMTBpBSN40edAb9g/1OcPvtE7wSvtSVbnETmY
+         3lRLyMVatgLoafCu6vTq77vsWmTdqZoh6mCHDI+QHVD1EQz1Vo95ITxs7nDQ/Hgp2eUI
+         Hf+hynf7ABYoyjg8oSMJ0VWqst3yA/auB9nAa8PE4o/wnA/ND/rMB6VpUZbbBHj+lMGJ
+         U9cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757859476; x=1758464276;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rsUHVkzZaZp36viUnZ0K/EbyNwm+EVEnUQ5b1FzHDOg=;
+        b=nQzytsw+A9OcApVkF1T0u7/wC5KM0GiOtmoWKA0rIoTfE9RqXbem7Br594gTmyG/bH
+         KltIABVvJDatE9uQV+5iKsWklpL5Yo7ska+OLJbwPq0d+xgvFdrG2+hlGv0WEiX9Tp1y
+         Xb4qMCyjutw73bDAL//hbGjwbZG3oukPue1SfkL5MCIs+R6UhOW1W2Aedq0k7IzkhgBj
+         xXPjuJcoCk8xs7xUkH5OixTRuJM6L7LfJW2e9VR3vCuGc4D0XXpnz0vjEQIWIKkuGZsk
+         GdAo9GaWbNR/2Lz9j557NxbG6WvYck1veAIhRKrnOjywNp346IqGdFXJ3i2kbMcw3UA0
+         Ov+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVem0VMVxgmGlNGJ1TdESKIuaEmarNpgn2hn5Dv9xuAMpwGNPHqbVgJ3+v2j4er/a3aRFP9OpQPZMpBeaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3wVnSY5OwjYExxkqCbAxDkv5yNNYUiBWtzmCDAG0a5qvh/tQZ
+	YO+J92VYn03riRy0aYXC5k4HToOGTQZw4sVf0J5dUJwCpFLQrr0ZLdoC
+X-Gm-Gg: ASbGncv0nOACogpMhLFjC8lUxPNNqUN5ouzv3+YRUvX5ksUIyF6Pp6YY4Md/dlGIC3N
+	OycC6mTuV72kvzfngDqYPkOVvmiCnv/IYFhYseg+bo+8T1IDO0NW9b8m7s00sMPYJDLPITdj4L0
+	CMK3dqvWU2lsWHPJ1WVy17Y66dWmoK/acvVNgdzDYE98ZqQ51U5jQB7hwqxy+Odr1GEPFJxeM6r
+	u0taGEPjjMQ2cjAMW9K4Yvw7XclCo+04neU02Kz9un5Vv8fk/OzMpZzkMgIzZewixxGK9SAZ7Ds
+	tLN7D49+yXWjsHERXIKGrDD/Sz9sUv2hAPTjNTD2DR7cPYPd0t8ABcVfYbdNV0vSBD2+j3Tm/8D
+	/Lz2sYGEzkVMHGFVCg9ipW5l7mydEFtfO/gpEjGCTCdiQcjTocabioWAk+8VaCh/gxVJ1PNVx0e
+	SZTESgvqTD
+X-Google-Smtp-Source: AGHT+IG7SrhD2n8YR6eRCNsiBeL2SRv1fue30YukLFK37eQXkOEUvQbSB53x/xhqHBpjrKKhjtKgHg==
+X-Received: by 2002:a05:6000:270e:b0:3e7:9d76:beb5 with SMTP id ffacd0b85a97d-3e79d76c25emr4400712f8f.14.1757859475877;
+        Sun, 14 Sep 2025 07:17:55 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e813eb46f3sm7319270f8f.23.2025.09.14.07.17.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 07:17:55 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
-Message-ID: <202509142156.qb0htmwo-lkp@intel.com>
-References: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] phy: exynos5-usbdrd: support the exynos8890 USBDRD
+Date: Sun, 14 Sep 2025 17:17:41 +0300
+Message-ID: <20250914141745.2627756-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Ivaylo,
+Hey folks,
 
-kernel test robot noticed the following build errors:
+This patchset adds support for the usbdrd phy for exynos8890. The SoC
+features 2 dwc3 controllers and 2 usb phy controllers. One of the USBs
+is used for DRD, whereas the second - for host. The host one seems to
+only be used on the MV8890 SBC, which... I don't think anyone has,
+really.
 
-[auto build test ERROR on krzk-dt/for-next]
-[also build test ERROR on linus/master v6.17-rc5]
-[cannot apply to krzk/for-next clk/clk-next next-20250912]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Code from this patchset can and will be reused for 8895 (I actually based
+it on my old 8895 work but decided to upstream it)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-clock-add-exynos8890-SoC/20250914-202302
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git for-next
-patch link:    https://lore.kernel.org/r/20250914122116.2616801-6-ivo.ivanov.ivanov1%40gmail.com
-patch subject: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
-config: csky-randconfig-001-20250914 (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/reproduce)
+Best regards,
+Ivaylo
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509142156.qb0htmwo-lkp@intel.com/
+Ivaylo Ivanov (2):
+  dt-bindings: phy: samsung,usb3-drd-phy: add exynos8890 support
+  phy: exynos5-usbdrd: support the exynos8890 USBDRD controller
 
-All errors (new ones prefixed by >>):
-
-   drivers/clk/samsung/clk-exynos8890.c: In function 'exynos8890_init_clocks':
->> drivers/clk/samsung/clk-exynos8890.c:49:45: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
-      49 | #define QCH_DIS                 (QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
-         |                                             ^~~~~~~~~~
-   drivers/clk/samsung/clk-exynos8890.c:88:31: note: in expansion of macro 'QCH_DIS'
-      88 |                         val = QCH_DIS;
-         |                               ^~~~~~~
-
-
-vim +/FIELD_PREP +49 drivers/clk/samsung/clk-exynos8890.c
-
-    39	
-    40	/*
-    41	 * As exynos8890 first introduced hwacg, cmu registers are mapped similarly
-    42	 * to exynos7, with the exception of the new q-state and q-ch registers that
-    43	 * can set the behavior of automatic gates.
-    44	 */
-    45	
-    46	/* decoded magic number from downstream */
-    47	#define QCH_EN_MASK		BIT(0)
-    48	#define QCH_MASK		(GENMASK(19, 16) | BIT(12))
-  > 49	#define QCH_DIS			(QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
-    50	
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    |  25 +++
+ drivers/phy/samsung/phy-exynos5-usbdrd.c      | 210 ++++++++++++++++++
+ 2 files changed, 235 insertions(+)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
