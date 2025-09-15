@@ -1,170 +1,161 @@
-Return-Path: <linux-kernel+bounces-817689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0588B5856D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38B5B5856F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BC2916B324
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFD71B22615
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9AF285C8C;
-	Mon, 15 Sep 2025 19:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24070285404;
+	Mon, 15 Sep 2025 19:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqLUXKqq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9P1LQHn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B6627E066;
-	Mon, 15 Sep 2025 19:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E1D280335
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757965146; cv=none; b=d5h8jCfIIc0BWA76v2ZD/zBpp34xzzRui49JovjyVQOW0vUAAMQBiKNLTSd1G6RQ3Iq/BVVrhhsECfEr3J5Z9O1xNwxxcXUgLp86rZtjafqtF3PTq4FjwtLSQzr8YLUox15N8rmXcRAlVgr5wW1uHWw7m6LIuYdSe/hD/wB0m1w=
+	t=1757965155; cv=none; b=uzHshM9TtPtAWhQ9GFHSfZZ82U7DwBAgASmw3t0vK1r2c0yeJQpUAZs+j+6SJBR0N2fOCCjaeJljMupiVx7vAlagamQ5GRDe3kvImgqRBf7Nmo+UuNXITB1ZhLSo+8sPPmZp+CKOzIyI+8zYtnjHxAsTX/vy4oZGRPMc00HvIsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757965146; c=relaxed/simple;
-	bh=veOCWn8AHbAgpZeNGt7sgqCJXZEPk4NeYew/a7ak3EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=p8EL148R88JGwsylBPGLD6DHvytTVzzF6GE9wMk9W0FK/5hg0icgmsjB48PEF+6H2LWR4sLU+r7XS0Je6QLRuO67rdkRIf/N1Ze8hLEHmOkTQmC8SUTK56vJsP8dnyDLkfu78+G1HstGJGl+NktXOM73wGnELqzZAicR4/kddQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqLUXKqq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E633C4CEF7;
-	Mon, 15 Sep 2025 19:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757965145;
-	bh=veOCWn8AHbAgpZeNGt7sgqCJXZEPk4NeYew/a7ak3EU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BqLUXKqqUVU/mW0lRlskT+Jfpq4jjmyHkgmQaXRTdzRbzXx2wDPiEevNdQF5X2/jA
-	 Pw8mYEUHxKOqVsvYu+V5c8l1+hfMh3o7iA85BV29r/QofMw87YV2kweV0/A+604pH4
-	 9SN7FglmR0UXaqp10fSHT06NddUeePw8utcIIh3C+qye43Lh3+dBQQaiP1K1btsYX2
-	 mPHyhPY5IZtLa9EUUQTn/OJt/gvabTwwDOpi151rf7rXgfG0U6UhvIj7SSgyjARJ5x
-	 defBnpt8wQYMpOrcaPrG+/95AgH0LJAbo9ykVpYNNzT6hm1BpvDv/gEN7wcSbK6ZOh
-	 Khu7ATQDKUypA==
-Date: Mon, 15 Sep 2025 14:39:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Matthew Wood <thepacketgeek@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial number
-Message-ID: <20250915193904.GA1756590@bhelgaas>
+	s=arc-20240116; t=1757965155; c=relaxed/simple;
+	bh=87rhYXHDtQiCMzx57VS1w3vd9t5iVIWXWbpAfZ5d7+Y=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZG0Z0ZHeMgUN+lIQ8w0hCndBYG3x4B93E03uLXBPg6po71W0Yx41oQ0SVaBJ3h0H6+yfekhaRgaKug3kVbrm+/vUdVFTHtqhu/EzBwFZKTMcSQU/+fICpfniFPbVhZ4cDjy8hqM3BoY83vyJ/v8RVogTIhc2ClE2LCB+3mTlhzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9P1LQHn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757965152;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7HkFYGg6A427CkTE8Uu+596fVOO9ot2LNl0j4v3H3A=;
+	b=g9P1LQHniy2w4LSIq1eGA+0bX7y7vlO24tN7P8L0qx2ZWOkcB/wRwqol4uS1E0dLsSpaI5
+	P1GSKdPxOuGc36Xq5gkqVfxzcIDwNGhkhunx8F8NMRQfDVWqeM8C/hbya9MSnNwKE3fZTz
+	jiAX645t6gzRIiAvsjlKfkQhyNeb+K0=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-613-PS0s5_CTPQGZdvGd3hXf0g-1; Mon, 15 Sep 2025 15:39:11 -0400
+X-MC-Unique: PS0s5_CTPQGZdvGd3hXf0g-1
+X-Mimecast-MFC-AGG-ID: PS0s5_CTPQGZdvGd3hXf0g_1757965151
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b633847b94so117160351cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:39:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757965151; x=1758569951;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7HkFYGg6A427CkTE8Uu+596fVOO9ot2LNl0j4v3H3A=;
+        b=XEdoKETHwfA+RUowbNRltajutbF5erHxNlCTVT/Rt7t+ofVznCjGcJr12b+2AqZNYm
+         3/dPGSKJvg8+lmBkEXrgqrjtzPsXVT+yION4UK9pOVrU0kOeKFMDLT1Ltu6PTpbsC1/b
+         p7FAbLyOrx9xuBLMr0I+DObVkN0WM9o8ajj11DMvOUX65BqFzB+K2AKSJpuMscpj8UEb
+         ZT88RnbsVa4JoBws/JJYPwD23bbgHlwRRcOTW6rHiQjJMXytRBJQsg1/S2YR8ywFpogU
+         QmKpNdvqCpz/HDv3LY1oahn7FEZ+Jd1a+smfdtTls3daTkLw7xNhY6AFGonDS0gRLxwV
+         Drhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCu8gqjqVJwn6kFOs/sJ8e+GbvmIW6E3sxl5ohnDjIk077fYW9oKvxZyjWeGrd6Y464EAgg7XofGNBruc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKfMJpj4mw20wyXpvyvIHYxp03x5Eby14L1sdmlzPt51z1gNLz
+	ddiTyGRLs4eLSwKjHQHisetljZzEOSkCn4YDkGFAoMaa7qIBFI9RxX0D1XGE+s00F/dnlftmIPD
+	NDsE6od4SP4q/X6yQu130M2c8+gtRP3eEyJxo6NzGATmZnFvEE9FfJG+Hch14MT4Z7Q==
+X-Gm-Gg: ASbGncvJmMpjb2PDywBHXHb5AXfSa6wHUrtKuj6ENCAPt1Q2A00MKICS7NhMGnssmEb
+	zpsDpwcKQHqxfGyu+Q2EyVBFPz08I+VvLtFvleqAQg5RFqlfuhmurXUjIplD0DxGvAlNf5ooHGi
+	BGYB5I1pPFU8W3GcqLTJeByBReCjMEH5ZW/2GHGvPhMLaoSpEdBztj1paMH0OFtr1+KEJxgupWI
+	lDxQRtkNW57TGb1QGGtN/lwz96hpHLlsbJd8tTtR/Q0li62j72J0iD7Lz+t+sG2GTIZLcECEQxV
+	Szg7OIAtZyjs1qV7XnI/AJXgWnfdD1sKBsnHtHnmFx6b2t5zUDEjZeDHxbG76KvLst80P/TWu/n
+	ybMgxmRKN9A==
+X-Received: by 2002:a05:622a:4e9a:b0:4b7:9972:1d8c with SMTP id d75a77b69052e-4b799dd639amr103831551cf.54.1757965150563;
+        Mon, 15 Sep 2025 12:39:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7pID2mDTqz46UkO3VdcT/XS3fmKdEaUkct2TWo3/kc/qTZwcCyfeBGxHuQNXAXCw+g5ytnQ==
+X-Received: by 2002:a05:622a:4e9a:b0:4b7:9972:1d8c with SMTP id d75a77b69052e-4b799dd639amr103831151cf.54.1757965149996;
+        Mon, 15 Sep 2025 12:39:09 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639dd12bbsm73788181cf.43.2025.09.15.12.39.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 12:39:09 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <cb1e7156-8043-452e-bdd3-076f72c51bee@redhat.com>
+Date: Mon, 15 Sep 2025 15:39:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821232239.599523-2-thepacketgeek@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC -v2 10/11] cpuset: use parse_cpulist for setting
+ cpus.exclusive
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
+ <20250909033233.2731579-11-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250909033233.2731579-11-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 21, 2025 at 04:22:38PM -0700, Matthew Wood wrote:
-> Add a single sysfs read-only interface for reading PCIe device serial
-> numbers from userspace in a programmatic way. This device attribute
-> uses the same hexadecimal 1-byte dashed formatting as lspci serial number
-> capability output. If a device doesn't support the serial number
-> capability, the serial_number sysfs attribute will not be visible.
-> 
-> Signed-off-by: Matthew Wood <thepacketgeek@gmail.com>
-> Reviewed-by: Mario Limonciello <superm1@kernel.org>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
-Sorry for the delay, I have no excuse.
-
+On 9/8/25 11:32 PM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> Previous patches made parse_cpulist handle empty cpu mask input.
+> Now use this helper for exclusive cpus setting. Also, compute_trialcs_xcpus
+> can be called with empty cpus and handles it correctly.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
->  Documentation/ABI/testing/sysfs-bus-pci |  9 +++++++++
->  drivers/pci/pci-sysfs.c                 | 27 ++++++++++++++++++++++---
->  2 files changed, 33 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
-> index 69f952fffec7..d5251f4f3659 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-pci
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci
-> @@ -612,3 +612,12 @@ Description:
->  
->  		  # ls doe_features
->  		  0001:01        0001:02        doe_discovery
-> +
-> +What:		/sys/bus/pci/devices/.../serial_number
-> +Date:		December 2025
-> +Contact:	Matthew Wood <thepacketgeek@gmail.com>
-> +Description:
-> +		This is visible only for PCIe devices that support the serial
-> +		number extended capability. The file is read only and due to
-> +		the possible sensitivity of accessible serial numbers, admin
-> +		only.
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 268c69daa4d5..1d26e4336f1b 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -30,6 +30,7 @@
->  #include <linux/msi.h>
->  #include <linux/of.h>
->  #include <linux/aperture.h>
-> +#include <linux/unaligned.h>
->  #include "pci.h"
->  
->  #ifndef ARCH_PCI_DEV_GROUPS
-> @@ -239,6 +240,22 @@ static ssize_t current_link_width_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RO(current_link_width);
->  
-> +static ssize_t serial_number_show(struct device *dev,
-> +				  struct device_attribute *attr, char *buf)
-> +{
-> +	struct pci_dev *pci_dev = to_pci_dev(dev);
-> +	u64 dsn;
-> +	u8 bytes[8];
-> +
-> +	dsn = pci_get_dsn(pci_dev);
-> +	if (!dsn)
-> +		return -EIO;
-> +	put_unaligned_be64(dsn, bytes);
-> +
-> +	return sysfs_emit(buf, "%8phD\n", bytes);
-> +}
-> +static DEVICE_ATTR_ADMIN_RO(serial_number);
-> +
->  static ssize_t secondary_bus_number_show(struct device *dev,
->  					 struct device_attribute *attr,
->  					 char *buf)
-> @@ -660,6 +677,7 @@ static struct attribute *pcie_dev_attrs[] = {
->  	&dev_attr_current_link_width.attr,
->  	&dev_attr_max_link_width.attr,
->  	&dev_attr_max_link_speed.attr,
-> +	&dev_attr_serial_number.attr,
+>   kernel/cgroup/cpuset.c | 25 +++++++++----------------
+>   1 file changed, 9 insertions(+), 16 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index de61520f1e44..785a2740b0ea 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -2567,27 +2567,20 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   	bool force = false;
+>   	int old_prs = cs->partition_root_state;
+>   
+> -	if (!*buf) {
+> -		cpumask_clear(trialcs->exclusive_cpus);
+> -		cpumask_clear(trialcs->effective_xcpus);
+> -	} else {
+> -		retval = cpulist_parse(buf, trialcs->exclusive_cpus);
+> -		if (retval < 0)
+> -			return retval;
+> -	}
+> +	retval = parse_cpuset_cpulist(buf, trialcs->exclusive_cpus);
+> +	if (retval < 0)
+> +		return retval;
+>   
+>   	/* Nothing to do if the CPUs didn't change */
+>   	if (cpumask_equal(cs->exclusive_cpus, trialcs->exclusive_cpus))
+>   		return 0;
+>   
+> -	if (*buf) {
+> -		/*
+> -		 * Reject the change if there is exclusive CPUs conflict with
+> -		 * the siblings.
+> -		 */
+> -		if (compute_trialcs_excpus(trialcs, cs))
+> -			return -EINVAL;
+> -	}
+> +	/*
+> +	 * Reject the change if there is exclusive CPUs conflict with
+> +	 * the siblings.
+> +	 */
+> +	if (compute_trialcs_excpus(trialcs, cs))
+> +		return -EINVAL;
+>   
+>   	/*
+>   	 * Check all the descendants in update_cpumasks_hier() if
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-I can see that the PCI r3.0 (conventional PCI) spec doesn't include
-the Device Serial Number Capability and the PCIe spec does include it,
-but this seems like it would fit better in the pci_dev_dev_attrs[],
-and the visibility check would be parallel to the
-dev_attr_boot_vga.attr check there.
-
->  	NULL,
->  };
->  
-> @@ -1749,10 +1767,13 @@ static umode_t pcie_dev_attrs_are_visible(struct kobject *kobj,
->  	struct device *dev = kobj_to_dev(kobj);
->  	struct pci_dev *pdev = to_pci_dev(dev);
->  
-> -	if (pci_is_pcie(pdev))
-> -		return a->mode;
-> +	if (!pci_is_pcie(pdev))
-> +		return 0;
->  
-> -	return 0;
-> +	if (a == &dev_attr_serial_number.attr && !pci_get_dsn(pdev))
-> +		return 0;
-> +
-> +	return a->mode;
->  }
->  
->  static const struct attribute_group pci_dev_group = {
-> -- 
-> 2.50.1
-> 
 
