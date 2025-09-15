@@ -1,214 +1,133 @@
-Return-Path: <linux-kernel+bounces-816853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9044CB5796A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:54:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE395B5797A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C86E2022CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33E5480A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE621303CBE;
-	Mon, 15 Sep 2025 11:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D136130498D;
+	Mon, 15 Sep 2025 11:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="kqirxFrl"
-Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg5psPh4"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C753C1E515;
-	Mon, 15 Sep 2025 11:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D63043D4
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937214; cv=none; b=ZSnWb6YjJmI8rHTquWyTpt7jB/s93sq4Vr2+CozGj2pGyW+xpMvfgttHkxDqo6ze6NDzZ7+mGAuYj0aj3AstzK00BDXqwfrZNOBEw29EDkjN5DeM4Y76INWJw4460iEwJRCwqbJ0rU0WIEO67AAyCW2j8456kUgcylo7elsd1YU=
+	t=1757937219; cv=none; b=Ete+zy/++i+HNmFtj6Aa8jd0+v/lNrohwBOYuEcq+vHFDyt1F9LAMyAOJpsvR58Suv+KPVqC6PxeiER9GxhYdymxrxpLlZZv/21KiZfSnU/QIdMNu6/2xrNoF2dYkGt4wNRbRl8mkGBULxBGwEBUpx9s5RoRPdOnLPFvcP31AUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937214; c=relaxed/simple;
-	bh=INR0gKKwfACJO986I6vNpgz9ymZl5uN+u2Vu5okD6e8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QS5EK/1ceT4H1KgSggQh6ZwTC24WfYiksPYd15XDDPgzLJxqm26u35BoPj+x+GMESi/jh+NPqdllIjDzO6VkicaV8oy3AhXaK9WLWvGbpDrDw/rPygmaLqtXbrXKWNsOxbBFpCqtASFQGgRj6hZIWVk1e8khmKIvvot64HSySpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=kqirxFrl; arc=none smtp.client-ip=178.154.239.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:b002:0:640:910e:0])
-	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 423C4C02F7;
-	Mon, 15 Sep 2025 14:53:24 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id CrNrXmiMGa60-tz9LPaL6;
-	Mon, 15 Sep 2025 14:53:23 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1757937203;
-	bh=aMw30NSXQpEeokpSwIEdrXINNAVHyNRWHjg7QYbqax0=;
-	h=Cc:Message-ID:References:Date:In-Reply-To:Subject:To:From;
-	b=kqirxFrlQMzP2PUk8B0wNoQeQV8SlLMZ5VoKlUTdszGC2qOXbmpFMMmIBSNVB1lKw
-	 9Qqi0zEoHDLUO1t2ZFsQEtKJ6kYxQ02Nhyd+U01+aGVk2U+H+CDxCCSbjr5GyKePqd
-	 bwsP6222w12RQ0JiCFdo9EM8zOOutHkmVm6/SDcE=
-Authentication-Results: mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-To: rust-for-linux@vger.kernel.org
-Cc: ojeda@kernel.org,
-	nathan@kernel.org,
-	nicolas.schier@linux.dev,
-	masahiroy@kernel.org,
-	aliceryhl@google.com,
-	thomas.weissschuh@linutronix.de,
-	tamird@gmail.com,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v2 1/1] rust: add `rustcheck` make target for check-only builds
-Date: Mon, 15 Sep 2025 14:53:11 +0300
-Message-ID: <20250915115311.3025-2-work@onurozkan.dev>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250915115311.3025-1-work@onurozkan.dev>
-References: <20250915115311.3025-1-work@onurozkan.dev>
+	s=arc-20240116; t=1757937219; c=relaxed/simple;
+	bh=0ILSGIiItmyMCE7xHI853y8dy3amB33rFGrcT6q6w44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ip/e8vsfx4TNJklrZKkTyRdixisUPwQMrypkxjimSR+AVcrymyf1EkXORnvVmSQepX9kHQspPepflu2upe7QFlqDAqgo/aVcPMq09wLNsphkD8bEunrK5djhzsQCsINOqx2jCe/YaXZUbEjTKaksX9BaZrmu1OPbYi4BPD+LsFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg5psPh4; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so2895136f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757937216; x=1758542016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S9rsfkbv0EL7aToRl/37b12mldmjeHZasuzSc06g/5c=;
+        b=Yg5psPh4WYZ92pfMU1Q8RGDtkgtbVzBijRhhArXWxcjCQh7G2fsyAIeW+QpA1vE1Io
+         nCv/WF4UgrliahfuxHIJLVjISmUpoAJYkxt0siwxT0iq6BmS7ZU+MgulJvzepOA5yXuv
+         yzUMbfAXMl4dbqDCITwYp920tI8Lj1lAoIuUGNAJacC2seqrYv8qHW2ANiApNh77wJNc
+         VI37DsVmgptMc5/oXJTjIhioAO1KxAg+69q9c2L1Qr6UKEFLaUogMB+C9lTQYejLLnsF
+         8EwaHXq7nuy5DlVrNXOuqgAzrPoJmNRg0IV5lY7l0IWhqOKrxywuJrRNuc5G6SQUUT0f
+         mJNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757937216; x=1758542016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S9rsfkbv0EL7aToRl/37b12mldmjeHZasuzSc06g/5c=;
+        b=vyrBYKa4PJbZpMCEBvth8qUTXhGBEFYd9ots1jysKmhZv+ga43Jj0cHQGcXzDojD4V
+         VvLLZNXAvuCQ7kBSsWnuklzCWHbM+xkSpgbcG7KoAUD+cLuUBdEmFFoqT4spOJWi9MbZ
+         QhAvjE4S6KQh9Mg+qK0G0kwFTiE8RfF1gg077tcm6FlYe1QtfZslGgB0m/iIrMEoHHI2
+         nE6Xc3eK8YRW5gdydPvAyiF6xrzQ9JVU2SMhYHBIn4HMxdNuAkieTTQAvHcSYPfU/QE8
+         TKBe17rqDFjAJAayXNpaL8XdtXW3dYr7J8VTBjk9rRDomxXylVRFUSiN5Fgr614YJtzy
+         R47w==
+X-Forwarded-Encrypted: i=1; AJvYcCWo8FAWhBL+1xpip6jqdkFxd+0PjK5Q0pHwYlTZe2LPPDLuXu/9U5yWsPv/T13BpQhbKBt2dE8p33SfLSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9Xf1T2dEp7AwFX56t+jErpSzNdiSzHmZEDBbrhR1hOJbXPnRX
+	FeyXSkVNm4Htnj8QmPfRNmYrG3GOuRJ4lURJU2425Aidb0ByJoIoHbF4oerEXlocWVfj1LpNK+c
+	yhOKgC2kM12+SMNvf3kj9Xb6fkEcCcCg=
+X-Gm-Gg: ASbGncuj379hLN6MJZEWfOdo50qSNjRCiXNJaAi289c8hOjJJDgJp8zSa4cYXNbWOZh
+	PCKkr7fuWaW6AIRXws0fK+wPB1/CSC0OJUfn43fSQgb/i2cVHy3xwCEMqRDz3PfK19467GSHSiB
+	uDCmb37SUAw4F180f7Ego/CB0abNuH7/NEIW5K1oG3Ib/fbws/0RCBx8A8yKl3uwQ4jIwaTgUje
+	fjq8TUKgE+aHCbzAVw=
+X-Google-Smtp-Source: AGHT+IGfEQTtfZM/ItJCozrT631R5nXA0YD+rGtclPjyGWg2BWC+ZOF/elBODu9mAt1IorwWM6bWM2cMtMtquc7HPHI=
+X-Received: by 2002:a05:6000:1884:b0:3ea:558d:8e33 with SMTP id
+ ffacd0b85a97d-3ea558d92femr3441083f8f.11.1757937215754; Mon, 15 Sep 2025
+ 04:53:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250915060141.12540-1-clamor95@gmail.com> <aMf6DLr8pTCP8tKn@shikoro>
+In-Reply-To: <aMf6DLr8pTCP8tKn@shikoro>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 15 Sep 2025 14:53:23 +0300
+X-Gm-Features: AS18NWBLkeKaqjltS4302C4IX18eul5NJVuVOImh89VIisTr8ceAaA7N6g0u10Y
+Message-ID: <CAPVz0n3m9VOV5unVHhU67XQnk4jckA+zyJdCHXu2fFxCSht4JQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] i2c: muxes: Add GPIO-detected hotplug I2C
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca@lucaceresoli.net>, 
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>, 
+	=?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adds a new `rustcheck` make target to run a check-only build
-similar to `cargo check`. This allows us to verify that the Rust
-sources can build without building/linking final artifacts,
-which speeds up the iteration (a lot) during development.
+=D0=BF=D0=BD, 15 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 14:35 Wolf=
+ram Sang
+<wsa+renesas@sang-engineering.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Mon, Sep 15, 2025 at 09:01:36AM +0300, Svyatoslav Ryhel wrote:
+> > Implement driver for hot-plugged I2C busses, where some devices on
+> > a bus are hot-pluggable and their presence is indicated by GPIO line.
+> > This feature is used by the ASUS Transformers family, by the  Microsoft
+> > Surface RT/2 and maybe more.
+> >
+> > ASUS Transformers expose i2c line via proprietary 40 pin plug and wire
+> > that line through optional dock accessory. Devices in the dock are
+> > connected to this i2c line and docks presence is detected by a dedicted
+> > GPIO.
+> >
+> > Micha=C5=82 Miros=C5=82aw (1):
+> >   i2c: muxes: Add GPIO-detected hotplug I2C
+> >
+> > Svyatoslav Ryhel (1):
+> >   dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
+> >
+> >  .../bindings/i2c/i2c-hotplug-gpio.yaml        |  65 +++++
+> >  drivers/i2c/muxes/Kconfig                     |  11 +
+> >  drivers/i2c/muxes/Makefile                    |   1 +
+> >  drivers/i2c/muxes/i2c-hotplug-gpio.c          | 263 ++++++++++++++++++
+> >  4 files changed, 340 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-hotplug-g=
+pio.yaml
+> >  create mode 100644 drivers/i2c/muxes/i2c-hotplug-gpio.c
+>
+> Adding Herve and Luca to CC because they want to achieve the same with
+> their I2C bus extensions, no?
+>
 
-The target also supports the CLIPPY flag (e.g., `make LLVM=1
-rustcheck CLIPPY=1) to run Clippy in a faster way.
-
-Also, unlike `make LLVM=1`, it doesn't compile large amounts of C
-code (on a fresh checkout) when the goal is only to check that
-Rust builds are not broken after some changes.
-
-Suggested-by: Benno Losin <lossin@kernel.org>
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/288089/topic/x/near/539103602
-Signed-off-by: Onur Özkan <work@onurozkan.dev>
----
- Makefile      |  7 +++++
- rust/Makefile | 73 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
-
-diff --git a/Makefile b/Makefile
-index cf37b9407821..7812cdc72938 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1716,6 +1716,8 @@ help:
- 	@echo  '		    is formatted, printing a diff otherwise.'
- 	@echo  '  rustdoc	  - Generate Rust documentation'
- 	@echo  '		    (requires kernel .config)'
-+	@echo  '  rustcheck       - Check that the Rust code builds'
-+	@echo  '                    (requires kernel .config)'
- 	@echo  '  rusttest        - Runs the Rust tests'
- 	@echo  '                    (requires kernel .config; downloads external repos)'
- 	@echo  '  rust-analyzer	  - Generate rust-project.json rust-analyzer support file'
-@@ -1821,6 +1823,11 @@ PHONY += rustdoc
- rustdoc: prepare
- 	$(Q)$(MAKE) $(build)=rust $@
- 
-+# Checking Rust sources.
-+PHONY += rustcheck
-+rustcheck: prepare0
-+	$(Q)$(MAKE) $(build)=rust $@
-+
- # Testing target
- PHONY += rusttest
- rusttest: prepare
-diff --git a/rust/Makefile b/rust/Makefile
-index bfa915b0e588..b45878870207 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -265,6 +265,79 @@ rusttest-kernel: $(src)/kernel/lib.rs rusttestlib-ffi rusttestlib-kernel \
-     rusttestlib-uapi rusttestlib-pin_init FORCE
- 	+$(call if_changed,rustc_test)
- 
-+## Check-only compilation (similar to `cargo check`)
-+quiet_cmd_rustc_check_library = $(RUSTC_OR_CLIPPY_QUIET) CHECK $<
-+      cmd_rustc_check_library = \
-+        OBJTREE=$(abspath $(objtree)) \
-+        $(RUSTC_OR_CLIPPY) $(rust_common_flags) \
-+                @$(objtree)/include/generated/rustc_cfg $(rustc_target_flags) \
-+                --crate-type $(if $(rustc_check_library_proc),proc-macro,rlib) \
-+                $(if $(rustc_check_library_proc),,--emit=metadata) \
-+                --out-dir $(objtree)/$(obj)/check -L$(objtree)/$(obj)/check \
-+                --crate-name $(if $(rustc_check_crate_name),$(rustc_check_crate_name), \
-+				$(subst rustcheck-,,$(subst rustchecklib-,,$@))) $<
-+
-+rustcheck: rustchecklib-build_error rustchecklib-ffi rustchecklib-macros \
-+	rustchecklib-compiler_builtins rustchecklib-pin_init_internal \
-+	rustchecklib-pin_init rustchecklib-bindings rustchecklib-uapi \
-+	rustchecklib-kernel
-+
-+rustchecklib-build_error: $(src)/build_error.rs FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-ffi: $(src)/ffi.rs FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-macros: private rustc_target_flags = --extern proc_macro
-+rustchecklib-macros: private rustc_check_library_proc = yes
-+rustchecklib-macros: $(src)/macros/lib.rs FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-compiler_builtins: private rustc_check_crate_name = compiler_builtins_kernel
-+rustchecklib-compiler_builtins: $(src)/compiler_builtins.rs FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-pin_init_internal: private rustc_target_flags = --cfg kernel \
-+	--extern proc_macro
-+rustchecklib-pin_init_internal: private rustc_check_library_proc = yes
-+rustchecklib-pin_init_internal: $(src)/pin-init/internal/src/lib.rs FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-pin_init: private rustc_target_flags = --extern pin_init_internal \
-+	--extern macros --cfg kernel
-+rustchecklib-pin_init: $(src)/pin-init/src/lib.rs rustchecklib-macros \
-+	rustchecklib-pin_init_internal FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-bindings: private rustc_target_flags = --extern ffi
-+rustchecklib-bindings: $(src)/bindings/lib.rs \
-+	$(obj)/bindings/bindings_generated.rs \
-+	$(obj)/bindings/bindings_helpers_generated.rs \
-+	rustchecklib-ffi FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+rustchecklib-uapi: private rustc_target_flags = --extern ffi
-+rustchecklib-uapi: $(src)/uapi/lib.rs $(obj)/uapi/uapi_generated.rs \
-+	rustchecklib-ffi FORCE
-+	+$(call if_changed,rustc_check_library)
-+
-+ifdef CONFIG_JUMP_LABEL
-+rustchecklib-kernel: $(obj)/kernel/generated_arch_static_branch_asm.rs FORCE
-+endif
-+ifndef CONFIG_UML
-+ifdef CONFIG_BUG
-+rustchecklib-kernel: $(obj)/kernel/generated_arch_warn_asm.rs \
-+	$(obj)/kernel/generated_arch_reachable_asm.rs FORCE
-+endif
-+endif
-+
-+rustchecklib-kernel: private rustc_target_flags = --extern ffi --extern pin_init \
-+	--extern build_error --extern macros --extern bindings --extern uapi
-+rustchecklib-kernel: $(src)/kernel/lib.rs rustchecklib-ffi rustchecklib-pin_init \
-+	rustchecklib-build_error rustchecklib-macros rustchecklib-bindings \
-+	rustchecklib-uapi FORCE
-+	+$(call if_changed,rustc_check_library)
-+
- ifdef CONFIG_CC_IS_CLANG
- bindgen_c_flags = $(c_flags)
- else
--- 
-2.51.0
-
+I have no idea what you are talking about, this an original series I
+have sent 2 years ago but now I decided that would be nice to have it
+in mainline Linux.  Here is a link to patchset from 19th Jun 2023
+https://lkml.org/lkml/2023/6/19/781
 
