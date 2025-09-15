@@ -1,123 +1,243 @@
-Return-Path: <linux-kernel+bounces-817560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6F1B583C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A26B583E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB19C3BF7AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4888A488756
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EAB299923;
-	Mon, 15 Sep 2025 17:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745A7242D78;
+	Mon, 15 Sep 2025 17:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2ccZRaR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dk6wVnu6"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05431AC43A;
-	Mon, 15 Sep 2025 17:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F350629D266
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757957779; cv=none; b=fvxmFFuGDwEeuucZMkFODEG/ENUtZmatyD0fslWcVPfGWY7/fVGlT3UbIWYxPPAJl/GDDWf161TxvdxwsowN5zwlkJh1hv7LCphNUfJA6dPumKzbJ6G8IbmSGhVpl8H/o9GHBtG4lDC/xxx8bOEE0wg2PsmvzfRyzdA2WD9+1Ug=
+	t=1757958165; cv=none; b=H6+OQxY5o71coEFFI/v1sd4EUf7eA0LpjkSPg6/tk7lfJa43a8XzX4+e5abqH9HjDuXA6vNNkVyqkYYgB/IFh/tcT3xWigMrXZv78NrSW5n3ekoSY69I2+dSNfJuig8Gz2GaMw1HhjxOcLiRYB4uVfIdRu5+ew9Ec6FkvG6x2jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757957779; c=relaxed/simple;
-	bh=sPtx8OcQ/LJYfINQ0uP+hDrIGzVtvgamvVg5IwJ3bnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IocKdmxlOgTcEB5W5GTpBlD4UOCAh/FqLTvIQ4286sItdClWIwCpvGDy6i1MFSvxv7W4RcSZw0C0nGnZwqxv56+ktyzIA0xqgh2RGP/7VpYicoY4sPzOWdtrSSwUaaoW/wJmAmyZQlxwG+E6eTc4H45quuVEw0WNodj21ZRqiqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2ccZRaR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83539C4CEF1;
-	Mon, 15 Sep 2025 17:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757957779;
-	bh=sPtx8OcQ/LJYfINQ0uP+hDrIGzVtvgamvVg5IwJ3bnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2ccZRaReh2ZMkpCh3J8H1jBHJ1wzWgEZ/gbkjqf90z3fosGq4uOHYSkq14BWKAyx
-	 PORewa6fOGqPAeaTcuXkC2S0680J9J5JjS/n1sKJShmJ4Bl+BKO2l87PqAp0Gb5eLv
-	 ys24Z1jjnJri18EHTtXGT/5fyXy0/oqi+fe3+ncitCHrKHgv51pc0TmVNYYac/7Ee/
-	 DSuIftRy9EJiP5KWeUXpwvg4AbLHDRvrZZMNkY9/9l2GaNJGDtxjPl3NTpfVTJve0x
-	 vmO0p34EIdmnY9Yb2LvnxGmsvxU53dEWUqs1DfMml0jMRniwv8VuWzfBNSnpwIA/R1
-	 RZpa2jGYhx+OQ==
-Date: Mon, 15 Sep 2025 18:36:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: usb: uhci: Add reset property
-Message-ID: <20250915-fifteen-sappy-82f26231843a@spud>
-References: <20250915073926.3057368-1-ryan_chen@aspeedtech.com>
- <20250915073926.3057368-2-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1757958165; c=relaxed/simple;
+	bh=iIuAx2JJmrgxbWM5e2basggpv/AeW5AUpcLAOdDXJhE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l4w28LZfhbPNGNBObz9aOk6Mgs5NrzaxT6p3Mp/LKjWc9t2UAKGh5cGa2wVYEdb21Izq7776U1T+DC5b02NB9QoPVNGajBxz6M2kLoNhC8lDCQTHzj/t5vWNhq78zr/VwP1KkXw18VoweqnyWmwQPrTewXH1HymLC7878iwZ8cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dk6wVnu6; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7761b392d50so3585797b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757958163; x=1758562963; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6b0KuwU6j12efKQOY8dZE63PnJPo0f1sevexcHHq57w=;
+        b=Dk6wVnu6rGNQYr55Okv0SEkrixUZaWTHPijZacZUGUEleVMlDjK6T4aPlUNMk+H42X
+         cVTGaLBicVsv8nJZjzCPHvR+BD+mwwrlKwHGkrSARSBL11VFyZnadXenMq4Czj+JLqR0
+         Tp2GESf+0T5/5KFeaD1LnkdxTT0HgwRmQVo2q/Sidwl+Klk7UNzANJsVvPn9t/EFZpO4
+         HODly38SoN/q0CPKkFYZ3pYV5889xc/+5X4DgnrJWSZo/T0JF9VKgiiDB9IIlb/Cglb5
+         NGurkKClNOJyDqsH9t8OOelcUM2C8EpwV9poBa08kR6e0/ZEwDxzPZA7VDml2tJw3bI8
+         4E/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757958163; x=1758562963;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6b0KuwU6j12efKQOY8dZE63PnJPo0f1sevexcHHq57w=;
+        b=C2nNntj+M//d3Rb5PdGlzHAoEel60hJxTlKUowYMRj5Nkhwv6YFobsT57+fksnVZ1n
+         I4v2PrDpbHp9mm97xUEJ4LYGpJKkiTlhBbuoWeDBGjEpscjeCwsE53j/OSH1PgykNudO
+         yh0mVrEz2qTXo+53M/vcl0KlJI71uYDPOLpSva049OcMOqQyPjOqv49tJTdiMT7p+Kqb
+         ezscJMTfNplVuSMp7s7n6IvMbph9PALnD8CGYVqAqBnkjbMEMrrJb/WwZwNSkeJWZpJh
+         rpdAK2s5sKuJa2Mte/ZR19JAPfUwLOeORzQxT14r3WrKodZLJdcSpr59OjusFUd/ZAMJ
+         1XhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLDM4kGkygiE8dLzs3zhFbGalNysqnuFIYbNYtZTP3tVTke0+d6kiQok+hJzEG72epX8fzatt/nDm4YTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWixguawnOMDH1DpBFsRNRB/CsY9cUJJSj1EfCjfJUtlP1zzDs
+	WJfpAbkbStc9geD5BGVeDdGuUZ9CyZpOhHTiUtQaxoM4tnz6Cv+7Xn7d
+X-Gm-Gg: ASbGnctFVKGcFKkOp0iARwToKRcgJRQ4EA7Iq7NkRV5PRwDy+eIXoYkr+/+EcG+iFBy
+	hXb+XKNo9piiOBvJ5xZa7LHZqUYzS76Nvn9IvUkVX/Gl9iStY+B0Jx4lIK5LAzqRDEHB5U8OVuQ
+	A7R15J5ku/nYORbyAFvoHKcvtrqbOQdnGjSbKd9JbLRW39glkek7Bfwi+vG8LPQKw8W5//5WETE
+	xBq5xTyTMcUo1aYGCxF/MkSqNi7flG4P5Z/kyRoUWRGA4bsVo2Espr3LSElZLh3hS+CpYnHLgY3
+	+713vgqiSagW958zCkXuG7KvmA9X6yxYPEfDkjprMRKWevuxr7ja1HipzCNnunUOoTttEJ89sRc
+	MAOixKhdHQ89iRJRRwS8KbXCAKJwcQcsEwJxz/Cx7LeBRoc6GfuQ43ADq7q0+xc02
+X-Google-Smtp-Source: AGHT+IHnMte/JH/TgBJWIa1QjarJY3d03Taro3j2D/fUNVZVh+OdeayWomtOekuzROYqyQ8BssxBLA==
+X-Received: by 2002:a05:6a21:3285:b0:24e:2cb:673d with SMTP id adf61e73a8af0-2602a8950ccmr18581817637.14.1757958163126;
+        Mon, 15 Sep 2025 10:42:43 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:d003:7033:ecb8:4012:29bc:7830])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dfd00c7efsm8968248a91.25.2025.09.15.10.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 10:42:42 -0700 (PDT)
+From: vivekyadav1207731111@gmail.com
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vivek Yadav <vivekyadav1207731111@gmail.com>,
+	Joe Perches <joe@perches.com>
+Subject: [PATCH v2] cpuidle: sysfs: Use sysfs_emit/sysfs_emit_at instead of sprintf/scnprintf
+Date: Mon, 15 Sep 2025 10:41:41 -0700
+Message-Id: <20250915174141.244346-1-vivekyadav1207731111@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZIluQHdooLWuNYaB"
-Content-Disposition: inline
-In-Reply-To: <20250915073926.3057368-2-ryan_chen@aspeedtech.com>
+Content-Transfer-Encoding: 8bit
 
+From: Vivek Yadav <vivekyadav1207731111@gmail.com>
 
---ZIluQHdooLWuNYaB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The ->show() callbacks in sysfs should use sysfs_emit() or
+sysfs_emit_at() when formatting values for user space. These helpers
+are the recommended way to ensure correct buffer handling and
+consistency across the kernel.
 
-On Mon, Sep 15, 2025 at 03:39:23PM +0800, Ryan Chen wrote:
-> The UHCI controller on Aspeed SoCs (including AST2700) requires
-> its reset line to be deasserted before the controller can be used.
-> Add an optional "resets" property to the UHCI device tree bindings
-> to describe the phandle to the reset controller.
+See Documentation/filesystems/sysfs.rst for details.
 
-Looks like the property is not optional at all for your aspeed devices,
-and you should require it for those compatibles.
+No functional change intended.
 
->=20
-> This property is optional for platforms which do not require
-> explicit reset handling.
->=20
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  Documentation/devicetree/bindings/usb/usb-uhci.yaml | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/usb-uhci.yaml b/Docume=
-ntation/devicetree/bindings/usb/usb-uhci.yaml
-> index d8336f72dc1f..b1f2b9bd7921 100644
-> --- a/Documentation/devicetree/bindings/usb/usb-uhci.yaml
-> +++ b/Documentation/devicetree/bindings/usb/usb-uhci.yaml
-> @@ -28,6 +28,9 @@ properties:
->    interrupts:
->      maxItems: 1
-> =20
-> +  resets:
-> +    maxItems: 1
-> +
->    '#ports':
->      $ref: /schemas/types.yaml#/definitions/uint32
-> =20
-> --=20
-> 2.34.1
->=20
+Suggested-by: Joe Perches <joe@perches.com>
+Signed-off-by: vivek yadav <vivekyadav1207731111@gmail.com>
+---
+Changes in v2:
+- Do not modify the variable 'i'; leave it unchanged.
+---
+ drivers/cpuidle/sysfs.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
---ZIluQHdooLWuNYaB
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/cpuidle/sysfs.c b/drivers/cpuidle/sysfs.c
+index d6f5da61cb7d..61de64817604 100644
+--- a/drivers/cpuidle/sysfs.c
++++ b/drivers/cpuidle/sysfs.c
+@@ -27,14 +27,14 @@ static ssize_t show_available_governors(struct device *dev,
+ 
+ 	mutex_lock(&cpuidle_lock);
+ 	list_for_each_entry(tmp, &cpuidle_governors, governor_list) {
+-		if (i >= (ssize_t) (PAGE_SIZE - (CPUIDLE_NAME_LEN + 2)))
++		if (i >= (ssize_t)(PAGE_SIZE - (CPUIDLE_NAME_LEN + 2)))
+ 			goto out;
+ 
+-		i += scnprintf(&buf[i], CPUIDLE_NAME_LEN + 1, "%s ", tmp->name);
++		i += sysfs_emit_at(buf, i, "%.*s ", CPUIDLE_NAME_LEN, tmp->name);
+ 	}
+ 
+ out:
+-	i+= sprintf(&buf[i], "\n");
++	i += sysfs_emit_at(buf, i, "\n");
+ 	mutex_unlock(&cpuidle_lock);
+ 	return i;
+ }
+@@ -49,9 +49,9 @@ static ssize_t show_current_driver(struct device *dev,
+ 	spin_lock(&cpuidle_driver_lock);
+ 	drv = cpuidle_get_driver();
+ 	if (drv)
+-		ret = sprintf(buf, "%s\n", drv->name);
++		ret = sysfs_emit(buf, "%s\n", drv->name);
+ 	else
+-		ret = sprintf(buf, "none\n");
++		ret = sysfs_emit(buf, "none\n");
+ 	spin_unlock(&cpuidle_driver_lock);
+ 
+ 	return ret;
+@@ -65,9 +65,9 @@ static ssize_t show_current_governor(struct device *dev,
+ 
+ 	mutex_lock(&cpuidle_lock);
+ 	if (cpuidle_curr_governor)
+-		ret = sprintf(buf, "%s\n", cpuidle_curr_governor->name);
++		ret = sysfs_emit(buf, "%s\n", cpuidle_curr_governor->name);
+ 	else
+-		ret = sprintf(buf, "none\n");
++		ret = sysfs_emit(buf, "none\n");
+ 	mutex_unlock(&cpuidle_lock);
+ 
+ 	return ret;
+@@ -230,7 +230,7 @@ static struct cpuidle_state_attr attr_##_name = __ATTR(_name, 0644, show, store)
+ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+ 			 struct cpuidle_state_usage *state_usage, char *buf) \
+ { \
+-	return sprintf(buf, "%u\n", state->_name);\
++	return sysfs_emit(buf, "%u\n", state->_name);\
+ }
+ 
+ #define define_show_state_ull_function(_name) \
+@@ -238,7 +238,7 @@ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+ 				  struct cpuidle_state_usage *state_usage, \
+ 				  char *buf)				\
+ { \
+-	return sprintf(buf, "%llu\n", state_usage->_name);\
++	return sysfs_emit(buf, "%llu\n", state_usage->_name);\
+ }
+ 
+ #define define_show_state_str_function(_name) \
+@@ -247,8 +247,8 @@ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+ 				  char *buf)				\
+ { \
+ 	if (state->_name[0] == '\0')\
+-		return sprintf(buf, "<null>\n");\
+-	return sprintf(buf, "%s\n", state->_name);\
++		return sysfs_emit(buf, "<null>\n");\
++	return sysfs_emit(buf, "%s\n", state->_name);\
+ }
+ 
+ #define define_show_state_time_function(_name) \
+@@ -256,7 +256,7 @@ static ssize_t show_state_##_name(struct cpuidle_state *state, \
+ 				  struct cpuidle_state_usage *state_usage, \
+ 				  char *buf) \
+ { \
+-	return sprintf(buf, "%llu\n", ktime_to_us(state->_name##_ns)); \
++	return sysfs_emit(buf, "%llu\n", ktime_to_us(state->_name##_ns)); \
+ }
+ 
+ define_show_state_time_function(exit_latency)
+@@ -273,14 +273,14 @@ static ssize_t show_state_time(struct cpuidle_state *state,
+ 			       struct cpuidle_state_usage *state_usage,
+ 			       char *buf)
+ {
+-	return sprintf(buf, "%llu\n", ktime_to_us(state_usage->time_ns));
++	return sysfs_emit(buf, "%llu\n", ktime_to_us(state_usage->time_ns));
+ }
+ 
+ static ssize_t show_state_disable(struct cpuidle_state *state,
+ 				  struct cpuidle_state_usage *state_usage,
+ 				  char *buf)
+ {
+-	return sprintf(buf, "%llu\n",
++	return sysfs_emit(buf, "%llu\n",
+ 		       state_usage->disable & CPUIDLE_STATE_DISABLED_BY_USER);
+ }
+ 
+@@ -310,7 +310,7 @@ static ssize_t show_state_default_status(struct cpuidle_state *state,
+ 					  struct cpuidle_state_usage *state_usage,
+ 					  char *buf)
+ {
+-	return sprintf(buf, "%s\n",
++	return sysfs_emit(buf, "%s\n",
+ 		       state->flags & CPUIDLE_FLAG_OFF ? "disabled" : "enabled");
+ }
+ 
+@@ -358,7 +358,7 @@ static ssize_t show_state_s2idle_##_name(struct cpuidle_state *state, \
+ 					 struct cpuidle_state_usage *state_usage, \
+ 					 char *buf)				\
+ { \
+-	return sprintf(buf, "%llu\n", state_usage->s2idle_##_name);\
++	return sysfs_emit(buf, "%llu\n", state_usage->s2idle_##_name);\
+ }
+ 
+ define_show_state_s2idle_ull_function(usage);
+@@ -550,7 +550,7 @@ static ssize_t show_driver_name(struct cpuidle_driver *drv, char *buf)
+ 	ssize_t ret;
+ 
+ 	spin_lock(&cpuidle_driver_lock);
+-	ret = sprintf(buf, "%s\n", drv ? drv->name : "none");
++	ret = sysfs_emit(buf, "%s\n", drv ? drv->name : "none");
+ 	spin_unlock(&cpuidle_driver_lock);
+ 
+ 	return ret;
+-- 
+2.25.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMhOjwAKCRB4tDGHoIJi
-0n3mAQD1ANXrcQzdhyuDWiQkUTSKB6wak20VqB3ZxN6/JezM5gD9EXJ+Tt4iDlrj
-BE34lYQMHERi4dDNSRXrHkWpy812OgA=
-=eNUF
------END PGP SIGNATURE-----
-
---ZIluQHdooLWuNYaB--
 
