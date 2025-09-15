@@ -1,119 +1,122 @@
-Return-Path: <linux-kernel+bounces-816550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762FAB57548
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:53:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5D8B5754A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B7517DE7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:53:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E4D17D799
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C552FABE1;
-	Mon, 15 Sep 2025 09:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52DD2F6183;
+	Mon, 15 Sep 2025 09:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RES8IUpK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="PgZoum/h"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F04D2FA0DE;
-	Mon, 15 Sep 2025 09:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048392EA73C;
+	Mon, 15 Sep 2025 09:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757930002; cv=none; b=o9iZPmRu4G97UMb2ycr9EQrMq9jCt5Yutb7q0iE8YqERicQTR24OyxRy1pZ+R4Fy5wepYLSkc2hFZFO1plCGXy33p90fNcRnaSYebT710W49NBpWI5zRCjKEpJn9GMnKS61lcE16D60mXhbUM9JnPh2kDWVAzyvsTJBPy3SiFIc=
+	t=1757930100; cv=none; b=WmdTf1wiM5bqN7q6xf/1il1RGKQvHqFUZJPxP6VyFlgh0wWWKXAyD0qYhJNkTAUplKwESXaDrfDmuyPvFZRWj00AUR3hHNQ8cQ2wGxJmjcf1eXciJ9OiaLcqKRliPjN0Lw/xszLI8XK7tfyDodKxgFOLwzkuYN6UQYnBnLpg/Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757930002; c=relaxed/simple;
-	bh=VExY4NPjfZpQJf4u88T+AAZWTi12kWN4VPC1o7qUEXw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PRP+oXdadfqwhsn53J6kpAzXwuDbIVmmnNXIrGH072Mu9xQHM53X1LXn33LsGrYVBtTSgScociLo/aAWdVZsVGhOuO/Of/5xhEWBZeE4prv2DOTGSqTxA/Jm6ASLYKjPNeDTJESNiydt0aIxjHGQYXLQ4n76XZo+wfTHlgpe9B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RES8IUpK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE44EC4CEFD;
-	Mon, 15 Sep 2025 09:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757930001;
-	bh=VExY4NPjfZpQJf4u88T+AAZWTi12kWN4VPC1o7qUEXw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RES8IUpKVfB5x16IQm0LsH7FrmzAiJ9MaEDjeyYnhqxUaoFMiK0ThEZjsKxZKt74N
-	 aVk8YTlUo8EdOQn2ZYfbWndt+xwj5VNKDvkIcEr/KHFzLLTwaed5LbIRXNR9ycLMo2
-	 kLdS2sRjlSo+57MYDpf4r7COwQwh9+Q43U2miybm581sJtWtn/AFo8IAP+25hbJnmR
-	 E5OFPVOWKgSuF/BCb6xXS1qGh8u9RG5F16/UvLYd64fjURUNuXfKLXS1bmdI52gxtw
-	 D1xoT8jaUZRp3fG5qZbSdMxkZyH2C6VXJJN6Bl0u9vhVuGh+LyX3de5uxujrFrMhTR
-	 HpI8L/uUnLLPw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uy5tf-00000006JZO-2xh4;
-	Mon, 15 Sep 2025 09:53:19 +0000
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Per Larsen <perlarsen@google.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
+	s=arc-20240116; t=1757930100; c=relaxed/simple;
+	bh=d0VqZbpQ0JGwY8ajzJh1U/vak+EkkwD4uK2aJndcr8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OM2LPva1FAfOqzRW5ZjBjNDQzSz9RLwkuQ2mQ+3seaB8OwFR3S0I9/6IEHpFdSNcpfkgXLV8TvuVQuSYRiIyWxwOQ/zG+Wqf5ClwBdUXVjvRlCKVd/lhjkWlpRDwd7fs5olnx9CT2nyAvGFgBWWgg0i5SZSewpsjfYC5TTErfQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=PgZoum/h; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6928C25D81;
+	Mon, 15 Sep 2025 11:54:50 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id DKm59VjfPMPN; Mon, 15 Sep 2025 11:54:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1757930089; bh=d0VqZbpQ0JGwY8ajzJh1U/vak+EkkwD4uK2aJndcr8E=;
+	h=From:To:Cc:Subject:Date;
+	b=PgZoum/hHcKkQqtSl3UBtjW23RnWMDzKiJCFBXKH8tu5b33wGdm80vG4QlxujSoK3
+	 CodbPTz8s60cg3td0TtnG9zlXD5vk+Ezq6O8Z1m7Ww1bc+ACnq6dUT386zCp5zHFhE
+	 aOWX+RmNunbz9jsM8i0gUY9ysZHyGe1eOIC9B2amrIycL2T8UO6Keu+ZolGynxHdfR
+	 smzfXbYsQdA0eEPrPRG4kJurSKk7KPGNl5f7jLKdLsOqiNiCGPkwUpR2wQB7j0J6oC
+	 u5a0FwOWAuNygw76T8mfzP5zBg0anCJoxwLxn/tcjjtcHoogyC/uMqgkjig+vlgp96
+	 wDzIyvbwzT0JA==
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	ahomescu@google.com,
-	armellel@google.com,
-	arve@android.com,
-	ayrton@google.com,
-	qperret@google.com,
-	sebastianene@google.com,
-	qwandor@google.com
-Subject: Re: [PATCH v11 0/6] KVM: arm64: Support FF-A 1.2
-Date: Mon, 15 Sep 2025 10:53:15 +0100
-Message-Id: <175792995612.521593.7894673693279210618.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250820-virtio-msg-ffa-v11-0-497ef43550a3@google.com>
-References: <20250820-virtio-msg-ffa-v11-0-497ef43550a3@google.com>
+	Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Han Gao <gaohan@iscas.ac.cn>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v2 0/5] Add reset controllers for other TH1520 subsystems
+Date: Mon, 15 Sep 2025 09:53:26 +0000
+Message-ID: <20250915095331.53350-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, perlarsen@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, ahomescu@google.com, armellel@google.com, arve@android.com, ayrton@google.com, qperret@google.com, sebastianene@google.com, qwandor@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 20 Aug 2025 01:10:04 +0000, Per Larsen wrote:
-> The FF-A 1.2 specification introduces a new SEND_DIRECT2 ABI which
-> allows registers x4-x17 to be used for the message payload. This patch
-> set prevents the host from using a lower FF-A version than what has
-> already been negotiated with the hypervisor. This is necessary because
-> the hypervisor does not have the necessary compatibility paths to
-> translate from the hypervisor FF-A version to a previous version.
-> 
-> [...]
+TH1520 SoC is split into several subsystems, and each of them comes with
+distinct reset controllers. We've already had the one for VO subsystem
+documented as "thead,th1520-reset" and supported, and this series adds
+support for others, including AO, VI, MISC, AP, DSP and VO.
 
-Applied to next, thanks!
+For TH1520_RESET_ID_{NPU,WDT0,WDT1}, these're reset signals that have
+been introduced along with support for the VO reset controller. However,
+registers in control of these resets don't stay in the VO reset region,
+instead they're AP-subsystem resets, thus the original ABI is
+problematic. I remove them in PATCH 1 and reintroduce them in PATCH 2.
 
-[1/6] KVM: arm64: Correct return value on host version downgrade attempt
-      commit: f414269392443f666bd8bef0cb3f0b53d5147be3
-[2/6] KVM: arm64: Use SMCCC 1.2 for FF-A initialization and in host handler
-      commit: 6f4c348b1d5c08f1105e645700962cc4353a8ac9
-[3/6] KVM: arm64: Mark FFA_NOTIFICATION_* calls as unsupported
-      commit: 79195f342417ff773048515964707aba3bfe0e41
-[4/6] KVM: arm64: Mark optional FF-A 1.2 interfaces as unsupported
-      commit: 8d24683e3e0f93b4bfdb558df50923514042817b
-[5/6] KVM: arm64: Mask response to FFA_FEATURE call
-      commit: 3f5952917498e7bb9d227812d4349668f62c413b
-[6/6] KVM: arm64: Bump the supported version of FF-A to 1.2
-      commit: 162190f2ccdc5964efa2a26e9fc3e56cf80fc29b
+Note the reset controller for AO subsystem is marked as "reserved" in
+devicetree since AON firmware may make use of it and access in Linux
+side may cause races.
 
-Cheers,
+This series is based on next-20250912, thanks for your time and review.
 
-	M.
+Changed from v1
+- Make a separate patch for the ABI-breaking change of
+  TH1520_RESET_ID_{NPU,WDT0,WDT1}
+- Fix the duplicated dt-binding IDs
+- Sort compatibles/reset-signal definitions in alphabetical order in
+  the driver
+- Sort dt-binding IDs in alphabetical order by subsystem names
+- Link to v1: https://lore.kernel.org/all/20250901042320.22865-1-ziyao@disroot.org/
+
+Yao Zi (5):
+  dt-bindings: reset: thead,th1520-reset: Remove non-VO-subsystem resets
+  dt-bindings: reset: thead,th1520-reset: Add controllers for more
+    subsys
+  reset: th1520: Prepare for supporting multiple controllers
+  reset: th1520: Support reset controllers in more subsystems
+  riscv: dts: thead: Add reset controllers of more subsystems for TH1520
+
+ .../bindings/reset/thead,th1520-reset.yaml    |   8 +-
+ arch/riscv/boot/dts/thead/th1520.dtsi         |  37 +
+ drivers/reset/reset-th1520.c                  | 835 +++++++++++++++++-
+ .../dt-bindings/reset/thead,th1520-reset.h    | 219 ++++-
+ 4 files changed, 1083 insertions(+), 16 deletions(-)
+
 -- 
-Without deviation from the norm, progress is not possible.
-
+2.50.1
 
 
