@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-817783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40841B5867B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:16:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED68B58694
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A6E1AA2A07
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504EC1AA6953
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA95E296BD4;
-	Mon, 15 Sep 2025 21:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAE42C029E;
+	Mon, 15 Sep 2025 21:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmYh6a6S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="OjjO4xIP"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094A426AE4;
-	Mon, 15 Sep 2025 21:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B50D1DB95E;
+	Mon, 15 Sep 2025 21:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757970999; cv=none; b=ckmFlZU2f6VkdxQ6FIyIzFlUXWI5bRbQi22xJq2WZWnVMClt4OCNGOQxguUaBWUFt6ZIWoeEr600SSaDHni0gqGjLln+168n+Vpz5BgPfWn7poq6U44ZDvZu9Z/wgOYENPOBc5GCSzQE1AnJgF6vZMds0HoZNhxhPnwNTBwB+Ds=
+	t=1757971225; cv=none; b=RtDbkkwqjZO8NXO/RmjIiXfXgknIzqls21nPzYHHFB+ydef9GZYn8JT7qSIpEG1ZwjexyGNSCKzO1mwTRmm5IZz0Id44Z/URlsyhNEE6iNT9sf1sLBPcFkXPOWM5f6EjlqCLtUhvbybsLbWbaZSC6S/NDjdj/hsuVHFyNrXcbeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757970999; c=relaxed/simple;
-	bh=eltE4P4dGi9OeQFvkpIcUPIWX78LRp5Hn4UZH+xTuB4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p6POaRV5KV37Y7emQsppafMbFJ8TbHECsfcIaDPaU2wkUwjrvUrLkXagdAANFfFjYvj1KeRtEkM5CGZ3eyitwevg2M3/FBHfdI5v6IyI35sYa4aWriC5kFAGF8ozfe6HryVwWoFMtfG5MW+gY7JyAXoyNjK+TYaBYHF3tEBtBYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmYh6a6S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D01AC4CEF1;
-	Mon, 15 Sep 2025 21:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757970998;
-	bh=eltE4P4dGi9OeQFvkpIcUPIWX78LRp5Hn4UZH+xTuB4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VmYh6a6SLAD437UzaOyJhyQJpHwIcArEnICrIsFykXuoJ/k7UQnMA5WIwb3Okxl7v
-	 6Z9P2JKATfY0912taRYgzTjHi848lZA2MXnFAqSm2J8v6v4A4Ee3BUT6Um2Hj/b19F
-	 l1g+BKU9KPIFHMAUTZF5Zu1dg8gjRvoT61s1dkP4XVatk5d1IGQRFHtWV6jCUV8XPx
-	 x2dN7Wt4wp5BKG2Z9eiKjYg+aeBNEr7GfO4ensalT+mvKKz8Ir6hPf5yztTkWrC4p3
-	 EgCbmswmmPA+LPqUjdXRQgXLB7aM/aEHA1hQSeZNvYAGBSdvSuZNswtLwZj/2eykZn
-	 dedI3W4XpCxGw==
-From: wufan@kernel.org
-To: keyrings@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dhowells@redhat.com,
-	lukas@wunner.de,
-	ignat@cloudflare.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	jarkko@kernel.org,
-	zohar@linux.ibm.com,
-	eric.snowberg@oracle.com,
-	Fan Wu <wufan@kernel.org>
-Subject: [PATCH v2] KEYS: X.509: Fix Basic Constraints CA flag parsing
-Date: Mon, 15 Sep 2025 21:15:50 +0000
-Message-Id: <20250915211550.2610-1-wufan@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250911225356.2678-1-wufan@kernel.org>
-References: <20250911225356.2678-1-wufan@kernel.org>
+	s=arc-20240116; t=1757971225; c=relaxed/simple;
+	bh=f58/b7yV2x5rpzB0Y5TRwwYqR5RkcYg3q7BpprX3nS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MVO7Vz3iB2azISjh5PeWsB9iN5vwesCAj3zXtqvtutTIWxz8CqSyIF042WleqItMZRggtVM9bLzwe/c3BhXGB3rHUzL4o2JM5K4dYvEZmUdnScYvo05Y+xCXKpKZpmz0cDI/x0B0sAVktd8yVvdPSJ4uqQSvytLgJ/QXxmsKbqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=OjjO4xIP; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cQdGv20jGzltH70;
+	Mon, 15 Sep 2025 21:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1757971220; x=1760563221; bh=1YsImEJ8KY5xc8Yvi4EEa0dg
+	Mjg/tAk0qeWCsYpfois=; b=OjjO4xIPxgW99q2LPF/Qow22DpVXG1EDFtPaWYOv
+	woQHRlSioqUuM1v1QFvj5uhwLP1sm+bgRV6e2CR3P/9ZuZnfq5iJN5NsKWBBpV4X
+	6CM6w1RqPyRiV/J2wDYS5Oe1EuiAFOcE19EzJt57J3tLv7vVwHt+nTLkndvkLmRm
+	rGwh/oB2/eol9huTM/YtAZPHTFZB+6opJivDK2rcMeIfLtrlrHfhHXod9X1l/uNy
+	vLj7oxd/q7Z8kFadPaByuUs4gHdpCQEzgGER27OuAzYojswU7/0JRvFkj5R/BaTa
+	XP1iLTriRAjRZpotrD/3eq6xDCDqvAXXqtHrC7UlX5n5XQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id hZGj7X9H7u8E; Mon, 15 Sep 2025 21:20:20 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cQdGg2NxJzlsxCp;
+	Mon, 15 Sep 2025 21:20:10 +0000 (UTC)
+Message-ID: <dd78b859-5f1b-499c-9578-03b8a18418cc@acm.org>
+Date: Mon, 15 Sep 2025 14:20:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] scsi: ufs: core: Add support for frequency PM QoS
+ tuning
+To: Wang Jianzheng <wangjianzheng@vivo.com>, Jens Axboe <axboe@kernel.dk>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Peter Wang
+ <peter.wang@mediatek.com>, Bean Huo <beanhuo@micron.com>,
+ "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250914114549.650671-1-wangjianzheng@vivo.com>
+ <20250914114549.650671-4-wangjianzheng@vivo.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250914114549.650671-4-wangjianzheng@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Fan Wu <wufan@kernel.org>
+On 9/14/25 4:45 AM, Wang Jianzheng wrote:
+> +	if (!shost)
+> +		return;
 
-Fix the X.509 Basic Constraints CA flag parsing to correctly handle
-the ASN.1 DER encoded structure. The parser was incorrectly treating
-the length field as the boolean value.
+Please remove the above if-statement and make sure that the
+initialization order guarantees that hba->host is set before
+ufshcd_pm_qos_freq_read_value() can be called.
 
-Per RFC 5280 section 4.1, X.509 certificates must use ASN.1 DER encoding.
-According to ITU-T X.690, a DER-encoded BOOLEAN is represented as:
+> +	shost_for_each_device(sdev, shost) {
 
-Tag (0x01), Length (0x01), Value (0x00 for FALSE, 0xFF for TRUE)
+Why a loop over all logical units? Isn't it sufficient to check the
+WLUN?
 
-The basicConstraints extension with CA:TRUE is encoded as:
+> +		if (!sdev)
+> +			continue;
+> +
+> +		q = sdev->request_queue;
+> +		if (IS_ERR_OR_NULL(q))
+> +			continue;
+> +
+> +		if (q->disk && !IS_ERR_OR_NULL(q->dev)) {
 
-  SEQUENCE (0x30) | Length | BOOLEAN (0x01) | Length (0x01) | Value (0xFF)
-                             ^-- v[2]         ^-- v[3]        ^-- v[4]
+The above three if-statements are not necessary. Please remove these
+three if-statements to improve code clarity.
 
-The parser was checking v[3] (the length field, always 0x01) instead
-of v[4] (the actual boolean value, 0xFF for TRUE in DER encoding).
+Thanks,
 
-Also handle the case where the extension is an empty SEQUENCE (30 00),
-which is valid for CA:FALSE when the default value is omitted as
-required by DER encoding rules (X.690 section 11.5).
-
-Per ITU-T X.690-0207:
-- Section 11.5: Default values must be omitted in DER
-- Section 11.1: DER requires TRUE to be encoded as 0xFF
-
-Link: https://datatracker.ietf.org/doc/html/rfc5280
-Link: https://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
-Fixes: 30eae2b037af ("KEYS: X.509: Parse Basic Constraints for CA")
-Signed-off-by: Fan Wu <wufan@kernel.org>
----
- crypto/asymmetric_keys/x509_cert_parser.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 2ffe4ae90bea..8df3fa60a44f 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -610,11 +610,14 @@ int x509_process_extension(void *context, size_t hdrlen,
- 		/*
- 		 * Get hold of the basicConstraints
- 		 * v[1] is the encoding size
--		 *	(Expect 0x2 or greater, making it 1 or more bytes)
-+		 *	(Expect 0x00 for empty SEQUENCE with CA:FALSE, or
-+		 *	0x03 or greater for non-empty SEQUENCE)
- 		 * v[2] is the encoding type
- 		 *	(Expect an ASN1_BOOL for the CA)
--		 * v[3] is the contents of the ASN1_BOOL
--		 *      (Expect 1 if the CA is TRUE)
-+		 * v[3] is the length of the ASN1_BOOL
-+		 *	(Expect 1 for a single byte boolean)
-+		 * v[4] is the contents of the ASN1_BOOL
-+		 *	(Expect 0xFF if the CA is TRUE)
- 		 * vlen should match the entire extension size
- 		 */
- 		if (v[0] != (ASN1_CONS_BIT | ASN1_SEQ))
-@@ -623,8 +626,13 @@ int x509_process_extension(void *context, size_t hdrlen,
- 			return -EBADMSG;
- 		if (v[1] != vlen - 2)
- 			return -EBADMSG;
--		if (vlen >= 4 && v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1)
-+		/* Empty SEQUENCE means CA:FALSE (default value omitted per DER) */
-+		if (v[1] == 0)
-+			return 0;
-+		if (vlen >= 5 && v[2] == ASN1_BOOL && v[3] == 1 && v[4] == 0xFF)
- 			ctx->cert->pub->key_eflags |= 1 << KEY_EFLAG_CA;
-+		else
-+			return -EBADMSG;
- 		return 0;
- 	}
- 
--- 
-2.51.0
-
+Bart.
 
