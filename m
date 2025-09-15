@@ -1,142 +1,80 @@
-Return-Path: <linux-kernel+bounces-816264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED445B571AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BFAB571B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29DE817B425
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897343A70AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1B52D593D;
-	Mon, 15 Sep 2025 07:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R4TfD9VM"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC0D2D739B;
+	Mon, 15 Sep 2025 07:39:36 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEB221638D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222702D23BD;
+	Mon, 15 Sep 2025 07:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921924; cv=none; b=JMFv3AEq85VU0+PjwprP007VHLv14k3YkyNNWHcBHdkbDExFNX4T4BxD0qKS3dOQ1Iwp0vBEzXRzCNbgHe86mFI5Q4JKsBFLnmI8Y6XgCFXv5NNXLtM6q9h+g72jlzzuhuaKBtHy8eUcuYE+0Hmd4Z+iYin/7WoNmx1It4PYa9c=
+	t=1757921976; cv=none; b=Z4IpS7jPGiejmN1TgCMJNwXWtJGVca/Q9io7+Tn9FZvnVjZ77ZlL3rnJGgwZm+pBjiWg16ZT94Tiz8atuPBTH8bk/IoUR6+D84/Tj0SUjTQM54y4nui9RJ0CQE+aNX/tFl5rL3lu5QodLK/9MR2huWN9laqL+1mCKE7p77diqcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921924; c=relaxed/simple;
-	bh=kGHwg3luaanPBk/Byu/i1GQ/JK31vdNJbOeeSmaUbuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QkKkPorJ0SHfTp5liEC9iJ1LiZVjbcQ25hnB7MN1GT99QjfqW1ODmis1seVACzXFookVOKe6XLvy5mlb43P8R6klqAV8p4qc5K+fwF/0/cagH4hSV3BsOrhOjVrn8XmQ1t6zCjNzQEaPQ0aUEZXGc7TgZCNbqYadscJYPHFKGjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R4TfD9VM; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45f2c9799a3so4551055e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757921921; x=1758526721; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JanCUlFRjj5laV++kf8eFiKJiHLqqlH/hnFp+08fd18=;
-        b=R4TfD9VMicu4a+dndbYW2Pupiy7oleCgttsD4I3EJ8FNX0Dk4WSl+mGHE4ABpzi14+
-         2n7Cn+gdHLbe+EU5lHVgpccdC0M8BKIG8N4AJHQZh8lsZyC3TyA7Iu5Is3hz5gydaO7h
-         EohqoQCSpPgI2JCwBnEUuYgjVDbk90PtV/YkY3sxNpFGpMBzLW4k04ikRlwG3RmTv3Xf
-         cTq+BfPJH4okDNrqVE5Ay6eYO0hWzA2emOK1sGjSIX7hDfeKa95Fm4T2Rwxcp2NwjYwv
-         fWfqMzpYFKVRwiMFzJ6sTIcmsrVmMehe54l+hX1oN7bf4pl4DuaKY+rMXA5ibUm5r6AL
-         xylA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757921921; x=1758526721;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JanCUlFRjj5laV++kf8eFiKJiHLqqlH/hnFp+08fd18=;
-        b=ulRLj7v5GPY7tj4vyzOMh6EyMLbdbIKaGTA+SVquddelGTPhijUGbHJ3XOlkDxRwwu
-         YdASWyGUQyBFQHw+t/L28ZhfO+USh941R465E5uzbJM5AuCPt5AkKQgiq+8wRPDPIyyk
-         rM0naSOq64H2ZGqynAIGoRaDtDbtcn7hrNEYOSPqM48d/VGJWXUtw5Wo7li2fMIFzf2O
-         ZVnU7zxEsnEpcVbFiR4N7ka6wd3fVv672HLJHOLB3SS2RPoNbQW1pLOv9nLaCDCgByJY
-         lzD4yvYx77b85FOcnllgf5UICH3/pr1h6kdp1MsVKilvRlng5JFgL1R3eAPT3DyN4pO/
-         5McA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjRpqO1tfFHV/jPOsi/3v6nPEFpqYUoDFhbuBimQGKSgdkBTPmnyQDobW6b3LkByL8ZDH3u+lTDZhGsAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtvxvjTxRXec2dQ+V8tDieLWoxjG03S3F6001DfU5khKdmZddE
-	QuRCA05y+3LxANg9nokJ+QxbzkcKaATCck8kLRANIslOV9N09ey3mkCR
-X-Gm-Gg: ASbGncv+SZUyfBaV7a8tYDuV9DJAaWsFA1bOvT2JA2+o1gpmQoK8zBLpauJmKEbe41u
-	F3deCLnbN6gZP63PihALymKYsZvFeFDUuKle0CM22B8/d5hTLB9J6kSHhOc7VcQ9zU6Dvd1pVJW
-	VK1EWOvzRcbZ/W2tLAlhItAH9WVQq1rX/2OfnWO1pSP0RAgo2Lna8c8si9K7BzYE2p0p6vVZ3Re
-	VP10BHGGzRBJ+UfupBVNIZKonLLGoqMiQ42VPWGhDmq2/yrQXcXsjPDR62jvu3aFWfYLOUn+mjz
-	vG07pMl7mn7msWhJxPbyW/8WPJpKj75kcp5fHQsvjlziPSZ37RhZkD2ZKvx0xS2W+lF5ALOeWZ7
-	o4LowCPkRr81cUn1WXq9tFLjlaeaVCxPTiU1U+WO9+GR6DnpxG3qJQA==
-X-Google-Smtp-Source: AGHT+IGgiNZFCx3A7Cjv6G6Nbr0a0VbqLvidbmj1KLlT+PabE1SdR3T2bnemHbr80ONhrSj9iyyLsg==
-X-Received: by 2002:a05:600c:3515:b0:45f:28ed:6e1e with SMTP id 5b1f17b1804b1-45f28ed71c9mr64761095e9.16.1757921920946;
-        Mon, 15 Sep 2025 00:38:40 -0700 (PDT)
-Received: from [10.80.3.86] ([72.25.96.18])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157619fsm169321285e9.7.2025.09.15.00.38.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 00:38:40 -0700 (PDT)
-Message-ID: <af70c86b-2345-4403-9078-be5c8ef0886f@gmail.com>
-Date: Mon, 15 Sep 2025 10:38:39 +0300
+	s=arc-20240116; t=1757921976; c=relaxed/simple;
+	bh=pJUMi9CBgVizV0CeN3q/a16QPGTUOyQqDnvy4l24BTk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q5nekak6vzLb25qxPjs0inVp+vnVdqOfPfodM01PBR/u/AW9E3eN1Tdl18pGBQD9XjzyZEuj9B9ppD3XxnAhFB44H1OqBTaiCnG99Al4VS7HSylvL36COOpfnqJDD3vpptXWRlCM5LyyezdBWXCHQjXT8F//DxcFO6rxn56b15w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 15 Sep
+ 2025 15:39:26 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Mon, 15 Sep 2025 15:39:26 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Alan
+ Stern" <stern@rowland.harvard.edu>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] Add Aspeed AST2700 uhci support
+Date: Mon, 15 Sep 2025 15:39:22 +0800
+Message-ID: <20250915073926.3057368-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net V2 10/11] net/mlx5e: Update and set Xon/Xoff upon port
- speed set
-To: Jakub Kicinski <kuba@kernel.org>, Mark Bloch <mbloch@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Tariq Toukan <tariqt@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Saeed Mahameed <saeedm@nvidia.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, linux-rdma@vger.kernel.org,
- Alexei Lazar <alazar@nvidia.com>
-References: <20250825143435.598584-1-mbloch@nvidia.com>
- <20250825143435.598584-11-mbloch@nvidia.com>
- <20250910170011.70528106@kernel.org> <20250911064732.2234b9fb@kernel.org>
- <fdd4a537-8fa3-42ae-bfab-80c0dc32a7c2@nvidia.com>
- <20250911073630.14cd6764@kernel.org>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250911073630.14cd6764@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+This patch series adds support for the UHCI controller found on the
+Aspeed AST2700 SoC.
 
+Compared to earlier SoCs (AST2400/2500/2600), AST2700 UHCI:
+ - requires a reset line to be deasserted before use
+ - supports 64-bit DMA addressing
 
-On 11/09/2025 17:36, Jakub Kicinski wrote:
-> On Thu, 11 Sep 2025 17:25:22 +0300 Mark Bloch wrote:
->> On 11/09/2025 16:47, Jakub Kicinski wrote:
->>> On Wed, 10 Sep 2025 17:00:11 -0700 Jakub Kicinski wrote:
->>>> Hi, this is breaking dual host CX7 w/ 28.45.1300 (but I think most
->>>> older FW versions, too). Looks like the host is not receiving any
->>>> mcast (ping within a subnet doesn't work because the host receives
->>>> no ndisc), and most traffic slows down to a trickle.
->>>> Lost of rx_prio0_buf_discard increments.
->>>>
->>>> Please TAL ASAP, this change went to LTS last week.
->>>
->>> Any news on this? I heard that it also breaks DCB/QoS configuration
->>> on 6.12.45 LTS.
->>
->> We are looking into this, once we have anything I'll update.
->> Just to make sure, reverting this is one commit solves the
->> issue you are seeing?
-> 
-> It did for me, but Daniel (who is working on the PSP series)
-> mentioned that he had reverted all three to get net-next working:
-> 
->    net/mlx5e: Set local Xoff after FW update
->    net/mlx5e: Update and set Xon/Xoff upon port speed set
->    net/mlx5e: Update and set Xon/Xoff upon MTU set
-> 
+This series updates the bindings and platform driver accordingly.
 
-Hi Jakub,
+Ryan Chen (4):
+  dt-bindings: usb: uhci: Add reset property
+  usb: uhci: Add reset control support
+  dt-bindings: usb: uhci: Add Aspeed AST2700 compatible
+  usb: uhci: Add Aspeed AST2700 support
 
-Thanks for reporting.
-We're investigating and will update soon.
+ .../devicetree/bindings/usb/usb-uhci.yaml     |  4 +++
+ drivers/usb/host/uhci-hcd.h                   |  1 +
+ drivers/usb/host/uhci-platform.c              | 34 +++++++++++++++----
+ 3 files changed, 33 insertions(+), 6 deletions(-)
 
-Regards,
-Tariq
+-- 
+2.34.1
 
 
