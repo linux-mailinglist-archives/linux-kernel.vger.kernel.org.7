@@ -1,87 +1,133 @@
-Return-Path: <linux-kernel+bounces-817752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCEFB58610
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:31:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69888B58614
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0608D188A18A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1766483316
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D310298CAF;
-	Mon, 15 Sep 2025 20:31:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F240329BDBC;
+	Mon, 15 Sep 2025 20:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A87y8xXL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB3072610
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564631D9346;
+	Mon, 15 Sep 2025 20:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757968264; cv=none; b=UYr/1PSD5nSYhIkCsMIZ3PTfyH4Ae4siPKaTpwTX90qm5R9qSDqmTPG2z5l3SQ1jAISqnBF7zj/YMbWzQ/daDJX7yAsKk2NCdDls+CxmWx34MHxy/yv/p8FuI6WoZm3HR8Y80QJuys6b9K+xC2Ehz2vsroaA76n+SSivnRGmHa0=
+	t=1757968563; cv=none; b=aG91wR2Kgmq3W4YgUstR9dQJT5IJuzo/vc/tL0CR6OM7aWotrLdEFMn9P7qjgbTdCSaMYwMX+t1cZbwSx38byPOh2OeyQSKmENzJs0v6SuJqFEBCZmOH78QCZzdpqsQ21pBav43c4YHsyQ+/cmksOdqLK8Hznn9H3f1wi+NEbx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757968264; c=relaxed/simple;
-	bh=b6xUAhSkq9CF20QAKR8T5QLGnQzzvGI5ZPW5RG7BblE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XR1mIVTq9cUu4usAa/IV6qSID8WNelvdXXHUwKVy0nF5GeSzwRpKifsYtbcuFq9KEULN6sVHFeBO5iyzxCwc5nCKMI1DX/N6I93oCWe2LYJ5d3uK+cZ3LCeSCIUKTTQC/gFA3xy0uRkXipxBuVBd7HKU+85CyJ1wfpaqJQbLhDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-893620de179so341994439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757968262; x=1758573062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSfa1TS/tc9azsXeHlqsi+zqwnTdr1EPZWX2g+MVJp4=;
-        b=PttKeQK9Ih7gGjGVENz1tSLwnZqwYAvcWZL8sUwtXh4NtX9Iuz54zkgIky07o9GRCf
-         z87Lotgg0adbn57oYZgK+0XsTnpzis3ZohBi7i0m/skrtMDZkHNpjArYiBcEiYe3Ktmn
-         zwEKAT7apLHTdLwwFGoL1W5O5uiJfhWcoNqCSgxbcCKRPvMPnrCecKpyPYsrAZcimpP+
-         Qjp3EuqJNaTb2GnRAA2XFhKLH6Ur9QDER4gCaWNqLXwwpz3B7wMDfW8K6tODeuZVBwpl
-         H6VFt/r3omK2LmLlHoue12lMVu4JgQSKRNMwDQ0daYGQ+56O3eKhQA7JpvVSqN2KtCI7
-         CC+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxuvyuL83fI5GXMdUzxE6SbaTbFN0N9rU2MED17O49HWd1jFcVEmajUK0HPx2ivbifIN3P8W0Dx7rTtVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYXA17fy12ocw/VxLTbAFoR2nYjvcWV+iNK29DfEofYxdFVyi8
-	Yr21PR5HKQTWCIMnyAQgnFzqQiKzHFYxjXJSfYQCYdrhq2QjF4+pvUdKFKr2MRap9KlKjOJEEeo
-	KDpJLkXWsryp4l/JpjeO1e/yyjVvgBMlQWqQM6x2jWeWW7PLprY8oJz47Wac=
-X-Google-Smtp-Source: AGHT+IHMZF8VsSDt1pYApy3XkiXUF1lcW/9T96gt2lhVyAj716cXCgtAjjDt0M2JEJTrdjas03ad8DK8GY+v0KtAVAkq8hgVMwAN
+	s=arc-20240116; t=1757968563; c=relaxed/simple;
+	bh=UgxWkx20mLbjGJHtFMXRZBk/r8XEEjLc3+vaV13RdrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eHe3NrP1P66Q8jlcbkJ+3JrqaAU1FWsNTIIgNXcDDzYffjtWCr92qyilKiJLH+vPC7BkcXR0LG3aHCyfkpLt3/Fu07FevSLyFiFr4KNkBmL8iwrw4z4Gk15BPSAHlzlZWo1cN0UzKkBzwA472vzDI3vH+w2TU8SDUCUqLQ4/aIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A87y8xXL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 278FDC4CEF1;
+	Mon, 15 Sep 2025 20:35:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757968560;
+	bh=UgxWkx20mLbjGJHtFMXRZBk/r8XEEjLc3+vaV13RdrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A87y8xXLRWfDVnc+cHUjCPS+b9h5AghuQgjUK7aBXiqXRbq3+IINnm4/0dZR6C2xA
+	 IIwgHW0srU4nv7wUOUDJGv78gDfqSQkMqkWgdroNaf/sSZgQ2h0MPg937mgTBtAATk
+	 ewwujp5TfLHg78mUCSWBAAA/KLaJ6xMvc/dESC9l5Ud7aPc1k+WQegv7fpGEtkyU77
+	 KordH3nm+iDSikLGG13Jlmr6jDAzyJ1noshxpEkVKePOV8A0tUDdYuBdyMpCXRIeKv
+	 DDebXA4JuXc35gA1MXmBoU3Q0Z9kRHsejZQIasuz+g34BWTKw2J+O9hvxlKmlehZo3
+	 n+cKwCOdznzPA==
+Date: Mon, 15 Sep 2025 21:35:55 +0100
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
+ operation
+Message-ID: <aMh4q4-xAPHnaOul@willie-the-truck>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-5-yeoreum.yun@arm.com>
+ <aMRQIeIdyiWVR8a0@arm.com>
+ <aMfrR0vserl/hfZ3@e129823.arm.com>
+ <aMhrscd1gz_syMtL@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3783:b0:409:d91f:a48f with SMTP id
- e9e14a558f8ab-420a42686eamr127681255ab.22.1757968262491; Mon, 15 Sep 2025
- 13:31:02 -0700 (PDT)
-Date: Mon, 15 Sep 2025 13:31:02 -0700
-In-Reply-To: <CAC_ur0onFzDuog+3e76qiG2mc15wxBxSSe45A-ESL3QmWyVcNA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c87786.050a0220.2ff435.03ae.GAE@google.com>
-Subject: Re: [syzbot] [input?] KASAN: stack-out-of-bounds Read in cp2112_xfer
-From: syzbot <syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com>
-To: deepak.takumi.120@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMhrscd1gz_syMtL@arm.com>
 
-Hello,
+On Mon, Sep 15, 2025 at 08:40:33PM +0100, Catalin Marinas wrote:
+> On Mon, Sep 15, 2025 at 11:32:39AM +0100, Yeoreum Yun wrote:
+> > > On Sat, Aug 16, 2025 at 04:19:27PM +0100, Yeoreum Yun wrote:
+> > > > diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+> > > > index bc06691d2062..ab7003cb4724 100644
+> > > > --- a/arch/arm64/include/asm/futex.h
+> > > > +++ b/arch/arm64/include/asm/futex.h
+> > > > @@ -7,17 +7,21 @@
+> > > >
+> > > >  #include <linux/futex.h>
+> > > >  #include <linux/uaccess.h>
+> > > > +#include <linux/stringify.h>
+> > > >
+> > > >  #include <asm/errno.h>
+> > > >
+> > > > -#define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> > > > +#define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> > >
+> > > I just noticed - you might as well leave the name as is here, especially
+> > > if in patch 6 you align down address and use CAS on a 64-bit value as
+> > > per Will's comment (and it's no longer LLSC). I think renaming this is
+> > > unnecessary.
+> > 
+> > Okay. I'll restore to use origin name.
+> > But I think LSUI wouldn't be used with CAS according to patch 6's
+> > comments from you and additionally i think
+> > chaning the CAS would make a failure because of
+> > change of unrelated field. i.e)
+> > 
+> > struct user_structure{
+> >   uint32 futex;
+> >   uint32 some_value;
+> > };
+> > 
+> > In this case, the change of some_value from user side could make a
+> > failure of futex atomic operation.
+> 
+> Yes but the loop would read 'some_value' again, fold in 'futex' and
+> retry. It would eventually succeed or fail after 128 iterations if the
+> user keeps changing that location. Note that's also the case with LL/SC,
+> the exclusive monitor would be cleared by some store in the same cache
+> line (well, depending on the hardware implementation) and the STXR fail.
+> From this perspective, CAS has better chance of succeeding.
+> 
+> > So I think it would be better to keep the current LLSC implementation
+> > in LSUI.
+> 
+> I think the code would look simpler with LL/SC but you can give it a try
+> and post the code sample here (not in a new series).
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+If you stick the cas*t instruction in its own helper say, cmpxchg_user(),
+then you can do all the shifting/masking in C and I don't reckon it's
+that bad. It means we (a) get rid of exclusives, which is the whole
+point of this and (b) don't have to mess around with PAN.
 
-Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
-Tested-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+> BTW, is there a test suite for all the futex operations? The cover
+> letter did not mention any.
 
-Tested on:
+I was thinking that too. I'm sure I remember a 'futextest' kicking
+around when we did the arm64 port but nowadays there's something in
+tools/testing/selftests/futex/ which might be better.
 
-commit:         f83ec76b Linux 6.17-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=103a1762580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7617e19c8a59edfbd879
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=153f947c580000
-
-Note: testing is done by a robot and is best-effort only.
+Will
 
