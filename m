@@ -1,186 +1,148 @@
-Return-Path: <linux-kernel+bounces-816062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7625EB56EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973ACB56EE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 028E94E0222
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134FB18993BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942762641FB;
-	Mon, 15 Sep 2025 03:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0975126657D;
+	Mon, 15 Sep 2025 03:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tBNKvV6S"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Lvl5S8pN"
+Received: from mail-m15577.qiye.163.com (mail-m15577.qiye.163.com [101.71.155.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143E226AA94
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E341B6D06;
+	Mon, 15 Sep 2025 03:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757907402; cv=none; b=H/qGdhkr+PmBEv+soUPiwzG/xNQfyppNe2ZRCvbQofZbx0iHYlfEtGSwxTQYCkVlvm343AYvyZCU37Z4/5fPcX3Kxq527XyS0tlZW8pnBcBHfdA6tN4PNL13lLpSPFmQZjeAr5PqlbdAMsItGAT+6cvVrcCRZF3VRwVpGGkeUWg=
+	t=1757907507; cv=none; b=WLSgnX7ZCHqHcb34WsiFMkv3kIIuW0dLM5Um8mXCp5uAtyLGaawB76tyjOhnSc2WgrEkKlmBP30bVJbbUPP7MDiQ9mr0rTKDutOuKx1crgTzGK1Nml+hbX8DgMQ3yBpLQ6v3/yAJlCWBPbyxh9z90CZNherj7xfs12yiCCpO4jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757907402; c=relaxed/simple;
-	bh=YcOkd7y+I07yftr3b/zuLZrawi1IpCDJgMnekwxa64s=;
+	s=arc-20240116; t=1757907507; c=relaxed/simple;
+	bh=/xc1zd9KAuHRGU1aPx+ust4hmr4zb1B5xHZFfFubWXw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SbccnhI5TEocf2XPus8j6LWq36wsvbs4WcJ5zs2MZOIGbjtAeTAP9ULxErf121ZLgGIY7FHzOtmGOaXyX22P6IR0drYXf3SJofDgGyZZAcQGwlUVdhkIq7vw5Jya0s+zNjKmRGkVzKQKtexO6Vzi5VzeSuCTA3Bc9rfycUi0oNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tBNKvV6S; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c9d4d761-202f-48ce-8e3d-fb9075671ff3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757907397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XOq3tAKiSS4SZqaYiFMa6a3N6kv3gCmuXSnB/b8DG10=;
-	b=tBNKvV6SZaIls4AXk4gIFyG3o230C77+N2DZwtS9pXCUvz6lsvQeQHICJB9R5dxFrK8gM8
-	uXnIAkjTZJ0S+mF6qaMqKrZBiG9lw68joa3qKdLmq/yfOJvP/kdOIrP3s/CJ/A6NjZS93q
-	tpUnkLgdwseB7YLAZGp+rMcdf4pG3/w=
-Date: Mon, 15 Sep 2025 11:36:29 +0800
+	 In-Reply-To:Content-Type; b=ig346lkSWc7awJuYvAwvKinyYogKFKs7fd5mIKiROnOAViYwKNxmYk7GCb3SzYzB3QATFq+e7QpndW5Wtcyx/rKGllL4yjQ/vWR2XH66rz0QoWL3ORx3DJHhMSG8kwxKsJoTQmmIdMT9byZcch9FijReKg2Mnqe5qzT6Ehx9XPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Lvl5S8pN; arc=none smtp.client-ip=101.71.155.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.153] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 22c8b5b47;
+	Mon, 15 Sep 2025 11:38:12 +0800 (GMT+08:00)
+Message-ID: <bda5453b-5cc8-4d31-9143-3e23b5d914d2@rock-chips.com>
+Date: Mon, 15 Sep 2025 11:38:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 3/3] mm/khugepaged: abort collapse scan on guard
- PTEs
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: stmmac: dwmac-rk: Ensure clk_phy doesn't contain
+ invalid address
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Yao Zi <ziyao@disroot.org>, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonas Karlman <jonas@kwiboo.se>, David Wu <david.wu@rock-chips.com>,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250904031222.40953-3-ziyao@disroot.org>
+ <aLlwv3v8ACha8b-3@shell.armlinux.org.uk>
+ <b5fbeb3f-9962-444d-85b3-3b8a11f69266@rock-chips.com>
+ <aLlyb6WvoBiBfUx3@shell.armlinux.org.uk>
+ <aLly7lJ05xQjqCWn@shell.armlinux.org.uk> <aLvIbPfWWNa6TwNv@pie>
+ <5d691f5b-460e-46cb-9658-9c391058342f@rock-chips.com>
+ <wgau7accvif4pcblnkpppyve4isstvmxyljlojt2yu4cwnyqvf@od4zasgpwdjr>
 Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, ryan.roberts@arm.com,
- baohua@kernel.org, ioworker0@gmail.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, akpm@linux-foundation.org, david@redhat.com
-References: <20250914143547.27687-1-lance.yang@linux.dev>
- <20250914143547.27687-4-lance.yang@linux.dev>
- <750a06dc-db3d-43c6-b234-95efb393a9df@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <750a06dc-db3d-43c6-b234-95efb393a9df@arm.com>
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <wgau7accvif4pcblnkpppyve4isstvmxyljlojt2yu4cwnyqvf@od4zasgpwdjr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a994b739fc103abkunm50451f02ab88b3
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtISFZPSUsZTkxLTk5NGklWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Lvl5S8pN8u8JQeTy99+juZGGQlsIspYWMdGRWMc49pPXE9TcJEuPh0U3r5oetVv7l+BEpCygircNrUnlXK5O4vBw3XrB3GkE+xRXa7yy5F+QYIbAQjQQbTjW7dtHcyVBOOfmhyRJEsBS5mokBDNKjJChhqvhpMuacvImDYZckvQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=Mq67zs+U1255nllj+V7rSH0ZUO6DNosUCaee26uoN3Y=;
+	h=date:mime-version:subject:message-id:from;
 
+Hi Sebastian,
 
-
-On 2025/9/15 01:03, Dev Jain wrote:
-> 
-> On 14/09/25 8:05 pm, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
+On 9/7/2025 4:25 AM, Sebastian Reichel wrote:
+> Hi,
+>
+> On Sat, Sep 06, 2025 at 02:26:31PM +0800, Chaoyi Chen wrote:
+>> On 9/6/2025 1:36 PM, Yao Zi wrote:
 >>
->> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
->> lightweight guard regions.
->>
->> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
->> encountering such a range.
->>
->> MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
->> the special marker in __collapse_huge_page_swapin().
->>
->> hpage_collapse_scan_pmd()
->>   `- collapse_huge_page()
->>       `- __collapse_huge_page_swapin() -> fails!
->>
->> khugepaged's behavior is slightly different due to its max_ptes_swap 
->> limit
->> (default 64). It won't fail as deep, but it will still needlessly scan up
->> to 64 swap entries before bailing out.
->>
->> IMHO, we can and should detect this much earlier ;)
->>
->> This patch adds a check directly inside the PTE scan loop. If a guard
->> marker is found, the scan is aborted immediately with a new 
->> SCAN_PTE_GUARD
->> status, avoiding wasted work.
->>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   mm/khugepaged.c | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index e54f99bb0b57..910a6f2ec8a9 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -59,6 +59,7 @@ enum scan_result {
->>       SCAN_STORE_FAILED,
->>       SCAN_COPY_MC,
->>       SCAN_PAGE_FILLED,
->> +    SCAN_PTE_GUARD,
->>   };
->>   #define CREATE_TRACE_POINTS
->> @@ -1317,6 +1318,16 @@ static int hpage_collapse_scan_pmd(struct 
->> mm_struct *mm,
->>                       result = SCAN_PTE_UFFD_WP;
->>                       goto out_unmap;
->>                   }
->> +                /*
->> +                 * Guard PTE markers are installed by
->> +                 * MADV_GUARD_INSTALL. Any collapse path must
->> +                 * not touch them, so abort the scan immediately
->> +                 * if one is found.
->> +                 */
->> +                if (is_guard_pte_marker(pteval)) {
->> +                    result = SCAN_PTE_GUARD;
->> +                    goto out_unmap;
->> +                }
->>                   continue;
-> 
-> This looks good, but see below.
-> 
->>               } else {
->>                   result = SCAN_EXCEED_SWAP_PTE;
->> @@ -2860,6 +2871,7 @@ int madvise_collapse(struct vm_area_struct *vma, 
->> unsigned long start,
->>           case SCAN_PAGE_COMPOUND:
->>           case SCAN_PAGE_LRU:
->>           case SCAN_DEL_PAGE_LRU:
->> +        case SCAN_PTE_GUARD:
->>               last_fail = result;
-> 
-> Should we not do this, and just send this case over to the default case. 
-> That
-> would mean immediate exit with -EINVAL, instead of iterating over the 
-> complete
-> range, potentially collapsing a non-guard range, and returning -EINVAL. 
+>>> On Thu, Sep 04, 2025 at 12:07:26PM +0100, Russell King (Oracle) wrote:
+>>>> On Thu, Sep 04, 2025 at 12:05:19PM +0100, Russell King (Oracle) wrote:
+>>>>> On Thu, Sep 04, 2025 at 07:03:10PM +0800, Chaoyi Chen wrote:
+>>>>>> On 9/4/2025 6:58 PM, Russell King (Oracle) wrote:
+>>>>>>> On Thu, Sep 04, 2025 at 03:12:24AM +0000, Yao Zi wrote:
+>>>>>>>>     	if (plat->phy_node) {
+>>>>>>>>     		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
+>>>>>>>>     		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
+>>>>>>>> -		/* If it is not integrated_phy, clk_phy is optional */
+>>>>>>>> +		/*
+>>>>>>>> +		 * If it is not integrated_phy, clk_phy is optional. But we must
+>>>>>>>> +		 * set bsp_priv->clk_phy to NULL if clk_phy isn't proivded, or
+>>>>>>>> +		 * the error code could be wrongly taken as an invalid pointer.
+>>>>>>>> +		 */
+>>>>>>> I'm concerned by this. This code is getting the first clock from the DT
+>>>>>>> description of the PHY. We don't know what type of PHY it is, or what
+>>>>>>> the DT description of that PHY might suggest that the first clock would
+>>>>>>> be.
+>>>>>>>
+>>>>>>> However, we're geting it and setting it to 50MHz. What if the clock is
+>>>>>>> not what we think it is?
+>>>>>> We only set integrated_phy to 50M, which are all known targets. For external PHYs, we do not perform frequency settings.
+>>>>> Same question concerning enabling and disabling another device's clock
+>>>>> that the other device should be handling.
+>>>> Let me be absolutely clear: I consider *everything* that is going on
+>>>> with clk_phy here to be a dirty hack.
+>>>>
+>>>> Resources used by a device that has its own driver should be managed
+>>>> by _that_ driver alone, not by some other random driver.
+>>> Agree on this. Should we drop the patch, or fix it up for now to at
+>>> least prevent the oops? Chaoyi, I guess there's no user of the feature
+>>> for now, is it?
+>> This at least needs fixing. Sorry, I have no idea how to implement
+>> this in the PHY.
+> I think the proper fix is to revert da114122b8314 ("net: ethernet:
+> stmmac: dwmac-rk: Make the clk_phy could be used for external phy"),
+> which has only recently been merged. External PHYs should reference
+> their clocks themself instead of the MAC doing it.
+>
+> Chaoyi Chen: Have a look at the ROCK 4D devicetree:
+>
+> &mdio0 {
+> 	rgmii_phy0: ethernet-phy@1 {
+> 		compatible = "ethernet-phy-id001c.c916";
+> 		reg = <0x1>;
+> 		clocks = <&cru REFCLKO25M_GMAC0_OUT>;
+> 		assigned-clocks = <&cru REFCLKO25M_GMAC0_OUT>;
+> 		assigned-clock-rates = <25000000>;
+>          ...
+>      };
+> };
+>
+> The clock is enabled by the RTL8211F PHY driver (check for
+> devm_clk_get_optional_enabled in drivers/net/phy/realtek/realtek_main.c),
+> as the PHY is the one needing the clock and not the Rockchip MAC. For
+> this to work it is important to set the right compatible string, so
+> that the kernel can probe the right driver without needing to read the
+> identification registers (as that would require the clock to be already
+> configured before the driver is being probed).
 
-That makes sense to me ;)
-
-> I do not
-> think we should spend a significant time in the kernel when the user is 
-> literally
-> invoking madvise(MADV_GUARD_INSTALL) and madvise(MADV_COLLAPSE) on 
-> overlapping regions.
-
-I'm just a bit unsure because the MADV_COLLAPSE man page[1] describes it
-as a "best-effort" collapse. This patch follows that idea, collapsing what
-it can.
-
-        MADV_COLLAPSE (since Linux 6.1)
-               Perform a best-effort synchronous collapse of the native
-               pages mapped by the memory range into Transparent Huge
-               Pages (THPs).  MADV_COLLAPSE operates on the current state
-               of memory of the calling process and makes no persistent
-               changes or guarantees on how pages will be mapped,
-               constructed, or faulted in the future.
-
-A hard-fail on a guard PTE marker might go against that.
-
-Well, I'm open to either approach. What do other folks think?
-
-[1] https://man7.org/linux/man-pages/man2/madvise.2.html
-
-Cheers,
-Lance
-
-> 
->>               break;
->>           default:
-
+Yes, what you said is correct. This is also the issue we encountered earlier on RK3576 board :)
 
 
