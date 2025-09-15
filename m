@@ -1,342 +1,193 @@
-Return-Path: <linux-kernel+bounces-817174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B445DB57ED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:25:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779BDB57EDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 704D54E1100
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A19903AF56D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9E6322C83;
-	Mon, 15 Sep 2025 14:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D14327790;
+	Mon, 15 Sep 2025 14:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="inVdlhlZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mCaIvOVW"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013002.outbound.protection.outlook.com [40.107.159.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F283C322544
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946324; cv=none; b=FuhEYAFoshGYSHQCwai2alTTH3Wg0Tt4+9Q/kg5KpNyWHX5zfVK46AulcYGucSuKK8EBuUgoz5/wT/N1c1yMoy3nZ2CYzETdyvDRJhNvQvOS76rgkmuuB8cGNrZLsVTZEt7IPu0SYRRko8NeDEREpGuvbOFe1WKAZpDPMqkApLc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946324; c=relaxed/simple;
-	bh=VRJmU+3Z0Ji8Ytd0OifcCVdCAJW+EyU4ZhcjTZpgSu0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qFMQk4p2kA2yCXo7vOD28bxxXnz1cKtuSx98XBWibAT55Pz9qOcldW7qyCI2nr5tHn3YX6JlTtUzsEvQmeaOQxgzu8xIpmIyoNxZcGIKPkWKHvGf4t0/lKg0I9hJcLXk60sHYrXvxTgj9ov+F7QF9T7okskYZx9uo+CCjO1COko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=inVdlhlZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8FlAa006165
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:25:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5izw87yptpP/XObnBkQgmPZEGVfJ4L4P4qGMCF58Bqo=; b=inVdlhlZoch48y8V
-	Dbp9UOiLvMHxY/9sFGJLiWkCr2t8Nyw3UJVUzEWIQkESk2YE6G7kO8KnNw+pP5mu
-	aAhC3dXqJ1AIsWUn8bKLOPsZqjRxkn0/bbEzBIgiVO75vozJHOsgpl6fnw1slG6Q
-	ceIAH3IL6Ik9xAm5DJbU0sbK/ixCHyVlxxkBipNaHmDXe++e7WHY3+94epXirbnv
-	ycbgsSqiJz9n079R/wDzOCTbAMBz9b7sRstcymiy52enDxHDpPWvdxbtw0lOfYQm
-	XpW06RtZTJ40PJ7vv7ZtjGxNZwqNg5LEPbe5T5VpZNc17udvOUTBrw1dXWIgkxcJ
-	fxW1Vg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951chd63t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:25:22 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24458345f5dso51089575ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:25:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757946321; x=1758551121;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5izw87yptpP/XObnBkQgmPZEGVfJ4L4P4qGMCF58Bqo=;
-        b=bJCOzP/h31GCG56cbWyX98G0tULjWB2L3j/L/w732sjaEvId5BQmB0XuxvccS9ddHm
-         1HKIpYZkkLJ37Q8PPKnW/iPds6jv+IDpOza6xYzigmKMmpJZ19KBy8xYxwlp9gqAmsx3
-         Rd6n9Yek6FI0ZbDEsuLUanU+nbr5/7ro2p//ezHiOXwHln3VtLJRev8NRGmLh6dpC7km
-         WQWb8GeroKo1ycSJN1S0jnmThbWf3hegzVTyZ+nGfPz0Fl+2/kDKcuSsxQ1xnCOcROO3
-         2sixxbbY+Z89OEgozgclEX6Z/PitXhsVYf6db0Qosx2p5yi8/Jqbiz35I8Xf3xbIUEmv
-         STjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtrEyt1MviAFBIjFZ16CeWuydRY1E/lejSXQSjhUACo/SxXeSlIZ2QwTlWD0EtD3LyyjAp9uhcEcgcMhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6vtMYdq6mA0Q3PiujLYiPcThuzZA90gl28LSbRvw7NmE+J5YB
-	s64PWCvBJk1kSdbXRZWH7eGOWF29VvLTMqfsnz3uFBMR/iR5DOPlo+SIHEbzcBstZAahOUB9NpJ
-	IMjkVohjaAUzrKsJAzOkLc1oo4KMQl3OKYjH6m9jXWZVipaP41BBlX5shiZfsSI5A3AU=
-X-Gm-Gg: ASbGncvxOCU1qZyKiI0SqjFxGytfv6ogrzykAWJXpw7Fxg+L4E1kSR016QJFjIzBgA2
-	Vxmw4YTjZTmy/pkby0ZqtJLT/20BZ8ufRn7y87rowuauloDgPPfQqgIJ7B4Tm1LjGhCLAfPVfg8
-	2x8/fxJsJHkjsQbxRNvTB3NiI4fthHDTrKleGWTPpiDVvo9Op7FiKm2s6uBgvqzO7r5tsPgbgE2
-	VoQ91v8bdSi8wiurvVr6RvvdeBIKPdkpJZrB9K2cdybafwFnwwAWi668WNmgxTNHyMqKlbLGTCR
-	cuek2GtNoJCljU4bMZ4eogjp5pEw9HX/+2gevYSw6hHHiL7K1k0hS+Zu2SfLatXrZxJvGXo=
-X-Received: by 2002:a17:902:f788:b0:267:99bf:6724 with SMTP id d9443c01a7336-26799bf6b55mr27467985ad.31.1757946321004;
-        Mon, 15 Sep 2025 07:25:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVopEJxZmQBHqpYtqqiv3HdtWoLiJQP97ogG4ITqijKQjfqCkXb3yEbY1lb5VyRKyTIFWuAQ==
-X-Received: by 2002:a17:902:f788:b0:267:99bf:6724 with SMTP id d9443c01a7336-26799bf6b55mr27467245ad.31.1757946320335;
-        Mon, 15 Sep 2025 07:25:20 -0700 (PDT)
-Received: from [192.168.1.7] ([49.204.104.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26263a76cd4sm64322145ad.31.2025.09.15.07.25.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 07:25:19 -0700 (PDT)
-Message-ID: <cb96f3cd-7427-4644-b7ca-26b763867db4@oss.qualcomm.com>
-Date: Mon, 15 Sep 2025 19:55:14 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E945430BF6D;
+	Mon, 15 Sep 2025 14:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757946338; cv=fail; b=c4YaVZlKkshkQrmmkA4REQj5mvbC+eK7IPUGWdWYZxokisAwOxUVscmgNfSICCIw8gUIqR5p3FoAaHWiy77xYvKJ1eGOWsJu8rCCczAcDKJLi/SV6tRBGkjB0RN2+nxO58h1Dn3Mbs5Xle1RudQh7CBJTlhh8RoNQz0O+cV5GuE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757946338; c=relaxed/simple;
+	bh=MCg+oPEaJ+zqWw8X+rb43aeo+kSFm6igUjNir+Bmf88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=T/mnMd9xPLUZYgQbPYCQsn3XzPLhbDqQwRh2+87ewgNfHuYhGZzFY6Bjzqnmcmf3qMlBHvHB+EWWMslrFprx2r2BqUzvHGLUs8YseUH4oBMrotY+RzXVoCljpgoe/o09sb+2nKGeGZ8yT2p+7s7Li3tTBohPWdQ49qkPb6JmOH4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mCaIvOVW; arc=fail smtp.client-ip=40.107.159.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B6ecVRn5XLWgvBw5f2LJCA1UeSbA49L4viSOhPQq8JKyFdQXzqYPpA2PcAPWvFhm2w1jCRgv3VquIg+Sgxuukj4Q+skgGvqJRrCKkyZ5xXkIDVNLjJi6FbK0511zn/sGChPG3HtE6DAheBKU4/c0XU9RsO+t9xo8O8ClOtAU9ceHnoVuz1TtkjC9Cys72f9PCaMzaWsV0weFco9V4UNDpcnm3slLO9/3fKn2zj6v3gIDmC8wW5WN6ghBlFZzC/dWaYgtSYaI9qGf1JeDFcqOZq3J0x1ZiFVHUDmar9gan9OZWLK/yoVNDwiGz74OWVFVCujgTK7zr1GZGbhMctUJsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xigNK625I0WU6wh+GslJ+bCKkPMqF8Fnca2KiOUET1w=;
+ b=zSQZPcagTWNlgEh2/NEQHAweAXrV/KO1OENqNnfm32tdykXGBOopQqsC33767IiSq6yEjRlytEecxgdd/BF8vlZcGeaH77Sz/8ZVUdXAMytP7t7jLkIrVfeY6wgXcCP0XIiZNwU8e/GFXpbfJad8/KDOveqj3apfL1CngJe6Kh3vdI6sewfS6XxaDzCrTzL5wtPmYK4LAjjaTrhHQja0DYfpSRVlgVYkcmXHj2XZp0hR/y5XEH4bLbMd8bG08wmcqJosNOdLrl0BPRN1WaetRnSxtTtg2Dl1eRgYuRG5W8mLhJXbThza7R+Jdw5fakfogj2ssbmHhvlvDWEMEmBVCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xigNK625I0WU6wh+GslJ+bCKkPMqF8Fnca2KiOUET1w=;
+ b=mCaIvOVWCDSdvARegQ4xjnzV7Ny13isWgI/MtPe+QfJyH3kveulndMt5JT37V7yt13LqjNL6F59HmEFs9p2c2akzzqRztasvB/uoJDNDdcnMRxWSJfm/nqZ90xBeYOYYCQHzO6OAnDfLbE+f6/lU7WRmRDchTuXle3Rm5vf/QFe81VhEjoqjWJ99TdSS155w+GQtUAAstR5He6m5xcV0tGoBAh5jnq1vtjfKjzOodsGOjY5VdX6xCP60z0q17OCq/1N41y8MA5kFe3blOC5C3aDs3R1ON+mhUV5gc+bPY8V7TiGVc2SYKXo1L7b4/4rTtOGuy08Y2gdIXOFU9Ghsyw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by PA1PR04MB10365.eurprd04.prod.outlook.com (2603:10a6:102:442::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
+ 2025 14:25:33 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Mon, 15 Sep 2025
+ 14:25:33 +0000
+Date: Mon, 15 Sep 2025 10:25:24 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, bhelgaas@google.com, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: PCI: dwc: Add one more reference
+ clock
+Message-ID: <aMgh1L/TcrNvaHtL@lizhi-Precision-Tower-5810>
+References: <20250915035348.3252353-1-hongxing.zhu@nxp.com>
+ <20250915035348.3252353-2-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915035348.3252353-2-hongxing.zhu@nxp.com>
+X-ClientProxiedBy: BY3PR05CA0052.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::27) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime
- resume
-To: Alexey Klimov <alexey.klimov@linaro.org>,
-        Praveen Talari <quic_ptalari@quicinc.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
-        quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
-        quic_arandive@quicinc.com, quic_shazhuss@quicinc.com, krzk@kernel.org
-References: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
- <DCNLSFVPCKMV.K1UE3J3K6JQD@linaro.org>
- <DCOJFRU8KNFL.14VPXK9QZC9T4@linaro.org>
- <5b7b8c9f-48c5-45cd-8366-c8c048eaa757@oss.qualcomm.com>
- <DCPUJPHR8NUB.1SRB4D7ONSRBY@linaro.org>
- <2c5fd01a-543b-4108-ac54-80d1d87b65a3@oss.qualcomm.com>
- <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
-Content-Language: en-US
-From: Praveen Talari <praveen.talari@oss.qualcomm.com>
-In-Reply-To: <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=eeo9f6EH c=1 sm=1 tr=0 ts=68c821d2 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=Z2XpV/0q3vK5biEotBnTqQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=05CQPNOUvAP4fS3p7jwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: W2ssz_5PQdQZwYyu9IMM5VZKXPq-1nBn
-X-Proofpoint-GUID: W2ssz_5PQdQZwYyu9IMM5VZKXPq-1nBn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzNiBTYWx0ZWRfX1J1+G2N/O/4M
- Y51aeATILSTqQyoqQXgEi8tZoBTMB24BZohqXLoCDN2UCbwQE30b9dCYXfhtJMkKr2x/dREXHWv
- ePIZ5uaxsm4ahIbrVgFfEzawG8wkt7KHZwRkAr1zjOfp3DZSCGch6NIKK8iC+kwqK481DJULPnm
- LsLLEq0OK9WlphjXpJxldW9gY6lyEk5d2vxm9LmOqfa8U+CDWcYjCo0RO1AQl5T4NfphBi/kVHX
- go2l/Gm0bFiJsyqV9/NgwwTjKUE5Ujx0PiswaM4Jvs53gHN5gukykMw7KyeJ0Jm4YQgjzol0LRs
- 3kPgw2SJPyi8xm/H5Ws+qs9ATDN4Drpe5lj/X5m+xmO5b0sqnpt85zzUrFTOju6/mE8M3n+oulr
- glH2Dptc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130036
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|PA1PR04MB10365:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53a0c5c3-2632-4207-0763-08ddf463bae8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|19092799006|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sscOjKkvCmVTRR9LFMpMhxA7yXK2bmDiWMYC0LNSt0r9mfx16LkbAp7MsDL5?=
+ =?us-ascii?Q?e79r0t8L7Dm1WkLgE1MCLoi2oH6JAxZD8AZQDWwntRiDcvIPoU1kig4SNtoh?=
+ =?us-ascii?Q?8KUyuafxI5oMI7jPp0cFK0c54PBs6bbNemRxyO5vjP57mWCWtcVe8cPPYVnl?=
+ =?us-ascii?Q?GZYn8R0k5/EXZ+H0deGW/+Z4eF78f9IH7AL1iTmlwzr8vA75IZVsq6qbPWUR?=
+ =?us-ascii?Q?iRaVbKHiMQgbUaxt019jenXLrdW58TDk75MteX4wWL5Zo/W64I3ukraL3Gst?=
+ =?us-ascii?Q?WViq5wJfPleWtdSIRlqhPtvJKb0wdWdj8v/sRPZE4wGtvxSb7gH7p/opCkUX?=
+ =?us-ascii?Q?Ev4QkMwn0C53EbVsHyDPFXqIbxHMm/RDGamh29aF6h9ZbT0Y63RT2cehvb2d?=
+ =?us-ascii?Q?G6XtxrzNG9XCxmW34NWXAZuLQ68TyFNqhbCDllTapwsk92NVMuyMk5LbODvb?=
+ =?us-ascii?Q?JpR986aTdEbGsOxPd7utoJu2NlXai8Txrg3wqloeNdCfkzRCnDeL5NWlgHfl?=
+ =?us-ascii?Q?vxJdLitCce7nbIFKp770/O1Ghu1ySMUgV2Gc/heAiljKpGybTIX7SPRBnsRZ?=
+ =?us-ascii?Q?vSflrZZpvi4c4uJDvK0eFmPtGYhks4SDVXWz8kHFjHWz3OXckgopPkGHpUaf?=
+ =?us-ascii?Q?+OZ4sJcLBLkw117zIvGefnI4l12ooQcSWpUg1e2rq3bWTrfVraVTDmlFpUyJ?=
+ =?us-ascii?Q?Yih+GmfXlBp7PfXQ5qNW2XmwhGFgPGDzQQkTAIk/KS2lJUMuHtu0e2YjSjyK?=
+ =?us-ascii?Q?orxobUcO+4+cGxQ+BjNPm9ZsUiGioXEtiqeuagPfPawXo/IEqrxqzk+kC33c?=
+ =?us-ascii?Q?WVOhYh5K5CqknT+nMdPwX+lfhxcdgNDo4nd5k8hxRsheXXynLz8uZ1O1DT+P?=
+ =?us-ascii?Q?7VFih+bkGqTTdGBfrfgLvlsIE8rzZoNWGGwzury/413EnFmfY8aAqww/D/S0?=
+ =?us-ascii?Q?NYMfzhEYE6oK0gCqQHcCUwGNK9t9cYMO2O/Ln8hqLjVk0437OcmMoT3t3zBv?=
+ =?us-ascii?Q?pMmdqnNGNxjCUxZZ/bOrfqjklKtVfVluxDytQQsVnNAFD8ug/AkMZYgV9a3Y?=
+ =?us-ascii?Q?Ojb8po14eOK6+yQgJsJMlHPQKMEyicMsAsarF3ZRbjB6Uy9w0HXt10AA/Jcp?=
+ =?us-ascii?Q?XuPcpfvDbh35YurvS93QfcYuqUpLN6ctJKzc1+yMQZumXmvVKT40KfwKLuWj?=
+ =?us-ascii?Q?uumd63GsuKktPVLMn22RM7a7JxIrpBfuFDjXVVB9XYpWH03YJsyd5eeVKLzK?=
+ =?us-ascii?Q?APDP7Dzf2FuEDITGziajXFm2Ic3kaCHWspJMo6xB9LSy1XKEkQ8Sx1qmGu8V?=
+ =?us-ascii?Q?tx/SM9dgBhrxymBl/a0TZYQ8mYYth2xw9rmudBZ8vsyaSDoeEPtL/UrErZtU?=
+ =?us-ascii?Q?GsFtGqtES4J312qlH10X+8nverdf5d2KYiIPoimTtIRH6mKlt39K+wka4rJk?=
+ =?us-ascii?Q?lJ06ANezMvLUvRmCyqSLImvjyeAsAQV39BEyt4WVxxdCVOhi/pEb1A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(19092799006)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vFRtGbUi4ACh/ob8Wm1wIuNu265nd4haOiHThBA9n6u294eNlZ+6KUT+bgBq?=
+ =?us-ascii?Q?NTzMKZsR0VN/wHOH+e6xiU6NKWlBj2ctjnmhBAUnu2NL1uAZWJriWowYHTm8?=
+ =?us-ascii?Q?wsvWWa641EEJokx4f1X4Za1Pe2Ciw/MSGNhgHh0enOWimfM7uN0Y+d3weGQH?=
+ =?us-ascii?Q?HiLY6bIBWbhA4iAnw9cfkcNWJ1EgMrp0lNA5I6qmQUQsN97Ir9lfBwQ6wakQ?=
+ =?us-ascii?Q?Bn7dBK8yZTSDsu2JHUl2ObnMFHBirJA7RNoxrODQyRhzKYWoIvy6Apu+cwXj?=
+ =?us-ascii?Q?k84GivsaOHatxaKhjeXBmpdKHslOKll8Pd6xN3Vzp8s9oPU3t+UM04A0v1iu?=
+ =?us-ascii?Q?kqbPnKSt+lRXw5e1Vk5Rs+8oMK78H/sDiKFqVqRx1ISQ1ykqPHg7yRFBJxkJ?=
+ =?us-ascii?Q?WVpnOZAIDeUM/r/aS38vwplgOJuq9IbDoz0SnVNOEsyApwdH5cjPjuM4ZIvl?=
+ =?us-ascii?Q?yhxaBtAcZEC0dgQ3GhsrbBPzyWYuh3+6rnqqcitkxmuNjNLOS5GoLBWh9CV5?=
+ =?us-ascii?Q?WXhJ6ymeXw2MCeLluD5O5K/mPBHShyy0rslUHYV2SMQ7fS3yb1zgYfxncM3B?=
+ =?us-ascii?Q?1tgz3n/XRj+6QZMnxMViKKOspqgjA7n1+TEGZ9aW1LEoeO6N4OARc4bgUPDE?=
+ =?us-ascii?Q?sbevRpG95qf4xw38wvbjlEYkbSqa2+no5v0S07EARj3MthP3zr6n9uNgAkrX?=
+ =?us-ascii?Q?TTm4iPJpgD/hgFVywwxFIhoIVyhW56elTNExVZ7Ae7SmTiHBE2kXhnZi5l2B?=
+ =?us-ascii?Q?KEk2cFEUBFQXF0caEULLxdLIrCp8Nx1AkGVJVR5efQ+QAmWNBir1om76xL3I?=
+ =?us-ascii?Q?mKu/Ss3E0NuQqQBDSoXkIFMKgkAlsax0IS5tzATR/+qZEoh8vMk9ftwmmyGs?=
+ =?us-ascii?Q?V97BenZj8LuXMFBpoMUuPeO3pSZqFyMLONjdiLCQj1OpDeE6mMk8c+jzNFet?=
+ =?us-ascii?Q?VU1YgaNwhMMJsVlilqGWJlSyYs9CCdAdIardcyPOkxgt9D7Ho9sA80dOX0od?=
+ =?us-ascii?Q?4jKhA1edRXdnOlC2v2XNZ4tn6jK/Mo4zQ2KneZqLLS0Js2AUK2MSDN5JKreO?=
+ =?us-ascii?Q?1rkI8yB5GI3xWox4x6TAFN/cI5gBzluj9MOyPB4cdt2bOxzxmrDvUDeejuYb?=
+ =?us-ascii?Q?x+2wvY4CCGf816oub8ypFyofFpzraL/DRy13Cu2iG77a703p1KbyYiyX0xwM?=
+ =?us-ascii?Q?UVLiYPdGAwac+jexIfqMvc/GZ/mprxelChKd7IqOuhYOM3/0+7J34x4CUact?=
+ =?us-ascii?Q?kuqh1+Tb+/AjW4OS+u46RrfHcSSHnCPGQSSbhXAmjhqxgbFQVHrMkA5IKbkS?=
+ =?us-ascii?Q?4LfjmYA4kxRvcuprYJrS/55g6bZSg+q0oOQSHN1FB/ks9awEArX62YirzSS3?=
+ =?us-ascii?Q?idfImrBoMiYYfhOMjry1UWZNmKHAaaXrkCH02owrzXJJO0dtkQIv0LY4W/jS?=
+ =?us-ascii?Q?vJOFfxNO//7BsvLaVgVyrMKmihsfkkRXXJ8KW8tqzHZp34PSVARGvpklTIRv?=
+ =?us-ascii?Q?WVRVcit7WS7eIPy2f9FgzvgHbUbhT74REVRcn5SqM3w/RMjT8RjVGEZrOEw1?=
+ =?us-ascii?Q?vYCAwe/t6P1uE5TLcj4=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53a0c5c3-2632-4207-0763-08ddf463bae8
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 14:25:33.2822
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uO5RycqUexkitahsgFuS1p/znyvl31Zmd8uCKu7oGZur2ldT6IUL/XktN/Y5JmqH6lqe2AdpbCKdavycUscKbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10365
 
-Hi Alexey,
+On Mon, Sep 15, 2025 at 11:53:46AM +0800, Richard Zhu wrote:
+> Add one more reference clock "extref" to for a reference clock that
+> comes from external crystal oscillator.
+>
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
 
-On 9/15/2025 3:09 PM, Alexey Klimov wrote:
-> (removing <quic_mnaresh@quicinc.com> from c/c -- too many mail not delivered)
-> 
-> Hi Praveen,
-> 
-> On Mon Sep 15, 2025 at 7:58 AM BST, Praveen Talari wrote:
->> Hi Alexey,
->>
->> Really appreciate you waiting!
->>
->> On 9/11/2025 2:30 PM, Alexey Klimov wrote:
->>> Hi Praveen,
->>>
->>> On Thu Sep 11, 2025 at 9:34 AM BST, Praveen Talari wrote:
->>>> Hi Alexy,
->>>>
->>>> Thank you for update.
->>>>
->>>> On 9/10/2025 1:35 AM, Alexey Klimov wrote:
->>>>>
->>>>> (adding Krzysztof to c/c)
->>>>>
->>>>> On Mon Sep 8, 2025 at 6:43 PM BST, Alexey Klimov wrote:
->>>>>> On Mon Sep 8, 2025 at 5:45 PM BST, Praveen Talari wrote:
->>>>>>> A deadlock is observed in the qcom_geni_serial driver during runtime
->>>>>>> resume. This occurs when the pinctrl subsystem reconfigures device pins
->>>>>>> via msm_pinmux_set_mux() while the serial device's interrupt is an
->>>>>>> active wakeup source. msm_pinmux_set_mux() calls disable_irq() or
->>>>>>> __synchronize_irq(), conflicting with the active wakeup state and
->>>>>>> causing the IRQ thread to enter an uninterruptible (D-state) sleep,
->>>>>>> leading to system instability.
->>>>>>>
->>>>>>> The critical call trace leading to the deadlock is:
->>>>>>>
->>>>>>>        Call trace:
->>>>>>>        __switch_to+0xe0/0x120
->>>>>>>        __schedule+0x39c/0x978
->>>>>>>        schedule+0x5c/0xf8
->>>>>>>        __synchronize_irq+0x88/0xb4
->>>>>>>        disable_irq+0x3c/0x4c
->>>>>>>        msm_pinmux_set_mux+0x508/0x644
->>>>>>>        pinmux_enable_setting+0x190/0x2dc
->>>>>>>        pinctrl_commit_state+0x13c/0x208
->>>>>>>        pinctrl_pm_select_default_state+0x4c/0xa4
->>>>>>>        geni_se_resources_on+0xe8/0x154
->>>>>>>        qcom_geni_serial_runtime_resume+0x4c/0x88
->>>>>>>        pm_generic_runtime_resume+0x2c/0x44
->>>>>>>        __genpd_runtime_resume+0x30/0x80
->>>>>>>        genpd_runtime_resume+0x114/0x29c
->>>>>>>        __rpm_callback+0x48/0x1d8
->>>>>>>        rpm_callback+0x6c/0x78
->>>>>>>        rpm_resume+0x530/0x750
->>>>>>>        __pm_runtime_resume+0x50/0x94
->>>>>>>        handle_threaded_wake_irq+0x30/0x94
->>>>>>>        irq_thread_fn+0x2c/xa8
->>>>>>>        irq_thread+0x160/x248
->>>>>>>        kthread+0x110/x114
->>>>>>>        ret_from_fork+0x10/x20
->>>>>>>
->>>>>>> To resolve this, explicitly manage the wakeup IRQ state within the
->>>>>>> runtime suspend/resume callbacks. In the runtime resume callback, call
->>>>>>> disable_irq_wake() before enabling resources. This preemptively
->>>>>>> removes the "wakeup" capability from the IRQ, allowing subsequent
->>>>>>> interrupt management calls to proceed without conflict. An error path
->>>>>>> re-enables the wakeup IRQ if resource enablement fails.
->>>>>>>
->>>>>>> Conversely, in runtime suspend, call enable_irq_wake() after resources
->>>>>>> are disabled. This ensures the interrupt is configured as a wakeup
->>>>>>> source only once the device has fully entered its low-power state. An
->>>>>>> error path handles disabling the wakeup IRQ if the suspend operation
->>>>>>> fails.
->>>>>>>
->>>>>>> Fixes: 1afa70632c39 ("serial: qcom-geni: Enable PM runtime for serial driver")
->>>>>>> Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
->>>>>>
->>>>>> You forgot:
->>>>>>
->>>>>> Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>>>>
->>>>>> Also, not sure where this change will go, via Greg or Jiri, but ideally
->>>>>> this should be picked for current -rc cycle since regression is
->>>>>> introduced during latest merge window.
->>>>>>
->>>>>> I also would like to test it on qrb2210 rb1 where this regression is
->>>>>> reproduciable.
->>>>>
->>>>> It doesn't seem that it fixes the regression on RB1 board:
->>>>>
->>>>>     INFO: task kworker/u16:3:50 blocked for more than 120 seconds.
->>>>>           Not tainted 6.17.0-rc5-00018-g9dd1835ecda5-dirty #13
->>>>>     "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>>>>     task:kworker/u16:3   state:D stack:0     pid:50    tgid:50    ppid:2      task_flags:0x4208060 flags:0x00000010
->>>>>     Workqueue: async async_run_entry_fn
->>>>>     Call trace:
->>>>>      __switch_to+0xf0/0x1c0 (T)
->>>>>      __schedule+0x358/0x99c
->>>>>      schedule+0x34/0x11c
->>>>>      rpm_resume+0x17c/0x6a0
->>>>>      rpm_resume+0x2c4/0x6a0
->>>>>      rpm_resume+0x2c4/0x6a0
->>>>>      rpm_resume+0x2c4/0x6a0
->>>>>      __pm_runtime_resume+0x50/0x9c
->>>>>      __driver_probe_device+0x58/0x120
->>>>>      driver_probe_device+0x3c/0x154
->>>>>      __driver_attach_async_helper+0x4c/0xc0
->>>>>      async_run_entry_fn+0x34/0xe0
->>>>>      process_one_work+0x148/0x284
->>>>>      worker_thread+0x2c4/0x3e0
->>>>>      kthread+0x12c/0x210
->>>>>      ret_from_fork+0x10/0x20
->>>>>     INFO: task irq/92-4a8c000.:79 blocked for more than 120 seconds.
->>>>>           Not tainted 6.17.0-rc5-00018-g9dd1835ecda5-dirty #13
->>>>>     "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>>>>     task:irq/92-4a8c000. state:D stack:0     pid:79    tgid:79    ppid:2      task_flags:0x208040 flags:0x00000010
->>>>>     Call trace:
->>>>>      __switch_to+0xf0/0x1c0 (T)
->>>>>      __schedule+0x358/0x99c
->>>>>      schedule+0x34/0x11c
->>>>>      __synchronize_irq+0x90/0xcc
->>>>>      disable_irq+0x3c/0x4c
->>>>>      msm_pinmux_set_mux+0x3b4/0x45c
->>>>>      pinmux_enable_setting+0x1fc/0x2d8
->>>>>      pinctrl_commit_state+0xa0/0x260
->>>>>      pinctrl_pm_select_default_state+0x4c/0xa0
->>>>>      geni_se_resources_on+0xe8/0x154
->>>>>      geni_serial_resource_state+0x8c/0xbc
->>>>>      qcom_geni_serial_runtime_resume+0x3c/0x88
->>>>>      pm_generic_runtime_resume+0x2c/0x44
->>>>>      __rpm_callback+0x48/0x1e0
->>>>>      rpm_callback+0x74/0x80
->>>>>      rpm_resume+0x3bc/0x6a0
->>>>>      __pm_runtime_resume+0x50/0x9c
->>>>>      handle_threaded_wake_irq+0x30/0x80
->>>>>      irq_thread_fn+0x2c/0xb0
->>>>>      irq_thread+0x170/0x334
->>>>>      kthread+0x12c/0x210
->>>>>      ret_from_fork+0x10/0x20
->>>>
->>>> I can see call stack is mostly similar for yours and mine but not
->>>> completely at initial calls.
->>>>
->>>> Yours dump:
->>>>    >    qcom_geni_serial_runtime_resume+0x3c/0x88
->>>>    >    pm_generic_runtime_resume+0x2c/0x44
->>>>    >    __rpm_callback+0x48/0x1e0
->>>>    >    rpm_callback+0x74/0x80
->>>>    >    rpm_resume+0x3bc/0x6a0
->>>>    >    __pm_runtime_resume+0x50/0x9c
->>>>    >    handle_threaded_wake_irq+0x30/0x80
->>>>
->>>> Mine:
->>>>    >>>      qcom_geni_serial_runtime_resume+0x4c/0x88
->>>>    >>>      pm_generic_runtime_resume+0x2c/0x44
->>>>    >>>      __genpd_runtime_resume+0x30/0x80
->>>>    >>>      genpd_runtime_resume+0x114/0x29c
->>>>    >>>      __rpm_callback+0x48/0x1d8
->>>>    >>>      rpm_callback+0x6c/0x78
->>>>    >>>      rpm_resume+0x530/0x750
->>>>
->>>>
->>>> Can you please share what is DT file for this Board if possible?
->>>> is there any usecase enabled on this SE instance?
->>>
->>> Well, yeah, sorry, I didn't really compared backtraces line to line and
->>> behaviour was exactly the same. I thought that the purpose was to fix
->>> the regression reported earlier.
->>>
->>> RB1 main dts files are qrb2210-rb1.dts and qcm2290.dtsi.
->>>
->>> The similar board RB2 uses qrb4210-rb2.dts and sm4250.dtsi+sm6115.dtsi,
->>> it is worth checking it as well.
->>> For testing here I didn't use anything extra (the only change was wifi fix
->>> from Loic); I tested -master and linux-next usually.
->>>
->>> If you can tell me what is SE instance I may be able to answer. But
->>> as far as I know it is not a part of any infrastructure or CI machinery.
->>> I just boot the board and see if it works, if it does then I rebuild and
->>> test my changes (audio).
->>
->> I'm actively working on this and experimenting various scenarios with
->> wakeup. I’ll share the updated patch as soon as possible.
->>
->> Should we include fix in V2 or new version(V1) if the fix originates
->> from a different subsystem(pinctrol)?
-> 
-> Wait, I am a bit lost. Are there two regresssions? And is this patch only
-> targets one of the them?
-I am simulated on different target(SC7280) and it is same issue only.
-> Are there two fixes now for different problems?
-The problem is same.
-> If they are not related (independent) then I'd split it but it not something
-> exceptional -- just standard rules should apply.
-I am fixing from this issue from pinctrol subsystem.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Please guide me on this.
-Should we include fix in V2 or new version(V1) if the fix originates
-from a different subsystem(pinctrol)?
-
-Thanks,
-Praveen
-> 
-> Thanks,
-> Alexey
+> ---
+>  .../devicetree/bindings/pci/snps,dw-pcie-common.yaml        | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> index 34594972d8db..0134a759185e 100644
+> --- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> +++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> @@ -105,6 +105,12 @@ properties:
+>              define it with this name (for instance pipe, core and aux can
+>              be connected to a single source of the periodic signal).
+>            const: ref
+> +        - description:
+> +            Some dwc wrappers (like i.MX95 PCIes) have two reference clock
+> +            inputs, one from an internal PLL, the other from an off-chip crystal
+> +            oscillator. If present, 'extref' refers to a reference clock from
+> +            an external oscillator.
+> +          const: extref
+>          - description:
+>              Clock for the PHY registers interface. Originally this is
+>              a PHY-viewport-based interface, but some platform may have
+> --
+> 2.37.1
+>
 
