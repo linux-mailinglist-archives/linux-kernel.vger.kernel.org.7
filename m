@@ -1,94 +1,47 @@
-Return-Path: <linux-kernel+bounces-816232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0633B57152
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:24:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC25B57153
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC37189E323
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516F0179869
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D172D6E68;
-	Mon, 15 Sep 2025 07:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB922D595F;
+	Mon, 15 Sep 2025 07:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jxn3CpdE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wgOGh5hL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="umQmIgrI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SV0oeKfd"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xteqf3u4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F7D2D540D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931272D4B66;
+	Mon, 15 Sep 2025 07:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921026; cv=none; b=CTfuCwL+70DRybNDP9k2T7ruv2MYjXRpLSJtcgvKnS5c0SlaahL+BVPDpFlqXSKPtDuGA/ZShIdqb/xmdjD9ei/+k65oDf50z6n+IcBUl+M6c7dG1yHahzDxATQOTO0xYapfncTw3ECtFbq+mqQ/Ggu6/FpNQaesd7SqMBAZf3g=
+	t=1757921070; cv=none; b=j5ecjH5e8XeqJ0dKtTtYwvm80CziOqaZ7+sP3fDuLwjPmo4q4jnx4WhWCdy3KS8V9RKGBlViS5/0wTL/L9F7mQwqCtjzIbbROE+st+zg/NpXbCv6DXvdPq3k0N5KAZ5SxCL5vEvDnRjWVluqWpiDAywZ2xBhJU7QxhCeIOcpz44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921026; c=relaxed/simple;
-	bh=9Co/8gh8ef+iRkLNKDJPTsKTYTZo66/pd8POYoks2e8=;
+	s=arc-20240116; t=1757921070; c=relaxed/simple;
+	bh=zuvzgkYNweR5jUGWIKB6w4d1SpfzDuqMu95Rq8yDKww=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JRKOw8hBF2295/ns9N0MkhTmY++9nrnWED+YDETomgOhbqBnwNBcjAHW2TLAKLWTByb7o0pXv6eykpu1ieBwbHidH4VV8sMkYy+c0KdmCWl2j4krgNoz+yDjzC4WmRP1OjyhCOj2cGzuuspvFfiyy389MWQW922eLDvT3EVsuzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jxn3CpdE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wgOGh5hL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=umQmIgrI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SV0oeKfd; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 79C441FB62;
-	Mon, 15 Sep 2025 07:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757921022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=avkQBaKpQ2tXPojONTuZJv8D5y0jW2E+baU2QVcI4DU=;
-	b=jxn3CpdEgIU463lBafIa+jrZtph7h1N9ma52/EnV6QctSTAAzA3lfxbv7JAwZsDkWFOiFv
-	RrbKk3+FX9t7WeYEqKcLJpUHAbyjObManhIgcSqgJZwTn61rN5lrM/gB+Ey//5zVtelVAK
-	triLlRal+NtMNIvuN0wSUTWw3zpSa/k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757921022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=avkQBaKpQ2tXPojONTuZJv8D5y0jW2E+baU2QVcI4DU=;
-	b=wgOGh5hL3PKI8i65VVdE7JtbCnOqn5omm9/bKcNa6edz7NM2rJsc1ulOktyWN3U1T4YWuC
-	TKb8IHA7KbnnxaDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757921021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=avkQBaKpQ2tXPojONTuZJv8D5y0jW2E+baU2QVcI4DU=;
-	b=umQmIgrI7iLS0KP0k2lZQlrf+JsXJbmB7ahAZcTWMXZzn638s4TxxO6r2RdmVIduW+fhaK
-	YTlyEmy5umntWPx4Wufgi3XrxkbEVuf4C6HFB2mR9z4G/4n3nRQkMtFRkiE2aBBmsRKTNq
-	7+TgBon99HsrPpRxhTFG6G+sq1beAOM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757921021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=avkQBaKpQ2tXPojONTuZJv8D5y0jW2E+baU2QVcI4DU=;
-	b=SV0oeKfdRmDD/n56WxeJbghi7C8+SUrohh9IgeTawsjqg59b/1oiOoA3mjLWUwP0I6l7yD
-	FObTqJAz/z23MCCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E73D91398D;
-	Mon, 15 Sep 2025 07:23:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gZbDLPu+x2ijUQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 15 Sep 2025 07:23:39 +0000
-Message-ID: <002989b4-f35a-4918-8493-6e352c6244f3@suse.de>
-Date: Mon, 15 Sep 2025 09:23:38 +0200
+	 In-Reply-To:Content-Type; b=m8J/oX+n1SBjLC245LwSYnpxyMVmN7fHc+s3LQzrIyNWt/2pSvpkC1lRtkb1QRQZkHDETXstDT0KhlO5oCI25QEHpRieHLaevmUSuWkWxJLhrCrNG/N+pQWA7ojsAgBglyfUX8LlH22g8K6C+m4ju6kAzJG3iy26SjIXaA/7+5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xteqf3u4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ECE7C4CEF1;
+	Mon, 15 Sep 2025 07:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757921070;
+	bh=zuvzgkYNweR5jUGWIKB6w4d1SpfzDuqMu95Rq8yDKww=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xteqf3u4yVaLwOZJ0BXR7kC/Jt/PyJsGYCmrarQHTWKLUEz5rRWhaBE8yUUX0P4nm
+	 8m74kye43GqYAwaQbvCOu0X88doZl5p2O2DQMrcUYoUTBCt3Xz03J/kkooUwz6Apux
+	 9iroOkqwIUfmm1jSqxqZMD08MvOfsBK4qSxA4ftj+XAb12196UaxL3gMoT4t/SkEZ1
+	 1haSA9i5uShXwqZg88SQUH7f18Zpza/v/uK6Sw9Sav67/gvtxFi79Z+yD10a+xiN2k
+	 ALMVIT0Htu1qWJ2pEToCliPaUutC56p+nSA86U33eQL2hLqJyhTRyOCxFOqFeHHymZ
+	 J4cnSI57efjog==
+Message-ID: <bf72ff58-f149-4f99-9d74-abd4ec314774@kernel.org>
+Date: Mon, 15 Sep 2025 09:24:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,183 +49,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: gud: replace WARN_ON/WARN_ON_ONCE with drm versions
-To: Ruben Wauters <rubenru09@aol.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250914155308.2144-1-rubenru09.ref@aol.com>
- <20250914155308.2144-1-rubenru09@aol.com>
+Subject: Re: [PATCH v3 5/9] memory: tegra210: Support interconnect framework
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Dmitry Osipenko <digetx@gmail.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250906-t210-actmon-v3-0-1403365d571e@gmail.com>
+ <20250906-t210-actmon-v3-5-1403365d571e@gmail.com>
+ <29ec10fa-1ca4-43eb-a865-7219d39c7140@kernel.org>
+ <c1b0bffe-f5d4-4d71-bfb6-b047d3d2866e@kernel.org>
+ <CALHNRZ9G_OA0+quNP=NwnwX43iaV1JWxjJFM0Aoect9Y8jGjWw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250914155308.2144-1-rubenru09@aol.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[aol.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[aol.com,gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CALHNRZ9G_OA0+quNP=NwnwX43iaV1JWxjJFM0Aoect9Y8jGjWw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi
+On 15/09/2025 08:08, Aaron Kling wrote:
+> On Wed, Sep 10, 2025 at 5:07 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> +    icc_provider_init(&emc->icc_provider);
+>>>> +
+>>>> +    /* create External Memory Controller node */
+>>>> +    node = icc_node_create(TEGRA_ICC_EMC);
+>>>> +    if (IS_ERR(node)) {
+>>>> +            err = PTR_ERR(node);
+>>>> +            goto err_msg;
+>>>
+>>> return dev_err_probe
+>>
+>>
+>> I will send patches to fix existing code. I also found some more issues
+>> which I would like to implement here.
+>>
+>> I apologize for coming with all this at v3. I should point out things a
+>> bit earlier, although how this patchset was organized also affected review.
+>>
+>> Anyway my comments are mostly non-critical things, so v3 is late to
+>> bring these, I understand. That's on me. I appreciate your work and
+>> please do not get discouraged with my comments.
+> 
+> I understand and that's fine. Get it done right the first time so it
+> doesn't have to be redone later. I will try to get a new revision out
+> this week once I cycle back around to the relevant devices here.
+> 
 
-Am 14.09.25 um 17:50 schrieb Ruben Wauters:
-> GUD is a drm driver, and therefore should use the drm versions of
-> WARN_ON and WARN_ON_ONCE. This patch replaces all instances of WARN_ON
-> and WARN_ON_ONCE with drm_WARN_ON and drm_WARN_ON_ONCE.
->
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+Just FYI, I closed my tree already so I will take anything after merge
+window earliest.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-Thanks a lot. I'll merge the patch in a bit.
-
-Best regards
-Thomas
-
-> ---
->   drivers/gpu/drm/gud/gud_connector.c |  8 ++++----
->   drivers/gpu/drm/gud/gud_pipe.c      | 10 +++++-----
->   2 files changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/gud/gud_connector.c b/drivers/gpu/drm/gud/gud_connector.c
-> index 4a15695fa933..62e349b06dbe 100644
-> --- a/drivers/gpu/drm/gud/gud_connector.c
-> +++ b/drivers/gpu/drm/gud/gud_connector.c
-> @@ -561,11 +561,11 @@ static int gud_connector_add_properties(struct gud_device *gdrm, struct gud_conn
->   			continue; /* not a DRM property */
->   
->   		property = gud_connector_property_lookup(connector, prop);
-> -		if (WARN_ON(IS_ERR(property)))
-> +		if (drm_WARN_ON(drm, IS_ERR(property)))
->   			continue;
->   
->   		state_val = gud_connector_tv_state_val(prop, &gconn->initial_tv_state);
-> -		if (WARN_ON(IS_ERR(state_val)))
-> +		if (drm_WARN_ON(drm, IS_ERR(state_val)))
->   			continue;
->   
->   		*state_val = val;
-> @@ -593,7 +593,7 @@ int gud_connector_fill_properties(struct drm_connector_state *connector_state,
->   			unsigned int *state_val;
->   
->   			state_val = gud_connector_tv_state_val(prop, &connector_state->tv);
-> -			if (WARN_ON_ONCE(IS_ERR(state_val)))
-> +			if (drm_WARN_ON_ONCE(connector_state->connector->dev, state_val))
->   				return PTR_ERR(state_val);
->   
->   			val = *state_val;
-> @@ -667,7 +667,7 @@ static int gud_connector_create(struct gud_device *gdrm, unsigned int index,
->   		return ret;
->   	}
->   
-> -	if (WARN_ON(connector->index != index))
-> +	if (drm_WARN_ON(drm, connector->index != index))
->   		return -EINVAL;
->   
->   	if (flags & GUD_CONNECTOR_FLAGS_POLL_STATUS)
-> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_pipe.c
-> index 54d9aa9998e5..3a208e956dff 100644
-> --- a/drivers/gpu/drm/gud/gud_pipe.c
-> +++ b/drivers/gpu/drm/gud/gud_pipe.c
-> @@ -61,7 +61,7 @@ static size_t gud_xrgb8888_to_r124(u8 *dst, const struct drm_format_info *format
->   	size_t len;
->   	void *buf;
->   
-> -	WARN_ON_ONCE(format->char_per_block[0] != 1);
-> +	drm_WARN_ON_ONCE(fb->dev, format->char_per_block[0] != 1);
->   
->   	/* Start on a byte boundary */
->   	rect->x1 = ALIGN_DOWN(rect->x1, block_width);
-> @@ -138,7 +138,7 @@ static size_t gud_xrgb8888_to_color(u8 *dst, const struct drm_format_info *forma
->   				pix = ((r >> 7) << 2) | ((g >> 7) << 1) | (b >> 7);
->   				break;
->   			default:
-> -				WARN_ON_ONCE(1);
-> +				drm_WARN_ON_ONCE(fb->dev, 1);
->   				return len;
->   			}
->   
-> @@ -527,7 +527,7 @@ int gud_plane_atomic_check(struct drm_plane *plane,
->   		drm_connector_list_iter_end(&conn_iter);
->   	}
->   
-> -	if (WARN_ON_ONCE(!connector_state))
-> +	if (drm_WARN_ON_ONCE(plane->dev, !connector_state))
->   		return -ENOENT;
->   
->   	len = struct_size(req, properties,
-> @@ -539,7 +539,7 @@ int gud_plane_atomic_check(struct drm_plane *plane,
->   	gud_from_display_mode(&req->mode, mode);
->   
->   	req->format = gud_from_fourcc(format->format);
-> -	if (WARN_ON_ONCE(!req->format)) {
-> +	if (drm_WARN_ON_ONCE(plane->dev, !req->format)) {
->   		ret = -EINVAL;
->   		goto out;
->   	}
-> @@ -561,7 +561,7 @@ int gud_plane_atomic_check(struct drm_plane *plane,
->   			val = new_plane_state->rotation;
->   			break;
->   		default:
-> -			WARN_ON_ONCE(1);
-> +			drm_WARN_ON_ONCE(plane->dev, 1);
->   			ret = -EINVAL;
->   			goto out;
->   		}
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Best regards,
+Krzysztof
 
