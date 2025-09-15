@@ -1,117 +1,145 @@
-Return-Path: <linux-kernel+bounces-817712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EACB5858F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD6DB58593
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4617A4C5B96
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF813A311D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBCB288527;
-	Mon, 15 Sep 2025 19:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471682874E0;
+	Mon, 15 Sep 2025 19:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qU7+qyHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kRXhSUag"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32A8287271;
-	Mon, 15 Sep 2025 19:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920732874F1
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757965975; cv=none; b=K3h2C4L+jg/4a4YSsf8nsj576AE+OO/KtfslnXTsEMp9GZHG707pef2lopGBRvP4vaxsrq6X+7CKu4UFObxQCsdZO5gQ6RzWu3wX1W9OEzi1IYY6blY8lLTRZ6JrR3G0keDzlXet9HTRmPLJRWMGAgsaeC9znGtDAz4sRqNiASA=
+	t=1757966034; cv=none; b=WWgK5uN3VUk7HPm91lUvKvL85aV8dznNmeQtHuseD5NTTXG6THIer6PU0yzZzLo74w6866fk1GyM0XK8ncJfpsvLkAACLNQp8lZWzsdTLe2qqNjT4pmiiB+RhYZjhAPKeo3c4527whCqq1qBGTtFk/FIrVhuUIeghMQn3mFmz94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757965975; c=relaxed/simple;
-	bh=uOejRi2XFO7qeixRkiyMH2Apb1CTrpBORTrA10JAROg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f0SO2sCGkSkua6FYM7EE+/9LoJvdHq3+53kfzU4Y5NX0ZdwA++0g5YGiLKCpNwIALm61HqQgK+8nKEBpCiwQx2AArfs3TepcaLxXZHEp45tHESRYPejK3ZpLa0dK95t26CWK6FswO2oZKaYRAb7p3E/LLDC6Uv92IzY2xhNPeLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qU7+qyHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9069FC4CEF1;
-	Mon, 15 Sep 2025 19:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757965974;
-	bh=uOejRi2XFO7qeixRkiyMH2Apb1CTrpBORTrA10JAROg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qU7+qyHlZrBu/gHA3AJ6ybvYlPuZ9cE2B8ivLGMmpgMb2CTlsMAcrLFG8Rqs7iR58
-	 trQljAvT+THNok/lBolUatoHOkf2F+/qNp1jyopY0nehy5T39ibuQNX76ps4LtlEc2
-	 Kpn/ycP5WZUGeDfHwW1TvEtCS2ulAX/fhFv/r/21w79fTB149Ruin4gcO/aZwtsJpR
-	 bFt+jNr5rFpfavWiUFGSBiLgXx7Re6slKaeAhg/FZiVOfzRj0U1rckVJfQPSeSzxmC
-	 fMTBpOVzuzlh4iMSuJJTk6Eg3bgXkn9On/BE6GK/18smpRaUtQROx6L8582/uzj0pg
-	 adVSmS0KSukKA==
-Date: Mon, 15 Sep 2025 20:52:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1757966034; c=relaxed/simple;
+	bh=4+yxs60OAVC+egyNAJiQPoNAhkAmxqsLILpbkalQphk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d/6fKCm7TOO/YdYOFwFU031aDKXSqFdJPUOn1O0zIi0HKMJ3uTt7DYx/ya+X412RXc30vZ0sFQ5DxjF7LykN6WD5U9bGvuPU77aMUWXs4r/pa0nnGld6okQXy6A4Hu238obBWMi8TUhYEVx7bwagNxn8dESen6WFw0PBdt13ga8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=kRXhSUag; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso35024745e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:53:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1757966031; x=1758570831; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vJhLIV1mYQqcST1oL+DWVlUO1Mmv/0wElK+MzmN2lAU=;
+        b=kRXhSUag1/nS8E9xY2G9KRhCheSE0I9o3LyDArUUJ9sVex8XnMOTPmJaWjvSV4ALEK
+         SZaLC+2giSK4D2kZvYU0ypTQ8oCHwxrzeQFZMA/gPUSNR+dNU08usJm0cbJ3xaayW65i
+         41E7e56XROM4SCpuC5RjugIL2go9gKfviWSV8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757966031; x=1758570831;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vJhLIV1mYQqcST1oL+DWVlUO1Mmv/0wElK+MzmN2lAU=;
+        b=XTvIF2jOwD/TwtnwIL12RIfBzfPFnc7cGgAAZXu1+mKqNOhTnejlFCNPGMX8KGn9/G
+         zqhSrP4r6KrR8YN7Mxch7d7lEqGH1KONO66ew+ptDRJasvWifuDM9e+y2RTPrexbKSYG
+         PzjpnbS92CfeYxJJxLPPqZIetzB54G/H/HqYqPdsUyhJdNC5Cwl7B7p4T3ETQ25WyD5Y
+         /t7vQaIdq0Lmdzyrpj3O+KSCW9w18KS3yH33uM5eAao/ZYx+/gRAoLzSUYGZZjMSqV9N
+         LFohOGypYCJkYW5tWs7btGnT8mjK+G1dpPIfDDz2ADdhti8ysJTt5N9PfB+D1KVR1kL9
+         a9vQ==
+X-Gm-Message-State: AOJu0Yw4F2wruI2N3jcyaDKcDZcpZq8ZTTe7ceoiGmYyqYtPwHMjfY45
+	JrSBkKDyDWagaHP6HYv6h9bkmJLmUS95ggNHoLZyFX9+2fgwaac6L2uCnaNXukiL+rKlJH6ldMh
+	NhDLI
+X-Gm-Gg: ASbGncte6WGkQNG5ix4wVjsVsmNPy56nb7kSHx0LyJiv9ec6zEblnoiUFBKDBPtpxww
+	TsX6BpY6D3AEd3QiUnk7xLT8+6mJXsqMDldoutFguKPX7HdGDS+23UfOQ1UUHanIa149e1znhHt
+	fbB4VRRo0cZRNqCc7ueY94feC9jzRclXJ0bGvJNRJhvLcpX996ffFjMPj2JOVh1YMTFNXBd8UwZ
+	40zinakItqNtjxwFSAvPGaqT4D6y08gP9LKA23/QTAo3aERlp4kfGoTLz3Dw1N0s4KF8vOueeZQ
+	6QMZT5VzLeIiKvIS111LBu8Ec4RzDoEPdIgQ/Vd3Uf7nEFyzl0RVQbXAejuJNtNXLd4ePDxEDd7
+	pUq02P/sc+qXM+uEYapU/FFK2zIIW7ZYm8Qb6GsBuvVgbuqaw9pDE8VGjFDqLGZc=
+X-Google-Smtp-Source: AGHT+IG7qHwPsEqR9IHaKIK+gqJMIa/E+Jy05PFsgkH/KUwCOfGsFJPue2mRPxnFFVk+CO6qHeKm9w==
+X-Received: by 2002:a7b:c44b:0:b0:45c:b5f7:c6e4 with SMTP id 5b1f17b1804b1-45f21202a1amr79796525e9.35.1757966030718;
+        Mon, 15 Sep 2025 12:53:50 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.40.230])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32640f49sm530985e9.9.2025.09.15.12.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 12:53:50 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Frank Li <Frank.Li@nxp.com>,
+	linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Javier Carrasco <javier.carrasco@wolfvision.net>,
+	Jeff LaBundy <jeff@labundy.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jinmei Wei <weijinmei@linux.spacemit.com>
-Subject: Re: [PATCH v3 2/2] ASoC: spacemit: add i2s support for K1 SoC
-Message-ID: <50b81d55-a4d9-4e8f-831d-b98d789c125e@sirena.org.uk>
-References: <20250911-k1-i2s-v3-0-57f173732f9c@linux.spacemit.com>
- <20250911-k1-i2s-v3-2-57f173732f9c@linux.spacemit.com>
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH v3 0/6] Input: imx6ul_tsc - set glitch threshold by dts property
+Date: Mon, 15 Sep 2025 21:53:02 +0200
+Message-ID: <20250915195335.1710780-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EGXM8N1jhlP6IDAm"
-Content-Disposition: inline
-In-Reply-To: <20250911-k1-i2s-v3-2-57f173732f9c@linux.spacemit.com>
-X-Cookie: Use a pun, go to jail.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+The series allows setting the glitch threshold for the detected signal
+from a DTS property instead of a hardcoded value.
+In addition, I applied a patch that replaces opencoded masking and
+shifting, with BIT(), GENMASK(), FIELD_GET() and FIELD_PREP() macros.
 
---EGXM8N1jhlP6IDAm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Changes in v3:
+- Remove the final part of the description that refers to
+  implementation details in fsl,imx6ul-tsc.yaml.
 
-On Thu, Sep 11, 2025 at 01:47:11PM +0800, Troy Mitchell wrote:
+Changes in v2:
+- Replace patch ("dt-bindings: input: touchscreen: fsl,imx6ul-tsc: add
+  fsl,glitch-threshold") with ("dt-bindings: touchscreen: add
+  touchscreen-glitch-threshold-ns property"), making the previous property
+  general by moving it to touchscreen.yaml.
+- Rework "Input: imx6ul_tsc - set glitch threshold by DTS property" patch
+  to match changes made to the DTS property.
+- Move "Input: imx6ul_tsc - use BIT, FIELD_{GET,PREP} and GENMASK macros"
+  patch right after the patch fixing the typo.
 
-> +
-> +static int spacemit_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
-> +				unsigned int fmt)
-> +{
-> +	struct spacemit_i2s_dev *i2s = dev_get_drvdata(cpu_dai->dev);
-> +	u32 sspsp_val;
+Dario Binacchi (5):
+  Input: imx6ul_tsc - use BIT, FIELD_{GET,PREP} and GENMASK macros
+  dt-bindings: touchscreen: add touchscreen-glitch-threshold-ns property
+  dt-bindings: touchscreen: fsl,imx6ul-tsc: support glitch thresold
+  ARM: dts: imx6ull-engicam-microgea-bmm: set touchscreen glitch
+    threshold
+  Input: imx6ul_tsc - set glitch threshold by DTS property
 
-> +	case SND_SOC_DAIFMT_DSP_A:
-> +		sspsp_val |= SSPSP_FSRT;
-> +	case SND_SOC_DAIFMT_DSP_B:
-> +		cpu_dai->driver->playback.channels_min = 1;
-> +		cpu_dai->driver->playback.channels_max = 1;
-> +		cpu_dai->driver->capture.channels_min = 1;
-> +		cpu_dai->driver->capture.channels_max = 1;
-> +		cpu_dai->driver->playback.formats = SNDRV_PCM_FMTBIT_S32_LE;
-> +		cpu_dai->driver->capture.formats = SNDRV_PCM_FMTBIT_S32_LE;
-> +		sspsp_val |= FIELD_PREP(SSPSP_FIELD_SFRMWDTH, 0x1);
-> +		break;
+Michael Trimarchi (1):
+  Input: imx6ul_tsc - fix typo in register name
 
-You really shouldn't be modifying the driver struct at all, if two
-interfaces have different configurations or if one interface changes
-modes the two will fight with each other.  Use the constraints API to
-enforce any constraints that are discovered at runtime.
+ .../input/touchscreen/fsl,imx6ul-tsc.yaml     |  12 ++
+ .../input/touchscreen/touchscreen.yaml        |   4 +
+ .../nxp/imx/imx6ull-engicam-microgea-bmm.dts  |   1 +
+ drivers/input/touchscreen/imx6ul_tsc.c        | 122 +++++++++++-------
+ 4 files changed, 95 insertions(+), 44 deletions(-)
 
---EGXM8N1jhlP6IDAm
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIbpAACgkQJNaLcl1U
-h9Dx7wf+JdDIZkZd9eM9d4C+b/D0+e65EupvZa+AsItg/lCqRm5ORu57BBdcmBTA
-kKSHTTfHgAT7EMcHDmRYTX+HUxqVMBFFJ1Qp7ZP23Yv2oMUQw1pmDUCHc6iirgvQ
-MOiKDXTv8Y9XHI5DpzrnC9wUTxy5B9RV1THZY2P5PQCDPKSknMafWOZsJLFzjOCC
-QpBWW+TYApx9c7m45lHRvWK8Xk/tdzhz9E2EyUNTSX1mUc2w4M9A0RPlI/gVAPzk
-8kfsGCNjmRA1gOwgecmB69k2bBqvSH4HUJbt8d1oct2qNtuzqLP4NneaALBK340h
-6oSgJkPkOKdN3shbVXBUXaVIFg2LIQ==
-=DUX+
------END PGP SIGNATURE-----
-
---EGXM8N1jhlP6IDAm--
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+branch: tsc_de_glitch
 
