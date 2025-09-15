@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-816263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF941B571A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A94B571B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A9D17CC65
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623DD17C0DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B2D2D8375;
-	Mon, 15 Sep 2025 07:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FED2D7DCE;
+	Mon, 15 Sep 2025 07:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="e/WY7yZk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="io8fvVYd"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WY+cQzx7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8522D6630;
-	Mon, 15 Sep 2025 07:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFC62D6E65
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921733; cv=none; b=erhTnNrBInRjHzdwLpsnDFQM8V8QONBY55Hntx2gj3kxhTZdgUlIeBPrMi6FDL30zujvKPZVjNzDz8WJ4Zy/Gcsdj3/PgSWs7UAB3Yki8ljUljwTtW9yJ+xWNP5ik3QIxthx8a/FDeFNc8GyPBusMaO6DVVU757gzPwj9eJzRB0=
+	t=1757921978; cv=none; b=QcoElYW0HoiX4jNTY6DxE3AVLn/n8PBQwbKyBdmhtUUeel5x36skQ/k2c2cTljb7gVC+xRzmQ0Dw7hB2IctMLr1Oz5npwEHtkNOrzD22ifxv4G01wPicLvH/uqil/zce254bHnxDCYpKHjnSftvG8AE+HappdmH8qPybhVBZm78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921733; c=relaxed/simple;
-	bh=RuYRebl+HbUVt0zse4N6nxIR3wc0SJPxveq7cnkMuQY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=u4TPENf5XdNNY5aKeHm4sYLUaqfCZzoUKCCfnMbzdM2KNS87iTaHLLsnfyN2D2bzUF1U06Q5srSbPsR+ePpDXnwXoTz0/tIpoCv/xKlHbPBgg9woFRiYfAyHGvkKPk1LQ94cb1B8RgrpECHBefoiQcRj9MAPOcenw7Mggg5iXRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=e/WY7yZk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=io8fvVYd; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7B41C14001EB;
-	Mon, 15 Sep 2025 03:35:29 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 15 Sep 2025 03:35:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757921729;
-	 x=1758008129; bh=fFh5zcL0Pgn2r4JIGJOuEdaPyHtQPb9OTIMUntGscWE=; b=
-	e/WY7yZk+oi6sgHBOkGnVbdFzRM7RlUGTvJirnJupQ0QTzVhSq1GbfGEMIgCU1+d
-	qocPk/TYsXpUiTg1aesivL/DbrG77RryIK/cACp26g1OYlKRDGruAbiOZn+jkKOZ
-	HXu0fJj1/aeWN9dZO0flvv4V8NTKial7+5zerjtSLDu8PpL4RIXJdWdaNprwB88Z
-	2KPiJ7ns9xIWK9fo0QTeUdwg2E6Mtsm2LYHhjt+CJMFqZNqdySyVUGBJJL+Uwkj+
-	5sGLKtTp9Ye4hu5281d/3y2vZMtuyII4GMxeOQlmdkOSECdKKMeBYeUFnn1cCZuA
-	P9ZB7UVtJYRFIezfPSoGoA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757921729; x=
-	1758008129; bh=fFh5zcL0Pgn2r4JIGJOuEdaPyHtQPb9OTIMUntGscWE=; b=i
-	o8fvVYd/Z4P0NxWvFzmkCK9GRflvqwBjRzMmewVCIxFLWqvjOJXXxIBoCrcmjxMO
-	ovPm9cpXpLCVg+Y1503X/DIlNitTHAHXnSm3PJAS575L+uKZgfK9maf9Wam72aRK
-	tAbH+l4NjIfbL0z88fFc+ivw9F2q7RF6D0KO+4jFvlLxHOM4J76vidayad2Oh3bJ
-	MBR+vQi/TQ4OADrvtqcR0m5OFx+XJ0PSpNLt3L6njsvJGykXIHgJZ8bWSD0Tzpi8
-	qk4S4jjdmc45u2T5U0l1PlklfN5Vjm+kSdTdzKE0MsShZGGAeUFhcAxc2NXbCepI
-	g/Q/eiOH608d/u36MWLJw==
-X-ME-Sender: <xms:wcHHaF3KSi1DD8hVUkyMGkeXYekvY-ifWGKuqSHMUOje8MsBWEfMWg>
-    <xme:wcHHaMHTWfbvBZl3VUSoe74tY6rqhDYiXCn8BZW5MEwBWj2-ybLGeJX3rHzaY5Hlz
-    BGrQYdCIXBEeJOOSVw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjedutdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoh
-    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhii
-    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtohepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggv
-    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnh
-    gvth
-X-ME-Proxy: <xmx:wcHHaOlAJdtLoomW4wYDMK7BHOkdJhLFYghNEX3oKyZAbvEfaJylcw>
-    <xmx:wcHHaLwa6igA3rro_CvfGamUYBF7LzSGmd2F0d26vwQCHGP3vgQdDw>
-    <xmx:wcHHaJzpb9Jj6ejaH5QT0Y8HGKJpel3FKE5glhH4jRjbRecvmRYDig>
-    <xmx:wcHHaDWqQmIF5hvbydUD2Fs2EMUo7b_KgyyM0rytBbLRh3RZi-3UGA>
-    <xmx:wcHHaPexKUQGNL2eRO6D5m9KTUKjsUix5r3ESQBVxi3d5zVuMYTFikEs>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E954370006A; Mon, 15 Sep 2025 03:35:28 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757921978; c=relaxed/simple;
+	bh=119j7dFD5eNZT8DRTdfIdHAunKmZc0CaSGjdg3caCpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rl4Nb4NGHKH1q6sj/wp2bWxny7xsHXVJVwQirVbEgNwmaTn0si1xqLm21d7hjbW4PtNEixRQ/H814PplkJbsSlABWvHmtWa193WKlsQC/kC3M8FULCGhWQBZBubCGVSyuZ7WjcXeYHqHfsALGl2MicE7QuInZ4Xid46RujWIxeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WY+cQzx7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757921975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0xX6tI6u5zeOVsZqj6Xc96LcqkQ2tcTen7S/ZQeEwms=;
+	b=WY+cQzx7qYBFrANOXvd5g1wrYGRAgMHu6aXqxksIyzhIo4Zw3eaW83Mth3XNtSNdheCMk8
+	s8ziDng3wAFPdh0O8qsU6qoEIezarE5msVtMdpZ1xmiqvv/ZjTyhqGO6qS4xnlAP1U6hax
+	rR3EFUamYC/hB6TcDnEhSNHVMgbGYiw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-88-hN0GAeRxOuGjBMW0I3ex3Q-1; Mon,
+ 15 Sep 2025 03:39:33 -0400
+X-MC-Unique: hN0GAeRxOuGjBMW0I3ex3Q-1
+X-Mimecast-MFC-AGG-ID: hN0GAeRxOuGjBMW0I3ex3Q_1757921972
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7076A1955E88;
+	Mon, 15 Sep 2025 07:39:31 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.224.116])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8DDC6180035E;
+	Mon, 15 Sep 2025 07:39:28 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>,
+	Nam Cao <namcao@linutronix.de>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Zhen Ni <zhen.ni@easystack.cn>
+Subject: [GIT PULL] rv fixes for 6.17-rc7
+Date: Mon, 15 Sep 2025 09:35:30 +0200
+Message-ID: <20250915073529.20364-2-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ah_uXtpTlO07
-Date: Mon, 15 Sep 2025 09:35:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Finn Thain" <fthain@linux-m68k.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
- "Lance Yang" <lance.yang@linux.dev>
-Message-Id: <f1f95870-9ef1-42e8-bb74-b7120820028e@app.fastmail.com>
-In-Reply-To: 
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Sun, Sep 14, 2025, at 02:45, Finn Thain wrote:
-> index 100d24b02e52..7ae82ac17645 100644
-> --- a/include/asm-generic/atomic64.h
-> +++ b/include/asm-generic/atomic64.h
-> @@ -10,7 +10,7 @@
->  #include <linux/types.h>
-> 
->  typedef struct {
-> -	s64 counter;
-> +	s64 counter __aligned(sizeof(long));
->  } atomic64_t;
+Steve,
 
-Why is this not aligned to 8 bytes? I checked all supported architectures
-and found that arc, csky, m68k, microblaze, openrisc, sh and x86-32
-use a smaller alignment by default, but arc and x86-32 override it
-to 8 bytes already. x86 changed it back in 2009 with commit
-bbf2a330d92c ("x86: atomic64: The atomic64_t data type should be 8
-bytes aligned on 32-bit too"), and arc uses the same one.
+The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
 
-Changing csky, m68k, microblaze, openrisc and sh to use the same
-alignment as all others is probably less risky in the long run in
-case anything relies on that the same way that code expects native
-alignment on atomic_t.
+  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
 
-     Arnd
+are available in the Git repository at:
+
+  git@gitlab.com:glemco/linux tags/rv-6.17-rc7
+
+for you to fetch changes up to 9b5096761c184b3923ae45c5e82da31005a765c7:
+
+  rv: Fix missing mutex unlock in rv_register_monitor() (2025-09-15 08:36:35 +0200)
+
+----------------------------------------------------------------
+Simple fixes like:
+- Fix build in some riscv flavours
+- Fix wrong cast, obsolete after refactoring
+- Fix missing unlock on failure
+- Fix duplicate import
+
+----------------------------------------------------------------
+Akhilesh Patil (1):
+      include/linux/rv.h: remove redundant include file
+
+Nam Cao (1):
+      rv: Fix wrong type cast in enabled_monitors_next()
+
+Palmer Dabbelt (1):
+      rv: Support systems with time64-only syscalls
+
+Zhen Ni (1):
+      rv: Fix missing mutex unlock in rv_register_monitor()
+
+ include/linux/rv.h                     | 6 ++----
+ kernel/trace/rv/monitors/sleep/sleep.c | 4 ++++
+ kernel/trace/rv/rv.c                   | 4 ++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+Cc: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+Cc: Nam Cao <namcao@linutronix.de>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Zhen Ni <zhen.ni@easystack.cn>
+
 
