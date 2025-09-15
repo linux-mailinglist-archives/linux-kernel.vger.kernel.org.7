@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-817073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCD0B57DA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:42:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F6CCB57DA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AF2188D43D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1DE43A2503
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5158321F24;
-	Mon, 15 Sep 2025 13:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297F8322DC0;
+	Mon, 15 Sep 2025 13:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAo9Kp/s"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RumgNqet"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A8A31D73A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B331D75F
 	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757943653; cv=none; b=bj12h6DeP6SlMkk48AxVm4CqaOPpSxzkLzVw3eYFXxgngsaZQ5ITL3QUF6xFQWTzYH5Dpkv++SEHtbfM+3URZV4KD6uM/5/UTJFhfHpAOgBRJC7Ys+N093C+AanSwPcQyMmYGw8ylUVM+K3tuT7UA2QPIJnvLBlPA0vsgIbBpJY=
+	t=1757943654; cv=none; b=tcWkfjIqp8TtAy02tbE79sPtxdI+1dhiyDEyuVx/0C1nZxSUxe4jbEtycb1niCsnSPlbE+247Dk3oYYenJBQeA12pobsBnmbyysHwXQAkNattfbhuqGbBo2cMDqiOit3RFRKJwfaI43XRZMU/z28IPcVEFbbR55KNeIjXC2AfVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757943653; c=relaxed/simple;
-	bh=ttjmvio6QfWzCovg1C7MzOvfsRCArSCL+o0LkD/11Yw=;
+	s=arc-20240116; t=1757943654; c=relaxed/simple;
+	bh=R22Tn1GxXynVgGcZZtmj6j+HXED5mHvsvsc3jdyA2XI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dncy/FQ11B/Av9ptCL4xa2L+W2+rbIbrWAKVKIt5fiTsLuz8TYMFu9r/TD8gXEAzezb9ZVx2cxRdCgZUyZWDN+9+L3pJR28dZF8LvwPS8yVIf8T6gGCFtqWBxpUCOnyFpzryQ46jXwNbTPYEOxvjEAwZDj6xFVs/P8MfWS43TJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAo9Kp/s; arc=none smtp.client-ip=209.85.167.49
+	 MIME-Version; b=kbfufMbO1QSIGKU5qQCLmztwPMRSEPxc2XgOVAK2oD6H3clGCXCmPB5carDd2rE6kGU7N+3BOKvaSab/bi4VHax6s5lyREj89LIzIArxaU29/lGVlm446DlhJFrwKaDJKqSaUOSM3TpVxiFs2GVc5C7P+tYAJ7As0fGlXLJ+/68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RumgNqet; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55f720ffe34so4781345e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:40:50 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5608b619cd8so5187127e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:40:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757943649; x=1758548449; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757943650; x=1758548450; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7tWr/JqVgOvXu/F9fhJXup17MiB9k9fkyyqujUfoMQs=;
-        b=QAo9Kp/s0X8JE1WvvTFC/Qoj8M/9tj1mFqXdWldX9QyfePfkM/2bXCW99LUyETTF55
-         xTEnx6KLxgLexahO4GGtUzFL5DewnztFbVpvS3ADuzsQY6fcEIFgoUnM3yFU+htq3q6l
-         AM4VZciOZR3TK1nNm2uXR7Fgrl41ARYRdqseM5oHc+9z5tA33/k+TxAc3IJ8qTtn5RIU
-         6tPBnEcUCoaGTlfbXKhtKMG6QF0g82mg73IYc0WRxEACAoAbQYKW2uLXECMvIMKpFrMP
-         ZjpSman5aFS/2mKqcyaO0I8sK0IXJTG6ePYCa1gHQd2yNefOR80DsDN+bcYhDNirpwJo
-         LiDA==
+        bh=Cxhy1CjTE1SRKEDgpZBn3ZyvPt/a9+eTb0usq/BEmN4=;
+        b=RumgNqetHI7lQll08UXRRRq9ZNz7FeCKHunzN7Z6fBTF3YNAKiPCEfym2hiUWJbYeE
+         cZXhsXqPgJFVPZjs0fg5BFieVgVWl2zpUPPTtdlWZQyQSVJ++jLsEFxzs0wL/5IQdpjR
+         BIZs6q9a311XFTgfIBrZza3p+CDdpf7Ds0jEOVrUOnKlHc72xyMaQXZmC+esGqUzCqjf
+         iF3i1Hc4k01ntRVKhJxvBOmS7agoKRhldWHlbcjWRXqWH88lkN5msQF/cqqM0UX4QBvc
+         Y2aLcjOu/CKPYNZ2A4QdfXl26mnK62W0ihTkyVRkmUuPpCOe2cMHTOhulS6+Ln6AYvCs
+         mL3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757943649; x=1758548449;
+        d=1e100.net; s=20230601; t=1757943650; x=1758548450;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7tWr/JqVgOvXu/F9fhJXup17MiB9k9fkyyqujUfoMQs=;
-        b=NTTLSzfSYBEAojI7WLDuEPiGvEL2alQMiFUpKqBw1DjEH7OTf90pVkIdYOaNv3TMRM
-         aiAWptFgVoo1aoyKmO7iWCF3LmStzA6XgsconELhWP2MPyaE9lxm7zMEhMkIKnpFa8NJ
-         S6/JUYndtk6BkNNYrvRfk+TyjGdM/R6Ep4tBoSkgy0nd+t/HLL9oC9SPbp0TieClmo6n
-         jxrbfSyL5lsRfQLBx8jt2QMXVYCOX5/nsbxz/hIAz1QunsgdoH0JXCqP9sVectBVdtIx
-         MVJmpfTjvtgbRU02FamhQnCUMqIN0RrhtM9wlMW4rJDroRaAlJvsGJ00jZ9C9S82VgYh
-         jYbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT3A6qOA8IAZ12EIJpWAlhEXTyzPLNatrscT2VsI0yWcrnV0CHuTqnt4xafQvexhqRr8KenScvHAq8c/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyafS9+XvMBJ7rG++9kMZDUeAOk6lU4vuj0dZUfZyE822VrOKWB
-	yWGySWDcdFz3hF53pWQafNV28NNkU8uuR8sypg7mY/5V36lS3TWPzcVQj8A2iw==
-X-Gm-Gg: ASbGncswjDw2cIyrqy4XlVd+Gi1VdzhoZ6lv1Yg3ELgw6X2ID2Cgmg0WNgjRviCD6JH
-	oVww9Uix0MgbCW9Z3lRFqnTqcJc94U7ac0kFauWW8RM7Ua5p7OOlXGuy3RRNZXvr8rQAP2ougpQ
-	p4nDNXDJGSCzsfW26qOkLJCX9Haupt0S/zv2+YhMZoEb5O2NfReriK+UmEH2Gcy20h8hGIt4lDk
-	28czFPA2CQiBMJip9jjSpbRbCKXRS4Ti758DteZJQJL6xE82C99mBCd0WWRNcTZb20W5jsn6hgm
-	h5i8SKlgfTziWVfAcH5zI8qaaNQqiYbqeFKgcs2uAgKuIAIhZk3UaK6OYOKEh1N7hLai7LPjtCG
-	HrhYiok7i2wkx5aygoWtOND12Uxk=
-X-Google-Smtp-Source: AGHT+IGZUiqgRibPAiA5DgB0BOAerZLdpk29rMvBlfQxC3FGQGHcSpvUlZ5Nw+aF8RQ+y3vCwdokTw==
-X-Received: by 2002:a05:6512:31d6:b0:566:41cb:671d with SMTP id 2adb3069b0e04-57061436fa8mr3784043e87.23.1757943649092;
+        bh=Cxhy1CjTE1SRKEDgpZBn3ZyvPt/a9+eTb0usq/BEmN4=;
+        b=tpvXMiwY3T54ZRIBA91MXuPDLdHZaKK9bs13kJ7Vbd7nLoG3KqTvrYLcEa2+X69FIf
+         2pElHix7s4UvydgmEvJME+KZFCucmVOq54yLRHyWumkM6xRJZ6fOFP/gzxY5enUIFqZB
+         Waa/PpFCIstt7u76C9XvmlEnFg53n7QaYNIMkQg3UcrBxCd5HFL673ad/rkCbTxsjpRk
+         9Lp/CX17x3bQ2GXCXxYzfoAJxoN2R3mnx597/6NJY4AwykblLDg3H3y+BZgdg+gpPd3/
+         k2Ts3rFrqHu+qJ8N0rG4NxQXXb9UuYgF21EUiJH8V45KXjy2nNDJ6JTOqFEp/M9cwtZx
+         JeaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUe9UOdS9SZsw1aa4+juEwqUtV9Mf5wzw3Y0tJHceVWC7f8s9r2lTJ89aV1Lw/atm68s1hDrxOIIztyxOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhmDlEwD2ndcEV2gPTdQl6Sde8eGwEoCpQnHqbQ938qnPbqpRQ
+	63JI7DVCdC0lsEizps/+qaTAL3GJuPuysbieCfKGPhnausK4xR/HRsmH
+X-Gm-Gg: ASbGncurppEqcBLOkgVoSxSVE98NiYl8dzjrxUl3UOBVs1TT89O/cN6lL3vx5lv/y6+
+	zyCGbyEwJo6tdoEU5/TMcEvQwCzAKtGusJl5gGNT4zGyg5pO2kW0/cFGhzSP24NvwL2lCl7yP+P
+	HvqZkNyEMKuqVM4ZbEBHjt6IeZPcll1+vm8ikkTMfnUAIlpGoSHIa9asS4DikcTMjTPWu5SYQu0
+	2nyaTi4B3qFxkLefcxM0y1lG61QaWde3eDA/jL0FkYMu5JQYt8SFJ/gYv8X+HKaawU+VNkKKuUs
+	V7Ec+vB0pXcOupROHwWt0IYpeKHUPZ8DIFJLPmEQizIe0nitL2UsvMss9b1m6aIm4BJX3ntg1Or
+	WkGTPzLnX1IhvgaHPhLKrxjTL4xQ=
+X-Google-Smtp-Source: AGHT+IGmRNj1PuGI3ccv6PqCAdUWydP8EuQ817wuW4eDhXwFm+h94+/q66fitzQ60Lp8WCMHShUitw==
+X-Received: by 2002:ac2:4ca9:0:b0:55f:53fd:e2fe with SMTP id 2adb3069b0e04-5704aa9fff7mr3152235e87.3.1757943649990;
         Mon, 15 Sep 2025 06:40:49 -0700 (PDT)
 Received: from localhost.localdomain ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-573c8330e54sm1150719e87.63.2025.09.15.06.40.48
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-573c8330e54sm1150719e87.63.2025.09.15.06.40.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 06:40:48 -0700 (PDT)
+        Mon, 15 Sep 2025 06:40:49 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: linux-mm@kvack.org,
 	Andrew Morton <akpm@linux-foundation.org>
@@ -79,11 +79,11 @@ Cc: Michal Hocko <mhocko@kernel.org>,
 	Baoquan He <bhe@redhat.com>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>
-Subject: [PATCH v2 07/10] mm/kasan: Support non-blocking GFP in kasan_populate_vmalloc()
-Date: Mon, 15 Sep 2025 15:40:37 +0200
-Message-ID: <20250915134041.151462-8-urezki@gmail.com>
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>
+Subject: [PATCH v2 08/10] kmsan: Remove hard-coded GFP_KERNEL flags
+Date: Mon, 15 Sep 2025 15:40:38 +0200
+Message-ID: <20250915134041.151462-9-urezki@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250915134041.151462-1-urezki@gmail.com>
 References: <20250915134041.151462-1-urezki@gmail.com>
@@ -95,48 +95,178 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A "gfp_mask" is already passed to kasan_populate_vmalloc() as
-an argument to respect GFPs from callers and KASAN uses it for
-its internal allocations.
+kmsan_vmap_pages_range_noflush() allocates its temp s_pages/o_pages
+arrays with GFP_KERNEL, which may sleep. This is inconsistent with
+vmalloc() as it will support non-blocking requests later.
 
-But apply_to_page_range() function ignores GFP flags due to a
-hard-coded mask.
+Plumb gfp_mask through the kmsan_vmap_pages_range_noflush(), so it
+can use it internally for its demand.
 
-Wrap the call with memalloc_apply_gfp_scope()/memalloc_restore_scope()
-so that non-blocking GFP flags(GFP_ATOMIC, GFP_NOWAIT) are respected.
+Please note, the subsequent __vmap_pages_range_noflush() still uses
+GFP_KERNEL and can sleep. If a caller runs under reclaim constraints,
+sleeping is forbidden, it must establish the appropriate memalloc
+scope API.
 
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
 Cc: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- mm/kasan/shadow.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ include/linux/kmsan.h |  6 ++++--
+ mm/internal.h         |  4 ++--
+ mm/kmsan/shadow.c     |  6 +++---
+ mm/percpu-vm.c        |  2 +-
+ mm/vmalloc.c          | 26 +++++++++++++++++---------
+ 5 files changed, 27 insertions(+), 17 deletions(-)
 
-diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-index 11d472a5c4e8..c6643a72d9f6 100644
---- a/mm/kasan/shadow.c
-+++ b/mm/kasan/shadow.c
-@@ -377,18 +377,10 @@ static int __kasan_populate_vmalloc(unsigned long start, unsigned long end, gfp_
- 		 * page tables allocations ignore external gfp mask, enforce it
- 		 * by the scope API
- 		 */
--		if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
--			flags = memalloc_nofs_save();
--		else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
--			flags = memalloc_noio_save();
--
-+		flags = memalloc_apply_gfp_scope(gfp_mask);
- 		ret = apply_to_page_range(&init_mm, start, nr_pages * PAGE_SIZE,
- 					  kasan_populate_vmalloc_pte, &data);
--
--		if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
--			memalloc_nofs_restore(flags);
--		else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
--			memalloc_noio_restore(flags);
-+		memalloc_restore_scope(flags);
+diff --git a/include/linux/kmsan.h b/include/linux/kmsan.h
+index 2b1432cc16d5..e4b34e7a3b11 100644
+--- a/include/linux/kmsan.h
++++ b/include/linux/kmsan.h
+@@ -133,6 +133,7 @@ void kmsan_kfree_large(const void *ptr);
+  * @prot:	page protection flags used for vmap.
+  * @pages:	array of pages.
+  * @page_shift:	page_shift passed to vmap_range_noflush().
++ * @gfp_mask:	gfp_mask to use internally.
+  *
+  * KMSAN maps shadow and origin pages of @pages into contiguous ranges in
+  * vmalloc metadata address range. Returns 0 on success, callers must check
+@@ -142,7 +143,8 @@ int __must_check kmsan_vmap_pages_range_noflush(unsigned long start,
+ 						unsigned long end,
+ 						pgprot_t prot,
+ 						struct page **pages,
+-						unsigned int page_shift);
++						unsigned int page_shift,
++						gfp_t gfp_mask);
  
- 		___free_pages_bulk(data.pages, nr_pages);
- 		if (ret)
+ /**
+  * kmsan_vunmap_kernel_range_noflush() - Notify KMSAN about a vunmap.
+@@ -348,7 +350,7 @@ static inline void kmsan_kfree_large(const void *ptr)
+ 
+ static inline int __must_check kmsan_vmap_pages_range_noflush(
+ 	unsigned long start, unsigned long end, pgprot_t prot,
+-	struct page **pages, unsigned int page_shift)
++	struct page **pages, unsigned int page_shift, gfp_t gfp_mask)
+ {
+ 	return 0;
+ }
+diff --git a/mm/internal.h b/mm/internal.h
+index 45b725c3dc03..5f3486c1cb83 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1359,7 +1359,7 @@ size_t splice_folio_into_pipe(struct pipe_inode_info *pipe,
+ #ifdef CONFIG_MMU
+ void __init vmalloc_init(void);
+ int __must_check vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+-                pgprot_t prot, struct page **pages, unsigned int page_shift);
++	pgprot_t prot, struct page **pages, unsigned int page_shift, gfp_t gfp_mask);
+ unsigned int get_vm_area_page_order(struct vm_struct *vm);
+ #else
+ static inline void vmalloc_init(void)
+@@ -1368,7 +1368,7 @@ static inline void vmalloc_init(void)
+ 
+ static inline
+ int __must_check vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+-                pgprot_t prot, struct page **pages, unsigned int page_shift)
++	pgprot_t prot, struct page **pages, unsigned int page_shift, gfp_t gfp_mask)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/mm/kmsan/shadow.c b/mm/kmsan/shadow.c
+index 54f3c3c962f0..3cd733663100 100644
+--- a/mm/kmsan/shadow.c
++++ b/mm/kmsan/shadow.c
+@@ -215,7 +215,7 @@ void kmsan_free_page(struct page *page, unsigned int order)
+ 
+ int kmsan_vmap_pages_range_noflush(unsigned long start, unsigned long end,
+ 				   pgprot_t prot, struct page **pages,
+-				   unsigned int page_shift)
++				   unsigned int page_shift, gfp_t gfp_mask)
+ {
+ 	unsigned long shadow_start, origin_start, shadow_end, origin_end;
+ 	struct page **s_pages, **o_pages;
+@@ -230,8 +230,8 @@ int kmsan_vmap_pages_range_noflush(unsigned long start, unsigned long end,
+ 		return 0;
+ 
+ 	nr = (end - start) / PAGE_SIZE;
+-	s_pages = kcalloc(nr, sizeof(*s_pages), GFP_KERNEL);
+-	o_pages = kcalloc(nr, sizeof(*o_pages), GFP_KERNEL);
++	s_pages = kcalloc(nr, sizeof(*s_pages), gfp_mask);
++	o_pages = kcalloc(nr, sizeof(*o_pages), gfp_mask);
+ 	if (!s_pages || !o_pages) {
+ 		err = -ENOMEM;
+ 		goto ret;
+diff --git a/mm/percpu-vm.c b/mm/percpu-vm.c
+index cd69caf6aa8d..4f5937090590 100644
+--- a/mm/percpu-vm.c
++++ b/mm/percpu-vm.c
+@@ -194,7 +194,7 @@ static int __pcpu_map_pages(unsigned long addr, struct page **pages,
+ 			    int nr_pages)
+ {
+ 	return vmap_pages_range_noflush(addr, addr + (nr_pages << PAGE_SHIFT),
+-					PAGE_KERNEL, pages, PAGE_SHIFT);
++			PAGE_KERNEL, pages, PAGE_SHIFT, GFP_KERNEL);
+ }
+ 
+ /**
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 5e01c6ac4aca..2d4e22dd04f7 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -671,16 +671,28 @@ int __vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+ }
+ 
+ int vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+-		pgprot_t prot, struct page **pages, unsigned int page_shift)
++		pgprot_t prot, struct page **pages, unsigned int page_shift,
++		gfp_t gfp_mask)
+ {
+ 	int ret = kmsan_vmap_pages_range_noflush(addr, end, prot, pages,
+-						 page_shift);
++						page_shift, gfp_mask);
+ 
+ 	if (ret)
+ 		return ret;
+ 	return __vmap_pages_range_noflush(addr, end, prot, pages, page_shift);
+ }
+ 
++static int __vmap_pages_range(unsigned long addr, unsigned long end,
++		pgprot_t prot, struct page **pages, unsigned int page_shift,
++		gfp_t gfp_mask)
++{
++	int err;
++
++	err = vmap_pages_range_noflush(addr, end, prot, pages, page_shift, gfp_mask);
++	flush_cache_vmap(addr, end);
++	return err;
++}
++
+ /**
+  * vmap_pages_range - map pages to a kernel virtual address
+  * @addr: start of the VM area to map
+@@ -696,11 +708,7 @@ int vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+ int vmap_pages_range(unsigned long addr, unsigned long end,
+ 		pgprot_t prot, struct page **pages, unsigned int page_shift)
+ {
+-	int err;
+-
+-	err = vmap_pages_range_noflush(addr, end, prot, pages, page_shift);
+-	flush_cache_vmap(addr, end);
+-	return err;
++	return __vmap_pages_range(addr, end, prot, pages, page_shift, GFP_KERNEL);
+ }
+ 
+ static int check_sparse_vm_area(struct vm_struct *area, unsigned long start,
+@@ -3838,8 +3846,8 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	 */
+ 	flags = memalloc_apply_gfp_scope(gfp_mask);
+ 	do {
+-		ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+-			page_shift);
++		ret = __vmap_pages_range(addr, addr + size, prot, area->pages,
++				page_shift, nested_gfp);
+ 		if (nofail && (ret < 0))
+ 			schedule_timeout_uninterruptible(1);
+ 	} while (nofail && (ret < 0));
 -- 
 2.47.3
 
