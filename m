@@ -1,188 +1,255 @@
-Return-Path: <linux-kernel+bounces-816174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AED0B57087
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:41:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056FBB5708C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD69189ADC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:41:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A49984E1615
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BBB28C5B8;
-	Mon, 15 Sep 2025 06:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3541428751B;
+	Mon, 15 Sep 2025 06:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SOWsV4v3"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bey7w97y"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5447F1A5B9E;
-	Mon, 15 Sep 2025 06:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A2827E045;
+	Mon, 15 Sep 2025 06:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757918427; cv=none; b=mySPuC5IBLdn2HZoxXh2OFWNm+yyMAhIrS6ZSxv+GnCK2glfDHd1tx2TJjaEmM5q93NUWaodxsEMhCPfM4j2QOq7J9mbPGbx++LQb6vqTiRwZhHC6ZqHxyyqsfEMYKAmM2Eh/0FS3AorqVztJYPY69HWBXi9bmd8bJoz0b+fXwM=
+	t=1757918567; cv=none; b=OignkUuadie3dGTPJSC4L51gN+2e5gloWmMO0/Y1sx8EC63ZhXIyI81B37XYUD8vU6uJLWTyqVkciECbhQnrLEXFbFtrWXaguNXm+BFC0G+zaBMaauB4UPzA7xAzgUfTfjKXpx0omTob0U7LLePOxkLWtD7PKGZpRpQ2adeWdeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757918427; c=relaxed/simple;
-	bh=1oATAxVL9L8+W4Wm3xhU3r66jDl8E04elcLrcxGUIqw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Swy0CldI4Li9POhlx0l/P3SH+uBZyrI3lUc6xMdgUa9sWgEVKQi3w43NZpol6NmAcoE5TtmusJx7viqTRFw0bDWsAboFaDpgE5iAkMDwXbk1BQzuG77KN6p0IBEzWPW9F3nAPNhlQTXm1uTACoKlPX3GzEQi3nzwegTESG9XorM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SOWsV4v3; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c66:2dbc:e233:e1b4:15e7:45cd])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 61A5BC71;
-	Mon, 15 Sep 2025 08:39:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757918346;
-	bh=1oATAxVL9L8+W4Wm3xhU3r66jDl8E04elcLrcxGUIqw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SOWsV4v3s9N3Dr5pzUODuvmtOkJW63u83wkDuwuPQqKkF/esIPz6fp/eA6LAlolIo
-	 SUfRI6pNuqJsew1Tp2FBEiRTMtDGBPmOgCN/ZIpKCJzYj1t5sB63OfWR+KZap3+8B+
-	 hBn0Pwcy14JHK9WCyPIgsS28N7cCuSb9KQUJ3vaY=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Mon, 15 Sep 2025 12:09:14 +0530
-Subject: [PATCH v3 8/8] media: imx335: Switch to {enable,disable}_streams
+	s=arc-20240116; t=1757918567; c=relaxed/simple;
+	bh=dOUlmwtjQ7dFqHBYte2ksVsiBR2UJ6V2cqwUM9/Qyf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kInMiQbBBjJUsxpMiilDJGpJBd00LRTMJk+dsYs8Fgw8kQO5yxbyoAiojjX1tfArJf1a3Ou+Z65ik8W1aeZLjqA5RPBNFKWRY+1/j+dAvr+Tgc5IVc7zy97XQOQbJEZea4e/B6qAJyoc2Wy8VhiM6OFikxH/qsDbT+V+SAvxzms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bey7w97y; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757918557;
+	bh=dOUlmwtjQ7dFqHBYte2ksVsiBR2UJ6V2cqwUM9/Qyf0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bey7w97y3A/+4kjYut9Z4evws1FAIusM2YegGYIePSac8lorZw+rSQA/uhixwRjrF
+	 TFP8uehhYxvTBmldzsMNsERWsgapJW8u+Hk8sr6rasl3G3uyJh50fEb6VzlsWp07PI
+	 WVCc1Z8Oh4ohIsrP9CPsuDJRoBDCPUOKCsharMM+yHZ0l5NdReF2HjGVFO9m2lMjFk
+	 cU/Wmxb+skS2F8AbXqocdpalPP+Ou/dpyr9UOEyoJF+CSIiU0DH7LcibQk9T7+oMN+
+	 R2tO05DbP1w7PbsRXvxWnxEkAfya+kPWW5Hw4BnR4SStoRu1HOz10uLh5JL+/bRBmP
+	 eCHI22bPmH3HQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7D89E17E046C;
+	Mon, 15 Sep 2025 08:42:36 +0200 (CEST)
+Date: Mon, 15 Sep 2025 08:42:24 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] drm/panthor: add custom ASN_HASH support for
+ mt8196
+Message-ID: <20250915084224.08fcc2a4@fedora>
+In-Reply-To: <20250913002155.1163908-3-olvaffe@gmail.com>
+References: <20250913002155.1163908-1-olvaffe@gmail.com>
+	<20250913002155.1163908-3-olvaffe@gmail.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-imx335_binning-v3-8-16ecabf2090d@ideasonboard.com>
-References: <20250915-imx335_binning-v3-0-16ecabf2090d@ideasonboard.com>
-In-Reply-To: <20250915-imx335_binning-v3-0-16ecabf2090d@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tommaso Merciai <tomm.merciai@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3419;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=1oATAxVL9L8+W4Wm3xhU3r66jDl8E04elcLrcxGUIqw=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBox7SWA1eJ64lhrSMyPgpk82+aL4IDQKaIJJ5bO
- c4z/bY40+mJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaMe0lgAKCRBD3pH5JJpx
- RUpsD/wOIEEjjLU6ju09e/DaXSkUC963kgjfoXImdsa+OknPcGwx7N1sKmnIIfPusA+6odip+5b
- YFQwMqrCui8acoANCajSHi/x/zBRchmA9XBC+U/9/gN1IAxj7ejNbTosDOKNEkg3uyGKfMqd84r
- JO4XxUVJGP0BJPRGOzcC4lP64ZK8PvDJbS+cSuFYoe3rp7sSES+pkrC5N5i/+/s6F4/vHV3eDSB
- fng06pwgIbVNuyqjWlCPdiGb9DxK8UKZJnYK1iolxtglwNV/sdPzeaUkM/y6rWiWM3ijbxG5Q5y
- KMotxWLa0MKA0nPTQltspr1DPZ1Wv5dP8YzSLgnN5ssiXHOAt7QdMA8hPlLEAxDtoEhqqbhchPk
- aLhGTDxB1LvQjR6XQQYkGYd2iUkSdQQc+Mm+OxxZiml2CXgjAlvN+GhC2W5kJrhzTBOKPwgr/m9
- OKjMXjhmqMCUCIdIYK3/fOC3KtDOkXT7G6BmHKP/qWA4iVDqZm0wCV5oKAYmRBCmKCiajurWrn3
- QIM/hRrHfuci5TewvlPCZ+hK69aM4OjFyxjEO84DYjIVc02cPo3LBlGTWdxoQ9HXU/SJC1ObL6j
- VKStLlGWwk4O1l64K/NcjTNolZVGloV80d+sD0Sgov6Do6gZ4NtDXiMnvkLZaWBG/af0zyv4vx/
- eRlIdIhzDuxHbfw==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Switch from s_stream to enable_streams and disable_streams callbacks.
+On Fri, 12 Sep 2025 17:21:55 -0700
+Chia-I Wu <olvaffe@gmail.com> wrote:
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/i2c/imx335.c | 53 +++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 29 deletions(-)
+> Add panthor_soc_data to control custom ASN_HASH. Add compatible string
+> for "mediatek,mt8196-mali" and enable custom ASN_HASH for the soc.
+> 
+> Without custom ASN_HASH, FW fails to boot
+> 
+>   panthor 48000000.gpu: [drm] *ERROR* Unhandled Page fault in AS0 at VA 0x0000000000000000
+>   panthor 48000000.gpu: [drm] *ERROR* Failed to boot MCU (status=fatal)
+>   panthor 48000000.gpu: probe with driver panthor failed with error -110
+> 
+> With custom ASN_HASH, panthor probes fine and userspace boots to ui just
+> fine as well
+> 
+>   panthor 48000000.gpu: [drm] clock rate = 0
+>   panthor 48000000.gpu: EM: created perf domain
+>   panthor 48000000.gpu: [drm] Mali-G925-Immortalis id 0xd830 major 0x0 minor 0x1 status 0x5
+>   panthor 48000000.gpu: [drm] Features: L2:0x8130306 Tiler:0x809 Mem:0x301 MMU:0x2830 AS:0xff
+>   panthor 48000000.gpu: [drm] shader_present=0xee0077 l2_present=0x1 tiler_present=0x1
+>   panthor 48000000.gpu: [drm] Firmware protected mode entry not be supported, ignoring
+>   panthor 48000000.gpu: [drm] Firmware git sha: 27713280172c742d467a4b7d11180930094092ec
+>   panthor 48000000.gpu: [drm] CSF FW using interface v3.13.0, Features 0x10 Instrumentation features 0x71
+>   [drm] Initialized panthor 1.5.0 for 48000000.gpu on minor 1
+> 
+> Note that the clock and the regulator drivers are not upstreamed yet.
+> They might as well take a different form when upstreamed.
+> 
+> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 
-diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-index e320c7e6fcede823bd67bae617c24196cbbed8c6..ebdd6ef534499a1d518977675c16a78c31c71c6d 100644
---- a/drivers/media/i2c/imx335.c
-+++ b/drivers/media/i2c/imx335.c
-@@ -1019,13 +1019,19 @@ static int imx335_set_framefmt(struct imx335 *imx335)
- }
- 
- /**
-- * imx335_start_streaming() - Start sensor stream
-- * @imx335: pointer to imx335 device
-+ * imx335_enable_streams() - Enable sensor streams
-+ * @sd: V4L2 subdevice
-+ * @state: V4L2 subdevice state
-+ * @pad: The pad to enable
-+ * @streams_mask: Bitmask of streams to enable
-  *
-  * Return: 0 if successful, error code otherwise.
-  */
--static int imx335_start_streaming(struct imx335 *imx335)
-+static int imx335_enable_streams(struct v4l2_subdev *sd,
-+				 struct v4l2_subdev_state *state, u32 pad,
-+				 u64 streams_mask)
- {
-+	struct imx335 *imx335 = to_imx335(sd);
- 	const struct imx335_reg_list *reg_list;
- 	int ret;
- 
-@@ -1099,37 +1105,24 @@ static int imx335_start_streaming(struct imx335 *imx335)
- }
- 
- /**
-- * imx335_stop_streaming() - Stop sensor stream
-- * @imx335: pointer to imx335 device
-- */
--static void imx335_stop_streaming(struct imx335 *imx335)
--{
--	cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
--		  IMX335_MODE_STANDBY, NULL);
--	pm_runtime_put(imx335->dev);
--}
--
--/**
-- * imx335_set_stream() - Enable sensor streaming
-- * @sd: pointer to imx335 subdevice
-- * @enable: set to enable sensor streaming
-+ * imx335_disable_streams() - Disable sensor streams
-+ * @sd: V4L2 subdevice
-+ * @state: V4L2 subdevice state
-+ * @pad: The pad to disable
-+ * @streams_mask: Bitmask of streams to disable
-  *
-  * Return: 0 if successful, error code otherwise.
-  */
--static int imx335_set_stream(struct v4l2_subdev *sd, int enable)
-+static int imx335_disable_streams(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_state *state, u32 pad,
-+				  u64 streams_mask)
- {
- 	struct imx335 *imx335 = to_imx335(sd);
--	struct v4l2_subdev_state *state;
--	int ret = 0;
--
--	state = v4l2_subdev_lock_and_get_active_state(sd);
--
--	if (enable)
--		ret = imx335_start_streaming(imx335);
--	else
--		imx335_stop_streaming(imx335);
-+	int ret;
- 
--	v4l2_subdev_unlock_state(state);
-+	ret = cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
-+			IMX335_MODE_STANDBY, NULL);
-+	pm_runtime_put(imx335->dev);
- 
- 	return ret;
- }
-@@ -1249,7 +1242,7 @@ static int imx335_parse_hw_config(struct imx335 *imx335)
- 
- /* V4l2 subdevice ops */
- static const struct v4l2_subdev_video_ops imx335_video_ops = {
--	.s_stream = imx335_set_stream,
-+	.s_stream = v4l2_subdev_s_stream_helper,
- };
- 
- static const struct v4l2_subdev_pad_ops imx335_pad_ops = {
-@@ -1259,6 +1252,8 @@ static const struct v4l2_subdev_pad_ops imx335_pad_ops = {
- 	.set_selection = imx335_get_selection,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.set_fmt = imx335_set_pad_format,
-+	.enable_streams = imx335_enable_streams,
-+	.disable_streams = imx335_disable_streams,
- };
- 
- static const struct v4l2_subdev_ops imx335_subdev_ops = {
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
--- 
-2.51.0
+> 
+> ---
+> v2:
+>  - remove CONFIG_DRM_PANTHOR_SOC_MT8196 and panthor_soc*.[ch]
+>  - update commit message
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.c |  2 ++
+>  drivers/gpu/drm/panthor/panthor_device.h | 14 +++++++++++++
+>  drivers/gpu/drm/panthor/panthor_drv.c    |  6 ++++++
+>  drivers/gpu/drm/panthor/panthor_gpu.c    | 25 +++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_regs.h   |  4 ++++
+>  5 files changed, 50 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index 81df49880bd87..c7033d82cef55 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -172,6 +172,8 @@ int panthor_device_init(struct panthor_device *ptdev)
+>  	struct page *p;
+>  	int ret;
+>  
+> +	ptdev->soc_data = of_device_get_match_data(ptdev->base.dev);
+> +
+>  	init_completion(&ptdev->unplug.done);
+>  	ret = drmm_mutex_init(&ptdev->base, &ptdev->unplug.lock);
+>  	if (ret)
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+> index 4fc7cf2aeed57..9f0649ecfc4fc 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -31,6 +31,17 @@ struct panthor_perfcnt;
+>  struct panthor_vm;
+>  struct panthor_vm_pool;
+>  
+> +/**
+> + * struct panthor_soc_data - Panthor SoC Data
+> + */
+> +struct panthor_soc_data {
+> +	/** @asn_hash_enable: True if GPU_L2_CONFIG_ASN_HASH_ENABLE must be set. */
+> +	bool asn_hash_enable;
+> +
+> +	/** @asn_hash: ASN_HASH values when asn_hash_enable is true. */
+> +	u32 asn_hash[3];
+> +};
+> +
+>  /**
+>   * enum panthor_device_pm_state - PM state
+>   */
+> @@ -93,6 +104,9 @@ struct panthor_device {
+>  	/** @base: Base drm_device. */
+>  	struct drm_device base;
+>  
+> +	/** @soc_data: Optional SoC data. */
+> +	const struct panthor_soc_data *soc_data;
+> +
+>  	/** @phys_addr: Physical address of the iomem region. */
+>  	phys_addr_t phys_addr;
+>  
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index be962b1387f03..9dd90754865ac 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1682,7 +1682,13 @@ static struct attribute *panthor_attrs[] = {
+>  
+>  ATTRIBUTE_GROUPS(panthor);
+>  
+> +static const struct panthor_soc_data soc_data_mediatek_mt8196 = {
+> +	.asn_hash_enable = true,
+> +	.asn_hash = { 0xb, 0xe, 0x0, },
+> +};
+> +
+>  static const struct of_device_id dt_match[] = {
+> +	{ .compatible = "mediatek,mt8196-mali", .data = &soc_data_mediatek_mt8196, },
+>  	{ .compatible = "rockchip,rk3588-mali" },
+>  	{ .compatible = "arm,mali-valhall-csf" },
+>  	{}
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index db69449a5be09..9d98720ce03fd 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -52,6 +52,28 @@ static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
+>  		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
+>  }
+>  
+> +static void panthor_gpu_l2_config_set(struct panthor_device *ptdev)
+> +{
+> +	const struct panthor_soc_data *data = ptdev->soc_data;
+> +	u32 l2_config;
+> +	u32 i;
+> +
+> +	if (!data || !data->asn_hash_enable)
+> +		return;
+> +
+> +	if (GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id) < 11) {
+> +		drm_err(&ptdev->base, "Custom ASN hash not supported by the device");
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(data->asn_hash); i++)
+> +		gpu_write(ptdev, GPU_ASN_HASH(i), data->asn_hash[i]);
+> +
+> +	l2_config = gpu_read(ptdev, GPU_L2_CONFIG);
+> +	l2_config |= GPU_L2_CONFIG_ASN_HASH_ENABLE;
+> +	gpu_write(ptdev, GPU_L2_CONFIG, l2_config);
+> +}
+> +
+>  static void panthor_gpu_irq_handler(struct panthor_device *ptdev, u32 status)
+>  {
+>  	gpu_write(ptdev, GPU_INT_CLEAR, status);
+> @@ -241,8 +263,9 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev)
+>  			      hweight64(ptdev->gpu_info.shader_present));
+>  	}
+>  
+> -	/* Set the desired coherency mode before the power up of L2 */
+> +	/* Set the desired coherency mode and L2 config before the power up of L2 */
+>  	panthor_gpu_coherency_set(ptdev);
+> +	panthor_gpu_l2_config_set(ptdev);
+>  
+>  	return panthor_gpu_power_on(ptdev, L2, 1, 20000);
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_regs.h b/drivers/gpu/drm/panthor/panthor_regs.h
+> index 8bee76d01bf83..8fa69f33e911e 100644
+> --- a/drivers/gpu/drm/panthor/panthor_regs.h
+> +++ b/drivers/gpu/drm/panthor/panthor_regs.h
+> @@ -64,6 +64,8 @@
+>  
+>  #define GPU_FAULT_STATUS				0x3C
+>  #define GPU_FAULT_ADDR					0x40
+> +#define GPU_L2_CONFIG					0x48
+> +#define   GPU_L2_CONFIG_ASN_HASH_ENABLE			BIT(24)
+>  
+>  #define GPU_PWR_KEY					0x50
+>  #define  GPU_PWR_KEY_UNLOCK				0x2968A819
+> @@ -110,6 +112,8 @@
+>  
+>  #define GPU_REVID					0x280
+>  
+> +#define GPU_ASN_HASH(n)					(0x2C0 + ((n) * 4))
+> +
+>  #define GPU_COHERENCY_FEATURES				0x300
+>  #define GPU_COHERENCY_PROT_BIT(name)			BIT(GPU_COHERENCY_  ## name)
+>  
 
 
