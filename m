@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-816100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2DBB56F6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DFEB56F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D388C16C3D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:36:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0284D3BD42D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8B327381B;
-	Mon, 15 Sep 2025 04:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EE2277007;
+	Mon, 15 Sep 2025 04:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzZgT5Hh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKGQ7ztD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A52CA6F;
-	Mon, 15 Sep 2025 04:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128C714F121;
+	Mon, 15 Sep 2025 04:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757910983; cv=none; b=La+Nt4pEmLklzPJUUDSjekmMQ8hImnOqZxNFrCoKkVy7m/G82zpolUbXGKiagii9AQsW7TsT1aybw4jj8KqaBeMFZwBNw/1XCpqFUbOVakq8nQ/rlMidqcpT0Fglz2vYWceB29Gpk2PQMUpXcPmRbux57EfDgkBsEndZCjrngxg=
+	t=1757911319; cv=none; b=Q/WyXhuCSwKS7zk3hIQXfH8/3mKviloSSl7cnu/kZHZUgp38YWQv5wyqJmv1GYrd0ukFild5w2G1w8sz1K8LuJBFjVY3Bwq9KgtdBu8XeJmfeSnxnpdB/qf+SvxKohYgLd0PuOVN/j322vQCa+87WrP2xQ3AKPZVhu+sHDXRdLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757910983; c=relaxed/simple;
-	bh=k0sNb7NLoVYVvW3vpRZbfBp88c3GVqAUJZWzv7Q2gnA=;
+	s=arc-20240116; t=1757911319; c=relaxed/simple;
+	bh=b/qNKcp4cR4Py7I6Jmk+kD30432fdQwu0TjuOKJbeyo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKVmebvqSRB7ZnBkbscczXGV10VooH/SDm7kiEeQAnrMgE+bpGYusIeZiP5FdL++i0uAX8zx+FfG09+W9sKql4HyXBQm4EVtYAJh/J+8Iv1gjhoMdXNhlfHjS+KffVY1A7ktctdbTUFhCEOdTDlHntevvt3yebyDPUxntd2n+Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzZgT5Hh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AFEC4CEF1;
-	Mon, 15 Sep 2025 04:36:18 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=B/27kH7tlhdwa+zLOA23+1NbUQxPvP1sQ+VzwbbRXIrgo60nb9eOvvPStXzQ3hW+kNgjXpTTj57d5FD7YgxkJ+DAmCBY2MJgXNNrAM0yPicts2zKkflyw6Le+b7fPXJ5LoN/VafhgDWh7v7hgWQbTjkggUFWCn2hbFg5Bq3OZsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKGQ7ztD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3122BC4CEF1;
+	Mon, 15 Sep 2025 04:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757910981;
-	bh=k0sNb7NLoVYVvW3vpRZbfBp88c3GVqAUJZWzv7Q2gnA=;
+	s=k20201202; t=1757911318;
+	bh=b/qNKcp4cR4Py7I6Jmk+kD30432fdQwu0TjuOKJbeyo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BzZgT5Hhy4pc7AgYH3SHmULpHKz1lw+ZkSNWmXdxZ49uR2y3/mwfdmsS0CL1vE8QX
-	 Bmq7R3gW6CDGiYewtTdSNuI15scKuKMUn2Xow+DrseH3sk0AuOqnU5qRuUhkhMV2eB
-	 z50elEW5tOAA3Sy/3fldbOadFOBhDqY1ZOUCIYoeHY5j7x983PCgQHjkxByty4zl+J
-	 cXiRLh5BSWYmxFrOuICVPX8xaFq8a1f+tCvG34UgITYE6+TX6ocvygRHKaOoFVjnoE
-	 ypP+WWnT6rtEO7r3BvSbAGxv7uuUanCAKGdexJJ93SbET93BeQ4am8FgSDT+WDqdPB
-	 fDuPo+eEO0RUA==
-Message-ID: <ede52fd2-fe20-4648-be7b-de10b14d7e3f@kernel.org>
-Date: Mon, 15 Sep 2025 06:36:16 +0200
+	b=BKGQ7ztDCnDjfZJ0cK4jdzXAQlg5ER9a5S6mlLN1o2ImSD31RSh7Lwze8SuHF0TkX
+	 rfYJllK7y5wqOF93+DWlDBGMbmuup4Xlc3cqmEwbBku+pHZv5LLLt4z0G5b/4h1Jmq
+	 tOvtOzEZGHAKZql6rfhAGE8Hlr5P+fKpGYuacg5DmAiwH+/6KnsntmV30MxFoQF/e6
+	 7KB/uFRVxkdhQVFx+hr+PdjvWpl5gYmxr/jt7jldbt6xV9avUOPDdv8XdP7TlPbQEh
+	 w1yrB6rfYNAO6IjSoEt1bL+fK4LlE/db6uK0ux8c5Sfz62bLPnEdXBc1TD6rAq6wQE
+	 8k9Zh2ZA8ao3g==
+Message-ID: <1b39712b-86c1-4eff-83ea-eb8b180db48c@kernel.org>
+Date: Mon, 15 Sep 2025 06:41:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: exynos: Add initial support for the
- Exynos9610 SoC
-To: Alexandru Chimac <alex@chimac.ro>, Alim Akhtar <alim.akhtar@samsung.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250914-exynos9610-devicetree-v1-0-2000fc3bbe0b@chimac.ro>
- <20250914-exynos9610-devicetree-v1-2-2000fc3bbe0b@chimac.ro>
+Subject: Re: [PATCH RESEND 21/62] init: remove all mentions of root=/dev/ram*
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Eric Curtin <ecurtin@redhat.com>, Alexander Graf <graf@amazon.com>,
+ Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>,
+ linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
+ linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-um@lists.infradead.org, x86@kernel.org, Ingo Molnar
+ <mingo@redhat.com>, linux-block@vger.kernel.org, initramfs@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org,
+ "Theodore Y . Ts'o" <tytso@mit.edu>, linux-acpi@vger.kernel.org,
+ Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+ Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>,
+ patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-22-safinaskar@gmail.com>
+ <a079375f-38c2-4f38-b2be-57737084fde8@kernel.org>
+ <20250914131321.df00dfc835be48c10f4cce4b@linux-foundation.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,85 +130,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250914-exynos9610-devicetree-v1-2-2000fc3bbe0b@chimac.ro>
+In-Reply-To: <20250914131321.df00dfc835be48c10f4cce4b@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/09/2025 22:44, Alexandru Chimac wrote:
-> +
-> +	arm-a53-pmu {
-> +		compatible = "arm,cortex-a53-pmu";
-> +		interrupts = <0 82 4>,
-> +			     <0 83 4>,
-> +			     <0 84 4>,
-> +			     <0 85 4>;
-> +		interrupt-affinity = <&cpu0>,
-> +				     <&cpu1>,
-> +				     <&cpu2>,
-> +				     <&cpu3>;
-> +	};
-> +
-> +	arm-a73-pmu {
-> +		compatible = "arm,cortex-a73-pmu";
-> +		interrupts = <0 96 4>,
-> +			     <0 97 4>,
-> +			     <0 98 4>,
-> +			     <0 99 4>;
-
-You need to use proper defines.
-
-> +		interrupt-affinity = <&cpu100>,
-> +				     <&cpu101>,
-> +				     <&cpu102>,
-> +				     <&cpu103>;
-> +	};
-> +
-> +	oscclk: clock-osc {
-> +		compatible = "fixed-clock";
-> +		#clock-cells = <0>;
-> +		clock-output-names = "oscclk";
-> +		clock-frequency = <26000000>;
-
-clock-frequency is board property.
+On 14/09/2025 22:13, Andrew Morton wrote:
+> On Sun, 14 Sep 2025 12:06:24 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> 
+>>>  Documentation/admin-guide/kernel-parameters.txt          | 3 +--
+>>>  Documentation/arch/m68k/kernel-options.rst               | 9 ++-------
+>>>  arch/arm/boot/dts/arm/integratorap.dts                   | 2 +-
+>>>  arch/arm/boot/dts/arm/integratorcp.dts                   | 2 +-
+>>>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-cmm.dts     | 2 +-
+>>>  .../boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dts    | 2 +-
+>>>  .../arm/boot/dts/aspeed/aspeed-bmc-facebook-minipack.dts | 2 +-
+>>>  .../arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge100.dts | 2 +-
+>>>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge40.dts | 2 +-
+>>>  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yamp.dts    | 2 +-
+>>>  .../boot/dts/aspeed/ast2600-facebook-netbmc-common.dtsi  | 2 +-
+>>
+>> No, don't do that. DTS is always separate.
+> 
+> Why can't DTS changes be carried in a different tree?
 
 
+It must be carried in a different kernel tree and it must be ALWAYS a
+separate commit. Embedding it in the middle of this patchset and in the
+middle of some other commit breaks these two rules.
 
-...
+If you asked why it cannot be carried by VFS (or by any non-SoC tree in
+general), it is because DTS is completely independent hardware
+description, so by keeping it on separate tree we enforce that rule of
+lack of dependency between DTS and any driver or core code.
 
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-> +
-> +		/* Stock Samsung bootloader doesn't configure CNTFRQ_EL0 */
-> +		clock-frequency = <26000000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		abox_rmem: abox@e9400000 {
+If there is a dependency here, then it would be a NAK, because there
+cannot be such - it would be a breach of contract for outside users (DTS
+is shared with other, non-Linux projects).
 
-What is abox?
-
-> +			compatible = "reserved-memory";
-> +			reg = <0x0 0xe9400000 0x2800000>;
-> +			no-map;
-> +		};
-> +
-> +		ramoops@f9d10000 {
-
-This belongs to the the board.
-
-> +			compatible = "ramoops";
-> +			reg = <0x0 0xf9d10000 0x200000>;
-> +			record-size = <0x80000>;
-> +			console-size = <0x80000>;
 
 Best regards,
 Krzysztof
