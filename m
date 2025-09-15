@@ -1,248 +1,108 @@
-Return-Path: <linux-kernel+bounces-816698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A8FB5774D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A40AAB5774E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F023AA099
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7BF63ACA69
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB802FF141;
-	Mon, 15 Sep 2025 10:55:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA112FD7AE;
-	Mon, 15 Sep 2025 10:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D082FE05F;
+	Mon, 15 Sep 2025 10:56:00 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4402E2FB984
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933743; cv=none; b=PgdDIc8RWgqNFT47Jr113BXdUP5hDjdsickLLOuUqwXde9IouZr7t3bwkpHB+PrbNEGOjopvogSVJBIaixP8c00yGER+mXLXk6gEcavplRRB99d+7ULJ9ZqgU0T6CVU/+ULRPdQVur5CcMEINx4Xng33HmW3d/iiPee9VEHdXCg=
+	t=1757933759; cv=none; b=Vp2liu71ioQuFpYRte7Pz9Mz08Sj5wmh9XmClux/GrinA52s5KMuPHqAzTdMZ4+xK9tU5LPh067JM2JZnT3YZABf7vgvzAtZVOVnaTIrZVPQM6P7hBdugpcaNjmIQugg/gb2wDNys7j9u6qW2r7+2gwq7aYYy9xVCHCkKXJdShI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933743; c=relaxed/simple;
-	bh=j9nIETp/ySj+kPeJrGjnyazf55d6hgsJGarkgCP784I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TfSYjGcsL6I+Z67piD6e578Z39HLCe0A4X/k1Qdw4ypcaqsw4v0RF3QS4W+cA2RlIpo8Uan/rnj07G5Bcwoo1+63Wb4h7FLQ36TXr9CosqsLFP3c5ArmTAKfsUtT5b2A4oSCE/GAdudWggG78v6ANxDjm+SDnC3aXt8KBBJSUS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04ABD1424;
-	Mon, 15 Sep 2025 03:55:33 -0700 (PDT)
-Received: from [10.57.5.5] (unknown [10.57.5.5])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9AFCE3F694;
-	Mon, 15 Sep 2025 03:55:36 -0700 (PDT)
-Message-ID: <cdcf1c3c-aca3-4a32-b4ca-ba1a4af5a321@arm.com>
-Date: Mon, 15 Sep 2025 11:55:28 +0100
+	s=arc-20240116; t=1757933759; c=relaxed/simple;
+	bh=GEJSgsO5Z2xGs50BWLMifrD/+7zn62SbW5k2WUWfB+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pf8L8m7ecv+w5LAUAcOEkB4PTOghyPJxcqE3d6WtoOp3nhxN6Aw/NUozLL3zF3nUfYunV9zZ3Kgs8OAfjITh2bvobOqFrDom/Wx1vCYixW7fLBQkUuegi7KOM8dDvDY+as6oO1dfAL2CzRNrxyF5MfweLrNWpz0i9/e+nIowQZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b042cc39551so677954866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:55:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757933757; x=1758538557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ojo6oKzvqX8/j4uhWlFtqoPQT5IbRZtxXM8tJo4BfVE=;
+        b=BPLWDqsy1+XzyoFj+AhP5zy7sFqGXyRKCy54Hslv7Hxlffcxpsa4ONyLvuOnGXYK0i
+         DiLnMpYzgIf288NNw2PL8XxoYWXQKTTa9NMk7R27N3dNkHa4MPAN8Ld//WN94JSyJVst
+         REx/TpiWO/2O1rTILku6+omMQbQylVfxNc3kNhGl5hOOz3S8RoiBCRNIFoFtKApEgOpg
+         miL2HQ8yHK/Qh8L8pmkL1Zxpa2+rPWToEmBeP4R2lJyBqqSTr2KlPJNOivN0PACAoBfo
+         NQE8cMBiK6pCUjHJ0hoYVan6fJ/bdWDNrgSSCeJx13fsoPrU70xQ6cunr0cR4Fo0Bi/6
+         TTIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUk4vV3zElBR8V1xr4KdMAW9ZuTqOQscuJ/wiFTC8FasTDOEXfQ13GESwcGdgT0ZCFWUV1Nv4ZXGCDsLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9z8uV50VfVuFcFIIg9FsUTXDjP7O9DND48SpXfP6RZdascTmy
+	nUR/KfloadxnAZO6mXr3exme7mllFRWfSnrqJTKoac8yeRjhGskZJ3Yj
+X-Gm-Gg: ASbGncs2GSdzr583F1qpkM9q4VsMH8R7XmlAtk9W4hFEErZuTvspk5TIK+6WRfvfAoJ
+	hXpX2qXFsv2O0i5e4rvZAr4CtiA+XmaD4BExiHj/RJyTvr6FTn5vRenPlw6hueu6LeKnZXfcDe1
+	2V2PN+GpjGh/9MWgrICt6MTfQ8Sn3FcpCi1ywpBXzwhc09KlPpClfV72lGnRO9rPSo7jfKw8qw3
+	VjrjOK7JSeIbU/eQJ5EkhDXaRfKYzmrbW8GzNaqQORhXHQ+p0qCUgfV7tH07hDdIjWb5bzFdc6g
+	b4vGWMB3hiw2FcR6XqF1cMG8tLWrdUwX2jP/FO0PQdyJ67VsQkZJmlXBN9w9TLpN3a5TxI2E85m
+	wslDds26NTvFN8r8+1p1Pij0=
+X-Google-Smtp-Source: AGHT+IF8ft3JrAFd5dlXi0U7soWJ7mf7bjTrn94XFIguC2L7TjKvuFQf7Q0Ve+zesz+ofCw1EhAFPQ==
+X-Received: by 2002:a17:907:8689:b0:b04:84db:c83 with SMTP id a640c23a62f3a-b07c35ccf80mr1242336566b.27.1757933756489;
+        Mon, 15 Sep 2025 03:55:56 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:6::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32dd601sm917014366b.60.2025.09.15.03.55.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 03:55:55 -0700 (PDT)
+Date: Mon, 15 Sep 2025 03:55:53 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Lei Yang <leiyang@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, kuba@kernel.org, 
+	Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, kernel-team@meta.com
+Subject: Re: [PATCH net-next v2 0/7] net: ethtool: add dedicated GRXRINGS
+ driver callbacks
+Message-ID: <glf2hbcffix64oogovguhq2dh7icym7hq4qkxw46h74myq6mcf@d7szmoq3gx7q>
+References: <20250912-gxrings-v2-0-3c7a60bbeebf@debian.org>
+ <CAPpAL=zn7ZQ_bVBML5no3ifkBNgd2d-uhx5n0RUTn-DXWyPxKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/43] arm64: Support for Arm CCA in KVM
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
- Emi Kisanuki <fj0570is@fujitsu.com>, Vishal Annapurve <vannapurve@google.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
- <2aa76e3c-1e97-46d8-a8b7-c13cbbf05e8b@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <2aa76e3c-1e97-46d8-a8b7-c13cbbf05e8b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPpAL=zn7ZQ_bVBML5no3ifkBNgd2d-uhx5n0RUTn-DXWyPxKQ@mail.gmail.com>
 
-On 04/09/2025 01:46, Gavin Shan wrote:
-> 
-> On 8/21/25 12:55 AM, Steven Price wrote:
->> This series adds support for running protected VMs using KVM under the
->> Arm Confidential Compute Architecture (CCA).
->>
->> The related guest support was merged for v6.14-rc1 so you no longer need
->> that separately.
->>
->> There are a few changes since v9, many thanks for the review
->> comments. The highlights are below, and individual patches have a
->> changelog.
->>
->>   * Fix a potential issue where the host was walking the stage 2 page
->> tables on
->>     realm destruction. If the RMM didn't zero when undelegated (which
->> it isn't
->>     required to) then the kernel would attempt to work the junk values
->> and crash.
->>
->>   * Avoid RCU stall warnings by correctly settign may_block in
->>     kvm_free_stage2_pgd().
->>
->>   * Rebased onto v6.17-rc1.
->>
->> Things to note:
->>
->>   * The magic numbers for capabilities and ioctls have been updated. So
->>     you'll need to update your VMM. See below for the updated kvmtool
->> branch.
->>
->>   * This series doesn't attempt to integrate with the guest-memfd
->> changes that
->>     are being discussed (see below).
->>
->>   * Vishal raised an important question about what to do in the case of
->>     undelegate failures (also see below).
->>
-> 
-> [...]
-> 
-> I tried to boot a guest using the following combinations, nothing
-> obvious went to
-> wrong except several long existing issues (described below). So feel
-> free to add:
-> 
-> Tested-by: Gavin Shan <gshan@redhat.com>
+Hello Lei,
 
-Thanks for testing!
+On Mon, Sep 15, 2025 at 06:50:15PM +0800, Lei Yang wrote:
+> Hi Breno
+> 
+> This series of patches introduced a kernel panic bug. The tests are
+> based on the linux-next commit [1]. I tried it a few times and found
+> that if I didn't apply the current patch, the issue wouldn't be
+> triggered. After applying the current patch, the probability of
+> triggering the issue was 3/3.
+> 
+> Reproduced steps:
+> 1. git clone https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> 2. applied this series of patches
+> 3. compile and install
+> 4. reboot server(A kernel panic occurs at this step)
 
-Regards,
-Steve
+Thanks for the report. Let me try to reproduce it on my side.
 
-> 
-> Combination
-> ===========
-> host.tf-a        https://git.trustedfirmware.org/TF-A/trusted-firmware-
-> a.git      (v2.13-rc0)
-> host.tf-rmm      https://git.codelinaro.org/linaro/dcap/
-> rmm                       (cca/v8)
-> host.edk2        git@github.com:tianocore/
-> edk2.git                                (edk2-stable202411)
-> host.kernel      git@github.com:gwshan/
-> linux.git                                  (cca/host-v10) (this series)
-> host.qemu        https://git.qemu.org/git/
-> qemu.git                                (stable-9.2)
-> host.buildroot   https://github.com/buildroot/
-> buildroot                           (master)
-> guest.qemu       https://git.codelinaro.org/linaro/dcap/
-> qemu.git                  (cca/latest) (with linux-headers sync'ed)
-> guest.kvmtool    https://gitlab.arm.com/linux-arm/kvmtool-
-> cca                     (cca/latest)
-> guest.edk2       https://git.codelinaro.org/linaro/dcap/
-> edk2                      (cca/latest)
-> guest.kernel     git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/
-> linux.git (v6.17.rc3)
-> guest.buildroot  https://github.com/buildroot/
-> buildroot                           (master)
-> 
-> Script to start the host
-> ========================
-> gshan@nvidia-grace-hopper-01:~/sandbox/qemu/host$ cat start.sh
-> #!/bin/sh
-> HOST_PATH=/home/gshan/sandbox/qemu/host
-> GUEST_PATH=/home/gshan/sandbox/qemu/guest
-> IF_UP_SCRIPT=/etc/qemu-ifup-gshan
-> IF_DOWN_SCRIPT=/etc/qemu-ifdown-gshan
-> 
-> sudo ${HOST_PATH}/qemu/build/qemu-system-aarch64                        \
-> -M virt,virtualization=on,secure=on,gic-version=3,acpi=off              \
-> -cpu max,x-rme=on -m 3G -smp 8                                          \
-> -serial mon:stdio -monitor none -nographic -nodefaults                  \
-> -bios ${HOST_PATH}/tf-a/flash.bin                                       \
-> -kernel ${HOST_PATH}/linux/arch/arm64/boot/Image                        \
-> -initrd ${HOST_PATH}/buildroot/output/images/rootfs.cpio.xz             \
-> -device pcie-root-port,bus=pcie.0,chassis=1,id=pcie.1                   \
-> -device pcie-root-port,bus=pcie.0,chassis=2,id=pcie.2                   \
-> -device pcie-root-port,bus=pcie.0,chassis=3,id=pcie.3                   \
-> -device pcie-root-port,bus=pcie.0,chassis=4,id=pcie.4                   \
-> -device virtio-9p-device,fsdev=shr0,mount_tag=shr0                      \
-> -fsdev local,security_model=none,path=${GUEST_PATH},id=shr0             \
-> -netdev tap,id=tap1,script=${IF_UP_SCRIPT},downscript=${IF_DOWN_SCRIPT} \
-> -device virtio-net-pci,bus=pcie.2,netdev=tap1,mac=b8:3f:d2:1d:3e:f1
-> 
-> Script to start the guest
-> =========================
-> gshan@nvidia-grace-hopper-01:~/sandbox/qemu/guest$ cat start_full.sh
-> #!/bin/sh
-> key="VGhlIHJlYWxtIGd1ZXN0IHBlcnNvbmFsaXphdGlvbiBrZXkgaW4gZm9ybWF0IG9mIGJhc2U2NCAgICAgICAgIA=="
-> IF_UP_SCRIPT=/etc/qemu-ifup
-> IF_DOWN_SCRIPT=/etc/qemu-ifdown
-> 
-> qemu-system-aarch64 -enable-kvm \
-> -object rme-guest,id=rme0,measurement-algorithm=sha512,personalization-
-> value=${key} \
-> -M virt,gic-version=3,confidential-guest-
-> support=rme0                               \
-> -cpu host -smp 4 -m 2G -boot
-> c                                                      \
-> -serial mon:stdio -monitor none -nographic -
-> nodefaults                              \
-> -bios /mnt/edk2/Build/ArmVirtQemu-AARCH64/RELEASE_GCC5/FV/
-> QEMU_EFI.fd               \
-> -device pcie-root-
-> port,bus=pcie.0,chassis=1,id=pcie.1                               \
-> -device pcie-root-
-> port,bus=pcie.0,chassis=2,id=pcie.2                               \
-> -drive file=/mnt/
-> rhel10.qcow2,if=none,id=drive0                                     \
-> -device virtio-blk-pci,id=virtblk0,bus=pcie.1,drive=drive0,num-
-> queues=4             \
-> -netdev
-> tap,id=tap0,script=${IF_UP_SCRIPT},downscript=${IF_DOWN_SCRIPT}             \
-> -device virtio-net-pci,bus=pcie.2,netdev=tap0,mac=b8:3f:d2:1d:3e:f9
-> 
-> Issues
-> ======
-> 1. virtio-iommu isn't supported by QEMU. The guest kernel becomes stuck
-> at IOMMU
-> probing time where the endpoint's capabilities is queried by sending
-> request over
-> virtio device's vring and the response is expected to be fed by QEMU.
-> The request
-> can't be seen by QEMU due to the wrong IOMMU address translation used in
-> QEMU as
-> virtio-iommu provides a different IOMMU address translation operations
-> to override
-> the platform one, leading the DMA address (in the shared space) can't be
-> properly
-> recognized. The information has been shared to Jean.
-> 
-> 2. 'reboot' command doesn't work in the guest. QEMU complains some
-> registers aren't
-> accessible from QEMU. I didn't sorted out a workaround for this.
-> 
-> 3. HMP command 'dump-guest-memory' causes QEMU to exit abnormally. The
-> cause is the
-> realm is reconfigured when the VM is resumed after the guest memory is
-> dumped. The
-> reconfiguration is rejected by the host, leading QEMU's abnormal exit.
-> The fix would
-> be to avoid the reconfiguration on the realm. The issue was originally
-> reported by
-> Fujitsu and all the information has been shared to Fujitsu.
-> 
-> 4. In QEMU, the CPU property 'kvm-no-adjvtime' can't be set to off.
-> Otherwise, QEMU
-> tries to access the timer registers, which have been hidden by the host.
-> So we need
-> to take the parameter (for QEMU) to by pass it: "-cpu host,kvm-no-
-> adjvtime=on".
-> 
-> 5. I didn't try virtio-mem and memory balloon, which isn't expected to
-> work, especially
-> when the guest memory is hot added or hot removed.
-> 
-> Thanks,
-> Gavin
-> 
-> 
+Is this a physical machine, or, are you using a VM with the virtio change?
 
+Thanks,
+--breno
 
