@@ -1,197 +1,308 @@
-Return-Path: <linux-kernel+bounces-817486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86001B582BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:05:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87463B582BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF831A2283A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:05:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 537494E238B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F92877EE;
-	Mon, 15 Sep 2025 17:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9718C277CB6;
+	Mon, 15 Sep 2025 17:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="PswIMUK7"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OEuipUee"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DAF286424;
-	Mon, 15 Sep 2025 17:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757955915; cv=none; b=WHmEA47to1NhEcRpY6ohhhULM9Inj1v2Qt3vAXiQ7KSjMeK3wqyuEEFCX/+YqvimNWosZNKsM13dwXTDkzWNeuzXBghEEgNym5XrZ3SMF7gEYxii7+rz9xNlexV31+L/jo2pUKgoxZTRfRW3OTCi3UmrfzHCJnHEsYM9zZ/HfpA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757955915; c=relaxed/simple;
-	bh=UYHu4XvkaRjYogwIfNpvwksawDBauQBnyHYV6E8cpTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VFNiogxGUpXV5S1zgyUwqw6okGsptCVPsX8P2bMcb1CFyGk0adkp66v0OJaC+LWP82waytil5vJODFlslpy54NzIKze1exhOpxReLdSKXip7P7Zo8PFIYSUxWsiQjtKtv7UV1qCUeDqzPHtLZwZFFn5JgymDEgWBrEbOLMvO1CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=PswIMUK7; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [0.0.0.0] ([134.134.137.72])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58FH4vE22801932
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 15 Sep 2025 10:04:57 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58FH4vE22801932
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025082201; t=1757955898;
-	bh=JbWMiStndH0zdL0jqV2oFj5rZ7N3e7IVzr7NBcUkyX0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PswIMUK7RLrOYL724NWLO+FU07YSavIOCsEN0Lo3+H1kLXvlqoAAziDmyUeHPrE7i
-	 1TLh7s91nbQh/4uA+p7cLa5LY7e9/WOzOLv/2Nb/08l2Nkf5zagSiskgeSrKKXIffS
-	 DBjc+m3khQq0wLBsjBMRITk1MaGkH5/Q3SmQt+vHPDYat77jP2m4urEyW5MOL65NoJ
-	 wOokMJ2IpYolNK9TWk2lFWPf+d6OaztfznYv/FFdNPZJLHjR4hj8qqnRn8Nx08k6Nr
-	 alrKEX9VPXbMUG25G+QZWak9FXaAjpumFnFt0FI8USzG8u9oHbm3C1tGgkfYSYz0M1
-	 JDoRQq0MWQ05g==
-Message-ID: <65184bb3-0a36-49c3-b212-4b19f2df7092@zytor.com>
-Date: Mon, 15 Sep 2025 10:04:51 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD472080C8;
+	Mon, 15 Sep 2025 17:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757955908; cv=fail; b=MCswoOZCwlEGRjZ0W2sOe2sMnMuk/dIXUuhEKgxg+9PNP5wXxLpfOcl3t9uIT4lbx4368jBcceJdb6u/t/bBOnRGMU6pvLQuyPFTUAz38cgDzKOvOkbcfIbs8YwNtixvQXQ+fjdAKV9nL6vi1x2CX6JB9WTeuDG9zSj4QYBb/6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757955908; c=relaxed/simple;
+	bh=YYPaZypjXf3qByJ+LKoiVVb9R2e6NekpAthPZCIJLyQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PO5n9XkvRbRKVomKeIQ8IUBmZGEZtk7rk2Hb1M7y3L/v1g6MEL4gzLRS7xrXD0sbwZCgE28x+86X0MC5S2IqH+Pt4U8Vl7ASdj1bZ7vbz952jhADfglORRo41epy938psoAnQusuEs1Ev187bF6RqGZGcQMuLC3GKZ5qctlHAkI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OEuipUee; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757955907; x=1789491907;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=YYPaZypjXf3qByJ+LKoiVVb9R2e6NekpAthPZCIJLyQ=;
+  b=OEuipUeeYHrpoleuiSxCXVYzq0L4O7q8WccB+iA9sNF0ZKCUV6RIZ6eH
+   UmeM+Uleg4TmrbP6EKXZvseNEyOCTv7sj5Dc6wAEoWTzAM5BS3LArYzuZ
+   47SdC775JNxNKEz+E1Mug59AjMtIa4SXPIxzkS7oC5WnhuZlyP/hdy+nN
+   HLALZ0VGagWp2MTM6xxuv8P8P4QVoQ3Mbxn7dLFx3X0K2s3Elk7tJnjAH
+   hrKFxQeQ/kCB4H9AXbWIpcW4P9FeRmmI03jzA9qO8iUMEQPhZfka6T5ty
+   GTJl/OMUmCcNU3dwptWIRN2F3G4MCGbk1fYpZ+5hCk1ELudQDrnNxLH4D
+   Q==;
+X-CSE-ConnectionGUID: OXG4RM6HTjCIxRTD2NN/7g==
+X-CSE-MsgGUID: Z2bT08yCQHWTBQclfjyG7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="62853977"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="62853977"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:05:05 -0700
+X-CSE-ConnectionGUID: TNv6z3SbRQG4wdqwKlnnmw==
+X-CSE-MsgGUID: 7I1xWa1UTSev0rldURMGHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="175094701"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:05:04 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 10:05:03 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 15 Sep 2025 10:05:03 -0700
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.71) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 10:05:02 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LHQ+M+dzs1uQDFXOX7AAGLXM0w0aaYyvadL+sx9HDhKvDLROkwItnm9mogqRwpBv4BC4nG2dxAxBrL7Fq1Yi9AgTh0/eXoi5GIxvWD7tYEp33gVg2TEccIKy12/VeGyBDwhRTkDhPKt9wPQQlX2zvpfGrvM6dmr99dIJNUshqkdxKLf60VL3ek2hD9sCyLFdADU1TUH4J3R657cPaR9PdNpMjO1A+TYHNsndLoLhlRYck3iEo5D23f8yhTqaQW8hrxh+NJazl30Syuxr9GV8uvv3IqI71hmGEpcmZtpLY8hV2D65Nu7Ju6k8ORM+Y44Xl0alSooT+gWsx6TkmTk1VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WLmkSb/5Ky/zgmIEirYXEVVW36LIrdBtsC2Pso4hxR4=;
+ b=ChUDs9XMGHneHYcK15g/sEfEn/Atn8FP5TAroQUKUBzhHVErY68OMMts0jSDpGw12ZmzEbRDB+lfGWEnwU2KKpTU/0YZTHMSHRTc/cFF5IXWJqtdWh3Os6GCzN4cmjR+9Ti86sYJr9BiLqbTrsxtTMLdarNzL4GszbFMgsS7ecEZLS3my2yHzXjTDG8lCPkYFGoFWH359lT6PPQTJCnSeU4VNbyWlp+89J+skDpyy69QjyxB+0JPWWzLqU+nZ4OR9igXeG1Fr+5+6M+jYzxGjovisSAObMn1YCkZKoTMDAl+x7zjio20YS3tbUYVGaktRchUMI7qj1ycAutsbeTcsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by DS7PR11MB8805.namprd11.prod.outlook.com (2603:10b6:8:254::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 17:04:58 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 17:04:58 +0000
+Date: Mon, 15 Sep 2025 12:04:53 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Christian
+ =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, "=?utf-8?Q?Micha=C5=82?=
+ Winiarski" <michal.winiarski@intel.com>, Alex Deucher
+	<alexander.deucher@amd.com>, <amd-gfx@lists.freedesktop.org>, David Airlie
+	<airlied@gmail.com>, <dri-devel@lists.freedesktop.org>,
+	<intel-gfx@lists.freedesktop.org>, <intel-xe@lists.freedesktop.org>, "Jani
+ Nikula" <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	"Michael J . Ruhl" <mjruhl@habana.ai>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2 00/11] PCI: Resizable BAR improvements
+Message-ID: <wqukxnxni2dbpdhri3cbvlrzsefgdanesgskzmxi5sauvsirsl@xor663jw2cdw>
+References: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="iso-8859-1"; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
+X-ClientProxiedBy: SJ0PR13CA0071.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::16) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 09/41] KVM: x86: Load guest FPU state when access
- XSAVE-managed MSRs
-To: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Mathias Krause <minipli@grsecurity.net>,
-        John Allen <john.allen@amd.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-10-seanjc@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250912232319.429659-10-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS7PR11MB8805:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75239d60-9000-4494-64b2-08ddf479ffd3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?vGNjZM28kr6V8JI11y4MvKGGBOdfTgmV6gl3EW7UOJAKYTwTiQkKsV5ykz?=
+ =?iso-8859-1?Q?5lG/RIaMDTbXM/7iveYuNd9H9c5LgdHr8g6H9eGKv9MUo2ZCsCk5CVoOee?=
+ =?iso-8859-1?Q?+KLlt7I9kh+aufMnUHbR0rDlBa7u0gx2apeErSCw4wyQHaCtxbJpVx4Wvq?=
+ =?iso-8859-1?Q?GDw3WZqXHiU6R2EjAMd0goO2G0yG/7Zs3SrsJc+8XJ9vK9XC+PJQ0ieVo6?=
+ =?iso-8859-1?Q?GDC6KDcv5SzM7Au71IkSxVWARoysEc75VyBKIiAEyHNUwPyWqOClEHGD1f?=
+ =?iso-8859-1?Q?QnV/glostv/xAxP4MQHww0rQJTdhEIADvit53gjLfzE4v2GK7hZy41Eop1?=
+ =?iso-8859-1?Q?BwidtMAq0VxdqaEBv0uBdV0GeeUtHHLSV5AZl5Ce1plA1kL3m72D65xj6p?=
+ =?iso-8859-1?Q?QsOxaKs/BZOX91e7vilpAd+KqarrzhtG+EO389bEw2Ei0ds9xQjE4V6Pdp?=
+ =?iso-8859-1?Q?8vxPcQMzfv/qdbD5nKtLBf0IO05AUWHem0HDge+K//H/cyT4dI4E9iOQQ9?=
+ =?iso-8859-1?Q?aFWzSxZXdFwHOrx542mWmRQfE7tQay3/r/Y3/HbMGH+fbtwbMiSAG4BT4C?=
+ =?iso-8859-1?Q?K4w0di0NmxDp4ATYvHu8D8Y1VGmAsxRug015EVniA7L9BGRX3v5I2FYL9/?=
+ =?iso-8859-1?Q?1p4ei8jfEvT0UhrjV1unL/laMwGL8XC3LILmcPFyOwdl+8wuyZbLM3wMr6?=
+ =?iso-8859-1?Q?2L+vF7hEEWz6vvQyQIsFKmTTgCj3L+E23hTiWEPKY9HtLsutSl1D42/HH6?=
+ =?iso-8859-1?Q?j3D21OMKahBTdcgiC6gxX3h5TLn2CTHR4pnupdQjBPgpIyM72FRNpiL/0b?=
+ =?iso-8859-1?Q?gPHKs24ZtkdJfYbU4Cyv0vri2vmkyXzldu4l8F2GlXeq1R8EXLEVHqHTee?=
+ =?iso-8859-1?Q?6MloO+dEEE5M8MiI4kp02d+wHRFPEymeQ4wWybJSZJcRtaozkgKvjK9N9N?=
+ =?iso-8859-1?Q?Z5cwdvZNPe7OmGg+Eb9WZnbFjw0qLt7RSVvMdguLThQ2Lwe/ZgojYSDwmk?=
+ =?iso-8859-1?Q?JGS4zu/2VoXESniESVuICyaONL3bKstnaz4+EANH1OeSL7wTbuSO+FfMY+?=
+ =?iso-8859-1?Q?nF7f3Tdx0r245bXwntW5s3zmPnDHqAszRIYFWIXRyokS+AP6nPN58KFy4+?=
+ =?iso-8859-1?Q?WF+8WvfkFPsQIXi9Dba8jUIe02NysroYszw6SnMYVCfIkKnhh3foLi+Gel?=
+ =?iso-8859-1?Q?8mZahW581sFC7hgaQLZtGv729KE0oHHFGP1/MUcYLDj+/WvvZwVE2qDrkD?=
+ =?iso-8859-1?Q?6ebD3P/G532pyFgXzsV9OQP42DRBRCpRER38Tt906elJklgxoV8ZIScVDJ?=
+ =?iso-8859-1?Q?V/KapgUBnapHllrmVjcmtrv1LBe7gTYoXPB2590WeQXcvXbNXZeYDlntmx?=
+ =?iso-8859-1?Q?6VABHcyq1dF+CSf5fKp5vy4Nfzn6qSgxIDYQ0dCpeatxmE/OPBlxB7tkQI?=
+ =?iso-8859-1?Q?r84mPdw0mmnvvUfmeiXID/6ZWZj0QwhvFwRDd4kgwvCN3GbBvNOxfi9lVu?=
+ =?iso-8859-1?Q?s=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?FXCviziYuhehGS/3hFYtW3r+HiP8Z66uio2ofNm4S0hcZ0oRzfrFAjzv4u?=
+ =?iso-8859-1?Q?+OBtgx8SFDXGsbbPWQcEgkFve4N2ISRT4SZtSeS/JeBBxvLzYNbRf/7gOl?=
+ =?iso-8859-1?Q?mNuNdR0RJn3y+hY+oZCXpgyuqH6N85aSKKHUqKfSM8KOGu24vN57vZr/zc?=
+ =?iso-8859-1?Q?GzEbJ2vzFkTAIJl56lLu9Y/zCxoaEqQBZr3cVFyUk7RDCnngvzrIlSsGZb?=
+ =?iso-8859-1?Q?jgbVOMT2vmsi3h8iNV0CR4wuzvU4xoCNqYrn8oy8K9ifW+UInMBaD3S7eq?=
+ =?iso-8859-1?Q?oqc9bPb1GwO9/TDgsfDny5upJpmnaeBjwR5AGC/MaFGU38Rxu1Rhi9WKl3?=
+ =?iso-8859-1?Q?ekAAZocb+WXDWt3uDdXqU0VwH+kqlKxsmEgbSNum1BBOIrgZqiICsNvsrw?=
+ =?iso-8859-1?Q?6TNdJzsmVM7jI+hFQpN9Z288eiAa/7gYM9BGSloK8y4iMD5TWV7mhRpD8h?=
+ =?iso-8859-1?Q?iNjTNVjRU8Ow4Yr7aDGpYNV32RiWn16Aa4DWofgduIaNufR+QkUkGpCu2A?=
+ =?iso-8859-1?Q?pqVcGArcHy0j3yA6HLxUBHZ6UKqSQTG15UxGh2853ekSV3Jf4cRKU78OKN?=
+ =?iso-8859-1?Q?BbmJ1qg7rc5CWEH54es2lEORzvf06arq8wgpY8rox7nsr31GoxAetk1FB2?=
+ =?iso-8859-1?Q?P8DJ8KWokX1xMM7NC/jtNXtYa9TUOKuPRcrSJ+QMvt/23PHwrDB83lKmR4?=
+ =?iso-8859-1?Q?HQQLWCoPiSQf4SiEpMCOTbA+bCFPhvquggB476yDsbWbt5fj/vw591rfw7?=
+ =?iso-8859-1?Q?SGPx324TqzAmXZJ3tgf7dartcpvyX+9DeG47J44Bc/iS4EOU7eFlgLHxZa?=
+ =?iso-8859-1?Q?aMWwg4nOAeMFC3rriXffRDByfI4Zz50zjFrcCwqe6icUKndE9uXVTsNL9y?=
+ =?iso-8859-1?Q?ZAHZu1+Y5frjTuo+glIA5C6gl0Cy3oWC6P73yf3h3VFwPItyXHE07umRIb?=
+ =?iso-8859-1?Q?OkVHmUXtU2W9T+1yANYXDRicSgekrv9qz5UGwOZZ+f4wLGdLOTI5liRdBZ?=
+ =?iso-8859-1?Q?+MwgzBZlCHnFD6s8jjNmSt4LkopHcKPmJe0DQS5nQ3nyN0jjeJgk9Aa7x+?=
+ =?iso-8859-1?Q?aQyOjotOrzpEFYxfSrbKo9gMIBUepVYyllziwppCSzgbDI1nfykB/Fk+Ou?=
+ =?iso-8859-1?Q?i41oOoTvZRkW7zcfkuBZes7+b+2VHmtKbGL/sCcdELjRefU12FEkOqmIa1?=
+ =?iso-8859-1?Q?jDj+uTVxf++VRoM8hz9ewhjRpyhgVcw4VlL0pX+U5ajD3q2PgkKNlNvvg1?=
+ =?iso-8859-1?Q?3AxugZBZt2fDUDcmNflZ2XcOjmJ09msy7o5OZGsnQ8q9hggUSVIn9vsDIB?=
+ =?iso-8859-1?Q?Vgo7xW9QdTnZ62RMWOMCy86UqKgxBD0J1FVPIItG3/mkc70hhmiy0XGEAW?=
+ =?iso-8859-1?Q?Hdwyf0U1L46G61BRAvDQIyK9X4QbOz4bstOf+ij1r9RmJt42fdTfVf5rnb?=
+ =?iso-8859-1?Q?KV+cZ07MewRCJO8YD3FjYT46ZYZ+gtgNmnYT94NzO47vn8r3AS2mwVylOP?=
+ =?iso-8859-1?Q?cE5x8S6V8HzC9pBlmu00pvlAwlW8h1LyHbGn5uRNJjUP9BTadVXojJipK3?=
+ =?iso-8859-1?Q?5WZX6XSErKdM8ZaDlANBvFBPjoFvUgaR8agBJexGzc9yFOf7/Un3hcdTUf?=
+ =?iso-8859-1?Q?zHJGeAuNiC57CGx4aGYtXq1idmTJhz8UEINyzjvFiA828inlqeIYOQug?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75239d60-9000-4494-64b2-08ddf479ffd3
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 17:04:58.4007
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YpbCg1oYSXht8JUcr/fWXHvf0xEIdpCKAyRl814ifbydikPJI0K7nN6SHfuC5II9NRJ/hGIkPvcTvshJFFQKRMbM+Jd6ZNWwHyF51q8faZo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB8805
+X-OriginatorOrg: intel.com
 
-On 9/12/2025 4:22 PM, Sean Christopherson wrote:
-> Load the guest's FPU state if userspace is accessing MSRs whose values
-> are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
-> to facilitate access to such kind of MSRs.
-> 
-> If MSRs supported in kvm_caps.supported_xss are passed through to guest,
-> the guest MSRs are swapped with host's before vCPU exits to userspace and
-> after it reenters kernel before next VM-entry.
-> 
-> Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
-> explicitly check @vcpu is non-null before attempting to load guest state.
-> The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
-> loading guest FPU state (which doesn't exist).
-> 
-> Note that guest_cpuid_has() is not queried as host userspace is allowed to
-> access MSRs that have not been exposed to the guest, e.g. it might do
-> KVM_SET_MSRS prior to KVM_SET_CPUID2.
-> 
-> The two helpers are put here in order to manifest accessing xsave-managed
-> MSRs requires special check and handling to guarantee the correctness of
-> read/write to the MSRs.
-> 
-> Co-developed-by: Yang Weijiang <weijiang.yang@intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> [sean: drop S_CET, add big comment, move accessors to x86.c]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Mon, Sep 15, 2025 at 12:13:47PM +0300, Ilpo Järvinen wrote:
+>pci.c has been used as catch everything that doesn't fits elsewhere
+>within PCI core and thus resizable BAR code has been placed there as
+>well. Move Resizable BAR related code to a newly introduced rebar.c to
+>reduce size of pci.c. After move, there are no pci_rebar_*() calls from
+>pci.c indicating this is indeed well-defined subset of PCI core.
+>
+>Endpoint drivers perform Resizable BAR related operations which could
+>well be performed by PCI core to simplify driver-side code. This
+>series adds a few new API functions to that effect and converts the
+>drivers to use the new APIs (in separate patches).
+>
+>While at it, also convert BAR sizes bitmask to u64 as PCIe spec already
+>specifies more sizes than what will fit u32 to make the API typing more
+>future-proof. The extra sizes beyond 128TB are not added at this point.
+>
+>These are based on pci/main plus a simple "adapter" patch to add the
+>include for xe_vram_types.h that was added by a commit in drm-tip.
+>Hopefully that is enough to avoid the within context conflict with
+>BAR_SIZE_SHIFT removal to let the xe CI tests to be run for this
+>series.
+>
+>There are two minor conflicts with the work in pci/resource but I'm
+>hesitant to base this on top of it as this is otherwise entirely
+>independent (and would likely prevent GPU CI tests as well). If we end
+>up having to pull the bridge window select changes, there should be no
+>reason why this does have to become collateral damage (so my
+>suggestion, if this is good to go in this cycle, to take this into a
+>separate branch than pci/resource and deal with those small conflicts
+>while merging into pci/next).
+>
+>I've tested sysfs resize, i915, and xe BAR resizing functionality. In
+>the case of xe, I did small hack patch as its resize is anyway broken
+>as is because BAR0 pins the bridge window so resizing BAR2 fails. My
+>hack caused other problems further down the road (likely because BAR0
+>is in use by the driver so releasing it messed assumptions xe driver
+>has) but the BAR resize itself was working which was all I was
 
+is the hack you mention here to release all BARs before attempting the
+resize?
 
-Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+>interested to know. I'm not planning to pursue fixing the pinning
+>problem within xe driver because the core changes to consider maximum
+>size of the resizable BARs should take care of the main problem by
+>different means.
 
+I'd actually like to pursue that myself as that could be propagated to
+stable since we do have some resize errors in xe with BMG that I wasn't
+understanding. It's likely due to xe_mmio_probe_early() taking a hold of
+BAR0 and not expecting it to be moved. We could either remap if we have
+have to resize or just move the resize logic early on.
 
-> ---
->   arch/x86/kvm/x86.c | 86 +++++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 85 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c5e38d6943fe..a95ca2fbd3a9 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -3801,6 +3804,66 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
->   	mark_page_dirty_in_slot(vcpu->kvm, ghc->memslot, gpa_to_gfn(ghc->gpa));
->   }
->   
-> +/*
-> + * Returns true if the MSR in question is managed via XSTATE, i.e. is context
-> + * switched with the rest of guest FPU state.  Note!  S_CET is _not_ context
-> + * switched via XSTATE even though it _is_ saved/restored via XSAVES/XRSTORS.
-> + * Because S_CET is loaded on VM-Enter and VM-Exit via dedicated VMCS fields,
-> + * the value saved/restored via XSTATE is always the host's value.  That detail
-> + * is _extremely_ important, as the guest's S_CET must _never_ be resident in
-> + * hardware while executing in the host.  Loading guest values for U_CET and
-> + * PL[0-3]_SSP while executing in the kernel is safe, as U_CET is specific to
-> + * userspace, and PL[0-3]_SSP are only consumed when transitioning to lower
-> + * privilegel levels, i.e. are effectively only consumed by userspace as well.
-> + */
-> +static bool is_xstate_managed_msr(struct kvm_vcpu *vcpu, u32 msr)
-> +{
-> +	if (!vcpu)
-> +		return false;
-> +
-> +	switch (msr) {
-> +	case MSR_IA32_U_CET:
-> +		return guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ||
-> +		       guest_cpu_cap_has(vcpu, X86_FEATURE_IBT);
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +		return guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
-> +	default:
-> +		return false;
-> +	}
-> +}
+thanks
+Lucas De Marchi
 
-With this new version of is_xstate_managed_msr(), which checks against vcpu
-capabilities instead of KVM, patch 9 of KVM FRED patches[1] no longer needs
-to make any change to it.  And this is the only conflict when I apply KVM
-FRED patches on top of this v15 mega-CET patch series.
-
-[1] https://lore.kernel.org/lkml/20250829153149.2871901-10-xin@zytor.com/
-
-
-
+>
+>Some parts of this are to be used by the resizable BAR changes into the
+>resource fitting/assingment logic but these seem to stand on their own
+>so sending these out now to reduce the size of the other patch series.
+>
+>v2:
+>- Kerneldoc:
+>  - Improve formatting of errno returns
+>  - Open "ctrl" -> "control"
+>  - Removed mislead "bit" words (when referring to BAR size)
+>  - Rewrote pci_rebar_get_possible_sizes() kernel doc to not claim the
+>    returned bitmask is defined in PCIe spec as the capability bits now
+>    span across two registers in the spec and are not continuous (we
+>    don't support the second block of bits yet, but this API is expected
+>    to return the bits without the hole so it will not be matching with
+>    the spec layout).
+>- Dropped superfluous zero check from pci_rebar_size_supported()
+>- Small improvement to changelog of patch 7
+>
+>Ilpo Järvinen (11):
+>  PCI: Move Resizable BAR code into rebar.c
+>  PCI: Cleanup pci_rebar_bytes_to_size() and move into rebar.c
+>  PCI: Move pci_rebar_size_to_bytes() and export it
+>  PCI: Improve Resizable BAR functions kernel doc
+>  PCI: Add pci_rebar_size_supported() helper
+>  drm/i915/gt: Use pci_rebar_size_supported()
+>  drm/xe/vram: Use PCI rebar helpers in resize_vram_bar()
+>  PCI: Add pci_rebar_get_max_size()
+>  drm/xe/vram: Use pci_rebar_get_max_size()
+>  drm/amdgpu: Use pci_rebar_get_max_size()
+>  PCI: Convert BAR sizes bitmasks to u64
+>
+> Documentation/driver-api/pci/pci.rst        |   3 +
+> drivers/gpu/drm/amd/amdgpu/amdgpu_device.c  |   8 +-
+> drivers/gpu/drm/i915/gt/intel_region_lmem.c |  10 +-
+> drivers/gpu/drm/xe/xe_vram.c                |  32 +-
+> drivers/pci/Makefile                        |   2 +-
+> drivers/pci/iov.c                           |   9 +-
+> drivers/pci/pci-sysfs.c                     |   2 +-
+> drivers/pci/pci.c                           | 145 ---------
+> drivers/pci/pci.h                           |   5 +-
+> drivers/pci/rebar.c                         | 314 ++++++++++++++++++++
+> drivers/pci/setup-res.c                     |  78 -----
+> include/linux/pci.h                         |  15 +-
+> 12 files changed, 350 insertions(+), 273 deletions(-)
+> create mode 100644 drivers/pci/rebar.c
+>
+>
+>base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+>prerequisite-patch-id: 35bd3cd7a60ff7d887450a7fdde73b055a76ae24
+>-- 
+>2.39.5
+>
 
