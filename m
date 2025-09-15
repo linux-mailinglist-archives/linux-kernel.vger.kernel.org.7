@@ -1,247 +1,150 @@
-Return-Path: <linux-kernel+bounces-816689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD62B57725
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6143B5772C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A547AA465
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:50:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D9A77AB2CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5919B2FE59C;
-	Mon, 15 Sep 2025 10:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B1B2FF178;
+	Mon, 15 Sep 2025 10:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m6CINBJN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dsm1gepW"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BDA2FE590;
-	Mon, 15 Sep 2025 10:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C122FF167
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933392; cv=none; b=GQI1hJkfob29skBpXOdpef7O9bOfvdGenXXa59/MVaWJo5az7q+NjpraGJ++REm8PbYfYeYQ3rmVefwMwdsbLINYaIy9pKOZg0wjsReTl7od+JU732onfTByOHzTHaslQ3TcOCysTaaBn0sAhhqUc2RMJAuxi/gApR9SAfNKjXc=
+	t=1757933434; cv=none; b=YkqiwZ/7t0cq76UAZDyUGTyjLyDq2AD+C5UWinh7paUx13Tfyt7YDJwyqThUtyQ2kLNiIbuK/gMVxq5heGAZlSiP7IJsor5o3alaK/FANNxfSQoMAzoXvczloAsX69U/gjNSIyAPZOvuhWjxJaXOsX5MAp5WXZEiTEXHoXOaxP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933392; c=relaxed/simple;
-	bh=R05ROGazlXJ42KmryzhFUXmAwUuWWtCbn9ju0VtLFBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AZHESYkdVB8YIt3bEr/bzUsQ3a0LO9Snc898sDP52eF9Dhz/0EpeR5rwdxYj2NwkMwsPeLvH+dnAxrKO9aIcXU5MsHR6DniwDYAqWaAlw36bwdfkaj4pqXyTl8VI/BGJ3tg+eFL4uQcoGlXsUxD24fQCJy2QyJHDsis/f51w0Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m6CINBJN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8FlUB005788;
-	Mon, 15 Sep 2025 10:49:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HHGInZc+ZRc624QBF+o24+dBaQgC5aqIAyZRer1zD8s=; b=m6CINBJNAiwUNixR
-	Pr+/zPX2RQwh1GB263plfgspEfZO6Wq7dI/aLQktlPa6ZM9dwV9ENbNsni2zfJ+e
-	nwSrp0TARcd9vYpXMxmkD6AogTkjbd/cCa0ozN9DqtghoLZ3DbSeKVXSdyzc99mL
-	q1MK9LeE4MO167mwIhsHp1s2kkaCO5orWbhIzsDxIFNentZXJKIYIcaml2n21ni5
-	sT4qlw4bBJ/+d/yEmE6bk+0fkYrhkTR4We0GjpDTlLJH/Zcf+I2EZInbSt9Q/CxU
-	oKF6hvIHZV6WpclpwkzIfilsShJbNngbzEpUHHDe1k02JaXPGZE2m/8t/DgxLEs1
-	U92n5g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951snmekg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 10:49:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58FAnl8g010624
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 10:49:47 GMT
-Received: from [10.217.218.191] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 15 Sep
- 2025 03:49:45 -0700
-Message-ID: <cc4432ff-a8cc-4235-bd1e-29a22929aec5@quicinc.com>
-Date: Mon, 15 Sep 2025 16:19:42 +0530
+	s=arc-20240116; t=1757933434; c=relaxed/simple;
+	bh=kARumPxqfmMMWgp1NvnsY+8lw/OMkVWPKeLFtKSIlME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KIilW2HGcbFcEuUhOfaG9zJ1etuUqh7hkPv31S8Boly560ON5dicYUsYbDA7q1WPPUuZSXlYBddW80po8NfDVzZzqye6mPZIuvSRG/bRttA/oyxWxL9MsvDPFYy51CeFzXyxoQ7aFzTPMdepcq5XwnPoV5zYgpFLKTkX65Leu54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dsm1gepW; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d601859f5so28815027b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757933430; x=1758538230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a3UAx19vK1YiNrAi97n0gU/rRiRg+M8i65mS2Lnx+jM=;
+        b=dsm1gepW+64GUvS7kMWqaTSMnvOb4DE2XTTvWEeHN+RE/+11IMxt7/VT5nrAsrozPj
+         LjW2VVhrxJupJV9qXK3qo8acFznWW8EUfnwnoI4vzGcKbj1UMmf+bhA1qOvMvaSEpSri
+         JxWMtmdA/Sij1xAwa/AkWOoJWA5FL9LcqfNjqBUys25YDzn55KJIvJEGu+5RMQH+vPpr
+         P8UCDM4suEIwAfOvYk3SwbegH35M/X9YI1gUIk0XqsFMHy+ZES0t8yI4pLpuClLxwNQX
+         aI3en3/nuAnC9ZoXdtEoEmEg9DHc2ZK9SllMJGfkcANMbMEBs5t6ih8A2jNMaQ6iEEy7
+         zv+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757933430; x=1758538230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a3UAx19vK1YiNrAi97n0gU/rRiRg+M8i65mS2Lnx+jM=;
+        b=xLkBz1QJAYs3LtsPMvEhhNai2bzZOzglVcRHYLV5jObQoJArugrRdwp1zFddmFvdzP
+         33XQ1tZVN5kORlDmhV49ZKL6HELJYcK/5GL6Qu1RoZ66uWbsNO8FosHId2Scx3wiZLnt
+         0JYTSR06Fq5mGeW0ppAeGQorsDJSl79qQnHgWZ6XZHm45CnFfmb65HRVP3nyahNiCTiK
+         ag3pH8v28odwVkzXwz+WBtfC/4Nz4uj6ucORehwBtsvrKxse9ncspaFViEWz1c2G1Q3y
+         aaLGgPYdlFJKEKWrW+v0D782B3XVLIycFAtFtmEtyzNut1KnWCbHFbUeF9Hr8Vtn0ZQk
+         83pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyhltzLXdXzvWyyHo1xgPzPiC6DAzbxj5tnLCcOu4wnhC8TqxRcLVqZIg42xb/lT5mZgDimDztkuX+lRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3mvG4WIxvaD8wgmAWQkDeEFXdHqKExxDlxEbqnkaeD9ExX9it
+	jPKvY0rlM9mTvyYrhHut8ScpMOqPUSd2pgBXG3DrWk/cmGrgLpSU5ETkxYxiuUQa5X+OOaX02LD
+	AFdhD5ckzuLyWQRHorTDo9RUW3nLsxBTXP5iB39spig==
+X-Gm-Gg: ASbGnculGQ/sMkfDzjWShXgmY9efrgI0Cw3rJ/Sg7Gx4I7GJMOTI/m5Mt4k9vFIxCKl
+	Qg94KSDRsUFcIfVULye7D0aGZh99tUPxwpFrjlHVdm1kUpC+XAhK48t/lQSD6yUNiSbAyrGOw6N
+	WcnOQpC+rsmNUebwEZBMF3hMtq3A5yzhm1DrgYWHBJAaVaFgrRVwsDx1ZZMBADbl5kTiz1jhrTY
+	eOrzDHboMe478HJBdM=
+X-Google-Smtp-Source: AGHT+IGDEYgOKM3gJ8Zzlityz/syLNE9FRvDAqAmupyu9aSeveyvR7FHQhtEilEP6qYlMPKL0ImuzwqqE0dGUhFDiNI=
+X-Received: by 2002:a05:690c:3706:b0:722:7d35:e0c2 with SMTP id
+ 00721157ae682-730626d2dd2mr106799857b3.2.1757933429679; Mon, 15 Sep 2025
+ 03:50:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] bus: mhi: host: pci_generic: Read
- SUBSYSTEM_VENDOR_ID for VF's to check status
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        <Vivek.Pernamitta@quicinc.com>,
-        Manivannan Sadhasivam <mani@kernel.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250912-uevent_vdev_next-20250911-v4-0-fa2f6ccd301b@quicinc.com>
- <20250912-uevent_vdev_next-20250911-v4-2-fa2f6ccd301b@quicinc.com>
- <65df50b9-0bdf-4a62-ae1f-d0bb550ff406@oss.qualcomm.com>
-Content-Language: en-US
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-In-Reply-To: <65df50b9-0bdf-4a62-ae1f-d0bb550ff406@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=JO87s9Kb c=1 sm=1 tr=0 ts=68c7ef4c cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=Su0R0xCKNgINluJRNn0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: JYME87k6jZj6WBAujzlM01YCxHB1NYeb
-X-Proofpoint-GUID: JYME87k6jZj6WBAujzlM01YCxHB1NYeb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDA0MCBTYWx0ZWRfX+giX9WlPjEa4
- eZiIOrwH+TMITzKe9I3ygzzHuefSF/j+mErC5kDan+1wuF2CAQi4tpa5zqvPRmjgq6xnRn70diz
- jUZShwGI3wwGIAzyF++/cP5S+/AgPmLuaebm8X/qBwhrif2GlujLebW73nVXsc6KsqOoEgskr3O
- GOX6H0CzZRt5AeaHKsOBhcNOHEO43H0J+9YbxLrhUB1KEzF+8W91MMH4LLZY/Ftiqu5eyj5DfKQ
- jxvsHFS4eLSaqZaREsAAA3ohIDRbNSPXG8QxHR2d2rJBi2YyZFMYKZXIrRR+hPfeG4hesKJS3tQ
- T6U26lFlWL9NcERi4RktUQ5OhWTJboWTtarCJKKwthUPwZBNnBQ+veZBYD3fkqPuxW0yJgN+tnY
- mbavvsia
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_04,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 adultscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130040
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-3-507ba4c4b98e@jannau.net>
+In-Reply-To: <20250828-dt-apple-t6020-v1-3-507ba4c4b98e@jannau.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 15 Sep 2025 12:49:53 +0200
+X-Gm-Features: Ac12FXxZCAZGblY8VwFHa1GJ1rGV08p3Fv5KI-OAzvQkX2G4ZDMKiAukPP3wanY
+Message-ID: <CAPDyKFr9dAvP7U3dZ_LFw8YxcvJ6n95OKKLYpntUarqdfUqjWQ@mail.gmail.com>
+Subject: Re: [PATCH 03/37] pmdomain: apple: Add "apple,t8103-pmgr-pwrstate"
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mark Kettenis <kettenis@openbsd.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Michael Turquette <mturquette@baylibre.com>, 
+	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 28 Aug 2025 at 16:01, Janne Grunau <j@jannau.net> wrote:
+>
+> After discussion with the devicetree maintainers we agreed to not extend
+> lists with the generic compatible "apple,pmgr-pwrstate" anymore [1]. Use
+> "apple,t8103-pmgr-pwrstate" as base compatible as it is the SoC the
+> driver and bindings were written for.
+>
+> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+>
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-On 9/15/2025 2:22 PM, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 9/12/2025 6:18 PM, Vivek.Pernamitta@quicinc.com wrote:
->> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
->>
->> In SR-IOV enabled devices, reading the VF DEVICE/VENDOR ID register
->> returns `FFFFh`, as specified in section 3.4.1.1 of the PCIe SR-IOV spec.
->> To accurately determine device activity, read the PCIe VENDOR_ID of
->> the Physical Function (PF) insteadcommit text and subject needs to be 
->> modified to reflect new changes
-> 
->> Health check monitoring for Virtual Functions (VFs) has been disabled,
->> since VFs are not physical functions and lack direct hardware control.
->> This change prevents unnecessary CPU cycles from being consumed by VF
->> health checks, which are both unintended and non-functional.
->>
->> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
->> Reviewed-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> ---
->>   drivers/bus/mhi/host/pci_generic.c | 34 +++++++++++++++++++++++ 
->> +----------
->>   1 file changed, 24 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/ 
->> host/pci_generic.c
->> index 
->> 8a605cb3b8e1e54ef4e699700f3f2660ad5cb093..6fa16975e320212a50e0b68ddb34db5ce711589c 100644
->> --- a/drivers/bus/mhi/host/pci_generic.c
->> +++ b/drivers/bus/mhi/host/pci_generic.c
->> @@ -1082,7 +1082,7 @@ static bool mhi_pci_is_alive(struct 
->> mhi_controller *mhi_cntrl)
->>       struct pci_dev *pdev = to_pci_dev(mhi_cntrl->cntrl_dev);
->>       u16 vendor = 0;
->> -    if (pci_read_config_word(pdev, PCI_VENDOR_ID, &vendor))
->> +    if (pci_read_config_word(pci_physfn(pdev), PCI_VENDOR_ID, &vendor))
-> As you are invoking only for physical functions pci_physfn is not needed.
-> 
-> - Krishna Chaitanya
-pci_physfn(pdev) was intentionally kept as this can be called for VF's
-in error handle path. >>           return false;
->>       if (vendor == (u16) ~0 || vendor == 0)
->> @@ -1193,7 +1193,9 @@ static void mhi_pci_recovery_work(struct 
->> work_struct *work)
->>       dev_warn(&pdev->dev, "device recovery started\n");
->> -    timer_delete(&mhi_pdev->health_check_timer);
->> +    if (pdev->is_physfn)
->> +        timer_delete(&mhi_pdev->health_check_timer);
->> +
->>       pm_runtime_forbid(&pdev->dev);
->>       /* Clean up MHI state */
->> @@ -1220,7 +1222,10 @@ static void mhi_pci_recovery_work(struct 
->> work_struct *work)
->>       dev_dbg(&pdev->dev, "Recovery completed\n");
->>       set_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status);
->> -    mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->> +
->> +    if (pdev->is_physfn)
->> +        mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->> +
->>       return;
->>   err_unprepare:
->> @@ -1307,7 +1312,9 @@ static int mhi_pci_probe(struct pci_dev *pdev, 
->> const struct pci_device_id *id)
->>       else
->>           mhi_cntrl_config = info->config;
->> -    timer_setup(&mhi_pdev->health_check_timer, health_check, 0);
->> +    /* Initialize health check monitor only for Physical functions */
->> +    if (pdev->is_physfn)
->> +        timer_setup(&mhi_pdev->health_check_timer, health_check, 0);
->>       mhi_cntrl = &mhi_pdev->mhi_cntrl;
->> @@ -1371,7 +1378,8 @@ static int mhi_pci_probe(struct pci_dev *pdev, 
->> const struct pci_device_id *id)
->>       set_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status);
->>       /* start health check */
->> -    mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->> +    if (pdev->is_physfn)
->> +        mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->>       /* Allow runtime suspend only if both PME from D3Hot and M3 are 
->> supported */
->>       if (pci_pme_capable(pdev, PCI_D3hot) && !(info->no_m3)) {
->> @@ -1396,7 +1404,8 @@ static void mhi_pci_remove(struct pci_dev *pdev)
->>       struct mhi_pci_device *mhi_pdev = pci_get_drvdata(pdev);
->>       struct mhi_controller *mhi_cntrl = &mhi_pdev->mhi_cntrl;
->> -    timer_delete_sync(&mhi_pdev->health_check_timer);
->> +    if (pdev->is_physfn)
->> +        timer_delete_sync(&mhi_pdev->health_check_timer);
->>       cancel_work_sync(&mhi_pdev->recovery_work);
->>       if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
->> @@ -1424,7 +1433,8 @@ static void mhi_pci_reset_prepare(struct pci_dev 
->> *pdev)
->>       dev_info(&pdev->dev, "reset\n");
->> -    timer_delete(&mhi_pdev->health_check_timer);
->> +    if (pdev->is_physfn)
->> +        timer_delete(&mhi_pdev->health_check_timer);
->>       /* Clean up MHI state */
->>       if (test_and_clear_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status)) {
->> @@ -1469,7 +1479,8 @@ static void mhi_pci_reset_done(struct pci_dev 
->> *pdev)
->>       }
->>       set_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status);
->> -    mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->> +    if (pdev->is_physfn)
->> +        mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->>   }
->>   static pci_ers_result_t mhi_pci_error_detected(struct pci_dev *pdev,
->> @@ -1534,7 +1545,9 @@ static int  __maybe_unused 
->> mhi_pci_runtime_suspend(struct device *dev)
->>       if (test_and_set_bit(MHI_PCI_DEV_SUSPENDED, &mhi_pdev->status))
->>           return 0;
->> -    timer_delete(&mhi_pdev->health_check_timer);
->> +    if (pdev->is_physfn)
->> +        timer_delete(&mhi_pdev->health_check_timer);
->> +
->>       cancel_work_sync(&mhi_pdev->recovery_work);
->>       if (!test_bit(MHI_PCI_DEV_STARTED, &mhi_pdev->status) ||
->> @@ -1585,7 +1598,8 @@ static int __maybe_unused 
->> mhi_pci_runtime_resume(struct device *dev)
->>       }
->>       /* Resume health check */
->> -    mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->> +    if (pdev->is_physfn)
->> +        mod_timer(&mhi_pdev->health_check_timer, jiffies + 
->> HEALTH_CHECK_PERIOD);
->>       /* It can be a remote wakeup (no mhi runtime_get), update access 
->> time */
->>       pm_runtime_mark_last_busy(dev);
->>
+Kind regards
+Uffe
 
+> ---
+>  drivers/pmdomain/apple/pmgr-pwrstate.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/pmdomain/apple/pmgr-pwrstate.c b/drivers/pmdomain/apple/pmgr-pwrstate.c
+> index 9467235110f4654e00ab96c25e160e125ef0f3e5..82c33cf727a825d2536644d2fe09c0282acd1ef8 100644
+> --- a/drivers/pmdomain/apple/pmgr-pwrstate.c
+> +++ b/drivers/pmdomain/apple/pmgr-pwrstate.c
+> @@ -306,6 +306,7 @@ static int apple_pmgr_ps_probe(struct platform_device *pdev)
+>  }
+>
+>  static const struct of_device_id apple_pmgr_ps_of_match[] = {
+> +       { .compatible = "apple,t8103-pmgr-pwrstate" },
+>         { .compatible = "apple,pmgr-pwrstate" },
+>         {}
+>  };
+>
+> --
+> 2.51.0
+>
 
