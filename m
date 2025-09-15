@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-816521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAB4B574EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE54FB574F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720F23A3F1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEE4440F5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844F42F5331;
-	Mon, 15 Sep 2025 09:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JcGw6eYE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TsCkvdLb"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B492EF665;
+	Mon, 15 Sep 2025 09:31:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448391FC0EA;
-	Mon, 15 Sep 2025 09:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA092D2488
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928578; cv=none; b=QutxpVQEWCTHmMlaes1/ZtD2EXDb9bQm+5DfLKvksIX5DUp8EHKQr72WZ4MQFjw3x989KcujjJ6gCo3tFIcTJDQbGk8W1xrpwANQBD2HUNvMl3WHOO8O50285kzZkgVpFUrqrFEIELyrbgMr6ExOi2tmWzRvL93kNcuLmPKVp/I=
+	t=1757928696; cv=none; b=g+1Gbbgbd3t8yFnBHIfULqS86O0CZ9vYF7x+fMhdLp3RExEkLRhnJrqgSTetLQkgyUoAuV+czVRRJ0kS2UTcvK1U7azNOyUnHSJFVcjv+7HSsVZkEq3LCndJPRUOTuns6XA3O1IZyUe+GOLC4RPPYkQi5mT7gD9T0yeg2xsaJvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928578; c=relaxed/simple;
-	bh=w+AOnPDqZdINjhZr0XEnxl7jwYDeFZy59UUMQYl77HY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pBgpRAJkePqGf5XZ96QHTB2doX/zLhlfqjq+1iUQHeeC8Axpx5eOCh7FMKRfMvK/gilemxQWKhyi0AHmvL+5ygr+WHDhkBLaG8F4UKFWwpcwEDp+ErSTECulgSlgm6cbLUb1LW6bsZlNCivgezO2yIIQrTqMnKO0YKE9aErNLgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JcGw6eYE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TsCkvdLb; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 40E48140019B;
-	Mon, 15 Sep 2025 05:29:35 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 15 Sep 2025 05:29:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757928575;
-	 x=1758014975; bh=nKLER6V7zUEC4x624A5YTVLE+4Pgd1sT0irB5GYVHZg=; b=
-	JcGw6eYEgUWOe/fxn9oJLYkd2jZ2DHsaugWzcx6lfdijGXrw5NMElWvkhPknjNuO
-	sHQxFdIgYPXP9/QPu5VObPEAAUxZfW1e+yR9PyUEMNC+76X2YTPImX2bzxp+O6h1
-	rHpp9PaN1ywFyRrjL7zjefDNI32RJXw/GC66Nix+NGSEquhn98Y27F2pOPAssGjh
-	CV5vF8a+c+djtI+4rUaVGFrrCjF8KcRzGVHGr+ksMLvgGs0dUF1pzfKMBRdS0lWJ
-	bSqdpZ25VeBJwyqjpOI9mroL6zfodrTltxyZ9roKHfPVNo/Ltav/3IaV2XzXCX8N
-	6H2JqUl6OXuCicNCn5cY3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757928575; x=
-	1758014975; bh=nKLER6V7zUEC4x624A5YTVLE+4Pgd1sT0irB5GYVHZg=; b=T
-	sCkvdLbaUyhT4+Cnpbq0E0PDQ2ozmarQFgrH0WUZJqBvUlnnU6Kp3E5HqU/lVvrz
-	4KySQKhOqIoR9l9oEokPsY8UxOSjAVe27PHeudT8RmKzqSt6Ngp0v9hceV2xHXQI
-	ggQZo43z9GMAP6g40Vy5oUT76kb5Qn9L8+6q7EXWI40/T1SMG9IdmM1OtzeAX4Qq
-	wKlsG0awHfYZJaOCOpUtLER2rjBtY2yZpM26Cp8SIMGzRvUY/DFtEnH0W5QIkpNf
-	hn2cIDDb5Nmw7VApmbmLYYmcXegEAxIN+Ngk+BLP6/4vf5cMG1dpmdUQA5U0BSXU
-	N98NQzu+RKH0Kiyalgb+w==
-X-ME-Sender: <xms:f9zHaBA3PnAS3ZEGiMviQdb5khui0bmyPi0O0_3Whot6ObayLaR2-A>
-    <xme:f9zHaPjtq5rgEon0uC1_U-quSrSr8EgGbNoWmXCueHe53z4pBuk995DwvtR3LhGxh
-    BA1L7v1ZN4ZZe019jc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoh
-    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhii
-    sehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtohepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggv
-    rdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnh
-    gvth
-X-ME-Proxy: <xmx:f9zHaFxrSSUbs45wxHJOEnDg7qyBSbJY5-MiKbslq1nL87kur1MpcQ>
-    <xmx:f9zHaLN_dxTKaeYf8VpADHHRs8HS9FgaVV2IyrwoflayV3EXwUMGTg>
-    <xmx:f9zHaMfQDWz4QYMvoBIl1I5ODkRz8KDvACezbY7IIwmshSQQEuZzfg>
-    <xmx:f9zHaIS50g0ntb3JfzGjXIFAxVK3aeTipNhXCb4gJGm3g7etWS6mMg>
-    <xmx:f9zHaP6QFuhQp-GLlJZwvtIyKJHHEhHqrYw4VhlSt8Z8gsOXGT2R7pNO>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E6C77700065; Mon, 15 Sep 2025 05:29:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757928696; c=relaxed/simple;
+	bh=OGXyjUvYK5vmnEp5jqa+n3SQ1w1v/lwJlIt5A/daJNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5pjzjBYvvcTLqyyLjOcFhRqJ50adq8R7tlrzXpcOmYtrwlSoSy+92Y7xkrM8/fS7I04mqHqduAUKFE1ZSzqQMOu93msiyHWRcG99bvzAoKn2fVR3E/pXNOoLsjxwKHjnZyxdH4YqqIDFLh44WDaSzm6WNeAAjyVZMcPlOAgO1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uy5Xz-0000Vh-8o; Mon, 15 Sep 2025 11:30:55 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uy5Xw-001Och-13;
+	Mon, 15 Sep 2025 11:30:52 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uy5Xw-009L6r-0X;
+	Mon, 15 Sep 2025 11:30:52 +0200
+Date: Mon, 15 Sep 2025 11:30:52 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
+	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
+Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
+ ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+Message-ID: <aMfczCuRf0bm2GgQ@pengutronix.de>
+References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
+ <20250908124610.2937939-3-o.rempel@pengutronix.de>
+ <20250911193440.1db7c6b4@kernel.org>
+ <aMPw7kUddvGPJCzx@pengutronix.de>
+ <20250912170053.24348da3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ah_uXtpTlO07
-Date: Mon, 15 Sep 2025 11:29:14 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Finn Thain" <fthain@linux-m68k.org>
-Cc: "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
- "Lance Yang" <lance.yang@linux.dev>
-Message-Id: <fb06c629-6a57-4d14-a5db-b7790b84ce13@app.fastmail.com>
-In-Reply-To: <c130a0bd-f581-a1da-cc10-0c09c782dfca@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
- <f1f95870-9ef1-42e8-bb74-b7120820028e@app.fastmail.com>
- <c130a0bd-f581-a1da-cc10-0c09c782dfca@linux-m68k.org>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250912170053.24348da3@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 15, 2025, at 11:26, Finn Thain wrote:
-> On Mon, 15 Sep 2025, Arnd Bergmann wrote:
->> Why is this not aligned to 8 bytes? I checked all supported 
->> architectures and found that arc, csky, m68k, microblaze, openrisc, sh 
->> and x86-32 use a smaller alignment by default, but arc and x86-32 
->> override it to 8 bytes already. x86 changed it back in 2009 with commit 
->> bbf2a330d92c ("x86: atomic64: The atomic64_t data type should be 8 bytes 
->> aligned on 32-bit too"), and arc uses the same one.
->> 
->
-> Right, I forgot to check includes in arch/x86/include. (I had assumed this 
-> definition was relevant to that architecture, hence the sizeof(long), in 
-> order to stick to native alignment on x86-32.)
+On Fri, Sep 12, 2025 at 05:00:53PM -0700, Jakub Kicinski wrote:
+> On Fri, 12 Sep 2025 12:07:42 +0200 Oleksij Rempel wrote:
+> > > > +      -
+> > > > +        name: max-average-mse
+> > > > +        type: u32
+> > > > +      -
+> > > > +        name: max-peak-mse
+> > > > +        type: u32
+> > > > +      -
+> > > > +        name: refresh-rate-ps
+> > > > +        type: u64
+> > > > +      -
+> > > > +        name: num-symbols
+> > > > +        type: u64  
+> > > 
+> > > type: uint for all these?  
+> > 
+> > I would prefer to keep u64 for refresh-rate-ps and num-symbols.
+> > 
+> > My reasoning comes from comparing the design decisions of today's industrial
+> > hardware to the projected needs of upcoming standards like 800 Gbit/s. This
+> > analysis shows that future PHYs will require values that exceed the limits of a
+> > u32.
+> 
+> but u64 may or may not also have some alignment expectations, which uint
+> explicitly excludes
 
-Ok
+just to confirm - if we declare an attribute as type: uint in the YAML
+spec, the kernel side can still use nla_put_u64() to send a 64-bit
+value, correct? My understanding is that uint is a flexible integer
+type, so userspace decoders will accept both 4-byte and 8-byte encodings
+transparently.
 
->> Changing csky, m68k, microblaze, openrisc and sh to use the same 
->> alignment as all others is probably less risky in the long run in case 
->> anything relies on that the same way that code expects native alignment 
->> on atomic_t.
->> 
->
-> By "native alignment", do you mean "natural alignment" here?
-
-Yes, that's what I meant.
-
-    Arnd
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
