@@ -1,111 +1,154 @@
-Return-Path: <linux-kernel+bounces-816564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7716B5757B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:03:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2478BB5757E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82A27AD17F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D0C1AA0553
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07C22FA0D3;
-	Mon, 15 Sep 2025 10:03:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3A2FA0FD;
+	Mon, 15 Sep 2025 10:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jq14LWgC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF442F39B5;
-	Mon, 15 Sep 2025 10:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A958221DA5;
+	Mon, 15 Sep 2025 10:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757930607; cv=none; b=IvaMjuYHlv2qI076v0O18DOlfnaxqlB444Wzl07FwuHvUXTt6W3SiALPU+pW+7RhlDiX8tl17Tnx/EjMmPYyTHwTFlAZvfXIaxs18ChxaTY9h9aD0B88wlb98QYj8hCDgDPDD8ljkBfeA+I3P+1IoDl4eCFR+ZpbMsjSnVQxP5w=
+	t=1757930774; cv=none; b=u/t1rOIQFmTwtEeVYtsGTJ4ZIvtix44tjCVUNbu/CcRDpxk2zeAXhriWlX263H7nJTvVHFiYQM0IsoAxw+oFyAp8Lj0BFmuhW2nBFz0rSDxVJCusWx7lKl71rf/ptiW6qVLz+odj/oimcj3prJnYDa58oSfIsUr9QXey40j5Ttg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757930607; c=relaxed/simple;
-	bh=QPAozO9IPCmM9NuB4KSm+9RLT4V7i/cbQWE5o+mkTiw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n8mTBe6jweUzMDpdS/nZIgPzo71mzi6zMZJx6xBCK0PSmcqrq1ZLHn2CEH4o1HfVveJxmqrxt1CdikSx6hl5uiIUDTEnrdfcV+PZKVZKvFQV1wyM78Z7dRfQfAGhDsqbieDwUbVRpFaorwFSOPO3qF35YCn6ybcOEvRmXCM4UIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQLD25tk5z6K9GM;
-	Mon, 15 Sep 2025 18:01:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B2ABF1402FB;
-	Mon, 15 Sep 2025 18:03:21 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
- 2025 12:03:21 +0200
-Date: Mon, 15 Sep 2025 11:03:20 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-CC: Keith Busch <kbusch@kernel.org>, Matthew Wood <thepacketgeek@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Mario Limonciello <superm1@kernel.org>,
-	Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial
- number
-Message-ID: <20250915110320.0000602f@huawei.com>
-In-Reply-To: <20250913061720.GA1992308@rocinante>
-References: <20250821232239.599523-1-thepacketgeek@gmail.com>
-	<20250821232239.599523-2-thepacketgeek@gmail.com>
-	<aK9e_Un3fWMWDIzD@kbusch-mbp>
-	<20250913061720.GA1992308@rocinante>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757930774; c=relaxed/simple;
+	bh=GvdVNftmJ4BLsmRTY+O4IdSScT4A5MItclZk4Rky85I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNzudbNtfRAnsGBZnHASuIdiYaVmz8Zxh0aFQQHXa5YGW6gCZ7o56/PBMeCsd85EXADV8VsMO0jFTMozeAtbgzJwy0LW3FTuOBft40ZgF8uWtMNA6Kpog8bVs94dsUPf4UrCNJ7TiFd6RryjwzS6aPzgKaogEnpwkMteoLCdubc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jq14LWgC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mf/tFV46HWfDni09P3y3GXXAMD+xCRlLP1MgaKMxEA4=; b=jq14LWgCXg3rYJiE+C3g1DF47y
+	tuAXag/3QK7TpHUzxyKyvqDVKKrLb9YEec+wUU5oogxTzp4odZplpTuEUrTHQ8L3MZ+sX2w9SfSDw
+	wzCQ8VK7QvSWVegCcNL+zd7+nlXhcZ3yeGyFsQ86wgtUcXXxASAeVkQM9V021MX0Yx02jDFx4lr46
+	pwvJv/89kAxTWJscTvbyBppt6GyVKhZzklpD7nUsPvH6CDLBJjDxsq8eprQ+rENsvDdJpiPtBBqxp
+	E+i4A6hXa3tnUVNim+Y1yjYzb0J87iIP+CGtJnWpuoGp1Rs2vtYduKc9I5PdIDhhy7uNwqoD4UAXk
+	ayxQgR5A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uy661-00000006ugF-2nOT;
+	Mon, 15 Sep 2025 10:06:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 84A3F300212; Mon, 15 Sep 2025 12:06:04 +0200 (CEST)
+Date: Mon, 15 Sep 2025 12:06:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@vger.kernel.org
+Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
+ operations
+Message-ID: <20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
+References: <cover.1757810729.git.fthain@linux-m68k.org>
+ <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
+ <20250915080054.GS3419281@noisy.programming.kicks-ass.net>
+ <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
 
-On Sat, 13 Sep 2025 15:17:20 +0900
-Krzysztof Wilczy=C5=84ski <kw@linux.com> wrote:
+On Mon, Sep 15, 2025 at 07:38:52PM +1000, Finn Thain wrote:
+> 
+> On Mon, 15 Sep 2025, Peter Zijlstra wrote:
+> 
+> > On Sun, Sep 14, 2025 at 10:45:29AM +1000, Finn Thain wrote:
+> > > From: Peter Zijlstra <peterz@infradead.org>
+> > > 
+> > > Add a Kconfig option for debug builds which logs a warning when an
+> > > instrumented atomic operation takes place at some location that isn't
+> > > a long word boundary. Some platforms don't trap for this.
+> > > 
+> > > Link: https://lore.kernel.org/lkml/20250901093600.GF4067720@noisy.programming.kicks-ass.net/
+> > > ---
+> > > This patch differs slightly from Peter's code which checked for natural
+> > > alignment.
+> > > ---
+> > >  include/linux/instrumented.h |  4 ++++
+> > >  lib/Kconfig.debug            | 10 ++++++++++
+> > >  2 files changed, 14 insertions(+)
+> > > 
+> > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> > > index 711a1f0d1a73..55f5685971a1 100644
+> > > --- a/include/linux/instrumented.h
+> > > +++ b/include/linux/instrumented.h
+> > > @@ -7,6 +7,7 @@
+> > >  #ifndef _LINUX_INSTRUMENTED_H
+> > >  #define _LINUX_INSTRUMENTED_H
+> > >  
+> > > +#include <linux/bug.h>
+> > >  #include <linux/compiler.h>
+> > >  #include <linux/kasan-checks.h>
+> > >  #include <linux/kcsan-checks.h>
+> > > @@ -67,6 +68,7 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
+> > >  {
+> > >  	kasan_check_read(v, size);
+> > >  	kcsan_check_atomic_read(v, size);
+> > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
+> > >  }
+> > >  
+> > >  /**
+> > > @@ -81,6 +83,7 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
+> > >  {
+> > >  	kasan_check_write(v, size);
+> > >  	kcsan_check_atomic_write(v, size);
+> > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
+> > >  }
+> > >  
+> > >  /**
+> > > @@ -95,6 +98,7 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
+> > >  {
+> > >  	kasan_check_write(v, size);
+> > >  	kcsan_check_atomic_read_write(v, size);
+> > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
+> > >  }
+> > 
+> > Right, so why aren't we trusting the size argument? And instead
+> > mandating a possibly larger alignment?
+> > 
+> 
+> It wasn't supposed to mandate a larger alignment in practice. I considered 
+> doing something like (unsigned long)v & (size - 1) & (sizeof(long) - 1) 
+> but decided that the extra overhead probably wouldn't be worthwhile, if in 
+> practice, no-one is doing atomic ops on shorts or chars. I will revisit 
+> this.
 
-> Hello,
->=20
-> > Can we get a ruling on this one? It's pretty straight forward
-> > implementation exposing a useful attribute. =20
->=20
-> Who needs this?  Why is this useful?  Why hasn't there been a need for
-> exposing serial number in past decades, and suddenly we need it so
-> desperately?
->=20
-> We probably wouldn't want to add this if there is only a single user that
-> needs this, especially give that userspace tools like lspci already expose
-> this when someone needs it.
->=20
-> Also, we were reluctant to expose some types of information, like serial
-> numbers and such, via the VPD recently, so why exposing any serial numbers
-> via sysfs would be any different?
+atomic_t is aligned at 4 bytes, you're now mandating it is aligned at 8
+bytes (on LP64), this cannot be right.
 
-I'll note that we already expose these serial numbers for CXL type3 devices
-because they are really useful when you have a bunch of identical devices
-as they turn in RAS error records and other places.
+kernel/locking/qspinlock.c:xchg_tail() does xchg_relaxed(&lock->tail,
+...) which is u16. Again, you cannot mandate 8 bytes here.
 
-I pushed back on adding this same sysfs attribute to other CXL types
-on basis we could just get it from the associated PCI device (assuming this
-series lands).
+> When you do atomic operations on atomic_t or atomic64_t, (sizeof(long)
+> - 1) probably doesn't make much sense. But atomic operations get used on 
+> scalar types (aside from atomic_t and atomic64_t) that don't have natural 
+> alignment. Please refer to the other thread about this: 
+> https://lore.kernel.org/all/ed1e0896-fd85-5101-e136-e4a5a37ca5ff@linux-m68k.org/
 
-https://elixir.bootlin.com/linux/v6.17-rc5/source/drivers/cxl/core/memdev.c=
-#L113
-
-Note that we don't do is_visible magic for this particular attribute in CXL
-because it is mandated as present by the CXL spec.  We do that for a lot
-of other stuff though as it keeps the interface clean.
-
-Jonathan
-
-
->=20
-> Thank you,
->=20
-> 	Krzysztof
-
+Perhaps set ARCH_SLAB_MINALIGN ?
 
