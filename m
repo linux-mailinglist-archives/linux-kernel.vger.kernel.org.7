@@ -1,260 +1,236 @@
-Return-Path: <linux-kernel+bounces-816137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9959FB57008
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABA8B57009
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9D41719C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A0160C3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526A32773C3;
-	Mon, 15 Sep 2025 06:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCE42773C3;
+	Mon, 15 Sep 2025 06:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KUgFmsxP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MA5Vpfgk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF30E207A38
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757916320; cv=none; b=h+KlG6+UYomEC4qAgdCN/aZQXyvqFGz5EigitN4vqkkv0nVDmjcD/vtbQL1L2eWWbMByhhczdiiH2nt1OMI/ZPjpZZnb/QfdEV5sD2uPx7QyzLlEaqxUau2lsEPvA023EmAn3Of6l2HeXbvSmQgnTvgnHK3XOiIWWTz6vPbd/dg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757916320; c=relaxed/simple;
-	bh=FjnuknUKHafj9VjcTmGKowDO4oahvWxzLheWbZonOt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyLpd+42sFd8KL1YinJ2qFU9nstpxdov4ER+JcH0UHmyZ320WbpqsTRONEAuEkT5Re1+DDbluwmND8b4SOGjnvo4iEr7s3dG8eGwM/4vmq9XHdW6Ec8xEEpBL24zNQzPHXmMn342Bb2FOMIWFME+VaCbzP5knD9bKmrK3s5ZkVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KUgFmsxP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757916317;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=omBBC34VXd5M1CEthfLS/UAjyzULL/tObmzB8px4Cho=;
-	b=KUgFmsxPbGNPkbGtA/Ez6FMl1+i5IN50kJQCqdtg5twtLlgDPz31W4pmkHJv7dNibqq9WT
-	X79qOMXWph5c+ULQX6cT+/a4/ZYj0AhKxzJXsRbWgfkQSBqpRNBA7o9Ro1BU9r9PUPqc5G
-	fpr+yzYheA6RcWIx3eBSTaocUEiTNi4=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-357-HYwBbPZrNEeysXt6WS_Bmw-1; Mon, 15 Sep 2025 02:05:15 -0400
-X-MC-Unique: HYwBbPZrNEeysXt6WS_Bmw-1
-X-Mimecast-MFC-AGG-ID: HYwBbPZrNEeysXt6WS_Bmw_1757916315
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4e63a34f3fso2440376a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:05:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757916314; x=1758521114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=omBBC34VXd5M1CEthfLS/UAjyzULL/tObmzB8px4Cho=;
-        b=r2txOBVuUknTuT2nz1vrcvGy4biDwkHtYg5Pn53I/UZ3UJP7+y4mLZjHryGJRoakj9
-         sdsfb1HVVWLU7XQxIMRgUI7/gvbwVmf71Cg1CjYvXI0VqaM0oQe5Q1UYju2tfpMoVKk8
-         Z4joMIGeDcUcrWqh/YhP3GVhDTht8yLC6YDL5gNdgzYxNIgSF0cI1wbNV0Zdmul0Sazg
-         Wl3l4vTRU7PPtN0vJFil5LUtg4ADufrT9Yj985pjZ97/EwzPvnefPmphfbpuLSRGMkEc
-         5XlNpZrRXamnXTjnr7BbUngxdQ/O7REfs1udOiy4XB+/e4ipkdoW+mR/vU9a8SJg2IJQ
-         j8QA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5oDpU2JKK23lbb/VOodh3ksdlg8tRmva90OPyj4Y12UjvsJZqF3/w/95qgrjTxItZQ3HqxzIrDqblsOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSNf5cWTPiNAgkFxpYQIQ9F9BuTfnbzIv/wCm0u6ziearmMClN
-	XuRbsEfJLZS5hKqp2qRb//Pgs9KXr1Z8G2oQf3EiWWgk3BjgKUExbef9D2Mr6U139lq1fCNG9+b
-	Y3RRQwPnVAQulXbgGutLatW9WITbJmttl6visELN02IML9vD9IxjQ5qS1cDL/nc15Xw==
-X-Gm-Gg: ASbGncvJ5nedJM317UIsHvNRMA+ZryDYRnviwI5ZlNeXXktHq9kiiqXaCn7xBDBENP0
-	YRJSESqiUv1TonC7sii6i3w80XEp39sNAQ/Tr3F3EL0JE57VrG4y5YxaSh8gDmw1tEtP5dsN0IH
-	RM0XjfMPcEq9l6au2jYja+BTMGRpo+J89/tnojyWgqdOgNtOwnmk4EdNg0wpdXxfCrFovF30bhe
-	6G13X3m3khnS5BNk80KsWZfDzhV/VSaw+niAnEfXCw47yvkYfHvbMvJKUee2NWZYp8SjAqcO1JF
-	WisEVtAm9EP6N9HXqodAYF1jf880qgg=
-X-Received: by 2002:a17:903:37cd:b0:25b:f1f3:815f with SMTP id d9443c01a7336-25d2782cda6mr166987695ad.58.1757916314542;
-        Sun, 14 Sep 2025 23:05:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNlG6tjmW8hOH++0qfJ78+vVgyjSBUaQc7oR1me/YHP9gwQwOcHBaCT0XwJ/bVU3GcEaMzkA==
-X-Received: by 2002:a17:903:37cd:b0:25b:f1f3:815f with SMTP id d9443c01a7336-25d2782cda6mr166987255ad.58.1757916314118;
-        Sun, 14 Sep 2025 23:05:14 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264277e8bc2sm35628675ad.138.2025.09.14.23.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 23:05:13 -0700 (PDT)
-Date: Mon, 15 Sep 2025 14:03:32 +0800
-From: Coiby Xu <coxu@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ima: don't clear IMA_DIGSIG flag when setting non-IMA
- xattr
-Message-ID: <asadtbf7itw2343rjwvqfdvhmofhu7k6n4vsos2lojt6gqtudv@l7cgdsfbuuku>
-References: <20250902042515.759750-1-coxu@redhat.com>
- <20250908105825.1573222-1-coxu@redhat.com>
- <7790048d4dc468792b428e80ceae7261a97a896d.camel@linux.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4863A1DE3CA;
+	Mon, 15 Sep 2025 06:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757916376; cv=fail; b=qFF5Y057CjPwGZqNX/nUaA1NAuQ9lKcVooWeGMQop97RNwrDa7/dyHd1uOiuauRJVeqjd+fgyt+SfL2R1d3ON+x6BqLuBFG69yI0B2gejF31jlW6yfLKwGcmiMwOH8oDy6kx4pFM3xDzuuvfR43el8YzsH+v+m6sgDOCuNMLnQQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757916376; c=relaxed/simple;
+	bh=LvMI3XgH1a80PEo/wfl2NbjEoxEfeAJyT+KkJhACMxk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mW7wW0w5YJjZ45Y+m5cHY1kqyAFRaWRZ/HdaYOny8z9XkK7rTEYDGPJKISyFZ/7aNO85tTGeGzjB+jj5fxMTY++632McXojQrFSxNqXzAZtfh8WPTA4V15WTyvyJDG0c1diPlZBMEcZlzlnuGKgtmNAO8yPp+YjMFce4BvHhGIE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MA5Vpfgk; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757916375; x=1789452375;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=LvMI3XgH1a80PEo/wfl2NbjEoxEfeAJyT+KkJhACMxk=;
+  b=MA5VpfgkG/Ya3RZ42EaT/t4MDKyaqnS8i/FHoGn9TjyGTQ7naqKK+r9B
+   aWF2Wh+QpN9AbkA+8grv8ITqgXE5QqsplTHQv0bYAEy9uM5RJNssOCk9M
+   8nSqv8eQG46mBZZUi/WvFxI22JxbmBBAVqQzSDBLZ/2gsemMUJHmEv3Mi
+   cm2koi67OKMX0YXxwcJdzOqQIJAgtlrK/hUDLQIEi0IJnBlfRm3k19JCS
+   GNghbFOBjtspQoAS/kjHm+CZCvzSI3JYFho1OcXOijK0BZ71O/Gocupy3
+   6mIDl203NuOaHuieDY7tYXn3W4CfSUFvys1u4OYvgyT4IKI8oKfBNJP6A
+   g==;
+X-CSE-ConnectionGUID: ef0Mud3eSyuyHLVnkqMcyA==
+X-CSE-MsgGUID: MInpwEvtT0G1pn9YPeBsrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="59202592"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="59202592"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:06:14 -0700
+X-CSE-ConnectionGUID: dv/HbiE0QmKfxs8Vb7oJ+g==
+X-CSE-MsgGUID: Z9bclMO8Tt+zWFzwxqkHlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="174074289"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:06:15 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 14 Sep 2025 23:06:13 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Sun, 14 Sep 2025 23:06:13 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.64)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 14 Sep 2025 23:06:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=moUZodsFmdeziJzNRrRpyJpKyjX9aEYvr0AxlbdyOJBPYScTtzZvU53h/iVcJ8V+E9MMgh1OCEM73l/+41i6cvNwI0ZJOmjMtaul/I+AIKym4WPdKQaVAPZF+gTctWogV/YYZEZL51MA6BuWlE0YkbF8rtjwYD5+NoCK8LaiOUfxS/cn3/D2fUXhvqlIC6A9t9a2NGRxZFpI6u+RzUvqT4AtQ5mzvKqoGX1Lzgad0J1QyIXKNyf7zx6kZ7nGFQIcA7JZnxuIeevxoXKbQGMOt8DOOt4WBtWbcMc6vQ8sslR5mWC95qCGg/1joTAFgKVDd3fBW9b3yIPhUO1FrH4vmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OIi04tZQhFY2/U15D7PF+saeqMCI+/30GjI3X/1wB6A=;
+ b=wXEFG4n+V/Jm6+wdSpmwkn9MH64GoaY7Ht3n9o7VKCLMUTxS/7a8+Zi3Oh6G8mCwJY7qkOSSIYPyOoNCWTzlcfgdPlybRcr2UnRP/h9LwwohiMHpyFJtX5BywdNkSaz2Y3WQ0lcrQ2eR97Cmvo6y2C9zPvDsIrt69OSe6Ww96z4k7oDw3M1W0XmXeeES+wFYReJWQaSV2mCDrDkS2nbPL1Cl0R9AMsrJCJZsIbYtZJ9uaGxY7MEyYGr1ssM6yA9zKJakSr1dKYRbBIS7wUCIbB5k2N/GbxXwOSRxp1LII/R3AiuKe2qY1oyfkC3QoMmAbV1ooC0M1H+n4oS7lXnfJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ IA3PR11MB9013.namprd11.prod.outlook.com (2603:10b6:208:57c::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.19; Mon, 15 Sep 2025 06:06:08 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%7]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 06:06:08 +0000
+Date: Mon, 15 Sep 2025 14:05:04 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
+	<seanjc@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Li,
+ Xiaoyao" <xiaoyao.li@intel.com>, "Du, Fan" <fan.du@intel.com>, "Hansen, Dave"
+	<dave.hansen@intel.com>, "david@redhat.com" <david@redhat.com>,
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "vbabka@suse.cz"
+	<vbabka@suse.cz>, "tabba@google.com" <tabba@google.com>, "kas@kernel.org"
+	<kas@kernel.org>, "michael.roth@amd.com" <michael.roth@amd.com>, "Weiny, Ira"
+	<ira.weiny@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>, "ackerleytng@google.com"
+	<ackerleytng@google.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"Peng, Chao P" <chao.p.peng@intel.com>, "Annapurve, Vishal"
+	<vannapurve@google.com>, "Miao, Jun" <jun.miao@intel.com>,
+	"pgonda@google.com" <pgonda@google.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [RFC PATCH v2 18/23] x86/virt/tdx: Do not perform cache flushes
+ unless CLFLUSH_BEFORE_ALLOC is set
+Message-ID: <aMeskOdstg01cvMP@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20250807093950.4395-1-yan.y.zhao@intel.com>
+ <20250807094516.4705-1-yan.y.zhao@intel.com>
+ <b247407ec52d96a7fdec656c5e690297d4facde6.camel@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <b247407ec52d96a7fdec656c5e690297d4facde6.camel@intel.com>
+X-ClientProxiedBy: SI2PR02CA0023.apcprd02.prod.outlook.com
+ (2603:1096:4:195::11) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <7790048d4dc468792b428e80ceae7261a97a896d.camel@linux.ibm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|IA3PR11MB9013:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53cef804-14ae-4d9c-099d-08ddf41df68c
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sCtgvJG2QwoFCj9mfKpjjq09k7auCJBe1e/2irCq++4EBTJ5kYsd7YuB7J3Z?=
+ =?us-ascii?Q?kKgaTaMg61+e8g8ncbj7fyTN4/YiuyY89krhU0CbxKthQ5kxKFtgtjHOPVyx?=
+ =?us-ascii?Q?GwAq+WVk4pAeeozlzZHtcieMNhdj8mMVACvoiqGxN2jGDe35OzamGIl4m5Av?=
+ =?us-ascii?Q?g8nTW3FNgSUxrCojqJ8ujvZN0mop1Rx2ElBCVc5kwldSqXcyB/z7kAauzJkl?=
+ =?us-ascii?Q?vLOAIGraimQOaFuERQk2gQPh790opwN0oy9zisMuXMu57ndTeMBLyBclD5Wf?=
+ =?us-ascii?Q?EfsbsN26oLaabLpDED/ljx+vyzc6WUoc8LEiBPq1sjtyn6VqQPpX8KczRJOE?=
+ =?us-ascii?Q?Lw71ZHgXpmjKpZglymoYx04pPbY7yRuoclTbxYFsK+yaUDPda5uYx6N3G81A?=
+ =?us-ascii?Q?U89dN4zEJXddB6t3sAm00x7WfnIxeQPtv9lJX9+GrpCmmqzhxpzyfDN1Kyy1?=
+ =?us-ascii?Q?vUAiBhEyraHjnknidgOK+HTId1hbGx9ES0hu3l/pLTdnj6NSklE2Mvn7J67W?=
+ =?us-ascii?Q?WEIXj+UsPe6qm5hr+fYZdWkcg5CTfc2I5nNI5pmBpw1fT9nUFbqUnyw8gGUp?=
+ =?us-ascii?Q?3qA5V79kqdDa87OpePWVBwc5XcJqJkuJLaoH8HdwV6ZM8brZ5rtPdlc0NAh3?=
+ =?us-ascii?Q?gMufma9Vo9iQSWYP1gK/lN+Dhibpq4J7Q0hD9Ov+o9AQFTtsg+rN0tDnt9D5?=
+ =?us-ascii?Q?z2KUHvEZj0n2n9feAfuXKjbZNQj10sZWKtQ37Gnr8efcru2pZ7rKncT+GZxL?=
+ =?us-ascii?Q?5iYkwfN5ry37uxUhE4uhvCsdqWtcmpT6GiwWbpeb53JFmgoLDvvycdmPoFHA?=
+ =?us-ascii?Q?1TgKdxn/xnsDmaPYdjYMWH2rM9bQC4zTuThsZUZhSvRnckqB7vQLLB3+LMRw?=
+ =?us-ascii?Q?ELPpV19tY0jPKoMfbsQDo5dDK+rqIqCv7FuqvlK3zyPCebYAXIOaCViZnEHS?=
+ =?us-ascii?Q?lZx+H2wyrybjrzKPYCAnaj0NBsfLXATkKL5FU0tGnJTetPzqY7xr7rO6C4dA?=
+ =?us-ascii?Q?1uEEuvUnhAdbarQApeHthyayBCSEihQG18Wr0cSNDaXgvQK60YJTVlsNaByH?=
+ =?us-ascii?Q?8vSBPUkRQXoOBbKdO1PxPKZ3rT5CiGAMX6HoHKckDnP6xNavZ7V0cc0NnRKF?=
+ =?us-ascii?Q?0lGH3IgMHFxDFDz/ssfh4I8AEK3lg/pZAyzczPN+apBqi+ptq+vntBs/QLwL?=
+ =?us-ascii?Q?MvHbp7QszUHIb416AMkoKyYjNVRtmR13AOXOzsdfVpsecEYkp6edbvLoqXMv?=
+ =?us-ascii?Q?CgokyYPMD5K3nIg2Ied1A6ROvUiA7zIe77Syrtfq9cJwY5yPOrHPOz/BfBHO?=
+ =?us-ascii?Q?+XYgEj5F/jFKnQFl5j2+Agsemfkmu7HkeIqE7Qosk+kogRWR7uZi2OszQ7q3?=
+ =?us-ascii?Q?+/jShuwJfBqjPmZ1uD21w0rPPZ9uHD4qCZQK5rZ6G0L/8sQtkVfZTpn+z4pv?=
+ =?us-ascii?Q?jtRxgiaNLu0=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MYBuwWiTfTUy4vsavMO1RQ2rLCLfqCm2SmFe3rcSLI0SOfdEx9rhuYaQaNXM?=
+ =?us-ascii?Q?7PHN7v8SYT6Kr7QINBciT6dAQS2f0sPj7ykqIHj7Xi3Hjb//u7qoj6p2sXYl?=
+ =?us-ascii?Q?H1PZUUBKApFDcbuVFpR3TocJBmdlwPnn04FbIGScH0JH8BS5Y8wwGAwNVE4j?=
+ =?us-ascii?Q?7yT3yFa+fY2wlSuxJ3a/IDT6LgB+TBK8LGvlXBEdSt8cbvlcHmQAHXyrcZaY?=
+ =?us-ascii?Q?h/lk+L7pPD3qgmgMYFfAF75/uJ/M9HJB/viDnXpgyS3yqgFOsV3EmV76EoH9?=
+ =?us-ascii?Q?UjmuGryI3gSzZiPykNeLdOtyNfL88grjawj9mLiCF4LtouztxfsXUOZDHMiK?=
+ =?us-ascii?Q?L1aJYdMiGDGwquDvhYc8BonwRi7KKWIKOgY/9THP5SdnmXSFFCb+ukm8zkGo?=
+ =?us-ascii?Q?cXv9/ypw4pfpAIGx/+MyU1zgpP/7V2QzJdXup3Y7EoaTlKi8rLFer+QaiDWM?=
+ =?us-ascii?Q?N4qg8sGe0XRNFynZ2YhwYy34Ngsfluoay7R6A3Dtg4C2lcRhWQLmG/GR6hri?=
+ =?us-ascii?Q?g0gCFhURU1A7AnYYl0gGjc7cYLSF4hDHVNR2yNZ156EgAZb1JHAm/++Q249Y?=
+ =?us-ascii?Q?bqd6ocj/oGtG/grHK/hAQU9Yr+GCUEqhCOW/cAMPINLEK+pX/DQj2zXkFKeH?=
+ =?us-ascii?Q?XpUqTkOm9Qi9ocjMXf6ffwy5UnaE36bsZYfbXOb0o+esUB6G5FGWBI0vN/ec?=
+ =?us-ascii?Q?L9sWvWavW5K4DOMh/yU72540jHIcpnrJnMfSQHg2M2DSR9wIhGS5EfpK9xv/?=
+ =?us-ascii?Q?mB+Sr6/Mq+9TMAoWSrhYLoJ1P2pC9RDie+cYb+Uai9GsT8357gfLJNYHzeGk?=
+ =?us-ascii?Q?dcV3puezqOiEo49wmGQcmWlumLlYiPz+HmXWdUWzUux04+ie++v+PEyi8eVx?=
+ =?us-ascii?Q?mBWFkGt3xUClxMnysIyxzgYLFjAeoSjWkqXICyjAbx0NBB5cyUFMp+/9qJtV?=
+ =?us-ascii?Q?GNN68kF8UzH3zXBWlU/RisnibAn0GiD24f1WGU9VmGTRMzsrAoRYFTb8SBpm?=
+ =?us-ascii?Q?eA0TkAApWxk7KP2FbPCUOHkFJjcDeNsVDgCx/laQZYi3UrDPdhouts0bIp11?=
+ =?us-ascii?Q?OSliFr9L6FEG55CWx32AI2r+fMcY2s8JsHzHQnRjbtq6C948tfW1Bp40HoBx?=
+ =?us-ascii?Q?D+u/CdGXhIkwYqWcfgXZt3xUs/qtXv61jxYgEmlrh3KLYEG71Vb2gqZkXJqh?=
+ =?us-ascii?Q?6AxI/IfpsM9KFaHAqEkhPFb2+NkNNM9U6v99u0tD+e1C9Hn+toIS5x3/Cehk?=
+ =?us-ascii?Q?l9kKvJDFXOMXFzc3+y6b7bawZst/NEDjTgnZorwrJSbPXsUCYeOOKB8H6pWS?=
+ =?us-ascii?Q?CCcg/t3nGoZ7liH5lCigOYSu4BQmNYgzYKMmaoHdxiwV1Vddq4nxoE/K3djZ?=
+ =?us-ascii?Q?UZsN0HdwHpxCz6nucN35GG7BdLE42120VUCs3Aewqnb62uK8RkSEQ1x0dfus?=
+ =?us-ascii?Q?zFwYTpgFHXOkJ2UCzHVmzHBR8Y/NXvg1tYKY7LDC872s28v9GZAlAkjUdN2v?=
+ =?us-ascii?Q?hjdK5q0OKgSF3G0LQykd66Z/3jg2Ihs698/LgyaUuvitguUR737qY66Ww7RQ?=
+ =?us-ascii?Q?yn+9hyuwI561R/RNXS8FXSjbHqzQPZWZG7N8skyO?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53cef804-14ae-4d9c-099d-08ddf41df68c
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 06:06:08.5972
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cMGmaPiuBP5RTrYbS1gA9IW48DQHFsVaGorlJe4i0KnOVr/EzayW5l3rI+KenKb2NFgleIPdKf8bv5PH0nRuEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9013
+X-OriginatorOrg: intel.com
 
-On Wed, Sep 10, 2025 at 08:21:03AM -0400, Mimi Zohar wrote:
->On Mon, 2025-09-08 at 18:58 +0800, Coiby Xu wrote:
->> Currently when both IMA and EVM are in fix mode, the IMA signature will
->> be reset to IMA hash if a program first stores IMA signature in
->> security.ima and then sets security.selinux for a file.
->
->The problem description should be generic.
->
->-> and then writes some other security xattr for the file.
+On Fri, Sep 05, 2025 at 11:41:41PM +0800, Edgecombe, Rick P wrote:
+> On Thu, 2025-08-07 at 17:45 +0800, Yan Zhao wrote:
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > 
+> > The TDX module enumerates with a TDX_FEATURES0 bit if an explicit cache
+> > flush is necessary when switching KeyID for a page, like before
+> > handing the page over to a TD.
+> > 
+> > Currently, none of the TDX-capable platforms have this bit enabled.
+> > 
+> > Moreover, cache flushing with TDH.PHYMEM.PAGE.WBINVD fails if
+> > Dynamic PAMT is active and the target page is not 4k. The SEAMCALL only
+> > supports 4k pages and will fail if there is no PAMT_4K for the HPA.
+Back to when Kirill was enabling DPAMT for huge pages, TDH.PHYMEM.PAGE.WBINVD
+did fail in this scenario.
+However, this has been fixed in TDX_1.5.20, which is why I didn't encounter
+this issue when posting this series.
 
-Good advice! I've applied it to v3 with a slight change,
-"... then writes/removes some other security xattr" in v3,
+> > Avoid performing these cache flushes unless the CLFLUSH_BEFORE_ALLOC bit
+> > of TDX_FEATURES0 is set.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> 
+> I think I mentioned this on some version of this patch already, but during the
+> base series we decided to assume CLFLUSH_BEFORE_ALLOC was always set for
+> simplicity. Let's try to be consistent.
+Right, though CLFLUSH_BEFORE_ALLOC is always false in all current TDX modules,
+linux conservatively assumes it's always true.
 
-
->
->Start a new paragraph here for the example.
->> For example, on
->> Fedora, after booting the kernel with "ima_appraise=fix evm=fix
->> ima_policy=appraise_tcb" and installing rpm-plugin-ima, reinstalling a
->> package will not make good reference IMA signature generated. Instead
->> IMA hash is generated,
->>     # getfattr -m - -d -e hex /usr/bin/bash
->>     # file: usr/bin/bash
->>     security.ima=0x0404...
->>
->> This happens because when setting selinux.selinux, the IMA_DIGSIG flag
->> that had been set early was cleared. As a result, IMA hash is generated
->> when the file is closed.
->
->Start a new paragraph here, adding a sentence describing the solution to the
->problem. For example,
->
->Prevent replacing the IMA file signature with a file hash, by preventing the
->IMA_DIGSIG flag from being reset.
-
-Thanks for the suggestion, applied to v3.
-
->
->>
->> Here's a minimal C reproducer,
->>
->>     #include <stdio.h>
->>     #include <sys/xattr.h>
->>     #include <fcntl.h>
->>     #include <unistd.h>
->>     #include <string.h>
->>     #include <stdlib.h>
->>
->>     int main() {
->>         const char* file_path = "/usr/sbin/test_binary";
->>         const char* hex_string = "030204d33204490066306402304";
->>         int length = strlen(hex_string);
->>         char* ima_attr_value;
->>         int fd;
->>
->>         fd = open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
->>         if (fd == -1) {
->>             perror("Error opening file");
->>             return 1;
->>         }
->>
->>         ima_attr_value = (char*)malloc(length / 2 );
->>         for (int i = 0, j = 0; i < length; i += 2, j++) {
->>             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
->>         }
->>
->>         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) == -1) {
->>             perror("Error setting extended attribute");
->>             close(fd);
->>             return 1;
->>         }
->>
->>         const char* selinux_value= "system_u:object_r:bin_t:s0";
->>         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selinux_value), 0) == -1) {
->>             perror("Error setting extended attribute");
->>             close(fd);
->>             return 1;
->>         }
->>
->>         close(fd);
->>
->>         return 0;
->>     }
->>
->> Signed-off-by: Coiby Xu <coxu@redhat.com>
->
->Thanks, Coiby.  The updated patch looks good.  Have you looked at the other
->calls to ima_reset_appraise_flags() to make sure they don't need to be adjusted?
-
-Great question! I've updated the other two places in v3 which can
-address two additional cases,
-- remove xattr like security.evm
-- set/remove ACL
-
-Note I tried to write a C program to set/remove ACL but somehow the C
-version of "setfacl -m u:test:r" always lead to "acl_set_fd: Invalid
-argument". I bypass this issue by setting system.posix_acl_access xattr
-directly. We can get the value by "getfattr -m system.posix_acl_access
--d -e hex" after "setfacl -m u:test:r /usr/sbin/test_binary".
-
->
->thanks,
->
->Mimi
->
->> ---
->>  security/integrity/ima/ima_appraise.c | 15 +++++++++++++--
->>  1 file changed, 13 insertions(+), 2 deletions(-)
->>
->> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->> index f435eff4667f..4e4750ea41ad 100644
->> --- a/security/integrity/ima/ima_appraise.c
->> +++ b/security/integrity/ima/ima_appraise.c
->> @@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, const char *xattr_name,
->>  	return 0;
->>  }
->>
->> +/*
->> + * ima_reset_appraise_flags - reset ima_iint_cache flags
->> + *
->> + * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
->> + *          0: clear IMA_DIGSIG
->> + *          1: set IMA_DIGSIG
->> + *         -1: don't change IMA_DIGSIG
->> + *
->> + */
->>  static void ima_reset_appraise_flags(struct inode *inode, int digsig)
->>  {
->>  	struct ima_iint_cache *iint;
->> @@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *inode, int digsig)
->>  		return;
->>  	iint->measured_pcrs = 0;
->>  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
->> -	if (digsig)
->> +	if (digsig == 1)
->>  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
->> -	else
->> +	else if (digsig == 0)
->>  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->>  }
->>
->> @@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
->>  		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
->>  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) {
->>  		digsig = (xvalue->type == EVM_XATTR_PORTABLE_DIGSIG);
->> +	} else {
->> +		digsig = -1;
->>  	}
->>  	if (result == 1 || evm_revalidate_status(xattr_name)) {
->>  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
->
-
--- 
-Best regards,
-Coiby
-
+> Why prepare for some future TDX module that sets CLFLUSH_BEFORE_ALLOC *and* adds
+> new support for at larger page sizes TDH.PHYMEM.PAGE.WBINVD? It almost seems
+> like this is working around a bug.
+As the TDX module bug is gone, let's drop this patch to be consistent with the
+policy of assuming CLFLUSH_BEFORE_ALLOC is always true.
 
