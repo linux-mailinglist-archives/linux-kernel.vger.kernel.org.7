@@ -1,106 +1,149 @@
-Return-Path: <linux-kernel+bounces-816522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5710FB574F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:31:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4BBDB5750A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1919B177F7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:31:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37B318953C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9252F8BE4;
-	Mon, 15 Sep 2025 09:31:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81717221DA5;
-	Mon, 15 Sep 2025 09:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF702F9982;
+	Mon, 15 Sep 2025 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="WeLcL0r/"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A962F549F;
+	Mon, 15 Sep 2025 09:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928665; cv=none; b=HV98ECYuyDFbUY+AduPuD9cj77gds9bh6mtUBRculIlOMLnYHDCByPOUpWy77pwg9+JRjFWu9pB6ByJb3kTNqDBFyJoC9b3YcFniEvm8CufZic/rGOL7CsbIyV+c/Be5pxuHgPwYxIa09Q9Iaj/FfOyU45+jeQKSoOaFsqjRikw=
+	t=1757929227; cv=none; b=q+kM9HPOo2zVv5TOlRtL7KeKJiwYgEDwze/RtcQQSg4aF6Wln5VXm3eqrhHkiHFNGp0niSRefL8jn9uAOZShDlaJPZIIHHhoh7QuL4BnFXhW2nwWCZYix5ZqczFmnm6QOi/+O5eMbsjZaM/RE2nJ1QrXezu5Z9/Na3J2hDsJBqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928665; c=relaxed/simple;
-	bh=UFhV/7AGyMsS824TQlWmd24PvS2Vmm4dlKYWw7YtZKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tjzZpTLtoLJVAgHAoEIUK0mJE0kXiZfUCuUgnWHrXEGENtt+H0NM5xaU5T2JhNy1cvn90hSoWTv+vB1hsK0uSxkwDTRqaGBHuMauwOjqFhrlXhEygGPL+56+iwUw9C+UiC0RCMRc//B/aMbT/KladaF613U3SvzuY63nAHkNP8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9831E1063;
-	Mon, 15 Sep 2025 02:30:54 -0700 (PDT)
-Received: from [10.1.35.47] (unknown [10.1.35.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7BDB33F694;
-	Mon, 15 Sep 2025 02:31:00 -0700 (PDT)
-Message-ID: <ef6ac601-22a6-48f6-98d7-32ff93a2d21e@arm.com>
-Date: Mon, 15 Sep 2025 10:30:59 +0100
+	s=arc-20240116; t=1757929227; c=relaxed/simple;
+	bh=Hmjdd1ChV+8SxQHGRgNWtZrCpwmOz+pQ5vs7rwQviJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=re0GfjRppEWZQm81SoHj8Ew7UJXZaSd0qHw6Z0dFdBk9Fipui68vviApoAzuUgnh0P4hBCJKBW9fbG/Pixa06GE6RjM/8XwAsBWeY8of+quW7WPH7hcriiWWPzW6Sc8qOLslBhXHtKowiX/T2mGln8Lsn0Q/vcOMG7SO5W9fkAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=WeLcL0r/; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id BDAE11C006D; Mon, 15 Sep 2025 11:32:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1757928722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nIME8cdz06LUslw529zpHp//o40yXRj8V4ARH29l+OM=;
+	b=WeLcL0r/wOESE22lzdL0T0iZSsoHeDCHNeQkagRYaZG10PxOeBZZ5bDcSKYh7v5oiJUYVs
+	QTedepsGbIkdFGSOmSM9atufwcdbyRMPCa2eSR7XjcfGQ5NOs74IPHr3tcdFoqylhLeadu
+	yXWzOmB+VkYwx6xEASZnw0ojDCuRAI4=
+Date: Mon, 15 Sep 2025 11:32:02 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
+	will@kernel.org, longman@redhat.com,
+	miriam.rachel.korenblit@intel.com, linux-wireless@vger.kernel.org
+Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
+ often on thinkpad X220
+Message-ID: <aMfdEk6Cw6EFt+/l@duo.ucw.cz>
+References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
+ <aID6XPLXuGo+ViTm@duo.ucw.cz>
+ <aIEC4t2EICdgomZV@duo.ucw.cz>
+ <c5c06a93845f72b40c6df82fcbc89d3163a01d8b.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/25] coresight: trbe: Convert to new IRQ affinity
- retrieval API
-Content-Language: en-GB
-To: Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Mark Rutland
- <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sven Peter
- <sven@kernel.org>, Janne Grunau <j@jannau.net>,
- James Clark <james.clark@linaro.org>
-References: <20250915085702.519996-1-maz@kernel.org>
- <20250915085702.519996-8-maz@kernel.org>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250915085702.519996-8-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 15/09/2025 09:56, Marc Zyngier wrote:
-> Now that the relevant interrupt controllers are equipped with
-> a callback returning the affinity of per-CPU interrupts, switch
-> the TRBE driver over to this new method.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-
-Assuming this goes via irqchip tree,
-
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CcqJqSEzx53JM7Gd"
+Content-Disposition: inline
+In-Reply-To: <c5c06a93845f72b40c6df82fcbc89d3163a01d8b.camel@sipsolutions.net>
 
 
-> ---
->   drivers/hwtracing/coresight/coresight-trbe.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-trbe.c b/drivers/hwtracing/coresight/coresight-trbe.c
-> index 8267dd1a2130d..c512f8faa6012 100644
-> --- a/drivers/hwtracing/coresight/coresight-trbe.c
-> +++ b/drivers/hwtracing/coresight/coresight-trbe.c
-> @@ -1472,9 +1472,10 @@ static void arm_trbe_remove_cpuhp(struct trbe_drvdata *drvdata)
->   static int arm_trbe_probe_irq(struct platform_device *pdev,
->   			      struct trbe_drvdata *drvdata)
->   {
-> +	const struct cpumask *affinity;
->   	int ret;
->   
-> -	drvdata->irq = platform_get_irq(pdev, 0);
-> +	drvdata->irq = platform_get_irq_affinity(pdev, 0, &affinity);
->   	if (drvdata->irq < 0) {
->   		pr_err("IRQ not found for the platform device\n");
->   		return drvdata->irq;
-> @@ -1485,8 +1486,7 @@ static int arm_trbe_probe_irq(struct platform_device *pdev,
->   		return -EINVAL;
->   	}
->   
-> -	if (irq_get_percpu_devid_partition(drvdata->irq, &drvdata->supported_cpus))
-> -		return -EINVAL;
-> +	cpumask_copy(&drvdata->supported_cpus, affinity);
->   
->   	drvdata->handle = alloc_percpu(struct perf_output_handle *);
->   	if (!drvdata->handle)
+--CcqJqSEzx53JM7Gd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
+
+> > [  402.125635] ------------[ cut here ]------------
+> > [  402.125638] raw_local_irq_restore() called with IRQs enabled
+> > [  402.125645] WARNING: CPU: 3 PID: 387 at kernel/locking/irqflag-debug=
+=2Ec:10 warn_bogus_irq_restore+0x25/0x30
+> > [  402.125654] Modules linked in:
+> > [  402.125661] CPU: 3 UID: 0 PID: 387 Comm: kworker/u16:5 Tainted: G S =
+                 6.16.0-rc7+ #303 PREEMPT(voluntary)=20
+> > [  402.125667] Tainted: [S]=3DCPU_OUT_OF_SPEC
+> > [  402.125668] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.=
+43 ) 10/12/2016
+> > [  402.125671] Workqueue: events_unbound cfg80211_wiphy_work
+> > [  402.125678] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
+> > [  402.125683] Code: 90 90 90 90 90 80 3d 51 3d dc 00 00 74 05 c3 cc cc=
+ cc cc 55 48 c7 c7 c0 4f c9 85 48 89 e5 c6 05 38 3d dc 00 01 e8 9b d8 e6 fe=
+ <0f> 0b 5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
+> > [  402.125686] RSP: 0018:ffffc9000173fb30 EFLAGS: 00010282
+> > [  402.125691] RAX: 0000000000000000 RBX: ffffffff8616b460 RCX: 0000000=
+000000000
+> > [  402.125694] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 0000000=
+0ffffffff
+> > [  402.125696] RBP: ffffc9000173fb30 R08: 0000000028935f32 R09: 0000000=
+000000001
+> > [  402.125699] R10: 0000000000000044 R11: ffff888100ba52c8 R12: 0000000=
+000000001
+> > [  402.125702] R13: ffffc9000173fbcb R14: ffffffff84301224 R15: 0000000=
+000000000
+> > [  402.125704] FS:  0000000000000000(0000) GS:ffff88829007f000(0000) kn=
+lGS:0000000000000000
+> > [  402.125707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  402.125710] CR2: 000055967d471ee0 CR3: 0000000006046001 CR4: 0000000=
+0000606b0
+> > [  402.125713] Call Trace:
+> > [  402.125716]  <TASK>
+> > [  402.125719]  console_flush_all+0x41e/0x460
+> > [  402.125725]  ? console_flush_all+0x43/0x460
+> > [  402.125735]  console_unlock+0x55/0x100
+> > [  402.125741]  vprintk_emit+0x157/0x320
+> > [  402.125748]  vprintk_default+0x18/0x20
+> > [  402.125752]  vprintk+0x9/0x10
+> > [  402.125756]  _printk+0x52/0x70
+> > [  402.125766]  ieee80211_sta_rx_queued_mgmt+0x4c8/0xd30
+> > [  402.125775]  ? __this_cpu_preempt_check+0x13/0x20
+> > [  402.125784]  ieee80211_iface_work+0x3ad/0x500
+>=20
+> That's not great, but I don't see how the driver or wifi subsystem is
+> involved ... ieee80211_sta_rx_queued_mgmt() doesn't even use spinlocks
+> let alone disable IRQs or use raw_ APIs, and it's in the middle of
+> printk anyway.
+>=20
+> No idea what might be going on here, sorry.
+
+For the record, problem was eventually traced to intel wifi driver bug
+in bugzilla, and at least experimental patch exist fixing it.
+
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, Netanyahu and Musk!
+
+--CcqJqSEzx53JM7Gd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaMfdEgAKCRAw5/Bqldv6
+8ovgAKCPjHJcOnb4T7bj/oFpRfr3ZByhzACcDbNIfOo86i/Wf6MvGZ8mxAhftmc=
+=9DKh
+-----END PGP SIGNATURE-----
+
+--CcqJqSEzx53JM7Gd--
 
