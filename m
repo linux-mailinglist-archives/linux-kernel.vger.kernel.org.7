@@ -1,348 +1,93 @@
-Return-Path: <linux-kernel+bounces-817350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2E1B580DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:37:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F513B580F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAB2C7A4F7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8833A44EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B5B1F1538;
-	Mon, 15 Sep 2025 15:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA89212568;
+	Mon, 15 Sep 2025 15:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xaoJU7gO"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="YAdyjo0S"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E890B57C9F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757950625; cv=none; b=QoEUECQKvXSKx7iQ9yXs+5FpsTKJ8GRkZl6FVTUiqHVd5bRezuPdQoP05TgSajZbb1ECbF0saJRWREEnMx7yp5Q916McZww3Q4Hj53E6bALmc436QeaUkRqbRYrJkLgOMW9kuBrbriwjH3ScFE40lzJkQ5jsIRIgys/Ex4xelEY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757950625; c=relaxed/simple;
-	bh=SNQX9jVuudWNKsVENtOK6ohBfS9ZpG3Y9l8Z5BV1MXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KqL+8ocRqjVj6GtnKGa7Atqfxt/PL/wW9vpQh8HiOGCZXjeO51tx4jFAaUpGtgPEj0wsTrWSWxOodHxb2XgtArGkzf9GKPXMlU2Ei7RUNjqlfv2qiwJl2hhneNMCuE7MCPficD8YmoZdGrElWMbEWXq5HtLsTL+8ZI6t4CUCl40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xaoJU7gO; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62f28da25b9so2135655a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757950621; x=1758555421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/mHjWPU/zmI6VFe0ygBMZ/McjnLYznpUmAATZGQRdx4=;
-        b=xaoJU7gOkMw+8vMGjBvbzG+BoslneTupIiUTZg9mSd3UkOfxlU/82UDfAncrwm9rpy
-         cUge8A0PNdYlbyV8Ya01Es4n9lRPGgY537i9cRNuTUxS2v7O1mr8Y7PxIpPaXt2iqBPY
-         apLuaAIx3j6Zyp0o6Hv9J+XqC5ZJNy8kQpY1lETtxyPMu+mkVIkiYahkuG755qMheFMx
-         59w9JR4Y3VGrRWcNQruTh1uwU4yjIdf5Aop4T67jaZFEtyhogsVlAE9Oj0PqBK5LiF/R
-         NvQWRNH1YekBmk+QkM6A6rQHKgnOB3Ltv8sX1g43URIw2cIJoB+C/OhsIgZLBn0bXbRe
-         DARg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757950621; x=1758555421;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/mHjWPU/zmI6VFe0ygBMZ/McjnLYznpUmAATZGQRdx4=;
-        b=amJqpoDVl5aZRC6lE2XVRGr9FZxUITrFAKcUnaa8TKOM480ULipiqljh6uuT7q4FCq
-         07kIcZbsxF7zwA5KZTiRrQf8qLHO/qksqAE8fTbetpBdG2oEqtmfUI+XXQkAA0H4raYg
-         ogrA6oGtl/FbIbj514jB5evEvn02E4SXj0/S88PhEFb4wb1uiNvoacRMLIAwnWTo69H7
-         LBqsSgHaGNWkyd5FvReLEZIe+xTHId5qUcMvDNEehDM6FdTN2ygBheTKXI44Lw73ozkd
-         WULy57x0cLPVsYNlyR3rXVM5UPmVEmo1MrzPQ2OWKYitCiF3/H7CmiHGNAzSsnklHfEZ
-         zpJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP4X60vautZddwKSIBbC1+cu3Ni59jemxibwBLb+GjnQbRfgC71kMgqXCcw7Xr21DqyTvjXVr/iOizbRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB5wFkls+O17vDFzKlgRr4rVbtBBWzqsoeiUk2yFPGwAD5T6sr
-	wS5QoGp6QTR56GUFoAYvIh2lP9LM6lZ2KIWGLEodJDNHpWZPvWggbbNH/BFC6jVvlpvTdcnpmSb
-	MGX8z+83M6Pqtj5mkzMI/51ABZ6pTmdyYXK1bg47vlZxJrG3jl473aVM=
-X-Gm-Gg: ASbGncstulBWA5YhERcmI/SArye+2a3fA6hShCWR/ffv29WUDFYvxjIZDdCm3AFYMPa
-	LRTrA0XwhytztjuXuM1TEiagGZL1SjlqvX22N76rRnNdSbqqn4YeOrWyCZFddRd299RhXPlJA3n
-	eV8af+Elc1IP4EMSY+fknB+86L+KE9njm2RmlffiPC9NFlFpmy+L1k2gLaP3y8seh8gkNY0z35E
-	Tqt6eZjOsX6ua0NnwRIIUISqOwG/ND8Z0acfy3o4H13erOEPS0IFdG+izFZdcRVWJSwhgz6UjmL
-	lNFYQFqvNvrssAEPyaMTs+tHEqsUvSJCHNH9q17r74xmOTC8qA==
-X-Google-Smtp-Source: AGHT+IHaCGR4bJP0zk6dQyNjvAMqOj83vg1/N6S59DAb5aM9KrE92htEXPWeBR2BYJio9XOPDSBuQKHMC8DpDsz6s6c=
-X-Received: by 2002:a05:6402:21d1:b0:61e:c42e:825f with SMTP id
- 4fb4d7f45d1cf-62ed825a71cmr11238844a12.2.1757950621239; Mon, 15 Sep 2025
- 08:37:01 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2611DE4C9;
+	Mon, 15 Sep 2025 15:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757950753; cv=pass; b=IuflH4BpYmWTzrEuw4FAhDqcz4cKYH8TOCagBT3upTRFluLJufhVg4MkDIQx9btNHfEfJjzCawCiidi5c60+XQamOcrU86WozTRhfVpHHUQ5WjbvUsMvKScvnljjOdURu6/MkS+Dafk+xCnD6GlpEv6NuO9UkLpEXbBch7Ghung=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757950753; c=relaxed/simple;
+	bh=5kmvQnBymQMrJfGDO8l0+E8qI+rwZ5BMyzqkwT6KPUo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Rcq4xWslZJF8/ekqR9G94UhxpnRg7s0lxsuJcvbvC7EVGGisCyznD4GvaD4Ge0ItubzmX6waFhCbblU85BTpwRe96po1aolZ0pOUrWuEQKA1kREkrDBwAOnQL0aufpNEw5JODN50NnbU0uUnjT72/Umpys0A1neQTVdWOvo3U28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=YAdyjo0S; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757950731; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Jx//BjnUviO745ZA6pbnnW++OyROvK57X/zX+yUfjLMZKD7SlHnOTUMlyLekjD3vetTiM44W5S7J/sKfnjEayofAZEJ+g8gZcMHofbgsUfmMR/POo68sXUZ0/2GaboL2/ByWvxwaWJETUp3pc/+GsIwwzBQgAxaJRMCNTT9oURc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757950731; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=5kmvQnBymQMrJfGDO8l0+E8qI+rwZ5BMyzqkwT6KPUo=; 
+	b=O3lq7xi0VJgQtQxFFC6AfKFVDl2kIifLCQBfcA4Koq0pF2hAiRYNArlAdAVhvUkh8otPEqPUea91gTXrP1rRLMtlnS7HpG7WniFvClw6yaaqsQIHhq3AKy46jomk3jrO6aDPKORsIm4Ca2qwGI6g3boWftQ1sx2qmOswaEAbaV4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757950731;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=5kmvQnBymQMrJfGDO8l0+E8qI+rwZ5BMyzqkwT6KPUo=;
+	b=YAdyjo0SEwsFhyP2ZOH+hUN9zQ1rbJklHHzYs9Afgk4BDaWMBwL5klo7R4Rd8QHd
+	SczU78NnydtndgX6+Ka3RsLhGrgaj4PZMjOe4jOxYr1LFHxC+5zaV6gXVENu6aeUGcB
+	2dBXEyI5nrX/tJzHTYFw2AI4pxvfSeCrac5bYiSI=
+Received: by mx.zohomail.com with SMTPS id 1757950728174458.07732891061437;
+	Mon, 15 Sep 2025 08:38:48 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250609151531.22621-1-dawei.li@linux.dev>
-In-Reply-To: <20250609151531.22621-1-dawei.li@linux.dev>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 15 Sep 2025 09:36:48 -0600
-X-Gm-Features: AS18NWCAJ6Emz8XYDyjxhwrpmsWu02aESGwF6JloSGyRuZtGrxXg5HjO3xltCzU
-Message-ID: <CANLsYkxLXxj9=+TvsLNmO7c41_hzay2oe-4njkVU=4kmJrmccQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
-To: Dawei Li <dawei.li@linux.dev>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] rust: less allocation in CString::try_from
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250915065401.20141-1-work@onurozkan.dev>
+Date: Mon, 15 Sep 2025 17:38:32 +0200
+Cc: rust-for-linux@vger.kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ lossin@kernel.org,
+ a.hindborg@kernel.org,
+ aliceryhl@google.com,
+ tmgross@umich.edu,
+ dakr@kernel.org,
+ tamird@gmail.com,
+ daniel@sedlak.dev,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3208F1A3-CFA9-45BC-85D7-74C8C47CA11F@collabora.com>
+References: <20250915065401.20141-1-work@onurozkan.dev>
+To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+X-Mailer: Apple Mail (2.3826.700.81)
+X-ZohoMailClient: External
 
-On Mon, 9 Jun 2025 at 09:15, Dawei Li <dawei.li@linux.dev> wrote:
->
-> Hi,
->
-> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
-> for rpmsg subsystem.
->
-> Current uAPI implementation for rpmsg ctrl & char device manipulation is
-> abstracted in procedures below:
-> - fd = open("/dev/rpmsg_ctrlX")
-> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
->   generated.
-> - fd_ep = open("/dev/rpmsgY", O_RDWR)
-> - operations on fd_ep(write, read, poll ioctl)
-> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
-> - close(fd_ep)
-> - close(fd)
->
-> This /dev/rpmsgY abstraction is less favorable for:
-> - Performance issue: It's time consuming for some operations are
-> invovled:
->   - Device node creation.
->     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
->     overhead is based on coordination between DEVTMPFS and userspace
->     tools such as udev and mdev.
->
->   - Extra kernel-space switch cost.
->
->   - Other major costs brought by heavy-weight logic like device_add().
->
-> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
->     that a dynamically created device node can be opened only once.
->
-> - For some container application such as docker, a client can't access
->   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
->   is generated dynamically and whose existence is unknown for clients in
->   advance, this uAPI based on device node doesn't fit well.
->
-> An anonymous inode based approach is introduced to address the issues above.
-> Rather than generating device node and opening it, rpmsg code just creates
-> an anonymous inode representing eptdev and return the fd to userspace.
->
-> # Performance demo
->
-> An simple C application is tested to verify performance of new uAPI.
->
-> $ cat test.c
->
-> #include <linux/rpmsg.h>
->
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <sys/ioctl.h>
-> #include <fcntl.h>
-> #include <string.h>
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <stdlib.h>
-> #include <errno.h>
-> #include <sys/time.h>
->
-> #define N (1 << 20)
->
-> int main(int argc, char *argv[])
-> {
->         int ret, fd, ep_fd, loop;
->         struct rpmsg_endpoint_info info;
->         struct rpmsg_endpoint_fd_info fd_info;
->         struct timeval start, end;
->         int i = 0;
->         double t1, t2;
->
->         fd = -1;
->         ep_fd = -1;
->         loop = N;
->
->         if (argc == 1) {
->                 loop = N;
->         } else if (argc > 1) {
->                 loop = atoi(argv[1]);
->         }
->
->         printf("loop[%d]\n", loop);
->
->         strcpy(info.name, "epx");
->         info.src = -1;
->         info.dst = -1;
->
->         strcpy(fd_info.name, "epx");
->         fd_info.src = -1;
->         fd_info.dst = -1;
->         fd_info.fd = -1;
->
->         while (fd < 0) {
->                 fd = open("/dev/rpmsg_ctrl0", O_RDWR);
->                 if (fd < 0) {
->                         printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
->                 }
->         }
->
->         gettimeofday(&start, NULL);
->
->         while (loop--) {
->                 ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
->                 if (ret < 0) {
->                         printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed, ret[%d]\n", ret);
->                 }
->
->                 ep_fd = -1;
->                 i = 0;
->
->                 while (ep_fd < 0) {
->                         ep_fd = open("/dev/rpmsg0", O_RDWR);
->                         if (ep_fd < 0) {
->                                 i++;
->                                 printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
->                         }
->                 }
->
->                 //printf("Number of open failed[%d]\n", i);
->
->                 ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
->                 if (ret < 0) {
->                         printf("old ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d], errno[%d]\n", ret, errno);
->                 }
->
->                 close(ep_fd);
->         }
->
->         gettimeofday(&end, NULL);
->
->         printf("time for old way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
->         t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
->
->         if (argc == 1) {
->                 loop = N;
->         } else if (argc > 1) {
->                 loop = atoi(argv[1]);
->         }
->
->         printf("loop[%d]\n", loop);
->
->         gettimeofday(&start, NULL);
->
->         while (loop--) {
->                 fd_info.fd = -1;
->                 fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
->                 ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
->                 if (ret < 0 || fd_info.fd < 0) {
->                         printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
->                 }
->
->                 ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
->                 if (ret < 0) {
->                         printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
->                 }
->
->                 close(fd_info.fd);
->         }
->
->         gettimeofday(&end, NULL);
->
->         printf("time for new way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
->         t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
->
->         printf("t1(old) / t2(new) = %f\n", t1 / t2);
->
->         close(fd);
-> }
->
-> # Performance benchmark
->
-> - Legacy means benchmark based on old uAPI
-> - New means benchmark based on new uAPI(the one this series introduce)
-> - Time are in units of us(10^-6 s)
->
-> Test    loops   Total time(legacy)      Total time(new) legacy/new
-> 1       1000    218472                  2445            89.354601
-> 2       1000    223435                  2419            92.366680
-> 3       1000    224263                  2487            90.174105
-> 4       1000    218982                  2465            88.836511
-> 5       1000    209640                  2574            81.445221
-> 6       1000    203816                  2509            81.233958
-> 7       1000    203266                  2458            82.695688
-> 8       1000    222842                  2835            78.603880
-> 9       1000    209590                  2719            77.083487
-> 10      1000    194558                  2621            74.230446
->
-> 11      10000   2129021                 31239           68.152662
-> 12      10000   2081722                 27997           74.355181
-> 13      10000   2077086                 31724           65.473648
-> 14      10000   2073547                 28290           73.296112
-> 15      10000   2055153                 26957           76.238194
-> 16      10000   2022767                 29809           67.857593
-> 17      10000   2054562                 25884           79.375753
-> 18      10000   2036320                 28511           71.422258
-> 19      10000   2062547                 28725           71.803203
-> 20      10000   2110498                 26740           78.926627
->
-> 21      100000  20802565                260392          79.889417
-> 22      100000  20373178                259836          78.407834
-> 23      100000  20361077                256404          79.410138
-> 24      100000  20207000                256759          78.700260
-> 25      100000  20220358                268118          75.415892
-> 26      100000  20711593                259130          79.927423
-> 27      100000  20301064                258545          78.520428
-> 28      100000  20393203                256070          79.639173
-> 29      100000  20162830                259942          77.566649
-> 30      100000  20471632                259291          78.952343
->
-> # Changelog:
->
-> Changes in v4:
-> - Build warning of copy_to_user (Dan).
-> - ioctl() branches reorder (Beleswar).
-> - Remove local variable fd and pass &ept_fd_info.fd to rpmsg_anonymous_eptdev_create().
-> - Link to v3: https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/
->
-> Changes in v3:
-> - s/anon/anonymous (Mathieu)
->
-> - API naming adjustment (Mathieu)
->   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
->   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
->
-> - Add parameter 'flags' to uAPI so user can specify file flags
->   explicitly on creating anonymous inode.
-> - Link to v2: https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/
->
-> Changes in v2:
-> - Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
-> - Link to v1: https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
->
-> Dawei Li (3):
->   rpmsg: char: Reuse eptdev logic for anonymous device
->   rpmsg: char: Implement eptdev based on anonymous inode
->   rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
->
->  drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
->  drivers/rpmsg/rpmsg_char.h |  23 +++++++
->  drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
->  include/uapi/linux/rpmsg.h |  27 +++++++-
->  4 files changed, 182 insertions(+), 32 deletions(-)
->
+Hi Onur, thanks for working on this :)
 
-I intend to merge this when 6.18-rc1 is released in 3 or 4 weeks.
+The commit title doesn=E2=80=99t parse very well, can you rework it?
 
-Thanks,
-Mathieu
+=E2=80=94 Daniel
 
-> ---
-> base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
->
-> Thanks,
->
->         Dawei
-> --
-> 2.25.1
->
+
 
