@@ -1,43 +1,87 @@
-Return-Path: <linux-kernel+bounces-816661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F57CB576E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:45:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4068B576DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF7B3A68BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01F79162EC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9687E2FD7C7;
-	Mon, 15 Sep 2025 10:44:35 +0000 (UTC)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE01C2FD7A8;
+	Mon, 15 Sep 2025 10:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZVWcrepZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597642ED846;
-	Mon, 15 Sep 2025 10:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3FA280312
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933075; cv=none; b=Nn/WL/GwSB5SI2DMtCWQzI8vl9qQZW1g39LtrtYxpu8s8dG3YSWiVCoyDAXeLKeKNopTE+n+K8RLrVeeNCT3YjHY4uyH7QfF+waxyn58eqiTVJ2vmB/9Qx93c3qJaS+K1La3WCD4TXwefzLM/1or4pnz/7lUaNzUv0ZsDaH/lXE=
+	t=1757933083; cv=none; b=axq3/9RJdLsdGGBShKb2F7uDzEJWyU8Jy3uGwQLaSveeEPPUeLbZa9HYxKVM8SucgZQ/HP6dTJZSSFhh0bREpOeCXLAgWJIlnVkz9Ioo1o8OI0/b57PUCwimJNbLH8Y49xYXtvoOFcFDnFoOf/dtFKfTxZxdAkm0Z0KkoEyJjEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933075; c=relaxed/simple;
-	bh=wa0cYI+ah+AvN0/sbzMdeoYPO/F+uIM6PMekhf9HdDo=;
+	s=arc-20240116; t=1757933083; c=relaxed/simple;
+	bh=5w4k8EcLvF61+VRzmKHTpNHP2/KD4diDnXkd57nVb28=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/AHqgBD742AKbznB3MlXIcXCg6dumZm2eIiH07of6CR7zq1RN6JeN55SAUsJzi9MKF2YEyMCUsM+6xXeuk4shaZWqNksQacq2YcK23Y2gjkB+UL/MJh/c7PWgB7tmsvqIOsXw1ZnqK0B05V0Ta+IzCCUjYCSGlte6OCFg736NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip2t1757933031t384558d8
-X-QQ-Originating-IP: ViO3qK2xPauEngfgGmycWiarTOARoV3EHoXmRla6+7M=
-Received: from [127.0.0.1] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 15 Sep 2025 18:43:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15059840297681885872
-Message-ID: <B3EFC6A5E09F74FB+a67c9b82-a7c5-4dbb-9486-90a6df55ed13@radxa.com>
-Date: Mon, 15 Sep 2025 18:43:50 +0800
+	 In-Reply-To:Content-Type; b=Uh6psQU2gOObBP2Sc/ygpPtpLJc+wUqXcL1HyObAFHDycg/CPR8AywtKtYjv4qQwGuojdm0fjWZF4QSUh/MrTcPtrSFyV4lK2hUQUPfEqvvnCOofKTtDFfl9cuZQnbreLrjdbm98J3l+haEzxuC6RmwPkeGLHjgHQy6mmze7IWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZVWcrepZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757933081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pfBeZpYZH3kwLaHNF9xrLr+NfYDzXqMeo508dRBOzOs=;
+	b=ZVWcrepZ+x4jlBzYr81ZJ/C1iPx+pjSBOb+vzyTXdAHWIYNtONq+fLpc6BH7sEHHS0T5FZ
+	r+uyVvBIWQE9mhVGMPJqCni+STChLJ3vtwCQD3bRv5tIOyQBpRh36P5CyKsi9o0AI1d3g+
+	Wc84b7KiHDVuuP0B2byUsKDadSgfT+I=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-548-vcXk70LCNnSuEb_lMaOzHA-1; Mon, 15 Sep 2025 06:44:39 -0400
+X-MC-Unique: vcXk70LCNnSuEb_lMaOzHA-1
+X-Mimecast-MFC-AGG-ID: vcXk70LCNnSuEb_lMaOzHA_1757933079
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3e04ea95c6cso1620172f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:44:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757933078; x=1758537878;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pfBeZpYZH3kwLaHNF9xrLr+NfYDzXqMeo508dRBOzOs=;
+        b=dxZcYoqKMVWdlR+S6jSo742Cxz7KOUcHHTNkgm0bvwOHRkHIY6s9wUJIiy8kMRiFJE
+         yj7H56aB/AzvElG4HZL6liKFfK0qp66neCqPhhzUeSOdoNhHucV5vlcPfVo044/cenaW
+         P+ggsNG2m/DoeVnla3QQ/Xa1orK+Et5zfzESbzZCQVX2j4VDJ9XwpyV2KR04GFrNAUIg
+         iqzltBSFUyJz4xGUUV5+CpkATaFQEkOnRJ5t/kWTvr6ZcIHiUA5+e3r0Rjm7ApiOFuHf
+         x7Kir/ZyMPUiXAq0M8p77TROLF8SAZsc1gmaD0TFPoh0/au/VT0OZRbk/K8PvG3aLdTT
+         icCg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3AAUTKIvzOJusm4GfWrdeHABCmHD/ibcm4mXzHHvRQCo39jEleFpiKpDARiJ/Fmf9yqzVs84xH1gJVgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6cFYkgQAddVRVEEMwnhtbD/xQx+RdWOrhRR6IrQWtzxff8ZID
+	mX8ZsEchDg/fA162S0WdYYlOxjUfY3manvG8iOtApoVxCRB+Cwi6LOKyJ4+YWsLjy360KHTp6x8
+	8kjvLN/08UKoOPZx8ylzSkQOI8FYyXk2bBiI6f1iyksPCJ6Qw5ESajwg2uTcy/Lx2Rg==
+X-Gm-Gg: ASbGncs3M24B4d0Wp7MGYSMrKYnEgpaTJXn+MO/LOr/P/OQ4PuuibkawVgmMlidV+P/
+	/R/pAAPixThS4Br5oP93tgXJ5aZRe6MwMh8gq1t90KVDRlmoc9bKFgwWW3FTLq/Qqd+CbfRckZO
+	e8s7FBzOxV/wt4ED9wCb/6GtAtxJeXp+KZbxzXo1mgv6GEZBTmzKjP6HSNUDwNfbMsN//7MHVbk
+	gWVRsHiP636CnBC9fDQ2CM7cRmSmrQYKSL71+GslftHSBwS3WS/Zk7z1/pqSPTTIv1ysbXeCuiK
+	8JRT3VZ4csssU0qZui8gZQkzEiirnOJ3airqSe0WFRZDgsEV3KpSr9P8Xlu/coZXxkR8vvLb6NW
+	zRLg1ZkMaSbH22/FAh9ou5jXGCyD9l+/pkDaCMnGg2QIU3Xy6O5zbuqtQspisc6pstDk=
+X-Received: by 2002:a05:6000:4313:b0:3e4:64b0:a779 with SMTP id ffacd0b85a97d-3e765a0adbcmr10716136f8f.53.1757933078524;
+        Mon, 15 Sep 2025 03:44:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZ67BH6eODIX53bsHRNys6uDTQ10DKCXfSX16I+6EVy74wqGrkRZ/YiWiJ663QUmC8ksBjyw==
+X-Received: by 2002:a05:6000:4313:b0:3e4:64b0:a779 with SMTP id ffacd0b85a97d-3e765a0adbcmr10716076f8f.53.1757933078032;
+        Mon, 15 Sep 2025 03:44:38 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd? (p200300d82f18f900e0ae65d58bf88cfd.dip0.t-ipconnect.de. [2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f2acbeee0sm67118205e9.0.2025.09.15.03.44.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 03:44:37 -0700 (PDT)
+Message-ID: <34754ca4-fced-4a3c-8ff8-c00967d487de@redhat.com>
+Date: Mon, 15 Sep 2025 12:44:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,115 +89,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs6490: Introduce Radxa Dragon
- Q6A
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250915-radxa-dragon-q6a-v3-0-a6c32d988ed7@radxa.com>
- <20250915-radxa-dragon-q6a-v3-2-a6c32d988ed7@radxa.com>
- <33vm6uzxqbs5bukswpzdkrn3ronl7mp2q5d3j772t7lqcnvqvg@5or7jxglcynf>
+Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
+ peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+ sunnanyong@huawei.com, vishal.moola@gmail.com,
+ thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+ aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+ dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
+ lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
+ pfalcato@suse.de
+References: <20250912032810.197475-1-npache@redhat.com>
+ <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
+ <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
+ <CAA1CXcA+pb5KvEnJJqdf1eSjaFiBZ82MRB+KDmyhj3DbiQqOxg@mail.gmail.com>
+ <enrgrocqajwu5d3x34voghja7pbvau45oobxgabawrly44ld4u@ahch3xn6rtq5>
+ <cd8e7f1c-a563-4ae9-a0fb-b0d04a4c35b4@redhat.com>
+ <2c5328ee-fb6e-45cf-a151-868cc8e7ff97@lucifer.local>
+ <4508810d-7645-4f57-a0c5-2ee9f44206fc@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <33vm6uzxqbs5bukswpzdkrn3ronl7mp2q5d3j772t7lqcnvqvg@5or7jxglcynf>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <4508810d-7645-4f57-a0c5-2ee9f44206fc@lucifer.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: N+/GyfuFbcLi9vKdZlDTi25HexHBa35Ey17B5e5fSmkMASF/2oUDfY7O
-	2ok6oEMt8Xvgh8u8QEb6qfdXS300sjPJuznCEQd+tSkmNZkrOQwjYeIN6NiaQwR4jw+1gnt
-	ziQIYlvo6pznesj1xctEl6MuA5C3jnPOXSkuF6s+IPEh8SlO/mKcBwHecd3nu0D1FHWR7MH
-	XWqsDR2OJ2rTI1aSbCbnB00OF/gy5SNnJ5hAi0r3m+9h/ye3eh4wMdF0P/2HbI2h+Un1ouI
-	maDAAjL6hVHSxTw9EBSHEESw+KAMdYJ1AyxiHH3h+QWxFu/MO9NyvtkgTjboxw8WTsFsSaM
-	t4R5fRzjz1Zn1jNR9fTPXJDkGIRjsIIPFuIyiRLCHOMNfbi5pOGAN3R4pNXcNjVery1gEAc
-	GfkB7882YnvnOdF0v/CNIw1km1H5BN8+U+98T/NguQoM2KkpUQmDrVUuVzJIhZLzLhdv4wB
-	NPT320CPzR9vqb8xVDlRpgaEaii3F7g9K1jvmmmOPj/nT9xs5gCY16yccz9XdDyAdSykDuC
-	uqV9JBf7yvzFp7M9skNrJhkv5/DsgJDeDx8PEDqMJdMdJEfQFie0voik1GvPJ6gBP9b2Zde
-	FlTuhMSWhZBvmZskGU8W+fmiZU7fTNT4J6hZscD01J0unLN+4qrQkrMH1sFIv65nyZazrw4
-	+mCt9rrFmyt+7Zue69Z2L6VFjfdyBAaOjmq3rErB4ZD9UsgcksNqYn9W8m+DZi5tM1PLq/Y
-	xjDomGPaWacNdlp1bOdyHx8Yfgcx1NyLRDjwIBd////gTrLxIczvyTZFkV8TA9bsHXRs4OE
-	nvxcbVhXEhzERTyxNpqinAAuEgkiaG5CTl90jX480YXaV8m17N3Nbt3PBt85kTWKhqgsf9G
-	r0dUKu2oY4LJ1frJMW+Ai8KBWzfDLfRh8vPVaM85y5ZHtZkwDyESvcnz0ZxTGVyRAkfHiM/
-	23PkuPrbfE3eRfyBMftGFroxH4U5A+aw2CoHot1Ss3m1BaxxGrnXY9iL6b9eXnb4xUMueSl
-	J3cGJ/03S3k/6KZDc7
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
 
-On 9/15/2025 6:10 PM, Dmitry Baryshkov wrote:
-> On Mon, Sep 15, 2025 at 09:31:44AM +0800, Xilin Wu wrote:
->> Radxa Dragon Q6A is a single board computer, based on the Qualcomm
->> QCS6490 platform.
+>>> Mapping that to actual THP sizes (#pages in a thp) on an arch will be easy.
 >>
->> Features enabled and working:
->>
->> - Three USB-A 2.0 ports
->> - RTL8111K Ethernet connected to PCIe0
->> - eMMC module
->> - SD card
->> - M.2 M-Key 2230 PCIe 3.0 x2
->> - Headphone jack
->> - Onboard thermal sensors
->> - QSPI controller for updating boot firmware
->> - ADSP remoteproc (Type-C and charging features disabled in firmware)
->> - CDSP remoteproc (for AI applications using QNN)
->> - Venus video encode and decode accelerator
->>
->> Signed-off-by: Xilin Wu <sophon@radxa.com>
->> ---
->>   arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->>   .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 961 +++++++++++++++++++++
->>   2 files changed, 962 insertions(+)
+>> And at different mTHP levels too right?
 >>
 > 
->> +
->> +&gpu_zap_shader {
->> +	firmware-name = "qcom/qcs6490/a660_zap.mbn";
+> Another point here, since we have to keep:
 > 
-> Is the device fused to reject standard qcs6490 firmware? If not, can we
-> point it to the existing files (maybe except the ADSP)? Anyway, could
-> you please submit the required set of files to the linux-firmware repo?
-
-No, the device is not fused. So it can use firmware from linux-firmware 
-repo, except ADSP and Audioreach topology.
-
-Sure, I can submit the ADSP firmware and Audioreach topology file to 
-linux-firmware.> >> +
->> +&usb_2 {
->> +	dr_mode = "host";
+> /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
 > 
-> As Konrad has asked, please describe the onboard hub and the USB ports.
-> This will ensure that corresponding ports are correctly marked as
-> hotplug in sysfs.
+> Around, and users will try to set values there, presumably we will now add:
 > 
-
-Sure, will describe them in v4.
-
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_2_hsphy {
->> +	status = "okay";
->> +
->> +	vdda-pll-supply = <&vreg_l10c_0p88>;
->> +	vdda33-supply = <&vreg_l2b_3p072>;
->> +	vdda18-supply = <&vreg_l1c_1p8>;
->> +};
->> +
->> +&venus {
->> +	status = "okay";
+> /sys/kernel/mm/transparent_hugepage/khugepaged/eagerness
 > 
-> No separate firmware?
-> 
+> How will we map <-> the two tunables?
 
-The one from linux-firmware works.>
+Well, the easy case if someone updates eagerness, then we simply et it 
+to whatever magic value we compute and document.
 
+The other direction is more problematic, likely we'll simply warn and do 
+something reasonable (map it to whatever eagerness scale is closest or 
+simply indicate it as "-1" -- user intervened or sth like that)
 
 -- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+Cheers
+
+David / dhildenb
 
 
