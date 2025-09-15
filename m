@@ -1,143 +1,106 @@
-Return-Path: <linux-kernel+bounces-817388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6044B5819D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:08:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452B2B581A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353B6188BF6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2A9320552B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7288B248F40;
-	Mon, 15 Sep 2025 16:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9395725A2C6;
+	Mon, 15 Sep 2025 16:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="yXEIBjis"
-Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1eJrgHS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF33121CC44
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B8A248F68;
+	Mon, 15 Sep 2025 16:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757952483; cv=none; b=Rh+XjVOz2E8ZEMEcv9YLtqswQZCPEEPS5mNGZrCLen7niIok+3erdWRmPZqlt+KjtckxP2lLcxy6dRcyZnrgukgpRj3snx/K71NiXqt5X+F14eyaPXK+ja3Bg6W2ZI/tp534eufVfB/1/RmCc4afcGHVESJCO6Zcs4oiUVuilVY=
+	t=1757952552; cv=none; b=VP9KoWAH2sDIhz3rWkg5qpRUhRGbZtuo6QuZioGQsUxZzcw7IvZxiI9py/IAK50blUj5mZFKhX9j2+VBDlpOYva1Ri/sSZKWXDWBw8DP+x4sZ/9Gz/jYhu+3BpOM0kufZ7UU6r9n5iFCZMsgkx/5QmFM/+9ltINg1FWvSxaqo9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757952483; c=relaxed/simple;
-	bh=8y5dEoNz50uZgAm+YvoOGseE/GoqPwL+ASF5KsXnbgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QgpBRFyroEexo8Oz37xpz7bV1ruZ6JY8o7awSwNrnnjubBzM/dPDDBOFavVyBFeIHgvjZbzKJQ2Tartstp207LwtWTTxcmXx1nA5C4R5RvmgmDrI5dU9tKPFHwdILTsS42MqGXE9PAoAvgDffyVGJszStk99TqYMStxyLT0eRuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=yXEIBjis; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:94a9:0:640:a3fa:0])
-	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id C105480974;
-	Mon, 15 Sep 2025 19:07:48 +0300 (MSK)
-Received: from [IPV6:2a02:6bf:8080:c71::1:21] (unknown [2a02:6bf:8080:c71::1:21])
-	by mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id k7SMwi1FoeA0-zghivO12;
-	Mon, 15 Sep 2025 19:07:48 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1757952468;
-	bh=lGCRACttmCTN5Oi05rkiDmsynTL0QDVW9+5tG3omKnA=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=yXEIBjislWRCQjdX1d3Eym6KG4j7KXDyWlGEU4jRX6pBUXcByoYqGSQUoaguOJzeb
-	 vcbnwtpGcVVW14iU1pHkjCZky/dEVGnIa4APFABFeoFY6Z3zdMTSpQGEZosH3eiuCs
-	 EWmNXHxUPF6GPSfk5TlWvW7vUUdAfB0I0C38aQbQ=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-68.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <ca90223f-ca25-466c-a8c1-94f4f39b26cf@yandex-team.ru>
-Date: Mon, 15 Sep 2025 19:07:46 +0300
+	s=arc-20240116; t=1757952552; c=relaxed/simple;
+	bh=2kwD057UDVqZKek/SB4FkUZbEOXrXs53qNd/kRtu9fI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iIuUIEPIn8z73LuuUS/GxP+DtNC+KyXfII//w7nV4tB2UW6+ncANIvv2lXornnudCdmAfiwdH4MpraR5GNvjsm0A9nlSiORJaRzvNeGj4/D9w2oT0DxWycuHn0wd8ChOYi8wDb1j92j5dmEpFOqqadwtEj2RIEAyObIQUaggrsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1eJrgHS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B2DC4CEF1;
+	Mon, 15 Sep 2025 16:09:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757952551;
+	bh=2kwD057UDVqZKek/SB4FkUZbEOXrXs53qNd/kRtu9fI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=A1eJrgHSDSoCFgRMCcpY1lhPLcxXCBJbstJDNVMAHCDPETpIIFCEhyuIZ3XMhzlSg
+	 SzuOXgNl0q+HTBftEyyTm1KFQA9QuLp1xkWKicOFvhD5C5qynGI8PGhBe/1Vvhtzfh
+	 eN5t7Vh93GEkq8280+VaE98UhxN2VOmGeje+PNyB+eKvchw9Xf/tkSN9okVMXRQoWq
+	 xj3OWyTAew62N8YUndxfOhlkHK9HMH8aeKubZpVtr0G/nxFRZizt6uTiKlyGLqGHfZ
+	 HLc07DPkIC7zXndV+80NYS6lgQVRnO6vJJE6gwLVFfFnitlaWd3GbOou0Ew2nW+GCF
+	 Ipu7HjzCJNskA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org,
+	fsverity@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	x86@kernel.org,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2 0/6] Optimize fsverity using 2-way interleaved SHA-256 hashing
+Date: Mon, 15 Sep 2025 11:08:13 -0500
+Message-ID: <20250915160819.140019-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
- blocks around
-To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
- <aMLrGCQSyC8odlFZ@pathway.suse.cz> <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
- <84bjnhx91r.fsf@jogness.linutronix.de> <aMPm8ter0KYBpyoW@pathway.suse.cz>
- <aMPt8y-8Wazh6ZmO@pathway.suse.cz> <aMQzD9CLP1F01Rry@pathway.suse.cz>
- <84a52zy0iu.fsf@jogness.linutronix.de>
- <20cbb02b-762f-4a3f-ba40-aae018388b3b@yandex-team.ru>
- <84348pqtej.fsf@jogness.linutronix.de>
- <fece29ff-070e-4074-85be-4093a3000e5d@yandex-team.ru>
- <84wm5z7o14.fsf@jogness.linutronix.de>
-Content-Language: en-US
-From: Daniil Tatianin <d-tatianin@yandex-team.ru>
-In-Reply-To: <84wm5z7o14.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+This series is targeting libcrypto-next.  It can also be retrieved from:
 
-On 9/15/25 6:07 PM, John Ogness wrote:
-> On 2025-09-14, Daniil Tatianin <d-tatianin@yandex-team.ru> wrote:
->>> After applying your patch, can you provide an example where a maximum
->>> size of exactly half causes the tail to be pushed beyond the head? Keep
->>> in mind that data_check_size() accounts for the meta-data. It only
->>> doesn't account for the extra ID on wrapping data blocks.
->> Sorry, I think exactly half is fine, basically we can keep it half, but
->> only remove the tailing id check with my patch.
-> I have been investigating this further. Even _without_ your patches, I
-> cannot find (either by using my brain or through testing) a problem with
-> limiting it to exactly half:
->
-> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-> index bc811de18316b..9d47c1b94b71f 100644
-> --- a/kernel/printk/printk_ringbuffer.c
-> +++ b/kernel/printk/printk_ringbuffer.c
-> @@ -398,8 +398,6 @@ static unsigned int to_blk_size(unsigned int size)
->    */
->   static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
->   {
-> -	struct prb_data_block *db = NULL;
-> -
->   	if (size == 0)
->   		return true;
->   
-> @@ -408,11 +406,7 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
->   	 * array. The largest possible data block must still leave room for
->   	 * at least the ID of the next block.
->   	 */
-> -	size = to_blk_size(size);
-> -	if (size > DATA_SIZE(data_ring) - sizeof(db->id))
-> -		return false;
-> -
-> -	return true;
-> +	return (to_blk_size(size) <= (DATA_SIZE(data_ring) / 2));
->   }
->   
->   /* Query the state of a descriptor. */
->
-> When invalidating a data block (pushing the tail) it only must be
-> certain that the newly created space is large enough to fit the new data
-> block.
->
-> With a maximum of half, a new non-wrapping data block will always
-> fit. If it is a wrapping data block the worst case is if it is maximally
-> sized and ends exactly at the end of the array. In the case, it is
-> placed at index 0. But there it will only free up until the head
-> value. (If the head value was less, the data block would not have
-> wrapped.)
->
-> Your series handles the "ends exactly at the end of the array" case by
-> avoiding the need to wrap and thus invalidate up to half the
-> ringbuffer. But your series does not affect the maximum record size.
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha256_finup_2x-v2
 
-Yeah, I think you're right. I guess the second patch can be dropped now, 
-which is even better.
+This series adds support for 2-way interleaved SHA-256 hashing to
+lib/crypto/, implements it for arm64 and x86_64, and makes fsverity use
+it.  This significantly improves fsverity performance on many CPUs.
 
->
-> I will submit an official patch that also improves the comments to
-> clarify exactly why the limit exists.
->
-> @Petr: I am fine with you keeping our 1/4 limit in printk.c. But I would
-> like the ringbuffer code to be exactly proper here.
->
-> John
+Later patches will make dm-verity use this optimization as well.
+
+Changed in v2:
+- Made the new arm64 assembly compatible with CONFIG_CPU_BIG_ENDIAN=y.
+- Omitted sha256_finup_2x() from pre-boot environments.
+- Made alloc_guarded_buf() assert that the allocation succeeded.
+- Minor tweaks to comments and whitespace.
+
+Eric Biggers (6):
+  lib/crypto: sha256: Add support for 2-way interleaved hashing
+  lib/crypto: arm64/sha256: Add support for 2-way interleaved hashing
+  lib/crypto: x86/sha256: Add support for 2-way interleaved hashing
+  lib/crypto: tests: Add tests and benchmark for sha256_finup_2x()
+  fsverity: Remove inode parameter from fsverity_hash_block()
+  fsverity: Use 2-way interleaved SHA-256 hashing when supported
+
+ fs/verity/enable.c              |  12 +-
+ fs/verity/fsverity_private.h    |   2 +-
+ fs/verity/hash_algs.c           |   3 +-
+ fs/verity/verify.c              | 175 ++++++++++++---
+ include/crypto/sha2.h           |  28 +++
+ lib/crypto/arm64/sha256-ce.S    | 284 +++++++++++++++++++++++-
+ lib/crypto/arm64/sha256.h       |  37 ++++
+ lib/crypto/sha256.c             |  71 +++++-
+ lib/crypto/tests/sha256_kunit.c | 184 ++++++++++++++++
+ lib/crypto/x86/sha256-ni-asm.S  | 368 ++++++++++++++++++++++++++++++++
+ lib/crypto/x86/sha256.h         |  39 ++++
+ 11 files changed, 1147 insertions(+), 56 deletions(-)
+
+base-commit: 54e7bb6ade8acd3fb1c486c9f3e2c0dfdc18f84e
+-- 
+2.51.0
+
 
