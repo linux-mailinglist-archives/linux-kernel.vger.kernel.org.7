@@ -1,77 +1,63 @@
-Return-Path: <linux-kernel+bounces-817208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6C1B57F41
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:39:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68734B57F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91ACC7A93AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 698F2485830
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2EA329F36;
-	Mon, 15 Sep 2025 14:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEE232ED41;
+	Mon, 15 Sep 2025 14:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DY6NJfYy"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N2q0dBS2"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622726B97E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D1F30C61B;
+	Mon, 15 Sep 2025 14:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947172; cv=none; b=KCB5gHCCEvoTgiMFzc2phLsxdB3vtc7zWX/EAOoH7Kh/cevtHXHNgU+V5wmakj3Xh/ML/3WiBG8jl4nrG9S6Kmrsruo8aSc21ufmtcIRi4plEjz7PartRPJpAXrCLA4oF1WobaIvNQG10BbbYYShKuO3EeX6RjJBoml7RY05S58=
+	t=1757947273; cv=none; b=r0FzrXQkpzhHzNhx5aImOMH6dNpSctFZH68cF2GX7dTbL2rz8hhgweCV0uH0f11e/fFTnoCzy/5daJlFb+jdvPVpreCVx1mczAS4hZ9ufwoDgNEUosq4op0ASREAuhRDLNhVzhJ1Ix6HNLjej0Am4AcSLydmA5if1A96C+8JuWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947172; c=relaxed/simple;
-	bh=/UzLQJAqsQ20oZpcrvVtig07k+dbEdhwy0rxuKQNspc=;
+	s=arc-20240116; t=1757947273; c=relaxed/simple;
+	bh=UCT0GiCK1YOW+PhYr1Pzbcbe42IkXxQYZBGZKDcKnug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0iMtgiDm6ptsG47y6MOBRV0Ar1/i3b3G3bc9R0nxq0Ktq53uHXlldRhfusvEPhwK4QAaWHP6ip3GFbG48hReRFqbHj/sfAwXC+Uia+aNxSuRyz8d5yukyDEd7mZlEY+1xUOEc8NIQr0n/HRcM5A36GXj9BZOO9VPxMJY1V1Z1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DY6NJfYy; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6FF6A40E019E;
-	Mon, 15 Sep 2025 14:39:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ovMTX1tMk3Lz; Mon, 15 Sep 2025 14:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757947164; bh=uz2esuv3kCBRjR335a/wuf/S3sBiFeFoPIAa2U7UJnU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=D5fGB/AQCKHSgkWwl6GX4EMI4/dF2OUeifM9zrQw6EdY1tLiq1zgB5+s4CwvwfdIvmi4N1crtj2Kaw82h+ExS+mj7jCof3+ItenzToENLHfjrYMnnwBeNJ4pu3VKBcLBlnquwBaLlF0UX5ZjZhBTffDigkz8GdGpmGEUCfOQS3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N2q0dBS2; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A17D36DF;
+	Mon, 15 Sep 2025 16:39:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757947188;
+	bh=UCT0GiCK1YOW+PhYr1Pzbcbe42IkXxQYZBGZKDcKnug=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DY6NJfYykqnONBYf28N/ZwsHm1MvRACJQnraawir0VyCzeXDGMtLUUTiLelKDSVE4
-	 Vsw2bYtu+YH/6geblph93SoYrWaFLZft2GGbP8qXTDj6AlgwFJQ4VcCBwOBEV1EW/F
-	 MQ+U+9tmoEC7f/4MlCFdXZ1ZgXe22m0TacvDBLtaYGl0Q/gqMh6k+1m0Ha3l6GuZ3P
-	 NFFTNtE01KYl1WwTAyTUzU8iV9f/zUe1l1i0xSnWNXNs6zQMlRoVbUrsEk5PM4cfYT
-	 SvU3NzIPNyklpiuB9HgHGNuSVYD/h0pNloFdsnLqwHyJX0JirA9zoE0kZtvw9mxCk7
-	 cMMzBjDAirvggPKz+/MbAObr+djr4Il9XPmBh8IsVm4lCjh2XlYWnzBV4zN4myVbjk
-	 HEA0JdS3qfF4RD58Q9P6fF4lUTj0sTULBMOqu8Vemg7Hl2BlK2RvZwTrdMGVEWdv48
-	 RNof0boxYpdD6udwEpCDGmjOpudGuICBl4DOBuaqYEfwh28uAIRfXblGa2YCUN3Kqe
-	 JlwBiuCrR46TpPjKI5Zr9a1Xq6ecmJSIAmRCSalMOnyd7+NVXmrxXQ4jIvYyRPtb4C
-	 65dI/zv5H4+GMq9Tm86qFdZq8DHV7O9t6wbAPmWrIr37+iNYqfu2D7Xnl3qTH8GJXo
-	 2L2nF1sil+CdQcpsbG9VIrLc=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 84C8740E0176;
-	Mon, 15 Sep 2025 14:39:16 +0000 (UTC)
-Date: Mon, 15 Sep 2025 16:39:09 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/tsx: Get the tsx= command line parameter with
- core_param()
-Message-ID: <20250915143909.GAaMglDd5oRSPDDuqu@fat_crate.local>
-References: <20250731083433.3173437-1-ptesarik@suse.com>
+	b=N2q0dBS2ofT7pUa8jiujbAVSOMtx8wdhwtbRZwtFcdSaOZ+MxGhLqK4oh3ntDZ8Ax
+	 FsDYMGCxuOsCmtbznoi9p6baEWTAK0Ij6QkkreAai3ITqpYLUHF1TxJbH++gbYj6vJ
+	 Ql8gIMnJ/8P6F8rg8UbitM6gzX48+/uUQxj15t/k=
+Date: Mon, 15 Sep 2025 17:40:40 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: kernel test robot <lkp@intel.com>,
+	Dafna Hirschfeld <dafna@fastmail.com>,
+	Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 5/8] media: v4l2-core: Introduce v4l2-params.c
+Message-ID: <20250915144040.GA8821@pendragon.ideasonboard.com>
+References: <20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f@ideasonboard.com>
+ <202508240704.AZwGXBaw-lkp@intel.com>
+ <jhynzoppwi22vnrdzrvqixsbvntsli7sj2vtsxrevtmxluveps@q6yzgvlqmxxb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,18 +66,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250731083433.3173437-1-ptesarik@suse.com>
+In-Reply-To: <jhynzoppwi22vnrdzrvqixsbvntsli7sj2vtsxrevtmxluveps@q6yzgvlqmxxb>
 
-On Thu, Jul 31, 2025 at 10:34:33AM +0200, Petr Tesarik wrote:
-> Use core_param() to get the value of the tsx= command line parameter.
+On Mon, Sep 15, 2025 at 03:31:58PM +0200, Jacopo Mondi wrote:
+> Question for media maintainers...
+> 
+> I'm not sure how I should better handle this one
+> 
+> On Sun, Aug 24, 2025 at 07:16:21AM +0800, kernel test robot wrote:
+> > Hi Jacopo,
+> >
+> > kernel test robot noticed the following build errors:
+> >
+> > [auto build test ERROR on a75b8d198c55e9eb5feb6f6e155496305caba2dc]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250820-210503
+> > base:   a75b8d198c55e9eb5feb6f6e155496305caba2dc
+> > patch link:    https://lore.kernel.org/r/20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f%40ideasonboard.com
+> > patch subject: [PATCH v4 5/8] media: v4l2-core: Introduce v4l2-params.c
+> > config: nios2-randconfig-002-20250824 (https://download.01.org/0day-ci/archive/20250824/202508240704.AZwGXBaw-lkp@intel.com/config)
+> > compiler: nios2-linux-gcc (GCC) 9.5.0
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250824/202508240704.AZwGXBaw-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202508240704.AZwGXBaw-lkp@intel.com/
+> >
+> > All errors (new ones prefixed by >>):
+> >
+> >    nios2-linux-ld: drivers/media/v4l2-core/v4l2-params.o: in function `v4l2_params_buffer_validate':
+> >    v4l2-params.c:(.text+0x124): undefined reference to `vb2_plane_vaddr'
+> > >> v4l2-params.c:(.text+0x124): relocation truncated to fit: R_NIOS2_CALL26 against `vb2_plane_vaddr'
+> 
+> Clearly v4l2-params.c (now v4l2-isp.c) depends on VIDEOBUF2_CORE
+> 
+> Right now v4l2-params.c gets compiled in as part of the
+> videodev-objs Makefile target. IOW is not gated by a KConfig option.
+> 
+> To select (or better, depend) on VIDEOBUF2_CORE I should guard
+> v4l2-params.c with a KConfig option so that I can 'depend on
+> VIDEOBUF2_CORE'. Drivers that use the v4l2-params.c helper would then
+> have to 'select V4L2_PARAMS` (or similar).
 
-Use early_param() pls.
+Make it V4L2_ISP :-)
 
-Thx.
+> Is this the best approach or are there alternatives I might be missing ?
+
+We don't want VIDEODEV depending on VB2. I think it also makes sense to
+have a separate Kconfig option for these helpers, are they will be used
+by a small number of drivers.
+
+Make CONFIG_V4L2_ISP an option that drivers select, not depend on.
 
 -- 
-Regards/Gruss,
-    Boris.
+Regards,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Laurent Pinchart
 
