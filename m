@@ -1,195 +1,272 @@
-Return-Path: <linux-kernel+bounces-816644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE2AB576B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:38:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5D9B576B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C44200E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:38:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 877FB4445A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1142FE599;
-	Mon, 15 Sep 2025 10:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6872FB99E;
+	Mon, 15 Sep 2025 10:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SCP1d7Dl"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UqJ5scJD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jxT2VTbe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UqJ5scJD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jxT2VTbe"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C974E2FE56F;
-	Mon, 15 Sep 2025 10:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B67D2FC016
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757932667; cv=none; b=UnXD3EdW3mmvDtGgaN2VjUZ4XjW66FhyYqaDGhlmmpGXBrtiabe9pGH2rIiQ0753VGCRqdDOqBHy2Z463jhjw37eS32g5ykLidCNQtnDsnhjri73aWTL75zcqHq1UiKqND1K1O6IXGHgq+Ak1Y+/pU/gfUdEKpNqfeRWiHWv8cE=
+	t=1757932724; cv=none; b=EQN73VFI5wLOqImDK7J6oAisXKAGZBXPnFu/eSHumalFwFrRkbpzUajteTDv7gcsxwgRUioo0Ih1LqTLV9iIEKC0fkWbhhzmf1W2YaxYTFCZcDdPmLtyhB+KISTqNSEoxys7wy0YScmJUSZyTcYEMTjB2QXGENlH39lc71LKxFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757932667; c=relaxed/simple;
-	bh=KedPFyvTS9CkoIRXAH7XdeX5q7bM89mAHx8MYznoCa4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=T7QxMf1iH6wNHNQgkPO6y5Yj5q2v1ubPtgxUW7PkwvHkrVcOC5KUxExQXOeFn+GggyHRxNhLpV5v/VRd2Hn470RXX6AHwObGBL3wu+kv/8D7zxs1Y+1u93pHsByfwYhJkQ8uszGllNzs4VmG2pQugo4b4r342dl7gYUDc5O5YSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SCP1d7Dl; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id AA0F4EC01FA;
-	Mon, 15 Sep 2025 06:37:43 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 15 Sep 2025 06:37:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757932663; x=1758019063; bh=S3tkyveM8KAf6AU1pjfVZqhckIwKnWLO+1I
-	U/3AsN/M=; b=SCP1d7Dl/xOAG/sAR/0ofNgoAwG2s4O6y8jk9H3/FzM39/wpQ8R
-	nRGbn3uRLuHYTdwH1h0oBbNgl9BcAMO5HjNSycypodbYpUzrEkNknSYNQmeE4UGH
-	OVPn5/fvhDUVvP4EORf/XfNn2YpxW9L7TPTkakUiM6UQ+G99S5GKriRC6bJwEGCh
-	EXsEmiiEkTnwRk8RHKYtiVxMA1fD1q5jyqBOaATfRu/FVitHynBzpYpgDhh9iwOb
-	zpJvT6ibimjwSYDTT9z3vvCUZJNvZnl03o0Z7e+EyDsKD8mu8hUVf9oB0nkE4o1W
-	hTNoVtWwS4gPDMT79O5hLOJKMTWLV4c3R1Q==
-X-ME-Sender: <xms:duzHaBKeXKRSaqvXzswr3pjowu3x3kw5PYsQKYQei9KrCyv70ZDiuw>
-    <xme:duzHaMWU1lXyJLdLYNYXcV-4NyM4NYH3dBOsYurxujj-72fuEGxreHKb7RBQd3BUr
-    xt6fKpZMvHCkGO6mvg>
-X-ME-Received: <xmr:duzHaMbA0w4KNlQOFGC1hKmvcoC8ixo51WKbLNwnMyiHO-sZ-qIVd7b7nb35v2qgQ0vD53Lrl0x2UzWo2LHcpKdTUBGNcCzhO_w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeegjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
-    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepfeeiheejvdetgfeitddutefhkeeilefhveehgfdvtdekkedvkeehffdtkeevvdeu
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdho
-    rhhgpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrth
-    hiohhnrdhorhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrhhkrd
-    hruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdgu
-    vgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:d-zHaLwxNMLQIdUVqU6nfjI5ynam_kWzVG5uPALNrcuXlo9O16kKmw>
-    <xmx:d-zHaE1S5qhO5m7TAI0Fu9DSBpcrzvZv4e10dXVXoX1LX3qXl3gYTg>
-    <xmx:d-zHaEnPiMN8rIHlCXzO3l-U9mHCUXLIU-WJLeUqPE1gy0UJzcY9Tw>
-    <xmx:d-zHaL-pxruKADvgL7oCtZhffBbL1O7S8tMH3V0qL__XyRtc0D1KTg>
-    <xmx:d-zHaBMm-mRTYs-D--hsVAJpYdRnGJ2nlEwCvLHcE9DZDzBKJPyfctqm>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 06:37:39 -0400 (EDT)
-Date: Mon, 15 Sep 2025 20:37:34 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-    linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org
-Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
- operations
-In-Reply-To: <20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
-Message-ID: <8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org> <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org> <20250915080054.GS3419281@noisy.programming.kicks-ass.net> <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
- <20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1757932724; c=relaxed/simple;
+	bh=ikmaAHtiSs1pTGUMoyBaXfgKpTThPyepYq1DPAzGwQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkbTCkU89c9YlnvSb5npZDVmmWxShA5cFhrn9UendVOsk9x5HQXXHaTWPaqS26LiArK1hb9MI+krHMlEYVsjS35pkTou8wtxhz9ySyMI/nh6jQGpbRfzNu4QHqRHCPy60B8pLQFWCMoA0g5QTD2POMImVymDy8qtbY/sUiZ56jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UqJ5scJD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jxT2VTbe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UqJ5scJD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jxT2VTbe; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 14AF822C24;
+	Mon, 15 Sep 2025 10:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757932720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SuhWLaQAWTaS74RdAscPhzseVA4M2GMOEfw5jlfCKJ4=;
+	b=UqJ5scJDGOAjiY6eRdqV0/Ucs/Ub14LkNeC+l/N982ob+zPywoiTA9H1ASt/AuF/K/h2lB
+	C8CSzY8BhRsS8ESi9Ld6BvxrUW7dU8GxdQTKwrjDGWPBRM62hkmQ8gtBKhVW4xKa62YyKb
+	Cvd6QYtjLU6YsEpCN6lNdvHyL1zKPxQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757932720;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SuhWLaQAWTaS74RdAscPhzseVA4M2GMOEfw5jlfCKJ4=;
+	b=jxT2VTbeHlVVWyXiBcJvFKMi2Jc02DTu7La5ThjBJrvc6R7WjfouEXGeQNURiT0VzHMihj
+	8DyEHpohOAjR1xAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757932720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SuhWLaQAWTaS74RdAscPhzseVA4M2GMOEfw5jlfCKJ4=;
+	b=UqJ5scJDGOAjiY6eRdqV0/Ucs/Ub14LkNeC+l/N982ob+zPywoiTA9H1ASt/AuF/K/h2lB
+	C8CSzY8BhRsS8ESi9Ld6BvxrUW7dU8GxdQTKwrjDGWPBRM62hkmQ8gtBKhVW4xKa62YyKb
+	Cvd6QYtjLU6YsEpCN6lNdvHyL1zKPxQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757932720;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SuhWLaQAWTaS74RdAscPhzseVA4M2GMOEfw5jlfCKJ4=;
+	b=jxT2VTbeHlVVWyXiBcJvFKMi2Jc02DTu7La5ThjBJrvc6R7WjfouEXGeQNURiT0VzHMihj
+	8DyEHpohOAjR1xAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D43D11368D;
+	Mon, 15 Sep 2025 10:38:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CDNlMq/sx2hbFAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 15 Sep 2025 10:38:39 +0000
+Message-ID: <119c9db0-3d41-4256-aadc-fb62361bd7ee@suse.de>
+Date: Mon, 15 Sep 2025 12:38:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] drm: Replace the deprecated DRM_* logging macros in
+ gem helper files
+To: Athul Raj Kollareth <krathul3152@gmail.com>, michal.wajdeczko@intel.com
+Cc: skhan@linuxfoundation.org, dri-devel@lists.freedesktop.org,
+ linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+ simona@ffwll.ch, mripard@kernel.org
+References: <aLczDHV_yGnnRKbr@Terra>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <aLczDHV_yGnnRKbr@Terra>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,intel.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+
+Hi
+
+Am 02.09.25 um 20:10 schrieb Athul Raj Kollareth:
+> Replace the DRM_* logging macros used in gem helper files with the
+> appropriate ones specified in /include/drm/drm_print.h.
+
+Added to drm-misc-next. Thanks for the patch.
+
+Best regards
+Thomas
+
+>
+> Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
+> Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+> ---
+> Changes in v5:
+>      - Minor style fix.
+>
+> Changes in v4:
+>      - Some codestyle corrections.
+>      - Remove OOM error logging in drm_gem_init().
+>
+> Changes in v3:
+>      - Revert all changes to drm_gem_objects_lookup().
+>      - Use drm_device from minor.
+>
+> Changes in v2:
+>      - Change drm_gem_objects_lookup() to take a drm_device* argument.
+>      - Make appropriate changes to all calls of drm_gem_objects_lookup().
+> ---
+>   drivers/gpu/drm/drm_gem.c            | 16 ++++++++--------
+>   drivers/gpu/drm/drm_gem_dma_helper.c |  2 +-
+>   2 files changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index 4a89b6acb6af..fb12cc2051d8 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -101,10 +101,8 @@ drm_gem_init(struct drm_device *dev)
+>   
+>   	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
+>   					  GFP_KERNEL);
+> -	if (!vma_offset_manager) {
+> -		DRM_ERROR("out of memory\n");
+> +	if (!vma_offset_manager)
+>   		return -ENOMEM;
+> -	}
+>   
+>   	dev->vma_offset_manager = vma_offset_manager;
+>   	drm_vma_offset_manager_init(vma_offset_manager,
+> @@ -783,9 +781,10 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+>   int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>   			   int count, struct drm_gem_object ***objs_out)
+>   {
+> -	int ret;
+> -	u32 *handles;
+> +	struct drm_device *dev = filp->minor->dev;
+>   	struct drm_gem_object **objs;
+> +	u32 *handles;
+> +	int ret;
+>   
+>   	if (!count)
+>   		return 0;
+> @@ -805,7 +804,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>   
+>   	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
+>   		ret = -EFAULT;
+> -		DRM_DEBUG("Failed to copy in GEM handles\n");
+> +		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
+>   		goto out;
+>   	}
+>   
+> @@ -853,12 +852,13 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
+>   long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
+>   				    bool wait_all, unsigned long timeout)
+>   {
+> -	long ret;
+> +	struct drm_device *dev = filep->minor->dev;
+>   	struct drm_gem_object *obj;
+> +	long ret;
+>   
+>   	obj = drm_gem_object_lookup(filep, handle);
+>   	if (!obj) {
+> -		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
+> +		drm_dbg_core(dev, "Failed to look up GEM BO %d\n", handle);
+>   		return -EINVAL;
+>   	}
+>   
+> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
+> index 4f0320df858f..a507cf517015 100644
+> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+> @@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
+>   
+>   	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
+>   	if (ret) {
+> -		DRM_ERROR("Failed to vmap PRIME buffer\n");
+> +		drm_err(dev, "Failed to vmap PRIME buffer\n");
+>   		return ERR_PTR(ret);
+>   	}
+>   
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
-On Mon, 15 Sep 2025, Peter Zijlstra wrote:
-
-> On Mon, Sep 15, 2025 at 07:38:52PM +1000, Finn Thain wrote:
-> > 
-> > On Mon, 15 Sep 2025, Peter Zijlstra wrote:
-> > 
-> > > On Sun, Sep 14, 2025 at 10:45:29AM +1000, Finn Thain wrote:
-> > > > From: Peter Zijlstra <peterz@infradead.org>
-> > > > 
-> > > > Add a Kconfig option for debug builds which logs a warning when an
-> > > > instrumented atomic operation takes place at some location that isn't
-> > > > a long word boundary. Some platforms don't trap for this.
-> > > > 
-> > > > Link: https://lore.kernel.org/lkml/20250901093600.GF4067720@noisy.programming.kicks-ass.net/
-> > > > ---
-> > > > This patch differs slightly from Peter's code which checked for natural
-> > > > alignment.
-> > > > ---
-> > > >  include/linux/instrumented.h |  4 ++++
-> > > >  lib/Kconfig.debug            | 10 ++++++++++
-> > > >  2 files changed, 14 insertions(+)
-> > > > 
-> > > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> > > > index 711a1f0d1a73..55f5685971a1 100644
-> > > > --- a/include/linux/instrumented.h
-> > > > +++ b/include/linux/instrumented.h
-> > > > @@ -7,6 +7,7 @@
-> > > >  #ifndef _LINUX_INSTRUMENTED_H
-> > > >  #define _LINUX_INSTRUMENTED_H
-> > > >  
-> > > > +#include <linux/bug.h>
-> > > >  #include <linux/compiler.h>
-> > > >  #include <linux/kasan-checks.h>
-> > > >  #include <linux/kcsan-checks.h>
-> > > > @@ -67,6 +68,7 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
-> > > >  {
-> > > >  	kasan_check_read(v, size);
-> > > >  	kcsan_check_atomic_read(v, size);
-> > > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
-> > > >  }
-> > > >  
-> > > >  /**
-> > > > @@ -81,6 +83,7 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
-> > > >  {
-> > > >  	kasan_check_write(v, size);
-> > > >  	kcsan_check_atomic_write(v, size);
-> > > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
-> > > >  }
-> > > >  
-> > > >  /**
-> > > > @@ -95,6 +98,7 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
-> > > >  {
-> > > >  	kasan_check_write(v, size);
-> > > >  	kcsan_check_atomic_read_write(v, size);
-> > > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
-> > > >  }
-> > > 
-> > > Right, so why aren't we trusting the size argument? And instead
-> > > mandating a possibly larger alignment?
-> > > 
-> > 
-> > It wasn't supposed to mandate a larger alignment in practice. I considered 
-> > doing something like (unsigned long)v & (size - 1) & (sizeof(long) - 1) 
-> > but decided that the extra overhead probably wouldn't be worthwhile, if in 
-> > practice, no-one is doing atomic ops on shorts or chars. I will revisit 
-> > this.
-> 
-> atomic_t is aligned at 4 bytes, you're now mandating it is aligned at 8
-> bytes (on LP64), this cannot be right.
-> 
-> kernel/locking/qspinlock.c:xchg_tail() does xchg_relaxed(&lock->tail,
-> ...) which is u16. Again, you cannot mandate 8 bytes here.
-> 
-
-OK. I will change it back to your code (i.e. mandate natural alignment).
-
-> > When you do atomic operations on atomic_t or atomic64_t, (sizeof(long)
-> > - 1) probably doesn't make much sense. But atomic operations get used on 
-> > scalar types (aside from atomic_t and atomic64_t) that don't have natural 
-> > alignment. Please refer to the other thread about this: 
-> > https://lore.kernel.org/all/ed1e0896-fd85-5101-e136-e4a5a37ca5ff@linux-m68k.org/
-> 
-> Perhaps set ARCH_SLAB_MINALIGN ?
-> 
-
-That's not going to help much. The 850 byte offset of task_works into 
-struct task_struct and the 418 byte offset of exit_state in struct 
-task_struct are already misaligned.
-
-But that's all moot, if you intended that CONFIG_DEBUG_ATOMIC should 
-complain about any deviation from natural alignment. I still don't have 
-any performance measurements but I'm willing to assume there's a penalty 
-for such deviation.
 
