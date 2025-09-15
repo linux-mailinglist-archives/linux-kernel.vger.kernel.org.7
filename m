@@ -1,115 +1,67 @@
-Return-Path: <linux-kernel+bounces-816870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D90B579A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:01:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C240B579AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 311434E1EEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047423AE19A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448572FC009;
-	Mon, 15 Sep 2025 12:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BE22FC009;
+	Mon, 15 Sep 2025 12:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhlh3UjA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="r5754uGW"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7721921CC47
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C18E1519B4;
+	Mon, 15 Sep 2025 12:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937692; cv=none; b=WV3xcWQkj2LUToa0o2sReD/NSlW4UR8wcanzuvmjI1O9u+Y6UDIwY8D29Ei2H7zoyEkFf/7KYQaDQMva5XzFM4kuQzez3qHpzHXXVIf+yXt3t11BOordsMu2k2CXcvYry9Ue8nF0YnXVBkkrnehfAtDEUIKGRGNfL+4hRsKW4oU=
+	t=1757937718; cv=none; b=FeJm7DsTOhi/t3wOuiJDpW4dvDP5mRBCf/vsZLnJZrgx4fNJUHEU87sM7ipAJotpZy6b/EeaWZo9HX04kh8X6VIgdWXc8L611AcciEooXku7qMBnlG6OEsUhMFsqoCfhTHR2WD1zMeEPcYhRngprCaxRBLKoAO6vF+6cpdXM270=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937692; c=relaxed/simple;
-	bh=OdpGHaR6mVxP5HKq5aAY+2+SKhkbZPP2b52C+M/aSWc=;
+	s=arc-20240116; t=1757937718; c=relaxed/simple;
+	bh=+WtHQs295H3vxQFqZDro2SqnZZjKJ31/hrt5spFK47M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hr6+kgis/DuQP5l6xPGGzrK8eSb4zEQyZQTvHmWNj1+aUoxM/cw9h0AJxv4DTslsS/0OvPh9fw2NRyb5FDVr0FCpJ2k3jPFhj4D/hKM6f29Bw1MrC0GuQH+kWWnnolgHPHKRWUTL132ZuqK8DULIZVZxOwd7l937Q0BNzDBK0ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhlh3UjA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C22AC4CEF1;
-	Mon, 15 Sep 2025 12:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757937692;
-	bh=OdpGHaR6mVxP5HKq5aAY+2+SKhkbZPP2b52C+M/aSWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uhlh3UjAhOfXkVXbGPLkiJ2IwDdJz6IbjDX6KkXNjuFGEsfdy/sJg70IdeFE9Q2GM
-	 SGcU3KXvT6Qnske83HJXQMspd9vSfkgPkSE9lnATOu0hyxx/a5snwXytgMZZqK2qiU
-	 XPxFeh2fVAOSe6DSVTCeezuiSAnEwGakC8RJl2Q83blDnt3CrW07BnelRszu/OPKaI
-	 IcPL1K26ULRyqxXqH/mvim8LeE06ZKP8gJocdA/z9c8Z6+xHScyJomdacck+6maZlm
-	 8lFQIhzn/O/DYbxu2eSiUXBVKu5Apkht/+WLP0qWu/OCEKXfrM5e3CdMMkoH2qNmPC
-	 XCijZ744058pg==
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 1A835F40066;
-	Mon, 15 Sep 2025 08:01:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Mon, 15 Sep 2025 08:01:30 -0400
-X-ME-Sender: <xms:GQDIaKIRTXCcaxAUYKgCRxMNWcCye0dRCoakwCbSGQUurMQVVdE17A>
-    <xme:GQDIaP_BVAD9Lp_0CNgDffomeY121c4OgJc1sHIPcU76TfkIe8Tjw1Trfb8LVMSNM
-    p_kfphQPtQNlsMaV1c>
-X-ME-Received: <xmr:GQDIaIizBz999vqBaFlrq3S6TjVE19T_VZfEuOaxoNufMXutpoxNxDCJDgI5TQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeeigecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
-    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
-    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
-    grmhgvpdhnsggprhgtphhtthhopeelkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrsh
-    htohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehrvggu
-    hhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqthhrrggtvgdqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsg
-    grohhlihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomh
-X-ME-Proxy: <xmx:GQDIaPR-9ZZsb_FqFD8FxF4U_29VX41nyxPhlQ8UN_jnJgsRNSEGAA>
-    <xmx:GQDIaLlG2Tvx9s8Rs0SzuH3AZ7b7LQWHQUu839I9L64iVETXp4w8PQ>
-    <xmx:GQDIaJWNfKqdibNS9dwiMOpk8c7OP-x002n4Dqg2bfH34J8nsNqd7w>
-    <xmx:GQDIaCzOrN2B2rfuCp6OP4xFWPwwWijDYhGbdgADfIR2bN8zdV9OOQ>
-    <xmx:GgDIaCUwNebGqmUNTY1vfe4EQlThA94bk8k2ZooT7GpWo9L-_KCwBMMA>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 08:01:28 -0400 (EDT)
-Date: Mon, 15 Sep 2025 13:01:26 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- 	Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
- 	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, dev.jain@arm.com, 	corbet@lwn.net,
- rostedt@goodmis.org, mhiramat@kernel.org,
- 	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, 	willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, 	usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- 	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- aarcange@redhat.com, 	raquini@redhat.com, anshuman.khandual@arm.com,
- catalin.marinas@arm.com, 	tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, jack@suse.cz, 	cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- 	hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, 	hughd@google.com, richard.weiyang@gmail.com,
- lance.yang@linux.dev, vbabka@suse.cz, 	rppt@kernel.org, jannh@google.com,
- pfalcato@suse.de
-Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-Message-ID: <ioo6sjwlznvfmv7kupubkqk6qc6lec7kczius7g27o4kpp3z5p@druouu5ziylf>
-References: <enrgrocqajwu5d3x34voghja7pbvau45oobxgabawrly44ld4u@ahch3xn6rtq5>
- <cd8e7f1c-a563-4ae9-a0fb-b0d04a4c35b4@redhat.com>
- <155c821d-402c-4627-a723-6f8c88a2f65c@lucifer.local>
- <ae9d88e2-bab9-49fc-a459-d7b9a8fe9351@redhat.com>
- <ff4b6935-fd13-478e-9187-219fb612aac3@lucifer.local>
- <e450009a-56c9-4820-bd0c-da1d782d3962@redhat.com>
- <2757fb07-78bf-4a39-8c60-8ca8be200994@lucifer.local>
- <a48c8d89-da30-4a7d-96f6-e5e17757b818@redhat.com>
- <e0580a44-2afc-4f3e-8d3e-d4fe9b2eeb21@lucifer.local>
- <6ec80746-2945-485f-930e-8cc34446f9e3@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxBG8pEj+ITObTOW8uW/M8MFp5DfekXXj8D7uu90Vqc28KraaKVsQTKDViNPNS82KzvTvV0yiquZmoYbgprYuJARAFrY0V+JS2hV9EQfCdjKSqU+LuaTm0mDVz9/36MEhzmi4ihYT18urNwyScsvFAvk86yR9EJMO6lV/JAmNGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=r5754uGW; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=va3oKp7BOBHUURZCdWCTqGG5NbY9CSNNWRqUTFrPKVI=; b=r5754uGWSbsgM9H86dzIDXTLdw
+	t1hz+xPCkyrdciw/qJd09VyzM09Abx+TGPu+NwGpOSKRfLTUIwyomUfLXcqWqvlF3oZBR/9GZyyC3
+	Fh8cohBBhchoaj+lLqjMdzsrJcGutu/Ri1IyM/f6SHE9Hp8JoCsz/vWKKQoDPMau2NY5qkR4gWEGk
+	xIPSIax/uc4Die6DWncRUGi8Sd/5ar1TfSIKhtOUI5LgoEzaHScNxI8nVuPrkEb17n/3TkVT1y3lq
+	C5yXR81rtaHg1Qh3ikzoO+jLH5eHLj+nQ2rlNfk6jg+vVZRpQh2VPGsZV3A9G0NJ3Zoq1enYcAI8Z
+	eTRqnpFw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36322)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uy7ty-000000008RS-2jMS;
+	Mon, 15 Sep 2025 13:01:46 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uy7tw-000000006di-0hHz;
+	Mon, 15 Sep 2025 13:01:44 +0100
+Date: Mon, 15 Sep 2025 13:01:44 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: micrel: Add Fast link failure support
+ for lan8842
+Message-ID: <aMgAKIn0YRyxK0Fn@shell.armlinux.org.uk>
+References: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -118,105 +70,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6ec80746-2945-485f-930e-8cc34446f9e3@redhat.com>
+In-Reply-To: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Sep 15, 2025 at 01:45:39PM +0200, David Hildenbrand wrote:
-> On 15.09.25 13:35, Lorenzo Stoakes wrote:
-> > On Mon, Sep 15, 2025 at 01:29:22PM +0200, David Hildenbrand wrote:
-> > > On 15.09.25 13:23, Lorenzo Stoakes wrote:
-> > > > On Mon, Sep 15, 2025 at 01:14:32PM +0200, David Hildenbrand wrote:
-> > > > > On 15.09.25 13:02, Lorenzo Stoakes wrote:
-> > > > > > On Mon, Sep 15, 2025 at 12:52:03PM +0200, David Hildenbrand wrote:
-> > > > > > > On 15.09.25 12:43, Lorenzo Stoakes wrote:
-> > > > > > > > On Mon, Sep 15, 2025 at 12:22:07PM +0200, David Hildenbrand wrote:
-> > > > > > > > > 
-> > > > > > > > > 0 -> ~100% used (~0% none)
-> > > > > > > > > 1 -> ~50% used (~50% none)
-> > > > > > > > > 2 -> ~25% used (~75% none)
-> > > > > > > > > 3 -> ~12.5% used (~87.5% none)
-> > > > > > > > > 4 -> ~11.25% used (~88,75% none)
-> > > > > > > > > ...
-> > > > > > > > > 10 -> ~0% used (~100% none)
-> > > > > > > > 
-> > > > > > > > Oh and shouldn't this be inverted?
-> > > > > > > > 
-> > > > > > > > 0 eagerness = we eat up all none PTE entries? Isn't that pretty eager? :P
-> > > > > > > > 10 eagerness = we aren't eager to eat up none PTE entries at all?
-> > > > > > > > 
-> > > > > > > > Or am I being dumb here?
-> > > > > > > 
-> > > > > > > Good question.
-> > > > > > > 
-> > > > > > > For swappiness it's: 0 -> no swap (conservative)
-> > > > > > > 
-> > > > > > > So intuitively I assumed: 0 -> no pte_none (conservative)
-> > > > > > > 
-> > > > > > > You're the native speaker, so you tell me :)
-> > > > > > 
-> > > > > > To me this is about 'eagerness to consume empty PTE entries' so 10 is more
-> > > > > > eager, 0 is not eager at all, i.e. inversion of what you suggest :)
-> > > > > 
-> > > > > Just so we are on the same page: it is about "eagerness to collapse", right?
-> > > > > 
-> > > > > Wouldn't a 0 mean "I am not eager, I will not waste any memory, I am very
-> > > > > careful and bail out on any pte_none" vs. 10 meaning "I am very eager, I
-> > > > > will collapse no matter what I find in the page table, waste as much memory
-> > > > > as I want"?
-> > > > 
-> > > > Yeah, this is my understanding of your scale, or is my understanding also
-> > > > inverted? :)
-> > > > 
-> > > > Right now it's:
-> > > > 
-> > > > eagerness max_ptes_none
-> > > > 
-> > > > 0 -> 511
-> > > > ...
-> > > > 10 -> 0
-> > > > 
-> > > > Right?
-> > > 
-> > > Just so we are on the same page, this is what I had:
-> > > 
-> > > 0 -> ~100% used (~0% none)
-> > > 
-> > > So "0" -> 0 pte_none or 512 used.
-> > > 
-> > > (note the used vs. none)
-> > 
-> > OK right so we're talking about the same thing, I guess?
-> > 
-> > I was confused partly becuase of the scale, becuase weren't people setting
-> > this parameter to low values in practice?
-> > 
-> > And now we make it so we have equivalent of:
-> > 
-> > 0 -> 0
-> > 1 -> 256
-> > 2 -> 384
-> 
-> Ah, there is the problem, that's not what I had in mind.
-> 
-> 0 -> ~100% used (~0% none)
-> ...
-> 8 -> ~87,5% used (~12.5% none)
-> 9 -> ~75% used (~25% none)
-> 9 -> ~50% used (~50% none)
-> 10 -> ~0% used (~100% none)
-> 
-> Hopefully I didn't mess it up again.
+On Mon, Sep 15, 2025 at 11:11:49AM +0200, Horatiu Vultur wrote:
+> +static int lan8842_set_fast_down(struct phy_device *phydev, const u8 *msecs)
+> +{
+> +	if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_ON)
+> +		return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
+> +					      LAN8842_FLF,
+> +					      LAN8842_FLF_ENA |
+> +					      LAN8842_FLF_ENA_LINK_DOWN,
+> +					      LAN8842_FLF_ENA |
+> +					      LAN8842_FLF_ENA_LINK_DOWN);
+> +
+> +	if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_OFF)
+> +		return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
+> +					      LAN8842_FLF,
+> +					      LAN8842_FLF_ENA |
+> +					      LAN8842_FLF_ENA_LINK_DOWN, 0);
 
-I think this kind of table is fine for initial implementation of the
-knob, but we don't want to document it to userspace like this.
-I think we want to be strategically ambiguous on what the knob does
-exactly, so kernel could evolve the meaning of the knob over time.
+Would this be more readable?
 
-We don't want to repeat the problem we have with max_ptes_none which too
-prescriptive and got additional meaning with introduction of shrinker.
+	u16 flf;
 
-As kernel evolves, we want ability to adjust the meaning and keep the
-knob useful.
+	switch (*msecs) {
+	case ETHTOOL_PHY_FAST_LINK_DOWN_OFF:
+		flf = 0;
+		break;
+
+	case ETHTOOL_PHY_FAST_LINK_DOWN_ON:
+		flf = LAN8842_FLF_ENA | LAN8842_FLF_ENA_LINK_DOWN;
+		break;
+
+	default:
+		return -EINVAL;
+	}
+
+	return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
+				      LAN8842_FLF,
+				      LAN8842_FLF_ENA |
+				      LAN8842_FLF_ENA_LINK_DOWN, flf);
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
