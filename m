@@ -1,168 +1,178 @@
-Return-Path: <linux-kernel+bounces-815993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1F9B56DFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:49:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65023B56DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC46D17727E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C03F83AC94F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555072165EA;
-	Mon, 15 Sep 2025 01:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E905921773D;
+	Mon, 15 Sep 2025 01:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdx+EFKW"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YraMr34+"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3913720A5F3
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C47A1E98EF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757900971; cv=none; b=cBZPcp+7ppMjVaqw2bk6AkQ6RQvm2u/pGIKLNc8MFMGA9acGbBITvahXcdr+ZxfITkzGPsChPgkozUaqqbkOHWpOgGueORMTI6OFc8P/8Oxv/3jyxhedwFeDFtJWSEhI6xrmjtDdGW1IrW3W+GAjC4WR/oTYxEdJZFwOiGGx2jg=
+	t=1757901017; cv=none; b=B0HE0bBYQAaHVgeSggEH9DlyOIIqz6wxkmg5bgG/RySNr/eVTa2AY6dx2xo8WzRkbzfqD9Xrzx6EfQI0uE0ma1UshRivq7+retb5bA3JE7my1SKhCde8lZCPLjungy8dunIF61B1elFYBcS/7synbMjFXdz1nQMlxtt+IHFND20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757900971; c=relaxed/simple;
-	bh=oSreoU6ZmkSN75RCTco6kgjieWSOH7uDaMA8CsUlAvI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cggHtat6PBcZPoQoWvK13enzuVt6HtJMTnHjxdcQe955xAu9SgTZUeH01hCsMOzUTpGQh4tevQgYRwEPTEVXVyDtJ9wGhwwb+1JLvxgZqGXfHmBrTaxDZemJbNgxAX6lKcy3zPKtAU4f3e8H7F8wlXX/M81a9uwiQm1UUXaT6pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mdx+EFKW; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2647bf5cb51so6043675ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757900969; x=1758505769; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPKyOmuQWUf8l01OnPw9ehRNwWWfONhetwr0Nv+M8qA=;
-        b=mdx+EFKWx/rS3DoXnDw1yF7bZFg2ZZ3nT5UFDZcJ7tc/uETs9LHSIb50c0KcfBLjfa
-         CTNP7SLCwUcUVJyepiY9zKBDK8lm5S7sN7vyGmOtX8DXnkXtxV3bBBBp5iliXP26+aYi
-         7rhvmazxSEWANRJeu2heTpbphlpdmOqKAn0DFmYC0hdzG2sSbCP2EAfqRobGsCSeEjay
-         Ox4Gu9Vy/MwRCvU0CvXTkOuMRIWRXq6roY7i4tpVQKS0UQKh5VMpllwlT4mf/HTce3yX
-         ZrAVuPAd0isykGnjRpFulu0swFk0HASytwYY7AzuZHuT8lW/BxL/Y353mZ4S6w21dwch
-         IuFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757900969; x=1758505769;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wPKyOmuQWUf8l01OnPw9ehRNwWWfONhetwr0Nv+M8qA=;
-        b=iIHrklH4Y6SZJqMJG404uvnwKPxKbUWkwYxjmTXvy24MEWqwR57tRUFIx/8mlHgeE7
-         QBtSR0veEG3P12Gl30egEsfRvZ0A4B3Yeee62VvLVPEHa1BIh8D5pIiFaBQ1NPpIFYW5
-         NydJ2Xk/GLNe+261sxvKrIav90yaPzaF2A9PDksYeCIDP/QTN6vHosdxegHDwfplgUSE
-         YCNlN99PnIAF0g4HpsQQS/g3rWE556ywQTTpiWBVOuo2a1/Z+ykUHyduIyUx9Lp1CGb9
-         y4shFBSAuPFS3S5QltgJApJ533eeQUIPX29vd6vZKj86GUIl7YcuP92u0fskN6gBTLCW
-         tgtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOmiFdDh+GY/vaFCf6rLEqbzfH/woapvkuzpc9ousKJxSbklZYPsxYYEx3M1EtL/O4AayMOFNgViS839U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCtwFnKxdG+fk5jhqlG9VmlSl0Iu/6KkyOLftBFIOac2lEGP//
-	8K0pDByQUnavBcbDHfxxNnV8ar0BQlPFqrwPxYiUZtDMzjnXr8LlW7/X
-X-Gm-Gg: ASbGnctCvCMof9R4e9sG9a2V1ozpDBDTnXGXjS1qb8A5T2+acr3N+cBH4VWj8vFfQe2
-	ln22qzAVi/HfMbsobDvyTwYOXM055q6N27+AP0DDSKEfKED+AYgQuCdgbZeO68Ph7nVsymasqb3
-	dsydI0mnuAHQzD+g/Pv9YH/r77wZIfn733ay2LUYsIzgrVCBU04gOpjilPQXUJiVQiRc/AbOZbL
-	mu4Uk5HM8BMIQQ8qr9iyzgsXMveSgljO1TVSVzDMLI8AF/rKyBrTcbRzUCpcGjJ6+K65CIx+1xS
-	3a1iV0oWuQ3CSAmksD+CXlW9dOawp17a21a7b3gZZmogLZQ650Wy2erGpnthT0ZMzNXm9vxON9t
-	cesIFGc+GWE2gFrcpN/YmHwlN
-X-Google-Smtp-Source: AGHT+IHBNABRw3UbSzvGuIrlP87lXKciHZg0JsaKpxSUDEQmCGa7IwYsb8d2vZMsVK2RJ1/SO3YUyQ==
-X-Received: by 2002:a17:903:22c9:b0:24c:7bf0:6e6b with SMTP id d9443c01a7336-25d26e47c11mr110147975ad.53.1757900969374;
-        Sun, 14 Sep 2025 18:49:29 -0700 (PDT)
-Received: from [127.0.1.1] ([59.188.211.98])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-26686623f10sm11523175ad.23.2025.09.14.18.49.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 18:49:28 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH v4 0/3] SPMI dt-bindings and nodes for Apple A11 and T2
- SoCs
-Date: Mon, 15 Sep 2025 09:48:53 +0800
-Message-Id: <20250915-t8015-spmi-v4-0-0574eda4ba5a@gmail.com>
+	s=arc-20240116; t=1757901017; c=relaxed/simple;
+	bh=HMqR9DZs6FNR4cMu7mykopu7y0XWq6OnWYpSB6SKhPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lhbyf79xH/QlfIi7cZmAmv2tM7t0fo58DsOow6Mh1l6fn9/+s5Uz1mC9L4WaMcNkS7Knm1l1WAkJfxp2smIACcBdYeI/VbvchUc8O5n0jBpSGliI8yOd6HvP24lBfBOK37cFLZ2JYMW7O5kINlD/pA/z6A6DiWsngVsBro9sopA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YraMr34+; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757901009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=55EdHUWBK5u8uHnXBcQwEESNacob2wIPlfbcNT5dT/A=;
+	b=YraMr34+kVMXblEBRbavdSoe5wtYUP69DNk1V76E3J8IvXpyAe3B2tViaqAOeoHph2tE/Z
+	g3ZI8FrM67B/LauxVjXn+KVFSyHV47LUxIDBqzByIEKe1zgMaaoV3BGZ5/IqbZ3oDAcxrE
+	LzQ3tZnnBXaK/06yKUPAqDnguOVu1aA=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: peterz@infradead.org
+Cc: ast@kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, tzimmermann@suse.de,
+ simona.vetter@ffwll.ch, jani.nikula@intel.com, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] sched: make migrate_enable/migrate_disable inline
+Date: Mon, 15 Sep 2025 09:49:58 +0800
+Message-ID: <5923659.DvuYhMxLoT@7940hx>
+In-Reply-To: <20250828060354.57846-1-menglong.dong@linux.dev>
+References: <20250828060354.57846-1-menglong.dong@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIVwx2gC/12Qy27DIBBFf8ViXSqGhw1Z9T+qLAYYEqQ6TsCxW
- kX595J4UafLO6NzRndurFLJVNmuu7FCS655OrWg3zoWjng6EM+xZSaFNMLIgc9WgOH1PGZulfV
- eu6g0EmvAuVDK30/Z577lY67zVH6e7gUe01XTC7fVLMAF9yoYg1GAdvBxGDF/vYdpZA/NIv9QC
- /CCyoaidIAhiah79x9VG1S+XlUNNdaDIZLBSrNF72ubQpdr+8i8VmIeK/G2H/O865x1Aa1RMRI
- ljFpbH5MfBgBQCZMLQVvhVN9k918eiBEbZgEAAA==
-X-Change-ID: 20250527-t8015-spmi-838bb49d34ae
-To: Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, Sven Peter <sven@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Nick Chan <towinchenmi@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1979; i=towinchenmi@gmail.com;
- h=from:subject:message-id; bh=oSreoU6ZmkSN75RCTco6kgjieWSOH7uDaMA8CsUlAvI=;
- b=owEBbQKS/ZANAwAKAQHKCLemxQgkAcsmYgBox3Cg6vCkFtk2gUKfofkTMYN1rFg/vlHOsb70A
- qiMAv3+rPWJAjMEAAEKAB0WIQRLUnh4XJes95w8aIMBygi3psUIJAUCaMdwoAAKCRABygi3psUI
- JMeMD/4ry6RelVSMt+gVOgcbYvGaKJQNQepagwG0kBxfvKJSzp2mDb5ioYvyighK9C5Fqazdis/
- NdWRCrGuNzcZY7tIaO3aPyeHf5yTa5148SP11XAPQG3t+rmg9ufFE5tFEJtWFb9YcnhGM32NlR8
- har6l8XzrunRGFCh7T/bO3t6LZLxwPfTx6ZZo0EXEbsKzEGr0im/njL9dvS7q2BUwArPSbvxqio
- am9yN+l1h/TjdWvMi6OTYgwnjEr0aWGly3AGkJ6Xv1R0731Sle5UPZxRnkOVilxe5ywKW3sDJ4i
- VbDygmzgetzxAh/UH37Q4e7mhYaq6/dAS057qXBoASrbTpvVq9mKANKWiL650xF8XvpkxqPF5+f
- VGxS7phVfNZfsQvWjjssk4pFIIqnbo0W/8hVIw/NDaoqP4Dziu6hwecl5JfXaPKrJbLGPxgo6Jq
- c4ySFOtg0h87IMvAh/egNye5z+5ujnSxrx6mcVdpj5/Y8A7BBSbin2RUrLnWp0UTvPa7t/dn751
- rp9i0Fu8URTXXycUpLfSj3n7WjkV6+oaqmEzBN+SVVGv9KpbOdyL6fsR/dSubD509ykCJpl1ZF0
- adYBzhymPqGlJoX8ubNHB6io96cmYd930j/JrtCckSvNC2GL3d25dvejoGTKav0ye73PFMoIYk9
- 1fOv1NDd7Yv/9+Q==
-X-Developer-Key: i=towinchenmi@gmail.com; a=openpgp;
- fpr=4B5278785C97ACF79C3C688301CA08B7A6C50824
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On 2025/8/28 14:03 Menglong Dong <menglong.dong@linux.dev> write:
+> In this series, we make migrate_enable/migrate_disable inline to obtain
+> better performance in some case.
+>=20
+> In the first patch, we add the macro "COMPILE_OFFSETS" to all the
+> asm-offset.c to avoid circular dependency in the 2nd patch.
+>=20
+> In the 2nd patch, we generate the offset of nr_pinned in "struct rq" with
+> rq-offsets.c, as the "struct rq" is defined internally and we need to
+> access the "nr_pinned" field in migrate_enable and migrate_disable. Then,
+> we move the definition of migrate_enable/migrate_disable from
+> kernel/sched/core.c to include/linux/sched.h.
+>=20
+> In the 3rd patch, we fix some typos in include/linux/preempt.h.
 
-This series adds dt-bindings and nodes for Apple A11 and T2 SoCs,
-and the existing driver appears to be compatible. Drivers for the attached
-Dialog DA2422 and DA2449 PMICs will be in a future patch series.
+Hi, everyone. Do we have any thoughts on this series?
 
-The dt-binding patch depends on other spmi dt-binding patches that are
-already applied in apple-soc/drivers-6.18, so it is best for it to be
-applied through there.
+Thanks!
+Menglong Dong
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
-Changes in v4:
-- Keep the empty lines as is in the spmi dt-bindings file
-- Keep DT includes in alphabetical order
-- Drop tags for dt-bindings since they are sigificantly different from v2
-- Link to v3: https://lore.kernel.org/r/20250829-t8015-spmi-v3-0-58b15ee2c825@gmail.com
+>=20
+> One of the beneficiaries of this series is BPF trampoline. Without this
+> series, the migrate_enable/migrate_disable is hot when we run the
+> benchmark for FENTRY, FEXIT, MODIFY_RETURN, etc:
+>=20
+>   54.63% bpf_prog_2dcccf652aac1793_bench_trigger_fentry [k]
+>                  bpf_prog_2dcccf652aac1793_bench_trigger_fentry
+>   10.43% [kernel] [k] migrate_enable
+>   10.07% bpf_trampoline_6442517037 [k] bpf_trampoline_6442517037
+>   8.06% [kernel] [k] __bpf_prog_exit_recur
+>   4.11% libc.so.6 [.] syscall
+>   2.15% [kernel] [k] entry_SYSCALL_64
+>   1.48% [kernel] [k] memchr_inv
+>   1.32% [kernel] [k] fput
+>   1.16% [kernel] [k] _copy_to_user
+>   0.73% [kernel] [k] bpf_prog_test_run_raw_tp
+>=20
+> Before this patch, the performance of BPF FENTRY is:
+>=20
+>   fentry         :  113.030 =C2=B1 0.149M/s
+>   fentry         :  112.501 =C2=B1 0.187M/s
+>   fentry         :  112.828 =C2=B1 0.267M/s
+>   fentry         :  115.287 =C2=B1 0.241M/s
+>=20
+> After this patch, the performance of BPF FENTRY increases to:
+>=20
+>   fentry         :  143.644 =C2=B1 0.670M/s
+>   fentry         :  149.764 =C2=B1 0.362M/s
+>   fentry         :  149.642 =C2=B1 0.156M/s
+>   fentry         :  145.263 =C2=B1 0.221M/s
+>=20
+> Changes since V3:
+> * some modification on the 2nd patch, as Alexei advised:
+>  - rename CREATE_MIGRATE_DISABLE to INSTANTIATE_EXPORTED_MIGRATE_DISABLE
+>  - add document for INSTANTIATE_EXPORTED_MIGRATE_DISABLE
+>=20
+> Changes since V2:
+> * some modification on the 2nd patch, as Peter advised:
+>   - don't export runqueues, define migrate_enable and migrate_disable in
+>     kernel/sched/core.c and use them for kernel modules instead
+>   - define the macro this_rq_pinned()
+>   - add some comment for this_rq_raw()
+>=20
+> Changes since V1:
+> * use PERCPU_PTR() for this_rq_raw() if !CONFIG_SMP in the 2nd patch
+>=20
+> Menglong Dong (3):
+>   arch: add the macro COMPILE_OFFSETS to all the asm-offsets.c
+>   sched: make migrate_enable/migrate_disable inline
+>   sched: fix some typos in include/linux/preempt.h
+>=20
+>  Kbuild                               |  13 ++-
+>  arch/alpha/kernel/asm-offsets.c      |   1 +
+>  arch/arc/kernel/asm-offsets.c        |   1 +
+>  arch/arm/kernel/asm-offsets.c        |   2 +
+>  arch/arm64/kernel/asm-offsets.c      |   1 +
+>  arch/csky/kernel/asm-offsets.c       |   1 +
+>  arch/hexagon/kernel/asm-offsets.c    |   1 +
+>  arch/loongarch/kernel/asm-offsets.c  |   2 +
+>  arch/m68k/kernel/asm-offsets.c       |   1 +
+>  arch/microblaze/kernel/asm-offsets.c |   1 +
+>  arch/mips/kernel/asm-offsets.c       |   2 +
+>  arch/nios2/kernel/asm-offsets.c      |   1 +
+>  arch/openrisc/kernel/asm-offsets.c   |   1 +
+>  arch/parisc/kernel/asm-offsets.c     |   1 +
+>  arch/powerpc/kernel/asm-offsets.c    |   1 +
+>  arch/riscv/kernel/asm-offsets.c      |   1 +
+>  arch/s390/kernel/asm-offsets.c       |   1 +
+>  arch/sh/kernel/asm-offsets.c         |   1 +
+>  arch/sparc/kernel/asm-offsets.c      |   1 +
+>  arch/um/kernel/asm-offsets.c         |   2 +
+>  arch/xtensa/kernel/asm-offsets.c     |   1 +
+>  include/linux/preempt.h              |  11 +--
+>  include/linux/sched.h                | 113 +++++++++++++++++++++++++++
+>  kernel/bpf/verifier.c                |   1 +
+>  kernel/sched/core.c                  |  63 ++++-----------
+>  kernel/sched/rq-offsets.c            |  12 +++
+>  26 files changed, 180 insertions(+), 57 deletions(-)
+>  create mode 100644 kernel/sched/rq-offsets.c
+>=20
+> --=20
+> 2.51.0
+>=20
+>=20
 
-Changes in v3:
-- After discussion with the DT maintainers we agreed not to extend the
-  generic compatible[1]. Change the series to the agreed-upon style.
-- Now depends on a patch[2] adding the t602x spmi compatible.
-- Link to v2: https://lore.kernel.org/r/20250811-t8015-spmi-v2-0-a291acf0d469@gmail.com
 
-[1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
-[2]: https://lore.kernel.org/asahi/20250828-dt-apple-t6020-v1-22-507ba4c4b98e@jannau.net/
 
-Changes in v2:
-- Rebased on top of v6.17-rc1
-- Collect Rob and Sven's tags
-- Link to v1: https://lore.kernel.org/r/20250609-t8015-spmi-v1-0-b3c55ad01491@gmail.com
-
----
-Nick Chan (3):
-      dt-bindings: spmi: Add Apple A11 and T2 compatible
-      arm64: dts: apple: t8012: Add SPMI node
-      arm64: dts: apple: t8015: Add SPMI node
-
- Documentation/devicetree/bindings/spmi/apple,spmi.yaml | 5 ++++-
- arch/arm64/boot/dts/apple/t8012.dtsi                   | 8 ++++++++
- arch/arm64/boot/dts/apple/t8015.dtsi                   | 8 ++++++++
- 3 files changed, 20 insertions(+), 1 deletion(-)
----
-base-commit: 989ca853ddeefad448bdfb771113faf9cc480936
-change-id: 20250527-t8015-spmi-838bb49d34ae
-
-Best regards,
--- 
-Nick Chan <towinchenmi@gmail.com>
 
 
