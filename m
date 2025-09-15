@@ -1,180 +1,235 @@
-Return-Path: <linux-kernel+bounces-817808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA02B586CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:29:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BFCB586CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC5767A82EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1147A177E45
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AD52DC78E;
-	Mon, 15 Sep 2025 21:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFD0298CC4;
+	Mon, 15 Sep 2025 21:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPFp6fa4"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="geKn2S6P"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E41B283CB8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFE51DE4E0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757971784; cv=none; b=pVnA6EfLs+dsRyKFqyzeE9aRbZ+EFN/0jH6pFHrTIH8/hV/pxRH2S5sYhtBMGvsgbfFe3As2eji04eA+uDWrzf2nFCrs0RJIxYDXbRck5IMFxnLD5EB/rHgCeZQ1fvuMcykc6i9Pv7HG4AP/t80IyA35anP7LxBuyfhP4GPutuI=
+	t=1757971926; cv=none; b=MQB4Ib2qZGxd6j86W7suyaufzms52Vb4m8bWRcMyYU+R22LPihUQ7OMPdwRnd23N52r5ZlCcg7u72G5qim8f3TBv0KJK+ZvGAwQaiH2IltezQa/dzjrjct19eLzpUOp9CIXimCVtUsJjGaPz2JGZyNkzJWbsSDSA/CUni471vMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757971784; c=relaxed/simple;
-	bh=RUVduxfW+q1+xIpDUx9oew7SFp3YP2RX1oljyANBXE4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hh40zyBjEACGU51XkaxgauSWY5yyK9dFkYXuZ2xbesOhAqupmbeIqQlSVuQyOAbDTEwi/T6oRZ5OeCZJJgKCnr+Gu8wgXSBhJvGijWIf6uv0fYjkeD1MSGkPuwtpM6iQHCl6a6M0cofiAgys/5KYPmJWne0RDwrQSEUof7ObXeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPFp6fa4; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7ae31caso841022566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:29:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757971781; x=1758576581; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QUas9F/ATYTJ0SX50S151v/GKp7Qx1ja4tfTxLpr0QY=;
-        b=VPFp6fa4lWuSnwBXuKEYb3/PH/ONtdheIf70Hf+TUw1LE6MaQoRXxtJhoBV5Ch9nXt
-         RZSGOFLeYwMLBne2M2oR7XAmP3nbV9ffl1CmYRCa/fEVww2Pj5Jt4NnTaVr7Vr4uwKvb
-         35A4bplk5pJ+q4r1lgo+vJjZI1L9m7mnrQvLL0hpbT9dbab3nleNog+3J4DaimlZ/COJ
-         z7brMKn594e5NgRfpndVXaq15IsEUCClHzl0ttPUHf6Mx+j23pUomUTj0QRlkKdbqA90
-         ci8GvEgEDyCp1q9wRqZsZ1cJxv9B7J2fpL5dxek5uMWHREkQTwFdTY0JYlUx96vD1ijX
-         sS5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757971781; x=1758576581;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUas9F/ATYTJ0SX50S151v/GKp7Qx1ja4tfTxLpr0QY=;
-        b=tePtHYDtUylJSRc7w5AyuG1z6i/Oi2gn2HKe06YmuHNReUqMB5BuwF6LR9Y+tnrwFf
-         lT27PIPpfBvMuiJNGOaDIOtiteKwC+Co/D2OuEAeX+Z0tI7gECJjWQPg9VgNH9QbsDS+
-         mKS0etbmjVWwuqSShf6rEuGsyTR8w036AD3Y9VdQ8F8xSzJdlzr5SBu1rHpizNeptbwr
-         GtOVXAyftX0gXhtzk7G3TBQF9YhfJh0TDGrMY+uDdAnFRJfP8hZ5Y2iDhlT36VLhUHdN
-         N70IlshTZNEH8wCd5KobeiyNmvmiBnioRoZlzKzx5vR7KDeMpgPRKcbSj5mJ9tejmxUI
-         f9Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeAb0LZmYOeaDTs2k14tbxQf6O1mru2dFlvkAo9PmscHhUuDclK+p5lD4iQC8bl41G6lLsAwrRP4pkqnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn3fIl0QjTEb0Tu2getPvwzjQKwTFu/KE72JFYiBpoeLJns5MN
-	6rb2ZGOaW5ohvKYHl8SFqEsKMpXCv/96TGeMyj63hwUxGmVCvBty8lP7
-X-Gm-Gg: ASbGncv1xRk1L1DB7oDWFxqWWDf52VoRnWlWldCaKJjRWcy7g/VvcxOjHzMlV38RBT0
-	tm9Z10l4hRtfLxHeQOuVil39vEHxOoMWBb/Fqhyjap+RdrocQ2vKZ0uXdID3T4qIsbkF1sEMcjs
-	D8VyDiRIveB1BNKCSDloPzohGVMuoKH92lGyKUhMfOXkrd/sqVwI9tBT/GzxPdCnOkPfYLj9iIc
-	5gAERJt/K0iAGvVJzt+lAQFTB3D7YLg1o8+jG5CNYiVIDNbaAEMLS2tzuT2GkUUeKS1lco5oXMD
-	g+Wjg/HShQnXPiE8B5BL5M6sHpxWqf0NGLhkSb4tVsK4Qy/e4lnN3R7bJvqWjyGtZwD/Igv2Cpd
-	mfnadVv9sSejbbPILXHAaKqL7RtWZ/sxkHXjwWyo8JWxBFdMPKA==
-X-Google-Smtp-Source: AGHT+IG5wmhrzfoQv6frcbayV8TWGbdyF5my/3S+PId8ITD1HBtsuQZQe3hHDZN00pZEVUVkM/1bmw==
-X-Received: by 2002:a17:907:7e9a:b0:afe:ea93:ddbb with SMTP id a640c23a62f3a-b07c38673ccmr1371195966b.45.1757971780425;
-        Mon, 15 Sep 2025 14:29:40 -0700 (PDT)
-Received: from krava (89-40-234-69.wdsl.neomedia.it. [89.40.234.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b09fea706afsm550131766b.91.2025.09.15.14.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 14:29:40 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 15 Sep 2025 23:29:37 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Ihor Solodrai <ihor.solodrai@linux.dev>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv3 perf/core 0/6] uprobe,bpf: Allow to change app
- registers from uprobe registers
-Message-ID: <aMiFQRLP3w1APfbU@krava>
-References: <20250909123857.315599-1-jolsa@kernel.org>
- <CAEf4Bzb4ErWn=2SajBcyJxqGEYy0DXmtWuXKLskPGLG-Y9POFA@mail.gmail.com>
- <7f591ac9-d3e0-4404-987c-40eceaf51fbb@linux.dev>
- <aMSIr1oItIfWQd5R@krava>
- <CAEf4BzZ21xFq25Vs0xSmCfb1MSbdz_GLs8B6s+h0Q3kCTmnzSw@mail.gmail.com>
+	s=arc-20240116; t=1757971926; c=relaxed/simple;
+	bh=W7C84yvEfJE6W6gHRa9X5Y9kR/gi2La0o9oC7V8Bg7A=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=RYn6D9wlcsN+8TiW+oHMEHxCvoXATFh3pV2i52Y2T/XdE2b9wGXHmopCAg256nBBLNuTJMjAQZYMDKxyYU3bwVAJUvi+1CTagNValDSc4mLHcyOzonBgmEVfckq+QN5agNGKvWpJBJgp/45LocVDgLiHZ9tM49asFrS50hXPD5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=geKn2S6P; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757971911;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TjCQVoRcvkNWmv8o166ThVNsGRK8YUNi+qrJMGfB+yU=;
+	b=geKn2S6PjU8cjPzCGXTD7pgYIXVvFexC6PL/ne74oYaDfT7ErWwmgUZlTnKEWFLlqwjK4g
+	dAdDWU1mliydp+hlSe9nK4kAyAnaF5hOmeW/LTAyCI3zETi+kyivMSOs6f9ZLYJGOnZGQk
+	hQyHt8PkQo143xev04YYejRqnoaumWs=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZ21xFq25Vs0xSmCfb1MSbdz_GLs8B6s+h0Q3kCTmnzSw@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] PMCR_EL0.N is RAZ/WI. At least a build failes in Ubuntu
+ 22.04 LTS. Remove the set function.
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Itaru Kitayama <itaru.kitayama@linux.dev>
+In-Reply-To: <86348rdg5o.wl-maz@kernel.org>
+Date: Tue, 16 Sep 2025 06:31:31 +0900
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>,
+ K Poulose Suzuki <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Itaru Kitayama <itaru.kitayama@fujitsu.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0524084A-9E82-408A-9F22-369ED25E42E9@linux.dev>
+References: <867by4c4v1.wl-maz@kernel.org>
+ <3FEB4D87-EEAF-4A21-BCBC-291A4A7C2230@gmail.com>
+ <86348rdg5o.wl-maz@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 15, 2025 at 01:10:33PM -0700, Andrii Nakryiko wrote:
-> On Fri, Sep 12, 2025 at 1:55 PM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Fri, Sep 12, 2025 at 01:28:55PM -0700, Ihor Solodrai wrote:
-> > > On 9/9/25 9:41 AM, Andrii Nakryiko wrote:
-> > > > On Tue, Sep 9, 2025 at 8:39 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> > > > >
-> > > > > hi,
-> > > > > we recently had several requests for tetragon to be able to change
-> > > > > user application function return value or divert its execution through
-> > > > > instruction pointer change.
-> > > > >
-> > > > > This patchset adds support for uprobe program to change app's registers
-> > > > > including instruction pointer.
-> > > > >
-> > > > > v3 changes:
-> > > > > - deny attach of kprobe,multi with kprobe_write_ctx set [Alexei]
-> > > > > - added more tests for denied kprobe attachment
-> > > > >
-> > > > > thanks,
-> > > > > jirka
-> > > > >
-> > > > >
-> > > > > ---
-> > > > > Jiri Olsa (6):
-> > > > >        bpf: Allow uprobe program to change context registers
-> > > > >        uprobe: Do not emulate/sstep original instruction when ip is changed
-> > > > >        selftests/bpf: Add uprobe context registers changes test
-> > > > >        selftests/bpf: Add uprobe context ip register change test
-> > > > >        selftests/bpf: Add kprobe write ctx attach test
-> > > > >        selftests/bpf: Add kprobe multi write ctx attach test
-> > > > >
-> > > >
-> > > > For the series:
-> > > >
-> > > > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > > >
-> > > > Question is which tree will this go through? Most changes are in BPF,
-> > > > so probably bpf-next, right?
-> > >
-> > > Hi Jiri.
-> > >
-> > > This series does not apply to current bpf-next, see below.
-> > >
-> > > Could you please respin it with bpf-next tag?
-> > > E.g. "[PATCH v4 bpf-next 0/6] ..."
-> > >
-> >
-> > hi,
-> > the uprobe change it needs to be on top of the optimized uprobes (tip/perf/core)
-> 
-> Is this what you happened to base it on (and thus diff context has
-> that arch_uprobe_optimize), or those changes are needed for correct
-> functioning?
 
-yes
 
-> 
-> It seems like some conflict is inevitable, but on uprobe side it's two
-> lines of code that would need to be put after arch_uprobe_optimize
-> (instead of handler_chain), while on BPF side it's a bit more
-> invasive.
-> 
-> So unless tip/perf/core changes are mandatory for correct functioning,
-> I'd say let's rebase on top of bpf-next and handle that trivial merge
-> conflict during merge window?
+> On Sep 12, 2025, at 21:11, Marc Zyngier <maz@kernel.org> wrote:
+>=20
+> On Fri, 12 Sep 2025 12:33:39 +0100,
+> Itaru Kitayama <itaru.kitayama@gmail.com> wrote:
+>>=20
+>>=20
+>>=20
+>>> On Sep 12, 2025, at 20:01, Marc Zyngier <maz@kernel.org> wrote:
+>>>=20
+>>> =EF=BB=BFOn Fri, 12 Sep 2025 09:27:40 +0100,
+>>> Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
+>>>>=20
+>>>> Signed-off-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
+>>>=20
+>>> This isn't an acceptable commit message.
+>>>=20
+>>>> ---
+>>>> Seen a build failure with old Ubuntu 22.04 LTS, while the latest =
+release
+>>>> has no build issue, a write to the bit fields is RAZ/WI, remove the
+>>>> function.
+>>>> ---
+>>>> tools/testing/selftests/kvm/arm64/vpmu_counter_access.c | 6 ------
+>>>> 1 file changed, 6 deletions(-)
+>>>>=20
+>>>> diff --git =
+a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c =
+b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>>>> index =
+f16b3b27e32ed7ca57481f27d689d47783aa0345..56214a4430be90b3e1d840f2719b22dd=
+44f0b49b 100644
+>>>> --- a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>>>> +++ b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>>>> @@ -45,11 +45,6 @@ static uint64_t get_pmcr_n(uint64_t pmcr)
+>>>>   return FIELD_GET(ARMV8_PMU_PMCR_N, pmcr);
+>>>> }
+>>>>=20
+>>>> -static void set_pmcr_n(uint64_t *pmcr, uint64_t pmcr_n)
+>>>> -{
+>>>> -    u64p_replace_bits((__u64 *) pmcr, pmcr_n, ARMV8_PMU_PMCR_N);
+>>>> -}
+>>>> -
+>>>> static uint64_t get_counters_mask(uint64_t n)
+>>>> {
+>>>>   uint64_t mask =3D BIT(ARMV8_PMU_CYCLE_IDX);
+>>>> @@ -490,7 +485,6 @@ static void =
+test_create_vpmu_vm_with_pmcr_n(uint64_t pmcr_n, bool expect_fail)
+>>>>    * Setting a larger value of PMCR.N should not modify the field, =
+and
+>>>>    * return a success.
+>>>>    */
+>>>> -    set_pmcr_n(&pmcr, pmcr_n);
+>>>>   vcpu_set_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0), pmcr);
+>>>>   pmcr =3D vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0));
+>>>>=20
+>>>>=20
+>>>=20
+>>> So what are you fixing here? A build failure? A semantic defect?
+>>> Something else? What makes this a valid change?
+>>>=20
+>>> Frankly, I have no idea.
+>>>=20
+>>> But KVM definitely allows PMCR_EL0.N to be written from userspace, =
+and
+>>> that's not going to change.
+>>>=20
+>>=20
+>> Then I=E2=80=99ll drop this patch.
+>=20
+> I'm not asking you to drop it, I'm asking you to explain. If you found
+> a problem, let's discuss it and fix it. But as it stands, you're not
+> giving me much to go on.
+>=20
 
-ok, sounds good, will rebase/resend
+You are right, while the bit fields are write ignored, to be consistent =
+with the handling of other bit fields of the register, I=E2=80=99m fully =
+convinced that checking the write operation in the vpmu_counter_access.c =
+file should be kept.
 
-thanks,
-jirka
+The build error I=E2=80=99ve seen with Ubuntu 22.04 LTS is below:=20
+
+gcc -D_GNU_SOURCE=3D  =
+-I/home/itaru/projects/linux/tools/testing/selftests/cgroup/lib/include =
+-DDEBUG -Wall -Wstrict-prototypes -Wuninitialized -O0 -g -std=3Dgnu99 =
+-Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT =
+-fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset =
+-fno-builtin-strnlen -fno-stack-protector -fno-PIE -fno-strict-aliasing =
+-I/home/itaru/projects/linux/tools/testing/selftests/../../../tools/includ=
+e =
+-I/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/a=
+rm64/include =
+-I/home/itaru/projects/linux/tools/testing/selftests/../../../usr/include/=
+ -Iinclude -Iarm64 -Iinclude/arm64 -I ../rseq -I..  -isystem =
+/home/itaru/projects/linux/tools/testing/selftests/../../../usr/include =
+-I/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/a=
+rm64/include/generated/   -c arm64/vpmu_counter_access.c -o =
+/home/itaru/projects/linux/tools/testing/selftests/kvm/arm64/vpmu_counter_=
+access.o
+In file included from =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/arm=
+64/include/asm/sysreg.h:1098,
+                 from =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/arm=
+64/include/asm/esr.h:10,
+                 from include/arm64/processor.h:16,
+                 from arm64/vpmu_counter_access.c:16:
+In function =E2=80=98field_multiplier=E2=80=99,
+    inlined from =E2=80=98field_mask=E2=80=99 at =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:141:17,
+    inlined from =E2=80=98u64_encode_bits=E2=80=99 at =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:172:1,
+    inlined from =E2=80=98u64p_replace_bits=E2=80=99 at =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:172:1,
+    inlined from =E2=80=98set_pmcr_n=E2=80=99 at =
+arm64/vpmu_counter_access.c:50:2:
+=
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:136:17: error: call to =E2=80=98__bad_mask=E2=80=99 =
+declared with attribute error: bad bitfield mask
+  136 |                 __bad_mask();
+      |                 ^~~~~~~~~~~~
+In function =E2=80=98field_multiplier=E2=80=99,
+    inlined from =E2=80=98u64_encode_bits=E2=80=99 at =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:172:1,
+    inlined from =E2=80=98u64p_replace_bits=E2=80=99 at =
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:172:1,
+    inlined from =E2=80=98set_pmcr_n=E2=80=99 at =
+arm64/vpmu_counter_access.c:50:2:
+=
+/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
+linux/bitfield.h:136:17: error: call to =E2=80=98__bad_mask=E2=80=99 =
+declared with attribute error: bad bitfield mask
+  136 |                 __bad_mask();
+      |                 ^~~~~~~~~~~~
+arm64/vpmu_counter_access.c: At top level:
+cc1: note: unrecognized command-line option =
+=E2=80=98-Wno-gnu-variable-sized-type-not-at-end=E2=80=99 may have been =
+intended to silence earlier diagnostics
+make: *** [Makefile.kvm:303: =
+/home/itaru/projects/linux/tools/testing/selftests/kvm/arm64/vpmu_counter_=
+access.o] Error 1
+
+Thanks,
+Itaru.
+
+> M.
+>=20
+> --=20
+> Without deviation from the norm, progress is not possible.
+
+
 
