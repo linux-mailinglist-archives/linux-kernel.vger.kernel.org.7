@@ -1,174 +1,242 @@
-Return-Path: <linux-kernel+bounces-817681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAEAB5854D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D3CB5854F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01251B220C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1667E1B22104
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA70218AA0;
-	Mon, 15 Sep 2025 19:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D9E26F2AB;
+	Mon, 15 Sep 2025 19:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H2T0lmJ0"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAkFmryh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93008320F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64F3320F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757964799; cv=none; b=VJDT/mzttBS1zG62Fp/J8+yCBT8NEHVYslYVYZmIQKWJn6q2Dg6c1IjXMUL96V3dr5/ODeCgrUy9dY9NyfmLfH9bTLhrohRpT2iCN3h62ySC0wLyQDQrZUiS5H4hxHDVaL0hCEEU1uf81ifD/5p7Wq0DkghEoJuxr6dOxTSdTr0=
+	t=1757964835; cv=none; b=mbCDkIHzqiy3z0qLs9xNTzYIwLipE+fHPFH/3//42ABmsMAzANn2xAeDBwKg/XJpjhRMbkLbOpmOIelnQlac8kFHfAKSY86FBjL58iLHp856y4zb98bHeZgIA/vIY+3e8FyVzZrub7HsAS7dJ2kmlOP/2ql8b8w6ANMHidRw+Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757964799; c=relaxed/simple;
-	bh=VaeojEuJd5bJmzU1Yq3QuZM+3aR2f2ZrpUcvGqH1okk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nlo+BoTEJK8Nb67qEbu9iDq8xl9/MFwUZGNd6W1Kemj6X7fC/rDysxcel95uBEGQFRVe4OONjJlis35LywpSUN1eOPKn0JLvpREJ1/0eL3MIGnhzPpp9z2Pw0uLEGPj0WlBet+518iynSb2RRW9H4SP6aUlyVqEh2DbBohvC3n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H2T0lmJ0; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 15 Sep 2025 19:33:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757964793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UVv4w1jtg4ojHbR2lrrdyh2MgDQjPgMUDgj4NVC4Ao8=;
-	b=H2T0lmJ0fQrfvBo5DS9iOk5zIjLls+m1jXijYlY+VEb+TQfas+wpUQiArrjWuFrjcnxTFP
-	+wS/uAp1LZ/LCVEw6gphTx8jOZgd8JmpL6ADyUAUHqZMViz14TRa/+J2rm8YEfXsOpruWK
-	wtHFI4O8MruNWckyp0Jq1xOBw+R2eDo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: zswap: interact directly with zsmalloc
-Message-ID: <pduxj3r37ufwsbe2jxtx262dikjbbnwmzkagwfot5j4tajxmaf@4z3slwpmdsl4>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250829162212.208258-2-hannes@cmpxchg.org>
- <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
- <20250909150156.GB1474@cmpxchg.org>
- <46xtfjznexpdlemxjwykin5k74oqomedb2fyli5jrb4xnquuke@ztcmxhmhlkx7>
- <20250910134240.GA1111@cmpxchg.org>
- <f5hn4awbmkelckl6khlaosw3tbfrwzvf5l7kn6mnqpbastsdnh@77mqvfjzyfys>
- <20250915153640.GA828739@cmpxchg.org>
+	s=arc-20240116; t=1757964835; c=relaxed/simple;
+	bh=bHRNR6Si9KkH2i6HyBG3sLnqM7QaA4pwDc0GRfKNCBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X3eMxDJgCkMw+SIFIdCp3+XJ/C7mf47L4TWk0xCY/jm5ug+97oQYIMgToclzhgKmrzxN8DR2BjqQqaUTfY7a/d7ZsG5vVkCNs3i8tCYN29DbzqrfHruYRH+/UMfnVzUGlkuZ/qOXpulpFhgNd5+/b1TvHMhpA3+dhMhP+PBpPi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAkFmryh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E384C113CF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757964835;
+	bh=bHRNR6Si9KkH2i6HyBG3sLnqM7QaA4pwDc0GRfKNCBs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gAkFmryhDtGnEGfBS/Iojo7VsdNZNEiLHZhMqQBNHbcwU7C91PkAKOP/lcgrLlW9S
+	 CnH1dDbTfdlUlZSfGCSu4pM8+1uoP4nRomGPa40WuhLSuWA6kGPEQ3j5aMtj8T53gW
+	 iAmUe2Tr7nOU1D7GKKjPCC6MKuPNhINIsO0KFuRrjDPig0uZ4RQmNYHYEVsEoAbDzk
+	 6jG1ICMj4PQ7QpHOiTMXhto8xwjMX78wrjAsf9g3Jz8SYpMsCa+MmEA6qcM9HttR3U
+	 UiJo1tUhLc8oH7x5AAK2M5bep8tSofkWUITZlwbp5y4mrkU1NAUiRVb1/UhhF78ez9
+	 Z9bnb3uXRjR1g==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-61ea79c1e91so2026398eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:33:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPnEfmr097oT0EDz9kKdrE/Q8KupFybsiFmz/HcraSSq16aSRzv2Z9F0UTeKat45gQQSCPpYFNXzEhpZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxBmEn/6YoZeOuomc22scVNtxM7Dl+3YbHCWcEo3BQTWwTJAjN
+	pn8Ovvf9v2HjieiO7C9ckL01Pwby42roAhx9xaZxcLiBbGzMHxKakZrC/+dMdDwzlzaFKdibh1w
+	/MOJEpLrCPj+l/c9OenkyXp+a9/OxiJE=
+X-Google-Smtp-Source: AGHT+IFt0QX/DZNL+mFbjfONvR4fJq+mrWUIlKJnqaVa6n0S7fGi6dwDHjXutXDyNK9g28F/49/zVWZmAC6itATpams=
+X-Received: by 2002:a05:6820:162a:b0:621:ce3b:b648 with SMTP id
+ 006d021491bc7-621ce3bbb6cmr4252352eaf.4.1757964834587; Mon, 15 Sep 2025
+ 12:33:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915153640.GA828739@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20250910044531.264043-1-jiaqiyan@google.com> <88893809-ed13-dbb9-2446-8fd680f57693@huawei.com>
+In-Reply-To: <88893809-ed13-dbb9-2446-8fd680f57693@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Sep 2025 21:33:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g_f3Ut_8nf1NM5nJb3OSS83ccS65sT=DZOu0LWuCWZ1Q@mail.gmail.com>
+X-Gm-Features: AS18NWAtIax3pu9gkklTbd3hply-pFX4azyM_X7JPxc8ebVAI3tNa1WrLEgQp_4
+Message-ID: <CAJZ5v0g_f3Ut_8nf1NM5nJb3OSS83ccS65sT=DZOu0LWuCWZ1Q@mail.gmail.com>
+Subject: Re: [PATCH v3] ACPI: APEI: EINJ: Allow more types of addresses except MMIO
+To: Hanjun Guo <guohanjun@huawei.com>, Jiaqi Yan <jiaqiyan@google.com>
+Cc: tony.luck@intel.com, rafael@kernel.org, dan.j.williams@intel.com, 
+	bp@alien8.de, mchehab@kernel.org, xueshuai@linux.alibaba.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 11:36:40AM -0400, Johannes Weiner wrote:
-> On Thu, Sep 11, 2025 at 02:30:31PM +0000, Yosry Ahmed wrote:
-> > On Wed, Sep 10, 2025 at 09:42:40AM -0400, Johannes Weiner wrote:
-> > > @@ -314,6 +314,10 @@ static struct zswap_pool *__zswap_pool_create_fallback(void)
-> > >  		}
-> > >  	}
-> > >  
-> > > +	/* Kconfig bug? */
-> > > +	if (WARN_ON(!crypto_has_acomp(zswap_compressor, 0, 0)))
-> > > +		return NULL;
-> > > +
-> > >  	return zswap_pool_create(zswap_compressor);
-> > >  }
-> > 
-> > Sure, looks good, although I think it's clearer (and smaller diff) to
-> > preserve the old structure instead, up to you:
-> > 
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index c88ad61b232cf..bbfc087792648 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -300,18 +300,21 @@ static struct zswap_pool *zswap_pool_create(char *compressor)
-> > 
-> >  static struct zswap_pool *__zswap_pool_create_fallback(void)
-> >  {
-> > -       if (!crypto_has_acomp(zswap_compressor, 0, 0) &&
-> > +       bool has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
+On Wed, Sep 10, 2025 at 4:57=E2=80=AFPM Hanjun Guo <guohanjun@huawei.com> w=
+rote:
+>
+> On 2025/9/10 12:45, Jiaqi Yan wrote:
+> > EINJ driver today only allows injection request to go through for two
+> > kinds of IORESOURCE_MEM: IORES_DESC_PERSISTENT_MEMORY and
+> > IORES_DESC_SOFT_RESERVED. This check prevents user of EINJ to test
+> > memory corrupted in many interesting areas:
+> >
+> > - Legacy persistent memory
+> > - Memory claimed to be used by ACPI tables or NV storage
+> > - Kernel crash memory and others
+> >
+> > There is need to test how kernel behaves when something consumes memory
+> > errors in these memory regions. For example, if certain ACPI table is
+> > corrupted, does kernel crash gracefully to prevent "silent data
+> > corruption". For another example, legacy persistent memory, when manage=
+d
+> > by Device DAX, does support recovering from Machine Check Exception
+> > raised by memory failure, hence worth to be tested.
+> >
+> > However, attempt to inject memory error via EINJ to legacy persistent
+> > memory or ACPI owned memory fails with -EINVAL.
+> >
+> > Allow EINJ to inject at address except it is MMIO. Leave it to the BIOS
+> > or firmware to decide what is a legitimate injection target.
+> >
+> > In addition to the test done in [1], on a machine having the following
+> > iomem resources:
+> >
+> >      ...
+> >      01000000-08ffffff : Crash kernel
+> >      768f0098-768f00a7 : APEI EINJ
+> >      ...
+> >    768f4000-77323fff : ACPI Non-volatile Storage
+> >    77324000-777fefff : ACPI Tables
+> >    777ff000-777fffff : System RAM
+> >    77800000-7fffffff : Reserved
+> >    80000000-8fffffff : PCI MMCONFIG 0000 [bus 00-ff]
+> >    90040000-957fffff : PCI Bus 0000:00
+> >    ...
+> >    300000000-3ffffffff : Persistent Memory (legacy)
+> >    ...
+> >
+> > I commented __einj_error_inject during the test and just tested when
+> > injecting a memory error at each start address shown above:
+> > - 0x80000000 and 0x90040000 both failed with EINVAL
+> > - request passed through for all other addresses
+> >
+> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
+> > ---
+> >
+> > Changelog
+> >
+> > v2 [2] -> v3:
+> > - Remove unnecessary IORES_DESC_CXL per comment from Hanjun [3].
+> > - Minor update to code comment.
+> >
+> > v1 [1] -> v2:
+> > - In addition to allow IORES_DESC_PERSISTENT_MEMORY_LEGACY, open the
+> >    door wider and only exclude MMIO per suggestion from Tony [4].
+> > - Rebased to commit 11e7861d680c ("Merge tag 'for-linus' of git://git.k=
+ernel.org/pub/scm/virt/kvm/kvm").
+> >
+> > [1] https://lore.kernel.org/linux-acpi/20250825223348.3780279-1-jiaqiya=
+n@google.com
+> > [2] https://lore.kernel.org/linux-acpi/20250830030226.918555-1-jiaqiyan=
+@google.com
+> > [3] https://lore.kernel.org/linux-acpi/bc8ad4b8-c000-0298-efd1-4a332c4c=
+7820@huawei.com
+> > [4] https://lore.kernel.org/linux-acpi/SJ1PR11MB60835824926BEE57F094DE6=
+FFC39A@SJ1PR11MB6083.namprd11.prod.outlook.com
+> >
+> > drivers/acpi/apei/einj-core.c | 51 ++++++++++++++++++++++++++++-------
+> >   1 file changed, 42 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-cor=
+e.c
+> > index 2561b045acc7b..3c87953dbd197 100644
+> > --- a/drivers/acpi/apei/einj-core.c
+> > +++ b/drivers/acpi/apei/einj-core.c
+> > @@ -656,6 +656,43 @@ static int __einj_error_inject(u32 type, u32 flags=
+, u64 param1, u64 param2,
+> >       return rc;
+> >   }
+> >
+> > +/* Allow almost all types of address except MMIO. */
+> > +static bool is_allowed_range(u64 base_addr, u64 size)
+> > +{
+> > +     int i;
+> > +     /*
+> > +      * MMIO region is usually claimed with IORESOURCE_MEM + IORES_DES=
+C_NONE.
+> > +      * However, IORES_DESC_NONE is treated like a wildcard when we ch=
+eck if
+> > +      * region intersects with known resource. So do an allow list che=
+ck for
+> > +      * IORES_DESCs that definitely or most likely not MMIO.
+> > +      */
+> > +     int non_mmio_desc[] =3D {
+> > +             IORES_DESC_CRASH_KERNEL,
+> > +             IORES_DESC_ACPI_TABLES,
+> > +             IORES_DESC_ACPI_NV_STORAGE,
+> > +             IORES_DESC_PERSISTENT_MEMORY,
+> > +             IORES_DESC_PERSISTENT_MEMORY_LEGACY,
+> > +             /* Treat IORES_DESC_DEVICE_PRIVATE_MEMORY as MMIO. */
+> > +             IORES_DESC_RESERVED,
+> > +             IORES_DESC_SOFT_RESERVED,
+> > +     };
 > > +
-> > +       if (!has_comp &&
-> >             strcmp(zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
-> >                 pr_err("compressor %s not available, using default %s\n",
-> >                        zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
-> >                 param_free_charp(&zswap_compressor);
-> >                 zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
-> > -               if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
-> > -                       pr_err("default compressor %s not available\n",
-> > -                              zswap_compressor);
-> > -                       zswap_compressor = ZSWAP_PARAM_UNSET;
-> > -                       return NULL;
-> > -               }
-> > +               has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-> > +       }
-> > +       if (!has_comp) {
-> > +               pr_err("default compressor %s not available\n",
-> > +                      zswap_compressor);
-> > +               zswap_compressor = ZSWAP_PARAM_UNSET;
-> > +               return NULL;
-> >         }
-> 
-> No objection to moving the branch instead of adding another one. I'd
-> just like to retain the warning, since it shouldn't happen. And ditch
-> the bool, IMO it pointlessly splits the test from the consequences.
-> 
-> If you're fine with this Yosry, Andrew can you please fold it?
+> > +     if (region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, IOR=
+ES_DESC_NONE)
+> > +                           =3D=3D REGION_INTERSECTS)
+> > +             return true;
+> > +
+> > +     for (i =3D 0; i < ARRAY_SIZE(non_mmio_desc); ++i) {
+> > +             if (region_intersects(base_addr, size, IORESOURCE_MEM, no=
+n_mmio_desc[i])
+> > +                                   =3D=3D REGION_INTERSECTS)
+> > +                     return true;
+> > +     }
+> > +
+> > +     if (arch_is_platform_page(base_addr))
+> > +             return true;
+> > +
+> > +     return false;
+> > +}
+> > +
+> >   /* Inject the specified hardware error */
+> >   int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u6=
+4 param3,
+> >                     u64 param4)
+> > @@ -702,19 +739,15 @@ int einj_error_inject(u32 type, u32 flags, u64 pa=
+ram1, u64 param2, u64 param3,
+> >        * Disallow crazy address masks that give BIOS leeway to pick
+> >        * injection address almost anywhere. Insist on page or
+> >        * better granularity and that target address is normal RAM or
+> > -      * NVDIMM.
+> > +      * as long as is not MMIO.
+>
+> Thanks for updating this as well.
+>
+> >        */
+> >       base_addr =3D param1 & param2;
+> >       size =3D ~param2 + 1;
+> >
+> > -     if (((param2 & PAGE_MASK) !=3D PAGE_MASK) ||
+> > -         ((region_intersects(base_addr, size, IORESOURCE_SYSTEM_RAM, I=
+ORES_DESC_NONE)
+> > -                             !=3D REGION_INTERSECTS) &&
+> > -          (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DE=
+SC_PERSISTENT_MEMORY)
+> > -                             !=3D REGION_INTERSECTS) &&
+> > -          (region_intersects(base_addr, size, IORESOURCE_MEM, IORES_DE=
+SC_SOFT_RESERVED)
+> > -                             !=3D REGION_INTERSECTS) &&
+> > -          !arch_is_platform_page(base_addr)))
+> > +     if ((param2 & PAGE_MASK) !=3D PAGE_MASK)
+> > +             return -EINVAL;
+> > +
+> > +     if (!is_allowed_range(base_addr, size))
+> >               return -EINVAL;
+> >
+> >       if (is_zero_pfn(base_addr >> PAGE_SHIFT))
+>
+> Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
 
-LGTM, with this folded:
-Acked-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-
-Thanks!
-
-> 
-> ---
-> 
-> From b8fa4c7edd4f3c84853665b47acec8cebb4f4899 Mon Sep 17 00:00:00 2001
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Date: Mon, 15 Sep 2025 10:56:15 -0400
-> Subject: [PATCH] mm: zswap: interact directly with zsmalloc fix
-> 
-> Yosry points out that the default compressor check only applies when
-> something else is configured and we fall back, but not if it was
-> configured out of the box but isn't available. Move the test. Kconfig
-> should not permit this, so replace the pr_err() with a WARN.
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->  mm/zswap.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index cba7077fda40..c1af782e54ec 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -309,12 +309,12 @@ static struct zswap_pool *__zswap_pool_create_fallback(void)
->  		       zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
->  		param_free_charp(&zswap_compressor);
->  		zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
-> -		if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
-> -			pr_err("default compressor %s not available\n",
-> -			       zswap_compressor);
-> -			zswap_compressor = ZSWAP_PARAM_UNSET;
-> -			return NULL;
-> -		}
-> +	}
-> +
-> +	/* Default compressor should be available. Kconfig bug? */
-> +	if (WARN_ON_ONCE(!crypto_has_acomp(zswap_compressor, 0, 0))) {
-> +		zswap_compressor = ZSWAP_PARAM_UNSET;
-> +		return NULL;
->  	}
->  
->  	return zswap_pool_create(zswap_compressor);
-> -- 
-> 2.51.0
-> 
+Applied as 6.18 material, thanks!
 
