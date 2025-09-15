@@ -1,141 +1,148 @@
-Return-Path: <linux-kernel+bounces-816312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFB4B57229
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:01:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625C9B5727E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331E93BEFF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:01:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71CE117E4D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1008219DF4F;
-	Mon, 15 Sep 2025 08:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA882D663F;
+	Mon, 15 Sep 2025 08:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Uykw+0R9"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jjmz3yV5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBD22D5A0C;
-	Mon, 15 Sep 2025 08:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFB72E9EC7;
+	Mon, 15 Sep 2025 08:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757923267; cv=none; b=PWbuy5omHCYDrqJxlDr0cqMPRwSnEvGHB5q28MnfphbHHrcAsPP6d3Yxit4Wjrb+wYAX1G78XGUhQRxPiy66sEUBbDAV178BV9Dm/MqJIXgbymRA453uLPYU0su1tvagfhp4Tabs7Vmz1RaV+KcvH5uAgUzWVQu0lp1YjLEO9Fg=
+	t=1757923531; cv=none; b=ic5zhmMxWgqEMYD5E2TRTwGqbkFLLKeitTMHIQGYpgimFZs3IkAxo6/Vf+cWGqjPxcEOIpEqG34o1QhWhB2jbMRUbiq0BnHGNW882wYc/rcjeKqVofN3LDF4cKcUdr+L9tKVHXZSBlRgee7xerCXYRXftf5fCcIblf8kgrMA14I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757923267; c=relaxed/simple;
-	bh=0+tz1zj31RfoL32vadKg89/mQT+Ohn5CXj+nVykOgKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzmx3FHxXLOR05BNfXFbjJTk/yQYnwtc0VDYjnoltl/efWPd2SAFbWs+KscJuPn+9fHvB5fd6b9IbWIqrqEY+md4qxHGxu6oeTs2wAUHEINFvh1t2+MwqW0kfQ0c2AwTtCcR/NUYCQ/4i8djC+Rtmsch+8XWmq4tqydatFC0jM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Uykw+0R9; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jonmaVcGtJWv0aVkRcTv8ZFU9T2t2UVyNF1hWIKbZtw=; b=Uykw+0R9RibxKo09CI/drghfbl
-	tK89vLKwrAk8ZhR82JKtLLeEYB94xBbjhnzUFJqRSyGAxA2EdkNdKQ2VmP6vqZ1RQaCoZmFJDwWnU
-	FVUgvM6O5D2Nj+w0SMFMvABs1kPAOxmwWLIWFAU/kVJxCZzJRw5/254AXU29uYHVPBUjSCxK8e+2r
-	ZrxJsxrL5tu+En7/uJuSOVF1OT/JqiWRmBFMFhOcq6wwT3kpgrFXcxm2DJMf2oNZGapSXkgxaBzaT
-	b+OcDyH9RQqVA9NXH20WrSx9p8YTgr4OU9wIRGqsulBbBfKus4QUn2F6UaUDb96CzEOoZ+KGE7I2Z
-	hJUW/Cew==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uy48t-00000006trB-1rvp;
-	Mon, 15 Sep 2025 08:00:56 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EF34C300212; Mon, 15 Sep 2025 10:00:54 +0200 (CEST)
-Date: Mon, 15 Sep 2025 10:00:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@vger.kernel.org
-Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
- operations
-Message-ID: <20250915080054.GS3419281@noisy.programming.kicks-ass.net>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
+	s=arc-20240116; t=1757923531; c=relaxed/simple;
+	bh=B74HX5e+TfRygmN6Og4POXNipS2VHQDoP8es2YE1kNc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u38sQARDITpaQXxVpGktCbCbgwvuHylxgokXX6T/kNKpEaBOYzJ/sItnP5c00XnHmC4D+yWvK5wfmGKYO0aHBFPNoG0jVO93CDWr6lFFRTND6VfMYCfpYVDcs2ZGj82m6vMpzowmaX9x3bUycDSbU1uBsM+c7cElFdcYC2Z0sRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jjmz3yV5; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757923529; x=1789459529;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=B74HX5e+TfRygmN6Og4POXNipS2VHQDoP8es2YE1kNc=;
+  b=jjmz3yV5k4P8OXl/Km9t6DejuYxQoVdef6j4H/qGmewvXbkpjqiyPsoW
+   UeZmlUdAquR2YzSxUafXOyZYYFMUe48kzvWNA4yO05TQL8t19BZ6f9BjB
+   9R8NkbY8qlk5ZU7P/0M76GkOYi8Ild+N4sV15Q3P8WeyLAyvNGa9EUNiT
+   WNqBUV2ZKivq1OGP0hpfnYekZ2IoCZ71Y6/hBF0iMEl6rS7OJQRFtPfG8
+   6JZ5RdAjX6ND9bVxBslJIegU0kT2lsYSHTt+GsocuyfJ5apLMurCaZCyB
+   Z3uqctM16f92FWlac8S9Bg+R5e5I8D5MQEEQDlLaeXrwEyuVTMAxKwMLy
+   g==;
+X-CSE-ConnectionGUID: ewY7/e+gQ0WFS+nyOvSX4A==
+X-CSE-MsgGUID: 824WDI+DT/Wt1juxykZo1A==
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="213889417"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 01:05:22 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 15 Sep 2025 01:05:14 -0700
+Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 15 Sep 2025 01:05:11 -0700
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
+	<vadim.fedorenko@linux.dev>, <rosenp@gmail.com>,
+	<rmk+kernel@armlinux.org.uk>, <christophe.jaillet@wanadoo.fr>,
+	<steen.hegelund@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>
+Subject: [PATCH net] phy: mscc: Fix PTP for vsc8574 and VSC8572
+Date: Mon, 15 Sep 2025 10:01:12 +0200
+Message-ID: <20250915080112.3531170-1-horatiu.vultur@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Sun, Sep 14, 2025 at 10:45:29AM +1000, Finn Thain wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
-> 
-> Add a Kconfig option for debug builds which logs a warning when an
-> instrumented atomic operation takes place at some location that isn't
-> a long word boundary. Some platforms don't trap for this.
-> 
-> Link: https://lore.kernel.org/lkml/20250901093600.GF4067720@noisy.programming.kicks-ass.net/
-> ---
-> This patch differs slightly from Peter's code which checked for natural
-> alignment.
-> ---
->  include/linux/instrumented.h |  4 ++++
->  lib/Kconfig.debug            | 10 ++++++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> index 711a1f0d1a73..55f5685971a1 100644
-> --- a/include/linux/instrumented.h
-> +++ b/include/linux/instrumented.h
-> @@ -7,6 +7,7 @@
->  #ifndef _LINUX_INSTRUMENTED_H
->  #define _LINUX_INSTRUMENTED_H
->  
-> +#include <linux/bug.h>
->  #include <linux/compiler.h>
->  #include <linux/kasan-checks.h>
->  #include <linux/kcsan-checks.h>
-> @@ -67,6 +68,7 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
->  {
->  	kasan_check_read(v, size);
->  	kcsan_check_atomic_read(v, size);
-> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
->  }
->  
->  /**
-> @@ -81,6 +83,7 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
->  {
->  	kasan_check_write(v, size);
->  	kcsan_check_atomic_write(v, size);
-> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
->  }
->  
->  /**
-> @@ -95,6 +98,7 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
->  {
->  	kasan_check_write(v, size);
->  	kcsan_check_atomic_read_write(v, size);
-> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
->  }
+When trying to enable PTP on vsc8574 and vsc8572 it is not working even
+if the function vsc8584_ptp_init it says that it has support for PHY
+timestamping. It is not working because there is no PTP device.
+So, to fix this make sure to create a PTP device also for this PHYs as
+they have the same PTP IP as the other vsc PHYs.
 
-Right, so why aren't we trusting the size argument? And instead
-mandating a possibly larger alignment?
+Fixes: 774626fa440e ("net: phy: mscc: Add PTP support for 2 more VSC PHYs")
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ drivers/net/phy/mscc/mscc_main.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-Note how things like test_and_set_bit() will use sizeof(long), while
-atomic_set() will use sizeof(*v), which, on LP64 architectures are very
-much not the same.
-
-The same with atomic_*() vs atomic_long_*() / atomic64_*(), they will
-have different alignment requirements.
-
-And then there is cmpxchg(), that can be u8 u16, u32 and u64 depending
-on the user. And then there is cmpxchg128().
-
-I really don't see how using long here is correct.
-
+diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
+index ef0ef1570d392..89b5cd96e8720 100644
+--- a/drivers/net/phy/mscc/mscc_main.c
++++ b/drivers/net/phy/mscc/mscc_main.c
+@@ -2259,6 +2259,7 @@ static int vsc8574_probe(struct phy_device *phydev)
+ 	u32 default_mode[4] = {VSC8531_LINK_1000_ACTIVITY,
+ 	   VSC8531_LINK_100_ACTIVITY, VSC8531_LINK_ACTIVITY,
+ 	   VSC8531_DUPLEX_COLLISION};
++	int ret;
+ 
+ 	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
+ 	if (!vsc8531)
+@@ -2267,8 +2268,11 @@ static int vsc8574_probe(struct phy_device *phydev)
+ 	phydev->priv = vsc8531;
+ 
+ 	vsc8584_get_base_addr(phydev);
+-	devm_phy_package_join(&phydev->mdio.dev, phydev,
+-			      vsc8531->base_addr, 0);
++	ret = devm_phy_package_join(&phydev->mdio.dev, phydev,
++				    vsc8531->base_addr,
++				    sizeof(struct vsc85xx_shared_private));
++	if (ret)
++		return ret;
+ 
+ 	vsc8531->nleds = 4;
+ 	vsc8531->supp_led_modes = VSC8584_SUPP_LED_MODES;
+@@ -2279,6 +2283,16 @@ static int vsc8574_probe(struct phy_device *phydev)
+ 	if (!vsc8531->stats)
+ 		return -ENOMEM;
+ 
++	if (phy_package_probe_once(phydev)) {
++		ret = vsc8584_ptp_probe_once(phydev);
++		if (ret)
++			return ret;
++	}
++
++	ret = vsc8584_ptp_probe(phydev);
++	if (ret)
++		return ret;
++
+ 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
+ }
+ 
+@@ -2648,7 +2662,7 @@ static struct phy_driver vsc85xx_driver[] = {
+ 	.config_aneg    = &vsc85xx_config_aneg,
+ 	.aneg_done	= &genphy_aneg_done,
+ 	.read_status	= &vsc85xx_read_status,
+-	.handle_interrupt = vsc85xx_handle_interrupt,
++	.handle_interrupt = vsc8584_handle_interrupt,
+ 	.config_intr    = &vsc85xx_config_intr,
+ 	.suspend	= &genphy_suspend,
+ 	.resume		= &genphy_resume,
+-- 
+2.34.1
 
 
