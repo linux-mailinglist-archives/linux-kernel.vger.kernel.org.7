@@ -1,152 +1,112 @@
-Return-Path: <linux-kernel+bounces-816182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DEAB570A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:53:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16249B570A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3740817589B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:53:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C31524E11F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A62C0291;
-	Mon, 15 Sep 2025 06:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WZ7sEzKM"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AF02C0293;
+	Mon, 15 Sep 2025 06:53:30 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1B214236;
-	Mon, 15 Sep 2025 06:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6CF2C0291
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757919183; cv=none; b=XnN+CI7Xor1y3fvGrwbXihqoODoqzs4DP/HE5Nps0rfeJlqtM6nbmvwrUg9TzQZx9umTFcpZuODSk99jWsyXHDnwHHo8O0vCQ6Bf/Fh5TEc84TjwTpmArpZCXUa/RLtyay0YKs93gKLuWVlAehybSUDUhwOsu2tOUJ/T1nWP34o=
+	t=1757919209; cv=none; b=l94/0RObsM84+M5aBlIWRNbv6n49v5jympAx4/hi9uTdh+rfn5n/fQjuufqBRa2F6d0YoBUjW/wfBUGdLdxRZmiwvH8YcUZglza7qtMvhQKk/e/2dAwqjsbQlI3SLHyNMEEgySelm54ikfR6KAlOCmwqFflAr2wYj8w61C1WFek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757919183; c=relaxed/simple;
-	bh=eTnWsuowkvPW2CNQFBCtuWekj/ZUpGVr6DjRo9OXlfc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cJBlowtOTwzTHRaTYji92Y0qGhl+ySdTCFMUMv2zjxvRpb6/kgHZw02wdvdCyMErrbeSWUkhDT9YLFUSyK3d5pSFfi2BI53sCTD32LF3nDIe3JFY77fp7zjg3FDC+FLTffqmxz+CNmPFpNOOFAamWk5YX/qOSpf2YVLCtKvG3TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WZ7sEzKM; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=nMOQLJiy/VsypA3JP622mRkwPrLWm4CPv8lTuG2ajGo=; b=WZ7sEzKMymJToveqY1HimB8gtz
-	NRFIp1vT2UPG23kqeRIBpvHcPJpGX294RPEQ0NcagF5dljOx2qAtIcotTaW/k8yGNPc6P/deiSG0O
-	IG3C9rLh/afB3I9LGN6HrOQ9ZT5Ygz4mW4sRaJf+RCpqU8Buq871mLHWigy/XeaDCYmVXbrWkMskd
-	q1/fQ66/4jnB9uMpJZ+JYiTCwFn070kTX9uPdqj47hTXrcMq4ddam/mcUUZhGjOQrcUkl4YcV7Lp6
-	g7YL4WU9xOtx8BA0n0CTeArpxMHduXl+cAVtS3TLsEIUTgUcImT1/xyVuQJZUY++NSB3DeTbq3ZDG
-	eghamXNA==;
-Received: from [58.29.143.236] (helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uy34t-00Bgzm-UV; Mon, 15 Sep 2025 08:52:44 +0200
-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com
-Cc: kernel-dev@igalia.com,
-	sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [PATCH] sched_ext: allow scx_bpf_task_cgroup() in ops.dispatch()
-Date: Mon, 15 Sep 2025 15:52:36 +0900
-Message-ID: <20250915065236.13669-1-changwoo@igalia.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757919209; c=relaxed/simple;
+	bh=nSsCs6TEzIhAnOz3JlLkssZexHWbTb577DseGI25km4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qdIINrFSPNGyI6XEnOaUhbgkAceUpApSEuz1hKsgUBxVgLEuv4N7VJCuxo30CMXqtoERzw9W1RMo/YPY9KHeeX+RCxAJYipkIo1ydM3BWxtsvRrpiIoVqJiJMJSJhgXzyKeFNkc7PaHYxC38dx0j1RYA54EwU8MFKocFzT4EUrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42407cbc8d1so4679445ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:53:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757919207; x=1758524007;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jBy8RrbeqjzTb2WDPBZ8sroE/2cV1mjofyaNZ7rU6Vc=;
+        b=VTirBW8wTgtLTVGxVjWWjMKQU0kqUp4m9Ou/PyztjW+oZaKMOOu7/cRhUeBRivEFlX
+         TrjXdkLA5k9VpERYPu1NIRk9z9W22W2w429VOOcXtHNe0lmue4VZ69Eyy9NJp+hJOdd9
+         eNE25D6nMCL+FEVu//dAeuZFhEhLfpWdPz73QdDneTmcOoZ2eLaO6/RX7WYAiseGko7a
+         pA/LCUsKcrBm7hijJahNJG7sp9/iKht3ccYEMMl6O1i+6tskfNLZC8lxMB/Zb/frBLm5
+         /RJszB0UC7hhUBYjIbxTfhGx7cMBMNtfhumhNiZzSEqBISL4VEBPBK6ij8aMUIn8DXrd
+         2wTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgxFOEXIQnlnBKlcU2sc3Eg2c8Hd5tuOyE+CXsyUBEIL8LOfpMN4RQbnTicpI5ysQwhlyUSsjcS+yEMB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUbLHMd8Cv8Re0p3Nzbu3+Q44nnvBBh3XxpOq6ftzFtWO1/PAN
+	JkbBtEDfjtmeT05RhxQLcxCY+KmqstW/vJzZLZPT2VPI5oWTlOwm6Qsjj4/Kv3TMNTXzn1MKDw1
+	UmnRg4M/nTs7Sjwip09syAylrkaPbjPZb/0JEqTJ0EHgGuOfM0ab189+rJ1A=
+X-Google-Smtp-Source: AGHT+IEkr/1wq8cGVH8F4JtQKAwxIMr6dWN40WGiEwJ4qk9AFiqN/dh6wzAJ6Hpqi3XAY9xozNewdZN6c6BxiGToRj8MJaR0n0T6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1568:b0:41a:6194:c251 with SMTP id
+ e9e14a558f8ab-4209d31a3e1mr123921935ab.3.1757919206951; Sun, 14 Sep 2025
+ 23:53:26 -0700 (PDT)
+Date: Sun, 14 Sep 2025 23:53:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c7b7e6.050a0220.2ff435.038b.GAE@google.com>
+Subject: [syzbot] Monthly input report (Sep 2025)
+From: syzbot <syzbot+list70c5e712121cd45eb183@syzkaller.appspotmail.com>
+To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Calling scx_bpf_task_cgroup() on the prev task from ops.dispatch()
-currently triggers a runtime error:
+Hello input maintainers/developers,
 
-------
-CodecWorker[92989] triggered exit kind 1024:
-  runtime error (called on a task not being operated on)
+This is a 31-day syzbot report for the input subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/input
 
-Backtrace:
-  scx_bpf_task_cgroup+0xbb/0xd0
-  bpf_prog_d7d2e9d404cf3602_lavd_dispatch+0xc45/0xccc
-  bpf__sched_ext_ops_dispatch+0x4b/0xab
-  balance_one+0x25f/0x550
-  balance_scx+0x37/0x160
-  prev_balance+0x46/0xb0
-  __schedule+0x702/0x23d0
-  schedule+0x27/0xd0
-  irqentry_exit_to_user_mode+0x1ac/0x200
-  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-------
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 18 issues are still open and 62 have already been fixed.
 
-This happens because the prev task is not registered as a task argument
-of ops.dispatch(). As a result, scx_kf_allowed_on_arg_tasks() rejects
-scx_bpf_task_cgroup() calls on the prev task.
+Some of the still happening issues:
 
-Fix this by adding the prev task to scx.kf_tasks so that task-related
-BPF helpers such as scx_bpf_task_cgroup() can be called safely. Since
-the SCX_CALL_OP_TASK family assumes the first argument is the task,
-introduce a new SCX_CALL_OP_TASK_ANY macro without that restriction.
-Also update __SCX_KF_TERMINAL to include SCX_KF_DISPATCH.
+Ref  Crashes Repro Title
+<1>  2779    Yes   WARNING in cm109_urb_irq_callback/usb_submit_urb
+                   https://syzkaller.appspot.com/bug?extid=2d6d691af5ab4b7e66df
+<2>  1394    No    possible deadlock in evdev_pass_values (2)
+                   https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
+<3>  932     Yes   WARNING in enable_work
+                   https://syzkaller.appspot.com/bug?extid=7053fbd8757fecbbe492
+<4>  166     Yes   KASAN: stack-out-of-bounds Read in sched_show_task
+                   https://syzkaller.appspot.com/bug?extid=8d2757d62d403b2d9275
+<5>  85      Yes   WARNING in cm109_input_open/usb_submit_urb (3)
+                   https://syzkaller.appspot.com/bug?extid=ac0f9c4cc1e034160492
+<6>  57      Yes   possible deadlock in uinput_request_submit
+                   https://syzkaller.appspot.com/bug?extid=159077b1355b8cd72757
+<7>  27      No    KASAN: slab-use-after-free Read in report_descriptor_read
+                   https://syzkaller.appspot.com/bug?extid=bc537ca7a0efe33988eb
+<8>  18      Yes   INFO: rcu detected stall in console_callback
+                   https://syzkaller.appspot.com/bug?extid=32af18ae7b894a681f2d
+<9>  18      Yes   INFO: task hung in __input_unregister_device (5)
+                   https://syzkaller.appspot.com/bug?extid=78e2288f58b881ed3c45
+<10> 7       Yes   INFO: task hung in console_callback (6)
+                   https://syzkaller.appspot.com/bug?extid=6027421afa74a2ba440d
 
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- include/linux/sched/ext.h |  3 ++-
- kernel/sched/ext.c        | 13 +++++++++++--
- 2 files changed, 13 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
-index 7047101dbf58..b404a93d371c 100644
---- a/include/linux/sched/ext.h
-+++ b/include/linux/sched/ext.h
-@@ -116,7 +116,8 @@ enum scx_kf_mask {
- 
- 	__SCX_KF_RQ_LOCKED	= SCX_KF_CPU_RELEASE | SCX_KF_DISPATCH |
- 				  SCX_KF_ENQUEUE | SCX_KF_SELECT_CPU | SCX_KF_REST,
--	__SCX_KF_TERMINAL	= SCX_KF_ENQUEUE | SCX_KF_SELECT_CPU | SCX_KF_REST,
-+	__SCX_KF_TERMINAL	= SCX_KF_DISPATCH | SCX_KF_ENQUEUE |
-+				  SCX_KF_SELECT_CPU | SCX_KF_REST,
- };
- 
- enum scx_dsq_lnode_flags {
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 3eb6be889da6..f704d2e5dce2 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -328,6 +328,14 @@ do {										\
- 	__ret;									\
- })
- 
-+#define SCX_CALL_OP_TASK_ANY(sch, mask, op, rq, task, args...)			\
-+do {										\
-+	BUILD_BUG_ON((mask) & ~__SCX_KF_TERMINAL);				\
-+	current->scx.kf_tasks[0] = task;					\
-+	SCX_CALL_OP((sch), mask, op, rq, ##args);				\
-+	current->scx.kf_tasks[0] = NULL;					\
-+} while (0)
-+
- /* @mask is constant, always inline to cull unnecessary branches */
- static __always_inline bool scx_kf_allowed(u32 mask)
- {
-@@ -2105,8 +2113,9 @@ static int balance_one(struct rq *rq, struct task_struct *prev)
- 	do {
- 		dspc->nr_tasks = 0;
- 
--		SCX_CALL_OP(sch, SCX_KF_DISPATCH, dispatch, rq,
--			    cpu_of(rq), prev_on_scx ? prev : NULL);
-+		SCX_CALL_OP_TASK_ANY(sch, SCX_KF_DISPATCH, dispatch, rq,
-+				     prev_on_scx ? prev : NULL,
-+				     cpu_of(rq), prev_on_scx ? prev : NULL);
- 
- 		flush_dispatch_buf(sch, rq);
- 
--- 
-2.51.0
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
