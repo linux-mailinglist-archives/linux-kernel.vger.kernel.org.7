@@ -1,147 +1,218 @@
-Return-Path: <linux-kernel+bounces-816957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F92B57B4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB75B57B5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20C767A3CAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965C63B02E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375D230B529;
-	Mon, 15 Sep 2025 12:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D5630C62A;
+	Mon, 15 Sep 2025 12:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2sISqCN"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NB/MCL+Z"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012009.outbound.protection.outlook.com [40.93.195.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401C72F99B5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940038; cv=none; b=cgs3XLGROVBAXgkLlNKwKeuUC1IUQ5imqmXKkJYOG7sC8GM8J1JzwsLkKJof/U8TZjfoJsP9R/8oHqnqs54b/4zcivpXw6BBP31btsB/OEiUtlzUJha9mGXCFouwF59tU48BBuRIVHuEVGW/q6S43oVyJa2ieGAu0DCoXXHIISs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940038; c=relaxed/simple;
-	bh=dNJnJsH0bwlUv9iv5mm0gr5b4wshCly50clBeI+rCXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpZvURD1e7+Bh+Ibk6IImb+B8ViCyKOMLetJAbIRuLPzvxey/TYzIbJ7b182fW7QALHFx0MdY9dYsa5z8wrtwAedHeU26y4YQZmCDSuXtepJUzBzpJWd8IMGWeEvdxuKtbp/7Emh5kJ9IAItwUnTNBXkYfXwBDMESe1l06uGxtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2sISqCN; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-266fa7a0552so6975065ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:40:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757940036; x=1758544836; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dNJnJsH0bwlUv9iv5mm0gr5b4wshCly50clBeI+rCXY=;
-        b=I2sISqCN0QdjPoe/B/DieEqe0D0/p/1imHlfUY3RxRhmq0g9CNuPr4BUWSUUI//aoj
-         mrFnXxolSZ3AKVPZxC8JvIocAep6zTzEA4Pj6FdLq4y6FQl4e6uJkIdKU/g6N26pQ4p+
-         v747gQot8tviWtnowB+/EfutA6Mp/9cOFvnWGO1POOjoZFnjeXqbd+r65aT0klJG3Mn2
-         JSsmHFqtbZT0Y3kKh/F9OASFUi7cZUrQFeDHpHCxol32NxwJZK1xOhG0KADaZD3NxkW5
-         PqWEE8mAf/suuN+l+opg7qBnuLiyRx6xsIhCQ7/KPWr/OgKGEJbX1ZwY708qKY4eAB1O
-         NfGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757940036; x=1758544836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dNJnJsH0bwlUv9iv5mm0gr5b4wshCly50clBeI+rCXY=;
-        b=ULfZqizBxbI2YkQcFUBTx5cAX61Qlxk/uNslR5TJpNteOAvIguyCNwzK2Ur617TquF
-         MvIyDXwgBsLhQqqHylmfHPGN+IJA9x0BG4UzDr6rQ7mZSzl3ZAY/bKcHFpZW1ekEHJeU
-         bpg5LcJrL+cWPXxOq7EdxGyAxdJlvN3FdT9ZpKyOZMAmswLRoyyd4ZPqu3/dfRmh8JEn
-         Aw8FMAe2fnMWfiyimeuWyQ7aHuwLOe2qwLfkqHW2omTz5cb+MaQgpeIJwqL+n8tJvXNi
-         GMbhBWiGlgVNIzFIQykO21WEOmxoRA7wNQ2u9bcFe8PkuUWO+kSr7Sg1mKehRCseQPAS
-         t/xQ==
-X-Gm-Message-State: AOJu0Yzf8BmhGJL9YZ/JS4JrZWS2SUis4g7ZjAUbFnlPQnM4lW/JB2oH
-	elWsZip4XE4tqmdG8ly5QOLjQcJlCdYamp2hTM3SJV+CB0YwEqc9nbhy
-X-Gm-Gg: ASbGncvbTsnapo/2nIZqZKHvcv3A8q7Vmb16RWCPNXljhsyLawmfSyHDB9OEcJywNCK
-	XmmGi/id3iO975Hcafefory7ZRVVr2oWSItSpzjJOULu8kYEwACOmVnFx6wR3x+VpjmFJrsz9yN
-	E/bBUurlSU+ypajGkKXMPn4GH74i/OHrCtgvr+MHcs0gPWyTo7ysa/1N77UmjR6iLM2lCUba31J
-	iJM4XnFgrrx8TVxcxJ93B3QRR/2eHvnoDj4L7bK6bcdksSdoZXvJXDjWJ2wkk38mGXKHW0O/Eam
-	X2qqXTlnzOBVYh2L12esmWhDHNIKcMjTqZ4NNGCUS+0HTQozIvUHy4gRxEtsWkK3uEUeHK32H1F
-	KR5hgWGSF96TJBS8Mzc1G1GU4ZgHxLQpCkKbv
-X-Google-Smtp-Source: AGHT+IHhTD9B3Sdd7GngwxsOkjj4gaAYEGinNPhIKE81JuyUWnx5sHsOsSR6QPKASvI6Pv3nndfZjQ==
-X-Received: by 2002:a17:902:ef46:b0:246:bce2:e837 with SMTP id d9443c01a7336-25d271485a2mr163639975ad.49.1757940036320;
-        Mon, 15 Sep 2025 05:40:36 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2635c79cd21sm55033945ad.49.2025.09.15.05.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 05:40:35 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id CB28B420A6BD; Mon, 15 Sep 2025 19:40:29 +0700 (WIB)
-Date: Mon, 15 Sep 2025 19:40:29 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux cgroups <cgroups@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrea Righi <arighi@nvidia.com>,
-	Johannes Bechberger <me@mostlynerdless.de>,
-	Changwoo Min <changwoo@igalia.com>,
-	Shashank Balaji <shashank.mahadasyam@sony.com>,
-	Ingo Molnar <mingo@kernel.org>, Jake Rice <jake@jakerice.dev>,
-	Cengiz Can <cengiz@kernel.wtf>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v2 2/4] Documentation: cgroup-v2: Add section numbers
-Message-ID: <aMgJPWETGVt_AE9i@archie.me>
-References: <20250915081942.25077-1-bagasdotme@gmail.com>
- <20250915081942.25077-3-bagasdotme@gmail.com>
- <duppgeomaflt6fbymdk5443glmw7d3bgli2yu7gx6awb7q2dhn@syjq5mmia6pb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F33530B53D;
+	Mon, 15 Sep 2025 12:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757940135; cv=fail; b=MsR4a+urce+bjWaa6jomgS1Dz4IW+Q6mCiul42zj9BZTnYC71cdhs5lGTl88XrgHml1U5nZYiyPB6dvlG2VGcXaokSTK3f3mtV94PVNxzKGhUyVe03bBS0F9TLY+TnT9ltn839LO9MzsHeo5kK7uKe5xV0NZaV5C7fUljIPKgkc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757940135; c=relaxed/simple;
+	bh=bRJn6qfNu2aiwNfAhjZboKREnVwjnwf+4EOpq2STXGI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nFfN5dx+KjCypP/PUgeCb16pWpg2KWnVqtFvXoADCT2CQtAIlPR4i70/yeZWO759FOH3sbLYXYWwAxSoVoNGVyc1gmAvt/m0RHfiyut37DL1xGNb8Tna9Goji5ILK3/KcX6PiMMy2ZJgOwiQdgslVMppHE/VOdLTdmGLW1yFw+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NB/MCL+Z; arc=fail smtp.client-ip=40.93.195.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u7nEU6AiT7lys0tJnqrJ2tKWTKyxNzBB+EltVvqU9chr47Um9TWD7E6hVn0i6H2VPLSDjetxqsPd2ytLug2vTVX1TyBynHcCDEzXleZP6AV44L0DBY+nXP2zq5EtVqHDMAa9yhSVaT4QZM6+21eQgTWsYQBxr4wCbqhetfZ9ASxYQeRGTjZWXrHVUoPTt3WfeR2ha2qdr87FDhtRdfFOqrBY1T1SeHwHmJwR21lrvw3IjrRNzcQ6gH4kxaNyg5b5JmiFrVGDmf4t8hl2vLlh1Du0yvkueMt5LUjYXdlZvmm5baTawS5wdgnyhkCmYvIo8Dk1itPMaKi4Xx+PcWkmDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Sv8G56s1LtCWbpL+eW1eqRI0uNy7NBAKTE9dtVRTPCA=;
+ b=aJwM2HKi9XUp7t1PZ2NojifGsu0QC5cg6mTI5t6qfGvFeIA7LdCIR1afxRCIPWX8+OzMHMhaRJOSEzc8C9ELwdjdMXktkxhfrT5Hs4+981yV86fklFDmWxLVGXjqo3m6GphHY8n/B4CC2s48bbvgpgAUlzfw4CtKtCVYNJ3W7sDGiZ6ZlnWvI6Wevn23Zsd0BSUBq+z2i0EeMLLv+3WyOeYkvdD76WnTml02lwBlnXLBgl7uLgJmq1gqvkl4K3Yje1FIITbY2HiFgmVutA8Boc20GTh0nqnDfs7FHStOzpuWsctubYiFvt8N6VUnWnMFIq3VwVn8xklIquD0m7KHsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Sv8G56s1LtCWbpL+eW1eqRI0uNy7NBAKTE9dtVRTPCA=;
+ b=NB/MCL+ZBDP8gJdKHAXIEU6bu9p4LDL67mU2rQ0EPDuwws/giFdgU4bFvvHHaLwA7d8YOL9ppumL+QwBzwM/ZZ2BlP3GoH4ukkxNOhmrUAgx7+j2J4rdOmfKuKs5wmIYEaE1dQRogJX2sKaiUxdhIda+ZF5iP1bMM8C6iqIzDnoUDD8bgDACFBNVBePxT4ERW0mtjlj3kSVSkwkW1LiLOCQL7usZwT/EC1tamM+q8sUXVl3WslBJ11ilrd04/29if2Ykg3jslaH8iI0QU2fGOlrn1nnMq2fH0eLC1Ccg3AaKV6ztcEokqh0tXlgnwPYKoOp3R1lleXngdxiOhBTmNQ==
+Received: from SJ0PR13CA0129.namprd13.prod.outlook.com (2603:10b6:a03:2c6::14)
+ by PH0PR12MB7983.namprd12.prod.outlook.com (2603:10b6:510:28e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 12:42:09 +0000
+Received: from MWH0EPF000A6730.namprd04.prod.outlook.com
+ (2603:10b6:a03:2c6:cafe::54) by SJ0PR13CA0129.outlook.office365.com
+ (2603:10b6:a03:2c6::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.11 via Frontend Transport; Mon,
+ 15 Sep 2025 12:41:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ MWH0EPF000A6730.mail.protection.outlook.com (10.167.249.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Mon, 15 Sep 2025 12:42:08 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
+ 2025 05:41:51 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 15 Sep 2025 05:41:50 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 15 Sep 2025 05:41:47 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>
+CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Parav Pandit
+	<parav@nvidia.com>, Shay Drory <shayd@nvidia.com>
+Subject: [PATCH net-next V2 0/4] net/mlx5: Refactor devcom and add net namespace support
+Date: Mon, 15 Sep 2025 15:41:06 +0300
+Message-ID: <1757940070-618661-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aPEdF1//wg19KKDS"
-Content-Disposition: inline
-In-Reply-To: <duppgeomaflt6fbymdk5443glmw7d3bgli2yu7gx6awb7q2dhn@syjq5mmia6pb>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6730:EE_|PH0PR12MB7983:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bba022e-85cd-49bc-8467-08ddf4554905
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eDQxclBLUEdoQzBkMStJbVJCc3UyWjFVbEtsTmVpc05qZFVSM3dnNGUrTDBR?=
+ =?utf-8?B?MTlJeTZMQzVtQnJhN3JGeXdlMWZ4eFFHZFJrVVNFRjRBb1o2YzN1WUUxM3VV?=
+ =?utf-8?B?eVh1MHZmZmhpSDVpWWI2Q2tMN2NIcm9PR2FZMFI4ak04YjhORFovV3NqWkZP?=
+ =?utf-8?B?YXJUaFdPNHk2RWFCcHBiL0x2ak0wcVVkam9IVXRxYmJxUWkxRXhJa29RWlJu?=
+ =?utf-8?B?ZHVzTGNLN2wzanYzNmI2MFhNT001eVI0eVVwZWhqaUFWYjlSeXdLdzlmaU5Z?=
+ =?utf-8?B?ZTlYemMrNXZjQURMczVPUlRSdkc4dXUwYVkzWmJMTzdFUUZWTkdlMVR5QVU4?=
+ =?utf-8?B?TGdTNTZuV3RTZXl1OUkrN0pnYjU4dklWNjd1Z2dmd0RzZitlVFFTai9TR0Vq?=
+ =?utf-8?B?SC9GallyVGl2TWxyKzYrdVN0Z0ZZRDJLOG1Jekk4SmFLK1JkK1JKK0lTcjVI?=
+ =?utf-8?B?eEtMOEp0anhQM1RmZUhxOE9iSmorNXRSZlFOYm96Y2J6TU5UeVpCa2xWSTJi?=
+ =?utf-8?B?SnY4QkFMRzZHRzZuVU03OWZLWU4ycmJ4QjI5OWd0QUhaQVhZNWM2Ly9WWHZW?=
+ =?utf-8?B?MVlqOWdaY1RNM3RnUzhBTnlFTmthSFIwb0VBODM4S0Q1R0tRZEpvYTluQ2Jq?=
+ =?utf-8?B?Z2szTFdRTkVINEZ5Y05wUG5TYkNuRjA0a1hDbjMwWjN4V3ZYbW8zYVhNQy9n?=
+ =?utf-8?B?a3YzdHFUdFNBY2RkNHJjcm56NGRuUTdwQlUwMXIxQUFxWC9wL3VsMndLd2hT?=
+ =?utf-8?B?L2dpdStWUFNjc3JVZUxTTHlxazFzSXVORFZ5M0puRkpGWGVlZU1DUVRqMmdM?=
+ =?utf-8?B?MlJrRXZ4L3BYb0pWaHVvR09XZ2V0K2xjTG04VVVEU3NrL1lkWjE3TExSS3Zp?=
+ =?utf-8?B?R2Rkd2trSWNVRVlaL0VjUWM3VGd0ZGlxQmNPaWxSSVpEdEtDbXAzUzZrYldF?=
+ =?utf-8?B?NmJlS2VETDI2bjJMZkpuQmdoUFIraFE0U3NseW0vU2xXc25vVTVyNTEweURk?=
+ =?utf-8?B?Q1pkdElEQ0hrSGpkODVTKzRmb29WeFhLQUprUjF2MDVCbXpiS1l0L0cyMTNt?=
+ =?utf-8?B?RzlhTEsyeUJXUjlEVGt5TVN5V3FvMjNsWktpVEY2ZWlIUnZtSHh3TEh1TG53?=
+ =?utf-8?B?aTFqUlRyN0orcDNsOHBvRDlLOW1BbnVOOWZyTXA5WndBUml4M1lSTFUyWXZF?=
+ =?utf-8?B?T0pKMlpjWDFuRzZwMmI2S2h6blpYelozMzdRYUh1ZUlMUy8wWmpBNzlyZHJD?=
+ =?utf-8?B?TUVmT1creXMxdkZFM2hNWmZGYlkvR0NnV05NcEpGMnpTdFlIM3ZLVUFoUjlL?=
+ =?utf-8?B?RlFlSjhUQzk0TU9TU0U2dVV6U2ZWQ3c5UDBBa1NNRUR4QW93QnI3VFY5NkZO?=
+ =?utf-8?B?VEZNT2dPOS9HNXhaOEVYODBUTFhVN3o4aGl3ZUlsdlVqVGRkejVyOTQzclZk?=
+ =?utf-8?B?SkNZZ2w0eldaanc2QkkyZEkyZ1VWaVE5V2xkeWdHOWxJcGpzWVVhNXBhRmNS?=
+ =?utf-8?B?bnoxZnJLci9KKzZ0cEFBa3Vaa0JkVTgrZ1dMR0RsWUt2UTgvaHBBb1RIWG5N?=
+ =?utf-8?B?N0VaVGJ2a044OEk4WWJCc09HMzZ4SXRvNER5bjBBNjNjQnh0M1VOOVpIWHMv?=
+ =?utf-8?B?VHkxVnk0OExrM2FjQmd2UzJ5ZG50WkRxdU15V25QM2dwNGNLQ3JNM282U3Ji?=
+ =?utf-8?B?R0JRQ2ZRaUhxejc2YklyREU0aHNBL1hTZldWOXEvbEp3OWxvTU5ubHN4WlVt?=
+ =?utf-8?B?Z0FFQSs1bE9XSTYzdkhDZzNGS1U1anNUUlEvOUpXZ0t5aG9aMWxiVUtuazh3?=
+ =?utf-8?B?RU9Xb1dxVzN5UjVrcE1LaW5IY0ZKcnVDMmxHNGhqb1U5N08xQnFIa1RvYS9X?=
+ =?utf-8?B?bXNMNHBTOE9aUGdKdDhDZzFqc3czNjZhaWZpSHN6YnI1LzJxUy9xY082bmZp?=
+ =?utf-8?B?Y1RqWVdIUjlJeElzRTNyL2NtWDlQa3diT2J6dk1NNDdtL1JPVjRoME95TjFi?=
+ =?utf-8?B?ZmMwakQ4K2FXOEt3OURqVEdGSHk0enRGSDJKQ1pmRHhHSFFiaFBtcU1wRWtj?=
+ =?utf-8?B?eGlSaStRS09RWkVXcjhGcWN2TjlXUjlQa3p4UT09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 12:42:08.9834
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bba022e-85cd-49bc-8467-08ddf4554905
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6730.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7983
+
+Hi,
+
+This series by Shay improves the mlx5 devcom infrastructure by
+introducing a structured matching attribute interface, relocating
+certain devcom registration flows to more appropriate locations, and
+adding net namespace awareness to the devcom framework and its users.
+
+Patch 1: Refactors the devcom interface to accept a match attribute
+structure instead of raw keys, enabling future extensibility such as
+namespace-based matching.
+
+Patch 2: Moves the devcom registration for HCA components from the core
+code to the LAG layer to better reflect their logical ownership and
+lifecycle.
+
+Patch 3: Adds net namespace support to the devcom framework, enabling
+components to operate in isolated namespaces.
+
+Patch 4: Updates the LAG layer to make use of the new namespace-aware
+devcom interface and improves reload behavior in LAG mode.
+
+Regards,
+Tariq
 
 
---aPEdF1//wg19KKDS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+V1:
+https://lore.kernel.org/all/1757572267-601785-1-git-send-email-tariqt@nvidia.com/
 
-On Mon, Sep 15, 2025 at 02:20:59PM +0200, Michal Koutn=C3=BD wrote:
-> On Mon, Sep 15, 2025 at 03:19:25PM +0700, Bagas Sanjaya <bagasdotme@gmail=
-=2Ecom> wrote:
-> > Add section numbers, following the numbering scheme in the manual
-> > toctree. Note that sectnum:: directive cannot be used as it also
-> > numbers the docs title.
->=20
-> Erm, so in addition to keeping manual ToC in sync, we'd also need to
-> maintain the section numbers manually?
+Changes:
+V1->V2:
+- Added Simon's reviewed by tag to patches 1,2 and 3.
+- Extended the commit message of patch 4 to address
+  Simon's comments on it.
 
-Right.
+Shay Drory (4):
+  net/mlx5: Refactor devcom to use match attributes
+  net/mlx5: Lag, move devcom registration to LAG layer
+  net/mlx5: Add net namespace support to devcom
+  net/mlx5: Lag, add net namespace support
 
->=20
-> What about dropping the numbers from manual ToC and sections? (If manual
-> ToC is to be preserved.)
+ .../net/ethernet/mellanox/mlx5/core/devlink.c |  5 ---
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |  6 ++-
+ .../net/ethernet/mellanox/mlx5/core/en_tc.c   | 10 +++--
+ .../net/ethernet/mellanox/mlx5/core/eswitch.h |  7 ++-
+ .../mellanox/mlx5/core/eswitch_offloads.c     |  5 ++-
+ .../net/ethernet/mellanox/mlx5/core/lag/lag.c | 45 +++++++++++++++++--
+ .../net/ethernet/mellanox/mlx5/core/lag/lag.h |  1 +
+ .../ethernet/mellanox/mlx5/core/lib/clock.c   | 14 ++++--
+ .../ethernet/mellanox/mlx5/core/lib/devcom.c  | 44 +++++++++++++-----
+ .../ethernet/mellanox/mlx5/core/lib/devcom.h  | 16 ++++++-
+ .../net/ethernet/mellanox/mlx5/core/lib/sd.c  |  6 ++-
+ .../net/ethernet/mellanox/mlx5/core/main.c    | 24 ----------
+ 12 files changed, 126 insertions(+), 57 deletions(-)
 
-Nope. To be fair, we also want section numbers for htmldocs readers, though.
 
-Thanks.
+base-commit: 5b5ba63a54cc7cb050fa734dbf495ffd63f9cbf7
+-- 
+2.31.1
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---aPEdF1//wg19KKDS
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMgJNwAKCRD2uYlJVVFO
-owUWAQDOV37Jt9sGtdMfo9OFbV+SKpl+FM7rQVpTGqsGX5TCAgD/YCIODJf7QdFr
-0241ELSDVsy6ZHhshkKBKhCObdEmkgw=
-=Y3IF
------END PGP SIGNATURE-----
-
---aPEdF1//wg19KKDS--
 
