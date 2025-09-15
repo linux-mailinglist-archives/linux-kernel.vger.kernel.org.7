@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-817904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3984AB5885A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:40:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6257BB5885F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC542A24D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:40:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292112A26A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936C52DA77F;
-	Mon, 15 Sep 2025 23:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOIrvey/"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606442DAFD5;
+	Mon, 15 Sep 2025 23:41:15 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7592D1A267
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F157C2D73A2;
+	Mon, 15 Sep 2025 23:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757979621; cv=none; b=hoYtD/DoJ1W0I7yDSANMXduvmmpSh/pyq3f+tkCtKLYC4Xy+ARshvKvvJe9SDeXXT/EPY1JyMtJs1iRzMGlOvm8A7t6MUIOMtNM4S7uR0ePAXMFIkBEN5/nE6O8LoEZnbpXryZEkFoG8/8o6harjC5NMlnkaFEJGQhzlzqvAnGk=
+	t=1757979675; cv=none; b=c7tHck1jTcOIyR2XU4JyfRdPzErIQwCrHML91wGnLmEDDSDShQPAWWZvcb2doSBeShBh+YKBSFoeNIKzZ40cB9qTcu3huZH1mNI8RdVF2XKcwXayVadlqN+1eYcddnjtiIMfIAYNH0QM/Zi4fxgKikyX7gvUiaSgzdSLY5DJ2f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757979621; c=relaxed/simple;
-	bh=0OcssUkImO3SE1HHfnrP/IX7TMqj8GUkVeISdnI1urQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dcOOpdPFEiwWMfoxJdNC+eK80cEpOSLloiSRJe43rWQzY3uuGjg7ChWSllL0Wo3T/Bvw8NWHodJQvq3duXsXRcZUGJac0mhdW6FmuAZwTU8f4eSX05413NDO1PJ1hkhQA6yTimqJJGlTckqiomlpbmlBd0tKV79tFI/I0wVqFN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOIrvey/; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-77786498b5fso1468172b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757979620; x=1758584420; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJSMheGsHe6BVL8P/ZodqLFYVtMcU4bhndx0+FT0+d8=;
-        b=BOIrvey/fc+9CwbpEfkrfrES5ocb04nWAA0Y61HQpekWVvMEwYtQ6m87MLQoekED7f
-         i2jvVHNAf99DOS2pB+v+Pi+2g5UhvZ+hjOCFNrL3l8w75CPZ5KrkmgxWrXNotQnEvqQn
-         G7xbKZAhBbS0/eYO4kfGcj41rQF2NFlVSYKeezcV7z8IVi650+vkq4YKoXJx7RbBGnnW
-         qljtulD0pwex7Qm2usGIlyUVsty6WYovdBUwpNeLLRlNKZj87NFKo2dM4kgno5zAO4HQ
-         6mSXYDoZmMV2oYlSB6Wpd6YffK/DCpvLoOqFcnSsuSzocw1Nld6BirQ6Qn3uukENSjwD
-         O41g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757979620; x=1758584420;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rJSMheGsHe6BVL8P/ZodqLFYVtMcU4bhndx0+FT0+d8=;
-        b=LmkvVdSU/Him9uNsZPP7nx7irnBVGmsFh9VO7nlGs22WJ646gHZGeN8a3gD6rRP5Mb
-         TQs5yjlxaCU9mZ/VCZPqqCwczzG1q2Job2/iwrL3U2Vow2rgKAsQocA88LBZTZkns4t7
-         i81gEQ7+kCiI9B0cat5meZqQuCZr/RUqmOt92UtI78IJgmQM+lQJbmueH1+rr0WFYifl
-         F2QG7iB3gu12TaGjrAluAl0IoNutegED14dq5LTS5Hpz4GCBe26NG8Rpltr3dvxHFR6h
-         sdOyZ7A96XtJfhvgslDGpPAaTSk60WeLOb0PJ167Dr15k0O6u4sxH9K+e6X3hl6XEX39
-         lWRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/LKie1HjeLU9rsnwCTc+SdeYNMaQqUN5ef4MwEN6+MDEK2MtG4ziZe38Da7yzrFmoPY5PnldcV6LAwYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7tc5kqTtoEgCBOgAhFmoIO4XY70BNNSiMVuKg0OngUl3w+1AC
-	lwdBUc4xrwt0/yX9DCNvCl8q3V0RgNWfASwHItmYLedS7KvAmdjbM3J1
-X-Gm-Gg: ASbGncuTkjQMkk4hcBw8dfKEZLoxaGgYl6z2CF2gtvinDRkGyrzyyS4PPTNNlRQxiCH
-	17GfkclspkvX+eS9wIgZIwc4rR0Z7GtRPBKy5HXviZwGdHcPrXYszcdjUPoECPhYf331S8Q0d37
-	ke89v6w8rC81q4QSVdDezZcQRhRpiiqsXUkQ4JQ0OThMUjgA51EU4s7YJE3oQKugi4NhfnnBB5+
-	g5PJH12OqLSimJ0jMUS+aTxJr2QJMocEbuFw94+2r1t1nG5/arl7IMp1S9mx9ZIhs5RHmt22cum
-	hzX7i5GCCNyLj3n0glCiTm0r3OVW515fiLzxqYaV3zzfmj2yZ+yOwU1JTuB2L/uvbIDrLaNUckG
-	9hTFadngdsikR1z3HZdxMPWGrpibsrsKxrVdAcngzIa+Oqc0k
-X-Google-Smtp-Source: AGHT+IGnt46crtLT5a+xjBfk4DXNhqvw6MM+OfwjuMK5SV74rlSJI5wYJ4cGD9gfrEGJ6UmbOVxeXg==
-X-Received: by 2002:a05:6a00:3c92:b0:775:fab1:18c8 with SMTP id d2e1a72fcca58-77612060f6emr14543524b3a.3.1757979619680;
-        Mon, 15 Sep 2025 16:40:19 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:1da5:13e3:3878:69c5? ([2620:10d:c090:500::4:283f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-777d3ca57e2sm5193931b3a.33.2025.09.15.16.40.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 16:40:19 -0700 (PDT)
-Message-ID: <b1717a5b75475b8e14afaee4825a40a3808bd0cb.camel@gmail.com>
-Subject: Re: [syzbot] [bpf?] WARNING in maybe_exit_scc
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: syzbot <syzbot+3afc814e8df1af64b653@syzkaller.appspotmail.com>, 
-	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, 	haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, sdf@fomichev.me, 	song@kernel.org,
- syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Date: Mon, 15 Sep 2025 16:40:17 -0700
-In-Reply-To: <81bb1cf72e9c5f56c92ab43636a0626a1046d748.camel@gmail.com>
-References: <68c85acd.050a0220.2ff435.03a4.GAE@google.com>
-	 <81bb1cf72e9c5f56c92ab43636a0626a1046d748.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1757979675; c=relaxed/simple;
+	bh=JuEMNNtyXAo945noq2fgyIyulS4lCT2taizRXolw8WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YBs6ElFTzzrEvDwa2rGYL+8Isp/0ws0KNXnNnl2685DGCUBgtwT4PZMXbmhRFgffTDEV5lh0I3IBOtq6KVnEGv5PTraExsAmvsHNjPbPMcs24PfmGBnYGUxYBMsQPnBkkbq8yW5a7/G6TBWa8hapmBWuA8ztXjUlIvCRw051P6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 0F89CC07CE;
+	Mon, 15 Sep 2025 23:41:03 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id E2C4D20026;
+	Mon, 15 Sep 2025 23:40:55 +0000 (UTC)
+Date: Mon, 15 Sep 2025 19:41:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: akpm@linux-foundation.org, minchan@kernel.org,
+ lorenzo.stoakes@oracle.com, david@redhat.com, Liam.Howlett@oracle.com,
+ rppt@kernel.org, pfalcato@suse.de, kernel-team@android.com,
+ android-mm@google.com, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook
+ <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan
+ <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded
+ trace event
+Message-ID: <20250915194158.472edea5@gandalf.local.home>
+In-Reply-To: <20250915163838.631445-8-kaleshsingh@google.com>
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+	<20250915163838.631445-8-kaleshsingh@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: xeh53t51osude5snikt49ygtg765jjcj
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: E2C4D20026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX182V87XcZg9olTniRrbK41HEticcPkYuYw=
+X-HE-Tag: 1757979655-928162
+X-HE-Meta: U2FsdGVkX19Zx1if+NNOzNVMgDMyEiQRf5KCrWoxEDdLlNyy025itEj2zjYJBMkNwUQkqjVFWdtFRA5Ynf4Yz52t7Y1DGnQ2OrwsGDN+DfgeyZ/AjYltT/l+Fuc8hpc2wOnrMa4yD4BId/vidyDiRLVZf5kH/cEGKQMrhL9USmC5wPTmd/XZBCPSslcwAPZSJYKJrh1jOkhQdQrzGMZhwDuGvOx64jO6Sdz5jN+n3mxHtNycmWq2UKphdEubae/8110tkn8jyhlLd+mre6+YjdQCeFduvdoPDJUesJYNt8Y1VSJVf19uZJ2Wze55wXrfVIdxUSD+IxDLITtQ30dzIQMUtN1rlpTd
 
-On Mon, 2025-09-15 at 15:34 -0700, Eduard Zingerman wrote:
+On Mon, 15 Sep 2025 09:36:38 -0700
+Kalesh Singh <kaleshsingh@google.com> wrote:
 
-[...]
+> Needed observability on in field devices can be collected with minimal
+> overhead and can be toggled on and off. Event driven telemetry can be
+> done with tracepoint BPF programs.
+> 
+> The process comm is provided for aggregation across devices and tgid is
+> to enable per-process aggregation per device.
 
-> > verifier bug: scc exit: no visit info for call chain (1)(1)
-> > WARNING: CPU: 1 PID: 6013 at kernel/bpf/verifier.c:1949 maybe_exit_scc+=
-0x768/0x8d0 kernel/bpf/verifier.c:1949
->
-> Both this and [1] are reported for very similar programs:
->
-> <this>                                      <[1]>
-> -------------------------------------------------------------------------=
--------------------
-> (b7) r0 =3D -1023213567                       (b7) r0 =3D -1023213567
-> (bf) r3 =3D r10				    (bf) r3 =3D r10
-> (07) r3 +=3D -512				    (07) r3 +=3D -504
-> (72) *(u8 *)(r10 -16) =3D -8		    (72) *(u8 *)(r10 -16) =3D -8
-> (71) r4 =3D *(u8 *)(r10 -16)		    (71) r4 =3D *(u8 *)(r10 -16)
-> (65) if r4 s> 0xff000000 goto pc+2	    (65) if r4 s> 0xff000000 goto pc+2
-> (2d) if r0 > r4 goto pc+5		    (2d) if r0 > r4 goto pc+5
-> (20) r0 =3D *(u32 *)skb[60673]		    (20) r0 =3D *(u32 *)skb[60673]
-> (7b) *(u64 *)(r3 +0) =3D r0		    (7b) *(u64 *)(r3 +0) =3D r0
-> (1d) if r4 =3D=3D r4 goto pc+0		    (1d) if r4 =3D=3D r4 goto pc+0
-> (7a) *(u64 *)(r10 -512) =3D -256		    (7a) *(u64 *)(r10 -512) =3D -256
-> (db) lock *(u64 *)(r3 +0) |=3D r0		    (db) r0 =3D atomic64_fetch_and((u6=
-4 *)(r3 +0), r0)
-> (b5) if r0 <=3D 0x0 goto pc-2		    (b5) if r0 <=3D 0x0 goto pc-2
-> (95) exit				    (95) exit
->
-> So, I assume it's the same issue. Looking into it.
->
-> [1] https://lore.kernel.org/bpf/68c85b0d.050a0220.2ff435.03a5.GAE@google.=
-com/T/#u
+What do you mean about comm being used to aggregation across devices?
+What's special about this trace event that will make it used across devices?
 
-Minimal reproducer:
+Note, if BPF is being used, can't the BPF program just add the current
+comm? Why waste space in the ring buffer for it?
 
-  SEC("socket")
-  __caps_unpriv(CAP_BPF)
-  __naked void syzbot_bug(void)
-  {
-        asm volatile (
-        "r0 =3D 100;"
-  "1:"
-        "*(u64 *)(r10 - 512) =3D r0;"
-        "if r0 <=3D 0x0 goto 1b;"
-        "exit;"
-        ::: __clobber_all);
-  }
 
-And corresponding verifier log:
 
-  Live regs before insn:
-        0: .......... (b7) r0 =3D 100
-    1   1: 0......... (7b) *(u64 *)(r10 -512) =3D r0
-    1   2: 0......... (b5) if r0 <=3D 0x0 goto pc-2
-        3: 0......... (95) exit
-  Global function syzbot_bug() doesn't return scalar. Only those are suppor=
-ted.
-  0: R1=3Dctx() R10=3Dfp0
-  ; asm volatile ( @ verifier_and.c:118
-  0: (b7) r0 =3D 100                      ; R0_w=3D100
-  1: (7b) *(u64 *)(r10 -512) =3D r0       ; R0_w=3D100 R10=3Dfp0 fp-512_w=
-=3D100
-  2: (b5) if r0 <=3D 0x0 goto pc-2
-  mark_precise: frame0: last_idx 2 first_idx 0 subseq_idx -1
-  mark_precise: frame0: regs=3Dr0 stack=3D before 1: (7b) *(u64 *)(r10 -512=
-) =3D r0
-  mark_precise: frame0: regs=3Dr0 stack=3D before 0: (b7) r0 =3D 100
-  2: R0_w=3D100
-  3: (95) exit
+> +
+> +TRACE_EVENT(max_vma_count_exceeded,
+> +
+> +	TP_PROTO(struct task_struct *task),
 
-  from 2 to 1 (speculative execution): R0_w=3Dscalar() R1=3Dctx() R10=3Dfp0=
- fp-512_w=3D100
-  1: R0_w=3Dscalar() R1=3Dctx() R10=3Dfp0 fp-512_w=3D100
-  1: (7b) *(u64 *)(r10 -512) =3D r0
-  verifier bug: scc exit: no visit info for call chain (1)
-  processed 5 insns (limit 1000000) max_states_per_insn 0 total_states 0 pe=
-ak_states 0 mark_read 0
+Why pass in the task if it's always going to be current?
 
-[...]
+> +
+> +	TP_ARGS(task),
+> +
+> +	TP_STRUCT__entry(
+> +		__string(comm,	task->comm)
+
+This could be:
+
+		__string(comm, current)
+
+But I still want to know what makes this trace event special over other
+trace events to store this, and can't it be retrieved another way,
+especially if BPF is being used to hook to it?
+
+-- Steve
+
+
+> +		__field(pid_t,	tgid)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__assign_str(comm);
+> +		__entry->tgid = task->tgid;
+> +	),
+> +
+> +	TP_printk("comm=%s tgid=%d", __get_str(comm), __entry->tgid)
+> +);
+> +
 
