@@ -1,154 +1,141 @@
-Return-Path: <linux-kernel+bounces-816491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411A5B5747C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:18:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737C3B57452
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543AD17409B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C33416EFD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23052F5327;
-	Mon, 15 Sep 2025 09:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897E72F066C;
+	Mon, 15 Sep 2025 09:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRyVghQ+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="yfmTZ+GC"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45AF2F28E6;
-	Mon, 15 Sep 2025 09:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4678B2F39AB;
+	Mon, 15 Sep 2025 09:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757927779; cv=none; b=Wm9UXi5qUgUELfIL7Lq7IJ7kMmhz3wQ+bRB2ikoejKH7G4vuocqBnfVOCS0r7xo1FhU0mMPfukqFWOQIuSl5brYwBQnyxiv0e411KvfYO4PRdmSHlnavQZzKE7dRsjvItwFjsTn1LgbtpomnRZe2GMMwrMX2HqtXw3nTBMM1eWs=
+	t=1757927686; cv=none; b=QGGSZhIUSod08niVsn+irpm/P0pxICFugJjR/lAHo8G5sGeH0Mh6eTp+f5J5wlHwygWhbnb5JexxQfzlq6D3F2zTz5eqWnY8Nnjt/r3PtyhoqIoFdqyd6Hs1+/bcZsazblTzLs+zBhFas74KbIScUFhMoVPG5WW/FVF9adEbXaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757927779; c=relaxed/simple;
-	bh=3QZLcU1sOaofImxypEEkFSCCp9uLAxUQQn/lot3lAiI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cmvsDh+z97Yr2mrxgyBXOZ+Lonov/vozP+uJUq8QRLbfF1I2ZmL2IP6SDN+jKt93NouQCuuDSxDBA5PmkmexohorSVe0/bRuEoNkZ4LUSj6oJm682KMv0zyl/wM4bPeH7QY4xV/+93So/VSLyEStv2Q48tf7bOYL5stDnuq+eLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRyVghQ+; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1757927686; c=relaxed/simple;
+	bh=oQfosn2zhfeucMRo21AsBcaF4NJayEqqcVK99eNlv3Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=HYmGHDWjEUg3pAN8+b+u+VSKT4VJ1k781RU4TIh04LE1QxAvzmmxyatWNpTt+vIxNmmj/vUMoW1nQOxmpAjBP4eMvDLA93IYpGqckaoCzGAxmp6YDGspuMlHOAUrj8dXsA2IdyZ0OX8NWgpfYHXbeBlXSpgtXq0q3ZcUsepohFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=yfmTZ+GC; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757927777; x=1789463777;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3QZLcU1sOaofImxypEEkFSCCp9uLAxUQQn/lot3lAiI=;
-  b=VRyVghQ+80Kqj/hpiWLvT8n3EdwU0xnbGFdnIqxadP4UaEu4KwRW3XXk
-   rcNkZAqFykRVeRQQ0uWCBm+qEyW2WmFXpLQ8c3HPohxYe/WLTQ+ImJwDW
-   Hy7/gN+Is3f0JwMvQQwpVwrbLx0rUA5JUO20PntiIoi9yJp77hkmwDDXT
-   NnDfdo85yVBxybHPzIONjfIpG2dQsVPujtrPhBwWNlYSnkdcvG/06GoMo
-   taUxVzljLVGbJmRcWGUTIREVtJg46mPPDbHk2uQvdfzYD9luA7m2RDQoA
-   p2B5SyvqBKQA+RBZRDgX3Qc8ZnpXxEljgySrqLu9dY/bvubjyW5u8wclH
-   g==;
-X-CSE-ConnectionGUID: euWm/HMORYiH7nBrL3JQyw==
-X-CSE-MsgGUID: G5J2omOeRbifx2X2COT3Wg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="59401376"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757927685; x=1789463685;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=oQfosn2zhfeucMRo21AsBcaF4NJayEqqcVK99eNlv3Q=;
+  b=yfmTZ+GCtWRq7+NiBWaYHtyvvnCUvlRyPTuQiUdhtssipimxx/SnsTYF
+   3jro0iKRFgovV1i47cdKrPxujvbseHGG2qpfzx+q00arhXrYuIGhY2ABz
+   Zmd0qiP/9aNCp2fuOOB7z9WfxmVRuYzAdaEil77xhQeomxgwEpGJ9bI8R
+   LYci5OzPu9gq/tBR0dCWOvqeQ3WGTaMks5P3K4Dwkj2aM0UT9IhogRPQl
+   sOH0B8ncSzzSRUM/psCHP9dyiVkaExxATvbhzRnr582kqH0KVkTpNXjdI
+   bxS+PZjf88pJ5u4blX8PWc2seJ4aHNUtAwALbVrqw31YkITfKx5jBiUtu
+   w==;
+X-CSE-ConnectionGUID: tqZ4GQ/vQ0a7gKvyioyWTQ==
+X-CSE-MsgGUID: yueklx7FSNKUzjdwWJszSQ==
 X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="59401376"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 02:16:17 -0700
-X-CSE-ConnectionGUID: Qd5TG6JaS9iw3UGWoNdylA==
-X-CSE-MsgGUID: VTXSdWOPQ4G7D6CGu0QLYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="175364122"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.39])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 02:16:09 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	David Airlie <airlied@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	"Michael J . Ruhl" <mjruhl@habana.ai>,
-	linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v2 09/11] drm/xe/vram: Use pci_rebar_get_max_size()
-Date: Mon, 15 Sep 2025 12:13:56 +0300
-Message-Id: <20250915091358.9203-10-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
-References: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
+   d="scan'208";a="213891748"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 02:14:44 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 15 Sep 2025 02:14:05 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 15 Sep 2025 02:14:00 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Date: Mon, 15 Sep 2025 14:43:57 +0530
+Subject: [PATCH] ARM: dts: microchip: sam9x7: Add qspi controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250915-sam9x7-qspi-dtsi-v1-1-1cc9adba7573@microchip.com>
+X-B4-Tracking: v=1; b=H4sIANTYx2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0NT3eLEXMsKc93C4oJM3ZSS4kzdRBMLExMjM7MkQ/MUJaC2gqLUtMw
+ KsJHRsbW1AFznxiViAAAA
+To: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Dharma Balasubiramani
+	<dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757927640; l=1714;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=oQfosn2zhfeucMRo21AsBcaF4NJayEqqcVK99eNlv3Q=;
+ b=NYixYiS+TI4iR/32pLdtnHSaO90FMDfIhQphSIsup9JZeqYuVvcOVQ4HJloezNJMWSIWKn/YG
+ V/cPI3tieG8BmN4OsemoTkAxFVsn8EFDZGm90qTbgDFlsyngVVkki58
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-Use pci_rebar_get_max_size() from PCI core in resize_vram_bar() to
-simplify code.
+Add support for QSPI controller.
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Acked-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
 ---
- drivers/gpu/drm/xe/xe_vram.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Driver and Doc support
+https://lore.kernel.org/lkml/20250908-microchip-qspi-v2-0-8f3d69fdd5c9@microchip.com/
+---
+ arch/arm/boot/dts/microchip/sam9x7.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/gpu/drm/xe/xe_vram.c b/drivers/gpu/drm/xe/xe_vram.c
-index d4fbd7f74255..ca02744fb369 100644
---- a/drivers/gpu/drm/xe/xe_vram.c
-+++ b/drivers/gpu/drm/xe/xe_vram.c
-@@ -54,16 +54,11 @@ static void resize_vram_bar(struct xe_device *xe)
- 	resource_size_t current_size;
- 	resource_size_t rebar_size;
- 	struct resource *root_res;
--	u32 bar_size_mask;
-+	int max_size, i;
- 	u32 pci_cmd;
--	int i;
+diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+index 66c07e642c3e..46dacbbd201d 100644
+--- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
++++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
+@@ -271,6 +271,27 @@ AT91_XDMAC_DT_PERID(38))>,
+ 			status = "disabled";
+ 		};
  
- 	/* gather some relevant info */
- 	current_size = pci_resource_len(pdev, LMEM_BAR);
--	bar_size_mask = pci_rebar_get_possible_sizes(pdev, LMEM_BAR);
--
--	if (!bar_size_mask)
--		return;
- 
- 	if (force_vram_bar_size < 0)
- 		return;
-@@ -77,7 +72,8 @@ static void resize_vram_bar(struct xe_device *xe)
- 			drm_info(&xe->drm,
- 				 "Requested size: %lluMiB is not supported by rebar sizes: 0x%x. Leaving default: %lluMiB\n",
- 				 (u64)pci_rebar_size_to_bytes(rebar_size) >> 20,
--				 bar_size_mask, (u64)current_size >> 20);
-+				 pci_rebar_get_possible_sizes(pdev, LMEM_BAR),
-+				 (u64)current_size >> 20);
- 			return;
- 		}
- 
-@@ -85,7 +81,10 @@ static void resize_vram_bar(struct xe_device *xe)
- 		if (rebar_size == current_size)
- 			return;
- 	} else {
--		rebar_size = pci_rebar_size_to_bytes(__fls(bar_size_mask));
-+		max_size = pci_rebar_get_max_size(pdev, LMEM_BAR);
-+		if (max_size < 0)
-+			return;
-+		rebar_size = pci_rebar_size_to_bytes(max_size);
- 
- 		/* only resize if larger than current */
- 		if (rebar_size <= current_size)
++		qspi: spi@f0014000 {
++			compatible = "microchip,sam9x7-ospi";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0xf0014000 0x100>, <0x60000000 0x20000000>;
++			reg-names = "qspi_base", "qspi_mmap";
++			interrupts = <35 IRQ_TYPE_LEVEL_HIGH 7>;
++			dmas = <&dma0
++				(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++				AT91_XDMAC_DT_PERID(26))>,
++				<&dma0
++				(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++				AT91_XDMAC_DT_PERID(27))>;
++			dma-names = "tx", "rx";
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 35>, <&pmc PMC_TYPE_GCK 35>;
++			clock-names = "pclk", "gclk";
++			assigned-clocks = <&pmc PMC_TYPE_GCK 35>;
++			assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_PLLADIV2>;
++			status = "disabled";
++		};
++
+ 		i2s: i2s@f001c000 {
+ 			compatible = "microchip,sam9x7-i2smcc", "microchip,sam9x60-i2smcc";
+ 			reg = <0xf001c000 0x100>;
+
+---
+base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+change-id: 20250915-sam9x7-qspi-dtsi-a4844266b17d
+
+Best regards,
 -- 
-2.39.5
+Dharma Balasubiramani <dharma.b@microchip.com>
 
 
