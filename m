@@ -1,156 +1,287 @@
-Return-Path: <linux-kernel+bounces-817439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D155B58231
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:35:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AE0B58230
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46FF47AB45D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB84A7A9EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2364A27877D;
-	Mon, 15 Sep 2025 16:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BDE279DBA;
+	Mon, 15 Sep 2025 16:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrUNDXkf"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k0zz2Jp0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9432C181
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B64279359;
+	Mon, 15 Sep 2025 16:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757954135; cv=none; b=m9vlaW1COhcFGnqQz4yjvRvhCsFIczFANiBMLPHlv1Gjv3Hlhvp3Cwx4oKBEyXKfGA/lVvSjM+/gxSwchgZU9kJ1LL/D9BGmK2mWHEKj3rsfOalQtTe7hO2POaNeexcIh2up4zvk2OObCg+s9QROJuqGMtDT0tV2STKuUV7kBCE=
+	t=1757954111; cv=none; b=lQu4IlZl/FEreitC+LFVRwX39LrRqqC2cVYuR84TQyBaiKSbceBsm5Vepw0nQjQh+UkrbBGmZQ8VvbDuwpNpRgdJPh7z2APoihEs4xVjWIwo5fhWPG54yWQVINgmxbaKFNuP/KJjcitWbqqz4dFR/8OCzidCZEjMXY7bmYNa05Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757954135; c=relaxed/simple;
-	bh=RSowVsNl4N7b4FPmTKveKQTcAcSzfTApfhJeIzxm5R0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nYjQzEMpxduJjsw+cVj9ESNDFjIc8h8pZD9OEOmw0fTD99oAToOw1QxJTSTEIQ2ZPeX2BaLi6E1Noz+SzMJK6W3/P2i3tCjf9kBop7oWUkPwMgc9cukRo+yW7Oflcrbx+gZa2b1QQc+KzOP5cGhC+YJ4uaORInYhlrHn0Aq/fZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrUNDXkf; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so323493a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757954132; x=1758558932; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kaS+4e9CD9qq/qcfYA/NkZS+Q4I1Jtxyn3M0VBK+Z8M=;
-        b=YrUNDXkfKC366UsvjM/z5RPUeZub0UmAOdDoJPFnhP0m0M7rxTEbFyakZGB/MO+blZ
-         xFAEBwcLfK9J/gtLj/B3oR12+lQW0fglfVqNXNcMFYXBaH2yM5FuyFKCouHa3J3cDhSe
-         piSJibqmrOpv3naZlNAfZVSRJ+yJSj/uabh2Xa/zuzUzlN/lQpnPudx9vSjdpuRQlKKk
-         +RSQGt1ZXUzHyUt7iiqgqsDzcXHA6YMJWMT9GzVhL2qcoxYtEM97H4T62tU50xqPBSuB
-         r+JGAw5YTwaggTX+oEpNqsjtMgvcd1jcZggA5X4MQxkKlED73xKf3FE69tIydERDjHo1
-         GfqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757954132; x=1758558932;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kaS+4e9CD9qq/qcfYA/NkZS+Q4I1Jtxyn3M0VBK+Z8M=;
-        b=hI8GMbeid8dZBUCYq9kBoRv+rhhI/qVJhP1DGM8+m02zNIE9HWH9bRqerkRoloujzj
-         bGhcrHEbQ3X9knyYrdSXTf3t+2DIYv0MKQyC8XQxnlabyYgx/d747mU7jkMRFkPSoCV0
-         VBWgA//6OqLfv/RiOAf8fsUHbsl0obVWkB62CMfZhUm7iKkOEFYPhqUppWqwskZq9Bli
-         m+1p3Gry3n94MsaWIheDuaem8iFpC5BtsqRBdnZKuCgx1EnpPTOTmX5WkzRat+jY80XK
-         O2xMdLHO1QnrU12BKeS//YxHYgs0o0w+KOybJj2cSCvqCMoWY6WIyHmdvYhsJvEfSwQ6
-         W+EA==
-X-Forwarded-Encrypted: i=1; AJvYcCXB2CLNLGDJet8XddbfdBsbBSa7cNv99htTkuGBgCcjRUpMNef9gG4/HZM09u747uODE0y6oS0UczPQ7bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9dv1L5KFwDufqHy14QzuH5/lv0xPBoWIWV/fd0R8h0MnSNF8o
-	IWdGhv3gHXXOq341GGASIlEblc0O3gKWiS1h98NpVqiMKZtgVPuGLLjAM1CVeg1Z2nHPIpnfPVF
-	0ssHfS2pJ1rg9nXWd7gNe4aFKS5PzKv8=
-X-Gm-Gg: ASbGncsaNRqvpnug2ZnKH+laludHwjoPFmaXU6pqRuRoIeztFoW7l5GRyudGu2TrNj1
-	uWXbt6t7tIgY8MPz5+9SStOp4xq4rdoHN7RpuwKsp5AXpSBW1vk1gYvFEgqBYAH6KUaBsM5RBtc
-	npOGvUybIJ/S7pJhOoHpx8w/vPGjTJOd4UC8kqkT1wZneHZ8wWabN5Q+R9hp3wBn+Y/jvyPR6J9
-	M10NAmpLzuDkEenJVPalg==
-X-Google-Smtp-Source: AGHT+IHVXEBwPC51SnFdwQUYw9y7HhXwNvoyENyaB1Bz3o6IJeGXsQsiMQQNhelK9xiWwWQe8BzplsMVrUd6qgL2l6M=
-X-Received: by 2002:a05:6402:1e93:b0:62e:dd2b:b700 with SMTP id
- 4fb4d7f45d1cf-62edd2bb931mr11812400a12.2.1757954131625; Mon, 15 Sep 2025
- 09:35:31 -0700 (PDT)
+	s=arc-20240116; t=1757954111; c=relaxed/simple;
+	bh=379MXxVX0CY81GJIFx/jgRPRbnaC6b2v+kI5DOyRhAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+YYn+bN3sWvleJMPDg+CUOSgC11dORs1PD9fGjuQsYzWcMG1sfrAvQBwOJl+bzWUCZyiMdYAXaPBB21lrNa5UyTocSYzU6gobJzX+a7xkX4nFhWE/E75AxvkiOqy6rAgd6HjIhURH+phPSnWXISYzaiadcKX8Zap2yzz0gs1Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k0zz2Jp0; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757954109; x=1789490109;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=379MXxVX0CY81GJIFx/jgRPRbnaC6b2v+kI5DOyRhAU=;
+  b=k0zz2Jp0gZjBouXY10vlHOYIsOHKOSpsaxzyHZ24piDgR9PShAVkq9nM
+   jn1kAU+9q3vCLpevB0RrpGrdBhQUd3tMlwyp0qT9uGVZJIdHdZeEGQE5C
+   oHLjD78YvS6w46d2Aq8beO9UpgwHb3oHSFrf7s5dvHHj1MvxRLNZkVjdB
+   3Me1ZSq6S6NaHjkcJrD16+M3cgYr84AQjip+MVezi6r5dMS82vwkMZZ7N
+   p4VRdF4EjaFLHRTN7/uLCwBiKVIFP2dXfMBwffKHZCMOwozfRL0FqpwnU
+   stwsQZYzjwxQFMBcJL9Fw+KLs2J9XdSE2kUzPKk+kL20WU+2RbKb4T/CD
+   Q==;
+X-CSE-ConnectionGUID: Mn9BSvs5QD+qccqYBbduWg==
+X-CSE-MsgGUID: m99XZF15Sc+c5ayMiXCEUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="62850530"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="62850530"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:35:09 -0700
+X-CSE-ConnectionGUID: ozMxnKSnQNOpuROb4JRy+w==
+X-CSE-MsgGUID: XatX7gQQRIOfePPtYR0Qxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="173822208"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.129]) ([10.125.111.129])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:35:08 -0700
+Message-ID: <ce199a30-b898-45c6-9122-db1b25ffd98a@intel.com>
+Date: Mon, 15 Sep 2025 09:35:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-6-ryncsn@gmail.com>
- <CACePvbX4juhR5jry0Bi202qo=nfFVZkztHzo8KxKMW_yKBseyA@mail.gmail.com>
-In-Reply-To: <CACePvbX4juhR5jry0Bi202qo=nfFVZkztHzo8KxKMW_yKBseyA@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 16 Sep 2025 00:34:55 +0800
-X-Gm-Features: AS18NWDf-XutQXVyGUmemggoHy9lplrAX8RvyMvG0-69Mvw2smNEDJTjC4BRwgY
-Message-ID: <CAMgjq7Cddet5BQorsc5gaLbNKJrZhCwi5qifpHz=sd6gb9dQ8g@mail.gmail.com>
-Subject: Re: [PATCH v3 05/15] mm, swap: always lock and check the swap cache
- folio before use
-To: Chris Li <chrisl@kernel.org>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
-	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/11] cxl/region: Implement endpoint decoder address
+ translation
+To: Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso
+ <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-9-rrichter@amd.com>
+ <20250915114614.000053f1@huawei.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250915114614.000053f1@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 11:07=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote=
-:
->
-> On Wed, Sep 10, 2025 at 9:09=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> > @@ -2004,6 +2002,13 @@ static int unuse_pte(struct vm_area_struct *vma,=
- pmd_t *pmd,
-> >         bool hwpoisoned =3D false;
-> >         int ret =3D 1;
-> >
-> > +       /*
-> > +        * If the folio is removed from swap cache by others, continue =
-to
-> > +        * unuse other PTEs. try_to_unuse may try again if we missed th=
-is one.
-> > +        */
->
-> It took me a while to figure out why we add a
-> folio_matches_swap_entry() check here but we don't have an existing
-> check for folio swap entry matching in this function. Can you confirm
-> that if a race has happened causing the folio swap entry mismatch,
-> then try_to_usue() MUST try again rather than "may" try again. It
-> seems to me that it is a MUST rather than "may". I am curious in what
-> condition the mismatch happens and the try_to_unuse() does not need to
-> try again.
 
-It depends, I think it may, because: for example here we are unusing
-folio A with entry S1, and a raced process just swapin folio A then
-remove it from swap cache. If the raced process didn't swapout the PTE
-again, then there is no need to retry as we are dong with this PTE.
 
-There are many races, someone else swapped out folio A again using S2.
-Then here we will see a !folio_matches_swap_entry. And that's OK.
+On 9/15/25 3:46 AM, Jonathan Cameron wrote:
+> On Fri, 12 Sep 2025 16:45:10 +0200
+> Robert Richter <rrichter@amd.com> wrote:
+> 
+>> Systems that need address translation have the endpoint decoders
+>> programmed for a different address space. Host physical addresses
+>> (HPA) are different from their system physical addresses (SPA). The
+>> decoder's address range and interleaving configuration of such
+>> endpoints cannot be used to determine the region parameters. The
+>> region's address range must be SPA which the decoder does not
+>> provide. In addition, an endpoint's incoming HPA is already converted
+>> to the devices physical address (DPA). Thus it has interleaving
+>> disabled.
+>>
+>> Address translation may provide different ways to determine an
+>> endpoint's SPA, e.g. it may support a firmware call. This allows the
+>> determination of the region's parameters without inspecting the
+>> endpoint decoders.
+>>
+>> Implement the setup of address translation given there is a function
+>> to convert an endpoint's HPA (which is identical to its DPA) to an
+>> SPA. Use the previously introduced cxl_to_hpa_fn callback for this.
+>> Convert the decoder's address range and ensure it is 256MB aligned.
+>>
+>> Identify the region's interleaving ways by inspecting the address
+>> ranges. Also determine the interleaving granularity using the address
+>> translation callback. Note that the position of the chunk from one
+>> interleaving block to the next may vary and thus cannot be considered
+>> constant. Address offsets larger than the interleaving block size
+>> cannot be used to calculate the granularity. Thus, probe the
+>> granularity using address translation for various HPAs in the same
+>> interleaving block.
+>>
+>> Note that this patch does not yet enable address translation as
+>> callbacks have not been initialized.
+>>
+>> Signed-off-by: Robert Richter <rrichter@amd.com>
+>> ---
+>>  drivers/cxl/core/region.c | 95 ++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 94 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 57697504410b..9fb1e9508213 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -3422,16 +3422,109 @@ struct cxl_region_context {
+>>  	int interleave_granularity;
+>>  };
+>>  
+>> +static int setup_address_translation(struct cxl_endpoint_decoder *cxled,
+>> +				     struct cxl_region_context *ctx)
+>> +{
+>> +	struct cxl_port *port = to_cxl_port(cxled->cxld.dev.parent->parent);
+> 
+> When there is a parent->parent it always makes me nervous that I haven't
+> reasoned out what port this actually is. A comment would help or
+> a more specific macro where the name lets us know what we are getting.
 
-But there have been many other subtle race conditions in other places,
-e.g. another folio occupied the same PTE and got swapped out using S1,
-causing PTE =3D=3D S1 and here got a wrong folio A installed. This isn't
-happening here, because we have removed the !SWP_WRITEOK flag from the
-si during swapoff...
+I was also going to suggest that name 'port' to 'parent_port' as well to make it clear what it is.
 
-It's really complex and fragile, so just make it easier, check
-folio_matches_swap_entry and abort early, is safer and follows the
-convention.
+DJ
 
-> BTW, this function has three types of return value, 1, 0, and negative
-> for error. The 0 and 1 are ignored by the caller, the caller only
-> cares about the negative value. Overall this unuse_pte() and
-> try_to_unuse() walk feels complicated and maybe a candidate for later
-> clean up. That is not your patch's fault. I am not requesting a
-> cleanup in this series.
+> 
+>> +	struct cxl_decoder *cxld = &cxled->cxld;
+>> +	struct range range = ctx->hpa_range;
+>> +	u64 spa_len, len = range_len(&range);
+>> +	u64 addr, base = range.start;
+>> +	int ways, gran;
+>> +
+>> +	if (!len || !port->to_hpa)
+>> +		return 0;
+>> +
+>> +	if (!IS_ALIGNED(range.start, SZ_256M) ||
+>> +	    !IS_ALIGNED(range.end + 1, SZ_256M)) {
+>> +		dev_warn(&port->dev,
+>> +			"CXL address translation: Unaligned decoder HPA range: %#llx-%#llx(%s)\n",
+>> +			range.start, range.end, dev_name(&cxld->dev));
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	/* Translate HPA range to SPA. */
+>> +	range.start = port->to_hpa(cxld, range.start);
+> 
+> This is where the generic naming as 'range' gets really confusing.
+> hpa_range etc with separate struct range for each would definitely help
+> 
+> For the checks and inputs maybe just use ctx->hpa_range directly.
+> 
+> 
+>> +	range.end = port->to_hpa(cxld, range.end);
+> Perhaps use the DEFINE_RANGE macro or 
+> 	range = (struct range) {
+> 		.start = ...
+> style as per earlier patches.
+> 
+>> +
+>> +	if (range.start == ULLONG_MAX || range.end == ULLONG_MAX) {
+>> +		dev_warn(&port->dev,
+>> +			"CXL address translation: Failed to translate HPA range: %#llx-%#llx:%#llx-%#llx(%s)\n",
+>> +			range.start, range.end, ctx->hpa_range.start,
+>> +			ctx->hpa_range.end, dev_name(&cxld->dev));
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Since translated addresses include the interleaving
+>> +	 * offsets, align the range to 256 MB.
+> 
+> So we pass in an HPA range without interleaving offsets and get back
+> one with them?  Is that unavoidable, or can we potentially push
+> this bit into the callback?  Probably with separate callbacks to
+> get the interleave details.
+> 
+> Overall I'm not really following what is going on here.  Maybe
+> some ascii art would help?
+> 
+>> +	 */
+>> +	range.start = ALIGN_DOWN(range.start, SZ_256M);
+>> +	range.end = ALIGN(range.end, SZ_256M) - 1;
+>> +
+>> +	spa_len = range_len(&range);
+>> +	if (!len || !spa_len || spa_len % len) {
+>> +		dev_warn(&port->dev,
+>> +			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
+>> +			range.start, range.end, ctx->hpa_range.start,
+>> +			ctx->hpa_range.end, dev_name(&cxld->dev));
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	ways = spa_len / len;
+>> +	gran = SZ_256;
+>> +
+>> +	/*
+>> +	 * Determine interleave granularity
+>> +	 *
+>> +	 * Note: The position of the chunk from one interleaving block
+>> +	 * to the next may vary and thus cannot be considered
+>> +	 * constant. Address offsets larger than the interleaving
+>> +	 * block size cannot be used to calculate the granularity.
+>> +	 */
+>> +	while (ways > 1 && gran <= SZ_16M) {
+>> +		addr = port->to_hpa(cxld, base + gran);
+>> +		if (addr != base + gran)
+>> +			break;
+>> +		gran <<= 1;
+>> +	}
+>> +
+>> +	if (gran > SZ_16M) {
+>> +		dev_warn(&port->dev,
+>> +			"CXL address translation: Cannot determine granularity: %#llx-%#llx:%#llx-%#llx(%s)\n",
+>> +			range.start, range.end, ctx->hpa_range.start,
+>> +			ctx->hpa_range.end, dev_name(&cxld->dev));
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	ctx->hpa_range = range;
+>> +	ctx->interleave_ways = ways;
+>> +	ctx->interleave_granularity = gran;
+>> +
+>> +	dev_dbg(&cxld->dev,
+>> +		"address mapping found for %s (hpa -> spa): %#llx+%#llx -> %#llx+%#llx ways:%d granularity:%d\n",
+>> +		dev_name(ctx->cxlmd->dev.parent), base, len, range.start,
+>> +		spa_len, ways, gran);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int setup_region_params(struct cxl_endpoint_decoder *cxled,
+>>  			       struct cxl_region_context *ctx)
+>>  {
+>> +	int rc;
+>> +
+>>  	ctx->cxled = cxled;
+>>  	ctx->cxlmd = cxled_to_memdev(cxled);
+>>  	ctx->hpa_range = cxled->cxld.hpa_range;
+>>  	ctx->interleave_ways = cxled->cxld.interleave_ways;
+>>  	ctx->interleave_granularity = cxled->cxld.interleave_granularity;
+>>  
+>> -	return 0;
+>> +	rc = setup_address_translation(cxled, ctx);
+> 
+> A quick search suggested nothing new gets added after this. As such
+> 	return setup_address_translation(...);
+> is probably appropriate here.
+> 
+> 
+>> +	if (rc)
+>> +		return rc;
+>> +
+>> +	return rc;
+>>  }
+>>  
+>>  static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
+> 
+> 
 
-Right, totally agree, we can cleanup the swapoff part later.
-
-> With that Nitpick,
->
-> Acked-by: Chris Li <chrisl@kernel.org>
-
-Thanks!
 
