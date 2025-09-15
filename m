@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-817830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9E2B58735
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:13:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03524B58738
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA151AA8650
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66B84C3199
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB6F2C0F7B;
-	Mon, 15 Sep 2025 22:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8EC2C0F64;
+	Mon, 15 Sep 2025 22:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zh+fRe+Y"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSWRXPLD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30D02C0285
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB012C0273;
+	Mon, 15 Sep 2025 22:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757974376; cv=none; b=CLOzKdS+T2qISRN6pTaMKdg1MjgD5iGDpV6cvUfj4yB1IBpH39rA27J33yMXeH5rsRx0103lxY20PbGfuVsXNhQBM34GMrJc2SgS3oRDBwJtaT+ro0Aa8/QRNvmqJuYPlhIGtq4Sp/Rg0sYigAd3yF4Qaut5rL9hfa+AwIrPmwk=
+	t=1757974391; cv=none; b=aZF3XFZ1SP06B8O5q2C58lRV/fgLt2JydlU5jlpWbtNwQTnNakwXQJxqa4um2y4Gs7qm1b/53Tpy0ndM3tHRVBJdMEhCxyH49UW9irGtKsuEXSyJ4hGlhOu7rCCEcc8jrjuVZheOhEjKxvlgJ8E9oNrfGTSaluz8nWdWbP7f9Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757974376; c=relaxed/simple;
-	bh=DVlri7iCY4MppHBj5wNw7dj3I14e1CKN3HUDI+4tCxc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=arsKpb3nxthKcCyBTBPVob4IKCNZizohvhmp4xuGvyG7JeJDfVd6mm0qY5i74oPitLBola6+J6MGFkv1cItuS09UGSJIdOT+wLkN1I81t2RZv93mbHJokLTajCGje6fY7XobF45gIgNlhfWjK5Ces++1LljAA9SKcp/IoThlc1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zh+fRe+Y; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2675d9ad876so15907735ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757974374; x=1758579174; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=j87FXg7tFCRagVDld0PEyw37R7wt3rGw/96+RjwDdpc=;
-        b=zh+fRe+YJX/Bb+/CxIxM+9MJ78BDesrkz23xE1ox02Wng9oGIrxafdZbpv9yRevap+
-         ERjJBuTZbMRcGrmSoFiGlfkh2hwrfqmoA6o5qiGIp88zuCITmV0m9L0YUusRtzvK8dsd
-         ypnfa+zZDGv+wTK7yOL26v6N+53S8SXh7HUR/OkzbVtcWIPiwxhcULXCGuk6QeqmNxEy
-         I/txx3ltug6suifUM49ZK0DbwVREfweSzABoiSDPR24Fo0V9VojXxHE/dEkGox2gF3+W
-         8WCzP/kwFoEA7AnRHYf3fscIAxY8hUdul9H/N3lyDAYargDQewMFlsZhwcK1e+pJWzVd
-         rUGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757974374; x=1758579174;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j87FXg7tFCRagVDld0PEyw37R7wt3rGw/96+RjwDdpc=;
-        b=QFMVFZMXVCoPYQkdrt2TNieHxa++eV5sX0pNLVVVNvPnK1MtyLTcj2zaD667+QXgjD
-         4CnjpJohCxYrx3fIeMX+nIiKre8R0DvBbwd1u7fSYhlE6bFu70WPaDdeIn60bSgr2TT/
-         ehdZmtM4/vd7Zqq4VuKE/vjy1v76wzBSswHQgyrNVr1zOrQpwZPk9wsIuc5cemPZUW5L
-         mUNUTkSb+OHckE3sSdSoWXl1WU1+k4owjScjU0+7ZpKgVOTO1mkeK+Jr3ih4kV/ZNFSg
-         CMy8Jcg3exeQKFOlheSbJwNA2kdHc6rF3/zE0/k9Wp2eb+vVkucL+ZGhIAyuMfovh3Pm
-         itkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYP5Ra/s/ShvVzsmrg7O0JS5t+lANft0XaFcKGAc86LIqrRploKrWsRZBOzZR+R2qIe/pBbOJIt/EQC1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjgxY+PUWylR8zpzo0WJ+PllDNSzBIILtiCRyY4YMHvNYluhS6
-	9IsCmg+oByCw8F1/C8o3tR88UWNOF6ENE50bD9InBk7Q9pf9zXkfLt7Am8dXk5ogkcwlthyvcPR
-	G3I8AFXWmtkRgvw==
-X-Google-Smtp-Source: AGHT+IFESkUZb/k54fYGaZPTJJrL+f2Yr5vCiqX3z2w9zyP+DcCmdgG7J/85fpkmx6lSHtDQasSIhXCTc2ZlIA==
-X-Received: from plbme6.prod.google.com ([2002:a17:902:fc46:b0:24b:14e1:af48])
- (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:2ac6:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-25d25a72d8dmr182399555ad.18.1757974374029;
- Mon, 15 Sep 2025 15:12:54 -0700 (PDT)
-Date: Mon, 15 Sep 2025 22:12:47 +0000
+	s=arc-20240116; t=1757974391; c=relaxed/simple;
+	bh=QUw8qBq5X0fJdlqKntgs6fN2g/4Qxw5qdh9m2/Ep6BM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NEpcS+2jb2dqAjHir+rt6iQRkdfODk0OTJmNh53zNnCeNRjq71icwalNlV45gVPSNAcxVjAzIAmdGMTH40K5G1FZEqAYMeTEIKcLoWZxSZlisnhosbADveViPJvdY6o5o8CnrDk5wcOcnTm5V1aI41wIfEKpOTP77X1hpf0ukK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSWRXPLD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA86C4CEF1;
+	Mon, 15 Sep 2025 22:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757974390;
+	bh=QUw8qBq5X0fJdlqKntgs6fN2g/4Qxw5qdh9m2/Ep6BM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JSWRXPLDGxr4Nag3XMwU5IgABMWQ7r3VMzwsiOE256EC906LR3lpLbUlEInpzXfDT
+	 6bG4kIGDKOFxgWxtS+ieUyxjLGpcmZwgqpcu4UMkPD80dHgGyKUB67PatK0aW2Mtb5
+	 RQh3GNF7KIKisRQf+cndYbhNjjSc7laYOmlH+/onaDTOEtGhWxgjU+zfPy9eEW4/DQ
+	 QiSprAdhtyK2n1Le1Jy82edYTIwpaq105hrt+cw3aKNACYYCmBJTTAgS5tFdTpsACi
+	 L8ghJPXud9E2B0ZE+KBOyhFMjOYciKhN912cvNeFD1tio/eQvwE7E/Ykl/cWM6fwsc
+	 UfbeQaN6BsBzQ==
+Date: Mon, 15 Sep 2025 23:13:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Wolfram Sang <wsa@kernel.org>, Akhil R <akhilrajeev@nvidia.com>,
+	Kartik Rajput <kkartik@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: linux-next: manual merge of the i2c tree with the arm-soc tree
+Message-ID: <e70f4454-d0f5-4b3e-9751-730781f056f9@sirena.org.uk>
+References: <aMhR9TJm5V5EqaoC@sirena.org.uk>
+ <aMh_eKWqkuLODo2r@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250915221248.3470154-1-cmllamas@google.com>
-Subject: [PATCH] binder: fix double-free in dbitmap
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Alice Ryhl <aliceryhl@google.com>
-Cc: kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Tiffany Yang <ynaffit@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SVHMJg8yH3SQbV22"
+Content-Disposition: inline
+In-Reply-To: <aMh_eKWqkuLODo2r@shikoro>
+X-Cookie: Use a pun, go to jail.
 
-A process might fail to allocate a new bitmap when trying to expand its
-proc->dmap. In that case, dbitmap_grow() fails and frees the old bitmap
-via dbitmap_free(). However, the driver calls dbitmap_free() again when
-the same process terminates, leading to a double-free error:
 
-  ==================================================================
-  BUG: KASAN: double-free in binder_proc_dec_tmpref+0x2e0/0x55c
-  Free of addr ffff00000b7c1420 by task kworker/9:1/209
+--SVHMJg8yH3SQbV22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  CPU: 9 UID: 0 PID: 209 Comm: kworker/9:1 Not tainted 6.17.0-rc6-dirty #5 PREEMPT
-  Hardware name: linux,dummy-virt (DT)
-  Workqueue: events binder_deferred_func
-  Call trace:
-   kfree+0x164/0x31c
-   binder_proc_dec_tmpref+0x2e0/0x55c
-   binder_deferred_func+0xc24/0x1120
-   process_one_work+0x520/0xba4
-  [...]
+On Mon, Sep 15, 2025 at 11:04:56PM +0200, Wolfram Sang wrote:
 
-  Allocated by task 448:
-   __kmalloc_noprof+0x178/0x3c0
-   bitmap_zalloc+0x24/0x30
-   binder_open+0x14c/0xc10
-  [...]
+> > 's linux-next merge of the i2c tree got a conflict in:
+> >=20
+> >   Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+> >=20
+> > between commit:
+> >=20
+> >   804ebc2bdcc85 ("dt-bindings: i2c: nvidia,tegra20-i2c: Document Tegra2=
+64 I2C")
+> >=20
+> > from the arm-soc tree and commit:
 
-  Freed by task 449:
-   kfree+0x184/0x31c
-   binder_inc_ref_for_node+0xb44/0xe44
-   binder_transaction+0x29b4/0x7fbc
-   binder_thread_write+0x1708/0x442c
-   binder_ioctl+0x1b50/0x2900
-  [...]
-  ==================================================================
+> ? Usually such patches go via I2C? And v6 was still under discussion? Do
+> i miss something?
 
-Fix this issue by marking proc->map NULL in dbitmap_free().
+IIRC it came into arm-soc from Tegra but ICBW there.
 
-Cc: stable@vger.kernel.org
-Fixes: 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/dbitmap.h | 1 +
- 1 file changed, 1 insertion(+)
+--SVHMJg8yH3SQbV22
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/android/dbitmap.h b/drivers/android/dbitmap.h
-index 956f1bd087d1..c7299ce8b374 100644
---- a/drivers/android/dbitmap.h
-+++ b/drivers/android/dbitmap.h
-@@ -37,6 +37,7 @@ static inline void dbitmap_free(struct dbitmap *dmap)
- {
- 	dmap->nbits = 0;
- 	kfree(dmap->map);
-+	dmap->map = NULL;
- }
- 
- /* Returns the nbits that a dbitmap can shrink to, 0 if not possible. */
--- 
-2.51.0.384.g4c02a37b29-goog
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIj3EACgkQJNaLcl1U
+h9Azlgf/XFikCn3g7A6UogjcKEU3xFVoeXmHFAraMcBe0o2bdASk/rEyTM2UVnXE
+mXV/ytChmi4wYLjXNqEFWvFn1l38nnOOX2Gx+4XUg88pINlwNGTcNF7YdkHWJhNK
+UlSLZXP3DekDTbeSbUnkhsCkJOeVmChLy/uvJthI1x5hF6nHXlXcpQxrJb361mUu
+i+U8YFl4UF9UTN9skxOYMI+Cl1HXec11Hjp5p8e16qm/HzldH/8uPH/d4kX33vEr
+Oj3/9Y6iWyt2xkF+weRdkrXlWixTNw7E2g2sFcOZnmmRCcXXcWv7lHfQlgucbrNZ
+rV7i0/86wqYlqy9cXPbclGFqC4nWNQ==
+=V+Ga
+-----END PGP SIGNATURE-----
+
+--SVHMJg8yH3SQbV22--
 
