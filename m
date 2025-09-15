@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-817663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DF0B5851F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:06:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17AAB58520
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B273203E72
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DF23B8961
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98A4283145;
-	Mon, 15 Sep 2025 19:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="nrRwng/L"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C6327F166;
+	Mon, 15 Sep 2025 19:07:46 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA65628313B
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10711E9B1C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757963179; cv=none; b=T9sHZhrlKs9NzA3HQxPWOxCHFnP0jJbpb90n6QcyQkjW/viXmFwpIlqALKt488fO+eRvQdctSnO1EoERPD+z+c6MvYupboAa1+9jbspjvtQlN4uG9j32CurMUublUOsCqSnJ8Juz75kiQunFpKsPxTJ29BMlNH1jALXVzC8NT/Q=
+	t=1757963266; cv=none; b=uyzlc4Nuxh/DhBBu2+YfQp+Nv+2j54OZQXM7cAvSRUmyNnkLI7d3F/XL3tRfDH1ufXM+3VBtQLqSgI//hNxeJd/KIiXI+puAJgrXXwxwOvaRGZmoCSKDpbl8SgIT+1Ihag1BBLhGQN3qE06I/ybjL0UwV8hBIDEPuPuG5X30QnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757963179; c=relaxed/simple;
-	bh=0iX5b+RQ4FVD35w9Laahyqwkc7xvtaE529Fi4r78dAg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z3n4zLPrjzN047fkG9oB8pwho3xZgQw6KywfUgHoT7e9HvvrTs+nPct7aoSTf6ZsiYaatu8G4A3b3djzbj1cVOLDhvhw8xUnw/UlpCRlcgv6cDeuY2b7NLQ7+qmkqxfGqhgLkpy3FZuyPMqS5DkRxiEDFdtThbdz2BMK6G5HQ+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=nrRwng/L; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-88428b19ea9so149060139f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:06:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757963177; x=1758567977; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=605eAfcsvQtf5UG6Wl88Awayl0fUHXFSSCuYXHba67A=;
-        b=nrRwng/L8Z2vSfiYeLSYJxBdR+wVkW/0oTqd/SyGoF83t8fa/way5PifEz429A4PLJ
-         veqR2pmKasc/8HYrUs01AkHD/DPSt533K6zaKw3gw84t3CGSideqCgVH1MtYa9z2FkAr
-         KXSj6/TNe59gxCsfRSFUhuHq8GDH5+ngyZnyLX9xR9eBcZ1v/wwOZQDSvoYRrQYC1tIg
-         vnTMw28M75eKvKqweVS8vA9ck07CFo9Sma/DuQcdQ4N07jZHLZ2qiVaKNVOyXh2SEquw
-         eRJyGTWPUPZQB1Ci8JUUjvFtEXzRTmJcgQeRJBNpB5GhheYVMPkXzmUz4OPu2kYh/+Ej
-         voYg==
+	s=arc-20240116; t=1757963266; c=relaxed/simple;
+	bh=2aBAK15ip3O5OLmQKzZk+8W48e2KI5m7FWxIRoHVReg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=mbEW8KdfieeYv57fWAacByeOb5Y4zriJctfLnvOtGp9VwrDJXOJpLmcKSZRajBZ8r9xHgbKtrUPEsRCLskOYWQXaztd1Hv4BO9Irz/IVYVivPgvHWFOPOxhlLBxyeqOE8fum5WSKWb52cKHeMJzOx4+xHCDsjmzf401iOy8n98Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8875a8663d0so471804039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:07:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757963177; x=1758567977;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=605eAfcsvQtf5UG6Wl88Awayl0fUHXFSSCuYXHba67A=;
-        b=UfYAaEpC/5irg6OVvcJTdBbQSDYBEwlH+eWFlVbDdAciA6iX/dqgW39jip44lyd2fv
-         2KvgnJi5at3cUbspv3NaAG5B5n5oY1aEBffz5AtTcEFlsdyos7zgF35org0MWBCL/67H
-         rXOvy4Nw4AXkqXEXiahCVZXWN/jjCcqau9blqn2UHJFWvKcksW1uPjmYuRINNVxB2tTA
-         gQ+qdtUUZtp7NCATxr2DC0H4uFN+nT1OBeMOe91oGyKJkLSlFrVGz2UsdMnOrCGSvJo8
-         XhS7GqKlj3JZIEAXJQL6mXYOhFH7WQxEQ0szY5LsJ5Wiqp3/Vd04ziWHKU1TzlRE/7Kd
-         0C5A==
-X-Gm-Message-State: AOJu0Yzs9J/p6gUNrerLKLVOd23H6sYjLa8FI/SmRy+iB4DtcxGg0aVt
-	qOkLowu76QjNmth7695yle5s3TvRbEow1VmlctTaVgAU/KSUVdN2gFK3dJVhoImtXYwd0+jINlB
-	DL8/f
-X-Gm-Gg: ASbGncvzcClxq6p4JlQuvg1lfU3v3HBI807ta+nthFZ0eXSydmK+6ABxLKVyXU7B+NZ
-	f0dZ0WVZd9wQKsWQTAQI510H5uanIv5hDoGn1aPpZVidTWNMgAp4Rb/yUi3fnGDaZ+sAgAFdvFX
-	Q5cvZLokT8JUFpgjlf9lGKnAmUMld/jLSKqwzBK0aKMNMAejJ0UvBXJ5EU0SbpBX2YHR7hbBD9l
-	5aUQMOk1SEYO0ZpcqJm03hWCy184yv+WbDbVPlUJq0eQ3KiA4yZ6bl5uM0QrFlE9Vd8Ny8z6SnB
-	JJTJoCzPNHoALSv1N0xhgrhQjMlWplle1w+PPy0ar949rzkqvY/356PkFQRL5Bcfr26V2Ettao+
-	uw0KETtXSqHg7Vw==
-X-Google-Smtp-Source: AGHT+IEf1HsAMEBW077DlyavSFZ5TnC0Pthsp1POX7u07ToTT+gA1ImLyl8ajqpBQimicV7MfZVDzg==
-X-Received: by 2002:a92:cd89:0:b0:424:86d:7bb9 with SMTP id e9e14a558f8ab-424086d7e93mr30986755ab.0.1757963176759;
-        Mon, 15 Sep 2025 12:06:16 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-41deede6d15sm62947995ab.7.2025.09.15.12.06.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 12:06:16 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
- io-uring Mailing List <io-uring@vger.kernel.org>, 
- Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>, 
- Bart Van Assche <bvanassche@acm.org>, dr.xiaosa@gmail.com
-In-Reply-To: <20250913162540.77167-1-ammarfaizi2@gnuweeb.org>
-References: <20250913162540.77167-1-ammarfaizi2@gnuweeb.org>
-Subject: Re: [PATCH liburing] liburing.h: Support C++20 module export
- feature
-Message-Id: <175796317609.265653.2867794592544924823.b4-ty@kernel.dk>
-Date: Mon, 15 Sep 2025 13:06:16 -0600
+        d=1e100.net; s=20230601; t=1757963264; x=1758568064;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MuOIk64QYWOXQ27t1jVJjOXapS9T9UT7lZ0e3vJIKOQ=;
+        b=fllHuDDiNqEo3S7Xt0+xx15B2xynHgYaI9iM5p462fa9oky0AF+PqQ3WYRPkZSDheb
+         ZqMpwRPZ4+G/4J8hivuo7wbi80T4p0CEoxz7ztFkieQFaH6db1zmpoYSNB3YG9IxRVao
+         +i9J8m5H8ukJhh2YDR/cEZWCKO4Udt5ccB2DHSxNpZEMlenzhD64iLHXfBduztQSA5/C
+         fpjYry+CYPuYwTXZ6sUr2v76yYCohRDn4VvSeo5tMgA4dMcqTbiMJmAoqjbBMPyO0T1l
+         EfBWfh2gafXPK+dqlCDycpPoBY4H8+KP2zboTu7VnTAN/hwDrO8N9mxavT11MTPiV0Vz
+         Vtvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA1GRYFGrhvX3Lbabzz6J1HD6EXqNdHwc5k5ZKEcyY9VNxe19/bDLxL2JjQiHBc3WHzclkkhHjdnd2BlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTqn+Z/gzvrpvfzNxCpWx2OIB46peJRgWifVXVR6GVx22A2Pdw
+	cV4DlFX+SjtGsTkC0Ih+6XzGd6rVYujKrqHbiB7cfHjw4rRj86+LFMc2+CRZwcdIQqIbguEtLHz
+	Xg1canCqZ/cpnLZ1ElDxYb/sx2nMpInQS0DC2JqtgZrc1QOtH7XVU9b0R66w=
+X-Google-Smtp-Source: AGHT+IFcnTSXLGbUKH46CdN9QivF+oRfPAWztpgbJ9CSLQBB/FS1T/4FxJ5DhmxJb+X4TgYmHveyIbXZ9qIF//HTp/7f7+xrf9pR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+X-Received: by 2002:a05:6e02:214b:b0:423:fd07:d3f0 with SMTP id
+ e9e14a558f8ab-423fd07d535mr54611465ab.26.1757963264106; Mon, 15 Sep 2025
+ 12:07:44 -0700 (PDT)
+Date: Mon, 15 Sep 2025 12:07:44 -0700
+In-Reply-To: <5fb34b0f-435e-4584-abe0-bbf7839b44df@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c86400.050a0220.2ff435.03a7.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: yanjun.zhu@linux.dev
+Cc: jgg@ziepe.ca, leon@kernel.org, yanjun.zhu@linux.dev, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+> #syz test:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
 
-On Sat, 13 Sep 2025 23:25:40 +0700, Ammar Faizi wrote:
-> Having "static inline" functions in liburing header file results in
-> compilation errors when using the new C++20 module export feature:
-> 
->   In file included from src/work.cpp:3:
->   ./include/liburing.h:343:20: error: \
->     ‘void io_uring_cq_advance(io_uring*, unsigned int)’ \
->     exposes TU-local entity ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’
->     343 | IOURINGINLINE void io_uring_cq_advance(struct io_uring *ring, unsigned nr)
->         |                    ^~~~~~~~~~~~~~~~~~~
->   In file included from ./include/liburing.h:20:
->   ./include/liburing/barrier.h:42:20: note: \
->     ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’ is a \
->     specialization of TU-local template \
->     ‘template<class T> void io_uring_smp_store_release(T*, T)’
->     42 | static inline void io_uring_smp_store_release(T *p, T v)
->        |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
->   ./include/liburing/barrier.h:42:20: note: \
->     ‘template<class T> void io_uring_smp_store_release(T*, T)’ declared with internal linkage
-> 
-> [...]
+unknown command "test:https://github.com/zhuyj/linux.git"
 
-Applied, thanks!
-
-[1/1] liburing.h: Support C++20 module export feature
-      commit: 5503c2b545709e1cf8484670aa7088a827f4818d
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+>
+> On 9/12/25 3:04 PM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> WARNING in gid_table_release_one
+>>
+>> ------------[ cut here ]------------
+>> GID entry ref leak for dev syz1 index 2 ref=445
+>> WARNING: CPU: 1 PID: 1088 at drivers/infiniband/core/cache.c:809 release_gid_table drivers/infiniband/core/cache.c:806 [inline]
+>> WARNING: CPU: 1 PID: 1088 at drivers/infiniband/core/cache.c:809 gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
+>> Modules linked in:
+>> CPU: 1 UID: 0 PID: 1088 Comm: kworker/u8:5 Not tainted syzkaller #0 PREEMPT(full)
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+>> Workqueue: ib-unreg-wq ib_unregister_work
+>> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
+>> RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
+>> Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 00 46 71 8c 4c 89 e6 44 89 fa e8 3b a5 fa f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+>> RSP: 0018:ffffc90003d0f908 EFLAGS: 00010246
+>> RAX: 11007f8b953ea200 RBX: ffff88802d562cd8 RCX: ffff888026adda00
+>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+>> RBP: 1ffff11005aac59b R08: ffff8880b8724253 R09: 1ffff110170e484a
+>> R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff888028265480
+>> R13: ffff88802d562c00 R14: ffff8880779b1800 R15: 0000000000000002
+>> FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000200000000240 CR3: 000000007612e000 CR4: 00000000003526f0
+>> Call Trace:
+>>   <TASK>
+>>   ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+>>   device_release+0x99/0x1c0 drivers/base/core.c:-1
+>>   kobject_cleanup lib/kobject.c:689 [inline]
+>>   kobject_release lib/kobject.c:720 [inline]
+>>   kref_put include/linux/kref.h:65 [inline]
+>>   kobject_put+0x22b/0x480 lib/kobject.c:737
+>>   process_one_work kernel/workqueue.c:3236 [inline]
+>>   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+>>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+>>   kthread+0x70e/0x8a0 kernel/kthread.c:463
+>>   ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
+>>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>>   </TASK>
+>>
+>>
+>> Tested on:
+>>
+>> commit:         dd87fd3f RDMA/rxe: Add logs to find out the root cause
+>> git tree:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+>> console output:https://syzkaller.appspot.com/x/log.txt?x=144a9934580000
+>> kernel config:https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
+>> dashboard link:https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+>>
+>> Note: no patches were applied.
 
