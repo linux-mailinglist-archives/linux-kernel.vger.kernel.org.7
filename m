@@ -1,161 +1,241 @@
-Return-Path: <linux-kernel+bounces-816209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAED8B5710C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:18:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355D4B5710F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841E9176020
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:18:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5FC83BA566
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3244A285C88;
-	Mon, 15 Sep 2025 07:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CF12D47F3;
+	Mon, 15 Sep 2025 07:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q6aDHMK9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FDQWzIpK"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141C02D23A5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B71B2C0286
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757920710; cv=none; b=itf9QjjAo2Mp0Uajfl90pZfq/MlAmqd9s344paFQgzib7TiVEKtP9D6AgOdN7kqhVDYLCOY5mpFsFO03dfdHcOFrcyA+UdtBMkIqBpsKEhIKoh5VNcYAV/ma7JL3T0oekFSE4nz6kgYKbez+LsBYvSXb4yeoFtrabKdtYamfBM4=
+	t=1757920732; cv=none; b=Mct8fjHoiaSHQW7eXxBOapfIQOksMqqql0Rr+buHW4hFnOV3Vlxe66U5hHRWDmbyZsAgyRrlQHaoJqHvaWqWuh5Irw11eoNkPgrZEJ9Tzvew/QSS7Z+gF0kYYmKPi7oV7+jy337Hwn18ISkAzbXnvZBaFLwhjmVMKRNKbRxLbQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757920710; c=relaxed/simple;
-	bh=RfdtUEfshvy974yJPEuKYRZCnsD9sadOk5+B4IIchgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dfeJrkv6hQA1bZyQ4jzPdxziADcYVAwrc8yO7pl37Zi8qZmVc84km4lMt69uI7tz2ku89Xqhihn5ipsXF7qIP0c6PtY5+NvLCkAIjfpBXpnhaoIucAvv41WS5zbqZ5rc9117io4gdzhK1crtSdltp9T+RlsZjWGYt+Cb9JpHzIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q6aDHMK9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F7I4tR010281
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:18:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kZV267zGbAJfepcXaTiuuQWN4inCsP8FeAE5hho9iso=; b=Q6aDHMK9HuKE5Y3F
-	NIiaSHrfaGl2cAbgwa4kUr9MKGdieLygu7fdAkUMPuaeJYhtK69sw0LgzBv+MvIR
-	eisNrguxPBLtKqoBl0+09iKijldaVC3ojgS1IZurSdMXw4Ydzu0C/qrvqJZ0isCt
-	LvjqHBk/hFOi57TCxYty41HmoAOf4jUDGJfEk8jh/ZUxFLY3uR7FMUtLYvfv0Y8g
-	BJY+P0b2GCxnnG4f3aIPe/o50SteMQaMQkEdIVMi7qVanw1bvYypXf92oDzV6cFq
-	h9jVXG4NCYKIxK38K4btLteebRdEZQv1uUvFAoEyotz1Xo1YiLPY3i7YYDFk/ASI
-	7bG4EQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 494yma3vkh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:18:27 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-77dfbbc42adso1205386d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:18:27 -0700 (PDT)
+	s=arc-20240116; t=1757920732; c=relaxed/simple;
+	bh=N+aPabF4Hwc+ssipHtzxdYT8V6ZYevI0V4qEa4nH6Xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mFOMO0wQBIdSzKKfHWxA5kN6/pzQhw+BSaIy7uV6u9JGtTP67/PaOlv61KS4KPpSTjXU5rbxvcEUvdPFFCsCy8+gFCO6rcAk9sCGiBlv4ReuTa2AIL+PL++HYmwOcu2OSVf3reMaUi6ZctlM8coOEZCGu/uk7YoC+/54Myr1YIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FDQWzIpK; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-337e5daf5f5so42897151fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757920728; x=1758525528; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O5YQjHTlBTsN+6yBGhPL1nppIP0vBI5RNEgHYignDxI=;
+        b=FDQWzIpKeHq2hlfKjrbohSMD5AZuF1rTPiBOJkSYWO9bExlXb8FYMkfjB5jF9Qk4ef
+         XuCZXzQEMIQw0ztBT+G5KcUeUO1OeCPfrDqBamZwKSlOv0fY+AboktNSYo6+v0zPWaxp
+         6L2RlgV0Ae5J2tBHLE5PBd+MPzkN7SMHZwwJg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757920707; x=1758525507;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZV267zGbAJfepcXaTiuuQWN4inCsP8FeAE5hho9iso=;
-        b=flAHKDBlrIlxWFfVQCro1KNj3++73Z5cDlEEmY2ZVQNRJJlviZYvcPP8EVzOaZ4b0U
-         t5ubmQUK70qhoFr9zpAjrrGiHfa7yBQWQkJfuYo2cEHfxzwvK7chDcqHI7wARi9u5Tnk
-         ea70cHATLmAdlZp4NwDNDHDJkhZRTM3KfN5r514HuJ5wseeb59ZqjO4kUtADg289zAxl
-         IFBR7hx6RlImlWJ1NBWCc4kNDcSd4BnUl6jOVM3lvwIINnWClSfgymIBlUpQGQIM1Tzd
-         q2XfGJcAJoaVduMHJUzPwopf2zipwZHRvUIPnjp+AGjzLk2lUX8y7JgCcxZ7mulAi9zO
-         Me4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNW6ChI7vRQNcuB4TTIbPjBoKPOCo6yKFNK+abOEsh10JsAL4NFS0Xy5oGdMaJZHUFMs9mfK0qXFLOz44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM5j+Zet2myPZwCUG2km/exS+peLofIXXqMMk7a4+r68DKf8W+
-	H3HG0yYu+bMfOb3NcRX9MnrUB1GNw3+AfC9ibJ7OmBED6we+XLHSfBBslbpgX2N6Kz5Icj0+Ihf
-	XQzU241k8Ghz0w69YjgL1cK++fKOsPEv+FdHfn40WLah4ysO5jEksHRug7VbWcwdoz0Y=
-X-Gm-Gg: ASbGncv+FR4Y98kIu1HPV1B6Llb4EcRodEK+sY7C0WL1DsCTyDuDS/3LpC9tRZbVbJ9
-	7Kbf/VBIw32m6DXF2hc33U4pX7cRKigu3GeP7e68rVYeZmqOziG/uO/nra0/sxCFVgwtF2TBcjw
-	qSLgIljFOt6AYc4BhZcxUazRKwoPYpi9spRBivp/hdniqi3xn2UgQ0F+GfQzdRoSkwU3Xqrz9F8
-	d7g2joAzGzODH33WGjAiTpbTQjVfI9XfvoZa9xe2rz5nHEbi8dYEwLrvzGmLbGoDjndnbyeBkTI
-	ZpeGxnr7XFMLvkKfyBClrPLP4fh/iTpqdHg/DOf1GIk9BpLOPSlghjuIV5DrvqfR6AELneW2L4H
-	OISPEBVUYAkF9UkPUM7Obtg==
-X-Received: by 2002:a05:6214:2b0e:b0:726:8d13:da3c with SMTP id 6a1803df08f44-767c3772701mr87916706d6.5.1757920706777;
-        Mon, 15 Sep 2025 00:18:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGG7fCLxQ6z7xmoYKJ3boF9j/ZgGnwmZqrMmvyGalmjSbO2uXoz6sKz7oSM6s6OaaZY7WTQPA==
-X-Received: by 2002:a05:6214:2b0e:b0:726:8d13:da3c with SMTP id 6a1803df08f44-767c3772701mr87916546d6.5.1757920706314;
-        Mon, 15 Sep 2025 00:18:26 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62ec33f57dbsm8550654a12.25.2025.09.15.00.18.24
+        d=1e100.net; s=20230601; t=1757920728; x=1758525528;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O5YQjHTlBTsN+6yBGhPL1nppIP0vBI5RNEgHYignDxI=;
+        b=xVn7f5jkMD6KHW2yRBFie4Wmc8ZL/cRJYTZok/Gvg25vp89lrUXv+Kovh6kBFTVQE9
+         4lQvk2m+pqEc+ps45k6DltRKiebYp2+FqdnVUHc8zakoYXFyN256gWtMrL4Hu8gy3rov
+         KNFasFmkdck8DjT3hxTKeTvAcswpGeKm7lLwtG0Y8qBUBxRGqbgiachCEqcEFDJLf61y
+         7ELr9skNPO0N/O32ZoyKR3v7BGFRc1kwknuLAH765mTDxfBjcrAmubT+trOCJacwSVWh
+         pGL4/2MvGDXwnELWlBy3AdjdMOQnrh7UR2hB3yC+8NsmCBtbcMcFpJkiamyuM38VMziJ
+         EPCg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Oqnz5WnGLpTS1dpGaXVgl2Hl4ndRKjRoxRup44CFyWr8fGztKQRjexBaVAFlFOZtKSaGGddbgkL8zvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ8r5YDSbntm30OPBR68IJ/Vk0MmveKQS0BfRErHue/kv77/VQ
+	iTmyLlGmtQyV9PHmvPmYDIulYWs1ipP07LyCpPKVacWin++bQ+o4l8J7NWINxEkWbdUwbxJJVpD
+	NuRU=
+X-Gm-Gg: ASbGncsKiB0XMcECZxfJLZ7cFgoAlxZ9yn39paUgOW4MzewHZODMy0Rk59EIiP+dLMl
+	qlvPmAgZg9OGYxIoswOL50r+rW0I0IBWUMWioAgCko7oFO5+l/aE6jeNDEdsF6I8C/bEW234X1x
+	sv7F7/+6KtCeDgkUo/el7RIjjEZzu0+hWBfqNGSHlm36n/k+FFpAklq9JHgN0oTZ/i7xahCoRfJ
+	wYByAftd1yacv4ffqttpTuA8hpTi8K6buSUJG0k0ecbJciSrFcwQ2bqn3TLe5/zP1KmnWaSM28x
+	LKdN7ngIGTTpNnyf8JwZczWkHy7nXyqRca+qiq/wOtIUPDVxhPcA+d4DFfVd9BVrENiMveNe9bC
+	xrtzlt0vXCqTVHnRgRY0AqRaxSGWKE7SmULztr0JCf+fIlo/DRjF+J1dKt9LDUto6ViFi28s=
+X-Google-Smtp-Source: AGHT+IE6URUQ3aA4WNlKQdq8CAdccibaAypZe1lWMzQA0gJ5FNGyeEnHXdE2gXaGW5sS1at5HmUjuw==
+X-Received: by 2002:a05:651c:1107:10b0:336:e46a:6e14 with SMTP id 38308e7fff4ca-3510ef6b55fmr27171701fa.0.1757920728313;
+        Mon, 15 Sep 2025 00:18:48 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1c6cabedsm27009641fa.69.2025.09.15.00.18.46
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 00:18:25 -0700 (PDT)
-Message-ID: <33c43646-a8d5-49cd-b27f-093b73517bd5@oss.qualcomm.com>
-Date: Mon, 15 Sep 2025 09:18:23 +0200
+        Mon, 15 Sep 2025 00:18:47 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57263febd12so1185117e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:18:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV11Yom3e8cMC37qlzQE5DSq/dL10A3MWGwwr9db+NVCkZDFgCX7xUx4e5XM1PjUHz9rI4uy5SlZX6BKqo=@vger.kernel.org
+X-Received: by 2002:a05:6512:10d4:b0:554:e7ce:97f8 with SMTP id
+ 2adb3069b0e04-570601d3f6fmr3574906e87.15.1757920726308; Mon, 15 Sep 2025
+ 00:18:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/11] arm64: dts: qcom: sdm845-lg-common: Add wifi node
-To: Paul Sajna <sajattack@postmarketos.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-References: <20250913-judyln-dts-v1-0-23b4b7790dce@postmarketos.org>
- <20250913-judyln-dts-v1-6-23b4b7790dce@postmarketos.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250913-judyln-dts-v1-6-23b4b7790dce@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxOSBTYWx0ZWRfX9LnMKT5YQFxe
- GnoHV3Mxd/9x3CBTBYql2Kn1y03Z0A4uqAFny6/B2DL7CftRAkfD+VOVN1lTS65jZY/3Imqetxu
- Di9+PUEma+6ul7OFuoHH00CoCrXLv3cje6Z22kfeBtxx2YbEVFpUMW7yh3kLYVzbl16RrCBdjlb
- 8QLLhxR3juZ2h7g3vo/f7nOW/nWAsvogFDiTCoZcwwgpr8sCVCVW0WVlCjA6+LmL65qXeN0AIMT
- e6IjHaICWvIHQf3+TTJqld8HHFIpz0zhaWZH2O4QDlFeliEIVO7fbK2Ab2fxa+Ux8BMCIn3WH4F
- klaT7q+3uRqAbj544SfLLXISmFy1NOshK/QD0FEUxtsboFjYzRZ3eogIhfhE5KGgColL272ZSMp
- OjV8pTNJ
-X-Authority-Analysis: v=2.4 cv=cdTSrmDM c=1 sm=1 tr=0 ts=68c7bdc3 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Gbw9aFdXAAAA:8 a=qoi5gUcjuFCQQthds88A:9
- a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=9vIz8raoGPyDa4jBFAYH:22
-X-Proofpoint-ORIG-GUID: p2W5yYAAvyTjLSQPDWtxAMzWZESnfV4j
-X-Proofpoint-GUID: p2W5yYAAvyTjLSQPDWtxAMzWZESnfV4j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_03,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130019
+References: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
+ <20250818-uvc-iq-switch-v1-4-f7ea5e740ddd@chromium.org> <20250913140628.GB10328@pendragon.ideasonboard.com>
+In-Reply-To: <20250913140628.GB10328@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 15 Sep 2025 09:18:33 +0200
+X-Gmail-Original-Message-ID: <CANiDSCtsFYoDdQPakhX=mvkYCFpP-U82FBhDwdGJwOME-hFYQg@mail.gmail.com>
+X-Gm-Features: Ac12FXzF2wjrlcTq-ZWxQ0b0FPhh0zsXbdbEJWeUXxxUiBB8xNFTd0o9yHoc-kY
+Message-ID: <CANiDSCtsFYoDdQPakhX=mvkYCFpP-U82FBhDwdGJwOME-hFYQg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] media: uvcvideo: Support UVC_CROSXU_CONTROL_IQ_PROFILE
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/14/25 1:56 AM, Paul Sajna wrote:
-> Wi-Fi now works with this patch and relevant firmware
-> 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> index 1bf2f2b0e85de174959ec2467076a95f471a59d4..585582ff4e0bbe8c994328278d5e5dd3a280ddb6 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> @@ -682,3 +682,16 @@ &uart9 {
->  
->  	status = "okay";
->  };
-> +
-> +&wifi {
-> +	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
-> +	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
-> +	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
-> +	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
-> +	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
-> +
-> +	qcom,snoc-host-cap-skip-quirk;
-> +	qcom,ath10k-calibration-variant = "lg_judy";
+Hi Laurent
 
-This is deprecated, use qcom,calibration-variant instead
+On Sat, 13 Sept 2025 at 16:06, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Mon, Aug 18, 2025 at 08:15:39PM +0000, Ricardo Ribalda wrote:
+> > The ChromeOS XU provides a control to change the IQ profile for a camera.
+> > It can be switched from VIVID (a.k.a. standard) to NONE (a.k.a. natural).
+> >
+> > Wire it up to the standard v4l2 control.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++++++++++++
+> >  include/linux/usb/uvc.h          |  5 +++++
+> >  2 files changed, 37 insertions(+)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index ff975f96e1325532e2299047c07de5d1b9cf09db..8766a441ad1d8554c0daaed3f87758321684246b 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -376,6 +376,15 @@ static const struct uvc_control_info uvc_ctrls[] = {
+> >                               | UVC_CTRL_FLAG_GET_DEF
+> >                               | UVC_CTRL_FLAG_AUTO_UPDATE,
+> >       },
+> > +     {
+> > +             .entity         = UVC_GUID_CHROMEOS_XU,
+> > +             .selector       = UVC_CROSXU_CONTROL_IQ_PROFILE,
+> > +             .index          = 3,
+> > +             .size           = 1,
+> > +             .flags          = UVC_CTRL_FLAG_SET_CUR
+> > +                             | UVC_CTRL_FLAG_GET_RANGE
+> > +                             | UVC_CTRL_FLAG_RESTORE,
+> > +     },
+> >  };
+> >
+> >  static const u32 uvc_control_classes[] = {
+> > @@ -384,6 +393,17 @@ static const u32 uvc_control_classes[] = {
+> >  };
+> >
+> >  static const int exposure_auto_mapping[] = { 2, 1, 4, 8 };
+> > +static const int cros_colorfx_mapping[] = { 1, // V4L2_COLORFX_NONE
+> > +                                         -1, // V4L2_COLORFX_BW
+> > +                                         -1, // V4L2_COLORFX_SEPIA
+> > +                                         -1, // V4L2_COLORFX_NEGATIVE
+> > +                                         -1, // V4L2_COLORFX_EMBOSS
+> > +                                         -1, // V4L2_COLORFX_SKETCH
+> > +                                         -1, // V4L2_COLORFX_SKY_BLUE
+> > +                                         -1, // V4L2_COLORFX_GRASS_GREEN
+> > +                                         -1, // V4L2_COLORFX_SKIN_WHITEN
+> > +                                         0}; // V4L2_COLORFX_VIVID};
+>
+> Extar '};' at the end of the line. The indentation also looks a bit
+> weird. I'll replace it with
+>
+> static const int cros_colorfx_mapping[] = {
+>         1,      /* V4L2_COLORFX_NONE */
+>         -1,     /* V4L2_COLORFX_BW */
+>         -1,     /* V4L2_COLORFX_SEPIA */
+>         -1,     /* V4L2_COLORFX_NEGATIVE */
+>         -1,     /* V4L2_COLORFX_EMBOSS */
+>         -1,     /* V4L2_COLORFX_SKETCH */
+>         -1,     /* V4L2_COLORFX_SKY_BLUE */
+>         -1,     /* V4L2_COLORFX_GRASS_GREEN */
+>         -1,     /* V4L2_COLORFX_SKIN_WHITEN */
+>         0,      /* V4L2_COLORFX_VIVID */
+> };
+>
+> > +
+> >
+> >  static bool uvc_ctrl_mapping_is_compound(struct uvc_control_mapping *mapping)
+> >  {
+> > @@ -975,6 +995,18 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+> >               .data_type      = UVC_CTRL_DATA_TYPE_BITMASK,
+> >               .name           = "Region of Interest Auto Ctrls",
+> >       },
+> > +     {
+> > +             .id             = V4L2_CID_COLORFX,
+> > +             .entity         = UVC_GUID_CHROMEOS_XU,
+> > +             .selector       = UVC_CROSXU_CONTROL_IQ_PROFILE,
+> > +             .size           = 8,
+> > +             .offset         = 0,
+> > +             .v4l2_type      = V4L2_CTRL_TYPE_MENU,
+> > +             .data_type      = UVC_CTRL_DATA_TYPE_ENUM,
+> > +             .menu_mapping   = cros_colorfx_mapping,
+> > +             .menu_mask      = BIT(V4L2_COLORFX_VIVID) |
+> > +                               BIT(V4L2_COLORFX_NONE),
+> > +     },
+> >  };
+> >
+> >  /* ------------------------------------------------------------------------
+> > diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
+> > index 12a57e1d34674a3a264ed7f88bed43926661fcd4..22e0dab0809e296e089940620ae0e8838e109701 100644
+> > --- a/include/linux/usb/uvc.h
+> > +++ b/include/linux/usb/uvc.h
+> > @@ -29,6 +29,9 @@
+> >  #define UVC_GUID_EXT_GPIO_CONTROLLER \
+> >       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+> >        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
+> > +#define UVC_GUID_CHROMEOS_XU \
+> > +     {0x24, 0xe9, 0xd7, 0x74, 0xc9, 0x49, 0x45, 0x4a, \
+> > +      0x98, 0xa3, 0xc8, 0x07, 0x7e, 0x05, 0x1c, 0xa3}
+>
+> I'd like to add a link to the documentation, but searching for the GUID
+> didn't turn up any meaningful result. Where can I find documentation for
+> this XU ?
 
-Konrad
+It is not public yet. Not because there is anything secret about it,
+but because of the "making documentation process".
+
+Once there is a public document I will add a link.
+
+Regards!
+>
+> The link can be added later, so
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> >  #define UVC_GUID_MSXU_1_5 \
+> >       {0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
+> >        0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
+> > @@ -50,6 +53,8 @@
+> >  #define UVC_MSXU_CONTROL_FIELDOFVIEW2_CONFIG 0x0f
+> >  #define UVC_MSXU_CONTROL_FIELDOFVIEW2                0x10
+> >
+> > +#define UVC_CROSXU_CONTROL_IQ_PROFILE                0x04
+> > +
+> >  #define UVC_GUID_FORMAT_MJPEG \
+> >       { 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
+> >        0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+
+
+-- 
+Ricardo Ribalda
 
