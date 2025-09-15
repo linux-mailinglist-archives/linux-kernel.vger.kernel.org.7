@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-816112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A013BB56F9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9541FB56FA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F61189AC55
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155081893972
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00C7274B42;
-	Mon, 15 Sep 2025 05:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43958275B05;
+	Mon, 15 Sep 2025 05:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="bwExPnFd"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sTSJagWL"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5521F09AD;
-	Mon, 15 Sep 2025 05:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2187D26980B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757912816; cv=none; b=CdUoK2Z+nppJlee+ryx6DU7cOOqQQFHI9IoHp2zGk3j9Pj09vsO9vTy0kB1UrYzZM0BPAE/2ODftY2EXiMsS0nmTDLWiISea9sYL6tQYVwaH8SsHEAHV1EB9Hxe7hCB53KZ9L3TDQYyx1UqzDIeWjGeSMIfbp6/Q9/N4Da5jCCc=
+	t=1757913072; cv=none; b=mB52Q/slzqRpjQ1hY4D/cARfzVHPPVT83boUP+qjzm7fV4tjMqDMtwz789mw+oCCaKG1te6r54Oh+e/F2fQKYXOICfoXiM4WOjdDNljfd6ACNSfXtWYsV2Gexnng4x9a+fdr4OVSBWxmupscS5yRbb1oclwKFDbspAeZ620mi8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757912816; c=relaxed/simple;
-	bh=oNMOaL81IkhElHKr2VApsXrxfwnHiJNxSJBV5ekXwTA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Khjy6/C5Nr+Z3UJXG7fGxbf3gUf+I3PsZhr1OZZG8LYJxq7zSJQ8n8b06FvikyvRio30IrJ5rPioTaCYNuIROwVKJSRe+evSg5FWiaN47NRFFey3Pnj6vOIPe55IP2p9w/PGcu4mLMCI3bsdWJlj5cWHbcEfbx/H4422EdpV+LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=bwExPnFd; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1757912812;
-	bh=oNMOaL81IkhElHKr2VApsXrxfwnHiJNxSJBV5ekXwTA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=bwExPnFdRLkhCTTi+hk/aoWc+gY5XGZePQgDQN+4nim/C8quuZxzvEFZu002gI0rH
-	 9MQhVepzXwruhuA5KoAaeQc1UVV2xJ40DoOw7W6aSSAU39KsCncmJCpaaUbZo6Vhqg
-	 /IWyQZ0XW1SBb4NrMgUYpB+Z6F7UQuFy9gpVrgCP5ChIKmMztJMLz8FrXlEoK/OX0M
-	 R6Vmg4eHGafzc3EEDbyG3WGrF8dkPqJERJ6wqUddiRub+QPew+DrAs2qpMgSmaY9Yf
-	 /13wRgEQSpA7Yf/i1nm+adpnqT6V8yB1yH/BQFxjL8qyojo0YjyFdbOZ+DasjGATJg
-	 ljuHfKM4dmbVA==
-Received: from [IPv6:2405:6e00:2430:fb15:b2b4:1872:3690:c682] (unknown [120.20.190.44])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id F1C9864CF0;
-	Mon, 15 Sep 2025 13:06:49 +0800 (AWST)
-Message-ID: <28dc3bd8aeca7e3164747960747f75060c596704.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] peci: controller: peci-aspeed: convert from
- round_rate() to determine_rate()
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Brian Masney <bmasney@redhat.com>, Iwona Winiarska
-	 <iwona.winiarska@intel.com>, Joel Stanley <joel@jms.id.au>, Maxime Ripard
-	 <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 15 Sep 2025 14:36:48 +0930
-In-Reply-To: <aMatZAX6eFI1RmDH@redhat.com>
-References: <20250810-peci-round-rate-v1-1-ec96d216a455@redhat.com>
-	 <aMatZAX6eFI1RmDH@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1757913072; c=relaxed/simple;
+	bh=gQ4356ubTnt/7Svy5h8IRy0Tzj9khjjlW3Nl+PzwwKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=Er0WTOrY7EuUbyJ+7iw4e6U8GVyVxjmQfo9p/6984qrA9b+BDzB+IoP94VcrhjGHXvFDrqz6G5evJq6YPzYX4juj68ALo8S3CqkRhALqQJCvTFpCyoZfV/aSaA67Kj4a+yRzfVrahxh7TVoq/+MbbguQ7mQtAAxL9uvpJFDoMHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sTSJagWL; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250915051108epoutp01673076f48c44ad4159b19ebbe6891620~lXJ8mS5KL0762507625epoutp01M
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:11:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250915051108epoutp01673076f48c44ad4159b19ebbe6891620~lXJ8mS5KL0762507625epoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757913068;
+	bh=Qtqck/gpVB4ju4zZiFzaFJ+MV8r04EU/eAiQG9DA2kU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=sTSJagWLuoMvhkRIfGldifYu9jDDkxC1rDeol/b51PkWJSkoL46xYVJH2iiZlDDCp
+	 eiGVsulECiPJMRcZ1BkHLDzFR5NHQ74m4+xPJQjWrp43bly0Dulc1HjYMqAaxK2y0y
+	 tNxp8g4pQ9gYLaoe8lOjZoO/16QwKLUlqfCaTMeM=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250915051107epcas2p1b2da98d21c1af3159b3be2e7cd1d33ab~lXJ76u2CS3200232002epcas2p1L;
+	Mon, 15 Sep 2025 05:11:07 +0000 (GMT)
+Received: from epcas2p4.samsung.com (unknown [182.195.36.102]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cQCmW08qJz2SSKv; Mon, 15 Sep
+	2025 05:11:07 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250915051106epcas2p19c54f69c993621430aac622c6865919b~lXJ6xOlrR3117831178epcas2p1e;
+	Mon, 15 Sep 2025 05:11:06 +0000 (GMT)
+Received: from tayo (unknown [10.229.9.198]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250915051106epsmtip1ea10842bfde3976dc3dc3e1101d27762~lXJ6p1qNv0859208592epsmtip1G;
+	Mon, 15 Sep 2025 05:11:06 +0000 (GMT)
+From: "myunggeun.ji" <myunggeun.ji@samsung.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Cc: Jongho Park <jongho0910.park@samsung.com>, kiisung lee
+	<kiisung.lee@samsung.com>, "myunggeun.ji" <myunggeun.ji@samsung.com>
+Subject: [PATCH 0/2] update exynos-iommu code and device tree for v9
+Date: Mon, 15 Sep 2025 14:13:18 +0900
+Message-ID: <20250915051320.3378957-1-myunggeun.ji@samsung.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250915051106epcas2p19c54f69c993621430aac622c6865919b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+cpgsPolicy: CPGSC10-234,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250915051106epcas2p19c54f69c993621430aac622c6865919b
+References: <CGME20250915051106epcas2p19c54f69c993621430aac622c6865919b@epcas2p1.samsung.com>
 
-Hi Brian,
+Series updates exynos-iommu code and device tree to support
+for ExynosAuto sysMMU version v9.
+It provides initial driver code and register information the sysMMU device.
 
-On Sun, 2025-09-14 at 07:56 -0400, Brian Masney wrote:
-> Hi Iwona, Joel, and Andrew,
->=20
-> On Sun, Aug 10, 2025 at 06:21:51PM -0400, Brian Masney wrote:
-> > The round_rate() clk ops is deprecated, so migrate this driver from
-> > round_rate() to determine_rate() using the Coccinelle semantic patch
-> > appended to the "under-the-cut" portion of the patch.
-> >=20
-> > Signed-off-by: Brian Masney <bmasney@redhat.com>
->=20
-> Would it be possible to get this picked up for v6.18? I'd like to remove
-> this API from drivers/clk in v6.19.
+myunggeun.ji (2):
+  iommu/exynos: Implement register set and fault handling on SysMMU v9
+  arm64: dts: exynosautov920: Add DT node for sysMMU
 
-My (strong) preference is that Iwona applies it, but I'll keep an eye
-out for any unusual delays.
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 21 ++++++
+ drivers/iommu/exynos-iommu.c                  | 73 ++++++++++++++++---
+ 2 files changed, 85 insertions(+), 9 deletions(-)
 
-Andrew
+-- 
+2.50.1
+
 
