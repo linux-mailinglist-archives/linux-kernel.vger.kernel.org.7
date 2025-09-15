@@ -1,95 +1,55 @@
-Return-Path: <linux-kernel+bounces-817641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D237B584D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64107B584D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A531A27D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5DD01A27E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0151E1A3D;
-	Mon, 15 Sep 2025 18:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A12283682;
+	Mon, 15 Sep 2025 18:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RQh6+HDj"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4/+tQuL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469BA280327
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7EC1FBCB0;
+	Mon, 15 Sep 2025 18:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757961701; cv=none; b=FhrR/146oAiiGbz7/JoUYHUU/vci+u7V+YjqFZ0MoAEgRV9IDW+ZBr9hYtIiKRAig7D2BlLkTUp+Hg9g2V7YYxGpkUTpXHOQ51/AJ1Nfs0eYvwpCDHM9azw0H5LDh8fWj7LkvqRZ4cBLwAQ6Biwl9+LoUsUyLw//49wUWkPIl3A=
+	t=1757961758; cv=none; b=hZdoeIieOZKL/bXlT2CPN0CWihxAk4Y3jFdK/CNwnMjoof8CZTKmrmiddVKnsmhoQMSfH3L1h+lW29XrX05Rkpqzt68O5NrdMjePNJGP6SAFpEx1vEWCzTB97w3FwGMbKnMkbsMZ6bw9Pd1R8GqGQaeWCDdj/7aqlh0oxL2FpWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757961701; c=relaxed/simple;
-	bh=oPccXBrUqI8/MvE8k9QrGmavp+NZUnAV7TpP14XIh1I=;
+	s=arc-20240116; t=1757961758; c=relaxed/simple;
+	bh=jGa4P8r8qgsP5wEh2koJGsDYIlxbZTXvkbhvkpHoqts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8qlAO5SWukn5e1ycucqn4v/WJY0X1i/Tv4Rpeq+gc19Ve4JDZz/dYSBqTDX7Wg0L6BkIP77OYy1yGhPehggWsQQ3mwOSIGI48YSDZ4eXyRCWjx0KcTdhPDmcH9zZb7JGzYx9LLqKASDUi4xuP7aOyS8cdHgg3ENAS8lN3H9ZhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RQh6+HDj; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77716518125so1223788b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757961699; x=1758566499; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvNrOR4ellqZqvuE2ABZzj31gMsgVuW0rC+wrpkvP4k=;
-        b=RQh6+HDjWB8BIpncYrlpe38iW5hNnBqKNpT/1uDM85K/0//qGxzY3Ck5WLFTqOCUGO
-         MXAKljODka1QYTxPJV2v6OWBdyvXryogLe2JPPvRr44yB5bqVfBtY9qQ0IQ+cyMJ6xT6
-         rEqgVVmjJq9SgXkW2XcEaYLZ4c7zfckcqqnus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757961699; x=1758566499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yvNrOR4ellqZqvuE2ABZzj31gMsgVuW0rC+wrpkvP4k=;
-        b=YFpKF4Cz444x3INhHa5XZ9QMM5A2RqcX1Lh13JhEU+MzsvRZIPjsGnoBaGxvQv4f9U
-         PMe/QO5zYm6Z+cSnHCJb0vLFgQajFQe2LAvpzGWqLa8MlnqESnwLRPQ8qYth4afLFr2T
-         AyZiruy530XbsG0XeCK97yaq36Y/CIndmmZ8xzJf6JFKl/i/6kACDUnj/797JAskXGm4
-         T0mvO9cJ9Df/3rZv3bcj8HiZrvjL7COZ4YS9SUc6oTfGT9T1InfyqcGC6/L53Jgv7z83
-         ErgKhYUjD2Ua3wQu1U03LMa62cwsEm0rN1nIKpM+xil5qyXc1f9/pfbF1ErvkVuFRllm
-         IjMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDGOOP0MCJvRlNyhmlAeQ+tJXAfn0XlyOYM60shikhXcNS8uLxmIMZB0rS05/tEEMYj2VAqaIk9qyNHO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIIu356NKivtfCzyO7drF3MzxWVwb9CSPFPyEwAW2iF5S+LO8E
-	ehJACEbSnOwPKyGD3KiUx32KSTYeCCYTbiMRAuhaNxacqYOIuAoZeUiIHwxdxwItFA==
-X-Gm-Gg: ASbGncuwYr+r2xsIp48vINQzr4L5yxbnxUTq+9MYkRLADIRt5t5z+fBS9Kdei/XffWI
-	pACx4WRzkAglb8e7rif0VGt1bLsbPILxBo8PNSrDRo+Y5Yac1SfBwrdF0TpO6RZXGFCIsFqvHDx
-	xUxNcmogvYsO2EvwjJlUXugkCc+t5oN3OO/QvIXDveg+0VRgpVQ3Ud7YFWMPikDkrBYHJEoYu9t
-	EeUy3mWiSLSo/TAvXJZUWS/sWV2niqgs1zPpd+eKn06dMX80u7cqgpY/8U0joi2PocJW28WFrnX
-	x3tzRvHDlgDyUZ2yF3l3ULBHzcRYQchi+kjzQjfjIEQcMBBTYgqjuNzAFDwT23GYbCB95lgfOku
-	bs8MDaiwOkztEzEax/rFGEEN2jWO8eP/Ocs2wT+N3SYkzDKY+GmvCPE6LJ20l8NVcEw1ZqDU=
-X-Google-Smtp-Source: AGHT+IGlRm1d0pxmlp5QnmWl5T2hIZtYHRH5ZefBsxntjPmY3kpOuBh7Py9dWQ+bly9aiTvcXCvOzw==
-X-Received: by 2002:a05:6a00:9289:b0:772:4759:e433 with SMTP id d2e1a72fcca58-7761209bdeemr15688778b3a.2.1757961699464;
-        Mon, 15 Sep 2025 11:41:39 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:fd49:49b1:16e7:2c97])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77607b33c45sm13983580b3a.71.2025.09.15.11.41.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 11:41:38 -0700 (PDT)
-Date: Mon, 15 Sep 2025 11:41:37 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>, linux-pci@vger.kernel.org,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Richard Weinberger <richard@nod.at>, Wei Liu <wei.liu@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	kunit-dev@googlegroups.com,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	linux-um@lists.infradead.org
-Subject: Re: [PATCH 0/4] PCI: Add support and tests for FIXUP quirks in
- modules
-Message-ID: <aMhd4REssOE-AlYw@google.com>
-References: <20250912230208.967129-1-briannorris@chromium.org>
- <aMgZJgU7p57KC0DL@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcXkAuUdodejHoFpR61/PaS+URCrCTuFLToXKq5LPlV7mFgXT4v49S/dJuR1IWF1b2xst0Ql3wUoJjCgR4NaCaXN/zzkr07WGFU2QXZfQp0glrsL+QrXHoCWKyI5utNbK7rykLUYPXLaA9n+9uDmGQZhFCQusnZ/buMpRpn8hK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4/+tQuL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E63DC4CEF1;
+	Mon, 15 Sep 2025 18:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757961758;
+	bh=jGa4P8r8qgsP5wEh2koJGsDYIlxbZTXvkbhvkpHoqts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H4/+tQuLGZ0e0I3NJQ2fZVWBdZJwUqSc4Khkps+UsIEBaYBk4asO6ZjIY8mosnIfX
+	 z1l+TbOzrdA0SMjKvwe/lWMzOh2aDZt7nokP75EA8q/Dk6o7UekeBU9fWDvRaNH5WD
+	 EnjWBNEeZUTwcXl2aoQ08gzbQUmtDu/U7Oq1SOfWA9yMy4wFkiPDh6pZeEk+vE63CV
+	 9ch8vhaDrTX1+I3jEMJR26d08+uSnYSv1qPLz9/eyYlFjHyG/dATQcENT3L492Tlx5
+	 YthPfsXaw61hk8ia3IGV4/Ne6PsawDQOUbIG4k2klRBBNj39dHylzamgtJhpLwbWo1
+	 C65aD9aTWzTcQ==
+Date: Mon, 15 Sep 2025 21:42:33 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Gunnar Kudrjavets <gunnarku@amazon.com>
+Cc: peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
+	christophe.ricard@gmail.com, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Justinien Bouron <jbouron@amazon.com>
+Subject: Re: [PATCH] tpm_tis: Fix incorrect arguments in
+ tpm_tis_probe_irq_single
+Message-ID: <aMheGdW3jqfGIPlh@kernel.org>
+References: <20250915182105.6664-1-gunnarku@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,47 +58,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aMgZJgU7p57KC0DL@infradead.org>
+In-Reply-To: <20250915182105.6664-1-gunnarku@amazon.com>
 
-Hi Christoph,
-
-On Mon, Sep 15, 2025 at 06:48:22AM -0700, Christoph Hellwig wrote:
-> On Fri, Sep 12, 2025 at 03:59:31PM -0700, Brian Norris wrote:
-> > This series primarily adds support for DECLARE_PCI_FIXUP_*() in modules.
-> > There are a few drivers that already use this, and so they are
-> > presumably broken when built as modules.
+On Mon, Sep 15, 2025 at 06:20:44PM +0000, Gunnar Kudrjavets wrote:
+> The tpm_tis_write8() call specifies arguments in wrong order. Should be
+> (data, addr, value) not (data, value, addr). The initial correct order
+> was changed during the major refactoring when the code was split.
 > 
-> That's a reall bad idea, because it allows random code to insert quirks
-> not even bound to the hardware they support.
+> Fixes: 41a5e1cf1fe1 ("tpm/tpm_tis: Split tpm_tis driver into a core and TCG TIS compliant phy")
+> Signed-off-by: Gunnar Kudrjavets <gunnarku@amazon.com>
+> Reviewed-by: Justinien Bouron <jbouron@amazon.com>
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 4b12c4b9da8b..8954a8660ffc 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -978,8 +978,8 @@ static int tpm_tis_probe_irq_single(struct tpm_chip *chip, u32 intmask,
+>  	 * will call disable_irq which undoes all of the above.
+>  	 */
+>  	if (!(chip->flags & TPM_CHIP_FLAG_IRQ)) {
+> -		tpm_tis_write8(priv, original_int_vec,
+> -			       TPM_INT_VECTOR(priv->locality));
+> +		tpm_tis_write8(priv, TPM_INT_VECTOR(priv->locality),
+> +			       original_int_vec);
+>  		rc = -1;
+>  	}
+> 
+> 
+> base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+> --
+> 2.47.3
+> 
 
-I see fixups in controller drivers here:
+Amazing catch, thank you. Have you been able to verify this?
 
-drivers/pci/controller/dwc/pci-imx6.c
-drivers/pci/controller/dwc/pci-keystone.c
-drivers/pci/controller/dwc/pcie-qcom.c
-drivers/pci/controller/pci-loongson.c
-drivers/pci/controller/pci-tegra.c
-drivers/pci/controller/pcie-iproc-bcma.c
-drivers/pci/controller/pcie-iproc.c
+I'm asking this because post this there was a lot of unsuccesful
+attempts to enable irqs in the tis driver (which have never really
+worked too well since epoch) so perhaps this could move things
+forward.
 
-Are any of those somehow wrong?
+Thus, I'm interested do you happen to have a working testing
+environment?
 
-And if they are not wrong, then is this a good reason to disallow making
-these drivers modular? (Yes, few of them are currently modular; but I
-don't see why that *must* be the case.)
 
-I agree, as with many kernel features, there are plenty of ways to use
-them incorrectly. But I'm just trying to patch over one rough edge about
-how to use them incorrectly, and I don't really see why it's such a bad
-idea.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-> So no, modules should not allow quirks, but the kernel should probably
-> be nice enough to fail compilation when someone is attemping that
-> instead of silently ignoring the quirks.
-
-Sure, if consensus says we should not support this, I'd definitely like
-to make this failure mode more obvious -- likely a build error.
-
-Thanks for your thoughts,
-Brian
+BR, Jarkko
 
