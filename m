@@ -1,182 +1,125 @@
-Return-Path: <linux-kernel+bounces-816974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAB8B57BC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E048B57BB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28257B3661
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF561716D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D82D30E85F;
-	Mon, 15 Sep 2025 12:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AAE2F619D;
+	Mon, 15 Sep 2025 12:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5MQNHjd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j+ZUr+4w"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A0030BF53;
-	Mon, 15 Sep 2025 12:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6584B30C35D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940362; cv=none; b=DOznAL3x8Qqn4bn0TAG4qgFh5aDhOpCZ/8HJnqB3oiRrei2omokkUePB4Vmx3MW8QyvDyUk6o9oqbHa5HS2WySnTexKRabzFnmOjzo7/2qqBiTZyQXl0vO76gGdrNnA/2KtCTdceH1uOMsLpEADrgJLZqSUGPRXEPFtY+2+H2Xk=
+	t=1757940393; cv=none; b=kh9PgBTQ/55/vBPpid/jLdD4yeG9i+rt8zIDmGDO3JdBNxqCDKDNOHy13Pl5AyOaHKoNkaKy263o1+sy1rtuBBLKx8Fr7sTs++YvIiv0iHOhg2QiWdzaG17zaQVe/zfELRkulKLST8PSbmj90rg5B3ePIGC7I2Nxu/WbkiP0RWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940362; c=relaxed/simple;
-	bh=BNNYoYpkBHTO9cpmUyT6nQRRrUm5Of6d7v3BDEpFFU4=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=bQ7rB4WZGgXa0SYDWjvzGNY3pGZ9MCEfGb2Azjm4bCrIiqLPJVwbkSM9GEvFvMC3I2+MXk3YrBmNTxf0UorNh1FavxOv3mutflDFjpI8OnKXljw//RYD+s2QDlOwIqsIa1gXQrJwe1x2vAeb9faHvA3cTtrxitne7UM7aGlgMYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5MQNHjd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7B9C4CEF1;
-	Mon, 15 Sep 2025 12:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757940362;
-	bh=BNNYoYpkBHTO9cpmUyT6nQRRrUm5Of6d7v3BDEpFFU4=;
-	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
-	b=P5MQNHjdJOR5OvJ2seL9fNaXLlcWGaiKyZi6zDxypyw2W59qIZyeDLkNYYkRcwAfx
-	 YVfCzRNxSYdK9dRclEKMCbWxHfe5vM9u4Phd8LR6GeD0LQ9mRSyHLbD812YZ+EUalj
-	 a+f4aAP5uEn0IQs46QKp5fQ9/IP3U2JKi6i34zTB++GhmJd7z0NkCu5YQapAbH6eev
-	 vgfsiT0TR8NJcy94zbNNStasbKd+28YOJtnR0ZQ42KEZSzDPVqzSNVrfRqgE/cejaZ
-	 FsPmE4okkwbYujW8ISwyubXxYnp+Da7R7oto/toJ+Ir+krtFNPP1/s7B7b9EH5BvVk
-	 S/jkQ3yHVBvyA==
-Content-Type: multipart/signed;
- boundary=b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 15 Sep 2025 14:45:58 +0200
-Message-Id: <DCTDUJO0PS8B.1LD03WTEMNRVP@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Ioana Ciornei" <ioana.ciornei@nxp.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn Guo" <shawnguo@kernel.org>,
- "Lee Jones" <lee@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/9] gpio: regmap: add the .fixed_direction_output
- configuration parameter
-Cc: "Frank Li" <Frank.Li@nxp.com>
-X-Mailer: aerc 0.16.0
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-5-ioana.ciornei@nxp.com>
-In-Reply-To: <20250915122354.217720-5-ioana.ciornei@nxp.com>
+	s=arc-20240116; t=1757940393; c=relaxed/simple;
+	bh=8K3qhCEVntYpqks6hbAZVbzX91LPYALD7hZrna3Wf1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=us8wBemqhODglY3LXIW1XFmN1CrKoFksDyrz0qEXmR0wb8/cS7I3DcbIJutSbFZsaKFwOSuiZQz/ZxUNmsYWSLgBZ6+W6udZSsuA4iuPC73jTzij8Agq1WlKqK5GG7tC3iEDnEVLbrrXD/5MTdfaPde7q5Tt6laemQ4sSfhe9d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j+ZUr+4w; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=roxWxZNd5RHeZx94bFohg6BtZ/O98eZ2QkoC0PlCjtY=; b=j+ZUr+4wnN6x16bHsluNhzynt7
+	lQJ0tyiSKDe8FLHi0FzbEtzjYW4rEHCiOSNEFDoPB4oCGfIeXkJrY9/5pV32y3Grk+HNLPQ+CVaok
+	ejaytGRyUhT9TtmPfaV75gSb5MIp11cFxoEV1VULk/AyrfXtsyhzkn2UdM2wEN1QAUJtWpRIsBB3g
+	SPxk5lqNkSc6pBwOKvoE34SdE1n2B3Ctwbr8MrarUweHVr6yRyRx6f8lOufOqG9vZx1nw5qR8CQHO
+	EEnkDyjNOAUydSLBwD9C98AkzURikgA7LSlycACxEqVnsctHwaut/7VFgJ1UJwEmAk9nZ/h4LXysY
+	k9t5WbXQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uy8aq-0000000FRCA-19y2;
+	Mon, 15 Sep 2025 12:46:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5575B302E03; Mon, 15 Sep 2025 14:46:00 +0200 (CEST)
+Date: Mon, 15 Sep 2025 14:46:00 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Libo Chen <libo.chen@oracle.com>,
+	Abel Wu <wuyun.abel@bytedance.com>, Len Brown <len.brown@intel.com>,
+	linux-kernel@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: Re: [PATCH v3 2/2] sched: Fix sched domain build error for GNR, CWF
+ in SNC-3 mode
+Message-ID: <20250915124600.GE3245006@noisy.programming.kicks-ass.net>
+References: <cover.1757614784.git.tim.c.chen@linux.intel.com>
+ <208a0a8278a28521e7bbc5114cf9899d31875d15.1757614784.git.tim.c.chen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <208a0a8278a28521e7bbc5114cf9899d31875d15.1757614784.git.tim.c.chen@linux.intel.com>
 
---b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi Ioana,
-
-On Mon Sep 15, 2025 at 2:23 PM CEST, Ioana Ciornei wrote:
-> There are GPIO controllers such as the one present in the LX2160ARDB
-> QIXIS FPGA which have fixed-direction input and output GPIO lines mixed
-> together in a single register. This cannot be modeled using the
-> gpio-regmap as-is since there is no way to present the true direction of
-> a GPIO line.
->
-> In order to make this use case possible, add a new configuration
-> parameter - fixed_direction_output - into the gpio_regmap_config
-> structure. This will enable user drivers to provide a bitmap that
-> represents the fixed direction of the GPIO lines.
-
-I wonder about the ownership of that allocated memory in the config
-structure (and btw, I guess you leak the memory in your driver) and
-if it's not better and more error proof to allocate and copy the
-bitmap in gpio-regmap too (and maybe use devm_bitmap_alloc()) and
-leave it to the caller to handle the passed bitmap. I.e. it could
-also be on the stack.
-
-Otherwise, this looks good.
-
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
-> Changes in v2:
-> - Add the fixed_direction_output bitmap to the gpio_regmap_config
->
->  drivers/gpio/gpio-regmap.c  | 12 ++++++++++++
->  include/linux/gpio/regmap.h |  2 ++
->  2 files changed, 14 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index e8a32dfebdcb..2489768686d3 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-> @@ -31,6 +31,7 @@ struct gpio_regmap {
->  	unsigned int reg_clr_base;
->  	unsigned int reg_dir_in_base;
->  	unsigned int reg_dir_out_base;
-> +	unsigned long *fixed_direction_output;
-> =20
->  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
->  			      unsigned int offset, unsigned int *reg,
-> @@ -129,6 +130,16 @@ static int gpio_regmap_get_direction(struct gpio_chi=
-p *chip,
->  	unsigned int base, val, reg, mask;
->  	int invert, ret;
-> =20
-> +	if (offset >=3D chip->ngpio)
-> +		return -EINVAL;
-
-Not sure this can happen. I tried to look into gpiolib.c but
-couldn't find anything obvious that it can't happen. Maybe Linus or
-Bartosz can comment on that.
-
+On Thu, Sep 11, 2025 at 11:30:57AM -0700, Tim Chen wrote:
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index 33e166f6ab12..3f894c525e49 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -515,6 +515,34 @@ static void __init build_sched_topology(void)
+>  	set_sched_topology(topology);
+>  }
+>  
+> +int arch_sched_node_distance(int from, int to)
+> +{
+> +	int d = node_distance(from, to);
 > +
-> +	if (gpio->fixed_direction_output) {
-> +		if (test_bit(offset, gpio->fixed_direction_output))
-> +			return GPIO_LINE_DIRECTION_OUT;
-> +		else
-> +			return GPIO_LINE_DIRECTION_IN;
+> +	if (!x86_has_numa_in_package)
+> +		return d;
+> +
+> +	switch (boot_cpu_data.x86_vfm) {
+> +	case INTEL_GRANITERAPIDS_X:
+> +	case INTEL_ATOM_DARKMONT_X:
+> +		if (d < REMOTE_DISTANCE)
+> +			return d;
+> +
+> +		/*
+> +		 * Trim finer distance tuning for nodes in remote package
+> +		 * for the purpose of building sched domains.  Put NUMA nodes
+> +		 * in each remote package in the same sched group.
+> +		 * Simplify NUMA domains and avoid extra NUMA levels including
+> +		 * different NUMA nodes in remote packages.
+> +		 *
+> +		 * GNR and CWF don't expect systmes with more than 2 packages
+> +		 * and more than 2 hops between packages.
+> +		 */
+> +		d = sched_avg_remote_numa_distance;
+
+So all of that avg_remote crap should live here, and in this patch. It
+really should not be in generic code.
+
+You really need to assert this 'expectation', otherwise weird stuff will
+happen. The whole 'avg_remote' thing hard relies on there being a single
+remote package.
+
 > +	}
-> +
->  	if (gpio->reg_dat_base && !gpio->reg_set_base)
->  		return GPIO_LINE_DIRECTION_IN;
->  	if (gpio->reg_set_base && !gpio->reg_dat_base)
-> @@ -247,6 +258,7 @@ struct gpio_regmap *gpio_regmap_register(const struct=
- gpio_regmap_config *config
->  	gpio->reg_clr_base =3D config->reg_clr_base;
->  	gpio->reg_dir_in_base =3D config->reg_dir_in_base;
->  	gpio->reg_dir_out_base =3D config->reg_dir_out_base;
-> +	gpio->fixed_direction_output =3D config->fixed_direction_output;
-> =20
->  	chip =3D &gpio->gpio_chip;
->  	chip->parent =3D config->parent;
-> diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-> index c722c67668c6..34c143aca42d 100644
-> --- a/include/linux/gpio/regmap.h
-> +++ b/include/linux/gpio/regmap.h
-> @@ -78,6 +78,8 @@ struct gpio_regmap_config {
->  	int ngpio_per_reg;
->  	struct irq_domain *irq_domain;
-> =20
-> +	unsigned long *fixed_direction_output;
-
-Please add some documentation.
-
--michael
-
-> +
->  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
->  			      unsigned int offset, unsigned int *reg,
->  			      unsigned int *mask);
-
-
---b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaMgKhhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/g/OQGApkK4RyQeR27/lOz7UgmjxXWviLT24rk7
-HomZpRwCI1WRHKWuke8PKCKR4WSGZcYjAYDBPXI1xnHdn8m/n1TIQChwQTK5HsFI
-3TxEofLzFPbcaU5PkHKQoroE+2VZNlrfg8A=
-=QdL8
------END PGP SIGNATURE-----
-
---b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5--
+> +	return d;
+> +}
 
