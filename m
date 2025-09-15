@@ -1,170 +1,169 @@
-Return-Path: <linux-kernel+bounces-816677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77504B5770F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:50:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B487CB5770A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11DA83A54C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:48:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A0454E1BD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B1F38DDB;
-	Mon, 15 Sep 2025 10:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8GUuZND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9272FE587;
+	Mon, 15 Sep 2025 10:47:42 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD82DA776;
-	Mon, 15 Sep 2025 10:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077382FD7C3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933222; cv=none; b=dD1gYCyxOL7IB87HR4w6rlpLsbehOZxmsnfoCeuyjqnU/CSNHVW2a6BsTfZJIHOY+l23QS0iQrhMAI0ktRK7weAPeSCyW+NVJGZ/qeppUOC0oDFzuA6L+EasDJX/LKKmlkZQwDYOMhXO9rh4PEGpLpN1V0B+qE1Bl6FOFd50SrI=
+	t=1757933261; cv=none; b=GiV8yYV38WdhT7tm7Vu0tzYxyhGW5RsI456P4JD8SE1V3Q8w78Bw4WsGoWKNrh+3ZuCgGzetnkob6N4nj1vT1xSt/m/6rP/zGVt1hokhWYAp2G+1KLQ4+cJv93ZV3FpIYnLmR37UbrstbzLrlbust8moIISbsSTxYN4cIAPVXAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933222; c=relaxed/simple;
-	bh=avsto3QNk6qIWfGwz4s5xOHibcyjdg9CFwNBjQsN5dQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNtOMwY3IkmfR+TmH+3GN7AdJ050/wfM/mjgLZNEHJcAIU8DOEvY8jpAlj3kZ1TFeCtsCpfYeMhPH3rsUhGEQ9L9xVTw1A4AxnXeVZDPydRsrMlWNXfRRYHmxB5afnoPaedDSw9RxMzqqBH3cWgtFlauYDk+kv9Gyf77smP1tkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8GUuZND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8DCC4CEF1;
-	Mon, 15 Sep 2025 10:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757933222;
-	bh=avsto3QNk6qIWfGwz4s5xOHibcyjdg9CFwNBjQsN5dQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V8GUuZNDRXJWH+csFpxRySlEaGxHPM1wv2EB4Q2EiTEtWYe6vRrtznX8TBjYg6+Kc
-	 EYGZP31esjXS511n24JlKdPKKEh4PhVuyJVonhaA+OnjQDxMHO/hiAIoD3OocIRDS7
-	 /DHxTpNwq0zDYrKd3mr9ByHnvtsrkNSiRYhRKEC+u/Ll7aIbbQXDRKw0R15nd0IE2j
-	 YWon+KVteNNHpC+H9ElCVIs/ogx+ARDcmRk55ciThwnvEnZ3jscpl5N41PobwGS/UJ
-	 VZHLFiMhoaqXlrcwycy0xMmjxbkeoR2ABmqryCrPnYqBig4meuPGwYi0wzkkzm2SeP
-	 patWrdkfYenVQ==
-Message-ID: <f0a34514-19da-4c73-9cd4-ae220fed6447@kernel.org>
-Date: Mon, 15 Sep 2025 19:47:00 +0900
+	s=arc-20240116; t=1757933261; c=relaxed/simple;
+	bh=FtZR8dFldPy1RuaNntESwgcsBNyTo98zgEi4p5KB27w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M6fwsJU3hR55H5kUZ+OBM59BA9naUwGfzjK4AaLGqjNURI7RISZm2H+/aNr9kxymBiQpGLdditwnBTYtpC03IHrw/NuXvS9exJ+dy4Iq61MewkKlowcrW7nsPNLBjSwRE2Jrf1DfaYT8vWF3Q1vYJw+18nPVFV9QVaKDi8U6e+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62f1987d446so2309012a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:47:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757933258; x=1758538058;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5i+aeXUTUwkFP24pZXIgtLwZ4MmQQUiLZKdFo7RuhVE=;
+        b=oDMVppczSapTCfnK6reNaoXJKQn0NTCXQbEEh2EGAyNT4VWf2KbVHN8/ydRO+obeXm
+         FSFEy2Tw8CTRq5hk39ASwh+ESDiDJ9sRaxO8RrMy9V2deCvuC+DGrAtwDBXlT+ARAO2B
+         b3LN6FFw0q+XtZ73YEFnELz/ou16dLtY38zKmq/kxtrKQDlJPBxuS/jRtaI9DX4un5nT
+         LMJi4ixYHDErC/CQGVaT/fLMim+aAVQlaMOSIUZJ802Atnf0sXMrwSMbIMP6pdlCSfkS
+         TdgpFttTxQK3Q4F4d2ZFfob+gHB95u+4SfvDsBEtmLpEdQJk/QVb8bDjkBS3AdNMnl7u
+         aueQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNP2rDWKGJel3NjVlVWYMH75mZuuRt2VzIjMH1w+9f2pfKvSlGpVi2Qp2caSLTBhN86EkzzRdmXM0EeRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMa5Ufh/VQtDq1QcUFxk3BFAmiQks3e7KQ0h+NJUAAVJG4kfff
+	Var5M+x1j8Ra+a02hGRIw52wrcRb04uk5iuN/FsMlfMxXUAiSk+WTw1n
+X-Gm-Gg: ASbGncsVk1CfbjPjWzLGTYiFwhHBvCnHcWsRFRrmx7oYR1ZPin8aLCew17kPltNjsMW
+	HQevgwLpamTd5CwaCxrx/vvZh8kW4tG9s+i8zADT6eO0jixYH04eQecfk3Pxeqa7K+ZhMOCwszB
+	PHDo8ZEUSOhDzAUehlvUySHX+HwSEM2ISlI71/8LJJu5RaaP9kyz+hIUVfUchCc8UlIqlxevynf
+	keiSgdfo+dZrwqccX9Ba1Er9AIP90WfWz2+UuTXUUMkwVjU7dhPWyGjBIM8gRkhlSiwMZbc9sRE
+	zpTL+MAamk3fZEZVPL1vGCKYO4/BPqPQTgi9KXzxeKO0LPDDrH3wnj9wB8iv8shfGAQHLnK80qn
+	MYGM5Krt3jbp9CA==
+X-Google-Smtp-Source: AGHT+IHZw351OahB9qpqYDiJ9xfQky2jTs5UL8nDOi+G7moUMafcJPtFqs78cPQMSXYcowTOaURa/w==
+X-Received: by 2002:a05:6402:1ec7:b0:62c:26cd:c919 with SMTP id 4fb4d7f45d1cf-62ed82b9655mr14152868a12.22.1757933258217;
+        Mon, 15 Sep 2025 03:47:38 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f38abc083sm2123233a12.50.2025.09.15.03.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 03:47:37 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v3 0/8] net: ethtool: add dedicated GRXRINGS
+ driver callbacks
+Date: Mon, 15 Sep 2025 03:47:25 -0700
+Message-Id: <20250915-gxrings-v3-0-bfd717dbcaad@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] can: raw: use bitfields to store flags in struct
- raw_sock
-To: Oliver Hartkopp <socketcan@hartkopp.net>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
- <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
- <f96cd163-0364-4c14-882b-48c3f8e0f05a@hartkopp.net>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <f96cd163-0364-4c14-882b-48c3f8e0f05a@hartkopp.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL3ux2gC/1XNywqDMBCF4VcJs3ZKHC+trvoepYskjjqbWBIJF
+ vHdC6H0sj7839khchCO0KsdAieJsnjoVVUocLPxE6MM0CsgTY3udIPTFsRPEQ2xI2Imww4KBY/
+ Ao2xZuoHnFT1vK9wLBbPEdQnPfJHKvL+17qOlEjW2VU0XGnVrmvo6sBXjT0uYMpLoJyzpGxJqr
+ NzZtNpaZjv+hcdxvAD6XSfH4gAAAA==
+X-Change-ID: 20250905-gxrings-a2ec22ee2aec
+To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+ kuba@kernel.org, Simon Horman <horms@kernel.org>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, Breno Leitao <leitao@debian.org>, 
+ Lei Yang <leiyang@redhat.com>, kernel-team@meta.com
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2757; i=leitao@debian.org;
+ h=from:subject:message-id; bh=FtZR8dFldPy1RuaNntESwgcsBNyTo98zgEi4p5KB27w=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBox+7HirfQaeDf5m28Ma+aXf52p+Qtm5IBGtD8z
+ pKG7Y2FNT+JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaMfuxwAKCRA1o5Of/Hh3
+ bZpTD/0THZuj7I15KmgVCbSxEZI6L3IvZudFf69KcoButC9jDJUT2rq5B2tEpzA5KmXQupu/OTV
+ puF4/TxOLCIpQz1YTFWKfTGkIvLLI/W+PKj/WuTr0jZLaOyeIMQUD/MWgkfqFI4SnwOCVxwL0E9
+ Oebpl+3E8VYL80bn/qbD/PLyReL570i7hr4aR8+EVQLdXTDKx8P8mgR5wf3lD3HKIIfxuOiA824
+ /3n4nAJQQ0DgUp/8uzpdp2Smn1Xo9Ff+4aAnQHeM5gjE3xwWtK8976c3phPmjyOM3X2haMdzd0X
+ Wyc/9GxREn4/xZxAzR6waHQaxXksfUKgyO2wyuUa37v6Cig8P62MaX1nH4up7DvuAwRSYtcKgWK
+ pNm5y0tbKHNckbT6HPKwq+csPshCm+fAwmHj0SNAjoBTYVbGZxj6Cuc/WXyX0CejGbu3UGBh8nK
+ Slx87562CA1Hazm9fXjEsOE331nAEY6sXdn9Lc1q0Wvb5TpF9wUusMDR8IvNt/3NS5Aqa64hjac
+ NfjXrmWTZYKLJvBRvi3XPrIOCBEqK2MH3LTNw/O0XSBDKy6YE7yI5Nw7O1B/cWItxQkgnkGf5T1
+ BMOroaUdXtqE32pJvw7F0kk0AO12akrEGXG8Z6O1J1xMJggBT5e4ycF7aUGb8O66a2C8y8mDuUZ
+ y+tWuPLSlIV0fzA==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 15/09/2025 at 19:16, Oliver Hartkopp wrote:
-> On 15.09.25 11:23, Vincent Mailhol wrote:
->> The loopback, recv_own_msgs, fd_frames and xl_frames fields of struct
->> raw_sock just need to store one bit of information.
->>
->> Declare all those members as a bitfields of type unsigned int and
->> width one bit.
->>
->> Add a temporary variable to raw_setsockopt() and raw_getsockopt() to
->> make the conversion between the stored bits and the socket interface.
->>
->> This reduces struct raw_sock by eight bytes.
->>
->> Statistics before:
->>
->>    $ pahole --class_name=raw_sock net/can/raw.o
->>    struct raw_sock {
->>        struct sock                sk __attribute__((__aligned__(8))); /*    
->> 0   776 */
->>
->>        /* XXX last struct has 1 bit hole */
->>
->>        /* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
->>        int                        bound;                /*   776     4 */
->>        int                        ifindex;              /*   780     4 */
->>        struct net_device *        dev;                  /*   784     8 */
->>        netdevice_tracker          dev_tracker;          /*   792     0 */
->>        struct list_head           notifier;             /*   792    16 */
->>        int                        loopback;             /*   808     4 */
->>        int                        recv_own_msgs;        /*   812     4 */
->>        int                        fd_frames;            /*   816     4 */
->>        int                        xl_frames;            /*   820     4 */
->>        struct can_raw_vcid_options raw_vcid_opts;       /*   824     4 */
->>        canid_t                    tx_vcid_shifted;      /*   828     4 */
->>        /* --- cacheline 13 boundary (832 bytes) --- */
->>        canid_t                    rx_vcid_shifted;      /*   832     4 */
->>        canid_t                    rx_vcid_mask_shifted; /*   836     4 */
->>        int                        join_filters;         /*   840     4 */
->>        int                        count;                /*   844     4 */
->>        struct can_filter          dfilter;              /*   848     8 */
->>        struct can_filter *        filter;               /*   856     8 */
->>        can_err_mask_t             err_mask;             /*   864     4 */
->>
->>        /* XXX 4 bytes hole, try to pack */
->>
->>        struct uniqframe *         uniq;                 /*   872     8 */
->>
->>        /* size: 880, cachelines: 14, members: 20 */
->>        /* sum members: 876, holes: 1, sum holes: 4 */
->>        /* member types with bit holes: 1, total: 1 */
->>        /* forced alignments: 1 */
->>        /* last cacheline: 48 bytes */
->>    } __attribute__((__aligned__(8)));
->>
->> ...and after:
->>
->>    $ pahole --class_name=raw_sock net/can/raw.o
->>    struct raw_sock {
->>        struct sock                sk __attribute__((__aligned__(8))); /*    
->> 0   776 */
->>
->>        /* XXX last struct has 1 bit hole */
->>
->>        /* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
->>        int                        bound;                /*   776     4 */
->>        int                        ifindex;              /*   780     4 */
->>        struct net_device *        dev;                  /*   784     8 */
->>        netdevice_tracker          dev_tracker;          /*   792     0 */
->>        struct list_head           notifier;             /*   792    16 */
->>        unsigned int               loopback:1;           /*   808: 0  4 */
->>        unsigned int               recv_own_msgs:1;      /*   808: 1  4 */
->>        unsigned int               fd_frames:1;          /*   808: 2  4 */
->>        unsigned int               xl_frames:1;          /*   808: 3  4 */
-> 
-> This means that the former data structures (int) are not copied but bits are set
-> (shifted, ANDed, ORed, etc) right?
-> 
-> So what's the difference in the code the CPU has to process for this
-> improvement? Is implementing this bitmap more efficient or similar to copy the
-> (unsigned ints) as-is?
+This patchset introduces a new dedicated ethtool_ops callback,
+.get_rx_ring_count, which enables drivers to provide the number of RX
+rings directly, improving efficiency and clarity in RX ring queries and
+RSS configuration.
 
-It will indeed have to add a couple assembly instructions. But this is peanuts.
-In the best case, the out of order execution might very well optimize this so
-that not even a CPU tick is wasted. In the worst case, it is a couple CPU ticks.
+Number of drivers implements .get_rxnfc callback just to report the ring
+count, so, having a proper callback makes sense and simplify .get_rxnfc
+(in some cases remove it completely).
 
-On the other hands, reducing the size by 16 bytes lowers the risk to have a
-cache miss. And removing one cache miss outperforms by an order of magnitude the
-penalty of adding a couple assembly instructions.
+This has been suggested by Jakub, and follow the same idea as RXFH
+driver callbacks [1].
 
-Well, I did not benchmark it, but this is a commonly accepted trade off.
+This also port virtio_net to this new callback. Once there is consensus
+on this approach, I can start moving the drivers to this new callback.
 
+Link: https://lore.kernel.org/all/20250611145949.2674086-1-kuba@kernel.org/ [1]
 
-Yours sincerely,
-Vincent Mailhol
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Tested-by: Lei Yang <leiyang@redhat.com>
+---
+Changes in v3:
+- Make ethtool_get_rx_ring_count() non static and use it in rss_set_prep_indir()
+- Check return function of ethtool_get_rx_ring_count() in
+  ethtool_get_rx_ring_count() (Jakub)
+- Link to v2: https://lore.kernel.org/r/20250912-gxrings-v2-0-3c7a60bbeebf@debian.org
+
+Changes in v2:
+- rename get_num_rxrings() to ethtool_get_rx_ring_count() (Jakub)
+- initialize struct ethtool_rxnfc() (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250909-gxrings-v1-0-634282f06a54@debian.org
+---
+Changes v1 from RFC:
+- Renaming and changing the return type of .get_rxrings() callback (Jakub)
+- Add the docstring format for the new callback (Simon)
+- Remove the unecessary WARN_ONCE() (Jakub)
+- Link to RFC: https://lore.kernel.org/r/20250905-gxrings-v1-0-984fc471f28f@debian.org
+
+---
+Breno Leitao (8):
+      net: ethtool: pass the num of RX rings directly to ethtool_copy_validate_indir
+      net: ethtool: add support for ETHTOOL_GRXRINGS ioctl
+      net: ethtool: remove the duplicated handling from ethtool_get_rxrings
+      net: ethtool: add get_rx_ring_count callback to optimize RX ring queries
+      net: ethtool: update set_rxfh to use ethtool_get_rx_ring_count helper
+      net: ethtool: update set_rxfh_indir to use ethtool_get_rx_ring_count helper
+      net: ethtool: use the new helper in rss_set_prep_indir()
+      net: virtio_net: add get_rxrings ethtool callback for RX ring queries
+
+ drivers/net/virtio_net.c | 15 ++-------
+ include/linux/ethtool.h  |  2 ++
+ net/ethtool/common.h     |  2 ++
+ net/ethtool/ioctl.c      | 88 ++++++++++++++++++++++++++++++++++++++----------
+ net/ethtool/rss.c        | 15 ++++-----
+ 5 files changed, 84 insertions(+), 38 deletions(-)
+---
+base-commit: 5b5ba63a54cc7cb050fa734dbf495ffd63f9cbf7
+change-id: 20250905-gxrings-a2ec22ee2aec
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
