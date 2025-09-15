@@ -1,149 +1,183 @@
-Return-Path: <linux-kernel+bounces-816532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BBDB5750A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5F2B574F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37B318953C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE136167C21
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF702F9982;
-	Mon, 15 Sep 2025 09:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D8A2F5313;
+	Mon, 15 Sep 2025 09:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="WeLcL0r/"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqU5CNoT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A962F549F;
-	Mon, 15 Sep 2025 09:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1012F546D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757929227; cv=none; b=q+kM9HPOo2zVv5TOlRtL7KeKJiwYgEDwze/RtcQQSg4aF6Wln5VXm3eqrhHkiHFNGp0niSRefL8jn9uAOZShDlaJPZIIHHhoh7QuL4BnFXhW2nwWCZYix5ZqczFmnm6QOi/+O5eMbsjZaM/RE2nJ1QrXezu5Z9/Na3J2hDsJBqk=
+	t=1757928897; cv=none; b=MYk81AokoyTOe6EoeBrJPObvGT3tpi6GGWwnsGhYSs4szX+NpUscsnw4ZpGT9AQdYiGSi5DNww0m45JSnGhn7mLHRuK5eCT4XYqg1tlOzT5bHgKw6v/FI0CovhGB0AgGpMc8pvSQUf8xHMISzacfE9W398nUeZRdNU35SpjwhPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757929227; c=relaxed/simple;
-	bh=Hmjdd1ChV+8SxQHGRgNWtZrCpwmOz+pQ5vs7rwQviJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=re0GfjRppEWZQm81SoHj8Ew7UJXZaSd0qHw6Z0dFdBk9Fipui68vviApoAzuUgnh0P4hBCJKBW9fbG/Pixa06GE6RjM/8XwAsBWeY8of+quW7WPH7hcriiWWPzW6Sc8qOLslBhXHtKowiX/T2mGln8Lsn0Q/vcOMG7SO5W9fkAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=WeLcL0r/; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id BDAE11C006D; Mon, 15 Sep 2025 11:32:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1757928722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nIME8cdz06LUslw529zpHp//o40yXRj8V4ARH29l+OM=;
-	b=WeLcL0r/wOESE22lzdL0T0iZSsoHeDCHNeQkagRYaZG10PxOeBZZ5bDcSKYh7v5oiJUYVs
-	QTedepsGbIkdFGSOmSM9atufwcdbyRMPCa2eSR7XjcfGQ5NOs74IPHr3tcdFoqylhLeadu
-	yXWzOmB+VkYwx6xEASZnw0ojDCuRAI4=
-Date: Mon, 15 Sep 2025 11:32:02 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
-	will@kernel.org, longman@redhat.com,
-	miriam.rachel.korenblit@intel.com, linux-wireless@vger.kernel.org
-Subject: Re: locking problems in iwlwifi? was Re: 6.16-rcX: crashing way too
- often on thinkpad X220
-Message-ID: <aMfdEk6Cw6EFt+/l@duo.ucw.cz>
-References: <aH/L1PCwtwe8Y1+a@duo.ucw.cz>
- <aID6XPLXuGo+ViTm@duo.ucw.cz>
- <aIEC4t2EICdgomZV@duo.ucw.cz>
- <c5c06a93845f72b40c6df82fcbc89d3163a01d8b.camel@sipsolutions.net>
+	s=arc-20240116; t=1757928897; c=relaxed/simple;
+	bh=QZMX6GkwFBWgTBkjZS74DvKgneBWRDpU+Kd4625oEPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NiZ88zV82k7WKap73IjtG33BkTUFpt5W4Wj/7eFKB4SIxt/kpcKba/uG2lIO/0UHxnZAhn6PE9o3srC0vERi9aca9gaun5hFJICdAOThxtv+qw0D2nAoGWO7M0R4F6CdJEcNQrs7zdvj+T9YzeZ1dYpV6L6DzEfXq6KfDznWRsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqU5CNoT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9341C4CEF5;
+	Mon, 15 Sep 2025 09:34:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757928897;
+	bh=QZMX6GkwFBWgTBkjZS74DvKgneBWRDpU+Kd4625oEPM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gqU5CNoTNMdUO2fWX9ZxfSGdNEjVLI+ZFBNHZlCrDzshK31on832kPz+gOG70NWTE
+	 252FnHsS1a3bl4zxwgY5ResK7JUL43dD+x2ksVcn5+/pk1hOTPlS/tElQDORAur+SL
+	 T4wOX4h8EHwsGZW+Hcc42UlOv+6/r+OWxIrNu8v///lL99SfTCu+ipnw4BMQCBc2D1
+	 S5IiQVpqRiOkr1EKeailfM/sQd9lN4ItpatKlQsV7CJLuHHyPNA1RvflRtCzGHIoJ6
+	 o9kg3MduIAQU1T/WiNRu/0K8PAj4JTX/ryTxwAMudxk1/BGno+8oEtSk/hBaqeuKxB
+	 bS73knibL6xUA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: fix to mitigate overhead of f2fs_zero_post_eof_page()
+Date: Mon, 15 Sep 2025 17:34:45 +0800
+Message-ID: <20250915093445.3790583-1-chao@kernel.org>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CcqJqSEzx53JM7Gd"
-Content-Disposition: inline
-In-Reply-To: <c5c06a93845f72b40c6df82fcbc89d3163a01d8b.camel@sipsolutions.net>
+Content-Transfer-Encoding: 8bit
 
+f2fs_zero_post_eof_page() may cuase more overhead due to invalidate_lock
+and page lookup, change as below to mitigate its overhead:
+- check new_size before grabbing invalidate_lock
+- lookup and invalidate pages only in range of [old_size, new_size]
 
---CcqJqSEzx53JM7Gd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: ba8dac350faf ("f2fs: fix to zero post-eof page")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/file.c | 36 ++++++++++++++++--------------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
 
-Hi!
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 1aae4361d0a8..92538d0113f8 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -35,15 +35,20 @@
+ #include <trace/events/f2fs.h>
+ #include <uapi/linux/f2fs.h>
+ 
+-static void f2fs_zero_post_eof_page(struct inode *inode, loff_t new_size)
++static void f2fs_zero_post_eof_page(struct inode *inode,
++					loff_t new_size, bool lock)
+ {
+ 	loff_t old_size = i_size_read(inode);
+ 
+ 	if (old_size >= new_size)
+ 		return;
+ 
++	if (lock)
++		filemap_invalidate_lock(inode->i_mapping);
+ 	/* zero or drop pages only in range of [old_size, new_size] */
+-	truncate_pagecache(inode, old_size);
++	truncate_inode_pages_range(inode->i_mapping, old_size, new_size);
++	if (lock)
++		filemap_invalidate_unlock(inode->i_mapping);
+ }
+ 
+ static vm_fault_t f2fs_filemap_fault(struct vm_fault *vmf)
+@@ -114,9 +119,7 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
+ 
+-	filemap_invalidate_lock(inode->i_mapping);
+-	f2fs_zero_post_eof_page(inode, (folio->index + 1) << PAGE_SHIFT);
+-	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_zero_post_eof_page(inode, (folio->index + 1) << PAGE_SHIFT, true);
+ 
+ 	file_update_time(vmf->vma->vm_file);
+ 	filemap_invalidate_lock_shared(inode->i_mapping);
+@@ -1149,7 +1152,7 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		filemap_invalidate_lock(inode->i_mapping);
+ 
+ 		if (attr->ia_size > old_size)
+-			f2fs_zero_post_eof_page(inode, attr->ia_size);
++			f2fs_zero_post_eof_page(inode, attr->ia_size, false);
+ 		truncate_setsize(inode, attr->ia_size);
+ 
+ 		if (attr->ia_size <= old_size)
+@@ -1268,9 +1271,7 @@ static int f2fs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 	if (ret)
+ 		return ret;
+ 
+-	filemap_invalidate_lock(inode->i_mapping);
+-	f2fs_zero_post_eof_page(inode, offset + len);
+-	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_zero_post_eof_page(inode, offset + len, true);
+ 
+ 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
+ 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
+@@ -1555,7 +1556,7 @@ static int f2fs_do_collapse(struct inode *inode, loff_t offset, loff_t len)
+ 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	filemap_invalidate_lock(inode->i_mapping);
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len);
++	f2fs_zero_post_eof_page(inode, offset + len, false);
+ 
+ 	f2fs_lock_op(sbi);
+ 	f2fs_drop_extent_tree(inode);
+@@ -1678,9 +1679,7 @@ static int f2fs_zero_range(struct inode *inode, loff_t offset, loff_t len,
+ 	if (ret)
+ 		return ret;
+ 
+-	filemap_invalidate_lock(mapping);
+-	f2fs_zero_post_eof_page(inode, offset + len);
+-	filemap_invalidate_unlock(mapping);
++	f2fs_zero_post_eof_page(inode, offset + len, true);
+ 
+ 	pg_start = ((unsigned long long) offset) >> PAGE_SHIFT;
+ 	pg_end = ((unsigned long long) offset + len) >> PAGE_SHIFT;
+@@ -1814,7 +1813,7 @@ static int f2fs_insert_range(struct inode *inode, loff_t offset, loff_t len)
+ 	f2fs_down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 	filemap_invalidate_lock(mapping);
+ 
+-	f2fs_zero_post_eof_page(inode, offset + len);
++	f2fs_zero_post_eof_page(inode, offset + len, false);
+ 	truncate_pagecache(inode, offset);
+ 
+ 	while (!ret && idx > pg_start) {
+@@ -1872,9 +1871,7 @@ static int f2fs_expand_inode_data(struct inode *inode, loff_t offset,
+ 	if (err)
+ 		return err;
+ 
+-	filemap_invalidate_lock(inode->i_mapping);
+-	f2fs_zero_post_eof_page(inode, offset + len);
+-	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_zero_post_eof_page(inode, offset + len, true);
+ 
+ 	f2fs_balance_fs(sbi, true);
+ 
+@@ -4922,9 +4919,8 @@ static ssize_t f2fs_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	if (err)
+ 		return err;
+ 
+-	filemap_invalidate_lock(inode->i_mapping);
+-	f2fs_zero_post_eof_page(inode, iocb->ki_pos + iov_iter_count(from));
+-	filemap_invalidate_unlock(inode->i_mapping);
++	f2fs_zero_post_eof_page(inode,
++		iocb->ki_pos + iov_iter_count(from), true);
+ 	return count;
+ }
+ 
+-- 
+2.49.0
 
-> > [  402.125635] ------------[ cut here ]------------
-> > [  402.125638] raw_local_irq_restore() called with IRQs enabled
-> > [  402.125645] WARNING: CPU: 3 PID: 387 at kernel/locking/irqflag-debug=
-=2Ec:10 warn_bogus_irq_restore+0x25/0x30
-> > [  402.125654] Modules linked in:
-> > [  402.125661] CPU: 3 UID: 0 PID: 387 Comm: kworker/u16:5 Tainted: G S =
-                 6.16.0-rc7+ #303 PREEMPT(voluntary)=20
-> > [  402.125667] Tainted: [S]=3DCPU_OUT_OF_SPEC
-> > [  402.125668] Hardware name: LENOVO 4291W3B/4291W3B, BIOS 8DET73WW (1.=
-43 ) 10/12/2016
-> > [  402.125671] Workqueue: events_unbound cfg80211_wiphy_work
-> > [  402.125678] RIP: 0010:warn_bogus_irq_restore+0x25/0x30
-> > [  402.125683] Code: 90 90 90 90 90 80 3d 51 3d dc 00 00 74 05 c3 cc cc=
- cc cc 55 48 c7 c7 c0 4f c9 85 48 89 e5 c6 05 38 3d dc 00 01 e8 9b d8 e6 fe=
- <0f> 0b 5d c3 cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
-> > [  402.125686] RSP: 0018:ffffc9000173fb30 EFLAGS: 00010282
-> > [  402.125691] RAX: 0000000000000000 RBX: ffffffff8616b460 RCX: 0000000=
-000000000
-> > [  402.125694] RDX: 0000000000000003 RSI: 0000000000000027 RDI: 0000000=
-0ffffffff
-> > [  402.125696] RBP: ffffc9000173fb30 R08: 0000000028935f32 R09: 0000000=
-000000001
-> > [  402.125699] R10: 0000000000000044 R11: ffff888100ba52c8 R12: 0000000=
-000000001
-> > [  402.125702] R13: ffffc9000173fbcb R14: ffffffff84301224 R15: 0000000=
-000000000
-> > [  402.125704] FS:  0000000000000000(0000) GS:ffff88829007f000(0000) kn=
-lGS:0000000000000000
-> > [  402.125707] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [  402.125710] CR2: 000055967d471ee0 CR3: 0000000006046001 CR4: 0000000=
-0000606b0
-> > [  402.125713] Call Trace:
-> > [  402.125716]  <TASK>
-> > [  402.125719]  console_flush_all+0x41e/0x460
-> > [  402.125725]  ? console_flush_all+0x43/0x460
-> > [  402.125735]  console_unlock+0x55/0x100
-> > [  402.125741]  vprintk_emit+0x157/0x320
-> > [  402.125748]  vprintk_default+0x18/0x20
-> > [  402.125752]  vprintk+0x9/0x10
-> > [  402.125756]  _printk+0x52/0x70
-> > [  402.125766]  ieee80211_sta_rx_queued_mgmt+0x4c8/0xd30
-> > [  402.125775]  ? __this_cpu_preempt_check+0x13/0x20
-> > [  402.125784]  ieee80211_iface_work+0x3ad/0x500
->=20
-> That's not great, but I don't see how the driver or wifi subsystem is
-> involved ... ieee80211_sta_rx_queued_mgmt() doesn't even use spinlocks
-> let alone disable IRQs or use raw_ APIs, and it's in the middle of
-> printk anyway.
->=20
-> No idea what might be going on here, sorry.
-
-For the record, problem was eventually traced to intel wifi driver bug
-in bugzilla, and at least experimental patch exist fixing it.
-
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, Netanyahu and Musk!
-
---CcqJqSEzx53JM7Gd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaMfdEgAKCRAw5/Bqldv6
-8ovgAKCPjHJcOnb4T7bj/oFpRfr3ZByhzACcDbNIfOo86i/Wf6MvGZ8mxAhftmc=
-=9DKh
------END PGP SIGNATURE-----
-
---CcqJqSEzx53JM7Gd--
 
