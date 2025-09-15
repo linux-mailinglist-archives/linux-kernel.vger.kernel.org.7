@@ -1,138 +1,216 @@
-Return-Path: <linux-kernel+bounces-817569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14EAB583EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 531DBB583F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C578E4C39F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:46:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BADF7AE360
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D68D2D7DD9;
-	Mon, 15 Sep 2025 17:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473B722D4C8;
+	Mon, 15 Sep 2025 17:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itEM3nm8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="TJSuwjP4";
+	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="MxlyPL4K"
+Received: from mx0b-003cac01.pphosted.com (mx0b-003cac01.pphosted.com [205.220.173.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C082C3756;
-	Mon, 15 Sep 2025 17:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757958382; cv=none; b=p6tcjODwmX8Xdj26VaJytRXIaQijSUY9DZDk/TiUZsOwfX/QnUPZZ8Ge6rtTRi32i69KC9NB4RWly++jC9apE/Omby6rw66kzVJPAy32+gug9IDBD8kjjlTNz2ACnzZJgy/EStgGzQt0ZluBi946tq1zAGP4NTsOIaPcG49ekag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757958382; c=relaxed/simple;
-	bh=43p4hmwIZmZLhKtA9YVOxJxdxXdlkShzPX7Sy+37atw=;
-	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gAA6j08xNODEws3JbSAS3NPXDx5FRdffd0ciMVEg3B7UcPPy1sz0+bdRHq81GDwEsT78rs8KgkD6q/4kdwGk/5mfOVy7arxky4F7kRnVX2g1e3JH7s3admgIJsRLYvGTEzkkSN8Te7Bew4iFR36IuSQ/FxwiZKG0w54G44IQ7rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itEM3nm8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE8AC4CEFA;
-	Mon, 15 Sep 2025 17:46:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757958380;
-	bh=43p4hmwIZmZLhKtA9YVOxJxdxXdlkShzPX7Sy+37atw=;
-	h=Date:From:Cc:Subject:From;
-	b=itEM3nm8wehwfAeVftHglrkkVF1nt7dbjkgIj16nLtTdYAQGYDo+02T2OM8ZnfAF2
-	 3Mt7rI+kbMUPM/1coO7korV7eRAH6NUlU5EHjO8FSylfbJf5jVdcBd/761WAmb0YSQ
-	 O2F6c40gXiFVAVncDYkkQdbtrvOG58cU8FhhwnP2T+O6cmrADd3vwtaV/pPUawS83K
-	 DlS5xeqHzF8ijNIJHl/meTstbE/4te1Y50/wnkvMZONFLkiCcgdrYNgL5NtzHpGBtM
-	 ETwWhZOEgr3qqIUBXoHyy7GurY4sEcg45GJbau6BkHz0EtljJPxMGE7zi911hqWH0t
-	 AsjoDqEWWCkCg==
-Date: Mon, 15 Sep 2025 18:46:16 +0100
-From: Mark Brown <broonie@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: linux-next: manual merge of the fs-next tree with the mm-unstable
- tree
-Message-ID: <aMhQ6Po0hAIyB0dM@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC65121767C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.173.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757958503; cv=fail; b=kDW1BmvqnlxGWyEz8h/ATl24Q/0CygdDygobzYPmlpqGhpz7VeBhTkZg9dHaO6+RypoeztOFnsggWeyx3ViFq4dNkYQsckLnjWMfc3sbA0vRl0blef2zMr9NItslRpsdmuBIvyR6bskt5FJqHXoFlwfVU9vYuvBcw0wAQZulOU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757958503; c=relaxed/simple;
+	bh=9DZLVZ5tO+u348txv1rJKzEq/UYiC9jqElXDh259pec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qlGEY8CzOkq1dVs7Awa9od+oc4aS9NfNq0QN5uKOHVbWLbzU5gYEMgEeHn9ofzKEf71qQ6HOe3eqXwc06fF8c2acZirA/KYxbqd5fa1AAAlWnDLUfpI5h9+J/3eoFrdm1sJzihhebcAUI955mYhyg4z0S21mZOCIuvU3TK5Yj4c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=TJSuwjP4; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=MxlyPL4K; arc=fail smtp.client-ip=205.220.173.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
+Received: from pps.filterd (m0187217.ppops.net [127.0.0.1])
+	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FAkCr2018507;
+	Mon, 15 Sep 2025 10:48:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=ppfeb2020; bh=
+	9DZLVZ5tO+u348txv1rJKzEq/UYiC9jqElXDh259pec=; b=TJSuwjP452fdl0ex
+	7lEbUc+T3N1ZaSmiAaselawVxG1ALCRky4EvfKAisyE5swl5+nkuCUEc3ZzjdFg3
+	kzJNCgIPQMOXEqubZB7GmlV8/0szu0p4mMSoYHDZyaLlEg90Q33OVQHdTcvOcS5x
+	Q2yduWBfsfbO6PB3ns+6cTxnJfXbqsRL26ub8eHbyCvTO7eCcud614Ux8NHb5TOm
+	XdFJU6n5EqLu/pCbwJqVT6pTnifYMeLGjvLDhfG7Q1ni7+E9fDiAVvZZKb3wjuf0
+	FW1Dox8c3vBrEEmBiFhjxR2bfDGQRoH2hGmU7B+f6JD6fX2QpAY/ODgV9dDZZrbl
+	LfvZjQ==
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04on2065.outbound.protection.outlook.com [40.107.102.65])
+	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 49581eujjj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Sep 2025 10:48:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IjZh57N/lgWxHm6b3/ErknojJn+hPjmbSf7P3IxBNKEmbmkg+O4yV6jeu2Wq059DaLpMBWeee9KiXhi4H0ClqNm9ejSRnulZ2qNnDyZjd0p6uppUTa0117wytrpuezlvD67uD06ojRp6kepl4vVwppRilUeCY7wBEa8TOPl+qjCjXEjPfPfZRg6zQwik345qDwQqwCcr0qeq31RSJT+wLgDLS3TTojLerIFskIOESiZhNcQqeDUCRQIsKeFL4pq9FElXDnY4h+gL8yBIH2UFphs8mIcDfDcShtR51aGv+B4BLlR295ebrXUvtZTCOx+QlP4ciObiCr1tKbW7jqehKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9DZLVZ5tO+u348txv1rJKzEq/UYiC9jqElXDh259pec=;
+ b=un5+MeWko2ZxH3YPV+FUZYgY4gnvAdmwh0axBXx54R3fRZZrBaHbB9Pk6G9e3NyRvHBXnZ2ru4Tswy+Py2UtPb4dFP7p0TJqeiwFNzsrWAzSW7wvqeJ4NdiBDb3+sEQm/xDUBCyNIkUkp0Y8vtR/DoC3QUqsPF9eykQnxi+q5ABBoGkwFrSEE5db7sqcr4buwvw0pLhf7kHYuOaLUxZO+w8aEEt3ix2dVHYJBiNX7qd54D6RCWyS8KodjS3EEcg5bciskXN+Z4vk0NU3AnJFbc5pEKfAgxcPtggMPXkiGRdmYsJVGsKMYWRrytN7iK1VxY6sQpVTguEkqgRGOBzvfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
+ dkim=pass header.d=keysight.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9DZLVZ5tO+u348txv1rJKzEq/UYiC9jqElXDh259pec=;
+ b=MxlyPL4KX2U/QyZO3LFE/fEhG7euBxCYScZXAW79xfXpmUlNp26CqCPxvsOlyYa3+U/mYxDVkb+IQYVnEVdI1+Q2DjnYnzCWpneyBEOJIiUsyIu09zSvKY1uhlG7dvns2KDy01SGU4sTKMMnRyuRXyFx8Iu3/+HQvgxQzqK8Sl8=
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
+ by SJ0PR17MB4758.namprd17.prod.outlook.com (2603:10b6:a03:378::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
+ 2025 17:48:06 +0000
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 17:48:05 +0000
+From: John Ripple <john.ripple@keysight.com>
+To: dianders@chromium.org
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+        andrzej.hajda@intel.com, blake.vermeer@keysight.com,
+        dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com,
+        john.ripple@keysight.com, jonas@kwiboo.se,
+        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+        matt_laubhan@keysight.com, mripard@kernel.org,
+        neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
+        tzimmermann@suse.de
+Subject: Re: [PATCH V3] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode with HPD
+Date: Mon, 15 Sep 2025 11:47:57 -0600
+Message-ID: <20250915174757.2566288-1-john.ripple@keysight.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <CAD=FV=Wij7MjyuS0b+4jn65Oq7Ee+2-__+5GjhfURBBk9G3kpQ@mail.gmail.com>
+References: <CAD=FV=Wij7MjyuS0b+4jn65Oq7Ee+2-__+5GjhfURBBk9G3kpQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5P221CA0027.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:930:b::37) To PH7PR17MB6130.namprd17.prod.outlook.com
+ (2603:10b6:510:1f5::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yDEG01lgW0oL6jlV"
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|SJ0PR17MB4758:EE_
+X-MS-Office365-Filtering-Correlation-Id: b46024cf-7c9b-4416-e1cf-08ddf480066c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Y6GHcklFWiwVQtB59JEc0d9SN4LNMY7aOhGETEMm+GBjUBXruPEtZkqYnDGQ?=
+ =?us-ascii?Q?mE29CukeOl89jy4HbC39I/i4K85/Ii1ByazP9ED3FIddi46r7MQt1/CT4m3v?=
+ =?us-ascii?Q?cVJ63nhcnN1ryH0tSMfHHIaFbqcw1Zn158O5JC339LOFxA85B/V6DWpPXQs/?=
+ =?us-ascii?Q?wDLREw4P46s/Uyej4dm7QmiOggdHZnVVVPWCL/e61v/zedjC4z4QC3OzHoQf?=
+ =?us-ascii?Q?QJsGWJXHKaddNuB7+jJYFrQN3eABFUJEWYTCACO7wrMRZMnnD228k1tHN3WX?=
+ =?us-ascii?Q?TsF0gVdRsUd8CpAuSPsH+7zo6MUPyVLeWTgs1McujPRM4UXxE9mDbhUfrbrI?=
+ =?us-ascii?Q?GLCOUjp0GVPT2Zxl+fccBMKhopMsU0xDAvfyA4vQJgeUw1AUYcglnNZFlto0?=
+ =?us-ascii?Q?iw/2MSnjSVSbY9SorM5CcTEvJP7ty9hsZbsvPCA+yztekj2iTV9KOjgVOjEm?=
+ =?us-ascii?Q?aSsRmOkGvIpAmTVtTNWlQChDZdlzm6Rs3cYkiqNJ/RU1JPqN1P//ZNdycke/?=
+ =?us-ascii?Q?OLRQmbiE1VB2dKyHeP3nEfKva5ycpJkytBVeaSn9Jb5rgiEJewdaNMQJsnYH?=
+ =?us-ascii?Q?ThwrHPAL2Hz0qzojSWx6/GjjF7amwfZDkSpXhs9SZ3hQn4qZWtCVgqMdkpdh?=
+ =?us-ascii?Q?rSmerZUV4uqz0kxWZeRmvstKhYMd6w2aN36MSXJ9RdaKLpnTa0OhLZymXeTC?=
+ =?us-ascii?Q?XrpAo6rNHlvwKD6giK1ncF1bZImlNVgF+MQSE4Na+/fs1njKnT89oQUScs0h?=
+ =?us-ascii?Q?f8FHJjizwR1/so+Wk7DSgefJUVez2G2TUKVPCB5fYr80O+V6RubWOpHB2bnH?=
+ =?us-ascii?Q?rHZu7gD5Qyj4LYuuktoIoDKOPDaXhpeZ/mVmY579O+wXjhK0CNyqEX1KqWKL?=
+ =?us-ascii?Q?B23vyrZAz6vZiEbzF4+88YjT6coGc82I9ie/gAz40wlnyYp1t+mIXtK+hH7x?=
+ =?us-ascii?Q?4fzU2GrEe13nPUeaAF90CKZi8l9LmSKM1qwy97EIeD/MUdtdMcozoQBapVWC?=
+ =?us-ascii?Q?82FJk4k5iBNhk8GVwjduXQrHd20foVPFv3GjV3UBG1OvXYO8DU+G752FF13Q?=
+ =?us-ascii?Q?aQd9yF7+bGEHcSTbrkM3l+2gg8oeNf+6WUKfePDz1yCBsMlNP9bZP6r1GswN?=
+ =?us-ascii?Q?usFvA6db8URoqI7E7SVEKgZtcyAS0ScWZ8LemHJLc1Jan0c6DjQgOMatgUq/?=
+ =?us-ascii?Q?jJ4jL7PmJsOm5hpuC0PtZ049ltZCIdx+0sHAyG1vbLg7N5FkkskOfsZvLyUk?=
+ =?us-ascii?Q?h2M4Brxaq4ZhQgNf4kg1L5hX0eRuJgL3z6pe/5J3fJl+j/SetcuU0L+9OuFq?=
+ =?us-ascii?Q?NcOe/2k7kHgs4pCokjJCf4fHb/As5sVcheA5hiYNF/R+zeQoQUFpDBjjA54Q?=
+ =?us-ascii?Q?Tw8wyf/XB6tRntzpQRcVwRlB09AzF/6NcqsT+JCGzL5d8uICFWq91ko3KAtJ?=
+ =?us-ascii?Q?VJs1vDTe3Yo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LCXX/pX7aCscp78XJvU3GUXgqp7akDwxULNAC4XdiWIfOgZoFHft7Pe5dHHB?=
+ =?us-ascii?Q?fQO0fHycO5Z3wYvxP8ht1rSI3c+XWU3ETondDLj1YF5xFEqWAqd+GjrLhvm4?=
+ =?us-ascii?Q?FvldmkrJ6/TuE4eR5GswmFqNNz4IACDxtivTN7jANn6sCgrchiRGBTL3JV/w?=
+ =?us-ascii?Q?aeMOqVZxhWogQ670YrZMks0dxy5bh8vmtai1zuHZes1qOSkbo8cisulH0LKq?=
+ =?us-ascii?Q?7NvD6J9vOjtkPmYe3s/dJaQGDEHqgizBbImQ8mJHznvaer5TodiNISzhz5sS?=
+ =?us-ascii?Q?UcTJFWmUY4NHTKzoSaFKyBR44sq4cHAzgi1uG/kN6Pc8HtrZPIldJA46YbKT?=
+ =?us-ascii?Q?X0EJYmflaHN5HfFiCh4lH+xM2cRp3eZg1AwvBUWg8CP3aoJRRQwcMCFlbEvT?=
+ =?us-ascii?Q?fUjH9G5rBcv1Bf8kFoMdY8XB/9dgwDmb6Q/46v/u8X67y+HHB6mMp08Caxva?=
+ =?us-ascii?Q?QWzisVNWpvVsM4iyjZDnXUF041Q8Arfuc+FklEMIgZ04S1xjj0AYuNetOmfo?=
+ =?us-ascii?Q?E8lEhySYQZeAdlMpWN/bkGRfHn9OiBeuOfxUn8Wn41eNBRW55ueIv+c38xFs?=
+ =?us-ascii?Q?ZzquISzaI1ZRO6b78/esh2BSnUTkcSU6Remw+uw1Wd50Fm9olggdyYpHIkxS?=
+ =?us-ascii?Q?lqEojnMK8Sd7OkRsC0dT9zR8m2JztifJonP36TcPpzHmJ1tbGPs0LOUe9Nj3?=
+ =?us-ascii?Q?XZj+wo6m8p7eg6rjKWQkBNm4CjQfh1tGA9J1OpkQiIl4MChGYYprymNeSZ0r?=
+ =?us-ascii?Q?M6prh3wu0KK+ZJ8lSr8r0NzomDTc0fmATehsFWmeuMtUyKwIc6JnTdWrqggm?=
+ =?us-ascii?Q?zqJ6XHEvcdw/Pr1zPpg+FTYE8QjuHNq9KXaDLqilF8NPPApKriBdkDtYWw7K?=
+ =?us-ascii?Q?7dGMfuH+TCgR72Q3YCukeOj1ENSh++37IEr9gBbJ9/13Uc9G2m2pCQrvPk2i?=
+ =?us-ascii?Q?F1W0CD7VnWhfVXcEnux/bey+VnwIqSs2UHJpFxNSVTy8XOnBwCsLvZ1mxnMW?=
+ =?us-ascii?Q?p5N245sypkm+ax15rCp8xq4sqAp4PCt0QUva3HeLORW1TSXZEJw1gSN5DSUW?=
+ =?us-ascii?Q?+T5YwIWcJKM5UW0q3IAvVDLlWTnI6spaG5Pqm/Ky5t6k8wxKcFZHileu5fg1?=
+ =?us-ascii?Q?ir2K5MTAh6qz32nlrn3bQM5SqYLYKT2HvfK4oKEXsM2fFWdAgY3mccp86ZGn?=
+ =?us-ascii?Q?Dv49PDgkr6nO9P70l2nlgUK75TTMox3jRFMIibhljVJ6fl8LMHjP6ez5Cmhx?=
+ =?us-ascii?Q?H6Nr5ZtJm60ri5Uve51eQ67BHenLBhp2iGq6IYvXpxIZK2/pXOUw2yChQCnQ?=
+ =?us-ascii?Q?aC8mU5PEWbfCUOLGYQorBrMV5vycO121v28JzaaOK8NaNHqxEFbbTp9Csjcb?=
+ =?us-ascii?Q?T+1RkQZ1LdsKKmWIWCTj2ttaqPKa/lhFO+9nVjScCxDEaT6sBnaJOWNYakIg?=
+ =?us-ascii?Q?zF8Z/WREoiQhNxOzWaZCN0sYxnMITRer6OSuzO6aFw5FlyZKSYWzDZPYU+rN?=
+ =?us-ascii?Q?4S7gkLe8be97JJoOVrEHMq+HuP99aza+PEw4md+cPz3N8/oE4uJEt0lFfC1y?=
+ =?us-ascii?Q?OeVh5GfNzipTu2PMMJIjBs4gRHOQNLwLh/hxK7tPDqHF2ZdAQGA8Eby89GQR?=
+ =?us-ascii?Q?fw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	l5/9S3QRWokwbGu+i3/lUWWjjc8YQbhm6F+I76km7Zn97u7GVhB8y0WioVFG/SrrxczH9xaBAcD014KvlcIpmdUwJ+SEpsiklFeNKIRXyeuM5hM50bbmNA4f0TmO5UJpfgA5536S0TtmTRIEpNJnVtDj3H+DCd0qPmF+I3I4He1u5n4M3/H4aJIwCzQF4b47sOFUNHGGsEniRbmw4Vr+ToR56uJ6d8nXlObsoK3QF/FaNIbM6koGYTRFmYrRzcd9M8ov2XsNr1DDrbGaiZnsR0jtiaiMdSmD5eofSxvp+Zt0rkDOdbzkBNUkA+u3/PQzfoCXdv3v5lpD2gMmYFN31Coy33s8B5DXnRgEbQfXI0kALZGbCvcQnSCsur1bLyWJ0AHViIgYZumK2b5QW1U3MW14zRAR3NkiHI8s4YJDaZhs37hpSjGXkKWbIGUskxjV41lHF2U7ZcniAzVQmI1KIxCHWD+VcgYf8O6FH3SC+9vJP52CTsVfA7Pirj9A5AbHH8q04tA7D20NHhF4fi3fKCVKmOdRcjfjlZ66wJ2M/HYhhppbhtp1jAXVLJFfjJeyQsM7FOecc0tf7d7tdY5fRxQQe/NED+1wIBJXDuuJPpQrzFlchiUj7zE5Nt3YK1lM
+X-OriginatorOrg: keysight.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b46024cf-7c9b-4416-e1cf-08ddf480066c
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 17:48:05.9358
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uv7L3jKc7fJqyMrt+qumi8Y3byu1IResWpDANpr24onwGw5HAKXwK+SWcCcpBmoxKd2nwPJdqheeAGC3+OQNNFaRECiGoXDM8LAWfNc/P24=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR17MB4758
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDExMCBTYWx0ZWRfX3BzYCoacBLVk
+ pl5eGJYX7nndcocofdVWNIV0QsrpI7+yAl+IIOUPEganBPZ1lmN6fnfMt5SyHI9E5EKgIo87Sac
+ JxtZrx7dpRk2vW68sKs/ZmbxXIcXO0uBDcXqsYLfZH64v9wBjZxFvJXyoXVr4XlEDfnZ7dXT/ib
+ B+JnAPsdBzEG49gg0HLuOC1PITeoDAmnMP8q6ZJQD+C+avISlQIDZTDVQeipeqzfp+lSuNcoMrL
+ KKNbAfpbHHmziFJlFDozQv123niMllneTBuYaUaNYdju5vtKRtSR/q/dk8BaS6+AOlPkA1dnCQ1
+ jh7JPfghARREsOv/FrufQ5ryyDN2ymtzW2NsfobVU+fMPirRFfsd2NfA8g3B9DN/1IuMf82fOA0
+ FxsSabtK
+X-Proofpoint-GUID: VEDfSngR3WN0Y8oaej5gd9lMcJdOevQ5
+X-Authority-Analysis: v=2.4 cv=XLkwSRhE c=1 sm=1 tr=0 ts=68c85158 cx=c_pps
+ a=1qom1VPyPr7zHzn88zifxA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10 a=vu2TTH8h0NUA:10
+ a=ytpM4SMt6J0pzg2_eLsA:9
+X-Proofpoint-ORIG-GUID: VEDfSngR3WN0Y8oaej5gd9lMcJdOevQ5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_06,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 malwarescore=0 phishscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130110
 
+Hi,
 
---yDEG01lgW0oL6jlV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>...but it doesn't really matter. I guess it's a little weird that your
+>current code still writes status even if it's 0, but it shouldn't
+>really hurt. There's no need to spin with that change unless you feel
+>like it.
 
-Hi all,
+I'm already working on it so I might as well.
 
-Today's linux-next merge of the fs-next tree got a conflict in:
+Thanks for all the feedback its been very helpful!
 
-  Documentation/filesystems/porting.rst
-
-between commit:
-
-  cf411621eeaa2 ("doc: update porting, vfs documentation for mmap_prepare a=
-ctions")
-
-=66rom the mm-unstable tree and commit:
-
-  b28f9eba12a49 ("change the calling conventions for vfs_parse_fs_string()")
-
-=66rom the fs-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/filesystems/porting.rst
-index 6743ed0b91126,85702e6fa1f21..0000000000000
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@@ -1286,7 -1286,14 +1286,19 @@@ The vm_area_desc provides the minimum r
-  to initialise state upon memory mapping of a file-backed region, and outp=
-ut
-  parameters for the file system to set this state.
- =20
- +In nearly all cases, this is all that is required for a filesystem. Howev=
-er, if
- +a filesystem needs to perform an operation such a pre-population of page =
-tables,
- +then that action can be specified in the vm_area_desc->action field, whic=
-h can
- +be configured using the mmap_action_*() helpers.
-++
-+ ---
-+=20
-+ **mandatory**
-+=20
-+ Calling conventions for vfs_parse_fs_string() have changed; it does *not*
-+ take length anymore (value ? strlen(value) : 0 is used).  If you want
-+ a different length, use
-+=20
-+ 	vfs_parse_fs_qstr(fc, key, &QSTR_LEN(value, len))
-+=20
-+ instead.
-
---yDEG01lgW0oL6jlV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIUOcACgkQJNaLcl1U
-h9AO7wf+Lf0ih3kYGwQoOkjm1+Y1nNLIP5bsSkc6p6M7H2bWR/eEM71v/w+Azzl3
-ieg6Bb0UiIcfG02w0llxd2PuRyLGn2aP5TqjYFJNdeDLC48benezu9oG7bAl3nAT
-6vT9uNZJGnjjUqu/PV2Y7jcFXdbytnc2m6XS2j0ODOhECImPVWMefE38dfyaAvfD
-n3VHsf1NgzfAkNaKXu/XDGE/YEvdb0UwfkKTlb5uhfsPsBGBvpTyMepzxaIn4PIn
-VEc+y0+srHEUqrweOYPUKIY21VF9e/JsQCigvPTK2IWyUG/BevwsmwCrAXY98Fih
-dqFoYhqHHCsKVyzDrPrtRrYn0bAkzw==
-=+2wd
------END PGP SIGNATURE-----
-
---yDEG01lgW0oL6jlV--
+-John
 
