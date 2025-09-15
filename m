@@ -1,169 +1,208 @@
-Return-Path: <linux-kernel+bounces-817540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB55B5837B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78132B58381
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097FC3A8E35
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:23:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 384104C551C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509D52882BD;
-	Mon, 15 Sep 2025 17:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C30B2E1EF5;
+	Mon, 15 Sep 2025 17:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="IwylzrYq"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EethH6wk"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99439286891;
-	Mon, 15 Sep 2025 17:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB70327D786
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757956880; cv=none; b=QR3XuOu2wJ8O3cgEwXYc1m9nVGd7zynY2fbfj0McE8ZYLcvwllfuh2EZGX34eYnYtUsxG/RQ92kTN2PhcszLGQXTGMAfQSMmmM5P9W8HE+UpFGkPDNC4/E01+ckmUUjMp2wT4Sc0mi3/2KzJG5ilT/8Nj43jXwXFxUQkbQPDuR8=
+	t=1757956899; cv=none; b=s6N1f4ftYVleoPn5dxapO60iGH+2OEijgYrJU7cOd/sSEx16CopukfoIlaXu6Tm5cpLajV4TuJ9EDcuwuD6Bnj2AMfWTe7jIvnz4Dtg+5dCQmlcsRtdXgh4K7qQF61qvLPKzSQqn8GjC3V5rF24hS2iUfd5pezZ6aEkYTT47zEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757956880; c=relaxed/simple;
-	bh=o1b/fDtd35x9x3J5GZJ10hfQ/p2pwRmB9aFJ7RDgwzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKIqETBBPxex+6U0xRsTV03wAgGjKnrMLqa2LSB17QXjiSP4q4dy8W+9kPnAZrvjkpbjeFdb6Ssw6ttJAsYZWoNXIr5+OJG4Iccb/qQx0efNlqioHECF9RBiS8Ite+BgpGw74YDcM+k/hxJpurp8nJyZHEURtxS0X/214r2+b78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=IwylzrYq; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [0.0.0.0] ([134.134.137.72])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58FHL7UQ2812528
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 15 Sep 2025 10:21:08 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58FHL7UQ2812528
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025082201; t=1757956870;
-	bh=rA8HIDVGmKyWyQ4z/tQ7GO2iaDFSepHEC+9igZ+OK+A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IwylzrYqJnro61LhvmKVj+8WK/dm58X4oq8cFnregnbCTNLFEkWvxnrKuzVW2Axns
-	 ++hQO1QUov3u9LyyM0IaHzSiky+PCzFpHtXRSK6t8wabd+sS3IdaR98PlaW/8sdB4x
-	 g0K98vkhjq3xPSg/XXHHQcsXUITyJpjNc/+6IHuxuv7fY8jAgXuFnM6eHlb6HApRKT
-	 k3i1j30wY+thE0UDrljzsC8XUqo5ubnMTAPzWNkZLL2Tj9ags+f9OAilqN6mw/NDbY
-	 a99eTkSXrk59ZD7SePRJP7fuUDKxLgDNfwsV3RjcoA3ROYd2mmRndqbOvQ6fvvy3SM
-	 D1fXO9t4eSTKQ==
-Message-ID: <d3f45a95-6fac-4b99-b3c3-a05e8c09d479@zytor.com>
-Date: Mon, 15 Sep 2025 10:21:01 -0700
+	s=arc-20240116; t=1757956899; c=relaxed/simple;
+	bh=WpegXv7L2q5nce4QrwZYAf24Fffl8t42I/LKE6Fyr4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FBUmc0QxIEw6wZjOOKaidnTcBuRzvDlBbDzRnXLZExxgfddDqEnNiDOzxzeCE5fIRTIOhV8XBoZwaPIxp2MB/czY19iUJ/Zmp1kC70LBnfhFsS+sJdBXUqaHOOnHn5prgmFFohcFrQeVxtxVOYFkhn7zq6CaGUjn84MZvtXbLwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EethH6wk; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b0411b83aafso671188966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:21:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757956896; x=1758561696; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=td2chPrpcXRRriXk2X2/u7ClZFwh3i+z6PZKNphNpCI=;
+        b=EethH6wkk7cgyOuoUMlKYXQJbmVUe82CqelgiPXhwoylPsR8pAx3+U31128Ur2zEr1
+         J1mUtUrj3dWOlhdHcvN3NDtfTcYwLLt0oHrfMKJUfrIuohnvBLuvRMCUyTfn/ZoSn0vD
+         Q15YZt8fiddkK2Aq/UFLUb1QfNkib4R8V/tpNPZFcltyfq5N6ErJBnsA5o53C4XE/BRN
+         Unlykc7dudlYH1A7b/z6KsXm1EXtaoE4aeTuCs8v1mLpPEgHJFnlmWcCveDwKsNle9ZZ
+         9zGOKFhZ6dZx3DIQK5uSVMS6Fj2uNLwcmFMHp5lvsmOSuuLHEtVnMC1LG/5is0asEwAG
+         FPlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757956896; x=1758561696;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=td2chPrpcXRRriXk2X2/u7ClZFwh3i+z6PZKNphNpCI=;
+        b=lvO4JAmZGrp9Q1fqMHVC1QHFVyZ4hLhGSiBzWrKDXK2xAlG9EnEWWjdAko0sXvMtSH
+         zOg+ot8lMwsRCxl0bLcEnD8bLPEqm0rfdZFvjydy+xaSMOUWaprgQ/Jqsdbw8apNvk37
+         hGmQBG5BW8QqKbHdLFx2jPCm+uBT2NoTKirw+bLR1hf4zkVHnXqlJ/on4mD2dvZm//J3
+         Q/1MiYuPch90evvSqXACozsPr2zIeJKAQ8pb5JFqcymt895n+1HhUPGySAF+XRNVRJHR
+         UdIbb1G55U7srJwnsCKGZ7zcPPhrD4sVEdPx1BWd39hfgQT3t+wdL4KUeXbtqAMEO+Z+
+         OkBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/EQvf5MqAfmFRLnBBB9fBbBi0tPl7CZWOYarxzIag4BcKIMb3uG0pUFYXIl1Ph5ionR4ciCLBW8EO7Tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4Gpbn0YDJYOt1NmrUaEkTj2YzCXz1yQSM8S/7DXjwEtBFf0r7
+	0TWxxiojUL3IoRK6rU6y+FU5tKz0m8936XxnxsezOLpiU+YbP0xGq+mG+ks4tOxw
+X-Gm-Gg: ASbGncuJvJRdi6tZPf80qj27E34e8emoF6sCfsq6rcu/NhB3E7CFtYbox6xAyxpsXYJ
+	bIGDdxm8hojOdeMGX0wai0KlMKJqui6umxIYzgru3/axemTRQdIha3bkWdTaRvmT2H28QPoqPdI
+	KNxKk7kYPeQ3BPFrNs7q1B5L2OjjAiKAH3PfAB/mOCqnE3w6gAuR0lKGzpZlh14o4TSr82bG63t
+	0CiNSfCLusuTx1TglkHEiEYsqBl9j8guRJPRtHVbijoR9/Var6CN7+tOVJcpJjAojpn1br+aepk
+	zjPqkxLEH19ort7Qtmy4Y2YyH956AS1BOK4LjcCvQ7ay56hU1bm9FGvjscexUBgFRbeP3uulYj9
+	BVquO3PWWps7xPfe6Rb+oy1x7bxiUQFKojV+xbKcijBumMlZgLiT0URMJWtQQVyDVYjm0ncLQYa
+	kfK9I=
+X-Google-Smtp-Source: AGHT+IHEKp0Y6D+z+isGpfnpSFCaAJkmdh1YHEFRSo5IN+59rFPuNBWBiHyIC/CFw3AzsE2P1eoOMQ==
+X-Received: by 2002:a17:907:7ba1:b0:b04:5a68:8674 with SMTP id a640c23a62f3a-b07c37dc7e4mr1397201066b.35.1757956896016;
+        Mon, 15 Sep 2025 10:21:36 -0700 (PDT)
+Received: from reolab.localdomain ([83.120.241.83])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b333437bsm972768566b.95.2025.09.15.10.21.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 10:21:35 -0700 (PDT)
+From: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+To: rafael@kernel.org
+Cc: lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+Subject: [PATCH] ACPI: debug: fix signedness issues in read/write helpers
+Date: Mon, 15 Sep 2025 20:51:19 +0330
+Message-ID: <20250915172119.5303-1-a.jahangirzad@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 16/41] KVM: VMX: Set up interception for CET MSRs
-To: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Mathias Krause <minipli@grsecurity.net>,
-        John Allen <john.allen@amd.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
-        Xiaoyao Li <xiaoyao.li@intel.com>,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-17-seanjc@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250912232319.429659-17-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/12/2025 4:22 PM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
-> 
-> Enable/disable CET MSRs interception per associated feature configuration.
-> 
-> Pass through CET MSRs that are managed by XSAVE, as they cannot be
-> intercepted without also intercepting XSAVE. However, intercepting XSAVE
-> would likely cause unacceptable performance overhead.
-> MSR_IA32_INT_SSP_TAB is not managed by XSAVE, so it is intercepted.
-> 
-> Note, this MSR design introduced an architectural limitation of SHSTK and
-> IBT control for guest, i.e., when SHSTK is exposed, IBT is also available
-> to guest from architectural perspective since IBT relies on subset of SHSTK
-> relevant MSRs.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+In the ACPI debugger interface the helper functions for read and write
+operations use an `int` type for the length parameter. When a large
+`size_t count` is passed from the file operations, this cast to `int`
+results in truncation and a negative value due to signed integer
+representation.
+
+Logically, this negative number value propagates to the `min` calculation,
+where it's selected over the positive buffer space value, leading to an
+unexpected behavior. Subsequently, when this negative value is used in
+`copy_to_user` or `copy_from_user`, it is interpreted as a large positive
+value due to the unsigned nature of the size parameter in these functions
+causing the copy operations to attempt handling sizes far beyond the
+intended buffer limits.
+
+This patch addresses the issue by:
+- Changing the length parameters in `acpi_aml_read_user` and
+  `acpi_aml_write_user` from `int` to `size_t`, aligning with the expected
+  unsigned size semantics.
+- Updating return types and local variables in acpi_aml_read() and
+  acpi_aml_write() to 'ssize_t' for consistency with kernel file operation
+  conventions.
+- Using 'size_t' for the 'n' variable to ensure calculations remain
+  unsigned.
+- Adding explicit casts to 'size_t' for circ_count_to_end() and
+  circ_space_to_end() to align types in the min() macro.
 
 
-Reviewed-by: Xin Li (Intel) <xin@zytor.com>
+Signed-off-by: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+---
+ drivers/acpi/acpi_dbg.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
+index d50261d05f3a1..72878840b4b75 100644
+--- a/drivers/acpi/acpi_dbg.c
++++ b/drivers/acpi/acpi_dbg.c
+@@ -569,11 +569,11 @@ static int acpi_aml_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
+-static int acpi_aml_read_user(char __user *buf, int len)
++static ssize_t acpi_aml_read_user(char __user *buf, size_t len)
+ {
+-	int ret;
++	ssize_t ret;
+ 	struct circ_buf *crc = &acpi_aml_io.out_crc;
+-	int n;
++	size_t n;
+ 	char *p;
+ 
+ 	ret = acpi_aml_lock_read(crc, ACPI_AML_OUT_USER);
+@@ -582,7 +582,7 @@ static int acpi_aml_read_user(char __user *buf, int len)
+ 	/* sync head before removing logs */
+ 	smp_rmb();
+ 	p = &crc->buf[crc->tail];
+-	n = min(len, circ_count_to_end(crc));
++	n = min(len, (size_t)circ_count_to_end(crc));
+ 	if (copy_to_user(buf, p, n)) {
+ 		ret = -EFAULT;
+ 		goto out;
+@@ -599,8 +599,8 @@ static int acpi_aml_read_user(char __user *buf, int len)
+ static ssize_t acpi_aml_read(struct file *file, char __user *buf,
+ 			     size_t count, loff_t *ppos)
+ {
+-	int ret = 0;
+-	int size = 0;
++	ssize_t ret = 0;
++	ssize_t size = 0;
+ 
+ 	if (!count)
+ 		return 0;
+@@ -639,11 +639,11 @@ static ssize_t acpi_aml_read(struct file *file, char __user *buf,
+ 	return size > 0 ? size : ret;
+ }
+ 
+-static int acpi_aml_write_user(const char __user *buf, int len)
++static ssize_t acpi_aml_write_user(const char __user *buf, size_t len)
+ {
+-	int ret;
++	ssize_t ret;
+ 	struct circ_buf *crc = &acpi_aml_io.in_crc;
+-	int n;
++	size_t n;
+ 	char *p;
+ 
+ 	ret = acpi_aml_lock_write(crc, ACPI_AML_IN_USER);
+@@ -652,7 +652,7 @@ static int acpi_aml_write_user(const char __user *buf, int len)
+ 	/* sync tail before inserting cmds */
+ 	smp_mb();
+ 	p = &crc->buf[crc->head];
+-	n = min(len, circ_space_to_end(crc));
++	n = min(len, (size_t)circ_space_to_end(crc));
+ 	if (copy_from_user(p, buf, n)) {
+ 		ret = -EFAULT;
+ 		goto out;
+@@ -663,14 +663,14 @@ static int acpi_aml_write_user(const char __user *buf, int len)
+ 	ret = n;
+ out:
+ 	acpi_aml_unlock_fifo(ACPI_AML_IN_USER, ret >= 0);
+-	return n;
++	return ret;
+ }
+ 
+ static ssize_t acpi_aml_write(struct file *file, const char __user *buf,
+ 			      size_t count, loff_t *ppos)
+ {
+-	int ret = 0;
+-	int size = 0;
++	ssize_t ret = 0;
++	ssize_t size = 0;
+ 
+ 	if (!count)
+ 		return 0;
+-- 
+2.51.0
 
-> ---
->   arch/x86/kvm/vmx/vmx.c | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 4fc1dbba2eb0..adf5af30e537 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -4101,6 +4101,8 @@ void pt_update_intercept_for_msr(struct kvm_vcpu *vcpu)
->   
->   void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->   {
-> +	bool intercept;
-> +
->   	if (!cpu_has_vmx_msr_bitmap())
->   		return;
->   
-> @@ -4146,6 +4148,23 @@ void vmx_recalc_msr_intercepts(struct kvm_vcpu *vcpu)
->   		vmx_set_intercept_for_msr(vcpu, MSR_IA32_FLUSH_CMD, MSR_TYPE_W,
->   					  !guest_cpu_cap_has(vcpu, X86_FEATURE_FLUSH_L1D));
->   
-> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
-> +		intercept = !guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
-> +
-> +		vmx_set_intercept_for_msr(vcpu, MSR_IA32_PL0_SSP, MSR_TYPE_RW, intercept);
-
-
-As you suggested, this is also the correct interception setting for FRED.
-
-Thanks!
-     Xin
 
