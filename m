@@ -1,205 +1,185 @@
-Return-Path: <linux-kernel+bounces-816257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F831B5719A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:35:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 182E3B571A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA7518946EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:35:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B25643B1BBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6602E2D661C;
-	Mon, 15 Sep 2025 07:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1506F2D77ED;
+	Mon, 15 Sep 2025 07:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUEysU5Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huHSAOoG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F132877E7;
-	Mon, 15 Sep 2025 07:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385DE2D640F;
+	Mon, 15 Sep 2025 07:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921701; cv=none; b=dhscLj6rW4c9cXG6ABmQ5AG5cCNhSJRA25cKDXtlQ+9bUHlWvjh4kBD13++o3bjj5Q8txQHrFZ9rdtFC8ASdjBwJGJdRn5aLAX7aXwWNxLdSO9tgDxPEZf1Y/ya+tEjNPpQJyKOfPHGCX5EX641Vn154KraysRDSb0x0mTihRfo=
+	t=1757921717; cv=none; b=rYaNllPBD5oH2FCUEar2CzgEBoQwb9mztoXDgiYwBHh8Fhc/UBy7KoGuqod1xEp3MIMgCNpDCRyejIOxpzwAGKNsPC8p/O/TvlLWa748/eoUbXhdE5uFZ+JNE7HY1fagdNTUn/V8Qoc9UkCVDe72jou3zCvlO1+P78Uvr4h85ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921701; c=relaxed/simple;
-	bh=yz87stKD1z8lNZekflqVA6tGhoyOFH6K4fheBUkwWBQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ERftT4jUBt+cuKSlFHaj95+FxdnDhaJ/HC5QDtw38A38TV1Cs0IM7ADf0KyPoriFOFINxQ0ryOdOh1P65jvQfcICyU3q776em+KgaaVRqi/Q8YkcCweyuOYYnDKFCtLsU/r0Amh7qURCeKYETPoR5trAxkbIqoUKIG1P8/7Mq+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUEysU5Q; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757921700; x=1789457700;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=yz87stKD1z8lNZekflqVA6tGhoyOFH6K4fheBUkwWBQ=;
-  b=AUEysU5Q2XUmMJyDig03jE063HSoJoGBdwXv7UQThJvovx8ofqaZnKlv
-   rpNn0VcPoN4/wFIc3cKPoUeOEvsBoEu1Q1Awn+mVLOKi8ntYDZJNbEjbW
-   6YEP3jds4klb6MEOczqByPYlFkIPCYZSa1GBiWYkPryBn6eXCISfQaoRj
-   0njalNM+IiGW4XC8a2vLCEmW0RVf9R9Q18OsV0Bvu3knaW4YmOYHd/xbd
-   Pd3XI+RdJY1RZJ1Qd0rogeF3l/2jIwf+55hDftwemOQxo9+htZjulj1Lh
-   lCoGMOh/tRjmi676/7k2liFnagvTAIuPyT9bt+faqvjNERgIJkX+iPVkC
-   A==;
-X-CSE-ConnectionGUID: NCxdNmFvSRiEbkjPKXJgQA==
-X-CSE-MsgGUID: Pf6bi0HlQ8aAHZyLZaaudQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="60311120"
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="60311120"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 00:35:00 -0700
-X-CSE-ConnectionGUID: JnW2jI7ASBGCNco3wY6svA==
-X-CSE-MsgGUID: loMQ9YVRRP2R2jVXXaPUFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="178857232"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.39])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 00:34:57 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 15 Sep 2025 10:34:53 +0300 (EEST)
-To: Daniel <dany97@live.ca>
-cc: Markus Elfring <Markus.Elfring@web.de>, 
-    LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hansg@kernel.org>, 
-    Matan Ziv-Av <matan@svgalib.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3] platform/x86: lg-laptop: Fix WMAB call in
- fan_mode_store()
-In-Reply-To: <MN2PR06MB55988311E10C20DD6EF0CB97DC0BA@MN2PR06MB5598.namprd06.prod.outlook.com>
-Message-ID: <78e9dde3-9f21-9b06-663b-e7a23451b9e7@linux.intel.com>
-References: <MN2PR06MB5598DFC94FB13E9F809F0EB3DC08A@MN2PR06MB5598.namprd06.prod.outlook.com> <37610abe-e6ea-4694-be63-1a7147c52b73@web.de> <MN2PR06MB55988311E10C20DD6EF0CB97DC0BA@MN2PR06MB5598.namprd06.prod.outlook.com>
+	s=arc-20240116; t=1757921717; c=relaxed/simple;
+	bh=pqJLiaWaQH9X7RAJXHVhivU56cK+jqLVrIFbuYipMtU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y2CIsauJaBNmwxoH8KI2uDKhg3GeZJU3crClh+M8L4BzbYnKKE4FhU/abmwo9gv6l1n4gbhh6CZK9r+LdFQ/WZ1oiE8R2y2SYSFuJ7zEjozQNyx9BSpWr+FJmsD6t8R5yJoXztQ3NHAmQBH6mi5aN4Ny3g14OjUQ2w72wZXJQes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huHSAOoG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C07A0C4CEF1;
+	Mon, 15 Sep 2025 07:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757921716;
+	bh=pqJLiaWaQH9X7RAJXHVhivU56cK+jqLVrIFbuYipMtU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=huHSAOoGFEW96CKHc37p+prxQ+MBp7L4RbzZKUpFVtSQXXaJaN2k9SchOl3wc6mFv
+	 0WpDxKhoQoxbzSUs4drCkJxVjPTLK5TsA/1KV87D3079E8SYAeAw/C1zSD5SC8c/mr
+	 Tn4v/emuScK1iTumL6U/wN85nqXHy6SF6wOfl41sTsXp5yoSRHb8pUqNr7zVekLVzk
+	 fZH++ZCTHZNPkxCuE2V4cOOgoLXmrkkU/MCOgWJfDV/fLZO3XJQnLbWzAHHtASHK+j
+	 aYqgyzBG4xPbX69ljvo4rP/6AF4MV5CJF63Ha3TuJ1DRJltTiaDmM7J6GXJ1IYVZSe
+	 TFTvS/S887Geg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A338ACAC58F;
+	Mon, 15 Sep 2025 07:35:16 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH v9 0/3] arm64: dts: qcom: x1-hp-x14: Add support for
+ X1P42100 HP Omnibook X14
+Date: Mon, 15 Sep 2025 09:35:03 +0200
+Message-Id: <20250915-hp-x14-x1p-v9-0-fa457ca30ffe@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKnBx2gC/33Py07DMBAF0F+pvMbI4/ew4j8QCz+JpaqJ4hIVq
+ vw7TjYkiGYxizvSHN25k5rGkip5Od3JmKZSS39pAZ9OJHTu8pFoiS0TzrhihnHaDfQGss1Akxc
+ 8S406oibtYBhTLrcVe3tvuSv12o9fqz3Bsv2XmYAyygGF0skKzsxrf441dH1/rv3589oa1Wdfv
+ sliTvyxw5vjsvLK2gho8NARW0fsHLE6OQETXrZWh47cOmrnyOZAEAqiTy6DPXTU1rE7RzVHyoC
+ gU3ZoxKGjtw7uHN2cLFUIYLXTPB46ZuMA2zlm+QsDsGDBgHCHjv118E8f2xzLLHeeaUSAh848z
+ z+hQ7OSqQIAAA==
+X-Change-ID: 20250702-hp-x14-x1p-eb32f4696d96
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757921715; l=3869;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=pqJLiaWaQH9X7RAJXHVhivU56cK+jqLVrIFbuYipMtU=;
+ b=RWd8+poZ3KJKaCnMBMAgo1Vdi7m9dDVXiv3pYW4OmiX2kHB1MOe15hQJbwd0mdj9vUEr191Qd
+ C3RiyClUXaQAOCTuL7FrtNEMdEiyQbFJwX/F9mHGqHof3cA+GLiQtTY
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Fri, 12 Sep 2025, Daniel wrote:
+This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
 
-> On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
-> /sys/devices/platform/lg-laptop/fan_mode have no effect and reads always
-> report a status of 0.
-> 
-> Disassembling the relevant ACPI tables reveals that in the WMAB call to
-> set the fan mode, the new mode is read either from bits 0,1 or bits 4,5
-> (depending on the value of some other EC register).  Thus when we call
-> WMAB twice, first with bits 4,5 zero, then bits 0,1 zero, the second
-> call undoes the effect of the first call.
-> 
-> Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
-> When the fan mode is returned from WMAB it always has this form, so
-> there is no need to preserve the other bits.  As a bonus, the driver
-> now supports the "Performance" fan mode seen in the LG-provided Windows
-> control app, which provides less aggressive CPU throttling but louder
-> fan noise and shorter battery life.
-> 
-> I can confirm with this patch reading/writing the fan mode now works
-> as expected on my laptop, although I have not tested it on any other
-> LG laptop.
-> 
-> Also, correct the documentation to reflect that 0 corresponds to the
-> default mode (what the Windows app calls "Optimal") and 1 corresponds
-> to the silent mode.
-> 
-> Signed-off-by: Daniel Lee <dany97@live.ca>
-> Tested-by: Daniel Lee <dany97@live.ca>
-> Fixes: dbf0c5a6b1f8e7bec5e17baa60a1e04c28d90f9b ("platform/x86: Add LG Gram laptop special features driver")
-> ---
->  .../admin-guide/laptops/lg-laptop.rst         |  4 +--
->  drivers/platform/x86/lg-laptop.c              | 29 +++++++------------
->  2 files changed, 13 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
-> index 67fd6932c..c4dd534f9 100644
-> --- a/Documentation/admin-guide/laptops/lg-laptop.rst
-> +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
-> @@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
->  Fan mode
->  --------
->  
-> -Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
-> -the fan silent mode.
-> +Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
-> +Optimal/Silent/Performance respectively.
->  
->  
->  USB charge
-> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
-> index 4b57102c7..335afdc75 100644
-> --- a/drivers/platform/x86/lg-laptop.c
-> +++ b/drivers/platform/x86/lg-laptop.c
-> @@ -75,6 +75,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
->  #define WMBB_USB_CHARGE 0x10B
->  #define WMBB_BATT_LIMIT 0x10C
->  
-> +#define FAN_MODE_FIELD_LOWER GENMASK(1, 0)
-> +#define FAN_MODE_FIELD_UPPER GENMASK(5, 4)
-> +
->  #define PLATFORM_NAME   "lg-laptop"
->  
->  MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
-> @@ -274,29 +277,19 @@ static ssize_t fan_mode_store(struct device *dev,
->  			      struct device_attribute *attr,
->  			      const char *buffer, size_t count)
->  {
-> -	bool value;
-> +	unsigned long value;
->  	union acpi_object *r;
-> -	u32 m;
->  	int ret;
->  
-> -	ret = kstrtobool(buffer, &value);
-> +	ret = kstrtoul(buffer, 10, &value);
->  	if (ret)
->  		return ret;
-> +	if (value >= 3)
-> +		return -EINVAL;
->  
-> -	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
-> -	if (!r)
-> -		return -EIO;
-> -
-> -	if (r->type != ACPI_TYPE_INTEGER) {
-> -		kfree(r);
-> -		return -EIO;
-> -	}
-> -
-> -	m = r->integer.value;
-> -	kfree(r);
-> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
-> -	kfree(r);
-> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
-> +	r = lg_wmab(dev, WM_FAN_MODE, WM_SET,
-> +		FIELD_PREP(FAN_MODE_FIELD_LOWER, value) |
-> +		FIELD_PREP(FAN_MODE_FIELD_UPPER, value));
+Since this is actually the same model as the 14-fe0xxx, but with an
+X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
+To have as minimal duplicate definition as possible, the hp X14 gets 
+unified into a dtsi (and it stays compatible to the derived 
+device trees, like the Ultrabook G1q). 
 
-"FIELD" seems just unnecessary characters.
+The supported features are the same as for the original Omnibook X14:
 
-Please also add include for <linux/bitfield.h>.
+- Keyboard (no function keys though)
+- Display
+- PWM brightness control
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB and with internal speakers)
 
->  	kfree(r);
->  
->  	return count;
-> @@ -317,7 +310,7 @@ static ssize_t fan_mode_show(struct device *dev,
->  		return -EIO;
->  	}
->  
-> -	status = r->integer.value & 0x01;
-> +	status = FIELD_GET(FAN_MODE_FIELD_LOWER, r->integer.value);
+[1]: https://www.hp.com/us-en/shop/pdp/hp-omnibook-x-laptop-next-gen-ai-pc-14-fe100-14-a4nd1av-1#techSpecs
 
-Is it good to reuse the input side define here for response side or should 
-you have another with more specific name? (This is put to status named 
-variable so my natural expectation is that the field's name is somehow 
-related to that.)
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Changes in v9:
+- rebased to next-20250912
+- fixed patch overwrite from x1e80100-hp-omnibook-x14.dts to 
+  x1-hp-omnibook.x14.dts (thanks Stephan)
+- Link to v8: https://lore.kernel.org/r/20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz
 
->  	kfree(r);
->  
->  	return sysfs_emit(buffer, "%d\n", status);
-> 
+Changes in v8:
+- rebased to next-20250909.
+- picked up reviewed-by from Konrad (Thanks!)
+- Link to v7: https://lore.kernel.org/r/20250710-hp-x14-x1p-v7-0-19c10c81713a@oldschoolsolutions.biz
 
+Changes in v7:
+- rebased to next-20250710.
+- reworded commit message for patch #2
+- picked up reviewed-by for patch #3 (thanks)
+- fixed link ref in patch #3
+- Link to v6: https://lore.kernel.org/r/20250709-hp-x14-x1p-v6-0-f45cc186a62d@oldschoolsolutions.biz
+
+Changes in v6:
+- rebased to next-20250709.
+- picked up reviewed-by for patch #1 (thanks)
+- corrected typo in patch #1
+- removed model, compatible, chassis nodes from x1-hp-omnibook-x14.dtsi
+- amended copyright strings as discussed
+- Link to v5: https://lore.kernel.org/r/20250708-hp-x14-x1p-v5-0-44c916efa973@oldschoolsolutions.biz
+
+Changes in v5:
+- rebased to next-20250708.
+- changed commit message for patch #1 to reflect what happens
+- moved gpu node into the common dtsi part (always supported now)
+- switched over to gpu_zap_shader definition in the individual parts
+- Link to v4: https://lore.kernel.org/r/20250705-hp-x14-x1p-v4-0-1c351dbeaf18@oldschoolsolutions.biz
+
+Changes in v4:
+- leave the qcom,jp-omnibook-x14 ABI unchanged, reuse it for the -fe0 variant
+- hacked b4 to create an easier reviewable patch: https://lore.kernel.org/all/20250705-format-harder-v1-1-55c5342be55c@oldschoolsolutions.biz
+- Link to v3: https://lore.kernel.org/r/20250703-hp-x14-x1p-v3-0-affe103b4356@oldschoolsolutions.biz
+
+Changes in v3:
+- removed copyright strings
+- amended changed commit message  
+- Link to v2: https://lore.kernel.org/r/20250702-hp-x14-x1p-v2-0-af5b588d1979@oldschoolsolutions.biz
+
+Changes in v2:
+- remove pm8010 handling
+- Link to v1: https://lore.kernel.org/r/20250702-hp-x14-x1p-v1-0-219356e83207@oldschoolsolutions.biz
+
+---
+Jens Glathe (3):
+      dt-bindings: arm: qcom: Add HP Omnibook X14 AI X1P4200 variant
+      arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14 device tree structure
+      arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    2 +
+ arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi   | 1544 ++++++++++++++++++++
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1544 +-------------------
+ .../boot/dts/qcom/x1p42100-hp-omnibook-x14.dts     |   33 +
+ 5 files changed, 1584 insertions(+), 1540 deletions(-)
+---
+base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+change-id: 20250702-hp-x14-x1p-eb32f4696d96
+
+Best regards,
 -- 
- i.
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
 
 
