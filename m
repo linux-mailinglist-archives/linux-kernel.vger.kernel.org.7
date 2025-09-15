@@ -1,241 +1,137 @@
-Return-Path: <linux-kernel+bounces-816609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7BBB57632
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:22:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F3BB57635
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B076218828BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B53817FFBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395ED2F2905;
-	Mon, 15 Sep 2025 10:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JuR1f03T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5292FB0B3;
+	Mon, 15 Sep 2025 10:23:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44552F1FCB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D15F1C4609;
+	Mon, 15 Sep 2025 10:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931737; cv=none; b=Q+C1HU3P/Ti9Ae1Qf0xqbvQT3pbWrnBK0RW6nvFsf3/jxfg2H2eFMimkfCu/3sqTGPlKvm6vpqvd8fjNtprCocdL2tBfqFZtAtDiEtx6HMxxQqGzANkVdfKOycIdTe1BNEn+OTyg6t95GrI+ECZIcO3R2cCX94aeIEaFmED06Nc=
+	t=1757931827; cv=none; b=HFW7oJnqa5I/J+Qywcd8VJN5zKXNc6SQGaE530AsLgszY3vL4S1n0+MXP5ZyrA5iG6fz4mIs47/sBzz/nP1kE51d+fF+LAFma91XAj/hcpskvSLtpV4esR+IHRFWimZQDqYwRHLh7GT/PxyBrg6Z8Fcodm1taroE7kYqkZ33H4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931737; c=relaxed/simple;
-	bh=VzjGvqlPF9xCuZFMclIj8GGwc3xClQ69xgAbHknxPLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FHTl4P6Jy9XKF7hOJ9omyxTCsViKgQLRAjB29wPgknk+wByxtCZkje3bPv7wlowVr/ckf5D4K4SkTCw46xL03SkYiqewr0MkP3pFHBMmY6T3xC/JpLDmULo3zWuYBlpnduS/DSDC+9PkAibp8tUK7j4L/btnRRsifhvjXjR6zX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JuR1f03T; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757931734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tfmpc2B5EjLEtaoBAE2WUDTDXpz+5rNlMUp/3jDUjRA=;
-	b=JuR1f03TUUrT87ZefD9iPUnLQGJj5S3EzEZBAcWFrOKT2e66FeFj5Ps0wuT5XkyyQpvOFJ
-	QuFhr9cYNIlPlSFFbvzQu8mvFYcF8zsnCtwYHrvVpSC6KISRNB+HxHrmlMhK0GP3IQFBlo
-	vpkNvrzH2upjd5clhpY71Km+D3THT+g=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-PGptfRVQNgGOeWRjjsqRNQ-1; Mon, 15 Sep 2025 06:22:13 -0400
-X-MC-Unique: PGptfRVQNgGOeWRjjsqRNQ-1
-X-Mimecast-MFC-AGG-ID: PGptfRVQNgGOeWRjjsqRNQ_1757931732
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso35359075e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:22:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757931732; x=1758536532;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tfmpc2B5EjLEtaoBAE2WUDTDXpz+5rNlMUp/3jDUjRA=;
-        b=skrVdqMkr8vNWa5XiQtssl+CqjD3+LiDqSe+oI7K3CQNyjXeuY25JkGIZ43aA1MwQ8
-         jJSyk8tfT+v8q7KwxNRvw3pc3tWvDki7sz9rqc+AS73IUlEc2sPj0gboFvb5+ZxNwBgS
-         Gtm1wFqiVvk0KtMTv9SW+P3BECPzxeFVQAZbowAWsaxkynB1x7KzoveLPVSl3mxiwbcE
-         OyPGbb9TC7K4zpAS/CD91G/aSyGMsfSbLmIWFCNqi+rjP90fOou+m4AzTCxIaau+CySX
-         a6/ctlaOV0tbjo/9gVsf71ws9OqG5UVUwf9BdxCqqmJxMFdEFKja7ndX5gApoixuXR5n
-         qjpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhT/aDlzSWq+xURObpBz7E1AuYYzQNLFFcOuTj1/aDouuqMQDaM8lvuIsavza+Ztx505NMGCK7wM1rmxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6DEdomAUNBDfdNLt6jgwPnHSBQWukojx5mRyX+2kg7VVSX7K+
-	jlarcAfoKvoamFSUpndr4TMu+g6N+COE6VAWnQDO0c6jwY+Nt4/9iavTvCHHVSaB7W41R+xE46h
-	7rSkK+PmxzI/ervaP1kpgyjhuWj99+jb31jw2gOEaDq7k611m2JinVgMxhRJn8RPJlA==
-X-Gm-Gg: ASbGncsGOjndshk95Wx6hxipAvXAfYsfBjMoogqmmxkDH0bR2qwgmYLEYqKj/+aubYV
-	QB7GnSYi+aOscYn6sgtGY9J7lhF6Utbll+K7sOExH9xYty01oES4y7z+sewtsiDUVMavlXutvNG
-	OacsyU4iS2TLAL0seIweJypB0nLekd7CMB6AiTwNtwlfEab6ljl40sHgHDvdbLzYLojsSHmYaSZ
-	kxG4jXcS3Py65pEPFb94RTpzxgu3C8xj2b2KyeEY3XEa20nNXHwPX+rzOC3Px2MnARfBV4GlEuj
-	MW2OMKVV0ioR+ClKnrC6SnO66GbeK+hBfYpx5sK7m1dDP0hQbUt4wmZai+9D0PXCyhsd1bGNqYl
-	VQDnSgNoIo+DzbeTsgP2PvSQUQ6UFqipqNm2TGYoAwqmquhD+mnZ/5lnKjYFBBoDYziU=
-X-Received: by 2002:a05:600c:1387:b0:45c:17a:4c98 with SMTP id 5b1f17b1804b1-45f211f8ed1mr95800835e9.19.1757931731966;
-        Mon, 15 Sep 2025 03:22:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEy+yAeVMTpk3VfeLuvmpLt8Pnw7jlIdxjQEeHLZ9ljjFZymYPOAoBhKJl9mxQWLD5TBFtZ/w==
-X-Received: by 2002:a05:600c:1387:b0:45c:17a:4c98 with SMTP id 5b1f17b1804b1-45f211f8ed1mr95800505e9.19.1757931731471;
-        Mon, 15 Sep 2025 03:22:11 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd? (p200300d82f18f900e0ae65d58bf88cfd.dip0.t-ipconnect.de. [2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e76078708bsm17596191f8f.15.2025.09.15.03.22.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 03:22:10 -0700 (PDT)
-Message-ID: <cd8e7f1c-a563-4ae9-a0fb-b0d04a4c35b4@redhat.com>
-Date: Mon, 15 Sep 2025 12:22:07 +0200
+	s=arc-20240116; t=1757931827; c=relaxed/simple;
+	bh=Z7gBVl8NDSlD7/2DByYfLKQfOzntI2KhxBFRAe94tgQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OJvx2HCXD2gG826sM7I/Gtam7PTP3/uZfiC3fH9E5Msor67jjeDVX7B3TEe7DgxuQzVop2dVc67hHkM32t7x9OnjJZKsQ1JSuM2LhLaBvHBJZPqI4fMKbZqvTUyjnMmyBMxB22EARAIfFzeZNXB5R0XuvYx5Y8jIPJt/P1xW5Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQLf16wMMz6M5gW;
+	Mon, 15 Sep 2025 18:20:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6A9161402FB;
+	Mon, 15 Sep 2025 18:23:43 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
+ 2025 12:23:42 +0200
+Date: Mon, 15 Sep 2025 11:23:41 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 02/11] cxl/region: Store HPA range in struct
+ cxl_region
+Message-ID: <20250915112341.00000ec6@huawei.com>
+In-Reply-To: <20250912144514.526441-3-rrichter@amd.com>
+References: <20250912144514.526441-1-rrichter@amd.com>
+	<20250912144514.526441-3-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-To: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
- corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
- pfalcato@suse.de
-References: <20250912032810.197475-1-npache@redhat.com>
- <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
- <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
- <CAA1CXcA+pb5KvEnJJqdf1eSjaFiBZ82MRB+KDmyhj3DbiQqOxg@mail.gmail.com>
- <enrgrocqajwu5d3x34voghja7pbvau45oobxgabawrly44ld4u@ahch3xn6rtq5>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <enrgrocqajwu5d3x34voghja7pbvau45oobxgabawrly44ld4u@ahch3xn6rtq5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 15.09.25 11:22, Kiryl Shutsemau wrote:
-> On Fri, Sep 12, 2025 at 05:31:51PM -0600, Nico Pache wrote:
->> On Fri, Sep 12, 2025 at 6:25 AM David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 12.09.25 14:19, Kiryl Shutsemau wrote:
->>>> On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
->>>>> The following series provides khugepaged with the capability to collapse
->>>>> anonymous memory regions to mTHPs.
->>>>>
->>>>> To achieve this we generalize the khugepaged functions to no longer depend
->>>>> on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
->>>>> pages that are occupied (!none/zero). After the PMD scan is done, we do
->>>>> binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
->>>>> range. The restriction on max_ptes_none is removed during the scan, to make
->>>>> sure we account for the whole PMD range. When no mTHP size is enabled, the
->>>>> legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
->>>>> by the attempted collapse order to determine how full a mTHP must be to be
->>>>> eligible for the collapse to occur. If a mTHP collapse is attempted, but
->>>>> contains swapped out, or shared pages, we don't perform the collapse. It is
->>>>> now also possible to collapse to mTHPs without requiring the PMD THP size
->>>>> to be enabled.
->>>>>
->>>>> When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
->>>>> 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
->>>>> mTHP collapses to prevent collapse "creep" behavior. This prevents
->>>>> constantly promoting mTHPs to the next available size, which would occur
->>>>> because a collapse introduces more non-zero pages that would satisfy the
->>>>> promotion condition on subsequent scans.
->>>>
->>>> Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
->>>> all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
->>>>
->>>
->>> I am all for not adding any more ugliness on top of all the ugliness we
->>> added in the past.
->>>
->>> I will soon propose deprecating that parameter in favor of something
->>> that makes a bit more sense.
->>>
->>> In essence, we'll likely have an "eagerness" parameter that ranges from
->>> 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if
->>> not all is populated".
->> Hi David,
->>
->> Do you have any reason for 0-10, I'm guessing these will map to
->> different max_ptes_none values.
->> I suggest 0-5, mapping to 0,32,64,128,255,511
+On Fri, 12 Sep 2025 16:45:04 +0200
+Robert Richter <rrichter@amd.com> wrote:
+
+> Each region has a known host physical address (HPA) range it is
+> assigned to. Endpoint decoders assigned to a region share the same HPA
+> range. The region's address range is the system's physical address
+> (SPA) range.
 > 
-> That's too x86-64 specific.
+> Endpoint decoders in systems that need address translation use HPAs
+> which are not SPAs. To make the SPA range accessible to the endpoint
+> decoders, store and track the region's SPA range in struct cxl_region.
+> Introduce the @hpa_range member to the struct. Now, the SPA range of
+> an endpoint decoder can be determined based on its assigned region.
 > 
-> And the whole idea is not to map to directly, but give kernel wiggle
-> room to play.
+> Patch is a prerequisite to implement address translation which uses
+> struct cxl_region to store all relevant region and interleaving
+> parameters.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+Trivial comment inline.
 
-Initially we will start out simple and map it directly. But yeah, the 
-idea is to give us some more room later.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-I had something logarithmic in mind which would roughly be (ignoring the 
-the weird -1 for simplicity and expressing it as "used" instead of 
-none-or-zero)
+> ---
+>  drivers/cxl/core/region.c | 17 +++++++++++++++++
+>  drivers/cxl/cxl.h         |  2 ++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 2c37c060d983..777d04870180 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -664,6 +664,11 @@ static int alloc_hpa(struct cxl_region *cxlr, resource_size_t size)
+>  		return PTR_ERR(res);
+>  	}
+>  
+> +	cxlr->hpa_range = (struct range) {
+> +		.start = res->start,
+> +		.end = res->end,
+> +	};
+> +
+>  	p->res = res;
+>  	p->state = CXL_CONFIG_INTERLEAVE_ACTIVE;
+>  
+> @@ -700,8 +705,14 @@ static int free_hpa(struct cxl_region *cxlr)
+>  	if (p->state >= CXL_CONFIG_ACTIVE)
+>  		return -EBUSY;
+>  
+> +	cxlr->hpa_range = (struct range) {
+> +		.start = 0,
+> +		.end = -1,
+> +	};
 
-0 -> ~100% used (~0% none)
-1 -> ~50% used (~50% none)
-2 -> ~25% used (~75% none)
-3 -> ~12.5% used (~87.5% none)
-4 -> ~11.25% used (~88,75% none)
-...
-10 -> ~0% used (~100% none)
+There is DEFINE_RANGE() which you could use here
+	cxlr->hpa_range = DEFINE_RANGE(0, -1);
 
-Mapping that to actual THP sizes (#pages in a thp) on an arch will be easy.
+Not sure if it is worth bothering though.
 
--- 
-Cheers
 
-David / dhildenb
+
+> +
+>  	cxl_region_iomem_release(cxlr);
+>  	p->state = CXL_CONFIG_IDLE;
+> +
+>  	return 0;
+>  }
+
 
 
