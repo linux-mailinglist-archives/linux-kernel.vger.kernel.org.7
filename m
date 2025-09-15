@@ -1,155 +1,275 @@
-Return-Path: <linux-kernel+bounces-817039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAD5B57CCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:25:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B7DB57CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1ACC3A814A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:25:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE5F3B14A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F326D2C027C;
-	Mon, 15 Sep 2025 13:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E56A314A62;
+	Mon, 15 Sep 2025 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="ecdJyacU"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g8Gyu9zn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0t6zffSp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DogmMKlv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rb1GbvZ8"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C33031282E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67183128CB
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942726; cv=none; b=gqfBg1/GdBVP1FCkmXM0kPnO7Nh+OjSDVPyaYeJjBsRpbZSseYKm0fuJTnLKPMMTsD+mskSsV/VTwU0cHY1ICvT31PwFNkGrA1Y96cQ4hDrcQ8Cywn22QzhrWjGOlKjNBP489+VG9jta1vl6mkri/0CUypQQHpdlfhrp48AKWRA=
+	t=1757942728; cv=none; b=CpoayafD+icweV7eLxA1Re8wFHmPQRcltqibY/osOfon9/b8c2NM9Jrj4FhkbKDMF7R7jFN4Nw6XADDEsvamzMHB8BZ7JtCBLjca0ZsDHl56ou0Y7UC5v+WRGauWj8p+GFb5WbLigzs0GVsr5PjVN3yMS5vZu3G67+KvM6CVgZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942726; c=relaxed/simple;
-	bh=Lh3Ewj+eaiZ27SQgPdOvdafuhktnqtBuhs6NGQHfhA8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tY1mKOeEry0D8+3HF+reMV8sU67UUDi82N4HKSCSngPpYr9mndV3VHW6tVHtow9VmFbUDxhrt0L+qagmMSQVpSO39E6DsfUHYKCImypJvH24USbSZU9m5B7vR45RXy6JuL4ms01p8AR6qzwQYZBfhQnJVMji+/Q5pHPsVqMFXFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=ecdJyacU; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58FBYXl01285418
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:25:23 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=+OeUW4b0iTtQSlBksBON64DALPlRhQHDwWoPGx/RrlI=; b=ecdJyacUIINV
-	ZyhlyY01Dnd0GhvqwNEvWMBpYKGM3FQe1wLbjJDeKgog4pbwzQBG91o7+1k8F41z
-	a8UKFkE55IZtdvJj5GCziUaWFTwT3gdZwYivO6Svem88ujafjTUKBHf8x8qsNxvj
-	PdpjdGL4BhkBuzLpFYB9AhrdjV52VduTtcgsgM89Blx8YE9AGi0sL0WxELPVhIi1
-	9INSJe2mHYhQBt4lv8l2HIQ/mIE0cSQ8UMRIZVhT8O9g9QYqMk/CTx3cLYqnyEPe
-	TDyaBBy67BIjhp4wpLskcHTxMzVffFL+A5owFKibfECjjSsi3IydrVx90MANXO4U
-	uZAlnbZNnw==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 496j1u0mvg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:25:23 -0700 (PDT)
-Received: from twshared14631.07.ash9.facebook.com (2620:10d:c0a8:1b::2d) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Mon, 15 Sep 2025 13:25:22 +0000
-Received: by devbig091.ldc1.facebook.com (Postfix, from userid 8731)
-	id A040325C3EE4; Mon, 15 Sep 2025 06:25:09 -0700 (PDT)
-From: Chris Mason <clm@meta.com>
-To: <liuqiqi@kylinos.cn>
-CC: Chris Mason <clm@meta.com>, <akpm@linux-foundation.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm:fix duplicate accounting of free pages in should_reclaim_retry()
-Date: Mon, 15 Sep 2025 06:25:02 -0700
-Message-ID: <20250915132506.2889372-1-clm@meta.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250812070210.1624218-1-liuqiqi@kylinos.cn>
-References:
+	s=arc-20240116; t=1757942728; c=relaxed/simple;
+	bh=X0TOCZxXAacV5UY+tvG2AfFjjUdiuP3hBh1fdqjczUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NLk6h9bi7s4BCwBhi1Psm5ELoLVWrjF4o4n37Z95OAEb7ltbZ1qtCDNiHID3AkqXIN0tSTGJn07ELt4qcOgckvVgwdlRUJGUPZfEp+qRBmwn1FTK/KWPMtd4FuwTpNnQoN3rrur5/D6cDzeQe65BDqPvdztAJBDskk6S3Oi8ssM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g8Gyu9zn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0t6zffSp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DogmMKlv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rb1GbvZ8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C7026336A2;
+	Mon, 15 Sep 2025 13:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757942725; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdqwXF95v5+cBIN5km+b6uLUwL6CiQT8aqnzh2dXgmM=;
+	b=g8Gyu9znowZysx8H26AteaCBYjp9Q9maHyK62RS3Ker3gaW7H8o5tBKEOi8lOSATG6I5av
+	+Yex0EDkpNfiUIv7WMKnUJ2fliXC6QlQgAebHLHLgOLsN1Q1wKrKIXsmxk2u58ckxU5623
+	1eMeTPJsxIK42Ev0lNRQcDTf0fT7C4U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757942725;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdqwXF95v5+cBIN5km+b6uLUwL6CiQT8aqnzh2dXgmM=;
+	b=0t6zffSpUcqzh4SOni1oKpQu8YYsQkxFbcs9inKU4HnXYSv3qaGxnNKQf4Ib3DBt/gGn1D
+	zXpARsLGTgEsLzAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=DogmMKlv;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rb1GbvZ8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757942724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdqwXF95v5+cBIN5km+b6uLUwL6CiQT8aqnzh2dXgmM=;
+	b=DogmMKlv4uPZl3MwmdLdGeFgMViYJTX8+bPUUtbVhFn3Tgvm7FZYCaSl/462/ioJQor7d1
+	OVMjb2H2fPcvFy79a0Hs93M8DbOlsWFtPRgzGxdE5/dvBKk/R58McrR0pAsQb6ljdkM4OY
+	BSPbqqtwHKb1hXYsOJWBgxkfrOA4eoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757942724;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IdqwXF95v5+cBIN5km+b6uLUwL6CiQT8aqnzh2dXgmM=;
+	b=rb1GbvZ8j8JF08umlPvgYfrfT9ZZ/JkBeCNZHO1VIEnqe+RCYoOSrID/gMZQ86cqdcymmx
+	HVS/vKvguJGJypDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B6E521372E;
+	Mon, 15 Sep 2025 13:25:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HcyjLMQTyGghTQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:25:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4A670A0A06; Mon, 15 Sep 2025 15:25:20 +0200 (CEST)
+Date: Mon, 15 Sep 2025 15:25:20 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 28/33] nsfs: support file handles
+Message-ID: <4gsrbaiqrt3ymcze7rm6ec2oy25ernllidg2i3rkrsqh6q5deu@7bozrym7omj4>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-28-1a247645cef5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=SZz3duRu c=1 sm=1 tr=0 ts=68c813c3 cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=yJojWOMRYYMA:10 a=IEEH_mcYg3zSNz_hGwYA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDEyNyBTYWx0ZWRfX883ZHwOx8+bT
- FSUlUXs4+GC137KnA0/a+OTUEmh/x4Nscws4yzr8cex2dMEMRxX8pjhOD72CCNUKiY0J4i//5+g
- npWf947Yj58HdJP1cFBZfQmwBTRvRBzqDEa9RjV5ZykrPqPu2hElf57X0H28HtdTKrjYgWz/Cf6
- s5uazE/LYCtUGR9ifnjSlsskkFdY8swDwLlTBS1DoRaEopf+vpsuOzSz0etR5dcZg1KNqq0zxiv
- ywNTl7xem8pmYtaa7F3s+/d8SyvHimN3WDuo5MTg2nbsr/1utrt22nOZdljNINhEMUK32rlulKv
- /X2deW8xJWfDhBMoxQLA6ZsQkwRiceV6ihDQCoijyKMb+BcWAHfXWF7ae21Hco=
-X-Proofpoint-ORIG-GUID: WECyw4VzVCM8cB7t9r5tQYddSuUsoIxO
-X-Proofpoint-GUID: WECyw4VzVCM8cB7t9r5tQYddSuUsoIxO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-work-namespace-v2-28-1a247645cef5@kernel.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: C7026336A2
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email]
+X-Spam-Score: -2.51
 
-On Tue, 12 Aug 2025 15:02:10 +0800 liuqiqi@kylinos.cn wrote:
+On Fri 12-09-25 13:52:51, Christian Brauner wrote:
+> A while ago we added support for file handles to pidfs so pidfds can be
+> encoded and decoded as file handles. Userspace has adopted this quickly
+> and it's proven very useful. Implement file handles for namespaces as
+> well.
+> 
+> A process is not always able to open /proc/self/ns/. That requires
+> procfs to be mounted and for /proc/self/ or /proc/self/ns/ to not be
+> overmounted. However, userspace can always derive a namespace fd from
+> a pidfd. And that always works for a task's own namespace.
+> 
+> There's no need to introduce unnecessary behavioral differences between
+> /proc/self/ns/ fds, pidfd-derived namespace fds, and file-handle-derived
+> namespace fds. So namespace file handles are always decodable if the
+> caller is located in the namespace the file handle refers to.
+> 
+> This also allows a task to e.g., store a set of file handles to its
+> namespaces in a file on-disk so it can verify when it gets rexeced that
+> they're still valid and so on. This is akin to the pidfd use-case.
+> 
+> Or just plainly for namespace comparison reasons where a file handle to
+> the task's own namespace can be easily compared against others.
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-> From: liuqiqi <liuqiqi@kylinos.cn>
->=20
-> In the zone_reclaimable_pages() function, if the page counts for
-> NR_ZONE_INACTIVE_FILE, NR_ZONE_ACTIVE_FILE, NR_ZONE_INACTIVE_ANON,
-> and NR_ZONE_ACTIVE_ANON are all zero,
-> the function returns the number of free pages as the result.
->=20
-> In this case, when should_reclaim_retry() calculates reclaimable pages,
-> it will inadvertently double-count the free pages in its accounting.
->=20
-> static inline bool
-> should_reclaim_retry(gfp_t gfp_mask, unsigned order,
->                      struct alloc_context *ac, int alloc_flags,
->                      bool did_some_progress, int *no_progress_loops)
-> {
->         ...
->                 available =3D reclaimable =3D zone_reclaimable_pages(zo=
-ne);
->                 available +=3D zone_page_state_snapshot(zone, NR_FREE_P=
-AGES);
->=20
-> Signed-off-by: liuqiqi <liuqiqi@kylinos.cn>
-> ---
->  mm/vmscan.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
->=20
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 34410d24dc15..a9aaefdba7a2 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -393,14 +393,7 @@ unsigned long zone_reclaimable_pages(struct zone *=
-zone)
->  	if (can_reclaim_anon_pages(NULL, zone_to_nid(zone), NULL))
->  		nr +=3D zone_page_state_snapshot(zone, NR_ZONE_INACTIVE_ANON) +
->  			zone_page_state_snapshot(zone, NR_ZONE_ACTIVE_ANON);
-> -	/*
-> -	 * If there are no reclaimable file-backed or anonymous pages,
-> -	 * ensure zones with sufficient free pages are not skipped.
-> -	 * This prevents zones like DMA32 from being ignored in reclaim
-> -	 * scenarios where they can still help alleviate memory pressure.
-> -	 */
-> -	if (nr =3D=3D 0)
-> -		nr =3D zone_page_state_snapshot(zone, NR_FREE_PAGES);
+...
+
+> +	switch (ns->ops->type) {
+> +#ifdef CONFIG_CGROUPS
+> +	case CLONE_NEWCGROUP:
+> +		if (!current_in_namespace(to_cg_ns(ns)))
+> +			owning_ns = to_cg_ns(ns)->user_ns;
+> +		break;
+> +#endif
+> +#ifdef CONFIG_IPC_NS
+> +	case CLONE_NEWIPC:
+> +		if (!current_in_namespace(to_ipc_ns(ns)))
+> +			owning_ns = to_ipc_ns(ns)->user_ns;
+> +		break;
+> +#endif
+> +	case CLONE_NEWNS:
+> +		if (!current_in_namespace(to_mnt_ns(ns)))
+> +			owning_ns = to_mnt_ns(ns)->user_ns;
+> +		break;
+> +#ifdef CONFIG_NET_NS
+> +	case CLONE_NEWNET:
+> +		if (!current_in_namespace(to_net_ns(ns)))
+> +			owning_ns = to_net_ns(ns)->user_ns;
+> +		break;
+> +#endif
+> +#ifdef CONFIG_PID_NS
+> +	case CLONE_NEWPID:
+> +		if (!current_in_namespace(to_pid_ns(ns))) {
+> +			owning_ns = to_pid_ns(ns)->user_ns;
+> +		} else if (!READ_ONCE(to_pid_ns(ns)->child_reaper)) {
+> +			ns->ops->put(ns);
+> +			return ERR_PTR(-EPERM);
+> +		}
+> +		break;
+> +#endif
+> +#ifdef CONFIG_TIME_NS
+> +	case CLONE_NEWTIME:
+> +		if (!current_in_namespace(to_time_ns(ns)))
+> +			owning_ns = to_time_ns(ns)->user_ns;
+> +		break;
+> +#endif
+> +#ifdef CONFIG_USER_NS
+> +	case CLONE_NEWUSER:
+> +		if (!current_in_namespace(to_user_ns(ns)))
+> +			owning_ns = to_user_ns(ns);
+> +		break;
+> +#endif
+> +#ifdef CONFIG_UTS_NS
+> +	case CLONE_NEWUTS:
+> +		if (!current_in_namespace(to_uts_ns(ns)))
+> +			owning_ns = to_uts_ns(ns)->user_ns;
+> +		break;
+> +#endif
+
+Frankly, switches like these are asking for more Generic usage ;) But ok
+for now.
+
+> +	default:
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +	}
 > +
->  	return nr;
->  }
-> =20
-> @@ -6417,7 +6410,7 @@ static bool allow_direct_reclaim(pg_data_t *pgdat=
-)
->  		return true;
-> =20
->  	for_each_managed_zone_pgdat(zone, pgdat, i, ZONE_NORMAL) {
-> -		if (!zone_reclaimable_pages(zone))
-> +		if (!zone_reclaimable_pages(zone) && zone_page_state_snapshot(zone, =
-NR_FREE_PAGES))
->  			continue;
-> =20
+> +	if (owning_ns && !ns_capable(owning_ns, CAP_SYS_ADMIN)) {
+> +		ns->ops->put(ns);
+> +		return ERR_PTR(-EPERM);
+> +	}
+> +
+> +	/* path_from_stashed() unconditionally consumes the reference. */
+> +	ret = path_from_stashed(&ns->stashed, nsfs_mnt, ns, &path);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return no_free_ptr(path.dentry);
 
-It looks like the logic got inverted when this code moved around.  Should=
- this
-be !zone_page_state_snapshot()?
+Ugh, so IMO this is very subtle because we declare
 
--chris
+	struct path path __free(path_put)
+
+but then do no_free_ptr(path.dentry). I really had to lookup implementation
+of no_free_ptr() to check whether we are leaking mnt reference here or not
+(we are not). But that seems as an implementation detail we shouldn't
+better rely on? Wouldn't be:
+
+	return dget(path.dentry);
+
+much clearer (and sligthly less efficient, I know, but who cares)?
+
+Otherwise looks good to me so feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
