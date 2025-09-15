@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-817685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C135B5855B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:35:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A56B58562
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E4E48470B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:35:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490BC163EE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF291FDA61;
-	Mon, 15 Sep 2025 19:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6FD283CA7;
+	Mon, 15 Sep 2025 19:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VAFTReJ8"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tq5XpbLa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B72320F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BE7320F;
+	Mon, 15 Sep 2025 19:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757964926; cv=none; b=bWcUd30SY1S9U7/PmKPlReNz2feSs9aPJqxcytZoCqhVZkI0wTf9HcV6f/dhq1YgA0Dev4/PF1kEQuQ9PQCeCcpIUVrFyEWV53ZG0EsCgFBlXRHmSy9Zc+H4/GyWPxYcP75pulwgHhzAIElcSMCUqZRhJaQsvJPf9ae7R1L8hsU=
+	t=1757964981; cv=none; b=TBoJDWqlR7A9p7nDdZtmfuigksJpoyThGK4gADYYGtt9p+JNgHhy86LVJLvw0UJSMbsXqylJVQ60+gRT3cuGykec/RV650WZE8Wq4P0r8B+6nX9gTOX/NvdGDEI3NNlqqsvd07NIjXRdMGlzrRKArZrloOch7TwfLhPUnITF/38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757964926; c=relaxed/simple;
-	bh=qsrCux5uG5F+vFPb3AdHz26bygDHOMWX00ODfHuapU8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=pbnjirNr9rwWCVJ5VqiKjrK6KbqbUjj+95kfSxPhVL3Lwm6w7G+YwGC0xYa2NnCWCi0z3nimcQz+rKMEjT8p+cashEfm5+vBzAO/5eeZNOISehx/Zbo/zZEe/b8yxu7faHMdoBnMoR18PEevUko8OlxR2m4R1etskO0zkBTDFsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VAFTReJ8; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757964912;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qsrCux5uG5F+vFPb3AdHz26bygDHOMWX00ODfHuapU8=;
-	b=VAFTReJ8dXyhRYmYyshNH34mb0cJQbWurGthvuslr3xAIwpo3yrMks1U0LP/WoKltzil2u
-	nLTAlnj2sp+BRvd7ytYwhnSficd4bTwjCKasfmiO4LpnXdwP5//0jfoJnxpJUDh+X2aoKi
-	LnrAlcV3EkTjVEd+4c898mq/NNkKjyQ=
+	s=arc-20240116; t=1757964981; c=relaxed/simple;
+	bh=xIiCA6XEsrWkWIw6mHGpGZiKaHps/gNNAYLbHZYqqj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j8Pt4ZhNw/J0KFO5I+xQjMbYTEMLWcCSCMCyUIn2m6aUTBBV7PiX0p1XHksoR661L7isg+KaH/9/3gXF6Ije7CGkSmxqlSGpHPDu4PYXT9I92Cyo6lht4CRob7PnXFcQPr8oy6noowrsoDiiwar4nJuDKRcmISpskWmxVpIEVok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tq5XpbLa; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757964979; x=1789500979;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xIiCA6XEsrWkWIw6mHGpGZiKaHps/gNNAYLbHZYqqj8=;
+  b=Tq5XpbLaNHBbKlScR4AuNz3HZvfHWQfNBqmF1fXKkaWy5cI1Xk06QK9j
+   BxoDNx6upziijcNr/AZ6skLcDml0tqsOxrogBM8K3K2vFqxx2+TMG/lR0
+   +ZMdCF+TCXFVyGzesPIyaWW5tRa+gs5Rfa2TOetqEKeT1GFkiciY6Xqfm
+   DqnZZHq6RYX640wB6ats7begSTBnf/1KIqXrR1AXrf9CUT9UXBrJTQ8wr
+   5P6J+E2czrl3JgcRZl3k60viVn07kHnhe/QPvR8dhKah4QO9MYcD40m8v
+   bbjlK71sbxSN5jK+L3ChWSZ9rS5oHYIsuQmTfvrcB7uyLPpos8gFYSCgD
+   Q==;
+X-CSE-ConnectionGUID: UxHDi4ccQQSeKZ1QAlywpw==
+X-CSE-MsgGUID: E86gYZ0ARMe8EWkEq2/b6w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="82827217"
+X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
+   d="scan'208";a="82827217"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 12:36:18 -0700
+X-CSE-ConnectionGUID: Y8hQESkPS4qErw9rZtB5/g==
+X-CSE-MsgGUID: ite+/TU1Qyacu+j/+yt5kA==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 5b01dd97f97c) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 15 Sep 2025 12:36:15 -0700
+Received: from kbuild by 5b01dd97f97c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uyEzl-0000cl-0J;
+	Mon, 15 Sep 2025 19:36:13 +0000
+Date: Tue, 16 Sep 2025 03:36:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lakshay Piplani <lakshay.piplani@nxp.com>, wbg@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, vikash.bansal@nxp.com,
+	priyanka.jain@nxp.com, shashank.rebbapragada@nxp.com,
+	Lakshay Piplani <lakshay.piplani@nxp.com>
+Subject: Re: [PATCH 2/2] counter: nxp-pcf85363-stopwatch: Add driver for NXP
+ PCF85263/PCF85363 stopwatch
+Message-ID: <202509160317.ig0aBXeu-lkp@intel.com>
+References: <20250915071415.1956219-2-lakshay.piplani@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] docs: maintainer: Fix capitalization
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <c85881bd-a159-4bb3-9615-b87ce4ab0575@infradead.org>
-Date: Mon, 15 Sep 2025 21:35:00 +0200
-Cc: Jonathan Corbet <corbet@lwn.net>,
- workflows@vger.kernel.org,
- linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E32E7460-02E4-4E85-8482-E91D3FD12253@linux.dev>
-References: <20250915192235.2414746-2-thorsten.blum@linux.dev>
- <c85881bd-a159-4bb3-9615-b87ce4ab0575@infradead.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915071415.1956219-2-lakshay.piplani@nxp.com>
 
-Hi Randy,
+Hi Lakshay,
 
-On 15. Sep 2025, at 21:29, Randy Dunlap wrote:
-> On 9/15/25 12:22 PM, Thorsten Blum wrote:
->> The sentence starts at the previous line: s/Indicate/indicate/
->=20
-> Are you sure?
-> ISTM that the entire line is a "sub-heading".
+kernel test robot noticed the following build warnings:
 
-Hm maybe, but then the layout/rendering on the web is very confusing:
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.17-rc6 next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-=
-https://docs.kernel.org/maintainer/maintainer-entry-profile.html#key-cycle=
--dates
+url:    https://github.com/intel-lab-lkp/linux/commits/Lakshay-Piplani/counter-nxp-pcf85363-stopwatch-Add-driver-for-NXP-PCF85263-PCF85363-stopwatch/20250915-152227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250915071415.1956219-2-lakshay.piplani%40nxp.com
+patch subject: [PATCH 2/2] counter: nxp-pcf85363-stopwatch: Add driver for NXP PCF85263/PCF85363 stopwatch
+config: i386-randconfig-141-20250916 (https://download.01.org/0day-ci/archive/20250916/202509160317.ig0aBXeu-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509160317.ig0aBXeu-lkp@intel.com/reproduce)
 
-How would that be fixed?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509160317.ig0aBXeu-lkp@intel.com/
 
-Thanks,
-Thorsten
+All warnings (new ones prefixed by >>):
 
+>> drivers/counter/nxp-pcf85363-stopwatch.c:375:34: warning: unused variable 'dev_ids' [-Wunused-const-variable]
+     375 | static const struct of_device_id dev_ids[] = {
+         |                                  ^~~~~~~
+   1 warning generated.
+
+
+vim +/dev_ids +375 drivers/counter/nxp-pcf85363-stopwatch.c
+
+   374	
+ > 375	static const struct of_device_id dev_ids[] = {
+   376		{ .compatible = "nxp,pcf85263atl", .data = &pcf_85263_config },
+   377		{ .compatible = "nxp,pcf85363atl", .data = &pcf_85363_config },
+   378		{ }
+   379	};
+   380	MODULE_DEVICE_TABLE(of, dev_ids);
+   381	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
