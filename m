@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-817379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C12EB58175
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A319DB58178
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0432B2041C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6549320461B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E7423FC66;
-	Mon, 15 Sep 2025 16:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72D923D297;
+	Mon, 15 Sep 2025 16:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dPKAIfnB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KW4X8gtz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375F222A4EE
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAB81D5CC7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757952197; cv=none; b=klOobJ3Oza47z6Y5B3vaNHnzeWYVMe04JB7CSfvlivoZiQgq6F84Uypk8Tbj/+2apQSvEhMBYnX23CC9+n8BjkqhIJpX+LWtKOsSmy9KOPtfyoC/giZMTD1InrVVOocyZuYyTwCFdn4JqvkvSrcLeDwN8iO4bz7HpgCvsr09f3M=
+	t=1757952208; cv=none; b=XDWH/O7mp0X2XebAsBlmvbL8Z1oUY0PCfUmamiaNHB60rR/4+weRrkfLo7iIiNsBkvj/gspenMx0puR51cTfw/i/6OpXWdpkyoB1OpJlvcudtfvCmTud8YUNE845+xMqEg7HA8qmVe2hHozLZvSa7LrlFHYMVudb5hWHJ7iJvLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757952197; c=relaxed/simple;
-	bh=UgpAiUSkfqsIiMi/5vuPzG4RqiLKzyDrVtzPJiZs6b0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mTy66yCBCxJcKqRBIH7koUjzr82l8Y9HOQ814kdlgRpzCYfRXxKIshNovRzSFrp2bOyt16cXT1UJKtl/AgHRdc3+uIMMyFA6jplkfgcA3/d/Jb3f3o36+2sr/A9s4DW9TSPJFB1wMCMFlCTqIdBL6GbfGrH3Z9S8JKGJDmTgXmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dPKAIfnB; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1757952208; c=relaxed/simple;
+	bh=jZv2I+hQgy7h1flHxtjAdMVXtLJV6Xkt1tQmvJyMaYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J3ARXdUcgRrP6sjmbH8b8GJk7ghWze+Voqx3+yOrmUiMtODfpCbfvM0gN9JkilKU29iB17UbZHaUodK0e7yzsp1E5+xv+JdsurAVpXPHgZ95/bqnqBWJnlGV8vVGF8wFYSZhxb2SgVn7/c8TZQ2N1NjoM83vRrXkROmF4Rwqh04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KW4X8gtz; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757952195;
+	s=mimecast20190719; t=1757952205;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxYYDZD7WvA8pBIh8RZ+XYWpfwg8m7Jck2wpptSqpfw=;
-	b=dPKAIfnBBkSOZaiOxdGP1PiuyU56PTuZZY8Swx0Ha7AJPZgB7Lj+R09u6+IA/gZE/QebLe
-	UnSi05Z8/e1sES4/87i3o9m3xEkGtTn29MOoE714t9URm3KTYNvlTu8RwGkC+TtuxvulOB
-	p77eMs8vuQ0p2QzAmZF7AyM/6jTBtF0=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=l8M1HLgoXiLY5BzoOeoK/zpN6LMaZFeM6/poF/2GC8o=;
+	b=KW4X8gtzK/Ah21Pmcw8/GGGggTesFQ/u2Hh1zsGdJgX0qyEjL+b7TDJpioQOifUCwxH9mg
+	wlfz/JnBip2lP+LGTYtwXguLgjtXbjBeRA4Hpfr6vSeUSiYW24oZkI3jnGHVLM6H9ThSKk
+	EzBV5oFw8wqpyPSy6gh5sNZW086u8f0=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-208-YL5Omkd7NLSsqiuzX7ap6g-1; Mon, 15 Sep 2025 12:03:13 -0400
-X-MC-Unique: YL5Omkd7NLSsqiuzX7ap6g-1
-X-Mimecast-MFC-AGG-ID: YL5Omkd7NLSsqiuzX7ap6g_1757952192
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-62ae827e496so3911974a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:03:13 -0700 (PDT)
+ us-mta-657-IeqUPwKJMwm1iG4VfKeLXg-1; Mon, 15 Sep 2025 12:03:24 -0400
+X-MC-Unique: IeqUPwKJMwm1iG4VfKeLXg-1
+X-Mimecast-MFC-AGG-ID: IeqUPwKJMwm1iG4VfKeLXg_1757952203
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-afcb78d5c35so515680866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:03:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757952192; x=1758556992;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxYYDZD7WvA8pBIh8RZ+XYWpfwg8m7Jck2wpptSqpfw=;
-        b=brTmI8pANyQQtzdBPo3j+9YGbRFvY2g7pOwL0DJYadrXV2usPkCqwDUMY6MiDTCorZ
-         q7CZXsnDwLorEkIAUK0dC0LIRL1mCWdzw5lFgsVmIysrDpXLoEgS4JEJfTPUo5kmam5m
-         RLEpuZKJyKn+CQbhuPSqEAWejL3vz846XkVvELD2kciBk/n3VInV4nIlqhcmYDwi3JE4
-         8i2BOcRXyqopdIxZi0NdYr/laX3ZTOuKxnC0SeJjtiCNh3ZPxti0WDnF8F64vvxJvtQb
-         LtHnVJTuNtuWXY8rlyWngHp+gYYfZLIJU2YSWCAUy0mlLWRML+Q8FYlfuMtAOzvKWeYK
-         tfAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWv56ii8l6LNIiT9gUAOMP+Fxi3Y1DSEGwETUk+45CqwzD/q4fh1J+Gnap45kal6JwiyE+2BC+tjS6TYR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx7vjkMYWSm71OTJxu52e/XObLnZF2ekv09gW6t8knlFX0smwf
-	9eTE3hOJp0YyIzMpUkTVTlxaqtRptNgjZKXqOm8ACU8w4BcxfVfWysRkzcrvAkyF4HqWYo7dlM2
-	vaF/RzsThK3hUQNGj9lCsXMuPUfdbFSOILA8fvuXhdcqYoybhp6uB08vUQIeajG4KIFyFggpwgg
-	==
-X-Gm-Gg: ASbGncsM6lkHCNQMaA7fMCryTXI8B+IIfZnOuW3dOSbemcodWvSpScD1Fe7cbu54BQe
-	MgFgj+h9r1jK0hyAPc8QgYqFbWrnwT/hqlzzEP8L8kSc0ubi4B7+hJAUVzSAvmZHnWVMV8ssQg2
-	0MGMSaaqTLIZHNwT9nttyOnevKdUOUzKtjqTibRMoxGvyJo7PSBnoAnbr9Ik7aXY7wxU2j7hcdA
-	18fPE91+Il8gRnt21NHtLs9EQ6LPWhHBgeOqmGB3QTIChwGsBaanugnMsY/YimiTWFs9gr3VdqC
-	6/scP1IZaY4jyHUizZQBCaMUs+gy
-X-Received: by 2002:a05:6402:5c9:b0:62f:5cd8:9b2e with SMTP id 4fb4d7f45d1cf-62f5cd8a072mr216481a12.29.1757952191717;
-        Mon, 15 Sep 2025 09:03:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjGn2Z0BOy+sfljpNHO+I5IXHBbdbcb8SYTOdauYndHQ59yMvvIQnAzpSL9eW6X/im0GKszQ==
-X-Received: by 2002:a05:6402:5c9:b0:62f:5cd8:9b2e with SMTP id 4fb4d7f45d1cf-62f5cd8a072mr216441a12.29.1757952191084;
-        Mon, 15 Sep 2025 09:03:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757952203; x=1758557003;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l8M1HLgoXiLY5BzoOeoK/zpN6LMaZFeM6/poF/2GC8o=;
+        b=ifp+yZlxN+gsI3VZ4l1eyAY56aqge5YzWTd5mZL/xJdt1+ap1eETAL1f0gg0cdeP08
+         IgLSdcZifxYr5AxRsoPnC9hfavk7R+7SIC64me7zC4wIZHZaaD+/yND7NG8UUaTvKUCF
+         1xMt6kfnMrfbtpqlW2gsMTPvqZS4z8hhVC94y1JkcASzG96jujZ6EUSWOVi0yK6qyWiN
+         BJP6zAUjEl20Bai+OGUiputCZ7HMOABrUl7susIKRVvkrENahcyMufVLDcYjlP0S+g2h
+         qKCqcXFQCA2sGqd3PfWz6infS07nTiCw1MfAoBinK7LNYiWoWkf3mswycTYCrV80zTCz
+         +gog==
+X-Gm-Message-State: AOJu0YyumrlPy4Tnmwut6gPt78E90dsqDaVkMae27rhtWC77ddx3wyL7
+	nFgVZ1n0b3mB/bEsgTUWJCOOvJu4og2lwgRAp5Tc0ddBn/ZfhZeK9C+kwnTpJXZgOnAduOSL45z
+	ehmdfradgHcQVFwzmY0jV6oM2gLeDOFF8wfGyA8/yv4xzm8T09V5BWFwZzeoLvrsyJzes8WXPxG
+	CXLPA81CsUaXe3hjMzPJoGyDaKmXUUo75CPgxfmeiy4Mo=
+X-Gm-Gg: ASbGncv3qaDaEWjHWbGFlTQBCjvIuQy2of4JwWFnakrY2w9EXmSVPLvEMwK3gJYvCoG
+	KHiI6/fJCZ4EOf0LhXoxSrnarm2h8guHxxYMFLhAuNuD62Wh+rrTdFKpFbwbRdHEvX1fsuZmsAg
+	LtEvdEz8GwfhYf6XQPEKm2zAybq1OxbKI0/I4N/Iw7uqhyFCCNUc7cua+fc0yCPUKJp/SaWNtHn
+	P2eEzSayupuxEdROoiIOLZ0P2/dBAljDLbNj1JXjXiktKoUdeYc8H/CrRgy9ICvJpIOeC3auvFw
+	/F9jCmOP+vdB/Soy+Nj4oJkQKDgr
+X-Received: by 2002:a17:907:1c1d:b0:b04:a1a4:4bec with SMTP id a640c23a62f3a-b07c3a67aa8mr1299527666b.58.1757952202647;
+        Mon, 15 Sep 2025 09:03:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwwIB4rLfw0BfbhWfF9Fcdmo+wyMaaAb5Z+Vosd8vM4TIyjSy30sdafKcHylRnmXkyEaGRuQ==
+X-Received: by 2002:a17:907:1c1d:b0:b04:a1a4:4bec with SMTP id a640c23a62f3a-b07c3a67aa8mr1299522466b.58.1757952202060;
+        Mon, 15 Sep 2025 09:03:22 -0700 (PDT)
 Received: from redhat.com ([31.187.78.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f454f4288sm1899363a12.5.2025.09.15.09.03.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3128a1esm947877266b.29.2025.09.15.09.03.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 09:03:10 -0700 (PDT)
-Date: Mon, 15 Sep 2025 12:03:07 -0400
+        Mon, 15 Sep 2025 09:03:20 -0700 (PDT)
+Date: Mon, 15 Sep 2025 12:03:19 -0400
 From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: eperezma@redhat.com, jonah.palmer@oracle.com, kuba@kernel.org,
-	jon@nutanix.com, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH net 2/2] vhost-net: correctly flush batched packet before
- enabling notification
-Message-ID: <20250915120210-mutt-send-email-mst@kernel.org>
-References: <20250912082658.2262-1-jasowang@redhat.com>
- <20250912082658.2262-2-jasowang@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jon Kohler <jon@nutanix.com>, netdev@vger.kernel.org
+Subject: [PATCH v3 0/3] vhost-net regression fixes
+Message-ID: <cover.1757951612.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,101 +89,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912082658.2262-2-jasowang@redhat.com>
-
-On Fri, Sep 12, 2025 at 04:26:58PM +0800, Jason Wang wrote:
-> Commit 8c2e6b26ffe2 ("vhost/net: Defer TX queue re-enable until after
-> sendmsg") tries to defer the notification enabling by moving the logic
-> out of the loop after the vhost_tx_batch() when nothing new is
-> spotted. This will bring side effects as the new logic would be reused
-> for several other error conditions.
-> 
-> One example is the IOTLB: when there's an IOTLB miss, get_tx_bufs()
-> might return -EAGAIN and exit the loop and see there's still available
-> buffers, so it will queue the tx work again until userspace feed the
-> IOTLB entry correctly. This will slowdown the tx processing and may
-> trigger the TX watchdog in the guest.
-> 
-> Fixing this by stick the notificaiton enabling logic inside the loop
-> when nothing new is spotted and flush the batched before.
-> 
-> Reported-by: Jon Kohler <jon@nutanix.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 8c2e6b26ffe2 ("vhost/net: Defer TX queue re-enable until after sendmsg")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vhost/net.c | 33 +++++++++++++--------------------
->  1 file changed, 13 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 16e39f3ab956..3611b7537932 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -765,11 +765,11 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
->  	int err;
->  	int sent_pkts = 0;
->  	bool sock_can_batch = (sock->sk->sk_sndbuf == INT_MAX);
-> -	bool busyloop_intr;
->  	bool in_order = vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
->  
->  	do {
-> -		busyloop_intr = false;
-> +		bool busyloop_intr = false;
-> +
->  		if (nvq->done_idx == VHOST_NET_BATCH)
->  			vhost_tx_batch(net, nvq, sock, &msg);
->  
-> @@ -780,10 +780,18 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
->  			break;
->  		/* Nothing new?  Wait for eventfd to tell us they refilled. */
->  		if (head == vq->num) {
-> -			/* Kicks are disabled at this point, break loop and
-> -			 * process any remaining batched packets. Queue will
-> -			 * be re-enabled afterwards.
-> +			/* Flush batched packets before enabling
-> +			 * virqtueue notification to reduce
-> +			 * unnecssary virtqueue kicks.
->  			 */
-> +			vhost_tx_batch(net, nvq, sock, &msg);
-
-So why don't we do this in the "else" branch"? If we are busy polling
-then we are not enabling kicks, so is there a reason to flush?
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
 
-> +			if (unlikely(busyloop_intr)) {
-> +				vhost_poll_queue(&vq->poll);
-> +			} else if (unlikely(vhost_enable_notify(&net->dev,
-> +								vq))) {
-> +				vhost_disable_notify(&net->dev, vq);
-> +				continue;
-> +			}
->  			break;
->  		}
->  
-> @@ -839,22 +847,7 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
->  		++nvq->done_idx;
->  	} while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)));
->  
-> -	/* Kicks are still disabled, dispatch any remaining batched msgs. */
->  	vhost_tx_batch(net, nvq, sock, &msg);
-> -
-> -	if (unlikely(busyloop_intr))
-> -		/* If interrupted while doing busy polling, requeue the
-> -		 * handler to be fair handle_rx as well as other tasks
-> -		 * waiting on cpu.
-> -		 */
-> -		vhost_poll_queue(&vq->poll);
-> -	else
-> -		/* All of our work has been completed; however, before
-> -		 * leaving the TX handler, do one last check for work,
-> -		 * and requeue handler if necessary. If there is no work,
-> -		 * queue will be reenabled.
-> -		 */
-> -		vhost_net_busy_poll_try_queue(net, vq);
->  }
->  
->  static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
-> -- 
-> 2.34.1
+Two regressions were reported in vhost-net.
+This is based on a patchset by Jason, but with
+patch 2 from his series split up and made simpler.
+
+Lightly tested.
+Jason, Jon could you pls test this as well, and report?
+
+
+Jason Wang (2):
+  vhost-net: unbreak busy polling
+
+Michael S. Tsirkin (1):
+  Revert "vhost/net: Defer TX queue re-enable until after sendmsg"
+  vhost-net: flush batched before enabling notifications
+
+ drivers/vhost/net.c | 44 ++++++++++++++++++++------------------------
+ 1 file changed, 20 insertions(+), 24 deletions(-)
+
+-- 
+MST
 
 
