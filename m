@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-816218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF294B57126
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9213AB5714D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909E63A69F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6903B7B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD392D541E;
-	Mon, 15 Sep 2025 07:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F192D5943;
+	Mon, 15 Sep 2025 07:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHY58iAW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="iOPf0TX/"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFAC2D46BB;
-	Mon, 15 Sep 2025 07:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689DB2D5410;
+	Mon, 15 Sep 2025 07:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757920905; cv=none; b=QUFFjSs1K1o0tqactadjtWmdPtg0ayufP4/I96SzrMpsgaoTq1ixRtBuordNRZOHCLMqoDKcDsBhQT7cFnovw5dp6CURrbJjwBBWX2QDRswCOJWXdbaGTDvY2kdnkt39VCU3NK49MPExnEsbxeSZpysl8aQOoA4WhEg4a2PM75o=
+	t=1757920957; cv=none; b=Qkfb4+VxdlqX5xzNWZT4knKs138Q/crapECE8J0k40RsRAWFnueGzp2JXFBTQh0KlMqvSR4L8jNRGBdjYtT4BNosShnh1chMyVzuTiqRM39Mp14prbKHlcahJrbBt7uUu3/ENqnACzjW36uJi7170a99NRJY7H9GBV+8IUJUgcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757920905; c=relaxed/simple;
-	bh=hnQkfJdaz4J64XGVGqQUY0ejbNk1/Yb8gP67ZkFXXBM=;
+	s=arc-20240116; t=1757920957; c=relaxed/simple;
+	bh=6GpWF7++CGjGvUkG7uSpyCjVeorJthApNUA9/W3UTKs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r5ovKvvb+9zSU+cHSAZ8kjR+IzdXnhjyvFAXB7hXV6k579t7vOdwKIy01+okw5dr4mG25bBcfBSsijt5TCXVKDKqNowo3UF8ij4JSKCsdl4bsdP8wt23XMkH6T0ZMjs43LB8DMOBfgc4yegM3UWAW/Joo3GEsHaADQtbxYS59WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHY58iAW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F823C4CEF1;
-	Mon, 15 Sep 2025 07:21:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757920905;
-	bh=hnQkfJdaz4J64XGVGqQUY0ejbNk1/Yb8gP67ZkFXXBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oHY58iAWzfDd5RwVm5RGOjcmd5USdQ+QfmR18QQR1nIDOxKJwqbt+shs4mVmG853F
-	 dPGHWSfjE4EwUUd/nRuyq96KgbVQECfH7bEyDpp/8z7Qw2cm9vL+xDM3FG9W7+ro0w
-	 +6XqvzKpU+FE627Jbr/uGhecbXZL+WxhR/+toHpL23yK3IwCRT0HLgJANLhoiF/Fqf
-	 AFRviFn7klY3z7jaJXnB/m5oUQdiyw9jZL4ybPWCyn11eEIa6fjb2Ik5tXdIHn4Hbh
-	 ZV1foFr/GqYas0ngZtS/oXIyTpWoIYMUZ5zivGnV9l3bq9rjUVrKOZi/StnVi1Wk9F
-	 LaoeSI6zS6rvQ==
-Message-ID: <7ed4b1ef-8eef-4acd-9ae6-6478d7c5ff29@kernel.org>
-Date: Mon, 15 Sep 2025 09:21:41 +0200
+	 In-Reply-To:Content-Type; b=OWTqjVleLVqziEfPYR999/oHo8CUbbexIlV1taAnxMHziU3KhZ4cP71bMBmAEMjzJ4S9kbEc7ZCvafd3eXBRr1atz5QP0TuZBPhJzqT02ZLWsVOtGmsH1pWVTpMauurELyprq5RIiLlwMjrF4ZnDgE6Coykc/19fMU8HLkuR5n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=iOPf0TX/; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=f3Vzsf0SHsz53w/fRj6/iu+ZGqGrPOJgnz+3y2sYnCQ=; b=iOPf0TX/RVhtW0Js/XsIhpZejg
+	F8QTYCaXx7L2ew1fEQZh3NQkbSb74csI4cR9PaT3SC5dBKXyRRdVdTFcesfEy5mlAY5CsKUv8lQwG
+	tRm2IdBt4ucUYMvc1SDVWCwNkBJlktGL3+JasHCrF8amarR3M2BfoDFqMlNBJpL4DebCOVCNjZOxQ
+	dUDo4zw9aU+TRmRzWgaNIEFjwMjfCQI5E2BwAzqDoyKuEZtGkXrAwTSRBeBVh+239n7v5nf8469zg
+	/b1GM29lB1vfxXDslobYljlOFr92Qe9bgbMJf4LK7pP9DC9KwXovYwvhUhGVcHiBcCS+OdthCF3L3
+	5zR4nBDQ==;
+Received: from [58.29.143.236] (helo=[192.168.1.7])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uy3Xe-00BhZ3-RP; Mon, 15 Sep 2025 09:22:27 +0200
+Message-ID: <978215f1-40d1-4c77-b436-2710029d5acc@igalia.com>
+Date: Mon, 15 Sep 2025 16:22:20 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,475 +55,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] counter: nxp-pcf85363-stopwatch: Add driver for NXP
- PCF85263/PCF85363 stopwatch
-To: Lakshay Piplani <lakshay.piplani@nxp.com>, wbg@kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
- shashank.rebbapragada@nxp.com
-References: <20250915071415.1956219-1-lakshay.piplani@nxp.com>
- <20250915071415.1956219-2-lakshay.piplani@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250915071415.1956219-2-lakshay.piplani@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] Revert "sched_ext: Skip per-CPU tasks in
+ scx_bpf_reenqueue_local()"
+To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>
+Cc: Cheng-Yang Chou <yphbchou0911@gmail.com>, sched-ext@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250912161438.529446-1-arighi@nvidia.com>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <20250912161438.529446-1-arighi@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 15/09/2025 09:14, Lakshay Piplani wrote:
-> +#include <linux/regmap.h>
-> +#include <linux/counter.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/nvmem-provider.h>
-> +
-> +#define SW_100THS	0x00
-> +#define SW_SECS		0x01
-> +#define SW_MINUTES	0x02
-> +#define SW_HOURS_XX_XX_00	0x03
-> +#define SW_HOURS_XX_00_XX	0x04
-> +#define SW_HOURS_00_XX_XX	0x05
-> +
-> +#define CTRL_OFFSET	0x24
-> +#define CTRL_OSCILLATOR	0x25
-> +#define CTRL_BATTERY	0x26
-> +#define CTRL_PIN_IO	0x27
-> +#define CTRL_FUNCTION	0x28
-> +#define CTRL_INTA_EN	0x29
-> +#define CTRL_INTB_EN	0x2a
-> +#define CTRL_FLAGS	0x2b
-> +#define CTRL_RAMBYTE	0x2c
-> +#define CTRL_WDOG	0x2d
-> +#define CTRL_STOP_EN	0x2e
-> +#define CTRL_RESETS	0x2f
-> +#define CTRL_RAM	0x40
-> +
-> +#define OSC_CAP_SEL	GENMASK(1, 0)
-> +#define OSC_CAP_6000	0x01
-> +#define OSC_CAP_12500	0x02
-> +
-> +#define STOP_EN_STOP	BIT(0)
-> +#define RTCM_BIT	BIT(4)
-> +#define MODE_100TH_S	BIT(7)
-> +#define SW_BCD7_MASK	GENMASK(6, 0)
-> +
-> +#define RESET_CPR	0xa4
-> +
-> +#define NVRAM_SIZE	0x40
-> +
-> +#define SW_MAX_100THS 359999999999ULL /* Maximum representable value in centiseconds (10ms)*/
-> +
-> +#define SW_TIME_REGS	6
-> +
-> +struct pcf85363 {
-> +	struct regmap *regmap;
-> +	struct counter_device *counter;
-> +	struct mutex lock; /* Protects access to stopwatch registers */
+Hi Andrea,
 
-regmap protects it already (see also further)
-> +};
-> +
-> +struct pcf85x63_config {
-> +	const struct regmap_config regmap;
-> +	unsigned int num_nvram;
-> +};
-> +
-> +static int pcf85363_load_capacitance(struct pcf85363 *pcf85363)
-> +{
-> +	struct device *dev = pcf85363->counter->parent;
-> +	u32 load = 7000;
-> +	u8 value = 0;
-> +
-> +	device_property_read_u32(dev, "quartz-load-femtofarads", &load);
-> +
-> +	switch (load) {
-> +	default:
-> +		dev_warn(pcf85363->counter->parent, "Unknown quartz-load-femtofarads value: %d. Assuming 7000",
+On 9/13/25 01:14, Andrea Righi wrote:
+> scx_bpf_reenqueue_local() can be called from ops.cpu_release() when a
+> CPU is taken by a higher scheduling class to give tasks queued to the
+> CPU's local DSQ a chance to be migrated somewhere else, instead of
+> waiting indefinitely for that CPU to become available again.
+> 
+> In doing so, we decided to skip migration-disabled tasks, under the
+> assumption that they cannot be migrated anyway.
+> 
+> However, when a higher scheduling class preempts a CPU, the running task
+> is always inserted at the head of the local DSQ as a migration-disabled
+> task. This means it is always skipped by scx_bpf_reenqueue_local(), and
+> ends up being confined to the same CPU even if that CPU is heavily
+> contended by other higher scheduling class tasks.
+> 
+> As an example, let's consider the following scenario:
+> 
+>   $ schedtool -a 0,1, -e yes > /dev/null
+>   $ sudo schedtool -F -p 99 -a 0, -e \
+>     stress-ng -c 1 --cpu-load 99 --cpu-load-slice 1000
+> 
+> The first task (SCHED_EXT) can run on CPU0 or CPU1. The second task
+> (SCHED_FIFO) is pinned to CPU0 and consumes ~99% of it. If the SCHED_EXT
+> task initially runs on CPU0, it will remain there because it always sees
+> CPU0 as "idle" in the short gaps left by the RT task, resulting in ~1%
+> utilization while CPU1 stays idle:
+> 
+>      0[||||||||||||||||||||||100.0%]   8[                        0.0%]
+>      1[                        0.0%]   9[                        0.0%]
+>      2[                        0.0%]  10[                        0.0%]
+>      3[                        0.0%]  11[                        0.0%]
+>      4[                        0.0%]  12[                        0.0%]
+>      5[                        0.0%]  13[                        0.0%]
+>      6[                        0.0%]  14[                        0.0%]
+>      7[                        0.0%]  15[                        0.0%]
+>    PID USER       PRI  NI  S CPU  CPU%▽MEM%   TIME+  Command
+>   1067 root        RT   0  R   0  99.0  0.2  0:31.16 stress-ng-cpu [run]
+>    975 arighi      20   0  R   0   1.0  0.0  0:26.32 yes
+> 
+> By allowing scx_bpf_reenqueue_local() to re-enqueue migration-disabled
+> tasks, the scheduler can choose to migrate them to other CPUs (CPU1 in
+> this case) via ops.enqueue(), leading to better CPU utilization:
+> 
+>      0[||||||||||||||||||||||100.0%]   8[                        0.0%]
+>      1[||||||||||||||||||||||100.0%]   9[                        0.0%]
+>      2[                        0.0%]  10[                        0.0%]
+>      3[                        0.0%]  11[                        0.0%]
+>      4[                        0.0%]  12[                        0.0%]
+>      5[                        0.0%]  13[                        0.0%]
+>      6[                        0.0%]  14[                        0.0%]
+>      7[                        0.0%]  15[                        0.0%]
+>    PID USER       PRI  NI  S CPU  CPU%▽MEM%   TIME+  Command
+>    577 root        RT   0  R   0 100.0  0.2  0:23.17 stress-ng-cpu [run]
+>    555 arighi      20   0  R   1 100.0  0.0  0:28.67 yes
+> 
+> It's debatable whether per-CPU tasks should be re-enqueued as well, but
+> doing so is probably safer: the scheduler can recognize re-enqueued
+> tasks through the %SCX_ENQ_REENQ flag, reassess their placement, and
+> either put them back at the head of the local DSQ or let another task
+> attempt to take the CPU.
+> 
+> This also prevents giving per-CPU tasks an implicit priority boost,
+> which would otherwise make them more likely to reclaim CPUs preempted by
+> higher scheduling classes.
+> 
+> Fixes: 97e13ecb02668 ("sched_ext: Skip per-CPU tasks in scx_bpf_reenqueue_local()")
+> Cc: stable@vger.kernel.org # v6.15+
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
+>   kernel/sched/ext.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 236dce2fc13b4..4c3592e26ee45 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -5726,12 +5726,8 @@ __bpf_kfunc u32 scx_bpf_reenqueue_local(void)
+>   		 * CPUs disagree, they use %ENQUEUE_RESTORE which is bypassed to
+>   		 * the current local DSQ for running tasks and thus are not
+>   		 * visible to the BPF scheduler.
+> -		 *
+> -		 * Also skip re-enqueueing tasks that can only run on this
+> -		 * CPU, as they would just be re-added to the same local
+> -		 * DSQ without any benefit.
+>   		 */
+> -		if (p->migration_pending || is_migration_disabled(p) || p->nr_cpus_allowed == 1)
+> +		if (p->migration_pending)
+>   			continue;
 
-Missing wrapping. Please wrap around 80, so after parent, see Linux
-coding style for proper explanation.
+I think it is okay to keep "p->nr_cpus_allowed == 1" to the
+condition. When a task is pinned to a *single* CPU, there is no
+other place for a scheduler to put the task. Additionally, adding
+the condition is acceptable in your example of the first task
+running on either CPU 0 or 1.
 
-> +			 load);
-> +		fallthrough;
-> +	case 7000:
-> +		break;
-> +	case 6000:
-> +		value = OSC_CAP_6000;
-> +		break;
-> +	case 12500:
-> +		value = OSC_CAP_12500;
-> +		break;
-> +	}
-> +
-> +	return regmap_update_bits(pcf85363->regmap, CTRL_OSCILLATOR,
-> +				  OSC_CAP_SEL, value);
-> +}
-> +
-> +/* Reads stopwatch value in 1/100 seconds (centiseconds), the device stores
-
-That's not netdev, so use standard Linux coding style comments.
-
-> + * six BCD fields: CC(0..99), SS(0..59), MM(0..59), HH0/HH1/HH2 (each 0..99)
-> + * Seconds and minutes contain OS/EMON flag bits; mask them as per datasheet
-> + * before bcd2bin().
-> + */
-> +static int pcf85363_counter_read(struct counter_device *counter,
-> +				 struct counter_count *count, u64 *val)
-> +{
-> +	struct pcf85363 *pcf85363 = counter_priv(counter);
-> +	u8 raw[SW_TIME_REGS];
-> +	u64 hours;
-> +	int ret;
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +	ret = regmap_bulk_read(pcf85363->regmap, SW_100THS, raw, ARRAY_SIZE(raw));
-> +	if (ret)
-> +		return ret;
-> +
-
-So the lock would end here if you were protecting registers. Your
-comment about locking is misleading or incomplete or incorrect.
-
-> +	/* Mask OS/EMON flag bits in seconds/minutes */
-> +	raw[1] = FIELD_GET(SW_BCD7_MASK, raw[1]);
-> +	raw[2] = FIELD_GET(SW_BCD7_MASK, raw[2]);
-> +
-> +	hours = (u64)bcd2bin(raw[3]);
-> +	hours += (u64)bcd2bin(raw[4]) * 100ULL;
-> +	hours += (u64)bcd2bin(raw[5]) * 10000ULL;
-> +
-> +	*val = (u64)bcd2bin(raw[0]);
-> +	*val += (u64)bcd2bin(raw[1]) * 100ULL;
-> +	*val += (u64)bcd2bin(raw[2]) * 60ULL * 100ULL;
-> +	*val += hours * 60ULL * 60ULL * 100ULL;
-> +
-> +	/* Defensive clamp in case of transient read while rolling over */
-> +	if (*val > SW_MAX_100THS) {
-> +		dev_warn(counter->parent, "stopwatch value exceeds max, clamping\n");
-> +		*val = SW_MAX_100THS;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* Set stopwatch value in centiseconds. It requires a stop-load-start sequence.
-> + * set STOP_EN, write all six BCD fields then clear STOP_EN.
-> + */
-> +static int pcf85363_counter_write(struct counter_device *counter,
-> +				  struct counter_count *count, const u64 val)
-> +{
-> +	struct pcf85363 *pcf85363 = counter_priv(counter);
-> +	u64 rem = val;
-> +	u8 buf[SW_TIME_REGS];
-> +	int ret;
-> +
-> +	if (val > SW_MAX_100THS)
-> +		return -ERANGE;
-> +
-> +	buf[0] = bin2bcd(rem % 100); rem /= 100;
-> +	buf[1] = bin2bcd(rem % 60); rem /= 60;
-> +	buf[2] = bin2bcd(rem % 60); rem /= 60;
-> +	buf[3] = bin2bcd(rem % 100); rem /= 100;
-> +	buf[4] = bin2bcd(rem % 100); rem /= 100;
-> +	buf[5] = bin2bcd(rem % 100);
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +	ret = regmap_update_bits(pcf85363->regmap, CTRL_STOP_EN, STOP_EN_STOP,
-> +				 FIELD_PREP(STOP_EN_STOP, 1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_bulk_write(pcf85363->regmap, SW_100THS, buf, ARRAY_SIZE(buf));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_update_bits(pcf85363->regmap, CTRL_STOP_EN, STOP_EN_STOP,
-> +				 FIELD_PREP(STOP_EN_STOP, 0));
-> +
-> +	return ret;
-> +}
-> +
-> +static int pcf85363_counter_is_enabled(struct counter_device *counter,
-> +					struct counter_count *count, u8 *enable)
-> +{
-> +	struct pcf85363 *pcf85363 = counter_priv(counter);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +	ret = regmap_read(pcf85363->regmap, CTRL_STOP_EN, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*enable = !FIELD_GET(STOP_EN_STOP, val);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pcf85363_counter_set_enable(struct counter_device *counter,
-> +					 struct counter_count *count, u8 enable)
-> +{
-> +	struct pcf85363 *pcf85363 = counter_priv(counter);
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +
-> +	return regmap_update_bits(pcf85363->regmap, CTRL_STOP_EN,
-> +				  STOP_EN_STOP, FIELD_PREP(STOP_EN_STOP, enable ? 0 : 1));
-> +}
-> +
-> +static const struct counter_ops pcf85363_counter_ops = {
-> +	.count_read = pcf85363_counter_read,
-> +	.count_write = pcf85363_counter_write,
-> +};
-> +
-> +static struct counter_comp pcf85363_counter_ext[] = {
-> +	COUNTER_COMP_ENABLE(pcf85363_counter_is_enabled,
-> +			    pcf85363_counter_set_enable),
-> +};
-> +
-> +static struct counter_count pcf85363_counts[] = {
-> +	{
-> +		.id = 0,
-> +		.name = "pcf85363-stopwatch",
-> +		.functions_list = (const enum counter_function[]){
-> +		COUNTER_FUNCTION_INCREASE },
-> +		.num_functions = 1,
-> +		.ext = pcf85363_counter_ext,
-> +		.num_ext = ARRAY_SIZE(pcf85363_counter_ext),
-> +	}
-> +};
-> +
-> +static int pcf85363_nvram_read(void *priv, unsigned int offset, void *val,
-> +			       size_t bytes)
-> +{
-> +	struct pcf85363 *pcf85363 = priv;
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +
-> +	return regmap_bulk_read(pcf85363->regmap, CTRL_RAM + offset,
-> +				val, bytes);
-> +}
-> +
-> +static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
-> +				size_t bytes)
-> +{
-> +	struct pcf85363 *pcf85363 = priv;
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +
-> +	return regmap_bulk_write(pcf85363->regmap, CTRL_RAM + offset,
-> +				 val, bytes);
-> +}
-> +
-> +static int pcf85x63_nvram_read(void *priv, unsigned int offset, void *val,
-> +			       size_t bytes)
-> +{
-> +	struct pcf85363 *pcf85363 = priv;
-> +	unsigned int tmp_val;
-> +	int ret;
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +
-> +	ret = regmap_read(pcf85363->regmap, CTRL_RAMBYTE, &tmp_val);
-> +	(*(unsigned char *)val) = (unsigned char)tmp_val;
-> +
-> +	return ret;
-> +}
-> +
-> +static int pcf85x63_nvram_write(void *priv, unsigned int offset, void *val,
-> +				size_t bytes)
-> +{
-> +	struct pcf85363 *pcf85363 = priv;
-> +	unsigned char tmp_val;
-> +
-> +	guard(mutex)(&pcf85363->lock);
-> +
-> +	tmp_val = *((unsigned char *)val);
-> +	return regmap_write(pcf85363->regmap, CTRL_RAMBYTE,
-> +				(unsigned int)tmp_val);
-> +}
-> +
-> +static const struct pcf85x63_config pcf_85263_config = {
-> +	.regmap = {
-> +		.reg_bits = 8,
-> +		.val_bits = 8,
-> +		.max_register = 0x2f,
-> +	},
-> +	.num_nvram = 1
-> +};
-> +
-> +static const struct pcf85x63_config pcf_85363_config = {
-> +	.regmap = {
-> +		.reg_bits = 8,
-> +		.val_bits = 8,
-> +		.max_register = 0x7f,
-> +	},
-> +	.num_nvram = 2
-> +};
-> +
-> +static const struct nvmem_config nvmem_cfgs[] = {
-> +	{
-> +		.name = "pcf85x63-",
-> +		.word_size = 1,
-> +		.stride = 1,
-> +		.size = 1,
-> +		.reg_read = pcf85x63_nvram_read,
-> +		.reg_write = pcf85x63_nvram_write,
-> +	}, {
-> +		.name = "pcf85363-",
-> +		.word_size = 1,
-> +		.stride = 1,
-> +		.size = NVRAM_SIZE,
-> +		.reg_read = pcf85363_nvram_read,
-> +		.reg_write = pcf85363_nvram_write,
-> +	},
-> +};
-> +
-> +static int pcf85363_stopwatch_probe(struct i2c_client *client)
-> +{
-> +	struct pcf85363 *pcf85363;
-> +	const struct pcf85x63_config *config = &pcf_85363_config;
-
-Drop this assignment, not correct.
-
-> +	const void *data = of_device_get_match_data(&client->dev);
-
-Drop, pointless.
-
-> +	struct device *dev = &client->dev;
-> +	struct nvmem_device *nvmem;
-> +	int ret, i, err;
-> +
-> +	if (data)
-> +		config = data;
-
-You only need the assignment here data = get_match_data.
-
-> +
-> +	struct counter_device *counter = devm_counter_alloc(dev, sizeof(struct pcf85363));
-> +
-> +	if (!counter)
-> +		return -ENOMEM;
-> +
-> +	pcf85363 = counter_priv(counter);
-> +
-> +	mutex_init(&pcf85363->lock);
-> +
-> +	pcf85363->regmap = devm_regmap_init_i2c(client, &config->regmap);
-> +	if (IS_ERR(pcf85363->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(pcf85363->regmap), "regmap init failed\n");
-> +
-> +	/* Stopwatch Mode set and centiseconds granularity enabled */
-> +	ret = regmap_update_bits(pcf85363->regmap, CTRL_FUNCTION,
-> +				 RTCM_BIT | MODE_100TH_S, RTCM_BIT | MODE_100TH_S);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to set RTCM bit\n");
-> +
-> +	ret = regmap_write(pcf85363->regmap, CTRL_FLAGS, 0);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to clear flags\n");
-> +
-> +	counter->name = "pcf85363-stopwatch";
-> +	counter->parent = dev;
-> +	counter->ops = &pcf85363_counter_ops;
-> +	counter->counts = pcf85363_counts;
-> +	counter->num_counts = ARRAY_SIZE(pcf85363_counts);
-> +	pcf85363->counter = counter;
-> +
-> +	ret = devm_counter_add(dev, counter);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Counter registration failed\n");
-> +
-> +	dev_dbg(dev, "pcf85363 registered in stopwatch mode\n");
-> +
-> +	err = pcf85363_load_capacitance(pcf85363);
-> +	if (err < 0)
-> +		dev_warn(&client->dev, "failed to set xtal load capacitance: %d", err);
-> +
-> +	for (i = 0; i < config->num_nvram; i++) {
-> +		struct nvmem_config cfg = nvmem_cfgs[i];
-> +
-> +		cfg.priv = pcf85363;
-> +		cfg.dev = dev;
-> +		cfg.id = i;
-> +		nvmem = devm_nvmem_register(dev, &cfg);
-> +		if (IS_ERR(nvmem))
-> +			return dev_err_probe(dev, PTR_ERR(nvmem), "nvmem reg %d failed\n", i);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id dev_ids[] = {
-> +	{ .compatible = "nxp,pcf85263atl", .data = &pcf_85263_config },
-> +	{ .compatible = "nxp,pcf85363atl", .data = &pcf_85363_config },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, dev_ids);
-> +
-> +static struct i2c_driver pcf85363_sw_driver = {
-> +	.driver	= {
-> +		.name	= "pcf85363-stopwatch",
-> +		.of_match_table = of_match_ptr(dev_ids),
-
-You have warnings here, drop of_match_ptr. There is no such combination
-in mainline anymore, we fixed it some time ago.
-
-> +	},
-> +	.probe = pcf85363_stopwatch_probe,
-> +};
-> +
-> +module_i2c_driver(pcf85363_sw_driver);
-> +
-> +MODULE_AUTHOR("Lakshay Piplani");
-> +MODULE_DESCRIPTION("pcf85263/pcf85363 stopwatch driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("COUNTER");
-
-
-Best regards,
-Krzysztof
+Regards,
+Changwoo Min
 
