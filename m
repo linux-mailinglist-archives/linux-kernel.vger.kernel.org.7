@@ -1,147 +1,154 @@
-Return-Path: <linux-kernel+bounces-817192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADB8B57F0D
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F14B57F0C
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62327AE831
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:31:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED24B172BAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C8631D74B;
-	Mon, 15 Sep 2025 14:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EF831DDA0;
+	Mon, 15 Sep 2025 14:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTlHJVkv"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HhGMIiAK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C99D3081C7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F501C8631
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946806; cv=none; b=Tmge6ukPy5WYjw1g2HMzXzJAi+oqBBIlT02hRk5dK144ruOND4NMY+YXrQA1KNr85mT2jU3OLH4X0PgeuEkVeGlRqqeZDVLiY5b+wo5RyX13+bTfO4bUTrwAVN9S/C6S9MA65o1NzJrybCk8/Ihi/wR7CVu9PVkuUXIRvO4lFeA=
+	t=1757946785; cv=none; b=TmdQO597PZ7D0UJ1/Qkme4B9fM8kWAU2GzZIz3h5DHlwiiCJ3PVDKINgDQfvvxwElPDsXWuuYGmQooMm6HtQsQedrBpgCj5kTjJtdKkBfJyyKItGQpkdt72DgtGxya3V/sJwb+CLVsTX8Sf3AtM7vyR9hGpLaGWsS6KsAeU5Ick=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946806; c=relaxed/simple;
-	bh=2M8bte29liykG6nBai0n+gQbjbDqAsnpaZ6Ut1ajsDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QHz/XMgIdxOQYtuBy6GeiYJPEBR0owVfW4eHtFYihmY04Lri5Yjz3KA2B3Sc4aLilShIuDTFQ/AvZSEdcSYeMTtFk0lFqGgFeAZkeuar3+put+gNStm65LuAnT6XaONH3MEFBs00LqF3HGI5bNMqmp0IQhbcCTCJmsxkKnzsowo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTlHJVkv; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45ed646b656so34893265e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:33:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757946803; x=1758551603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHPRcShdCxFpSO6mT7vMAVpPVug6VS2Oq2S7HGINRxQ=;
-        b=GTlHJVkvzWm8BjSk0SkXcVgwKubIRszAvLc8T5kGkd85/urhbcZAlP8EYc46Q69Fhy
-         xFmC6Igq9iNguz/U03y8Fsw5sPutfuWqO/BkVc1yHMQVM7p61zKcml8c4ralVqADEKcQ
-         Wc6rqEiHb4YBaoZ59+HGWyFyySw0ZCyqkBcu2FVQDj8BqnaqWmHofRXn3gfLogEqDP14
-         KVGppZ3cD7fnxZwnxfJcp5UbYiiivsFtz3RW4RxFA/EqSZ3fdVhsjSDJDjlS4OZ+VnkC
-         0MnaACeP36Xa81nSA9HKygix0fOwunJxm8eK0nZQDPEa9xUEJwUI3UQbu8VB9LVsVI8y
-         +SLA==
+	s=arc-20240116; t=1757946785; c=relaxed/simple;
+	bh=SZsUCX/w3pUxBbcbMlcwv7f0jJpQxiT09A73W9+X7FA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O7CEtvXTga8bP8mVY1u3D3JtrIHGRdx8bNS9LRu3LkyPHKz95v+YjzDX3XO2D2uYNSBxX/478bL2k//gccM6tpsmAKQP+k4EbBZC+XfdMk4RLNBpmfnYKDvwX8X3psImIo26WAFsZSsjDe/q8zPNy++Ptw+LmQOXTh4wXq242g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HhGMIiAK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FAQPnh017534
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:33:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cCiPLFsgRo2egphdxmb1qzOQ
+	5mme8yx2hExKNMNoSQE=; b=HhGMIiAKuz/F2/+8ITmQfIeolCgGFrHLten91PgH
+	l4DBKNbJ0h6Ud7usSUwjs2iLHeWuPm+1OlcAtLQaUuAcTDr+TxU1A5Gg9nTVV7Ea
+	S3aynEudRJFGuHFX6Ecded+KObji5Il6HG9I1ORtA5mEP6VFiGa4c4lwShLOVXgN
+	jmImbcBG2bxsrFIWHOq4XgfScJ4D9xq9afhPeWgcwVRA1MSparaYEu6CPqOS41O1
+	qSoPEFg/7QV4QshJ2G7DbqqUqTf/Eykdzf4w4EKa4VIF9T+c+XJU7Ry5f6szyfle
+	Hayss9GLQh6BT5L9m7ru1lv2qf1dJW3I9HL+OnLH/kAUgw==
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496h1sgr64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:33:02 +0000 (GMT)
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-544b20274deso1569223e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:33:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757946803; x=1758551603;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qHPRcShdCxFpSO6mT7vMAVpPVug6VS2Oq2S7HGINRxQ=;
-        b=gzFLxZadEr+/DRTDyy2hRFeQyCXy+jV+CSeYZj26gyQE73RQc54s7sLKuBf+cJTJ/o
-         mn/+FPmMe/UjMt1y+u9jAdghVjG+7tWDADZT7bAd/nyaRqTTDuaQQTGwPQ9+6bKGSB0R
-         cE9Kbos3jI1usC7+mnZA3uiQnYc+23U5P1Nzd4UqgqH84/R2xlZPsJyZO2/rXECFcoPa
-         1r5VM4lMJzB/3wulPapWZwLjph9ckr6Y3S3T7yimcOMRSHNF840BUj4C91P5jH8kNrZw
-         m+xbOHG0NBpJ5BzNL+7Wmk8uLYIpdmFcffJNYHceFNkNsqsQBAviMx5bLwhv8CJNxo5y
-         NR7w==
-X-Gm-Message-State: AOJu0Yz4j7u2kVUolaJLQsdHSZh1SAkoITlV3hgv33TxjW9RD2qRTHuQ
-	vI1iMFznfrd1NGe05oik+9GnLMTLvpyYKc8y7RmYPnKdZXFaofq/OW9o
-X-Gm-Gg: ASbGncswcyXKmvdv1oMKuPxydnZTjUkinK0eOsSwpIsB86bDyeNWeIidEuyrBe5yhQN
-	W21xu3WkBZeYKuWW2pvRgJ/uULCcCOhN+paPZU0PY8KTKnFAglDdfMk5OQC6jHPO/cUw5XcflUM
-	aQtRrQAoyzd3EJ+GlNzcWWNJuwioF0DmrwXSo7X7MhGloVprJi8ZianBsZO1KH1HG4wep8ENbIj
-	Tzm2PP9rG/EiV+0zs7xUv1mjpwA0HEW+cRNQcwHLtKmh/wl06pM88EcyiKU54NyujCdEHhqcD/U
-	a9AFEjGxrAtxu+xRBhCRPMbdKXd3p9taCYDXasS0kA3FOB4XP+DC6BVj7Ccn4D+MPMhE1bUQ+aI
-	Nfb8tSWweyiMtFqYht4hfxCunC0K3WVnXR7coJ53B6IU=
-X-Google-Smtp-Source: AGHT+IEn5Sa4Xov8t4lAKQk2pYBCXtbAYBUAtDz70s4kq9Ua1d/xAlyfDPwz+0nOS9FKdWS0cCrzdg==
-X-Received: by 2002:a05:600c:8b4b:b0:45f:27fb:8017 with SMTP id 5b1f17b1804b1-45f284e67cdmr74363105e9.5.1757946802462;
-        Mon, 15 Sep 2025 07:33:22 -0700 (PDT)
-Received: from localhost.localdomain ([37.72.3.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c3cbdsm195493545e9.17.2025.09.15.07.33.21
+        d=1e100.net; s=20230601; t=1757946782; x=1758551582;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cCiPLFsgRo2egphdxmb1qzOQ5mme8yx2hExKNMNoSQE=;
+        b=F7x7f426ER4wtu+qXraTKHiW4+xpWTZfBwv6PhEz/pp83yHg9hopqBj5GzO7AYEPxl
+         dMqi5idiJTgF8V5GLgqFXIaEhZGfXHowY/4LdaAXiKHcvKYJUpkDnrSmYWfj0927fgWR
+         +e4aMRGq3iIv1jtLEUB6sgHiuJH7GGo7yD2aixrzctdvzv2KDwFXwD/BiysPK57iRhbL
+         5UI5qXygHZB1UjQscQEhAO6bE7XHEg34qvlya4EGhRqRqHHdAxNVTrrJgGzdIE5Vt5ZT
+         jgug1B1uLpmp2RgcRtkzy4B9BNuq+jG/m62AAc5vlk1Eaw07VweGkrE9Wf0RdZtiPfhY
+         18rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV82zefLbhgiQv71awbdNIvFMd/GRIJV97HJBVEDLTjx/0b1VnrywrqxXyPf20zXxbnfp06oLiYa2VdrAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKXveYLsp8+YYhKhWaLlX7WbdhY9yChCaQQS5ih2WcBE0OsEHG
+	Gg0eD6MbGJe+cKriWTA2a6AsE/uL74WAqi3YKNcwklNO/rZns8s1F4YRR20++YLcIgK2nI2PX9b
+	xZbWwvZCTlWZQi6Y+ZAgEFmtz+caDAD45FCmHP6LhnQSGvCD0mpTARjdPH+dGRTqjmtQ=
+X-Gm-Gg: ASbGncvG9kUVKKbu4IBCHEwrMGQ14nwzsgkQWfhvchbtBOhAfdET3uZlcC8cnimTMfv
+	w7fD4zZO9fLkmw0WEjSRhlNcqrbGZVwB6rEHpM11cuA8FRfFY566qkKW5HJ1i3ThteteCBDb2+X
+	/Ux1auKlceGwefCXZf60tHPnWpJo+5hTHVfvo4B9uZiFJ8o/xlz3kFatbkpTMOCMJKGTvvDpPko
+	rSB60uzdMRs8kvDrXSaKZOB/8szYIHbm6I7daybzLLTaCH5SUWu9dkTVSCSwiaSveZMLlI+D1nZ
+	cGfRfCRcGM456fFd4JwCXai8fWMlXREd95eB2vhY+eG8s1M9Lpo0ZbCAJ3p1+pbTT7WeltZyi2W
+	Rkk9QO50sRXnXSF4pPTPtbdjRxlRRbkYcdsiXZebCWGlgu3jkAIiB
+X-Received: by 2002:a05:6122:2019:b0:530:7bd4:1761 with SMTP id 71dfb90a1353d-54a16cc2ea8mr3544714e0c.11.1757946781603;
+        Mon, 15 Sep 2025 07:33:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHuIXd3AXZPQsg6yrUQ/6TEB2uZ3QxUx6thouxmHnQ+pG1W7Rw+xHTFcjX/dtsAxhwpzcsAcA==
+X-Received: by 2002:a05:6122:2019:b0:530:7bd4:1761 with SMTP id 71dfb90a1353d-54a16cc2ea8mr3544660e0c.11.1757946780789;
+        Mon, 15 Sep 2025 07:33:00 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e5c3b62b3sm3659056e87.5.2025.09.15.07.32.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 07:33:22 -0700 (PDT)
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-To: linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	alex@ghiti.fr,
-	wangyuli@uniontech.com,
-	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-Subject: [PATCH] riscv: kgdb: Ensure that BUFMAX > NUMREGBYTES
-Date: Mon, 15 Sep 2025 16:32:52 +0200
-Message-ID: <20250915143252.154955-1-mikisabate@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Mon, 15 Sep 2025 07:32:59 -0700 (PDT)
+Date: Mon, 15 Sep 2025 17:32:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: display: simple: Add innolux,
+ n133hse-ea1 and nlt, nl12880bc20-spwg-24
+Message-ID: <bd6y7ckgp6nmnotyfibedhgyzemne7mz7ghcfwf3h4k6xdqpbd@i3zl3uellpex>
+References: <20250912185159.1118209-1-Frank.Li@nxp.com>
+ <ufmwjrlnaq6tucfpqishzvdpgsxartxgohjrgyr4eccahb5jrc@5ausrm3osivb>
+ <aMghlBUIu0z2HqPw@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMghlBUIu0z2HqPw@lizhi-Precision-Tower-5810>
+X-Proofpoint-ORIG-GUID: ibDRd84-lioh2CRYbWEydbjxzXKzkqsp
+X-Authority-Analysis: v=2.4 cv=A/1sP7WG c=1 sm=1 tr=0 ts=68c8239e cx=c_pps
+ a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=8WGclHcmlfbBJmt5TOwA:9 a=CjuIK1q_8ugA:10
+ a=vmgOmaN-Xu0dpDh8OwbV:22
+X-Proofpoint-GUID: ibDRd84-lioh2CRYbWEydbjxzXKzkqsp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA5OCBTYWx0ZWRfX4yfLtnFE8bTi
+ 1Zzn5yfr/ww9IkkfUgPcAC6VyCtF9WRjPAaKhHO1Ec/pdibREnY/eIrAO4mptLNcO9O2tRNNjm0
+ tmtDPvEu6cV3pYPNJSIiobKaLZDxIrclL1kaJOsku4q3t7mLnjaaQMG4hR+Xp9dhHeDxkt3i8wI
+ ORWnJ3gXR3UCYBrtSGs+nrj02ge/33VRROFTBBMNqPqlLw8eC78gOLka7jIZSUc4Ykr5DJKr9A3
+ f71xktK3r2Q1/Hb+Cx5t5arA2ufavJVcm1WiUqGYkufDcH/MegugSiUJBWeLC9PMcfpb4vBhjY5
+ 56YESrFQz0DqqfOkbq0w6MtG2LKyoAZpww7zVcm9wCJsu0ZQM/kTsUr/I0JWu9DbR1pqpLpgHEt
+ rHXwicaB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ impostorscore=0 clxscore=1015 adultscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150098
 
-The current value of BUFMAX is similar as in other architectures, but as
-per documentation on KGDB (see
-'Documentation/process/debugging/kgdb.rst'), BUFMAX has to be larger
-than NUMREGBYTES.
+On Mon, Sep 15, 2025 at 10:24:20AM -0400, Frank Li wrote:
+> On Mon, Sep 15, 2025 at 04:00:22AM +0300, Dmitry Baryshkov wrote:
+> > On Fri, Sep 12, 2025 at 02:51:59PM -0400, Frank Li wrote:
+> > > Add innolux,n133hse-ea1 13.3" TFT LCD panel and nlt,nl12880bc20-spwg-24
+> > > 12.1" WXGA (1280 x 800) LVDS TFT LCD panel.
+> > >
+> >
+> > And no driver bits?
+> 
+> This patches just try to fix CHECK_DTBS Warnings for existed old platform.
+> I have not these platforms to do test. It is not necessary to have one
+> linux driver when add binding doc.
 
-Some NUMREGBYTES architectures (e.g. powerpc or hexagon) actually define
-BUFMAX in relation to NUMREGBYTES, and thus this condition is always
-guaranteed. Since 2048 is a value that is generally accepted on all
-architectures, and that is larger than the current value of NUMREGBYTES,
-we can keep this value in arch/riscv, but we can at least add an
-'static_assert' as an extra measure just in case NUMREGBYTES changes in
-the future for some unforseen reason.
+Please explain this in the commit message.
 
-Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
----
- arch/riscv/include/asm/kgdb.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/include/asm/kgdb.h b/arch/riscv/include/asm/kgdb.h
-index cc11c4544cff..66ff46e434fa 100644
---- a/arch/riscv/include/asm/kgdb.h
-+++ b/arch/riscv/include/asm/kgdb.h
-@@ -3,14 +3,18 @@
- #ifndef __ASM_KGDB_H_
- #define __ASM_KGDB_H_
- 
-+#include <linux/build_bug.h>
-+
- #ifdef __KERNEL__
- 
- #define GDB_SIZEOF_REG sizeof(unsigned long)
- 
--#define DBG_MAX_REG_NUM (36)
--#define NUMREGBYTES ((DBG_MAX_REG_NUM) * GDB_SIZEOF_REG)
-+#define DBG_MAX_REG_NUM 36
-+#define NUMREGBYTES (DBG_MAX_REG_NUM * GDB_SIZEOF_REG)
- #define CACHE_FLUSH_IS_SAFE     1
- #define BUFMAX                  2048
-+static_assert(BUFMAX > NUMREGBYTES,
-+	      "As per KGDB documentation, BUFMAX must be larger than NUMREGBYTES");
- #ifdef CONFIG_RISCV_ISA_C
- #define BREAK_INSTR_SIZE	2
- #else
-@@ -97,6 +101,7 @@ extern unsigned long kgdb_compiled_break;
- #define DBG_REG_STATUS_OFF 33
- #define DBG_REG_BADADDR_OFF 34
- #define DBG_REG_CAUSE_OFF 35
-+/* NOTE: increase DBG_MAX_REG_NUM if you add more values here. */
- 
- extern const char riscv_gdb_stub_feature[64];
- 
 -- 
-2.51.0
-
+With best wishes
+Dmitry
 
