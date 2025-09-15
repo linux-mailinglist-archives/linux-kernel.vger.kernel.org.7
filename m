@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-816140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54471B57010
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73E9B57023
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D977518941C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BB93A7401
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477A72652A4;
-	Mon, 15 Sep 2025 06:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C568827FB3E;
+	Mon, 15 Sep 2025 06:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2thQLtu"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qk5FjaMF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5F41F463E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988D027FD45
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757916511; cv=none; b=hD8MYmTp8BWztaHOOklPkvn96/4BYVYQ5m7ytd5lvTv7+Ow2mS2w70EwxRYOlTKWWhvjSXdpCY/rbdfOEo+Bn0x78ux1lMztLp/IjkiWqx+oLAlHl3kqb6+KZHYNLc9NWPMDn3UTy4vCcIX8fbX9brBd7ODSozu7HU0QjnpHDC8=
+	t=1757917219; cv=none; b=riaTjczGKuaIX+4fTi2OoWFkUl6wGJoCRlJX5fIUj4uUStdgpYWHhyesbiZxpqybmHyuxHnlEXRDji4qLS90vVbthfvpTU1YXXRwIV+MOQ5wkpgeX5WsTLVY/r5ytEiT1obaAWnVOnv0uNG5MZJhqArGnB4NxV/zM26LyZY5Amw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757916511; c=relaxed/simple;
-	bh=7VzbklctKdIrn6OpeqjjDqcdvSxO6Lzp/1BHbgsjrIA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BL5q2z5nNjtUX4KozYWrKNYUyjM+HsOE8yKzymfrMsP5lWSAqIPf+rVX9Mt52iCSUMoENNpOxF5Y1FLSUX+xJylKDS2/F9gliJjVV6sktuJrjX8gtsmg4u7/ebw6VFWE54m/YQ0QtPydlQ3sDpR2uH7wU3o9OU7riY8OXry/hQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2thQLtu; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f6507bd53so3992811e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757916508; x=1758521308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6+bAX19gw/9gH1ginZH4Z7Vwie8QhvssmibHNzq3eoY=;
-        b=S2thQLtuERHfqEu0cb8GSvjx7+x4W/aCl8/6dLJ7M3I4XNCmH8TX61DwiUUtAS89zr
-         ST7R1t/wsrIGYRMC/Jd6PSqD5BXrUSG8V9V0PM1rcCR8l8XB5yIdYdLEOnT9dAsW8FBp
-         QV87jKxEm1oPhGqS7GQlUbCjL1gZNLmQ30qnYv+mUlD8xjYJVgvcxoOOWKv44ND8/bQg
-         HBFAFL5Kk8GtPjzArG2N69yp+n3MAlt3uZTXSWFsrs5htbs+/XhTborrjqc/NFz9AsB3
-         gdN+QzCNLpMUgrgvieUFMK5it8uon2nem7iT+Uht+Nq1FpVaMmLjm4AMErjUiZ97sMGJ
-         ZidQ==
+	s=arc-20240116; t=1757917219; c=relaxed/simple;
+	bh=vva6pIwIf3d2mZtlJF6HKg5UB//x7948Lc30IK2Mdek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7oQGl1g1qPZ8lD17DbXZIC687GL81egeoQPcF0cuN7dJWawuaprLgZJGAx3qtjFTiGW7RmDYLZDHZrvtfDeAehVgTSTUdIwOXWBMcfsM7JpsDppCgUKSa0GA/42p4t/ZUvbyvpkk40/fVzIhssdTrHKeTTClbW0fakNg6JZI6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qk5FjaMF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757917216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9cBtHKBe6RRB8Snk7hpO1mjWCGkijKsQ31tvgy2vEzE=;
+	b=Qk5FjaMFFz47s8zMcazcG+eLpj9pOno6+YtjDmQODpFIWTUtB/0wZEyin9bCQfMtGtcc/o
+	5PgRzSAmyNx9JfpK2zd5lCnUVzWXRkjM0GIqFCivnPw36OX85VRalyVgNBSrJaCTAglwbF
+	bHFm/oPOYddyZxAErZLB7RcwPzdNfto=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-VXHrxOgcNLaG90O9xF-1JA-1; Mon, 15 Sep 2025 02:20:15 -0400
+X-MC-Unique: VXHrxOgcNLaG90O9xF-1JA-1
+X-Mimecast-MFC-AGG-ID: VXHrxOgcNLaG90O9xF-1JA_1757917214
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b54a2ab0f2aso2078628a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:20:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757916508; x=1758521308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6+bAX19gw/9gH1ginZH4Z7Vwie8QhvssmibHNzq3eoY=;
-        b=SC8d8PqUeMa2oUAXxh9m1u45wDJRdnkoPWl9fhbWijRqAiYx5r8UhaPl/ZrKJm+n2f
-         izWlsZeXIesrVv4FXBVWvHBxA8nTnQqvWvGBceHsLwH9fQggWYeFTDWFN2NBff5BPI97
-         WIfUtIvU8i+dL04LbWxjzRDgMmk+lAcTQKwGVm2P8Uif5T8EhKCqVm8z8yAw0HPaExQD
-         ocsiRO3OyK7iE343VHos0b97I8ikb5gb2LY3snImuUGmiKU3BDTtQMywcmOSsjOfkG0K
-         vm76zRowIHkKudV7bwdexMXSwFFTI3epqfEDEdYqc3l3jw315sYckpyy67NW3rDhiOVZ
-         0lXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq0x4qJd/3Bz9Yc6Uft6U6bFPs9ymvZUQ+F8ysO/gSZWXiWd+orxVOLlzN93lAJpy+yX/9hkF4qOSvCzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDJow78jbN6rR9+KAl6ULwMOwpKseZ9qpKli1351GpwhxvOmvy
-	5KQE3hp6eHeyiY9U+jDeoc55gK05zetDsF4jmT9TNohsKHP+v+NR+q2jcY8pua6wRa1aLDW4NP8
-	QaP8C9QwET5BV2xJOXoSUHpWmRPlAWa8=
-X-Gm-Gg: ASbGncvYVsj0jYYR92hy7ma+tDjmK+VkY6x2gpP9tvbDtN8KQfWDnWwj4nXDmxGYG64
-	y19obTcIzQUQFVG1sfzZnCtix25bNNTK863DXsaLnSRT6MgFBBfpBRgS+CFV3hkhXrtQNYuvp/i
-	sbXCSZKnwKUKRUMbM5uGmf2XyxqkYrBVwa0tOgrdFPyyK9/0OL5peC0Fw6VyvNtrIA8JhFyaTjg
-	V2y+neuBn1xpAk5pA==
-X-Google-Smtp-Source: AGHT+IGFGnkhckMa356Nxb0PE7sy4MulP40ZRRHJNJXJXO8vi8UJyukObUTHuMngTBbku9KLRFQWU0gFKtiEEN2v7mM=
-X-Received: by 2002:ac2:4bcd:0:b0:571:3afa:33dc with SMTP id
- 2adb3069b0e04-5713afa35f7mr3565655e87.16.1757916507877; Sun, 14 Sep 2025
- 23:08:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757917214; x=1758522014;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9cBtHKBe6RRB8Snk7hpO1mjWCGkijKsQ31tvgy2vEzE=;
+        b=K8yCgrDliT3Fa511W1vYuvGexgb0h8MHoTK/CHfdzh0SUqU/hWNoOiTFmCKTwLxOH2
+         Pwqf1DJl2Ppft2T3j+wO+ZCs9I+Eq3kTjIFDqdZDbv4qlJbqG3YXcYxlTmmwytnz6a6J
+         DHfWc4l50vmGl06yDyIOYtnCxYHu9w7sATjKed84yFc0SIM5CVkFAOwek0LkPlrewJEV
+         hTC7PzJ9NhQj/ivpFx+WWrP/RD7L0iBzazOF3GOByYuxumQNZitfmhDroXhqanwNlrjV
+         COIMOC/e/yfMXtzO7WNiSs3AOPDrlD1nDJSp9IWFc+XJZUVR7leAauK0GaUHvv+Sf1hR
+         Robg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAKieyJ0TkXPlGZB68fyoy6z9S3O7SYDDa5sTDejtwyozNh6FPM4LE6IhNProNKyaMl6Vsk3AnjFfUnHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbWG04yPMvOK1vAmagRVR631dcRTb8BtwcU1QdwWOdq74OO3I+
+	3n55rj/P8cSrtUCo5yb8daikHnuhLXOj0EQAifwCPE7eEV7JXslKguugutTxYPjeqdSZICka5mZ
+	XjEDm4YC2Y35rO76Lj4inwFPkLtVltAjaGfNntsUezUGbp6bcX5YVOw8hvdZiyHDaEA==
+X-Gm-Gg: ASbGncvQqdJBug9xDO7JcQzwd6j0ePN2i4Ywv0/6FeRYnLpjaApS21FpFb4aEBBH/9t
+	lLNsveGNZ+Ta26M7BNj5GBJw1/E2UPKVbYrcVVLOG0oS16oFK57Rm2PA4XvkX2IYTkl0tBQ2qry
+	8NDQU0xC5xtS9tl8bKfnTBHz/moFtvpf6Gqt3ZX15O+Vooz25nZw8i9l1F8/JL91HJTjBuWcE9q
+	bsh4QL+jUvVl6NdtLZKAGR3M8aVTnNHx0PnerZdJUqomMkS5LsuM4mw/645vvnnLFfh+vu6b1AU
+	feHHAlU1uvLeJnnCxgLuVjft/GnK3RI=
+X-Received: by 2002:a05:6a20:7d86:b0:243:b92d:72c1 with SMTP id adf61e73a8af0-25cdefc7abbmr21753636637.0.1757917214013;
+        Sun, 14 Sep 2025 23:20:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErivlYOqYNMD1uzOOLvIYOeSFyGjheTCp4Vv8Fmhsfn/ts4DA9nnO0VA6qrA0q8hxFLJc/yg==
+X-Received: by 2002:a05:6a20:7d86:b0:243:b92d:72c1 with SMTP id adf61e73a8af0-25cdefc7abbmr21753609637.0.1757917213616;
+        Sun, 14 Sep 2025 23:20:13 -0700 (PDT)
+Received: from localhost ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b169f2edsm7546506a12.19.2025.09.14.23.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 23:20:13 -0700 (PDT)
+Date: Mon, 15 Sep 2025 14:17:51 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: kernel test robot <lkp@intel.com>
+Cc: kexec@lists.infradead.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, fuqiang wang <fuqiang.wang@easystack.cn>, x86@kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Linux Memory Management List <linux-mm@kvack.org>, 
+	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] crash: Add KUnit tests for crash_exclude_mem_range
+Message-ID: <x33mpzp6bhnx2awnszjymuyfhgmtvq5hhfs6aoyvuoo6opsbqr@tkegmqv3lucp>
+References: <20250904093855.1180154-2-coxu@redhat.com>
+ <202509090415.cOytgte4-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250906-t210-actmon-v3-0-1403365d571e@gmail.com>
- <20250906-t210-actmon-v3-5-1403365d571e@gmail.com> <29ec10fa-1ca4-43eb-a865-7219d39c7140@kernel.org>
- <c1b0bffe-f5d4-4d71-bfb6-b047d3d2866e@kernel.org>
-In-Reply-To: <c1b0bffe-f5d4-4d71-bfb6-b047d3d2866e@kernel.org>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Mon, 15 Sep 2025 01:08:15 -0500
-X-Gm-Features: Ac12FXxfBqN3bMySguM87nRxs_1fzm1bjR4kMnBwk53fxGN6c3-9HEkbRgJ-OG4
-Message-ID: <CALHNRZ9G_OA0+quNP=NwnwX43iaV1JWxjJFM0Aoect9Y8jGjWw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/9] memory: tegra210: Support interconnect framework
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <202509090415.cOytgte4-lkp@intel.com>
 
-On Wed, Sep 10, 2025 at 5:07=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 10/09/2025 11:39, Krzysztof Kozlowski wrote:
-> > On 06/09/2025 22:16, Aaron Kling via B4 Relay wrote:
-> >> +
-> >> +static int tegra_emc_interconnect_init(struct tegra210_emc *emc)
-> >> +{
-> >> +    const struct tegra_mc_soc *soc =3D emc->mc->soc;
-> >> +    struct icc_node *node;
-> >> +    int err;
-> >> +
-> >> +    emc->icc_provider.dev =3D emc->dev;
-> >> +    emc->icc_provider.set =3D emc_icc_set;
-> >> +    emc->icc_provider.data =3D &emc->icc_provider;
-> >> +    emc->icc_provider.aggregate =3D soc->icc_ops->aggregate;
-> >> +    emc->icc_provider.xlate_extended =3D emc_of_icc_xlate_extended;
-> >> +    emc->icc_provider.get_bw =3D tegra_emc_icc_get_init_bw;
-> >> +
-> >> +    icc_provider_init(&emc->icc_provider);
-> >> +
-> >> +    /* create External Memory Controller node */
-> >> +    node =3D icc_node_create(TEGRA_ICC_EMC);
-> >> +    if (IS_ERR(node)) {
-> >> +            err =3D PTR_ERR(node);
-> >> +            goto err_msg;
-> >
-> > return dev_err_probe
->
->
-> I will send patches to fix existing code. I also found some more issues
-> which I would like to implement here.
->
-> I apologize for coming with all this at v3. I should point out things a
-> bit earlier, although how this patchset was organized also affected revie=
-w.
->
-> Anyway my comments are mostly non-critical things, so v3 is late to
-> bring these, I understand. That's on me. I appreciate your work and
-> please do not get discouraged with my comments.
+On Tue, Sep 09, 2025 at 05:25:17AM +0800, kernel test robot wrote:
+>Hi Coiby,
 
-I understand and that's fine. Get it done right the first time so it
-doesn't have to be redone later. I will try to get a new revision out
-this week once I cycle back around to the relevant devices here.
+Hi,
 
-Aaron
+>
+>kernel test robot noticed the following build errors:
+>
+>[auto build test ERROR on b320789d6883cc00ac78ce83bccbfe7ed58afcf0]
+>
+>url:    https://github.com/intel-lab-lkp/linux/commits/Coiby-Xu/crash-Add-KUnit-tests-for-crash_exclude_mem_range/20250904-174105
+>base:   b320789d6883cc00ac78ce83bccbfe7ed58afcf0
+>patch link:    https://lore.kernel.org/r/20250904093855.1180154-2-coxu%40redhat.com
+>patch subject: [PATCH v6 2/2] crash: Add KUnit tests for crash_exclude_mem_range
+>config: x86_64-randconfig-073-20250908 (https://download.01.org/0day-ci/archive/20250909/202509090415.cOytgte4-lkp@intel.com/config)
+>compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+>reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509090415.cOytgte4-lkp@intel.com/reproduce)
+>
+>If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>the same patch/commit), kindly add following tags
+>| Reported-by: kernel test robot <lkp@intel.com>
+>| Closes: https://lore.kernel.org/oe-kbuild-all/202509090415.cOytgte4-lkp@intel.com/
+>
+>All errors (new ones prefixed by >>, old ones prefixed by <<):
+>
+>>> ERROR: modpost: "crash_exclude_mem_range" [kernel/crash_core_test.ko] undefined!
+
+Thanks for reporting this problem. This issue has already been fixed by
+Andrew [1][2] earlier.
+
+This issue happens because the KUnit tests can be built and run as a
+kernel module. 
+
+[1] https://lore.kernel.org/mm-commits/20250905031921.E0A26C4CEF0@smtp.kernel.org/
+[2] https://lore.kernel.org/mm-commits/20250914001748.77104C4CEEB@smtp.kernel.org/
+
+>
+>-- 
+>0-DAY CI Kernel Test Service
+>https://github.com/intel/lkp-tests/wiki
+>
+
+-- 
+Best regards,
+Coiby
+
 
