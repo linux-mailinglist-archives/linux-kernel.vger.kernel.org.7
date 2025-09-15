@@ -1,140 +1,123 @@
-Return-Path: <linux-kernel+bounces-816235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFC7B57161
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:26:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E08B57163
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3CC1882829
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65BC93A5805
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015BF2D541E;
-	Mon, 15 Sep 2025 07:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C08F2D5A13;
+	Mon, 15 Sep 2025 07:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p3kZ88AV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FxOytutH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p3kZ88AV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FxOytutH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PK0MMIiI"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227AB1C84B2
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C5B2D4B66
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921132; cv=none; b=vAne3bdKOZP/ECe2QsWK8dJfpQ4uZUu8eR8Q9sRFrEek8sY4GbMB9v2SV7PIGXqZZllbn5T0iaiwbZrk+HfBiJMX6loeEz0xbP0q+fBvvagBdU4PX6rDhQckVCrP2ClEyF1DII1rajqGhxFK++DBArCzlTLdwwlbr1q05WFArSY=
+	t=1757921176; cv=none; b=DDhDZMdUcg/g6Pqba/R2eqNAf3Ess/AXIa/6oVnQC7nGgVM6n8xuHcgflIO/K0G/4eYpCFdnq8/zE7Jfu1FFns38Cj6i+12dXTtQblIKLGv0gA56Z5r1SfHb2sjZoxrWKDtZDh1RnkwZbotJIYUvf4iYYLcZ5WseZSS8TEq1k/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921132; c=relaxed/simple;
-	bh=8fCUQ11DL5F/0Lqpm8GDwb6J3QMNm+ADL0F4mfEKQwM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O+iKhVIfx7z7Yrnd9OSV1LcnJNLrt/OwwbI5Wayiv3Tsjs9W6W10uc/8kBNicqbznsqiAdwSZXJGTaJ8p20Mx2ykMktpCxiwyTypcYOdOme7hjv8MENeDgdeRO1P0FDKR6867PDfshNj/9QQueyw/Wr6vSdcNe1oSUsH9ojq2BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p3kZ88AV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FxOytutH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p3kZ88AV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FxOytutH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4CF9B336FF;
-	Mon, 15 Sep 2025 07:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757921128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMd/nitlP8qOmRswa/STelaVTi/2uUpbJw5r3qvELl0=;
-	b=p3kZ88AVDINYgirTiRNy7MuPJr+zSmBv5Tf1yZNg0bqMw7HmF5Acjz1QahXg4FnHmkw2bL
-	j6EKrSP5ttv8Ld2lVHkP4MyakP9oEKP5IMVgoyHT63KjgdoHWPU0uweDoR1e5kPHOaBKPV
-	k4o47gy64vfCu94xP5P3wFafFX3Qk24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757921128;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMd/nitlP8qOmRswa/STelaVTi/2uUpbJw5r3qvELl0=;
-	b=FxOytutHmctOdbjNXNqafKylY725oOB8t5y5u39t7tIQas/dYoeOcNZCUFGyrZppOTRw+Z
-	Q9mmIi9bASpulCBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757921128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMd/nitlP8qOmRswa/STelaVTi/2uUpbJw5r3qvELl0=;
-	b=p3kZ88AVDINYgirTiRNy7MuPJr+zSmBv5Tf1yZNg0bqMw7HmF5Acjz1QahXg4FnHmkw2bL
-	j6EKrSP5ttv8Ld2lVHkP4MyakP9oEKP5IMVgoyHT63KjgdoHWPU0uweDoR1e5kPHOaBKPV
-	k4o47gy64vfCu94xP5P3wFafFX3Qk24=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757921128;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JMd/nitlP8qOmRswa/STelaVTi/2uUpbJw5r3qvELl0=;
-	b=FxOytutHmctOdbjNXNqafKylY725oOB8t5y5u39t7tIQas/dYoeOcNZCUFGyrZppOTRw+Z
-	Q9mmIi9bASpulCBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CF811372E;
-	Mon, 15 Sep 2025 07:25:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id k+FOBWi/x2g4UgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 15 Sep 2025 07:25:28 +0000
-Date: Mon, 15 Sep 2025 09:25:27 +0200
-Message-ID: <87cy7sp47s.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Bou-Saan Che <yungmeat@inboxia.org>
-Cc: tiwai@suse.com,
-	perex@perex.cz,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ALSA: hda: cs35l41: Support Lenovo Thinkbook 13x Gen 5
-In-Reply-To: <20250914191537.2530-1-yungmeat@inboxia.org>
-References: <20250914191537.2530-1-yungmeat@inboxia.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1757921176; c=relaxed/simple;
+	bh=il3RWP//uEEY2n8ngQoGcSw/BKRVeZVtJyaEnMKOkRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mJWOT2SLPhu0UUaGOlM2g58d351tFuH3hiupZxmzjfgvskfcip7ZxGjPC6QqcQjOUUlf1WBr6p2OCzKWYFj12r+3OYmg5merliqqi6Vhowddo/XQA+z0a00D5vJlTT3UKIDGdZ5egwHdTTSY73bcKf37mnNkx/S1OVUO86vBDkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PK0MMIiI; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ea3d3ae48fso494852f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757921173; x=1758525973; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KPb/cQALkoRKOIChkqMKQTa0nfUPirTMUHR/c3+21lM=;
+        b=PK0MMIiI9tV0kWDiRRTn5OztVweKH2K3opqkPZdsndMg2FQtE9ydShx1F9zQTu05BO
+         i63ZvWtAT9iryUmEh84luqbps9iHlmzJgSLidFKq5dORvGoLkF6DzqMwzHfbGrGdVzLb
+         3KKUrn5cZXYGCdpjLU35TLqR4g3te2r42h4NfBQQwX8i5JdZ+6nv4UnqIZEMI0QCpvRt
+         bg5Ad41lsmZXdc1lW5mSwWztXH0NQzCuECNIddjbGy3BNvp39bK9lqEO3bEa+NywwXFL
+         We51DiyzUa5vmF46eaSgIxlGEQr6avkK6tKCinQNcIghjyIRGJCxEHT6hPUCJuddlLna
+         hKaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757921173; x=1758525973;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KPb/cQALkoRKOIChkqMKQTa0nfUPirTMUHR/c3+21lM=;
+        b=TLySmkg3gVUkaff5xra9Hc+qpgS5XEoN4GyOqA4em8HaaiVSb5bRFgow+3q8fdsdXl
+         6IT6wRemgaT8S5olE+hUAA7SM/n9ovoV8fR5ZcOe2KuefOIJzi7nbIf3Nsui464mbK2h
+         Ja0bNiuul0Ahn6u2waGrYmkPjcwv2fl53BDeYYrxfoUsGC2VcLVmrBLPp398XeIHrqy5
+         MeWN0QQ5W7ncJ4kQSH0SLZKsNT9of7rAOppXLN1C2gHwBjsvEF4R1H+ybH78zopRmRHo
+         XW83F5Rjk6SlZ0C4h7oNF2Q/WdzVzTyWb+YilERkleRmhI241xWQP/+uWoJMZaP/XN6h
+         Yd4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQP4qphhekGo2aMq/2ijAHB3hFLkVzWeTfYRaztM2jMhwPuWgwWSLMt5LX5Wu6dFuNiET8lIpys5AsHcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4kAmDPfLRHrl3O9/V9sPrrliKW4Tkk6vlBEkX+CN+RQqerbuN
+	L36ijBcosmjCKfmfCxUmlVUsKy7mHBf9W07g0TBJhDhISpf9/S+omZGhrgpZcXBtCKADCwftOKM
+	1lznYK/AoaGgRIvFhhptqv9lrNTkWVC9OmoEOeqJl
+X-Gm-Gg: ASbGncvMFWAEKrEqI+zdo6BfUSOUW4Fn+nPovc1t+xaTr2eJGnGXYqur5rQYPZetaOo
+	cTSdu8c0yG3GymRmDhY/fhM5/izRkkY4ZITHOIWscqFtLGOvAFjKX8aCm55TMPymEQw82h7hdya
+	3iIvDMylcqCeR+gFC/J2OHCc2TQZ3QX7eDu2qpxCcd8ybHRl+QnpLK5biScL3khwY2IT0hvqvo/
+	xAQYVJEZdYDjo5KaLCTYyBbNAXqypT0h4QetvjrvPmSWrPOioAEwnn6gw==
+X-Google-Smtp-Source: AGHT+IF4H+sxqJGHnMi4FR3slcSvUIcr+C1WsOliTFCri/8U1xukmTWS6miDnju5B2fm3g20CxJ60I30/Ak7xB79JO8=
+X-Received: by 2002:a05:6000:2891:b0:3d7:df92:5e5a with SMTP id
+ ffacd0b85a97d-3e7657bace9mr11482558f8f.12.1757921172928; Mon, 15 Sep 2025
+ 00:26:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+References: <20250915065401.20141-1-work@onurozkan.dev>
+In-Reply-To: <20250915065401.20141-1-work@onurozkan.dev>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 15 Sep 2025 09:26:00 +0200
+X-Gm-Features: AS18NWD83wL7eLRtB9b-_4ihmqDF4p07D38Am6JKUC7mmrHQ0m2035Ul91sMD34
+Message-ID: <CAH5fLgi-VrhDSEjJA4Bg+5Wmr2JDAmmOc1FkfZAZ29SMqkX++w@mail.gmail.com>
+Subject: Re: [PATCH] rust: less allocation in CString::try_from
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, 
+	tamird@gmail.com, daniel@sedlak.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 14 Sep 2025 21:15:37 +0200,
-Bou-Saan Che wrote:
-> 
-> This laptop does not contain _DSD so needs to be supported using the
-> configuration table.
-> 
-> Signed-off-by: Bou-Saan Che <yungmeat@inboxia.org>
+On Mon, Sep 15, 2025 at 8:54=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.dev=
+> wrote:
+>
+> Allocates buffer with the correct capacity upfront by
+> using the length of the `CStr` to avoid extra and unnecessary
+> re-allocation when converting from `CStr` to `CString`.
+>
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> ---
+>  rust/kernel/str.rs | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 6c892550c0ba..98d41d995e45 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -946,9 +946,10 @@ impl<'a> TryFrom<&'a CStr> for CString {
+>      type Error =3D AllocError;
+>
+>      fn try_from(cstr: &'a CStr) -> Result<CString, AllocError> {
+> -        let mut buf =3D KVec::new();
+> +        let bytes =3D cstr.to_bytes_with_nul();
+>
+> -        buf.extend_from_slice(cstr.to_bytes_with_nul(), GFP_KERNEL)?;
+> +        let mut buf =3D KVec::with_capacity(bytes.len(), GFP_KERNEL)?;
+> +        buf.extend_from_slice(bytes, GFP_KERNEL)?;
 
-Thanks, applied all three patches now to for-linus branch.
+I don't think this changes the number of allocations. KVec::new() does
+not allocate.
 
-
-Takashi
+Alice
 
