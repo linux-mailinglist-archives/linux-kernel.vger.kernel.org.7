@@ -1,169 +1,403 @@
-Return-Path: <linux-kernel+bounces-815954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A724B56D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:32:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF24B56D67
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D413BB286
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 00:32:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D402B189A706
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 00:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36531B87EB;
-	Mon, 15 Sep 2025 00:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A0E1A76B1;
+	Mon, 15 Sep 2025 00:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EQNPID3Y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KA1yLK1J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7B614AD0D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F77288D6
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757896331; cv=none; b=udDpP8LAvRR2cOvSYCjB9pFYWoVRg0o8j3TqhMpQZHbzdoxEWisOVD55ULPbrovxM2+0uf6XGA5nmko28GxbswINRy9LAU1xwKGBFZb1g5KGl+zoJa2PPuO1puuWBsNYr6zcvMGW3sTjtoboqOVEcY0KlaEKQdQnnI6SvjuJKSI=
+	t=1757896419; cv=none; b=Ajle17MjtiIOAiBs68JcPnRUM1UtmugcmIqEh5134bf50c8wMqctGUTkf0iiTQdQCoEK8k1T0jbySXda3aClleDmLllh5WmlkxbQbiH1+KxKUQIDbq4NCKM/b4RG6iuTPt18GnNFrsMkWSYk5qpnBfpB4GPh4REO58149h7qwzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757896331; c=relaxed/simple;
-	bh=fVwiNBmoQdzu12TPo+tBaLZwp7T2wl/KVuYlPKdvW28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGPtxIdz3dJwzKqMIsC2Aw7dvGvFXIivcqQR5YUaieLFVoyz20MWxZ50ahZzLhg2dS+laCsnXnvqZtUifSDdeAOqrI42ImAkOtlguqRwVKPwcEwi3Sr78T+E3hrhwmMCPS0Nt3JfRUjE/4Sx0f+arlvdUYkWm4peoPlPz7oIznE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EQNPID3Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ENcNY6001428
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:32:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=X6INT4dFh36gD5CkZ/5tXn9K
-	DSDRdeyRZoyjm8V/Qek=; b=EQNPID3Yu0SAMp/ZbVlqVnzQMfFgsPdHp3Rmpj93
-	Vp/lCC9qXrYgY/dqjngrtqeTqw6U/7Vf81wIYI+Fbk/2DV5CdBdQyNS59lyf/i/2
-	CzruxkRUUZIpQ3wLkKKvnlxvDh/ip+TGaVYvIxry0Kye0ipJbrP7A4XeAlZd4+Ql
-	0cOLzHfIpDIvXrE6H8/FS+Pjrp1m+yZpgkP/6ZZNGGLs4QtYHzTJSoSCNRUEEeL1
-	VF+t+FPuZcuyAU57jM1aBs7SvlFWRN+bU0z1eHKYzy7p2SNqVTh+pmN7514K1/91
-	s/tIfd/KcJhm5B9hW1aHzOKLKmoA2rRvBgPu7us54lwQOg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 494wyr36sb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:32:08 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-7814871b57dso8867266d6.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 17:32:08 -0700 (PDT)
+	s=arc-20240116; t=1757896419; c=relaxed/simple;
+	bh=qX866UujfUMh2usMLlxwIilBS63If5k/x+YqGp7Ezlg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Br2ASv5QJtABSWwyExiklhJU5HMBNDstyCHu/HpfY+ZkCmhWFXljQ3sWINdmYEIPCzMNuhwelXx7Uw6ESJWRW8QTiG/RdGXtwKwMZe3JRzwLBMrqqNyN8wta5iiqZDvyvgKTciFq1pBjMZLitHjQwWFVadbLHe1J5z56eY+IVzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KA1yLK1J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757896415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Tv+FE1ET0lfCXvwziye6Xvvm89/ScdWxbdg0BcdCwCo=;
+	b=KA1yLK1JmECfiYWxfalLmIDeXz2048kGcXcoPIYd7pmqb4s/uMteGCHSxY+Sc0/LziLSTf
+	LBYjMxpQaPrUi0e0XJE8YAu7PEJZJSDndKrZr1DBp7/3r81EJYlgNzJEx6eamBDoDCQEQN
+	5C0oW7M1y8hxOpBhRCZVv8dD4DQwtxg=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-eVUAYPDaMO2s8pkS7dwemQ-1; Sun, 14 Sep 2025 20:33:34 -0400
+X-MC-Unique: eVUAYPDaMO2s8pkS7dwemQ-1
+X-Mimecast-MFC-AGG-ID: eVUAYPDaMO2s8pkS7dwemQ_1757896413
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-5717bd64551so1133670e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 17:33:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757896328; x=1758501128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X6INT4dFh36gD5CkZ/5tXn9KDSDRdeyRZoyjm8V/Qek=;
-        b=N0UeusuuFQJdsgJMdsdL9pRm9cwLXCVlrnUPQAWEN3PwYzq/D5M6T+rG+mXl1yfyQi
-         piWh4TK15l01pi636ogB3t18a6EICeKn8YeXhsbfN7nutgPWJkGm8ZkKQhHFyS6s7pva
-         PeIBEqV+eY/BC7sI9omGq4VEVKDpFNT61UpJIZFJeVlI3CUg7L82e1wBXlQmTKgu75MC
-         4mC7fpI85kXU9kvEEnRBTlOyFDC4O05bPaiu0ZgOg8tGRzocX61hyAc1P7b9hUstOZKN
-         zsOjOYliRITCu+l1K7KaLz7VkxK5NtDSDg7c2VVeb5DBkyCOuslBQwyWjptaSmVQ/IIu
-         6tMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHj5BqOtBqoS3JH2XW468+H+BGVao42jOvmzE3K31K1O+s9IDR/ITBpt4LGRDetBoo70wtm/1OzlUanm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz95fRCF0hdMR+ydgzr6Coog6UBpyURiDzP0PT18U1iEemiYlEL
-	Q5aML638t/XJlC5wQvwixZZ7TOqgkC+MLavqx8IEDbIgSUB6uDAHN9+Ey27Ngl5wPmeP7l8ybDx
-	krOPBYzu1gkcDnVma6DhBlFD2I6PFH930vDXLPZTcAMJhCw6Pe9crMA9fWTraU3HPJCA=
-X-Gm-Gg: ASbGncsRxmKPEDCDClPjWfJR88ggAHE8FV1cMmptj8PZ7wp71xLu0dNlEJNE5SGpBAQ
-	loAZFHs9haXcRxfZ+lcqsJagResGBV0H91u0fiNcNSX5wT5KFIq2oUYSiyrXGrxzvyuo+uEgoeh
-	2XfZr+IH+trKXkhAxYYwVtXOWhbRKMSoWp6U2U7DgPT+i1nmjZCNda5FdjqwGjdBjMJeBlsywN6
-	qc8zJ6bY10S3lRewt2sDDt4WfgwkxnJx8K3mB77j62Y/BLhwRZslR9fDzInjV6IbpZwm5N6va8a
-	wdYA8y55NDgdFUsFfjZe2ecfwQp+POKmo+dYr92Y7yS7C5VcEKJMKIYIt7qOG8pyxCpZ20FRx2Y
-	5xO7Zsx77ubJWUnaLXgknytMm02Yo4BMNJDjKzNsA04t+LXRYj0vy
-X-Received: by 2002:ad4:4ea3:0:b0:70d:f55f:ef97 with SMTP id 6a1803df08f44-7621c32efaemr167236856d6.1.1757896327661;
-        Sun, 14 Sep 2025 17:32:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1qZzfHrBrw83QUogwWdZ6sXq0A8mz8+e0aG3fK2moYD3Os+D+QtmmTb729sL9JHULQgtuww==
-X-Received: by 2002:ad4:4ea3:0:b0:70d:f55f:ef97 with SMTP id 6a1803df08f44-7621c32efaemr167236656d6.1.1757896327191;
-        Sun, 14 Sep 2025 17:32:07 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e65564951sm3159160e87.130.2025.09.14.17.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 17:32:06 -0700 (PDT)
-Date: Mon, 15 Sep 2025 03:32:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-Subject: Re: [PATCH 06/11] arm64: dts: qcom: sdm845-lg-common: Add wifi node
-Message-ID: <rfp5oukqbnrzva6ewg4ehilpt4cm2xybmo2adtcbpqsliwfe5q@d5ayeglq7vz5>
-References: <20250913-judyln-dts-v1-0-23b4b7790dce@postmarketos.org>
- <20250913-judyln-dts-v1-6-23b4b7790dce@postmarketos.org>
+        d=1e100.net; s=20230601; t=1757896412; x=1758501212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tv+FE1ET0lfCXvwziye6Xvvm89/ScdWxbdg0BcdCwCo=;
+        b=LDeqfgW61p1MVlMy5MVLmf8Tb9lwBw2S5mDdBz6PEcFrxCSFTBvkFM20jGdpVXmKKy
+         j4dpT7LbDS2sQhKKcDRrf86CHCJeL/5MrogwdaCoMArfbCIoVY1X2bj1Lt1n1BrVsDGQ
+         UEkzzQObgq/0Qs0xAS3nSu2/ak4sfgJo1kR9CYYPKX2cmoRsmMeWbnkLOuppfzgJX/eX
+         cAzbatgmXF7HSzuyQIRk1nTgmmmtL88F0JiD0pUc/nQA6qxstMRRM6ZHmgxsyS7GWiJB
+         fQMuiKCcQ47lke+d2wsJUwJ8oFc6XzRxWw+vyXB4asX4j3zSjKLToNQ5j5WVGpQBLVgD
+         UDKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVHdUunXqwGmbpvp/0s57r5c9hYMctY/Ddwiknso1otlKT1MZekXa5+iJ4Q/loHJR6Fza2bmVcV8qudvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4kb5nSDv1lOIPrRvCDf8E7Hdy81hfO4M0NDqYmGa5KqtUxnV6
+	1L7GDSN6CnP3LwH2L0lww9BNkd9M/xd1WVoDGcRbnEIaIRKu7eMwaqrvZH/29CEbzGpd3Ao5ap/
+	9bdPFkVERcMbT1aC1uwdQoIu6k+iR3D4OncC8WU8NOgryi7F/E+0mnCPMBHBuOiAxNS20oVFQp7
+	5281i53Zqn5IaeezTQMK8CzC4t6GMiNDQDkTj/tyyv1atPr6vwEjQ=
+X-Gm-Gg: ASbGncvGMUckASF1u8p6P3aq9NEN+uQAY4Sj886cN1aOao+2X98XY+D33C2MZ/E8w5u
+	/+2nSnMwxMQBlhLenTu76gZ8yBeXKPKh/xoRhyYQyNY/AZenOURFMNZSTN5eCEqC0id6u4y1fua
+	zcX1d5vqkYgea5BzUqj1UEXQ==
+X-Received: by 2002:a2e:b896:0:b0:336:c9be:c164 with SMTP id 38308e7fff4ca-35142005a54mr27467011fa.45.1757896412012;
+        Sun, 14 Sep 2025 17:33:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFVnaSGGnxdMenpLu3BklRoJfQQPbVd0XWiLR9QTKgfTXftVxHek4IfsLABN9rRGDhnKvLs6cdjV7cWkqQjYgc=
+X-Received: by 2002:a2e:b896:0:b0:336:c9be:c164 with SMTP id
+ 38308e7fff4ca-35142005a54mr27466951fa.45.1757896411539; Sun, 14 Sep 2025
+ 17:33:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913-judyln-dts-v1-6-23b4b7790dce@postmarketos.org>
-X-Proofpoint-ORIG-GUID: 4FHJxICsQxfFK9RlWnHWiBcfnA43xWED
-X-Authority-Analysis: v=2.4 cv=SouQ6OO0 c=1 sm=1 tr=0 ts=68c75e88 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=Gbw9aFdXAAAA:8 a=H0H2Q2WVq0cUEFHX9e0A:9
- a=CjuIK1q_8ugA:10 a=dK5gKXOJidcA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=9vIz8raoGPyDa4jBFAYH:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAwMCBTYWx0ZWRfX+ATOQUyLf0ND
- X4bgbSjQg14xCXeNEyYETwJDL0zG+5L074n7S2r3yrv+jVF5QgwUJbWOuXJnKm3HbtKlfMNbGaE
- fWJPZhMe8MgZu+u1eJgtXUQjUEW1GLhSR44IRmaotffi8WGrRaYWjxu4bU1dvVPsfZaaFs68hog
- /+ShdLv9tT+FNE1FU9/SsScW2W176yKScNZTjKcmlEaiOR6V7kMcz/ENjoVAbI1TgdU18FWaRps
- I4fB6KJP8Vf536ci7Ia+5lXYPgN00dOqINet9oJAL+ILF6V3A2c1bEVWVnvERBsbtR/Je2CrAJv
- oS5hLVcuKbNWF0tNu2mCUGcCGfJTDT70gq8S685cekLsrdDIG3irfzpF7z/xyqsocyss3rOTz3L
- NH37y4yd
-X-Proofpoint-GUID: 4FHJxICsQxfFK9RlWnHWiBcfnA43xWED
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-14_08,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 phishscore=0 adultscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130000
+References: <20250911073144.42160-1-linan666@huaweicloud.com> <20250911073144.42160-3-linan666@huaweicloud.com>
+In-Reply-To: <20250911073144.42160-3-linan666@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Mon, 15 Sep 2025 08:33:19 +0800
+X-Gm-Features: Ac12FXyJvz4WK5MtepX0dPCC6SxTee8sxOJ3sSRvi18-vjhbqHXWFJesarJOrpY
+Message-ID: <CALTww2_z7UGXJ+ppYXrkAY8bpVrV9O3z0VfoaTOZtmX1-DXiZA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] md: allow configuring logical_block_size
+To: linan666@huaweicloud.com
+Cc: corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, linan122@huawei.com, 
+	hare@suse.de, martin.petersen@oracle.com, bvanassche@acm.org, 
+	filipe.c.maia@gmail.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, 
+	yangerkun@huawei.com, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 13, 2025 at 04:56:39PM -0700, Paul Sajna wrote:
-> Wi-Fi now works with this patch and relevant firmware
-> 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+Hi Nan
+
+On Thu, Sep 11, 2025 at 3:41=E2=80=AFPM <linan666@huaweicloud.com> wrote:
+>
+> From: Li Nan <linan122@huawei.com>
+>
+> Previously, raid array used the maximum logical_block_size (LBS) of
+> all member disks. Adding a larger LBS during disk at runtime could
+> unexpectedly increase RAID's LBS, risking corruption of existing
+> partitions.
+
+Could you describe more about the problem? It's better to give some
+test steps that can be used to reproduce this problem.
+>
+> Simply restricting larger-LBS disks is inflexible. In some scenarios,
+> only disks with 512 LBS are available currently, but later, disks with
+> 4k LBS may be added to the array.
+>
+> Making LBS configurable is the best way to solve this scenario.
+> After this patch, the raid will:
+>   - stores LBS in disk metadata.
+>   - add a read-write sysfs 'mdX/logical_block_size'.
+>
+> Future mdadm should support setting LBS via metadata field during RAID
+> creation and the new sysfs. Though the kernel allows runtime LBS changes,
+> users should avoid modifying it after creating partitions or filesystems
+> to prevent compatibility issues.
+
+Because it only allows setting when creating an array. Can this be
+done automatically in kernel space?
+
+Best Regards
+Xiao
+>
+> Note that many RAID paths rely on PAGE_SIZE alignment, including for
+> metadata I/O. A logical_block_size larger than PAGE_SIZE will result in
+> metadata reads/writes failures. So this config should be prevented.
+>
+> Only 1.x meta supports configurable logical_block_size. 0.90 meta init
+> all fields to default at auto-detect. Supporting 0.90 would require more
+> extensive changes and no such use case has been observed.
+>
+> Signed-off-by: Li Nan <linan122@huawei.com>
 > ---
->  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> index 1bf2f2b0e85de174959ec2467076a95f471a59d4..585582ff4e0bbe8c994328278d5e5dd3a280ddb6 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
-> @@ -682,3 +682,16 @@ &uart9 {
->  
->  	status = "okay";
->  };
+>  Documentation/admin-guide/md.rst |  7 +++
+>  drivers/md/md.h                  |  1 +
+>  include/uapi/linux/raid/md_p.h   |  3 +-
+>  drivers/md/md-linear.c           |  1 +
+>  drivers/md/md.c                  | 75 ++++++++++++++++++++++++++++++++
+>  drivers/md/raid0.c               |  1 +
+>  drivers/md/raid1.c               |  1 +
+>  drivers/md/raid10.c              |  1 +
+>  drivers/md/raid5.c               |  1 +
+>  9 files changed, 90 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/md.rst b/Documentation/admin-guide=
+/md.rst
+> index 1c2eacc94758..f5c81fad034a 100644
+> --- a/Documentation/admin-guide/md.rst
+> +++ b/Documentation/admin-guide/md.rst
+> @@ -238,6 +238,13 @@ All md devices contain:
+>       the number of devices in a raid4/5/6, or to support external
+>       metadata formats which mandate such clipping.
+>
+> +  logical_block_size
+> +     Configures the array's logical block size in bytes. This attribute
+> +     is only supported for RAID1, RAID5, RAID10 with 1.x meta. The value
+> +     should be written before starting the array. The final array LBS
+> +     will use the max value between this configuration and all rdev's LB=
+S.
+> +     Note that LBS cannot exceed PAGE_SIZE.
 > +
-> +&wifi {
-> +	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
-> +	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
-> +	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
-> +	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
-> +	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
+>    reshape_position
+>       This is either ``none`` or a sector number within the devices of
+>       the array where ``reshape`` is up to.  If this is set, the three
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index afb25f727409..b0147b98c8d3 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -432,6 +432,7 @@ struct mddev {
+>         sector_t                        array_sectors; /* exported array =
+size */
+>         int                             external_size; /* size managed
+>                                                         * externally */
+> +       unsigned int                    logical_block_size;
+>         __u64                           events;
+>         /* If the last 'event' was simply a clean->dirty transition, and
+>          * we didn't write it to the spares, then it is safe and simple
+> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_=
+p.h
+> index ac74133a4768..310068bb2a1d 100644
+> --- a/include/uapi/linux/raid/md_p.h
+> +++ b/include/uapi/linux/raid/md_p.h
+> @@ -291,7 +291,8 @@ struct mdp_superblock_1 {
+>         __le64  resync_offset;  /* data before this offset (from data_off=
+set) known to be in sync */
+>         __le32  sb_csum;        /* checksum up to devs[max_dev] */
+>         __le32  max_dev;        /* size of devs[] array to consider */
+> -       __u8    pad3[64-32];    /* set to 0 when writing */
+> +       __le32  logical_block_size;     /* same as q->limits->logical_blo=
+ck_size */
+> +       __u8    pad3[64-36];    /* set to 0 when writing */
+>
+>         /* device state information. Indexed by dev_number.
+>          * 2 bytes per device
+> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> index 5d9b08115375..da8babb8da59 100644
+> --- a/drivers/md/md-linear.c
+> +++ b/drivers/md/md-linear.c
+> @@ -72,6 +72,7 @@ static int linear_set_limits(struct mddev *mddev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_hw_sectors =3D mddev->chunk_sectors;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         err =3D mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRIT=
+Y);
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 40f56183c744..e0184942c8ec 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -1963,6 +1963,7 @@ static int super_1_validate(struct mddev *mddev, st=
+ruct md_rdev *freshest, struc
+>                 mddev->layout =3D le32_to_cpu(sb->layout);
+>                 mddev->raid_disks =3D le32_to_cpu(sb->raid_disks);
+>                 mddev->dev_sectors =3D le64_to_cpu(sb->size);
+> +               mddev->logical_block_size =3D le32_to_cpu(sb->logical_blo=
+ck_size);
+>                 mddev->events =3D ev1;
+>                 mddev->bitmap_info.offset =3D 0;
+>                 mddev->bitmap_info.space =3D 0;
+> @@ -2172,6 +2173,7 @@ static void super_1_sync(struct mddev *mddev, struc=
+t md_rdev *rdev)
+>         sb->chunksize =3D cpu_to_le32(mddev->chunk_sectors);
+>         sb->level =3D cpu_to_le32(mddev->level);
+>         sb->layout =3D cpu_to_le32(mddev->layout);
+> +       sb->logical_block_size =3D cpu_to_le32(mddev->logical_block_size)=
+;
+>         if (test_bit(FailFast, &rdev->flags))
+>                 sb->devflags |=3D FailFast1;
+>         else
+> @@ -5900,6 +5902,66 @@ static struct md_sysfs_entry md_serialize_policy =
+=3D
+>  __ATTR(serialize_policy, S_IRUGO | S_IWUSR, serialize_policy_show,
+>         serialize_policy_store);
+>
+> +static int mddev_set_logical_block_size(struct mddev *mddev,
+> +                               unsigned int lbs)
+> +{
+> +       int err =3D 0;
+> +       struct queue_limits lim;
 > +
-> +	qcom,snoc-host-cap-skip-quirk;
-> +	qcom,ath10k-calibration-variant = "lg_judy";
-
-Was it submitted for inclusion? Please follow the process described at
-https://wireless.docs.kernel.org/en/latest/en/users/drivers/ath10k/boardfiles.html
-
+> +       if (queue_logical_block_size(mddev->gendisk->queue) >=3D lbs) {
+> +               pr_err("%s: incompatible logical_block_size %u, can not s=
+et\n",
+> +                      mdname(mddev), lbs);
+> +               return -EINVAL;
+> +       }
 > +
-> +	status = "okay";
-> +};
-> 
-> -- 
-> 2.51.0
-> 
+> +       lim =3D queue_limits_start_update(mddev->gendisk->queue);
+> +       lim.logical_block_size =3D lbs;
+> +       pr_info("%s: logical_block_size is changed, data may be lost\n",
+> +               mdname(mddev));
+> +       err =3D queue_limits_commit_update(mddev->gendisk->queue, &lim);
+> +       if (err)
+> +               return err;
+> +
+> +       mddev->logical_block_size =3D lbs;
+> +       return 0;
+> +}
+> +
+> +static ssize_t
+> +lbs_show(struct mddev *mddev, char *page)
+> +{
+> +       return sprintf(page, "%u\n", mddev->logical_block_size);
+> +}
+> +
+> +static ssize_t
+> +lbs_store(struct mddev *mddev, const char *buf, size_t len)
+> +{
+> +       unsigned int lbs;
+> +       int err =3D -EBUSY;
+> +
+> +       /* Only 1.x meta supports configurable LBS */
+> +       if (mddev->major_version =3D=3D 0)
+> +               return -EINVAL;
+> +
+> +       if (mddev->pers)
+> +               return -EBUSY;
+> +
+> +       err =3D kstrtouint(buf, 10, &lbs);
+> +       if (err < 0)
+> +               return -EINVAL;
+> +
+> +       err =3D mddev_lock(mddev);
+> +       if (err)
+> +               goto unlock;
+> +
+> +       err =3D mddev_set_logical_block_size(mddev, lbs);
+> +
+> +unlock:
+> +       mddev_unlock(mddev);
+> +       return err ?: len;
+> +}
+> +
+> +static struct md_sysfs_entry md_logical_block_size =3D
+> +__ATTR(logical_block_size, S_IRUGO|S_IWUSR, lbs_show, lbs_store);
+>
+>  static struct attribute *md_default_attrs[] =3D {
+>         &md_level.attr,
+> @@ -5933,6 +5995,7 @@ static struct attribute *md_redundancy_attrs[] =3D =
+{
+>         &md_scan_mode.attr,
+>         &md_last_scan_mode.attr,
+>         &md_mismatches.attr,
+> +       &md_logical_block_size.attr,
+>         &md_sync_min.attr,
+>         &md_sync_max.attr,
+>         &md_sync_io_depth.attr,
+> @@ -6052,6 +6115,17 @@ int mddev_stack_rdev_limits(struct mddev *mddev, s=
+truct queue_limits *lim,
+>                         return -EINVAL;
+>         }
+>
+> +       /*
+> +        * Before RAID adding folio support, the logical_block_size
+> +        * should be smaller than the page size.
+> +        */
+> +       if (lim->logical_block_size > PAGE_SIZE) {
+> +               pr_err("%s: logical_block_size must not larger than PAGE_=
+SIZE\n",
+> +                       mdname(mddev));
+> +               return -EINVAL;
+> +       }
+> +       mddev->logical_block_size =3D lim->logical_block_size;
+> +
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
+> @@ -6690,6 +6764,7 @@ static void md_clean(struct mddev *mddev)
+>         mddev->chunk_sectors =3D 0;
+>         mddev->ctime =3D mddev->utime =3D 0;
+>         mddev->layout =3D 0;
+> +       mddev->logical_block_size =3D 0;
+>         mddev->max_disks =3D 0;
+>         mddev->events =3D 0;
+>         mddev->can_decrease_events =3D 0;
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index f1d8811a542a..705889a09fc1 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -382,6 +382,7 @@ static int raid0_set_limits(struct mddev *mddev)
+>         md_init_stacking_limits(&lim);
+>         lim.max_hw_sectors =3D mddev->chunk_sectors;
+>         lim.max_write_zeroes_sectors =3D mddev->chunk_sectors;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.io_opt =3D lim.io_min * mddev->raid_disks;
+>         lim.chunk_sectors =3D mddev->chunk_sectors;
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index d0f6afd2f988..de0c843067dc 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -3223,6 +3223,7 @@ static int raid1_set_limits(struct mddev *mddev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_write_zeroes_sectors =3D 0;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.features |=3D BLK_FEAT_ATOMIC_WRITES;
+>         err =3D mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRIT=
+Y);
+>         if (err)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index c3cfbb0347e7..68c8148386b0 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4005,6 +4005,7 @@ static int raid10_set_queue_limits(struct mddev *md=
+dev)
+>
+>         md_init_stacking_limits(&lim);
+>         lim.max_write_zeroes_sectors =3D 0;
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.chunk_sectors =3D mddev->chunk_sectors;
+>         lim.io_opt =3D lim.io_min * raid10_nr_stripes(conf);
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index c32ffd9cffce..ff0daa22df65 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -7747,6 +7747,7 @@ static int raid5_set_limits(struct mddev *mddev)
+>         stripe =3D roundup_pow_of_two(data_disks * (mddev->chunk_sectors =
+<< 9));
+>
+>         md_init_stacking_limits(&lim);
+> +       lim.logical_block_size =3D mddev->logical_block_size;
+>         lim.io_min =3D mddev->chunk_sectors << 9;
+>         lim.io_opt =3D lim.io_min * (conf->raid_disks - conf->max_degrade=
+d);
+>         lim.features |=3D BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+> --
+> 2.39.2
+>
 
--- 
-With best wishes
-Dmitry
 
