@@ -1,272 +1,154 @@
-Return-Path: <linux-kernel+bounces-817628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87E7B584B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19421B584B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188541A26DB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:37:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEEC72E0110
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8F6280037;
-	Mon, 15 Sep 2025 18:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C2B27F010;
+	Mon, 15 Sep 2025 18:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="fwQCF83w"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQz73Mq2"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4E2E573
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FD4E573
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757961425; cv=none; b=YZCiVyTdgbba6odvFHQzC4TSZgoO3n22AJSSepDze1m7DtZMfaZR7/jF0Y5RMBQavMBz7HpA+VyzRg6zczZyNjBW+rHqfZ1DPDptipGz1hTOW39p1DoeeYt6NyN6iA6dKFq6uvlO3W9WkGrp6HI1wkaDaylZLfaAP3yYb1q9gRI=
+	t=1757961461; cv=none; b=l/QbmHQwZ6VJATTbpbuRct+QJr7fgTCb8WsxLiR558ArB/8YzMYy52N+uQ8VFeLvhfNs+xfiSlsEu3Jp8OtAk1poCFBKrZU0xRevg09SUqHYMmKDiF1KPwZbAfJmfmZ88v6k3bWpUiOVEsjJ19wyodWnDU6zabY2WWKkFP+eI8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757961425; c=relaxed/simple;
-	bh=209eci6aRzHWIwRyX/rgh7c2i1XYNBnkzbEzYmFDqlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnhG6VvKn+6LD/IHpyyhgHRffNjUChfXQ92YtbQwuh9CrDM916Anm09naBppfBJCOXz4bxP5A1EqYPahn7QfWe5hrN/0CnV7cEvp8ZkR2sl1hPVSqhgozI3kEGsLOILbY4rt20pfkmOTN4RbNDVPenUAGw2DBMlDNEpSHYMjWeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=fwQCF83w; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 25061240103
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:36:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
-	t=1757961417; bh=8N8kahmaMK5yIdd2qUvMT4zY2+pJHodS9IL0e9aOgwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=fwQCF83wJdr+KUbeDi1nA2IBUEJZ2khcpIGdfBDrGAGplQOaYAFZnvyZb0C2gAsNV
-	 BReyAS17iwws8P4467xM+TM77Vju1guBecU4sCiz8bqxiWJg0A27/nS6I8AkWzBIJz
-	 fBYMffyhzX7Tz8f2zz8y/xVphU3l22mB8uPiLKuqQKPl9doktBxkXiKBWLSqTe+N1k
-	 mPFnkcyrIZAusw1BgBSlDrH0sqIrbgxreTy72c4AaTv9aqCsCHmAW2PtpOrrXbvt0z
-	 1m02e60KVwdA4byZbFlX3bBtICD1aODJkOTPYPsNpEtmv0oQ4zHGgkx8bDC8QH41Zj
-	 vmV81v5YCsJvw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cQYfF5ngLz6tvm;
-	Mon, 15 Sep 2025 20:36:53 +0200 (CEST)
-Date: Mon, 15 Sep 2025 18:36:56 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= via B4 Relay <devnull+j.ne.posteo.net@kernel.org>,
-	j.ne@posteo.net, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: allwinner: h313: Add Amediatech X96Q
-Message-ID: <aMhcxcBYF2vMjd5g@probook>
-References: <20250912-x96q-v1-0-8471daaf39db@posteo.net>
- <20250912-x96q-v1-2-8471daaf39db@posteo.net>
- <20250912105449.70717d80@donnerap>
- <CAGb2v67dp8V4A86yyaixN9oOgBzMpLJ0ZxnDLng8mO2tkEqYUg@mail.gmail.com>
+	s=arc-20240116; t=1757961461; c=relaxed/simple;
+	bh=wXEh5XUO1GSsuM+gJYa63BqTnJOA2KRhkUcKEMYt4j0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rTDvDlFiNB7S/FohXbheW6WBxStKNLV4GaWwxXw/s3QUyb9LGeT0LCnBW9ibSDqiirgGc55LBA0aegCB8MVxuXsKp8K6p5vkeOiihku7DOnCrTzye1VB3Wchltlbd2qn+ABKXZqrRZrDhaXieqEXZp+KN/Gyraq4LqiWL6oi9Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQz73Mq2; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b07c081660aso653836566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:37:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757961458; x=1758566258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NE2v9TO71EUWF2H1Q7iKY20vLhOzqrYlcvab2K0WToU=;
+        b=gQz73Mq2cAD46LHh356EwS/vufKMDX2YG2nighS91EkQ+H/WTlpcEnOzGxTNkcxzOV
+         VIshwBesSukq+wR0qsNwrXEaXf5CRmbwfsI6lWKFiUCTjlysS9H0M/oQ6Zis1s0LHEL3
+         7c9+V8Pmgmgp0Tf59f2YeIDWUh3sKqcCq+S+ijDfQWRmC5BkBD70do4BB6mgxosfKGK6
+         AYlJ5RFe8xvvV+nJvNwMMbvaW3oE8k8L0v0E1fqV4EYrRWGbMiJ1QU0GMmUMr9IpbUsL
+         a0WL9B0kcHQxIl9Zd3GkMnZFFAGggmPxDgPo50Stm/ept3fY6YSatbwNYF6fh/w4N+qo
+         iNxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757961458; x=1758566258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NE2v9TO71EUWF2H1Q7iKY20vLhOzqrYlcvab2K0WToU=;
+        b=C/3XsYMbjXwQb+ToSCOLTid64TiiOrDnTUoQAPdLLTJabZazK3O+I+lTbCdAdvrCov
+         YBOtNZakRpwEcDf8OZh6I003SHBGb8bhuEqQ7ICReFQCByh07wn9rTVmivN0+Jub1aq8
+         P6RlSWYL8/tBDXWkwuV5GNsFjm7aN8PP3+W0OlqpCnxiuyYFC7v8k1/zphOmo+5knRMW
+         sEyR5bdM0U+mFSCRBgYAKtxy+iPqQqz1Gh3HzEdhiZ/bwL8QYPFrGJUy/kpnTsbRJH71
+         NBz6A34BCU+XcXNd6Ja2iPl8y3t1zE1cP0aorjta/dWw/uYRuwO0HUa4OnPrJEyX2N2V
+         XK/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXrBkoLTg/Nq9sm5ei1RxA4iF1Y/jnO5t8NymKD8271/CNTHTeAGbLjacvq2XdydUzHWXI/9zxI2d3NuFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBoLk1m48N4xQ99e2Id0F13TMbd3k1jgaORyMo39MPtrHAyqo5
+	blAlqu0BqlDug+igqsCzfvsCUb9HS7IRsZSP5WzbAZvBZ3I3oqpBvdC/
+X-Gm-Gg: ASbGncvKhmY5bMi4e01Ksr45QX3RVDQhOBRBfM4FyvmNkrqtg8Z+zp1ta2kQxopyXLW
+	lYy6NjJGdMI9ox6sRppyAJN31KXwUMx3HBFp9RXqSsAR4fX9Zj7g2QF39ZIcXHoEkNY5fHZR6c3
+	GRLPXS8iwVKVNY4ViNNhn1x1Wko7IqtPPGrbf8Bbm2UISO0IAUB8hC5PuI8mDAswMrEuyMTwCUV
+	ITjG4RC9O0+9mhZnbOQ9vYKV68bW3h1TMrLfSbuFGlXLWT73Q/kbfqEnEwL3u6mOPkzUqZc6TOK
+	EwaJ12DvOzMBc5n2xJMPlrURDlBS60sIyquOLJfOEOLksLJCGphTC43vAmPJgvQ4JJVKH9vPevH
+	wsMH5zUlEX2J+wA+fbuiMjUkdtv8yJeAwh47qKQ8nCbY1A271oMtdUmyy9npDR/zyZdS4nClB/m
+	FenqWMPXyqtJaHXQ==
+X-Google-Smtp-Source: AGHT+IHuWqt68O/G0TZOS+N0wRIMM5ma2QAVQE27OJdGEIQLiGVw+tgoMFYVE8WVnKyG+/zMJSyrSA==
+X-Received: by 2002:a17:907:2683:b0:b04:6858:13ce with SMTP id a640c23a62f3a-b07c37fd474mr1435431366b.38.1757961458201;
+        Mon, 15 Sep 2025 11:37:38 -0700 (PDT)
+Received: from localhost (dslb-002-205-018-108.002.205.pools.vodafone-ip.de. [2.205.18.108])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b31715cesm977888466b.48.2025.09.15.11.37.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 11:37:37 -0700 (PDT)
+From: Jonas Gorski <jonas.gorski@gmail.com>
+To: Mark Brown <broonie@kernel.org>,
+	Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH v2 0/7] spi: multi CS cleanup and controller CS limit removal
+Date: Mon, 15 Sep 2025 20:37:18 +0200
+Message-ID: <20250915183725.219473-1-jonas.gorski@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGb2v67dp8V4A86yyaixN9oOgBzMpLJ0ZxnDLng8mO2tkEqYUg@mail.gmail.com>
 
-On Sat, Sep 13, 2025 at 05:36:12PM +0800, Chen-Yu Tsai wrote:
-> On Fri, Sep 12, 2025 at 5:54 PM Andre Przywara <andre.przywara@arm.com> wrote:
-> >
-> > On Fri, 12 Sep 2025 01:52:10 +0200
-> > J. Neuschäfer via B4 Relay <devnull+j.ne.posteo.net@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > many thanks for posting the DT, I really wish more people would do that!
-> >
-> > > From: "J. Neuschäfer" <j.ne@posteo.net>
-> > >
-> > > The X96Q is a set-top box with an H313 SoC, AXP305 PMIC, 1 or 2 GiB RAM,
-> > > 8 or 16 GiB eMMC flash, 2x USB A, Micro-SD, HDMI, Ethernet, audio/video
-> > > output, and infrared input.
-> > >
-> > >   https://x96mini.com/products/x96q-tv-box-android-10-set-top-box
-> > >
-> > > Tested, works:
-> > > - debug UART
-> > > - status LED
-> > > - USB ports in host mode
-> > > - MicroSD
-> > > - eMMC
-> > > - recovery button hidden behind audio/video port
-> > > - analog audio (line out)
-> > >
-> > > Does not work:
-> > > - Ethernet (requires AC200 MFD/EPHY driver)
-> > > - analog video output (requires AC200 driver)
-> > > - HDMI audio/video output
-> > >
-> > > Untested:
-> > > - "OTG" USB port in device mode
-> > > - built-in IR receiver
-> > > - external IR receiver
-> > > - WLAN (requires out-of-tree XRadio driver)
-> > >
-> > > Table of regulators on the downstream kernel, for reference:
-> > >
-> > >  vcc-5v      1   15      0 unknown  5000mV     0mA  5000mV  5000mV
-> > >     dcdca    0    0      0 unknown   900mV     0mA     0mV     0mV
-> > >     dcdcb    0    0      0 unknown  1350mV     0mA     0mV     0mV
-> > >     dcdcc    0    0      0 unknown   900mV     0mA     0mV     0mV
-> > >     dcdcd    0    0      0 unknown  1500mV     0mA     0mV     0mV
-> > >     dcdce    0    0      0 unknown  3300mV     0mA     0mV     0mV
-> > >     aldo1    0    0      0 unknown  3300mV     0mA     0mV     0mV
-> > >     aldo2    0    0      0 unknown   700mV     0mA     0mV     0mV
-> > >     aldo3    0    0      0 unknown   700mV     0mA     0mV     0mV
-> > >     bldo1    0    0      0 unknown  1800mV     0mA     0mV     0mV
-> > >     bldo2    0    0      0 unknown  1800mV     0mA     0mV     0mV
-> > >     bldo3    0    0      0 unknown   700mV     0mA     0mV     0mV
-> > >     bldo4    0    0      0 unknown   700mV     0mA     0mV     0mV
-> > >     cldo1    0    0      0 unknown  2500mV     0mA     0mV     0mV
-> > >     cldo2    0    0      0 unknown   700mV     0mA     0mV     0mV
-> > >     cldo3    0    0      0 unknown   700mV     0mA     0mV     0mV
-> > >
-> > > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> > > ---
-[...]
-> > > +&mmc0 {
-> > > +     vmmc-supply = <&reg_aldo1>;
-> > > +     cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;  /* PF6 */
-> > > +     disable-wp;
-> > > +     bus-width = <4>;
-> > > +     max-frequency = <150000000>;
-> >
-> > That line is already in the .dtsi file, so redundant.
-> >
-> > > +     status = "okay";
-> > > +     /* µSD */
-> >
-> > If we really need this comment, it should be above, right after the
-> > "&mmc0 {". And I wonder if it should be "microSD" instead.
-> 
-> Yes. Please use ASCII in the code if possible, since some of us have
-> setups that don't quite work well with extended character sets.
+This series aims at cleaning up the current multi CS parts and removing
+the CS limit per controller that was introduced with the multi CS
+support.
 
-ACK
+To do this, store the assigned chip selects per device in
+spi_device::num_chipselects, which allows us to use that instead of
+SPI_CS_CNT_MAX for most loops, as well as remove the check for
+SPI_INVALID_CS for any chip select.
 
-> 
-> > > +};
-> > > +
-> > > +&mmc1 {
-> > > +     /* TODO: XRadio XR819 WLAN */
-> >
-> > Either you just keep the comment, an mention mmc1, but don't reference the
-> > node, or you add the properties that you know of already, like
-> > vmmc-supply, vqmmc-supply, mmc-pwrseq, bus-width, non-removable.
-> > But this "empty reference with a comment" is somewhat odd.
-> 
-> I'd say just fill it in completely so that the mmc host is enabled and
-> the SDIO card is detected. Missing driver support for the chip is a
-> different issue, but since this is an enumerable bus it shouldn't prevent
-> you from describing everything already.
+This should hopefully make it obvious that SPI_CS_CNT_MAX only limits
+accesses to arrays indexed by the number of chip selects of a device,
+not the controller, and we can remove the check for
+spi_controller::num_chipselects being less than SPI_CS_CNT_MAX in device
+registration (which was the wrong place to do that anyway).
 
-I gave it a try just now, but I wasn't successful with enumeration:
+After having done that, we can reduce SPI_CS_CNT_MAX again to 4 without
+breaking devices on higher CS lines.
 
-	&mmc1 {
-		/* XRadio XR819 WLAN */
-		vmmc-supply = <&reg_aldo1>;
-		vqmmc-supply = <&reg_bldo1>;
-		mmc-pwrseq = <&wifi_pwrseq>;
-		bus-width = <4>;
-		non-removable;
-		mmc-ddr-1_8v;
-		status = "okay";
-	};
+Finally, rename SPI_CS_CNT_MAX to SPI_DEVICE_CNT_MAX to make it more
+clear that this limit only applies to devices, not controllers.
 
-The result is unsuccessful (with or without the questionable mmc-ddr-1_8v):
+There are still more issues left, but these can be addressed in future
+submissions:
 
-	[    1.607511] mmc1: Failed to initialize a non-removable card
+* The code allows multi-cs devices for any controller, as long as the
+  device does not set parallel-memories.
+* No current spi controller driver handles logical chip selects other
+  than the first one, and always use it, regardless what cs_index_mask
+  says.
+* While most spi controllers should be able to handle devices that have
+  multiple cs that just get enabled selectively, but not at the same
+  time, there is no way to tell that to the core (ties into the above).
+* There is no parallel memories/multi cs flag for devices, so any
+  implementing driver needs to check the device tree node, making it
+  impossible to register these kind of devices via platform code.
 
-The downstream DT mentions a few relevant properties:
+Changes v1 -> v2:
 
-	/wlan {
-		wlan_regon = <&pio 6 18 GPIO_ACTIVE_LOW>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&losc>;
-	};
-	...
-	losc: clk_losc@0 {
-		linux,phandle = <0xd3>;
-		phandle = <0xd3>;
-		allwinner,drive = <0x02>;
-		allwinner,function = "x32kfout";
-		allwinner,muxsel = <0x03>;
-		allwinner,pins = "PG10";
-		allwinner,pull = <0x01>;
-	};
+* rebased onto current spi/for-next
+* kept the initialization of spi_device::chip_select[] to SPI_INVALID_CS
+* reworded the reduce patch to not be a revert anymore
 
-Translating this (roughly) into mainline bindings:
+Jonas Gorski (7):
+  spi: fix return code when spi device has too many chipselects
+  spi: keep track of number of chipselects in spi_device
+  spi: move unused device CS initialization to __spi_add_device()
+  spi: drop check for validity of device chip selects
+  spi: don't check spi_controller::num_chipselect when parsing a dt
+    device
+  spi: reduce device chip select limit again
+  spi: rename SPI_CS_CNT_MAX => SPI_DEVICE_CS_CNT_MAX
 
-	mmc-pwrseq = <&wifi_pwrseq>;
-	...
-
-	wifi_pwrseq: pwrseq {
-		compatible = "mmc-pwrseq-emmc";
-		reset-gpios = <&pio 6 18 GPIO_ACTIVE_LOW>;
-		clocks = <&rtc CLK_OSC32K_FANOUT>;
-		clock-names = "ext_clock";
-		pinctrl-names = "default";
-		pinctrl-0 = <&x32clk_fanout_pin>;
-	};
-
-... it fails in drivers/reset/core.c, because __reset_add_reset_gpio_device
-doesn't handle #gpio-cells = <3>, which is the case for &pio:
-
-	/*
-	 * Currently only #gpio-cells=2 is supported with the meaning of:
-	 * args[0]: GPIO number
-	 * args[1]: GPIO flags
-	 * TODO: Handle other cases.
-	 */
-	if (args->args_count != 2)
-		return -ENOENT;
-
-Relatedly, I'd expect this limitation to break WiFi on sun50i-h313-tanix-tx1.dts
-(upstreamed by Andre) as well.
-
-> > > +};
-> > > +
-> > > +&mmc2 {
-> > > +     vmmc-supply = <&reg_aldo1>;
-> > > +     vqmmc-supply = <&reg_bldo1>;
-> > > +     non-removable;
-> > > +     cap-mmc-hw-reset;
-> > > +     mmc-ddr-1_8v;
-> > > +     mmc-hs200-1_8v;
-> > > +     bus-width = <8>;
-> > > +     max-frequency = <100000000>;
-> >
-> > Are you sure you need that?
-
-After some more testing, it turns out that I do need to limit the
-frequency to 100 MHz. At the default of 150 MHz, stable operation of
-the eMMC isn't possible (all other properties being as they are).
-
-> >
-> > > +     status = "okay";
-> > > +     /* eMMC */
-> >
-> > Please move that comment up.
-> 
-> I don't think it's necessary though. hs200 and 8-bit width would make
-> it obvious that it's an eMMC.
-
-Not necessary, but perhaps still useful for someone having a quick
-glance at the devicetree, so I'd prefer to keep it in.
+ drivers/spi/spi-cadence-quadspi.c |  2 +-
+ drivers/spi/spi.c                 | 75 +++++++++++++------------------
+ include/linux/spi/spi.h           | 16 ++++---
+ 3 files changed, 42 insertions(+), 51 deletions(-)
 
 
-Best regards,
-J. Neuschäfer
+base-commit: 34c2202f5ca2325511a0e0b8802492eec17a2c76
+-- 
+2.43.0
+
 
