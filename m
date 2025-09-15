@@ -1,118 +1,154 @@
-Return-Path: <linux-kernel+bounces-816118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D32B56FBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246EAB56FBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7797B17459D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6313B7866
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFCA2741C6;
-	Mon, 15 Sep 2025 05:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4576227602E;
+	Mon, 15 Sep 2025 05:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oibJ0v5b"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="QEgbWh2S"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2BFD531;
-	Mon, 15 Sep 2025 05:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0094517BEBF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757914424; cv=none; b=doNgBpRIcLp/MUKclUkqIshQeI04+D+vCEfyNvLz68JIj0Gzf80TvDEQysOm0MkV9SYES7TKhjzneAH5J/iXTxkc27op/cyy0pUK+l4LMYpxtfL19SDWcfpqPCJaO2a2ez5YL1kgI9ppHAielJdAFiSYEduHd8nhbTRSsoO1ywQ=
+	t=1757914476; cv=none; b=M0jj+/IK7X4SpAKtmNHZIpJvhDGVRYWMwo8aK5/8AgX0eiY/8YM1bDKeEiqlIek72qajOWsMg0P5ufGjjTkMfX9joY6qLoz48qGN0GQ5T8a7Bed6NymqxP/z0ESrdJMg6FOkEV3HqVDlMpc7UlYhALnTse0rHwKVvlRsine/Tz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757914424; c=relaxed/simple;
-	bh=YXiCg8kjOpduhsvq4Au0o9KWuuM1uRTLrpBMgK7e7x4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0Yv87X7jzyNoWRm9tpARSM/tUX7q2YGZ+USZ9zHwqIP7c3TGUNDOZA75mb/LmfBA1f4f8Y+ljpBRlUeeIgqun9DI8Sb7TVd75nmR7w422IICo3kBpGw7G+BVbXpMc+YWkD4XM3cK5Q9QODNjqp9O0+O28d9JZ7scYJsypVWfOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oibJ0v5b; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58F5XNPw973598;
-	Mon, 15 Sep 2025 00:33:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757914403;
-	bh=agnB6R3GEZoRPtaNvh47f+HhUxJeIdo/7f5/fjJd0XA=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=oibJ0v5b5D1cyErqQw36YAHi6SblrB//muJNeXtxcUKpC1anGWkTjfXbmBnGtkS0D
-	 j42sIcYqsy3qPIF+wIDKqzTJf4mhqXGQqzckzATYilCfs4+DQ9O1/UQ+I4NFa74zCa
-	 08kI1DmC3HSAnam/R/ku9s+B1dICrOZUcC1xRxLo=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58F5XNso505544
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 15 Sep 2025 00:33:23 -0500
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 15
- Sep 2025 00:33:22 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 15 Sep 2025 00:33:22 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58F5XLRL3507463;
-	Mon, 15 Sep 2025 00:33:22 -0500
-Date: Mon, 15 Sep 2025 11:03:21 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Kendall Willis <k-willis@ti.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby
-	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <vishalm@ti.com>, <sebin.francis@ti.com>, <msp@baylibre.com>,
-        <khilman@baylibre.com>, <a-kaur@ti.com>,
-        <andriy.shevchenko@linux.intel.com>, <yujiaoliang@vivo.com>,
-        <b-liu@ti.com>, <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v2 2/2] serial: 8250: omap: Support wakeup pinctrl state
- on suspend
-Message-ID: <20250915053321.yradgpitr2tamd56@lcpd911>
-References: <20250910-uart-daisy-chain-8250-omap-v2-0-e90d44c1a9ac@ti.com>
- <20250910-uart-daisy-chain-8250-omap-v2-2-e90d44c1a9ac@ti.com>
+	s=arc-20240116; t=1757914476; c=relaxed/simple;
+	bh=1MJFzf4pGz8DgaKAs7CKJL+eWNPRE7XZdof1TjvBwFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T1opix0NW7Epykv1EwMisDHh1CJg6+Qkgp8qG+UxgukIbGbCIAmCJL/0SBssgsecPT/EU/3VOSCafMA1TrAidM2pVtBKdgvalwsCdmR3ZOfBDxx8BcPCIo62AddWHzbsI/seP2niX5o9Qw3QQr9SnXqSmjV0xfZafJ05j8maHaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=QEgbWh2S; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77619f3f41aso1789051b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 22:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1757914473; x=1758519273; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HcWOum1mNBViAIuGhSYHqBX6ni4rWoPSQnGJMRFhyRI=;
+        b=QEgbWh2SGvLVQ6+bLS6V0L28fPmCVKNNK/2Td7dLtaGbjDpmryKsaGt7kFbgvyyOSf
+         sA8XlWQrfscz7Zzniatf0LNv51nj6bjLy69KFwvL2WqhuSJeZyqYPPrvCAfv3KKFC9lG
+         1WEcugjX3/OAsT14fzov+ZNdoa7b0nHSdXmOfGWfVdmmczTNAWwsiIIbZdalqfJwZNPs
+         Vo3GRr7uWWzk/Yh4eaqLAHHKjBaeAWMtid0YbLSjJA0p03BZolej73suIWPFdydDpenz
+         fLS4hQUoW+enX77HgWGjBvDxJm9QwnTbwldMyO+9K6CYV+myFDusNtWaPa3dgC7n6yDA
+         8Daw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757914473; x=1758519273;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HcWOum1mNBViAIuGhSYHqBX6ni4rWoPSQnGJMRFhyRI=;
+        b=fEGH5868CY1DBJOPOsaLQkEkA2Zg577hhzFuQ6DGNyuF7rpYYR4yotRK7pC6DpCFuE
+         xpREp3NXdUyvID5gj0HlUTqEDe/SLkCIUgkWCnJZJETrzkYpTD2bLVI4ljVXsvPVjSeU
+         +H6k31GhGp+dG9YI4iWiY17e7o0Q+IInrplRc9kvAZvTvzDD/IFG2SbpnXxKPohdk4Po
+         AZiS1gUgnrBcBvP28hpiXM+GhTR4QOpdfG7RhTNV0oxVposNCWBf28p3m0xTrOc5S6Wd
+         ljQwRA9cbCu06PRG6nfZFONpnqAIrDY/faLBae/TKjg5F1q85WC4PGjeSAq6UaEo/cbf
+         7JUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFs15C0Qn7Z9klBj+zQX45zODUulxXwTKRPryVThJQTpkHKbmvx2+vhe112SBjNumbAVFwHCzfzBRySg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3kmgcWA+w2y8UUHhm3XLVxjBMRTph8jiW5oh/AzDk6BBiksYj
+	7gT8ig4p3JVz0s542hbI6lYH88+13iRdOrUYAfp9X663wXLkXlW6kB8SXPFdS4TdAtY=
+X-Gm-Gg: ASbGncs+c+YRvcoLjAs5Nm/F9tniZLXtCL2hCCMiqcyAD1WZXSLaQiZo/SYpZSVUMaE
+	3hbhSQJEnJXOyHme8/VnIsTrEmJzv3vg+0bMyvdIv/kGrWIePXztNDO3geHlSfSfQgg1qA7JUZb
+	lu6xLBlzCBO/9WCpsAcb1ju1jvxxqArPcw/6lYeVFMB7KKxOlQkvdNZFl0Q+Ud7pHc3NyFCFskt
+	NCbvjpv8tJR+/gZmsxEOR2+04+/Sr/LR+TpOOhJnbOcmdNbEHGAX4lm4Rl8gb6EdxLq6DF/z2Y1
+	8mqGA9asqDpUWzLhF49HHXaL6+TDBkisao0a+c+NuB7VVvQ8CnjX0mnChqxEZ2LVTf1qay0bE/2
+	5PKj2gPNfjEgc6CZROw85xpPt2/KeIea3dCUs5eqo8rDoiEuYvp7A4Vg=
+X-Google-Smtp-Source: AGHT+IGjRSvNn9pjamHg0axHO24KuBYdd0ejvKhVmAXCjHWpKLeck8mQqMrFQreoUO1LGLwUqHHLQg==
+X-Received: by 2002:a05:6a21:999a:b0:262:d265:a3c with SMTP id adf61e73a8af0-262d2650de3mr5504416637.32.1757914473069;
+        Sun, 14 Sep 2025 22:34:33 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a387cc21sm10604151a12.28.2025.09.14.22.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 22:34:32 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Anup Patel <anup@brainfault.org>,
+	Atish Patra <atish.patra@linux.dev>,
+	kvm-riscv@lists.infradead.org
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH] RISC-V: KVM: Fix SBI_FWFT_POINTER_MASKING_PMLEN algorithm
+Date: Sun, 14 Sep 2025 22:34:20 -0700
+Message-ID: <20250915053431.1910941-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250910-uart-daisy-chain-8250-omap-v2-2-e90d44c1a9ac@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On Sep 10, 2025 at 16:23:32 -0500, Kendall Willis wrote:
-> From: Markus Schneider-Pargmann <msp@baylibre.com>
-> 
-> UART can be used as a wakeup source for am62 from suspend to ram states.
-> To enable wakeup from UART am62 requires a wakeup flag being set in the
+The implementation of SBI_FWFT_POINTER_MASKING_PMLEN from commit
+aa04d131b88b ("RISC-V: KVM: Add support for SBI_FWFT_POINTER_MASKING_PMLEN")
+was based on a draft of the SBI 3.0 specification, and is not compliant
+with the ratified version.
 
-My preference would be to call it TI K3 AM62 family of SoCs.
-am62 can mean very different things to different people.
+Update the algorithm to be compliant. Specifically, do not fall back to
+a pointer masking mode with a larger PMLEN if the mode with the
+requested PMLEN is unsupported by the hardware.
 
+Fixes: aa04d131b88b ("RISC-V: KVM: Add support for SBI_FWFT_POINTER_MASKING_PMLEN")
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+---
+I saw that the RFC version of this patch already made it into
+riscv_kvm_queue, but it needs an update for ratified SBI 3.0. Feel free
+to squash this into the original commit, or I can send a replacement v2
+patch if you prefer.
 
-> pinctrl.
-> 
-> If the device is marked as wakeup enabled, select the 'wakeup' pinctrl
-> state on suspend and restore the default pinctrl state on resume.
-> 
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> Signed-off-by: Kendall Willis <k-willis@ti.com>
-> ---
+ arch/riscv/kvm/vcpu_sbi_fwft.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-If you do end up respinning, include:
-
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-
-
+diff --git a/arch/riscv/kvm/vcpu_sbi_fwft.c b/arch/riscv/kvm/vcpu_sbi_fwft.c
+index cacb3d4410a54..62cc9c3d57599 100644
+--- a/arch/riscv/kvm/vcpu_sbi_fwft.c
++++ b/arch/riscv/kvm/vcpu_sbi_fwft.c
+@@ -160,14 +160,23 @@ static long kvm_sbi_fwft_set_pointer_masking_pmlen(struct kvm_vcpu *vcpu,
+ 	struct kvm_sbi_fwft *fwft = vcpu_to_fwft(vcpu);
+ 	unsigned long pmm;
+ 
+-	if (value == 0)
++	switch (value) {
++	case 0:
+ 		pmm = ENVCFG_PMM_PMLEN_0;
+-	else if (value <= 7 && fwft->have_vs_pmlen_7)
++		break;
++	case 7:
++		if (!fwft->have_vs_pmlen_7)
++			return SBI_ERR_INVALID_PARAM;
+ 		pmm = ENVCFG_PMM_PMLEN_7;
+-	else if (value <= 16 && fwft->have_vs_pmlen_16)
++		break;
++	case 16:
++		if (!fwft->have_vs_pmlen_16)
++			return SBI_ERR_INVALID_PARAM;
+ 		pmm = ENVCFG_PMM_PMLEN_16;
+-	else
++		break;
++	default:
+ 		return SBI_ERR_INVALID_PARAM;
++	}
+ 
+ 	vcpu->arch.cfg.henvcfg &= ~ENVCFG_PMM;
+ 	vcpu->arch.cfg.henvcfg |= pmm;
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+2.47.2
+
+base-commit: 7835b892d1d9f52fb61537757aa446fb44984215
+branch: up/kvm-fwft-pmlen
 
