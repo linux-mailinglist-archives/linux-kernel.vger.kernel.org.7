@@ -1,184 +1,148 @@
-Return-Path: <linux-kernel+bounces-816884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D9DB579F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A7BB57A02
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB1D3A5AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82EA16700F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A958A302758;
-	Mon, 15 Sep 2025 12:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1F0302CCD;
+	Mon, 15 Sep 2025 12:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMnLf5Ah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BjV6dXlk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BAA2FABEF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F113002A0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938155; cv=none; b=SmAELYWjcPF74V0uFpWZt7C/sJfWRuOa5Cz6lHmGzo9m1QktTQvaDZA+0NDscq8GAORHCOviqBu1zznGDNDPteuEQX8hi5CgAl1+jKWma8yrhJ3iwP6xwKWWNAHbReYGMsZgKCzPgfXjzpsbC0gd/ECNaVvX+R0sX7w2MusCTTk=
+	t=1757938251; cv=none; b=p+fbTZPElLzgqhmamapvy/xS6PWU/uUJ++oyiA+CsBcNLpuieb67RLTEtWIdK1315OjaCRedgDH+UUI3i9zFo4x6RvJ6bMQVFDLTMirPIl1YpWamNRL5jWh/PBrPHRQTS+Ru5SAbctei4TTSu5qtEoubOsbg/qAcxKbPDWuO8Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938155; c=relaxed/simple;
-	bh=Teeh8KcQNzuIsJXPFF4rs0mxS9J90+7VxVkbhpr7iiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PqI2fOcS/JMzP/efBiTQKg3jhzZ4xxPE9il0id/xU/jjfZe3yXAoybilL8VVukP+Ct9CNLUNi06d8UrJsFGiEOo1jaJwpk9hTKnfPDXYQBdeyebd1Xgk/XUFMld/SjuP03bVBcXMLgSW+jSNDLsc91QtcPo0se0w7jpu9+UcEMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMnLf5Ah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72BBC4CEF9
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:09:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757938154;
-	bh=Teeh8KcQNzuIsJXPFF4rs0mxS9J90+7VxVkbhpr7iiE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fMnLf5AhvoQxAWsQ2XNQoYFXf8uDuEkEAyf+n46BRdVlbMgtVgrBN3bL8x77mKiGR
-	 2hR4eGOPagtAFZlmolRGZ2jb7WW0rQG6Bmr6ydcQvl0u2fahtpt4bp63rYvv94MOMV
-	 dpCEz3AZG2FZxdH8AVWgEhjgaFaUA7/om0vP13sN1ks/U+CyRzEIB+Zq0Jti4LLODY
-	 mn+SZbsKkriY1LRkttyfZSneLvuH6cwbbCdM8G6XuaAivN+/LnnnDYlKNnjjnLrH4F
-	 4+bxWCiwHug/iUMU4eP9Hk0Sy4sPe/0sFL9zhpqp0LnKVWdn8PuH4P/bh7qh7UdN6E
-	 NXAawDeLs7cBg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-62344ae5bacso609377eaf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:09:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUP4CikdgOxx6ogb0NvY4T+vB5Q6S6BHxfKrPnXBZyANnYFA3PKCNPfc0UjQNhvEUr3Z03/lCZUBDygARM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwhXH+mE0nhqz8kFCRdfGxQlrkesPFHdJrisNyNhrt98L/VtfF
-	c8ivssAFnrrdt7t/Kk7bx487Unhqa2LbLrAAjlrsPV2Ofh0LoiURCRdcsgt2iPaNdSW3qdsEfxf
-	6ytl+29p9n/+YOPMZd22iHLtBHH1wTHo=
-X-Google-Smtp-Source: AGHT+IHWVj7BbTDa433wRQXaT2JQvW3m4j1w+ikKLeCXzEnVOLyCvrMszDlpf3M5BCYVACy6h58yQCmNDWHvWpCDBiA=
-X-Received: by 2002:a05:6820:2d87:b0:61e:68b9:cb0d with SMTP id
- 006d021491bc7-621b2c31ebdmr6904407eaf.0.1757938153953; Mon, 15 Sep 2025
- 05:09:13 -0700 (PDT)
+	s=arc-20240116; t=1757938251; c=relaxed/simple;
+	bh=zfBMW9Wry9FFlM4ynsgMpWJYaz8r0IYmfbQDpxHEN0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDPanyHkW6I0pK71y5TXk1aJwurYPZLxlZt1448a46zuZ3VokDiq25AecUp8gIjVYb6eXYVLjobUf9OS94Bx4O3mI81lKoYUGm1q2fJIGwHpgHSg+Nw70hPAkZ7lQTKaP0y0xDMHIP4A4xd/OlwarAqYxPkjhyWG61TT065KVFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BjV6dXlk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757938249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VWtTSMlxJRQGC3FcFieZ8tT1OlyU8gkHxlUHQErqXnU=;
+	b=BjV6dXlkBu4sqF7Cs//g3K4GzbZhllDsiQG7DUo+X64AZmovcg3uE1VBGo/fSBOZqFdUub
+	/L2XrD8ktBWUR1vFJFgHaJQqkZN8oWUCcvozrWfiNVjRAeJezwZp18Uf1IclaOoFnK+/uU
+	hSb+/afJyHelvc2HBcFU4bs0GZGN4t8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-sIIVRUQyNdGlUvtsxFtKrA-1; Mon,
+ 15 Sep 2025 08:10:46 -0400
+X-MC-Unique: sIIVRUQyNdGlUvtsxFtKrA-1
+X-Mimecast-MFC-AGG-ID: sIIVRUQyNdGlUvtsxFtKrA_1757938245
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64EFC19107D4;
+	Mon, 15 Sep 2025 12:10:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.65])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E2BC519560B4;
+	Mon, 15 Sep 2025 12:10:42 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 15 Sep 2025 14:09:21 +0200 (CEST)
+Date: Mon, 15 Sep 2025 14:09:17 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-kernel@vger.kernel.org,
+	Barret Rhoden <brho@google.com>
+Subject: [PATCH v2 2/2] fix the racy usage of task_lock(tsk->group_leader) in
+ sys_prlimit64() paths
+Message-ID: <20250915120917.GA27702@redhat.com>
+References: <20250914110908.GA18769@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5046661.31r3eYUQgx@rafael.j.wysocki> <5017964.GXAFRqVoOG@rafael.j.wysocki>
- <aMfyqjZZwozuRmW_@kekkonen.localdomain>
-In-Reply-To: <aMfyqjZZwozuRmW_@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 15 Sep 2025 14:09:03 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g98Tt43y-jCS4Vn9hhv1HtcjcyeOkSv21zswhpxc0TRg@mail.gmail.com>
-X-Gm-Features: Ac12FXxdXXSBMo-UKdgHRtY55N_mZMFYhdOIYWa7Dl1VzzRLET2kLzV8rtE2wCg
-Message-ID: <CAJZ5v0g98Tt43y-jCS4Vn9hhv1HtcjcyeOkSv21zswhpxc0TRg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] ACPI: property: Fix buffer properties extraction
- for subnodes
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914110908.GA18769@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Sakari,
+The usage of task_lock(tsk->group_leader) in sys_prlimit64()->do_prlimit()
+path is very broken.
 
-On Mon, Sep 15, 2025 at 1:04=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Fri, Sep 12, 2025 at 09:39:52PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > The ACPI handle passed to acpi_extract_properties() as the first
-> > argument represents the ACPI namespace scope in which to look for
-> > objects returning buffers associated with buffer properties.
-> >
-> > For _DSD objects located immediately under ACPI devices, this handle is
-> > the same as the handle of the device object holding the _DSD, but for
-> > data-only subnodes it is not so.
-> >
-> > First of all, data-only subnodes are represented by objects that
-> > cannot hold other objects in their scopes (like control methods).
-> > Therefore a data-only subnode handle cannot be used for completing
-> > relative pathname segments, so the current code in
-> > in acpi_nondev_subnode_extract() passing a data-only subnode handle
-> > to acpi_extract_properties() is invalid.
-> >
-> > Moreover, a data-only subnode of device A may be represented by an
-> > object located in the scope of device B (which kind of makes sense,
-> > for instance, if A is a B's child).  In that case, the scope in
-> > question would be the one of device B.  In other words, the scope
-> > mentioned above is the same as the scope used for subnode object
-> > lookup in acpi_nondev_subnode_extract().
-> >
-> > Accordingly, rearrange that function to use the same scope for the
-> > extraction of properties and subnode object lookup.
-> >
-> > Fixes: 103e10c69c61 ("ACPI: property: Add support for parsing buffer pr=
-operty UUID")
->
-> I believe the commit introducing this is
-> 99db5ff7fe0b4e1657423d7bbe2aa8f655dd02d1 .
+sys_prlimit64() does get_task_struct(tsk) but this only protects task_struct
+itself. If tsk != current and tsk is not a leader, this process can exit/exec
+and task_lock(tsk->group_leader) may use the already freed task_struct.
 
-No, it isn't.  Prior to commit 103e10c69c61, scope was not passed to
-acpi_extract_properties().
+Another problem is that sys_prlimit64() can race with mt-exec which changes
+->group_leader. In this case do_prlimit() may take the wrong lock, or (worse)
+->group_leader may change between task_lock() and task_unlock().
 
-> > Cc: 6.0+ <stable@vger.kernel.org> # 6.0+
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/acpi/property.c |   30 +++++++++++-------------------
-> >  1 file changed, 11 insertions(+), 19 deletions(-)
-> >
-> > --- a/drivers/acpi/property.c
-> > +++ b/drivers/acpi/property.c
-> > @@ -83,6 +83,7 @@ static bool acpi_nondev_subnode_extract(
-> >                                       struct fwnode_handle *parent)
-> >  {
-> >       struct acpi_data_node *dn;
-> > +     acpi_handle scope =3D NULL;
-> >       bool result;
-> >
-> >       if (acpi_graph_ignore_port(handle))
-> > @@ -98,27 +99,18 @@ static bool acpi_nondev_subnode_extract(
-> >       INIT_LIST_HEAD(&dn->data.properties);
-> >       INIT_LIST_HEAD(&dn->data.subnodes);
-> >
-> > -     result =3D acpi_extract_properties(handle, desc, &dn->data);
-> > +     /*
-> > +      * The scope for the completion of relative pathname segments and
-> > +      * subnode object lookup is the one of the namespace node (device=
-)
-> > +      * containing the object that has returned the package.  That is,=
- it's
-> > +      * the scope of that object's parent device.
-> > +      */
-> > +     if (handle)
-> > +             acpi_get_parent(handle, &scope);
-> >
-> > -     if (handle) {
-> > -             acpi_handle scope;
-> > -             acpi_status status;
-> > -
-> > -             /*
-> > -              * The scope for the subnode object lookup is the one of =
-the
-> > -              * namespace node (device) containing the object that has
-> > -              * returned the package.  That is, it's the scope of that
-> > -              * object's parent.
-> > -              */
-> > -             status =3D acpi_get_parent(handle, &scope);
-> > -             if (ACPI_SUCCESS(status)
-> > -                 && acpi_enumerate_nondev_subnodes(scope, desc, &dn->d=
-ata,
-> > -                                                   &dn->fwnode))
-> > -                     result =3D true;
-> > -     } else if (acpi_enumerate_nondev_subnodes(NULL, desc, &dn->data,
-> > -                                               &dn->fwnode)) {
-> > +     result =3D acpi_extract_properties(scope, desc, &dn->data);
-> > +     if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->f=
-wnode))
-> >               result =3D true;
-> > -     }
-> >
-> >       if (result) {
-> >               dn->handle =3D handle;
-> >
-> >
->
-> --
+Change sys_prlimit64() to take tasklist_lock when necessary. This is not
+nice, but I don't see a better fix for -stable.
+
+Cc: stable@vger.kernel.org
+Fixes: 18c91bb2d872 ("prlimit: do not grab the tasklist_lock")
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ kernel/sys.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 1e28b40053ce..36d66ff41611 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1734,6 +1734,7 @@ SYSCALL_DEFINE4(prlimit64, pid_t, pid, unsigned int, resource,
+ 	struct rlimit old, new;
+ 	struct task_struct *tsk;
+ 	unsigned int checkflags = 0;
++	bool need_tasklist;
+ 	int ret;
+ 
+ 	if (old_rlim)
+@@ -1760,8 +1761,25 @@ SYSCALL_DEFINE4(prlimit64, pid_t, pid, unsigned int, resource,
+ 	get_task_struct(tsk);
+ 	rcu_read_unlock();
+ 
+-	ret = do_prlimit(tsk, resource, new_rlim ? &new : NULL,
+-			old_rlim ? &old : NULL);
++	need_tasklist = !same_thread_group(tsk, current);
++	if (need_tasklist) {
++		/*
++		 * Ensure we can't race with group exit or de_thread(),
++		 * so tsk->group_leader can't be freed or changed until
++		 * read_unlock(tasklist_lock) below.
++		 */
++		read_lock(&tasklist_lock);
++		if (!pid_alive(tsk))
++			ret = -ESRCH;
++	}
++
++	if (!ret) {
++		ret = do_prlimit(tsk, resource, new_rlim ? &new : NULL,
++				old_rlim ? &old : NULL);
++	}
++
++	if (need_tasklist)
++		read_unlock(&tasklist_lock);
+ 
+ 	if (!ret && old_rlim) {
+ 		rlim_to_rlim64(&old, &old64);
+-- 
+2.25.1.362.g51ebf55
+
+
 
