@@ -1,211 +1,230 @@
-Return-Path: <linux-kernel+bounces-817013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B0AB57C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:08:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7D5B57D74
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4754864B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938853A48AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348E730DEC0;
-	Mon, 15 Sep 2025 13:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172FF31B807;
+	Mon, 15 Sep 2025 13:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y0zaOiip";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i7iqIT6V";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zmQdpiqT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="e7GDT84W"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="fyI3FnhQ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEF425A321
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941691; cv=none; b=LjbYw3dLn1MMYLglbTpDoMJSg+I4geyT2dCmPK5eF0JC2k/Jguu5vK3QXDQUfFQwqxlBTi/gKSUrpsnoh2xkfiXCzbtscVRm7cyjYZ/yU0YuMwFpNRnjvrWAZ/LGpl2xODy7L1pKUNspdeHZIKeddbzOYQjSJw0OKWyEBSGNg80=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941691; c=relaxed/simple;
-	bh=Re22mJjzS3FlfnQ75rbX5/KkAHtmHxAoHXCLc7Y2T5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apv2NqVJYtQwoY2V+1lZD6qDjlqZum2XvYpelhA0jprc98UkXgCU288CLd5lhHOC1AJM/xRnHtN1XLP2PTHu2lMzTpqWE6SslpYGz+pavbzNLvPwIjHa6+BDhWDTdD2a5sgBCm2oZVXBt1PZMjvPLEfmWh0WkqdG2qGYRPmZa3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y0zaOiip; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i7iqIT6V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zmQdpiqT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=e7GDT84W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D0A3A1FB7A;
-	Mon, 15 Sep 2025 13:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757941688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDT1ixlN5/l3VLvL8I6eQ25gbYXEk9IwocxJMid4zSY=;
-	b=Y0zaOiiprLTkpBrhHIiGO7lF7DVf5wenfiH/E/+IxPG1rQPiz2WVQad5Nx1Z8gATTp6RPM
-	oVs9vOF46oel1h+jrpuZF9zlnTuA3RmzJ6wy3iNGziWMz7uy8LCRNSF86Ivvzic3+lmbtS
-	tr1Xa9zzMfEexTLliJJ6H9qHB26wZ+Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757941688;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDT1ixlN5/l3VLvL8I6eQ25gbYXEk9IwocxJMid4zSY=;
-	b=i7iqIT6VUHIzFqv3mvi/fCZLKE80GzrdrDyp76OCC2cCUgXtsj8Fao0U+8zkE6tYzsRUEi
-	qnNsE/vJyeEsRlAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zmQdpiqT;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=e7GDT84W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757941686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDT1ixlN5/l3VLvL8I6eQ25gbYXEk9IwocxJMid4zSY=;
-	b=zmQdpiqTiBwns3bXFSj8gCGGVExEIKeH1PFidZVlpASWgVEmqj+PccZpJjIeF9IrJ4qcXK
-	prAUyLVFTzKt00BujzY3IS5iYWzvj08K8CKr0j68yqMkRKiYTRgCVDNNQWvNBJ/XoyHxWF
-	GMxloy2RRvmPJNVcjins+qSegtJN4s8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757941686;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nDT1ixlN5/l3VLvL8I6eQ25gbYXEk9IwocxJMid4zSY=;
-	b=e7GDT84W7wexUEtWItPo8Fpq7KhQG8m6jb+EwDDNAgCjN53sZoK/T7t6XWACPiBNIN8FMf
-	KZ8m/o0jq2QC32BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BCB0E1372E;
-	Mon, 15 Sep 2025 13:08:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Rzu+LbYPyGgWRwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:08:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 65AAFA0A06; Mon, 15 Sep 2025 15:08:02 +0200 (CEST)
-Date: Mon, 15 Sep 2025 15:08:02 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 27/33] nsfs: add current_in_namespace()
-Message-ID: <oqr6utatstghtjivwscnrrwyyzq7xwnqqw6ylkeyvvv6a4pp3j@ffobmvyqlndm>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-27-1a247645cef5@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312B5312804;
+	Mon, 15 Sep 2025 13:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757943294; cv=pass; b=YaRL1YNIWj77qxz2lbiY3TVFh1i3WFINFfMPSSJibnGNuF5UBDjax7EFpdBDX1UJMJt+eNGlLQKNNGOp/zwFjHOYv+Y66pCXu0GDw88/jevJ3iM4gTBz8n+2l0BoE+a2yXURyzTNGb5j/P6TbZsvhVrohthm1+xxHZv6u7RF0Vc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757943294; c=relaxed/simple;
+	bh=uXelXmVecP0Kqw+0zkV1JM96ps5WyaV3Nq+mEOJy9gc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g61QNSde2eTxUHwAE9NLlpOE2lsyZ5ApzdMheR/vvIOw8GBL7G17zSCup0ITaMXeCrKdimCQBlHlJ7AQy95jFc1pNiK2ttuE05nx4X6dctmI1+/hARK7wB7f3JbhesXOg9UzxTnaUFey8NYNQLvtxGghUutnVk+rA1uhu8+C3aE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=fyI3FnhQ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757943260; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bhJcqyqaJf6fbb3wRy49gzrnP/jNHvzkV3C6IbBWWbpj76HcJ30Im2V6QFjc3xr8WihnltlgvHoicCrcqFkBqpTCy5WD4+CpXQNwi1S4IOUbDievVhxqcDIpbv+xwM30SUDbjjGcN6tEltRyzMjGr4sGdnoD5UxkLMBIpbrMqug=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757943260; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FmQQaI5thj9GN9UIWV3zSwQzaVhJ4atEslX7ELWl7hI=; 
+	b=JTjpnyG0DIu0VCtIBYr4vNMuWUKVfHYXvlgjK3f8XTqynZDRpLrFVLGYARLrx9S8omXl7IeL7LZj/rQTlKz/S+um16FWoqldrGJdl7l77ZDWBCA6mWDamfXGXcsYGr5wdCswbeN1xSB4VzYUHsc3UNOxpZrp0qcXIrzXdYO4gZs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757943260;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=FmQQaI5thj9GN9UIWV3zSwQzaVhJ4atEslX7ELWl7hI=;
+	b=fyI3FnhQR5rKmaNNyvARvYaV2U4W3knN1mJ3Ej13dXI2ltCUB68fTvtj3BWR9hci
+	2o9rwMOsfvsJFJgASAIkOA7DivNiyrvpwvJ0yPD7txUGWv2nm508GLYKT0TGnWRLtPL
+	VCVR+V3Gxpa9bxqHObC70rrpPZHcl8XmPLygJypk=
+Received: by mx.zohomail.com with SMTPS id 1757943257975999.7821234845057;
+	Mon, 15 Sep 2025 06:34:17 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject:
+ Re: [PATCH v2 09/10] drm/panthor: devfreq: add pluggable devfreq providers
+Date: Mon, 15 Sep 2025 15:09:38 +0200
+Message-ID: <24083992.6Emhk5qWAg@workhorse>
+In-Reply-To:
+ <CAPaKu7TEN++z8r68k_4-iCyMLMthqJBUX35pgXupAHPdfttrYg@mail.gmail.com>
+References:
+ <20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com>
+ <20250912-mt8196-gpufreq-v2-9-779a8a3729d9@collabora.com>
+ <CAPaKu7TEN++z8r68k_4-iCyMLMthqJBUX35pgXupAHPdfttrYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-27-1a247645cef5@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D0A3A1FB7A
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri 12-09-25 13:52:50, Christian Brauner wrote:
-> Add a helper to easily check whether a given namespace is the caller's
-> current namespace. This is currently open-coded in a lot of places.
-> Simply switch on the type and compare the results.
-> 
-> Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Saturday, 13 September 2025 00:53:50 Central European Summer Time Chia-I=
+ Wu wrote:
+> On Fri, Sep 12, 2025 at 11:38=E2=80=AFAM Nicolas Frattaroli
+> <nicolas.frattaroli@collabora.com> wrote:
+> <snipped>
+> > diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.h b/drivers/gpu/dr=
+m/panthor/panthor_devfreq.h
+> > index a891cb5fdc34636444f141e10f5d45828fc35b51..94c9768d5d038c4ba851692=
+9edb565a1f13443fb 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_devfreq.h
+> > +++ b/drivers/gpu/drm/panthor/panthor_devfreq.h
+> > @@ -8,6 +8,7 @@
+> >
+> >  struct devfreq;
+> >  struct thermal_cooling_device;
+> > +struct platform_device;
+> >
+> >  struct panthor_device;
+> >
+> > @@ -43,6 +44,19 @@ struct panthor_devfreq {
+> >         spinlock_t lock;
+> >  };
+> >
+> > +struct panthor_devfreq_provider {
+> > +       /** @dev: device pointer to the provider device */
+> > +       struct device *dev;
+> > +       /**
+> > +        * @init: the provider's init callback that allocates a
+> > +        * &struct panthor_devfreq, adds it to panthor, and adds a devf=
+req
+> > +        * device to panthor. Will be called during panthor's probe.
+> > +        */
+> > +       int (*init)(struct panthor_device *ptdev, struct device *dev);
+> > +
+> > +       struct list_head node;
+> > +};
+> On mt8196, we have performance-domains to replace several other
+> properties: clocks, *-supply, power-domains, operating-points-v2.
+> There are also quirks, such as GPU_SHADER_PRESENT should be masked by
+> GF_REG_SHADER_PRESENT. It feels like that the scope of
+> panthor_devfreq_provider is more broader, and at least the naming is
+> not right.
 
-Looks good. Feel free to add:
+True, though I'm still not entirely sure whether mtk_mfg needs to do
+the GF_REG_SHADER_PRESENT thing. It's entirely possible this is just
+an efuse value the GPUEB reads and then puts in SRAM for us, and we
+could simply read this efuse cell ourselves. Among a list of questions
+about the hardware we're sending to MediaTek, whether this is an efuse
+cell and where it is placed is one of them.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+If it turns out to be the case that we can simply read an efuse in
+panthor in the other mt8196 integration code, then we can keep
+mtk_mfg basically entirely focused on the devfreq-y part. I'd really
+prefer this solution.
 
-								Honza
-> ---
->  include/linux/nsfs.h | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/nsfs.h b/include/linux/nsfs.h
-> index fb84aa538091..e5a5fa83d36b 100644
-> --- a/include/linux/nsfs.h
-> +++ b/include/linux/nsfs.h
-> @@ -5,6 +5,8 @@
->  #define _LINUX_NSFS_H
->  
->  #include <linux/ns_common.h>
-> +#include <linux/cred.h>
-> +#include <linux/pid_namespace.h>
->  
->  struct path;
->  struct task_struct;
-> @@ -22,5 +24,17 @@ int ns_get_name(char *buf, size_t size, struct task_struct *task,
->  			const struct proc_ns_operations *ns_ops);
->  void nsfs_init(void);
->  
-> -#endif /* _LINUX_NSFS_H */
-> +#define __current_namespace_from_type(__ns)				\
-> +	_Generic((__ns),						\
-> +		struct cgroup_namespace *: current->nsproxy->cgroup_ns,	\
-> +		struct ipc_namespace *:    current->nsproxy->ipc_ns,	\
-> +		struct net *:              current->nsproxy->net_ns,	\
-> +		struct pid_namespace *:    task_active_pid_ns(current),	\
-> +		struct mnt_namespace *:    current->nsproxy->mnt_ns,	\
-> +		struct time_namespace *:   current->nsproxy->time_ns,	\
-> +		struct user_namespace *:   current_user_ns(),		\
-> +		struct uts_namespace *:    current->nsproxy->uts_ns)
-> +
-> +#define current_in_namespace(__ns) (__current_namespace_from_type(__ns) == __ns)
->  
-> +#endif /* _LINUX_NSFS_H */
-> 
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+However, assuming we can't go down this path either because this is
+not how the hardware works, or because MediaTek never replies, or
+because someone doesn't like reading efuses in panthor, I think
+generalising "devfreq_provider" to "performance_controller" or
+something like that would be a good move.
+
+In a way, the fused off core mask is part of the vague domain of
+"performance", and it'll also allow us to extend it with other
+things relevant to performance control in different vendor integration
+logic designs. I'm thinking memory bandwidth control and job scheduling
+preferences. E.g. if the interconnect tells us one core is spending a
+lot of time waiting on the interconnect, maybe because a different
+piece of the SoC that's active shares the same path on the
+interconnect, we could then communicate a scheduling preference for
+the other cores that have bandwidth headroom even if they are busier
+in compute. Maybe this doesn't make sense though because interconnect
+designs are fully switched these days or panthor's scheduler will
+already figure this out from job completion times.
+
+If any other SoC vendor or people working on hardware of those vendors
+want to chime in and say whether they've got any other uses for
+communicating more than just devfreq from glue logic to panthor, then
+this would be a great time to do it, so that we can get this interface
+right from the beginning.
+
+> Another issue is I am not sure if we need to expose panthor_device
+> internals to the provider. mtk_mfg accesses very few fields of
+> panthor_device. It seems we can make the two less coupled.
+>=20
+> I might change my view as mtk_mfg evolves and requires tigher
+> integration with panthor. But as is, I might prefer for mtk_mfg to
+> live under drivers/soc/mediatek and provide a header for panthor to
+> use in soc-specific path.
+
+I'm not very confident it's possible to cleanly decouple them without
+inventing a bunch of very panthor-and-mfg specific interfaces that
+masquerade as general solutions in the process. It'd also mean I'd
+have to duplicate all of `panthor_devfreq_get_dev_status` instead of
+just being able to reuse it, unless that is also exposed in said
+header file, which would need a better justification than "well there
+is one other user of it and we're trying to couple it more loosely".
+
+I know that it's almost independent, but unfortunately, even a tiny
+dependency between the two will mean that mediatek_mfg will need to
+know about panthor.
+
+Other things needed from panthor are the pdevfreq->gov_data, and
+the panthor struct device* itself, as well as stuff like "fast_rate"
+in the panthor_device struct.
+
+In the future, we may want to expand this driver with governors
+beyond SIMPLE_ONDEMAND, based on the job completion duration targets
+we can communicate to the GPUEB. That may either make the driver
+more tightly coupled or more loosely coupled, I don't really know
+yet.
+
+One advantage of looking to completely decouple them (though again,
+I doubt that's possible at the moment without questionable refactors)
+could be that we could also support panfrost devices that need this.
+
+>=20
+>=20
+> > +
+> >
+> >  int panthor_devfreq_init(struct panthor_device *ptdev);
+> >
+> > @@ -57,4 +71,6 @@ int panthor_devfreq_get_dev_status(struct device *dev,
+> >
+> >  unsigned long panthor_devfreq_get_freq(struct panthor_device *ptdev);
+> >
+> > +int panthor_devfreq_register_provider(struct panthor_devfreq_provider =
+*prov);
+> > +
+> >  #endif /* __PANTHOR_DEVFREQ_H__ */
+> >
+> > --
+> > 2.51.0
+> >
+>=20
+
+
+
+
 
