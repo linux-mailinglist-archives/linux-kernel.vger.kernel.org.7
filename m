@@ -1,391 +1,209 @@
-Return-Path: <linux-kernel+bounces-817472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2706CB5829B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:55:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD4B5829E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7632A2284
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF45D3B6238
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E649283FD9;
-	Mon, 15 Sep 2025 16:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85E9283CB8;
+	Mon, 15 Sep 2025 16:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SICsUAzF"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="c70sDKW0"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F82701B8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA01E50E;
+	Mon, 15 Sep 2025 16:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757955305; cv=none; b=g14hLlbwq4sAE0lr+3nkooY6lE/Orxh4jbTkhspkfQFtSK4/rqK9pDjxzqJJ73izPO+sLXCfNlgrnjAj2xAHYpFm/dtToNVZEancytmykjavpMJIEAomQeU1uBGFf0ne+nwbQy9KWYqTMza/QQ4Sp+XCvH2pnWvxNdh2WscPQJ4=
+	t=1757955354; cv=none; b=nxsDiC2GXnnvC97xXw0gjKOHr6yebkX55uixbg+UeCb/M9tD7HKjndRHP9CRWmWzKDa0Wx154Xty0DNNBegDi1fgS1cWy3TUXzvjpwf9KEBNfjKbedo0cra+AbkzQVqVBQhZ2u1JTMnE3GqBUY5bTt/pTcWOhwyx31JrKMM7ZMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757955305; c=relaxed/simple;
-	bh=J59w39RBpPTW2BK9vj32fr6jhKBI3HhYaa7/Gd2qRbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=phHtEjbqjS5welDTy22PrrhiQoOMgcKlYcDfrPgP96CQZwrlxU/+7fBx3rumNo00wNmeptoofGAu9G672Hu2R9fI1UKQcUcton1mmTpikuanrafzDmErwfvo7n0geLNbhf3IQNO0PWmPz5/eBtfZOsNuZ5PwfacW4C2JFvIMkTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SICsUAzF; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b522e2866bcso315377a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757955302; x=1758560102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/YjN8qvwhiHU8tintgshBZavETAbRta16kugFoyEbLI=;
-        b=SICsUAzF3R0XuhVtoG4xoBzKzPOmvJJjR2yn1Zy0qxiUrUQEpG8WBcowsQpMsGm8eR
-         +O4UCZIiZslA1ovD75B9Zce1U0WtCoYMbyWj2iqelRXtOA2JXKX8B7RrXuzpERlYjO2S
-         DQbvYHxqo4+xqyS4eUw6T9RH5PPNr6T7hAnMXpyitWffandnnSCjsReZt2Gxvmk2WXEA
-         YbtcgPEMjOV8ghdBOoJwFki6EklvtpuoMDexXUaLp0to2kYeATZSAALNM1/1045M/7ej
-         k1G95jtA+4WEEgawdyduhVhdyjBN0e1AciZPTeMjwidXiGmc4wkpt9MyjYDGQWezaWBb
-         vL7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757955302; x=1758560102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/YjN8qvwhiHU8tintgshBZavETAbRta16kugFoyEbLI=;
-        b=hl1dP/3TkaB3GxTjnfgCd5LnJenEkWMM0qFY3mUFp1i9gMkoTM01qiyGnMaSS8DDTp
-         r33nu2tII1i2MsRFuw7QKK6WtIQ3ojUAvv4NShq4a5LqGym7z8T4QakGJRCr5HqTcfaJ
-         Na/ZzwnhKhBzWFbvmuhaT1ZKViYQxbiG26xSdCPscTViJOfhQg748PN7S0vmn92QeSz2
-         vqEszugbUczrUecWHJ78Bg782RRI6LYfTW3WTK0gUyxyhT+W4o8TfJ1FqEUU3gAX5a/D
-         IvXwRgbu0LSRRjzgUou7GNejZNAOrnzeM7m5gYL/5x5XDf6nCjGSwF5GRQi7QRvxrx89
-         gqKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWuafr8rO8Kl2RAgozqn/KEVW2rTNjYg27i0Lnb7WKO/Lcv+VRLAt+76yPf7e6PhP1fxXEP5yd+TIKzFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxWzvNxHfwrJhL5hn527Yu3Hb6ngFL/7sUhIX42XQRQ9cKtBYz
-	IdydE20RNCJViLtsy61QU6Jq0yI4Hp79R4OzS1zeZjNaGjH7kS82ssgw0nSAsN1fNJvOjKoNqUa
-	L8MGTuACzLr6Pgc+5FHCPfnsKRiSBqhF/vrOK5GsrQQ==
-X-Gm-Gg: ASbGncvqsqXB6F91TNbnde3re4vVhlZ+cxxkGTWo+/Sf58oeuwHdeTOf+yi3fq/OMu2
-	6cX5KNM/mk2KYYF4vRrQ/aohohcFZm9qYdd9Eqv10IroKYksBWNWXMiGXrfwmoDS1bZjQbarTaU
-	k7IcCplXPWQ0AbeMIb7HATR9omGHtpgl2GOgkaDw7qTg9eyLsxpc1CRoh8iHyhLFQTKk3mhOgYR
-	UJ4nm1xtpFCnWJ4upRBTx6NxiNO1FbVEOW37JTaf5R00H9s65Y=
-X-Google-Smtp-Source: AGHT+IHMAwA6cEL7MUPdfl7PV4ovMCbIEezc+HuF9md65upZSvgRXkEpjLiGdatB0iTxFeYFQgmYrxcSkTbFlYOukTU=
-X-Received: by 2002:a17:902:ec85:b0:267:bd8d:1b6 with SMTP id
- d9443c01a7336-267bd8d09c0mr3771115ad.6.1757955302499; Mon, 15 Sep 2025
- 09:55:02 -0700 (PDT)
+	s=arc-20240116; t=1757955354; c=relaxed/simple;
+	bh=ScHNo7xeAxbc9qs152ZJaY9kt3AjpGFgAP5bYGwbDhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+YoxyXZb6DNrSYf9IaCexYsQhk4f8KOFkPcFGtfOiQPdv/Iugcnhlh+YTABLFRdzRHtC82wNYeWlIcLHlcDl4utA4L+a1MHKpjkX/A2X17+xQkd9LSczP54a7VQ30hA8MXVEzQ3xwfsJZdSdgZFAREcl1GRZCFvb/E9dSjsKCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=c70sDKW0; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-56-182.net.vodafone.it [5.90.56.182])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 82062B0B;
+	Mon, 15 Sep 2025 18:54:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757955272;
+	bh=ScHNo7xeAxbc9qs152ZJaY9kt3AjpGFgAP5bYGwbDhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c70sDKW0Y91oM30vf++vp2z4pVbkNOEdGBxrMH87+iYEavirzIxXtUCKhgFzwH/KH
+	 ivQOwVUa5MFYJGAYc2gUP6A0ScAbeK8jx6ft6jvJouGoxqtvgUx+q/8AkW3LX4d1VE
+	 TQ8R7eqIgg2YgosbNbUJkyuF4YlP8QN+qRW6CNj8=
+Date: Mon, 15 Sep 2025 18:55:44 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Stefan Klug <stefan.klug@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: rkisp1: Improve frame sequence correctness on
+ stats and params buffers
+Message-ID: <rthpkuipbpbp2lv2ddmruwb7fmpkmtlsnx3q6kk7gaskzpdaar@5bk3r44f2mpo>
+References: <20250908094200.48002-1-stefan.klug@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-3-sidong.yang@furiosa.ai> <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local> <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local> <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
- <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local> <CADUfDZppdnM2QAeX37OmZsXqd7sO7KvyLnNPUYOgLpWMb+FpoQ@mail.gmail.com>
- <aMRNSBHDM4nkewHO@sidongui-MacBookPro.local> <CADUfDZrHse9nDxfd0UDkxOEmVRg-b=KDEUZ9Hz08eojXJvgtng@mail.gmail.com>
- <aMVmm1Ydt4iOfxu5@sidongui-MacBookPro.local>
-In-Reply-To: <aMVmm1Ydt4iOfxu5@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 15 Sep 2025 09:54:50 -0700
-X-Gm-Features: Ac12FXwmoh35IByx-sSqLbzTFKdFSm8mcEsw5Ger2WP3BbuSlGRbjwsXJOYIDJU
-Message-ID: <CADUfDZrULTJj99Bik3OhUEorMSnL5cWgJ-VqoHePZ6WWDoukTQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250908094200.48002-1-stefan.klug@ideasonboard.com>
 
-On Sat, Sep 13, 2025 at 5:42=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai=
-> wrote:
+Hi Stefan
+
+On Mon, Sep 08, 2025 at 11:41:48AM +0200, Stefan Klug wrote:
+> On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
+> handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
+> and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
+> commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
+> debugfs var for irq delay") a warning was added for that. There are two
+> cases where this condition can occur:
 >
-> On Fri, Sep 12, 2025 at 10:56:31AM -0700, Caleb Sander Mateos wrote:
-> > On Fri, Sep 12, 2025 at 9:42=E2=80=AFAM Sidong Yang <sidong.yang@furios=
-a.ai> wrote:
-> > >
-> > > On Tue, Sep 09, 2025 at 09:32:37AM -0700, Caleb Sander Mateos wrote:
-> > > > On Tue, Sep 9, 2025 at 7:43=E2=80=AFAM Sidong Yang <sidong.yang@fur=
-iosa.ai> wrote:
-> > > > >
-> > > > > On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wro=
-te:
-> > > > > > On Sat, Sep 6, 2025 at 7:28=E2=80=AFAM Sidong Yang <sidong.yang=
-@furiosa.ai> wrote:
-> > > > > > >
-> > > > > > > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos=
- wrote:
-> > > > > > > > On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.=
-yang@furiosa.ai> wrote:
-> > > > > > > > >
-> > > > > > > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Ma=
-teos wrote:
-> > > > > > > > > > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <si=
-dong.yang@furiosa.ai> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > The pdu field in io_uring_cmd may contain stale data =
-when a request
-> > > > > > > > > > > object is recycled from the slab cache. Accessing uni=
-nitialized or
-> > > > > > > > > > > garbage memory can lead to undefined behavior in user=
-s of the pdu.
-> > > > > > > > > > >
-> > > > > > > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_=
-prep() so that
-> > > > > > > > > > > each command starts from a well-defined state. This a=
-voids exposing
-> > > > > > > > > > > uninitialized memory and prevents potential misinterp=
-retation of data
-> > > > > > > > > > > from previous requests.
-> > > > > > > > > > >
-> > > > > > > > > > > No functional change is intended other than guarantee=
-ing that pdu is
-> > > > > > > > > > > always zero-initialized before use.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > > > > > > > ---
-> > > > > > > > > > >  io_uring/uring_cmd.c | 1 +
-> > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cm=
-d.c
-> > > > > > > > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > > > > > > > --- a/io_uring/uring_cmd.c
-> > > > > > > > > > > +++ b/io_uring/uring_cmd.c
-> > > > > > > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_k=
-iocb *req, const struct io_uring_sqe *sqe)
-> > > > > > > > > > >         if (!ac)
-> > > > > > > > > > >                 return -ENOMEM;
-> > > > > > > > > > >         ioucmd->sqe =3D sqe;
-> > > > > > > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > > > > > > > >
-> > > > > > > > > > Adding this overhead to every existing uring_cmd() impl=
-ementation is
-> > > > > > > > > > unfortunate. Could we instead track the initialized/uni=
-nitialized
-> > > > > > > > > > state by using different types on the Rust side? The io=
-_uring_cmd
-> > > > > > > > > > could start as an IoUringCmd, where the PDU field is Ma=
-ybeUninit,
-> > > > > > > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that=
- guarantees the
-> > > > > > > > > > PDU has been initialized.
-> > > > > > > > >
-> > > > > > > > > I've found a flag IORING_URING_CMD_REISSUE that we could =
-initialize
-> > > > > > > > > the pdu. In uring_cmd callback, we can fill zero when it'=
-s not reissued.
-> > > > > > > > > But I don't know that we could call T::default() in miscd=
-evice. If we
-> > > > > > > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevi=
-ce<T>.
-> > > > > > > > >
-> > > > > > > > > How about assign a byte in pdu for checking initialized? =
-In uring_cmd(),
-> > > > > > > > > We could set a byte flag that it's not initialized. And w=
-e could return
-> > > > > > > > > error that it's not initialized in read_pdu().
-> > > > > > > >
-> > > > > > > > Could we do the zero-initialization (or T::default()) in
-> > > > > > > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISS=
-UE flag
-> > > > > > > > isn't set (i.e. on the initial issue)? That way, we avoid a=
-ny
-> > > > > > > > performance penalty for the existing C uring_cmd() implemen=
-tations.
-> > > > > > > > I'm not quite sure what you mean by "assign a byte in pdu f=
-or checking
-> > > > > > > > initialized".
-> > > > > > >
-> > > > > > > Sure, we could fill zero when it's the first time uring_cmd c=
-alled with
-> > > > > > > checking the flag. I would remove this commit for next versio=
-n. I also
-> > > > > > > suggests that we would provide the method that read_pdu() and=
- write_pdu().
-> > > > > > > In read_pdu() I want to check write_pdu() is called before. S=
-o along the
-> > > > > > > 20 bytes for pdu, maybe we could use a bytes for the flag tha=
-t pdu is
-> > > > > > > initialized?
-> > > > > >
-> > > > > > Not sure what you mean about "20 bytes for pdu".
-> > > > > > It seems like it would be preferable to enforce that write_pdu(=
-) has
-> > > > > > been called before read_pdu() using the Rust type system instea=
-d of a
-> > > > > > runtime check. I was thinking a signature like fn write_pdu(cmd=
-:
-> > > > > > IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's =
-a
-> > > > > > reason that wouldn't work and a runtime check would be necessar=
-y?
-> > > > >
-> > > > > I didn't think about make write_pdu() to return IoUringCmdPdu<T> =
-before.
-> > > > > I think it's good way to pdu is safe without adding a new generic=
- param for
-> > > > > MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it coul=
-d call
-> > > > > IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
-> > > >
-> > > > Yes, that's what I was thinking.
-> > >
-> > > Good, I'll change api in this way. Thanks!
-> > >
-> > > >
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > But maybe I would introduce a new struct that has Pin<&mut Io=
-UringCmd> and
-> > > > > > > issue_flags. How about some additional field for pdu is initi=
-alized like below?
-> > > > > > >
-> > > > > > > struct IoUringCmdArgs {
-> > > > > > >   ioucmd: Pin<&mut IoUringCmd>,
-> > > > > > >   issue_flags: u32,
-> > > > > > >   pdu_initialized: bool,
-> > > > > > > }
-> > > > > >
-> > > > > > One other thing I realized is that issue_flags should come from=
- the
-> > > > > > *current* context rather than the context the uring_cmd() callb=
-ack was
-> > > > > > called in. For example, if io_uring_cmd_done() is called from t=
-ask
-> > > > > > work context, issue_flags should match the issue_flags passed t=
-o the
-> > > > > > io_uring_cmd_tw_t callback, not the issue_flags originally pass=
-ed to
-> > > > > > the uring_cmd() callback. So it probably makes more sense to de=
-couple
-> > > > > > issue_flags from the (owned) IoUringCmd. I think you could pass=
- it by
-> > > > > > reference (&IssueFlags) or with a phantom reference lifetime
-> > > > > > (IssueFlags<'_>) to the Rust uring_cmd() and task work callback=
-s to
-> > > > > > ensure it can't be used after those callbacks have returned.
-> > > > >
-> > > > > I have had no idea about task work context. I agree with you that
-> > > > > it would be better to separate issue_flags from IoUringCmd. So,
-> > > > > IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
-> > > >
-> > > > "Task work" is a mechanism io_uring uses to queue work to run on th=
-e
-> > > > thread that submitted an io_uring operation. It's basically a
-> > > > per-thread atomic queue of callbacks that the thread will process
-> > > > whenever it returns from the kernel to userspace (after a syscall o=
-r
-> > > > an interrupt). This is the context where asynchronous uring_cmd
-> > > > completions are generally processed (see
-> > > > io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy())=
-. I
-> > > > can't speak to the history of why io_uring uses task work, but my
-> > > > guess would be that it provides a safe context to acquire the
-> > > > io_ring_ctx uring_lock mutex (e.g. nvme_uring_cmd_end_io() can be
-> > > > called from an interrupt handler, so it's not allowed to take a
-> > > > mutex). Processing all the task work at once also provides natural
-> > > > opportunities for batching.
-> > >
-> > > Thanks, I've checked io_uring_cmd_complete_in_task() that it receives
-> > > callback that has issue_flags different with io_uring_cmd(). I'll try=
- to add
-> > > a api that wrapping io_uring_cmd_complete_in_task() for next version.
-> > >
-> > > >
-> > > > Yes, we probably don't need to bundle anything else with the
-> > > > IoUringCmd after all. As I mentioned earlier, I don't think Pin<&mu=
-t
-> > > > IoUringCmd> will work for uring_cmds that complete asynchronously, =
-as
-> > > > they will need to outlive the uring_cmd() call. So uring_cmd() need=
-s
-> > > > to transfer ownership of the struct io_uring_cmd.
-> > >
-> > > I can't think that how to take ownership of struct io_uring_cmd. The
-> > > struct allocated with io_alloc_req() and should be freed with io_free=
-_req().
-> > > If taking ownership means having pointer of struct io_uring_cmd, I th=
-ink
-> > > it's no difference with current version. Also could it be called with
-> > > mem::forget() if it has ownership?
-> >
-> > I don't mean ownership of the io_uring_cmd allocation; that's the
-> > responsibility of the io_uring layer. But once the io_uring_cmd is
-> > handed to the uring_cmd() implementation, it belongs to that layer
-> > until it completes the command back to io_uring. Maybe a better way to
-> > describe it would be as ownership of the "executing io_uring_cmd". The
-> > problem with Pin<&mut IoUringCmd> is that it is a borrowed reference
-> > to the io_uring_cmd, so it can't outlive the uring_cmd() callback.
-> > Yes, it's possible to leak the io_uring_cmd by never calling
-> > io_uring_cmd_done() to return it to the io_uring layer.
+> 1. The v-sync and the frame-end belong to the same frame. This means,
+>    the irq was heavily delayed and the warning is likely appropriate.
 >
-> Thanks, I understood that IoUringCmd could be outlive uring_cmd callback.
-> But it's sad that it could be leaked without any unsafe code.
-
-Safety in Rust doesn't require destructors to run, which means any
-resource can be safely leaked
-(https://faultlore.com/blah/everyone-poops/ has some historical
-background on why Rust decided leaks had to be considered safe).
-Leaking an io_uring_cmd is analogous to leaking a Box, both are
-perfectly possible in safe Rust.
-
+> 2. The v-sync belongs to the next frame. This can happen if the vertical
+>    blanking between two frames is very short.
 >
-> >
-> > I would imagine something like this:
-> >
-> > #[derive(Clone, Copy)]
-> > struct IssueFlags<'a>(c_uint, PhantomData<&'a ()>);
-> >
-> > // Indicates ownership of the io_uring_cmd between uring_cmd() and
-> > io_uring_cmd_done()
-> > struct IoUringCmd(NonNull<bindings::io_uring_cmd>);
-> >
-> > impl IoUringCmd {
-> >         // ...
-> >
-> >         fn done(self, ret: i32, res2: u64, issue_flags: IssueFlags<'_>)=
- {
-> >                 let cmd =3D self.0.as_ptr();
-> >                 let issue_flags =3D issue_flags.0;
-> >                 unsafe {
-> >                         bindings::io_uring_cmd_done(cmd, ret, res2, iss=
-ue_flags)
-> >                 }
-> >         }
-> > }
-> >
-> > // Can choose whether to complete the command synchronously or asynchro=
-nously.
-> > // If take_async() is called, IoUringCmd::done() needs to be called to
-> > complete the command.
-> > // If take_async() isn't called, the command is completed synchronously
-> > // with the return value from MiscDevice::uring_cmd().
-> > struct UringCmdInput<'a>(&mut Option<NonNull<bindings::io_uring_cmd>>);
+> The current code always handles case 1 although case 2 is in my
+> experience the more common case and happens in regular usage. This leads
+
+I would rather argue that 8524fa22fd2f is possibily wrong, and case 1)
+would imply the interrupt has been delayed for the whole frame
+duration (+ blanking), which seems unlikely to me ?
+
+True we handle stats collection and parameters programming in irq
+context, which is less than ideal and could take time (I wonder if we
+should use a threaded irq, but that's a different problem)
+
+If that's the case and we only should care about 2) would simply
+handling RKISP1_CIF_ISP_FRAME before RKISP1_CIF_ISP_V_START be enough ?
+
+> to incorrect sequence numbers on stats and params buffers which in turn
+> breaks the regulation in user space. Fix that by adding a frame_active
+> flag to distinguish between these cases and handle the start of frame
+> either at the beginning or at the end of the rkisp1_isp_isr().
 >
-> Thanks for a detailed example!
+> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+> ---
+>  .../platform/rockchip/rkisp1/rkisp1-common.h    |  1 +
+>  .../media/platform/rockchip/rkisp1/rkisp1-isp.c | 17 +++++++++++++----
+>  2 files changed, 14 insertions(+), 4 deletions(-)
 >
-> But rather than this, We could introduce new return type that has a callb=
-ack that
-> user could take IoUringCmd instead of returning -EIOCBQUEUED.
-
-I'm not following what you're suggesting, maybe a code sample would help?
-
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> index ca952fd0829b..adf23416de9a 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> @@ -222,6 +222,7 @@ struct rkisp1_isp {
+>  	struct media_pad pads[RKISP1_ISP_PAD_MAX];
+>  	const struct rkisp1_mbus_info *sink_fmt;
+>  	__u32 frame_sequence;
+> +	bool frame_active;
+>  };
 >
-> But I prefer that we provide just one type IoUringCmd without UringCmdInp=
-ut.
-> Although UringCmdInput, user could call done() in uring_cmd callback and
-> it makes confusion that whether task_async() called and returning -EIOCBQ=
-UEUED
-> is mismatched that returns -EINVAL. We don't need to make it complex.
+>  /*
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> index 8c29a1c9309a..1469075b2d45 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
+>  	}
+>
+>  	isp->frame_sequence = -1;
+> +	isp->frame_active = false;
+>
+>  	sd_state = v4l2_subdev_lock_and_get_active_state(sd);
+>
+> @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
+>   * Interrupt handlers
+>   */
+>
+> -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
+> +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
+>  {
+>  	struct v4l2_event event = {
+>  		.type = V4L2_EVENT_FRAME_SYNC,
+>  	};
+>
+> +	isp->frame_sequence++;
+> +	isp->frame_active = true;
+> +
+>  	event.u.frame_sync.frame_sequence = isp->frame_sequence;
+>  	v4l2_event_queue(isp->sd.devnode, &event);
+>  }
+> @@ -1112,14 +1116,15 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>  	rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
+>
+>  	/* Vertical sync signal, starting generating new frame */
+> -	if (status & RKISP1_CIF_ISP_V_START) {
+> -		rkisp1->isp.frame_sequence++;
+> -		rkisp1_isp_queue_event_sof(&rkisp1->isp);
+> +	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
+> +		status &= ~RKISP1_CIF_ISP_V_START;
+> +		rkisp1_isp_sof(&rkisp1->isp);
+>  		if (status & RKISP1_CIF_ISP_FRAME) {
+>  			WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
+>  			rkisp1->debug.irq_delay++;
+>  		}
+>  	}
+> +
+>  	if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
+>  		/* Clear pic_size_error */
+>  		isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
+> @@ -1138,6 +1143,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>  	if (status & RKISP1_CIF_ISP_FRAME) {
+>  		u32 isp_ris;
+>
+> +		rkisp1->isp.frame_active = false;
+>  		rkisp1->debug.complete_frames++;
+>
+>  		/* New frame from the sensor received */
+> @@ -1152,5 +1158,8 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>  		rkisp1_params_isr(rkisp1);
+>  	}
+>
+> +	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active)
 
-Sure, if you only want to support asynchronous io_uring_cmd
-completions, than you can just pass IoUringCmd to
-MiscDevice::uring_cmd() and require it to call IoUringCmd::done() to
-complete the command. There's a small performance overhead to that
-over just returning the result from the uring_cmd() callback for
-synchronous completions (and it's more verbose), but I think that
-would be fine for an initial implementation.
+I think you can drop the  && !rkisp1->isp.frame_active because if you
+get here and 'status & RKISP1_CIF_ISP_V_START' it means that:
 
-Best,
-Caleb
+1) frame_active was false and you have entered the above
+
+        if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
+
+   and now the RKISP1_CIF_ISP_V_START bit in 'status' has been cleared
+   so you don't need to handle VSYNC here
+
+2) frame_active was true and you delayed handling V_START till here.
+   If also ISP_FRAME was set, frame_start has been set to false here
+   above. If ISP_FRAME was not set then it has been delivered by a
+   previous interrupt and then frame_start is false.
+
+So I guess it's enough to check if at this point RKISP1_CIF_ISP_V_START
+is still set in 'status' ?
+
+However, as said, it's seems unlikely to that your above 1) can
+happen. Have you ever hit a WARN() again with this patch applied ?
+
+> +		rkisp1_isp_sof(&rkisp1->isp);
+> +
+>  	return IRQ_HANDLED;
+>  }
+> --
+> 2.48.1
+>
+>
 
