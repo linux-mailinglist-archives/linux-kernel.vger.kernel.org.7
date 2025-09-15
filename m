@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-816311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AA6B57227
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFB4B57229
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5424D18929CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331E93BEFF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FA32EA49C;
-	Mon, 15 Sep 2025 07:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1008219DF4F;
+	Mon, 15 Sep 2025 08:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hw5dHaey"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54122D3212;
-	Mon, 15 Sep 2025 07:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Uykw+0R9"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBD22D5A0C;
+	Mon, 15 Sep 2025 08:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757923174; cv=none; b=iJllE5VSnR0LINtfnt8+SqIXn0mypu2m695T49NPsHj7RF+26twy8wWhJWawpSe91BBdu95e6soMAJv43Muyk+HR0zoEnSJXJLsC1rsaR/Zrs4z7jJWy9XvqqWYwEIwtUB5zh1yE7rn95blbjAfHMwBLDzoxk4JBchEkCWB2FxI=
+	t=1757923267; cv=none; b=PWbuy5omHCYDrqJxlDr0cqMPRwSnEvGHB5q28MnfphbHHrcAsPP6d3Yxit4Wjrb+wYAX1G78XGUhQRxPiy66sEUBbDAV178BV9Dm/MqJIXgbymRA453uLPYU0su1tvagfhp4Tabs7Vmz1RaV+KcvH5uAgUzWVQu0lp1YjLEO9Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757923174; c=relaxed/simple;
-	bh=9gujTLiqLHjjINMpkRbHhV8wQb6Epk5lqXdJd/pFwy8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=VXqjGhYqvMhkxpxE3F1XHKX7wYmdrMjN/MNrAwuQTrRJtax7tEkxFL/FeuaprwChwz9kgLV6ucEh6oo/enYDfeg3NAKdCL8QCh3Xh7iOdSu2fBLwmBbjzQ2FfwBCU0TDFupbnXcZYPpvhNuUG2Ped7hY8BNKnfqo8hgZhuMr4Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hw5dHaey; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1186)
-	id 4146B211AA26; Mon, 15 Sep 2025 00:59:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4146B211AA26
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757923172;
-	bh=Nz0oO5BYuVZk608Ctk/BPbO9/lnJ/evA3f086VgS9pI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hw5dHaeywF2B1awA8Dkp4mU3qjv1n+AZ0PK86ZDKN1CzOfnyGc/T/Y4qEMWtM5gr3
-	 2afH7tV4tLbNikuZoxZfAevjhu9tdnO2IrBoW+U1TtwFItVDmTOSd3Cfeh6anTb2bU
-	 DGenyyo8fhydFuO5XE8B+B3wd64CAo+xhSOhqzR0=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	shirazsaleem@microsoft.com,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next 1/1] RDMA/mana_ib: Extend modify QP
-Date: Mon, 15 Sep 2025 00:59:32 -0700
-Message-Id: <1757923172-4475-1-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1757923267; c=relaxed/simple;
+	bh=0+tz1zj31RfoL32vadKg89/mQT+Ohn5CXj+nVykOgKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzmx3FHxXLOR05BNfXFbjJTk/yQYnwtc0VDYjnoltl/efWPd2SAFbWs+KscJuPn+9fHvB5fd6b9IbWIqrqEY+md4qxHGxu6oeTs2wAUHEINFvh1t2+MwqW0kfQ0c2AwTtCcR/NUYCQ/4i8djC+Rtmsch+8XWmq4tqydatFC0jM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Uykw+0R9; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jonmaVcGtJWv0aVkRcTv8ZFU9T2t2UVyNF1hWIKbZtw=; b=Uykw+0R9RibxKo09CI/drghfbl
+	tK89vLKwrAk8ZhR82JKtLLeEYB94xBbjhnzUFJqRSyGAxA2EdkNdKQ2VmP6vqZ1RQaCoZmFJDwWnU
+	FVUgvM6O5D2Nj+w0SMFMvABs1kPAOxmwWLIWFAU/kVJxCZzJRw5/254AXU29uYHVPBUjSCxK8e+2r
+	ZrxJsxrL5tu+En7/uJuSOVF1OT/JqiWRmBFMFhOcq6wwT3kpgrFXcxm2DJMf2oNZGapSXkgxaBzaT
+	b+OcDyH9RQqVA9NXH20WrSx9p8YTgr4OU9wIRGqsulBbBfKus4QUn2F6UaUDb96CzEOoZ+KGE7I2Z
+	hJUW/Cew==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uy48t-00000006trB-1rvp;
+	Mon, 15 Sep 2025 08:00:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EF34C300212; Mon, 15 Sep 2025 10:00:54 +0200 (CEST)
+Date: Mon, 15 Sep 2025 10:00:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@vger.kernel.org
+Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
+ operations
+Message-ID: <20250915080054.GS3419281@noisy.programming.kicks-ass.net>
+References: <cover.1757810729.git.fthain@linux-m68k.org>
+ <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
 
-From: Shiraz Saleem <shirazsaleem@microsoft.com>
+On Sun, Sep 14, 2025 at 10:45:29AM +1000, Finn Thain wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
+> 
+> Add a Kconfig option for debug builds which logs a warning when an
+> instrumented atomic operation takes place at some location that isn't
+> a long word boundary. Some platforms don't trap for this.
+> 
+> Link: https://lore.kernel.org/lkml/20250901093600.GF4067720@noisy.programming.kicks-ass.net/
+> ---
+> This patch differs slightly from Peter's code which checked for natural
+> alignment.
+> ---
+>  include/linux/instrumented.h |  4 ++++
+>  lib/Kconfig.debug            | 10 ++++++++++
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> index 711a1f0d1a73..55f5685971a1 100644
+> --- a/include/linux/instrumented.h
+> +++ b/include/linux/instrumented.h
+> @@ -7,6 +7,7 @@
+>  #ifndef _LINUX_INSTRUMENTED_H
+>  #define _LINUX_INSTRUMENTED_H
+>  
+> +#include <linux/bug.h>
+>  #include <linux/compiler.h>
+>  #include <linux/kasan-checks.h>
+>  #include <linux/kcsan-checks.h>
+> @@ -67,6 +68,7 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
+>  {
+>  	kasan_check_read(v, size);
+>  	kcsan_check_atomic_read(v, size);
+> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
+>  }
+>  
+>  /**
+> @@ -81,6 +83,7 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
+>  {
+>  	kasan_check_write(v, size);
+>  	kcsan_check_atomic_write(v, size);
+> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
+>  }
+>  
+>  /**
+> @@ -95,6 +98,7 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
+>  {
+>  	kasan_check_write(v, size);
+>  	kcsan_check_atomic_read_write(v, size);
+> +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
+>  }
 
-Extend modify QP to support further attributes: local_ack_timeout, UD qkey,
-rate_limit, qp_access_flags, flow_label, max_rd_atomic.
+Right, so why aren't we trusting the size argument? And instead
+mandating a possibly larger alignment?
 
-Signed-off-by: Shiraz Saleem <shirazsaleem@microsoft.com>
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
----
- drivers/infiniband/hw/mana/mana_ib.h | 11 +++++++++--
- drivers/infiniband/hw/mana/qp.c      |  9 +++++++++
- 2 files changed, 18 insertions(+), 2 deletions(-)
+Note how things like test_and_set_bit() will use sizeof(long), while
+atomic_set() will use sizeof(*v), which, on LP64 architectures are very
+much not the same.
 
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index af09a3e6c..9d36232ed 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -412,7 +412,7 @@ struct mana_ib_ah_attr {
- 	u8 traffic_class;
- 	u16 src_port;
- 	u16 dest_port;
--	u32 reserved;
-+	u32 flow_label;
- };
- 
- struct mana_rnic_set_qp_state_req {
-@@ -429,8 +429,15 @@ struct mana_rnic_set_qp_state_req {
- 	u32 retry_cnt;
- 	u32 rnr_retry;
- 	u32 min_rnr_timer;
--	u32 reserved;
-+	u32 rate_limit;
- 	struct mana_ib_ah_attr ah_attr;
-+	u64 reserved1;
-+	u32 qkey;
-+	u32 qp_access_flags;
-+	u8 local_ack_timeout;
-+	u8 max_rd_atomic;
-+	u16 reserved2;
-+	u32 reserved3;
- }; /* HW Data */
- 
- struct mana_rnic_set_qp_state_resp {
-diff --git a/drivers/infiniband/hw/mana/qp.c b/drivers/infiniband/hw/mana/qp.c
-index a6bf4d539..48c1f4977 100644
---- a/drivers/infiniband/hw/mana/qp.c
-+++ b/drivers/infiniband/hw/mana/qp.c
-@@ -735,6 +735,8 @@ static int mana_ib_gd_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
- 	int err;
- 
- 	mana_gd_init_req_hdr(&req.hdr, MANA_IB_SET_QP_STATE, sizeof(req), sizeof(resp));
-+
-+	req.hdr.req.msg_version = GDMA_MESSAGE_V3;
- 	req.hdr.dev_id = mdev->gdma_dev->dev_id;
- 	req.adapter = mdev->adapter_handle;
- 	req.qp_handle = qp->qp_handle;
-@@ -748,6 +750,12 @@ static int mana_ib_gd_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
- 	req.retry_cnt = attr->retry_cnt;
- 	req.rnr_retry = attr->rnr_retry;
- 	req.min_rnr_timer = attr->min_rnr_timer;
-+	req.rate_limit = attr->rate_limit;
-+	req.qkey = attr->qkey;
-+	req.local_ack_timeout = attr->timeout;
-+	req.qp_access_flags = attr->qp_access_flags;
-+	req.max_rd_atomic = attr->max_rd_atomic;
-+
- 	if (attr_mask & IB_QP_AV) {
- 		ndev = mana_ib_get_netdev(&mdev->ib_dev, ibqp->port);
- 		if (!ndev) {
-@@ -774,6 +782,7 @@ static int mana_ib_gd_modify_qp(struct ib_qp *ibqp, struct ib_qp_attr *attr,
- 							  ibqp->qp_num, attr->dest_qp_num);
- 		req.ah_attr.traffic_class = attr->ah_attr.grh.traffic_class >> 2;
- 		req.ah_attr.hop_limit = attr->ah_attr.grh.hop_limit;
-+		req.ah_attr.flow_label = attr->ah_attr.grh.flow_label;
- 	}
- 
- 	err = mana_gd_send_request(gc, sizeof(req), &req, sizeof(resp), &resp);
--- 
-2.43.0
+The same with atomic_*() vs atomic_long_*() / atomic64_*(), they will
+have different alignment requirements.
+
+And then there is cmpxchg(), that can be u8 u16, u32 and u64 depending
+on the user. And then there is cmpxchg128().
+
+I really don't see how using long here is correct.
+
 
 
