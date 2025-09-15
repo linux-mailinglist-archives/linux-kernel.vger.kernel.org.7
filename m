@@ -1,273 +1,92 @@
-Return-Path: <linux-kernel+bounces-816901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC02CB57A43
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:18:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC30B57A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8FC1A27BE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:18:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C55516494D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18A6304964;
-	Mon, 15 Sep 2025 12:18:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AB1304BCA;
+	Mon, 15 Sep 2025 12:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="On55TMfC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8482AD11;
-	Mon, 15 Sep 2025 12:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E2024A044;
+	Mon, 15 Sep 2025 12:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938693; cv=none; b=Ca7jmi/T4G3t4L+Ea9f14gJJqqUV6SuGtEFKsjafsYms3H+WxfzG47GSZR73if3xCRVtU410rv6aIXiVP+YO3Q2Ecd9mkEw1Omc46N3SSj/g6j9e4Ui/wkx2rhkrraZfijH0Y3A2vFXibvVsFhEVMvRkKOn55jjEuYArc6NWvJo=
+	t=1757938751; cv=none; b=H2ZiIllfmGdo1/cc6kVwUGTBZaCpt0yhVmpyPajxWGKVTAJJ6LDcvxLDBo3aOzgtti7ubhNFR9LfCDyXAAeHN+sLnS6V2aISNaPOkY7t+6a5bOHMBkZlYmy+CYNWi3QnvSBgOQtP6WfIBRpLqC+qieaQIWCOIZIn6Nt2KzkDwpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938693; c=relaxed/simple;
-	bh=ybjcuwbdPeSSf58GfNrZLbTx361DsTpYMPNclLBtM/o=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PWfxGAoBpqLy/Cj3XEXymw9LudgSimwy42rBuqSUHHPdP88U9+r2TLnbgUXUMSKg3JOsoCwN/mAYOkZiVMQ4DrsXp8+FRvtVO0jbMsU0xoIAF5xYPWjKQy9UIdKexHyy3ctAOyXd8kdsMfmmmT8YSItT7blkbw/+k1JHOULaBVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQPB252rRz6M5B2;
-	Mon, 15 Sep 2025 20:15:22 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3A8961400DC;
-	Mon, 15 Sep 2025 20:18:08 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
- 2025 14:18:07 +0200
-Date: Mon, 15 Sep 2025 13:18:06 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
-CC: <nathan.lynch@amd.com>, Vinod Koul <vkoul@kernel.org>, Wei Huang
-	<wei.huang2@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, "Bjorn
- Helgaas" <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
-Subject: Re: [PATCH RFC 07/13] dmaengine: sdxi: Import descriptor enqueue
- code from spec
-Message-ID: <20250915131806.00006e3b@huawei.com>
-In-Reply-To: <20250905-sdxi-base-v1-7-d0341a1292ba@amd.com>
-References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-	<20250905-sdxi-base-v1-7-d0341a1292ba@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757938751; c=relaxed/simple;
+	bh=Mp0zU8WbYQ7r07HLeddx7mG0Lyzxx6ZI8Wz6NpkA01A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Io8DXsofxGf5UGNJVkYuENzbddQQzLNU0ZhGM5n9Z/e12ZBsNBO50sUmG6grm4BC5VTqNWQVl0EYggW/Li3pLsWXPEBpO1YIvfUasD+Fc7s4YQPUGqZ5SxpNAXQgxyuaGRn2xxcTlJRxlx1tjblngrDBsfMbjd0B/G//nibbKN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=On55TMfC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB051C4CEF1;
+	Mon, 15 Sep 2025 12:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757938751;
+	bh=Mp0zU8WbYQ7r07HLeddx7mG0Lyzxx6ZI8Wz6NpkA01A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=On55TMfCI2DD5nSQddzQKftNnxm6C+HkZeHiP1WAYjVNBz6I0QRi7J0uYdlpPdufM
+	 sqEDk85/C4r6B3e6iCc9gKOubpIlKF3AKa5Fro3YI2IwZNWj29VHxdWU0hyWqQHwsx
+	 vGqtli1Mb3fiAuB7sw6k545UD+BDk5zdnYvRe8ggPuVVrSgvIV5InBGp7IfEsB57O0
+	 Xo7bIHMYBVgOP8eOk054S7hjydJocyMBE4fvb17T2mKX5bzdRbwB2IOKrfbmsEwv7O
+	 bb0CkRtKOInOR9Y10FyRS2KZk67QJCaYpKGmw5AsCmnrn+4YvkzLovvGhHKAzWkGAX
+	 0zEaBn6t4QJTw==
+From: Christian Brauner <brauner@kernel.org>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/namespaces: make ns_entries const
+Date: Mon, 15 Sep 2025 14:18:44 +0200
+Message-ID: <20250915-infrage-heimisch-ffdb2870c6ac@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250909075509.810329-1-max.kellermann@ionos.com>
+References: <20250909075509.810329-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1118; i=brauner@kernel.org; h=from:subject:message-id; bh=Mp0zU8WbYQ7r07HLeddx7mG0Lyzxx6ZI8Wz6NpkA01A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScYLEUf3eZy71fbO1qhvlzj7JKzl+/beX+iTs7H10I7 6mX1jkv3lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRiV8Z/pfHpHyMP7h2o3KN 9JLjtV+n5ulO7FWfu7FHput1uNe74o2MDOc/8x8JjE6LYTtXyn7nxcc/f9J+Cs6XXTVF2veETAb bOX4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, 05 Sep 2025 13:48:30 -0500
-Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:
-
-> From: Nathan Lynch <nathan.lynch@amd.com>
+On Tue, 09 Sep 2025 09:55:06 +0200, Max Kellermann wrote:
+> Global variables that are never modified should be "const" so so that
+> they live in the .rodata section instead of the .data section of the
+> kernel, gaining the protection of the kernel's strict memory
+> permissions as described in Documentation/security/self-protection.rst
 > 
-> Import the example code from the "SDXI Descriptor Ring Operation"
-> chapter of the SDXI 1.0 spec[1], which demonstrates lockless
-> descriptor submission to the ring. Lightly alter the code
-> to (somewhat) comply with Linux coding style, and use byte order-aware
-> types as well as kernel atomic and barrier APIs.
-> 
-> Ultimately we may not really need a lockless submission path, and it
-> would be better for it to more closely integrate with the rest of the
-> driver.
-> 
-> [1] https://www.snia.org/sites/default/files/technical-work/sdxi/release/SNIA-SDXI-Specification-v1.0a.pdf
-> 
-> Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
-Hi Nathan,
-
-I suspect you have a good idea of what needs to happen to get this ready for a merge
-but I'll comment briefly anyway!
-
-> ---
->  drivers/dma/sdxi/enqueue.c | 136 +++++++++++++++++++++++++++++++++++++++++++++
->  drivers/dma/sdxi/enqueue.h |  16 ++++++
->  2 files changed, 152 insertions(+)
-> 
-> diff --git a/drivers/dma/sdxi/enqueue.c b/drivers/dma/sdxi/enqueue.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..822d9b890fa3538dcc09e99ef562a6d8419290f0
-> --- /dev/null
-> +++ b/drivers/dma/sdxi/enqueue.c
-> @@ -0,0 +1,136 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + *
-> + * Copyright (c) 2024, The Storage Networking Industry Association.
-> + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions
-> + * are met:
-> + *
-> + * * Redistributions of source code must retain the above copyright
-> + * notice, this list of conditions and the following disclaimer.
-> + *
-> + * * Redistributions in binary form must reproduce the above copyright
-> + * notice, this list of conditions and the following disclaimer in the
-> + * documentation and/or other materials provided with the
-> + * distribution.
-> + *
-> + * * Neither the name of The Storage Networking Industry Association
-> + * (SNIA) nor the names of its contributors may be used to endorse or
-> + * promote products derived from this software without specific prior
-> + * written permission.
-> + *
-> + * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-> + * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-> + * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-> + * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-> + * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-> + * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-> + * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-> + * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-> + * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-> + * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-> + * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-> + * OF THE POSSIBILITY OF SUCH DAMAGE.
-> + */
-> +
-> +#include <asm/barrier.h>
-> +#include <asm/byteorder.h>
-> +#include <asm/rwonce.h>
-> +#include <linux/atomic.h>
-> +#include <linux/errno.h>
-> +#include <linux/io-64-nonatomic-lo-hi.h>
-> +#include <linux/processor.h>
-> +#include <linux/types.h>
-> +
-> +#include "enqueue.h"
-> +
-> +/*
-> + * Code adapted from the "SDXI Descriptor Ring Operation" chapter of
-> + * the SDXI spec, specifically the example code in "Enqueuing one or
-> + * more Descriptors."
-> + */
-> +
-> +#define SDXI_DESCR_SIZE 64
-I think that's already effectively encoded in the asserts in the header.
-Hence don't repeat it here. Use sizeof() whatever makes sense.
-
-> +#define SDXI_DS_NUM_QW (SDXI_DESCR_SIZE / sizeof(__le64))
-
-> +#define SDXI_MULTI_PRODUCER 1  /* Define to 0 if single-producer. */
-
-Get rid of other path and drop this.
-
-> +
-> +static int update_ring(const __le64 *enq_entries,   /* Ptr to entries to enqueue */
-> +		       u64 enq_num,                 /* Number of entries to enqueue */
-> +		       __le64 *ring_base,           /* Ptr to ring location */
-> +		       u64 ring_size,               /* (Ring Size in bytes)/64 */
-> +		       u64 index)                   /* Starting ring index to update */
-
-Whilst I get the minimal changes bit, make this kernel-doc.
-
-> +{
-> +	for (u64 i = 0; i < enq_num; i++) {
-> +		__le64 *ringp = ring_base + ((index + i) % ring_size) * SDXI_DS_NUM_QW;
-> +		const __le64 *entryp = enq_entries + (i * SDXI_DS_NUM_QW);
-> +
-> +		for (u64 j = 1; j < SDXI_DS_NUM_QW; j++)
-> +			*(ringp + j) = *(entryp + j);
-
-memcpy?
-
-> +	}
-> +
-> +	/* Now write the first QW of the new entries to the ring. */
-> +	dma_wmb();
-> +	for (u64 i = 0; i < enq_num; i++) {
-> +		__le64 *ringp = ring_base + ((index + i) % ring_size) * SDXI_DS_NUM_QW;
-> +		const __le64 *entryp = enq_entries + (i * SDXI_DS_NUM_QW);
-> +
-> +		*ringp = *entryp;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int sdxi_enqueue(const __le64 *enq_entries,                 /* Ptr to entries to enqueue */
-> +		 u64 enq_num,                               /* Number of entries to enqueue */
-> +		 __le64 *ring_base,                         /* Ptr to ring location */
-> +		 u64 ring_size,                             /* (Ring Size in bytes)/64 */
-> +		 __le64 const volatile * const Read_Index,  /* Ptr to Read_Index location */
-> +		 __le64 volatile * const Write_Index,       /* Ptr to Write_Index location */
-> +		 __le64 __iomem *Door_Bell)                 /* Ptr to Ring Doorbell location */
-> +{
-> +	u64 old_write_idx;
-> +	u64 new_idx;
-> +
-> +	while (true) {
-> +		u64 read_idx;
-> +
-> +		read_idx = le64_to_cpu(READ_ONCE(*Read_Index));
-> +		dma_rmb();  /* Get Read_Index before Write_Index to always get consistent values */
-> +		old_write_idx = le64_to_cpu(READ_ONCE(*Write_Index));
-> +
-> +		if (read_idx > old_write_idx) {
-> +			/* Only happens if Write_Index wraps or ring has bad setup */
-> +			return -EIO;
-> +		}
-> +
-> +		new_idx = old_write_idx + enq_num;
-> +		if (new_idx - read_idx > ring_size) {
-> +			cpu_relax();
-> +			continue;  /* Not enough free entries, try again */
-> +		}
-> +
-> +		if (SDXI_MULTI_PRODUCER) {
-> +			/* Try to atomically update Write_Index. */
-> +			bool success = cmpxchg(Write_Index,
-> +					       cpu_to_le64(old_write_idx),
-> +					       cpu_to_le64(new_idx)) == cpu_to_le64(old_write_idx);
-> +			if (success)
-> +				break;  /* Updated Write_Index, no need to try again. */
-> +		} else {
-> +			/* Single-Producer case */
-> +			WRITE_ONCE(*Write_Index, cpu_to_le64(new_idx));
-> +			dma_wmb();  /* Make the Write_Index update visible before the Door_Bell update. */
-> +			break;  /* Always successful for single-producer */
-> +		}
-> +		/* Couldn"t update Write_Index, try again. */
-> +	}
-> +
-> +	/* Write_Index is now advanced. Let's write out entries to the ring. */
-> +	update_ring(enq_entries, enq_num, ring_base, ring_size, old_write_idx);
-> +
-> +	/* Door_Bell write required; only needs ordering wrt update of Write_Index. */
-> +	iowrite64(new_idx, Door_Bell);
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/dma/sdxi/enqueue.h b/drivers/dma/sdxi/enqueue.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..28c1493779db1119ff0d682fa6623b016998042a
-> --- /dev/null
-> +++ b/drivers/dma/sdxi/enqueue.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause */
-> +/* Copyright (c) 2024, The Storage Networking Industry Association. */
-> +#ifndef DMA_SDXI_ENQUEUE_H
-> +#define DMA_SDXI_ENQUEUE_H
-> +
-> +#include <linux/types.h>
-> +
-> +int sdxi_enqueue(const __le64 *enq_entries,  /* Ptr to entries to enqueue */
-> +		 u64 enq_num,  /* Number of entries to enqueue */
-> +		 __le64 *ring_base,  /* Ptr to ring location */
-> +		 u64 ring_size,  /* (Ring Size in bytes)/64 */
-> +		 __le64 const volatile * const Read_Index,  /* Ptr to Read_Index location */
-> +		 __le64 volatile * const Write_Index,  /* Ptr to Write_Index location */
-> +		 __le64 __iomem *Door_Bell);  /* Ptr to Ring Doorbell location */
-> +
-> +#endif /* DMA_SDXI_ENQUEUE_H */
 > 
 
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] fs/proc/namespaces: make ns_entries const
+      https://git.kernel.org/vfs/vfs/c/91beadc05329
 
