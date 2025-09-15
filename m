@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-816894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A0F3B57A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C25B57A1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97C23A7FE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EE71A2783D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE65306B0E;
-	Mon, 15 Sep 2025 12:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79CC305E29;
+	Mon, 15 Sep 2025 12:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jxhmbybD"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSR2ZDJl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B341321CC47;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13596305E09;
 	Mon, 15 Sep 2025 12:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938407; cv=none; b=bRne+Tb0BaCT6HlFRoFBbOSjODNQAEa8rwmfZ5ek3jhv2Vmh3Y1C8KKz5+M7Iy98FC7pDCzW94seaEZh6P6oQrVIGUGjMLPsk5rigMpXF4pCoXgoROLvJo4D1TSe+qSr8TanUY+EnjLoxFTw70EteEO6Eol8HRHf98boeI8BOSs=
+	t=1757938405; cv=none; b=QTSjEcf3bBhEIIEmWcyzIE6TOcPRMD4WRXcQ/+NEcotq/8VyGpkE3pLiwmAh9ACpgVX3IK5OeObHOGrKEL2zB3/Qy+wQBw2ejiX1hDYMwN2e/bZYqTTHz+RIT5TCMSoJU0q0VR6n4UDTf2F+T3qiuKlmDduJzqGDjvbviKWQZLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938407; c=relaxed/simple;
-	bh=RnaQPEpAFGE+FmHs1ujCADBWdRDqnxSUnXW7zkovLnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dUjR6phRnEtimIMRB/g/Oi6IyIMr6b4D2CW2bov8L/fIt42N7piAw5RsNldS6COIamF3ChaGWQQ97oIrJE9ZFkz9yDKQm3VZmNW9r0PizerL4zaXXukP2hTXXtu5UFX/oiagKorxbSCIdpM510JHrjgZBFPrmP4FlvOqPJhaMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jxhmbybD; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58FCDIrV1553311;
-	Mon, 15 Sep 2025 07:13:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757938398;
-	bh=fOPm7DPa44haQ5Kh6Z0KE9NG3VWd3hMZ47EgCDyDjFA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=jxhmbybDH1VCsp3EWS3EZnSqckVvrYM4dbg0iG1N9VbrLBG00j2pMJmSSS8ibGptO
-	 uedHLOpljz4XbDVZexkY8nct0O4toYGj8MmLSrrdbz8TqC4w9ZtjwP5ToIVRRxt8y/
-	 +HRoOrb/tjjtGL6M4JdhrkKkD48qwBTlE/OuBDJw=
-Received: from DLEE206.ent.ti.com (dlee206.ent.ti.com [157.170.170.90])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58FCDID73381010
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 15 Sep 2025 07:13:18 -0500
-Received: from DLEE210.ent.ti.com (157.170.170.112) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 15 Sep
- 2025 07:13:18 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE210.ent.ti.com
- (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 15 Sep 2025 07:13:18 -0500
-Received: from [10.250.32.255] ([10.250.32.255])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58FCDIUI3747341;
-	Mon, 15 Sep 2025 07:13:18 -0500
-Message-ID: <4333d98d-3f6c-4c22-8dee-e4349a7b4046@ti.com>
-Date: Mon, 15 Sep 2025 07:13:18 -0500
+	s=arc-20240116; t=1757938405; c=relaxed/simple;
+	bh=N+eJ0gU44hVx/MW9LCq46yXd5OHmuJCxQYNhv441Ql8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B0na/+DuDvLNPKw0WXVpCGWkH7T5lN1l1XB6UrmGfS5GIWyDmMyosrajW5Okf6V0Ur2lE0uh8PbBKGhJgaTZNP8xEpnn/ph2hJxoVCoLUtKpYklKocOCYUK2JGY0jZdcLtEvnXj4O4eIevsJTxaDGDtJ9InbR3o2Yaj4yMuo7as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSR2ZDJl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE01C4CEF1;
+	Mon, 15 Sep 2025 12:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757938404;
+	bh=N+eJ0gU44hVx/MW9LCq46yXd5OHmuJCxQYNhv441Ql8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=DSR2ZDJlBr3Wz4wRY+2/aAxWZSLSTpc8cbCBn919mwyiZSGq1+6EYpGqVA0cI+Kil
+	 TqjE5KE/mMgstLFFBbXddlGj4l6x0jJHRyg7M1GG3aIJRnoFBIhCV+nlrbeNcU+v5H
+	 WJA3Vxp4AgCNsADMhg5o0p3u0JmoXzKaC6NGkjJoj2nx5eBd5Vmc3Y8kRVw9DBEg5+
+	 FXC/nHThtqA0WnchXGu1Nh4DWBTgIfu07n1mJBahrb5OVDx499jSGkLvm27bV03WcV
+	 TXciRp9D5W24P+w8Ecf/7m3/ImM/yiJbBKA35s/3Xj+Qom7LlmXT4X3NWdfqvQJc5i
+	 I5C8tnFC0At2w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C3D2ECE1105; Mon, 15 Sep 2025 05:13:23 -0700 (PDT)
+Date: Mon, 15 Sep 2025 05:13:23 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jan Engelhardt <ej@inai.de>
+Cc: Sudarsan Mahendran <sudarsanm@google.com>, vbabka@suse.cz,
+	Liam.Howlett@oracle.com, cl@gentwo.org, harry.yoo@oracle.com,
+	howlett@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	maple-tree@lists.infradead.org, rcu@vger.kernel.org,
+	rientjes@google.com, roman.gushchin@linux.dev, surenb@google.com,
+	urezki@gmail.com
+Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
+Message-ID: <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250913000935.1021068-1-sudarsanm@google.com>
+ <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] iio: health: afe4403: Use devm_regulator_get_enable()
- helper
-To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>
-CC: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Andy Shevchenko
-	<andy@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250813225840.576305-1-afd@ti.com>
- <20250813225840.576305-2-afd@ti.com>
- <4e109905-347d-4830-aea6-a93d88252481@baylibre.com>
- <20250913152052.134a4059@jic23-huawei>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250913152052.134a4059@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
 
-On 9/13/25 9:20 AM, Jonathan Cameron wrote:
-> On Wed, 13 Aug 2025 18:12:26 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+On Mon, Sep 15, 2025 at 09:51:25AM +0200, Jan Engelhardt wrote:
 > 
->> On 8/13/25 5:58 PM, Andrew Davis wrote:
->>> This takes care of both getting and enabling the regulator in one
->>> function, it also handles the devm action, so remove that. Also
->>> do not disable the regulator on suspend, this will be handled for
->>
->> I didn't know that this worked automatically. What is the mechanism
->> that makes it work? I've seen lots of drivers doing the disable/
->> enable in suspend/resume, so I just always assumed that was how one
->> is supposed to do it.
->>
-> Hi Andrew
+> On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
+> >
+> >Summary of the results:
+> >
+> >- Significant change (meaning >10% difference
+> >  between base and experiment) on will-it-scale
+> >  tests in AMD.
+> >
+> >Summary of AMD will-it-scale test changes:
+> >
+> >Number of runs : 15
+> >Direction      : + is good
 > 
-> This question is still open, so I'll not pick the reset of the series
-> up until it's resolved.  I'm going to mark these in patchwork as
-> changes requested so will need a v2 now.
-> 
+> If STDDEV grows more than mean, there is more jitter,
+> which is not "good".
 
-Sounds good, I'm still working on tracking down the answer to the
-question. I think it involves the regulator suspend path but
-will sort it out fully for v2.
+This is true.  On the other hand, the mean grew way more in absolute
+terms than did STDDEV.  So might this be a reasonable tradeoff?
 
-Thanks,
-Andrew
+Of course, if adjustments can be made to keep the increase in mean while
+keeping STDDEV low, that would of course be even better.
 
-> 
-> Jonathan
-> 
->>> us. We now do not need to track the regulator at all, so drop it
->>> from the device struct.
->>>
->>> Signed-off-by: Andrew Davis <afd@ti.com>
-> 
+							Thanx, Paul
 
+> >|            | MIN        | MAX        | MEAN       | MEDIAN     | STDDEV     |
+> >|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
+> >| brk1_8_processes
+> >| BASE       | 7,667,220  | 7,705,767  | 7,682,782  | 7,676,211  | 12,733     |
+> >| TEST       | 9,477,395  | 10,053,058 | 9,878,753  | 9,959,360  | 182,014    |
+> >| %          | +23.61%    | +30.46%    | +28.58%    | +29.74%    | +1,329.46% |
+> >
+> >| mmap2_256_processes
+> >| BASE       | 7,483,929  | 7,532,461  | 7,491,876  | 7,489,398  | 11,134     |
+> >| TEST       | 11,580,023 | 16,508,551 | 15,337,145 | 15,943,608 | 1,489,489  |
+> >| %          | +54.73%    | +119.17%   | +104.72%   | +112.88%   | +13,276.75%|
+> 
 
