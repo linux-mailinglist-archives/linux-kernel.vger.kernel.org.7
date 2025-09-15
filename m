@@ -1,888 +1,458 @@
-Return-Path: <linux-kernel+bounces-816072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BDEB56F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A099B56F09
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D750E1886233
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A2718998B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592DA2749D9;
-	Mon, 15 Sep 2025 03:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9A025F99B;
+	Mon, 15 Sep 2025 03:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bA9X3yAS"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WGVKqotF"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D142641FB
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757908463; cv=none; b=C7D3k9f4T2otpHR/jZ1ghoggC9TdR5N9ZwArpKL0H40l9QzNwsbmonRSx9np6dS8A+kHV5pCsFzo+Qi9jn9ivcDYti1RoD/0xKZdLyZ3FdLt8CCBZDEUqn+FgyNBThgroaP2GgjoOizwI+3SQQgEMzBzIs/0Bmg4c191wSlzWGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757908463; c=relaxed/simple;
-	bh=2/sZD9zxcCRSMDBhL8ORm0Ol6QX2WSd0TWzHXVj9YPs=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=gRosoZfD3dv7vRjV0ImiT7SzBeTmT+8IY9a+j9fKiAMv1LKkMttz7KjUBYRwMEmmpDHYvqUYXTzjb1Ja23NDvzkGgXviRQniWXGWEscG4AOCVYjOa6LxxGT7fWOktHSETRCQ35yzWV1YnlSREad4kzPCW/0WgTWak4eweuwTyzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bA9X3yAS; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7723f0924a3so4545396b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 20:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757908460; x=1758513260; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jvva0TL4zh+S2sr11l6cv20Cr9JEg4KFzWcybkVhfMQ=;
-        b=bA9X3yASZgqr6E1dWeAljBVsxjnvfguBRldx3ASb/24hYl4VYaS66HDCZz+9GM6nTc
-         Jn+upwszmWvFl+nTb2S2XD5IIvVKvvgergwuP5gbXV7cfKDcNBJQIvznGnIBbk4CSOGc
-         XOi3QQeiOV5D6Of7NUlRqM1M6e+0slAtIpK95p2imNCOMESGfeR+Yca1DjF2RVmxBCVf
-         KSkVRDiWcssbaDGudoOkB2zOv41JVTXLygAq4XK4D0DngCFZBJ4BKYjMmuKivTyP/wxE
-         JMyii+wVOBVVtvuBd+KqTQfCd6uhHeQX6ZuTvdyQvDh0WUxekzdbbH8jKvlRQw2v8EGo
-         hQnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757908460; x=1758513260;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jvva0TL4zh+S2sr11l6cv20Cr9JEg4KFzWcybkVhfMQ=;
-        b=O5bCE+Hz9WgE7hfgJ/IlZPD5LSX5b4xfAKuRQWaR4PkvXFlHCkNveB35XGi6TQYRkf
-         mDhb6atDXgUIIhKYttNVjNoEopLHi7Q7f6APJ0s0SlHIv5QgQzdEVZZ7uDQN45yaZ4fN
-         E1heESzKUO5LHUUk83RVwoTxKVieJoQJuZqAHKeyVmN+cNCA+fUJ/Koj2R+rObQPnPCB
-         vAcFcmpK+VyKwqMxUQZHEZ3k5Q3e2n54HEnYIavHV1g0zbz1YmjRDIacbWbQdssRzYtz
-         lXfdzx1E2Ui3IMpiPaEH1trknooNBYFMzOihj4FivEtyEd4pb6OtDLxlpUx/CkaYxREH
-         9C3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXDVtzOkX/Oy0iC4AQwGqSUzam86a+TF9CnTYVdf8h6PdvsR1P9vvNJeH1mivejLXgxL1mxE1P8zecv3Es=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhH2vx/BX6eDHQffx/ZvlDjdYbNT1zT6lWq4P3rS49sfZ3m6Sp
-	GYOFfWw96Sly8ubnLNvg3HV/G9yK1l738uUYQuHTuCcvFyAbaKl0FzymrMxaAT7dA3E=
-X-Gm-Gg: ASbGncvHNZIPO8iveVrVc2tG3bxoa6WbOpHjjRmsYR5+9noU6Qhsa9wD5T9ul9Wi7S+
-	ypiNVABOJ4AFnWwt8KxXP7Zk119TTiHnHva50nb89CsAc+s6uCi/i7XZ3tEvkgPqrNsoxrxTlYB
-	lmZmKHSauoW6Fctg3USPLEJKqnIRM2JOJGrDF9AvxjdBS8MeI0EVMCx7jW42ALrDUY6AWA804dv
-	FETEWkMersBZQaYGIzlPkV1WcosVnH/YgmtPR4ReSRJrKKAGBFcn0FNVI126DALwu3pPDPdOUFo
-	q8JL+viPLmk8mQaMOiyyONIWwZ9YeLUAPhAl/1SB4SaaToThvdNOFEb0bigcD0VelrO3l/eg1+r
-	PE9tmdXo8G7TCJzQQ1gbRBmNvG5ZPGmwzDV7sdzU+7yVihbTKN1La1tt4RUe0v+CbhiazUOiOmw
-	==
-X-Google-Smtp-Source: AGHT+IEUv47qgkoX4duiDYe5ibddYEaWl/+CzJjy+AV9oJ+RXLgTxH7LbdbzqFKva19jzTttLui6og==
-X-Received: by 2002:a05:6a00:acc:b0:772:638e:5f72 with SMTP id d2e1a72fcca58-77612189faemr12341637b3a.25.1757908459288;
-        Sun, 14 Sep 2025 20:54:19 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.245])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-776075fdd83sm11791895b3a.0.2025.09.14.20.54.02
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 14 Sep 2025 20:54:18 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: akpm@linux-foundation.org,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	maddy@linux.ibm.com,
-	mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	peterz@infradead.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	kees@kernel.org,
-	masahiroy@kernel.org,
-	aliceryhl@google.com,
-	ojeda@kernel.org,
-	thomas.weissschuh@linutronix.de,
-	xur@google.com,
-	ruanjinjie@huawei.com,
-	cuiyunhui@bytedance.com,
-	gshan@redhat.com,
-	maz@kernel.org,
-	suzuki.poulose@arm.com,
-	zhanjie9@hisilicon.com,
-	yangyicong@hisilicon.com,
-	dianders@chromium.org,
-	gautam@linux.ibm.com,
-	arnd@arndb.de,
-	zhao.xichao@vivo.com,
-	rppt@kernel.org,
-	lihuafei1@huawei.com,
-	coxu@redhat.com,
-	jpoimboe@kernel.org,
-	yaozhenguo1@gmail.com,
-	luogengkun@huaweicloud.com,
-	max.kellermann@ionos.com,
-	tj@kernel.org,
-	wangjinchao600@gmail.com,
-	yury.norov@gmail.com,
-	thorsten.blum@linux.dev,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] watchdog: remove HARDLOCKUP_DETECTOR_PERF
-Date: Mon, 15 Sep 2025 11:53:55 +0800
-Message-Id: <20250915035355.10846-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D77786344
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757908458; cv=fail; b=bz7oj50sFsbFaaFJNMsDgbKF9wZqnlurgr5HZzn+ANJLvrBb5+OrSdMvceJ6Cq6nx0LHElKaH4mUluR02cFAgM2R7wp4H1ajpD27PUcd00jl/xSTzX7eXGDySL8cGzMwiqwxVOuunwCuI/QMMGqdZF8ugoVTeuLBz5hx/mDIhmE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757908458; c=relaxed/simple;
+	bh=PzmAMAGAyMkQelgd3De2/T7SWSB8jXTOALbM4chgQB4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UsG2b52jipBKozkKjkcL90Zf13m14cWTeUxt4EPojnEPHxfeHBVjEZzJcuAFRu+bS4L0PYvuJYZoHJ+Juso+u+SFvDc8ga1SJzua0qkOSbHO7FdQ/qLrf06bwUX1B8GLn8sn/q6Jb9p+mjEmiAudD8qe2frVc4Ge+avyGd9OU4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WGVKqotF; arc=fail smtp.client-ip=40.107.92.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l+NdNkiWY6WVynb55/4CZq9Z4wDHnvFkKhYJG/t2x/JxDLSTNZMgSOzVxxxnHCNKl0KHmumhg5tAPoF/xCi390fiqOzAgA+R9JgkrlbHiLDxceGVfQiSFBu1h7TUZLEaQvkOwtBEt8/156qWcQqee7KfWVf6aNT6wOfwIZMCPnXEQr0BAuVnpeUECKsxKtT8Si0E+4eKExxwwSXr64CCQDXgg/5ZMF4u2BlbWHSsddOjuKtybCNsFEse0k6fH2YMn4qO2T+nU5b6nTKIdT/96gEnTb2ok204UTXqQuCrq6MIn8SLjUwZAyww/47/ZenvbB2c7tOUHGWnADQ9ykq4Fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n+SK7A/S70rWgmPihLFGkzc4R5Xirr1BBGMdpiFzhHk=;
+ b=UnWWxkrhdfA0DKw/JP6VmooNN/PqW3Y8HXhKtrggvJIiJ4ZzDNajYWymEeMw0DwdVoeCCyLiflkMk5ux9VkjhkCJN5eUbkyR7GHnAFR5ncrGGRvHFh3ZTZJ/C0rHi0k5q0E22k7Bh5IU6csTMTTIFW41JhDAtq8lU0WnKmAUvw2/MDj9Xrx4kBCyssWO5ARM9pDRL/b6EOcl3M87Kp7em1ll71j6S7/PlDj5nVbaaducptqnPOIhPMIVnCdY6BBvS684+G3BKEpKdsN6PyZMNBAr2pYQSAfXXZhI5wxC4SJKDF72xdotjDMxTnmUORuEqLAVul8A9R/UQ1auBk1+3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n+SK7A/S70rWgmPihLFGkzc4R5Xirr1BBGMdpiFzhHk=;
+ b=WGVKqotFtMr9iQMz+3Gap/uZbo+eWZfWFLwBlJl9OPoBqBJMoF3A6Zg8TFbCWSUlrlVMZkjawQ27eYpY7WuHPoLH9It4l72QDTeh71GaOO24pbrzyHtfD98vNq4IxkXgwDpKsBiO0QniuktCCz1BsfIqlDhYpkRdbgZBV0Ht4oYsDFS/Rc0OsTesW3d2VnJP3uJ7ccYrKtKlvlKp0W9nPloaIB6LHXqDFp5HJq8G+lu/IfoK2koRVjU4CUmbRYp8tYD5nMEesGLe6skCg85C+GLJAjfv1pfmuZCsxBgLwSVBmVPgY8TkT6lJCfTQ/ZeSkxDFgF0ne2Tg9i1fAEuvRQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by SJ2PR12MB7919.namprd12.prod.outlook.com (2603:10b6:a03:4cc::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
+ 2025 03:54:09 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9115.018; Mon, 15 Sep 2025
+ 03:54:09 +0000
+Message-ID: <dbb631dc-32d3-4b2d-a23c-968c7a61001c@nvidia.com>
+Date: Mon, 15 Sep 2025 13:54:01 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 04/15] mm/huge_memory: implement device-private THP splitting
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250908000448.180088-1-balbirs@nvidia.com>
+ <20250908000448.180088-5-balbirs@nvidia.com>
+ <ca592d4a-3e91-48ea-970e-a5ff12f215be@redhat.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <ca592d4a-3e91-48ea-970e-a5ff12f215be@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0229.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f::24) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SJ2PR12MB7919:EE_
+X-MS-Office365-Filtering-Correlation-Id: e576227f-657a-4823-d049-08ddf40b8624
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eHNVU0Z4MDJnU0hnTDkrTUtGUDlRL21abzVzRFpWOWlFbkZXN3RtUk5RcVBO?=
+ =?utf-8?B?cE92TmlMOU9rMmdZYnU5TlMrRnpJdllMdURUazlIUmFtQTVpcXhnaVk3Y3cy?=
+ =?utf-8?B?ckF1SHJ1dWtUL3N4M3JpSnhIaUJSN25BcmRJSUpKakMxZ3BwSm9yV2dxZmN0?=
+ =?utf-8?B?dUkvVGZQWHJYdFc5WlZ5ZEZ2NE5ob0V5N3lyR3lmZWtDcDJXZ1JUL1JRcHFF?=
+ =?utf-8?B?WHMrbzJocC9tOWRrNHhWSXkraUdUSTIzQ0NEQ2Q3dVlqT0VrNXQxaElhQzZ2?=
+ =?utf-8?B?ZUtKcjJUQ3QvNmtnazFEdTZSOXJ6YkZnbkJaYnFydVkvK1R5bFg0TlBYSzFF?=
+ =?utf-8?B?QmNUbEo3T2hIcDZTTE9GQ1NkRngxMlBVTXJLTlk0ZGtzcnpBYTk4UkVSa1F0?=
+ =?utf-8?B?SHBkNjhsM2N2U3dxY1l4N3hGdU9hZjBYZktXRm5MTWpuMjZPUHlZdjZFVnhV?=
+ =?utf-8?B?UTRWQ0c5eVBlOFBhYlpvVUJtUUZrNHJXdHozRFNaSXFZVWRPelIzTGRtTEFU?=
+ =?utf-8?B?V0pleUZwVVhzNTN5WUQ1b25QalZIU3VLTWJwNGN0bnNIRGd4dEJCa0RSMzhK?=
+ =?utf-8?B?Y1pTNHVPd0t1VGZyMnlxYXdMTXNpZTkzM2tKREx5M0lEenE5Z3ZSMktpblJR?=
+ =?utf-8?B?ajQ5c01JNENld1dYRXVTUWdDRFpaNWNEeVVkS3NLTFdDdlVTYWdSOXIyK3lF?=
+ =?utf-8?B?Z1Z5R2JZWHI4Q0Fka2x4RUk0NlpiMWsvTnlKNDFTR1Yza2dwZHpidzgvQ2ZW?=
+ =?utf-8?B?TWZlbG81MmxvTDFVc2hVSUk0TU1ZNldUQmw1Q3V0NjBlVmUzSHJTU0dmOCtV?=
+ =?utf-8?B?emRNc2IyaEJyY01jNWhueEFDZkJ1NlFMUlY4STNkVjRXMU5sRUY4T0M5RnFh?=
+ =?utf-8?B?VDlBUFNmMkRubk9MUlo3ZXZTcDZCcWRJRGZZYVFBMlBxSWZRNE5DSittQVpV?=
+ =?utf-8?B?aG53RGFqOGg1Rmd3NkU2MHVvOU1sOE5CSm9DV3duQk9zZW9hQXB2bjA4VFF3?=
+ =?utf-8?B?VUtFa2ZkQ2ZnU1JtYnBvRkJqd0VlY0FOczVVSElFWGxXaUtQQ3N4bk5CZ2FZ?=
+ =?utf-8?B?anRjQ2tUdUVuRVdPSWxQbWcvdDg4ZERJdXJiYnlRTEIvdGd1YVJaNktqNEFS?=
+ =?utf-8?B?WlczNEI0b0FlSWNzbGJtMjQ1bWRzMFJnb3ZjWGVteDZldDUzdU8xUC9oT0NP?=
+ =?utf-8?B?eXBFSDBBVWlKaE8waENVWUxPbWFQMWZ6YUlIdXU1anYvbkZuaVVTTXBFNWYw?=
+ =?utf-8?B?YnVEUWFrNThmdWtYaS94ZW9sZ0NkbGs4bFlWcXF6em1QQTZzK0dYYlFlRk9X?=
+ =?utf-8?B?bkMwbWxwbXZEN3NNRklWZEZPTnVKYTA3YnE4QUlqQlRNRW5RRFpJaEZHV1RG?=
+ =?utf-8?B?bmhIS20zeTV2bW4zS2VWcS9kZVl5dHA3WG4zTDB6eUdzcGJMckJCZFNoRWQv?=
+ =?utf-8?B?V0VzRkxvVnJ3UDRnNEJmcUZKNXdnVW9raWovT09IczNaRlJaancwSkgzT25i?=
+ =?utf-8?B?TWN3VG5LcVlGdmJ2QlpmOGcrZFFhb09BRmlMcmxDRVl3VGkrVUNWQWRxUWVB?=
+ =?utf-8?B?SXBBUUNWSVFWdU1qcWFLcTlrV21ORWlTTnlFQjNLanp4TGczdHVId2YzbXhr?=
+ =?utf-8?B?Wmt2NHhBaGt6L1BkSGx0UkZ3aTM0bHpKS3BVOHpDbzZ4Q0JEcjhRRmZFVzI4?=
+ =?utf-8?B?MzZNSG0xKzE4MW85QVNQVld0VHl4aTk4bkFJQzdMS21rSmg1T0tXZGVIcUIx?=
+ =?utf-8?B?c3NZRk01RThwRUUvbjZUNWx5VEFjN0NuaDFCc1VOTHRHbG9FUXFSdzdjS1k1?=
+ =?utf-8?B?NldwUFdaVWpyNW5ublJtUnM3Y0d4SnIxanBPYUlSOE5CUjYrNStOd3pxWlZa?=
+ =?utf-8?B?bzAxbzU3THZNTGJJOERiUVhWZVM2bmxuejk3bGhva0xKWU1acmN2TitEMjRi?=
+ =?utf-8?Q?v4ZAfI6nGhQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXMzTGVPajV5K0laOUNIN1U5TjNTSTBtc01QbHg0K0t5Qk9qYmhCakIyWTJC?=
+ =?utf-8?B?cUtxYjdOU1dhbndaRWJGZnl1Q1ZSczc0WWduMjJLL0wvOWx0N1dwdDlLbmFQ?=
+ =?utf-8?B?MGdZMDNkRDUrOUNIYVVDcHZQMGtvam9jd1VZdURwMm1Welh4K2lrRjdJWEZ3?=
+ =?utf-8?B?V2dGcGhxYTRDWWRhbGJEU0NDTkhmb0ZCakErSC9HS2JwUXEwa3IzVHBaQmRW?=
+ =?utf-8?B?a3F4WFNDWVNsQWFHT01IVmU1bjNZS2hKQjhneXZ4eTc3RTFSM2crT0VqRnpT?=
+ =?utf-8?B?UTkyTVhlQ0tXbnFWOXpydThYMTZSakZ5UU1KYjNiY09pRGRXOUpWV3U2NGVC?=
+ =?utf-8?B?dVNhaU02NDJHdllKczJlNmJkaTdueS94ck5hVU5PZ2dtQnZld1pYNTZVSDA2?=
+ =?utf-8?B?aVpQbzZDUHUyMHhodWFXdlN4dTkzbFR1Q0pwZmhzREtqd0pESHppMDhGMVlN?=
+ =?utf-8?B?RU96R1dJa2NTWjdGQ2F3dGNiMndRdFlaclRIMGJoekZVY1M0NXM4ei9DeWtQ?=
+ =?utf-8?B?TVhpOGpBeVZ3MjY4dHl0c3JtZk9Yd0lyWjdmeTc5YWVOZWFiSGQxMEpXdXRE?=
+ =?utf-8?B?cHdxWDZ0dDFOOStmSUMyaFdhaGoxOXE2Mk1PV2FUeG5wMGt4TWxoOGxhdjlw?=
+ =?utf-8?B?V0xJdUJSN1JFdFBuNU9tYjlwYk1qMTlMSEt5UmdGcjh5WmJqWkNpbENuYkd2?=
+ =?utf-8?B?Tm5ISDlRZEdWa2U2Qm5MTHhTSk01bTBDV0dwU082VDN1S1FkanZSaVVvbWdL?=
+ =?utf-8?B?cjFmcUtLZDlWZmpRQkxiM1NWTTN5ajBMNjMwKy9HMi95dFFmWGY4RU04UjJ5?=
+ =?utf-8?B?VXpWeDNZY0Fac0R0MzZzR1ZxQUMvbXdLczhmRmkzNXM5OGRvYVFUZzRXcXpx?=
+ =?utf-8?B?cWR1RXFuVXlwalVYVkdkR25PelZIUW13Q3lNd0x6dWl1VWJScEd3R1hZdExE?=
+ =?utf-8?B?eGdLai85RVRGRHBtdXNxZjMrcmNkTS8yQUM3OThaYlhIZGozMnhWMWlnZkxW?=
+ =?utf-8?B?S3ljcy80dm9rbTFMQ1RjUkR5bXdYNjRBOGNMeHo4RlBSMS9DRVFSbWZDa3RT?=
+ =?utf-8?B?Yk5MWW8vcWRVdHRiZVRsVSsxYS8wUXpHZXcyRHRSYzFWZXB5NmUxLzRoNUhN?=
+ =?utf-8?B?MzlLYzh5UVluY21hWmhJVUM4V1IrdGlXdTdDaDJGZThjYk5PZ3FLN1Z6Yksr?=
+ =?utf-8?B?MGhBekNrSlVzcUplSklZZ1o3cyswRC9Ba0pYS1Q1dXM5UU5LOGtWV1JFK3Uy?=
+ =?utf-8?B?ZHk0Qk9PR1N4Y252VkI5NHVMMGVMWVJmQngvUmNjei9GUTAzd2h1L25FQTNW?=
+ =?utf-8?B?QngxUkl1TXNvSTI3ZTJEZG80RC8zWjlIcXpPSmlJSnQ2emUyTThwaUkrQVJq?=
+ =?utf-8?B?clkzYUZyRWF0MGRmeG9HM3RSMDdJWHNBMVZMUTYyWGp5MjlPMkI1RXNKOCtJ?=
+ =?utf-8?B?d2N5Ky84U2FpR09JQTNRMFpyNEx6M005S0ZhaTZTdDc5VVU5dVBKSmJtbUJR?=
+ =?utf-8?B?K0d4eitsUTBZSjRQdVlWKzdaUE1lRS9NNUdiMlJIMWh0R1ZnVGxmSlVoZXpn?=
+ =?utf-8?B?K3o0VmxGVStGZ0pCWWF2WXZqMllMNUZIZVJJN1QwMDFOOTViK0h3U0ZzQXZM?=
+ =?utf-8?B?T2g0SG9CQ2ViWkxtbmVWRUNjSERXQ2VXaXdqWWtuelhjZ003SndueXVvTlU2?=
+ =?utf-8?B?dmYrQkxxN2dPTUFsemFQbkY4amNVM2ZmWWVFcUdrY1JGRVRpQmFZenpFRlla?=
+ =?utf-8?B?ZTVFZFdFWFB4WHhORlpESmlYV3ZyMkE4STRDZ1ZtaXB5a3ZuSnhzdHFGWENK?=
+ =?utf-8?B?MDVQck10RVFLV1E2S2V2eTJjSTRtUGJ6VENnaXpiZnJMS0RqUWpwUHhMQm9z?=
+ =?utf-8?B?ZWo4aHBXM2RJdFM0cWpkaTB6dEd6ZjNlWldIcFN3Sk9EaUlaTWFMbUZKN25S?=
+ =?utf-8?B?UUNja3h5VWVIZUJGWnNSRW84Y2szZ3RTQ2xrekhsRkRlc2ZURzZZOUdPNk9M?=
+ =?utf-8?B?dlp0MzBDSXRNcTFmWU4rNWQwbDYreVlkdVdxMlZtVzYwSFc5MWhDTVNlMkw5?=
+ =?utf-8?B?RHNNMFdWVkVjR1dZK0NKSnhZOGx4Y09UTXcwanZXL3puQm51Y3ZNTjZjWkJ1?=
+ =?utf-8?B?NkF2Q3YwVXRvSVYzMTUyL295OWUvQkVFUTlwL25xYTRSSFdJb3RCaHluL1Rl?=
+ =?utf-8?Q?g35v79lG2TR8W23PnNvl7hgZf8gTkftA98KuAURG0vIg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e576227f-657a-4823-d049-08ddf40b8624
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 03:54:09.2151
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JMf8vdGhLW9v647SmEW7CVd5GJJGLwYU8vXJFTMa5M0f39inW9gKOpePV2gIymJ1SU/4iCAzhAYv7tZOEBcqXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7919
 
-There are currently two hard lockup detector implementations:
-HARDLOCKUP_DETECTOR_PERF (perf-based) and HARDLOCKUP_DETECTOR_BUDDY
-(buddy-based). When enabling the hardlockup feature on new arch
-(e.g., RISC-V), ambiguity arises regarding which detector to choose.
+On 9/11/25 22:31, David Hildenbrand wrote:
+> On 08.09.25 02:04, Balbir Singh wrote:
+>> Add support for splitting device-private THP folios, enabling fallback
+>> to smaller page sizes when large page allocation or migration fails.
+>>
+>> Key changes:
+>> - split_huge_pmd(): Handle device-private PMD entries during splitting
+>> - Preserve RMAP_EXCLUSIVE semantics for anonymous exclusive folios
+>> - Skip RMP_USE_SHARED_ZEROPAGE for device-private entries as they
+>>    don't support shared zero page semantics
+>>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> Cc: Rakie Kim <rakie.kim@sk.com>
+>> Cc: Byungchul Park <byungchul@sk.com>
+>> Cc: Gregory Price <gourry@gourry.net>
+>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Lyude Paul <lyude@redhat.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>> Cc: Matthew Brost <matthew.brost@intel.com>
+>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> ---
+>>   mm/huge_memory.c | 129 +++++++++++++++++++++++++++++++++--------------
+>>   1 file changed, 91 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 337d8e3dd837..b720870c04b2 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -2880,16 +2880,19 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>>       struct page *page;
+>>       pgtable_t pgtable;
+>>       pmd_t old_pmd, _pmd;
+>> -    bool young, write, soft_dirty, pmd_migration = false, uffd_wp = false;
+>> -    bool anon_exclusive = false, dirty = false;
+>> +    bool young, write, soft_dirty, uffd_wp = false;
+>> +    bool anon_exclusive = false, dirty = false, present = false;
+>>       unsigned long addr;
+>>       pte_t *pte;
+>>       int i;
+>> +    swp_entry_t swp_entry;
+>>         VM_BUG_ON(haddr & ~HPAGE_PMD_MASK);
+>>       VM_BUG_ON_VMA(vma->vm_start > haddr, vma);
+>>       VM_BUG_ON_VMA(vma->vm_end < haddr + HPAGE_PMD_SIZE, vma);
+>> -    VM_BUG_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd));
+>> +
+>> +    VM_WARN_ON(!is_pmd_migration_entry(*pmd) && !pmd_trans_huge(*pmd) &&
+>> +            !is_pmd_device_private_entry(*pmd));
+>>   
+> 
+> Indentation. But I do wonder if we want a helper to do a more
+> efficient
+> 
 
-From the community discussion (see link below [1]), the buddy approach is
-preferred. So remove the HARDLOCKUP_DETECTOR_PERF implementation.
+The indentation at my end is fine, do you mean you want to see the conditions aligned?
 
-Link: https://lore.kernel.org/all/CAD=FV=WWUiCi6bZCs_gseFpDDWNkuJMoL6XCftEo6W7q6jRCkg@mail.gmail.com/ [1]
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/Kconfig                     |  14 --
- arch/arm64/Kconfig               |   3 -
- arch/arm64/kernel/Makefile       |   1 -
- arch/arm64/kernel/watchdog_hld.c |  94 ----------
- arch/powerpc/Kconfig             |   2 -
- arch/powerpc/kernel/setup_64.c   |  11 --
- arch/x86/Kconfig                 |   2 -
- arch/x86/events/intel/core.c     |   4 -
- arch/x86/kernel/apic/hw_nmi.c    |   7 -
- include/linux/nmi.h              |  24 ---
- kernel/Makefile                  |   1 -
- kernel/watchdog.c                |   3 -
- kernel/watchdog_perf.c           | 308 -------------------------------
- lib/Kconfig.debug                |  34 +---
- 14 files changed, 3 insertions(+), 505 deletions(-)
- delete mode 100644 arch/arm64/kernel/watchdog_hld.c
- delete mode 100644 kernel/watchdog_perf.c
+> is_pmd_migration_entry() || is_pmd_device_private_entry()
+> 
+> If only I could come up with a good name ... any ideas?
+> 
+> is_non_present_folio_entry()
+> 
+> maybe?
+> 
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index f18dbcc776140..76e99f25be8ca 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -459,20 +459,6 @@ config HAVE_MIXED_BREAKPOINTS_REGS
- config HAVE_USER_RETURN_NOTIFIER
- 	bool
- 
--config HAVE_PERF_EVENTS_NMI
--	bool
--	help
--	  System hardware can generate an NMI using the perf event
--	  subsystem.  Also has support for calculating CPU cycle events
--	  to determine how many clock cycles in a given period.
--
--config HAVE_HARDLOCKUP_DETECTOR_PERF
--	bool
--	depends on HAVE_PERF_EVENTS_NMI
--	help
--	  The arch chooses to use the generic perf-NMI-based hardlockup
--	  detector. Must define HAVE_PERF_EVENTS_NMI.
--
- config HAVE_HARDLOCKUP_DETECTOR_ARCH
- 	bool
- 	help
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 63e7d8a86b92c..d04ad76ecf67b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -229,8 +229,6 @@ config ARM64
- 	select HAVE_FUNCTION_GRAPH_FREGS
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_GCC_PLUGINS
--	select HAVE_HARDLOCKUP_DETECTOR_PERF if PERF_EVENTS && \
--		HW_PERF_EVENTS && HAVE_PERF_EVENTS_NMI
- 	select HAVE_HW_BREAKPOINT if PERF_EVENTS
- 	select HAVE_IOREMAP_PROT
- 	select HAVE_IRQ_TIME_ACCOUNTING
-@@ -238,7 +236,6 @@ config ARM64
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select HAVE_NMI
- 	select HAVE_PERF_EVENTS
--	select HAVE_PERF_EVENTS_NMI if ARM64_PSEUDO_NMI
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_PREEMPT_DYNAMIC_KEY
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 76f32e424065e..12d77f373fea4 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -44,7 +44,6 @@ obj-$(CONFIG_KUSER_HELPERS)		+= kuser32.o
- obj-$(CONFIG_FUNCTION_TRACER)		+= ftrace.o entry-ftrace.o
- obj-$(CONFIG_MODULES)			+= module.o module-plts.o
- obj-$(CONFIG_PERF_EVENTS)		+= perf_regs.o perf_callchain.o
--obj-$(CONFIG_HARDLOCKUP_DETECTOR_PERF)	+= watchdog_hld.o
- obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
- obj-$(CONFIG_CPU_PM)			+= sleep.o suspend.o
- obj-$(CONFIG_KGDB)			+= kgdb.o
-diff --git a/arch/arm64/kernel/watchdog_hld.c b/arch/arm64/kernel/watchdog_hld.c
-deleted file mode 100644
-index 3093037dcb7be..0000000000000
---- a/arch/arm64/kernel/watchdog_hld.c
-+++ /dev/null
-@@ -1,94 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include <linux/nmi.h>
--#include <linux/cpufreq.h>
--#include <linux/perf/arm_pmu.h>
--
--/*
-- * Safe maximum CPU frequency in case a particular platform doesn't implement
-- * cpufreq driver. Although, architecture doesn't put any restrictions on
-- * maximum frequency but 5 GHz seems to be safe maximum given the available
-- * Arm CPUs in the market which are clocked much less than 5 GHz. On the other
-- * hand, we can't make it much higher as it would lead to a large hard-lockup
-- * detection timeout on parts which are running slower (eg. 1GHz on
-- * Developerbox) and doesn't possess a cpufreq driver.
-- */
--#define SAFE_MAX_CPU_FREQ	5000000000UL // 5 GHz
--u64 hw_nmi_get_sample_period(int watchdog_thresh)
--{
--	unsigned int cpu = smp_processor_id();
--	unsigned long max_cpu_freq;
--
--	max_cpu_freq = cpufreq_get_hw_max_freq(cpu) * 1000UL;
--	if (!max_cpu_freq)
--		max_cpu_freq = SAFE_MAX_CPU_FREQ;
--
--	return (u64)max_cpu_freq * watchdog_thresh;
--}
--
--bool __init arch_perf_nmi_is_available(void)
--{
--	/*
--	 * hardlockup_detector_perf_init() will success even if Pseudo-NMI turns off,
--	 * however, the pmu interrupts will act like a normal interrupt instead of
--	 * NMI and the hardlockup detector would be broken.
--	 */
--	return arm_pmu_irq_is_nmi();
--}
--
--static int watchdog_perf_update_period(void *data)
--{
--	int cpu = smp_processor_id();
--	u64 max_cpu_freq, new_period;
--
--	max_cpu_freq = cpufreq_get_hw_max_freq(cpu) * 1000UL;
--	if (!max_cpu_freq)
--		return 0;
--
--	new_period = watchdog_thresh * max_cpu_freq;
--	hardlockup_detector_perf_adjust_period(new_period);
--
--	return 0;
--}
--
--static int watchdog_freq_notifier_callback(struct notifier_block *nb,
--					   unsigned long val, void *data)
--{
--	struct cpufreq_policy *policy = data;
--	int cpu;
--
--	if (val != CPUFREQ_CREATE_POLICY)
--		return NOTIFY_DONE;
--
--	/*
--	 * Let each online CPU related to the policy update the period by their
--	 * own. This will serialize with the framework on start/stop the lockup
--	 * detector (softlockup_{start,stop}_all) and avoid potential race
--	 * condition. Otherwise we may have below theoretical race condition:
--	 * (core 0/1 share the same policy)
--	 * [core 0]                      [core 1]
--	 *                               hardlockup_detector_event_create()
--	 *                                 hw_nmi_get_sample_period()
--	 * (cpufreq registered, notifier callback invoked)
--	 * watchdog_freq_notifier_callback()
--	 *   watchdog_perf_update_period()
--	 *   (since core 1's event's not yet created,
--	 *    the period is not set)
--	 *                                 perf_event_create_kernel_counter()
--	 *                                 (event's period is SAFE_MAX_CPU_FREQ)
--	 */
--	for_each_cpu(cpu, policy->cpus)
--		smp_call_on_cpu(cpu, watchdog_perf_update_period, NULL, false);
--
--	return NOTIFY_DONE;
--}
--
--static struct notifier_block watchdog_freq_notifier = {
--	.notifier_call = watchdog_freq_notifier_callback,
--};
--
--static int __init init_watchdog_freq_notifier(void)
--{
--	return cpufreq_register_notifier(&watchdog_freq_notifier,
--					 CPUFREQ_POLICY_NOTIFIER);
--}
--core_initcall(init_watchdog_freq_notifier);
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index a72d15bbbd7c7..4feebc0ba6adf 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -253,7 +253,6 @@ config PPC
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_GENERIC_VDSO
- 	select HAVE_HARDLOCKUP_DETECTOR_ARCH	if PPC_BOOK3S_64 && SMP
--	select HAVE_HARDLOCKUP_DETECTOR_PERF	if PERF_EVENTS && HAVE_PERF_EVENTS_NMI
- 	select HAVE_HW_BREAKPOINT		if PERF_EVENTS && (PPC_BOOK3S || PPC_8xx)
- 	select HAVE_IOREMAP_PROT
- 	select HAVE_IRQ_TIME_ACCOUNTING
-@@ -272,7 +271,6 @@ config PPC
- 	select HAVE_OBJTOOL			if ARCH_USING_PATCHABLE_FUNCTION_ENTRY || MPROFILE_KERNEL || PPC32
- 	select HAVE_OBJTOOL_MCOUNT		if HAVE_OBJTOOL
- 	select HAVE_PERF_EVENTS
--	select HAVE_PERF_EVENTS_NMI		if PPC64
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_PREEMPT_DYNAMIC_KEY
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 8fd7cbf3bd048..8deea36ed97d1 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -894,13 +894,6 @@ struct ppc_pci_io ppc_pci_io;
- EXPORT_SYMBOL(ppc_pci_io);
- #endif
- 
--#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
--u64 hw_nmi_get_sample_period(int watchdog_thresh)
--{
--	return ppc_proc_freq * watchdog_thresh;
--}
--#endif
--
- /*
-  * The perf based hardlockup detector breaks PMU event based branches, so
-  * disable it by default. Book3S has a soft-nmi hardlockup detector based
-@@ -913,15 +906,11 @@ u64 hw_nmi_get_sample_period(int watchdog_thresh)
-  */
- static int __init disable_hardlockup_detector(void)
- {
--#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
--	hardlockup_detector_disable();
--#else
- 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
- 		check_kvm_guest();
- 		if (is_kvm_guest())
- 			hardlockup_detector_disable();
- 	}
--#endif
- 
- 	return 0;
- }
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index d68b5f6202e2f..099fa9fc725c1 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -273,8 +273,6 @@ config X86
- 	select HAVE_PAGE_SIZE_4KB
- 	select HAVE_PCSPKR_PLATFORM
- 	select HAVE_PERF_EVENTS
--	select HAVE_PERF_EVENTS_NMI
--	select HAVE_HARDLOCKUP_DETECTOR_PERF	if PERF_EVENTS && HAVE_PERF_EVENTS_NMI
- 	select HAVE_PCI
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 28f5468a6ea36..756929be84992 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -7818,16 +7818,12 @@ static __init int fixup_ht_bug(void)
- 
- 	cpus_read_lock();
- 
--	hardlockup_detector_perf_stop();
--
- 	x86_pmu.flags &= ~(PMU_FL_EXCL_CNTRS | PMU_FL_EXCL_ENABLED);
- 
- 	x86_pmu.start_scheduling = NULL;
- 	x86_pmu.commit_scheduling = NULL;
- 	x86_pmu.stop_scheduling = NULL;
- 
--	hardlockup_detector_perf_restart();
--
- 	for_each_online_cpu(c)
- 		free_excl_cntrs(&per_cpu(cpu_hw_events, c));
- 
-diff --git a/arch/x86/kernel/apic/hw_nmi.c b/arch/x86/kernel/apic/hw_nmi.c
-index 45af535c44a07..bc534f4f6fbc5 100644
---- a/arch/x86/kernel/apic/hw_nmi.c
-+++ b/arch/x86/kernel/apic/hw_nmi.c
-@@ -23,13 +23,6 @@
- 
- #include "local.h"
- 
--#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
--u64 hw_nmi_get_sample_period(int watchdog_thresh)
--{
--	return (u64)(cpu_khz) * 1000 * watchdog_thresh;
--}
--#endif
--
- #ifdef arch_trigger_cpumask_backtrace
- static void nmi_raise_cpu_backtrace(cpumask_t *mask)
- {
-diff --git a/include/linux/nmi.h b/include/linux/nmi.h
-index cf3c6ab408aac..ff2b70cfd39bb 100644
---- a/include/linux/nmi.h
-+++ b/include/linux/nmi.h
-@@ -99,18 +99,6 @@ void watchdog_hardlockup_touch_cpu(unsigned int cpu);
- void watchdog_hardlockup_check(unsigned int cpu, struct pt_regs *regs);
- #endif
- 
--#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
--extern void hardlockup_detector_perf_stop(void);
--extern void hardlockup_detector_perf_restart(void);
--extern void hardlockup_config_perf_event(const char *str);
--extern void hardlockup_detector_perf_adjust_period(u64 period);
--#else
--static inline void hardlockup_detector_perf_stop(void) { }
--static inline void hardlockup_detector_perf_restart(void) { }
--static inline void hardlockup_config_perf_event(const char *str) { }
--static inline void hardlockup_detector_perf_adjust_period(u64 period) { }
--#endif
--
- void watchdog_hardlockup_stop(void);
- void watchdog_hardlockup_start(void);
- int watchdog_hardlockup_probe(void);
-@@ -204,18 +192,6 @@ static inline bool trigger_single_cpu_backtrace(int cpu)
- }
- #endif
- 
--#ifdef CONFIG_HARDLOCKUP_DETECTOR_PERF
--u64 hw_nmi_get_sample_period(int watchdog_thresh);
--bool arch_perf_nmi_is_available(void);
--#endif
--
--#if defined(CONFIG_HARDLOCKUP_CHECK_TIMESTAMP) && \
--    defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
--void watchdog_update_hrtimer_threshold(u64 period);
--#else
--static inline void watchdog_update_hrtimer_threshold(u64 period) { }
--#endif
--
- #ifdef CONFIG_HAVE_ACPI_APEI_NMI
- #include <asm/nmi.h>
- #endif
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 216a7dfc3a688..76de2a3df2fb9 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -102,7 +102,6 @@ obj-$(CONFIG_KGDB) += debug/
- obj-$(CONFIG_DETECT_HUNG_TASK) += hung_task.o
- obj-$(CONFIG_LOCKUP_DETECTOR) += watchdog.o
- obj-$(CONFIG_HARDLOCKUP_DETECTOR_BUDDY) += watchdog_buddy.o
--obj-$(CONFIG_HARDLOCKUP_DETECTOR_PERF) += watchdog_perf.o
- obj-$(CONFIG_SECCOMP) += seccomp.o
- obj-$(CONFIG_RELAY) += relay.o
- obj-$(CONFIG_SYSCTL) += utsname_sysctl.o
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 5b62d10027836..8d058389a3565 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -111,8 +111,6 @@ static int __init hardlockup_panic_setup(char *str)
- 		watchdog_hardlockup_user_enabled = 0;
- 	else if (!strncmp(str, "1", 1))
- 		watchdog_hardlockup_user_enabled = 1;
--	else if (!strncmp(str, "r", 1))
--		hardlockup_config_perf_event(str + 1);
- 	while (*(str++)) {
- 		if (*str == ',') {
- 			str++;
-@@ -623,7 +621,6 @@ static void set_sample_period(void)
- 	 * hardlockup detector generates a warning
- 	 */
- 	sample_period = get_softlockup_thresh() * ((u64)NSEC_PER_SEC / NUM_SAMPLE_PERIODS);
--	watchdog_update_hrtimer_threshold(sample_period);
- }
- 
- static void update_report_ts(void)
-diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-deleted file mode 100644
-index d3ca70e3c256a..0000000000000
---- a/kernel/watchdog_perf.c
-+++ /dev/null
-@@ -1,308 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Detect hard lockups on a system using perf
-- *
-- * started by Don Zickus, Copyright (C) 2010 Red Hat, Inc.
-- *
-- * Note: Most of this code is borrowed heavily from the original softlockup
-- * detector, so thanks to Ingo for the initial implementation.
-- * Some chunks also taken from the old x86-specific nmi watchdog code, thanks
-- * to those contributors as well.
-- */
--
--#define pr_fmt(fmt) "NMI watchdog: " fmt
--
--#include <linux/panic.h>
--#include <linux/nmi.h>
--#include <linux/atomic.h>
--#include <linux/module.h>
--#include <linux/sched/debug.h>
--
--#include <asm/irq_regs.h>
--#include <linux/perf_event.h>
--
--static DEFINE_PER_CPU(struct perf_event *, watchdog_ev);
--
--static atomic_t watchdog_cpus = ATOMIC_INIT(0);
--
--#ifdef CONFIG_HARDLOCKUP_CHECK_TIMESTAMP
--static DEFINE_PER_CPU(ktime_t, last_timestamp);
--static DEFINE_PER_CPU(unsigned int, nmi_rearmed);
--static ktime_t watchdog_hrtimer_sample_threshold __read_mostly;
--
--void watchdog_update_hrtimer_threshold(u64 period)
--{
--	/*
--	 * The hrtimer runs with a period of (watchdog_threshold * 2) / 5
--	 *
--	 * So it runs effectively with 2.5 times the rate of the NMI
--	 * watchdog. That means the hrtimer should fire 2-3 times before
--	 * the NMI watchdog expires. The NMI watchdog on x86 is based on
--	 * unhalted CPU cycles, so if Turbo-Mode is enabled the CPU cycles
--	 * might run way faster than expected and the NMI fires in a
--	 * smaller period than the one deduced from the nominal CPU
--	 * frequency. Depending on the Turbo-Mode factor this might be fast
--	 * enough to get the NMI period smaller than the hrtimer watchdog
--	 * period and trigger false positives.
--	 *
--	 * The sample threshold is used to check in the NMI handler whether
--	 * the minimum time between two NMI samples has elapsed. That
--	 * prevents false positives.
--	 *
--	 * Set this to 4/5 of the actual watchdog threshold period so the
--	 * hrtimer is guaranteed to fire at least once within the real
--	 * watchdog threshold.
--	 */
--	watchdog_hrtimer_sample_threshold = period * 2;
--}
--
--static bool watchdog_check_timestamp(void)
--{
--	ktime_t delta, now = ktime_get_mono_fast_ns();
--
--	delta = now - __this_cpu_read(last_timestamp);
--	if (delta < watchdog_hrtimer_sample_threshold) {
--		/*
--		 * If ktime is jiffies based, a stalled timer would prevent
--		 * jiffies from being incremented and the filter would look
--		 * at a stale timestamp and never trigger.
--		 */
--		if (__this_cpu_inc_return(nmi_rearmed) < 10)
--			return false;
--	}
--	__this_cpu_write(nmi_rearmed, 0);
--	__this_cpu_write(last_timestamp, now);
--	return true;
--}
--
--static void watchdog_init_timestamp(void)
--{
--	__this_cpu_write(nmi_rearmed, 0);
--	__this_cpu_write(last_timestamp, ktime_get_mono_fast_ns());
--}
--#else
--static inline bool watchdog_check_timestamp(void) { return true; }
--static inline void watchdog_init_timestamp(void) { }
--#endif
--
--static struct perf_event_attr wd_hw_attr = {
--	.type		= PERF_TYPE_HARDWARE,
--	.config		= PERF_COUNT_HW_CPU_CYCLES,
--	.size		= sizeof(struct perf_event_attr),
--	.pinned		= 1,
--	.disabled	= 1,
--};
--
--static struct perf_event_attr fallback_wd_hw_attr = {
--	.type		= PERF_TYPE_HARDWARE,
--	.config		= PERF_COUNT_HW_CPU_CYCLES,
--	.size		= sizeof(struct perf_event_attr),
--	.pinned		= 1,
--	.disabled	= 1,
--};
--
--/* Callback function for perf event subsystem */
--static void watchdog_overflow_callback(struct perf_event *event,
--				       struct perf_sample_data *data,
--				       struct pt_regs *regs)
--{
--	/* Ensure the watchdog never gets throttled */
--	event->hw.interrupts = 0;
--
--	if (panic_in_progress())
--		return;
--
--	if (!watchdog_check_timestamp())
--		return;
--
--	watchdog_hardlockup_check(smp_processor_id(), regs);
--}
--
--static int hardlockup_detector_event_create(void)
--{
--	unsigned int cpu;
--	struct perf_event_attr *wd_attr;
--	struct perf_event *evt;
--
--	/*
--	 * Preemption is not disabled because memory will be allocated.
--	 * Ensure CPU-locality by calling this in per-CPU kthread.
--	 */
--	WARN_ON(!is_percpu_thread());
--	cpu = raw_smp_processor_id();
--	wd_attr = &wd_hw_attr;
--	wd_attr->sample_period = hw_nmi_get_sample_period(watchdog_thresh);
--
--	/* Try to register using hardware perf events */
--	evt = perf_event_create_kernel_counter(wd_attr, cpu, NULL,
--					       watchdog_overflow_callback, NULL);
--	if (IS_ERR(evt)) {
--		wd_attr = &fallback_wd_hw_attr;
--		wd_attr->sample_period = hw_nmi_get_sample_period(watchdog_thresh);
--		evt = perf_event_create_kernel_counter(wd_attr, cpu, NULL,
--						       watchdog_overflow_callback, NULL);
--	}
--
--	if (IS_ERR(evt)) {
--		pr_debug("Perf event create on CPU %d failed with %ld\n", cpu,
--			 PTR_ERR(evt));
--		return PTR_ERR(evt);
--	}
--	WARN_ONCE(this_cpu_read(watchdog_ev), "unexpected watchdog_ev leak");
--	this_cpu_write(watchdog_ev, evt);
--	return 0;
--}
--
--/**
-- * watchdog_hardlockup_enable - Enable the local event
-- * @cpu: The CPU to enable hard lockup on.
-- */
--void watchdog_hardlockup_enable(unsigned int cpu)
--{
--	WARN_ON_ONCE(cpu != smp_processor_id());
--
--	if (hardlockup_detector_event_create())
--		return;
--
--	/* use original value for check */
--	if (!atomic_fetch_inc(&watchdog_cpus))
--		pr_info("Enabled. Permanently consumes one hw-PMU counter.\n");
--
--	watchdog_init_timestamp();
--	perf_event_enable(this_cpu_read(watchdog_ev));
--}
--
--/**
-- * watchdog_hardlockup_disable - Disable the local event
-- * @cpu: The CPU to enable hard lockup on.
-- */
--void watchdog_hardlockup_disable(unsigned int cpu)
--{
--	struct perf_event *event = this_cpu_read(watchdog_ev);
--
--	WARN_ON_ONCE(cpu != smp_processor_id());
--
--	if (event) {
--		perf_event_disable(event);
--		perf_event_release_kernel(event);
--		this_cpu_write(watchdog_ev, NULL);
--		atomic_dec(&watchdog_cpus);
--	}
--}
--
--/**
-- * hardlockup_detector_perf_adjust_period - Adjust the event period due
-- *                                          to current cpu frequency change
-- * @period: The target period to be set
-- */
--void hardlockup_detector_perf_adjust_period(u64 period)
--{
--	struct perf_event *event = this_cpu_read(watchdog_ev);
--
--	if (!(watchdog_enabled & WATCHDOG_HARDLOCKUP_ENABLED))
--		return;
--
--	if (!event)
--		return;
--
--	if (event->attr.sample_period == period)
--		return;
--
--	if (perf_event_period(event, period))
--		pr_err("failed to change period to %llu\n", period);
--}
--
--/**
-- * hardlockup_detector_perf_stop - Globally stop watchdog events
-- *
-- * Special interface for x86 to handle the perf HT bug.
-- */
--void __init hardlockup_detector_perf_stop(void)
--{
--	int cpu;
--
--	lockdep_assert_cpus_held();
--
--	for_each_online_cpu(cpu) {
--		struct perf_event *event = per_cpu(watchdog_ev, cpu);
--
--		if (event)
--			perf_event_disable(event);
--	}
--}
--
--/**
-- * hardlockup_detector_perf_restart - Globally restart watchdog events
-- *
-- * Special interface for x86 to handle the perf HT bug.
-- */
--void __init hardlockup_detector_perf_restart(void)
--{
--	int cpu;
--
--	lockdep_assert_cpus_held();
--
--	if (!(watchdog_enabled & WATCHDOG_HARDLOCKUP_ENABLED))
--		return;
--
--	for_each_online_cpu(cpu) {
--		struct perf_event *event = per_cpu(watchdog_ev, cpu);
--
--		if (event)
--			perf_event_enable(event);
--	}
--}
--
--bool __weak __init arch_perf_nmi_is_available(void)
--{
--	return true;
--}
--
--/**
-- * watchdog_hardlockup_probe - Probe whether NMI event is available at all
-- */
--int __init watchdog_hardlockup_probe(void)
--{
--	int ret;
--
--	if (!arch_perf_nmi_is_available())
--		return -ENODEV;
--
--	ret = hardlockup_detector_event_create();
--
--	if (ret) {
--		pr_info("Perf NMI watchdog permanently disabled\n");
--	} else {
--		perf_event_release_kernel(this_cpu_read(watchdog_ev));
--		this_cpu_write(watchdog_ev, NULL);
--	}
--	return ret;
--}
--
--/**
-- * hardlockup_config_perf_event - Overwrite config of wd_hw_attr.
-- * @str: number which identifies the raw perf event to use
-- */
--void __init hardlockup_config_perf_event(const char *str)
--{
--	u64 config;
--	char buf[24];
--	char *comma = strchr(str, ',');
--
--	if (!comma) {
--		if (kstrtoull(str, 16, &config))
--			return;
--	} else {
--		unsigned int len = comma - str;
--
--		if (len > sizeof(buf))
--			return;
--
--		strscpy(buf, str, len);
--		if (kstrtoull(buf, 16, &config))
--			return;
--	}
--
--	wd_hw_attr.type = PERF_TYPE_RAW;
--	wd_hw_attr.config = config;
--}
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 099abf128ce67..5981d33e12f6d 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1159,8 +1159,7 @@ config HAVE_HARDLOCKUP_DETECTOR_BUDDY
- config HARDLOCKUP_DETECTOR
- 	bool "Detect Hard Lockups"
- 	depends on DEBUG_KERNEL && !S390 && !HARDLOCKUP_DETECTOR_SPARC64
--	depends on HAVE_HARDLOCKUP_DETECTOR_PERF || HAVE_HARDLOCKUP_DETECTOR_BUDDY || HAVE_HARDLOCKUP_DETECTOR_ARCH
--	imply HARDLOCKUP_DETECTOR_PERF
-+	depends on HAVE_HARDLOCKUP_DETECTOR_BUDDY || HAVE_HARDLOCKUP_DETECTOR_ARCH
- 	imply HARDLOCKUP_DETECTOR_BUDDY
- 	imply HARDLOCKUP_DETECTOR_ARCH
- 	select LOCKUP_DETECTOR
-@@ -1174,37 +1173,10 @@ config HARDLOCKUP_DETECTOR
- 	  chance to run.  The current stack trace is displayed upon detection
- 	  and the system will stay locked up.
- 
--#
--# Note that arch-specific variants are always preferred.
--#
--config HARDLOCKUP_DETECTOR_PREFER_BUDDY
--	bool "Prefer the buddy CPU hardlockup detector"
--	depends on HARDLOCKUP_DETECTOR
--	depends on HAVE_HARDLOCKUP_DETECTOR_PERF && HAVE_HARDLOCKUP_DETECTOR_BUDDY
--	depends on !HAVE_HARDLOCKUP_DETECTOR_ARCH
--	help
--	  Say Y here to prefer the buddy hardlockup detector over the perf one.
--
--	  With the buddy detector, each CPU uses its softlockup hrtimer
--	  to check that the next CPU is processing hrtimer interrupts by
--	  verifying that a counter is increasing.
--
--	  This hardlockup detector is useful on systems that don't have
--	  an arch-specific hardlockup detector or if resources needed
--	  for the hardlockup detector are better used for other things.
--
--config HARDLOCKUP_DETECTOR_PERF
--	bool
--	depends on HARDLOCKUP_DETECTOR
--	depends on HAVE_HARDLOCKUP_DETECTOR_PERF && !HARDLOCKUP_DETECTOR_PREFER_BUDDY
--	depends on !HAVE_HARDLOCKUP_DETECTOR_ARCH
--	select HARDLOCKUP_DETECTOR_COUNTS_HRTIMER
--
- config HARDLOCKUP_DETECTOR_BUDDY
- 	bool
- 	depends on HARDLOCKUP_DETECTOR
- 	depends on HAVE_HARDLOCKUP_DETECTOR_BUDDY
--	depends on !HAVE_HARDLOCKUP_DETECTOR_PERF || HARDLOCKUP_DETECTOR_PREFER_BUDDY
- 	depends on !HAVE_HARDLOCKUP_DETECTOR_ARCH
- 	select HARDLOCKUP_DETECTOR_COUNTS_HRTIMER
- 
-@@ -1217,8 +1189,8 @@ config HARDLOCKUP_DETECTOR_ARCH
- 	  be used.
- 
- #
--# Both the "perf" and "buddy" hardlockup detectors count hrtimer
--# interrupts. This config enables functions managing this common code.
-+# Buddy hardlockup detectors count hrtimer interrupts. This config enables
-+# functions managing this common code.
- #
- config HARDLOCKUP_DETECTOR_COUNTS_HRTIMER
- 	bool
--- 
-2.39.5
+There is is_pfn_swap_entry(), but that includes hwpoison entries as well.
 
+
+> Well, there is device-exclusive .... but that would not be reachable on these paths yet, ever.
+> 
+> 
+>>       count_vm_event(THP_SPLIT_PMD);
+>>   @@ -2937,18 +2940,43 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>>           return __split_huge_zero_page_pmd(vma, haddr, pmd);
+>>       }
+>>   -    pmd_migration = is_pmd_migration_entry(*pmd);
+>> -    if (unlikely(pmd_migration)) {
+>> -        swp_entry_t entry;
+>>   +    present = pmd_present(*pmd);
+>> +    if (unlikely(!present)) {
+> 
+> I hate this whole function. But maybe in this case it's better
+> to just have here
+> 
+> if (is_pmd_migration_entry(old_pmd)) {
+> 
+> } else if (is_pmd_device_private_entry(old_pmd)) {
+> 
+> There is not much shared code and the helps reduce the indentation level.
+> 
+
+We can definitely try this
+
+>> +        swp_entry = pmd_to_swp_entry(*pmd);
+>>           old_pmd = *pmd;
+>> -        entry = pmd_to_swp_entry(old_pmd);
+>> -        page = pfn_swap_entry_to_page(entry);
+>> -        write = is_writable_migration_entry(entry);
+>> -        if (PageAnon(page))
+>> -            anon_exclusive = is_readable_exclusive_migration_entry(entry);
+>> -        young = is_migration_entry_young(entry);
+>> -        dirty = is_migration_entry_dirty(entry);
+>> +
+>> +        folio = pfn_swap_entry_folio(swp_entry);
+>> +        VM_WARN_ON(!is_migration_entry(swp_entry) &&
+>> +                !is_device_private_entry(swp_entry));
+> 
+> Indentation.
+
+Same as above, checkpatch.pl does not seem to complain
+
+> 
+>> +        page = pfn_swap_entry_to_page(swp_entry);
+>> +
+>> +        if (is_pmd_migration_entry(old_pmd)) {
+>> +            write = is_writable_migration_entry(swp_entry);
+>> +            if (PageAnon(page))
+>> +                anon_exclusive =
+>> +                    is_readable_exclusive_migration_entry(
+>> +                                swp_entry);
+> 
+> Single line please, this is unreadable.
+> 
+
+Sure, will do, I double checked and it seems like 100 columns is fine as per checkpatch.pl
+
+>> +            young = is_migration_entry_young(swp_entry);
+>> +            dirty = is_migration_entry_dirty(swp_entry);
+>> +        } else if (is_pmd_device_private_entry(old_pmd)) {
+>> +            write = is_writable_device_private_entry(swp_entry);
+>> +            anon_exclusive = PageAnonExclusive(page);
+>> +            if (freeze && anon_exclusive &&
+>> +                folio_try_share_anon_rmap_pmd(folio, page))
+>> +                freeze = false;
+>> +            if (!freeze) {
+>> +                rmap_t rmap_flags = RMAP_NONE;
+>> +
+>> +                folio_ref_add(folio, HPAGE_PMD_NR - 1);
+>> +                if (anon_exclusive)
+>> +                    rmap_flags |= RMAP_EXCLUSIVE;
+>> +
+>> +                folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
+>> +                         vma, haddr, rmap_flags);
+>> +            }
+>> +        }
+>> +
+>>           soft_dirty = pmd_swp_soft_dirty(old_pmd);
+>>           uffd_wp = pmd_swp_uffd_wp(old_pmd);
+>>       } else {
+>> @@ -3034,30 +3062,49 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>>        * Note that NUMA hinting access restrictions are not transferred to
+>>        * avoid any possibility of altering permissions across VMAs.
+>>        */
+>> -    if (freeze || pmd_migration) {
+>> +    if (freeze || !present) {
+> 
+> Here too, I wonder if we should just handle device-private completely separately for now.
+> 
+
+For all practical purposes they are inside the if statement. freeze and is_migration need to go together.
+
+
+>>           for (i = 0, addr = haddr; i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE) {
+>>               pte_t entry;
+>> -            swp_entry_t swp_entry;
+>> -
+>> -            if (write)
+>> -                swp_entry = make_writable_migration_entry(
+>> -                            page_to_pfn(page + i));
+>> -            else if (anon_exclusive)
+>> -                swp_entry = make_readable_exclusive_migration_entry(
+>> -                            page_to_pfn(page + i));
+>> -            else
+>> -                swp_entry = make_readable_migration_entry(
+>> -                            page_to_pfn(page + i));
+>> -            if (young)
+>> -                swp_entry = make_migration_entry_young(swp_entry);
+>> -            if (dirty)
+>> -                swp_entry = make_migration_entry_dirty(swp_entry);
+>> -            entry = swp_entry_to_pte(swp_entry);
+>> -            if (soft_dirty)
+>> -                entry = pte_swp_mksoft_dirty(entry);
+>> -            if (uffd_wp)
+>> -                entry = pte_swp_mkuffd_wp(entry);
+>> -
+>> +            if (freeze || is_migration_entry(swp_entry)) {
+>> +                if (write)
+>> +                    swp_entry = make_writable_migration_entry(
+>> +                                page_to_pfn(page + i));
+>> +                else if (anon_exclusive)
+>> +                    swp_entry = make_readable_exclusive_migration_entry(
+>> +                                page_to_pfn(page + i));
+>> +                else
+>> +                    swp_entry = make_readable_migration_entry(
+>> +                                page_to_pfn(page + i));
+>> +                if (young)
+>> +                    swp_entry = make_migration_entry_young(swp_entry);
+>> +                if (dirty)
+>> +                    swp_entry = make_migration_entry_dirty(swp_entry);
+>> +                entry = swp_entry_to_pte(swp_entry);
+>> +                if (soft_dirty)
+>> +                    entry = pte_swp_mksoft_dirty(entry);
+>> +                if (uffd_wp)
+>> +                    entry = pte_swp_mkuffd_wp(entry);
+>> +            } else {
+>> +                /*
+>> +                 * anon_exclusive was already propagated to the relevant
+>> +                 * pages corresponding to the pte entries when freeze
+>> +                 * is false.
+>> +                 */
+>> +                if (write)
+>> +                    swp_entry = make_writable_device_private_entry(
+>> +                                page_to_pfn(page + i));
+>> +                else
+>> +                    swp_entry = make_readable_device_private_entry(
+>> +                                page_to_pfn(page + i));
+>> +                /*
+>> +                 * Young and dirty bits are not progated via swp_entry
+>> +                 */
+>> +                entry = swp_entry_to_pte(swp_entry);
+>> +                if (soft_dirty)
+>> +                    entry = pte_swp_mksoft_dirty(entry);
+>> +                if (uffd_wp)
+>> +                    entry = pte_swp_mkuffd_wp(entry);
+>> +            }
+>>               VM_WARN_ON(!pte_none(ptep_get(pte + i)));
+>>               set_pte_at(mm, addr, pte + i, entry);
+>>           }
+>> @@ -3084,7 +3131,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>>       }
+>>       pte_unmap(pte);
+>>   -    if (!pmd_migration)
+>> +    if (!is_pmd_migration_entry(*pmd))
+>>           folio_remove_rmap_pmd(folio, page, vma);
+>>       if (freeze)
+>>           put_page(page);
+>> @@ -3096,8 +3143,10 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>>   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
+>>                  pmd_t *pmd, bool freeze)
+>>   {
+>> +
+> 
+> Unrelated change.
+> 
+
+Will do
+
+Thanks!
+Balbir
 
