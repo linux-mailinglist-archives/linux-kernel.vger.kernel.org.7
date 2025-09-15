@@ -1,64 +1,58 @@
-Return-Path: <linux-kernel+bounces-816001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3239B56E0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:58:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A5FB56E10
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956CC178B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E37A3BD751
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538E321CC4D;
-	Mon, 15 Sep 2025 01:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA3322370A;
+	Mon, 15 Sep 2025 01:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0AJjbBG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvG8ia4q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A004479EA;
-	Mon, 15 Sep 2025 01:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72CE21FF48;
+	Mon, 15 Sep 2025 01:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757901492; cv=none; b=PDier6NtU9bjOA88mouOJAyt5KFqTm8xviGMiruuvlaHRh2GkoYXQJ2AU1snEAhboD/vmBxEOsk1pfBu8rf8wbJgK8Nj3T0No2h18BqLKeRnPNhKHppLaEIPdbQD9sR6ql6t/aIcZd0xRAuywcJ91LKowUrrHvVU6uSnWMufMSM=
+	t=1757901494; cv=none; b=jcQGQ8h8a1AQakdZiSOpBp6iBkTwrHhIR8493TZiD9Jr965jnHkljNdNGZQNXAAc1f40BR9vrsxIwjMjTtqQIGsaJwWO9Ozz7RZyHL23ZAqHn0NH9WMlv2D+q63o2uf8DvZ1m7X9NMyy11L5jmWexQ8xVsCE2uHls8jiXQx9vDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757901492; c=relaxed/simple;
-	bh=BjDfoABSgABBExqvsCQseg6eKUcYV/UHjDVy9HDbnTM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rqk+WrfTqJ0j8qHDh4HFCOuO0Sie/NQscJc1GUOZzem+svaR2jvQOf+IkF4WqdB54Nq5fJrzkOWiTpj2Bm6Q3WLzrZd/HnqdeXsWgiyTqVl/5MJaFLX95ZUHInYgNuuL+yH027WXUSnYrUBtmjf3jU1fDqlYAYS5Tj958nmTGDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0AJjbBG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C49C4CEF0;
-	Mon, 15 Sep 2025 01:58:11 +0000 (UTC)
+	s=arc-20240116; t=1757901494; c=relaxed/simple;
+	bh=LPyFMKB43zMlbHRsGJfXl3nVz2GmOh2C7PouLJ938HM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=U+hB0sXjCdETIhPr8GVtJQDEpLgeCl1N9Mfof910xRLwRYRxQbJTZFvQJlfdtozdBJi4sIl6c15AZcKNeMtxDwkRGlSUZVYfwCQ1nhu1fKry1eRJ6ZbIChkpTSSJUli47da/j516GgiBOL4IxUSOqIBqBLwSIgZXywgmhZd6DrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvG8ia4q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C31CC4CEF0;
+	Mon, 15 Sep 2025 01:58:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757901492;
-	bh=BjDfoABSgABBExqvsCQseg6eKUcYV/UHjDVy9HDbnTM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=p0AJjbBGFPG749zf9wQYkZKmgBX19ks09WgebMp/0+Hpb55ugQuzAomtLitCmJ5Yy
-	 dTzRVHUoQv3y+CT4Ivr5dw8PWQ03uYMJQLa3ZDbtLg3UQutyzvgsH3WNMMM48TwMxA
-	 mGrqqKHI64s8s2OKPM+2FCF/DAmEyMa6FAPlt5b3C7ub6dLLIpIBlcH9ESwtPyi3NG
-	 TjVCW17Fp+EiqKDtKJUptMA09kckNx/v4hIQXu+QXE/uEd9ApAih+UqwF3E4HAoYuT
-	 QVvgaSFzYrIrwRCMGfY6ilG+tToxHmEnqUjYKh/V9KlASxr9DRtAH91puGizygcwSM
-	 K6MLyBvtOWwIg==
+	s=k20201202; t=1757901493;
+	bh=LPyFMKB43zMlbHRsGJfXl3nVz2GmOh2C7PouLJ938HM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DvG8ia4qP38O3NEYaj64HpSn7dn2Ni8E73J+n/o/qiKCt9lL2wdZ+8AeAegbzg4gW
+	 aR7iX7LuMoaliorim7TJQ42HGMNIJ6cPJp3hfa5IBm5HBYXqRxR7DKqmbwOALUnrJt
+	 A6JP1Fgen11hlDQhrUlLmbVcKU1QP2azOug0XQUf5NmMeegrjy+5DXCIqFuc2AfbuV
+	 zWxau/gxB1FW9xmbOU+xmQkkf6HWLv59i4K0Iky1VVflnkJm58lkyCUMQpBNFNkLKQ
+	 qXIkN17/to6ZB2MUz8VXNlwIgQQPb+K2Cno1KtZx5r1RmPWggl9i7GmiHUzmymcTN8
+	 Jz70PbzrgdzTg==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
 	damon@lists.linux.dev,
 	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 0/6] mm/damon: misc fixups and improvements for 6.18
-Date: Sun, 14 Sep 2025 18:58:01 -0700
-Message-Id: <20250915015807.101505-1-sj@kernel.org>
+Subject: [PATCH 1/6] mm/damon/core: reset age if nr_accesses changes between non-zero and zero
+Date: Sun, 14 Sep 2025 18:58:02 -0700
+Message-Id: <20250915015807.101505-2-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250915015807.101505-1-sj@kernel.org>
+References: <20250915015807.101505-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,51 +61,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Misc fixes and improvements for DAMON that are not critical and
-therefore aims to be merged into Linux 6.18-rc1.
+DAMON resets the age of a region if its nr_accesses value has
+significantly changed. Specifically, the threshold is calculated as 20%
+of largest nr_accesses of the current snapshot.  This means that regions
+changing the nr_accesses from zero to small non-zero value or from a
+small non-zero value to zero will keep the age.  Since many users treat
+zero nr_accesses regions special, this can be confusing.  Kernel code
+including DAMOS' regions priority calculation and DAMON_STAT's idle time
+calculation also treat zero nr_accesses regions special.  Make it
+unconfusing by resetting the age when the nr_accesses changes between
+zero and a non-zero value.
 
-The first patch improves DAMON's age counting for nr_accesses zero
-to/from non-zero changes.
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/damon/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-The second patch fixes an initial DAMOS apply interval delay issue that
-is not realistic but still could happen on an odd setup.
-
-The third patch fixes wrongly written code that doesn't cause any real
-problem but could make code review confusing.
-
-The fourth and the fifth patches update DAMON community meetup
-description and DAMON user-space tool example command for DAMOS usage,
-respectively.
-
-Finally, the sixth patch updates MAINTAINERS section name for DAMON to
-just DAMON.
-
-Changes from RFC
-(https://lore.kernel.org/20250909034353.7064-1-sj@kernel.org)
-- The RFC was only for the first patch
-- Rebase and wordsmith the first patch
-- Add a few misc fixes and improvements for 6.18 to the series
-
-SeongJae Park (6):
-  mm/damon/core: reset age if nr_accesses changes between non-zero and
-    zero
-  mm/damon/core: set effective quota on first charge window
-  mm/damon/lru_sort: use param_ctx correctly
-  Docs/mm/damon/maintainer-profile: update community meetup for
-    reservation requirements
-  Docs/admin-guide/mm/damon/start: add --target_pid to DAMOS example
-    command
-  MAINTAINERS: rename DAMON section
-
- Documentation/admin-guide/mm/damon/start.rst  |  2 +-
- Documentation/mm/damon/maintainer-profile.rst | 17 ++++++-----------
- MAINTAINERS                                   |  2 +-
- mm/damon/core.c                               |  7 ++++++-
- mm/damon/lru_sort.c                           |  2 +-
- 5 files changed, 15 insertions(+), 15 deletions(-)
-
-
-base-commit: d245e17d619ea0336d50b0a6c914f5701d1b0e53
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index be5942435d78..996647caca02 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -2261,6 +2261,9 @@ static void damon_merge_regions_of(struct damon_target *t, unsigned int thres,
+ 	damon_for_each_region_safe(r, next, t) {
+ 		if (abs(r->nr_accesses - r->last_nr_accesses) > thres)
+ 			r->age = 0;
++		else if ((!r->nr_accesses && r->last_nr_accesses) ||
++				(r->nr_accesses && !r->last_nr_accesses))
++			r->age = 0;
+ 		else
+ 			r->age++;
+ 
 -- 
 2.39.5
 
