@@ -1,68 +1,76 @@
-Return-Path: <linux-kernel+bounces-817256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C13CB57FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:06:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21E2B57FCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F321A27692
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8290317B758
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD05227586;
-	Mon, 15 Sep 2025 15:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68839338F29;
+	Mon, 15 Sep 2025 15:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jV43ZEqs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9SQ7rCz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA21F340DB3
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7B3341661
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948429; cv=none; b=ejSAf7ljQ/V/iWIZeGB4s+hIZ3YQyjM/u90aGGsbo198853nlBe8raeYgBkZz7jnpnpOLWmeeJHwIeMC4NARVCRpiHldBFlZfiKvOoo+YdLpw6IJVdFUAxIx5re+17F5gXmF63iT7Vs7FlZr/kL8bFsjlgxlNUi7rWu1UXlCGVo=
+	t=1757948437; cv=none; b=LVXad5YmV0gXZ0Z6LbTm/13WuPg0g0VTyGdCWWTPu2YYFkICdvpSxherjzH6mwyXo+WtDJqM7/TRf87q13CbJIQ2unDxu96BoUpFCeku8yUm0wBzRBqYCSw/3u/ZyMIxbmANAOmJ4eD4pUwMV3fDEzsa60m8hONLS7cOikT+/EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948429; c=relaxed/simple;
-	bh=DAEJnz1PYrrsRnE2T7/7GUldQyKxaAsfp+XTjj5m3Fo=;
+	s=arc-20240116; t=1757948437; c=relaxed/simple;
+	bh=Gje1a6MuxbQRqJJjVBWFqMGNjvc5qcBa8yIEEkD8wWQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g0lX/QSBJ2Rfjxarvbtfy0HGay2dM3IKMqSEJR0I27phuQmEJhhcouX4cDArLqwivaY4NVHWb7OjqqxiQ4/p8aXD89pDCOQLtw3GoWYXSr29QeLRn1pPVsQSykNoRdqxtj65NOf8LKo48pQPmOIJQviLmnQfiJLOLHiQAcm/ZH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jV43ZEqs; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=tP21c3AmiLJkAnt5QI4WjExsRKq6HXM7fbbH7Vhx/IVNwadKLgg26Pn4yXN4WEHa6JdjQRQNDuwg+VXOBWL1Pi4WMcLgh+n9NlhwRDRRNkGz/yzACrzN7mRJwU8s64yQz0zo4iGZQeaSxiFMnkn4Uo/kIbesuAfkumlpNBqkBWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9SQ7rCz; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757948426;
+	s=mimecast20190719; t=1757948434;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Glcz1Zqa3Xm+SpxWCco2Yz++SUVZfeI6p0+BeU5K0tE=;
-	b=jV43ZEqs1iSkpg8GYAzoHduaC1GEKoS49iVd3Sih1bBs2tenxFrAYkyVdW8RVTsxoWs+j/
-	wei2vl+7XyAazpNdv+1T7iWSdFUY0lpM1w/djOyw6cFEkWb39hMXwjBrW+MrjPpiO7ytEa
-	HCCxMxgFAa3r93p1yVd5Aa6OIAjOkt4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=SLP0rl8cKBQmenYpN/sNhONBZ/EaXWDugv9JYiXlVuM=;
+	b=f9SQ7rCzpEMQECoAdGribDJWYfHXC7ybWgIif7rW3Gz4dC6s0+uriO7AvvLHDYWHImdnW4
+	pNipDuaEtYEGHT9bAwjrodwUnCPqnvFTxq3poH32ZRdHWLr+RA/DFpLYH/oK/AI89Zx/q7
+	H0PmZNo79H2W06mw2615gxYW1DR0KUc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-dHz9H-g8MKik48a7PXRIbQ-1; Mon,
- 15 Sep 2025 11:00:24 -0400
-X-MC-Unique: dHz9H-g8MKik48a7PXRIbQ-1
-X-Mimecast-MFC-AGG-ID: dHz9H-g8MKik48a7PXRIbQ_1757948423
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-4BA_leHXP1ml6STXCRd0wQ-1; Mon,
+ 15 Sep 2025 11:00:30 -0400
+X-MC-Unique: 4BA_leHXP1ml6STXCRd0wQ-1
+X-Mimecast-MFC-AGG-ID: 4BA_leHXP1ml6STXCRd0wQ_1757948428
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E70AF180057E;
-	Mon, 15 Sep 2025 15:00:22 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C8A418002C4;
+	Mon, 15 Sep 2025 15:00:28 +0000 (UTC)
 Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.63])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5EEF1180044F;
-	Mon, 15 Sep 2025 15:00:20 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 264F21800446;
+	Mon, 15 Sep 2025 15:00:23 +0000 (UTC)
 From: Gabriele Monaco <gmonaco@redhat.com>
 To: linux-kernel@vger.kernel.org,
-	Yury Norov <yury.norov@gmail.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH v12 8/9] cpumask: Add initialiser CPUMASK_NULL to use cleanup helpers
-Date: Mon, 15 Sep 2025 16:59:29 +0200
-Message-ID: <20250915145920.140180-19-gmonaco@redhat.com>
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	"John B. Wyatt IV" <jwyatt@redhat.com>,
+	"John B. Wyatt IV" <sageofredondo@gmail.com>
+Subject: [PATCH v12 9/9] timers: Exclude isolated cpus from timer migration
+Date: Mon, 15 Sep 2025 16:59:30 +0200
+Message-ID: <20250915145920.140180-20-gmonaco@redhat.com>
 In-Reply-To: <20250915145920.140180-11-gmonaco@redhat.com>
 References: <20250915145920.140180-11-gmonaco@redhat.com>
 Precedence: bulk
@@ -74,45 +82,255 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The cleanup helper __free(free_cpumask_var) works only if the function
-returns after alloc_cpumask_var, this can complicate the code in case
-there are multiple cpumasks using the cleanup helper.
+The timer migration mechanism allows active CPUs to pull timers from
+idle ones to improve the overall idle time. This is however undesired
+when CPU intensive workloads run on isolated cores, as the algorithm
+would move the timers from housekeeping to isolated cores, negatively
+affecting the isolation.
 
-Define a cpumask initialiser that is NULL if the cpumask is a pointer
-and {} if it's on stack. This allows users of the cleanup helper to use
-it freely on initialised cpumasks as the actual free will be called only
-if the mask is not NULL (and of course if it's a pointer).
+Exclude isolated cores from the timer migration algorithm, extend the
+concept of unavailable cores, currently used for offline ones, to
+isolated ones:
+* A core is unavailable if isolated or offline;
+* A core is available if non isolated and online;
 
-This solution was first used in [1], dropped as eventually a single mask
-was sufficient.
+A core is considered unavailable as isolated if it belongs to:
+* the isolcpus (domain) list
+* an isolated cpuset
+Except if it is:
+* in the nohz_full list (already idle for the hierarchy)
+* the nohz timekeeper core (must be available to handle global timers)
 
-[1] - https://lore.kernel.org/lkml/20240120025053.684838-8-yury.norov@gmail.com
+CPUs are added to the hierarchy during late boot, excluding isolated
+ones, the hierarchy is also adapted when the cpuset isolation changes.
 
+Due to how the timer migration algorithm works, any CPU part of the
+hierarchy can have their global timers pulled by remote CPUs and have to
+pull remote timers, only skipping pulling remote timers would break the
+logic.
+For this reason, prevent isolated CPUs from pulling remote global
+timers, but also the other way around: any global timer started on an
+isolated CPU will run there. This does not break the concept of
+isolation (global timers don't come from outside the CPU) and, if
+considered inappropriate, can usually be mitigated with other isolation
+techniques (e.g. IRQ pinning).
+
+This effect was noticed on a 128 cores machine running oslat on the
+isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
+and the CPU with lowest count in a timer migration hierarchy (here 1
+and 65) appears as always active and continuously pulls global timers,
+from the housekeeping CPUs. This ends up moving driver work (e.g.
+delayed work) to isolated CPUs and causes latency spikes:
+
+before the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:     1203 10 3 4 ... 5 (us)
+
+after the change:
+
+ # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+ ...
+  Maximum:      10 4 3 4 3 ... 5 (us)
+
+Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
+Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- include/linux/cpumask.h | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/timer.h         |   9 +++
+ kernel/cgroup/cpuset.c        |   3 +
+ kernel/time/timer_migration.c | 108 +++++++++++++++++++++++++++++++++-
+ 3 files changed, 119 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index ff8f41ab7ce6..5fb9c3fe4256 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -1005,6 +1005,7 @@ static __always_inline unsigned int cpumask_size(void)
+diff --git a/include/linux/timer.h b/include/linux/timer.h
+index 0414d9e6b4fc..62e1cea71125 100644
+--- a/include/linux/timer.h
++++ b/include/linux/timer.h
+@@ -188,4 +188,13 @@ int timers_dead_cpu(unsigned int cpu);
+ #define timers_dead_cpu		NULL
+ #endif
  
- #define this_cpu_cpumask_var_ptr(x)	this_cpu_read(x)
- #define __cpumask_var_read_mostly	__read_mostly
-+#define CPUMASK_NULL			NULL
++#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
++extern int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask);
++#else
++static inline int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
++{
++	return 0;
++}
++#endif
++
+ #endif
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 3cedc3580373..6e9d86fab27e 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1399,6 +1399,9 @@ static void update_exclusion_cpumasks(bool isolcpus_updated)
  
- bool alloc_cpumask_var_node(cpumask_var_t *mask, gfp_t flags, int node);
+ 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
+ 	WARN_ON_ONCE(ret < 0);
++
++	ret = tmigr_isolated_exclude_cpumask(isolated_cpus);
++	WARN_ON_ONCE(ret < 0);
+ }
  
-@@ -1051,6 +1052,7 @@ static __always_inline bool cpumask_available(cpumask_var_t mask)
+ /**
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 0a3a26e766d0..08e29fc01479 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -10,6 +10,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/timerqueue.h>
+ #include <trace/events/ipi.h>
++#include <linux/sched/isolation.h>
  
- #define this_cpu_cpumask_var_ptr(x) this_cpu_ptr(x)
- #define __cpumask_var_read_mostly
-+#define CPUMASK_NULL {}
+ #include "timer_migration.h"
+ #include "tick-internal.h"
+@@ -436,6 +437,29 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
+ 	return !(tmc->tmgroup && tmc->available);
+ }
  
- static __always_inline bool alloc_cpumask_var(cpumask_var_t *mask, gfp_t flags)
++/*
++ * Returns true if @cpu should be excluded from the hierarchy as isolated.
++ * Domain isolated CPUs don't participate in timer migration, nohz_full CPUs
++ * are still part of the hierarchy but become idle (from a tick and timer
++ * migration perspective) when they stop their tick. This lets the timekeeping
++ * CPU handle their global timers. Marking also isolated CPUs as idle would be
++ * too costly, hence they are completely excluded from the hierarchy.
++ * This check is necessary, for instance, to prevent offline isolated CPUs from
++ * being incorrectly marked as available once getting back online.
++ *
++ * Additionally, the tick CPU can be isolated at boot, however
++ * we cannot mark it as unavailable to avoid having no global migrator
++ * for the nohz_full CPUs. This check is only necessary at boot time.
++ */
++static inline bool tmigr_is_isolated(int cpu)
++{
++	if (!tick_nohz_cpu_hotpluggable(cpu))
++		return false;
++	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
++		cpuset_cpu_is_isolated(cpu)) &&
++	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
++}
++
+ /*
+  * Returns true, when @childmask corresponds to the group migrator or when the
+  * group is not active - so no migrator is set.
+@@ -1451,6 +1475,8 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
+ 
+ 	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
+ 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
++		if (!tmc->available)
++			return 0;
+ 		tmc->available = false;
+ 		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
+ 
+@@ -1478,8 +1504,12 @@ static int tmigr_set_cpu_available(unsigned int cpu)
+ 	if (WARN_ON_ONCE(!tmc->tmgroup))
+ 		return -EINVAL;
+ 
++	if (tmigr_is_isolated(cpu))
++		return 0;
+ 	cpumask_set_cpu(cpu, tmigr_available_cpumask);
+ 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
++		if (tmc->available)
++			return 0;
+ 		trace_tmigr_cpu_available(tmc);
+ 		tmc->idle = timer_base_is_idle();
+ 		if (!tmc->idle)
+@@ -1489,6 +1519,81 @@ static int tmigr_set_cpu_available(unsigned int cpu)
+ 	return 0;
+ }
+ 
++static void tmigr_cpu_isolate(struct work_struct *ignored)
++{
++	tmigr_clear_cpu_available(smp_processor_id());
++}
++
++static void tmigr_cpu_unisolate(struct work_struct *ignored)
++{
++	tmigr_set_cpu_available(smp_processor_id());
++}
++
++/**
++ * tmigr_isolated_exclude_cpumask - Exclude given CPUs from hierarchy
++ * @exclude_cpumask: the cpumask to be excluded from timer migration hierarchy
++ *
++ * This function can be called from cpuset code to provide the new set of
++ * isolated CPUs that should be excluded from the hierarchy.
++ * Online CPUs not present in exclude_cpumask but already excluded are brought
++ * back to the hierarchy.
++ * Functions to isolate/unisolate need to be called locally and can sleep.
++ */
++int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
++{
++	struct work_struct __percpu *works __free(free_percpu) =
++		alloc_percpu(struct work_struct);
++	cpumask_var_t cpumask_unisol __free(free_cpumask_var) = CPUMASK_NULL;
++	cpumask_var_t cpumask_isol __free(free_cpumask_var) = CPUMASK_NULL;
++	int cpu;
++
++	lockdep_assert_cpus_held();
++
++	if (!alloc_cpumask_var(&cpumask_isol, GFP_KERNEL))
++		return -ENOMEM;
++	if (!alloc_cpumask_var(&cpumask_unisol, GFP_KERNEL))
++		return -ENOMEM;
++	if (!works)
++		return -ENOMEM;
++
++	cpumask_andnot(cpumask_unisol, cpu_online_mask, exclude_cpumask);
++	cpumask_andnot(cpumask_unisol, cpumask_unisol, tmigr_available_cpumask);
++	/* Set up the mask earlier to avoid races with the migrator CPU */
++	cpumask_or(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_unisol);
++	for_each_cpu(cpu, cpumask_unisol) {
++		struct work_struct *work = per_cpu_ptr(works, cpu);
++
++		INIT_WORK(work, tmigr_cpu_unisolate);
++		schedule_work_on(cpu, work);
++	}
++
++	cpumask_and(cpumask_isol, exclude_cpumask, tmigr_available_cpumask);
++	cpumask_and(cpumask_isol, cpumask_isol, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
++	/*
++	 * Handle this here and not in the cpuset code because exclude_cpumask
++	 * might include also the tick CPU if included in isolcpus.
++	 */
++	for_each_cpu(cpu, cpumask_isol) {
++		if (!tick_nohz_cpu_hotpluggable(cpu)) {
++			cpumask_clear_cpu(cpu, cpumask_isol);
++			break;
++		}
++	}
++	/* Set up the mask earlier to avoid races with the migrator CPU */
++	cpumask_andnot(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_isol);
++	for_each_cpu(cpu, cpumask_isol) {
++		struct work_struct *work = per_cpu_ptr(works, cpu);
++
++		INIT_WORK(work, tmigr_cpu_isolate);
++		schedule_work_on(cpu, work);
++	}
++
++	for_each_cpu_or(cpu, cpumask_isol, cpumask_unisol)
++		flush_work(per_cpu_ptr(works, cpu));
++
++	return 0;
++}
++
+ /*
+  * NOHZ can only be enabled after clocksource_done_booting(). Don't
+  * bother trashing the cache in the tree before.
+@@ -1496,7 +1601,8 @@ static int tmigr_set_cpu_available(unsigned int cpu)
+ static int __init tmigr_late_init(void)
  {
+ 	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
+-				 tmigr_set_cpu_available, tmigr_clear_cpu_available);
++				 tmigr_set_cpu_available,
++				 tmigr_clear_cpu_available);
+ }
+ 
+ static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
 -- 
 2.51.0
 
