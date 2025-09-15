@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-817475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B1FB582A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:00:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98DFB582B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA9B3B1C65
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FB33173494
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1DC28468D;
-	Mon, 15 Sep 2025 17:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AED0285CA4;
+	Mon, 15 Sep 2025 17:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="umzzBUFA"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="eZn8VCfB"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B1122DF99
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AB6224B05
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757955645; cv=none; b=ds8Q9Uy2duV4F8o2P2VJVhU4Nw3KS1J2pl9KXmOEYemo+BkXB4tv7wXMNvYudlwqhlJTaOX1nDhM3HOLiDQZuKe5kSAhbkFKZL4KyRw10Ae2sCliP1bZq/4OdNLglsq/R4E7hEbHe18dqdUI2hpyQcsZWf5Vrolwpo0Dbou4DVw=
+	t=1757955719; cv=none; b=VffALc67qUD2vYHpFOR1xb+W+V1BI5JIMjQbCo3PF1dTQhrRN3BTrlIVYgAM/7Pp80iPs6xoS4LgTLmWm/PfjKbSG+Ip+bypuHoE0Wutk8uwLyMGn9GWrqQyd3+VjchuQ9aKjbU11vUnA33SVrNoFck4Atp8hLmDGVUFQ4BIHB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757955645; c=relaxed/simple;
-	bh=8PxneQeOv/lA5FM5mKO84O7CcXV29XKqLv5rWJEZVB8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IckVVPl8sIPNqDSHfqkuemtqY7vdKzrYh5JLczZPTt3vM5zzb5kjtWwxkMe2HvbDZ2gjesf758ATkMJiH5vbEBvvVKZGao+XYcW+SFPATE0EIVrUIEvc1Ve71avOunIMnq4ksB9bs2EkISibNz2Q5jDltig65WzFLyYqXe/tk1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=umzzBUFA; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329b750757aso3711514a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:00:43 -0700 (PDT)
+	s=arc-20240116; t=1757955719; c=relaxed/simple;
+	bh=n4vASe85eZy1KMZCjpCPLB0+R5aQYRJHMP2IQSmxlmc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=hrAotxhc26EZ367YRpnsRGDbQLeXo2eQucT16N0UVDrPUiE7XsR2kNhxOZrTal6xS6MyI79FgJC6pycTABstcAugk5y0yskDROVrB+98VszKJU00MnO2jtUk31s3kIoWGxnrhsORYZzXC7uFUiCTiuxnVbe0lIBtjEpmXthg9uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=eZn8VCfB; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3eb01f4f76bso44627f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757955643; x=1758560443; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxFVtxN3tgRer9OorGw1rSwesdEyfhvsd/NDtysxL1g=;
-        b=umzzBUFATfoU1BcPunD5siGNY5X512hye5bnuUq7kW/KvwkE5KZQqMfNKE1cXx5ABA
-         Ve4vLVnzUu3mXcfQ3GIcSWjPuU0Da2oJ2TTePFq5o5mz3RWxeqQzyIOuc5TeaxLEuY6c
-         FYXl/yxO1++pgJG7+0wmwDgtzEZDQc6YvwshUYOL02e68oSXmNi/FEhmOz0Is/H0NzaP
-         zGBYHvmIeFr7+VtWExRjW6/Zf8O8s2NfMMM3VZ9g+8v/BHPcNEEhwIvRWFIjViQgcnnI
-         NENv/Ji9TozHijt29UNfRbeuReJvBm33CPA8sPxg7cIWQgeOdg/2dnMZjLCvkKLufPmC
-         E7uw==
+        d=ventanamicro.com; s=google; t=1757955716; x=1758560516; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWHHL1s0psJfb//epbwV/zjtkXGJcyLhcOl2Is0sDa4=;
+        b=eZn8VCfBDEKTZwke7bXWAQf55cyK6DZXnVN9WPzRSrzp98LIj0F2Z1Lnzgz0r4ghfE
+         UWKtLfQH7Vo+20SQ7kS9+8Ei/dn1VxzGn18OvllnDBw5CUi0gHACWGr/EVqwbPLQRiJX
+         3WYbSMSdHoT3GKw+ktHo7rHpraun6EMY/ejyKDhjSwXEuISFRrla0HbDjwXZei9wkdgw
+         QMWfndUxGVN1l78ZyJGFWuaIL9ZT4pXxDn+Z19J7Yvl3ZsyougONebbLb+aDbhz6vmCe
+         If4QBIciBdYsJ3JAFek2h0j+NpSYijHQBLDlPE5s0Nb/icoQ8svkPTPy4V+FihyCcvPq
+         cB/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757955643; x=1758560443;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxFVtxN3tgRer9OorGw1rSwesdEyfhvsd/NDtysxL1g=;
-        b=A87ZjvcZPEsQZ73cPVwpZ8fZUT6x3ne4wnTMg+IlPWHppbmTlBEPqtWbe0xABKMMVz
-         hEDWy6J5EO3JNZwSe7NZd6nB95bhorfMGb/eegwPpdzkHj+d1Z5nzYteHoAkUjqUDKPw
-         rhSckiD8+rMYnQw0K5ppg4LMXKrB9DPTvaKgWWiawO9axLVI/bTH/ylLH8MbqFRp3H3O
-         1XdsJRy9sTMBSz6Akt3d0Hs2vc9bsPKZKP3h3JbTSxrhEeWWEMROSMX6EejCKBoCmy3H
-         /AwL1ePHt1xSXwEZ3p3IvyfmBBeVV3MHBAYQovRNaylfwOpLpJoTDhKJUuVQn1dIQln5
-         NWfA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1rE0DsiWZIgsTBgGqeDs8cUSvIrfVWFUlaqQvskoOqx7BpG84y6m7qQqCr0TZeErVIAvVTrfC5TfJ/ho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUUn8eW3ZbrU0kWy661L6VZTIVuX73KVQHy9KouCFgFCy3bD3T
-	Q+ugQNp5EeTg86uHVOIgAzPPhFrKwHxHlGhlAt9sBpT/MXr+eu+/0Pya1EhKk50uKBWTjhveaZp
-	QFnYzcg==
-X-Google-Smtp-Source: AGHT+IEBh2YE0i6AygzJ4eZnRmYv6+ppmyhOgn0HXl7KSONyNYepQesQNZVPyUFZ+8BI91okOls8ZC7vyBI=
-X-Received: from pjl12.prod.google.com ([2002:a17:90b:2f8c:b0:32e:38f5:e86a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:554f:b0:32e:38b0:1600
- with SMTP id 98e67ed59e1d1-32e38b028ddmr6647879a91.6.1757955643085; Mon, 15
- Sep 2025 10:00:43 -0700 (PDT)
-Date: Mon, 15 Sep 2025 10:00:41 -0700
-In-Reply-To: <aMfM4Fu+Q6gpZKYF@intel.com>
+        d=1e100.net; s=20230601; t=1757955716; x=1758560516;
+        h=in-reply-to:references:subject:from:to:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DWHHL1s0psJfb//epbwV/zjtkXGJcyLhcOl2Is0sDa4=;
+        b=JP7vtBWb1ep73Z6w3Te5LLfSumlTyohbMmZ+1SLBRB5kFMNF12q7rweO7cnA4tIsoX
+         uJ8z+PovA6v2/sZMz1fteJFLaLh6jA3n0vMOFma/vqB5++Dp+SWsGzDL9AuSZmcYYiY4
+         VACwo9tKQ33e9TEzNSCgDoNkgHPtMkowF9kSuV0WMS0ENt7dP9I3Rw1rwfXGpPcmKQMr
+         2Nkg76iFZHUFJAnde7WKz4LvMh5uJbcfQxnGgoquw7VmR1PJuubTSGPj6bkcYWRF70YM
+         l5hps7cglkRkcU+11DM3Dva+vrGDFkDSCzl6ECU7mtOsQ8V1Id3SdJFDAlJ061TpOLD5
+         qqDg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6/IY14dux8qmKeeDIefZPGNciWvNiTm2RpkciGa1bmJDuhWOM/pP1o0qLwlKKM+k+mLEWUiqe8aKx3G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8sx9hMbeqsC5P7CkSAi6k/Qg45faMh5ahqw82kLKWb9TWNfMV
+	tGfOd8RNj6UehrW5Rg55bpL2OeaZ5lnoDfs8TpX/HVnr4JKLYBrCo2SK9PLEN/rQOg4=
+X-Gm-Gg: ASbGncuL/zp7jmdKvf/Fl1PpIdkVJ3oFoy6HRVVLLVPYH0k9J7XWdePmVGLK4HyPYdi
+	nH9y/laI3IEIjJrMhlR7YLbvaZVOuvjUU3sw2NvOf6X1yEIKRYyR02fEoNTWMTolTio23E8PiYe
+	XGffp/bDjEmKSRADhIeRfoVNoSwhaqdSC1afcH+HwdIbprXfa8CjRAOwAXmXda9T/4XeYOcf/PY
+	4WZ9Zn5ZLvTbaYMWNShnD8mEL8EjJ8F2y1K3k3peBUFKTFxg9Jv+OsVG8P+rG78tnFn6G9Hw6nB
+	w8EaEnjnsZV+OoZj6a7zAy6V4O1v9N6QhdjBsHUpm450zqkovLszlnL8Cwjipw52FsFJG6wVrCv
+	z1fTkTAxCxNwdBB5JPeSjOw==
+X-Google-Smtp-Source: AGHT+IFU1lq2Hn1rhnQ1PXztdy1u0/BZUM8rfqOS080uGF0cxwIiBohWrEivOXB1opFs7TzdP9qSMg==
+X-Received: by 2002:a5d:64e3:0:b0:3e6:4b2:b9b2 with SMTP id ffacd0b85a97d-3e7659e936fmr5550562f8f.6.1757955715906;
+        Mon, 15 Sep 2025 10:01:55 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::bfbb])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e9c2954b10sm7301300f8f.50.2025.09.15.10.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 10:01:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-36-seanjc@google.com>
- <aMfM4Fu+Q6gpZKYF@intel.com>
-Message-ID: <aMhGOVFg2PvhqHhj@google.com>
-Subject: Re: [PATCH v15 35/41] KVM: selftests: Add an MSR test to exercise
- guest/host and read/write
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 15 Sep 2025 19:01:03 +0200
+Message-Id: <DCTJ9US6E4PG.1MA4ICDR21DS6@ventanamicro.com>
+Cc: <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
+ <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ "Tianshun Sun" <stsmail163@163.com>
+To: "Jinyu Tang" <tjytimi@163.com>, "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atish.patra@linux.dev>, "Andrew Jones"
+ <ajones@ventanamicro.com>, "Conor Dooley" <conor.dooley@microchip.com>,
+ "Yong-Xuan Wang" <yongxuan.wang@sifive.com>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Nutty Liu" <nutty.liu@hotmail.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [RFC PATCH] kvm/riscv: Add ctxsstatus and ctxhstatus for
+ migration
+References: <20250915152731.1371067-1-tjytimi@163.com>
+ <DCTJ3N8W4PCL.9XCHFVGS62SF@ventanamicro.com>
+In-Reply-To: <DCTJ3N8W4PCL.9XCHFVGS62SF@ventanamicro.com>
 
-On Mon, Sep 15, 2025, Chao Gao wrote:
-> >+static void __vcpus_run(struct kvm_vcpu **vcpus, const int NR_VCPUS)
-> >+{
-> >+	int i;
-> >+
-> >+	for (i = 0; i < NR_VCPUS; i++)
-> >+		do_vcpu_run(vcpus[i]);
-> >+}
-> >+
-> >+static void vcpus_run(struct kvm_vcpu **vcpus, const int NR_VCPUS)
-> >+{
-> >+	__vcpus_run(vcpus, NR_VCPUS);
-> >+	__vcpus_run(vcpus, NR_VCPUS);
-> 
-> ...
-> 
-> >+	for (idx = 0; idx < ARRAY_SIZE(__msrs); idx++) {
-> >+		sync_global_to_guest(vm, idx);
-> >+
-> >+		vcpus_run(vcpus, NR_VCPUS);
-> >+		vcpus_run(vcpus, NR_VCPUS);
-> 
-> We enter each vCPU 4 times for each MSR here. If I count correctly, only two of
-> them are needed as the guest code syncs with the host twice for each MSR (one in
-> guest_test_{un,}supported_msr(), the other at the end of guest_main()).
+2025-09-15T18:52:56+02:00, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicr=
+o.com>:
+> 2025-09-15T23:27:31+08:00, Jinyu Tang <tjytimi@163.com>:
+>> +	if (reg_num =3D=3D KVM_REG_RISCV_CSR_REG(ctxhstatus))
+>> +		csr->ctxhstatus =3D vcpu->arch.guest_context.hstatus;
+>
+> Neither should userspace be able to directly set hstatus.
+> KVM should derive it from other userspace configuration.
+>
+> What isn't correctly reflected in hstatus?
 
-I'm 99% certain you're correct and that the second run is unnecessary.  I suspect
-this is leftover crud from an earlier incarnation of the test that used a separate
-VM for the "unsupported" features case (before I realized that the test could
-abuse and test the fact that KVM doesn't require homogeneous vCPU models).
-
-I'll triple check and post a fixup.
-
-Thanks!
+Ah, we don't set hstatus.SPVP when setting KVM_REG_RISCV_CORE_REG(mode).
 
