@@ -1,128 +1,93 @@
-Return-Path: <linux-kernel+bounces-817664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17AAB58520
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:07:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC26B58521
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92DF23B8961
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:07:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2155203D94
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C6327F166;
-	Mon, 15 Sep 2025 19:07:46 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E7427F163;
+	Mon, 15 Sep 2025 19:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mxe8twKU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TxZvutuy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10711E9B1C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AFF1E9B1C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757963266; cv=none; b=uyzlc4Nuxh/DhBBu2+YfQp+Nv+2j54OZQXM7cAvSRUmyNnkLI7d3F/XL3tRfDH1ufXM+3VBtQLqSgI//hNxeJd/KIiXI+puAJgrXXwxwOvaRGZmoCSKDpbl8SgIT+1Ihag1BBLhGQN3qE06I/ybjL0UwV8hBIDEPuPuG5X30QnM=
+	t=1757963390; cv=none; b=VH72vfl2aR/azRw3jhuxydSJjrg/KQi+i5+UqGQIgPBy5+DPtr5C2mz9rlGUb6olrmYAu5hiTZUYJgcKZVpW97rl844GlAeEmt1WBT5Vs0otO+sQHz4YjRQi47YqMaHYAlYLJ4fF4xmTZhF+4/pAKaxoprPCWnWMoBfgniLOYeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757963266; c=relaxed/simple;
-	bh=2aBAK15ip3O5OLmQKzZk+8W48e2KI5m7FWxIRoHVReg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=mbEW8KdfieeYv57fWAacByeOb5Y4zriJctfLnvOtGp9VwrDJXOJpLmcKSZRajBZ8r9xHgbKtrUPEsRCLskOYWQXaztd1Hv4BO9Irz/IVYVivPgvHWFOPOxhlLBxyeqOE8fum5WSKWb52cKHeMJzOx4+xHCDsjmzf401iOy8n98Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8875a8663d0so471804039f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:07:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757963264; x=1758568064;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MuOIk64QYWOXQ27t1jVJjOXapS9T9UT7lZ0e3vJIKOQ=;
-        b=fllHuDDiNqEo3S7Xt0+xx15B2xynHgYaI9iM5p462fa9oky0AF+PqQ3WYRPkZSDheb
-         ZqMpwRPZ4+G/4J8hivuo7wbi80T4p0CEoxz7ztFkieQFaH6db1zmpoYSNB3YG9IxRVao
-         +i9J8m5H8ukJhh2YDR/cEZWCKO4Udt5ccB2DHSxNpZEMlenzhD64iLHXfBduztQSA5/C
-         fpjYry+CYPuYwTXZ6sUr2v76yYCohRDn4VvSeo5tMgA4dMcqTbiMJmAoqjbBMPyO0T1l
-         EfBWfh2gafXPK+dqlCDycpPoBY4H8+KP2zboTu7VnTAN/hwDrO8N9mxavT11MTPiV0Vz
-         Vtvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUA1GRYFGrhvX3Lbabzz6J1HD6EXqNdHwc5k5ZKEcyY9VNxe19/bDLxL2JjQiHBc3WHzclkkhHjdnd2BlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTqn+Z/gzvrpvfzNxCpWx2OIB46peJRgWifVXVR6GVx22A2Pdw
-	cV4DlFX+SjtGsTkC0Ih+6XzGd6rVYujKrqHbiB7cfHjw4rRj86+LFMc2+CRZwcdIQqIbguEtLHz
-	Xg1canCqZ/cpnLZ1ElDxYb/sx2nMpInQS0DC2JqtgZrc1QOtH7XVU9b0R66w=
-X-Google-Smtp-Source: AGHT+IFcnTSXLGbUKH46CdN9QivF+oRfPAWztpgbJ9CSLQBB/FS1T/4FxJ5DhmxJb+X4TgYmHveyIbXZ9qIF//HTp/7f7+xrf9pR
+	s=arc-20240116; t=1757963390; c=relaxed/simple;
+	bh=rg0sLfTUnaivB4AoCCPKFFf1PE/J9OdsE3i8nd47VAk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pbe0ruttMAjs47EZU3LRfJBPi1/ddDMEimSmkws3WYZLyJFHn2v0JvxHzp4h6R9i5es9UsaYBuu1BIU+DmbCpvXQ2DWcjjwKnWkySxg7evVZxL9eQrEQRwQXiQjxk4CCLIsmrKXILzUyNNI8n16qq0qUaFfSSrEoLkJuh4Jc0mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mxe8twKU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TxZvutuy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757963387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rg0sLfTUnaivB4AoCCPKFFf1PE/J9OdsE3i8nd47VAk=;
+	b=mxe8twKU+DFctBL4mNnuDrHLCnDCREgyHC2eN2OG0DDFxn+YICdn82hNpyYPA9feRqlLqu
+	gV70YtgTNT+KXkujguizxxFU1LDe3wpDa1KM2lJ/jDoJvyzfmDvsz+mWbAM1SCP7rLITl/
+	/xUtSxFQDhU3SoqhGP7GP1NJjBEJGSHJbh7YkmrhQZ965d94i/EaXbvSVXe7fXAJGWR2rs
+	th4O2j4yhG9jdVxhjNkzyAjvxR7mKgGjCuhhe/bvPpqDT9jhsd/lKnloWXiKm69p7NcpxV
+	zCF2XYUZ/H04h3trGh9kQ+j+oMTq4kJrYnLk6J7Wdv8UF7tUevQOdDOvCJ7g4Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757963387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rg0sLfTUnaivB4AoCCPKFFf1PE/J9OdsE3i8nd47VAk=;
+	b=TxZvutuykKEff0k45B/Tv6vfhnCd+1PAa+xEmT5aALfl173z4qcXE5oW5UeHY/IpOUv4oZ
+	chWC90n1ZrBMxBAw==
+To: Breno Leitao <leitao@debian.org>
+Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Mike
+ Galbraith <efault@gmx.de>, linux-kernel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v1 1/1] printk: nbcon: Allow unsafe
+ write_atomic() for panic
+In-Reply-To: <i6qgd5wcdl5gkwfc6cru2hnokcsawdd4yzez2i6klu54uxwx23@jl44kdpph3t3>
+References: <20250912121852.2666874-1-john.ogness@linutronix.de>
+ <20250912121852.2666874-2-john.ogness@linutronix.de>
+ <74htjoj66srvussqvivbhlkdkj6lkm6ox4jdv2sedb4yzccdmr@sgzbd44mivfs>
+ <84348n9510.fsf@jogness.linutronix.de>
+ <i6qgd5wcdl5gkwfc6cru2hnokcsawdd4yzez2i6klu54uxwx23@jl44kdpph3t3>
+Date: Mon, 15 Sep 2025 21:15:46 +0206
+Message-ID: <845xdj8rd1.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214b:b0:423:fd07:d3f0 with SMTP id
- e9e14a558f8ab-423fd07d535mr54611465ab.26.1757963264106; Mon, 15 Sep 2025
- 12:07:44 -0700 (PDT)
-Date: Mon, 15 Sep 2025 12:07:44 -0700
-In-Reply-To: <5fb34b0f-435e-4584-abe0-bbf7839b44df@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c86400.050a0220.2ff435.03a7.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: yanjun.zhu@linux.dev
-Cc: jgg@ziepe.ca, leon@kernel.org, yanjun.zhu@linux.dev, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-> #syz test:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
-
-unknown command "test:https://github.com/zhuyj/linux.git"
-
+On 2025-09-15, Breno Leitao <leitao@debian.org> wrote:
+> If there is a printk() inside an IRQ and the host is not panicking, then
+> the message will be deferred to the kthread, which will print through
+> ->write_thread.
 >
-> On 9/12/25 3:04 PM, syzbot wrote:
->> Hello,
->>
->> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
->> WARNING in gid_table_release_one
->>
->> ------------[ cut here ]------------
->> GID entry ref leak for dev syz1 index 2 ref=445
->> WARNING: CPU: 1 PID: 1088 at drivers/infiniband/core/cache.c:809 release_gid_table drivers/infiniband/core/cache.c:806 [inline]
->> WARNING: CPU: 1 PID: 1088 at drivers/infiniband/core/cache.c:809 gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
->> Modules linked in:
->> CPU: 1 UID: 0 PID: 1088 Comm: kworker/u8:5 Not tainted syzkaller #0 PREEMPT(full)
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
->> Workqueue: ib-unreg-wq ib_unregister_work
->> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
->> RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
->> Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 00 46 71 8c 4c 89 e6 44 89 fa e8 3b a5 fa f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
->> RSP: 0018:ffffc90003d0f908 EFLAGS: 00010246
->> RAX: 11007f8b953ea200 RBX: ffff88802d562cd8 RCX: ffff888026adda00
->> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
->> RBP: 1ffff11005aac59b R08: ffff8880b8724253 R09: 1ffff110170e484a
->> R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff888028265480
->> R13: ffff88802d562c00 R14: ffff8880779b1800 R15: 0000000000000002
->> FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000200000000240 CR3: 000000007612e000 CR4: 00000000003526f0
->> Call Trace:
->>   <TASK>
->>   ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
->>   device_release+0x99/0x1c0 drivers/base/core.c:-1
->>   kobject_cleanup lib/kobject.c:689 [inline]
->>   kobject_release lib/kobject.c:720 [inline]
->>   kref_put include/linux/kref.h:65 [inline]
->>   kobject_put+0x22b/0x480 lib/kobject.c:737
->>   process_one_work kernel/workqueue.c:3236 [inline]
->>   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
->>   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
->>   kthread+0x70e/0x8a0 kernel/kthread.c:463
->>   ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
->>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>   </TASK>
->>
->>
->> Tested on:
->>
->> commit:         dd87fd3f RDMA/rxe: Add logs to find out the root cause
->> git tree:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
->> console output:https://syzkaller.appspot.com/x/log.txt?x=144a9934580000
->> kernel config:https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
->> dashboard link:https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
->> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->>
->> Note: no patches were applied.
+> So, from a user/netconsole perspective, assuming the no panic
+> (allow_unsafe_takeover=false) all the messages will be transmitted
+> (always from a thread context), even if the printk() happens on an IRQ.
+> So, no message will be lost.
+>
+> Is my understanding right?
+
+Yes. So you will always have a safe context to write from (except in
+panic, where you will do your unsafe code).
+
+John
 
