@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-817914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B83B58890
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B22B5888F
 	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15544204832
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40051AA8618
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBAE2DA776;
-	Mon, 15 Sep 2025 23:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747402DEA98;
+	Mon, 15 Sep 2025 23:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="pd+4wDUX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AwtrSVER"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Y13EsDhw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k2/z/z+P"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361A82D8773
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007A521A420
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757980074; cv=none; b=fHCmDLJrjAOMi8M+hyAEjcGHcc/7s9TA9feAMds46x7JukfaTZS34sWLM3vPkLf2xa8ihz4g3Vwke6x7HEXy17guodxChZzyyJt45pQBiUw5qqAhlZCOj1pmuIzsxoqoLqogjg/O4IUgpWVI7CpqNw8s9qu1fUnMCHqXybaQMAY=
+	t=1757980076; cv=none; b=MDVh5zDrrUCini83trE90CaMzUl6NqrkjUTcXjzWTcErm9DoexYeaUbf9uVM3xGtrzgjgSDOCLjJPZ/N2DOCjtU5PSkKwHFumgo42iMD3CbzAkFjKaQKtmB2ht47VbYOC2v1KxsTEBOdEPQiKm2bS2XlHV+huCTutUNmPx9hLAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757980074; c=relaxed/simple;
-	bh=kvFGGaTmbPFgW/4yhqADh5WIuw3AqvoQayJ5yPkTEBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePoLqtxus9Ktypn7t7XFh0w2bYpk7azv6cnFSrGaUYOelU2PdY6dGninyk9gTvL8qH/eQUY71ICV3DkaZ7yCtKelocBJ4Mnrp3LRI2Trqh/SYHJUvls+rs1zwmdBLl+Qy5Ci6pgTHUWNi8Y7cDuFecepXNiD4rB3Q/L6WHaTBek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=pd+4wDUX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AwtrSVER; arc=none smtp.client-ip=202.12.124.157
+	s=arc-20240116; t=1757980076; c=relaxed/simple;
+	bh=YMLVPxZRJjHSwpacs4Y/4zxs9XOK0x8s3Jy3zIPcHAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mJ4GGnADHBuHmb29Kic2MbFvqgqponP8L3fsxGRxBvFqKkWdC5SXDx/LoAqEV38wz56qCA6zd6b6Oo2+vQYd4qBIwv8h/9HP66jRyh+P61+c54DyceoiuaGF797mtO/11QQruGerxShyN/Q5tljK4DqX/P6ujJxzqDViN0Aelxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Y13EsDhw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k2/z/z+P; arc=none smtp.client-ip=202.12.124.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4C6387A01CA;
-	Mon, 15 Sep 2025 19:47:51 -0400 (EDT)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id DF3FD1D001C2;
+	Mon, 15 Sep 2025 19:47:52 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 15 Sep 2025 19:47:51 -0400
+  by phl-compute-11.internal (MEProxy); Mon, 15 Sep 2025 19:47:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1757980071; x=1758066471; bh=qsaoSUpaWq
-	feihvZLMbkP6PL1UV86xVlfjL5cVWoios=; b=pd+4wDUX19GMdCqD46brCxh+G8
-	/2swdZOgWyNq2qnipQFu36SM550gtwQa0kSnKq2AP260xdHK0HUdpT+QOozucecq
-	6ZXcHhDzsGb0dL4+cj696Zpp/rK/tRd834e+ZkHiPVUA8RLKncfKfLKOZaIqopbc
-	KG701wCQJTNECdrU/50vtHxHFHUuvnvRZUfjXT6Y9jNLNyoDojpA5CJFKwFXAFtl
-	KmOJSBnyptGjEjAw+LT+lmkauqX9WdOjBM/bIU2UrwwW6OQKflLJS3EWFAJ8HgiI
-	Y0YxwgSptYHmeM6yK2mUvyZywMLDEtLlaNRgpOwyX/jMBO86x5QfKTU8S+2A==
+	:from:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1757980072; x=
+	1758066472; bh=TVLAZiE8S6oLCOMyBp6Z+AOI4tSEx9bMWEKSAF910Rk=; b=Y
+	13EsDhwWYzR3WvMUFORzFdbSUpAFPTq38GWvryOV0e3ULJuPshh8fZnUzUnZaA95
+	CQDGz+A9YmsoELOLhLNi5W0QYzSx03lK4ijM+C6BerTbLfFDgnSwoGGcRjw0pv5o
+	wA6iDgFsZd1lAxoIAn7Pauc04iGoXM2PNi5jnm4+liI7LF6W86qGpVE9iaIJrnh7
+	euyY05AO83R0Wk2F5pmHCFRjK6SQpvxonUd+w9oUGVBIVoBItGR8kzof4PRPOShR
+	touc8bt48VVY7pu22qyKLMB2L8IExB/NNroIDUJEEqzuzEVCkYwRAwWzPlH6KTJM
+	Nm6BWPL78l9CNTdPGITOQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757980071; x=1758066471; bh=qsaoSUpaWqfeihvZLMbkP6PL1UV86xVlfjL
-	5cVWoios=; b=AwtrSVERl4PhGUgB1MeTHbxHZm0sSLVTACLYR7OlSVEEZoYoUqS
-	nn1QI0WDMOPGRccZB89amkoddgK88hvqNA8UWWeWn33Yyn5CMf5Ce6uTQXSHSFYm
-	SDTcbzxcpVxYjEPKfsqhT3EvN8SMeGmOIOq5HKkzl7LVGetYl+SnMXe3b73YYvo5
-	CNO4VXtNbUlAVdMuhDFFD7LSdXdOcB0MF+l8O83mnGmB7+lneGYMjyOGHjNzha8h
-	y2ft9sZH3/OFLz6wk+3QOBf4hRwtdtYiUxfaJqmL89jArrz+TjXhEQEiLTVFXBjo
-	q7dTLC2RMWkeb+Md3PMGaPYrbMdRP6o2u9g==
-X-ME-Sender: <xms:pqXIaEOPzqLpy7v-os91KJbm_Ce5xvso-5SdtwmFfC5XWCZ-Trr2hQ>
-    <xme:pqXIaD6vM_wnsP_b-sA5yQoiRVvBEFWXHMih0ojknTdD7U47H-2oLVy3PzNJUcRg2
-    GROeUyQ7TuMO_7pGG0>
-X-ME-Received: <xmr:pqXIaNM8M8AQ3k--akeNUFORGtqhE7NydLXKmdtTXbIjjGtQVD2lx40R1pdVlmgc--N3cBBVn3kPkhqlpf0bQYrfHahR3s_PX_U4SVcoHaiZFw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefledthecutefuodetggdotefrod
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757980072; x=1758066472; bh=T
+	VLAZiE8S6oLCOMyBp6Z+AOI4tSEx9bMWEKSAF910Rk=; b=k2/z/z+PhPie740iq
+	U1dk0p9DF/ztMps4i5q24wuTqDhLBzOTZ4CFimP79zbvsltJJxCnWEBzNTYIs69s
+	VamGpUqHmL0zDiTNF0xEqVnzuslT7wKsT33V5JOtvxtqK9XscSC3U6e6z/yMUvdr
+	ZOsBQBYOTotRFPfLaSuAlCsQwCRiDsQtsQKYXRdYRtOtjFdlwsMv32tgOREDjQCB
+	x6MYbp4GlQE5Q+eikt6tXqEgZ74JYFglhskGKVcGOhNCT2z3UpudoDk+tDL4kp/o
+	xWQ7icPaeJNuvnRFcLht3tA/Bzs23J3KO166KBov0u0GY7/7dgh7IS4WiTKrpFR5
+	uzHYA==
+X-ME-Sender: <xms:qKXIaHcI4AuFCR0w96bB9F8TgnQIn445HAeEp_GDkgnY5sqACxxPFw>
+    <xme:qKXIaGICeT9uMp60r0EPtuCPbhCDz0ujZP4nmuTQvs2Uq23jsG3vOfJOlrsNuYExG
+    2J9vEgcoGOXbPyrKXs>
+X-ME-Received: <xmr:qKXIaCf7mYowNCfpjBqejQnl3cXQLxP31aFcwdn-wXcVIIG6T7BK8YbavfpgADcUBzyCdFAJVlQnLeRCEXgbJDaKgyYrBsF4DLUEz4gHaAFlxw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefledtgecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
-    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
-    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
-    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:pqXIaJkqj8ZVbD4wTDM8EQMgzoSqYrX4Q8DQhugv4MfkDTmUhGR5GQ>
-    <xmx:p6XIaMSQGNB1ITqfUP0d7PxjSmcrbHIWcnQQrYaFmBLqdWI_rPMULg>
-    <xmx:p6XIaNDDs02elsPUoCNju7a_W0M44cPcduzu7Ge68WBQfmBFCnMPlg>
-    <xmx:p6XIaDTDAWRVIOrClsg6raUI2WW-2LRHhjxMUK_zZxkV8r_-cg7iyw>
-    <xmx:p6XIaMykjii7a_XyTN9utjtEYA0eOwwM3LB9YwxlL0aochpiEpwnImUU>
+    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtre
+    dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
+    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejuedvgf
+    duudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgvrhfu
+    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
+    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:qKXIaF2svZBnz2GzxtBXo7yyWPlHYLb1sV_keVJboZkXeCRSa88x1A>
+    <xmx:qKXIaDjpK0eYMxnFZFnk2NRv97gpFFQ7YMcAZjbmGHlZoN5Ab6HF4A>
+    <xmx:qKXIaDSlWIXpe34Hu3SpukZAKfM89iIJggLm5QTLUCjwxxRS_zMSvA>
+    <xmx:qKXIaMiS5belhL3x3pivEEwcI_wrIE23EDHmk57RHmZsVM13VAyoIg>
+    <xmx:qKXIaKA2zsVjPj01D63RFcKRG-L4gUFPBPsgWOQ5UTIIZEmAng115WUi>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 19:47:49 -0400 (EDT)
+ 15 Sep 2025 19:47:51 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] firewire: core: partition fw_card spinlock
-Date: Tue, 16 Sep 2025 08:47:41 +0900
-Message-ID: <20250915234747.915922-1-o-takashi@sakamocchi.jp>
+Subject: [PATCH 1/6] firewire: core: use scoped_guard() to manage critical section to update topology
+Date: Tue, 16 Sep 2025 08:47:42 +0900
+Message-ID: <20250915234747.915922-2-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250915234747.915922-1-o-takashi@sakamocchi.jp>
+References: <20250915234747.915922-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,33 +100,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+At present, guard() macro is used for the critical section to update
+topology. It is inconvenient to add the other critical sections into
+the function.
 
-The current implementation uses the fw_card spinlock for a wide range of
-purposes, which goes against the theory that the type of lock should
-protect critical sections as narrowly as possible.
+This commit uses scoped_guard() macro instead.
 
-This patchset adds some spinlocks for specific purposes, therefore
-partitioning the existing wide-purpose lock.
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-topology.c | 74 +++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 40 deletions(-)
 
-Takashi Sakamoto (6):
-  firewire: core: use scoped_guard() to manage critical section to
-    update topology
-  firewire: core: maintain phy packet receivers locally in cdev layer
-  firewire: core: use spin lock specific to topology map
-  firewire: core: use spin lock specific to transaction
-  firewire: core: use spin lock specific to timer for split transaction
-  firewire: core: annotate fw_destroy_nodes with must-hold-lock
-
- drivers/firewire/core-card.c        |  23 +++--
- drivers/firewire/core-cdev.c        |  27 ++++--
- drivers/firewire/core-topology.c    |  92 ++++++++++----------
- drivers/firewire/core-transaction.c | 128 ++++++++++++++++++----------
- include/linux/firewire.h            |  33 ++++---
- 5 files changed, 185 insertions(+), 118 deletions(-)
-
-
-base-commit: 931383f161c066ac5fda12035540498931739842
+diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
+index 5f8fb1201d80..17aaf14cab0b 100644
+--- a/drivers/firewire/core-topology.c
++++ b/drivers/firewire/core-topology.c
+@@ -458,46 +458,40 @@ void fw_core_handle_bus_reset(struct fw_card *card, int node_id, int generation,
+ 
+ 	trace_bus_reset_handle(card->index, generation, node_id, bm_abdicate, self_ids, self_id_count);
+ 
+-	guard(spinlock_irqsave)(&card->lock);
+-
+-	/*
+-	 * If the selfID buffer is not the immediate successor of the
+-	 * previously processed one, we cannot reliably compare the
+-	 * old and new topologies.
+-	 */
+-	if (!is_next_generation(generation, card->generation) &&
+-	    card->local_node != NULL) {
+-		fw_destroy_nodes(card);
+-		card->bm_retries = 0;
+-	}
+-
+-	card->broadcast_channel_allocated = card->broadcast_channel_auto_allocated;
+-	card->node_id = node_id;
+-	/*
+-	 * Update node_id before generation to prevent anybody from using
+-	 * a stale node_id together with a current generation.
+-	 */
+-	smp_wmb();
+-	card->generation = generation;
+-	card->reset_jiffies = get_jiffies_64();
+-	card->bm_node_id  = 0xffff;
+-	card->bm_abdicate = bm_abdicate;
+-	fw_schedule_bm_work(card, 0);
+-
+-	local_node = build_tree(card, self_ids, self_id_count, generation);
+-
+-	update_topology_map(card, self_ids, self_id_count);
+-
+-	card->color++;
+-
+-	if (local_node == NULL) {
+-		fw_err(card, "topology build failed\n");
+-		/* FIXME: We need to issue a bus reset in this case. */
+-	} else if (card->local_node == NULL) {
+-		card->local_node = local_node;
+-		for_each_fw_node(card, local_node, report_found_node);
+-	} else {
+-		update_tree(card, local_node);
++	scoped_guard(spinlock, &card->lock) {
++		// If the selfID buffer is not the immediate successor of the
++		// previously processed one, we cannot reliably compare the
++		// old and new topologies.
++		if (!is_next_generation(generation, card->generation) && card->local_node != NULL) {
++			fw_destroy_nodes(card);
++			card->bm_retries = 0;
++		}
++		card->broadcast_channel_allocated = card->broadcast_channel_auto_allocated;
++		card->node_id = node_id;
++		// Update node_id before generation to prevent anybody from using
++		// a stale node_id together with a current generation.
++		smp_wmb();
++		card->generation = generation;
++		card->reset_jiffies = get_jiffies_64();
++		card->bm_node_id  = 0xffff;
++		card->bm_abdicate = bm_abdicate;
++		fw_schedule_bm_work(card, 0);
++
++		local_node = build_tree(card, self_ids, self_id_count, generation);
++
++		update_topology_map(card, self_ids, self_id_count);
++
++		card->color++;
++
++		if (local_node == NULL) {
++			fw_err(card, "topology build failed\n");
++			// FIXME: We need to issue a bus reset in this case.
++		} else if (card->local_node == NULL) {
++			card->local_node = local_node;
++			for_each_fw_node(card, local_node, report_found_node);
++		} else {
++			update_tree(card, local_node);
++		}
+ 	}
+ }
+ EXPORT_SYMBOL(fw_core_handle_bus_reset);
 -- 
 2.48.1
 
