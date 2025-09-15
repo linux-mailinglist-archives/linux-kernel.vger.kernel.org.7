@@ -1,122 +1,231 @@
-Return-Path: <linux-kernel+bounces-816923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F541B57AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C594B57AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAEC189319B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F89F189EA40
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90435307ACF;
-	Mon, 15 Sep 2025 12:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794F530BF62;
+	Mon, 15 Sep 2025 12:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="chg9d1BB"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="YTgBXcLG"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013043.outbound.protection.outlook.com [52.101.72.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1D430ACEE;
-	Mon, 15 Sep 2025 12:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757939083; cv=none; b=d2AvIQ2q/yrx7TIqYDBKqVS2nleG582HBg83LfCZTDwHhX6LLogzTqAopDufrVXgYASgar4MvFDG4P/j91SLe7F1BadtIaA4OLxU5WsPWDRA89N+NMa9C1gtitK56EeZxqDBws/yIdFJy10WskCr/+0wwdeLTKfgjhp4C2zCgXE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757939083; c=relaxed/simple;
-	bh=XNZL1+d+Qc/BZHek/35MEzGZGMUx6EA9t85VdCwsxeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nwidC6ABESU3zFO/I+agwQOJzJH3S5Bl4EwKBw1mZaPJDUy5G31DHIxW0Erw/hMvD8T5Su0n204cGrAJz39QSSPDvXaSADHv4USM05zif/zZM94wAn99H74KyHHRNXWUercYhhtr8YBXYRXkmj2lq/wSzSJrILp//YVcGtTjKCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=chg9d1BB; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=sj
-	SqrG5JGVjvm9XZFoJOiIfn6ve0j4UMsIKI6ctHudQ=; b=chg9d1BBpnn4ZrjdV0
-	WUky7UkIjXQoZESll/Y9skCu57lKq2VeA7G9TP4OzH6PxFJcCYj17HL7//VfXddT
-	hsemxghAV/vPoq5xTGyI4Zh7SwX4qKS8d5BF218UGMM2q7j89pffcYPEG8qMCHVe
-	G0ex2BOTUbyGgAIDZ8xWbDF/A=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3_2xJBchoOwBzBQ--.20956S2;
-	Mon, 15 Sep 2025 20:23:39 +0800 (CST)
-From: Jinyu Tang <tjytimi@163.com>
-To: Anup Patel <anup@brainfault.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Nutty Liu <nutty.liu@hotmail.com>,
-	Tianshun Sun <stsmail163@163.com>
-Cc: kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jinyu Tang <tjytimi@163.com>
-Subject: [PATCH] KVM: riscv: Power on secondary vCPUs from migration
-Date: Mon, 15 Sep 2025 20:23:34 +0800
-Message-ID: <20250915122334.1351865-1-tjytimi@163.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D849730B53D;
+	Mon, 15 Sep 2025 12:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757939095; cv=fail; b=jeGKsOGkTEoI66KKB09nsmEKzkWTzJLI+EEeepf6/tx1kPFKAUdwtNghMxHSY1c/QBXWayauTYfaTw/4q3VrGsB7QJYqXir9hzhAV/7aL1sTaHxfZuEvbWMLOe2SFk3Zvf06n86iJI/wWnVkGFHnKKgEhI2L//+yvX1CFtPc84s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757939095; c=relaxed/simple;
+	bh=w4hjQ0H1Jgwo7hLkumarEci0zZQLJXY1ogzkn6pD8eA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pcimlXmPQqnCgTC52Sxjz6bvVwxsSOitzuVkK0nZ6T2eX4EOC5pSL+7Ilx797crImBSAd7eTxF+3sztQIzSucoQqX1lfeyU52kvR606y7p8qqZshoSld/ZLzuLyHU8kU+cYUK9Nt2roN8w9giOTCsUNpAaa0F8H1KuPerRcm2nI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=YTgBXcLG; arc=fail smtp.client-ip=52.101.72.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ydo1E1e+SRP5w1Ykh3qU2AYB18RyV9Gg95MBC+NlX6LHqYi4GfaXF+K37cy8NT3KeOq0o9Q92VAKMRsNlODLqVKlisTTa+3o6rlAjCRsO5IequCnbj7SkVXVV0HlL+QgtE4rFNHbi0wcKiC5RhXxpqqqegjpmTzKfzsN9P8cxV0Jye0heqOONjCbV1ZZ9u+RBUaIUmzhjh6Hb/2K2Gzxq8iDY5T4Zcr3tMsvh5/I0KfzYCeNSjmXG0JvT7khjKa/ApnYP7MvzjlRwnBvLAl1n0UAi6omxr/n3ScrLJ0wmV8uxlXbfA9xGhBU8PKMNpK6qs9KKQ0ym7KPSSwD2Q4paw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xjJwUJOU+O1e/dn1GktrrN+oKEsGGeyTNaKuDav+pHw=;
+ b=vQ0CuxtP9MU/391lpN13rVn7zmhTPMNYN6MAuwjYmpQ/RdiRI+WwrU9QtRmWVHXNJwH0cobTnucN2CNh1OlryYs5aXGN+D8jhLbNyvPICprN9oXYni0TGzOnio2tIPWcbPdwVoLxbQ36WttaeG30eJvx1+zH/ODcJDT3Mcxo0Bwsr9H1EqmIqygYLngkNcOZ7t0Fh8f9JzJonhy7HK5M18e6j+s2Ss/6buygTYAhCott4ls9/r7XfIb8qNeuXnj1IcVbvd8JTStfQtWr3v0v6NBgWLYYU7XGM2+mprBrRDeaDWjfyeHbmuD20gq6xtKK8gXbzKl27O70LkLA3h4D2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xjJwUJOU+O1e/dn1GktrrN+oKEsGGeyTNaKuDav+pHw=;
+ b=YTgBXcLGXRaBCWxBWpTpzwEf5TycPBDvbjy61C6w017oZsSwoiJ2BSxVXyjA7j3BzElq1n9F1MfQq3E7hPGb8iYD4B5yagALfwjQkqSCUI2myXMM5Uq2mjISvLAYzlb9cmWCT8NeDmw8BDSrVdFk+bZX/rL+NB5CQa9iykqQ4/uJL46Gb13IQEWq38P+OdUoNbhZBFhJ846gkjqwsxEFBCIwoAxfkQbdCfAJ8+e91LW9JRSzXvVCTjAW04dyYydT15lgKLae/iL9z3sy4HNsuCZokVzq0H9Khh6nxO0nTcCkuv9DBoV8r+t+yQ0qRgFw/ywVe4/o8sSgKFJsMLhIgQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
+ by AS4PR04MB9291.eurprd04.prod.outlook.com (2603:10a6:20b:4e6::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Mon, 15 Sep
+ 2025 12:24:49 +0000
+Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc]) by AS8PR04MB8868.eurprd04.prod.outlook.com
+ ([fe80::b7fe:6ce2:5e14:27dc%4]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 12:24:49 +0000
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH v2 0/9] drivers: gpio: and the QIXIS FPGA GPIO controller
+Date: Mon, 15 Sep 2025 15:23:45 +0300
+Message-Id: <20250915122354.217720-1-ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR10CA0023.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:17c::33) To AS8PR04MB8868.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42f::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_2xJBchoOwBzBQ--.20956S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tryDXF1UtryxXF4UXw48Xrb_yoW8CrWUpF
-	4jkrZY9395JFW7Gw4qyw4kuF4YyFsYg3WaqryDZryjyr4Ygw10yr4kKayjyF95Xrs5Zwna
-	vF4YyFy8Crn0ya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piHa0PUUUUU=
-X-CM-SenderInfo: xwm13xlpl6il2tof0z/1tbiTgTJeGjH+nKkeQABsA
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|AS4PR04MB9291:EE_
+X-MS-Office365-Filtering-Correlation-Id: 167079e7-edcb-4e47-12f4-08ddf452dd6d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WDrtK/W8YZMyQq4an0zx3KJNiZiQfN1CSEjQ5P+OOiaU+tTLBpF+hFjwQlZ2?=
+ =?us-ascii?Q?mEMF4OU5/5m18Z/eT0ZPaPe+5I3Q15VhKHelNsaMAQFViyoQxdYisX29spn/?=
+ =?us-ascii?Q?vkDxkzY/J7i8BLYzLPFnN4kHqu9Lvg2J/Y+kP7hxANfbH9k1SP/HDmefjm+Z?=
+ =?us-ascii?Q?nJKx821+6ToArUc0rNQTvWF6rjUmkYdU6G1Ilmr9B5tAzGAgkchYIsIGN3WU?=
+ =?us-ascii?Q?B+OupFprkzZv1HwOuvyn4DVWYaSb1X34JNJR1b1RlmS4oNdClmru9P8IvbYI?=
+ =?us-ascii?Q?HNlq3XBc9db8O4oRtC0B6zVF3FPrGpenbJLGD+97CVvBkrwMQSP911HmxKIK?=
+ =?us-ascii?Q?FFZZxNI0rb85Nsfvog121WqMUecwrMFdmRFcs7p+AGFa9pvQ/bSPHEKVpR6W?=
+ =?us-ascii?Q?A1WjYpA/pH2Isg61ASNtSiJqdFzgXAUHHhPDT1S+imJIQnMoRbRHfCyJKY2s?=
+ =?us-ascii?Q?1JacS6xH75ZGGG5CDiwMHWX/0jyNd3Qj7ygmqo71MhRo/XITwedzNRJWOItJ?=
+ =?us-ascii?Q?oCss7Oqjlxb3x3rybMIB0OcEOhRzYolvvXBXO0Lkd4kJb6C7p4lEC5eFvEqn?=
+ =?us-ascii?Q?vLcT5RmhAS6HCxEUAorGv/gZH9OGL/tkqTFxXOOScCJu6bC4jdnlLcMHzm9E?=
+ =?us-ascii?Q?qSHwNHN8lyQvVjsP1nqbfu5X2QS92fj2k42i5xR3NOsjte9cg/zBW4GHgaAd?=
+ =?us-ascii?Q?r+JFsBgD2bBeprLlFKee52ThmLOZjgqMRUx3XlNdtUGPcj2gWKoKeW9UOAbN?=
+ =?us-ascii?Q?9Z89TaTrBFFH9zopbz/lb3cJzbrUgKGfBA1trM1ytlX3XqOVLGHISb35XtzO?=
+ =?us-ascii?Q?nKYQdJIgCGTbwq7dIh1H2zOqqX3oLcYq/wb5bgFxvFYutwfBEsmX4XE3IDO6?=
+ =?us-ascii?Q?RCUth61QAw+RHQA6DMiKEw6hlr3hohMS//VW47akmmAGZclvRWDQ7nChdPwM?=
+ =?us-ascii?Q?2LxKHsx62vpErAkHlXfpPANcBYztEVSCkKJzB3Gniao96EfjK2U5JmmBZV/0?=
+ =?us-ascii?Q?Iv6/pvgg0KwSfcvY5k4WybT0D3edsCNLSk0JPqC3iFXf5i+TnEptIrCYJeqR?=
+ =?us-ascii?Q?DEFzdtl5lgnRpvoR/o1xpQXhQTwZQTpLtOWqouzjoQhwtmamfut2dHI4g5Sq?=
+ =?us-ascii?Q?uST421nyONLpJd0Wg/cvVZ2C0V1G2eywPlOouY9K1l1tKpj4Gm4zMhdIVZJP?=
+ =?us-ascii?Q?AnsgbUVSaeZ6pSWwBeyk7o4o5N8BRRHzuTxaHc4IaRRzaigC4oj94D+rH1XG?=
+ =?us-ascii?Q?d3GBes+lMUBO4xU0Fc48kYDNnsFGscu5sIgcVZ+07flJkR7Fgx2cQhV2Xv0O?=
+ =?us-ascii?Q?yTEQV6mZ3CUrp7+4FxFQV7tnXZDzGlJlorjVMJUpuf25xQRRG24ywaKf7o4z?=
+ =?us-ascii?Q?saeWTRZ+8OKrfZ8xp48HmXuzN2FephbY1i94ulNsTbW55ENsKpYvib6WQ8ue?=
+ =?us-ascii?Q?gIhDeo4TtiU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qVEkLxgmbPBBGL6YJJuVW3Bbg4USIjfmbOlDpYIA3c3hAGpIFBQNu0SmDQGH?=
+ =?us-ascii?Q?EyivbzvESft5OlIArp96ymreJ0CmMNpj/aX90qeXplCz4lPgZUmCCZiQt7UZ?=
+ =?us-ascii?Q?LvS83b76q9p9XzfVPxD4cad8iFvzne2L3sjjYYXG7u7N/mXgqDRewaCAgaXa?=
+ =?us-ascii?Q?eWt3hgKW4VFjfw9hm44UAGVmVdFdfy+TQr4Va8gD3vyp2AqxN6+3UnIWYKsH?=
+ =?us-ascii?Q?eRpyRITlnXm99ge4xExPf4LHpm49ZAASZR3DDgbTaTi5gY7CabfCWtPIwny/?=
+ =?us-ascii?Q?2m8AosDhkHProEtuC4E+OUmHPTq3wZNNx5hYRnHgzSolZJrtFA+NkqEMeH6n?=
+ =?us-ascii?Q?d24alvHjXhfE9u+sdx6l0hL+nSk+V3Y4n8muhEGT1Z5YP8E2RowBUjcWXzHC?=
+ =?us-ascii?Q?cDhPnF3k1lZ8B8xUTUzqhhIZesDhlDtmpr9rv2E6fN/atj0uHObRuT3X8DFo?=
+ =?us-ascii?Q?41olgPQtOQuK/ibW6EzFcxvX5pYusVy1VdOgwk9F2yy9BWY+PDegWJR0yTuV?=
+ =?us-ascii?Q?3p9ysntZr6w86LANIP9StdDkcLJsp0NKB3jqQJN2AAGl+931IXqpxeH4kudF?=
+ =?us-ascii?Q?Nsm8OsFshSoigErc433o+kDsYA7cgVxsJ5itosXupWGLI5egDFo/AoOn8nfz?=
+ =?us-ascii?Q?FYEgrKangt6mDKxvLTTH+KfxR94Ry0uelmZyHCoVNtq7TK5l8gjPfbdFl8wK?=
+ =?us-ascii?Q?vXqqwga/84huTx8nLDDDRkO8cQadOX1Fqr5nbDKFYL1t1VY51j49ilTWVkCf?=
+ =?us-ascii?Q?TUmkCqRo5DDVSkSRhC3zRN49hsZKFgrptEWojCMLb1+mF01BHQuBokrnUMeq?=
+ =?us-ascii?Q?pv0ZSGMatcIXDPPWVrzo9ci9L+/ONPxKbRKBH1xfMQ5Bk4uqpbBEJjYDH+Si?=
+ =?us-ascii?Q?1vK71EkTbGZHKPk8LejCBcZIAQ6oF1a8S7IW4CPGVUthNXRI1FbwO1ZQ/fTA?=
+ =?us-ascii?Q?EgZ8vb2NuK9vevkTyYxr/E36zqcBSa9FT54xlniJ4j8hYBVlErEJY4eoSKWM?=
+ =?us-ascii?Q?60LKQRPQbJ/RlSFT5+g4gyH2OosJRPpjdlXzBGTl8Ww8FF0CB6L7VNDPIZ9G?=
+ =?us-ascii?Q?opI500la1EK8DTWCJVGGwBT2xumgk9WyXrY7Dm3Xay2Rl9cVeba/PcBL3MAU?=
+ =?us-ascii?Q?07kjuvowoXueBr3eTCw0VsXwuFDhXeg2naTZwELVmJoyZVGqSZ9jyMLjJjJV?=
+ =?us-ascii?Q?SLhLRYtcYRv9OOx8jVWnuTQZUITrcch+DH/UaUdZr0GBHE1iseCOx9sWr4r3?=
+ =?us-ascii?Q?w42y+sm0yOKT8ubjqT8PchZrjEVwnUrW8btiM/PbYJ+U27kTXX3BCtRHkL3A?=
+ =?us-ascii?Q?j7peJfYB2M3DM+k4D33fgMMfTuqWRJQRfPo2oddfU/+OTgIXVUzVtlcGlpjT?=
+ =?us-ascii?Q?pDmMkXStX9cWSyuDbHnuVYuv290zN/MYnYhGFA7VXqn0bAcJDRojOAQUVfrL?=
+ =?us-ascii?Q?uVAA+i/o2Rvsd2YgqAqO8cT6IqlZB4YrdqOBa2Dvfoc8yeOyNYEyZfY1f0M6?=
+ =?us-ascii?Q?pMI4e6qprbXh6xvdLHk7LFNH3eFxuzrlWQdbz2zqhgyAaThkUFRLLKWiJzLG?=
+ =?us-ascii?Q?g4g327sVN+fgiUdfmbpICgA/5o8MWDgihCPKEBAU?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 167079e7-edcb-4e47-12f4-08ddf452dd6d
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 12:24:49.7797
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W128y/C0Ai00efN6vZldwwcG5TYMUEP/Bt4MXqBMWg7gaZgq3Gen8MfMZMHrWjJFQRoAn1Q+1nQVeKBv6FMd6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9291
 
-The current logic keeps all secondary VCPUs powered off on their
-first run in kvm_arch_vcpu_postcreate(), relying on the boot VCPU 
-to wake them up by sbi call. This is correct for a fresh VM start,
-where VCPUs begin execution at the bootaddress (0x80000000).
+This patch set adds support for the GPIO controllers on the QIXIS FPGAs
+found on some Layerscape boards such as LX2160ARDB and LS1046AQDS. At
+the same time it describes the SFP+ cages found on these boards, which
+are the users of those GPIO lines.
 
-However, this behavior is not suitable for VCPUs that are being
-restored from a state (e.g., during migration resume or snapshot
-load). These VCPUs have a saved program counter (sepc). Forcing
-them to wait for a wake-up from the boot VCPU, which may not
-happen or may happen incorrectly, leaves them in a stuck state
-when using Qemu to migration if smp is larger than one.
+Before actually adding the GPIO driver, patches #2 and #3 add and
+describe a new compatible string - fsl,lx2160ardb-fpga - which would be
+used for the QIXIS FPGA found on the LX2160ARDB board. As opposed to the
+other compatible strings found in fsl,fpga-qixis-i2c.yaml, the
+fsl,lx2160ardb-fpga imposes a unit address for its child devices. This
+will be used in the next patches when the gpio controller node will
+define its unit address as the address of its underlying register offset
+inside the FPGA. This requirement is described in the yaml file and it
+only affects the newly added compatible.
 
-So check a cold start and a warm resumption by the value of the 
-guest's sepc register. If the VCPU is running for the first time 
-*and* its sepc is not the hardware boot address, it indicates a 
-resumed vCPU that must be powered on immediately to continue 
-execution from its saved context.
+Moving on to the GPIO subsystem, patch #4 is extending the gpio-regmap
+with the fixed_direction_output bitmap which could be used by user
+drivers to transmit directly the fixed direction of all the GPIO lines.
 
-Signed-off-by: Jinyu Tang <tjytimi@163.com>
-Tested-by: Tianshun Sun <stsmail163@163.com>
----
- arch/riscv/kvm/vcpu.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Even though this patch set touches multiple subsytems, each with their
+own tree, I submit everything at once so that we can have a clear
+picture on the overall intention. The hope is that each subsystem can
+pick up the related patches since there is no compile time dependency
+between them.
 
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index 3ebcfffaa..86aeba886 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -867,8 +867,16 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
- 	struct kvm_cpu_trap trap;
- 	struct kvm_run *run = vcpu->run;
- 
--	if (!vcpu->arch.ran_atleast_once)
-+	if (!vcpu->arch.ran_atleast_once) {
- 		kvm_riscv_vcpu_setup_config(vcpu);
-+		/*
-+		 * For VCPUs that are resuming (e.g., from migration)
-+		 * and not starting from the boot address, explicitly
-+		 * power them on.
-+		 */
-+		if (vcpu->arch.guest_context.sepc != 0x80000000)
-+			kvm_riscv_vcpu_power_on(vcpu);
-+	}
- 
- 	/* Mark this VCPU ran at least once */
- 	vcpu->arch.ran_atleast_once = true;
+Please note that CHECK_DTBS will fail without the following fixup patch.
+https://lore.kernel.org/all/20250912165916.3098215-1-ioana.ciornei@nxp.com/
+
+Changes in v2:
+- 1/9: Used the newly added trivial-gpio.yaml file
+- 1/9: Removed redundant "bindings" from commit title
+- 1/9: Added only one compatible string for the gpio controllers on
+  LX2160ARDB since both registers have the same layout.
+- 2/9: Enforce a unit address on the child gpios nodes (remove the ?)
+- 2/9: Enforce the use of unit addresses by having #address-size and
+  #size-cells only for the newly added fsl,lx2160ardb-fpga compatible
+- 4/9: Add the fixed_direction_output bitmap to the gpio_regmap_config
+- 5/9: Use the newly added .fixed_direction_output bitmap
+  representing the fixed direction of the GPIO lines.
+- 6/9: Use the same compatible string for both GPIO controller nodes.
+
+Ioana Ciornei (9):
+  dt-bindings: gpio: add QIXIS FPGA based GPIO controller
+  dt-bindings: fsl,fpga-qixis-i2c: extend support to also cover the
+    LX2160ARDB FPGA
+  mfd: simple-mfd-i2c: add compatible string for LX2160ARDB
+  gpio: regmap: add the .fixed_direction_output configuration parameter
+  drivers: gpio: add QIXIS FPGA GPIO controller
+  arm64: dts: lx2160a-rdb: describe the QIXIS FPGA and two child GPIO
+    controllers
+  arm64: dts: ls1046a-qds: describe the FPGA based GPIO controller
+  arm64: dts: lx2160a-rdb: fully describe the two SFP+ cages
+  arm64: dts: ls1046a-qds: describe the two on-board SFP+ cages
+
+ .../bindings/board/fsl,fpga-qixis-i2c.yaml    |  47 +++++++
+ .../bindings/gpio/trivial-gpio.yaml           |   2 +
+ .../boot/dts/freescale/fsl-ls1046a-qds.dts    |  52 ++++++++
+ .../boot/dts/freescale/fsl-lx2160a-rdb.dts    |  78 +++++++++++
+ drivers/gpio/Kconfig                          |   9 ++
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-qixis-fpga.c                | 123 ++++++++++++++++++
+ drivers/gpio/gpio-regmap.c                    |  12 ++
+ drivers/mfd/simple-mfd-i2c.c                  |   1 +
+ include/linux/gpio/regmap.h                   |   2 +
+ 10 files changed, 327 insertions(+)
+ create mode 100644 drivers/gpio/gpio-qixis-fpga.c
+
 -- 
-2.43.0
+2.25.1
 
 
