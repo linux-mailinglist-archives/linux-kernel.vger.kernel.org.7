@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-816086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93879B56F48
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:28:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696E7B56F98
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F10877A2997
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABBA118996B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF994224AF9;
-	Mon, 15 Sep 2025 04:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFE12777E4;
+	Mon, 15 Sep 2025 05:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="gYNs4EVW"
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="hCN3+R70"
 Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B3E17BEBF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC4E19E98C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757910491; cv=none; b=STDAP9sGBmQmtDaWoNjwHBLFvhl+SsQp0Dolz9kmt22k3O5WRQHdOW1CzCCAAvoz5JxGxnzeQmdLttfAq+ZlhyP9Ie0BouMYfwp8cYUvcmGFOA7CGuY9o7dXaz5h1kAVq6uS7Ge+TuWM4r2m2Cl/Xmci8HCyN8v3KIpM6Hycf78=
+	t=1757912565; cv=none; b=WByiB6oINv1yZlu1SM65CG2mf44WJrQBLcMg5kxf1REYrvCsMU0VNpFreJpahmMYNPjKvrohnOd6ldQ6FH+KyrA71QL4z/jOFkAq9UHMiUDcWRlGVMUAoWYb64BjdnLNq83T2k1BEfibgzADxCymi714OudVbX5IJ/PKykAOunE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757910491; c=relaxed/simple;
-	bh=thSEO4XZbXdXEtOD8K6LIxHa5CcneJ4OsmAcM9CEBvM=;
+	s=arc-20240116; t=1757912565; c=relaxed/simple;
+	bh=0BuXaIhXy4G65WMnbZc0qJEgqyZFyu+URXPBWPnUEgc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UQbX68YPAuIxJnzm6Sd0yAslPklQrU9RX/m64FBxay9XUfLPDNNf0jMvr5jUhUTPEffKIKC+aRtulGYElMs3HAjd8HJ1knuMXm7FBJ8KuU7Ntw32jTdGS7bFywuxe/ytrOeMOnLO+yoJM+Sa9kqTbPa07AFabGRG8lqpppXH044=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=gYNs4EVW; arc=none smtp.client-ip=133.167.8.150
+	 MIME-Version; b=UE7EAUlW2/Zo6WV7obdB7ygdkn2c3sDUS2y4mLfC1tzWOq2wJoOsInPslQWU1RqLr3sFDVjCAXDBAQMjcTacWHo46WF60uSlGxEWaeB9IJ0LIeT0K4Sq7mo5p9wkhj/yS7py24oMr/r0EG0P+B8QXON2MUQFundC1c78jeyivww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=hCN3+R70; arc=none smtp.client-ip=133.167.8.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
 Received: from fedora (p4504123-ipxg00s01tokaisakaetozai.aichi.ocn.ne.jp [114.172.113.123])
 	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58F3gpZp004256
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58F3gpZq004256
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Mon, 15 Sep 2025 12:43:17 +0900 (JST)
 	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=R0HOnqHMxuP96xu16dWewxfrRPsTQLoG49PuVlo3OSI=;
+DKIM-Signature: a=rsa-sha256; bh=LpQfTwt0Pqfiz1reZkxCSBjCcgZybFuCZ+NkVasMgPc=;
         c=relaxed/relaxed; d=mgml.me;
         h=From:To:Subject:Date:Message-ID;
         s=rs20250315; t=1757907797; v=1;
-        b=gYNs4EVWhtbf5rniTjP3beAPOvDoy/GmNv2TdZlwiDlGHvaAOKZ4r9MF2loPlWV7
-         AKqkI2CY68d6uuuR7Ilm7gJ7CqUmRY93eswH5cayJiLcvAKOkXEJRqAOJMLbRsl5
-         WMeIA7U+/cs82yQvROapfEhj44jII6P6gRe4Y/kRp+sjLmLwE2BEEyU6syahklqc
-         0FwuZaYfZykv5xpmIm0hq1deddReOTMeF+sSLm/DGVMrfzYLaZ92HuoSfdoslIun
-         dqEHuYwQA6fxYn4MWXjxDA9NtFUM+scL0q64sXn5MSRduqKfw3amoILpXARD0CBt
-         W7FYJ0dFMOJOO6szOcRywg==
+        b=hCN3+R70BIWFFdxoEL3msRz4tEwvZSXjC3+akKIzMekeaExya/c0CC2jnyGAjwf+
+         K6z7nFn8vAOSKLKhBTFJM8ej1C05EpsfvrnDxmC1XORT6z5QgA3SiykZ+yJehqx8
+         tKylEWYVPb914sfcbS0LVtX0PoWxvDIa0pYowhC+OUt+M7B9KWgSXr8fUC1yE5mA
+         nnIYEzJiD84EQcJN3J61+rZqdSvGgqChknYCgzNw1Y+rPdO3uHouc3N5Pn0qNhQU
+         FepFusttzkNKFzdUax5cU55Fs8YphfNbEJxZPLo8RlcL+QKP2H8h0cg40eBdMhdl
+         B6aMosimTHg7SWbbOkEfBw==
 From: Kenta Akagi <k@mgml.me>
 To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
         Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
         Guoqing Jiang <jgq516@gmail.com>
 Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kenta Akagi <k@mgml.me>
-Subject: [PATCH v4 8/9] md/raid1,raid10: Add error message when setting MD_BROKEN
-Date: Mon, 15 Sep 2025 12:42:09 +0900
-Message-ID: <20250915034210.8533-9-k@mgml.me>
+Subject: [PATCH v4 9/9] md/raid1,raid10: Fix: Operation continuing on 0 devices.
+Date: Mon, 15 Sep 2025 12:42:10 +0900
+Message-ID: <20250915034210.8533-10-k@mgml.me>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250915034210.8533-1-k@mgml.me>
 References: <20250915034210.8533-1-k@mgml.me>
@@ -66,46 +66,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Once MD_BROKEN is set on an array, no further writes can be
-performed to it.
-The user must be informed that the array cannot continue operation.
+Since commit 9a567843f7ce ("md: allow last device to be forcibly
+removed from RAID1/RAID10."), RAID1/10 arrays can now lose all rdevs.
 
+Before that commit, losing the array last rdev or reaching the end of
+the function without early return in raid{1,10}_error never occurred.
+However, both situations can occur in the current implementation.
+
+As a result, when mddev->fail_last_dev is set, a spurious pr_crit
+message can be printed.
+
+This patch prevents "Operation continuing" printed if the array
+is not operational.
+
+root@fedora:~# mdadm --create --verbose /dev/md0 --level=1 \
+--raid-devices=2  /dev/loop0 /dev/loop1
+mdadm: Note: this array has metadata at the start and
+    may not be suitable as a boot device.  If you plan to
+    store '/boot' on this device please ensure that
+    your boot-loader understands md/v1.x metadata, or use
+    --metadata=0.90
+mdadm: size set to 1046528K
+Continue creating array? y
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
+root@fedora:~# echo 1 > /sys/block/md0/md/fail_last_dev
+root@fedora:~# mdadm --fail /dev/md0 loop0
+mdadm: set loop0 faulty in /dev/md0
+root@fedora:~# mdadm --fail /dev/md0 loop1
+mdadm: set device faulty failed for loop1:  Device or resource busy
+root@fedora:~# dmesg | tail -n 4
+[ 1314.359674] md/raid1:md0: Disk failure on loop0, disabling device.
+               md/raid1:md0: Operation continuing on 1 devices.
+[ 1315.506633] md/raid1:md0: Disk failure on loop1, disabling device.
+               md/raid1:md0: Operation continuing on 0 devices.
+root@fedora:~#
+
+Fixes: 9a567843f7ce ("md: allow last device to be forcibly removed from RAID1/RAID10.")
 Signed-off-by: Kenta Akagi <k@mgml.me>
 ---
- drivers/md/raid1.c  | 4 ++++
- drivers/md/raid10.c | 4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/md/raid1.c  | 9 +++++----
+ drivers/md/raid10.c | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 55213bcd82f4..febe2849a71a 100644
+index febe2849a71a..b3c845855841 100644
 --- a/drivers/md/raid1.c
 +++ b/drivers/md/raid1.c
-@@ -1786,6 +1786,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
- 	if (test_bit(In_sync, &rdev->flags) &&
- 	    (conf->raid_disks - mddev->degraded) == 1) {
- 		set_bit(MD_BROKEN, &mddev->flags);
-+		pr_crit("md/raid1:%s: Disk failure on %pg, this is the last device.\n"
-+			"md/raid1:%s: Cannot continue operation (%d/%d failed).\n",
+@@ -1803,6 +1803,11 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+ 		update_lastdev(conf);
+ 	}
+ 	set_bit(Faulty, &rdev->flags);
++	if ((conf->raid_disks - mddev->degraded) > 0)
++		pr_crit("md/raid1:%s: Disk failure on %pg, disabling device.\n"
++			"md/raid1:%s: Operation continuing on %d devices.\n",
 +			mdname(mddev), rdev->bdev,
-+			mdname(mddev), mddev->degraded + 1, conf->raid_disks);
++			mdname(mddev), conf->raid_disks - mddev->degraded);
+ 	spin_unlock_irqrestore(&conf->device_lock, flags);
+ 	/*
+ 	 * if recovery is running, make sure it aborts.
+@@ -1810,10 +1815,6 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+ 	set_bit(MD_RECOVERY_INTR, &mddev->recovery);
+ 	set_mask_bits(&mddev->sb_flags, 0,
+ 		      BIT(MD_SB_CHANGE_DEVS) | BIT(MD_SB_CHANGE_PENDING));
+-	pr_crit("md/raid1:%s: Disk failure on %pg, disabling device.\n"
+-		"md/raid1:%s: Operation continuing on %d devices.\n",
+-		mdname(mddev), rdev->bdev,
+-		mdname(mddev), conf->raid_disks - mddev->degraded);
+ }
  
- 		if (!mddev->fail_last_dev) {
- 			conf->recovery_disabled = mddev->recovery_disabled;
+ static void print_conf(struct r1conf *conf)
 diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index 86c0eacd37cb..be5fd77da3e1 100644
+index be5fd77da3e1..4f3ef43ebd2a 100644
 --- a/drivers/md/raid10.c
 +++ b/drivers/md/raid10.c
-@@ -2039,6 +2039,10 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
- 
- 	if (test_bit(In_sync, &rdev->flags) && !enough(conf, rdev->raid_disk)) {
- 		set_bit(MD_BROKEN, &mddev->flags);
-+		pr_crit("md/raid10:%s: Disk failure on %pg, this is the last device.\n"
-+			"md/raid10:%s: Cannot continue operation (%d/%d failed).\n",
+@@ -2059,11 +2059,12 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+ 	set_bit(Faulty, &rdev->flags);
+ 	set_mask_bits(&mddev->sb_flags, 0,
+ 		      BIT(MD_SB_CHANGE_DEVS) | BIT(MD_SB_CHANGE_PENDING));
++	if (enough(conf, -1))
++		pr_crit("md/raid10:%s: Disk failure on %pg, disabling device.\n"
++			"md/raid10:%s: Operation continuing on %d devices.\n",
 +			mdname(mddev), rdev->bdev,
-+			mdname(mddev), mddev->degraded + 1, conf->geo.raid_disks);
++			mdname(mddev), conf->geo.raid_disks - mddev->degraded);
+ 	spin_unlock_irqrestore(&conf->device_lock, flags);
+-	pr_crit("md/raid10:%s: Disk failure on %pg, disabling device.\n"
+-		"md/raid10:%s: Operation continuing on %d devices.\n",
+-		mdname(mddev), rdev->bdev,
+-		mdname(mddev), conf->geo.raid_disks - mddev->degraded);
+ }
  
- 		if (!mddev->fail_last_dev) {
- 			spin_unlock_irqrestore(&conf->device_lock, flags);
+ static void print_conf(struct r10conf *conf)
 -- 
 2.50.1
 
