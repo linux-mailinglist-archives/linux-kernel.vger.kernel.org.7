@@ -1,224 +1,256 @@
-Return-Path: <linux-kernel+bounces-816399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C91B57357
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:46:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E11B5735D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D27E1771A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001903ABF0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8DE2F0696;
-	Mon, 15 Sep 2025 08:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05562F0C5B;
+	Mon, 15 Sep 2025 08:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VrdbykHx"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2050.outbound.protection.outlook.com [40.107.92.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2HBUacn"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FAF275B02;
-	Mon, 15 Sep 2025 08:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757925951; cv=fail; b=CLqg/wa/IdBHqMUW+pjtwaSqqcQU/aFSoesaVoVQ38cghgWnjnniRByOJMwcI7dlnmQjLYCRMbmF4ApxsNOIId9D4+yImlw3mz8Su5DMOHLs6Q+gk8WIQ9t/iozJirYb1IjNDOcWnFiaq72FU3RqG6lqgv1gX3oRwS72bdkyCn4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757925951; c=relaxed/simple;
-	bh=m1N+ngC4c0gHqHo65s+37YgiaJBWjlmKjCQ05G5PmQU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sC1+Nho20k2JGcu1kOLHOdjG8Ia6M/BQJ4Y1DxlDt1LKq8c1cylWHY1UvtWCdilOX2CkrHO41LoItcncYKfTSiKarkKWWqpJwYhEQhy4SSLus2Wlp+/U0VEMqi83+iDc6aT41FGwNiMchmNNfeS0H0Xz9lz8DDc6K5YxXi4cX4g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VrdbykHx; arc=fail smtp.client-ip=40.107.92.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JvrlfmpMedMGT8FbOZPAyIU/PglBN2oCkR02a4BkYervz8KDnLoc/P1+nvuaE06qO6Z3RSFcyosKYCSLkLfyo3u30PErS0l9uxjEba286XeTUS6WIFVvl7qkbHTrTcRv/vJwiO+ZJNnIKaOkVdUHJqD1UH+gix/3aB9H55ofh7ha4MdDC7r/QbtzbXr+BckMxxURnWwSJc/abBg1zmGvEyGOtBrpqAdBshjMzScx9LJJVtEpDDcCAVn9m0PBD4InNSa9g9bhWrDs2Cviac25/4XUDDaMh0jJnVp7rvYYum66SqJNuTL8u88Ba6Fee2dicH4miU5Xzzd0GnX9+vt78Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lGmbHnvPQ9WksNu8wf/QMliD5wkkXB+P6F/Ah/aMTt0=;
- b=hPg8/DLvMiCNhWP/M4AFHHq72gwNPr4A7e1B2Kkcsw5daTVQg1w6tSqmjmE38gqTA7bnyx+LF25R56RS6B4tvB6Cdo3jers1z3YGvHd4qfmR5qkWnebDrGKxEiS1XgKjD94M51eNPa0hLCZf+QsX501C8UQE1owcQ9DS8nRv4dlSeffDyB3GuDWgkzQQUwusHgLml+DSFLVNGtNeqmIb7ceIDV0hGsSP2k6esKY0to8Z6IMfAGW65HFMi1qyBhHB5uK4kY59TQ6QF6dKP87YfVrX+lNCSqCdPXJ4cJQmm8x8Hbcd1RnqE8G9/JEpSUuKERoZZKfXetgSlAIDLmPH1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lGmbHnvPQ9WksNu8wf/QMliD5wkkXB+P6F/Ah/aMTt0=;
- b=VrdbykHxqwnElPtE6f6LhLywKIiKGvaJ9bCgfh/WVPThz4M2S58V+jZ1piWb3wyjQUYtxoW3P6Sexv71s+fBtU3scEpO/hXpNgZCmc8wocroKspNHsMd9s8I9IEopJPljm3OkdcKljc3TR2vj+dyhp2jjcdbsylG4y1wSWJLqc4MeGLpNU1R2n+0rkcZ9ctt7o/WNmksLKftOTiQK8HjuOE3RAFYLUCtrNFd4ML+B/+SCcHpVfg+YgHjn9Xv6TrB8fF0Si8KtdCJz0YL9Rt5bzDhL63IxD83xWc+lvXCATj4/EedtYy5v2bN9NOdD0Dh5lAe8gPxxh+YEym/awFHtQ==
-Received: from CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12)
- by CH3PR12MB9148.namprd12.prod.outlook.com (2603:10b6:610:19d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 08:45:47 +0000
-Received: from CH3PR12MB7548.namprd12.prod.outlook.com
- ([fe80::e8c:e992:7287:cb06]) by CH3PR12MB7548.namprd12.prod.outlook.com
- ([fe80::e8c:e992:7287:cb06%5]) with mapi id 15.20.9115.018; Mon, 15 Sep 2025
- 08:45:47 +0000
-From: Shameer Kolothum <skolothumtho@nvidia.com>
-To: Ankit Agrawal <ankita@nvidia.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, Yishai Hadas
-	<yishaih@nvidia.com>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com" <yi.l.liu@intel.com>, Zhi Wang <zhiw@nvidia.com>
-CC: Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>, Kirti
- Wankhede <kwankhede@nvidia.com>, "Tarun Gupta (SW-GPU)"
-	<targupta@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>, Andy Currid
-	<ACurrid@nvidia.com>, Alistair Popple <apopple@nvidia.com>, John Hubbard
-	<jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>, "Anuj Aggarwal
- (SW-GPU)" <anuaggarwal@nvidia.com>, Matt Ochs <mochs@nvidia.com>, Krishnakant
- Jaju <kjaju@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [RFC 10/14] vfio/nvgrace-egm: Clear Memory before handing out to
- VM
-Thread-Topic: [RFC 10/14] vfio/nvgrace-egm: Clear Memory before handing out to
- VM
-Thread-Index: AQHcHVGcRg7gqsZ9+0qfRt7cDEPeR7ST/v5w
-Date: Mon, 15 Sep 2025 08:45:47 +0000
-Message-ID:
- <CH3PR12MB754873BDB6510A889170A0B3AB15A@CH3PR12MB7548.namprd12.prod.outlook.com>
-References: <20250904040828.319452-1-ankita@nvidia.com>
- <20250904040828.319452-11-ankita@nvidia.com>
-In-Reply-To: <20250904040828.319452-11-ankita@nvidia.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR12MB7548:EE_|CH3PR12MB9148:EE_
-x-ms-office365-filtering-correlation-id: 91d99df0-6d35-4658-8a41-08ddf43443f3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7053199007|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?kWPvbvnG4zv2XXuY/WCD+6ZXzAL1aRe/yXx8t3vlX3cROd8wzz9P4gkCz6U4?=
- =?us-ascii?Q?aNJ9UpjFW+/hYoRfjP0maYw+ZqAZOWcLKcdgbK/cbeFkGG9qZ0DWonN2/5w1?=
- =?us-ascii?Q?MZeJlmqyiOiX4IxdA8CBrNssy5W7fIKkpfWCgB8bNo02BLqeylvwv/UK455V?=
- =?us-ascii?Q?acEEhVdufOyMyt2FFgaXsVgdM6UgeAhu4OisctGdYI0F+2+ntPYPKQ1C0MSx?=
- =?us-ascii?Q?DeKXtfy4ftMmlSk94LVCLP6uOawz7jB9X8KwFv7ttKKYLjuXOUkruYHIchNo?=
- =?us-ascii?Q?/o6FiqUa7MHwzrPcpTPiGVKvszpNoqwEQs4l8/WqDFNALiprcO9SGArHwwSE?=
- =?us-ascii?Q?73Y0eUpZip93Ie8xfiEHufieBXsQU+GtWrnErarRXBrtGQZRrkxunI0vIsGB?=
- =?us-ascii?Q?41KNRngUl2alCUd7IUWLxZ3493vNyKQc19Nf26nCnCgHoPXU1KW/F3A5ecLO?=
- =?us-ascii?Q?4F6rtYBT3Ru0yyOIjWXw7JwjbBXWENVWfnLYf3/4CzzRuPu3Ga52wAeJDLwn?=
- =?us-ascii?Q?QjkuTddNywqPFdb12CWS/BNf4aM42KUjLAHd+37O8UhGtXYd2b5l0rZgmk/R?=
- =?us-ascii?Q?hsetmdn1MOcL5v0mjzb/fO6fKH1m+sIVN21FgTS+xT2s+WP/oVSuzx2N558t?=
- =?us-ascii?Q?X8ARhoZB3cLBkeRZlybav80+W3XsliFRUcPjOvSO92jougDH3Dmrhp7l3N54?=
- =?us-ascii?Q?umkXL6X3Jv2p87Q08UjAb1Gt8Mo20jeekG3lJifX0EQl35f3maLFcWJHvCou?=
- =?us-ascii?Q?/WOTmPtFtwvNxXkNPAOtZgp59DLrkpw+7gEBS+k1URMTZu0V8Z+11qvGgTaZ?=
- =?us-ascii?Q?OUDVI0quhz0f8X1HLYg/bY5obd8d/biTfiZR5b3J6knaMxMqrzoklwGiLwyE?=
- =?us-ascii?Q?GTMJZ7lZhxiQv/Y7a5USE97aaMfrkllD39oWjmJbKbf/Ov7CanZw3beSiHfT?=
- =?us-ascii?Q?DABJ4tcQYHxAC4PBWXKMo/IVXu3dfeRzCPnfcJzO7ryzL0Rx0Wv2HGY/tCrZ?=
- =?us-ascii?Q?YGidaUVPcxxLiBEI6780VmgHY/h7oCMG7THPPZbf1NqpRwC9krBXeEMphcP4?=
- =?us-ascii?Q?9eIZWWYd+AMmXlaHuN2DfPkI/7OalPlb7jM7ICTm2osQ127OJVDG1lALA8fz?=
- =?us-ascii?Q?9iVa+kN7S+kb+CLUU6bm6/+Mn4D7ojPj5hTkE9211Bxtz7RcYi1FDRlHzNG3?=
- =?us-ascii?Q?UDVqNgL8Ldsi+WrD4C8z5kCrTLGzRDXq1rC4x2kCXRav+wFGXipQ7u3yCy7U?=
- =?us-ascii?Q?J7ZM3rUUxQ+kg0t6ZdCj5WMh47SSd3QTXdITJBN6uaP1VuNhcDzWtmL7GW+U?=
- =?us-ascii?Q?PHh9TlmLXtKTGS3slUjpMT2NtYhhM+NH0YjjqqmggRu8VFRYRepuLGuzr4HW?=
- =?us-ascii?Q?wzUqIaPgHg63GQFKA5I4SbJrYB08rI0YWH6EUY4RCb72pwV4C5xG32J71jcD?=
- =?us-ascii?Q?AsBM+B9GnDzLzv3duHPyXUq8fF2H81Tjm7x6puaCqZrHYhKbUd9WSY9EAqq2?=
- =?us-ascii?Q?9t6m8hUgL+oMntE=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7548.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?hluirvMP6RdQi7xFK0Ty7B1+8Wjdfkftm9a+5+GjUvCBrp5ABKFxcb+2HVr2?=
- =?us-ascii?Q?z8c7ej07ePESvrSvtTz4jQxEO+ZA8OTbJIHGH56PBkDyHupJoF10PlrTyqJZ?=
- =?us-ascii?Q?kirTwzGQ7fQIisBeSVOaAcurRxN9NoX1WH6J3TbB9/Edjamo9XPZJbeLrdXx?=
- =?us-ascii?Q?LZHcr0hw3Za4+ypYs9wNpNAWnHrZDYfgE+rqj9flIZdNYe+0AYyswTtMEdxD?=
- =?us-ascii?Q?mQHljRNx9R7+R77WtuCXHAMpxwghqZZ6RngaXoo6MlWG0BQX2A4TO1weY/rn?=
- =?us-ascii?Q?I/c+ztv4lcvJSGdViU4Y+ZsCNyaSivZLAciLrdJlWPSnBlMIY+xFO5yMzZ//?=
- =?us-ascii?Q?4CE9YSLwq8QYpRsJSE063JVMXV6HB7dku9HiEGyzKNLMDb7Cw0wT3WFNYP53?=
- =?us-ascii?Q?SC0bswu3Jgu6xTmmLlL/Ulx1/4likzbCIXWyH26Q5DMaHo/eylZxIy0CfqNo?=
- =?us-ascii?Q?NBbKXfSHBJhQPrD2q9gaCDXQDWnbA+lHvOIjnytiXy7C3VydHbNeENYXsfOg?=
- =?us-ascii?Q?MMvMFHr5ZJhsyMnaR8lPTaf/dOP0cwPTPDcMwqxnYDTKH5QPfn/+ioCXeL7i?=
- =?us-ascii?Q?ud81M40oXp9WXpLAVp+qHQGacTJOa5MNbZNXw3OjPiNfllH1XmvZvGkd0XkJ?=
- =?us-ascii?Q?h86GqCtRiISHlJr6jNEhHRbNHQpCALPu3bGARh40zAxh9dHjxVCo+Y3nZkvE?=
- =?us-ascii?Q?73g1FvVsCamEBt/JAa6cDlXd2dRYNY5PWVms3X0O70YizQXj0k0OnpYPApUa?=
- =?us-ascii?Q?Szn/rOUUYbe0RePkFFXuFovTPJ9ToiqxXCzx3tK+73bBcC+3ftZqoNJ9zEtv?=
- =?us-ascii?Q?xz9/5LOP2nUt6Yi/tIAyI7omLZQgYPK+Vhm8VxTQ5OdNAfEGGCM3O6ij3Y+R?=
- =?us-ascii?Q?dlhHKi0CBd3lTo1xvejpuoF+MYwijWmd1V3U2cpx//N8y+wPbgd90ZvU82cz?=
- =?us-ascii?Q?D7fqUui+4qH8/hA73RliULBCD38ilLgK2AzWbcvfhF3dK8TXehN0bAVCvL1I?=
- =?us-ascii?Q?QKWpIQy5p2E5rkT0Kyphe/F8f1aFrWD5a+OTZcsnFg/s/0V2xrr+y+q4o2UK?=
- =?us-ascii?Q?7VhKH3UxMmH+5RCYfaZbo4ZjBczupjUvYEnBuv5by29Aa9qcTNTol0ok6Fl1?=
- =?us-ascii?Q?BiOauA7sW8Cp7iZADTqE8dMeQcheYdby2F2AjgouicsA1XPDVtdyZxZd3sR4?=
- =?us-ascii?Q?SXN6RxzV2x8EsK3kX0WW7actwIjbHtuJ2+8Koy41ROzJGVr0kTxw8FQnJ6AR?=
- =?us-ascii?Q?CeP2tVPmh1XgvcPR4Q59MgkKi6Skw3Z6U29Ebz6JV0q0C3rxgvI3OZAW1dtn?=
- =?us-ascii?Q?JwhE0tY+qallswsbjHXG5T6n+Rg/6GUdXGiNzhrzK8Uew/Cj/I4n+Ogk0d45?=
- =?us-ascii?Q?y6Z/Pz6TPLFbBqdhID1e84SWOGpusA/5ApvjJyca23wsuckeE2E8Dvaf+WqE?=
- =?us-ascii?Q?axOggZyHuA/A6jnd3Z196692+/mgjljDJPVS88UTv95qHLJ5fdD4FePA2cDI?=
- =?us-ascii?Q?czkjx8L69tDIb7O7JI/jEduSNIOWHGa5WSod9sz5kX8ig3FqSvEs64lgQ1TF?=
- =?us-ascii?Q?ElUDpCytnReN2SniOMx6+ZPeob+rlas30Y4SxM8u?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1651F2D3212
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757926032; cv=none; b=uQDB54EW4qEeQxzFi3wRBQAy3QINKRyyA9GGP5Y64qMkRkPFiYetXUs6uXSMXutgeLf6Rbv5f4rDoLayBLnYotKcCfyd1ODiA1Lg9qAok2mc7aERa+rasoPAmd7jnVpgF8Zk99fbQwXyquQCyFWWEs51GQyN3qebFTdoen1n/I0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757926032; c=relaxed/simple;
+	bh=RhNIq7hnZGcjn/f5Zl3RQLnfgLR/SNEk/Y5YGAQMLT8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J10F6/ClOCDvfcsREgGiyPdblzyZ+HeLRM/HnUFQz6DNp0RF8ZXxILCPMz5Qrapv/9ehClTRs2bJpAwQw0bMu6TbMpApukg+EIbMsoDOHWBBJTxdH0tNpyqwwxN+Ht/XpYYr54dKte21lYA04PjRlHVc/hQWReSykfw5r0rJKUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2HBUacn; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so952489f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757926028; x=1758530828; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NeWCrHcuFJQca7c3KHuqecD6Yx1TOdfi8IxgxCePYwg=;
+        b=b2HBUacnSGIRfc7L8sQSBV5Jeq9T4dGtncirTPrIowfylfZWmB6emZP3Zm5D+QlTOE
+         iA48Sqd6hpy3Qw9Rdv2l5PqkeEelEITlZVGOZYECQUi7dsS4tiqchW2CAGY61KL0C0L8
+         /pUdsNwTQ8LlAzMEhjFQuh0csXGgu1+GXcE0JFHKmFpy7Rd2gVFIt2zlt/fdNxpGaD5M
+         lJ/vByo2b6juBC23bGeuYQVeLCwdQF3wAxkOP5WfjO8D5V8ztgbsIkpPJgEwbFd3IaPq
+         cDHiM87TAyLWqVekrlVrXOGwCbkv38f86N1ibGMOZjMKFkJltmlL6FHIrtHGlUZgeNb8
+         JMwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757926028; x=1758530828;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NeWCrHcuFJQca7c3KHuqecD6Yx1TOdfi8IxgxCePYwg=;
+        b=vLwzYxszW0RygOmc9hDnUbl3M6ntSZtwd2q4X+jpMsSS6avsYwQQFXYJ4a26+xhis0
+         McCwNEKKA8dwyBJEaQ6ltiCHAMBZvoGtakIyRilLTX+ULYGKL0BTPO8+ABpbbq52Menm
+         XbOcPUa/ahYQYUNPfCyDWGz4U8+z3iRzNhdxlyMPvV2pii7ihbtwOuGOsGRnmmf8SC6w
+         oyWFeS9Gz74oO/rbQCZ/ulrP1arvMY7uYGbMWd4s8zD7jyfeXODG/kfb1HdkyrUpFJ6x
+         HnDxei25wksXpTUMhJY8daXGRaN0ephhao6DSDWZlr9jmnfEd+nupX3NwGAlsbtPxDi7
+         QBmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvi2roMJhdVMf9N4VMXlJSuJjqJ51HPlyyGx2+GRh2NU+2q2pN7HEPusLZoYa1lORR1WPXGsTj7/Qxs0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytI9NjtysSEI5ByuK08G5Pqd3/1AwraSWABexQHJzGhLLuw6oR
+	Xn4tzhRGEpbLTdn58Tzq7GHE2O9OEMFGRghz4+lqzVN3v7ukFOGaBXRj
+X-Gm-Gg: ASbGncvMtLKWYhht2qXsmPHkQjcJTh53w8pO3KP+aT5omaw1w+9/zez1PMHjQghfDFV
+	jileY7evPWw/QhcRJhYlAxlWtaJZLYevCINU7oNF5ajGf2Is3bXn77YVfCJD03mXzbFhq1we43W
+	WPr+Ugq/KiXn/29k6MhfwEsr2hVCo6WJGjOFgoara4oKCRn/y+oeRo1rYO/jKYsosbywSu7P/6V
+	a/rijYqNQWdZLlGbipOKO9y1OoHOyv8FwQamGojJQyhDFzmtThcp9cWFk1PT9XedKHXGMCTUHdF
+	R0msl6kNqJB+AVTkqn7brTrTYe6qViaBooA4nYKPyyDhgA+PUtBsrDbgLSgHYskGr6HNFBoiGVE
+	GHF/9bfzujwQMkYHN6g0UTe3SzLk1InKSuQ==
+X-Google-Smtp-Source: AGHT+IEnR35kGekzsSQOOolWkENuf20h1eCcMTRZ6YwYt7+OxdsvEvVafLU/W3jYmP/qjG8iaSVmxg==
+X-Received: by 2002:a05:6000:26cc:b0:3e7:458e:f69 with SMTP id ffacd0b85a97d-3e765a08312mr11273339f8f.56.1757926028001;
+        Mon, 15 Sep 2025 01:47:08 -0700 (PDT)
+Received: from localhost ([45.10.155.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7b42bdc5asm11523113f8f.21.2025.09.15.01.47.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 01:47:07 -0700 (PDT)
+Message-ID: <a18a6bef-0262-4c72-86c9-8df72c8c7415@gmail.com>
+Date: Mon, 15 Sep 2025 10:46:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7548.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91d99df0-6d35-4658-8a41-08ddf43443f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2025 08:45:47.1427
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yfHrbjZfMdkI8CmEaFpanGhaHgwXJejW0CVIdvCkohPtJoI0P+ZFVxA2s1ITlVozRDrbn7GCwAORdb5aQoLmbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9148
+Subject: Re: [PATCH net-next v4 2/5] net: gro: only merge packets with
+ incrementing or fixed outer ids
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
+ tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
+ ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
+ kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250901113826.6508-1-richardbgobert@gmail.com>
+ <20250901113826.6508-3-richardbgobert@gmail.com>
+ <willemdebruijn.kernel.277f254610c6e@gmail.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <willemdebruijn.kernel.277f254610c6e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Willem de Bruijn wrote:
+> Richard Gobert wrote:
+>> Only merge encapsulated packets if their outer IDs are either
+>> incrementing or fixed, just like for inner IDs and IDs of non-encapsulated
+>> packets.
+>>
+>> Add another ip_fixedid bit for a total of two bits: one for outer IDs (and
+>> for unencapsulated packets) and one for inner IDs.
+>>
+>> This commit preserves the current behavior of GSO where only the IDs of the
+>> inner-most headers are restored correctly.
+>>
+>> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+>> ---
+>>  include/net/gro.h      | 30 +++++++++++++++---------------
+>>  net/ipv4/tcp_offload.c |  5 ++++-
+>>  2 files changed, 19 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/include/net/gro.h b/include/net/gro.h
+>> index 87c68007f949..322c5517f508 100644
+>> --- a/include/net/gro.h
+>> +++ b/include/net/gro.h
+>> @@ -75,7 +75,7 @@ struct napi_gro_cb {
+>>  		u8	is_fou:1;
+>>  
+>>  		/* Used to determine if ipid_offset can be ignored */
+>> -		u8	ip_fixedid:1;
+>> +		u8	ip_fixedid:2;
+>>  
+>>  		/* Number of gro_receive callbacks this packet already went through */
+>>  		u8 recursion_counter:4;
+>> @@ -442,29 +442,26 @@ static inline __wsum ip6_gro_compute_pseudo(const struct sk_buff *skb,
+>>  }
+>>  
+>>  static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *iph2,
+>> -				 struct sk_buff *p, bool outer)
+>> +				 struct sk_buff *p, bool inner)
+>>  {
+>>  	const u32 id = ntohl(*(__be32 *)&iph->id);
+>>  	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
+>>  	const u16 ipid_offset = (id >> 16) - (id2 >> 16);
+>>  	const u16 count = NAPI_GRO_CB(p)->count;
+>>  	const u32 df = id & IP_DF;
+>> -	int flush;
+>>  
+>>  	/* All fields must match except length and checksum. */
+>> -	flush = (iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF));
+>> -
+>> -	if (flush | (outer && df))
+>> -		return flush;
+>> +	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF)))
+>> +		return true;
+>>  
+>>  	/* When we receive our second frame we can make a decision on if we
+>>  	 * continue this flow as an atomic flow with a fixed ID or if we use
+>>  	 * an incrementing ID.
+>>  	 */
+>>  	if (count == 1 && df && !ipid_offset)
+>> -		NAPI_GRO_CB(p)->ip_fixedid = true;
+>> +		NAPI_GRO_CB(p)->ip_fixedid |= 1 << inner;
+>>  
+>> -	return ipid_offset ^ (count * !NAPI_GRO_CB(p)->ip_fixedid);
+>> +	return ipid_offset ^ (count * !(NAPI_GRO_CB(p)->ip_fixedid & (1 << inner)));
+>>  }
+>>  
+>>  static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr *iph2)
+>> @@ -479,7 +476,7 @@ static inline int ipv6_gro_flush(const struct ipv6hdr *iph, const struct ipv6hdr
+>>  
+>>  static inline int __gro_receive_network_flush(const void *th, const void *th2,
+>>  					      struct sk_buff *p, const u16 diff,
+>> -					      bool outer)
+>> +					      bool inner)
+>>  {
+>>  	const void *nh = th - diff;
+>>  	const void *nh2 = th2 - diff;
+>> @@ -487,19 +484,22 @@ static inline int __gro_receive_network_flush(const void *th, const void *th2,
+>>  	if (((struct iphdr *)nh)->version == 6)
+>>  		return ipv6_gro_flush(nh, nh2);
+>>  	else
+>> -		return inet_gro_flush(nh, nh2, p, outer);
+>> +		return inet_gro_flush(nh, nh2, p, inner);
+>>  }
+>>  
+>>  static inline int gro_receive_network_flush(const void *th, const void *th2,
+>>  					    struct sk_buff *p)
+>>  {
+>> -	const bool encap_mark = NAPI_GRO_CB(p)->encap_mark;
+>>  	int off = skb_transport_offset(p);
+>>  	int flush;
+>> +	int diff;
+>>  
+>> -	flush = __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->network_offset, encap_mark);
+>> -	if (encap_mark)
+>> -		flush |= __gro_receive_network_flush(th, th2, p, off - NAPI_GRO_CB(p)->inner_network_offset, false);
+>> +	diff = off - NAPI_GRO_CB(p)->network_offset;
+>> +	flush = __gro_receive_network_flush(th, th2, p, diff, false);
+>> +	if (NAPI_GRO_CB(p)->encap_mark) {
+>> +		diff = off - NAPI_GRO_CB(p)->inner_network_offset;
+>> +		flush |= __gro_receive_network_flush(th, th2, p, diff, true);
+>> +	}
+> 
+> nit: this diff introduction is not needed. The patch is easier to
+> parse without the change. Even if line length will (still) be longer.
+> 
+>>  
+>>  	return flush;
+>>  }
+>> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
+>> index e6612bd84d09..1949eede9ec9 100644
+>> --- a/net/ipv4/tcp_offload.c
+>> +++ b/net/ipv4/tcp_offload.c
+>> @@ -471,6 +471,7 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
+>>  	const u16 offset = NAPI_GRO_CB(skb)->network_offsets[skb->encapsulation];
+>>  	const struct iphdr *iph = (struct iphdr *)(skb->data + offset);
+>>  	struct tcphdr *th = tcp_hdr(skb);
+>> +	bool is_fixedid;
+>>  
+>>  	if (unlikely(NAPI_GRO_CB(skb)->is_flist)) {
+>>  		skb_shinfo(skb)->gso_type |= SKB_GSO_FRAGLIST | SKB_GSO_TCPV4;
+>> @@ -484,8 +485,10 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
+>>  	th->check = ~tcp_v4_check(skb->len - thoff, iph->saddr,
+>>  				  iph->daddr, 0);
+>>  
+>> +	is_fixedid = (NAPI_GRO_CB(skb)->ip_fixedid >> skb->encapsulation) & 1;
+>> +
+>>  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4 |
+>> -			(NAPI_GRO_CB(skb)->ip_fixedid * SKB_GSO_TCP_FIXEDID);
+>> +			(is_fixedid * SKB_GSO_TCP_FIXEDID);
+> 
+> Similar to how gro_receive_network_flush is called from both transport
+> layers, TCP and UDP, this is needed in udp_gro_complete_segment too?
+> 
+> Existing equivalent block is entirely missing there.
+> 
+> The deeper issue is that this is named TCP_FIXEDID, but in reality it
+> is IPV4_FIXEDID and applies to all transport layer protocols on top.
+> 
+> Perhaps not to fix in this series. But a limitation of USO in the
+> meantime.
+> 
 
+Yes, I noticed this when working on this change and there is no good
+reason not to do this for UDP as well. I think we should address this in
+a separate patch series.
 
-> -----Original Message-----
-> From: Ankit Agrawal <ankita@nvidia.com>
-> Sent: 04 September 2025 05:08
-> To: Ankit Agrawal <ankita@nvidia.com>; Jason Gunthorpe <jgg@nvidia.com>;
-> alex.williamson@redhat.com; Yishai Hadas <yishaih@nvidia.com>; Shameer
-> Kolothum <skolothumtho@nvidia.com>; kevin.tian@intel.com;
-> yi.l.liu@intel.com; Zhi Wang <zhiw@nvidia.com>
-> Cc: Aniket Agashe <aniketa@nvidia.com>; Neo Jia <cjia@nvidia.com>; Kirti
-> Wankhede <kwankhede@nvidia.com>; Tarun Gupta (SW-GPU)
-> <targupta@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Andy Currid
-> <acurrid@nvidia.com>; Alistair Popple <apopple@nvidia.com>; John Hubbard
-> <jhubbard@nvidia.com>; Dan Williams <danw@nvidia.com>; Anuj Aggarwal
-> (SW-GPU) <anuaggarwal@nvidia.com>; Matt Ochs <mochs@nvidia.com>;
-> Krishnakant Jaju <kjaju@nvidia.com>; Dheeraj Nigam <dnigam@nvidia.com>;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [RFC 10/14] vfio/nvgrace-egm: Clear Memory before handing out to
-> VM
->=20
+>>  
+>>  	tcp_gro_complete(skb);
+>>  	return 0;
+>> -- 
+>> 2.36.1
+>>
+> 
+> 
 
-[...]
-
->  static struct nvgrace_egm_dev *
-> @@ -30,6 +31,26 @@ static int nvgrace_egm_open(struct inode *inode,
-> struct file *file)
->  {
->  	struct chardev *egm_chardev =3D
->  		container_of(inode->i_cdev, struct chardev, cdev);
-> +	struct nvgrace_egm_dev *egm_dev =3D
-> +		egm_chardev_to_nvgrace_egm_dev(egm_chardev);
-> +	void *memaddr;
-> +
-> +	if (atomic_inc_return(&egm_chardev->open_count) > 1)
-> +		return 0;
-> +
-> +	/*
-> +	 * nvgrace-egm module is responsible to manage the EGM memory as
-> +	 * the host kernel has no knowledge of it. Clear the region before
-> +	 * handing over to userspace.
-> +	 */
-> +	memaddr =3D memremap(egm_dev->egmphys, egm_dev->egmlength,
-> MEMREMAP_WB);
-> +	if (!memaddr) {
-> +		atomic_dec(&egm_chardev->open_count);
-> +		return -EINVAL;
-
-Nit: may be better to ret -ENOMEM here.
-
-Thanks,
-Shameer
 
