@@ -1,222 +1,363 @@
-Return-Path: <linux-kernel+bounces-817149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039D8B57E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4492DB57E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F08484288
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38AB4487EC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717F231B130;
-	Mon, 15 Sep 2025 14:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ib744pOF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5C731A54C;
+	Mon, 15 Sep 2025 14:13:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB47D2D12E7;
-	Mon, 15 Sep 2025 14:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E88031B80F;
+	Mon, 15 Sep 2025 14:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757945563; cv=none; b=Rf7pD8gjznhYWwzVaZncvPd401MqrjLAePI91iLtqw1yVIg5A2314JJLLmFSTmy6wmPcQWOkuedruKJObzDGYMPnm8qbNY2hw/Qx0AxLkTr41qOwilVjULJnrAyc0Vsi8miM/MXo9AVOPmNhHnuaQbcFkxdf9XZ+uLsx89hpp4g=
+	t=1757945585; cv=none; b=ZCbULJT7hEU3Cr70qDqUTq8SnvnEzr2JS8Z2Jwm+U3sotSQZn/V1mHhMshydyQLxJJtf1pYI5X5HhV4X/Yu8EVdISH7jpKd/w7wayOLm34HUfwbdqgYu51vvzp7zNbGVOWYyxrCanbAPqWC/gntWmHgDFjjwwmphqygF20y44Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757945563; c=relaxed/simple;
-	bh=KgVjLVJIEGxaahBivf2jposmH0k5F1mKeUGKFxC40rU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7sg68+gcMdxdignmajnqTTW6bpkQYCb0zNpa9VFy5FxNYvevjmcPJROes8DPJwOnhQxzkIiXZmtSo4sSl0ibiWqz+ej1ayYDzVXjdl/iVlrY4wC0WPNiyl1Hq1ToMLIbLBEgje/se7rxyKkFGpYseJrgLqH6f4pTRRWwmN7ISc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ib744pOF; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757945562; x=1789481562;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KgVjLVJIEGxaahBivf2jposmH0k5F1mKeUGKFxC40rU=;
-  b=Ib744pOFSXOA4yk2Umv77oMD4dy7jZXXkSC6uAkMq3gvxo1Ejz1ljxNn
-   uniqacumbyKv3aw6rKOjjYn9eFXhHBR0yyGVwSnEqQ83lSe+UIDE0yJtT
-   zvaFFW2Wrx7ejy3+8foPrITFVpCuQnze5Kwky6pY9AR2AXMYSfVnP3Dji
-   videZ4QMQJEHwuXmmnTF7C2ZTvCL1dRqfL/4TUi22hDXfaWA7vMUGSuaY
-   44P7IclGqeqWKSUSX5Xd4nA2tVboBbQH0BD/e6tDS37YjsWeyxIkd8JdV
-   rB6BHgSzVFFt/mZgqfzAC7PU09H3bp5lBV7Y6JC5lttgOwxwOUFTRyL4w
-   g==;
-X-CSE-ConnectionGUID: 47WfFI+oT5y+jX+fb8MHyg==
-X-CSE-MsgGUID: GZVkfGJxQrafETJ604+l0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="71567912"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="71567912"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:12:41 -0700
-X-CSE-ConnectionGUID: 3inNKzA3TLKjz1f7vlblkg==
-X-CSE-MsgGUID: TtYywyn8Sx6i+0cfps0tpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="179807537"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:12:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uy9wY-00000003GfO-1jDn;
-	Mon, 15 Sep 2025 17:12:34 +0300
-Date: Mon, 15 Sep 2025 17:12:34 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <aMge0jYwYCiY72Yb@smile.fi.intel.com>
-References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com>
- <20250915-bd79112-v5-2-a74e011a0560@gmail.com>
+	s=arc-20240116; t=1757945585; c=relaxed/simple;
+	bh=AwTu8u9YiJquU5bgb96v3Ixdf9OaqS4HYjtVwL6W5NQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N24VzdqJATKZLSnvYIV5WWHlpIJVu+DNJ4m0yA25zAciNncR3tYQ9AHtkb22JssQCoVlC+FtHpxBrc2zH/qVpGdqzg1yq3rcnh+tZtcx6Dk0UOZBD2VO17+iUAj8JQKLVPZJKqoRhxSx3TxZgvyKdx09pTp1ENB/HJ7SDLrlEko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQRhc713mz6L6kL;
+	Mon, 15 Sep 2025 22:08:32 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C50C1402F7;
+	Mon, 15 Sep 2025 22:12:59 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
+ 2025 16:12:58 +0200
+Date: Mon, 15 Sep 2025 15:12:57 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
+CC: <nathan.lynch@amd.com>, Vinod Koul <vkoul@kernel.org>, Wei Huang
+	<wei.huang2@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
+Subject: Re: [PATCH RFC 08/13] dmaengine: sdxi: Context creation/removal,
+ descriptor submission
+Message-ID: <20250915151257.0000253b@huawei.com>
+In-Reply-To: <20250905-sdxi-base-v1-8-d0341a1292ba@amd.com>
+References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+	<20250905-sdxi-base-v1-8-d0341a1292ba@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915-bd79112-v5-2-a74e011a0560@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:
-> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+On Fri, 05 Sep 2025 13:48:31 -0500
+Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:
+
+> From: Nathan Lynch <nathan.lynch@amd.com>
 > 
-> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> daisy-chain configuration) and maximum sampling rate is 1MSPS.
+> Add functions for creating and removing SDXI contexts and submitting
+> descriptors against them.
 > 
-> The IC does also support CRC but it is not implemented in the driver.
+> An SDXI function supports one or more contexts, each of which has its
+> own descriptor ring and associated state. Each context has a 16-bit
+> index. A special context is installed at index 0 and is used for
+> configuring other contexts and performing administrative actions.
+> 
+> The creation of each context entails the allocation of the following
+> control structure hierarchy:
+> 
+> * Context L1 Table slot
+>   * Access key (AKey) table
+>   * Context control block
+>     * Descriptor ring
+>     * Write index
+>     * Context status block
+> 
+> Co-developed-by: Wei Huang <wei.huang2@amd.com>
+> Signed-off-by: Wei Huang <wei.huang2@amd.com>
+> Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
+Some superficial stuff inline.
 
-...
+I haven't yet reread the spec against this (and it's been a while
+since I looked at sdxi!) but overall seems reasonable.
+> ---
+>  drivers/dma/sdxi/context.c | 547 +++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/dma/sdxi/context.h |  28 +++
+>  2 files changed, 575 insertions(+)
+> 
+> diff --git a/drivers/dma/sdxi/context.c b/drivers/dma/sdxi/context.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..50eae5b3b303d67891113377e2df209d199aa533
+> --- /dev/null
+> +++ b/drivers/dma/sdxi/context.c
+> @@ -0,0 +1,547 @@
 
-> +static int bd79112_probe(struct spi_device *spi)
+
+> +
+> +static struct sdxi_cxt *alloc_cxt(struct sdxi_dev *sdxi)
 > +{
-> +	struct bd79112_data *data;
-> +	struct iio_dev *iio_dev;
-> +	struct iio_chan_spec *cs;
-> +	struct device *dev = &spi->dev;
-> +	unsigned long gpio_pins, pin;
-> +	unsigned int i;
-> +	int ret;
+> +	struct sdxi_cxt *cxt;
+> +	u16 id, l2_idx, l1_idx;
 > +
-> +	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!iio_dev)
-> +		return -ENOMEM;
+> +	if (sdxi->cxt_count >= sdxi->max_cxts)
+> +		return NULL;
 > +
-> +	data = iio_priv(iio_dev);
-> +	data->spi = spi;
-> +	data->dev = dev;
-> +	data->map = devm_regmap_init(dev, NULL, data, &bd79112_regmap);
-> +	if (IS_ERR(data->map))
-> +		return dev_err_probe(dev, PTR_ERR(data->map),
-> +				     "Failed to initialize Regmap\n");
+> +	/* search for an empty context slot */
+> +	for (id = 0; id < sdxi->max_cxts; id++) {
+> +		l2_idx = ID_TO_L2_INDEX(id);
+> +		l1_idx = ID_TO_L1_INDEX(id);
 > +
-> +	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to get the Vdd\n");
-
-> +	data->vref_mv = ret / 1000;
-
-I still think moving to _mV is the right thing to do.
-There is no 'mv' in the physics for Volts.
-
-> +	ret = devm_regulator_get_enable(dev, "iovdd");
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to enable I/O voltage\n");
+> +		if (sdxi->cxt_array[l2_idx] == NULL) {
+> +			int sz = sizeof(struct sdxi_cxt *) * L1_TABLE_ENTRIES;
+> +			struct sdxi_cxt **ptr = kzalloc(sz, GFP_KERNEL);
 > +
-> +	data->read_xfer[0].tx_buf = &data->read_tx[0];
-> +	data->read_xfer[0].len = sizeof(data->read_tx);
-> +	data->read_xfer[0].cs_change = 1;
-> +	data->read_xfer[1].rx_buf = &data->read_rx;
-> +	data->read_xfer[1].len = sizeof(data->read_rx);
-> +	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
-
-> +	devm_spi_optimize_message(dev, spi, &data->read_msg);
-
-And if it fails?..
-
-> +	data->write_xfer.tx_buf = &data->reg_write_tx[0];
-> +	data->write_xfer.len = sizeof(data->reg_write_tx);
-> +	spi_message_init_with_transfers(&data->write_msg, &data->write_xfer, 1);
-> +	devm_spi_optimize_message(dev, spi, &data->write_msg);
+> +			sdxi->cxt_array[l2_idx] = ptr;
+> +			if (!(sdxi->cxt_array[l2_idx]))
+> +				return NULL;
+> +		}
 > +
-> +	ret = devm_iio_adc_device_alloc_chaninfo_se(dev, &bd79112_chan_template,
-> +						    BD79112_MAX_NUM_CHANNELS - 1,
-> +						    &cs);
-> +
-> +	/* Register all pins as GPIOs if there are no ADC channels */
-> +	if (ret == -ENOENT)
-> +		goto register_gpios;
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	iio_dev->num_channels = ret;
-> +	iio_dev->channels = cs;
-> +
-> +	for (i = 0; i < iio_dev->num_channels; i++)
-> +		cs[i].datasheet_name = bd79112_chan_names[cs[i].channel];
-> +
-> +	iio_dev->info = &bd79112_info;
-> +	iio_dev->name = "bd79112";
-> +	iio_dev->modes = INDIO_DIRECT_MODE;
-> +
-> +	/*
-> +	 * Ensure all channels are ADCs. This allows us to register the IIO
-> +	 * device early (before checking which pins are to be used for GPIO)
-> +	 * without having to worry about some pins being initially used for
-> +	 * GPIO.
-> +	 */
-> +	for (i = 0; i < BD79112_NUM_GPIO_EN_REGS; i++) {
-> +		ret = regmap_write(data->map, BD79112_FIRST_GPIO_EN_REG + i, 0);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Failed to initialize channels\n");
+> +		cxt = (sdxi->cxt_array)[l2_idx][l1_idx];
+> +		/* found one empty slot */
+> +		if (!cxt)
+> +			break;
 > +	}
 > +
-> +	ret = devm_iio_device_register(data->dev, iio_dev);
-> +	if (ret)
-> +		return dev_err_probe(data->dev, ret, "Failed to register ADC\n");
+> +	/* nothing found, bail... */
+> +	if (id == sdxi->max_cxts)
+> +		return NULL;
 > +
-> +register_gpios:
-> +	gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
-> +					  iio_dev->num_channels);
+> +	/* alloc context and initialize it */
+> +	cxt = kzalloc(sizeof(struct sdxi_cxt), GFP_KERNEL);
+
+sizeof(*ctx) usually preferred as it saves anyone checking types match.
+
+> +	if (!cxt)
+> +		return NULL;
 > +
-> +	/* If all channels are reserved for ADC, then we're done. */
-> +	if (!gpio_pins)
-> +		return 0;
-> +
-> +	/* Default all the GPIO pins to GPI */
-> +	for_each_set_bit(pin, &gpio_pins, BD79112_MAX_NUM_CHANNELS) {
-> +		ret = bd79112_gpio_dir_set(data, pin, GPIO_LINE_DIRECTION_IN);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "Failed to mark pin as GPI\n");
+> +	cxt->akey_table = dma_alloc_coherent(sdxi_to_dev(sdxi),
+> +					     sizeof(*cxt->akey_table),
+> +					     &cxt->akey_table_dma, GFP_KERNEL);
+> +	if (!cxt->akey_table) {
+> +		kfree(cxt);
+
+Similar to below. You could use a DEFINE_FREE() to auto cleanup up ctx
+on error.
+
+> +		return NULL;
 > +	}
 > +
-> +	data->gpio_valid_mask = gpio_pins;
-> +	data->gc = bd79112_gpio_chip;
-> +	data->gc.parent = dev;
+> +	cxt->sdxi = sdxi;
+> +	cxt->id = id;
+> +	cxt->db_base = sdxi->dbs_bar + id * sdxi->db_stride;
+> +	cxt->db = sdxi->dbs + id * sdxi->db_stride;
 > +
-> +	return devm_gpiochip_add_data(dev, &data->gc, data);
+> +	sdxi->cxt_array[l2_idx][l1_idx] = cxt;
+> +	sdxi->cxt_count++;
+> +
+> +	return cxt;
 > +}
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +struct sdxi_cxt *sdxi_working_cxt_init(struct sdxi_dev *sdxi,
+> +				       enum sdxi_cxt_id id)
+> +{
+> +	struct sdxi_cxt *cxt;
+> +	struct sdxi_sq *sq;
+> +
+> +	cxt = sdxi_cxt_alloc(sdxi);
+> +	if (!cxt) {
+> +		sdxi_err(sdxi, "failed to alloc a new context\n");
+> +		return NULL;
+> +	}
+> +
+> +	/* check if context ID matches */
+> +	if (id < SDXI_ANY_CXT_ID && cxt->id != id) {
+> +		sdxi_err(sdxi, "failed to alloc a context with id=%d\n", id);
+> +		goto err_cxt_id;
+> +	}
+> +
+> +	sq = sdxi_sq_alloc_default(cxt);
+> +	if (!sq) {
+> +		sdxi_err(sdxi, "failed to alloc a submission queue (sq)\n");
+> +		goto err_sq_alloc;
+> +	}
+> +
+> +	return cxt;
+> +
+> +err_sq_alloc:
+> +err_cxt_id:
+> +	sdxi_cxt_free(cxt);
+
+Might be worth doing a DEFINE_FREE() then you can use return_ptr(ctx); instead
+of return ctx.  Will allow you to simply return on any errors.
+
+> +
+> +	return NULL;
+> +}
+> +
+> +static const char *cxt_sts_state_str(enum cxt_sts_state state)
+> +{
+> +	static const char *const context_states[] = {
+> +		[CXTV_STOP_SW]  = "stopped (software)",
+> +		[CXTV_RUN]      = "running",
+> +		[CXTV_STOPG_SW] = "stopping (software)",
+> +		[CXTV_STOP_FN]  = "stopped (function)",
+> +		[CXTV_STOPG_FN] = "stopping (function)",
+> +		[CXTV_ERR_FN]   = "error",
+> +	};
+> +	const char *str = "unknown";
+> +
+> +	switch (state) {
+> +	case CXTV_STOP_SW:
+> +	case CXTV_RUN:
+> +	case CXTV_STOPG_SW:
+> +	case CXTV_STOP_FN:
+> +	case CXTV_STOPG_FN:
+> +	case CXTV_ERR_FN:
+> +		str = context_states[state];
+
+I'd do a default to make it explicit that there are other states.  If there
+aren't then just return here and skip the return below.  A compiler should
+be able to see if you handled them all and complain loudly if a new one is
+added that you haven't handled.
+
+> +	}
+> +
+> +	return str;
+> +}
+> +
+> +int sdxi_submit_desc(struct sdxi_cxt *cxt, const struct sdxi_desc *desc)
+> +{
+> +	struct sdxi_sq *sq;
+> +	__le64 __iomem *db;
+> +	__le64 *ring_base;
+> +	u64 ring_entries;
+> +	__le64 *rd_idx;
+> +	__le64 *wr_idx;
+> +
+> +	sq = cxt->sq;
+> +	ring_entries = sq->ring_entries;
+> +	ring_base = sq->desc_ring[0].qw;
+> +	rd_idx = &sq->cxt_sts->read_index;
+> +	wr_idx = sq->write_index;
+> +	db = cxt->db;
+I'm not sure the local variables add anything, but if you really want
+to keep them, then at least combine with declaration.
+
+	struct sdxi_sq *sq = ctx->sq;
+	__le64 __iomem *db = ctx->db;
+
+
+just to keep thing code more compact.
+
+Personally I'd just have a local sq and do the rest in the call
+
+	return sdxi_enqueue(desc->qw, 1, sq->desc_ring[0].wq,
+etc
+
+
+> +
+> +	return sdxi_enqueue(desc->qw, 1, ring_base, ring_entries,
+> +			    rd_idx, wr_idx, db);
+				
+> +}
+> +
+> +static void sdxi_cxt_shutdown(struct sdxi_cxt *target_cxt)
+> +{
+> +	unsigned long deadline = jiffies + msecs_to_jiffies(1000);
+> +	struct sdxi_cxt *admin_cxt = target_cxt->sdxi->admin_cxt;
+> +	struct sdxi_dev *sdxi = target_cxt->sdxi;
+> +	struct sdxi_cxt_sts *sts = target_cxt->sq->cxt_sts;
+> +	struct sdxi_desc desc;
+> +	u16 cxtid = target_cxt->id;
+> +	struct sdxi_cxt_stop params = {
+> +		.range = sdxi_cxt_range(cxtid),
+> +	};
+> +	enum cxt_sts_state state = sdxi_cxt_sts_state(sts);
+> +	int err;
+> +
+> +	sdxi_dbg(sdxi, "%s entry: context state: %s",
+> +		 __func__, cxt_sts_state_str(state));
+> +
+> +	err = sdxi_encode_cxt_stop(&desc, &params);
+> +	if (err)
+> +		return;
+> +
+> +	err = sdxi_submit_desc(admin_cxt, &desc);
+> +	if (err)
+> +		return;
+> +
+> +	sdxi_dbg(sdxi, "shutting down context %u\n", cxtid);
+> +
+> +	do {
+> +		enum cxt_sts_state state = sdxi_cxt_sts_state(sts);
+> +
+> +		sdxi_dbg(sdxi, "context %u state: %s", cxtid,
+> +			 cxt_sts_state_str(state));
+> +
+> +		switch (state) {
+> +		case CXTV_ERR_FN:
+> +			sdxi_err(sdxi, "context %u went into error state while stopping\n",
+> +				cxtid);
+> +			fallthrough;
+
+I'd just return unless a later patch adds something more interesting to the next
+cases.
+
+> +		case CXTV_STOP_SW:
+> +		case CXTV_STOP_FN:
+> +			return;
+> +		case CXTV_RUN:
+> +		case CXTV_STOPG_SW:
+> +		case CXTV_STOPG_FN:
+> +			/* transitional states */
+> +			fsleep(1000);
+> +			break;
+> +		default:
+> +			sdxi_err(sdxi, "context %u in unknown state %u\n",
+> +				 cxtid, state);
+> +			return;
+> +		}
+> +	} while (time_before(jiffies, deadline));
+> +
+> +	sdxi_err(sdxi, "stopping context %u timed out (state = %u)\n",
+> +		cxtid, sdxi_cxt_sts_state(sts));
+> +}
+> +
+> +void sdxi_working_cxt_exit(struct sdxi_cxt *cxt)
+> +{
+> +	struct sdxi_sq *sq;
+> +
+> +	if (!cxt)
+Superficially this looks like defensive programming that we don't need
+as it makes not sense to call this if ctx is NULL.  Add a comment if
+there is a path where this actually happens.
+> +		return;
+> +
+> +	sq = cxt->sq;
+> +	if (!sq)
+Add a comment on why this might happen, or drop teh cehck.
+
+> +		return;
+> +
+> +	sdxi_cxt_shutdown(cxt);
+> +
+> +	sdxi_sq_free(sq);
+> +
+> +	sdxi_cxt_free(cxt);
+> +}
 
 
 
