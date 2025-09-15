@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-817738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7F1B585DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:16:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB10B585DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17A7B1AA7F4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:16:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37924C03AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27F328AAEE;
-	Mon, 15 Sep 2025 20:15:28 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381D8296BA2;
+	Mon, 15 Sep 2025 20:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ESdlTdOP"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A601C5F2C;
-	Mon, 15 Sep 2025 20:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7F228DB76
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757967328; cv=none; b=AdAi9DPBca651EzDRgmGxhkcivx7rU4A8EmTeQ2r1ud5nPt9cYkF4YaOK5pfTky+/V6f7QUmhtbTEdI3r5QVhfz6q/1ZYGOSEkTTsCcOX6kJnDpIc5JToWJ1B+IRmdEmrUCmVLxSbE7do5dS0pbD88bQJjx3fQeB6TfA3DHKdfM=
+	t=1757967331; cv=none; b=dp0i8n+jV723odbgJ2J2tHzFRyIVraZN1Pwvr6sHUZFQsf9rAT4NcPUlzEuN+4OVPPDcnMVoP995DH0Oj2XnZY0PeLuDq795rKXBefop4Xw/UzpsUhnFXcs1QmNSR5YcRPvCl5gOv1U07IvrsW3l/ThtPnOtO/W53akXrqQ4tEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757967328; c=relaxed/simple;
-	bh=GEvlCbW0Iy+b8ikUglHc1z5oUArAVq7KRM9VrsPA6gQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vxg7mXi1SFKtVLdVTIaX54e0KT8dUBB4CUPggpu5DnKsbAZdCCuWe6sBKkNtLkXFCvfI1kBtwJQUE1E9I7mmo0Y866+PmMb8LUW25ClovY4ub6EJUTEl7AR9ysp8+f7o/1Okd5ScpzHrVJ2D0YpaZlJfX/XAu+VSAWMogMJTgKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.5] (ip5f5af7be.dynamic.kabel-deutschland.de [95.90.247.190])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D03BB6028F36B;
-	Mon, 15 Sep 2025 22:15:05 +0200 (CEST)
-Message-ID: <17914806-345b-4554-8fff-b366c20a45bc@molgen.mpg.de>
-Date: Mon, 15 Sep 2025 22:15:03 +0200
+	s=arc-20240116; t=1757967331; c=relaxed/simple;
+	bh=wWwx5SwaBv+9/Y7GF7bBTitX8HYbR/n1WZNDRyIeVog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m98z1lXfKh8gA15R2wPDMZG1lDqIq2G/NcXP6UqE1mFJnNl7GUqo1HviZFfYpKpDFGLN1nCEABBV2QPGcZ2lUmCtRUv+RHs5Dndinv/IxFmn+g8TITk4yZc5M6vOGbjfGsd/BbAs9ZaMsB4CWdoXJlFJWDMLYUKKIzxSFRAKZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ESdlTdOP; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 15 Sep 2025 13:15:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757967327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fiu+/JsF0ratR6bMwfydxpKbaWu9OWoA9n/p9dm5StU=;
+	b=ESdlTdOPYdfNqWIXfz9dOUsepNFdwyUi8hsnxPSA4jzzwt1/+IicKrIvaTZyo58cSDjp7v
+	vLhvniA7lUfOvs9uDpqIKunxfeZSJiNTuqJi9pMf6mnpDEhOQ6zuXn4rLbKQMlyH3kbN0O
+	XD6cdBVT1FMy7xAivKX/c8lF4xAQR54=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: vbabka@suse.cz, akpm@linux-foundation.org, cl@gentwo.org, 
+	rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com, 
+	alexei.starovoitov@gmail.com, usamaarif642@gmail.com, 00107082@163.com, souravpanda@google.com, 
+	kent.overstreet@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] slab: mark slab->obj_exts allocation failures
+ unconditionally
+Message-ID: <dia6xv4liysr54vdjfpw3bucbvg3eqh4nn4jh57h5htxev2zy6@rtnakdtz7vjb>
+References: <20250915200918.3855580-1-surenb@google.com>
+ <20250915200918.3855580-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm_tis: Fix incorrect arguments in
- tpm_tis_probe_irq_single
-To: Gunnar Kudrjavets <gunnarku@amazon.com>
-Cc: peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
- stefanb@linux.vnet.ibm.com, christophe.ricard@gmail.com,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- Justinien Bouron <jbouron@amazon.com>
-References: <20250915182105.6664-1-gunnarku@amazon.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250915182105.6664-1-gunnarku@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915200918.3855580-3-surenb@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Dear Gunnar,
-
-
-Thank you for your patch.
-
-Am 15.09.25 um 20:20 schrieb Gunnar Kudrjavets:
-> The tpm_tis_write8() call specifies arguments in wrong order. Should be
-> (data, addr, value) not (data, value, addr). The initial correct order
-> was changed during the major refactoring when the code was split.
+On Mon, Sep 15, 2025 at 01:09:18PM -0700, Suren Baghdasaryan wrote:
+> alloc_slab_obj_exts() should mark failed obj_exts vector allocations
+> independent on whether the vector is being allocated for a new or an
+> existing slab. Current implementation skips doing this for existing
+> slabs. Fix this by marking failed allocations unconditionally.
 > 
-> Fixes: 41a5e1cf1fe1 ("tpm/tpm_tis: Split tpm_tis driver into a core and TCG TIS compliant phy")
+> Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mark failed slab_ext allocations")
+> Reported-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Closes: https://lore.kernel.org/all/avhakjldsgczmq356gkwmvfilyvf7o6temvcmtt5lqd4fhp5rk@47gp2ropyixg/
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Cc: stable@vger.kernel.org # v6.10+
 
-     $ git describe 41a5e1cf1fe1
-     v4.7-rc2-83-g41a5e1cf1fe1
-
-Interesting, that this did not cause more havoc.
-
-> Signed-off-by: Gunnar Kudrjavets <gunnarku@amazon.com>
-> Reviewed-by: Justinien Bouron <jbouron@amazon.com>
-> ---
->   drivers/char/tpm/tpm_tis_core.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 4b12c4b9da8b..8954a8660ffc 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -978,8 +978,8 @@ static int tpm_tis_probe_irq_single(struct tpm_chip *chip, u32 intmask,
->   	 * will call disable_irq which undoes all of the above.
->   	 */
->   	if (!(chip->flags & TPM_CHIP_FLAG_IRQ)) {
-> -		tpm_tis_write8(priv, original_int_vec,
-> -			       TPM_INT_VECTOR(priv->locality));
-> +		tpm_tis_write8(priv, TPM_INT_VECTOR(priv->locality),
-> +			       original_int_vec);
->   		rc = -1;
->   	}
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
