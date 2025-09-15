@@ -1,84 +1,94 @@
-Return-Path: <linux-kernel+bounces-817767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A73EB58645
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:01:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF952B58648
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4203117D3DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95494C3663
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082A6283CB8;
-	Mon, 15 Sep 2025 21:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD3729E116;
+	Mon, 15 Sep 2025 21:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJkfs+JI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vI46tAAV"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C54B2E63C;
-	Mon, 15 Sep 2025 21:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917AE276045
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757970101; cv=none; b=KOcEEr0735e1pARz93IuzKTiFSnst6ZGZoXTsNnPvlU9JRweVdVOFh0UVt4wnvoP5nsaBNtMitP1XyRzUmhX2NqaK5DwDt6zVXHjEI1MIEmTeuwnfG8+meF6KusFD2KCnHO/ZaXkCqZhIdsA2T7R2QLRXFbdrTRWPvc+N8P4bZU=
+	t=1757970184; cv=none; b=K0ZBNnezcRKBuVSVpPekqbzD7O1dEE2LPlavyl2+Pfj0eL1yYRHsgG2q/fQy4gmhMWmgTO0Xcd1aW9oMw8F2NKh3Bu6tHox4gFH2zlsGqzwE0EXUMalSPQOV96roMvKjnKLDte5LM73gCWz1MpANbj4BdJE3sRI71uDuofgGMm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757970101; c=relaxed/simple;
-	bh=xX1+Xzo/jnAGqPyi6iInTfds1bV2ZowlmfSy9qbmmH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5vJD3wNIgCNL3TxuOSS4Q8uwlpW+SkXQd5Vj2YvkiCqnHRamSdDM1zw2gjxlPWo3QCa3XeGw3vqIl5lxBwIyQ2tysx7vvPO/Hf1h+Zp2+kug26dQAwNPYhqcpFLYoaJHsi1TCSaHpcNCfKyFx4pMedZ7gPRuBIEvbF4VTCsxGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJkfs+JI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC465C4CEF1;
-	Mon, 15 Sep 2025 21:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757970100;
-	bh=xX1+Xzo/jnAGqPyi6iInTfds1bV2ZowlmfSy9qbmmH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJkfs+JIKfs5Jf8AGEvLxosKPDC29qQYBhJpbj/7gDmI0w1JtX6lFdxC+EqxUjiur
-	 w4ConOZpT7DRJzawNlbc3+1s3G5WHKlGGp7v8MFu8uGlUFa+5BKydGw7uGCWqNuGgb
-	 tXKpxDwfkKoyjICqOIdo3nyAcumGzXLDH/JKwAE0nOzo3We8LIHST/uCQe8nQhy7YJ
-	 wXTj7Cye5eguUl8fUndI318DYAo0jjPL2GQMR3S7oAaB/psB/HgcKuJ/hfu7IOtRo8
-	 4t5Rv9dj7yHIBRs8G2lK9VE93Sso1E1T/NitRsT5w0Pv6RfHMPRazZNP0hFSybkkZJ
-	 7X33ctnoqRx0w==
-Date: Mon, 15 Sep 2025 16:01:39 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?J=2E_Neusch=E4fer?= <j.ne@posteo.net>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-sunxi@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-	Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org,
-	Samuel Holland <samuel@sholland.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Add Amediatech X96Q
-Message-ID: <175797009935.3384023.4009992725320048640.robh@kernel.org>
-References: <20250912-x96q-v1-0-8471daaf39db@posteo.net>
- <20250912-x96q-v1-1-8471daaf39db@posteo.net>
+	s=arc-20240116; t=1757970184; c=relaxed/simple;
+	bh=fTSNHZAQcFYsYv6n1G4GxZktpGJ8qsXioj7qp8jjd+o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=FBUM7+TtU5CDdpP1BG4PXd9yBFxY5mUaKGrwpyey8bLE5MRiYdABFMhhenGYfAu+pHuQrkdHG6wFhRkOvCerMXAZzt+E3dojSMEwO79rVM8OX+cUWo3wBlTO28xATNB/A/O1JpK/0c7JrPZqPsSV9HxOx2muVia1HLwvdAXfAKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vI46tAAV; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7761dc1b36dso5596718b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757970182; x=1758574982; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RxwTdZBEmt4jtUv/E6BNSirMqJUJGOYRGh1YXveb5WM=;
+        b=vI46tAAVGlKFMbbrbWTw8o5gmnIlmjQSeE/qj3dAJXeWX5EglJxVraiqXFaDSFrM2y
+         eRxg2hLVD77CHXL0ajYmPvyJeSLHLe/kyiRsdVwGzd9OuAHGD+5BYJX2xRULc7B7QGQn
+         0evkDPB5+SVyO8lUxiBM+Z/3r6Fu1G6/vbr+ryVdWWEku2LhMy0/rMPUyAHUswDNPn7Z
+         c/drTUZrzy5jsQyYEXNv8vLEHytG+iptdNBNr7YKuA03m+xdiW7UrDB4ErOSwvj7d0ki
+         8Y4242uF5DAKHHQ5VuI0RU6Eu69IX16iRzHL7yOIYEOncKdK9C0RaIC9shHHYJKGNhi4
+         YHuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757970182; x=1758574982;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RxwTdZBEmt4jtUv/E6BNSirMqJUJGOYRGh1YXveb5WM=;
+        b=PTEXwaOoOk8L5GUc5IJ4cNfGZrix075q9hUP4wp/dNfmFRQtciPNk/Q+sH5kNsR/n3
+         7b67ZSiNg7lXQ0Liyy2gEjeOLXa3+0TCJ8Dx4uqC4sSBRlWcvKeRTLsX5vruw6Nn7loh
+         Czn4PD4401AI2eRJ8SIDo62EmsnXMhHRE8ccAmNuSck0Hg1siJ3cWEDbEo0W2/qwmTjB
+         dpy5yvmYzE88fpM6RTfY1GzPK6eQW3sk7NJQ6Qh+slm0dKXGkEkgFFyu0RUfNCD8oT29
+         PM3uVIw3GxZgXdKQXD+9uJMt7hpY3o6uXRw5so+VEx2LDb0QSH9bRSvMBAAgSVROGixZ
+         edeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhR/SLxUL+ZnnWauQqvC9VKXaBT7ftV+uadVSO6cwfgC0MW9WHDEL81i9cW9EcqkeM6b2usfPOVaA1mE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8HkR21kr5H2BXGJ41u5tfVWDbilo8s4YDzXhcY9lrLo7JIZFg
+	UhcErzqKDgID3jI1rOPaTabm+1WB10vnaBJJjfgRjTUUFFZEpLXRep0m5H8THkfiXGkXTPUqIbr
+	AJK69Cg==
+X-Google-Smtp-Source: AGHT+IFuSpiuKJG6P8l3wSHwKGYEnnc3OxEX+l/ch1UwznTqKr0gm4ilazi12JKz5vJTRzZBy222Qo02Nhs=
+X-Received: from pjbnw4.prod.google.com ([2002:a17:90b:2544:b0:32b:65c6:661a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:734c:b0:24e:c235:d80d
+ with SMTP id adf61e73a8af0-2602c14454amr18045793637.49.1757970181895; Mon, 15
+ Sep 2025 14:03:01 -0700 (PDT)
+Date: Mon, 15 Sep 2025 14:03:00 -0700
+In-Reply-To: <20250827194107.4142164-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250912-x96q-v1-1-8471daaf39db@posteo.net>
+Mime-Version: 1.0
+References: <20250827194107.4142164-1-seanjc@google.com>
+Message-ID: <aMh_BCLJqVKe-w7-@google.com>
+Subject: Re: [PATCH v2 0/3] vhost_task: Fix a bug where KVM wakes an exited task
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Content-Type: text/plain; charset="us-ascii"
 
-
-On Fri, 12 Sep 2025 01:52:09 +0200, J. Neuschäfer wrote:
-> The X96Q is a set-top box with an H313 SoC, AXP305 PMIC, 1 or 2 GiB RAM,
-> 8 or 16 GiB eMMC flash, 2x USB A, Micro-SD, HDMI, Ethernet, audio/video
-> output, and infrared input.
+On Wed, Aug 27, 2025, Sean Christopherson wrote:
+> Michael,
 > 
->   https://x96mini.com/products/x96q-tv-box-android-10-set-top-box
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
->  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+> Do you want to take this through the vhost tree?  It technically fixes a KVM
+> bug, but this obviously touches far more vhost code than KVM code, and the
+> patch that needs to go into 6.17 doesn't touch KVM at all.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+Can this be squeezed into 6.17?  I know it's very late in the cycle, and that the
+KVM bug is pre-existing, but the increased impact of the bug is new in 6.17 and I
+don't want 6.17 to release without a fix.
 
