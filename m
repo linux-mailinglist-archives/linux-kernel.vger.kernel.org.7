@@ -1,91 +1,133 @@
-Return-Path: <linux-kernel+bounces-816278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7FDB571C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:43:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416CBB571CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F2C3BD082
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:42:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9E27ABA20
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611CD2D6E67;
-	Mon, 15 Sep 2025 07:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E2qxO42G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dj6qrJNk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D0E2D73AA;
+	Mon, 15 Sep 2025 07:43:03 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562112C0F67
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A9C2D6620;
+	Mon, 15 Sep 2025 07:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757922140; cv=none; b=BTvmmMtRXs14icPS0GzhOf+WZmShKpWsiNTz84PPfKLpKq1cXwYkSLERY0aYRXpNiWZ/zC5F++/7wZzxf+fm/+lN6/FqsHTOQ1Pyx5PFDAs4hM4qgEFpsSR7w+b1e6NJ61cctGlh+CTKLCnDFEKT6vKU1UhbJbubK3eTxGJISaA=
+	t=1757922183; cv=none; b=RKhWFJRv3/B2vasqxKCYp0xL7e0gGwrUM8QFGdgWRQYJd4lFw5Nn3QOZhoN8Y6ERZI8pBm+0QXAsihwVXlaVsZTZCXkwMagog0u5sugSLtcDPaHL/Ru8QObi8E8I2dlPxECyfb6yI/Y5wY3WF3Ku6LpvRtc8nSa/fNX9wgWmYNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757922140; c=relaxed/simple;
-	bh=TL+Nmc3i/qX0W8acIf9+HWe22GQU4yhqJJ7zxNGIMuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuKeS8i9qWmEjKI96okp2gMfweuo5tGgz5LFvqNipvwh4tJ688j2gci8amomobUwYO2REYlitcd3nC/0zuGZYKGmzo6B6M2XiPKBi+hezRj1cEDoE8cJUqJgYXVErgY5raDao5LHRx4WX1z+q0TFhNHmaFIQhJNoPMCk3irylPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E2qxO42G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dj6qrJNk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 15 Sep 2025 09:42:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757922137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CaQJ8YpJx+npBQA7NSeqOcr1sHlKEZKmCMVznqYCbXU=;
-	b=E2qxO42Gtzb++MUBsbv9d8F6YgW/gM3cprOKvMzy2hbJk9a56VlD8cO+71Oksx5ht5243P
-	CSBqtNJrxwZAduxLhzEk0/Cv9JfYRky109CvS5zu4snet2sAaIk5OKATlWQLaqrNybCEZ4
-	LTN4y2Cs9dRgsXOG8LEdrmagZD9eSWl0DflhCP0jez2gh8La4kw8m6K+STseRfalmNIG+N
-	e9gfon55Wslk1Z6/CLqbFLzDym7zjAB81JeRa4saRlbKLBizPtMQUCg426H34FAKhptTBv
-	zf00p28tqjOAo8kCiNy1hIGJJZuOyU/LBV0rwRkJ79995CUv4xBEq9cUww5Hew==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757922137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CaQJ8YpJx+npBQA7NSeqOcr1sHlKEZKmCMVznqYCbXU=;
-	b=Dj6qrJNk0loJQXvVvCQJMO6TKPNaF+Jo0kXQD3DFZ7PIOvDzKpNM7rERCSL56Q/ut+Db2g
-	cWuvi+JwEHCjdlDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Clark Williams <clrkwllms@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v3 0/3] Allow to drop the softirq-BKL lock on PREEMPT_RT
-Message-ID: <20250915074216.VIaWMfNY@linutronix.de>
-References: <20250904142526.1845999-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1757922183; c=relaxed/simple;
+	bh=ggQUGLC8JTmMpWJqdkIhB62AvhBLfqcOms9LrrS7BiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FN3jOdJs2zJ0TpMRzI5chWJ/Qt/Yu+L8drJcHK9unGyC+jKKVWl5TJEi0YqAStBfvfeV8eIOpMqZV5BXLrTj4ZivmBBnm/gHliK8RYkP07a+QWUmIA/k8bGsAsOwFeFztzWPuPN+wNFdAdwWwQDLmFqVLnaRPhORndAlfSE6b7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip3t1757922169ta20c0c63
+X-QQ-Originating-IP: QRDqi4pNaU/sJUftpijW7H04pC9TQ/4M0p4TfS49pf8=
+Received: from [127.0.0.1] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 15 Sep 2025 15:42:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17166322424909041935
+Message-ID: <CC5FA2116C20A69E+a2b123b5-1b78-444e-a886-3d3beb6e0ead@radxa.com>
+Date: Mon, 15 Sep 2025 15:42:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250904142526.1845999-1-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH DNM v2 5/5] arm64: dts: qcom: qcs6490-radxa-dragon-q6a:
+ Enable USB 3.0 and HDMI ports
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com>
+ <20250914-radxa-dragon-q6a-v2-5-045f7e92b3bb@radxa.com>
+ <b3c169b5-607c-40ae-9ca1-0977b6f526c2@oss.qualcomm.com>
+Content-Language: en-US
+From: Xilin Wu <sophon@radxa.com>
+In-Reply-To: <b3c169b5-607c-40ae-9ca1-0977b6f526c2@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OE3tIrIEWSq47Mbrswj3N8cLDlq4eBgBwhVZ81ZHNHdxWgG6algZ0kew
+	Co5k8+O8BK18iL0wJTliNDU631oWoEA1mHmxePEfmxzuQVe8et8zUEK8jdXdZPhvCmGp2rS
+	e+8AwStQKsyDuEroPZULuE9xKD5ITevq0tCCvRLGOWxPHHvfb9utCr7OhVq9oDs3YJgdmLg
+	TxmEbb602l7kr4gtC6EZENfX71uwx1vdddVpyTTIdNKQIfGxsQRhuuwRA1sSqg+LcdyayV/
+	it0RC3ewg98FzztPqIFggFkL6wyu+F328iupMoab8h1OwxZWAoNjzUEje2Hk5gNwK128whn
+	EBt/XzAB/NiXB+8KodGyBWkzLz8qKiK3uexP/CUV968G/i5nGPiqOXGUpGwIUtInZiRYqWo
+	9fxd32H9nYM5MV1VxuKTr7lz5wIQH5jrk2ETefHRS7H6kqNZHJxKplg85voVrd0sROngPRw
+	oyrXwJrKvkF5PXgLmgxaRfpMDUZd364vrFe3Qbz2sZm2WNlCzui047AGVE+qIG0GQii0LpZ
+	ipJGcg7t3v18YyMaCX+mR94B8poq1yS/JpHw+ZGwmzsp0usB289zl9MQoRhQbFIAje94Lun
+	2BZAReZhcp96Sf0dxcnUZks5aALQksg9qfra5QGAvC/qVqdE4jFtFR0OzLBveTQ2QJW+glP
+	0+zEug7YiyN3YCYckpEEea3unc8KUjBEpcvgILRhaPAUHhzDAFO990dh75/y1mEgw5eNEQt
+	U0mpikn+cMRoVTxCIF7/I8B+bd3KJyFv8kp7fyeKybKUCaftCDwgo7hb0vZojXkh3v47+gl
+	ZGCg+Ow7sbn/ZabodGUcMLVQ9vSyuztY94dg4srmonBQJzgA2UC4yZyKjC8+7GpIMzqncwt
+	8lEEPt/iOV7iT0Ikz8aYynfw5oSsk1bN09WdiEk8Hsos+W9gMUytofaO7eH+OwF/9GMumwy
+	+mnTWuMcux/d15zcAKEMf7sm5USL1wslQgIFvNFAJt6tCgP60TEm5Cy31OcwzgZEl6Ew6t+
+	J4AEQLYtVMQQRsdpOYHCz3MDmL9Dkbiar7iGG00ElnNlkZ7E0R
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On 2025-09-04 16:25:22 [+0200], To linux-rt-devel@lists.linux.dev wrote:
-> Users which rely on synchronisation within a BH-disabled section as in
-> - access to per-CPU data
-> - per-CPU timers
-> - synchronisation against another user within a BH-disabled section
+On 9/15/2025 3:27 PM, Konrad Dybcio wrote:
+> On 9/14/25 5:57 PM, Xilin Wu wrote:
+>> This board doesn't feature a regular Type-C port. The usb_1_qmpphy's
+>> RX1/TX1 pair is statically connected to the USB-A port, while its RX0/TX0
+>> pair is connected to the RA620 DP-to-HDMI bridge.
+>>
+>> Add and enable the nodes for the features to work.
+>>
+>> Signed-off-by: Xilin Wu <sophon@radxa.com>
+>>
+>> ---
+>>
+>> This change depends on the following patch series:
+>> https://lore.kernel.org/all/20250908-topic-x1e80100-hdmi-v3-4-c53b0f2bc2fb@linaro.org/
+>> ---
+>>   .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 152 +++++++++++++++++++++
+>>   1 file changed, 152 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+>> index 3bf85d68c97891db1f1f0b84fb5649803948e06f..12bc9a0fcfbfeaabf6ede351f96c61193a8261c0 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+>> @@ -78,6 +78,71 @@ chosen {
+>>   		stdout-path = "serial0:115200n8";
+>>   	};
+>>   
+>> +	usb3_con: connector {
+>> +		compatible = "usb-a-connector";
 > 
-> rely on the local_lock_t lock in local_bh_disable() on PREEMPT_RT.
-> Almost all users dropped their dependency. The remaining (identified)
-> user in networking (pipapo) is in net-next.
-> What is left is the infrastructure as in tasklet and workqueue (for
-> bh-worker).
-> Both are part of this series. The last patch in the series adds an
-> option to drop the lock.
+> Looking at https://docs.radxa.com/en/dragon/q6a, I see two of these.
+> 
+> I suppose there's a (dumb) hub inbetween - check sdm850-lenovo-yoga-c630
+> for reference if that's the case
+> 
+> Konrad
+> 
 
-Could we please route #2 and #3 via -tip?
+There are actually four USB-A ports, but only one of them is USB 3.0, 
+and is directly connected to the SoC.
 
-Sebastian
+The other three USB 2.0 ports are connected to an always-on USB hub, 
+which is then connected to the second USB controller.
+
+-- 
+Best regards,
+Xilin Wu <sophon@radxa.com>
 
