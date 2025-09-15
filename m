@@ -1,177 +1,239 @@
-Return-Path: <linux-kernel+bounces-816229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E79B5714A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:23:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB74B570E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 602C1179319
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5ED3B7EBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B452D8383;
-	Mon, 15 Sep 2025 07:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B814E2D24A6;
+	Mon, 15 Sep 2025 07:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OjpYR4o0"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/TwOcog"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385DE2D7DD0;
-	Mon, 15 Sep 2025 07:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253F12D2485
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757920935; cv=none; b=LFcskZmFkPspvAYqzs6zGzzL8D4fXYVvzJaCU1B2CMVJ5n8i2mxdi8TqeUKEx0/bVP2SGYYd+67i0kw8Qy8tO2hVXKTOD8vipmZnDBA8Wj+GE2Zm7pCtJSXdXiueGFpWwXNBnqkTGmZY+V2WpncXSW+q/VyHoHzwk1CosXpTD3o=
+	t=1757920308; cv=none; b=oKVJ830yIOPDEK7Rv6SJ3+rib7NMdMImcqjIaVH4qS1N+NdiYnc27HX4VKWHzhgAwVNhrJbjOoFsn+NLQ6WybPegqZoN4nlNQS+ymdWI/Wg5eGRYud5yx14eWjx2C0kDf7BIzcdFSDF7S16PIiMIxLSRP1C1dJHCrQKTux6Jrgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757920935; c=relaxed/simple;
-	bh=D1njsi3Dc3pm+FEmPaeoan3fmVED/gaa/845805VSmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BeAlElPuBC0l7eV0c50WVTjep0MzeJW+yl81rdYiM26HZzJxq+d5zapy08VVHKLfTJJLuvL/zLldhoWEJ9mmkUILvGUedEg6Hq/oPNbiaj7J2gRgiNLgZ4jMDPxxfFdEkhzH/smYGSrRYeg+Ckomt5McgfjCxtVm0G3tx3KcJHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OjpYR4o0; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=EzGYOyHyBK8XRCpIi1QlHK5VKphrWANC8ROrsS0E19Q=;
-	t=1757920933; x=1759130533; b=OjpYR4o0tQBaelHAEQh4eaJY/Y0hlVFkY+foOTsAQpfQWbC
-	r9QZWxa0Jz3zVpSM1mYawHZ1B8JwKIPFxyPVpvokiOcH44kkyru9QXYRSbKgyu41TZrz/3aqtWI/d
-	3+5YuIg5b4Pbe5OfMiwHDmZc0wwQRdHX7q0T1VxB+5IRHZaEPv6z7hr4GxLn9vYvupczLTItgh55d
-	e4qfwHyqKbtol5U/Gz6vn0+ElwgJgNFPkb57js4WGCWPXe4KcYxPvVldl/+pfE8yK2T2dh5kqph0d
-	gvl8niGNcQfjcg9KfDd7yAxNVkKg+orl6FZF0VCYILu9t+r9F95eB5jYbPt2/SRg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1uy3XO-00000005w6o-0YuW;
-	Mon, 15 Sep 2025 09:22:10 +0200
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: linux-um@lists.infradead.org,
-	Willy Tarreau <w@1wt.eu>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	linux-kselftest@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Tiwei Bie <tiwei.btw@antgroup.com>,
-	Benjamin Berg <benjamin.berg@intel.com>
-Subject: [PATCH 9/9] um: switch ptrace FP register access to nolibc
-Date: Mon, 15 Sep 2025 09:11:15 +0200
-Message-ID: <20250915071115.1429196-10-benjamin@sipsolutions.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250915071115.1429196-1-benjamin@sipsolutions.net>
-References: <20250915071115.1429196-1-benjamin@sipsolutions.net>
+	s=arc-20240116; t=1757920308; c=relaxed/simple;
+	bh=IsgAPpyXkbreJRRA0w7kjsQFxpj1ev/QH3Dka/0dZS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=baJR1khlCGDOrUrEhiqwFCLSIlFLjg8PwY5SSppc4ndu7FYziDOIStffdC4v9COBmZS9buQLxKaZbVqEsc+T9q6ZAMAb4zcVBbwRAYBfXkAvF0ZVDjTvE0QoOSM/6lv5M4oTHIljFeeGSGJTQm9PZXP03F834KIOSIur/LjZZw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U/TwOcog; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f6507bd53so4047000e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757920304; x=1758525104; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bfX7diTZFOB89teVPyN0MNu/bt0BkcOn8S63v6cexCc=;
+        b=U/TwOcog4nGwRa92uR2r/+gTYTVD1MbQ4RsHGQapP82m/TB9e9rARu6Mi6rAGHkh69
+         sJrO1FbZQKhMcP7sVNjjv+hVgUKBz5ZwqwmIkbgWh/91AEnMMuyNxSa3d/8cD7xhQkhU
+         b2VD6CsxjxJ8QVwKiikufuAygkrPh/lKi4DRi4ncBv9Q/MQeFt9coem9EGqiVHlaLzpO
+         BbLWOkD8wPg7gpj5Iv1AK8Ogrc14KPNccZJZxMuHQmAnWvZfcmb+VDrXD+hXDnE1Ec66
+         mh1vk+0eBF3n0FBWmyGxCs8eF14mYM6Do6MqD2MU6SllRNB4hUu1IjMKzSJRu2W3GSNs
+         GkoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757920304; x=1758525104;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfX7diTZFOB89teVPyN0MNu/bt0BkcOn8S63v6cexCc=;
+        b=FRmEGaWwUNT6rzee2AjTWrJgBVOJggzReG4Urno7tAZukLqj7ICnB2XFj9Y8o2wj7B
+         utW9SjpVPP6UyGuCNES9/+Yk/427O88hRKoSyWT8sgLn5sAG5jyBYFnbpEIZjKW7CnZs
+         aYHIVnoOoyUblhP6sf/EdWUioSe0jJgwnOA+KkLq7F47TY8jnhJ+HPS3IX3FRII6hhGH
+         piHmC6TV52ykQdF9XZ0w2ax2KYPf3ZQRSjgAkhIlh3NlbIDXzNrVm8bHx5EmItDeO+L6
+         LRckkeY6RdRZhPvrCstZPd+z96CeOH4TLt2GtzeO8b1YRRT6+pmuHudpePvR0dIP8a+4
+         EG/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWyyqOC97jX1+/I831iUBHhvdqKEZCyvf2S73UyVIiyNP7Axp+TzNSZTAJOfIsP/DIN6ii8uAnobkSALl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpPqZ+im2kVxudVsf29tP1k1ZMrsCu+mOfUJxRrTJz2MukFtI5
+	z5xR6yejyEKqzk/aRyUcyrKX9jFc8faMLOYU1CFo9htk/4fIF0kWxNmZ
+X-Gm-Gg: ASbGnctyHdMPF9dOYBpz/5rNFQEKKe1PhUyjE3f6hfjX4A7TImrzBs2xDZvkApYMeo2
+	xPNa3f46n3STJsZ9fwMjRdFOgL8yfdSP+O2yI8s6ZOJE679z7eVsjaR8BvdSIrRwUfZyuARu7oK
+	6Gm6IJpQGxQseteLa9G2MV9ngktHmaaWJDrA1SRKe6tIY6yXyA+So4eS+T2goIDQF+/jVzWOTQM
+	qa0PcthtAgujMz+zUgu/cS5GxZj0ZeJCV1DBsSoKJ6lbQ7It+kAR6kkr/LuUvuQF2lLYcsQHj0l
+	N4DF6gTFmYipvHyWhFVXGrw3mMhGYx75y7/qrJSXQutMWaaqTKzl+NFzDEuP0I8K/muzoUHjUlY
+	6ncUmzpzvww6HYTvJE4e9wYAk9Q==
+X-Google-Smtp-Source: AGHT+IHnZijPDedKaSXjvGExCJ5Bp7pMs2ApqYkbSxd1AwGKZxuCUAgkgsahBx5kGvRvP16aCqLHUA==
+X-Received: by 2002:a05:651c:439c:20b0:336:bc68:d29c with SMTP id 38308e7fff4ca-3513a32712emr26510541fa.3.1757920303946;
+        Mon, 15 Sep 2025 00:11:43 -0700 (PDT)
+Received: from mva-rohm ([213.255.186.37])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1b39dca7sm24425461fa.50.2025.09.15.00.11.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 00:11:42 -0700 (PDT)
+Date: Mon, 15 Sep 2025 10:11:23 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v5 0/3] Support ROHM BD79112 ADC
+Message-ID: <20250915-bd79112-v5-0-a74e011a0560@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8bOBuaMJtlKxByA+"
+Content-Disposition: inline
+X-B4-Tracking: v=1; b=H4sIAGO7x2gC/2WOSw7CIABEr2JYC+FbWlfew3SBFFoSKQaQaJveX
+ dqVicuXzLyZFSQTnUngclpBNMUlF+YK4nwCelLzaKAbKgOKqcAdwfA+yI4QCjlrFG6lEpgwUNP
+ PaKx7H6ZbX9nG4GGeolFHX4diIiJSSCwYFw0aXUZeLUsdV1qH15yvo1fugXTwu29yKYf4OY4Vv
+ lv/PxQOMbQttZxJ3qhW/yj6bdu+nc3mlt4AAAA=
+X-Change-ID: 20250910-bd79112-436a087a5013
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3740;
+ i=mazziesaccount@gmail.com; h=from:subject:message-id;
+ bh=OQts2Lx4+UAW1/ys5F+pD0K4L3rowsIP7nue6xgUq4I=;
+ b=owEBbQGS/pANAwAKAXhQN/9N2qHFAcsmYgBox7tkk7XzsSoPjuJX+cHp+q1VsI8zGA/a9G68r
+ GfTYVeHw66JATMEAAEKAB0WIQQjH5/zBlvbx8soSFN4UDf/TdqhxQUCaMe7ZAAKCRB4UDf/Tdqh
+ xZLcCACVuPI9vlMdaQSh7lRG0eoFHyxnCaGTmey9MGafcZHg8cpHcJheRvHRsDWzgoCkNxmSBVl
+ 9VIEZ+bIP3OUcYkEwvr1aryFh+to21v2gvXRtWMHWwnvjdUWr7wcOqBMBVXa97XcR/NhKCILZiQ
+ Wv32PsOBlEZl3qs8lnOvJBxb2fb+VaV40J/YitollxrnVxHinDUAXaipS7xdFic8xI9PmyfzhM9
+ Yn9pwb+vSWvYND5GF9MFkrvSeB7JO7juHuDTIefc3SzaLcDRCRs5ymzjGrsEFjtsYfRDhYZkB2h
+ eC6rFbCoNaI7yy5oG456TZDS+/WPmdkwb5c8TNkKi34Pm+ie
+X-Developer-Key: i=mazziesaccount@gmail.com; a=openpgp;
+ fpr=83351EE69759B11AF0A3107B40497F0C4693EF47
 
-From: Benjamin Berg <benjamin.berg@intel.com>
 
-The registers.c file only contain the routines for floating point
-register access in ptrace mode and initial size detection. The file can
-be moved over to nolibc by replacing the ptrace libc call with a simple
-wrapper that does a direct syscall.
+--8bOBuaMJtlKxByA+
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+Support ROHM BD79112 ADC/GPIO
+
+The ROHM BD79112 is a 12-bit, 32 channel SAR ADC / GPIO IC. Or, a "Signal
+Monitor Hub IC" as data-sheet describes it.
+
+Data sheet states the maximum sampling rate to be 1 MSPS, but achieving
+this would probably require the SPI and samples to be processed by
+something else but the CPU running Linux. This could work with the "SPI
+offloading" which has recently landed upstream - but I have no HW to test
+this so nothing fancy is implemented here. It's still worth mentioning
+if someone needs the speed and wants to try implementing it :)
+
+The SPI protocol is slightly peculiar. Accesses are done in 16-bit
+sequences, separated by releasing and re-aquiring the chip-select.
+
+Register write takes 1 such sequence. The 8-bit register data to write,
+is stored in the last 8 bits. The high 8 bits contain register address
+and an I/O-bit which needs to be set for register accesses.
+
+Register read consists of two 16-bit sequences (separated by
+chip-select). First sequence has again the register address and an IO
+bit in the high byte. Additionally, reads must have a 'read bit' set.
+The last 8 bits must be zero. The register data will be carried in the
+last 8 bits of the next 16-bit sequence while high bits in reply are zero.
+
+ADC data reading is similar to register reading except:
+ - No R/W bit or I/O bit should be set.
+ - Register address is replaced by channel number (0 - 31).
+ - Reply data is carried in the 12 low bits (instead of 8 bits) of the
+   reply sequence.
+
+The protocol is implemented using custom regmap read() and write()
+operations.
+
+Other than that, pretty standard device and driver.
+
+Revision history:
+ v4 =3D> v5:
+ - Minor driver changes
+   - doc
+   - SPI optimization
+ - MAINTAINERS and dt-binding unchanged
+ - Link to v4: https://lore.kernel.org/r/20250910-bd79112-v4-0-f82f43746a8c=
+@gmail.com
+
+ v3 =3D> v4:
+ - Fix Kconfig dependency (I2C =3D> SPI)
+ - Styling as suggested by Andy and Jonathan
+ - Moved I/O documentation comment and read/write functions next to each
+   other and tried clarifying the comment
+
+ v2 =3D> v3:
+ - Mostly cosmetic changes to the driver
+ - dt-bindings and MAINTAINERS unchanged
+
+ v1 =3D> v2:
+ - Plenty of fixes to the driver (thanks to reviewers, Andy and David)
+ - Add gpio-controller information to the device-tree bindings
+
+See individual patches for more accurate changelog
+
 ---
- arch/x86/um/os-Linux/Makefile    |  5 ++++-
- arch/x86/um/os-Linux/registers.c | 22 ++++++++--------------
- 2 files changed, 12 insertions(+), 15 deletions(-)
+To: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+To: Nuno S=E1 <nuno.sa@analog.com>
+To: Andy Shevchenko <andy@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-iio@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
 
-diff --git a/arch/x86/um/os-Linux/Makefile b/arch/x86/um/os-Linux/Makefile
-index 77a308aaa5ec..d37320430822 100644
---- a/arch/x86/um/os-Linux/Makefile
-+++ b/arch/x86/um/os-Linux/Makefile
-@@ -3,10 +3,13 @@
- # Licensed under the GPL
- #
- 
--obj-y = registers.o mcontext.o
-+obj-y = mcontext.o
- 
- obj-$(CONFIG_X86_32) += tls.o
- 
- USER_OBJS := $(obj-y)
- 
-+obj-y += registers.o
-+NOLIBC_OBJS := registers.o
-+
- include $(srctree)/arch/um/scripts/Makefile.rules
-diff --git a/arch/x86/um/os-Linux/registers.c b/arch/x86/um/os-Linux/registers.c
-index eb1cdadc8a61..55bce0d3f5d2 100644
---- a/arch/x86/um/os-Linux/registers.c
-+++ b/arch/x86/um/os-Linux/registers.c
-@@ -6,18 +6,20 @@
- 
- #include <errno.h>
- #include <stdlib.h>
--#include <sys/ptrace.h>
-+#include <linux/ptrace.h>
- #ifdef __i386__
- #include <sys/user.h>
- #endif
- #include <longjmp.h>
- #include <sysdep/ptrace_user.h>
--#include <sys/uio.h>
-+#include <linux/uio.h>
- #include <asm/sigcontext.h>
- #include <linux/elf.h>
- #include <registers.h>
- #include <sys/mman.h>
- 
-+#define my_ptrace(...) my_syscall4(__NR_ptrace, __VA_ARGS__)
-+
- static unsigned long ptrace_regset;
- unsigned long host_fp_size;
- 
-@@ -28,9 +30,7 @@ int get_fp_registers(int pid, unsigned long *regs)
- 		.iov_len = host_fp_size,
- 	};
- 
--	if (ptrace(PTRACE_GETREGSET, pid, ptrace_regset, &iov) < 0)
--		return -errno;
--	return 0;
-+	return my_ptrace(PTRACE_GETREGSET, pid, ptrace_regset, &iov);
- }
- 
- int put_fp_registers(int pid, unsigned long *regs)
-@@ -40,9 +40,7 @@ int put_fp_registers(int pid, unsigned long *regs)
- 		.iov_len = host_fp_size,
- 	};
- 
--	if (ptrace(PTRACE_SETREGSET, pid, ptrace_regset, &iov) < 0)
--		return -errno;
--	return 0;
-+	return my_ptrace(PTRACE_SETREGSET, pid, ptrace_regset, &iov);
- }
- 
- int arch_init_registers(int pid)
-@@ -60,9 +58,7 @@ int arch_init_registers(int pid)
- 
- 	/* GDB has x86_xsave_length, which uses x86_cpuid_count */
- 	ptrace_regset = NT_X86_XSTATE;
--	ret = ptrace(PTRACE_GETREGSET, pid, ptrace_regset, &iov);
--	if (ret)
--		ret = -errno;
-+	ret = my_ptrace(PTRACE_GETREGSET, pid, ptrace_regset, &iov);
- 
- 	if (ret == -ENODEV) {
- #ifdef CONFIG_X86_32
-@@ -71,9 +67,7 @@ int arch_init_registers(int pid)
- 		ptrace_regset = NT_PRFPREG;
- #endif
- 		iov.iov_len = 2 * 1024 * 1024;
--		ret = ptrace(PTRACE_GETREGSET, pid, ptrace_regset, &iov);
--		if (ret)
--			ret = -errno;
-+		ret = my_ptrace(PTRACE_GETREGSET, pid, ptrace_regset, &iov);
- 	}
- 
- 	munmap(iov.iov_base, 2 * 1024 * 1024);
--- 
-2.51.0
+---
+Matti Vaittinen (3):
+      dt-bindings: iio: adc: ROHM BD79112 ADC/GPIO
+      iio: adc: Support ROHM BD79112 ADC/GPIO
+      MAINTAINERS: Support ROHM BD79112 ADC
 
+ .../devicetree/bindings/iio/adc/rohm,bd79112.yaml  | 104 ++++
+ MAINTAINERS                                        |   3 +-
+ drivers/iio/adc/Kconfig                            |  10 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/rohm-bd79112.c                     | 550 +++++++++++++++++=
+++++
+ 5 files changed, 667 insertions(+), 1 deletion(-)
+---
+base-commit: d1487b0b78720b86ec2a2ac7acc683ec90627e5b
+change-id: 20250910-bd79112-436a087a5013
+
+Best regards,
+--=20
+Matti Vaittinen <mazziesaccount@gmail.com>
+
+
+--8bOBuaMJtlKxByA+
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmjHvBsACgkQeFA3/03a
+ocUijwf/TIWG2Yx/GJYf6+EPN0SAwyp/2z/AebFqy2n2AuYUhZcN/PrFxZp9FEhS
+kk1WSFb50J4z+GbFWLeoHHFGNFhlG81+wZVS7yfZdRsc/SSNqLq/UmjTAo8B8Qjj
+Gbx2v0g4elgDJUF9/Mm/fjramHHN78xamBEay1z7qe09Eg5YtKP3l5F+KIv4Oehx
+w4TOcT5/+utmfJ3lnxdoekSJn6SXPW7M53JvLZ0Wt7q4qdDdvgk/3s3EB9tLZDcg
+KibOB5bkzVWGJpUZOHeVaRTn439GtbOsNDmjE0VuyRnzg261BfVWJ/OW30M9pQ/1
+PU61iNvc6GSx+XS4yeluIh9+Ye2i6w==
+=cHlS
+-----END PGP SIGNATURE-----
+
+--8bOBuaMJtlKxByA+--
 
