@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-816266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BFAB571B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:39:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70534B571B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897343A70AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:39:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1EF3ACD6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC0D2D739B;
-	Mon, 15 Sep 2025 07:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661402D9493;
+	Mon, 15 Sep 2025 07:39:43 +0000 (UTC)
 Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222702D23BD;
-	Mon, 15 Sep 2025 07:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56462D7388;
+	Mon, 15 Sep 2025 07:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921976; cv=none; b=Z4IpS7jPGiejmN1TgCMJNwXWtJGVca/Q9io7+Tn9FZvnVjZ77ZlL3rnJGgwZm+pBjiWg16ZT94Tiz8atuPBTH8bk/IoUR6+D84/Tj0SUjTQM54y4nui9RJ0CQE+aNX/tFl5rL3lu5QodLK/9MR2huWN9laqL+1mCKE7p77diqcA=
+	t=1757921983; cv=none; b=I+RABGEjq8gZFmr/M9uEhERVANqxhUJzmly627hnjU7lyh65Np7HmZU7XGYw93lhYlLOd/XuMgI6YhJJQ3Uhy0ei16Gd8Q1IYr/lAvMhyjqkULQy6axKeq4UpU7lfj1lj/jEjragARZJnx44NHmeinQ+T3VIKpEmOxJFHg0d83A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921976; c=relaxed/simple;
-	bh=pJUMi9CBgVizV0CeN3q/a16QPGTUOyQqDnvy4l24BTk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q5nekak6vzLb25qxPjs0inVp+vnVdqOfPfodM01PBR/u/AW9E3eN1Tdl18pGBQD9XjzyZEuj9B9ppD3XxnAhFB44H1OqBTaiCnG99Al4VS7HSylvL36COOpfnqJDD3vpptXWRlCM5LyyezdBWXCHQjXT8F//DxcFO6rxn56b15w=
+	s=arc-20240116; t=1757921983; c=relaxed/simple;
+	bh=qSuz+bKGDq7k+juHcdsrwoGO+rS155RqVm52v5DFmnA=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kyLCumzl3jhttXiU1loaQnW98N4HNqFq7D4x6HTUhMrQ9iWeTJ9ErJJldA50CN02vYk9N1xkI+99oHJCCxJw9Za7U3EJH/BQR3DgqzocqUQEKesAKQUEfjKOZpJ1LQQyrVClNNp21MCnMG/8PYVwVdktgjyzJIqlYig9R8wtuYQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
@@ -41,10 +42,12 @@ To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
  Stern" <stern@rowland.harvard.edu>, Philipp Zabel <p.zabel@pengutronix.de>,
 	<linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/4] Add Aspeed AST2700 uhci support
-Date: Mon, 15 Sep 2025 15:39:22 +0800
-Message-ID: <20250915073926.3057368-1-ryan_chen@aspeedtech.com>
+Subject: [PATCH 1/4] dt-bindings: usb: uhci: Add reset property
+Date: Mon, 15 Sep 2025 15:39:23 +0800
+Message-ID: <20250915073926.3057368-2-ryan_chen@aspeedtech.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250915073926.3057368-1-ryan_chen@aspeedtech.com>
+References: <20250915073926.3057368-1-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,26 +57,33 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-This patch series adds support for the UHCI controller found on the
-Aspeed AST2700 SoC.
+The UHCI controller on Aspeed SoCs (including AST2700) requires
+its reset line to be deasserted before the controller can be used.
+Add an optional "resets" property to the UHCI device tree bindings
+to describe the phandle to the reset controller.
 
-Compared to earlier SoCs (AST2400/2500/2600), AST2700 UHCI:
- - requires a reset line to be deasserted before use
- - supports 64-bit DMA addressing
+This property is optional for platforms which do not require
+explicit reset handling.
 
-This series updates the bindings and platform driver accordingly.
+Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+---
+ Documentation/devicetree/bindings/usb/usb-uhci.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Ryan Chen (4):
-  dt-bindings: usb: uhci: Add reset property
-  usb: uhci: Add reset control support
-  dt-bindings: usb: uhci: Add Aspeed AST2700 compatible
-  usb: uhci: Add Aspeed AST2700 support
-
- .../devicetree/bindings/usb/usb-uhci.yaml     |  4 +++
- drivers/usb/host/uhci-hcd.h                   |  1 +
- drivers/usb/host/uhci-platform.c              | 34 +++++++++++++++----
- 3 files changed, 33 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/usb/usb-uhci.yaml b/Documentation/devicetree/bindings/usb/usb-uhci.yaml
+index d8336f72dc1f..b1f2b9bd7921 100644
+--- a/Documentation/devicetree/bindings/usb/usb-uhci.yaml
++++ b/Documentation/devicetree/bindings/usb/usb-uhci.yaml
+@@ -28,6 +28,9 @@ properties:
+   interrupts:
+     maxItems: 1
+ 
++  resets:
++    maxItems: 1
++
+   '#ports':
+     $ref: /schemas/types.yaml#/definitions/uint32
+ 
 -- 
 2.34.1
 
