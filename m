@@ -1,190 +1,226 @@
-Return-Path: <linux-kernel+bounces-816102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1168CB56F83
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF76B56F85
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFBDB3BD415
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51DFB1792D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161EA274FDC;
-	Mon, 15 Sep 2025 04:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DD1DED53;
+	Mon, 15 Sep 2025 04:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kyv9j5/H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F77DWVv0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE442550CD;
-	Mon, 15 Sep 2025 04:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D082DC77E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757911403; cv=none; b=XGbVlxDvtw7c8cL5JEf5fLe4bkYVL8XDhxBEgZsK3IE69rZWIOAzkzIIIpYejnmXG2wiws8Ozyoe1CRwPpGQPKZnfcjabrCrjFfQVdkouMaBOQTNGO85G9wPfU9neuL7qQZn8NPBzwwXl0bGfk//9vGNlSXDWhPBaDodraQsuYI=
+	t=1757911545; cv=none; b=YLuuBAXA6QQOOsmA8GMys4XGKN3UjMA8mGh2s3T/4zxx3Bm3GLJWZ6ZWz8N9ZVkOQNYBDAeyMV7Gwm6XM/qidh2EQT+uIK3+LTvX0B3AxECG9xwQe0hd1udiRfjfobCFjbJuWmT1AIybG6GJQ1UdX1I72unsIw/nA8Q2sSJEu4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757911403; c=relaxed/simple;
-	bh=CUN0otap2yO9qoIBHLhIiCWDmxu0Z78YOM2t+xkpPwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZXuCy1WNVbVzYtn/dbehePZbE1lPtsblQsceyMWlJ6piHLNsm0swEn4XKnqxnB/0PuRJrXch4sLGW2G39MIYrrESmvJNe75oqtcBfeCz4UZlgDPH/Gd7v2OYhqelAxq+Un2UTxREJDcj4Yywpa7mipDGrjHaD30paj3u6XMXMfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kyv9j5/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D136EC4CEF1;
-	Mon, 15 Sep 2025 04:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757911402;
-	bh=CUN0otap2yO9qoIBHLhIiCWDmxu0Z78YOM2t+xkpPwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kyv9j5/HYlawfEhhplu1ymlmGZMVEb1Uxj9vNWWJYQSa+AFiyPQsnaXAlB1hwap4K
-	 oFb3OZw2/288XAK6agtD3PiglCpGY2KAp9Gun3C1QJyyn0nQ5MxiBv+8bealuFXBO8
-	 cdlWZtlq1IfukJrAnmOPC9wgjJZyHhY0da0JZLNucx4pwk38WwS5y5uH53DhJ3Mpp3
-	 rTtKZ3b76FQoqH9kTYniCSU1fYeLGPElj8AdJVs9+pKaKLlrCrO9K1gD+9j+E/4gRe
-	 hLNCeqbe/si+xktScGvcEhDN6pnHx4x2aU+ak+WK3qitg3fSP8doOEnncoPSjBhp+g
-	 rV+D7GGfE3ntw==
-Date: Sun, 14 Sep 2025 21:43:22 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
-	Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250915044322.GN1587915@frogsfrogsfrogs>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <20250731130458.GE273706@mit.edu>
- <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com>
- <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
- <20250912145857.GQ8117@frogsfrogsfrogs>
- <5a25a7da-1204-49a5-a897-de457a7c304b@bsbernd.com>
+	s=arc-20240116; t=1757911545; c=relaxed/simple;
+	bh=P9HC0HvrI36wYsk3Me7Kkc+3h/N69RO4kXmWdfKD+X4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=OVjP8rm32HaJwM8xX8Kv1j0akFcxDo7MeBrX0sbuJNNlOsrPyYKWIegmPCFD88PBqdtKTIR+n8YknW2R/kutUpYf4at3hUB1p5QCJbTTKtW2D3IMdN7XlLUmhqz0Bg6tGSGUfs4nb+oDpPBjU62uiGgaokMnbQe5gqPzpo3dVB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F77DWVv0; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757911543; x=1789447543;
+  h=date:from:to:cc:subject:message-id;
+  bh=P9HC0HvrI36wYsk3Me7Kkc+3h/N69RO4kXmWdfKD+X4=;
+  b=F77DWVv0EjIBxQFYZdJ2SU2Lv+ZnO+tPfR+ctQ6pi4GLZPJ4hXsAdt7x
+   jirPq99Vu+JjhogZxU5FP+VxWwWBkTKw+ISW7x7n9s3oXv0qJFCu5G+w5
+   JKyMhKl/GGtjz/ct5eayJAZT7jQjRxZXnI48lMx9BNAL4N+4w5FfOefQw
+   SKHw4wad5L73IGp4DwaRDq2DMvqJKdib36KekQjUfzR1sJgeP+ZpyZ/it
+   bHlWy898yv72GiwhQ9RBM+hUZI44U2aF07XiSMN1QNQ9K69o7+m/wWHeK
+   jPhITUviueSoPs5iRrRqsYwJgxPMviTWLnsrX82T1DL+dxIzmigImhYuJ
+   g==;
+X-CSE-ConnectionGUID: uydLrjYhQhSkuLkNXVZQ0w==
+X-CSE-MsgGUID: iYNaPCJbSuOwNaFCDkweTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="60301130"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="60301130"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 21:45:43 -0700
+X-CSE-ConnectionGUID: w82XpIRtTf+tIsziry3pTw==
+X-CSE-MsgGUID: BQQJtKHcRFS5xTAJxPfr1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="175312558"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 14 Sep 2025 21:45:42 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uy15v-0002yC-3B;
+	Mon, 15 Sep 2025 04:45:39 +0000
+Date: Mon, 15 Sep 2025 12:45:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 584a19f9b54926dd1d3fec0a1e9b1fde801d9f23
+Message-ID: <202509151253.YA8ei8F0-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5a25a7da-1204-49a5-a897-de457a7c304b@bsbernd.com>
 
-On Fri, Sep 12, 2025 at 05:20:58PM +0200, Bernd Schubert wrote:
-> 
-> 
-> On 9/12/25 16:58, Darrick J. Wong wrote:
-> > On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
-> >>
-> >>
-> >> On 9/12/25 13:41, Amir Goldstein wrote:
-> >>> On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 8/1/25 12:15, Luis Henriques wrote:
-> >>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
-> >>>>>
-> >>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
-> >>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
-> >>>>>>>>
-> >>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> >>>>>>>> could restart itself.  It's unclear if doing so will actually enable us
-> >>>>>>>> to clear the condition that caused the failure in the first place, but I
-> >>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> >>>>>>>> aren't totally crazy.
-> >>>>>>>
-> >>>>>>> I'm trying to understand what the failure scenario is here.  Is this
-> >>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
-> >>>>>>> is supposed to happen with respect to open files, metadata and data
-> >>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
-> >>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
-> >>>>>>> potentally to be out of sync, right?
-> >>>>>>>
-> >>>>>>> What are the recovery semantics that we hope to be able to provide?
-> >>>>>>
-> >>>>>> <echoing what we said on the ext4 call this morning>
-> >>>>>>
-> >>>>>> With iomap, most of the dirty state is in the kernel, so I think the new
-> >>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
-> >>>>>> would initiate GETATTR requests on all the cached inodes to validate
-> >>>>>> that they still exist; and then resend all the unacknowledged requests
-> >>>>>> that were pending at the time.  It might be the case that you have to
-> >>>>>> that in the reverse order; I only know enough about the design of fuse
-> >>>>>> to suspect that to be true.
-> >>>>>>
-> >>>>>> Anyhow once those are complete, I think we can resume operations with
-> >>>>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
-> >>>>>> fuse_make_bad'd, which effectively revokes them.
-> >>>>>
-> >>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
-> >>>>> but probably GETATTR is a better option.
-> >>>>>
-> >>>>> So, are you currently working on any of this?  Are you implementing this
-> >>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
-> >>>>> look at fuse2fs too.
-> >>>>
-> >>>> Sorry for joining the discussion late, I was totally occupied, day and
-> >>>> night. Added Kevin to CC, who is going to work on recovery on our
-> >>>> DDN side.
-> >>>>
-> >>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
-> >>>> server restart we want kernel to recover inodes and their lookup count.
-> >>>> Now inode recovery might be hard, because we currently only have a
-> >>>> 64-bit node-id - which is used my most fuse application as memory
-> >>>> pointer.
-> >>>>
-> >>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
-> >>>> outstanding requests. And that ends up in most cases in sending requests
-> >>>> with invalid node-IDs, that are casted and might provoke random memory
-> >>>> access on restart. Kind of the same issue why fuse nfs export or
-> >>>> open_by_handle_at doesn't work well right now.
-> >>>>
-> >>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
-> >>>> would not return a 64-bit node ID, but a max 128 byte file handle.
-> >>>> And then FUSE_REVALIDATE_FH on server restart.
-> >>>> The file handles could be stored into the fuse inode and also used for
-> >>>> NFS export.
-> >>>>
-> >>>> I *think* Amir had a similar idea, but I don't find the link quickly.
-> >>>> Adding Amir to CC.
-> >>>
-> >>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
-> >>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> >>
-> >> Thanks for the reference Amir! I even had been in that thread.
-> >>
-> >>>
-> >>>>
-> >>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
-> >>>> will iterate over all superblock inodes and mark them with fuse_make_bad.
-> >>>> Any objections against that?
-> > 
-> > What if you actually /can/ reuse a nodeid after a restart?  Consider
-> > fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
-> > you can reconnect the fuse_inode to the ondisk inode, assuming recovery
-> > didn't delete it, obviously.
-> > 
-> > I suppose you could just ask for refreshed stat information and either
-> > the server gives it to you and the fuse_inode lives; or the server
-> > returns ENOENT and then we mark it bad.  But I'd have to see code
-> > patches to form a real opinion.
-> > 
-> > It's very nice of fuse to have implemented revoke() ;)
-> 
-> 
-> Assuming you would run with an attr cache timeout equal 0 the existing
-> NOTIFY_RESEND would be enough for fuse4fs? 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 584a19f9b54926dd1d3fec0a1e9b1fde801d9f23  Merge branch into tip/master: 'x86/tdx'
 
-That brings up some good questions.  Yes, fuse4fs sets an attr cache
-timeout of 0, but (a) would it actually be useful to set it to a higher
-value to reduce round trips?  And (b) shouldn't a restart trigger a
-revalidation regardless?
+elapsed time: 1096m
 
---D
+configs tested: 134
+configs skipped: 5
 
-> 
-> Thanks,
-> Bernd
-> 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250914    gcc-9.5.0
+arc                   randconfig-002-20250914    gcc-10.5.0
+arm                              allmodconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                                 defconfig    clang-22
+arm                       netwinder_defconfig    gcc-15.1.0
+arm                   randconfig-001-20250914    clang-22
+arm                   randconfig-002-20250914    clang-19
+arm                   randconfig-003-20250914    gcc-14.3.0
+arm                   randconfig-004-20250914    gcc-12.5.0
+arm                         s3c6400_defconfig    gcc-15.1.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20250914    gcc-9.5.0
+arm64                 randconfig-002-20250914    clang-22
+arm64                 randconfig-003-20250914    clang-17
+arm64                 randconfig-004-20250914    gcc-8.5.0
+csky                              allnoconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20250914    gcc-15.1.0
+csky                  randconfig-002-20250914    gcc-13.4.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon                             defconfig    clang-22
+hexagon               randconfig-001-20250914    clang-22
+hexagon               randconfig-002-20250914    clang-22
+i386                              allnoconfig    gcc-14
+i386                             allyesconfig    gcc-14
+i386        buildonly-randconfig-001-20250914    gcc-13
+i386        buildonly-randconfig-002-20250914    gcc-14
+i386        buildonly-randconfig-003-20250914    gcc-14
+i386        buildonly-randconfig-004-20250914    gcc-14
+i386        buildonly-randconfig-005-20250914    clang-20
+i386        buildonly-randconfig-006-20250914    gcc-14
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20250914    clang-22
+loongarch             randconfig-002-20250914    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                                defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                            gpr_defconfig    clang-18
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250914    gcc-10.5.0
+nios2                 randconfig-002-20250914    gcc-11.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250914    gcc-8.5.0
+parisc                randconfig-002-20250914    gcc-10.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    clang-22
+powerpc                       ppc64_defconfig    clang-22
+powerpc               randconfig-001-20250914    clang-22
+powerpc               randconfig-002-20250914    clang-22
+powerpc               randconfig-003-20250914    clang-22
+powerpc                     sequoia_defconfig    clang-17
+powerpc64             randconfig-001-20250914    clang-22
+powerpc64             randconfig-002-20250914    clang-22
+powerpc64             randconfig-003-20250914    gcc-13.4.0
+riscv                            allmodconfig    clang-22
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    clang-16
+riscv                               defconfig    clang-22
+riscv                 randconfig-001-20250914    clang-22
+riscv                 randconfig-002-20250914    gcc-12.5.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    clang-22
+s390                  randconfig-001-20250914    gcc-10.5.0
+s390                  randconfig-002-20250914    gcc-15.1.0
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                             espt_defconfig    gcc-15.1.0
+sh                    randconfig-001-20250914    gcc-15.1.0
+sh                    randconfig-002-20250914    gcc-10.5.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250914    gcc-11.5.0
+sparc                 randconfig-002-20250914    gcc-14.3.0
+sparc                       sparc32_defconfig    gcc-15.1.0
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20250914    gcc-8.5.0
+sparc64               randconfig-002-20250914    clang-22
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-14
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-14
+um                    randconfig-001-20250914    clang-22
+um                    randconfig-002-20250914    clang-18
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250914    clang-20
+x86_64      buildonly-randconfig-002-20250914    clang-20
+x86_64      buildonly-randconfig-003-20250914    clang-20
+x86_64      buildonly-randconfig-004-20250914    clang-20
+x86_64      buildonly-randconfig-005-20250914    gcc-14
+x86_64      buildonly-randconfig-006-20250914    clang-20
+x86_64                              defconfig    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250914    gcc-14.3.0
+xtensa                randconfig-002-20250914    gcc-8.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
