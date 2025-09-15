@@ -1,132 +1,239 @@
-Return-Path: <linux-kernel+bounces-816909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9993DB57AA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5641B57AA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFD3B1AA06F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000761AA1033
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A41430AAB6;
-	Mon, 15 Sep 2025 12:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E933D30B517;
+	Mon, 15 Sep 2025 12:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A0svqQWY"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2vy+jzO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC1A30AAC6
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122AC3081B7;
+	Mon, 15 Sep 2025 12:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938865; cv=none; b=hRa9UvI+afo+/kuM54ZAR0R87tlNp2CxP5aKDzefoYpFDTNey8/HGyVhaoDEZaZ2o/ioeizjDU9RTADAizntoNDjaELzbjfhOnASN+C88fF6kLqi8hG1AG1Mkj20CibnCseasS6WSg71bfl+DYSK9m/GvJ6xqWJ0Y9oGdEY+T+4=
+	t=1757938868; cv=none; b=Lr+fmhaOzA7QGMaPMBmv2mixJRlfssVnCmDSUlb6MTy1VWx2pqxBkWksWmY4epuOdeO2EiFQPm+h0rH8NOmRGJRY4ryJfRY7pL7ZZo/19Bgy2SO1hgm19ovgwjfl2x/jkaPEJXBB+K7dl1JNQ1XxNcUPWxPcQAamdcY+OK6D8Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938865; c=relaxed/simple;
-	bh=dRXGhWojN/zmxVhLhhV7UBCFaTwMPK23OlCcE6/vJA0=;
+	s=arc-20240116; t=1757938868; c=relaxed/simple;
+	bh=8lfc6XMmCEqrdB6ag90R+cZmEFmO/+qdAqdG2uHElgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SE1LEmwhmW7WbPWu5dqmbU/FUvsxJxqoH4/ZxkILlSDsVFCxzktI8WfK2gEUrF0yNY5Fb+7z9pVuJU6Rxr1S1qlBYZk2jLnPcsLKSe+z7cfF+gY2aKaMQoO7Np7rcNXMkEaTxQVAmvxo3Q7+dm9CE6LcU0Lc4L4rf1wBK+dlkdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A0svqQWY; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so1164277f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757938862; x=1758543662; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dRXGhWojN/zmxVhLhhV7UBCFaTwMPK23OlCcE6/vJA0=;
-        b=A0svqQWYY98nAXTi9kuDSTEPPipJjudbrmhCo2ftEGwGqaqCr9QiYUsuHjrBfWrfAD
-         +Uan2JVN+pog/3GfkAhB5tvG2HWwNGSS2DkT+/bqXwcrzDh4oAPFcltxjeShd9BzrxE9
-         dCLq9atUMYZHGakoVjG59DEO8Y4YRX7d37eV4KQ+LctVHUnIB0lcVEiUaMF5s1So/P7z
-         sTY7dXsQaHTYiNUmB5pSr5F7vpRbJ9MWO7XDcYMrAnt1sW6etYKyPuT+fGRKs57wfj0O
-         8vQuNXDUnvTWxiPeO8Fr32Y4BCpfD1AZmeXRehOH9CqysvfDylpp5FfWZN3YcJWIFso0
-         eD1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757938862; x=1758543662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dRXGhWojN/zmxVhLhhV7UBCFaTwMPK23OlCcE6/vJA0=;
-        b=oVh47HPvpBJ4rHe4nqzo0EoyEyLg9/flLwCDFTfr5zUdh6IdAj48EM/MxfrAH9sB17
-         QwxN7RxBWkLRpTrOsFtmLpL5twBzmY73X8QncbhWnQP6lxvGf5DPI3QTelEMYKwhrOHJ
-         I8299NJoH+Q+SonrIRzVT6engNaZX+7q/oox6ORMYPYhl7v1gXcqpJWooVzm+qJDQzyu
-         VwLjnjYPYrubtfej1tACUFPOfLCoA4adQ13+kDfkyJsSIGkTn2MQpQz0zGSl1IFeS/gW
-         ugFt3oKnduPb3nNKaNO5QmwRzcD4yU7jJ2O4CEd7jkfqGFXyNmdc4Qq1HIVz0aGLynkn
-         87AA==
-X-Gm-Message-State: AOJu0YxDANtCXdJaxRiVRb8wrqxM1q1YXhCcl/UmGg38iRYHXMULqK+L
-	F+cwbYhEXlYiCYjmWY2XdbzjnHx76iKulD4GA0ga1MnivM777MVtZTDBrze0+jC0G4M=
-X-Gm-Gg: ASbGncsH3W3GjDh8qeiQzWOZ3SAchUv5eJRhAIEG+tE8eE5YSQgNH2lt7wjLw9vwMVg
-	eZxYxshYD88hMP079RD+gEyY+VcuPoMrxlFBd45QmL3HQ8ztzHHkISzwiXmPUKbNX7EQbr8Q4Cg
-	CaPY9j61CW+f4s1TEdHjVPtnfRckvHUAFLmOyr2uZ3Y+JdvNl6e0lth2e07pZiY0+HsYDewpdRE
-	OuAhn78P2602sOzjtT2LjEzBQ755u1woE3rxqUN0F72YBEmOCCZZUtBeg3zrzrQgqSzfO1JpQvX
-	BN5ZQVORSiCMYq8vC8XsID4MnmkJtF7azQis7bKhau/ri5jU+XPrgj0+Cc2nRcAEZvYzBzQYPEj
-	SDIdZBha7xZnUh0jhFznup/oT
-X-Google-Smtp-Source: AGHT+IHZxjPiVftQFFSVsD2VxpuAkBezLqcbHM5N6FMX7Nja48uVvgnW5IZJk5T4dZviTmbAHvCxyQ==
-X-Received: by 2002:a5d:64c3:0:b0:3d1:42dc:c710 with SMTP id ffacd0b85a97d-3e76579317emr9382433f8f.16.1757938862113;
-        Mon, 15 Sep 2025 05:21:02 -0700 (PDT)
-Received: from blackbook2 ([84.19.86.74])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e96dee54d8sm7498070f8f.12.2025.09.15.05.21.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 05:21:01 -0700 (PDT)
-Date: Mon, 15 Sep 2025 14:20:59 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Documentation <linux-doc@vger.kernel.org>, Linux cgroups <cgroups@vger.kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrea Righi <arighi@nvidia.com>, Johannes Bechberger <me@mostlynerdless.de>, 
-	Changwoo Min <changwoo@igalia.com>, Shashank Balaji <shashank.mahadasyam@sony.com>, 
-	Ingo Molnar <mingo@kernel.org>, Jake Rice <jake@jakerice.dev>, Cengiz Can <cengiz@kernel.wtf>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH v2 2/4] Documentation: cgroup-v2: Add section numbers
-Message-ID: <duppgeomaflt6fbymdk5443glmw7d3bgli2yu7gx6awb7q2dhn@syjq5mmia6pb>
-References: <20250915081942.25077-1-bagasdotme@gmail.com>
- <20250915081942.25077-3-bagasdotme@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvjSCpMK/2aNL3ueWsGf1vQ2ScGPrhly1BLeJH92SMUdPWAXHuJp/q3KMl4v6MedgGF3EKsxOn/nRRiH/skiD2QgJ/DkMHS3+z8AsOMFg8ng1xAHAAoPHTc9o/Grhoqqqq8QTuCPqwPodKv1tw6at+sOkTAhS1SU9Bri1tdUKPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2vy+jzO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA75C4CEF5;
+	Mon, 15 Sep 2025 12:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757938867;
+	bh=8lfc6XMmCEqrdB6ag90R+cZmEFmO/+qdAqdG2uHElgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E2vy+jzOOvWjLtfVkBg+1i/BTUsPhURr6bEieNtkgZI/ilXfym63hUkcu1bcMi6qN
+	 +IWn1gJHUssY5s+irbl1BegmcWrGw4bLTx7s5vsb637yMnRvlKl+svwzA4+DpuKjhw
+	 VhSi+FtGemVi5uL//6v6U51Q9/HuIIyS7dn8W9YHGrKIslSGshMbU4p6Qq9Qw5B8IM
+	 vCNy9DTOQm64Aqhf/zhvSc5JFI01oibrEAC8Qc3yOWPEMgzLtw6K+We3ohdUAG6Bbu
+	 YiidQM7wbH3dL0z0C+ptVCHCUTqoDw4yE6yQOVcYpk3eKoI2UrNgULkBTMPyNZs6ep
+	 cgHlVudFh83CQ==
+Date: Mon, 15 Sep 2025 14:21:02 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Jan Kara <jack@suse.cz>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Mark Tinguely <mark.tinguely@oracle.com>, ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	jlbec@evilplan.org, mark@fasheh.com, willy@infradead.org, david@fromorbit.com
+Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
+ I_WILL_FREE usage
+Message-ID: <20250915-trieb-undeutlich-e68568ff9fe7@brauner>
+References: <20250904154245.644875-1-mjguzik@gmail.com>
+ <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
+ <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
+ <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com>
+ <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
+ <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com>
+ <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
+ <b9957de7-737c-454a-83b1-6cb2a4070fcf@linux.alibaba.com>
+ <a3hdepfrx3styl62viehd56akiu7fthobe2ldj7j4viopfle5b@44mnouc76e3x>
+ <02814cfb-9a51-4e67-942c-4da0c57a75c4@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ml2yrs6lektswjhv"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915081942.25077-3-bagasdotme@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <02814cfb-9a51-4e67-942c-4da0c57a75c4@linux.alibaba.com>
 
+On Tue, Sep 09, 2025 at 05:58:21PM +0800, Joseph Qi wrote:
+> 
+> 
+> On 2025/9/9 17:49, Jan Kara wrote:
+> > On Tue 09-09-25 09:23:56, Joseph Qi wrote:
+> >> On 2025/9/8 21:54, Jan Kara wrote:
+> >>> On Mon 08-09-25 20:41:21, Joseph Qi wrote:
+> >>>>
+> >>>>
+> >>>> On 2025/9/8 18:23, Jan Kara wrote:
+> >>>>> On Mon 08-09-25 09:51:36, Joseph Qi wrote:
+> >>>>>> On 2025/9/5 00:22, Mateusz Guzik wrote:
+> >>>>>>> On Thu, Sep 4, 2025 at 6:15 PM Mark Tinguely <mark.tinguely@oracle.com> wrote:
+> >>>>>>>>
+> >>>>>>>> On 9/4/25 10:42 AM, Mateusz Guzik wrote:
+> >>>>>>>>> This postpones the writeout to ocfs2_evict_inode(), which I'm told is
+> >>>>>>>>> fine (tm).
+> >>>>>>>>>
+> >>>>>>>>> The intent is to retire the I_WILL_FREE flag.
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> >>>>>>>>> ---
+> >>>>>>>>>
+> >>>>>>>>> ACHTUNG: only compile-time tested. Need an ocfs2 person to ack it.
+> >>>>>>>>>
+> >>>>>>>>> btw grep shows comments referencing ocfs2_drop_inode() which are already
+> >>>>>>>>> stale on the stock kernel, I opted to not touch them.
+> >>>>>>>>>
+> >>>>>>>>> This ties into an effort to remove the I_WILL_FREE flag, unblocking
+> >>>>>>>>> other work. If accepted would be probably best taken through vfs
+> >>>>>>>>> branches with said work, see https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs-6.18.inode.refcount.preliminaries__;!!ACWV5N9M2RV99hQ!OLwk8DVo7uvC-Pd6XVTiUCgP6MUDMKBMEyuV27h_yPGXOjaq078-kMdC9ILFoYQh-4WX93yb0nMfBDFFY_0$
+> >>>>>>>>>
+> >>>>>>>>>   fs/ocfs2/inode.c       | 23 ++---------------------
+> >>>>>>>>>   fs/ocfs2/inode.h       |  1 -
+> >>>>>>>>>   fs/ocfs2/ocfs2_trace.h |  2 --
+> >>>>>>>>>   fs/ocfs2/super.c       |  2 +-
+> >>>>>>>>>   4 files changed, 3 insertions(+), 25 deletions(-)
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+> >>>>>>>>> index 6c4f78f473fb..5f4a2cbc505d 100644
+> >>>>>>>>> --- a/fs/ocfs2/inode.c
+> >>>>>>>>> +++ b/fs/ocfs2/inode.c
+> >>>>>>>>> @@ -1290,6 +1290,8 @@ static void ocfs2_clear_inode(struct inode *inode)
+> >>>>>>>>>
+> >>>>>>>>>   void ocfs2_evict_inode(struct inode *inode)
+> >>>>>>>>>   {
+> >>>>>>>>> +     write_inode_now(inode, 1);
+> >>>>>>>>> +
+> >>>>>>>>>       if (!inode->i_nlink ||
+> >>>>>>>>>           (OCFS2_I(inode)->ip_flags & OCFS2_INODE_MAYBE_ORPHANED)) {
+> >>>>>>>>>               ocfs2_delete_inode(inode);
+> >>>>>>>>> @@ -1299,27 +1301,6 @@ void ocfs2_evict_inode(struct inode *inode)
+> >>>>>>>>>       ocfs2_clear_inode(inode);
+> >>>>>>>>>   }
+> >>>>>>>>>
+> >>>>>>>>> -/* Called under inode_lock, with no more references on the
+> >>>>>>>>> - * struct inode, so it's safe here to check the flags field
+> >>>>>>>>> - * and to manipulate i_nlink without any other locks. */
+> >>>>>>>>> -int ocfs2_drop_inode(struct inode *inode)
+> >>>>>>>>> -{
+> >>>>>>>>> -     struct ocfs2_inode_info *oi = OCFS2_I(inode);
+> >>>>>>>>> -
+> >>>>>>>>> -     trace_ocfs2_drop_inode((unsigned long long)oi->ip_blkno,
+> >>>>>>>>> -                             inode->i_nlink, oi->ip_flags);
+> >>>>>>>>> -
+> >>>>>>>>> -     assert_spin_locked(&inode->i_lock);
+> >>>>>>>>> -     inode->i_state |= I_WILL_FREE;
+> >>>>>>>>> -     spin_unlock(&inode->i_lock);
+> >>>>>>>>> -     write_inode_now(inode, 1);
+> >>>>>>>>> -     spin_lock(&inode->i_lock);
+> >>>>>>>>> -     WARN_ON(inode->i_state & I_NEW);
+> >>>>>>>>> -     inode->i_state &= ~I_WILL_FREE;
+> >>>>>>>>> -
+> >>>>>>>>> -     return 1;
+> >>>>>>>>> -}
+> >>>>>>>>> -
+> >>>>>>>>>   /*
+> >>>>>>>>>    * This is called from our getattr.
+> >>>>>>>>>    */
+> >>>>>>>>> diff --git a/fs/ocfs2/inode.h b/fs/ocfs2/inode.h
+> >>>>>>>>> index accf03d4765e..07bd838e7843 100644
+> >>>>>>>>> --- a/fs/ocfs2/inode.h
+> >>>>>>>>> +++ b/fs/ocfs2/inode.h
+> >>>>>>>>> @@ -116,7 +116,6 @@ static inline struct ocfs2_caching_info *INODE_CACHE(struct inode *inode)
+> >>>>>>>>>   }
+> >>>>>>>>>
+> >>>>>>>>>   void ocfs2_evict_inode(struct inode *inode);
+> >>>>>>>>> -int ocfs2_drop_inode(struct inode *inode);
+> >>>>>>>>>
+> >>>>>>>>>   /* Flags for ocfs2_iget() */
+> >>>>>>>>>   #define OCFS2_FI_FLAG_SYSFILE               0x1
+> >>>>>>>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
+> >>>>>>>>> index 54ed1495de9a..4b32fb5658ad 100644
+> >>>>>>>>> --- a/fs/ocfs2/ocfs2_trace.h
+> >>>>>>>>> +++ b/fs/ocfs2/ocfs2_trace.h
+> >>>>>>>>> @@ -1569,8 +1569,6 @@ DEFINE_OCFS2_ULL_ULL_UINT_EVENT(ocfs2_delete_inode);
+> >>>>>>>>>
+> >>>>>>>>>   DEFINE_OCFS2_ULL_UINT_EVENT(ocfs2_clear_inode);
+> >>>>>>>>>
+> >>>>>>>>> -DEFINE_OCFS2_ULL_UINT_UINT_EVENT(ocfs2_drop_inode);
+> >>>>>>>>> -
+> >>>>>>>>>   TRACE_EVENT(ocfs2_inode_revalidate,
+> >>>>>>>>>       TP_PROTO(void *inode, unsigned long long ino,
+> >>>>>>>>>                unsigned int flags),
+> >>>>>>>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+> >>>>>>>>> index 53daa4482406..e4b0d25f4869 100644
+> >>>>>>>>> --- a/fs/ocfs2/super.c
+> >>>>>>>>> +++ b/fs/ocfs2/super.c
+> >>>>>>>>> @@ -129,7 +129,7 @@ static const struct super_operations ocfs2_sops = {
+> >>>>>>>>>       .statfs         = ocfs2_statfs,
+> >>>>>>>>>       .alloc_inode    = ocfs2_alloc_inode,
+> >>>>>>>>>       .free_inode     = ocfs2_free_inode,
+> >>>>>>>>> -     .drop_inode     = ocfs2_drop_inode,
+> >>>>>>>>> +     .drop_inode     = generic_delete_inode,
+> >>>>>>>>>       .evict_inode    = ocfs2_evict_inode,
+> >>>>>>>>>       .sync_fs        = ocfs2_sync_fs,
+> >>>>>>>>>       .put_super      = ocfs2_put_super,
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> I agree, fileystems should not use I_FREEING/I_WILL_FREE.
+> >>>>>>>> Doing the sync write_inode_now() should be fine in ocfs_evict_inode().
+> >>>>>>>>
+> >>>>>>>> Question is ocfs_drop_inode. In commit 513e2dae9422:
+> >>>>>>>>   ocfs2: flush inode data to disk and free inode when i_count becomes zero
+> >>>>>>>> the return of 1 drops immediate to fix a memory caching issue.
+> >>>>>>>> Shouldn't .drop_inode() still return 1?
+> >>>>>>>
+> >>>>>>> generic_delete_inode is a stub doing just that.
+> >>>>>>>
+> >>>>>> In case of "drop = 0", it may return directly without calling evict().
+> >>>>>> This seems break the expectation of commit 513e2dae9422.
+> >>>>>
+> >>>>> generic_delete_inode() always returns 1 so evict() will be called.
+> >>>>> ocfs2_drop_inode() always returns 1 as well after 513e2dae9422. So I'm not
+> >>>>> sure which case of "drop = 0" do you see...
+> >>>>>
+> >>>> I don't see a real case, just in theory.
+> >>>> As I described before, if we make sure write_inode_now() will be called
+> >>>> in iput_final(), it would be fine.
+> >>>
+> >>> I'm sorry but I still don't quite understand what you are proposing. If
+> >>> ->drop() returns 1, the filesystem wants to remove the inode from cache
+> >>> (perhaps because it was deleted). Hence iput_final() doesn't bother with
+> >>> writing out such inodes. This doesn't work well with ocfs2 wanting to
+> >>> always drop inodes hence ocfs2 needs to write the inode itself in
+> >>> ocfs2_evice_inode(). Perhaps you have some modification to iput_final() in
+> >>> mind but I'm not sure how that would work so can you perhaps suggest a
+> >>> patch if you think iput_final() should work differently? Thanks!
+> >>>
+> >> I'm just discussing if generic_delete_inode() will always returns 1. And
+> >> if it is, I'm fine with this change. Sorry for the confusion.
+> > 
+> > generic_delete_inode() is defined as:
+> > 
+> > int generic_delete_inode(struct inode *inode)
+> > {               
+> >         return 1;
+> > }
+> > 
+> > So the return is pretty much guaranteed :). But I agree with Mateusz the
+> > function name could be less confusing.
+> > 
+> Oops, I've mixed it with generic_drop_inode()...
 
---ml2yrs6lektswjhv
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 2/4] Documentation: cgroup-v2: Add section numbers
-MIME-Version: 1.0
-
-On Mon, Sep 15, 2025 at 03:19:25PM +0700, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
-> Add section numbers, following the numbering scheme in the manual
-> toctree. Note that sectnum:: directive cannot be used as it also
-> numbers the docs title.
-
-Erm, so in addition to keeping manual ToC in sync, we'd also need to
-maintain the section numbers manually?
-
-What about dropping the numbers from manual ToC and sections? (If manual
-ToC is to be preserved.)
-
-Thanks,
-Michal
-
---ml2yrs6lektswjhv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaMgEqBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AgBMAEA5FwahNfScmcGEHeTMPg/
-fK1406QYr3ODWMP8GdbwXk8A/3ZGZNF3X3LOGQ4Okk40J612ukJscIDXRv9sFEbP
-V8UC
-=5Zpi
------END PGP SIGNATURE-----
-
---ml2yrs6lektswjhv--
+Not that uncommon of a mixup...
 
