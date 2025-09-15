@@ -1,143 +1,74 @@
-Return-Path: <linux-kernel+bounces-816965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E6FB57B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 533CBB57B70
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06FC77B137E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039B844720E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F66730C352;
-	Mon, 15 Sep 2025 12:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E730C624;
+	Mon, 15 Sep 2025 12:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dgg5eDCQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lKyKz/ke"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3B30BF78;
-	Mon, 15 Sep 2025 12:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688C3302CC9;
+	Mon, 15 Sep 2025 12:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940155; cv=none; b=G8e4haaYLo0e+i6UGw6yPiWYNrJQRbEI+9BZdnOpe5Zf4b0ujLUMw0/9bQHuJo3CASdkhhUIUW2k1j/QWo7TTFAj2tUrVBNOK3wfpbpXf3in03j5/H3u4taW0PV2tLVisq52JEN4Tlz8MIsB0EFKmCWjgxVzOsZkWZK1pEq3LWs=
+	t=1757940165; cv=none; b=Xqzsy36yfNhPuqdSiKcZqacQdKgobBUA3s4p6O7Qm1BpfR+GDoeKw6oYz1nADjAZyFtJ9nPXlvjRW9ep5l8sKPjiyzqmpj8niWF/ftSs7zPKqQdwDmE1R45SbIvwCBOhxNfMlDQpEsvr+Q4Gy0kqCDuDxOu1p7eAtaT7Wa1Nqlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940155; c=relaxed/simple;
-	bh=oAEeoHs9rXo/wf2oE06+wQRWp/MuIBStmQIAXSQs2Yc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D1boHwcL6FXp5VCqREeJh5VIxgYO47m/rFTtJcZmOxj2utqgRNeHmwqynfVB1eI/bKHttReenbWh5/i87hCU6BUwNa/cwQRLOedGIOKS4aFAJEReefenL54zzhdrVPdhap8A55jL2sv541UxhVhUX1dhN8PxoFal05n7Hja1E6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dgg5eDCQ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757940154; x=1789476154;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=oAEeoHs9rXo/wf2oE06+wQRWp/MuIBStmQIAXSQs2Yc=;
-  b=Dgg5eDCQT4ZFzRh1+mEjh6ag0c6mFBeOZNj8figqyyUHHEzBDS+ONBTE
-   3uCBlyw8enrCE3dFqyIH4mJc5OYyJ6sVi16b7hIOixCkV4i5WWuOpKlXr
-   fhUq/BvKbh6vMlTF3cMk26c8DoWzjv4OlaeCeXYk4DxIGBpi8C+t5h3/S
-   rfxub1SFFG0K49liXlQLbXbbEde9smYOjqZaD02diozEKvuagq9BuSXox
-   iR2GJmW8D2LLQxNXNRUVrHXT/iMYejFjALSq5t0UvLr6P6RxaKoiMVOxk
-   8UF3RAG1ZNDkMcIT6EMgkfH6h63mLR4pd9Aqd9iMY0KgGSZoa4WrEbxcJ
-   A==;
-X-CSE-ConnectionGUID: H6zBGGM0TWeZ4x0WK8YB9Q==
-X-CSE-MsgGUID: myqocbLcRfuT4avmKPhjGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="71617240"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="71617240"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 05:42:34 -0700
-X-CSE-ConnectionGUID: cOZDlnkpT02cRk3T8k23uw==
-X-CSE-MsgGUID: XKZSDT/hQSW8OJec2XHG4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="175056198"
-Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.17])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 05:42:26 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Ilpo =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Christian =?utf-8?Q?K=C3=B6ni?=
- =?utf-8?Q?g?= <christian.koenig@amd.com>,
- =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>, Alex
- Deucher
- <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, David Airlie
- <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, Joonas
- Lahtinen <joonas.lahtinen@linux.intel.com>, Lucas De Marchi
- <lucas.demarchi@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona
- Vetter <simona@ffwll.ch>, Tvrtko Ursulin <tursulin@ursulin.net>,
- ?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- "Michael J . Ruhl" <mjruhl@habana.ai>, linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v2 06/11] drm/i915/gt: Use pci_rebar_size_supported()
-In-Reply-To: <20250915091358.9203-7-ilpo.jarvinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
- <20250915091358.9203-7-ilpo.jarvinen@linux.intel.com>
-Date: Mon, 15 Sep 2025 15:42:23 +0300
-Message-ID: <b918053f6ac7b4a27148a1cbf10eb8402572c6c9@intel.com>
+	s=arc-20240116; t=1757940165; c=relaxed/simple;
+	bh=aNskhq3Cmzm3alKPr9Rro+188cJKwfTQ8rO/BJf4CyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TbbWxP0Un2JSb1U7AM8/3w17EjaBGdyd5T0289jtjTprZ5ec2WrJZfHTHV4dxzzsGShED9wXUbw277tLYPF2h9imNhbocBwLkmFtZ3z5/+nnlsHUljGEk1G2QeGlsWL2bdbo6hnATFPfZ7f2MbcYtJiZRaHtFBm9EfZfI0TCpCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lKyKz/ke; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=jZcPuO3anU5LkN9y1m2FeE7inKsARtSp8ndgiLojr2I=; b=lKyKz/keXRJK/B0spe2Kgwelbk
+	F63gnLL77Wtp1c2ofxyqNX6PCV1pKwPi3urXU0Sig/LrKLZt4KvZf28UNgHWPSKOmzSWxzsk6XWCi
+	ywE21yRXb/FqDMiSw0KVqzPFgrcvkMcqdJzT2yACOVloMkKvkM3/oVQIQAUSy9Cp1Zew=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uy8XP-008RIJ-Ca; Mon, 15 Sep 2025 14:42:31 +0200
+Date: Mon, 15 Sep 2025 14:42:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: micrel: Add Fast link failure support
+ for lan8842
+Message-ID: <698d4fbe-a84b-40cd-986f-1ebaecbf60b1@lunn.ch>
+References: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
 
-On Mon, 15 Sep 2025, Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> wro=
-te:
-> PCI core provides pci_rebar_size_supported() that helps in checking if
-> a BAR Size is supported for the BAR or not. Use it in
-> i915_resize_lmem_bar() to simplify code.
->
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+> +/**
+> + * LAN8814_PAGE_PCS - Selects Extended Page 0.
+> + *
+> + * This page appaers to control the fast link failure and there are different
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+appears.
 
-and
+And just curious. Why appears? Don't you have access to the data sheet?
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-
-for merging via whichever tree is convenient.
-
-> ---
->  drivers/gpu/drm/i915/gt/intel_region_lmem.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/gt/intel_region_lmem.c b/drivers/gpu/dr=
-m/i915/gt/intel_region_lmem.c
-> index 51bb27e10a4f..69c65fc8a72d 100644
-> --- a/drivers/gpu/drm/i915/gt/intel_region_lmem.c
-> +++ b/drivers/gpu/drm/i915/gt/intel_region_lmem.c
-> @@ -61,16 +61,12 @@ static void i915_resize_lmem_bar(struct drm_i915_priv=
-ate *i915, resource_size_t
->  	current_size =3D roundup_pow_of_two(pci_resource_len(pdev, GEN12_LMEM_B=
-AR));
->=20=20
->  	if (i915->params.lmem_bar_size) {
-> -		u32 bar_sizes;
-> -
-> -		rebar_size =3D i915->params.lmem_bar_size *
-> -			(resource_size_t)SZ_1M;
-> -		bar_sizes =3D pci_rebar_get_possible_sizes(pdev, GEN12_LMEM_BAR);
-> -
-> +		rebar_size =3D i915->params.lmem_bar_size * (resource_size_t)SZ_1M;
->  		if (rebar_size =3D=3D current_size)
->  			return;
->=20=20
-> -		if (!(bar_sizes & BIT(pci_rebar_bytes_to_size(rebar_size))) ||
-> +		if (!pci_rebar_size_supported(pdev, GEN12_LMEM_BAR,
-> +					      pci_rebar_bytes_to_size(rebar_size)) ||
->  		    rebar_size >=3D roundup_pow_of_two(lmem_size)) {
->  			rebar_size =3D lmem_size;
-
---=20
-Jani Nikula, Intel
+	Andrew
 
