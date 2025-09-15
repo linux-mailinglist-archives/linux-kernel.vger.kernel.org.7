@@ -1,103 +1,231 @@
-Return-Path: <linux-kernel+bounces-817181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471D8B57EEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:29:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F48B57EF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB9B162E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B07D7A818D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D70327A0C;
-	Mon, 15 Sep 2025 14:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620B6324B22;
+	Mon, 15 Sep 2025 14:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aznarjCN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qbvCBD8m"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593A527461;
-	Mon, 15 Sep 2025 14:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB962FFDF7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946539; cv=none; b=NeH8X6BRC2eBbx6QhefB4GHAypxWIBpPyK48TeDogntTEGjP8ME9QIgeWSR77Fdg1nrSVySkkHHCa0YjpW0A82u1eSIMyKrwkP1O9J+WnMXYGE9v2wiZ+D7C4UKoMyn7p1uTf853x0m1/CELM3GQ1sk9PX+B+vKxrgv+1d1fH0w=
+	t=1757946597; cv=none; b=g0ZwORwAaHu4f+rIjFF73MmHLVu4ruJRQpGbHyi9rsj4kQaSlRXpbRFdSoAuRKl2yWwG27TZPC911rMZ6WixYwuiR/Dx0XAdi/fcV9novJ6jCWK6z5mLehcSHQmH8KiT7QKNJ5bnkrAiZop6J6KB/8PfEWh9jnXOyEwk+sG8RcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946539; c=relaxed/simple;
-	bh=EgT9R2R8e3sTbKbdhG6OlsOC7QwWtgWnokLPG63/BcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flqPdDYwN98/VJqT6p8osn8wuZ1mn+H12grXWKPzvAWLDarnmpdjoQ4xrpkAyh33lefHy5vmVlZkrfIKKoTnEqUtXMBoGnidFOPMEumAZRkXqrtMyPO2C5mC/ZzzvV+YLkmr0OdxGo0pD4xfQxkVO5mXWKvzhWbtAaGrF4HjIQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aznarjCN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF433C4CEF1;
-	Mon, 15 Sep 2025 14:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757946539;
-	bh=EgT9R2R8e3sTbKbdhG6OlsOC7QwWtgWnokLPG63/BcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aznarjCNixBG85m590SUihDdfWa3aml66JIxssJCi1LS+zwWHzg4FUlLyAnalqQMm
-	 NYwjREyVizZcptqaeHgaoI0/dACOCJgfWNOAFYWxlAWXOS3tvO8BMu2N3TZjf8scj2
-	 s8El3SQdJgBupfAkZ02UFtFSz1mhar3XApoC3XOs/yhZ7b+4cDcd4nTyTvPl5OtdFa
-	 B24UwbhD/wWgi1n/at6q9z0Y8R1YsQ+oEtunaFcdOJiRYE7LVFbxsPC9m38XTKlN2N
-	 zI+ECKNOSFqumzris7wjTHnEywtuTelu+ex06D65ZPT0cQkNuB+x1YznABHvVJtHgf
-	 vOfIvMomdnfug==
-Date: Mon, 15 Sep 2025 08:28:56 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kw@linux.com>
-Cc: Matthew Wood <thepacketgeek@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [RESEND PATCH v7 1/1] PCI/sysfs: Expose PCIe device serial number
-Message-ID: <aMgiqJVWTptU6Fq0@kbusch-mbp>
-References: <20250821232239.599523-1-thepacketgeek@gmail.com>
- <20250821232239.599523-2-thepacketgeek@gmail.com>
- <aK9e_Un3fWMWDIzD@kbusch-mbp>
- <20250913061720.GA1992308@rocinante>
+	s=arc-20240116; t=1757946597; c=relaxed/simple;
+	bh=Vag2gnBb/vURH7J+sFwDP2yfkuPnkkqrFPGa8fWRmRg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QcLooeSi7wUKkN9mAP+9uAioiW74JKroiiLPUJp5kY/3NXjDJyTA/kMQ0Sh9eq4azqq8U/H9RcnkYqThlJRF5PSL/BuHBBVCtWHKinrVTKP/RdEi3keLFV4F+bxtX3aX0Z6XG4UDKiG5PsTrfwzsESW+4KtKKi3dUNcRTdq6U1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qbvCBD8m; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1757946596; x=1789482596;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Vag2gnBb/vURH7J+sFwDP2yfkuPnkkqrFPGa8fWRmRg=;
+  b=qbvCBD8mDlUv90FAcC/xbSGBEQhljP1TgjRvLoftlTWD6Fpl98bIAm7Q
+   mERKlEMyc4HDiqJ0D9D4CZd95OA7bNhFCnWCjSMmSXNcymQCtNneaORxX
+   yEKFciz2bLbxmusnwl07dXkrigbi8M4cnw7yYgFIcJyxCybm7HXhl5gH1
+   LxUxaNAWn4EzYaBucKBT5FVa7JHvU3Smj5zIIrwF5sUJ/5PD68kkXDRd1
+   ZFMQUvaQajHfCSxXqloDFR7Fp5ozRGIjF5E/uwCPvlHKg0GHiodiCqNTR
+   BJ/p1EDRKjLI74gxhsoxlb9VOv4LElealo9RoEy4emDkArJDGO1lY03kZ
+   Q==;
+X-CSE-ConnectionGUID: LXjrnypeSNyBrbf8fuQoPA==
+X-CSE-MsgGUID: 5jpjx4GUTgyDK4/MLlSw3g==
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="47065475"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:29:55 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 15 Sep 2025 07:29:32 -0700
+Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 15 Sep 2025 07:29:30 -0700
+From: <nicolas.ferre@microchip.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Cristian Birsan <cristian.birsan@microchip.com>, Ryan Wanner
+	<ryan.wanner@microchip.com>, Varshini Rajendran
+	<varshini.rajendran@microchip.com>, Mihai Sain <mihai.sain@microchip.com>
+Subject: [PATCH 1/2] clk: at91: add ACR in all PLL settings
+Date: Mon, 15 Sep 2025 16:29:07 +0200
+Message-ID: <20250915142908.18737-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250913061720.GA1992308@rocinante>
+Content-Type: text/plain
 
-On Sat, Sep 13, 2025 at 03:17:20PM +0900, Krzysztof Wilczy´nski wrote:
-> Who needs this?  Why is this useful?  Why hasn't there been a need for
-> exposing serial number in past decades,
+From: Cristian Birsan <cristian.birsan@microchip.com>
 
-I can't speak for other reviewers for their interest in having such an
-attribute. Matt provided the reasoning here in the cover letter by
-making it possible to access from unpriviledged applications that are
-managing devices assigned to them without jumping through hoops to get
-that information.
+Add the ACR register to all PLL settings and provide the correct
+ACR value for each PLL used in different SoCs.
 
-> and suddenly we need it so desperately?
+Suggested-by: Mihai Sain <mihai.sain@microchip.com>
+Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
+[nicolas.ferre@microchip.com: add sama7d65 and review commit message]
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ drivers/clk/at91/pmc.h      | 1 +
+ drivers/clk/at91/sam9x60.c  | 2 ++
+ drivers/clk/at91/sam9x7.c   | 5 +++++
+ drivers/clk/at91/sama7d65.c | 4 ++++
+ drivers/clk/at91/sama7g5.c  | 2 ++
+ 5 files changed, 14 insertions(+)
 
-"desperately" is a bit of a stretch. This simple patch has been out for
-many months now, missed 2 merge windows with zero negative feedback, and
-we're about to miss a 3rd. At this point, "frustration" would be a
-better description.
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 4fb29ca111f7..5daa32c4cf25 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -80,6 +80,7 @@ struct clk_pll_characteristics {
+ 	u16 *icpll;
+ 	u8 *out;
+ 	u8 upll : 1;
++	u32 acr;
+ };
  
-> We probably wouldn't want to add this if there is only a single user that
-> needs this, 
+ struct clk_programmable_layout {
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index db6db9e2073e..18baf4a256f4 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -36,6 +36,7 @@ static const struct clk_pll_characteristics plla_characteristics = {
+ 	.num_output = ARRAY_SIZE(plla_outputs),
+ 	.output = plla_outputs,
+ 	.core_output = core_outputs,
++	.acr = UL(0x00020010),
+ };
+ 
+ static const struct clk_range upll_outputs[] = {
+@@ -48,6 +49,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
+ 	.output = upll_outputs,
+ 	.core_output = core_outputs,
+ 	.upll = true,
++	.acr = UL(0x12023010), /* fIN = [18 MHz, 32 MHz]*/
+ };
+ 
+ static const struct clk_pll_layout pll_frac_layout = {
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index 740f52906f6b..89868a0aeaba 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -107,6 +107,7 @@ static const struct clk_pll_characteristics plla_characteristics = {
+ 	.num_output = ARRAY_SIZE(plla_outputs),
+ 	.output = plla_outputs,
+ 	.core_output = plla_core_outputs,
++	.acr = UL(0x00020010), /* Old ACR_DEFAULT_PLLA value */
+ };
+ 
+ static const struct clk_pll_characteristics upll_characteristics = {
+@@ -115,6 +116,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
+ 	.output = upll_outputs,
+ 	.core_output = upll_core_outputs,
+ 	.upll = true,
++	.acr = UL(0x12023010), /* fIN=[20 MHz, 32 MHz] */
+ };
+ 
+ static const struct clk_pll_characteristics lvdspll_characteristics = {
+@@ -122,6 +124,7 @@ static const struct clk_pll_characteristics lvdspll_characteristics = {
+ 	.num_output = ARRAY_SIZE(lvdspll_outputs),
+ 	.output = lvdspll_outputs,
+ 	.core_output = lvdspll_core_outputs,
++	.acr = UL(0x12023010), /* fIN=[20 MHz, 32 MHz] */
+ };
+ 
+ static const struct clk_pll_characteristics audiopll_characteristics = {
+@@ -129,6 +132,7 @@ static const struct clk_pll_characteristics audiopll_characteristics = {
+ 	.num_output = ARRAY_SIZE(audiopll_outputs),
+ 	.output = audiopll_outputs,
+ 	.core_output = audiopll_core_outputs,
++	.acr = UL(0x12023010), /* fIN=[20 MHz, 32 MHz] */
+ };
+ 
+ static const struct clk_pll_characteristics plladiv2_characteristics = {
+@@ -136,6 +140,7 @@ static const struct clk_pll_characteristics plladiv2_characteristics = {
+ 	.num_output = ARRAY_SIZE(plladiv2_outputs),
+ 	.output = plladiv2_outputs,
+ 	.core_output = plladiv2_core_outputs,
++	.acr = UL(0x00020010),  /* Old ACR_DEFAULT_PLLA value */
+ };
+ 
+ /* Layout for fractional PLL ID PLLA. */
+diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+index a5d40df8b2f2..7dee2b160ffb 100644
+--- a/drivers/clk/at91/sama7d65.c
++++ b/drivers/clk/at91/sama7d65.c
+@@ -138,6 +138,7 @@ static const struct clk_pll_characteristics cpu_pll_characteristics = {
+ 	.num_output = ARRAY_SIZE(cpu_pll_outputs),
+ 	.output = cpu_pll_outputs,
+ 	.core_output = core_outputs,
++	.acr = UL(0x00070010),
+ };
+ 
+ /* PLL characteristics. */
+@@ -146,6 +147,7 @@ static const struct clk_pll_characteristics pll_characteristics = {
+ 	.num_output = ARRAY_SIZE(pll_outputs),
+ 	.output = pll_outputs,
+ 	.core_output = core_outputs,
++	.acr = UL(0x00070010),
+ };
+ 
+ static const struct clk_pll_characteristics lvdspll_characteristics = {
+@@ -153,6 +155,7 @@ static const struct clk_pll_characteristics lvdspll_characteristics = {
+ 	.num_output = ARRAY_SIZE(lvdspll_outputs),
+ 	.output = lvdspll_outputs,
+ 	.core_output = lvdspll_core_outputs,
++	.acr = UL(0x00070010),
+ };
+ 
+ static const struct clk_pll_characteristics upll_characteristics = {
+@@ -160,6 +163,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
+ 	.num_output = ARRAY_SIZE(upll_outputs),
+ 	.output = upll_outputs,
+ 	.core_output = upll_core_outputs,
++	.acr = UL(0x12020010),
+ 	.upll = true,
+ };
+ 
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 8385badc1c70..1340c2b00619 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -113,6 +113,7 @@ static const struct clk_pll_characteristics cpu_pll_characteristics = {
+ 	.num_output = ARRAY_SIZE(cpu_pll_outputs),
+ 	.output = cpu_pll_outputs,
+ 	.core_output = core_outputs,
++	.acr = UL(0x00070010),
+ };
+ 
+ /* PLL characteristics. */
+@@ -121,6 +122,7 @@ static const struct clk_pll_characteristics pll_characteristics = {
+ 	.num_output = ARRAY_SIZE(pll_outputs),
+ 	.output = pll_outputs,
+ 	.core_output = core_outputs,
++	.acr = UL(0x00070010),
+ };
+ 
+ /*
+-- 
+2.43.0
 
-There's multiple reviewers representing different companies.
-
-> especially give that userspace tools like lspci already expose
-> this when someone needs it.
-
-Only if you're root. This new attribute is admin-only by default too,
-but can be changed as needed.
-
-> Also, we were reluctant to expose some types of information, like serial
-> numbers and such, via the VPD recently, so why exposing any serial numbers
-> via sysfs would be any different?
-
-It's a specification defined attribute of a device, and sysfs is the
-interface that exports device attributes.
 
