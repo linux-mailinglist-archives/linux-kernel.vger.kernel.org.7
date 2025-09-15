@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-817058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C3AB57D77
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:36:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF391B57D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AD82A102B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35BA43A3D1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E393191D7;
-	Mon, 15 Sep 2025 13:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2F7315D28;
+	Mon, 15 Sep 2025 13:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJGZ1vBQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HwcrGxrA"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4792313291;
-	Mon, 15 Sep 2025 13:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5117313291;
+	Mon, 15 Sep 2025 13:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757943281; cv=none; b=kCNzxLouwtx8lvaGWcXqci7Kn71XRx8w2dQ1fLwM/DXh9iDxqXvsXYeJzPj1jHfIAOL1phX7A68L3FGvGSWP/IUQitJJj9IHvy0j4zvMk3lcnQ7/HaWG6iSgFATOW47d7fA+U7rAqv4BkNgwQjonsa6i6PW1cD8xwOtR+R2krKk=
+	t=1757943293; cv=none; b=q6+8pGq7jzryqcICN3ZPTubsse2wroX/eUhn00bgCwpx2cZh/opjnqt8IHrEym0ArXJh7XGN84k9L00nWgHMgIInPKicJuQxQKDwmOTsTxRENw6ZmPDcPBir0xIJBx5/ZVG414wQ7ivyowzxQs7vhdVNirdOxX92THFn1l/XwA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757943281; c=relaxed/simple;
-	bh=G1pxbFOuDJsJnBF0m+5CY6Xwwfubv5cFdvznrZJvWPg=;
+	s=arc-20240116; t=1757943293; c=relaxed/simple;
+	bh=fPtIoj0FkrwQP2tgb+LAMXtFykuyWDiFG6GIu6JEh3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkfHiPj1UpfBq8XCfhhzzHPDGr9xBeZaX7wPEA1SOYykFR7UBSgp0wkVo2BBFYed+ECtfAmcx/kTpNpTTEqv2oNAs8tIPopgbduz/YzdO6pwjGTIbD7wplQT9aK9SN6DdzWj0CGvL9zj8ggJjuwp+n3TVsqYQZHImRxsTB3LVsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJGZ1vBQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06662C4CEF5;
-	Mon, 15 Sep 2025 13:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757943280;
-	bh=G1pxbFOuDJsJnBF0m+5CY6Xwwfubv5cFdvznrZJvWPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BJGZ1vBQTvO1OLFpsKgtQvIkjtAVvJey56ZqhZxYzVB3EDoeucwA9j3Ikra0r96a5
-	 jQw9/XHjAdC85R6jORBqXH6OkpLRRmI0UaRxSBMlJTyGu8sObrPf6EYsRHYnpzWABK
-	 4guOhpliPb5aYSSJ1cikDCiA9fl38O9CJLfhWdf/1FUDPbaUHhsgjd/BUigP/DwSAR
-	 ZgzXa5kZ1LN2Vwu2d8y8wxYWU6XMdt47ld5N4t1CFweo+0HtUX4GHSNgmsq7QjI/jF
-	 wghZzlNvaq7LpEjMzkOqler37Pf0I1gD2UiJKUJFEipxphTk6d9TTXloxjbYPhi7oP
-	 Dxi908vsrFrMg==
-Date: Mon, 15 Sep 2025 15:34:26 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
-	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>, 
-	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
-	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-um@lists.infradead.org, 
-	x86@kernel.org, Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org, 
-	initramfs@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, 
-	linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
-Subject: Re: [PATCH RESEND 00/62] initrd: remove classic initrd support
-Message-ID: <20250915-modebranche-marken-fc832a25e05d@brauner>
-References: <20250913003842.41944-1-safinaskar@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcTYiNWfe0i6qb5YCHvMmVGpurNtzwpiz2zVQeVVgjt0GMQi42yxDzD3IRmvvtC45mogHyU8SsLR/hfLyDqmlv2oR4yeHtzrzCGxbzsE2uwJWJBBrcRPgU4URwkkC/t49488SCiRJx/Tw/qpP6KdixOI+3ALDzfA/7vkqQxf588=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HwcrGxrA; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=tIaERIBIwJafIeyw2K3jSp5OGzOS9qBC9uS4brU4IqM=; b=HwcrGxrAnnF7LG6L1V8LREbJR8
+	KJLkr1Pd2zBaMbrs+4EAsXp/0peBgG+d98LTmKRBVY6f2GwbELwKIlFqU6kYF5FAw844uUkglUx/S
+	QYQsuFvGBIJAOeQcbFzx7Ho9lMjIHBuJL23kha+3Qs69S/CHeo6OtvgBuKOY1+5Q23k4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uy9M0-008Rj1-1W; Mon, 15 Sep 2025 15:34:48 +0200
+Date: Mon, 15 Sep 2025 15:34:48 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v2 3/5] net: cadence: macb: Add support for Raspberry Pi
+ RP1 ethernet controller
+Message-ID: <d2afd474-1514-4663-9e96-7efea30a5eaa@lunn.ch>
+References: <20250822093440.53941-1-svarbanov@suse.de>
+ <20250822093440.53941-4-svarbanov@suse.de>
+ <0142ac69-f0eb-4135-b0d2-50c9fec27d43@suse.de>
+ <8715a21b-83ac-4bc1-b856-fa90bb5b809f@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250913003842.41944-1-safinaskar@gmail.com>
+In-Reply-To: <8715a21b-83ac-4bc1-b856-fa90bb5b809f@suse.de>
 
-On Sat, Sep 13, 2025 at 12:37:39AM +0000, Askar Safin wrote:
-> Intro
-> ====
-> This patchset removes classic initrd (initial RAM disk) support,
-> which was deprecated in 2020.
+On Mon, Sep 15, 2025 at 02:27:34PM +0300, Stanimir Varbanov wrote:
+> 
+> 
+> On 9/10/25 2:32 PM, Stanimir Varbanov wrote:
+> > Hi Jakub,
+> > 
+> > On 8/22/25 12:34 PM, Stanimir Varbanov wrote:
+> >> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> >>
+> >> The RP1 chip has the Cadence GEM block, but wants the tx_clock
+> >> to always run at 125MHz, in the same way as sama7g5.
+> >> Add the relevant configuration.
+> >>
+> >> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> >> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> >> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> >> ---
+> >>  drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++++
+> >>  1 file changed, 12 insertions(+)
+> >>
+> > 
+> > This patch is missing in net-next but ("dt-bindings: net: cdns,macb: Add
+> > compatible for Raspberry Pi RP1") from this series has been applied.
+> > 
+> > Could you take this patch as well, please.
+> 
+> Gentle ping.
 
-This is a good idea but the patchset does a bit too much and it's pretty
-convoluted and mixes cleanups with the removal of initrd support and so
-it's not that great to review let alone merge especially considering
-that a revert might be needed.
+Such pings are ignored. Please rebase the patch to net-next and submit
+it again.
 
-Split it up into multiple patch series. Send a first series that
-focusses only on removing the generic infrastructure keeping it as
-contained as possible. Only do non-generic cleanups that are absolutely
-essential for the removal. Then the cleanups can go in separate series
-later.
-
-As usual I'm happy to try to shed old code but I wouldn't be too
-optimistic that we'll get away with this and if so it needs to be
-surgical.
+	Andrew
 
