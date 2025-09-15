@@ -1,165 +1,123 @@
-Return-Path: <linux-kernel+bounces-816244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCBDB5717C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:29:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186F6B57185
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18B124E16AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066FD18924E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9301C2D5A13;
-	Mon, 15 Sep 2025 07:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF322D6620;
+	Mon, 15 Sep 2025 07:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LfDSNl+V"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="J3gk/IUn"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CEE2D5410;
-	Mon, 15 Sep 2025 07:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F71F4174;
+	Mon, 15 Sep 2025 07:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921341; cv=none; b=mm5X0mHtt5x2e5V+pFgtE1fqki6kR0lELASqNgDoGW0vjw6L2RWS0k9BsbJCx7GmEUHTohvYXvMoo/D8mTwjNWaK+EtPqtSB5mj4pHrswwZ3OGnc3K00FXNJUt6xCkrNO8opZo0KS6mVFJo+4raCjCk4MYz9GWMsY7m3ORAnZ94=
+	t=1757921430; cv=none; b=u7SO5+t2xEUMURg54uz4nNAigtUwXHHdrWY/Jn2YexNZZNbKFWPNqeoc5mb0/z0mdYqTvxXSqHmUfA0YYiHq0YKlWRtpX4sf3fTxJEXtTUIDNtVYhZQLLk7JK9Xsxi42BaKyGatyyVHfo1SNWFU9LDKcMTyphnnQqiFtNzJ5Y74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921341; c=relaxed/simple;
-	bh=GXEPazfaV4yHZLRavKhdyKStvO3E/DjBkytTjtx7oYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZE8YqeRYjfPLJzw9VohRfXUVehXF+8NoAV8YRD0CvZBPPMBGuf0BgOGzfJhKYSiSN2Lma5gGFwhs0bS/ow4hssbskKdrBEAsn12kxxt29DXPI5xkszLJSQp6v4KLJ4br3z7iXGCj30189iu+8WlQb6cA8mYt0jsc5X8XJQfA2xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LfDSNl+V; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757921337;
-	bh=GXEPazfaV4yHZLRavKhdyKStvO3E/DjBkytTjtx7oYc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LfDSNl+VFT3HhTIWTMkRiyNe781kVDlIlyWFraoYz0tlEIfTvGX1/ULcCrKlXvOoh
-	 Ywjaz2qMjH24AyXSe5b8qNWWgwHLvVUKC7WYG52ku74vFv7CtdYLj1uLsT3KBD+AHe
-	 13xsGCqvephqcHESgMgHNU4Oie2mNy1bWPwfL9GTZKhE8FgwYyqoA34QzVbfsycetB
-	 0dumOr/X9ie8215pyMubkphHrfjASAzvEOHm8udMCXST6Dh9HPTuS4Hyv+p0NS2o6H
-	 r8eJuiZd3P/q1M5BAiJDssxFAcH6iY3al1w06QfezBf9zqtFQkuEDpwdMN3q7Q2Yz6
-	 sGf99VFaO+3Qg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id F36D317E0AC3;
-	Mon, 15 Sep 2025 09:28:56 +0200 (CEST)
-Message-ID: <7bacf8ca-4ec4-4b06-b989-52e287a812d8@collabora.com>
-Date: Mon, 15 Sep 2025 09:28:56 +0200
+	s=arc-20240116; t=1757921430; c=relaxed/simple;
+	bh=XcH7i1NU1nkQKzNcmQPjDrqXYBVW64HelzyptMyKuVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdDyFPnjrhg1eW8m+OYx+CeITy2BLCtXzUM2owPZiYJPVOHsxqR7HNP3nvR/+7oM4UUtqGlxjq8d9Wb5gOJh1NREyZTNYbekUPvpClYX2Fj6D19sZtgS2AxCoYQOfkEU66/Xpd2TAvlh3Njk1PqpNrf2WMQ8kzzy/qnCy50rWfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=J3gk/IUn; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=iiG+4BPtqocqvD5BfQ1WbBJoY22xYm8SxsvFP5Qb9Pk=;
+	b=J3gk/IUnjqDdVtZ1I9NEOZQysOSsqYMikjXTU/ngPgIunKH+pNW7fHmAmMpX/T
+	WyvWE5WUjMZqcIoAPbyW6U0PW9HMw6zWQF2JC203DUyiTL+VQ+X9/XMyvEPR6FxB
+	JqC2ZCqC8PXET/hu0thZQ6CnKtDpeRe75Shg6UBSQtAUc=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgC3dW9CwMdoe7d5BA--.6943S3;
+	Mon, 15 Sep 2025 15:29:07 +0800 (CST)
+Date: Mon, 15 Sep 2025 15:29:05 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
+Message-ID: <aMfAQXE4sRjru9I_@dragon>
+References: <20250910065312.176934-1-shawnguo2@yeah.net>
+ <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
+ <aMQbIu5QNvPoAsSF@dragon>
+ <20250914174326.i7nqmrzjtjq7kpqm@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: mediatek: Document MT6878
- pin controller bindings
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Sean Wang <sean.wang@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20250914-mt6878-pinctrl-support-v2-0-254731aa3fc2@mentallysanemainliners.org>
- <20250914-mt6878-pinctrl-support-v2-1-254731aa3fc2@mentallysanemainliners.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250914-mt6878-pinctrl-support-v2-1-254731aa3fc2@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914174326.i7nqmrzjtjq7kpqm@airbuntu>
+X-CM-TRANSID:M88vCgC3dW9CwMdoe7d5BA--.6943S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw43JF1UAw4rXr17Xry3CFg_yoW8Cw43pF
+	WUu3y2y34kWa1Dtws2ya18u3WFvan8J3yjkFyUurnYvwsxJ3WYg3WUGa1UAFZ8A3ykG3Wq
+	qr1Ut39rXF4jkaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uz6wZUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIARNsmjHwEQhQAAA3R
 
-Il 14/09/25 16:51, Igor Belwon ha scritto:
-> Add device-tree bindings for the pin controller and the EINT controller
-> found in the MediaTek MT6878 SoC.
+On Sun, Sep 14, 2025 at 06:43:26PM +0100, Qais Yousef wrote:
+> > > Why do you want to address the issue in the cpufreq core instead of
+> > > doing that in the cpufreq-dt driver?
+> > 
+> > My intuition was to fix the regression at where the regression was
+> > introduced by recovering the code behavior.
 > 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->   .../bindings/pinctrl/mediatek,mt6878-pinctrl.yaml  | 210 +++++++++++++++++++++
->   1 file changed, 210 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f320d286ad2155bc4aa449c195ddff3a8686204c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6878-pinctrl.yaml
-> @@ -0,0 +1,210 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/mediatek,mt6878-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6878 Pin Controller
-> +
-> +maintainers:
-> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> +  - Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> +
-> +description:
-> +  The MediaTek MT6878 Pin controller is used to control SoC pins.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6878-pinctrl
-> +
-> +  reg:
-> +    items:
-> +      - description: pin controller base
-> +      - description: bl group IO
-> +      - description: bm group IO
-> +      - description: br group IO
-> +      - description: bl1 group IO
-> +      - description: br1 group IO
-> +      - description: lm group IO
-> +      - description: lt group IO
-> +      - description: rm group IO
-> +      - description: rt group IO
-> +      - description: EINT controller E block
-> +      - description: EINT controller S block
-> +      - description: EINT controller W block
-> +      - description: EINT controller C block
-> +
-> +  reg-names:
-> +    items:
-> +      - const: base
-> +      - const: bl
-> +      - const: bm
-> +      - const: br
-> +      - const: bl1
-> +      - const: br1
-> +      - const: lm
-> +      - const: lt
-> +      - const: rm
-> +      - const: rt
-> +      - const: eint-e
-> +      - const: eint-s
-> +      - const: eint-w
-> +      - const: eint-c
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    description:
-> +      Number of cells in GPIO specifier. Since the generic GPIO binding is used,
-> +      the amount of cells must be specified as 2. See the below mentioned gpio
-> +      binding representation for description of particular cells.
-> +    const: 2
-> +
-> +  gpio-ranges:
-> +    maxItems: 1
-> +
-> +  gpio-line-names: true
+> Isn't the right fix here is at the driver level still? We can only give drivers
+> what they ask for. If they ask for something wrong and result in something
+> wrong, it is still their fault, no?
 
-Krzysztof asked you to restrict the maximum number of gpio-line-names if I
-remember correctly, you forgot to do so :-)
+I'm not sure.  The cpufreq-dt driver is following suggestion to use
+CPUFREQ_ETERNAL, which has the implication that core will figure out
+a reasonable default value for platforms where the latency is unknown.
+And that was exactly the situation before the regression.  How does it
+become the fault of cpufreq-dt driver?
 
-Cheers,
-Angelo
+> Alternatively maybe we can add special handling for CPUFREQ_ETERNAL value,
+> though I'd suggest to return 1ms (similar to the case of value being 0). Maybe
+> we can redefine CPUFREQ_ETERNAL to be 0, but not sure if this can have side
+> effects.
+
+Changing CPUFREQ_ETERNAL to 0 looks so risky to me.  What about adding
+an explicit check for CPUFREQ_ETERNAL?
+
+---8<---
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index fc7eace8b65b..053f3a0288bc 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -549,11 +549,15 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
+        if (policy->transition_delay_us)
+                return policy->transition_delay_us;
+ 
++       if (policy->cpuinfo.transition_latency == CPUFREQ_ETERNAL)
++               goto default_delay;
++
+        latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
+        if (latency)
+                /* Give a 50% breathing room between updates */
+                return latency + (latency >> 1);
+ 
++default_delay:
+        return USEC_PER_MSEC;
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
+
+--->8---
+
+Shawn
 
 
