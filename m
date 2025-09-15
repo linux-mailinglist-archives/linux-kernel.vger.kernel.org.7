@@ -1,244 +1,254 @@
-Return-Path: <linux-kernel+bounces-816594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740FEB575FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F06CB575F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB3F3BAC4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31CAF1896803
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5E32FD7DD;
-	Mon, 15 Sep 2025 10:14:51 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6E32FC897;
+	Mon, 15 Sep 2025 10:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwIOS4MH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8176E2FC002;
-	Mon, 15 Sep 2025 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C422FB615;
+	Mon, 15 Sep 2025 10:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931291; cv=none; b=qmvkFFdDUD9iPX9snWfdjGo00g+wO38KfqEliyXMXgJ1oFRCmU6uDXNsZdy0nd/t1erjH/XKxz2tVjfZ8G26mLLHTGYRtxQ5imHEDkRxPDH0WawmLKTW7Z9NECOzGI8SfNPsAFw6d3QolSpjMB1x7iFY4BWLP/x+yxO+ecH2sw8=
+	t=1757931258; cv=none; b=cIOtg5Y+zq3hzGxZLbpqveLhWaObg05ZqXEjUndRyHRJrFyzYo23lj7eeBl32X/KGApCWUnpaVNKQn5YBtdAQVYaB6Ig7EJntWpqoTbikOY1LR8m+5IcaHPG+vItrySjOomOCtqea6yy/rd6mWAgB5XOu1S7792vHy3pmYlGrVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931291; c=relaxed/simple;
-	bh=wmh+6WoTIzt69uzJ/QM4LwRFfOW4HB3rilPET+COi3g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t5lIxdPJ/P7hNMAYYPSxehmF36Hr/KDTRj39yFkepVgjdqk0GtnofAxwvoVBAuTA+G1NnQAFRy/AJCMPTOMw2NJO3wTU8XdcLTsDaHtbtJzuYBT034GSSm3esctpPgSLk5A/TaNJc/Alo3bNNWbeku78Jc6udPvNSyahFN1RC/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.101])
-	by APP-05 (Coremail) with SMTP id zQCowAD3lxHf5sdoHWn3Ag--.53429S7;
-	Mon, 15 Sep 2025 18:13:58 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: linux-riscv@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V12 5/5] riscv: mm: Add userfaultfd write-protect support
-Date: Mon, 15 Sep 2025 18:13:43 +0800
-Message-Id: <20250915101343.1449546-6-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250915101343.1449546-1-zhangchunyan@iscas.ac.cn>
-References: <20250915101343.1449546-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1757931258; c=relaxed/simple;
+	bh=SIEs9n6hrG+yng86tGVw2VfwaKQOVNscQokfGNTf4Hk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eGHcE7VN1kLHjPZDm/DnriYmTcDWkCEswpnGXD4CGllBA2loOSv6Wrnc1ecGuN8qfTjPtVdTMg86g3qFf+FGurqoky64GKTUja0UTtr27yHFT4KzI/G1HyhrV0Sy7wk6++801Rg+ojs/r0o7ZlsM/Fcy4Xl6b5bboa5rBoUz6J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwIOS4MH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 92835C4CEF9;
+	Mon, 15 Sep 2025 10:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757931257;
+	bh=SIEs9n6hrG+yng86tGVw2VfwaKQOVNscQokfGNTf4Hk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TwIOS4MHaBwkszOsilzkclSsQ7JUZQ9SMwnB6AGNRiOwkwYP4QRqnLlu+8uu68wNC
+	 zJugYKAxZhnkWMpUY5KNCgzqBIRhXtzOTU8duLQr9C6RyuM9LgF51pPV1rJp6t/sdw
+	 vPXMTsYfYyfcYnQmXVrAExFE4hopeF1LpeoTEfy8IFnjB+WT8QYQMTkPQbNA2s3dd9
+	 bQWXo6xjINeR8MMJs0RCzBYRPsrP3nrGvl//RBEXRI08Iqat+ZtJocWfYM+Dce4BAN
+	 ewHwQr7I/8xL4QuVNCgs3Qc8e3AubdwUmSHcK13K4tGGq0ctplhjZMRzUYgDSjfvOW
+	 NCwlucvDLwCgA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8090FCAC597;
+	Mon, 15 Sep 2025 10:14:17 +0000 (UTC)
+From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
+Subject: [PATCH v6 0/2] MAX77759 Fuel Gauge driver support
+Date: Mon, 15 Sep 2025 12:14:09 +0200
+Message-Id: <20250915-b4-gs101_max77759_fg-v6-0-31d08581500f@uclouvain.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAD3lxHf5sdoHWn3Ag--.53429S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF48ZF4kKF4xKFW5urWrAFb_yoWruw15pr
-	s5Ga95urWDJF97tayftr4YgrWrZw4fWa4DWr9xCa1kJFy7K3yDXr95Kry3try8JFWvv347
-	WFWrKr1rCw47JrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmEb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28C
-	jxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI
-	8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E
-	87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
-	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK67AK6r4DMxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-	I_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
-	6r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4U
-	JVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IUnqNt7UUUUU==
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAgGB2jHtULAQwABsf
+X-B4-Tracking: v=1; b=H4sIAPHmx2gC/4XRwWrDMAwG4FcpPs9DtuU47mnvMUqxEzk1bMlmN
+ 6al5N3ndhuF0bCL4BfoE0gXlilFymy7ubBEJeY4jTU0TxvWHdw4EI99zUyCRFEL98iHLEDs393
+ JGKPtPgwcQZJUwqFXitXRj0Qhnm7s667mQ8zHKZ1vW4q4dv8Bi+DAbdvL4IwPpOBl7t6mubg4P
+ ntiV7PIX0eDWHVkdVpjtXWevAnhgYN3R0u14mB1PFoLSEo7hQ+c5u60gCuOrg4oh0BNB6T6P87
+ yfbxEn3N9xfHngsvyBQrqcxyoAQAA
+X-Change-ID: 20241202-b4-gs101_max77759_fg-402e231a4b33
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757931256; l=7205;
+ i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
+ bh=SIEs9n6hrG+yng86tGVw2VfwaKQOVNscQokfGNTf4Hk=;
+ b=g2M3SOd04Q0Pg8cjMAaTjzMFSeU0J/YFyAfuve6C1EkvzBBgrOEKN7b+02evxbVmn/6MmWZ/9
+ WYbfdWoq0xsDkZuMXzrJ4sZ006ZFo5lmC3NUpIxwcVH+Z38WE9AD/sx
+X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
+ pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
+X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
+ auth_id=289
+X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
+Reply-To: t.antoine@uclouvain.be
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-for software, this patch uses bit 60 for uffd-wp tracking
+The gs101-oriole (Google Pixel 6) and gs101-raven (Google Pixel 6 Pro)
+have a Maxim MAX77759 which provides a fuel gauge functionality based
+on the MAX M5 fuel gauge.
 
-Additionally for tracking the uffd-wp state as a PTE swap bit, we borrow
-bit 4 which is not involved into swap entry computation.
+Add a driver for the fuel gauge of the Maxim MAX77759 based on the
+one for the Maxim MAX1720x which also uses the MAX M5 fuel gauge.
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+A future patch will add both gs101-oriole and gs101-raven as clients.
+
+Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
 ---
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-bits.h | 18 +++++++
- arch/riscv/include/asm/pgtable.h      | 68 +++++++++++++++++++++++++++
- 3 files changed, 87 insertions(+)
+Changes in v6:
+- Remove devicetree and defconfig changes from patch
+- Driver: Check return of power_supply_get_battery_info (Peter Griffin)
+- Binding: Fix properties order of the example and add power supply ref
+(Krzysztof Kozlowski)
+- Link to v5: https://lore.kernel.org/all/20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index db3337300c4c..637edec03b2d 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -147,6 +147,7 @@ config RISCV
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD if 64BIT && MMU
- 	select HAVE_ARCH_USERFAULTFD_MINOR if 64BIT && USERFAULTFD
-+	select HAVE_ARCH_USERFAULTFD_WP if 64BIT && MMU && USERFAULTFD && RISCV_ISA_SVRSW60T59B
- 	select HAVE_ARCH_VMAP_STACK if MMU && 64BIT
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index f3bac2bbc157..b422d9691e60 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -38,6 +38,24 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+
-+/* ext_svrsw60t59b: Bit(60) for uffd-wp tracking */
-+#define _PAGE_UFFD_WP							\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 (1UL << 60) : 0)
-+/*
-+ * Bit 4 is not involved into swap entry computation, so we
-+ * can borrow it for swap page uffd-wp tracking.
-+ */
-+#define _PAGE_SWP_UFFD_WP						\
-+	((riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)) ?	\
-+	 _PAGE_USER : 0)
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 28057afaee33..0d9ae32ae29e 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -416,6 +416,41 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+#define pgtable_supports_uffd_wp()	\
-+	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVRSW60T59B)
-+
-+static inline bool pte_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_UFFD_WP);
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline bool pte_swp_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -838,6 +873,38 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline bool pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline bool pmd_soft_dirty(pmd_t pmd)
- {
-@@ -1055,6 +1122,7 @@ static inline pud_t pud_modify(pud_t pud, pgprot_t newprot)
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 2:	(zero)
-  *	bit            3:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit            4:	_PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
+Changes in v5:
+- Separate MAX77759 from MAX1720x for clarity
+- Remove voltage reporting
+- Add initialization of the chip
+- Add device dependent initialization data
+- Add access to eeprom for access to non-volatile backup data.
+- Link to v4: https://lore.kernel.org/r/20250523-b4-gs101_max77759_fg-v4-0-b49904e35a34@uclouvain.be
+
+Changes in v4:
+- Make first patch standalone
+- Separate MAX77759 defines from MAX1720x defines (Dimitri Fedrau)
+- Inline device name property (Dimitri Fedrau)
+- Separate MAX77759 capacity lsb logic from the MAX1720x capacity
+  computation (Dimitri Fedrau)
+- Use device_property_read_u32 instead of of_property_read_u32
+  (Sebastian Reichel)
+- Removed leftover debugs
+- Move shunt-resistor-micro-ohms to out of allOf:if: (Krzysztof Kozlowski)
+- Fix reg-names constraints
+- Fix style errors
+- Link to v3: https://lore.kernel.org/r/20250421-b4-gs101_max77759_fg-v3-0-50cd8caf9017@uclouvain.be
+
+Changes in v3:
+- Update base tree to avoid conflicts
+- Fix capacity computation for max1720x
+- Add separate properties for the max7759 to disable non-functional ones
+- Take TASKPERIOD into account for voltage computation of max77759
+- Simplify vcell computation (Dimitri Fedrau)
+- Switch has_nvmem to bool and keep it only in chip_data (Dimitri Fedrau)
+- Drop the yes_range from the write table (Sebastian Reichel)
+- Add test_power_supply_properties.sh to cover letter (Sebastian Reichel)
+- Switch back some changes to binding and actually use allOf:if: to
+  restrict constraints (Krzysztof Kozlowski)
+- Fix style errors
+- Link to v2: https://lore.kernel.org/r/20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be
+
+Changes in v2:
+- Add fallback for voltage measurement (André Draszik)
+- Add regmap for the max77759 (André Draszik)
+- Add chip identification for the max77759 (André Draszik, Peter Griffin)
+- Move RSense value to a devicetree property shunt-resistor-micro-ohms
+  (Dimitri Fedrau, André Draszik)
+- Use allOf:if to narrow binding per variant (Krzysztof Kozlowski)
+- Remove binding example (Krzysztof Kozlowski)
+- Change defconfig order to follow savedefconfig (Krzysztof Kozlowski)
+- Fix style errors
+- Link to v1: https://lore.kernel.org/r/20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be
+
+tools/testing/selftests/power_supply/test_power_supply_properties.sh:
+gs101-oriole:
+  # Testing device max77759-fg
+  ok 1 max77759-fg.exists
+  ok 2 max77759-fg.uevent.NAME
+  ok 3 max77759-fg.sysfs.type
+  ok 4 max77759-fg.uevent.TYPE
+  ok 5 max77759-fg.sysfs.usb_type # SKIP
+  ok 6 max77759-fg.sysfs.online # SKIP
+  # Reported: '1' ()
+  ok 7 max77759-fg.sysfs.present
+  ok 8 max77759-fg.sysfs.status # SKIP
+  # Reported: '99' % ()
+  ok 9 max77759-fg.sysfs.capacity
+  ok 10 max77759-fg.sysfs.capacity_level # SKIP
+  # Reported: 'MAX77759' ()
+  ok 11 max77759-fg.sysfs.model_name
+  # Reported: 'Maxim Integrated' ()
+  ok 12 max77759-fg.sysfs.manufacturer
+  ok 13 max77759-fg.sysfs.serial_number # SKIP
+  ok 14 max77759-fg.sysfs.technology # SKIP
+  ok 15 max77759-fg.sysfs.cycle_count # SKIP
+  ok 16 max77759-fg.sysfs.scope # SKIP
+  ok 17 max77759-fg.sysfs.input_current_limit # SKIP
+  ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
+  ok 19 max77759-fg.sysfs.voltage_now # SKIP
+  ok 20 max77759-fg.sysfs.voltage_min # SKIP
+  ok 21 max77759-fg.sysfs.voltage_max # SKIP
+  ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
+  ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
+  # Reported: '1562' uA (1.562 mA)
+  ok 24 max77759-fg.sysfs.current_now
+  ok 25 max77759-fg.sysfs.current_max # SKIP
+  ok 26 max77759-fg.sysfs.charge_now # SKIP
+  # Reported: '4562000' uAh (4.562 Ah)
+  ok 27 max77759-fg.sysfs.charge_full
+  # Reported: '4524000' uAh (4.524 Ah)
+  ok 28 max77759-fg.sysfs.charge_full_design
+  ok 29 max77759-fg.sysfs.power_now # SKIP
+  ok 30 max77759-fg.sysfs.energy_now # SKIP
+  ok 31 max77759-fg.sysfs.energy_full # SKIP
+  ok 32 max77759-fg.sysfs.energy_full_design # SKIP
+  ok 33 max77759-fg.sysfs.energy_full_design # SKIP
+
+  gs101-raven:
+  # Testing device max77759-fg
+  ok 1 max77759-fg.exists
+  ok 2 max77759-fg.uevent.NAME
+  ok 3 max77759-fg.sysfs.type
+  ok 4 max77759-fg.uevent.TYPE
+  ok 5 max77759-fg.sysfs.usb_type # SKIP
+  ok 6 max77759-fg.sysfs.online # SKIP
+  # Reported: '1' ()
+  ok 7 max77759-fg.sysfs.present
+  ok 8 max77759-fg.sysfs.status # SKIP
+  # Reported: '100' % ()
+  ok 9 max77759-fg.sysfs.capacity
+  ok 10 max77759-fg.sysfs.capacity_level # SKIP
+  # Reported: 'MAX77759' ()
+  ok 11 max77759-fg.sysfs.model_name
+  # Reported: 'Maxim Integrated' ()
+  ok 12 max77759-fg.sysfs.manufacturer
+  ok 13 max77759-fg.sysfs.serial_number # SKIP
+  ok 14 max77759-fg.sysfs.technology # SKIP
+  ok 15 max77759-fg.sysfs.cycle_count # SKIP
+  ok 16 max77759-fg.sysfs.scope # SKIP
+  ok 17 max77759-fg.sysfs.input_current_limit # SKIP
+  ok 18 max77759-fg.sysfs.input_voltage_limit # SKIP
+  ok 19 max77759-fg.sysfs.voltage_now # SKIP
+  ok 20 max77759-fg.sysfs.voltage_min # SKIP
+  ok 21 max77759-fg.sysfs.voltage_max # SKIP
+  ok 22 max77759-fg.sysfs.voltage_min_design # SKIP
+  ok 23 max77759-fg.sysfs.voltage_max_design # SKIP
+  # Reported: '4375' uA (4.375 mA)
+  ok 24 max77759-fg.sysfs.current_now
+  ok 25 max77759-fg.sysfs.current_max # SKIP
+  ok 26 max77759-fg.sysfs.charge_now # SKIP
+  # Reported: '4676000' uAh (4.676 Ah)
+  ok 27 max77759-fg.sysfs.charge_full
+  # Reported: '4904000' uAh (4.904 Ah)
+  ok 28 max77759-fg.sysfs.charge_full_design
+  ok 29 max77759-fg.sysfs.power_now # SKIP
+  ok 30 max77759-fg.sysfs.energy_now # SKIP
+  ok 31 max77759-fg.sysfs.energy_full # SKIP
+  ok 32 max77759-fg.sysfs.energy_full_design # SKIP
+  ok 33 max77759-fg.sysfs.energy_full_design # SKIP
+
+---
+Thomas Antoine (2):
+      power: supply: add support for MAX77759 fuel gauge
+      dt-bindings: power: supply: add support for MAX77759 fuel gauge
+
+ .../bindings/power/supply/maxim,max77759.yaml      |  78 +++
+ drivers/power/supply/Kconfig                       |  14 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/max77759_battery.c            | 652 +++++++++++++++++++++
+ 4 files changed, 745 insertions(+)
+---
+base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+change-id: 20241202-b4-gs101_max77759_fg-402e231a4b33
+
+Best regards,
 -- 
-2.34.1
+Thomas Antoine <t.antoine@uclouvain.be>
+
 
 
