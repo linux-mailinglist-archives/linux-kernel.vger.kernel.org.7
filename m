@@ -1,219 +1,86 @@
-Return-Path: <linux-kernel+bounces-817575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25E8B58400
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:52:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ACBB58401
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399F317C1D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B142B3AB0AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D06329C343;
-	Mon, 15 Sep 2025 17:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iwUc5kcN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866282C2345;
+	Mon, 15 Sep 2025 17:52:08 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CD45C96;
-	Mon, 15 Sep 2025 17:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD56329CB48
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757958725; cv=none; b=iP7xLt4YTE+NGqVOfhW7KqPaW+Vr1BiVag9YTm/pYHwmnS27NGNZ+9ZbGETOUSsvO8D5aWLtGbNTgTLJV3SWu90CIKE4XjRTS6LSyxzZOoL2tjZYpzgr6ycNnrFB5mPgP+1nPrf8xa5wrWqppSdxhB0+qFtW+U8QJ+c9oObsl7E=
+	t=1757958728; cv=none; b=XyU4Vwj7Kcq/U0PvgxujBYKXhTj+JmbWNcjebQ1MRflVM/5R8NvQNmy3l5NotB1Rw1n73sgl6zv2fBWHbieyqNv1SRgKmg+E+RXg355Sn4Ks/XOYHgDxe/tTz2bzUcbau8BfH7X+NJtNoZtJ6AgfPjsnohBdvK4/a19R821Q7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757958725; c=relaxed/simple;
-	bh=NU+TKvEvde8dfyNg/eYCd/pOhIAzHUbKhhLR1unR06g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2m5CrPNFcJ8K/IrW8PjkOzxrpjZIh51LODbEp5f6FkTGCNs6hd7Mhc1igL1JS9dx6AIwpjzbflSTjhSsazDT8biNEO7iACIOohIjLwkJDKx//EhSQi01D0lvPGRECxDxTUxq8qN8NsEJXP977GSc//P0GdB9nv2l19NihHbVnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iwUc5kcN; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757958724; x=1789494724;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=NU+TKvEvde8dfyNg/eYCd/pOhIAzHUbKhhLR1unR06g=;
-  b=iwUc5kcNo2t2Z1bdRWRenvPbGiiWt2/geyweN0pMwNs9TofKH45H1CJg
-   sjtuaABJUQNL3NSeKDaT7bUGwwGUWL6zDbgT5xf+Qj8uoDl+XTBiOEQR/
-   o4xmN/PJS2lBdgfw0TJ6didDbG+hPOEpueetfumnWrTJrxmwBQBAkAJD+
-   dAMqDzOEL8iRF95HC/zLi65qwUnQ1yJwBzQdU1jUrcwthS+QQaKR1mrmy
-   XuBx57qhD4VuSrbYWKAyXFn603kGvdLapnq8szxQDiDqAptlrHLWxCncU
-   iuYDDcC++ixFrnJnZC2pF9vMXXYJQJizmij+EX+3VYH28QYixoL1fstEY
-   g==;
-X-CSE-ConnectionGUID: +LU7x6YBTQ6t/34xB6o24Q==
-X-CSE-MsgGUID: BC7ETP1kTvKBDQsWdLRgwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="64045148"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="64045148"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:52:03 -0700
-X-CSE-ConnectionGUID: p1TAoOGIS7+NWPc1DhIsMw==
-X-CSE-MsgGUID: Qw5OfQ+xS+6o7Lgh/VoUlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="174254944"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.113])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:52:01 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id B102411F785;
-	Mon, 15 Sep 2025 20:51:57 +0300 (EEST)
-Date: Mon, 15 Sep 2025 20:51:57 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 2/4] ACPI: property: Add code comments explaining what
- is going on
-Message-ID: <aMhSPQZxYB61wVYe@kekkonen.localdomain>
-References: <5046661.31r3eYUQgx@rafael.j.wysocki>
- <2243680.irdbgypaU6@rafael.j.wysocki>
- <aMf5ZNW9t_6tfsjy@kekkonen.localdomain>
- <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
- <CAJZ5v0jVeSrDO6hrZhKgRZrH=FpGD4vNUjFD8hV9WwN9TLHjzQ@mail.gmail.com>
+	s=arc-20240116; t=1757958728; c=relaxed/simple;
+	bh=L3iNPtLV29vihGHH9eO//rUY/3dTdqv29QrUth7+D/0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PhnAmSjGK3N6NihQ5itkOAWkQrszgDwvndNubZ0obtMD86H5BBgk4rbYnaQ8NCfZWNT/GYc0Awa3Rnc+gA8UQ5qnoK4qV9TOEvR0oci8fJcFFErDe6xFFxSdjUSvACg8qXcRQKKPSyEOCTC4xiMXehpf1DpnA7BrlmPocJxuNv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42409f4ca72so19833815ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:52:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757958726; x=1758563526;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=26ocySBz5Kz9X1yZLNutgxJyhoVyEgJmtFwenGcnTTg=;
+        b=Iv87JAzuKOWclx1rlM/hfGijsMkzUdK1Swz406fmwFjIxvQ7NZZrvh87ZaYUBcPG02
+         nN8QYn7K1me+kLLD04LGOJuX8s8OLgROTfgMqS10ct/laP9u2SG0C7lGDVsjYDMf979t
+         nhQ58EfP6ICXt+/+mxAWHp4BtJbD00v/1mpti1513C2nop8tDnu4jRMOiDOHffN3Uh+6
+         FrMWXH52S8NWy/NSAVylICINtQQJcO/x3cSntO5YZPmXN7UVSFHsSySF3TVHc4yn/fGi
+         dpCTO8wlpkiNXsqaUKMqCOfZV/dBRasLVlfhV0loxtE3vSJzueGs5UM5j4Y07m35khbH
+         /rNA==
+X-Gm-Message-State: AOJu0YwuBAW8m6GvpMtHwksnIYvsnjARZWpXh1Sj+WYmjwiedp2qLZ8c
+	yywi9P8FdcqSJCH4faF6fPV44SomC7gS4VMKcnxSpZmMrFyVYV60P7oqLaTU8r1SMl7lXDRfXxh
+	n6EFauAErD2hBtinfHVddnVQq2eCjpXX9NhR0e9Wi+3EtG/bWspcFQfiH4eY=
+X-Google-Smtp-Source: AGHT+IGfiBWf9L+HdO9uRTMEnFyXYiD50FwDtW/78CWQ9lkWmJ6f2km4YYQMVr2FkC9DGL9AOzo4kB4BSJYAAIV+OJQAQBv1PVCO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jVeSrDO6hrZhKgRZrH=FpGD4vNUjFD8hV9WwN9TLHjzQ@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1545:b0:423:fc5f:caea with SMTP id
+ e9e14a558f8ab-423fc5fcdcamr71270605ab.14.1757958725768; Mon, 15 Sep 2025
+ 10:52:05 -0700 (PDT)
+Date: Mon, 15 Sep 2025 10:52:05 -0700
+In-Reply-To: <CAPrAcgP7f7rGNKKvHYe72jHMjo2D_8wRzoPt61stAiM0fccOhg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c85245.050a0220.2ff435.03a0.GAE@google.com>
+Subject: Re: [syzbot] [net?] [usb?] WARNING in rtl8150_start_xmit/usb_submit_urb
+From: syzbot <syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viswanathiyyappan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Rafael,
+Hello,
 
-On Mon, Sep 15, 2025 at 07:12:44PM +0200, Rafael J. Wysocki wrote:
-> On Mon, Sep 15, 2025 at 2:27 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > Hi Sakari,
-> >
-> > On Mon, Sep 15, 2025 at 1:32 PM Sakari Ailus
-> > <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Rafael,
-> > >
-> > > On Fri, Sep 12, 2025 at 09:40:58PM +0200, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >
-> > > > In some places in the ACPI device properties handling code, it is
-> > > > unclear why the code is what it is.  Some assumptions are not documented
-> > > > and some pieces of code are based on experience that is not mentioned
-> > > > anywhere.
-> > > >
-> > > > Add code comments explaining these things.
-> > > >
-> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > ---
-> > > >  drivers/acpi/property.c |   51 ++++++++++++++++++++++++++++++++++++++++++++++--
-> > > >  1 file changed, 49 insertions(+), 2 deletions(-)
-> > > >
-> > > > --- a/drivers/acpi/property.c
-> > > > +++ b/drivers/acpi/property.c
-> > > > @@ -108,7 +108,18 @@ static bool acpi_nondev_subnode_extract(
-> > > >       if (handle)
-> > > >               acpi_get_parent(handle, &scope);
-> > > >
-> > > > +     /*
-> > > > +      * Extract properties from the _DSD-equivalent package pointed to by
-> > > > +      * desc and use scope (if not NULL) for the completion of relative
-> > > > +      * pathname segments.
-> > > > +      *
-> > > > +      * The extracted properties will be held in the new data node dn.
-> > > > +      */
-> > > >       result = acpi_extract_properties(scope, desc, &dn->data);
-> > > > +     /*
-> > > > +      * Look for subnodes in the _DSD-equivalent package pointed to by desc
-> > > > +      * and create child nodes of dn if there are any.
-> > > > +      */
-> > > >       if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->fwnode))
-> > > >               result = true;
-> > > >
-> > > > @@ -153,6 +164,12 @@ static bool acpi_nondev_subnode_ok(acpi_
-> > > >       acpi_handle handle;
-> > > >       acpi_status status;
-> > > >
-> > > > +     /*
-> > > > +      * If the scope is unknown, the _DSD-equivalent package being parsed
-> > > > +      * was embedded in an outer _DSD-equivalent package as a result of
-> > > > +      * direct evaluation of an object pointed to by a reference.  In that
-> > > > +      * case, using a pathname as the target object pointer is invalid.
-> > > > +      */
-> > > >       if (!scope)
-> > > >               return false;
-> > > >
-> > > > @@ -172,6 +189,10 @@ static bool acpi_add_nondev_subnodes(acp
-> > > >       bool ret = false;
-> > > >       int i;
-> > > >
-> > > > +     /*
-> > > > +      * Every element in the links package is expected to represent a link
-> > > > +      * to a non-device node in a tree containing device-specific data.
-> > > > +      */
-> > > >       for (i = 0; i < links->package.count; i++) {
-> > > >               union acpi_object *link, *desc;
-> > > >               acpi_handle handle;
-> > > > @@ -182,22 +203,48 @@ static bool acpi_add_nondev_subnodes(acp
-> > > >               if (link->package.count != 2)
-> > > >                       continue;
-> > > >
-> > > > -             /* The first one must be a string. */
-> > > > +             /* The first one (the key) must be a string. */
-> > > >               if (link->package.elements[0].type != ACPI_TYPE_STRING)
-> > > >                       continue;
-> > > >
-> > > > -             /* The second one may be a string, a reference or a package. */
-> > > > +             /*
-> > > > +              * The second one (the target) may be a string, a reference or
-> > > > +              * a package.
-> > > > +              */
-> > > >               switch (link->package.elements[1].type) {
-> > > >               case ACPI_TYPE_STRING:
-> > > > +                     /*
-> > > > +                      * The string is expected to be a full pathname or a
-> > > > +                      * pathname segment relative to the given scope.  That
-> > > > +                      * pathname is expected to point to an object returning
-> > > > +                      * a package that contains _DSD-equivalent information.
-> > > > +                      */
-> > > >                       result = acpi_nondev_subnode_ok(scope, link, list,
-> > > >                                                        parent);
-> > > >                       break;
-> > > >               case ACPI_TYPE_LOCAL_REFERENCE:
-> > >
-> > > I think you get ACPI_TYPE_LOCAL_REFERENCE only when you evaluate a
-> > > reference to a device object.
-> >
-> > If it is so, the code below is just dead because the target here is
-> > expected to be a named object (not a device), in which case it would
-> > just be better to delete this code.
-> 
-> Well, unless there's a bug in the ACPI tables attempting to add a
-> reference to a device as a data-only subnode.  Of course, this won't
-> work, but printing a message in that case may help.
-> 
-> > Is this what you mean?
-> 
-> I think it is and you are right: Referencing a named object will cause
-> that object to be evaluated automatically and its return data to be
-> embedded into the return package at the location of the reference.
-> 
-> So I think that this piece is confusing and I'm going to get rid of it.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Sounds reasonable. Maybe this change would be worth its own patch?
+Reported-by: syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
+Tested-by: syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com
 
-The DSD guide indeed requires the target evaluates to a package object
-while a device object does not. The ACPICA doesn't document this behaviour
-(or at least I'm not aware of it), which is probably why we have this code
-here.
+Tested on:
 
--- 
-Kind regards,
+commit:         590b221e Add linux-next specific files for 20250912
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17dd7b62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9134e501f17b95a4
+dashboard link: https://syzkaller.appspot.com/bug?extid=78cae3f37c62ad092caa
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1043f934580000
 
-Sakari Ailus
+Note: testing is done by a robot and is best-effort only.
 
