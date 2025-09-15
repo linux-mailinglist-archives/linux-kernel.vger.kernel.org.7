@@ -1,151 +1,228 @@
-Return-Path: <linux-kernel+bounces-817586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E3DB58425
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:57:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A81B58420
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F220B2A1EB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669472A48A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24D02DEA6D;
-	Mon, 15 Sep 2025 17:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CAF2C08BF;
+	Mon, 15 Sep 2025 17:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aRf31/9J"
-Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com [209.85.128.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Ih7ja9tn"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazolkn19012086.outbound.protection.outlook.com [52.103.20.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677552BEFE8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.225
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757958983; cv=none; b=n5/eSDt6OgM6bD3e4NnDdgoEGerB8CHa7Z1+n4eO33YL27CvEmcznzfRUljbNVUfn7nvexJAjkVeJWNkogEvc15qCH+DYGsHYX3sSq4RkMa6FRlhtY417LWP0yTTmMF1ymMeEiQAcdnUFtCcu8OVI2FgLWj7Eu1lY+5Wol2rSmQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757958983; c=relaxed/simple;
-	bh=pyln1+t7r3NReffU+GcqGlg7dQEAIsHl0+sNo5XvP3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZEGIqNOfRK6D2QBTI9/M4SWJIy8C65AAD43YoGf14Ze8BgqLEgj1FJO2e4TwDJ1sTMCY+kYx4xqEwXG3ASKIknW0eK4CIvPsOmo2JsUeCBBMIBa2TD/M/2CNEDzGzRobd/kD5BAAN0tptstzPGKkHz5mbP0+Uj1U1P+8Nua0Wxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aRf31/9J; arc=none smtp.client-ip=209.85.128.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yw1-f225.google.com with SMTP id 00721157ae682-73400edf776so11621397b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:56:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757958981; x=1758563781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dJbRTFvItIOxNjF8btTHP0zPk7LDQHPgGj0UqdfwXlI=;
-        b=V7zdKYeolZ58AoWO/lDSBanIv3KaMSFU+ZtyPJSvegs1vHJMggHT4kRL2mSEKc52xw
-         oT0yzIdQ6B1PG9s1iPqFTeIJCqQzvHSpcsfKf64FoQQAiVHmx6hqoiSz8ibAvprdfctv
-         /Oh1H0AlmKauM7LC8ee4M23cWSTb2uSEQb9VgEOLYbbFjUc6so5yuUy5opBEe5VuDrlG
-         LsR+1UWUazJItgVO595afOAzxwA35IkiwKpleWD9RDTQJxkmvc6y57ekADt4wksiaIbW
-         RGzySskOCjunlXvhJjhSAnfwIe3WKnwGcJyCSqHmib4L/Wh02ydGoxcNNOwz1OzQbJaR
-         EJqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnEthN7tIkySdeofQYYVQ+P3FxsREGQ3Ig+UpYCQukPPkCFhmxxFu8YI6YUNu7UNNE1UPDPxE/qjfPITc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK7oE6kcloyUdm83i+2Bc+lnMPOrTBYoemwkFA9XasoAOIaqXi
-	2+dCm+wZnIncD0+MnUmK8SsejwpKGE9T+FWkik5DO9qpWDI7IecgHD5LQTxkxkx5c+xMLWPd3uf
-	89e0MesK72dZeuShtyEgms2k4/LGnkVkdgjXXUQOKmyALgtw/7X6/dhFCyAER/+WkQjGDqgGj+d
-	PpAafT8VMnQTSpAEojO5K+9oeGV0fqBWtWSTZ6R//XpWyhYxg//ovPEKFkocaoHQpRYFrbnf5B7
-	bTQpFQiW9QNawoSN7rRQ4L5CBjP
-X-Gm-Gg: ASbGnctN+ikSTpKPZA+ES+BGFDZgM4na8no+Br8lwNot5w5DjZvnMJVz1oLJXeyg6E1
-	F2E6XTjHINSF+A982XS5SyRFIaJilXvMqSw1tl5qPMS+zDaNpQHXMYzi5ZFIs1PxFR0ddNM76Wh
-	H5JB1pacWR8kpI+4TTyW4Gb6vNxzfvREAVb/erhtQmmUMczyXH+8lro+bkmg9Uug+hQLJ+KPkeD
-	qrIVPntyrYVqU+lbyVPRhVIyDkpvfEMiVO+Z5RHVDS32MR9G+TbP03A0BYauA2WyLIbtlBQ6QeG
-	A8as2D6cvhiJ2YJtGzXAHWiBIohqIJP+/0UCKhL6QJFiiA5ge1n1gYixFQf2QlCFz1LGABcHzwH
-	ulF7heMohv+ZFo9T9cSo+FekeR9CuGM0gg+pye1CtTDI+ny5bhJKysCzAGCb9pgQ0leZ1KtwCSL
-	D1jC4qkQ==
-X-Google-Smtp-Source: AGHT+IGaAJsnAX2F62V8OJXYsbDSNHexaOxHnjVPBQtILS6Swh9siZfuT6PWcCieJMDHJ/svLbSRAbkSdLfM
-X-Received: by 2002:a05:690c:9c01:b0:724:c3fb:181d with SMTP id 00721157ae682-730652d448cmr119881577b3.44.1757958981166;
-        Mon, 15 Sep 2025 10:56:21 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-736e339cd64sm23577b3.2.2025.09.15.10.56.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Sep 2025 10:56:21 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b4f86568434so3349001a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1757958980; x=1758563780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dJbRTFvItIOxNjF8btTHP0zPk7LDQHPgGj0UqdfwXlI=;
-        b=aRf31/9JQbh8ec3DAbRVvMVqKx3GfFBU6DwSZHcWhEJWYKXzQaWzLq6yELYPy5pFZO
-         I0HQQdAnJ0Zv4vGhA21arm2KGdJevP0CeHbmY338/AjetaZ/vrmpM/9NimfXGGNbIwFN
-         3jU6M4LZ1Sdq4A/By36m4TJ1esIm8LK0fNeYQ=
-X-Forwarded-Encrypted: i=1; AJvYcCWOmHgYS98eA9zQI66/RnoUTXXMyklpgvyX+MRZedFXwueWPrOWKt+NV5s65TKAP5V4PTqHvMj9tkt/RxM=@vger.kernel.org
-X-Received: by 2002:a17:902:dacd:b0:25d:8043:781d with SMTP id d9443c01a7336-25d804381bcmr158134815ad.21.1757958979789;
-        Mon, 15 Sep 2025 10:56:19 -0700 (PDT)
-X-Received: by 2002:a17:902:dacd:b0:25d:8043:781d with SMTP id
- d9443c01a7336-25d804381bcmr158134515ad.21.1757958979436; Mon, 15 Sep 2025
- 10:56:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0452BD016;
+	Mon, 15 Sep 2025 17:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757958978; cv=fail; b=PphgiF7HozDvnooMRObHK9AK9VZbEuQM0+CqdIGfyNxofyfe17AzqP/pRM7eu8qAOZJOwOt8zuC3G9GMXiCwwHr0iU458ZAiEN6KS0iqR5eOEkx/LtqhD3SRqdyVZhCxcTAg+a6wZcxeFecA2rfo1HmB22lO26xNWvC55gEt9Co=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757958978; c=relaxed/simple;
+	bh=A2V9axL0CK3Mk3Eg9PAktAVxkNmLOdCLDCfDb0llcWM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MW6N53Ahed7zHgZAJVmzvbpk8QqQ/ujlhymXtJlVx03bJlw7v9I1QSJpRWmSs9o01eTLGN66syTYcJLj200+KdUdR/xOYmYW7jeVG1VodoQzWAnnS3YPAetwFMkqhJw+zlyrooXDZIo1h6M+UhIXBfRXvXtnVPWrkK8VBoWBCOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Ih7ja9tn; arc=fail smtp.client-ip=52.103.20.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U/vvhPGqQQA9NmYhrm7qorijTFQxUMktboM0usv0Xd+ug1VqzLt3RiseY5p9nMI+nZKbnto/qXu/cPJ9NJEAHdY01ad4507fXaPlbCHcGxfDdq0Ro2nxMFwuKVTIeQ3fxfBPpRV6Etihi7NPE2pv6wpruIZ3JUOBTK+fje5pCGOVoqqusrGVk6Nxg7WrvA10InqNYv5inLsMnkcmZX7ok8gyCbxLuzmFQf4lZMRYjLA0xkeskSztJRdeef5ule3wH7CV3UCTFjdtlUJjv+uVOP/V3VarwYk1D0G94ZR4LdmqVydBSHzR9lT5fUKZ27GODhztpoAam5aVSY0YmidWaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tl6YLICMu2uTOwAq9CpBZwOiHgEoMxX3ABozcvr3Qsc=;
+ b=wvucBIh+8TMqKyNw+BMcZOQ0K6wjgIp2V7UcM4LJx1pxb7lv0OB9CdzP9NwPGvQdZAqdjkPkBTYvht0yu5lcahl8UKKxK6ZERJHZDib0nuTyEH+Euyhs09753j1dyw2s3cSKq/VIOwgy8ymLFgyu2RHu4vFIotKHrE/amnF58CRzG18w3jeR91vkk8EdItUocsZP8lqyDzKqEYE3LG1OvVrfJ3PSQoYqpmdjV6VvtNgi4ozH93VQ7JBZ9k2NiK8U+XlitkumsV1aSxUjTtCUppc/PReo68pnGeX+qXcoGsnOB29YO24CEzFBdnyAl0rzu3t0Zrn8cirKj5CylHDCoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tl6YLICMu2uTOwAq9CpBZwOiHgEoMxX3ABozcvr3Qsc=;
+ b=Ih7ja9tng4p+yOUGXjcroSPDduNgKye3N6Hs8JxFhQyHtPpA7M8ZvAhG6j+6rmyaQHDgrSZZgeKFDphBNugevT2GUms9ESydNsWw2R1nNIasaP0/n7XIlny2kYcnJoIDQ1jmmqLOB3dMRMwODBefGaarQw5Tp+5zQ291RaMyK4s39g9H6wEO4AcstkThf12b/17Ulmve7XyVdxL4dWJHbkng7JBiwHWyDZXZyfs+SRORCyC3PVk6v+aXOAfaC9SnNc7PLUQIKOX+DlxltDo0evHM8lvEPgA40gvaxzgjMA9rhz9Vx48m3/+xRfD3a0VHyTff4Ehew7YVYk/uNUPIxg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by LV3PR02MB10056.namprd02.prod.outlook.com (2603:10b6:408:19a::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 17:56:14 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 17:56:13 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"arnd@arndb.de" <arnd@arndb.de>
+Subject: RE: [PATCH v1 6/6] x86/hyperv: Enable build of hypervisor crashdump
+ collection files
+Thread-Topic: [PATCH v1 6/6] x86/hyperv: Enable build of hypervisor crashdump
+ collection files
+Thread-Index: AQHcIeeD/3QUCmD7EEewGvIyXSLQYbSUe5GA
+Date: Mon, 15 Sep 2025 17:56:13 +0000
+Message-ID:
+ <SN6PR02MB415730C50D722D289E33296ED415A@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250910001009.2651481-1-mrathor@linux.microsoft.com>
+ <20250910001009.2651481-7-mrathor@linux.microsoft.com>
+In-Reply-To: <20250910001009.2651481-7-mrathor@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|LV3PR02MB10056:EE_
+x-ms-office365-filtering-correlation-id: e256ef43-ce9b-474f-58de-08ddf481295e
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799012|41001999006|8062599012|8060799015|461199028|19110799012|13091999003|31061999003|3412199025|440099028|40105399003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?58wNXqj0gHYMGcLknMlAAgeGPosGbceZMHqMpra9hV41vvY3OFE0YTXhXKYb?=
+ =?us-ascii?Q?HCcbDN18iPF4TfRZqz0J36XQSMCA80EH2mNxaveDCpqTPDUJok1JQKBCSd2u?=
+ =?us-ascii?Q?Z/asN7WRIEU0SA3gxf9e03dNZ9qXXlReVophNL2bBWe9PlLGRzjr7Hh3vKMj?=
+ =?us-ascii?Q?XxpNKhnRQk6jkxNTJgkfE8TXx7kPw9vtFTe8LeB0+WUWeGuFQ8vOGiofyZoG?=
+ =?us-ascii?Q?o5izSv9O/Ym/nlc0Dm7H7F8MgufxzpJ24TMw7txO7YpsrFc2mndJd2gaLsln?=
+ =?us-ascii?Q?ntiJQu1vgLj1OvijI6otKxUBxTKWL9u0Q3pgkmUD1WI7v0Mg6DZm4CVQky8y?=
+ =?us-ascii?Q?UlNGnrCMVedHQo5y+UUQvDUZ7fcvBp3ZK+eacWalieVLP/NJMNa9XlfQN87q?=
+ =?us-ascii?Q?qSna76g2pluqPdTdyHTEuU8FYVHez0j54SD8GMQx80xs8pGFakqj7VBPHvbK?=
+ =?us-ascii?Q?9ERFV9OnYsZ4mM+WH2dWy2Mmbo/129WQRxBcsOL8yR6X0kzICji6Zxqn67p7?=
+ =?us-ascii?Q?SqHzPEmydXNuM3exNI/qjDK8JiN6ekBbtXDmpoMrVtwOpuUTDXIXsRsCvAts?=
+ =?us-ascii?Q?kg0F1IfoVBO3xA919CkPlhq0Y6fudE1mchm4Oh+bCmG5eU8sNhQBhxfDEB+S?=
+ =?us-ascii?Q?YTZNyqttS7mMTnQzLPVVsEIVdSog1mnjml5RT52BS9GBfLL9Hzun+U+3B9Bp?=
+ =?us-ascii?Q?nHEwwtl2+cGJlSDL+rSepd+0Phne99/3xjlVJHAd5Xu10vvE6YqrVJx0t8xy?=
+ =?us-ascii?Q?XoDXMa8zLA5hPOZ2zPCp5/tmgQiDg9iFtEmYjWX4pfKOa7XQrdGl1bGm+06b?=
+ =?us-ascii?Q?wdJcKigDvoIBMybirX6QHH/AjvZhX27jhB2hA3D2065OqKdMyKedUIUNoF0I?=
+ =?us-ascii?Q?PeNdeSyDS8VsVdiS3o9chijP6prp6jf2Pizrjao4wZeYazfGm/+x8J12E8ir?=
+ =?us-ascii?Q?BAc3gNjAjp9BQ9jsQhK0/W8GsGOZ9HbNQKTqh+8nL5ajIZbp7SxEPP3eSE9L?=
+ =?us-ascii?Q?tu7/Nfq9YQxeErNuijN+NYfkR46Rshu6SZWR2eamgPW1IpA2HQUXLx5QD+8V?=
+ =?us-ascii?Q?vY93gk+ZyH4MdPO+Z6GKGrleohnaYRPEJRsxD7iqUFMHCUXWbwzV2t0EPjAg?=
+ =?us-ascii?Q?wpVrTsbvKw0+jmPKMR0Y42ISLHRnuQwR3VcAx5px0H/OnXCxD0F3qB9nhVka?=
+ =?us-ascii?Q?fBsNpTdO6zxsZwA4mckJTKIE9nExujOhvEFcTA=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Smrk/9lFO+fTFG+dYk3cZ+QH6vxaWI7NEPLSpi/8KxB4tFrkvHrcOrVKtW3k?=
+ =?us-ascii?Q?U4PPZR9XjyPm9tN1pbxwtmDdlE5hBlxSh5slwHljt87U4fj4XQHBet/4frE4?=
+ =?us-ascii?Q?NF7VJo5pbLjok1/+lYbW6YtNhmBVT0Au86+nKgpWICyYawbs0suR7YgF7uR7?=
+ =?us-ascii?Q?0OaSRj1cck2AhmtTrF0k59Lb+eYOzV2L2XYXvwT3PbneX/Xg1hpN25Fku04B?=
+ =?us-ascii?Q?oMCAao2nTxLIdz5P0aIFD87oDm7UWMHRlS/dK3fzk0Lskt/Mp6QZaOECylVY?=
+ =?us-ascii?Q?iLO729xzpodfbkh7bYVc0dDd+3EE3szGuMOcGBkazlddW3yKJxjEZ6o1zdux?=
+ =?us-ascii?Q?9ZkDgHgHkw1YgZtcF4TuUlAtpt/+eR7DjLBoDQJjHOkzDfZBCIllF5ZghlcM?=
+ =?us-ascii?Q?kP2XeeVlnBVPwWoY+t1BaE4H0SXThrerIqk/sLQEOe9A3f3sJI+c18pk35O+?=
+ =?us-ascii?Q?EROIqM+UCjvEZt+KkH9Mwg3yI73XklVqYaeoE+60hMmRsitLplaussKaDSWV?=
+ =?us-ascii?Q?qrgeXdRcpDsOE3PJ9cyskNEZriEneyXqbO1/faupQ4aimkhHzulVd+dS0VLs?=
+ =?us-ascii?Q?PW7JwapvO+Ka0pAEVdC73Flv2H5+5cFKzDiPHfUJ0Tq4fTt0AvGh534KHqOC?=
+ =?us-ascii?Q?3gDAMI3Bbr3jKvRfDBamoWxOd16gskWH4IAEVgSwsiKL9B71r8L8xzSiTqOb?=
+ =?us-ascii?Q?t8IOwkMBZyD/d8WfK8KlA2wIrmzRi1G2PkqiQxqsNqns06/yz9MEeG0SJuyH?=
+ =?us-ascii?Q?KOEPREeE4K5qx/YmiuRcv/Md3CrBUGuZVdfRVCXmfsiKgmOo2tSN2zAQCQ/E?=
+ =?us-ascii?Q?1T8xMf1+RNU/mypCJHh9JwNcpFEjGCXCh2zygrZy74Gjb5NqHyCyluoWD8oH?=
+ =?us-ascii?Q?YsdoBjs/qh/XGLb7tPBf9Dr+XM5qcfovkn4QCXWQRfwWwGGonR/SJLktwtDE?=
+ =?us-ascii?Q?jMYTwb8OJFqaarmMpUsyHxXnL4FtXyU0sGGaMezKtVaKC+xKJUboPFMkY+Fs?=
+ =?us-ascii?Q?2OIOJCZWEm+3DW84SbS2s0AYj6ypgk2xuOzTGr+c7FBMGxjwCLf36w2sNBzk?=
+ =?us-ascii?Q?GFNSJM0uUj8FWFbmyDM8Q1CPeJf2EoNqglg/YwlbhD32fFty2S1OrZdDjDj0?=
+ =?us-ascii?Q?8snNTas7/Mo24Gg2vjcd7kxuFzD1TJUYVKldFJQDBWJJo2bR5sSFIA4VKlSi?=
+ =?us-ascii?Q?RIgKJTQDO2ltdBdGEtR64DhnMi3VYp8Clr7Tze3Q+atX1yo71Ta6QKC+2XU?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
- <20250911193505.24068-7-bhargava.marreddy@broadcom.com> <20250914133150.429b5f70@kernel.org>
-In-Reply-To: <20250914133150.429b5f70@kernel.org>
-From: Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>
-Date: Mon, 15 Sep 2025 23:26:07 +0530
-X-Gm-Features: AS18NWAdwcC_lAEZq2uYBCaX6F8v5R_jkiei_yxqCSuPoChdSZfVNZ-cFOt-fRU
-Message-ID: <CANXQDtaB7HcSujG1R9i90YUB6PdOin4=CsKzGvNX6tGMw8n+mw@mail.gmail.com>
-Subject: Re: [v7, net-next 06/10] bng_en: Allocate packet buffers
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, michael.chan@broadcom.com, 
-	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com, 
-	vikas.gupta@broadcom.com, 
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: e256ef43-ce9b-474f-58de-08ddf481295e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2025 17:56:13.8024
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR02MB10056
 
-On Mon, Sep 15, 2025 at 2:01=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Fri, 12 Sep 2025 01:05:01 +0530 Bhargava Marreddy wrote:
-> > +static void bnge_alloc_one_rx_pkt_mem(struct bnge_net *bn,
-> > +                                   struct bnge_rx_ring_info *rxr,
-> > +                                   int ring_nr)
-> > +{
-> > +     u32 prod;
-> > +     int i;
-> > +
-> > +     prod =3D rxr->rx_prod;
-> > +     for (i =3D 0; i < bn->rx_ring_size; i++) {
-> > +             if (bnge_alloc_rx_data(bn, rxr, prod, GFP_KERNEL)) {
-> > +                     netdev_warn(bn->netdev, "init'ed rx ring %d with =
-%d/%d skbs only\n",
-> > +                                 ring_nr, i, bn->rx_ring_size);
-> > +                     break;
-> > +             }
-> > +             prod =3D NEXT_RX(prod);
-> > +     }
-> > +     rxr->rx_prod =3D prod;
->
-> You should have some sort of minimal fill level of the Rx rings.
-> Right now ndo_open will succeed even when Rx rings are completely empty.
-> Looks like you made even more functions void since v6, this is going in
-I changed those functions to void only because in this patchset they can=E2=
-=80=99t fail.
-> the wrong direction. Most drivers actually expect the entire ring to be
-> filled. You can have a partial fill, but knowing bnxt I'm worried the
-> driver will actually never try to fill the rings back up.
-I believe the driver should return an error if any buffer allocation
-fails and handle the unwinding accordingly.
-What do you think?
+From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Tuesday, September =
+9, 2025 5:10 PM
+>=20
+> Enable build of the new files introduced in the earlier commits and add
+> call to do the setup during boot.
+>=20
+> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+> ---
+>  arch/x86/hyperv/Makefile       | 6 ++++++
+>  arch/x86/hyperv/hv_init.c      | 1 +
+>  include/asm-generic/mshyperv.h | 9 +++++++++
+>  3 files changed, 16 insertions(+)
+>=20
+> diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
+> index d55f494f471d..6f5d97cddd80 100644
+> --- a/arch/x86/hyperv/Makefile
+> +++ b/arch/x86/hyperv/Makefile
+> @@ -5,4 +5,10 @@ obj-$(CONFIG_HYPERV_VTL_MODE)	+=3D hv_vtl.o
+>=20
+>  ifdef CONFIG_X86_64
+>  obj-$(CONFIG_PARAVIRT_SPINLOCKS)	+=3D hv_spinlock.o
+> +
+> + ifdef CONFIG_MSHV_ROOT
+> +  CFLAGS_REMOVE_hv_trampoline.o +=3D -pg
+> +  CFLAGS_hv_trampoline.o        +=3D -fno-stack-protector
+> +  obj-$(CONFIG_CRASH_DUMP)      +=3D hv_crash.o hv_trampoline.o
+> + endif
+>  endif
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index afdbda2dd7b7..577bbd143527 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -510,6 +510,7 @@ void __init hyperv_init(void)
+>  		memunmap(src);
+>=20
+>  		hv_remap_tsc_clocksource();
+> +		hv_root_crash_init();
+>  	} else {
+>  		hypercall_msr.guest_physical_address =3D vmalloc_to_pfn(hv_hypercall_p=
+g);
+>  		wrmsrq(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyper=
+v.h
+> index dbd4c2f3aee3..952c221765f5 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -367,6 +367,15 @@ int hv_call_deposit_pages(int node, u64 partition_id=
+, u32
+> num_pages);
+>  int hv_call_add_logical_proc(int node, u32 lp_index, u32 acpi_id);
+>  int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flag=
+s);
+>=20
+> +#if CONFIG_CRASH_DUMP
+> +void hv_root_crash_init(void);
+> +void hv_crash_asm32(void);
+> +void hv_crash_asm64_lbl(void);
+> +void hv_crash_asm_end(void);
+> +#else   /* CONFIG_CRASH_DUMP */
+> +static inline void hv_root_crash_init(void) {}
+> +#endif  /* CONFIG_CRASH_DUMP */
+> +
 
-Thanks,
-Bhargava Marreddy
+The hv_crash_asm* functions are x86 specific. Seems like their
+declarations should go in arch/x86/include/asm/mshyperv.h, not in
+the architecture-neutral include/asm-generic/mshyperv.h.
+
+>  #else /* CONFIG_MSHV_ROOT */
+>  static inline bool hv_root_partition(void) { return false; }
+>  static inline bool hv_l1vh_partition(void) { return false; }
 > --
-> pw-bot: cr
+> 2.36.1.vfs.0.0
+>=20
+
 
