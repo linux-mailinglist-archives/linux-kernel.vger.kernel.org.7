@@ -1,90 +1,85 @@
-Return-Path: <linux-kernel+bounces-816304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F098B57208
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:52:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C7CB57211
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB70E3BF5EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED8417BA29
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC39B2E9EA8;
-	Mon, 15 Sep 2025 07:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LvNnyXh0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T54UbsVG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2F12E9EC0;
+	Mon, 15 Sep 2025 07:57:47 +0000 (UTC)
+Received: from a3.inai.de (a3.inai.de [144.76.212.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69262E88B3
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E532E3397;
+	Mon, 15 Sep 2025 07:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.212.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757922682; cv=none; b=JCb0QtAYrsJPBBqD9O8n8akNgTwQ8JXD3cpZRFjYAb/yerSZ/b2xBii1xgz9n2pcrqsY5nr6cFHGNqY3prp741KgSIuSqB4fAgymJkhFX9uDN3wB3tS6qiDropAiwxdY37jUZ2TGP1mjUbkNZi13hb0YD3BrgeLWRcDKZqLYPyM=
+	t=1757923066; cv=none; b=a8gmFL5La3uE+KUOOkpaNOlGHlRLMOBemz0D8qUgqcI9fd32q4A97F8d8HSm6LrVCM67kbHffhbSBEZF9IbY633fDJP5TK8kNhy4W+rTs0abMrdNhXkU3ArRQpCjT/ch5za3DfM1GoImQLeX32GDs4QgKEa6XNapRC/iRdGTkkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757922682; c=relaxed/simple;
-	bh=/4m/TcD/L+nywzhzgZbHYHh/zumiDL+hLV8CZn7yQUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uf9lhgEuSV+WwJVz9UalygBBfjoiTP9a3OzNG1K5lXDTLa5ASDXey+7ePihpQC5hUw7ftNBhY8CsSR26SK07vSyQuM8bZ6g+EmbNvDOQguSaEkieYvBnsRLqT6GXtG9duLk/IbXsZxNvZtUoZ7pvIURCNXwCjhZNrikmN9p8/Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LvNnyXh0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T54UbsVG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 15 Sep 2025 09:51:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757922679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/4m/TcD/L+nywzhzgZbHYHh/zumiDL+hLV8CZn7yQUA=;
-	b=LvNnyXh055gKSdFXW8DmcKPAXCyqlXCFpDgcEhqI/P5RyLw050OEJ+YQFaCuuNkJW+K1nD
-	KBftN74lZp1OPS6G0GaPIDBjDGksuIlPd78F1droOE2q73zXx3dLXT8D4FXiSqV1gTzqBP
-	LTQI/kNFKZptFqezI2y5aFtNmpgiGosjfbOfm0/0XnFvxgZFtyc7pToT8fDNL0FZpDVm4y
-	A+YfcipqvoZy1Ijfm46ZrKzsVvinNlWabQqvmOfqc7oJREuHmnaXMpQICTHBxj7ektvzco
-	k+/btVbJJpBtlaP+3ePPXaGcp97X3WSGb3HjbRgYd8Tqq7kw14x0Gs5lLW1ISg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757922679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/4m/TcD/L+nywzhzgZbHYHh/zumiDL+hLV8CZn7yQUA=;
-	b=T54UbsVGnfja1n7ath0NYQmyQClKwJSKcv2V6JWG2SqljVHN8B1ZAwDDIf01WpEH3JPpQx
-	7QkcUVhhhDrfYlCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
-Cc: linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Waiman Long <longman@redhat.com>,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH v2 1/2] selftest/futex: Make the error check more precise
- for futex_numa_mpol
-Message-ID: <20250915075117.ts5Z9WGG@linutronix.de>
-References: <20250904165556.56926-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1757923066; c=relaxed/simple;
+	bh=q1tMMGYP7r1Z2f8ud+W8eBZSvKk8A6um8wiaX2PZSVM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XqPPPD3VjRkmz5f7nmRDKUQDY5I+FdRlRz4OHpgHnFlxzHqYCDxErObe/f/uDEFGvdxcuBgwYvveJ6qZtBUEGCzngcnCvxJ0zDikHoALPBS38eMHSYma+Cy0vNcsj85gZ6tZohSuxw5kkbeyeig7j6wab36cz0opJRR8Q8XFFO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=pass smtp.mailfrom=inai.de; arc=none smtp.client-ip=144.76.212.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inai.de
+Received: by a3.inai.de (Postfix, from userid 25121)
+	id A5C131003CDBE2; Mon, 15 Sep 2025 09:51:25 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by a3.inai.de (Postfix) with ESMTP id A56C5110020B40;
+	Mon, 15 Sep 2025 09:51:25 +0200 (CEST)
+Date: Mon, 15 Sep 2025 09:51:25 +0200 (CEST)
+From: Jan Engelhardt <ej@inai.de>
+To: Sudarsan Mahendran <sudarsanm@google.com>
+cc: vbabka@suse.cz, Liam.Howlett@oracle.com, cl@gentwo.org, 
+    harry.yoo@oracle.com, howlett@gmail.com, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org, maple-tree@lists.infradead.org, rcu@vger.kernel.org, 
+    rientjes@google.com, roman.gushchin@linux.dev, surenb@google.com, 
+    urezki@gmail.com
+Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
+In-Reply-To: <20250913000935.1021068-1-sudarsanm@google.com>
+Message-ID: <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz> <20250913000935.1021068-1-sudarsanm@google.com>
+User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250904165556.56926-1-andrealmeid@igalia.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On 2025-09-04 13:55:55 [-0300], Andr=C3=A9 Almeida wrote:
-> Instead of just checking if the syscall failed as expected, check as
-> well what is the error code returned, to check if it's match the
-> expectation and it's failing in the correct error path inside the
-> kernel.
 
-Andr=C3=A9, these two are the only ones that are still pending?
+On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
+>
+>Summary of the results:
+>
+>- Significant change (meaning >10% difference
+>  between base and experiment) on will-it-scale
+>  tests in AMD.
+>
+>Summary of AMD will-it-scale test changes:
+>
+>Number of runs : 15
+>Direction      : + is good
 
-Sebastian
+If STDDEV grows more than mean, there is more jitter,
+which is not "good".
+
+>|            | MIN        | MAX        | MEAN       | MEDIAN     | STDDEV     |
+>|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
+>| brk1_8_processes
+>| BASE       | 7,667,220  | 7,705,767  | 7,682,782  | 7,676,211  | 12,733     |
+>| TEST       | 9,477,395  | 10,053,058 | 9,878,753  | 9,959,360  | 182,014    |
+>| %          | +23.61%    | +30.46%    | +28.58%    | +29.74%    | +1,329.46% |
+>
+>| mmap2_256_processes
+>| BASE       | 7,483,929  | 7,532,461  | 7,491,876  | 7,489,398  | 11,134     |
+>| TEST       | 11,580,023 | 16,508,551 | 15,337,145 | 15,943,608 | 1,489,489  |
+>| %          | +54.73%    | +119.17%   | +104.72%   | +112.88%   | +13,276.75%|
 
