@@ -1,168 +1,179 @@
-Return-Path: <linux-kernel+bounces-817866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12134B587B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:43:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EE1B587BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:44:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EDAA7A1A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7659E1B25996
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFB22D6401;
-	Mon, 15 Sep 2025 22:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JDm70VRr"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A42E2D8387;
+	Mon, 15 Sep 2025 22:44:43 +0000 (UTC)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14B62C029E;
-	Mon, 15 Sep 2025 22:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506AD221282
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757976167; cv=none; b=gbaEAJ/W1+Xc+VJyl8xGXw3n7PFkkRC2eY7JVDtCvQx2VFp/sIDgi/j7AfmvLUg7FLp4eeMiYmtnivnffkDFsiY18CfUPrTuSV4KOB6ZpwMb8HvH3vRa4Uz0Y/MgRwrNu4s04mXlcpTApHt4btnhqCY/r+oiU7Mrx3UrHG20pes=
+	t=1757976282; cv=none; b=WAapN3LpvmtZ+AAhxNCQyfv7qbZd/Vt03uZ0pRqlhEsZi1zyyxqDtftEx+msv5GL2E8ddG267GCbjp3XmVpwUD0aX6G94ksjb6wj6m7TulLx5RiXtQpCBp1bPBkXN1Jp9oWLEc+LazBMcYFc5CZqL97f5hznisS7Dt6VAHgpByg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757976167; c=relaxed/simple;
-	bh=J8x45dODCOGR40LhgL+MfCwNImZSxtFm6oc+Ork33fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ja8550SpXNKS/+bSGPRH2M4rto2bxwZgLEILvkVZfd7N6Jx1j+kQHpfRz9U9ZrKBcMYhE/feun94YayCdeYfLV3jKaYpbXXNkKr2MUequbT5Wm61ET1lnw1ZI/i44IFm2mhraOBXGC5gudA/loaevV/xhXGIHUsEo4SxkjNrr2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=JDm70VRr; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hbm2WSVmWKgLVc+FUCeHQ169iZOFNw7qHsfdrv2W7jM=; b=JDm70VRrydgYgL06K194KUdz26
-	7nJwV5ewahNISz5xKsw+jBMwlf9ud4paxClly8WX4iYudPs7mgWeUoEVqMKK20gZ2rUdQdo0ifguv
-	+C4xqhkV3qJ+mh1V1fdh4uEE2qkr2XkjJQczJVMa8BijytoUFEP2zpN6xMSA6wqnMSQKWC/jDRgg7
-	z8yI4bQwRiaF5pji1jKL3InGglehRDc9m3uNDZHMk0diX0J88ZoTiwn7W+X4hsLrnQHRBnLWWQH/n
-	4aATqcvJyEhHrVsT0/ridycVuVZoYdggX2A7SEPCCLm8qQGddbrGP1T5xis+iItY9fW/2IS1hTZ7s
-	/W4gjpdw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59534)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uyHuF-000000002Ay-0s3f;
-	Mon, 15 Sep 2025 23:42:43 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uyHuD-0000000073J-2mVm;
-	Mon, 15 Sep 2025 23:42:41 +0100
-Date: Mon, 15 Sep 2025 23:42:41 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v9 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <aMiWYWKzrFnwyTuz@shell.armlinux.org.uk>
-References: <20250913044404.63641-1-mmyangfl@gmail.com>
- <20250913044404.63641-4-mmyangfl@gmail.com>
+	s=arc-20240116; t=1757976282; c=relaxed/simple;
+	bh=FoDhXKL27FrqFbdKgo4qvaWBWJzf83x/wDOeD8TZ98k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZHRo4wYp0bVhlzmM+rNOKdnl01PKRrXFbAjkZzFNJqfy+rosuIPPkE7kMP5Diq2X76Pg7xgBE+FeASQ1fjPBzLslzAaw0cUbo0I9DCTtAe2+cIeFvtZ5QtkYlQWZ1hhAzCh7BJ2Fjem0Os6/u3HlqNJOCnuF+5KK7ALA5lJqF7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26495aa4967so3880445ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:44:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757976281; x=1758581081;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n4h6TvvGvdfthwq8yZuD7RXg5Y5KodTn8R97NT7K6NI=;
+        b=o0zvCdczkmsiSxE+rfOBRc0z86WfS+viVIyWgSwfkuavPTgIEtBf1aF+EJO67TVCR2
+         eOcIpoByRWhdUOA/7gFOjOzlIxz4Pmf8Pctix5igH9i5JC1uTxlA2BWfagA8NE4yN4Qn
+         5tlDfzODHIT9GVFSxYrvTJn+VyWOHZxj80FucaINQl+wkpH+QjCL26+k9r9pcD6iaAUi
+         RPfzraiC3TjMxRA3pHHClaNBNxWH5ad1L/i3pqa9cdqurUsNS7W0gdGMylX2tJn8pN47
+         /0mjv0fIdbmSPK4MT4bd2iV62jmitKEdH/B/tUTROD9VxmhamojBcRi4Ig0upMmOIw5H
+         HRfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+cu1ncW4CMN11TnXHsU1rNHYoFm8szRu6Iefk/F8pdq5SqGkpICZ7ukJDQKUY5eczZoM6yWocyM35bDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCw/VmQL/gSAd8vHiRd3P5CdErdRXZa0stcVjzzvFaJh237jiz
+	byq44lMG8f6KYg0OcZagIMH6q/4Vihsiu8leLNmxjX3NZOBri5mUQabW
+X-Gm-Gg: ASbGncvobTazlI+BRKEPwywnv0sePc9QFVL2Ydm+ujoJQ5ZL691iVlfRazSbPOux3Ki
+	C2vNNJuayFV8j5nYC5ZcOfvzhnlVpn/VmWZXER96DfDRM0sDBwu9MgMaGbeMAKkf9C+gmAeT2Ue
+	ED1ZpQ9E25UEGBVmi8ByYqLRKrQwhtZQgFcINjeOUegRA8pFUQfg4ZaVOMVHm/GOMpDo1IGAb5+
+	5meYqacQienxaqZ457Y2iQmMZkZR88VXpeYX2H4Q50GHkk1xkw9Vjxfi4aRGrk/77A4jWmfq18G
+	qZB0XiAeFLThZ7ZAUih+CXhnOcBa4cb97hjTYWI1xEuSdQ11EjYwrlFcHUO8KLY6bZT8PQ3E6N4
+	cGzd8ZekCLvZQfm/UMSboj2bZ1izOkE8IzDHBOdHA2v2ws0PptOZa5irdeEYtoeKbOkCxolkFWg
+	UJ/PyxzOB+mw==
+X-Google-Smtp-Source: AGHT+IHVxjXZpD31bCIVHV7+Q1p6w2ZxDlVfrTJXcV+ZPNp+MWwHnfZ/vC/wORtLF/jAvuHJqOJ52g==
+X-Received: by 2002:a17:902:ec85:b0:267:bd8d:1b6 with SMTP id d9443c01a7336-267bd8d09c0mr10685795ad.6.1757976280635;
+        Mon, 15 Sep 2025 15:44:40 -0700 (PDT)
+Received: from localhost ([218.152.98.97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc53a1sm142718715ad.2.2025.09.15.15.44.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 15:44:40 -0700 (PDT)
+From: Yunseong Kim <ysk@kzalloc.com>
+To: Namjae Jeon <linkinjeon@kernel.org>,
+	Steve French <smfrench@gmail.com>
+Cc: Norbert Szetei <norbert@doyensec.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Tom Talpey <tom@talpey.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Dawei Li <set_pte_at@outlook.com>,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org (open list),
+	Yunseong Kim <ysk@kzalloc.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ksmbd: Fix race condition in RPC handle list access
+Date: Mon, 15 Sep 2025 22:44:09 +0000
+Message-ID: <20250915224408.1132493-2-ysk@kzalloc.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913044404.63641-4-mmyangfl@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 13, 2025 at 12:44:01PM +0800, David Yang wrote:
-> +static int
-> +yt921x_port_config(struct yt921x_priv *priv, int port, unsigned int mode,
-> +		   phy_interface_t interface)
-> +{
-> +	struct device *dev = to_device(priv);
-> +	u32 mask;
-> +	u32 ctrl;
-> +	int res;
-> +
-> +	if (!yt921x_port_is_external(port)) {
-> +		if (interface != PHY_INTERFACE_MODE_INTERNAL) {
-> +			dev_err(dev, "Wrong mode %d on port %d\n",
-> +				interface, port);
-> +			return -EINVAL;
-> +		}
-> +		return 0;
-> +	}
-> +
-> +	switch (interface) {
-> +	/* SGMII */
-> +	case PHY_INTERFACE_MODE_SGMII:
-> +	case PHY_INTERFACE_MODE_100BASEX:
-> +	case PHY_INTERFACE_MODE_1000BASEX:
-> +	case PHY_INTERFACE_MODE_2500BASEX:
-> +		mask = YT921X_SGMII_CTRL_PORTn(port);
-> +		res = yt921x_reg_set_bits(priv, YT921X_SGMII_CTRL, mask);
-> +		if (res)
-> +			return res;
-> +
-> +		mask = YT921X_XMII_CTRL_PORTn(port);
-> +		res = yt921x_reg_clear_bits(priv, YT921X_XMII_CTRL, mask);
-> +		if (res)
-> +			return res;
-> +
-> +		mask = YT921X_SGMII_MODE_M;
-> +		switch (interface) {
-> +		case PHY_INTERFACE_MODE_SGMII:
-> +			ctrl = YT921X_SGMII_MODE_SGMII_PHY;
+The 'sess->rpc_handle_list' XArray manages RPC handles within a ksmbd
+session. Access to this list is intended to be protected by
+'sess->rpc_lock' (an rw_semaphore). However, the locking implementation was
+flawed, leading to potential race conditions.
 
-Does this mean that "SGMII" here means you are sending SGMII
-speed/duplex to a host MAC (in other words, immitating a PHY) ?
+In ksmbd_session_rpc_open(), the code incorrectly acquired only a read lock
+before calling xa_store() and xa_erase(). Since these operations modify
+the XArray structure, a write lock is required to ensure exclusive access
+and prevent data corruption from concurrent modifications.
 
-If yes, then I think we want PHY_INTERFACE_MODE_REVSGMII added.
+Furthermore, ksmbd_session_rpc_method() accessed the list using xa_load()
+without holding any lock at all. This could lead to reading inconsistent
+data or a potential use-after-free if an entry is concurrently removed and
+the pointer is dereferenced.
 
-> +static void
-> +yt921x_phylink_mac_link_down(struct phylink_config *config, unsigned int mode,
-> +			     phy_interface_t interface)
-> +{
-> +	struct dsa_port *dp = dsa_phylink_to_port(config);
-> +	struct dsa_switch *ds = dp->ds;
-> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
-> +	struct device *dev = to_device(priv);
-> +	int port = dp->index;
-> +	int res;
+Fix these issues by:
+1. Using down_write() and up_write() in ksmbd_session_rpc_open()
+   to ensure exclusive access during XArray modification, and ensuring
+   the lock is correctly released on error paths.
+2. Adding down_read() and up_read() in ksmbd_session_rpc_method()
+   to safely protect the lookup.
 
-Reverse christmas tree ordering please, and do we need "struct device
-*dev..." because ds->dev should be this same device. Maybe:
+Fixes: a1f46c99d9ea ("ksmbd: fix use-after-free in ksmbd_session_rpc_open")
+Fixes: b685757c7b08 ("ksmbd: Implements sess->rpc_handle_list as xarray")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+---
+ fs/smb/server/mgmt/user_session.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-	struct dsa_port *dp = dsa_phylink_to_port(config);
-	struct yt921x_priv *priv = to_yt921x_priv(dp->ds);
-	int port = dp->index;
-	int res;
-
-> +
-> +	cancel_delayed_work(&priv->ports[port].mib_read);
-> +
-> +	mutex_lock(&priv->reg_lock);
-> +	res = yt921x_port_down(priv, port);
-> +	mutex_unlock(&priv->reg_lock);
-> +
-> +	if (res)
-> +		dev_err(dev, "Failed to %s port %d: %i\n", "bring down",
-> +			port, res);
-
-Then:
-		dev_err(dp->ds->dev, ...
-
-Same comment for the other phylink methods.
-
-Thanks.
-
+diff --git a/fs/smb/server/mgmt/user_session.c b/fs/smb/server/mgmt/user_session.c
+index 9dec4c2940bc..b36d0676dbe5 100644
+--- a/fs/smb/server/mgmt/user_session.c
++++ b/fs/smb/server/mgmt/user_session.c
+@@ -104,29 +104,32 @@ int ksmbd_session_rpc_open(struct ksmbd_session *sess, char *rpc_name)
+ 	if (!entry)
+ 		return -ENOMEM;
+ 
+-	down_read(&sess->rpc_lock);
+ 	entry->method = method;
+ 	entry->id = id = ksmbd_ipc_id_alloc();
+ 	if (id < 0)
+ 		goto free_entry;
++
++	down_write(&sess->rpc_lock);
+ 	old = xa_store(&sess->rpc_handle_list, id, entry, KSMBD_DEFAULT_GFP);
+-	if (xa_is_err(old))
++	if (xa_is_err(old)) {
++		up_write(&sess->rpc_lock);
+ 		goto free_id;
++	}
+ 
+ 	resp = ksmbd_rpc_open(sess, id);
+-	if (!resp)
+-		goto erase_xa;
++	if (!resp) {
++		xa_erase(&sess->rpc_handle_list, entry->id);
++		up_write(&sess->rpc_lock);
++		goto free_id;
++	}
+ 
+-	up_read(&sess->rpc_lock);
++	up_write(&sess->rpc_lock);
+ 	kvfree(resp);
+ 	return id;
+-erase_xa:
+-	xa_erase(&sess->rpc_handle_list, entry->id);
+ free_id:
+ 	ksmbd_rpc_id_free(entry->id);
+ free_entry:
+ 	kfree(entry);
+-	up_read(&sess->rpc_lock);
+ 	return -EINVAL;
+ }
+ 
+@@ -144,9 +147,14 @@ void ksmbd_session_rpc_close(struct ksmbd_session *sess, int id)
+ int ksmbd_session_rpc_method(struct ksmbd_session *sess, int id)
+ {
+ 	struct ksmbd_session_rpc *entry;
++	int method;
+ 
++	down_read(&sess->rpc_lock);
+ 	entry = xa_load(&sess->rpc_handle_list, id);
+-	return entry ? entry->method : 0;
++	method = entry ? entry->method : 0;
++	up_read(&sess->rpc_lock);
++
++	return method;
+ }
+ 
+ void ksmbd_session_destroy(struct ksmbd_session *sess)
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.51.0
+
 
