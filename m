@@ -1,311 +1,135 @@
-Return-Path: <linux-kernel+bounces-816387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614D9B5732A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:38:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3B6B5732D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45F143AD75B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F66F1A201A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B562ED15C;
-	Mon, 15 Sep 2025 08:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD642EE5FE;
+	Mon, 15 Sep 2025 08:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6Y8GkBM"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QMVuRFzi"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606C12E9ECF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD612EAB83;
+	Mon, 15 Sep 2025 08:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757925480; cv=none; b=lU2npyTFcD/Z7OvoR3UtzWwhpiUCD/1khQ7p2BPjc6uvtl2yniH4Icerrd3IV602wrnKv86Hm02SzU3uLZRk28eYkVkZFQ5Vfaxbf/HIXakwGFC12DiXzm5CRgUNbGtoz7elSsAjO89lzbSDH486Ye4Fx6epQFpWQhPnyz2QKGQ=
+	t=1757925510; cv=none; b=nwPW7YlySbXCnx8HzzuWhEFs2hYvAb/inppwNbrPzOxQrMcZqN8klKExO/HuSDwsrTQak9AZB8JuGTCAMI5a12o9kMKmAEE6rHoMifyeC9VnQrReR0oOskpsP4QJrnwTXG/n++T7dqd4/wrKzVhvshuHA4bXBytzpJQxeS1bC8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757925480; c=relaxed/simple;
-	bh=7u80ReDnDCInh+aNkQsfcb3XTF3Bd2sZEHQdKV9NRcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J5dqkkU/PIFO9ovvw/PEUGHmE/sUPsXVnfHB596XcSVwJi5WkVvfqEwaGnr/F/FkawTwIDqCCad/cAJ82LyWqW0Y+IPEfJbcCuyVY8oo2qp8BF4vDTr0qtair9z0gUjapQ8NERMlFjgXbZPD5R1qyrP9tJ6wfUxAQ9mTHgH4Sl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6Y8GkBM; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77256e75eacso3228098b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757925478; x=1758530278; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HDoCph1wIa9nDp+Ls5YW8at1GN3q+1l7Ys3PhbWDvJI=;
-        b=O6Y8GkBM5ze5b4IzvRCrVovjnhdhsOzHuozQDSz+ROHKQ5OW7TxI/jSHEFVYtxh02n
-         08qnBK4aRCdVlaqLq3SqCdy18wigxX72NkjypOCw/3OMlphX1e7eNIZWwd0ZMv/ExeHa
-         Ll4A/61AmdBYssc6z1j3BaRSEpz0tl27c3WEPgOq/MmbxR6+C7xc+LFwgVDRP/hORfeg
-         MYcXHAm/XXgEXvus68TmvXt3BBMS/o7fWsKL+g5pj2P5A+bw6JCR5IR0PscQeXqLCqpm
-         uSpvRvxI3thNYWVMOEhgorIH9jNOnNp6TGsSSkEVecWAUFECMpq9YEmlMY6H3YkF8yhT
-         Gdlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757925478; x=1758530278;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HDoCph1wIa9nDp+Ls5YW8at1GN3q+1l7Ys3PhbWDvJI=;
-        b=L1AA9oCaYm6KAjdclN5kHH1J7qVBWVbnnpd2auBqw3S+CpgoxJu8nskdl++nNLgZsz
-         toI9zKO/QFTVtsBNf7+wnzDxCDwlEecddDEmKlEYcFg+B9urasbzG5mpL5IcyEC57Xak
-         rTFy+5TusAl64/YeKVLHLRR3upd+HO1ANwQ09WzJ8GyTmdVoICK2TOyWAy4Oe6FdsdfG
-         JMTfqXfwgAt78HvHD0+ap6/3eRhlUmYQb7maMjtD0QNlIqjtgxRtys3SAMWLLSXffFIP
-         tLD+CULdgX/2Rb0uTG7ceZG6DTQMOWdP7bqjqBVMUbyj+Fb8bMyATVkBw/qcfyWApZDI
-         wyPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXu75CKHE7H7OaIoQqrDYHSfHUmlFWrE5lBtiq554YNBJ0jXgE3nCjXOOUkbVSdhJQrLWHSc+0mmPy4MKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMblM2ELJ8M4n7nqhMsYtEv3Lw+LGZ/TPf8uyUYjLvfXO7NQAV
-	L7tIyg+7fWmqhUIi7O8z2rnWky75+tnJPmAx1tTKwZVekhvkWSl4U921
-X-Gm-Gg: ASbGncvwmC8w1Ce28TleX9HzOji2pj86RNIWt5SNUO6oUHCa7ZwGxmvaQbEHeHv3IaQ
-	NSfCQZZaa10yugSqPyEx5Fwbzxe3l899UUYV9dCoUrGtvRmKpbRRYEZbnBN6W8Iri/L3or3rR21
-	wOl3l9BVCryeoj15eLSxiTtVcDBb7JjkncZPv84KNes3htorHLZ4AnOAgq3Mu/K8naeM57vMFJm
-	8KSicEmMH+DxrozyFFFFuR6Mm7u8XbzzTJ7dAUhU93mDMCDSwu8+2pxcOyM6xd12q/MgO3r2UMO
-	FQJHrlH8stPF2Yr8JTkJ9JyYxhUSaGcLP4e7cC6PKfUn6y6ZDHL2UnhUGLF0W/F93UpfDd0i4Z+
-	S8wyPkK36ltuNd9MFB1uHVRyLH0EJ+/a838yGeiX/2w==
-X-Google-Smtp-Source: AGHT+IHitCsHJoq28GnOhekSevw6BlB4OkYmROTXSDSkUd7RqqVB0//Pt3osxPDlsy2neRxLTy1zLQ==
-X-Received: by 2002:a05:6a20:939e:b0:245:ffe1:5615 with SMTP id adf61e73a8af0-2602bb59653mr13885769637.38.1757925477650;
-        Mon, 15 Sep 2025 01:37:57 -0700 (PDT)
-Received: from fedora.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b1a031sm12901974b3a.57.2025.09.15.01.37.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 01:37:57 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Petr Machata <petrm@nvidia.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCH 2/2] selftests: bonding: add ipsec offload test
-Date: Mon, 15 Sep 2025 08:37:42 +0000
-Message-ID: <20250915083742.423741-2-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250915083742.423741-1-liuhangbin@gmail.com>
-References: <20250915083742.423741-1-liuhangbin@gmail.com>
+	s=arc-20240116; t=1757925510; c=relaxed/simple;
+	bh=JrJpsdeX9I2kWwalMMtD/gF5m4F/paBcJmibIeKR5f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNTWeqxTigI06JWYeQEr6zeUAocbEMsDnnNreLVk86wJlCBcYNqw+NIw3tfFknRNVS84dlHgU/0FLphsrl1Rj5CQjoMyh3FYze1tuu22mJl72d9q8m46AMMXI2TxizACj13OXDkzvU0eu6s6wWV33kK5QjcETF1nQdY3NC+6mVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QMVuRFzi; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1HGzVHn2DWvwUBJDfAea0CauflSfX3VQjqYrUtMgN+4=; b=QMVuRFzizyLo1uAgDu9CG4pee+
+	xvf/CcpeaRCZ+HATf+bGABp4iKyU0liNOgBDb9ZG6pTUBIq6lgaxMUoH8zXLU0+VBHRth2pQBUtiK
+	FJbVWcAUeIuT+TEuL5Ku8H+Qi/AqXZ63KiV5zttWtFpaXDIbhGMsYW0ryr251LivVT25pWNmPfZ2h
+	agWgwoOwYNLM9YBjxYHL6lvzdh3vxZ4XRCFWppW3KZ7dfB6jdySp4YcmYQkp/HfeLg/rhLRMzHRyd
+	uZiwrNSrbmcL3HOl8ifHHPbYg36jfRYTZiQMuNYphaoBnBHBjz2R82Js5M+kbGe/dMZIb88zi00vV
+	UjWfNoBQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uy4j2-00000006uCF-3SGt;
+	Mon, 15 Sep 2025 08:38:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8FED4300212; Mon, 15 Sep 2025 10:38:15 +0200 (CEST)
+Date: Mon, 15 Sep 2025 10:38:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
+ __task_rq_lock()
+Message-ID: <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155809.684653538@infradead.org>
+ <aMNnLenCytO_KEKg@slm.duckdns.org>
+ <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
+ <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
 
-This introduces a test for IPSec offload over bonding, utilizing netdevsim
-for the testing process, as veth interfaces do not support IPSec offload.
-The test will ensure that the IPSec offload functionality remains operational
-even after a failover event occurs in the bonding configuration.
+On Fri, Sep 12, 2025 at 07:56:21AM -1000, Tejun Heo wrote:
 
-Here is the test result:
+> It *seems* that way to me. There are two other scenarios tho.
+> 
+> - A task can move from a non-local DSQ to another non-local DSQ at any time
+>   while queued. As this doesn't cause rq migration, we can probably just
+>   overwrite p->srq_lock to the new one. Need to think about it a bit more.
 
-TEST: bond_ipsec_offload (active_slave eth0)                        [ OK ]
-TEST: bond_ipsec_offload (active_slave eth1)                        [ OK ]
+It can use task_on_rq_migrating(), exactly like 'normal' rq-to-rq
+migration:
 
-Reviewed-by: Petr Machata <petrm@nvidia.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
- .../selftests/drivers/net/bonding/Makefile    |   3 +-
- .../drivers/net/bonding/bond_ipsec_offload.sh | 154 ++++++++++++++++++
- .../selftests/drivers/net/bonding/config      |   4 +
- 3 files changed, 160 insertions(+), 1 deletion(-)
- create mode 100755 tools/testing/selftests/drivers/net/bonding/bond_ipsec_offload.sh
+	LOCK src_dsq->lock
+	p->on_rq = TASK_ON_RQ_MIGRATING;
+	task_unlink_from_dsq();
+	UNLOCK src_dsq->lock
 
-diff --git a/tools/testing/selftests/drivers/net/bonding/Makefile b/tools/testing/selftests/drivers/net/bonding/Makefile
-index 44b98f17f8ff..c13ef40e7db1 100644
---- a/tools/testing/selftests/drivers/net/bonding/Makefile
-+++ b/tools/testing/selftests/drivers/net/bonding/Makefile
-@@ -11,7 +11,8 @@ TEST_PROGS := \
- 	bond_options.sh \
- 	bond-eth-type-change.sh \
- 	bond_macvlan_ipvlan.sh \
--	bond_passive_lacp.sh
-+	bond_passive_lacp.sh \
-+	bond_ipsec_offload.sh
- 
- TEST_FILES := \
- 	lag_lib.sh \
-diff --git a/tools/testing/selftests/drivers/net/bonding/bond_ipsec_offload.sh b/tools/testing/selftests/drivers/net/bonding/bond_ipsec_offload.sh
-new file mode 100755
-index 000000000000..4b19949a4c33
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/bonding/bond_ipsec_offload.sh
-@@ -0,0 +1,154 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# IPsec over bonding offload test:
-+#
-+#  +----------------+
-+#  |     bond0      |
-+#  |       |        |
-+#  |  eth0    eth1  |
-+#  +---+-------+----+
-+#
-+# We use netdevsim instead of physical interfaces
-+#-------------------------------------------------------------------
-+# Example commands
-+#   ip x s add proto esp src 192.0.2.1 dst 192.0.2.2 \
-+#            spi 0x07 mode transport reqid 0x07 replay-window 32 \
-+#            aead 'rfc4106(gcm(aes))' 1234567890123456dcba 128 \
-+#            sel src 192.0.2.1/24 dst 192.0.2.2/24
-+#            offload dev bond0 dir out
-+#   ip x p add dir out src 192.0.2.1/24 dst 192.0.2.2/24 \
-+#            tmpl proto esp src 192.0.2.1 dst 192.0.2.2 \
-+#            spi 0x07 mode transport reqid 0x07
-+#
-+#-------------------------------------------------------------------
-+
-+lib_dir=$(dirname "$0")
-+source "$lib_dir"/../../../net/lib.sh
-+algo="aead rfc4106(gcm(aes)) 0x3132333435363738393031323334353664636261 128"
-+srcip=192.0.2.1
-+dstip=192.0.2.2
-+ipsec0=/sys/kernel/debug/netdevsim/netdevsim0/ports/0/ipsec
-+ipsec1=/sys/kernel/debug/netdevsim/netdevsim0/ports/1/ipsec
-+active_slave=""
-+
-+active_slave_changed()
-+{
-+        local old_active_slave=$1
-+        local new_active_slave=$(ip -n ${ns} -d -j link show bond0 | \
-+				 jq -r ".[].linkinfo.info_data.active_slave")
-+        [ "$new_active_slave" != "$old_active_slave" -a "$new_active_slave" != "null" ]
-+}
-+
-+test_offload()
-+{
-+	# use ping to exercise the Tx path
-+	ip netns exec $ns ping -I bond0 -c 3 -W 1 -i 0 $dstip >/dev/null
-+
-+	active_slave=$(ip -n ${ns} -d -j link show bond0 | \
-+		       jq -r ".[].linkinfo.info_data.active_slave")
-+
-+	if [ $active_slave = $nic0 ]; then
-+		sysfs=$ipsec0
-+	elif [ $active_slave = $nic1 ]; then
-+		sysfs=$ipsec1
-+	else
-+		check_err 1 "bond_ipsec_offload invalid active_slave $active_slave"
-+	fi
-+
-+	# The tx/rx order in sysfs may changed after failover
-+	grep -q "SA count=2 tx=3" $sysfs && grep -q "tx ipaddr=$dstip" $sysfs
-+	check_err $? "incorrect tx count with link ${active_slave}"
-+
-+	log_test bond_ipsec_offload "active_slave ${active_slave}"
-+}
-+
-+setup_env()
-+{
-+	if ! mount | grep -q debugfs; then
-+		mount -t debugfs none /sys/kernel/debug/ &> /dev/null
-+		defer umount /sys/kernel/debug/
-+
-+	fi
-+
-+	# setup netdevsim since dummy/veth dev doesn't have offload support
-+	if [ ! -w /sys/bus/netdevsim/new_device ] ; then
-+		modprobe -q netdevsim
-+		if [ $? -ne 0 ]; then
-+			echo "SKIP: can't load netdevsim for ipsec offload"
-+			exit $ksft_skip
-+		fi
-+		defer modprobe -r netdevsim
-+	fi
-+
-+	setup_ns ns
-+	defer cleanup_ns $ns
-+}
-+
-+setup_bond()
-+{
-+	ip -n $ns link add bond0 type bond mode active-backup miimon 100
-+	ip -n $ns addr add $srcip/24 dev bond0
-+	ip -n $ns link set bond0 up
-+
-+	ifaces=$(ip netns exec $ns bash -c '
-+		sysfsnet=/sys/bus/netdevsim/devices/netdevsim0/net/
-+		echo "0 2" > /sys/bus/netdevsim/new_device
-+		while [ ! -d $sysfsnet ] ; do :; done
-+		udevadm settle
-+		ls $sysfsnet
-+	')
-+	nic0=$(echo $ifaces | cut -f1 -d ' ')
-+	nic1=$(echo $ifaces | cut -f2 -d ' ')
-+	ip -n $ns link set $nic0 master bond0
-+	ip -n $ns link set $nic1 master bond0
-+
-+	# we didn't create a peer, make sure we can Tx by adding a permanent
-+	# neighbour this need to be added after enslave
-+	ip -n $ns neigh add $dstip dev bond0 lladdr 00:11:22:33:44:55
-+
-+	# create offloaded SAs, both in and out
-+	ip -n $ns x p add dir out src $srcip/24 dst $dstip/24 \
-+	    tmpl proto esp src $srcip dst $dstip spi 9 \
-+	    mode transport reqid 42
-+
-+	ip -n $ns x p add dir in src $dstip/24 dst $srcip/24 \
-+	    tmpl proto esp src $dstip dst $srcip spi 9 \
-+	    mode transport reqid 42
-+
-+	ip -n $ns x s add proto esp src $srcip dst $dstip spi 9 \
-+	    mode transport reqid 42 $algo sel src $srcip/24 dst $dstip/24 \
-+	    offload dev bond0 dir out
-+
-+	ip -n $ns x s add proto esp src $dstip dst $srcip spi 9 \
-+	    mode transport reqid 42 $algo sel src $dstip/24 dst $srcip/24 \
-+	    offload dev bond0 dir in
-+
-+	# does offload show up in ip output
-+	lines=`ip -n $ns x s list | grep -c "crypto offload parameters: dev bond0 dir"`
-+	if [ $lines -ne 2 ] ; then
-+		check_err 1 "bond_ipsec_offload SA offload missing from list output"
-+	fi
-+}
-+
-+trap defer_scopes_cleanup EXIT
-+setup_env
-+setup_bond
-+
-+# start Offload testing
-+test_offload
-+
-+# do failover and re-test
-+ip -n $ns link set $active_slave down
-+slowwait 5 active_slave_changed $active_slave
-+test_offload
-+
-+# make sure offload get removed from driver
-+ip -n $ns x s flush
-+ip -n $ns x p flush
-+line0=$(grep -c "SA count=0" $ipsec0)
-+line1=$(grep -c "SA count=0" $ipsec1)
-+[ $line0 -ne 1 -o $line1 -ne 1 ]
-+check_fail $? "bond_ipsec_offload SA not removed from driver"
-+
-+exit $EXIT_STATUS
-diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
-index 4d16a69ffc65..bcd54edd1c87 100644
---- a/tools/testing/selftests/drivers/net/bonding/config
-+++ b/tools/testing/selftests/drivers/net/bonding/config
-@@ -10,3 +10,7 @@ CONFIG_NET_CLS_MATCHALL=m
- CONFIG_NET_SCH_INGRESS=y
- CONFIG_NLMON=y
- CONFIG_VETH=y
-+CONFIG_INET_ESP=y
-+CONFIG_INET_ESP_OFFLOAD=y
-+CONFIG_XFRM_USER=m
-+CONFIG_NETDEVSIM=m
--- 
-2.50.1
+	LOCK dst_dsq->lock
+	dispatch_enqueue()
+	p->on_rq = TASK_ON_RQ_QUEUED;
+	UNLOCK dst_dsq->lock
 
+Same reasoning as for the pick_task_scx() migration, if it observes
+!p->srq_lock, then it must observe MIGRATING and we'll spin-wait until
+QUEUED. At which point we'll see the new srq_lock.
+
+> - A task can be queued on a BPF data structure and thus may not be on any
+>   DSQ. I think this can be handled by adding a raw_spinlock to task_struct
+>   and treating the task as if it's on its own DSQ by pointing to that one,
+>   and grabbing that lock when transferring that task from BPF side.
+
+Hmm, and BPF data structures cannot have a lock associated with them?
+I'm thinking they must, something is serializing all that.
+
+> So, it *seems* solvable but I'm afraid it's becoming too subtle. How about
+> doing something simpler and just add a per-task lock which nests inside rq
+> lock which is always grabbed by [__]task_rq_lock() and optionally grabbed by
+> sched classes that want to migrate tasks without grabbing the source rq
+> lock? That way, we don't need to the lock pointer dancing while achieving
+> about the same result. From sched_ext's POV, grabbing that per-task lock is
+> likely going to be cheaper than doing the rq lock switching, so it's way
+> simpler and nothing gets worse.
+
+I *really* don't like that. Fundamentally a runqueue is 'rich' data
+structure. It has a container (list, tree, whatever) but also a pile of
+statistics (time, vtime, counts, load-sums, averages). Adding/removing a
+task from a runqueue needs all that serialized. A per-task lock simply
+cannot do this.
+
+If you've hidden this lock inside BPF such that C cannot access it, then
+your abstraction needs fixing. Surely it is possible to have a C DSQ to
+mirror whatever the BPF thing does. Add a few helpers for BPF to
+create/destroy DSQs (IDs) and a callback to map a task to a DSQ. Then
+the C part can use the DSQ lock, and hold it while calling into whatever
+BPF.
+
+Additionally, it can sanity check the BPF thing, tasks cannot go
+'missing' without C knowing wtf they went -- which is that bypass
+problem, no?
 
