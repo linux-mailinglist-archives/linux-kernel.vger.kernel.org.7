@@ -1,122 +1,245 @@
-Return-Path: <linux-kernel+bounces-816120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A98B56FC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E36B1B56FC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F38F3B854D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0343B5390
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB4626F2AB;
-	Mon, 15 Sep 2025 05:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97D81F4703;
+	Mon, 15 Sep 2025 05:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FfZYjYkr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YrO2N/Fi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9A14207F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E8719DF4F;
+	Mon, 15 Sep 2025 05:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757914661; cv=none; b=KLnPyZapzo5bVBlRC+sbv5N6JhgAKuV9KJOQ1EyDvmGTSt7xQd3yWt4yYRhdtW3eECoN5GXeqOhTcLYO8UYD70CxCiMX6hZgv0TnXxaJ4QOeQqdYZ0OcoFXzLDZRdjmI0bfYdnKdyz+Zw2BpGJbRuo4VUB8lfhKY8jySP1s5AbI=
+	t=1757915267; cv=none; b=alx37r38IgOSeZBFRIW0pnWbywn6T1kEHgKfmidA/2HVx1DB7XAqL9bVYv5gR0PBVNtoyEwTKIAhvXbkEAHjEiMBi/FunHaEkbJPaUVqAiEzyij3uIL8PB8DEgO6D98OK32FsXqeVLUGYxl0o1UjAYytctbfiReBgKMiFwCoT/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757914661; c=relaxed/simple;
-	bh=7FaPHvaHboKYorbJVbz1FyZQBQKlAOrD2rb4iU3osNU=;
+	s=arc-20240116; t=1757915267; c=relaxed/simple;
+	bh=uhq5A4HqOzycNT0EguqVROkMdKzAY8x3LE2Z7OEXVXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Slb+ZobYEb+WddGt08G4uyFlk8np6MCTrVpMTHScpSvLdbWlEXJZUrGdqaJIoiNel94Dzw+Wc9n6mbpxIEe4o02KfiOcEsutSo5OigJGO29tsjFx+h/sojdjtt2YtuBiYQCUnv0dGS1ianMBIdgr87eAP6yTMVx/yXkkR6VGkdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FfZYjYkr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757914658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rR4nvuLB68PWeoEq6OrLbNMctFC5H6hheeaS39RYv7Q=;
-	b=FfZYjYkrYJa9rito3bV+9Z+JVNM5hiVoLtHRNt7kD5j2htro7rIThQBVp9RyKxR6hOZ8/q
-	Qnbd5O8NO2HS6Y1E+zQmCDKSzVzHRDjdaPjC7TkMmORLKWWh19IhqXMPqEU1KWtPYxGmNK
-	S1P3S4WMgBFY98RY/uaBcwMmCQk6LD0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-j2IEoyyDO9S2fP4RaYfzeA-1; Mon,
- 15 Sep 2025 01:37:32 -0400
-X-MC-Unique: j2IEoyyDO9S2fP4RaYfzeA-1
-X-Mimecast-MFC-AGG-ID: j2IEoyyDO9S2fP4RaYfzeA_1757914650
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 52736195609F;
-	Mon, 15 Sep 2025 05:37:30 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.195])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC8901800446;
-	Mon, 15 Sep 2025 05:37:28 +0000 (UTC)
-Date: Mon, 15 Sep 2025 13:37:24 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: glider@google.com, dvyukov@google.com, elver@google.com,
-	linux-mm@kvack.org, vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-	sj@kernel.org, lorenzo.stoakes@oracle.com,
-	christophe.leroy@csgroup.eu,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, snovitoll@gmail.com
-Subject: Re: [PATCH v3 00/12] mm/kasan: make kasan=on|off work for all three
- modes
-Message-ID: <aMemFIM+T7PBrx1G@MiWiFi-R3L-srv>
-References: <20250820053459.164825-1-bhe@redhat.com>
- <CA+fCnZdfv+D7sfRtWgbbFAmWExggzC2by8sDaK7hXfTS7viY8w@mail.gmail.com>
- <aLlJtTeNMdtZAA9B@MiWiFi-R3L-srv>
- <CA+fCnZf2fGTQ6PpoKxDqkOtwcdwyPYx2cFwQw+3xAjOVxjoh6w@mail.gmail.com>
- <75a2eb31-3636-44d4-b2c9-3a24646499a4@gmail.com>
- <CA+fCnZf7jYPUyqHqonWhDKVi9eeN6aaaByMTBYCQrv2-8+hngQ@mail.gmail.com>
- <CA+fCnZf0z526E31AN_NUM-ioaGm+YF2kn02NwGU6-fmki-tkCg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SmEndwrq6P/abuSaLd/mJg0z3CQOmc3t/nmqg2+VZcfVuW+Hs0JTrJi/POqGpnQnB9T2uGrx6ptp7cocRoN1Ou+/vJP9/V7eU393TcDklsynY+wo8+kvzKoh+ADr56vKN2bnANAFYoj2GW9AGyP2YuDr0zw3d2dG99YlelpSARk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YrO2N/Fi; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757915265; x=1789451265;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uhq5A4HqOzycNT0EguqVROkMdKzAY8x3LE2Z7OEXVXw=;
+  b=YrO2N/FiQbeNOJfR4qQJdbcF+L4ch2iAeSTrQW0uj55LPQBbu4/53ioz
+   BnCLZ9IiXI/eRJ9NszYQyVik3nWIzG+bfeoGOJ7O6apT6ILpOeHT92gg6
+   o3wQq5HSHrD+91yVIBRNaeoQ9OMY+JJOmccak1MlahxiQ00Fjb8pBJKTr
+   8j9yfJtKfEmYJqJMMlGEb5HuUX6N1dmpOi7jGde/QXjsjCSGHUcwSSiHn
+   IB73avXP84CbYiLvingBKbUEwKLMUO664XlAZ8jfvi4vvGYGhL+J/ChbU
+   uRZqIAr0yhlcsiCMyZMyjqr+7cD624QN+U1rZu5UbnAtYtxP2hgxjeKdf
+   Q==;
+X-CSE-ConnectionGUID: UN/Cfw9kQtCSkl8yTyusZg==
+X-CSE-MsgGUID: HqH6ix8dSH+y7yVsKNUYuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="60264268"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="60264268"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 22:47:44 -0700
+X-CSE-ConnectionGUID: gjM+2CUiQFKjW+x4di8vSw==
+X-CSE-MsgGUID: sYKP41NqQxW0tIoaUO1RTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="174598032"
+Received: from lkp-server02.sh.intel.com (HELO 0f80bf6f8d53) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 14 Sep 2025 22:47:37 -0700
+Received: from kbuild by 0f80bf6f8d53 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uy23O-00002V-38;
+	Mon, 15 Sep 2025 05:47:10 +0000
+Date: Mon, 15 Sep 2025 13:46:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
+	Charan Pedumuru <charan.pedumuru@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 23/23] staging: media: tegra-video: add CSI support
+ for Tegra20 and Tegra30
+Message-ID: <202509151319.M4lQXwA8-lkp@intel.com>
+References: <20250906135345.241229-24-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+fCnZf0z526E31AN_NUM-ioaGm+YF2kn02NwGU6-fmki-tkCg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250906135345.241229-24-clamor95@gmail.com>
 
-On 09/06/25 at 03:25pm, Andrey Konovalov wrote:
-> On Fri, Sep 5, 2025 at 10:34 PM Andrey Konovalov <andreyknvl@gmail.com> wrote:
-> >
-> > Baoquan, I'd be in favor of implementing kasan.vmalloc=off instead of
-> > kasan=off. This seems to both (almost) solve the RAM overhead problem
-> > you're having (AFAIU) and also seems like a useful feature on its own
-> > (similar to CONFIG_KASAN_VMALLOC=n but via command-line). The patches
-> > to support kasan.vmalloc=off should also be orthogonal to the
-> > Sabyrzhan's series.
-> >
-> > If you feel strongly that the ~1/8th RAM overhead (coming from the
-> > physmap shadow and the slab redzones) is still unacceptable for your
-> > use case (noting that the performance overhead (and the constant
-> > silent detection of false-positive bugs) would still be there), I
-> > think you can proceed with your series (unless someone else is
-> > against).
-> 
-> Hm, just realized that kasan.vmalloc=off would probably break if
-> CONFIG_VMAP_STACK is enabled: read-only shadow for vmalloc =>
-> read-only shadow for stacks => stack instrumentation will try writing
-> into read-only shadow and crash.
-> 
-> So I wonder if there's a way to avoid the lazy vmap freeing to deal
-> with the RAM overhead.
+Hi Svyatoslav,
 
-That's a very key feature of vmalloc, lazy vmap freeing not only
-integrate the virtual area freeing on one cpu at one time, but also
-merge the areas and flush tlb at one time too. Please see
-__purge_vmap_area_lazy() for the details. This can avoid performance
-degradation when many vfree() are called.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on robh/for-next clk/clk-next linus/master v6.17-rc6]
+[cannot apply to next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/clk-tegra-set-CSUS-as-vi_sensors-gate-for-Tegra20-Tegra30-and-Tegra114/20250906-215750
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250906135345.241229-24-clamor95%40gmail.com
+patch subject: [PATCH v2 23/23] staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
+config: arm-randconfig-r131-20250915 (https://download.01.org/0day-ci/archive/20250915/202509151319.M4lQXwA8-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 21857ae337e0892a5522b6e7337899caa61de2a6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250915/202509151319.M4lQXwA8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509151319.M4lQXwA8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from <built-in>:3:
+   In file included from include/linux/compiler_types.h:171:
+   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
+      28 | #define __SANITIZE_ADDRESS__
+         |         ^
+   <built-in>:366:9: note: previous definition is here
+     366 | #define __SANITIZE_ADDRESS__ 1
+         |         ^
+>> drivers/staging/media/tegra-video/tegra20.c:909:6: warning: variable 'pp' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     909 |         if (ret < 0) {
+         |             ^~~~~~~
+   drivers/staging/media/tegra-video/tegra20.c:923:53: note: uninitialized use occurs here
+     923 |         tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
+         |                                                            ^~
+   drivers/staging/media/tegra-video/tegra20.c:909:2: note: remove the 'if' if its condition is always false
+     909 |         if (ret < 0) {
+         |         ^~~~~~~~~~~~~~
+     910 |                 dev_warn(csi->dev, "MIPI calibration status timeout!\n");
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     911 |                 goto exit;
+         |                 ~~~~~~~~~~
+     912 |         }
+         |         ~
+   drivers/staging/media/tegra-video/tegra20.c:900:6: warning: variable 'pp' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     900 |         if (ret < 0) {
+         |             ^~~~~~~
+   drivers/staging/media/tegra-video/tegra20.c:923:53: note: uninitialized use occurs here
+     923 |         tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
+         |                                                            ^~
+   drivers/staging/media/tegra-video/tegra20.c:900:2: note: remove the 'if' if its condition is always false
+     900 |         if (ret < 0) {
+         |         ^~~~~~~~~~~~~~
+     901 |                 dev_warn(csi->dev, "MIPI calibration timeout!\n");
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     902 |                 goto exit;
+         |                 ~~~~~~~~~~
+     903 |         }
+         |         ~
+   drivers/staging/media/tegra-video/tegra20.c:886:15: note: initialize the variable 'pp' to silence this warning
+     886 |         u32 value, pp, cil;
+         |                      ^
+         |                       = 0
+   3 warnings generated.
+
+
+vim +909 drivers/staging/media/tegra-video/tegra20.c
+
+   880	
+   881	static int tegra20_finish_pad_calibration(struct tegra_mipi_device *mipi)
+   882	{
+   883		struct tegra_csi *csi = mipi->csi;
+   884		void __iomem *cil_status_reg = csi->iomem + TEGRA_CSI_CSI_CIL_STATUS;
+   885		unsigned int port = mipi->pads;
+   886		u32 value, pp, cil;
+   887		int ret;
+   888	
+   889		/* This part is only for CSI */
+   890		if (port > PORT_B) {
+   891			pm_runtime_put(csi->dev);
+   892	
+   893			return 0;
+   894		}
+   895	
+   896		guard(mutex)(&csi->mipi_lock);
+   897	
+   898		ret = readl_relaxed_poll_timeout(cil_status_reg, value,
+   899						 value & CSI_MIPI_AUTO_CAL_DONE, 50, 250000);
+   900		if (ret < 0) {
+   901			dev_warn(csi->dev, "MIPI calibration timeout!\n");
+   902			goto exit;
+   903		}
+   904	
+   905		/* clear status */
+   906		tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, value);
+   907		ret = readl_relaxed_poll_timeout(cil_status_reg, value,
+   908						 !(value & CSI_MIPI_AUTO_CAL_DONE), 50, 250000);
+ > 909		if (ret < 0) {
+   910			dev_warn(csi->dev, "MIPI calibration status timeout!\n");
+   911			goto exit;
+   912		}
+   913	
+   914		pp = tegra20_mipi_read(mipi, TEGRA_CSI_CSI_PIXEL_PARSER_STATUS);
+   915		cil = tegra20_mipi_read(mipi, TEGRA_CSI_CSI_CIL_STATUS);
+   916		if (pp | cil) {
+   917			dev_warn(csi->dev, "Calibration status not been cleared!\n");
+   918			ret = -EINVAL;
+   919			goto exit;
+   920		}
+   921	
+   922	exit:
+   923		tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
+   924	
+   925		/* un-select to avoid interference with DSI */
+   926		tegra20_mipi_write(mipi, TEGRA_CSI_CILB_MIPI_CAL_CONFIG,
+   927				   CSI_CIL_MIPI_CAL_HSPDOS(0) |
+   928				   CSI_CIL_MIPI_CAL_HSPUOS(0) |
+   929				   CSI_CIL_MIPI_CAL_TERMOS(4));
+   930	
+   931		tegra20_mipi_write(mipi, TEGRA_CSI_CILA_MIPI_CAL_CONFIG,
+   932				   CSI_CIL_MIPI_CAL_NOISE_FLT(0xa) |
+   933				   CSI_CIL_MIPI_CAL_PRESCALE(0x2) |
+   934				   CSI_CIL_MIPI_CAL_HSPDOS(0) |
+   935				   CSI_CIL_MIPI_CAL_HSPUOS(0) |
+   936				   CSI_CIL_MIPI_CAL_TERMOS(4));
+   937	
+   938		pm_runtime_put(csi->dev);
+   939	
+   940		return ret;
+   941	}
+   942	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
