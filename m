@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-817197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C84B57F25
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:35:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E442B57F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924E9487420
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B71484133
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657A8335BC6;
-	Mon, 15 Sep 2025 14:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32C43314C8;
+	Mon, 15 Sep 2025 14:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="G1UTySBi"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfR9fJfO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D9D30C379
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDCD326D57;
+	Mon, 15 Sep 2025 14:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946866; cv=none; b=Ewv7vCJ2bxnEKvy163Jnk1eblQYS2LljJrWHrNP3ZOUY25WyqsLjDYELs1iy8lnPYha9J7PlTCkKFxiGG+t+e0C6C9RYLs62c0i3UexXSjjlf0kWvdb5FJrX/zu0A8Tn+jNiZMRKuBBjRY8w1lNTc4os9Y/lC34Nc9eyE4b1+N0=
+	t=1757946859; cv=none; b=a+GzZqNcZsW5lZFic2qRun2CliG5XcN7IKpFMvrR7yT1KQ/+keWLM8UPk5vWyHlYto94MPH8shpiS+zJEfDyVYoN3eXJl7nEPN9bpy59mr8qBTTW1LVeEIF2vZrol84ecgIs86TzBQ+/bNARTN2Ns67YnLA8SaQGVI4eYpK9HR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946866; c=relaxed/simple;
-	bh=6G5vs2cyxeBTHwZWABgSNrCBXx1XdkeNKjCIKpoDxFQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XWUUO/G80Fkz+FeRJuiKPCYjmCJTt0/3SckAlab7mWDS9MkHB4VGBwMJ7e+1IYGqGD7rBsc5k/k6ey0qVeYFMfSDplnVnmCihBTZ+/oMnftqhx/98/GouC/mZsvB5ASq7i32jbSf07kR1QSRNyADudK+qujTH4v42iTu26OoXXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=G1UTySBi; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757946865; x=1789482865;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6G5vs2cyxeBTHwZWABgSNrCBXx1XdkeNKjCIKpoDxFQ=;
-  b=G1UTySBi3BsbAwWORwH7mcwA5eqh7LG/9XnMftzIHPA587RwXhdqPif4
-   zXS5REPyl+8ZRCM0GLuGy/9xzXjrg9i8vmXaGMAG8O+za7/5Le62ByLmS
-   RU+zFRMdoDQWAF8mMho5MBT+2sFh3V58vyHOU4hLTSXwOJvdrRaERmkkK
-   1/LAQSipel3kFglpU7L4riGMjBMckxIKaemthW3FbpguUYfWkxcFkyVU5
-   2CrWy60BU/jytcV3DABY4fkTMFvBLZ379s05K9xjWeHNmLG50NMoVcA7J
-   k7PON8p/EiZrIFLptm1sQKYPIAU74Zrv9sQJpNQsnaXIKQzCE6/I/oXHp
-   A==;
-X-CSE-ConnectionGUID: DF1M/GhBQMGN2tUVc32rVw==
-X-CSE-MsgGUID: XRRqoovgT3yxUJMX9QI+Jg==
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="277891866"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:34:23 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 07:33:55 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 15 Sep 2025 07:33:53 -0700
-From: <nicolas.ferre@microchip.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Cristian Birsan <cristian.birsan@microchip.com>, Ryan Wanner
-	<ryan.wanner@microchip.com>, Varshini Rajendran
-	<varshini.rajendran@microchip.com>
-Subject: [PATCH 2/2] ARM: at91: remove default values for PMC_PLL_ACR
-Date: Mon, 15 Sep 2025 16:33:45 +0200
-Message-ID: <20250915143345.18998-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757946859; c=relaxed/simple;
+	bh=KnApPHdpbkc0ZqBs12JwYi2eKHvm/OQD74k8kMvr4jQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=to1151X7Ef8xKDnlTGFMB+p6NTttzQ2wmTz6VQjEeK5g1VLqLLtQnbKgweAplKgjuMloxYPElnc7hkBQZ4ORDsmW7yr7snunSOiikNMHNzf/yo9o04tiIryrTuqNA5wY9PZcpfEPiCqf3oU+yt7o/qcITQH+OVauhztfMEYU5F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfR9fJfO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 169EDC4CEF7;
+	Mon, 15 Sep 2025 14:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757946859;
+	bh=KnApPHdpbkc0ZqBs12JwYi2eKHvm/OQD74k8kMvr4jQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MfR9fJfOqXGHrjFh3h+WbbF7uOfJlWGJe2Ds6MljZsis9feU+3khyHudcngQ4QASf
+	 FbCNnwo/DGqnFz5dB3jsLbjSOLa12LH8oFQUO0riP0+OsBiaHSUODDsns5AeKlMKBg
+	 zINErZXf3HPxZjdbwEfidaxpPCymNK6ahIC9+C4TiDnopomCGUSmkeWlbXrqlYrmio
+	 o6bXJ+aNyG+B0KJS2d78D1UepJvUNGBPRANtA3Cq7G7gfkjZ/PxmcRyIG+DSLGZPg0
+	 kyHOeR2Qta6NQE6gPzHfIJOcTzTGNfNFthXaftEMKmMfWgeUUu9qTV8zN+l63Pm+kf
+	 QdBajgWBFvR8w==
+Date: Mon, 15 Sep 2025 20:04:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH v9 3/4] PCI: qcom: Prepare for the DWC ECAM enablement
+Message-ID: <astoz72ufcybla5mmueweeizsyn4p6xcprt63ld7hzrcyb7hid@ionwygzp4464>
+References: <20250909-controller-dwc-ecam-v9-3-7d5b651840dd@kernel.org>
+ <20250912215053.GA1643809@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20250912215053.GA1643809@bhelgaas>
 
-From: Cristian Birsan <cristian.birsan@microchip.com>
+On Fri, Sep 12, 2025 at 04:50:53PM GMT, Bjorn Helgaas wrote:
+> On Tue, Sep 09, 2025 at 12:37:52PM +0530, Manivannan Sadhasivam wrote:
+> > From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> > 
+> > To support the DWC ECAM mechanism, prepare the driver by performing below
+> > configurations:
+> > 
+> >   1. Since the ELBI region will be covered by the ECAM 'config' space,
+> >      override the 'elbi_base' with the address derived from 'dbi_base' and
+> >      the offset from PARF_SLV_DBI_ELBI register.
+> > 
+> >   2. Block the transactions from the host bridge to devices other than Root
+> >      Port on the root bus to return all F's. This is required when the 'CFG
+> >      Shift Feature' of iATU is enabled.
+> 
+> FWIW, before I noticed your v9, I had updated the comments here to fix
+> a few inconsistencies.  Here's the diff:
+> 
 
-Remove default values for PMC PLL Analog Control Register(ACR) as the
-values are specific for each SoC and PLL and load them from PLL
-characteristics structure
+I will incorporate this in next version.
 
-Co-developed-by: Andrei Simion <andrei.simion@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
-Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
-[nicolas.ferre@microchip.com: fix pll acr write sequence, preserve val]
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/clk-sam9x60-pll.c | 7 ++-----
- include/linux/clk/at91_pmc.h       | 2 --
- 2 files changed, 2 insertions(+), 7 deletions(-)
+- Mani
 
-diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
-index a035dc15454b..3dc75a394ce1 100644
---- a/drivers/clk/at91/clk-sam9x60-pll.c
-+++ b/drivers/clk/at91/clk-sam9x60-pll.c
-@@ -103,11 +103,8 @@ static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
- 	    (cmul == frac->mul && cfrac == frac->frac))
- 		goto unlock;
- 
--	/* Recommended value for PMC_PLL_ACR */
--	if (core->characteristics->upll)
--		val = AT91_PMC_PLL_ACR_DEFAULT_UPLL;
--	else
--		val = AT91_PMC_PLL_ACR_DEFAULT_PLLA;
-+	/* Load recommended value for PMC_PLL_ACR */
-+	val = core->characteristics->acr;
- 	regmap_write(regmap, AT91_PMC_PLL_ACR, val);
- 
- 	regmap_write(regmap, AT91_PMC_PLL_CTRL1,
-diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
-index 7af499bdbecb..d60ce9708ea2 100644
---- a/include/linux/clk/at91_pmc.h
-+++ b/include/linux/clk/at91_pmc.h
-@@ -47,8 +47,6 @@
- #define	AT91_PMC_PCSR		0x18			/* Peripheral Clock Status Register */
- 
- #define AT91_PMC_PLL_ACR	0x18			/* PLL Analog Control Register [for SAM9X60] */
--#define		AT91_PMC_PLL_ACR_DEFAULT_UPLL	UL(0x12020010)	/* Default PLL ACR value for UPLL */
--#define		AT91_PMC_PLL_ACR_DEFAULT_PLLA	UL(0x00020010)	/* Default PLL ACR value for PLLA */
- #define		AT91_PMC_PLL_ACR_UTMIVR		(1 << 12)	/* UPLL Voltage regulator Control */
- #define		AT91_PMC_PLL_ACR_UTMIBG		(1 << 13)	/* UPLL Bandgap Control */
- 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 7c2b2c8c61c2..962f0311a23a 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -343,15 +343,15 @@ static void qcom_pci_config_ecam(struct dw_pcie_rp *pp)
+>  	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
+>  
+>  	/*
+> -	 * The only device on root bus is a single Root Port. So if PCI core
+> -	 * tries to access any devices other than Device/Function (0.0) in Bus
+> -	 * 0, the TLP will go outside of the controller to the PCI bus. But with
+> -	 * CFG Shift Feature (ECAM) enabled in iATU, there is no guarantee that
+> -	 * the response is going to be all F's. Hence, to make sure that the
+> +	 * The only device on the root bus is a single Root Port. If we try to
+> +	 * access any devices other than Device/Function 00.0 on Bus 0, the TLP
+> +	 * will go outside of the controller to the PCI bus. But with CFG Shift
+> +	 * Feature (ECAM) enabled in iATU, there is no guarantee that the
+> +	 * response is going to be all F's. Hence, to make sure that the
+>  	 * requester gets all F's response for accesses other than the Root
+> -	 * Port, configure iATU to block the transactions starting from function
+> -	 * 1 of the root bus to the end of the root bus (i.e from dbi_base + 4kb
+> -	 * to dbi_base + 1MB).
+> +	 * Port, configure iATU to block the transactions starting from
+> +	 * function 1 of the root bus to the end of the root bus (i.e., from
+> +	 * dbi_base + 4KB to dbi_base + 1MB).
+>  	 */
+>  	addr = pci->dbi_phys_addr + SZ_4K;
+>  	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
+> @@ -1385,7 +1385,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>  	if (pp->ecam_enabled) {
+>  		/*
+>  		 * Override ELBI when ECAM is enabled, as when ECAM
+> -		 * is enabled ELBI moves along with the dbi config space.
+> +		 * is enabled ELBI moves along with the DBI config space.
+>  		 */
+>  		offset = FIELD_GET(SLV_DBI_ELBI_ADDR_BASE, readl(pcie->parf + PARF_SLV_DBI_ELBI));
+>  		pci->elbi_base = pci->dbi_base + offset;
+
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
