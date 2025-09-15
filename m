@@ -1,223 +1,199 @@
-Return-Path: <linux-kernel+bounces-817366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26D6B58142
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:52:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C7CB58152
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DF5B7A4D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FD5202BEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A8A227EAA;
-	Mon, 15 Sep 2025 15:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD192376F8;
+	Mon, 15 Sep 2025 15:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="b4wdhx9s"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011025.outbound.protection.outlook.com [40.107.130.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VQHdawWU"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C50E21B9DB;
-	Mon, 15 Sep 2025 15:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757951510; cv=fail; b=u2/JqsFpQpw0cBQoXlq5T/xiRT8j7kP/DaZu1whV/DO5AashclrSHxMkasakpA53LfxgXBu3Vy180V5a5AO3cXfsSlUInu/SjjhII3e7OqaBbB+97qm2aUtGhc16X6Cy7Ke9sP8NOp1vPlsDFuHzoQKRaqxujmpDPgP1cBJyovQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757951510; c=relaxed/simple;
-	bh=WJuaSGSZpFZh9lpybkSardsbcrS/BCDmm55QOVpOBm0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MNrrUWSj2H0DlPsbrlvKqy5fZKus0zGG9llVALlsIXs/GIh/PudZufqbz9xXC7UbrDTZFWHuHPCJGrqAPTCyhegIkgxjaZLQ9u1JLEY3G6PsJ9t56EN1Csnr1B73v6i1UjM1Cl0mUIWqAUkoATGAgudht1fYdVmFq9EIo0njxkw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=b4wdhx9s; arc=fail smtp.client-ip=40.107.130.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=schoTgq/UredTl3xKNfQuDa+em3noIis/Ic4hX1biYjOuh85WUKZei8FjJV9KoWIccY74TM3K21RQfC2xW80exob0TR0pj2bwU4d+vTb5oZL5PspeZ4oAaHxDFbVFEnNnAbBYvjIQz1BVd4jm4U6zK579ZuAADcyAr5iXfr0Slq/tfM5YNOpbzL9OXXinqCiyhjgrzDzoeCROwmh4pAwqLsTXmrU6HTp2m+IWTmYePGJnsCncCbHxZn5/2ZLOfwiAG368F0f79dodFzFqJHqyK3JWer5+fc12BWUEFUPfbot2wNny6j30iA3Qn6+hXnDCen0HHk5Yb7IqnqNbDJzow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cLA1HSDhDTNI5zGlm+oV8Lz414pHFtp980ccHUjK9Xk=;
- b=tPnoJE8OF+4Zd28W7SnLdWrp14X9f9C//ORZPT8mHRE9rFp4MwPVIswFwYZuOBscW4npwvqkrrzRGzhuhSeidtHlCPYdo5Amcd8shXgu1iMNeW7kn3PzcAV01AVz8JXImj/qj5sJ/WdkFWo8XBBif8E0UD4uuabtmomDukDCQEJmDKX2NQX1U5HufHXxrMRvNsuKOUknmzyf1wIO4wesg6pjmlwVhpAN8nXK7NdYFdoBGKCCaC/3ecCoxYFUqQJ0Ma6/ukDEzF6/EBG9l0FXPMAiaQWKcBTcyl6TlWqCrsyqLvbaYfihkrlHVTs4O6keEViisUv0Qj4qkIi1e7Lk6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cLA1HSDhDTNI5zGlm+oV8Lz414pHFtp980ccHUjK9Xk=;
- b=b4wdhx9sPlqjq7tt+PpMqJCtbo53tKSasSMHO7WMzFv7wAtMlcDPbHWa18K1Zee4F2x2L+6Rf9VXY5OynVMZmRrYC/tQ/kMAHP66bFNkLUNZf6YaoSzLRfZyfNhSmf1lCQbSzUkDQu23pIGehZpc8VGX0aATuCVwcPvcaN1H92eciuqbNoF9I2Z+ikrpiqmiVNUiBxcSTLg5/Du343bIh99t3N8GxusQmRX6PmhSBKUfEA9HyHWourEVK253XzmAvzMvMupmwJYcPsQgch2aj0QvRxOEw38NLyOJq79u6sLFY1hvEE6Y3KP1o/etF59e3SwLpDJPzifFGU8kaWAc4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by VI2PR04MB11217.eurprd04.prod.outlook.com (2603:10a6:800:29a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
- 2025 15:51:43 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Mon, 15 Sep 2025
- 15:51:43 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	dri-devel@lists.freedesktop.org (open list:DRM PANEL DRIVERS),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v2 1/1] dt-bindings: display: simple: Add innolux,n133hse-ea1 and nlt,nl12880bc20-spwg-24
-Date: Mon, 15 Sep 2025 11:51:23 -0400
-Message-Id: <20250915155123.3250823-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR13CA0106.namprd13.prod.outlook.com
- (2603:10b6:a03:2c5::21) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D34E230D0F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757951599; cv=none; b=ImgolrP/NbZ0Lu+yKbc4if42rdYd0CaeckMt7J8uQanUm5CbUkfrZrIe36ZoPPkyGxdx33FSMkQpE5mI2nhkSKszEmFw+VJFfV72ZK12+rAe7hbluqFtGaEMFwX4EDe45mqqgE3dEsrvWNs7TxERjzOMBQRR76pZTAaTRRE41yU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757951599; c=relaxed/simple;
+	bh=F6DTZWr2PPXJc9MSABBtybg5z0j9nOtTokHsabCL6Ig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oj+BfHxe7rRtIfQekXFuXP4aQZldmt6+vQHIYBNva07ZwMehyRffoEKSmlkKpHJdlpLKPGzsL1CdREEoclptY8EAZyL/muj2+N+p/nHR4Q5M3y5/KwcS1UdZ+tOfluEGl3IqhYWkwWw4n7d1Oeoj8CHxpoemWelaWt5JRqYWzuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VQHdawWU; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-ea4032e406dso1517608276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757951596; x=1758556396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/0XiNoYxd5ucucDApZFb2O43+1fOasgyAKcEaecxkgQ=;
+        b=VQHdawWUwxtUDsnf2OzYeoOPiUSRylGj41rMeufU3tH1ig5U4ms5rukuBjhMB3iO6G
+         ku2ekowbU1bNKB3OJi3STK7m7v4swUXxXOBEPYmJvYdnMPvvBaRY4g59PXBAdXyfAv4f
+         iYaSGjp1rOTuHfPwt0axVvLoNSY50WMMxqh6+KBhO0eHkg6XDEnnCn6Stntg+wNC4Ygl
+         zSLW6ZeMP/Qbmc5ome+hs7m2MoCF2GDCgIj2hcaBCm3jQ8P6e5nKJmktksCaa+v2T04c
+         otewqvBv7sfCDz49Ar0kCx1+UPix/PGUsTWJZfxcK0DTVgr47egaYRoUl/t9FV7xmOaa
+         5FPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757951596; x=1758556396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/0XiNoYxd5ucucDApZFb2O43+1fOasgyAKcEaecxkgQ=;
+        b=ftDn/o2K+F0+3wWcqmSMPOF2atFs/uUaC+B9Th0dnV1tTbNTd+R6IrBfY/WozU+y0O
+         QmKQXuUM3taYwlfzoNECgIsXLJ59k3Y9w9TIWpXzhBbU0NDXdVaYGK4Et3LmdBdbDByl
+         LQ8G1EAtNroHd6OPrJ50J82fPEefe66kHhVp1UTtJChF6lPJQmgk/uzthNbZl3IO5CRD
+         Cq87Sre1V2BhFsemr7773UA8vVZK5TKKklgn5kG2OQS21oTwcx5G8qpZOX4G9VvO79GE
+         DFwSb4BQMEx7jBafxjEC2prHADRUCejFtC/ypCdBXqOptgCEWn02LgWZvga2BxyigWQG
+         LnjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJV9YAlX2nAaWnUJbbpY4ZGf3OMxheNQNMpol3n6DOdpTci2KnWUdSa0cLU7k/QA1glTk9ACOuoqTvXrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBnknH9NkLS2RaxxfMbRyYW7GnmfYEdpIGSsIXqiFxTIiiQ563
+	+73n3CNflSDMCWP7KPjIqBhncNmya+lnb53nBHnDYCFLR0BpamQVu9R4v4hl8kz9xZDIzBnHBmZ
+	vEkZhyD4KuuLGXlLtLpvuQpYhrRKn7Lpjw7dd7Q2F
+X-Gm-Gg: ASbGncsjP7+cK9i0MdOOuMQfLMuXa4RzHE9q9GmYotAbO9d3tMF8VAp0qGw4pwKS4zg
+	9Vi0FkDp7kMrgOvCwySQpIYGKyaBkoZ/S//DJtZbofsi0nz+ujcVcNFMPi8SVafxuFqbJcseFl7
+	IyUlr+WTXpueaXgQLm13R5McuFbEz4qvpvJdzyWwDHQYu0tevJDTE+0SqrwQRa1xZ5vAOSK/QM8
+	gX8p7ZGrs1aj2ewcmkc3+I6xdsscQvzsUngCBgLVkM=
+X-Google-Smtp-Source: AGHT+IE83V2dgjtVWnGJmHoDlRMTL2myBzrkKJXkq0h5ZUezl7kZ6j4oqJ7P5qXzlNuzOLFywsL004XyX2O24GgrcM4=
+X-Received: by 2002:a05:690e:251a:20b0:62a:e5e3:b1f with SMTP id
+ 956f58d0204a3-62ae5e30d34mr6904794d50.18.1757951595803; Mon, 15 Sep 2025
+ 08:53:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|VI2PR04MB11217:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5e0037e3-125b-4d12-e649-08ddf46fc48b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|52116014|7416014|376014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QldFV0xaWXJNWUNJbmpVWXJkNXJuRytvV0R6bWJ1WU1VQlZSc3BKY1BhdmFK?=
- =?utf-8?B?MUM3R05SSS9QUVV3dUpmNzVjU2swVVI5MVVHbnJxZlZTSVlGT05SMmNIUnZZ?=
- =?utf-8?B?S0pUeTFrcVNtN285bzRuRFhoV1FYQkFJNVkxNEpRTXZyYXRjSGZ3MTNzMy9E?=
- =?utf-8?B?QUU3VDIxck83TFk3UTJ6aGU3ZkEwUTNPb3lIVGRyN0RSeDMyWTh4aGl0TzQ1?=
- =?utf-8?B?Q1dOSnkxOXc5dmExZ1ArTDFQUlg0Y1YyYzYrM3lOUWUxWkR3OWpmTC9DcUxH?=
- =?utf-8?B?TGRIeWd3QzNyaDJOWXVHMU12aVJJOXp3ekplYk5RRnYwSVB3U2d5NkJTNVM5?=
- =?utf-8?B?ZmlMNzlNWmc2MTEwY1EvYUdVL05kOW9Lc0VyeGlCQmNQVUhaUXllSStZeWQw?=
- =?utf-8?B?TjRlTWdDR3FrNDM4VndsNWtKOS9KaG95QlFTem5Td3NmYkRnMEVQYTdNNSs0?=
- =?utf-8?B?ZFlMSU1LZThla0ZCdjlqSTNDS2cxT2wwakNMMDVjQUV5Q0V4Z2d0bDlrNHdI?=
- =?utf-8?B?a3RuSXZuQmQvc1VOMWlyOG9UMjdHVlBDOW5GRnRhUTV6ckk3UjFLaDViOXY0?=
- =?utf-8?B?MXVhemhLSFBwUG9hRjJDY0NXU0tTckZ4VGQyTmIxRnp3MnlBV2FwTHBsSXRz?=
- =?utf-8?B?cDhhODVLMHdTUHV0c1VBaUNRYVlmMFIyeFdodFRjcjM4dXlsdTRyYnQ5Q29J?=
- =?utf-8?B?RzV1TEZUNVNEU0VqWWNEcmlhekZTSXQ2NWx5L0hrZkJPUWJaQjZMV0RZa0FV?=
- =?utf-8?B?R0NBNmE4bkNyREhmenV0ZEMrT2RzL3ZqUGNYblJhWHphamUrbldYZHByUnJN?=
- =?utf-8?B?eVhhbng0TnJnSVdjQUFacm5LR0YxV0Jab2x6M1VxQXNqMEF5S3lSSnh4b1pj?=
- =?utf-8?B?d3ZXSnRkQW5DeXN5N1FGeTN1N28yRG1lMFVTaXB3T3VnSitTa1lZMWh4c3Nv?=
- =?utf-8?B?Tk9ZVGFhYlh3eXAvSzg4UlhWd1piN0dsVzlOYW5vbVZmeWtGWThSTzNucDZB?=
- =?utf-8?B?c1psRmc2Nncva2s0VitxSVd4dC9wSmNzN3IxclRHSG9sczFBWFV0UzNoOWtv?=
- =?utf-8?B?dnlDaWZWWnYzbk5tYU9KaEFTamE0MTJ6RG1OVURtcTd1bjZwVnJWb1BPdHVL?=
- =?utf-8?B?b1dicHJOOFd1ZWtCTzRSQlUybTVqaUFRakYvK2IyekE2d3F2VGhFWlkwSnh0?=
- =?utf-8?B?T3pjNi8wZ1lkUHlIZy9qYXRnZURMeVVralh5UVVuc2RVbWtlZzF3OTdtdzFx?=
- =?utf-8?B?N0p2bi9kUE0zeTRlKyt1NDQ4MjVqc1NoM1VPbitQb1U4aHpLWXNhWjFHWGNQ?=
- =?utf-8?B?NUZhQStQUDBtY0FmZk92TFBQNFZ4TStSSk0vdFVDdU84Rkl2bzNXaFllbmxY?=
- =?utf-8?B?ZGcrdEM3S1h0Q3I1azRmVm5nUnhQRy9hSzQvblg1M2Q2S05CbnJwZDZHRTVo?=
- =?utf-8?B?R2UzczJ5ZlVQZ25UNnNuZjUzQkRHWXdyaTZPYjQxTkRyaHFSK0dOZDRQUXhh?=
- =?utf-8?B?QXZpVG80a3RZNUJydTMrTXl4MGZaMUNuNlFGTFd5djFqZitYcElVUkEzRWEz?=
- =?utf-8?B?Ykd6R1JkaUl4Y0FOTU00V1k5VTBoeGV6NlpEc1dScmZTVlFBTUlHS3Vyd0Rs?=
- =?utf-8?B?b05jQm9FSlFIQVlQQUlXVjM4ZnVQUWVRRnFmQldUQjZXa3J4OEhlUFRlVk5x?=
- =?utf-8?B?a1oxV2pYVWxlSzJhMzNLb1pjclVTVHF1bG8xdFVnTlZvWXd2KzZjL2dTdXpK?=
- =?utf-8?B?TVBPT29YaXZCdkUrVUpiZmpWSmkwRlMvd2FsQVBzNDk2WnFJUENxNTV6aXZI?=
- =?utf-8?B?QUh4eVcxSk1ua2llMVNDVkI5MEI0VzAwY0RvM05GbE1vd0ZrTTdWZll2d2N6?=
- =?utf-8?B?cHVNVnYxRGQ4MmxRKzFJb0VSRUJ6elNGaEs0ckpnWnh4eGpxSldFTGVWUGdv?=
- =?utf-8?B?K25ibnV4WnFHSnJGVmVnUUd0VTluSGdIMFRjbng5cTFwNk1hYmVOWUQ4U2Zj?=
- =?utf-8?Q?Lng4Z8dCvCRzGZtx3iV7PTnspllTR4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(52116014)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NHNaY1YvNEJFMHl6eWZyNUdMcDVaTm9udU53cmtEVWRsM1NENmhVZFZzYnA3?=
- =?utf-8?B?TWVUc0lja0s4QnRpYW80UFpueE5Td2xwbmZRS2JxaGFleTA3S3I3NUExajV4?=
- =?utf-8?B?M3VwZlRFaUVQbGFFRUhWR1c2d09xMGE2UU1yVjl0bWlPclNudEh4S1ZiaThX?=
- =?utf-8?B?dWw0L1I1NUxHMDZReC9ueVJBVmxSNlN2VHB3QlBoaHpyZUFYaXhHdy9sWGRT?=
- =?utf-8?B?SHIxSzZmcUpLVEpGeHpTOXNKWE1VMFNIQWRSVzdQdytCY1Y1STlaUnl1YlJH?=
- =?utf-8?B?NHY5Q0JySFU4Z3pzTkhXZFpZRkwraytVQUFpTld1Q3BIZmdXODdENG1pUkUz?=
- =?utf-8?B?ZWtVZHVOd0FhSStDWUhGZzd6UGw2ZEE1Y0tHaUZveUU2VFpVY2NCY1dDbE1i?=
- =?utf-8?B?UkVPaTN3cTk1RmRxeXEzN2o5TlorK04wbXpySEorYld2S1FOYXhLLyt6UmlD?=
- =?utf-8?B?RnZ5dysrTmhXQ0E2WFk2aWh5dnVsQUlJMXdYYnBBcWhEcXJSaWxKbW1qVmFC?=
- =?utf-8?B?QldNWHRWWDJVT3RJYWdZOWVLc0h6Y1lsdmZsMzVscDZnSytxKzZkRGZHUTNV?=
- =?utf-8?B?OGFvNmFtNHNQRXI2cER3QnN4SjNBQ0hHTGNyb0pobW93QjgxUjdEeUY4M1Qr?=
- =?utf-8?B?cUFxbjRWazNETU80TlRIdk1CMktmTHRPUVpyYlkzbFZZMTA3QjdmSGJZb1JE?=
- =?utf-8?B?dzQ1L013SGxCS08wNHAzSS96RGJWaERzRGpyVFdUditvbWhoUmJLSlJhbUtj?=
- =?utf-8?B?QnJLRzdSRXEzWVRhSFpkeVJ6dTJHaC9wa1VRMFFTaU9jU1RHK3hoRmtHbXlu?=
- =?utf-8?B?S3pNYmRMRzRMaWFsa2xIeU81Qjk3N1BVVGdzR1Y4c1hVNG5DY0Z2bHl4bmNJ?=
- =?utf-8?B?aXVQZ01sN21ic3pGdkxxVDFxS2MwRWUrWk5mZkdlQVp0NXZWOFloc0tSVVd6?=
- =?utf-8?B?NTd3d3ovWTQxVjluNEN3NUNUcXVqeTE3TEdOSktqSkl0NkpVUDdvSi9zeFZ2?=
- =?utf-8?B?VlU1SVN4SXNsUUVmaTRUNDFwZGE3YzY3czdROWlTTnlIT1E0SEpsWFgxSm5T?=
- =?utf-8?B?MlNHZm9QYzR1T3BFYzVTOTIxTU84dnExWHgvVUNqY3hvYmZwTVlyVzZKckhh?=
- =?utf-8?B?WEw0ay9OV29JaHdSK3pzMjd0VktrV29qYWE0L3BTWkdFbUE4bHk2WXNXRmY4?=
- =?utf-8?B?ekZzWUpZdnE0MkMvc3Q2OU1VaEUxazBqcjJBV0tFSHY0eTVXT3ZQeWxoQTFP?=
- =?utf-8?B?WmZYejdnWHA0dFEyRFI4a2lndG1LeDlMaExsZzZvdENyVE9ldVpZaW9YMXhE?=
- =?utf-8?B?NFhHZ1RrNWQ5czlDU0k4TmpZRm9JY1lnTHVkc1ExY0hGdTNydlhzdXFCb0V4?=
- =?utf-8?B?RWlDdUxXM3o3WEp0RlJVR3lKQ3pRb0JhSE9FaEZadFhKMEdPdmJzOUdKOTdY?=
- =?utf-8?B?cXM5MVQ0bUxxVXpyTUJBRHg1Y3lpR1c5TXlFbmlqSG1xR2FJcnZkV3MvNGJz?=
- =?utf-8?B?NlExNlZ4UTM5OGVKRW1EWm9IcWJxd092dGU1VVFqcTcySlpUd1dseHVQVmEy?=
- =?utf-8?B?WWZvSFBGZnpaWVc0a2xOc3ZhSHd6S2ViVVI3dGRKUEpveS80dzVhclh0UzN5?=
- =?utf-8?B?bEVPZFAyL1BabFRrbXM3dlRDaGcrQmJ3MUJFN2pXMFZZbENjYmVEZmpLL1JF?=
- =?utf-8?B?UzdlNHVQVU9pQ3gva3BsWHVWS0lQUFdlM3NVOFRZMHpnT2RhOVowSEdvczNE?=
- =?utf-8?B?V0JxcXdkaUsyck1FMEdjTkdRSTM4amR1NCs4TGoxZS94bEl1R1g3MUIxOFJR?=
- =?utf-8?B?Q0RscExRS2c5VGlrWEtkdzRSSVYxOHpwWXJmc3NBREFwdnY5MHAwRFZEaEtv?=
- =?utf-8?B?MGd4UUtHNG5pcXR4RURvWldTb3E1Y2p3Y2ZmbnpWRXlkcnpKZ0pXS21RUzJv?=
- =?utf-8?B?aHJPbFZjRzlyZFVkRk4xVXVPYmIzN0NMbXRxaVJZeDBRLzNTRlNiNWhVbURN?=
- =?utf-8?B?UmgzNDhsQlYvTm1SL2ZkL0IzS1RhaXJHOXlTeHE1N1BSQ2Y1aFMxdk9YN0I5?=
- =?utf-8?B?L29MSkZxb2E0SHNPNDR6VXEwcmJtM1RDbzUvRGRDODlOOU9FYms2SVdxeE5s?=
- =?utf-8?Q?ZlOMemsqTFFi+bjd9B2uNnQJS?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e0037e3-125b-4d12-e649-08ddf46fc48b
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 15:51:43.5401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4eJ+BYl2D0HwZEfK07zfsnZocB6N/eK1orDfZbZIDvvkXfOAuNSdoynjirDuhXcsC1CZAtVvcjLBdpd8nVPkyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB11217
+References: <20250829105418.3053274-1-sidnayyar@google.com>
+ <4e215854-59df-489b-b92d-8d2fb2edf522@suse.com> <CA+OvW8ZY1D3ECy2vw_Nojm1Kc8NzJHCpqNJUF0n8z3MhLAQd8A@mail.gmail.com>
+ <409ddefc-24f8-465c-8872-17dc585626a6@suse.com>
+In-Reply-To: <409ddefc-24f8-465c-8872-17dc585626a6@suse.com>
+From: Sid Nayyar <sidnayyar@google.com>
+Date: Mon, 15 Sep 2025 16:53:04 +0100
+X-Gm-Features: AS18NWDFM6GFUPdftWx-folpVmUzea-hrwoyneDC89H80_fy-yjv_PiWu2wlc2k
+Message-ID: <CA+OvW8bhWK7prmyQMMJ_VYBeGMbn_mNiamHhUgYuCsnht+LFtA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/10] scalable symbol flags with __kflagstab
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Giuliano Procida <gprocida@google.com>, =?UTF-8?Q?Matthias_M=C3=A4nnich?= <maennich@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add innolux,n133hse-ea1 13.3" TFT LCD panel and nlt,nl12880bc20-spwg-24
-12.1" WXGA (1280 x 800) LVDS TFT LCD panel.
+On Mon, Sep 8, 2025 at 11:09=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
+> This sounds reasonable to me. Do you have any numbers on hand that would
+> show the impact of extending __ksymtab?
 
-Fix below CHECK_DTBS warnings:
-arch/arm/boot/dts/nxp/imx/imx6q-novena.dtb: /panel: failed to match any schema with compatible: ['innolux,n133hse-ea1']
-arch/arm/boot/dts/nxp/imx/imx6dl-tx6u-811x.dtb: /lvds0-panel: failed to match any schema with compatible: ['nlt,nl12880bc20-spwg-24']
+I did performance analysis for module loading. The kflagstab
+optimizes symbol search, which accounts for less than 2% of the
+average module load time. Therefore, this change does not translate
+into any meaningful gains (or losses) in module loading performance.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-change in v2
-- update commit message to show fix CHECK_DTBS warnings.
----
- .../devicetree/bindings/display/panel/panel-simple.yaml       | 4 ++++
- 1 file changed, 4 insertions(+)
+On the binary size side, the on-disk size for vmlinux is somewhat
+inflated due to extra entries in .symtab and .strtab. Since these
+sections are not part of the final Image, the only increase in the
+in-memory size of the kernel is for the kflagstab itself. This new
+table occupies 1 byte for each symbol in the ksymtab.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-index 48344ce74a6e7..77a5d20a8b0d9 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-@@ -180,6 +180,8 @@ properties:
-       - innolux,g121xce-l01
-         # InnoLux 15.6" FHD (1920x1080) TFT LCD panel
-       - innolux,g156hce-l01
-+        # InnoLux 13.3" FHD (1920x1080) TFT LCD panel
-+      - innolux,n133hse-ea1
-         # InnoLux 15.6" WXGA TFT LCD panel
-       - innolux,n156bge-l21
-         # Innolux Corporation 7.0" WSVGA (1024x600) TFT LCD panel
-@@ -230,6 +232,8 @@ properties:
-       - netron-dy,e231732
-         # Newhaven Display International 480 x 272 TFT LCD panel
-       - newhaven,nhd-4.3-480272ef-atxl
-+        # NLT Technologies, Ltd. 12.1" WXGA (1280 x 800) LVDS TFT LCD panel
-+      - nlt,nl12880bc20-spwg-24
-         # NLT Technologies, Ltd. 15.6" WXGA (1366×768) LVDS TFT LCD panel
-       - nlt,nl13676bc25-03f
-         # New Vision Display 7.0" 800 RGB x 480 TFT LCD panel
--- 
-2.34.1
+> > The Android Common Kernel source is compiled into what we call
+> > GKI (Generic Kernel Image), which consists of a kernel and a
+> > number of modules. We maintain a stable interface (based on CRCs and
+> > types) between the GKI components and vendor-specific modules
+> > (compiled by device manufacturers, e.g., for hardware-specific
+> > drivers) for the lifetime of a given GKI version.
+> >
+> > This interface is intentionally restricted to the minimal set of
+> > symbols required by the union of all vendor modules; our partners
+> > declare their requirements in symbol lists. Any additions to these
+> > lists are reviewed to ensure kernel internals are not overly exposed.
+> > For example, we restrict drivers from having the ability to open and
+> > read arbitrary files. This ABI boundary also allows us to evolve
+> > internal kernel types that are not exposed to vendor modules, for
+> > example, when a security fix requires a type to change.
+> >
+> > The mechanism we use for this is CONFIG_TRIM_UNUSED_KSYMS and
+> > CONFIG_UNUSED_KSYMS_WHITELIST. This results in a ksymtab
+> > containing two kinds of exported symbols: those explicitly required
+> > by vendors ("vendor-listed") and those only required by GKI modules
+> > ("GKI use only").
+> >
+> > On top of this, we have implemented symbol import protection
+> > (covered in patches 9/10 and 10/10). This feature prevents vendor
+> > modules from using symbols that are not on the vendor-listed
+> > whitelist. It is built on top of CONFIG_MODULE_SIG. GKI modules are
+> > signed with a specific key, while vendor modules are unsigned and thus
+> > treated as untrusted. This distinction allows signed GKI modules to
+> > use any symbol in the ksymtab, while unsigned vendor modules can only
+> > access the declared subset. This provides a significant layer of
+> > defense and security against potentially exploitable vendor module
+> > code.
+>
+> If I understand correctly, this is similar to the recently introduced
+> EXPORT_SYMBOL_FOR_MODULES() macro, but with a coarser boundary.
+>
+> I think that if the goal is to control the kABI scope and limit the use
+> of certain symbols only to GKI modules, then having the protection
+> depend on whether the module is signed is somewhat odd. It doesn't give
+> me much confidence if vendor modules are unsigned in the Android
+> ecosystem. I would expect that you want to improve this in the long
+> term.
 
+GKI modules are the only modules built in the same Kbuild as the
+kernel image, which Google builds and provides to partners. In
+contrast, vendor modules are built and packaged entirely by partners.
+
+Google signs GKI modules with ephemeral keys. Since partners do
+not have these keys, vendor modules are treated as unsigned by
+the kernel.
+
+To ensure the authenticity of these unsigned modules, partners
+package them into a separate image that becomes one of the boot
+partitions. This entire image is signed, and its signature is
+verified by the bootloader at boot time.
+
+> It would then make more sense to me if the protection was determined by
+> whether the module is in-tree (the "intree" flag in modinfo) or,
+> alternatively, if it is signed by a built-in trusted key. I feel this
+> way the feature could be potentially useful for other distributions that
+> care about the kABI scope and have ecosystems where vendor modules are
+> properly signed with some key. However, I'm not sure if this would still
+> work in your case.
+
+Partners can produce both in-tree and out-of-tree modules. We do not
+trust either type regarding symbol exposure, as there is no way to know
+exactly what sources were used. Furthermore, symbols exported via
+EXPORT_SYMBOL_FOR_MODULES can be accessed by any vendor module that
+mimics the GKI module name.
+
+Therefore, neither the in-tree flag nor the EXPORT_SYMBOL_FOR_MODULES
+mechanism provides a strong enough guarantee for the Android kernel to
+identify GKI modules.
+
+Only module signatures are sufficient to allow a module to access the
+full set of exported symbols.  Unsigned vendor modules may only access
+the symbol subset declared ahead of time by partners.
+
+In case such symbol protection is not useful for the Linux community, I
+am happy to keep this as an Android-specific feature.  However, I would
+urge you to at least accept the kflagstab, as it allows us (and
+potentially other Linux distributions) to easily introduce additional
+flags for symbols. It is also a simplification/clean-up of the module
+loader code.
+
+--
+Thanks,
+Siddharth Nayyar
 
