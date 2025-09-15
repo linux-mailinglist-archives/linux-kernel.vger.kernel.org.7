@@ -1,187 +1,243 @@
-Return-Path: <linux-kernel+bounces-816777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDC1B5782D
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F511B5782E
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DCC20427E
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EA2204298
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FBA302CA7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97145302CA6;
 	Mon, 15 Sep 2025 11:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rsb0V5T+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ly0jmR4l";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Rsb0V5T+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ly0jmR4l"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ms91yZs6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S6e2CBNz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BAF301473
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4D1301484;
+	Mon, 15 Sep 2025 11:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757935660; cv=none; b=WZObnTO0i/gJc0UbbQpnDtV/du27cGBVC7wa9lL77Nf9rsYtQ/vfOPOH0OPvbUliqQPaGnFjZ9B2AxnBw74zmsa1qr1oEpNP7XyZoOX/RTVfCnXWS0BhQGfFGwZeOGgAypTVx3ITNw0lTNUkPJpISvSoH/TdzFPBDqOV2e2CgoI=
+	t=1757935660; cv=none; b=XSGzfz9H8goD0IYeynAUjhoxt1EAcHzap78xE2VqyPID/0nlYhFENQcUwbdsHeYEcQMdXAVYOCun4t7eYNo92p+T/8lFUmRv5/RCGq/yHF4+F/f/KJL4I6XQXl19o3IwC0K79yjJAl8H4ENWoHLiv2dQnwyWHkdbqAJ+4mvmttk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757935660; c=relaxed/simple;
-	bh=YHQS7oCQKUANz8KL2VKX+GE23Upm3bXldCC/jRePUPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SeYbaKmkEey9iwRCNUgQ2P+TM7LNNMfiJMXEsKaR32LjyORiXlCScnBn7brWbJTpGvj4pGaeZGTovKAzNAqMZ9QlK+ta7mFKxT9h4Mn0e4IMJYhn2FJ03f31IsOBznHrPyD0gSxzdvzIC47CcjmmHJbnTyi/07Qt2QEvLlHw4jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rsb0V5T+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ly0jmR4l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Rsb0V5T+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ly0jmR4l; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 348A11F8B0;
-	Mon, 15 Sep 2025 11:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757935656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=vygnaY4k/gOgG+T5ie5zP/z2AOfFqSmfHI7YDPydKw0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=KroW+Fz1nzMOlQJz0+2V01YX6D8w9E4k5gmRosXG5VCnlfo1DTe4viGAjdd6WWJ9sLcH42Yu9xF07UVzZD4e5O2kEyPbrvY3u761YooTkTg9iwUjXeMQsAh0Ix+Ledv1hw0eZSH/bh2K5JNON3/a2OOQArNpQr4LdgtMXWstG8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ms91yZs6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S6e2CBNz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 15 Sep 2025 11:27:35 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757935656;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JntDITgOThJNLP4MXQJ43VBflgagcrs9tOitGbwZPX8=;
-	b=Rsb0V5T+AAgLb/QUPTZ/JYQZNEavTu8wHlENSEYwTlmHShN5RECnFYNLQPuXo1HLU7ZXzN
-	qxo/8HlVKsXY+T2zeq7YJBo3GSPZRzyGbBC2ZfAU+W49ycEOzlIa+PGcP7XoHMl1EvxBnz
-	H9mNLitqdRL3QHOT4TSBBDVdLiD/AME=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757935656;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=ZrWJlvtNrNEkbVtJe+oBKecze02c1P9mnIm4unKesfY=;
+	b=ms91yZs6eAqw1dYaJ3HfBfnm4t9GGLQLm8N/qGGQS/Wsu7Cz9O/m8TtRZL+Vi5Raorvhae
+	MMrjf/jVnIYEQDzHzKKHFqWdenEb4r2I/JfCdBuzKgY6TRTCDQBVyTEwivp88Qhtll5rv2
+	PDTR25meUnrM2KTjo5/tmfZnXKKIoalCq/1vqfGrVlfYMkSUGZwVy8Hr69o9EoSdN2TZ/h
+	zzSPtVdyfMzee4udEEk4OQpszhYAmW7YQ3lOmphWtltDNvYxfYc4uEKBUmIdUN4ofzJWTd
+	b6ygHdR+kCBj9/EGIGUzXbeUbBjrMksh9XDSF/gWFls6DrU0sxw14GdxHhE+wQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757935656;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JntDITgOThJNLP4MXQJ43VBflgagcrs9tOitGbwZPX8=;
-	b=ly0jmR4lryxNId0U7Z6g6pGZdqf3d3Dk/dfFCIOKx/mNg8LaQy5oLJdFhRijLmmouqOEva
-	ZGdv9tm2o4wKITCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Rsb0V5T+;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ly0jmR4l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757935656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JntDITgOThJNLP4MXQJ43VBflgagcrs9tOitGbwZPX8=;
-	b=Rsb0V5T+AAgLb/QUPTZ/JYQZNEavTu8wHlENSEYwTlmHShN5RECnFYNLQPuXo1HLU7ZXzN
-	qxo/8HlVKsXY+T2zeq7YJBo3GSPZRzyGbBC2ZfAU+W49ycEOzlIa+PGcP7XoHMl1EvxBnz
-	H9mNLitqdRL3QHOT4TSBBDVdLiD/AME=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757935656;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JntDITgOThJNLP4MXQJ43VBflgagcrs9tOitGbwZPX8=;
-	b=ly0jmR4lryxNId0U7Z6g6pGZdqf3d3Dk/dfFCIOKx/mNg8LaQy5oLJdFhRijLmmouqOEva
-	ZGdv9tm2o4wKITCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 250271372E;
-	Mon, 15 Sep 2025 11:27:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9GaQBif4x2hwJQAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Mon, 15 Sep 2025 11:27:35 +0000
-Message-ID: <8715a21b-83ac-4bc1-b856-fa90bb5b809f@suse.de>
-Date: Mon, 15 Sep 2025 14:27:34 +0300
+	bh=ZrWJlvtNrNEkbVtJe+oBKecze02c1P9mnIm4unKesfY=;
+	b=S6e2CBNz10MB/cgSim4T+onr2wryrNN3aohmSfPCDVGTgTaVDf4nOoZwlQJi8Gb09jwK8E
+	SmxI2BdIte+nh4AA==
+From: "tip-bot2 for Babu Moger" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cache] fs/resctrl: Pass struct rdtgroup instead of
+ individual members
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <6cbebfc1f5e63d3c5dcbb6751ee7ccda9f38cf4b.1757108044.git.babu.moger@amd.com>
+References:
+ <6cbebfc1f5e63d3c5dcbb6751ee7ccda9f38cf4b.1757108044.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] net: cadence: macb: Add support for Raspberry Pi
- RP1 ethernet controller
-To: Stanimir Varbanov <svarbanov@suse.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Jakub Kicinski <kuba@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Andrea della Porta <andrea.porta@suse.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Phil Elwell
- <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, Andrew Lunn <andrew@lunn.ch>
-References: <20250822093440.53941-1-svarbanov@suse.de>
- <20250822093440.53941-4-svarbanov@suse.de>
- <0142ac69-f0eb-4135-b0d2-50c9fec27d43@suse.de>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <0142ac69-f0eb-4135-b0d2-50c9fec27d43@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 348A11F8B0
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[23];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[dt,netdev];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.01
+Message-ID: <175793565565.709179.8650016453258705604.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+The following commit has been merged into the x86/cache branch of tip:
 
+Commit-ID:     bc53eea6c2a1dea152a0073a2f2814b697ad197e
+Gitweb:        https://git.kernel.org/tip/bc53eea6c2a1dea152a0073a2f2814b697a=
+d197e
+Author:        Babu Moger <babu.moger@amd.com>
+AuthorDate:    Fri, 05 Sep 2025 16:34:18 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 15 Sep 2025 12:23:24 +02:00
 
-On 9/10/25 2:32 PM, Stanimir Varbanov wrote:
-> Hi Jakub,
-> 
-> On 8/22/25 12:34 PM, Stanimir Varbanov wrote:
->> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->>
->> The RP1 chip has the Cadence GEM block, but wants the tx_clock
->> to always run at 125MHz, in the same way as sama7g5.
->> Add the relevant configuration.
->>
->> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
->> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
->> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->> ---
->>  drivers/net/ethernet/cadence/macb_main.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
-> 
-> This patch is missing in net-next but ("dt-bindings: net: cdns,macb: Add
-> compatible for Raspberry Pi RP1") from this series has been applied.
-> 
-> Could you take this patch as well, please.
+fs/resctrl: Pass struct rdtgroup instead of individual members
 
-Gentle ping.
+Reading monitoring data for a monitoring group requires both the RMID and
+CLOSID. The RMID and CLOSID are members of struct rdtgroup but passed
+separately to several functions involved in retrieving event data.
 
-~Stan
+When "mbm_event" counter assignment mode is enabled, a counter ID is required
+to read event data. The counter ID is obtained through mbm_cntr_get(), which
+expects a struct rdtgroup pointer.
+
+Provide a pointer to the struct rdtgroup as parameter to functions involved in
+retrieving event data to simplify access to RMID, CLOSID, and counter ID.
+
+Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Link: https://lore.kernel.org/cover.1757108044.git.babu.moger@amd.com
+---
+ fs/resctrl/monitor.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index 2ed29ae..c815153 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -413,9 +413,11 @@ static void mbm_cntr_free(struct rdt_mon_domain *d, int =
+cntr_id)
+ 	memset(&d->cntr_cfg[cntr_id], 0, sizeof(*d->cntr_cfg));
+ }
+=20
+-static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
++static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
+ {
+ 	int cpu =3D smp_processor_id();
++	u32 closid =3D rdtgrp->closid;
++	u32 rmid =3D rdtgrp->mon.rmid;
+ 	struct rdt_mon_domain *d;
+ 	struct mbm_state *m;
+ 	int err, ret;
+@@ -475,8 +477,8 @@ static int __mon_event_count(u32 closid, u32 rmid, struct=
+ rmid_read *rr)
+ /*
+  * mbm_bw_count() - Update bw count from values previously read by
+  *		    __mon_event_count().
+- * @closid:	The closid used to identify the cached mbm_state.
+- * @rmid:	The rmid used to identify the cached mbm_state.
++ * @rdtgrp:	resctrl group associated with the CLOSID and RMID to identify
++ *		the cached mbm_state.
+  * @rr:		The struct rmid_read populated by __mon_event_count().
+  *
+  * Supporting function to calculate the memory bandwidth
+@@ -484,9 +486,11 @@ static int __mon_event_count(u32 closid, u32 rmid, struc=
+t rmid_read *rr)
+  * __mon_event_count() is compared with the chunks value from the previous
+  * invocation. This must be called once per second to maintain values in MBp=
+s.
+  */
+-static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
++static void mbm_bw_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
+ {
+ 	u64 cur_bw, bytes, cur_bytes;
++	u32 closid =3D rdtgrp->closid;
++	u32 rmid =3D rdtgrp->mon.rmid;
+ 	struct mbm_state *m;
+=20
+ 	m =3D get_mbm_state(rr->d, closid, rmid, rr->evtid);
+@@ -515,7 +519,7 @@ void mon_event_count(void *info)
+=20
+ 	rdtgrp =3D rr->rgrp;
+=20
+-	ret =3D __mon_event_count(rdtgrp->closid, rdtgrp->mon.rmid, rr);
++	ret =3D __mon_event_count(rdtgrp, rr);
+=20
+ 	/*
+ 	 * For Ctrl groups read data from child monitor groups and
+@@ -526,8 +530,7 @@ void mon_event_count(void *info)
+=20
+ 	if (rdtgrp->type =3D=3D RDTCTRL_GROUP) {
+ 		list_for_each_entry(entry, head, mon.crdtgrp_list) {
+-			if (__mon_event_count(entry->closid, entry->mon.rmid,
+-					      rr) =3D=3D 0)
++			if (__mon_event_count(entry, rr) =3D=3D 0)
+ 				ret =3D 0;
+ 		}
+ 	}
+@@ -658,7 +661,7 @@ static void update_mba_bw(struct rdtgroup *rgrp, struct r=
+dt_mon_domain *dom_mbm)
+ }
+=20
+ static void mbm_update_one_event(struct rdt_resource *r, struct rdt_mon_doma=
+in *d,
+-				 u32 closid, u32 rmid, enum resctrl_event_id evtid)
++				 struct rdtgroup *rdtgrp, enum resctrl_event_id evtid)
+ {
+ 	struct rmid_read rr =3D {0};
+=20
+@@ -672,30 +675,30 @@ static void mbm_update_one_event(struct rdt_resource *r=
+, struct rdt_mon_domain *
+ 		return;
+ 	}
+=20
+-	__mon_event_count(closid, rmid, &rr);
++	__mon_event_count(rdtgrp, &rr);
+=20
+ 	/*
+ 	 * If the software controller is enabled, compute the
+ 	 * bandwidth for this event id.
+ 	 */
+ 	if (is_mba_sc(NULL))
+-		mbm_bw_count(closid, rmid, &rr);
++		mbm_bw_count(rdtgrp, &rr);
+=20
+ 	resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
+ }
+=20
+ static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
+-		       u32 closid, u32 rmid)
++		       struct rdtgroup *rdtgrp)
+ {
+ 	/*
+ 	 * This is protected from concurrent reads from user as both
+ 	 * the user and overflow handler hold the global mutex.
+ 	 */
+ 	if (resctrl_is_mon_event_enabled(QOS_L3_MBM_TOTAL_EVENT_ID))
+-		mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_TOTAL_EVENT_ID);
++		mbm_update_one_event(r, d, rdtgrp, QOS_L3_MBM_TOTAL_EVENT_ID);
+=20
+ 	if (resctrl_is_mon_event_enabled(QOS_L3_MBM_LOCAL_EVENT_ID))
+-		mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_LOCAL_EVENT_ID);
++		mbm_update_one_event(r, d, rdtgrp, QOS_L3_MBM_LOCAL_EVENT_ID);
+ }
+=20
+ /*
+@@ -768,11 +771,11 @@ void mbm_handle_overflow(struct work_struct *work)
+ 	d =3D container_of(work, struct rdt_mon_domain, mbm_over.work);
+=20
+ 	list_for_each_entry(prgrp, &rdt_all_groups, rdtgroup_list) {
+-		mbm_update(r, d, prgrp->closid, prgrp->mon.rmid);
++		mbm_update(r, d, prgrp);
+=20
+ 		head =3D &prgrp->mon.crdtgrp_list;
+ 		list_for_each_entry(crgrp, head, mon.crdtgrp_list)
+-			mbm_update(r, d, crgrp->closid, crgrp->mon.rmid);
++			mbm_update(r, d, crgrp);
+=20
+ 		if (is_mba_sc(NULL))
+ 			update_mba_bw(prgrp, d);
 
