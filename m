@@ -1,227 +1,98 @@
-Return-Path: <linux-kernel+bounces-816059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 935ABB56ED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:30:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FC3B56EE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B6B7179E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46B33B8105
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD9326C3BC;
-	Mon, 15 Sep 2025 03:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FAF2652A4;
+	Mon, 15 Sep 2025 03:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oE/iHbvJ"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="k0haYbzR"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E4CA6F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27AD2627EC
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757907027; cv=none; b=NAVaqM/BB49UTor/ER1QLSKMAemHJGzeZDDh95ZhhXcfCeZ/rjuSQ5/iNSyiUExAXD29qAmbT0Krxwbnenhh31dH45j6eHSWt+t2+8kAGh4IRgYb3mFu+avvnhaff5Q3b1CYmCiNZc7phQZciKDhbTowDed+4snfjSsunYH2M1o=
+	t=1757907385; cv=none; b=MJ1Ef7qMyevaFubh6tl+Bd3dcdiN2NmFG94o3y3VbREU5ZZx2fOnAWXilu0jET9DHhPzrrBVAw1zgiR/FAVUxny+VVAST4wa0s7Jxxg5VY7zPBMN6FjyxKSEqlKxcNiJyEfrXBoMCETo5BxWRXnc15QrrsX2roEDxAG6IWa1ghM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757907027; c=relaxed/simple;
-	bh=wZVi2wabEOpgtUDHV27rglg9c6vnB19hOWyKfgXbmO4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iw+k/XK9qu4fSC5emdgdKsAFh1xbE4cYwWNu2g5MsSnv/lZNM4VZxGk7IcQ29u+WvGQv0tuIcDGgOAYCV3zEIkptStvIfEzj4nCepweTjDy3A6fUtRPH19uavXIjjCOxFt4zqv+Laug5muh5hXFtgyqUYY+Mww1yj3AhQxhk76E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oE/iHbvJ; arc=none smtp.client-ip=115.124.30.99
+	s=arc-20240116; t=1757907385; c=relaxed/simple;
+	bh=YbH6kjZJpOqPzrs7+Dvb+JeajuKzFh/6OSslPqMKEzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qm6rFlHEhhpC0x0v1hWZo3C+mTzWIBZEyxzDN/6r4be5dLR5o8AHCn1ELyLBvjNXxEWkzd7mhl5sN1LJCgXC9iHNIV5nfSL73V8JTiVFZSj07dzpM08eF/7E7cAyfesY2fBrIpylkHIokmfZ9OdcZgrzfxB5Gtgz/8pZJz4aT0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=k0haYbzR; arc=none smtp.client-ip=115.124.30.97
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1757907017; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=aV55o1PrOMi1ewOa19IO6mFfTMCoyqv5bAgN6SrTF+U=;
-	b=oE/iHbvJwAxW5XU8/yo2Zk/V3WnzlTNd2esVdRAmVwcIjhNvVtPByoTCrm1eFz0GHVH6AMuXicZ5j8dnU2V9sPeOFf3CI1RopSLuVxaETQAuWZG+wFtydFWOvJ/Y91BsGRCJSYzGo/HJfMv3NdJmH1rQx7NfsD/weLVYsKhAQnQ=
-Received: from localhost.localdomain(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wnx2CMj_1757907014 cluster:ay36)
+	t=1757907374; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=2b6sC4/5fn9cn7zC7Lhch8bDm46TCCw/xd6ul129aIg=;
+	b=k0haYbzR4oQN00/MbDH/8+KsfR/E9N1haXdek6Gr62vtpCtq3onF4h/kyT2FuAEBx63TtBdC+rBen1U5vxuw1RtXVLQQ95HCZGcPOGnOO6e6YmB1jyJMx8LTl3v+/FjEipSkK72aCIAXYrU05GV6wSpYL82iK0NsJBS9KImmuiU=
+Received: from 30.74.144.132(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WnxDIio_1757907373 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Mon, 15 Sep 2025 11:30:15 +0800
-From: Huang Ying <ying.huang@linux.alibaba.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>
-Cc: Huang Ying <ying.huang@linux.alibaba.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	"Christoph Lameter (Ampere)" <cl@gentwo.org>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH 2/2] arm64, tlbflush: don't TLBI broadcast if page reused in write fault
-Date: Mon, 15 Sep 2025 11:29:46 +0800
-Message-Id: <20250915032946.33203-3-ying.huang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250915032946.33203-1-ying.huang@linux.alibaba.com>
-References: <20250915032946.33203-1-ying.huang@linux.alibaba.com>
+          Mon, 15 Sep 2025 11:36:13 +0800
+Message-ID: <fef6da33-2035-480d-9351-bd2ef066b3ba@linux.alibaba.com>
+Date: Mon, 15 Sep 2025 11:36:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/khugepaged: Do not fail collapse_pte_mapped_thp() on
+ SCAN_PMD_NULL
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Zi Yan <ziy@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <xhan2av3fyl7qpsl4bhjtds2zeegrl57ehtc5grtkua3c3v3nz@vain5s6gpycl>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <xhan2av3fyl7qpsl4bhjtds2zeegrl57ehtc5grtkua3c3v3nz@vain5s6gpycl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A multi-thread customer workload with large memory footprint uses
-fork()/exec() to run some external programs every tens seconds.  When
-running the workload on an arm64 server machine, it's observed that
-quite some CPU cycles are spent in the TLB flushing functions.  While
-running the workload on the x86_64 server machine, it's not.  This
-causes the performance on arm64 to be much worse than that on x86_64.
 
-During the workload running, after fork()/exec() write-protects all
-pages in the parent process, memory writing in the parent process
-will cause a write protection fault.  Then the page fault handler
-will make the PTE/PDE writable if the page can be reused, which is
-almost always true in the workload.  On arm64, to avoid the write
-protection fault on other CPUs, the page fault handler flushes the TLB
-globally with TLBI broadcast after changing the PTE/PDE.  However, this
-isn't always necessary.  Firstly, it's safe to leave some stall
-read-only TLB entries as long as they will be flushed finally.
-Secondly, it's quite possible that the original read-only PTE/PDEs
-aren't cached in remote TLB at all if the memory footprint is large.
-In fact, on x86_64, the page fault handler doesn't flush the remote
-TLB in this situation, which benefits the performance a lot.
 
-To improve the performance on arm64, make the write protection fault
-handler flush the TLB locally instead of globally via TLBI broadcast
-after making the PTE/PDE writable.  If there are stall read-only TLB
-entries in the remote CPUs, the page fault handler on these CPUs will
-regard the page fault as spurious and flush the stall TLB entries.
+On 2025/9/13 00:58, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
+> 
+> MADV_COLLAPSE on a file mapping behaves inconsistently depending on if
+> PMD page table is installed or not.
+> 
+> Consider following example:
+> 
+> 	p = mmap(NULL, 2UL << 20, PROT_READ | PROT_WRITE,
+> 		 MAP_SHARED, fd, 0);
+> 	err = madvise(p, 2UL << 20, MADV_COLLAPSE);
+> 
+> fd is a populated tmpfs file.
+> 
+> The result depends on the address that the kernel returns on mmap().
+> If it is located in an existing PMD table, the madvise() will succeed.
+> However, if the table does not exist, it will fail with -EINVAL.
+> 
+> This occurs because find_pmd_or_thp_or_none() returns SCAN_PMD_NULL when
+> a page table is missing, which causes collapse_pte_mapped_thp() to fail.
+> 
+> SCAN_PMD_NULL and SCAN_PMD_NONE should be treated the same in
+> collapse_pte_mapped_thp(): install the PMD leaf entry and allocate page
+> tables as needed.
+> 
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> ---
 
-To test the patchset, make the usemem.c from
-vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
-support calling fork()/exec() periodically.  To mimic the behavior of
-the customer workload, run usemem with 4 threads, access 100GB memory,
-and call fork()/exec() every 40 seconds.  Test results show that with
-the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
-flush functions reduces from ~50.5% to ~0.3% in perf profile.
-
-Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Zi Yan <ziy@nvidia.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Dev Jain <dev.jain@arm.com>
-Cc: Barry Song <baohua@kernel.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Yicong Yang <yangyicong@hisilicon.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
----
- arch/arm64/include/asm/pgtable.h  | 14 ++++++++-----
- arch/arm64/include/asm/tlbflush.h | 33 +++++++++++++++++++++++++++++++
- arch/arm64/mm/fault.c             |  2 +-
- 3 files changed, 43 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index abd2dee416b3..a9ed8c9d2c33 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -130,12 +130,16 @@ static inline void arch_leave_lazy_mmu_mode(void)
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- /*
-- * Outside of a few very special situations (e.g. hibernation), we always
-- * use broadcast TLB invalidation instructions, therefore a spurious page
-- * fault on one CPU which has been handled concurrently by another CPU
-- * does not need to perform additional invalidation.
-+ * We use local TLB invalidation instruction when reusing page in
-+ * write protection fault handler to avoid TLBI broadcast in the hot
-+ * path.  This will cause spurious page faults if stall read-only TLB
-+ * entries exist.
-  */
--#define flush_tlb_fix_spurious_fault(vma, address, ptep) do { } while (0)
-+#define flush_tlb_fix_spurious_fault(vma, address, ptep)	\
-+	local_flush_tlb_page_nonotify(vma, address)
-+
-+#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp)	\
-+	local_flush_tlb_page_nonotify(vma, address)
- 
- /*
-  * ZERO_PAGE is a global shared page that is always zero: used
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 18a5dc0c9a54..607b67d8f61b 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -282,6 +282,39 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
- 	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
- }
- 
-+static inline void __local_flush_tlb_page_nonotify_nosync(
-+	struct mm_struct *mm, unsigned long uaddr)
-+{
-+	unsigned long addr;
-+
-+	dsb(nshst);
-+	addr = __TLBI_VADDR(uaddr, ASID(mm));
-+	__tlbi(vale1, addr);
-+	__tlbi_user(vale1, addr);
-+}
-+
-+static inline void local_flush_tlb_page_nonotify(
-+	struct vm_area_struct *vma, unsigned long uaddr)
-+{
-+	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-+	dsb(nsh);
-+}
-+
-+static inline void __local_flush_tlb_page_nosync(
-+	struct mm_struct *mm, unsigned long uaddr)
-+{
-+	__local_flush_tlb_page_nonotify_nosync(mm, uaddr);
-+	mmu_notifier_arch_invalidate_secondary_tlbs(mm, uaddr & PAGE_MASK,
-+						(uaddr & PAGE_MASK) + PAGE_SIZE);
-+}
-+
-+static inline void local_flush_tlb_page(struct vm_area_struct *vma,
-+					unsigned long uaddr)
-+{
-+	__local_flush_tlb_page_nosync(vma->vm_mm, uaddr);
-+	dsb(nsh);
-+}
-+
- static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
- 					   unsigned long uaddr)
- {
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index d816ff44faff..22f54f5afe3f 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
- 
- 	/* Invalidate a stale read-only entry */
- 	if (dirty)
--		flush_tlb_page(vma, address);
-+		local_flush_tlb_page(vma, address);
- 	return 1;
- }
- 
--- 
-2.39.5
-
+Make sense to me. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
