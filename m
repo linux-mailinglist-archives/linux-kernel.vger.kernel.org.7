@@ -1,119 +1,396 @@
-Return-Path: <linux-kernel+bounces-816194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2449B570CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:03:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F794B570D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1412F178B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E611C3A6D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16F1272E42;
-	Mon, 15 Sep 2025 07:03:14 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4A62C21CC;
+	Mon, 15 Sep 2025 07:05:11 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27418524F;
-	Mon, 15 Sep 2025 07:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A51291864
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757919794; cv=none; b=PIXvr2MY7s7LKm4Dl6vR56xdWlNXsIwjASVUg+CXhj7eXM4EteQNsIdVQUqoN/Ep82+cR6hpbok5s8rk3ehIufyfM0oWk/GQPuVFa1maHQj8lGjEwny/XtOxFMZkhsXMqS4h/GbnMFiOxRMZqcU9pFztrT9MdQbHsy/CNZRUHAY=
+	t=1757919911; cv=none; b=JctyDli5EhuKCx8UFOHjCdxDKu8Gt2WkFG5FdSrmgydG8xGojg3wGHYCSZG1d2Dp9RHh6EQ0JrB3+tqvkZv/EiiAuUEHg5ZgcT3VtqAWiwsKZ3LKWPlgRABt0iWABHNjpbgGfBOo9PWduxAED4r8qMlA5UsoZmcqjCG+n8tMaIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757919794; c=relaxed/simple;
-	bh=n9WV5gmKWMnWsr3Z+Pe+uPvOpjFR6LqlTPskCOGV6bo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YsVFJppj74YmG0HoSsM+0U9HSM3RCSYD/kGK3b0RZQAr2LDtjgyQKqkd8HUMbgwQ2GUc+jIg+oCBcWR9lJTnBMcPfjjMhOAEvB8z0WbdDDQ6ZCSd7m1LML6lbnmIpiPt4yHt1U/7d5QwB5aaQywQPBc2DANWQgfX/3G2fALNzfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 012e5f9a920211f0b29709d653e92f7d-20250915
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:03285f4c-24b8-45cb-8b80-e662239d4e59,IP:0,U
-	RL:0,TC:0,Content:29,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:29
-X-CID-META: VersionHash:6493067,CLOUDID:2a3130dfdfe9b9a9fe1a32862b6c3330,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:4|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 012e5f9a920211f0b29709d653e92f7d-20250915
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1829662885; Mon, 15 Sep 2025 15:02:55 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 5BF6CE009009;
-	Mon, 15 Sep 2025 15:02:55 +0800 (CST)
-X-ns-mid: postfix-68C7BA1F-10783978
-Received: from localhost.localdomain (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 886F5E009008;
-	Mon, 15 Sep 2025 15:02:54 +0800 (CST)
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-To: "Rafael J . wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: zhenglifeng <zhenglifeng1@huawei.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zihuan Zhang <zhangzihuan@kylinos.cn>
-Subject: [PATCH v1] cpufreq: Replace pointer subtraction with iteration macros
-Date: Mon, 15 Sep 2025 15:02:50 +0800
-Message-Id: <20250915070250.416423-1-zhangzihuan@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757919911; c=relaxed/simple;
+	bh=EIMnJykjTERXw3Hp9tmJefnnn9xm1Sx8LbQbay9IOr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EIchBPnfZaB/GvJO+PhiN57JVN9ZXS7+uQy8jeoRUr1QJHZQrYLWGceR3QgNRd2d823bM5rUh7yYYddInSym6Z7t8FR5bPG0TGb+06RvEqeI+fE4WwCbD1imkB7QvMs3uaLJMZxsqb5sk7UuukShunXJ8m4KLOXI/70HMHV0S9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: esmtpsz11t1757919900tf5fda2a8
+X-QQ-Originating-IP: 6+GqocOLC8mSQxIhBFQwffJkEU+ZOBm+O1rQWd/KJes=
+Received: from [127.0.0.1] ( [116.234.26.9])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 15 Sep 2025 15:04:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12997105335972763702
+Message-ID: <8C476C0AA53F638B+b640da5b-8e9f-4580-b0f7-5c22c4429855@radxa.com>
+Date: Mon, 15 Sep 2025 15:04:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH DNM v2 5/5] arm64: dts: qcom: qcs6490-radxa-dragon-q6a:
+ Enable USB 3.0 and HDMI ports
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com>
+ <20250914-radxa-dragon-q6a-v2-5-045f7e92b3bb@radxa.com>
+ <3d9ce086-dbcb-4e55-850e-89977cb88978@linaro.org>
+Content-Language: en-US
+From: Xilin Wu <sophon@radxa.com>
+In-Reply-To: <3d9ce086-dbcb-4e55-850e-89977cb88978@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MIYVF5Pddf3wZjB8KQpwPQDmcxjVuGNMLuRmvMeDCux4lB2sT875WNib
+	HG88kVOnhtX/Gqf+tvb1eaS9LC9yVr4x5EzBqQFu3ySVjbY7jfQW1JW6HVMSfe0Z6PybRYU
+	176a5Lgyi4f4PS9CwGv//GT82XY40q6cRxeT+C8c8x7e9GysZcbfkQvxIOMKkWOqAZwka3O
+	955lkXR27smZjTsKXyEMlnXQCCWAnag8FHjmb4am6nifiZGNXqiWo7kVzIoFJQSNlo3Ih0r
+	vtFK/SSq8qEmrTwny7io/98xFkQQ+xIbIElXkEGCqc1GFUNgcY+fPKV0kNFb+zoEGQq+kPJ
+	AZ32FUTuGq6lL+wuMUsZAvxKSEx5TJ3h15gR5ZHW2IyfmL2Gyl0xbP5MAuMwoftobO7F6yb
+	42nXfA3XF+4hcK+cD5yIKxws9zt5KEbBReocEh9JTdJVG6H8+ltouMKFnWAWzFGXSDg8nx9
+	qX3tnUm/oXeDa8VlhkrA4gAByVRmyXhAjmPLSBu7CtU2uxSAQrhfDD9xMw2GhIN57ZbcTcl
+	uPaTonp9vc7ehxEEecOsh0QdhzQidDWDTUeUDpSkZveUbpn0F3uP5O1OuLvwKZBv9CFUWCA
+	4ulnpCz8WHB7P0llFQJqZG43oXt921B7CzB3JhaCa7O9OkNRdAKJ9V64IJ3O+1OAEUDm1fE
+	tvySVF26mBFoKY7zvyY4+ayvYWVMsbFazm/IwjFZ/BsjjG6b5cHZqT5DvCfbAcIT1Fyf+IY
+	37SJbgJYlNbPAV93aw6e/XW3RtVhN8mXgZLmb3LAz5RiNFgbc/vThs9F+Tn3VhOcx4cKD+j
+	Xd4XxLxFUp6J6V9RiX0evSKficFGsHgoqQLGEbuzi4SpO9ZkHwKYcG6XyOtlLnz/+R9oTSq
+	gJn/HQJM3hYaokgE/Maa9wpX2Llo0SVWJGDOyT4mVKW6R6adjJYPpfQqrehicNCCtBHE2m2
+	PQSqISHS8W9f14xLBnU8hcH3gl52Fi8LBT7uv410R0PD6HCsVPqgMdLvKNkjucPxyl3fwlU
+	b/M0/KWNzHHzi/RGoOgAy6PrGXqdACcAGiyBg4xeIose8sY6sehTO5ugIJXm0=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-The cpufreq documentation suggests avoiding direct pointer
-subtraction when working with entries in driver_freq_table, as
-it is relatively costly. Instead, the recommended approach is
-to use the provided iteration macros:
+On 9/15/2025 2:51 PM, Neil Armstrong wrote:
+> On 14/09/2025 17:57, Xilin Wu wrote:
+>> This board doesn't feature a regular Type-C port. The usb_1_qmpphy's
+>> RX1/TX1 pair is statically connected to the USB-A port, while its RX0/TX0
+>> pair is connected to the RA620 DP-to-HDMI bridge.
+>>
+>> Add and enable the nodes for the features to work.
+>>
+>> Signed-off-by: Xilin Wu <sophon@radxa.com>
+>>
+>> ---
+>>
+>> This change depends on the following patch series:
+>> https://lore.kernel.org/all/20250908-topic-x1e80100-hdmi-v3-4- 
+>> c53b0f2bc2fb@linaro.org/
+>> ---
+>>   .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 152 +++++++++++ 
+>> ++++++++++
+>>   1 file changed, 152 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts b/ 
+>> arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+>> index 
+>> 3bf85d68c97891db1f1f0b84fb5649803948e06f..12bc9a0fcfbfeaabf6ede351f96c61193a8261c0 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
+>> @@ -78,6 +78,71 @@ chosen {
+>>           stdout-path = "serial0:115200n8";
+>>       };
+>> +    usb3_con: connector {
+>> +        compatible = "usb-a-connector";
+>> +
+>> +        ports {
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            port@0 {
+>> +                reg = <0>;
+>> +
+>> +                usb3_con_hs_in: endpoint {
+>> +                    remote-endpoint = <&usb_1_dwc3_hs>;
+>> +                };
+>> +            };
+>> +
+>> +            port@1 {
+>> +                reg = <1>;
+>> +
+>> +                usb3_con_ss_in: endpoint {
+>> +                    remote-endpoint = <&usb_dp_qmpphy_out_usb>;
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> +
+>> +    hdmi-bridge {
+>> +        compatible = "radxa,ra620";
+>> +
+>> +        pinctrl-0 = <&dp_hot_plug_det>;
+>> +        pinctrl-names = "default";
+>> +
+>> +        ports {
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            port@0 {
+>> +                reg = <0>;
+>> +
+>> +                hdmi_bridge_in: endpoint {
+>> +                    remote-endpoint = <&usb_dp_qmpphy_out_dp>;
+>> +                };
+>> +            };
+>> +
+>> +            port@1 {
+>> +                reg = <1>;
+>> +
+>> +                hdmi_bridge_out: endpoint {
+>> +                    remote-endpoint = <&hdmi_connector_in>;
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> +
+>> +    hdmi-connector {
+>> +        compatible = "hdmi-connector";
+>> +        label = "hdmi";
+>> +        type = "a";
+>> +
+>> +        port {
+>> +            hdmi_connector_in: endpoint {
+>> +                remote-endpoint = <&hdmi_bridge_out>;
+>> +            };
+>> +        };
+>> +    };
+>> +
+>>       leds {
+>>           compatible = "gpio-leds";
+>> @@ -504,6 +569,21 @@ &lpass_va_macro {
+>>       status = "okay";
+>>   };
+>> +&mdss {
+>> +    status = "okay";
+>> +};
+>> +
+>> +&mdss_dp {
+>> +    sound-name-prefix = "Display Port0";
+>> +
+>> +    status = "okay";
+>> +};
+>> +
+>> +&mdss_dp_out {
+>> +    data-lanes = <0 1>;
+>> +    remote-endpoint = <&usb_dp_qmpphy_dp_in>;
+>> +};
+>> +
+>>   &pcie0 {
+>>       perst-gpios = <&tlmm 87 GPIO_ACTIVE_LOW>;
+>>       wake-gpios = <&tlmm 89 GPIO_ACTIVE_HIGH>;
+>> @@ -753,6 +833,22 @@ platform {
+>>               sound-dai = <&q6apm>;
+>>           };
+>>       };
+>> +
+>> +    dp0-dai-link {
+>> +        link-name = "DP0 Playback";
+>> +
+>> +        codec {
+>> +            sound-dai = <&mdss_dp>;
+>> +        };
+>> +
+>> +        cpu {
+>> +            sound-dai = <&q6apmbedai DISPLAY_PORT_RX_0>;
+>> +        };
+>> +
+>> +        platform {
+>> +            sound-dai = <&q6apm>;
+>> +        };
+>> +    };
+>>   };
+>>   /* Pin 11, 29, 31, 32 in GPIO header */
+>> @@ -967,6 +1063,58 @@ &ufs_mem_phy {
+>>       status = "okay";
+>>   };
+>> +&usb_1 {
+>> +    dr_mode = "host";
+>> +
+>> +    status = "okay";
+>> +};
+>> +
+>> +&usb_1_dwc3_hs {
+>> +    remote-endpoint = <&usb3_con_hs_in>;
+>> +};
+>> +
+>> +&usb_1_hsphy {
+>> +    vdda-pll-supply = <&vreg_l10c_0p88>;
+>> +    vdda33-supply = <&vreg_l2b_3p072>;
+>> +    vdda18-supply = <&vreg_l1c_1p8>;
+>> +
+>> +    status = "okay";
+>> +};
+>> +
+>> +&usb_1_qmpphy {
+>> +    vdda-phy-supply = <&vreg_l6b_1p2>;
+>> +    vdda-pll-supply = <&vreg_l1b_0p912>;
+>> +
+>> +    /delete-property/ orientation-switch;
+>> +
+>> +    status = "okay";
+>> +
+>> +    ports {
+>> +        port@0 {
+>> +            #address-cells = <1>;
+>> +            #size-cells = <0>;
+>> +
+>> +            /delete-node/ endpoint;
+>> +
+>> +            /* RX1/TX1 is statically connected to USB-A port */
+>> +            usb_dp_qmpphy_out_usb: endpoint@0 {
+>> +                reg = <0>;
+>> +
+>> +                data-lanes = <2 3>;
+>> +                remote-endpoint = <&usb3_con_ss_in>;
+>> +            };
+>> +
+>> +            /* RX0/TX0 is statically connected to RA620 bridge */
+>> +            usb_dp_qmpphy_out_dp: endpoint@1 {
+>> +                reg = <1>;
+>> +
+>> +                data-lanes = <3 2>;
+>> +                remote-endpoint = <&hdmi_bridge_in>;
+>> +            };
+> 
+> In this WiP patchset endpoint@0 is suposed to be DisplayPort, and 
+> endpoint@1 for USB3 lanes.
+> 
+> And you must not have colliding data-lanes, so it should be something like:
+> 
+>              /* DP0/DP1 is statically connected to a RA620 bridge*/
+>              usb_dp_qmpphy_out_dp: endpoint@0 {
+>                  reg = <0>;
+> 
+>                  data-lanes = <0 1>;
+>                  remote-endpoint = <&hdmi_bridge_in>;
+>              };
+> 
+>              /* RX0/TX0 is statically connected to an USB-A Connector */
+>              usb_dp_qmpphy_out_usb: endpoint@1 {
+>                  reg = <1>;
+> 
+>                  data-lanes = <2 3>;
+>                  remote-endpoint = <&usb3_con_ss_in>;
+>              };
+> 
+> But I just found out while reviewed my patchset is wrong... it should be:
+> 
+> +          endpoint@0:
+> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> +            description: Display Port Output lanes of the PHY when used 
+> with static mapping
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes:
+> +                $ref: /schemas/types.yaml#/definitions/uint32-array
+> +                minItems: 2
+> +                maxItems: 4
+> +                oneOf:
+> +                  - items: # DisplayPort 2 lanes, normal orientation
+> +                      - const: 3
+> +                      - const: 2
+> +                  - items: # DisplayPort 2 lanes, flipped orientation
+> +                      - const: 0
+> +                      - const: 1
+> +                  - items: # DisplayPort 4 lanes, normal orientation
+> +                      - const: 0
+> +                      - const: 1
+> +                      - const: 2
+> +                      - const: 3
+> +                  - items: # DisplayPort 4 lanes, flipped orientation
+> +                      - const: 3
+> +                      - const: 2
+> +                      - const: 1
+> +                      - const: 0
+> 
+> and in driver:
+> +static const u32 dp_2_data_lanes_mapping[][2] = {
+> +    [TYPEC_ORIENTATION_NORMAL] = { 3, 2 },
+> +    [TYPEC_ORIENTATION_REVERSE] = { 0, 1 },
+> 
+> Neil
 
-  - cpufreq_for_each_valid_entry_idx()
+The driver change in the WIP patchset assumes endpoint@0 to be USB, I 
+forgot to mention that. Either the driver or the binding needs to be 
+fixed indeed.
 
-Update freq_table.c accordingly to replace pointer difference
-calculations with the proper macros. This improves code clarity
-and follows the established cpufreq coding style.
+And I think there's another mistake in the driver:
 
-No functional change intended.
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+@@ -4221,7 +4221,7 @@ static int qmp_combo_probe(struct platform_device 
+*pdev)
+                                 if (!memcmp(data_lanes, 
+usb3_data_lane_mapping[i], sizeof(u32) * 2))
+                                         break;
 
-Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
----
- drivers/cpufreq/freq_table.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+-                       if (i >= TYPEC_ORIENTATION_REVERSE)
++                       if (i > TYPEC_ORIENTATION_REVERSE)
+                                 /* Property value is invalid, ignore 
+property */
+                                 goto usb3_mapping_done;
 
-diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-index d5111ee56e38..ca06a0236e70 100644
---- a/drivers/cpufreq/freq_table.c
-+++ b/drivers/cpufreq/freq_table.c
-@@ -33,16 +33,17 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_po=
-licy *policy)
- 	struct cpufreq_frequency_table *pos, *table =3D policy->freq_table;
- 	unsigned int min_freq =3D ~0;
- 	unsigned int max_freq =3D 0;
-+	unsigned int i =3D 0;
- 	unsigned int freq;
-=20
--	cpufreq_for_each_valid_entry(pos, table) {
-+	cpufreq_for_each_valid_entry_idx(pos, table, i) {
- 		freq =3D pos->frequency;
-=20
- 		if ((!cpufreq_boost_enabled() || !policy->boost_enabled)
- 		    && (pos->flags & CPUFREQ_BOOST_FREQ))
- 			continue;
-=20
--		pr_debug("table entry %u: %u kHz\n", (int)(pos - table), freq);
-+		pr_debug("table entry %u: %u kHz\n", i, freq);
- 		if (freq < min_freq)
- 			min_freq =3D freq;
- 		if (freq > max_freq)
---=20
-2.25.1
+@@ -4265,7 +4265,7 @@ static int qmp_combo_probe(struct platform_device 
+*pdev)
+                                         break;
+                         }
+
+-                       if (i >= TYPEC_ORIENTATION_REVERSE)
++                       if (i > TYPEC_ORIENTATION_REVERSE)
+                                 /* Property value is invalid, ignore 
+property */
+                                 goto dp_mapping_done;
+
+
+After fixing this, the driver works properly with my DT at least.
+
+> 
+>   +        };
+>> +    };
+>> +};
+>> +
+>>   &usb_2 {
+>>       dr_mode = "host";
+>> @@ -986,6 +1134,10 @@ &venus {
+>>   };
+>>   /* PINCTRL - additions to nodes defined in sc7280.dtsi */
+>> +&dp_hot_plug_det {
+>> +    bias-disable;
+>> +};
+>> +
+>>   &pcie0_clkreq_n {
+>>       bias-pull-up;
+>>       drive-strength = <2>;
+>>
+> 
+> 
+
+-- 
+Best regards,
+Xilin Wu <sophon@radxa.com>
 
 
