@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-817881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3796DB58807
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:07:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0406B58804
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6B954E183F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:07:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6079B1B24917
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9E42D594D;
-	Mon, 15 Sep 2025 23:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4YwMAfz"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F112D47EB;
+	Mon, 15 Sep 2025 23:07:07 +0000 (UTC)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087ED2C0F64
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2107328BA83
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757977640; cv=none; b=SuZGWPNmWbQnctmhWDeIgznXlaaEab31BSdJ7bqvvjSGJsQdvq/MLFZwoInCU2vMX5ztnZk6liGNqG0dEYdDvhBAU6XRkc2+0dLB4OzbRGm19eJmwuSks2iLkfdlQoMNTKpdvnM6pR+9Hw5CcjJHMVZDfJjZe28qDFmHxeqJjWw=
+	t=1757977627; cv=none; b=FUhhDYtdb8z0G0gJWZfm43oogyjWu+ezciXyTwKK/K0ptqzb/UlCaS2D5SwUCy7et3ze1hCL6hhhxrouoDugdb27jI2GBjOllswUjKtui8iYrYcP+nFOLzFmm7Gvkk5rod18NeVVDpRidfuJyPrXhLMutcy8vi01qzy4iC25UiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757977640; c=relaxed/simple;
-	bh=LN2djmX+oWBpW9P0SQsUvr3K6xqKGvT+SBfNb5FBCfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RroR36kkWB6WBnfTnYxeDBylOsCFDJjMZXW2k9gHruHg8z3hXxpQetms6aMACMRrHpxU+mret/p/bPko5zNcJGvLL7R7shpM8Tfmbr4741NdHZXTpeSe477W26cNDBzUlQtECIO+eb/IEWwR2wHvg5N7T0kD/a9WJ/dd0DrfMtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4YwMAfz; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-827906ef3aeso226082485a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757977638; x=1758582438; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ntdt+Fw1ooyH2+q0/xC8jx4AecQq6NmyBnAlPcFGaz8=;
-        b=n4YwMAfzy2Zh3g4Hv6xSWn/QT6VpQ8TEvyNIZ9CFJd+xyAUolKdhH+INOrsieljURg
-         zTgkBHR562u8RTcgIPXZO/jN1Ra6d8jNEzUJfi++1Ht7LxoyEXdsFBzQNtfMMkgLIiS4
-         bDxcumYxmwjiLb/Rn/c2U3Q1VkLepNEvJBQbe5sK1rf4m2N29I1+S6VitW7hSOKESWfY
-         C+/4D7EyGiqkLMqQt0Io7JfRFLFEfq8WWxiJN2RPv4lJAS3NrUGV/PY5wc17rkA/fZMP
-         +qdt5yAWt9xTOaxPFOAiskqHfMSVXm6FevMUhzk9pr6Y5LhsvX5Is4xh5+HfiS15wcbw
-         CqIg==
+	s=arc-20240116; t=1757977627; c=relaxed/simple;
+	bh=excbcDwDxrEvuwHqwKVQbW2H0N+JOeSU0RhDz8Q5Z7I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iIhTKQPAxodrvAysvpdXdgdqFei/t3rjvqZ0SkUktYtO5hyNERyEuYt1ejNN+0l0sO89xtNJN5ASnjehPPYKaQngXeH9pHjjVOReB9A6PwRxglMeskiebfM3RSesGOC/O3hQhfmiAKNNY1n27WZOWJUsb1gOexY2/FC4ZVvbMiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32e78c3680dso213635a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:07:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757977638; x=1758582438;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ntdt+Fw1ooyH2+q0/xC8jx4AecQq6NmyBnAlPcFGaz8=;
-        b=RygUjTNDMuZ+mWxOXjk+YDA+gum6dsZyO/4jHI7+IBvRPPu13fJ5OOZH9MhrjPjVca
-         MWEb/0CRtFMawHLYLxIUHWx3jk/l2+pKhU5D8cB2H1q+aHjWDrkmd2exQi0ueNuPLUcV
-         8MygEikPQ20Eoy9aPz3UlMNOmLPHrB/EzlS6cZV1sR/pEa3+LSr3nU6eyGH/gNY5xQAn
-         /pTLdZvDm7RRpIit8B3flu1G9jra0k6RoWpgpIW7Lh03BLsPP+vg0brrFajtuROlE5bQ
-         QOpWUcNMWXxymHZzwOniwJQsmUGfFP5Ie6L7XWcls/AFosO3+iiSWnGHCAtm35CJM2N2
-         XDnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHB70/yIwef8ok3BoGEJZK5xx/mIYFF1g0Us3Y1jJJXpRIVCBfYUwedCl2tWiEBQzM+k7kI4Z9q/pCvEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXLsua7Viq2T3wZfq/nzzbdUIs6zdMZMmXGj87SCXKfR9QWopW
-	lIm4KGwdQaMb64XnoWf/vgAZHO9skXjq8dDcMk0tOBwxRaOWCBX9M8yzVx/vZ2CuZUazl3KbTtH
-	LWdMCqg==
-X-Gm-Gg: ASbGncv7aqNAq91f7huLz3mzOVHlct8e5nUjKpAyDL8xbUUqCyGtdVPxnhV7ZoLF4Q+
-	UxDmM+q6Eed2VsPXc0wUVmp9SrKVCzUsbZemu4YLdO8DcS+U966O596EfcUIruJlDDMJVk0KQN5
-	aTsFUjvyuIo2A+/qZTetaVj20FPDSMVvfR0QDTayjSbVHsI+tIX1FOAel8CpBek6tDfgemb6yEX
-	eM0jx1fe3Tjj7G2f9IRB/D2EukNz9FKA66ImKqwvj4IH5xK86fQwm2Cz6a5X4JRMbGezfXnkYlL
-	15QkzTZSFvIWUFZL90CeGyHmcmTAiVhjju+nw92daR2ScoTzs5DTcBiERpAofl1OzVWR/ai9wCm
-	oNEvhKePLKdZXa1SHPGI+QRmF6ZQOL8MSFaIV26FjOxVkFwb+Kbol0vQD0hZ22qUAd+QAPp8=
-X-Google-Smtp-Source: AGHT+IEoi1lVcF4aPi9zcBQfqqjlIJGn2T6EJO2nM/jlo5+f9d6XecVONNJlc1ldgD3Xd7nmpRVVIA==
-X-Received: by 2002:a05:6e02:12c7:b0:418:4323:921f with SMTP id e9e14a558f8ab-420a568c3a9mr147338935ab.32.1757977624725;
-        Mon, 15 Sep 2025 16:07:04 -0700 (PDT)
-Received: from google.com (138.243.29.34.bc.googleusercontent.com. [34.29.243.138])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-423f9383029sm37354345ab.32.2025.09.15.16.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 16:07:03 -0700 (PDT)
-Date: Mon, 15 Sep 2025 16:06:59 -0700
-From: Justin Stitt <justinstitt@google.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3][next] drm/nouveau: fifo: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <fksv7eprcqnb55n5zllfyhk7ynx6zgbeuqtuoimbpgamguyodh@niwjdhicah2j>
-References: <aJ17oxJYcqqr3946@kspp>
+        d=1e100.net; s=20230601; t=1757977625; x=1758582425;
+        h=content-transfer-encoding:organization:subject:from:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+tG2/pl1HRKUlyAsj9zDa+uGnIDTNYDArMaYIOnk47U=;
+        b=pkToLAbjNOj/2OylKcT7mwC1oGBuBXQqZ5jsYGgou0VuG9EJfwaUt5uzMYukM+7Z+S
+         yztJETVh3xV3vHMk2UkfswyGPNo8cSDDoqEzBe+LYJF/RvYiqHEcoElU0fU7jPcXCoMy
+         Z6+J0WDNNWVhZXY5hNs/ROpmXE0wwQHMBJZn36rWiqpeIbX1RTVabfPmZqfUMGIUtZUl
+         ooTF3SexaBYB4atRuHhicPilDQ5AeO+Z5hRL5xXvUA326Wo+VsQ3FiOq40MBLZ5VGFgo
+         lJtQ/vdBpf35DKekVfbhnY9hQ7qPRpTAu4mb+8h1+AspdPHjTfpiu+bjeW/dbc5TxMEA
+         2xRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiFWwBxWbKfkCkwYSWauTCiVYIt1ZTQ5yg1ypPY3tZBkdJdtQfeZawEbx85UbeiEeETn+gcvOqxm3tGog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCIAhHesPVlWz5AxQJ8n6+2v1essioePHPs9mn0NtVagsDeMqU
+	W4DoooUAty4LCmvniT1/ZrZf1UAKZCOYYRmUZiOeHeb2jMKxhaqlqG5r
+X-Gm-Gg: ASbGncsvcaH5S76km0wy0rrhQtlgQsnxmhrm3B+kkjWn4EjMcQ+Gp7gxtp/pevr9XRv
+	uv1qdUV64d2WCF5RYsxyi0ZleUREdyGZn64kX0FQsjULtSSx3qSEN72mH2T7pq8FMt+SyblePKs
+	BvjsMU6VN6gw1Euu3SFSET+UpLTEgFJhqNzxOZ8Jq6E797z5EVLLzWThOENzrYkZDxGyTWf0FGP
+	R8xA4cUtto3UoOL8NY9VYlHnV+qUSqlxmW3G8KzHIOFG8OxZrtOTAzrAiIcpom6o7CNUbBBMMXX
+	KJG/h/z2d0PdNG2crjwKuX63MLWg7wr9073TKkK82F1+0pmgGyBtVfUQOzxQWNUA3fzQbMcGKtW
+	0M/urJYMcSuEqW8B1ak2wwDVShmTag6bbRCUpaHzjFiSQQvLuarWDVlJbIYXgqcgmpiC9DK6SWY
+	8Kym6IbSKDsKc0TrXsEdXmN/6CqnWw
+X-Google-Smtp-Source: AGHT+IGbqBJF/id9+qYtY3KsiDNgt+EfjytBm4qa0ZzMz3igOef+VrgCD1CGjFg5iy6cetqBPVxKGA==
+X-Received: by 2002:a05:6a20:914c:b0:251:31a0:9e70 with SMTP id adf61e73a8af0-2602cb012a7mr10124077637.7.1757977625339;
+        Mon, 15 Sep 2025 16:07:05 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b169f2edsm9504128a12.19.2025.09.15.16.07.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 16:07:05 -0700 (PDT)
+Message-ID: <8da4d540-652c-4845-9feb-0d53eeb3b5ed@kzalloc.com>
+Date: Tue, 16 Sep 2025 08:07:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJ17oxJYcqqr3946@kspp>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Yunseong Kim <ysk@kzalloc.com>
+Subject: [RFC] ksmbd: Deprecate MD5 support and enhance AES-GCM for SMB 3.1.1
+ compliance
+Organization: kzalloc
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hi all,
 
-On Thu, Aug 14, 2025 at 03:01:07PM +0900, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Use the new TRAILING_OVERLAP() helper to fix the following warning:
-> 
-> drivers/gpu/drm/nouveau/nvif/fifo.c:29:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> This helper creates a union between a flexible-array member (FAM)
-> and a set of members that would otherwise follow it. This overlays
-> the trailing members onto the FAM while preserving the original
-> memory layout.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+I'm looking into contributing to the ksmbd crypto module, specifically
+around crypto handling in crypto_ctx.c. I wanted to send this RFC to gauge
+interest and get feedback before preparing patches.
 
-I took a look at the modified structure layout with the union from the
-macro using pahole and found the layouts and sizes to be equivalent --
-all the while fixing the warning you demonstrated.
+First, regarding MD5 support: The current code includes HMAC-MD5
+(via crypto_alloc_shash("hmac(md5)")) which appears to be for legacy SMB1
+compatibility. SMB1 is widely deprecated due to security issues, and MD5
+itself is vulnerable to collision attacks, making it unsuitable for modern
+use. I propose deprecating or removing this support entirely, perhaps with
+a config option (e.g., CONFIG_KSMBD_LEGACY_SMB1) for those who absolutely
+need it, but defaulting to off. This would align ksmbd with security best
+practices, similar to how Windows has disabled SMB1 by default.
 
-Reviewed-by: Justin Stitt <justinstitt@google.com>
+Second, for SMB 3.1.1 compliance: The code already supports AES-GCM via
+crypto_alloc_aead("gcm(aes)"), but to fully adhere to the spec (MS-SMB2),
+we should explicitly handle AES-128-GCM as the default cipher, with
+AES-256-GCM as an optional stronger variant. AES-256-GCM isn't mandatory
+but is recommended for higher security (e.g., in Windows Server 2022+).
 
-> ---
-> Changes in v3:
->  - Use the new TRAILING_OVERLAP() helper.
+This would involve:
+ - Adding key length checks and setkey logic in the caller side
+   (e.g., negotiate or session setup).
+ - Updating the negotiate context to include cipher selection
+   (0x0001 for AES-128-GCM, 0x0002 for AES-256-GCM).
+ - Potentially separating signing (AES-CMAC) from encryption ciphers for
+   clarity.
 
-There's really starting to be a lot of these helper macros!
+Is this direction worth pursuing? I'd like to prepare patches for review
+if there's consensus. Any thoughts on priorities, potential pitfalls, or
+related work in progress?
 
-> 
-> Changes in v2:
->  - Adjust heap allocation.
-> 
->  drivers/gpu/drm/nouveau/nvif/fifo.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nvif/fifo.c b/drivers/gpu/drm/nouveau/nvif/fifo.c
-> index a463289962b2..b0ab80995d98 100644
-> --- a/drivers/gpu/drm/nouveau/nvif/fifo.c
-> +++ b/drivers/gpu/drm/nouveau/nvif/fifo.c
-> @@ -25,13 +25,12 @@ static int
->  nvif_fifo_runlists(struct nvif_device *device)
->  {
->  	struct nvif_object *object = &device->object;
-> -	struct {
-> -		struct nv_device_info_v1 m;
-> +	TRAILING_OVERLAP(struct nv_device_info_v1, m, data,
->  		struct {
->  			struct nv_device_info_v1_data runlists;
->  			struct nv_device_info_v1_data runlist[64];
->  		} v;
-> -	} *a;
-> +	) *a;
->  	int ret, i;
->  
->  	if (device->runlist)
-> -- 
-> 2.43.0
-> 
->
+Thanks for your time.
 
-Thanks
-Justin
+Yunseong
 
