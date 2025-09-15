@@ -1,135 +1,171 @@
-Return-Path: <linux-kernel+bounces-816517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE594B574E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:27:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB96AB574E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EAC3AFAA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8162C4405C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B65B2ECD23;
-	Mon, 15 Sep 2025 09:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BFD2F5332;
+	Mon, 15 Sep 2025 09:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FXPR1bVn"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SJBhiQjR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3A83D984;
-	Mon, 15 Sep 2025 09:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D282F4A04;
+	Mon, 15 Sep 2025 09:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928419; cv=none; b=hwqkFM70H/iPuRwKBji1rF/rUCmWCLCpfjJe4pVF2l+5saXmzsLGJ7rJhBdRbdLQoJl/c7HZPpdjf64YiTcIEFGTunfgAg3/NrYyQuc+DjxCtTLuhU1LWq/FcLCopfNKHtZlLBn8GcOyPK4N5gt+L+nLhDC8aF5YZYe34spLYi4=
+	t=1757928492; cv=none; b=OSJHrn634YsattcfV3lwYIRftAtXnnoRwxQhw2ZC4RtQRyVwZcFWyZZGg6edGhwEsO/8peQeqep7fLK+ZDh9gFU036x4w/H33dmo+etKhwCFt3KCkbN/lST/kh0qerSW/aR80pKyHY08ERYj4kvcD4ZBIL4X6GgLqdKg+SA7IOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928419; c=relaxed/simple;
-	bh=0ny8FKWjpUlbLud8VuX99OuONGyKCRz9Iotsxs0Aopw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=istNtp0za0MRjRT/wnj6/0sXCGLBO0fIxVK04Z+u3ge36DkB1SIRzCdkQxy77IpCybvIImdKc3NyFV81HnH70iCcpQGZtZiboIchsl+iYYvmACkLoAQ8l87Ig0UsknBO/FlTHbFxcGrA9jr6QKTDkK44Pw2EQuXXezyX/nnSSOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FXPR1bVn; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 385BF140020F;
-	Mon, 15 Sep 2025 05:26:56 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 15 Sep 2025 05:26:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757928416; x=1758014816; bh=qB5j5tPDORmdLoU8aR2TXEt209oeznvEGDo
-	zn2hFDXo=; b=FXPR1bVndsbxvdAus3OYAegJiWque9bPlLzTAjV7DJvzRw/tMpi
-	NqZsa3wpk/eHcgqPzLS5H5nb0PzLLlGdVavwovhns5ZqgqBTkpbC06jAzYjMqxSW
-	OWtiYlAndcQDq2jp2wGLAKCC7wRtfek9XG+HfjOAHgmafoIALR2Xx9EtZYRH4l3w
-	t7f3spWOMxzqhmgbVVVmClvr5yF0+oE2LH5xm/EelN9BzVNfDkaF3ABR29H0R7g1
-	UVvn9vEjjsNAojKIcuzeR+4bMa0anBrrHtEV6AmdpstIaA4Ja19Eda6vz/iK+4Hm
-	ka/fXU4xZVxnPq1RQlcENUjXA9wDYB4spPg==
-X-ME-Sender: <xms:39vHaE1QE2pFrgzQbcY9bE2RK6dSIubB6M0yfdIDxUp6R6kcIoFnSw>
-    <xme:39vHaJhs8xrDU-wj9xNJ3J2fHEGs3pMi9aGOH6FYGjMaNLNZmfpHphjzX4Hd-tL0s
-    fp-AR56He9YwAFsN3M>
-X-ME-Received: <xmr:39vHaEZLwGt4VxZhRZDNR7xRUqkZUCnpIrkqZzPfiiXTqq5w4HdmNNHMPRygEE1zlhFk6Ypsk5CACzMb21pAqTJs6ujEszJGTSs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
-    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueehueel
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
-    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
-    htohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnug
-    grthhiohhnrdhorhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgt
-    ohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrh
-    hkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrtg
-    hhsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:39vHaFUS-TllTcenWAQP1Pr1NfefUNmI2ediOKRwOUO5q1S7Bqrt-A>
-    <xmx:39vHaMHLTnfA1PWVnpNDavVrzp_7yzH82Dnm7c2qkY9yBou4tYKaAg>
-    <xmx:39vHaPYxcmTdBLpNkfjyc3ovnscn6NuinLMr6a5o0y_umFEXJtSXfA>
-    <xmx:39vHaLGV9M12b-1gKcMso0TsmGPyLQgoVJ_TANBqy9RYwGw299Sjzg>
-    <xmx:4NvHaBsm2NqGSf4IwAc1PaH3UlTBBsX1W3yu2HXkg9n7WGk6wc0a1rGB>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 05:26:52 -0400 (EDT)
-Date: Mon, 15 Sep 2025 19:26:46 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
-    Linux-Arch <linux-arch@vger.kernel.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
-    Lance Yang <lance.yang@linux.dev>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
- atomic64_t
-In-Reply-To: <f1f95870-9ef1-42e8-bb74-b7120820028e@app.fastmail.com>
-Message-ID: <c130a0bd-f581-a1da-cc10-0c09c782dfca@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <f1f95870-9ef1-42e8-bb74-b7120820028e@app.fastmail.com>
+	s=arc-20240116; t=1757928492; c=relaxed/simple;
+	bh=ig9pnFV5Dffbtj//ovQm7EUb5gnxPa3r3vIlgcADr78=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=EPEWEJA1qrOXjOpK2vi/QVDpszmziTxR4BE5/QsVOT3cGxs2GYUYwOx+ofvFrOyy+VOl4qa5TiJoacOg881tLgWTIDs9ML8dY8oUTtbtn8tNCnffUMRLyFxWP6/Skx3/MllK46HCBfy/tenJEFK7i9EW//WrE44Td/8+OBEQnzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SJBhiQjR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from thinkpad.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1ACA76DF;
+	Mon, 15 Sep 2025 11:26:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757928411;
+	bh=ig9pnFV5Dffbtj//ovQm7EUb5gnxPa3r3vIlgcADr78=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=SJBhiQjRQwwdrf/m53fDFdEAhwTMcF6ydRgT2aAJrWv7I/EEb/4aIQi/TEq3dTG1H
+	 PlsG5BMP4vEJSRWvoOLKMSIOEg3BgV1nfJmw39IFksEZawT8OaT63roL4Ac0XtWEvw
+	 8g1TIQ4eBsHMhwtWAibihYd5bKfP04beAcmwBn9k=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aLlRgRBztMEicEgM@kekkonen.localdomain>
+References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com> <20250903102243.1563527-2-isaac.scott@ideasonboard.com> <aLlRgRBztMEicEgM@kekkonen.localdomain>
+Subject: Re: [PATCH v2 1/3] media: v4l: Add helper to get number of active lanes via a pad
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: laurent.pinchart@ideasonboard.com, rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, hverkuil@kernel.org, nicolas.dufresne@collabora.com, tomi.valkeinen@ideasonboard.com, jonas@kwiboo.se, dan.scally+renesas@ideasonboard.com, m.szyprowski@samsung.com, mehdi.djait@linux.intel.com, niklas.soderlund+renesas@ragnatech.se
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Mon, 15 Sep 2025 10:28:05 +0100
+Message-ID: <175792848509.11401.3410245547555092168@isaac-ThinkPad-T16-Gen-2>
+User-Agent: alot/0.10
 
+Hi Sakari,
 
-On Mon, 15 Sep 2025, Arnd Bergmann wrote:
+Thank you for the review!
 
-> On Sun, Sep 14, 2025, at 02:45, Finn Thain wrote:
-> > index 100d24b02e52..7ae82ac17645 100644
-> > --- a/include/asm-generic/atomic64.h
-> > +++ b/include/asm-generic/atomic64.h
-> > @@ -10,7 +10,7 @@
-> >  #include <linux/types.h>
-> > 
-> >  typedef struct {
-> > -	s64 counter;
-> > +	s64 counter __aligned(sizeof(long));
-> >  } atomic64_t;
-> 
-> Why is this not aligned to 8 bytes? I checked all supported 
-> architectures and found that arc, csky, m68k, microblaze, openrisc, sh 
-> and x86-32 use a smaller alignment by default, but arc and x86-32 
-> override it to 8 bytes already. x86 changed it back in 2009 with commit 
-> bbf2a330d92c ("x86: atomic64: The atomic64_t data type should be 8 bytes 
-> aligned on 32-bit too"), and arc uses the same one.
-> 
+Quoting Sakari Ailus (2025-09-04 09:44:49)
+> Hi Isaac,
+>=20
+> Thanks for the update.
+>=20
+> On Wed, Sep 03, 2025 at 11:22:40AM +0100, Isaac Scott wrote:
+> > Sometimes, users will not use all of the MIPI CSI 2 lanes available when
+> > connecting to the MIPI CSI receiver of their device. Add a helper
+> > function that checks the mbus_config for the device driver to allow
+> > users to define the number of active data lanes through the
+> > get_mbus_config op.
+> >=20
+> > If the driver does not implement this op, fall back to using the number
+> > of data lanes specified in device tree.
+> >=20
+> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-common.c | 25 +++++++++++++++++++++++++
+> >  include/media/v4l2-common.h           |  1 +
+> >  2 files changed, 26 insertions(+)
+> >=20
+> > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2=
+-core/v4l2-common.c
+> > index 6e585bc76367..8683107b3704 100644
+> > --- a/drivers/media/v4l2-core/v4l2-common.c
+> > +++ b/drivers/media/v4l2-core/v4l2-common.c
+> > @@ -571,6 +571,31 @@ s64 __v4l2_get_link_freq_pad(struct media_pad *pad=
+, unsigned int mul,
+> >       return __v4l2_get_link_freq_ctrl(sd->ctrl_handler, mul, div);
+> >  }
+> >  EXPORT_SYMBOL_GPL(__v4l2_get_link_freq_pad);
+> > +
+> > +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, u=
+nsigned int dt_lanes)
+>=20
+> This line would benefit from being wrapped.
 
-Right, I forgot to check includes in arch/x86/include. (I had assumed this 
-definition was relevant to that architecture, hence the sizeof(long), in 
-order to stick to native alignment on x86-32.)
+OK, I'll wrap it in v3.
 
-> Changing csky, m68k, microblaze, openrisc and sh to use the same 
-> alignment as all others is probably less risky in the long run in case 
-> anything relies on that the same way that code expects native alignment 
-> on atomic_t.
-> 
+>=20
+> > +{
+> > +     struct v4l2_mbus_config mbus_config =3D {};
+> > +     struct v4l2_subdev *sd;
+> > +     unsigned int lanes;
+> > +     int ret;
+> > +
+> > +     sd =3D media_entity_to_v4l2_subdev(pad->entity);
+> > +     ret =3D v4l2_subdev_call(sd, pad, get_mbus_config, pad->index,
+> > +                            &mbus_config);
+> > +     if (ret < 0 && ret !=3D -ENOIOCTLCMD)
+> > +             return ret;
+> > +
+> > +     if (!mbus_config.bus.mipi_csi2.num_data_lanes)
+> > +             return dt_lanes;
+> > +
+> > +     lanes =3D mbus_config.bus.mipi_csi2.num_data_lanes;
+> > +
+> > +     if (lanes < 0 || lanes > dt_lanes)
+>=20
+> lanes is unsigned int so no need to check for less than 0.
+>=20
+> I might just not use a local variable for this, up to you.
+>=20
+> > +             return -EINVAL;
+> > +
+> > +     return lanes;
+> > +}
+> > +EXPORT_SYMBOL_GPL(v4l2_get_active_data_lanes);
+> >  #endif /* CONFIG_MEDIA_CONTROLLER */
+> > =20
+> >  /*
+> > diff --git a/include/media/v4l2-common.h b/include/media/v4l2-common.h
+> > index 0a43f56578bc..3f8937260c76 100644
+> > --- a/include/media/v4l2-common.h
+> > +++ b/include/media/v4l2-common.h
+> > @@ -584,6 +584,7 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mpla=
+ne *pixfmt, u32 pixelformat,
+> >       (pad, mul, div)
+> >  s64 __v4l2_get_link_freq_pad(struct media_pad *pad, unsigned int mul,
+> >                            unsigned int div);
+>=20
+> Some kernel-doc documentation would be nice.
 
-By "native alignment", do you mean "natural alignment" here?
+Ah, of course, I'll include it in v3.
+
+>=20
+> > +unsigned int v4l2_get_active_data_lanes(const struct media_pad *pad, u=
+nsigned int dt_lanes);
+>=20
+> Please wrap this, too.
+
+Will do!
+
+>=20
+> >  #else
+> >  #define v4l2_get_link_freq(handler, mul, div)                \
+> >       __v4l2_get_link_freq_ctrl(handler, mul, div)
+>=20
+> --=20
+> Kind regards,
+>=20
+> Sakari Ailus
+
+Best wishes,
+
+Isaac
 
