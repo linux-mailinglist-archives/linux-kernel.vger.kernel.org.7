@@ -1,245 +1,475 @@
-Return-Path: <linux-kernel+bounces-817043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C063B57CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:27:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5438BB57CE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900CB161E44
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156C31AA1609
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14047313539;
-	Mon, 15 Sep 2025 13:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8747C30F815;
+	Mon, 15 Sep 2025 13:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZSXFcrsy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3fD2m0rl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZSXFcrsy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3fD2m0rl"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hLqdrH9U";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="DCxVw0f7"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C2330F815
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942811; cv=none; b=o3STpvoXODur4GYl0gr8VmWz/qXjyKoIguP6aOZhKvQcLsFffjgwvNczUaCeHOT0rITsCE1Q50jJdvN+wgbvnpSkEPxYXWDpdWMCf8NpqwMpXRKJbCvbtLfP+J0ftE1TxOFN8V7pq9gvm5K0ZEkvfjh0tcz/foEBx8ZmDg7mLPI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942811; c=relaxed/simple;
-	bh=DNjCT8AjCBIhsNIIt7caR81pc8KcMInwSiEfAHrOjLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/bKnwvMXRYFgEnVY00hwz6phLxSIiIWIBl93UJziU1ZrUXXV12BwcqXmpWFwcb/mrEe/vVtOzCQLqK/6lYVVLUdkxH5YO0a/53lHYGgim9WbLI2NbUfc/rr0S125WIhB0Jas/sk76XokU0SZ2NwFClKwHfbGltbKNnqxBqNtOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZSXFcrsy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3fD2m0rl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZSXFcrsy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3fD2m0rl; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 83698336A2;
-	Mon, 15 Sep 2025 13:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757942807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/GcvgzHFljI8lmWkgEFZKMFkx5vtDy9BKC9dr2WXzM=;
-	b=ZSXFcrsy5tbNjQqSoVPmy60S5q4IYLaWz7xzaMFnm16yhV7GVO8krdX42Q17mjhKMhuZyE
-	dccKOo/XDBewPpVZEtClisdORwZ9OW2Gh0P+N2K7iTv2Y2oCEVGAdtKqGG510EBd+azO89
-	Kci5CEMy0+96jvF6/U2H5WwldMY56v4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757942807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/GcvgzHFljI8lmWkgEFZKMFkx5vtDy9BKC9dr2WXzM=;
-	b=3fD2m0rlKAn16qJMgGK1oSMl7S3r61w6wg+MDFG3yz13vB4RhR+bq1rupS3ZJu1c/uzyIT
-	k/yY2pWN213RLADw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757942807; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/GcvgzHFljI8lmWkgEFZKMFkx5vtDy9BKC9dr2WXzM=;
-	b=ZSXFcrsy5tbNjQqSoVPmy60S5q4IYLaWz7xzaMFnm16yhV7GVO8krdX42Q17mjhKMhuZyE
-	dccKOo/XDBewPpVZEtClisdORwZ9OW2Gh0P+N2K7iTv2Y2oCEVGAdtKqGG510EBd+azO89
-	Kci5CEMy0+96jvF6/U2H5WwldMY56v4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757942807;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/GcvgzHFljI8lmWkgEFZKMFkx5vtDy9BKC9dr2WXzM=;
-	b=3fD2m0rlKAn16qJMgGK1oSMl7S3r61w6wg+MDFG3yz13vB4RhR+bq1rupS3ZJu1c/uzyIT
-	k/yY2pWN213RLADw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 736051372E;
-	Mon, 15 Sep 2025 13:26:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qtcoHBcUyGiTTQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:26:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 23F8EA0A06; Mon, 15 Sep 2025 15:26:45 +0200 (CEST)
-Date: Mon, 15 Sep 2025 15:26:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 29/33] nsfs: support exhaustive file handles
-Message-ID: <qar72lx6pjoygcxefjssrbn6crytpfbpltpeuvplb3mnsle4gm@zpil2qdsn65o>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-29-1a247645cef5@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4197E2C027C;
+	Mon, 15 Sep 2025 13:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757942826; cv=fail; b=Gbaddeum5vsY8W9P9mJI+93T6ycQD9xBvpZqaTQjD+hlN5qbxdvffBoF2IMYY2iOWNCyJBM/1XYpW1ZzixE0JUrBfttx+lpjDlw43uF1SZPhiuMOTxbftv6jGV0lmE8pvWAmu6uw7sKENeIBlJ6LpBWI9xv0OFZtWoOSOMJmtsk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757942826; c=relaxed/simple;
+	bh=cckhWnOdO0zzPOD/I7G45tIAf8Qg1W81iFv+AzS+Ee4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Vo5kyGxZOTH+x/DU7S3c6Df6OpkAyFsEE8hpqrk5e8yWHryhk3MO5rnHuXM0Dlla67dvoiiZwdTkdampKk84UB/urA7mvYAjH/sK4Z61aT/DQSJmhdhFRkTYXA5WE+DGLI0Tm3lNDF9bLxvKc0HIASCdRvkmOtcw2ARxMHHSwm8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hLqdrH9U; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=DCxVw0f7; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FDBsnR005153;
+	Mon, 15 Sep 2025 13:26:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=dHmuXWe3JNMCwUWhVfUAE/7YAQNgahQhTWwuCr31tA8=; b=
+	hLqdrH9UkSmPmZo+P6x0pKME3J+XPj3/dXiuRoY1RzEb4aftBfNU5V+fGpG4l87j
+	bHyczw8ykMHgndUrFTO09vC1Cz4tW4vZZUrOjxapSm3ZJh9uatiKX+t6TQ4lP9y2
+	HRVbTbfXu+TTjmUaajqnYP6D+WNnOtxihyMxlPChKR6ZjQzuIdw5Lm5b41VrPUM4
+	leF+FSMaiaKrkaInnaJzC5Cr9KgWW1MypTA+B1aRCIsZhfzSW5daayEURPvZUAcb
+	jNivyAL5vbXBRULmRkrfqvIKQVDawAgudA2WvjTYMy/cTgFES2kjYlmxlWJA54zF
+	K8HsM+MiNgvAaKLxs/sZnQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 494yhd2duq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Sep 2025 13:26:53 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58FCdHCm015411;
+	Mon, 15 Sep 2025 13:26:52 GMT
+Received: from cy7pr03cu001.outbound.protection.outlook.com (mail-westcentralusazon11010067.outbound.protection.outlook.com [40.93.198.67])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2b1ytr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Sep 2025 13:26:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U1/lxEvDhiVs1jakcL3Dr+dh6NEly2Kn/lankK7p/96SXHSPyLAFNMesA0qNRS1o+Elx8yyU0Kr+s0cN4yqbgDkWFUUip7p+gkjB0gox8FUCwS3QWN9cJ4vcg8rboQJJSuWjWV0AzDUEb9sBCG/cZGyU0h6iLFCDyc+h8bjapQ6YLb/clQTkJK6K98CjJRqWybEQje/rtzGPsFFxL/gCFu1aWLTxgrdMV5i6za3iJQZmO/7xHExXsRUpyfQP0beA0T9qGpYh8Mp3xY5T7eQlLfQ0l5KiabnCVaFK61+bcVxf8cdpL9S+k7OtvV42wC41+jlQA9/aizRcmsRBbU+cNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dHmuXWe3JNMCwUWhVfUAE/7YAQNgahQhTWwuCr31tA8=;
+ b=xIkvLN1l+tl7Zd1w+fOWAwv7ZCTFwh3PFmqkayH1a/twMNN1kpMpRLhipYBtOdEeGTCMXlMZhIRBKejxOWp6iJYftA2pIqj6oFGuODkb+QfYCQRx5l2MoqVHh8zsJlH19cbQv9iLSO5aVm5Jz48uQAMXmFqYao3EjtvWthUQ78rZoJkRWUKs0n5YwPG84SGzzt0/ZpWVuDqUf5SrYhmi8SAvFEgWeG5SWbTkmpbDs83+Kfag5qjBrwLJ5v0R0zcKEATFSJoJfMqrrViOZFTJMsCDszqdQZdCStrD//QRYtuf7PyfsVupWFEXm+64KQ9dU1I64vBsrtv2uOJbE2uovQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dHmuXWe3JNMCwUWhVfUAE/7YAQNgahQhTWwuCr31tA8=;
+ b=DCxVw0f7rmz/fQ8LpnJ20jaNR2ZHU1nohVo8g9sHiNzHRSmLJpUhjCy4yByhjodBLmj4RhCrEeY2B5GYQ6wymaRpTSOxXaZY7r/Nj7ymelR5OTnL48ofxMQS39gDvlI1gDQbehbE2rfMn40KhF5k/oUeqSC5iH7U2KbD4LIPVuo=
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16)
+ by SJ5PPF7A7588508.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7aa) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 13:26:49 +0000
+Received: from MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c]) by MN2PR10MB4320.namprd10.prod.outlook.com
+ ([fe80::42ec:1d58:8ba8:800c%7]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 13:26:49 +0000
+Message-ID: <58214139-2e42-4480-a7c3-443dd931fd09@oracle.com>
+Date: Mon, 15 Sep 2025 14:26:46 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 09/12] generic: Add sudden shutdown tests for multi
+ block atomic writes
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Zorro Lang <zlang@redhat.com>,
+        fstests@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org, tytso@mit.edu,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+References: <cover.1757610403.git.ojaswin@linux.ibm.com>
+ <25f77aa7ac816e48b5921601e3cf10445db1f36b.1757610403.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <25f77aa7ac816e48b5921601e3cf10445db1f36b.1757610403.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LNXP265CA0088.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:76::28) To MN2PR10MB4320.namprd10.prod.outlook.com
+ (2603:10b6:208:1d5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-29-1a247645cef5@kernel.org>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.30
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4320:EE_|SJ5PPF7A7588508:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58f929c3-e91f-4cae-b48c-08ddf45b866c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0gxNWJRZWdFaXowcVlGVTJLbFJwTTdRNU1SUFpIWmxNaWhQTlJ3a2xKaGRQ?=
+ =?utf-8?B?eXRGSFM5NCtVUE0rNVkyQUFkc21RaXUycnZQNC9FSFR3TURMVXhQRjIwUHQr?=
+ =?utf-8?B?Rm9qa29VWnNRQWNhL3FmL2hTS0YySGd6bjVxaGFCSk5ybGl3NGhSbDNPY01p?=
+ =?utf-8?B?dzJLNjN5QWRSOFJPTjd4UlpvTk5wOElqTkYzVEhIM2prNjl4RnRVV3RGYUFh?=
+ =?utf-8?B?Y1VDanNGVTNZVlAwMzlyT3BnczNZRVNyeEw3OVBNc3BJaDRRT3h4Tnc2QmlQ?=
+ =?utf-8?B?WkE3Q2hDRyt0eDFWYjVtS3JVQWIyc1NCWjQwbUFjbm9sVG00cVFEVUkyYnJm?=
+ =?utf-8?B?VWdCc3hYdkk5bXF4RmNFSWwzVTFpWDZ0Mzd1VUF1RG9sanIvYTFrcDdHK0tZ?=
+ =?utf-8?B?WmxQNTdwc0kvY0wxanJSSTZCWEJxSzhnMElkUVdPTWdhWFVqTTEyUmNmOFFS?=
+ =?utf-8?B?M2Z1TDE2MmxCMzVkNmJUWmRaRCsrOS9uRW5IQThOR1Z5ZGIyQnVjcG52SHE0?=
+ =?utf-8?B?VDlpMXgrMldObDdPcVVkVnEzWTZQcFArSGlINjFHWFRRU3ovUHZERXFQWE1B?=
+ =?utf-8?B?bUZyaXo5bWZCODNhUzVVN2VPOXVJWmtDU0ZjK2RhRmVnWUNFamFNRGdJZ2FJ?=
+ =?utf-8?B?QkVMSVhhS2tIUWo1MURhSDVJVnM5b3BMUE1VZ3JoaU9ZempVSzVJRG1vQUJM?=
+ =?utf-8?B?SUxHczgwcEI2SzhaSjBML0NnU2hkeUpUV2plYkpjMGV0TFY5UHR2aWc0ZEZj?=
+ =?utf-8?B?TmliajQ2U2g3b0hmenc3OGhPdi9BeWVLUk1tSDhVVWNKY1hlTmU5R0FIY0Ji?=
+ =?utf-8?B?Q0d5YyttSXZYSksyc0o5OEpEVUVaQUtwbWtBZmppOENFY2s3UkI3YWIzemZl?=
+ =?utf-8?B?WUNrYXhjd05DUXF2YXYwc1p1STFmVE5Ra0tlTFNkSG5lOGhGNTJCL2xWMnVV?=
+ =?utf-8?B?UWFDRWVEVG1rdWhBNFlJdytINEt2N2t6a1lKT1Z4aHl0cGNHU1VpdVY2Tlph?=
+ =?utf-8?B?NzhaTlJIWkExRm9lY3drcUpnNytwNlRJV1N2OXhxYVlZLzYwUTVBMW1uSDdh?=
+ =?utf-8?B?VGtnWUh4OXI1S1B2L0VwK1hYdi96cXZTRUhJdnR2TTNIbGFEMkczZ1U4RXhP?=
+ =?utf-8?B?WEJRd0N5c25iWVVoc2dBNTZRWFFtdzAyNDByWEhrYU1vcDNGSDBPeHIrVEow?=
+ =?utf-8?B?b3JCcU44TE4zQW44WHZSTHpFUTRjRXQxa3Jic3JnSDZGOERsR3k2NXlzeE9S?=
+ =?utf-8?B?RTFNZ3ZxWGdJUHkzbjRWN0NOZXlVTngxRDA1dlRQdW1aSmxrMU5lOUIxZ1Y3?=
+ =?utf-8?B?MjVlN2kxeWZqdklYc24yWjVnNC9DN2o3aXlsdS9zR00vc2sxd29XcEVlZVho?=
+ =?utf-8?B?ZnZNLzVwQWNrRlRyZSs5M1YyRFNILzBKcTg1UzhqMGVWY3Q0cDJEeTNXVmxH?=
+ =?utf-8?B?SGZXNUtwRG9Qb2U3T3g4cEV3U0RlNVovVzdwSmQ3L2daZk80TlU5V29Hdyti?=
+ =?utf-8?B?Zkl5ZjNvM0VxMlBYdlhFd1BWZDNRUGNVREs3cGhXczFLbDRKM2pBVHhwY1Ji?=
+ =?utf-8?B?cGM3aTZrWkpVLzYzbEg4WXVXN1NLeFB4NDI0RjJTQTExRm5uSDl1c0RpYktZ?=
+ =?utf-8?B?SlY4MXFwRXFMUGkrYmx6QkxSYlFnSVlwOU1udjlFMm8wKzkzbEMxcER4cGVn?=
+ =?utf-8?B?Z0pkbkxpSnczemJTNFVFRmdNcmlTZVJmQTVKYlA4SCt0TWwxUm5WYnpBTDc4?=
+ =?utf-8?B?dkRiZXB5K0tXdWt5d3l5cHNWdUo0UVlIWlNxQWVWQmdPNEQrUS9EZWNZWTRw?=
+ =?utf-8?B?WmV1djhSU2JhOWY3dFd3d3ZCQzZyWUVCRDdIUkNaUU9wL24wNEJqQVpYQmpq?=
+ =?utf-8?B?LytzR0ozTmFEWXdyZUZGUGM1UkJpQWpNaElLb2tNR2lNSlhodGUyNGhXT3ZJ?=
+ =?utf-8?Q?Uo44oVj3+is=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4320.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V2ZTendDVzgzNC95SDhXdmdjZnBPRnA0Y2NRcW5nZTZYTC9HNFFLelFWcno1?=
+ =?utf-8?B?ejVQWkZkbG55T2JRdkUzbjNyZWcyUGNoUyt0UHZFWXNubFRYdXhSTDg5b1Ay?=
+ =?utf-8?B?ZGEyQlFsNDErR1dzOXZlZWRqVnhWVnl3ODloZ3NFZFpqZ0wrT0QyRG1IeXBE?=
+ =?utf-8?B?ck5TZExiQ05HMGJvdXcvOW5nL1Ywc2VqZ1g0NEUrVGJBMDNBcTZoZFVwZDRO?=
+ =?utf-8?B?RGJlV0NiMWgzcHR0dUFkNnp4SHF1Zk8wRGoxSHhOS1lqNS9hNmNwSEpGd3F6?=
+ =?utf-8?B?dmRmay9ERVdqQnVtSkhBeFVjZ2pPT0ZKMjJ5VFFuL3dYN043WTU2Ymg2WGVs?=
+ =?utf-8?B?SzAxNHpRUzVYaDYvVDBReUZ0bklQWGRQbmgwUlQxYmtuN2xWcjhrNWUvbnFF?=
+ =?utf-8?B?SXV1ZW9mV1RjRVlvZnA2cnJTWTVCNXRnM2hETWRnc0ZDSjdKTmltSGlqOXRw?=
+ =?utf-8?B?QnJKV3Y2RlhaeEdIQ0pqL04wQm9lRytqQ05BdzlPYnVwQk9PYWtzRDhoUWlj?=
+ =?utf-8?B?VHNCRkN5bEMxM3FsUHorcW9nYVh6SnM2Q2YzQXFMZU9jYjM3dXYzeSsrNEta?=
+ =?utf-8?B?alRCWGdxZzFTU3o5TU9pbXFtQ3Y3N1FvUkxaZVJIOVVseEVqV0JkZUVCZWM0?=
+ =?utf-8?B?MThOL2ZhNFlzbTlwZGlnV2ZpSnV3UFJ3RzVWTW9ycUhKa0ZqU2M0Vkx3Tlo1?=
+ =?utf-8?B?ajI0TStJZTcvc2dHa095VGRwTER0bEVGN2ZYajFCZkxLcC91Yyswc2JpNXNs?=
+ =?utf-8?B?bmYvZ2tZK2N0V0UxRWE4YnhtS2EvYXVZOXYyN1ZVcFY3eThMNm9xWEJhd3Iy?=
+ =?utf-8?B?dnp3Ti9BUTBRMVlCNUZYcmhIbjRlT3BNZTVmd2NyU3BjR1FsTWRJdzYyRVBh?=
+ =?utf-8?B?TnN6M1c4NUI4UkoxZVJEYkVEMkdFVUMyQm9PM1UyVDMvUTFDQzVuWjZZNFVv?=
+ =?utf-8?B?ZzBkZ3ZKN1ZpZkxoOUlkMERBWFRxeVVodmF1ODV2SS9DcThzcTZpbStRUzZH?=
+ =?utf-8?B?bWE3RkxEVWp6ZU42ZWRFcGNTQUNVSjRjWGgvRkZBSHdlMmZJaHdJZUgwWG5o?=
+ =?utf-8?B?UTErMWxYNmdFcmVjZG5WcVUyR2xxZDd5RGIxQjBoblZaQmNHbjlMYVJBTlVq?=
+ =?utf-8?B?SXlocHgrQllRRkZ0a1RTczMweFVrdXBCTW04SDllWFlLRXY2dFp1TngxVTgz?=
+ =?utf-8?B?a3BGRDBaRCthMmxSWFR6Mk9DVHE5bDJVRkVSTUtsSWNqMTZjMys3QllDOEtV?=
+ =?utf-8?B?K3dPVGxOc0lyc29hSWVoUnJnWWMySlZHeFVodUErNW9ObC81cnI1WmFpVm9i?=
+ =?utf-8?B?SkUxaTBiTjd5WHluRFRjRWlMdEhlRnAzZlc2R1RvblhSSjQ1R0UxZFAxOVJz?=
+ =?utf-8?B?NDdaRytUWnBBT3ZRbXRxMUo1TW44Mm9xRk1iaWdyQk45bG5hYSsvYjV1Tks1?=
+ =?utf-8?B?eTU4SkcvcXNES0FrWXZUTVlGMjRydjFsbzNvT3FDY3I3dElGdkZCSUJQZmE2?=
+ =?utf-8?B?UEptYWZheklNUDNFeDFyVjQ0WURsSnJJV3BKYlRIYzZvenVKbFM4cWR0eEtD?=
+ =?utf-8?B?UUFvdUZtdDYxcFgwRUtEeGZaVldRcEplSTdONHZJUnZpVm9oTG12cEUwMHhH?=
+ =?utf-8?B?eXZZVnRHMlBmYzVVL3hpSUxiL1hJY0ZhQ2RXamwzYXdjeDRVTm93Qng5OHor?=
+ =?utf-8?B?OFB3L056cVh0TDk1MzlYS1pDMGxFdjdYU3JwREFzTTRYVHIybkhha3FSa1Vp?=
+ =?utf-8?B?V3VOdHdoVUwzRmdJcHBha1Z3ekNjZVgwakd5dGVoaGUrbkF1ODF2M1BKNk5l?=
+ =?utf-8?B?UWlFUE0yWGYvYWp2Y0ZwTUw5UGJCU083dEMvNGVMSjNNdG1PSzFLcDNsd05l?=
+ =?utf-8?B?YkVJb2ZuYU9wQ0JkR0Noekg3Nko1aDlFYko2T2Y0U2srekJZMW9mNWVoWUph?=
+ =?utf-8?B?aU5mZkNISytYT1owZ3poaTcremRHZ25jRHRMVXU4Y0tUUWY4MklrUzh1VkZM?=
+ =?utf-8?B?YnZiYmFOTnRtM01STmtiU2g1UkNHOWFmalVnMzZ4UTNubnNqSXRuYVFKQ0w5?=
+ =?utf-8?B?YytMZ0xqdm02L2FpZVVXSXFhUXc0L1BMZGJZT0ZNVEN3V09KYnY1OGc5Mm9h?=
+ =?utf-8?B?WGF5NUtNbkFuWTU2ckJGZmN0MXo2VDh4bGYvNjd4M3dnVVRuV2oyU0J4S3Jk?=
+ =?utf-8?B?UGc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	QUI6+CwXwQ7L8GdHcEKZ5g5VNc+ZG9Rj3XBTSt03Bj+pzmZG7eiiQO1ZYIJZjCSv4ilPbW3Odo1Hf5AjoB1hso1ZkYf/26/yn8J/g/jfZ3LAT+BeUnanqV1i6A7J4jiNOxSBzEDjyDAvz9kYK5FOMNXN49wgv3yskliQRMF9qpzssOevO2X6cuj1CGb/oIG2j3zGU4wTUDTDKW93xLqE0FjI67tE8InDbWPxMbrhSp5UZQMg9kW6MDPkZl/kst2IZxzbk3yn6fg1ZWaXqqLG6EYnZJmIoT1xePzq+bJPZqBTbOnmitESc1PmcEvh522XT97hlZy4if2dM5uQS5CleSQBCchddLXKPnLP8PkTunvhRnRjjHgZZ5+4MePrT/KEAdbH2vYXszaFZhf2QhjXqm1TbIjqzRgbjEt8lzXX+iZdqQds7nueWZDcJkzNv38G9l/yNGpM0ORedkNEUhF1anr9j6/LFHcCGbqb5hw5d1FtWOx7z6EyQ5yYXfGErjNa1llzqlboq2FS2p7iR1VjAbAbI9hnYVXbc610RxTarWj/YsvWqkbnDBEy4inILvCCSy6vf88wkj7RZV127DwNUqiRb2ekqP4BrovrzRZ0dvM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58f929c3-e91f-4cae-b48c-08ddf45b866c
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4320.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:26:49.2908
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9fmB5FhlmayYqYlAHxaI5cq8HWGl77DR+FMFkEKXZhBtDcOy1SQss1zP7JG/VpqZYTFyo4PKgsi5Qv49wLot6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF7A7588508
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509150127
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxOCBTYWx0ZWRfX5cb25b3fNmib
+ Ug09G+uPGK4HjHfrSYLklwzVzuUogeFpYxoqBi/o5cWUP3kLkbXCQ3sED07P0bvtcb+18j+ez1C
+ Fp9QvrbWw3TX26Z3BGfgetADJc1Iau9xyS4zU0SnwxESl50wTo67xl1cH0LFG3qG91LXIHEfW37
+ maXhfx1c5htWYxXxGktsfH+jm08PxpYU6YDTHQFsU7WmgwgHlhiiieFP4603uzX8RUavLyKu7AP
+ hlQ/MEBeM6/bJVqXJCByldHEiNBYulWlrezoMqzJ0kEiUtszt3WBK1YYnq1MkhSG4O2q7owmtJ0
+ tlXrq028bvyOPDJbo2xG0WWQHJi2Ufj1NtjEgQibklaLg1KxhQHP2VoSNq3ss0dvIJmvNUtfU7b
+ 0Te9Afum19ETKv9TN4M4ZmxtTWhAWg==
+X-Proofpoint-ORIG-GUID: keMcF1_GnMGuV9PFdA36gBDLMs998ZOX
+X-Authority-Analysis: v=2.4 cv=YKafyQGx c=1 sm=1 tr=0 ts=68c8141d b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8 a=tvnvZeL4VaK0S_oPBncA:9 a=QEXdDO2ut3YA:10
+ cc=ntf awl=host:12084
+X-Proofpoint-GUID: keMcF1_GnMGuV9PFdA36gBDLMs998ZOX
 
-On Fri 12-09-25 13:52:52, Christian Brauner wrote:
-> Pidfd file handles are exhaustive meaning they don't require a handle on
-> another pidfd to pass to open_by_handle_at() so it can derive the
-> filesystem to decode in. Instead it can be derived from the file
-> handle itself. The same is possible for namespace file handles.
+On 11/09/2025 18:13, Ojaswin Mujoo wrote:
+> This test is intended to ensure that multi blocks atomic writes
+> maintain atomic guarantees across sudden FS shutdowns.
 > 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> The way we work is that we lay out a file with random mix of written,
+> unwritten and hole extents. Then we start performing atomic writes
+> sequentially on the file while we parallelly shutdown the FS. Then we
+> note the last offset where the atomic write happened just before shut
+> down and then make sure blocks around it either have completely old
+> data or completely new data, ie the write was not torn during shutdown.
+> 
+> We repeat the same with completely written, completely unwritten and completely
+> empty file to ensure these cases are not torn either.  Finally, we have a
+> similar test for append atomic writes
+> 
+> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Looks good. Feel free to add:
+I still have some nits, which are close to being the same as last time. 
+I don't want this series to be held up any longer over my nitpicking, so:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+Reviewed-by: John Garry <john.g.garry@oracle.com>
 
 > ---
->  fs/fhandle.c               |  6 ++++++
->  fs/internal.h              |  1 +
->  fs/nsfs.c                  | 10 ++++++++++
->  include/uapi/linux/fcntl.h |  1 +
->  4 files changed, 18 insertions(+)
+>   tests/generic/1230     | 368 +++++++++++++++++++++++++++++++++++++++++
+>   tests/generic/1230.out |   2 +
+>   2 files changed, 370 insertions(+)
+>   create mode 100755 tests/generic/1230
+>   create mode 100644 tests/generic/1230.out
 > 
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 7c236f64cdea..f18c855bb0c2 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -11,6 +11,7 @@
->  #include <linux/personality.h>
->  #include <linux/uaccess.h>
->  #include <linux/compat.h>
-> +#include <linux/nsfs.h>
->  #include "internal.h"
->  #include "mount.h"
->  
-> @@ -189,6 +190,11 @@ static int get_path_anchor(int fd, struct path *root)
->  		return 0;
->  	}
->  
-> +	if (fd == FD_NSFS_ROOT) {
-> +		nsfs_get_root(root);
-> +		return 0;
-> +	}
+> diff --git a/tests/generic/1230 b/tests/generic/1230
+> new file mode 100755
+> index 00000000..28c2c4f5
+> --- /dev/null
+> +++ b/tests/generic/1230
+> @@ -0,0 +1,368 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> +#
+> +# FS QA Test No. 1230
+> +#
+> +# Test multi block atomic writes with sudden FS shutdowns to ensure
+> +# the FS is not tearing the write operation
+> +. ./common/preamble
+> +. ./common/atomicwrites
+> +_begin_fstest auto atomicwrites
 > +
->  	return -EBADF;
->  }
->  
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 38e8aab27bbd..a33d18ee5b74 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -355,3 +355,4 @@ int anon_inode_getattr(struct mnt_idmap *idmap, const struct path *path,
->  int anon_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  		       struct iattr *attr);
->  void pidfs_get_root(struct path *path);
-> +void nsfs_get_root(struct path *path);
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 926e2680414e..22765fcab18e 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -25,6 +25,14 @@
->  
->  static struct vfsmount *nsfs_mnt;
->  
-> +static struct path nsfs_root_path = {};
+> +_require_scratch_write_atomic_multi_fsblock
+> +_require_atomic_write_test_commands
+> +_require_scratch_shutdown
+> +_require_xfs_io_command "truncate"
 > +
-> +void nsfs_get_root(struct path *path)
-> +{
-> +	*path = nsfs_root_path;
-> +	path_get(path);
+> +_scratch_mkfs >> $seqres.full 2>&1
+> +_scratch_mount >> $seqres.full
+> +
+> +testfile=$SCRATCH_MNT/testfile
+> +touch $testfile
+> +
+> +awu_max=$(_get_atomic_write_unit_max $testfile)
+> +blksz=$(_get_block_size $SCRATCH_MNT)
+> +echo "Awu max: $awu_max" >> $seqres.full
+> +
+> +num_blocks=$((awu_max / blksz))
+> +# keep initial value high for dry run. This will be
+> +# tweaked in dry_run() based on device write speed.
+> +filesize=$(( 10 * 1024 * 1024 * 1024 ))
+> +
+> +_cleanup() {
+> +	[ -n "$awloop_pid" ] && kill $awloop_pid &> /dev/null
+> +	wait
 > +}
 > +
->  static long ns_ioctl(struct file *filp, unsigned int ioctl,
->  			unsigned long arg);
->  static const struct file_operations ns_file_operations = {
-> @@ -598,4 +606,6 @@ void __init nsfs_init(void)
->  	if (IS_ERR(nsfs_mnt))
->  		panic("can't set nsfs up\n");
->  	nsfs_mnt->mnt_sb->s_flags &= ~SB_NOUSER;
-> +	nsfs_root_path.mnt = nsfs_mnt;
-> +	nsfs_root_path.dentry = nsfs_mnt->mnt_root;
->  }
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index f291ab4f94eb..3741ea1b73d8 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -111,6 +111,7 @@
->  #define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
->  
->  #define FD_PIDFS_ROOT			-10002 /* Root of the pidfs filesystem */
-> +#define FD_NSFS_ROOT			-10003 /* Root of the nsfs filesystem */
->  #define FD_INVALID			-10009 /* Invalid file descriptor: -10000 - EBADF = -10009 */
->  
->  /* Generic flags for the *at(2) family of syscalls. */
-> 
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +atomic_write_loop() {
+> +	local off=0
+> +	local size=$awu_max
+> +	for ((i=0; i<$((filesize / $size )); i++)); do
+> +		# Due to sudden shutdown this can produce errors so just
+> +		# redirect them to seqres.full
+> +		$XFS_IO_PROG -c "open -fsd $testfile" -c "pwrite -S 0x61 -DA -V1 -b $size $off $size" >> /dev/null 2>>$seqres.full
+> +		echo "Written to offset: $off" >> $tmp.aw
+> +		off=$((off + $size))
+> +	done
+> +}
+> +
+> +start_atomic_write_and_shutdown() {
+> +	atomic_write_loop &
+> +	awloop_pid=$!
+> +
+> +	local i=0
+> +	# Wait for atleast first write to be recorded or 10s
+
+at least
+
+> +	while [ ! -f "$tmp.aw" -a $i -le 50 ]; do i=$((i + 1)); sleep 0.2; done
+> +
+> +	if [[ $i -gt 50 ]]
+> +	then
+> +		_fail "atomic write process took too long to start"
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Shutting down filesystem while write is running" >> $seqres.full
+> +	_scratch_shutdown
+> +
+> +	kill $awloop_pid 2>/dev/null  # the process might have finished already
+> +	wait $awloop_pid
+> +	unset $awloop_pid
+> +}
+
+...
+
+> +
+> +verify_data_blocks() {
+> +	local verify_start=$1
+> +	local verify_end=$2
+> +	local expected_data_old="$3"
+> +	local expected_data_new="$4"
+> +
+> +	echo >> $seqres.full
+> +	echo "# Checking data integrity from $verify_start to $verify_end" >> $seqres.full
+> +
+> +	# After an atomic write, for every chunk we ensure that the underlying
+> +	# data is either the old data or new data as writes shouldn't get torn.
+> +	local off=$verify_start
+> +	while [[ "$off" -lt "$verify_end" ]]
+> +	do
+> +		#actual_data=$(xxd -s $off -l $awu_max -p $testfile)
+> +		actual_data=$(od -An -t x1 -j $off -N $awu_max $testfile)
+> +		if [[ "$actual_data" != "$expected_data_new" ]] && [[ "$actual_data" != "$expected_data_old" ]]
+> +		then
+> +			echo "Checksum match failed at off: $off size: $awu_max"
+> +			echo "Expected contents: (Either of the 2 below):"
+> +			echo
+> +			echo "Expected old: "
+
+nit: I think that I mentioned this the last time - I would not use the 
+word "expected". We have old data, new data, and actual data. The only 
+thing which we expect is that actual data will be either all old or all new.
+
+> +			echo "$expected_data_old"
+> +			echo
+> +			echo "Expected new: "
+> +			echo "$expected_data_new"
+> +			echo
+> +			echo "Actual contents: "
+> +			echo "$actual_data"
+> +
+> +			_fail
+> +		fi
+> +		echo -n "Check at offset $off succeeded! " >> $seqres.full
+> +		if [[ "$actual_data" == "$expected_data_new" ]]
+> +		then
+> +			echo "matched new" >> $seqres.full
+> +		elif [[ "$actual_data" == "$expected_data_old" ]]
+> +		then
+> +			echo "matched old" >> $seqres.full
+> +		fi
+> +		off=$(( off + awu_max ))
+> +	done
+> +}
+> +
+> +# test data integrity for file by shutting down in between atomic writes
+> +test_data_integrity() {
+> +	echo >> $seqres.full
+> +	echo "# Writing atomically to file in background" >> $seqres.full
+> +
+> +	start_atomic_write_and_shutdown
+> +
+> +	last_offset=$(tail -n 1 $tmp.aw | cut -d" " -f4)
+> +	if [[ -z $last_offset ]]
+> +	then
+> +		last_offset=0
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Last offset of atomic write: $last_offset" >> $seqres.full
+> +
+> +	rm $tmp.aw
+> +	sleep 0.5
+> +
+> +	_scratch_cycle_mount
+> +
+> +	# we want to verify all blocks around which the shutdown happened
+> +	verify_start=$(( last_offset - (awu_max * 5)))
+> +	if [[ $verify_start < 0 ]]
+> +	then
+> +		verify_start=0
+> +	fi
+> +
+> +	verify_end=$(( last_offset + (awu_max * 5)))
+> +	if [[ "$verify_end" -gt "$filesize" ]]
+> +	then
+> +		verify_end=$filesize
+> +	fi
+> +}
+> +
+> +# test data integrity for file with written and unwritten mappings
+> +test_data_integrity_mixed() {
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with mixed mappings" >> $seqres.full
+> +	create_mixed_mappings $testfile $filesize
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_mixed" "$expected_data_new"
+> +}
+> +
+> +# test data integrity for file with completely written mappings
+> +test_data_integrity_written() {
+
+nit: again, I am not so keen on using the word "integrity" at all. 
+"integrity" in storage world relates to T10 PI support in Linux. I know 
+that last time I mentioned it's ok to use "integrity" when close to 
+words "atomic write", but I still fear some doubt on whether we are 
+talking about T10 PI when we mention integrity.
+
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with fully written mapping" >> $seqres.full
+> +	$XFS_IO_PROG -c "pwrite -b $filesize 0 $filesize" $testfile >> $seqres.full
+> +	sync $testfile
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_mapped" "$expected_data_new"
+> +}
+> +
+> +# test data integrity for file with completely unwritten mappings
+> +test_data_integrity_unwritten() {
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with fully unwritten mappings" >> $seqres.full
+> +	$XFS_IO_PROG -c "falloc 0 $filesize" $testfile >> $seqres.full
+> +	sync $testfile
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_zeroes" "$expected_data_new"
+> +}
+> +
 
