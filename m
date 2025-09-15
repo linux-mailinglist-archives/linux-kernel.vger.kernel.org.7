@@ -1,279 +1,143 @@
-Return-Path: <linux-kernel+bounces-817462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAD4B58280
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:48:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A3BB5824D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843413B3710
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:48:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A684417EF66
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A529E2853FA;
-	Mon, 15 Sep 2025 16:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABEC25CC42;
+	Mon, 15 Sep 2025 16:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g4QAmWol"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qicALOeC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1657627A903
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8207227934B;
+	Mon, 15 Sep 2025 16:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757954847; cv=none; b=OjzxGcTWMDaIuBhjovPB2LCvDoXDPm72KsRWiTb86y18VCJxWSRGo24hbnPs3lt/8V2B4jfvF9oI4gLiyuvR3Be5GF38WXD7UmJZ6I/vpYrJrGclTiWGuKmV6XuhoSltPAmR8myPSszW6Yle3P5+OGoNXVVYWPjdMB8bGeWu3Ds=
+	t=1757954311; cv=none; b=IjkNVP9Emtavw51/k2WgbMv8Zbi3179BTuPCYEkjqTF4bqtMpFzkBABBXbWI2tdinGLscO1zfDKOzEFqnbhKYDmBMFpuHayBipnDT4l4OKjqhB7bmTtxz4JXgCdKMiFTSXTGHJcScCdYcMsw7YBLzn/xWr5D1KLn908Bzoy1DGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757954847; c=relaxed/simple;
-	bh=XFR6sya9J2xG2hfxSf1a8GNZ3av4lo6QHIK09umVRAY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WFOmn3hRyndZljGCwNCei//rUcYIs34yvuM4/y+belRh7C9v3a8/BHRCmSaWZ+qV+5VJ5nmjjcJzJ9N6BVquVRwhnk13gSc1QMy/wgiGnhj9GtnMUTZOVpI8XzK4L5/YJ357+a1yFMXuMrv30Rs6U4X5ezzpiX4wh81gdOxibrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g4QAmWol; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-26166420e5dso20211015ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757954845; x=1758559645; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=59uH0/Rs24hPqNuUZQXolv8jQt8VsNO5VNNB4W0XCmc=;
-        b=g4QAmWolSYP/Ed9ydbSy+KIA8l92LSjJj+8sG3pzGH5w13aHY+AiLC3d+3C6gOLUSi
-         eyOQL+EixJoK8kycW0C2xNJdBqrMbodeultUPbyJhxugZSLs1rcqX0oLcwQ11h42ZZ3I
-         HxI115Q/I55b2pos6MXXkNHm7oquDjII6JxW81cnJddBTRrQ9y/vjLtp3WWSRoQNyBjt
-         JLlzNO7Aj7W569UK/AIqBVgF7o4rJo65wmzm6wYhKO/15ypJXRWi37MD+3OII4iv+RRV
-         ojSpkz8CU3zHn9X5Dpu+AzG7asbpSAGBoBPt9a8LB9Uh10wtd1slV7/dCJiTKv7V7I+o
-         BICQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757954845; x=1758559645;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=59uH0/Rs24hPqNuUZQXolv8jQt8VsNO5VNNB4W0XCmc=;
-        b=NryI1gntni1HxRTi0tEo/vW3FsHcg/XwFHwzwor+vGPFuIHlE7Y439T6dQ9/L1Ai0h
-         /0EwRpj1Pl30CwOok+HgQChw2nqXUQQpJOT3FVmrlZOsrKJkQFQmrqME2jaN7Lw3XAvp
-         E15FkmMlkDJniXf6QFOgTKOEFrYnPdD44y1/VZObuOVa+GYMCiH1eEDi8ZUruPFRpYcG
-         TfnN3MYzRe2gFXK6lMDFsVC3j84I6EIby5OkSy0P9VKAf5KqpWVHcADAbo2wrbU4K5Md
-         mHsMvGtoBBPibjJL4pvAVdBhBSO+N1LsWTkzE6+TgK3Veq21APVmCDhrti2W1L19TKWp
-         aaXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpka0E3tf2GIzPsq6mdfnbzPKrFUaUKeAQMbUJk01+EoGFnPzUvdtAYsW8DPHwG3zfKvD6pUf9kcm3z1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsI3y4qs05HA9MAsjCJZqDiuArqF4c+UrNqhSssFEJsUjsysZ7
-	eFTvKtHDOSJl1ua4LPYxJ0hHR/0jm6J7GhdWDe8BIGkO6j2HRuwvUFZYblWczcK5NfmXZUIBY8P
-	5Wvkjv4jLjnryglDT+QBh1M65mg==
-X-Google-Smtp-Source: AGHT+IHzc/fMWSswS4eA5+I14M9qXHKcg1jQwLLx5RpIwI8nZ9BGgFMV8dLNy7m9xz0Qp5xRzbGmEY4nirx7Uqh/jg==
-X-Received: from plhs1.prod.google.com ([2002:a17:903:3201:b0:24c:b6df:675e])
- (user=kaleshsingh job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:d552:b0:260:df70:f753 with SMTP id d9443c01a7336-260df70fbdcmr125334005ad.38.1757954845285;
- Mon, 15 Sep 2025 09:47:25 -0700 (PDT)
-Date: Mon, 15 Sep 2025 09:36:38 -0700
-In-Reply-To: <20250915163838.631445-1-kaleshsingh@google.com>
+	s=arc-20240116; t=1757954311; c=relaxed/simple;
+	bh=rPux3kZ+R4cKlhfcbqH6Q3wPadbmps9lgWzK5w84qUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EqqKPDgQRdDNvwlvYZYWoPDOP/arkNOX6W+pLAiL9c2zVetqHgwv2XXQFToKyJkUhfsC8PNGdnwmcqwvhh4S84T/WfBafXnwRq1FftCdO7edA4PAyMSUm5Muuotf/1AzVuJGzbwkvw6rYEhUjlkyfMn9aQ9LHeY2oivMQl33cxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qicALOeC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F37C4CEF1;
+	Mon, 15 Sep 2025 16:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757954311;
+	bh=rPux3kZ+R4cKlhfcbqH6Q3wPadbmps9lgWzK5w84qUY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qicALOeCy/B6hol6Ze0031B5J4oMt5saZygVSnd0z+oBlBDinX7+wt11d9FAQGv9h
+	 VocGaZ7P/sltKlMQotnahk8aXH9stVjKZeAG4RnxDFOeTW3it+WWrIPg5uv3ziclYl
+	 3MGjafqH4fPcPu6B9AQ1gjEFqUKcC+IKy62yOr1cAvO8R5ZdSV9Foywg7xFSxvB7Hi
+	 JFDsMmrnrPj9fO4g/cgQHdsekzNWClwNKcGmy66ACiqukkH9DcBtW4Y9EEHcWpgzOe
+	 sCtkhkakJfsc/LOHT6TJhaWLmEIqM28rKevU2hvcIAfpT44Iqg2jqIJ0uQy5LVuW3Y
+	 rHzUZWkmneGRA==
+Date: Mon, 15 Sep 2025 17:38:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs tree with the fs-next tree
+Message-ID: <aMhBAxSlU-vhVqxQ@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250915163838.631445-1-kaleshsingh@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250915163838.631445-8-kaleshsingh@google.com>
-Subject: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded trace event
-From: Kalesh Singh <kaleshsingh@google.com>
-To: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de
-Cc: kernel-team@android.com, android-mm@google.com, 
-	Kalesh Singh <kaleshsingh@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kCTZdpj4RhxVWrrE"
+Content-Disposition: inline
 
-Needed observability on in field devices can be collected with minimal
-overhead and can be toggled on and off. Event driven telemetry can be
-done with tracepoint BPF programs.
 
-The process comm is provided for aggregation across devices and tgid is
-to enable per-process aggregation per device.
+--kCTZdpj4RhxVWrrE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This allows for observing the distribution of such problems in the
-field, to deduce if there are legitimate bugs or if a bump to the limit is
-warranted.
+Hi all,
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Pedro Falcato <pfalcato@suse.de>
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
----
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Chnages in v2:
-  - Add needed observability for operations failing due to the vma count limit,
-      per Minchan
-    (Since there isn't a common point for debug logging due checks being
-    external to the capacity based vma_count_remaining() helper. I used a
-    trace event for low overhead and to facilitate event driven telemetry
-    for in field devices)
+  fs/namespace.c
 
- include/trace/events/vma.h | 32 ++++++++++++++++++++++++++++++++
- mm/mmap.c                  |  5 ++++-
- mm/mremap.c                | 10 ++++++++--
- mm/vma.c                   | 11 +++++++++--
- 4 files changed, 53 insertions(+), 5 deletions(-)
- create mode 100644 include/trace/events/vma.h
+between commit:
 
-diff --git a/include/trace/events/vma.h b/include/trace/events/vma.h
-new file mode 100644
-index 000000000000..2fed63b0d0a6
---- /dev/null
-+++ b/include/trace/events/vma.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM vma
-+
-+#if !defined(_TRACE_VMA_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_VMA_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(max_vma_count_exceeded,
-+
-+	TP_PROTO(struct task_struct *task),
-+
-+	TP_ARGS(task),
-+
-+	TP_STRUCT__entry(
-+		__string(comm,	task->comm)
-+		__field(pid_t,	tgid)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(comm);
-+		__entry->tgid = task->tgid;
-+	),
-+
-+	TP_printk("comm=%s tgid=%d", __get_str(comm), __entry->tgid)
-+);
-+
-+#endif /*  _TRACE_VMA_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 30ddd550197e..0bb311bf48f3 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -56,6 +56,7 @@
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/mmap.h>
-+#include <trace/events/vma.h>
- 
- #include "internal.h"
- 
-@@ -374,8 +375,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 		return -EOVERFLOW;
- 
- 	/* Too many mappings? */
--	if (!vma_count_remaining(mm))
-+	if (!vma_count_remaining(mm)) {
-+		trace_max_vma_count_exceeded(current);
- 		return -ENOMEM;
-+	}
- 
- 	/*
- 	 * addr is returned from get_unmapped_area,
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 14d35d87e89b..f42ac05f0069 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -30,6 +30,8 @@
- #include <asm/tlb.h>
- #include <asm/pgalloc.h>
- 
-+#include <trace/events/vma.h>
-+
- #include "internal.h"
- 
- /* Classify the kind of remap operation being performed. */
-@@ -1040,8 +1042,10 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
- 	 * We'd prefer to avoid failure later on in do_munmap:
- 	 * which may split one vma into three before unmapping.
- 	 */
--	if (vma_count_remaining(current->mm) < 4)
-+	if (vma_count_remaining(current->mm) < 4) {
-+		trace_max_vma_count_exceeded(current);
- 		return -ENOMEM;
-+	}
- 
- 	if (vma->vm_ops && vma->vm_ops->may_split) {
- 		if (vma->vm_start != old_addr)
-@@ -1817,8 +1821,10 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
- 	 * the threshold. In other words, is the current map count + 6 at or
- 	 * below the threshold? Otherwise return -ENOMEM here to be more safe.
- 	 */
--	if (vma_count_remaining(current->mm) < 6)
-+	if (vma_count_remaining(current->mm) < 6) {
-+		trace_max_vma_count_exceeded(current);
- 		return -ENOMEM;
-+	}
- 
- 	return 0;
- }
-diff --git a/mm/vma.c b/mm/vma.c
-index 0e4fcaebe209..692c33c3e84d 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -7,6 +7,8 @@
- #include "vma_internal.h"
- #include "vma.h"
- 
-+#include <trace/events/vma.h>
-+
- struct mmap_state {
- 	struct mm_struct *mm;
- 	struct vma_iterator *vmi;
-@@ -621,8 +623,10 @@ __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 		     unsigned long addr, int new_below)
- {
--	if (!vma_count_remaining(vma->vm_mm))
-+	if (!vma_count_remaining(vma->vm_mm)) {
-+		trace_max_vma_count_exceeded(current);
- 		return -ENOMEM;
-+	}
- 
- 	return __split_vma(vmi, vma, addr, new_below);
- }
-@@ -1375,6 +1379,7 @@ static int vms_gather_munmap_vmas(struct vma_munmap_struct *vms,
- 		 */
- 		if (vms->end < vms->vma->vm_end &&
- 		    !vma_count_remaining(vms->vma->vm_mm)) {
-+			trace_max_vma_count_exceeded(current);
- 			error = -ENOMEM;
- 			goto vma_count_exceeded;
- 		}
-@@ -2801,8 +2806,10 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT))
- 		return -ENOMEM;
- 
--	if (!vma_count_remaining(mm))
-+	if (!vma_count_remaining(mm)) {
-+		trace_max_vma_count_exceeded(current);
- 		return -ENOMEM;
-+	}
- 
- 	if (security_vm_enough_memory_mm(mm, len >> PAGE_SHIFT))
- 		return -ENOMEM;
--- 
-2.51.0.384.g4c02a37b29-goog
+  96ff702edaec8 ("mnt: support ns lookup")
 
+=66rom the fs-next tree and commit:
+
+  91e682db2fbe1 ("mnt_ns_tree_remove(): DTRT if mnt_ns had never been added=
+ to mnt_ns_list")
+
+=66rom the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc fs/namespace.c
+index e3ac6e06be70d,aeeb33bf3e7b3..0000000000000
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@@ -153,10 -195,26 +161,10 @@@ static void mnt_ns_release_rcu(struct r
+  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+  {
+  	/* remove from global mount namespace list */
+- 	if (!is_anon_ns(ns))
+ -	if (!list_empty(&ns->mnt_ns_list)) {
+ -		mnt_ns_tree_write_lock();
+ -		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+ -		list_bidir_del_rcu(&ns->mnt_ns_list);
+ -		mnt_ns_tree_write_unlock();
+ -	}
+++	if (!list_empty(&ns->mnt_ns_list))
+ +		ns_tree_remove(ns);
+ =20
+ -	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
+ -}
+ -
+ -static int mnt_ns_find(const void *key, const struct rb_node *node)
+ -{
+ -	const u64 mnt_ns_id =3D *(u64 *)key;
+ -	const struct mnt_namespace *ns =3D node_to_mnt_ns(node);
+ -
+ -	if (mnt_ns_id < ns->seq)
+ -		return -1;
+ -	if (mnt_ns_id > ns->seq)
+ -		return 1;
+ -	return 0;
+ +	call_rcu(&ns->ns.ns_rcu, mnt_ns_release_rcu);
+  }
+ =20
+  /*
+
+--kCTZdpj4RhxVWrrE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIQQIACgkQJNaLcl1U
+h9DnwAf/dcLBqnRwO5sx78mBtOb8drd6mySRt2aQOlowkw62+4mZh3As+vOW1osW
+rHKD9iEH/I5hFpNWTClFsDL2AFHmAg+f9RFwlNuT2vdApoRNVkiDd28DGP/3cQpI
+BVZrAc5jRpAxJ2on3EQ+gt/rbHwy+KrRceLYl0BtHj6Fkr8NcZTxap2/wDYn333M
+uR+4QFErsNvpkAzdMyfNLRoG+DChwx3nsE2r3MKm3xUAq1vsW5kTkcaIiByB5Ypk
+1Dlb6IdgvKn9qLAeoWMLRgaFOA9sQSRndwabbRfN/yFqWeuYTYPor1O/X/FoVRjl
+3V+wqGz3p2l+5VFL2BxwemudA8EOmg==
+=uH/+
+-----END PGP SIGNATURE-----
+
+--kCTZdpj4RhxVWrrE--
 
