@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-816133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335B6B56FFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:02:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C149CB56FFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A07C171F08
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92173B9382
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5C82773C3;
-	Mon, 15 Sep 2025 06:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C47278E5D;
+	Mon, 15 Sep 2025 06:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGPA1C5N"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4Ieyqrl"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4751DE3CA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE74207A38
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757916123; cv=none; b=f/B5eB0Igied5zHNIu+1yI8FILrsDyBw0lUETEN8N6g8zXocvE+7SAoz3DwX67O/3VUR6+Upj/t7Omra5rlHN2+yDlKZ+C4XKmgL3v85p4tqqV+pCohUu3vNxUmNQtRmW9s5c8heElqAiZ4fcF3xWmQIGH0vJL8Fz0USndtSsIc=
+	t=1757916124; cv=none; b=PB+G/c+fJ3jRe5fnBj3yfWJ0tGZ88OoSn5io0idj1kE0eHt7WWYxr0XjmlWm0Fd0xn7bi1FzWRfy5FZDrFcC7YJRZuWMIT1nFCicDe4eplYZgzAQ8yR55lSjIPgi2yDzP3WO5rnITObVCbdddRRm9E3WQRnZhX20Un6zr+6NaNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757916123; c=relaxed/simple;
-	bh=0i8+DknoxQAjvpBVwLLCnjqj1KkrlAyOUec1giywe+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j5StRslUFUL+DFcShVXSEdu6gDIumVFkocuKxfJS0fkcBou8ZVFZ9OTyt4+MGMhrMAftMMjqrdHgeb87MD9kFdCryP7p4Htweai3RhH38NS4bvtOiKkbw782k77Z+7LEbweLV9yEcmh9RPtAvB/raFgR13AI5G9ht5Dt/E2+vPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IGPA1C5N; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1757916124; c=relaxed/simple;
+	bh=H86OdhgTHF+sXtUDW7aUQJv0MWH5MWu/K9PkO+/x6d8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j2RTrEThwrSD0OFT5MtIcaO6rdKCYp/Cv1DlNCmUHiSPS/MHZdgOcFxH38KwQzh00qRB83Gv2KcLgmn1F7iWOEWlyCltqb0wSYRTQozGYeq/ZraDWpK+x5zi4/XPLfGKcuBQFb+nWMJAK/6eXPqUtiJ4yjXEiGllsHmxjEvgsAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4Ieyqrl; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55f7ab2a84eso3602340e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:02:01 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55f72452a8eso4402512e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757916120; x=1758520920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uZUcnCRcwQHZ20XjWalfDU23D3XdkLxWMGXACq1syco=;
-        b=IGPA1C5NBFhAp4EUg3Zdc/FUc8obGmBmha5eAy2nVDlxnr7TrYrwCMe/8e4TZAfBMD
-         rsn48LoK9Ve0VfLjiOa/ZRjiJWnH9Vg1wvvwQP9upkcta35OuT+OmAPcJd0DTU82sW0I
-         SEvzdheR7kyHy5hRJObVhzlUxunOMRwbhLc0shjLUEK6PONdRFUXfhBiZb4qIHMlR9hJ
-         /Grpa2ipd4Tn8XtdPjNRHEi4ChQ6GX/XZtTgm53zjBUPcEdjehz3JUvwEO5kYHVCdCXE
-         CU476MxnlbYei3Itg2EuLoUCeGG3nx+X+jA6wmSclGKKYpNtpayPgJFwZifuV/bWvbYH
-         f/sw==
+        d=gmail.com; s=20230601; t=1757916121; x=1758520921; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3GAzaDQKIDLrSVL1wcySzyvMJnY8KNZJxvSnSoEULDg=;
+        b=H4IeyqrlEP1w9hYzZpidqEX0G58A4F45FJWvMaaKXeTHIoAurn6qEprL0dh4Qh1wb3
+         Tdco/8EvWBKMJfPGm+b09OCeSyN+D7sDvLlB7bU38XqkkWATlM5rRCM3xHKPc5ClBa5E
+         SXiavKNbHMAXcScYqhJdpdLZMztSnttor9ut+8VFUJxOVDYx+8BFE1crZsJ0lxG00CEm
+         zJ7oZfYwiCHLg6EvZIV4WOjFGm3TFrB6jTlfAFOgwkc8mGa8vhO4rsp8+SAve7BC2bbE
+         K3oHQy0QLMrD6tN/q6rpzqHyIBclI6sq50VX4orayK3Nvli9clMI1SMV5fRhUsvubVfd
+         2LkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757916120; x=1758520920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uZUcnCRcwQHZ20XjWalfDU23D3XdkLxWMGXACq1syco=;
-        b=GC8qb4K943AZkS2QuQv+xe7LV9i8zdpKIgSGoT8Ko7bVFqm12R6B6PsB0yIrQveL3U
-         97NZlAzJXns/dlIDmlSzFO+FgtN3y/GTH4JmGRS6rt3ZOK7dkB/o8K2ioNu+11n4GXi/
-         dkxiysv1RFrsdq6J9/+LnYF+BZdOpGQ3J/wbRXeI5NupSYsgLe8rjNJaMZGUHEl1fR+P
-         g+LoXK6s3OmVYSdkG8IcSGn6hZ063N+Ur/1s/vbgEY8ZYVK18GQrcV5QxQ3F4ooRMSsR
-         vpU7xoOBshD1z0LaDCj7J/HorHiG0HdbBncOw2vXAXJn1y3rTw3vFGwwb4FShbokkwmA
-         4PpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUL1uUiQq2atBuU9DTQn+/B3MjcdjqxG/mCF7vspLf+VVKXHrvxBmPLjL/0k1dVAI0WSoyj9ks4emgJJBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxox6L5rO133MhuMoVtpwDU711N16ZPLEgTtxjjS6aCG30TbjFJ
-	Rd2dP+93GkfxZnjZlYrBkR2Ojk4nhxkmkJ7pDcH8vcA97OKSccLUI74X
-X-Gm-Gg: ASbGnctSpid01i6ReeWmRcQlaAKLGhlExbsqKr79Z0OYvJNDa0mwHYEmABHl4aJCRf2
-	ahtHhfS8F++CcBpvecTt/WJH4UquQAfhdAmt6sftisICK+sra0UVjJmM/wM2jjScYHggh2SC8ig
-	q2xCCdHVIPt/2iAExwsqtuhO17I26f4Gq/mu2ZuoDDcV/bnQU/EeG7CFfw7G1V7EDt8km//66zB
-	NoxJfkYzGd+gtBycwapGSSvwmakQJzNRx3LdAdwV/2LrRzTNOZI9NJHHNuUI5+PAgsllb9DAi5s
-	BzpDnmiFuYU2Wc+UCA068Sz+/dr8ygICQ87n9Ldyfaqzpjw48jOw4F/TfEs324ZbdkznryfJL4Q
-	ZGRY9ZqXjUZ3Xyw==
-X-Google-Smtp-Source: AGHT+IHDjCsT9FHnjoOO4pQ1o6E03HlGS5iXY22PkYNYih/D6j5nfiMo/CGz7SI8qhM2srkPhzPUKw==
-X-Received: by 2002:a05:6512:361a:b0:560:95c0:a523 with SMTP id 2adb3069b0e04-5704fb86b89mr3166947e87.35.1757916119435;
-        Sun, 14 Sep 2025 23:01:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757916121; x=1758520921;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3GAzaDQKIDLrSVL1wcySzyvMJnY8KNZJxvSnSoEULDg=;
+        b=VM+SYkkdnMqJQAOgOoNAEDNHV+C3pLR0CCUWE8JB+1h46itEUWmJJpoy8sIKZmcM/r
+         FqMyPqWxcheFWVzVUskuwlxK8ND7BvZ0zeDDmoiK2aNaqD0iaWxsP9f/bBewpaEFyp/T
+         CsO8w69R+HxXXkA23bMj13K1RXMwgFYH6AlACBItrtCt2IcZgM9kxj+jm+WzX0g07Y4R
+         QnlYXtw94wy09wxH63r9C3+CnrORIrL4qytM9UTsCAROyJ8n+tu8YiDU5VKMTjl7V8AM
+         9f9CJDax4FWApCzD/Ws3E5Hmvgcp8qDdylFnHOK+zkqJqGVPP0LasrskvtqPlEhfx2yt
+         OjNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwFOmKmtMeoVFy+pihstR4sXBucAaryTsTJ5I2Jxs7R0rApGRUYhEy6zKHAuXqoqybVsFnMHxJwjtvGgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznp62anz05GpRAkCCiuVRpSvahx1KTV6hb9LKSEihCpnS2g2b1
+	n+VfO/ue1IVg19mfYoVpAriTD5i5Nf4bPLNlRR+8rlD0wut0dM2j8QCT
+X-Gm-Gg: ASbGncspash8CCB5iqkwjXlfq3RC/C4e7KQqNlIBZdO9+gz6hP4jB9ysPQydyzsX/bK
+	hchgmnRHqa5WftJBGPXCirUeJooDMs2ixiW8qlOBOFC/YA9FuW9NkkudUTQlqqlL840YpcQxs/o
+	fUg7pPIADko381vpTWe2maOnBNQ2SUskJufz5jBRy2dKWJVEaedWf3NP4SoABRE0e3I2ONI8S06
+	WOkwQiyy4Xc/F0wDuaJb+3FND+FuxlNbS2OEPEm7TRaDT1XbO3es/AQEZt5nwtTmU2Dx0s4EuHi
+	yAjXV1taVdhfVSeQicS5M/TBIxyeYCMP4MkiI/Fgj4Koovp3PmhC5dJ42cmWuRjajUYe+KfSHR0
+	4xsAAg0k2b08XXQ==
+X-Google-Smtp-Source: AGHT+IH/1syhnxH2MgON3fBQYZRWQzr7rl4FW7/6FJ9ZvlyxiPfGztFWjjW5t/Xc1eUHZDZ7Yq0H2Q==
+X-Received: by 2002:a05:6512:32c6:b0:55f:5245:d695 with SMTP id 2adb3069b0e04-57048bea410mr3293682e87.10.1757916120363;
+        Sun, 14 Sep 2025 23:02:00 -0700 (PDT)
 Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571d16e79d0sm2062214e87.86.2025.09.14.23.01.58
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571d16e79d0sm2062214e87.86.2025.09.14.23.01.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 23:01:59 -0700 (PDT)
+        Sun, 14 Sep 2025 23:02:00 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Andi Shyti <andi.shyti@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -82,10 +84,12 @@ To: Andi Shyti <andi.shyti@kernel.org>,
 Cc: linux-i2c@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/2] i2c: muxes: Add GPIO-detected hotplug I2C
-Date: Mon, 15 Sep 2025 09:01:36 +0300
-Message-ID: <20250915060141.12540-1-clamor95@gmail.com>
+Subject: [PATCH v1 1/2] dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
+Date: Mon, 15 Sep 2025 09:01:37 +0300
+Message-ID: <20250915060141.12540-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250915060141.12540-1-clamor95@gmail.com>
+References: <20250915060141.12540-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,30 +99,87 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Implement driver for hot-plugged I2C busses, where some devices on
-a bus are hot-pluggable and their presence is indicated by GPIO line.
-This feature is used by the ASUS Transformers family, by the  Microsoft
-Surface RT/2 and maybe more.
+Schema describes hardware configuration that uses a GPIO signal to
+determine the bus's presence and state, allowing the system to dynamically
+configure I2C devices as they are plugged in or removed.
 
-ASUS Transformers expose i2c line via proprietary 40 pin plug and wire
-that line through optional dock accessory. Devices in the dock are
-connected to this i2c line and docks presence is detected by a dedicted
-GPIO.
-
-Michał Mirosław (1):
-  i2c: muxes: Add GPIO-detected hotplug I2C
-
-Svyatoslav Ryhel (1):
-  dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
-
- .../bindings/i2c/i2c-hotplug-gpio.yaml        |  65 +++++
- drivers/i2c/muxes/Kconfig                     |  11 +
- drivers/i2c/muxes/Makefile                    |   1 +
- drivers/i2c/muxes/i2c-hotplug-gpio.c          | 263 ++++++++++++++++++
- 4 files changed, 340 insertions(+)
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+---
+ .../bindings/i2c/i2c-hotplug-gpio.yaml        | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-hotplug-gpio.yaml
- create mode 100644 drivers/i2c/muxes/i2c-hotplug-gpio.c
 
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-hotplug-gpio.yaml b/Documentation/devicetree/bindings/i2c/i2c-hotplug-gpio.yaml
+new file mode 100644
+index 000000000000..d1d5d830c91b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/i2c-hotplug-gpio.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/i2c-hotplug-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: GPIO detected hot-plugged I2C bus
++
++maintainers:
++  - Michał Mirosław <mirq-linux@rere.qmqm.pl>
++  - Svyatoslav Ryhel <clamor95@gmail.com>
++
++description: An I2C bus, where some devices on the bus are hot-pluggable
++  and their presence is indicated by GPIO line.
++
++properties:
++  compatible:
++    const: i2c-hotplug-gpio
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  interrupts:
++    maxItems: 1
++
++  detect-gpios:
++    description: usually the same GPIO used as an interrupt. In the active
++      state should indicate that detachable devices are plugged in.
++    maxItems: 1
++
++  i2c-parent:
++    maxItems: 1
++
++required:
++  - compatible
++  - '#address-cells'
++  - '#size-cells'
++  - interrupts
++  - detect-gpios
++  - i2c-parent
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c-dock {
++        compatible = "i2c-hotplug-gpio";
++
++        interrupt-parent = <&gpio>;
++        interrupts = <164 IRQ_TYPE_EDGE_BOTH>;
++
++        detect-gpios = <&gpio 164 GPIO_ACTIVE_LOW>;
++
++        i2c-parent = <&gen2_i2c>;
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
++...
 -- 
 2.48.1
 
