@@ -1,170 +1,131 @@
-Return-Path: <linux-kernel+bounces-817211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67EFB57F52
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03050B57F6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCFF1A27398
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9AC1AA13AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177A432A3CC;
-	Mon, 15 Sep 2025 14:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA63A340DA6;
+	Mon, 15 Sep 2025 14:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m8NJI9pn"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="NA8xF+H6"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0150731C565
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BC032F757;
+	Mon, 15 Sep 2025 14:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947333; cv=none; b=UM9K4+ZjfFlbJio3aMNEekqjZ180K0eT6FBlDcJgukVZGvhd0PnfD6bQ6IQ0VFP4gwrJcaNXU2pJWusVX/uLyJRnIlbkzCbRyoT+8KSewi6cGw/0SQpSdefcBS7Zxl+x8dhAJ4jEQYgiFIARe3FBZ6dEs5ttNzR5ZUCMPN2VXcI=
+	t=1757947672; cv=none; b=jyAu1zL7EsjZhJmcY3D5uUSYYpw7qddesqZyCOUJJl0RoPcVgvzys31/Aj8hgE+QAnjo5ZHS1fZNhXAMK6TfU/LNYgpxMdX5wDqBdWvmMjTaYOM+xuvGpSl0J86SMLFmr3TrPqXyCZpXc7OrFw4hVF4+Cg6RjjCeVnCROURjMoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947333; c=relaxed/simple;
-	bh=MsgQ+XEybDBFnv1Sn7YCQ6b2cPbqNlmkdHgNFFRWULQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=juJ9HCSFWH3QMo0jBsBMzlGJThIjPOy1qiUKTmiFQtAmkg7nosjrTjyBDRWwjHGtmW/rUgllJBeKwZbPqNmlmBiMc9jjR5PyClJ4R/bKCOyHRuRFMfUQ8YtJ8grUOTmt4F3HBMY8pqIHTq6/BM+xjo0kER8H1dQNZFSvUA0WfEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m8NJI9pn; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <121a0947-88cd-4515-bf14-a2af9b69eb0b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757947329;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=otD0lF88c/W1mhXnZZlmqwcx36asc6J+ruH2BHy82vs=;
-	b=m8NJI9pn7LA1CV/E/15NfiRNHl0491YASPDwDn4YMfZP3tGltyzJLFHg+HiEf4XsPtEI1s
-	h0OVkE2EOubpGiDYXx9Ycwl2n+i0QGGB2Bw2l++MvS+vszzPFGSj1ni4Q7I1hioL12BmpY
-	X88TdsxVe7494tG2OsZwjvuzm/deTls=
-Date: Mon, 15 Sep 2025 22:42:00 +0800
+	s=arc-20240116; t=1757947672; c=relaxed/simple;
+	bh=RbIKwA1YEbJ9B7hJPqXCkfvKOCOA7kqlj5tzz3+rIX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WSqevvYVHzmFwcmwrrp/K5qGSfufIhCDJyYrhRZ8CcaMmMNK3f55VHSAIir6hUFQTUsexMxX71+Lzvbun8hK0tnuf47ekWfp5JyzRgNyDWiyGMsdzxXCXJWyYESPJTWLOoPXXpQ7YnmoSFlBM2bQWG+PwF7HouMKIepZ+A8l3f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=NA8xF+H6; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757947660;
+	bh=RbIKwA1YEbJ9B7hJPqXCkfvKOCOA7kqlj5tzz3+rIX4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NA8xF+H6E0QwDJU+/6IiEQBcJIE2tW6qMYTk9BF4TMKtUVDe+b9m6mnefi1Pe+Fxg
+	 Ttb0HG4q1Ny4mbpQWDqOgThDA14FWM+ibf32SsoRV4tJuQABhnv5k9Of10MeV/dcHb
+	 Hsty9YfGo6Bb92Z0T8jpkVclWq8GkpNX+P+WSMidgfJQxT/XYjrQJuNF0QW2XjvGJ7
+	 ilRDwdKYxX/Fr5x7V4sSF+rH7RBHIg0OWyKaf5VgWkfnbgtBAj5oDhsm3Xvv66K5Np
+	 4p5pW3S2WpSTSEUsy6nqhH5RYfkYWJQkQlVxyduRoNuFQAnL16ysXTXicVBJwlGnoE
+	 7cKN7w3Y82wGg==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id DDC8F60078;
+	Mon, 15 Sep 2025 14:47:39 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id F3401201BEC; Mon, 15 Sep 2025 14:43:05 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v5 00/11] tools: ynl: prepare for wireguard
+Date: Mon, 15 Sep 2025 14:42:45 +0000
+Message-ID: <20250915144301.725949-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 3/3] mm/khugepaged: abort collapse scan on guard
- PTEs
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250914143547.27687-1-lance.yang@linux.dev>
- <20250914143547.27687-4-lance.yang@linux.dev>
- <59519b0f-af14-4486-9aca-4e721842d45b@lucifer.local>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <59519b0f-af14-4486-9aca-4e721842d45b@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+This series contains the last batch of YNL changes to support
+the wireguard YNL conversion.
 
+The wireguard changes, to be applied on top of this series,
+has been posted as an RFC series here:
+  https://lore.kernel.org/netdev/20250904-wg-ynl-rfc@fiberby.net/
 
-On 2025/9/15 22:08, Lorenzo Stoakes wrote:
-> On Sun, Sep 14, 2025 at 10:35:47PM +0800, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->>
->> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
->> lightweight guard regions.
->>
->> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
->> encountering such a range.
->>
->> MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
->> the special marker in __collapse_huge_page_swapin().
->>
->> hpage_collapse_scan_pmd()
->>   `- collapse_huge_page()
->>       `- __collapse_huge_page_swapin() -> fails!
->>
->> khugepaged's behavior is slightly different due to its max_ptes_swap limit
->> (default 64). It won't fail as deep, but it will still needlessly scan up
->> to 64 swap entries before bailing out.
->>
->> IMHO, we can and should detect this much earlier ;)
-> 
-> No smileys in commit messages please... :)
+---
+v5:
+- In patch 4, just copy the old local_vars logic into the new helper.
+v4:
+- Added a few Reviewed-by (thanks Donald).
+- In patch 4, changed the implementation a bit, to avoid overloading.
+- In patch 6, expose __ynl_attr_validate(), and move ynl_attr_validate()
+  to ynl-priv.h, as an inline function.
+- Dropped v3 patch 5 and 6 from this series.
+v3: https://lore.kernel.org/netdev/20250911200508.79341-1-ast@fiberby.net/
+- Rebased on top of new net-next, after Matthieu's cleanup.
+- Added a Reviewed-by (thanks Donald).
+- Added the parsing local vars cleanup as patch 7
+- In patch 4, change to use set() for deduplication.
+- In patch 8, declare __ynl_attr_validate() as static.
+v2: https://lore.kernel.org/netdev/20250910230841.384545-1-ast@fiberby.net/
+- Added Reviewed-by's to unchanged patches. Thanks to all reviewers.
+- Patch 4, refactors local variables for .attr_put() callers, and
+  replaces the old patch 4 and 5.
+- Patch 5 and 6 are new, and reduces the differences between the 3
+  .attr_put() callers, so it might be easier to keep them in sync.
+- Patch 7, now validates the nested payload (thanks Jakub).
+- Patch 8, now renames more variables (thanks Jakub),
+- Patch 10, got a dead line remove (thanks Donald).
+- Patch 11, revised hex input to support macsec (suggested by Sabrina).
+v1: https://lore.kernel.org/netdev/20250904-wg-ynl-prep@fiberby.net/
 
-Got it. Apparently, I'm a bit too fond of them ... Will remove it in v2.
+Asbjørn Sloth Tønnesen (11):
+  tools: ynl-gen: allow overriding name-prefix for constants
+  tools: ynl-gen: generate nested array policies
+  tools: ynl-gen: add sub-type check
+  tools: ynl-gen: refactor local vars for .attr_put() callers
+  tools: ynl-gen: avoid repetitive variables definitions
+  tools: ynl-gen: validate nested arrays
+  tools: ynl-gen: rename TypeArrayNest to TypeIndexedArray
+  tools: ynl: move nest packing to a helper function
+  tools: ynl: encode indexed-arrays
+  tools: ynl: decode hex input
+  tools: ynl: add ipv4-or-v6 display hint
 
-> 
->>
->> This patch adds a check directly inside the PTE scan loop. If a guard
->> marker is found, the scan is aborted immediately with a new SCAN_PTE_GUARD
->> status, avoiding wasted work.
->>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   mm/khugepaged.c | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index e54f99bb0b57..910a6f2ec8a9 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -59,6 +59,7 @@ enum scan_result {
->>   	SCAN_STORE_FAILED,
->>   	SCAN_COPY_MC,
->>   	SCAN_PAGE_FILLED,
->> +	SCAN_PTE_GUARD,
-> 
-> I wonder if we really need to have it literally called out though, can we just
-> use:
-> 
-> SCAN_PTE_NON_PRESENT
-> 
-> Instead?
-> 
-> As it is, indeed, non-present :)
+ Documentation/netlink/genetlink-legacy.yaml |  2 +-
+ tools/net/ynl/lib/ynl-priv.h                | 10 ++-
+ tools/net/ynl/lib/ynl.c                     |  6 +-
+ tools/net/ynl/pyynl/lib/ynl.py              | 38 +++++++--
+ tools/net/ynl/pyynl/ynl_gen_c.py            | 92 ++++++++++++---------
+ 5 files changed, 100 insertions(+), 48 deletions(-)
 
-Makes sense to me. A guard PTE is indeed a special non-present case.
-
-So, let's reuse SCAN_PTE_NON_PRESENT for that case ;)
-
-Cheers,
-Lance
-
-> 
->>   };
->>
->>   #define CREATE_TRACE_POINTS
->> @@ -1317,6 +1318,16 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
->>   					result = SCAN_PTE_UFFD_WP;
->>   					goto out_unmap;
->>   				}
->> +				/*
->> +				 * Guard PTE markers are installed by
->> +				 * MADV_GUARD_INSTALL. Any collapse path must
->> +				 * not touch them, so abort the scan immediately
->> +				 * if one is found.
->> +				 */
->> +				if (is_guard_pte_marker(pteval)) {
->> +					result = SCAN_PTE_GUARD;
->> +					goto out_unmap;
->> +				}
->>   				continue;
->>   			} else {
->>   				result = SCAN_EXCEED_SWAP_PTE;
->> @@ -2860,6 +2871,7 @@ int madvise_collapse(struct vm_area_struct *vma, unsigned long start,
->>   		case SCAN_PAGE_COMPOUND:
->>   		case SCAN_PAGE_LRU:
->>   		case SCAN_DEL_PAGE_LRU:
->> +		case SCAN_PTE_GUARD:
->>   			last_fail = result;
->>   			break;
->>   		default:
->> --
->> 2.49.0
->>
-> 
-> Cheers, Lorenzo
+-- 
+2.51.0
 
 
