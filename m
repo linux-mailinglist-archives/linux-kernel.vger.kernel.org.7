@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-817092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542D4B57DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:49:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C0CB57DD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8262171DC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E8D3A7D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1512045B7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767FD31B828;
 	Mon, 15 Sep 2025 13:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q3QhaDlW"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013018.outbound.protection.outlook.com [40.93.196.18])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hR/9PDE9"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012013.outbound.protection.outlook.com [52.101.48.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DA93191D0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4EB315765
 	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.18
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944052; cv=fail; b=nLPUzemz9t5gf2Bgxa1+1kk4sQ6PAY21plOnIFzAWDyDqlCFRLCDjGMUtmceGJJ34J/cYDUpFkpl00r7r9TEBzNBcqluFRgDpQfYkwGmAgIiZiLXHWJKryctbPg+QXA814Le/Dd5usFAyi0lapxyTvqqC5cF2I3/uQYDoU/pqBk=
+	t=1757944052; cv=fail; b=h4FddIhCbcI1ixtKII1Ws375Xp7Nipe7kWmniMqi+bpYNoQ66QcUy1uG3bmGuWr6ueC8Ryzs0m/vdVTb2DKIuQThhR4LX7sI9Z28btT/Fjo9b3xONOLBjbZpuZG3Xox0EDKZ+0vIr41RFCXwFhbZSvsFxsEftHMpJ9O1cdbBRFo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757944052; c=relaxed/simple;
-	bh=AtGw9s6rfZrovj3Y64tN7QL11z/f3M9R+mWqdEZFdxM=;
+	bh=T8laaNVb4oMMJHdLFSQrFzNQ7shsJyyNIsFXh//ywd0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b+YV+egJ/tyhCbLM7ySgiU+QM0zVbIhw2tTDrcASv/EqElmFMJx5OgHlAGBkrMe+HmZEeBKI/2SUHYeNVoEz1CPTWRnCRU/trD541N/HcIg2+yj+wkPfwPMLpfv4z/In09dhyOQnlAzW/jdtx2Cl3ms9KmSRtQPedGWDAcXItuI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q3QhaDlW; arc=fail smtp.client-ip=40.93.196.18
+	 MIME-Version:Content-Type; b=cdnRcDFzF+KLMJZcQJAW0cX4EFlxhcADLlHdJN7MYHozy04M/yXCe470q9fZzrhederWYDXc5NzZVc/yTeq3sUqlPRxRwioj71g6RvVVT7064GmYddu2aCoBZY5lvAMFGEkV7Tl3dI0XbZK0DZ/r0oEVIpnZb8UJM6fucHbAsgE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hR/9PDE9; arc=fail smtp.client-ip=52.101.48.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fP5IHkVXICr7SllxqXEuG43YYgbo3wboOoPEN/GRRcnU2R/qbr6NkWhRAqLKhRRWoDuZVIR6ATHtwhnLaca1aeWNxLUkgf83w4TNrIZtPQthdiHtqMbmP7i6pjN89mr9P1OBb7GMJivazybJhiwvC436ZrpxqsmdNTnWvafwYoKpcFPOPU7Va7mioDMM7We0qQvB6BEpZKDrQ3oJ3/tQpdP3rXs5McwmlMBqT8L6xIQqUVoXJmpOHmGG4wdlsDgP7CAf146wfkIPd5gkOpA4VAEk2zozNZK9HMiz4ZTbeGF3vQNj6CQEqVqDkP3NGoktqLKLm+/mBhn/Mth8JtmdFw==
+ b=BJhxncT0xqhdKCT1b6wahMqyixj5tUjGnHQbjz+jPhbpaY1+hyVtwkuMQ0Vlc4YHzJk4LgjXf2t+XBtoFkeH6+NfUY8R/a4xjOXyPngyXhvVyFaVBlTP89HUPCkokJsAEpouL/HCZXUIR2OZ7EoK8OLxzME9vXH9AgJophv8nb+IsVcYpndCHGuqKYlnLKXUoB4h8yX3R8Uucye2rL1W94Ga441gvYxhDMLCA7E00q0EyVCQcICLSGb0gsFI77iGu31vhNXeUQW0PDayN7E0d5L+p+P92ryA0RgRiAoIZrmuGRtDL02GqaAb1tl23AAiNTv6SVg5PJC3YnKumtxOpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RXbYvvyEb4qjFyv3M6LQxTSj+13XoB2ld3iGGuDEjFc=;
- b=hDtd2J1g3nP93aaDe71/EQltxceP/dqYXJctVDDTrWjXXBhs6j0ychORsoK/SeWvvtWNafW0kB3sWSarpM4LaiNCrrmpht8/GUupv2asn1M/KfhZjzkPAFI+cQlk225wObJkicaVh7jLpxQUD9nZ01vEaNdHZ7rXyWMLtK2aiOd7f2CHAm4FVFD+4BJtROFOX0X0qaea9w+WNBrvEOP0cCiz+FKGn87my8xIJkqlJXMX1mvhljkdxl9tuAEydk/xwlZAco4eQVXQwV9KQWsRp9bxXyrMQQvIHQdJECgneO0abcIAvAlPzEZSt/7nE2bceHVTuGZFBd04bft7QGSTaA==
+ bh=3H7LIWW4xbUPUOesIu4iqZaED8yLEtigQJkPuF3SHQg=;
+ b=PPVlBJd4Gt4YYlEDQYpFurAq5ama0TwXIjt1tkE4pc70Bawny6lefB67UHm7n7NiJw3F9zYd35LSoOir+/xo2nxDzHFZk1RWFlG5ZGyRO3QAeiInsfnfKaN6Z9toqaxNn/UhyQ8rrrhziL55JHfQd64G45X62oWHCDneu3EL3qsLCrOVPn9FxVOrRiUwMeN4HT9mWdvhHuPrE1h6BTa2ygZIyRXIhLrh3gsojY3b6wtFuoI2Gnd9Uwtd/sSdCg+wj+BevEgAVkyAGkTK/BZoYSPovpvj9UoSi+Ze4KmwB2A2NX5yssPQNMXzHa+PXs5d4AZhBKTZkHiSF1EI52xPIQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RXbYvvyEb4qjFyv3M6LQxTSj+13XoB2ld3iGGuDEjFc=;
- b=Q3QhaDlW6lrCXRsSP4ACsBXzoFOD4uGaH5EK+Hm0OvGjpDr+BfzfVgVPWjuIsUThrUN63kqBbyqIta/9o8fuvisHsJ2wr9xEb1J9F4/8jMAGofwtJFkUbfg8A5J0bWOjtyN9K+LUv7CEfcmfawouLUP9+NRvUIQu9Q8I8vM4HR4=
-Received: from SJ0PR03CA0107.namprd03.prod.outlook.com (2603:10b6:a03:333::22)
- by SN7PR12MB7276.namprd12.prod.outlook.com (2603:10b6:806:2af::8) with
+ bh=3H7LIWW4xbUPUOesIu4iqZaED8yLEtigQJkPuF3SHQg=;
+ b=hR/9PDE9axy9Eve8BfO8a0gy7YxXkIFed1/WkPc3ucuo3HCP2xh45Z6qHxHUH7EFY218gzktcFkNrUq9DaE2REy1J+Lz2FzGF/C5Dd8zWgaofHra9HFVPje/kdlK+ULafS2sGs1IqQN8C7svXV9G7JiEHzbnCq24ewIh5RZ1PQ0=
+Received: from SJ0PR03CA0116.namprd03.prod.outlook.com (2603:10b6:a03:333::31)
+ by MW4PR12MB7238.namprd12.prod.outlook.com (2603:10b6:303:229::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 15 Sep
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Mon, 15 Sep
  2025 13:47:26 +0000
 Received: from SJ5PEPF000001D4.namprd05.prod.outlook.com
- (2603:10b6:a03:333:cafe::4) by SJ0PR03CA0107.outlook.office365.com
- (2603:10b6:a03:333::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.19 via Frontend Transport; Mon,
- 15 Sep 2025 13:47:23 +0000
+ (2603:10b6:a03:333:cafe::e9) by SJ0PR03CA0116.outlook.office365.com
+ (2603:10b6:a03:333::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.21 via Frontend Transport; Mon,
+ 15 Sep 2025 13:47:26 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,11 +64,11 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  SJ5PEPF000001D4.mail.protection.outlook.com (10.167.242.56) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Mon, 15 Sep 2025 13:47:25 +0000
+ 15.20.9137.12 via Frontend Transport; Mon, 15 Sep 2025 13:47:26 +0000
 Received: from tiny.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 15 Sep
- 2025 06:47:22 -0700
+ 2025 06:47:23 -0700
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 3/7] x86/bugs: Simplify SSB cmdline parsing
-Date: Mon, 15 Sep 2025 08:47:02 -0500
-Message-ID: <20250915134706.3201818-4-david.kaplan@amd.com>
+Subject: [PATCH v3 4/7] x86/bugs: Remove uses of cpu_mitigations_off()
+Date: Mon, 15 Sep 2025 08:47:03 -0500
+Message-ID: <20250915134706.3201818-5-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250915134706.3201818-1-david.kaplan@amd.com>
 References: <20250915134706.3201818-1-david.kaplan@amd.com>
@@ -94,240 +94,98 @@ X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D4:EE_|SN7PR12MB7276:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5cbc9321-fb3a-4e06-6f82-08ddf45e679c
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D4:EE_|MW4PR12MB7238:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35ac21a0-0fae-4a7f-cfbf-08ddf45e6814
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hUrxlHTQz3W7p7ovls/jgIYmXupQc6sCwXIl7sacZZfLZdJDWOI1vNwK1HhV?=
- =?us-ascii?Q?ylXFNxVcnIBjwS2vdqyY1eIhoJFo46OpGcdZyc1AT3aK7B8/BdUqvrPznXLm?=
- =?us-ascii?Q?V+g4ywDlzlqs0yYmgoIZtrDtCgFcfOzg9miHlm+8HFdhLaBNBCwMDMsDuy+e?=
- =?us-ascii?Q?oi55GIt6rnFhRgwnA/wfdpllhUa1f7nGRcrn6cIwv9SrSZZjEwxlTPm1jzpy?=
- =?us-ascii?Q?ccL5qKmj7zDEC/4FzzD7+xZrsglvSZ9lj24T+j/ZGyCK/voD67cc8mUiUqFf?=
- =?us-ascii?Q?7j/FSdXgQBZW3sqpkI4DagvIj3yWWhiqdzzLmyMlHZyiUSTCIrEboU1DOvyI?=
- =?us-ascii?Q?HoSyZlcoqpqlh47qQlEqRojZ5q59HamrPv18DLF+uYXHwPiWlTCjfStA347i?=
- =?us-ascii?Q?WCCf3YrLBPSDCG3mXfdlRj87SABEydTR0zFjdRKuSSO33adQ/bbW9f47fQDR?=
- =?us-ascii?Q?XJFNQRhSW0UodfzTyKdfIbbenZ/dJYqmncDm0ZNTkck3hmJy+1zYwm/pHuaJ?=
- =?us-ascii?Q?XqwY9K18m4J/LMG/beEFUmSGCabr3Q07VIfqfAxPZ0AjNgaCTeHl9hv6vSmu?=
- =?us-ascii?Q?vCLYxqFWuvP+eacm6RVyNvHI5rgQoJdYfLBaUS1vNZHu2cQjcJL/ALKk72El?=
- =?us-ascii?Q?xUqLGLBu+dHzrn3gb/3GmgGt/mFvXXMau5HlNUS0Y5agK5/+aJ+gIA9xoDeM?=
- =?us-ascii?Q?hkmtZcneH/nYZiWktSvwNfyi9pkYLqWn6wEaRXIB9X6zOV5Mx0WuD9nA6fg1?=
- =?us-ascii?Q?nFEQjK69/cF5SF6UvQ5ZHPyjpGWBD6iyArcfVPvgetMX5OMOFZrzCGKdQsCb?=
- =?us-ascii?Q?gheqJdI1PjJASnJaI9jCvqn+d04JLSToU63Puh1CUAxI0CuA/d+27GnYgVdo?=
- =?us-ascii?Q?8lyKGXXsvMEQ8auts9RUtHrcGDTPZ9zeuXlZi585Rr1f9S2vEHR0m8QQ/bdy?=
- =?us-ascii?Q?NlA5zigbEvZqCa8TaG/9Su/C6mYQRgm3RGS35HucZucf/OI+TcdcTVy+Ssqq?=
- =?us-ascii?Q?D+NTMm/XtLod4cn9LgBhGRiCGqz9emwjCDQrHhWIj0nh/So5pMp7QyGksu20?=
- =?us-ascii?Q?D7n+hwyFgcE1IuEQpGVs8yfLtZBA3QZ/PeD/S0ksySKyadTMK1IpZFwSFCpY?=
- =?us-ascii?Q?0+vkCHkGv2NgK4N3hpOA0VLew9PpnRUgHO+7dShFevkyuVP/W7YusYF3Q9sg?=
- =?us-ascii?Q?NeFpmjqT79huWc5I/NH/Pauo4Wlo5hI15sdwBsVo3PI8e87fFBQQZgNxe2eA?=
- =?us-ascii?Q?z4UZJTefsOY1jZInWUEPVwuNhD8zEwSm55YNOrvMrfatDCBupZD3+8Z94czj?=
- =?us-ascii?Q?Hvf2wkCQMp5Bomg2WBbuX99qdxOLWii/ErLySQY9/t7xQZA2CiMJlglalaVk?=
- =?us-ascii?Q?UTJ+ez0hc4C0Gk4vJo5/EiKFwtccmCq3F0uKtLWC2FUI41tiRIeuVl6X47xH?=
- =?us-ascii?Q?5Y7UR6CoG6aLGtHrFYRnmd1dx1cwL41OzcTPZOTGTYNTgI00iAbgSDLl2UeR?=
- =?us-ascii?Q?b1/qp/yRYda2hF7htWlqBHBK37bsgx4r9uDq?=
+	=?us-ascii?Q?nUM+fnDaosWMjpWQvCEnIRBT4HERfIK6MRc6NXkqbOuLPMljKbuyDpsCbgCt?=
+ =?us-ascii?Q?K9938tU9EOw8RdfRlDSUDjPEqSaPIYlb4/HkD1tzfBHkyUf5bOYqZ5vyZbET?=
+ =?us-ascii?Q?vTPNG71gd27h4i0KOIJDW0+nV1ikk937b2BLVHVKA1Nx9A0S7YXuhmK8N1zL?=
+ =?us-ascii?Q?yHTWb+S0P76syipbD1/FqsQYLnrxYQ8ckzYQwvasNc748z3JIxM9PFio0gMl?=
+ =?us-ascii?Q?NLa05U8vLI3zG1E8JPTFkN+4M7I9FmIT+QdFK3FPXfVu40xZsRC1V7WDFO+q?=
+ =?us-ascii?Q?916y0XtvVOcI+GjdI9BQLC7S3Go122m47hAdsm5IbLL7QfnhKZNEnqCwvI54?=
+ =?us-ascii?Q?7WCqV5vKgNhW8L85z7bsi/5NkFH/ZwhLHsingaJQ70js9EE6y0PiUaqig38d?=
+ =?us-ascii?Q?75Qu5VWeOeypnnC+Wx+4UA72f9j9tRyCoNW8w4AiC122oEIdRm9cEflXzV7r?=
+ =?us-ascii?Q?PmZ5Mms4hFj0oftoC0hs9QQYJvSesglymVwr2LtnfWN7A1vAHcP9T4y0Y4zk?=
+ =?us-ascii?Q?st3XghGQ3fj6NZT3A3GUCcVOVlyYA/60qjaJ5f/g1O6XeyOv9EvIQbgRQiXU?=
+ =?us-ascii?Q?Ma+2agplw/U+TrWQii0oNAVXNaXKwL76Tl1smNGVXrN8JaIHiFU9FIaBBwLm?=
+ =?us-ascii?Q?kQZwVkm/OL4ZtfzS2VD8eR5YBj/zs5jjl+JZyudORreeRtsWfR/1bLRKO01U?=
+ =?us-ascii?Q?Sgp3FEXAdYZsmcSpsEN3waFkcZdSvwLLwDAC8Ycgpjn1nWI2yMyiyMaD64ah?=
+ =?us-ascii?Q?Semu0o7ooWg6iRlec5BWDldoh716FTsExbNr+iZnukPdzKqTfsFRpZN03kqV?=
+ =?us-ascii?Q?d21NhUr0yhN7u0git1+nU7bkxfhhR/S+gbUavGs1WnGzNNj5FsMs2pLXq8Pp?=
+ =?us-ascii?Q?+tf6n8oONaZ2nCL5TlWtuKA/KkvJWEJrZaFibuHu3zsQC3lvEcDj3YCceltQ?=
+ =?us-ascii?Q?FG3nNfQTqf6dUlLRBnHS5LzL75ipBauiDF3YRN9MciP7qgYvSJqXsUNKkocP?=
+ =?us-ascii?Q?y/sjg8AvpzhEh6VW0OvSQuUV3LfcLms7NM3lUuLVwwXDQHrueANuNc9a2rDR?=
+ =?us-ascii?Q?2Yd1RSwfC8ReaFDUZTwMsxmY252IHbFnS6hIfOdHqQiYYT+K3pgkUuTRQY+Y?=
+ =?us-ascii?Q?wqLLF/05Ko42noLViHQ6wNAWNcyGjuBA/VuBC1aSvBiXnh2wrFqSiM95KUIs?=
+ =?us-ascii?Q?IH/1TKMcnTv2JWTSoFmgjqp6rEKVLA/BERWJSXaQD0hckxRbEtjaxAndPnEe?=
+ =?us-ascii?Q?RukiaNUQJoCSD869WRsjk/aLGVZfudDa/KGh0g4fOf0zHSzbuoVParlq92Gz?=
+ =?us-ascii?Q?3HVbaHmtA61Og7H83/xg5UX1ZYbCaYDE3Tnxm47Q7Tdr7MYRNuiMlclX76IO?=
+ =?us-ascii?Q?FhLC/LZuhys3rI+LuOkWFuTeuCyqLahfIOTicMBgP1qMMSgh4EGhJaf+itci?=
+ =?us-ascii?Q?Ql9Y4r55UZnJlHTg03tX6W7q97fW3OqwH0Vw+QW9JrKQ9oxnGzw2YNeECXk9?=
+ =?us-ascii?Q?/ySW+wCq5EzahoJHHmxpmKrqiQoljG0TY3hV?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:47:25.7542
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:47:26.5448
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cbc9321-fb3a-4e06-6f82-08ddf45e679c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35ac21a0-0fae-4a7f-cfbf-08ddf45e6814
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	SJ5PEPF000001D4.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7276
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7238
 
-Simplify the SSB command line parsing by selecting a mitigation directly,
-as is done in most of the simpler vulnerabilities.  Use early_param instead
-of cmdline_find_option for consistency with the other mitigation
-selections.
+cpu_mitigations_off() is no longer needed because all bugs use attack
+vector controls to select a mitigation, and cpu_mitigations_off() is
+equivalent to no attack vectors being selected.
+
+Remove the few remaining unnecessary uses of this function in this file.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 ---
- arch/x86/include/asm/nospec-branch.h |   1 +
- arch/x86/kernel/cpu/bugs.c           | 120 +++++++++------------------
- 2 files changed, 41 insertions(+), 80 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index e29f82466f43..08ed5a2e46a5 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -514,6 +514,7 @@ enum spectre_v2_user_mitigation {
- /* The Speculative Store Bypass disable variants */
- enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
-+	SPEC_STORE_BYPASS_AUTO,
- 	SPEC_STORE_BYPASS_DISABLE,
- 	SPEC_STORE_BYPASS_PRCTL,
- 	SPEC_STORE_BYPASS_SECCOMP,
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index aa2eb2e7878f..fe57e890d56c 100644
+index fe57e890d56c..d52600b89d60 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -2530,16 +2530,8 @@ static void update_mds_branch_idle(void)
- #undef pr_fmt
- #define pr_fmt(fmt)	"Speculative Store Bypass: " fmt
+@@ -687,8 +687,7 @@ static const char * const mmio_strings[] = {
  
--static enum ssb_mitigation ssb_mode __ro_after_init = SPEC_STORE_BYPASS_NONE;
--
--/* The kernel command line selection */
--enum ssb_mitigation_cmd {
--	SPEC_STORE_BYPASS_CMD_NONE,
--	SPEC_STORE_BYPASS_CMD_AUTO,
--	SPEC_STORE_BYPASS_CMD_ON,
--	SPEC_STORE_BYPASS_CMD_PRCTL,
--	SPEC_STORE_BYPASS_CMD_SECCOMP,
--};
-+static enum ssb_mitigation ssb_mode __ro_after_init =
-+	IS_ENABLED(CONFIG_MITIGATION_SSB) ? SPEC_STORE_BYPASS_AUTO : SPEC_STORE_BYPASS_NONE;
- 
- static const char * const ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_NONE]	= "Vulnerable",
-@@ -2548,94 +2540,61 @@ static const char * const ssb_strings[] = {
- 	[SPEC_STORE_BYPASS_SECCOMP]	= "Mitigation: Speculative Store Bypass disabled via prctl and seccomp",
- };
- 
--static const struct {
--	const char *option;
--	enum ssb_mitigation_cmd cmd;
--} ssb_mitigation_options[]  __initconst = {
--	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
--	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
--	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
--	{ "prctl",	SPEC_STORE_BYPASS_CMD_PRCTL },   /* Disable Speculative Store Bypass via prctl */
--	{ "seccomp",	SPEC_STORE_BYPASS_CMD_SECCOMP }, /* Disable Speculative Store Bypass via prctl and seccomp */
--};
-+static bool nossb __ro_after_init;
- 
--static enum ssb_mitigation_cmd __init ssb_parse_cmdline(void)
-+static int __init nossb_parse_cmdline(char *str)
+ static void __init mmio_select_mitigation(void)
  {
--	enum ssb_mitigation_cmd cmd;
--	char arg[20];
--	int ret, i;
--
--	cmd = IS_ENABLED(CONFIG_MITIGATION_SSB) ?
--		SPEC_STORE_BYPASS_CMD_AUTO : SPEC_STORE_BYPASS_CMD_NONE;
--	if (cmdline_find_option_bool(boot_command_line, "nospec_store_bypass_disable") ||
--	    cpu_mitigations_off()) {
--		return SPEC_STORE_BYPASS_CMD_NONE;
--	} else {
--		ret = cmdline_find_option(boot_command_line, "spec_store_bypass_disable",
--					  arg, sizeof(arg));
--		if (ret < 0)
--			return cmd;
-+	nossb = true;
-+	ssb_mode = SPEC_STORE_BYPASS_NONE;
-+	return 0;
-+}
-+early_param("nospec_store_bypass_disable", nossb_parse_cmdline);
- 
--		for (i = 0; i < ARRAY_SIZE(ssb_mitigation_options); i++) {
--			if (!match_option(arg, ret, ssb_mitigation_options[i].option))
--				continue;
-+static int __init ssb_parse_cmdline(char *str)
-+{
-+	if (!str)
-+		return -EINVAL;
- 
--			cmd = ssb_mitigation_options[i].cmd;
--			break;
--		}
-+	if (nossb)
-+		return 0;
- 
--		if (i >= ARRAY_SIZE(ssb_mitigation_options)) {
--			pr_err("unknown option (%s). Switching to default mode\n", arg);
--			return cmd;
--		}
--	}
-+	if (!strcmp(str, "auto"))
-+		ssb_mode = SPEC_STORE_BYPASS_AUTO;
-+	else if (!strcmp(str, "on"))
-+		ssb_mode = SPEC_STORE_BYPASS_DISABLE;
-+	else if (!strcmp(str, "off"))
-+		ssb_mode = SPEC_STORE_BYPASS_NONE;
-+	else if (!strcmp(str, "prctl"))
-+		ssb_mode = SPEC_STORE_BYPASS_PRCTL;
-+	else if (!strcmp(str, "seccomp"))
-+		ssb_mode = IS_ENABLED(CONFIG_SECCOMP) ?
-+			SPEC_STORE_BYPASS_SECCOMP : SPEC_STORE_BYPASS_PRCTL;
-+	else
-+		pr_err("Ignoring unknown spec_store_bypass_disable option (%s).\n",
-+			str);
- 
--	return cmd;
-+	return 0;
- }
-+early_param("spec_store_bypass_disable", ssb_parse_cmdline);
- 
- static void __init ssb_select_mitigation(void)
- {
--	enum ssb_mitigation_cmd cmd;
--
--	if (!boot_cpu_has(X86_FEATURE_SSBD))
--		goto out;
--
--	cmd = ssb_parse_cmdline();
--	if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS) &&
--	    (cmd == SPEC_STORE_BYPASS_CMD_NONE ||
--	     cmd == SPEC_STORE_BYPASS_CMD_AUTO))
-+	if (!boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS)) {
-+		ssb_mode = SPEC_STORE_BYPASS_NONE;
+-	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA) ||
+-	     cpu_mitigations_off()) {
++	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA)) {
+ 		mmio_mitigation = MMIO_MITIGATION_OFF;
  		return;
-+	}
- 
--	switch (cmd) {
--	case SPEC_STORE_BYPASS_CMD_SECCOMP:
--		/*
--		 * Choose prctl+seccomp as the default mode if seccomp is
--		 * enabled.
--		 */
--		if (IS_ENABLED(CONFIG_SECCOMP))
--			ssb_mode = SPEC_STORE_BYPASS_SECCOMP;
--		else
--			ssb_mode = SPEC_STORE_BYPASS_PRCTL;
--		break;
--	case SPEC_STORE_BYPASS_CMD_ON:
--		ssb_mode = SPEC_STORE_BYPASS_DISABLE;
--		break;
--	case SPEC_STORE_BYPASS_CMD_AUTO:
-+	if (ssb_mode == SPEC_STORE_BYPASS_AUTO) {
- 		if (should_mitigate_vuln(X86_BUG_SPEC_STORE_BYPASS))
- 			ssb_mode = SPEC_STORE_BYPASS_PRCTL;
- 		else
- 			ssb_mode = SPEC_STORE_BYPASS_NONE;
--		break;
--	case SPEC_STORE_BYPASS_CMD_PRCTL:
--		ssb_mode = SPEC_STORE_BYPASS_PRCTL;
--		break;
--	case SPEC_STORE_BYPASS_CMD_NONE:
--		break;
  	}
+@@ -3130,14 +3129,15 @@ static void __init srso_select_mitigation(void)
  
--out:
--	if (boot_cpu_has_bug(X86_BUG_SPEC_STORE_BYPASS))
--		pr_info("%s\n", ssb_strings[ssb_mode]);
-+	if (!boot_cpu_has(X86_FEATURE_SSBD))
-+		ssb_mode = SPEC_STORE_BYPASS_NONE;
+ static void __init srso_update_mitigation(void)
+ {
++	if (!boot_cpu_has_bug(X86_BUG_SRSO))
++		return;
 +
-+	pr_info("%s\n", ssb_strings[ssb_mode]);
+ 	/* If retbleed is using IBPB, that works for SRSO as well */
+ 	if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB &&
+ 	    boot_cpu_has(X86_FEATURE_IBPB_BRTYPE))
+ 		srso_mitigation = SRSO_MITIGATION_IBPB;
+ 
+-	if (boot_cpu_has_bug(X86_BUG_SRSO) &&
+-	    !cpu_mitigations_off())
+-		pr_info("%s\n", srso_strings[srso_mitigation]);
++	pr_info("%s\n", srso_strings[srso_mitigation]);
  }
  
- static void __init ssb_apply_mitigation(void)
-@@ -2851,6 +2810,7 @@ static int ssb_prctl_get(struct task_struct *task)
- 		return PR_SPEC_DISABLE;
- 	case SPEC_STORE_BYPASS_SECCOMP:
- 	case SPEC_STORE_BYPASS_PRCTL:
-+	case SPEC_STORE_BYPASS_AUTO:
- 		if (task_spec_ssb_force_disable(task))
- 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
- 		if (task_spec_ssb_noexec(task))
+ static void __init srso_apply_mitigation(void)
 -- 
 2.34.1
 
