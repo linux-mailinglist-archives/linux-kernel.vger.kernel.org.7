@@ -1,337 +1,205 @@
-Return-Path: <linux-kernel+bounces-817257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F21E2B57FCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C65B57FD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8290317B758
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:01:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31DD20839A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68839338F29;
-	Mon, 15 Sep 2025 15:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332BE341648;
+	Mon, 15 Sep 2025 15:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f9SQ7rCz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b+EMtRhX"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7B3341661
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62893002A3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948437; cv=none; b=LVXad5YmV0gXZ0Z6LbTm/13WuPg0g0VTyGdCWWTPu2YYFkICdvpSxherjzH6mwyXo+WtDJqM7/TRf87q13CbJIQ2unDxu96BoUpFCeku8yUm0wBzRBqYCSw/3u/ZyMIxbmANAOmJ4eD4pUwMV3fDEzsa60m8hONLS7cOikT+/EU=
+	t=1757948479; cv=none; b=daPdgzn6xtzvY7n3spRgUuecDBS0eP5exh/r4zjoE4toVm05BzyWMOTcnZMf42fGoxuIcsguf6d7SirkWYZNoCuCU7F21sLMyaIqlXtfmzQ/lfz96q/0cy+Qz54CeGuYBVmNPTdb3F/U4j2nF4+PC0LnmjOXou+5aoujiJPoqEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948437; c=relaxed/simple;
-	bh=Gje1a6MuxbQRqJJjVBWFqMGNjvc5qcBa8yIEEkD8wWQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tP21c3AmiLJkAnt5QI4WjExsRKq6HXM7fbbH7Vhx/IVNwadKLgg26Pn4yXN4WEHa6JdjQRQNDuwg+VXOBWL1Pi4WMcLgh+n9NlhwRDRRNkGz/yzACrzN7mRJwU8s64yQz0zo4iGZQeaSxiFMnkn4Uo/kIbesuAfkumlpNBqkBWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f9SQ7rCz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757948434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SLP0rl8cKBQmenYpN/sNhONBZ/EaXWDugv9JYiXlVuM=;
-	b=f9SQ7rCzpEMQECoAdGribDJWYfHXC7ybWgIif7rW3Gz4dC6s0+uriO7AvvLHDYWHImdnW4
-	pNipDuaEtYEGHT9bAwjrodwUnCPqnvFTxq3poH32ZRdHWLr+RA/DFpLYH/oK/AI89Zx/q7
-	H0PmZNo79H2W06mw2615gxYW1DR0KUc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-4BA_leHXP1ml6STXCRd0wQ-1; Mon,
- 15 Sep 2025 11:00:30 -0400
-X-MC-Unique: 4BA_leHXP1ml6STXCRd0wQ-1
-X-Mimecast-MFC-AGG-ID: 4BA_leHXP1ml6STXCRd0wQ_1757948428
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8C8A418002C4;
-	Mon, 15 Sep 2025 15:00:28 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.63])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 264F21800446;
-	Mon, 15 Sep 2025 15:00:23 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	"John B. Wyatt IV" <jwyatt@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH v12 9/9] timers: Exclude isolated cpus from timer migration
-Date: Mon, 15 Sep 2025 16:59:30 +0200
-Message-ID: <20250915145920.140180-20-gmonaco@redhat.com>
-In-Reply-To: <20250915145920.140180-11-gmonaco@redhat.com>
-References: <20250915145920.140180-11-gmonaco@redhat.com>
+	s=arc-20240116; t=1757948479; c=relaxed/simple;
+	bh=XNzym3SlW68WTjuaImeS6uxut+Hkf13t1gya8khOoMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=aI5ZC/expUfHfaxrzxL7aY17fgzqzXkV7Kp/MUUGyP150dAYrVc0TdrAsGtnDnCzNaF04j3l3a5UXK145PgrndmyjTUk+3LkRE8BFMR5i5kjvnDJCj8kxtW9Y5i190S3zatszlrTrUp1kIQELUIiBsqP8cLL7/SYNdnxVR2tzlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b+EMtRhX; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2637b6e9149so331145ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757948467; x=1758553267; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f9K2ZNoVdFEQAo4l5PTBMo8u7yy6tT4YYzBB/JfpAiU=;
+        b=b+EMtRhXmbQPKQDIdxgKr5lFiiyJE7z0nBf5NKKAb9YWK9bhs5hcUJfEcUbnf4Gb0E
+         BaFd9u88VuW6tFvRhgxE1by2Ld0rGHTbZCAOoYtKRI1qrn9nmP1rA5yy8a2LZW10Mkqz
+         2XzVnJR7b+hP18EU8x4gKY5tawXRU2KEDBEZFvTA+BqfuVRLd3aFkbAb/jMS7b8H/ONS
+         feVikVt54/dBwuJuhaCZregXA/pBuapVUEhuGjAc2O5vWt6MyhL/dIJXR0eQUHMno9gI
+         RAu1hr+QFvajGSBbvv2dBZ0000e83hgkPw8jADdYXT2yDck43aymcBtgqnVvbwLu8IVQ
+         9lQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757948467; x=1758553267;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f9K2ZNoVdFEQAo4l5PTBMo8u7yy6tT4YYzBB/JfpAiU=;
+        b=eTCjN2p3AQ6JxBb9yc2fT3KkgjRjKc2Pvl3+OZamS+fsbWuLdBX4AJeE9fhmTigH5C
+         987K+bLJMveVhefwSrMbLfUe0ab2pH3V7f/8xVIGhxtkSSAQArc6+EeAKhB21vUkOmaU
+         L6HhLHvqzNDc0rw/iU2TfMLdAIb7UswQ8oxFPl/3BiqM7ZcBuZtjk3hMjDeIeVidjY/k
+         urljLkxsnK+1R4Dnb+6QGe7dpxBp7+enrKbMUn+D0jnTeUp3OtSN6Mj0O+JaDhOPIL4W
+         Utvi8DqCwTBGMJP43O6GUVbCk0Ze6ORPwg8E17mbBJXurq4zQ+egai4f12NjsxilveVE
+         O4NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJrb87eEoK7MmNXh8NZ1A0EFZCxxK90EHdG4bcvaTzFkY97rAC94GgJmR2QTFCw2C0TWJ39rxzLSf30CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjONxjQ8A2hPY0UWfdhbxjkyN8cj8+5lD+y/5jAWoHm0AG+z/u
+	K1Jbu1PoxSF7pwtmwjRFM70tfbA4WrrCtgYasS8MPT4gCjT3HqHh6RMtlcKQb3hG5K9I372gsrB
+	Fp8WMyipiB0hBL/uhMB6/7VulXNsvX/jnYQqDI7vy
+X-Gm-Gg: ASbGncv1Vnj4CPHQTOqKahuCzQDSXa//DWBNrtXFP8/czsaBqi6ryvOluAXqop8Cw0f
+	e5aRBLEe/fwp5nLKGkjt4qvjvxYvZyL6b2qLOC+QxPenHycCXYCqjiYJaoBKI7RngX00pudKz/O
+	JZ77+o3+pt46P8FP77EHLXhUccDbByqCmWlXAw7D4nOVSy1LXl2yL0oTkxwm/O0kgHh9v4gAXav
+	giVjWuyq9ioC9AwVzd/zMKOIOeU9gaxLvkSvQWcaLrHZ/j/tQotlic=
+X-Google-Smtp-Source: AGHT+IGySltNDMqtEE6Huhdc1tR9G0RC/iwxIoxdqKUeG2fq3SitVMFnig3n05ncji36jZGgJEZr47n8UCv81x6Enc4=
+X-Received: by 2002:a17:902:ea08:b0:266:b8a2:f605 with SMTP id
+ d9443c01a7336-266b8a2f830mr2974895ad.3.1757948466100; Mon, 15 Sep 2025
+ 08:01:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250914181808.1957729-1-irogers@google.com>
+In-Reply-To: <20250914181808.1957729-1-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 15 Sep 2025 08:00:53 -0700
+X-Gm-Features: Ac12FXy_iXabN6eCwLi19NLkk4n6ATbOkH6fj37zAuckwN_qB8gDAsBy5dmJucI
+Message-ID: <CAP-5=fWz9Put0QznfXSf1ATXjcfQj1T2toZmXrXp502qU4fRSw@mail.gmail.com>
+Subject: Re: [PATCH v1] perf maps: Ensure kmap is set up for all inserts
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The timer migration mechanism allows active CPUs to pull timers from
-idle ones to improve the overall idle time. This is however undesired
-when CPU intensive workloads run on isolated cores, as the algorithm
-would move the timers from housekeeping to isolated cores, negatively
-affecting the isolation.
+On Sun, Sep 14, 2025 at 11:18=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> __maps__fixup_overlap_and_insert may split or directly insert a map,
+> when doing this the map may need to have a kmap set up for the sake of
+> the kmaps. The missing kmap set up fails the check_invariants test in
+> maps, later "Internal error" reports from map__kmap and ultimately
+> causes segfaults.
+>
+> Similar fixes were added in commit e0e4e0b8b7fa ("perf maps: Add
+> missing map__set_kmap_maps() when replacing a kernel map") and commit
+> 25d9c0301d36 ("perf maps: Set the kmaps for newly created/added kernel
+> maps") but they missed cases. To try to reduce the risk of this,
+> update the kmap directly following any manual insert. This identified
+> another problem in maps__copy_from.
+>
+> Fixes: e0e4e0b8b7fa ("perf maps: Add missing map__set_kmap_maps() when re=
+placing a kernel map")
+> Fixes: 25d9c0301d36 ("perf maps: Set the kmaps for newly created/added ke=
+rnel maps")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Exclude isolated cores from the timer migration algorithm, extend the
-concept of unavailable cores, currently used for offline ones, to
-isolated ones:
-* A core is unavailable if isolated or offline;
-* A core is available if non isolated and online;
+This may be worth picking up for v6.17. It was a fairly regular source
+of crashes on basic commands like `perf record` for me on certain
+kernels. `perf record` by default is processing the whole perf.data
+file and if there were overlapping maps, from BPF symbol events
+typically, the broken kmap would trigger assertion failures and seg
+faults.
 
-A core is considered unavailable as isolated if it belongs to:
-* the isolcpus (domain) list
-* an isolated cpuset
-Except if it is:
-* in the nohz_full list (already idle for the hierarchy)
-* the nohz timekeeper core (must be available to handle global timers)
+Thanks,
+Ian
 
-CPUs are added to the hierarchy during late boot, excluding isolated
-ones, the hierarchy is also adapted when the cpuset isolation changes.
-
-Due to how the timer migration algorithm works, any CPU part of the
-hierarchy can have their global timers pulled by remote CPUs and have to
-pull remote timers, only skipping pulling remote timers would break the
-logic.
-For this reason, prevent isolated CPUs from pulling remote global
-timers, but also the other way around: any global timer started on an
-isolated CPU will run there. This does not break the concept of
-isolation (global timers don't come from outside the CPU) and, if
-considered inappropriate, can usually be mitigated with other isolation
-techniques (e.g. IRQ pinning).
-
-This effect was noticed on a 128 cores machine running oslat on the
-isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
-and the CPU with lowest count in a timer migration hierarchy (here 1
-and 65) appears as always active and continuously pulls global timers,
-from the housekeeping CPUs. This ends up moving driver work (e.g.
-delayed work) to isolated CPUs and causes latency spikes:
-
-before the change:
-
- # oslat -c 1-31,33-63,65-95,97-127 -D 62s
- ...
-  Maximum:     1203 10 3 4 ... 5 (us)
-
-after the change:
-
- # oslat -c 1-31,33-63,65-95,97-127 -D 62s
- ...
-  Maximum:      10 4 3 4 3 ... 5 (us)
-
-Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
-Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- include/linux/timer.h         |   9 +++
- kernel/cgroup/cpuset.c        |   3 +
- kernel/time/timer_migration.c | 108 +++++++++++++++++++++++++++++++++-
- 3 files changed, 119 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/timer.h b/include/linux/timer.h
-index 0414d9e6b4fc..62e1cea71125 100644
---- a/include/linux/timer.h
-+++ b/include/linux/timer.h
-@@ -188,4 +188,13 @@ int timers_dead_cpu(unsigned int cpu);
- #define timers_dead_cpu		NULL
- #endif
- 
-+#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
-+extern int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask);
-+#else
-+static inline int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 3cedc3580373..6e9d86fab27e 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -1399,6 +1399,9 @@ static void update_exclusion_cpumasks(bool isolcpus_updated)
- 
- 	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
- 	WARN_ON_ONCE(ret < 0);
-+
-+	ret = tmigr_isolated_exclude_cpumask(isolated_cpus);
-+	WARN_ON_ONCE(ret < 0);
- }
- 
- /**
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 0a3a26e766d0..08e29fc01479 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -10,6 +10,7 @@
- #include <linux/spinlock.h>
- #include <linux/timerqueue.h>
- #include <trace/events/ipi.h>
-+#include <linux/sched/isolation.h>
- 
- #include "timer_migration.h"
- #include "tick-internal.h"
-@@ -436,6 +437,29 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
- 	return !(tmc->tmgroup && tmc->available);
- }
- 
-+/*
-+ * Returns true if @cpu should be excluded from the hierarchy as isolated.
-+ * Domain isolated CPUs don't participate in timer migration, nohz_full CPUs
-+ * are still part of the hierarchy but become idle (from a tick and timer
-+ * migration perspective) when they stop their tick. This lets the timekeeping
-+ * CPU handle their global timers. Marking also isolated CPUs as idle would be
-+ * too costly, hence they are completely excluded from the hierarchy.
-+ * This check is necessary, for instance, to prevent offline isolated CPUs from
-+ * being incorrectly marked as available once getting back online.
-+ *
-+ * Additionally, the tick CPU can be isolated at boot, however
-+ * we cannot mark it as unavailable to avoid having no global migrator
-+ * for the nohz_full CPUs. This check is only necessary at boot time.
-+ */
-+static inline bool tmigr_is_isolated(int cpu)
-+{
-+	if (!tick_nohz_cpu_hotpluggable(cpu))
-+		return false;
-+	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
-+		cpuset_cpu_is_isolated(cpu)) &&
-+	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
-+}
-+
- /*
-  * Returns true, when @childmask corresponds to the group migrator or when the
-  * group is not active - so no migrator is set.
-@@ -1451,6 +1475,8 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
- 
- 	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		if (!tmc->available)
-+			return 0;
- 		tmc->available = false;
- 		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
- 
-@@ -1478,8 +1504,12 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 	if (WARN_ON_ONCE(!tmc->tmgroup))
- 		return -EINVAL;
- 
-+	if (tmigr_is_isolated(cpu))
-+		return 0;
- 	cpumask_set_cpu(cpu, tmigr_available_cpumask);
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		if (tmc->available)
-+			return 0;
- 		trace_tmigr_cpu_available(tmc);
- 		tmc->idle = timer_base_is_idle();
- 		if (!tmc->idle)
-@@ -1489,6 +1519,81 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 	return 0;
- }
- 
-+static void tmigr_cpu_isolate(struct work_struct *ignored)
-+{
-+	tmigr_clear_cpu_available(smp_processor_id());
-+}
-+
-+static void tmigr_cpu_unisolate(struct work_struct *ignored)
-+{
-+	tmigr_set_cpu_available(smp_processor_id());
-+}
-+
-+/**
-+ * tmigr_isolated_exclude_cpumask - Exclude given CPUs from hierarchy
-+ * @exclude_cpumask: the cpumask to be excluded from timer migration hierarchy
-+ *
-+ * This function can be called from cpuset code to provide the new set of
-+ * isolated CPUs that should be excluded from the hierarchy.
-+ * Online CPUs not present in exclude_cpumask but already excluded are brought
-+ * back to the hierarchy.
-+ * Functions to isolate/unisolate need to be called locally and can sleep.
-+ */
-+int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-+{
-+	struct work_struct __percpu *works __free(free_percpu) =
-+		alloc_percpu(struct work_struct);
-+	cpumask_var_t cpumask_unisol __free(free_cpumask_var) = CPUMASK_NULL;
-+	cpumask_var_t cpumask_isol __free(free_cpumask_var) = CPUMASK_NULL;
-+	int cpu;
-+
-+	lockdep_assert_cpus_held();
-+
-+	if (!alloc_cpumask_var(&cpumask_isol, GFP_KERNEL))
-+		return -ENOMEM;
-+	if (!alloc_cpumask_var(&cpumask_unisol, GFP_KERNEL))
-+		return -ENOMEM;
-+	if (!works)
-+		return -ENOMEM;
-+
-+	cpumask_andnot(cpumask_unisol, cpu_online_mask, exclude_cpumask);
-+	cpumask_andnot(cpumask_unisol, cpumask_unisol, tmigr_available_cpumask);
-+	/* Set up the mask earlier to avoid races with the migrator CPU */
-+	cpumask_or(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_unisol);
-+	for_each_cpu(cpu, cpumask_unisol) {
-+		struct work_struct *work = per_cpu_ptr(works, cpu);
-+
-+		INIT_WORK(work, tmigr_cpu_unisolate);
-+		schedule_work_on(cpu, work);
-+	}
-+
-+	cpumask_and(cpumask_isol, exclude_cpumask, tmigr_available_cpumask);
-+	cpumask_and(cpumask_isol, cpumask_isol, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-+	/*
-+	 * Handle this here and not in the cpuset code because exclude_cpumask
-+	 * might include also the tick CPU if included in isolcpus.
-+	 */
-+	for_each_cpu(cpu, cpumask_isol) {
-+		if (!tick_nohz_cpu_hotpluggable(cpu)) {
-+			cpumask_clear_cpu(cpu, cpumask_isol);
-+			break;
-+		}
-+	}
-+	/* Set up the mask earlier to avoid races with the migrator CPU */
-+	cpumask_andnot(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_isol);
-+	for_each_cpu(cpu, cpumask_isol) {
-+		struct work_struct *work = per_cpu_ptr(works, cpu);
-+
-+		INIT_WORK(work, tmigr_cpu_isolate);
-+		schedule_work_on(cpu, work);
-+	}
-+
-+	for_each_cpu_or(cpu, cpumask_isol, cpumask_unisol)
-+		flush_work(per_cpu_ptr(works, cpu));
-+
-+	return 0;
-+}
-+
- /*
-  * NOHZ can only be enabled after clocksource_done_booting(). Don't
-  * bother trashing the cache in the tree before.
-@@ -1496,7 +1601,8 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- static int __init tmigr_late_init(void)
- {
- 	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
--				 tmigr_set_cpu_available, tmigr_clear_cpu_available);
-+				 tmigr_set_cpu_available,
-+				 tmigr_clear_cpu_available);
- }
- 
- static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
--- 
-2.51.0
-
+> ---
+>  tools/perf/util/maps.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
+> index 85b2a93a59ac..779f6230130a 100644
+> --- a/tools/perf/util/maps.c
+> +++ b/tools/perf/util/maps.c
+> @@ -477,6 +477,7 @@ static int __maps__insert(struct maps *maps, struct m=
+ap *new)
+>         }
+>         /* Insert the value at the end. */
+>         maps_by_address[nr_maps] =3D map__get(new);
+> +       map__set_kmap_maps(new, maps);
+>         if (maps_by_name)
+>                 maps_by_name[nr_maps] =3D map__get(new);
+>
+> @@ -502,8 +503,6 @@ static int __maps__insert(struct maps *maps, struct m=
+ap *new)
+>         if (map__end(new) < map__start(new))
+>                 RC_CHK_ACCESS(maps)->ends_broken =3D true;
+>
+> -       map__set_kmap_maps(new, maps);
+> -
+>         return 0;
+>  }
+>
+> @@ -891,6 +890,7 @@ static int __maps__fixup_overlap_and_insert(struct ma=
+ps *maps, struct map *new)
+>                 if (before) {
+>                         map__put(maps_by_address[i]);
+>                         maps_by_address[i] =3D before;
+> +                       map__set_kmap_maps(before, maps);
+>
+>                         if (maps_by_name) {
+>                                 map__put(maps_by_name[ni]);
+> @@ -918,6 +918,7 @@ static int __maps__fixup_overlap_and_insert(struct ma=
+ps *maps, struct map *new)
+>                          */
+>                         map__put(maps_by_address[i]);
+>                         maps_by_address[i] =3D map__get(new);
+> +                       map__set_kmap_maps(new, maps);
+>
+>                         if (maps_by_name) {
+>                                 map__put(maps_by_name[ni]);
+> @@ -942,14 +943,13 @@ static int __maps__fixup_overlap_and_insert(struct =
+maps *maps, struct map *new)
+>                                  */
+>                                 map__put(maps_by_address[i]);
+>                                 maps_by_address[i] =3D map__get(new);
+> +                               map__set_kmap_maps(new, maps);
+>
+>                                 if (maps_by_name) {
+>                                         map__put(maps_by_name[ni]);
+>                                         maps_by_name[ni] =3D map__get(new=
+);
+>                                 }
+>
+> -                               map__set_kmap_maps(new, maps);
+> -
+>                                 check_invariants(maps);
+>                                 return err;
+>                         }
+> @@ -1019,6 +1019,7 @@ int maps__copy_from(struct maps *dest, struct maps =
+*parent)
+>                                 err =3D unwind__prepare_access(dest, new,=
+ NULL);
+>                                 if (!err) {
+>                                         dest_maps_by_address[i] =3D new;
+> +                                       map__set_kmap_maps(new, dest);
+>                                         if (dest_maps_by_name)
+>                                                 dest_maps_by_name[i] =3D =
+map__get(new);
+>                                         RC_CHK_ACCESS(dest)->nr_maps =3D =
+i + 1;
+> --
+> 2.51.0.384.g4c02a37b29-goog
+>
 
