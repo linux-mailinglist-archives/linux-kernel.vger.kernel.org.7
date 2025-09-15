@@ -1,133 +1,284 @@
-Return-Path: <linux-kernel+bounces-817672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3B4B58534
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B879AB58538
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4988E169843
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 502F23A5E77
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB018238C0D;
-	Mon, 15 Sep 2025 19:16:37 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B0D27D771;
+	Mon, 15 Sep 2025 19:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IlUgY25b"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D26212574
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D99277C96
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757963797; cv=none; b=sY1BbmDdgLuvyv4Z87CoBcQ8Imbi8JtI6+WywMRVHjORrVJLLVltnLNF98DiHfYKyZMPa097oPR9n5Kji3PsY+tbJKPP8APDqMFN6mM+Z5A/98NewQH/OF3h+y0HBivtZKeMwlGAqG41E5tXW+Id0UqxHZPhtJOnfsmhPgHW8Sg=
+	t=1757963993; cv=none; b=noDaiSEPL8o8UEDjwGHSF0L2ZwRVPxaPIviGkrQtEJ3DZ4HSFN3kSNCHpt5PlyJ7nxgf1xk+PEGIW2KysdcRo6AjaRLyW8OzrVeQ7uOXVGZ9C47vlLXtYmnxpfWeeYfsD3VHZuaMpf0g59pLNul0bITvbUC6Oe1+qJ41bHpqscE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757963797; c=relaxed/simple;
-	bh=OnT7PRQ5i0p6/3ST28rQ8Ujjlw5uLEpAi+qO0Z7u7HQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=F8jp9YUAGAZBqDl2yzqHGva/2aiqVD9MMYH64oUogFl76l4jT/CaIstTGS+G+eftoJzpOGwbzT1nNBxARQW0DM/3HCVT/aT09VVYLfEwoItZipyzpTS2NWrRJx+nRIRDH1pV8szaugvCG/y/ZyfRK726ij40bFdoZnm81it7xNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42408b5749aso12980575ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:16:35 -0700 (PDT)
+	s=arc-20240116; t=1757963993; c=relaxed/simple;
+	bh=go8QQIZyPGUp4PkxMDF6s9CZk99i9v2/qqZF6ke4mtg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GOsMXwbhHmRvKZw3uxAFpRzPgqBhlGS1WELnXKyigC5IeDRzsrQOHy6lVrJd/UEHD8sqk+C7kpnMf+Sgns2AVV1AXpwPN8NWaaOE10dBj8M57gcWzI9xpVwHt8/T0luoNc6dNwhoopA0loSz3CpjSI483P1OH/5XaZQblFJCYrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IlUgY25b; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wakel.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2ea9366aso4334098b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757963992; x=1758568792; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWO+pKXM4jrMlLY6TR5WyVhXPvUt8x12rN7+iA06M7s=;
+        b=IlUgY25bSXYl0TmXg3EslR3D/UJirm/WceA/vm24nBsNDy3BZKeX8VZi//H7uhtoCn
+         220UeDlpPnofUHTx3gqQf3qZPKnM9MLlwl/+P9qUyJK4wivVT+AlnIjbJvXpsLqfU0Ce
+         BqJ2Dk0sNUx7eVYCwg3VJd0EOrKQjtPDsMv6GvjPGud8pYxkiQ+4/B5r5e13C4wGzEb1
+         Ipdohf6+rmHAOu32eaYRpNvZJtXHQesrSrBBrgZsbj2x6aBWXhuE0lCxiZsKs0KLKnk/
+         pvurYLVtGfaRUHCdfhw95HW4SfPlysUi8uw1Iwdl1J9nA8KnXuwoUHv+QAq5rP9+0YpP
+         F+Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757963795; x=1758568595;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9K/aJSR2T1nWA2iBvljIkPMJ0bTnTAH5Epf8hE9KXQ=;
-        b=lyas2T2S56o+ugM6N+G9MajhMJ3PGnSaGQK/vX1SgpdWb4JMgvLiejOQ8KBtSjS0b0
-         +TKPT+J9XQFgDMX9TUg/J9tsXrrPA9ioH6ePSPY5Pu/+TSJI5P2EcYigCu9EvqcVHBcs
-         i5WaavnnXSBOrEfxFr9YkGZhWhbrV1fZp4aBSF3I1H1yQJtYWME4sfLe47LGAyTgw9F/
-         QdDbJuhF4yJt3ciq0Sv4AzjJkTfVzpWfHvRknl6JtcNfQx7u+bNjXZCDB/MwMn3SHDP5
-         OP/FZZkJ61YClYkcny62M+qlYm3DWqTrA6ilzZ3SpEuqh+eNrXSOHkgVWMJHAmcqWDam
-         NtUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgp/nxGv1kejyPrqm8RLJ5OEpiofQfl60Rj+S+WHyPge+ZEmxMIcrDEmZphzQxT+q6mQhQC9jpA9yHscM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvP+O3GPgiJDwglG4Lpe9SHIjranB/RXjPQOBl25fGH+UtncDa
-	ktvs2EOUWDjY/LiGogQhXuiJ1a+TKhobofzITj5v+yi7bDrW26HcCju6fbSuMhVRe5p7TEL2r5l
-	QXxV10uu9M6bkl05JXunGcrfkFXBoXl6oIRUXGrEfy78uC1ci3vFdkHiTcus=
-X-Google-Smtp-Source: AGHT+IGKn3F9zgH/Y0O2rSLfJhx47pe3dzvUzegRuUPcWmB34CRAUlO8ZAp+SmozGsI/lnd4y0OLn30qooOHef4HWsyHEpUWNDnv
+        d=1e100.net; s=20230601; t=1757963992; x=1758568792;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWO+pKXM4jrMlLY6TR5WyVhXPvUt8x12rN7+iA06M7s=;
+        b=MyZnpn7P6mH6KN/svcZugwOsOvNLs63viychoQbv2podNGm7SlB56RIk65VWUqmh5/
+         KCXtjVT2tbrQNtIRYpx+Zx1aMw9bpRiLYmBBa35jw20yUumXPhqNzapMNL4JFnKZiy/g
+         jn/n84GvONygJf0u+7ghEnChCebOin3JmMlc6AJV6bxb/90eac6aQr5YhxJPRQNsv2c7
+         Kvn2abU1JHqdV3pPtxNmVVvYPIiX8YMVNVLHgn63GrptJ/FOjxJ3U3NcqulS5VlAhNd6
+         t7Vo3QKjinQSFLZf0w59rCc+FEz4gdpA3SffIdnDnCm8ZOwdTxKR2Smkz3bEvl5Z2R2C
+         IzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6pLPpl51jH93t14G+uUDLzPg7/ssMBMGt1shAkWRtjfhk9yBZHR/XiUL97srSJD7hNju4E1SKkuofaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOmiqn1rE6fFSDWJ7drvRONG7foe3GJnGyofOC0x8KToIm6rmY
+	Kv3JDXMMDi6RgdpPyZoi//ArDAC++Mg/9js4sk+0M2SeWtgXEGID30d33GjNYMG4iq51LmGuF5M
+	+Ng==
+X-Google-Smtp-Source: AGHT+IHrAcKdifdBfvzg9iFv/i/1R3Icgb5FYVy4tL4b6A+2MkyfkLlRYL5Zu2ouqTtRPch9AwbMRhNFkQ==
+X-Received: from pffn25.prod.google.com ([2002:a62:e519:0:b0:772:5ec0:9124])
+ (user=wakel job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2383:b0:772:4d52:ce5a
+ with SMTP id d2e1a72fcca58-7761219409cmr15606700b3a.26.1757963991502; Mon, 15
+ Sep 2025 12:19:51 -0700 (PDT)
+Date: Tue, 16 Sep 2025 03:19:44 +0800
+In-Reply-To: <fbb55063-ab03-40a9-80f4-4315d12239ba@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1809:b0:414:117d:3186 with SMTP id
- e9e14a558f8ab-420d00eda51mr124074325ab.13.1757963795121; Mon, 15 Sep 2025
- 12:16:35 -0700 (PDT)
-Date: Mon, 15 Sep 2025 12:16:35 -0700
-In-Reply-To: <b06c5a01-839f-47bf-9530-705ec838fcbe@linux.dev>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c86613.050a0220.3c6139.0d1f.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: yanjun.zhu@linux.dev
-Cc: jgg@ziepe.ca, leon@kernel.org, yanjun.zhu@linux.dev, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+References: <fbb55063-ab03-40a9-80f4-4315d12239ba@t-8ch.de>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250915191944.9779-1-wakel@google.com>
+Subject: [PATCH v2] selftests/timers: Consolidate and fix 32-bit overflow in timespec_sub
+From: Wake Liu <wakel@google.com>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, wakel@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-> #syz test:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+The timespec_sub function, as implemented in several timer
+selftests, is prone to integer overflow on 32-bit systems.
 
-unknown command "test:https://github.com/zhuyj/linux.git"
+The calculation `NSEC_PER_SEC * b.tv_sec` is performed using
+32-bit arithmetic, and the result overflows before being
+stored in the 64-bit `ret` variable. This leads to incorrect
+time delta calculations and test failures.
 
->
->
-> On 9/15/25 12:07 PM, syzbot wrote:
->>> #syz test:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
->> unknown command "test:https://github.com/zhuyj/linux.git"
->>
->>> On 9/12/25 3:04 PM, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
->>>> WARNING in gid_table_release_one
->>>>
->>>> ------------[ cut here ]------------
->>>> GID entry ref leak for dev syz1 index 2 ref=445
->>>> WARNING: CPU: 1 PID: 1088 at drivers/infiniband/core/cache.c:809 release_gid_table drivers/infiniband/core/cache.c:806 [inline]
->>>> WARNING: CPU: 1 PID: 1088 at drivers/infiniband/core/cache.c:809 gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
->>>> Modules linked in:
->>>> CPU: 1 UID: 0 PID: 1088 Comm: kworker/u8:5 Not tainted syzkaller #0 PREEMPT(full)
->>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
->>>> Workqueue: ib-unreg-wq ib_unregister_work
->>>> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
->>>> RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
->>>> Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 00 46 71 8c 4c 89 e6 44 89 fa e8 3b a5 fa f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
->>>> RSP: 0018:ffffc90003d0f908 EFLAGS: 00010246
->>>> RAX: 11007f8b953ea200 RBX: ffff88802d562cd8 RCX: ffff888026adda00
->>>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
->>>> RBP: 1ffff11005aac59b R08: ffff8880b8724253 R09: 1ffff110170e484a
->>>> R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff888028265480
->>>> R13: ffff88802d562c00 R14: ffff8880779b1800 R15: 0000000000000002
->>>> FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
->>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> CR2: 0000200000000240 CR3: 000000007612e000 CR4: 00000000003526f0
->>>> Call Trace:
->>>>    <TASK>
->>>>    ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
->>>>    device_release+0x99/0x1c0 drivers/base/core.c:-1
->>>>    kobject_cleanup lib/kobject.c:689 [inline]
->>>>    kobject_release lib/kobject.c:720 [inline]
->>>>    kref_put include/linux/kref.h:65 [inline]
->>>>    kobject_put+0x22b/0x480 lib/kobject.c:737
->>>>    process_one_work kernel/workqueue.c:3236 [inline]
->>>>    process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
->>>>    worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
->>>>    kthread+0x70e/0x8a0 kernel/kthread.c:463
->>>>    ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
->>>>    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->>>>    </TASK>
->>>>
->>>>
->>>> Tested on:
->>>>
->>>> commit:         dd87fd3f RDMA/rxe: Add logs to find out the root cause
->>>> git tree:https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
->>>> console output:https://syzkaller.appspot.com/x/log.txt?x=144a9934580000
->>>> kernel config:https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
->>>> dashboard link:https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
->>>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->>>>
->>>> Note: no patches were applied.
+As suggested by tglx, this patch fixes the issue by:
+
+1. Creating a new `static inline` helper function,
+   `timespec_to_ns`, which safely converts a `timespec` to
+   nanoseconds by casting `tv_sec` to `long long` before
+   multiplying with `NSEC_PER_SEC`.
+
+2. Placing the new helper and a rewritten `timespec_sub` into
+   a common header: tools/testing/selftests/timers/helpers.h.
+
+3. Removing the duplicated, buggy implementations from all
+   timer selftests and replacing them with an #include of the
+   new header.
+
+This consolidates the code and ensures the calculation is
+correctly performed using 64-bit arithmetic across all tests.
+
+Changes in v2:
+  - Per tglx's feedback, instead of changing NSEC_PER_SEC globally,
+    this version consolidates the buggy timespec_sub() implementations
+    into a new 32-bit safe inline function in a shared header.
+  - Amended the commit message to be more descriptive.
+---
+ .../selftests/timers/alarmtimer-suspend.c     | 15 +++------
+ tools/testing/selftests/timers/helpers.h      | 31 +++++++++++++++++++
+ tools/testing/selftests/timers/nanosleep.c    |  2 +-
+ tools/testing/selftests/timers/nsleep-lat.c   | 12 ++-----
+ .../testing/selftests/timers/valid-adjtimex.c |  8 ++---
+ 5 files changed, 43 insertions(+), 25 deletions(-)
+ create mode 100644 tools/testing/selftests/timers/helpers.h
+
+diff --git a/tools/testing/selftests/timers/alarmtimer-suspend.c b/tools/testing/selftests/timers/alarmtimer-suspend.c
+index a9ef76ea6051..e85ab182abe5 100644
+--- a/tools/testing/selftests/timers/alarmtimer-suspend.c
++++ b/tools/testing/selftests/timers/alarmtimer-suspend.c
+@@ -31,8 +31,9 @@
+ #include <include/vdso/time64.h>
+ #include <errno.h>
+ #include "../kselftest.h"
++#include "helpers.h"
+ 
+-#define UNREASONABLE_LAT (NSEC_PER_SEC * 5) /* hopefully we resume in 5 secs */
++#define UNREASONABLE_LAT (NSEC_PER_SEC * 5LL) /* hopefully we resume in 5 secs */
+ 
+ #define SUSPEND_SECS 15
+ int alarmcount;
+@@ -70,14 +71,6 @@ char *clockstring(int clockid)
+ }
+ 
+ 
+-long long timespec_sub(struct timespec a, struct timespec b)
+-{
+-	long long ret = NSEC_PER_SEC * b.tv_sec + b.tv_nsec;
+-
+-	ret -= NSEC_PER_SEC * a.tv_sec + a.tv_nsec;
+-	return ret;
+-}
+-
+ int final_ret;
+ 
+ void sigalarm(int signo)
+@@ -88,8 +81,8 @@ void sigalarm(int signo)
+ 	clock_gettime(alarm_clock_id, &ts);
+ 	alarmcount++;
+ 
+-	delta_ns = timespec_sub(start_time, ts);
+-	delta_ns -= NSEC_PER_SEC * SUSPEND_SECS * alarmcount;
++	delta_ns = timespec_sub(ts, start_time);
++	delta_ns -= (long long)NSEC_PER_SEC * SUSPEND_SECS * alarmcount;
+ 
+ 	printf("ALARM(%i): %ld:%ld latency: %lld ns ", alarmcount, ts.tv_sec,
+ 							ts.tv_nsec, delta_ns);
+diff --git a/tools/testing/selftests/timers/helpers.h b/tools/testing/selftests/timers/helpers.h
+new file mode 100644
+index 000000000000..652f20247091
+--- /dev/null
++++ b/tools/testing/selftests/timers/helpers.h
+@@ -0,0 +1,31 @@
++#ifndef SELFTESTS_TIMERS_HELPERS_H
++#define SELFTESTS_TIMERS_HELPERS_H
++
++#include <time.h>
++
++#ifndef NSEC_PER_SEC
++#define NSEC_PER_SEC 1000000000L
++#endif
++
++/*
++ * timespec_to_ns - Convert timespec to nanoseconds
++ */
++static inline long long timespec_to_ns(const struct timespec *ts)
++{
++	return ((long long) ts->tv_sec * NSEC_PER_SEC) + ts->tv_nsec;
++}
++
++/*
++ * timespec_sub - Subtract two timespec values
++ *
++ * @a: first timespec
++ * @b: second timespec
++ *
++ * Returns a - b in nanoseconds.
++ */
++static inline long long timespec_sub(struct timespec a, struct timespec b)
++{
++	return timespec_to_ns(&a) - timespec_to_ns(&b);
++}
++
++#endif /* SELFTESTS_TIMERS_HELPERS_H */
+diff --git a/tools/testing/selftests/timers/nanosleep.c b/tools/testing/selftests/timers/nanosleep.c
+index 252c6308c569..41c33629d5f0 100644
+--- a/tools/testing/selftests/timers/nanosleep.c
++++ b/tools/testing/selftests/timers/nanosleep.c
+@@ -138,7 +138,7 @@ int main(int argc, char **argv)
+ 		fflush(stdout);
+ 
+ 		length = 10;
+-		while (length <= (NSEC_PER_SEC * 10)) {
++		while (length <= (NSEC_PER_SEC * 10LL)) {
+ 			ret = nanosleep_test(clockid, length);
+ 			if (ret == UNSUPPORTED) {
+ 				ksft_test_result_skip("%-31s\n", clockstring(clockid));
+diff --git a/tools/testing/selftests/timers/nsleep-lat.c b/tools/testing/selftests/timers/nsleep-lat.c
+index de23dc0c9f97..c888a77aab7a 100644
+--- a/tools/testing/selftests/timers/nsleep-lat.c
++++ b/tools/testing/selftests/timers/nsleep-lat.c
+@@ -26,6 +26,7 @@
+ #include <signal.h>
+ #include <include/vdso/time64.h>
+ #include "../kselftest.h"
++#include "helpers.h"
+ 
+ #define UNRESONABLE_LATENCY 40000000 /* 40ms in nanosecs */
+ 
+@@ -74,14 +75,6 @@ struct timespec timespec_add(struct timespec ts, unsigned long long ns)
+ }
+ 
+ 
+-long long timespec_sub(struct timespec a, struct timespec b)
+-{
+-	long long ret = NSEC_PER_SEC * b.tv_sec + b.tv_nsec;
+-
+-	ret -= NSEC_PER_SEC * a.tv_sec + a.tv_nsec;
+-	return ret;
+-}
+-
+ int nanosleep_lat_test(int clockid, long long ns)
+ {
+ 	struct timespec start, end, target;
+@@ -146,7 +139,7 @@ int main(int argc, char **argv)
+ 			continue;
+ 
+ 		length = 10;
+-		while (length <= (NSEC_PER_SEC * 10)) {
++		while (length <= (NSEC_PER_SEC * 10LL)) {
+ 			ret = nanosleep_lat_test(clockid, length);
+ 			if (ret)
+ 				break;
+@@ -164,3 +157,4 @@ int main(int argc, char **argv)
+ 
+ 	ksft_finished();
+ }
++
+diff --git a/tools/testing/selftests/timers/valid-adjtimex.c b/tools/testing/selftests/timers/valid-adjtimex.c
+index 6b7801055ad1..a61d4b4739a2 100644
+--- a/tools/testing/selftests/timers/valid-adjtimex.c
++++ b/tools/testing/selftests/timers/valid-adjtimex.c
+@@ -260,16 +260,16 @@ int validate_set_offset(void)
+ 	if (set_offset(-NSEC_PER_SEC - 1, 1))
+ 		return -1;
+ 
+-	if (set_offset(5 * NSEC_PER_SEC, 1))
++	if (set_offset(5LL * NSEC_PER_SEC, 1))
+ 		return -1;
+ 
+-	if (set_offset(-5 * NSEC_PER_SEC, 1))
++	if (set_offset(-5LL * NSEC_PER_SEC, 1))
+ 		return -1;
+ 
+-	if (set_offset(5 * NSEC_PER_SEC + NSEC_PER_SEC / 2, 1))
++	if (set_offset(5LL * NSEC_PER_SEC + NSEC_PER_SEC / 2, 1))
+ 		return -1;
+ 
+-	if (set_offset(-5 * NSEC_PER_SEC - NSEC_PER_SEC / 2, 1))
++	if (set_offset(-5LL * NSEC_PER_SEC - NSEC_PER_SEC / 2, 1))
+ 		return -1;
+ 
+ 	if (set_offset(USEC_PER_SEC - 1, 0))
+-- 
+2.51.0.384.g4c02a37b29-goog
+
 
