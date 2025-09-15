@@ -1,132 +1,200 @@
-Return-Path: <linux-kernel+bounces-815945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802A3B56D4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26422B56D4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E6F3A23ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 00:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0D0176091
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 00:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF948199FB0;
-	Mon, 15 Sep 2025 00:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3B019ABC6;
+	Mon, 15 Sep 2025 00:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfISNfCS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C4Vr9g9t"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AE9288D2;
-	Mon, 15 Sep 2025 00:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CF7189F3B;
+	Mon, 15 Sep 2025 00:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757895902; cv=none; b=FKVa2wZHCQ5h470lxLH4u3BjR18LTy7QebQutiwNHbd3uwwhYKVcwySURLLPkxR19XnLYh25iJLMTd4tQli+ECo8hF0NFWFoI/IgPEVmT4LBiujy1OipUE3jAodPjkZDQkRLyMtNKUCiScL1BGa5dLd9RKlEn3o9I/7kx9bHM1k=
+	t=1757895926; cv=none; b=IrHysMw8ru1lQgye9rRt+hE/r0ucFHPdz1rR+xKTvWA2inr3v/Z3WgsmfP+JNqiA8FDy1Jcbw7QE2ZYJszy+3Z9D2DnyulHFYK5ZL+ml6mRVV5/ZFy7yHGbFLI4ScMDlumyLEfNRK6HtAqt5b8lvsmb8pTUYDEKrBPUNjnGxB4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757895902; c=relaxed/simple;
-	bh=fGG2ZwndHPkyRbDPK16urfdX2lHeajzJP0z7F8/XDOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n50trjx0bZFGws/yg9HTo1q0RnNdlwJWMyHl3Shak5wgkye5wjeWbwdfNoDlUayZ8O5o55rIM5QcgjFPuFkh6WomE/gJASbXc0fmoM8UdqjGPb4cGqxk+r+chpPHmxoX+d0a/JLhRMBQggx0dBeqAhgfJTOKxKfmqUP5Pk2Df08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfISNfCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62244C4CEF0;
-	Mon, 15 Sep 2025 00:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757895901;
-	bh=fGG2ZwndHPkyRbDPK16urfdX2lHeajzJP0z7F8/XDOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YfISNfCSeJ94+JyEyQBOAt6tVZQIy/8dcXZQ2ht6VwHhX6wJ8cYEfrHGq89UPf2/4
-	 5JWUceXy7H85P/nVo1k1bARA+NIFw7ZG8uvPIm0J2HD0pY3yx8OepEZNTk9Pijvfy2
-	 TYSqjLC6/MZaqWKrVP8tloiUwjRe0RbsQfYx3iLp7CzToF4k1w+AY18MGmra2DBLfW
-	 OK1B/P2JsD8dxE6Nlv6s6UDrhS6fQvQg5jBJeHZthlM/bBVyxtZIF6JaOckaxHMnDf
-	 Xjrm3icD9YV/76uwXSw7Nf3hicnwjHi/qIjLTB7sHJ0a0Rz41J0GAKl7pFw2Q+D+ut
-	 j/kGlAGkl7DFg==
-Date: Sun, 14 Sep 2025 19:25:00 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Paolo Abeni <pabeni@redhat.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH net-next v3 1/9] dt-bindings: net: pcs:
- renesas,rzn1-miic: Add RZ/T2H and RZ/N2H support
-Message-ID: <175789589955.2309369.4610960260845760288.robh@kernel.org>
-References: <20250910204132.319975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250910204132.319975-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1757895926; c=relaxed/simple;
+	bh=zEoptxqfKZSCEk17+Y0MDsXZEX03H+Xf2g82b3gPamU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZhIr16kwvo/lIpYPiwwmAa9SPXMZcX8BEeaMl4m0f1mnaj9vAZXFLl6v0WNF86VEfYmcoYEwtJsXe56v8H8bdn2z/tPj0kUlXMoNTXL0xaHSYxUU34qYYhbWiHRXU4wZJqjaho8W9/UHNiUZVgG9YDDCbHIrXI2eyNz3Wmr3eOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C4Vr9g9t; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=u8zMQpdMOqIdURPi9uNy67Biru0axdnayB3aNUPVnFg=; b=C4Vr9g9tXs0Oc6zzKbFOONNmS8
+	eSq7F7barvctskieUIp02HEyGQ5xs95vT4cQdN8GL8v8pFooUt4jO90o9jRdZN2qTWgLbANdIQHVg
+	7yWqDbMse/xbhrClylogg0mkrBD+sfMojfAxlRUKqoUYxmVvZQhc49T5CYv+u4+BMbsZw1Mmn9hDt
+	QLFtLpVkchQJYQzd33HRUXm7OQC2+puMAgjlu+FJx10HXRXGHMPK1PZazbc18iKT52RKB5O5dIz3G
+	2tUV2HN5Ickg8XzW7+WYHGD4fWqQpAyB7ji5nbaGvb6R+RwmoHRSuvx8XxoDlqQJBsrG8uFyWfaTs
+	iVhfy0+w==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uxx20-00000002PjJ-0sg7;
+	Mon, 15 Sep 2025 00:25:20 +0000
+Message-ID: <fadb37f2-543a-4c4c-9cde-5ee7928edbe4@infradead.org>
+Date: Sun, 14 Sep 2025 17:25:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910204132.319975-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] tracing: wprobe: Add wprobe event trigger
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <175785897434.234168.6798590787777427098.stgit@devnote2>
+ <175785903073.234168.11080771050255081365.stgit@devnote2>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <175785903073.234168.11080771050255081365.stgit@devnote2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Wed, 10 Sep 2025 21:41:22 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+On 9/14/25 7:10 AM, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> Add device tree binding support for RZ/T2H and RZ/N2H SoCs to the
-> existing RZ/N1 MIIC converter binding. These SoCs share similar MIIC
-> functionality but have architectural differences that require schema
-> updates.
+> Add wprobe event trigger to set and clear the watch event dynamically.
+> This allows us to set an watchpoint on a given local variables and
+> a slab object instead of static objects.
 > 
-> Add new compatible strings "renesas,r9a09g077-miic" for RZ/T2H and
-> "renesas,r9a09g087-miic" for RZ/N2H, with the latter falling back to
-> the RZ/T2H variant. The new SoCs require reset support with two reset
-> lines for converter register reset and converter reset, which are not
-> present on RZ/N1.
+> The trigger syntax is below;
+
+                        below:
+(just a nit :)
+
 > 
-> Update port configurations to accommodate the different architectures.
-> RZ/N1 supports 5 ports numbered 1-5 with complex input mappings
-> covering indices 0-13, while RZ/T2H and RZ/N2H support 4 ports
-> numbered 0-3 with simplified input mappings covering indices 0-8.
-> Extend the switch port configuration property to support value 0 for
-> the new SoCs.
+>   - set_wprobe:WPROBE:FIELD[+OFFSET] [if FILTER]
+>   - clear_wprobe:WPROBE[:FIELD[+OFFSET]] [if FILTER]
 > 
-> Add a new dt-bindings header file with media interface connection
-> matrix constants that map GMAC, ESC, and ETHSW ports to numeric
-> identifiers for use with RZ/T2H and RZ/N2H device trees.
+> set_wprobe sets the address pointed by FIELD[+offset] to the WPROBE
+> event. The FIELD is the field name of trigger event.
+> clear_wprobe clears the watch address of WPROBE event. If the FIELD
+> option is specified, it clears only if the current watch address is
+> same as the given FIELD[+OFFSET] value.
 > 
-> Update DT schema validation to ensure proper port numbering and input
-> mappings per SoC variant.
+> The set_wprobe trigger do not change type and length. That should be
+
+                         does                             should be done
+?
+
+> set when a new wprobe is created.
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Also, the WPROBE event must be disabled when setting the new trigger
+> and it will be busy afterwards. Recommended usage is to add a new
+> wprobe at NULL address and keep disabled.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > ---
-> v2->v3:
-> - Added Tested-by tag.
-> 
-> v1->v2:
-> - Dropped regx in title and description.
-> - As done for other IPs used T2H compatible as a fallback for N2H.
-> - Renamed pcs-rzt2h-miic.h -> renesas,r9a09g077-pcs-miic.h
-> - Added matrix table in the new header file.
-> - Corrected the resets check for RZ/N1.
-> - Updated the commit message.
+>  Changes in v3:
+>   - Add FIELD option support for clear_wprobe and update document.
+>   - Fix to unregister/free event_trigger_data on file correctly.
+>   - Fix syntax comments.
+>  Changes in v2:
+>   - Getting local cpu perf_event from trace_wprobe directly.
+>   - Remove trace_wprobe_local_perf() because it is conditionally unused.
+>   - Make CONFIG_WPROBE_TRIGGERS a hidden config.
 > ---
->  .../bindings/net/pcs/renesas,rzn1-miic.yaml   | 177 +++++++++++++-----
->  .../net/renesas,r9a09g077-pcs-miic.h          |  36 ++++
->  2 files changed, 165 insertions(+), 48 deletions(-)
->  create mode 100644 include/dt-bindings/net/renesas,r9a09g077-pcs-miic.h
+>  Documentation/trace/wprobetrace.rst |   88 +++++++
+>  include/linux/trace_events.h        |    1 
+>  kernel/trace/Kconfig                |   10 +
+>  kernel/trace/trace_wprobe.c         |  430 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 529 insertions(+)
 > 
+> diff --git a/Documentation/trace/wprobetrace.rst b/Documentation/trace/wprobetrace.rst
+> index 9774f57e2947..a1812a8ac491 100644
+> --- a/Documentation/trace/wprobetrace.rst
+> +++ b/Documentation/trace/wprobetrace.rst
+> @@ -67,3 +67,91 @@ Here is an example to add a wprobe event on a variable `jiffies`.
+>             <idle>-0       [000] d.Z1.  717.026373: my_jiffies: (tick_do_update_jiffies64+0xbe/0x130)
+>  
+>  You can see the code which writes to `jiffies` is `do_timer()`.
+> +
+> +Combination with trigger action
+> +-------------------------------
+> +The event trigger action can extend the utilization of this wprobe.
+> +
+> +- set_wprobe:WPEVENT:FIELD[+|-ADJUST]
+> +- clear_wprobe:WPEVENT[:FIELD[+|-]ADJUST]
+> +
+> +Set these triggers to the target event, then the WPROBE event will be
+> +setup to trace the memory access at FIELD[+|-ADJUST] address.
+> +When clear_wprobe is hit, if FIELD is NOT specified, the WPEVENT is
+> +forcibly cleared. If FIELD[[+|-]ADJUST] is set, it clears WPEVENT only
+> +if its watching address is the same as the FIELD[[+|-]ADJUST] value.
+> +
+> +Notes:
+> +The set_wprobe trigger do not change type and length. That should be
+                          does not                          should be done
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+> +set when a new wprobe is created.
+> +
+> +The WPROBE event must be disabled when setting the new trigger
+> +and it will be busy afterwards. Recommended usage is to add a new
+> +wprobe at NULL address and keep disabled.
+> +
+> +
+> +For example, trace the first 8 byte of the dentry data structure passed
+
+                                  bytes
+
+> +to do_truncate() until it is deleted by __dentry_kill().
+> +(Note: all tracefs setup uses '>>' so that it does not kick do_truncate())
+> +
+> +  # echo 'w:watch rw@0:8 address=$addr value=+0($addr)' > dynamic_events
+
+Just using '>' here is OK?
+
+> +
+> +  # echo 'f:truncate do_truncate dentry=$arg2' >> dynamic_events
+> +  # echo 'set_wprobe:watch:dentry' >> events/fprobes/truncate/trigger
+> +
+> +  # echo 'f:dentry_kill __dentry_kill dentry=$arg1' >> dynamic_events
+> +  # echo 'clear_wprobe:watch:dentry' >> events/fprobes/dentry_kill/trigger
+> +
+> +  # echo 1 >> events/fprobes/truncate/enable
+> +  # echo 1 >> events/fprobes/dentry_kill/enable
+> +
+> +  # echo aaa > /tmp/hoge
+> +  # echo bbb > /tmp/hoge
+> +  # echo ccc > /tmp/hoge
+> +  # rm /tmp/hoge
+> +
+> +Then, the trace data will show;
+
+Usually that should be:      show:
+
+but in .rst it might need to be    show::
+
+I don't know. Haven't tested it.
+
+
+-- 
+~Randy
 
 
