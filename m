@@ -1,257 +1,170 @@
-Return-Path: <linux-kernel+bounces-816675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12018B57701
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77504B5770F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FD71885521
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11DA83A54C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B632FE05F;
-	Mon, 15 Sep 2025 10:46:23 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B1F38DDB;
+	Mon, 15 Sep 2025 10:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8GUuZND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D88C1E87B;
-	Mon, 15 Sep 2025 10:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AD82DA776;
+	Mon, 15 Sep 2025 10:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933182; cv=none; b=VFI61odWw8K1O8+JbDwFDEppFRovwN2Ky3ptzXmDjKZqcezg3CXjjEOL8njzNAZ2T7js2qtgyf2YZnNkwkSF9eJT+MhwU2i9O8G1c5oct0kCF1BRu1Vx7R29x64Delk1N+DHpREJgvkblsWqYvGJy3mcsyppSBXjtDpa3A1j6Os=
+	t=1757933222; cv=none; b=dD1gYCyxOL7IB87HR4w6rlpLsbehOZxmsnfoCeuyjqnU/CSNHVW2a6BsTfZJIHOY+l23QS0iQrhMAI0ktRK7weAPeSCyW+NVJGZ/qeppUOC0oDFzuA6L+EasDJX/LKKmlkZQwDYOMhXO9rh4PEGpLpN1V0B+qE1Bl6FOFd50SrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933182; c=relaxed/simple;
-	bh=FhnEPNIMRkzIGOksggj4Z5MBpCvP5ojagYiNxuMGBfU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S/aE+ZIYdvp7x5yUB59B+d+i/oCM/qo309LxyuPb+8MW5yyRyCIDCKPaLTS5obZ+8a30d7sQnB3TbGlJWS3Ds7bG9dAGKrgxQtDu8iKex8pQq6j3ZIGZdRDLYbAMQSQJ4nyUkx7yDLqdUfwCcE/QoGIofc3tC5VGAYX33IDhBMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQM826nt4z6M5gY;
-	Mon, 15 Sep 2025 18:43:30 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6C1811402FB;
-	Mon, 15 Sep 2025 18:46:16 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
- 2025 12:46:15 +0200
-Date: Mon, 15 Sep 2025 11:46:14 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
- De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
-	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 08/11] cxl/region: Implement endpoint decoder address
- translation
-Message-ID: <20250915114614.000053f1@huawei.com>
-In-Reply-To: <20250912144514.526441-9-rrichter@amd.com>
-References: <20250912144514.526441-1-rrichter@amd.com>
-	<20250912144514.526441-9-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757933222; c=relaxed/simple;
+	bh=avsto3QNk6qIWfGwz4s5xOHibcyjdg9CFwNBjQsN5dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNtOMwY3IkmfR+TmH+3GN7AdJ050/wfM/mjgLZNEHJcAIU8DOEvY8jpAlj3kZ1TFeCtsCpfYeMhPH3rsUhGEQ9L9xVTw1A4AxnXeVZDPydRsrMlWNXfRRYHmxB5afnoPaedDSw9RxMzqqBH3cWgtFlauYDk+kv9Gyf77smP1tkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8GUuZND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8DCC4CEF1;
+	Mon, 15 Sep 2025 10:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757933222;
+	bh=avsto3QNk6qIWfGwz4s5xOHibcyjdg9CFwNBjQsN5dQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V8GUuZNDRXJWH+csFpxRySlEaGxHPM1wv2EB4Q2EiTEtWYe6vRrtznX8TBjYg6+Kc
+	 EYGZP31esjXS511n24JlKdPKKEh4PhVuyJVonhaA+OnjQDxMHO/hiAIoD3OocIRDS7
+	 /DHxTpNwq0zDYrKd3mr9ByHnvtsrkNSiRYhRKEC+u/Ll7aIbbQXDRKw0R15nd0IE2j
+	 YWon+KVteNNHpC+H9ElCVIs/ogx+ARDcmRk55ciThwnvEnZ3jscpl5N41PobwGS/UJ
+	 VZHLFiMhoaqXlrcwycy0xMmjxbkeoR2ABmqryCrPnYqBig4meuPGwYi0wzkkzm2SeP
+	 patWrdkfYenVQ==
+Message-ID: <f0a34514-19da-4c73-9cd4-ae220fed6447@kernel.org>
+Date: Mon, 15 Sep 2025 19:47:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] can: raw: use bitfields to store flags in struct
+ raw_sock
+To: Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
+ <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
+ <f96cd163-0364-4c14-882b-48c3f8e0f05a@hartkopp.net>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <f96cd163-0364-4c14-882b-48c3f8e0f05a@hartkopp.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 12 Sep 2025 16:45:10 +0200
-Robert Richter <rrichter@amd.com> wrote:
-
-> Systems that need address translation have the endpoint decoders
-> programmed for a different address space. Host physical addresses
-> (HPA) are different from their system physical addresses (SPA). The
-> decoder's address range and interleaving configuration of such
-> endpoints cannot be used to determine the region parameters. The
-> region's address range must be SPA which the decoder does not
-> provide. In addition, an endpoint's incoming HPA is already converted
-> to the devices physical address (DPA). Thus it has interleaving
-> disabled.
+On 15/09/2025 at 19:16, Oliver Hartkopp wrote:
+> On 15.09.25 11:23, Vincent Mailhol wrote:
+>> The loopback, recv_own_msgs, fd_frames and xl_frames fields of struct
+>> raw_sock just need to store one bit of information.
+>>
+>> Declare all those members as a bitfields of type unsigned int and
+>> width one bit.
+>>
+>> Add a temporary variable to raw_setsockopt() and raw_getsockopt() to
+>> make the conversion between the stored bits and the socket interface.
+>>
+>> This reduces struct raw_sock by eight bytes.
+>>
+>> Statistics before:
+>>
+>>    $ pahole --class_name=raw_sock net/can/raw.o
+>>    struct raw_sock {
+>>        struct sock                sk __attribute__((__aligned__(8))); /*    
+>> 0   776 */
+>>
+>>        /* XXX last struct has 1 bit hole */
+>>
+>>        /* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
+>>        int                        bound;                /*   776     4 */
+>>        int                        ifindex;              /*   780     4 */
+>>        struct net_device *        dev;                  /*   784     8 */
+>>        netdevice_tracker          dev_tracker;          /*   792     0 */
+>>        struct list_head           notifier;             /*   792    16 */
+>>        int                        loopback;             /*   808     4 */
+>>        int                        recv_own_msgs;        /*   812     4 */
+>>        int                        fd_frames;            /*   816     4 */
+>>        int                        xl_frames;            /*   820     4 */
+>>        struct can_raw_vcid_options raw_vcid_opts;       /*   824     4 */
+>>        canid_t                    tx_vcid_shifted;      /*   828     4 */
+>>        /* --- cacheline 13 boundary (832 bytes) --- */
+>>        canid_t                    rx_vcid_shifted;      /*   832     4 */
+>>        canid_t                    rx_vcid_mask_shifted; /*   836     4 */
+>>        int                        join_filters;         /*   840     4 */
+>>        int                        count;                /*   844     4 */
+>>        struct can_filter          dfilter;              /*   848     8 */
+>>        struct can_filter *        filter;               /*   856     8 */
+>>        can_err_mask_t             err_mask;             /*   864     4 */
+>>
+>>        /* XXX 4 bytes hole, try to pack */
+>>
+>>        struct uniqframe *         uniq;                 /*   872     8 */
+>>
+>>        /* size: 880, cachelines: 14, members: 20 */
+>>        /* sum members: 876, holes: 1, sum holes: 4 */
+>>        /* member types with bit holes: 1, total: 1 */
+>>        /* forced alignments: 1 */
+>>        /* last cacheline: 48 bytes */
+>>    } __attribute__((__aligned__(8)));
+>>
+>> ...and after:
+>>
+>>    $ pahole --class_name=raw_sock net/can/raw.o
+>>    struct raw_sock {
+>>        struct sock                sk __attribute__((__aligned__(8))); /*    
+>> 0   776 */
+>>
+>>        /* XXX last struct has 1 bit hole */
+>>
+>>        /* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
+>>        int                        bound;                /*   776     4 */
+>>        int                        ifindex;              /*   780     4 */
+>>        struct net_device *        dev;                  /*   784     8 */
+>>        netdevice_tracker          dev_tracker;          /*   792     0 */
+>>        struct list_head           notifier;             /*   792    16 */
+>>        unsigned int               loopback:1;           /*   808: 0  4 */
+>>        unsigned int               recv_own_msgs:1;      /*   808: 1  4 */
+>>        unsigned int               fd_frames:1;          /*   808: 2  4 */
+>>        unsigned int               xl_frames:1;          /*   808: 3  4 */
 > 
-> Address translation may provide different ways to determine an
-> endpoint's SPA, e.g. it may support a firmware call. This allows the
-> determination of the region's parameters without inspecting the
-> endpoint decoders.
+> This means that the former data structures (int) are not copied but bits are set
+> (shifted, ANDed, ORed, etc) right?
 > 
-> Implement the setup of address translation given there is a function
-> to convert an endpoint's HPA (which is identical to its DPA) to an
-> SPA. Use the previously introduced cxl_to_hpa_fn callback for this.
-> Convert the decoder's address range and ensure it is 256MB aligned.
-> 
-> Identify the region's interleaving ways by inspecting the address
-> ranges. Also determine the interleaving granularity using the address
-> translation callback. Note that the position of the chunk from one
-> interleaving block to the next may vary and thus cannot be considered
-> constant. Address offsets larger than the interleaving block size
-> cannot be used to calculate the granularity. Thus, probe the
-> granularity using address translation for various HPAs in the same
-> interleaving block.
-> 
-> Note that this patch does not yet enable address translation as
-> callbacks have not been initialized.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/core/region.c | 95 ++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 94 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 57697504410b..9fb1e9508213 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3422,16 +3422,109 @@ struct cxl_region_context {
->  	int interleave_granularity;
->  };
->  
-> +static int setup_address_translation(struct cxl_endpoint_decoder *cxled,
-> +				     struct cxl_region_context *ctx)
-> +{
-> +	struct cxl_port *port = to_cxl_port(cxled->cxld.dev.parent->parent);
+> So what's the difference in the code the CPU has to process for this
+> improvement? Is implementing this bitmap more efficient or similar to copy the
+> (unsigned ints) as-is?
 
-When there is a parent->parent it always makes me nervous that I haven't
-reasoned out what port this actually is. A comment would help or
-a more specific macro where the name lets us know what we are getting.
+It will indeed have to add a couple assembly instructions. But this is peanuts.
+In the best case, the out of order execution might very well optimize this so
+that not even a CPU tick is wasted. In the worst case, it is a couple CPU ticks.
 
-> +	struct cxl_decoder *cxld = &cxled->cxld;
-> +	struct range range = ctx->hpa_range;
-> +	u64 spa_len, len = range_len(&range);
-> +	u64 addr, base = range.start;
-> +	int ways, gran;
-> +
-> +	if (!len || !port->to_hpa)
-> +		return 0;
-> +
-> +	if (!IS_ALIGNED(range.start, SZ_256M) ||
-> +	    !IS_ALIGNED(range.end + 1, SZ_256M)) {
-> +		dev_warn(&port->dev,
-> +			"CXL address translation: Unaligned decoder HPA range: %#llx-%#llx(%s)\n",
-> +			range.start, range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	/* Translate HPA range to SPA. */
-> +	range.start = port->to_hpa(cxld, range.start);
+On the other hands, reducing the size by 16 bytes lowers the risk to have a
+cache miss. And removing one cache miss outperforms by an order of magnitude the
+penalty of adding a couple assembly instructions.
 
-This is where the generic naming as 'range' gets really confusing.
-hpa_range etc with separate struct range for each would definitely help
-
-For the checks and inputs maybe just use ctx->hpa_range directly.
+Well, I did not benchmark it, but this is a commonly accepted trade off.
 
 
-> +	range.end = port->to_hpa(cxld, range.end);
-Perhaps use the DEFINE_RANGE macro or 
-	range = (struct range) {
-		.start = ...
-style as per earlier patches.
-
-> +
-> +	if (range.start == ULLONG_MAX || range.end == ULLONG_MAX) {
-> +		dev_warn(&port->dev,
-> +			"CXL address translation: Failed to translate HPA range: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			range.start, range.end, ctx->hpa_range.start,
-> +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	/*
-> +	 * Since translated addresses include the interleaving
-> +	 * offsets, align the range to 256 MB.
-
-So we pass in an HPA range without interleaving offsets and get back
-one with them?  Is that unavoidable, or can we potentially push
-this bit into the callback?  Probably with separate callbacks to
-get the interleave details.
-
-Overall I'm not really following what is going on here.  Maybe
-some ascii art would help?
-
-> +	 */
-> +	range.start = ALIGN_DOWN(range.start, SZ_256M);
-> +	range.end = ALIGN(range.end, SZ_256M) - 1;
-> +
-> +	spa_len = range_len(&range);
-> +	if (!len || !spa_len || spa_len % len) {
-> +		dev_warn(&port->dev,
-> +			"CXL address translation: HPA range not contiguous: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			range.start, range.end, ctx->hpa_range.start,
-> +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	ways = spa_len / len;
-> +	gran = SZ_256;
-> +
-> +	/*
-> +	 * Determine interleave granularity
-> +	 *
-> +	 * Note: The position of the chunk from one interleaving block
-> +	 * to the next may vary and thus cannot be considered
-> +	 * constant. Address offsets larger than the interleaving
-> +	 * block size cannot be used to calculate the granularity.
-> +	 */
-> +	while (ways > 1 && gran <= SZ_16M) {
-> +		addr = port->to_hpa(cxld, base + gran);
-> +		if (addr != base + gran)
-> +			break;
-> +		gran <<= 1;
-> +	}
-> +
-> +	if (gran > SZ_16M) {
-> +		dev_warn(&port->dev,
-> +			"CXL address translation: Cannot determine granularity: %#llx-%#llx:%#llx-%#llx(%s)\n",
-> +			range.start, range.end, ctx->hpa_range.start,
-> +			ctx->hpa_range.end, dev_name(&cxld->dev));
-> +		return -ENXIO;
-> +	}
-> +
-> +	ctx->hpa_range = range;
-> +	ctx->interleave_ways = ways;
-> +	ctx->interleave_granularity = gran;
-> +
-> +	dev_dbg(&cxld->dev,
-> +		"address mapping found for %s (hpa -> spa): %#llx+%#llx -> %#llx+%#llx ways:%d granularity:%d\n",
-> +		dev_name(ctx->cxlmd->dev.parent), base, len, range.start,
-> +		spa_len, ways, gran);
-> +
-> +	return 0;
-> +}
-> +
->  static int setup_region_params(struct cxl_endpoint_decoder *cxled,
->  			       struct cxl_region_context *ctx)
->  {
-> +	int rc;
-> +
->  	ctx->cxled = cxled;
->  	ctx->cxlmd = cxled_to_memdev(cxled);
->  	ctx->hpa_range = cxled->cxld.hpa_range;
->  	ctx->interleave_ways = cxled->cxld.interleave_ways;
->  	ctx->interleave_granularity = cxled->cxld.interleave_granularity;
->  
-> -	return 0;
-> +	rc = setup_address_translation(cxled, ctx);
-
-A quick search suggested nothing new gets added after this. As such
-	return setup_address_translation(...);
-is probably appropriate here.
-
-
-> +	if (rc)
-> +		return rc;
-> +
-> +	return rc;
->  }
->  
->  static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
+Yours sincerely,
+Vincent Mailhol
 
 
