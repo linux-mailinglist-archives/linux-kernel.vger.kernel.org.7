@@ -1,117 +1,135 @@
-Return-Path: <linux-kernel+bounces-816516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE3EB574E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE594B574E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723733A3AE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:26:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52EAC3AFAA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713B02F4A18;
-	Mon, 15 Sep 2025 09:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B65B2ECD23;
+	Mon, 15 Sep 2025 09:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I0prLoYl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FXPR1bVn"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478D72EA484;
-	Mon, 15 Sep 2025 09:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3A83D984;
+	Mon, 15 Sep 2025 09:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928380; cv=none; b=NiRkcTV6qOG2JO4JVNyQepT8/GYNc1yqvxLPECL9+z62W/AfsqJrRv6LCGH/DKWLBCEjRoK+5V1QAnRBW3ntZun9PuEgFz+rLZeBCJk7YEwKWtGvQVcgczqMO/tP7/gZraMkLzAs3iq2CQeJSbNqeH7dT54Qp9QjdUhH4pPvM4E=
+	t=1757928419; cv=none; b=hwqkFM70H/iPuRwKBji1rF/rUCmWCLCpfjJe4pVF2l+5saXmzsLGJ7rJhBdRbdLQoJl/c7HZPpdjf64YiTcIEFGTunfgAg3/NrYyQuc+DjxCtTLuhU1LWq/FcLCopfNKHtZlLBn8GcOyPK4N5gt+L+nLhDC8aF5YZYe34spLYi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928380; c=relaxed/simple;
-	bh=RXgOH1ZqN+gAwFqxR0p6/Oe1YMnjPq6e68rQXfXoDnE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=jxyoIeopFRZY07sPf/kC/U37298tzOqJ50o3oi3nvxMHUgY8gRDIKmOpBUGXtfN4lHq+WqnbwlatCwAW+aNGyKKkkNahY7cHJOy+sww2GLT7ZcMNsAIf7Vp21Tfk95Fh7P1Rr2nvroZQo0n7o24wn90nWdk5WLZf4R4qZtiE6Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=I0prLoYl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from thinkpad.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 00F396DF;
-	Mon, 15 Sep 2025 11:24:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757928300;
-	bh=RXgOH1ZqN+gAwFqxR0p6/Oe1YMnjPq6e68rQXfXoDnE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=I0prLoYlTTjxBdwfZo5Tp3rWZuXItvjUYWsgz9fzNvEoalSnLOHaex8wBgRPHgCkl
-	 DJagsPt9DzAqfHFfJo+mYQioIDJ+5lHp60N1hr1/v/XYoxYvermjdp9voDLTF/+7d8
-	 YuxZxAI15KoC8mKZUrhhT2fTlXl5k6MgmYgQD+0Y=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757928419; c=relaxed/simple;
+	bh=0ny8FKWjpUlbLud8VuX99OuONGyKCRz9Iotsxs0Aopw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=istNtp0za0MRjRT/wnj6/0sXCGLBO0fIxVK04Z+u3ge36DkB1SIRzCdkQxy77IpCybvIImdKc3NyFV81HnH70iCcpQGZtZiboIchsl+iYYvmACkLoAQ8l87Ig0UsknBO/FlTHbFxcGrA9jr6QKTDkK44Pw2EQuXXezyX/nnSSOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FXPR1bVn; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 385BF140020F;
+	Mon, 15 Sep 2025 05:26:56 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 15 Sep 2025 05:26:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757928416; x=1758014816; bh=qB5j5tPDORmdLoU8aR2TXEt209oeznvEGDo
+	zn2hFDXo=; b=FXPR1bVndsbxvdAus3OYAegJiWque9bPlLzTAjV7DJvzRw/tMpi
+	NqZsa3wpk/eHcgqPzLS5H5nb0PzLLlGdVavwovhns5ZqgqBTkpbC06jAzYjMqxSW
+	OWtiYlAndcQDq2jp2wGLAKCC7wRtfek9XG+HfjOAHgmafoIALR2Xx9EtZYRH4l3w
+	t7f3spWOMxzqhmgbVVVmClvr5yF0+oE2LH5xm/EelN9BzVNfDkaF3ABR29H0R7g1
+	UVvn9vEjjsNAojKIcuzeR+4bMa0anBrrHtEV6AmdpstIaA4Ja19Eda6vz/iK+4Hm
+	ka/fXU4xZVxnPq1RQlcENUjXA9wDYB4spPg==
+X-ME-Sender: <xms:39vHaE1QE2pFrgzQbcY9bE2RK6dSIubB6M0yfdIDxUp6R6kcIoFnSw>
+    <xme:39vHaJhs8xrDU-wj9xNJ3J2fHEGs3pMi9aGOH6FYGjMaNLNZmfpHphjzX4Hd-tL0s
+    fp-AR56He9YwAFsN3M>
+X-ME-Received: <xmr:39vHaEZLwGt4VxZhRZDNR7xRUqkZUCnpIrkqZzPfiiXTqq5w4HdmNNHMPRygEE1zlhFk6Ypsk5CACzMb21pAqTJs6ujEszJGTSs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeeffecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueehueel
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
+    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
+    htohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhl
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnug
+    grthhiohhnrdhorhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgt
+    ohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrh
+    hkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrtg
+    hhsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:39vHaFUS-TllTcenWAQP1Pr1NfefUNmI2ediOKRwOUO5q1S7Bqrt-A>
+    <xmx:39vHaMHLTnfA1PWVnpNDavVrzp_7yzH82Dnm7c2qkY9yBou4tYKaAg>
+    <xmx:39vHaPYxcmTdBLpNkfjyc3ovnscn6NuinLMr6a5o0y_umFEXJtSXfA>
+    <xmx:39vHaLGV9M12b-1gKcMso0TsmGPyLQgoVJ_TANBqy9RYwGw299Sjzg>
+    <xmx:4NvHaBsm2NqGSf4IwAc1PaH3UlTBBsX1W3yu2HXkg9n7WGk6wc0a1rGB>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Sep 2025 05:26:52 -0400 (EDT)
+Date: Mon, 15 Sep 2025 19:26:46 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
+    Linux-Arch <linux-arch@vger.kernel.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
+    Lance Yang <lance.yang@linux.dev>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
+ atomic64_t
+In-Reply-To: <f1f95870-9ef1-42e8-bb74-b7120820028e@app.fastmail.com>
+Message-ID: <c130a0bd-f581-a1da-cc10-0c09c782dfca@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <f1f95870-9ef1-42e8-bb74-b7120820028e@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aLhgNP0UMAj3Cpzi@lizhi-Precision-Tower-5810>
-References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com> <20250903102243.1563527-4-isaac.scott@ideasonboard.com> <aLhgNP0UMAj3Cpzi@lizhi-Precision-Tower-5810>
-Subject: Re: [PATCH v2 3/3] media: imx-mipi-csis: Get number of active lanes via mbus_config
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-Cc: laurent.pinchart@ideasonboard.com, rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, hverkuil@kernel.org, nicolas.dufresne@collabora.com, sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com, jonas@kwiboo.se, dan.scally+renesas@ideasonboard.com, m.szyprowski@samsung.com, mehdi.djait@linux.intel.com, niklas.soderlund+renesas@ragnatech.se
-To: Frank Li <Frank.li@nxp.com>
-Date: Mon, 15 Sep 2025 10:26:15 +0100
-Message-ID: <175792837500.11401.10747878334767148751@isaac-ThinkPad-T16-Gen-2>
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
 
-Hi Frank,
 
-Thank you for the review!
+On Mon, 15 Sep 2025, Arnd Bergmann wrote:
 
-Quoting Frank Li (2025-09-03 16:35:16)
-> On Wed, Sep 03, 2025 at 11:22:42AM +0100, Isaac Scott wrote:
-> > The number of lanes actively used by a MIPI CSI transmitter may differ
-> > from that which is defined in device tree. As such, call on
-> > v4l2_get_active_data_lanes to check if the driver reports a
->=20
-> function need (), v4l2_get_active_data_lanes()
->=20
-> > differing number of lanes to device tree, and use that number of active
-> > lanes.
-> >
-> > If the number of active data lanes is invalid, or the op is not
-> > supported, it will use the number of lanes defined in device tree.
->=20
-> remove "it will" to keep simple.
+> On Sun, Sep 14, 2025, at 02:45, Finn Thain wrote:
+> > index 100d24b02e52..7ae82ac17645 100644
+> > --- a/include/asm-generic/atomic64.h
+> > +++ b/include/asm-generic/atomic64.h
+> > @@ -10,7 +10,7 @@
+> >  #include <linux/types.h>
+> > 
+> >  typedef struct {
+> > -	s64 counter;
+> > +	s64 counter __aligned(sizeof(long));
+> >  } atomic64_t;
+> 
+> Why is this not aligned to 8 bytes? I checked all supported 
+> architectures and found that arc, csky, m68k, microblaze, openrisc, sh 
+> and x86-32 use a smaller alignment by default, but arc and x86-32 
+> override it to 8 bytes already. x86 changed it back in 2009 with commit 
+> bbf2a330d92c ("x86: atomic64: The atomic64_t data type should be 8 bytes 
+> aligned on 32-bit too"), and arc uses the same one.
+> 
 
-Thanks, I'll change this in v3.
+Right, I forgot to check includes in arch/x86/include. (I had assumed this 
+definition was relevant to that architecture, hence the sizeof(long), in 
+order to stick to native alignment on x86-32.)
 
->=20
-> Frank
+> Changing csky, m68k, microblaze, openrisc and sh to use the same 
+> alignment as all others is probably less risky in the long run in case 
+> anything relies on that the same way that code expects native alignment 
+> on atomic_t.
+> 
 
-Best wishes,
-
-Isaac
-
-> >
-> > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
-> > ---
-> >  drivers/media/platform/nxp/imx-mipi-csis.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media=
-/platform/nxp/imx-mipi-csis.c
-> > index fc89325f2f94..985be511bcd0 100644
-> > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
-> > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-> > @@ -967,6 +967,9 @@ static int mipi_csis_s_stream(struct v4l2_subdev *s=
-d, int enable)
-> >       format =3D v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
-> >       csis_fmt =3D find_csis_format(format->code);
-> >
-> > +     csis->bus.num_data_lanes =3D v4l2_get_active_data_lanes(csis->sou=
-rce.pad,
-> > +                                                           csis->max_d=
-ata_lanes);
-> > +
-> >       ret =3D mipi_csis_calculate_params(csis, csis_fmt);
-> >       if (ret < 0)
-> >               goto err_unlock;
-> > --
-> > 2.43.0
-> >
+By "native alignment", do you mean "natural alignment" here?
 
