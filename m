@@ -1,144 +1,253 @@
-Return-Path: <linux-kernel+bounces-817051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864FFB57D1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:30:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3F5B57D14
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F094C032D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:29:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BB04C0171
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F8124A044;
-	Mon, 15 Sep 2025 13:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D8C315D5B;
+	Mon, 15 Sep 2025 13:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPOlI/cN"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bNR4R6FA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kXVZgNRq";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bNR4R6FA";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kXVZgNRq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DD1313539
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFAF315D2C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942936; cv=none; b=bEDCvlFsLo7r87q2jWqL5P8g+Ax5JG+965fltt2XTabJLgQSI1OK8D4clanIweikMmNB498dmWHiaCFwJ3fZhKGXd90Ar1MbFVlj+LEIPnxnZa1Bvp6vZwjbjgPItPPEvebe0K3AVIOs+In9SEbzR3OQgkwHUuv44WC7Aviz010=
+	t=1757942920; cv=none; b=B0nEZ4L3KsMLOukNJeGfxkej7XTkM5657/KOKnIA8eJOyQDDz1jbalTLqRNrNWjRSVKd8YAcX6kXTGx3DRFuRqLNFov/Yn4/DpfSTQWbZO2QYLzA+KjRSMbI9got4AxdUVKdjLgZZys/vgCtj25xcmdmxhIXsOU3FA14jjYd6hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942936; c=relaxed/simple;
-	bh=vnlm1slyNmbttO9fw4RIWStPZdVkW1FF3oJw8gyAinQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dke5ydjMOiOC/LBYXn7TfX8eOpC7NaArx9zT//MWtxeCbM5IZdLf7SuK4BZHhu43N3EgRzqngPNRbzAW0ByoQ0gA7gpFqK3XDATgfZwHkyXQqEJRJ4Vr7xSQSPPxL2Y+qXK3X9HCl7J5556SpJSe0Ede9eAs/TdYnvVX6bt6lhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPOlI/cN; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3d3ff4a4d6fso2867574f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757942933; x=1758547733; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=35maHscUr/d47mvdI2u+bHhN47XfHp34cUHx+zt1aho=;
-        b=HPOlI/cNBucj9ZmJ7fuE1dAKZ1e5jgYxSIx1PCtbLI0fwIMDMwRATM1CBs5nGoBOIe
-         9EltpUsVZgTFPQTNOaPrbmAqxJW6NhYMo8WHzJpbx3kP0TgSxDl3ze3ScGjdQsoWc1nf
-         dvo3a3g4EC5v8KQlljGghJifmGPxrVIZzbOoDgjudSRgS6k7ALdZjHsm5VGxPNvuKu8+
-         Ln/2Z2ful+6bPzD8QEhmrCHhgpOxrWP/VqVjeIvGddFnAOlN5v7h5T25osJD7qNlPysF
-         6XsZDhayoHi6Yi/KTbjc/TKR4+HrqVs9gWhnCeQuu1aDShIa3nsVnncojnbKBeWy59TV
-         epXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757942933; x=1758547733;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=35maHscUr/d47mvdI2u+bHhN47XfHp34cUHx+zt1aho=;
-        b=ChGiz7IZPMTqHZM+YqgfNxomko2gCXXiLDBf78S3sYn7pVQSsRXp5mDJytmcwfs0UD
-         U6/pgNANuZMJl1Z5KYw+47DA2WuMYN3HyXw15oBRDW+eUklik/Q43e+UNda6lMfn/lQY
-         46G1fpBxgOxDFc75giV8s8+OEqifEF64WdiBx/In3nHkmIesYrVQCRHKYr2hjBW8kEo7
-         BDAKbhTjaLn91sNiTwb8ukAyXydEYjiMbNpN8e/FeWlqs969I/+RCfAJQ041oWI1LnCS
-         3CQ8ti8U21licE4twT9D3ysAjlvQinig7b3eTwinArs+FZAtoHaILnAPy9DSabuvxi4S
-         4ALQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsYXAPbhmzLSO/ngoOKgoHC4I99p8UA+ja0OLOYYVhPrXjwAVKbXuGHvGjv3dF18fTSoXJxwEdmSQbuqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0DDycOr680bOvNgRPrZxo8kHMA7fX9o5jQUfShy47wit/9avf
-	o6Hl39E3PjfJYtM+JQLAuxm2cP4IZTSS6fjHsvkBOEeloeC6KxdIaV4khrgJ8pN/cSE=
-X-Gm-Gg: ASbGncvoDGjAkGiSWfhbiw4lYVpUBdON/yzDyW/ipY5L4sW1lC+9JpgCbXG8gjvUk/S
-	KkgwvMjHu459U3JC8UKWnKGIduV57VAbaRhZzEsN2I6OUS6YPfhENl/AZXHmYrftEcYUtIU2x3i
-	Ws61+SdxjTALWfqeuWdvJFlVKJ+gswSavupewDJMpPTJIdzpBnYZ2OvKm2/25KJXC3RcYnElexH
-	WlLnFloLm6vZG/ouVWRUcDxcJmGqFu7lzY9wTsplP/yK4HoXe9kJPsTtqjn573Yq5RY4kr7dkRK
-	lHPufTgYCqffWxW42LY0hWc/3SzkkbDq9hQAW7jX8zfhD6ZY9rzoq/Y/0HpNcVbwxf9mWuZOaeX
-	hH54MIrenhwMV99YEjdMKc0wdpdkQCDhIjCo=
-X-Google-Smtp-Source: AGHT+IER/KlJED2PxaZ/4h5FniATgL9p4nd5Af5mJaje+r1DLi2JqavLb0mBaDaMSdEUYQIxaESExg==
-X-Received: by 2002:a5d:5d0f:0:b0:3cd:5405:16e7 with SMTP id ffacd0b85a97d-3e765a2eed8mr11975067f8f.29.1757942933186;
-        Mon, 15 Sep 2025 06:28:53 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:41:eee1:5042:e713:2e9a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e9fd89af70sm5978874f8f.43.2025.09.15.06.28.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 06:28:52 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Mon, 15 Sep 2025 15:28:30 +0200
-Subject: [PATCH 1/3] arm64: dts: qcom: msm8916: Add missing MDSS reset
+	s=arc-20240116; t=1757942920; c=relaxed/simple;
+	bh=1AW4t4m6IiHUftKocp6VIyAkHCIooVduXxKVptt40PQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZemURTt6iXR2aCGmrl/9sZysHR5B9tPhl2nlZwOPgYHnWVwga+DksSdzX8AOo7+jkG7CKJmo0b1VYokJZgJu1QTZxaO+oXvOa8LVc4DTl5b79VAeRvS3akDfh80dXYtlaGO4pp1S8Svtxf2zUCSgruObH38VRTDWkD9W45fr3w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bNR4R6FA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kXVZgNRq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bNR4R6FA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kXVZgNRq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 64A6B1FB3B;
+	Mon, 15 Sep 2025 13:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757942916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=bNR4R6FALKJQFagyxuMJVny9MRcdRheTibLPuOdI3N9VWPz1UVqy4t31q9NPZQiaDsgNxv
+	8domcKZEj0qkd6JIQsOHZSv1BnILvngKu7FNsZJrxmqz+rQ0fYm1fQ5z7tonW06c6t6Pvx
+	0QUFW5P6j5JaKurqRfXxa2TMsbsaxwE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757942916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=kXVZgNRq73fYquBOv5Gd6JCZO2bjeCgVyRCbya/8OaDivP9pCcU4v4vylnfj3Uzb03VhgZ
+	wBEx95vInt4e0cAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bNR4R6FA;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kXVZgNRq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757942916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=bNR4R6FALKJQFagyxuMJVny9MRcdRheTibLPuOdI3N9VWPz1UVqy4t31q9NPZQiaDsgNxv
+	8domcKZEj0qkd6JIQsOHZSv1BnILvngKu7FNsZJrxmqz+rQ0fYm1fQ5z7tonW06c6t6Pvx
+	0QUFW5P6j5JaKurqRfXxa2TMsbsaxwE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757942916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
+	b=kXVZgNRq73fYquBOv5Gd6JCZO2bjeCgVyRCbya/8OaDivP9pCcU4v4vylnfj3Uzb03VhgZ
+	wBEx95vInt4e0cAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4929B1372E;
+	Mon, 15 Sep 2025 13:28:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id P7aLEYQUyGgUTgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:28:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E532FA0A06; Mon, 15 Sep 2025 15:28:31 +0200 (CEST)
+Date: Mon, 15 Sep 2025 15:28:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 30/33] nsfs: add missing id retrieval support
+Message-ID: <bmkl6ii7y7fbkzndiukfuxpgsysli6552zzg2fsax4xqhgms73@wk7sfbp6hqyl>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org>
-References: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
-In-Reply-To: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vincent Knecht <vincent.knecht@mailoo.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 64A6B1FB3B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
+X-Spam-Score: -2.51
 
-On most MSM8916 devices (aside from the DragonBoard 410c), the bootloader
-already initializes the display to show the boot splash screen. In this
-situation, MDSS is already configured and left running when starting Linux.
-To avoid side effects from the bootloader configuration, the MDSS reset can
-be specified in the device tree to start again with a clean hardware state.
+On Fri 12-09-25 13:52:53, Christian Brauner wrote:
+> The mount namespace has supported id retrieval for a while already.
+> Add support for the other types as well.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-The reset for MDSS is currently missing in msm8916.dtsi, which causes
-errors when the MDSS driver tries to re-initialize the registers:
+Looks good. Feel free to add:
 
- dsi_err_worker: status=6
- dsi_err_worker: status=6
- dsi_err_worker: status=6
- ...
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-It turns out that we have always indirectly worked around this by building
-the MDSS driver as a module. Before v6.17, the power domain was temporarily
-turned off until the module was loaded, long enough to clear the register
-contents. In v6.17, power domains are not turned off during boot until
-sync_state() happens, so this is no longer working. Even before v6.17 this
-resulted in broken behavior, but notably only when the MDSS driver was
-built-in instead of a module.
+								Honza
 
-Cc: stable@vger.kernel.org
-Fixes: 305410ffd1b2 ("arm64: dts: msm8916: Add display support")
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index b50c7e6e0bfcd35ab4f8b84aeabe214fd60e8d7c..de0c10b54c86c7795b7a0d1ecd80652e60e117b6 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -1562,6 +1562,8 @@ mdss: display-subsystem@1a00000 {
- 
- 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
- 
-+			resets = <&gcc GCC_MDSS_BCR>;
-+
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 
-
+> ---
+>  fs/nsfs.c                 | 25 +++++++++++++------------
+>  include/uapi/linux/nsfs.h |  6 ++++--
+>  2 files changed, 17 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/nsfs.c b/fs/nsfs.c
+> index 22765fcab18e..8484bc4dd3de 100644
+> --- a/fs/nsfs.c
+> +++ b/fs/nsfs.c
+> @@ -177,6 +177,7 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
+>  	case NS_GET_TGID_FROM_PIDNS:
+>  	case NS_GET_PID_IN_PIDNS:
+>  	case NS_GET_TGID_IN_PIDNS:
+> +	case NS_GET_ID:
+>  		return true;
+>  	}
+>  
+> @@ -226,18 +227,6 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+>  		argp = (uid_t __user *) arg;
+>  		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
+>  		return put_user(uid, argp);
+> -	case NS_GET_MNTNS_ID: {
+> -		__u64 __user *idp;
+> -		__u64 id;
+> -
+> -		if (ns->ops->type != CLONE_NEWNS)
+> -			return -EINVAL;
+> -
+> -		mnt_ns = container_of(ns, struct mnt_namespace, ns);
+> -		idp = (__u64 __user *)arg;
+> -		id = mnt_ns->ns.ns_id;
+> -		return put_user(id, idp);
+> -	}
+>  	case NS_GET_PID_FROM_PIDNS:
+>  		fallthrough;
+>  	case NS_GET_TGID_FROM_PIDNS:
+> @@ -283,6 +272,18 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+>  			ret = -ESRCH;
+>  		return ret;
+>  	}
+> +	case NS_GET_MNTNS_ID:
+> +		if (ns->ops->type != CLONE_NEWNS)
+> +			return -EINVAL;
+> +		fallthrough;
+> +	case NS_GET_ID: {
+> +		__u64 __user *idp;
+> +		__u64 id;
+> +
+> +		idp = (__u64 __user *)arg;
+> +		id = ns->ns_id;
+> +		return put_user(id, idp);
+> +	}
+>  	}
+>  
+>  	/* extensible ioctls */
+> diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
+> index fa86fe3c8bd3..5d5bf22464c9 100644
+> --- a/include/uapi/linux/nsfs.h
+> +++ b/include/uapi/linux/nsfs.h
+> @@ -16,8 +16,6 @@
+>  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+>  /* Get owner UID (in the caller's user namespace) for a user namespace */
+>  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+> -/* Get the id for a mount namespace */
+> -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
+>  /* Translate pid from target pid namespace into the caller's pid namespace. */
+>  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
+>  /* Return thread-group leader id of pid in the callers pid namespace. */
+> @@ -42,6 +40,10 @@ struct mnt_ns_info {
+>  /* Get previous namespace. */
+>  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+>  
+> +/* Retrieve namespace identifiers. */
+> +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
+> +#define NS_GET_ID		_IOR(NSIO, 13, __u64)
+> +
+>  enum init_ns_ino {
+>  	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
+>  	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
+> 
+> -- 
+> 2.47.3
+> 
 -- 
-2.50.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
