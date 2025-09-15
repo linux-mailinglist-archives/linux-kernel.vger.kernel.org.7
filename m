@@ -1,86 +1,156 @@
-Return-Path: <linux-kernel+bounces-817087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD12AB57DD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB96B57DDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD80E162087
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBFB188EA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7911E51F6;
-	Mon, 15 Sep 2025 13:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1B4322C7D;
+	Mon, 15 Sep 2025 13:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5KAfDUW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="hyvE6Bwl";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="xdYPNGvE"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90DD1EB9E3;
-	Mon, 15 Sep 2025 13:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F7331D751;
+	Mon, 15 Sep 2025 13:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944041; cv=none; b=kZAL8V9H0ZaxAPa/Rzleej3R4EQpWIDa8R/eu5waxTuu4MeQ0y7zd2pgs33FoVVJKkjucHvgZ2E/SbmZiapswx33BrDWeKmvKOCu7UAovduOfMp/UH5QzM0hybI4OM2MxI3T9C4COBEAx3NwGCfDRHQsC2c+h0ZG5BlxaYKZ0+8=
+	t=1757944061; cv=none; b=Tet3trQiUVyheVClDLVw2oI9DiyJ084cfvadgoYdvNEp7/KLf8BnWqzX38oiLDbZJui3DS27CROnqhmKIrhBrVUPNTvEvoFNT528NXKveiju7m/b/WRmrS8lZvB9unBBgXZD2/Zkk3JToCpKkJ2kDGXnUm2eEisOSRORwDjclNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944041; c=relaxed/simple;
-	bh=9AViTU5RWD1JwxYeTPUfmvXGdgLMSJvWywCAquChztA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9kxu1+PGQICMASd3rSyT2J7NmVMHQXEIUlKx5q0U+1KG+ZQ0j41dF55yVTL+amVd6Gsz4wNHf2QKmZic1gQh20NLEzQByxWdfsNFAcGv8ZuUiODpz2rCN0ShMhpHfoSYaDXNjGSG1Hg/Zt0jBvMX6zWN9+nqk/xD6LisISW3ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5KAfDUW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E81C4CEF1;
-	Mon, 15 Sep 2025 13:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757944041;
-	bh=9AViTU5RWD1JwxYeTPUfmvXGdgLMSJvWywCAquChztA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B5KAfDUWhWUxaEyqapMF5Cz0bLydBIAIluRn/zrIwSrGO1+Nw2U2GPTXJpThhAbsF
-	 5BHDeWxydPDVX8GJXKoczVtLV8Z0SCcUJIq2BYyKb8RV8l7YJraFEEkHBr60QEVwfs
-	 QEj5vpwKS1xQdprghKyJdFRKFYhiWQB8iMtPiBRpqL8BFftY7iTcpzcBIRSsQpHuPG
-	 9fZV7vcTJMQYwqqSoWRjP1lj0ChhmWq9R7n06kNkN5C2MOi39lvAwJeb30zYPMERy9
-	 m9lXC5JFhJLdfx7HOFWt5uOjSqBUuWTAqcH6ZsvLf7O8bLz67kO74aGLa3tlsQMnjO
-	 hHSKzNGq2hU0Q==
-Date: Mon, 15 Sep 2025 08:47:20 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexandru Chimac <alex@chimac.ro>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alexandru Chimac <alexchimac@protonmail.com>
-Subject: Re: [PATCH 5/8] dt-bindings: soc: exynos-sysreg: Add Exynos9610
- SYSREG bindings
-Message-ID: <175794403920.2666251.4158627694069114504.robh@kernel.org>
-References: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
- <20250915-exynos9610-clocks-v1-5-3f615022b178@chimac.ro>
+	s=arc-20240116; t=1757944061; c=relaxed/simple;
+	bh=f2w5uCDoZFnkYm5uUGJHduCgIY7lNblnEhSehTJXCHA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnmxSWpw6Wf3b2tYcMeYWn6ROjrmzZeSCWxBrCXKcS7XVUgRM2iF1zUqW8BIurscPMtD43qE2Z/6RNZ2zXSRQEzTRh1C/wQH+YsEp/SXjFMmOfjPstlBB5t8Zsv7L8cLxWqN/0LgBojSlvdG4XzpVHy1Fc2CMeHGKPluCAVeaVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=hyvE6Bwl; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=xdYPNGvE; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+Received: from mta-03.yadro.com (localhost [127.0.0.1])
+	by mta-03.yadro.com (Postfix) with ESMTP id C8E83E0005;
+	Mon, 15 Sep 2025 16:47:28 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com C8E83E0005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-02;
+	t=1757944048; bh=Bm7kigw2xKXqAF5dsQZDS5ySRPjJs/2aS/vLrLlSJzU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=hyvE6BwllkNwVdFU9EKpoof3zfqy3rBvQOq0HAqMo79WY9ffz4xK1Y9Yj5kURgB2d
+	 r18kyP9q3YquFir5hlgOgYOUuDTT6uojv8rRjOivfGAFVLXPxcrCNxT6Aqx6TvsoGY
+	 sXzDEtLN7bIQBM7bXXZViLygfgeT/gqui/M1O1jgFDNI7xWZqfskZus1qfKtHxywIs
+	 EfzpfSFY8BvvgbN7scXWhOkbq5PLRimEpHfbsVktWzyKaHwy0YM44DD74jObjzgayL
+	 wA+4dsnu7iKlK2tW0cfT55gBMQp+jBXD5yd13jZfsRKfib6OKcyirA5EHrg3z8GskY
+	 dHakkWbnEznVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1757944048; bh=Bm7kigw2xKXqAF5dsQZDS5ySRPjJs/2aS/vLrLlSJzU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=xdYPNGvEd1Q28LFn0yfF++s5yq4M3iTGL7Kw7w+WsxQh2kK5uMCnmkX03NbA87WsB
+	 Gb6I1Z9W7aBQ6Vb920EcSu1oDbrK1ilGdGx5aDp1LTRHp30/30D04IRe0i074VRxEH
+	 LNZqsEtC8u2IlbGTEvsuV8kvZfS1uOhLyFsMOpe972hDD0AICJCk/aMsHo1AWyjBv4
+	 lIQqkDKBsqPKdWdcFDEWEf+YY47dVegHRxGUTC0uPjVtJ3gcjIZA6j3sHDyGZZmRHI
+	 hFb3i4pd2yQ110Ovnz3t7SGBu+0WDr+V7cyBonhcixy180F4u8LGfe2Binx2g5jwJ/
+	 /K75fDR4cvjqw==
+Received: from T-EXCH-10.corp.yadro.com (T-EXCH-10.corp.yadro.com [10.34.9.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mta-03.yadro.com (Postfix) with ESMTPS;
+	Mon, 15 Sep 2025 16:47:22 +0300 (MSK)
+Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
+ T-EXCH-10.corp.yadro.com (10.34.9.212) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.9; Mon, 15 Sep 2025 16:47:22 +0300
+Received: from yadro.com (172.17.34.55) by T-EXCH-12.corp.yadro.com
+ (10.34.9.214) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 15 Sep
+ 2025 16:47:21 +0300
+Date: Mon, 15 Sep 2025 16:47:25 +0300
+From: Dmitry Bogdanov <d.bogdanov@yadro.com>
+To: Tony Battersby <tonyb@cybernetics.com>
+CC: Nilesh Javali <njavali@marvell.com>,
+	<GR-QLogic-Storage-Upstream@marvell.com>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>,
+	<target-devel@vger.kernel.org>, <scst-devel@lists.sourceforge.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 12/15] scsi: qla2xxx: add cmd->rsp_sent
+Message-ID: <20250915134725.GC624@yadro.com>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+ <366f8fb5-376d-4426-9f27-6bef23a624b2@cybernetics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250915-exynos9610-clocks-v1-5-3f615022b178@chimac.ro>
+In-Reply-To: <366f8fb5-376d-4426-9f27-6bef23a624b2@cybernetics.com>
+X-ClientProxiedBy: RTM-EXCH-06.corp.yadro.com (10.34.9.206) To
+ T-EXCH-12.corp.yadro.com (10.34.9.214)
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/15 10:53:00 #27821131
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-KATA-Status: Not Scanned
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 5
 
-
-On Sun, 14 Sep 2025 21:20:09 +0000, Alexandru Chimac wrote:
-> Add bindings for SYSREG nodes, compatible with the standard syscon
-> driver.
+On Mon, Sep 08, 2025 at 03:07:04PM -0400, Tony Battersby wrote:
 > 
-> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+> (target mode)
+> 
+> Add cmd->rsp_sent to indicate that the SCSI status has been sent
+> successfully, so that SCST can be informed of any transport errors.
+> This will also be used for logging in later patches.
+> 
+> Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
 > ---
->  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml  | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  drivers/scsi/qla2xxx/qla_target.c | 4 ++++
+>  drivers/scsi/qla2xxx/qla_target.h | 4 ++++
+>  2 files changed, 8 insertions(+)
 > 
+> diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+> index eabb891a5528..0ddbf02ebe79 100644
+> --- a/drivers/scsi/qla2xxx/qla_target.c
+> +++ b/drivers/scsi/qla2xxx/qla_target.c
+> @@ -4067,6 +4067,10 @@ static void qlt_do_ctio_completion(struct scsi_qla_host *vha,
+> 
+>         if (cmd->state == QLA_TGT_STATE_PROCESSED) {
+>                 cmd->trc_flags |= TRC_CTIO_DONE;
+> +
+> +               if (likely(status == CTIO_SUCCESS))
+> +                       cmd->rsp_sent = 1;
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Looks like TRC_CTIO_DONE without TRC_DIF_ERR and TRC_CTIO_ERR means
+exactly that CTIO was completed successfully.
 
+> +
+>         } else if (cmd->state == QLA_TGT_STATE_NEED_DATA) {
+>                 cmd->state = QLA_TGT_STATE_DATA_IN;
+> 
+> diff --git a/drivers/scsi/qla2xxx/qla_target.h b/drivers/scsi/qla2xxx/qla_target.h
+> index 1931e1dade7a..972a7af1c81c 100644
+> --- a/drivers/scsi/qla2xxx/qla_target.h
+> +++ b/drivers/scsi/qla2xxx/qla_target.h
+> @@ -883,6 +883,10 @@ struct qla_tgt_cmd {
+>         unsigned int conf_compl_supported:1;
+>         unsigned int sg_mapped:1;
+>         unsigned int write_data_transferred:1;
+> +
+> +       /* Set if the SCSI status was sent successfully. */
+> +       unsigned int rsp_sent:1;
+> +
+>         unsigned int q_full:1;
+>         unsigned int term_exchg:1;
+>         unsigned int cmd_sent_to_fw:1;
+> --
+> 2.43.0
+> 
+> 
+> 
 
