@@ -1,187 +1,170 @@
-Return-Path: <linux-kernel+bounces-816098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B553B56F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D59B56F6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BE717A7D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:33:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1221817A7D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD9272E41;
-	Mon, 15 Sep 2025 04:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF22B2727ED;
+	Mon, 15 Sep 2025 04:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EeEAJXcp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="j9l6rePl"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474B710FD;
-	Mon, 15 Sep 2025 04:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDEF1EB5D6;
+	Mon, 15 Sep 2025 04:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757910784; cv=none; b=I3SEaT0roAKgqs5y+Azzz2P5+IBKyYw7EW7AyZjzWCmDJ3Nd5ZcPrSbfOI37D6hT1G0dKJya14x34obopGsJPBBhnYtAq7PlfHt/CFCwHreya2dGkN4dBvSj8mz5kqNEj3u8qfatDGUPlaDuNJ5qJDNK/oL2qbSTB03dubFJplU=
+	t=1757910869; cv=none; b=tZnNVQ/bci26A0FmKCjkyjtEqzeRKzW87YbS82ssRbpuX2acneSsWiVksyFMd4pIjZXJBOeThYEiRTsnPAEE9Lwf3yBnWEm21rgTq1vTZxkmGwL44A5om9NT/PsVjpHWG5P0MF2ZhV5KKk1bp5bSh/KpoOofe0wzHAM/spqdPEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757910784; c=relaxed/simple;
-	bh=pykA1A3/Zg0D/ZaZ6KglsvOLp4vC0LMedDVJjoQuhpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yl8e/JaVOsi9C/4XrIRNX2GgUGg48aclfQkTknPW+deU4Up/pLgGBQiD+NqV8jfhYdr9yUrGdbZeEA3qU9GyHaWWs++fOjjbmmfDEbACw82kAn3yqky0FL32ZwbJtcyIhROzlPSyPhWh6DuWoyBCtoGwy2KQKNFAIajYUb54hT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EeEAJXcp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3B5C4CEF1;
-	Mon, 15 Sep 2025 04:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757910783;
-	bh=pykA1A3/Zg0D/ZaZ6KglsvOLp4vC0LMedDVJjoQuhpw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EeEAJXcp//6Qb0FMBfCMiPMVoiiqCMa2329dXewXnCKIoi5MOma3r8T0jEawSr5Uu
-	 HQst3nHsv/qGEhvJTDMa+alyMRQ6/4K5g5c0g/xLm8SElEh40rUGrBHsXuTBDH6qJ8
-	 Rjs1IiZILiTOI7JA2g4MwYGrdbrAmWhzruKg/od84m7m8PnvdLYr+bXPc6yqK3I9RW
-	 rsRFrtEZlT0BNe3W3Z76Lf89k69YOiAMEd6g7SnKrs/20kio1QEIHbeOGwABL3wTKs
-	 YNzb4OASZJUt+hRS96Oi92FJq+qTBJAjAlEbB9pz47ABrwuwP/q63oZUObgUnfS806
-	 yttGaicxuhi/A==
-Message-ID: <9f255174-bfa4-4dfb-8c19-6488286fca21@kernel.org>
-Date: Mon, 15 Sep 2025 06:32:58 +0200
+	s=arc-20240116; t=1757910869; c=relaxed/simple;
+	bh=R59jfh34yGxkC7W3AEGjJY6dRX+yKJOmXEt1HBSy8j0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rGw5n9byLezATedv/dfqdVbdd9Keg47NyA9muocj8Terdf8FzEip9+cvGK2Zds1pARCdQfdDhMgNPCL2vz+lDbjsck37y/axX8QQscNbE/zTYI/AkaithR5nY5ghToo2qsRxjKARvRHsTCW55cFDLEGgvq/Cu4PeNFxrNdzN5Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=j9l6rePl; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1757910865;
+	bh=jGd9kLzjDaoi+l0HOQu5KE2dhKkmGdqUdNlJgfKDaQ4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=j9l6rePl1LUachlMBzH84pJ4kBHHVvbIl05HfsxlWo/BECrz1cj/oTJUcTE+mwMxJ
+	 1zhFaWpOsMOT+ws5vGcBytUoqpX60OAE2NGwm7D45vwRgVNN0oHUYMe/MVhyC4KyTz
+	 WDq4LX4lbyF+4K/MdLmV2a5A1ag5A27ZrLDtKbHgyBhHaS/1eNp1XLeS7bCD4Au4HZ
+	 Z5K6pTKPx4A9glzNAfLgQutJM+RqCu1DPmf9H3q+8nKyicoSF2LckL67+bC/qWSkN3
+	 ij1vnEAI/uYsdu3Q8/nv4/oQRdRwiZDEd1crElwzz5MlsqhSSMsGMvotAV+bRScjPa
+	 78Ag7Bu3F/cUA==
+Received: from [IPv6:2405:6e00:2430:fb15:b2b4:1872:3690:c682] (unknown [120.20.190.44])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0452B64CF0;
+	Mon, 15 Sep 2025 12:34:21 +0800 (AWST)
+Message-ID: <ae46aa8e57d01208deb56a8fd01f26a9a0bf359b.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 2/2] ARM: dts: aspeed: Add NVIDIA VR144NVL board
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Donald Shannon <donalds@nvidia.com>, robh@kernel.org,
+ krzk+dt@kernel.org, 	conor+dt@kernel.org, Andrew Lunn <andrew@lunn.ch>
+Cc: joel@jms.id.au, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, etanous@nvidia.com
+Date: Mon, 15 Sep 2025 14:04:19 +0930
+In-Reply-To: <f0b75151-d355-4d03-a356-dfbfb7a9e803@nvidia.com>
+References: <20250822203818.4062595-1-donalds@nvidia.com>
+	 <20250822203818.4062595-3-donalds@nvidia.com>
+	 <f9cd6015c47d390eef9c689d2cb4fcd301c4d123.camel@codeconstruct.com.au>
+	 <fcd64668-4232-4d7b-98ec-5326d40d19d7@nvidia.com>
+	 <f0b75151-d355-4d03-a356-dfbfb7a9e803@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: Add initial support for Samsung
- Galaxy Tab S6 Lite (gta4xl)
-To: Alexandru Chimac <alex@chimac.ro>, Alim Akhtar <alim.akhtar@samsung.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20250914-exynos9610-devicetree-v1-0-2000fc3bbe0b@chimac.ro>
- <20250914-exynos9610-devicetree-v1-3-2000fc3bbe0b@chimac.ro>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250914-exynos9610-devicetree-v1-3-2000fc3bbe0b@chimac.ro>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 14/09/2025 22:44, Alexandru Chimac wrote:
-> Add initial support for the Samsung Galaxy Tab S6 Lite (SM-P610/P615):
-> 
-> - Framebuffer, through SimpleFB
-> - RAM
-> - Buttons
-> 
-> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile              |  1 +
->  arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts | 97 ++++++++++++++++++++++++
->  2 files changed, 98 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index bdb9e9813e506de3a8ff6d1c3115382cca6ea9d9..8aacff968fa10d6b645bafe910c71fb65e8569f8 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -12,6 +12,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos7885-jackpotlte.dtb	\
->  	exynos850-e850-96.dtb		\
->  	exynos8895-dreamlte.dtb		\
-> +	exynos9610-gta4xl.dtb		\
->  	exynos9810-starlte.dtb		\
->  	exynos990-c1s.dtb		\
->  	exynos990-r8s.dtb               \
-> diff --git a/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts b/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f455af22ff872c6f07b9bcfc68b1ae1f45d0def3
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts
-> @@ -0,0 +1,97 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Galaxy Tab S6 Lite device tree
-> + *
-> + * Copyright (c) 2025, Alexandru Chimac <alexchimac@protonmail.com>
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "exynos9610.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +
-> +/ {
-> +	compatible = "samsung,gta4xl", "samsung,exynos9610";
-> +	#address-cells = <2>;
-> +	#size-cells = <1>;
-> +
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		framebuffer0: framebuffer@ca000000 {
-> +			compatible = "simple-framebuffer";
-> +			memory-region = <&cont_splash_rmem>;
-> +			width = <1200>;
-> +			height = <2000>;
-> +			stride = <(1200 * 4)>;
-> +			format = "a8r8g8b8";
-> +		};
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x3AB00000>,
-> +		      <0x0 0xC0000000 0x20000000>,
-> +		      <0x0 0xE1900000 0x1E700000>,
+Hi Donald,
 
-Lowercase hex everywhere.
+On Wed, 2025-09-10 at 09:46 -0700, Donald Shannon wrote:
+> On 9/9/25 16:05, Donald Shannon wrote:
+> > On 9/3/25 00:07, Andrew Jeffery wrote:
+> >=20
+> > > Hi Donald,
+> > >=20
+> > > On Fri, 2025-08-22 at 13:38 -0700, Donald Shannon wrote:
+> > > > This is an Aspeed AST2600 based BMC board for the NVIDIA VR144NVL
+> > > > Platform.
+> > > >=20
 
+*snip*
 
-Best regards,
-Krzysztof
+> > > > +
+> > > > +&mdio0 {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 status =3D "okay";
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ethphy0: ethernet-phy@0 {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 compatible =3D "ethernet-phy-ieee802.3-c22";
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 reg =3D <0>;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+> > > > +};
+> > > > +
+> > > > +&mac0 {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-names =3D "default";
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 phy-mode =3D "rgmii-id";=20
+> > > Is this correct, in the context of the query here?
+> > >=20
+> > > https://lore.kernel.org/all/6a3d7eb4-c091-437f-98f8-2b8577e539a7@lunn=
+.ch/
+> > >=20
+> > > If not, please drop the node from the patch until the MAC driver is
+> > > fixed with respect to the RGMII delays.
+> > >=20
+> > > Andrew=20
+> >=20
+> > Hi Andrew,
+> >=20
+> > I will change this to alphabetical order.
+> >=20
+> > The extra space in our flash is for root of trust application. I will n=
+ote this in the next patch.
+> >=20
+> > I see that the ftgmac100 drivers do not use the phy-mode parameter so I=
+ will leave it out.
+> >=20
+> > Thanks,
+> > Don
+> >=20
+>=20
+> Hi Andrew,
+>=20
+> I am getting conflicting messages in my v3 patch series and want to confi=
+rm what the consensus
+> is for removing or keeping the unused phy-mode parameter.
+>=20
+
+The background is that there's been some concerns over phy-mode wrt to
+where the RGMII delays are inserted, and the impact on the phy
+configuration. My intent was that if you were unsure that you would
+remove the entire mac node rather than just the phy-mode property. That
+way there's no networking that can break when ASPEED sort out issues
+with the ftgmac100 driver. You would have to carry a downstream patch
+to add the node back for networking, but I feel that's an improvement
+on carrying the entire devicetree downstream.
+
+However:
+
+>  There is some inconsistency in
+> the existing dts-es as well.
+
+Yes, this is part of the problem.
+
+>=20
+> Our board phy implements tx and rx delay, so -id would be the appropriate=
+ one to use if we
+> decide to use it.
+
+Right, so long as there's no delay configured for the MAC in the SCU
+(see SCU340-35C) and networking functions for your board then I think
+it's fine to keep the node and specify `phy-mode =3D "rgmii-id";`. Any
+fixes to the driver shouldn't break that arrangement (as in this
+configuration it should deconfigure any delays for the MAC in the SCU).
+
+There's some good documentation here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
+umentation/devicetree/bindings/net/ethernet-controller.yaml?h=3Dv6.16#n264
+
+and relevant discussion here:
+
+https://lore.kernel.org/all/f28736b5-f4e4-488e-8c9b-55afc7316c5e@lunn.ch/
+
+Sorry for the confusion.
+
+Andrew
 
