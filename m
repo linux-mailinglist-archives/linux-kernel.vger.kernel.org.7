@@ -1,135 +1,155 @@
-Return-Path: <linux-kernel+bounces-817427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF6EB58209
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:29:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0504FB58217
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F6E16E50F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F1AF3A321D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F182DC786;
-	Mon, 15 Sep 2025 16:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87895288517;
+	Mon, 15 Sep 2025 16:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qI0Hr66S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cKSUywkf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A0D27E05A;
-	Mon, 15 Sep 2025 16:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02FE2877F7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757953703; cv=none; b=lZA5ckIWESAfLdeio+QmnLQwt07hJysq6osIdmmnxjLsaDfgEVLcJ9j+l5p06Z3EPj9NPAFEq4J8sOEDU0bSRIfn0Tzb5Y6G+4lCtrFuwwSF+ElnV0qeC80s8c6mhSI5B2Oirj5KNwpvIe4zIkPJPmFEVtnOEJd/YGWD0U5qNoA=
+	t=1757953743; cv=none; b=q8hJLPeqQNRXDWYD6s1dc8GPmaJeEz8YJi91FZd+GviYdaNWjFa+42ByAkL30wdxh1FU/cSU+/KSqQwirg9XFcU6CqrIZCaQulpjfHTeQsZksDBCzhSy0erqp2pxPwIzOTUakOLL9pveFY39o4P0cgqc6au3MisC2kUw9oJS+uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757953703; c=relaxed/simple;
-	bh=wIrItACSO6xpqEsoeRFwFKh9DWmDR0g6UY9Xw3JMGRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pwP9Xog38ibeNIfWuRZg4UmSBl7MeNKi/ddJIa4LRZOdqL92UkgFG8H5j/JMcUL4AUdXNG/fa0VbDSY6kjgju3aXNmpPHC2Ez4iPhwKZ1Luw7dObc37klHV0l1iIvnpuNArgnMiK8TegDAhhFmWHn4u9+xkDngCthUUH6TwjZ+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qI0Hr66S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 149F0C4CEF1;
-	Mon, 15 Sep 2025 16:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757953703;
-	bh=wIrItACSO6xpqEsoeRFwFKh9DWmDR0g6UY9Xw3JMGRE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qI0Hr66SOioC4CuFeml2EWgsCft9xE6mTt3CSJhPKyKyrg316haKVvf9PbRWnsN1a
-	 virXl3k1Ji+2dV0ptXKGlD3iHDV+sQJLa77xJMPBkFZhrscOuDERPQqz0n/CpyWlGr
-	 30DufI6nNSsewQKdp/oYwMIvHOJ9+/jRdFTrvsMdBc2cLuO+6LHYUS8YKA0+PgkQBS
-	 mUvKIGHcDCVwfYHLUPROB7MuUuDXW+z7WlWMqq/lMbfV+GRs1uVFR0EQyITGLmtyv2
-	 h1Rvl6W10WAR/fStlY5bimWSvFN6aQPKiwdI6HWu5lKtmMBIq6HQsNh++Cqf41esx2
-	 J0e1n3MblVgMQ==
-Date: Mon, 15 Sep 2025 17:28:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs tree with the fs-next tree
-Message-ID: <aMg-o7KPAkDmqQN8@sirena.org.uk>
+	s=arc-20240116; t=1757953743; c=relaxed/simple;
+	bh=SapIqnwTojIEKvm8JJFE1rz8q7ui11cRO+zNNtA+z4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G2WZuMfWKZ92Bq8ahlDidVeZTuZgMXTZd/9+IHq4xjUwgcfDSZJinKH+Cl2QQaXaP3fSdUktDqM0L75RlwctTEBaEn1dBz1B4czAW0zggIozIxcvJ6sATS7x/4jf+hSpmFHd5aT01j42PG0E4HdOWAL8zhdCCFBusrBdS5FhF7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cKSUywkf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757953740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=90J5I7tDJWuTtR4pzepvkTqrxkeGN9PC3IPf6m4g6yQ=;
+	b=cKSUywkfgEEQQjwh6LL1H+eMxNJ0An1zmlDOvSeugYKP4jnlqj5y+3yNJ5TtNi7dCMl+69
+	/RzY/WXywV0MjHfyiuYhwM/Xjtg6Clp1p9yt2B8KIQk4drIrDgCX+zuDAcVoPybhMKLO2U
+	MtEH7qysb7M5aBahFkVjcLVK2O7PqR0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-351-fS3RZhW-Pp6NdfZIUXHj4w-1; Mon, 15 Sep 2025 12:28:59 -0400
+X-MC-Unique: fS3RZhW-Pp6NdfZIUXHj4w-1
+X-Mimecast-MFC-AGG-ID: fS3RZhW-Pp6NdfZIUXHj4w_1757953738
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dd66e1971so37242575e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:28:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757953738; x=1758558538;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=90J5I7tDJWuTtR4pzepvkTqrxkeGN9PC3IPf6m4g6yQ=;
+        b=ZyOC+80/B+2MDADE1FDR9AMVfXdkugIFcHhbXYeRiDEMbg9QT1vK5d4gnypleNUNgG
+         vpaXhONkohoYShBu7TUr6EwIfXg/jDKV3fh3j9LlBFj2jwF3DjohETAbdF0YNKJlTRy2
+         Tqz/rTfMao1628AyM/mVwugyXpItq1T0Gka2F4bpCQxdp8k/PjUj8Jh47DNcNTvpiFeQ
+         xoIZwsXzQ/InkUtY2HUlLaEt+lPbbCZa+NHKuwaWmsqts8oWAHuQ/6lb5prMBF38dYTI
+         yhKO7J0VUAmOqJwfZlXhXW+EU0JXPeBcQYkybF/jxYVuml6cmjsYvyZUpLkmgFhH1KUA
+         BP/Q==
+X-Gm-Message-State: AOJu0YyHP4O9gPRhJy9UBS3EEwNVvP2hUF1Ob0HC3fL6LmZ25zjQpOw6
+	SmJ2sLLvJXy4c26JtjBGmlzdCbB9uu3agxq+GwBAUjMqWFRbGeXXyzP4QWe7HntJwcjrqgSLesu
+	tKWYtv2BDfLYj4+UAB3tx8ajUIUP1yAgjLNCvDzqlO/Ae9biLXlvlZ4COX7EY82XTzv8xOue/N9
+	3CmiViOmnhUov3Bfpfi21MPbJQfv3085CqCPcz0LTZtUoFZr1WE8pf
+X-Gm-Gg: ASbGncv3WzI47uGvHd3JQafdvJoLkR/VgFaHIXirjNwrFlPvpFKfyDAx1I9a15/ACi0
+	YZSyF1wLndaILx9pdPRkqt1n5V3dkCswhO6OW3YQhTwNeKsZW/cz+HhFJld2vmfobEAGk/2U4zh
+	AfsUnsiV6FB2dVdQvzh0g4e/UptpeBGaUsmBFQjhXg4OTCWer3mOHVdczfUfoZgD9dr8ngnxk8s
+	DFuAtXGVjhADPLQK0mpoeJ6jiB7O6Ct8V0d0act3r+TW8Y4Cmfn07FHCbna0LFxM40MhTM3wjEI
+	Gw/klOR23tqZM7fkcTuGVEEvF7f2WFZN4mRdvHSieGYdOrn5/iY5TF4=
+X-Received: by 2002:a05:600c:1d22:b0:45f:2bc1:22d0 with SMTP id 5b1f17b1804b1-45f2c422f88mr52741735e9.33.1757953737882;
+        Mon, 15 Sep 2025 09:28:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGcqLg89RzAzIylVbUAdhxQnrbuII6q9BMD4UeHPPpyAnAih60GUdiWlXGIqVqjdTWEN3ljw==
+X-Received: by 2002:a05:600c:1d22:b0:45f:2bc1:22d0 with SMTP id 5b1f17b1804b1-45f2c422f88mr52741475e9.33.1757953737422;
+        Mon, 15 Sep 2025 09:28:57 -0700 (PDT)
+Received: from holism.lzampier.com ([2a06:5900:814a:ab00:c1c7:2e09:633d:e94e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7cde81491sm12840179f8f.42.2025.09.15.09.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 09:28:56 -0700 (PDT)
+From: Lucas Zampieri <lzampier@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	stable@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jia Wang <wangjia@ultrarisc.com>
+Subject: [PATCH] irqchip/sifive-plic: avoid interrupt ID 0 handling during suspend/resume
+Date: Mon, 15 Sep 2025 17:28:46 +0100
+Message-ID: <20250915162847.103445-1-lzampier@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yPaLQWwmGrOURL3O"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+To: linux-kernel@vger.kernel.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>
+Cc: stable@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
 
---yPaLQWwmGrOURL3O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+According to the PLIC specification[1], global interrupt sources are
+assigned small unsigned integer identifiers beginning at the value 1.
+An interrupt ID of 0 is reserved to mean "no interrupt".
 
-Hi all,
+The current plic_irq_resume() and plic_irq_suspend() functions incorrectly
+starts the loop from index 0, which could access the reserved interrupt ID
+0 register space.
+This fix changes the loop to start from index 1, skipping the reserved
+interrupt ID 0 as per the PLIC specification.
 
-Today's linux-next merge of the vfs tree got a conflict in:
+This prevents potential undefined behavior when accessing the reserved
+register space during suspend/resume cycles.
 
-  fs/afs/internal.h
+Fixes: e80f0b6a2cf3 ("irqchip/irq-sifive-plic: Add syscore callbacks for hibernation")
+Co-developed-by: Jia Wang <wangjia@ultrarisc.com>
+Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
+Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
 
-between commit:
+[1] https://github.com/riscv/riscv-plic-spec/releases/tag/1.0.0
+---
+ drivers/irqchip/irq-sifive-plic.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  09c69289a2730 ("afs: Add support for RENAME_NOREPLACE and RENAME_EXCHANGE=
-")
+diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+index bf69a4802b71..1c2b4d2575ac 100644
+--- a/drivers/irqchip/irq-sifive-plic.c
++++ b/drivers/irqchip/irq-sifive-plic.c
+@@ -252,7 +252,7 @@ static int plic_irq_suspend(void)
+ 
+ 	priv = per_cpu_ptr(&plic_handlers, smp_processor_id())->priv;
+ 
+-	for (i = 0; i < priv->nr_irqs; i++) {
++	for (i = 1; i < priv->nr_irqs; i++) {
+ 		__assign_bit(i, priv->prio_save,
+ 			     readl(priv->regs + PRIORITY_BASE + i * PRIORITY_PER_ID));
+ 	}
+@@ -283,7 +283,7 @@ static void plic_irq_resume(void)
+ 
+ 	priv = per_cpu_ptr(&plic_handlers, smp_processor_id())->priv;
+ 
+-	for (i = 0; i < priv->nr_irqs; i++) {
++	for (i = 1; i < priv->nr_irqs; i++) {
+ 		index = BIT_WORD(i);
+ 		writel((priv->prio_save[index] & BIT_MASK(i)) ? 1 : 0,
+ 		       priv->regs + PRIORITY_BASE + i * PRIORITY_PER_ID);
+-- 
+2.51.0
 
-=66rom the fs-next tree and commit:
-
-  09c2e9069e0fb ("afs_edit_dir_{add,remove}(): constify qstr argument")
-
-=66rom the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/afs/internal.h
-index 444a3ea4fdf65,1ce5deaf60193..0000000000000
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@@ -1099,11 -1097,11 +1099,11 @@@ int afs_single_writepages(struct addres
-  /*
-   * dir_edit.c
-   */
-- extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct af=
-s_fid *,
-+ extern void afs_edit_dir_add(struct afs_vnode *, const struct qstr *, str=
-uct afs_fid *,
-  			     enum afs_edit_dir_reason);
-- extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum a=
-fs_edit_dir_reason);
-+ extern void afs_edit_dir_remove(struct afs_vnode *, const struct qstr *, =
-enum afs_edit_dir_reason);
- -void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
- -				enum afs_edit_dir_reason why);
- +void afs_edit_dir_update(struct afs_vnode *vnode, const struct qstr *name,
- +			 struct afs_vnode *new_dvnode, enum afs_edit_dir_reason why);
-  void afs_mkdir_init_dir(struct afs_vnode *dvnode, struct afs_vnode *paren=
-t_vnode);
- =20
-  /*
-
---yPaLQWwmGrOURL3O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIPqIACgkQJNaLcl1U
-h9C/Wwf+OYy/4uf6MBZTi3RMH16np/z4n+1eUp0aBFe/mpTrDHIxes3YgFMLlt3v
-M5X2FnA7JFP2BSoJZwgcs5+tZnZN/Fd8uDT9HzSX6sCZ6HrBym74zeijkA5irUV3
-+jQZs8LelgxkNEy9ccU8KntA/GjxFwJgFFtCJ3FZi0l+ClOuc3YWVBqFSgl/x+Wv
-/t9G8VsmRE/F1bjuUX/TMD6U5I2rN8zup1nW5nIOv0cCIBlh3ajE8tL7WM8mGXPI
-lPr/JHWTWlRWePNPDD4eDf/wCuRwae+0yDwEraKMRtfTAvHEbfhaUThby/V21FOO
-EBmz8MphXDfxyvsX8WRCiaqPhhM8lA==
-=otWZ
------END PGP SIGNATURE-----
-
---yPaLQWwmGrOURL3O--
 
