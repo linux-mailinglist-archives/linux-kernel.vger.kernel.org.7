@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-817751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F3AB5860F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCEFB58610
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88141B20930
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0608D188A18A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAF3296BBE;
-	Mon, 15 Sep 2025 20:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAGklpnG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D310298CAF;
+	Mon, 15 Sep 2025 20:31:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B224F2747B;
-	Mon, 15 Sep 2025 20:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB3072610
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757968156; cv=none; b=qMrFBln39GL6x/cs7a/LWwzyMHgPQdTG+Z8MrRXeONrr8xS+L6oRhzrr/tWGzo5Lqa1VGg1g+Uq6PBYYV1F57q70v8juBv7iopgWH0kI61MxmMbeF0nUC00WXG6lesQVubpoNFZ6UvyduLe3tUJKcR+/QaVH5PJJWa26bNQf2po=
+	t=1757968264; cv=none; b=UYr/1PSD5nSYhIkCsMIZ3PTfyH4Ae4siPKaTpwTX90qm5R9qSDqmTPG2z5l3SQ1jAISqnBF7zj/YMbWzQ/daDJX7yAsKk2NCdDls+CxmWx34MHxy/yv/p8FuI6WoZm3HR8Y80QJuys6b9K+xC2Ehz2vsroaA76n+SSivnRGmHa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757968156; c=relaxed/simple;
-	bh=EQpTo/RgoNKX0mXkKrafjmm1nM0eoEouMnKpfDPXiLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukwJ4v9ChoTOAuChvOkN55nFly368vf377rP832OtUASkmjP0i/GwI/BBB5fvRTjebUiXgqgFsYvvlqa777xeWdaV/DC4aYXLOxdb1dUFc27OGBUmJ7wleNSTEBfu9wcnSoMNDVtN6dYjLNNWzoCfpq/5H6i3z/5wZBFIaJGxPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAGklpnG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A117C4CEF1;
-	Mon, 15 Sep 2025 20:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757968156;
-	bh=EQpTo/RgoNKX0mXkKrafjmm1nM0eoEouMnKpfDPXiLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gAGklpnGWNP2a56z4dv4JQ6l99jWPRcvfNdLwJg6genX7OTzgF5JF5rXPrN7MHVUk
-	 2lcS/iKj8jot5wQEPEJoUeCFAE551diZ5qE6n6JcaUKH8ryhU129S3vx9l5zoJGnin
-	 u2t9A4SeeG2K8BgdfSmRXMztyvDMzoyuYgAO3TtGk8Fl5mKbHPj+qk28auvMl5Y3Dv
-	 C87IBGjJgdXy0BYzTrwrEnvJyyH9aPwwWVaS1fMG2LZwMpJIdk1xkbBRC0DZPhrBNh
-	 hry9bzRG1M3+izr6YM1CIOn2U1ZXSY6/V3l+sYKxoo/rJAN90Lzw0uyaztnOHoFQlo
-	 rOdau0R/rjk/A==
-Date: Mon, 15 Sep 2025 15:29:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/9] dt-bindings: gpio: add QIXIS FPGA based GPIO
- controller
-Message-ID: <20250915202915.GA3338804-robh@kernel.org>
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-2-ioana.ciornei@nxp.com>
+	s=arc-20240116; t=1757968264; c=relaxed/simple;
+	bh=b6xUAhSkq9CF20QAKR8T5QLGnQzzvGI5ZPW5RG7BblE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XR1mIVTq9cUu4usAa/IV6qSID8WNelvdXXHUwKVy0nF5GeSzwRpKifsYtbcuFq9KEULN6sVHFeBO5iyzxCwc5nCKMI1DX/N6I93oCWe2LYJ5d3uK+cZ3LCeSCIUKTTQC/gFA3xy0uRkXipxBuVBd7HKU+85CyJ1wfpaqJQbLhDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-893620de179so341994439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:31:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757968262; x=1758573062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DSfa1TS/tc9azsXeHlqsi+zqwnTdr1EPZWX2g+MVJp4=;
+        b=PttKeQK9Ih7gGjGVENz1tSLwnZqwYAvcWZL8sUwtXh4NtX9Iuz54zkgIky07o9GRCf
+         z87Lotgg0adbn57oYZgK+0XsTnpzis3ZohBi7i0m/skrtMDZkHNpjArYiBcEiYe3Ktmn
+         zwEKAT7apLHTdLwwFGoL1W5O5uiJfhWcoNqCSgxbcCKRPvMPnrCecKpyPYsrAZcimpP+
+         Qjp3EuqJNaTb2GnRAA2XFhKLH6Ur9QDER4gCaWNqLXwwpz3B7wMDfW8K6tODeuZVBwpl
+         H6VFt/r3omK2LmLlHoue12lMVu4JgQSKRNMwDQ0daYGQ+56O3eKhQA7JpvVSqN2KtCI7
+         CC+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVxuvyuL83fI5GXMdUzxE6SbaTbFN0N9rU2MED17O49HWd1jFcVEmajUK0HPx2ivbifIN3P8W0Dx7rTtVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYXA17fy12ocw/VxLTbAFoR2nYjvcWV+iNK29DfEofYxdFVyi8
+	Yr21PR5HKQTWCIMnyAQgnFzqQiKzHFYxjXJSfYQCYdrhq2QjF4+pvUdKFKr2MRap9KlKjOJEEeo
+	KDpJLkXWsryp4l/JpjeO1e/yyjVvgBMlQWqQM6x2jWeWW7PLprY8oJz47Wac=
+X-Google-Smtp-Source: AGHT+IHMZF8VsSDt1pYApy3XkiXUF1lcW/9T96gt2lhVyAj716cXCgtAjjDt0M2JEJTrdjas03ad8DK8GY+v0KtAVAkq8hgVMwAN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915122354.217720-2-ioana.ciornei@nxp.com>
+X-Received: by 2002:a05:6e02:3783:b0:409:d91f:a48f with SMTP id
+ e9e14a558f8ab-420a42686eamr127681255ab.22.1757968262491; Mon, 15 Sep 2025
+ 13:31:02 -0700 (PDT)
+Date: Mon, 15 Sep 2025 13:31:02 -0700
+In-Reply-To: <CAC_ur0onFzDuog+3e76qiG2mc15wxBxSSe45A-ESL3QmWyVcNA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c87786.050a0220.2ff435.03ae.GAE@google.com>
+Subject: Re: [syzbot] [input?] KASAN: stack-out-of-bounds Read in cp2112_xfer
+From: syzbot <syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com>
+To: deepak.takumi.120@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 15, 2025 at 03:23:46PM +0300, Ioana Ciornei wrote:
-> Add a device tree binding for the QIXIS FPGA based GPIO controller.
-> Depending on the board, the QIXIS FPGA exposes registers which act as a
-> GPIO controller, each with 8 GPIO lines of fixed direction.
-> 
-> Since each QIXIS FPGA layout has its particularities, add a separate
-> compatible string for each board/GPIO register combination supported.
-> 
-> Since these GPIO controllers are trivial, make use of the newly added
-> trivial-gpio.yaml file instead of creating an entirely new one.
-> 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
-> Changes in v2:
-> - Used the newly added trivial-gpio.yaml file
-> - Removed redundant "bindings" from commit title
-> - Added only one compatible string for the gpio controllers on
->   LX2160ARDB since both registers have the same layout.
-> 
->  Documentation/devicetree/bindings/gpio/trivial-gpio.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+Hello,
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Tested-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         f83ec76b Linux 6.17-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=103a1762580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=7617e19c8a59edfbd879
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=153f947c580000
+
+Note: testing is done by a robot and is best-effort only.
 
