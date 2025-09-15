@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-817727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32327B585B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0EDB585B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F604814AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:07:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A8C1AA74BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6DD28BAB9;
-	Mon, 15 Sep 2025 20:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FE228751B;
+	Mon, 15 Sep 2025 20:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvYzKB9s"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Slh5TKcJ"
+Received: from mail-yx1-f74.google.com (mail-yx1-f74.google.com [74.125.224.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C430E285CB5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9AF320F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757966827; cv=none; b=bswqTOqb0qUM+dOY3tpTmpesvU5W82qOMO6BSe44x8z6u/XV5aw87Oz6QQyiFkLoG+O5rSKQjDF7k3NKEPx2e8HV5gx7n64aZ6Kcb/whCZ2d/PrfZKjC10z6AZpGBehU5J+WSzv3mfoXEtVS3y92TYjgXi7R/ZU24VldvLn0gDM=
+	t=1757966964; cv=none; b=I57BVAnO3/pg0UxVmmJ15pPuuqHT0qf3gs3qwKcB4Oqc5a2p+QRKc6gIuQcnIz+QVdyOpc/yjFG4LFqdzhSGCxoepU71hyz1nKj8qR4ZAOEZ2V4cPFpaxsw6b2JRUkdbl0BES/jcIf0mfXcflVbkaXPdjDunF7UFg2c1Cuyk9iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757966827; c=relaxed/simple;
-	bh=Bp374DX/U/aWjXzAxxMNXNdVpAbYUiHoMWgNCmnD4nM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sh0IJSsZScT6mrI4uckiGEtwLTCDrRzv5ksw2PUkeYg22A2zdtSIvS4KxX+cepoKuZctyNpszINZKCmmboZenwJ1OAQ8AVnd4LVE8qXG0ig2Q4OWpC8FWA6fPr+y+j3+KPpmAG61zp/jgaaOXXoDqknWdFa++QiGKVnoq9d5ZwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvYzKB9s; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso47990895e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:07:05 -0700 (PDT)
+	s=arc-20240116; t=1757966964; c=relaxed/simple;
+	bh=Fobnu558txLFiN/zkoPZ8no7tLohQ5HWSoUnVfqVHKk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R//iWOGBtRPwn8bNsSndp37w67c+W3qyMHhHVqb4FStFJqDywop4zNnyFmfX8rKKvFfBpCSstmdHtBvDwQSdkxMajCLFstRQtBuUOsig9rw3EMmGurhISiorzjSCuOCjpiixn4iEPDigo+1zqdL55LbkDzgtYmezKg/FQjrOc1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Slh5TKcJ; arc=none smtp.client-ip=74.125.224.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yx1-f74.google.com with SMTP id 956f58d0204a3-632d1b023d4so644390d50.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:09:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757966824; x=1758571624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iMaZelnv0gjVtGPE0leSvjV6B/t1yvdFRKvRCI36mmU=;
-        b=ZvYzKB9sQNTz9TdlkWrIxo5IfNWq6setJckZpLZ6bOnpLJz/kASNi+ZaZeAC/MoRdQ
-         y87zgSB3hGCCwvpR5uBBOJD6GgyZybuyeJNXNDW+5fSzAVWVULGiGCqP3uHgnvyS74S4
-         J7FK0r6zURWaXgtkzfoV7kXyYYUit9H5tVH8LenWDQ5VtfoPdu8Z/Z2+PNJMMVbou3I2
-         FQtGzYvE9j+0xMOKTRT9W2kEfiUFWbJLsiuf9iMnvmlZFVTU13NCz6rWuaMMBaGbfT6G
-         /ChDkqNVpG/q17WOI7y7qaov4FQSBy+KQLHyeDpgA6CJ/3WHG7OQbxYndFWXO9arpz2b
-         Jt3w==
+        d=google.com; s=20230601; t=1757966962; x=1758571762; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fmQFBQOU3sbSfIW0gfUABdqH2f/LLX/ec2YX0nMZUmA=;
+        b=Slh5TKcJFkZ/d9cG1JJU74BBHfQ8kQep61Sv7E/vTiIrKYiukidafg+tnsWXnIh/TL
+         AaJl/xGtwCYdebcyp6DTFm15gCxxgcAZiLDSy61eVOb8XryC08uhgIvWDNpB2JxcqQ6n
+         5e3S2FTJJ4L4Ft7zYPJBBWvGAfh73n61qeHW0/E51lB8oihj5JbyxDZ/MJMkcG6+EI4+
+         Lr2YeodX3Cni3VrBF70bug2uZNYMHSyh1cov4iKtJQtvc73Efyjz0O3JSdTx/EcBbivZ
+         WUEU0W5j4MGih5VAGk0eHUSQtVhw9ZcOt4ZdJxHDUHTe0kz9Wdz25uml4woge27mHQv1
+         MyRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757966824; x=1758571624;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iMaZelnv0gjVtGPE0leSvjV6B/t1yvdFRKvRCI36mmU=;
-        b=kxQLe3BHIUhNhFijKBzW96BYjKENFcJSHmN8dOcbDWmlPrQKMxXiSh8eIjfY0Ama7L
-         M3XhnTP7bLhgnUszfmXE3WJC9W4cE36VcomWGceBLQponFb7Y9rMYt0LbnTyOGfI1SgV
-         79+6dWYyrextqn4zg8szUn4ltqKomUr/zkzpLXTBIBPPYwi68pNYuQDGAAhssp2aAGOO
-         LF055FvSnvZHJr/N3A374C5GmkRUYH5Fs9IfEuYgb+FfkVRQLxQSbxrQno13cQeioUMN
-         nMXBN4DulJy96K329pwTB0nu8EreuEDsG1H4+Af0G7p3ZmPHK5dkKPGMQxS00d6+z0Gu
-         PdAw==
-X-Gm-Message-State: AOJu0YxqjMlbv0LxYFOhKSD7uSS8ZlduEDSkRXkS66vC2gZlqJvVC0wA
-	naOO9nWX0I0Il8tLLlWs/x1tCuP0bvtPdQTqGwwnMBRKP3V/xRVW48eS
-X-Gm-Gg: ASbGncvHBvNJb1hs5a29NOYTaCYhptZkGiN9hcN3gVG72q8S5xSaj1jK8BCan8P40O9
-	8KzJHcjnPBEKZoHdVptAl0UtN1mKY8PcK58zsB6T+Uj7SHpNzY5Bz23vIATwkdVU7Eyif452ztx
-	RNoXLvT/IRG9qrFm/s/qOVgVCwkHfFN4vN2Gd0hZF9uBSNfdHLXznPX4tNOaDv5SmbNFL7r06hq
-	FjavFB5v8jbxGmB48Iil+/5yTIhMtxvq+ETR6od7ZlZCMHfLnBfAP9efG1lDvYrHpfr+VRKntfu
-	cCTylhGbFPoaDx7UyGEqAVTEFN9CNpFhU8zIFvRFT94zVzVBQR10ghwLT2JCdm3WI2sQ1IIujH/
-	jTeYURt/Lx5bG/D55sWL7S8coQl3ZlwmhhjUT17uVSSc=
-X-Google-Smtp-Source: AGHT+IE6RC6QQj4xdst05r+LwYKAnJLbln/3bNeokossDxipclPSYD8h8fJvmCXid878uJsfA1X5Mw==
-X-Received: by 2002:a05:600c:2251:b0:45d:f7e4:88b4 with SMTP id 5b1f17b1804b1-45f211fee13mr110158435e9.30.1757966823772;
-        Mon, 15 Sep 2025 13:07:03 -0700 (PDT)
-Received: from localhost.localdomain ([37.72.3.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32114c62sm2840745e9.2.2025.09.15.13.07.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 13:07:03 -0700 (PDT)
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-To: linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	pjw@kernel.org,
-	palmer@dabbelt.com,
-	alex@ghiti.fr,
-	wangyuli@uniontech.com,
-	chenhuacai@kernel.org,
-	mikisabate@gmail.com
-Subject: [PATCH] riscv: kgdb: Prefer strscpy instead of strcpy
-Date: Mon, 15 Sep 2025 22:06:44 +0200
-Message-ID: <20250915200644.200498-1-mikisabate@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1757966962; x=1758571762;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fmQFBQOU3sbSfIW0gfUABdqH2f/LLX/ec2YX0nMZUmA=;
+        b=SvDorKCfzF+nwryV+ZnugxajLyQvfDEsyiOJYgYQDvmaVrT6hNFXiE7gZQbnkMK1xK
+         4vewAO6t0wesi5mr7YQib4K/djb4sRRVtnLPv9Kq8mAv3a3XBaxffs5DnXQt/TPqCKzQ
+         qTC7rA3b3BgTyLmGE4hcMubcCJgx7aMmg8fxmp4VDUHzx76ePJzVVKrXQpJec2exjiQD
+         tqVDWxRWk3fdrRYkEJ1WE3Op41jvG7qw8BcDdYLGgWsJUD9O4v2ffNDR6D8TxpOoXKks
+         nLn0wNf3Yl65T73gxjKFu1OKTyURkj4WNJEuaTmOOtoKX6+CR9+RBL4ytbfJEjHIHyvc
+         P92A==
+X-Forwarded-Encrypted: i=1; AJvYcCXT6bONwLHm3kGTTsCsY+P0PZpEW1wyH1V99e/5GYCRou5LUZ+vv1N/JOByk1bU0B7w1Na57j3S5cQ2ptE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywouwct1+tQkRh7Renv8q4n+CUK7CAP9K+P/WzdkWJoD3vGYj+z
+	rMwVVzv5euRLIudT8eywZG50z34hDQICcbvYv96+ryBiuZvlI64jdD1Gx2XiJTFMafzHu1/lc9K
+	HkijV6A==
+X-Google-Smtp-Source: AGHT+IFfkDS+5yJa97rnpCK9X9oH9mDCgwcvJD7rMR+X3QCodaw6DtIogjSxErvfJVvIxP4SKHSMVtQ9WRc=
+X-Received: from ywt8.prod.google.com ([2002:a05:690c:9a08:b0:723:ac0b:257f])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690e:1246:b0:62d:cb07:f098
+ with SMTP id 956f58d0204a3-62dcb07f103mr6632562d50.18.1757966962125; Mon, 15
+ Sep 2025 13:09:22 -0700 (PDT)
+Date: Mon, 15 Sep 2025 13:09:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250915200918.3855580-1-surenb@google.com>
+Subject: [PATCH 0/2] fixes for slab->obj_exts allocation failure handling
+From: Suren Baghdasaryan <surenb@google.com>
+To: vbabka@suse.cz
+Cc: akpm@linux-foundation.org, cl@gentwo.org, rientjes@google.com, 
+	roman.gushchin@linux.dev, harry.yoo@oracle.com, shakeel.butt@linux.dev, 
+	alexei.starovoitov@gmail.com, usamaarif642@gmail.com, 00107082@163.com, 
+	souravpanda@google.com, kent.overstreet@linux.dev, surenb@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-As pointed out in [1], strcpy() is deprecated in favor of strscpy().
+Fixes for several issues noticed by Shakeel pertaining to slab->obj_exts
+allocation failure handling in [1].
 
-[1] KSPP#88
+Patchset is based on mm-new.
 
-Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
----
- arch/riscv/kernel/kgdb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please route it via vbabka/slab.git as it's relevant to Alexei's patches
+in that branch.
 
-diff --git a/arch/riscv/kernel/kgdb.c b/arch/riscv/kernel/kgdb.c
-index 9f3db3503dab..945f82a72954 100644
---- a/arch/riscv/kernel/kgdb.c
-+++ b/arch/riscv/kernel/kgdb.c
-@@ -265,10 +265,10 @@ void kgdb_arch_handle_qxfer_pkt(char *remcom_in_buffer,
- {
- 	if (!strncmp(remcom_in_buffer, gdb_xfer_read_target,
- 		     sizeof(gdb_xfer_read_target)))
--		strcpy(remcom_out_buffer, riscv_gdb_stub_target_desc);
-+		strscpy(remcom_out_buffer, riscv_gdb_stub_target_desc);
- 	else if (!strncmp(remcom_in_buffer, gdb_xfer_read_cpuxml,
- 			  sizeof(gdb_xfer_read_cpuxml)))
--		strcpy(remcom_out_buffer, riscv_gdb_stub_cpuxml);
-+		strscpy(remcom_out_buffer, riscv_gdb_stub_cpuxml);
- }
- 
- static inline void kgdb_arch_update_addr(struct pt_regs *regs,
+[1] https://lore.kernel.org/all/jftidhymri2af5u3xtcqry3cfu6aqzte3uzlznhlaylgrdztsi@5vpjnzpsemf5/
+
+Suren Baghdasaryan (2):
+  slab: prevent warnings when slab obj_exts vector allocation fails
+  slab: mark slab->obj_exts allocation failures unconditionally
+
+ mm/slab.h | 8 ++++++--
+ mm/slub.c | 3 +--
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+
+base-commit: 9a9318f95d63805868bd21e1381d68c3a75d03a7
 -- 
-2.51.0
+2.51.0.384.g4c02a37b29-goog
 
 
