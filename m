@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-817077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B638B57DA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:43:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A511EB57DB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44BD1AA122F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:43:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63D44165C13
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DDC32779D;
-	Mon, 15 Sep 2025 13:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7614431B81B;
+	Mon, 15 Sep 2025 13:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTVCKsBS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YegZ2WtT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39C731986F;
-	Mon, 15 Sep 2025 13:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A0631A578;
+	Mon, 15 Sep 2025 13:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757943667; cv=none; b=e7OK11f+Hdlfv1bT9i8QLJNMfrKrcxemYBwTNNMvSj2cMYm+CaCBF0V6nxK+OCaumzenuClUXspYFcMvrL7dSLEHglWZrZM9DDzYjCLGOhWAD9MWskhcLNC1ZPaW4m0pKLvlzbbzlfWT2YeibeL9gUNrKdr4Ek9sZcpxvjNu80o=
+	t=1757943690; cv=none; b=n0uhwifUAsxd6igMLqZPSONCgOV25LedoZFNGfjM0k99zgpEHRcJ82iNRnPIYivUe3PvUFJcnerZpRqA6lZKpkfE0WGGdknPT95nj3f0wkEl5xEpF9YtRFcKDwMmO/9pq+nvsA7/2hZHT4O9xfMdyxew8SMcYqX7ErhMw8x/Ais=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757943667; c=relaxed/simple;
-	bh=VDLORfLKka5X/8PhdR6E7ilqkJcXYuBbGf75wpi+r+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eI2eWZK/qzMHa4qqGZ0fQs0Bb3wWnEPA78yQFJ3LRuWAS8Z4Y4AaZF31zvPbEC7pBfMErTXHgHcnHnqP1WKQ4mmBsqgJEXCg4i7VwZJvD3U/7KVUNOBQpcZgblKj946GxaZ572ApXu1iv6ZZk3iJ8/WC3+14U7SMJCM/X9ged1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTVCKsBS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA215C4CEF5;
-	Mon, 15 Sep 2025 13:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757943667;
-	bh=VDLORfLKka5X/8PhdR6E7ilqkJcXYuBbGf75wpi+r+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nTVCKsBSCbnc2DScS5sG9dC7zfwep0s3pxzrPi3qgLq/idFr0YOlHS+XFqsVdjK9r
-	 lpc1mHs571V8SRqJTAnfaN1D1X+CbboBKQXBXHamDkBTIjj5tz8bJQELVflMbgehzf
-	 a9raZrsOaOi7Wc5cA9TD/PROoxV1WBDXhYPgayF85sMbGt1vwMOACrahqRCoVl6Lk7
-	 ypgPSNqZRx5BYBe2bYMKplLtCXzGAYX6L0mfS1s0P0IeG9FtgH0QjkNVkLpFB2+o43
-	 zlulvGNMM2+LVDMEDpatNlUtx06Ryq4VoVnO8OU4HQScVHJgJ5Z0BlTMU6LvUiIqHe
-	 nSTJ13a40aN3g==
-Date: Mon, 15 Sep 2025 15:41:02 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
-Message-ID: <20250915-tricksen-militant-406d4cb8ebda@brauner>
-References: <20250911045557.1552002-1-mjguzik@gmail.com>
- <20250911045557.1552002-3-mjguzik@gmail.com>
- <20250915-erstflug-kassieren-37e5b3f5b998@brauner>
- <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
+	s=arc-20240116; t=1757943690; c=relaxed/simple;
+	bh=yxThJFjgk/onijRWZOMaM2BSfI+4eRYM4Vqmsvjq89Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=V0tMQSbd9ZpQXIdwKl11WTp+zP7KZzAXAvlFDVqy3Wq64iKPgMpgodrxU3MHyxRmT1XK2/6k+0KvNK1YUnbS77Y43Z1DPZ+hqWBo5sLuh8TpLXbIt23h/wyBVgJ82KMZaNTCxrTNZURcLoOyo3aRaQjSjB58vSISHkJRj11z92k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YegZ2WtT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757943687;
+	bh=yxThJFjgk/onijRWZOMaM2BSfI+4eRYM4Vqmsvjq89Y=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=YegZ2WtTwpGRE9vdewFKrn9fAnxENJApcYtpeJVlPUKl48EHfTejKzGcoy7IfKHSq
+	 gSqdusiaSUTXqrKFZjqLYqggi3vjuHiFSLI7HzuGfU5MvG+wXVN/3rLs7rGAhBQPoF
+	 EZw9Au7i5ZUsvh7S858i1ZUe6Vhj7EH8t6mlWNTVDhb0uL8zqwHu0bNWgCfGn0buX8
+	 xqy4XeBN5e6SPq6+ox7nx1pZCqb2vYg622Gx56IfQWSgdMqY12GEvlCKegyiQ1xqrU
+	 bs+UjakxTT/R1i76wEOet47SBBbtPicuhrxmwoFBXN7w29vPImDzBeHe/drIpnmo9Y
+	 7lJKke7oypQTQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7FB0317E107A;
+	Mon, 15 Sep 2025 15:41:26 +0200 (CEST)
+Message-ID: <bf054186-17fb-4ea4-9d07-488b6792a437@collabora.com>
+Date: Mon, 15 Sep 2025 15:41:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] tty: serial: 8250_mtk: enable baud clock
+To: Daniel Golle <daniel@makrotopia.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>, Yu Jiaoliang <yujiaoliang@vivo.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Changqi Hu <changqi.hu@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
+ Steven Liu <steven.liu@mediatek.com>, John Crispin <john@phrozen.org>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <2de07b0a6d51d5d3bf3e55cd03cf75adfc91ee7d.1757941345.git.daniel@makrotopia.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <2de07b0a6d51d5d3bf3e55cd03cf75adfc91ee7d.1757941345.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 03:27:16PM +0200, Mateusz Guzik wrote:
-> On Mon, Sep 15, 2025 at 2:41 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
-> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > ---
-> >
-> > I would do:
-> >
-> > inode_state()
-> > inode_state_raw()
-> >
-> > Similar to
-> >
-> > rcu_derefence()
-> > rcu_dereference_raw()
-> >
+Il 15/09/25 15:06, Daniel Golle ha scritto:
+> Some MediaTek SoCs got a gated UART baud clock, which currently gets
+> disabled as the clk subsystem believes it would be unused. This results in
+> the uart freezing right after "clk: Disabling unused clocks" on those
+> platforms.
 > 
-> I don't follow how to fit this in here.
+> To fix this request the baud clock to be prepared and enabled during probe.
 > 
-> Here is the complete list:
-> inode_state_read
-> inode_state_read_unstable
-> 
-> first is a plain read + lockdep assert, second is a READ_ONCE
-> 
-> inode_state_add
-> inode_state_add_unchecked
-> inode_state_del
-> inode_state_del_unchecked
-> inode_state_set_unchecked
-> 
-> Routine with _unchecked forego asserts, otherwise the op checks lockdep.
-> 
-> I guess _unchecked could be _raw, but I don't see how to fit this into
-> the read thing.
+> Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
+> Suggested-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-_raw() is adapted from rcu which is why I'm very familiar with what it
-means: rcu_dereference() performs checks and rcu_dereference_raw()
-doesn't. It's just a naming convention that we already have and are
-accustomed to.
+Thanks for caring about power management. However, this and the addition in PM ops
+should be a single commit. It's even using the same Fixes tag...! :-)
 
+I've read both of the commits in this series and the code LGTM.
+
+
+tty: serial: 8250_mtk: Enable baud clock and manage in runtime PM
+
+Please, squash the two commits, after which...
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Cheers,
+Angelo
+
+> ---
+> v2: no changes
 > 
-> Can you just spell out the names you want for all of these?
-
-just use _raw() imho
-
+>   drivers/tty/serial/8250/8250_mtk.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> > But you need some actual commit messages etc...
-> >
-> 
-> Ye and I need to runtime test at least with xfs and btrfs.
+> diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+> index b44de2ed7413..9329ed1f759d 100644
+> --- a/drivers/tty/serial/8250/8250_mtk.c
+> +++ b/drivers/tty/serial/8250/8250_mtk.c
+> @@ -475,13 +475,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
+>   	int dmacnt;
+>   #endif
+>   
+> -	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
+> +	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
+>   	if (IS_ERR(data->uart_clk)) {
+>   		/*
+>   		 * For compatibility with older device trees try unnamed
+>   		 * clk when no baud clk can be found.
+>   		 */
+> -		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
+> +		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>   		if (IS_ERR(data->uart_clk)) {
+>   			dev_warn(&pdev->dev, "Can't get uart clock\n");
+>   			return PTR_ERR(data->uart_clk);
 
-Something I plan to do soon is more automated testing as soon as patch
-series are pulled into one of the VFS trees. And by that I mean visible
-to the author of the series. It'll be a while though unless we get
-manpower for that.
+
+
 
