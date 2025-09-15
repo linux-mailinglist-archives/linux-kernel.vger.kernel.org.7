@@ -1,190 +1,159 @@
-Return-Path: <linux-kernel+bounces-817360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA369B58123
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:46:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBE3B58132
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:49:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ACF016A711
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42224189302E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133AC21FF25;
-	Mon, 15 Sep 2025 15:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0924B1F37D3;
+	Mon, 15 Sep 2025 15:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QLvV3nKk"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010019.outbound.protection.outlook.com [52.101.201.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrG/RLKS"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3551F37D3;
-	Mon, 15 Sep 2025 15:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757950991; cv=fail; b=cbBT9pPsKDW1JhOcJTopCNpR+LhyNzJLO15hix8gFyEvgkxBR3Q1RpCfZ/pSYKD+2JNM6/iw6v5Z2SZWTC17KiNNJsSElq6KFPUZyBXCFUOy0L1m6MTXkeoeUrFJpjSZbBFl8MpYjLEy+f3ehisYQzLdPixfLd/x0W8ywy0eVAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757950991; c=relaxed/simple;
-	bh=drCie79hy0KSrNPeeywHo4KnbkvUaW+yC0QZje/ZMo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r9nRl1LAHvfM2gHu/psmu1Q2Boglawu8jiuyBnXsWp2VzjpDGz0gactg75FKykbWazOePjSUYftpN3Q8ZtUUycBGATuLVQ3PQP6yk3k0Izgyu5NSmIH1rvEKo9+XWEtA9aQIe9EcMD9q+qMvAqGY74Nixve1rhpAQwnwLiZBBGo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QLvV3nKk; arc=fail smtp.client-ip=52.101.201.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mnLIOuSgh7A9MMD72ON8nB1XF31uqeX5v88D/facbEw1ylGTvybW80Dn5hwdPrh8tG2/cVmRe8uOivhDGpgbsLQqA25p0hzVJyOGnib6RWoxU4wODBSX5kQOTK/H3Tv1B9cH6PGSwdDxRP3bJ8DjaGX8xQSwO/FY8kI6PySoLt5tORUQ9V3t1dsE+5MqoyIUxFjK33Bjh12bRgSXO8jb1HshBE2jt1IxSKolKNMA26ZGsIzdI+Osquqylwy5JjrP435EBtDP59knZMptsAQK7gGARc9HkiAnLWhgHsLsP8YPoGKtxxxtFFHRWb7eEfluMfcM1+/Uu9hC8CEkRBBMLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bqN1cuflBe1KfAsjSmv5jFx3bnWan+yMBJmBafZpYYQ=;
- b=A1Y4wBWfrZLDFsKscgvm2STw9WvmkCxMToD/mPW7+iClXWgsWugpXJYheQcEioOF141gWN2oPKM2FVfGLMzSv3QgaH395dmyd7jAoNZJGaI9Uacl4PaxjAQEVx8t4N2lFtNnJpEI6tFSZjT7IJFRtyN4sAibIohG43svGB7YnKs+pLoAM3K/xj6yVvvZ7uZzCN/+ypihOijXmGUWcIXRgUsdeRY0QwqHh6W2qnlYzQUy+Up5ObPQ2nc2wLpx4J+2+VqjGAFcRQoWZSCUgTR96gOVNUmISuPT2HDwob6w0BV1c+g756+nQaJ4CppHiNuqTT5mUFYBBBloD9mozYw2Hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bqN1cuflBe1KfAsjSmv5jFx3bnWan+yMBJmBafZpYYQ=;
- b=QLvV3nKkAMwgcG1UnzInpq3GPy8zuY72abECrNdRrKlcr+3MbpgUaBzIaPj798+N6rx3wfTaOFV7f2fICPAe8QJElktqDAHuIOB92EGfVbwRvUIEn2t0aEYBusXNSrTgWgUUWoV+qWYgNWBU/o77gDR8IoHAYagF3mQpMWLfRrk0pvdw0UkCG2fqdFylz02JS7fkbLwqYhBs1P6t2eDaK/OnM+u1Y4yYDfWUz7yv1FCmscsCDPnZ0QE2sVD+tGj9zs10fpSHUr0OIEw6xoDutGWnUrehhITG2LyOC/3uapKOQvEdyHVhZiKWhYKfk7dtgESqmYkjMBEtEsPWZ4JTIg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SJ0PR12MB5612.namprd12.prod.outlook.com (2603:10b6:a03:427::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 15:43:06 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 15:43:06 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Shuah Khan <shuah@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@collabora.com,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: Re: [PATCH 2/2] selftests/mm: protection_keys: Fix dead code
-Date: Mon, 15 Sep 2025 11:43:03 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <8BE96B0B-01DB-4629-A671-044E74680F1E@nvidia.com>
-In-Reply-To: <20250912123025.1271051-3-usama.anjum@collabora.com>
-References: <20250912123025.1271051-1-usama.anjum@collabora.com>
- <20250912123025.1271051-3-usama.anjum@collabora.com>
-Content-Type: text/plain
-X-ClientProxiedBy: BL1P221CA0034.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:5b5::18) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ADB17C91
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757951015; cv=none; b=o3iYoJMU0/JHxPkmZRLwFDXixXiKmUKcIWIZuru11IxO+q6DbvcyOZMvm17faRkkM9jhO4rtkQIBTnsIxRURlMZpox6qQXYmdxBduL6PGJgnKlRmWr8vx+NerSOq0F3SEv0958KxqBlo0uGbqRAVNMnXpfzhuAb1xXlol3O5ybI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757951015; c=relaxed/simple;
+	bh=OgGRiEUDLX3RTzuowFTrJ0bl861dCWK6Y5fQo+yVJdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AKtIcgqd3kX0SFVNei73iS3/f3yFN4ZG3OXbvvXBot1+ihj9oO8uX5X+XwknuBCh0h+g/FlCl7F70MTyouAXVB0Bwbq209yM2IHPCBtFqwK1cIX9WEPgmQJZzjRD7Ign+4zI8aOD99ij2SBVOLFsQpK60x+d7F9/A+gQ7G2zin0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrG/RLKS; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3eb3f05c35bso753950f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757951011; x=1758555811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a4TpjbuEkSI9D7sI2TIuMaUkLm3RGFxmBSKlWPmE/RE=;
+        b=OrG/RLKSdV73atEZ8bDCCuV5diO1jlCqDFHgyWBVsEo4uTmK24b4dtjlGZELSx0GBs
+         TE8ytN87zLnXF2RBGduhryA2dDEjqTWZbgIiMLdvyq6aTjUTU8uUp8TzuzW2jUix/ucw
+         rECU7rYPKvMvhz+keDLmYzb5MdA3YagKZr7eZ8XBw2K+jLD9iww4CpUltxfVDOy3koyc
+         mhie4vU8G+S0vOSIfy4pENAf/qtvb7qPiE1CWAsiuuAuLyH1bh3nUzdMxG1dbiwKrkeF
+         71VGbhDF4RYEFNHgCpP88AT+k7BHx6rBel11egAhHG/6HqZytI7JCDKjbESGndW7loh6
+         sbFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757951011; x=1758555811;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a4TpjbuEkSI9D7sI2TIuMaUkLm3RGFxmBSKlWPmE/RE=;
+        b=R7lWb61ivmldXIgyH7mUH3D817vuLH+aPpuk6pFeuqw77u5q13JcgLz73tbYxB8MkN
+         kmUUbcJZ7f3+r5w044NY3ZxqHaeeEn8Hdabul0RHInL/UJtW1KM8ydPhc4K9FyF2Hhtk
+         qktugwOMP7Sf/tkIu0tBDewld1BL/7hNlldFlF+Dv9CFYQYX+GUEchRBuSldqtCLQFkI
+         xpKKAFDMCrcdXdZlU4sBSEFajqgRlCkFOY1QW/RiBHhUigiMjHiNilOUdN7EPBqGdPGZ
+         5ApdrtEdnEe4Uv4IARljWDAI+qgeYfp6Qh2q/SqDNxiMgjnEH9GH0oMAuXrv480ooj0o
+         4Qxw==
+X-Gm-Message-State: AOJu0YyE8aR3oCImZ9nJsAnR9hMssSqv4Dr3y0xL9leWJu3ZAOxvQ5Mk
+	sydTzlX7/8RPvxFWNE/n6rNN4KMegZ4Xu18qkWZQj683MQ7soYpu+3TGgdN0tg==
+X-Gm-Gg: ASbGnctBr8A4K9lPwTNCMsxclyi+AtmSAS3jE4U9FMALvdj0Co8Fot7KtEvLUTRtFE5
+	mJRvpUqNE/6KSuq9s/ShNOLQ0kqBuK9/ecnVZC/aZ+fNw/Ck50t+laPeftCYNkFQ6NCgkBbDMY2
+	6HGQYnt6Q0aERcx47GAsLMa56gg1HljEb7TtYEjtPJGKSlDuXcgJ8NucnOq82+i/XKOu+Z4akIC
+	D1qWS1F7FX+5L9UDBYlPlLyt3TaEz2x0H4l40I+8QpO63zIC5eKDsTFHpQqemWPKf+jYPdmVe06
+	bVuMTPliK9izORX0KIYUGOdKlkkdBeul8JvIIT0PmC8i8WQMi3msM+LTlc+2PwRRcphWN5GRIF/
+	p5vSbRWTC72zCpmL8zhKBex0nNtVgFwI5I8WScmxpOtWeqgkT4zaKwb8757pktXRW8JOIaj1hER
+	0C8A1aivYrqw==
+X-Google-Smtp-Source: AGHT+IHo8rprzs2lnPAlHcfPi3gQ8kIkTHbVdYwaA2RYfhtKfLsiiB/E1MXC3I20/8ZIV3TcLzdQDw==
+X-Received: by 2002:a05:6000:26c1:b0:3ea:ab6b:3873 with SMTP id ffacd0b85a97d-3eaab6b39damr2657222f8f.30.1757951010719;
+        Mon, 15 Sep 2025 08:43:30 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f3105510csm5969895e9.6.2025.09.15.08.43.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 08:43:30 -0700 (PDT)
+Date: Mon, 15 Sep 2025 16:43:13 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-mm@kvack.org, Kees Cook
+ <keescook@chromium.org>, Aleksa Sarai <cyphar@cyphar.com>, Al Viro
+ <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] uaccess: Comment that copy to/from inatomic requires
+ page fault disabled
+Message-ID: <20250915164313.42644914@pumpkin>
+In-Reply-To: <20250910161820.247f526a@gandalf.local.home>
+References: <20250910161820.247f526a@gandalf.local.home>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ0PR12MB5612:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19b3a4f9-5a20-46c4-3d2d-08ddf46e903a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+VmIZzO036roLYCaIWPt8iWsFxge06w793UZxknSNMXNt30T7pFH/u5bV2Cr?=
- =?us-ascii?Q?bGVZiAJ6PwXZGEejjqE6pP8DkZ0/jBbZZBcAmYz5zMJWz75hDUZScfFpScdQ?=
- =?us-ascii?Q?kC6qRxejamN4kSXYdDiNQ8CoG2SvUE3O17WBczZw5IY8KBK4Gicg+O2qfQeD?=
- =?us-ascii?Q?U/lQ2Tr9TvuAOKKyv3xS9yhxYhFnOURbJ+jaUuIQkO4kJtQuxlRrZonqk0v/?=
- =?us-ascii?Q?5wV6oAlhttFn+sbsUiG2ng82kBrkzfOJKKbXigeGnzJaVflHbKTcyCPZrdRj?=
- =?us-ascii?Q?/LjNDjONYPqrKTGX7LgQAK1tn8L1aNUZbhzoLSGHIou4lbieDKs517hElroN?=
- =?us-ascii?Q?yzDIHR/g0MQHqvUHG0ezOLjZYhWduJDB5VWbFwIyo5rhbuI4kgN/yv3QMAY5?=
- =?us-ascii?Q?tzq/RflD/g12bvyZEuW7L2GwqO4GKeN+UjVIEIz6ookl6xBaQ0t+gVsdwh1T?=
- =?us-ascii?Q?bCJ7pi7Xf5cBKeQmuS6Esit5N6qFcX2Cyg/bE+R4gEXT3u+sNksJyq3M4zmS?=
- =?us-ascii?Q?n4RlAmrp1SZgOvEaG0oWBIKh2taTvlH1gLNgC9AFjEVXtH+UG+kniLMEHYJE?=
- =?us-ascii?Q?elWmALU8RpXxSjgTcG0kYsJsMcPoWzBSS++ySEQiSXqXwceBGy4L+XjOGlJ7?=
- =?us-ascii?Q?wmtrb9phQgdqXkACuuPWNId4poq+CwLa6O+oURM3hl4K+BapBSr5bE8aWc7Y?=
- =?us-ascii?Q?xi2KExpkSRoEPDLEI75V5P4Cf/bZTyLxbB8QMwFSF09xUPh6FsjmQ2Yw+CiW?=
- =?us-ascii?Q?ieCDO138pYdwkWph0leFg2CWAq90ha5Z+WEQjcN/45G/6GwNoFqnxg715Zrd?=
- =?us-ascii?Q?QNzJuMmtcxJSBKuBmRzP/ayHJbwmBtA3PVZ0Yom/OLTUa8/uwMEeDdcMk4Cq?=
- =?us-ascii?Q?WBHfdwULd9IYBiy3RaA9Qp1Z/+F8XtW7+Vyd/fttagRoI4zHjN0sAXi0YQ5n?=
- =?us-ascii?Q?Whr7AE2RhwNgoN/DbV8enQGJ+EXLwhvHUJzVegL6n1qrRCA7SYzJ4MBQ2fEI?=
- =?us-ascii?Q?xSENDuGXNYYKzEcYKCiEEkqaomfZaCAc6EmvrnaYp4a47gtPySlMkij1E7j7?=
- =?us-ascii?Q?dkYcfOeaujjurEeGWxiPkkntBjWJXaVBFTRE7kyOA9LdVtv16DBkL3Hxv2LU?=
- =?us-ascii?Q?0mOBZ/LF9aehG2l8pL3/aAjEHiCZH5aljjAZ7plYe24/sH9+B9FOj3ZhVzL4?=
- =?us-ascii?Q?VAyPDlHAm/Q5oCW2Xhz+FdFyW0tl1si9mdw06f+3Fd5UBv+1TUwCYFOeonD0?=
- =?us-ascii?Q?fsN8Ukfk29o4agupcyDdSHuG4au5S9sbtHLFdAb0WFbNARi3F0eRZqR+7OXx?=
- =?us-ascii?Q?roMg4shvJXdtmh384NQtTuxjQYWZRdh6Y2X6A1smwbDI9m+9K6bCi8LwAtVJ?=
- =?us-ascii?Q?pZBGdVlydw4PLT9RNK+CNSSCAonw13MKVe0BHa9po475uQ3Fj5HaL6A/5ghQ?=
- =?us-ascii?Q?GlAs2Tf+mIA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AXAfmOrBygkC67Uqbhgqrg1B9TAy9N3a3Y7RwscabHSYGvmDwUAkMZ3OoX3h?=
- =?us-ascii?Q?YwiTAGG+UA0usrO4uczKKFDgpNatlzGHoW5O3+Ye3Vjb/YBvLZ703caHlNzf?=
- =?us-ascii?Q?S74VsPZ1AuQ9pP1QzxBMTwwONVR6m84R6C6EZ2Ag3amG2vWEm7R1Gn12Jniw?=
- =?us-ascii?Q?PSDiGHhBwVqN7MC3Mk0UgtfHDq9Oey2014h3b50yJ7FrGUopPJ1YDbZA+rHl?=
- =?us-ascii?Q?jkFXkGJ3AeayYInp7bmHytYvCgBYYef45nPY6JM4AB6AD+BUlwXmBTjHmcaa?=
- =?us-ascii?Q?ioQBSd5wZgl12xZZTjdNhKLBFHhi2jz5jmHt8hxf3iNJF6j+nGL5Askjca8c?=
- =?us-ascii?Q?kjEKeSohLCxqqVnyOK6HquphlgyiUsmghWuf920rMeP0loe+1pr3g8REzqpf?=
- =?us-ascii?Q?ZmycMXwWIKFOMrrnKHqWTiOxtDg/8g1V1kU/bLSRgmbnQwb940jPBKNX9I6h?=
- =?us-ascii?Q?HVIDaBBjQ0cqb6FvpqU588dt3D1Al6NRE24MKHmxX9k1nUhPRiyruxRpM34s?=
- =?us-ascii?Q?0DE1wxhaKCJBoVJzkp/HM42rWWiDVLoGC2wZhc1RAVGhGjjSttiwXvTx+6Fy?=
- =?us-ascii?Q?ktASSQ0LnWP1UT+qjP8pGEQ9haD3MK+VejMLNhNrQEPkpkEAKAxKWN1S6fGL?=
- =?us-ascii?Q?F01URq+lfhJrreie8n84J/ixNSecUV3itGDGX6SnI41Vzustg0NltP3IH8f2?=
- =?us-ascii?Q?2k51gW4oqRSLCabJGwiaM2zdZeSenjZi+YVxU/erEFhKR8mocEJieRfVJKbk?=
- =?us-ascii?Q?hwlR4xNTrj9r29rvxxPh18R4EJ1c3iiSth/SkIj4NI//TbXjnJE6ZiNj8vt3?=
- =?us-ascii?Q?d/MqVN145GOd72AkErAHDJRA4EdFGB1GEBz9zAcZBFEX1/o5fGf6MLqddoKn?=
- =?us-ascii?Q?f/DhJqob1w83/DNjBuT0UsLD0BkwAJ84nKX1brGXTSY6eJISmRaUmgAY9MT/?=
- =?us-ascii?Q?yRsamnfIk/eyttA4l97Lik72XKjzXLvCehqjKqnaQZoaM6dcErf0ZfzidwnG?=
- =?us-ascii?Q?rFa/8Zp78iUjcwsVwbEZFY/mr0BR6mG4OjZ3bBJJD+4FIyduLmOlN8BflkpI?=
- =?us-ascii?Q?4RZWkgA+AuqzmO3nsXNhTicCBDOXEEx9fdxzMuFbF6AWbsEtNH4YNuLKjaHr?=
- =?us-ascii?Q?z+lhWAzERAun0XZUlSHRLVRR3nM1byxCmTGtqcKrp6MydBscXXH+XpPlGDZR?=
- =?us-ascii?Q?mv5KkwaXlFEK2wz8T5v4gTdkS+Q4DUll1g2iDdhN9qUs2i7kuUsnMSwlZ5gY?=
- =?us-ascii?Q?yTO4OmDpocBD0nCo4BA7XEDXpfRjb7fGylbrDUmF8/6Mzwzycp04kALhP3bQ?=
- =?us-ascii?Q?+yiufaF83/UnVrsF7k7fGi2tbl4flTTuRZeVRoMXsetiGdGqzR8aX7QDSX3v?=
- =?us-ascii?Q?jL+TyFax2cqN26tRlMhi52qKUjouJrdpEMT4MjHcfuF9pqO2bOmCn8gyJBog?=
- =?us-ascii?Q?8f5RqB+qB4LXe6PQ00gZvh3KLX9fR3UtKoxY5/uHMDnn5Exc9TME5XEEZFYE?=
- =?us-ascii?Q?7bdr7fD4PFbaD9Yk6OfM945vtsQX70iBsOAMJUA2CVo5Y9cizwEQ+UVCSlC4?=
- =?us-ascii?Q?QngQ7uVRioeoqttJEcs9k5cExxD+JntJuyix0iiO?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19b3a4f9-5a20-46c4-3d2d-08ddf46e903a
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 15:43:06.0979
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m5SVs7e+0PRGctUkXB29Bu5xCXqcaqYcYbSIdiuIhLtdET6htcl85jqkg9Is8bQR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5612
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 12 Sep 2025, at 8:30, Muhammad Usama Anjum wrote:
+On Wed, 10 Sep 2025 16:18:20 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> The while loop doesn't execute and following warning gets generated:
->
-> protection_keys.c:561:15: warning: code will never be executed
-> [-Wunreachable-code]
->                 int rpkey = alloc_random_pkey();
->
-> Let's enable the while loop such that it gets executed nr_iterations
-> times. Simplify the code a bit as well.
->
-> Reviewed-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> The functions __copy_from_user_inatomic() and __copy_to_user_inatomic()
+> both require that either the user space memory is pinned, or that page
+> faults are disabled when they are called. If page faults are not disabled,
+> and the memory is not present, the fault handling of reading or writing to
+> that memory may cause the kernel to schedule. That would be bad in an
+> atomic context.
+> 
+> Link: https://lore.kernel.org/all/20250819105152.2766363-1-luogengkun@huaweicloud.com/
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->  tools/testing/selftests/mm/protection_keys.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
+>  include/linux/uaccess.h | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 1beb5b395d81..add99fa9b656 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -86,6 +86,12 @@
+>   * as usual) and both source and destination can trigger faults.
+>   */
+>  
+> +/*
+> + * __copy_from_user_inatomic() is safe to use in an atomic context but
+> + * the user space memory must either be pinned in memory, or page faults
+> + * must be disabled, otherwise the page fault handling may cause the function
+> + * to schedule.
+> + */
+>  static __always_inline __must_check unsigned long
+>  __copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
+>  {
+> @@ -124,7 +130,8 @@ __copy_from_user(void *to, const void __user *from, unsigned long n)
+>   * Copy data from kernel space to user space.  Caller must check
+>   * the specified block with access_ok() before calling this function.
+>   * The caller should also make sure he pins the user space address
+> - * so that we don't result in page fault and sleep.
+> + * or call page_fault_disable() so that we don't result in a page fault
+> + * and sleep.
 
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
+It is worse than that - it must avoid a COW fault as well.
+I suspect the comment should really be that these are not the functions you
+are looking for, you probably want the 'nofault' variants.
 
-Best Regards,
-Yan, Zi
+Even if the code thinks it has pinned the user buffer it has to be better
+to use the 'nofault' variant.
+
+The only exception might be in code that already has page faults disabled.
+But even then it would have to be pretty performance critical for normal code.
+
+	David  
+
+
+>   */
+>  static __always_inline __must_check unsigned long
+>  __copy_to_user_inatomic(void __user *to, const void *from, unsigned long n)
+
 
