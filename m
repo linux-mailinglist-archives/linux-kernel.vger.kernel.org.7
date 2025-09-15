@@ -1,210 +1,270 @@
-Return-Path: <linux-kernel+bounces-816873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4BDB579C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:03:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5021B579CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3269201AB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:03:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8A491789F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A66B3019C8;
-	Mon, 15 Sep 2025 12:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BCC3054F5;
+	Mon, 15 Sep 2025 12:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G5LEHeOc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tmO6hzn+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="G5LEHeOc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tmO6hzn+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="quetT4Fi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B17304BC8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FA03019C8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937778; cv=none; b=WOLwVLf2NiClJRWIzy+z4jfZiqbE4TcIEqTErbkTtONfZN/MkB6Xsi5cRBoTuPXyXDMkHjN6WV83oXRG/9ab8lcqL+Dt9MNHz55b9i02WpXpKPp99epNzWJj3BLYJW2aCHMZPPNqdSWniNDFc6SXgCNF6yeoF9XF7ew54C/BgcQ=
+	t=1757937801; cv=none; b=Ad+FipgRaf012OoAEwPFcFHQVlk7ueUC+NXYYqqZ0VJ0saReK7IzfTqY6jFrkCZrPuqS1X0/j2Q7g/xT8Fi8e64cqn5nz59iiXLPJ6p9N69x6NsJTzBNf8ma0vA+zmH2FpP29CoaptJVYXK3yrVZxnJ40/2ZncDNVAEIXEw3fks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937778; c=relaxed/simple;
-	bh=+TXlkW8Z3UjSMZ3mMju3NMVNIYxFe88jYkREYv69f+I=;
+	s=arc-20240116; t=1757937801; c=relaxed/simple;
+	bh=WuLW6lAPFE5PyqhbMcw8TeyxN6BUetFjGeRBiFQpsCo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SM8zD+m23aRwG0W+yx2hjLYZQhbh6DJV9et3JxqGsLW3QltfSv1Vv3UckjRxUTRYBj1P2a3U8/H3+Ipc6jSVKDCb29wnEEEH2JD8+exRpzyIpZ+POcRZPUF2ROZBbdIBzQVz/n1jut+TGUVzDZg8FOYfx+lofjS2mHMCa/1aQOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G5LEHeOc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tmO6hzn+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=G5LEHeOc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tmO6hzn+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2DE611FBB6;
-	Mon, 15 Sep 2025 12:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757937774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n4kQtIN3mYgRKrDJiQ9BwBRP12ov3svY5yzZj6ZIIOg=;
-	b=G5LEHeOc4LutebZENufLhfqnfVCy0DC7ZzbyrqJSQKM8IExvUY7oCGeZxcrly/RwHEVhdx
-	A0BDBmj8ooTzsHuWTdWZxCh7chdVV67OdabDs1Lkn4vW/yPvmKtKbV5qINJxM4zxpBdYqr
-	mHDcnIlX+TuEZofqUD78HgHUsHJlMqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757937774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n4kQtIN3mYgRKrDJiQ9BwBRP12ov3svY5yzZj6ZIIOg=;
-	b=tmO6hzn+Vh77WECRkM+ywqy3/rTVGqyqeSvvRJWOl7ZJ8+4QSvYog2Xo9YmYJjmtT2k1mf
-	2Sq1btCCvhGWckBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=G5LEHeOc;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tmO6hzn+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757937774; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n4kQtIN3mYgRKrDJiQ9BwBRP12ov3svY5yzZj6ZIIOg=;
-	b=G5LEHeOc4LutebZENufLhfqnfVCy0DC7ZzbyrqJSQKM8IExvUY7oCGeZxcrly/RwHEVhdx
-	A0BDBmj8ooTzsHuWTdWZxCh7chdVV67OdabDs1Lkn4vW/yPvmKtKbV5qINJxM4zxpBdYqr
-	mHDcnIlX+TuEZofqUD78HgHUsHJlMqo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757937774;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n4kQtIN3mYgRKrDJiQ9BwBRP12ov3svY5yzZj6ZIIOg=;
-	b=tmO6hzn+Vh77WECRkM+ywqy3/rTVGqyqeSvvRJWOl7ZJ8+4QSvYog2Xo9YmYJjmtT2k1mf
-	2Sq1btCCvhGWckBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D6611398D;
-	Mon, 15 Sep 2025 12:02:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OMMrB24AyGhFMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 12:02:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B8722A0A06; Mon, 15 Sep 2025 14:02:45 +0200 (CEST)
-Date: Mon, 15 Sep 2025 14:02:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 21/33] net: support ns lookup
-Message-ID: <qdxj5g326tpu3sczuhveknkvcsn6a3rngfm6plmwmbq22oof6e@qcapgrdp4n3x>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-21-1a247645cef5@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouO6GDNTnS+ZQytKF2yuzmu1zUaE/r19gYieyZc95CErYH5I5CtWV5+wrRGPpIh/uE9Ca1SZWAKsHuMQr8Muj5o58Iy30NO9D2CeYZ/08e5N5Xbwru5jui+VTOltPe35dh5psSd2L5k3+tfmLIHwcl5MAEnr3AnA1f/jopBZuV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=quetT4Fi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB76C4CEF5;
+	Mon, 15 Sep 2025 12:03:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757937800;
+	bh=WuLW6lAPFE5PyqhbMcw8TeyxN6BUetFjGeRBiFQpsCo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=quetT4FiIQ47f59x0E04GM/MPIVuEcIkcxc4B2sTCca+v01WcVV1oJYHao1WWkWzI
+	 lMF+1djqUbDZFqQtitwaIBE+6XmtZFotolOBYTRz4D3P0weBcJUY9bgxhPFwfcS6qD
+	 h1ga0kUpnsDFEqNKRMNIdKW5A9XD/YaWRQxx54UcUPPn97jBJBf0wko/f+eySNSKWv
+	 byvwukGiV7juqk8NnPY5PantKxKq5NJREf6Lgc6m8gY3asRszbX73TnELgp/vdpq0N
+	 +IlrUUrzAf0x8Fv7uHqIp2MxxO12huUVIr+oZaUDcUMrsO9Uf+Itg86ACFaIAp0Cif
+	 3kqQ+qrzNt02Q==
+Date: Mon, 15 Sep 2025 14:03:17 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+Message-ID: <20250915-benign-rare-marmot-9fbb96@penduick>
+References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
+ <20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
+ <l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
+ <20250820131302.6a2da5ef@booty>
+ <20250827-charming-arcane-stingray-cfb8b6@houat>
+ <20250908154906.16693078@booty>
+ <20250910-glittering-serval-of-piety-b32844@houat>
+ <20250910184752.6c42f004@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="orln5b4aahbx7uil"
 Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-21-1a247645cef5@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2DE611FBB6
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email,suse.com:email]
-X-Spam-Score: -2.51
+In-Reply-To: <20250910184752.6c42f004@booty>
 
-On Fri 12-09-25 13:52:44, Christian Brauner wrote:
-> Support the generic ns lookup infrastructure to support file handles for
-> namespaces.
-> 
-> The network namespace has a separate list with different lifetime rules
-> which we can just leave in tact. We have a similar concept for mount
-> namespaces as well where it is on two differenet lists for different
-> purposes.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Just some nits below. Feel free to add:
+--orln5b4aahbx7uil
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
+ on unplug
+MIME-Version: 1.0
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Wed, Sep 10, 2025 at 06:47:52PM +0200, Luca Ceresoli wrote:
+> On Wed, 10 Sep 2025 12:59:12 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+>=20
+> > On Mon, Sep 08, 2025 at 03:49:06PM +0200, Luca Ceresoli wrote:
+> > > Hi Maxime,
+> > >=20
+> > > On Wed, 27 Aug 2025 09:46:03 +0200
+> > > Maxime Ripard <mripard@kernel.org> wrote:
+> > >  =20
+> > > > On Wed, Aug 20, 2025 at 01:13:02PM +0200, Luca Ceresoli wrote: =20
+> > > > > Hello Maxime,
+> > > > >=20
+> > > > > On Tue, 19 Aug 2025 14:29:32 +0200
+> > > > > Maxime Ripard <mripard@kernel.org> wrote:
+> > > > >    =20
+> > > > > > > @@ -1005,7 +1041,24 @@ static void sn65dsi83_remove(struct i2=
+c_client *client)
+> > > > > > >  {
+> > > > > > >  	struct sn65dsi83 *ctx =3D i2c_get_clientdata(client);
+> > > > > > > =20
+> > > > > > > +	drm_bridge_unplug(&ctx->bridge);
+> > > > > > >  	drm_bridge_remove(&ctx->bridge);     =20
+> > > > > >=20
+> > > > > > Shouldn't we merge drm_bridge_unplug with the release part of
+> > > > > > devm_drm_bridge_alloc?   =20
+> > > > >=20
+> > > > > I'm not sure I got what you are suggesting here, sorry.
+> > > > >=20
+> > > > > Do you mean that __devm_drm_bridge_alloc() should add a devres ac=
+tion
+> > > > > to call drm_bridge_unplug(), so the unplug is called implicitly a=
+nd
+> > > > > does not need to be called explicitly by all drivers?   =20
+> > > >=20
+> > > > Yes
+> > > >  =20
+> > > > > If that's what you mean, I don't think that would work. Unless I'm
+> > > > > missing something, devres actions are always invoked just after t=
+he
+> > > > > driver .remove callback.   =20
+> > > >=20
+> > > > Yes, they are called in reverse order of registration, after remove.
+> > > >  =20
+> > > > > But we need to call drm_bridge_unplug() at the beginning (or just
+> > > > > before) .remove, at least for drivers that need to do something in
+> > > > > .remove that cannot be done by devm.
+> > > > >=20
+> > > > > In pseudocode:
+> > > > >=20
+> > > > > mybridge_remove()
+> > > > > {
+> > > > >   drm_bridge_unplug(); <-- explicit call as in my patch
+> > > > >   xyz_disable();
+> > > > >   drm_bridge_unplug(); <-- implicitly done by devres
+> > > > > }
+> > > > >=20
+> > > > > We want xyz_disable() to be done after drm_bridge_unplug(), so ot=
+her
+> > > > > code paths using drm_bridge_enter/exit() won't mess with xyz.   =
+=20
+> > > >=20
+> > > > It's not clear to me why doing it before xyz_disable() is important
+> > > > here? If anything, it would prevent from disabling the hardware for
+> > > > example, even though you still have your memory mapping, clocks, po=
+wer
+> > > > domains, regulators, etc. to properly disable it.
+> > > >=20
+> > > > You're still correct that it's a bad idea though because we want to=
+ do
+> > > > it before we start freeing all those, so it needs to execute as the
+> > > > before the devm actions ...
+> > > >  =20
+> > > > > devres actions cannot be added to be executed _before_ .remove, A=
+FAIK.   =20
+> > > >=20
+> > > > ... and we can't do that either. =20
+> > >=20
+> > > I understand your words as "the drm_bridge_unplug() is OK where it is,
+> > > your patch is OK in this respect". Correct?
+> > >=20
+> > > So if this is correct, and my reply on the devres cleanups is also
+> > > correct (other reply in this thread), that means the whole patch is O=
+K. =20
+> >=20
+> > I'm still confused why it's so important than in your example
+> > xyz_disable must be called after drm_bridge_unplug.
+>=20
+> Let me clarify with an example.
+>=20
+> As I wrote in another reply, I have moved from a flag
+> (disable_resources_needed) to a devres action as you had suggested, but
+> the example here is based on the old flag because it is more explicit,
+> code would be executed in the same order anyway, and, well, because I
+> had written the example before the devres action conversion.
+>=20
+> Take these two functions (stripped versions of the actual ones):
+>=20
+> /* Same as proposed, but with _unplug moved at the end */
+> static void sn65dsi83_remove()
+> {
+> 	struct sn65dsi83 *ctx =3D i2c_get_clientdata(client);
+>=20
+> 	drm_bridge_remove(&ctx->bridge);
+> =09
+> 	/*=20
+> 	 * I moved the following code to a devm action, but keeping it
+> 	 * explicit here for the discussion
+> 	 */
+> 	if (ctx->disable_resources_needed) {
+> 		sn65dsi83_monitor_stop(ctx);
+> 		regulator_disable(ctx->vcc);
+> 	}
+> =09
+> 	drm_bridge_unplug(&ctx->bridge);     // At the end!
+> }
 
-> diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-> index 025a7574b275..42075748dff1 100644
-> --- a/include/net/net_namespace.h
-> +++ b/include/net/net_namespace.h
-> @@ -11,6 +11,7 @@
->  #include <linux/list.h>
->  #include <linux/sysctl.h>
->  #include <linux/uidgid.h>
-> +#include <linux/nstree.h>
->  
->  #include <net/flow.h>
->  #include <net/netns/core.h>
+First off, why do we need to have drm_bridge_unplug and
+drm_bridge_remove separate?
 
-Why this include?
+If we were to mirror drm_dev_enter and drm_dev_unplug, drm_dev_unplug
+calls drm_dev_unregister itself, and I can't find a reason where we
+might want to split the two.
 
-> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> index 5fb7bd8ac45a..169ec22c4758 100644
-> --- a/net/core/net_namespace.c
-> +++ b/net/core/net_namespace.c
-> @@ -20,6 +20,7 @@
->  #include <linux/sched/task.h>
->  #include <linux/uidgid.h>
->  #include <linux/proc_fs.h>
-> +#include <linux/nstree.h>
->  
->  #include <net/aligned_data.h>
->  #include <net/sock.h>
-> @@ -445,7 +446,7 @@ static __net_init int setup_net(struct net *net)
->  	LIST_HEAD(net_exit_list);
->  	int error = 0;
->  
-> -	net->net_cookie = atomic64_inc_return(&net_aligned_data.net_cookie);
-> +	net->net_cookie = ns_tree_gen_id(&net->ns);
+> static void sn65dsi83_atomic_disable()
+> {
+> 	if (!drm_bridge_enter(bridge, &idx))
+> 		return;
+>=20
+> 	/* These 3 lines will be replaced by devm_release_action() */
+> 	ctx->disable_resources_needed =3D false;
+> 	sn65dsi83_monitor_stop(ctx);
+> 	regulator_disable(ctx->vcc);
+>=20
+> 	drm_bridge_exit(idx);
+> }
+>=20
+> Here the xyz_disable() in my pseudocode is the sn65dsi83_monitor_stop()
+> + regulator_disable().
+>=20
+> If sn65dsi83_remove() and sn65dsi83_atomic_disable() were to happen
+> concurrently, this sequence of events could happen:
+>=20
+> 1. atomic_disable:  drm_bridge_enter() -> OK, can go
+> 2. remove:          drm_bridge_remove()
+> 3. remove:          sn65dsi83_monitor_stop()
+> 4. remove:          regulator_disable()
+> 5. remove:          drm_bridge_unplug() -- too late to stop atomic_disable
 
-net_cookie seems to be unused now and can be deleted?
+drm_dev_unplug would also get delayed until drm_dev_exit is called,
+mitigating your issue here.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 6. atomic_disable:  ctx->disable_resources_needed =3D false -- too late t=
+o stop .remove
+> 7. atomic_disable:  sn65dsi83_monitor_stop() -- twice, maybe no problem
+> 8. atomic_disable:  regulator_disable() -- Twice, en/disable imbalance!
+>=20
+> So there is an excess regulator disable, which is an error. I don't see
+> how this can be avoided if the drm_bridge_unplug() is called after the
+> regulator_disable().
+>=20
+> Let me know whether this clarifies the need to _unplug at the beginning
+> of the .remove function.
+
+Another thing that just crossed my mind is why we don't call
+atomic_disable when we're tearing down the bridge too. We're doing it
+for the main DRM devices, it would make sense to me to disable the
+encoder -> bridge -> connector (and possibly CRTC) chain if we remove a
+bridge automatically.
+
+Maxime
+
+--orln5b4aahbx7uil
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMgAhQAKCRAnX84Zoj2+
+diuSAX0bYflXNYWeq+Kg3B/9hb1awVO2kPt2/xPRe2UzASnAxIPzr+HwpCkyfRlb
+ALCl5H4BgNJFrSJ8Lh/qlbOUO1ZOZt3PRaIVzWsaW8eURebzQd4zYZZ7Y2oeXuVw
+tvofKkipNg==
+=wrQe
+-----END PGP SIGNATURE-----
+
+--orln5b4aahbx7uil--
 
