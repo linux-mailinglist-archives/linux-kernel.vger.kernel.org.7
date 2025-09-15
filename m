@@ -1,120 +1,90 @@
-Return-Path: <linux-kernel+bounces-817014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D6FB57C6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:09:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D7DB57BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38D7D164719
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:09:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2BA37A64F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1BD30CD9B;
-	Mon, 15 Sep 2025 13:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E7930B514;
+	Mon, 15 Sep 2025 12:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QQbqExzp"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ES42hSfD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479DB212548;
-	Mon, 15 Sep 2025 13:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38B830CD98;
+	Mon, 15 Sep 2025 12:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941761; cv=none; b=d0jAU8412V3DV3AWdAw6OoLT6Y+U8AWechYuepJB9NdBksfye1yPWC+atBTY/Y1S4MgjD/rvmK2lVVIpQbu0zSDiaqUFnWxitkc8amsQ+ivDzB7y7u1vMK4dec19vMvXGDyBEDZMx1+tEENvT/ci+c9yrN8LhwE5V5QqyERTDEQ=
+	t=1757940786; cv=none; b=pxmTk/UMpJoqreKq0e7K60E+SvAQKV1+Gqxpv1+Ri0GHmAaLgJhYdb2ZAgNQWvaoQu3LVVUeZHvbBJRgZnBrb67Abn22dnHmdYcthI/ILzKr5r3XT82QmieoehWhENQXfcEVFvVJ/3SClIswWo79TC9rcYmHnnZQrvVOEvR8YRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941761; c=relaxed/simple;
-	bh=Lq5efmfHRLuv3ZzWqKfawWb/2DoKQhScquay3vNt2Y0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cDwIt9QM0SWAPJ7TRK2n2WW3qGPEU99vfFbZJTxCDxRgS32ztIG6yRpR1bJ9SUnNIPfzFPAgoAwOqAKDEdGcbxoU3uzhf6duqkquBM2Xa6jFDYns/KC3hW9cqECKZcRhyFHArG8ddWLF9iTEVpL3ROv7dYzSRpp085q5P+bSZMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QQbqExzp; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=fm
-	f0OIsGMiE8P3J1F3N/Fn2ucYiqGWZO/N1K1kd83tw=; b=QQbqExzp1A7pb9QAsX
-	IpzD3pqilcPrF125S81aF2DegBmtDgZM+rCIkBlYjExAMpOt3Ky2GkedRs2Kq8s8
-	k76g0Ltwfdo9EiT4qlMaaFg+E4z+KTUzWJ/6gjr9Rc9pq0HBdL3Pjt1SeKuYEtIa
-	IK02Cowx4OULX2ALe26hu2nKw=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgCHOtEhDMhoJPeJCw--.8722S4;
-	Mon, 15 Sep 2025 20:52:51 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: minghsiu.tsai@mediatek.com,
-	houlong.wei@mediatek.com,
-	andrew-ct.chen@mediatek.com,
-	mchehab@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	hverkuil@kernel.org,
-	eballetbo@kernel.org,
-	eizan@chromium.org
-Cc: linux-media@vger.kernel.org,
+	s=arc-20240116; t=1757940786; c=relaxed/simple;
+	bh=03DhFL7q+iJs+tw1V8FCzhxFTVFAy+z5zOi2iUsMbb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HBp6LviXgS/t1+nZzLbT1MS3iYtGlCRT/l+xphR0UuUtaRZbYw+ejzft/kkEZ0u8FZz9cGnvCOpc7njkAVjH9szxnfUaQXY6nv8MitGxOewaD84HNc7hTESzalbjMwnf4171hbXlQxcv78amTQ3zg/k/7fCLBZrzQIL9FVPb0LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ES42hSfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CCB0C4CEF5;
+	Mon, 15 Sep 2025 12:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757940786;
+	bh=03DhFL7q+iJs+tw1V8FCzhxFTVFAy+z5zOi2iUsMbb0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ES42hSfDVs1XrJgDE2Z5T1p/EnJl72XU31PJtu7V5kjr8H9/YpYvSKWi8snZS4TDY
+	 aAujIDy9Y+WpmPdUou92n8w0CG1eY2kFY9DOqyMchuVxqG+TZxpxQA/EK4Acr3evuF
+	 q0wlO4Ptd6b7Mo5K+LpxacNXx94JNt1xEyrAiDCgGm/oBdLwO+kP5VBT1gLtxYwa8P
+	 vkjTd6V98jGRbxHcdmFv5bjF91WlaEfBoVIwa/2wPuT2IrcltwgjSeP+oqVtGik9Du
+	 pvRq1VIh/2BI/NWl9AocPZHiJl7MwwKEWcte91FT+wDYP5VjFPeLRhvLbGCt9V/1s0
+	 vh5egvK6HBSiQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] media: mtk-mdp: Fix a reference leak in mtk_mdp_probe()
-Date: Mon, 15 Sep 2025 20:52:48 +0800
-Message-Id: <20250915125248.181608-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] initramfs: Replace strcpy() with strscpy() in find_link()
+Date: Mon, 15 Sep 2025 14:52:50 +0200
+Message-ID: <20250915-hinstellen-golfclub-0f4565b7b561@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250912064724.1485947-1-thorsten.blum@linux.dev>
+References: <20250912064724.1485947-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=900; i=brauner@kernel.org; h=from:subject:message-id; bh=03DhFL7q+iJs+tw1V8FCzhxFTVFAy+z5zOi2iUsMbb0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc4NFZcbGLedIjEWt3T73GsqZT395oCby8Okl56qMNa xY87jM/3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjAR4c2MDF3lU6PmXJCwqjLf N/H9snsl574IT2zz/uK/avr7yG6XhNkMf0XWsJrvvuD58l7vpsRimXsTFFn+f/b/nJgZpWHibH6 zgQ8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgCHOtEhDMhoJPeJCw--.8722S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww15tryfJry8Jr1UtrWfGrg_yoW8Wr1rpF
-	WDWayFkrWUuF4jgr4UGa1UZa45Aw1S9w48Wa1xAw4xu345WrWDJr10qFyIqrW8JF97Ca43
-	Jr1IqFWxuFWrZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_MKuUUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiMwLJbmjIBhvCbwAAsG
 
-vpu_get_plat_device() increases the reference count of the returned
-platform device. Add platform_device_put() to prevent reference leak.
+On Fri, 12 Sep 2025 08:47:24 +0200, Thorsten Blum wrote:
+> strcpy() is deprecated; use strscpy() instead.
+> 
+> 
 
-Fixes: ee18fc7b0b95 ("media: mtk-mdp: handle vpu_wdt_reg_handler() errors during probe")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/media/platform/mediatek/mdp/mtk_mdp_core.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.misc branch should appear in linux-next soon.
 
-diff --git a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-index 80fdc6ff57e0..6aedb6033010 100644
---- a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-+++ b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-@@ -198,7 +198,7 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 				  VPU_RST_MDP);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register reset handler\n");
--		goto err_m2m_register;
-+		goto err_vpu_get_dev;
- 	}
- 
- 	platform_set_drvdata(pdev, mdp);
-@@ -206,7 +206,7 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 	ret = vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to set vb2 dma mag seg size\n");
--		goto err_m2m_register;
-+		goto err_vpu_get_dev;
- 	}
- 
- 	pm_runtime_enable(dev);
-@@ -214,6 +214,9 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+err_vpu_get_dev:
-+	platform_device_put(mdp->vpu_dev);
-+
- err_m2m_register:
- 	v4l2_device_unregister(&mdp->v4l2_dev);
- 
--- 
-2.25.1
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.misc
+
+[1/1] initramfs: Replace strcpy() with strscpy() in find_link()
+      https://git.kernel.org/vfs/vfs/c/afd77d2050c3
 
