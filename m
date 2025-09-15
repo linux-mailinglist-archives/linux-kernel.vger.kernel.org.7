@@ -1,162 +1,97 @@
-Return-Path: <linux-kernel+bounces-816617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503DEB5764E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:30:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45488B57654
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123AC17348A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB32B4436E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6F72FCC1B;
-	Mon, 15 Sep 2025 10:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47702FB63A;
+	Mon, 15 Sep 2025 10:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FusBt2vO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V1BHcmxb"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCCA2FCBE3;
-	Mon, 15 Sep 2025 10:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320DB2FCBE3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757932225; cv=none; b=buae4y0wgKl78FI2pii4ld9dKf592uiykNMsFd4sIyR7LbqWt8gE2+CUdRLUVxlHtCynGWunMVI6EW5fuMkVfhoOGx/xj3e4UqZgzZUyubKL/OFY2HACWY0ZJ1FPfU9IC2jzS25ghQOgbRV5n5Q2TWDeZycAFRzPgdq5tUFwfvE=
+	t=1757932247; cv=none; b=ChdlXtMNDtkiXYcR6UX4BGDqFtO9C7eSgLGISe0H/+SxQU8Kb+n5vZYU3ZRzUSxbQQIatB0x+knwz00JjPUNnPR/OFFl4LF3zRUSO4lo3wh1vQpRh5bLg30pssZlS8qgaJ3lUTAmyhgVICcpgIROYM1wsEWWGvok3UO5kBWEnYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757932225; c=relaxed/simple;
-	bh=77dwZU3PIqsBuoVq1y+3yB+skASgC8Rn9oVnn2I8Biw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eu5DzoEpxPxQrNWZsrYGj6NJ5C4RdLdcZv5MP3p0xqVSc+DjMLmeMzhmtp3gP38a5/0l3pIMXc2Ixr0fUNXm4Zo+cCPry48olJOhihZqm924/PzhBH16Dk+YVZxFUh7KQoqCbcU623eGJLmXT1gKOcrWdUtzt9UjYNIQBWWIRE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FusBt2vO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FAAC4CEF7;
-	Mon, 15 Sep 2025 10:30:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757932225;
-	bh=77dwZU3PIqsBuoVq1y+3yB+skASgC8Rn9oVnn2I8Biw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FusBt2vO6eOMuxurwssBaYr+uujX5QvRO0zN0JJZq8EAZItTiiphjkM31c5VkXP2T
-	 w8tS6kMFVVtmreLeXsQbJbyIdk2HUGPkYSCVJvVgWuFrOO9kYYyKGtsl9YncOXK1Tn
-	 SC9fdKnznGrcHdsOaKh0l5xiQeikQBnKb4XZUEwnE9tPbeXy4VkooXdRStgu6zlDW0
-	 AYFyLKvNwy8xxji85cXDWF6ew+Db2Yl2veFyz5bZremnxoQiZieBsNR+k6+eiqolsy
-	 5azau1Wtf/oYJXt7OwRN/YMvaTfDL7Ub+RSY+2EyfGWBNlSNt/HV2kAbzftS1w2vaV
-	 0TaR9xlFBB/PA==
-Date: Mon, 15 Sep 2025 11:30:19 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v9 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <20250915103019.GP224143@horms.kernel.org>
-References: <20250913044404.63641-1-mmyangfl@gmail.com>
- <20250913044404.63641-4-mmyangfl@gmail.com>
+	s=arc-20240116; t=1757932247; c=relaxed/simple;
+	bh=zY7JI7hDmtHnYscMcs6+BbCMIvxvauO2CVcScH3sN0Y=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=aq8V45y8KSKohNnXNNQsu6415k00IPaCJDLs5gxqNNZLTttNYWYD8ummMGdO6Ibp5vGNgEv6QSCZsU5YQwdrV75YlgiyJqIckgs+Ls9dNmhb1mf87cVqA+SewhlKkhK3tfqv9j5VLBY5GLSAkzwmGD8q3eoe51HGqMgdCn4p60Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V1BHcmxb; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757932233;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jdb8MAzJ69Crza7fkEstwRRVIV34/bxmK/xuu8MGxcM=;
+	b=V1BHcmxbOiJwcyYkyAvWjYh61UIhQSWPQHb1XMLdUh2Z096n8Ayr8bciUQia4p7btjsitU
+	QgDBXE+e6aLAf14xunvHlLUfCGEqsVI7Fpsnhkyn/QMlhJrphce486mjVIkmijWJwu/8NU
+	g5sKmtSkEPaIqtkoPmj7tAjULe6keb0=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913044404.63641-4-mmyangfl@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] initrd: Fix logged Minix/Ext2 block numbers in
+ identify_ramdisk_image()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20250915043141.GM1587915@frogsfrogsfrogs>
+Date: Mon, 15 Sep 2025 12:30:20 +0200
+Cc: David Disseldorp <ddiss@suse.de>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <9FA25B6B-4B04-4A35-90E2-8537C1E228E6@linux.dev>
+References: <20250913103959.1788193-1-thorsten.blum@linux.dev>
+ <20250915122146.56f66eb2.ddiss@suse.de>
+ <20250915043141.GM1587915@frogsfrogsfrogs>
+To: "Darrick J. Wong" <djwong@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Sep 13, 2025 at 12:44:01PM +0800, David Yang wrote:
-> Motorcomm YT921x is a series of ethernet switches developed by Shanghai
-> Motorcomm Electronic Technology, including:
+On 15. Sep 2025, at 06:31, Darrick J. Wong wrote:
+> On Mon, Sep 15, 2025 at 12:21:46PM +1000, David Disseldorp wrote:
+>> Hi Thorsten,
+>> 
+>> On Sat, 13 Sep 2025 12:39:54 +0200, Thorsten Blum wrote:
+>> 
+>>> Both Minix and Ext2 filesystems are located at 'start_block + 1'. Update
+>>> the log messages to report the correct block numbers.
+>> 
+>> I don't think this change is worthwhile. The offset of the superblock
+>> within the filesystem image is an implementation detail.
 > 
->   - YT9215S / YT9215RB / YT9215SC: 5 GbE PHYs
->   - YT9213NB / YT9214NB: 2 GbE PHYs
->   - YT9218N / YT9218MB: 8 GbE PHYs
-> 
-> and up to 2 GMACs.
-> 
-> Driver verified on a stock wireless router with IPQ5018 + YT9215S.
-> 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> ...and even if logging the detail is useful, for ext* the superblock is
+> always at byte offset 1024, no matter which block (0 or 1) that is.
 
-...
+All logs ignore the individual filesystem offsets and only print the
+starting block. This may not be particularly useful information, but the
+printed starting blocks for minix/ext2 are off by one compared to the
+others, which is at least confusing.
 
-> +static int
-> +yt921x_port_config(struct yt921x_priv *priv, int port, unsigned int mode,
-> +		   phy_interface_t interface)
-> +{
-> +	struct device *dev = to_device(priv);
-> +	u32 mask;
-> +	u32 ctrl;
-> +	int res;
-> +
-> +	if (!yt921x_port_is_external(port)) {
-> +		if (interface != PHY_INTERFACE_MODE_INTERNAL) {
-> +			dev_err(dev, "Wrong mode %d on port %d\n",
-> +				interface, port);
-> +			return -EINVAL;
-> +		}
-> +		return 0;
-> +	}
-> +
-> +	switch (interface) {
-> +	/* SGMII */
-> +	case PHY_INTERFACE_MODE_SGMII:
-> +	case PHY_INTERFACE_MODE_100BASEX:
-> +	case PHY_INTERFACE_MODE_1000BASEX:
-> +	case PHY_INTERFACE_MODE_2500BASEX:
-> +		mask = YT921X_SGMII_CTRL_PORTn(port);
-> +		res = yt921x_reg_set_bits(priv, YT921X_SGMII_CTRL, mask);
-> +		if (res)
-> +			return res;
-> +
-> +		mask = YT921X_XMII_CTRL_PORTn(port);
-> +		res = yt921x_reg_clear_bits(priv, YT921X_XMII_CTRL, mask);
-> +		if (res)
-> +			return res;
-> +
-> +		mask = YT921X_SGMII_MODE_M;
-> +		switch (interface) {
-> +		case PHY_INTERFACE_MODE_SGMII:
-> +			ctrl = YT921X_SGMII_MODE_SGMII_PHY;
-> +			break;
-> +		case PHY_INTERFACE_MODE_100BASEX:
-> +			ctrl = YT921X_SGMII_MODE_100BASEX;
-> +			break;
-> +		case PHY_INTERFACE_MODE_1000BASEX:
-> +			ctrl = YT921X_SGMII_MODE_1000BASEX;
-> +			break;
-> +		case PHY_INTERFACE_MODE_2500BASEX:
-> +			ctrl = YT921X_SGMII_MODE_2500BASEX;
-> +			break;
-> +		default:
-> +			WARN_ON(1);
-> +			break;
-> +		}
+Since initrd seems to be on its way out anyway, it's probably not worth
+changing this.
 
-Hi David,
+Thanks,
+Thorsten
 
-If the default case is reached above then ctrl is used uninitialised below.
-
-Flagged by Clang 21.2.1
-
-> +		res = yt921x_reg_update_bits(priv, YT921X_SGMIIn(port),
-> +					     mask, ctrl);
-> +		if (res)
-> +			return res;
-> +
-> +		break;
-> +	/* add XMII support here */
-> +	default:
-> +		WARN_ON(1);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-
-...
 
