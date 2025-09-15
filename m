@@ -1,146 +1,179 @@
-Return-Path: <linux-kernel+bounces-817103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD3FB57E01
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776A9B57DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6870718833BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB0E161EF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E45B2DC79E;
-	Mon, 15 Sep 2025 13:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFIodkMd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FF21F4C8B;
-	Mon, 15 Sep 2025 13:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348EC1FDE09;
+	Mon, 15 Sep 2025 13:51:53 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380C715E5DC;
+	Mon, 15 Sep 2025 13:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944242; cv=none; b=syoJbqWnL4rF/xbsK/VGHxLr7+uy2UqoR2hP7eMK13NNe+4d/95nrIWJKXvhvZveocE6JWKG0o9cd5fuII43Eo5kRA4kZ/H8U6hfLiSevGUtsHMILudjMiMktpWuZVsqHutQU4Scc1FT/6+gl8cZOt+CVWfdh0x14Cjwj3sEQJw=
+	t=1757944312; cv=none; b=eW5gLG2uycc7tRBr51iVqeWCN0lXiJJfOdq6ZeOwyvxhn46uZhxu3uzlezj8+duHX9DESzwiHhZANlkOa3q+LWc0Qq0dLXdJuFAIux22DrLasUP7/e75Z8OEMzNuHOzaZizJD8QyWEB/l2YMSxoIQmQBsGXSQLm++lPckAPnjNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944242; c=relaxed/simple;
-	bh=VVQSZnONJmQxNkcY9qahnzNb2KqMvwCvZikB0PJzuC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSR6eyOP2adN+v4WoVs7S9bkXapleXXbUK3dfk/cgyyjcid/8kAIHgqQkzye6fivKyAMgWaeYnLkAucv9Jp2BTXuBY/Zhz4uheXQ7fxRSf4TctZ5EQU0sV1XREhqnVbXnRkwmmQUJ1XJ8hWE7gM1eD+Q4aQpj7iKzGa1wcRU13o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFIodkMd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FEC1C4CEF9;
-	Mon, 15 Sep 2025 13:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757944242;
-	bh=VVQSZnONJmQxNkcY9qahnzNb2KqMvwCvZikB0PJzuC8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CFIodkMdEQxYvS8UdQjhKiaJ1Oud523FjVkTUx9kUtbjwkeBFAKXSWGZ5bNi9SlXi
-	 J4f9zHrf7vdowBooqY2YS8nqH/Bl/Dy1zt/4bUiTzZnL8WMpfQcjTNugzG12EGlEvZ
-	 35mi3GZhTBzkyb5YHO/LGs8cHzY9Tml3voBlKNzvYU2IOKySRDm3bV7vZdVAdGQ7AN
-	 KsPQjaJDx5Jr4lLMGmBJLcQVIsx+hmrvj+OY4aUJDW0f91TZDkNngy11AHSbHYU5T2
-	 sL6pFvAHW9JRmkSpPOYUnZJXNYL94H3xKTlA+oK1k2kJrQ5K0ruln0VV/yW/We0lYt
-	 v6SJ9I+tuNmRA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uy9bL-0000000AJon-36ku;
-	Mon, 15 Sep 2025 15:50:39 +0200
-Date: Mon, 15 Sep 2025 15:50:39 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tmgross@umich.edu
-Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a wrapper
- for sphinx-build
-Message-ID: <s5gyu27qlfg7frb4v3ssqms6inqammtakwchgl635r3ahooj5n@vhw5tnyti7nd>
-References: <20250910153334.0b3e1440@foz.lan>
- <28c45f53-a3ff-428f-ba99-ebb09e0581d3@gmail.com>
- <20250912130420.6c14dbbd@foz.lan>
- <f3d142be-3980-4d4e-9d66-c03276694bf9@gmail.com>
- <6hhhn5go2yb7ecdrqtuti23i6pfgckqbdk5nhuhn2ijrhmvvmw@awswbm3tvmwp>
- <aa2aa8d2-f7f1-4f04-a9b0-f08160f9ea81@gmail.com>
- <20250915125805.25b48d09@foz.lan>
- <803501857ad28fc9635c84b7db08250dc4b9a451@intel.com>
+	s=arc-20240116; t=1757944312; c=relaxed/simple;
+	bh=4VkDJOiB0y7OLO69mz485c1iz/UZXU1pQ2zaSsoHrEI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GUPvLu+bRUlHRuhUUdhLRfDFHqo1Gs/rCgVJ8yYI3gYpUyZ/VbKrBOZMKr4yodqqmcn66r5b9GcsNVBwot994hoHcc8M7tfQhke+dDi4zqXm5V48NGf70DVSn2KfO5/tXPoI0wajW0f7s2xQAyY2qoGj2CcZLTKClV2V4l/YzVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app1 (Coremail) with SMTP id TAJkCgC3zg_qGchovXXRAA--.27513S2;
+	Mon, 15 Sep 2025 21:51:40 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	linux-phy@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	Yulin Lu <luyulin@eswincomputing.com>
+Subject: [PATCH v4 0/3] Add driver support for Eswin EIC7700 SoC SATA Controller and PHY
+Date: Mon, 15 Sep 2025 21:51:38 +0800
+Message-Id: <20250915135138.877-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <803501857ad28fc9635c84b7db08250dc4b9a451@intel.com>
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgC3zg_qGchovXXRAA--.27513S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF4DtF1ktFWfWryxCrykZrb_yoWrKw15pa
+	1kCry7Jrn5tryxta97J3WI9a4fZan7GF43urs3Jw1UZ3y3XFyvv39ak3WYvFykCw4kKryY
+	qF4agFy5CFyUAFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWrXVW3AwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJrcTUUUUU
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-On Mon, Sep 15, 2025 at 03:54:26PM +0300, Jani Nikula wrote:
-> On Mon, 15 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > IMHO, long term solution is to change SPHINXDIRS into something
-> > like:
-> >
-> > 	make O=doc_build SPHINXTITLE="Media docs" SPHINXDIRS="admin-guide/media userspace-api/media driver-api/media/"
-> >
-> > would create something similar to this(*):
-> >
-> > 	doc_build/sphindirs/
-> > 		|
-> > 		+--> index.rst
-> > 		+--> admin-guide -> {srcdir}/Documentation/admin-guide/media/
-> > 		+--> usespace-api -> {srcdir}/Documentation/admin-guide/media/
-> > 		\--> driver-api -> {srcdir}/Documentation/admin-guide/media/
-> 
-> So you're basically suggesting the documentation build should support
-> cherry-picking parts of the documentation with categories different from
-> what the upstream documentation has? 
+This series depends on the config option patch [1].
 
-No. I'm saying that, if we want to have a single build process
-for multiple sphinxdirs, that sounds to be the better way to do it
-to override sphinx-build limitation of having single source directory.
+[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
 
-The advantages is that:
-    - brings more performance, as a single build would be enough;
-    - cross-references between them will be properly solved.
+Updates:
+  v4 (resend):
+    - Fix patch 1/3 subject prefix: add missing "dt-bindings: ata:"
 
-The disadvantages are:
-    - it would very likely need to create copies (or hard symlinks)
-      at the build dir, which may reduce performance;
-    - yet-another-hack;
-    - increased build complexity.
+  v4 -> v3:
+    - eswin,eic7700-ahci.yaml
+      - Fix grammatical errors in patch subject and commit message
+      - Add an explanation in the commit message of patch 1 for retaining the
+        "ports-implemented" field, which Rob Herring suggested to remove
+        in the review comments on v2.
+        Link to Rob Herring's review:
+        https://lore.kernel.org/lkml/CAL_JsqKFotNLZZXwiy7S6K8qXLdGRAnsa-1zvZRDQBE39Gf5kg@mail.gmail.com/
+        Link to my question and Niklas Cassel's reply:
+        https://lore.kernel.org/lkml/aLBUC116MdJqDGIJ@flawful.org/
+        In this reply, Niklas Cassel mentioned his view:
+        If the ports-implemented register gets reset from
+        ahci_platform_assert_rsts(), then it seems acceptable to
+        retain the ports-implemented property in the device tree.
+        This aligns with our design.
+        Link to my reply:
+        https://lore.kernel.org/lkml/4ab70c6a.8be.198f47da494.Coremail.luyulin@eswincomputing.com/
+        Link to Niklas Cassel's question and my further explanation:
+        https://lore.kernel.org/lkml/aLlYkZWBaI5Yz6fo@ryzen/
+        https://lore.kernel.org/lkml/7206383a.d98.19918c22570.Coremail.luyulin@eswincomputing.com/
+    - eswin,eic7700-sata-phy.yaml
+      - Fix grammatical errors in patch subject and commit message
+      - Adjust the position of reg in the properties and required arrays
+      - Add reviewed-by tag of Krzysztof Kozlowski
+    - phy-eic7700-sata.c
+      - Correct the loop condition in wait_for_phy_ready() to use the current
+        jiffies instead of the fixed start time
+      - Change the return value from -EFAULT to -ETIMEDOUT to correctly
+        indicate a timeout condition
+      - Remove redundant clock disable handling in probe error path, as
+        SATA_SYS_CLK_EN is managed in phy_init() and phy_exit()
+      - Use dev_err_probe return in probe
+      - Reorder local variables to follow reverse Xmas tree order
+      - Wrap each line in the extended comments to 80 columns before splitting lines
+      - Adjust the position of `#include <linux/io.h>` for proper ordering
+    - Link to v3: https://lore.kernel.org/lkml/20250904063427.1954-1-luyulin@eswincomputing.com/
 
-I'm not convinced myself about doing it or not. I didn't like when
-I had to do that after the media book was split on 3 books. If one thinks
-that having for loops to build targets is a problem, we need a separate
-discussion about how to avoid it. Also, this is outside of the scope of
-this series.
+  v2 -> v3:
+    - Use full name in "From" and "Signed-off-by" fields information
+    - eswin,eic7700-ahci.yaml
+      - Remove the introduction to the reg, interrupts, phys, and phy-names fields
+      - Modify the usage of the clocks field in the examples
+      - Correct the order of dt properties
+    - phy-eic7700-sata.c
+      - Register operations use the GENMASK macro and FIELD_PREP instead of
+        the original bit offset method, and add "#include <linux/bitfield.h>"
+      - Modify some macro definition names.
+      - Remove the redundant initialization assignments for "ret" and "val"
+      - Delete ".suppress_bind_attrs = true"
+      - Modify the driver name
+      - Add "#include <linux/io.h>" to fix the robot test issue
+    - Link to v2: https://lore.kernel.org/lkml/20250819134722.220-1-luyulin@eswincomputing.com/
 
--
+  v2 -> v1:
+    - Delete the original controller driver and use ahci_dwc.c instead
+    - Add eswin,eic7700-ahci.yaml
+      - Correct the descriptions of reset, interrupt and other
+        hardware resources for the sata controller on EIC7700 SoC
+      - The clocks for both sata controller and sata PHY are controlled
+        via a register bit in the HSP bus and are not registered in the
+        clock tree. Clock are managed within the PHY driver, therefore
+        it is not described in this document
+      - Add $ref: snps,dwc-ahci-common.yaml#.
+    - Add eswin,eic7700-sata-phy.yaml
+      - Add this file to include the description of the PHY on EIC7700 SoC
+    - Add an eswin directory under the PHY driver path, and include the SATA
+      PHY driver code for EIC7700 SoC
+    - Link to v1: https://lore.kernel.org/all/20250515085114.1692-1-hehuan1@eswincomputing.com/
 
-Another alternative to achieve such goal of not needing a loop at Sphinx
-to handle multiple books in parallel would be to submit a patch for 
-Sphinx to get rid of the current limitation of having a single book
-with everything on a single directory. Sphinx has already hacks for it
-with "latex_documents", "man_pages", "texinfo_documents" conf.py variables
-that are specific for non-html builders.
+Yulin Lu (3):
+  dt-bindings: ata: eswin: Document for EIC7700 SoC ahci
+  dt-bindings: phy: eswin: Document the EIC7700 SoC SATA PHY
+  phy: eswin: Create eswin directory and add EIC7700 SATA PHY driver
 
-Still, when such variables are used, a post-sphinx-build logic with a
-per-output-file loop is needed.
-
-> I.e. even if we figured out how to
-> do intersphinx books, you'd want to grab parts from them and turn them
-> into something else?
-
-Either doing it or not, intersphinx is intestesting. 
-
-> Ugh.
-> 
-> 
-> BR,
-> Jani.
-> 
-> 
-> -- 
-> Jani Nikula, Intel
+ .../bindings/ata/eswin,eic7700-ahci.yaml      |  79 +++++++
+ .../bindings/phy/eswin,eic7700-sata-phy.yaml  |  36 ++++
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/eswin/Kconfig                     |  14 ++
+ drivers/phy/eswin/Makefile                    |   2 +
+ drivers/phy/eswin/phy-eic7700-sata.c          | 192 ++++++++++++++++++
+ 7 files changed, 325 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/eswin,eic7700-sata-phy.yaml
+ create mode 100644 drivers/phy/eswin/Kconfig
+ create mode 100644 drivers/phy/eswin/Makefile
+ create mode 100644 drivers/phy/eswin/phy-eic7700-sata.c
 
 -- 
-Thanks,
-Mauro
+2.25.1
+
 
