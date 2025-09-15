@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-817036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2686B57CBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CBBB57CBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E394F202513
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8251AA07FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAFC3128A3;
-	Mon, 15 Sep 2025 13:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F88630FC31;
+	Mon, 15 Sep 2025 13:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElBQQ9Kc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UqXRCsen"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F48311C2D;
-	Mon, 15 Sep 2025 13:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBE41E7C2E;
+	Mon, 15 Sep 2025 13:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942523; cv=none; b=SmRcJ4fSMCiw0R/79jKJKDoF42DsKOhH1sPTXm8PKzbRiWo1yt73G0MevoWXWz7Z/IvphMUEaW/kWTLmqs7xVPEImh7c7TSDBzVcoftUQ3YrQi1Y/qRx3EZPZuhHDOYwgQ7fVmsHKrVSEdtmFlURB/URlYqGQUpJTojhXpahosQ=
+	t=1757942607; cv=none; b=uXOV1BGD7MNr9YJQe60Vl0ioe6B8Ap0Sdi71gNCzI1TbX2Wf9NPjxdz6/NJpF/z+HoquuB5L63AjlwAgB/tolyYZlebFahXUTXDqbKEe6hcQ894187Z8f7/sRd5eyHw3CH7RFy6X9Hh2KJgh1S3/P6ktRZrLew8sYJI3MgvwU+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942523; c=relaxed/simple;
-	bh=omVHC2lwXuWYfBEc6TmKSITT2zhlG65jkMcTKudJYvA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Dk1Gf1OR969rF6wlbaUaGdwC5IMS0+2CxkOLd5UuLAssw+dtsAL5mFlzACg5LSKQPBMAjLTeHgOF0cKq8qxHA9XhWy1h26qFJOnICjTWSWna1ntqARw0ZRZJbpGTkN9bBAOIItNNk5K31705ufoSjBP2Z/uK/0dcEvq3t+VpJrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElBQQ9Kc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F0F2C4CEFB;
-	Mon, 15 Sep 2025 13:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757942522;
-	bh=omVHC2lwXuWYfBEc6TmKSITT2zhlG65jkMcTKudJYvA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ElBQQ9KcNgtwr4NhGGUvtU3fqMuyETn+BzUs1uBvHuhGbf91zVGX1KOdeiYC21l2u
-	 737981xXKNHJIsCD5pBgdyC4MTZ/YUTmLJYIqSu8hI9FJHNTQxO/D4cZreo+pDxQTC
-	 0byr7EXAa+rYpJltKcE0f8ESi0hpZin/CoapjFC0c6MPY9JsDr+E4dVn5SzNzn4eI+
-	 SJC1LIIGN6JpQhlmOaLXWV4Tx1LmFEyozXaO1oRe88rlMSggIPq3Jr55kjJBMf0786
-	 FlLSd7gyRM3Aq14AHMFBLLfuV3/KS/D1J0gKbl7jvX4Ql4OpL2bKAnk381TswC26Rh
-	 HHJ7oVKE1knLw==
-Date: Mon, 15 Sep 2025 08:22:01 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1757942607; c=relaxed/simple;
+	bh=5JmUo5wzYdhjJxAOdK8joBgBIJLjs1DAmnWDAuzwHGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=usNbgFG7rBUnKq3rV+zZLjlCovdOSgBwHO8M8oOa1MmBLST/KdrMA1knaP/teUSsP4JR4ewmxkRWPHXpsbVVJNa2K+dEDpAcSNr/b8pC4sWciycrIZZaV1mAFa/hhh6BxSykDFIQ3n8UTx9iCapwfnUMCD33s0l4MVqEIPt3Vwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UqXRCsen; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=u8
+	qA80TU+qvZWZGpZXUYmlo1JufyjuXgNsy8o8OtuNQ=; b=UqXRCsen4uouXLYJ+z
+	1WqEpLJW0Zb64BVdCQe9hF3QBvTYb/WSH9U3ZlULMw1qYE6a2l54oO3zbdBDCD0H
+	X47TmEmnoMGCJrNcR6mIRvmegNNO9urGa2fe78BQ+LTd09J00e7gqJHahYWD4HUE
+	SyItiOtDncSg/bGwR33IQiEwo=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgCXqX49E8hoEW5WDA--.46102S4;
+	Mon, 15 Sep 2025 21:23:10 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: almaz.alexandrovich@paragon-software.com
+Cc: ntfs3@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] fs/ntfs3: Fix a resource leak bug in wnd_extend()
+Date: Mon, 15 Sep 2025 21:23:07 +0800
+Message-Id: <20250915132307.183674-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alexandru Chimac <alexchimac@protonmail.com>, 
- Stephen Boyd <sboyd@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, 
- Michael Turquette <mturquette@baylibre.com>
-To: Alexandru Chimac <alex@chimac.ro>
-In-Reply-To: <20250915-exynos9610-clocks-v1-1-3f615022b178@chimac.ro>
-References: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
- <20250915-exynos9610-clocks-v1-1-3f615022b178@chimac.ro>
-Message-Id: <175794237115.2496914.9134109163312001999.robh@kernel.org>
-Subject: Re: [PATCH 1/8] dt-bindings: clock: samsung: Add Exynos9610 CMU
- bindings
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgCXqX49E8hoEW5WDA--.46102S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XF4kXw15XrW8Kr1fKr1kGrg_yoWxAFX_Ga
+	s7Ca48X3y5JFn8K3WkWr90vws7Xw4rK3WkGrZFvFyDta4DXa90qrsYyrs3twsYgay7uFWr
+	Jr9aqrZak34fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRAAwIUUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEgfJbmjIEfcqUQAAsP
 
+Add put_bh() to decrease the refcount of 'bh' after the job
+is finished, preventing a resource leak.
 
-On Sun, 14 Sep 2025 21:19:19 +0000, Alexandru Chimac wrote:
-> This clock management unit has a topmost block (CMU_TOP)
-> that generates top clocks for other blocks, alongside 20
-> other blocks, out of which 11 are currently implemented.
-> 
-> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
-> ---
->  .../bindings/clock/samsung,exynos9610-clock.yaml   | 344 ++++++++++
->  include/dt-bindings/clock/samsung,exynos9610.h     | 720 +++++++++++++++++++++
->  2 files changed, 1064 insertions(+)
-> 
+Fixes: 3f3b442b5ad2 ("fs/ntfs3: Add bitmap")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ fs/ntfs3/bitmap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml:250:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/samsung,exynos9610-clock.yaml: $id: 'http://devicetree.org/schemas/clock/samsung,exynos9610-clock.yaml' does not match 'http://devicetree.org/schemas(/[^/ ]+)+\\.yaml#'
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-Error: Documentation/devicetree/bindings/clock/samsung,exynos9610-clock.example.dts:25.13-14 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/clock/samsung,exynos9610-clock.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1527: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250915-exynos9610-clocks-v1-1-3f615022b178@chimac.ro
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/fs/ntfs3/bitmap.c b/fs/ntfs3/bitmap.c
+index 04107b950717..65d05e6a0566 100644
+--- a/fs/ntfs3/bitmap.c
++++ b/fs/ntfs3/bitmap.c
+@@ -1371,6 +1371,7 @@ int wnd_extend(struct wnd_bitmap *wnd, size_t new_bits)
+ 		mark_buffer_dirty(bh);
+ 		unlock_buffer(bh);
+ 		/* err = sync_dirty_buffer(bh); */
++		put_bh(bh);
+ 
+ 		b0 = 0;
+ 		bits -= op;
+-- 
+2.25.1
 
 
