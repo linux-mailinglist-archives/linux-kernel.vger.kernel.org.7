@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-817252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A98DB57FC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24223B57FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37CB2A0D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C07C3BBE5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A010043ABC;
-	Mon, 15 Sep 2025 15:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346B73431E7;
+	Mon, 15 Sep 2025 15:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eyllpHLb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CePmwMy/"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81901327A1C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC50342CA3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948416; cv=none; b=L/26CTiazB65gQ4kDusGmZ0tPFaGAIX9t7szatOorT+2mMyX3+6P+gQHugBDGf5OSGzdDpQJclio4b9kv3F/AGBGc4f4hAIg4QyvI++QtTCZKx3GoB+e1um5SOFPKTwvdecM0ScZ7mXw+MP8xIzUrcmgbL7ZSMkbmaHRx9B9/ng=
+	t=1757948417; cv=none; b=RCTY+hDG4La602z22QDTmkmXjWiFXixOhRJNU2W0q5QR20P4tBXvWxg5Le+pXl+G6wyJbnb9qj2h/e21pRv9kYBwBv+y266ckVYRlTu49Dxm4EyAtvN1s1XXJMmjjV371YPsAu6TG/zmPDPWwByk+InitVyIZwqe7IO5jwM/5ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948416; c=relaxed/simple;
-	bh=UMsHu+w8EEtkyNcFKkFqgEeOYSGG/E/cfqNjj48Uvek=;
+	s=arc-20240116; t=1757948417; c=relaxed/simple;
+	bh=CVcxBN3yBi2+KF9nsuc5ygifXUn/J8ZoLLY8fUb/2IQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YkIahAtm1oxK1yFbVRKoKVZY1hEl9Gj6gZx3qrVxyk0jV2ActXUisfVK4hOzKgnPm4NRQPOO46dKnTrBotEhESuAdkgDUa1UXW2jDv+rsf7iaN+EQ0CqUc05tcx3K/4D5E3HCmjxUiNTE4G2XUAYUui6A6+GLX/QXy1VJQmFcvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eyllpHLb; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=Y4Ejp2UTc9TNWDx+TnG21x9qVYgdJWyG3ICFajRzPY5NIPKti8WYIX6JGJikBamp+0x5Q49ybTbo/DbJuwHa8ipKVGMGjFkg5PnJ0Xc008Cj5tHuhMMAE2VGDSicMJYvpufJsClbyLjov78xZnN10H5YIzoTxy5hSTDVUo8uMmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CePmwMy/; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757948413;
+	s=mimecast20190719; t=1757948414;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nneiESOQSRs1JNr8iGSFvq05p9vDY3T+UnNzRYLtsEk=;
-	b=eyllpHLbzLg8FzID/F6Mwm1x0EmAe/UavaIdthqvFGsi1fHyU0bg9hFmN4lK9mEP5OpRWE
-	P8RZRTVAreYhpLw+UJ3iphPk3/PVmpW7zyg1bBvOi8c+ptbH9DOXrmMyWqWV+VlZZU003S
-	1JWdlAZUpP0ojlbQCp5Qnc11Rwr3Qmc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	bh=8d/8dosrELDy6fCndqrJ6GJCaJmUKepAV3zv1L8i3og=;
+	b=CePmwMy/bQEXv7Pk2KRUinZY36/sAjOXkrkhFwRqpt4yNhgdd8fR2peuQ6cWNbfXYVrFBB
+	ABiqVn8bikcbWqVXlqgZhxxCMKh/R/dvY9SwKYFHwc+avEUViM5aXsxmSN6xWn1ERG6fJq
+	g+inQZRrN8BuoGr5vMtXCGWfA4f12YE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-h3aGPfcfOCCwN0GXgFc6fw-1; Mon,
- 15 Sep 2025 11:00:08 -0400
-X-MC-Unique: h3aGPfcfOCCwN0GXgFc6fw-1
-X-Mimecast-MFC-AGG-ID: h3aGPfcfOCCwN0GXgFc6fw_1757948407
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-YYITePQIPJWz0erSeFmpWA-1; Mon,
+ 15 Sep 2025 11:00:13 -0400
+X-MC-Unique: YYITePQIPJWz0erSeFmpWA-1
+X-Mimecast-MFC-AGG-ID: YYITePQIPJWz0erSeFmpWA_1757948412
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 11920180035C;
-	Mon, 15 Sep 2025 15:00:07 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A5BDD1800359;
+	Mon, 15 Sep 2025 15:00:11 +0000 (UTC)
 Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.63])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C375E1800446;
-	Mon, 15 Sep 2025 15:00:04 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 12A961800446;
+	Mon, 15 Sep 2025 15:00:07 +0000 (UTC)
 From: Gabriele Monaco <gmonaco@redhat.com>
 To: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>
+	Waiman Long <longman@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org
 Cc: Gabriele Monaco <gmonaco@redhat.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v12 4/9] timers: Use scoped_guard when setting/clearing the tmigr available flag
-Date: Mon, 15 Sep 2025 16:59:25 +0200
-Message-ID: <20250915145920.140180-15-gmonaco@redhat.com>
+Subject: [PATCH v12 5/9] cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to update_exclusion_cpumasks()
+Date: Mon, 15 Sep 2025 16:59:26 +0200
+Message-ID: <20250915145920.140180-16-gmonaco@redhat.com>
 In-Reply-To: <20250915145920.140180-11-gmonaco@redhat.com>
 References: <20250915145920.140180-11-gmonaco@redhat.com>
 Precedence: bulk
@@ -76,68 +79,78 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Cleanup tmigr_clear_cpu_available() and tmigr_set_cpu_available() to
-prepare for easier checks on the available flag.
+update_unbound_workqueue_cpumask() updates unbound workqueues settings
+when there's a change in isolated CPUs, but it can be used for other
+subsystems requiring updated when isolated CPUs change.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Generalise the name to update_exclusion_cpumasks() to prepare for other
+functions unrelated to workqueues to be called in that spot.
+
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- kernel/time/timer_migration.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ kernel/cgroup/cpuset.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 865071ab5062..0a3a26e766d0 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -1450,17 +1450,17 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
- 	u64 firstexp;
- 
- 	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
--	raw_spin_lock_irq(&tmc->lock);
--	tmc->available = false;
--	WRITE_ONCE(tmc->wakeup, KTIME_MAX);
-+	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		tmc->available = false;
-+		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
- 
--	/*
--	 * CPU has to handle the local events on his own, when on the way to
--	 * offline; Therefore nextevt value is set to KTIME_MAX
--	 */
--	firstexp = __tmigr_cpu_deactivate(tmc, KTIME_MAX);
--	trace_tmigr_cpu_unavailable(tmc);
--	raw_spin_unlock_irq(&tmc->lock);
-+		/*
-+		 * CPU has to handle the local events on his own, when on the way to
-+		 * offline; Therefore nextevt value is set to KTIME_MAX
-+		 */
-+		firstexp = __tmigr_cpu_deactivate(tmc, KTIME_MAX);
-+		trace_tmigr_cpu_unavailable(tmc);
-+	}
- 
- 	if (firstexp != KTIME_MAX) {
- 		migrator = cpumask_any(tmigr_available_cpumask);
-@@ -1479,13 +1479,13 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 		return -EINVAL;
- 
- 	cpumask_set_cpu(cpu, tmigr_available_cpumask);
--	raw_spin_lock_irq(&tmc->lock);
--	trace_tmigr_cpu_available(tmc);
--	tmc->idle = timer_base_is_idle();
--	if (!tmc->idle)
--		__tmigr_cpu_activate(tmc);
--	tmc->available = true;
--	raw_spin_unlock_irq(&tmc->lock);
-+	scoped_guard(raw_spinlock_irq, &tmc->lock) {
-+		trace_tmigr_cpu_available(tmc);
-+		tmc->idle = timer_base_is_idle();
-+		if (!tmc->idle)
-+			__tmigr_cpu_activate(tmc);
-+		tmc->available = true;
-+	}
- 	return 0;
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 27adb04df675..81a9239053a7 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1339,7 +1339,7 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+ 	return isolcpus_updated;
  }
  
+-static void update_unbound_workqueue_cpumask(bool isolcpus_updated)
++static void update_exclusion_cpumasks(bool isolcpus_updated)
+ {
+ 	int ret;
+ 
+@@ -1470,7 +1470,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+ 	list_add(&cs->remote_sibling, &remote_children);
+ 	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
+ 	spin_unlock_irq(&callback_lock);
+-	update_unbound_workqueue_cpumask(isolcpus_updated);
++	update_exclusion_cpumasks(isolcpus_updated);
+ 	cpuset_force_rebuild();
+ 	cs->prs_err = 0;
+ 
+@@ -1511,7 +1511,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+ 	compute_effective_exclusive_cpumask(cs, NULL, NULL);
+ 	reset_partition_data(cs);
+ 	spin_unlock_irq(&callback_lock);
+-	update_unbound_workqueue_cpumask(isolcpus_updated);
++	update_exclusion_cpumasks(isolcpus_updated);
+ 	cpuset_force_rebuild();
+ 
+ 	/*
+@@ -1580,7 +1580,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ 	if (xcpus)
+ 		cpumask_copy(cs->exclusive_cpus, xcpus);
+ 	spin_unlock_irq(&callback_lock);
+-	update_unbound_workqueue_cpumask(isolcpus_updated);
++	update_exclusion_cpumasks(isolcpus_updated);
+ 	if (adding || deleting)
+ 		cpuset_force_rebuild();
+ 
+@@ -1943,7 +1943,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 		WARN_ON_ONCE(parent->nr_subparts < 0);
+ 	}
+ 	spin_unlock_irq(&callback_lock);
+-	update_unbound_workqueue_cpumask(isolcpus_updated);
++	update_exclusion_cpumasks(isolcpus_updated);
+ 
+ 	if ((old_prs != new_prs) && (cmd == partcmd_update))
+ 		update_partition_exclusive_flag(cs, new_prs);
+@@ -2968,7 +2968,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+ 	else if (isolcpus_updated)
+ 		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
+ 	spin_unlock_irq(&callback_lock);
+-	update_unbound_workqueue_cpumask(isolcpus_updated);
++	update_exclusion_cpumasks(isolcpus_updated);
+ 
+ 	/* Force update if switching back to member & update effective_xcpus */
+ 	update_cpumasks_hier(cs, &tmpmask, !new_prs);
 -- 
 2.51.0
 
