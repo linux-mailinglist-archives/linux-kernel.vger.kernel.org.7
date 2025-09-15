@@ -1,702 +1,265 @@
-Return-Path: <linux-kernel+bounces-817205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CB6B57F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F63BB57F3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9161884BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9288F1883F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205182EF665;
-	Mon, 15 Sep 2025 14:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2778C32A806;
+	Mon, 15 Sep 2025 14:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PXMVndUf"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="L3V76+LG";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="L3V76+LG"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30BB31D74F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F5E32F743
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947081; cv=none; b=pjH+vqFcOHChqGKwZl+4FFk6UrqcZWRxM3Wig7a5QtcRAHvn/9I7OwoSqediOuhKZeyTtDdbSGNKUJhzpbKu3HtGLWCbhCJwSRk9fYzD9xGDwEnMH3FgisEjDBbgCPrCxjFtvFe1S98AapjrjAZYTL+KFPQe/BQ984Xtue4ZDrM=
+	t=1757947090; cv=none; b=s0WA/+9q0U74pBWhn6PJIORbiEKkrqgqeO/GvRgsfvrNbm33xUJJm6GHCh29Al77logLOFs/5GMXF/dF4jqJtbBEYkS14MnN8cZ7vcMYACjC6j7NfxMMlsuCvygyYxB/wD9p/u2UXvQQWeTkUAXAjuVzfrwAVxeSp4ogHo+T8tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947081; c=relaxed/simple;
-	bh=/aJL1GLc/q/SZT+h3CJsbjljCC8X7ssSvOsNBLNmI+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LR8x3YhT6Yf2T9M5uuiGNZPhSN0DC9SCRwVKdpl6rt9ebxllr8njLOjwWXlwhMfwyLgPsKVtRcsMLb50LPEu8XKNnEdpP2Fyiw5iOD+64yMG7noW7usT0IY/NPWvWbBEglTbROaeL7UxKNV3cpk3ntzt8SD1reSqnHFeHBNEB3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PXMVndUf; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-265f460ae7bso175275ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757947079; x=1758551879; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9l7kfCBA2cs7PkOgzQd41fpeGxaVdiNT2GRWXLR1Ow=;
-        b=PXMVndUfZ3iWjCYpTPB0jN9h1idBq792AU+3R0LVuY238M8eL03fxEZM5lttiwclNO
-         xfJ+w5KzoUMmHa97NxJOq14WeeW19DqfIER+pP0RgGiFzilEmJ4rNPJFvYxQQuU8bW1r
-         8v2UMZCyN+m8O6mB5Uymyu7vpAS85OniYcdmFHBKDTSYzQdEdc7sS5xPlZLZ7BzOB55m
-         cuJtJQjfSd0pCKiRByp4h0eS+QwPH6gb0Ida2qP1x2NrbB72VsbMR2R1ai9zHS73ffdu
-         QpGDQyGNI1JPmQil2fLOAQBACRdaFIMD+N0ME4kUBDIOHj+bbFtzXeNzm8Dc8Z/54sb0
-         2pGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757947079; x=1758551879;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G9l7kfCBA2cs7PkOgzQd41fpeGxaVdiNT2GRWXLR1Ow=;
-        b=BJ8GpcDWS/kMesmVt7Ibor+3nUMur1bJBrTao3JhPWwC8JrzmKqqesJCTi/pxwwPex
-         KjbC0yxDEhT6eeXMKDIIQRLg0sgNsFNExQ8r5YT7A0up4GZe2OKdChyuxZoc+xbQELhd
-         687LlDXhbQNgndKNUQ0X8spXWgzLMqGg4QqzdCH23JTnNhDwsusCiFDkgIqfYGtNDp0q
-         sph64k4PUKASRDmiWQTrtZyHUiplTl6snIPo73IseWE7us55x3PWeFHLLRveX8jaulwJ
-         374Us+A4F0cg3IktbCMxxpPH6hcylHItnlCdjeeIGWtDaK/vUGoIZrDJy3bSGfYX8UGU
-         eAEw==
-X-Gm-Message-State: AOJu0YxSDJul+XeBDpn0Zmu0RVcr1LgpS3pf1ibQMQtDg7y6d7iPY93P
-	L5x+e4cni4OLdvRNlB5QOauy2GUg5ZBjIqh8/mQh1XY/mHicbO8u70P8FLzxmqvDHA==
-X-Gm-Gg: ASbGncvV9dXfDvL0l5TKCwF2/wYxY568r/rcnEGNhe8AkUQb/37oz6F9IEbtEg9Nn1V
-	9R4m5QPfO4WHk1nanjE1ksjSBXmYfOeIfuKLJyqC85AXPTtx9BSeZKR3Otc3T2IeJcJpq64MImO
-	BIllMNzefw51T81SITTcmeKx9USZgFldFI6vn8WUen0dRvlTm2yz5NiPOqzRGOkvXq/IQYnkhao
-	X9NxqRuUJzrHZUibYBDmtei/oPQsbO+xvuvgYwuqoAIgb51fjgBgSs8/qPRqzctLSGlGsXp56Zo
-	XeAK8TqRwGMw+HQ64Bvow7GF5PUrlmNKP0zawGHVciZ7S5BpYFbPWkz6vX23fh6tW0j0EK7M7ca
-	WBD/B9FGBI0ng70sLb1cee1RrEly7Jyq9xc1n2PSAnZMGlNmBXMWrN47EeeNLEk0=
-X-Google-Smtp-Source: AGHT+IGhfmd7g1PxAjlI0hYoPute4cdl8W6oRNhYET11FPPMJfr+Sk6514yvFJkaiLa+4xRUIMBrbA==
-X-Received: by 2002:a17:902:f542:b0:264:9b0d:3197 with SMTP id d9443c01a7336-2649b0d3435mr4027565ad.6.1757947078628;
-        Mon, 15 Sep 2025 07:37:58 -0700 (PDT)
-Received: from google.com (23.178.142.34.bc.googleusercontent.com. [34.142.178.23])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-265819a61a7sm41148385ad.48.2025.09.15.07.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 07:37:56 -0700 (PDT)
-Date: Mon, 15 Sep 2025 14:37:49 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com
-Subject: Re: [PATCH v4 04/28] iommu/io-pgtable-arm: Move selftests to a
- separate file
-Message-ID: <aMgkvTLAWLUJ7OD5@google.com>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-5-smostafa@google.com>
+	s=arc-20240116; t=1757947090; c=relaxed/simple;
+	bh=7gRYp0cb7dAEDLqhYXXbKXfajs1T5jBY5z5wtuMISI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hp65uXH2IBvHdgw2z85mIaWegqH4bX964aX0FRhhCJNTKz4abS78vaG1DgpWMuLIEuf9gYbz5fYgLUxDLH2y62d78pv6veWwm1ZGfRLzQ90wcvfsgqnl007HmBsnxa+kxtvQa3yF231I6D/7CA5A+xwHEt+UJVJySoyEsCIK6Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=L3V76+LG; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=L3V76+LG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6E7951F45B;
+	Mon, 15 Sep 2025 14:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1757947086; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7gRYp0cb7dAEDLqhYXXbKXfajs1T5jBY5z5wtuMISI8=;
+	b=L3V76+LGk8y/d2hsEwZeONxP5o2VpfNDzo8HbLBEUoWPl+nO1hE3Bf1BfABndpyiqjSlCj
+	Aoy+IBHhxonQSylGIQ0EU6cj9u41JK9un5T3008izmmbDAJ28wwpN8ZLS2AEAd7EuUauI5
+	ZCdp66lk8Q/20ef0npmS/Ltb7hGLZVw=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1757947086; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7gRYp0cb7dAEDLqhYXXbKXfajs1T5jBY5z5wtuMISI8=;
+	b=L3V76+LGk8y/d2hsEwZeONxP5o2VpfNDzo8HbLBEUoWPl+nO1hE3Bf1BfABndpyiqjSlCj
+	Aoy+IBHhxonQSylGIQ0EU6cj9u41JK9un5T3008izmmbDAJ28wwpN8ZLS2AEAd7EuUauI5
+	ZCdp66lk8Q/20ef0npmS/Ltb7hGLZVw=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 542C11368D;
+	Mon, 15 Sep 2025 14:38:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TSvLEs4kyGipZAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Mon, 15 Sep 2025 14:38:06 +0000
+Message-ID: <33fb4d70-c3e7-4158-9727-3ad29f974246@suse.com>
+Date: Mon, 15 Sep 2025 16:38:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819215156.2494305-5-smostafa@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2023-53212: xenbus: check xen_domain in xenbus_probe_initcall
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+References: <2025091511-CVE-2023-53212-fdd4@gregkh>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <2025091511-CVE-2023-53212-fdd4@gregkh>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------iKIU26qpcU1dKKzStTMIbrOF"
+X-Spamd-Result: default: False [-5.20 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	HAS_ATTACHMENT(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -5.20
 
-On Tue, Aug 19, 2025 at 09:51:32PM +0000, Mostafa Saleh wrote:
-> Soon, io-pgtable-arm.c will be compiled as part of the KVM/arm64
-> in the hypervisor object, which doesn't have many of the kernel APIs,
-> as faux devices, printk...
-> 
-> We would need to factor this things outside of this file, this patch
-> moves the selftests outside, which remove many of the kernel
-> dependencies, which also is not needed by the hypervisor.
-> Create io-pgtable-arm-kernel.c for that, and in the next patch
-> the rest of the code is factored out.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  drivers/iommu/Makefile                |   2 +-
->  drivers/iommu/io-pgtable-arm-kernel.c | 216 +++++++++++++++++++++++
->  drivers/iommu/io-pgtable-arm.c        | 245 --------------------------
->  drivers/iommu/io-pgtable-arm.h        |  41 +++++
->  4 files changed, 258 insertions(+), 246 deletions(-)
->  create mode 100644 drivers/iommu/io-pgtable-arm-kernel.c
-> 
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index 355294fa9033..d601b0e25ef5 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -11,7 +11,7 @@ obj-$(CONFIG_IOMMU_DEBUGFS) += iommu-debugfs.o
->  obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
->  obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
->  obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
-> -obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
-> +obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o io-pgtable-arm-kernel.o
->  obj-$(CONFIG_IOMMU_IO_PGTABLE_DART) += io-pgtable-dart.o
->  obj-$(CONFIG_IOMMU_IOVA) += iova.o
->  obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
-> diff --git a/drivers/iommu/io-pgtable-arm-kernel.c b/drivers/iommu/io-pgtable-arm-kernel.c
-> new file mode 100644
-> index 000000000000..f3b869310964
-> --- /dev/null
-> +++ b/drivers/iommu/io-pgtable-arm-kernel.c
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------iKIU26qpcU1dKKzStTMIbrOF
+Content-Type: multipart/mixed; boundary="------------6GOCqgCCRSqYRDfFDwXX1by0";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: cve@kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <33fb4d70-c3e7-4158-9727-3ad29f974246@suse.com>
+Subject: Re: CVE-2023-53212: xenbus: check xen_domain in xenbus_probe_initcall
+References: <2025091511-CVE-2023-53212-fdd4@gregkh>
+In-Reply-To: <2025091511-CVE-2023-53212-fdd4@gregkh>
 
-If this file just contains the selftests, how about naming it
-"io-pgtable-arm-selftests.c" ? 
+--------------6GOCqgCCRSqYRDfFDwXX1by0
+Content-Type: multipart/mixed; boundary="------------rsQ7eC5n82SZyFbXECCR7CWp"
 
-> @@ -0,0 +1,216 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * CPU-agnostic ARM page table allocator.
-> + *
-> + * Copyright (C) 2014 ARM Limited
-> + *
-> + * Author: Will Deacon <will.deacon@arm.com>
-> + */
-> +#define pr_fmt(fmt)	"arm-lpae io-pgtable: " fmt
-> +
-> +#include <linux/device/faux.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +
-> +#include "io-pgtable-arm.h"
-> +
-> +#ifdef CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST
-> +
-> +static struct io_pgtable_cfg *cfg_cookie __initdata;
-> +
-> +static void __init dummy_tlb_flush_all(void *cookie)
-> +{
-> +	WARN_ON(cookie != cfg_cookie);
-> +}
-> +
-> +static void __init dummy_tlb_flush(unsigned long iova, size_t size,
-> +				   size_t granule, void *cookie)
-> +{
-> +	WARN_ON(cookie != cfg_cookie);
-> +	WARN_ON(!(size & cfg_cookie->pgsize_bitmap));
-> +}
-> +
-> +static void __init dummy_tlb_add_page(struct iommu_iotlb_gather *gather,
-> +				      unsigned long iova, size_t granule,
-> +				      void *cookie)
-> +{
-> +	dummy_tlb_flush(iova, granule, granule, cookie);
-> +}
-> +
-> +static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
-> +	.tlb_flush_all	= dummy_tlb_flush_all,
-> +	.tlb_flush_walk	= dummy_tlb_flush,
-> +	.tlb_add_page	= dummy_tlb_add_page,
-> +};
-> +
-> +static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
-> +{
-> +	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-> +
-> +	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
-> +		cfg->pgsize_bitmap, cfg->ias);
-> +	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
-> +		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
-> +		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
-> +}
-> +
-> +#define __FAIL(ops, i)	({						\
-> +		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
-> +		arm_lpae_dump_ops(ops);					\
-> +		-EFAULT;						\
-> +})
-> +
-> +static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> +{
-> +	static const enum io_pgtable_fmt fmts[] __initconst = {
-> +		ARM_64_LPAE_S1,
-> +		ARM_64_LPAE_S2,
-> +	};
-> +
-> +	int i, j;
-> +	unsigned long iova;
-> +	size_t size, mapped;
-> +	struct io_pgtable_ops *ops;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(fmts); ++i) {
-> +		cfg_cookie = cfg;
-> +		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
-> +		if (!ops) {
-> +			pr_err("selftest: failed to allocate io pgtable ops\n");
-> +			return -ENOMEM;
-> +		}
-> +
-> +		/*
-> +		 * Initial sanity checks.
-> +		 * Empty page tables shouldn't provide any translations.
-> +		 */
-> +		if (ops->iova_to_phys(ops, 42))
-> +			return __FAIL(ops, i);
-> +
-> +		if (ops->iova_to_phys(ops, SZ_1G + 42))
-> +			return __FAIL(ops, i);
-> +
-> +		if (ops->iova_to_phys(ops, SZ_2G + 42))
-> +			return __FAIL(ops, i);
-> +
-> +		/*
-> +		 * Distinct mappings of different granule sizes.
-> +		 */
-> +		iova = 0;
-> +		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
-> +			size = 1UL << j;
-> +
-> +			if (ops->map_pages(ops, iova, iova, size, 1,
-> +					   IOMMU_READ | IOMMU_WRITE |
-> +					   IOMMU_NOEXEC | IOMMU_CACHE,
-> +					   GFP_KERNEL, &mapped))
-> +				return __FAIL(ops, i);
-> +
-> +			/* Overlapping mappings */
-> +			if (!ops->map_pages(ops, iova, iova + size, size, 1,
-> +					    IOMMU_READ | IOMMU_NOEXEC,
-> +					    GFP_KERNEL, &mapped))
-> +				return __FAIL(ops, i);
-> +
-> +			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
-> +				return __FAIL(ops, i);
-> +
-> +			iova += SZ_1G;
-> +		}
-> +
-> +		/* Full unmap */
-> +		iova = 0;
-> +		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
-> +			size = 1UL << j;
-> +
-> +			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
-> +				return __FAIL(ops, i);
-> +
-> +			if (ops->iova_to_phys(ops, iova + 42))
-> +				return __FAIL(ops, i);
-> +
-> +			/* Remap full block */
-> +			if (ops->map_pages(ops, iova, iova, size, 1,
-> +					   IOMMU_WRITE, GFP_KERNEL, &mapped))
-> +				return __FAIL(ops, i);
-> +
-> +			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
-> +				return __FAIL(ops, i);
-> +
-> +			iova += SZ_1G;
-> +		}
-> +
-> +		/*
-> +		 * Map/unmap the last largest supported page of the IAS, this can
-> +		 * trigger corner cases in the concatednated page tables.
-> +		 */
-> +		mapped = 0;
-> +		size = 1UL << __fls(cfg->pgsize_bitmap);
-> +		iova = (1UL << cfg->ias) - size;
-> +		if (ops->map_pages(ops, iova, iova, size, 1,
-> +				   IOMMU_READ | IOMMU_WRITE |
-> +				   IOMMU_NOEXEC | IOMMU_CACHE,
-> +				   GFP_KERNEL, &mapped))
-> +			return __FAIL(ops, i);
-> +		if (mapped != size)
-> +			return __FAIL(ops, i);
-> +		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
-> +			return __FAIL(ops, i);
-> +
-> +		free_io_pgtable_ops(ops);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init arm_lpae_do_selftests(void)
-> +{
-> +	static const unsigned long pgsize[] __initconst = {
-> +		SZ_4K | SZ_2M | SZ_1G,
-> +		SZ_16K | SZ_32M,
-> +		SZ_64K | SZ_512M,
-> +	};
-> +
-> +	static const unsigned int address_size[] __initconst = {
-> +		32, 36, 40, 42, 44, 48,
-> +	};
-> +
-> +	int i, j, k, pass = 0, fail = 0;
-> +	struct faux_device *dev;
-> +	struct io_pgtable_cfg cfg = {
-> +		.tlb = &dummy_tlb_ops,
-> +		.coherent_walk = true,
-> +		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
-> +	};
-> +
-> +	dev = faux_device_create("io-pgtable-test", NULL, 0);
-> +	if (!dev)
-> +		return -ENOMEM;
-> +
-> +	cfg.iommu_dev = &dev->dev;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
-> +		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
-> +			/* Don't use ias > oas as it is not valid for stage-2. */
-> +			for (k = 0; k <= j; ++k) {
-> +				cfg.pgsize_bitmap = pgsize[i];
-> +				cfg.ias = address_size[k];
-> +				cfg.oas = address_size[j];
-> +				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
-> +					pgsize[i], cfg.ias, cfg.oas);
-> +				if (arm_lpae_run_tests(&cfg))
-> +					fail++;
-> +				else
-> +					pass++;
-> +			}
-> +		}
-> +	}
-> +
-> +	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
-> +	faux_device_destroy(dev);
-> +
-> +	return fail ? -EFAULT : 0;
-> +}
-> +subsys_initcall(arm_lpae_do_selftests);
-> +#endif
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 96425e92f313..791a2c4ecb83 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -7,15 +7,10 @@
->   * Author: Will Deacon <will.deacon@arm.com>
->   */
->  
-> -#define pr_fmt(fmt)	"arm-lpae io-pgtable: " fmt
-> -
->  #include <linux/atomic.h>
->  #include <linux/bitops.h>
->  #include <linux/io-pgtable.h>
-> -#include <linux/kernel.h>
-> -#include <linux/device/faux.h>
->  #include <linux/sizes.h>
-> -#include <linux/slab.h>
->  #include <linux/types.h>
->  #include <linux/dma-mapping.h>
->  
-> @@ -24,33 +19,6 @@
->  #include "io-pgtable-arm.h"
->  #include "iommu-pages.h"
->  
-> -#define ARM_LPAE_MAX_ADDR_BITS		52
-> -#define ARM_LPAE_S2_MAX_CONCAT_PAGES	16
-> -#define ARM_LPAE_MAX_LEVELS		4
-> -
-> -/* Struct accessors */
-> -#define io_pgtable_to_data(x)						\
-> -	container_of((x), struct arm_lpae_io_pgtable, iop)
-> -
-> -#define io_pgtable_ops_to_data(x)					\
-> -	io_pgtable_to_data(io_pgtable_ops_to_pgtable(x))
-> -
-> -/*
-> - * Calculate the right shift amount to get to the portion describing level l
-> - * in a virtual address mapped by the pagetable in d.
-> - */
-> -#define ARM_LPAE_LVL_SHIFT(l,d)						\
-> -	(((ARM_LPAE_MAX_LEVELS - (l)) * (d)->bits_per_level) +		\
-> -	ilog2(sizeof(arm_lpae_iopte)))
-> -
-> -#define ARM_LPAE_GRANULE(d)						\
-> -	(sizeof(arm_lpae_iopte) << (d)->bits_per_level)
-> -#define ARM_LPAE_PGD_SIZE(d)						\
-> -	(sizeof(arm_lpae_iopte) << (d)->pgd_bits)
-> -
-> -#define ARM_LPAE_PTES_PER_TABLE(d)					\
-> -	(ARM_LPAE_GRANULE(d) >> ilog2(sizeof(arm_lpae_iopte)))
-> -
->  /*
->   * Calculate the index at level l used to map virtual address a using the
->   * pagetable in d.
-> @@ -163,18 +131,6 @@
->  #define iopte_set_writeable_clean(ptep)				\
->  	set_bit(ARM_LPAE_PTE_AP_RDONLY_BIT, (unsigned long *)(ptep))
->  
-> -struct arm_lpae_io_pgtable {
-> -	struct io_pgtable	iop;
-> -
-> -	int			pgd_bits;
-> -	int			start_level;
-> -	int			bits_per_level;
-> -
-> -	void			*pgd;
-> -};
-> -
-> -typedef u64 arm_lpae_iopte;
-> -
->  static inline bool iopte_leaf(arm_lpae_iopte pte, int lvl,
->  			      enum io_pgtable_fmt fmt)
->  {
-> @@ -1274,204 +1230,3 @@ struct io_pgtable_init_fns io_pgtable_arm_mali_lpae_init_fns = {
->  	.alloc	= arm_mali_lpae_alloc_pgtable,
->  	.free	= arm_lpae_free_pgtable,
->  };
-> -
-> -#ifdef CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST
-> -
-> -static struct io_pgtable_cfg *cfg_cookie __initdata;
-> -
-> -static void __init dummy_tlb_flush_all(void *cookie)
-> -{
-> -	WARN_ON(cookie != cfg_cookie);
-> -}
-> -
-> -static void __init dummy_tlb_flush(unsigned long iova, size_t size,
-> -				   size_t granule, void *cookie)
-> -{
-> -	WARN_ON(cookie != cfg_cookie);
-> -	WARN_ON(!(size & cfg_cookie->pgsize_bitmap));
-> -}
-> -
-> -static void __init dummy_tlb_add_page(struct iommu_iotlb_gather *gather,
-> -				      unsigned long iova, size_t granule,
-> -				      void *cookie)
-> -{
-> -	dummy_tlb_flush(iova, granule, granule, cookie);
-> -}
-> -
-> -static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
-> -	.tlb_flush_all	= dummy_tlb_flush_all,
-> -	.tlb_flush_walk	= dummy_tlb_flush,
-> -	.tlb_add_page	= dummy_tlb_add_page,
-> -};
-> -
-> -static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
-> -{
-> -	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
-> -	struct io_pgtable_cfg *cfg = &data->iop.cfg;
-> -
-> -	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
-> -		cfg->pgsize_bitmap, cfg->ias);
-> -	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
-> -		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
-> -		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
-> -}
-> -
-> -#define __FAIL(ops, i)	({						\
-> -		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
-> -		arm_lpae_dump_ops(ops);					\
-> -		-EFAULT;						\
-> -})
-> -
-> -static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
-> -{
-> -	static const enum io_pgtable_fmt fmts[] __initconst = {
-> -		ARM_64_LPAE_S1,
-> -		ARM_64_LPAE_S2,
-> -	};
-> -
-> -	int i, j;
-> -	unsigned long iova;
-> -	size_t size, mapped;
-> -	struct io_pgtable_ops *ops;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(fmts); ++i) {
-> -		cfg_cookie = cfg;
-> -		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
-> -		if (!ops) {
-> -			pr_err("selftest: failed to allocate io pgtable ops\n");
-> -			return -ENOMEM;
-> -		}
-> -
-> -		/*
-> -		 * Initial sanity checks.
-> -		 * Empty page tables shouldn't provide any translations.
-> -		 */
-> -		if (ops->iova_to_phys(ops, 42))
-> -			return __FAIL(ops, i);
-> -
-> -		if (ops->iova_to_phys(ops, SZ_1G + 42))
-> -			return __FAIL(ops, i);
-> -
-> -		if (ops->iova_to_phys(ops, SZ_2G + 42))
-> -			return __FAIL(ops, i);
-> -
-> -		/*
-> -		 * Distinct mappings of different granule sizes.
-> -		 */
-> -		iova = 0;
-> -		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
-> -			size = 1UL << j;
-> -
-> -			if (ops->map_pages(ops, iova, iova, size, 1,
-> -					   IOMMU_READ | IOMMU_WRITE |
-> -					   IOMMU_NOEXEC | IOMMU_CACHE,
-> -					   GFP_KERNEL, &mapped))
-> -				return __FAIL(ops, i);
-> -
-> -			/* Overlapping mappings */
-> -			if (!ops->map_pages(ops, iova, iova + size, size, 1,
-> -					    IOMMU_READ | IOMMU_NOEXEC,
-> -					    GFP_KERNEL, &mapped))
-> -				return __FAIL(ops, i);
-> -
-> -			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
-> -				return __FAIL(ops, i);
-> -
-> -			iova += SZ_1G;
-> -		}
-> -
-> -		/* Full unmap */
-> -		iova = 0;
-> -		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
-> -			size = 1UL << j;
-> -
-> -			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
-> -				return __FAIL(ops, i);
-> -
-> -			if (ops->iova_to_phys(ops, iova + 42))
-> -				return __FAIL(ops, i);
-> -
-> -			/* Remap full block */
-> -			if (ops->map_pages(ops, iova, iova, size, 1,
-> -					   IOMMU_WRITE, GFP_KERNEL, &mapped))
-> -				return __FAIL(ops, i);
-> -
-> -			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
-> -				return __FAIL(ops, i);
-> -
-> -			iova += SZ_1G;
-> -		}
-> -
-> -		/*
-> -		 * Map/unmap the last largest supported page of the IAS, this can
-> -		 * trigger corner cases in the concatednated page tables.
-> -		 */
-> -		mapped = 0;
-> -		size = 1UL << __fls(cfg->pgsize_bitmap);
-> -		iova = (1UL << cfg->ias) - size;
-> -		if (ops->map_pages(ops, iova, iova, size, 1,
-> -				   IOMMU_READ | IOMMU_WRITE |
-> -				   IOMMU_NOEXEC | IOMMU_CACHE,
-> -				   GFP_KERNEL, &mapped))
-> -			return __FAIL(ops, i);
-> -		if (mapped != size)
-> -			return __FAIL(ops, i);
-> -		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
-> -			return __FAIL(ops, i);
-> -
-> -		free_io_pgtable_ops(ops);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int __init arm_lpae_do_selftests(void)
-> -{
-> -	static const unsigned long pgsize[] __initconst = {
-> -		SZ_4K | SZ_2M | SZ_1G,
-> -		SZ_16K | SZ_32M,
-> -		SZ_64K | SZ_512M,
-> -	};
-> -
-> -	static const unsigned int address_size[] __initconst = {
-> -		32, 36, 40, 42, 44, 48,
-> -	};
-> -
-> -	int i, j, k, pass = 0, fail = 0;
-> -	struct faux_device *dev;
-> -	struct io_pgtable_cfg cfg = {
-> -		.tlb = &dummy_tlb_ops,
-> -		.coherent_walk = true,
-> -		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
-> -	};
-> -
-> -	dev = faux_device_create("io-pgtable-test", NULL, 0);
-> -	if (!dev)
-> -		return -ENOMEM;
-> -
-> -	cfg.iommu_dev = &dev->dev;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
-> -		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
-> -			/* Don't use ias > oas as it is not valid for stage-2. */
-> -			for (k = 0; k <= j; ++k) {
-> -				cfg.pgsize_bitmap = pgsize[i];
-> -				cfg.ias = address_size[k];
-> -				cfg.oas = address_size[j];
-> -				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
-> -					pgsize[i], cfg.ias, cfg.oas);
-> -				if (arm_lpae_run_tests(&cfg))
-> -					fail++;
-> -				else
-> -					pass++;
-> -			}
-> -		}
-> -	}
-> -
-> -	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
-> -	faux_device_destroy(dev);
-> -
-> -	return fail ? -EFAULT : 0;
-> -}
-> -subsys_initcall(arm_lpae_do_selftests);
-> -#endif
-> diff --git a/drivers/iommu/io-pgtable-arm.h b/drivers/iommu/io-pgtable-arm.h
-> index ba7cfdf7afa0..a06a23543cff 100644
-> --- a/drivers/iommu/io-pgtable-arm.h
-> +++ b/drivers/iommu/io-pgtable-arm.h
-> @@ -2,6 +2,8 @@
->  #ifndef IO_PGTABLE_ARM_H_
->  #define IO_PGTABLE_ARM_H_
->  
-> +#include <linux/io-pgtable.h>
-> +
->  #define ARM_LPAE_TCR_TG0_4K		0
->  #define ARM_LPAE_TCR_TG0_64K		1
->  #define ARM_LPAE_TCR_TG0_16K		2
-> @@ -27,4 +29,43 @@
->  #define ARM_LPAE_TCR_PS_48_BIT		0x5ULL
->  #define ARM_LPAE_TCR_PS_52_BIT		0x6ULL
->  
-> +/* Struct accessors */
-> +#define io_pgtable_to_data(x)						\
-> +	container_of((x), struct arm_lpae_io_pgtable, iop)
-> +
-> +#define io_pgtable_ops_to_data(x)					\
-> +	io_pgtable_to_data(io_pgtable_ops_to_pgtable(x))
-> +
-> +struct arm_lpae_io_pgtable {
-> +	struct io_pgtable	iop;
-> +
-> +	int			pgd_bits;
-> +	int			start_level;
-> +	int			bits_per_level;
-> +
-> +	void			*pgd;
-> +};
-> +
-> +#define ARM_LPAE_MAX_ADDR_BITS		52
-> +#define ARM_LPAE_S2_MAX_CONCAT_PAGES	16
-> +#define ARM_LPAE_MAX_LEVELS		4
-> +
-> +/*
-> + * Calculate the right shift amount to get to the portion describing level l
-> + * in a virtual address mapped by the pagetable in d.
-> + */
-> +#define ARM_LPAE_LVL_SHIFT(l,d)						\
-> +	(((ARM_LPAE_MAX_LEVELS - (l)) * (d)->bits_per_level) +		\
-> +	ilog2(sizeof(arm_lpae_iopte)))
-> +
-> +#define ARM_LPAE_GRANULE(d)						\
-> +	(sizeof(arm_lpae_iopte) << (d)->bits_per_level)
-> +#define ARM_LPAE_PGD_SIZE(d)						\
-> +	(sizeof(arm_lpae_iopte) << (d)->pgd_bits)
-> +
-> +#define ARM_LPAE_PTES_PER_TABLE(d)					\
-> +	(ARM_LPAE_GRANULE(d) >> ilog2(sizeof(arm_lpae_iopte)))
-> +
-> +typedef u64 arm_lpae_iopte;
-> +
->  #endif /* IO_PGTABLE_ARM_H_ */
+--------------rsQ7eC5n82SZyFbXECCR7CWp
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Apart from the renaming above, I was able to apply this patch alone, and
-build succesfully while toggling IOMMU_IO_PGTABLE_LPAE_SELFTEST across 
-builds.
+T24gMTUuMDkuMjUgMTY6MjEsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gRnJvbTog
+R3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAa2VybmVsLm9yZz4NCj4gDQo+IERlc2NyaXB0
+aW9uDQo+ID09PT09PT09PT09DQo+IA0KPiBJbiB0aGUgTGludXgga2VybmVsLCB0aGUgZm9s
+bG93aW5nIHZ1bG5lcmFiaWxpdHkgaGFzIGJlZW4gcmVzb2x2ZWQ6DQo+IA0KPiB4ZW5idXM6
+IGNoZWNrIHhlbl9kb21haW4gaW4geGVuYnVzX3Byb2JlX2luaXRjYWxsDQo+IA0KPiBUaGUg
+c2FtZSB3YXkgd2UgYWxyZWFkeSBkbyBpbiB4ZW5idXNfaW5pdC4NCj4gRml4ZXMgdGhlIGZv
+bGxvd2luZyB3YXJuaW5nOg0KPiANCj4gWyAgMzUyLjE3NTU2M10gVHJ5aW5nIHRvIGZyZWUg
+YWxyZWFkeS1mcmVlIElSUSAwDQo+IFsgIDM1Mi4xNzczNTVdIFdBUk5JTkc6IENQVTogMSBQ
+SUQ6IDg4IGF0IGtlcm5lbC9pcnEvbWFuYWdlLmM6MTg5MyBmcmVlX2lycSsweGJmLzB4MzUw
+DQo+IFsuLi5dDQo+IFsgIDM1Mi4yMTM5NTFdIENhbGwgVHJhY2U6DQo+IFsgIDM1Mi4yMTQz
+OTBdICA8VEFTSz4NCj4gWyAgMzUyLjIxNDcxN10gID8gX193YXJuKzB4ODEvMHgxNzANCj4g
+WyAgMzUyLjIxNTQzNl0gID8gZnJlZV9pcnErMHhiZi8weDM1MA0KPiBbICAzNTIuMjE1OTA2
+XSAgPyByZXBvcnRfYnVnKzB4MTBiLzB4MjAwDQo+IFsgIDM1Mi4yMTY0MDhdICA/IHByYl9y
+ZWFkX3ZhbGlkKzB4MTcvMHgyMA0KPiBbICAzNTIuMjE2OTI2XSAgPyBoYW5kbGVfYnVnKzB4
+NDQvMHg4MA0KPiBbICAzNTIuMjE3NDA5XSAgPyBleGNfaW52YWxpZF9vcCsweDEzLzB4NjAN
+Cj4gWyAgMzUyLjIxNzkzMl0gID8gYXNtX2V4Y19pbnZhbGlkX29wKzB4MTYvMHgyMA0KPiBb
+ICAzNTIuMjE4NDk3XSAgPyBmcmVlX2lycSsweGJmLzB4MzUwDQo+IFsgIDM1Mi4yMTg5Nzld
+ICA/IF9fcGZ4X3hlbmJ1c19wcm9iZV90aHJlYWQrMHgxMC8weDEwDQo+IFsgIDM1Mi4yMTk2
+MDBdICB4ZW5idXNfcHJvYmUrMHg3YS8weDgwDQo+IFsgIDM1Mi4yMjEwMzBdICB4ZW5idXNf
+cHJvYmVfdGhyZWFkKzB4NzYvMHhjMA0KPiANCj4gVGhlIExpbnV4IGtlcm5lbCBDVkUgdGVh
+bSBoYXMgYXNzaWduZWQgQ1ZFLTIwMjMtNTMyMTIgdG8gdGhpcyBpc3N1ZS4NCg0KSSBkb24n
+dCBzZWUgaG93IGFuIHVucHJpdmlsZWdlZCB1c2VyIGNvdWxkIHRyaWdnZXIgdGhpcyBwcm9i
+bGVtLg0KDQpQbGVhc2UgcmV2b2tlIHRoaXMgQ1ZFLg0KDQoNCkp1ZXJnZW4NCg==
+--------------rsQ7eC5n82SZyFbXECCR7CWp
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-> -- 
-> 2.51.0.rc1.167.g924127e9c0-goog
-> 
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------rsQ7eC5n82SZyFbXECCR7CWp--
+
+--------------6GOCqgCCRSqYRDfFDwXX1by0--
+
+--------------iKIU26qpcU1dKKzStTMIbrOF
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjIJM0FAwAAAAAACgkQsN6d1ii/Ey+M
++Af+OStQnnm480+wVH8j149QFgi+pZvKDVdCQ41m3BPIeyDkBRVdO0X8wH/d0SLipygk2JywwY8D
+xhvTVyQ1jm49oUzxYZSX9IXRQsjF13MUtN3CXfzQmGFIeRM7iKm3FMFR5HUJOjGyJU+bRBT401UO
+F7lXjE45WGRJ5oMl0smQfEHp89bUTEXOMd6nmAudrMR7lj7KPikbuQETCzHyjdnfa3eg+Y/UoLqB
+FS0l0ZshUol2+WaNA7avGDlNKhEkAlBJ55Giq1R3eYtwr6TQLL0FUTueND+ZIhkVHG8t1WAn7R55
+lY/AVYw28TM4/GzHnC7eW3VM1MiQFU1JoxNqoF0WgA==
+=qnHO
+-----END PGP SIGNATURE-----
+
+--------------iKIU26qpcU1dKKzStTMIbrOF--
 
