@@ -1,232 +1,152 @@
-Return-Path: <linux-kernel+bounces-817636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E93DB584C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:39:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA121B584C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948981A288D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DF792E02E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D807629B8EF;
-	Mon, 15 Sep 2025 18:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB492DCBF4;
+	Mon, 15 Sep 2025 18:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwAJZcDy"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gUCVroGw"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E79331D759
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D99277814;
+	Mon, 15 Sep 2025 18:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757961470; cv=none; b=R1D9CShcOMHpas5YMGa6qQga0SGlzNtTUFo3a+7/TwVjhYiVSWnRUhVU6agZ23nnkoQWgpRP94eyrR6QnhWtmqJnPK9fk468hmhoM6ur0DKvwqCB5BHEHld2WmPm19ZwWYOLaIjrqEUt5RwVsjG0nfqwPi43ebhUBVkLthTCmyk=
+	t=1757961512; cv=none; b=KzepeQjcmxAaQE9/qE11PaRclFc5V+hsZZy82yXzPvEoV+aMhSCZHax2vy6YGYqhXqOfbBkD6qDAJe3gQHiSu4HgGbSmAOTGAhf828wnZGvcZiLzMWNAhdgMPrFJ+5aEPXRIOPH2UaAydzUYN3K0BsrP7pfZasO8PqKN4k6x+N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757961470; c=relaxed/simple;
-	bh=jbnenaa4O6i14j4ZifdqFvInS3eJxZIQbMEEwSis0yw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OFl+FZU1AL3gZI61/yF3qCaA7fMM/vX1TnUyJUboBERETSaDiSB28iDgFL9QwRM5hE3/PiNK8c86YZasuylZ7s2uEBkv2hKE+vdBvapIZNo737kO3k48jVTu2zVHtTMkOu6Jw9N2L+Lftt1XU6EObajfefmbcouuZlBxW/nr1J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwAJZcDy; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b04ba58a84fso607367866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757961466; x=1758566266; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5qjOlUlJq2SsNzQS1L4g2nZJSlF7eLB1a0byw2EKzH4=;
-        b=CwAJZcDy83d14bePGKhFeirGFaVzBPdELC/8dwWdncFwmhv0Gy6AZixUgqwyGC4M4T
-         npdZAMnqnaMjnUm+nb77+Sk8MLj+lUpYwtoYjBGgfSXDV91sc0nrrREFLJByEcZ8RgAr
-         W88+t5JjxlCDVNja6fQDwflSfXKqTZ4jhGOv6UFhu9Sh93Vxm3/Qb89+XqskIq9Bcrz/
-         3h2EDdcoBIK/YPlWwibFF+/mDS6sT3T192RRv1OxTgPSSzP54w2KrKkYX9yOpfTHFARn
-         gJL1qvmOC5s/4b4+WC8BOsxIH5tlH1tdQm18P1jkReKLRZTZkJqaMfShvEPWcRQbcm2C
-         Qcrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757961466; x=1758566266;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5qjOlUlJq2SsNzQS1L4g2nZJSlF7eLB1a0byw2EKzH4=;
-        b=t/11mRhnSSaZ9doSVVcmNUc692SB6zQKlL3Wy21hw6Ciq/8hVKkm1553naMyEqpugQ
-         8LpcWPsh9l71XBrlCgnVZUniCcpHn+4p6l/EPDBCc10UDfv9hr7ofRDgnV27xNuHPX6B
-         F5aF4ugZJE+wrpme7Y4kwPFUYdc9qoIvZ7lDZ88XPMSJhhMFdO2mfAq8bm1VXuGSrMtt
-         4uC7PjjDS06IL/jvkuAMqP/h9UarI4K8x97Axu/jQvkcISg7kwlDpXBWFPOxEQyo0anB
-         V1BOPckgmBqTWovR3IAKwScSLtTI4YqpzXrMKHgBCOomj1Kxvotv/YsvP05rXUlRHJOW
-         wN6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxbum8IjKMe11WcY3CScza0HeZl/AV7rl4+vocIc+/xPTseNQjD99k5MHbUreec6War5Gm/nHtHYMFtyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfQLRmat2/Vaija2RpLyeIK/v3t4MYlL77jxaFBnyhs1Ycjcjh
-	XJltVmpWMtqErUHDWv6/CUn5Lg6wPscWOt53rpUsybNBcTC+xmbi0ITD
-X-Gm-Gg: ASbGncv6C/FoREvKiT9VSdQ29pmdIsfUuDn44HPthBwrZhHFKqzJDNif4V8MtIQZide
-	MgrTdNBpzJNJTRhpmkIMjvdQORg+10kZo0na53EEITB77IEq7+RZN6ZIKc7b/xzGXfDPZepCzsk
-	MPbpTkgNdPkLugMGd2xXSlKMnbYm/XmGdhZWObhF2soKBAdFH46EyL4IdALSP+y0ySD55uK6N1h
-	viMhHIdPDQiYPcPFpSgurSQDSd9rnOPl40T+f9hbOboE9sqCMYwoxkOy1EeUXqV7k7wKjCCbVWm
-	8tzNWOALsz3yOn7YqnhrxnGEn9Cjo6MnlfPxE9lYRcRBt+FWGY0BR65ixCNf2GU2XWSw4G3yNaP
-	MpHRQvXsq6tTVNMCpE1EnOZ3yLlAwSSxV4x0WLYAmHpLh3SGvixbZz9P2JqgPiqXG2qp+Vp0M5d
-	zvR/oR2g9ZwLzMKg==
-X-Google-Smtp-Source: AGHT+IGOgHgfT9pewzJMSeqVIebTPIEkxQX8DNga8jXtGvUMJHVHxmWcNBP2oUmlSXgcd2MHGYeYbw==
-X-Received: by 2002:a17:907:1c93:b0:b04:590a:a5b5 with SMTP id a640c23a62f3a-b07c3579f62mr1299448766b.24.1757961465968;
-        Mon, 15 Sep 2025 11:37:45 -0700 (PDT)
-Received: from localhost (dslb-002-205-018-108.002.205.pools.vodafone-ip.de. [2.205.18.108])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f1cc4sm1016951266b.76.2025.09.15.11.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 11:37:45 -0700 (PDT)
-From: Jonas Gorski <jonas.gorski@gmail.com>
-To: Mark Brown <broonie@kernel.org>,
-	Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH v2 7/7] spi: rename SPI_CS_CNT_MAX => SPI_DEVICE_CS_CNT_MAX
-Date: Mon, 15 Sep 2025 20:37:25 +0200
-Message-ID: <20250915183725.219473-8-jonas.gorski@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250915183725.219473-1-jonas.gorski@gmail.com>
-References: <20250915183725.219473-1-jonas.gorski@gmail.com>
+	s=arc-20240116; t=1757961512; c=relaxed/simple;
+	bh=PD4ml/kKgQapP5VRNYxsB/4ndnacacUwgx1YD5Dy+HU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M1BO13YlCyvryXnEBeyoBTjZxPJ79sHpbGWB0d23OSzQp0TCbkmslkFetYocvjlN6THj42UNmNyeZPsbTiDSEtdh9LW/2aarq1ocsCmVpl1ZCvB9u0vTMisvFLrT9MuFVZbMUig3j1uwkVWgLzUYqn+fRF4w0ideeUseQ+h1ZUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gUCVroGw; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FFSmIY027471;
+	Mon, 15 Sep 2025 18:38:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=VqyqwvnFCAn1NBpp
+	RidUOvsJe9fID2sfWBF8Tr5hVfg=; b=gUCVroGwdH7JpteKmz3b3PMOyy5SK2dG
+	f4iBPJuqdcUj50isOtSzTl3M6dzEEUOkdI3xkJgbhm+xoNhd/NUH9zDzT8Zucn1M
+	xosuwlIOFMIHYrPMEVhy824u4Ma0EE1Y6C5C9JEYyDGTDET6sXI3H73rarqdFeGi
+	geNvOC2rKfMGRi/CCcSQ6ZxF8E4EoQmwiQLMygfYqrao97A9D+XdBjbWVdZgjzaI
+	Lia9MvoHxEYP7ASaTMoDJlNIsjHBSnnxbqX0m9Dqht0AwUd2NgisTo2cK3c00Crf
+	aXUu9lTIwA7xMGFmM0hSxCEv8G9R+5R5B8dwL4azUOW02uQFiFVyTA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 494y1fk1h6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Sep 2025 18:38:27 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58FH2GnZ037309;
+	Mon, 15 Sep 2025 18:38:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2hntjj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Sep 2025 18:38:02 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58FIc2QC025147;
+	Mon, 15 Sep 2025 18:38:02 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 494y2hntj3-1;
+	Mon, 15 Sep 2025 18:38:02 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: martin.petersen@oracle.com, hare@suse.de,
+        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: libfc: Fix potential buffer overflow in fc_ct_ms_fill()
+Date: Mon, 15 Sep 2025 11:37:57 -0700
+Message-ID: <20250915183759.768036-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_07,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509150175
+X-Proofpoint-ORIG-GUID: 9nY-z1dU8vZhaJcC-JXL_JjObV50L3Ok
+X-Authority-Analysis: v=2.4 cv=KNpaDEFo c=1 sm=1 tr=0 ts=68c85d23 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=vxlFMlNojV4MJXLBM2cA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 cc=ntf awl=host:12083
+X-Proofpoint-GUID: 9nY-z1dU8vZhaJcC-JXL_JjObV50L3Ok
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxMiBTYWx0ZWRfX+fCqioRXASWG
+ 4WCMNH69AczVZa8JnB3+ClJsiZ0gA2lRlf2YRZbRek7FgMqVVYP8b1Il/tI1iVRaijnCLDqT2rQ
+ 0TUk+x9oMfNqp2x0KCCrsyzAN74EkgyLZBZ0degO9BbB/KufUz8n8d/9UTHgfcxFFYdzi5pGQwX
+ vqRhkYhfpF5Q0xZKz7iakhHobD2CjPcfp/+pV1cXjpDwkhQuG7fef89YnESGly8H6r+eKGqaCaK
+ Hd8QNc23hKcC0SKtl86Z8SAp/maNk+iGl0zdPhI6TtEvO9NlUSnBt0dQ5aEgRjw7yzMM/G1xOjS
+ v1mwosLSjPPjMDG5c+Nk5TI/xe4mjxsLPQRKGhIEVM9W6CBw+uHovlA0jEgI0CDrg2ZUI1fmaZN
+ lgGPPw/AU8KDJD1VsuSQd0QVwDMeAg==
 
-Rename SPI_CS_CNT_MAX to SPI_DEVICE_CS_CNT_MAX to make it more obvious
-that this is the max number of CS per device supported, not per
-controller.
+The fc_ct_ms_fill() helper currently formats the OS name and version
+into entry->value using "%s v%s". Since init_utsname()->sysname and
+->release are unbounded strings, snprintf() may attempt to write more
+than FC_FDMI_HBA_ATTR_OSNAMEVERSION_LEN bytes, triggering a
+-Wformat-truncation warning with W=1.
 
-Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+In file included from drivers/scsi/libfc/fc_elsct.c:18:
+drivers/scsi/libfc/fc_encode.h: In function ‘fc_ct_ms_fill.constprop’:
+drivers/scsi/libfc/fc_encode.h:359:30: error: ‘%s’ directive output may
+be truncated writing up to 64 bytes into a region of size between 62
+and 126 [-Werror=format-truncation=]
+  359 |                         "%s v%s",
+      |                              ^~
+  360 |                         init_utsname()->sysname,
+  361 |                         init_utsname()->release);
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+drivers/scsi/libfc/fc_encode.h:357:17: note: ‘snprintf’ output between
+3 and 131 bytes into a destination of size 128
+  357 |                 snprintf((char *)&entry->value,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  358 |                         FC_FDMI_HBA_ATTR_OSNAMEVERSION_LEN,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  359 |                         "%s v%s",
+      |                         ~~~~~~~~~
+  360 |                         init_utsname()->sysname,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~
+  361 |                         init_utsname()->release);
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~
+
+Fix this by using "%.62s v%.62s", which ensures both sysname and
+release are truncated to fit within the 64-byte field defined by
+FC_FDMI_HBA_ATTR_OSNAMEVERSION_LEN.
+
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
 ---
-v1 -> v2:
-* no changes
+ drivers/scsi/libfc/fc_encode.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/spi/spi-cadence-quadspi.c |  2 +-
- drivers/spi/spi.c                 | 14 +++++++-------
- include/linux/spi/spi.h           | 12 ++++++------
- 3 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/spi/spi-cadence-quadspi.c b/drivers/spi/spi-cadence-quadspi.c
-index 9bf823348cd3..d6b2c1051328 100644
---- a/drivers/spi/spi-cadence-quadspi.c
-+++ b/drivers/spi/spi-cadence-quadspi.c
-@@ -33,7 +33,7 @@
- #define CQSPI_NAME			"cadence-qspi"
- #define CQSPI_MAX_CHIPSELECT		4
- 
--static_assert(CQSPI_MAX_CHIPSELECT <= SPI_CS_CNT_MAX);
-+static_assert(CQSPI_MAX_CHIPSELECT <= SPI_DEVICE_CS_CNT_MAX);
- 
- /* Quirks */
- #define CQSPI_NEEDS_WR_DELAY		BIT(0)
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 2eb361e9e44d..2e0647a06890 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -670,9 +670,9 @@ static int __spi_add_device(struct spi_device *spi)
- 	int status, idx;
- 	u8 cs;
- 
--	if (spi->num_chipselect > SPI_CS_CNT_MAX) {
-+	if (spi->num_chipselect > SPI_DEVICE_CS_CNT_MAX) {
- 		dev_err(dev, "num_cs %d > max %d\n", spi->num_chipselect,
--			SPI_CS_CNT_MAX);
-+			SPI_DEVICE_CS_CNT_MAX);
- 		return -EOVERFLOW;
- 	}
- 
-@@ -699,7 +699,7 @@ static int __spi_add_device(struct spi_device *spi)
- 	}
- 
- 	/* Initialize unused logical CS as invalid */
--	for (idx = spi->num_chipselect; idx < SPI_CS_CNT_MAX; idx++)
-+	for (idx = spi->num_chipselect; idx < SPI_DEVICE_CS_CNT_MAX; idx++)
- 		spi_set_chipselect(spi, idx, SPI_INVALID_CS);
- 
- 	/* Set the bus ID string */
-@@ -1076,7 +1076,7 @@ static void spi_set_cs(struct spi_device *spi, bool enable, bool force)
- 	trace_spi_set_cs(spi, activate);
- 
- 	spi->controller->last_cs_index_mask = spi->cs_index_mask;
--	for (idx = 0; idx < SPI_CS_CNT_MAX; idx++) {
-+	for (idx = 0; idx < SPI_DEVICE_CS_CNT_MAX; idx++) {
- 		if (enable && idx < spi->num_chipselect)
- 			spi->controller->last_cs[idx] = spi_get_chipselect(spi, 0);
- 		else
-@@ -2354,7 +2354,7 @@ static void of_spi_parse_dt_cs_delay(struct device_node *nc,
- static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
- 			   struct device_node *nc)
- {
--	u32 value, cs[SPI_CS_CNT_MAX];
-+	u32 value, cs[SPI_DEVICE_CS_CNT_MAX];
- 	int rc, idx;
- 
- 	/* Mode (clock phase/polarity/etc.) */
-@@ -2429,7 +2429,7 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
- 
- 	/* Device address */
- 	rc = of_property_read_variable_u32_array(nc, "reg", &cs[0], 1,
--						 SPI_CS_CNT_MAX);
-+						 SPI_DEVICE_CS_CNT_MAX);
- 	if (rc < 0) {
- 		dev_err(&ctlr->dev, "%pOF has no valid 'reg' property (%d)\n",
- 			nc, rc);
-@@ -3313,7 +3313,7 @@ int spi_register_controller(struct spi_controller *ctlr)
- 	}
- 
- 	/* Setting last_cs to SPI_INVALID_CS means no chip selected */
--	for (idx = 0; idx < SPI_CS_CNT_MAX; idx++)
-+	for (idx = 0; idx < SPI_DEVICE_CS_CNT_MAX; idx++)
- 		ctlr->last_cs[idx] = SPI_INVALID_CS;
- 
- 	status = device_add(&ctlr->dev);
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index df4842abbc6f..cb2c2df31089 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -21,7 +21,7 @@
- #include <uapi/linux/spi/spi.h>
- 
- /* Max no. of CS supported per spi device */
--#define SPI_CS_CNT_MAX 4
-+#define SPI_DEVICE_CS_CNT_MAX 4
- 
- struct dma_chan;
- struct software_node;
-@@ -229,7 +229,7 @@ struct spi_device {
- 	struct spi_delay	cs_hold;
- 	struct spi_delay	cs_inactive;
- 
--	u8			chip_select[SPI_CS_CNT_MAX];
-+	u8			chip_select[SPI_DEVICE_CS_CNT_MAX];
- 	u8			num_chipselect;
- 
- 	/*
-@@ -238,9 +238,9 @@ struct spi_device {
- 	 * multiple chip selects & memories are connected in parallel
- 	 * then more than one bit need to be set in cs_index_mask.
- 	 */
--	u32			cs_index_mask : SPI_CS_CNT_MAX;
-+	u32			cs_index_mask : SPI_DEVICE_CS_CNT_MAX;
- 
--	struct gpio_desc	*cs_gpiod[SPI_CS_CNT_MAX];	/* Chip select gpio desc */
-+	struct gpio_desc	*cs_gpiod[SPI_DEVICE_CS_CNT_MAX];	/* Chip select gpio desc */
- 
- 	/*
- 	 * Likely need more hooks for more protocol options affecting how
-@@ -721,8 +721,8 @@ struct spi_controller {
- 	bool				auto_runtime_pm;
- 	bool                            fallback;
- 	bool				last_cs_mode_high;
--	s8				last_cs[SPI_CS_CNT_MAX];
--	u32				last_cs_index_mask : SPI_CS_CNT_MAX;
-+	s8				last_cs[SPI_DEVICE_CS_CNT_MAX];
-+	u32				last_cs_index_mask : SPI_DEVICE_CS_CNT_MAX;
- 	struct completion               xfer_completion;
- 	size_t				max_dma_len;
+diff --git a/drivers/scsi/libfc/fc_encode.h b/drivers/scsi/libfc/fc_encode.h
+index 02e31db31d68..e046091a549a 100644
+--- a/drivers/scsi/libfc/fc_encode.h
++++ b/drivers/scsi/libfc/fc_encode.h
+@@ -356,7 +356,7 @@ static inline int fc_ct_ms_fill(struct fc_lport *lport,
+ 		put_unaligned_be16(len, &entry->len);
+ 		snprintf((char *)&entry->value,
+ 			FC_FDMI_HBA_ATTR_OSNAMEVERSION_LEN,
+-			"%s v%s",
++			"%.62s v%.62s",
+ 			init_utsname()->sysname,
+ 			init_utsname()->release);
  
 -- 
-2.43.0
+2.50.1
 
 
