@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-817163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4C9B57EA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:18:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27547B57EB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30DCE167004
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86182188388E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F1C31D396;
-	Mon, 15 Sep 2025 14:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080051E9B1C;
+	Mon, 15 Sep 2025 14:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+bqU/Do"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUfIFce8"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4CB202F70;
-	Mon, 15 Sep 2025 14:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6B91F4C90
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757945787; cv=none; b=qMS2iFHmyEo54WgLOoi7fOpw7aASyDNOxSn3If4+dSOv1zhTa89/EOgHTBL3vVgqL6b0Vpzqxf6SRhzL4wAkUUg77dsjkgcQeku5N0TkpLuTaYG4PeDLu72kM6066DaWbIBauuQ1UceFHT5peMbnxa8xk2zAOxlq9Yvb70y/VIU=
+	t=1757945939; cv=none; b=fh439w9BSc+o3LwiztyJcGa6vV32a3F7SsR8sAMp5TTvMpnAHipB/6Bqae0CsP80RTrkfx/N7c9brJJSC5/T3gFSIWCUUUwg/Nnb9YR6DAukB2Gp1mTY7uOWXnfaX5QnGuKF2ewMm32dPZQHDDUa6WVKVYLe+2nwwRASa8XFCDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757945787; c=relaxed/simple;
-	bh=375vrJnuhArZHx8LwQ+Xj/EZHelElcdhjqklqPfxGQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4ke+CvloIFMZP/XQRngHvZUqsvdfpq4kBn8W38FCKzFNU8qOKSXH9tOdZbX38Rs490YOnMkEeUQpCrPM5vFZsct0Uq6oRFkCOc+8Zvu20JdPl6zpziwpUiVChGaeGpWSZUCfpPNBJPMFDavUT9JRC1+Ae2p8Qw7ALoBm2exLwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+bqU/Do; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33626C4CEF1;
-	Mon, 15 Sep 2025 14:16:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757945786;
-	bh=375vrJnuhArZHx8LwQ+Xj/EZHelElcdhjqklqPfxGQI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n+bqU/DovpD+6zwqc3EBHNvup8SLG0XJY5F/PxifROMh/B3w4z8HmOU73Dnu66g4L
-	 /db6k93F+MsKAx9Icdya6yZjTvsNEIGK9Dn+xllzQiQmTk+KwCCVxPcb/Gfe2YEHz8
-	 ellg9+Gae13XCGjMjayrAKkZ5XhOjMEREhmTw+xO3zuOCnkZIFjRi1j+YYWqbSTo7F
-	 Mi8b4tP+CFiWWmx7kdR2DA+fXyDjqBxb++E62g8YhZRNqNDlxUR5KYHctkB9L1gIPY
-	 AHCLEt2/v4WSMIEpRL60Lg2twaqR5yuDp+L5KbIag9PpLvflan6c3YQoMujpIuSGdx
-	 3JIwaupI464ig==
-Date: Mon, 15 Sep 2025 16:16:21 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
-Message-ID: <20250915-geowissenschaften-euphorie-3413b3f9fedd@brauner>
-References: <20250911045557.1552002-1-mjguzik@gmail.com>
- <20250911045557.1552002-3-mjguzik@gmail.com>
- <20250915-erstflug-kassieren-37e5b3f5b998@brauner>
- <CAGudoHG7uPDFH9K9sjnEZxZ_DtXC-ZqSkwzCJUmw1yKAzEA+dQ@mail.gmail.com>
- <20250915-tricksen-militant-406d4cb8ebda@brauner>
- <CAGudoHETnk1NJe_7TAsweokKia2xtKH0bLn-V7+hcE1voiqrhw@mail.gmail.com>
+	s=arc-20240116; t=1757945939; c=relaxed/simple;
+	bh=Zu1w3QZIF/UOuJi2rMXKSirnN1g1yW3DTiUUQlQFlOI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q3QgMVUpQncbU4zHEwcwg9Cwi99SfjyEsrFXztAJyaahdhR6n7hjsjL79/YjV+WZZwf0aF7YQnCHbPLnbepxmVVWtjU691zPTjaAm89XxPJghI3AlUOPfMRt4lBxntOcNmR3MRnO+7W4NXm1SqRn5aQYmSv90XGkO66/a6BDU1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUfIFce8; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3dae49b1293so2412543f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757945936; x=1758550736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpbkITrua1vhJUKN7WiR48HkRmbVKO0hyDxhB8JjHlQ=;
+        b=gUfIFce8T24DO7bGYgoIaDVBPttqw5Qb5q5fE5QqfOIo1C7sEwL1TjFvzvaX40JIWp
+         8KcJgqn9F11pBxMzYFadTxhkTs0aeF/ECInGSmdGoNbKmOykYmO+Pie/R9VFWoYs66q9
+         ACE3lW/ObyhpKoV1OMSGj776Cg40fmHH/PSxrfAjIpr0pXz3Ofv0bFnCkd5KMZbmddS/
+         5D3D9ZchDi8Vu7WoVtRKxCs3ozQZduMpe8TGaf5GpzH4uIyBmy6stmZoBQxNkcK6+15A
+         qUdOhf7Sx69KAU4HWdtvDnxMo5l2sr5OEkeL6qJZ4y7aHKAF4da7EDkoSRfhkbhP2NIt
+         FkWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757945936; x=1758550736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZpbkITrua1vhJUKN7WiR48HkRmbVKO0hyDxhB8JjHlQ=;
+        b=vhP2eL7JQ97HC2qpQTZoYs5tGwmLypNxjMlPXxDB8xiv7LLt5G+85+6KCkejSdgxxp
+         uR8srXYePGr6waZ54x7Eo+H/4dGbAE/9b5Uu1aapzn925TME+WM/jEn1ebpKWhXj6YDp
+         HvbiAceL7xLi8yJyEEkudUNtUd+pSZIy89nemsCpbx8kskBqC7WzuwfbLgTvYy+NF/ha
+         oWY27SzvGZB1YooscUbSns5k+ckQqLeHYLveYVyDcrtq0tWZWYNeDdRNpmDu4UDHy2RS
+         icNi6Xq4nmo+sc+Oob9E3MGUUe4VxdHupduigT9jVVrREcB099aqdgtIfN3tf5pq3LTq
+         M8Pg==
+X-Gm-Message-State: AOJu0YwKcG36m0EGWaRmGfhO8Aci3HVDdCp2vqFxqWY8wDQD5xEgvbCS
+	DuTnyerB4BIZWfP2Z9tGJJSW8kctU18TggtPclwG1G1bBsDxv8AzsvZ3
+X-Gm-Gg: ASbGnct2Y/eP8cyQPAqjUce13lZFz/WJi1NGnih0eIkhhay0LG61m6Q/m27d7BtdKiu
+	XphacJ1XlAY1nypK1Npng4dvMtZApbm0fHFpbPmZR/Mc6IbCC2YhqlUmTE/viwgAz0PDE7IK0ym
+	lFWGHRCQeGL3YIivPzycjw+hRaoJCWBACDYVfAHph/bmgDXh1r+cra13z8p3r34+R42KOF2UoeS
+	VD2s7l6tHMAw41JApsygl9097hW0IgZHB2+BuSwEHCAk2THJufrce5BIcODsRvaZLG2C8hyMfaz
+	PQVQYwGR5H0xMYVV5nXReFo8NVWvLB9NptG5WjF2nwybnRsdfJFas5ytKXuCf/Xx+4RKp/PK6Ld
+	dmnWJgNUBYAQDYcO/iTuv5jzxIilMjibWUbC3LLUM1Ek=
+X-Google-Smtp-Source: AGHT+IHYmgT2onMqBufUPZRupmR3CnSUVb0/r+MRCOJUXUaouM7O2XSBxIvDmBdJHyG24thxg2NLpQ==
+X-Received: by 2002:a5d:588f:0:b0:3eb:9447:b986 with SMTP id ffacd0b85a97d-3eb9447bb89mr1990966f8f.6.1757945935851;
+        Mon, 15 Sep 2025 07:18:55 -0700 (PDT)
+Received: from localhost.localdomain ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037b9ebbsm191083595e9.11.2025.09.15.07.18.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 07:18:55 -0700 (PDT)
+From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	mikisabate@gmail.com
+Subject: [PATCH] powerpc: kgdb: Remove OUTBUFMAX constant
+Date: Mon, 15 Sep 2025 16:18:08 +0200
+Message-ID: <20250915141808.146695-1-mikisabate@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHETnk1NJe_7TAsweokKia2xtKH0bLn-V7+hcE1voiqrhw@mail.gmail.com>
 
-On Mon, Sep 15, 2025 at 03:48:29PM +0200, Mateusz Guzik wrote:
-> On Mon, Sep 15, 2025 at 3:41 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Mon, Sep 15, 2025 at 03:27:16PM +0200, Mateusz Guzik wrote:
-> > > On Mon, Sep 15, 2025 at 2:41 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
-> > > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > > > ---
-> > > >
-> > > > I would do:
-> > > >
-> > > > inode_state()
-> > > > inode_state_raw()
-> > > >
-> > > > Similar to
-> > > >
-> > > > rcu_derefence()
-> > > > rcu_dereference_raw()
-> > > >
-> > >
-> > > I don't follow how to fit this in here.
-> > >
-> > > Here is the complete list:
-> > > inode_state_read
-> > > inode_state_read_unstable
-> > >
-> > > first is a plain read + lockdep assert, second is a READ_ONCE
-> > >
-> > > inode_state_add
-> > > inode_state_add_unchecked
-> > > inode_state_del
-> > > inode_state_del_unchecked
-> > > inode_state_set_unchecked
-> > >
-> > > Routine with _unchecked forego asserts, otherwise the op checks lockdep.
-> > >
-> > > I guess _unchecked could be _raw, but I don't see how to fit this into
-> > > the read thing.
-> >
-> > _raw() is adapted from rcu which is why I'm very familiar with what it
-> > means: rcu_dereference() performs checks and rcu_dereference_raw()
-> > doesn't. It's just a naming convention that we already have and are
-> > accustomed to.
-> >
-> > >
-> > > Can you just spell out the names you want for all of these?
-> >
-> > just use _raw() imho
-> >
-> 
-> For these no problem:
-> inode_state_add
-> inode_state_add_raw
-> inode_state_del
-> inode_state_del_raw
-> inode_state_set_raw
-> 
-> But for the read side:
-> inode_state_read
-> inode_state_read_unstable
-> 
-> The _unstable thing makes sure to prevent surprise re-reads
-> specifically because the lock is not expected to be held.
-> Giving it the _raw suffix would suggest it is plain inode_state_read
-> without lockdep, which is imo misleading.
-> 
-> But I'm not going to die on this hill.
+This constant was introduced in commit 17ce452f7ea3 ("kgdb, powerpc:
+arch specific powerpc kgdb support"), but it is no longer used anywhere
+in the source tree.
 
-Ok.
+Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
+---
+ arch/powerpc/include/asm/kgdb.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/powerpc/include/asm/kgdb.h b/arch/powerpc/include/asm/kgdb.h
+index 715c18b75334..4c0afde87e97 100644
+--- a/arch/powerpc/include/asm/kgdb.h
++++ b/arch/powerpc/include/asm/kgdb.h
+@@ -25,7 +25,6 @@
+ 
+ #define BREAK_INSTR_SIZE	4
+ #define BUFMAX			((NUMREGBYTES * 2) + 512)
+-#define OUTBUFMAX		((NUMREGBYTES * 2) + 512)
+ 
+ #define BREAK_INSTR		0x7d821008	/* twge r2, r2 */
+ 
+-- 
+2.51.0
+
 
