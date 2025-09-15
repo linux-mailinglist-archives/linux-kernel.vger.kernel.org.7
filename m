@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-816547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C19B57540
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:51:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55642B57543
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52139200481
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F2617BA71
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608742F6183;
-	Mon, 15 Sep 2025 09:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0872F2F5330;
+	Mon, 15 Sep 2025 09:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETCw2ARP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XgAMqD5L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DA01E47B3;
-	Mon, 15 Sep 2025 09:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6256A1F4CB3;
+	Mon, 15 Sep 2025 09:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757929852; cv=none; b=grjFyvgbUFYutqQsFKYgZgItxf6yKrhtwXxWB5TxSU+GfVlosx/HtM2puiOlMsTAQYM9HfFw+/rz56tA14eCbRHwEDfkXJ1X2htTa9O0lMuPOQACsqSbq7dHx8BfwrBtLCm4rtQUgakNKQU3Ge1+paP/hm8iNkEpzBXNElXpG+o=
+	t=1757929934; cv=none; b=prAaStvuj8jbT59fiZ7vXPAmUQpKjjKmHOC9318C6pBpzUI0i1K1xjMdwr9vs8dLIp8eIIAWjxSytUkSWjl9f5GCrMUWgL60tR2DmiksnAVL3LgVeSBqcotMyuQz0hF8OLEMs+OUEFFjCI+78inFq/XBrvH+yxFuyKKVVHkIXGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757929852; c=relaxed/simple;
-	bh=R+4gah+r4MFQSrR6c810iz7S0zKTbnc0EO7PgcX/Xn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=caRqqIfJ+yNEpNRxTL0gbzOurk1f5JhEaBGI01oB/qVG8TF5i7dUpDnyibIaJ2AtsIGwoCxtUjmbds7LoOtR3RA45e0LMYacPPf4fDSYkX9EGa9AJXenT2HcjYCmgjo+dCKf1TGitck0w8KADdSmM3qM++KbgT7ZrgrzEmVpaPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETCw2ARP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1E1C4CEF1;
-	Mon, 15 Sep 2025 09:50:51 +0000 (UTC)
+	s=arc-20240116; t=1757929934; c=relaxed/simple;
+	bh=GjsbRcQ1rdxsj6BWFVjK+U7PKN7gG/WTi1mQQDE8eW0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=osboKOc3LVJyIQrrentTqgU2j3ocg56o3l4Uh/duBy/A9i2pKsCnWM5AAeFzMeQlNaPBFprQlBPHQxp+tErgMBWukiMqK64wCXTmseYaY7m3CgFhP0GmrVj3+d6kfkbSqXVpK4K6SMSyHYlc1RyvFh1mDlaqWNtfR3a6KD+fXiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XgAMqD5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBF4BC4CEF1;
+	Mon, 15 Sep 2025 09:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757929852;
-	bh=R+4gah+r4MFQSrR6c810iz7S0zKTbnc0EO7PgcX/Xn4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ETCw2ARPYr7Lm/34wSIp3bX+Ms/FWpO2KA8ybk9Pgg/zcCg1lOwvdso2rTct5DiqX
-	 K9Ey2q3ZNPkNuli3K3TDxG9uh8kahwseQrHfnSPc7fJ/yUI26PmhojUSyIZEI0dr0f
-	 cgHmciKOkNppxoKv8MeffyfJXw1qgSmIkZpI5QBWJ0AeyidHVcuWFJiaLAZUMlMzlT
-	 JEdqEZAnk4f+gQh8keqpX0OlF6819mcbWDJuQALtkMuq09P9WNgJLx3N6BY7mMm2qS
-	 fNYb1s8MR9edHy7wbQIfsqZJ13ZkZkhFVRC2OV9GKOBI8Z3JQxRRoaCkXBIj7Yx0aH
-	 9YzOcDpoo/w4A==
-Date: Mon, 15 Sep 2025 11:50:49 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pwm: use str_plural() to simplify the code
-Message-ID: <fol4hemfnbh7km5dfdkbrfxx3txc4wtv7jvdn4h2xlzxlcoyht@ax7ml3rq53zs>
-References: <20250818083629.503250-1-zhao.xichao@vivo.com>
+	s=k20201202; t=1757929933;
+	bh=GjsbRcQ1rdxsj6BWFVjK+U7PKN7gG/WTi1mQQDE8eW0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XgAMqD5LBxWWoMnDPGyehZfx3mwCIVEBp227sZI8Bps+DLRwRCf7EjlySL6TkXYHu
+	 RAN8tG0mZDilVFHBgATHxz5VQTi+zhdstpNWX3fgHLW7e5Euj2HDnv4cDIv444nd5P
+	 IJGQ5Yy9OCzpiGCz9SlQVMvEPPT7/iZ6k89Z486a2B9YLLb01y1POsr3NM+6PWrFiT
+	 KbvQRoQuLwoM72R+37FgV/ZEF8DphUiZz86yz2HCEsFf49dMtxUrVaDrt8V3zQ4yog
+	 GzVMXByJgjcxqRXk1DMxKnGB4TnR+/FlXHMlt4APAlMDXzXbweNjnMLvjn9qbKGMyM
+	 iw9wjC6BMYBmg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uy5sZ-00000006JY2-3pOS;
+	Mon, 15 Sep 2025 09:52:11 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Sebastian Ene <sebastianene@google.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2] KVM: arm64: ptdump: Don't test PTE_VALID alongside other attributes
+Date: Mon, 15 Sep 2025 10:52:09 +0100
+Message-Id: <175792991797.521490.13445837593336164540.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250809135356.1003520-1-r09922117@csie.ntu.edu.tw>
+References: <20250809135356.1003520-1-r09922117@csie.ntu.edu.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7m42mtvfe7tfiq4e"
-Content-Disposition: inline
-In-Reply-To: <20250818083629.503250-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, r09922117@csie.ntu.edu.tw, oliver.upton@linux.dev, joey.gouly@arm.com, sebastianene@google.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+
+On Sat, 09 Aug 2025 21:53:56 +0800, Wei-Lin Chang wrote:
+> The attribute masks and test values in the ptdump code are meant for
+> individual attributes, however for stage-2 ptdump we included PTE_VALID
+> while testing for R, W, X, and AF. This led to some confusion and the
+> flipped output for the executable attribute.
+> 
+> Remove PTE_VALID from all attribute masks and values so that each test
+> matches only the relevant bits.
+> 
+> [...]
+
+Applied to next, thanks!
+
+[1/1] KVM: arm64: ptdump: Don't test PTE_VALID alongside other attributes
+      commit: 8673e5b22e1e114213d3ca74f415034aed45e528
+
+Cheers,
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
 
 
---7m42mtvfe7tfiq4e
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pwm: use str_plural() to simplify the code
-MIME-Version: 1.0
-
-On Mon, Aug 18, 2025 at 04:36:29PM +0800, Xichao Zhao wrote:
-> Use the string choice helper function str_plural() to simplify the code.
->=20
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-> ---
->  drivers/pwm/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 0d66376a83ec..732d22dee035 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -2620,7 +2620,7 @@ static int pwm_seq_show(struct seq_file *s, void *v)
->  		   (char *)s->private, chip->id,
->  		   pwmchip_parent(chip)->bus ? pwmchip_parent(chip)->bus->name : "no-b=
-us",
->  		   dev_name(pwmchip_parent(chip)), chip->npwm,
-> -		   (chip->npwm !=3D 1) ? "s" : "");
-> +		   str_plural(chip->npwm));
-> =20
->  	pwm_dbg_show(chip, s);
-
-I'm not sure this is an improvement. While the code is shorter and might
-compile to more efficient code, it's also less readable.
-
-I tend to do just
-
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index ea2ccf42e814..5b75f4a08496 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -2696,11 +2696,10 @@ static int pwm_seq_show(struct seq_file *s, void *v)
- {
- 	struct pwm_chip *chip =3D v;
-=20
--	seq_printf(s, "%s%d: %s/%s, %d PWM device%s\n",
-+	seq_printf(s, "%s%d: %s/%s, npwm: %d\n",
- 		   (char *)s->private, chip->id,
- 		   pwmchip_parent(chip)->bus ? pwmchip_parent(chip)->bus->name : "no-bus=
-",
--		   dev_name(pwmchip_parent(chip)), chip->npwm,
--		   (chip->npwm !=3D 1) ? "s" : "");
-+		   dev_name(pwmchip_parent(chip)), chip->npwm);
-=20
- 	pwm_dbg_show(chip, s);
-=20
-instead, or drop the output of npwm completely given its value
-implicitly clear by the number of lines following this output.
-
-Best regards
-Uwe
-
---7m42mtvfe7tfiq4e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjH4XcACgkQj4D7WH0S
-/k5jKQf9Gk4jgrfC9v4mMaNZpNCkQGNdovUupapNlWDdOLkYz6KMteHiRvAma2BV
-5xNQJrU3sI+0hAGBEVfgmftp0VFyIk2qtxL7DP+fxtk5WnDyFmReS8MzM4ZjAtL0
-cTSOf6Ex4EPLkfiuF4QqukUKS14ONtT1SuGuBayTJ4XvqM+ZVjc4tIzU4q6uDJPz
-8pZpF15hveiB0VSkAXu6BY9ymsb2mD/R/u0z8oYUyLuA38mOyMNmI+BgG3XEcs/q
-YGhQO2SyYcht2i7y3TdFmgDOd+LeRI0jpoysKpjUq2k/dSbcKI2KFMCG4B6XNfmW
-PKpxnRHRknGkkfCM3FqyT2u3YirozQ==
-=w6pb
------END PGP SIGNATURE-----
-
---7m42mtvfe7tfiq4e--
 
