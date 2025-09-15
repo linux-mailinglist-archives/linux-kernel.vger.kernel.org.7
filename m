@@ -1,80 +1,68 @@
-Return-Path: <linux-kernel+bounces-816711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8214EB5776F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:01:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4668FB5777A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF3C07A149A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:00:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C74189EC5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AADE27817F;
-	Mon, 15 Sep 2025 11:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8CA3002AF;
+	Mon, 15 Sep 2025 11:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cUpx8rxT"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Z7OFn1Jm"
+Received: from fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.65.3.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34062FE56F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6672F0C6A;
+	Mon, 15 Sep 2025 11:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.65.3.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757934041; cv=none; b=hy2xdCwslqsSOAiZpwhHLsN/CfJmdtFQM74oWMnNR6XKRiSLWQf8/18xM3AvDwygvTeC/mQz7SpmnPZT2xmmnpdp9XFqdfsU5VKuY+PBON9FAgi08fnQxJMS8WqC7SCqNLfIJ7NxqUK2bK+GQW3251GTDT3c1iumJMZ0HDKov/I=
+	t=1757934060; cv=none; b=N9gLUPcsQb08DPo8a4ym5WYBUvtRtJorAbUbB6qiIdXBvXNpY8DVbIG4rohZPY5bZHsTLHBh/aIqL/5Eh2eYgorrRnbQnvKIDR9iLOaFl+I583YdruGzAUEPlH42Gf580QQPqqsvDymYCbo9d5/IuXrfP3e+TDs2Xp11q9cDD1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757934041; c=relaxed/simple;
-	bh=i5sgCc01vK4RPSfrnI/Y9ovkRzVT0szN5lG4kf9sjlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DvU8Inxt7yeGAS6S0tSThbyB5U8CYVaL89FZDI0gQ6sMHIsSEaZkxKul9/Ggq9FHKZuiHW/XJ4Ly6Lv2iFsddlaUrtoA2j076cJegBIBzDs2uv+clAxXr2PRmlwVKwyeX9YKYgS/R++k+HxI3q4ODBUNMcpet6Pe5CA2m4yvurQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cUpx8rxT; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3dae49b1293so2277957f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:00:39 -0700 (PDT)
+	s=arc-20240116; t=1757934060; c=relaxed/simple;
+	bh=tO+J030RANL3qO9YTazthtZ1bMv2wDCZoy0frgFXq0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=revi946A6ayWi/qtuPI73oYMwalMaMDepfH8ELCDb+FPEM3st6bo5YVo7gOqqFHRjR4YrtcutZ1fTqS+BRq7qVfY2tGSyvWZBt2IfZ9/P+KzI8Q+Y59sfsyP3UaxuAhDQ8p+k/owWPYQP6VIts+Ene2LE8WH8gUXHviuFo4kQv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Z7OFn1Jm; arc=none smtp.client-ip=3.65.3.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757934038; x=1758538838; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XE7Xq4L1Dtfsz8f3IxnHKAOzDG+X/UjcqwyZapiSDj8=;
-        b=cUpx8rxTrGfAhAUS02BT9pVpnxnIYzcbsXcry34hkSeZmwMLAcCj0nDPx2W2hGBiih
-         vSk6a98fkN2/VOOzFzZ7eBqCqUaOJScX7+AKFlcgEi7SSevUvKZwvmUF2g9sVEOlcbqw
-         XFmW+n/uhJ/ndzvhqB0umij2Oinq80pSqwxhtkRl4UrPpmULchBSchLFyrWzU8XQ6k7G
-         sZSr2y44ALdMuSNe8If7jKjFIu6Nc4UFa6YTa9mVzVBr8XuEYEI5o7nGyOI02l1VhNKq
-         NlfETCAnyeuULza+MILfbbuABtYdgw0HnFyGw6Mfly0S0YaWwvtyplXUXasCH4sN8Rsv
-         JyRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757934038; x=1758538838;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XE7Xq4L1Dtfsz8f3IxnHKAOzDG+X/UjcqwyZapiSDj8=;
-        b=wi40znghHbmJlSzg+ZD2qQJ80WqIjXN5Um10/f4aB3Ipak2w+Im4nojDKx9mPpDOoP
-         zzKTxCiy+6JW2mv5xzJGKgRKgCj/iwyE2kbB1K46XuVYLr9VF71oqzfB6+ulWh1Cik+9
-         N22jr7Z7HMlDIi4hB8FD3I98B33MsIdNXGMZ0mtr/4xQ1e41+NgBJiaWW1bNfUrSbscn
-         kmJ3vIfk8/znOfRigQHitRbNoH3ALHGGA8+sP1wHTa/u58x7zMI6XiF78VM4aso/StoH
-         4s9ziRhfdACop59xIV6Kfk9f6dIksqb0dgHPHF7DljXGHRxCZBkAYasupwb917iI4ySr
-         sInQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxOH5kUNP/Lu3T5bkPewY2pd63zeLOkkDsD1DJkEPewUjK4ty4jJynSIL52D4JLsvPxge1ohIpHApVxuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ3UfYvbtB3D6+9m7RktiQv0zKScg+nH/M24YXfNidrxe7kWcE
-	DEg3OgHBbhz9QxLr1xRpViqVjaC/+WO6uC/4oYcE51D/NpVL0GR69Ey7KlrhtEC/w5Y=
-X-Gm-Gg: ASbGncvarXsB8j0S9jAMFMAe89U65b9NzYW1uJfHqRZpb5znAmW/8Wu6muh1VJWG15Q
-	fhGrlTKezektvg5DgSMDfQ/10HM4kutu/TYsU1ykE6x/SmezsGhi7FBZ9r3ZJ1gwI20i2EouBLz
-	lU1fhxfJqGWiOXKWWTholBxpynk99sMgUXtunZ4yeJNzlqMYN7E+lks8suahM/CmeGWbqR7E+5C
-	LDRmNhOZi3FpZ/WYQUQ4um23hk4OxhfX+r4YqfdlDDB/yN4Gfx1DctRRMybKdsqGD2ZSVQ6VQhf
-	W8zePibmr/qJLPX2OI9wk1jjPc1Nfe10mvLv9i5Bn/XGR9ROkuXQ9+2s30TSo7u5rETbAckRVdd
-	4knQ8mP13RcYjT2CzSoeG2yKofFkwKQvHsoqdkhxdt/spufQhfLTxRUFAboulZCL1W6PTwK0WK7
-	g6dgf8gq+8GmqD5DclINY=
-X-Google-Smtp-Source: AGHT+IEWJRcQLHslpmLibsz3O85acgnTfdDU/E/N80/0EiGbiQC80sxLfM3h7gRZBVAU0IOwhNxuQg==
-X-Received: by 2002:a5d:5f82:0:b0:3e5:a68:bdd0 with SMTP id ffacd0b85a97d-3e765a26bdemr11811776f8f.52.1757934038000;
-        Mon, 15 Sep 2025 04:00:38 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b4222sm175270115e9.20.2025.09.15.04.00.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 04:00:37 -0700 (PDT)
-Message-ID: <9a91fb03-ee63-49e6-b554-aecdbdc20014@linaro.org>
-Date: Mon, 15 Sep 2025 12:00:33 +0100
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1757934057; x=1789470057;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=S0HcVXIWVLuQhI/jDHrRwQTnt9fr8t8TU4iKQqRk+Sw=;
+  b=Z7OFn1JmgJAbCB7fhQf/vKAhcom+ddAF+5ABJnGv152IboA+YfwDmtZo
+   MnMiaBU9LWjGSsADWcCz3W/hZPG1UY2Bqupli3HkYSMYPFH6Qqu1xrCV8
+   oAN/m0zS1Rzjaamehj0K6nkJTVrbhZt2hBmKUGtU33yhYKE33VTa6LJIy
+   6ZrxFCc5t3isJiXZKij5b/IjBsoyaMJ/ymdh7XOG3P1BNuSXx8qFWNp8n
+   Wx7wBdmuF918z1odLB13d2peDk4Pk6gd/WNjqaSHO/YztyXfuOD65CUDs
+   QCwaKHd1pNP9JDpjMamTHXRrdx19RwyNThgqeIIIl1PHQLieqJRPRCHvK
+   Q==;
+X-CSE-ConnectionGUID: U4Uc6E/wRaSDxuiA5wLPAQ==
+X-CSE-MsgGUID: x309l3HlSUOILP8TdJIs4Q==
+X-IronPort-AV: E=Sophos;i="6.18,266,1751241600"; 
+   d="scan'208";a="2117592"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 11:00:47 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.234:23682]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.47.2:2525] with esmtp (Farcaster)
+ id c1cb5186-d18b-4524-af53-bd7d19a45e92; Mon, 15 Sep 2025 11:00:46 +0000 (UTC)
+X-Farcaster-Flow-ID: c1cb5186-d18b-4524-af53-bd7d19a45e92
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Mon, 15 Sep 2025 11:00:46 +0000
+Received: from [192.168.5.30] (10.106.83.11) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Mon, 15 Sep 2025
+ 11:00:45 +0000
+Message-ID: <64b92c8b-1b9b-4ad1-afc4-0d4eb31336b5@amazon.com>
+Date: Mon, 15 Sep 2025 12:00:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,55 +70,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x:
- Enable IRIS
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Alexey Klimov <alexey.klimov@linaro.org>,
- Anthony Ruhier <aruhier@mailbox.org>,
- Stefan Schmidt <stefan.schmidt@linaro.org>
-References: <20250915-x1e-iris-dt-v2-0-1f928de08fd4@linaro.org>
- <20250915-x1e-iris-dt-v2-6-1f928de08fd4@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
+To: James Houghton <jthoughton@google.com>
+CC: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"michael.day@amd.com" <michael.day@amd.com>, "david@redhat.com"
+	<david@redhat.com>, "Roy, Patrick" <roypat@amazon.co.uk>, "Thomson, Jack"
+	<jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, "Cali,
+ Marco" <xmarcalx@amazon.co.uk>
+References: <20250902111951.58315-1-kalyazin@amazon.com>
+ <20250902111951.58315-2-kalyazin@amazon.com>
+ <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
+ <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
+ <CADrL8HUObfEd80sr783dB3dPWGSX7H5=0HCp9OjiL6D_Sp+2Ww@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <20250915-x1e-iris-dt-v2-6-1f928de08fd4@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <CADrL8HUObfEd80sr783dB3dPWGSX7H5=0HCp9OjiL6D_Sp+2Ww@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D001EUA004.ant.amazon.com (10.252.50.19) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On 15/09/2025 11:06, Stephan Gerhold wrote:
-> IRIS firmware for the Lenovo Yoga Slim 7x is already upstream in
-> linux-firmware at qcom/x1e80100/LENOVO/83ED/qcvss8380.mbn, so enable IRIS
-> for the Slim 7x with the corresponding firmware-name property.
+
+
+On 12/09/2025 23:34, James Houghton wrote:
+> On Thu, Sep 11, 2025 at 3:15 AM Nikita Kalyazin <kalyazin@amazon.com> wrote:
+>>
+>>
+>>
+>> On 10/09/2025 22:23, James Houghton wrote:
+>>> On Tue, Sep 2, 2025 at 4:20 AM Kalyazin, Nikita <kalyazin@amazon.co.uk> wrote:
+>>>>
+>>>> From: Nikita Kalyazin <kalyazin@amazon.com>
+>>>
+>>> Hi Nikita,
+>>
+>> Hi James,
+>>
+>> Thanks for the review!
 > 
-> Tested-by: Anthony Ruhier <aruhier@mailbox.org>
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts | 5 +++++
->   1 file changed, 5 insertions(+)
+> :) I hope it's actually helpful.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> index dae616cd93bdf54bf2d3a3d4d0848e7289a78845..e0642fe8343f6818e1e10656a1d8fec8fb09e7e2 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> @@ -1026,6 +1026,11 @@ touchscreen@14 {
->   	};
->   };
->   
-> +&iris {
-> +	firmware-name = "qcom/x1e80100/LENOVO/83ED/qcvss8380.mbn";
-> +	status = "okay";
-> +};
-> +
->   &lpass_tlmm {
->   	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
->   		pins = "gpio12";
+>>
+>>
+>>>>
+>>>> write syscall populates guest_memfd with user-supplied data in a generic
+>>>> way, ie no vendor-specific preparation is performed.  This is supposed
+>>>> to be used in non-CoCo setups where guest memory is not
+>>>> hardware-encrypted.
+>>>
+>>> What's meant to happen if we do use this for CoCo VMs? I would expect
+>>> write() to fail, but I don't see why it would (seems like we need/want
+>>> a check that we aren't write()ing to private memory).
+>>
+>> I am not so sure that write() should fail even in CoCo VMs if we access
+>> not-yet-prepared pages.  My understanding was that the CoCoisation of
+>> the memory occurs during "preparation".  But I may be wrong here.
 > 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> This sounds fine to me, but could you update the changelog with what
+> the behavior is for CoCo VMs and why we don't allow writing to the
+> same pages/regions twice? Something like:
+> 
+> "Although write() is only meant to be used for non-CoCo VMs, it is
+> valid for CoCo VMs as well: the written contents will be encrypted
+> (when the page is prepared). Because the contents may be encrypted, it
+> is nonsensical to write() again, so write()ing to prepared pages is
+> disallowed (even if the no memory encryption occurs). Furthermore, in
+> the near future, page preparation will also result in pages being
+> removed from the direct map, so there will be no direct map through
+> which to perform the second write()."
+> 
+> (This is all provided that it's actually okay to write() content that
+> will be encrypted... I don't know why that would be improper, but I'm
+> not exactly an expert here.)
+
+ From what Vishal is saying in the other thread, it looks clearer to 
+disallow write() for CoCo VM types as it looks like we gain nothing from 
+supporting it now.
+
+> 
+>>>> @@ -390,6 +392,63 @@ void kvm_gmem_init(struct module *module)
+>>>>           kvm_gmem_fops.owner = module;
+>>>>    }
+>>>>
+>>>> +static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
+>>>> +                                    struct address_space *mapping,
+>>>> +                                    loff_t pos, unsigned int len,
+>>>> +                                    struct folio **foliop,
+>>>> +                                    void **fsdata)
+>>>> +{
+>>>> +       struct file *file = kiocb->ki_filp;
+>>>> +       pgoff_t index = pos >> PAGE_SHIFT;
+>>>> +       struct folio *folio;
+>>>> +
+>>>> +       if (!PAGE_ALIGNED(pos) || len != PAGE_SIZE)
+>>>> +               return -EINVAL;
+>>>
+>>> Requiring pos to be page-aligned seems like a strange restriction, and
+>>> requiring len to be exactly PAGE_SIZE just seems wrong. I don't see
+>>> any reason why the below logic can't be made to work with an
+>>> unrestricted pos and len (in other words, I don't see how guest_memfd
+>>> is special vs other filesystems in this regard).
+>>
+>> I don't have a real reason to apply those restrictions.  Happy to remove
+>> them, thanks.
+> 
+> Thanks! Presumably you'll make it so that any unaligned segments will
+> be left as zeroes; please describe this in the changelog as well. :)
+
+Will do!
+
+> 
+>>>> +
+>>>> +       if (pos + len > i_size_read(file_inode(file)))
+>>>> +               return -EINVAL;
+>>>> +
+>>>> +       folio = kvm_gmem_get_folio(file_inode(file), index);
+>>>> +       if (IS_ERR(folio))
+>>>> +               return -EFAULT;
+>>>> +
+>>>> +       if (WARN_ON_ONCE(folio_test_large(folio))) {
+>>>> +               folio_unlock(folio);
+>>>> +               folio_put(folio);
+>>>> +               return -EFAULT;
+>>>> +       }
+>>>> +
+>>>> +       if (folio_test_uptodate(folio)) {
+>>>> +               folio_unlock(folio);
+>>>> +               folio_put(folio);
+>>>> +               return -ENOSPC;
+>>>
+>>> Does it actually matter for the folio not to be uptodate? It seems
+>>> unnecessarily restrictive not to be able to overwrite data if we're
+>>> saying that this is only usable for unencrypted memory anyway.
+>>
+>> In the context of direct map removal [1] it does actually because when
+>> we mark a folio as prepared, we remove it from the direct map making it
+>> inaccessible to the way write() performs the copy.  It does not matter
+>> if direct map removal isn't enabled though.  Do you think it should be
+>> conditional?
+> 
+> Oh, good point. It's simpler (both to implement and to describe) to
+> disallow a second write() call in all cases (no matter if the direct
+> map for the page has been removed or if the contents have been
+> encrypted), so I'm all for leaving it unconditional like you have now.
+> Thanks!
+> 
+>>
+>> [1]: https://lore.kernel.org/kvm/20250828093902.2719-1-roypat@amazon.co.uk
+>>
+>>>
+>>> Is ENOSPC really the right errno for this? (Maybe -EFAULT?)
+>>
+>> I don't have a strong opinion here.  My reasoning was if the folio is
+>> already "sealed" by the direct map removal, then it is no longer a part
+>> of the "writable space", so -ENOSPC makes sense.  Maybe this intuition
+>> only works for me so I'm happy to change to -EFAULT if it looks less
+>> confusing.
+> 
+> Oh actually.... how about EEXIST? That feels like the most natural.
+> But also no strong opinion here.
+
+Yes, I like EEXIST.  Will use it next time, thanks!
+
+> 
+> Thanks for all the clarification, Nikita. :)
+
 
