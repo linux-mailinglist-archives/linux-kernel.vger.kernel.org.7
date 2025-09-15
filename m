@@ -1,142 +1,172 @@
-Return-Path: <linux-kernel+bounces-817266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF54B57FEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405D5B57FE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07FE93A4334
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 268272A0EC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483D832A83C;
-	Mon, 15 Sep 2025 15:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B2032A83C;
+	Mon, 15 Sep 2025 15:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zb2eGxQr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ERqay218"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945083002A3;
-	Mon, 15 Sep 2025 15:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6093002A3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948745; cv=none; b=F4OlY9yhKcYowK+z21wzJpAGypIQULvH4EPHpa3vH81bQ7YXKMBueOSGvcLXFXoeG5mCb9673UmR+7VH83Jzm/wCNe+STfeKUQ3HyNPDuwX+zqtVjcgsy1UrlJaPBdDaZPVwMyUPFfj9rgvvXLLZ3rUREsyaABz9O8z0x2wAacU=
+	t=1757948753; cv=none; b=m4EeWmqZDO2mc+oKeFS56dIBOjS2QggHiTbz9QESskr2K0Tran4fXXX023qHr7rnC3aLtJPWtjeckXbkA6C7WpAWddmG+yWfBAfrn+eQJFdK6bizKnafTxbkLFikcrJz9zfSh/43AQISiyOHMQyXBfj9gktM6bF7dSac9YV11vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948745; c=relaxed/simple;
-	bh=47i5pQEkkKKiG7KfLTvsZvpIllcI7jHYYFbj/kGs428=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhmDo6MtzKYtV/OEeGEurBvJC5BCLY/LmpQhmLMRkuHhrLuF0OTeWU239YWTCSvD35r54xWGsE0h+U9DaeQr/zN8BPxEC1jP62dSwBM4zZJX5qp0anPcWMoosq0iu62pJZX0cnlZHrmy8Fymm99SVaPjMuAHQpKcbBqo8HlZEKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zb2eGxQr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E80C4CEF7;
-	Mon, 15 Sep 2025 15:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757948745;
-	bh=47i5pQEkkKKiG7KfLTvsZvpIllcI7jHYYFbj/kGs428=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zb2eGxQrYnBRkE6RANwOXCecEibXSFVooOaNiz8HzGwmH22yIQMA3ufQNc5sKyelg
-	 qWgvafQv8YwlhHlffvLO42P2F4SVRHKDnUESejPS85K0XzwbfU3uSolps9/moLVjAL
-	 C0N2w7hZfhDEqeCFo6z0pzqVWDycV0XC+1POpD03msrhX+awl0hlCvixxtpYCK9yJP
-	 7txzcicgyd+mbg0X5e5yuNdLdiSXCsyPYpwfyPR/fiUN9dHrULXiPdHUCu2eGOuwdb
-	 tqMbtwNl0QV8gfhJtt4tJyOo61tscek729Kz+0m5ySg9o2h3GpR33Ac1QCeQFZldSi
-	 fp6kpnP9xgnLg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uyAlz-0000000ALQK-05Rc;
-	Mon, 15 Sep 2025 17:05:43 +0200
-Date: Mon, 15 Sep 2025 17:05:42 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
-	Akira Yokosawa <akiyks@gmail.com>, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tmgross@umich.edu
-Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a wrapper
- for sphinx-build
-Message-ID: <mfbjzrac7q2vmvieudwagi4n6ozxl5b5ey2vy3z34bjuyweblp@s7gnmdche5cq>
-References: <20250910153334.0b3e1440@foz.lan>
- <28c45f53-a3ff-428f-ba99-ebb09e0581d3@gmail.com>
- <20250912130420.6c14dbbd@foz.lan>
- <f3d142be-3980-4d4e-9d66-c03276694bf9@gmail.com>
- <6hhhn5go2yb7ecdrqtuti23i6pfgckqbdk5nhuhn2ijrhmvvmw@awswbm3tvmwp>
- <aa2aa8d2-f7f1-4f04-a9b0-f08160f9ea81@gmail.com>
- <20250915125805.25b48d09@foz.lan>
- <803501857ad28fc9635c84b7db08250dc4b9a451@intel.com>
- <s5gyu27qlfg7frb4v3ssqms6inqammtakwchgl635r3ahooj5n@vhw5tnyti7nd>
- <750e7225a88b7eb81c8f084477ebad66734c4dd7@intel.com>
+	s=arc-20240116; t=1757948753; c=relaxed/simple;
+	bh=Y+OAfwjN2zLWZP+9G119tAeZdgN0q8dCC78S2c4KhVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SEC3phte/+BOiYWC1icvuq2PNyBosi7M+VpgqgTKslFGfbHusHuyIx7aKfN4nqbXHTZ7W17oxzjzSbUYoNb+pXNGMwGINkz2ePx3v+/RIhm2K6u2SwrTHdUGq5YLOBTlgYcEBhXLVXDWe8+9BQXqbX7xH2qJvcxxAIl/d057PSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ERqay218; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d601859f5so31072697b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757948751; x=1758553551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1fZzkxHP1OOwmzsUzfvvWxxzPkZrOBgcHf91zQ9q6bA=;
+        b=ERqay2186jk6nozVThEj0Il2gGI/puycsj0fazq+DV+kRFIcf7xB+yQTjY/0bri/9S
+         +kcYWEOaOTEiqoi7LNcGhJRAsHeOtBril5k3zNRcLcyZK7wVEykbGr+o10MdAaVpEzrc
+         4/n+kq7zXBzhxENQYZzOju9iOwuuijf/dIap3jBBEKDGdwDHFEkJiuaJhrQ0PZdsoHQK
+         /mwaVjWErEJCY6/cP9mwWNmxipjRXvKS8+bRoniyxG6NUQ1NOIGKFXSqqfR4kiNFX2l9
+         yVSY5lzp+zURLt30HJr7Hyw0sDBqhp2NHvnNQMrg5opDh4yFnejH8ecVe/vteZ3cQ7Pa
+         /ftA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757948751; x=1758553551;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1fZzkxHP1OOwmzsUzfvvWxxzPkZrOBgcHf91zQ9q6bA=;
+        b=Q95LITSj5epkXiXror2O/HnOkTsBeTlvlA9ym3dJF2TfhmbY7JTOJpua6sSD3fjNMt
+         B+TWRpmVsYulDbC6XaWx5yYuTAqyI4LwA9YXtOPBGw1IR1ijiWviWgugi1lZFQ0Nrz70
+         8Xr2Tya80SA1e503yBWq43qWoRXWzw/hbfbjBbVI9mDieSTF4mby8dqAm5SWCwHc2zLZ
+         SDvNu74ilVbZqLyAMOZreILjAAdM+UtBMFvAd8eGSGsQ/xeUPvONnbKY8M5POLT/pzEG
+         6sJx7gb/2ZApfkHBBf9VwiykBEQ+p8JdryXZl/ZDrQtgcbDbRNGlfpaCEAl5I44YcUn2
+         0yWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWX8ZY+YRiE1xJkLZ6sl2fSPd0prJc+PPR7JpnxEIBEfqqb3JEdPaM9NYbRgaaFTngUhBd2ofen2XFkqnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5HsDe+8gb2Sm604vFBJQpREVj2W7AEJ94dpv2V2eFTkeo/oUf
+	IVWJICFSBD8Cf/hSLoYleVfU0IYtym6qRIuq+ogwTkcXOqph7EG0sOAO
+X-Gm-Gg: ASbGncvrHnxN1mYw+qxsIdGOZUyUM8cCD8AO0mIb8RzoO8afJZPlBe4JuVr7j5TpLA9
+	7eoKHG7O0O6EmHZFVHl4E+9hKpv367eSuCKSCt8tMqeWJAJ9V9qmEeykuWMFGtLKaC5mV9yLfxL
+	N7sEoWq4p+jD4K92aeyRmjcmj7Ddrf85/yW04jF81LGdHwFiT3LVjAyk4pWU6TZ0811rNhIsT40
+	F/viMSo5swLQxarerDAoF3ko/IZem8d0U224fjYajvVNxPYt73C2rDU/EudQYes3mLB8Wnp/iW4
+	HDMYZ7oSVAyhRQwRXZiMa+w22KVabkwy10sgyRafBWM/1AD13jfZF3L7RQk8mNGKnvOgxhv1HTy
+	1jTDiuz7GfqonpEruv83CkWfANkTovscZeVaPHhiby9pr/yg8e1zSNdb3BiALbIaw
+X-Google-Smtp-Source: AGHT+IFVR4/jZB2COJFPEGxfd0jRNijX9bwoQRclaQiC53MprmBZ+9vZhNJplkD1Ak6GytefEA05oQ==
+X-Received: by 2002:a05:690c:4904:b0:733:af83:51b2 with SMTP id 00721157ae682-733af836cf2mr41991207b3.45.1757948750534;
+        Mon, 15 Sep 2025 08:05:50 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:55::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f76238386sm32849077b3.8.2025.09.15.08.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 08:05:50 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 3/6] mm/damon/lru_sort: use param_ctx correctly
+Date: Mon, 15 Sep 2025 08:05:47 -0700
+Message-ID: <20250915150548.1486984-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250915015807.101505-4-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <750e7225a88b7eb81c8f084477ebad66734c4dd7@intel.com>
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 15, 2025 at 05:33:37PM +0300, Jani Nikula wrote:
-> On Mon, 15 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > On Mon, Sep 15, 2025 at 03:54:26PM +0300, Jani Nikula wrote:
-> >> On Mon, 15 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> >> > IMHO, long term solution is to change SPHINXDIRS into something
-> >> > like:
-> >> >
-> >> > 	make O=doc_build SPHINXTITLE="Media docs" SPHINXDIRS="admin-guide/media userspace-api/media driver-api/media/"
-> >> >
-> >> > would create something similar to this(*):
-> >> >
-> >> > 	doc_build/sphindirs/
-> >> > 		|
-> >> > 		+--> index.rst
-> >> > 		+--> admin-guide -> {srcdir}/Documentation/admin-guide/media/
-> >> > 		+--> usespace-api -> {srcdir}/Documentation/admin-guide/media/
-> >> > 		\--> driver-api -> {srcdir}/Documentation/admin-guide/media/
-> >> 
-> >> So you're basically suggesting the documentation build should support
-> >> cherry-picking parts of the documentation with categories different from
-> >> what the upstream documentation has? 
-> >
-> > No. I'm saying that, if we want to have a single build process
-> > for multiple sphinxdirs, that sounds to be the better way to do it
-> > to override sphinx-build limitation of having single source directory.
-> >
-> > The advantages is that:
-> >     - brings more performance, as a single build would be enough;
-> >     - cross-references between them will be properly solved.
-> >
-> > The disadvantages are:
-> >     - it would very likely need to create copies (or hard symlinks)
-> >       at the build dir, which may reduce performance;
-> >     - yet-another-hack;
-> >     - increased build complexity.
-> >
-> > I'm not convinced myself about doing it or not. I didn't like when
-> > I had to do that after the media book was split on 3 books. If one thinks
-> > that having for loops to build targets is a problem, we need a separate
-> > discussion about how to avoid it. Also, this is outside of the scope of
-> > this series.
+On Sun, 14 Sep 2025 18:58:04 -0700 SeongJae Park <sj@kernel.org> wrote:
+
+> damon_lru_sort_apply_parameters() allocates a new DAMON context, stages
+> user-specified DAMON parameters on it, and commits to running DAMON
+> context at once, using damon_commit_ctx().  The code is, however,
+> directly updating the monitoring attributes of the running context. This
+> doesn't cause a real user problem but apparently this is an
+> unintentional mistake that can cause code review confusions and future
+> real problems.  Fix the wrong use of the parameter context.
+
+Hi SJ,
+
+Thank you for the patch! I am a little bit confused by the behavior in
+damon_lru_sort_apply_parameters. I was hoping that you could help me understand : -)
+In particular, I think that this patch fixes two possible user visible errors.
+
+My understanding is that we want to make changes to the param_ctx first,
+validate the changes, and commit these changes to the global ctx struct at the
+end. In the middle in the errors, we can abort the operation without committing,
+and ctx will remain unchanged.
+
+So to me, it does seem like the current code could lead to some visible effects
+from the user's perspective (error-handling case).
+
+Also, I am a bit confused by how the commit is currently called. We have
+err = damon_commit_ctx(ctx, param_ctx), where the first argument is the
+destination and the second argument is the source. There is a bit of a mismatch
+because in the current code we have the following:
+
++------------------------------------------------+
+|              ctx                    param_ctx  |
++------------------------------------------------+
+| New &damon_lru_sort_mon_attrs                  |
+|                                     New scheme |
+| attrs overwritten to NULL	  <--            |
+| scheme rewritten to new scheme  <--            |
++------------------------------------------------+
+
+So in particular, the global ctx will never have the correct attrs pre-patch,
+since it will always be rewritten by param_ctx, which never had its attrs
+initialized.
+
+I hope this makes sense : -) All of this is just to say that this patch does
+more than just improve review confusions -- I think there at least two errors
+that this fixes for the user. So perhaps a more descriptive commit will be
+helpful in the future, since we are also adding a fixes tag?
+
+Thank you again for the patch, SJ! Feel free to add:
+Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+
+Have a great day!
+Joshua
+
+> Fixes: a30969436428 ("mm/damon/lru_sort: use damon_commit_ctx()")
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/damon/lru_sort.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I honestly don't even understand what you're saying above
+> diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
+> index 14d31009c09e..ab6173a646bd 100644
+> --- a/mm/damon/lru_sort.c
+> +++ b/mm/damon/lru_sort.c
+> @@ -219,7 +219,7 @@ static int damon_lru_sort_apply_parameters(void)
+>  		goto out;
+>  	}
+>  
+> -	err = damon_set_attrs(ctx, &damon_lru_sort_mon_attrs);
+> +	err = damon_set_attrs(param_ctx, &damon_lru_sort_mon_attrs);
+>  	if (err)
+>  		goto out;
+>  
+> -- 
+> 2.39.5
 
-Perhaps it is due to the lack of context. I was replying some comments
-from Akira where he mentioned about cherry-picking *.tex files after
-sphinx build, and do some tricks to build all of them altogether.
-
-My reply to his comments is that, if we're willing to cherry-pick things,
-it is better/cleaner/safer to do it at the beginning, before even running
-sphinx-build, ensuring no conflicts at the filename mapping.
-
-Yet, analyzing the alternative I proposed, I see both pros and cons - up
-to the point that I'm not convinced myself if it is worth doing such
-changes upstream or not.
-
-> and how it
-> contradicts with what I said about cherry-picking the documentation to
-> build.
-
-It doesn't.
- 
--- 
-Thanks,
-Mauro
+Sent using hkml (https://github.com/sjp38/hackermail)
 
