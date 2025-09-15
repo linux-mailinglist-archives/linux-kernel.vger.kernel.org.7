@@ -1,173 +1,241 @@
-Return-Path: <linux-kernel+bounces-816608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34572B5762B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:20:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7BBB57632
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:22:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2B717597D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B076218828BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E912FB962;
-	Mon, 15 Sep 2025 10:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395ED2F2905;
+	Mon, 15 Sep 2025 10:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E4RCjceu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JuR1f03T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300A42FA0CC
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44552F1FCB
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931632; cv=none; b=sY0AvX1L8wJVI2DprCdrkCoUq7oBV9qsRljvCnMGrMOaXl39NfJ7AIghmnI5gGUoHna7qQi9LTWhbvmn1eqVRX+mRwrsn5+IedqTlHIU8XB4Vr3Qvet+7WCFIIHsA/2AsTkQ8neG4O1m4Y/rbcrnTxHnHwp9Prnd8KToOqEVcbI=
+	t=1757931737; cv=none; b=Q+C1HU3P/Ti9Ae1Qf0xqbvQT3pbWrnBK0RW6nvFsf3/jxfg2H2eFMimkfCu/3sqTGPlKvm6vpqvd8fjNtprCocdL2tBfqFZtAtDiEtx6HMxxQqGzANkVdfKOycIdTe1BNEn+OTyg6t95GrI+ECZIcO3R2cCX94aeIEaFmED06Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931632; c=relaxed/simple;
-	bh=bUNuwE669bXdBGZ1MzmOAYXT/EucREWOdEjUe5wgwgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzLcTsDBQaTnMa6rgNKkkT2nNPhM5+RZj+0M/9gGj/eshp8kgxjYuTm3ADT6LzpV36e9U/WIENUsy2NTtJI5P7hqjAau7i9KuE+aJi3oCIIIcvM3dAlc9D+ovw/3NA4XdKWeDYxH5LST25fWisYqhYfagB0RmJZ8QHygXnoRV9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E4RCjceu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8G63V006520
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:20:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=RGYbORxiyAr6c96vlWyAJgN2
-	Z36YAZvrHJKPyVLUETk=; b=E4RCjceuFjWsbeoW71o7Gi2o9Qwx9dCDHrhUEuzG
-	cazBLKeTmU2MkLNrfYz2Y4SeLeABqUBt3K+ye5c8V43Nr0aVGAtpUOfbsrJ8fP0+
-	hDARsTh4t7+fETwJLLiODO2LNRUIG6wWbwtea1bDCrLL4oXQqEPBM/2UD5Z3kAPu
-	9Trq3hB2XZ3xf2L6fjosW7c+aqISWJncf6OJmryXpxQX7KA6ZArqpAg9qbxK+hbp
-	cqV7Lhgj+FzfJtAfIGdRFyjGK/N8lFcp39j/ssVlQlGIMMrgXBoXHDMXsnIOrhbp
-	ylV5cIiWmfru6FFKXC/5tM8OfAZ3CT4btFxEQ92zY31xkg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951chcf97-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:20:30 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b7ad72bc9fso4303691cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:20:30 -0700 (PDT)
+	s=arc-20240116; t=1757931737; c=relaxed/simple;
+	bh=VzjGvqlPF9xCuZFMclIj8GGwc3xClQ69xgAbHknxPLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FHTl4P6Jy9XKF7hOJ9omyxTCsViKgQLRAjB29wPgknk+wByxtCZkje3bPv7wlowVr/ckf5D4K4SkTCw46xL03SkYiqewr0MkP3pFHBMmY6T3xC/JpLDmULo3zWuYBlpnduS/DSDC+9PkAibp8tUK7j4L/btnRRsifhvjXjR6zX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JuR1f03T; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757931734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=tfmpc2B5EjLEtaoBAE2WUDTDXpz+5rNlMUp/3jDUjRA=;
+	b=JuR1f03TUUrT87ZefD9iPUnLQGJj5S3EzEZBAcWFrOKT2e66FeFj5Ps0wuT5XkyyQpvOFJ
+	QuFhr9cYNIlPlSFFbvzQu8mvFYcF8zsnCtwYHrvVpSC6KISRNB+HxHrmlMhK0GP3IQFBlo
+	vpkNvrzH2upjd5clhpY71Km+D3THT+g=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-PGptfRVQNgGOeWRjjsqRNQ-1; Mon, 15 Sep 2025 06:22:13 -0400
+X-MC-Unique: PGptfRVQNgGOeWRjjsqRNQ-1
+X-Mimecast-MFC-AGG-ID: PGptfRVQNgGOeWRjjsqRNQ_1757931732
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso35359075e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:22:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757931629; x=1758536429;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RGYbORxiyAr6c96vlWyAJgN2Z36YAZvrHJKPyVLUETk=;
-        b=oUbeNl/NsI+g2bneDj7FLe3RV8XVaqytgo2UIMq5ZlVsNG3DCHZ5gLA4e4Gg4c5cAJ
-         rE4ST/Un8JvOnbJ+w/OohrNGkWstWaIY8tB/jusTy3x4v0rPG/XVYMLzEnvyWPEwGcJZ
-         hpTOTz68Vz1unX3QlbC1C8p8LFegObhvZEy590Hl7AF0rkmMXr6jxvKm5M2UrjjklUJ0
-         5eQavA35tboxumhYXgygDtlejttPVrpd51CcJdrLvHh3uAY/f3xr2is9lFXEkBhZqp11
-         HNCdlpkjfP/VwxWaGSBR4u9lxicq9QmuMxRtZ9JR4hwXUiWyaPMzBUwroeWr7HHG5XAF
-         1zIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbIcQLnNUSS8lugFg00qiVOFeGAU3a/jtOkYfgaB2dLARroWGOZUqXJkEF76Zgr+3+viw0R1geOOIIMvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjE144kTveNnZYKgh49mtK00UhLFVMutS8CLjnEUL74WJw3D9o
-	34IRaBiQKm2VY9PrqpO2IEYq+7ddF/p+XWt2VT7/bbfU50mGT+xlH68yPRAG2jElonKId9IMZjc
-	1X9klMjrRYewireJuyTae5U+Mi5xYKW1eWUmCqUuI7HR5ByrjL9vfZTkMwLQydDH3uSE=
-X-Gm-Gg: ASbGncuDWUDKPZKGXp85N3+B4dTTsKXMsKla9iilnTt7BJHJKNhxzsYUd7G8hAjJJyw
-	rm7FpbBdny7+ZHtLWzy7iDAsgFkA0zeWw/EWvq6KKz1IkHvVg0o2UCoDceCggUcUrSHGBu8VfI/
-	wEMcrchAh4iUc/Bsea8lY2juFRDszlxnWY/EHjfRPLipgk1npZ544SjRE5lnRdY5G5wrGgss4mK
-	gP8YY8AqlEjXcVsJfGy8NgkJdrmjakinOIKhJELtzDP17lgMBO5sVv7DhTujoPnhxYTmvQ0y7IT
-	GXMhG3gn7Z/nNWT8rc+y41Fs9Xv5Qa+GJ3SrrVynbGMX8OW3YknJnlg5PbEgIqGvokfjx9/AqWI
-	dopDgX6XYfG47V1mKtOQSOEVmEkG1HbYyVuzGnT0velviRDJIhsvY
-X-Received: by 2002:a05:622a:5e05:b0:4b7:81df:95e2 with SMTP id d75a77b69052e-4b781df97a2mr99062201cf.40.1757931628781;
-        Mon, 15 Sep 2025 03:20:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYwTHXV4KtjY7Dwk60uIzpz5mR+OcC0Kr5EGu4MjShIIx+gN3rPddQUBAx2RB7YbhW+OgitQ==
-X-Received: by 2002:a05:622a:5e05:b0:4b7:81df:95e2 with SMTP id d75a77b69052e-4b781df97a2mr99061901cf.40.1757931628303;
-        Mon, 15 Sep 2025 03:20:28 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-573c8330eb9sm1049638e87.60.2025.09.15.03.20.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 03:20:27 -0700 (PDT)
-Date: Mon, 15 Sep 2025 13:20:25 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: fenglin.wu@oss.qualcomm.com
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        David Collins <david.collins@oss.qualcomm.com>,
-        =?utf-8?Q?Gy=C3=B6rgy?= Kurucz <me@kuruczgy.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 8/8] arm64: dts: qcom: x1e80100-crd: Add charge limit
- nvmem
-Message-ID: <vezlbc5onvmg3wd6tdr3cxhlvtmp24ca2e3vp6inqeegjhm7eu@viuurujdofvn>
-References: <20250915-qcom_battmgr_update-v4-0-6f6464a41afe@oss.qualcomm.com>
- <20250915-qcom_battmgr_update-v4-8-6f6464a41afe@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1757931732; x=1758536532;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tfmpc2B5EjLEtaoBAE2WUDTDXpz+5rNlMUp/3jDUjRA=;
+        b=skrVdqMkr8vNWa5XiQtssl+CqjD3+LiDqSe+oI7K3CQNyjXeuY25JkGIZ43aA1MwQ8
+         jJSyk8tfT+v8q7KwxNRvw3pc3tWvDki7sz9rqc+AS73IUlEc2sPj0gboFvb5+ZxNwBgS
+         Gtm1wFqiVvk0KtMTv9SW+P3BECPzxeFVQAZbowAWsaxkynB1x7KzoveLPVSl3mxiwbcE
+         OyPGbb9TC7K4zpAS/CD91G/aSyGMsfSbLmIWFCNqi+rjP90fOou+m4AzTCxIaau+CySX
+         a6/ctlaOV0tbjo/9gVsf71ws9OqG5UVUwf9BdxCqqmJxMFdEFKja7ndX5gApoixuXR5n
+         qjpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhT/aDlzSWq+xURObpBz7E1AuYYzQNLFFcOuTj1/aDouuqMQDaM8lvuIsavza+Ztx505NMGCK7wM1rmxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6DEdomAUNBDfdNLt6jgwPnHSBQWukojx5mRyX+2kg7VVSX7K+
+	jlarcAfoKvoamFSUpndr4TMu+g6N+COE6VAWnQDO0c6jwY+Nt4/9iavTvCHHVSaB7W41R+xE46h
+	7rSkK+PmxzI/ervaP1kpgyjhuWj99+jb31jw2gOEaDq7k611m2JinVgMxhRJn8RPJlA==
+X-Gm-Gg: ASbGncsGOjndshk95Wx6hxipAvXAfYsfBjMoogqmmxkDH0bR2qwgmYLEYqKj/+aubYV
+	QB7GnSYi+aOscYn6sgtGY9J7lhF6Utbll+K7sOExH9xYty01oES4y7z+sewtsiDUVMavlXutvNG
+	OacsyU4iS2TLAL0seIweJypB0nLekd7CMB6AiTwNtwlfEab6ljl40sHgHDvdbLzYLojsSHmYaSZ
+	kxG4jXcS3Py65pEPFb94RTpzxgu3C8xj2b2KyeEY3XEa20nNXHwPX+rzOC3Px2MnARfBV4GlEuj
+	MW2OMKVV0ioR+ClKnrC6SnO66GbeK+hBfYpx5sK7m1dDP0hQbUt4wmZai+9D0PXCyhsd1bGNqYl
+	VQDnSgNoIo+DzbeTsgP2PvSQUQ6UFqipqNm2TGYoAwqmquhD+mnZ/5lnKjYFBBoDYziU=
+X-Received: by 2002:a05:600c:1387:b0:45c:17a:4c98 with SMTP id 5b1f17b1804b1-45f211f8ed1mr95800835e9.19.1757931731966;
+        Mon, 15 Sep 2025 03:22:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEy+yAeVMTpk3VfeLuvmpLt8Pnw7jlIdxjQEeHLZ9ljjFZymYPOAoBhKJl9mxQWLD5TBFtZ/w==
+X-Received: by 2002:a05:600c:1387:b0:45c:17a:4c98 with SMTP id 5b1f17b1804b1-45f211f8ed1mr95800505e9.19.1757931731471;
+        Mon, 15 Sep 2025 03:22:11 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd? (p200300d82f18f900e0ae65d58bf88cfd.dip0.t-ipconnect.de. [2003:d8:2f18:f900:e0ae:65d5:8bf8:8cfd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e76078708bsm17596191f8f.15.2025.09.15.03.22.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 03:22:10 -0700 (PDT)
+Message-ID: <cd8e7f1c-a563-4ae9-a0fb-b0d04a4c35b4@redhat.com>
+Date: Mon, 15 Sep 2025 12:22:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915-qcom_battmgr_update-v4-8-6f6464a41afe@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=eeo9f6EH c=1 sm=1 tr=0 ts=68c7e86e cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=2ejD7e4gGTxI7fIsllgA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: 1A5usG9DJ9C-nIDb2UBA6zXCoEPe1u5p
-X-Proofpoint-GUID: 1A5usG9DJ9C-nIDb2UBA6zXCoEPe1u5p
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzNiBTYWx0ZWRfXzeUMzim+46b0
- IUSaZt0sHcG3canKtZXQZ2oG0+ARKTUXZQIyukXUYTUifvDiEDSu3Uq1JKCL9RWHq+sL66fDEVF
- MCmLMNM9p2EQUQriw9PKNuwQFieBXJH5l81cJohwhSIKifTQ4VlwKALJMuHWQMGAFhoXV95jIKk
- 9PfhHgI2hbL/eOxRuQrj6E4C50UCoVxjFogqL7CISOtJgRyRYh7dZrcCYEV5S4zS3yCRE0B9Y9Q
- 8Dqj1a9xEvouFQsitdxb2gES8wNAP2S3DwOMm65lCYPrsv+4KQoXD3/UqtmF/MHl7aMzBpM47lW
- 6iAd1RtjBBJLeE4YSh9cv54+alV4Y4xSffhDMori7aNy7L5XsIV2aYe1bvo7D5ZqluvqMIUTaG/
- WDBuqiVq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_04,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130036
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
+To: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
+ corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+ baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+ wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
+ vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
+ yang@os.amperecomputing.com, aarcange@redhat.com, raquini@redhat.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
+ will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+ jglisse@google.com, surenb@google.com, zokeefe@google.com,
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
+ lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
+ pfalcato@suse.de
+References: <20250912032810.197475-1-npache@redhat.com>
+ <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
+ <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
+ <CAA1CXcA+pb5KvEnJJqdf1eSjaFiBZ82MRB+KDmyhj3DbiQqOxg@mail.gmail.com>
+ <enrgrocqajwu5d3x34voghja7pbvau45oobxgabawrly44ld4u@ahch3xn6rtq5>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <enrgrocqajwu5d3x34voghja7pbvau45oobxgabawrly44ld4u@ahch3xn6rtq5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 15, 2025 at 04:50:00PM +0800, Fenglin Wu via B4 Relay wrote:
-> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+On 15.09.25 11:22, Kiryl Shutsemau wrote:
+> On Fri, Sep 12, 2025 at 05:31:51PM -0600, Nico Pache wrote:
+>> On Fri, Sep 12, 2025 at 6:25 AM David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>> On 12.09.25 14:19, Kiryl Shutsemau wrote:
+>>>> On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
+>>>>> The following series provides khugepaged with the capability to collapse
+>>>>> anonymous memory regions to mTHPs.
+>>>>>
+>>>>> To achieve this we generalize the khugepaged functions to no longer depend
+>>>>> on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
+>>>>> pages that are occupied (!none/zero). After the PMD scan is done, we do
+>>>>> binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
+>>>>> range. The restriction on max_ptes_none is removed during the scan, to make
+>>>>> sure we account for the whole PMD range. When no mTHP size is enabled, the
+>>>>> legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
+>>>>> by the attempted collapse order to determine how full a mTHP must be to be
+>>>>> eligible for the collapse to occur. If a mTHP collapse is attempted, but
+>>>>> contains swapped out, or shared pages, we don't perform the collapse. It is
+>>>>> now also possible to collapse to mTHPs without requiring the PMD THP size
+>>>>> to be enabled.
+>>>>>
+>>>>> When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
+>>>>> 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
+>>>>> mTHP collapses to prevent collapse "creep" behavior. This prevents
+>>>>> constantly promoting mTHPs to the next available size, which would occur
+>>>>> because a collapse introduces more non-zero pages that would satisfy the
+>>>>> promotion condition on subsequent scans.
+>>>>
+>>>> Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
+>>>> all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
+>>>>
+>>>
+>>> I am all for not adding any more ugliness on top of all the ugliness we
+>>> added in the past.
+>>>
+>>> I will soon propose deprecating that parameter in favor of something
+>>> that makes a bit more sense.
+>>>
+>>> In essence, we'll likely have an "eagerness" parameter that ranges from
+>>> 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if
+>>> not all is populated".
+>> Hi David,
+>>
+>> Do you have any reason for 0-10, I'm guessing these will map to
+>> different max_ptes_none values.
+>> I suggest 0-5, mapping to 0,32,64,128,255,511
 > 
-> Add nvmem cells for getting charge control thresholds if they have
-> been set previously.
+> That's too x86-64 specific.
 > 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
-> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi         |  3 +++
->  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 20 ++++++++++++++++++++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> index c9f0d505267081af66b0973fe6c1e33832a2c86b..fee65391653ae9c2ee23f9f3954d9ed018c9aecd 100644
-> --- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-> @@ -82,6 +82,9 @@ pmic-glink {
->  				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
->  				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
->  
-> +		nvmem-cells = <&charge_limit_en>, <&charge_limit_end>, <&charge_limit_delta>;
+> And the whole idea is not to map to directly, but give kernel wiggle
+> room to play.
 
-One item per line, please.
+Initially we will start out simple and map it directly. But yeah, the 
+idea is to give us some more room later.
 
-> +		nvmem-cell-names = "charge_limit_en", "charge_limit_end", "charge_limit_delta";
+I had something logarithmic in mind which would roughly be (ignoring the 
+the weird -1 for simplicity and expressing it as "used" instead of 
+none-or-zero)
 
-And here too.
+0 -> ~100% used (~0% none)
+1 -> ~50% used (~50% none)
+2 -> ~25% used (~75% none)
+3 -> ~12.5% used (~87.5% none)
+4 -> ~11.25% used (~88,75% none)
+...
+10 -> ~0% used (~100% none)
 
-> +
->  		/* Left-side rear port */
->  		connector@0 {
->  			compatible = "usb-c-connector";
+Mapping that to actual THP sizes (#pages in a thp) on an arch will be easy.
 
 -- 
-With best wishes
-Dmitry
+Cheers
+
+David / dhildenb
+
 
