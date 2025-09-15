@@ -1,205 +1,523 @@
-Return-Path: <linux-kernel+bounces-816219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BADB5712B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:22:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF294B57126
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CD7189D4A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909E63A69F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56532D592B;
-	Mon, 15 Sep 2025 07:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD392D541E;
+	Mon, 15 Sep 2025 07:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vSY/eILt"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHY58iAW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0902D46BB;
-	Mon, 15 Sep 2025 07:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFAC2D46BB;
+	Mon, 15 Sep 2025 07:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757920920; cv=none; b=fzoLc1r8h6kkKSHvsV+3UKccLxpOO+Q4vK7mwMhKxpP3RCuw9egf4jyACbgrPRHVgRFan5u6hGKu+TisYYTwT46pEB3Kmu5IHrkVA/eEdvOmJsNuDAClbPyPDMPzDJFJyC9waubA36pCwDYeVvrDRH5yoFskCn5quPQ3nAzQhdM=
+	t=1757920905; cv=none; b=QUFFjSs1K1o0tqactadjtWmdPtg0ayufP4/I96SzrMpsgaoTq1ixRtBuordNRZOHCLMqoDKcDsBhQT7cFnovw5dp6CURrbJjwBBWX2QDRswCOJWXdbaGTDvY2kdnkt39VCU3NK49MPExnEsbxeSZpysl8aQOoA4WhEg4a2PM75o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757920920; c=relaxed/simple;
-	bh=iER8ImaZiIpxm5WMViFuw+tlKm3YdnHp1TOGEzGXbY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJJIk2HzCU3IeLfZIm7GGPytBUcgcihiT3PdPXpusr79+7bNRDPqRIJc7eQDcxVRRbVHowWzJjtgApPqSprO7d9U/rrTcui+OBRtGe7fOw1YBjYpcqORHUrcFYglJhn4ChuJ3760lRkO5eG0z6TMAMhgbRfBqfu+qQ4e83ugjQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vSY/eILt; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2EBF4EC1;
-	Mon, 15 Sep 2025 09:20:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757920839;
-	bh=iER8ImaZiIpxm5WMViFuw+tlKm3YdnHp1TOGEzGXbY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vSY/eILtKKl4P0nyN5UgnhsW7UIlSlOsre213uDiQJJOQuyIVQ9vK72NPsAlw/SUn
-	 9arqxyv8XHSiMeN87a7PkuFzmd3NQ23SzLe1RjkMFgyX7ZDVvquYuCo0OiXcrjtb9U
-	 rik6JNhebmltMDYD3kcICSgvnxAs/NcoTr1kx+ic=
-Date: Mon, 15 Sep 2025 10:21:31 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 4/4] media: uvcvideo: Support
- UVC_CROSXU_CONTROL_IQ_PROFILE
-Message-ID: <20250915072131.GA22385@pendragon.ideasonboard.com>
-References: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
- <20250818-uvc-iq-switch-v1-4-f7ea5e740ddd@chromium.org>
- <20250913140628.GB10328@pendragon.ideasonboard.com>
- <CANiDSCtsFYoDdQPakhX=mvkYCFpP-U82FBhDwdGJwOME-hFYQg@mail.gmail.com>
+	s=arc-20240116; t=1757920905; c=relaxed/simple;
+	bh=hnQkfJdaz4J64XGVGqQUY0ejbNk1/Yb8gP67ZkFXXBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r5ovKvvb+9zSU+cHSAZ8kjR+IzdXnhjyvFAXB7hXV6k579t7vOdwKIy01+okw5dr4mG25bBcfBSsijt5TCXVKDKqNowo3UF8ij4JSKCsdl4bsdP8wt23XMkH6T0ZMjs43LB8DMOBfgc4yegM3UWAW/Joo3GEsHaADQtbxYS59WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHY58iAW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F823C4CEF1;
+	Mon, 15 Sep 2025 07:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757920905;
+	bh=hnQkfJdaz4J64XGVGqQUY0ejbNk1/Yb8gP67ZkFXXBM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oHY58iAWzfDd5RwVm5RGOjcmd5USdQ+QfmR18QQR1nIDOxKJwqbt+shs4mVmG853F
+	 dPGHWSfjE4EwUUd/nRuyq96KgbVQECfH7bEyDpp/8z7Qw2cm9vL+xDM3FG9W7+ro0w
+	 +6XqvzKpU+FE627Jbr/uGhecbXZL+WxhR/+toHpL23yK3IwCRT0HLgJANLhoiF/Fqf
+	 AFRviFn7klY3z7jaJXnB/m5oUQdiyw9jZL4ybPWCyn11eEIa6fjb2Ik5tXdIHn4Hbh
+	 ZV1foFr/GqYas0ngZtS/oXIyTpWoIYMUZ5zivGnV9l3bq9rjUVrKOZi/StnVi1Wk9F
+	 LaoeSI6zS6rvQ==
+Message-ID: <7ed4b1ef-8eef-4acd-9ae6-6478d7c5ff29@kernel.org>
+Date: Mon, 15 Sep 2025 09:21:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCtsFYoDdQPakhX=mvkYCFpP-U82FBhDwdGJwOME-hFYQg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] counter: nxp-pcf85363-stopwatch: Add driver for NXP
+ PCF85263/PCF85363 stopwatch
+To: Lakshay Piplani <lakshay.piplani@nxp.com>, wbg@kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
+Cc: vikash.bansal@nxp.com, priyanka.jain@nxp.com,
+ shashank.rebbapragada@nxp.com
+References: <20250915071415.1956219-1-lakshay.piplani@nxp.com>
+ <20250915071415.1956219-2-lakshay.piplani@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250915071415.1956219-2-lakshay.piplani@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 09:18:33AM +0200, Ricardo Ribalda wrote:
-> On Sat, 13 Sept 2025 at 16:06, Laurent Pinchart wrote:
-> > On Mon, Aug 18, 2025 at 08:15:39PM +0000, Ricardo Ribalda wrote:
-> > > The ChromeOS XU provides a control to change the IQ profile for a camera.
-> > > It can be switched from VIVID (a.k.a. standard) to NONE (a.k.a. natural).
-> > >
-> > > Wire it up to the standard v4l2 control.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++++++++++++
-> > >  include/linux/usb/uvc.h          |  5 +++++
-> > >  2 files changed, 37 insertions(+)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > index ff975f96e1325532e2299047c07de5d1b9cf09db..8766a441ad1d8554c0daaed3f87758321684246b 100644
-> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > @@ -376,6 +376,15 @@ static const struct uvc_control_info uvc_ctrls[] = {
-> > >                               | UVC_CTRL_FLAG_GET_DEF
-> > >                               | UVC_CTRL_FLAG_AUTO_UPDATE,
-> > >       },
-> > > +     {
-> > > +             .entity         = UVC_GUID_CHROMEOS_XU,
-> > > +             .selector       = UVC_CROSXU_CONTROL_IQ_PROFILE,
-> > > +             .index          = 3,
-> > > +             .size           = 1,
-> > > +             .flags          = UVC_CTRL_FLAG_SET_CUR
-> > > +                             | UVC_CTRL_FLAG_GET_RANGE
-> > > +                             | UVC_CTRL_FLAG_RESTORE,
-> > > +     },
-> > >  };
-> > >
-> > >  static const u32 uvc_control_classes[] = {
-> > > @@ -384,6 +393,17 @@ static const u32 uvc_control_classes[] = {
-> > >  };
-> > >
-> > >  static const int exposure_auto_mapping[] = { 2, 1, 4, 8 };
-> > > +static const int cros_colorfx_mapping[] = { 1, // V4L2_COLORFX_NONE
-> > > +                                         -1, // V4L2_COLORFX_BW
-> > > +                                         -1, // V4L2_COLORFX_SEPIA
-> > > +                                         -1, // V4L2_COLORFX_NEGATIVE
-> > > +                                         -1, // V4L2_COLORFX_EMBOSS
-> > > +                                         -1, // V4L2_COLORFX_SKETCH
-> > > +                                         -1, // V4L2_COLORFX_SKY_BLUE
-> > > +                                         -1, // V4L2_COLORFX_GRASS_GREEN
-> > > +                                         -1, // V4L2_COLORFX_SKIN_WHITEN
-> > > +                                         0}; // V4L2_COLORFX_VIVID};
-> >
-> > Extar '};' at the end of the line. The indentation also looks a bit
-> > weird. I'll replace it with
-> >
-> > static const int cros_colorfx_mapping[] = {
-> >         1,      /* V4L2_COLORFX_NONE */
-> >         -1,     /* V4L2_COLORFX_BW */
-> >         -1,     /* V4L2_COLORFX_SEPIA */
-> >         -1,     /* V4L2_COLORFX_NEGATIVE */
-> >         -1,     /* V4L2_COLORFX_EMBOSS */
-> >         -1,     /* V4L2_COLORFX_SKETCH */
-> >         -1,     /* V4L2_COLORFX_SKY_BLUE */
-> >         -1,     /* V4L2_COLORFX_GRASS_GREEN */
-> >         -1,     /* V4L2_COLORFX_SKIN_WHITEN */
-> >         0,      /* V4L2_COLORFX_VIVID */
-> > };
-> >
-> > > +
-> > >
-> > >  static bool uvc_ctrl_mapping_is_compound(struct uvc_control_mapping *mapping)
-> > >  {
-> > > @@ -975,6 +995,18 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
-> > >               .data_type      = UVC_CTRL_DATA_TYPE_BITMASK,
-> > >               .name           = "Region of Interest Auto Ctrls",
-> > >       },
-> > > +     {
-> > > +             .id             = V4L2_CID_COLORFX,
-> > > +             .entity         = UVC_GUID_CHROMEOS_XU,
-> > > +             .selector       = UVC_CROSXU_CONTROL_IQ_PROFILE,
-> > > +             .size           = 8,
-> > > +             .offset         = 0,
-> > > +             .v4l2_type      = V4L2_CTRL_TYPE_MENU,
-> > > +             .data_type      = UVC_CTRL_DATA_TYPE_ENUM,
-> > > +             .menu_mapping   = cros_colorfx_mapping,
-> > > +             .menu_mask      = BIT(V4L2_COLORFX_VIVID) |
-> > > +                               BIT(V4L2_COLORFX_NONE),
-> > > +     },
-> > >  };
-> > >
-> > >  /* ------------------------------------------------------------------------
-> > > diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
-> > > index 12a57e1d34674a3a264ed7f88bed43926661fcd4..22e0dab0809e296e089940620ae0e8838e109701 100644
-> > > --- a/include/linux/usb/uvc.h
-> > > +++ b/include/linux/usb/uvc.h
-> > > @@ -29,6 +29,9 @@
-> > >  #define UVC_GUID_EXT_GPIO_CONTROLLER \
-> > >       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
-> > >        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
-> > > +#define UVC_GUID_CHROMEOS_XU \
-> > > +     {0x24, 0xe9, 0xd7, 0x74, 0xc9, 0x49, 0x45, 0x4a, \
-> > > +      0x98, 0xa3, 0xc8, 0x07, 0x7e, 0x05, 0x1c, 0xa3}
-> >
-> > I'd like to add a link to the documentation, but searching for the GUID
-> > didn't turn up any meaningful result. Where can I find documentation for
-> > this XU ?
-> 
-> It is not public yet. Not because there is anything secret about it,
-> but because of the "making documentation process".
+On 15/09/2025 09:14, Lakshay Piplani wrote:
+> +#include <linux/regmap.h>
+> +#include <linux/counter.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/nvmem-provider.h>
+> +
+> +#define SW_100THS	0x00
+> +#define SW_SECS		0x01
+> +#define SW_MINUTES	0x02
+> +#define SW_HOURS_XX_XX_00	0x03
+> +#define SW_HOURS_XX_00_XX	0x04
+> +#define SW_HOURS_00_XX_XX	0x05
+> +
+> +#define CTRL_OFFSET	0x24
+> +#define CTRL_OSCILLATOR	0x25
+> +#define CTRL_BATTERY	0x26
+> +#define CTRL_PIN_IO	0x27
+> +#define CTRL_FUNCTION	0x28
+> +#define CTRL_INTA_EN	0x29
+> +#define CTRL_INTB_EN	0x2a
+> +#define CTRL_FLAGS	0x2b
+> +#define CTRL_RAMBYTE	0x2c
+> +#define CTRL_WDOG	0x2d
+> +#define CTRL_STOP_EN	0x2e
+> +#define CTRL_RESETS	0x2f
+> +#define CTRL_RAM	0x40
+> +
+> +#define OSC_CAP_SEL	GENMASK(1, 0)
+> +#define OSC_CAP_6000	0x01
+> +#define OSC_CAP_12500	0x02
+> +
+> +#define STOP_EN_STOP	BIT(0)
+> +#define RTCM_BIT	BIT(4)
+> +#define MODE_100TH_S	BIT(7)
+> +#define SW_BCD7_MASK	GENMASK(6, 0)
+> +
+> +#define RESET_CPR	0xa4
+> +
+> +#define NVRAM_SIZE	0x40
+> +
+> +#define SW_MAX_100THS 359999999999ULL /* Maximum representable value in centiseconds (10ms)*/
+> +
+> +#define SW_TIME_REGS	6
+> +
+> +struct pcf85363 {
+> +	struct regmap *regmap;
+> +	struct counter_device *counter;
+> +	struct mutex lock; /* Protects access to stopwatch registers */
 
-That makes reviewing patches annoying :-/ Any expected time frame ?
+regmap protects it already (see also further)
+> +};
+> +
+> +struct pcf85x63_config {
+> +	const struct regmap_config regmap;
+> +	unsigned int num_nvram;
+> +};
+> +
+> +static int pcf85363_load_capacitance(struct pcf85363 *pcf85363)
+> +{
+> +	struct device *dev = pcf85363->counter->parent;
+> +	u32 load = 7000;
+> +	u8 value = 0;
+> +
+> +	device_property_read_u32(dev, "quartz-load-femtofarads", &load);
+> +
+> +	switch (load) {
+> +	default:
+> +		dev_warn(pcf85363->counter->parent, "Unknown quartz-load-femtofarads value: %d. Assuming 7000",
 
-You don't have to polish the documentation, if it was good enough to be
-shared with webcam vendors to be implemented, it's good enough for the
-community too :-)
+Missing wrapping. Please wrap around 80, so after parent, see Linux
+coding style for proper explanation.
 
-> Once there is a public document I will add a link.
-> 
-> > The link can be added later, so
-> >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >
-> > >  #define UVC_GUID_MSXU_1_5 \
-> > >       {0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
-> > >        0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
-> > > @@ -50,6 +53,8 @@
-> > >  #define UVC_MSXU_CONTROL_FIELDOFVIEW2_CONFIG 0x0f
-> > >  #define UVC_MSXU_CONTROL_FIELDOFVIEW2                0x10
-> > >
-> > > +#define UVC_CROSXU_CONTROL_IQ_PROFILE                0x04
-> > > +
-> > >  #define UVC_GUID_FORMAT_MJPEG \
-> > >       { 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
-> > >        0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
+> +			 load);
+> +		fallthrough;
+> +	case 7000:
+> +		break;
+> +	case 6000:
+> +		value = OSC_CAP_6000;
+> +		break;
+> +	case 12500:
+> +		value = OSC_CAP_12500;
+> +		break;
+> +	}
+> +
+> +	return regmap_update_bits(pcf85363->regmap, CTRL_OSCILLATOR,
+> +				  OSC_CAP_SEL, value);
+> +}
+> +
+> +/* Reads stopwatch value in 1/100 seconds (centiseconds), the device stores
 
--- 
-Regards,
+That's not netdev, so use standard Linux coding style comments.
 
-Laurent Pinchart
+> + * six BCD fields: CC(0..99), SS(0..59), MM(0..59), HH0/HH1/HH2 (each 0..99)
+> + * Seconds and minutes contain OS/EMON flag bits; mask them as per datasheet
+> + * before bcd2bin().
+> + */
+> +static int pcf85363_counter_read(struct counter_device *counter,
+> +				 struct counter_count *count, u64 *val)
+> +{
+> +	struct pcf85363 *pcf85363 = counter_priv(counter);
+> +	u8 raw[SW_TIME_REGS];
+> +	u64 hours;
+> +	int ret;
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +	ret = regmap_bulk_read(pcf85363->regmap, SW_100THS, raw, ARRAY_SIZE(raw));
+> +	if (ret)
+> +		return ret;
+> +
+
+So the lock would end here if you were protecting registers. Your
+comment about locking is misleading or incomplete or incorrect.
+
+> +	/* Mask OS/EMON flag bits in seconds/minutes */
+> +	raw[1] = FIELD_GET(SW_BCD7_MASK, raw[1]);
+> +	raw[2] = FIELD_GET(SW_BCD7_MASK, raw[2]);
+> +
+> +	hours = (u64)bcd2bin(raw[3]);
+> +	hours += (u64)bcd2bin(raw[4]) * 100ULL;
+> +	hours += (u64)bcd2bin(raw[5]) * 10000ULL;
+> +
+> +	*val = (u64)bcd2bin(raw[0]);
+> +	*val += (u64)bcd2bin(raw[1]) * 100ULL;
+> +	*val += (u64)bcd2bin(raw[2]) * 60ULL * 100ULL;
+> +	*val += hours * 60ULL * 60ULL * 100ULL;
+> +
+> +	/* Defensive clamp in case of transient read while rolling over */
+> +	if (*val > SW_MAX_100THS) {
+> +		dev_warn(counter->parent, "stopwatch value exceeds max, clamping\n");
+> +		*val = SW_MAX_100THS;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/* Set stopwatch value in centiseconds. It requires a stop-load-start sequence.
+> + * set STOP_EN, write all six BCD fields then clear STOP_EN.
+> + */
+> +static int pcf85363_counter_write(struct counter_device *counter,
+> +				  struct counter_count *count, const u64 val)
+> +{
+> +	struct pcf85363 *pcf85363 = counter_priv(counter);
+> +	u64 rem = val;
+> +	u8 buf[SW_TIME_REGS];
+> +	int ret;
+> +
+> +	if (val > SW_MAX_100THS)
+> +		return -ERANGE;
+> +
+> +	buf[0] = bin2bcd(rem % 100); rem /= 100;
+> +	buf[1] = bin2bcd(rem % 60); rem /= 60;
+> +	buf[2] = bin2bcd(rem % 60); rem /= 60;
+> +	buf[3] = bin2bcd(rem % 100); rem /= 100;
+> +	buf[4] = bin2bcd(rem % 100); rem /= 100;
+> +	buf[5] = bin2bcd(rem % 100);
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +	ret = regmap_update_bits(pcf85363->regmap, CTRL_STOP_EN, STOP_EN_STOP,
+> +				 FIELD_PREP(STOP_EN_STOP, 1));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_bulk_write(pcf85363->regmap, SW_100THS, buf, ARRAY_SIZE(buf));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(pcf85363->regmap, CTRL_STOP_EN, STOP_EN_STOP,
+> +				 FIELD_PREP(STOP_EN_STOP, 0));
+> +
+> +	return ret;
+> +}
+> +
+> +static int pcf85363_counter_is_enabled(struct counter_device *counter,
+> +					struct counter_count *count, u8 *enable)
+> +{
+> +	struct pcf85363 *pcf85363 = counter_priv(counter);
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +	ret = regmap_read(pcf85363->regmap, CTRL_STOP_EN, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*enable = !FIELD_GET(STOP_EN_STOP, val);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pcf85363_counter_set_enable(struct counter_device *counter,
+> +					 struct counter_count *count, u8 enable)
+> +{
+> +	struct pcf85363 *pcf85363 = counter_priv(counter);
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +
+> +	return regmap_update_bits(pcf85363->regmap, CTRL_STOP_EN,
+> +				  STOP_EN_STOP, FIELD_PREP(STOP_EN_STOP, enable ? 0 : 1));
+> +}
+> +
+> +static const struct counter_ops pcf85363_counter_ops = {
+> +	.count_read = pcf85363_counter_read,
+> +	.count_write = pcf85363_counter_write,
+> +};
+> +
+> +static struct counter_comp pcf85363_counter_ext[] = {
+> +	COUNTER_COMP_ENABLE(pcf85363_counter_is_enabled,
+> +			    pcf85363_counter_set_enable),
+> +};
+> +
+> +static struct counter_count pcf85363_counts[] = {
+> +	{
+> +		.id = 0,
+> +		.name = "pcf85363-stopwatch",
+> +		.functions_list = (const enum counter_function[]){
+> +		COUNTER_FUNCTION_INCREASE },
+> +		.num_functions = 1,
+> +		.ext = pcf85363_counter_ext,
+> +		.num_ext = ARRAY_SIZE(pcf85363_counter_ext),
+> +	}
+> +};
+> +
+> +static int pcf85363_nvram_read(void *priv, unsigned int offset, void *val,
+> +			       size_t bytes)
+> +{
+> +	struct pcf85363 *pcf85363 = priv;
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +
+> +	return regmap_bulk_read(pcf85363->regmap, CTRL_RAM + offset,
+> +				val, bytes);
+> +}
+> +
+> +static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
+> +				size_t bytes)
+> +{
+> +	struct pcf85363 *pcf85363 = priv;
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +
+> +	return regmap_bulk_write(pcf85363->regmap, CTRL_RAM + offset,
+> +				 val, bytes);
+> +}
+> +
+> +static int pcf85x63_nvram_read(void *priv, unsigned int offset, void *val,
+> +			       size_t bytes)
+> +{
+> +	struct pcf85363 *pcf85363 = priv;
+> +	unsigned int tmp_val;
+> +	int ret;
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +
+> +	ret = regmap_read(pcf85363->regmap, CTRL_RAMBYTE, &tmp_val);
+> +	(*(unsigned char *)val) = (unsigned char)tmp_val;
+> +
+> +	return ret;
+> +}
+> +
+> +static int pcf85x63_nvram_write(void *priv, unsigned int offset, void *val,
+> +				size_t bytes)
+> +{
+> +	struct pcf85363 *pcf85363 = priv;
+> +	unsigned char tmp_val;
+> +
+> +	guard(mutex)(&pcf85363->lock);
+> +
+> +	tmp_val = *((unsigned char *)val);
+> +	return regmap_write(pcf85363->regmap, CTRL_RAMBYTE,
+> +				(unsigned int)tmp_val);
+> +}
+> +
+> +static const struct pcf85x63_config pcf_85263_config = {
+> +	.regmap = {
+> +		.reg_bits = 8,
+> +		.val_bits = 8,
+> +		.max_register = 0x2f,
+> +	},
+> +	.num_nvram = 1
+> +};
+> +
+> +static const struct pcf85x63_config pcf_85363_config = {
+> +	.regmap = {
+> +		.reg_bits = 8,
+> +		.val_bits = 8,
+> +		.max_register = 0x7f,
+> +	},
+> +	.num_nvram = 2
+> +};
+> +
+> +static const struct nvmem_config nvmem_cfgs[] = {
+> +	{
+> +		.name = "pcf85x63-",
+> +		.word_size = 1,
+> +		.stride = 1,
+> +		.size = 1,
+> +		.reg_read = pcf85x63_nvram_read,
+> +		.reg_write = pcf85x63_nvram_write,
+> +	}, {
+> +		.name = "pcf85363-",
+> +		.word_size = 1,
+> +		.stride = 1,
+> +		.size = NVRAM_SIZE,
+> +		.reg_read = pcf85363_nvram_read,
+> +		.reg_write = pcf85363_nvram_write,
+> +	},
+> +};
+> +
+> +static int pcf85363_stopwatch_probe(struct i2c_client *client)
+> +{
+> +	struct pcf85363 *pcf85363;
+> +	const struct pcf85x63_config *config = &pcf_85363_config;
+
+Drop this assignment, not correct.
+
+> +	const void *data = of_device_get_match_data(&client->dev);
+
+Drop, pointless.
+
+> +	struct device *dev = &client->dev;
+> +	struct nvmem_device *nvmem;
+> +	int ret, i, err;
+> +
+> +	if (data)
+> +		config = data;
+
+You only need the assignment here data = get_match_data.
+
+> +
+> +	struct counter_device *counter = devm_counter_alloc(dev, sizeof(struct pcf85363));
+> +
+> +	if (!counter)
+> +		return -ENOMEM;
+> +
+> +	pcf85363 = counter_priv(counter);
+> +
+> +	mutex_init(&pcf85363->lock);
+> +
+> +	pcf85363->regmap = devm_regmap_init_i2c(client, &config->regmap);
+> +	if (IS_ERR(pcf85363->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(pcf85363->regmap), "regmap init failed\n");
+> +
+> +	/* Stopwatch Mode set and centiseconds granularity enabled */
+> +	ret = regmap_update_bits(pcf85363->regmap, CTRL_FUNCTION,
+> +				 RTCM_BIT | MODE_100TH_S, RTCM_BIT | MODE_100TH_S);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to set RTCM bit\n");
+> +
+> +	ret = regmap_write(pcf85363->regmap, CTRL_FLAGS, 0);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to clear flags\n");
+> +
+> +	counter->name = "pcf85363-stopwatch";
+> +	counter->parent = dev;
+> +	counter->ops = &pcf85363_counter_ops;
+> +	counter->counts = pcf85363_counts;
+> +	counter->num_counts = ARRAY_SIZE(pcf85363_counts);
+> +	pcf85363->counter = counter;
+> +
+> +	ret = devm_counter_add(dev, counter);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Counter registration failed\n");
+> +
+> +	dev_dbg(dev, "pcf85363 registered in stopwatch mode\n");
+> +
+> +	err = pcf85363_load_capacitance(pcf85363);
+> +	if (err < 0)
+> +		dev_warn(&client->dev, "failed to set xtal load capacitance: %d", err);
+> +
+> +	for (i = 0; i < config->num_nvram; i++) {
+> +		struct nvmem_config cfg = nvmem_cfgs[i];
+> +
+> +		cfg.priv = pcf85363;
+> +		cfg.dev = dev;
+> +		cfg.id = i;
+> +		nvmem = devm_nvmem_register(dev, &cfg);
+> +		if (IS_ERR(nvmem))
+> +			return dev_err_probe(dev, PTR_ERR(nvmem), "nvmem reg %d failed\n", i);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id dev_ids[] = {
+> +	{ .compatible = "nxp,pcf85263atl", .data = &pcf_85263_config },
+> +	{ .compatible = "nxp,pcf85363atl", .data = &pcf_85363_config },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, dev_ids);
+> +
+> +static struct i2c_driver pcf85363_sw_driver = {
+> +	.driver	= {
+> +		.name	= "pcf85363-stopwatch",
+> +		.of_match_table = of_match_ptr(dev_ids),
+
+You have warnings here, drop of_match_ptr. There is no such combination
+in mainline anymore, we fixed it some time ago.
+
+> +	},
+> +	.probe = pcf85363_stopwatch_probe,
+> +};
+> +
+> +module_i2c_driver(pcf85363_sw_driver);
+> +
+> +MODULE_AUTHOR("Lakshay Piplani");
+> +MODULE_DESCRIPTION("pcf85263/pcf85363 stopwatch driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("COUNTER");
+
+
+Best regards,
+Krzysztof
 
