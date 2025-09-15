@@ -1,140 +1,131 @@
-Return-Path: <linux-kernel+bounces-816275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84E0B571C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:42:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F08B571C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40419188F39D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:42:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD4718939A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C382D77F5;
-	Mon, 15 Sep 2025 07:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A1D2D6E4D;
+	Mon, 15 Sep 2025 07:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mPtOxgNj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e6nKJ9MD"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TQijDgck"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AF32D6E5E;
-	Mon, 15 Sep 2025 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4D62C21D3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757922059; cv=none; b=r+Sls4UdHZ0nt9bli+5Ej3+nMm8kqlndpz7rD7D2HPKCgH81NFree7zAJ2rsJ9ZdGWEJ6UltpwAMYKMYEudlMPTgyeCvKg216aEDSarPgHFXyPsexgkYFHpc0j8ugnNFQPcaSiBY1vS5gTBprKpyq7U61VtY00XbyTWRQHsUzLI=
+	t=1757922114; cv=none; b=Fir+8I4sdqCo3Gef5gTiwAQYriN7HsnhF7LCVuXCBRzqGZRME+xOeao6IRob8JhOrAc6bHhNImtMD6tJRQjCne17zWyi4DzKEPY96LjnBwtF8hssEJAI1BT4qQ/OyOQIhz1f9O22H6N2+YAwlV24fzH4H5nrztWSMUvTCknrwGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757922059; c=relaxed/simple;
-	bh=59eiYpGD8uho8aeaQI+TTJPc1va7kDm+pwBNsNnHp4g=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=smJDJL8ZqRAU2EfzhtmaanTo+qgHf1ZK84qTbTlF8G/sEPRECVhfkXwYKo+h1oNqvDLjyYngq6Ql7jmkQyC754OFsRUUTZPM76Izl3HQPjQS+HUqEGA4FsqIAM6r2VRWzpieOU2xbK8V6B9szZ9yX+6Bydw8HQ9mV6fOCS9VZCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mPtOxgNj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e6nKJ9MD; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 85612EC0200;
-	Mon, 15 Sep 2025 03:40:56 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Mon, 15 Sep 2025 03:40:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757922056;
-	 x=1758008456; bh=59eiYpGD8uho8aeaQI+TTJPc1va7kDm+pwBNsNnHp4g=; b=
-	mPtOxgNjo3xL57GnKyn1Oub4BNkFSJTbQjrA25Qk7wTzXp7zgRDNdeT8mhDYYI58
-	s1bMOIdnFtZQaX0bKa6dg7kgC5/JHn6Rc0WIqgDBPkaMxHMboJGQEee/2ScegseE
-	Lzxa6o3nM9Pmwv/IFuTtr+36R5qtCvjNStI1sLzvRHXWFzCEYDrQtxST/wOfJkB1
-	4MybNIYSAZaFPdaDXd/G39cAroG2loBR4tI2W6AE2e7mezsS7QsrN4AE9jWfdVUg
-	ix1zg7v5A4Zj9+LkSSdfgwXRjngFCbu72+BKmASIaOqYfpyJkoNGFBjRcv0UxE7/
-	di5FThC0cuz40ycMmVG8/A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757922056; x=
-	1758008456; bh=59eiYpGD8uho8aeaQI+TTJPc1va7kDm+pwBNsNnHp4g=; b=e
-	6nKJ9MDSJz6fZT6mCvEDb+k714Y45hicwgsbF8CvrMEX+tcwzyOCTDyYno6mL5rv
-	dZAOhYytgDsmlXsmFM/6V1YYsOrubfZ7NZWqJdDEfUU9waMYScxQS1O0aKjzXqYn
-	LCvvAILtU31zg5ck5VYDOiCkPkRbTBo0yYVzwqZolWx8T+WHBpougBMXCAgtqfeT
-	ATgwm0l+YXf32ESFdcP8m/uhkFHE5DDMG4LYXt9RupbRljhlevjJYQ8MG2IslFZm
-	Y1BF4L5tvYYCm60V4at1igWuipiu2hZvF3WAa74naR/fYgruUoJSmDcOlbU71W0A
-	2npYGA6bQbo/NqLEZrwEQ==
-X-ME-Sender: <xms:B8PHaH9tbQsCrChGLgloB1_IAbGTWHh6o-5l9BiHWfHBkE_YAj2TgA>
-    <xme:B8PHaDvVAYkskUkwS0SSDrhdO9IVfpfskdPqJT54PYyXn3ASFqpv-dQbG-vskBv2B
-    7AC51zUs9mn-Mz6K5c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopehtihifvghirdgsthifsegrnhhtghhrohhuphdrtghomhdprhgtphhtth
-    hopegrnhhtohhnrdhivhgrnhhovhestggrmhgsrhhiughgvghgrhgvhihsrdgtohhmpdhr
-    tghpthhtohepthhifigvihdrsghivgeslhhinhhugidruggvvhdprhgtphhtthhopehlih
-    hnuhigqdhumheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehr
-    ihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopegsvghnjhgrmhhinhesshhiphhsoh
-    hluhhtihhonhhsrdhnvghtpdhrtghpthhtohepjhhohhgrnhhnvghssehsihhpshholhhu
-    thhiohhnshdrnhgvthdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:B8PHaCPyj_mzqAbc_5mwxQSMBeUILdui4vNktCYRn6dr0e-fJ6CCZA>
-    <xmx:B8PHaMrDv5ukvr64PMqBAQMBcwjTPZbxq3CbNz6BNDTVaKrguUhA-g>
-    <xmx:B8PHaFvaOnUChVnwLUrgAv3eVEg_VN6Px7X0Ic6B7pqHbZCFQMy7SA>
-    <xmx:B8PHaL2SPlwPyFq7zYl48_iYAe9T_srifWLyCIeHz9sCeiDtEYJOSQ>
-    <xmx:CMPHaIfOY6scgdFUoqoin7pzKXtGNfmKJP5pr3kUM5gmcqshBSMSApf2>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 7DC4B700069; Mon, 15 Sep 2025 03:40:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757922114; c=relaxed/simple;
+	bh=npEkbsZevWwCx0NAWH1qtbK0wmxYxIJb10Aezwv4xIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MxsvICHLzfjhvCLztWQiknPy9NpgcQMqEsPMXk141FUgWJ2Y0MKu2hkMlX23nS67QITw86MW7avHq3zXgbRXHnyKN7n9cSUDuUyNrYw+AKs8UGYO3hoiJo3l6PJJpoax47w/MLhQA0AylxLgKNZPmXIPND6jXIc2PCyqLF9T+EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TQijDgck; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58F7fFhw1510294;
+	Mon, 15 Sep 2025 02:41:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757922075;
+	bh=tEdZqpOd0p3VvYV6uzHABPpFXlZefqk+wQsFnV5+sps=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=TQijDgckIKgT9uwCLGaAqmDcdrBruQN11rlXEFDUuw2T0tih3c4ergAM44IJ6lPu1
+	 HP79l0Ed+nbXalOBG+0lqg5eQw4cb1owQbPJProSmPOJ58Y/qjtWq1XOScakMbenBQ
+	 ZZx2s9ngiJbH0ONFIi/y6cLyfP1jDvzlPlC0bbtk=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58F7fFJB3789550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 15 Sep 2025 02:41:15 -0500
+Received: from DLEE213.ent.ti.com (157.170.170.116) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 15
+ Sep 2025 02:41:14 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE213.ent.ti.com
+ (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 15 Sep 2025 02:41:14 -0500
+Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58F7fAFY3366317;
+	Mon, 15 Sep 2025 02:41:11 -0500
+Message-ID: <9fec8944-3bcd-4f89-b7d4-c5f5f9d6c185@ti.com>
+Date: Mon, 15 Sep 2025 13:11:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AAxI7Qcv7s-k
-Date: Mon, 15 Sep 2025 09:40:35 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Tiwei Bie" <tiwei.bie@linux.dev>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
- benjamin@sipsolutions.net, "Tiwei Bie" <tiwei.btw@antgroup.com>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <a10395f7-6666-4bdb-9aa0-bdd873029cc9@app.fastmail.com>
-In-Reply-To: <20250914155658.1028790-7-tiwei.bie@linux.dev>
-References: <20250914155658.1028790-1-tiwei.bie@linux.dev>
- <20250914155658.1028790-7-tiwei.bie@linux.dev>
-Subject: Re: [PATCH v3 6/7] asm-generic: percpu: Add assembly guard
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mtd: spi-nor: spansion: Modify addr_mode_nbytes for DTR
+ mode
+To: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <tudor.ambarus@linaro.org>, <pratyush@kernel.org>, <mwalle@kernel.org>,
+        <tkuw584924@gmail.com>
+CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <praneeth@ti.com>, <p-mantena@ti.com>, <a-dutta@ti.com>,
+        <u-kumar1@ti.com>, <s-k6@ti.com>
+References: <20250904131309.3095165-1-s-k6@ti.com>
+Content-Language: en-US
+From: Santhosh Kumar K <s-k6@ti.com>
+In-Reply-To: <20250904131309.3095165-1-s-k6@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Sep 14, 2025, at 17:56, Tiwei Bie wrote:
-> From: Tiwei Bie <tiwei.btw@antgroup.com>
->
-> Currently, asm/percpu.h is directly or indirectly included by
-> some assembly files on x86. Some of them (e.g., checksum_32.S)
-> are also used on um. But x86 and um provide different versions
-> of asm/percpu.h -- um uses asm-generic/percpu.h directly.
->
-> When SMP is enabled, asm-generic/percpu.h will introduce C code
-> that cannot be assembled. Since asm-generic/percpu.h currently
-> is not designed for use in assembly, and these assembly files
-> do not actually need asm/percpu.h on um, let's add the assembly
-> guard in asm-generic/percpu.h to fix this issue.
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-arch@vger.kernel.org
-> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+Hello Pratyush and Takahiro,
 
-Have you tried if you can remove the percpu.h dependency from
-the files that currently include it? In many cases it should
-be enough to use percpu-defs.h.
+On 04/09/25 18:43, Santhosh Kumar K wrote:
+> The nor->params->addr_mode_nbytes parameter defines the address byte
+> count for the current addressing mode. When transitioning between SDR
+> and DDR modes, this parameter must be properly updated to maintain the
+> correct addressing behavior. So, implement the necessary updates to
+> nor->params->addr_mode_nbytes during both DDR mode enablement and
+> disablement operations to ensure address byte counts remain consistent
+> with the active transfer mode.
+> 
+> Signed-off-by: Santhosh Kumar K <s-k6@ti.com>
+> ---
+> 
+> Tested on TI's AM62x SK
+> Logs: https://gist.github.com/santhosh21/8d69756bd54605d79086b00850e1083a
 
-If that doesn't work, I have no objections to this patch either.
+We were facing write and erase failures in NOR flashes without this fix.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Failure log:
+
+root@am62xx-evm:~# flash_erase /dev/mtd6 0 0
+Erasing 256 Kibyte @ 0 --  0 % complete [   33.078034] spi-nor spi0.0: 
+Erase Error occurred
+[   33.086178] spi-nor spi0.0: Erase Error occurredock 0 (mtd6)
+
+         error 5 (Input/output error)
+flash_erase: error!: /dev/mtd6: MTD Erase entire chip failureTrying one 
+by one each sector.
+              error 5 (Input/output error)
+Erasing 256 Kibyte @ 0 --  0 % complete libmtd: error!: MEMERASE64 ioctl 
+failed for eraseblock 0 (mtd6)
+         error 5 (Input/output error)
+flash_erase: error!: /dev/mtd6: MTD Erase failure
+              error 5 (Input/output error)
+Erasing 256 Kibyte @ 0 -- 100 % complete
+root@am62xx-evm:~#
+
+But, I just bisected and got to know that the
+commit b61c35e3404557779ec427c077f7a9f057bb053d
+"mtd: spi-nor: spansion: Use nor->addr_nbytes in octal DTR mode in 
+RD_ANY_REG_OP"
+fixed this issue. My bad!
+Lets drop this patch.
+
+Thanks and Regards,
+Santhosh.
+
 
