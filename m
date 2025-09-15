@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-817230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857EEB57F8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:53:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0896B57F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED1AB4C02A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64821884B3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55F341AD4;
-	Mon, 15 Sep 2025 14:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5EC32A3CC;
+	Mon, 15 Sep 2025 14:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aaw7untd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaa6zbq5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C8C34167D;
-	Mon, 15 Sep 2025 14:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7150320A17;
+	Mon, 15 Sep 2025 14:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947765; cv=none; b=cMQ60/8ios3tNOv9uhofS+BtwulGL9kEBkMdy7Mo6oF4sRx3yQtTIJ1op8L7b0G2PgWuthYYIx0HvWwTuAJwlTEr+tgmAuUo1ChUOL0x/EeM2HCOK4p2JUBKSCiFGvHet6nq/sBYOpe5p/kVdeQ3Ntd4WusquwycneG6xKL6e2s=
+	t=1757947041; cv=none; b=C8JYyL4Rf+KGLlHwovE8yi9GybQdvYtJA21yHeChBqUWVl9GAMZdVwH4GWtWUwllHW2J8mNNLCiyebh96b/1jdYviIIxRzyEPAG8CuTHxRsloMUnhzu/oicieUOcg6xYEimbOcwM8jBKD8kwGO9dO8RFyx9haoc3x+gOboiQ+Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947765; c=relaxed/simple;
-	bh=qzDJZ6MIVaKjCDoPQ7eYvhjd24ErbN5nstetVspBJWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oT3h5JD5P6t4yNbrTrZb4Cunl6wsQ7DlS1ykpQnp61vha/GoS73NzcJ+QmaeHE0seJf2oPFs1aSoQ7CaIOw4WhZf+JRvnqGgvuQIZ3jPSvrKR/kNNq4Un+YOIMtcoXLvcO4yhW+z38QBHX6miNyf7+WkFcxofIunXnpH1T15wOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aaw7untd; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757947763; x=1789483763;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qzDJZ6MIVaKjCDoPQ7eYvhjd24ErbN5nstetVspBJWE=;
-  b=Aaw7untdVMPxvdcVD2lbeKovYWlwreSgqUj75j6NJ8paP0hFgKfY2MaI
-   nM/+CHIlphgBp2Dbwmn8wxaFxlCGWxrUllJDK0x8znktMKDh+ST2CV/aE
-   VZ8VvW1sZDTd2Aql4xWoy5geXfqYw90hoaH4+7z2AXFCCfTcdRLH/wSAe
-   uRKXL9DMGmhjBb6hnuC/YKDwJczyVPKHm1hB/g4Qlps67MuoH8Kzt26PC
-   wDThY5Qso4H3MMNP2zyQAABYZPrVjK39rtTxr3l1m0v14y9q0mQs2BgMg
-   dhgsjptBceNh02Qq7eg9mVFNogJUoOSWtc8PZUVNiBred0B3wxPCsKByh
-   Q==;
-X-CSE-ConnectionGUID: 44cHvJjbTz+uproUJm8GdA==
-X-CSE-MsgGUID: sXpPcs64SOivOED7oNVGsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="62837288"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="62837288"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:37:03 -0700
-X-CSE-ConnectionGUID: icW+tYUUQeqOVdgjfXiksg==
-X-CSE-MsgGUID: wUiI5kB1Sm6pIh+A7sUphA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="174477461"
-Received: from lkp-server01.sh.intel.com (HELO 5b01dd97f97c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 15 Sep 2025 07:36:59 -0700
-Received: from kbuild by 5b01dd97f97c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyAJp-0000Jn-0W;
-	Mon, 15 Sep 2025 14:36:37 +0000
-Date: Mon, 15 Sep 2025 22:35:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan.Wanner@microchip.com, claudiu.beznea@tuxon.dev, sre@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	linux@armlinux.org.uk
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] ARM: at91: PM: implement selection of LPM
-Message-ID: <202509152248.NjJj2xwQ-lkp@intel.com>
-References: <e72d9af1326cf44888059270263afde875ccc994.1757519351.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1757947041; c=relaxed/simple;
+	bh=4F79abvdGAdbyFcQAGB43etL6vwoT9Ad2tdcs0ambeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qibI77yREAmt8VnCDzSAVTDGorFRM7KfVCYoTon2IWFPuQiDuDQs2nSymdG7i5xYbe6KQSgd1XZ7NZQDG3FazSXQ5R71wAFNIj56/QvDTbKwR+aro/oEV1K51egURWYI8q1hRchecK6qrRu1bpxWcfIKB8UGOroOE+WdmjZ3x7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaa6zbq5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8DAC4CEF1;
+	Mon, 15 Sep 2025 14:37:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757947040;
+	bh=4F79abvdGAdbyFcQAGB43etL6vwoT9Ad2tdcs0ambeE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iaa6zbq56CcFRPv/KV0SbxptCtRM/XJQEu0Dd7mhWiYjlLsFmkHRhLMA2mSxZx2Oc
+	 uRvnW9OUImU+tWLbfOVS1XeWhv//GzftSqQENAM/iZmAOikc9iv+QRg2UG9FgIiaws
+	 +hx5yG6laNn4pTSKo1R9No82xnr1zOvSZWtPyJJ8gg6tbnL7HhCll2GEUEAAVDE1MU
+	 K1mgYs5loLdjfHu858y4YrTiZWu4qrit8A8S0zk7DI+09ySD0K4+3x+suFoORSkL3k
+	 aEQSKVvcKMUb4O8dIdKDj0BozJoWxBq4wT5pfXJ1O3Iz41uuoLyf8VZa/hJXx2XAvE
+	 9ZJUY01ZVjNKA==
+From: Christian Brauner <brauner@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Simon Schuster <schuster.simon@siemens-energy.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] rv/ltl_monitor: adapt handle_task_newtask to u64 clone_flags
+Date: Mon, 15 Sep 2025 16:37:15 +0200
+Message-ID: <20250915-hemmen-neuartig-0315104a9d78@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
+References: <20250904-trace-task-newtask-fix-callbacks-v1-1-8edb3d557365@siemens-energy.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e72d9af1326cf44888059270263afde875ccc994.1757519351.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1204; i=brauner@kernel.org; h=from:subject:message-id; bh=4F79abvdGAdbyFcQAGB43etL6vwoT9Ad2tdcs0ambeE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScUJmdr/Vgupieu/eiXxtLLHYaFW74+9HJuuLT3EezM ufP61h4vKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiCjaMDNOj9DlkOROiq3Ms I3aVxJYFmCSGqa+3XLi4/cKxVdwXwhj+Kccrqi+QeD3P+YHL2Y0u+f9NG1bn9by1v2LQoyL64Jo dEwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Thu, 04 Sep 2025 13:36:52 +0200, Simon Schuster wrote:
+> Since commit edd3cb05c00a ("copy_process: pass clone_flags as u64 across
+> calltree") the task_newtask trace event exposes clone_flags as u64 to
+> its callbacks.
+> 
+> However, ltl_monitor was not adapted, resulting in a faulty callback.
+> This also resulted in an lkp build warning due to
+> -Wincompatible-pointer-types.
+> 
+> [...]
 
-kernel test robot noticed the following build warnings:
+Applied to the kernel-6.18.clone3 branch of the vfs/vfs.git tree.
+Patches in the kernel-6.18.clone3 branch should appear in linux-next soon.
 
-[auto build test WARNING on soc/for-next]
-[also build test WARNING on cbeznea/tests linus/master v6.17-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Wanner-microchip-com/dt-bindings-power-reset-atmel-sama5d2-shdwc-add-lpm-binding/20250911-002354
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/e72d9af1326cf44888059270263afde875ccc994.1757519351.git.Ryan.Wanner%40microchip.com
-patch subject: [PATCH 2/4] ARM: at91: PM: implement selection of LPM
-config: arm-randconfig-r131-20250915 (https://download.01.org/0day-ci/archive/20250915/202509152248.NjJj2xwQ-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 21857ae337e0892a5522b6e7337899caa61de2a6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250915/202509152248.NjJj2xwQ-lkp@intel.com/reproduce)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509152248.NjJj2xwQ-lkp@intel.com/
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-sparse warnings: (new ones prefixed by >>)
->> arch/arm/mach-at91/pm.c:283:75: sparse: sparse: Using plain integer as NULL pointer
-   arch/arm/mach-at91/pm.c:1101:30: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void ( *static [assigned] [toplevel] at91_suspend_sram_fn )( ... ) @@     got void [noderef] __iomem * @@
-   arch/arm/mach-at91/pm.c:1101:30: sparse:     expected void ( *static [assigned] [toplevel] at91_suspend_sram_fn )( ... )
-   arch/arm/mach-at91/pm.c:1101:30: sparse:     got void [noderef] __iomem *
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: kernel-6.18.clone3
 
-vim +283 arch/arm/mach-at91/pm.c
-
-   271	
-   272	static int at91_pm_prepare_lpm(unsigned int pm_mode)
-   273	{
-   274		struct platform_device *pdev;
-   275		int ndevices, i, ret;
-   276		struct of_phandle_args lpmspec;
-   277	
-   278		if ((pm_mode != AT91_PM_ULP0 && pm_mode != AT91_PM_ULP1) ||
-   279		    !soc_pm.shdwc_np)
-   280			return 0;
-   281	
-   282		ndevices = of_count_phandle_with_args(soc_pm.shdwc_np,
- > 283						      "microchip,lpm-connection", 0);
-   284		if (ndevices < 0)
-   285			return 0;
-   286	
-   287		soc_pm.data.lpm = 1;
-   288		for (i = 0; i < ndevices; i++) {
-   289			ret = of_parse_phandle_with_args(soc_pm.shdwc_np,
-   290							 "microchip,lpm-connection",
-   291							 NULL, i, &lpmspec);
-   292			if (ret < 0) {
-   293				if (ret == -ENOENT) {
-   294					continue;
-   295				} else {
-   296					soc_pm.data.lpm = 0;
-   297					return ret;
-   298				}
-   299			}
-   300	
-   301			pdev = of_find_device_by_node(lpmspec.np);
-   302			if (!pdev)
-   303				continue;
-   304	
-   305			if (device_may_wakeup(&pdev->dev)) {
-   306				if (pm_mode == AT91_PM_ULP1) {
-   307					/*
-   308					 * ULP1 wake-up sources are limited. Ignore it if not
-   309					 * in soc_pm.ws_ids.
-   310					 */
-   311					if (at91_pm_device_in_list(pdev, soc_pm.ws_ids))
-   312						soc_pm.data.lpm = 0;
-   313				} else {
-   314					soc_pm.data.lpm = 0;
-   315				}
-   316			}
-   317	
-   318			put_device(&pdev->dev);
-   319			if (!soc_pm.data.lpm)
-   320				break;
-   321		}
-   322	
-   323		return 0;
-   324	}
-   325	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[1/1] rv/ltl_monitor: adapt handle_task_newtask to u64 clone_flags
+      https://git.kernel.org/vfs/vfs/c/02bf8f2f7ccb
 
