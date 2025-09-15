@@ -1,96 +1,53 @@
-Return-Path: <linux-kernel+bounces-816425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB552B573B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:58:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08066B573BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 720C716F049
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800D218864F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED0136D;
-	Mon, 15 Sep 2025 08:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5070A2F1FFE;
+	Mon, 15 Sep 2025 08:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NlrgJBRa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Fl+1jpAq"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3304B2550CA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4032D5C61;
+	Mon, 15 Sep 2025 08:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757926546; cv=none; b=mcx3jrXe1iu+2v4uhEOVKhze0ZzAUQbfEi3SlsT4UCmOuQbX0RTdWte3KQOQ6A6xk5zxECdbYjLAm9fsac2MvwgRxJkefOcNhF5bmWSxDPzbV2CfuhofHU6sZuvEG9Xb84SMGS+SvDL+wC3NvC82jePOz8wO+DzsFmUAJXd6U/0=
+	t=1757926547; cv=none; b=dq2lctV7AONEgwVDz4I7uujWuI4oCkXZSjnsD0elV50FLKWDTd1ja3TVrFMJkhNHXituWEQaFGMfWAilRwX5mY0K8qFTmZKVmSc6Twd/4KRHr2P7Ry9cshhaWmlsu/LrE25etH0fFviw6J6qMV8yBXsceJxu6/x69s/R58/dFIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757926546; c=relaxed/simple;
-	bh=Yy5STNsXLz/oHRvxTISnADXePW8lhB72PMJ0pnkSnxI=;
+	s=arc-20240116; t=1757926547; c=relaxed/simple;
+	bh=wumQeK4aV33ZODZF7p8zwB+eZepT7/KIxwdWnzj3rqU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVKP5tirRnWilZpZEwLFch0xTjNc4ri60UD68vjMxzK7nOgBUyosw2HnQ6bEKUv8DZgZNiTpjDrHu8BHAMEN3wy7axtWcSyRie8jG/23Z290J6bGqCQLtouaWV2t27TeeQUMgQoBiM/uealPpUdyoC4C4ndRNNfzYT7NcsWkAl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NlrgJBRa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8Fhxm031681
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:55:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=wLNuOM/rMRTF8+cnf91YECVB
-	LsmZQln4JgL+duYQ6Gs=; b=NlrgJBRawrjeWrAQ5UWTM9g22eePJlPV2MQFS4hI
-	Cm9O7stq6FVxXmxVUKC6ld0lOXvA2HUZKTeulmvKSp7VM1vWg5n4ekDmgnBpcc9d
-	KAj7V2W7h5oADnM8vQgp0SBGU0Q9Tss12/uRuvvcYLBhpLWnvJIbAPF6SGuVLfU7
-	mLyqPTbuATHtezLVQmcaf2KUQrI630ueopKEM20Mrz9xXmAMwoIJUXfSc3R8+8Ws
-	kNg1xppWRMv2tNDr3FtdapQMkZbG3OQBRjRGBs1AuGT/q474+W0R0V/vlZGoMpk0
-	HAIALg9UPfa0qthIhs1E2UT8wbSnm3aVPOfbx0JKw1LHhA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 494yma46rm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:55:43 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-261cec07f2dso12203825ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:55:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757926543; x=1758531343;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wLNuOM/rMRTF8+cnf91YECVBLsmZQln4JgL+duYQ6Gs=;
-        b=WA+JWSe8i8LbbGCTpxa2ltJnAPV/1EWJVThmPUnsEjn+K+Ft5QJ1vI5FYU1zb3nmP8
-         0W9gs1Gkab7/+gp/rEVE/35t+HWcRse5dAxFtUEvCKBI54zj5hXmruTsPr+EAvd9zZFM
-         PwC/rHvtJOQJyFy6TgLlERNKVz9a5Csg9c1TsKdXSsyO7xEkrlWm0LxYf3uswysOnPHT
-         0CWU3Y0ovkVc6dRcBBnooXp0qv3LAqUgEGgzTBmVnWrt86nQkrHJrI34mTU5gCrcDkPZ
-         RiDqkPQYnGU0Q/vfzqGcAlD/KEiWaeV5f0fHsl9L79774zrEbVPrq+dyqay3MIIgJH/c
-         bL5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1QEVATVbNNquszhoEE+R3scWCLXtRg4MA3NhytAdRazbOh1Nc9VTJWpcvjx6OgxvpT3MrjyTiNzYEgEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9eDsz41KEQatjeqrKGh+YR5Q2YDULCISp8IJtOp9gLx2UvUXx
-	5tZMnspB6fNJvssTxgnLE/wB+v/5pvXOTX95rQH/Rnm0d/hrOw9mEOz20GTeRSe22rs4gPk+9M2
-	4X+D2ujo4FOm848qOmSPuhxmwbPe+OPM4RuEXk3xOLXi6yhqWTzNtPhN+B27BzM65wiM=
-X-Gm-Gg: ASbGnct08+yS3sCVmhz8LWoVKCNboqITd8tnhJI6jcEFNPenBfqFwyknvgu2X6pRXCo
-	mNhPJoirOVUphROlU6EBo45npm5iPujNkfaToyokzd83tC7QZwH9EBpW3ESkzrWhIK8JrDWVpei
-	eWrde/GRayd7yuIeIsPaL0A5BxVTkhmPKZEhPXhDNje+7w3nQUIOSOo0evX8TauPKA4j1AT+NNF
-	s0Oeelzh+5kiqOLb1nP1sMC5Tl0DHjNX6CBZArJJjPLpvHGsqeXYg3hGb3VV7ISooYnpVPPzsB3
-	L0hQ/E5/Gyej60Srq9YivFr8oY58PNqnkq2TBsltlWMqjR0mEPcETA==
-X-Received: by 2002:a17:902:f147:b0:246:2da9:73a2 with SMTP id d9443c01a7336-25bae8dca71mr118773175ad.27.1757926542605;
-        Mon, 15 Sep 2025 01:55:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxJVzmN8L1lYkKLjLebIOGAD4Y/rC3K4e1Kjs12zKjyg936oG4vniFvJPtY1SQDO/H0GB+HA==
-X-Received: by 2002:a17:902:f147:b0:246:2da9:73a2 with SMTP id d9443c01a7336-25bae8dca71mr118772965ad.27.1757926542028;
-        Mon, 15 Sep 2025 01:55:42 -0700 (PDT)
-Received: from oss.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264eeab7bf1sm35739675ad.5.2025.09.15.01.55.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 01:55:41 -0700 (PDT)
-Date: Mon, 15 Sep 2025 14:25:36 +0530
-From: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>, andrew@lunn.ch
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: qcom: qca808x: Add .get_rate_matching
- support
-Message-ID: <aMfUiBe9gdEAuySZ@oss.qualcomm.com>
-References: <20250914-qca808x_rate_match-v1-1-0f9e6a331c3b@oss.qualcomm.com>
- <aMcFHGa1zNFyFUeh@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbEumzWtCDvyL8LhS75Jdn7JgCTTD8lhxVY9TN216+zUFyvfrAd5zV8Pb989CePNKv+nwzHvb8KpQoHj5AypbPd1HOox9pQF77BhLPCu5xDtFP4ny3XspZCcR8Bv0lMrJqKPuiy9cOLglP1T5r7Ib7Sx1jXS+Mfa0xzVrSunisU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Fl+1jpAq; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1757926543;
+	bh=wumQeK4aV33ZODZF7p8zwB+eZepT7/KIxwdWnzj3rqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fl+1jpAqH0FHqqwTKgrcFGzynJRpfwmNC9e7CqhsJUTZNS2/RFX8fZVfYPLvq2uJx
+	 463NTzafmNeUbz8S3a0LCQEKfqBENv+q7Zuc380YZIsfnZLX+a8VzigQ4PS7W9l0li
+	 Tn+Dxqjr1ykhhB/Tyq44MeGJheZsWced8yXw9lxg=
+Date: Mon, 15 Sep 2025 10:55:44 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
+	linux-kselftest@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-kernel@vger.kernel.org, Tiwei Bie <tiwei.btw@antgroup.com>, 
+	Benjamin Berg <benjamin.berg@intel.com>
+Subject: Re: [PATCH 6/9] tools/nolibc: add option to disable startup code
+Message-ID: <e2f2b0e3-a72d-4b6f-9677-02de711b7d3a@t-8ch.de>
+References: <20250915071115.1429196-1-benjamin@sipsolutions.net>
+ <20250915071115.1429196-7-benjamin@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,132 +56,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aMcFHGa1zNFyFUeh@shell.armlinux.org.uk>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxOSBTYWx0ZWRfX9+YVS0n66BIi
- odt1DoNeYeFydmDX/XnO1oKwmAtFwbZ7+zO4/Pg77Px0trupy6cEnicpNgPWDxO0kjgHJTyDj18
- 3e9MtTxu7BiRcbhBrSIxO+RJ+Y3NuiWsXN8veLKp6CcVn1Ut+s0coPH2a6CYv80u02x2g9mMLtY
- MB1ifNOOlL1D/pGHHFDcmptNUizbrZQa3JCMN4sUxYZ7kbJ5k2GCjO2OtgJahVqN76rv/V1WDqf
- KkQ+LVlHcZ/P/ZNKOMc9+Jh1+NuOHEJk7xmE79lGdpiQ8PMIhQrmC8P0I3fXbUepgctFRIrYFgO
- HuiDqihCFwT0eiW4HiSWAYymEyYuGi6nKy7tY/pc7kyFZvvDixe4bwsbC2SiP1KkYCtQUyuidS5
- KS671gve
-X-Authority-Analysis: v=2.4 cv=cdTSrmDM c=1 sm=1 tr=0 ts=68c7d490 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=P-IC7800AAAA:8 a=c4qJPYNQ9Ol6fpErAFgA:9
- a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-ORIG-GUID: BaMqzVPh-dmnyJlLR9uD3CJEDbfbNDFt
-X-Proofpoint-GUID: BaMqzVPh-dmnyJlLR9uD3CJEDbfbNDFt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_03,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130019
+In-Reply-To: <20250915071115.1429196-7-benjamin@sipsolutions.net>
 
-On Sun, Sep 14, 2025 at 07:10:36PM +0100, Russell King (Oracle) wrote:
-> On Sun, Sep 14, 2025 at 08:36:48PM +0530, Mohd Ayaan Anwar wrote:
-> > Add support for rate matching to the QCA8081 PHY driver to correctly
-> > report its capabilities. Some boards[0][1] with this PHY currently
-> > report support only for 2.5G.
-> > 
-> > Implement the .get_rate_matching callback to allow phylink to determine
-> > the actual PHY capabilities and report them accurately.
+On 2025-09-15 09:11:12+0200, Benjamin Berg wrote:
+> From: Benjamin Berg <benjamin.berg@intel.com>
 > 
-> Sorry, but this is incorrect.
-> 
-> The PHY does not support rate matching, but switches between SGMII
-> and 2500BASE-X depending on the negotiated speed according to the code:
-> 
-> static void qca808x_fill_possible_interfaces(struct phy_device *phydev)
-> {
->         unsigned long *possible = phydev->possible_interfaces;
-> 
->         __set_bit(PHY_INTERFACE_MODE_SGMII, possible);
-> 
->         if (!qca808x_is_1g_only(phydev))
->                 __set_bit(PHY_INTERFACE_MODE_2500BASEX, possible);
-> }
-> 
-> static int qca808x_read_status(struct phy_device *phydev)
-> {
-> ...
->         if (phydev->link) {
->                 if (phydev->speed == SPEED_2500)
->                         phydev->interface = PHY_INTERFACE_MODE_2500BASEX;
->                 else
->                         phydev->interface = PHY_INTERFACE_MODE_SGMII;
->         } else {
-> 
-> The driver certainly does not support rate-matching, even if the PHY
-> can support it, and even with your patch. All you are doing is making
-> ethtool suggest that other speeds are supported, but I think you'll
-> find that if the PHY negotiates those speeds, it won't work.
-> 
+> In principle, it is possible to use nolibc for only some object files in
+> a program. In that case, the startup code in _start and _start_c is not
+> going to be used. Add the NOLIBC_NO_STARTCODE compile time option to
+> disable it entirely and also remove anything that depends on it.
 
-Weirdly, I was able to test both 1G and 2.5G with my patch. Could this
-be because the driver is already deviating from the standard in other
-areas?
+Not a big fan of the naming. More than only _start()/_start_c() are
+disabled. Maybe NOLIBC_NO_RUNTIME?  I'm horrible at naming...
 
-> So, the bug is likely elsewhere, or your ethernet MAC doesn't support
-> SGMII and you need to add complete support for  rate-matching to the
-> driver.
+> Doing this avoids warnings from modpost for UML as the _start_c code
+> references the main function from the .init.text section while it is not
+> inside .init itself.
 > 
-
-I tried setting phy-mode=sgmii in the Devicetree and I am able to get 1G
-and lower speeds to work.
-
-> Please enable phylink debugging and send the kernel messages so I can
-> see what's going on.
+> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+> ---
+>  tools/include/nolibc/arch-arm.h       | 2 ++
+>  tools/include/nolibc/arch-arm64.h     | 2 ++
+>  tools/include/nolibc/arch-loongarch.h | 2 ++
+>  tools/include/nolibc/arch-m68k.h      | 2 ++
+>  tools/include/nolibc/arch-mips.h      | 2 ++
+>  tools/include/nolibc/arch-powerpc.h   | 2 ++
+>  tools/include/nolibc/arch-riscv.h     | 2 ++
+>  tools/include/nolibc/arch-s390.h      | 2 ++
+>  tools/include/nolibc/arch-sh.h        | 2 ++
+>  tools/include/nolibc/arch-sparc.h     | 2 ++
+>  tools/include/nolibc/arch-x86.h       | 4 ++++
+>  tools/include/nolibc/crt.h            | 3 +++
+>  tools/include/nolibc/stackprotector.h | 2 ++
+>  tools/include/nolibc/stdlib.h         | 2 ++
+>  tools/include/nolibc/sys.h            | 3 ++-
+>  tools/include/nolibc/sys/auxv.h       | 3 +++
+>  16 files changed, 36 insertions(+), 1 deletion(-)
 > 
+> diff --git a/tools/include/nolibc/arch-arm.h b/tools/include/nolibc/arch-arm.h
+> index 1f66e7e5a444..24ad348cc1e8 100644
+> --- a/tools/include/nolibc/arch-arm.h
+> +++ b/tools/include/nolibc/arch-arm.h
+> @@ -185,6 +185,7 @@
+>  })
+>  
+>  /* startup code */
+> +#ifndef NOLIBC_NO_STARTCODE
 
-Filtered logs (without my patch):
-[    7.937871] qcom-ethqos 23040000.ethernet: IRQ eth_wake_irq not found
-[    7.944581] qcom-ethqos 23040000.ethernet: IRQ eth_lpi not found
-[    7.953753] qcom-ethqos 23040000.ethernet: User ID: 0x20, Synopsys ID: 0x52
-[    7.960927] qcom-ethqos 23040000.ethernet:   DWMAC4/5
-[    7.966049] qcom-ethqos 23040000.ethernet: DMA HW capability register supported
-[    7.973564] qcom-ethqos 23040000.ethernet: RX Checksum Offload Engine supported
-[    7.981073] qcom-ethqos 23040000.ethernet: TX Checksum insertion supported
-[    7.988139] qcom-ethqos 23040000.ethernet: TSO supported
-[    7.993603] qcom-ethqos 23040000.ethernet: Enable RX Mitigation via HW Watchdog Timer
-[    8.001654] qcom-ethqos 23040000.ethernet: Enabled L3L4 Flow TC (entries=8)
-[    8.008817] qcom-ethqos 23040000.ethernet: Enabled RFS Flow TC (entries=10)
-[    8.008819] qcom-ethqos 23040000.ethernet: Enabling HW TC (entries=128, max_off=64)
-[    8.008821] qcom-ethqos 23040000.ethernet: TSO feature enabled
-[    8.008822] qcom-ethqos 23040000.ethernet: SPH feature enabled
-[    8.008824] qcom-ethqos 23040000.ethernet: Using 36/40 bits DMA host/device width
-[    8.243500] qcom-ethqos 23040000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-[    8.253778] qcom-ethqos 23040000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-1
-[    8.261991] qcom-ethqos 23040000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-2
-[    8.262527] qcom-ethqos 23040000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-3
-[    8.348697] qcom-ethqos 23040000.ethernet eth0: PHY stmmac-0:1c uses interfaces 4,23, validating 23
-[    8.358304] qcom-ethqos 23040000.ethernet eth0:  interface 23 (2500base-x) rate match none supports 6,13-14,47
-[    8.368589] qcom-ethqos 23040000.ethernet eth0: PHY [stmmac-0:1c] driver [Qualcomm QCA8081] (irq=POLL)
-[    8.368595] qcom-ethqos 23040000.ethernet eth0: phy: 2500base-x setting supported 0000000,00000000,00008000,00006040 advertising 0000000,00000000,00008000,00006040
-[    8.381057] qcom-ethqos 23040000.ethernet eth0: Enabling Safety Features
-[    8.416398] qcom-ethqos 23040000.ethernet eth0: IEEE 1588-2008 Advanced Timestamp supported
-[    8.425541] qcom-ethqos 23040000.ethernet eth0: registered PTP clock
-[    8.434778] qcom-ethqos 23040000.ethernet eth0: configuring for phy/2500base-x link mode
-[    8.446169] qcom-ethqos 23040000.ethernet eth0: major config, requested phy/2500base-x
-[    8.454323] qcom-ethqos 23040000.ethernet eth0: interface 2500base-x inband modes: pcs=00 phy=00
-[    8.463353] qcom-ethqos 23040000.ethernet eth0: major config, active phy/outband/2500base-x
-[    8.471939] qcom-ethqos 23040000.ethernet eth0: phylink_mac_config: mode=phy/2500base-x/none adv=0000000,00000000,00000000,00000000 pause=00
-[    8.485780] 8021q: adding VLAN 0 to HW filter on device eth0
-[    8.489653] qcom-ethqos 23040000.ethernet eth0: phy link down 2500base-x/Unknown/Unknown/none/off/nolpi
-[   13.615848] qcom-ethqos 23040000.ethernet eth0: phy link up 2500base-x/2.5Gbps/Full/none/rx/tx/nolpi
-[   13.617924] qcom-ethqos 23040000.ethernet eth0: Link is Up - 2.5Gbps/Full - flow control rx/tx
+I'd prefer the ifdef around the comments.
 
-// I changed the link partner speed to 1G here:
-[   74.031182] qcom-ethqos 23040000.ethernet eth0: phy link down 2500base-x/Unknown/Unknown/none/off/nolpi
-[   74.031773] qcom-ethqos 23040000.ethernet eth0: Link is Down
+>  void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector _start(void)
+>  {
+>  	__asm__ volatile (
+> @@ -193,5 +194,6 @@ void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector _s
+>  	);
+>  	__nolibc_entrypoint_epilogue();
+>  }
+> +#endif /* NOLIBC_NO_STARTCODE */
 
-For reference, this board is using the same MAC as [0] which works
-perfectly fine with the AQR115C PHY. I got the (wrong) idea to add
-.get_rate_matching after comparing the two PHY drivers. The MAC driver
-is stmmac/dwmac-qcom-ethqos.c
-
-	Ayaan
----
-[0] https://elixir.bootlin.com/linux/v6.17-rc5/source/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
+(...)
 
