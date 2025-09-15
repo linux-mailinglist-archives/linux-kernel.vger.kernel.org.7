@@ -1,142 +1,134 @@
-Return-Path: <linux-kernel+bounces-816014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F605B56E2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:13:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D221BB56E33
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2A9179A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAA5189AA96
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368732165EA;
-	Mon, 15 Sep 2025 02:13:41 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BE021D3CC;
+	Mon, 15 Sep 2025 02:15:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA72321C16E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D899C2DC790;
+	Mon, 15 Sep 2025 02:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757902420; cv=none; b=dq+CCBqYxwcDHhh35te0oIjDdIdATV4/rBSgaXJOaz4h5QNDipMR/fo/JdntsqmPQSq138HzgmjsitDt+4kg0bSR9NbJAVdHsALp+Ui6XqZPywcdNhZ1tQtnh1Tc4wxoMLFvjreh6cbVDuqHU0Q55dImLcUK+58F1H09Yjoj3uI=
+	t=1757902552; cv=none; b=YtfUHVzxN/FGhTU+QdIQAsBPSHnaTKkAf2lYnMikYV3Wxk3pL76Hn7X0DByTiuyzKorRrk71JNqiHqDEFhmKJB4Uu4kDYaK2GkZEPF2eQhIAYNOQJ3tDZTZfEWY6j9GIv44ucQ3ilQ+KbZMo1PSqzTprOCP1nf5mW1UY61rGBF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757902420; c=relaxed/simple;
-	bh=M1zr4g+YL0dCSc0J7WncCIFH2o5Pwo1l+lnSTGU2HA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SH7WSZBKDSWIaIccj55EQYX0of26NK9D57pHA1PiNRIKah6scFPbb1PjkWqV/uF3pmoX0ZhqoHTcajjf1Kx5aTGNHtzip0IBZO3+KcXAE+BMhx25ZBYx4QvHMu6kWG/Kr2E9xCXV3OCwuyXGR7YPrFQ6LHgqPsoavNLypOaVacQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cQ7kP0BqCz2CgSs;
-	Mon, 15 Sep 2025 10:09:01 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5B247140148;
-	Mon, 15 Sep 2025 10:13:35 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 15 Sep 2025 10:13:34 +0800
-Message-ID: <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
-Date: Mon, 15 Sep 2025 10:13:33 +0800
+	s=arc-20240116; t=1757902552; c=relaxed/simple;
+	bh=wk9cxB3e82vYRXRXSwGgpB9vFtSquVnq6ILEBPGlYbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lf2eibQduQqDpN3t8XPzvkQUL7Dq85TqIcMq2xAMN5M8sMoTs0U9z433nHb9HSiyYa/SxjDkUksOOQBwlPIds0yvnVH6qdh+TDWTmxSWRwHFmrihy7azZYDjo4RvScaIs+yU8ZKEiqsJMUi595go8zvqwp5OuDT8dv2dNlkGMkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cQ7tB4KRjzYQv4n;
+	Mon, 15 Sep 2025 10:15:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2682D1A1305;
+	Mon, 15 Sep 2025 10:15:45 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgDnMY7NdsdounEuCg--.53887S3;
+	Mon, 15 Sep 2025 10:15:43 +0800 (CST)
+Message-ID: <9041896d-e4f8-c231-e8ea-5d82f8d3b0d2@huaweicloud.com>
+Date: Mon, 15 Sep 2025 10:15:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
-To: Zhang Changzhong <zhangchangzhong@huawei.com>, <dave@stgolabs.net>,
-	<paulmck@kernel.org>, <josh@joshtriplett.org>, <frederic@kernel.org>
-CC: <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <20250912015737.1209143-1-wangliang74@huawei.com>
- <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 2/2] md: allow configuring logical_block_size
+To: Xiao Ni <xni@redhat.com>, linan666@huaweicloud.com
+Cc: corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, hare@suse.de,
+ martin.petersen@oracle.com, bvanassche@acm.org, filipe.c.maia@gmail.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250911073144.42160-1-linan666@huaweicloud.com>
+ <20250911073144.42160-3-linan666@huaweicloud.com>
+ <CALTww2_z7UGXJ+ppYXrkAY8bpVrV9O3z0VfoaTOZtmX1-DXiZA@mail.gmail.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <CALTww2_z7UGXJ+ppYXrkAY8bpVrV9O3z0VfoaTOZtmX1-DXiZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-CM-TRANSID:gCh0CgDnMY7NdsdounEuCg--.53887S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF1kJFW7GFWDury8tr45Awb_yoW8Ar18pa
+	ykZa15K3Z5tFyjy3Z7Z3Z2ga4jgw4xKa1UGry3Gw17u3y5uF1a9r4Igayjga4jyr1S9ry2
+	vr4qqr1SvF929aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+	v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8Zw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQV
+	y7UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
-在 2025/9/12 10:16, Zhang Changzhong 写道:
->
-> 在 2025/9/12 9:57, Wang Liang 写道:
->> When setting the locktorture module parameter 'bind_writers', the variable
->> 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
->> is not freed, when removing module or setting the parameter again.
->>
->> Below kmemleak trace is seen for this issue:
->>
->> unreferenced object 0xffff888100aabff8 (size 8):
->>    comm "bash", pid 323, jiffies 4295059233
->>    hex dump (first 8 bytes):
->>      07 00 00 00 00 00 00 00                          ........
->>    backtrace (crc ac50919):
->>      __kmalloc_node_noprof+0x2e5/0x420
->>      alloc_cpumask_var_node+0x1f/0x30
->>      param_set_cpumask+0x26/0xb0 [locktorture]
->>      param_attr_store+0x93/0x100
->>      module_attr_store+0x1b/0x30
->>      kernfs_fop_write_iter+0x114/0x1b0
->>      vfs_write+0x300/0x410
->>      ksys_write+0x60/0xd0
->>      do_syscall_64+0xa4/0x260
->>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> This issue can be reproduced by:
->>    insmod locktorture.ko
->>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
->>    rmmod locktorture
->>
->> or:
->>    insmod locktorture.ko
->>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
->>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
->>
->> The parameter 'bind_readers' also has the same problem. Free the memory
->> when removing module or setting the parameter.
->>
->> Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   kernel/locking/locktorture.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
->> index ce0362f0a871..cad80c050502 100644
->> --- a/kernel/locking/locktorture.c
->> +++ b/kernel/locking/locktorture.c
->> @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
->>   	int ret;
->>   	char *s;
->>   
->> +	free_cpumask_var(*cm_bind);
->> +	*cm_bind = NULL;
-> 这个NULL没必要吧
 
+在 2025/9/15 8:33, Xiao Ni 写道:
+> Hi Nan
+> 
+> On Thu, Sep 11, 2025 at 3:41 PM <linan666@huaweicloud.com> wrote:
+>>
+>> From: Li Nan <linan122@huawei.com>
+>>
+>> Previously, raid array used the maximum logical_block_size (LBS) of
+>> all member disks. Adding a larger LBS during disk at runtime could
+>> unexpectedly increase RAID's LBS, risking corruption of existing
+>> partitions.
+> 
+> Could you describe more about the problem? It's better to give some
+> test steps that can be used to reproduce this problem.
 
-Setting global pointer to NULL after free may be more safe. ^-^
+Thanks for your review. I will add reproducer in the next version.
 
->> +
->>   	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
->>   		s = "Out of memory";
->>   		ret = -ENOMEM;
->> @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
->>   			cxt.cur_ops->exit();
->>   		cxt.init_called = false;
->>   	}
->> +
->> +	free_cpumask_var(bind_readers);
->> +	free_cpumask_var(bind_writers);
->> +	bind_readers = NULL;
->> +	bind_writers = NULL;
-> 同上
->
->> +
->>   	torture_cleanup_end();
->>   }
->>   
+>>
+>> Simply restricting larger-LBS disks is inflexible. In some scenarios,
+>> only disks with 512 LBS are available currently, but later, disks with
+>> 4k LBS may be added to the array.
+>>
+>> Making LBS configurable is the best way to solve this scenario.
+>> After this patch, the raid will:
+>>    - stores LBS in disk metadata.
+>>    - add a read-write sysfs 'mdX/logical_block_size'.
+>>
+>> Future mdadm should support setting LBS via metadata field during RAID
+>> creation and the new sysfs. Though the kernel allows runtime LBS changes,
+>> users should avoid modifying it after creating partitions or filesystems
+>> to prevent compatibility issues.
+> 
+> Because it only allows setting when creating an array. Can this be
+> done automatically in kernel space?
+> 
+> Best Regards
+> Xiao
+
+The kernel defaults LBS to the max among all rdevs. When creating RAID
+with mdadm, if mdadm doesn't set LBS explicitly, how does the kernel
+learn the intended value?
+
+Gunaghao previously submitted a patch related to mdadm:
+https://lore.kernel.org/all/3a9fa346-1041-400d-b954-2119c1ea001c@huawei.com/
+
+-- 
+Thanks,
+Nan
+
 
