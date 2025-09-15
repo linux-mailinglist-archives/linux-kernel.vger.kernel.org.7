@@ -1,161 +1,185 @@
-Return-Path: <linux-kernel+bounces-817279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B11B58001
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197F0B58018
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F4407A5771
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EAA161CC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8B532F77A;
-	Mon, 15 Sep 2025 15:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUvH1+O4"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E20A1DE4E5;
+	Mon, 15 Sep 2025 15:09:04 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7433218BA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC9033EB15;
+	Mon, 15 Sep 2025 15:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948936; cv=none; b=BctcJGscs2og6A5WIeyfc7T2PTA43LxdEeoUy09VUFKLbctpfUML8eJ2UG2NG2O7R1HOUnQ1kWChamPb9xvr6nVT3BLWlbOLF67lg8Ssk8WRkaiHFNMFg7SUxLqsdYUyxQMkZxUnzELBBay0q2nGIv6uN7DmfZiF8cVmV/m5qBo=
+	t=1757948943; cv=none; b=QIWCXJwLkDXI0ioOsewAk4ulTJX2rA4xR5mtgklPw96Ps4JpFT4NQDYiB7JFeDqBivPaoS3TLFAdMheNPYUuKMcyIZ1wiwCqQxyFqTdQCNhQ8fW4OGnFm6NgCiBr6Qr5xSyXitwHR9eVNiwP+8+j724CGGWBGxy5I6b9v1Ky3SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948936; c=relaxed/simple;
-	bh=fpkLiRx4peIwEQMVeV0Sr+7DioZoAzUNHpOYmIWDnzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BKEadSudsQDB3DDsXUBKbGwk5MN7OfE9BXbLv/a3PM1c20tBVE6jgLtc1OHhDhY6NOY2SCp0DZNwobLOmsj73IG4Ft778V5VUBs/p4Wkb5ZAhPds/9/XTt1738+wDKC00ruM2MprIo7dZo+OasSB9gPWqycXu8QYQuFWIFZ/Hcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUvH1+O4; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-723ad237d1eso39287417b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757948934; x=1758553734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wwFsPBiwikLgXGeg1StWERPB9X7NSPvY1FsUVXJjxOU=;
-        b=ZUvH1+O44BalJljNEHTYc+/MrA8qMiFPyepOy8Zd+88Zzi0Bqn0pc9YzLtH6CwoaS0
-         QcePhbRams0AmmBTyyKZVhK1H++YzQEPKB3CUEiii6Jpiv7vNjT1oMzZ5F6Kmax37ebu
-         /6+olLf4XsFuz/9vYQW8PogfuSCdShl6UDjV8DjBEXgJJP9qSj7E/a7Y/fKDaXu0sF8I
-         uhhUxKozecuUWD1xx5vB4x20AoWC+BRaPni6r/aZDYwhADX1QHeodAWPiVYCWJ5zW/BJ
-         c0KH15ooWuN03Wte9i7QvKi5KxDDaVkkcqGQ6Mam3bpEOBTgLVo1UQV5I+h/p1k54mtq
-         wwfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757948934; x=1758553734;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wwFsPBiwikLgXGeg1StWERPB9X7NSPvY1FsUVXJjxOU=;
-        b=VnEA7mtv2Xk7XZ3fFmgsibp2euX3SGEVqdocBfhUOWiY9mcfFP7MFaTNj7kjr+19Sb
-         SK7HGATlr06Fe3Fx7DSNfvgwxVCDKpKXzxq2Jijgg+hNkYP7TsgiBw22EDrk5OkikK44
-         H0GFKgM2y+VIBdUk5G6Msa88V43htkzjxaUlacDmaFBPYh/SnV3Hlq+Jv9ITYEGrlK9P
-         +642FQQyXhuQLCWFuKTZZsPvYkZCQFKPGOmgsdwDlCzwXaBBegh+aOKYwZP7tGDH98ev
-         z402LBJoRYD4tuqQVICERRjZhUlulukAtyPZ4apMKAv0LGJkE3nvkqoVNxLMoZDcjRt+
-         8NiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNXulF4ORoLMOueijJoWwhWCfb+kRxlu6X9YDEk+GsI/0NYKgXq7kaxnsHcIkLX5j+szOqndZmebMO0yU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQTtroCgtjGlllmyh0TItO7zXz5br9CU0bEWt3mxfYrqjttLGB
-	EEJIoMEF26ygtuCqG8ZmNakktekV8dk92C74yMKnCVdIHSxBh1rXWfXF
-X-Gm-Gg: ASbGncuoGp3Z2nYD6AMunpGSHF3EsxZY1oYZLoB+eRsFu9J+N1VGyYKAGiyy912cC3P
-	PfbvFOAIWqi/AbEOMSUJiVUp4Kwp3O27G1mOxRPD2QIXngQMah+C5KaaG+y2TDLAkn5AK/qKicm
-	+aW3ncPjx8JLzX7lEw4BI/SasnbtJhe2rzjFIfldCIfTXFpcxDB2HxVMQsU/eC9nESnetIf/JUB
-	MmVJnnKnEE5mKvlbNc9ZZYRy7KvL2aazwEyRWR0V9pdn4wVCsACvVyekYCyVjUs9TSXfp1fOlM/
-	en/LNcPWO1PMrEO2s/VzFKr8QGF7ZDd7kKMYdCyKPQxOIQLUvSQn31tZRG7ErnYV4WmMhJS7kF0
-	GYL0jU2QCW7aQ94KxhMqJQ/bw4I3ZgJ6q1madPbi96cFBYdb/QBM/j7WbA04pK7Tx
-X-Google-Smtp-Source: AGHT+IEoCH4/7SidphYGS+MZaTfXIWw2+iqeHbHWYFRR44N5J03EruPqOb3s6H+Eiuaqun0K37I/aQ==
-X-Received: by 2002:a05:690c:640e:b0:732:92b7:8b88 with SMTP id 00721157ae682-73292b78edfmr55749467b3.38.1757948933883;
-        Mon, 15 Sep 2025 08:08:53 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:59::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-73453627ddcsm8002397b3.38.2025.09.15.08.08.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 08:08:53 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 0/6] mm/damon: misc fixups and improvements for 6.18
-Date: Mon, 15 Sep 2025 08:08:51 -0700
-Message-ID: <20250915150851.1508878-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250915015807.101505-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1757948943; c=relaxed/simple;
+	bh=2TS+njpHoWqfcXvZ/AG4mUlZy2MsCcBbzK85MJoZSWM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uexC6aVGHhPsOZ2AnPD3KM+wY6t2RdDbWyd5zs0sansc6OsH7ENDXTxNjaKONLiR0uY3y2Fa0+I26Qaq1JSJTPSahO+ImGVyMdI1lP9vlmhRuzinuMd22Ed7C8ryShSBtMBkeaKjaB2pqwE6/Q3MeuLNInLyYRViEFFQ34/tXdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQT0g0Yt0z6GD5y;
+	Mon, 15 Sep 2025 23:07:31 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8D7481400DC;
+	Mon, 15 Sep 2025 23:08:58 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
+ 2025 17:08:58 +0200
+Date: Mon, 15 Sep 2025 16:08:56 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
+CC: <nathan.lynch@amd.com>, Vinod Koul <vkoul@kernel.org>, Wei Huang
+	<wei.huang2@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
+Subject: Re: [PATCH RFC 12/13] dmaengine: sdxi: Add Kconfig and Makefile
+Message-ID: <20250915160856.000005bc@huawei.com>
+In-Reply-To: <20250905-sdxi-base-v1-12-d0341a1292ba@amd.com>
+References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
+	<20250905-sdxi-base-v1-12-d0341a1292ba@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Sun, 14 Sep 2025 18:58:01 -0700 SeongJae Park <sj@kernel.org> wrote:
+On Fri, 05 Sep 2025 13:48:35 -0500
+Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:
 
-> Misc fixes and improvements for DAMON that are not critical and
-> therefore aims to be merged into Linux 6.18-rc1.
+> From: Nathan Lynch <nathan.lynch@amd.com>
 > 
-> The first patch improves DAMON's age counting for nr_accesses zero
-> to/from non-zero changes.
+> Add SDXI Kconfig that includes debug and unit test options in addition
+> to the usual tristate. SDXI_DEBUG seems necessary because
+> DMADEVICES_DEBUG makes dmatest too verbose.
 > 
-> The second patch fixes an initial DAMOS apply interval delay issue that
-> is not realistic but still could happen on an odd setup.
+> One goal is to keep the bus-agnostic portions of the driver buildable
+> without PCI(_MSI), in case non-PCI SDXI implementations come along
+> later.
 > 
-> The third patch fixes wrongly written code that doesn't cause any real
-> problem but could make code review confusing.
-> 
-> The fourth and the fifth patches update DAMON community meetup
-> description and DAMON user-space tool example command for DAMOS usage,
-> respectively.
-> 
-> Finally, the sixth patch updates MAINTAINERS section name for DAMON to
-> just DAMON.
+> Co-developed-by: Wei Huang <wei.huang2@amd.com>
+> Signed-off-by: Wei Huang <wei.huang2@amd.com>
+> Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
+It's up to the dma maintainer, but personally and for subsystems I
+do maintain this approach of putting the build files in at the end
+is not something I'd accept.
 
-Hi SJ,
+The reason being that it leads to issues in earlier patches being
+hidden with stuff not well separated.  I'd much rather see the driver
+built up so that it builds at each step with each new patch
+adding additional functionality.  Also avoids things like comments
+on the build dependencies in patch descriptions earlier in the series.
+They become clear as the code is with the patch.  The one about MSIX
+for example doesn't seem to be related to what is here.
 
-I was unable to find this sixth patch on the mailing list. Maybe it got dropped
-somewhere? : -) 
+Anyhow, no idea if dma maintainers prefer that or this approach.
 
-> Changes from RFC
-> (https://lore.kernel.org/20250909034353.7064-1-sj@kernel.org)
-> - The RFC was only for the first patch
-> - Rebase and wordsmith the first patch
-> - Add a few misc fixes and improvements for 6.18 to the series
+> ---
+>  drivers/dma/Kconfig       |  2 ++
+>  drivers/dma/Makefile      |  1 +
+>  drivers/dma/sdxi/Kconfig  | 23 +++++++++++++++++++++++
+>  drivers/dma/sdxi/Makefile | 17 +++++++++++++++++
+>  4 files changed, 43 insertions(+)
 > 
-> SeongJae Park (6):
->   mm/damon/core: reset age if nr_accesses changes between non-zero and
->     zero
->   mm/damon/core: set effective quota on first charge window
->   mm/damon/lru_sort: use param_ctx correctly
->   Docs/mm/damon/maintainer-profile: update community meetup for
->     reservation requirements
->   Docs/admin-guide/mm/damon/start: add --target_pid to DAMOS example
->     command
->   MAINTAINERS: rename DAMON section
-> 
->  Documentation/admin-guide/mm/damon/start.rst  |  2 +-
->  Documentation/mm/damon/maintainer-profile.rst | 17 ++++++-----------
->  MAINTAINERS                                   |  2 +-
->  mm/damon/core.c                               |  7 ++++++-
->  mm/damon/lru_sort.c                           |  2 +-
->  5 files changed, 15 insertions(+), 15 deletions(-)
-> 
-> 
-> base-commit: d245e17d619ea0336d50b0a6c914f5701d1b0e53
-> -- 
-> 2.39.5
+> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+> index 05c7c7d9e5a4e52a8ad7ada8c8b9b1a6f9d875f6..cccf00b73e025944681b03cffe441c372526d3f3 100644
+> --- a/drivers/dma/Kconfig
+> +++ b/drivers/dma/Kconfig
+> @@ -774,6 +774,8 @@ source "drivers/dma/fsl-dpaa2-qdma/Kconfig"
+>  
+>  source "drivers/dma/lgm/Kconfig"
+>  
+> +source "drivers/dma/sdxi/Kconfig"
+> +
+>  source "drivers/dma/stm32/Kconfig"
+>  
+>  # clients
+> diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
+> index a54d7688392b1a0e956fa5d23633507f52f017d9..ae4154595e1a6250b441a90078e9df3607d3d1dd 100644
+> --- a/drivers/dma/Makefile
+> +++ b/drivers/dma/Makefile
+> @@ -85,6 +85,7 @@ obj-$(CONFIG_XGENE_DMA) += xgene-dma.o
+>  obj-$(CONFIG_ST_FDMA) += st_fdma.o
+>  obj-$(CONFIG_FSL_DPAA2_QDMA) += fsl-dpaa2-qdma/
+>  obj-$(CONFIG_INTEL_LDMA) += lgm/
+> +obj-$(CONFIG_SDXI) += sdxi/
+>  
+>  obj-y += amd/
+>  obj-y += mediatek/
+> diff --git a/drivers/dma/sdxi/Kconfig b/drivers/dma/sdxi/Kconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c9757cffb5f64fbc175ded8d0c9d751f0a22b6df
+> --- /dev/null
+> +++ b/drivers/dma/sdxi/Kconfig
+> @@ -0,0 +1,23 @@
+> +config SDXI
+> +	tristate "SDXI support"
+> +	select DMA_ENGINE
+> +	select DMA_VIRTUAL_CHANNELS
+> +	select PACKING
+> +	help
+> +	  Enable support for Smart Data Accelerator Interface (SDXI)
+> +	  Platform Data Mover devices. SDXI is a vendor-neutral
+> +	  standard for a memory-to-memory data mover and acceleration
+> +	  interface.
+> +
+> +config SDXI_DEBUG
+> +	bool "SDXI driver debug"
+> +	default DMADEVICES_DEBUG
+> +	depends on SDXI != n
+> +	help
+> +	  Enable debug output from the SDXI driver. This is an option
+> +	  for use by developers and most users should say N here.
+> +
+> +config SDXI_KUNIT_TEST
+> +       tristate "SDXI unit tests" if !KUNIT_ALL_TESTS
+> +       depends on SDXI && KUNIT
+> +       default KUNIT_ALL_TESTS
+> diff --git a/drivers/dma/sdxi/Makefile b/drivers/dma/sdxi/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c67e475689b45d6260fe970fb4afcc25f8f9ebc1
+> --- /dev/null
+> +++ b/drivers/dma/sdxi/Makefile
+> @@ -0,0 +1,17 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +ccflags-$(CONFIG_SDXI_DEBUG) += -DDEBUG
 
-Sent using hkml (https://github.com/sjp38/hackermail)
+What does this actually do?  More modern drivers rarely
+do this any more because we have nice facilities like dynamic debug.
+
+> +
+> +obj-$(CONFIG_SDXI) += sdxi.o
+> +
+> +sdxi-objs += \
+> +	context.o     \
+> +	descriptor.o  \
+> +	device.o      \
+> +	dma.o         \
+> +	enqueue.o     \
+> +	error.o
+> +
+> +sdxi-$(CONFIG_PCI_MSI) += pci.o
+> +
+> +obj-$(CONFIG_SDXI_KUNIT_TEST) += descriptor_kunit.o
+> 
+
 
