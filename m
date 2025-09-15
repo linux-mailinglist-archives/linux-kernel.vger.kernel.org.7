@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-817131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C046B57E4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:03:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CDBB57E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463F71611FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0CE4188D98A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588A221D3F2;
-	Mon, 15 Sep 2025 14:01:30 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82EA30F55C;
+	Mon, 15 Sep 2025 14:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqEXiorW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCF220B800
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434D20CCCA;
+	Mon, 15 Sep 2025 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944890; cv=none; b=dLAc4P8Rkq3xdtmrv40+QjGZTGf+J8PTL0ChLXLQNKCQxV/iWUfYQ0j0+3dMPX62fD3XsPVY3IZ0s64UgT0qOfTRLGtaKtfveB5q2GcnBYxtZYYRDHaY+1nzAGqN8hEPFFWSuif3AN8tQfpIIxCdHr9TMjkPg1K5pGNC2xbmRKM=
+	t=1757944916; cv=none; b=tTXC30niyup5vxndiR3D9gJYOGjE/m3j+f7bkla+Ae1XWLyN9CcPMytFhPCcXm5cfWrgWOWt4WWs7ToZ7VlkeHenFuuSHhd/cqZqAhNadvC4F78skynX5Vlb/eu7BFMdZZ3nF+rArxWqmXRHUfZaXaW0yjqj7WWcJ21nc45sxjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944890; c=relaxed/simple;
-	bh=1X0xIQxBX6yOVnBl/NmLb5h/aascqubss1dyNaB4NFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpe1+BhLk9qzo0pc7aLr4mWJH5jKN2GnGLVrjlGRv5YMKP31kmRjZ2tA/1FTP9HT40SUuYoWaErf3lHracttw+LelBEZK/0g7Ovpco3PTpVH/ndczGR9PKZ8lG2FMzOarHIGvKnUELk10GevyQdQLpTDM7TbKfjDIRbdOkhz3m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b04770a25f2so581856366b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:01:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757944886; x=1758549686;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CySEvBWybAaoq23IN9w8eMXO84IhqV9JSNjs9ydP8qI=;
-        b=bdlOJjjlIM45eLvSGCGFt/KGYjJ9CJ/QC+4d4LgeOK2UVkIpZMW3loo9WaR9CkzE/h
-         5YLR52yAPJ45GPNGDmAp8KAXjV+9RfazRgA2f/d3cVP1U6GvxSrPtLjuPivB/l5mfV8+
-         uWwlBePKYUCnc2jfKoQYjwJVLv6yf35SVcEDeBmlzB2xbPRuvGnRIPfBcw3Q7YBv2oBT
-         I0woWI3AaN8QvEUdpAxp+cyiC//B31wm4MNRobIofJ0VZb1JP6afCt6sLFJJeHmiT0k6
-         6zbkE24qn8Z3CQs52y9m3Q4r4/BkTetbWiafobr8LXNHd8O/eQD21Yo37N3iXi6qFvFV
-         +kjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzplSRnmgR5uvCrGVvxgku9ATCyO8Td5MCj3jXMFohKmy4mFlznSI/pSUlMneeO5QIQC4EVsqbUZdmQSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGKsppOQTjoWkWOIP1vDy9w+V1fHxB8QAIa6lKOnwkUNZajTL1
-	ftt0jndVFVWQaHS7ItxPt4C340JOvvGOifR2m0GaGXCoaU1/1q3RxMOf
-X-Gm-Gg: ASbGncthhXlSpy2qhgxHv3pubAqhnCatlRck5kqb6V8bftp9hUNUHeUiVaOt3tz5SFB
-	HzyTjvC79q2PFEEXhhdq5cTQacTztJYICKnu7t3pVaOrlPiXbB2EZET+ikjktL/CPs5/TXuAv16
-	wiXnlk3nSvaoRVTbMFqI4H6/0bTIkt5gtPk7uuvTUlnZeI8hZAZJr4bIRGNBb4FnTVausA6Si48
-	eTTJcyUUE0aUvrCHBS9Ft1hMwmAkoi+xKPXAUlNbflxUslxImmnxq3t5Ma/o0Tv50DScVN9xFeF
-	ldEXsfMP04TOCloCQfelSddnk4y/PExdvcC3Xw1RjYP11rzFN2FCPQ0u6c3Oohhi4mPbBvIlaQ4
-	sZJGOqBr9CPso
-X-Google-Smtp-Source: AGHT+IGJHk97TkO3n1rni6eMyFEqSOB7kk0D7c63q8YCb+UW0rY8Zuk/D87SI6+ftSGqq5ZrrekSyQ==
-X-Received: by 2002:a17:907:c09:b0:b04:35c3:40b3 with SMTP id a640c23a62f3a-b07c384b024mr1274897766b.15.1757944881256;
-        Mon, 15 Sep 2025 07:01:21 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:9::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b136ee12326sm90933666b.51.2025.09.15.07.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 07:01:20 -0700 (PDT)
-Date: Mon, 15 Sep 2025 07:01:17 -0700
-From: Breno Leitao <leitao@debian.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mike Galbraith <efault@gmx.de>, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v1 1/1] printk: nbcon: Allow unsafe write_atomic()
- for panic
-Message-ID: <74htjoj66srvussqvivbhlkdkj6lkm6ox4jdv2sedb4yzccdmr@sgzbd44mivfs>
-References: <20250912121852.2666874-1-john.ogness@linutronix.de>
- <20250912121852.2666874-2-john.ogness@linutronix.de>
+	s=arc-20240116; t=1757944916; c=relaxed/simple;
+	bh=KXhpX+I9cqFa8/Brd3t1pN6QW8/ieopeH5GV9QGl6+c=;
+	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
+	 In-Reply-To; b=ZSZ6Q5KLpBC4fTrmXLQf9OJ3PDvz+RzJXKG5t9Jia06zFPoNVKD662n5mJ9ooL+z2Qlyow2qkJYjslxhr4aLvleGkeUqL3QfiiFUS0R4aLwfa3V1MF4qLRyCkP/Xic0LdPp2M3Vygi81EMmbh0Zh1F+zX+j2gmrpOqlRhbN/XsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqEXiorW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F789C4CEF7;
+	Mon, 15 Sep 2025 14:01:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757944915;
+	bh=KXhpX+I9cqFa8/Brd3t1pN6QW8/ieopeH5GV9QGl6+c=;
+	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
+	b=YqEXiorWXIlgYi6mGicFLw+n3pYi5983wdej1RWRLNNoTKmoRo7BL/knJC7s2srsx
+	 ividi6kdGvcz7Jh/TqWOQ++BySawnRjLPViUhzhkwA2+fEFk47sLu9+d8MboSx4L6w
+	 BTk/ynlY1a1GLKBfCOLzTZPlQ2RMv9Z0JW/nzlMy+KR2KBOSsqANDu+3sZmGlETGdz
+	 pCV5+lhgf5neMGpPFre+on+VDdUQuUQ4ydsR28CC50O6UhQ1+P0/hHNtyW+paZLyq+
+	 Dn9XGF1mD2HRH/lVQmgig8WiGl2LjZUUC4o9Zr27ZWDOf8dr1/vGw1UbOcGsnDc1M0
+	 TFfBLUFg7ytjQ==
+Content-Type: multipart/signed;
+ boundary=7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 15 Sep 2025 16:01:50 +0200
+Message-Id: <DCTFGN6IH4MM.2UXRHE7M6O9TS@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Ioana Ciornei" <ioana.ciornei@nxp.com>
+Subject: Re: [PATCH v2 4/9] gpio: regmap: add the .fixed_direction_output
+ configuration parameter
+Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Linus Walleij"
+ <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn
+ Guo" <shawnguo@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Frank Li" <Frank.Li@nxp.com>
+X-Mailer: aerc 0.16.0
+References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
+ <20250915122354.217720-5-ioana.ciornei@nxp.com>
+ <DCTDUJO0PS8B.1LD03WTEMNRVP@kernel.org>
+ <4awrlgj33bg33gg4ianqk5ypchrygppkqyyojfliznitbtzu5h@xsgnk25syvqq>
+In-Reply-To: <4awrlgj33bg33gg4ianqk5ypchrygppkqyyojfliznitbtzu5h@xsgnk25syvqq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912121852.2666874-2-john.ogness@linutronix.de>
 
-Hello John,
+--7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-First of all, thanks for this patch.
+Hi Ioana,
 
-On Fri, Sep 12, 2025 at 02:24:52PM +0206, John Ogness wrote:
-> @@ -1606,6 +1610,13 @@ static void __nbcon_atomic_flush_pending(u64 stop_seq, bool allow_unsafe_takeove
->  		if (!console_is_usable(con, flags, true))
->  			continue;
->  
-> +		/*
-> +		 * It is only allowed to use unsafe ->write_atomic() from
-> +		 * nbcon_atomic_flush_unsafe().
-> +		 */
-> +		if ((flags & CON_NBCON_ATOMIC_UNSAFE) && !allow_unsafe_takeover)
-> +			continue;
+> So you are suggesting gpio-regmap to allocate the bitmap using
+> devm_bitmap_alloc() and base its size on config->ngpio, then copy into
+> it the bitmap passed by the caller, right?  Yes, that does seem more
+> error proof in terms of memory handling. Will change it in the next
+> version.
 
-What will happen with the "message" in this case? is it lost?	
+Yes exactly.
 
-Let me clarify I understand the patch. The .write_atomic callback are
-called in two cases:
+-michael
 
-	1) Inside IRQ/NMI and scheduling context
-	2) During panics.
+--7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In both cases, they go throught __nbcon_atomic_flush_pending_con(),
-right?
+-----BEGIN PGP SIGNATURE-----
 
-Let's say that netconsole implements CON_NBCON_ATOMIC_UNSAFE. What will
-happen with printks() inside IRQs (when the system is NOT panicking).
-Are they coming through __nbcon_atomic_flush_pending() and will be
-skipped?
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaMgcTxIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/i5SwGAmEBY61tAUoDus3BsCNkojKBx5G5zhyBA
+wWcea5fgeTWEeDKURrAxtI+kko4Vpkw7AX4vL1ZdiV0IbxzW7vL1yu62fJcxqs1R
+jmys1Q1+92kQ9kEedU4DsMD2klPQlJGPUE8=
+=UCzZ
+-----END PGP SIGNATURE-----
 
-Also, are these messages even deferred for later flush?
-
-Thanks,
---breno
+--7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68--
 
