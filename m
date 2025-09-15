@@ -1,104 +1,113 @@
-Return-Path: <linux-kernel+bounces-817232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F15B57F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:53:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9F1B57FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27E34C06DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:53:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0C618891AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1F2345724;
-	Mon, 15 Sep 2025 14:50:43 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB51834A30F;
+	Mon, 15 Sep 2025 14:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H4yyi3hZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305F3431E9;
-	Mon, 15 Sep 2025 14:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4D33EB06;
+	Mon, 15 Sep 2025 14:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947843; cv=none; b=frURZPqZUgbDv4WXwEkuHjyh7vAFR/wWwdG38UdTE3T9821eflmnTPKlKz60v8EhyoB9FFxUn13UXwhEHRaBSVCob1cwL54q5NnR1nbgmqhX/hRpIOi9rDIYZm4tOBDM2R2mWSE97DjESRYPBeo+5pBLP3uknzsSME9nu9QX4aI=
+	t=1757947872; cv=none; b=Bf07W6VmeboSC/rmXbm7qD3iDRv1t32RV2MDAz+c0gpZ+cf5pfxSQ+FOOyv095nf9No3RvGm4jpLivSka1PqrbykB06bXQXfPJ85R1lVKDXUdmmy+BPB/QNJK2SDLSuP3rS5WbwRn5BCYkXSOYzU0OmTibVL8r1Q+sIbmTMvo34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947843; c=relaxed/simple;
-	bh=X7joDIQOhd4EYaEdt0UM/m+z3DLeB8OZMqEr8/8P3nw=;
+	s=arc-20240116; t=1757947872; c=relaxed/simple;
+	bh=758/qyt7z8YWXOIxh7aGJyvNvH0k/7KRC3Hsiw66ubg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWVioLxi3xw8GPw0XeFOkf93+x3nEx8QrMpE/tFiUuu0AP8TeyJ/IWVYE3HYBlLK2hWdKVdqwU5avQpVodcvA0dUrRtBowf2mOEeIQyc3Noa9CfgO15NujQdB4wGrSUoeLQRQOQExbf0doPTlA0rST0NHXRkIVcDKN8LFxmmmNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 04E63499; Mon, 15 Sep 2025 09:50:32 -0500 (CDT)
-Date: Mon, 15 Sep 2025 09:50:32 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgoettsche@seltendoof.de>,
-	linux-kernel@vger.kernel.org,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH] pid: use ns_capable_noaudit() when determining net
- sysctl permissions
-Message-ID: <aMgnuMB4ycJX5VdL@mail.hallyn.com>
-References: <20250910192605.16431-1-cgoettsche@seltendoof.de>
- <23663be0b8dc2a435bcc46a3d52e9e19@paul-moore.com>
- <aMNVoSM7PauOrCPF@mail.hallyn.com>
- <aMR2EfsdxmIXIgTW@mail.hallyn.com>
- <20250915-geldquelle-magie-eb9075a9764e@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uwhjl2CPcqVo9H60qnc/c4QOpjVgs1aq+IRf6pcq+20HsTWE+Jj0LUwTf29YtWwYfxLQMuhyWiMW/2hAxhfCIN0CPFVW1Sy0iVN6PQKGAPSiXt8uT4HvDQnHVdiDn+b9LszC2V8VXh5NfNs6Ntz/++w993g9fe2odIadadV6DdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H4yyi3hZ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757947871; x=1789483871;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=758/qyt7z8YWXOIxh7aGJyvNvH0k/7KRC3Hsiw66ubg=;
+  b=H4yyi3hZnyr7+uymfNJsh+ZUvW/ESRb5FGOk7vOuwO8UZ6+kjEGHiOxC
+   W1w2d3LfE2+cgKpQhMmTL0DSqF2CmDqIvBuaMN9vVCQv1yYEud72GYeSf
+   zgOGV/zMKUJCB/72zLRSgJqOmJb/XgJHZDaK2E7wUWTIRU23iq3DQv5ao
+   I2B7Gyr7brQ/WrfU6ljO8tN1b1wJuwCz11Ou21lEld2w5Sw7m9VgkJFSc
+   9l8kGYNRhbjxIUHqeKVuD420jvqVdcQ72jiwzVPPgQsB7rWwFKI0zytmy
+   Sa+uxWZdX5MxLfD9HlZR55IOGy5zM+4eQlb8VDxBSctmHD5utz8kR8Vn4
+   w==;
+X-CSE-ConnectionGUID: RK8Q2bSZQnyRSVNcz/kYDA==
+X-CSE-MsgGUID: q935mA4xTPuWShj8cRThWA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="59247279"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="59247279"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:51:10 -0700
+X-CSE-ConnectionGUID: KR3YtAn8R/WMh/bTm5v1jw==
+X-CSE-MsgGUID: hlZp7rZTR8Gr20gFnhvUTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="178649539"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:51:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyAXl-00000003H8v-3fUX;
+	Mon, 15 Sep 2025 17:51:01 +0300
+Date: Mon, 15 Sep 2025 17:51:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Daniel Golle <daniel@makrotopia.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Changqi Hu <changqi.hu@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] tty: serial: 8250_mtk: enable baud clock
+Message-ID: <aMgn1XXtgR20CSuI@smile.fi.intel.com>
+References: <2de07b0a6d51d5d3bf3e55cd03cf75adfc91ee7d.1757941345.git.daniel@makrotopia.org>
+ <bf054186-17fb-4ea4-9d07-488b6792a437@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915-geldquelle-magie-eb9075a9764e@brauner>
+In-Reply-To: <bf054186-17fb-4ea4-9d07-488b6792a437@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Sep 15, 2025 at 04:13:16PM +0200, Christian Brauner wrote:
-> On Fri, Sep 12, 2025 at 02:35:45PM -0500, Serge Hallyn wrote:
-> > On Thu, Sep 11, 2025 at 06:05:05PM -0500, Serge E. Hallyn wrote:
-> > > On Thu, Sep 11, 2025 at 04:46:20PM -0400, Paul Moore wrote:
-> > > > On Sep 10, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
-> > > > > 
-> > > > > The capability check should not be audited since it is only being used
-> > > > > to determine the inode permissions. A failed check does not indicate a
-> > > > > violation of security policy but, when an LSM is enabled, a denial audit
-> > > > > message was being generated.
-> > > > > 
-> > > > > The denial audit message can either lead to the capability being
-> > > > > unnecessarily allowed in a security policy, or being silenced potentially
-> > > > > masking a legitimate capability check at a later point in time.
-> > > > > 
-> > > > > Similar to commit d6169b0206db ("net: Use ns_capable_noaudit() when
-> > > > > determining net sysctl permissions")
-> > > > > 
-> > > > > Fixes: 7863dcc72d0f ("pid: allow pid_max to be set per pid namespace")
-> > > > > CC: Christian Brauner <brauner@kernel.org>
-> > > > > CC: linux-security-module@vger.kernel.org
-> > > > > CC: selinux@vger.kernel.org
-> > > > > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> > > > > ---
-> > > > >  kernel/pid.c | 2 +-
-> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > > 
-> > > Thanks.
-> > > 
-> > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > 
-> > > I'll queue this up in the capability tree, unless Christian wanted
-> > > it in his.
-> > > 
-> > > -serge
-> > 
-> > I've included this in git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git#caps-next
+On Mon, Sep 15, 2025 at 03:41:25PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 15/09/25 15:06, Daniel Golle ha scritto:
+
+...
+
+> I've read both of the commits in this series and the code LGTM.
 > 
-> What's easier for you? Just want me to stuff this in the pidfs pile?
+> tty: serial: 8250_mtk: Enable baud clock and manage in runtime PM
 
-Oh, sure - I can drop it from my tree, since it's the only thing in there
-right now.
+"tty: " part is not needed.
+
+> Please, squash the two commits, after which...
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
