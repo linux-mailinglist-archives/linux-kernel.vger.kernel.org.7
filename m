@@ -1,266 +1,179 @@
-Return-Path: <linux-kernel+bounces-816890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2510BB57A16
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:12:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D97FB57A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF5C3A7297
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:12:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852D31A248A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEAD302CCD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6DC3064B4;
 	Mon, 15 Sep 2025 12:12:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bR13VG/y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cKqSdVk6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bR13VG/y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cKqSdVk6"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B472F0661;
-	Mon, 15 Sep 2025 12:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DC33054EC
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938319; cv=none; b=Q4CKX/03buU4EVD89ImOzdrr/cwJPynI4MaUc0couliNYYF85pG2cxc8MGPyd7n00U0KwNFEGfM1HiLaQ3Lo1ktyz4LSMkhSC9M9xFOfwOAEj61K89tr+/VrE3k1//KoQSgi6KPl6kI4awZH0rnkDUHFYsLlcpKmd3FPpPv1ZC4=
+	t=1757938319; cv=none; b=o4fBAkNEs2M7tFYxrVaz9gQVS/fGbPv4e0V3EB0Ow7A6e8xZ649v3lBja72X7CCTa0lIu0jdZZ2jW0tomGY4zbUy+FBo1aMdwdCTsyBgCuTAXSIH1JOAEzCnQUsqw6+Ia85YrvmS1YRVjBsib1Tkx9ZCbkkY6FCuXa3uP70zNJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757938319; c=relaxed/simple;
-	bh=v76aSgIomYEhuZfch6qrk9HyPL93jBWVa3EGkekZCwQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dQ1YDXoZdq//1P6g8bUFqJkXwmWQN7OVr8wtCdjSGLUARHEOu9y0nGCEductlwSwlu1BmDSjvVYWjInTz6N6iFKQzPvTYK5OR+Ibgg1x/ARe2DTR+EnmdhaDX7Lb9NkgHc5HuUHNmoR/S2t+IUsbrhXEOg0tYHMGZNwEwsMT64o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQP2q2H7Qz6M57M;
-	Mon, 15 Sep 2025 20:09:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D84A21402EA;
-	Mon, 15 Sep 2025 20:11:52 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
- 2025 14:11:52 +0200
-Date: Mon, 15 Sep 2025 13:11:51 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
-CC: <nathan.lynch@amd.com>, Vinod Koul <vkoul@kernel.org>, Wei Huang
-	<wei.huang2@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, "Bjorn
- Helgaas" <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
-Subject: Re: [PATCH RFC 06/13] dmaengine: sdxi: Add error reporting support
-Message-ID: <20250915131151.00005f26@huawei.com>
-In-Reply-To: <20250905-sdxi-base-v1-6-d0341a1292ba@amd.com>
-References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-	<20250905-sdxi-base-v1-6-d0341a1292ba@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	bh=xlRPAJhIpH4XL1xNECA1LZs2RkYtgCf8hJ82IBt380o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lov3a7O6aYlrn90X0XeSjkx6ctvnvRB5ZUSySydZwfixuNdjDZxJbnvbInQ2DlC6hAQJWk3EqqRZ6vUkfmfoywwBfKXeR5rFm58MBDxsmMP6KS+r9iTIgd15XTP6TtRHSp/QhYOvP9tEKSlBdTXi5IP6bubyD0DTC4CzS89FUD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bR13VG/y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cKqSdVk6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bR13VG/y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cKqSdVk6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1573A1F8C3;
+	Mon, 15 Sep 2025 12:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757938316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nzSUoqECYfRg+oyrfybo/qQ/BsSe+olVOPSSTCRTm6I=;
+	b=bR13VG/ypFDAljAvyBvCy2YVXy/I/PORbr5tUkjn5F9r1crhzdkbUxHwewqmu20Pxx1gq/
+	4gEvtZ9hwWLQVW318siwg1279Djdjbq6x0VyOI2LCkUb7JXi5CPYr8ZvATBs/ltW6mqyXS
+	0oKJ2lNK0onk90zYoY6TNHWssCy9VwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757938316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nzSUoqECYfRg+oyrfybo/qQ/BsSe+olVOPSSTCRTm6I=;
+	b=cKqSdVk60T9hGN8FTqcgtgMCBF1ftl1bM33V6q+QS90kH+GAxRuGGpcF0OPVG6u2dkAQaL
+	hvSQhZ6yuQzFxQAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757938316; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nzSUoqECYfRg+oyrfybo/qQ/BsSe+olVOPSSTCRTm6I=;
+	b=bR13VG/ypFDAljAvyBvCy2YVXy/I/PORbr5tUkjn5F9r1crhzdkbUxHwewqmu20Pxx1gq/
+	4gEvtZ9hwWLQVW318siwg1279Djdjbq6x0VyOI2LCkUb7JXi5CPYr8ZvATBs/ltW6mqyXS
+	0oKJ2lNK0onk90zYoY6TNHWssCy9VwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757938316;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nzSUoqECYfRg+oyrfybo/qQ/BsSe+olVOPSSTCRTm6I=;
+	b=cKqSdVk60T9hGN8FTqcgtgMCBF1ftl1bM33V6q+QS90kH+GAxRuGGpcF0OPVG6u2dkAQaL
+	hvSQhZ6yuQzFxQAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 08E921368D;
+	Mon, 15 Sep 2025 12:11:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jpwqAowCyGhoNAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 12:11:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BAC22A0A06; Mon, 15 Sep 2025 14:11:55 +0200 (CEST)
+Date: Mon, 15 Sep 2025 14:11:55 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 24/33] user: support ns lookup
+Message-ID: <bh6wllwygal6hfdjbv3amgok2yxzjgmemyvzriqf2wos6b3plp@tvhvgz47mll3>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-24-1a247645cef5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-work-namespace-v2-24-1a247645cef5@kernel.org>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.30
 
-On Fri, 05 Sep 2025 13:48:29 -0500
-Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:
-
-> From: Nathan Lynch <nathan.lynch@amd.com>
+On Fri 12-09-25 13:52:47, Christian Brauner wrote:
+> Support the generic ns lookup infrastructure to support file handles for
+> namespaces.
 > 
-> SDXI implementations provide software with detailed information about
-> error conditions using a per-device ring buffer in system memory. When
-> an error condition is signaled via interrupt, the driver retrieves any
-> pending error log entries and reports them to the kernel log.
-> 
-> Co-developed-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
-Hi,
-A few more comments inline. Kind of similar stuff around
-having both register definitions for unpacking and the structure
-definitions in patch 2.
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+...
+> @@ -200,6 +202,7 @@ static void free_user_ns(struct work_struct *work)
+>  	do {
+>  		struct ucounts *ucounts = ns->ucounts;
+>  		parent = ns->parent;
+> +		ns_tree_remove(ns);
+>  		if (ns->gid_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+>  			kfree(ns->gid_map.forward);
+>  			kfree(ns->gid_map.reverse);
+> @@ -218,7 +221,8 @@ static void free_user_ns(struct work_struct *work)
+>  		retire_userns_sysctls(ns);
+>  		key_free_user_ns(ns);
+>  		ns_free_inum(&ns->ns);
+> -		kmem_cache_free(user_ns_cachep, ns);
+> +		/* Concurrent nstree traversal depends on a grace period. */
+> +		kfree_rcu(ns, ns.ns_rcu);
 
-Thanks,
+So this is correct for now but it's a bit of a landmine. A lot of stuff
+that ns references is kfreed before the RCU expires. Thus if you lookup ns
+using id, then even if you're under RCU protection you have to be very
+careful about what you can and cannot dereference. IMHO this deserves a
+careful documentation at least or, preferably, split free_user_ns() into
+pre and post-RCU period parts...
 
-Jonathan
-> ---
->  drivers/dma/sdxi/error.c | 340 +++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/dma/sdxi/error.h |  16 +++
->  2 files changed, 356 insertions(+)
-> 
-> diff --git a/drivers/dma/sdxi/error.c b/drivers/dma/sdxi/error.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c5e33f5989250352f6b081a3049b3b1f972c85a6
-> --- /dev/null
-> +++ b/drivers/dma/sdxi/error.c
+								Honza
 
-> +/* The "unpacked" counterpart to ERRLOG_HD_ENT. */
-> +struct errlog_entry {
-> +	u64 dsc_index;
-> +	u16 cxt_num;
-> +	u16 err_class;
-> +	u16 type;
-> +	u8 step;
-> +	u8 buf;
-> +	u8 sub_step;
-> +	u8 re;
-> +	bool vl;
-> +	bool cv;
-> +	bool div;
-> +	bool bv;
-> +};
-> +
-> +#define ERRLOG_ENTRY_FIELD(hi_, lo_, name_)				\
-> +	PACKED_FIELD(hi_, lo_, struct errlog_entry, name_)
-> +#define ERRLOG_ENTRY_FLAG(nr_, name_) \
-> +	ERRLOG_ENTRY_FIELD(nr_, nr_, name_)
-> +
-> +/* Refer to "Error Log Header Entry (ERRLOG_HD_ENT)" */
-> +static const struct packed_field_u16 errlog_hd_ent_fields[] = {
-> +	ERRLOG_ENTRY_FLAG(0, vl),
-> +	ERRLOG_ENTRY_FIELD(13, 8, step),
-> +	ERRLOG_ENTRY_FIELD(26, 16, type),
-> +	ERRLOG_ENTRY_FLAG(32, cv),
-> +	ERRLOG_ENTRY_FLAG(33, div),
-> +	ERRLOG_ENTRY_FLAG(34, bv),
-> +	ERRLOG_ENTRY_FIELD(38, 36, buf),
-> +	ERRLOG_ENTRY_FIELD(43, 40, sub_step),
-> +	ERRLOG_ENTRY_FIELD(46, 44, re),
-> +	ERRLOG_ENTRY_FIELD(63, 48, cxt_num),
-> +	ERRLOG_ENTRY_FIELD(127, 64, dsc_index),
-> +	ERRLOG_ENTRY_FIELD(367, 352, err_class),
-
-The association between the fields here and struct sdxi_err_log_hd_ent
-to me should be via some defines in patch 2 for the various fields
-embedded in misc0 etc.
-
-> +};
-
-> +static void sdxi_print_err(struct sdxi_dev *sdxi, u64 err_rd)
-> +{
-> +	struct errlog_entry ent;
-> +	size_t index;
-> +
-> +	index = err_rd % ERROR_LOG_ENTRIES;
-> +
-> +	unpack_fields(&sdxi->err_log[index], sizeof(sdxi->err_log[0]),
-> +		      &ent, errlog_hd_ent_fields, SDXI_PACKING_QUIRKS);
-> +
-> +	if (!ent.vl) {
-> +		dev_err_ratelimited(sdxi_to_dev(sdxi),
-> +				    "Ignoring error log entry with vl=0\n");
-> +		return;
-> +	}
-> +
-> +	if (ent.type != OP_TYPE_ERRLOG) {
-> +		dev_err_ratelimited(sdxi_to_dev(sdxi),
-> +				    "Ignoring error log entry with type=%#x\n",
-> +				    ent.type);
-> +		return;
-> +	}
-> +
-> +	sdxi_err(sdxi, "error log entry[%zu], MMIO_ERR_RD=%#llx:\n",
-> +		 index, err_rd);
-> +	sdxi_err(sdxi, "  re: %#x (%s)\n", ent.re, reaction_str(ent.re));
-> +	sdxi_err(sdxi, "  step: %#x (%s)\n", ent.step, step_str(ent.step));
-> +	sdxi_err(sdxi, "  sub_step: %#x (%s)\n",
-> +		 ent.sub_step, sub_step_str(ent.sub_step));
-> +	sdxi_err(sdxi, "  cv: %u div: %u bv: %u\n", ent.cv, ent.div, ent.bv);
-> +	if (ent.bv)
-> +		sdxi_err(sdxi, "  buf: %u\n", ent.buf);
-> +	if (ent.cv)
-> +		sdxi_err(sdxi, "  cxt_num: %#x\n", ent.cxt_num);
-> +	if (ent.div)
-> +		sdxi_err(sdxi, "  dsc_index: %#llx\n", ent.dsc_index);
-> +	sdxi_err(sdxi, "  err_class: %#x\n", ent.err_class);
-Consider using tracepoints for error logging rather than large splats in the
-log. Maybe you add those in later patches!
-
-I'd then just fill the tracepoint in directly rather than have an unpacking
-step.
-
-> +}
-
-> +/* Refer to "Error Log Initialization" */
-> +int sdxi_error_init(struct sdxi_dev *sdxi)
-> +{
-> +	u64 reg;
-> +	int err;
-> +
-> +	/* 1. Clear MMIO_ERR_CFG. Error interrupts are inhibited until step 6. */
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_CFG, 0);
-> +
-> +	/* 2. Clear MMIO_ERR_STS. The flags in this register are RW1C. */
-> +	reg = FIELD_PREP(SDXI_MMIO_ERR_STS_STS_BIT, 1) |
-> +	      FIELD_PREP(SDXI_MMIO_ERR_STS_OVF_BIT, 1) |
-> +	      FIELD_PREP(SDXI_MMIO_ERR_STS_ERR_BIT, 1);
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_STS, reg);
-> +
-> +	/* 3. Allocate memory for the error log ring buffer, initialize to zero. */
-> +	sdxi->err_log = dma_alloc_coherent(sdxi_to_dev(sdxi), ERROR_LOG_SZ,
-> +					   &sdxi->err_log_dma, GFP_KERNEL);
-> +	if (!sdxi->err_log)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * 4. Set MMIO_ERR_CTL.intr_en to 1 if interrupts on
-> +	 * context-level errors are desired.
-> +	 */
-> +	reg = sdxi_read64(sdxi, SDXI_MMIO_ERR_CTL);
-> +	FIELD_MODIFY(SDXI_MMIO_ERR_CTL_EN, &reg, 1);
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_CTL, reg);
-> +
-> +	/*
-> +	 * The spec is not explicit about when to do this, but this
-> +	 * seems like the right time: enable interrupt on
-> +	 * function-level transition to error state.
-> +	 */
-> +	reg = sdxi_read64(sdxi, SDXI_MMIO_CTL0);
-> +	FIELD_MODIFY(SDXI_MMIO_CTL0_FN_ERR_INTR_EN, &reg, 1);
-> +	sdxi_write64(sdxi, SDXI_MMIO_CTL0, reg);
-> +
-> +	/* 5. Clear MMIO_ERR_WRT and MMIO_ERR_RD. */
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_WRT, 0);
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_RD, 0);
-> +
-> +	/*
-> +	 * Error interrupts can be generated once MMIO_ERR_CFG.en is
-> +	 * set in step 6, so set up the handler now.
-> +	 */
-> +	err = request_threaded_irq(sdxi->error_irq, NULL, sdxi_irq_thread,
-> +				   IRQF_TRIGGER_NONE, "SDXI error", sdxi);
-> +	if (err)
-> +		goto free_errlog;
-> +
-> +	/* 6. Program MMIO_ERR_CFG. */
-
-I'm guessing these are numbers steps in some bit of the spec?
-If not some of these comments like this one provide no value.  We can
-see what is being written from the code!  Perhaps add a very specific
-spec reference if you want to show why the numbering is here.
-
-
-> +	reg = FIELD_PREP(SDXI_MMIO_ERR_CFG_PTR, sdxi->err_log_dma >> 12) |
-> +	      FIELD_PREP(SDXI_MMIO_ERR_CFG_SZ, ERROR_LOG_ENTRIES >> 6) |
-> +	      FIELD_PREP(SDXI_MMIO_ERR_CFG_EN, 1);
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_CFG, reg);
-> +
-> +	return 0;
-> +
-> +free_errlog:
-> +	dma_free_coherent(sdxi_to_dev(sdxi), ERROR_LOG_SZ,
-> +			  sdxi->err_log, sdxi->err_log_dma);
-> +	return err;
-> +}
-> +
-> +void sdxi_error_exit(struct sdxi_dev *sdxi)
-> +{
-> +	sdxi_write64(sdxi, SDXI_MMIO_ERR_CFG, 0);
-> +	free_irq(sdxi->error_irq, sdxi);
-> +	dma_free_coherent(sdxi_to_dev(sdxi), ERROR_LOG_SZ,
-> +			  sdxi->err_log, sdxi->err_log_dma);
-> +}
-
-> 
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
