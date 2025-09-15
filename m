@@ -1,53 +1,59 @@
-Return-Path: <linux-kernel+bounces-817105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BC3B57E02
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83038B57E0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8F316483C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE4E1AA4CE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093841FDE09;
-	Mon, 15 Sep 2025 13:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MIlBTByE"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9823E15E5DC;
-	Mon, 15 Sep 2025 13:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DC0202F70;
+	Mon, 15 Sep 2025 13:53:04 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839801F418D;
+	Mon, 15 Sep 2025 13:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944344; cv=none; b=LefkEkZHXztCaR8F7NI9faEUEsX66DoFtTYgpAnnpLYZUBx5FgbX0DTpFlMZt6PStvdOv3Fh7am2fmem8PMvq7OEtRP/k7Bne2b1uHZOekCoW1VE2jOR966l+XeRWSMa7cszz0pffkM4yNFW8EVn03PKaUt7Sho/aVWVicRoJmE=
+	t=1757944383; cv=none; b=AYGsuh2q7VLbJavBv7Q7G4etTeVCraR4o5LOG6mcEGPji13j0zksp1HWK/JSoRCwFmZkkwvIMwBwMzY7bgk07Cdk+7YuG91rosqeftKwhoApxfIamh8YoqyJPyHzkMWWcusq2HLrAkriTsqQTzwNbRKieUxWHGchP5AiFoBGa/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944344; c=relaxed/simple;
-	bh=A9wGSKQWTgVbN5PUpTVVIy4I5HQdmYev8rnlZghLy5o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CIbh2N7IXDIBbDdFTJwLLpWQA8fn7WkZb1FuIo4VKz/NUZwnqqRNofAMooIxwtwOxbMEp3kuCSWEeliKjpLAOknCi1Une4i9Pe3Lr2g/3MGi6yRcTDhN1a7VuXqRCWQ2cthUWD35Xu4b6zFa0LRnwY3tVcM759IcMDeYXD40S7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MIlBTByE; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=ZS
-	1DV7iVPnHgFJniBg8Hr6Bv03+t0XpK4+IrR9aoPl8=; b=MIlBTByEzo3mFlLI9R
-	kdOKHE8aRwZ24MN0DQeWCL0HvPi2x61oJKW7sf/hMxiCRb13w85KRmfGKXNuk0Tj
-	sumGuyutmsiRmGrmUxIAWpKGsMzP7VJwWHw6PCBngnWBx/+ok6qqLADJsOUnLGog
-	QMHcaHFXgmsdu20KvKwgU57/Y=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3N_cDGshoSmy2BQ--.63017S4;
-	Mon, 15 Sep 2025 21:52:03 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: davem@davemloft.net,
-	andreas@gaisler.com,
-	haoxiang_li2024@163.com
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] sparc: Fix a reference leak in central_build_irq()
-Date: Mon, 15 Sep 2025 21:52:01 +0800
-Message-Id: <20250915135201.187119-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757944383; c=relaxed/simple;
+	bh=R2Lk1cyFg0GsUHawE+a2oIwMUZYd71/kIsct6YqEqRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JDI2OfwhKr1E0szvz6TohsNYNeGLJ/UejB9fngRL86CXlpar+KPN/U7QaJaFyTH7ZeONMU3UpK2O6Y+ktSYJynnW69TjVI+1CqtyZicc89tn0lAwfnghaWQ1jwSEdIRYP5BT8bgmYxEP4vGs4qnozwWetZxNEx/Rz+PVPFDD7Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app2 (Coremail) with SMTP id TQJkCgAXqZIuGshomW_RAA--.39132S2;
+	Mon, 15 Sep 2025 21:52:49 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	linux-phy@lists.infradead.org
+Cc: ningyu@eswincomputing.com,
+	zhengyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	fenglin@eswincomputing.com,
+	lianghujun@eswincomputing.com,
+	Yulin Lu <luyulin@eswincomputing.com>
+Subject: [PATCH v4 1/3] dt-bindings: ata: eswin: Document for EIC7700 SoC ahci
+Date: Mon, 15 Sep 2025 21:52:32 +0800
+Message-Id: <20250915135232.1852-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
+In-Reply-To: <20250915135138.877-1-luyulin@eswincomputing.com>
+References: <20250915135138.877-1-luyulin@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,43 +61,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3N_cDGshoSmy2BQ--.63017S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZw4fWryktF13KryfAry7Jrb_yoWDCrX_uF
-	1fA3Z3Wr4rGw4IvFy7C3y3ZF13A3ZFqFW5W34vqrZ5CFy5Xr4UXrs3XFZ5Jrs8urW3urn8
-	u3ZrWws5Kr129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRAAwIUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEAbJbmjIEI1b9wABsh
+X-CM-TRANSID:TQJkCgAXqZIuGshomW_RAA--.39132S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw4fGF4xAFyDWr4xGrW3Jrb_yoW5Aw1rpF
+	s7GrZrJFs2qryxXayxJF10kF1S9ws3CFyYkr1xt3W7JrZ8Wa4vqrsIy3W5Ga47Jr1xX34a
+	gFy3K3yjya12vrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Wrv_ZF1lc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRxwIDUUUUU=
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-Call put_device() once central_op is no longer needed, preventing
-a reference leak.
+Document the SATA AHCI controller on the EIC7700 SoC platform,
+including descriptions of its hardware configurations.
 
-Fixes: 5fce09c6f636 ("sparc: Move irq_trans_init() and support code into seperate file.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+Retains the "ports-implemented" property in the DTS, because
+removing it and relying only on the firmware register causes
+problems. If the property is not present and we remove the
+module using `rmmod`, a reset is triggered that clears the
+register. As a result, inserting module again using `insmod`
+will lead to errors.
+
+The detailed reasons are that the ports-implemented register is
+configured by the firmware (U-Boot on the HiFive Premier P550 board)
+before kernel entry and correctly set to 0x1. During probe,
+ahci_platform_enable_resources() -> ahci_platform_deassert_rsts() is
+called, and when the driver is removed,
+ahci_platform_disable_resources() -> ahci_platform_assert_rsts() is
+called. This reset clears the register, which is defined by the IP
+databook to reset to 0.
+
+Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
 ---
- arch/sparc/kernel/prom_irqtrans.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/ata/eswin,eic7700-ahci.yaml      | 79 +++++++++++++++++++
+ 1 file changed, 79 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
 
-diff --git a/arch/sparc/kernel/prom_irqtrans.c b/arch/sparc/kernel/prom_irqtrans.c
-index 5752bfd73ac0..4cfc27131caa 100644
---- a/arch/sparc/kernel/prom_irqtrans.c
-+++ b/arch/sparc/kernel/prom_irqtrans.c
-@@ -733,6 +733,7 @@ static unsigned int central_build_irq(struct device_node *dp,
- 	} else if (of_node_name_eq(dp, "clock-board")) {
- 		res = &central_op->resource[3];
- 	} else {
-+		put_device(&central_op->dev);
- 		return ino;
- 	}
- 
-@@ -747,6 +748,7 @@ static unsigned int central_build_irq(struct device_node *dp,
- 	tmp &= ~0x80000000;
- 	upa_writel(tmp, imap);
- 
-+	put_device(&central_op->dev);
- 	return build_irq(0, iclr, imap);
- }
- 
+diff --git a/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
+new file mode 100644
+index 000000000000..40c44f0705ba
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
+@@ -0,0 +1,79 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/ata/eswin,eic7700-ahci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Eswin EIC7700 SoC SATA Controller
++
++maintainers:
++  - Yulin Lu <luyulin@eswincomputing.com>
++  - Huan He <hehuan1@eswincomputing.com>
++
++description:
++  AHCI SATA controller embedded into the EIC7700 SoC
++  is based on the DWC AHCI SATA v5.00a IP core.
++
++select:
++  properties:
++    compatible:
++      const: eswin,eic7700-ahci
++  required:
++    - compatible
++
++allOf:
++  - $ref: snps,dwc-ahci-common.yaml#
++
++properties:
++  compatible:
++    items:
++      - const: eswin,eic7700-ahci
++      - const: snps,dwc-ahci
++
++  clocks:
++    minItems: 2
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: aclk
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: arst
++
++  ports-implemented:
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - phys
++  - phy-names
++  - ports-implemented
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    sata@50420000 {
++        compatible = "eswin,eic7700-ahci", "snps,dwc-ahci";
++        reg = <0x50420000 0x10000>;
++        interrupt-parent = <&plic>;
++        interrupts = <58>;
++        clocks = <&clock 171>, <&clock 186>;
++        clock-names = "pclk", "aclk";
++        phys = <&sata_phy>;
++        phy-names = "sata-phy";
++        ports-implemented = <0x1>;
++        resets = <&reset 96>;
++        reset-names = "arst";
++    };
 -- 
 2.25.1
 
