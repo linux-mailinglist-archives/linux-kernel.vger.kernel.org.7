@@ -1,146 +1,203 @@
-Return-Path: <linux-kernel+bounces-816856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1A4B57970
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D55B57980
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6666B205BEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:54:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C3E201889
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7A130147D;
-	Mon, 15 Sep 2025 11:54:44 +0000 (UTC)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FDD3043C3;
+	Mon, 15 Sep 2025 11:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="Am0bohJy"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2095.outbound.protection.outlook.com [40.107.241.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A0630101A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937284; cv=none; b=KoQie8MSp9jqNi5iy5mtdLsl4PkzA20pdnfEMUzSC7dLcqRrHyVaS/l7oAo5TJxjN/uStTkhpgznK/l30/z2pCP3Df0XdLy2g40I+Zamcon4TAz4a7qOjR4OIxMeVRq/3kyM4MZXu0PYTaKIjj9sKeQk0OaBDPyIHGpF2ePEMls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937284; c=relaxed/simple;
-	bh=X1mJ891dQWSYdtfoPDMNxd56dDiE4l7XqS7hxKPA0zg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dkCea+g2LL2Rmd0ABx11fD1CusEbPUBnP3xzBOd07xg5gghoqAV0+NmGgkEl/5tgzS7PJC+CLr1rMujlwbprPFvWydLusF4md9X2BR9gzS6+D7nNRYW8wbODOmbwk1ANcg8yux+ZguHQTrchgKb2aD9swMWG2wgGhWz9KR5B1hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8dbe7c166a1so495499241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:54:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757937281; x=1758542081;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8j9g6khBudlWCULOd6eX9KmZnbNuYyJvR9k6Ybie28I=;
-        b=Q5Yrqr5J+xOAHZdfI4DqoN+ZjNpUzL+boerbfQ96T5jOK/S/LxaOzJ+LehGIDJFp47
-         m+4YIfdGX2mzrhEGt4cfdDP9CqNhGV80GmFJ3cAv+3ha4nPhDSe9GzQFdcpaBhArY+Ab
-         mrFQKxt/h2ojrrKydbu38XHJaQJa50ACJyG/pgRGnBeeAPxsCoDPYBcOJ5Zby5NGWSAc
-         IPO0+ZWfZYRLq/qQzsIJ6Il4l3H2NLjA1PdJXBzRwgg6V6fQR93bYIARRECzCQsuuaId
-         Z2OcSt4LTWudCoImjck8zoD80snWyYzvIQu+i1KSzLGFWhJ53bh9CecjzhB2m2WMjlqo
-         2crg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFHSJZA/NZ9JWMb7ztt+RjL2C9M4Q7rHfdYUAMWtt4y6ARI3N2hUywkMfKKapXW8z8Juj2SU5LOlfo/u8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuExhNFV4Ezyz1SD3IADqpJQdTuCe/USAZ2LEktcqWvEpsP2sA
-	iIc922cJ1voceFH7BagBI2kyuMdcL+kncSGkr/RMGxQPgmV4KVi95H8rHLN1mMuw
-X-Gm-Gg: ASbGncvtPfJ4P2NOS9t2i2vRYdJ8SgiL9Mn+p3L/KMrTkxhtAOhgHqfA4qhJ3xMn2nu
-	6v4MYgVK/yzI5pNRCxOmupCdbVTlyQft3Xr5VxNIA3BZBv1mJD8DP0doizv7tvkd+3DTKiyMUbI
-	1vtA4r5XZk/fwnB2BgLhzsldSVHeBsB1klYqbiKTTwg47K3utpIp5zMBYPvohynleL4okuG3C76
-	kRYNRA9sv1IVBjPvMQaMGi/wbFl/QYzS5RddXMAoGI0GTs+zFm8pbOuyIYSRVBhqolJaLiBS3S7
-	5Ug1o0+cwqC5rPqCNdABexh1gjoPWH/yRrn8AV7YmmHagQjpVTK/mxdKdHnXKN/tZn2HTuAdCtg
-	sb60l6hWt537RR38Q8Lr8p+FzSyg3KpHHYUGyRonocuvhGFKW+ZueTzq9htlE
-X-Google-Smtp-Source: AGHT+IHWYg5uucDnIR1SvAk/AYSR7t2r8rsy5wT3jsvAWNC1ZaWfIc6wP+xrGongwAUbNzWD4P2QLw==
-X-Received: by 2002:a05:6102:549e:b0:4e9:8f71:bd6e with SMTP id ada2fe7eead31-55600b2aa3emr4181675137.0.1757937280383;
-        Mon, 15 Sep 2025 04:54:40 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5598571bbc0sm1808173137.2.2025.09.15.04.54.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 04:54:40 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-52a73cc9f97so1321449137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:54:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVkdSAcADjuvtruTDm45CJENUvnsFoCk7tBnHcw5eaEr4SeEHFcoghSAxZskG1HS36Znbi3lY4E0z4U9Dg=@vger.kernel.org
-X-Received: by 2002:a05:6102:8098:b0:527:4113:6ad6 with SMTP id
- ada2fe7eead31-5560a10e919mr3310852137.9.1757937280011; Mon, 15 Sep 2025
- 04:54:40 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A01E3019C2;
+	Mon, 15 Sep 2025 11:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757937360; cv=fail; b=XdOcPq0oJYwkcWljNTsbpVTnDYG+wAJbH52ce88hIrXkGa8WJG1CVrs+d/FQuoHs8PUka0Mg/D68ZtLial5LXCAZWT8SyL38dYrCaA6zerHzmp8r4bt9eA9RTMM2dtTIOdnoGwccWo9TXWfr6ySbH2VX+CB0uXq6ZQBB7ifvSXA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757937360; c=relaxed/simple;
+	bh=u//49ZEM/u/OHghALogYspT46i8SVzkclEtt4HVTIqE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=F2qrqLrulYbzkyZOrpBEpSViEwMekQkFDiLhiGd4+uakYgbGsspx7bE7COTee4SpO2Z9B2sv5f7YYYvdB2wKpr49YToIs32Oaocsj960AIceHzzOHRhFdsIHWVeJA38HRs3da/WVLr6ww7z00kw9TKL4z4gU0E6YXjWPEPXNlQk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=Am0bohJy; arc=fail smtp.client-ip=40.107.241.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lLwqauutiukfttkjnW8wPfEKbEdmzJ2yQdXoZ1Rz8dj5jiYIukhILaOdTsi/+8i4zOVyR9Oj71LncoylFGv80uROXZ1G9zLBM39lc3Ctdn0uXVByaZwYasBzN788hZYIgOUL1Cp1obOmL2XxSCtvVGabkUnrIRLavDIgNxS+h8EQhHIEKd0oKnR6GhZnpryAHtlCuquZ2OQvBlYlASS56HsByuTEECMgzXgOULr6+CJfQ8Laz1nBC/Sh8LKwj0skvI60TgOIdhXmMBvnVDICGiDAd1+PEXFZum6tyP1i3iIqkSQU2PwyBqsouDe6MhHm4j2h0DA0O3CFvqR1XOC0jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6vEb2J4Fd1i0b2p6SRScIxuceljrCXOC2QIb0vVDE+o=;
+ b=YzfPenCpmJZmlWLY2wpWNdZckY+lZHbX92sG3z7+83YMs+Jt0bC4DBEFhQxxtu9MvcJDqfUNs1oJDQUuoKonyoUObi9waOL/WHe2Qam6bp/ixafS2ec/OHpaMv8nvzqidX+pIXdXuugADJNcoNvWmZGFoG5VWKxmz3za0vAHcVdN2VK7zXUskT23309UJTkCjIWdAVFPedB62Sj6ztmHCrYwUx7ra06DhUwe1eXL/NRkE6mUU1tcxp0XS7aPUuupw2cfXFB38icULTnHVt2n2RakuhbjSyGn+J+3OFad5K2CHB8Mp+vt3YnrGYMT5UbzcqSuzMVNUmw1JmaFmQxAAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 91.26.50.189) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=phytec.de;
+ dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=phytec.de; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6vEb2J4Fd1i0b2p6SRScIxuceljrCXOC2QIb0vVDE+o=;
+ b=Am0bohJyGKJG9H2HWHgQzKDMgIhZ93uevBqtM0+wxT3sU8zWJ8OZ6wH6LGa3yTrrBe8l6aU5/PCB4frEVmo+IKv6PllFyLcms3dTfx54oJBozzT6MJmv6+fdeYjOmaK2SdGlv/vuNcaVHy08aXdb9au4ZfjFcD9PzNoPkaqsxSY1ouxD6rABNVparL2I8NoZdT5kIGnVPcY51OuEPE2rY9dIVwlG+3zbdQ6TZL8GQAvFt/sYkPoEh1pUJPNTEp1tWIT2m/B0BzNO+TpXnTtgarNd0DDf1B0A/DEWfOchg2XeICFLQcDWMwcZRwzFc9C/ogo2AH3GJkYsYbqgsAhNSQ==
+Received: from AM0PR10CA0062.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:15::15)
+ by AS8P195MB1821.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:52d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 11:55:52 +0000
+Received: from AM4PEPF00025F9B.EURPRD83.prod.outlook.com
+ (2603:10a6:208:15:cafe::4e) by AM0PR10CA0062.outlook.office365.com
+ (2603:10a6:208:15::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.21 via Frontend Transport; Mon,
+ 15 Sep 2025 11:55:51 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ phytec.de discourages use of 91.26.50.189 as permitted sender)
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ AM4PEPF00025F9B.mail.protection.outlook.com (10.167.16.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9160.0 via Frontend Transport; Mon, 15 Sep 2025 11:55:52 +0000
+Received: from Postix.phytec.de (172.25.0.11) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.58; Mon, 15 Sep
+ 2025 13:55:52 +0200
+Received: from llp-moog.phytec.de (172.25.32.51) by Postix.phytec.de
+ (172.25.0.11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 15 Sep
+ 2025 13:55:51 +0200
+From: Yannic Moog <y.moog@phytec.de>
+Subject: [PATCH 0/3] Add display overlays for imx8mp-phyboard-pollux
+Date: Mon, 15 Sep 2025 13:54:34 +0200
+Message-ID: <20250915-imx8mp-pollux-display-overlays-v1-0-59508d578f0f@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728071452.35171-1-jogidishank503@gmail.com>
-In-Reply-To: <20250728071452.35171-1-jogidishank503@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 15 Sep 2025 13:54:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXpn8VhFL3RF_NEEdK3-VuHuHHZ6PFBcJi+kYCgbnwL8Q@mail.gmail.com>
-X-Gm-Features: AS18NWBDv-eagQpa9zzAr9IRsIYBMwlArzoXlxqRod7XiXKpYRxYZJ8lRHiHNyU
-Message-ID: <CAMuHMdXpn8VhFL3RF_NEEdK3-VuHuHHZ6PFBcJi+kYCgbnwL8Q@mail.gmail.com>
-Subject: Re: [PATCH] zorro: remove extra whitespace in macro definitions
-To: Dishank Jogi <jogidishank503@gmail.com>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-	darshanrathod475@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHr+x2gC/x2NQQqDMBAAvyJ77kIUDUm/Ij1E3bYL0YQsSkrI3
+ xs8DXOZKSCUmASeXYFEFwuHo0n/6GD9uuNDyFtzGNQwKasM8p7NHjEG78+MG0v07ofhotQouIx
+ uMaPVetUaWiQmenO+B/Or1j+BAiIvcAAAAA==
+X-Change-ID: 20250908-imx8mp-pollux-display-overlays-b4ab84966c66
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<upstream@lists.phytec.de>, Yannic Moog <y.moog@phytec.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757937351; l=1740;
+ i=y.moog@phytec.de; s=20250509; h=from:subject:message-id;
+ bh=u//49ZEM/u/OHghALogYspT46i8SVzkclEtt4HVTIqE=;
+ b=7T3Vsx1PAjMm8ZtxbIqBN5iDIbT4+5SVDrmeAoh5evQEhbzfUWzbxBofpZKa+AwCTCEk3jEtt
+ UDftdWqPkZiCfzB9Ubb6L0MzIoZA/MU1gCX1dfyOLc4DoyUX7xhLX0z
+X-Developer-Key: i=y.moog@phytec.de; a=ed25519;
+ pk=rpKoEJ4E7nD9qsrU/rfKVwMTWNWYaTBylZuJUXUiFr8=
+X-ClientProxiedBy: Diagnostix.phytec.de (172.25.0.14) To Postix.phytec.de
+ (172.25.0.11)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM4PEPF00025F9B:EE_|AS8P195MB1821:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ba1a7e3-bb9a-41aa-c1be-08ddf44ed222
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aW4vd2V3RmhlM2Z5TG8waVFzdGtaanFnaEVMTVRmNGpOMjhnWld5RVRrNTdY?=
+ =?utf-8?B?ZlNoQUpsNUFjd2JDMURxbGMzbld3K1dkTEduRUw3cExPN3RhcUtISjVYU1RC?=
+ =?utf-8?B?UklGRjhpWUczQmR2cWU0bWlWd3RpNTg0SGFicjN2T2dDVVN0citEeVN4aVVU?=
+ =?utf-8?B?SjlKVHVRVE56S3pDenlYVVhDU0RwaDh1a3F3OE56bUNsaG9yU2VTd3hvamd0?=
+ =?utf-8?B?cFpid3lPWi93V3hjVmVkUEdLdHhCZFk0RFY0WmJmUTRoV0ZxaXlnbnltcWhQ?=
+ =?utf-8?B?SWFNdm84ZUlEc3FjSGpJVXhzdmIzQWZabTFHWnpxQXpTV2hFdzVtZWZiMmNI?=
+ =?utf-8?B?cElFTHAwM3QwajM1eUs2RWNGcGZFUDZ1eUkxMExlSW5QMUpOak4zcG1nRVFF?=
+ =?utf-8?B?Kzh2WGxjL3EvcWw2Z1RoZlJOeW5oNzhvYnNVZFBpaFYvQmJOdkdjRmtDd2ZZ?=
+ =?utf-8?B?L3h5UFE4azNLY1h2WWY0ZnlXZU16SC85ZWNWL3FGcWt2WVc3U3F1SmZyK1VD?=
+ =?utf-8?B?VHBIcmE1TTNMZUFtYlVqUjgwRWR6alVLMUNDWEVmcllQWXZEckdhSUVSb3hr?=
+ =?utf-8?B?bENGSzhsVFlwWTZFcUFBT0txbWYwbWlOMWVnbFplaW5nUzI3WVIvOE1QK2tY?=
+ =?utf-8?B?MTJBWDBlSk1oYkhya3NGQjRoUU5rQ1BFQzhKRlpFWE1nN2h5TEk3S29wVTgx?=
+ =?utf-8?B?alhFMXVzNm5ZWkRXMG92K0VocTR1TVBQbW1XRmNvSkFwcHlzVHlyUllxUkVS?=
+ =?utf-8?B?bEx1S0lxbHQvZDlhK3prSDVvaStUcHRVMSszZHhhbnhGVm02T1RKQUdLUjdv?=
+ =?utf-8?B?VDVGdnJ1WXlRaWRVM2tIR0pYZlRlUFZpanV0OUlzOWhldUhzTEtRSmxEVzhS?=
+ =?utf-8?B?UzdXRmYyODNmeFkyZGVWZnFXT2V5T2huRnZQY0JBeTFUUm5ZbkVtd21ZaFpC?=
+ =?utf-8?B?MGhRb0EzV2w1MUdWZ2wvcUZGaWtlcjNGWFp2dmJHeTFLd3dzMzFwQ1E2UGti?=
+ =?utf-8?B?RzB2eWhzOWRFN2s3ME5oNytoTWJGRnJ0UzV6QVRNVE95cWV5Sm5HR3djM2tF?=
+ =?utf-8?B?WUtXa29paklhWnZLZzVkeXZnUFYxdTRncW5FZCt2NzBPRVJOSFJ2Wlc4emlK?=
+ =?utf-8?B?SVBqcUo0cmxxWXBNMFZKUHZDK2ZxbFVhN1VsNHdrUDJpc1g0ODM0TFlSQmtK?=
+ =?utf-8?B?QUhiMjduZGRJSEdLZmp4UFpPamIxaUtnZEZpV2NtVGR6VzlsN2pGRERISnc5?=
+ =?utf-8?B?V2JiTmx0QzhhSTlWTXNSTTJjTW1LWWVHZlF6K2dUZllnWGtvS1lCeFk1dVpT?=
+ =?utf-8?B?Q0NTSEJ5OFhDeG40WkwyTVFpV2J5YXI1d0EzUkd0ZWM5OGVtYmszUnhueDVl?=
+ =?utf-8?B?b2VzVjlpVzhVVDEyYWpkcFlua1FSbFhSeFNoSTloMUxrdFpHci9xOXpCbG9S?=
+ =?utf-8?B?WGx4RFVSSEJVVzF6NzVIQk1kREFVTWxHU2RvT1EwOEhRc2JnTUhoTE5tNTNE?=
+ =?utf-8?B?NERBTjVsbDQ5eldWVnVvTGJKZG41Tmh1K0dpek9iNzd4YVNxMGtmaUlzQlRK?=
+ =?utf-8?B?OEZRRDRWT09qR1pBTTJ6RHBaQlA1L1BkUzhEdFdCWVFIT1ZWTE1xWThEQzlh?=
+ =?utf-8?B?WWlveDdlRlVnMmVCSGplclhlTGd1cGM2SlZ3b1BVRTFTczh4KzlmTlBlWDAv?=
+ =?utf-8?B?QlEwOXNaVTlhdlZGTGczWmlVVE5RamE0TWFNa1Fpam9qOGdVN21KM3NxN29T?=
+ =?utf-8?B?OXE5azZmWnlObm5Yc09Ob2I0V2huZVhpUGorN1hiVE4xRW9yNXd3S0llUmhw?=
+ =?utf-8?B?bXkxV1NQQzloMVl4QlhSVkd0VXZNN1BpdVRKUTh4NXFTbWgyekFtS251eXFT?=
+ =?utf-8?B?Ty9pTjNoQWpWL080UEFPU1ZZN04ybE9qbVNCWkd0a3pZdTRoMmk0RitybjNK?=
+ =?utf-8?B?dE9rYlBpcEhZV2VpemlOWVFXMEt0UVdaRHJYYnhCWTFpQ2N1WVNIWGw2VEM0?=
+ =?utf-8?B?Y20vRFNKOFNYOFVDNWlDc0Nxb2JhdmhRaFhpYXR2dHZ0M0lwSW1VRWFYd3VF?=
+ =?utf-8?Q?19F3g8?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 11:55:52.5584
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ba1a7e3-bb9a-41aa-c1be-08ddf44ed222
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00025F9B.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P195MB1821
 
-Hi Dishank,
+The phyBOARD-Pollux has an LVDS + backlight connector where one LVDS
+channel is routed through.
+Also, an expansion board (PEB-AV-10) may be connected to the baseboard
+where the other LVDS channel (of the imx8mp SoC LVDS display bridge) is
+routed to and there, too, an LVDS display may be connected.
+However, both LVDS channels must not be used simultaneously as this is
+not supported.
+Currently, 2 displays are supported. Both are 10" touch displays, where the
+edt is deprecated and kept for backward compatibility reasons. The powertip
+panel is the successor to the edt panel and the current panel of choice.
+The expansion board (PEB-AV-10) also has a 3.5 mm audio jack and thus
+the expansion board may also be used for audio purposes without
+displays.
 
-On Mon, 28 Jul 2025 at 09:15, Dishank Jogi <jogidishank503@gmail.com> wrote:
-> Cleaned up the formatting of MANUF and PRODUCT macro
-> definitions in 'drivers/zorro/names.c' by removing extra
-> spaces between macro names and their parameters.
->
-> No functional changes.
->
-> Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
+---
+Yannic Moog (3):
+      arm64: dts: imx8mp pollux: add display overlays
+      arm64: dts: imx8mp pollux: add expansion board overlay
+      arm64: dts: imx8mp pollux: add displays for expansion board
 
-Thanks for your patch!
+ arch/arm64/boot/dts/freescale/Makefile             |  15 ++
+ .../imx8mp-phyboard-pollux-etml1010g3dra.dtso      |  44 +++++
+ ...mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtso |  45 +++++
+ ...8mp-phyboard-pollux-peb-av-10-ph128800t006.dtso |  45 +++++
+ .../imx8mp-phyboard-pollux-peb-av-10.dtsi          | 198 +++++++++++++++++++++
+ .../imx8mp-phyboard-pollux-peb-av-10.dtso          |   9 +
+ .../imx8mp-phyboard-pollux-ph128800t006.dtso       |  45 +++++
+ .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   |  49 ++---
+ 8 files changed, 411 insertions(+), 39 deletions(-)
+---
+base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
+change-id: 20250908-imx8mp-pollux-display-overlays-b4ab84966c66
 
-> --- a/drivers/zorro/names.c
-> +++ b/drivers/zorro/names.c
-> @@ -36,21 +36,21 @@ struct zorro_manuf_info {
->   * real memory.. Parse the same file multiple times
->   * to get all the info.
->   */
-> -#define MANUF( manuf, name )           static char __manufstr_##manuf[] __initdata = name;
-> +#define MANUF(manuf, name)             static char __manufstr_##manuf[] __initdata = name;
->  #define ENDMANUF()
-> -#define PRODUCT( manuf, prod, name )   static char __prodstr_##manuf##prod[] __initdata = name;
-> +#define PRODUCT(manuf, prod, name)     static char __prodstr_##manuf##prod[] __initdata = name;
-
-You missed removing a bogus space.  I will fix that up while applying.
-
->  #include "devlist.h"
->
->
-> -#define MANUF( manuf, name )           static struct zorro_prod_info __prods_##manuf[] __initdata = {
-> +#define MANUF(manuf, name)             static struct zorro_prod_info __prods_##manuf[] __initdata = {
->  #define ENDMANUF()                     };
-> -#define PRODUCT( manuf, prod, name )   { 0x##prod, 0, __prodstr_##manuf##prod },
-> +#define PRODUCT(manuf, prod, name)     { 0x##prod, 0, __prodstr_##manuf##prod },
->  #include "devlist.h"
->
->  static struct zorro_manuf_info __initdata zorro_manuf_list[] = {
-> -#define MANUF( manuf, name )           { 0x##manuf, ARRAY_SIZE(__prods_##manuf), __manufstr_##manuf, __prods_##manuf },
-> +#define MANUF(manuf, name)             { 0x##manuf, ARRAY_SIZE(__prods_##manuf), __manufstr_##manuf, __prods_##manuf },
->  #define ENDMANUF()
-> -#define PRODUCT( manuf, prod, name )
-> +#define PRODUCT(manuf, prod, name)
->  #include "devlist.h"
->  };
-
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-i.e. will queue in the m68k tree for v6.18.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Yannic Moog <y.moog@phytec.de>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
