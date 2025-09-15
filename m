@@ -1,125 +1,181 @@
-Return-Path: <linux-kernel+bounces-817907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B86B58864
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:42:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C9DB58867
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BDFC1AA6F19
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B70A3B6DE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FFE2DAFA2;
-	Mon, 15 Sep 2025 23:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662952DAFB9;
+	Mon, 15 Sep 2025 23:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AnCtHntQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gF9kcw0E"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062982D238A;
-	Mon, 15 Sep 2025 23:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1E22D238A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757979770; cv=none; b=Vof92Ffcf1yBKPl7rkOnLDPEpooxvgdRWkP8y3Yt0I7K/YsyKS+OsXGnDYuFrFfp5kMWQPE1W9CpZvHgWoPJS/4vCJz80WndeHneOiUtEVq5V1KsKFKGLJop1GLyx0r02dmHhXwso4FuI8Gz36eRnnGIEfUrNHf8ZtNf3T2FwNM=
+	t=1757979826; cv=none; b=QCtBcj+gxetLKqm9MrKhKhmMi9GFkuykI/LqX5/6a1KgTwfRTmW0iliEs4xsrQZ7lsF4wPzdE1RU+TU9glsl223HEtRqqf1p8BnLeR56TgVpjXSN5pGO425l1fHo4T/ZQVh5QedQPEmGHM501h5fE7xDByuqQJTSkDDLUHpf6jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757979770; c=relaxed/simple;
-	bh=jZaEOziBglpDbUCJBMp8aBXcUFCv9ylBZH717KvszyM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ih9CbCLkMQUeTkPBRFa5j7M9VVwUxs1TeHYg7JYkrYIkNckcZe9RxLZr4s1ulRn/BgeQlSl+krxPjyAueaZ36Y+jkkd1T+iGyX3fbSJw9nrFS4BrJufrzhUIZdVzTBXa8M0AIh9eha1tCWeo4MQwRF3IDRJJ4iPtOMSH4j3rDA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AnCtHntQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7EDBC4CEF1;
-	Mon, 15 Sep 2025 23:42:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757979769;
-	bh=jZaEOziBglpDbUCJBMp8aBXcUFCv9ylBZH717KvszyM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AnCtHntQV2wzjjVOmP7rYmJTYXrxHdpQNyC9lYZE3PU+JqtgKPEoQINB57cW+RvAU
-	 N6E1+flXLdPkwdQGvd/3aobMeQFKOVIOXF4PA41hCKK4Dgw/SHpKYvv9l8NbY5c2zx
-	 cF3Nj4j1aHnWP8rfbcVJEr79OfpmS7rIrYZNvvTU=
-Date: Mon, 15 Sep 2025 16:42:48 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, Ritesh Harjani
- <ritesh.list@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
- <chengming.zhou@linux.dev>, Wei Yang <richard.weiyang@gmail.com>, Aboorva
- Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Giorgi Tchankvetadze
- <giorgitchankvetadze1997@gmail.com>, stable@vger.kernel.org, Joe Perches
- <joe@perches.com>
-Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
- mm_struct during fork
-Message-Id: <20250915164248.788601c4dc614913081ec7d7@linux-foundation.org>
-In-Reply-To: <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
-References: <cover.1757946863.git.donettom@linux.ibm.com>
-	<4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757979826; c=relaxed/simple;
+	bh=DCeF63tBNbF7HFYiehXMRuKCFYhth2Gi/fMLF+uJEBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ta2HYLls47UmuAeputJlcSe9qf2ikAgPB7KSKc3wPRpb2wa2nw2Y/tEmdyBQselElG+q+Z2KrbAnj0m83hQ9x/M8GGQXisws6XYSzhvQdVoEcdSHkfgibo5Ot2ueqmvcn6L5mN7AVIJaTsStPITOJa+7gm5flwWpNSnsA8szWoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gF9kcw0E; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-828690f9128so321687685a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757979824; x=1758584624; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PdgJHBrB/lzs7soTL/dZrbkv934nXJ2LKfj8nw3fMYE=;
+        b=gF9kcw0E/T6NA3uVIqDLVEEGBfPsBwAd2mqvKNK0Kqj9s/VePjTg1imoErNr8c9gUy
+         nE388B8mXbR7w3E+ulB0/QRYplUg6R0D7+QIZncrn1pAK4Eown7WHBsspBEtmqe6YlQB
+         Y3SSYY3rwPkwOIyjrSKfDKZ6inB2PCInBVSt8kw9rpENV0Us1GWXoFCgO4ND3Rm/j+Tk
+         wxYZLZFWW2SOFSGoYih5NIIJNHhKlcrC8ex9g33JVHaeztKj9jvmcoJsxSvsJwqizdzT
+         XOHJy6U90GEZSQkjNKQENGm+n2EtGDZtaXh/dkK4iVU8oCrbRhMrSyaIeiAhySKrdUZV
+         D7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757979824; x=1758584624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PdgJHBrB/lzs7soTL/dZrbkv934nXJ2LKfj8nw3fMYE=;
+        b=c2la8w8Gmo4DvUrRYQukXUfFJhp5Jk7AUP49q055/RQ35SndHK9B49IdNX9dlMexuG
+         muQFNHPS6uqTB0n0G3zUDR9D2r6+KYM/e2VCWWhQiGVRiUfAdW/TdFMGX9CqxEdemWvC
+         veo5uG+ZfG1RiztP49WMZJ4JhReLsW1M+uTWCqE+rCCWr3aWeBYR2qEVXxED6w9jdebo
+         0Ynrrn4WVCqvT/DIeyQY/rXiEiz6FRqAaOGx+6ah3+KJQIEUmgzM+vrePgx63AXPcyAM
+         Jk02/MM7wMxINIFiWwj3PEcllnVGgDUYSQsju+Puq0yPke1V8UHwNZu8NZRuUUS6jAsd
+         Bqdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPMwJizJqo4+B2upFpBHpCYXEh2eQ/f+Lu+nrMFMzLiYe78EjAos6xprJbClC439knUSeOwzcFhBn8m9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDfaPAo376f9KGPKITznU1Tw0y5S8HHSJJ6lHIMP9aI7AeAOTD
+	bEgDHgtiAXft+JgYGp6PykU0duChDQHB35Bw4LPCrtrAiEbI65qNHyd1
+X-Gm-Gg: ASbGncu8aP+cpBI0Pnevc1AH0i2ft4FXuHlIAedn48cfyQqcSy2yVvLUwf0gxuMHprh
+	SjLn87dl3aZVgUYBpM9g8I4DP2idbHsBWH0+tlrXZLRGIAxeY0LFkGvFNaPsJaMYpGQxoe0keio
+	YFlSEAwayXrQSUC4Heb7nVTrWcE3DaVSSXsa3cBn79Lrh9oH6oTU2M+pRFgEpvN6W1h7Vb2J7tu
+	llPzpsNXipYdDQi/h/r2M98KKaEs/y2J7CSs1W3P8fQKVo4Au9pAM/GjsGeUFHP4QSgWjMuG89A
+	caH86tmqGl+Nb1FiiAXg/Ma3e/lRkL+AVPacLc8SAGcw+73kNMlVl1vZgqQbOhKWq0avynGWC/W
+	J0j9v7z0jwVD5dZ49XI4lZEtu6HKmRz3jM1Jj5WDJAC/iJmG3VX/bUx9Qk8dt2qvJUkTtfLuPBf
+	H6qX0fpuoBgDbeUKYZO9Sg/KeMIIDS8UMlaw==
+X-Google-Smtp-Source: AGHT+IFtU7EGaYy0d2f1MqC/XVc068eWREOrfFX9Dv4w/usYLmOlLWrTddm+QEvCMQWyuJIKoB/FxQ==
+X-Received: by 2002:a05:620a:4007:b0:82b:46c7:7249 with SMTP id af79cd13be357-82b46c775f8mr200373185a.24.1757979824066;
+        Mon, 15 Sep 2025 16:43:44 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820ce19d151sm845214485a.50.2025.09.15.16.43.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 16:43:43 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 05368F4006A;
+	Mon, 15 Sep 2025 19:43:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 15 Sep 2025 19:43:43 -0400
+X-ME-Sender: <xms:rqTIaB7li7PgqrH7NwXXHRXivw9ArLOXOkLAg10qfyk5tGPbct3M6A>
+    <xme:rqTIaMRZL7pu93dT-F1XvsEGskZbOO01vKYJskWVv6_13OrSfvMIgAAXXwFqZTQSI
+    DjbgezHbITPkBtefg>
+X-ME-Received: <xmr:rqTIaPzHgWL5aNPd3Ufxtd5nQgtWWyxHmyHY45ZJ4eH_bq5SCQjYjjqxCoau>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefledtgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhnucfh
+    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
+    hrnhepiedtfeevhfetkeelgfethfegleekfeffledvvefhheeukedtvefhtedtvdetvedv
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
+    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
+    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
+    drnhgrmhgvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihurhihrd
+    hnohhrohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghqvgesghhoohhglhgvrdgt
+    ohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpth
+    htohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhinhhgohes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:rqTIaEr3_gJg8HWvzMmd_0jIi2Ve2bxMZbqOshVQqxL0a2H25a0Nhw>
+    <xmx:rqTIaC3XZT8VHt8KZm5uylFi3x041uV9UThQ6dZi4U7YtOAZP-UJBA>
+    <xmx:rqTIaEzOpWpLmoMcJ7XUbUp5P0_LrsqRlGpTlzlLlK-1-ttTu3-T3g>
+    <xmx:rqTIaGikediGB-Qqun_LVTco-H5WrpEBjscboLri0PpDSrHqwUTJjA>
+    <xmx:rqTIaPqzriwvZVqjYr7Xvt7sPgvS56CSQh7QoGI8wexHn7Of28d8H0xm>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Sep 2025 19:43:42 -0400 (EDT)
+Date: Mon, 15 Sep 2025 19:43:41 -0400
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, mingo@kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: linux-next: manual merge of the bitmap tree with the tip tree
+Message-ID: <aMikrcaVbSYdkdmW@tardis-2.local>
+References: <aMiZpcBu2LDzwCje@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMiZpcBu2LDzwCje@sirena.org.uk>
 
-On Mon, 15 Sep 2025 20:33:04 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
+[Cc Ingo, Thomas and Miguel for their awareness]
 
-> Currently, the KSM-related counters in `mm_struct`, such as
-> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
-> inherited by the child process during fork. This results in inconsistent
-> accounting.
+On Mon, Sep 15, 2025 at 11:56:37PM +0100, Mark Brown wrote:
+> Hi all,
 > 
-> When a process uses KSM, identical pages are merged and an rmap item is
-> created for each merged page. The `ksm_merging_pages` and
-> `ksm_rmap_items` counters are updated accordingly. However, after a
-> fork, these counters are copied to the child while the corresponding
-> rmap items are not. As a result, when the child later triggers an
-> unmerge, there are no rmap items present in the child, so the counters
-> remain stale, leading to incorrect accounting.
+> Today's linux-next merge of the bitmap tree got a conflict in:
 > 
-> A similar issue exists with `ksm_zero_pages`, which maintains both a
-> global counter and a per-process counter. During fork, the per-process
-> counter is inherited by the child, but the global counter is not
-> incremented. Since the child also references zero pages, the global
-> counter should be updated as well. Otherwise, during zero-page unmerge,
-> both the global and per-process counters are decremented, causing the
-> global counter to become inconsistent.
+>   rust/helpers/helpers.c
 > 
-> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
-> during fork, and the global ksm_zero_pages counter is updated with the
-> per-process ksm_zero_pages value inherited by the child. This ensures
-> that KSM statistics remain accurate and reflect the activity of each
-> process correctly.
+> between commit:
 > 
-> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
+>   ed17707bd8f33 ("rust: sync: Add memory barriers")
+> 
+> from the tip tree and commits:
+> 
+>   ae384a4623fc3 ("rust: add bindings for bitops.h")
+>   78d9de4ca3474 ("rust: add bindings for bitmap.h")
+> 
 
-Linux-v5.19
+Thank you for reporting and your resolution looks good to me.
 
-> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
+Regards,
+Boqun
 
-Linux-v6.1
+> from the bitmap tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc rust/helpers/helpers.c
+> index a16758a6ef395,abff1ef14d813..0000000000000
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@@ -8,7 -8,8 +8,9 @@@
+>    */
+>   
+>   #include "auxiliary.c"
+>  +#include "barrier.c"
+> + #include "bitmap.c"
+> + #include "bitops.c"
+>   #include "blk.c"
+>   #include "bug.c"
+>   #include "build_assert.c"
 
-> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
 
-Linux-v6.10
-
-> cc: stable@vger.kernel.org # v6.6
-
-So how was Linux-v6.6 arrived at?
-
-I think the most important use for Fixes: is to tell the -stable
-maintainers which kernel version(s) we believe should receive the
-patch.  So listing multiple Fixes: targets just causes confusion.
-
-Maybe the -stable maintainers parse the "# v6.6" thing, I don't know. 
-But providing them with a single Fixes: recommendation is a good thing
-either way.
-
-So can you please revisit this and suggest a single Fixes: target which
-clarifies your reccomendation?
-
-Thanks.
-
-(Cc Joe.  Should checkpatch say something about this)?
 
