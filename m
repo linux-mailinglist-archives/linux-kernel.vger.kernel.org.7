@@ -1,154 +1,205 @@
-Return-Path: <linux-kernel+bounces-816258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091C5B571A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:35:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F831B5719A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55359189EBA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA7518946EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5012D6E64;
-	Mon, 15 Sep 2025 07:35:08 +0000 (UTC)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6602E2D661C;
+	Mon, 15 Sep 2025 07:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUEysU5Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4896F2D6E4C;
-	Mon, 15 Sep 2025 07:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F132877E7;
+	Mon, 15 Sep 2025 07:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921707; cv=none; b=Y1y4vWHCiYxO44KYUL/0Zl4VYAq8pLBqUesKZKU86SJV9DnL1YFuSCVou+SvN8wACI+aAibX0JXoQqJ7rtlS8Zoo9UeDmXPCUH3EZeE67BJpvnJUjp2qsC2Quahy1K3ByLvdXZ4FaxNziG3E1grT9jMtjwP66I29grPqPoc1DPA=
+	t=1757921701; cv=none; b=dhscLj6rW4c9cXG6ABmQ5AG5cCNhSJRA25cKDXtlQ+9bUHlWvjh4kBD13++o3bjj5Q8txQHrFZ9rdtFC8ASdjBwJGJdRn5aLAX7aXwWNxLdSO9tgDxPEZf1Y/ya+tEjNPpQJyKOfPHGCX5EX641Vn154KraysRDSb0x0mTihRfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921707; c=relaxed/simple;
-	bh=OTlhYlwmlrHd5LLpKbj2RzBc7GgHsmuWPZ832h7Kq7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iw5lth8NZQNL6OkrTvCh6Lq54UQZt4xHh2bfz3mleAjSuYHmTN9u9+WmhVqeYzQA1KZ4PmVYLwKabvz06MUDG++9y19McHXhbVd0xY9djxxEF3Fb0g3KOUm2k2rlEhGuMFeHFIFUJkngT2Z4qZ+N59avzbRZX0TaLTDse7vFAdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: esmtpgz16t1757921690t60967de8
-X-QQ-Originating-IP: kSwovttHONOrwwhmhJpODn+fWUYHq0Htq6+XUFWGxhE=
-Received: from [127.0.0.1] ( [116.234.26.9])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 15 Sep 2025 15:34:48 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3665793942661466864
-Message-ID: <4AD4461A95C1A8F2+bc2124f8-d1ae-4fe4-8d0e-55872609d3f3@radxa.com>
-Date: Mon, 15 Sep 2025 15:34:48 +0800
+	s=arc-20240116; t=1757921701; c=relaxed/simple;
+	bh=yz87stKD1z8lNZekflqVA6tGhoyOFH6K4fheBUkwWBQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ERftT4jUBt+cuKSlFHaj95+FxdnDhaJ/HC5QDtw38A38TV1Cs0IM7ADf0KyPoriFOFINxQ0ryOdOh1P65jvQfcICyU3q776em+KgaaVRqi/Q8YkcCweyuOYYnDKFCtLsU/r0Amh7qURCeKYETPoR5trAxkbIqoUKIG1P8/7Mq+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUEysU5Q; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757921700; x=1789457700;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=yz87stKD1z8lNZekflqVA6tGhoyOFH6K4fheBUkwWBQ=;
+  b=AUEysU5Q2XUmMJyDig03jE063HSoJoGBdwXv7UQThJvovx8ofqaZnKlv
+   rpNn0VcPoN4/wFIc3cKPoUeOEvsBoEu1Q1Awn+mVLOKi8ntYDZJNbEjbW
+   6YEP3jds4klb6MEOczqByPYlFkIPCYZSa1GBiWYkPryBn6eXCISfQaoRj
+   0njalNM+IiGW4XC8a2vLCEmW0RVf9R9Q18OsV0Bvu3knaW4YmOYHd/xbd
+   Pd3XI+RdJY1RZJ1Qd0rogeF3l/2jIwf+55hDftwemOQxo9+htZjulj1Lh
+   lCoGMOh/tRjmi676/7k2liFnagvTAIuPyT9bt+faqvjNERgIJkX+iPVkC
+   A==;
+X-CSE-ConnectionGUID: NCxdNmFvSRiEbkjPKXJgQA==
+X-CSE-MsgGUID: Pf6bi0HlQ8aAHZyLZaaudQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="60311120"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="60311120"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 00:35:00 -0700
+X-CSE-ConnectionGUID: JnW2jI7ASBGCNco3wY6svA==
+X-CSE-MsgGUID: loMQ9YVRRP2R2jVXXaPUFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="178857232"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.39])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 00:34:57 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 15 Sep 2025 10:34:53 +0300 (EEST)
+To: Daniel <dany97@live.ca>
+cc: Markus Elfring <Markus.Elfring@web.de>, 
+    LKML <linux-kernel@vger.kernel.org>, Hans de Goede <hansg@kernel.org>, 
+    Matan Ziv-Av <matan@svgalib.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3] platform/x86: lg-laptop: Fix WMAB call in
+ fan_mode_store()
+In-Reply-To: <MN2PR06MB55988311E10C20DD6EF0CB97DC0BA@MN2PR06MB5598.namprd06.prod.outlook.com>
+Message-ID: <78e9dde3-9f21-9b06-663b-e7a23451b9e7@linux.intel.com>
+References: <MN2PR06MB5598DFC94FB13E9F809F0EB3DC08A@MN2PR06MB5598.namprd06.prod.outlook.com> <37610abe-e6ea-4694-be63-1a7147c52b73@web.de> <MN2PR06MB55988311E10C20DD6EF0CB97DC0BA@MN2PR06MB5598.namprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH DNM v2 4/5] arm64: dts: qcom: qcs6490-radxa-dragon-q6a:
- Enable UFS controller
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
- Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
- Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-References: <20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com>
- <20250914-radxa-dragon-q6a-v2-4-045f7e92b3bb@radxa.com>
- <9a18cfae-4fcd-490e-b44d-6f9345cc7c3b@oss.qualcomm.com>
-Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <9a18cfae-4fcd-490e-b44d-6f9345cc7c3b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MBClcpj4hUKmyYOMfKfD7FTLfligRsXGmCRzKlLeD3ZISsCr+XD/C/My
-	aVzjBn5Di/dz6culWDKY3oWB5Ezg5p9oe/iejo35EXAy3mWh6zWB4I4zHhKweK0iGca5yEs
-	19sn2jijcYD0dAAyLQaHnWsIHwCmQLkDeUHdNWj3jA2SLlLlnYp9M2TixeKHCWit2aloSNr
-	UzfUnB4Le/25mj98MBLmNYgkvu5h/WN30mrIATDlaxw2KYfzB0gqu6QHTQjOcko9Ty2dITj
-	9nnMdSHihtM9KJmSOifp2NZue0KRNxpFXIsu4l7+sqhuaIyXNrgqiAIYDs7rZxYJakGXDcx
-	DDKYEOokU9olf+j57mxzc0S/vgIzT3PhLP8rJ6TZZ7xfbu1Qrot+siZUXv3D55cr12IkAnX
-	e7/1W6p6mPBRPFFwo61w59qlrey6GoWYaTyrU7AWscqTv2B2YRlQKfOKPGHcyiJ8kfEipLr
-	8EP6Z9o3E7p+QluBnubJynAGE3JnumZUJL6ycHN8Bg2Og3n/ACjcK96GwL5JU7pqTf6yFU8
-	UfcSnXCsQjSbq62IxYCuTlrF+/9bkkGFgVKR7IB1d/3NnUfMkF/tkflaLRl1Fl/kS+QhMpi
-	DzmFEpx1CdJ/20n4oNREyDM7nUaleo4B8azP5gXl7Vg3mVWENlrey7DyC0wucXAnB9aycMl
-	rwdAtwxzoRwekLQwjciiJ6dhPnchvOJMFtE/34soA4v6yYIgrWM+4jvFm3WLszMJ3UkxHkN
-	Mkzd9K6BhgDsHInru7AApsqM9dWNgjRkipH0ZnKMk4KqUM5iCD00Y0gwwNjvW5h6+bLsmse
-	kmnPq96dC9zg1p1LSaxZHtmK0LSO2VI1vfWDNqLyeSHC8AS9auNmf/wzv3YYf1NCw9B7Yur
-	T2kKI2NRYTd3qxTdPoJ4/PU6mdZcrfuZ6EsFHi8STje7Mafm0fci5yKm2AHj5NYzZPCTmbs
-	ZXLyEZd/v8tySi0JNS4REevDViSYuZMqSZjEcFcc69QjCh789NeEhyE3Z2+DbbUvddFRJ+0
-	gdEp3EstFx/s0cdQrs2jWTqVWxOjo=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
 
-On 9/15/2025 3:24 PM, Konrad Dybcio wrote:
-> On 9/14/25 5:57 PM, Xilin Wu wrote:
->> Add and enable UFS related nodes for this board.
->>
->> Note that UFS Gear-4 Rate-B is unstable due to board and UFS module design
->> limitations. UFS on this board is stable when working at Gear-4 Rate-A.
->>
->> Signed-off-by: Xilin Wu <sophon@radxa.com>
->>
->> ---
->>
->> This change depends on the following patch series:
->> https://lore.kernel.org/all/20250902164900.21685-1-quic_rdwivedi@quicinc.com/
->> ---
->>   .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     | 29 ++++++++++++++++++++++
->>   1 file changed, 29 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
->> index d30cddfc3eff07237c7e3480a5d42b29091d87d6..3bf85d68c97891db1f1f0b84fb5649803948e06f 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
->> @@ -482,6 +482,11 @@ &i2c13 {
->>   	status = "okay";
->>   };
->>   
->> +/* It takes a long time in ufshcd_init_crypto when enabled */
-> 
-> Huh? It only turns on some clocks, writes a couple of mmio registers
-> and turns the clocks back off, could you investigate a little more?
+On Fri, 12 Sep 2025, Daniel wrote:
 
-More specifically, it takes a long time in 
-`qcom_scm_ice_invalidate_key`. Considering this platform boots from SPI 
-NOR, while TrustZone doesn't really support SPI NOR storage on this 
-platform, there could be something broken in TZ.
+> On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
+> /sys/devices/platform/lg-laptop/fan_mode have no effect and reads always
+> report a status of 0.
+> 
+> Disassembling the relevant ACPI tables reveals that in the WMAB call to
+> set the fan mode, the new mode is read either from bits 0,1 or bits 4,5
+> (depending on the value of some other EC register).  Thus when we call
+> WMAB twice, first with bits 4,5 zero, then bits 0,1 zero, the second
+> call undoes the effect of the first call.
+> 
+> Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
+> When the fan mode is returned from WMAB it always has this form, so
+> there is no need to preserve the other bits.  As a bonus, the driver
+> now supports the "Performance" fan mode seen in the LG-provided Windows
+> control app, which provides less aggressive CPU throttling but louder
+> fan noise and shorter battery life.
+> 
+> I can confirm with this patch reading/writing the fan mode now works
+> as expected on my laptop, although I have not tested it on any other
+> LG laptop.
+> 
+> Also, correct the documentation to reflect that 0 corresponds to the
+> default mode (what the Windows app calls "Optimal") and 1 corresponds
+> to the silent mode.
+> 
+> Signed-off-by: Daniel Lee <dany97@live.ca>
+> Tested-by: Daniel Lee <dany97@live.ca>
+> Fixes: dbf0c5a6b1f8e7bec5e17baa60a1e04c28d90f9b ("platform/x86: Add LG Gram laptop special features driver")
+> ---
+>  .../admin-guide/laptops/lg-laptop.rst         |  4 +--
+>  drivers/platform/x86/lg-laptop.c              | 29 +++++++------------
+>  2 files changed, 13 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
+> index 67fd6932c..c4dd534f9 100644
+> --- a/Documentation/admin-guide/laptops/lg-laptop.rst
+> +++ b/Documentation/admin-guide/laptops/lg-laptop.rst
+> @@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
+>  Fan mode
+>  --------
+>  
+> -Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
+> -the fan silent mode.
+> +Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
+> +Optimal/Silent/Performance respectively.
+>  
+>  
+>  USB charge
+> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
+> index 4b57102c7..335afdc75 100644
+> --- a/drivers/platform/x86/lg-laptop.c
+> +++ b/drivers/platform/x86/lg-laptop.c
+> @@ -75,6 +75,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
+>  #define WMBB_USB_CHARGE 0x10B
+>  #define WMBB_BATT_LIMIT 0x10C
+>  
+> +#define FAN_MODE_FIELD_LOWER GENMASK(1, 0)
+> +#define FAN_MODE_FIELD_UPPER GENMASK(5, 4)
+> +
+>  #define PLATFORM_NAME   "lg-laptop"
+>  
+>  MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
+> @@ -274,29 +277,19 @@ static ssize_t fan_mode_store(struct device *dev,
+>  			      struct device_attribute *attr,
+>  			      const char *buffer, size_t count)
+>  {
+> -	bool value;
+> +	unsigned long value;
+>  	union acpi_object *r;
+> -	u32 m;
+>  	int ret;
+>  
+> -	ret = kstrtobool(buffer, &value);
+> +	ret = kstrtoul(buffer, 10, &value);
+>  	if (ret)
+>  		return ret;
+> +	if (value >= 3)
+> +		return -EINVAL;
+>  
+> -	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
+> -	if (!r)
+> -		return -EIO;
+> -
+> -	if (r->type != ACPI_TYPE_INTEGER) {
+> -		kfree(r);
+> -		return -EIO;
+> -	}
+> -
+> -	m = r->integer.value;
+> -	kfree(r);
+> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
+> -	kfree(r);
+> -	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
+> +	r = lg_wmab(dev, WM_FAN_MODE, WM_SET,
+> +		FIELD_PREP(FAN_MODE_FIELD_LOWER, value) |
+> +		FIELD_PREP(FAN_MODE_FIELD_UPPER, value));
 
->> +&ice {
->> +	status = "disabled";
->> +};
->> +
->>   &lpass_audiocc {
->>   	compatible = "qcom,qcm6490-lpassaudiocc";
->>   	/delete-property/ power-domains;
->> @@ -938,6 +943,30 @@ &uart5 {
->>   	status = "okay";
->>   };
->>   
->> +&ufs_mem_hc {
->> +	reset-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
->> +	vcc-supply = <&vreg_l7b_2p96>;
->> +	vcc-max-microamp = <800000>;
->> +	vccq-supply = <&vreg_l9b_1p2>;
->> +	vccq-max-microamp = <900000>;
->> +	vccq2-supply = <&vreg_l9b_1p2>;
->> +	vccq2-max-microamp = <1300000>;
->> +
->> +	/* Gear-4 Rate-B is unstable due to board */
->> +	/* and UFS module design limitations */
-> 
-> /* Gear-4 Rate-B is unstable due to board and UFS module design limitations */
-> 
-> Konrad
-> 
+"FIELD" seems just unnecessary characters.
 
+Please also add include for <linux/bitfield.h>.
+
+>  	kfree(r);
+>  
+>  	return count;
+> @@ -317,7 +310,7 @@ static ssize_t fan_mode_show(struct device *dev,
+>  		return -EIO;
+>  	}
+>  
+> -	status = r->integer.value & 0x01;
+> +	status = FIELD_GET(FAN_MODE_FIELD_LOWER, r->integer.value);
+
+Is it good to reuse the input side define here for response side or should 
+you have another with more specific name? (This is put to status named 
+variable so my natural expectation is that the field's name is somehow 
+related to that.)
+
+>  	kfree(r);
+>  
+>  	return sysfs_emit(buffer, "%d\n", status);
+> 
 
 -- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+ i.
+
 
