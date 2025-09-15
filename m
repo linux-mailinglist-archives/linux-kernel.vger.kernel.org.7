@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-817199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00276B57F2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:36:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28856B57F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A971744D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064F818838B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE5D30BF64;
-	Mon, 15 Sep 2025 14:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B7932F77A;
+	Mon, 15 Sep 2025 14:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm8h8W+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MckR8/fO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7400B1F4CB3;
-	Mon, 15 Sep 2025 14:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AACB1F4CB3;
+	Mon, 15 Sep 2025 14:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947005; cv=none; b=KqfyN5Lg9XSwOeBda3wMFOvtXZ4FX1P37Kh1U+4oMDRX6jGQm4tNA6hGB+jEUs7MTboqegH50b+EC4b5LCbmnL/dVGZFndIk39hDVzk2eDpR75RMy0HdfrzQ3IFBAnBueB+bkIvVAozCUQq9lhkvAGbrGe5zwauHLCcqms9s8k0=
+	t=1757947010; cv=none; b=hpFmI6jsKQUSD37iqGSKtu3WgiE1yxYJKFRk1sf4SGRpIKWJBbzccpObFXzBwswmZrAGLdg6E/udHkt4fOuiuU25zcOPv/H2MSjD9WD8aVODc/qwgGUi91vShm/IFeMnWj6kFqke2y+g0vCicYl6/kL2He/XjwH1WGOJI1gTKu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947005; c=relaxed/simple;
-	bh=RLaJFRiH9fUacA+g8XK++lLAVHNIs8PaxaaH9y0/D68=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H03nM/2XJ8NZtGlkzduSuP6wLJdhCc1OjNqz3d3mg0n5r2P8NOckEz/FsYIDDiiBA8c2Ce2JqOba7SSpR78J+fVPd3g/Zhum+8EpWqBHX+r6xmfXIwURL08kr7jbgtJbDWcWoefKNaCFvywACw2wYkczs1mexlmm33DeEIbkGWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cm8h8W+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6236C4CEF1;
-	Mon, 15 Sep 2025 14:36:40 +0000 (UTC)
+	s=arc-20240116; t=1757947010; c=relaxed/simple;
+	bh=lWTfUooKBHxRj0AEjDVG4lEODpzAtqXZGx+VDKCy+8o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jipzqlEMw35J6Qrl/PcCaeUWwC36zwBXE/DOniueNdF4e30LMfSd3XEB1yKe9P08gPEfd4H+6IjV83td4WZXkN0saH6DYHZhNH1emZBSXZYP7UdHJ66nOCJPfKAJC0U9Q9QXw65xeM4n7ZCxbBWyH8RiIbFm8MABIXJnQpbNqgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MckR8/fO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC8D1C4CEFD;
+	Mon, 15 Sep 2025 14:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757947005;
-	bh=RLaJFRiH9fUacA+g8XK++lLAVHNIs8PaxaaH9y0/D68=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Cm8h8W+NHQQgUhYx7vuPgMU2GxX/rYcW6cDGMwdYtftGZM+ds2S4gGgbjvadMuJW7
-	 uZz0cIIRb13Y9XNXQ2fP+Kbeai4RTWs9XFrsDSCg1QrqimGWm2f6C2u70A1bnccP7W
-	 79OZAe5oGfLp6K7kRzxFjwwC4E5M/EOVJNlXODnpq7THhEyOk3D61bKy2eekpyWq2+
-	 Pi8dbMS52WvF/SCwrCRDLI/0U7MZjzsMOT9x0Zh+rynSjKen3EDQbD/0PMk6cTqtOx
-	 R/TzC+Tef7diO72p98ly74SUmGgETUy2IypawrudL66x3Uhe1XwzdDzLrdnKnHzGIH
-	 tKTGhk0/3ltrw==
+	s=k20201202; t=1757947010;
+	bh=lWTfUooKBHxRj0AEjDVG4lEODpzAtqXZGx+VDKCy+8o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MckR8/fOICHyGpMdP7LtuXaD9m96cYfzcCmQsxryAMOPioHH0m/K+3yQ8mU0Pd/ig
+	 u26n1AVBuug4htyBalPeF3YWVnwgZV1VtjUrAAZFsIJiWvSV+ZJwzx3mq0+6FRES1N
+	 S5DSqI0G+tYS5cZccM0cQ2uHVv/0iXf0oH8RnEF6aFtM0q4UCtfYnv4n5Zw4WOxONQ
+	 t//FFt2K3nF5lsck2ooxnXpIJ8Y6fdVoudj63DA48htOMMPRabWeWV0ioyOgKfIBmu
+	 H5OiBEmpi+hHa6ZurLsNoIswEOtghhG2TQXIavS6+CIbWl0IS5vVR1OabIakSTuXHL
+	 EK7CVWrF2PKYw==
 From: Michael Walle <mwalle@kernel.org>
 To: Frank Binns <frank.binns@imgtec.com>,
 	Matt Coster <matt.coster@imgtec.com>,
@@ -63,10 +64,12 @@ Cc: Andrew Davis <afd@ti.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH 0/3] drm/imagination: add AM62P/AM67A/J722S support
-Date: Mon, 15 Sep 2025 16:34:37 +0200
-Message-Id: <20250915143440.2362812-1-mwalle@kernel.org>
+Subject: [PATCH 1/3] dt-bindings: gpu: img: Add AM62P SoC specific compatible
+Date: Mon, 15 Sep 2025 16:34:38 +0200
+Message-Id: <20250915143440.2362812-2-mwalle@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250915143440.2362812-1-mwalle@kernel.org>
+References: <20250915143440.2362812-1-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,38 +78,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The AM62P and AM67A/J722S feature the same BXS-4 GPU as the J721S2.
-In theory, one have to just add the DT node. But it turns out, that
-the clock handling is not working. If I understood Nishan Menon
-correct, it is working on the J721S2 because there, the clock is
-shared, while on the AM62P the GPU has its own PLL.
-In the latter case, the driver will fail with a WARN() because the
-queried clock rate is zero due to a wrong cached value.
+The AM62P and the J722S features the same BXS-4 GPU as the J721S2. Add a
+new SoC specific compatible.
 
-This was tested on an AM67A.
+Signed-off-by: Michael Walle <mwalle@kernel.org>
+---
+ Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v1:
- - Don't set the clock to 800MHz in the soc dtsi. 800MHz is only
-   possible if the core voltage is 0.85V. Just use the hardware
-   default of 720MHz. A board device tree can set the 800MHz if
-   applicable. Thanks Nishan.
- - Also add the new compatible to a conditional in the DT schema.
-   Thanks Andrew.
- - Dropped the wrong of_clk_set_defaults() and instead disable
-   caching of the clock rate.
-
-RFC: https://lore.kernel.org/r/20250716134717.4085567-1-mwalle@kernel.org/
-
-Michael Walle (3):
-  dt-bindings: gpu: img: Add AM62P SoC specific compatible
-  clk: keystone: don't cache clock rate
-  arm64: dts: ti: add GPU node
-
- .../devicetree/bindings/gpu/img,powervr-rogue.yaml    |  2 ++
- .../arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 11 +++++++++++
- drivers/clk/keystone/sci-clk.c                        |  8 ++++++++
- 3 files changed, 21 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+index c87d7bece0ec..a207a57c013b 100644
+--- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
++++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+@@ -28,6 +28,7 @@ properties:
+           - const: img,img-rogue
+       - items:
+           - enum:
++              - ti,am62p-gpu
+               - ti,j721s2-gpu
+           - const: img,img-bxs-4-64
+           - const: img,img-rogue
+@@ -140,6 +141,7 @@ allOf:
+           contains:
+             enum:
+               - ti,am62-gpu
++              - ti,am62p-gpu
+               - ti,j721s2-gpu
+     then:
+       properties:
 -- 
 2.39.5
 
