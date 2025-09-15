@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-817370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689D2B5815C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:55:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 408D1B58164
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C2151768E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE31202EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ED322D792;
-	Mon, 15 Sep 2025 15:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064062367BF;
+	Mon, 15 Sep 2025 15:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VIZjdQMX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="x4Pdobj0"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154A0191F89
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5BB2DC786
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757951750; cv=none; b=eGcwKlHMFwtatXD+Wya3S9/lIuyQ2ddoe/WYHvUKMzKY98i5ywMd1SI40FJmWr3lEvBMzYbJjadmEPRB4ricnUrCcmau88xGgZA/7m7j2li1Z5kukNdjvof40fgcRXpLqAAzZiD69VOviM4/pcTo4BNUT07KnlrqaKhfismCSPw=
+	t=1757951917; cv=none; b=kjzzvF+qIQ5yFRyYqvR10ZXy4mRejXre9WpHSyF3vFRHoR6Xdfmwd2S5F2Uga6sMqyGetaX3I240OYbeB/8+MfNLOXf/x/8Vg0BJl3/BnspDji8EPUC30wPwk3xFjZIormP4p4JoRTE0B/MwsplZdH0H/TwRCu15kYz1ZDpZlgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757951750; c=relaxed/simple;
-	bh=XSaTVE69Y82izKbCX7lEZ0n9v5yXDvhPB5ubZ5Z3Ya8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IBwnS7D954m7RWghCnXzjjjI98BIuA9Yhxq+d+H/hJCOJaV2BgIyxBi9j/Sa7OHdsP+B2fqJs/vvX79pVkA5JVyEUIxp1xvAmM/F/3Jy6PABDB8XCd8UoTq0TyXbhtX4aP0iUwUnRA75HtvCDUh7/N1A4+35CiuT95SVe0GTbsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VIZjdQMX; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757951748; x=1789487748;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=XSaTVE69Y82izKbCX7lEZ0n9v5yXDvhPB5ubZ5Z3Ya8=;
-  b=VIZjdQMXW1ou0vnoAw5I4aXDB9SGBH+EvWH43vbpYF57Kuf6zCQ3m4ut
-   g4NjgUenDt6Ge/hLmmm7jdBJyYoYPkgqTR/fK1PwzeLiY79H87Mxruamk
-   DGiE+SMv2liMCPI3uOyOuf9SPMdURnoyTeuBM3jEygnY6UzvV+KAV9zCe
-   0gPnbjR+/6ZATzb6byMbzfhAC80BU9AZ45LD8YUWBbVuiT7Cl5MmRFZRg
-   yDi+ShrwU+nSuXLL2ixAF0WqQXETDZ5ncpKuKfzsg8UHncYlPCZOEuXML
-   N6uJ2X+mOnUTa8XsZdd7JE+7jFJARvVkN/it53dT6NHsprPK68/Gw/9rt
-   g==;
-X-CSE-ConnectionGUID: cBp0+7czSmG2yQTF8cocnw==
-X-CSE-MsgGUID: jV/v/VElQXi8cVVGs2XfGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="62846008"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="62846008"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 08:55:47 -0700
-X-CSE-ConnectionGUID: aDkoebD3TCmck7IT51wYUg==
-X-CSE-MsgGUID: Xf2A40I4R7K9ggmEzCL6WA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="175095835"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa009.fm.intel.com with ESMTP; 15 Sep 2025 08:55:45 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 5E6C694; Mon, 15 Sep 2025 17:55:44 +0200 (CEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] kexec: Remove unused code in kimage_load_cma_segment()
-Date: Mon, 15 Sep 2025 17:55:43 +0200
-Message-ID: <20250915155543.2912469-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757951917; c=relaxed/simple;
+	bh=XgZwLsglGazDQIGAEWOdcUILG780w7iP0hbpgVxGkpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HBj/SfCSAgRDfZ/dhouYwwCiNR/pv3w7wvR+P9B7MUtxny3LK84aCHM6lwuUMvhRAkwyn/6oos7TU2Oj9u+gwIGM+h4WKb1BoZENqmTShvRidXm1qaUxKglApTGHpE7Vslu0gHcx6XZZ9LR26YoT0c+lz3HkzZIkhQTHqt49VHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=x4Pdobj0; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8EDD31A0E25;
+	Mon, 15 Sep 2025 15:58:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5F8586063F;
+	Mon, 15 Sep 2025 15:58:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3CAA2102F2A5C;
+	Mon, 15 Sep 2025 17:58:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757951911; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=DamnrMPL+mXDLfGrUw/hnqqyh2Urrlm64DKRH83FzbA=;
+	b=x4Pdobj0zrZkumQ8rF0dGvCIOsihT6/tmEvJOSyK4ZM0dL/TEFffUsWfNHpA7tCnZz0rHY
+	ExaPG8VC8y1PjnbyfB7XnWAEIz4TkImhBHb4IKjMRMm8ZZyEgTKXoArnZPj6QGAkVIJH0H
+	IIshDWowrJo0o6E4Qj4bAE+bmOu0ZLKHwPfybuNEM2HA+rXIqVe0nSF01e2O8xQnIXYSkv
+	37ShdxkQoV3IIJRYSlJ66AmfcAlGv0A+JgYl2xlCzlQlSXQ238ykgpGR+RUAst5M9VW6tH
+	9rvsThszzjgCcqgxGhPD+tl7fpmY+TlomeJ0GcyyTukkii93hp4ksi0OVYd1tg==
+Date: Mon, 15 Sep 2025 17:58:05 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@oss.qualcomm.com>, Chaoyi Chen
+ <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 7/9] drm/bridge: remove
+ drm_for_each_bridge_in_chain()
+Message-ID: <20250915175805.6e8df6ef@booty>
+In-Reply-To: <20250915-optimal-hornet-of-potency-efa54a@penduick>
+References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+	<20250808-drm-bridge-alloc-getput-for_each_bridge-v2-7-edb6ee81edf1@bootlin.com>
+	<20250915-optimal-hornet-of-potency-efa54a@penduick>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-clang is not happy about set but unused variable:
+On Mon, 15 Sep 2025 14:22:24 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-kernel/kexec_core.c:745:16: error: variable 'maddr' set but not used [-Werror,-Wunused-but-set-variable]
-  745 |         unsigned long maddr;
-      |                       ^
-1 error generated.
+> Hi,
+> 
+> On Fri, Aug 08, 2025 at 04:49:14PM +0200, Luca Ceresoli wrote:
+> > All users have been replaced by drm_for_each_bridge_in_chain_scoped().
+> > 
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > ---
+> >  .clang-format            |  1 -
+> >  include/drm/drm_bridge.h | 14 --------------
+> >  2 files changed, 15 deletions(-)
+> > 
+> > diff --git a/.clang-format b/.clang-format
+> > index 1cac7d4976644c8f083f801e98f619782c2e23cc..d5c05db1a0d96476b711b95912d2b82b2e780397 100644
+> > --- a/.clang-format
+> > +++ b/.clang-format
+> > @@ -167,7 +167,6 @@ ForEachMacros:
+> >    - 'drm_connector_for_each_possible_encoder'
+> >    - 'drm_exec_for_each_locked_object'
+> >    - 'drm_exec_for_each_locked_object_reverse'
+> > -  - 'drm_for_each_bridge_in_chain'
+> >    - 'drm_for_each_bridge_in_chain_scoped'
+> >    - 'drm_for_each_connector_iter'
+> >    - 'drm_for_each_crtc'
+> > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> > index a8e2f599aea764c705da3582df0ca428bb32f19c..6adf9221c2d462ec8e0e4e281c97b39081b3da24 100644
+> > --- a/include/drm/drm_bridge.h
+> > +++ b/include/drm/drm_bridge.h
+> > @@ -1358,20 +1358,6 @@ drm_bridge_chain_get_first_bridge(struct drm_encoder *encoder)
+> >  						       struct drm_bridge, chain_node));
+> >  }
+> >  
+> > -/**
+> > - * drm_for_each_bridge_in_chain() - Iterate over all bridges present in a chain
+> > - * @encoder: the encoder to iterate bridges on
+> > - * @bridge: a bridge pointer updated to point to the current bridge at each
+> > - *	    iteration
+> > - *
+> > - * Iterate over all bridges present in the bridge chain attached to @encoder.
+> > - *
+> > - * This is deprecated, do not use!
+> > - * New drivers shall use drm_for_each_bridge_in_chain_scoped().
+> > - */
+> > -#define drm_for_each_bridge_in_chain(encoder, bridge)			\
+> > -	list_for_each_entry(bridge, &(encoder)->bridge_chain, chain_node)
+> > -  
+> 
+> I think I'd go a step further and rename
+> drm_for_each_bridge_in_chain_scoped to drm_for_each_bridge_in_chain,
+> there's no need to have a "scoped" variant if it's our only variant.
+> 
+> It can be done in a subsequent patch though.
 
-Fix the compilation breakage (`make W=1` build) by removing unused variable.
+Sure, that's the plan. There's a note in patch 3:
 
-Fixes: 07d24902977e ("kexec: enable CMA based contiguous allocation")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- kernel/kexec_core.c | 3 ---
- 1 file changed, 3 deletions(-)
+Note 1: drm_for_each_bridge_in_chain_scoped() could be renamed removing the
+        _scoped suffix after removing all the users of the current macro
+        and eventually the current macro itself. Even though this series is
+        converting all users, I'd at least wait one kernel release before
+        renaming, to minimize issues with existing patches which would fail
+        building.
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 5357ed39e9d1..32722926bc7e 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -742,7 +742,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
- 	struct kexec_segment *segment = &image->segment[idx];
- 	struct page *cma = image->segment_cma[idx];
- 	char *ptr = page_address(cma);
--	unsigned long maddr;
- 	size_t ubytes, mbytes;
- 	int result = 0;
- 	unsigned char __user *buf = NULL;
-@@ -754,7 +753,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
- 		buf = segment->buf;
- 	ubytes = segment->bufsz;
- 	mbytes = segment->memsz;
--	maddr = segment->mem;
- 
- 	/* Then copy from source buffer to the CMA one */
- 	while (mbytes) {
-@@ -782,7 +780,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
- 		}
- 
- 		ptr    += mchunk;
--		maddr  += mchunk;
- 		mbytes -= mchunk;
- 
- 		cond_resched();
+> For the entire series:
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+
+Great, thanks!
+
+I'll wait a few more days before applying.
+
+Luca
+
 -- 
-2.50.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
