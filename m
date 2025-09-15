@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-817284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3164BB5801F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:13:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56206B58010
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ECED3A7180
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:11:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 632537A909D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0525327A2E;
-	Mon, 15 Sep 2025 15:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6068733EB01;
+	Mon, 15 Sep 2025 15:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eozcWgg7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="g3pnRY0l"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCD81C84C0;
-	Mon, 15 Sep 2025 15:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F445320387;
+	Mon, 15 Sep 2025 15:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757949060; cv=none; b=SQrgsjHRD7rGNRvQn57dCmrSwhAxmSr0UKk5T0QlxtnlOXH5ewqn932iAstVYFrBlThNfjWteYl7NSf2cQyJwkMDMuwbvTMs3w1b2D834GhJIle6R+wkDCpAdwUJL3+Ju1LLXGATYFsUwz71mEW1RCxSzmH4TMe6KGagWg9c4PQ=
+	t=1757949074; cv=none; b=QPpK/8P60JiiC+RPfm0X69AM8RaMtXsIU1RebPaIHaaGJ9j5nrFqPuiC+bJZKVtVuzHfl+QsFe4iSJCJeqvzGD5kCus+r6214ZcqazsWLbEeHRZ/KP2Vu/BG+YLDOZPkoBaId8TFwVU+b2jQdsvyR2r5X0RuolTpDQqHpb0zmE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757949060; c=relaxed/simple;
-	bh=lOQsesSjhz8e79l3Spu+RP7vswtUlIm457YZy/lEGow=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TcvaWFl9tn71QaJGXHt49JY30xlktCZjnYl0qvlmaVtWPDUi5E0n63iobw5hFLtlxehKyg69BG86iCp2nDCrlMscFlJsR7aYxoyVqGiQZ919NrBDLUaq2f/h+zn2JPkeBXjJSY/wrcjykK8VpS2g3jxnnwP42aC6IHt29asWRpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eozcWgg7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF3DC4CEF1;
-	Mon, 15 Sep 2025 15:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757949059;
-	bh=lOQsesSjhz8e79l3Spu+RP7vswtUlIm457YZy/lEGow=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=eozcWgg7rH+/eaeTTJecewUsdHETkLrLdVnhdLGWEENmO4+6sNuH1We0YsWvv/GcP
-	 AsfvsftB3OT+MMfJR84CFY2iKTRuA8KB87gQiZqVvSKufd9qme7QOvjLuSGymBFspe
-	 mIrAdsoahHZTIvUWqgVENFqIY7OYcAZqnu99SPA3Nijd/ixHfMZlhECdSXK79lcT5F
-	 nMAr6S+ICGFFIgRkwTu45BGLqIQ24e2rnH3N/q3TqDuX4j3apD+ouZyHSXd4YuflNI
-	 U1kD2WMxBaPxIgjZt309lQcr5ROG2edPSIMXrbiJF7UDSk37F5AngeAT5xBl1IjOYR
-	 4kRwhXCiJSpPg==
-Message-ID: <9d796d36d64e08fdb58630b5fe3c551754b6c748.camel@kernel.org>
-Subject: Re: [PATCH 3/5] Documentation: trace: historgram-design: Separate
- sched_waking histogram section heading and the following diagram
-From: Tom Zanussi <zanussi@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>,  Linux Kernel Tracing
- <linux-trace-kernel@vger.kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jonathan Corbet <corbet@lwn.net>
-Date: Mon, 15 Sep 2025 10:10:58 -0500
-In-Reply-To: <20250911042527.22573-4-bagasdotme@gmail.com>
-References: <20250911042527.22573-1-bagasdotme@gmail.com>
-	 <20250911042527.22573-4-bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1757949074; c=relaxed/simple;
+	bh=63EY3ctwPlCII/zbqHIwtxT//+JnZDzY6EJnU6Y3OzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MFIaUuVRdOnfdpxa6HR5fVUsRuUr//5G7Zc308gF4MehsfmQufmbP3nnTGAIGDsXR9x7hvZvC2Sl2n8TAykkg1Jip+vXPQB5CQpJK1aMoSHzv3kRTaLMHQ0HM8/FXGkvcPW+/QsUXt9hCOHrEO24+DS4fN6aZx06yig8YEE2684=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=g3pnRY0l; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2vv7mzTspn8YSSzImCdO3beqA7HPeUQQg28cj3eRsME=; b=g3pnRY0lJ2LY/xpKP+w1ylJAbM
+	0WO21FYWMAUxgSOIsL75yLY5dbGtsUeJvBaaiMa8W7ec+/RLo/Tz/j0Le3L7YcOxTkAUjhd2s6204
+	H/FvpRA0QA86g6P2KuaBYzSUds6BQpXUD8MSK+bwcVdg6ci6owuN1JSzg3HPQzY8m+GSB1SVKaZln
+	xtDdfHdlcvmKLt5YPIjBam/wZC+4M5X90+6Spl5W6mnQBZl66YeGIWfJMrnpkRCiLU7ThUjGmsuqg
+	QS64VOMROTmvXO8os3eZLcB0QM5mzd85LXDqhzo/Ml80U8CZ0c9sJDrGvIFoy6Q4f49JRJ5qJ7jLX
+	0KcI7wEw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41340)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uyArC-000000000o0-3Vjn;
+	Mon, 15 Sep 2025 16:11:06 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uyArA-000000006lb-2EUe;
+	Mon, 15 Sep 2025 16:11:04 +0100
+Date: Mon, 15 Sep 2025 16:11:04 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Mohd Ayaan Anwar <mohd.anwar@oss.qualcomm.com>
+Cc: andrew@lunn.ch, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: qcom: qca808x: Add .get_rate_matching
+ support
+Message-ID: <aMgsiDS5tFeqJsKD@shell.armlinux.org.uk>
+References: <20250914-qca808x_rate_match-v1-1-0f9e6a331c3b@oss.qualcomm.com>
+ <aMcFHGa1zNFyFUeh@shell.armlinux.org.uk>
+ <aMfUiBe9gdEAuySZ@oss.qualcomm.com>
+ <aMgCA13MhTnG80_V@shell.armlinux.org.uk>
+ <aMgootkPQ/GcdiXX@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMgootkPQ/GcdiXX@oss.qualcomm.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, 2025-09-11 at 11:25 +0700, Bagas Sanjaya wrote:
-> Section heading for sched_waking histogram is shown as normal
-> paragraph
-> instead due to codeblock marker for the following diagram being in
-> the
-> same line as the section underline. Separate them.
->=20
->=20
+On Mon, Sep 15, 2025 at 08:24:26PM +0530, Mohd Ayaan Anwar wrote:
+> On Mon, Sep 15, 2025 at 01:09:39PM +0100, Russell King (Oracle) wrote:
+> > This shows that the PHY supports SGMII (4) and 2500base-X (23). However,
+> > as we only validate 2500base-X, this suggests stmmac doesn't support
+> > switching between SGMII and 2500base-X.
+> > 
+> > What *exactly* is the setup with stmmac here? Do you have an external
+> > PCS to support 2500base-X, or are you using the stmmac internal PCS?
+> 
+> Internal PCS. But it's not really pure 2500base-X...
+> I found an older thread for this exact MAC core [0], and it looks like
+> we have an overclocked SGMII, i.e., 2500base-X without in-band
+> signalling.
+> 
+> Just wondering if registering a `.get_interfaces` callback in
+> `dwmac-qcom-ethqos.c` and doing something like the following will be
+> helpful?
+> 
+> case PHY_INTERFACE_MODE_2500BASEX:
+> 	__set_bit(PHY_INTERFACE_MODE_2500BASEX, interfaces);
+> 	fallthrough;
+> case PHY_INTERFACE_MODE_SGMII:
+> 	__set_bit(PHY_INTERFACE_MODE_SGMII, interfaces);
+> 	break;
+> ...
+> 
+> This should ensure that both SGMII and 2500base-X are validated,
+> allowing switching between them.
 
-Small typo in the subject line, s/historgram/histogram but otherwise
-looks good.
+So, this is something that has never worked with this hardware setup.
+I don't think we should rush to make it work. The stmmac internal
+PCS code is a mess, bypassing phylink. I had a patch series which
+addressed this a while back but it went nowhere, but I guess this is
+an opportunity to say "look, we need to get this sorted properly".
 
-Thanks,
+I suspect this isn't going to be simple - stmmac does _not_ use
+phylink properly (I've been doing lots of cleanups to this driver
+over the last year or so to try and make the code more
+understandable so I can start addressing this deficiency) and
+there's still lots of work to be done. The way the "platform glue"
+drivers work is far from ideal, especially when it comes to
+switching interfaces.
 
-Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+I'll try to post the stmmac PCS cleanup series in the coming few
+days, and it would be useful if you could give it whatever
+testing you can.
 
-> Fixes: daceabf1b494 ("tracing/doc: Fix ascii-art in histogram-
-> design.rst")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> =C2=A0Documentation/trace/histogram-design.rst | 4 +++-
-> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/trace/histogram-design.rst
-> b/Documentation/trace/histogram-design.rst
-> index 231a12bd7d461c..4faff1669b77bd 100644
-> --- a/Documentation/trace/histogram-design.rst
-> +++ b/Documentation/trace/histogram-design.rst
-> @@ -380,7 +380,9 @@ entry, ts0, corresponding to the ts0 variable in
-> the sched_waking
-> =C2=A0trigger above.
-> =C2=A0
-> =C2=A0sched_waking histogram
-> -----------------------::
-> +----------------------
-> +
-> +.. code-block::
-> =C2=A0
-> =C2=A0=C2=A0 +------------------+
-> =C2=A0=C2=A0 | hist_data=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |<----=
------------------------------------------
-> ----------+
+Thanks.
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
