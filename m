@@ -1,127 +1,170 @@
-Return-Path: <linux-kernel+bounces-816560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D99FB57567
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:00:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DD9B5756D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF4F3ACD3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2EA1189E0B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1992FB0B3;
-	Mon, 15 Sep 2025 10:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314422F9999;
+	Mon, 15 Sep 2025 10:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isaI4Le1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="aiHspCza"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F1B2F39B7;
-	Mon, 15 Sep 2025 10:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37422777F2
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757930416; cv=none; b=S+eRf3kmCEzs0GnF+X4C61fiUy97I26jz3rypy9ShCcsb7L/dbBGdBV1eDfkZb4kyfcOwkwc0ezDMxlEWwcrFxknlnA/5Du0eKoQ4suIU+Z3JG/2mIwoUPA4MdMEQNLb1+aaTGhn8AmXHYJNA3DYzes+QmxDDdA3Uk8ydL6V5ZM=
+	t=1757930533; cv=none; b=grh5hEH108oGMKSL7CIJzbuyXBQYci/4fa8Iz7LpIYe4R3UsJQ4vpcR7tZhuaGlPzDy3D8C8y424k4kAi6qvVhOee06Wy+dAG1wrnUX8nAv5TdH4c84T3rrb9mIIbROcIzm5Q3h+X5+HE+ylxQN6UizJssrvMtFAd0Nx9kKvaKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757930416; c=relaxed/simple;
-	bh=Pcd9ZToXPQQxmubV3rR5Zi6CoH4Kg5mSLyV/LY5hX/8=;
+	s=arc-20240116; t=1757930533; c=relaxed/simple;
+	bh=E3+oVjwbyn39N5bbJ8PtDEtoLjERba4fXbVGOjw/WDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUtBxLazMXgaMnb2WfTfI4+TpKzifUseIRUKrMxStFRVO5qZJaVkLNAEMSkKyB+ED9mf6nPqTGUG763KLMCW7yk7mZkYxLLTKbsn3LbId0m54s5hg1t0HdcgNKREmchsYqlVEf7MKWpwl99/+cxuunM+nOq4mRSUqE0lmZYNxHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isaI4Le1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2424C4CEF1;
-	Mon, 15 Sep 2025 10:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757930416;
-	bh=Pcd9ZToXPQQxmubV3rR5Zi6CoH4Kg5mSLyV/LY5hX/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=isaI4Le1IUPm5WO/FkjugGY5TihhnnOPPWBqXZATkJqCFu8K+uagSHjhYXaYdBJVO
-	 pYj6cFzEwtrwxAkVKFerFQexukNRw9y3ZypQUnHgd14TkKkjUXhKvKhl5pOiCDXE/C
-	 //8cMCshz8VQP2Btbaa2ZCG8IX/xMZ5RGNglwqHa4qDfgOFNww4g5zb3zUfsP8m8r+
-	 /sRQBTMnpLAtOI52ZR96b0Hu5xrIvRTyXKf3bGrUuDQH5vLvtrFQD5FkhxEK0JCzvP
-	 UxJCRydMKaMLvXso4KD37LJgVE2f1+Jy7+fwWUlHR+yofF0VS8dJqXl6YkCDTi/8HB
-	 orORk55ceYQQQ==
-Date: Mon, 15 Sep 2025 12:00:14 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Drew Fustini <fustini@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v14 1/7] pwm: Export `pwmchip_release` for external use
-Message-ID: <3jxl6gpxwv376ooyny7qkeokeh7nzafttbyoehmwqzrccn5oip@747v6zdnogso>
-References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
- <CGME20250820083541eucas1p2ad7d78418576b8bc8cbddd8efe83bbe9@eucas1p2.samsung.com>
- <20250820-rust-next-pwm-working-fan-for-sending-v14-1-df2191621429@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ENCa40Lf20gKhYI5FgiTJjolUq1ImAiGmffroB3g9MtnmKU8A3vYAvX0JHLw7SZWVqd4AJgIHRFYCSjQBU+YsZgET0CARE33zU2AOrQUSbQEqQ3eFSnuJFXg7Q4kOsuYhZ/c0prM6ubcABINouHY/BOYaeOb3MneXgWkb2MkuL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=aiHspCza; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45f2a69d876so7311085e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1757930530; x=1758535330; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aRVL9IUAAqgHrjK9nkhZ1Oduj9r/xQ7fhJ7EmcfoG/8=;
+        b=aiHspCzalk7rtf1PwXf86Uny47ZFswkpGATv2fmnFHHPUh76nA3cr3kXBJmbIAauLW
+         bGflJwF4qDjLEl4T4l7QXxRhAP4W7tL8xjlOJSuRnHfe5w3/10NeGldnlke6hcaOHzi3
+         E9Crf32imTfbeIWf6yJLSptDEzIHH7ipE7rmcaxR1RptzRVdtkbK/B1CiumIjGMhVrEQ
+         8trowDztboYB7tcdrENMGFQNO18LcJfBwl/CAc8Vgb3NTYZdaRYvLHTes9mo5T373tIa
+         7VSnxARPM34RUI3ACoO92V2olg1+ZCqRveARdwgz3NeT9R/3Sp+df6rjV5xKHzTgJ+Yh
+         K3Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757930530; x=1758535330;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aRVL9IUAAqgHrjK9nkhZ1Oduj9r/xQ7fhJ7EmcfoG/8=;
+        b=AmhO7JQ4vRlc7Sev53qjJ4dJ5RaARYFqSys34LzmkDdcHkC/azDusTQdT23iytkWle
+         KHnnL0bPWVquGi2enLI+cVmG6n5moZHgEbwq2Nl6EgVoRWhj0lRUD4eHzc4goBvDaTZ9
+         m4l/dIkzby9BOddn+pXamMGlDZifp/DZSg1y3U5suYr7wi1dLF/cDG7y5+D3Csm6OGvR
+         MLji9x/xB1cL95rgeQ/4rvEJ+sFYHEzMc9LDWoM8md3Yx6kwWLY7bPOWRtmEyENmUpji
+         OiAxt18ybhbThW7EA8OgLGIaDBTgcwL7jrgIX9bwtxbWzPN9ARQNEZvq0lSO3E2RKX6v
+         G58Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXBruiTXltjQx6qqNvcUnALSnggIl4H3ze3GKqM0HheBpy0MnplG5Fpds0LE9XWRVkJ5yqA+I8BJjV9dYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaVMcBDeKtGxX3SCRWdW/+W4psKGKeftsyas0BB+vUM5JUw6vG
+	r9+RhunzM68VFf0n8z3eOrI/VsgqvCAfndmUdzDSxw4vpCXP+rxMnG4U5v80PdV8+rc=
+X-Gm-Gg: ASbGncudMduieyIIosVQrbBA6BnO8VL8z6uU8oXR92FRBEOICg6mvneE6TKjDlpb8Kt
+	1/uxJvuMH1P0AxY6swrI5LQZXvTiP1BqpOpWWpuvUimTnTb9BbzXy1i9sG5bWijBSmidSirqh0a
+	IBoGVjyiDtbe55vfTFULAdVYz4xd2ycb87TuoJ63RPp/7mWmUzIh5uWMhn1rTHbE6rn5RaUxBk/
+	t1fjjPB+Mcbqk1IV9z7VYRN0xIhv9Xt3OTwMFclzWpH3C0PHNeIRRECJp3Gz9rkJcz2AE6V5Tsi
+	oXS+IILJohRPZc5UHOpDtR+YW/WY7vzrQJAcm4ssrnTtBP46sNBRsg5bYTP8AHvQjw4zN3V5ws5
+	Py2jNw4utzHda5L5YROzXv9JbLyHh4ETeciQz2hm1ZBtGmmatMcuZ1AThp81kIHgN7vpvUfJcZt
+	pshUhCpw==
+X-Google-Smtp-Source: AGHT+IFWv6FkVBTnKeZEQb3UM8U1+lQXiSAg03mu+qCRATFWX8WcP+0O2Dka4KG3lOwejUMfLpLyjg==
+X-Received: by 2002:a05:600c:6b15:b0:45d:d88d:9ed9 with SMTP id 5b1f17b1804b1-45f2120568fmr70439915e9.34.1757930529767;
+        Mon, 15 Sep 2025 03:02:09 -0700 (PDT)
+Received: from airbuntu (host86-160-23-239.range86-160.btcentralplus.com. [86.160.23.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e9c2954b10sm5957250f8f.50.2025.09.15.03.02.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 03:02:09 -0700 (PDT)
+Date: Mon, 15 Sep 2025 11:02:07 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
+Message-ID: <20250915100207.5amkmknirijnvuoh@airbuntu>
+References: <20250910065312.176934-1-shawnguo2@yeah.net>
+ <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
+ <aMQbIu5QNvPoAsSF@dragon>
+ <20250914174326.i7nqmrzjtjq7kpqm@airbuntu>
+ <aMfAQXE4sRjru9I_@dragon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ieqpilfwwfgxf4dc"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820-rust-next-pwm-working-fan-for-sending-v14-1-df2191621429@samsung.com>
+In-Reply-To: <aMfAQXE4sRjru9I_@dragon>
 
+On 09/15/25 15:29, Shawn Guo wrote:
+> On Sun, Sep 14, 2025 at 06:43:26PM +0100, Qais Yousef wrote:
+> > > > Why do you want to address the issue in the cpufreq core instead of
+> > > > doing that in the cpufreq-dt driver?
+> > > 
+> > > My intuition was to fix the regression at where the regression was
+> > > introduced by recovering the code behavior.
+> > 
+> > Isn't the right fix here is at the driver level still? We can only give drivers
+> > what they ask for. If they ask for something wrong and result in something
+> > wrong, it is still their fault, no?
+> 
+> I'm not sure.  The cpufreq-dt driver is following suggestion to use
+> CPUFREQ_ETERNAL, which has the implication that core will figure out
+> a reasonable default value for platforms where the latency is unknown.
+> And that was exactly the situation before the regression.  How does it
+> become the fault of cpufreq-dt driver?
 
---ieqpilfwwfgxf4dc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v14 1/7] pwm: Export `pwmchip_release` for external use
-MIME-Version: 1.0
+Rafael and Viresh would know better, but amd-pstate chooses to fallback to
+specific values if cppc returned CPUFREQ_ETERNAL.
 
-Hello,
+Have you tried to look why dev_pm_opp_get_max_transition_latency() returns
+0 for your platform? I think this is the problem that was being masked before.
 
-On Wed, Aug 20, 2025 at 10:35:36AM +0200, Michal Wilczynski wrote:
-> The upcoming Rust abstraction layer for the PWM subsystem uses a custom
-> `dev->release` handler to safely manage the lifetime of its driver
-> data.
->=20
-> To prevent leaking the memory of the `struct pwm_chip` (allocated by
-> `pwmchip_alloc`), this custom handler must also call the original
-> `pwmchip_release` function to complete the cleanup.
->=20
-> Make `pwmchip_release` a global, exported function so that it can be
-> called from the Rust FFI bridge. This involves removing the `static`
-> keyword, adding a prototype to the public header, and exporting the
-> symbol.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> 
+> > Alternatively maybe we can add special handling for CPUFREQ_ETERNAL value,
+> > though I'd suggest to return 1ms (similar to the case of value being 0). Maybe
+> > we can redefine CPUFREQ_ETERNAL to be 0, but not sure if this can have side
+> > effects.
+> 
+> Changing CPUFREQ_ETERNAL to 0 looks so risky to me.  What about adding
+> an explicit check for CPUFREQ_ETERNAL?
 
-I still somewhat dislike this patch. Isn't it possible to make the rust
-abstraction use the pointer that .release is set to when it calls
-pwmchip_alloc()?
+Yeah this is what I had in mind. I think treating CPUFREQ_ETERNAL like 0 where
+we don't know the right value and end up with a sensible default makes sense to
+me.
 
-(I wouldn't further delay this series for this discussion, this can be
-handled just fine at a later point in time.)
+I think printing info/warn message that the driver is not specifying the actual
+hardware transition delay would be helpful for admins. A driver/DT file is
+likely needs to be updated.
 
-Best regards
-Uwe
+Better hear from Rafael first to make sure it makes sense to him too.
 
---ieqpilfwwfgxf4dc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjH46sACgkQj4D7WH0S
-/k5CPgf/d9VpIxfV66LPQ8LcyKGHr/z6WLe8e0mXCQBgmb+2uCpwZuAcfd87eAge
-Gj0+iGdFuUvqg9fRbzhyd91BvVk/yCcPrg4kWxrECTxVq3ZqoMivnw7cngrXg1k5
-gFdHV1Hd294DQHqM8cw4m2CpbS3Uo+2i17f2+hlQcIbGfrChb5Ge3HlZKsaMvd2k
-QRw8M4TQVIzt/CUSPAwDgjB22tASqGcyOSczpasXB7XdPI2T8IdUF795FzZrvNvg
-VKdgOVk2s82h9mVAImKZOCHPwE/N9Qbe25AaJAFDMkBLjebGEI2hkwFFjt406aNo
-edMadB5H+bBdQwPhBaDbH4qsWO1paw==
-=yBiS
------END PGP SIGNATURE-----
-
---ieqpilfwwfgxf4dc--
+> 
+> ---8<---
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index fc7eace8b65b..053f3a0288bc 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -549,11 +549,15 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
+>         if (policy->transition_delay_us)
+>                 return policy->transition_delay_us;
+>  
+> +       if (policy->cpuinfo.transition_latency == CPUFREQ_ETERNAL)
+> +               goto default_delay;
+> +
+>         latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
+>         if (latency)
+>                 /* Give a 50% breathing room between updates */
+>                 return latency + (latency >> 1);
+>  
+> +default_delay:
+>         return USEC_PER_MSEC;
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
+> 
+> --->8---
+> 
+> Shawn
+> 
 
