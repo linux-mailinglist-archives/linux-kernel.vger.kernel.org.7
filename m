@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-817702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E00B58582
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118D1B58583
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A401AA2934
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C52B1AA30BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9FB28A705;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90E32874E1;
 	Mon, 15 Sep 2025 19:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gOiD94Vs"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FGGCLwc4"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADE0288C2C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657B2289367
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757965947; cv=none; b=kBzrKvVX7mLql33kbjhPx4HAWGWfCL4kbFBCpxuEkrlgYLGSimmBZyAIwwNylxKmk670NbTiHCehSlxArV5cI/rEEYBOMsCsUVpGTxhL3fZk9faYw4cXOhsdacRsFMlJ9ITJgi8BPhE5Y1C+IEn0lB3pB3Mz0OpB3mfFuiYpg1s=
+	t=1757965948; cv=none; b=rGMW3VmN24vmsXhz18Py146U/mfBmWtvxddCL/W4bf9IafuEujROYYtuhvyKX5NwULD7e3P8c3WWIRUv0jLOGy+hgqbZHWv5zQUrC/ea3BcFNwQzZFL8NQm0Q1FAJfJgmnKWhpTmHwR8pwe0ZchhjQvz+DkyRX9tWV81SBPV75k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757965947; c=relaxed/simple;
-	bh=q3V3MsJ7DztIP8fpon5vJbX30D6R7q52PZAummA8iI4=;
+	s=arc-20240116; t=1757965948; c=relaxed/simple;
+	bh=8LKRYHLCAZTJKnDKNFoSC4CZNzre4T6N3gX2Sm3PQrI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=at4XqzT9D3g8iXmOwDlTwAU/+VAGFU0pVw8DRrDIFs7WLm5HEIsbErG8j7tRXfHfPSWwBzGNZN27rzXcZhFzc+m7LtFBy7r+w+49uqKSWw4OTk7UaWztsHB7Zhwjk3f2zpGr9hps9j9MDx0fnANNWiCPTQs5XY/bTC7rsnGVzUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gOiD94Vs; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=mRodtMaefsokpUikcVQ7Zw1eoJy6jmPoAjjGsCFP+V4GZ03mhSChvhmLrJivoi/oWh0JsT6mu7jX3NpfipMaMhrRxk9FdW8/X3miH+3UMVcSMQhtxyFWqqw0QaQ+ih82zBCmkfYp2FFDxAJH71YCkYXuBYycnIDWFklWgux3IYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FGGCLwc4; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2641084fb5aso17846135ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:52:24 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4d3ab49a66so6505489a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757965944; x=1758570744; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757965946; x=1758570746; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vg42YXvjHFhdSPyd/4e9YIQchkUAG0NxSAV9DDvIrlA=;
-        b=gOiD94Vsid3c9lQXwjmmC9/m+CbfuYPbM0QnsKNrAIe08z/SKY4VGs7NANbeLmMt5W
-         KGyNGWQAlPKTV8vWk19bIQSCBpRhRq1eiXpzCQ9jwK4l0kMdgw+SBI3MsSgfeBHM6hrT
-         LlP7b/kKlLkkPgA3Bbvi55Egs/prUXIDyvKyzRbyEHfwzTIDpx9Hw/ufiTk5q7EY6fdj
-         628bqhJFYsY2VJwMTDJdmbThlRK5BW2vEJKKYWgQLlVYEq3H+vfBwTO3Q56ey5++XLhO
-         x1GwJjNRUUxzeMDR6bOmABaRwE/VqcDxfcXIL7M4CcCEF46IbdFgYlhtZN0rKKGM9Ty3
-         Dzzg==
+        bh=/HSCepCK3t1UxBnW9wh+oSKVJTG/pFFOaZ/Yho235Fc=;
+        b=FGGCLwc4xUJXsIPuHKn/+edeY+TnfqIYX7w5Y9N1d08V2ePyMn9jsZ9H0Wm5HfiSnL
+         uX6PjjhdDx4YZwlGBpCGr+1s4frnBaDOClVcODpphKuWWiH9UfIHb8HLrxQyfSi8w69f
+         iexPZlfJogqPu23axMN2IIZdZ0AuMh2V7CoCmlK3e1l/mnI0SaIYawqDoWnBG5sFGVE/
+         9l/MCFWp6Tccgw6IwqfEHvSiAgyyLc7Txidr4tssgz58yZ1YkP+une4J1IMHZln1TNFl
+         I2RgJ6tWR9O4bwOXW9ohN5RvosTSzk9dDjAx64krFTvE43ClEC3SVJnEPjCuB/Yx8XMS
+         Jjjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757965944; x=1758570744;
+        d=1e100.net; s=20230601; t=1757965946; x=1758570746;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vg42YXvjHFhdSPyd/4e9YIQchkUAG0NxSAV9DDvIrlA=;
-        b=IQxZmzAZpRgnM7KLe91rKZ2p4HYnKa3XtehpTmJjHssTdm81jTV0KZD0lPAg5OFZgy
-         QPvCoGWbVbXJOPD6xCdx1p/WdWIVOen+QMZ7Vx4YEFqlQn2NObnp2RI4ZeeIMDRW/Ugy
-         1YZDFklmaJP2VOxNoj45Ub1hj1+C0E6BC0VeuZndAlAwm0jKV1PH4xiPO7aib+Vj6Hux
-         L0PF36BeW2sW8dnQEMZmL5S32sEX1x71qdLaB0ApvCHxqUOQehZroceruxPTxsCZ2h1H
-         mxnSkAmyssB5ItWsJYePx018m0gAP4wwx2s7tx9eMXmVxLMOiG3APDlwWeEMWj3LqXZX
-         o3Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVuw8RC6UbpV0diBOfiPfj1eBf2XXuv3d4WGQXCN7kodnQ0ym/0+0aPMm3Rs9Qv9DYE7MNQyAYG8V074ZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSK2npyw8o//LdF6Ljxz2N1huT/lqzws9V62PL2ezI5/J7Vrxs
-	O6VMgrQZegNOysjHy6L5GfG7CRLnJoO3eFwPr31LMQ7XF8OSvEWRO/YPEqzLzHx55020YJkZ2Q=
+        bh=/HSCepCK3t1UxBnW9wh+oSKVJTG/pFFOaZ/Yho235Fc=;
+        b=SZovL4VwpGpGq87S0bmrMyRIzowZohd/K1MZnonRVehTBDGs2kGfkYr2VMnLvAKVSx
+         hoNYVN8eLjCRgehhahfD1hArPrjgXS9Licw6pcqP1xf9GR81yVp54X1HnRWDNy8/WS+o
+         uhyBeys2thff6F4T4gvbF1WO0kZt1K+yO8QZ+yWYwOPalSXS4kIF99JzzWOlUbV4plEi
+         hvXm7EhV5DAho7L60pnHtzcFdLFp0GPePW+x59vJlWfcxRtmxo0uhm0wKW38O4BXS7nB
+         xSvtmLz6uEMpYtI5I/H0cXyr1MFmBBnJ3Qiz3rme3QiMe+S7bZSrzQQ2U4WboeROTqlw
+         TACg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1UzPp+ivj80LR7dsrolUnCMegp1RgWY85BWr9qooaDivjxjjZgM6vf3DYeZqM2P2Bg7UavrthkuvIxeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw04//Bt2OGUXtLvUcpe24rCxdcRk1q91cEbyZAbem5xr+6ec4w
+	pB4H2dcfUJejdUX8nGd6ULhVxttVUjhOqkVA1KmV4LGCjMJNWjVjf69n1eznUzcX27vdsIgq7g=
 	=
-X-Google-Smtp-Source: AGHT+IFLZf3/R1udLdGzfNx7SuklFJxoiGyP5wz+2NArO8lgYrlOW7Rh8Rc5osSmdBqt/k2sJfzU7IDn
-X-Received: from pjn16.prod.google.com ([2002:a17:90b:5710:b0:32d:d956:20fb])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:228f:b0:24c:be1f:c204
- with SMTP id d9443c01a7336-25d24da3763mr151368475ad.22.1757965944068; Mon, 15
- Sep 2025 12:52:24 -0700 (PDT)
-Date: Mon, 15 Sep 2025 19:51:45 +0000
+X-Google-Smtp-Source: AGHT+IH/aG7LJ/XwS+oMxCdx7EksVfml5Du7v3Dy129jptRP6+MPmhejd017Z1fgvIWqbyZ0zd5FVA53
+X-Received: from pjv14.prod.google.com ([2002:a17:90b:564e:b0:32d:69b3:b7b0])
+ (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c81:b0:32e:96b1:fb7f
+ with SMTP id 98e67ed59e1d1-32e96b1ff96mr1957825a91.11.1757965945709; Mon, 15
+ Sep 2025 12:52:25 -0700 (PDT)
+Date: Mon, 15 Sep 2025 19:51:46 +0000
 In-Reply-To: <20250915195153.462039-1-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250915195153.462039-1-fvdl@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250915195153.462039-5-fvdl@google.com>
-Subject: [RFC PATCH 04/12] mm/cma: keep a global sorted list of CMA ranges
+Message-ID: <20250915195153.462039-6-fvdl@google.com>
+Subject: [RFC PATCH 05/12] mm/cma: add helper functions for CMA balancing
 From: Frank van der Linden <fvdl@google.com>
 To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
 	linux-kernel@vger.kernel.org
@@ -82,227 +82,273 @@ Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev,
 	Frank van der Linden <fvdl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-In order to walk through CMA areas efficiently, it is useful
-to keep a global sorted list of ranges.
+Add some CMA helper functions to assist CMA balancing. They
+are:
 
-Create this list when activating the areas.
+cma_get_available.
+    - Returns the number of available pages in a CMA area
 
-Since users of this list may want to reference the CMA area
-the range came from, there needs to be a link from the range
-to that area. So, store a pointer to the CMA structure in
-the cma_memrange structure. This also reduces the number
-of arguments to a few internal functions.
+cma_numranges
+    - Returns the total number of CMA ranges.
+
+cma_next_balance_pagerange
+    - Get the next CMA page range in a zone that has is available
+      as a target for CMA balancing. This means a range that
+      consists of CMA pageblocks that are managed by the buddy
+      allocator (not allocated through cma_alloc). The array of
+      CMA ranges is walked top down.
+
+cma_next_noncma_pagerange
+    - Get the next non-CMA page range in a zone. The zone is
+      traversed bottom up.
 
 Signed-off-by: Frank van der Linden <fvdl@google.com>
 ---
- mm/cma.c | 72 ++++++++++++++++++++++++++++++++++++++++++--------------
- mm/cma.h |  6 ++---
- 2 files changed, 57 insertions(+), 21 deletions(-)
+ include/linux/cma.h |  30 +++++++++
+ mm/cma.c            | 161 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 191 insertions(+)
 
+diff --git a/include/linux/cma.h b/include/linux/cma.h
+index ec48f2a11f1d..0504580d61d0 100644
+--- a/include/linux/cma.h
++++ b/include/linux/cma.h
+@@ -37,6 +37,7 @@ enum cma_flags {
+ #define CMA_INIT_FLAGS (CMA_FIXED|CMA_RESERVE_PAGES_ON_ERROR)
+ 
+ struct cma;
++struct zone;
+ 
+ extern unsigned long totalcma_pages;
+ extern phys_addr_t cma_get_base(const struct cma *cma);
+@@ -79,6 +80,12 @@ extern void cma_reserve_pages_on_error(struct cma *cma);
+ struct folio *cma_alloc_folio(struct cma *cma, int order, gfp_t gfp);
+ bool cma_free_folio(struct cma *cma, const struct folio *folio);
+ bool cma_validate_zones(struct cma *cma);
++int cma_numranges(void);
++unsigned long cma_get_available(const struct cma *cma);
++bool cma_next_balance_pagerange(struct zone *zone, struct cma *cma, int *rindex,
++			    unsigned long *startpfn, unsigned long *endpfn);
++bool cma_next_noncma_pagerange(struct zone *zone, int *rindex,
++			       unsigned long *startpfn, unsigned long *endpfn);
+ #else
+ static inline struct folio *cma_alloc_folio(struct cma *cma, int order, gfp_t gfp)
+ {
+@@ -93,6 +100,29 @@ static inline bool cma_validate_zones(struct cma *cma)
+ {
+ 	return false;
+ }
++
++static inline int cma_numranges(void)
++{
++	return 0;
++}
++
++static inline unsigned long cma_get_available(const struct cma *cma)
++{
++	return 0;
++}
++
++static inline bool cma_next_balance_pagerange(struct zone *zone,
++			struct cma *cma, int *rindex, unsigned long *start_pfn,
++			unsigned long *end_pfn)
++{
++	return false;
++}
++
++static inline bool cma_next_noncma_pagerange(struct zone *zone, int *rindex,
++			     unsigned long *start_pfn, unsigned long *end_pfn)
++{
++	return false;
++}
+ #endif
+ 
+ #endif
 diff --git a/mm/cma.c b/mm/cma.c
-index 00d8d365f0b5..1f5a7bfc9152 100644
+index 1f5a7bfc9152..53cb1833407b 100644
 --- a/mm/cma.c
 +++ b/mm/cma.c
-@@ -23,6 +23,7 @@
- #include <linux/sizes.h>
- #include <linux/slab.h>
- #include <linux/string_choices.h>
-+#include <linux/sort.h>
- #include <linux/log2.h>
- #include <linux/cma.h>
- #include <linux/highmem.h>
-@@ -65,12 +66,11 @@ static unsigned long cma_bitmap_aligned_mask(const struct cma *cma,
-  * Find the offset of the base PFN from the specified align_order.
-  * The value returned is represented in order_per_bits.
-  */
--static unsigned long cma_bitmap_aligned_offset(const struct cma *cma,
--					       const struct cma_memrange *cmr,
-+static unsigned long cma_bitmap_aligned_offset(const struct cma_memrange *cmr,
- 					       unsigned int align_order)
- {
- 	return (cmr->base_pfn & ((1UL << align_order) - 1))
--		>> cma->order_per_bit;
-+		>> cmr->cma->order_per_bit;
+@@ -54,6 +54,11 @@ const char *cma_get_name(const struct cma *cma)
+ 	return cma->name;
  }
  
- static unsigned long cma_bitmap_pages_to_bits(const struct cma *cma,
-@@ -79,11 +79,12 @@ static unsigned long cma_bitmap_pages_to_bits(const struct cma *cma,
- 	return ALIGN(pages, 1UL << cma->order_per_bit) >> cma->order_per_bit;
- }
- 
--static void cma_clear_bitmap(struct cma *cma, const struct cma_memrange *cmr,
-+static void cma_clear_bitmap(const struct cma_memrange *cmr,
- 			     unsigned long pfn, unsigned long count)
- {
- 	unsigned long bitmap_no, bitmap_count;
- 	unsigned long flags;
-+	struct cma *cma = cmr->cma;
- 
- 	bitmap_no = (pfn - cmr->base_pfn) >> cma->order_per_bit;
- 	bitmap_count = cma_bitmap_pages_to_bits(cma, count);
-@@ -147,8 +148,7 @@ static void __init cma_activate_area(struct cma *cma)
- 	for (allocrange = 0; allocrange < cma->nranges; allocrange++) {
- 		cmr = &cma->ranges[allocrange];
- 		early_pfn[allocrange] = cmr->early_pfn;
--		cmr->bitmap = bitmap_zalloc(cma_bitmap_maxno(cma, cmr),
--					    GFP_KERNEL);
-+		cmr->bitmap = bitmap_zalloc(cma_bitmap_maxno(cmr), GFP_KERNEL);
- 		if (!cmr->bitmap)
- 			goto cleanup;
- 	}
-@@ -199,12 +199,45 @@ static void __init cma_activate_area(struct cma *cma)
- 	pr_err("CMA area %s could not be activated\n", cma->name);
- }
- 
-+static struct cma_memrange **cma_ranges;
-+static int cma_nranges;
-+
-+static int cmprange(const void *a, const void *b)
++unsigned long cma_get_available(const struct cma *cma)
 +{
-+	struct cma_memrange *r1, *r2;
++	return cma->available_count;
++}
 +
-+	r1 = *(struct cma_memrange **)a;
-+	r2 = *(struct cma_memrange **)b;
+ static unsigned long cma_bitmap_aligned_mask(const struct cma *cma,
+ 					     unsigned int align_order)
+ {
+@@ -202,6 +207,11 @@ static void __init cma_activate_area(struct cma *cma)
+ static struct cma_memrange **cma_ranges;
+ static int cma_nranges;
+ 
++int cma_numranges(void)
++{
++	return cma_nranges;
++}
 +
-+	if (r1->base_pfn < r2->base_pfn)
-+		return -1;
-+	return r1->base_pfn - r2->base_pfn;
+ static int cmprange(const void *a, const void *b)
+ {
+ 	struct cma_memrange *r1, *r2;
+@@ -214,6 +224,157 @@ static int cmprange(const void *a, const void *b)
+ 	return r1->base_pfn - r2->base_pfn;
+ }
+ 
++/*
++ * Provide the next free range in a cma memory range, as derived
++ * from the bitmap.
++ *
++ * @cmr: memory range to scan
++ * @start_pfn: the beginning of the previous range
++ * @end_pfn: the end of the previous range, zero for the first call
++ *
++ * The caller can adjust *end_pfn end use it as a starting point.
++ */
++static bool cma_next_free_range(struct cma_memrange *cmr,
++			unsigned long *start_pfn, unsigned long *end_pfn)
++{
++	unsigned long zerobit, onebit, start, nbits, offset, base;
++	struct cma *cma = cmr->cma;
++
++	nbits = cma_bitmap_maxno(cmr);
++
++	if (!*end_pfn)
++		offset = start = 0;
++	else {
++		start = ((*end_pfn - cmr->base_pfn) >> cma->order_per_bit);
++		if (start >= nbits)
++			return false;
++
++		offset = *end_pfn -
++			(cmr->base_pfn + (start << cma->order_per_bit));
++	}
++
++	spin_lock_irq(&cma->lock);
++	zerobit = find_next_zero_bit(cmr->bitmap, nbits, start);
++	if (zerobit >= nbits) {
++		spin_unlock_irq(&cma->lock);
++		return false;
++	}
++	onebit = find_next_bit(cmr->bitmap, nbits, zerobit);
++	spin_unlock_irq(&cma->lock);
++
++	base = (zerobit << cma->order_per_bit) + cmr->base_pfn;
++	*start_pfn = base + offset;
++	*end_pfn = base + ((onebit - zerobit) << cma->order_per_bit);
++
++	return true;
++}
++
++static inline bool cma_should_balance_range(struct zone *zone,
++				      struct cma_memrange *cmr)
++{
++	if (page_zone(pfn_to_page(cmr->base_pfn)) != zone)
++		return false;
++
++	return true;
++}
++
++/*
++ * Get the next CMA page range containing pages that have not been
++ * allocated through cma_alloc. This is just a snapshot, and the caller
++ * is expected to deal with the changing circumstances. Used to walk
++ * through CMA pageblocks in a zone in an optimized fashion during
++ * zone CMA balance compaction.
++ *
++ * If @cma is NULL, the global list of ranges is walked, else
++ * the ranges of the area pointed to by @cma are walked.
++ */
++bool cma_next_balance_pagerange(struct zone *zone, struct cma *cma,
++			    int *rindex, unsigned long *start_pfn,
++			    unsigned long *end_pfn)
++{
++	struct cma_memrange *cmr;
++	int i, nranges;
++
++	if (!cma_nranges)
++		return false;
++
++	nranges = cma ? cma->nranges : cma_nranges;
++
++	if (*rindex == -1) {
++		if (*end_pfn != 0) {
++			for (i = nranges - 1; i >= 0; i--) {
++				cmr = cma ? &cma->ranges[i] : cma_ranges[i];
++				if (!cma_should_balance_range(zone, cmr))
++					continue;
++				if (*end_pfn > cmr->base_pfn &&
++				    *end_pfn < (cmr->base_pfn + cmr->count))
++					break;
++			}
++		} else {
++			i = nranges - 1;
++		}
++	} else {
++		i = *rindex;
++	}
++
++	for (; i >= 0; i--) {
++		cmr = cma ? &cma->ranges[i] : cma_ranges[i];
++		if (!cma_should_balance_range(zone, cmr))
++			continue;
++		if (cma_next_free_range(cmr, start_pfn, end_pfn)) {
++			*rindex = i;
++			return true;
++		}
++	}
++
++	return false;
++}
++
++/*
++ * Get the next stretch of memory in a zone that is not MIGRATE_CMA
++ * pageblocks.
++ */
++bool cma_next_noncma_pagerange(struct zone *zone, int *rindex,
++						unsigned long *start_pfn,
++						unsigned long *end_pfn)
++{
++	struct cma_memrange *cmr;
++	unsigned long cma_start, cma_end;
++	int i;
++
++	if (*end_pfn >= zone_end_pfn(zone))
++		return false;
++
++	if (*rindex == -1) {
++		*rindex = 0;
++		if (*start_pfn == 0)
++			*start_pfn = zone->zone_start_pfn;
++	} else {
++		cmr = cma_ranges[*rindex];
++		*start_pfn = cmr->base_pfn + cmr->count;
++	}
++
++	for (i = *rindex; i < cma_nranges; i++) {
++		cmr = cma_ranges[i];
++		cma_start = cmr->base_pfn;
++		cma_end = cmr->base_pfn + cmr->count;
++		if (page_zone(pfn_to_page(cma_start)) != zone)
++			continue;
++		if (*start_pfn == cma_start) {
++			*start_pfn = cma_end;
++		} else if (*start_pfn < cma_start) {
++			*rindex = i;
++			*end_pfn = cma_start;
++			return true;
++		}
++	}
++
++	*rindex = cma_nranges;
++	*end_pfn = zone_end_pfn(zone);
++
++	return true;
 +}
 +
  static int __init cma_init_reserved_areas(void)
  {
--	int i;
-+	int i, r, nranges;
-+	struct cma *cma;
-+	struct cma_memrange *cmr;
-+
-+	nranges = 0;
-+	for (i = 0; i < cma_area_count; i++) {
-+		cma = &cma_areas[i];
-+		nranges += cma->nranges;
-+		cma_activate_area(cma);
-+	}
-+
-+	cma_ranges = kcalloc(nranges, sizeof(*cma_ranges), GFP_KERNEL);
-+	cma_nranges = 0;
-+	for (i = 0; i < cma_area_count; i++) {
-+		cma = &cma_areas[i];
-+		for (r = 0; r < cma->nranges; r++) {
-+			cmr = &cma->ranges[r];
-+			cma_ranges[cma_nranges++] = cmr;
-+		}
-+	}
- 
--	for (i = 0; i < cma_area_count; i++)
--		cma_activate_area(&cma_areas[i]);
-+	sort(cma_ranges, cma_nranges, sizeof(*cma_ranges), cmprange, NULL);
- 
- 	return 0;
- }
-@@ -297,6 +330,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 	cma->ranges[0].base_pfn = PFN_DOWN(base);
- 	cma->ranges[0].early_pfn = PFN_DOWN(base);
- 	cma->ranges[0].count = cma->count;
-+	cma->ranges[0].cma = cma;
- 	cma->nranges = 1;
- 	cma->nid = NUMA_NO_NODE;
- 
-@@ -687,6 +721,7 @@ int __init cma_declare_contiguous_multi(phys_addr_t total_size,
- 		cmrp->base_pfn = PHYS_PFN(mlp->base);
- 		cmrp->early_pfn = cmrp->base_pfn;
- 		cmrp->count = size >> PAGE_SHIFT;
-+		cmrp->cma = cma;
- 
- 		sizeleft -= size;
- 		if (sizeleft == 0)
-@@ -772,7 +807,7 @@ static void cma_debug_show_areas(struct cma *cma)
- 	for (r = 0; r < cma->nranges; r++) {
- 		cmr = &cma->ranges[r];
- 
--		nbits = cma_bitmap_maxno(cma, cmr);
-+		nbits = cma_bitmap_maxno(cmr);
- 
- 		pr_info("range %d: ", r);
- 		for_each_clear_bitrange(start, end, cmr->bitmap, nbits) {
-@@ -786,9 +821,9 @@ static void cma_debug_show_areas(struct cma *cma)
- 	spin_unlock_irq(&cma->lock);
- }
- 
--static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
--				unsigned long count, unsigned int align,
--				struct page **pagep, gfp_t gfp)
-+static int cma_range_alloc(struct cma_memrange *cmr,
-+			   unsigned long count, unsigned int align,
-+			   struct page **pagep, gfp_t gfp)
- {
- 	unsigned long mask, offset;
- 	unsigned long pfn = -1;
-@@ -796,10 +831,11 @@ static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
- 	unsigned long bitmap_maxno, bitmap_no, bitmap_count;
- 	int ret = -EBUSY;
- 	struct page *page = NULL;
-+	struct cma *cma = cmr->cma;
- 
- 	mask = cma_bitmap_aligned_mask(cma, align);
--	offset = cma_bitmap_aligned_offset(cma, cmr, align);
--	bitmap_maxno = cma_bitmap_maxno(cma, cmr);
-+	offset = cma_bitmap_aligned_offset(cmr, align);
-+	bitmap_maxno = cma_bitmap_maxno(cmr);
- 	bitmap_count = cma_bitmap_pages_to_bits(cma, count);
- 
- 	if (bitmap_count > bitmap_maxno)
-@@ -840,7 +876,7 @@ static int cma_range_alloc(struct cma *cma, struct cma_memrange *cmr,
- 			break;
- 		}
- 
--		cma_clear_bitmap(cma, cmr, pfn, count);
-+		cma_clear_bitmap(cmr, pfn, count);
- 		if (ret != -EBUSY)
- 			break;
- 
-@@ -879,7 +915,7 @@ static struct page *__cma_alloc(struct cma *cma, unsigned long count,
- 	for (r = 0; r < cma->nranges; r++) {
- 		page = NULL;
- 
--		ret = cma_range_alloc(cma, &cma->ranges[r], count, align,
-+		ret = cma_range_alloc(&cma->ranges[r], count, align,
- 				       &page, gfp);
- 		if (ret != -EBUSY || page)
- 			break;
-@@ -1011,7 +1047,7 @@ bool cma_release(struct cma *cma, const struct page *pages,
- 		return false;
- 
- 	free_contig_range(pfn, count);
--	cma_clear_bitmap(cma, cmr, pfn, count);
-+	cma_clear_bitmap(cmr, pfn, count);
- 	cma_sysfs_account_release_pages(cma, count);
- 	trace_cma_release(cma->name, pfn, pages, count);
- 
-diff --git a/mm/cma.h b/mm/cma.h
-index 25b696774c6a..384d1109d438 100644
---- a/mm/cma.h
-+++ b/mm/cma.h
-@@ -30,6 +30,7 @@ struct cma_memrange {
- 		unsigned long early_pfn;
- 		unsigned long *bitmap;
- 	};
-+	struct cma *cma;
- #ifdef CONFIG_CMA_DEBUGFS
- 	struct debugfs_u32_array dfs_bitmap;
- #endif
-@@ -67,10 +68,9 @@ struct cma {
- extern struct cma cma_areas[MAX_CMA_AREAS];
- extern unsigned int cma_area_count;
- 
--static inline unsigned long cma_bitmap_maxno(struct cma *cma,
--		struct cma_memrange *cmr)
-+static inline unsigned long cma_bitmap_maxno(struct cma_memrange *cmr)
- {
--	return cmr->count >> cma->order_per_bit;
-+	return cmr->count >> cmr->cma->order_per_bit;
- }
- 
- #ifdef CONFIG_CMA_SYSFS
+ 	int i, r, nranges;
 -- 
 2.51.0.384.g4c02a37b29-goog
 
