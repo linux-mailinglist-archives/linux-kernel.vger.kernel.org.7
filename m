@@ -1,83 +1,181 @@
-Return-Path: <linux-kernel+bounces-817825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4CFB58721
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:01:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0162B58724
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299BC1B2552E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:01:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFD3E7A5100
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951FC2C029D;
-	Mon, 15 Sep 2025 22:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A31629BD9A;
+	Mon, 15 Sep 2025 22:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="q9eAu4HS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZfhdS/QH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9Nf55ADZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EF536D;
-	Mon, 15 Sep 2025 22:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0782E1DB95E;
+	Mon, 15 Sep 2025 22:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757973654; cv=none; b=oMiNeg3H57WM6ilmz7xCQP4Xm3piar926qEmX5f32aRAON5Dp+0ABVcYpVy7Xk0d/NZ5REtYC2tahg1cNjWuW9OZyhvR8z6d/1txBw3/P51+jiLBH7++iGjSDzQKysqiLc9yUBfwhkoqa+bEezEZvwnw6e3BbKV1uFXLcAAtXx4=
+	t=1757973898; cv=none; b=cYFFlQkOrxTlqCfhveG1CewL4qMLP8ryokvlZqh50p9KdOBYENmHbUSFk3juBbgebsYd3Cr2bjtYVWtYvdj5BlY0xG7ByeARctL7xlHWUVUBFx+KPiGKv+s7s2RuhCVRk7VPBo26cD8TJZ1Y2CNbQu4dfa+7Mz7WesJJep7moKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757973654; c=relaxed/simple;
-	bh=VLQGS3cgTtk104a64eK65T5b3tVm3LffcJx+YoRZ5iU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZcheGDmhCcfFPsQrJ9suZPOGTBCZ0BkALpefXFalk7srMzezDxmNh0g3ckiHK/ifzjtPYaYu09UOaqOkCd/MEFIOv5PZzUFRAknl623skCPZOMlLKKNfeWqr2IBZuThy3vti0JYG1jtnFw30TwkdMlMRmOvX/QuAs59et1hWfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=q9eAu4HS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NS7S5a2VcyEH5jQf3fwVpWmwNIV9OR74n9P7vCPbVqQ=; b=q9eAu4HSX9Q8nYaGN+fgSTf/+B
-	rNsNEJacv9FXek+K6lWVcX+VaIW+cpipAPIRoC7IO10pYOpbjrhZaqEUpW+kM9HWc/bTmXI7WofZX
-	wDYBBRuUuJDtrsxwocMVx7kdiGa7RsenqMLCaQnVXOraPp0tODn9NDzRELJl6ywTk/uo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uyHFZ-008U9c-Lk; Tue, 16 Sep 2025 00:00:41 +0200
-Date: Tue, 16 Sep 2025 00:00:41 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/1] net: phy: clear EEE runtime state in
- PHY_HALTED/PHY_ERROR
-Message-ID: <dd53bd18-32b5-404c-92cf-2bca8a510718@lunn.ch>
-References: <20250912132000.1598234-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1757973898; c=relaxed/simple;
+	bh=QHhf/7bBiZdrVvOVStZvUjbCj9fxi+XoGBWGh783NNw=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Qs/rJwY7vKxDeQwCx7QPNy1cmn3G0i/7JiLSzwL4BQ0IKrX7V08L7918m7Vj9dEKmlryBx4DVN6IpYgZwwDd/AfAa/9Vc/n0ccbgiJ506dt2nelMqgFANmx8rGEnf4LRTDQxHwr4ysBZLmpC9Q7bzG4E7WruujSxzM5CNjJ6QjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZfhdS/QH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9Nf55ADZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 15 Sep 2025 22:04:53 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757973895;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=cGfX7uYH4b5XvyYqP69iMKYidsUuoQvW80jgIITdbEI=;
+	b=ZfhdS/QH5Q+wvJhaGKffc+5DzYgKuRXP90bai/Sjwe+xICYFvtoXmd8wUHr6jOne/oYTlK
+	3JXuJWXxFUx02XprL/y7gSTgSXl20LS9Z9KLHsD01IDX4+/8vw83/TLoOjHl0l4V4FPeZ2
+	mK+azpxO5pkti68HFzVxK34KZcKimmDgVwUwl8PGtIVToeO0Hl9dVWElMRDH1PKySPbvqj
+	4zYPMqQ6o5pkcy05kg6Y3GIG/73rwGonOZf32VAdx/l7qxvf6Q4AyHLBa9IxQm7fHdSMSS
+	hjwQoKVtWZGyMExaMGyarwuQz+oFnmr9lIV66ocOtujFILgv9m9HqwUHfsn0Qg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757973895;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=cGfX7uYH4b5XvyYqP69iMKYidsUuoQvW80jgIITdbEI=;
+	b=9Nf55ADZC3AS4NTjGZKAe2IONj4tvoBpUqP9Fmnn87UOd6aHZ//tGHzxdtzbtcx1M/nIR+
+	3vLY9YpzjKhfF7DA==
+From: "tip-bot2 for Tom Lendacky" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/sev: Guard sev_evict_cache() with
+ CONFIG_AMD_MEM_ENCRYPT
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>, stable@kernel.org,
+	#@tip-bot2.tec.linutronix.de, 6.16.x@tip-bot2.tec.linutronix.de,
+	x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912132000.1598234-1-o.rempel@pengutronix.de>
+Message-ID: <175797389339.709179.7449727928740128362.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 03:20:00PM +0200, Oleksij Rempel wrote:
-> Clear EEE runtime flags when the PHY transitions to HALTED or ERROR
-> and the state machine drops the link. This avoids stale EEE state being
-> reported via ethtool after the PHY is stopped or hits an error.
-> 
-> This change intentionally only clears software runtime flags and avoids
-> MDIO accesses in HALTED/ERROR. A follow-up patch will address other
-> link state variables.
-> 
-> Suggested-by: Russell King (Oracle) <linux@armlinux.org.uk>
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+The following commit has been merged into the x86/urgent branch of tip:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Commit-ID:     7f830e126dc357fc086905ce9730140fd4528d66
+Gitweb:        https://git.kernel.org/tip/7f830e126dc357fc086905ce9730140fd45=
+28d66
+Author:        Tom Lendacky <thomas.lendacky@amd.com>
+AuthorDate:    Mon, 15 Sep 2025 11:04:12 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 15 Sep 2025 18:29:43 +02:00
 
-    Andrew
+x86/sev: Guard sev_evict_cache() with CONFIG_AMD_MEM_ENCRYPT
+
+The sev_evict_cache() is guest-related code and should be guarded by
+CONFIG_AMD_MEM_ENCRYPT, not CONFIG_KVM_AMD_SEV.
+
+CONFIG_AMD_MEM_ENCRYPT=3Dy is required for a guest to run properly as an SEV-=
+SNP
+guest, but a guest kernel built with CONFIG_KVM_AMD_SEV=3Dn would get the stub
+function of sev_evict_cache() instead of the version that performs the actual
+eviction. Move the function declarations under the appropriate #ifdef.
+
+Fixes: 7b306dfa326f ("x86/sev: Evict cache lines during SNP memory validation=
+")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: stable@kernel.org # 6.16.x
+Link: https://lore.kernel.org/r/70e38f2c4a549063de54052c9f64929705313526.1757=
+708959.git.thomas.lendacky@amd.com
+---
+ arch/x86/include/asm/sev.h | 38 ++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index 0223696..465b19f 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -562,6 +562,24 @@ enum es_result sev_es_ghcb_hv_call(struct ghcb *ghcb,
+=20
+ extern struct ghcb *boot_ghcb;
+=20
++static inline void sev_evict_cache(void *va, int npages)
++{
++	volatile u8 val __always_unused;
++	u8 *bytes =3D va;
++	int page_idx;
++
++	/*
++	 * For SEV guests, a read from the first/last cache-lines of a 4K page
++	 * using the guest key is sufficient to cause a flush of all cache-lines
++	 * associated with that 4K page without incurring all the overhead of a
++	 * full CLFLUSH sequence.
++	 */
++	for (page_idx =3D 0; page_idx < npages; page_idx++) {
++		val =3D bytes[page_idx * PAGE_SIZE];
++		val =3D bytes[page_idx * PAGE_SIZE + PAGE_SIZE - 1];
++	}
++}
++
+ #else	/* !CONFIG_AMD_MEM_ENCRYPT */
+=20
+ #define snp_vmpl 0
+@@ -605,6 +623,7 @@ static inline int snp_send_guest_request(struct snp_msg_d=
+esc *mdesc,
+ static inline int snp_svsm_vtpm_send_command(u8 *buffer) { return -ENODEV; }
+ static inline void __init snp_secure_tsc_prepare(void) { }
+ static inline void __init snp_secure_tsc_init(void) { }
++static inline void sev_evict_cache(void *va, int npages) {}
+=20
+ #endif	/* CONFIG_AMD_MEM_ENCRYPT */
+=20
+@@ -619,24 +638,6 @@ int rmp_make_shared(u64 pfn, enum pg_level level);
+ void snp_leak_pages(u64 pfn, unsigned int npages);
+ void kdump_sev_callback(void);
+ void snp_fixup_e820_tables(void);
+-
+-static inline void sev_evict_cache(void *va, int npages)
+-{
+-	volatile u8 val __always_unused;
+-	u8 *bytes =3D va;
+-	int page_idx;
+-
+-	/*
+-	 * For SEV guests, a read from the first/last cache-lines of a 4K page
+-	 * using the guest key is sufficient to cause a flush of all cache-lines
+-	 * associated with that 4K page without incurring all the overhead of a
+-	 * full CLFLUSH sequence.
+-	 */
+-	for (page_idx =3D 0; page_idx < npages; page_idx++) {
+-		val =3D bytes[page_idx * PAGE_SIZE];
+-		val =3D bytes[page_idx * PAGE_SIZE + PAGE_SIZE - 1];
+-	}
+-}
+ #else
+ static inline bool snp_probe_rmptable_info(void) { return false; }
+ static inline int snp_rmptable_init(void) { return -ENOSYS; }
+@@ -652,7 +653,6 @@ static inline int rmp_make_shared(u64 pfn, enum pg_level =
+level) { return -ENODEV
+ static inline void snp_leak_pages(u64 pfn, unsigned int npages) {}
+ static inline void kdump_sev_callback(void) { }
+ static inline void snp_fixup_e820_tables(void) {}
+-static inline void sev_evict_cache(void *va, int npages) {}
+ #endif
+=20
+ #endif
 
