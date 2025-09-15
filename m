@@ -1,83 +1,100 @@
-Return-Path: <linux-kernel+bounces-817764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473CFB5863D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:57:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBDAB5863F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 818517A84F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43ECA1B22BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F57E299AB4;
-	Mon, 15 Sep 2025 20:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A30299AB4;
+	Mon, 15 Sep 2025 20:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDg19uYk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dllwHkai"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC4326E16A;
-	Mon, 15 Sep 2025 20:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C99872610;
+	Mon, 15 Sep 2025 20:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757969848; cv=none; b=GxQLQHjt+MvACXUSen5V7EUotwU90p3rzD/kz1OBpTxnAqvOKBN5pUMPPN4u4fYRYKc5VnQk3TphaYU3r1769DeHyhc8rwOr2jM8Wr5ry6Cjcc8iGG7ECLcblDGZ7qqOgOZrtPTpHhiJp4SV+NL6TVnL9fX1Ft2ShNzwmmwllwU=
+	t=1757969897; cv=none; b=N1oGJV2iyZsrj6DuK7EsCM/sFw7ldUZNUw+xBHPdM5l2HJkd1dqNqQyhd/FoqjWFrR5hrZtCSXUh/Ad4CGdl0r+aDiBDMG5k/gFCUJO6bBNUTmtnhxx12Eiq+hpxou4o0bRZkFjILdmnxlqi3KbrYoq8xEHk823/AvyapCUZKjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757969848; c=relaxed/simple;
-	bh=FAhsTruNsmWXJBgpWX4neFlt6ZUZBvbVYrNSsZrP9Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JznsQZLtvwEiZLqP0q0v2J15rWAHsIFmx29k3uPkrkfN8JODsgl/G311GvobZ+D+BknZLw9DnqRa2yvTUUAehq/JUyygVlvYWTV8wlROBruG0EAXiAjmBIOOlXp6tR59h2q8QkkBIubGHgAGh/2m1rANtMw+HRJJprPLVNGnVIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDg19uYk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24D0BC4CEF1;
-	Mon, 15 Sep 2025 20:57:27 +0000 (UTC)
+	s=arc-20240116; t=1757969897; c=relaxed/simple;
+	bh=x3/UkngNGKVY/w11MDmgCTH/JFX+ay+6u6MWV9Bgxtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Hdrl7y+1U4GZQWKxWAVvw5AW3/n7kk8GjAphd3VwzdLWX+npUZHBT1aZ5L3X5kMCcGfpfclSjQWWLAhHv1Ldo6XMa/KzEA1NUdh9zho92GZ/cFvqsJLGEI4Brf3KPOHg/yrYTNRpIWK5WeQghOm/OwOenXD/55wltTghoU5n0X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dllwHkai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B8DC4CEF1;
+	Mon, 15 Sep 2025 20:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757969847;
-	bh=FAhsTruNsmWXJBgpWX4neFlt6ZUZBvbVYrNSsZrP9Qc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LDg19uYkgT3SYKYudfHms/thXSN1PJVhS6DNjX/ydUkyipksa9MUbbyu67Vy5MDde
-	 HN0rfRbZgXVFQnA4OuN1sK63G/q/ydnVclilBLVFna0ZzKI/UHzEICbx8oyEcHmx0a
-	 NieG0Au7lFxj2Rlppk7m3j2XHuGH5CIJGdHPhjubOTrKriheI9LPVqRmn2vIRC5l2l
-	 T2F2r3a/O860Qy+dR/Whz3WTUIKQX/j7481LEYgZMq2ukKh7LmBsvpOwl2/gL37PRK
-	 HXECH5Xp//gJ+77E1otT9Uzy2U9DAcl5Wz7ZdDrS1do8NN2lH8jv/Qykj0CUcZVfjv
-	 5OFEh3p4q6duw==
-Date: Mon, 15 Sep 2025 15:57:26 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Robin van der Gracht <robin@protonic.nl>,
-	Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: auxdisplay: change to
- unevaluatedProperties
-Message-ID: <175796984570.3379405.7210704746413204244.robh@kernel.org>
-References: <20250911180641.1031346-1-Frank.Li@nxp.com>
+	s=k20201202; t=1757969897;
+	bh=x3/UkngNGKVY/w11MDmgCTH/JFX+ay+6u6MWV9Bgxtc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=dllwHkaiBIz/stxR1VjeFHgF/MDUe3PLmHfensPLWWT6wpAGLdbgZW/p0ewiQVQ67
+	 rEJKclbQ98bd7wUd3G8D+6o/R0tyII83OINJmTgb1mjJeRuEzQDFG6mf4zVrAIX3fE
+	 xGsS4UJ3dRPjmctApkydJxzqRh58tNotRkZWSRrtPkfT1m/E0PrJBJIEPqzp6bjnUw
+	 5bCXslWXarr1DBInv7kfYlNpphd/SwZK63CUW+pU92UpwPWkPM3eWpaBLTFdqSV93N
+	 XIg/5KEdomDuG9qsKg0PZQK9UuBImaDkZ+wbk8XABLIKtfZYOffsngofo9D2C8Q8XX
+	 Cgeb1VjOH703w==
+Date: Mon, 15 Sep 2025 21:58:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Jorge Marques <jorge.marques@analog.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Frank Li <Frank.Li@nxp.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the i3c tree
+Message-ID: <aMh95LzHnl-9-w5Y@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7fnVIbRNQ/HmTUuI"
+Content-Disposition: inline
+
+
+--7fnVIbRNQ/HmTUuI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250911180641.1031346-1-Frank.Li@nxp.com>
 
+Hi all,
 
-On Thu, 11 Sep 2025 14:06:41 -0400, Frank Li wrote:
-> Change additionalProperties to unevaluatedProperties because it refs to
-> /schemas/input/matrix-keymap.yaml.
-> 
-> Fix below CHECK_DTBS warnings:
-> arch/arm/boot/dts/nxp/imx/imx6dl-victgo.dtb: keypad@70 (holtek,ht16k33): 'keypad,num-columns', 'keypad,num-rows' do not match any of the regexes: '^pinctrl-[0-9]+$'
->         from schema $id: http://devicetree.org/schemas/auxdisplay/holtek,ht16k33.yaml#
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/auxdisplay/holtek,ht16k33.yaml          | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+After merging the i3c tree, today's linux-next build (x86 allmodconfig)
+failed like this:
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+/tmp/next/build/drivers/i3c/master/adi-i3c-master.c:13:10: fatal error: linux/fpga/adi-axi-common.h: No such file or directory
+   13 | #include <linux/fpga/adi-axi-common.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
 
+Caused by commit
+
+  63cae74bea7cc ("i3c: master: Add driver for Analog Devices I3C Controller IP")
+
+I have used the version from next-20250912 instead.
+
+--7fnVIbRNQ/HmTUuI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIfeQACgkQJNaLcl1U
+h9BlFQf+JUxDbrhiPQ0nHOwb6b0KfMRY6zbVtD5F/pkKQnzDYuzpaWpotiP0ttBk
+r/98h9qQkGN0RPJObC8Z6zC62I8UmwNqjmooMQcttPFTPxc414dM/LSgaLseQXSM
+GRXqK8eIMqisZ4iChtvATD6CEO1Bd6EX9flaG/unIK/bXkMBkK50sdIy2jAfyCQy
+m62kRgRntVvX0QjAgWu8DUsgZ4UHMRJ1bbwDgu092y7fOODFmssRjzKAqTpgpBW/
+J7pQx153OxUa7J9jWmoL+76NazL4BjM5aO9Kz34eCDtb0tmsGJVqg3UT+aco7mqd
+XnEfOZVk1sbVQ+4GexX8dvfM0hXKcw==
+=Rwg2
+-----END PGP SIGNATURE-----
+
+--7fnVIbRNQ/HmTUuI--
 
