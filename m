@@ -1,253 +1,162 @@
-Return-Path: <linux-kernel+bounces-816132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046ACB56FF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:55:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241CCB583A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962313B6792
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4758F485287
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F8D2773E5;
-	Mon, 15 Sep 2025 05:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EEC2BDC2A;
+	Mon, 15 Sep 2025 17:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ey9+Pde3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkuOsgYO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D926B97E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437B229BDBA;
+	Mon, 15 Sep 2025 17:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757915739; cv=none; b=deFVg1giVkqeL2Gv8wOYErA5sDESOxwFeSiWJuXa9vol3X9QXnx4VIYWOoV7VjeWPa5YeqVnEm6s51BrY/0qbpNL0q0PEcMAW9e8eNj76VaEP0RXUQ4Wr2gLdexUNl5q1jyO7sftnvP2peyOtRAReI6lq0lP4GlkfFltSmTw4Ao=
+	t=1757957454; cv=none; b=Efh17La2hkxVYNi8eUaLbL31bKHSZPKmQUjgUB3hOsXq4ZpQRBNbF5WNHCkspSryzbBi9c/r0vErgJo70tThCToEctX+kpJR5i602yeVpAbPXom/PsfYlNrFUNk//fZg9mizzVVJW92Qco4RXRnbRDj0vpDVjpJa3I+mkKRnPeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757915739; c=relaxed/simple;
-	bh=DbYsO7UJQJRjzTAl4hsAi+uv5Z0ebRu1GjxF1gpkvJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GtVpTpprJ6c1IRb9TBFjqByNn+uT2Ec5MPns1YdzRUQpEU6p2qkMXMKmH5yHFk8ybLH5+nz5pIuthM/Kc7Ps+NizcSvWJ+WhpuMRKT1130EIG9exP+LLLpSU2PCdeMBCNz3Uy3W/plNHH9SeO2HjF5TxJlIFOecsba8dF91nQMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ey9+Pde3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757915735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PgzCsQOKmacoCjP/GBUfHiLtpkuIZsT3t9XMSe2iV7U=;
-	b=Ey9+Pde3xvjEz/agHISwelVwUa2YRJmsIhgi6foc9d2dBPqSqD/57r9dzzx9L046IX8NCP
-	8wWpEoFBYUbaYZrmbvhO2wxuQemmFxP2bhz+0LYBwdjVd313ZbsIgM6ccxwz5ncC17NM0x
-	Npw6D6lQOXaO1+3WnPbQh+tMN4iS96c=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-333-bhCO57uPOsan3aqkds7Log-1; Mon, 15 Sep 2025 01:55:34 -0400
-X-MC-Unique: bhCO57uPOsan3aqkds7Log-1
-X-Mimecast-MFC-AGG-ID: bhCO57uPOsan3aqkds7Log_1757915733
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b54a2ab0f2aso2068468a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 22:55:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757915733; x=1758520533;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PgzCsQOKmacoCjP/GBUfHiLtpkuIZsT3t9XMSe2iV7U=;
-        b=Fu4s+75GmRC9HMDlosb4+FQ+cDZAECEzUQqKwGFwPegEGS5DwjtZGc1Znp4X+h5/JS
-         iUWUwYmlk7mvtMKM27jhS4/jTiVZEJOpvkITXWRoQg4GAYzmR/OmaDaqIcglSOwWyOeH
-         QjptVzs7GI+FX1Zw7RBRlC26NSCt18mUqo7h9SAbUrW1d4krJbBEjmWcY0peeDDFZp0f
-         s8BK6m3kZlhTnCkLZt7NMnd8x7x5F+zWREzy26jmdlVryeT8Nv7IvIPnhW03d0UoeiCU
-         gJO9VxTVLAj6YqFTUzBPC3fW6B3s4GzmnXxWrM1w1FYfIoZxj4OXZvAMkBk0wDbnzvww
-         ps3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGgdGyoDdEVC+YtHFu3anuK09WjVHJB7EbWKXxnntBIksuGFpCnwasSBhZooWv4jXXfbifqeG493Jvmxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR3798xu26XQ2KdsRXYHfCVZyQ5OTMKd1WNmRxRtl/PU1U0Xsg
-	H4mvTW8FYkkH5RgqAcPeSVb/aI/lz15quohKW1t5BZis7tieAUDO98dadqwzkUZQmzL5FzggvjH
-	rrC2ZzDdauWcmBPQXsqVYicOaYG+1DSkrK1CfNn22HXPnRfeAnCwiQCYhOIYyO5NxuibuxK4nhB
-	vQuao=
-X-Gm-Gg: ASbGncsl6ewRw0wcznlduR4GOJOKq0PL38b62O8kzbRptmSry4wjhKkgH73IZrB5m3k
-	sZUF8u9bYGYRG21SKbKz3cZMi30y0qRs216ZL5SSOKkriyGmryTpCOz9pGRTie8e6EMeTT2IQ9E
-	+W2lS7KyyjU1PPWaA7N3WpEsKewycCjkrAfP5pU/3e8IarB6HL8yDsAslyIIGN9FAJb2PhQntRZ
-	sF19wHv7DT++R9jakHM74BzS9FvDz4Zb8FxAd0EaRtVFJNX6fz6HuscV2vrJumieGVCPRXnaoq/
-	HfJqaQPun+9YYusZ6ET7Vye+KjlMLzo=
-X-Received: by 2002:a05:6a20:548d:b0:248:7e43:b6b8 with SMTP id adf61e73a8af0-26027c23f44mr12880574637.3.1757915732979;
-        Sun, 14 Sep 2025 22:55:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmcsBuNESqmUSaUAZsD1y3Jo2f26HFzeSrkABroCjauRovq1uR/BneKn5f+6zwo9yQ8EBy3Q==
-X-Received: by 2002:a05:6a20:548d:b0:248:7e43:b6b8 with SMTP id adf61e73a8af0-26027c23f44mr12880551637.3.1757915732593;
-        Sun, 14 Sep 2025 22:55:32 -0700 (PDT)
-Received: from localhost ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77618a7feefsm8575003b3a.58.2025.09.14.22.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 22:55:32 -0700 (PDT)
-From: Coiby Xu <coxu@redhat.com>
-To: linux-integrity@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] ima: don't clear IMA_DIGSIG flag when setting or removing non-IMA xattr
-Date: Mon, 15 Sep 2025 13:55:23 +0800
-Message-ID: <20250915055524.2187783-1-coxu@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250902042515.759750-1-coxu@redhat.com>
-References: <20250902042515.759750-1-coxu@redhat.com>
+	s=arc-20240116; t=1757957454; c=relaxed/simple;
+	bh=d0uiTV0FLlDekg05gVtL0PWv+SDj/bAX7hFr0eZWj+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrDM90ha5QZcT0Lo+WNwONoGVNWsw2sgJAgEs9Hk1nz46JbbORZnhkNS8tCp1CiZyxDQ5i8wQwbR3W221DMOiWkaw1TRXmDrxQaCukxq5+B+d3shNJOEygxfKrpcRHCzCIdHi4iJirB44c2tuUcCN5wTj/HoGn3Jp+6+RghCAjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkuOsgYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DBB1C4CEF7;
+	Mon, 15 Sep 2025 17:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757957453;
+	bh=d0uiTV0FLlDekg05gVtL0PWv+SDj/bAX7hFr0eZWj+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TkuOsgYOvu58oToRsDi9Nx/v8OaO5+vSq8hsFcnk7cwMqXrBc/BF+uvGDApqWIx6Y
+	 0YAfR58LXnFMIHzeY4qwSzmjEbzKcZkV9tUZPGS+xaZ+H9QlEto2n4oZbd5PSXtJiA
+	 4PfS+SeEiUUfBu1CKpwIKbu8NfEv55eBZADfm7fMFqhhoddz2fv/m90qT9DxEINI8k
+	 ZGCyxxTKNnb4aUTGVvDtPQlNZrjk+w6hbz632dfvp4Ss51QXMBwQKIZPTnp4UK43ue
+	 xdZMywnIbZsPSHaLyLNUc3/wAih0wuZHiYhoOD2hVTw5+7Vt4ZCWfYncCUtGIQy2tp
+	 Q2VF4BAlQQODQ==
+Date: Mon, 15 Sep 2025 07:56:16 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aMeqgPVfJcjBLhl8@levanger>
+References: <cover.1755535876.git.legion@kernel.org>
+ <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
 
-Currently when both IMA and EVM are in fix mode, the IMA signature will
-be reset to IMA hash if a program first stores IMA signature in
-security.ima and then writes/removes some other security xattr for the
-file.
+On Mon, Aug 18, 2025 at 06:54:57PM +0200, Alexey Gladkov wrote:
+> From: Masahiro Yamada <masahiroy@kernel.org>
+> 
+> Keep the .modinfo section during linking, but strip it from the final
+> vmlinux.
+> 
+> Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
+> 
+> This change will allow the next commit to extract the .modinfo section
+> from the vmlinux.unstripped intermediate.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>  include/asm-generic/vmlinux.lds.h | 2 +-
+>  scripts/Makefile.vmlinux          | 2 +-
+>  scripts/mksysmap                  | 3 +++
+>  3 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index ae2d2359b79e9..cfa63860dfd4c 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -831,6 +831,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+>  
+>  /* Required sections not related to debugging. */
+>  #define ELF_DETAILS							\
+> +		.modinfo : { *(.modinfo) }				\
+>  		.comment 0 : { *(.comment) }				\
+>  		.symtab 0 : { *(.symtab) }				\
+>  		.strtab 0 : { *(.strtab) }				\
+> @@ -1044,7 +1045,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+>  	*(.discard.*)							\
+>  	*(.export_symbol)						\
+>  	*(.no_trim_symbol)						\
+> -	*(.modinfo)							\
+>  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
+>  	*(.gnu.version*)						\
+>  
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index 4f2d4c3fb7372..e2ceeb9e168d4 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -86,7 +86,7 @@ endif
+>  # vmlinux
+>  # ---------------------------------------------------------------------------
+>  
+> -remove-section-y                                   :=
+> +remove-section-y                                   := .modinfo
+>  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+>  
+>  quiet_cmd_strip_relocs = OBJCOPY $@
+> diff --git a/scripts/mksysmap b/scripts/mksysmap
+> index 3accbdb269ac7..a607a0059d119 100755
+> --- a/scripts/mksysmap
+> +++ b/scripts/mksysmap
+> @@ -79,6 +79,9 @@
+>  / _SDA_BASE_$/d
+>  / _SDA2_BASE_$/d
+>  
+> +# MODULE_INFO()
+> +/ __UNIQUE_ID_modinfo[0-9]*$/d
+> +
+>  # ---------------------------------------------------------------------------
+>  # Ignored patterns
+>  #  (symbols that contain the pattern are ignored)
+> -- 
+> 2.50.1
+> 
 
-For example, on Fedora, after booting the kernel with "ima_appraise=fix
-evm=fix ima_policy=appraise_tcb" and installing rpm-plugin-ima,
-installing/reinstalling a package will not make good reference IMA
-signature generated. Instead IMA hash is generated,
+Hi Alexey,
 
-    # getfattr -m - -d -e hex /usr/bin/bash
-    # file: usr/bin/bash
-    security.ima=0x0404...
+with this patch applied, I still get a warning from objcpy as Masahiro
+and Stephen wrote [1,2]
 
-This happens because when setting security.selinux, the IMA_DIGSIG flag
-that had been set early was cleared. As a result, IMA hash is generated
-when the file is closed.
+  SORTTAB vmlinux.unstripped
++ sorttable vmlinux.unstripped
++ nm -S vmlinux.unstripped
++ ./scripts/sorttable -s .tmp_vmlinux.nm-sort vmlinux.unstripped
++ is_enabled CONFIG_KALLSYMS
++ grep -q ^CONFIG_KALLSYMS=y include/config/auto.conf
++ cmp -s System.map .tmp_vmlinux2.syms
++ echo vmlinux.unstripped: ../scripts/link-vmlinux.sh
+# OBJCOPY vmlinux
+  objcopy --remove-section=.modinfo vmlinux.unstripped vmlinux
+objcopy: vmlinux.unstripped: warning: empty loadable segment detected at vaddr=0xffff8000807a0000, is this intentional?
 
-Similarly, IMA signature can be cleared on file close after removing
-security xattr like security.evm or setting/removing ACL.
+(arm64, allnoconfig)
 
-Prevent replacing the IMA file signature with a file hash, by preventing
-the IMA_DIGSIG flag from being reset.
+Kind regards,
+Nicolas
 
-Here's a minimal C reproducer which sets security.selinux as the last
-step which can also replaced by removing security.evm or setting ACL,
 
-    #include <stdio.h>
-    #include <sys/xattr.h>
-    #include <fcntl.h>
-    #include <unistd.h>
-    #include <string.h>
-    #include <stdlib.h>
-
-    int main() {
-        const char* file_path = "/usr/sbin/test_binary";
-        const char* hex_string = "030204d33204490066306402304";
-        int length = strlen(hex_string);
-        char* ima_attr_value;
-        int fd;
-
-        fd = open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
-        if (fd == -1) {
-            perror("Error opening file");
-            return 1;
-        }
-
-        ima_attr_value = (char*)malloc(length / 2 );
-        for (int i = 0, j = 0; i < length; i += 2, j++) {
-            sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
-        }
-
-        if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) == -1) {
-            perror("Error setting extended attribute");
-            close(fd);
-            return 1;
-        }
-
-        const char* selinux_value= "system_u:object_r:bin_t:s0";
-        if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selinux_value), 0) == -1) {
-            perror("Error setting extended attribute");
-            close(fd);
-            return 1;
-        }
-
-        close(fd);
-
-        return 0;
-    }
-
-Signed-off-by: Coiby Xu <coxu@redhat.com>
----
- security/integrity/ima/ima_appraise.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index f435eff4667f..5149ff4fd50d 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, const char *xattr_name,
- 	return 0;
- }
- 
-+/*
-+ * ima_reset_appraise_flags - reset ima_iint_cache flags
-+ *
-+ * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
-+ *          0: clear IMA_DIGSIG
-+ *          1: set IMA_DIGSIG
-+ *         -1: don't change IMA_DIGSIG
-+ *
-+ */
- static void ima_reset_appraise_flags(struct inode *inode, int digsig)
- {
- 	struct ima_iint_cache *iint;
-@@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *inode, int digsig)
- 		return;
- 	iint->measured_pcrs = 0;
- 	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
--	if (digsig)
-+	if (digsig == 1)
- 		set_bit(IMA_DIGSIG, &iint->atomic_flags);
--	else
-+	else if (digsig == 0)
- 		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
- }
- 
-@@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
- 	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) {
- 		digsig = (xvalue->type == EVM_XATTR_PORTABLE_DIGSIG);
-+	} else {
-+		digsig = -1;
- 	}
- 	if (result == 1 || evm_revalidate_status(xattr_name)) {
- 		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
-@@ -807,7 +818,7 @@ static int ima_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 			     const char *acl_name, struct posix_acl *kacl)
- {
- 	if (evm_revalidate_status(acl_name))
--		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-+		ima_reset_appraise_flags(d_backing_inode(dentry), -1);
- 
- 	return 0;
- }
-@@ -815,11 +826,13 @@ static int ima_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- static int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 				 const char *xattr_name)
- {
--	int result;
-+	int result, digsig = -1;
- 
- 	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
- 	if (result == 1 || evm_revalidate_status(xattr_name)) {
--		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-+		if (!strcmp(xattr_name, XATTR_NAME_IMA))
-+			digsig = 0;
-+		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
- 		if (result == 1)
- 			result = 0;
- 	}
-
-base-commit: 7aac71907bdea16e2754a782b9d9155449a9d49d
--- 
-2.51.0
+[1]: https://lore.kernel.org/linux-kbuild/CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com/
+[2]: https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
 
 
