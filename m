@@ -1,154 +1,159 @@
-Return-Path: <linux-kernel+bounces-816565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2478BB5757E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:06:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF8DB57581
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D0C1AA0553
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9ADD1AA0804
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3A2FA0FD;
-	Mon, 15 Sep 2025 10:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C7C2FB08B;
+	Mon, 15 Sep 2025 10:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jq14LWgC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qB6QehD1"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A958221DA5;
-	Mon, 15 Sep 2025 10:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D08C2FABE9
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757930774; cv=none; b=u/t1rOIQFmTwtEeVYtsGTJ4ZIvtix44tjCVUNbu/CcRDpxk2zeAXhriWlX263H7nJTvVHFiYQM0IsoAxw+oFyAp8Lj0BFmuhW2nBFz0rSDxVJCusWx7lKl71rf/ptiW6qVLz+odj/oimcj3prJnYDa58oSfIsUr9QXey40j5Ttg=
+	t=1757930790; cv=none; b=J8kwthK84tIdqzskSYXqltdFcu9wEUgrN+K4CFcqTZI6Nz1xv1Pm8voGybgnRBYZ1zccLWvG2uwcSZRCM4oCLl1/D4mQHzcW/0a3cAur0jAQYz6EcThqdFiy/MbWK2XYfrQ+wTqSHFqqWU/M8BHorJ/yK7rGJHXofxHC3l7/kcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757930774; c=relaxed/simple;
-	bh=GvdVNftmJ4BLsmRTY+O4IdSScT4A5MItclZk4Rky85I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNzudbNtfRAnsGBZnHASuIdiYaVmz8Zxh0aFQQHXa5YGW6gCZ7o56/PBMeCsd85EXADV8VsMO0jFTMozeAtbgzJwy0LW3FTuOBft40ZgF8uWtMNA6Kpog8bVs94dsUPf4UrCNJ7TiFd6RryjwzS6aPzgKaogEnpwkMteoLCdubc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jq14LWgC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mf/tFV46HWfDni09P3y3GXXAMD+xCRlLP1MgaKMxEA4=; b=jq14LWgCXg3rYJiE+C3g1DF47y
-	tuAXag/3QK7TpHUzxyKyvqDVKKrLb9YEec+wUU5oogxTzp4odZplpTuEUrTHQ8L3MZ+sX2w9SfSDw
-	wzCQ8VK7QvSWVegCcNL+zd7+nlXhcZ3yeGyFsQ86wgtUcXXxASAeVkQM9V021MX0Yx02jDFx4lr46
-	pwvJv/89kAxTWJscTvbyBppt6GyVKhZzklpD7nUsPvH6CDLBJjDxsq8eprQ+rENsvDdJpiPtBBqxp
-	E+i4A6hXa3tnUVNim+Y1yjYzb0J87iIP+CGtJnWpuoGp1Rs2vtYduKc9I5PdIDhhy7uNwqoD4UAXk
-	ayxQgR5A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uy661-00000006ugF-2nOT;
-	Mon, 15 Sep 2025 10:06:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 84A3F300212; Mon, 15 Sep 2025 12:06:04 +0200 (CEST)
-Date: Mon, 15 Sep 2025 12:06:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@vger.kernel.org
-Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
- operations
-Message-ID: <20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
- <20250915080054.GS3419281@noisy.programming.kicks-ass.net>
- <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
+	s=arc-20240116; t=1757930790; c=relaxed/simple;
+	bh=Lflukm9inkFHDen/xv9DPoJ94WLjeXwlcVLPUTjmVXI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KEO86Xf57PkuX3ka3vvWqjkxbHXHuPUqJtMfR52QRiuskTsRedQxJQ+WbE/yUQzdaX6tQdQb+NcZ+VcBgVMF5yDxG1RTXfgJJ0LhCOM7V2urJQUkwd1WEAC2xOpXIS2HPoV7GBAxPvV6Qfici6HtmU7A5sgZ5qHNC0ssgzd3Qk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qB6QehD1; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-3ebe8dc13a3so60283f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757930787; x=1758535587; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n7wfHA9fiq8GV6iKYUSldM7skudAMrfG9DouOO2pRFQ=;
+        b=qB6QehD1Hqf3YXkQKfYncc8ODDLc6mTSi7UTvDw/KJAZoX56rm3Iyh1+gtIWyyIcAy
+         ZP5nz2vtnT7BIjPymn4NOgtBWiZ9qNsWqBAfLVEEtmxCD8FcHeMdGO8q7atkiOdx0GLG
+         BBot1s8yktq9E2U7ONVhB7s7hxcsUdLouGg75XjLSz62uqwxj45eVgqa9HWZb2JpwLJV
+         2bCBOwmf3DJ6FXR1tZhSsKtAcSRw9FvO66eamxNUYIt85jiGYOkmkXMqd0OrcICXoT3W
+         rxTGWqqX9bJl9Z7Fk8cHsX/XcdKUCsA823yUxxNe9u7HfFyPwd6XljNIYezj33qon/RW
+         VCBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757930787; x=1758535587;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n7wfHA9fiq8GV6iKYUSldM7skudAMrfG9DouOO2pRFQ=;
+        b=jIlvcgFqBO+7u1zMH408phGlpSHxp6Qrg4mK3tGpI8JolzcIal6G4gbZCkljTf6lAT
+         2F9HjMm07Yx3zrBjH00bPyWpBaC1ZO6x/76sAAtpkVt9+MWrAioVqGN8zdhDiquVm/vT
+         20THhKRcvgL+5PLQOsVzNu2VM5OVxJoVWyNvrLClSWlW73SEcUeiwdt+kTzqkayLtdtY
+         ixnFYw5jhYLHBcEUKDv4zx9R7BPPOoGsp+dbVYrbF/iMJpAiub7JFHhJKHGXHS4/L+ng
+         wKVi80RPI9B5/LHiHi++w5fKl8NwSdIKshEWaP5HuJld8GT7lJ1eDXc3aducPPOjK+VO
+         pQtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvRYljK0pmwmwl2dJr99sk9G7hGipW2KmXJ+tT5TcgD4osdBvA60XaZJsi5eYxkYeNl/w7BUZGx1Y9J5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV0eqQu6KbsqiJEpfdskE3XbgnXIIPTOW+8B6BZ/tJNbhBgOwL
+	rQznNYaBO/+WnIP26vZZ8A2Ng+5JI0of86VEMUY7eQAVJGvZ+SFTzX1v/vIvRDvDgRQ=
+X-Gm-Gg: ASbGncsUCVJiEbEKDAtJACNVpnOMhmYgIw5DEqKU4fpmLmfjmMOqHKwr2rO6U4OZdkp
+	/2xp822A5dMfT3ANUQejw2aV3ht1fBjtlvzh+EVRidUB1oARyM2nTmxaGRCghjqFwNIURVPRta/
+	LTShG0W0gRtvXhRpOcEgu2UIVz6Sx+IDgPbYKSgAPazUKdBiAK4UcoI8BqGi0nPm9JY6PMPDaD/
+	vfzY90R9phFmPmAgGFagRwoQUfTi5VPBlaOcUP1XL2/lObnX/bhEZTz4qK6DZoRIvaHjcAforQ0
+	LwbLb6b9gnXgY6y1ECyUPbEu+ceEs3lDYcMJNxILCL0HYWqPhZhlHb65tt2Me/isp5U+UZ8SKrM
+	TjmdMsT+65Tjbn0pdTBwpYPSc4QaDt3a1dz8HqPmGmfvqerI/jO6tanoZ
+X-Google-Smtp-Source: AGHT+IEWX6WiB96O6KkfXRMglqxuS6BwP39e3jC9S9DmPdpANKfiG7fuuUfc7A6J+a1uJC5XnIE97g==
+X-Received: by 2002:a05:6000:2012:b0:3e4:3e20:dafe with SMTP id ffacd0b85a97d-3e7659e835dmr11274354f8f.33.1757930786677;
+        Mon, 15 Sep 2025 03:06:26 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:41:eee1:5042:e713:2e9a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd4cdsm17209127f8f.37.2025.09.15.03.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 03:06:26 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH v2 0/9] arm64: dts: qcom: x1e80100: Add IRIS video codec
+Date: Mon, 15 Sep 2025 12:06:11 +0200
+Message-Id: <20250915-x1e-iris-dt-v2-0-1f928de08fd4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABPlx2gC/1WMywrCMBBFf6XM2sgkrUJc+R+li5hHOyCJTEqol
+ Py7sbhxeQ73nh2yZ/IZbt0O7AtlSrGBOnVgFxNnL8g1BoXqghq12GRTTFm4VfgHDnowskdroD1
+ e7ANtR22cGi+U18TvI17k1/46Uv51ihQorr01AYNrC3t/UjSczolnmGqtHzqz/lanAAAA
+X-Change-ID: 20250909-x1e-iris-dt-eb0494a130ca
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Alexey Klimov <alexey.klimov@linaro.org>, 
+ Anthony Ruhier <aruhier@mailbox.org>, 
+ Stefan Schmidt <stefan.schmidt@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Mon, Sep 15, 2025 at 07:38:52PM +1000, Finn Thain wrote:
-> 
-> On Mon, 15 Sep 2025, Peter Zijlstra wrote:
-> 
-> > On Sun, Sep 14, 2025 at 10:45:29AM +1000, Finn Thain wrote:
-> > > From: Peter Zijlstra <peterz@infradead.org>
-> > > 
-> > > Add a Kconfig option for debug builds which logs a warning when an
-> > > instrumented atomic operation takes place at some location that isn't
-> > > a long word boundary. Some platforms don't trap for this.
-> > > 
-> > > Link: https://lore.kernel.org/lkml/20250901093600.GF4067720@noisy.programming.kicks-ass.net/
-> > > ---
-> > > This patch differs slightly from Peter's code which checked for natural
-> > > alignment.
-> > > ---
-> > >  include/linux/instrumented.h |  4 ++++
-> > >  lib/Kconfig.debug            | 10 ++++++++++
-> > >  2 files changed, 14 insertions(+)
-> > > 
-> > > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-> > > index 711a1f0d1a73..55f5685971a1 100644
-> > > --- a/include/linux/instrumented.h
-> > > +++ b/include/linux/instrumented.h
-> > > @@ -7,6 +7,7 @@
-> > >  #ifndef _LINUX_INSTRUMENTED_H
-> > >  #define _LINUX_INSTRUMENTED_H
-> > >  
-> > > +#include <linux/bug.h>
-> > >  #include <linux/compiler.h>
-> > >  #include <linux/kasan-checks.h>
-> > >  #include <linux/kcsan-checks.h>
-> > > @@ -67,6 +68,7 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
-> > >  {
-> > >  	kasan_check_read(v, size);
-> > >  	kcsan_check_atomic_read(v, size);
-> > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
-> > >  }
-> > >  
-> > >  /**
-> > > @@ -81,6 +83,7 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
-> > >  {
-> > >  	kasan_check_write(v, size);
-> > >  	kcsan_check_atomic_write(v, size);
-> > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
-> > >  }
-> > >  
-> > >  /**
-> > > @@ -95,6 +98,7 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
-> > >  {
-> > >  	kasan_check_write(v, size);
-> > >  	kcsan_check_atomic_read_write(v, size);
-> > > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (sizeof(long) - 1)));
-> > >  }
-> > 
-> > Right, so why aren't we trusting the size argument? And instead
-> > mandating a possibly larger alignment?
-> > 
-> 
-> It wasn't supposed to mandate a larger alignment in practice. I considered 
-> doing something like (unsigned long)v & (size - 1) & (sizeof(long) - 1) 
-> but decided that the extra overhead probably wouldn't be worthwhile, if in 
-> practice, no-one is doing atomic ops on shorts or chars. I will revisit 
-> this.
+Add the necessary definitions to enable the IRIS video codec for
+accelerated video decoding on the X1E CRD, Lenovo ThinkPad T14s, Lenovo
+Yoga Slim 7x, Dell Inspiron 14 Plus 7441, Dell Latitude 7455 and Dell XPS
+13 9345. The additions are largely copied as-is from sm8550.dtsi with some
+minor changes necessary for X1E.
 
-atomic_t is aligned at 4 bytes, you're now mandating it is aligned at 8
-bytes (on LP64), this cannot be right.
+The PAS interface used to boot the IRIS firmware works only when running
+the usual setup with the Gunyah hypervisor in EL2 and Linux in EL1. It does
+not work when booting Linux/KVM in EL2. The code to start it without using
+PAS exists already in the Venus driver, but was not ported over to IRIS
+yet. Discussions how to model the video-firmware IOMMU are still ongoing,
+so disable IRIS in x1-el2.dtso for now to avoid regressions when running
+with KVM.
 
-kernel/locking/qspinlock.c:xchg_tail() does xchg_relaxed(&lock->tail,
-...) which is u16. Again, you cannot mandate 8 bytes here.
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Changes in v2:
+- Reword EL2<=>KVM<=>Gunyah slightly to avoid confusion (Trilok)
+- Fix typo in comment copied from sm8550.dtsi (Alexey)
+- Enable IRIS on Dell Thena variants (Bryan)
+- Enable IRIS on Lenovo Slim 7x (Anthony)
+- Enable IRIS on Dell XPS (Stefan Schmidt tested it before,
+  see Tested-by in initial IRIS driver commits)
+- Link to v1: https://lore.kernel.org/r/20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org
 
-> When you do atomic operations on atomic_t or atomic64_t, (sizeof(long)
-> - 1) probably doesn't make much sense. But atomic operations get used on 
-> scalar types (aside from atomic_t and atomic64_t) that don't have natural 
-> alignment. Please refer to the other thread about this: 
-> https://lore.kernel.org/all/ed1e0896-fd85-5101-e136-e4a5a37ca5ff@linux-m68k.org/
+---
+Stephan Gerhold (9):
+      arm64: dts: qcom: sm8550/sm8650: Fix typo in IRIS comment
+      arm64: dts: qcom: x1e80100: Add IRIS video codec
+      arm64: dts: qcom: x1-el2: Disable IRIS for now
+      arm64: dts: qcom: x1e80100-crd: Enable IRIS video codec
+      arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Enable IRIS
+      arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: Enable IRIS
+      arm64: dts: qcom: x1e80100-dell-inspiron-14-plus-7441: Enable IRIS
+      arm64: dts: qcom: x1e80100-dell-latitude-7455: Enable IRIS
+      arm64: dts: qcom: x1e80100-dell-xps13-9345: Enable IRIS
 
-Perhaps set ARCH_SLAB_MINALIGN ?
+ arch/arm64/boot/dts/qcom/sm8550.dtsi               |  2 +-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               |  2 +-
+ arch/arm64/boot/dts/qcom/x1-el2.dtso               |  5 ++
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  5 ++
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts          |  4 +
+ .../qcom/x1e80100-dell-inspiron-14-plus-7441.dts   |  5 ++
+ .../boot/dts/qcom/x1e80100-dell-latitude-7455.dts  |  5 ++
+ .../boot/dts/qcom/x1e80100-dell-xps13-9345.dts     |  5 ++
+ .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |  5 ++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 87 ++++++++++++++++++++++
+ 10 files changed, 123 insertions(+), 2 deletions(-)
+---
+base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+change-id: 20250909-x1e-iris-dt-eb0494a130ca
+
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
