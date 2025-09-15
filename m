@@ -1,78 +1,74 @@
-Return-Path: <linux-kernel+bounces-817561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58185B583D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:42:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAC7B583DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D623488287
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2947ACDB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC0A29993F;
-	Mon, 15 Sep 2025 17:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F6F2C21EB;
+	Mon, 15 Sep 2025 17:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="lvLJqE0F"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.221])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iyJkapcs"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57BE19ABD8;
-	Mon, 15 Sep 2025 17:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.221
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757958132; cv=pass; b=b22ceO80E+ve8WPFNzW3n66mQJ8EkMPtCaah5QWNQ9Q5KTOWq7C/oZ+zkIifOn+AhpGI69G1unS3ZAGnEfLpEOuVMKlLu7x5jQYTmbrI773WIkJWtxs+PqgeRdDzYLuGUQsmps5YyjaWenbAx6ukB0I2RCga/TlW7mG4n7Lb/T8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757958132; c=relaxed/simple;
-	bh=PVZ09Q/8Qfy1kLq53yq1kvo7FXr3QyBN2KZEt0mwdHs=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2790829BDBA;
+	Mon, 15 Sep 2025 17:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757958144; cv=none; b=qGIqtfUxSo909GaHjYS2QD3svyRujWDv5HoDC9wrLQD9pXsWqlSGmWrBNMCZD84mwkSZLRWG+AiuSUp5mGpDio1zzCbmzP+aGpBlbm4GDAxVwpBcwre8qU4c3pNqPBD8YFQFbCI/8+mJ22QSQOczNhMGJesMaOa5bw7xA94zdio=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757958144; c=relaxed/simple;
+	bh=lveJTBhWcGibWV+U84fVnL1ymE572t9uInDOtZ3oLaM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VR0IhpeiYogL0zoqISCymuX6PG4no6Ejuguktzro1vSLN9ViMGaUle5ovLROyvLWPFViuowto5EeNB/vxVTGQDOLB7LSRJrZPi8ydF0C7VuKXW8W3gAWRAyU7INTsg/LSCpCco+e9dDxgbzn8ejUofhOTpHpF6k9isn6U0qYzho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=lvLJqE0F; arc=pass smtp.client-ip=81.169.146.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1757958122; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=HQP+K/2MPxXI7kSsHpzLKHCZ6OG91P6QiY19hYnXnpGblquiyldy/cvfYR3hu+5pve
-    uzgyT95g8v6tk+OTAlo0MwBRMBfdfaKn7zqcyEzjdYnj/bNNYK8lmZEVlzEZdoxLqyvs
-    +tR2nwhongO67VzZ08rnEsDCvH7iGAntkTbd99+as97v05hxN7Kud0bhoasnJ3ytj2WF
-    Pv1+/ab9BPWnnV5U0DTJ745lNLdT5G4yRCCugoBNhw39U0mJTNoUiEpI15snyHgRU5Ne
-    O4ARmiYVj1BZVqcIDZmsFSkC7M0D5XP2uxGoL/Z+dVoSKQfwLtytHg3mAgQ3CYCOBj/8
-    7p2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1757958122;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=BSAmTJdcUddD1lBj1f/9Xw263hBNNCfzKGLKoKWMusw=;
-    b=VFSNHre+dxIAO69CSiRwouNGzc5W+b/uBEnGssKIbjZwNgQtf5ZDSFl05ubGz554ee
-    h7cSNp1AgXNlZq295mL0kxp6a+la65PHzl8tCLIGlBFX1GJoLvGD0CDAyjNUTODMqMk8
-    Tum++dpO0Req0aTUrPNhD9AjAMq+dHh2f3/ixozp6flognCUiQB89OVaYUa8nVRbD8Tg
-    ZRw7fFdxGRCrzLugbDm5v4GeDgmoZqxCpxezAmTCotZDF4RMSGD2peCeaY6494Z4+2Yi
-    f2dc9+KPbzj6O3d5qAQMKFwCumZfvL49AwItRciPFVeblP8C7N2XJ5k+Nazi6WE5uKq8
-    75Uw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757958122;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=BSAmTJdcUddD1lBj1f/9Xw263hBNNCfzKGLKoKWMusw=;
-    b=lvLJqE0FyQicUQjbFOF8jlO4DJeQiyO5fg0L197HFV8BIHlCrcwF9TJJPXToFsj03v
-    KX2oOnx1+f/U0pOI6dRL6UyXkQ3/xDbmJUdAuZt+cKek2jtrvGrjAEwygiYrP+9tlKId
-    3odoYENaDiQ80xfKgV3r8zn7ZS0Mya1mIK+iZdIaruxjPvX/ugbCWj/ojpnf2uW/ucoB
-    hMRtKxCDux7HLEUKeELSwgNcjhrUUAqz+opzNoLZs8jmJ4LwaDYXrR7uCSBrWPqgaduC
-    4ey16X8iOUJx1Hj4whJAaxACxW44ib3SInGu12QsQrAQKw8zqJ6HWrE1dWtgC/MEiZDB
-    iv5Q==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMr5owMnk64sm8VF6OpcIrgdno+M3mNGEGSIofQp0UJwtSeLY="
-Received: from [IPV6:2a02:b98:8b0e:d800:856:bd03:6d59:abd2]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id K2a23218FHg12xX
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 15 Sep 2025 19:42:01 +0200 (CEST)
-Message-ID: <6e8e18e4-3517-4c6c-8457-a4278b906f5d@hartkopp.net>
-Date: Mon, 15 Sep 2025 19:41:56 +0200
+	 In-Reply-To:Content-Type; b=Bsb+N5p3c9SK8WOLUcSxHbmG8TEv7KshdngNFzsuW+nmaSaQ6I1Qxj9/Zbhm9vUkQsL3q3wpUCUYcFuO/GfBwtADEFxPjIqzA91AyUkuRTa/nyGhiQrECOfcZxjSi5Ws5HJjS5GDM1Dt6FTfcFgzWldTolCccaqM53AaaWFOVCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iyJkapcs; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F9AEAk031553;
+	Mon, 15 Sep 2025 17:42:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=JhXJu6
+	ir11KpT+sS/XSzhY+3oje8j9jfdBWs7PnkAQI=; b=iyJkapcsCW2e+yp/90Fvqi
+	WfextZ6fAoQVXdviaM9OfMmQq+cIkC5Jbg3R54bgcOgYRKHAsHgnRIocTWaZSvuQ
+	FXQmqywaY2FGrUnQ8DQiz1z4UzS3whXM1Lygfqya8UEuF23JWorOuWSfx0XvurOn
+	mQ6Z5N6d2Qlj9co2TCL9ZtdlOsMz1WKYKs3m+4zFZuvE4uljBajhIqglH3Gm2V1R
+	xrXMSb7YeFFfoGJvBKGzqniJjJxu1viyc6zvby9AQdaIh4YWQYpcIH6vTvOG+yRd
+	TpLA68hnthXwKrI0uf54U3+p+nO9Si33rPMFI60dWhdZk1S1V1OL1eUmg+nD+Geg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1tbw94-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Sep 2025 17:42:18 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FFAAKa022316;
+	Mon, 15 Sep 2025 17:42:18 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kxpfp00-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Sep 2025 17:42:18 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FHgG3p18022992
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 15 Sep 2025 17:42:16 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 87EB85805C;
+	Mon, 15 Sep 2025 17:42:16 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A88E95805B;
+	Mon, 15 Sep 2025 17:42:15 +0000 (GMT)
+Received: from [9.61.244.242] (unknown [9.61.244.242])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 15 Sep 2025 17:42:15 +0000 (GMT)
+Message-ID: <f3a91866-3897-4872-8336-384bb8e568a4@linux.ibm.com>
+Date: Mon, 15 Sep 2025 10:42:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,133 +76,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] can: raw: use bitfields to store flags in struct
- raw_sock
-To: Vincent Mailhol <mailhol@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
- <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
- <f96cd163-0364-4c14-882b-48c3f8e0f05a@hartkopp.net>
- <f0a34514-19da-4c73-9cd4-ae220fed6447@kernel.org>
+Subject: Re: [PATCH v3 05/10] s390/pci: Restore IRQ unconditionally for the
+ zPCI device
+To: Niklas Schnelle <schnelle@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Cc: alex.williamson@redhat.com, helgaas@kernel.org, mjrosato@linux.ibm.com
+References: <20250911183307.1910-1-alifm@linux.ibm.com>
+ <20250911183307.1910-6-alifm@linux.ibm.com>
+ <d4ae1aede3a62ad60626e9706d11ed3c48f5a30a.camel@linux.ibm.com>
 Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <f0a34514-19da-4c73-9cd4-ae220fed6447@kernel.org>
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <d4ae1aede3a62ad60626e9706d11ed3c48f5a30a.camel@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=OMsn3TaB c=1 sm=1 tr=0 ts=68c84ffa cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=PrEUJIRfXM-3lrLWsPsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: Xc40oTrlQ4S-hynvkJgcYdzArThsAIFb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAwMSBTYWx0ZWRfX/aXsx08njwwt
+ lt7YE/llYTwyZk6ueEUlxYsDFD0u0MF5ZGE446nuKqk5xLuNOuwMN+vAasRGmCTJEXwIjqrVKb4
+ eS/LVTaRWLWYf2Gky/6r3gCBjoSGxWxaBAIPW04or4nMIP2ppdzILuagxcjt8TVRIOWZnFuH9nt
+ XdIGD4zFWMBbK4Cuj3srVxIaiWgG2BDJCE14eaj9P0WT6X2Y6tmRrUSJ+XgmLgk8kWa6tlb8AnE
+ e4IfOMgPmqbG2g3OD+3rg568CXaHjF9c/KsNM3fiV5+P6omeaaEoL9kPjV/n3tWRTgIgRKnbbop
+ zOX1s4xTSfIBqSEIWvibkXWL92mclSEq0ClA7Phc7R5LQzxrfojg4KXTL7VzklYF8iyAVn6al0U
+ PJFntxM9
+X-Proofpoint-GUID: Xc40oTrlQ4S-hynvkJgcYdzArThsAIFb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_06,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130001
 
 
-
-On 15.09.25 12:47, Vincent Mailhol wrote:
-> On 15/09/2025 at 19:16, Oliver Hartkopp wrote:
->> On 15.09.25 11:23, Vincent Mailhol wrote:
->>> The loopback, recv_own_msgs, fd_frames and xl_frames fields of struct
->>> raw_sock just need to store one bit of information.
->>>
->>> Declare all those members as a bitfields of type unsigned int and
->>> width one bit.
->>>
->>> Add a temporary variable to raw_setsockopt() and raw_getsockopt() to
->>> make the conversion between the stored bits and the socket interface.
->>>
->>> This reduces struct raw_sock by eight bytes.
->>>
->>> Statistics before:
->>>
->>>     $ pahole --class_name=raw_sock net/can/raw.o
->>>     struct raw_sock {
->>>         struct sock                sk __attribute__((__aligned__(8))); /*
->>> 0   776 */
->>>
->>>         /* XXX last struct has 1 bit hole */
->>>
->>>         /* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
->>>         int                        bound;                /*   776     4 */
->>>         int                        ifindex;              /*   780     4 */
->>>         struct net_device *        dev;                  /*   784     8 */
->>>         netdevice_tracker          dev_tracker;          /*   792     0 */
->>>         struct list_head           notifier;             /*   792    16 */
->>>         int                        loopback;             /*   808     4 */
->>>         int                        recv_own_msgs;        /*   812     4 */
->>>         int                        fd_frames;            /*   816     4 */
->>>         int                        xl_frames;            /*   820     4 */
->>>         struct can_raw_vcid_options raw_vcid_opts;       /*   824     4 */
->>>         canid_t                    tx_vcid_shifted;      /*   828     4 */
->>>         /* --- cacheline 13 boundary (832 bytes) --- */
->>>         canid_t                    rx_vcid_shifted;      /*   832     4 */
->>>         canid_t                    rx_vcid_mask_shifted; /*   836     4 */
->>>         int                        join_filters;         /*   840     4 */
->>>         int                        count;                /*   844     4 */
->>>         struct can_filter          dfilter;              /*   848     8 */
->>>         struct can_filter *        filter;               /*   856     8 */
->>>         can_err_mask_t             err_mask;             /*   864     4 */
->>>
->>>         /* XXX 4 bytes hole, try to pack */
->>>
->>>         struct uniqframe *         uniq;                 /*   872     8 */
->>>
->>>         /* size: 880, cachelines: 14, members: 20 */
->>>         /* sum members: 876, holes: 1, sum holes: 4 */
->>>         /* member types with bit holes: 1, total: 1 */
->>>         /* forced alignments: 1 */
->>>         /* last cacheline: 48 bytes */
->>>     } __attribute__((__aligned__(8)));
->>>
->>> ...and after:
->>>
->>>     $ pahole --class_name=raw_sock net/can/raw.o
->>>     struct raw_sock {
->>>         struct sock                sk __attribute__((__aligned__(8))); /*
->>> 0   776 */
->>>
->>>         /* XXX last struct has 1 bit hole */
->>>
->>>         /* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
->>>         int                        bound;                /*   776     4 */
->>>         int                        ifindex;              /*   780     4 */
->>>         struct net_device *        dev;                  /*   784     8 */
->>>         netdevice_tracker          dev_tracker;          /*   792     0 */
->>>         struct list_head           notifier;             /*   792    16 */
->>>         unsigned int               loopback:1;           /*   808: 0  4 */
->>>         unsigned int               recv_own_msgs:1;      /*   808: 1  4 */
->>>         unsigned int               fd_frames:1;          /*   808: 2  4 */
->>>         unsigned int               xl_frames:1;          /*   808: 3  4 */
+On 9/15/2025 1:39 AM, Niklas Schnelle wrote:
+> On Thu, 2025-09-11 at 11:33 -0700, Farhan Ali wrote:
+>> Commit c1e18c17bda6 ("s390/pci: add zpci_set_irq()/zpci_clear_irq()"),
+>> introduced the zpci_set_irq() and zpci_clear_irq(), to be used while
+>> resetting a zPCI device.
 >>
->> This means that the former data structures (int) are not copied but bits are set
->> (shifted, ANDed, ORed, etc) right?
+>> Commit da995d538d3a ("s390/pci: implement reset_slot for hotplug slot"),
+>> mentions zpci_clear_irq() being called in the path for zpci_hot_reset_device().
+>> But that is not the case anymore and these functions are not called
+>> outside of this file.
+> If you're doing another version I think you could add a bit more
+> information on why this still works for existing recovery based on my
+> investigation in
+> https://lore.kernel.org/lkml/052ebdbb6f2d38025ca4345ee51e4857e19bb0e4.camel@linux.ibm.com/
+>
+> Even if you don't add more explanations, I'd tend to just drop the
+> above paragraph as it doesn't seem relevant and sounds like
+> zpci_hot_reset_device() doesn't clear IRQs. As explained in the linked
+> mail there really is no need to call zpci_clear_irq() in
+> zpci_hot_reset_device() as the CLP disable does disable IRQs. It's
+> really only the state tracking that can get screwed up but is also fine
+> for drivers which end up doing the tear down.
+
+I referenced commit da995d538d3a as that commit introduced the 
+arch_restore_msi_irqs and describes the reasoning as to why we need it. 
+It also mentions about zpci_clear_irq being called by 
+zpci_hot_reset_device. IMHO the message was confusing as it took me my 
+down the path of trying to identify any commit that changed the behavior 
+since da995d538d3a. But that wasn't the case and it was an error in the 
+commit message. I want to keep a reference here to at least clarify that.
+
+I had tried to clarify that this only becomes an issue if a driver tries 
+restoring state through pci_restore_state(), in the paragraph below. But 
+should I change it to be more explicit about that it's not an issue for 
+driver doing setup and tear down through arch_msi_irq_setup and 
+arch_msi_irq_teardown functions?
+
+>
+>> However after a CLP disable/enable reset, the device's IRQ are
+>> unregistered, but the flag zdev->irq_registered does not get cleared. It
+>> creates an inconsistent state and so arch_restore_msi_irqs() doesn't
+>> correctly restore the device's IRQ. This becomes a problem when a PCI
+>> driver tries to restore the state of the device through
+>> pci_restore_state(). Restore IRQ unconditionally for the device and remove
+>> the irq_registered flag as its redundant.
+> s/its/it's/
+
+Thanks, will fix.
+
+>
+>> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/pci.h | 1 -
+>>   arch/s390/pci/pci_irq.c     | 9 +--------
+>>   2 files changed, 1 insertion(+), 9 deletions(-)
 >>
->> So what's the difference in the code the CPU has to process for this
->> improvement? Is implementing this bitmap more efficient or similar to copy the
->> (unsigned ints) as-is?
-> 
-> It will indeed have to add a couple assembly instructions. But this is peanuts.
-> In the best case, the out of order execution might very well optimize this so
-> that not even a CPU tick is wasted. In the worst case, it is a couple CPU ticks.
-> 
-> On the other hands, reducing the size by 16 bytes lowers the risk to have a
-> cache miss. And removing one cache miss outperforms by an order of magnitude the
-> penalty of adding a couple assembly instructions.
-> 
-> Well, I did not benchmark it, but this is a commonly accepted trade off.
+>> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+>> index 41f900f693d9..aed19a1aa9d7 100644
+>> --- a/arch/s390/include/asm/pci.h
+>> +++ b/arch/s390/include/asm/pci.h
+>> @@ -145,7 +145,6 @@ struct zpci_dev {
+>>   	u8		has_resources	: 1;
+>>   	u8		is_physfn	: 1;
+>>   	u8		util_str_avail	: 1;
+>> -	u8		irqs_registered	: 1;
+>>   	u8		tid_avail	: 1;
+>>   	u8		rtr_avail	: 1; /* Relaxed translation allowed */
+>>   	unsigned int	devfn;		/* DEVFN part of the RID*/
+>> diff --git a/arch/s390/pci/pci_irq.c b/arch/s390/pci/pci_irq.c
+>> index 84482a921332..e73be96ce5fe 100644
+>> --- a/arch/s390/pci/pci_irq.c
+>> +++ b/arch/s390/pci/pci_irq.c
+>> @@ -107,9 +107,6 @@ static int zpci_set_irq(struct zpci_dev *zdev)
+>>   	else
+>>   		rc = zpci_set_airq(zdev);
+>>   
+>> -	if (!rc)
+>> -		zdev->irqs_registered = 1;
+>> -
+>>   	return rc;
+>>   }
+>>   
+>> @@ -123,9 +120,6 @@ static int zpci_clear_irq(struct zpci_dev *zdev)
+>>   	else
+>>   		rc = zpci_clear_airq(zdev);
+>>   
+>> -	if (!rc)
+>> -		zdev->irqs_registered = 0;
+>> -
+>>   	return rc;
+>>   }
+>>   
+>> @@ -427,8 +421,7 @@ bool arch_restore_msi_irqs(struct pci_dev *pdev)
+>>   {
+>>   	struct zpci_dev *zdev = to_zpci(pdev);
+>>   
+>> -	if (!zdev->irqs_registered)
+>> -		zpci_set_irq(zdev);
+>> +	zpci_set_irq(zdev);
+>>   	return true;
+>>   }
+>>   
+> Code looks good to me. With or without my suggestions for the commit
+> message:
+>
+> Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
-Ok.
-Most accesses of those values like ro->fd_frames are read-only anyway, 
-which might add an additional AND operation with a constant value.
+Thanks for reviewing!
 
-Therefore your suggested changes are not in the hot path anyway and the 
-ro->fd_frames = !!flag operation is executed at socket creation time only.
+Thanks
+Farhan
 
-Generally it is interesting the the compiler can handle bits in this way.
-
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
-
-Thanks!
-
-Oliver
-
-> 
-> Yours sincerely,
-> Vincent Mailhol
-> 
 
 
