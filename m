@@ -1,200 +1,282 @@
-Return-Path: <linux-kernel+bounces-817452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C25B58264
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:45:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C55B5825D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A558C205A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:45:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C85727A7035
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A192289811;
-	Mon, 15 Sep 2025 16:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8095D27B50F;
+	Mon, 15 Sep 2025 16:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="THPst/pl"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ckVW2Azm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C71A266B67
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5A12777F3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757954722; cv=none; b=c5TobwohPvOvnWnvBUqoEboYr5fRRSXxqyPMf/qNiuX0Xtlmmk+ka+v6F6w4EKc3vnkJPHdGTtzhtDjyCxRnTOVN92YYrC3msb005gx/Z4t0tpKlJr2T2Kje2kHECmhlFC7s3BO77szFkIAIXGoLXAr4xr1uW+WdNq2yoe27VDY=
+	t=1757954693; cv=none; b=gABaQSJXUhvJ1luMvIIbRLkrXTSFx8PhuV1bWEtLqeGP+iXrGXfPRjt6wtmhS3xOpCj61dx7pTM/t77FVIY7lZ982EVU39ZMHDFdk/ASKGOfJfFSKfdB+fuVySQfTdDLCQLIQ7+gUSGNRgutVnO/pbYmA+U5F8I1ptkTtpd+PgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757954722; c=relaxed/simple;
-	bh=YlvkPaMs0t1PmNbYOSO3YQJzT0UijzMZmPn5PdxCCis=;
+	s=arc-20240116; t=1757954693; c=relaxed/simple;
+	bh=eUAkt20CMQ8n72tZCadKbRUCOETJVS9TbHdT604CUeQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nxXct+9W+72fQi5Stwy9NZDaiE+cwMHxs/zyeV9ZASf8pLj3Gt0Wqod4DxUWGppu0FeiSvHlcjqeb7pZ8KWkRKo/nzYlRP5FHsmfQDIG+h/hO1HDGMom0v/Rp2hmsoM1VeJ5exAfhudUFCWfxcWbCW2YHkxBmx0Hgob+oVmxwUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=THPst/pl; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FBg0Wh011065;
-	Mon, 15 Sep 2025 16:45:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ktd1ZZ
-	D5/H7RqBGfiUbU4dNdJWoPAfJYQDKU49aG/zU=; b=THPst/plqn8BPo4IZHzI+u
-	chfD1pb/oyJkLnWVUH6C3ivNi+kqtWTj+013Sxy3awvRdn3wVdsJxbi2sVzwl+nB
-	+AfBvBl+IgeRW3ZqiY3aIaS0ELpJZ89yqjwfFqTJAV4SYmT0lADuSCZWr8bIatUm
-	hm+h1kRqlGhJEysSsAxnVuODI2bZD9yDIxatpYB+/qxT3lYWEVm7DLDUdVOAaRNc
-	EZNHZkRaDcdPEQ8AXmjF00kq2uoUfGhgdshK2LW6UTCYrk/y+I6AgB0Z3pmlORi+
-	D3He3MRT4BH877CTEeKIFpWd4rXObOGwDOEkVFphM311leif/5ES69RR8RkAOD0A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509y42af-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 16:44:57 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FGTRio007332;
-	Mon, 15 Sep 2025 16:44:57 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509y42a8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 16:44:57 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FEN9kZ029817;
-	Mon, 15 Sep 2025 16:44:55 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kb0qkqn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 16:44:55 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FGirKD29229590
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 16:44:54 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DBD472004E;
-	Mon, 15 Sep 2025 16:44:53 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 903A820040;
-	Mon, 15 Sep 2025 16:44:51 +0000 (GMT)
-Received: from li-9b52914c-2c8b-11b2-a85c-a36f6d484b4a.ibm.com (unknown [9.61.163.204])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 15 Sep 2025 16:44:51 +0000 (GMT)
-Message-ID: <32bc2a49fabd619ea7dcafd7f5d50fca206b38ac.camel@linux.ibm.com>
-Subject: Re: [PATCH] Revert "virtio_console: fix order of fields cols and
- rows"
-From: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Filip Hejsek <filip.hejsek@gmail.com>, Amit Shah <amit@kernel.org>,
-        Arnd
- Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        virtualization@lists.linux.dev
-Date: Mon, 15 Sep 2025 18:44:50 +0200
-In-Reply-To: <7ebfa9a5ec3f07506b3d8f01cd4f2a35e2135679.1757666355.git.mst@redhat.com>
-References: 
-	<7ebfa9a5ec3f07506b3d8f01cd4f2a35e2135679.1757666355.git.mst@redhat.com>
+	 Content-Type:MIME-Version; b=kpMXWhmv42WSBd4knKBGnu4L9bx4423/n9kpLuX/uruXSEqEBnCdkKZ64otd4uxD327Lf+FegHkFrDdJc7GEGg+gvN1nGpiq+Lryfhvzt/HHCnNIRoJgW2Ghte77Z3rbrjpuHirmeTYofxuk2GGFeThhNHKiAQz1l9rF2iKbhwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ckVW2Azm; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757954692; x=1789490692;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=eUAkt20CMQ8n72tZCadKbRUCOETJVS9TbHdT604CUeQ=;
+  b=ckVW2Azm6IYG9gFznHDVbEK1Z8V+TPlaP9IOYcj1PfTW8UziILhIqzav
+   kJWqeqkCls4p6I++Uhi4ZgMQEHhHdOfGa8xci6ROpGKIvkLDDCOgGGtNV
+   a6S2L8qxi4JlYjhyVw3+6yxYEWLIlkyvEluPIMstmoszLsIW8wbsMogWl
+   ZQTtL02Th0SK2f0qmCHWCAsiTlxIx3ZY6E69t6yrLUjR8M32RJpUID5xF
+   wSY1jkdyA0Rqn/7c6qyb6eq/5Z+AoLP5oodx2G3g2oOF3ruVnaf0T+QHB
+   xNSuIrb5o4HBo3WHU92UcGwLE1vE9EzkjHdHhBwvLznEk2NGGpg5lF6n5
+   A==;
+X-CSE-ConnectionGUID: gI/pnXrfT+ifzFksbsdzMg==
+X-CSE-MsgGUID: uM1MuejoTeO30DE8YafSSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="71643956"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="71643956"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:44:51 -0700
+X-CSE-ConnectionGUID: 6vJ9h0iKRgqjL35I7O6PUw==
+X-CSE-MsgGUID: bjHatK4vQDa9bSvjoSgZBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="174238521"
+Received: from unknown (HELO [10.54.74.4]) ([10.54.74.4])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:44:51 -0700
+Message-ID: <1bccae2c1830daab13cf892ecb1ae7c05edd98f2.camel@linux.intel.com>
+Subject: Re: [PATCH v3 1/2] sched: Create architecture specific sched domain
+ distances
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra
+	 <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann	
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman	
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Tim Chen	
+ <tim.c.chen@intel.com>, Vincent Guittot <vincent.guittot@linaro.org>, Libo
+ Chen	 <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>, Len Brown
+	 <len.brown@intel.com>, linux-kernel@vger.kernel.org, Chen Yu
+ <yu.c.chen@intel.com>,  "Gautham R . Shenoy" <gautham.shenoy@amd.com>, Zhao
+ Liu <zhao1.liu@intel.com>, Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+  Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Date: Mon, 15 Sep 2025 09:44:50 -0700
+In-Reply-To: <e11163c7-9e23-4556-9a3a-962222978686@amd.com>
+References: <cover.1757614784.git.tim.c.chen@linux.intel.com>
+	 <1aa0ae94e95c45c8f3353f12e6494907df339632.1757614784.git.tim.c.chen@linux.intel.com>
+	 <e11163c7-9e23-4556-9a3a-962222978686@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyMCBTYWx0ZWRfX/LOWpyIdnOex
- AI2B5w7d0qfZa/C/r73MhGj4S/RR+85p2riKsMa5i8KN/ONstpeqHCHRvkdoRQ2DeU+nXuYDqk4
- jG98A4XBYPOgG2DWtJjcJqIWytAKG1PI0dh39xi2y2enRw7evIhahYC1aKMobDG/1+UhMYcaWNr
- mvvkQJPHn2LCpHjr8fbp2AmOVL5eotZPeUfskigi+7TEc9KTHk9ZXuF8wcwNJ1Dfqh95uRXrvl4
- 7PGt9Dbn1IFpxUjl6luvr83ZBXji1TWhtVHU3HtW8Rc9MFbE44E8VTStt9THIX43JG6lhKhzV6l
- pAy6fvWGgP4ZqYaCcApYB6wMc8l/q0XcvD6AZ+fOf6hGTGOfo2XdkLYdJjz4xnmo1xhTkvnRtD4
- rJTAHmuQ
-X-Authority-Analysis: v=2.4 cv=OPYn3TaB c=1 sm=1 tr=0 ts=68c84289 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=20KFwNOVAAAA:8 a=An3k0oS3jMOg4QUPsmwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: WvH70v3tCZ5IqkNXzr-kDV0as1xZBBFp
-X-Proofpoint-ORIG-GUID: dSZv335uWMmFkxbcDLTpCQYjLN49pRJG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_06,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1011 phishscore=0 suspectscore=0 spamscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130020
 
-On Fri, 2025-09-12 at 04:40 -0400, Michael S. Tsirkin wrote:
-> This reverts commit 5326ab737a47278dbd16ed3ee7380b26c7056ddd.
+On Fri, 2025-09-12 at 08:53 +0530, K Prateek Nayak wrote:
+> Hello Tim,
 >=20
-> The problem is that for a long time, the
-> Linux kernel used a different field order from what was specified in
-> the
-> virtio spec. The kernel implementation was apparently merged around
-> 2010,
-> while the virtio spec came in 2014, so when a previous version of
-> this
-> patch series was being discussed here on this mailing list in 2020,
-> it
-> was decided that QEMU should match the Linux implementation, and
-> ideally,
-> the virtio spec should be changed.
+> On 9/12/2025 12:00 AM, Tim Chen wrote:
+> > +static int sched_record_numa_dist(int offline_node, int (*n_dist)(int,=
+ int),
+> > +		int **dist, int *levels)
+> > +
 >=20
-> There are about 15 years' worth
-> of kernel versions with the swapped field order, including the kernel
-> currently shipped in Debian stable. The effects of the swapped
-> dimensions
-> can sometimes be quite annoying - e.g. if you have a terminal with
-> 24 rows, this will be interpreted as 24 columns, and your shell may
-> limit
-> line editing to this small space, most of which will be taken by your
-> prompt.
+> nit. Is the blank line above intentional?
 >=20
-> NB: the command structures really should move to the UAPI header so
-> it
-> is easier to notice when a change is breaking the guest/host ABI.
+> Also personally I prefer breaking the two lines above as:
+>=20
+> static int
+> sched_record_numa_dist(int offline_node, int (*n_dist)(int, int), int **d=
+ist, int *levels)
 
-As I already mentioned in the QEMU discussion, I proposed the fix,
-because I was working on a similar implementation to bring resizing to
-QEMU. Unfortunately, the patch-set was stuck in limbo for a while and
-now that someone else has picked up the slack, I've descided that it's
-better to contribute to the patch-set that is upstream instead of
-sending a competing patch-set that does the same thing. Accordingly, I
-no longer have any skin in the game of implementing resizing for virtio
-console in QEMU as the other patch-set takes care of that task.
+That would exceed 80 characters.  So we would still need to move some param=
+eters to a different
+line to keep within the limit.
 
-On a related note, during the initial discussion of this changing the
-virtio spec was proposed as well (as can be read from the commit mgs),
-however at the time on the viritio mailing list people were resistent
-to the idea of changing the virtio spec to conform to the kernel
-implementation.
-I don't really care if this discrepancy is fixed one way or the other,
-but it should most definitely be fixed.
+> {
+> 	...
+> }
+>=20
+> >  {
+> > -	struct sched_domain_topology_level *tl;
+> >  	unsigned long *distance_map;
+>=20
+> Since we are breaking this out and adding return values, can we also
+> cleanup that bitmap_free() before every return with __free(bitmap) like:
+>=20
+> (Only build tested)
 
-Kind regards,
-Max Brandtner
+Yes, __kfree will be better here.
 
 >=20
-> Reported-by: Filip Hejsek <filip.hejsek@gmail.com>
-> Fixes: 5326ab737a47 ("virtio_console: fix order of fields cols and
-> rows")
-> Cc: "Maximilian Immanuel Brandtner" <maxbr@linux.ibm.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 6c0ff62322cb..baa79e79ced8 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1910,9 +1910,8 @@ static int numa_node_dist(int i, int j)
+> =20
+>  static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, i=
+nt),
+>  		int **dist, int *levels)
+> -
+>  {
+> -	unsigned long *distance_map;
+> +	unsigned long *distance_map __free(bitmap) =3D NULL;
+>  	int nr_levels =3D 0;
+>  	int i, j;
+>  	int *distances;
+> @@ -1932,7 +1931,6 @@ static int sched_record_numa_dist(int offline_node,=
+ int (*n_dist)(int, int),
+> =20
+>  			if (distance < LOCAL_DISTANCE || distance >=3D NR_DISTANCE_VALUES) {
+>  				sched_numa_warn("Invalid distance value range");
+> -				bitmap_free(distance_map);
+>  				return -EINVAL;
+>  			}
+> =20
+> @@ -1946,19 +1944,17 @@ static int sched_record_numa_dist(int offline_nod=
+e, int (*n_dist)(int, int),
+>  	nr_levels =3D bitmap_weight(distance_map, NR_DISTANCE_VALUES);
+> =20
+>  	distances =3D kcalloc(nr_levels, sizeof(int), GFP_KERNEL);
+> -	if (!distances) {
+> -		bitmap_free(distance_map);
+> +	if (!distances)
+>  		return -ENOMEM;
+> -	}
+> +
+>  	for (i =3D 0, j =3D 0; i < nr_levels; i++, j++) {
+>  		j =3D find_next_bit(distance_map, NR_DISTANCE_VALUES, j);
+>  		distances[i] =3D j;
+>  	}
+> +
+>  	*dist =3D distances;
+>  	*levels =3D nr_levels;
+> =20
+> -	bitmap_free(distance_map);
+> -
+>  	return 0;
+>  }
+> =20
 > ---
-> =C2=A0drivers/char/virtio_console.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/char/virtio_console.c
-> b/drivers/char/virtio_console.c
-> index 088182e54deb..216c5115637d 100644
-> --- a/drivers/char/virtio_console.c
-> +++ b/drivers/char/virtio_console.c
-> @@ -1576,8 +1576,8 @@ static void handle_control_message(struct
-> virtio_device *vdev,
-> =C2=A0		break;
-> =C2=A0	case VIRTIO_CONSOLE_RESIZE: {
-> =C2=A0		struct {
-> -			__virtio16 cols;
-> =C2=A0			__virtio16 rows;
-> +			__virtio16 cols;
-> =C2=A0		} size;
-> =C2=A0
-> =C2=A0		if (!is_console_port(port))
+> >  	int nr_levels =3D 0;
+> >  	int i, j;
+> >  	int *distances;
+> > -	struct cpumask ***masks;
+> > =20
+> >  	/*
+> >  	 * O(nr_nodes^2) de-duplicating selection sort -- in order to find th=
+e
+> > @@ -1902,17 +1923,17 @@ void sched_init_numa(int offline_node)
+> >  	 */
+> >  	distance_map =3D bitmap_alloc(NR_DISTANCE_VALUES, GFP_KERNEL);
+> >  	if (!distance_map)
+> > -		return;
+> > +		return -ENOMEM;
+> > =20
+> >  	bitmap_zero(distance_map, NR_DISTANCE_VALUES);
+> >  	for_each_cpu_node_but(i, offline_node) {
+> >  		for_each_cpu_node_but(j, offline_node) {
+> > -			int distance =3D node_distance(i, j);
+> > +			int distance =3D n_dist(i, j);
+> > =20
+> >  			if (distance < LOCAL_DISTANCE || distance >=3D NR_DISTANCE_VALUES) =
+{
+> >  				sched_numa_warn("Invalid distance value range");
+> >  				bitmap_free(distance_map);
+> > -				return;
+> > +				return -EINVAL;
+> >  			}
+> > =20
+> >  			bitmap_set(distance_map, distance, 1);
+> > @@ -1927,17 +1948,66 @@ void sched_init_numa(int offline_node)
+> >  	distances =3D kcalloc(nr_levels, sizeof(int), GFP_KERNEL);
+> >  	if (!distances) {
+> >  		bitmap_free(distance_map);
+> > -		return;
+> > +		return -ENOMEM;
+> >  	}
+> > -
+> >  	for (i =3D 0, j =3D 0; i < nr_levels; i++, j++) {
+> >  		j =3D find_next_bit(distance_map, NR_DISTANCE_VALUES, j);
+> >  		distances[i] =3D j;
+> >  	}
+> > -	rcu_assign_pointer(sched_domains_numa_distance, distances);
+> > +	*dist =3D distances;
+> > +	*levels =3D nr_levels;
+> > =20
+> >  	bitmap_free(distance_map);
+> > =20
+> > +	return 0;
+> > +}
+> > +
+> > +static int avg_remote_numa_distance(int offline_node)
+> > +{
+> > +	int i, j;
+> > +	int distance, nr_remote =3D 0, total_distance =3D 0;
+> > +
+> > +	for_each_cpu_node_but(i, offline_node) {
+> > +		for_each_cpu_node_but(j, offline_node) {
+> > +			distance =3D node_distance(i, j);
+> > +
+> > +			if (distance >=3D REMOTE_DISTANCE) {
+> > +				nr_remote++;
+> > +				total_distance +=3D distance;
+> > +			}
+> > +		}
+> > +	}
+> > +	if (nr_remote)
+> > +		return total_distance / nr_remote;
+> > +	else
+> > +		return REMOTE_DISTANCE;
+> > +}
+> > +
+> > +void sched_init_numa(int offline_node)
+> > +{
+> > +	struct sched_domain_topology_level *tl;
+> > +	int nr_levels, nr_node_levels;
+> > +	int i, j;
+> > +	int *distances, *domain_distances;
+> > +	struct cpumask ***masks;
+> > +
+> > +	if (sched_record_numa_dist(offline_node, numa_node_dist, &distances,
+> > +				   &nr_node_levels))
+> > +		return;
+> > +
+> > +	WRITE_ONCE(sched_avg_remote_numa_distance,
+> > +		   avg_remote_numa_distance(offline_node));
+>=20
+> nit.
+>=20
+> Can add a small comment here saying arch_sched_node_distance() may
+> depend on sched_avg_remote_numa_distance and requires it to be
+> initialized correctly before computing domain_distances.
 
+Sure.
+
+Thanks for the review.
+
+Tim
+
+>=20
+> Apart from those nitpicks, the changes look good to me. Please feel free
+> to include:
+>=20
+> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
