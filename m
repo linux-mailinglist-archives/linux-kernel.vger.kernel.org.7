@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-817711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3165B5858D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7580BB5858A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202114C6602
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:54:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114A22085E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9AB28751F;
-	Mon, 15 Sep 2025 19:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB57299A94;
+	Mon, 15 Sep 2025 19:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Ek9skAL"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frWnZCxq"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1C029A300
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DD1298CA7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757965959; cv=none; b=A7V7OQNaTqpjx0aobFiMtr7N7E0EipTshdsUrh5QUWxO//SSPYVKGfpUMvwVMi/k5TS0K5LcM9IrDDE4dCsI+R0OXrwRRkIRS1AmIeEdpZFlfTNnnc35lXx6ipqrv2Cl9bRYmfuFDhiNmWXLFj68MB2Yha7rChkGOfeNElh9Dfk=
+	t=1757965957; cv=none; b=inzU/bIdUm/TKI/ibqmadMR6KmplfGZtqkAiOgpBxZBMgQlZRzgbKm9zSjy7M0Ea7/CJ5Zjl6VVRlKZZ+AB6cbW9HvjB7N0K0AiBMzK8xZ7VobazDvdURaIJFurM9O8Pb7fAsTvkMX8DSak4Nmtz3EcNuNOpcMfDiBY7n744Wx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757965959; c=relaxed/simple;
-	bh=E823T6HixBrikb26EDcwlUd1cuW3LPFnDlttoF3Syzw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qxqnbbohnhrw84YnkrK+LINKA1qFIAvayd/Jx3ffuovrIHZGglInyN8cNJZCEXsKgJncNPJLHL+CunC+hLHUOXRJuyhXbeKhZNXgQFO7WzYBI+Ib7T09eIogs+dlauFuZ21Znvew9vMIBGFhmQmBqg+TVo4o+UpFpd4ns3/CrMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Ek9skAL; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--fvdl.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-324e41e946eso8237487a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:52:37 -0700 (PDT)
+	s=arc-20240116; t=1757965957; c=relaxed/simple;
+	bh=rNdqYG04T8gFLQycibM7AbJbQyaoz+PiHssI+IbjctY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iaHpQnX4KGi5wDmNID1ohBPRB1phNVrD1R0EWMJEpsKGQAWr+p4K87cDjoq5gewnPH5Luyvj151qaL3gcORAjfWHzkhP1LxYPpOAKXPhetyhRGXF2PQRU7I3uMwIksbTj2Qy/fKpPVTak8YHjr+cw948PY+MMxAakqFiRoLtOOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frWnZCxq; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so4355072b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:52:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757965957; x=1758570757; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=II5IQOV7eE0UCj316osBsFAD6qW3Vm1Z7tYAX1f0u8c=;
-        b=1Ek9skALuvF30rujg7D7S4FZLGjsGFjZTMIW5ptcudn+AugCCRQ9aqCpEmx7fINLY0
-         VTiuDUDgVP7LJ+YyEAqS/JtJwLI2l/Gg8wDlEj2SMKPU6nBUTSIrZwcDU2BHJHbWUY05
-         N/foIrOhvhmCJU4wtwvA6RiUML22jACuMnhOs0+JMLNn+lpxA7l4FubiUxtIvtqRb4VE
-         A1MNd7VcBAcoSivkfaTgDmcO5exen3nISr4DpjRNPeZ3fNNTw3OOKHRXs5IfhbYSw5rZ
-         6dj8lv1MHUWwoTHaCxoqhLDH0f7B6vn1+NcMLdcE8Tm9toU06342ry1Sjs20IKPkfpZS
-         TT2w==
+        d=gmail.com; s=20230601; t=1757965955; x=1758570755; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hx/rCZsZx96u1s7oaybPrZ+MD9EqUx74622sy17JRpM=;
+        b=frWnZCxqFfRFCSUbpHDoI6cMLkcO1jpxqZ7znTeX1SmxEv+WihL4Tadm0wtz+Y4S/Q
+         /1QTdNoABV3PWPhOeuesiNauF6cY768SqPsL6oCnhWLtdgeAAdSD4GGioy3fOSgpsCNa
+         uS/B214cwJQqEEUrGiaR31EU12c9GSu/L7XT8kXapV83cXPyTZhmj1ZapJmwc19x4N34
+         Ro1YF/Ve9SSkvzaPId6zLUk4BVdzJRlq4ZvtpH6Xas7i4CaEoxP39UR1c5B+yGXIfx+E
+         sEY4qKPWa2fCEG1ZnZWgeYWl0fsbNTRqbN6wf0dWuKVYGsWgkniwizDNDbaSfB5N6CNM
+         mjDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757965957; x=1758570757;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=II5IQOV7eE0UCj316osBsFAD6qW3Vm1Z7tYAX1f0u8c=;
-        b=rUZ4pUNe6xUgfWzh7Wst3+76P2Yc2iFM+yha9a4PVRQPNqnpe1SHqhpGe+Hr0Fd3Bb
-         1RAr1d7ztm81xSO9CfUjQgJ6Qwarq616GWYG4b1T4RNl1i7D8/mqgdzYUJwzGQAZpD0+
-         675vI2KFEOK2RDQq6HDYhhop1Y4H2aORs+ilk5/hZHMDQ5N1DD/MKCkxVVF2NQKmPNbT
-         xk3WRbJkreErg9lPLsO2RE64/T/zDaEwaOC4dWaQSvQTqhcHc3BuNF4eMMUkNvvDl2Yw
-         GKS6n0YYKBA5AEtRIcyxazFh2J3uLM69V2lGDxKrq+OKp33HWR/0NKl4iDsBDim1nrmb
-         tOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQoN2z00P9xOGOOGWRQEjuFhkSm/zgBd8qhuUKdhwVGc8MNAmNwZPQwD/b2yBzgKLACoG9sUW8xHvOUus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZTMtmrT2Ibd/OrVDMWntnFQv+blJu7Pn1Oq1MS1fh1LjJroJV
-	6cR5Fk6mvBlKQ0lfcBEUGh7BPiUhMe9jbe74IJzEzDftkSGTngMzAR8KJk33kqPAKCNNhbn2GQ=
-	=
-X-Google-Smtp-Source: AGHT+IFMJxaxylkV9OFVgqxO/4qqXvhUjwfCwnpPmGFdHD+wNdYJe1GQz83T1fH2gji69vii59G7U8uJ
-X-Received: from pjah8.prod.google.com ([2002:a17:90b:5908:b0:32d:e4c6:7410])
- (user=fvdl job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4acf:b0:32e:685f:cce9
- with SMTP id 98e67ed59e1d1-32e685fce45mr5253405a91.18.1757965957450; Mon, 15
- Sep 2025 12:52:37 -0700 (PDT)
-Date: Mon, 15 Sep 2025 19:51:53 +0000
-In-Reply-To: <20250915195153.462039-1-fvdl@google.com>
+        d=1e100.net; s=20230601; t=1757965955; x=1758570755;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hx/rCZsZx96u1s7oaybPrZ+MD9EqUx74622sy17JRpM=;
+        b=uakrcxVIVkGvC/t7aEEa9Ae2GocPSRAt0QHnyXU8cR1BAIatcWsYNMnWrJJ2+Ao34y
+         QDzPFhVqWYJWkcaboQt84IfsOATBUYBZimAl3hA7zRtxQUrTdqV9bGMScLsFE6xElYmh
+         meYrPHlO5Zewb2YCmod/z7u6VTtFExzylDayStZTa8E6lcqTgCim7VVs7NyIheX5VmRN
+         uchwEPA5G1kBFivQ1pJ9aa4wxHVPv6PXRBjVZn2Omxf4Cq0EFnRw6HSCNZrhpztJDJdp
+         IpEqyAb5UZNJ31q4MXuKb1bqsiOL0PpFTBRqdjMEhhrRsDJVSPQdatW6bsUzAjdeqW4G
+         rH5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsig3WlVBZsohSIGbFu0t2N5x53sHy1kWaF52QdWrUZXslGuwpeDcn6+QiVcoVcRscDc6qT2uP+VtxLkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwILD502/AdX1fZP9qUmwx/i5R2ABk5mwaNB3aiLPQlYQyfyDbe
+	NxqQ/i0fP0egTtFC4e7bEga1s74/CG64RUnKVmth89ZesUUHFKBuEI8g
+X-Gm-Gg: ASbGncswbzEVhlp98IytoNzUOYuZaKxhOkNwSKDsSUd6G8vF6jaycdv2SK1jTQG56Jq
+	V88z3tT2wqCv2h6/i4Z/GVC87sARpPyAFXA/68UWgcSkUyNeWgQElHnBpSq8Z7h7RDxNcRm9SDh
+	Vk0qbrbNmfuhtNGoWzpOAc1F+bl+QtktoxF6mOCPGMf/j0scW+hCEmbo6S+JjdB6r3cKTcfjgdg
+	1DlDrza/uPdfzn8QAiKsabYr+flVIfDjYHQwbHzW8DJZpeJZ5RnORP9AzkXePshvnYy1nsvnIly
+	XNoQDE7I8RH0zuUpJOorWi4kjw7RNqp/dE5bukiRVLgdRvC6AA6WRjWGGbOFRe27SKPywciSWdy
+	+/HHwYBuNLCeAkwhxa490clCnbDNgwHOe
+X-Google-Smtp-Source: AGHT+IHjaw0ImYDF1+rZB0HCnboBsF9bM5bw2fct4iUtxTgaQ9grp6y3f9UVL787zENDOO/R2AG2LQ==
+X-Received: by 2002:a05:6a20:7f98:b0:247:55a7:695a with SMTP id adf61e73a8af0-26029d93a09mr17582980637.15.1757965954673;
+        Mon, 15 Sep 2025 12:52:34 -0700 (PDT)
+Received: from localhost ([216.228.125.130])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b7192d6fsm7884808a12.36.2025.09.15.12.52.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 12:52:34 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: 
+Date: Mon, 15 Sep 2025 15:52:31 -0400
+Message-ID: <20250915195231.403865-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250915195153.462039-1-fvdl@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250915195153.462039-13-fvdl@google.com>
-Subject: [RFC PATCH 12/12] mm/cma: add CMA balance VM event counter
-From: Frank van der Linden <fvdl@google.com>
-To: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev, 
-	Frank van der Linden <fvdl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Add VM counters that record the number of migration
-success / failures during CMA rebalancing. This is
-similar to other migrate counters.
+Subject: [PATCH net-next v2] net: renesas: rswitch: simplify rswitch_stop()
 
-Signed-off-by: Frank van der Linden <fvdl@google.com>
+rswitch_stop() opencodes for_each_set_bit().
+
+CC: Simon Horman <horms@kernel.org>
+Reviewed-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- include/linux/vm_event_item.h | 3 +++
- mm/migrate.c                  | 8 ++++++++
- mm/vmstat.c                   | 2 ++
- 3 files changed, 13 insertions(+)
+v1: https://lore.kernel.org/all/20250913181345.204344-1-yury.norov@gmail.com/
+v2: Rebase on top of net-next/main
 
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index 9e15a088ba38..1711ff85a02f 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -87,6 +87,9 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		CMA_ALLOC_SUCCESS,
- 		CMA_ALLOC_FAIL,
- #endif
-+		CMA_BALANCE_MIGRATE_SUCCESS,
-+		CMA_BALANCE_MIGRATE_FAIL,
-+
- 		UNEVICTABLE_PGCULLED,	/* culled to noreclaim list */
- 		UNEVICTABLE_PGSCANNED,	/* scanned for reclaimability */
- 		UNEVICTABLE_PGRESCUED,	/* rescued from noreclaim list */
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 9e5ef39ce73a..63d771daa3bc 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2144,6 +2144,14 @@ int migrate_pages(struct list_head *from, new_folio_t get_new_folio,
- 	count_vm_events(THP_MIGRATION_SUCCESS, stats.nr_thp_succeeded);
- 	count_vm_events(THP_MIGRATION_FAIL, stats.nr_thp_failed);
- 	count_vm_events(THP_MIGRATION_SPLIT, stats.nr_thp_split);
-+
-+	if (reason == MR_CMA_BALANCE) {
-+		count_vm_events(CMA_BALANCE_MIGRATE_SUCCESS,
-+				stats.nr_succeeded);
-+		count_vm_events(CMA_BALANCE_MIGRATE_FAIL,
-+				stats.nr_failed_pages);
-+	}
-+
- 	trace_mm_migrate_pages(stats.nr_succeeded, stats.nr_failed_pages,
- 			       stats.nr_thp_succeeded, stats.nr_thp_failed,
- 			       stats.nr_thp_split, stats.nr_split, mode,
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 71cd1ceba191..af811328db09 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1392,6 +1392,8 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_CMA
- 	[I(CMA_ALLOC_SUCCESS)]			= "cma_alloc_success",
- 	[I(CMA_ALLOC_FAIL)]			= "cma_alloc_fail",
-+	[I(CMA_BALANCE_MIGRATE_SUCCESS)]	= "cma_balance_migrate_success",
-+	[I(CMA_BALANCE_MIGRATE_FAIL)]		= "cma_balance_migrate_fail",
- #endif
- 	[I(UNEVICTABLE_PGCULLED)]		= "unevictable_pgs_culled",
- 	[I(UNEVICTABLE_PGSCANNED)]		= "unevictable_pgs_scanned",
+ drivers/net/ethernet/renesas/rswitch_main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/rswitch_main.c b/drivers/net/ethernet/renesas/rswitch_main.c
+index ff5f966c98a9..69676db20fec 100644
+--- a/drivers/net/ethernet/renesas/rswitch_main.c
++++ b/drivers/net/ethernet/renesas/rswitch_main.c
+@@ -1656,9 +1656,7 @@ static int rswitch_stop(struct net_device *ndev)
+ 	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
+ 		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDID);
+ 
+-	for (tag = find_first_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
+-	     tag < TS_TAGS_PER_PORT;
+-	     tag = find_next_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT, tag + 1)) {
++	for_each_set_bit(tag, rdev->ts_skb_used, TS_TAGS_PER_PORT) {
+ 		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
+ 		clear_bit(tag, rdev->ts_skb_used);
+ 		if (ts_skb)
 -- 
-2.51.0.384.g4c02a37b29-goog
+2.43.0
 
 
