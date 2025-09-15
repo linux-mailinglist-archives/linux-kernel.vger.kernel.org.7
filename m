@@ -1,274 +1,132 @@
-Return-Path: <linux-kernel+bounces-817246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC03B57FBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BDAB57FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36AD71718BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E89353AD233
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90B323E229;
-	Mon, 15 Sep 2025 14:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF532D7DCE;
+	Mon, 15 Sep 2025 14:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nIH728GC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O/h0bUi0"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465F42D7DCE;
-	Mon, 15 Sep 2025 14:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC8030BF63
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948304; cv=none; b=RH5kYK93JEIYTNew5LadHtfypCyHJ9zdhUF90aspH8Kkr9Tep4bko7gviyOjDJuGCTjULSFy11XefHgBhcVz/28+qQQ5IP8NllOSaAlMLCybYwgLdjiIcNB5xRILeIuzZYyGyAOOJIlBgcp8XpPXRc2mbt1Aa2V97xoyEY3ThSY=
+	t=1757948267; cv=none; b=FjSKRNf7MmSJUh+umFAlLhHs4eDWOKdYWP7C13V3iNy0S/gnlAu17F0NjBfqJB7bNJWSa6yGgHpkXOcRube7Yoo7wpv7D5UYplc4oKRu1YOrvNRQPL3/SPHIEeLCDuTpjEBeENe/q2HP2uSf+6g/goVqtmRTiADiJM9Fm3zGe4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948304; c=relaxed/simple;
-	bh=RZDbgiuYUemwihGWAOZNTM6teDV+Gwo6rUSUU0EUoVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q7WSMVbFqxQIxgRxevd95ynjSx3Yr4gjnQT0/W2C2y2DGWn7Tf8oXYpjXBXju9ar5oZ699p9m2S67neHEqA4631k6ZdlRhJ1JQ3IqJ2YABJ4i2et9tB0tHtVvNt49KB30+4pUXQ0k3x4v9NBVa04clRml0UWMGOfxH9qbLDokkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nIH728GC; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757948304; x=1789484304;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RZDbgiuYUemwihGWAOZNTM6teDV+Gwo6rUSUU0EUoVU=;
-  b=nIH728GCFG3p3joZggigaHXoDmtazosprbYwSkjoRzBixsimsDlFtUYK
-   3oG3R6TSKhks7oJTQllLldFMLrTOJRHopGbd+n2ZBSjobyZcZOTGITIul
-   xKrCbS/Ml8C3zvcp6sgwi80/gTOxyCTQ4/hPxFev9kglfbjnbZWrbz6g6
-   BxnHlB0kPDcdhcmHLtd1gcx3urFE6DQsa28PK+Eh3JxmjqsR8TMv25N2p
-   H6yvrH+EnAVpT6dpT/SyW5HBbWzYC/GD9p6JRKEFyQkzKghP0+oI2op/i
-   dy4Tu7AfBx2hTmmuuLAh3yqUV/rlVhU1YcCeOPALMz/rgEH5NeMBUNOMS
-   w==;
-X-CSE-ConnectionGUID: qluD5bkzSgKYY2rAOH16FA==
-X-CSE-MsgGUID: iZZjJu26QReEbM7BhKCfiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70455746"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="70455746"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:58:22 -0700
-X-CSE-ConnectionGUID: ttUN8l+tTe+m0OoBWDrUvA==
-X-CSE-MsgGUID: dUMgHo4DQ7e6HUep6Aggog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="174274000"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.intel.com) ([10.245.245.103])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:58:16 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Gregory Price <gourry@gourry.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Robert Richter <rrichter@amd.com>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject: [PATCH v6] cxl: docs/driver-api/conventions resolve conflicts between CFMWS, Low memory Holes, Decoders
-Date: Mon, 15 Sep 2025 16:57:20 +0200
-Message-ID: <20250915145810.16872-1-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757948267; c=relaxed/simple;
+	bh=8IynsGzsgz7X180dzhNxE6PK1i2vkr9WAjXS5vs2w24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mBMc6PHMnMzegZpR2UY7/3lmSpyjM/0akAQqFR6hC9G+5o5THlnK48xukkhobi2BlrG9X9cuRTJTMrAdc1/TSNJfZLvdqyIdWSEuzTyayq33BLERWy2ugDCmuMpgxbUXDAmrojFF1ujjcG/wV8QCoxwkNccKMZhCspfygjh4JE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O/h0bUi0; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2445826fd9dso51077235ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757948264; x=1758553064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bWnOZJSewnsdDRnB5iGIXYYv++Gnu1xZmA3g/PLQf9k=;
+        b=O/h0bUi0Bv2qcFJgzQ46OfRK8OI1U2iZ1A4m2P4FOvAaV67dya9pW5EU5fFf1dxQyw
+         1cjwOT72dzlIutVnt3mdbi+RopllpivVOhOlZNChxDg7nLyyg8/BFdO2Wyq9LfJrHmAH
+         mZ9283VfurcslXseuth8nRgLHv1y1wkYRRER20ymVtuThcDOraO9Q72xiJ63XGbSCUwo
+         W6JjRMh+luk3Ptw9FKf2KHTjAOpMiV9QaSR1W38iN09LlmhspxhFYpv7uSpa1a7CKyWr
+         m1qcK3zfqOsUmtrJMLOwMNhyi5m47Ybs7R7TRPoELXDtiXQOmHLuus0g9RsU5mGdFm5w
+         H0xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757948264; x=1758553064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bWnOZJSewnsdDRnB5iGIXYYv++Gnu1xZmA3g/PLQf9k=;
+        b=tRAoG7ROhhgIOX01oLF1Y1lFA0mZITyyZ2VRJGYlmIpG2P5r+I0dGZDfef3an5MbWs
+         hgeLq3GqsG576UnYwSgVen1emYqQWkBL11zNY6PUDl+XNhDvY6VErwwT5Abts1AlofPM
+         IaDe5ZR9dor3SAf4Bh7F+SBKAV+kjv83g81kKkWUngqZhJu83t/k/aITJMls0u97i/w4
+         bS9Sm19b3zkz0bXKRHbEJHl8gSg9IrSlQwqCo2Pxc48SXjT3TZKkCWWRWijW9hV4muRm
+         2c43aiUgls30DmXNsOitZ+pze1fXoiIy/F/FtCbVaph98A6jgf9B05DE3aCJ3gtN5VRn
+         Ahtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtlnv8A53IC6GF5gvKwTvZh/sF1KuF7z5hCfpXzT669PouKR2R+RRRPYAsft+B0jIMB8f0eSAIhcbpzYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfcOGEOpcNtCmIOgBXtEeEqzHUfOnwC0q4cVR86FFgatfKAERZ
+	ybQCh6Mdo3npMpIeEfGsevPk6qICwF5fiNDYQQhPMAUr1h96KA8gqIYRW/K88mYv8UwzyaXiXYh
+	xEIfUyP7RrQqm1sRT4s3xvg4XWUlLCssppov7rqxz
+X-Gm-Gg: ASbGncsIlEyqPGgMfLQgLXAd4zuWLPO0ZNvVDC7RRZhnD7eNbxLM1XjwyXdcnPPDmYi
+	hBhci3PSQ60Yk09y5KzZvk7TqpqXDcBAZqsAc0F3vyHwobp6VKx7Hark3drG95MnA7M12HYwMYE
+	/jEHxhz2hUQ3O0ePa/NKCa0oGR8B8Ddju7OGXWlOMH5PfL9QnYLXZ+pgs7hYGvIU5Y/V3VF9KxO
+	cFxojtJ9Wm9goV6zDffur0pdVY/2U0B7s3iwsIfPFk=
+X-Google-Smtp-Source: AGHT+IHnj6/TLndLwM8EyXwEuk/YJ9EdWGwOpk4CWXv+kwz1bKWJkqFmdEGI1fqwhaJAaM5FG2Rg3VduvcabMBwKZmE=
+X-Received: by 2002:a17:903:478d:b0:264:8a8d:92dd with SMTP id
+ d9443c01a7336-2648a8da428mr77672995ad.20.1757948263212; Mon, 15 Sep 2025
+ 07:57:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250915064715.662312-1-yanzhijian@huaqin.corp-partner.google.com>
+In-Reply-To: <20250915064715.662312-1-yanzhijian@huaqin.corp-partner.google.com>
+From: Doug Anderson <dianders@google.com>
+Date: Mon, 15 Sep 2025 07:57:30 -0700
+X-Gm-Features: Ac12FXxQXW-Con-zpsPtv_VMeeXMu-aegpq7H-CjBeLPv29-bp9mRKCGUG3xxe0
+Message-ID: <CAD=FV=W8HGEa6FJ_NApH7V-NiJhiiaA3czXPJTbff6vWKBoy=Q@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel: Add support for KD116N3730A07
+To: Zhijian Yan <yanzhijian@huaqin.corp-partner.google.com>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	hsinyi@google.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add documentation on how to resolve conflicts between CXL Fixed Memory
-Windows, Platform Low Memory Holes, intermediate Switch and Endpoint
-Decoders.
+Hi,
 
-Reviewed-by: Gregory Price <gourry@gourry.net>
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
+On Sun, Sep 14, 2025 at 11:48=E2=80=AFPM Zhijian Yan
+<yanzhijian@huaqin.corp-partner.google.com> wrote:
+>
+> Add panel driver support for the KD116N3730A07 11.6" eDP panel.
+> This includes initialization sequence and compatible string, the
+> enable timimg required 50ms.
+>
+> KD116N3730A07:
+> edid-decode (hex):
+>
+> 00 ff ff ff ff ff ff 00 2c 83 10 01 00 00 00 00
+> 02 23 01 04 95 1a 0e 78 03 3a 75 9b 5d 5b 96 28
+> 19 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 09 1e 56 dc 50 00 28 30 30 20
+> 36 00 00 90 10 00 00 1a 00 00 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fe
+> 00 4b 44 31 31 36 4e 33 37 33 30 41 30 37 00 2e
+>
+> Signed-off-by: Zhijian Yan <yanzhijian@huaqin.corp-partner.google.com>
+> ---
+> Change since V1:
+>
+> -Add edid in commit message.
+>
+> V1:https://lore.kernel.org/all/20250912131104.1726775-1-yanzhijian@huaqin=
+.corp-partner.google.com/
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-v5 -> v6: Extend "Summary of The Change" with detailed explanation about
-	  the mismatch between the Root and the other HDM Decoders HPA
-	  range sizes (Gregory)
-	  Clarify that this change is exclusively intended to enable x86
-	  platforms which map CXL memory under 4GB (Gregory)
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-v4 -> v5: Fix grammar and syntactic errors (Dave)
-	  Spell out CXL, OSPM, on first use (Dave)
-	  Rewrite a few sentences for better clarity (Dave)
-	  Talk about SPA vs HPA and SPA's relationship to CFMWS (Dave)
-	  Adjust a table for htmldocs output (Bagas)
-	  Use bullet list (Bagas)
-	  Correct the CFMWS[1] HPA range to not overlap CFMWS[0] (Robert)
-	  Correct the CFMWS[1] HPA range to the NIW*256MB rule (Robert)
+Pushed to drm-misc-next:
 
-v3 -> v4: Show and explain how CFMWS, Root Decoders, Intermediate
-	  Switch and Endpoint Decoders match and attach Regions in
-	  x86 platforms with Low Memory Holes (Dave, Gregory, Ira)
-	  Remove a wrong argument about large interleaves (Jonathan)
+[1/1] drm/panel: Add support for KD116N3730A07
+      commit: 65afe8b647a7c2e5c508eb28c93baddaa40812f4
 
-v2 -> v3: Rework a few phrases for better clarity.
-	  Fix grammar and syntactic errors (Randy, Alok).
-	  Fix semantic errors ("size does not comply", Alok).
-	  Fix technical errors ("decoder's total memory?", Alok).
-	  
-v1 -> v2: Rewrite "Summary of the Change" section, 3r paragraph.
-
- Documentation/driver-api/cxl/conventions.rst | 135 +++++++++++++++++++
- 1 file changed, 135 insertions(+)
-
-diff --git a/Documentation/driver-api/cxl/conventions.rst b/Documentation/driver-api/cxl/conventions.rst
-index da347a81a237..6bce7c614fff 100644
---- a/Documentation/driver-api/cxl/conventions.rst
-+++ b/Documentation/driver-api/cxl/conventions.rst
-@@ -45,3 +45,138 @@ Detailed Description of the Change
- ----------------------------------
- 
- <Propose spec language that corrects the conflict.>
-+
-+
-+Resolve conflict between CFMWS, Platform Memory Holes, and Endpoint Decoders
-+============================================================================
-+
-+Document
-+--------
-+
-+CXL Revision 3.2, Version 1.0
-+
-+License
-+-------
-+
-+SPDX-License Identifier: CC-BY-4.0
-+
-+Creator/Contributors
-+--------------------
-+
-+- Fabio M. De Francesco, Intel
-+- Dan J. Williams, Intel
-+- Mahesh Natu, Intel
-+
-+Summary of the Change
-+---------------------
-+
-+According to the current Compute Express Link (CXL) Specifications (Revision
-+3.2, Version 1.0), the CXL Fixed Memory Window Structure (CFMWS) describes zero
-+or more Host Physical Address (HPA) windows associated with each CXL Host
-+Bridge. Each window represents a contiguous HPA range that may be interleaved
-+across one or more targets, including CXL Host Bridges.  Each window has a set
-+of restrictions that govern its usage. It is the Operating System-directed
-+configuration and Power Management (OSPM) responsibility to utilize each window
-+for the specified use.
-+
-+Table 9-22 of the current CXL Specifications states that the Window Size field
-+contains the total number of consecutive bytes of HPA this window describes.
-+This value must be a multiple of the Number of Interleave Ways (NIW) * 256 MB.
-+
-+Platform Firmware (BIOS) might reserve physical addresses below 4 GB where a
-+memory gap such as the Low Memory Hole for PCIe MMIO may exist. In such cases,
-+the CFMWS Range Size may not adhere to the NIW * 256 MB rule.
-+
-+The HPA represents the actual physical memory address space that the CXL devices
-+can decode and respond to, while the System Physical Address (SPA), a related
-+but distinct concept, represents the system-visible address space that users can
-+direct transaction to and so it excludes reserved regions.
-+
-+BIOS publishes CFMWS to communicate the active SPA ranges that, on platforms
-+with LMH's, map to a strict subset of the HPA. The SPA range trims out the hole,
-+resulting in lost capacity in the Endpoints with no SPA to map to that part of
-+the HPA range that intersects the hole.
-+
-+E.g, an x86 platform with two CFMWS and an LMH starting at 2 GB::
-+
-+ +--------+------------+-------------------+------------------+-------------------+------+
-+ | Window | CFMWS Base |    CFMWS Size     | HDM Decoder Base |  HDM Decoder Size | Ways |
-+ +========+============+===================+==================+===================+======+
-+ |   0    |   0 GB     |       2 GB        |      0 GB        |       3 GB        |  12  |
-+ +--------+------------+-------------------+------------------+-------------------+------+
-+ |   1    |   4 GB     | NIW*256MB Aligned |      4 GB        | NIW*256MB Aligned |  12  |
-+ +--------+------------+-------------------+------------------+-------------------+------+
-+
-+HDM decoder base and HDM decoder size represent all the 12 Endpoint Decoders of
-+a 12 ways region and all the intermediate Switch Decoders.  They are configured
-+by the BIOS according to the NIW * 256MB rule, resulting in a HPA range size of
-+3GB. Instead, the CFMWS Base and CFMWS Size are used to configure the Root
-+Decoder HPA range that results smaller (2GB) than that of the Switch and
-+Endpoint Decoders in the hierarchy (3GB).
-+
-+This creates 2 issues which lead to a failure to construct a region:
-+
-+1) A mismatch in region size between root and any HDM decoder. The root decoders
-+   will always be smaller due to the trim.
-+
-+2) The trim causes the root decoder to violate the (NIW * 256MB) rule.
-+
-+This change allows a region with a base address of 0GB to bypass these checks to
-+allow for region creation with the trimmed root decoder address range.
-+
-+This change does not allow for any other arbitrary region to violate these
-+checks - it is intended exclusively to enable x86 platforms which map CXL memory
-+under 4GB.
-+
-+Despite the HDM decoders covering the PCIE hole HPA region, it is expected that
-+the platform will never route address accesses to the CXL complex because the
-+root decoder only covers the trimmed region (which excludes this).  This is
-+outside the ability of Linux to enforce.
-+
-+On the example platform, only the first 2GB will be potentially usable, but
-+Linux, aiming to adhere to the current specifications, fails to construct
-+Regions and attach Endpoint and intermediate Switch Decoders to them.
-+
-+There are several points of failure that due to the expectation that the Root
-+Decoder HPA size, that is equal to the CFMWS from which it is configured, has
-+to be greater or equal to the matching Switch and Endpoint HDM Decoders.
-+
-+In order to succeed with construction and attachment, Linux must construct a
-+Region with Root Decoder HPA range size, and then attach to that all the
-+intermediate Switch Decoders and Endpoint Decoders that belong to the hierarchy
-+regardless of their range sizes.
-+
-+Benefits of the Change
-+----------------------
-+
-+Without the change, the OSPM wouldn't match intermediate Switch and Endpoint
-+Decoders with Root Decoders configured with CFMWS HPA sizes that don't align
-+with the NIW * 256MB constraint, and so it leads to lost memdev capacity.
-+
-+This change allows the OSPM to construct Regions and attach intermediate Switch
-+and Endpoint Decoders to them, so that the addressable part of the memory
-+devices total capacity is made available to the users.
-+
-+References
-+----------
-+
-+Compute Express Link Specification Revision 3.2, Version 1.0
-+<https://www.computeexpresslink.org/>
-+
-+Detailed Description of the Change
-+----------------------------------
-+
-+The description of the Window Size field in table 9-22 needs to account for
-+platforms with Low Memory Holes, where SPA ranges might be subsets of the
-+endpoints HPA. Therefore, it has to be changed to the following:
-+
-+"The total number of consecutive bytes of HPA this window represents. This value
-+shall be a multiple of NIW * 256 MB.
-+
-+On platforms that reserve physical addresses below 4 GB, such as the Low Memory
-+Hole for PCIe MMIO on x86, an instance of CFMWS whose Base HPA range is 0 might
-+have a size that doesn't align with the NIW * 256 MB constraint.
-+
-+Note that the matching intermediate Switch Decoders and the Endpoint Decoders
-+HPA range sizes must still align to the above-mentioned rule, but the memory
-+capacity that exceeds the CFMWS window size won't be accessible.".
--- 
-2.50.1
-
+-Doug
 
