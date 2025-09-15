@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-816013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD28B56E2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:13:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F605B56E2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A430189B907
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2A9179A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D740C220F5C;
-	Mon, 15 Sep 2025 02:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="RET7wyI+"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368732165EA;
+	Mon, 15 Sep 2025 02:13:41 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530A921E098
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA72321C16E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757902410; cv=none; b=fvdVISwAbeesPsEXsVzaiIo8+slQqo8WdsjiWODY+CFKazf2ECeL73gkjlU0NEh97rBoaEBFQYyAufRs2SJiDuIDS8SyIcZH2s7SOzhEI2VJ90HbtaJ1Ow99zlUHWaYkDi+gC2gIkT5XJTWDlJDWCU9QpGwlxD/Ng5HgVy6pk4c=
+	t=1757902420; cv=none; b=dq+CCBqYxwcDHhh35te0oIjDdIdATV4/rBSgaXJOaz4h5QNDipMR/fo/JdntsqmPQSq138HzgmjsitDt+4kg0bSR9NbJAVdHsALp+Ui6XqZPywcdNhZ1tQtnh1Tc4wxoMLFvjreh6cbVDuqHU0Q55dImLcUK+58F1H09Yjoj3uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757902410; c=relaxed/simple;
-	bh=SMqAydrRlAWaSLUNJ6U8LSRxn7jkqUpS4uBIprB2vRI=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=FykzJiYOGfzU7P9SO3RWmCL86LiyTxwahqkAkDx/zLr7v5ghoS3qcUERbvqwkp75ayBwnH1oRiRGADTfQXChDKx0frVIKFaj9wEnvlLShcLKFr/tduRdWld+w+fTNI8TJjpRi0Orqa2wYx/DWrE+t+THYP6V5W0LE75INWXeIb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=RET7wyI+; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1757902400;
-	bh=6J20VH7voOyYroc7sd9mKpuRhnqygSA4dyoSLLqxRHc=;
-	h=Subject:From:To:Cc:Date;
-	b=RET7wyI+uYL1ZDx+gaIsj+SAAaoN8t4X90mneLv15rom0Fm29zZHh/Ed1WbOlZYV7
-	 gTYGB8UmEQanMKNvTArQ9OfsQ9CxCSzfrOrmHdbI/bX4hENeu/j9/LqyURN1FoqdII
-	 NLw2wYuZ3G8RLQ3k89clt8E2Jxsc4TXhGimVYrwMaxuHZPuKfS1cxgNS411rXFzheA
-	 pkoAZbpn43mt1lnFVDmizzX0YuNBGwD+ASCbyBxvHuLDgcuGOYO76J5R4xRCNfQN70
-	 LY6CgBtsj1zH0p5K+tfGR5wQvNVfJMZhMbOp2c8dI7jb1MAdmMDa6WrzYwASL9Gt2N
-	 eoRxqVgCotlog==
-Received: from [192.168.68.113] (unknown [180.150.112.213])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 25AD7640BB;
-	Mon, 15 Sep 2025 10:13:18 +0800 (AWST)
-Message-ID: <5793039afcedeb28179a3c9909631d8251abc73e.camel@codeconstruct.com.au>
-Subject: [GIT PULL] aspeed: further devicetree changes for v6.18
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: soc <soc@lists.linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
-Date: Mon, 15 Sep 2025 11:43:18 +0930
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1757902420; c=relaxed/simple;
+	bh=M1zr4g+YL0dCSc0J7WncCIFH2o5Pwo1l+lnSTGU2HA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SH7WSZBKDSWIaIccj55EQYX0of26NK9D57pHA1PiNRIKah6scFPbb1PjkWqV/uF3pmoX0ZhqoHTcajjf1Kx5aTGNHtzip0IBZO3+KcXAE+BMhx25ZBYx4QvHMu6kWG/Kr2E9xCXV3OCwuyXGR7YPrFQ6LHgqPsoavNLypOaVacQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cQ7kP0BqCz2CgSs;
+	Mon, 15 Sep 2025 10:09:01 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5B247140148;
+	Mon, 15 Sep 2025 10:13:35 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 15 Sep 2025 10:13:34 +0800
+Message-ID: <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
+Date: Mon, 15 Sep 2025 10:13:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
+To: Zhang Changzhong <zhangchangzhong@huawei.com>, <dave@stgolabs.net>,
+	<paulmck@kernel.org>, <josh@joshtriplett.org>, <frederic@kernel.org>
+CC: <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>
+References: <20250912015737.1209143-1-wangliang74@huawei.com>
+ <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-Hello SoC maintainers,
 
-This is a second 6.18 PR for the ASPEED devicetrees, following the
-first at [1].
+在 2025/9/12 10:16, Zhang Changzhong 写道:
+>
+> 在 2025/9/12 9:57, Wang Liang 写道:
+>> When setting the locktorture module parameter 'bind_writers', the variable
+>> 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
+>> is not freed, when removing module or setting the parameter again.
+>>
+>> Below kmemleak trace is seen for this issue:
+>>
+>> unreferenced object 0xffff888100aabff8 (size 8):
+>>    comm "bash", pid 323, jiffies 4295059233
+>>    hex dump (first 8 bytes):
+>>      07 00 00 00 00 00 00 00                          ........
+>>    backtrace (crc ac50919):
+>>      __kmalloc_node_noprof+0x2e5/0x420
+>>      alloc_cpumask_var_node+0x1f/0x30
+>>      param_set_cpumask+0x26/0xb0 [locktorture]
+>>      param_attr_store+0x93/0x100
+>>      module_attr_store+0x1b/0x30
+>>      kernfs_fop_write_iter+0x114/0x1b0
+>>      vfs_write+0x300/0x410
+>>      ksys_write+0x60/0xd0
+>>      do_syscall_64+0xa4/0x260
+>>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> This issue can be reproduced by:
+>>    insmod locktorture.ko
+>>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+>>    rmmod locktorture
+>>
+>> or:
+>>    insmod locktorture.ko
+>>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+>>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+>>
+>> The parameter 'bind_readers' also has the same problem. Free the memory
+>> when removing module or setting the parameter.
+>>
+>> Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
+>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>> ---
+>>   kernel/locking/locktorture.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+>> index ce0362f0a871..cad80c050502 100644
+>> --- a/kernel/locking/locktorture.c
+>> +++ b/kernel/locking/locktorture.c
+>> @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
+>>   	int ret;
+>>   	char *s;
+>>   
+>> +	free_cpumask_var(*cm_bind);
+>> +	*cm_bind = NULL;
+> 这个NULL没必要吧
 
-Cheers,
 
-Andrew
+Setting global pointer to NULL after free may be more safe. ^-^
 
-[1]: https://lore.kernel.org/soc/cb634cffaf0db9d25fb3062f0eee41e03955321f.c=
-amel@codeconstruct.com.au/
-
----
-
-The following changes since commit b785b5d88cc27a521ea22b3afd85804c4c321d4a=
-:
-
-  ARM: dts: aspeed: x570d4u: convert NVMEM content to layout syntax (2025-0=
-8-11 09:37:48 +0930)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
--6.18-devicetree-1
-
-for you to fetch changes up to 3708a165a98c23cc83216deda88bc7d64ba85527:
-
-  ARM: dts: aspeed: Drop syscon "reg-io-width" properties (2025-09-10 16:20=
-:40 +0930)
-
-----------------------------------------------------------------
-Further ASPEED devicetree updates for v6.18
-
-New platforms:
-
-- Meta Clemente
-
-  Clemente is a compute-tray platform using an AST2600 SoC
-
-Updated platforms:
-
-- Harma (Meta): Hot-swap controller, power monitoring, GPIO names
-
-There are also some devicetree cleanups from Rob and Krzysztof that touch a
-variety of platforms and the DTSIs. These lead to fewer warnings emitted fo=
-r the
-ASPEED devicetrees.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      ARM: dts: aspeed: Minor whitespace cleanup
-
-Leo Wang (3):
-      dt-bindings: arm: aspeed: add Meta Clemente board
-      ARM: dts: aspeed: Add NCSI3 and NCSI4 pinctrl nodes
-      ARM: dts: aspeed: clemente: add Meta Clemente BMC
-
-Peter Yin (3):
-      ARM: dts: aspeed: harma: add power monitor support
-      ARM: dts: aspeed: harma: revise gpio name
-      ARM: dts: aspeed: harma: add mp5990
-
-Rob Herring (Arm) (3):
-      ARM: dts: aspeed: Fix/add I2C device vendor prefixes
-      ARM: dts: aspeed: Drop "sdhci" compatibles
-      ARM: dts: aspeed: Drop syscon "reg-io-width" properties
-
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml        |    1 +
- arch/arm/boot/dts/aspeed/Makefile                               |    1 +
- arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts      |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dts |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts       |    4 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts       | 1283 +++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts          |   43 +--
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts        |   36 +--
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarbara.dts   |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-tiogapass.dts      |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts      |   12 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts             |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts                |    8 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dts         |    4 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts     |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dts            |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dts               |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dts              |    4 +-
- arch/arm/boot/dts/aspeed/aspeed-bmc-vegman.dtsi                 |    2 +-
- arch/arm/boot/dts/aspeed/aspeed-g4.dtsi                         |    1 -
- arch/arm/boot/dts/aspeed/aspeed-g5.dtsi                         |    2 -
- arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi                 |   10 +
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi                         |    6 +-
- 23 files changed, 1360 insertions(+), 73 deletions(-)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.d=
-ts
-
+>> +
+>>   	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
+>>   		s = "Out of memory";
+>>   		ret = -ENOMEM;
+>> @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
+>>   			cxt.cur_ops->exit();
+>>   		cxt.init_called = false;
+>>   	}
+>> +
+>> +	free_cpumask_var(bind_readers);
+>> +	free_cpumask_var(bind_writers);
+>> +	bind_readers = NULL;
+>> +	bind_writers = NULL;
+> 同上
+>
+>> +
+>>   	torture_cleanup_end();
+>>   }
+>>   
 
