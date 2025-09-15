@@ -1,191 +1,258 @@
-Return-Path: <linux-kernel+bounces-817023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAFAB57C8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:13:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C095B57C7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA10167B88
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C1813A6E18
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79B4311C3D;
-	Mon, 15 Sep 2025 13:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A771F30BF65;
+	Mon, 15 Sep 2025 13:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="ne6bv0Lr"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2090.outbound.protection.outlook.com [40.107.244.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2Xs09tdK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Q3FqPk1h";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ttON+rVc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WH++Bsk4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2393230FC07;
-	Mon, 15 Sep 2025 13:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941965; cv=fail; b=pvhpUyUCepNGiuV/6/qdxswQZpgrQZDw0WNbTy9WBvZ65crR0wUus4tXmRvs5NkKZO7S2puw7PWrERIG3zGHqKsgTDSWzbWhECnMtyn5lTiApur0+LVIiRWjJ9/2vV1VJajUjNHkCkcOQHD9k6cWx6j/iuUiMpJR+Ha/g+JukxA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941965; c=relaxed/simple;
-	bh=wjM/Z60yT3XGsqKt6Q2eBEk2denv6GLiM9kLQ/FpVCU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rpU3XrLt2edtpUXqrfTgDpNIwsIk1XrHqdn36NxphX8wxQmNT3k9cQhecsA6aSTjmmy3tNe/DO7FOipQEK6PWNNomyyzHKzBqKm409FGqe3mGSUL4paWp9ckWGR93BPnJrw5zho9cSyeVpSdpVlsKkbM3JLkUm3UD4bRBi4ooNM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=ne6bv0Lr; arc=fail smtp.client-ip=40.107.244.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wU7M8xry31LQYRk6mlNWW0y53eY13IhVryT3MCh/IoyoMpgYFovdnSDF3CXKNT2kus+ytBnFxxhqAwtI0ZipD9gbRHujvI826O9xIOoVFNlwEfHWEZ41gybHB95GkophxjKlw71RG70Av+r229p6loqch6HUBAQG5tYLqVruYlzr8WQNVtpw0UOzQ5P0GaHVdxWWLfsQyjluSYZgmwL8d+v6mFp3OXzSVlx52jeboOdHmngX9SAi6GDXfn89jrmq7VQqIghLju+eBYuEp1PaEtYwKk8JN+eb3Q0AychYjK4CKOJOOUPkX1a1aW8MXJaVXSGZgLSIqrDZlYWzvUm3RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BwxvSH1sO4Rm6uSuAzNE9CGGfkbYPLzgRPPStkzLlw4=;
- b=M6CZMqD8SXfIJhDQQoyWBylWFmdbx2rSmmvg60byW4xvDE869Y5o+vPstzwfz48ejk4tAIjqAtbgloJlAkKx57eq7+ovfI0p4N58ZceEWvKQXD32PmetnobyDw1W+EO5jTP6dHK9wGjmCbk0j5+BFAwSOSN86YxjptSGQl4ug8Mh9kSOJ0VwU5us9a4pODXPyIcxJae3crfhlRmDzg1IKQK8hIGpEkAUPsHVd4CAHjWhdCt6CQATPwt/IbVQTlpjWEsoXtGVKgAhixJ01EzRZr6yOeQjAh8TeVuCnrkKLl75AF1JucoaErnFcH8bK3VEbfdXroSmjEwvsSKdhLG7+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
- dmarc=none action=none header.from=axiado.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BwxvSH1sO4Rm6uSuAzNE9CGGfkbYPLzgRPPStkzLlw4=;
- b=ne6bv0LrJQqbxJxIFnaHJ04i2Yi00HulR3KQuSNB2M+peMJvmICs/lQI3wAuwNpFICMpzSDmelbv+Ryz2zUZS2NXEmnCuPOlAX+FciQsWnkLa108DEvAKdIis2gxF80zDSVP2NDtF7iZedy6eswSSkZZ91iQIJXhTu3r9uYtpbm5EPmFBDwoEYuDuqYxO6iObZeBZdSfHCsK9JcExwtxzxw71HRqJBH53QmHJ64z+oI+jzqJ6KOUqedMG9kTURyBT7Y36MQvE81Gwn1tctKCW8KsIAwsjDTrOXDrjUTEeXiIvAH68stDQYGn86kmfJIxjq0afSJJ0rwgj+2BwUxtpQ==
-Received: from BN0PR03CA0037.namprd03.prod.outlook.com (2603:10b6:408:e7::12)
- by BL4PR18MB6407.namprd18.prod.outlook.com (2603:10b6:208:5a7::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Mon, 15 Sep
- 2025 13:12:40 +0000
-Received: from BL6PEPF00020E64.namprd04.prod.outlook.com
- (2603:10b6:408:e7:cafe::3d) by BN0PR03CA0037.outlook.office365.com
- (2603:10b6:408:e7::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.21 via Frontend Transport; Mon,
- 15 Sep 2025 13:12:39 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
- smtp.mailfrom=axiado.com; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axiado.com;
-Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
- designate 50.233.182.194 as permitted sender)
- receiver=protection.outlook.com; client-ip=50.233.182.194;
- helo=vm-swbuild15.axiadord;
-Received: from vm-swbuild15.axiadord (50.233.182.194) by
- BL6PEPF00020E64.mail.protection.outlook.com (10.167.249.25) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13
- via Frontend Transport; Mon, 15 Sep 2025 13:12:38 +0000
-From: Vladimir Moravcevic <vmoravcevic@axiado.com>
-Date: Mon, 15 Sep 2025 06:11:57 -0700
-Subject: [PATCH 3/3] MAINTAINERS: Add entries for the Axiado SPI DB
- controller
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B148F30CD95
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757941935; cv=none; b=YLaY/meBeNvTcsmR7yRZEmefHcFmfgruhbqJRlSsbM4ISPSs5r1qynlzqcNGKsK6mBjAsY/PIJca1duevlQyI1oh7Su79rDBeA+9+jhMtMSIjAHjXEbO/PQ8xT8dwD6Hb/8M4aX5Sf3Cc8WuqLxDZeZXXCLQuNNZ2/5Yd9WNhUA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757941935; c=relaxed/simple;
+	bh=9/lrtO4A3MaU9BFrOpVUjWurgYGUiXR6cn3o9VkqOko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bgZeFYeQxXMLJfJJ/Sm5ymjUW6AB8Bb4jKfMYShu0EuGHnxk2XaD2Fq3bwlRrGybr5NJlvjK02NDp7BHIEKOuZNuTKleq+Lvr9xd7dONhq87LdbbUGFLsNJnuni7QuyQH6uMi3plIGUTX4/BgBce4IRBLn6LcGHSns8aKojpv/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2Xs09tdK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Q3FqPk1h; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ttON+rVc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WH++Bsk4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EC6011F45B;
+	Mon, 15 Sep 2025 13:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757941932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SrPbR9LiZCIW4M8Mmy8D1yOoCcG/VA9RhiDW2xLbky4=;
+	b=2Xs09tdKwZgfvwhTp+ytlHx7LR+j9J4br2LyOD98fmS9FFM/ClRwwd2/YiA+qA+zPa+u1j
+	opBkha2bMhj+k4wUeesp27oAPrmwprK6IIGPqogpUXXmQiEKBXX5rd7b+v0CYGeqFHkS3e
+	5fKqDTULJtqVS+KEDuMrW9YJaItsjf4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757941932;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SrPbR9LiZCIW4M8Mmy8D1yOoCcG/VA9RhiDW2xLbky4=;
+	b=Q3FqPk1hu1VStCtF+ojpLkm8FfFwggpMB2GwubCsFkTo2BJssWx5lEylVxEH07cdM9V6Hw
+	kX8QRF3yDayfz1AA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ttON+rVc;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WH++Bsk4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757941931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SrPbR9LiZCIW4M8Mmy8D1yOoCcG/VA9RhiDW2xLbky4=;
+	b=ttON+rVc9NJTk2ENcKiI2fHOnN5k5KQVQAYbwoJR5Q2CAI/AfElq91fzlwyEnh1LwCJW5z
+	8939cTKtSj7MSqITipg3UgNYxDg2vm5o3eO1Y/fV1sPLIROvdXL93SDStL2f0JVxnbX8uW
+	ad5fngI8YxIw/2Z22V+YGUMj4wuljKo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757941931;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=SrPbR9LiZCIW4M8Mmy8D1yOoCcG/VA9RhiDW2xLbky4=;
+	b=WH++Bsk4vUCcZm7UPZWlowyKiDbTdPay3cmig9fsAYVigAwS/e5WMviYkrWionIRauf3TL
+	V7cn1/sINmVX7fCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E48E1372E;
+	Mon, 15 Sep 2025 13:12:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YlRLIasQyGhqSAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 15 Sep 2025 13:12:11 +0000
+Message-ID: <9520bcb5-df81-452c-902a-0c4c61156716@suse.de>
+Date: Mon, 15 Sep 2025 15:12:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
+ initialization
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
+ <9f17dfd9-a4d4-41e9-b988-bd8ca858e5e7@suse.de>
+ <20250915-heavenly-athletic-lionfish-aa7b8b@penduick>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250915-heavenly-athletic-lionfish-aa7b8b@penduick>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-3-814a1fa2a83e@axiado.com>
-References: <20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-0-814a1fa2a83e@axiado.com>
-In-Reply-To: <20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-0-814a1fa2a83e@axiado.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>, 
- Tzu-Hao Wei <twei@axiado.com>, 
- Axiado Reviewers <linux-maintainer@axiado.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Vladimir Moravcevic <vmoravcevic@axiado.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757941952; l=997;
- i=vmoravcevic@axiado.com; s=20250904; h=from:subject:message-id;
- bh=wjM/Z60yT3XGsqKt6Q2eBEk2denv6GLiM9kLQ/FpVCU=;
- b=C0rLw0QfBN2GOlHqUhPFyx8qwHRa7rNQrJOBk/5U6vj8ghLS7LJI0Rz3PK08NYuKYrBSP93iD
- v1Oyognadr2BLMu87ugMPWXLuSYU7VUoXwQ7APfPTUp9Fbgo4/xxqDQ
-X-Developer-Key: i=vmoravcevic@axiado.com; a=ed25519;
- pk=iiyhWhM1F4HlCbbW3I3qKZhPCE8JsCrDQMgCBRg4YMA=
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E64:EE_|BL4PR18MB6407:EE_
-X-MS-Office365-Filtering-Correlation-Id: a398d050-395c-40de-78d4-08ddf4598c26
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TlQ4Yk1UVzQ0T2RBRWRPb3BNU1pYak9hc2ZxTlBKTVFMUHI0b0UrYUN2dUdY?=
- =?utf-8?B?bFB5SFA4OW11YlRYSUgrd3JkWmlGWkI2L2thbzcxcFdDUkl1c1hSUGNRM2du?=
- =?utf-8?B?cUZBaE04SDI2M01KQ0Y3RU5Xc0N1NWVyY1djQUc3V1RTSVZabzhTbWsxU3Bi?=
- =?utf-8?B?UE1nZEtSRDUyVUUzeUFham9DN3hHYXZGZS9kU0NaTlhpYUNmUTlhZnh5L2lC?=
- =?utf-8?B?a1pCYXRocHJRaUl5bGU4elJIbmtkWU10OUpjaEMweVFJcnRma2gxanNGRUsy?=
- =?utf-8?B?MmE0U3NpNGwxd2hYTzkxS0ZMVktZcjh6c21JenRSa3ltb3hodVRjaE9JL0Za?=
- =?utf-8?B?cTVuTXU4THNmbnRMNWpCVnBpNG4wN0tPVlB6cWNqNVUyQWRSV0NQcWZwblgr?=
- =?utf-8?B?N0tjcXFUSGFtM1c2SVVvOFN1T2hGNU1jbGY0c3ZWeVl2NXQrTTNXNWIxOXpV?=
- =?utf-8?B?dmtXOHJXMGl5V2xZd3h5L2cxUHhtT3BOUkVVQlJxSm4zQktKRlRQSDkvVnYy?=
- =?utf-8?B?a3dBNEtmNXZWRVNpdFI4Ynl2SHNJc2hjb255UUNaT0phUTBWRk9Ld25VK2l4?=
- =?utf-8?B?dlFobm5pSmEzSzczam42OGdvNE4reVAzc0dZOCtRbGJpUHA0eFJCbVpabHgz?=
- =?utf-8?B?RFBvR21Oanc1aGxmb2V5Ylh4SzR4T3VxRFpJQllXRXhQR3p0L3ZqVUFGWVFu?=
- =?utf-8?B?bUVWV0w0d0tWQVBmWExvTkJpNUN1d0NMQ0dKZ0t5ZUFKdGVJSTJsMGhhR0Fm?=
- =?utf-8?B?RklDRWp1QjFTK3NoWW9jVFhKQnhYRzQ0OE15WmpyRzlGUTZPYkRMcGFFd2l6?=
- =?utf-8?B?TWNtT1pkUTVUbk4zM281R3VudGlURW8yOXJIWE1aNmp5MmhmZW1CVk1NUlRR?=
- =?utf-8?B?UHNUT1pLUmV5OFFsdXdnbm9HWFEvbUZTRHRKdXhHYnRGNWxHT1JpNlZXaEN5?=
- =?utf-8?B?V01FREY0d0Y0ZU1tY0RITStmYld4SExhei9JVXdTWlJQWUw5dkNLMGVCVGRi?=
- =?utf-8?B?cCs4RktkTndBdWE0L3dyL1Z6Qkowd3RjYi9ESFJxNWMvYTJZc3NmSlB2ZVhw?=
- =?utf-8?B?OFNyZDM4dk1qZ25GT29FTnJ0c09zeXpnbWs2NUFSbEZ3blRISzU0RXdRa3Bi?=
- =?utf-8?B?SHBQM1J3dXM4dVdoN3hJUENaWWZ0RHdvdkhoY0I4YlpEMVJzWWNHemhxWTVw?=
- =?utf-8?B?VGhQVUw2aVFoQ3I1cngzUWd3Vmw4SWhwY1YwTUdnVGxjSGdGcHV3aTlBMVdX?=
- =?utf-8?B?VS8wYmtLNFhCZjJuQmRCSVlzdHFlVzNnRjl6VzlqYVNQSk5RSFMzMW9admZm?=
- =?utf-8?B?eUlENWpoeWVpN3hvS1IydW1uSU81d280QmlEK1pEcHV4Vlc5V0R3b280N3lx?=
- =?utf-8?B?cHlBRDRxaVBQWE9mOHJaYWgvcjdHYk5scFFEc1Nac29GVnhSQnhLaXRrVk4v?=
- =?utf-8?B?MG9aa1JnUXFsRUNKR1I2YndKNWtWaWZoMUE1dmNHOEtuUyt6ZklTUjlsdE91?=
- =?utf-8?B?S21GNElFcU02R2pzRmd5ZUtGTEtZTEVxTEpOUHZmVmQ0SUxoVDNyclVMQzEz?=
- =?utf-8?B?bC83dVNsQ0FkcjNYdEwzcXJRMmE4NGV1Uy8wdG5GUk1jL1ZRL0FXV0t5ZTds?=
- =?utf-8?B?QUFINUhoOXZDOWlSY1g0bEFFQjJVWWs4UkU4OGsrN05YbnQyRjM3M1U0U1Js?=
- =?utf-8?B?MDJsdS81czNMUmpVdHg3ZVQrSkN6NDlLYXZFUVRwUWVWU2c5NmJteHNNOVZJ?=
- =?utf-8?B?N1BOZ2ZTUWNtcTFBNEJ3bGNpREpYYm52NllnVDluUXZDZFhmL29RNWE5ZXdF?=
- =?utf-8?B?dElqTW5xVXZSdStoeWlvdVBXYTJiaXJPZ3Q4UVdLM08yWmdKYmhEOTZFSHJu?=
- =?utf-8?B?OHhWdUlIRjVRZlJsN085MGNVcGVIdTQ5eU4zUTArZlRJRU1oRlhyUEFkOUtw?=
- =?utf-8?B?SmJiUDJ4dkZVM2xFOEFrUk0rNXcrZFkvUERMa0JMOGsybmVhOCtDcFpnSy9P?=
- =?utf-8?B?U1hsbU8rR3UySFNJeGtBZWd1NnRBUDd5U2ZIeUlMZ2h1QXhHNTNHcXJYT29s?=
- =?utf-8?Q?ISl5oh?=
-X-Forefront-Antispam-Report:
-	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:vm-swbuild15.axiadord;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: axiado.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:12:38.7208
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a398d050-395c-40de-78d4-08ddf4598c26
-X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[vm-swbuild15.axiadord]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E64.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR18MB6407
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: EC6011F45B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,kernel.org,ideasonboard.com,kwiboo.se,iki.fi,ti.com,lists.freedesktop.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 
-Add the MAINTAINERS entries for the Axiado SPI DB controller.
+Hi
 
-Signed-off-by: Vladimir Moravcevic <vmoravcevic@axiado.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Am 15.09.25 um 13:27 schrieb Maxime Ripard:
+> On Tue, Sep 02, 2025 at 03:18:17PM +0200, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+>>> Bridges implement their state using a drm_private_obj and an
+>>> hand-crafted reset implementation.
+>>>
+>>> Since drm_private_obj doesn't have a set of reset helper like the other
+>>> states, __drm_atomic_helper_bridge_reset() was initializing both the
+>>> drm_private_state and the drm_bridge_state structures.
+>>>
+>>> This initialization however was missing the drm_private_state.obj
+>>> pointer to the drm_private_obj the state was allocated for, creating a
+>>> NULL pointer dereference when trying to access it.
+>>>
+>>> Fixes: 751465913f04 ("drm/bridge: Add a drm_bridge_state object")
+>>> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+>>> ---
+>>>    drivers/gpu/drm/drm_atomic_state_helper.c | 8 ++++++++
+>>>    1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+>>> index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..b962c342b16aabf4e3bea52a914e5deb1c2080ce 100644
+>>> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+>>> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+>>> @@ -707,10 +707,17 @@ void drm_atomic_helper_connector_destroy_state(struct drm_connector *connector,
+>>>    	__drm_atomic_helper_connector_destroy_state(state);
+>>>    	kfree(state);
+>>>    }
+>>>    EXPORT_SYMBOL(drm_atomic_helper_connector_destroy_state);
+>>> +static void __drm_atomic_helper_private_obj_reset(struct drm_private_obj *obj,
+>>> +						  struct drm_private_state *state)
+>>> +{
+>>> +	memset(state, 0, sizeof(*state));
+>> This argument is guaranteed to be zero'd, I think. No need for a memset.
+>>
+>>> +	state->obj = obj;
+>>> +}
+>>> +
+>>>    /**
+>>>     * __drm_atomic_helper_private_obj_duplicate_state - copy atomic private state
+>>>     * @obj: CRTC object
+>>>     * @state: new private object state
+>>>     *
+>>> @@ -796,10 +803,11 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_state);
+>>>     */
+>>>    void __drm_atomic_helper_bridge_reset(struct drm_bridge *bridge,
+>>>    				      struct drm_bridge_state *state)
+>>>    {
+>>>    	memset(state, 0, sizeof(*state));
+>> Another unnecessary memset?
+> I guess the two can be seen as redundant, but I'd argue the one in
+> __drm_atomic_helper_private_obj_reset should still be there.
+>
+> What guarantees that the pointer points to a zero'd structure?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6dcfbd11efef87927041f5cf58d70633dbb4b18d..4fa4b99661b37b161e4326526e0c5049cf24691a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4130,6 +4130,16 @@ W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
- F:	drivers/pwm/pwm-axi-pwmgen.c
- 
-+AXIADO SPI DB DRIVER
-+M:	Vladimir Moravcevic <vmoravcevic@axiado.com>
-+M:	Tzu-Hao Wei <twei@axiado.com>
-+R:	Axiado Reviewers <linux-maintainer@axiado.com>
-+L:	linux-spi@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/spi/axiado,ax3000-spi.yaml
-+F:	drivers/spi/spi-axiado.c
-+F:	drivers/spi/spi-axiado.h
-+
- AZ6007 DVB DRIVER
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-media@vger.kernel.org
+We only call this helper after allocation AFAICT. And the DRM APIs 
+already assume that allocation clears to zero.
+
+Best regards
+Thomas
+
+
+>
+> Maxime
 
 -- 
-2.25.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
