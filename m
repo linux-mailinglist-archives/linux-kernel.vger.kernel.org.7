@@ -1,167 +1,159 @@
-Return-Path: <linux-kernel+bounces-816021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D1FB56E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:24:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2857CB56E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A6F178F80
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7039C189A966
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338142101AE;
-	Mon, 15 Sep 2025 02:23:45 +0000 (UTC)
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D6C221703;
+	Mon, 15 Sep 2025 02:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wv/WAike";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ThFA7BNM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wv/WAike";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ThFA7BNM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A9D22A808
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA93DF49
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757903024; cv=none; b=Vn8n/AoPIb76W1li2AglF944wKHadrozxOMzgs56KnKOTCXs+9RpbvOEAaiiW8IC7Pc/uK3txHMl+sZOWwgiy6k9db3Z3oiwweVQeOlmijfFMKjHU+c74Tq338LekfA8Fxy9xER/hjIjwoyiMFkOh7yGfJqDgMweWQ29z7KaCM4=
+	t=1757902937; cv=none; b=mvjLFtUyjIy8p6Gvmqe0Jbnu6DlV9Ri9dR4+JJ0kYvjwA26cac+hWDzdb/psHFYX7oeQ6WlN+DJ1KZbXBtVUPkZRBhCJjgdCT+VVjuBCEubnqm9G5XZ5o2uE+lhH3gL2rfRCJaNdpAzuGnGD50RuRdBjIlotbRWbzy5/0QLssmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757903024; c=relaxed/simple;
-	bh=bTB9DzoWH3QIpeBu4xYDTQAzXlJCXk6gbv+o+fe1N3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dyhR6mX08FTvur0VudwbnUvvJnq63H3UZunbX36YN7wexXd695zliVrW76Jh4YStLKa0/BLWO1NSEGKC9/3XHbi+3stlP4qhlkW9pCVvtTd/yZvA7/+J0HXdHCuzffHiXFi0wm8aJJYyfJqWHzDqdiEWpWbW1MDuZhR7JXZii5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-32de2f8562aso2919221a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 19:23:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757903022; x=1758507822;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TVV/uiMu0xHtlKgwsYx2mXd0JzCW14CDL0hbQStIbj4=;
-        b=SoVlbsu0xzJwqAoI92aLWcOAJWk8cr5iBk7a2E0Xv2RiO88aQOzI6A3auQnTmTKy0/
-         1PTGPMcFQkmG/12d01YPj/V5TEXQlsBzu7r4OC8BfNzbFyrwpSnyGI2j5X23xqFB1uQ1
-         dOQgYBsLPxKcShjeFM3RBphHVacoqcsjaVbfaUaX5qv9s1D3IoucLSCNZSBiwrvtcawP
-         f5qbl4x6Dpf3SpGINBCX4rmS3fKdR0PMppQzRgE7mnbxYyA0mSiGQ+5xewg0rEZ2EEjn
-         abMCqGBpQrkrYNuAcOtuubpjDqRU0rvIdCYq72N+5s1lSlCHMNXyetoGOBVj1+ETrAUP
-         HG9g==
-X-Forwarded-Encrypted: i=1; AJvYcCW0C2/0STxd7ltbZATAYUe2pokqsVQHDwhhKSvJCP07T4QvH3cFKkC037XkuU5eNBr+EgsB5GRKAh21pUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfrWPTrBtKjf9F7msx+qkdM5HGBrFitMfbhl4IKtHuF/vsjN+i
-	uh1fzVDVDaRmFzPz2Ayhp9KofUK4y5WrlVfffYEwoz770IMS9W1fYxFm2FAfkBZxf0FHpw==
-X-Gm-Gg: ASbGncsPUn6WekOmhP4DlkoRE09uBpv2K6B4cwQInI7qdvdMYzqFS51WAKRKUoZd2gG
-	jxoOY+YvQXijqL7/GPNZoYimRFpHRD6WULw2YhdJ/tbtzChH6KHgU4Q2CVyJBgWApPs4hDt4JkX
-	EhSmsOT8+0wmH8elYshoENykPl9gh7fleS6Ztm0GNqyemXkhprdrEKP2fPhlKWaPKasCgP8Tz4P
-	UGoFf9hCU/hoq0l3lHD1ZcobkopYsMUMGZoe/T5InyDtxbddpkM43+Gwgl1rwdRJ6LlXzlTxeSf
-	wKr+hox81ALA+8Km1ip9jgzNrhVjzyoCiioaXKQk0zD7/z+dTUjIu//ZnYG94zlhyUpwhXD07gM
-	Hh0Zgj2tenY2rVF4a1QMpP3GtBDydWtHMJlp9og4ayIEefWgrp1kBPlE=
-X-Google-Smtp-Source: AGHT+IF+Y1ivvZp4pAmaUG3hCpveTcj5pGelQEzRTJOfLOyRR4gRbVeT03JbaIBxDc6kfYZUfAWuQg==
-X-Received: by 2002:a17:90b:48:b0:32e:42bb:dc58 with SMTP id 98e67ed59e1d1-32e42bbe0c2mr2998665a91.26.1757903022477;
-        Sun, 14 Sep 2025 19:23:42 -0700 (PDT)
-Received: from power-ThinkBook-15-G2-ITL.. ([39.144.194.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32e37005a82sm2969607a91.16.2025.09.14.19.23.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 19:23:42 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@kernel.org,
-	lenb@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH v3 2/2] PM: hibernate: make compression threads configurable
-Date: Mon, 15 Sep 2025 10:21:25 +0800
-Message-ID: <1764e5db50a9e6a7809f0ec59a7b59e66c1f155f.1757680816.git.luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1757680816.git.luoxueqin@kylinos.cn>
-References: <cover.1757680816.git.luoxueqin@kylinos.cn>
+	s=arc-20240116; t=1757902937; c=relaxed/simple;
+	bh=s2ix170QkLxa+s/sK6kD7u7AVhm+2DWw8W7p3aA+zpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BjUL4ADz5cg7uhKDH6uUhJ71eQaBATeVBdyUOgJXkN+q4P8qQ81os9VKysL3mGbu3Wav4SGOG1TDKwchIPVjNvaGeltQ37utTZz5coEburhwV+9zmmOHJWEo0CjOQqUV/GAKsm3D2QfvTpmCU970b3DSIyLZKsEzRMgkbGavXys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wv/WAike; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ThFA7BNM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wv/WAike; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ThFA7BNM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1947F21E3E;
+	Mon, 15 Sep 2025 02:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757902928; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZwzU21VPOFmHOqlHgZPgrVDoZUTFXgYZMsVOu9oqEDM=;
+	b=wv/WAikeIzXvfGA1f4U8WsZTTj/rYNwmAs10CgRJ1UzVvG4wuo9eQciBBcrbxPVWPVliLJ
+	6qBpSwvJPyUU2L1y8wnVxWU0krE5xMwQcnobbm1v6wzPSIrJ6ef2gryORM37JKkQPPhp4e
+	dGN82Pae1YPjkDvqrqh125vencWjISo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757902928;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZwzU21VPOFmHOqlHgZPgrVDoZUTFXgYZMsVOu9oqEDM=;
+	b=ThFA7BNMoBQlC7gYqGhO/GSpkgEOW5OgwKdC11ORRqZ1HZsfd44U855HRw2F4MHo7I2y8o
+	B11QvHUb+RbV4/DA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="wv/WAike";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ThFA7BNM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757902928; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZwzU21VPOFmHOqlHgZPgrVDoZUTFXgYZMsVOu9oqEDM=;
+	b=wv/WAikeIzXvfGA1f4U8WsZTTj/rYNwmAs10CgRJ1UzVvG4wuo9eQciBBcrbxPVWPVliLJ
+	6qBpSwvJPyUU2L1y8wnVxWU0krE5xMwQcnobbm1v6wzPSIrJ6ef2gryORM37JKkQPPhp4e
+	dGN82Pae1YPjkDvqrqh125vencWjISo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757902928;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZwzU21VPOFmHOqlHgZPgrVDoZUTFXgYZMsVOu9oqEDM=;
+	b=ThFA7BNMoBQlC7gYqGhO/GSpkgEOW5OgwKdC11ORRqZ1HZsfd44U855HRw2F4MHo7I2y8o
+	B11QvHUb+RbV4/DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B1A0613782;
+	Mon, 15 Sep 2025 02:22:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id f8QrGk14x2gEBQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Mon, 15 Sep 2025 02:22:05 +0000
+Date: Mon, 15 Sep 2025 12:21:46 +1000
+From: David Disseldorp <ddiss@suse.de>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] initrd: Fix logged Minix/Ext2 block numbers in
+ identify_ramdisk_image()
+Message-ID: <20250915122146.56f66eb2.ddiss@suse.de>
+In-Reply-To: <20250913103959.1788193-1-thorsten.blum@linux.dev>
+References: <20250913103959.1788193-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1947F21E3E
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-The number of compression/decompression threads has a direct impact on
-hibernate image generation and resume latency. Using more threads can
-reduce overall resume time, but on systems with fewer CPU cores it may
-also introduce contention and reduce efficiency.
+Hi Thorsten,
 
-Performance was evaluated on an 8-core ARM system, averaged over 10 runs:
+On Sat, 13 Sep 2025 12:39:54 +0200, Thorsten Blum wrote:
 
-    cmp_threads   hibernate time (s)   resume time (s)
-    --------------------------------------------------
-          3             12.14              18.86
-          4             12.28              17.48
-          5             11.09              16.77
-          6             11.08              16.44
+> Both Minix and Ext2 filesystems are located at 'start_block + 1'. Update
+> the log messages to report the correct block numbers.
 
-With 5–6 threads, resume latency improves by approximately 12% compared
-to the default 3-thread configuration, with negligible impact on
-hibernate time.
+I don't think this change is worthwhile. The offset of the superblock
+within the filesystem image is an implementation detail.
 
-Introduce a new kernel parameter `cmp_threads=` that allows users and
-integrators to tune the number of compression/decompression threads at
-boot. This provides a way to balance performance and CPU utilization
-across a wide range of hardware without recompiling the kernel.
+> Replace printk(KERN_NOTICE) with pr_notice() to avoid checkpatch
+> warnings.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/swap.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index f8c13f5672ec..dfa9b7c0f96c 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -519,8 +519,8 @@ static int swap_writer_finish(struct swap_map_handle *handle,
- 				CMP_HEADER, PAGE_SIZE)
- #define CMP_SIZE	(CMP_PAGES * PAGE_SIZE)
- 
--/* Maximum number of threads for compression/decompression. */
--#define CMP_THREADS	3
-+/* Default number of threads for compression/decompression. */
-+static int cmp_threads = 3;
- 
- /* Minimum/maximum number of pages for read buffering. */
- #define CMP_MIN_RD_PAGES	1024
-@@ -741,7 +741,7 @@ static int save_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = (void *)__get_free_page(GFP_NOIO | __GFP_HIGH);
- 	if (!page) {
-@@ -1257,7 +1257,7 @@ static int load_compressed_image(struct swap_map_handle *handle,
- 	 * footprint.
- 	 */
- 	nr_threads = num_online_cpus() - 1;
--	nr_threads = clamp_val(nr_threads, 1, CMP_THREADS);
-+	nr_threads = clamp_val(nr_threads, 1, cmp_threads);
- 
- 	page = vmalloc_array(CMP_MAX_RD_PAGES, sizeof(*page));
- 	if (!page) {
-@@ -1697,3 +1697,19 @@ static int __init swsusp_header_init(void)
- }
- 
- core_initcall(swsusp_header_init);
-+
-+static int __init cmp_threads_setup(char *str)
-+{
-+	int rc = kstrtouint(str, 0, &cmp_threads);
-+
-+	if (rc)
-+		return rc;
-+
-+	if (cmp_threads < 1)
-+		cmp_threads = 1;
-+
-+	return 1;
-+
-+}
-+
-+__setup("cmp_threads=", cmp_threads_setup);
--- 
-2.43.0
-
+Nothing is being fixed here.
 
