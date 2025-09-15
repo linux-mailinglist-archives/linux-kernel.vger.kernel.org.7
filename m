@@ -1,181 +1,138 @@
-Return-Path: <linux-kernel+bounces-817908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C9DB58867
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:43:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84E5B58871
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B70A3B6DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532C01AA6D2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662952DAFB9;
-	Mon, 15 Sep 2025 23:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C1B2DE70B;
+	Mon, 15 Sep 2025 23:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gF9kcw0E"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1E22D238A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jtyIs3jT"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6417829617D;
+	Mon, 15 Sep 2025 23:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757979826; cv=none; b=QCtBcj+gxetLKqm9MrKhKhmMi9GFkuykI/LqX5/6a1KgTwfRTmW0iliEs4xsrQZ7lsF4wPzdE1RU+TU9glsl223HEtRqqf1p8BnLeR56TgVpjXSN5pGO425l1fHo4T/ZQVh5QedQPEmGHM501h5fE7xDByuqQJTSkDDLUHpf6jg=
+	t=1757979981; cv=none; b=WVkQIUoGGyb5DvFQ/Q35ufqgKy62bZUxyNrU+AENH4Bf+9f8oPqGcLdiGrZxq/ZGqTr/wnbFRMjeaRNj4mlDl2e/RbEC6ZCrC1DB5HGn4zK2fRPrzuIyqJ1GIqhgO0g0S1PxtMHhnro7T1nmm/2Oei9nzGs+T2mDaQM2Titr9qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757979826; c=relaxed/simple;
-	bh=DCeF63tBNbF7HFYiehXMRuKCFYhth2Gi/fMLF+uJEBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ta2HYLls47UmuAeputJlcSe9qf2ikAgPB7KSKc3wPRpb2wa2nw2Y/tEmdyBQselElG+q+Z2KrbAnj0m83hQ9x/M8GGQXisws6XYSzhvQdVoEcdSHkfgibo5Ot2ueqmvcn6L5mN7AVIJaTsStPITOJa+7gm5flwWpNSnsA8szWoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gF9kcw0E; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-828690f9128so321687685a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757979824; x=1758584624; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PdgJHBrB/lzs7soTL/dZrbkv934nXJ2LKfj8nw3fMYE=;
-        b=gF9kcw0E/T6NA3uVIqDLVEEGBfPsBwAd2mqvKNK0Kqj9s/VePjTg1imoErNr8c9gUy
-         nE388B8mXbR7w3E+ulB0/QRYplUg6R0D7+QIZncrn1pAK4Eown7WHBsspBEtmqe6YlQB
-         Y3SSYY3rwPkwOIyjrSKfDKZ6inB2PCInBVSt8kw9rpENV0Us1GWXoFCgO4ND3Rm/j+Tk
-         wxYZLZFWW2SOFSGoYih5NIIJNHhKlcrC8ex9g33JVHaeztKj9jvmcoJsxSvsJwqizdzT
-         XOHJy6U90GEZSQkjNKQENGm+n2EtGDZtaXh/dkK4iVU8oCrbRhMrSyaIeiAhySKrdUZV
-         D7Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757979824; x=1758584624;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PdgJHBrB/lzs7soTL/dZrbkv934nXJ2LKfj8nw3fMYE=;
-        b=c2la8w8Gmo4DvUrRYQukXUfFJhp5Jk7AUP49q055/RQ35SndHK9B49IdNX9dlMexuG
-         muQFNHPS6uqTB0n0G3zUDR9D2r6+KYM/e2VCWWhQiGVRiUfAdW/TdFMGX9CqxEdemWvC
-         veo5uG+ZfG1RiztP49WMZJ4JhReLsW1M+uTWCqE+rCCWr3aWeBYR2qEVXxED6w9jdebo
-         0Ynrrn4WVCqvT/DIeyQY/rXiEiz6FRqAaOGx+6ah3+KJQIEUmgzM+vrePgx63AXPcyAM
-         Jk02/MM7wMxINIFiWwj3PEcllnVGgDUYSQsju+Puq0yPke1V8UHwNZu8NZRuUUS6jAsd
-         Bqdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPMwJizJqo4+B2upFpBHpCYXEh2eQ/f+Lu+nrMFMzLiYe78EjAos6xprJbClC439knUSeOwzcFhBn8m9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDfaPAo376f9KGPKITznU1Tw0y5S8HHSJJ6lHIMP9aI7AeAOTD
-	bEgDHgtiAXft+JgYGp6PykU0duChDQHB35Bw4LPCrtrAiEbI65qNHyd1
-X-Gm-Gg: ASbGncu8aP+cpBI0Pnevc1AH0i2ft4FXuHlIAedn48cfyQqcSy2yVvLUwf0gxuMHprh
-	SjLn87dl3aZVgUYBpM9g8I4DP2idbHsBWH0+tlrXZLRGIAxeY0LFkGvFNaPsJaMYpGQxoe0keio
-	YFlSEAwayXrQSUC4Heb7nVTrWcE3DaVSSXsa3cBn79Lrh9oH6oTU2M+pRFgEpvN6W1h7Vb2J7tu
-	llPzpsNXipYdDQi/h/r2M98KKaEs/y2J7CSs1W3P8fQKVo4Au9pAM/GjsGeUFHP4QSgWjMuG89A
-	caH86tmqGl+Nb1FiiAXg/Ma3e/lRkL+AVPacLc8SAGcw+73kNMlVl1vZgqQbOhKWq0avynGWC/W
-	J0j9v7z0jwVD5dZ49XI4lZEtu6HKmRz3jM1Jj5WDJAC/iJmG3VX/bUx9Qk8dt2qvJUkTtfLuPBf
-	H6qX0fpuoBgDbeUKYZO9Sg/KeMIIDS8UMlaw==
-X-Google-Smtp-Source: AGHT+IFtU7EGaYy0d2f1MqC/XVc068eWREOrfFX9Dv4w/usYLmOlLWrTddm+QEvCMQWyuJIKoB/FxQ==
-X-Received: by 2002:a05:620a:4007:b0:82b:46c7:7249 with SMTP id af79cd13be357-82b46c775f8mr200373185a.24.1757979824066;
-        Mon, 15 Sep 2025 16:43:44 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820ce19d151sm845214485a.50.2025.09.15.16.43.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 16:43:43 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 05368F4006A;
-	Mon, 15 Sep 2025 19:43:43 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Mon, 15 Sep 2025 19:43:43 -0400
-X-ME-Sender: <xms:rqTIaB7li7PgqrH7NwXXHRXivw9ArLOXOkLAg10qfyk5tGPbct3M6A>
-    <xme:rqTIaMRZL7pu93dT-F1XvsEGskZbOO01vKYJskWVv6_13OrSfvMIgAAXXwFqZTQSI
-    DjbgezHbITPkBtefg>
-X-ME-Received: <xmr:rqTIaPzHgWL5aNPd3Ufxtd5nQgtWWyxHmyHY45ZJ4eH_bq5SCQjYjjqxCoau>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefledtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhepiedtfeevhfetkeelgfethfegleekfeffledvvefhheeukedtvefhtedtvdetvedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqh
-    hunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddu
-    jeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvg
-    drnhgrmhgvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephihurhihrd
-    hnohhrohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghqvgesghhoohhglhgvrdgt
-    ohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpth
-    htohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhinhhgohes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:rqTIaEr3_gJg8HWvzMmd_0jIi2Ve2bxMZbqOshVQqxL0a2H25a0Nhw>
-    <xmx:rqTIaC3XZT8VHt8KZm5uylFi3x041uV9UThQ6dZi4U7YtOAZP-UJBA>
-    <xmx:rqTIaEzOpWpLmoMcJ7XUbUp5P0_LrsqRlGpTlzlLlK-1-ttTu3-T3g>
-    <xmx:rqTIaGikediGB-Qqun_LVTco-H5WrpEBjscboLri0PpDSrHqwUTJjA>
-    <xmx:rqTIaPqzriwvZVqjYr7Xvt7sPgvS56CSQh7QoGI8wexHn7Of28d8H0xm>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 19:43:42 -0400 (EDT)
-Date: Mon, 15 Sep 2025 19:43:41 -0400
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, mingo@kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: linux-next: manual merge of the bitmap tree with the tip tree
-Message-ID: <aMikrcaVbSYdkdmW@tardis-2.local>
-References: <aMiZpcBu2LDzwCje@sirena.org.uk>
+	s=arc-20240116; t=1757979981; c=relaxed/simple;
+	bh=lW3xNWJvBeUd78+N4Yyo06/B2znJyfp8Mxfc+3/obNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ej/C3FtzONFg6Uy0Sk7eN1qqR9fPu8tGF1XNjF5F4qU4EDzqPa13nhsduFM9/Z4zGzI12vylxaSZm3wFLkTW6xB34bPw22OxmmOAanYfH/6jKE46ckq5Y2Dy42XqAlBGMl53PFkspv5RHEMfnnXNJc5AWT3qJmVuy3N+hzMsAN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jtyIs3jT; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from mrdev.corp.microsoft.com (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A6840212329C;
+	Mon, 15 Sep 2025 16:46:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A6840212329C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757979979;
+	bh=7luzChTMUszkb9nUQYYy7F6No80YdK2nCBJEz1e/6Zs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jtyIs3jTrdwZXnDw9vxxokbXUXOLvwgRveEkFIwYiy+pMrWiva5ENlTdDcwoZTzmu
+	 FBJ51hSc8k8vMU9Fiwr1q8p1aQUcRRLs2BkWEZHNAsahuKe/NddZwgTT7E21RFLNJR
+	 5fJJ1WTPMe2vBTDNUjFz+vcGC294CxqRnKvMTVqE=
+From: Mukesh Rathor <mrathor@linux.microsoft.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	virtualization@lists.linux.dev
+Cc: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	dmitry.torokhov@gmail.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	bhelgaas@google.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	gregkh@linuxfoundation.org,
+	deller@gmx.de,
+	arnd@arndb.de,
+	sgarzare@redhat.com,
+	horms@kernel.org
+Subject: [PATCH v2 0/2] Fix CONFIG_HYPERV and vmbus related anamoly
+Date: Mon, 15 Sep 2025 16:46:02 -0700
+Message-Id: <20250915234604.3256611-1-mrathor@linux.microsoft.com>
+X-Mailer: git-send-email 2.36.1.vfs.0.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMiZpcBu2LDzwCje@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
 
-[Cc Ingo, Thomas and Miguel for their awareness]
+At present, drivers/Makefile will subst =m to =y for CONFIG_HYPERV
+for hv subdir. Also, drivers/hv/Makefile replaces =m to =y to build in
+hv_common.c that is needed for the drivers. Moreover, vmbus driver is
+built if CONFIG_HYPER is set, either loadable or builtin.
 
-On Mon, Sep 15, 2025 at 11:56:37PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the bitmap tree got a conflict in:
-> 
->   rust/helpers/helpers.c
-> 
-> between commit:
-> 
->   ed17707bd8f33 ("rust: sync: Add memory barriers")
-> 
-> from the tip tree and commits:
-> 
->   ae384a4623fc3 ("rust: add bindings for bitops.h")
->   78d9de4ca3474 ("rust: add bindings for bitmap.h")
-> 
+This is not a good approach. CONFIG_HYPERV is really an umbrella
+config that encompasses builtin code and various other things and not
+a dedicated config option for VMBus. VMBus should really have a config
+option just like CONFIG_HYPERV_BALLOON etc. This small series introduces
+CONFIG_HYPERV_VMBUS to build VMBus driver and make that distinction
+explicit. With that CONFIG_HYPERV could be changed to bool.
 
-Thank you for reporting and your resolution looks good to me.
+For now, hv_common.c is left as is to reduce conflicts for upcoming
+patches, but once merges are mostly done, that and some others should
+be moved to virt/hyperv directory.
 
-Regards,
-Boqun
+V2:
+ o rebased on hyper-next: commit 553d825fb2f0 
+        ("x86/hyperv: Switch to msi_create_parent_irq_domain()")
 
-> from the bitmap tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc rust/helpers/helpers.c
-> index a16758a6ef395,abff1ef14d813..0000000000000
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@@ -8,7 -8,8 +8,9 @@@
->    */
->   
->   #include "auxiliary.c"
->  +#include "barrier.c"
-> + #include "bitmap.c"
-> + #include "bitops.c"
->   #include "blk.c"
->   #include "bug.c"
->   #include "build_assert.c"
+V1:
+ o Change subject from hyper-v to "Drivers: hv:"
+ o Rewrite commit messages paying attention to VMBus and not vmbus
+ o Change some wordings in Kconfig
+ o Make new VMBUS config option default to HYPERV option for a smoother
+   transition
 
+Mukesh Rathor (2):
+  Driver: hv: Add CONFIG_HYPERV_VMBUS option
+  Drivers: hv: Make CONFIG_HYPERV bool
+
+ drivers/Makefile               |  2 +-
+ drivers/gpu/drm/Kconfig        |  2 +-
+ drivers/hid/Kconfig            |  2 +-
+ drivers/hv/Kconfig             | 13 ++++++++++---
+ drivers/hv/Makefile            |  4 ++--
+ drivers/input/serio/Kconfig    |  4 ++--
+ drivers/net/hyperv/Kconfig     |  2 +-
+ drivers/pci/Kconfig            |  2 +-
+ drivers/scsi/Kconfig           |  2 +-
+ drivers/uio/Kconfig            |  2 +-
+ drivers/video/fbdev/Kconfig    |  2 +-
+ include/asm-generic/mshyperv.h |  8 +++++---
+ net/vmw_vsock/Kconfig          |  2 +-
+ 13 files changed, 28 insertions(+), 19 deletions(-)
+
+-- 
+2.36.1.vfs.0.0
 
 
