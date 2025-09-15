@@ -1,78 +1,111 @@
-Return-Path: <linux-kernel+bounces-817771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF74B58653
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:04:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8120EB58655
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B1D4C3A3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493C11B240DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9444C2BD022;
-	Mon, 15 Sep 2025 21:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AE829D27A;
+	Mon, 15 Sep 2025 21:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LD/cGwjr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TMEtBHDd"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B3F1E9B1C;
-	Mon, 15 Sep 2025 21:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CE3296BA9
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757970273; cv=none; b=o+SsIab8PIEeC3rawbnivfxF0QCrtfdOfnxKVredH3F57tHHuWDG7k4lUkRULiMJ7nZJz+KMAR0i5viP1xi/r7f3kF6BE2GqEBbBbteGjis7vnhEz0QfRRlhPLdeEh8uoXNj6BjDvrNO5C/ciIB1EuFXMNq5z/yDYMNe3C+fULA=
+	t=1757970302; cv=none; b=naQAxvYtplAJ8KcxIyHgNGzgv66V+YkRWcAAkwIqkxOc6emTDZ84J+GV/8DpiytlhCQJItzC2NTbRz/u0FUEdds/q4IOftuj2UmP0Tw5TsYwkL043rZVhQhkOSo2MyU5ebcPGjmznGuWRpi5gTkAZu+E5adXUA9jt8fFX5mNXZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757970273; c=relaxed/simple;
-	bh=UmLiIB8qN0/00eqy8FuM9tN3FFds3XAu9YaFW+EzaPA=;
+	s=arc-20240116; t=1757970302; c=relaxed/simple;
+	bh=kwWCKHxwLqZgvWTjTnDQrD34N3T76maPRJJ7Gi2SqtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JeGCEvp3ALEN3YBvc4QAo3QmX/pRTwaIYSXvaHjgl/ubOdn69/NTjLeljnEJJv1paMOJxxQ8TaqnYXELxJvqNtd2+FLsGK2/BkicK5scs84PbjG8PYwcuhMsgGFGVX/1fHI2a75bll9/gIi5TBNgZzbAOnBSqSWDrESzj9ccwMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LD/cGwjr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C68C4CEF1;
-	Mon, 15 Sep 2025 21:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757970272;
-	bh=UmLiIB8qN0/00eqy8FuM9tN3FFds3XAu9YaFW+EzaPA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LD/cGwjrGAVqC+iA4IkDrKh5dsnvRF5zsSX2oNAx2xfxEUVnKzTHDbCDrd1ljonRi
-	 IvPmqeWtIh6YSUeYsTxYiBngGUJEAx4li4v1O/+G2KgmzsvT/gFQSGMxgh0nvbftK7
-	 1l8uiO8KWCwMnphUCXI00ZRtDW9scvuG0+AgqA4IfnvBsslRJNIspB+KODnS0kzpui
-	 YcGlUmj2oS9FKwoAoz167+8ev67tPVAHBbYpjV1Sy7t/GUTdOC+5wJ5fufo66gv9yd
-	 5kROWpWM6SKEP+gyJ8IXYr1W8veRbE0EwGXPLQ/vpQL9wRfLCT90ZmA6bMfA5D5SbK
-	 GvbgZMgas2Zmg==
-Date: Mon, 15 Sep 2025 16:04:31 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] dt-bindings: power: supply: bq24190: document
- charge enable pin
-Message-ID: <175797027095.3390698.12269460822380409041.robh@kernel.org>
-References: <20250912065146.28059-1-clamor95@gmail.com>
- <20250912065146.28059-2-clamor95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJvV9SjcgoQ00X8Vnd2jheevGMM2VI7MsNAyNTf5hkS1x6zk3xsyWRCpAGeaACdZrnl9xIHc/QlU4E34xlvJe4cIMVlXQFLWEG6ZqR2Sn8ES/ra7e1EMjQiJrpMMMM2iUA3xfkd/inuXwfM7Okm6MmS15gOAzGDMDaMp6KZXFRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TMEtBHDd; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=l+5R
+	O/mlRa3f5lfywdYD5PxYcu0VimVPHxg457+Xecg=; b=TMEtBHDdlolKthgGTQTg
+	gfWVQz10RX3IvroSse9PYtYr1J+4NYu9RwyCIItdrFb/WG1Pcp8kwERu3skpIsqy
+	Zm+iy8L5GX4qcsy3CBSRPT6aphXQKCHUeXWf839qRGlvvEH68Dsv6idfkxGHJ1Co
+	ZXu4Iu/aVciytPqK+5klmTsV1i/KGnrImUWR5JEO6hg70s0G15VjlcVxq9NJoFY9
+	iv0vpq6Eemi6VzNekfpTiqTVPGccgDgLFsfV9jtKYxCvPxlCyc+pHWaTvQVtlYhx
+	Vb22rf+KEXW9SHOwX9b4N6a/t9O/UmK0fw532JEpDNpUR/MDBtvkAorXuNOqERLO
+	QA==
+Received: (qmail 2512761 invoked from network); 15 Sep 2025 23:04:56 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Sep 2025 23:04:56 +0200
+X-UD-Smtp-Session: l3s3148p1@nkUIW90+zOkujnt7
+Date: Mon, 15 Sep 2025 23:04:56 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Wolfram Sang <wsa@kernel.org>, Akhil R <akhilrajeev@nvidia.com>,
+	Kartik Rajput <kkartik@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: linux-next: manual merge of the i2c tree with the arm-soc tree
+Message-ID: <aMh_eKWqkuLODo2r@shikoro>
+References: <aMhR9TJm5V5EqaoC@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QX2JGX+OmvkPSqcL"
+Content-Disposition: inline
+In-Reply-To: <aMhR9TJm5V5EqaoC@sirena.org.uk>
+
+
+--QX2JGX+OmvkPSqcL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912065146.28059-2-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
 
-On Fri, 12 Sep 2025 09:51:46 +0300, Svyatoslav Ryhel wrote:
-> Document active low Charge Enable pin. Battery charging is enabled when
-> REG01[5:4] = 01 and CE pin = Low. CE pin must be pulled high or low.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  Documentation/devicetree/bindings/power/supply/bq24190.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+> 's linux-next merge of the i2c tree got a conflict in:
+>=20
+>   Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+>=20
+> between commit:
+>=20
+>   804ebc2bdcc85 ("dt-bindings: i2c: nvidia,tegra20-i2c: Document Tegra264=
+ I2C")
+>=20
+> from the arm-soc tree and commit:
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+? Usually such patches go via I2C? And v6 was still under discussion? Do
+i miss something?
 
+
+--QX2JGX+OmvkPSqcL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjIf3QACgkQFA3kzBSg
+Kbaxqg//cU0Nkzb/5JAYf0ksxhJiI5Fjx/r4+rMK9/JV0S5ip+FfygClcTh/100y
+hjP/M17jt83HJJpHvROGSZeu1vrjVX6DJsyBeyYvMJTF+so7TDwyyyjbOwJpT3vf
+ztIubUBHHMarrIVvZm1fXnDHP9Yp0/SwQzzaz0VFSoS70HYtADmRL/Xzx0yB2wiz
+s4Gvkjmjpsgo///5etKEbGLK/bQfFLIZsZ8BPQFn7iqRoc1ESVqPVxfDykuU5R1n
+QfGpqLyK/6dTq/bqOc8WWZQY8NaGm+aA48K9itM4haaDwxmQlmT8aB0TlX0E53cV
+2AUV+CBs+AwPPQqZ5xzDNTYFh/J8Ej/4SRCbv8n9USC0nIZHWtX5KG5v1UCEqTgh
+VBapuuDtBxEKl+TgMMujDAV1LEhapLv6r563DxVHqATami9EdguHoveINY3Oz0DV
+wmPWH4MtiwQaG51z/aYfopy/wx31zHkQBNoMJIy3NGkmcFF6dbswEE4uK0cpdKGK
+Vp5S4Yym4HmXljReUpSzG5jw7uoTBIdmstZFCesZASV76KGHz5VHicFaEh7lHr84
+2/QUApju1FSQJUJ8vD5jrS+Ue5FxdghUid+476yBIKBcYESaFjLwqXPFn0w4c7JD
+FDWw5HSCVEC8qOCZdN+uokumWHhlX4Y0jIP9+UDUOgW2UBi6hMA=
+=oGeD
+-----END PGP SIGNATURE-----
+
+--QX2JGX+OmvkPSqcL--
 
