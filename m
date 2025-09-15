@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-817890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF7DB58827
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:21:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA5AB5882F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE13916775C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:21:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0D21AA7EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368C12D7DE2;
-	Mon, 15 Sep 2025 23:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB7E2D2383;
+	Mon, 15 Sep 2025 23:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="D7h5B75/"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AnNF5SZK"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBA928031D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624A427A93A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757978479; cv=none; b=Gq/sb6D1a3LxrTz9e77SXtf6MERtvudynhIzn91GzGNlAKALvzsTsjmyNHFd7D6zrMsUFdpEzseNtsh2LS4TqY2YyZ07D0tjVRKsreJHtdVkxn//foo5p0q8nW3D7eRv9Uuv+0HTyR2oZFGmN3Mrjrv5dOS3SVGzpmNWVD8f27E=
+	t=1757978670; cv=none; b=OhnD3JQr2rn6Ov92JQ8mTwp3lMtNk88GvW6oCrTYY/uADF1EpXKlNqNcLf9F0pd5PRiNEpsfA6FAOlE6FbtTm3kbljUr9FqHNXwGmZBeKgdijXh6toBKfnuMUv7AQsCjgiGLrINEYa9bYx3utVjiuF5BlFScruY7zhQ1X6JkZL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757978479; c=relaxed/simple;
-	bh=QjptKauox/zh/yVRJgItfD+1SMNcMuOHhIn0e1+Z9Mc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BLnx/JR7llDMDuOu7za+81ft7kFLvCBIVe04JnPBRZj2r4DntdcHYPrPIWgdIhqGTrSKSORmwgJvxxi8xuzsK2/D/LRsp1ysJ8H8K1Z/3KcmPULY2EZil+6TanIW8f2ADMvyr+PBeTHIQ4jSHiTy1bfeIIsS/5HSnrqZlhMWRCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=D7h5B75/; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1757978670; c=relaxed/simple;
+	bh=GKwwThVWN55ZdhLn8yiXh6K4JxO9Mo/TQgLMtJNViiY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QgF+Y4eyM6GfUtZkK6+II+KmBBdhS+evs++aHGEG8Jody+Si5qxsF3ca2QJlbm0YuWqs8S5lxkkKJi2C/DULTzlYnTCeW4UevZqA3CmgSw4Qcw+AAi5WyOlsQB1Vh+n3dnidEfe5e7PwkZFIW042+CkuPeeCMcl7h0jp4+jIz0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AnNF5SZK; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-25669596921so48716355ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:21:17 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32e372c413aso1353772a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757978477; x=1758583277; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgsUeyln5jHJQtg6nGIuuJa3omU5ijeYPDC8tIR2gz0=;
-        b=D7h5B75/JCdJbzyIf9m3bofYjEMIvzT38rcyTG2tKOWMIB829e5ldJZMKo8cizLcul
-         okswZh/T+GMZ1IeMF0Gs+S2yQ6M/zMI5AXe5tlLAE6D+Jfm3Qz+mZkL7PwOvNUD0zbwg
-         1xKmiTdN4EZIY0cooT+st3eRNp568XFIVFtAjvWapjh1yGFlHSkEcJBm5jNPuD46DK7C
-         JaOm9QJH7vLQB1bsRFa8Lqx/ZV54LxTKERel0yTI+L2wHU+2+wk8U6b9ty+Sytx0lxZt
-         l2RPuOyPsn4EOQAZ0usjyGrmfOarWsLUX0KeSE8Rfx4XbRUx6umdgkT9k8RHnjX2z31Q
-         A9kw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757978668; x=1758583468; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7uiIeEfgdlPYTD6UL4WzVPf/Tll8ADDPeUkNnf2rCA=;
+        b=AnNF5SZKv5v17asZT7KXmEVrj+c+cAHFNsqbOyyCckZn84Ou+TpsIyq9M5CNxXk9tp
+         wozriOntYhSiUFCQX/n/vTLbuYa1UxAeDgBphC69+e90/WPfG5f9ttB/62oYoZQY8wIQ
+         dFXRBNh5B8KDoHLupM0qQAHa1+etF8bgl1mJ2keogyskBZ/n+5OwdiFMhbXGJw/5YVks
+         S9lZyMmR5QX176dS50qmD/ygPWC0tVguS33YcC4T1DUjl0lrLk5P8z/H96YhD6PAL8pn
+         4FtAA667OE03xWx25OtDuFMjryLGR1dw2RQW1ytemeZGHlyQkpfZWg093TQRbI0MBXIc
+         w20g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757978477; x=1758583277;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgsUeyln5jHJQtg6nGIuuJa3omU5ijeYPDC8tIR2gz0=;
-        b=W46ir7ytU3atSaeBm1lHmHnS5L1HzLVcPh4qdfm1t2eINGYdUPy1OYxFpSEOOwTKs3
-         rjrtSxZYOyXJlEYDCO5wDdihb9ei6e5dl6H0OeIm+EmQk+8XzajmWi4AOw2yf/qPEje4
-         1n6HEEJkxzzjbYMznn3ByvveTC0Edlswm3J4kYZtCZx2FGb37T5EkVNygQ/8rQTEch2x
-         PjoBPqJIb/298a5BvEdKotQsmCOMm48F6Tt6pt9JDi73x+JPeN/Njq3fAiN9HIHZTunJ
-         nUZv78sKWdmn8VVcirxRtgPRQgeZyk0Hbv4Y208s6xvF+fO431g0ZXpk7sFmtyxsziex
-         QhZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUiD8bjJ/5ruZwcD8+Kkk23qPoF8UPySuiCmB2dsOpcpOG7q8o2EupkkdXqXHEPI2uCKBhnUHXBukxpr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa0dQpZuqQF8bSd8yKxZzeir+qalV1meWkc9Lb8p1lZURniptS
-	cTSMzt3dPScNh9eEXmBzIE1+ObClyl/jErpXNRsReZEJZSmVJBDrRstI59DSN18yyUQ=
-X-Gm-Gg: ASbGncsjrnhQxcFLSGCca3uF0PraTg8l7JS919uHEDF1KAvCEgEpCf0fFs07Y2uK6kM
-	nfppTyQpvtw81bfZuxDa46oRb94Vx5Q9T8NLbuI3xvUKOdqUF7xvPURZAopKG0Z6jSH1behnJId
-	pbX7fk1FEyd91DElIsLXb7oGIWeJN+zJb0ca7qYfle1iRmf2Cr+4WeAUolfz/4UcCpE/+VNiiX3
-	O5EtkJg/+X06GG1LvI7go5emSHjoNR8ody5f4X53i5pOJgzQgxZTUGWwTmgvY+ARp2YjY64Lfz1
-	CG9KUjr08ZYHLonpCQcuwSLNH6UdjKox8ONWcYf7PU83IBCkXnRorzkR07Xz11fzn86bUWX4guX
-	19yxcxK0iLVENe+e4tLDtrS8bIxrG1no=
-X-Google-Smtp-Source: AGHT+IEMv8jBnfBFpzOj2tDIE4OBC2iZqPmVd1ibS2mAaD25rPyFSdy7EKxeRUd8V1wYJ+kr0edLjQ==
-X-Received: by 2002:a17:903:3888:b0:24c:cc32:788b with SMTP id d9443c01a7336-25d243e7b4cmr166970205ad.3.1757978476693;
-        Mon, 15 Sep 2025 16:21:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757978668; x=1758583468;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7uiIeEfgdlPYTD6UL4WzVPf/Tll8ADDPeUkNnf2rCA=;
+        b=w0B/MAZu5eMCU9V7n3+RnT7rjAsBVb9dlWv1WfIdagDpIhRkm0o2sDHzME9TXfIAlk
+         TVFfkCr3ahE8ALRmB3ZyAdhrbBFK4iKoS4llIJR1lxY8Uzr7SEBXv0j1ErkkEzPD/I9J
+         ApoWMlUoRBu/ZMdxdcoruWSnW2ji/9WvB55oBIMtVXzcGjEwDbKwpk1c1GGHfu9v1fmx
+         U/x8r2Ee6ONxKTsdXl4IO8bUW1zRFUUacbsXAwsNNaGpW2p3LLVUyZdlX5iuD8ApzO6i
+         u+4FhiSM+UvGI8nhAocHOhPdUvhABBBj/GdVgIhe0iUd3Jc8mp20khfGcqNIi5y/Bhph
+         xe2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXxTWN+FS6b15phrVXoqHTvDlIrD/K1cnsO9hHF1/w754i0ggoF7n3yv+SxoW/wO+jNj5Q9bAIBzuvBA/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2sxFxRku1yKUrdOrR3Mder8hEVWBlwhCMncGhJiwfSs5mvjms
+	3bHuMBIeN97oi+ukb5qtC3N/wKesUjY/Vbzcjb7CBl8ouNkm3xydCRFieVlZfgoXI7E=
+X-Gm-Gg: ASbGncvNJTHBPZwnHFwRxVibM+UziQgO+UidSO/Yut/f38bHxJl5ywAVX6OCe/mYKqc
+	QXOmf+HtboIOwWK+B0NkZ5a/4LtdtvQHHIYWvf5TEuBdrOJ9B0T+sbiwFA7IazXyDFB1HTxSezo
+	l2Q5JO6lxcYIxPOHzq4atKc9p6j2Ya02YQEZo92mLSgGm4k/Eaq2JwSwDFWBZS0ZI6KdYsyU8eV
+	0v3HyARuLLKPeKkFrP/14RadnWVVpjHecyKEJD50cEGkP0V3mvTriNRr47e32G3ZopxdNrtqcN+
+	N/mcJIMv/dmMaoKVzEz4wJ2xRpG/fCTplhM2p2TIUcPJt1Y69l/EsjsD0R4OiVSfdt/O4WbkP9I
+	c68dYwefizkaN19vpPe9PJj98+cisGuM=
+X-Google-Smtp-Source: AGHT+IHW+Ei25gxkyciUKrKbP1B/EsmDVjk/MF+hGzmjRjAtg2y1sc/2CYFiYtv3fYigvlxtLkhu6A==
+X-Received: by 2002:a17:90b:49:b0:32e:528c:60ee with SMTP id 98e67ed59e1d1-32e528c62abmr7999389a91.24.1757978668587;
+        Mon, 15 Sep 2025 16:24:28 -0700 (PDT)
 Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b17c78sm14543629b3a.50.2025.09.15.16.21.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32df315f9dfsm11154777a91.21.2025.09.15.16.24.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 16:21:16 -0700 (PDT)
+        Mon, 15 Sep 2025 16:24:28 -0700 (PDT)
 From: Kevin Hilman <khilman@baylibre.com>
-To: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, 
- Russell King <linux@armlinux.org.uk>, 
- Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
- Sudeep Holla <sudeep.holla@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney@redhat.com>
-Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+To: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren
+ <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, Andreas Kemnade
+ <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Brian
+ Masney <bmasney@redhat.com>
+Cc: linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
-References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
 Subject: Re: (subset) [PATCH 0/3] ARM: convert from clk round_rate() to
  determine_rate()
-Message-Id: <175797847576.2104956.7606973558357095186.b4-ty@baylibre.com>
-Date: Mon, 15 Sep 2025 16:21:15 -0700
+In-Reply-To: <175797847576.2104956.7606973558357095186.b4-ty@baylibre.com>
+References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com>
+ <175797847576.2104956.7606973558357095186.b4-ty@baylibre.com>
+Date: Mon, 15 Sep 2025 16:24:27 -0700
+Message-ID: <7hfrcn8fkk.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-d7477
+Content-Type: text/plain
 
+Kevin Hilman <khilman@baylibre.com> writes:
 
-On Thu, 10 Jul 2025 19:42:15 -0400, Brian Masney wrote:
-> The round_rate() clk ops is deprecated in the clk framework in favor
-> of the determine_rate() clk ops, so let's go ahead and convert the
-> drivers in the arm32 subsystem using the Coccinelle semantic patch
-> posted below. I did a few minor cosmetic cleanups of the code in a
-> few cases.
-> 
-> Coccinelle semantic patch:
-> 
-> [...]
+> On Thu, 10 Jul 2025 19:42:15 -0400, Brian Masney wrote:
+>> The round_rate() clk ops is deprecated in the clk framework in favor
+>> of the determine_rate() clk ops, so let's go ahead and convert the
+>> drivers in the arm32 subsystem using the Coccinelle semantic patch
+>> posted below. I did a few minor cosmetic cleanups of the code in a
+>> few cases.
+>> 
+>> Coccinelle semantic patch:
+>> 
+>> [...]
+>
+> Applied, thanks!
+>
+> [1/3] ARM: OMAP1: clock: convert from round_rate() to determine_rate()
+>       commit: e2c0510935c5485a2dacfd13af3958536b9d138b
+> [2/3] ARM: OMAP2+: clock: convert from round_rate() to determine_rate()
+>       commit: bb676996ed583464504123721195e98a708fbba9
 
-Applied, thanks!
+I only toook the OMAP patches, Linus W. should take the mach-versatile
+one as he's the maintainer for that platform.
 
-[1/3] ARM: OMAP1: clock: convert from round_rate() to determine_rate()
-      commit: e2c0510935c5485a2dacfd13af3958536b9d138b
-[2/3] ARM: OMAP2+: clock: convert from round_rate() to determine_rate()
-      commit: bb676996ed583464504123721195e98a708fbba9
-
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
-
+Kevin
 
