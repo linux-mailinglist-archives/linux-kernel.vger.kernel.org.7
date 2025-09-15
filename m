@@ -1,194 +1,278 @@
-Return-Path: <linux-kernel+bounces-817912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D78B58883
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F8AB58886
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DFD51AA842E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9137A5837B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBB82DC32D;
-	Mon, 15 Sep 2025 23:46:33 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B0B2DE704;
+	Mon, 15 Sep 2025 23:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmixrFfq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE752DA76A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55223296BA9;
+	Mon, 15 Sep 2025 23:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757979992; cv=none; b=bemugKhDTEEyHAry2SfPnFfE9mdrf35jUfFuo5RgTFCl+15wYjtz6MBh7oKzI5Nqhv3nb46Jy3IgQ6MJWyPwKW4ac02cMYZNbHmviUiOon1Qr5MZ4GpzlkhSfJYmbTOR6UioK4KS2I7VcWvcAzRyzB2S430gwA9Xorwd/KZqVco=
+	t=1757980003; cv=none; b=D+iFEi3bb773Mwjut/7GeI3b0pIp/WlTQnswjtxNdUo3ift8f0QnTO4LVvBOuU9FGA6+BBhNvBvaX9FMmtj/uNASmbaL6LyYZSLJg3v5BdYe9sZvBc2D850WgRfTKrEFYxype0rdkm5J15kuog9weosAV42GYcqMEiqeNGrSrkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757979992; c=relaxed/simple;
-	bh=MnFYuAEn33wJLxLN1nIDMasehO+lUx1cgckask6jpPk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=umPMI5xFLE1Naq8ONU+LWzkiqfi2kth80hDLT9oLtNRnInR6bgS8sch8aMjEutesXVXPTI+G8iZcxEVvNuFRL6NqagA3Ip/OZzc/yY2D6+WsajrIFzQZjxgJn8YYGZ8HcLMn468FMrlnBPtMcPoQlNCZ3p4M1n6ackfjL7L9BME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-400bb989b1aso158081155ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:46:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757979990; x=1758584790;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zxkRSaEI9pzMUdH38ycDe6tZ7GPxP5ZO+AkLqPcEh2k=;
-        b=RB9p4opu8kY12piiDogkaLXjhsMdBgqTpJ0tyM6/73iQeC91B0VY5/txYFfwrSyfPF
-         78KvhuZXbh7nxJhWf4ePtS0WNVGTa0omUSBbpg2QcRMy+3VSnS5xhe04a+EL49eMLX9p
-         9HeuuSedgelsDrsB5Mr80VWvr/fY8s8yXSXAOtPPoj//llANfUzvMqIqFTlKJWqVGpO1
-         ZeI+hykq3rrOsq/Uj80NLb0hIvd+TdUiPQ8sz6S37RbqgkOXNia0XIppZXJrp28TSGr1
-         SN545rirkoSwhTdbBihmtZNfqF+13Q96/AKlr/8sQJsjqDA/e9//FR0J//r27UlTIL6T
-         Lfug==
-X-Forwarded-Encrypted: i=1; AJvYcCUotNj8eurWaxQbD5wx7+tPQ9TN9zELCv6Qf1lStM34QGCuD61RJvZ1hielHZfI6G9Idf0VJDg+06dS7xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylcZotbhLok38vQIRXqmR8BetV0kdKwjunK/dojqTAUpjKZzit
-	B09oUsU1ZLDXQQM8nTkyqTHelnrHSCdxhj1A4lO2MUXZmjuLO09HQwDyQ/qggA0fmhgNkb4cZaG
-	4ib4lhTibiMcaamZRkcmNyRVm39dEBLILjxDwHmfeJDR2eCcKYKOf8wlW6JM=
-X-Google-Smtp-Source: AGHT+IH1ocBX3NQo78mSvjN+yIDAfRzxIpd5nD1bXpJ/K9oj4cElrVK6tdvt0ZvLHnQdhMx1M3DgPNa5iwmTEwerldu2OZdsDFVG
+	s=arc-20240116; t=1757980003; c=relaxed/simple;
+	bh=lQWUQ4F451eSO2i4Zv9Ec5V01YA8QWSM2Go6NVC8z6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s7Pjwxxgwz1/pxD9LVYCxwLwpNsFgiVubaX+kQp5L3Y03Mva6XZXa1j1jD/vreQDgVEDTOrsV/zpExbiQpIGOlNW9RDTMWxy2Kdntr/+b9jbnOK3FAEpWdIaNkO8uy6blEfZ2ytTanogcfYCJdzmTrnO+ONZMSI7fVBrfwr57hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmixrFfq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37998C4CEF1;
+	Mon, 15 Sep 2025 23:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757980002;
+	bh=lQWUQ4F451eSO2i4Zv9Ec5V01YA8QWSM2Go6NVC8z6c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WmixrFfq6jyZr0DUxmni/Nj20B6IvKrrY4MaZO5ZVHEbdLirl5CIcQSYH9Hyr6kNQ
+	 G8TcwhnMBH9j+BfL/PnaIsvASeq65Uu/ysF0zS0jWudJWydF82iQyRgKqw9NnRoAve
+	 FLQxxyRHRS1eGal8x0Rp5O0QdyIk5iJi0xupgSnWr5dUrxb2GFr9+ZDvtTah2onDYw
+	 yo8aE1bmzizHYmBpP/3M/ee/4HyfJ9U0aMTIUPfevkFT7CIpS3jhhrbKwUiSHq0e0y
+	 j47Fj2ASM5Jj4OhPCVD52KPZunWnl2shlX92p39LKc1NqIy7b90PqZAaIHjQRsLLt+
+	 OA3k6aCggzgww==
+Date: Mon, 15 Sep 2025 16:46:41 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>, Jiri Pirko
+ <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+ linux-kernel@vger.kernel.org (open list), Arkadiusz Kubalewski
+ <arkadiusz.kubalewski@intel.com>
+Subject: Re: [PATCH net-next v2] dpll: zl3073x: Allow to use custom phase
+ measure averaging factor
+Message-ID: <20250915164641.0131f7ed@kernel.org>
+In-Reply-To: <20250911072302.527024-1-ivecera@redhat.com>
+References: <20250911072302.527024-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0f:0:b0:424:7bb:775c with SMTP id
- e9e14a558f8ab-42407bb7949mr43715965ab.31.1757979990306; Mon, 15 Sep 2025
- 16:46:30 -0700 (PDT)
-Date: Mon, 15 Sep 2025 16:46:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c8a556.050a0220.2ff435.03b6.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_copygc (2)
-From: syzbot <syzbot+ccfda19732868508d917@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+cc: Arkadiusz
 
-syzbot found the following issue on:
+On Thu, 11 Sep 2025 09:23:01 +0200 Ivan Vecera wrote:
+> The DPLL phase measurement block uses an exponential moving average,
+> calculated using the following equation:
+> 
+>                        2^N - 1                1
+> curr_avg = prev_avg * --------- + new_val * -----
+>                          2^N                 2^N
+> 
+> Where curr_avg is phase offset reported by the firmware to the driver,
+> prev_avg is previous averaged value and new_val is currently measured
+> value for particular reference.
+> 
+> New measurements are taken approximately 40 Hz or at the frequency of
+> the reference (whichever is lower).
+> 
+> The driver currently uses the averaging factor N=2 which prioritizes
+> a fast response time to track dynamic changes in the phase. But for
+> applications requiring a very stable and precise reading of the average
+> phase offset, and where rapid changes are not expected, a higher factor
+> would be appropriate.
+> 
+> Add devlink device parameter phase_offset_avg_factor to allow a user
+> set tune the averaging factor via devlink interface.
 
-HEAD commit:    f83ec76bf285 Linux 6.17-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10547b12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccfda19732868508d917
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Is averaging phase offset normal for DPLL devices?
+If it is we should probably add this to the official API.
+If it isn't we should probably default to smallest possible history?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
+> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+> ---
+> v2:
+> * optimized conversion between factor value and register value
+> * more detailed parameter documentation
+> ---
+>  Documentation/networking/devlink/zl3073x.rst | 17 ++++++
+>  drivers/dpll/zl3073x/core.c                  |  6 +-
+>  drivers/dpll/zl3073x/core.h                  |  8 ++-
+>  drivers/dpll/zl3073x/devlink.c               | 61 ++++++++++++++++++++
+>  4 files changed, 89 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/networking/devlink/zl3073x.rst b/Documentation/networking/devlink/zl3073x.rst
+> index 4b6cfaf386433..1988721bdfa8b 100644
+> --- a/Documentation/networking/devlink/zl3073x.rst
+> +++ b/Documentation/networking/devlink/zl3073x.rst
+> @@ -20,6 +20,23 @@ Parameters
+>       - driverinit
+>       - Set the clock ID that is used by the driver for registering DPLL devices
+>         and pins.
+> +   * - ``phase_offset_avg_factor``
+> +     - runtime
+> +     - Set the factor for the exponential moving average used for phase offset
+> +       reporting. The DPLL phase measurement block applies this value in the
+> +       following formula:
+> +
+> +       .. math::
+> +          curr\_avg = prev\_avg * \frac{2^N-1}{2^N} + new\_val * \frac{1}{2^N}
+> +
+> +       where `curr_avg` is the current phase offset, `prev_avg` is the previous
+> +       phase offset, and `new_val` is currently measured phase offset.
+> +
+> +       New measurements are taken approximately 40 Hz or at the frequency of
+> +       the reference, whichever is lower.
+> +
+> +       The default value of this parameter is 2, and the supported range of
+> +       values is <0, 15>, where a value 0 effectively disables averaging.
+>  
+>  Info versions
+>  =============
+> diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
+> index 7ebcfc5ec1f09..4f6395372f0eb 100644
+> --- a/drivers/dpll/zl3073x/core.c
+> +++ b/drivers/dpll/zl3073x/core.c
+> @@ -915,7 +915,8 @@ zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev, int num_channels)
+>  
+>  	/* Setup phase measurement averaging factor */
+>  	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
+> -	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, 3);
+> +	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR,
+> +				     zldev->phase_avg_factor);
+>  
+>  	/* Enable DPLL measurement block */
+>  	dpll_meas_ctrl |= ZL_DPLL_MEAS_CTRL_EN;
+> @@ -991,6 +992,9 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+>  	 */
+>  	zldev->clock_id = get_random_u64();
+>  
+> +	/* Default phase offset averaging factor */
+> +	zldev->phase_avg_factor = 3;
+> +
+>  	/* Initialize mutex for operations where multiple reads, writes
+>  	 * and/or polls are required to be done atomically.
+>  	 */
+> diff --git a/drivers/dpll/zl3073x/core.h b/drivers/dpll/zl3073x/core.h
+> index 71af2c8001109..289d09fcc5c5a 100644
+> --- a/drivers/dpll/zl3073x/core.h
+> +++ b/drivers/dpll/zl3073x/core.h
+> @@ -67,19 +67,19 @@ struct zl3073x_synth {
+>   * @dev: pointer to device
+>   * @regmap: regmap to access device registers
+>   * @multiop_lock: to serialize multiple register operations
+> - * @clock_id: clock id of the device
+>   * @ref: array of input references' invariants
+>   * @out: array of outs' invariants
+>   * @synth: array of synths' invariants
+>   * @dplls: list of DPLLs
+>   * @kworker: thread for periodic work
+>   * @work: periodic work
+> + * @clock_id: clock id of the device
+> + * @phase_avg_factor: phase offset measurement averaging factor
+>   */
+>  struct zl3073x_dev {
+>  	struct device		*dev;
+>  	struct regmap		*regmap;
+>  	struct mutex		multiop_lock;
+> -	u64			clock_id;
+>  
+>  	/* Invariants */
+>  	struct zl3073x_ref	ref[ZL3073X_NUM_REFS];
+> @@ -92,6 +92,10 @@ struct zl3073x_dev {
+>  	/* Monitor */
+>  	struct kthread_worker		*kworker;
+>  	struct kthread_delayed_work	work;
+> +
+> +	/* Devlink parameters */
+> +	u64			clock_id;
+> +	u8			phase_avg_factor;
+>  };
+>  
+>  struct zl3073x_chip_info {
+> diff --git a/drivers/dpll/zl3073x/devlink.c b/drivers/dpll/zl3073x/devlink.c
+> index 7e7fe726ee37a..fe8333a2ea1ee 100644
+> --- a/drivers/dpll/zl3073x/devlink.c
+> +++ b/drivers/dpll/zl3073x/devlink.c
+> @@ -195,10 +195,71 @@ zl3073x_devlink_param_clock_id_validate(struct devlink *devlink, u32 id,
+>  	return 0;
+>  }
+>  
+> +static int
+> +zl3073x_devlink_param_phase_avg_factor_get(struct devlink *devlink, u32 id,
+> +					   struct devlink_param_gset_ctx *ctx)
+> +{
+> +	struct zl3073x_dev *zldev = devlink_priv(devlink);
+> +
+> +	/* Convert the value to actual factor value */
+> +	ctx->val.vu8 = (zldev->phase_avg_factor - 1) & 0x0f;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +zl3073x_devlink_param_phase_avg_factor_set(struct devlink *devlink, u32 id,
+> +					   struct devlink_param_gset_ctx *ctx,
+> +					   struct netlink_ext_ack *extack)
+> +{
+> +	struct zl3073x_dev *zldev = devlink_priv(devlink);
+> +	u8 avg_factor, dpll_meas_ctrl;
+> +	int rc;
+> +
+> +	/* Read DPLL phase measurement control register */
+> +	rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Convert requested factor to register value */
+> +	avg_factor = (ctx->val.vu8 + 1) & 0x0f;
+> +
+> +	/* Update phase measurement control register */
+> +	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
+> +	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, avg_factor);
+> +	rc = zl3073x_write_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, dpll_meas_ctrl);
+> +	if (rc)
+> +		return rc;
+> +
+> +	/* Save the new factor */
+> +	zldev->phase_avg_factor = avg_factor;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +zl3073x_devlink_param_phase_avg_factor_validate(struct devlink *devlink, u32 id,
+> +						union devlink_param_value val,
+> +						struct netlink_ext_ack *extack)
+> +{
+> +	return (val.vu8 < 16) ? 0 : -EINVAL;
+> +}
+> +
+> +enum zl3073x_dl_param_id {
+> +	ZL3073X_DEVLINK_PARAM_ID_BASE = DEVLINK_PARAM_GENERIC_ID_MAX,
+> +	ZL3073X_DEVLINK_PARAM_ID_PHASE_OFFSET_AVG_FACTOR,
+> +};
+> +
+>  static const struct devlink_param zl3073x_devlink_params[] = {
+>  	DEVLINK_PARAM_GENERIC(CLOCK_ID, BIT(DEVLINK_PARAM_CMODE_DRIVERINIT),
+>  			      NULL, NULL,
+>  			      zl3073x_devlink_param_clock_id_validate),
+> +	DEVLINK_PARAM_DRIVER(ZL3073X_DEVLINK_PARAM_ID_PHASE_OFFSET_AVG_FACTOR,
+> +			     "phase_offset_avg_factor", DEVLINK_PARAM_TYPE_U8,
+> +			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
+> +			     zl3073x_devlink_param_phase_avg_factor_get,
+> +			     zl3073x_devlink_param_phase_avg_factor_set,
+> +			     zl3073x_devlink_param_phase_avg_factor_validate),
+>  };
+>  
+>  static void
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-f83ec76b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/16b6888b2528/vmlinux-f83ec76b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f228e7d0456a/bzImage-f83ec76b.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ccfda19732868508d917@syzkaller.appspotmail.com
-
-bcachefs (loop0): Detected missing backpointers in bucket 34, now have 1/128 with missing
-  running recovery pass check_extents_to_backpointers (17), currently at resume_logged_ops (39)
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: slab-use-after-free in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-BUG: KASAN: slab-use-after-free in bch2_bucket_bitmap_test fs/bcachefs/backpointers.h:194 [inline]
-BUG: KASAN: slab-use-after-free in bch2_bucket_is_movable fs/bcachefs/movinggc.c:78 [inline]
-BUG: KASAN: slab-use-after-free in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:157 [inline]
-BUG: KASAN: slab-use-after-free in bch2_copygc+0x105d/0x4510 fs/bcachefs/movinggc.c:221
-Read of size 8 at addr ffff8880558596a0 by task bch-copygc/loop/5366
-
-CPU: 0 UID: 0 PID: 5366 Comm: bch-copygc/loop Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x240 mm/kasan/report.c:482
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- check_region_inline mm/kasan/generic.c:-1 [inline]
- kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
- bch2_bucket_bitmap_test fs/bcachefs/backpointers.h:194 [inline]
- bch2_bucket_is_movable fs/bcachefs/movinggc.c:78 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:157 [inline]
- bch2_copygc+0x105d/0x4510 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x97a/0xe00 fs/bcachefs/movinggc.c:409
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Allocated by task 5366:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x93/0xb0 mm/kasan/common.c:405
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4376 [inline]
- __kvmalloc_node_noprof+0x30d/0x5f0 mm/slub.c:5067
- kvmalloc_array_node_noprof include/linux/slab.h:1065 [inline]
- bch2_bucket_bitmap_set+0x9a/0x1d0 fs/bcachefs/backpointers.c:1351
- check_bucket_backpointer_mismatch+0x1bdf/0x23a0 fs/bcachefs/backpointers.c:964
- check_bucket_backpointer_pos_mismatch fs/bcachefs/backpointers.c:1193 [inline]
- bch2_check_bucket_backpointer_mismatch+0x36c/0x690 fs/bcachefs/backpointers.c:1205
- __bch2_move_data_phys+0x17a7/0x1c50 fs/bcachefs/move.c:922
- bch2_evacuate_bucket+0x228/0x3a0 fs/bcachefs/move.c:1082
- bch2_copygc+0x3be3/0x4510 fs/bcachefs/movinggc.c:234
- bch2_copygc_thread+0x97a/0xe00 fs/bcachefs/movinggc.c:409
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff8880558596a0
- which belongs to the cache kmalloc-16 of size 16
-The buggy address is located 0 bytes inside of
- freed 16-byte region [ffff8880558596a0, ffff8880558596b0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x55859
-flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000000 ffff88801a841640 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080800080 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0xd2800(GFP_NOWAIT|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5354, tgid 5353 (syz.0.0), ts 76068484835, free_ts 0
- create_dummy_stack mm/page_owner.c:94 [inline]
- register_dummy_stack+0x89/0xe0 mm/page_owner.c:100
- init_page_owner+0x2e/0x620 mm/page_owner.c:118
- invoke_init_callbacks mm/page_ext.c:148 [inline]
- page_ext_init+0x511/0x550 mm/page_ext.c:486
- mm_core_init+0x56/0x70 mm/mm_init.c:2789
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff888055859580: 00 00 fc fc 00 00 fc fc 00 00 fc fc 00 00 fc fc
- ffff888055859600: fa fb fc fc fa fb fc fc 00 00 fc fc 00 00 fc fc
->ffff888055859680: 00 00 fc fc fb fb fc fc 00 00 fc fc fa fb fc fc
-                               ^
- ffff888055859700: fa fb fc fc 00 00 fc fc fa fb fc fc fa fb fc fc
- ffff888055859780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
