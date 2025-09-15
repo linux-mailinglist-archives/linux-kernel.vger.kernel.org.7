@@ -1,136 +1,239 @@
-Return-Path: <linux-kernel+bounces-816703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C0FB5775B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:59:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0758B57760
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AF33A33D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD30116EF20
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186A1242D88;
-	Mon, 15 Sep 2025 10:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kF8smMcC"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9B22FE060;
+	Mon, 15 Sep 2025 10:59:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9121B4F09
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E6F2FD7D6;
+	Mon, 15 Sep 2025 10:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757933991; cv=none; b=Sh1e9VTaEF55QWYezWpLQL1x95v7+qJuGyJ4RpXif7yHb3/faE5qLR5JrFZE7c0uiabdpMYbG/sqKKvCH5RE8h8vvE9q3OZ5X0fRa5V31zI7jMLvS6drRivh6NE5gg80d7RuvfK8S6n04ct96B4EyIWUcQvx9Vj1axdyRN0oyng=
+	t=1757933996; cv=none; b=i9KMfAOY3Fe/+PQ814w8QIeyuUV3+zPNYqQ7tPs0eGSAuELCZ1WL6CI+7EUMEIGbidQ2X+nbU196C3JvJhMSZq/r89KjnzEj/UjgUwMIQZatkFKfiKZf24xvWOA8TZ+tkc1atkdWd2pjW4ldAdwN81F6NIB+iQgU2RjpJ1ar/6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757933991; c=relaxed/simple;
-	bh=z4vIa1+jE/4b0HDhWypNczdB6rHMWQ9tTqETYOZ0tXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o149dhLV7C3J77Fr5RiB3pqDVmbBMEOyqM2V+jbtMf92AWbETXQ4raIb/+kppTdLp83Yjn65AXCX3nwNt8uwtSULjEnqi4yrLFu4M+/mbYz6lBZgFvx6dM7wNzkdgLSDGbrr3z//+urirS/ZYIQfZOGrC05sVFKnpxRDmCPljZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kF8smMcC; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45de56a042dso26337205e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757933988; x=1758538788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dZJB/Bsvr4A7muWR/f1MBNyM3K9e22kPh9FuXwE8xe8=;
-        b=kF8smMcC0+oM7wTAe27jeUKbCTQKfQdDTRJ1f8BDnnIa8wcCbEUx1HcMPRvub1H6rS
-         ddXK14vbIMjUQzyK8+vpY4YnO4sX+SeCC2ffpUUVWFhMuYvqEwizzkm0jFLeiDnf2WTR
-         S1i0E/BP3kVP3gmKDWoHVZ+/j4BZ9g+iHzHVPrMOJ+xWOUTSkJ9MNqOnx3U2gZW/XKiW
-         UWfNPg2lHeXnWP2sRc1QPmf9LV84DTY6+v3iJrXqsVWHc8aWDcjCpxKegVxWD/UqPPO1
-         jrSJ+XGb3PYdmrX2Lk5dQkjgRiO1Ah/4LL3pjrdMiY0jw/ZBXYLur8R8NgIo2tVo8vpH
-         bvXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757933988; x=1758538788;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dZJB/Bsvr4A7muWR/f1MBNyM3K9e22kPh9FuXwE8xe8=;
-        b=QeQsVmIQ1UASEnsE/q3CvFl0TYXpoHsU0Hyy49ob3ifkuFp/X2eA81W8MI1Ke1gjtO
-         8F4xLmFwJPBZ0vhL/OwJOpc1mt7dWiXfts2Y1EKKGIb0XvcgApd5HygmJeNmMb9UMCSY
-         4SpB0UqcB0IfgVbjSVITUp0wFGTts9G5AKXItOtHQV/aG+/HgIGYWVGKLdEgBPE+JOs9
-         qHkf0SswQVxyp6GB0W8+RX2/wEWzbpipq+VGkEwTBCr2vZCJUCfOYs/pflb0z1FvkjkK
-         cYrW/3ymV6Y5xDBhOGiDXIFfN6xNqXquAxTXIIHZ2R4xtPgKP7zMegrJJpbgIhXOAs5X
-         7CRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhq0VDpKPhinNiO0QpBs3AKqYR7KbAh0Dbwy+Cx1WQE4kHO9xBROiS+ZIeWF4UySblSLkrRt/DzCZX7Vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPcu36DvXH/GTLtU4CHG87Or5ikWWC55qlrKisgalOqBLb093L
-	4cnopnFRTsScufCG0ofXjaKRub+BgjDsUCUox3O0Wpj5PcIP9G6ibBaomIPTE3z9M/g=
-X-Gm-Gg: ASbGncsJrXTEBo/ISWsmyS/2EwGmGqlkh5bTLIUUpjHgIulq2MovhgyGDfBOUmIKUi9
-	dvU57lrSNur4Nc5C0aGqxqTBeO3XqHHrhAfDiDcj1gZOFd7raZqRBy8Ouhos+6U5VSque8ET3fF
-	JAduLF1UpXZj6kt5VYWpjRaSnbk7jFEk4CwsJW0tWfxkuoHpXUZ6Y/9xJgu/oCrF46F47/lt+he
-	pt3PAvWhCb1BO1Ds3s3C0nlcPd3CaGTE4l/CGIW1JliecucsV9JbVqoB7GgoWnDQmkWldX015ol
-	WIkOz4YNN7khx4psJmbA3QkE3XYkIIb5+TZs9DNIE73Xl9dVpKqw6usa4ejxpzSp+qp2dx5eQNg
-	NxQi/gnvlzEE56hSOAH3uz2xEZCMI04cIjdSqSSuJoKIJxdRPWjvRkWmKBURP+ZQCAUQMzm7wKb
-	BDMZvLhSvD4HZ6ZpYk8eg=
-X-Google-Smtp-Source: AGHT+IEv6c5FUwwLFSVhJG3Y1Sz4/h6bMTRmTq6A63QYOpaJO9qwKgFhy/icrtsmblyY/8eaAxy/eQ==
-X-Received: by 2002:a05:600c:6812:b0:45d:98be:ee91 with SMTP id 5b1f17b1804b1-45f211d4f1emr107824775e9.9.1757933988224;
-        Mon, 15 Sep 2025 03:59:48 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e016b5a16sm175947125e9.12.2025.09.15.03.59.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 03:59:47 -0700 (PDT)
-Message-ID: <1b322807-ce6c-413b-8f84-3a0df4eaabb4@linaro.org>
-Date: Mon, 15 Sep 2025 11:59:44 +0100
+	s=arc-20240116; t=1757933996; c=relaxed/simple;
+	bh=lY7RFPV4gPA2gfgumslg2zAPShgFCGhgWaLAHCRIL+s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gbC8T3YTfhjdX9LgHg3q5zv0sLC82L3BftTmC+iXrz3VFlGwcN/DlzDZTR/pEw/m2I+PleaVB1zrXF7bj08KKTeGnCj5z3YEozlKD/4rXJdhPO5BfhQadIcGOBR1mMuv6X8ogJtYk4PWWcMw9KDGMqHicKICUkCJ/HkB7qEy6FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQMTC59lkz6K9JR;
+	Mon, 15 Sep 2025 18:58:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B319E140372;
+	Mon, 15 Sep 2025 18:59:50 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
+ 2025 12:59:50 +0200
+Date: Mon, 15 Sep 2025 11:59:48 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Robert Richter <rrichter@amd.com>
+CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
+ Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Fabio M.
+ De Francesco" <fabio.m.de.francesco@linux.intel.com>, Terry Bowman
+	<terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH v3 11/11] cxl: Enable AMD Zen5 address translation using
+ ACPI PRMT
+Message-ID: <20250915115948.0000415a@huawei.com>
+In-Reply-To: <20250912144514.526441-12-rrichter@amd.com>
+References: <20250912144514.526441-1-rrichter@amd.com>
+	<20250912144514.526441-12-rrichter@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] arm64: dts: qcom:
- x1e80100-dell-inspiron-14-plus-7441: Enable IRIS
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Alexey Klimov <alexey.klimov@linaro.org>,
- Anthony Ruhier <aruhier@mailbox.org>,
- Stefan Schmidt <stefan.schmidt@linaro.org>
-References: <20250915-x1e-iris-dt-v2-0-1f928de08fd4@linaro.org>
- <20250915-x1e-iris-dt-v2-7-1f928de08fd4@linaro.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250915-x1e-iris-dt-v2-7-1f928de08fd4@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 15/09/2025 11:06, Stephan Gerhold wrote:
-> Enable IRIS to allow using the hardware-accelerated video codecs. The
-> firmware is not upstream in linux-firmware yet, so users need to copy it
-> from Windows to qcom/x1e80100/dell/inspiron-14-plus-7441/qcvss8380.mbn
-> (just like GPU/ADSP/CDSP firmware).
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+On Fri, 12 Sep 2025 16:45:13 +0200
+Robert Richter <rrichter@amd.com> wrote:
+
+> Add AMD Zen5 support for address translation.
+>=20
+> Zen5 systems may be configured to use 'Normalized addresses'. Then,
+> CXL endpoints use their own physical address space and are programmed
+> passthrough (DPA =3D=3D HPA), the number of interleaving ways for the
+> endpoint is set to one. The Host Physical Addresses (HPAs) need to be
+> translated from the endpoint to its CXL host bridge. The HPA of a CXL
+> host bridge is equivalent to the System Physical Address (SPA).
+>=20
+> ACPI Platform Runtime Mechanism (PRM) is used to translate the CXL
+> Device Physical Address (DPA) to its System Physical Address. This is
+> documented in:
+>=20
+>  AMD Family 1Ah Models 00h=E2=80=930Fh and Models 10h=E2=80=931Fh
+>  ACPI v6.5 Porting Guide, Publication # 58088
+>  https://www.amd.com/en/search/documentation/hub.html
+>=20
+> To implement AMD Zen5 address translation the following steps are
+> needed:
+>=20
+> AMD Zen5 systems support the ACPI PRM CXL Address Translation firmware
+> call (Address Translation - CXL DPA to System Physical Address, see
+> ACPI v6.5 Porting Guide above) when address translation is enabled.
+> The existence of the callback can be identified using a specific GUID
+> as documented. The initialization code checks firmware and kernel
+> support of ACPI PRM.
+>=20
+> Introduce a new file core/atl.c to handle ACPI PRM specific address
+> translation code. Naming is loosely related to the kernel's AMD
+> Address Translation Library (CONFIG_AMD_ATL) but implementation does
+> not dependent on it, nor it is vendor specific. Use Kbuild and Kconfig
+> options respectively to enable the code depending on architecture and
+> platform options.
+>=20
+> Implement an ACPI PRM firmware call for CXL address translation in the
+> new function cxl_prm_to_hpa(). This includes sanity checks. Enable the
+> callback for applicable CXL host bridges using the new cxl_atl_init()
+> function.
+>=20
+> Signed-off-by: Robert Richter <rrichter@amd.com>
+A few minor additions inline. =20
+
+J
 > ---
->   arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts
-> index f728d298c72f4bf2ee151698e36108fdd7a8e5a5..cf2a7c2628881e44f093d73e6496462c22326d9a 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-inspiron-14-plus-7441.dts
-> @@ -37,6 +37,11 @@ touchscreen@10 {
->   	};
->   };
->   
-> +&iris {
-> +	firmware-name = "qcom/x1e80100/dell/inspiron-14-plus-7441/qcvss8380.mbn";
-> +	status = "okay";
-> +};
+>  drivers/cxl/Kconfig       |   4 ++
+>  drivers/cxl/core/Makefile |   1 +
+>  drivers/cxl/core/atl.c    | 138 ++++++++++++++++++++++++++++++++++++++
+>  drivers/cxl/core/core.h   |   1 +
+>  drivers/cxl/core/port.c   |   8 +++
+>  5 files changed, 152 insertions(+)
+>  create mode 100644 drivers/cxl/core/atl.c
+>=20
+> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
+> index 48b7314afdb8..31f9c96ef908 100644
+> --- a/drivers/cxl/Kconfig
+> +++ b/drivers/cxl/Kconfig
+> @@ -233,4 +233,8 @@ config CXL_MCE
+>  	def_bool y
+>  	depends on X86_MCE && MEMORY_FAILURE
+> =20
+> +config CXL_ATL
+> +       def_bool y
+
+Given no help we can't turn this off manually and it's down to
+whether ACPI_PRMT is configured or not.
+
+To me this feels like something we should be able to control.
+Not a huge amount of code, but none the less 'so far' it only
+applies to particular AMD platforms yet ACPI_PRMT gets built
+on ARM platforms and other stuff even on AMD (CONFIG_AMD_ATL_PRM)
+
+
+
+> +       depends on ACPI_PRMT
 > +
->   &remoteproc_adsp {
->   	firmware-name = "qcom/x1e80100/dell/inspiron-14-plus-7441/qcadsp8380.mbn",
->   			"qcom/x1e80100/dell/inspiron-14-plus-7441/adsp_dtbs.elf";
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>  endif
+
+> diff --git a/drivers/cxl/core/atl.c b/drivers/cxl/core/atl.c
+> new file mode 100644
+> index 000000000000..5fc21eddaade
+> --- /dev/null
+> +++ b/drivers/cxl/core/atl.c
+
+> +struct prm_cxl_dpa_spa_data {
+> +	u64 dpa;
+> +	u8 reserved;
+> +	u8 devfn;
+> +	u8 bus;
+> +	u8 segment;
+> +	void *out;
+
+If reality is out is always a u64 * maybe just give it that type.
+
+> +} __packed;
+> +
+> +static u64 prm_cxl_dpa_spa(struct pci_dev *pci_dev, u64 dpa)
+> +{
+> +	struct prm_cxl_dpa_spa_data data;
+> +	u64 spa;
+> +	int rc;
+> +
+> +	data =3D (struct prm_cxl_dpa_spa_data) {
+> +		.dpa     =3D dpa,
+> +		.devfn   =3D pci_dev->devfn,
+> +		.bus     =3D pci_dev->bus->number,
+> +		.segment =3D pci_domain_nr(pci_dev->bus),
+> +		.out     =3D &spa,
+> +	};
+> +
+> +	rc =3D acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc) {
+> +		pci_dbg(pci_dev, "failed to get SPA for %#llx: %d\n", dpa, rc);
+> +		return ULLONG_MAX;
+> +	}
+> +
+> +	pci_dbg(pci_dev, "PRM address translation: DPA -> SPA: %#llx -> %#llx\n=
+", dpa, spa);
+> +
+> +	return spa;
+> +}
+> +
+> +static u64 cxl_prm_to_hpa(struct cxl_decoder *cxld, u64 hpa)
+> +{
+
+> +	pci_dev =3D to_pci_dev(cxlmd->dev.parent);
+
+
+	return prm_cxl_dpa_spa(to_pci_dev(cxlmd->dev.parent), hpa);
+seem fine to me and shortens things a little.
+
+> +
+> +	return prm_cxl_dpa_spa(pci_dev, hpa);
+> +}
+> +
+> +static void cxl_prm_init(struct cxl_port *port)
+> +{
+> +	u64 spa;
+> +	struct prm_cxl_dpa_spa_data data =3D { .out =3D &spa, };
+> +	int rc;
+> +
+> +	if (!check_prm_address_translation(port))
+> +		return;
+> +
+> +	/* Check kernel (-EOPNOTSUPP) and firmware support (-ENODEV) */
+> +	rc =3D acpi_call_prm_handler(prm_cxl_dpa_spa_guid, &data);
+> +	if (rc =3D=3D -EOPNOTSUPP || rc =3D=3D -ENODEV)
+> +		return;
+
+So other error values are fine?  IF they don't occur no need to be explicit
+just check rc < 0 and return.
+
+> +
+> +	port->to_hpa =3D cxl_prm_to_hpa;
+> +
+> +	dev_dbg(port->host_bridge, "PRM address translation enabled for %s.\n",
+> +		dev_name(&port->dev));
+> +}
+> +
+> +void cxl_atl_init(struct cxl_port *port)
+> +{
+> +	cxl_prm_init(port);
+Why not just rename cxl_prm_init() to cxl_atl_init() and get rid of this wr=
+apper?
+
+> +}
+
+
 
