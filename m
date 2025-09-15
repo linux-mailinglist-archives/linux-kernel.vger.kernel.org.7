@@ -1,206 +1,104 @@
-Return-Path: <linux-kernel+bounces-817626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DB4B584AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:34:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E1CB584AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D803A95EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FDE1174E54
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ACF280327;
-	Mon, 15 Sep 2025 18:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068C8279DC3;
+	Mon, 15 Sep 2025 18:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RBEgZaYC"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRWlck04"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30032267B90
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083FCE573
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757961256; cv=none; b=h821ji+XZtndqCNzY90U1ZC39OlNO84/oMz+mpxWFlSCyLRTBZYsQs11uwoJLhyWKmItbfrT7gNtIA9ua1h3cIez0R80Lbo+NQ0CywEp5gPhhw7nLtS65d0qhmViQdw7WVOUBwijnJOgKg2XUJz3J2ZM7WQjoiLWK3oCOIurDCM=
+	t=1757961317; cv=none; b=fzeVJnK5NqVeunnV+aaxyNpBOZNk3FBbLWkR2GSIUeHVqZnqoG50+llp8hm37c4xSai6isxirit2PZ/QxPY209CX+wK9hMGxHInNx2WN+bmuV6VEMXrd6DDur0rHil+mH9CqfI8oZ6IT5O6XLLaL07dll8pAllCeZ19XTJoQH3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757961256; c=relaxed/simple;
-	bh=nFTNXAZf8eOkJqjopbYNGl88wQ2udJXBUKbd5JGYFJc=;
+	s=arc-20240116; t=1757961317; c=relaxed/simple;
+	bh=QB8kWCz+k+opB+sV1nc0/tNqsdmHDtVxmRQU9TZnlz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMLDfncOpPJMeN0ZYgCYzkd+O+PoFCJ+lbz3qXm3RWf+BYKb2DXT84cN6jJvJ3G+gQchIooTYJcWkJIpfLF8SvcUyBRij7i47ferdYkqcSdkgJ9FmCjtlJl2zgEq34o5VJfmeQ5IJm8r1O5pgoxYlhbN6gi53MGtHLAHteGbu0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RBEgZaYC; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26763bb9a92so10008265ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:34:15 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJr+aFP3GmR+NSo4peshk42JSKdfgawGbwemDGgfJ/Zo3KfSjGzuyebPeQaBh4h0UZ90mIJlwP6pdhCrWmiFVYJ8pIBpnFDkn+8u92x21bF1ZSZceI61YBIHj2cReluzq1B7ai/FnentmpJHNuN/6kkSSwIHCxnt2g+Am2MtwjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRWlck04; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e931c71a1baso4481767276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757961254; x=1758566054; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UNSXkkVhuHJlFNtXimgTWN2ssSCSJ/yVmF41qtJieAc=;
-        b=RBEgZaYCGiZStA+ZMXctezvKgHiMZCVi6wCVzTK6Up2sHh2jlNu3iXSeWHTlGnSx+H
-         nWY1jb2r2BSypZ+htrY23sA+5gomed92AdqSYmHsYxHHQbtMu7povkJai3WudSpgXNOd
-         MWIvZ1UgXFtUM+aaXUUf89mTO3zyPYTt4p25M=
+        d=gmail.com; s=20230601; t=1757961315; x=1758566115; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rm47O0cVwkvg9nvwn/TiXMqZ6NlzV2ePDvDiAlLnDag=;
+        b=bRWlck04AkgC0OscsFv1w9HV6uACLYjQJN+AXnQqDFrYJCNCDAH3iL39j2cPub/O47
+         uu+6FiM3+1NQ8GVBXw+1Ow55gsZUSMYqrk7BDXt0ELQNDRZB0AGFMolhd63GaeyFtDIl
+         cddyfU35UR6wzl4yCKgYyRDrXKeKwWS/E1epdwNPBwAKNpVUVtC1MmY2JI92mA5oP+Nt
+         ealoNRtnujVMG5/cRGDd6gHcHGxrltsquZWhZ9iQSoWvoLiBUA7bfC/SWU/j+8BscwHb
+         Q1rAyzsxy7sNOYhFzjfVeVrjtjcYnXjtgMbrZfcgE4eXaXDoOjaRt4mCBvzDxV9XZqlg
+         XP8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757961254; x=1758566054;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UNSXkkVhuHJlFNtXimgTWN2ssSCSJ/yVmF41qtJieAc=;
-        b=Ywpb+aLPpP3RpsFNjYSeXCYrNNJ1zpnnLr7m/zUXCZbW6riTmBCXR17XcAYyKXKWzy
-         WOyQWywXi3P2Kdc+wDx63BBZtYnD+w7rwCm8jh51IzMfAntpvlc9PrtYZwOQQmT8Xj3S
-         lUazqtP+z5WkFgOBBmxPsfvgLkPEDCx0ME9mCuQrq6o7WkcQVG4HA3ikZ1zwloReGcG0
-         2uChLkGfJWyFUGO6cYZpcqQqdH1OgD4I44vXBYoFZIl8shFRzDHfD7c6f3YpdrJP27zQ
-         It+5ye4ehXHsFG4MEuVHckdg7czZC7vQDR7f1VCgpNoRlXak5JOiNPr4JOiKQXerAyUU
-         8TUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVor8lEBF9clqlj1r2t9LbcgdNzmP1g5hbqh1UNGkgJYfjT1KWXgNlxWdoWICmLRK+zLqC3y/OWLxNqb7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUJd3/99yhHnSutUMbFPRS/8MirT256yyP3ltMur2c/3b8QVgF
-	C8kSkEEPOi2ajJubLZ09bPIe09cT3hxzeM7Y2MavliKSn3jnIvOgW0GN3oMCvaLAHg==
-X-Gm-Gg: ASbGncuj0WB9A+q9wiZmYpFDiX6oqnj89z8JhRotG217HjQ5YgQf45AYWiKXvX1ROx5
-	AwDYuwBy8b1oPGZ2OBgc5FbjJXjFmfvqU+aF/2VJB7Rs/YTovNIgv96VunsOPK1VUXjuIndzNLQ
-	1IP3KhQ4dQ8xA++7xqIahuogM3zZAM6jjpdo93pGoxFRKTXJWXqALqcvwxazxzExk6zFu8dHWM8
-	vG+5dQNQKglBGU+e/wgo42ZmI3aXN8w6WF4aZyf08rA6HTPAIe+guz1NbSiRuz1G/JuFIRc/pxN
-	aP4rV8wM//Y776T+FHlIXudEItiE65Uvhwwsg+Oh+NqpHpPrZaFlAhxamJBU7B/7e62odhlxPZ/
-	5Ozw7gq+KHvT3LBi7DTwXvfzzIc82qjWnxASYssoR1DMwpcZYjD2y9OttSr6l
-X-Google-Smtp-Source: AGHT+IH+aA/qD9/tWA4T9bKeTNV4qwrmPWyIWt6h2dj375FkW7TVjYU5fI9lcYTNhfQ0zBY5pwIDPA==
-X-Received: by 2002:a17:902:ebc9:b0:24b:4a9a:703a with SMTP id d9443c01a7336-25d24da7536mr207524775ad.17.1757961253707;
-        Mon, 15 Sep 2025 11:34:13 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:fd49:49b1:16e7:2c97])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-26175efc667sm75235655ad.112.2025.09.15.11.34.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 11:34:12 -0700 (PDT)
-Date: Mon, 15 Sep 2025 11:34:10 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>, linux-pci@vger.kernel.org,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Richard Weinberger <richard@nod.at>, Wei Liu <wei.liu@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	kunit-dev@googlegroups.com,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	linux-um@lists.infradead.org,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: [PATCH 1/4] PCI: Support FIXUP quirks in modules
-Message-ID: <aMhcIsO3KmthtrIL@google.com>
-References: <20250912230208.967129-1-briannorris@chromium.org>
- <20250912230208.967129-2-briannorris@chromium.org>
- <8e75d6cc3847899ba8d6a0cbd0ef3ac57eabf009.camel@sipsolutions.net>
+        d=1e100.net; s=20230601; t=1757961315; x=1758566115;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rm47O0cVwkvg9nvwn/TiXMqZ6NlzV2ePDvDiAlLnDag=;
+        b=wCfHhQGpuThzWylfxHWVBaPS81rCF/wJK4YDbTLVu8VDH622QsBwsnfTGYVPute+6i
+         2buEHtELZgDVGWoCfZhSR62D1jA8qp1Dz86y1Trk5rlVD6qrV0UrauFEBGUUBMIsYmKG
+         RS+g57LEtr5KxVM9qQkeirWXlBQs6l39ZOnLlcrZTThDjwG/Z+kJ8jmM1ettpm4qGlPx
+         n0GQ0V7Sdznk9Ve1m7We6hUk5/mC907Rd46nwVjYp3LwAROYZJMc7XZRDq4b+ikKE2Fk
+         N08b10Fgch0vAnhUW551XQeezZTrYT3Kr7OX8Q1Zgah2uCqvjCqs4W2Gaf/Wx2TO4y3e
+         jpKw==
+X-Gm-Message-State: AOJu0YxALGSTgcmkNuWMEv+ze5d/bQsUWNYBkVkL9Y13ia988T6LDJ02
+	ZEnkD5sTnIIUhRTOi7vRs//FOnjr7fq6uugBXISeuvARx4L9NaOND48K22mjFQ==
+X-Gm-Gg: ASbGncuha5QrI4qFFKLAJ0AbZpb9eayh+g9W8Ur9D1Bmf8H6wRSYbL4ho0lpkFRxwvU
+	/vR9w21qTuUJSvUThxjCQXkXGGjJQcFVR1dp8aHeab2zxO6SHfrsF5iuGpXveIr3OUvbMVV4W4t
+	brmGGLMtECiUMSJbEFxz/Qdzhxc9Khwxzz0N8wpKYsekHrQyDHu5F8SxFX4ijMloPlAM1vGxXYB
+	4t1wm1yWWnr1gc5UcEX4Nn7LRefpzhGzTh9nCOMpIFQ1qvYYGVotdD2KwU+GZa4PX/el/2dKJZe
+	ylNUjP4wuSTbgrJ/Nd03Xso1ntgcy9j1D8iiq4q8KasqKlcDTLaO73SK0WUeaWRM9F0saXV1A6K
+	PaooXfk+TFXi+5auIbPJaCSCedWQKF33x+woO5T9zqOsco3qGeniYa1iCOf1/qWmch8Vr
+X-Google-Smtp-Source: AGHT+IGbR4PUcQEZed/FRBSnXZEzPM5zBmWXWfE7OIcYK0EwcAuJ5/etAvpfOe5Sx1gQUcSHWjIXwg==
+X-Received: by 2002:a05:690c:a84:b0:729:afb7:2a0d with SMTP id 00721157ae682-73062ab3b6amr116351707b3.1.1757961314736;
+        Mon, 15 Sep 2025 11:35:14 -0700 (PDT)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-732e77812fdsm16598787b3.19.2025.09.15.11.35.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 11:35:14 -0700 (PDT)
+Date: Mon, 15 Sep 2025 14:35:12 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 8/9] cpumask: Add initialiser CPUMASK_NULL to use
+ cleanup helpers
+Message-ID: <aMhcYCCJDFWoxcyw@yury>
+References: <20250915145920.140180-11-gmonaco@redhat.com>
+ <20250915145920.140180-19-gmonaco@redhat.com>
+ <aMg5EzmxG3hG7aJK@yury>
+ <820443ea-56d7-4fd0-9535-b1339e53240c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e75d6cc3847899ba8d6a0cbd0ef3ac57eabf009.camel@sipsolutions.net>
+In-Reply-To: <820443ea-56d7-4fd0-9535-b1339e53240c@redhat.com>
 
-Hi Johannes,
-
-On Mon, Sep 15, 2025 at 08:33:08AM +0200, Johannes Berg wrote:
-> On Fri, 2025-09-12 at 15:59 -0700, Brian Norris wrote:
-> > The PCI framework supports "quirks" for PCI devices via several
-> > DECLARE_PCI_FIXUP_*() macros. These macros allow arch or driver code to
-> > match device IDs to provide customizations or workarounds for broken
-> > devices.
-> > 
-> > This mechanism is generally used in code that can only be built into the
-> > kernel, but there are a few occasions where this mechanism is used in
-> > drivers that can be modules. For example, see commit 574f29036fce ("PCI:
-> > iproc: Apply quirk_paxc_bridge() for module as well as built-in").
-> > 
-> > The PCI fixup mechanism only works for built-in code, however, because
-> > pci_fixup_device() only scans the ".pci_fixup_*" linker sections found
-> > in the main kernel; it never touches modules.
-> > 
-> > Extend the fixup approach to modules.
+On Mon, Sep 15, 2025 at 05:02:45PM +0000, Gabriele Monaco wrote:
+> 2025-09-15T16:04:53Z Yury Norov <yury.norov@gmail.com>:
+> > So why don't you pick the original patch instead?
 > 
-> This _feels_ a bit odd to me - what if you reload a module, should the
-> fixup be done twice? Right now this was not possible in a module, which
-> is a bit of a gotcha, but at least that's only one for developers, not
-> for users (unless someone messes up and puts it into modular code, as in
-> the example you gave.)
+> In my opinion, the /juice/ of that patch was included with [1], here I'm just adding part of it.
+> If you prefer I can pick that patch and adapt the commit message to reflect only the part included here.
+> 
+> [1] - https://lore.kernel.org/lkml/1706509267-17754-3-git-send-email-schakrabarti@linux.microsoft.com/
 
-My assumption was that FIXUPs in modules are only legitimate if they
-apply to a dependency chain that involves the module they are built
-into. So for example, the fixup could apply to a bridge that is
-supported only by the module (driver) in question; or it could apply
-only to devices that sit under the controller in question [1].
-
-Everything I see that could potentially be in a module works like this
-AFAICT.
-
-To answer your question: no, the fixup should not be done twice, unless
-the device is removed and recreated. More below.
-
-[1] The quirks in drivers/pci/controller/dwc/pci-keystone.c look like
-this. (Side note: pci-keystone.c cannot be built as a module today.)
-
-> Although, come to think of it, you don't even apply the fixup when the
-> module is loaded, so what I just wrote isn't really true. That almost
-> seems like an oversight though, now the module has to be loaded before
-> the PCI device is enumerated, which is unlikely to happen in practice?
-> But then we get the next gotcha - the device is already enumerated, so
-> the fixups cannot be applied at the various enumeration stages, and
-> you're back to having to load the module before PCI enumeration, which
-> could be tricky, or somehow forcing re-enumeration of a given device
-> from userspace, but then you're firmly in "gotcha for the user"
-> territory again ...
-
-With my assumption above, none of this would really be needed. The
-relevant device(s) will only exist after the module is loaded, and they
-will go away when the module is gone.
-
-Or am I misreading your problem statements?
-
-> I don't really have any skin in this game, but overall I'd probably
-> argue it's better to occasionally have to fix things such as in the
-> commit you point out but have a predictable system, than apply things
-> from modules.
-
-FWIW, I believe some folks are working on making *more* controller
-drivers modular. So this problem will bite more people. (Specifically, I
-believe Manivannan was working on
-drivers/pci/controller/dwc/pcie-qcom.c, and it has plenty of FIXUPs.)
-
-I also don't think it makes things much less predictable, as long as
-developers abide by my above assumption. I think that's a perfectly
-reasonable assumption (it's not so different than, say,
-MODULE_DEVICE_TABLE), but I could perhaps be convinced otherwise.
-
-> Perhaps it'd be better to extend the section checking infrastructure to
-> catch and error out on these sections in modules instead, so we catch it
-> at build time, rather than finding things missing at runtime?
-
-Maybe I'm missing something here, but it seems like it'd be pretty easy
-to do something like:
-
-#ifdef MODULE
-#define DECLARE_PCI_FIXUP_SECTION...) BUILD_BUG()
-#else
-... real definitions ...
-#endif
-
-I'd prefer not doing this though, if we can help it, since I believe
-(a) FIXUPs are useful in perfectly reasonable ways for controller
-    drivers and
-(b) controller drivers can potentially be modules (yes, there are some
-    pitfalls besides $subject).
-
-> And yeah, now I've totally ignored the kunit angle, but ... not sure how
-> to combine the two requirements if they are, as I think, conflicting.
-
-Right, either we support FIXUPs in modules, or we should outlaw them.
-
-For kunit: we could still add tests, but just force them to be built-in.
-It wouldn't be the first kernel subsystem to need that.
-
-Brian
+Yes please.
 
