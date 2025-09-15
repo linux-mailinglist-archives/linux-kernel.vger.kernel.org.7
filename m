@@ -1,245 +1,248 @@
-Return-Path: <linux-kernel+bounces-816121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36B1B56FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:47:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D36FB56FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0343B5390
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 526561777F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97D81F4703;
-	Mon, 15 Sep 2025 05:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B912765E6;
+	Mon, 15 Sep 2025 05:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YrO2N/Fi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqJsGHA3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E8719DF4F;
-	Mon, 15 Sep 2025 05:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B8C19DF4F;
+	Mon, 15 Sep 2025 05:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757915267; cv=none; b=alx37r38IgOSeZBFRIW0pnWbywn6T1kEHgKfmidA/2HVx1DB7XAqL9bVYv5gR0PBVNtoyEwTKIAhvXbkEAHjEiMBi/FunHaEkbJPaUVqAiEzyij3uIL8PB8DEgO6D98OK32FsXqeVLUGYxl0o1UjAYytctbfiReBgKMiFwCoT/4=
+	t=1757915354; cv=none; b=qC6AysgHiRfRJ2Kk7IXUtvorSllK0XBgOwfXGPgWW5Px+JrSwozwkD6l1D9iRuz1LcgqLGtevI5dQX7R6XZe+0NxiGJGvnhf6Jrh1OAxraT+kGiI1Nps9n9WxomcBrQGLTPRt4f+NkImOFZbAAtns458e9Cb+jhk7+cGrqyEX3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757915267; c=relaxed/simple;
-	bh=uhq5A4HqOzycNT0EguqVROkMdKzAY8x3LE2Z7OEXVXw=;
+	s=arc-20240116; t=1757915354; c=relaxed/simple;
+	bh=vrIXg0HvWiKEZW1gHulvWI1+bn6Dt0Zf8zzIJtYH9KI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmEndwrq6P/abuSaLd/mJg0z3CQOmc3t/nmqg2+VZcfVuW+Hs0JTrJi/POqGpnQnB9T2uGrx6ptp7cocRoN1Ou+/vJP9/V7eU393TcDklsynY+wo8+kvzKoh+ADr56vKN2bnANAFYoj2GW9AGyP2YuDr0zw3d2dG99YlelpSARk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YrO2N/Fi; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757915265; x=1789451265;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uhq5A4HqOzycNT0EguqVROkMdKzAY8x3LE2Z7OEXVXw=;
-  b=YrO2N/FiQbeNOJfR4qQJdbcF+L4ch2iAeSTrQW0uj55LPQBbu4/53ioz
-   BnCLZ9IiXI/eRJ9NszYQyVik3nWIzG+bfeoGOJ7O6apT6ILpOeHT92gg6
-   o3wQq5HSHrD+91yVIBRNaeoQ9OMY+JJOmccak1MlahxiQ00Fjb8pBJKTr
-   8j9yfJtKfEmYJqJMMlGEb5HuUX6N1dmpOi7jGde/QXjsjCSGHUcwSSiHn
-   IB73avXP84CbYiLvingBKbUEwKLMUO664XlAZ8jfvi4vvGYGhL+J/ChbU
-   uRZqIAr0yhlcsiCMyZMyjqr+7cD624QN+U1rZu5UbnAtYtxP2hgxjeKdf
-   Q==;
-X-CSE-ConnectionGUID: UN/Cfw9kQtCSkl8yTyusZg==
-X-CSE-MsgGUID: HqH6ix8dSH+y7yVsKNUYuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="60264268"
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="60264268"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 22:47:44 -0700
-X-CSE-ConnectionGUID: gjM+2CUiQFKjW+x4di8vSw==
-X-CSE-MsgGUID: sYKP41NqQxW0tIoaUO1RTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="174598032"
-Received: from lkp-server02.sh.intel.com (HELO 0f80bf6f8d53) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 14 Sep 2025 22:47:37 -0700
-Received: from kbuild by 0f80bf6f8d53 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uy23O-00002V-38;
-	Mon, 15 Sep 2025 05:47:10 +0000
-Date: Mon, 15 Sep 2025 13:46:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 23/23] staging: media: tegra-video: add CSI support
- for Tegra20 and Tegra30
-Message-ID: <202509151319.M4lQXwA8-lkp@intel.com>
-References: <20250906135345.241229-24-clamor95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vq3ZMY/ohATRlNY7RPxFwdkkxf6/b0wSbP9xnv6+qmHEYdgiWyqnDTrGOZ/p6bI2IXfcPiHWzwobD9eriztwBZHtty+NYoeZntt1D8Luer8+YqwOHvrcUbzghNP6U65Jirag0V75gOtjp0qMeT4U4t846wUTq4/++5r0nJ/q8qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqJsGHA3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD98C4CEF1;
+	Mon, 15 Sep 2025 05:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757915354;
+	bh=vrIXg0HvWiKEZW1gHulvWI1+bn6Dt0Zf8zzIJtYH9KI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pqJsGHA3Dw84Vt3FNfV+B2PsS/AN483hdmBihkffirbf6IXtwBT8Hh73yngqOxVg/
+	 P7XLs00LOsDDlfBjx7b0s0kF/snFZ2HpDCNivp+DcYA8RnwNNglIkDWxuHbMKIenBc
+	 Iqw4bFizJepYKUN7acwx2c/SnnXzTCd+ExCZIWLdrMKkPGdk1xJbYCrdsvXIj+aZ1X
+	 L7M5K4zywmdxOR0CESTF3qhcATkR2/p0RLo7XD9itqLRl0bjLeWAKEgm2mzzA9bN+9
+	 SXQLU3wQOuN6l7iYHoPjgj6GktFtUs2Sg4yrYFIaRWB7/Df1bbgjUXcbEofytIXk60
+	 ge30V93X7NPxA==
+Date: Mon, 15 Sep 2025 11:19:04 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Hans Zhang <hans.zhang@cixtech.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	robh@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com, 
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 07/14] PCI: cadence: Add support for High Perf
+ Architecture (HPA) controller
+Message-ID: <pi5ouej6wae2nfjszfmeyctkavvmtycuaf7uxurfpie5x53zae@gz3ymk7laglx>
+References: <20250901092052.4051018-1-hans.zhang@cixtech.com>
+ <20250901092052.4051018-8-hans.zhang@cixtech.com>
+ <yl5mty7uz3fneyxyeacydbu2l7ptngt2ah7roybxza6vtjvs3s@fobe3kl76msw>
+ <5afb25b2-a3ca-4afe-9826-e1d722599ee1@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250906135345.241229-24-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5afb25b2-a3ca-4afe-9826-e1d722599ee1@cixtech.com>
 
-Hi Svyatoslav,
+On Tue, Sep 09, 2025 at 12:41:33AM GMT, Hans Zhang wrote:
 
-kernel test robot noticed the following build warnings:
+[...]
 
-[auto build test WARNING on tegra/for-next]
-[also build test WARNING on robh/for-next clk/clk-next linus/master v6.17-rc6]
-[cannot apply to next-20250912]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Dear Mani,
+> 
+> Thank you very much for your reply. This function is a new one I added
+> during my collaboration with Manikandan. Here I'll reply to you. Other
+> Manikandan will reply to you.
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/clk-tegra-set-CSUS-as-vi_sensors-gate-for-Tegra20-Tegra30-and-Tegra114/20250906-215750
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250906135345.241229-24-clamor95%40gmail.com
-patch subject: [PATCH v2 23/23] staging: media: tegra-video: add CSI support for Tegra20 and Tegra30
-config: arm-randconfig-r131-20250915 (https://download.01.org/0day-ci/archive/20250915/202509151319.M4lQXwA8-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 21857ae337e0892a5522b6e7337899caa61de2a6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250915/202509151319.M4lQXwA8-lkp@intel.com/reproduce)
+Please trim your replies so that your message appears at the top.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509151319.M4lQXwA8-lkp@intel.com/
+> > rp_bdf, rc_bus_nr
+> 
+> Will change.
+> 
+> > 
+> > > +     u32 ecam_addr_0, region_size_0, request_id_0;
+> > 
+> > So ECAM address is always 32bit? For all Cadence IP implementations?
+> 
+> Sorry, it's my fault here. Since the ECAM distribution of CIX SKY1 is as
+> follows:
+> 
+> X8: 0x2c00_0000 ~ 0x3000_0000
+> X4: 0x2900_0000 ~ 0x2c00_0000
+> X2: 0x2600_0000 ~ 0x2900_0000
+> X1_1: 0x2300_0000 ~ 0x2600_0000
+> X1_0: 0x2000_0000 ~ 0x2300_0000
+> 
+> This is only the CIX SKY1 designed in the low 32-bit address range. In fact,
+> Cadence IP supports 64-bit ECAM addresses. Will change.
+> 
+> 
+> > 
+> > > +     int busnr = 0, secbus = 0, subbus = 0;
+> > > +     struct resource_entry *entry;
+> > > +     resource_size_t size;
+> > > +     u32 axi_address_low;
+> > > +     int nbits;
+> > > +     u64 sz;
+> > > +
+> > > +     entry = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> > > +     if (entry) {
+> > > +             busnr = entry->res->start;
+> > > +             secbus = (busnr < 0xff) ? (busnr + 1) : 0xff;
+> > > +             subbus = entry->res->end;
+> > > +     }
+> > > +     size = resource_size(cfg_res);
+> > > +     sz = 1ULL << fls64(size - 1);
+> > > +     nbits = ilog2(sz);
+> > > +     if (nbits < 8)
+> > > +             nbits = 8;
+> > > +
+> > > +     root_port_req_id_reg = ((busnr & 0xff) << 8);
+> > > +     pcie_bus_number_reg = ((subbus & 0xff) << 16) | ((secbus & 0xff) << 8) |
+> > > +                           (busnr & 0xff);
+> > > +     ecam_addr_0 = cfg_res->start;
+> > 
+> > Doesn't the platform require 'cfg_res->start' to be aligned to 256 MiB? The bus
+> > range seem to be 0xff, so the Cadence IP allocates 8 bits for 'bus'. As per the
+> > PCIe spec r6.0, sec 7.2.2, says:
+> > 
+> > 'the base address of the range is aligned to a 2(n+20)-byte memory address
+> > boundary'
+> > 
+> > So the 'cfg_res->start' should be aligned to 2^28 byte (256 MiB) address.
+> > 
+> 
+> Just as the ECAM address range mentioned above, our bus is not 0xff.
+> Therefore, aligned to 2^28 byte (256 MiB) address is not required.
+> 
+> X8: 0xc0 ~ 0xff
+> X4: 0x90 ~ 0xbf
+> X2: 0x60 ~ 0x8f
+> X1_1: 0x30 ~ 0x5f
+> X1_0: 0x00 ~ 0x2f
 
-All warnings (new ones prefixed by >>):
+So n is 6 for your platforma and you need to check for 64MiB alignment. But
+since this check is performed in the common code, you need to somehow pass the
+'n' bits value from your csky driver.
 
-   In file included from <built-in>:3:
-   In file included from include/linux/compiler_types.h:171:
-   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
-      28 | #define __SANITIZE_ADDRESS__
-         |         ^
-   <built-in>:366:9: note: previous definition is here
-     366 | #define __SANITIZE_ADDRESS__ 1
-         |         ^
->> drivers/staging/media/tegra-video/tegra20.c:909:6: warning: variable 'pp' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     909 |         if (ret < 0) {
-         |             ^~~~~~~
-   drivers/staging/media/tegra-video/tegra20.c:923:53: note: uninitialized use occurs here
-     923 |         tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
-         |                                                            ^~
-   drivers/staging/media/tegra-video/tegra20.c:909:2: note: remove the 'if' if its condition is always false
-     909 |         if (ret < 0) {
-         |         ^~~~~~~~~~~~~~
-     910 |                 dev_warn(csi->dev, "MIPI calibration status timeout!\n");
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     911 |                 goto exit;
-         |                 ~~~~~~~~~~
-     912 |         }
-         |         ~
-   drivers/staging/media/tegra-video/tegra20.c:900:6: warning: variable 'pp' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-     900 |         if (ret < 0) {
-         |             ^~~~~~~
-   drivers/staging/media/tegra-video/tegra20.c:923:53: note: uninitialized use occurs here
-     923 |         tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
-         |                                                            ^~
-   drivers/staging/media/tegra-video/tegra20.c:900:2: note: remove the 'if' if its condition is always false
-     900 |         if (ret < 0) {
-         |         ^~~~~~~~~~~~~~
-     901 |                 dev_warn(csi->dev, "MIPI calibration timeout!\n");
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     902 |                 goto exit;
-         |                 ~~~~~~~~~~
-     903 |         }
-         |         ~
-   drivers/staging/media/tegra-video/tegra20.c:886:15: note: initialize the variable 'pp' to silence this warning
-     886 |         u32 value, pp, cil;
-         |                      ^
-         |                       = 0
-   3 warnings generated.
+> 
+> > > +     region_size_0 = nbits - 1;
+> > > +     request_id_0 = ((busnr & 0xff) << 8);
+> > > +
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_TAG_MANAGEMENT, 0x200000);
+> > > +
+> > > +     /* Taking slave err as OKAY */
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE, CDNS_PCIE_HPA_SLAVE_RESP,
+> > > +                          0x0);
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_SLAVE_RESP + 0x4, 0x0);
+> > > +
+> > > +     /* Program the register "i_root_port_req_id_reg" with RP's BDF */
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, I_ROOT_PORT_REQ_ID_REG,
+> > > +                          root_port_req_id_reg);
+> > > +
+> > > +     /**
+> > > +      * Program the register "i_pcie_bus_numbers" with Primary(RP's bus number),
+> > > +      * secondary and subordinate bus numbers
+> > > +      */
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_RP, I_PCIE_BUS_NUMBERS,
+> > > +                          pcie_bus_number_reg);
+> > > +
+> > > +     /* Program the register "lm_hal_sbsa_ctrl[0]" to enable the sbsa */
+> > > +     value = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, LM_HAL_SBSA_CTRL);
+> > > +     value |= BIT(0);
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, LM_HAL_SBSA_CTRL, value);
+> > > +
+> > > +     /* Program region[0] for ECAM */
+> > > +     axi_address_low = (ecam_addr_0 & 0xfff00000) | region_size_0;
+> > 
+> > Could you explain what is getting programmed and why?
+> 
+> Cadence IP register description:
+> 
+> Region Base Address [31:8] (24 bits)
+> Lower [31:8] bits of the AXI region base address.
+> 
+> Region Size (6 bits)
+> The programme value in this field + 1 gives the region size. Minimum value
+> to be programmed into this field is 7 as the lower 8 bits of the AXI region
+> base address are replaced by zeros by the region select logic. Minumum
+> supported region size is 256 bytes.
+> 
 
+Add some of this info in the comments.
 
-vim +909 drivers/staging/media/tegra-video/tegra20.c
+> 
+> The original intention of ecam_addr_0 & 0xfff00000 is to align with 1MB.
+> This is clearly redundant, as one Bus alone requires a 1MB ECAM range.
+> 
 
-   880	
-   881	static int tegra20_finish_pad_calibration(struct tegra_mipi_device *mipi)
-   882	{
-   883		struct tegra_csi *csi = mipi->csi;
-   884		void __iomem *cil_status_reg = csi->iomem + TEGRA_CSI_CSI_CIL_STATUS;
-   885		unsigned int port = mipi->pads;
-   886		u32 value, pp, cil;
-   887		int ret;
-   888	
-   889		/* This part is only for CSI */
-   890		if (port > PORT_B) {
-   891			pm_runtime_put(csi->dev);
-   892	
-   893			return 0;
-   894		}
-   895	
-   896		guard(mutex)(&csi->mipi_lock);
-   897	
-   898		ret = readl_relaxed_poll_timeout(cil_status_reg, value,
-   899						 value & CSI_MIPI_AUTO_CAL_DONE, 50, 250000);
-   900		if (ret < 0) {
-   901			dev_warn(csi->dev, "MIPI calibration timeout!\n");
-   902			goto exit;
-   903		}
-   904	
-   905		/* clear status */
-   906		tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, value);
-   907		ret = readl_relaxed_poll_timeout(cil_status_reg, value,
-   908						 !(value & CSI_MIPI_AUTO_CAL_DONE), 50, 250000);
- > 909		if (ret < 0) {
-   910			dev_warn(csi->dev, "MIPI calibration status timeout!\n");
-   911			goto exit;
-   912		}
-   913	
-   914		pp = tegra20_mipi_read(mipi, TEGRA_CSI_CSI_PIXEL_PARSER_STATUS);
-   915		cil = tegra20_mipi_read(mipi, TEGRA_CSI_CSI_CIL_STATUS);
-   916		if (pp | cil) {
-   917			dev_warn(csi->dev, "Calibration status not been cleared!\n");
-   918			ret = -EINVAL;
-   919			goto exit;
-   920		}
-   921	
-   922	exit:
-   923		tegra20_mipi_write(mipi, TEGRA_CSI_CSI_CIL_STATUS, pp);
-   924	
-   925		/* un-select to avoid interference with DSI */
-   926		tegra20_mipi_write(mipi, TEGRA_CSI_CILB_MIPI_CAL_CONFIG,
-   927				   CSI_CIL_MIPI_CAL_HSPDOS(0) |
-   928				   CSI_CIL_MIPI_CAL_HSPUOS(0) |
-   929				   CSI_CIL_MIPI_CAL_TERMOS(4));
-   930	
-   931		tegra20_mipi_write(mipi, TEGRA_CSI_CILA_MIPI_CAL_CONFIG,
-   932				   CSI_CIL_MIPI_CAL_NOISE_FLT(0xa) |
-   933				   CSI_CIL_MIPI_CAL_PRESCALE(0x2) |
-   934				   CSI_CIL_MIPI_CAL_HSPDOS(0) |
-   935				   CSI_CIL_MIPI_CAL_HSPUOS(0) |
-   936				   CSI_CIL_MIPI_CAL_TERMOS(4));
-   937	
-   938		pm_runtime_put(csi->dev);
-   939	
-   940		return ret;
-   941	}
-   942	
+You need to check for alignment at the start as I mentioned above.
+
+> Will delete & 0xfff00000.
+> 
+> Here it refers to CPU address.
+> 
+> > 
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(0),
+> > > +                          axi_address_low);
+> > > +
+> > > +     /* rc0-high-axi-address */
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(0), 0x0);
+> > > +     /* Type-1 CFG */
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_AT_OB_REGION_DESC0(0), 0x05000000);
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_AT_OB_REGION_DESC1(0),
+> > > +                          (request_id_0 << 16));
+> > > +
+> > > +     /* All AXI bits pass through PCIe */
+> > > +     cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> > > +                          CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(0), 0x1b);
+> > > +     /* PCIe address-high */
+> > 
+> > What is this address?
+> 
+> Cadence IP register description:
+> 
+> AXI to PCIe Address Translation
+> AXI Slave to PCIe Address Translation registers. Provides bits 31:8 of the
+> PCIe address and the number of AXI address bits passed through.
+> 
+> The annotations here will be changed to:  /* AXI to PCIe Address Translation
+> */
+
+Okay.
+
+- Mani
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+மணிவண்ணன் சதாசிவம்
 
