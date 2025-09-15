@@ -1,117 +1,198 @@
-Return-Path: <linux-kernel+bounces-816158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72E0B57051
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:31:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FBCB5704F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCFA13BE62F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:31:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 455694E1064
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BC22857F9;
-	Mon, 15 Sep 2025 06:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4E8284B36;
+	Mon, 15 Sep 2025 06:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q0hNUypx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cyt3nriC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A3325A328;
-	Mon, 15 Sep 2025 06:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847B438DDB;
+	Mon, 15 Sep 2025 06:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757917854; cv=none; b=nAm4j3KvWEzJJFMMnnzKSZQsEmquLPqfCr+uVXiOZClG2k3YcDBGLy6ulCuwMFB7LnLIe+sndqVcOiWrIOHrq1DNmQ5GTccem/J1jEzr4GTaSvT51+FzJ3rWv3ss3z1EvCtpraFGtDSDDVlgSgy32YJuVovdyPddOuhtp7VgR/o=
+	t=1757917875; cv=none; b=dKVV5uG8OJir7VYFTq1zoWcOxCmYYyjVBhpOyEGWlkx0f9jCtb84c9k8jKU8k+G3NeQfqIr1tMI6J1CycmlqOCLohpQwVCIc+qFA6EZbUD5LKdsgINowTn/kLo7nOm49uvw0edyKMK0Vy32aXnCYa5imhl80visi9e46IiXIGOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757917854; c=relaxed/simple;
-	bh=RyHVz7Q9v/zAvfrIw/SnNgHQqda+a783WgwEfzqAFP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CyqsLsZv3zbwOmpqlGP4KAITydYga3MFtnuNhIUt9dzhwOcSO3HdWa6yX50ZNNLx6DFVyLNoKnZd+8SCY1bD2Hbdm9ccBNYCy1Dk0q9XERjk8qznMYdg4MduQXdH3U0V9aINF1+4lBGyjNxXDhD5zh7Jffg46RdzTu9nDKlIDL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q0hNUypx; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1757917875; c=relaxed/simple;
+	bh=De/mkWOtKKz4RwwC1EJU3MDAHWFBrpuPkvoKidJPgis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NYPdWuodAgIpRRZcVovQSFgprTN2hKW1dhaDP2xMFHD+roep14AnJGVbcfaxMmEQ8Cji0tWzvdBv+ZaAGqNXBBxXXAYRY7p2JaRTDLmcmi/9lGM0+tMW2IMzCveHfwQKT6DYT4hGSjRiUUeAvLp4NAVuYjdtivxFGIWUVx302FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cyt3nriC; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757917852; x=1789453852;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=RyHVz7Q9v/zAvfrIw/SnNgHQqda+a783WgwEfzqAFP4=;
-  b=Q0hNUypxXeiPk5OdfREK3zIgw2nQU59GCIMb0CiWvXM0BDzaFLuKGV7E
-   gSAiu5CoBRo+fSWTNg0EISqZxXX1Z/ScLAS8Ps2j0cpNt4ZvAs3VAak17
-   HPy2WQKEchxAmM0LeJsjVX6NdJdRvVO9tDGQsjw4kgWx6CFd5YkHR4Rdq
-   ffq34GZi2SZ3OypBEHdcnEaiUOFTa34Fh3Xsyo/WMIGnXslLVtb+j2BTs
-   jIzD0riV3jGIMQHFeNwXw2npLP2VdbE51mZyLc1ZB1Ml2fiN47HR7TLQ9
-   DSwO+5WGmTg55D/fUUw8DbocEe7IXYB2LXFSjA+AY6u8fLXg9uoFw2oxj
-   g==;
-X-CSE-ConnectionGUID: OCNPVJ2hRKififkNe4WU+Q==
-X-CSE-MsgGUID: GqS+z9b7TeWWokjZRCc5MQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="82750328"
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="82750328"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:30:52 -0700
-X-CSE-ConnectionGUID: 1fvw/BQSQe2QK0jH/+4XvA==
-X-CSE-MsgGUID: yn3zaLhaT3KCKjjhxG9mrg==
+  t=1757917873; x=1789453873;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=De/mkWOtKKz4RwwC1EJU3MDAHWFBrpuPkvoKidJPgis=;
+  b=cyt3nriClesJD5Dxh261Zr5IMClDZhP3RPlu1HpkIyo7+tQK6ukvwB7Q
+   6L6FUdC1VSgTHAWCpxpVIYuPCEu3IQSxkn0lNPo09dzj9khC6pLHHhXu+
+   K6YbA09gHh0uYLmjdCtyn8TEcSBPARXEJjtxPpiC+R69BSXrWlHQVE6AN
+   4SEiRHkLackXmYfGhOCsnJ+7NHsCQ1RjgkPs09Ziav9bl6zrkkCD004Ya
+   5zLRAseMODN4Q14cuwOlr5xaRO1dT5LMBf3JSaNtaZzpeBKKgQ6YHtpwA
+   uyh0JxeIJ8aGuSSdck2DDSFsNtg86qB4tniA2ZuluVpeyjHm9JFbIoGeb
+   w==;
+X-CSE-ConnectionGUID: GuOhEfOFQxmT1LRHvzSG8Q==
+X-CSE-MsgGUID: us86naPFTyOrb65lnNaSTw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63979577"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63979577"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:31:12 -0700
+X-CSE-ConnectionGUID: ShvVWG3MRe2Nt7I3jHhSZQ==
+X-CSE-MsgGUID: kOWvQIobQ+SunMKGhecIfQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="173676993"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:30:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uy2je-000000036ju-3SZb;
-	Mon, 15 Sep 2025 09:30:46 +0300
-Date: Mon, 15 Sep 2025 09:30:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: =?iso-8859-1?Q?S=E9bastien?= Szymanski <sebastien.szymanski@armadeus.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: initialize acpi_gpio_info struct
-Message-ID: <aMeyluS3KuzkTJy2@smile.fi.intel.com>
-References: <20250912-gpiolib-acpi-fix-v1-1-1a41acbffadf@armadeus.com>
- <20250915044703.GA476609@black.igk.intel.com>
+   d="scan'208";a="174974906"
+Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:31:09 -0700
+Message-ID: <6ce69c3b-755d-4369-8d2b-71106d3d6b6e@intel.com>
+Date: Mon, 15 Sep 2025 14:31:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915044703.GA476609@black.igk.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 12/41] KVM: VMX: Introduce CET VMCS fields and control
+ bits
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-13-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250912232319.429659-13-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 06:47:03AM +0200, Mika Westerberg wrote:
-> On Fri, Sep 12, 2025 at 10:18:50PM +0200, Sébastien Szymanski wrote:
-> > Since commit 7c010d463372 ("gpiolib: acpi: Make sure we fill struct
-> > acpi_gpio_info"), uninitialized acpi_gpio_info struct are passed to
-> > __acpi_find_gpio() and later in the call stack info->quirks is used in
-> > acpi_populate_gpio_lookup. This breaks the i2c_hid_cpi driver:
-> > 
-> > [   58.122916] i2c_hid_acpi i2c-UNIW0001:00: HID over i2c has not been provided an Int IRQ
-> > [   58.123097] i2c_hid_acpi i2c-UNIW0001:00: probe with driver i2c_hid_acpi failed with error -22
-> > 
-> > Fix this by initializing the acpi_gpio_info pass to __acpi_find_gpio()
-> > 
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220388
-> > Fixes: 7c010d463372 ("gpiolib: acpi: Make sure we fill struct acpi_gpio_info")
-> > Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
 > 
-> Should have stable tag too, I think. Andy can add that once he applies.
+> Control-flow Enforcement Technology (CET) is a kind of CPU feature used
+> to prevent Return/CALL/Jump-Oriented Programming (ROP/COP/JOP) attacks.
+> It provides two sub-features(SHSTK,IBT) to defend against ROP/COP/JOP
+> style control-flow subversion attacks.
+> 
+> Shadow Stack (SHSTK):
+>    A shadow stack is a second stack used exclusively for control transfer
+>    operations. The shadow stack is separate from the data/normal stack and
+>    can be enabled individually in user and kernel mode. When shadow stack
+>    is enabled, CALL pushes the return address on both the data and shadow
+>    stack. RET pops the return address from both stacks and compares them.
+>    If the return addresses from the two stacks do not match, the processor
+>    generates a #CP.
+> 
+> Indirect Branch Tracking (IBT):
+>    IBT introduces instruction(ENDBRANCH)to mark valid target addresses of
+>    indirect branches (CALL, JMP etc...). If an indirect branch is executed
+>    and the next instruction is _not_ an ENDBRANCH, the processor generates
+>    a #CP. These instruction behaves as a NOP on platforms that have no CET.
+> 
+> Several new CET MSRs are defined to support CET:
+>    MSR_IA32_{U,S}_CET: CET settings for {user,supervisor} CET respectively.
+> 
+>    MSR_IA32_PL{0,1,2,3}_SSP: SHSTK pointer linear address for CPL{0,1,2,3}.
+> 
+>    MSR_IA32_INT_SSP_TAB: Linear address of SHSTK pointer table, whose entry
+> 			is indexed by IST of interrupt gate desc.
+> 
+> Two XSAVES state bits are introduced for CET:
+>    IA32_XSS:[bit 11]: Control saving/restoring user mode CET states
+>    IA32_XSS:[bit 12]: Control saving/restoring supervisor mode CET states.
+> 
+> Six VMCS fields are introduced for CET:
+>    {HOST,GUEST}_S_CET: Stores CET settings for kernel mode.
+>    {HOST,GUEST}_SSP: Stores current active SSP.
+>    {HOST,GUEST}_INTR_SSP_TABLE: Stores current active MSR_IA32_INT_SSP_TAB.
+> 
+> On Intel platforms, two additional bits are defined in VM_EXIT and VM_ENTRY
+> control fields:
+> If VM_EXIT_LOAD_CET_STATE = 1, host CET states are loaded from following
+> VMCS fields at VM-Exit:
+>    HOST_S_CET
+>    HOST_SSP
+>    HOST_INTR_SSP_TABLE
+> 
+> If VM_ENTRY_LOAD_CET_STATE = 1, guest CET states are loaded from following
+> VMCS fields at VM-Entry:
+>    GUEST_S_CET
+>    GUEST_SSP
+>    GUEST_INTR_SSP_TABLE
+> 
+> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-I can add, but this won't appear in the respective mailing list. Or did I miss
-a new tag for stable?
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> ---
+>   arch/x86/include/asm/vmx.h | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index cca7d6641287..ce10a7e2d3d9 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -106,6 +106,7 @@
+>   #define VM_EXIT_CLEAR_BNDCFGS                   0x00800000
+>   #define VM_EXIT_PT_CONCEAL_PIP			0x01000000
+>   #define VM_EXIT_CLEAR_IA32_RTIT_CTL		0x02000000
+> +#define VM_EXIT_LOAD_CET_STATE                  0x10000000
+>   
+>   #define VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR	0x00036dff
+>   
+> @@ -119,6 +120,7 @@
+>   #define VM_ENTRY_LOAD_BNDCFGS                   0x00010000
+>   #define VM_ENTRY_PT_CONCEAL_PIP			0x00020000
+>   #define VM_ENTRY_LOAD_IA32_RTIT_CTL		0x00040000
+> +#define VM_ENTRY_LOAD_CET_STATE                 0x00100000
+>   
+>   #define VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR	0x000011ff
+>   
+> @@ -369,6 +371,9 @@ enum vmcs_field {
+>   	GUEST_PENDING_DBG_EXCEPTIONS    = 0x00006822,
+>   	GUEST_SYSENTER_ESP              = 0x00006824,
+>   	GUEST_SYSENTER_EIP              = 0x00006826,
+> +	GUEST_S_CET                     = 0x00006828,
+> +	GUEST_SSP                       = 0x0000682a,
+> +	GUEST_INTR_SSP_TABLE            = 0x0000682c,
+>   	HOST_CR0                        = 0x00006c00,
+>   	HOST_CR3                        = 0x00006c02,
+>   	HOST_CR4                        = 0x00006c04,
+> @@ -381,6 +386,9 @@ enum vmcs_field {
+>   	HOST_IA32_SYSENTER_EIP          = 0x00006c12,
+>   	HOST_RSP                        = 0x00006c14,
+>   	HOST_RIP                        = 0x00006c16,
+> +	HOST_S_CET                      = 0x00006c18,
+> +	HOST_SSP                        = 0x00006c1a,
+> +	HOST_INTR_SSP_TABLE             = 0x00006c1c
+>   };
+>   
+>   /*
 
 
