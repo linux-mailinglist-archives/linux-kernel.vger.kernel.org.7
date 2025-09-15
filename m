@@ -1,253 +1,206 @@
-Return-Path: <linux-kernel+bounces-817018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27CCB57C7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07002B57C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457BD482026
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9B417B107
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E4A30149A;
-	Mon, 15 Sep 2025 13:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9B030BF65;
+	Mon, 15 Sep 2025 13:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XVqFp5y3"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012023.outbound.protection.outlook.com [52.101.48.23])
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="MCeLEdlv"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2133.outbound.protection.outlook.com [40.107.223.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF172F99B5;
-	Mon, 15 Sep 2025 13:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C835F2FB978;
+	Mon, 15 Sep 2025 13:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.133
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941911; cv=fail; b=I6LrneJcsE4WHiV2kiOCjAVqyYVg1hwKqY+60ded18Es9zdBlFAfG23r1L6XNdg9Al3CJijm4vHAlkNw56oXRS1NBJ6sdIEga4law7mPjhJvjwDg/ZoFQkcigufuADKK/n+ZkiR+zQyhOfHyrFkcWdGSAQh8CcG8L5F1WLmlYJ0=
+	t=1757941959; cv=fail; b=EoPkXIjmBOgncve0v9NPsyrWkGWtOeQLsuP5OYgf3oF9QorxW7+FutyvMU6zvztniu8lOA5q6hsDTfjQsBoo69Hfz33yndyR4tWb+7eUEzK0mQkQyAe2BccwSYreAEEw2SJyUx+UF9AnT0X4i9D6D/JBMGuOHPSzVpkGI8+mb24=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941911; c=relaxed/simple;
-	bh=jWvA/LvaQELPd/VFGW1LI7hmmVVa8xb9XI2Pg8jfni4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=dXxxOSv94JpV0YHhAdX6MVivFMYdjiCHVwWMokL4Way3Iu1LMeaSvbUSpBs2pKQjaVJZVSovJakdcPuD0uXRZ4FfBFJZ5lHP/XSiU7wlqCi12U6jcLpxnspynIBtdrqAxewrMCnd55EKoGn+9oqcy+5c4YHqKv6IKNmQjRwdiK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XVqFp5y3; arc=fail smtp.client-ip=52.101.48.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1757941959; c=relaxed/simple;
+	bh=71sFFii48Ua4ksZOAh6tYpt0yxPpbk0cq4laI3L0ZcQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=il3rCC1P5/dw9/Y+BxLLUjVjCA+yj6M84HEGty/1oXutGp4yOq3YmQNajKi5gkMXcER2sD5W6FLchEnk7bfkWpPwsmsN6V+38KfpbYblhR0qkcDAhj9RZ41oaLPyKwuKEWCQlEIEO0xfDWqX4j0ObP8Hsbm5jUYHxlqUydCkUZg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=MCeLEdlv; arc=fail smtp.client-ip=40.107.223.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VEkukaV9dWdYlGYACJfwPUv8aT8rf9VzkipmE6XrXnJrW2foTRsZ6VjQeascmjZddMglRpESn/B7udLukfAkJk7MEECWPVBNz18vhYrKnouQKM6Q+BV+Eo+cbKjUgzMOutlJLzQke2ncwDCdtIHNFwTyZE18gAR+/EgAJJwR/sJpwKvgQ9bzDPCoPGpewNDNNlaKUgF8DpkW5SSYpfSnbzrRA8xeY8TSS4vu8I4SI2FpvMsE3AvHSEHMNHxT+PAIy34mAwp522nQMlRzb15jv6fZ3qMP5sn3pZuPUVuyLWJh+UF2re/YHP8Xz7ewTB5lSDWrR7krPO6BjQHKYc2LeQ==
+ b=QGJrLj7P3p3njtOgZcgFTIuFzGkc0IIRObfAusDRpVnIz1DNhm8C86MatTrE9ITjuP1Q06gC20o7UqzhNJu/JkwK+N8ZtPXH7pJyFV3kTlTSkCp2iKtDIPpK9gwJVtZefc7iYoIDtKnkJohTo/RCIyYBlYEEsCyVjNP925PNBNpRoz4W+tZ/uhQOJJ+r5O61ZogodyYRR6S5YY8ZcZVF5nTP08Y1atYrUc1vCNHZ0SDhiFx9Y4iBekytIE5hJHuBxBWAqj7UKd7QLsGqIJO5Kw6004owAdws4mm0+QGHYOiRI41Keb422vshQ5SVXCsPTBVfdblMTqpPVTVYfCnzYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F5FAocx9qzl2nBgyJDZFuTLoX3Jt1ZtCO1BToWqTd6I=;
- b=BCoGEyOr08OElk1yUVia1tSuMkXzZDWGuhX0HRuvyofSEbspXMPuKDEeixlmNNNHNEC5UM6ZVj1zboyn5XmO8n//yLy5MWB9+ekcZQ2KRR8Hi4ACBrdVGAyDUTvr8AMdo2rHF4a+S6udWAF2UtssMgnylAKf4a4X04T8U2Q/TZ0vv/VRtAQ19b9cM8atFAOR6oc3kwiB4rW1lMK1mrUH18vKv5DO6+H7Rviw8ohqr0jxX9A3mLu2UtKINdAuQqDLSIaa8lUxoZtZGbpoUW8faKEDLiy6yk+3dfXQaEN/zEVx0GKXNp8+kBljaL+PKTmlhuHmy+pG5tvzHckKYC1kgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=gVg8IX+fmU84pkxLwxCCOG3wrXVMjM8O93gMvDPVR4A=;
+ b=GmX0d8Dd5jNgmZQDW4FvkPyj34VrDJkogh8OMmXPadvGmSxDMDmom3ktFbR/YTilVEVLOkCnOatsXPKnAX+8M/5EQZ6wyuKe1wHuGEz+OTtQserfwrk5Y3QjM79NF0ur0MmD9AgkeFDgQzwugZTROhZIC2Mff2MWpyaiolm5U1voNZijyeVSV9gBvMD0T42uQSvxneyAdbqd9+0Cf4EW0g7Io7xdhxLulbMTmO81/IdtXupCWZPnee7ZwuhtlJnHyb6uunXhMzWz2GCBFWunTkYDdadSKuQ8Elc0PsiOlS3I/fkZL3ZhX4VWcb9Egw0WSHuRffV9CbRPqq6ACxUeEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 50.233.182.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axiado.com;
+ dmarc=none action=none header.from=axiado.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F5FAocx9qzl2nBgyJDZFuTLoX3Jt1ZtCO1BToWqTd6I=;
- b=XVqFp5y3JK52SycRSgkg7BeZKyEXS0/zoIGXUo1lTUVeWyTaTJveWzmrqdS7V+/UP70GgnOiUEFBA+NCRpn7Jln1Fj0a0PevJmSysciinPSlcEyEdE2r70YUkLsAmhOUdUONXnrZhKbdTjLlWZvFpYZcet0fluZeTmQxfDLD2Wyb5Ki0ARxxMldXTdqbt0UG2UDvP74DFxpqO/JxLgz3cZABvp+UrPe64MChNBOaOml/cK95dQZGddogwc8AzjnjmqXCHXXImWBchUtKGtO/ssam7GIa/MQWPaV/zwGmSL9XJcZk0Ymn/8NtIUyKO1ByWpg47BemtzJFZ7GhmSbroQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by IA0PR12MB8087.namprd12.prod.outlook.com (2603:10b6:208:401::5) with
+ bh=gVg8IX+fmU84pkxLwxCCOG3wrXVMjM8O93gMvDPVR4A=;
+ b=MCeLEdlv/Ev5LDQ8MkRuLUMHO5wgRbBBe+o7SUfp11nr134xmY9CzLCGj+44OiRj1ry/gntcuHpZsGQvqxGxKleWgLYAmZIphpop/9RIi+YdxqLw/FdolHFMtR0wJa2XsWdTxS1g2V6Re+Ll8d1oGV+Q5SvFgr8lZbHYMbwFio5qav4tkeRegisI0L2kQSMXn3vMgREiMy6H8v1LX1XGx1pdr/ChWKcVF05dtrg8A0SbVRJa35OsuleqXCEURHP85hHnQNtJvqw2smv+5cjork39V1Q7REZu6MadTRInFk/AEPKpQ3USaKZkdHi1VscAvypANqgc9uv+eBWkqSN4ow==
+Received: from BN0PR03CA0060.namprd03.prod.outlook.com (2603:10b6:408:e7::35)
+ by PH7PR18MB5775.namprd18.prod.outlook.com (2603:10b6:510:304::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 13:11:45 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 13:11:44 +0000
-Date: Mon, 15 Sep 2025 10:11:42 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@redhat.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-	ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-	kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 08/16] mm: add ability to take further action in
- vm_area_desc
-Message-ID: <20250915131142.GI1024672@nvidia.com>
-References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
- <d85cc08dd7c5f0a4d5a3c5a5a1b75556461392a1.1757534913.git.lorenzo.stoakes@oracle.com>
- <20250915121112.GC1024672@nvidia.com>
- <77bbbfe8-871f-4bb3-ae8d-84dd328a1f7c@lucifer.local>
- <20250915124259.GF1024672@nvidia.com>
- <5be340e8-353a-4cde-8770-136a515f326a@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5be340e8-353a-4cde-8770-136a515f326a@lucifer.local>
-X-ClientProxiedBy: YT3PR01CA0102.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:85::21) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 15 Sep
+ 2025 13:12:34 +0000
+Received: from BL6PEPF00020E64.namprd04.prod.outlook.com
+ (2603:10b6:408:e7:cafe::30) by BN0PR03CA0060.outlook.office365.com
+ (2603:10b6:408:e7::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.21 via Frontend Transport; Mon,
+ 15 Sep 2025 13:12:34 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 50.233.182.194)
+ smtp.mailfrom=axiado.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received-SPF: Fail (protection.outlook.com: domain of axiado.com does not
+ designate 50.233.182.194 as permitted sender)
+ receiver=protection.outlook.com; client-ip=50.233.182.194;
+ helo=vm-swbuild15.axiadord;
+Received: from vm-swbuild15.axiadord (50.233.182.194) by
+ BL6PEPF00020E64.mail.protection.outlook.com (10.167.249.25) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13
+ via Frontend Transport; Mon, 15 Sep 2025 13:12:32 +0000
+From: Vladimir Moravcevic <vmoravcevic@axiado.com>
+Subject: [PATCH 0/3] Axiado AX3000 SoC SPI DB controller driver
+Date: Mon, 15 Sep 2025 06:11:54 -0700
+Message-Id: <20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-0-814a1fa2a83e@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJoQyGgC/x2N0QrCMAwAf2Xk2UBWKW7+ivhQ21QDoxmpjMHYv
+ xt8Ou7l7oDOJtzhPhxgvEkXbS7jZYD8Se3NKMUdAoVIM0VMu6SijisRYdeMfRUsL8zavqbLwob
+ FZHPMY4ocbnmaagUPrsZV9v/s8TzPH0EXVjB8AAAA
+X-Change-ID: 20250905-axiado-ax3000-soc-spi-db-controller-driver-91a5e27c88ff
+To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>, 
+ Tzu-Hao Wei <twei@axiado.com>, 
+ Axiado Reviewers <linux-maintainer@axiado.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Vladimir Moravcevic <vmoravcevic@axiado.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757941952; l=1815;
+ i=vmoravcevic@axiado.com; s=20250904; h=from:subject:message-id;
+ bh=71sFFii48Ua4ksZOAh6tYpt0yxPpbk0cq4laI3L0ZcQ=;
+ b=z4N4+XmFYWbAGiVrpZ54Vu4qz9EkdOXl3Tnamk8cLiArIcOc9tMk0vr/eUZWXABg/HCD9zbJM
+ J61IfcaQTAsDhA0zMW8H/j94Fe31ncUxGtY+C/NQVgrWQp6pxPSBx89
+X-Developer-Key: i=vmoravcevic@axiado.com; a=ed25519;
+ pk=iiyhWhM1F4HlCbbW3I3qKZhPCE8JsCrDQMgCBRg4YMA=
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|IA0PR12MB8087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 708710a6-b90b-45a9-c956-08ddf4596b13
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E64:EE_|PH7PR18MB5775:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19dbb32b-469e-438d-f421-08ddf45988b5
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9koqRD9AzRR6S4AySeWb6Akwl+RuPa/25iCSfjk0Dv0k7EkFp6Vjc0BNoDxA?=
- =?us-ascii?Q?U1CWd4XiPlWHy36pV7Nth97fO+5Tylq3uNWkjk6CyRSCJlrzWIxHYCxG5pKw?=
- =?us-ascii?Q?VZ4I2MDma5rcfpJFO3148A39jX9oMqFt0+QHOOvSxLYBaXrezXP5ceYJe2qt?=
- =?us-ascii?Q?jZm96u5ziCAZY/eRzPzDuY8ih1Qa0Tt9FyfaEhoR89sdMK3OnONu8QzT86Hq?=
- =?us-ascii?Q?PuzvghxP3lAaO/YtSLTRJ2haXC8fXk5TxbT/K5g787LU23eGy1zECY3mx0VR?=
- =?us-ascii?Q?7tYGvAdrwf2CKj5KNlJ2aJkUEh4S6uF8EE7fyrrEwDMBJhITnCRwD+qhtuYP?=
- =?us-ascii?Q?QloLbgZw1G4/OcY2hln9dbWwuaERCyqjlxq+eKlwUHAL1XmETumaTwaY+TZ1?=
- =?us-ascii?Q?j2VgVuopv+IZKKce2NQfS3GuS24tuVOlLnDl5t9jJhQeVUM/URSEPw0gQAoz?=
- =?us-ascii?Q?/WEsIrx38EvMKo4FE0eXiXd6zKlqbjKVvS68VKewjTOPjUFT+gb2O7v388jv?=
- =?us-ascii?Q?AV8PWUpZg1ULcHn2z30MBszoUehhZapDHHX67C0RZUViACLqOkTRYh/Po6A6?=
- =?us-ascii?Q?Hh45mrQOzCCkEMuAacRobfe7EldcOSdv6SE1vdqnsl9zAfRJM0jv8r828/LE?=
- =?us-ascii?Q?Afn1eyEVlGPe/Dph2kzxDUI3mhZpfNL8J6kAtDnuIrornajsYlw4ZDIIPcud?=
- =?us-ascii?Q?4HBzsB6N1AiZN4Ga6uplweokNIuHMp5q1NXtH2sZfZtw62xnhl0+8USNkDoL?=
- =?us-ascii?Q?v6i+rPeNBzoPYP4QnuEFtWM43DMTEeSUUp8dU/C8qkqY1dKps2jMiCH5O8LJ?=
- =?us-ascii?Q?g4fOvZGk8PkLTjhnSH8lboWpdS4Ug71kneICvny1M3Wepo989ztGECJauqRf?=
- =?us-ascii?Q?+f1Db8dN/zpR9W42GbY5+BrMlNH2SXHfRJu16jyabzI11MD6S53NyNAZ/BRk?=
- =?us-ascii?Q?aQoTk+ZH+zzkKtTf9pjLtqZzEVh7QwccuxG8U3oAbguVFlYH2o4GkQFWaCmy?=
- =?us-ascii?Q?JuR5ONeimFcWR78YeGbMY5w5gFVBp5NaNg2T7TYg5QOiuNUAwgLzf5hCXrbP?=
- =?us-ascii?Q?X4mxlVqMKRwFm0itxP9irJ6hXBCL2U1OJuL4d6U4ucMC6eM9g+vKQTTXlaO8?=
- =?us-ascii?Q?nudC+eelK/fsWNtYMGSwxAhWe9+JIYiB6+MfXS3D1G+c3hJqEUzKlOwIs2LU?=
- =?us-ascii?Q?/nKhL+yDNrwxX2smulREO59TOLoP0nUl0nKxVK69ziWVxbKHPMP4ZtpA25/r?=
- =?us-ascii?Q?8bL0xVwF75oSklpF8gDMx1yDg4NiDxAM8k1N+WhkBSnx/9ZymOKLWbcBbvBQ?=
- =?us-ascii?Q?aQOfXh6Qy4jjOY9NGZL/5hM4wgzZGbvPZZVBTfxPJVHuC+L10NSt0pRk5aPk?=
- =?us-ascii?Q?ZqWmHnadIXic6erzxo9BcUvZ/E31oPFNpy+e32oiHt0C6pUqRipFytOoezR7?=
- =?us-ascii?Q?9gR55hE5PQ4=3D?=
+	=?utf-8?B?WU9LenJlaFoyNjJvTzcyS0xUQzJocTZydi9XTXhWeDhTZUJQcmFUbkwwQ2tB?=
+ =?utf-8?B?ek5MdjhESTdVTVpDdlZJQUNpTTJJQVVBeTVPOGpnRFRlQVNqNVE4aE1Ec0M2?=
+ =?utf-8?B?SXBDSHBPd1poNkp4R291b1BibzZvdVUvaW1CaE1sM3o0VG9kOEZ2TEdoTlJY?=
+ =?utf-8?B?eklFN3FURlFHc2FneWtWVitNS1k5WnpSMi9vTUJocDBycVBHeUE1SXN3NzYy?=
+ =?utf-8?B?d0t6L0doVll5bjVSOHdFNGNRZFRmRnJrY0tpazJteitnWGs0UUtjUmlJTkxt?=
+ =?utf-8?B?UkFZWjRTSHkvVXovSlVpZExzTWlGR2J2YXRhKzNPNW9aMTREVWRqRDl5TzBI?=
+ =?utf-8?B?K3pzeGV5YjRyeTEyM1RGOW9ZWlVOZ3BtY01ySzlaUGlCaTFIU2RCdGlnMldS?=
+ =?utf-8?B?R1IyUHJTcEIzMVVmZGNhTEFtMUhLOXNpbXFXSFNDMnlXemxvbzg0MjQwOVpE?=
+ =?utf-8?B?d2VWaENJY1FOQi9HSm5nK1dTUDNsS2pheXlDRUZFYk9aNEw0aHhMN2VJN1Ny?=
+ =?utf-8?B?WnhIeEdRWlN4NUp1SklNM0Z0UkE0UUNyZW14Q1J2akl3R3kxK2ozZ1hFQnA4?=
+ =?utf-8?B?VTMzUWUzSlBzc1AyOVpyc0hqSHVTM1ZCWGV1RjllbU5jWGxKVFpPV2VuYi9N?=
+ =?utf-8?B?c00zYU1CQmtFemVOVEYwQnd0cmx3WDZNUmF4cEI1MDcrVUQyVFhiL2NKTlRK?=
+ =?utf-8?B?UEFtZHFrdTVsaUwwSitlMnVEalpYRXRWWHJJQ2ZSWWVKeGNPM3doSUl4UHBZ?=
+ =?utf-8?B?V3dvU0xUTXpldm50VjJObHJyTmpSRkdYNzU5Rm5BVk53RU1ub1poTHhqN3Y2?=
+ =?utf-8?B?NHRvNUdHb05wSGFGbVVrRjR5TysyMlZHdi8zUy9XeHNPNTdqalAxbEtTak9J?=
+ =?utf-8?B?YSsrcTNDZ2dtVG5ROWJicnVpeGZBRjRBbUhBcSsweFd1K1pYUWQreVoxVTds?=
+ =?utf-8?B?bHNVb2ovUjA4cUZkS3V5dEtyUEwraUV0bjROaFdVY0tzM3NIaS9uZTNaaVVO?=
+ =?utf-8?B?Zm1tWWdVZkRhK1hzRUs1U1p5Y2IzSGFnWlF3aUsvZlRRU3ZlWEVJanQxV1Za?=
+ =?utf-8?B?ZXdoZVdnU0o4akphdVJ6MEVUeXpLaURVZFg3UXVlOTFRQ2RwQTZST3FLYVFW?=
+ =?utf-8?B?a1pQd1d4bmVyL09nenFDcWdGM0FGV0JOYUcrVlBSZWJJT09HZ28xaFFkTmkx?=
+ =?utf-8?B?Y1ZVamZ0OUt4c2U3ZE5HOU5jcEw4TDZWU2QyUHZpdCtLK3lHUldNTEVsa2lP?=
+ =?utf-8?B?QXNhdFBEY2JqVXRURnpES2x3Wms0b0x3amhicmtzeisxWmJaUUJjMHJ1Y20r?=
+ =?utf-8?B?MU1aeHg3UFhHWGRtZmRKV3hGZWdKNWJ4djRjZGc2YXptdHRvS09LbG1VaEdE?=
+ =?utf-8?B?TGk3enJlNG1TOUJGeTBPbktoS3BYV2FiWTJSVzNyRXd6N3hyUDB1SVFwK2lB?=
+ =?utf-8?B?RVhqZkdCRUtBUVQ0dW9kWHpLejRXdXRCZ0k4MklBR0JQaDBFOXhqdFNTQ1VI?=
+ =?utf-8?B?ekMrV2hLQjN4RDlGNmJURGZjellZQktnb3dtRmZOZE1Gb0Y2eWJOdU9zUkJk?=
+ =?utf-8?B?VktuMDhvaUUwOU1sQzBna3V0Q1V2bk1HRTBQNjJpMmVYTlBtSzFJc2ZRSGtI?=
+ =?utf-8?B?eHVYZHg5Wlc4bXdjM0I5Rit5MHY5V2dyeGpaQjVCbzBGUXV3K255SHB3Ukhw?=
+ =?utf-8?B?M2pnMHNMd2pOdHZielM1czliUjU2ZHBNUkQ4WUZWTXRuT3pqVUFFQjlMd3U4?=
+ =?utf-8?B?dHZpM2gyN2hvdDBRTFIyUWxUVkR5d2lFV3MwS2hWc1UxSWxVZWNiSnozNmNC?=
+ =?utf-8?B?Y2laaE5DTk9KMXVvemR2WGFBbW5VUjFEMEhzTHpQeGE0d216WlVRL2RPTmI1?=
+ =?utf-8?B?TW5PQitKMHZEUWNFMllxclFib3lJOWRhRk9EQVV3Y05LZE5IdHNiN1lyQ1BK?=
+ =?utf-8?B?WmFqcHV1SDdJVjhDWjVFK09DeHIxRThYb3JWR0JaUWxWU0FYdmxuNzRkQUNU?=
+ =?utf-8?B?YVlVSmpDdG4wOUZSRXNyVzdIaHB6R2d4K1NOZUVRZzkvbFR3RWtlYVkvQ2xM?=
+ =?utf-8?Q?rOTeEx?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ME4HzCajAOXx0ZX7EyyLd5RHfF8oqX42T6cE2R7BMue9xRIOafc8iNCrxNjV?=
- =?us-ascii?Q?5vG5GbDm7dFO5GdrqIZ8unRvRY7YDGMkxAU0Fe/fABjx3mnvtwnamv2hm/G/?=
- =?us-ascii?Q?2fEyQpA8kPLbUid+0vLjWUnfkThWQ36NEt+RwV9VKvEXi42oRb4zvWGzyyqW?=
- =?us-ascii?Q?Gg618VFQhfwRvqlHailHOTDJsOiqwzSoCQHPoU7umd75mQIARaiRJMkYvKLx?=
- =?us-ascii?Q?oV2+jxkDQ/QWopg5Jlx3NoB6AIhodY1+QIhVyTeK6PzN/jvtwxMWeAjJGrJO?=
- =?us-ascii?Q?5JiBlGhy8TQAVvc0JX5JUNUBij4WwFAs6KlESOBDf5HBaqXqTSkD1ND5HTaC?=
- =?us-ascii?Q?jdbMlPfl2r9SQIV5dZrs3BlTV+TpFhTTquEAWoOTBJnDZd/3t2a6ytFA2Sz2?=
- =?us-ascii?Q?3EJUx/7/SW24xB2V0VyxpGoOnwyOZbOOZpHsJ5It4IPxv3OM2Uqr2kwwVJlr?=
- =?us-ascii?Q?KjxTjGsKgyknvSoATBpyiKTB0wFGVmketL1pg1IsWojwKZcG/U3r9IJtFgOQ?=
- =?us-ascii?Q?8tyyIGAOFcnA92nSzbC3xG6Kr/waqbAlr8y2NE+tnUjZq9HveP+yRYN7xTyM?=
- =?us-ascii?Q?7hahnaDnnoA0TCuoRCjfqrEK+Bydc/VuGgEesIAKycMBgiIsnucbxDDZXjmu?=
- =?us-ascii?Q?Rxj1Wyiu60WBG8louC1OuW6AcT3ak+qcrsX0dpMT+enArsZ3/tIRUoBqzz1D?=
- =?us-ascii?Q?XWjG78BWsUdIBzsjTjTgLrXIl8squMRxaQlU/BPX+9YPtuKk9yzAUsfPP69Y?=
- =?us-ascii?Q?gbmKgEow+9EZvtGoMnvpblmVApl4i2dbozUD5w99iAmBm+glxBw3b0tlIVER?=
- =?us-ascii?Q?/bmTEFXIE8yAebQdU+Y8+ztco30BF/JT/9NkYZgk5lfLh+5mGpIPan9j60pu?=
- =?us-ascii?Q?C9G4d+knPGgiPWcetO9iwg87BR7kigHY3gex0vTcqogkGSeoaM56RzAnvnHp?=
- =?us-ascii?Q?Km/FQL6evbO7hJTCEXJId08z5uaN27UxHUMNTKEjcTCwX70EgiTAOcMnSz/I?=
- =?us-ascii?Q?5RAkl451cTU70Xz52NynWYXnA65rVl+vEiOTOYpHjKuS4UChFKNJFujeDUU6?=
- =?us-ascii?Q?i6WIhy7ETMRvjGLBAyaCfW+GW0K2knE1QFhV92hPdbngL+9SZ5g7fdG5AJ6q?=
- =?us-ascii?Q?OX9m1nZEJMC/vIvqkCzR0jKYqM2Fqak0MWwUoMjjJgcMn0yCjicYcm1XtwU0?=
- =?us-ascii?Q?9grk8VGEN/kann/hs0SofUWWUE5VYe6BFQfIkHm5KUwMzs+DOdcAqoOHWxCa?=
- =?us-ascii?Q?KV3iayOvehvNDBkU7XBmDUatXta0PGBkzk8SYik8RRaDfGKJT/A0uZgUxv79?=
- =?us-ascii?Q?Y9jlq8anD+AQSWpxFyuoVAgezF1wQWJjt3bEZTdWsbtw9i51ptj5s1SGxWTT?=
- =?us-ascii?Q?UxcNoHWlTMlSw6XhbV+haw1cslwRHEG68XDtiHSeOjZPT+BWMbWxvHkz26yt?=
- =?us-ascii?Q?J4Q145rgwHhBLog8ff3t1fxXuyowaAg9P4xWkpHwZ+f3Vqof3UX1hEF5lyzQ?=
- =?us-ascii?Q?iUkqLvMAtIgEmLNSuiT5KCgUuKdKcMZst9a6Iz2dIwwC8X/CGdVm+jSoVn1O?=
- =?us-ascii?Q?khAM5W4GBbSyJUQLIfU=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 708710a6-b90b-45a9-c956-08ddf4596b13
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:11:44.4247
+	CIP:50.233.182.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:vm-swbuild15.axiadord;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 13:12:32.9189
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R9ReDV4PkYt20kbwYORhZwWuwB0tMw+3sd/Gj6EsFeDp+trQP4jV0XV5RXaaqGYo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8087
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19dbb32b-469e-438d-f421-08ddf45988b5
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=ff2db17c-4338-408e-9036-2dee8e3e17d7;Ip=[50.233.182.194];Helo=[vm-swbuild15.axiadord]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E64.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR18MB5775
 
-On Mon, Sep 15, 2025 at 01:54:05PM +0100, Lorenzo Stoakes wrote:
-> > Just mark the functions as manipulating the action using the 'action'
-> > in the fuction name.
-> 
-> Because now sub-callers that partially map using one method and partially map
-> using another now need to have a desc too that they have to 'just know' which
-> fields to update or artificially set up.
+Dear maintainers,
 
-Huh? There is only on desc->action, how can you have more than one
-action with this scheme?
+This patch series introduces new SPI controller driver for Axiado AX3000 SoC and its evaluation board.
 
-One action is the right thing anyhow, we can't meaningfully mix
-different action types in the same VMA. That's nonsense.
+The SPI controller provides:
+- Full-duplex and half-duplex transfer support
+- Configurable clock polarity and phase
+- Interrupt-driven
 
-You may need more flexible ways to get the address lists down the road
-because not every driver will be contiguous, but that should still be
-one action.
+Functionality has been verified using the `jedec,spi-nor` interface
+to access onboard flash memory. This ensures compatibility with common NOR flash devices
+used in boot and storage subsystem.
 
-> The vmcore case does something like this.
+The driver integrates with the Linux SPI subsystem and follows kernel coding standards.
 
-vmcore is a true MIXEDMAP, it isn't doing two actions. These mixedmap
-helpers just aren't good for what mixedmap needs.. Mixed map need a
-list of physical pfns with a bit indicating if they are "special" or
-not. If you do it with a callback or a kmalloc allocation it doesn't
-matter.
+This initial submission includes:
+- Driver implementation under `drivers/spi/`
+- Device tree bindings for supported boards
+- Kconfig and Makefile integration
 
-vmcore would then populate that list with its mixture of special and
-non-sepcial memory and do a single mixedmem action.
+Further improvements, including performance tuning and extended hardware feature support,
+will be submitted in follow-up patches.
 
-I think this series should drop the mixedmem stuff, it is the most
-complicated action type. A vmalloc_user action is better for kcov.
+Feedback is welcome.
 
-And maybe that is just a comment overall. This would be nicer if each
-series focused on adding one action with a three-four mmap users
-converted to use it as an example case.
+Signed-off-by: Vladimir Moravcevic <vmoravcevic@axiado.com>
+---
+Vladimir Moravcevic (3):
+      dt-bindings: spi: axiado,ax3000-spi: Add binding for Axiado SPI DB controller
+      spi: axiado: Add driver for Axiado SPI DB controller
+      MAINTAINERS: Add entries for the Axiado SPI DB controller
 
-Eg there are not that many places calling vmalloc_user(), a single
-series could convert alot of them.
+ .../devicetree/bindings/spi/axiado,ax3000-spi.yaml |  62 ++
+ MAINTAINERS                                        |  10 +
+ drivers/spi/Kconfig                                |  10 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-axiado.c                           | 840 +++++++++++++++++++++
+ drivers/spi/spi-axiado.h                           | 124 +++
+ 6 files changed, 1047 insertions(+)
+---
+base-commit: e6b9dce0aeeb91dfc0974ab87f02454e24566182
+change-id: 20250905-axiado-ax3000-soc-spi-db-controller-driver-91a5e27c88ff
 
-If you did it this way we'd discover that there are already
-helpers for vmalloc_user():
+Best regards,
+-- 
+Vladimir Moravcevic <vmoravcevic@axiado.com>
 
-	return remap_vmalloc_range(vma, mdev_state->memblk, 0);
-
-And kcov looks buggy to not be using it already. The above gets the
-VMA type right and doesn't force mixedmap :)
-
-Then the series goals are a bit better we can actually fully convert
-and remove things like remap_vmalloc_range() in single series. That
-looks feasible to me.
-
-Jason
 
