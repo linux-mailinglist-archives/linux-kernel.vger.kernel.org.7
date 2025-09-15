@@ -1,184 +1,163 @@
-Return-Path: <linux-kernel+bounces-817720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A18B585A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:57:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217ACB5859F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334C84C6BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28F657B2775
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C218D2882A9;
-	Mon, 15 Sep 2025 19:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD5E287515;
+	Mon, 15 Sep 2025 19:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I05tl7Zf"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URrTDOqs"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A783A28D8D0
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AB323E229
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757966077; cv=none; b=CAXHKIJkuR0ADAobKatMQkzHE5d4MDMQ7Ce7Q4Mp7TwmmPW2GIhqZTlmc8JKFqaglDmRvoTh8S/ayXeS5aE+2Qv2ndf9NwSLX034+5ag8Fvw3Pk/ccpV8WpQIcpqgiRclFXL/bX+U/E9lRo0RlmwfT5yxv7TLOVh5CC9Wfk1nzE=
+	t=1757966115; cv=none; b=p+zZYOr5/Hkal+Y8tHhJebjeS00Mo3LkMd7BSLPaF0LS46kkH67hPaP5QtLM6bWFx7vQcBiKrVK2n90oZ3kmoHwgONXNpCoBq+Hks6/4pckbd3FUDmV8qzYQ4Ub9uKedKUwR6lAxq/iJMoyV1MR7Ii0IP/gNyHmSdGEZB1wAbmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757966077; c=relaxed/simple;
-	bh=1t5HGUdbEnqlFM4BN+7spAJCkMUdNy6xmmpKrD3jxGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OPHLKs6dKekKoOjFrm+4bzR5769/rb5dWs4saPVP8rS8n+PD8aCca1FV2SGpZzNsgS86H1Q8iRtg5Epe1Nyf87O08SObYUYaD3DOHepVaFktd8JwT+FaZ7LS181a0Nj1da7rNpBN3mVRY9He7tyvYgr2u7e38/uvRyRAjCs2Ero=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I05tl7Zf; arc=none smtp.client-ip=209.85.215.172
+	s=arc-20240116; t=1757966115; c=relaxed/simple;
+	bh=oX6S3cWQPf1Wb59k65AxqPaya62lhiPp4qMPjhmTyNc=;
+	h=From:MIME-Version:Date:Message-ID:Subject:To:Cc:Content-Type; b=RMrIeMzQRQsO2R4Nwivfz4DVrRBejjQ8Ky+05EB27VnLu6gV2gCoW3Urn0WjLoW94MlEij9vZyFG5sMUa+8aYXmsm2p6znriSDGBcEFEbbhtqh6QgeJhLv3nC/l/Q3OOU6FoL64qI8xTjBPDNWRjajNohcTDHxf+rBvEr0cjLZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URrTDOqs; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b54c707374fso1133923a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:54:35 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8250869d5d8so397948885a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757966075; x=1758570875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bKMoNUFr15hMIs+DA/sQ+YcEe3uvxbWw0rkaGFS6MZk=;
-        b=I05tl7Zf8txDlXtRshtYw1C9ax2cMQ3SloWmynucveAWTn8oezeHCt5jLguUz9tzxY
-         DnHMn9FugRtz+b6MFp5Lkrv3xWiDS2n5GCwQPRaFyl4+TrD08LcFZFEfm9EVNpePKiM6
-         hYR8hwUaT4Qdgi7JG/2CuIlQ2Zz5Rjf/IzoPhorHpKZDINmr/KuRHRXRQq6Mn4gkY+b1
-         dKOOLpRUrW9nbU/l/eRdXS4ZBdBWLO9z34zWr1+O+vRkG+SspkmQKD3Su2cSOr8SbCBF
-         gGLaumziF7k3225ahhu1Jflvl8b1cn5bF1owOpn1+aKiCksjrpt8uV8LsulW1xyPJ5dg
-         RlVg==
+        d=gmail.com; s=20230601; t=1757966112; x=1758570912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date
+         :mime-version:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LrHpUBXq6LbkNxh4bGp0NBkouZcQAg01k90RPNhfloY=;
+        b=URrTDOqsZlnEx07R/uklzEm654OnofT6MxN5fYpSgrPXi71RR0Mgyp5e2oAaTOfBj+
+         Qflz01ocnq+fLRT7ZNJyI8C45GR4FtDbjhRfQvlrWpi/8PUwY+eSzYyZhUdUrps+O46X
+         bPq2ytbrtX/wY3jafv3I4B8E4LeIIJOLschV0TBH+7MO7n8Lx4J97+maw1Xa816Vzgh/
+         huErKJiBxKZVm+jejUQBEz80v++ccXsLQ2ClqkeG0asg9HbYzLlbIl7gtl8XaGONmXTA
+         sfWRzf3pCRu74zXq1P14Vk1MOhHCGR73FI+3Z1FAJSWB6Gm7be5u8PIf9jX46hLyV8Ru
+         JT9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757966075; x=1758570875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bKMoNUFr15hMIs+DA/sQ+YcEe3uvxbWw0rkaGFS6MZk=;
-        b=bsjDQd6XIvBtqZ7Ejxqlltsp0N7x8lJkgVRAjojoaRRNpcSR3yKA2AMsdWfOXZTzXM
-         Jl6UIgV82f6ATONBO/BSHphHo2X2dPdbTiK0KlK0SIyONTm/0WOCg8412StGylxOxmgz
-         QvKJ7twcYyeOzp3YCciKlR2QQ/wPTFH1uP8HW8L7PxbZErQE7YrIyR5ilM7bjqoWk7uy
-         xF3gnoo9X7zLSATD++kvzpvRYMb6ukR/iKcAds7pSIXHiAkoWW4VDNprK9QNJUjjuDqq
-         /qc2zIFq+fa1F470dI7ljGpKkh/ZYcWii4JUGmScwlJkXH1KCa+0YiuOsk0KflL1iNrB
-         qgOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6sXifUbwYY17t+BzZ22Y4BeIW8YGMBdaRQC0LDkhxgDcjy90jQvjHVNH9q3E73XiCTYlkBhsMIuY56EA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrXzEIj1XvrXtlb46f3R+XrbezYH7Xy5SX0vbJIOetWRUnr3n5
-	6ySBdgk99yP7DfpQQuubHrWD8l5QEwzppcTGSQoY3HVmR4CjalSenaoc8w2ZPPwAsl2dDOZUDic
-	MCCetNNfl1Sv3nAaCJvRQI3PcoC+ln6c=
-X-Gm-Gg: ASbGncu59bnAGjtIg7fMyw0zhPsV0av8zsBmIeZ0aUbFnBKfS33vi33KIia+IS55HVg
-	gNJnP3mJswEU7p8IaS/96ozh5Ka/ypWUzP6H2KsI6vQjzfxPWE58gYeN/86Lo/7+rjhOzBJ/LH9
-	LSjE5H4oVu8k+S+AHGkG0RHhKyRNk3qTnKVMcBBtuqIsLBKRJZxOESwCd2trv3rU40148fvQRaG
-	HLSoMN4m8wM+BgkSUa3fEJfgUDypAGA9g==
-X-Google-Smtp-Source: AGHT+IGhszUX/wIOL5NPxhRl5wThYAaRRneYHXfDR1OkxzwEwEhfmK0x+kYIpjKOZ/xwWV7ll61KtWzqWi210u8AngA=
-X-Received: by 2002:a17:902:cec6:b0:266:88ae:be6d with SMTP id
- d9443c01a7336-26688aec242mr56968135ad.6.1757966074538; Mon, 15 Sep 2025
- 12:54:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757966112; x=1758570912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date
+         :mime-version:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LrHpUBXq6LbkNxh4bGp0NBkouZcQAg01k90RPNhfloY=;
+        b=m0Gkk17B6i7IJm78EusbRIwUJ1J+Si8s0t/O4hI9croHIUJDR8msCvirfOcbFvDK2h
+         ILszamrZQqpWWDfrgzTEC5TyQIrE9N15uziaWqqGm81XhJ6gvSd49aFUgrpkPVc8n4xL
+         qIJo+e5i3ajYOdpuVpWKoLHa/bm2+p36y/t4zbl7luimsDpZzKQeQAjkj0o43f39+LsC
+         GsdDtUhpviJbJrjYP8Z1Rc9N984t4XZGsHfhWuLEzoSnPD9P1MQ46bJwroNdR9UEDo0C
+         /mWszJHCBbUSmfKAyenAf1M5yOT3lIuMHXODPsElD0iauGnjuZ059uDxIQT/Z9bPmlF1
+         2haA==
+X-Gm-Message-State: AOJu0YzW7C+cQ+CVGIRmZT/PXKEOGInYvQJ2wUAx90A7gyXBi5FV4pDf
+	/m3a+L4d4DLi9FHDX+ypCck010q8eO8oIVyqRWu2QpUK9YAB6g2zzIxsUjmQFVjqTxT2hnNAysH
+	Za6X1Mo5+8XqJUeow+kEqBw5A5HG6iTtkVQ==
+X-Gm-Gg: ASbGncsmOmqqBK6joWXfwZcq+Y3FA74eGxOgS9xCXyUBFxG38z1XRIdJyyEpJjWWXI0
+	+8LG/XSwDHPpf7Ro1FtzlNKb8cI4vbYAtqIa2UbES9gfv1ZmucBZCWeHZEj4Bo7yBESdS5zVvMp
+	CFgw8ZX38dPimz/lQLyy7IhMaY6S+qOLRdGpd17vcU2AXgEHXbO5nRW/7F5tYd498B44i9zzM4q
+	ru9AJ4=
+X-Google-Smtp-Source: AGHT+IFUzzuKQ8JsfJOXQyRYVUMVYOuuFNnM/IAsaG2fXI4NKfNZLDWdB0liX7BfPt053GTWuMSCzOJ5Fhqsf3ub5oA=
+X-Received: by 2002:a05:620a:178a:b0:82a:1dc8:2139 with SMTP id
+ af79cd13be357-82a1dc82187mr450528285a.13.1757966111509; Mon, 15 Sep 2025
+ 12:55:11 -0700 (PDT)
+Received: from 377903785069 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 15 Sep 2025 15:55:10 -0400
+Received: from 377903785069 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 15 Sep 2025 15:55:10 -0400
+From: Forest Crossman <cyrozap@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913222323.894182-1-kriish.sharma2006@gmail.com>
-In-Reply-To: <20250913222323.894182-1-kriish.sharma2006@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 15 Sep 2025 12:54:20 -0700
-X-Gm-Features: Ac12FXzojP0XfNu0UL3urOwuEQZBsAsNl-Qq1OLXgb7nho1cime033bbY4rUq2g
-Message-ID: <CAEf4BzY_f=iNKC2CVz-myfe_OERN9XWHiuNG6vng43-MXUAvSw@mail.gmail.com>
-Subject: Re: [PATCH] bpf: verifier: fix WARNING in reg_bounds_sanity_check (2)
-To: Kriish Sharma <kriish.sharma2006@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com
+Date: Mon, 15 Sep 2025 15:55:10 -0400
+X-Gm-Features: Ac12FXzjEDjGuN-06MEOsUYrs9iJmmp3HVtQ3bq0H83JzQKrw5fDVigzNACASBA
+Message-ID: <CAO3ALPxU5RzcoueC454L=WZ1qGMfAcnxm+T+p+9D8O9mcrUbCQ@mail.gmail.com>
+Subject: [PATCH] usb: mon: Increase BUFF_MAX to 64 MiB to support multi-MB URBs
+To: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 13, 2025 at 3:24=E2=80=AFPM Kriish Sharma
-<kriish.sharma2006@gmail.com> wrote:
->
-> syzbot reported a "REG INVARIANTS VIOLATION" triggered in reg_bounds_sani=
-ty_check()
-> due to inconsistent umin/umax and var_off state after min/max updates.
->
-> reg_set_min_max() and adjust_reg_min_max_vals() could leave a register st=
-ate
-> partially updated before syncing the bounds, causing verifier_bug() to fi=
-re.
->
-> This patch ensures reg_bounds_sync() is called after updates, and additio=
-nally
-> marks registers unbounded if min/max values are inconsistent, so that umi=
-n/umax,
-> smin/smax, and var_off remain consistent.
->
-> Fixes: d69eb204c255 ("Merge tag 'net-6.17-rc5' of git://git.kernel.org/pu=
-b/scm/linux/kernel/git/netdev/net")
-> Reported-by: syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Dc950cc277150935cc0b5
-> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
-> ---
->  kernel/bpf/verifier.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index c4f69a9e9af6..8f5f02d39005 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -16299,6 +16299,19 @@ static void regs_refine_cond_op(struct bpf_reg_s=
-tate *reg1, struct bpf_reg_state
->         }
->  }
->
-> +/* Ensure that a register's min/max bounds are sane.
-> + * If any of the unsigned/signed bounds are inconsistent, mark the
-> + * register as unbounded to prevent verifier invariant violations.
-> + */
-> +static void __maybe_normalize_reg(struct bpf_reg_state *reg)
-> +{
-> +       if (reg->umin_value > reg->umax_value ||
-> +               reg->smin_value > reg->smax_value ||
-> +               reg->u32_min_value > reg->u32_max_value ||
-> +               reg->s32_min_value > reg->s32_max_value)
-> +                       __mark_reg_unbounded(reg);
-> +}
-> +
->  /* Adjusts the register min/max values in the case that the dst_reg and
->   * src_reg are both SCALAR_VALUE registers (or we are simply doing a BPF=
-_K
->   * check, in which case we have a fake SCALAR_VALUE representing insn->i=
-mm).
-> @@ -16325,11 +16338,15 @@ static int reg_set_min_max(struct bpf_verifier_=
-env *env,
->         regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode), i=
-s_jmp32);
->         reg_bounds_sync(false_reg1);
->         reg_bounds_sync(false_reg2);
-> +       __maybe_normalize_reg(false_reg1);
-> +       __maybe_normalize_reg(false_reg2);
->
->         /* jump (TRUE) branch */
->         regs_refine_cond_op(true_reg1, true_reg2, opcode, is_jmp32);
->         reg_bounds_sync(true_reg1);
->         reg_bounds_sync(true_reg2);
-> +       __maybe_normalize_reg(true_reg1);
-> +       __maybe_normalize_reg(true_reg2);
+The usbmon binary interface currently truncates captures of large
+transfers from higher-speed USB devices. Because a single event capture
+is limited to one-fifth of the total buffer size, the current maximum
+size of a captured URB is around 240 KiB. This is insufficient when
+capturing traffic from modern devices that use transfers of several
+hundred kilobytes or more, as truncated URBs can make it impossible for
+user-space USB analysis tools like Wireshark to properly defragment and
+reassemble higher-level protocol packets in the captured data.
 
-We are actually taking a different approach to this problem. Eduard is
-going to modify verifier logic to use the fact that register' tnum and
-range bounds are incompatible to detect branches that cannot be taken,
-and process it as dead code. This way we don't lose information (like
-with the approach in this patch), but rather take advantage of it to
-improve verification performance.
+The root cause of this issue is the 1200 KiB BUFF_MAX limit, which has
+not been changed since the binary interface was introduced in 2006.
 
-Thanks for your patch, but I think we should go with the more generic
-solution I outlined above.
+To resolve this issue, this patch increases BUFF_MAX to 64 MiB. The
+original comment for BUFF_MAX based the limit's calculation on a
+saturated 480 Mbit/s bus. Applying the same logic to a modern USB 3.2
+Gen 2=C3=972 20 Gbit/s bus (~2500 MB/s over a 20ms window) indicates the
+buffer should be at least 50 MB. The new limit of 64 MiB covers that,
+plus a little extra for any overhead.
 
-pw-bot: cr
+With this change, both users and developers should now be able to debug
+and reverse engineer modern USB devices even when running unmodified
+distro kernels.
 
+Please note that this change does not affect the default buffer size. A
+larger buffer is only allocated when a user explicitly requests it via
+the MON_IOCT_RING_SIZE ioctl, so the change to the maximum buffer size
+should not unduly increase memory usage for users that don't
+deliberately request a larger buffer.
 
->
->         err =3D reg_bounds_sanity_check(env, true_reg1, "true_reg1");
->         err =3D err ?: reg_bounds_sanity_check(env, true_reg2, "true_reg2=
-");
-> --
-> 2.34.1
->
+Fixes: 6f23ee1fefdc ("USB: add binary API to usbmon")
+Link: https://lore.kernel.org/CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ=
+8wC1kQ@mail.gmail.com
+Signed-off-by: Forest Crossman <cyrozap@gmail.com>
+---
+ drivers/usb/mon/mon_bin.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
+index c93b43f5bc46..e713fc5964b1 100644
+--- a/drivers/usb/mon/mon_bin.c
++++ b/drivers/usb/mon/mon_bin.c
+@@ -68,18 +68,20 @@
+  * The magic limit was calculated so that it allows the monitoring
+  * application to pick data once in two ticks. This way, another applicati=
+on,
+  * which presumably drives the bus, gets to hog CPU, yet we collect our da=
+ta.
+- * If HZ is 100, a 480 mbit/s bus drives 614 KB every jiffy. USB has an
+- * enormous overhead built into the bus protocol, so we need about 1000 KB=
+.
++ *
++ * Originally, for a 480 Mbit/s bus this required a buffer of about 1 MB. =
+For
++ * modern 20 Gbps buses, this value increases to over 50 MB. The maximum
++ * buffer size is set to 64 MiB to accommodate this.
+  *
+  * This is still too much for most cases, where we just snoop a few
+  * descriptor fetches for enumeration. So, the default is a "reasonable"
+- * amount for systems with HZ=3D250 and incomplete bus saturation.
++ * amount for typical, low-throughput use cases.
+  *
+  * XXX What about multi-megabyte URBs which take minutes to transfer?
+  */
+-#define BUFF_MAX  CHUNK_ALIGN(1200*1024)
+-#define BUFF_DFL   CHUNK_ALIGN(300*1024)
+-#define BUFF_MIN     CHUNK_ALIGN(8*1024)
++#define BUFF_MAX  CHUNK_ALIGN(64*1024*1024)
++#define BUFF_DFL      CHUNK_ALIGN(300*1024)
++#define BUFF_MIN        CHUNK_ALIGN(8*1024)
+
+ /*
+  * The per-event API header (2 per URB).
+--=20
+2.50.1
 
