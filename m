@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-816090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FB0B56F4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:28:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7922DB56F4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F3913BD3F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:28:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4FA17A32F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342142773F0;
-	Mon, 15 Sep 2025 04:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D432798F5;
+	Mon, 15 Sep 2025 04:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="cid15uYn"
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="slVGW7LA"
 Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923D42765D4
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6C12765D4
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757910502; cv=none; b=KR1gkgnOkd4T6oXbdgOr+UMuO+SB6goxXA2Yp8x/1X6VjNjnd++COUaqbkY0nDoDmNvlvM2qoGwDLpT/xbSE5Oq91fLel0BXxiwqPCrpoh1T149emapNMJXKRbOiZodLmDPRYHHYqoJSk4MMdhKN23AfLJPZjCbHbvYslRPNYZQ=
+	t=1757910509; cv=none; b=m5r1ax6vuKKDnf0u4FD17eM0GCAG7OUWacD8KmIOVFXBahQsU7gpAoxJC/8rkexPKpSrsxA8U84I9/rU3A00X2mXRhnL2VFAqfRkebY92n0qxHyXqzhlS7XsToR8if/ppi81c69JzvxjNDrb5UIkSMbb4axYdEwyJyfBDABQ2XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757910502; c=relaxed/simple;
-	bh=dA7iA4QdYV5OQXZnQTJvoO7SWvqCvNO2XgAU9+kXw9M=;
+	s=arc-20240116; t=1757910509; c=relaxed/simple;
+	bh=4CLcBBkjK36gEeYIZwEui/NZjEwFgXh9aYprXRLtRug=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hjDY7QpFJk8FgIslcXWSTuZn9Ea6GhHimYxVVhCXC9bJEgh1O0qjvsUf0ZvOZks+ZAjq+r8Hm9aNvf7M4ojl/G0xvswV5n6rEjp2JF2r1T1036gH/N2oUg2fwZn/thoc6kWpaAmH7mQUqz5s7ZGFSIsOJIzsRSRmV5adNNEFjNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=cid15uYn; arc=none smtp.client-ip=133.167.8.150
+	 MIME-Version; b=gXZn6SNtG8j5FjsBdaU9Phg3V38UBWY4JDrY9f0kyZS+RTjE39fneT5DtSXNegN6NM28L+j5mcxZywa+crCalIT/zB7+/A3PhMWLEq7XBCCdkP5QG1E7h1SSb/D6fsdZn/ivY23cze4xPMcTUHoi88drvN1KIEzY+uzsNuR5N24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=slVGW7LA; arc=none smtp.client-ip=133.167.8.150
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
 Received: from fedora (p4504123-ipxg00s01tokaisakaetozai.aichi.ocn.ne.jp [114.172.113.123])
 	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58F3gpZm004256
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58F3gpZn004256
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
 	Mon, 15 Sep 2025 12:43:16 +0900 (JST)
 	(envelope-from k@mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=66cadRtkt9WSztizM58z6M5q8HJ0282WWMYK0IH6Oy4=;
+DKIM-Signature: a=rsa-sha256; bh=RJxV4KK8ZU7rxaRBtg/Q1j5+pT7wrtjDTMfXC7sU52Y=;
         c=relaxed/relaxed; d=mgml.me;
         h=From:To:Subject:Date:Message-ID;
         s=rs20250315; t=1757907796; v=1;
-        b=cid15uYniIEHCPUNQNY9iMTPrtXl5hdOSrQQkQbZ065Ed44Z0B3ZdnAWvFBt0MWs
-         IvUfzWX6dBgwHPX9FKMZVCd8t9I3YL7wlPFZilmwou+xZg+wOAwDhOZCb4RGrWIn
-         601AUlip8+uecNAf7XkkYKd624ra2LlrAiUYYkOtoL8rML1CVsHWbUfhZNUTv3Qd
-         yDvaMvM3unnJ7lacqFVpTXomB79He3EP1AHb/yGKjE4N7KvLiL4E/8yMyGpkmi5i
-         0RPIFlUyGpOVmE6mSooGjqUNSyRaXWOEsfqHZKbzm75hV1Kk6mzU3hvPVujfgtsx
-         odhbWhXb32U9hzuZ+J1tew==
+        b=slVGW7LATuFQMqYfeezIbLpXf/DneP0VulPE6a+NXMHbI1uOJLXpDr2pXpXvzuno
+         sg3gyxQfLhJ1Y5aXGeuOpJMc1la/9WUAtGPHq0JXMcHcOevaJ/ELxV75y3LisNJW
+         q/966omQdWkIBMgYtRgKYvva/PNOlDg5T/R0UhgG2Xf8c7UVbdgPZFnopWFwmnHF
+         EghZJm5OmNTEtvbo7E1J3jfIMfpNO480OgJVlcC8OLe3B/XCSIz5WQgQUfvkIgyQ
+         CYcvdYcGmxvoVrbjIJit8zzh9qSwyEOF0QtcACwWMW8sOZWt573jowHhvJSgBnyB
+         PDG8v0FasebMymovhzfwAg==
 From: Kenta Akagi <k@mgml.me>
 To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
         Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
         Guoqing Jiang <jgq516@gmail.com>
 Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kenta Akagi <k@mgml.me>
-Subject: [PATCH v4 5/9] md/raid1,raid10: Set R{1,10}BIO_Uptodate when successful retry of a failed bio
-Date: Mon, 15 Sep 2025 12:42:06 +0900
-Message-ID: <20250915034210.8533-6-k@mgml.me>
+Subject: [PATCH v4 6/9] md/raid1,raid10: Fix missing retries Failfast write bios on no-bbl rdevs
+Date: Mon, 15 Sep 2025 12:42:07 +0900
+Message-ID: <20250915034210.8533-7-k@mgml.me>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250915034210.8533-1-k@mgml.me>
 References: <20250915034210.8533-1-k@mgml.me>
@@ -66,135 +66,225 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the current implementation, when a write bio fails, the retry flow
-is as follows:
-* In bi_end_io, e.g. raid1_end_write_request, R1BIO_WriteError is
-  set on the r1bio.
-* The md thread calls handle_write_finished corresponding to this r1bio.
-* Inside handle_write_finished, narrow_write_error is invoked.
-* narrow_write_error rewrites the r1bio on a per-sector basis, marking
-  any failed sectors as badblocks. It returns true if all sectors succeed,
-  or if failed sectors are successfully recorded via rdev_set_badblock.
-  It returns false if rdev_set_badblock fails or if badblocks are disabled.
-* handle_write_finished faults the rdev if it receives false from
-  narrow_write_error. Otherwise, it does nothing.
+In the current implementation, write failures are not retried on rdevs
+with badblocks disabled. This is because narrow_write_error, which issues
+retry bios, immediately returns when badblocks are disabled. As a result,
+a single write failure on such an rdev will immediately mark it as Faulty.
 
-This can cause a problem where an r1bio that succeeded on retry is
-incorrectly reported as failed to the higher layer, for example in the
-following case:
-* Only one In_sync rdev exists, and
-* The write bio initially failed but all retries in
-  narrow_write_error succeed.
+The retry mechanism appears to have been implemented under the assumption
+that a bad block is involved in the failure. However, the retry after
+MD_FAILFAST write failure depend on this code, and a Failfast write request
+may fail for reasons unrelated to bad blocks.
 
-This commit ensures that if a write initially fails but all retries in
-narrow_write_error succeed, R1BIO_Uptodate or R10BIO_Uptodate is set
-and the higher layer receives a successful write status.
+Consequently, if failfast is enabled and badblocks are disabled on all
+rdevs, and all rdevs encounter a failfast write bio failure at the same
+time, no retries will occur and the entire array can be lost.
 
+This commit adds a path in narrow_write_error to retry writes even on rdevs
+where bad blocks are disabled, and failed bios marked with MD_FAILFAST will
+use this path. For non-failfast cases, the behavior remains unchanged: no
+retry writes are attempted to rdevs with bad blocks disabled.
+
+Fixes: 1919cbb23bf1 ("md/raid10: add failfast handling for writes.")
+Fixes: 212e7eb7a340 ("md/raid1: add failfast handling for writes.")
 Signed-off-by: Kenta Akagi <k@mgml.me>
 ---
- drivers/md/raid1.c  | 32 ++++++++++++++++++++++++++------
- drivers/md/raid10.c | 21 +++++++++++++++++++++
- 2 files changed, 47 insertions(+), 6 deletions(-)
+ drivers/md/raid1.c  | 44 +++++++++++++++++++++++++++++---------------
+ drivers/md/raid10.c | 37 ++++++++++++++++++++++++-------------
+ 2 files changed, 53 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 8fff9dacc6e0..806f5cb33a8e 100644
+index 806f5cb33a8e..55213bcd82f4 100644
 --- a/drivers/md/raid1.c
 +++ b/drivers/md/raid1.c
-@@ -2517,6 +2517,21 @@ static void fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
- 	}
- }
- 
-+/**
-+ * narrow_write_error() - Retry write and set badblock
-+ * @r1_bio:	the r1bio containing the write error
-+ * @i:		which device to retry
-+ *
-+ * Rewrites the bio, splitting it at the least common multiple of the logical
-+ * block size and the badblock size. Blocks that fail to be written are marked
-+ * as bad. If badblocks are disabled, no write is attempted and false is
-+ * returned immediately.
-+ *
-+ * Return:
-+ * * %true	- all blocks were written or marked bad successfully
-+ * * %false	- bbl disabled or
-+ *		  one or more blocks write failed and could not be marked bad
-+ */
- static bool narrow_write_error(struct r1bio *r1_bio, int i)
+@@ -2521,18 +2521,19 @@ static void fix_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+  * narrow_write_error() - Retry write and set badblock
+  * @r1_bio:	the r1bio containing the write error
+  * @i:		which device to retry
++ * @force:	Retry writing even if badblock is disabled
+  *
+  * Rewrites the bio, splitting it at the least common multiple of the logical
+  * block size and the badblock size. Blocks that fail to be written are marked
+- * as bad. If badblocks are disabled, no write is attempted and false is
+- * returned immediately.
++ * as bad. If bbl disabled and @force is not set, no retry is attempted.
++ * If bbl disabled and @force is set, the write is retried in the same way.
+  *
+  * Return:
+  * * %true	- all blocks were written or marked bad successfully
+  * * %false	- bbl disabled or
+  *		  one or more blocks write failed and could not be marked bad
+  */
+-static bool narrow_write_error(struct r1bio *r1_bio, int i)
++static bool narrow_write_error(struct r1bio *r1_bio, int i, bool force)
  {
  	struct mddev *mddev = r1_bio->mddev;
-@@ -2614,9 +2629,9 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
- 	int m, idx;
- 	bool fail = false;
+ 	struct r1conf *conf = mddev->private;
+@@ -2553,13 +2554,17 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
+ 	sector_t sector;
+ 	int sectors;
+ 	int sect_to_write = r1_bio->sectors;
+-	bool ok = true;
++	bool write_ok = true;
++	bool setbad_ok = true;
++	bool bbl_enabled = !(rdev->badblocks.shift < 0);
  
--	for (m = 0; m < conf->raid_disks * 2 ; m++)
-+	for (m = 0; m < conf->raid_disks * 2 ; m++) {
-+		struct md_rdev *rdev = conf->mirrors[m].rdev;
- 		if (r1_bio->bios[m] == IO_MADE_GOOD) {
--			struct md_rdev *rdev = conf->mirrors[m].rdev;
+-	if (rdev->badblocks.shift < 0)
++	if (!force && !bbl_enabled)
+ 		return false;
+ 
+-	block_sectors = roundup(1 << rdev->badblocks.shift,
+-				bdev_logical_block_size(rdev->bdev) >> 9);
++	block_sectors = bdev_logical_block_size(rdev->bdev) >> 9;
++	if (bbl_enabled)
++		block_sectors = roundup(1 << rdev->badblocks.shift,
++					block_sectors);
+ 	sector = r1_bio->sector;
+ 	sectors = ((sector + block_sectors)
+ 		   & ~(sector_t)(block_sectors - 1))
+@@ -2587,18 +2592,22 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
+ 		bio_trim(wbio, sector - r1_bio->sector, sectors);
+ 		wbio->bi_iter.bi_sector += rdev->data_offset;
+ 
+-		if (submit_bio_wait(wbio) < 0)
++		if (submit_bio_wait(wbio) < 0) {
+ 			/* failure! */
+-			ok = rdev_set_badblocks(rdev, sector,
+-						sectors, 0)
+-				&& ok;
++			write_ok = false;
++			if (bbl_enabled)
++				setbad_ok = rdev_set_badblocks(rdev, sector,
++							       sectors, 0)
++					    && setbad_ok;
++		}
+ 
+ 		bio_put(wbio);
+ 		sect_to_write -= sectors;
+ 		sector += sectors;
+ 		sectors = block_sectors;
+ 	}
+-	return ok;
++	return (write_ok ||
++		(bbl_enabled && setbad_ok));
+ }
+ 
+ static void handle_sync_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+@@ -2631,18 +2640,23 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+ 
+ 	for (m = 0; m < conf->raid_disks * 2 ; m++) {
+ 		struct md_rdev *rdev = conf->mirrors[m].rdev;
+-		if (r1_bio->bios[m] == IO_MADE_GOOD) {
++		struct bio *bio = r1_bio->bios[m];
++
++		if (bio == IO_MADE_GOOD) {
  			rdev_clear_badblocks(rdev,
  					     r1_bio->sector,
  					     r1_bio->sectors, 0);
-@@ -2628,12 +2643,17 @@ static void handle_write_finished(struct r1conf *conf, struct r1bio *r1_bio)
+ 			rdev_dec_pending(rdev, conf->mddev);
+-		} else if (r1_bio->bios[m] != NULL) {
++		} else if (bio != NULL) {
+ 			/* This drive got a write error.  We need to
+ 			 * narrow down and record precise write
+ 			 * errors.
  			 */
  			fail = true;
- 			if (!narrow_write_error(r1_bio, m))
--				md_error(conf->mddev,
--					 conf->mirrors[m].rdev);
-+				md_error(conf->mddev, rdev);
+-			if (!narrow_write_error(r1_bio, m))
++			if (!narrow_write_error(
++					r1_bio, m,
++					test_bit(FailFast, &rdev->flags) &&
++					(bio->bi_opf & MD_FAILFAST)))
+ 				md_error(conf->mddev, rdev);
  				/* an I/O failed, we can't clear the bitmap */
--			rdev_dec_pending(conf->mirrors[m].rdev,
--					 conf->mddev);
-+			else if (test_bit(In_sync, &rdev->flags) &&
-+				 !test_bit(Faulty, &rdev->flags) &&
-+				 rdev_has_badblock(rdev,
-+						   r1_bio->sector,
-+						   r1_bio->sectors) == 0)
-+				set_bit(R1BIO_Uptodate, &r1_bio->state);
-+			rdev_dec_pending(rdev, conf->mddev);
- 		}
-+	}
- 	if (fail) {
- 		spin_lock_irq(&conf->device_lock);
- 		list_add(&r1_bio->retry_list, &conf->bio_end_io_list);
+ 			else if (test_bit(In_sync, &rdev->flags) &&
 diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index b73af94a88b0..21c2821453e1 100644
+index 21c2821453e1..92cf3047dce6 100644
 --- a/drivers/md/raid10.c
 +++ b/drivers/md/raid10.c
-@@ -2809,6 +2809,21 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
- 	}
- }
- 
-+/**
-+ * narrow_write_error() - Retry write and set badblock
-+ * @r10_bio:	the r10bio containing the write error
-+ * @i:		which device to retry
-+ *
-+ * Rewrites the bio, splitting it at the least common multiple of the logical
-+ * block size and the badblock size. Blocks that fail to be written are marked
-+ * as bad. If badblocks are disabled, no write is attempted and false is
-+ * returned immediately.
-+ *
-+ * Return:
-+ * * %true	- all blocks were written or marked bad successfully
-+ * * %false	- bbl disabled or
-+ *		  one or more blocks write failed and could not be marked bad
-+ */
- static bool narrow_write_error(struct r10bio *r10_bio, int i)
+@@ -2813,18 +2813,18 @@ static void fix_read_error(struct r10conf *conf, struct mddev *mddev, struct r10
+  * narrow_write_error() - Retry write and set badblock
+  * @r10_bio:	the r10bio containing the write error
+  * @i:		which device to retry
++ * @force:	Retry writing even if badblock is disabled
+  *
+  * Rewrites the bio, splitting it at the least common multiple of the logical
+  * block size and the badblock size. Blocks that fail to be written are marked
+- * as bad. If badblocks are disabled, no write is attempted and false is
+- * returned immediately.
++ * as bad. If bbl disabled and @force is not set, no retry is attempted.
+  *
+  * Return:
+  * * %true	- all blocks were written or marked bad successfully
+  * * %false	- bbl disabled or
+  *		  one or more blocks write failed and could not be marked bad
+  */
+-static bool narrow_write_error(struct r10bio *r10_bio, int i)
++static bool narrow_write_error(struct r10bio *r10_bio, int i, bool force)
  {
  	struct bio *bio = r10_bio->master_bio;
-@@ -2975,6 +2990,12 @@ static void handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
- 				fail = true;
- 				if (!narrow_write_error(r10_bio, m))
- 					md_error(conf->mddev, rdev);
-+				else if (test_bit(In_sync, &rdev->flags) &&
-+					 !test_bit(Faulty, &rdev->flags) &&
-+					 rdev_has_badblock(rdev,
-+							   r10_bio->devs[m].addr,
-+							   r10_bio->sectors) == 0)
-+					set_bit(R10BIO_Uptodate, &r10_bio->state);
+ 	struct mddev *mddev = r10_bio->mddev;
+@@ -2845,13 +2845,17 @@ static bool narrow_write_error(struct r10bio *r10_bio, int i)
+ 	sector_t sector;
+ 	int sectors;
+ 	int sect_to_write = r10_bio->sectors;
+-	bool ok = true;
++	bool write_ok = true;
++	bool setbad_ok = true;
++	bool bbl_enabled = !(rdev->badblocks.shift < 0);
+ 
+-	if (rdev->badblocks.shift < 0)
++	if (!force && !bbl_enabled)
+ 		return false;
+ 
+-	block_sectors = roundup(1 << rdev->badblocks.shift,
+-				bdev_logical_block_size(rdev->bdev) >> 9);
++	block_sectors = bdev_logical_block_size(rdev->bdev) >> 9;
++	if (bbl_enabled)
++		block_sectors = roundup(1 << rdev->badblocks.shift,
++					block_sectors);
+ 	sector = r10_bio->sector;
+ 	sectors = ((r10_bio->sector + block_sectors)
+ 		   & ~(sector_t)(block_sectors - 1))
+@@ -2871,18 +2875,22 @@ static bool narrow_write_error(struct r10bio *r10_bio, int i)
+ 				   choose_data_offset(r10_bio, rdev);
+ 		wbio->bi_opf = REQ_OP_WRITE;
+ 
+-		if (submit_bio_wait(wbio) < 0)
++		if (submit_bio_wait(wbio) < 0) {
+ 			/* Failure! */
+-			ok = rdev_set_badblocks(rdev, wsector,
+-						sectors, 0)
+-				&& ok;
++			write_ok = false;
++			if (bbl_enabled)
++				setbad_ok = rdev_set_badblocks(rdev, wsector,
++							       sectors, 0)
++					    && setbad_ok;
++		}
+ 
+ 		bio_put(wbio);
+ 		sect_to_write -= sectors;
+ 		sector += sectors;
+ 		sectors = block_sectors;
+ 	}
+-	return ok;
++	return (write_ok ||
++		(bbl_enabled && setbad_ok));
+ }
+ 
+ static void handle_read_error(struct mddev *mddev, struct r10bio *r10_bio)
+@@ -2988,7 +2996,10 @@ static void handle_write_completed(struct r10conf *conf, struct r10bio *r10_bio)
  				rdev_dec_pending(rdev, conf->mddev);
- 			}
- 			bio = r10_bio->devs[m].repl_bio;
+ 			} else if (bio != NULL && bio->bi_status) {
+ 				fail = true;
+-				if (!narrow_write_error(r10_bio, m))
++				if (!narrow_write_error(
++						r10_bio, m,
++						test_bit(FailFast, &rdev->flags) &&
++						(bio->bi_opf & MD_FAILFAST)))
+ 					md_error(conf->mddev, rdev);
+ 				else if (test_bit(In_sync, &rdev->flags) &&
+ 					 !test_bit(Faulty, &rdev->flags) &&
 -- 
 2.50.1
 
