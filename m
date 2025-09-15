@@ -1,167 +1,171 @@
-Return-Path: <linux-kernel+bounces-817415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312CBB581EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:23:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F0AB581EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA10B17DDB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:22:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70DB7485CB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01929265CA2;
-	Mon, 15 Sep 2025 16:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CEC2773E3;
+	Mon, 15 Sep 2025 16:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nl2TW7nI"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kmvAgdRD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F3924DCE9
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5522C1F7910;
+	Mon, 15 Sep 2025 16:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757953374; cv=none; b=b8FSHCy/qvNM9dV3PlO08tldbEUknYL+CyayRZKGx/jbrR+WSSwb3k2e18jvCJaJ2p4a4V+OKlBZ59xE+ZvFPQufL1i4okwo/ROQyuhaP+lCgcSdtLtKJp+Iggxy126XSVylmM81b79GUlv5TZ6ZopyLX0EX0Wi44j/zR+gzK+k=
+	t=1757953456; cv=none; b=OPj5O/HRjyJN0Pt97MDRNBo6qUhuV5lLHaHH/QAhX+oEXkdnFc13OtBDvu2RandOLSlkfIlWWy4n341NxZCQVdl6ZqdOix0HPeNoFf/ypiNAaUiMNKuEnJ7Hx0MR6oNVuzGBk2OlIpUUcnksM3M4N8CpyKu9N3f5PZeWQsGaCx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757953374; c=relaxed/simple;
-	bh=ckALgmS9JU4cyB+fW+6jYbccuY9CRtj5qXaUIM5eQS0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tUzlI4Nad/XuWYu6kfeJNC7XMPtlkY7JlZEH0b6CqFchwVFrKphDRjGj9J77nsZv72/syhSBFdPLx6js15X6cIWu6wy+MmDGrlcDcnwNCc7FfNTeHumAlVMJmVvogzQxBxzXfD0IHkoPb5U/xxobycPhkS8DENBoRx57GRTg7t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nl2TW7nI; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32e43b0f038so974601a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757953372; x=1758558172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ckALgmS9JU4cyB+fW+6jYbccuY9CRtj5qXaUIM5eQS0=;
-        b=Nl2TW7nIHPm5aguwqvxS1aD3566baaLYAejy4zk8RvMckCmksUcqJgIs7VZc3nZZu8
-         GaB8QAZvVr0n2gOPgTmGSwnvkbpLb/A7myl3LNRfny9htmpSu1rQUvYZfwW5M56Xl2XZ
-         foIJBLnn6mPd2f77YUzirvV4pAnyNFaIg5SE3Hmb6Gx+Z5dQdLBEm5rNC6G8XhLmIbxR
-         e1HNevo/m8f8svl1bCnEYzmNnG6tpX9RIydncpe2VEkHBDFm1wIzV3k7HBFE7ZjpEJHN
-         cbWPUfDfOYVN40k0SlYa7Er5m1U2eM7pG9OdAdLvpXp84Jw2yiQ0S7lG133lULDn4xKO
-         6gfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757953372; x=1758558172;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ckALgmS9JU4cyB+fW+6jYbccuY9CRtj5qXaUIM5eQS0=;
-        b=dHWWSy9RCFd0+SOCraTCqfn3SQ6WhS1uDiofC4CuAG7JRn+rPZO2unNhRdpo+blJOT
-         7q+40bYTFCMabg1ExnDv8REc3tIDHxiUHEZb0JHp7+CYLya9VidTn2nKhZUaC4RnWlt9
-         +ufJgB5OU/2ytxZv0SJZr3xCyDj30gEmbnuCu16U2GrV1KJMgbi1z9d7qXDfhlzdGHW2
-         U4tKwJ/xzOASR2K0rKsZqWe68F1GXxDzOBBHgL+C+EwZ/5Laj08M86A10bmZ0l8wSP6a
-         qwHaVSf7UyBZ3Twz83jtWtTKHsHiQYlu+Qq7VdSOhTa8pTPMxkhf362ywykq1zM9rKpt
-         j5mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkwsfUOgWmQvT2TaXs1y/vVMwLct1xMwBZMJzaappub2NYG5TXec/dUCgGx1XFDCBEJqSgEb5z1iHPdv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcZELqBsNW0ht8K6EMNmX4n3LqtAlvpAhTAzfjeTYKGsmides1
-	kMnciFtUjQPbtqyNJXt2TgdGebI4V9CruVxo6+kNLDQhmJaszmJSq7Y8r7FnUzD5lbu5VA35xJZ
-	0j2LuvA==
-X-Google-Smtp-Source: AGHT+IFIKggxQ6LG8cRpNraYYyVtBUxnQDaC6/BZN4rVOPFXmkRI64p0YHer2xSH/vJbTDmNw1+WQAufXNg=
-X-Received: from pjbst15.prod.google.com ([2002:a17:90b:1fcf:b0:327:b430:11ad])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2d8a:b0:32e:7270:94aa
- with SMTP id 98e67ed59e1d1-32e72709635mr3542385a91.19.1757953372157; Mon, 15
- Sep 2025 09:22:52 -0700 (PDT)
-Date: Mon, 15 Sep 2025 09:22:50 -0700
-In-Reply-To: <4iceeja4kbnb4cir26kme6z6wabnnyu6trc2qo7ye7po65wemr@i2tyg7cfq54x>
+	s=arc-20240116; t=1757953456; c=relaxed/simple;
+	bh=O5SwdmxxLNi13kb62q2OqCYx8wGzejzDqVMTzbO/oLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nByLGQIBzniHsU5uYLAGmmWlamKk8gZbRlj5b1w4PyZ66No2X0MOLUJO0TSF8jrLKjlrP4V0M4a31FT11YnfIv9BHzO2mfvUCRkcPSSIbVggy4z7sFKywcA/IvYVYhjEpqkmj3c2cmrpph4ySEdpS6vCXBOtJdMF3pqFXtnoRUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kmvAgdRD; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757953455; x=1789489455;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=O5SwdmxxLNi13kb62q2OqCYx8wGzejzDqVMTzbO/oLM=;
+  b=kmvAgdRD9Z86wa2auMf/NSqgPtnQtUGHnITPYhEbEMoZ6RdQf2duroXn
+   9IWxzqsYYvVjGiYiIoJx7nSCGN1rBmWYXvE4D5H64gX/IZtk6k+iMCAZg
+   vioxpKK2VUeH0HQ03P93q4gDhWh6NnKb3n/bs1TZ5Fgx5q1Ag5pKkLNtb
+   9rCsdU22y1Bvon0rNH3tbdMD07BW4a981bfTRigVdDuhgEhF8AuZfOkKX
+   PlChBqurG/SOM+xkwqr39gS51lwKxwU1nyGQCcr/yXb73AIMbxIdwakPP
+   wBBDlleoSZG7gB/JpYg37fGxH+3yZtsqdVkTk88Kx+19nORJRUpdYXk0N
+   Q==;
+X-CSE-ConnectionGUID: WeQrXdrlSdO2PAAgccXhaw==
+X-CSE-MsgGUID: uv/xGNjXTdaNyKlWQiPGKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="47782486"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="47782486"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:24:14 -0700
+X-CSE-ConnectionGUID: 5JB3YnFGS3i1pKU71CnCaw==
+X-CSE-MsgGUID: e2KTI+UiQPe8ebRf8vvPPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="179053455"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.129]) ([10.125.111.129])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:24:10 -0700
+Message-ID: <090fd415-42e4-481f-8c77-0b3f2e9f3f63@intel.com>
+Date: Mon, 15 Sep 2025 09:24:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com>
- <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org> <4iceeja4kbnb4cir26kme6z6wabnnyu6trc2qo7ye7po65wemr@i2tyg7cfq54x>
-Message-ID: <aMg9WjipgDtgVPIR@google.com>
-Subject: Re: Commit Links [was: Linux 6.17-rc5]
-From: Sean Christopherson <seanjc@google.com>
-To: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <u.kleine-koenig@baylibre.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/11] cxl/region: Store HPA range in struct cxl_region
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-3-rrichter@amd.com>
+ <fd4fc0f6-03a9-4134-9703-60705ec6898c@intel.com>
+ <aMe96yaXueRvTARq@rric.localdomain>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <aMe96yaXueRvTARq@rric.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Linus,
->=20
-> On Fri, Sep 12, 2025 at 08:24:06AM +0200, Jiri Slaby wrote:
-> > On 08. 09. 25, 0:25, Linus Torvalds wrote:
-> > > So please: don't add useless information to commits in general, but i=
-n
-> > > _particular_ don't add "Link:" tags that only point back to the
-> > > original submission email. Yes, we have tooling that does it
-> > > automatically, but tooling should not be used to increase the human
-> > > burden. Tooling should _help_, not hurt.
-> >=20
-> > I disagree. In a bug-reporter role, I use these Links pointing to the
-> > patches every time. So unless there is a way (I did not find one), they=
- are
-> > very useful.
-> >=20
-> > My use case is (mostly) dig out the thread/patch (grep Link, and b4 or
-> > https://lore.kernel.org/all -> raw) and reply to it as it causes some i=
-ssue.
-> >=20
-> > In a backporter role, I use the Links to look at the thread to see the
-> > _whole_ patchset instead of guess work from the linear commit log.
->=20
-> +1, after a bisection I typically lookup the thread, too, to have my
-> regression report in the right thread. IMHO this is really useful
-> because the next person hitting the same problem (maybe?) finds my
-> report easily. So for me the Link trailer is useful, too.
 
-I described several other scenarios where the source/submitted link is usef=
-ul
-last time this came up[*], along with the same proposal to have a dedicated
-trailer so that people that don't want to risk exploring what might be a de=
-ad
-end can more easily ignore that specific link.
 
-[*] https://lore.kernel.org/all/Z-2XVMOJXUjVYXV0@google.com
+On 9/15/25 12:19 AM, Robert Richter wrote:
+> On 12.09.25 10:17:14, Dave Jiang wrote:
+>>
+>>
+>> On 9/12/25 7:45 AM, Robert Richter wrote:
+>>> Each region has a known host physical address (HPA) range it is
+>>> assigned to. Endpoint decoders assigned to a region share the same HPA
+>>> range. The region's address range is the system's physical address
+>>> (SPA) range.
+>>>
+>>> Endpoint decoders in systems that need address translation use HPAs
+>>> which are not SPAs. To make the SPA range accessible to the endpoint
+>>> decoders, store and track the region's SPA range in struct cxl_region.
+>>> Introduce the @hpa_range member to the struct. Now, the SPA range of
+>>> an endpoint decoder can be determined based on its assigned region.
+>>>
+>>> Patch is a prerequisite to implement address translation which uses
+>>> struct cxl_region to store all relevant region and interleaving
+>>> parameters.
+>>>
+>>> Signed-off-by: Robert Richter <rrichter@amd.com>
+>>
+>> Just a nit below. Otherwise looks ok
+>>
+>> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+>>
+>>> ---
+>>>  drivers/cxl/core/region.c | 17 +++++++++++++++++
+>>>  drivers/cxl/cxl.h         |  2 ++
+>>>  2 files changed, 19 insertions(+)
+>>>
+>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>>> index 2c37c060d983..777d04870180 100644
+>>> --- a/drivers/cxl/core/region.c
+>>> +++ b/drivers/cxl/core/region.c
+>>> @@ -664,6 +664,11 @@ static int alloc_hpa(struct cxl_region *cxlr, resource_size_t size)
+>>>  		return PTR_ERR(res);
+>>>  	}
+>>>  
+>>> +	cxlr->hpa_range = (struct range) {
+>>> +		.start = res->start,
+>>> +		.end = res->end,
+>>> +	};
+>>> +
+>>>  	p->res = res;
+>>>  	p->state = CXL_CONFIG_INTERLEAVE_ACTIVE;
+>>>  
+>>> @@ -700,8 +705,14 @@ static int free_hpa(struct cxl_region *cxlr)
+>>>  	if (p->state >= CXL_CONFIG_ACTIVE)
+>>>  		return -EBUSY;
+>>>  
+>>> +	cxlr->hpa_range = (struct range) {
+>>> +		.start = 0,
+>>> +		.end = -1,
+>>> +	};
+>>> +
+>>>  	cxl_region_iomem_release(cxlr);
+>>>  	p->state = CXL_CONFIG_IDLE;
+>>> +
+>>
+>> stray blank line
+>>>  	return 0;
+>>>  }
+> 
+> This small cleanup was intended and separates the return from other
+> statements to better group the code in (sort of) blocks. It is not
+> worth separate patch and it is common practice to have small cleanups
+> in the area of code that is changed. That allows small style fixes to
+> the code while reworking it, but avoids separate code cleanups causing
+> extra efforts, conflicts and the risk of changing stable code.
+> 
+> Anyway, let me know if you want me remove the change.
 
-> > > Make the links be something *useful*. Make them point to the report
-> > > for the bug that was the cause of the commit. Make them point to the
-> > > discussion that explains the impetus for the commit. But do *not*
-> > > mindlessly just use tooling to create a link that doesn't add anythin=
-g
-> > > that isn't already right there in the commit.
-> > >=20
-> > > I realize that people think the link makes the commit look more "real=
-"
-> > > or whatever. And I've heard people claim that discussion happens late=
-r
-> > > in the thread that the link points to. Neither of those are actually
-> > > true. When bugs happen, people don't go to the original emailed patch
-> > > to talk about them. Much of the time the reporter can't even tell
-> > > which patch caused it - and if they did bisect it, we already have th=
-e
-> > > information - there's no value add in going back to the original
-> > > emailed patch.
->=20
-> The true fact is probably that *most* people don't go back to the email
-> thread to reply there (either because the breaking commit isn't known
-> yet or they just start a new thread). Yes, the few who do can probably
-> easily lookup the thread on lore, but clicking on a link is easier (and
-> makes sure you find the version of the patch that was applied and not
-> an earlier version). (Or a later version that the maintainer failed to
-> notice before applying an earlier version.)
->=20
-> > > So if a link doesn't have any extra relevant information in it, just
-> > > don't add it at all in some misguided hope that tomorrow it will be
-> > > useful.
-> > >=20
-> > > Make "Link:" tags be something to celebrate, not something to curse
-> > > because they are worthless and waste peoples time.
->=20
-> What will you do if a question arises on a commit without a Link:
-> trailer? I guess you will lookup the shortlog on lore?
-> If the Link trailer was skipped because there is no relevant discussion
-> in the thread that resulted in application of the patch, you will still
-> look at it, just taking more time to eventually find it. So while I
-> agree this is a dead end with and without Link: most of the time, not
-> adding the Link: doesn't prevent you exploring that dead end, but only
-> results in more effort to find it.
+Yeah please just drop the change. While it's nice to have, it may potentially cause backport issues generally speaking. 
+
+> 
+> Thanks,
+> 
+> -Robert
+
 
