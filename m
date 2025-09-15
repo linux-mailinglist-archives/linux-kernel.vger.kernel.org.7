@@ -1,97 +1,124 @@
-Return-Path: <linux-kernel+bounces-817273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F23B5801E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:13:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA62B58005
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A531891C2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F2CF16FE40
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5FC340D97;
-	Mon, 15 Sep 2025 15:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFDD32ED5F;
+	Mon, 15 Sep 2025 15:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PosOuLmB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUPYwRGe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD86132A83C;
-	Mon, 15 Sep 2025 15:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC88415D1
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948843; cv=none; b=OMDDWLT4E/dXdR6yo0aOfKHCbAWLXIAp/j72fSTDGiyTbV4vGEVQUKgb3PV6BujvcZ6bPy/kolLJAn58qyPFx+sEtN6mK+vfIpcSnsL9zq5XCyRo3Abz6khWxJDl9IO6fNyJLC9rdpcAKHtAD98tKfzTPpSjLOqQhnhUrmUJvjU=
+	t=1757948866; cv=none; b=EzBT1wZRcUIOhc+7V+wOKz1PoeH3VW+atHCuFuwBC3lBjFStiQtSAmDQKeXO7SIOFIUQFGbidp2mMbAIYcGI0G1cwqCwPZBHOq3XVtzwKS6j+iWxOnKPg3z5ZtIoGALZs+hzVy+RamHhNTDPU6fFIoM8EbKPycWHAuVCZk5humc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948843; c=relaxed/simple;
-	bh=qbPCTs3eX0+uh0P69NXEX4fUArvMON49EQT3NNuN9Po=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UvAfdbICGbrwr2hZtP/N+iPaj3vEazeMjU4ZBUk/GARnNQXVDKG7JtxAhhE0Qo4qhpwrZliS4SBRaB7FDPuyzSN/TZCIH+dpzyBBuhrjAYjMrma/p2/tRF/NmitlG9a6vmaL7P94GPM9q9uhpGjD8kDys5x+8QT1Mo+Fnm8KtEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PosOuLmB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9860AC4CEF1;
-	Mon, 15 Sep 2025 15:07:21 +0000 (UTC)
+	s=arc-20240116; t=1757948866; c=relaxed/simple;
+	bh=lbCbHZj7vfmABIBv408giulALA9kMK1IB9J3cmB5oYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tq7nEU/ziYjgnnQsFfina9EW+JtrGusmUSvPUcKSKrVGP305E7eWiIES+SCioSUYFdigUjuAddyoJtADhXtpzXuqUg3vqIwqqY36M0SfMHciAFK2nfH1AFfJ2ez3c9ixqr58yfuYfWbazCqgIfo+m6+NN1qeBceZV6FWrI6GK+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUPYwRGe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CB1EC4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:07:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757948842;
-	bh=qbPCTs3eX0+uh0P69NXEX4fUArvMON49EQT3NNuN9Po=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PosOuLmBuBUvNGtRRuDafZCiLLmnY4Ha+lvfSFcYCfq/PT4DlFm/BXvrK7d3YP+85
-	 yDkcejz0njoq8bXgBAsdMaX0VbPyyCbGPHm8jR1AMyk2zK3hfwuQCddKIk3C1+4MTk
-	 d8R0uwHTqdYvOK2GygOmrXPMXwrcwfFzL2TbWuxjLanm5d81qBQ8vRMommbs/QCTvu
-	 fGWjbylpWUUnnuTVbTxgYIpLCRZkHd9Zbaf3ncj5/kB0Ux9FCBxLALSJRvWllP7dup
-	 GdvRDTgBX5Zw1AJkTf+ff/Fq3j73vXU31uCA8psG6oECY+Fz2wgBqMETnwpnrtShil
-	 UaaTKa0Xet9Wg==
-Date: Mon, 15 Sep 2025 08:07:20 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Kory Maincent
- <kory.maincent@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
- <roan@protonic.nl>
-Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <20250915080720.17646515@kernel.org>
-In-Reply-To: <aMfczCuRf0bm2GgQ@pengutronix.de>
-References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
-	<20250908124610.2937939-3-o.rempel@pengutronix.de>
-	<20250911193440.1db7c6b4@kernel.org>
-	<aMPw7kUddvGPJCzx@pengutronix.de>
-	<20250912170053.24348da3@kernel.org>
-	<aMfczCuRf0bm2GgQ@pengutronix.de>
+	s=k20201202; t=1757948866;
+	bh=lbCbHZj7vfmABIBv408giulALA9kMK1IB9J3cmB5oYA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DUPYwRGetiwBtqToVa3mN0ORT3D72xTqd5CkfqrL5OKuXcHrHZPTsPkmgQIk5xvZb
+	 8Gbnw7KKoZP++icj/e8mQGBPn3ZaZLvhfLZRnrjQ/rj2SkTIVlC/zs/04r37QsBry1
+	 2KhCxGdAao9ZIdXMJ3TXd2Kyog4EqRE9EdbgZt7gl5HMXBEHO0yxR8VpjwF2mKQZdL
+	 TGPSLSsynhPsW/KUeC8PG40xlbequa9M7Dhcg7SVRiXWVRqnstM1F5IKFs5k2AGOyI
+	 SxTMQD/DDG0zLQWeeybcuFqAGJLcM2if4N4GgNOMUudXl2R/0fHjJaHzj9u+N9Vtea
+	 Q+J4jC16iPWEg==
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45f2fa8a1adso6469025e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:07:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfljmdf7KRzUFz9TAwfGsaLbi+J5Ry+EAukkgW8zOoaKPxSWGjPj669el7AagILxdg40WSUOyH/0Wkidc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMFMnKWb9vhMqlMzuIHfuzBQgbFhIE84BJJBWxbmB6Ti4smPV9
+	3TnvMuuaBlsRsuO+65u8ZxXP9oNFeRiGqosCUnIwIcfz/2EvtgIvUfSooh2vc0PqKhL3jq4ocy1
+	rWeUOcV/1oRHpcrccZc7AUs8ou5f5bzqSnHl+uRmPKg==
+X-Google-Smtp-Source: AGHT+IGhuPmaGbUuWGfTk4lCZHKMHwj2fhjE+kTpWT6mdDBdnrkVFrFl26qtvg+vJOM3dKP52DILM0q3LcZL1isatKE=
+X-Received: by 2002:a05:6000:2f81:b0:3e5:5261:9fae with SMTP id
+ ffacd0b85a97d-3e75e0fd387mr17332464f8f.12.1757948865195; Mon, 15 Sep 2025
+ 08:07:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-6-ryncsn@gmail.com>
+In-Reply-To: <20250910160833.3464-6-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 15 Sep 2025 08:07:32 -0700
+X-Gmail-Original-Message-ID: <CACePvbX4juhR5jry0Bi202qo=nfFVZkztHzo8KxKMW_yKBseyA@mail.gmail.com>
+X-Gm-Features: AS18NWBcTBl91C5Xf37GBuC1knYSyNgjXDoI6S9qWcNEbUHt8JHt-T38VvczERs
+Message-ID: <CACePvbX4juhR5jry0Bi202qo=nfFVZkztHzo8KxKMW_yKBseyA@mail.gmail.com>
+Subject: Re: [PATCH v3 05/15] mm, swap: always lock and check the swap cache
+ folio before use
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 15 Sep 2025 11:30:52 +0200 Oleksij Rempel wrote:
-> On Fri, Sep 12, 2025 at 05:00:53PM -0700, Jakub Kicinski wrote:
-> > On Fri, 12 Sep 2025 12:07:42 +0200 Oleksij Rempel wrote:  
-> > > I would prefer to keep u64 for refresh-rate-ps and num-symbols.
-> > > 
-> > > My reasoning comes from comparing the design decisions of today's industrial
-> > > hardware to the projected needs of upcoming standards like 800 Gbit/s. This
-> > > analysis shows that future PHYs will require values that exceed the limits of a
-> > > u32.  
-> > 
-> > but u64 may or may not also have some alignment expectations, which uint
-> > explicitly excludes  
-> 
-> just to confirm - if we declare an attribute as type: uint in the YAML
-> spec, the kernel side can still use nla_put_u64() to send a 64-bit
-> value, correct? My understanding is that uint is a flexible integer
-> type, so userspace decoders will accept both 4-byte and 8-byte encodings
-> transparently.
+On Wed, Sep 10, 2025 at 9:09=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+> @@ -2004,6 +2002,13 @@ static int unuse_pte(struct vm_area_struct *vma, p=
+md_t *pmd,
+>         bool hwpoisoned =3D false;
+>         int ret =3D 1;
+>
+> +       /*
+> +        * If the folio is removed from swap cache by others, continue to
+> +        * unuse other PTEs. try_to_unuse may try again if we missed this=
+ one.
+> +        */
 
-Theoretically, and yes. But why would you use put_u64 and not
-put_uint() ?
+It took me a while to figure out why we add a
+folio_matches_swap_entry() check here but we don't have an existing
+check for folio swap entry matching in this function. Can you confirm
+that if a race has happened causing the folio swap entry mismatch,
+then try_to_usue() MUST try again rather than "may" try again. It
+seems to me that it is a MUST rather than "may". I am curious in what
+condition the mismatch happens and the try_to_unuse() does not need to
+try again.
+
+BTW, this function has three types of return value, 1, 0, and negative
+for error. The 0 and 1 are ignored by the caller, the caller only
+cares about the negative value. Overall this unuse_pte() and
+try_to_unuse() walk feels complicated and maybe a candidate for later
+clean up. That is not your patch's fault. I am not requesting a
+cleanup in this series.
+
+With that Nitpick,
+
+Acked-by: Chris Li <chrisl@kernel.org>
+
+Chris
+
+> +       if (!folio_matches_swap_entry(folio, entry))
+> +               return 0;
+> +
+>         swapcache =3D folio;
+>         folio =3D ksm_might_need_to_copy(folio, vma, addr);
+>         if (unlikely(!folio))
+> --
+> 2.51.0
+>
 
