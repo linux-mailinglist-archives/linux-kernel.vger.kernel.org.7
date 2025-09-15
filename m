@@ -1,115 +1,83 @@
-Return-Path: <linux-kernel+bounces-817668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EFCB5852B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:14:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD82B5852E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A0A1B2092C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:14:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AA96205C02
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B4D280308;
-	Mon, 15 Sep 2025 19:14:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C7A2820B9;
+	Mon, 15 Sep 2025 19:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEXIVtxf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E747727E066
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DB7280325;
+	Mon, 15 Sep 2025 19:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757963648; cv=none; b=EUMsOQjYjQwUyQKLNmUlKjD/c/Ys7oq8MtS5wmLc+W03PMcTs0ZNzv+YACt8RriJNQLCV0ws7KqT0ZdK7cVsWQnjcwV5uD/y3/01yIvgdeZCKTDGy4hNYariikol1kf/XJaoKAE12e2ECJfPi7fKmyxcv8OA+TPwdhCLrpJDr2I=
+	t=1757963674; cv=none; b=aenJsZFpKRZQftfLDFh1zdKnFDaYPr7CEX8QI/X/H6MafCmu0fkdCMdCd/P5RCugPznYNPnzF8UfWAYynFwL0QHYeWF4m1GTktYBPPdEKjQR3ldpmysJTm0ytDsUiOz/1YR5ri7LM4Cu4djdyPT685dggZRlPOoLnuJzWIc6hBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757963648; c=relaxed/simple;
-	bh=HQo7gECfUj2MZ5v+hbQo63hvW56mGKcbbxadCTI4/PQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ghyt0WKYKexqwAB1KuUyKnUA6hfBDEcHuj4yuJIh/4P/w41RsbgcUqWeu1P7e37HliD66wFw+eJ2KHdDeHJIKqF+e5YqB1vKv3NeLCbrnOguqRy4TMpOB6SfTesUDSTFP1qrcqZkAt9bkJ7HeMkegimSg0+qyLc0HwdUP1RJSMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-40f7be8ecf2so130124935ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757963646; x=1758568446;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R4UQUCfEQT8ITYqE1NUPEjW0YCqUm8im4+P3CCHTgyU=;
-        b=Z3h15GkIfOBT/7Bw4gt3VfdZTF8In2Ak0xB+fO7dQjDboedhNroJ23BnfUKDY7rbzt
-         PUncOCfGlzQUPAZQLpgMXPRCqtiqO3jow8qxoRldyYYStUWpOmWKj5hzhfn19S6Y6bl3
-         vSAYyDCxs7bqj5MkAGOMIliqpYA7VN3taikW5eItTPp45KFZvGuA8/3lGFgy62npdOVE
-         MYNQxO56T7DUV8wwWfadUWZVkwJk2IW53etPo0GlkyE9Bb7mzjuCP5kcoGgMzRPCV1N7
-         i6IIozCes9hBMhEncW7Op8SWC+F2lq5jnj7dflafahQYoRwGWef3HNxxH3gDRcZtC0Qv
-         T61g==
-X-Gm-Message-State: AOJu0YwRkARv4AkS/a/LjUZrJGSzW8ojPtWTaVt4Sf8IxUfW4PNCsjM2
-	fFcMxnLf/LiEkNocjRbgJAi5oePkUGZsYgg9UZoQMeQkH/2zXHzPlgEGgZdVFI98qZrn9uplKCq
-	WNPDpOvgmwHgsCxdFPTyKKYeIMS/IxdtDn9kiBlTFIcfF0KNsgZKNFeChyyo=
-X-Google-Smtp-Source: AGHT+IEVVrzztOqwAkHvH3iMI0wld5ci5RY68q2B1LvbRVFsc18hUfeTn0tL0R+bwpQnIWKWPbhKvhIUrEhdp0ihtuePfkZx8/Ej
+	s=arc-20240116; t=1757963674; c=relaxed/simple;
+	bh=WR/ccjdVbx7wP+a+ik9GRqSJSOhG72rt+JckoOvOLnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFSp9n7Y6dNfXpYH/vSxPvQeD/JNACg9Fz97S3LZbJwcnbDQ/APdpKp/ZffW16MOlM2w+lXFZ4Qp1IyuZppTaVHmZvNiNhK9OVdP9b8E935vcCTw2NwZhQX2Ma4j7D4WSpK+CeIo95a2qVhEwwJlS1cmk/WD0MU45JZAVuy4wCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEXIVtxf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5183C4CEF7;
+	Mon, 15 Sep 2025 19:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757963674;
+	bh=WR/ccjdVbx7wP+a+ik9GRqSJSOhG72rt+JckoOvOLnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nEXIVtxfguipyPtDLkdghE+b3AhQrYr1WhTDX/i6XDMhNTW5yocjLA7GQHaELAQ1Z
+	 ogBFSDttvarY9OafQVB274d9hoD+acfPdEn0eLalnFZW6CA+rajPjxoQ0mbXToDKtk
+	 /vlDeaGKp+fVc8NL8QReojfvoSuUaWjAwpY5hGp4k82z8zIXSj/n3dWHqTw4Zdo9W2
+	 jARY35mtLTsgTVRKZlycQF3o7Uqx4VcXoEvmokN9+IFXcWWRsUWroIfTxeHE9Y+5JC
+	 PgAqlM5PB/YiNWkJsVkIVhAMpWhQbGS/Yl25QynWQS2qHIuW6COpctGbR8o2Wmjjdh
+	 wcaycgutQeD+w==
+Date: Mon, 15 Sep 2025 20:14:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Sabrina Dubroca <sd@queasysnail.net>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>,
+	Carolina Jubran <cjubran@nvidia.com>,
+	Jianbo Liu <jianbol@nvidia.com>
+Subject: Re: [PATCH mlx5-next 1/3] net/mlx5: Remove VLAN insertion fields
+ from WQE Ether segment
+Message-ID: <20250915191428.GA322881@horms.kernel.org>
+References: <1757574619-604874-1-git-send-email-tariqt@nvidia.com>
+ <1757574619-604874-2-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc2:b0:424:49c:bb46 with SMTP id
- e9e14a558f8ab-424049cc711mr45213425ab.0.1757963646164; Mon, 15 Sep 2025
- 12:14:06 -0700 (PDT)
-Date: Mon, 15 Sep 2025 12:14:06 -0700
-In-Reply-To: <68c85874.050a0220.50883.0016.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c8657e.050a0220.3c6139.0d1d.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [input?] KASAN: stack-out-of-bounds Read in cp2112_xfer
-From: syzbot <syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1757574619-604874-2-git-send-email-tariqt@nvidia.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Thu, Sep 11, 2025 at 10:10:17AM +0300, Tariq Toukan wrote:
+> From: Carolina Jubran <cjubran@nvidia.com>
+> 
+> Now that the driver no longer uses VLAN TX insertion via the WQE
+> Ethernet segment, the related fields and flags can be removed.
+> 
+> Signed-off-by: Carolina Jubran <cjubran@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
 
-***
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Subject: Re: [syzbot] [input?] KASAN: stack-out-of-bounds Read in cp2112_xfer
-Author: deepak.takumi.120@gmail.com
-
-#syz test
-
-diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
-index 482f62a78c41..8e17500256f1 100644
---- a/drivers/hid/hid-cp2112.c
-+++ b/drivers/hid/hid-cp2112.c
-@@ -689,7 +689,9 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
-                        count = cp2112_write_read_req(buf, addr, read_length,
-                                                      command, NULL, 0);
-                } else {
--                       count = cp2112_write_req(buf, addr, command,
-+                       if (data->block[0] > 32)
-+                               count = -EINVAL;
-+                       else count = cp2112_write_req(buf, addr, command,
-                                                 data->block + 1,
-                                                 data->block[0]);
-                }
-@@ -700,7 +702,9 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
-                                                      I2C_SMBUS_BLOCK_MAX,
-                                                      command, NULL, 0);
-                } else {
--                       count = cp2112_write_req(buf, addr, command,
-+                       if (data->block[0] > 32)
-+                               count = -EINVAL;
-+                       else count = cp2112_write_req(buf, addr, command,
-                                                 data->block,
-                                                 data->block[0] + 1);
-                }
-@@ -709,7 +713,9 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
-                size = I2C_SMBUS_BLOCK_DATA;
-                read_write = I2C_SMBUS_READ;
-
--               count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
-+               if (data->block[0] > 32)
-+                       count = -EINVAL;
-+               else count = cp2112_write_read_req(buf, addr,
-I2C_SMBUS_BLOCK_MAX,
-                                              command, data->block,
-                                              data->block[0] + 1);
-                break;
 
