@@ -1,146 +1,153 @@
-Return-Path: <linux-kernel+bounces-817214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3F7B57F5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:46:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09267B57F97
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A967B7A9D4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:44:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEB67A7B57
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0391F4C8B;
-	Mon, 15 Sep 2025 14:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF29341650;
+	Mon, 15 Sep 2025 14:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TD8OjTFk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pdUFRMFB"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4254E4D599
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5887340DA6;
+	Mon, 15 Sep 2025 14:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947577; cv=none; b=EnZ+VRPIAZChQyOOFMSP89bei2QJQyM2WucQqBpW3X46GU6HAMSyIv/Glw9ASNjIWMUbCmfGCpcRyCtLXoRNq+q3z6CSJmxe3iIoa1Y1PaI15eEl/LGISLfRyzZrGPM2F5qtC+udYLNvv2MF9/7eI3owE9CYZawydZVbS1p/V7g=
+	t=1757947748; cv=none; b=OTcA1UObTPCxA8iV51VJQtH+PyGoQUnScgAuEOC9sIdesRBG/INmyac8Vq/XgMjrmEjx9i1czCB/uOKNoWCJlIbD0NCTouS7LK5biLrcg25AHJ3NhZFL9AzNuuCn2Eb7114877hrrHfoVGZ+HiKHHKgeRLqVG2cv19W4ni3RyJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947577; c=relaxed/simple;
-	bh=g2Pnb04/njOJX6OP/WYZ5RrANes435aK4i1BTsy1kfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oJf9gVBI6nEn07LmgGskZkiz5P3+LpsOmShf7jPdsnHFA8UTTKyM1EpG7VAtEA5S4zrZks2vDGd8UKrhuPqhJ4UwOJ6kVldYvSco9VDvvTuAK78T8q172PV0fVfamDM3L4i2O+rlm2OA5eMsTWWn05KovHe72P5vwvULjgrfVmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TD8OjTFk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757947575;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g2Pnb04/njOJX6OP/WYZ5RrANes435aK4i1BTsy1kfE=;
-	b=TD8OjTFkKo8rkRW2NHfbrHVN9EJOfiwcICs4SCaZqNgOJVLN9Oz9TqycvJlHnFbG5DuNwd
-	v4N+PVuRjmVNhJOMQVrIJnsc+kZwCJzsvFB/44XxwsTPHRhv1VmKz3REP7QxRJxiIazZJR
-	y2meAnjis4KM8+r5Hrqcv9A86T4dW2g=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-606-1yc0yqVXPk-xiRIz_3dcHg-1; Mon, 15 Sep 2025 10:46:13 -0400
-X-MC-Unique: 1yc0yqVXPk-xiRIz_3dcHg-1
-X-Mimecast-MFC-AGG-ID: 1yc0yqVXPk-xiRIz_3dcHg_1757947572
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b04145e8615so296416966b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:46:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757947572; x=1758552372;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g2Pnb04/njOJX6OP/WYZ5RrANes435aK4i1BTsy1kfE=;
-        b=vNxmdXXxaVycdQhQ6VOKTBxR11LAqjEMRhvM+utW+tbTudVqimHjtv8SRX6oUyTWxR
-         BiAHTlx3PlAmX5kKEX5GOrYyCUDfioXaqZaWe9NPqyCwK4QXmZ7KQUx5SEoVVG2oLLLp
-         hUC8Z49ky8/AnMqRt0NAP214kkiX2kSPJykjEtv2MM6dPr+1OV5kHTkJ1ajd79izbkWy
-         T7JSbb6153CLSfBKJqOz4wiICi4s98t0YdOQQ/PUFPd4pVKCAFfyv6N8hYQBpdPZ+ky8
-         SnbSASKvdacVncCP060GYxyMHMRSqh1CckeIt0C/JzlAHaM35Fysw134lzV0OYD+9gQw
-         iV6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUkHR8AIEzaNYmH4Dv2uDqfK7Xo9JSnoRZ6R04g2Z+fyTJSvYsTcTcGhMwqEK6nO0m29J527hHO26x4fA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+wA8K5UHGaiK6dk+E8B0smckCW+QJm/ym1aE/psYCEyoN9+Z9
-	08zEPnW5mx6HaBsyWjV8MO0khAWGziPLZR1C7lfgmAKnyCMG0R1LfxVZ8wX2o+gpT7sS4X/UK+E
-	B5G1Qg57OeYkEfMTxkvcnJAvE0iA0GRtAZWm8hK+sJgD+FbWR7CoHUklDFse9iU5tDrxBva8XSL
-	FXY9A5sKGCfcvrtIoYipTlmV9O+VrHlSMTs0uGsCd+
-X-Gm-Gg: ASbGncvaOx838fO9UWmd8+gdXEs3cnRnv/E2w9h3QHv8xLKsdA4AM2ZhmV1dgCX0lmr
-	UlkzLDRFs8+VO7tkWnT2rK3ENYaUa5NItw2UwG15y84d3x6fCV8hK5HmEj0RTHdcCXUU5XXdHtK
-	amts5VGTvLUTvpj38TX2QIdw==
-X-Received: by 2002:a17:907:3e03:b0:b10:ecc6:5da3 with SMTP id a640c23a62f3a-b10ecc6640dmr347176566b.63.1757947571748;
-        Mon, 15 Sep 2025 07:46:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERqnM4TDFaglXTZ1TiljWgRnJ/XQu6e2iToInrsLSac1TYz5imtwKAo2yzppRLZeL61hsUVinU28MLjkJY0qE=
-X-Received: by 2002:a17:907:3e03:b0:b10:ecc6:5da3 with SMTP id
- a640c23a62f3a-b10ecc6640dmr347172866b.63.1757947571319; Mon, 15 Sep 2025
- 07:46:11 -0700 (PDT)
+	s=arc-20240116; t=1757947748; c=relaxed/simple;
+	bh=482u6jxGleysWP98tfgATbmerynE8PjrJfFsYgUUIvE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=sOEqdJJr+AKJzceJizhmcd3eyMu8dl8llVI+DJteS8HomWHaADFi+FvmMIWz2L9ZRSgQiwSaan2AQxuK+x6DmDVy1NfpYunMsGp87sOqJQOiRGy59wKoy2FVC3wJ2cQ22e3dXbjRDL1xKB4WNqB4fcUj+Gyxs15Ft6VdYo1R0HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pdUFRMFB; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1757947734; x=1758552534; i=markus.elfring@web.de;
+	bh=482u6jxGleysWP98tfgATbmerynE8PjrJfFsYgUUIvE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pdUFRMFBX3y9VNiuv90E5y0K3leDD3HcC/eJn9kyKVtbk8ehXu9KNl5gNs7pefxY
+	 i8UpZPzts8g7x4rObabvMi0AoYCxeqMLw6qfQtvlibuTn+KB59b8N+C5waRiKd3O9
+	 cJ8c5f1YbUE05Mb6mjGzPO212o6bSjeMunCFjH9QdyeJQr9VsNJB0bSw+KMZhREdx
+	 vPZ/W3rHUVYpf3Mo4Ppurz6kyFlpAKvPdYVT9CBo+Ei8wyUgNNzt81iOG/+FLWPbT
+	 uKKhmzR6ECq8WwR2l+Q9bhaym13UPCcvQb/mj4R3IbPgIxMOAlXDTzoxsjS/Q5IYo
+	 GmcIWcFTrfvQ26oOJw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.188]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3Gki-1uGtKZ3YIM-012td8; Mon, 15
+ Sep 2025 16:48:53 +0200
+Message-ID: <222e3744-554b-44ba-80d2-a40fc4e9bed0@web.de>
+Date: Mon, 15 Sep 2025 16:48:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912-gxrings-v2-0-3c7a60bbeebf@debian.org>
- <CAPpAL=zn7ZQ_bVBML5no3ifkBNgd2d-uhx5n0RUTn-DXWyPxKQ@mail.gmail.com>
- <glf2hbcffix64oogovguhq2dh7icym7hq4qkxw46h74myq6mcf@d7szmoq3gx7q> <jserzzjxf75gwxeul35kvvexscs7yruhlddwhmw6h433shfdhf@jsesmjef3x76>
-In-Reply-To: <jserzzjxf75gwxeul35kvvexscs7yruhlddwhmw6h433shfdhf@jsesmjef3x76>
-From: Lei Yang <leiyang@redhat.com>
-Date: Mon, 15 Sep 2025 22:45:34 +0800
-X-Gm-Features: AS18NWCPqkI_mOz0DI25Cy8SLU0CdLKom07g_re2BVpx_B9ko5kxeK11-LxKKX4
-Message-ID: <CAPpAL=z2YXWDV7HVeSzZbTAUNrb1h4R3s1kmWSyjXp_r7iar8g@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 0/7] net: ethtool: add dedicated GRXRINGS
- driver callbacks
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, kuba@kernel.org, 
-	Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Haoxiang Li <haoxiang_li2024@163.com>, kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andreas Larsson <andreas@gaisler.com>, "David S. Miller"
+ <davem@davemloft.net>
+References: <20250915135201.187119-1-haoxiang_li2024@163.com>
+Subject: Re: [PATCH] sparc: Fix a reference leak in central_build_irq()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250915135201.187119-1-haoxiang_li2024@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HDsnPt6XmmqvRVP/1lOnoyj4myfgeygTe+D4KNYgmudWzU5jvmG
+ o8VsSczmF4GfmokRiZ53+/XkmSXI1+l5s8TmzCuGCfe+vFQXkEhLHvbe2RDr5WIasTDsL7N
+ PCmIzrFThMCSFJ1yk2AgjzAFlYcdrgoD4F6KCggauaCwnJlqoVjFpgJ+2qF9Vak0Gq6GuTz
+ 2nEWFFSnoB8PUiboSU4qg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CJifsE4RA+k=;lwfPRGdMa6c366xpf1kmb3zkRUd
+ 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
 
-On Mon, Sep 15, 2025 at 6:58=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
-ote:
->
-> On Mon, Sep 15, 2025 at 03:55:53AM -0700, Breno Leitao wrote:
-> > On Mon, Sep 15, 2025 at 06:50:15PM +0800, Lei Yang wrote:
-> > > This series of patches introduced a kernel panic bug. The tests are
-> > > based on the linux-next commit [1]. I tried it a few times and found
-> > > that if I didn't apply the current patch, the issue wouldn't be
-> > > triggered. After applying the current patch, the probability of
-> > > triggering the issue was 3/3.
-> > >
-> > > Reproduced steps:
-> > > 1. git clone https://git.kernel.org/pub/scm/linux/kernel/git/next/lin=
-ux-next.git
-> > > 2. applied this series of patches
-> > > 3. compile and install
-> > > 4. reboot server(A kernel panic occurs at this step)
-> >
-> > Thanks for the report. Let me try to reproduce it on my side.
+> Call put_device() once central_op is no longer needed, preventing
+> a reference leak.
 
-Hi Breno
-> >
-> > Is this a physical machine, or, are you using a VM with the virtio chan=
-ge?
+How do you think about to apply the attribute =E2=80=9C__free(put_device)=
+=E2=80=9D here?
+https://elixir.bootlin.com/linux/v6.17-rc5/source/include/linux/device.h#L=
+1180
 
-Yes, I test it with a physical machine. I didn't used VM=EF=BC=8C just inst=
-all
-rpm which compiled based on this series patches, then hit kernel pahic
-at server rebooting.
->
-> Also, I've just sent v3 earlier today, let me know if you have chance to
-> test it as well, given it fixes the issue raised by Jakub in [1]
->
-> Link: https://lore.kernel.org/all/20250914125949.17ea0ade@kernel.org/ [1]
-
-I already submitted a job to test v3, the test will be completed
-tomorrow and I will update the results promptly.
-
-Best Regards
-Lei
->
-
+Regards,
+Markus
 
