@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-816892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E67CB57A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:13:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0F3B57A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DEB01A22394
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:13:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97C23A7FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527F305E2B;
-	Mon, 15 Sep 2025 12:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE65306B0E;
+	Mon, 15 Sep 2025 12:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="toZ28Nr4"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jxhmbybD"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AFB21CC47
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B341321CC47;
+	Mon, 15 Sep 2025 12:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938388; cv=none; b=gbmuAhvIwJPf+dfStuMMcZccuP++k4oJNyZP4mCuorzG0GNQfkOv3mWxggMsJSDuV2np4Z9CSksAzJpP76oweHWVEhLc4THwf09Z8NcZCeYiP74kQT8RjCSnLuKNflG9QIucWg95DWenTnjDHfvfXhK262W52fjoc/qdNoqjX1I=
+	t=1757938407; cv=none; b=bRne+Tb0BaCT6HlFRoFBbOSjODNQAEa8rwmfZ5ek3jhv2Vmh3Y1C8KKz5+M7Iy98FC7pDCzW94seaEZh6P6oQrVIGUGjMLPsk5rigMpXF4pCoXgoROLvJo4D1TSe+qSr8TanUY+EnjLoxFTw70EteEO6Eol8HRHf98boeI8BOSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938388; c=relaxed/simple;
-	bh=SUuqkTQJ7a8CARIOQ64Hd3nkujx+80cxXNbJn6GQRqQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tKe8W5cE63OivC8xXrHZJGxsXFn/zxk3FboDp+iYWS0Faw3Oh5G+9MNR9VsHpD/oDr1CjvdhFV/8DjjxCe/Hdrn+bqhwdR+MXXdO2F6LsUlDGD8+Q9gDjj5t9cQdm1BojKkk8PPJDQaKG25B7w/Ku6SM56/DWestJMsm3aONBgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=toZ28Nr4; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cQP7F21Kpz9spB;
-	Mon, 15 Sep 2025 14:12:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757938377; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SUuqkTQJ7a8CARIOQ64Hd3nkujx+80cxXNbJn6GQRqQ=;
-	b=toZ28Nr4Owemh0E+myUp82bUAmOC0CojumoABgJq9N4eishwF7a7uEQbBOavyFn7HctkXz
-	EZS9Rde4ZVrUdFE3R2gvNvCDE8lN/mq/5RyZNSCm6Cb+qbTtfMLG8hI4kNt5wpWBO9sZwP
-	IOj51CErPu/gkY4MiiNl4aU4RQXiLtpqGrNUDSKj+nX+ef+AtVTAnCdNV6F2EC9dM0aCKb
-	K5guZdfIRImLvJffDs9AF1/Jp82XPjm3b1ERpYWqP4g/NjUwnx7tiOOicBAC8EIZzdP7Po
-	Cs1XfuKSf7jptK1oCKwUZc8hyveUkkE1WHEAXilcM088xWj7COIQE95Ff2VZcQ==
-Message-ID: <62842992a3f18ca7c11e4887d3eced69644793ae.camel@mailbox.org>
-Subject: Re: [PATCH] drm/sched: struct member doc fix
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Luc Ma <onion0709@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich
- <dakr@kernel.org>,  Philipp Stanner <phasta@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,  David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Date: Mon, 15 Sep 2025 14:12:53 +0200
-In-Reply-To: <20250912134406.221443-1-onion0709@gmail.com>
-References: <20250912134406.221443-1-onion0709@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1757938407; c=relaxed/simple;
+	bh=RnaQPEpAFGE+FmHs1ujCADBWdRDqnxSUnXW7zkovLnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dUjR6phRnEtimIMRB/g/Oi6IyIMr6b4D2CW2bov8L/fIt42N7piAw5RsNldS6COIamF3ChaGWQQ97oIrJE9ZFkz9yDKQm3VZmNW9r0PizerL4zaXXukP2hTXXtu5UFX/oiagKorxbSCIdpM510JHrjgZBFPrmP4FlvOqPJhaMM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jxhmbybD; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58FCDIrV1553311;
+	Mon, 15 Sep 2025 07:13:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757938398;
+	bh=fOPm7DPa44haQ5Kh6Z0KE9NG3VWd3hMZ47EgCDyDjFA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jxhmbybDH1VCsp3EWS3EZnSqckVvrYM4dbg0iG1N9VbrLBG00j2pMJmSSS8ibGptO
+	 uedHLOpljz4XbDVZexkY8nct0O4toYGj8MmLSrrdbz8TqC4w9ZtjwP5ToIVRRxt8y/
+	 +HRoOrb/tjjtGL6M4JdhrkKkD48qwBTlE/OuBDJw=
+Received: from DLEE206.ent.ti.com (dlee206.ent.ti.com [157.170.170.90])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58FCDID73381010
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 15 Sep 2025 07:13:18 -0500
+Received: from DLEE210.ent.ti.com (157.170.170.112) by DLEE206.ent.ti.com
+ (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 15 Sep
+ 2025 07:13:18 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE210.ent.ti.com
+ (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 15 Sep 2025 07:13:18 -0500
+Received: from [10.250.32.255] ([10.250.32.255])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58FCDIUI3747341;
+	Mon, 15 Sep 2025 07:13:18 -0500
+Message-ID: <4333d98d-3f6c-4c22-8dee-e4349a7b4046@ti.com>
+Date: Mon, 15 Sep 2025 07:13:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: ymb8xhzxx939tti45p6pfxj66jiwtawp
-X-MBO-RS-ID: e1ac6099f8206fd3e5b
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] iio: health: afe4403: Use devm_regulator_get_enable()
+ helper
+To: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>
+CC: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Andy Shevchenko
+	<andy@kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250813225840.576305-1-afd@ti.com>
+ <20250813225840.576305-2-afd@ti.com>
+ <4e109905-347d-4830-aea6-a93d88252481@baylibre.com>
+ <20250913152052.134a4059@jic23-huawei>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250913152052.134a4059@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, 2025-09-12 at 21:44 +0800, Luc Ma wrote:
-> The mentioned function has been renamed since commit 180fc134d712
-> ("drm/scheduler: Rename cleanup functions v2."), so let it refer to
-> the current one.
->=20
-> Signed-off-by: Luc Ma <onion0709@gmail.com>
+On 9/13/25 9:20 AM, Jonathan Cameron wrote:
+> On Wed, 13 Aug 2025 18:12:26 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> On 8/13/25 5:58 PM, Andrew Davis wrote:
+>>> This takes care of both getting and enabling the regulator in one
+>>> function, it also handles the devm action, so remove that. Also
+>>> do not disable the regulator on suspend, this will be handled for
+>>
+>> I didn't know that this worked automatically. What is the mechanism
+>> that makes it work? I've seen lots of drivers doing the disable/
+>> enable in suspend/resume, so I just always assumed that was how one
+>> is supposed to do it.
+>>
+> Hi Andrew
+> 
+> This question is still open, so I'll not pick the reset of the series
+> up until it's resolved.  I'm going to mark these in patchwork as
+> changes requested so will need a v2 now.
+> 
 
-Thx for the patch.
+Sounds good, I'm still working on tracking down the answer to the
+question. I think it involves the regulator suspend path but
+will sort it out fully for v2.
 
-> ---
-> =C2=A0include/drm/gpu_scheduler.h | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> index 323a505e6e6a..6c4d0563e3d7 100644
-> --- a/include/drm/gpu_scheduler.h
-> +++ b/include/drm/gpu_scheduler.h
-> @@ -546,7 +546,7 @@ struct drm_sched_backend_ops {
-> =C2=A0 * @num_rqs: Number of run-queues. This is at most DRM_SCHED_PRIORI=
-TY_COUNT,
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 as t=
-here's usually one run-queue per priority, but could be less.
-> =C2=A0 * @sched_rq: An allocated array of run-queues of size @num_rqs;
-> - * @job_scheduled: once @drm_sched_entity_do_release is called the sched=
-uler
-> + * @job_scheduled: once @drm_sched_entity_flush is called the scheduler
+Thanks,
+Andrew
 
-The change itself looks correct to me; however, a function must be
-cross-referenced with parenthesis: "once drm_sched_entity_flush() =E2=80=A6=
-"
-
-'@' is used for function parameters.
-
-https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#highlights=
--and-cross-references
-
-Please provide that change in a v2.
-
-Thank you,
-P.
-
-
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 waits on this wait queue until all the sc=
-heduled jobs are
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 finished.
-> =C2=A0 * @job_id_count: used to assign unique id to the each job.
+> 
+> Jonathan
+> 
+>>> us. We now do not need to track the regulator at all, so drop it
+>>> from the device struct.
+>>>
+>>> Signed-off-by: Andrew Davis <afd@ti.com>
+> 
 
 
