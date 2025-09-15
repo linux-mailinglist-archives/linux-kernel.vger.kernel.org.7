@@ -1,97 +1,198 @@
-Return-Path: <linux-kernel+bounces-817759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F5AB5862C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:47:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1DCB58663
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815A42A04EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EA44C5AAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8884F274FD3;
-	Mon, 15 Sep 2025 20:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DD72C0278;
+	Mon, 15 Sep 2025 21:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mnvfexft"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="uHubSila"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0B8EAC7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C019D29D27A;
+	Mon, 15 Sep 2025 21:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757969240; cv=none; b=YkwS5rfSx3bC70TUfM8S+DAXqexXoSmJeGb2WAfwS8awTvnAsawzJuG51F5HsNdsqJGUbW/cQmfIsY12ZH91VykzxJAWBPnXYGfzktebsp44qAdwSXieGAJicPtVomyvCc26cTzTOluheMkzNw8YwwbbvEGO1Fr60ylbGfL+xk0=
+	t=1757970550; cv=none; b=VLw1L8jfynmq5wXFF/vqO2xvjP18qWRWeC0FyvVY6jU9HvfKOa7nreEquFzvPftxQghn2JUdhchSNiA81KOyI/7mUuzBYb+LETGrZtalhLGdNaj2/er+3hn++QdEmQnNV83PQD/xm4NlmnGZ51fK375KDqp/R91vywKw5JTKSzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757969240; c=relaxed/simple;
-	bh=19Lt5UTvmFUNAK1WOTfD6mqn0xNznePgJBE+Oif+Gew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UN4tmJ+K+oyxWTpmpWevNtNL+xrXY6r0h1pfP0Gq+3QLkqNL1uL9Za1H7gnqqqvhjywNGWPLwNlUHxravSLkepvX9lMTHyxTOxgJCWsWCRMN0BOWNWbKt8S3OESGRD+MS1VENqj+eB/HEtsiAeznEm7KVTtXLgXrDjD3p9rzW/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Mnvfexft; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MwTJRT4h1O6UaYWP0BlK79M2H5OP55Nu3v4YH0QgOj0=; b=Mnvfexft4nqDCE4G082SbkCDUa
-	+01vaHcfEL7uMGPvqylZliQzmXDiVZZ7rYo/RBQnvPK/7ONXg6B7jg/gj+UAIc/Dp3Jr5Q3nhmN0x
-	KHBx5ZiXwBar+6JtrHX952/k93KamnuGw/3vQIJ49rYZvJb+ZyfAXlSQOiykDsQOe5M+gHOzXPcJq
-	gYkAYP8q/bkI9vVI65O4tFsWmRdS3Z6tLXzfeYkvuuLZOJEL5nFWZa1XmPfoPPip7Z4UNCk0D220v
-	BTuJd1A+wqHjR9IYE7qzOU13T7Ajhf0i8gt7yuZzN7OkLkW3+O88FOr57QscjReGgJdZRIVld8a8X
-	jN8liUaA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uyG6K-00000006bmk-1w1p;
-	Mon, 15 Sep 2025 20:47:04 +0000
-Date: Mon, 15 Sep 2025 21:47:04 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com,
-	mhocko@kernel.org, zhengqi.arch@bytedance.com,
-	shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com,
-	hughd@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: vmscan: remove folio_test_private() check in
- pageout()
-Message-ID: <aMh7SAlitp5FqR-M@casper.infradead.org>
-References: <cover.1757648598.git.baolin.wang@linux.alibaba.com>
- <b8c0fe71982aa1cafafd59d8e71064efaac16007.1757648598.git.baolin.wang@linux.alibaba.com>
- <aMQ6bW-OoMWMVEFF@casper.infradead.org>
- <11629632-c652-460e-b617-3ec0c27969f5@linux.alibaba.com>
+	s=arc-20240116; t=1757970550; c=relaxed/simple;
+	bh=ShGiyXLyx3jm+KuG+IC5eD9uMmaQRpPiVQwMFDqxLr4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Kv3KOayrwUB+fV8rK9YPl/YNEiqW8B9iuc2O5YcQKMvVeaM+AZn/Mgt61nv+uOuueMgQskYPIDro4ZV4uRvlUFVoMNdATM8MP0etgjv2fMsLyDY7sLr9VkRepHuDKB+eDPd0YglsKqgDhph70ZFKDR5NxTDHnvMcEVT1NwKOnUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=uHubSila; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=zhS7w4nBBZscnyjH8JgikhDYqJC/dkSKTQJL0yNFz8Y=; b=uHubSilac/r1athKzfXc25awmt
+	GD5yPjnn86yZU69V8cKLg/Si95RZMDQXVIz3knKr4bKrwWoQKLjC7BMUT1uoYSNqC54/7v33zi86V
+	icRGP1eNRdOPI2qZHXar09/vB79fMpFh67rPSuuWVpQprvDJGe5III4Hpi5ASzmPBLcxmn+033cqP
+	YotWB2ZbH6dANoJbXZ7pU7Fnd06yJz5Rg0EG+EKqbmX5Fg3FbFoB3aglO1/qTbDGf/B2zqLTFdvwH
+	wiv6s7CUsvvfqwkxD3QEIZs4jmmZGrOTWAZbZ/rE7Psw8+KdOzQ7+/1HQ7qh29muVGOyHKqgm4TPo
+	1kg230qA==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uyG7d-000OQt-2o;
+	Mon, 15 Sep 2025 22:48:25 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uyG7e-000FkJ-03;
+	Mon, 15 Sep 2025 22:48:25 +0200
+Message-ID: <550f28a9aa82a28beb35fd3490dbe08928ba9eed.camel@apitzsch.eu>
+Subject: Re: [PATCH 7/7] media: i2c: dw9719: Fix power on/off sequence
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Val Packett
+ <val@packett.cool>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, 	devicetree@vger.kernel.org, Daniel Scally
+ <djrscally@gmail.com>, 	~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, 	linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Mon, 15 Sep 2025 22:48:23 +0200
+In-Reply-To: <aKLZ39IzI_azrDIu@kekkonen.localdomain>
+References: <20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu>
+	 <20250817-dw9719-v1-7-426f46c69a5a@apitzsch.eu>
+	 <aKLZ39IzI_azrDIu@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11629632-c652-460e-b617-3ec0c27969f5@linux.alibaba.com>
+X-Virus-Scanned: Clear (ClamAV 1.0.9/27764/Mon Sep 15 10:26:33 2025)
 
-On Sat, Sep 13, 2025 at 11:04:48AM +0800, Baolin Wang wrote:
-> On 2025/9/12 23:21, Matthew Wilcox wrote:
-> > On Fri, Sep 12, 2025 at 11:45:07AM +0800, Baolin Wang wrote:
-> > > @@ -697,22 +697,8 @@ static pageout_t pageout(struct folio *folio, struct address_space *mapping,
-> > >   	 * swap_backing_dev_info is bust: it doesn't reflect the
-> > >   	 * congestion state of the swapdevs.  Easy to fix, if needed.
-> > >   	 */
-> > > -	if (!is_page_cache_freeable(folio))
-> > > +	if (!is_page_cache_freeable(folio) || !mapping)
-> > >   		return PAGE_KEEP;
-> > 
-> > I feel like we need to keep the comment (assuming it's still true ...
-> > which it probably is, although there's nobody who would think to update
-> > this comment if it became no longer true).  I would certainly wonder why
-> > we can have this !mapping test.
-> 
-> I think the !mapping check is still needed here because the tmpfs/shmem
-> folios truncation might race with folio reclamation, see shmem_undo_range().
+Hi Sakari,
 
-I agree that we still need the !mapping check.  But it needs this comment
-that you're deleting, because it's not obvious why we'd have a dirty
-folio with a NULL mapping on the LRU list.
+@Val, please see below.
 
-> > > -		/*
-> > > -		 * Some data journaling orphaned folios can have
-> > > -		 * folio->mapping == NULL while being dirty with clean buffers.
-> > > -		 */
+Am Montag, dem 18.08.2025 um 07:44 +0000 schrieb Sakari Ailus:
+> Hi Andr=C3=A9,
+>=20
+> On Sun, Aug 17, 2025 at 07:09:26PM +0200, Andr=C3=A9 Apitzsch via B4 Rela=
+y
+> wrote:
+> > From: Val Packett <val@packett.cool>
+> >=20
+> > The "jiggle" code was not actually expecting failure, which it
+> > should because that's what actually happens when the device wasn't
+> > already woken up by the regulator power-on (i.e. in the case of a
+> > shared regulator).
+> >=20
+> > Also, do actually enter the internal suspend mode on shutdown, to
+> > save power in the case of a shared regulator.
+> >=20
+> > Also, wait a bit longer (2x tOPR) on waking up, 1x is not enough at
+> > least on the DW9718S as found on the motorola-nora smartphone.
+> >=20
+> > Signed-off-by: Val Packett <val@packett.cool>
+> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > ---
+> > =C2=A0drivers/media/i2c/dw9719.c | 23 ++++++++++++++++-------
+> > =C2=A01 file changed, 16 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/media/i2c/dw9719.c
+> > b/drivers/media/i2c/dw9719.c
+> > index
+> > 63c7fd4ab70a0e02518252b23b89c45df4ba273d..dd28a0223d6ac980084b1f661
+> > bd029ea6b0be503 100644
+> > --- a/drivers/media/i2c/dw9719.c
+> > +++ b/drivers/media/i2c/dw9719.c
+> > @@ -95,12 +95,19 @@ struct dw9719_device {
+> > =C2=A0
+> > =C2=A0static int dw9719_power_down(struct dw9719_device *dw9719)
+> > =C2=A0{
+> > +	u32 reg_pwr =3D (dw9719->model =3D=3D DW9718S) ? DW9718S_PD :
+> > DW9719_CONTROL;
+>=20
+> Extra parentheses.
+>=20
+> > +
+> > +	/*
+> > +	 * Worth engaging the internal SHUTDOWN mode especially
+> > due to the
+> > +	 * regulator being potentially shared with other devices.
+> > +	 */
+> > +	cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN, NULL);
+>=20
+> I'd still complain if this fails as we don't return the error.
+>=20
+> > =C2=A0	return regulator_disable(dw9719->regulator);
+> > =C2=A0}
+> > =C2=A0
+> > =C2=A0static int dw9719_power_up(struct dw9719_device *dw9719, bool
+> > detect)
+> > =C2=A0{
+> > -	u32 reg_pwr;
+> > +	u32 reg_pwr =3D (dw9719->model =3D=3D DW9718S) ? DW9718S_PD :
+> > DW9719_CONTROL;
+>=20
+> Extra parentheses.
+>=20
+> > =C2=A0	u64 val;
+> > =C2=A0	int ret;
+> > =C2=A0	int err;
+> > @@ -109,13 +116,15 @@ static int dw9719_power_up(struct
+> > dw9719_device *dw9719, bool detect)
+> > =C2=A0	if (ret)
+> > =C2=A0		return ret;
+> > =C2=A0
+> > -	/* Jiggle SCL pin to wake up device */
+> > -	reg_pwr =3D (dw9719->model =3D=3D DW9718S) ? DW9718S_PD :
+> > DW9719_CONTROL;
+> > -	cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN, &ret);
+> > -	fsleep(100);
+> > +	/*
+> > +	 * Need 100us to transition from SHUTDOWN to STANDBY.
+> > +	 * Jiggle the SCL pin to wake up the device (even when the
+> > regulator
+> > +	 * is shared) and wait double the time to be sure, then
+> > retry the write.
+>=20
+> Why double? Isn't the datasheet correct when it comes to the power-on
+> sequence?
+>=20
+I haven't noticed any problems during power-up of DW9761. However,
+according to the commit message, there seems be an issue with DW9718S.
+But I don't own the device and cannot test it.
+
+Maybe Val can provided some additional information.
+
+Best regards,
+Andr=C3=A9
+
+> > +	 */
+> > +	cci_write(dw9719->regmap, reg_pwr, DW9719_STANDBY, &ret);
+> > +	ret =3D 0; /* the jiggle is expected to fail, don't even log
+> > that as error */
+> > +	fsleep(200);
+> > =C2=A0	cci_write(dw9719->regmap, reg_pwr, DW9719_STANDBY, &ret);
+>=20
+> Just pass NULL instead of ret as we don't check the value and the ret
+> assignment above becomes redundant. Please spare the comment though.
+>=20
+> > -	/* Need 100us to transit from SHUTDOWN to STANDBY */
+> > -	fsleep(100);
+> > =C2=A0
+> > =C2=A0	if (detect) {
+> > =C2=A0		/* This model does not have an INFO register */
+> >=20
 
