@@ -1,91 +1,104 @@
-Return-Path: <linux-kernel+bounces-816904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D2AB57A4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:19:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C06B57AC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2AF93B1D9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:19:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D96A160F36
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B2B304BDD;
-	Mon, 15 Sep 2025 12:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1335308F1F;
+	Mon, 15 Sep 2025 12:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kO8e8b1g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="jrFESGPW"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13FD24A044;
-	Mon, 15 Sep 2025 12:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BC92FF15D;
+	Mon, 15 Sep 2025 12:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938785; cv=none; b=CushE/0C3eTb7O/lW3xS5dhk7O7hMUxdWYIQ619kSX5TKk3uIzq6p52HkCuQ8cjiQYrqKgnPbnMbS0Zk9A8yrptfb8gqbf2lY1vYnC0eIXJWvRXGi9oJsCaQ/jwWjU/KfQA3F8R70XZBRSQCf87YFr6MvKSf8WooChBjdMaHNtY=
+	t=1757938908; cv=none; b=qWRGAHV9GrZ2XJ1XZZc/n51uhOK/GNpJWDm6q5CLW7TWXW41o15eHwC+mr99ur9/dtwqin/sT1p55LJpUwQXoiPvfcfJE7BQxkfndkQMAuPkTHGhLyCjTRSo/YyBwLtScF4E1oAUqsuHnQ3Ej0cl3zVwm1OPNBtqj1lHFTv2Fag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938785; c=relaxed/simple;
-	bh=l5Zerqh1/Oc1Qyem5tmwlM1+UIeC27lubKzDCyI2+Rg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QfT3IugIM16aTX0TRpHzkLzVIatDqjwp20Y5anE8lNNrJ9GRMGsnUBV/fTA0mhTbOyJMMN/rlEBVmbUeJ1SXBsn9AWzY9F1okTkX9eIcPJk4i0ueTNvqzE1Jd6VkXnNu6Qq1+eHrObsWgHtkxwYh8qP1HiVE8/gzOQO2ZbxH+Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kO8e8b1g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC3BC4CEF5;
-	Mon, 15 Sep 2025 12:19:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757938785;
-	bh=l5Zerqh1/Oc1Qyem5tmwlM1+UIeC27lubKzDCyI2+Rg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kO8e8b1ggjtxi+5ZRI5880vDl0JhLXW7kfQPxN93EekJQnxkklX7PXjQ3GpE535s4
-	 Ajr3yv4PVn+eJ1N5iIDcGA0NbPALzZAq29xqm/6FLo0F7thYwhGS5PUAFlXD+Idi/C
-	 +aXZeRBYH7gEwZR4WFRbZa8DuNZcKGrDEYvCyEPuYslj4owrYkWjChANNWn14DzbUd
-	 wtIpK4bvQUHg/T1C1FyxXDfMf4uHXuCTpHebs3bPgXlL8nzbuj6e376PTB2djwUiI6
-	 G0JnUChSiCbSSoW50YEoFFnJIAwoQKd3a7yl1zHjfL5Ljv588OzLsqGTbttOp2AfSq
-	 BolXKZ2MCfbPA==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use the switch statement in init_special_inode()
-Date: Mon, 15 Sep 2025 14:19:38 +0200
-Message-ID: <20250915-blutjung-vollbad-baec52a26b44@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250909075459.1291686-1-mjguzik@gmail.com>
-References: <20250909075459.1291686-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1757938908; c=relaxed/simple;
+	bh=z2kNIlcXBW6MfC2xnrcVa0oHxwllCrJCejQCNVLE0eQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiH9A/Vmohr2aOxV5Bv8HE1n1yWRhdHuv31Wr9lJ/6dYcwoQNJK1s/z8ASoiaZmLiSt5Ro7Pl72S7eR5W23nILJCCfwjDq8oJmGN2mckG1yJA0FUzPYJ5liVCxJR+7fH5sxjlLYSRa8VCwsY+KH+dZ+jWT94p9x1TddCqCry9ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=jrFESGPW; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=OOyfLZgtX27UDIP2iLeBPK7IHVGLm6yCXP8suJxPQlk=;
+	b=jrFESGPWhXpollyfx2m2Rmh87nxknxI0bHyUfUBTA7k8Zz0Jk6COaBKi03L4dr
+	I/WOcZ6ziU5uN2cHpS83VNHtD/12Jduq12MQIgeUSo9BAs7jjeUHXdEG6fBpvZa0
+	aa5V28EzrTFTAgUQpbIXpKUut6KGamE3qez/pMsnrO1SQ=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgB3b7qDBMhoodmEBA--.36439S3;
+	Mon, 15 Sep 2025 20:20:20 +0800 (CST)
+Date: Mon, 15 Sep 2025 20:20:18 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
+Message-ID: <aMgEgvTyHEzaEJ1v@dragon>
+References: <20250910065312.176934-1-shawnguo2@yeah.net>
+ <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
+ <aMQbIu5QNvPoAsSF@dragon>
+ <20250914174326.i7nqmrzjtjq7kpqm@airbuntu>
+ <aMfAQXE4sRjru9I_@dragon>
+ <20250915100207.5amkmknirijnvuoh@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=901; i=brauner@kernel.org; h=from:subject:message-id; bh=l5Zerqh1/Oc1Qyem5tmwlM1+UIeC27lubKzDCyI2+Rg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScYIkWk2ByONT4dje/593f2zQKNnSeczl9W/tM1pqLE TYdp69d7ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI3QcM/4yiNef9XmgdYSXF d6j5/2rjE9YeWZ85k6Vvfcm59Nkr7RQjw3yH10fdorLeHMlb/9hv4qHfnZtO3JYMei2xyba37I2 8HAMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915100207.5amkmknirijnvuoh@airbuntu>
+X-CM-TRANSID:Mc8vCgB3b7qDBMhoodmEBA--.36439S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7try8Ww1fWrWDKFyDAw48Crg_yoW8GF43pF
+	W7K3W2kF1kGF4Dtws2yw4Uuw1Ykwn5tr4UGry8WF1rA398Wrn0gw4Iga1Y9FW3Jr4DCw1q
+	qr40g3srZayYyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ut9N3UUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEh3JZWjHo9vN3AABsk
 
-On Tue, 09 Sep 2025 09:54:58 +0200, Mateusz Guzik wrote:
-> Similar to may_open().
+On Mon, Sep 15, 2025 at 11:02:07AM +0100, Qais Yousef wrote:
+> On 09/15/25 15:29, Shawn Guo wrote:
+> > On Sun, Sep 14, 2025 at 06:43:26PM +0100, Qais Yousef wrote:
+> > > > > Why do you want to address the issue in the cpufreq core instead of
+> > > > > doing that in the cpufreq-dt driver?
+> > > > 
+> > > > My intuition was to fix the regression at where the regression was
+> > > > introduced by recovering the code behavior.
+> > > 
+> > > Isn't the right fix here is at the driver level still? We can only give drivers
+> > > what they ask for. If they ask for something wrong and result in something
+> > > wrong, it is still their fault, no?
+> > 
+> > I'm not sure.  The cpufreq-dt driver is following suggestion to use
+> > CPUFREQ_ETERNAL, which has the implication that core will figure out
+> > a reasonable default value for platforms where the latency is unknown.
+> > And that was exactly the situation before the regression.  How does it
+> > become the fault of cpufreq-dt driver?
 > 
-> No functional changes.
+> Rafael and Viresh would know better, but amd-pstate chooses to fallback to
+> specific values if cppc returned CPUFREQ_ETERNAL.
 > 
-> 
+> Have you tried to look why dev_pm_opp_get_max_transition_latency() returns
+> 0 for your platform? I think this is the problem that was being masked before.
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+My platform doesn't scale voltage along with frequency, and the platform
+DT doesn't specify 'clock-latency-ns' which is an optional property
+after all.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Shawn
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: use the switch statement in init_special_inode()
-      https://git.kernel.org/vfs/vfs/c/4635c2c8bd5c
 
