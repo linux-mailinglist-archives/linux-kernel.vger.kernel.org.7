@@ -1,118 +1,179 @@
-Return-Path: <linux-kernel+bounces-816426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08066B573BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E26CCB573C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800D218864F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:58:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BE918913E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5070A2F1FFE;
-	Mon, 15 Sep 2025 08:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB12D2F39A8;
+	Mon, 15 Sep 2025 08:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Fl+1jpAq"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH7y4IrF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4032D5C61;
-	Mon, 15 Sep 2025 08:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEE32F28E7;
+	Mon, 15 Sep 2025 08:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757926547; cv=none; b=dq2lctV7AONEgwVDz4I7uujWuI4oCkXZSjnsD0elV50FLKWDTd1ja3TVrFMJkhNHXituWEQaFGMfWAilRwX5mY0K8qFTmZKVmSc6Twd/4KRHr2P7Ry9cshhaWmlsu/LrE25etH0fFviw6J6qMV8yBXsceJxu6/x69s/R58/dFIU=
+	t=1757926633; cv=none; b=cILAT3F0lnOWT/GkOYnll04KbfH3SLrymaZ9/rB4SQnywSgzQMMxC17zyyJ45Jb9BaRWQzUvvaH6usI54/v8FV5B+rfB1WRmTQYMGEVSkOShealPM7XYVccYk9hwm+/8+oX2yq6shTZUmigkR9O6O0d+bkl1M1freKX8wYDsrl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757926547; c=relaxed/simple;
-	bh=wumQeK4aV33ZODZF7p8zwB+eZepT7/KIxwdWnzj3rqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbEumzWtCDvyL8LhS75Jdn7JgCTTD8lhxVY9TN216+zUFyvfrAd5zV8Pb989CePNKv+nwzHvb8KpQoHj5AypbPd1HOox9pQF77BhLPCu5xDtFP4ny3XspZCcR8Bv0lMrJqKPuiy9cOLglP1T5r7Ib7Sx1jXS+Mfa0xzVrSunisU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Fl+1jpAq; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1757926543;
-	bh=wumQeK4aV33ZODZF7p8zwB+eZepT7/KIxwdWnzj3rqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fl+1jpAqH0FHqqwTKgrcFGzynJRpfwmNC9e7CqhsJUTZNS2/RFX8fZVfYPLvq2uJx
-	 463NTzafmNeUbz8S3a0LCQEKfqBENv+q7Zuc380YZIsfnZLX+a8VzigQ4PS7W9l0li
-	 Tn+Dxqjr1ykhhB/Tyq44MeGJheZsWced8yXw9lxg=
-Date: Mon, 15 Sep 2025 10:55:44 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Benjamin Berg <benjamin@sipsolutions.net>
-Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
-	linux-kselftest@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-kernel@vger.kernel.org, Tiwei Bie <tiwei.btw@antgroup.com>, 
-	Benjamin Berg <benjamin.berg@intel.com>
-Subject: Re: [PATCH 6/9] tools/nolibc: add option to disable startup code
-Message-ID: <e2f2b0e3-a72d-4b6f-9677-02de711b7d3a@t-8ch.de>
-References: <20250915071115.1429196-1-benjamin@sipsolutions.net>
- <20250915071115.1429196-7-benjamin@sipsolutions.net>
+	s=arc-20240116; t=1757926633; c=relaxed/simple;
+	bh=5E+Yes9XOWiH81I9dVAZpfFciGGWYGCSQDF6XHckgR8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JypPN/Xfs7cbK2y6/qtkuHNljB7IYezvK2rZ0STxCir4DUZbTZeasIEUgcarC2asTidyoP8dAU5fGJnpU6sOCL0zCwrTU4h7fjZ0xsV9iJZ4Fc2Jv1Ep48Su4hmMxAZt5Z6YtDVsyGqGzlYYJKVnwk8IhZ2cwlz0/JnV7K70q9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH7y4IrF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 740FCC4CEF1;
+	Mon, 15 Sep 2025 08:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757926633;
+	bh=5E+Yes9XOWiH81I9dVAZpfFciGGWYGCSQDF6XHckgR8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sH7y4IrFh198drJ40DUGs8+te89u3vEmFcBK6a7wiHEzlKVJh2DxGIw7k+xjcnvGR
+	 wpylXBu851ownBXwOlOcixK9YBSteVCnfS8D/YskqXZ1ULAiGUR5CsF0bMVshodFnI
+	 1+r73Rk9HgTm5c+wWQeJrG0aro9VrNZwonqb/QDrG3qvISyiMFDRZ4TyRAV1HgRAs3
+	 mtSeChf8Ps6dRrI58ikYtNMGt0048WpExcaqI1yTFhkBwrAW2PQPptH1l9rd9w5YMu
+	 pYSMqpX5xQkKJh2WxpaHZOfDSdWIg/zS6RAm8i7XXfT6wxnRoR0WNnEd0BB5sp/K81
+	 EFhTuz+6osXig==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uy51L-00000006IHP-0QON;
+	Mon, 15 Sep 2025 08:57:11 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark <james.clark@linaro.org>
+Subject: [PATCH v2 00/25] genirq: Add support for percpu_devid IRQ affinity
+Date: Mon, 15 Sep 2025 09:56:37 +0100
+Message-Id: <20250915085702.519996-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915071115.1429196-7-benjamin@sipsolutions.net>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2025-09-15 09:11:12+0200, Benjamin Berg wrote:
-> From: Benjamin Berg <benjamin.berg@intel.com>
-> 
-> In principle, it is possible to use nolibc for only some object files in
-> a program. In that case, the startup code in _start and _start_c is not
-> going to be used. Add the NOLIBC_NO_STARTCODE compile time option to
-> disable it entirely and also remove anything that depends on it.
+This is the second version of this series, originally posted at [1],
+which aims at allowing percpu_devid interrupt requests on the basis of
+an affinity mask. See the original submission for the details of why
+this is a desirable outcome.
 
-Not a big fan of the naming. More than only _start()/_start_c() are
-disabled. Maybe NOLIBC_NO_RUNTIME?  I'm horrible at naming...
+From v1, we have a number of changes, both functional and cosmetic,
+but the fundamentals are pretty much the same (change log below), with
+an even more appealing diffstat.
 
-> Doing this avoids warnings from modpost for UML as the _start_c code
-> references the main function from the .init.text section while it is not
-> inside .init itself.
-> 
-> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
-> ---
->  tools/include/nolibc/arch-arm.h       | 2 ++
->  tools/include/nolibc/arch-arm64.h     | 2 ++
->  tools/include/nolibc/arch-loongarch.h | 2 ++
->  tools/include/nolibc/arch-m68k.h      | 2 ++
->  tools/include/nolibc/arch-mips.h      | 2 ++
->  tools/include/nolibc/arch-powerpc.h   | 2 ++
->  tools/include/nolibc/arch-riscv.h     | 2 ++
->  tools/include/nolibc/arch-s390.h      | 2 ++
->  tools/include/nolibc/arch-sh.h        | 2 ++
->  tools/include/nolibc/arch-sparc.h     | 2 ++
->  tools/include/nolibc/arch-x86.h       | 4 ++++
->  tools/include/nolibc/crt.h            | 3 +++
->  tools/include/nolibc/stackprotector.h | 2 ++
->  tools/include/nolibc/stdlib.h         | 2 ++
->  tools/include/nolibc/sys.h            | 3 ++-
->  tools/include/nolibc/sys/auxv.h       | 3 +++
->  16 files changed, 36 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/include/nolibc/arch-arm.h b/tools/include/nolibc/arch-arm.h
-> index 1f66e7e5a444..24ad348cc1e8 100644
-> --- a/tools/include/nolibc/arch-arm.h
-> +++ b/tools/include/nolibc/arch-arm.h
-> @@ -185,6 +185,7 @@
->  })
->  
->  /* startup code */
-> +#ifndef NOLIBC_NO_STARTCODE
+Thanks to Will, Thomas and Raphael for their constructive review
+comments.
 
-I'd prefer the ifdef around the comments.
+FWIW, I've pushed a branch at [2].
 
->  void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector _start(void)
->  {
->  	__asm__ volatile (
-> @@ -193,5 +194,6 @@ void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector _s
->  	);
->  	__nolibc_entrypoint_epilogue();
->  }
-> +#endif /* NOLIBC_NO_STARTCODE */
+* From v1 [1]:
 
-(...)
+  - Fixed NMI handling by getting rid of the NMI-specific flow
+    handler, which was pretty useless anyway (Will)
+
+  - As a result, killed a metric buttload worth of GICv3 code
+
+  - Moved irq_fwspec out of irq_fwspec_info, and passed it as a
+    parameter to irq_get_fwspec_info(), renamed from irq_get_info(),
+    and applied some generous sanitisation of the structure (Thomas)
+
+  - Dropped the rather useless fwspec validity flag (Thomas)
+
+  - Rejigged the PMU per-CPU handling to better deal with the DT/ACPI
+    differences, and drop some now useless patches (Will)
+
+  - Plenty of cosmetic rework (Raphael, Thomas)
+
+[1] https://lore.kernel.org/r/20250908163127.2462948-1-maz@kernel.org
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git irq/ppi-affinity
+
+Marc Zyngier (24):
+  irqdomain: Add firmware info reporting interface
+  ACPI: irq: Add IRQ affinity reporting interface
+  of/irq: Add IRQ affinity reporting interface
+  platform: Add firmware-agnostic irq and affinity retrieval interface
+  irqchip/gic-v3: Add FW info retrieval support
+  irqchip/apple-aic: Add FW info retrieval support
+  coresight: trbe: Convert to new IRQ affinity retrieval API
+  perf: arm_pmu: Convert to new IRQ affinity retrieval API
+  perf: arm_spe_pmu: Convert to new IRQ affinity retrieval API
+  irqchip/gic-v3: Switch high priority PPIs over to
+    handle_percpu_devid_irq()
+  genirq: Kill handle_percpu_devid_fasteoi_nmi()
+  genirq: Merge irqaction::{dev_id,percpu_dev_id}
+  genirq: Factor-in percpu irqaction creation
+  genirq: Add affinity to percpu_devid interrupt requests
+  genirq: Update request_percpu_nmi() to take an affinity
+  genirq: Allow per-cpu interrupt sharing for non-overlapping affinities
+  genirq: Add request_percpu_irq_affinity() helper
+  perf: arm_spe_pmu: Request specific affinities for percpu IRQ
+  coresight: trbe: Request specific affinities for percpu IRQ
+  irqchip/gic-v3: Drop support for custom PPI partitions
+  irqchip/apple-aic: Drop support for custom PMU irq partitions
+  irqchip: Kill irq-partition-percpu
+  genirq: Kill irq_{g,s}et_percpu_devid_partition()
+  perf: arm_pmu: Kill last use of per-CPU cpu_armpmu pointer
+
+Will Deacon (1):
+  perf: arm_pmu: Request specific affinities for percpu NMI/IRQ
+
+ arch/arm64/kernel/smp.c                      |   2 +-
+ drivers/acpi/irq.c                           |  19 ++
+ drivers/base/platform.c                      |  60 ++++-
+ drivers/hwtracing/coresight/coresight-trbe.c |   9 +-
+ drivers/irqchip/Kconfig                      |   4 -
+ drivers/irqchip/Makefile                     |   1 -
+ drivers/irqchip/irq-apple-aic.c              |  56 +++--
+ drivers/irqchip/irq-gic-v3.c                 | 224 +++++------------
+ drivers/irqchip/irq-partition-percpu.c       | 241 -------------------
+ drivers/of/irq.c                             |  20 ++
+ drivers/perf/arm_pmu.c                       |  50 ++--
+ drivers/perf/arm_pmu_acpi.c                  |   2 +-
+ drivers/perf/arm_pmu_platform.c              |  20 +-
+ drivers/perf/arm_pmuv3.c                     |   2 +-
+ drivers/perf/arm_spe_pmu.c                   |  13 +-
+ include/linux/acpi.h                         |   7 +
+ include/linux/interrupt.h                    |  24 +-
+ include/linux/irq.h                          |   5 -
+ include/linux/irqchip/irq-partition-percpu.h |  53 ----
+ include/linux/irqdesc.h                      |   1 -
+ include/linux/irqdomain.h                    |  28 +++
+ include/linux/of_irq.h                       |   7 +
+ include/linux/perf/arm_pmu.h                 |   6 +-
+ include/linux/platform_device.h              |   2 +
+ kernel/irq/chip.c                            |  36 +--
+ kernel/irq/irqdesc.c                         |  24 +-
+ kernel/irq/irqdomain.c                       |  32 ++-
+ kernel/irq/manage.c                          | 124 +++++++---
+ 28 files changed, 423 insertions(+), 649 deletions(-)
+ delete mode 100644 drivers/irqchip/irq-partition-percpu.c
+ delete mode 100644 include/linux/irqchip/irq-partition-percpu.h
+
+-- 
+2.39.2
+
 
