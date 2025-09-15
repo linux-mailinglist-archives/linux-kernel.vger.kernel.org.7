@@ -1,77 +1,82 @@
-Return-Path: <linux-kernel+bounces-816178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93D45B5709A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B99B5709B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C55D3A8EDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EB0D189ADDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2455629E10C;
-	Mon, 15 Sep 2025 06:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CE8280328;
+	Mon, 15 Sep 2025 06:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxyqoPhu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y3xDtv0h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC68317BA6;
-	Mon, 15 Sep 2025 06:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75972BD59C;
+	Mon, 15 Sep 2025 06:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757918778; cv=none; b=E3jbMktFuWnF3/tuU0gmxfs1tGT3yZGf0etFxEg0YM16DBEGHi55dpTKtsue/PQCue21j28wZl6Ok15HquDv3SnA7VxthoRKsv5sO8CplYyt60+kdXDSPlZQh+mqX2WNDIj5iQJZ/VUx7OK12mhAmPZ02pyBEpfBStwfnXwgbww=
+	t=1757918783; cv=none; b=pQkt4mwMN89t1WbawMF2Uvte8QtmNEA5oRHl5Dq10skwuUZaXNWOA4yjqkLGkzUx22VCIGIB5tHY19lpGN93eSIPmj7xpFDZsjQsK/xQCnwZJn5i0ZeHAjvDHaTX6rAHAH8UstF5HC8XvGXgaNtWpKe0rTVVlOYIPU1jocO327k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757918778; c=relaxed/simple;
-	bh=NFNnCpOh/37SGnRaFO3Li3CU7DAJxxunjZO5vf9p/uM=;
+	s=arc-20240116; t=1757918783; c=relaxed/simple;
+	bh=cmgS2z03ZvYjY3BA1InRHzrqI41lDySPZ1Y6UvJpps8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kx0QPd7M4CVnzJfFl3CEIxr+GZw6kbbpOca+ymOT0NYNxuOKAb2TmFYGDWcbJCQWPy54I9vVfhZf6QmVsWqRFn0Choa7oQ0dZtzobojFPVzeX3sj8gi6EZzCtQYNAgY6ZoG5032he62Ldr1LUWC1ko5Rb9IgdT0WRWqigXJfuro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxyqoPhu; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOhY62ROfMdxV96t7OxXoCH9R94cYMHQwnnOhiVjKQQkBTQlQk0/zHRpH8stJuIVnA5knFN3oQmSVwNuBETfi096+JVQ49onFBTngjTzv0CS7z6fFGaV/KEqxudn2b2bYhijVZm7WOOwY03n/ZPoKnzbMzIx3ik8BamMROVztlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y3xDtv0h; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757918777; x=1789454777;
+  t=1757918782; x=1789454782;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=NFNnCpOh/37SGnRaFO3Li3CU7DAJxxunjZO5vf9p/uM=;
-  b=RxyqoPhuqprI0reSlDTSrcm4EtsyM6SqOHuAEYpBuZLqHUcgDD6NFX9p
-   AjjnkwEsVdZNr+ASzAG+4CteyK5UYkcE59nO2mFMSA381Dte13gnX/Spn
-   rclT693jvRSPkp0Jk6LPWSRokjx8f77gbAI/SMkzHspS97yUsr3ilq181
-   Y84BGqAw1ms7Wh5uvMcCnXivVsLjERJEioDi6wl+AoZVbs6U6JRLiVvKE
-   mci+y5WstK28omHqjzkX0JgAxO9U0cj4qy2KAQCq3RHovPxrU/HkP5+E7
-   9W+cXjrSndtUv/m70YFtQgrGboEK9cCA09+9Z96SNefFCXtVaYv5u1vmK
-   Q==;
-X-CSE-ConnectionGUID: rThCDsxOQQag2VsfGkICEw==
-X-CSE-MsgGUID: G29DDB3/SVufSow3gf2YKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60109421"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60109421"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:46:13 -0700
-X-CSE-ConnectionGUID: tb/kfT84RACG0apKR5x0Qg==
-X-CSE-MsgGUID: e0pZI3OCSk6hsCh5bhX1og==
+  bh=cmgS2z03ZvYjY3BA1InRHzrqI41lDySPZ1Y6UvJpps8=;
+  b=Y3xDtv0hKRLLOl6Gz7nsXW1OvvpcrNHsbLknkvIjC2vBhQ6sBAeNIy9F
+   Zwtk8lSZ/hscVqWd3HjEh0d/pAN73BTGhngUTQ/2fw97S1VCcro6mnUlT
+   wI2wDvFwYfnIiklxnXBez/6HWS6W7XOwmSQTxwAsM+S14/3FZZ8kp98Jz
+   jpo16BtPLVA6WyUMLS81oh82+OTlb1Gcy2UvKpSlo1bSDJdO8lLzS3Nh6
+   G3mjfrLOafzHEG4/6D08hyEA3ptHvdDaDJsHGD7WhuZoBqTDwlOUePP8e
+   oKX1jpnozqDB5sPYRMw2fw9dOzYvoWXoANtx6GLRDCjxNZe1V/iaLMaKo
+   w==;
+X-CSE-ConnectionGUID: w/ErTmdBQ1upi6KZ1huxzw==
+X-CSE-MsgGUID: xeed5aOySa2KBBdGopTR0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="47731674"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="47731674"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:46:21 -0700
+X-CSE-ConnectionGUID: alMmINDRSgy70osL0q2/dA==
+X-CSE-MsgGUID: oWfXSeK3R+OLKpxqLs0S6w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="211687003"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa001.jf.intel.com with ESMTP; 14 Sep 2025 23:46:11 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 1838594; Mon, 15 Sep 2025 08:46:10 +0200 (CEST)
-Date: Mon, 15 Sep 2025 08:46:10 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: =?utf-8?Q?S=C3=A9bastien?= Szymanski <sebastien.szymanski@armadeus.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: initialize acpi_gpio_info struct
-Message-ID: <20250915064610.GB476609@black.igk.intel.com>
-References: <20250912-gpiolib-acpi-fix-v1-1-1a41acbffadf@armadeus.com>
- <20250915044703.GA476609@black.igk.intel.com>
- <aMeyluS3KuzkTJy2@smile.fi.intel.com>
+   d="scan'208";a="174079788"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:46:19 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uy2ye-00000003B3E-0HRj;
+	Mon, 15 Sep 2025 09:46:16 +0300
+Date: Mon, 15 Sep 2025 09:46:15 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] iio: adc: ad7124: add filter support
+Message-ID: <aMe2N7B8XwUPXsEG@smile.fi.intel.com>
+References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
+ <20250911-iio-adc-ad7124-add-filter-support-v2-5-b09f492416c7@baylibre.com>
+ <CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
+ <87245221-c3d0-4026-980d-36562f0b4669@baylibre.com>
+ <20250913144200.17337dd8@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,34 +86,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMeyluS3KuzkTJy2@smile.fi.intel.com>
+In-Reply-To: <20250913144200.17337dd8@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Sep 15, 2025 at 09:30:46AM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 15, 2025 at 06:47:03AM +0200, Mika Westerberg wrote:
-> > On Fri, Sep 12, 2025 at 10:18:50PM +0200, Sébastien Szymanski wrote:
-> > > Since commit 7c010d463372 ("gpiolib: acpi: Make sure we fill struct
-> > > acpi_gpio_info"), uninitialized acpi_gpio_info struct are passed to
-> > > __acpi_find_gpio() and later in the call stack info->quirks is used in
-> > > acpi_populate_gpio_lookup. This breaks the i2c_hid_cpi driver:
+On Sat, Sep 13, 2025 at 02:42:00PM +0100, Jonathan Cameron wrote:
+> On Fri, 12 Sep 2025 09:27:47 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> > On 9/11/25 11:49 PM, Andy Shevchenko wrote:
+> > > On Fri, Sep 12, 2025 at 12:43 AM David Lechner <dlechner@baylibre.com> wrote:  
+
+...
+
+> > >> -       factor = 32 * 4; /* N = 4 for default sinc4 filter. */
+> > >> -       odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor +
+> > >> -                                              odr_micro * factor / MICRO);
+> > >> -       odr_sel_bits = clamp(odr_sel_bits, 1, 2047);
+> > >> +       divisor = cfg->requested_odr * factor +
+> > >> +                 cfg->requested_odr_micro * factor / MICRO;
+> > >> +       odr_sel_bits = clamp(DIV_ROUND_CLOSEST(fclk, divisor), 1, 2047);  
 > > > 
-> > > [   58.122916] i2c_hid_acpi i2c-UNIW0001:00: HID over i2c has not been provided an Int IRQ
-> > > [   58.123097] i2c_hid_acpi i2c-UNIW0001:00: probe with driver i2c_hid_acpi failed with error -22
-> > > 
-> > > Fix this by initializing the acpi_gpio_info pass to __acpi_find_gpio()
-> > > 
-> > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220388
-> > > Fixes: 7c010d463372 ("gpiolib: acpi: Make sure we fill struct acpi_gpio_info")
-> > > Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+> > > I have a déjà vu feeling here. Is this similar code to elsewhere?  Can
+> > > it be factored out to a helper?
 > > 
-> > Should have stable tag too, I think. Andy can add that once he applies.
-> 
-> I can add, but this won't appear in the respective mailing list. Or did I miss
-> a new tag for stable?
+> > It is changing the same code from a previous commit, not duplicating
+> > it. I guess I could have introduced the divisor variable in the
+> > earlier commit and saved some churn.
+> For this and the previous patch, to me it feels like we are letting
+> aiming for perfect patch break up be the enemy of a good result.
+> So I've applied them both but as I don't know if Andy will agree
+> not his RB.
 
-It does not need to go to the mailing list. It's enough that it is
-mentioned in the commit. E.g
+Even if I not agree, this is not a big deal. We can amend it in the future if
+even needed. So, thanks!
 
-  Cc: stable@vger.kernel.org
+-- 
+With Best Regards,
+Andy Shevchenko
 
-And the stable "machinery" will notice it once it hits the mainline.
+
 
