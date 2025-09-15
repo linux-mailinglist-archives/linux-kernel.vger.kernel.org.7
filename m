@@ -1,128 +1,147 @@
-Return-Path: <linux-kernel+bounces-816514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD181B574DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:25:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49584B574E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D61D3A83B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C821882953
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B4D2F0689;
-	Mon, 15 Sep 2025 09:24:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8F92F5302;
+	Mon, 15 Sep 2025 09:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbapCBXD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="O/6DYqcm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4305E2F49FD;
-	Mon, 15 Sep 2025 09:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5899E2F0689;
+	Mon, 15 Sep 2025 09:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928277; cv=none; b=W4yjWHon01Sh2gBzP90ni3A/PWbNfjtSydk9zppsDHx/BPbANANjeMu4rhkRDwshIs4GuAEKBYZmGwGg0SnK/9N3ricPefdvF3PMI1VApzNpkksjRBlVeyccUbjx/+Y2/Oe/8cA1Oz4jQtocecxzE3CGh9+Kk9vqgpHa635Ky4M=
+	t=1757928305; cv=none; b=ufntm0C28qE/mZs3E9ggQ+5VOT1FZOdK8oXjy+aEQBZynpCBcLmBIBHQ2bjH03JfFTu6jKlVBBNucmAGNFHfUVpqdS0PXttTu9HZ14O+qDg45GlDA7UxAHHoPZ/aFUpriakC6OTBWbORM3X27n1QSnVpUwyLyElmTd6VuImRoNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928277; c=relaxed/simple;
-	bh=RgkgrwRypdT/518CgEj/V8LfEbAO8YRYx2xOm90hzPk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YM1Wxrnb67eDy0s8cezNXKJuM/Asp9L23eC7xAHqaosCV6mlayQFLEkibiqPvm1MRaNc/e2kOWU2I2cQMi88qUSuzlgK/veTaDHx5oePOCR/dZrkkC/bciWsT6CSiTbAbE9WOK2cuxGHzk2PQxCJaBBtFxN3Lg+Kar6d1TWv3Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbapCBXD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D1D1EC4CEF1;
-	Mon, 15 Sep 2025 09:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757928276;
-	bh=RgkgrwRypdT/518CgEj/V8LfEbAO8YRYx2xOm90hzPk=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=XbapCBXDF3N0JCGizjXEEnzD31MMXQC03i/+s2l2R0wZ8miOI4LMi5Gg4yH2GlKd+
-	 Q6p/IdLWuIk3O4m0FpZ5lI2pKF+5siZCyzECvT+Y9LHHb6fMbXp/FNJbrOak3mz8xy
-	 PVdw03eFO4Wj5bF3mCqyGd6HKakkfAR6ZDU9B05omFHE5FzakQMTWdHqjgi51gFOm9
-	 EMzWFnvH1U1qqsNEicMESHpGGGhWu6VHZugCgkGnOZtnELneHxFgJLjJbYkjfZNBUZ
-	 endu4HugvKFXwjcJFtv84yplTu3poxGqmKcC4DtURMjGwFa72IZgv6lJ1c/MXLajAx
-	 7/Y8KfWSDjnpQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C31A1CAC598;
-	Mon, 15 Sep 2025 09:24:36 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 15 Sep 2025 13:24:18 +0400
-Subject: [PATCH] arm64: dts: qcom: ipq5018: add QUP3 I2C node
+	s=arc-20240116; t=1757928305; c=relaxed/simple;
+	bh=q5RA/RaHr9bqdc2QYzU95opigf2/icTVMiyCVrzT/HA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=PUVI/pITFgu2G3vuuzcTFeS61xTOFP1J0lwIqnKuicbKqe9BTzQx6ynju5owa3k1iH/CRtqbRcYd8XxIaKw/VDKfUCGQt5bIrs3yDDd0/D3TuUOencnVmYx2yHqOv0XC5gv2P05Xkp9tvO0wA2xLdOtMeQwoZAgDTYnW7pDSLSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=O/6DYqcm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from thinkpad.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EB5E722CF;
+	Mon, 15 Sep 2025 11:23:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757928222;
+	bh=q5RA/RaHr9bqdc2QYzU95opigf2/icTVMiyCVrzT/HA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=O/6DYqcm91ykCd6LEz2Gfd0XuyJBeV7P5y7EtdQ53V7GebfEUjnQLhOqE/FQ2IJOd
+	 4MBpJiKNNv8CsjH/l7DSPGDLvS8gxrR/oQRTL7bF3gxGlLSr/W+4pbXd/Pnm6QA7Dl
+	 LSHqzy9ctbj3FvaWP0k8LlKVOye27UqT19OpSESM=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-ipq5018-i2c-v1-1-46bbf27396d6@outlook.com>
-X-B4-Tracking: v=1; b=H4sIAEHbx2gC/x3MQQqAIBBA0avIrBNmBMu6SrSQGms2ZQoRiHdPW
- r7F/wUyJ+EMkyqQ+JEs19lAnYL18OfOWrZmMGgsjkRa4m2RnBazavQYPA29ceSgFTFxkPe/zUu
- tH1sLzpNdAAAA
-X-Change-ID: 20250911-ipq5018-i2c-0a0fa1762818
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Vandhiadevan Karunamoorthy <vkarunam@codeaurora.org>, 
- George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757928274; l=1420;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=5AMg7/oGtHNBWL+11z9Q/HGGQ9F6ll9nuoBPaZhI9aM=;
- b=YRzjCtxRPYCTIZbfjE7Ch/iQgVk2FPQ2D3Z9XheAftOihKy/1/tmjGVVJNjCCP6dXt51fm4rq
- wtSUjXqnECrAN3FPi6I7N+IBTc6A+E6Q/wpYazdNwaMdyxGBj0tyK4f
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250904150153.GB6174@pendragon.ideasonboard.com>
+References: <20250903102243.1563527-1-isaac.scott@ideasonboard.com> <20250903102243.1563527-3-isaac.scott@ideasonboard.com> <aLhfu0KK5NHIGH/W@lizhi-Precision-Tower-5810> <20250904150153.GB6174@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v2 2/3] media: imx-mipi-csis: Store the number of data_lanes configured in dt
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+Cc: rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm, mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, hverkuil@kernel.org, nicolas.dufresne@collabora.com, sakari.ailus@linux.intel.com, tomi.valkeinen@ideasonboard.com, jonas@kwiboo.se, dan.scally+renesas@ideasonboard.com, m.szyprowski@samsung.com, mehdi.djait@linux.intel.com, niklas.soderlund+renesas@ragnatech.se
+To: Frank Li <Frank.li@nxp.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date: Mon, 15 Sep 2025 10:24:56 +0100
+Message-ID: <175792829662.11401.2553264927858948770@isaac-ThinkPad-T16-Gen-2>
+User-Agent: alot/0.10
 
-From: Vandhiadevan Karunamoorthy <vkarunam@codeaurora.org>
+Hi all,
 
-Add node to support I2C bus inside of IPQ5018.
+Thank you very much for the reviews!
 
-Signed-off-by: Vandhiadevan Karunamoorthy <vkarunam@codeaurora.org>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5018.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Quoting Laurent Pinchart (2025-09-04 16:01:53)
+> On Wed, Sep 03, 2025 at 11:33:15AM -0400, Frank Li wrote:
+> > On Wed, Sep 03, 2025 at 11:22:41AM +0100, Isaac Scott wrote:
+> > > The number of lanes actively used by a MIPI CSI transmitter may differ
+> > > from that which is defined in device tree. To allow us to be able to =
+set
+> > > the number of configured lanes without changing the maximum lane coun=
+t,
+> > > store the number of lanes configured in device tree, and adjust the
+> > > debug print to reflect the device tree value.
+> > >
+> > > Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+> > > ---
+> > >  drivers/media/platform/nxp/imx-mipi-csis.c | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/med=
+ia/platform/nxp/imx-mipi-csis.c
+> > > index 2beb5f43c2c0..fc89325f2f94 100644
+> > > --- a/drivers/media/platform/nxp/imx-mipi-csis.c
+> > > +++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+> > > @@ -313,6 +313,8 @@ struct mipi_csis_device {
+> > >     u32 hs_settle;
+> > >     u32 clk_settle;
+> > >
+> > > +   unsigned int max_data_lanes;
+> > > +
+> >=20
+> > is num_data_lanes better? you get from vep.bus.mipi_csi2.num_data_lanes
+>=20
+> That's a good point, but I think I prefer max_data_lanes here as it
+> conveys better the fact that the field stores the maximum number of data
+> lanes that can be used, not the number of data lanes being used at a
+> given point of time.
+>=20
+> This being said, why do we need this ? The maximum number of data lanes
+> can be accessed through csis->bus.num_data_lanes. I've looked at patch
+> 3/3 to answer this question, it there csis->bus.num_data_lanes is
+> modified to store the number of data lanes used at runtime. I think it
+> would be better to consider csis->bus as immutable after probe, and
+> store the number of used data lanes in csis->num_data_lanes.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-index e88b52006566fd39c0690e6fb53be743eb56d11b..5ba33255659e0a83562bd42048c7152bef04f1cd 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
-@@ -504,6 +504,21 @@ blsp1_spi1: spi@78b5000 {
- 			status = "disabled";
- 		};
- 
-+		blsp1_i2c3: i2c@78b7000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			reg = <0x078b7000 0x600>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			clock-frequency = <400000>;
-+			dmas = <&blsp_dma 9>, <&blsp_dma 8>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		qpic_bam: dma-controller@7984000 {
- 			compatible = "qcom,bam-v1.7.4", "qcom,bam-v1.7.0";
- 			reg = <0x07984000 0x1c000>;
+Yes, this makes a lot of sense. I only used max_data_lanes because I
+wanted to avoid potential confusion between csis->bus.num_data_lanes and
+csis->num_data_lanes; if that's not acutally an issue, I'll change it to
+num_data_lanes.
 
----
-base-commit: b0971d2008c644b9064d968d440fb9f44606d90c
-change-id: 20250911-ipq5018-i2c-0a0fa1762818
+>=20
+> Isaac, could you replace this patch by another one that adds
+> csis->num_data_lanes, sets it to csis->bus.num_data_lanes in
+> mipi_csis_async_register(), and replace usage of
+> csis->bus.num_data_lanes with csis->num_data_lanes through the driver ?
+> Patch 3/3 should then modify csis->num_data_lanes, not
+> csis->bus.num_data_lanes.
+>=20
 
-Best regards,
--- 
-George Moussalem <george.moussalem@outlook.com>
+Good idea! Thanks, I'll take a look at submitting a v3.
 
+Best wishes,
 
+Isaac
+
+> > >     spinlock_t slock;       /* Protect events */
+> > >     struct mipi_csis_event events[MIPI_CSIS_NUM_EVENTS];
+> > >     struct dentry *debugfs_root;
+> > > @@ -1299,8 +1301,9 @@ static int mipi_csis_async_register(struct mipi=
+_csis_device *csis)
+> > >     }
+> > >
+> > >     csis->bus =3D vep.bus.mipi_csi2;
+> > > +   csis->max_data_lanes =3D vep.bus.mipi_csi2.num_data_lanes;
+> > >
+> > > -   dev_dbg(csis->dev, "data lanes: %d\n", csis->bus.num_data_lanes);
+> > > +   dev_dbg(csis->dev, "data lanes: %d\n", csis->max_data_lanes);
+> > >     dev_dbg(csis->dev, "flags: 0x%08x\n", csis->bus.flags);
+> > >
+> > >     asd =3D v4l2_async_nf_add_fwnode_remote(&csis->notifier, ep,
+>=20
+> --=20
+> Regards,
+>=20
+> Laurent Pinchart
 
