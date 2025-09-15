@@ -1,212 +1,182 @@
-Return-Path: <linux-kernel+bounces-816995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D51B57C1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:58:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBAB8B57BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42ABA170384
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:58:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28257B3661
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39AE30BF58;
-	Mon, 15 Sep 2025 12:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D82D30E85F;
+	Mon, 15 Sep 2025 12:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JsxhZ9c4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5MQNHjd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EE81B7F4
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A0030BF53;
+	Mon, 15 Sep 2025 12:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941113; cv=none; b=n6TVkfJczAJOxYPSJTV+HKvvK1gJnmOYk5oGW/cp47NRXHI8XK+9RO41+80rzROAzen4KqhaA6YxvlPEFZmzxg0XRSY5U1FmuwldTDX1Lw9N4Mnwl2es8gO0KaxyPrKKDst/klmN+/rDHNADuIzn+2r3C0vzF3o+QlZ12wCdirE=
+	t=1757940362; cv=none; b=DOznAL3x8Qqn4bn0TAG4qgFh5aDhOpCZ/8HJnqB3oiRrei2omokkUePB4Vmx3MW8QyvDyUk6o9oqbHa5HS2WySnTexKRabzFnmOjzo7/2qqBiTZyQXl0vO76gGdrNnA/2KtCTdceH1uOMsLpEADrgJLZqSUGPRXEPFtY+2+H2Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941113; c=relaxed/simple;
-	bh=zhy4i40EEXq+LGi3Ihe2o4Et63aoKgy7sGgFmySJ8Os=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9FAku3CAhfbbghuAbi6loZnz7EyNp36G35IuJtNnDS90O7rOWg+YuBOd+ioLq4xHHLFcljkBJUo/6DkbWNeBumjyqQcuPp2RYcsU6gye81HkA3mdKUEkueKQ6TNAsgzDMOl/rXR4iGSZe7aOwKb0KzBqe55nzNO1VjsjepG4Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JsxhZ9c4; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757941111; x=1789477111;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zhy4i40EEXq+LGi3Ihe2o4Et63aoKgy7sGgFmySJ8Os=;
-  b=JsxhZ9c49jMEFVA8oRFEXLqGI8S+fZUlL2LqQXKxMHf5SAYt2ZiyYCgI
-   TAJBvc4eVD7aTdw7X2qeMO3jMtsnEK3onbhsD7lMhUAjH0RlQFhL0+WYS
-   eUWA4HOK2bEnjoRXe5wV+jkP3C0St/n1V/AKURTNA3QYeLQw4uHDFiOr/
-   GENw+tHaWxenS7z9WwIFcIvat4Qopr8yRLkhHp47Cx8DePk8+THksKcPI
-   wjgbGiFhvGwIZqL9DntA7k9DJ/6m+9Ww3lIG5nvxekLmZd6hyjqsf7/1x
-   7JbdXKfuJHG00KVzwaCt5QyZuBiW5xDZIGmkVQBtC4m0Ih9B/TETH9bIk
-   g==;
-X-CSE-ConnectionGUID: 3QGtDWA8TIaO86E+vLyTIg==
-X-CSE-MsgGUID: bJpZZAy9QWqMk25WA2Ht0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="59889091"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="59889091"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 05:58:31 -0700
-X-CSE-ConnectionGUID: LSQqWEELQXmSkgxoTGoHOg==
-X-CSE-MsgGUID: ImFhlZWKSHint8DmPHLLSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="174171413"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 05:58:30 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [char-misc-next] mei: gsc: fix remove operations order
-Date: Mon, 15 Sep 2025 15:45:54 +0300
-Message-ID: <20250915124554.2263330-1-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757940362; c=relaxed/simple;
+	bh=BNNYoYpkBHTO9cpmUyT6nQRRrUm5Of6d7v3BDEpFFU4=;
+	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
+	 In-Reply-To; b=bQ7rB4WZGgXa0SYDWjvzGNY3pGZ9MCEfGb2Azjm4bCrIiqLPJVwbkSM9GEvFvMC3I2+MXk3YrBmNTxf0UorNh1FavxOv3mutflDFjpI8OnKXljw//RYD+s2QDlOwIqsIa1gXQrJwe1x2vAeb9faHvA3cTtrxitne7UM7aGlgMYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5MQNHjd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7B9C4CEF1;
+	Mon, 15 Sep 2025 12:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757940362;
+	bh=BNNYoYpkBHTO9cpmUyT6nQRRrUm5Of6d7v3BDEpFFU4=;
+	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
+	b=P5MQNHjdJOR5OvJ2seL9fNaXLlcWGaiKyZi6zDxypyw2W59qIZyeDLkNYYkRcwAfx
+	 YVfCzRNxSYdK9dRclEKMCbWxHfe5vM9u4Phd8LR6GeD0LQ9mRSyHLbD812YZ+EUalj
+	 a+f4aAP5uEn0IQs46QKp5fQ9/IP3U2JKi6i34zTB++GhmJd7z0NkCu5YQapAbH6eev
+	 vgfsiT0TR8NJcy94zbNNStasbKd+28YOJtnR0ZQ42KEZSzDPVqzSNVrfRqgE/cejaZ
+	 FsPmE4okkwbYujW8ISwyubXxYnp+Da7R7oto/toJ+Ir+krtFNPP1/s7B7b9EH5BvVk
+	 S/jkQ3yHVBvyA==
+Content-Type: multipart/signed;
+ boundary=b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 15 Sep 2025 14:45:58 +0200
+Message-Id: <DCTDUJO0PS8B.1LD03WTEMNRVP@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Ioana Ciornei" <ioana.ciornei@nxp.com>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Lee Jones" <lee@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/9] gpio: regmap: add the .fixed_direction_output
+ configuration parameter
+Cc: "Frank Li" <Frank.Li@nxp.com>
+X-Mailer: aerc 0.16.0
+References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
+ <20250915122354.217720-5-ioana.ciornei@nxp.com>
+In-Reply-To: <20250915122354.217720-5-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The mei disconnect should be the last operation in remove flow.
-Otherwise the device is used after destruction.
-Fix minor free flow that happens after device destruction too.
+--b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-The fault leads to the following oops in Intel Gfx CI:
+Hi Ioana,
 
-<4>[  267.871331] Oops: general protection fault, probably for non-canonical address 0x6b6b6b6b6b6b6bcb: 0000 [#1] SMP NOPTI
-...
-<4>[  267.871410] RIP: 0010:mei_gsc_remove+0x44/0x90 [mei_gsc]
-...
-<4>[  267.871555] Call Trace:
-<4>[  267.871562]  <TASK>
-<4>[  267.871570]  auxiliary_bus_remove+0x1b/0x30
-<4>[  267.871589]  device_remove+0x43/0x80
-<4>[  267.871604]  device_release_driver_internal+0x215/0x280
-<4>[  267.871619]  device_release_driver+0x12/0x20
-<4>[  267.871630]  bus_remove_device+0xdc/0x150
-<4>[  267.871645]  device_del+0x15f/0x3b0
-<4>[  267.871656]  ? bus_unregister_notifier+0x37/0x50
-<4>[  267.871672]  gsc_destroy_one.isra.0+0x44/0x210 [i915]
-<4>[  267.872295]  intel_gsc_fini+0x28/0x50 [i915]
-<4>[  267.872860]  intel_gt_driver_unregister+0x2c/0x80 [i915]
-<4>[  267.873300]  i915_driver_remove+0x6e/0x150 [i915]
-<4>[  267.873694]  i915_pci_remove+0x1e/0x40 [i915]
-<4>[  267.874095]  pci_device_remove+0x3e/0xb0
-<4>[  267.874111]  device_remove+0x43/0x80
-<4>[  267.874126]  device_release_driver_internal+0x215/0x280
-<4>[  267.874137]  ? bus_find_device+0xa5/0xe0
-<4>[  267.874153]  device_driver_detach+0x14/0x20
-<4>[  267.874164]  unbind_store+0xac/0xc0
-<4>[  267.874178]  drv_attr_store+0x21/0x50
-<4>[  267.874190]  sysfs_kf_write+0x4a/0x80
-<4>[  267.874204]  kernfs_fop_write_iter+0x188/0x240
-<4>[  267.874222]  vfs_write+0x283/0x540
-<4>[  267.874241]  ksys_write+0x6f/0xf0
-<4>[  267.874253]  __x64_sys_write+0x19/0x30
-<4>[  267.874264]  x64_sys_call+0x79/0x26a0
-<4>[  267.874277]  do_syscall_64+0x93/0xd50
-<4>[  267.874291]  ? do_syscall_64+0x1a2/0xd50
-<4>[  267.874301]  ? do_syscall_64+0x1a2/0xd50
-<4>[  267.874313]  ? do_syscall_64+0x1a2/0xd50
-<4>[  267.874324]  ? clear_bhb_loop+0x30/0x80
-<4>[  267.874336]  ? clear_bhb_loop+0x30/0x80
-<4>[  267.874349]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+On Mon Sep 15, 2025 at 2:23 PM CEST, Ioana Ciornei wrote:
+> There are GPIO controllers such as the one present in the LX2160ARDB
+> QIXIS FPGA which have fixed-direction input and output GPIO lines mixed
+> together in a single register. This cannot be modeled using the
+> gpio-regmap as-is since there is no way to present the true direction of
+> a GPIO line.
+>
+> In order to make this use case possible, add a new configuration
+> parameter - fixed_direction_output - into the gpio_regmap_config
+> structure. This will enable user drivers to provide a bitmap that
+> represents the fixed direction of the GPIO lines.
 
-Fixes: 7704e6be4ed2 ("mei: hook mei_device on class device")
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
- drivers/misc/mei/gsc-me.c |  4 ++--
- drivers/misc/mei/main.c   | 14 +++++++++-----
- 2 files changed, 11 insertions(+), 7 deletions(-)
+I wonder about the ownership of that allocated memory in the config
+structure (and btw, I guess you leak the memory in your driver) and
+if it's not better and more error proof to allocate and copy the
+bitmap in gpio-regmap too (and maybe use devm_bitmap_alloc()) and
+leave it to the caller to handle the passed bitmap. I.e. it could
+also be on the stack.
 
-diff --git a/drivers/misc/mei/gsc-me.c b/drivers/misc/mei/gsc-me.c
-index f147258e7c28..93cba090ea08 100644
---- a/drivers/misc/mei/gsc-me.c
-+++ b/drivers/misc/mei/gsc-me.c
-@@ -150,13 +150,13 @@ static void mei_gsc_remove(struct auxiliary_device *aux_dev)
- 	if (mei_me_hw_use_polling(hw))
- 		kthread_stop(hw->polling_thread);
- 
--	mei_deregister(dev);
--
- 	pm_runtime_disable(&aux_dev->dev);
- 
- 	mei_disable_interrupts(dev);
- 	if (!mei_me_hw_use_polling(hw))
- 		devm_free_irq(&aux_dev->dev, hw->irq, dev);
-+
-+	mei_deregister(dev);
- }
- 
- static int __maybe_unused mei_gsc_pm_suspend(struct device *device)
-diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index f37f9b8b1f51..93c518bb5e14 100644
---- a/drivers/misc/mei/main.c
-+++ b/drivers/misc/mei/main.c
-@@ -1208,12 +1208,12 @@ static int mei_minor_get(struct mei_device *dev)
- /**
-  * mei_minor_free - mark device minor number as free
-  *
-- * @dev:  device pointer
-+ * @minor: minor number to free
-  */
--static void mei_minor_free(struct mei_device *dev)
-+static void mei_minor_free(int minor)
- {
- 	mutex_lock(&mei_minor_lock);
--	idr_remove(&mei_idr, dev->minor);
-+	idr_remove(&mei_idr, minor);
- 	mutex_unlock(&mei_minor_lock);
- }
- 
-@@ -1225,11 +1225,14 @@ static void mei_device_release(struct device *dev)
- int mei_register(struct mei_device *dev, struct device *parent)
- {
- 	int ret, devno;
-+	int minor;
- 
- 	ret = mei_minor_get(dev);
- 	if (ret < 0)
- 		return ret;
- 
-+	minor = dev->minor;
-+
- 	/* Fill in the data structures */
- 	devno = MKDEV(MAJOR(mei_devt), dev->minor);
- 
-@@ -1279,7 +1282,7 @@ int mei_register(struct mei_device *dev, struct device *parent)
- err_del_cdev:
- 	cdev_del(dev->cdev);
- err:
--	mei_minor_free(dev);
-+	mei_minor_free(minor);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(mei_register);
-@@ -1287,6 +1290,7 @@ EXPORT_SYMBOL_GPL(mei_register);
- void mei_deregister(struct mei_device *dev)
- {
- 	int devno;
-+	int minor = dev->minor;
- 
- 	devno = dev->cdev->dev;
- 	cdev_del(dev->cdev);
-@@ -1295,7 +1299,7 @@ void mei_deregister(struct mei_device *dev)
- 
- 	device_destroy(&mei_class, devno);
- 
--	mei_minor_free(dev);
-+	mei_minor_free(minor);
- }
- EXPORT_SYMBOL_GPL(mei_deregister);
- 
--- 
-2.43.0
+Otherwise, this looks good.
 
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+> Changes in v2:
+> - Add the fixed_direction_output bitmap to the gpio_regmap_config
+>
+>  drivers/gpio/gpio-regmap.c  | 12 ++++++++++++
+>  include/linux/gpio/regmap.h |  2 ++
+>  2 files changed, 14 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index e8a32dfebdcb..2489768686d3 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
+> @@ -31,6 +31,7 @@ struct gpio_regmap {
+>  	unsigned int reg_clr_base;
+>  	unsigned int reg_dir_in_base;
+>  	unsigned int reg_dir_out_base;
+> +	unsigned long *fixed_direction_output;
+> =20
+>  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
+>  			      unsigned int offset, unsigned int *reg,
+> @@ -129,6 +130,16 @@ static int gpio_regmap_get_direction(struct gpio_chi=
+p *chip,
+>  	unsigned int base, val, reg, mask;
+>  	int invert, ret;
+> =20
+> +	if (offset >=3D chip->ngpio)
+> +		return -EINVAL;
+
+Not sure this can happen. I tried to look into gpiolib.c but
+couldn't find anything obvious that it can't happen. Maybe Linus or
+Bartosz can comment on that.
+
+> +
+> +	if (gpio->fixed_direction_output) {
+> +		if (test_bit(offset, gpio->fixed_direction_output))
+> +			return GPIO_LINE_DIRECTION_OUT;
+> +		else
+> +			return GPIO_LINE_DIRECTION_IN;
+> +	}
+> +
+>  	if (gpio->reg_dat_base && !gpio->reg_set_base)
+>  		return GPIO_LINE_DIRECTION_IN;
+>  	if (gpio->reg_set_base && !gpio->reg_dat_base)
+> @@ -247,6 +258,7 @@ struct gpio_regmap *gpio_regmap_register(const struct=
+ gpio_regmap_config *config
+>  	gpio->reg_clr_base =3D config->reg_clr_base;
+>  	gpio->reg_dir_in_base =3D config->reg_dir_in_base;
+>  	gpio->reg_dir_out_base =3D config->reg_dir_out_base;
+> +	gpio->fixed_direction_output =3D config->fixed_direction_output;
+> =20
+>  	chip =3D &gpio->gpio_chip;
+>  	chip->parent =3D config->parent;
+> diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+> index c722c67668c6..34c143aca42d 100644
+> --- a/include/linux/gpio/regmap.h
+> +++ b/include/linux/gpio/regmap.h
+> @@ -78,6 +78,8 @@ struct gpio_regmap_config {
+>  	int ngpio_per_reg;
+>  	struct irq_domain *irq_domain;
+> =20
+> +	unsigned long *fixed_direction_output;
+
+Please add some documentation.
+
+-michael
+
+> +
+>  	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
+>  			      unsigned int offset, unsigned int *reg,
+>  			      unsigned int *mask);
+
+
+--b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaMgKhhIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/g/OQGApkK4RyQeR27/lOz7UgmjxXWviLT24rk7
+HomZpRwCI1WRHKWuke8PKCKR4WSGZcYjAYDBPXI1xnHdn8m/n1TIQChwQTK5HsFI
+3TxEofLzFPbcaU5PkHKQoroE+2VZNlrfg8A=
+=QdL8
+-----END PGP SIGNATURE-----
+
+--b738722ffd0679501c74392f15a62318d558d5578d88a795dfcc1186f5e5--
 
