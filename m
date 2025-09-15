@@ -1,220 +1,159 @@
-Return-Path: <linux-kernel+bounces-816496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D0BB574A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:20:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29EFDB574BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9306444028
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9D2189EEF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C822F549F;
-	Mon, 15 Sep 2025 09:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB82F6572;
+	Mon, 15 Sep 2025 09:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y6rhBH2y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SJvrSjvI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dMec5VwZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NOo6WaFM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="IrVxG8fh"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ACF2F3C28
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299242F3C2B;
+	Mon, 15 Sep 2025 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757927984; cv=none; b=qYUNiR1BcHvA88WEpput3iTyGHlp7TiMhWpA4mtl+/KjG1zZFXJydUcCnB/WgaAjBy6AIW0tPUsoGtq0VGtx9YI5pQlAsQUM+NzA0D9cq759YI4hFXifIzxZVcTsLVDiXoZh9EEXKKL879OMFi/R/6xDMRUG8IkjnbF1CzZNREA=
+	t=1757928019; cv=none; b=KrYJCAwaQ8PsXHv6uMYQAq4biyPU1KIe5uTLbYTWiu7/PIKXddU05fd8bpIm8Q7eq1Tx8j6eOIQAZJqbkNv8zzEdovkvQVrHpvcbDpPl4rJXcT+I/R5QUelsKjr4Z3/JpmkJpavyrJSbdUVJSqK7I29BzJzoRASlrtb43sOrmwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757927984; c=relaxed/simple;
-	bh=XA6mXkBIPFgan+x1bf5BLCjXCwYPhLpEO9xTsEBGW0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jMgUF7e9i+uSLxRuPUWdFbPk3+1LgloQy4/RZPaK/Sfq3xSmZl8Impbd5raSwfOMFbYK28EeXTWcdMlLf67hCmCWSnvLVJx3eus6xuJyyDWuN5GOXnO8+471NrwqOibDXcM0CowYbwHQjqCLDe/hD9R5Z+l3NUUIN9cpsjbEhX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y6rhBH2y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SJvrSjvI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dMec5VwZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NOo6WaFM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EA1BB33712;
-	Mon, 15 Sep 2025 09:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757927979; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
-	b=y6rhBH2yIHqcEhWvW3OK/M1MGL07yB+6JMwC6X/CknVE5ua038lWDkVtBxXcMW2YiW0/gB
-	rSMv7hNa/JVKJWM7hARJEEPpYWbHOSmUMRbz8f4sVhqeny14kYvL5lcca9exMU9JyNeq6n
-	Pyq6WFF1sN1B85usXfvLUNO8krTzzDE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757927979;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
-	b=SJvrSjvI7wBdkhoQj3MZ4ZBU7tX1b1mGqMmsm9Le3rr8bw1HFENqVr83A7BDG7tAfD/H3I
-	rh7jnWIRJSAAW1Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757927978; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
-	b=dMec5VwZSk27WNcuKLsJWYANLg5lWjboI6lQZXChre5tGBQy9LfQiob4gACGMYnIEyj7wt
-	of5w1OHw8GaX5rzloEDHnRzUEa9We+whyL+vVkIgzkYI4qkYUE0EW8OsHCuSl7kqKZApPI
-	R62vbkO0euBFSVizbuH5OjHtbfjlT3s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757927978;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PhWypHhs76OUhW0wRhEmCSwbci4KHZ6s4gw5WflTcZE=;
-	b=NOo6WaFMZo/gSs0Cn6FVxnoIe/rbPumE4+eUSjak33WwfmR1YoYCMva3UzVfmUFBWfq4S4
-	cDjh2ACDImG9O8DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D5CE31398D;
-	Mon, 15 Sep 2025 09:19:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FQ3QMyrax2hoeQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 09:19:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 74FF7A0A2B; Mon, 15 Sep 2025 11:19:38 +0200 (CEST)
-Date: Mon, 15 Sep 2025 11:19:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: Askar Safin <safinaskar@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>, 
-	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
-	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-um@lists.infradead.org, 
-	x86@kernel.org, Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org, 
-	initramfs@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>, 
-	linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>, devicetree@vger.kernel.org, 
-	Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
-Subject: Re: [PATCH RESEND 13/62] ext2: remove ext2_image_size and associated
- code
-Message-ID: <5xr5efvf4dhy43fchbvfsxspzgde5bxezhszdgqcya4eqrocgy@lqqkaq5wok6a>
-References: <20250913003842.41944-1-safinaskar@gmail.com>
- <20250913003842.41944-14-safinaskar@gmail.com>
+	s=arc-20240116; t=1757928019; c=relaxed/simple;
+	bh=lrs+gaC/iCxZllKb8NGtMd926GgvT1TaLgwxAzZYc6w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=einhWfytAviCl+Kk/g4+bBfoN7nmZ21quFNUxTPi3NvoQJxgG78X9CVdSB1a9GqvGMhabTFqDFntDS8AJqiuvXRsl70IEdbZUoyhh006na8IEwUyfP+zRQC1WDWOzeXMvv4D2F2aV205InbAgSQgly2vUz81/WXAp92JkOD4V+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=IrVxG8fh; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2c7f199c921511f0b33aeb1e7f16c2b6-20250915
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=1le3np0jp2M0puYyEjMNuuOO7xrsTjp7HZKSsbnNKHk=;
+	b=IrVxG8fhruEPK1AT5HnCr4srmmx1UkvZpCuc/xgSJ2wntMHdTOJio9+G/jTnzp/2NVI22qXw32aGH3CVFHLigqJjY2hDiYYhf5jaqdaPK2FChUDTMPEsaX0chiaiYDSsRJ94cxFslhxkE0DwTONULJAXJAoaDXDzvXoxtbUkO/A=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:73610fbe-eb28-40c3-8b5e-80d78e040fe1,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:59ac4ff8-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
+	nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
+	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 2c7f199c921511f0b33aeb1e7f16c2b6-20250915
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <kyrie.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1423529524; Mon, 15 Sep 2025 17:20:08 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 15 Sep 2025 17:20:07 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 15 Sep 2025 17:20:05 +0800
+From: Kyrie Wu <kyrie.wu@mediatek.com>
+To: Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen
+	<andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Nicolas Dufresne
+	<nicolas.dufresne@collabora.com>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>, Sebastian Fricke
+	<sebastian.fricke@collabora.com>, Nathan Hebert <nhebert@chromium.org>, Arnd
+ Bergmann <arnd@arndb.de>, Irui Wang <irui.wang@mediatek.com>, George Sun
+	<george.sun@mediatek.com>, <linux-media@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Andrzej Pietrasiewicz
+	<andrzejtp2010@gmail.com>
+Subject: [PATCH v3 0/8] Enable video decoder & encoder for MT8189
+Date: Mon, 15 Sep 2025 17:19:50 +0800
+Message-ID: <20250915091958.31509-1-kyrie.wu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913003842.41944-14-safinaskar@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,linux-foundation.org,linuxfoundation.org,kernel.org,zeniv.linux.org.uk,suse.cz,lst.de,kernel.dk,gmail.com,cyphar.com,linutronix.de,cyberus-technology.de,linux.alibaba.com,redhat.com,amazon.com,landley.net,0pointer.de,lists.infradead.org,lists.linux.dev,lists.linux-m68k.org,lists.ozlabs.org,mit.edu,monstr.eu,linux.dev,linux.ibm.com];
-	R_RATELIMIT(0.00)[to_ip_from(RLbyy5b47ky7xssyr143sji8pp)];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[55];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Sat 13-09-25 00:37:52, Askar Safin wrote:
-> It is not used anymore
-> 
-> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+This series have the follow changing:
+Firstly add mt8189 video decoder compatible, profile and level to support
+MT8189 kernel driver.
+Secondly fix some bugs, including vp 4K profile2 and media device node
+number bug.
+Lastly, add mt8189 video encoder compatible.
 
-Looks good.
+This series has been tested with MT8189 tast test.
+Encoding and decoding worked for this chip.
 
-Acked-by: Jan Kara <jack@suse.cz>
+Patches 1-2 Add decoder compatible.
+Patches 3 Add profile and level supporting.
+Patches 4 Add core-only VP9 decoding supporting.
+Patches 5-6 fix some bugs.
+Patches 7-8 Adds encoder compatible.
 
-								Honza
+---
+H264 test results:
+./fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -j1 -t 90
+     JVT-AVC_V1       94/135
 
-> ---
->  fs/ext2/ext2.h          |  9 ---------
->  include/linux/ext2_fs.h | 13 -------------
->  2 files changed, 22 deletions(-)
-> 
-> diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-> index cf97b76e9fd3..d623a14040d9 100644
-> --- a/fs/ext2/ext2.h
-> +++ b/fs/ext2/ext2.h
-> @@ -608,15 +608,6 @@ struct ext2_dir_entry_2 {
->  					 ~EXT2_DIR_ROUND)
->  #define EXT2_MAX_REC_LEN		((1<<16)-1)
->  
-> -static inline void verify_offsets(void)
-> -{
-> -#define A(x,y) BUILD_BUG_ON(x != offsetof(struct ext2_super_block, y));
-> -	A(EXT2_SB_MAGIC_OFFSET, s_magic);
-> -	A(EXT2_SB_BLOCKS_OFFSET, s_blocks_count);
-> -	A(EXT2_SB_BSIZE_OFFSET, s_log_block_size);
-> -#undef A
-> -}
-> -
->  /*
->   * ext2 mount options
->   */
-> diff --git a/include/linux/ext2_fs.h b/include/linux/ext2_fs.h
-> index 1fef88569037..e5ebe6cdf06c 100644
-> --- a/include/linux/ext2_fs.h
-> +++ b/include/linux/ext2_fs.h
-> @@ -27,17 +27,4 @@
->   */
->  #define EXT2_LINK_MAX		32000
->  
-> -#define EXT2_SB_MAGIC_OFFSET	0x38
-> -#define EXT2_SB_BLOCKS_OFFSET	0x04
-> -#define EXT2_SB_BSIZE_OFFSET	0x18
-> -
-> -static inline u64 ext2_image_size(void *ext2_sb)
-> -{
-> -	__u8 *p = ext2_sb;
-> -	if (*(__le16 *)(p + EXT2_SB_MAGIC_OFFSET) != cpu_to_le16(EXT2_SUPER_MAGIC))
-> -		return 0;
-> -	return (u64)le32_to_cpup((__le32 *)(p + EXT2_SB_BLOCKS_OFFSET)) <<
-> -		le32_to_cpup((__le32 *)(p + EXT2_SB_BSIZE_OFFSET));
-> -}
-> -
->  #endif	/* _LINUX_EXT2_FS_H */
-> -- 
-> 2.47.2
-> 
+v4l2-compliance test results:
+Compliance test for mtk-vcodec-enc device /dev/video2:
+Total for mtk-vcodec-enc device /dev/video2: 47, Succeeded: 46, Failed: 1, Warnings: 0
+Compliance test for mtk-vcodec-dec device /dev/video3:
+Total for mtk-vcodec-dec device /dev/video3: 48, Succeeded: 48, Failed: 0, Warnings: 0
+
+scp upstream link:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20250811015922.32680-1-huayu.zong@mediatek.com/
+
+Changes compared with v1:
+--add H264 fluster test results
+--reorder compatible string for dt-bindings
+
+Changes compared with v1:
+--add v4l2-compliance test results
+--add scp upstream link
+--add HW difference discriptions for dt-bindings commit messages
+
+This series patches dependent on:
+[1]
+https://patchwork.linuxtv.org/project/linux-media/cover/20250510075357.11761-1-yunfei.dong@mediatek.com/
+[2]
+https://patchwork.linuxtv.org/project/linux-media/cover/20250528063633.14054-1-irui.wang@mediatek.com/
+
+Kyrie Wu (8):
+  dt-bindings: media: mediatek: decoder: Add MT8189
+    mediatek,vcodec-decoder
+  media: mediatek: vcodec: add decoder compatible to support MT8189
+  media: mediatek: vcodec: add profile and level supporting for MT8189
+  media: mediatek: vcodec: Add core-only VP9 decoding support for MT8189
+  media: mediatek: vcodec: fix vp9 4096x2176 fail for profile2
+  media: mediatek: vcodec: fix media device node number
+  dt-bindings: media: Add MT8189 mediatek,vcodec-encoder
+  media: mediatek: encoder: Add MT8189 encoder compatible data
+
+ .../media/mediatek,vcodec-encoder.yaml        |  2 ++
+ .../media/mediatek,vcodec-subdev-decoder.yaml |  1 +
+ .../vcodec/decoder/mtk_vcodec_dec_drv.c       |  9 +++++-
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  1 +
+ .../vcodec/decoder/mtk_vcodec_dec_stateless.c |  4 +++
+ .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 32 ++++++++++++-------
+ .../vcodec/encoder/mtk_vcodec_enc_drv.c       | 14 ++++++++
+ 7 files changed, 50 insertions(+), 13 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.45.2
+
 
