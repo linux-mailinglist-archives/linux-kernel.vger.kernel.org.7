@@ -1,235 +1,84 @@
-Return-Path: <linux-kernel+bounces-817809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64BFCB586CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:32:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9757B586D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1147A177E45
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:32:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 362B87A305C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFD0298CC4;
-	Mon, 15 Sep 2025 21:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5FA2C08B1;
+	Mon, 15 Sep 2025 21:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="geKn2S6P"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="coWvyVeC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFE51DE4E0
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD210EACE;
+	Mon, 15 Sep 2025 21:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757971926; cv=none; b=MQB4Ib2qZGxd6j86W7suyaufzms52Vb4m8bWRcMyYU+R22LPihUQ7OMPdwRnd23N52r5ZlCcg7u72G5qim8f3TBv0KJK+ZvGAwQaiH2IltezQa/dzjrjct19eLzpUOp9CIXimCVtUsJjGaPz2JGZyNkzJWbsSDSA/CUni471vMY=
+	t=1757972063; cv=none; b=DEB2S+PdRv3lkZxpgnPEEiZJBsRICoMwwMkDOHiJUczPNc2rvxnM7OV/H7sTTh0O6cTy27M3i/WiO5QXkT9PsxBZmCm/mYL90GkJMSxG8ire7aLqXcQG4iq6uALfxvJ0zvGIorCvVkd+vkhsoCcGSr1AKQVGChEGAJYh0J6B3Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757971926; c=relaxed/simple;
-	bh=W7C84yvEfJE6W6gHRa9X5Y9kR/gi2La0o9oC7V8Bg7A=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=RYn6D9wlcsN+8TiW+oHMEHxCvoXATFh3pV2i52Y2T/XdE2b9wGXHmopCAg256nBBLNuTJMjAQZYMDKxyYU3bwVAJUvi+1CTagNValDSc4mLHcyOzonBgmEVfckq+QN5agNGKvWpJBJgp/45LocVDgLiHZ9tM49asFrS50hXPD5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=geKn2S6P; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757971911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TjCQVoRcvkNWmv8o166ThVNsGRK8YUNi+qrJMGfB+yU=;
-	b=geKn2S6PjU8cjPzCGXTD7pgYIXVvFexC6PL/ne74oYaDfT7ErWwmgUZlTnKEWFLlqwjK4g
-	dAdDWU1mliydp+hlSe9nK4kAyAnaF5hOmeW/LTAyCI3zETi+kyivMSOs6f9ZLYJGOnZGQk
-	hQyHt8PkQo143xev04YYejRqnoaumWs=
+	s=arc-20240116; t=1757972063; c=relaxed/simple;
+	bh=EQ9er1liAcJ0+LgMZjQy4CDVJThm9UrjoRfFH7qfXIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ae3Tj+Eo/na54DxsNR6gwMNgd1rX+dPupywl2ahOkA/qn9N42KyKGAWYjMsg5mOmRNz0/56qMQcSZYC/tZFNds22FODDojs+ajleV3VCyJ8CTonoj64tCY3eXdUmlquJOdfqi27z/Aiec4rMA4E6s4t7T3zyKvQF58ionsDlCTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=coWvyVeC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B327C4CEF1;
+	Mon, 15 Sep 2025 21:34:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757972062;
+	bh=EQ9er1liAcJ0+LgMZjQy4CDVJThm9UrjoRfFH7qfXIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=coWvyVeCz1LjDVyYAu06PP1m/8FpKwRYQqc8+hGy/A+U9tNUwRQ4jN2a/JppPCaDF
+	 iNBlXJN6If8azp/Oa3mMmC2Slbx20pHDJgNk8lHZhyBndkClSsI8H8NOOAuF4fVH6z
+	 kH4HMrL4ceSFP/bhVgP66HW7evVSh2XXCpa88pD89GQVKabsQInk5339ALT+V3ImV5
+	 hb2BvGTTl7Wh82KVNVJU5GNY6jpFM6SBV6xr7OLMl4oijIUP8pt1XEk5TiYfIRh7lK
+	 MxcjWW08uOuMBPPVMvw7smbSgK69p0+nhjCpQX8y+QC7X20Ltplc5VWJNwp2lSNjSK
+	 xOkdBBD7Us75A==
+Date: Mon, 15 Sep 2025 16:34:21 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: linux-watchdog@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	linux-kernel@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>, Lee Jones <lee@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, Andrew Davis <afd@ti.com>,
+	linux-hwmon@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>, Srinivas Kandagatla <srini@kernel.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: mfd: tps6594: allow gpio-line-names
+Message-ID: <175797205997.3572376.2459188333826155892.robh@kernel.org>
+References: <20250912120745.2295115-1-mwalle@kernel.org>
+ <20250912120745.2295115-3-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] PMCR_EL0.N is RAZ/WI. At least a build failes in Ubuntu
- 22.04 LTS. Remove the set function.
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Itaru Kitayama <itaru.kitayama@linux.dev>
-In-Reply-To: <86348rdg5o.wl-maz@kernel.org>
-Date: Tue, 16 Sep 2025 06:31:31 +0900
-Cc: Oliver Upton <oliver.upton@linux.dev>,
- Joey Gouly <joey.gouly@arm.com>,
- K Poulose Suzuki <suzuki.poulose@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>,
- Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev,
- kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Itaru Kitayama <itaru.kitayama@fujitsu.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0524084A-9E82-408A-9F22-369ED25E42E9@linux.dev>
-References: <867by4c4v1.wl-maz@kernel.org>
- <3FEB4D87-EEAF-4A21-BCBC-291A4A7C2230@gmail.com>
- <86348rdg5o.wl-maz@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912120745.2295115-3-mwalle@kernel.org>
 
 
+On Fri, 12 Sep 2025 14:07:40 +0200, Michael Walle wrote:
+> Setting the signal names in the device tree was already possible, but
+> it will lead to a warning. Allow the gpio-line-names property to fix
+> that.
+> 
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/ti,tps6594.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-> On Sep 12, 2025, at 21:11, Marc Zyngier <maz@kernel.org> wrote:
->=20
-> On Fri, 12 Sep 2025 12:33:39 +0100,
-> Itaru Kitayama <itaru.kitayama@gmail.com> wrote:
->>=20
->>=20
->>=20
->>> On Sep 12, 2025, at 20:01, Marc Zyngier <maz@kernel.org> wrote:
->>>=20
->>> =EF=BB=BFOn Fri, 12 Sep 2025 09:27:40 +0100,
->>> Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
->>>>=20
->>>> Signed-off-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
->>>=20
->>> This isn't an acceptable commit message.
->>>=20
->>>> ---
->>>> Seen a build failure with old Ubuntu 22.04 LTS, while the latest =
-release
->>>> has no build issue, a write to the bit fields is RAZ/WI, remove the
->>>> function.
->>>> ---
->>>> tools/testing/selftests/kvm/arm64/vpmu_counter_access.c | 6 ------
->>>> 1 file changed, 6 deletions(-)
->>>>=20
->>>> diff --git =
-a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c =
-b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
->>>> index =
-f16b3b27e32ed7ca57481f27d689d47783aa0345..56214a4430be90b3e1d840f2719b22dd=
-44f0b49b 100644
->>>> --- a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
->>>> +++ b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
->>>> @@ -45,11 +45,6 @@ static uint64_t get_pmcr_n(uint64_t pmcr)
->>>>   return FIELD_GET(ARMV8_PMU_PMCR_N, pmcr);
->>>> }
->>>>=20
->>>> -static void set_pmcr_n(uint64_t *pmcr, uint64_t pmcr_n)
->>>> -{
->>>> -    u64p_replace_bits((__u64 *) pmcr, pmcr_n, ARMV8_PMU_PMCR_N);
->>>> -}
->>>> -
->>>> static uint64_t get_counters_mask(uint64_t n)
->>>> {
->>>>   uint64_t mask =3D BIT(ARMV8_PMU_CYCLE_IDX);
->>>> @@ -490,7 +485,6 @@ static void =
-test_create_vpmu_vm_with_pmcr_n(uint64_t pmcr_n, bool expect_fail)
->>>>    * Setting a larger value of PMCR.N should not modify the field, =
-and
->>>>    * return a success.
->>>>    */
->>>> -    set_pmcr_n(&pmcr, pmcr_n);
->>>>   vcpu_set_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0), pmcr);
->>>>   pmcr =3D vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0));
->>>>=20
->>>>=20
->>>=20
->>> So what are you fixing here? A build failure? A semantic defect?
->>> Something else? What makes this a valid change?
->>>=20
->>> Frankly, I have no idea.
->>>=20
->>> But KVM definitely allows PMCR_EL0.N to be written from userspace, =
-and
->>> that's not going to change.
->>>=20
->>=20
->> Then I=E2=80=99ll drop this patch.
->=20
-> I'm not asking you to drop it, I'm asking you to explain. If you found
-> a problem, let's discuss it and fix it. But as it stands, you're not
-> giving me much to go on.
->=20
-
-You are right, while the bit fields are write ignored, to be consistent =
-with the handling of other bit fields of the register, I=E2=80=99m fully =
-convinced that checking the write operation in the vpmu_counter_access.c =
-file should be kept.
-
-The build error I=E2=80=99ve seen with Ubuntu 22.04 LTS is below:=20
-
-gcc -D_GNU_SOURCE=3D  =
--I/home/itaru/projects/linux/tools/testing/selftests/cgroup/lib/include =
--DDEBUG -Wall -Wstrict-prototypes -Wuninitialized -O0 -g -std=3Dgnu99 =
--Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT =
--fno-builtin-memcmp -fno-builtin-memcpy -fno-builtin-memset =
--fno-builtin-strnlen -fno-stack-protector -fno-PIE -fno-strict-aliasing =
--I/home/itaru/projects/linux/tools/testing/selftests/../../../tools/includ=
-e =
--I/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/a=
-rm64/include =
--I/home/itaru/projects/linux/tools/testing/selftests/../../../usr/include/=
- -Iinclude -Iarm64 -Iinclude/arm64 -I ../rseq -I..  -isystem =
-/home/itaru/projects/linux/tools/testing/selftests/../../../usr/include =
--I/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/a=
-rm64/include/generated/   -c arm64/vpmu_counter_access.c -o =
-/home/itaru/projects/linux/tools/testing/selftests/kvm/arm64/vpmu_counter_=
-access.o
-In file included from =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/arm=
-64/include/asm/sysreg.h:1098,
-                 from =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/arch/arm=
-64/include/asm/esr.h:10,
-                 from include/arm64/processor.h:16,
-                 from arm64/vpmu_counter_access.c:16:
-In function =E2=80=98field_multiplier=E2=80=99,
-    inlined from =E2=80=98field_mask=E2=80=99 at =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:141:17,
-    inlined from =E2=80=98u64_encode_bits=E2=80=99 at =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:172:1,
-    inlined from =E2=80=98u64p_replace_bits=E2=80=99 at =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:172:1,
-    inlined from =E2=80=98set_pmcr_n=E2=80=99 at =
-arm64/vpmu_counter_access.c:50:2:
-=
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:136:17: error: call to =E2=80=98__bad_mask=E2=80=99 =
-declared with attribute error: bad bitfield mask
-  136 |                 __bad_mask();
-      |                 ^~~~~~~~~~~~
-In function =E2=80=98field_multiplier=E2=80=99,
-    inlined from =E2=80=98u64_encode_bits=E2=80=99 at =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:172:1,
-    inlined from =E2=80=98u64p_replace_bits=E2=80=99 at =
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:172:1,
-    inlined from =E2=80=98set_pmcr_n=E2=80=99 at =
-arm64/vpmu_counter_access.c:50:2:
-=
-/home/itaru/projects/linux/tools/testing/selftests/../../../tools/include/=
-linux/bitfield.h:136:17: error: call to =E2=80=98__bad_mask=E2=80=99 =
-declared with attribute error: bad bitfield mask
-  136 |                 __bad_mask();
-      |                 ^~~~~~~~~~~~
-arm64/vpmu_counter_access.c: At top level:
-cc1: note: unrecognized command-line option =
-=E2=80=98-Wno-gnu-variable-sized-type-not-at-end=E2=80=99 may have been =
-intended to silence earlier diagnostics
-make: *** [Makefile.kvm:303: =
-/home/itaru/projects/linux/tools/testing/selftests/kvm/arm64/vpmu_counter_=
-access.o] Error 1
-
-Thanks,
-Itaru.
-
-> M.
->=20
-> --=20
-> Without deviation from the norm, progress is not possible.
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
