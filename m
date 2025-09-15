@@ -1,209 +1,223 @@
-Return-Path: <linux-kernel+bounces-816282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC80B571D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7617DB571D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8171F16B8AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:45:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2471D1699F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3512E0406;
-	Mon, 15 Sep 2025 07:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F7C2D7810;
+	Mon, 15 Sep 2025 07:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="i0cB6JZN"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1e4QebJ9"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0652E03EB;
-	Mon, 15 Sep 2025 07:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757922341; cv=none; b=PeEi3YMTXv/fMRuT44l91IF1mcvsdGRUbQRXf/dFnUm/9CsYyxMC/R9ppMk3riIgsqjldEABOdFH/YRmC4v48NUWsT/3zPNPaKxiobhkiPOkH9uTchCrmpD215/+stuDUZ+r8TiyZAb6GMSGmMfeM8ZwjBUVt4S+1E+B7wTi0mc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757922341; c=relaxed/simple;
-	bh=ERZViQTj+6P1b6/KdlyQAzTUr+pPdDenyjAC3bDncac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PwfJxz8PCKjRfEYWJJTqJB1QrxvSNjudLkrAiCMgUdbglaYe292dGt0I9axwNEHPLoCE16vUWCBegyrOIUV3eCnmbhVCsPCl2eLcX8XnrAbTf30zp8l5VEOymLjd2uUSLZh0JFZsclvB/70eUyC5YvYhlHBmFYndN+ao4wt7Uds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=i0cB6JZN; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1757922286;
-	bh=qF5UwLEBr43GO6SPJWPCyImpKOOb7jUywXrHGThi7ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=i0cB6JZNTrN/O8cu9RQ8MbNidQc1gIsU1VZo52ga8r30GN0yLcWMvQxAiLuGGvsJk
-	 62iD34nrrwNbLanTw1BaAp13/hdn7dqrBoAh670HbpZ9KpEWEEHepPzobmxkwAjlQV
-	 Oz71SuYZ7PB7pGghHdBfLMXj0pi1xlTDhYgJJ+T4=
-X-QQ-mid: zesmtpgz3t1757922187td323d479
-X-QQ-Originating-IP: uaKMIBiz8NutNVI7ATwkksZe081CMs2tWjI3RjRxspQ=
-Received: from [198.18.0.1] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 15 Sep 2025 15:43:05 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10455015346246175872
-EX-QQ-RecipientCnt: 15
-Message-ID: <408B48A84E5811C4+555ae002-5b34-4f90-9452-a3458a11f10f@uniontech.com>
-Date: Mon, 15 Sep 2025 15:43:05 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359D32D6629;
+	Mon, 15 Sep 2025 07:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757922223; cv=fail; b=isxBq5N3Y/d8ZDtvaf8rlQAOyaRw/C3Dz3jt9lpgO1c6h6pbsC60GzR7wgGzQWfZkOmvXeOgsnUrOuK83AfQrXhvxMh88XP8tmknGLfIdB+3mSkn2GDP/+B7N0iUE/ncHapbtUHxDD0AAgfAvEpxMfuNTOoxdrItMV4dXqJcuIo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757922223; c=relaxed/simple;
+	bh=1FXKODpunk3Avr5UeDh8ClKagW4c86kXBCJYWNTjtI0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PRvlg7ICAEKZbx2H1KQi5C1rTXD90yibKyJ9sCGIgdtoV7xmuADv8H+rKtuyw4dAnAgSYrUTBmfQN2M/CHR+qklE5nK/uRIYKHzxAPXVQfPrbmpM/INnKHXdQi8XyxP//ZkhuuCW2buJLwP1IUOaG4iyp5JHrtS2mjzYzJ2Mlzg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1e4QebJ9; arc=fail smtp.client-ip=40.107.244.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xpY1ye/JzClJULodpWHtIkF6RDW7W24Uko4HZ2Q+cmzmELap2PQYjAhxYgaur0EmPvjeUmMxNdl29uC6UzK4F5Nr1Q3nRQVKRKiCJvmhekhlOExT0dj2oa9ffW0eASH7O4s4gfRB5L6Lx3JMPROTNQJ7+R3dennj7NUzUubfzUf/C1zNWl617iOCJm6X/nZn6ICXmCmo/VQEgKjpUXlRWq8jdFMSXXQvjRmEfpwrgFl0rdlQ3VL5omYCb6RSiGQOP2HrdRpR+BIjtpMI0Edm0iFCZWgsAAwH3XRpTl0NvMJORSfbhc+l5+4ivtc0Cxh1+W1Wee/DYNmeDmvzCbW3QA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9ZuVmDGtDlZRZ55v1rCsonle1UifiYPSdF3sV08fxnM=;
+ b=AReNbIh/mmJ/jomfGL8TNWKcavQFwjfg8P+V+d9cpiggD42Sah6SI6ImANGprIa2f1aNPpneEYcQnE6TUJ9S7lTM180ogSV+HC/rGBnedzyUQH4qsnZKUTsfuT2c/oPf5G45EGyQEiAk6H/RUF9+oPlDNDeA3QDmtQS1olbyAqCB0UsoP54PjyBVeUoyaLUKVCgjT7wbJaV1p8vENpKwvK8UKQHQZ2oquUz15O/W9YkeM0+chu1AAJKjvA+B+qEi56AihEnBSy3TgwErUDFSzFEtwjSQ6nPGxXJ2unm160ML8y168e05R3vgFXY7CWZW0ce+dVDqBdOwoBYZSi4B/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9ZuVmDGtDlZRZ55v1rCsonle1UifiYPSdF3sV08fxnM=;
+ b=1e4QebJ9zaqbCgyBN39kpl7ExzJNerIBkHgIPsq3lFecgiQeIEZJjHNNUtMURkT++ooYE4mhpwdJakC40U+LcrmWA182cmDm9l8uT+OxmUlWPCX3qjPNEbHyvLjYUom8qR6FNIvSkGgf2fhVGeg87kZR09H0M6jhfxRefWb08Uw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
+ by DS5PPFDBFC954F7.namprd12.prod.outlook.com (2603:10b6:f:fc00::664) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 07:43:40 +0000
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f]) by CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f%5]) with mapi id 15.20.9115.018; Mon, 15 Sep 2025
+ 07:43:39 +0000
+Message-ID: <c6e09d1e-c950-4ba7-8773-2062e0c62068@amd.com>
+Date: Mon, 15 Sep 2025 17:43:33 +1000
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [RFC PATCH] PCI: Add quirk to always map ivshmem as write-back
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Kai-Heng Feng <kai.heng.feng@canonical.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>, Santosh Shukla <santosh.shukla@amd.com>,
+ "Nikunj A. Dadhania" <nikunj@amd.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20250612082233.3008318-1-aik@amd.com>
+ <20250912164957.GCaMRPNf7P60wqBud9@fat_crate.local>
+From: Alexey Kardashevskiy <aik@amd.com>
+Content-Language: en-US
+In-Reply-To: <20250912164957.GCaMRPNf7P60wqBud9@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SY6PR01CA0116.ausprd01.prod.outlook.com
+ (2603:10c6:10:1b8::12) To CH3PR12MB9194.namprd12.prod.outlook.com
+ (2603:10b6:610:19f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] ALSA: usb-audio: add module param
- device_quirk_flags
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-sound@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Mingcong Bai <jeffbai@aosc.io>,
- Kexy Biscuit <kexybiscuit@aosc.io>, Nie Cheng <niecheng1@uniontech.com>,
- Zhan Jun <zhanjun@uniontech.com>, Feng Yuan <fengyuan@uniontech.com>,
- qaqland <anguoli@uniontech.com>, kernel@uniontech.com
-References: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
- <87a52zr9kq.wl-tiwai@suse.de>
-Content-Language: en-US
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-In-Reply-To: <87a52zr9kq.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: OWeDQKPzgDU86mCG3DHvRN8Ujs5GHeehhOAyUQ94FNPQBii40Hwv6nrj
-	YzMaMCu4JNWpU/SPvQIdLBx32Eu/wo8Zk4RMSXyL+ULa7VsECWx1O3HangIBAbAOIZ7ynWe
-	3VKwsqzOTHApbyvoF14bFnOcT0jPEMjEXSyU7qQZQ+y3Wj00Wa4+Mk/c13jaE5tI5kdWnU7
-	UClwV40oWyHIh3Z3ttAphipljaZyRWl6M7FYx8RKF6fhIaJv5YG0qQqAqvcxhf0gu3WtxOP
-	VWyIfyNQWIAB/UmcGz06pMMCNIBmwBEzpzJJPXLdhXlQWXIipVLSSpX45JG6t8pZo9U5jIH
-	yPzTGxEahZzD6dzGvPqzVtRUR3YpaJ9kU0lmLjPDwBv+zFV0SAR+2Uds4qYVrhXLYgZor8k
-	awF8JNdvfjzvCau125isgb+0txgKdbkXC87RxppxuZ1fsp0XT2nUPiFbmbxUiWBlwlqq9cL
-	1PjFz5nJIhGbVl6c64XbS8qYRPTGTEapJio9pa0a+51xpQpbIAvhgT3enszwgm1XSI72ydF
-	3rhMecm76X/s899twxNZ+Thqdxida48U8+dLTDtKvfGFkmuOK0+gmpB7D32rzW92Mt5Yjws
-	UyIFal6avmmK7c9sGTwDGfa2VbLYnSvhqGD2e/AGIJBi5KpmN923PTcAzu7c34j0gYENbuV
-	s0rceJ14y7xL9v+p0U0Yk5zp9Eqe44nYsn+O/usU1wAwjAdy66FNAX/hEtTN8Xo/4de+w+y
-	49Rhx+JKOzih0BjXEYdekolBVoxOI0BkHo9Ar2IoGR9lm2RRxrdbzHKHWDjJswD0WjlP796
-	u/9UHODeJq71tkdPVlg8vjQENUItvT1Zol2cjNuoWvlNalYoQwFSuZFVlkHjR3H/XkUhdtU
-	YuF3REdlcsVbbhed8SpWkeVSASNuYvOqug9HoAEXjE0CUf9X1Swh+vWGFmBbeMHV+UAhX+h
-	rKuwCBEvn6RKB+wXflDXxr5oK8SaV0LlF9/CnZhunuJ2KeR7QDlzYIlNwUXIPs71ylpOi/r
-	RkE/ZmnHkQbSJRg9wU59hWwoWGdHJSTCw6S1NMo9upD/ZoG16FnJMSbakdf0RcWXXB/vojt
-	B2YJ7jZOY0tJak/NuaIxck=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB9194:EE_|DS5PPFDBFC954F7:EE_
+X-MS-Office365-Filtering-Correlation-Id: e01e7f96-f752-4552-16ab-08ddf42b9607
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RCs1OXNNRjBpZVAwM1lBdXdmODhxeHU3cW9PczhsTndJUTNubVByc2tUMmRM?=
+ =?utf-8?B?RGEydys4czhveDRRQktHQ2loeTRrNisvWmVCcmhZOXUrbkJ2Ui9aQmpzRUdp?=
+ =?utf-8?B?T1ZGaGlPUXBwQWFaWTRXend6L0s1ZURaQlpjVm1MNDBoUGt5SU9wNnRsbGp0?=
+ =?utf-8?B?RmtUcHZlaE1VWUtaZFplZCtLenNmQzZubDlDZ0JWU1gwTUxHbk54TmJXd1Z1?=
+ =?utf-8?B?eS9RSTVseWVKNkhxR3kxeVBtWnBEQU1ERVdaSy81cEhlVFZyUE9sdThzQ3Zo?=
+ =?utf-8?B?V1FqbEhEZmdPNHI4Z2pCdUZJbVdaU1ZoVFBjZWRjUVhTbEtmdEo0N3VWNk50?=
+ =?utf-8?B?U2VFMG9pTzl3UWt6QThFNXliN3JZN1Z1bHV1akFKanBMbUhQOHFTZVZTSEx4?=
+ =?utf-8?B?Y2JiaEZqVXVhcW5rR25DWWxVWUlCWXA2b0x0ZnlFMGZ3QmRUL3FRaGpyYkYy?=
+ =?utf-8?B?VDlUaCtkTWttcDlHV0JzaXA3b3FMZThjODdOdUR1UXFScnFMczk2emV2bW51?=
+ =?utf-8?B?bkJ4dk5Lbmk3Q1lFcGtFK1FTbUdXbUNOZXdobTZkTzRWU1g3SkFvMkEvckZq?=
+ =?utf-8?B?U3FXcmRjTm1aa2VqenhaWlhYbXZ5NUhNYTlZWkF5Rmc3Y3VhL2ZiQzVPdFVX?=
+ =?utf-8?B?MFlqek15d1VjdG9tcWhtdTYrbkN0MW1VSlBwbkh0bEtLMmF3amJtTzYvZC9S?=
+ =?utf-8?B?YlBqeFhMVWoyTGRwdEFRd3IxcmV5YVBHWCthb0dWTS84clpzU1I1YmQ1VnlF?=
+ =?utf-8?B?OXI3V0pNNWZsZXQyaWlpM0c2V0RBKzlyYnJreWo3MGV4OHR6MG5Hc2tKZllM?=
+ =?utf-8?B?UFloeUJPZXpkdmJ5MTkybXJkRks3dWdnZm5wY215WGpoM0hoNWtRdWRYUnlQ?=
+ =?utf-8?B?b3ZvU2hQSmYrK09FMGdINlorenVqU2dtQ0hVMGFuWnNhVmlicVI2NERKbjFK?=
+ =?utf-8?B?M3dXMFdBT3hTUmVZcEdpeTVrZTg1N3lOSjVHOWl4a09wcUwzaU1CZ2JFSTRB?=
+ =?utf-8?B?VG5hVmYxUitrQnFZUkZhN2Qxck56Q043WTRncWRvNEIxSlRteXhyVlpwVHpY?=
+ =?utf-8?B?Uzk3SlEwb3k1VmVIdC9sazJFQ0l0blJ5T3FERDQ0bHIvYitEZnlXR2taM2J0?=
+ =?utf-8?B?UnM2RzFESS9WVXRlZjNIMzZMTndITUphREM5WW4vSzV1TURCMzhibkhkamlI?=
+ =?utf-8?B?ckdRTE5Zd0xnQmUydUplRVMwWXF3RGdIMkxNSEZ6TUV2Ykp0a2VwN1NKQjdM?=
+ =?utf-8?B?SmlYNlZZc1FQMVBNdHRGY2NVcm1NRGlseklSSkFBR2k2WWZUL2RoV2E1bkho?=
+ =?utf-8?B?ZEJiZzI0aWh3a3lQbnpCa29hZVZybW81MHVLMmZ1UHVoL3NuVXd2VWxZUjBF?=
+ =?utf-8?B?bm52R256TEpHN3NqRWlHSE5ycWRodnJ5aW4va2hOU0cwNEpOMHUrR1UyMm5q?=
+ =?utf-8?B?c2VNSTNkL2VFTWdOOEpxK2N5MlQ5UC92cXJoaUFNN3RQZmtTMFhPRlhxbnRW?=
+ =?utf-8?B?YTBlekRTQkxJYkRNNitGaVYxNFR3b2lOYzY4Y1lvZjVIREVSYUlOZUp2M040?=
+ =?utf-8?B?YkI3NVZwOHpIQ09oMUxKb2FBWkVXV2s4S0RyWWlnWC9MUlZBVFNNcC85K1R4?=
+ =?utf-8?B?MU1UWGZUZ21vSDY1RE0ydHlFeHpQaEdwYnNSS0VJQVZ1YnB2QS9qRWlWcHJD?=
+ =?utf-8?B?NEZ2Rnd3eDJMWTZIWFJhUUs2TC9CZ3ZENXFyR0lOcWVnMm5kVnFYMXBGeUNn?=
+ =?utf-8?B?VStoSURvUUlPU0l5ZmZxbERvWXJkd3FzZ1JsYlI2akxaK1VSOXFnNW5iZWVU?=
+ =?utf-8?B?UWFKaG5jY0l1WTloaWlWVnY4YXZsZGdKMFU3OWltRE16eHVIeEZjTUt0RlhR?=
+ =?utf-8?B?STBCZjEvN0RqSjlZRythdHZNaisxSk5YZnEvWVZETVl3VVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB9194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?a2gzNkpuS05iN3grQWNqeWh6QWFkNWNsZThxUUthN2hYN0FvQzVyVXBwREpV?=
+ =?utf-8?B?M3plbTkxYkk5ZWU1c3o5U1RRcjc1K3NYQkY5UjNGR3dnSkdicjhVbEw2NUxL?=
+ =?utf-8?B?U1hIanlqb2ZNNjNITlFROXh2b3lvRHd0c2JBK3NVbFl0cjdXbHZkMkJBeHJX?=
+ =?utf-8?B?WGw0VVlTNXk5S3ZKeWlOWFFjQzVoTzFxSzYxM0JQTkFIN1dOb1FRNURQbkUy?=
+ =?utf-8?B?ajFNWUZlbDgyRndMYU4zUmpsb1hHSWl5bVZ6WVhiL0xQWlhlZU5zVTc0WVZF?=
+ =?utf-8?B?SUJ6MmVJS09wVmpua0Y0d1Flb25MZ0k0YmJvVy82WTFOeVV6TEhuZjVKcm1r?=
+ =?utf-8?B?cUhjLzIwaVdDU0VVMllENUVtUTNaK3BoT2Q5WEFYazhMaWUvcEVQbVMyakZF?=
+ =?utf-8?B?ME05RXpha1RJKzVWcXFqbWtkVWZsbzF4UkVKcHB0N0dKcHRYQ2wwZWNhbnFV?=
+ =?utf-8?B?MzhBYjhQY2R1akhxOVJTbjhTMlA2K1pFeTBhV1FDTDRWM0dPR01mYWxwT1g3?=
+ =?utf-8?B?c2xHU2JEMlZ3U1pGTitVMENGbE9zZHROZ3R1ZUZwNVdHVUMzNEltRUJ1dDNk?=
+ =?utf-8?B?Ni9aWndad2ZFV2FhVjBWdE9KdUJUYjJZQnRIVjEzUG1yaURBY1VZRmRCd3M3?=
+ =?utf-8?B?c3d1bnM2WFBmOTY2YmRMWk5reFR2VXdtSzFoYzdicVpDbFpmaVFpZnh3RW9B?=
+ =?utf-8?B?am9kcDAramxDOTFOa0U4VmszS1BqT25NRDNSMENiR29lNkhGQlAwTUN5cnQz?=
+ =?utf-8?B?TGZta0VxQzQxeHYyb1JUdEZJSGl1bHFmNWcrS2VoVlY0ZXBkWHh4TzZaZjd6?=
+ =?utf-8?B?TEhxLzJmYjV4NmxMdnd3TVFYeWt5SEZpSkRkdHc5RTNPUFpLcjhaMWhFTXZQ?=
+ =?utf-8?B?dWhEbVkzbW1Yb2E5RzVYNWNRZTVJNkpYK212T3pnVzR5L1lyNE9MVmg1RE5a?=
+ =?utf-8?B?Qi9CVzZvVzFGRkt2ZmE4VUVvdVRIZEJ1ZGNNTEsvM0ZDYXA3NXVvOUorSVp0?=
+ =?utf-8?B?dHgvYk9JQ2lYTVVRVHZEMGNJSGJLYUFTNDc2Um95eTU1UFRha29xRXdic3hv?=
+ =?utf-8?B?WllBdVc4TmNDTTZRSWVMZGtVRkNnQzVkWE1SZWMvYnNINktZejhwWi9qWUNp?=
+ =?utf-8?B?a2szckNxV3gvRkdQVU45cUlUSWVBZ1RHNk9LQ0wzQnk0dWQwa3ZINFV2elhB?=
+ =?utf-8?B?V2pmRkNGSFlXU0lIWGpKblByc3VSaXQxNE9ZVWI5N0lEdWk3OS9oOStuQ2M1?=
+ =?utf-8?B?dThZcDYveGIrMGk2eURaYjVUSWZrWVdZSEtyczFsUnJ5Rmh2aW5LbTdDeUha?=
+ =?utf-8?B?c3QxSkFabTl6Q2J4QWZsTDVHSXp1d2dOMW5WYU16Wjg5WXkvdmk3bzBRMFBv?=
+ =?utf-8?B?ZytKOG50em5NZEcvZ01EVFEwem1BcngxTFh0Qk4rV0N2VmRkQWQyUVlYQ3hC?=
+ =?utf-8?B?Ymo4QndZa3dldzYvV2dQV2ZCMXArZWlmWnFoNThZVEN0R0VBMzlrVHVyekhu?=
+ =?utf-8?B?NWlBb2lDS1kzdlhrUHNXd1gwMlh1ZHdCbFdQa3NnWlRBTnE1Q0w4V3BkT2Zt?=
+ =?utf-8?B?dnczOE5TVFBXRkMrcjZEelZGMFhtdzdxM1ZEWjBrQnVhaHVxL1RvUk8xbytm?=
+ =?utf-8?B?NTNqN3BZbWdNL1dCbEN2KzcxekorOEhqV29JUi9aR1hCZTVpWkhjUVhCN2tU?=
+ =?utf-8?B?NnNQNG56UURTK1czUVRQcC9wVGZlaldzY2hUZm44TXZkaXl2cmZ3MW42dkVD?=
+ =?utf-8?B?K3RMN2J5UU04elNVUkZXOUV3K0RnRVlIUU56QUZ1MHl0dngwSEVxejdRb1hT?=
+ =?utf-8?B?aVZJM1hwUmFvOTkydnltaFF4dWVDOGljUklscFZncmo5QXFjYjhES2g4ZkpF?=
+ =?utf-8?B?Zk5OcG1UNGVPbFo5b3IydUlvT2pzbW5CTjBadno5OHFGbXYyUzhLaXJSa0tE?=
+ =?utf-8?B?RDc1ZThtT2xKOGhXZ3lQcHJYR1RkdHFDZUdsMUtaUGZyTEFRcXZqV2NHS2l3?=
+ =?utf-8?B?WTlXYVg3cHNhVURCekdHamxyYjNjVm1qVlpQWnFWWGZyQmVQQUQxN0dzd1JT?=
+ =?utf-8?B?MFkxVHVESll4MHBTTjRaYVNkTWlIU2tXU25vRFpTZHFLQTRKTTJ1MUNOSG1X?=
+ =?utf-8?Q?Pu4/gNn4C2+gzdqnMlbri29I7?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e01e7f96-f752-4552-16ab-08ddf42b9607
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB9194.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 07:43:39.6403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T6P2VjMgxzjZO3H1IXq/v28lbgxQ5BrtRJi6Z9n0t57dvUYhaqBmSKr8BdGTnmruIUSkd9R5FJq6D8D3o3TkuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFDBFC954F7
 
 
 
-On 12/09/2025 23.09, Takashi Iwai wrote:
-> On Fri, 12 Sep 2025 08:48:57 +0200,
-> Cryolitia PukNgae via B4 Relay wrote:
+On 13/9/25 02:49, Borislav Petkov wrote:
+> On Thu, Jun 12, 2025 at 06:22:33PM +1000, Alexey Kardashevskiy wrote:
+>> QEMU Inter-VM Shared Memory (ivshmem) is designed to share a memory
+>> region between guest and host. The host creates a file, passes it to QEMU
+>> which it presents to the guest via PCI BAR#2. The guest userspace
+>> can map /sys/bus/pci/devices/0000:01:02.3/resource2(_wc) to use the region
+>> without having the guest driver for the device at all.
 >>
->> As an implementation of what has been discussed previously[1].
->>
->>> An open question is whether we may want yet a new module option or
->>> rather extend the existing quirk option to accept the strings
->>> instead.  Basically, when the given argument has a colon, it's a new
->>> syntax.  If it's only a number, it's an old syntax, and parse like
->>> before.  But, I'm open for either way (a new option or extend the
->>> existing one).
->>
->> I would like to add a new param. The existed param
->> `static unsigned int quirk_flags[SNDRV_CARDS]` seems to related to
->> some sequence the card probed. To be honest, I havn't fully understood
->> it. And it seems hard to improve it while keeping compatibility.
->>
->> 1. https://lore.kernel.org/all/87h5xm5g7f.wl-tiwai@suse.de/
->>
->> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
->> ---
->> Changes in v2:
->> - Cleaned up some internal rebase confusion, sorry for that
->> - Link to v1: https://lore.kernel.org/r/20250912-sound-v1-0-cc9cfd9f2d01@uniontech.com
->>
->> ---
->> Cryolitia PukNgae (3):
->>       ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
->>       ALSA: usb-audio: add module param device_quirk_flags
->>       ALSA: doc: add docs about device_device_quirk_flags in snd-usb-audio
+>> The problem with this, since it is a PCI resource, the PCI sysfs
+>> reasonably enforces:
 > 
-> Well, what I had in mind is something like:
-> 
-> --- a/sound/usb/card.c
-> +++ b/sound/usb/card.c
-> @@ -73,7 +73,7 @@ static bool lowlatency = true;
->  static char *quirk_alias[SNDRV_CARDS];
->  static char *delayed_register[SNDRV_CARDS];
->  static bool implicit_fb[SNDRV_CARDS];
-> -static unsigned int quirk_flags[SNDRV_CARDS];
-> +static char *quirk_flags[SNDRV_CARDS];
->  
->  bool snd_usb_use_vmalloc = true;
->  bool snd_usb_skip_validation;
-> @@ -103,8 +103,8 @@ module_param_array(delayed_register, charp, NULL, 0444);
->  MODULE_PARM_DESC(delayed_register, "Quirk for delayed registration, given by id:iface, e.g. 0123abcd:4.");
->  module_param_array(implicit_fb, bool, NULL, 0444);
->  MODULE_PARM_DESC(implicit_fb, "Apply generic implicit feedback sync mode.");
-> -module_param_array(quirk_flags, uint, NULL, 0444);
-> -MODULE_PARM_DESC(quirk_flags, "Driver quirk bit flags.");
-> +module_param_array(quirk_flags, charp, NULL, 0444);
-> +MODULE_PARM_DESC(quirk_flags, "Driver quirk overrides.");
->  module_param_named(use_vmalloc, snd_usb_use_vmalloc, bool, 0444);
->  MODULE_PARM_DESC(use_vmalloc, "Use vmalloc for PCM intermediate buffers (default: yes).");
->  module_param_named(skip_validation, snd_usb_skip_validation, bool, 0444);
-> @@ -692,6 +692,22 @@ static void usb_audio_make_longname(struct usb_device *dev,
->  	}
->  }
->  
-> +static void set_quirk_flags(struct snd_usb_audio *chip, int idx)
-> +{
-> +	int i;
-> +
-> +	/* old style option found: the position-based integer value */
-> +	if (quirk_flags[idx] &&
-> +	    !kstrtou32(quirk_flags[idx], 0, &chip->quirk_flags))
-> +		return;
-> +
-> +	/* take the default quirk from the quirk table */
-> +	snd_usb_init_quirk_flags(chip);
-> +	/* add or correct quirk bits from options */
-> +	for (i = 0; i < ARRAY_SIZE(quirk_flags); i++)
-> +		snd_usb_apply_quirk_option(chip, quirk_flags[i]);
-> +}
-> +
->  /*
->   * create a chip instance and set its names.
->   */
-> @@ -750,10 +766,7 @@ static int snd_usb_audio_create(struct usb_interface *intf,
->  	INIT_LIST_HEAD(&chip->midi_v2_list);
->  	INIT_LIST_HEAD(&chip->mixer_list);
->  
-> -	if (quirk_flags[idx])
-> -		chip->quirk_flags = quirk_flags[idx];
-> -	else
-> -		snd_usb_init_quirk_flags(chip);
-> +	set_quirk_flags(chip, idx);
->  
->  	card->private_free = snd_usb_audio_free;
->  
-> .... and snd_usb_apply_quirk_option() adds or corrects the quirk bits
-> based on the string value if it matches with the probed device.
-> This function will be similar like your parser.
-> 
-> In that way, the old quirk_flags options work as-is, while you can use
-> a new style by passing values with "X:Y:Z" style.
-> 
+> Ok, so I read it up until now and can't continue because all I hear is a big
+> honking HACK alarm here!
 
-Thanks for your review. To be honest, I haven't understand how
-`static unsigned int quirk_flags[SNDRV_CARDS]` works. e.g., based on the
-current array form, how to pass a flag, and what does the index of the
-array means.
+It is :)
 
-Could you please explain it for me. thx.
-
-> Takashi
+> Shared memory which is presented to a guest via PCI BAR?!?
 > 
+> Can it get any more ugly than this?
+> 
+> I hope I'm missing an important aspect here...
 
-Cryolitia PukNgae
+yeah, sadly, there is one - people are actually using it, for, like, a decade, and not exactly keen on changing those user space tools :) Hence "RFC".
+
+
+>> diff --git a/drivers/pci/mmap.c b/drivers/pci/mmap.c
+>> index 8da3347a95c4..8495bee08fae 100644
+>> --- a/drivers/pci/mmap.c
+>> +++ b/drivers/pci/mmap.c
+>> @@ -35,6 +35,7 @@ int pci_mmap_resource_range(struct pci_dev *pdev, int bar,
+>>   	if (write_combine)
+>>   		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
+>>   	else
+>> +	else if (!(pci_resource_flags(pdev, bar) & IORESOURCE_CACHEABLE))
+> 	^^^^^^
+> 
+> This can't build.
+
+Why? Compiles and works just fine.
+
+
+-- 
+Alexey
+
 
