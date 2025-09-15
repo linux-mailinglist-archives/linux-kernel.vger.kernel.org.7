@@ -1,163 +1,160 @@
-Return-Path: <linux-kernel+bounces-817372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408D1B58164
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:58:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97969B58168
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE31202EAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5043ACA30
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064062367BF;
-	Mon, 15 Sep 2025 15:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="x4Pdobj0"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ED3238142;
+	Mon, 15 Sep 2025 15:59:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5BB2DC786
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DE722A1D4
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757951917; cv=none; b=kjzzvF+qIQ5yFRyYqvR10ZXy4mRejXre9WpHSyF3vFRHoR6Xdfmwd2S5F2Uga6sMqyGetaX3I240OYbeB/8+MfNLOXf/x/8Vg0BJl3/BnspDji8EPUC30wPwk3xFjZIormP4p4JoRTE0B/MwsplZdH0H/TwRCu15kYz1ZDpZlgw=
+	t=1757951973; cv=none; b=E7FxPRP0fPFC/aQ0exxi4s01pd5tZ4QSYnT86Xa2Y9qf7pMEhldojdlbS8uHT0SIIr3CXkfek87hAqvImQYObAx7AkzxxBLtNMJ0Xf4oVJeXQqkqyhzH6nDHDm1EbABDi2zK/hv3ca4eQLUOYafHz2i6KXFlHp4+Qc7PXLEItEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757951917; c=relaxed/simple;
-	bh=XgZwLsglGazDQIGAEWOdcUILG780w7iP0hbpgVxGkpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HBj/SfCSAgRDfZ/dhouYwwCiNR/pv3w7wvR+P9B7MUtxny3LK84aCHM6lwuUMvhRAkwyn/6oos7TU2Oj9u+gwIGM+h4WKb1BoZENqmTShvRidXm1qaUxKglApTGHpE7Vslu0gHcx6XZZ9LR26YoT0c+lz3HkzZIkhQTHqt49VHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=x4Pdobj0; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 8EDD31A0E25;
-	Mon, 15 Sep 2025 15:58:32 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5F8586063F;
-	Mon, 15 Sep 2025 15:58:32 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3CAA2102F2A5C;
-	Mon, 15 Sep 2025 17:58:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757951911; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=DamnrMPL+mXDLfGrUw/hnqqyh2Urrlm64DKRH83FzbA=;
-	b=x4Pdobj0zrZkumQ8rF0dGvCIOsihT6/tmEvJOSyK4ZM0dL/TEFffUsWfNHpA7tCnZz0rHY
-	ExaPG8VC8y1PjnbyfB7XnWAEIz4TkImhBHb4IKjMRMm8ZZyEgTKXoArnZPj6QGAkVIJH0H
-	IIshDWowrJo0o6E4Qj4bAE+bmOu0ZLKHwPfybuNEM2HA+rXIqVe0nSF01e2O8xQnIXYSkv
-	37ShdxkQoV3IIJRYSlJ66AmfcAlGv0A+JgYl2xlCzlQlSXQ238ykgpGR+RUAst5M9VW6tH
-	9rvsThszzjgCcqgxGhPD+tl7fpmY+TlomeJ0GcyyTukkii93hp4ksi0OVYd1tg==
-Date: Mon, 15 Sep 2025 17:58:05 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>, Chaoyi Chen
- <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 7/9] drm/bridge: remove
- drm_for_each_bridge_in_chain()
-Message-ID: <20250915175805.6e8df6ef@booty>
-In-Reply-To: <20250915-optimal-hornet-of-potency-efa54a@penduick>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-	<20250808-drm-bridge-alloc-getput-for_each_bridge-v2-7-edb6ee81edf1@bootlin.com>
-	<20250915-optimal-hornet-of-potency-efa54a@penduick>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757951973; c=relaxed/simple;
+	bh=kNVFWUkmNC1lBlh4H8LMAsxRtlfWdqS6hF8okKMOvRQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ut6SzqHZbkX5sVIoeFVRPFxncaMZA3+udh7+yYiKPK74CPYv9Vd3Tx22TQY8/1HhdviDsBRz1+qruGjdYscL1xVmLfePxdq8anLxYT/rltcYCBFbWRr6Jpihv8KJa9tTAIgVLUTJ53jVskXJL5cH7W8wgO/Beyk3lGznNgd7pWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-423feb240a7so41745895ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:59:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757951971; x=1758556771;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cEEppNHulk6/a4mav9kdAfWGQ62YPb0YxchlxpDlJvY=;
+        b=dabJXAZCqFE9T3j+Ic/wNhPxU70MzkO3OgpAanCXr2vmuZWoTaZvfJfMAXgTDXP+tw
+         SVSwAmKU1dr5jAC91i+Gls556EC1kxiHCX7ZBEbgIqwpyz25Y/hFPudbcqFebhT7TSeo
+         tWf+GLpYaDRgwpThoaoNB8eSBA9ZbAW2fLpbk0/YSage99MthxgvUrCdHvXtFeDvMWO3
+         n6w3Cy+he8JQTXMFvbeT2uYa5XAaEi1FPQ9f4s5y14G72Fa15hZtRTtNptCEFL8f/72/
+         sD8km0koz6SOZXJUqj8fxv52iG3o6CgcdqFVfuFq4Rtgg5qn12wm3hRcq9BQ9JrMtCdJ
+         fBuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLMsR/nEh4b6lR1e/vnODQUh6e1+v3IyDyhSHIimfRbXNoeIiA9thRQ7BdRk9lZhpio+hJqjU+BBLG89Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9T/qR8TUbA55sCaJNuehwU3CX8EiYtoXqUzJd3xEPlmMEVzZc
+	oUNGgVqXtuAJ7vIkchZbAq4fJXdJAP9svMtt5Jha69BCbKxE60tLcDOsFYC8kjv3watA56q1PVC
+	zsCyEKdtrDBs8Bf3wMf4L/HrxHkEXqXXgDdODXlM826hJA4sylOoKxCH2qWU=
+X-Google-Smtp-Source: AGHT+IHfCiWzh1x3f5wDLNXu2i83Btmx14JdBi4AdfR7fkuznpeJOZ3EkL8T9mqZwcuFuM/FjqXf4sDMXqPZnsQ3X2HEx3Z+EAqY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a92:c248:0:b0:424:866:ec6d with SMTP id
+ e9e14a558f8ab-4240866edffmr24886355ab.12.1757951970963; Mon, 15 Sep 2025
+ 08:59:30 -0700 (PDT)
+Date: Mon, 15 Sep 2025 08:59:30 -0700
+In-Reply-To: <68bf2c3f.050a0220.192772.0884.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c837e2.050a0220.2ff435.039c.GAE@google.com>
+Subject: Re: [syzbot] [fbdev?] KASAN: vmalloc-out-of-bounds Write in imageblit (5)
+From: syzbot <syzbot+48b0652a95834717f190@syzkaller.appspotmail.com>
+To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
+	soci@c64.rulez.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 15 Sep 2025 14:22:24 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+syzbot has found a reproducer for the following issue on:
 
-> Hi,
-> 
-> On Fri, Aug 08, 2025 at 04:49:14PM +0200, Luca Ceresoli wrote:
-> > All users have been replaced by drm_for_each_bridge_in_chain_scoped().
-> > 
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > ---
-> >  .clang-format            |  1 -
-> >  include/drm/drm_bridge.h | 14 --------------
-> >  2 files changed, 15 deletions(-)
-> > 
-> > diff --git a/.clang-format b/.clang-format
-> > index 1cac7d4976644c8f083f801e98f619782c2e23cc..d5c05db1a0d96476b711b95912d2b82b2e780397 100644
-> > --- a/.clang-format
-> > +++ b/.clang-format
-> > @@ -167,7 +167,6 @@ ForEachMacros:
-> >    - 'drm_connector_for_each_possible_encoder'
-> >    - 'drm_exec_for_each_locked_object'
-> >    - 'drm_exec_for_each_locked_object_reverse'
-> > -  - 'drm_for_each_bridge_in_chain'
-> >    - 'drm_for_each_bridge_in_chain_scoped'
-> >    - 'drm_for_each_connector_iter'
-> >    - 'drm_for_each_crtc'
-> > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> > index a8e2f599aea764c705da3582df0ca428bb32f19c..6adf9221c2d462ec8e0e4e281c97b39081b3da24 100644
-> > --- a/include/drm/drm_bridge.h
-> > +++ b/include/drm/drm_bridge.h
-> > @@ -1358,20 +1358,6 @@ drm_bridge_chain_get_first_bridge(struct drm_encoder *encoder)
-> >  						       struct drm_bridge, chain_node));
-> >  }
-> >  
-> > -/**
-> > - * drm_for_each_bridge_in_chain() - Iterate over all bridges present in a chain
-> > - * @encoder: the encoder to iterate bridges on
-> > - * @bridge: a bridge pointer updated to point to the current bridge at each
-> > - *	    iteration
-> > - *
-> > - * Iterate over all bridges present in the bridge chain attached to @encoder.
-> > - *
-> > - * This is deprecated, do not use!
-> > - * New drivers shall use drm_for_each_bridge_in_chain_scoped().
-> > - */
-> > -#define drm_for_each_bridge_in_chain(encoder, bridge)			\
-> > -	list_for_each_entry(bridge, &(encoder)->bridge_chain, chain_node)
-> > -  
-> 
-> I think I'd go a step further and rename
-> drm_for_each_bridge_in_chain_scoped to drm_for_each_bridge_in_chain,
-> there's no need to have a "scoped" variant if it's our only variant.
-> 
-> It can be done in a subsequent patch though.
+HEAD commit:    f83ec76bf285 Linux 6.17-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e5f934580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+dashboard link: https://syzkaller.appspot.com/bug?extid=48b0652a95834717f190
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14097b62580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a9bb12580000
 
-Sure, that's the plan. There's a note in patch 3:
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-f83ec76b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bdedf70f8797/vmlinux-f83ec76b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5bf9318d9242/bzImage-f83ec76b.xz
 
-Note 1: drm_for_each_bridge_in_chain_scoped() could be renamed removing the
-        _scoped suffix after removing all the users of the current macro
-        and eventually the current macro itself. Even though this series is
-        converting all users, I'd at least wait one kernel release before
-        renaming, to minimize issues with existing patches which would fail
-        building.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+48b0652a95834717f190@syzkaller.appspotmail.com
 
-> For the entire series:
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in fb_write_offset drivers/video/fbdev/core/sysmem.h:30 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in fb_bitmap_2ppw drivers/video/fbdev/core/fb_imageblit.h:364 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in fb_bitmap_imageblit drivers/video/fbdev/core/fb_imageblit.h:462 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in fb_imageblit drivers/video/fbdev/core/fb_imageblit.h:492 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in sys_imageblit+0x1a6f/0x1e60 drivers/video/fbdev/core/sysimgblt.c:24
+Write of size 8 at addr ffffc900051b1000 by task syz.0.17/6126
 
-Great, thanks!
+CPU: 2 UID: 0 PID: 6126 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xcd/0x630 mm/kasan/report.c:482
+ kasan_report+0xe0/0x110 mm/kasan/report.c:595
+ fb_write_offset drivers/video/fbdev/core/sysmem.h:30 [inline]
+ fb_bitmap_2ppw drivers/video/fbdev/core/fb_imageblit.h:364 [inline]
+ fb_bitmap_imageblit drivers/video/fbdev/core/fb_imageblit.h:462 [inline]
+ fb_imageblit drivers/video/fbdev/core/fb_imageblit.h:492 [inline]
+ sys_imageblit+0x1a6f/0x1e60 drivers/video/fbdev/core/sysimgblt.c:24
+ drm_fbdev_shmem_defio_imageblit+0x20/0x130 drivers/gpu/drm/drm_fbdev_shmem.c:38
+ bit_putcs_unaligned drivers/video/fbdev/core/bitblit.c:138 [inline]
+ bit_putcs+0x90f/0xde0 drivers/video/fbdev/core/bitblit.c:187
+ fbcon_putcs+0x384/0x4a0 drivers/video/fbdev/core/fbcon.c:1327
+ do_update_region+0x2e6/0x3f0 drivers/tty/vt/vt.c:627
+ invert_screen+0x1e4/0x590 drivers/tty/vt/vt.c:748
+ highlight drivers/tty/vt/selection.c:57 [inline]
+ clear_selection drivers/tty/vt/selection.c:87 [inline]
+ clear_selection+0x59/0x70 drivers/tty/vt/selection.c:83
+ vc_do_resize+0xd9b/0x10e0 drivers/tty/vt/vt.c:1195
+ vc_resize include/linux/vt_kern.h:49 [inline]
+ fbcon_set_disp+0x7ad/0xe50 drivers/video/fbdev/core/fbcon.c:1430
+ con2fb_init_display drivers/video/fbdev/core/fbcon.c:828 [inline]
+ set_con2fb_map+0x703/0x1080 drivers/video/fbdev/core/fbcon.c:902
+ fbcon_set_con2fb_map_ioctl+0x16c/0x220 drivers/video/fbdev/core/fbcon.c:3132
+ do_fb_ioctl+0x328/0x7e0 drivers/video/fbdev/core/fb_chrdev.c:138
+ fb_ioctl+0xe5/0x150 drivers/video/fbdev/core/fb_chrdev.c:169
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl fs/ioctl.c:584 [inline]
+ __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8e73d8eba9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc51d189d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f8e73fd5fa0 RCX: 00007f8e73d8eba9
+RDX: 0000200000000180 RSI: 0000000000004610 RDI: 0000000000000004
+RBP: 00007f8e73e11e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f8e73fd5fa0 R14: 00007f8e73fd5fa0 R15: 0000000000000003
+ </TASK>
 
-I'll wait a few more days before applying.
+The buggy address belongs to a 0-page vmalloc region starting at 0xffffc90004eb1000 allocated at drm_gem_shmem_vmap_locked+0x561/0x7e0 drivers/gpu/drm/drm_gem_shmem_helper.c:371
+Memory state around the buggy address:
+ ffffc900051b0f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc900051b0f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc900051b1000: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+                   ^
+ ffffc900051b1080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc900051b1100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+==================================================================
 
-Luca
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
