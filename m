@@ -1,261 +1,167 @@
-Return-Path: <linux-kernel+bounces-816967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9B4B57B77
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:44:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765C2B57B84
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242F14474D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C041A24C32
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB8C30DD05;
-	Mon, 15 Sep 2025 12:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8790230E0F2;
+	Mon, 15 Sep 2025 12:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GfyE2UD1"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013022.outbound.protection.outlook.com [40.93.201.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="I+QRWG+K"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01523054C4;
-	Mon, 15 Sep 2025 12:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757940186; cv=fail; b=pGOHvIIUTsSgtNnfZ00Q22wbyUxsjS0K4tSLiMNQVCDJB+MUN12R+UB9Tc4j6oJ3io3N7tT3JjWFyHp75dhcdFLXjMa29rDNY4oFLsRZPX+P84ycUwWkgWyEnUHRH9kNkweoVB9wyT46+dMIu5eoIxDFmrN4w42+zkaFDROts/4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757940186; c=relaxed/simple;
-	bh=D2ZXIJNKXUOgsz0UJVQB6VVFPHvaEJZ3N+oaNwn68W0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IqWFGz3vz6ObR5YfVIx1f/c0uZVXEihrYT9Ylf/DXGK0x+JZiZW5Bv6Cg+j27G43A4d25nV8CtAt0wCSsYd32TkZm8hZzY9Su8yoNKMlhfXfoTphm+xiK/Wyxcf4WNJ6EEYJufw5h6FWJApvBaI2fsvXSczNkSu39xP0Rg1oRfE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GfyE2UD1; arc=fail smtp.client-ip=40.93.201.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pR7jGD5VQnZyjw5oIRcFhS5gDbhMafpokwhWVfOrNFr/6RkZnXxPVXdevX6JcNXXPiwMeJBlg3TzngI1Ubn9u8iUQ7z9IgxzslxFRq3SX6JGbskR0Wt+X5kax2+Gt46TZCvW3VYB3f1n61PH7kjIk2I49XT0VyRfHDrcq1R248P3zHUxoAoFYHRLrVmUUG/ZSo1A3wj7uKlbAp0ZEBRERw64bY+YO0SKNr5ptpDlKfXGR0n0jWLvM8SbOtQqkUry4bm/upMkSR4s4EX5EEruVs2UT7laz5PujPEvUt72i10HKo6kvH5Z77sG/GFoiqXNKl9/SmCkmDRXZoY9/Nodag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5ohlcgjMwlPGLbA0CUY5UdnvTO4QqpmsXQ8z+4+DxPI=;
- b=Eeqc32uVtYdCGbzaTdrWyUoSwmCDaFsoYMKaTm8a6giV9EOhmI35GVxMl6tXMS35q4X40liQbjYkYhNyUucbAnPuOyN5+09UZYrgmZBgP7gstPkY1CZH+Gyz1x3jJCV4FaC9fUBtlOE5caC7VxoVZM/LojJtYeRxdOc+3N0Dgje3k9DXtPaZM6CTFUY1nH63NFyZ/ap0wyuG3Bc4jJWypJE2wUcVXobH/H3gYYiclu4uUkCdvQ+8ZCgzP1gZSPvS8lKlB6r72yfap/tYxKm3zHg90pCLMIqs6V/oGCVjp80IfyVwnWgWEB4k8xFZ0407cpehC9tUnvqsuXZ3MV6eDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5ohlcgjMwlPGLbA0CUY5UdnvTO4QqpmsXQ8z+4+DxPI=;
- b=GfyE2UD1oemnddKLCY6caj1vk7gS/yWFExJfv+jIwFjZGWnYE8hGJt3xUbws558whCmCbfPh1hV1Ct5/jnQAvQPLRTQ8wa8ZOEmvIDyiBgqkj1alo0a8+bYbSutzGB690SHSzaA0tAYI5kkDLNsd9dkw1AmIclQYh+3TPn79htaM/gXcamkbmVSO2Xld/sc/K9sG4k9fGNU7MBZ/DYXTFwu1xOIgRKp6yA8QkCiT9slCMMpRejI5vHEAf9fYtESkl2lWFvA0RMyPSKnN5CG41nfFNONiPm7sXKPNU8mdViXqraYCTNiYjJHbFa42mP/sq0gtRnydfdt8iS2usoI/NA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by SJ0PR12MB6688.namprd12.prod.outlook.com (2603:10b6:a03:47d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 12:43:01 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 12:43:01 +0000
-Date: Mon, 15 Sep 2025 09:42:59 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Matthew Wilcox <willy@infradead.org>, Guo Ren <guoren@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Nicolas Pitre <nico@fluxnic.net>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	David Hildenbrand <david@redhat.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-	sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-mm@kvack.org,
-	ntfs3@lists.linux.dev, kexec@lists.infradead.org,
-	kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 08/16] mm: add ability to take further action in
- vm_area_desc
-Message-ID: <20250915124259.GF1024672@nvidia.com>
-References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
- <d85cc08dd7c5f0a4d5a3c5a5a1b75556461392a1.1757534913.git.lorenzo.stoakes@oracle.com>
- <20250915121112.GC1024672@nvidia.com>
- <77bbbfe8-871f-4bb3-ae8d-84dd328a1f7c@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77bbbfe8-871f-4bb3-ae8d-84dd328a1f7c@lucifer.local>
-X-ClientProxiedBy: YT4PR01CA0402.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:108::14) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBE230DD19
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757940203; cv=none; b=LJ3I59Va5fyZtGWjLPV7U3LkEmAarm87GAX4JNRnvFbmTxA9IMr5k3r1muI+X0k+I/xvFQHKWElxTOaWVFj4XTzQ9PG7UErPlboVGtaPjCby598Fu12u2FUjL9COIvIVyoswUtBVLCcXN2VXf24YSU3FhrHPYvt4/NzY351OGpI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757940203; c=relaxed/simple;
+	bh=KQsZ7wbrasFYh0HAkLIVZmFlfxbgs4SQOHZ/1seu2OM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a2Mh+8qMNXFykY4t1KG9WzBOnA0XvGAYC6P2AK1KNqnqTkf7lPrZ1k/WWS9WDGZJTCKsnuGMBb1HMoEmlNZmPCTsZeBLVd41AO5lzrMXExoTgQ0nQSVk4rtZLMMb8P47Fxy6ee83mc7wy090sdkpBXALNvqcXEsk3bAN6N3mtYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=I+QRWG+K; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45b9814efbcso33155635e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1757940200; x=1758545000; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZx8ezcCR0TkH1+KA5xzMhiZbK7cxbphMWhXf4EoaKw=;
+        b=I+QRWG+K+f51rsVl2hP4a2XIeoaj9gPV1HTDSM8cCAlS0+KtwFpFRKPA3DoMujD+bG
+         qH40G8swMtV3d7h1OMYLmlZS68qSub7yq1GrKjs43TcoR5lDIyrlc5NqBRVfvbFbS7V7
+         ohtLTJSZmLkk93viGeZjnC4R2oo6Db60ftWKgI1xXX3Vhb/5uhY1mrJePxkTUPXrPhS1
+         zG/Mt3m2bdwn0qoxIIUGv6lkiFSii6oWHJkOqrzWAJSnLD3Cm/wh2WrCu0LowQbJcVHA
+         ibd4nRKOMRhJzN5LUEkLB+o2mtu9ELL4ru9pCSKfckb1977E7yGXX4NBvfcQkxfLXCUb
+         j3mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757940200; x=1758545000;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cZx8ezcCR0TkH1+KA5xzMhiZbK7cxbphMWhXf4EoaKw=;
+        b=H/e9ubswJ8Y7Rc+XEGa71ghSz2Xvig6tPwMl7QJr4Pbhqdh0syV2do5h+lp8hJ88Lt
+         mIZMTaJTmi6uSu7827oASOeOkt9sf0ogULgv1kaCY13gYBtAGHJ+IkBM4KTGlsLRYnir
+         tKjB6AO++Ac4wgSmk6Ji5LVF6gQ23cC5Fq2gDPBLwbF+W6svin2aYDiHN85/AxvbtDFT
+         sevmeE45+e1GWc/zaOVTQWEJOoZv5lKwm1PxY+4imG54xCrXHsvzWjDCNWApr/uC82jE
+         KjCJxK3YRyxH46A8MfPomsb/r4TT9gaUcTUwKzAhKz8WtkrTIa40qk1g2LNTpmd8BB8W
+         eIow==
+X-Gm-Message-State: AOJu0YyKUCQ/q5fGqEoT/np0ZZQvUXHxNMi17+FHEiTMZd48JS7Cbvhl
+	sBV72Z605hGq8t2WOIOF8tThyB8szbyzGRmfcJtqwZiF3O5GycMRjtO5JO1lj7sXVQmXQ7KREBo
+	/FBRwe/A=
+X-Gm-Gg: ASbGncvwqET69V0aqo0vq2x7kR74qAtX58L7+povy1mcgvTPIHKgM38n08SEdmNreCY
+	SpBGQx4BvMV6+CvBwEmoL0jaYUTIxpAYsDhYc9feGzytP2vBmsVAXaS8DmlFNqEylQ73v/SU2f0
+	KukNqxrWOgcZZ1sK74sxFRmaX0i9fS/LcZ1SiwJxXQD85wPFID7cs+HHPe6fw4l5ioO1n+oCMp4
+	KhAVdxFBNAjEBPUL07VdP8mT+8DI7jM78JPxfm20KkuOV6CpLu13aGcv+0Pr7zOwgKBQ7J2gGFx
+	eCiNyE8/XiA6/D/ULcddCsQ2ksi/faZZgR/FxUvevrcbzmNGDriiFCYJqTZRC4HXHvcqEo6w+0v
+	0ctAQQxwCRMIA2/MtOA5i+vOBqPusiEZAR6lywuVtTOTx+r0=
+X-Google-Smtp-Source: AGHT+IHWtqps3Uq//Mh/z4U79R+xEhoAjxO2ioWl2B7d+s4BuVweCWGhTOjkH3t3hFAmztUcd3H2cQ==
+X-Received: by 2002:adf:a385:0:b0:3eb:b7bf:cf3b with SMTP id ffacd0b85a97d-3ebb7bfd11amr932925f8f.9.1757940199596;
+        Mon, 15 Sep 2025 05:43:19 -0700 (PDT)
+Received: from [127.0.1.1] ([2a00:23c5:7815:1301:f27:e3a8:2334:314d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b4222sm178839265e9.20.2025.09.15.05.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 05:43:19 -0700 (PDT)
+From: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Subject: [PATCH RFC 0/2] printk: Release console_lock between printing
+ records in legacy thread
+Date: Mon, 15 Sep 2025 13:43:04 +0100
+Message-Id: <20250915-printk_legacy_thread_console_lock-v1-0-f34d42a9bcb3@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|SJ0PR12MB6688:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42b53a64-026a-480a-11a4-08ddf45567cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sO+0aRI8RF5E58QKySfGcP9rblmVAJnVToMQWH7P2RgYhbMUamsORmdQNvT2?=
- =?us-ascii?Q?4hVGV6Fe8VMp9+5bry894eXhYKoD1e13Ke4krKmqJu502FkzPzn8nOBFvGtu?=
- =?us-ascii?Q?RNFhml/Dvk8IbNVHIMGTgW5q6n97z1YmrvDw8tyuA3Rjv/PFJb2dit5Qw3/v?=
- =?us-ascii?Q?h+iv2zuRUjfI2HKtXxF2myowN129A5nwzPKvGQMhqI7UH7JNNg9HantiAkgG?=
- =?us-ascii?Q?85cRSeEpLozDBCahfEbOyKCMB4sSS4XNCnxuHr5AIVsr623Fp6J82VBAjAUo?=
- =?us-ascii?Q?CroL2JdK4o2rdiUABeJQFAXPPt/Fjv1KX9sjg9gxUqnlCuh8tcwoTHvKjXkn?=
- =?us-ascii?Q?y8POQl7ggi51dgLCqiuEkIQOMmjlQiPUCsp/iUIIQ6hQXY51f4ZJu+5Lvcpd?=
- =?us-ascii?Q?pjPpLtXV4V0i5BOnNA4lZXUuonJtriokF2IcwY/LNUniQGvAjW6ngqlfac6l?=
- =?us-ascii?Q?Pf4SFqPbClChMDVI6O+ahaflpaO9H1X25hKqseS/bYVfOCKMDb5yb6HYTa3m?=
- =?us-ascii?Q?IisTBnIhzzBBe7a3K+mQ4SDMlK3875gEWBicjOg7rNcbEMGQULyLCmTc3HGf?=
- =?us-ascii?Q?l6zhTU2l0Yr8fG4WEgSDdax5suBtBaAF7ecfXyiakYfT6UKxiWmoybpt+M6j?=
- =?us-ascii?Q?vjoJ5uL4s1DVLbguIjnGmk8v3HQfCnSv6pQ0GelJWJduheLWO04ZC/VVNsaI?=
- =?us-ascii?Q?5jGR8iXHJVJ7i2z17CpvZrOZOTqD65zhwYnVuOf63FuYNaH/XY7BpRgjyA08?=
- =?us-ascii?Q?k84YSL/l8VhBNV7QMHsMkAGsos+sG3JBnzxRRWXzy1ESOgTrMyj1Shqua0uP?=
- =?us-ascii?Q?pP6O8qMr6ndlSQJNw+MuhKI39mJ9hR+wDH/AKQ8L/nzMBpwQRRdBCNZWbzKL?=
- =?us-ascii?Q?T56Q29Ey+jKQQAKlOTd747y118vnv96O36D3wmq+H1/k+B8QfEFShDTN4lj3?=
- =?us-ascii?Q?uj5Dco6nVX3a0EK4rw88BRun/FlAJK1Npg689UQeTLxfXEMa2R1kShoMwX6b?=
- =?us-ascii?Q?Auv78JqnBrCoPPS6VYERG6cL0YJ0EOu8z6QW4ZBLwLjEaMIFmYfav6qUpsVR?=
- =?us-ascii?Q?5c2bSws0vf7PY0BjHzxliGliYDFMe23rjltQnQ3BcLPQ5mxK1JzyYFUTIpiR?=
- =?us-ascii?Q?zNivisaLb2psgQUFLhLANtP7/7tJLF5WOPtiL2/quwrjQwiOYzDLfy8khgMH?=
- =?us-ascii?Q?swSjjmfgXF2OysqdHycMq2veOuxb692FusVbVF/oOZL5JbuWDRLdfnLeTihM?=
- =?us-ascii?Q?6a4S1yQuWc7IzcOiWYbuKSASxEUqMssSP11Y8SKqJkxQQeV7yx1GFDgDqCVW?=
- =?us-ascii?Q?hzAJzFGDsk85yMPxwznxc7PPz2vn66e74hk+2xBYlH6V4maYoZxhCi+LVaIB?=
- =?us-ascii?Q?g+Wu7FmSqq+oooUr4+J1+LNUscnOD9o7NrvCk0O80qa6YBjrSF96kPdNIElr?=
- =?us-ascii?Q?zlw68AQKqR0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BBAt10kH+tWfob6BKdTgTRP451+49KXe9TmfP/ryYA3h1XJdSeAJ7b5s/2Gr?=
- =?us-ascii?Q?QGxCitj26rNqrLm6MBIFnWwj5/KpCrTRTGunvzJUgnjKenYtnEp0LBzr/Wy4?=
- =?us-ascii?Q?ZxwSaHtGXXYdOE0jxuzprbSMn1VImi1d9rC1dkmx12eDXLhj/kAbxW4LemFb?=
- =?us-ascii?Q?k1uRZ0l8IRPe1Yl4kChd9jrjQZuCPewV2Po2XAv2qmH1j5bPvOheuWJ9h1TF?=
- =?us-ascii?Q?RTRAGuSb7sAMbLR4EJpYXl9qqVOPT/MCcKJhlvSh00+sXYpBIXpeqnxzUMiE?=
- =?us-ascii?Q?cVQxBXTx5xpcd4jofLhTDfzkKG+d1X5xmLQbg57Jmp24AiXBRlnpQ4dZj29R?=
- =?us-ascii?Q?xP6SdBY9N0TCqtRCClAl731hMgKTUDz+M0wEDftfJI03PJFR1bmN0BD2iizf?=
- =?us-ascii?Q?7KLtjRMjYSmOT0NT0BcKyU3km58kvQ6myyPq1j4JyNZrToYpKvltWnrwSCr0?=
- =?us-ascii?Q?F/P4LEUBXY/KF6O4konJQVAxDCFnwvgl0kYjY3901jnb1sRynhAfR8u3kPA7?=
- =?us-ascii?Q?vUEvoR3rGADRix0CJoOqTeMJbMrWBjUJtv+xsz1xmKb/h+ioifDwaUjfhjU7?=
- =?us-ascii?Q?/oq9Q52TS+DNYa/IXqa8F44a9kcPQ2gHbvE8XFxfCpJzVZoiO6NZnb6uO+Lt?=
- =?us-ascii?Q?gxC/sEOVk9lh8WDIpG75kiA1PHn4CIbl6tciBFkY79OMzu5HaW6uL5wh4dzn?=
- =?us-ascii?Q?cY0T8qkSyYXVcR6iMTxIJeWOWIg33TzikEyJJj+DC0+QlbqBB6Lu1oH6o5zQ?=
- =?us-ascii?Q?DiFFBDqjGn38eciMiMVu6mqkSBX4wF4kAWssrQc6oStqfG5FSgLziEgk7ETw?=
- =?us-ascii?Q?eyi16ITzUraQVM8U+wZ9pazofspZjUVrMe6Rb7E2Rs5Jhgy67y0yW2U5wdvw?=
- =?us-ascii?Q?5x8FVKOP+7RBfAVO6xe7CV7zezXrMu1aSghwv+Na7kFJS3/yC9lgMEoQfppv?=
- =?us-ascii?Q?EHi8Ep541WvJ9w5WinP309soLvEW5p0XplG6UeiqJ0XZq9yBJGKNrWEBU8+j?=
- =?us-ascii?Q?xJbAK2g+LCwMSz/q7GG4h8TBaSv8M3M9oLrCHCoxvmyi0dW7djb2TY+QU8cJ?=
- =?us-ascii?Q?skNWlO2/aie1ISx5hiMucb8Ir3Q+qCDBgRB47IRmiY9EM7LjjUojXgP5gz8e?=
- =?us-ascii?Q?gGMGh05d2DzwNMUqE+cGTXI3akqvdn0Z06maSA+iJTDJpy9IRW23bXbp29D/?=
- =?us-ascii?Q?NhXYfKDbnkFap8CnKM7PdDqPVQQ0kqNCCab3lY+neUbfHN57qHoXQiXb1ZO8?=
- =?us-ascii?Q?BOW0OIqFaRK5kCrIQ8BGpY4MIkfJac5T71Wx/PVdCtHn5TDmqUhVPhnRb/1Y?=
- =?us-ascii?Q?SuTXO3dhlEalK2LetiMyLvix9hWBacFvp8Nm8ZF13fD5h/MZ7egAceAzg4ma?=
- =?us-ascii?Q?KSQ4HBblKkEcXla88k3Gwmq/AaQpjITCfIrhfRfmWF81/2TKSZVUPF7A1bSi?=
- =?us-ascii?Q?j2oXpzTdB0/t8a2fQrhMQg6q9EgDTDkr/dFBjGd2uFQ7et7iE4vXr/Cylck4?=
- =?us-ascii?Q?fnR0nrz1r3yy1hIy9qzbqLAqvNwdMMDjdlfalSf9lERNQ/+Lx5djtTiRR8rh?=
- =?us-ascii?Q?HsDybNinu6XY/lSHsGQ=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42b53a64-026a-480a-11a4-08ddf45567cc
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 12:43:00.9844
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JS1pkbfkkyjH+vyQuj9eiMlbzo7knWphYkn1+RNTWxsr2kKTKllQ2Qv0GgnxArOq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6688
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANkJyGgC/x3NQQrCMBBA0auUWRtIgkXiVvAAbouEOJ20Q0NSJ
+ kWU0rsbXL7N/ztUEqYK124HoTdXLrnBnDrAOeSJFI/NYLXttTNntQrnbfGJpoBfv81CYfRYci2
+ JfCq4KIP2Env3is5paJ1VKPLn/xjgcb/B8zh+uXUJaHgAAAA=
+X-Change-ID: 20250914-printk_legacy_thread_console_lock-1c27f59bf990
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ John Ogness <john.ogness@linutronix.de>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-kernel@vger.kernel.org, 
+ Andrew Murray <amurray@thegoodpenguin.co.uk>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757940198; l=2872;
+ i=amurray@thegoodpenguin.co.uk; s=20250914; h=from:subject:message-id;
+ bh=KQsZ7wbrasFYh0HAkLIVZmFlfxbgs4SQOHZ/1seu2OM=;
+ b=wMyIo5UGKa9z9xa8C1GJj1/MDA8QqPwqbgQOAWOsTBaSUydVL7PaX9FZB0OcqQXyRPuemsYG8
+ D/BUgRNZUeuC0mT5n+oN4/xZG6Ot6JLo4RPCDGhI2ORUHNFocZONbi2
+X-Developer-Key: i=amurray@thegoodpenguin.co.uk; a=ed25519;
+ pk=0SU0Q8S/uEiCdbXbXS+PvJGUCaBG1nDszD+HPU3Js0Q=
 
-On Mon, Sep 15, 2025 at 01:23:30PM +0100, Lorenzo Stoakes wrote:
-> On Mon, Sep 15, 2025 at 09:11:12AM -0300, Jason Gunthorpe wrote:
-> > On Wed, Sep 10, 2025 at 09:22:03PM +0100, Lorenzo Stoakes wrote:
-> > > +static inline void mmap_action_remap(struct mmap_action *action,
-> > > +		unsigned long addr, unsigned long pfn, unsigned long size,
-> > > +		pgprot_t pgprot)
-> > > +{
-> > > +	action->type = MMAP_REMAP_PFN;
-> > > +
-> > > +	action->remap.addr = addr;
-> > > +	action->remap.pfn = pfn;
-> > > +	action->remap.size = size;
-> > > +	action->remap.pgprot = pgprot;
-> > > +}
-> >
-> > These helpers drivers are supposed to call really should have kdocs.
-> >
-> > Especially since 'addr' is sort of ambigous.
-> 
-> OK.
-> 
-> >
-> > And I'm wondering why they don't take in the vm_area_desc? Eg shouldn't
-> > we be strongly discouraging using anything other than
-> > vma->vm_page_prot as the last argument?
-> 
-> I need to abstract desc from action so custom handlers can perform
-> sub-actions. It's unfortunate but there we go.
+The legacy printer kthread uses console_lock and
+__console_flush_and_unlock to flush records to the console which
+holds the console_lock being held for the entire flush. This
+results in large waiting times for console_lock waiters
+especially where there is a large volume of records or where the
+console is slow (e.g. serial). During boot, this contention causes
+delays in the filp_open call in console_on_rootfs.
+   
+Let's instead release and reacquire console_lock in between
+printing individual records.
 
-Why? I don't see this as required
+I've tested this on a PocketBeagle 2, with the following boot args:
+"console=ttyS2,9600 initcall_debug=1 loglevel=10"
 
-Just mark the functions as manipulating the action using the 'action'
-in the fuction name.
+Without the patches:
 
-> > I'd probably also have a small helper wrapper for the very common case
-> > of whole vma:
-> >
-> > /* Fill the entire VMA with pfns starting at pfn. Caller must have
-> >  * already checked desc has an appropriate size */
-> > mmap_action_remap_full(struct vm_area_desc *desc, unsigned long pfn)
-> 
-> See above re: desc vs. action.
+[    5.276850] +console_on_rootfs/filp_open
+[    5.311995] mmc1: SDHCI controller on fa00000.mmc [fa00000.mmc] using ADMA 64-bit
+[    5.313665] probe of 2b300050.target-module returned 517 after 1179 usecs
+[    5.315279] probe of fa00000.mmc returned 0 after 263618 usecs
+[    5.383935] mmc1: new ultra high speed SDR104 SDHC card at address 5048
+[    5.394496] mmcblk1: mmc1:5048 SD32G 29.7 GiB
+[    5.417837]  mmcblk1: p1 p2
+[    5.423320] probe of mmc1:5048 returned 0 after 36996 usecs
+[    5.425531] probe of 2b300050.target-module returned 517 after 1312 usecs
+[   15.339051] probe of 2b300050.target-module returned 517 after 1062 usecs
+[   15.424672] platform 2b300050.target-module: deferred probe pending: (reason unknown)
+[  145.531229] -console_on_rootfs/filp_open
 
-Yet, this is the API most places actually want.
- 
-> It'd be hard to know how to get the context right that'd need to be supplied to
-> the callback.
-> 
-> In kcov's case it'd be kcov->area + an offset.
+and with:
 
-Just use pgoff
- 
-> So we'd need an offset parameter, the struct file *, whatever else to be
-> passed.
+[    5.090776] +console_on_rootfs/filp_open
+[    5.316895] mmc1: SDHCI controller on fa00000.mmc [fa00000.mmc] using ADMA 64-bit
+[    5.318994] probe of 2b300050.target-module returned 517 after 1092 usecs
+[    5.320578] probe of fa00000.mmc returned 0 after 333601 usecs
+[    5.390914] mmc1: new ultra high speed SDR104 SDHC card at address 5048
+[    5.405461] mmcblk1: mmc1:5048 SD32G 29.7 GiB
+[    5.429104]  mmcblk1: p1 p2
+[    5.434603] probe of mmc1:5048 returned 0 after 41200 usecs
+[    5.436515] probe of 2b300050.target-module returned 517 after 1040 usecs
+[    7.203025] -console_on_rootfs/filp_open
 
-Yes
- 
-> And then we'll find a driver where that doesn't work and we're screwed.
+Where I've added a printk surrounding the call in console_on_rootfs to filp_open.
+For reference, where loglevel=1 the console_on_rootfs delay is negligible.
 
-Bah, you keep saying that but we also may never even find one.
+Please let me know if there are other ways I can measure the impact of this.
 
-Jason
+Signed-off-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+---
+Andrew Murray (2):
+      printk: Introduce console_flush_one_record
+      printk: Use console_flush_one_record for legacy printer kthread
+
+ kernel/printk/printk.c | 202 +++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 147 insertions(+), 55 deletions(-)
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20250914-printk_legacy_thread_console_lock-1c27f59bf990
+
+Best regards,
+-- 
+Andrew Murray <amurray@thegoodpenguin.co.uk>
+
 
