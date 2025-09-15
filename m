@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-816126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55183B56FE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8DFB56FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B26177470
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:49:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B803A45BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF342765FF;
-	Mon, 15 Sep 2025 05:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92C8274B22;
+	Mon, 15 Sep 2025 05:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="zT3c1Fv3"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rjuPvkPx"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038F91E1E12;
-	Mon, 15 Sep 2025 05:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3514D2749DA
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757915379; cv=none; b=sXlMqr8Y3b3ji8kZRr1oygjxLCZr43VHy07VQRgrkKaBDMOPLKq+fJ6zZufayrN1KvMMmeSVxJ9AmUAtz4p+gtMMp2R4DB4/5WRzJ/7/wi4V1M9Jm1SoOovqkStKdttgzPGiTns5lEUozSM0OvZjOV3Ar5wspcXVyLLemC63+o4=
+	t=1757915407; cv=none; b=Y2U6W36IxYo3I2xqYrFxMk63Dsm09z9tdLWnzhzhDAOrVp4Jx84J11QifiHUCaic8+/Zv9ZJalidpMuQAftWegkuk/nCY65WAfSWb96T7pkXKN8BuknUDpgyZJAgXL09Dvmd0GKVSEUVq+KEPqMMjaN66xMYJ1zt5jUfDYY8W0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757915379; c=relaxed/simple;
-	bh=lzPRMmO52ut5aLucZHdz3eltDg7+fystvTtazU7gI5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbcglNQSWyDS580U5voUJe5/Vuhn8i7puSQS/vbjU0JVDTS0NTXzeIWEqoIJKZ9CTzsL/q/cYJuf3IiYJOHxSCes0mQZqWm16pmsm6nuyzNjensFQQzBYa3R5PrF68D+8jSQaH/P1dDNdAEvH/vndnA2NcawMtRuo1Mys+JNH4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=zT3c1Fv3; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from lipo (unknown [IPv6:2a02:2f0e:3e0c:5b00:f1e0:3f4b:286c:9ddb])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id 708C3173BE2;
-	Mon, 15 Sep 2025 08:49:34 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1757915375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FqLjA+ubL/9DYZGEd5lqFmc3GH24rBewLMsLNh29sWk=;
-	b=zT3c1Fv3PFeyAMZ6ie6kpxBkpItfOozsaTAvE5bZscjy59LuFf60puNNCMwV2Ko42gBdFw
-	Xno1doKgviMXCyutc9KrYVC1NYuuvpsLnLiUly92If59mDDX7wpg5ETDbw6lMb2oTO160A
-	7CTBsGrJMG+i6qI1yDxjZzF+CotgBC9XUkwe8i8HWluQxE9NhbSpL4DGpzC5OfuZN8+kca
-	/ZfEBKnt+XlmTVopCrO03CTv0Qps83Al6nsq1vPFrAK24fKQQKqmjYVF9gcQ0JiMa6rFHW
-	BcGF1AWKJVXnfnk9oj6i4l1XueycxjVjjZF2JFbelX17YuAc2iJUmsg7NQC9EQ==
-Date: Mon, 15 Sep 2025 08:49:31 +0300
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno S?? <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 10/18] iio: accel: bma220: migrate to regmap API
-Message-ID: <aMeo64_bXbn1OkcW@lipo>
-References: <20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro>
- <20250913-b4-bma220_improvements-v3-10-0b97279b4e45@subdimension.ro>
- <CAHp75Vf0W9Lge8ycQrx=Y-xKyH4rBr7EVsxLy8gsLZhtE2oqrA@mail.gmail.com>
+	s=arc-20240116; t=1757915407; c=relaxed/simple;
+	bh=fiwgx8MAD2XVYzvxjkvb3XQ/m9LZS2p8t8MWQAfOLm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AymSdrdZIW1e5mh+JJs9T+xlPZSluixR0gZ7rpeDG2An4PmD4KpQ5MQm/fb0BDZzSHhWy4+qNSO1bOqr5acSAKjuQvyHtIyLiQKFTnaeL0jzEvP95qPZ9jpzfAtAe/VNV4opSBR4LhBuwF/ouZ3J6w9A5hILgTWMR5LfuK7oUqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rjuPvkPx; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45f29d2357aso7139925e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 22:50:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757915403; x=1758520203; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b/wBl0xLLFWVBpKxMI9aJF68zcNMG/DejRgIpzGZk0I=;
+        b=rjuPvkPxUiqWiJaP8vf/aMiepBOJEAd0AvORKY2TuO0BPT9Lkxd73FMpD6F6QYfJu0
+         AdQTW7ozH9XSBhaPmcIyo1jnnVMSzk7ZV7+Wxw3AWy1OEeo5dxElTtDAosnGpZVde6Xv
+         v2uCnraqcmGtZtB/heNWDONqlxK3+HvJuzKxVxNVm8q5lRkTk2jcsnqCpZSEQnV7VKmE
+         WU+gYkPkim2pSV7vqL/OSZTLuU/Wpy1zQK0KD/GGSAVbWevEz1hC89ajfeT1YxD16/2Y
+         M9IONNcBVeAH6bBKQpsVTmrDkJUZPUCOFAv/sL7abOJ8Hl9uTDrH1832TYyqM6u+NvRb
+         63kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757915403; x=1758520203;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b/wBl0xLLFWVBpKxMI9aJF68zcNMG/DejRgIpzGZk0I=;
+        b=jrheeZtjQ0S8cDqLKuNuOMajXlVma+WCmsx5Mowzb3AcpbW1Roh4FJI87/rJ6FdpCH
+         HiWNvFZKnWkad+q/b2yuR6DUTslu58Gb6S9RyUusng4a3ckfsgpenxDVZ1znhLaZL2cG
+         BJE3OyocmdjOTndOW1/lqwB5E46+b0PUvRXua9ojwN4fdNFCiVh/qd+Js6v47dQQhUUk
+         wxFhSuoNzqXPq854fbI2JQJrpAAxDiW4Nlh5c4Dq6FwDmaGtBpx70Q/yfjnloGE50G5B
+         zWd22Bg/pdsuNUqWl8mnquEBSjM+QyvS346YH6MDagzoZ9P7FxdnIWs8tujz4VauZjXS
+         Gtcw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5vRUYgqRZaftQgxhycLaA28L7YS93KuuYna0EPiKowvoSK4wZt1fUGCmhV3rmmHSfNJmdHa4f/pI21ng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSroRSg6i8ayiLcQfhzpVbjlJFbpEjUk+t5kclPbV4TQ0i1DIP
+	WPr3zY9GzDNpdHbgJJkLwZRriGRZ1KOZaVKi5UtbLPRwo1bTf654DH1FmHEZlY0p6Pg=
+X-Gm-Gg: ASbGnctf0HLKM5OUZ6RtauxhELs0rXUJFtD6yDLB5jLfdzhCAzsJI6LTavmlKQ6SJCj
+	3r1xsL0UqOB24Br7byJU8eXKhUbI65myyEW4ozoQaauIehOFzy7TAjzCaP/+d5yiD3/KM0kkX+p
+	Bb6EghXiNxoJ7IhKRU9E/6yTONRSaqsqEroBnUEezbbuedcCPSbKRxHJS2AJvbEh+KAzJkuRALL
+	fQt2CCHfjo8HOUTu8lpte8m5O9dBb2h10xd49APrDMqhNGsgapxHf8cdQmHADFA01T5zOwEF16t
+	mjUiIrVzLGd9dt1cWFkQBk6MgG4NodKpTQFXNqPuUE2h0Vo/BoHYuPW6XuJwGdaqtN4gRoCwKrF
+	WlyQ9rHJtH21LsxjNDjNTBQVKmi29c8NWLDI6vPml+rocv/0B
+X-Google-Smtp-Source: AGHT+IFRoam51kLCQlognqaLnDSeb4W/WyS/huGGcdNg8zu0xDnWYvxEcLms+5oh6bPzNGICjmp+CQ==
+X-Received: by 2002:a05:600c:58c8:b0:45d:d88b:cca with SMTP id 5b1f17b1804b1-45f211cb94dmr78596335e9.1.1757915403521;
+        Sun, 14 Sep 2025 22:50:03 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3e9996f384bsm5624675f8f.56.2025.09.14.22.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 22:50:03 -0700 (PDT)
+Date: Mon, 15 Sep 2025 08:49:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Feng Chen <feng.chen@amlogic.com>
+Cc: Liang Yang <liang.yang@amlogic.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Mark Brown <broonie@kernel.org>, linux-amlogic@lists.infradead.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] spi: amlogic: Fix some error checking in
+ aml_sfc_dma_buffer_setup()
+Message-ID: <aMepB7E95kwYvx0o@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cp0i1FQ85qLPA76Z"
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vf0W9Lge8ycQrx=Y-xKyH4rBr7EVsxLy8gsLZhtE2oqrA@mail.gmail.com>
-
-
---cp0i1FQ85qLPA76Z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: git-send-email haha only kidding
 
+There was supposed to be a "ret = " assignment here but it was
+accidentally left off so the error checking doesn't work.
 
-Hello Andy,
+Fixes: 4670db6f32e9 ("spi: amlogic: add driver for Amlogic SPI Flash Controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/spi/spi-amlogic-spifc-a4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, Sep 14, 2025 at 03:21:30PM +0300, Andy Shevchenko wrote:
-> > +#define BMA220_WDT_MASK                                GENMASK(2, 1)
-> > +#define BMA220_WDT_OFF                         0x0
-> > +#define BMA220_WDT_1MS                         BIT(1)
-> > +#define BMA220_WDT_10MS                                GENMASK(1, 0)
->=20
-> These do not look like bitfields, please use plain numbers (0, 2, 3).
+diff --git a/drivers/spi/spi-amlogic-spifc-a4.c b/drivers/spi/spi-amlogic-spifc-a4.c
+index 4ca8e82fdc67..4338d00e56a6 100644
+--- a/drivers/spi/spi-amlogic-spifc-a4.c
++++ b/drivers/spi/spi-amlogic-spifc-a4.c
+@@ -420,7 +420,7 @@ static int aml_sfc_dma_buffer_setup(struct aml_sfc *sfc, void *databuf,
+ 		goto out_map_data;
+ 
+ 	cmd = CMD_DATA_ADDRH(sfc->daddr);
+-	regmap_write(sfc->regmap_base, SFC_CMD, cmd);
++	ret = regmap_write(sfc->regmap_base, SFC_CMD, cmd);
+ 	if (ret)
+ 		goto out_map_data;
+ 
+-- 
+2.51.0
 
-ok.
-
-> I feel like I commented on this previous time and my comment was ignored.=
-=2E.
-
-I can't find your comment. got a link?
-
-best regards,
-peter
-
---cp0i1FQ85qLPA76Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE2Ap/wXYVGTXsPl+pzyaZmYROfzAFAmjHqOsACgkQzyaZmYRO
-fzA6wxAA1E8b4RmgS9/9qsp7OP4O1mXih8WpWSXLKFy87nEt9JWLQgOL3BRPUCNd
-bexBCzeY48WhCyC8NWmbJmNC25VuqdQ5ZRrRijLdQcVtElbzZVs/kQebkrFCMBEC
-h/tQP8e0MQnBd/1mKU/655EqmgcDgQe4kPaqe+ElXZx0V9MHQgWXK/j7/QZBUvvx
-c0uWbkYRg1iIjbEEX832ddirSvJC9CjoLty9PP1hT7uYfg+CEz3P2kst9Smh8vYD
-mkLihbq/njrU9NizwZILBGC5ppn3y47ImQcL1d0LtgAI8z8j2pTKZvLuPNLl/i1l
-lese4mmHnU1jg2mrA1zSUU/l/2i2cIAAOTokSAHEUjITZvl2gpPVrXBgGl9EWbGl
-bDg/QKv43ajrktuLFssXP9f5KZPLLetkSukQaKZCHY3UkMjWadpQY7kLDWzXJJey
-/jytFddKtTHiQp0IMPGRezBAnpxZsI2ez9DW6/dFNIwRVdV8WdFAHsfxX6Ip5Tb2
-K2ck971+fx35f+JpIuaZsozHFQBiq3iRYaQ+Hyl/Lmu/VH9EnUEmmV+FF8dK5P+m
-BkUJY0oiNi7M1mZnk4VRLKPAACoUk133JqkfIqafcz4TfODM3Zr1CsWsDmoKDtei
-kfY2WaRmVBxojVR5BdWFtmW2vFrdVgH0VFotN6g9DJFDVEk+8sg=
-=FYT7
------END PGP SIGNATURE-----
-
---cp0i1FQ85qLPA76Z--
 
