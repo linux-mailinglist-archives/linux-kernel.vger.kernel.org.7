@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-817167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A765B57EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5000EB57EB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA2D167FD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8C21646E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9EB31CA6B;
-	Mon, 15 Sep 2025 14:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFEE31A578;
+	Mon, 15 Sep 2025 14:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9cpByho"
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rDOSHwbH"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17C731B806
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9B530ACF3
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946014; cv=none; b=IKE0vq8lOD3uFeeYsjGxZm/F7IWDK6RDhKMWfgCa1DjNmhMDIWZQFxYoPJl1dQwUHi7KkKNo1mGRw+E8iKfqufu59LttyfMo2K/Obm8dca+ZW/y0YAwXTRMyGvZiUzQkTyiTobz0ftxGrhOgFz7DxSweH59S/Ofb4Gw/KQ3DZs8=
+	t=1757946000; cv=none; b=hXRX+4A59QBf809xjrN/45HGhJ3ZweRyjBwclZ6/V3rhVsgE+PqLSeks0s75UDmTc1pYRU0E7f9DGVvzwsEtdhgX3tgOWD+BXFYYugq2L13/SMRX0ct/VLc+KwFGJ7OZp3c3XUbIHql3zlVJC+v0MEWD6+ZbPleiuRZ1LYccSUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946014; c=relaxed/simple;
-	bh=5uF2i1fMfFFk57weo06ZCL9ZwMoWY3wP4AjoMRcCSok=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s+rdBtHaKpHwV0eheWwFnkaTOlxSq2TNeP+UyjWLpce9z+iEb+deWY8UaKauyQ6dE9ekkq8lxak3DclG55WkR+ha4fgdj57IVFjm2Ue9N3I1JCeGOuK9LkTRE5Jw4Y7yiV846f8O8BIpr1/GfmuAJd1ar5ToAs+01xhOIiWba3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9cpByho; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3df15fdf0caso3436774f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:20:11 -0700 (PDT)
+	s=arc-20240116; t=1757946000; c=relaxed/simple;
+	bh=zQ5QPRiVG3pjuad6CB2bBqliiABHFMuGHTERpYAq8Ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RF3YcecQoYkVRLyD1A5Jw+G2+fvnVT86V2ocGHZtcKH25dkEbrI6j+P9DIc+u4ZGFzDSRkBNQBAjuerkFih5J8oOHHTDqwhCs9JP9T83x+tiNBZg8JEfMN7+X2vPC0Fqz7R/oExLgikrmJMBl20Zt58ABimhyYNF6HYd2xQlELM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rDOSHwbH; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-778d99112fbso23472286d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:19:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757946010; x=1758550810; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zz7W2fHAKP9RNn810rrDm+4wFWDgNdWgturEviUI9n4=;
-        b=m9cpByhopjrv4OHjUI0MPSN0QxEhocyBYnzGVX/k6n3wbL1jw8RFFrPZ2ScHzEXIi9
-         2fQQPZKaRNqU/Yh6ZEL8M+IrYQSQHt1WYOCzIqZCBBEqp2ezgTt0+TJ1mCkgp2cUO9TF
-         0jkn1nxsKqC5Yq9iOPLxc9fQXOLsCC2IYAPoefCqYFQzurG6jFOQ3z4tXYsuwoDjGTU7
-         VZrRsZ7O/Rsb/w5Gxy2P6l+h8FPbwpKZjnWMFP5+Hx0Xw0eYzMXPAfXvM+8VqNERGXz2
-         Gn4NlSuiYoa5TAGWcbYL4NrBqZWpDb7syN9iDm503/v9EYMlz64DSyKEt5+cexe+y0pU
-         6uvg==
+        d=rowland.harvard.edu; s=google; t=1757945997; x=1758550797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ltJ3qWgJngyUcXpTPWVqY7F0iklIRp4Gy8Yg/l4qQg=;
+        b=rDOSHwbHRD0It61GWPhOenfwvzv/HYS/UtOAUQzCShj4YPOoeWaJqSK74RB+vnrhil
+         z28735lVxblFP3z9ppPP2ABidqs11aSN/a7SXybEtjm43kQZ8PgGrwf476Q5kh5zqs0y
+         tb8730fOhqF18XPENjN6rjPkUFLsoMr5ZwCBDcz3+wvoDk2Iv4qwO8Difm2PHxfHg8ek
+         Y7uVnui3kXtv7sFHLZf34QIGdlYkBQSPn/OwjI6cBJH1c8erjj6KD5mtPG7DPvasTnWO
+         X4Ddhn8whIM/Wxg5/gA4xn+O+Od3kZqoL1shX1+jQowFKrz1hCURbBjTMGnxF2QVUjD5
+         ndfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757946010; x=1758550810;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zz7W2fHAKP9RNn810rrDm+4wFWDgNdWgturEviUI9n4=;
-        b=PGxxV8ZOV6cC5S0Gd2SbRHZukVTzs02kR9q8rc07mfu4WeyHPWBSf3/P7TWDDe75es
-         6cGWYYRAni7B9X+b8l3fKulmHcCb/XXbu95BQS1jUL2p/ESGWT/bK1IqUWGVq+6ojleK
-         h2SgVPD2+EGyvJQ68ziA4yAdzOR/+eCwes2OIK/UNwX6bm59lxJzjBcQRi/XT/jiKTrN
-         oOmN7NfuVcYZfq8EM9Op2oI/9g9g1n374cGeS2BKDwOTEt99OhUbr87uVZY9CujG+bc/
-         kLUsEc8rz8ZVfB8Uflj6Ae7m1M8AYn6zNh9nvXBqQ4H4X8sQPRqz6cxQmaqlmLNtafJT
-         E2xA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6IIi3VHBYCZmoL7hswyQPaL69oMOzhgzcGYBYw7BsdD6WK8+bZkWQUQhgWKsDVKaQK26uM9hVJ/vUvK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2WfKenv6MHWdqG9scelb41yF1KsKzNf5v/VfQV+uxMnM62eRK
-	DBVshwJFOfKCQKRhBEIdYQRHudiLv+NdP+Q0diOKfrZIr2pmOv8sAVvZyv+fG4pglz8=
-X-Gm-Gg: ASbGnct5Gi2PF2MULxhCht+OoIgwJQ+7d2yaODfVAwF4m7ejIMFXJNrsPPuFd9jFgcd
-	C3k/sTYqL1GuLbbxYDAAOYe9JB9XzMUuejq4kHZoadu0hY4XfyTwnlLn7WoNt4uNIS87HLTo5x7
-	kf+7fuqRgQko1nBzn88nXUyboEdHniC3eprmBsyIn54pMKGtU0tRPHw/ACWw7X06Q78ZuxtF2CC
-	65tUoUkPh7sIbRemc3McugmCk5Ns1AyUX1Q/vJCAy3/FcQCb09/A37/U7pCNXfKTJDw+0e19sTM
-	jS1bE5/nhg2pLxGVPM+ej/gEchUEbfzKemFzvM4jcmBwscNELg8W8+c5TDPIvWTX2WKPO13Wn3s
-	l3waPB4uCW/3QbAWT+UD96SMRwiAqx/xDYME=
-X-Google-Smtp-Source: AGHT+IFSmQbTHF0YuHd9ONdZ3tdtKlFavLsHSPy1D//fCR+da9/Whp3rM1z+WJgImZ6na8pnBA1Zvw==
-X-Received: by 2002:a05:6000:4006:b0:3eb:bbd9:9c08 with SMTP id ffacd0b85a97d-3ebbbd9a3bbmr1863216f8f.46.1757946010074;
-        Mon, 15 Sep 2025 07:20:10 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:41:eee1:5042:e713:2e9a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7ff9f77c4sm11801928f8f.27.2025.09.15.07.20.09
+        d=1e100.net; s=20230601; t=1757945997; x=1758550797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ltJ3qWgJngyUcXpTPWVqY7F0iklIRp4Gy8Yg/l4qQg=;
+        b=gTKO5PjVLUr/VB1DQ4oP39FWS7f+0RxzFJurKt3mcBb6fZe482gHemtPEbrQWcEZ58
+         CHH9vuSkYyB5IYv5Xxu3XuP85hGahRyhEhWcxRnzOngX+82i1golTkv5f6byOYnaUYqo
+         UYdelxey7FKRVwOOOVou8iWxb5p906U57Zs7yJZUiHey9EmqQRblmilq3wleEBYN1B7a
+         sAyuUsv92Zg5t0gqk3OX5uS73n3EhYDfNoWGn6aWMBIPgfsxTWG/+2x+2XJMhmtbzS88
+         en8F8Z+GPYPbW0yuP1pMTWKZA5TRnbY+F/BdNJ7FxE3gGnOc/ZPr8ETB7uqobeo+WWdF
+         NOeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ+j/HjhAeYeHfPgtKIIL7fK9tN7FhIh4vW6QxXpwuNXJyGvUotk5TadZ7O9D0PTaRcJ15qgjXLwnhYis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGZq7HSXbSgzc3zYEPJQajrrszZ3SDVQ7DDXOkttDyNn369Wv3
+	ljDlFvHVcqbla/XEkeLugdzmRNNTQJ1vMddkBUSxcU3eTpxlEu6qqwSiUm26U6IWcw==
+X-Gm-Gg: ASbGnct+QHsltVoISqGrT/DR11bxSLFQUQnK2ntUgaDc7kCwZu2Tz/4eKjoV+T6YXvT
+	4GY3+1BjV+cE0QQtzAhSUEOgzFKatIjkm5mZwjRS2lskkV2pjdtU0vQjGTGUdRI7O7PTz7ILp2o
+	1SP3rdoyZBqHprouD6pP5BmchdGOou3p5hJq0EDIFQNjRxt0ziaJdCZrsXcjb+VWJNSDCECRpju
+	DCjgfuHsyIsxyru5eCitRWpCQy3MtTQlqXwealni0iLcIGSCcjPz3zLYqRBGK0xJsthOCssN8Yj
+	r8tmc6AEjYJ4YKbrkzRgJBAODGSdH8lGvDZRdcUykuej9Sldq6FzWGeTvwvzulAgW/cH9/en587
+	VacZrEVZ6id1dGf/8fFVj/x1nXAllMvTzki4ZNYgtjkSupJtxwylo
+X-Google-Smtp-Source: AGHT+IHNjl6+VXDq55mI2iLpt5yQHDG8LWznTFy16ycII1FKUcMN7wBwyIwufPTVyUH4m6LL8m4d2A==
+X-Received: by 2002:a05:6214:2a4f:b0:70d:aefc:359f with SMTP id 6a1803df08f44-767c3771fc7mr157165606d6.48.1757945997437;
+        Mon, 15 Sep 2025 07:19:57 -0700 (PDT)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763bdd36cfasm76812886d6.34.2025.09.15.07.19.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 07:20:09 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: [PATCH v5 0/2] Input: add Himax HX852x(ES) touchscreen driver
-Date: Mon, 15 Sep 2025 16:19:55 +0200
-Message-Id: <20250915-hx852x-v5-0-b938182f1056@linaro.org>
+        Mon, 15 Sep 2025 07:19:56 -0700 (PDT)
+Date: Mon, 15 Sep 2025 10:19:55 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] usb: mon: Make mon_bus::lock a raw spinlock
+Message-ID: <4f7805f7-805a-4678-8844-c38a97650dda@rowland.harvard.edu>
+References: <68c4cfc8.050a0220.2ff435.0369.GAE@google.com>
+ <20250915012914.361334-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIwgyGgC/2XOTQ7CIBCG4asY1mKYGSjgynsYF/2ZWhLTGmqaG
- tO7S2usGpcf4XnhIXqOgXux3zxE5CH0oWvTMNuNKJu8PbMMVdoCFZJykMlmdAZHSdqrCq0lQhT
- p8jVyHcYldDyl3YT+1sX70h1gPn0lPNA7MYBU0pfARV0byrg4nDk23aXatXwTc2TAL0hqhZhga
- RyC17ZANP+QVggK9QopwRxc+jrlDtj/Q/2GGhR8XtQJWs5yVGCtJ/cLp2l6AkC8BUVJAQAA
-X-Change-ID: 20230816-hx852x-3490d2773322
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>, 
- Jeff LaBundy <jeff@labundy.com>, 
- Jonathan Albrieux <jonathan.albrieux@gmail.com>, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915012914.361334-1-lizhi.xu@windriver.com>
 
-Add DT schema and driver for the Himax HX852x(ES) touch panel
-controller, with support for multi-touch and capacitive touch keys.
+On Mon, Sep 15, 2025 at 09:29:13AM +0800, Lizhi Xu wrote:
+> Interrupts are disabled before entering usb_hcd_giveback_urb().
 
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
-Changes in v5:
-- Annual resend, any feedback would be much appreciated!
-- There were no replies last year and the initial submission was 2 years ago.
-- No changes, just rebased to latest input/next.
-- Link to v4: https://lore.kernel.org/r/20241010-hx852x-v4-0-7e6a20177938@gerhold.net
+This needs to be fixed in the usbip driver.  There is no need to change 
+usbmon.
 
-Changes in v4:
-- Fix asm/unaligned.h -> linux/unaligned.h include renamed in
-  commit 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
-- Slightly increase delay after reset to fix init issues on some devices
-- Link to v3: https://lore.kernel.org/r/20231024-hx852x-v3-0-a1890d3a81e9@gerhold.net
+> A spinlock_t becomes a sleeping lock on PREEMPT_RT, so it cannot be
+> acquired with disabled interrupts.
+> 
+> Make mon_bus::lock a raw spinlock so it can be used with interrupts disabled.
 
-Changes in v3:
-- Fix device_property_count_u32() error handling (Jeff)
-- Properly handle errors in hx852x_suspend (Jeff)
-- Simplify error handling in hx852x_read_config() (Jeff)
-- Close i2c_msg array with trailing comma (Jeff)
-- Clean up error handling in hx852x_power_off()
-- Link to v2: https://lore.kernel.org/r/20230930-hx852x-v2-0-c5821947b225@gerhold.net
+See commit 8d63c83d8eb9 ("USB: gadget: dummy-hcd: Fix locking bug in 
+RT-enabled kernels") for an example of how to avoid disabling 
+interrupts before calling usb_hcd_giveback_urb().
 
-Changes in v2:
-- dt-bindings: Swap required:/additionalProperties: (Krzysztof)
-- Use dev_err_ratelimited() for error in IRQ thread (Christophe)
-- Use dev_err_probe() consistently (Christophe)
-- Improve error handling of hx852x_power_off()/hx852x_stop() (Jeff)
-- Add linux/of.h and linux/mod_devicetable.h include (Jeff)
-- Fix %d -> %u in some format strings (Jeff)
-- Fix other small comments from Jeff
-- Link to v1: https://lore.kernel.org/r/20230913-hx852x-v1-0-9c1ebff536eb@gerhold.net
-
----
-Stephan Gerhold (2):
-      dt-bindings: input: touchscreen: document Himax HX852x(ES)
-      Input: add Himax HX852x(ES) touchscreen driver
-
- .../bindings/input/touchscreen/himax,hx852es.yaml  |  81 ++++
- MAINTAINERS                                        |   7 +
- drivers/input/touchscreen/Kconfig                  |  10 +
- drivers/input/touchscreen/Makefile                 |   1 +
- drivers/input/touchscreen/himax_hx852x.c           | 500 +++++++++++++++++++++
- 5 files changed, 599 insertions(+)
----
-base-commit: d5ad57fc428c1e44335d25c822eb89645f425f32
-change-id: 20230816-hx852x-3490d2773322
-
-Best regards,
--- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
-
+Alan Stern
 
