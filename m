@@ -1,360 +1,229 @@
-Return-Path: <linux-kernel+bounces-817325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F008B580D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD35CB580C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF0C18866A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:30:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E83173F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEA9341AD4;
-	Mon, 15 Sep 2025 15:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BBE29C343;
+	Mon, 15 Sep 2025 15:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LBrv9mOo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MWbu/dbr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LlAYqGyw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MWbu/dbr";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LlAYqGyw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEF2341AC4
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757949730; cv=fail; b=RwzAUByaZ6XYvOcxF0kGZRm/UvFlLz2wQZNwlIpZ6VI8GD1c1T/rcrgcelK1vdtpKncUY4Duo6OGuOAVTjapCevvQ5HHUXyQw3CIboyWhvzD/qE+xgj8Plu+v+6V0R//UJJGYAhaKSxyLx0sJQ1NuA2EyTm6+fW7tR2qlcEnbVc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757949730; c=relaxed/simple;
-	bh=/drORpBVTyvp2SjnSCp5e0Dl4tk0aWCrRetcOlqEWz4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XYNxWvbyr0Hj7WGGDAZFZwqWAnsOWvSyXE4Qli7UCxRHibYCPdWEwgeUmBqMVf6h65ur6E2dxD4KVOc0p7eSggQp+kihhxqnUNtH4eKxfTXgM0TPuRjYwn302Cw2SaXrAA2jZ4VHnXZpYMwvoKz09L8ko49g5Bj72l/irhtyMMY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LBrv9mOo; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757949730; x=1789485730;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=/drORpBVTyvp2SjnSCp5e0Dl4tk0aWCrRetcOlqEWz4=;
-  b=LBrv9mOo7xBgXpRXiGDSbfoMMRLu2vwlmJyTYzrq2SMqQ+dYfpDfe2OB
-   MMDO58/qVpQqy7rshhHlPnOGVetnPoOaFLQ5NbVg49MeouZqx/r/jS5qa
-   htSvbEBGZzmMj3nW199ZRgiq2CR1wwRsCVZizh95QwjztEk0K22P8+par
-   tjaoesHJwVo7ML/U+VAXtrW1rGxusAdOygTenRSxMHYEt/BGXTCfDUerq
-   FLPQ7P6Jw8QmqJhR/xWfZVRZTRB3iWyFUs3LBZfCapEAiiLUR6Hv/TP8f
-   XCZpHHzhVM+onjW7iCS3PU34LYi36/WVls5V9uPIjUVhUrll0SVgQjzWa
-   A==;
-X-CSE-ConnectionGUID: kLfyWBBFQ4qbS40O4BPCZA==
-X-CSE-MsgGUID: 3UojbVScQfCgfkBvPTi2jQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="71306510"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="71306510"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 08:22:01 -0700
-X-CSE-ConnectionGUID: mJTeDOAoRMC5J6Q3wzp+nw==
-X-CSE-MsgGUID: oI2qWinST+mtiQ4ro8Qt5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="179039027"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 08:22:00 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 15 Sep 2025 08:21:59 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Mon, 15 Sep 2025 08:21:59 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.33) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 15 Sep 2025 08:21:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wQSM+TjjROwgHgJXvgzX/aTDvbGLEFReVUz61JuU8UT3wxG2tUgzfUSwbGZHybSJ3zl/925yHD9zH3UeJsGmllw39T4v7agqkaEtoO9U+E0KDwW8YJyy+71vOTOHHdMVB/sJTvKX4aO0DfNol4hG+xD7hWKSA/TkBdbTkoSlFpSbHjXBhl4QJOgzj3Q8MRlLOaWGwSFhpAO9lew6VyhqlSIl+980I9QWm4/m/LrzUI+HuPBg7/7vNJ7sxMIJBAiB20S3Dw1roR086hvWfs6kGbBk8QrKL9KfNybaRuFlSVAxHUPTmmDD1lWqFdCTLgH1j2LM5FkMkJyIObWm3HA5ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vrxX5Eq3yqHhkCnnSJ9ncYnn6SEyDdHVzDH5FOblWIo=;
- b=Iaoi+P5cHG/gEId49AzSuWmAU3HrF3sMIZUco6rh7ViQaVpsBw9ZmPRnerYw65XLbdEI8bQaSa8/uDk7dW6/SMRudVJ2cRh9scT8hCVCWJ6Ja1ZV65ntfaHxF24atY7eAP5mUCbltB8S6dyDaFx9PgQsasVqtvvXGakaB9aZVx3QzZgzga7kaHp31HaamqsTn25ONgy3FOtbovKG4vZ2soKtx5G8SCZ1T7W/UM9NnvK2zsvjtaOYMTVBDq6M2KzxB+owSG1XbkXdAiCNA8QpIYUxsSfysdvUHVY98xckrbW2tr6LBEdDufc8RG+tZO1HdmMYNMXEhgoT5IXkx3SzDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by LV2PR11MB5976.namprd11.prod.outlook.com (2603:10b6:408:17c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Mon, 15 Sep
- 2025 15:21:50 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 15:21:50 +0000
-Date: Mon, 15 Sep 2025 08:21:48 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>, Reinette Chatre
-	<reinette.chatre@intel.com>, Maciej Wieczor-Retman
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
-	<yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v10 28/28] x86,fs/resctrl: Update Documentation for
- package events
-Message-ID: <aMgvDIdZ7dILeaS6@agluck-desk3>
-References: <20250912221053.11349-1-tony.luck@intel.com>
- <20250912221053.11349-29-tony.luck@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250912221053.11349-29-tony.luck@intel.com>
-X-ClientProxiedBy: SJ0PR13CA0190.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::15) To SJ1PR11MB6083.namprd11.prod.outlook.com
- (2603:10b6:a03:48a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037CA33EB03
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757949738; cv=none; b=M3PSs10/afFW83OA9jBYNTmQpsFVyiPBOfK/A1Q5EL5Nh6tLYIIlMkNWQSuA1PLb8t13l4TGpnpmuvgDalb81pEklljvrgYvecwm3pVUbT5AV0oAhydq6TYgIYIuF/wJmM1iBU9sPF0OwVtiJ9WYcr4f+6knpz5Pk9iHdSgtWx0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757949738; c=relaxed/simple;
+	bh=lAKXHovJuHC8HpNPv+BhEiC+s9EmD83CVYU6Wj+mStM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u4T1n9OraO1byK3B5932ncRFJZQBwQF+0ROXrcmBvO/h66gRvJYfmXHTl878DUmbDgL6I+Raf/GJT7+l50+L5yM4QQzp+Wx2UeCTfgGKA39DoBaafR0i+QWIRBmGn3tafISPiw8/qwhDDdb6M+N70EwEsfdsJk4UQS0ZeobMdug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MWbu/dbr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LlAYqGyw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MWbu/dbr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LlAYqGyw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 539A21FB9D;
+	Mon, 15 Sep 2025 15:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757949735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g++Ng2aE8L4wMW36WPMF8LdbnzmEpxKB+UrWXNi4yxc=;
+	b=MWbu/dbr53BEeG65rCxERx1bCI6Mt53RMzj7/Ba3VW692rYCwQTW1LRY2Q8S/qfGI7/CYW
+	zIHsqlM7kn89+9ZgfzxT4yS0d7G1lggT5yJC3RNHLDWRyj/7iuhHt8OBb8YjSGbxhuNfm9
+	O11u7LcVjwBqD6Bk7ywsXn8ft9vosbk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757949735;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g++Ng2aE8L4wMW36WPMF8LdbnzmEpxKB+UrWXNi4yxc=;
+	b=LlAYqGywt7Iynbk0+KZIVJIMtpL7nWaw5KXrjeU0wzEZpCbyAg/C2HP92oPXYJVilpOk7j
+	o1yISor1tV3MjSCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757949735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g++Ng2aE8L4wMW36WPMF8LdbnzmEpxKB+UrWXNi4yxc=;
+	b=MWbu/dbr53BEeG65rCxERx1bCI6Mt53RMzj7/Ba3VW692rYCwQTW1LRY2Q8S/qfGI7/CYW
+	zIHsqlM7kn89+9ZgfzxT4yS0d7G1lggT5yJC3RNHLDWRyj/7iuhHt8OBb8YjSGbxhuNfm9
+	O11u7LcVjwBqD6Bk7ywsXn8ft9vosbk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757949735;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g++Ng2aE8L4wMW36WPMF8LdbnzmEpxKB+UrWXNi4yxc=;
+	b=LlAYqGywt7Iynbk0+KZIVJIMtpL7nWaw5KXrjeU0wzEZpCbyAg/C2HP92oPXYJVilpOk7j
+	o1yISor1tV3MjSCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 374891368D;
+	Mon, 15 Sep 2025 15:22:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MyA0DScvyGg6dAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 15 Sep 2025 15:22:15 +0000
+Message-ID: <d1ef1cbb-c18d-4da6-b56b-342e86dca525@suse.cz>
+Date: Mon, 15 Sep 2025 17:22:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|LV2PR11MB5976:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe3877be-88cc-49d9-e6f2-08ddf46b97d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xodu/CJ97UaerLzeK/8LKCE1/wrjzHW2lHVBKH9ErGroXvGqY8RWrLMwp3lc?=
- =?us-ascii?Q?B0xzd3S4b22F8/IG48sTgYncDJHyTin+m3Xk7ACZ8WB93vdik3oyP2/TtEQp?=
- =?us-ascii?Q?arTvubIfZM0/NDBRwwR3lz7/b86FXzNwpBqIgPpiBje4ZxZ+/Q25WpDu7bEU?=
- =?us-ascii?Q?eWdzBkF53ArMAy9+AH4+I9CTJPz2iKffwe6F7XGNov2njWcuL3HAyOIW0fAr?=
- =?us-ascii?Q?5CEEalAOhuZJLVLZdtF2Tv+6RTtGdPk2Ac8EjkKL5FuYZqJdVdqcSM3FNZY1?=
- =?us-ascii?Q?/gz1UuByNjiThSkJ84Nr/hMm3T6awxf+Ps4cR1BMGoMJOF+haq42E/sYqhBj?=
- =?us-ascii?Q?LeqlqsIhaOLZK4qXc44IFPA2Bq6g3RaEnwKusQ3EHZVZWnKHfiQuq5Fo3oDS?=
- =?us-ascii?Q?t4USFSOyo/it/2/H0rg0SNjmF5e68VG+APT94UuorQSLBwoqxGLuRDHtNhnY?=
- =?us-ascii?Q?FLYreVP7zICCZ/s1IcXV/0cLgFgmdSWRG2TqqaPqNCcuVSQNX8LT0xjr8wGS?=
- =?us-ascii?Q?Z8lZj3N2+FUHBSzI82ykrtRyzLvIc510do/S2PdGJchsR6kdyl8hoD12OHHy?=
- =?us-ascii?Q?TtYgFDPizQmWs+8BlFhPOG9cVse0JDsnj4ooXBrkyy9z56H+J1Yfk2d82bF3?=
- =?us-ascii?Q?CspB9uqqclNzW+E0QS9SBPdmbxDLdAjsyQY7L9WYvmTi7btGp+vZwGKZU1j9?=
- =?us-ascii?Q?H1p2I1+TQhfH3gyZKALOcqHw4QaJZjk9Ni+F1H7MLeDIGp2p6SWgKsBkDt7Z?=
- =?us-ascii?Q?Yzuy/Wn4FpNI7DellSJ7XbkE4crcsV6KQ4iYZbfpEfnJA5/1N2Wa9xk1y8qr?=
- =?us-ascii?Q?aXSGeipM2s8dmhb7YhOjlyWdLT8rV9gUMuW4AXv5xLPqGuXPblYQb8ZVu3Z3?=
- =?us-ascii?Q?E5dW3KDgKtl+xpFW+zUSsi5yLsPRvGLrfUVxh1u7W1TDRpesSw0BmwssjkEz?=
- =?us-ascii?Q?0HrRklbelAZq1FdINHneaPauiYwIFo2UDgAhLqdZXgDEfRWDcLZ7UhF1mY11?=
- =?us-ascii?Q?jBQBwA3P22zcTwa+/m+Cy/x2W593+qnnakibp68GWxO1nlXmPpy1nEk+ek3a?=
- =?us-ascii?Q?LhpwmNMSvyPIG/M9kkncr/kjskSxiq2thaHWDPG0IIHScN/9LuEL7CrQWZq5?=
- =?us-ascii?Q?+IMZf+c/1x5po+Kd47AbFJD0dZinzEgs7Hbphxxpx2qfRWzn2kmXEgrtMkYo?=
- =?us-ascii?Q?CUZp7hSNPsrYHFCKXNLKJmf6EX9Ex1qKrpHN8LPpYxammcsICk+3+k5eUxfn?=
- =?us-ascii?Q?wmFSjv8NqVD4fgeVR+5qlBYwwrqXdYhsaVlwM+FDDSJJ4R19r8k8q/eDTgyN?=
- =?us-ascii?Q?jwStQpbO4ZDDlJDu4rtU2TT8IKUWPwDfSffYIN1ZxPF7sZ7B5arOQp14oSmV?=
- =?us-ascii?Q?GYGC/xCddCMYbI+52W/5DHWVoZnI1e8dFrF1tZTDEIwNdmwKaTMt07oum0yU?=
- =?us-ascii?Q?bI2HksdaSxA=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hftoOaCbpkntFKmFl3/qcvs6lHseCzPzxBlxMYsSW7+qHuDGRrhwbhEwal0P?=
- =?us-ascii?Q?jujoZ5pMHjFBYwAC8bgfpRNJTTZLprZEJqZ98cVt57spyI/wgaKEIXq9dWJa?=
- =?us-ascii?Q?ars3Zd/1mIsqvmxQD1UisQ29DlW7NRDB8LQeoZaHsGieWwe97RDxOIi4EqN7?=
- =?us-ascii?Q?i+wzWkk3eaLWsrRK083DA160rLDj7+md4DbT0TcAc+DQkMtCTWgFFnIzDar1?=
- =?us-ascii?Q?aFoaZebNk2x9S0NY23Wu9eNn5xDPKRhORHNFBfrqG6tDBn7RztIo3FvqXAEc?=
- =?us-ascii?Q?1Hgkdj//AYlZgqykjWNJ5GGtKEsM3V39IfYjt+B55csnd5tOtyDtaKBMH4yC?=
- =?us-ascii?Q?jVlZmMKsMwmOSkDwkLj/ntES1HlJtpXXCGhBfuEwiuf8mRsU6k6A+M0NKNYF?=
- =?us-ascii?Q?SSDdJUTNqbwPNGZ4UwlwziWieZaHZLSjVNW4uCf8PCAlWCU9KHgYYKCnzZBK?=
- =?us-ascii?Q?6gEEkqzksecjrQiTJaw8pxfqMRcBubIcAmmzfc93EFHU/ZSZjtI+z7V/gxKe?=
- =?us-ascii?Q?9VaQU220mQLWmFg4LvrcS+w13JVVk95TIFsKzo/8XuRTeZj/8DgSOYnTnxw7?=
- =?us-ascii?Q?yOGyGCg2NVFOv+Eysc9lOpXXOl1BCoXPOX+HS4REJqzex8DELtgoKjhULid1?=
- =?us-ascii?Q?0owGDlF/IXXdpMe2jjANN+yiIdTcXUUs9/c7Wigs9ZQACBrm0ZLgFSasTkEZ?=
- =?us-ascii?Q?LhGg4nOKjqyaztTHkH5R0oaGYRo0iNhr9VqPt5ZIECI+xUZMindxEiH+C2xn?=
- =?us-ascii?Q?pjyWWE1UkQ2gqcl9PyqFAXhd9a8FdN2KtbcKm04CPv1Mn8znePi78XrCAzXU?=
- =?us-ascii?Q?ZqfHI6TAstfoHkpK29+1ATOTW54kwhhIyW5Y0oxCKkcrvdfSTA/DZ+eVvvms?=
- =?us-ascii?Q?GclU0TUtCqhxCFRirjXVRnVi1eXQkya5ZuWzo7gWv6fabj5JJ1XqrhChBirR?=
- =?us-ascii?Q?svNX0NQLBEj/OCENLwhHS7+wPMKmlGKDRYqOfBp0BQI9CcIjHdZFTjGK4VZw?=
- =?us-ascii?Q?+38ORNwhVCVC2bm3MeJpR4QeWEaR+lCn6nluxzFbb3C1R5TQrqtDHX7lCB19?=
- =?us-ascii?Q?0kT2E+PXpw5eFpOlorRFYQIyKcML3s+K4US8HdBDYFPY82/uD+e/+pI7maeb?=
- =?us-ascii?Q?/NTrJBtyjAmD4iXRUSYVTtO39eILqBv8ztJfpgJBmKOa1Pt42xAR4ZywP5kZ?=
- =?us-ascii?Q?Q7IyCwjHmQIwAw8+IQSwU+CYwO9Jegi8ezy2F5hNbcE1CcRptjQ4cFKm5dEv?=
- =?us-ascii?Q?NGSlYbvEdTvMVvgfybYTp/DpFYar5t6fpE6YdZ6B5t9hIxRA1NKHzkCGF20R?=
- =?us-ascii?Q?jiOR/RRS8FrXKrmhkbGW7ejFiSNvEK75F/P2okSaRCcseiM2vmLmUbQ5BCDD?=
- =?us-ascii?Q?MXiwWWrk/Q1jJZdm1OULyRVPZCW4nK0zmLTSDyZRKqinuxcP0e8HWUKRqI1w?=
- =?us-ascii?Q?jn7I+eDAE1wz00jSyuZI5lG7zzntn3tRcaN/0yItZ0z3ooCa1U4GvOY66a8R?=
- =?us-ascii?Q?Y6Ul11fIeSP7pX6RF2zUrJXKZBpXEB9kwiyZSI5Q/LTMQdy7lhg9XMR4S8IU?=
- =?us-ascii?Q?megFgev8czE2bZFH/asSo6ch9yAd2fArplagtECe?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe3877be-88cc-49d9-e6f2-08ddf46b97d7
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 15:21:50.6058
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WBW3z0jlIK7zrSlH4tuM7r0J7IMBp3UbF1bS4/rxHL5dpG6VbsB5NhtX/QHkYL6v2sU9FPqMj3uUns40rzP+Eg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB5976
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
+To: paulmck@kernel.org, Jan Engelhardt <ej@inai.de>
+Cc: Sudarsan Mahendran <sudarsanm@google.com>, Liam.Howlett@oracle.com,
+ cl@gentwo.org, harry.yoo@oracle.com, howlett@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ maple-tree@lists.infradead.org, rcu@vger.kernel.org, rientjes@google.com,
+ roman.gushchin@linux.dev, surenb@google.com, urezki@gmail.com
+References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+ <20250913000935.1021068-1-sudarsanm@google.com>
+ <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
+ <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,gmail.com,vger.kernel.org,kvack.org,lists.infradead.org,linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-> +	"activity", etc. The info/*/mon_features files provide the full
+On 9/15/25 14:13, Paul E. McKenney wrote:
+> On Mon, Sep 15, 2025 at 09:51:25AM +0200, Jan Engelhardt wrote:
+>> 
+>> On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
+>> >
+>> >Summary of the results:
 
-Need to escape that '*' to avoid:
+In any case, thanks a lot for the results!
 
-Documentation/filesystems/resctrl.rst:526: WARNING: Inline emphasis start-string without end-string. [docutils]
+>> >- Significant change (meaning >10% difference
+>> >  between base and experiment) on will-it-scale
+>> >  tests in AMD.
+>> >
+>> >Summary of AMD will-it-scale test changes:
+>> >
+>> >Number of runs : 15
+>> >Direction      : + is good
+>> 
+>> If STDDEV grows more than mean, there is more jitter,
+>> which is not "good".
+> 
+> This is true.  On the other hand, the mean grew way more in absolute
+> terms than did STDDEV.  So might this be a reasonable tradeoff?
 
-Note that this had me scratching my head for a bit because the line
-number in the warning points to this innocent line
+Also I'd point out that MIN of TEST is better than MAX of BASE, which means
+there's always an improvement for this config. So jitter here means it's
+changing between better and more better :) and not between worse and (more)
+better.
 
-526		Within each directory there is one file per event. For
+The annoying part of course is that for other configs it's consistently the
+opposite.
 
-two lines before the problem.
-
-Updated patch below:
-
--Tony
-
-From 13a738760802370fc69414749847e12dced03868 Mon Sep 17 00:00:00 2001
-From: Tony Luck <tony.luck@intel.com>
-Date: Fri, 12 Sep 2025 13:43:02 -0700
-Subject: [PATCH] x86,fs/resctrl: Update Documentation for package events
-
-Update resctrl filesystem documentation with the details about the
-resctrl files that support telemetry events.
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/filesystems/resctrl.rst | 100 ++++++++++++++++++++++----
- 1 file changed, 87 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index 006d23af66e1..cb6da9614f58 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -168,13 +168,12 @@ with respect to allocation:
- 			bandwidth percentages are directly applied to
- 			the threads running on the core
- 
--If RDT monitoring is available there will be an "L3_MON" directory
-+If L3 monitoring is available there will be an "L3_MON" directory
- with the following files:
- 
- "num_rmids":
--		The number of RMIDs available. This is the
--		upper bound for how many "CTRL_MON" + "MON"
--		groups can be created.
-+		The number of RMIDs supported by hardware for
-+		L3 monitoring events.
- 
- "mon_features":
- 		Lists the monitoring events if
-@@ -400,6 +399,19 @@ with the following files:
- 		bytes) at which a previously used LLC_occupancy
- 		counter can be considered for re-use.
- 
-+If telemetry monitoring is available there will be an "PERF_PKG_MON" directory
-+with the following files:
-+
-+"num_rmids":
-+		The number of RMIDs supported by hardware for
-+		telemetry monitoring events.
-+
-+"mon_features":
-+		Lists the telemetry monitoring events that are enabled on this system.
-+
-+The upper bound for how many "CTRL_MON" + "MON" can be created
-+is the smaller of the L3_MON and PERF_PKG_MON "num_rmids" values.
-+
- Finally, in the top level of the "info" directory there is a file
- named "last_cmd_status". This is reset with every "command" issued
- via the file system (making new directories or writing to any of the
-@@ -505,15 +517,40 @@ When control is enabled all CTRL_MON groups will also contain:
- When monitoring is enabled all MON groups will also contain:
- 
- "mon_data":
--	This contains a set of files organized by L3 domain and by
--	RDT event. E.g. on a system with two L3 domains there will
--	be subdirectories "mon_L3_00" and "mon_L3_01".	Each of these
--	directories have one file per event (e.g. "llc_occupancy",
--	"mbm_total_bytes", and "mbm_local_bytes"). In a MON group these
--	files provide a read out of the current value of the event for
--	all tasks in the group. In CTRL_MON groups these files provide
--	the sum for all tasks in the CTRL_MON group and all tasks in
--	MON groups. Please see example section for more details on usage.
-+	This contains directories for each monitor domain. One set for
-+	each instance of an L3 cache, another set for each processor
-+	package. The L3 cache directories are named "mon_L3_00",
-+	"mon_L3_01" etc. The package directories "mon_PERF_PKG_00",
-+	"mon_PERF_PKG_01" etc.
-+
-+	Within each directory there is one file per event. For
-+	example the L3 directories may contain "llc_occupancy", "mbm_total_bytes",
-+	and "mbm_local_bytes". The PERF_PKG directories may contain "core_energy",
-+	"activity", etc. The info/`*`/mon_features files provide the full
-+	list of event/file names.
-+
-+	"core energy" reports a floating point number for the energy (in Joules)
-+	consumed by cores (registers, arithmetic units, TLB and L1/L2 caches)
-+	during execution of instructions summed across all logical CPUs on a
-+	package for the current RMID.
-+
-+	"activity" also reports a floating point value (in Farads).
-+	This provides an estimate of work done independent of the
-+	frequency that the CPUs used for execution.
-+
-+	Note that these two counters only measure energy/activity
-+	in the "core" of the CPU (arithmetic units, TLB, L1 and L2
-+	caches, etc.). They do not include L3 cache, memory, I/O
-+	devices etc.
-+
-+	All other events report decimal integer values.
-+
-+	In a MON group these files provide a read out of the current
-+	value of the event for all tasks in the group. In CTRL_MON groups
-+	these files provide the sum for all tasks in the CTRL_MON group
-+	and all tasks in MON groups. Please see example section for more
-+	details on usage.
-+
- 	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
- 	directories for each node (located within the "mon_L3_XX" directory
- 	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-@@ -1506,6 +1543,43 @@ Example with C::
-     resctrl_release_lock(fd);
-   }
- 
-+Debugfs
-+=======
-+In addition to the use of debugfs for tracing of pseudo-locking
-+performance, architecture code may create debugfs directories
-+associated with monitoring features for a specific resource.
-+
-+The full pathname for these is in the form:
-+
-+    /sys/kernel/debug/resctrl/info/{resource_name}_MON/{arch}/
-+
-+The presence, names, and format of these files may vary
-+between architectures even if the same resource is present.
-+
-+PERF_PKG_MON/x86_64
-+-------------------
-+Three files are present per telemetry aggregator instance
-+that show status.  The prefix of
-+each file name describes the type ("energy" or "perf") which
-+processor package it belongs to, and the instance number of
-+the aggregator. For example: "energy_pkg1_agg2".
-+
-+The suffix describes which data is reported in the file and
-+is one of:
-+
-+data_loss_count:
-+	This counts the number of times that this aggregator
-+	failed to accumulate a counter value supplied by a CPU.
-+
-+data_loss_timestamp:
-+	This is a "timestamp" from a free running 25MHz uncore
-+	timer indicating when the most recent data loss occurred.
-+
-+last_update_timestamp:
-+	Another 25MHz timestamp indicating when the
-+	most recent counter update was successfully applied.
-+
-+
- Examples for RDT Monitoring along with allocation usage
- =======================================================
- Reading monitored data
--- 
-2.51.0
+> Of course, if adjustments can be made to keep the increase in mean while
+> keeping STDDEV low, that would of course be even better.
+> 
+> 							Thanx, Paul
+> 
+>> >|            | MIN        | MAX        | MEAN       | MEDIAN     | STDDEV     |
+>> >|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
+>> >| brk1_8_processes
+>> >| BASE       | 7,667,220  | 7,705,767  | 7,682,782  | 7,676,211  | 12,733     |
+>> >| TEST       | 9,477,395  | 10,053,058 | 9,878,753  | 9,959,360  | 182,014    |
+>> >| %          | +23.61%    | +30.46%    | +28.58%    | +29.74%    | +1,329.46% |
+>> >
+>> >| mmap2_256_processes
+>> >| BASE       | 7,483,929  | 7,532,461  | 7,491,876  | 7,489,398  | 11,134     |
+>> >| TEST       | 11,580,023 | 16,508,551 | 15,337,145 | 15,943,608 | 1,489,489  |
+>> >| %          | +54.73%    | +119.17%   | +104.72%   | +112.88%   | +13,276.75%|
+>> 
 
 
