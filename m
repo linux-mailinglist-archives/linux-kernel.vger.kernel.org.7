@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-817380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A319DB58178
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:03:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75188B58188
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6549320461B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189A4487943
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72D923D297;
-	Mon, 15 Sep 2025 16:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74D8254876;
+	Mon, 15 Sep 2025 16:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KW4X8gtz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LqSfDjlF"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAB81D5CC7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F2E246761
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757952208; cv=none; b=XDWH/O7mp0X2XebAsBlmvbL8Z1oUY0PCfUmamiaNHB60rR/4+weRrkfLo7iIiNsBkvj/gspenMx0puR51cTfw/i/6OpXWdpkyoB1OpJlvcudtfvCmTud8YUNE845+xMqEg7HA8qmVe2hHozLZvSa7LrlFHYMVudb5hWHJ7iJvLo=
+	t=1757952212; cv=none; b=Y9iBMht0gzkIFthhN0P8qUHl+xGd2H/CO9eZsLefPL2Q79J8RuUNnILw7jonKgiU4AvbOqCe+rzxqcvTL0z0X2zgh6gV1HmFbZym4OJP7tj69FoPAuHECEmGmyulENYqpfUonavAhpLMhjJyd+nIiZ1DivymCp7cW6vFat30Qx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757952208; c=relaxed/simple;
-	bh=jZv2I+hQgy7h1flHxtjAdMVXtLJV6Xkt1tQmvJyMaYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=J3ARXdUcgRrP6sjmbH8b8GJk7ghWze+Voqx3+yOrmUiMtODfpCbfvM0gN9JkilKU29iB17UbZHaUodK0e7yzsp1E5+xv+JdsurAVpXPHgZ95/bqnqBWJnlGV8vVGF8wFYSZhxb2SgVn7/c8TZQ2N1NjoM83vRrXkROmF4Rwqh04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KW4X8gtz; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1757952212; c=relaxed/simple;
+	bh=BAS0GBMKCDtwydPahpuw2HyfF0E/Y0qQ4Zq/+5p3ac8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKKuZTYo1em/46z+cFU0iLhklzUIc4LSBGDjxR3ni0VPPsqN3G9XcpO7vyFolZxSTrGdrk8Ptjo/398U4acDzc2l0N59NsG2qCoikW0R7zwNfFuIkbj8SJXNUoEymJNRYDNqPYlqLnqVIiuSLGLWmUKl0qFcR2t+K0cvt5enN28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LqSfDjlF; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757952205;
+	s=mimecast20190719; t=1757952209;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=l8M1HLgoXiLY5BzoOeoK/zpN6LMaZFeM6/poF/2GC8o=;
-	b=KW4X8gtzK/Ah21Pmcw8/GGGggTesFQ/u2Hh1zsGdJgX0qyEjL+b7TDJpioQOifUCwxH9mg
-	wlfz/JnBip2lP+LGTYtwXguLgjtXbjBeRA4Hpfr6vSeUSiYW24oZkI3jnGHVLM6H9ThSKk
-	EzBV5oFw8wqpyPSy6gh5sNZW086u8f0=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eMxsZvyoTV3G/hm1yNnpqqa9WqA68QAPsx4b+ZiU9Ys=;
+	b=LqSfDjlFxv9nk+hg1DLS4I8wwUDSLtiSrDvoLN2LBglyRNb7GI02A2e347cSCF24V50IiX
+	Z3sto9/wKlkjFdF6jSDtG1dienW0i0IgVuHkIYGQbjtl5mNbQy9V/OO/3O6fD7Fh5sDOhs
+	LT+HOjXBilFIsl1fxsRDofFwBqBLF8s=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-657-IeqUPwKJMwm1iG4VfKeLXg-1; Mon, 15 Sep 2025 12:03:24 -0400
-X-MC-Unique: IeqUPwKJMwm1iG4VfKeLXg-1
-X-Mimecast-MFC-AGG-ID: IeqUPwKJMwm1iG4VfKeLXg_1757952203
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-afcb78d5c35so515680866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:03:23 -0700 (PDT)
+ us-mta-677-ZGgXioVbNV6z4ZbaXG9f9A-1; Mon, 15 Sep 2025 12:03:28 -0400
+X-MC-Unique: ZGgXioVbNV6z4ZbaXG9f9A-1
+X-Mimecast-MFC-AGG-ID: ZGgXioVbNV6z4ZbaXG9f9A_1757952207
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b07d13a7752so406070266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:03:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757952203; x=1758557003;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l8M1HLgoXiLY5BzoOeoK/zpN6LMaZFeM6/poF/2GC8o=;
-        b=ifp+yZlxN+gsI3VZ4l1eyAY56aqge5YzWTd5mZL/xJdt1+ap1eETAL1f0gg0cdeP08
-         IgLSdcZifxYr5AxRsoPnC9hfavk7R+7SIC64me7zC4wIZHZaaD+/yND7NG8UUaTvKUCF
-         1xMt6kfnMrfbtpqlW2gsMTPvqZS4z8hhVC94y1JkcASzG96jujZ6EUSWOVi0yK6qyWiN
-         BJP6zAUjEl20Bai+OGUiputCZ7HMOABrUl7susIKRVvkrENahcyMufVLDcYjlP0S+g2h
-         qKCqcXFQCA2sGqd3PfWz6infS07nTiCw1MfAoBinK7LNYiWoWkf3mswycTYCrV80zTCz
-         +gog==
-X-Gm-Message-State: AOJu0YyumrlPy4Tnmwut6gPt78E90dsqDaVkMae27rhtWC77ddx3wyL7
-	nFgVZ1n0b3mB/bEsgTUWJCOOvJu4og2lwgRAp5Tc0ddBn/ZfhZeK9C+kwnTpJXZgOnAduOSL45z
-	ehmdfradgHcQVFwzmY0jV6oM2gLeDOFF8wfGyA8/yv4xzm8T09V5BWFwZzeoLvrsyJzes8WXPxG
-	CXLPA81CsUaXe3hjMzPJoGyDaKmXUUo75CPgxfmeiy4Mo=
-X-Gm-Gg: ASbGncv3qaDaEWjHWbGFlTQBCjvIuQy2of4JwWFnakrY2w9EXmSVPLvEMwK3gJYvCoG
-	KHiI6/fJCZ4EOf0LhXoxSrnarm2h8guHxxYMFLhAuNuD62Wh+rrTdFKpFbwbRdHEvX1fsuZmsAg
-	LtEvdEz8GwfhYf6XQPEKm2zAybq1OxbKI0/I4N/Iw7uqhyFCCNUc7cua+fc0yCPUKJp/SaWNtHn
-	P2eEzSayupuxEdROoiIOLZ0P2/dBAljDLbNj1JXjXiktKoUdeYc8H/CrRgy9ICvJpIOeC3auvFw
-	/F9jCmOP+vdB/Soy+Nj4oJkQKDgr
-X-Received: by 2002:a17:907:1c1d:b0:b04:a1a4:4bec with SMTP id a640c23a62f3a-b07c3a67aa8mr1299527666b.58.1757952202647;
-        Mon, 15 Sep 2025 09:03:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwwIB4rLfw0BfbhWfF9Fcdmo+wyMaaAb5Z+Vosd8vM4TIyjSy30sdafKcHylRnmXkyEaGRuQ==
-X-Received: by 2002:a17:907:1c1d:b0:b04:a1a4:4bec with SMTP id a640c23a62f3a-b07c3a67aa8mr1299522466b.58.1757952202060;
-        Mon, 15 Sep 2025 09:03:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757952207; x=1758557007;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eMxsZvyoTV3G/hm1yNnpqqa9WqA68QAPsx4b+ZiU9Ys=;
+        b=vSObX/kZ2TDLhVSpzvfyOvZqMaUWHY6K5Dgnrrva8DtcKDdilC8Nh0KZrJka+bsvBb
+         KI3bg1OAUcYom8sn2pIQ1y2dNT5xJ3akxFB+bA/ziArHN2S4srWOYBDBRjTo9avnhJgY
+         e1AGwGUMBkntkb4l+e9rtemRXtgkpCxgXbHiQvvHquprYTpCat1ctg5maowXetiBMB/i
+         2PBwNwxUToOFp6jnU8LiyOIqTiAvoq1fX6kmy6wx+DcJsJ0o6Izxh5Lpb7PyqbhSB3LF
+         hdl4cUr+meCBnT1cKF0N2a9oPBmWibReXSvdgqZuFDOezmR9leojZLQpDQq3e9uozKZE
+         jjog==
+X-Gm-Message-State: AOJu0YwqGW3ynt/Nh0xmJia++cmms81jEUnKJporCZv5HqR726/vQUjl
+	3mjrwF4MhR/QEKCou0RCHLvwxzUPAR3spD6G5xbIwYr/tv/hKeKe996aHFud6eEMUGYs8de/AZ8
+	UJ136u2mV0OD/Bofyp0yOX/4ZFSCwKzFpUqXBu9Oy9sMirknlXuH4co/WnTH7OzR8aEG55BHOmG
+	sdDKkLi5QOcKKnU/1Rp8j1tWAFrKGLbuGmwsumC/wn+hI=
+X-Gm-Gg: ASbGnctAxM7OIjMaLJEgEbvfIE3a8UKoWYUcqmyYuG+tS5m5+PzdZXH34p1Y1Jn9RBY
+	9NI8OER9No007G5mW8PuZMkUyHF32QAXyZZGVED6VVRqIXkjqHZ7Dxj7SE3n75BM4r2N9nubnEY
+	YL2uESg9+NWQSs+7FbIKJiocNEuwienNwI1TwQrP22TrY3QFpZ3tuceTPAJYW0RfOBrBMMM16HM
+	/MUOiN7ETVfec0zePdrtOCzYYxyKO8voWmm1ufO8dgoUD65pcuQOzYTL+RjKYiQr5RYCA2I4/ZS
+	EGsx7nUOL2SnwW+XksTVeoPVIWD6
+X-Received: by 2002:a17:907:9408:b0:b04:97df:d741 with SMTP id a640c23a62f3a-b07c3867766mr1173792166b.44.1757952206761;
+        Mon, 15 Sep 2025 09:03:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMAUdK5dLnmNqeaAzIQ4sLNIVdJ/bLJv6BqI8ieVrFaCmiktbN+iyKUpr58pZivx2Iqu/CNg==
+X-Received: by 2002:a17:907:9408:b0:b04:97df:d741 with SMTP id a640c23a62f3a-b07c3867766mr1173783066b.44.1757952204919;
+        Mon, 15 Sep 2025 09:03:24 -0700 (PDT)
 Received: from redhat.com ([31.187.78.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3128a1esm947877266b.29.2025.09.15.09.03.20
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b2e7a35dsm1001013466b.0.2025.09.15.09.03.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 09:03:20 -0700 (PDT)
-Date: Mon, 15 Sep 2025 12:03:19 -0400
+        Mon, 15 Sep 2025 09:03:24 -0700 (PDT)
+Date: Mon, 15 Sep 2025 12:03:22 -0400
 From: "Michael S. Tsirkin" <mst@redhat.com>
 To: linux-kernel@vger.kernel.org
-Cc: Jon Kohler <jon@nutanix.com>, netdev@vger.kernel.org
-Subject: [PATCH v3 0/3] vhost-net regression fixes
-Message-ID: <cover.1757951612.git.mst@redhat.com>
+Cc: Jon Kohler <jon@nutanix.com>, netdev@vger.kernel.org,
+	Jason Wang <jasowang@redhat.com>, stable@vger.kernel.org,
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+	Jonah Palmer <jonah.palmer@oracle.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH v3 1/3] vhost-net: unbreak busy polling
+Message-ID: <b93d3101a6c78f17a19bb0f883d72b30f66d1b54.1757952021.git.mst@redhat.com>
+References: <cover.1757951612.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,28 +96,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1757951612.git.mst@redhat.com>
 X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
 X-Mutt-Fcc: =sent
 
+From: Jason Wang <jasowang@redhat.com>
 
-Two regressions were reported in vhost-net.
-This is based on a patchset by Jason, but with
-patch 2 from his series split up and made simpler.
+Commit 67a873df0c41 ("vhost: basic in order support") pass the number
+of used elem to vhost_net_rx_peek_head_len() to make sure it can
+signal the used correctly before trying to do busy polling. But it
+forgets to clear the count, this would cause the count run out of sync
+with handle_rx() and break the busy polling.
 
-Lightly tested.
-Jason, Jon could you pls test this as well, and report?
+Fixing this by passing the pointer of the count and clearing it after
+the signaling the used.
 
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 67a873df0c41 ("vhost: basic in order support")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Message-Id: <20250915024703.2206-1-jasowang@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ drivers/vhost/net.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Jason Wang (2):
-  vhost-net: unbreak busy polling
-
-Michael S. Tsirkin (1):
-  Revert "vhost/net: Defer TX queue re-enable until after sendmsg"
-  vhost-net: flush batched before enabling notifications
-
- drivers/vhost/net.c | 44 ++++++++++++++++++++------------------------
- 1 file changed, 20 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index c6508fe0d5c8..16e39f3ab956 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1014,7 +1014,7 @@ static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
+ }
+ 
+ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
+-				      bool *busyloop_intr, unsigned int count)
++				      bool *busyloop_intr, unsigned int *count)
+ {
+ 	struct vhost_net_virtqueue *rnvq = &net->vqs[VHOST_NET_VQ_RX];
+ 	struct vhost_net_virtqueue *tnvq = &net->vqs[VHOST_NET_VQ_TX];
+@@ -1024,7 +1024,8 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
+ 
+ 	if (!len && rvq->busyloop_timeout) {
+ 		/* Flush batched heads first */
+-		vhost_net_signal_used(rnvq, count);
++		vhost_net_signal_used(rnvq, *count);
++		*count = 0;
+ 		/* Both tx vq and rx socket were polled here */
+ 		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, true);
+ 
+@@ -1180,7 +1181,7 @@ static void handle_rx(struct vhost_net *net)
+ 
+ 	do {
+ 		sock_len = vhost_net_rx_peek_head_len(net, sock->sk,
+-						      &busyloop_intr, count);
++						      &busyloop_intr, &count);
+ 		if (!sock_len)
+ 			break;
+ 		sock_len += sock_hlen;
 -- 
 MST
 
