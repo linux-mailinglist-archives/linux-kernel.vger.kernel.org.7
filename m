@@ -1,62 +1,69 @@
-Return-Path: <linux-kernel+bounces-815926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360AFB56D04
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:45:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE303B56D0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC65E189713C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:46:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92AF1733B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 00:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDADA278E67;
-	Sun, 14 Sep 2025 23:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E26C86344;
+	Mon, 15 Sep 2025 00:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbY0Dsm1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pKLF6LNB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132EB2101AE;
-	Sun, 14 Sep 2025 23:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EB61C27;
+	Mon, 15 Sep 2025 00:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757893533; cv=none; b=d7UvxBrU4jArQzGsQda+KMEZm+V8Hnf3a+LpNI/4EQf56bVi/UJ8nnDdobk4/fSIKYxB71jcPo1Q8YfwFHfJI06zCa408mV3hKlo3ppVA0FdrNLJnBxkB5rayMszHDMNiPSbPHn0r3+8kIbE47WRxTV+C7JynqmRax+VhX0ps+c=
+	t=1757894484; cv=none; b=neJnZimNJCAuCesvsiFErZmlaA45HeMjfoYlImocL2EtLPwigkSudkg3Zns2NUjMzJ90Da3Omzgeg24PSnWbjZUOQajE4iBMJsUhddXyzkOzFCp8Qg9pDwsXlag1QetCe/EzJIOzjfnmii7mZIQNbPmoibaGBo2E3056Tb5QB30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757893533; c=relaxed/simple;
-	bh=EtcNLf6b+VeOq3VY58DGr/jltFde/1cmlo9BtZ5d+VY=;
+	s=arc-20240116; t=1757894484; c=relaxed/simple;
+	bh=25c4vqp6oKm/TO4MjO51ZowS30kDKMGfPS6LktFlvdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNFwY6aT8rSMzO2SDPYbD6OUxbThBggWBJBYTV5b4Q05+lIwfZJBnsiXitptU7s9pAwvbBsqksIwdHvMpnGu2ZydkYhr/y/h/RXrmtxSBPL8wm4Eoab1XlrnH6qx28n9bNaYTpNIbRZi388R1d9VqrdNon1c26C287o4f2TT73k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbY0Dsm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF12C4CEF0;
-	Sun, 14 Sep 2025 23:45:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EzYInNPeFhogqD5n27hMj1HrpFZCwGL6NIGUzNnu1Mi8prvZ6gKUG2Ae6c7gcjAKptA5S7RMpHJ7S0pBn38ESqOsReBAKU4ykwRJ9koJ7UF5GrqKyZx/2wg+r7cpw+vsCKL8vMFwfX98EJCttfZzGLsDoBDu02Nw10X7+U6hImE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pKLF6LNB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD3DC4CEF0;
+	Mon, 15 Sep 2025 00:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757893531;
-	bh=EtcNLf6b+VeOq3VY58DGr/jltFde/1cmlo9BtZ5d+VY=;
+	s=k20201202; t=1757894483;
+	bh=25c4vqp6oKm/TO4MjO51ZowS30kDKMGfPS6LktFlvdc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YbY0Dsm1wbXp4m9MjjJsCVC9YC+X3KN4JQgs3wQeU4bCOZAP+S+w700Bw/OI/xE3M
-	 Ku2VuwzCvBd+5HEnavvOQ1Y2lnbmgPnKwkJelnG4VNz4QeRVtpE8t1fcAWOACMvY+6
-	 GRjlGymazfoOiydkVvMpKairo+vBsyhStWW5LBS+R3qlDLc+j4g+0/Qa44QX+HUpkh
-	 kiI6ph7tdJX06zXe59/Otn813m+4sEuwoqHy2t3mG9sObS7UtjUCOtO+5CZ1qzlFbY
-	 6xDetuZa13KKmy1qdT2ZDWfGFrY35URJ32XW2vXHP0IM+qKWtz8tmJ9miHap7Mq4aP
-	 H9HDwMDTnHiNg==
-Date: Sun, 14 Sep 2025 18:45:30 -0500
+	b=pKLF6LNBjBe9/5mqPSMyd3gJxRNQNfWcK9YXlbYztVOzLRmASl1132gNPGgOSZJLL
+	 ls0sUhHhIjdIZwVq8mMpt2AmAeh3mZUPulArNv4cYK7t2abZ4hsiZkO0W4x5dX96Ul
+	 tLYYeEyzaiuIhqcN5xS2K6QL+OvnNpmh3L4O5FvsJF5lBjRQ6IGIHSqSGLuiThcnt0
+	 xWjsSwCoEbU7aCaYR2N/g4WzxT+1yZSWFah+12id6VORVaYFjOPb/XwC6RuY9z0IBS
+	 YQohl4J84mgzycsZ/FuqZOo6/0+4GNxZ2vlRlsJLBMnFYuqzVDlfKNAmQNYNPSft2x
+	 0jWjia0mr55Ug==
+Date: Sun, 14 Sep 2025 19:01:22 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v2 06/11] dt-bindings: usb: Document Renesas RZ/G3E
- USB3HOST
-Message-ID: <175789353005.2252414.10762360255516722224.robh@kernel.org>
-References: <20250909180803.140939-1-biju.das.jz@bp.renesas.com>
- <20250909180803.140939-7-biju.das.jz@bp.renesas.com>
+To: Aleksandrs Vinarskis <alex@vinarskis.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	devicetree@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+	linux-media@vger.kernel.org, Daniel Thompson <danielt@kernel.org>,
+	linux-leds@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>,
+	Hans de Goede <hansg@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	threeway@gmail.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Jacopo Mondi <jacopo@jmondi.org>
+Subject: Re: [PATCH v5 1/4] dt-bindings: leds: add generic LED consumer
+ documentation
+Message-ID: <175789448207.2281753.18020125976595732486.robh@kernel.org>
+References: <20250910-leds-v5-0-bb90a0f897d5@vinarskis.com>
+ <20250910-leds-v5-1-bb90a0f897d5@vinarskis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,33 +72,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909180803.140939-7-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250910-leds-v5-1-bb90a0f897d5@vinarskis.com>
 
 
-On Tue, 09 Sep 2025 19:07:51 +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
+On Wed, 10 Sep 2025 14:01:08 +0200, Aleksandrs Vinarskis wrote:
+> Introduce common generic led consumer binding, where consumer defines
+> led(s) by phandle, as opposed to trigger-source binding where the
+> trigger source is defined in led itself.
 > 
-> Document the Renesas RZ/G3E USB3.2 Gen2 Host Controller (a.k.a USB3HOST).
-> The USB3HOST is compliant with the Universal Serial Bus 3.2 Specification
-> Revision 1.0.
->  - Supports 1 downstream USB receptacles
->      - Number of SSP Gen2 or SS ports: 1
->      - Number of HS or FS or LS ports: 1
->  - Supports Super Speed Plus Gen2x1 (10 Gbps), Super Speed (5 Gbps),
->    High Speed (480 Mbps), Full Speed (12Mbps), and Low Speed (1.5 Mbps).
->  - Supports all transfer-types: Control, Bulk, Interrupt, Isochronous, and
->    these split-transactions.
->  - Supports Power Control and Over Current Detection.
+> Add already used in some schemas 'leds' parameter which expects
+> phandle-array. Additionally, introduce 'led-names' which could be used
+> by consumers to map LED devices to their respective functions.
 > 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
 > ---
-> v1->v2:
->  * Added ref to usb-xhci.yaml
->  * Dropped Rb tag
-> ---
->  .../bindings/usb/renesas,rzg3e-xhci.yaml      | 87 +++++++++++++++++++
->  1 file changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/renesas,rzg3e-xhci.yaml
+>  .../devicetree/bindings/leds/leds-consumer.yaml    | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
