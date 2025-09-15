@@ -1,90 +1,146 @@
-Return-Path: <linux-kernel+bounces-816855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66226B57981
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:56:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1A4B57970
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1C3481249
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6666B205BEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E70302146;
-	Mon, 15 Sep 2025 11:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNuRCWkZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7A130147D;
+	Mon, 15 Sep 2025 11:54:44 +0000 (UTC)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A543E30101A;
-	Mon, 15 Sep 2025 11:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A0630101A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937267; cv=none; b=ql7ldw2ZbL/5yxXc2Jv+m1Oa9GcYP7GPytw/raCuNGBgrgZPAtRodWFOR+LE7WaBGL/YGgBJ3de0g6nDKNlLYuEYeIHDbxiFjwuUKSiZQflq+/0koRUBfk/VNF+ECJl5Yxjn3MvY9BhzUOGKBAW0QBs7ryeMdWkFePRpkyybeYk=
+	t=1757937284; cv=none; b=KoQie8MSp9jqNi5iy5mtdLsl4PkzA20pdnfEMUzSC7dLcqRrHyVaS/l7oAo5TJxjN/uStTkhpgznK/l30/z2pCP3Df0XdLy2g40I+Zamcon4TAz4a7qOjR4OIxMeVRq/3kyM4MZXu0PYTaKIjj9sKeQk0OaBDPyIHGpF2ePEMls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937267; c=relaxed/simple;
-	bh=O6oXltWjbyyGt5xAMfPgI1qX7BVTXNaWiJ13TGR5IGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSxVicJVqVpneej2uyccqfk4GdL5aUjjjAfrv1wUYapre7RF59oR+Bern5UK3ApPIwp0xFMoVCPBogzfPv96pkkIZwqlEDF7hQM5gFATfjpvbK+zHwAQG/0pzDlhPSNCeIWt8nRoh2DJ0GWbudF8Mo8TSs5lCsau4E6hubpCIE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNuRCWkZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2734C4CEF1;
-	Mon, 15 Sep 2025 11:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757937267;
-	bh=O6oXltWjbyyGt5xAMfPgI1qX7BVTXNaWiJ13TGR5IGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rNuRCWkZzPp0qsEnUVvGTFshx0vVjC0zXTp8pg5SYPc70y9KziIIa35hZMwdOKPEZ
-	 hnHGD9MfZ+Mje39gVi1D05PE2dUQt34w6xXhupgdMH18p8IHdndC39lTpHfUPddCBv
-	 OgKns27afeeA6+tO8K4a8wvwKIN+lESMF53H7BAFmLBrjbtYmIb5cBpHDlr1HuCQN+
-	 emp+VqqUOtwtLiajixJphFPwuPOkedQMdn4bVSiElQCDUpQQpOFo4umxrpIr9W1AKz
-	 ILS1b8sBlHiFF1zQ8CecSp99N7yJfVBllTe8Vk+AQbaZR8wVQULQIh5yd1r3nUrqGc
-	 dS2dU5YesnmTA==
-Date: Mon, 15 Sep 2025 13:54:21 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-	Andy Lutomirski <luto@amacapital.net>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] procfs: make reference pidns more user-visible
-Message-ID: <20250915-sesshaft-lackieren-c7f074e8fc4a@brauner>
-References: <20250805-procfs-pidns-api-v4-0-705f984940e7@cyphar.com>
- <20250902-gehofft-ruheraum-3c286b25b6d3@brauner>
- <2025-09-05-kinky-napping-auction-creeks-pbN1Vi@cyphar.com>
+	s=arc-20240116; t=1757937284; c=relaxed/simple;
+	bh=X1mJ891dQWSYdtfoPDMNxd56dDiE4l7XqS7hxKPA0zg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dkCea+g2LL2Rmd0ABx11fD1CusEbPUBnP3xzBOd07xg5gghoqAV0+NmGgkEl/5tgzS7PJC+CLr1rMujlwbprPFvWydLusF4md9X2BR9gzS6+D7nNRYW8wbODOmbwk1ANcg8yux+ZguHQTrchgKb2aD9swMWG2wgGhWz9KR5B1hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8dbe7c166a1so495499241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:54:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757937281; x=1758542081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8j9g6khBudlWCULOd6eX9KmZnbNuYyJvR9k6Ybie28I=;
+        b=Q5Yrqr5J+xOAHZdfI4DqoN+ZjNpUzL+boerbfQ96T5jOK/S/LxaOzJ+LehGIDJFp47
+         m+4YIfdGX2mzrhEGt4cfdDP9CqNhGV80GmFJ3cAv+3ha4nPhDSe9GzQFdcpaBhArY+Ab
+         mrFQKxt/h2ojrrKydbu38XHJaQJa50ACJyG/pgRGnBeeAPxsCoDPYBcOJ5Zby5NGWSAc
+         IPO0+ZWfZYRLq/qQzsIJ6Il4l3H2NLjA1PdJXBzRwgg6V6fQR93bYIARRECzCQsuuaId
+         Z2OcSt4LTWudCoImjck8zoD80snWyYzvIQu+i1KSzLGFWhJ53bh9CecjzhB2m2WMjlqo
+         2crg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFHSJZA/NZ9JWMb7ztt+RjL2C9M4Q7rHfdYUAMWtt4y6ARI3N2hUywkMfKKapXW8z8Juj2SU5LOlfo/u8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuExhNFV4Ezyz1SD3IADqpJQdTuCe/USAZ2LEktcqWvEpsP2sA
+	iIc922cJ1voceFH7BagBI2kyuMdcL+kncSGkr/RMGxQPgmV4KVi95H8rHLN1mMuw
+X-Gm-Gg: ASbGncvtPfJ4P2NOS9t2i2vRYdJ8SgiL9Mn+p3L/KMrTkxhtAOhgHqfA4qhJ3xMn2nu
+	6v4MYgVK/yzI5pNRCxOmupCdbVTlyQft3Xr5VxNIA3BZBv1mJD8DP0doizv7tvkd+3DTKiyMUbI
+	1vtA4r5XZk/fwnB2BgLhzsldSVHeBsB1klYqbiKTTwg47K3utpIp5zMBYPvohynleL4okuG3C76
+	kRYNRA9sv1IVBjPvMQaMGi/wbFl/QYzS5RddXMAoGI0GTs+zFm8pbOuyIYSRVBhqolJaLiBS3S7
+	5Ug1o0+cwqC5rPqCNdABexh1gjoPWH/yRrn8AV7YmmHagQjpVTK/mxdKdHnXKN/tZn2HTuAdCtg
+	sb60l6hWt537RR38Q8Lr8p+FzSyg3KpHHYUGyRonocuvhGFKW+ZueTzq9htlE
+X-Google-Smtp-Source: AGHT+IHWYg5uucDnIR1SvAk/AYSR7t2r8rsy5wT3jsvAWNC1ZaWfIc6wP+xrGongwAUbNzWD4P2QLw==
+X-Received: by 2002:a05:6102:549e:b0:4e9:8f71:bd6e with SMTP id ada2fe7eead31-55600b2aa3emr4181675137.0.1757937280383;
+        Mon, 15 Sep 2025 04:54:40 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5598571bbc0sm1808173137.2.2025.09.15.04.54.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 04:54:40 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-52a73cc9f97so1321449137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:54:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVkdSAcADjuvtruTDm45CJENUvnsFoCk7tBnHcw5eaEr4SeEHFcoghSAxZskG1HS36Znbi3lY4E0z4U9Dg=@vger.kernel.org
+X-Received: by 2002:a05:6102:8098:b0:527:4113:6ad6 with SMTP id
+ ada2fe7eead31-5560a10e919mr3310852137.9.1757937280011; Mon, 15 Sep 2025
+ 04:54:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025-09-05-kinky-napping-auction-creeks-pbN1Vi@cyphar.com>
+References: <20250728071452.35171-1-jogidishank503@gmail.com>
+In-Reply-To: <20250728071452.35171-1-jogidishank503@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Sep 2025 13:54:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXpn8VhFL3RF_NEEdK3-VuHuHHZ6PFBcJi+kYCgbnwL8Q@mail.gmail.com>
+X-Gm-Features: AS18NWBDv-eagQpa9zzAr9IRsIYBMwlArzoXlxqRod7XiXKpYRxYZJ8lRHiHNyU
+Message-ID: <CAMuHMdXpn8VhFL3RF_NEEdK3-VuHuHHZ6PFBcJi+kYCgbnwL8Q@mail.gmail.com>
+Subject: Re: [PATCH] zorro: remove extra whitespace in macro definitions
+To: Dishank Jogi <jogidishank503@gmail.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	darshanrathod475@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-> The main issues are:
-> 
-> 1. pid1 can often be non-dumpable, which can block you from doing that.
->    In principle, because the dumpable flag is reset on execve, it is
->    theoretically possible to get access to /proc/$pid/ns/pid if you win
->    the race in a pid namespace with lots of process activity, but this
->    kind of sucks.
-> 
-> 2. This approach doesn't work for empty pid namesapces.
->    pidns_for_children doesn't let you get a handle to an empty pid
->    namespace either (I briefly looked at the history and it seems this
->    was silently changed in v2 of the patchset based on some feedback
->    that I'm not sure was entirely correct).
-> 
-> 3. Now that you can configure the procfs mount, it seems like a
->    half-baked interface to not provide diagnostic information about the
->    namespace. (I suspect the criu folks would be happy to have this too
->    ;).)
+Hi Dishank,
 
-I think the easiest would be to add an ioctl that returns a pid
-namespace based on a procfs root if the caller is located in the pid
-namespace of the procfs instance (like
-current_in_namespace(proc->pid_ns) or if the caller is privileged over
-the owning ns. That would be simple and doesn't need to involve any
-ptrace.
+On Mon, 28 Jul 2025 at 09:15, Dishank Jogi <jogidishank503@gmail.com> wrote:
+> Cleaned up the formatting of MANUF and PRODUCT macro
+> definitions in 'drivers/zorro/names.c' by removing extra
+> spaces between macro names and their parameters.
+>
+> No functional changes.
+>
+> Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
+
+Thanks for your patch!
+
+> --- a/drivers/zorro/names.c
+> +++ b/drivers/zorro/names.c
+> @@ -36,21 +36,21 @@ struct zorro_manuf_info {
+>   * real memory.. Parse the same file multiple times
+>   * to get all the info.
+>   */
+> -#define MANUF( manuf, name )           static char __manufstr_##manuf[] __initdata = name;
+> +#define MANUF(manuf, name)             static char __manufstr_##manuf[] __initdata = name;
+>  #define ENDMANUF()
+> -#define PRODUCT( manuf, prod, name )   static char __prodstr_##manuf##prod[] __initdata = name;
+> +#define PRODUCT(manuf, prod, name)     static char __prodstr_##manuf##prod[] __initdata = name;
+
+You missed removing a bogus space.  I will fix that up while applying.
+
+>  #include "devlist.h"
+>
+>
+> -#define MANUF( manuf, name )           static struct zorro_prod_info __prods_##manuf[] __initdata = {
+> +#define MANUF(manuf, name)             static struct zorro_prod_info __prods_##manuf[] __initdata = {
+>  #define ENDMANUF()                     };
+> -#define PRODUCT( manuf, prod, name )   { 0x##prod, 0, __prodstr_##manuf##prod },
+> +#define PRODUCT(manuf, prod, name)     { 0x##prod, 0, __prodstr_##manuf##prod },
+>  #include "devlist.h"
+>
+>  static struct zorro_manuf_info __initdata zorro_manuf_list[] = {
+> -#define MANUF( manuf, name )           { 0x##manuf, ARRAY_SIZE(__prods_##manuf), __manufstr_##manuf, __prods_##manuf },
+> +#define MANUF(manuf, name)             { 0x##manuf, ARRAY_SIZE(__prods_##manuf), __manufstr_##manuf, __prods_##manuf },
+>  #define ENDMANUF()
+> -#define PRODUCT( manuf, prod, name )
+> +#define PRODUCT(manuf, prod, name)
+>  #include "devlist.h"
+>  };
+
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.18.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
