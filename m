@@ -1,180 +1,156 @@
-Return-Path: <linux-kernel+bounces-817814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E2CB586E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1D9B586E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003E51B20C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469B11B2063F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F222C08AF;
-	Mon, 15 Sep 2025 21:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A6614A4F9;
+	Mon, 15 Sep 2025 21:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="S5xncN0h"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9Os9++9"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C78A2DC78E;
-	Mon, 15 Sep 2025 21:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF314502A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757972638; cv=none; b=J5TI45kneG7rFTwNS6rgChIRYVLTEECtOpKHyfPvH1nfgAaBenIBHK3yLgmkCliSEDtWXQ/aoeamUcFaVsxZrscFtzB48ak3Iiy6eD2jMfw4FxdEo7oy+Z+SObKd9F+HomxJSPOBwt5bho8r9MQsPEXPAjDH7/EAoXFKgdroFO8=
+	t=1757972732; cv=none; b=o+FejmmS/U0PywuCDx5T6JOqVWtjE+51ikMfRHrcOGB7PlzHrKsoceB/aN73KPHxk9lOO2vBu1HQb1RoBOHDULzien7L9m0noPdjqZBoOka8B8498cd358exgAzUEWv3Cc34DJxDFRPN7Oco192kOCdokLSq7cQtch1T+UEjZNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757972638; c=relaxed/simple;
-	bh=xjgZHmSX6hQbMFsYHzBYKTo0y92y46Oz7JhFxVO451M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R4D2uheJ00BUQTgQtC53Jy36NHzMxLuK1XwwwZTyxR8+ishyn7HED+SOvM25qiMA1bf1UjbksE07LjNmbvV14FQRjmDgBvugvivz+ceRlLfwbWHd2vxbJIES2fLlAs7NTfPAPn0CGC+F42gL8Ifco2MAA8m0cyTpq5wLxTzPW40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=S5xncN0h; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1757972608; x=1758577408; i=spasswolf@web.de;
-	bh=ChbW6nEJU0PthS6uGA2+zqeh5CtfztIx0o/3V2HypMk=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=S5xncN0hbPU+ZvkxJlWxns9h5/tqAMImSexuWvzKyLQdGAxavhUOkNqrQsg0ieSD
-	 i8LgbRS/Byab32f/tnqrWvC5WKmuKAhtZ7z1BcLO6Q6+vZ08w8DB1850PtFtQrOGk
-	 s++K3RcVKeK/fP/m+3N6MSrFZmRVjjufpt8aVqafZISCGdKXWUG2BjV6s8WLnRDmO
-	 nt9I/OGIkQQ/UsxA33tsNv8hB1p39LorkJCYVxHFgq3mmJtKgWgXIW7QCgK0FWO8J
-	 HaXAYPXkTMYWJ6DeYKdD0ABZTETof47y9bNYq88L8izZ2AQiJJNNx0FFAmDnDX4w2
-	 cy7KCYcjKYuDQBIeQA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([95.223.134.88]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgJK-1vC4lm2W7G-004RtJ; Mon, 15
- Sep 2025 23:43:28 +0200
-Message-ID: <426097525d5f9e88a3f7e96ce93f24ca27459f90.camel@web.de>
-Subject: Re: spurious mce Hardware Error messages in next-20250912
-From: Bert Karwatzki <spasswolf@web.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-edac@vger.kernel.org, linux-acpi@vger.kernel.org, x86@kernel.org, 
-	rafael@kernel.org, qiuxu.zhuo@intel.com, nik.borisov@suse.com, 
-	Smita.KoralahalliChannabasappa@amd.com, spasswolf@web.de
-Date: Mon, 15 Sep 2025 23:43:26 +0200
-In-Reply-To: <45d4081d93bbd50e1a23a112e3caca86ce979217.camel@web.de>
-References: <20250915010010.3547-1-spasswolf@web.de>
-				 <20250915175531.GB869676@yaz-khff2.amd.com>
-	 <45d4081d93bbd50e1a23a112e3caca86ce979217.camel@web.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1757972732; c=relaxed/simple;
+	bh=3S+/CIj2dTjZzfVmKIc9+YYV8Tg/YeaidG5GPR9wTBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g+IuK5VyIEwqRaBZMrQGhkpME6XagyvzkCS01NAXbCfN+dM9WagjGfW4Zqqzd4xNGPDK2Y1rbsqUeypQbTuqyyDt+F3YZoaFJ23uJXScwDNPXZA8x0EJO1XqdTtCTsf9RZq5P5wmxkqv6wFWFIywq50vfF5wawDtoz1+QJjrLRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9Os9++9; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-264e0729c4aso3526955ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757972730; x=1758577530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hgjQuP4Me3guJDVcSDtwLqdLj9Ad4VyHioffhsnvnuU=;
+        b=J9Os9++9pKPQfwvU1UA6IE3kiMcUaHLvfTWfa4V2eK2RG9iUset5hsip4UPhFgmkxF
+         Chjh9IHHXHJ/WFG4WZ3Sd7CJWRDRVl+/0LbEtZOpQZEIF3ouHtUnjDDrrL9scUs9kt72
+         LM2BC3vExsLsFJQXHEvPrhzOq07dtCsTauGJ7d2uzUEizmtoJqQP0R7hNOcpLsNUbgHL
+         t6wtgnOTulJ2vgEOYck5HDBYjZ+FY0UHFhmmLTU8e1T77JM5W1WHubG1g+8y/UA8vooy
+         SkBXl9Bc2wmJg5bz+tZXBHeNStR/jyyw+SVuCFI7or2wC7Dxr53W6A5Y6h1OiSQTFbsc
+         Nitg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757972730; x=1758577530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hgjQuP4Me3guJDVcSDtwLqdLj9Ad4VyHioffhsnvnuU=;
+        b=hW3zZa6p245L2hCh2UFu8F2DPQFsEyZI+DMRFdSAdwnDK9JOMd57XNgMyUPLbgDvcW
+         XaHT1rXxN/Uw6VLpTyJLMCwdLyZ1ECxcJBuOkoSf1bCGLMAb+tOwvUt+f7qTIDl2AewM
+         7HnTvU/a7QV0WvZqOue1BpHrGwFVoirt1dbAvB3x/tUwpOe24jdBm+IVikf5JvWdz6BZ
+         eLZKwut6zoCBW6gsYHnQAJWpJQA1yHfR/cd5ZyKU7NL3ZdmbRQcHoZJHtcAFLct5aq4j
+         Abqm9Vjz39fSPTPjNAApaPjCv3rReV4/rG3kyx8Hzx02DN3zqQXbmvAIjsh/iVpX++pO
+         prPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjD989xZobb8NcTX2cMZDTY4wUFFDDWPbFm6ySL0AZYTX5pJ82n/QNov83klxkptTIkO/KxhChlokoI2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3Il8ePhv+99wreRsSiVWX6fO/ufxhMeMSfi27IQrAFaD4qiZi
+	xZrRMq3/pClFtiWaszH2QhTkY2U6I9vIm7pppk6jA5TQIIAFXuvPTWH80tz03tKrgmwg/FMfxGt
+	JlDQN5VuzdAZFIyw/Q+VbBltuaAO99Js=
+X-Gm-Gg: ASbGncsl0JBPAPtPvmNzI9F4y2Um2c7tW5qdT+IdzR3m3tdw9Kmqr8lLGXLDspJqOLc
+	N7KmKYJGZzEOzIkokq5UEdz7aG1hzjUIOB2O3x9zoxJ/JN6NmsjC547GNlaflslptXh/DgBeymq
+	RvtapZF3097Cjaro73W1bAOfAA+r1cliROfLuX5gpQqTdZx/ekRjcs/6wLsAsIhnCuor/Vkv1H+
+	T5t/3UpB3QfEkVYIQ==
+X-Google-Smtp-Source: AGHT+IHw3Z18XHstUu2o5MDyyGsJMQUZc09lyWpgCR+3iBlFcxOGkW7iUUBCOCFrQn0WS7ZaeI8Iju8q0S+OmEonvrg=
+X-Received: by 2002:a17:903:1a8b:b0:25a:4437:dbb7 with SMTP id
+ d9443c01a7336-25d25e85badmr85747195ad.4.1757972730212; Mon, 15 Sep 2025
+ 14:45:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250913052109.2638-1-bold.zone2373@fastmail.com>
+In-Reply-To: <20250913052109.2638-1-bold.zone2373@fastmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 15 Sep 2025 17:45:18 -0400
+X-Gm-Features: Ac12FXyeEWmkZqa6wbMn8t2Wun6mfw4KJJSTBJD8vx8rr6MmHrmXg4LFyNCd8yc
+Message-ID: <CADnq5_N9r+hyu6ARUGeYnsSPNNBM-bq0YV5mQoH6vp2yXdXZhg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Use kmalloc_array() instead of kmalloc()
+To: James Flowers <bold.zone2373@fastmail.com>
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, siqueira@igalia.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, roman.li@amd.com, alvin.lee2@amd.com, 
+	skhan@linuxfoundation.org, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PPp+c/vanHcGtDgNLx/d+0zjej9inOOzO58zyA4Ff75Bx2fKQAy
- ekG78KDdaxRKwzUVniZ4In1Bp0Iy/f/G45fDbSAToTUoJdXj3EegSjzn2kHJah8qdV8lzoa
- grgutmQc+HgT4jfGV3Uz1/3fO3lunAH2jviik6HK3idsyCIP3E5fyjYmeXWW1xowb61zMaE
- 50Y9A6rt9soovPFGrUcGg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TnkBAmGK0qU=;7LYxyx78lwrwfuQBQs9UwWmeiI0
- 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
 
-Am Montag, dem 15.09.2025 um 23:03 +0200 schrieb Bert Karwatzki:
-> Am Montag, dem 15.09.2025 um 13:55 -0400 schrieb Yazen Ghannam:
->=20
-> > >=20
-> > > As these messages do not appear in v6.17-rc5 I bisected the issue=20
-> > > (from v6.17-rc5 to next-20250912) and found this as the first bad co=
-mmit:
-> > >=20
-> > > cf6f155e848b ("x86/mce: Unify AMD DFR handler with MCA Polling")
-> >=20
-> > Could you try another recent linux-next build without the MCA updates?
-> >=20
-> >=20
-> >=20
-> > It looks like 'next-20250911' doesn't include the commit above.
-> > >=20
->=20
-> Somehow I cannot find next-20250911 in my linux-next git:
->=20
-> $ git checkout next-202509(TAB TAB)
-> next-20250901   next-20250902   next-20250905   next-20250908   next-202=
-50912  =20
->=20
-> I'm currently re-cloning linux-next.
->=20
+Applied.  Thanks!
 
-After re-cloning linux-next I tested next-20250911 and I get no mce error =
-messages
-even if I set the check_interval to 10.
+Alex
 
-
-Bert Karwatzki
-> >=20
+On Sat, Sep 13, 2025 at 1:31=E2=80=AFAM James Flowers
+<bold.zone2373@fastmail.com> wrote:
+>
+> Documentation/process/deprecated.rst recommends against the use of kmallo=
+c
+> with dynamic size calculations due to the risk of overflow and smaller
+> allocation being made than the caller was expecting. This could lead to
+> buffer overflow in code similar to the memcpy in
+> amdgpu_dm_plane_add_modifier().
+>
+> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+> ---
+> I see that in amdgpu_dm_plane_get_plane_modifiers, capacity is initialize=
+d to
+> only 128, but it is probably preferable to refactor.
+>
+> Tested on a Steam Deck OLED with no apparent regressions using these test=
+ suites from
+> igt-gpu-tools:
+> 1) kms_plane
+> 2) amd_plane
+> 3) amd_fuzzing
+> 4) testdisplay
+>
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/dr=
+ivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+> index b7c6e8d13435..b587d2033f0b 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+> @@ -146,7 +146,7 @@ static void amdgpu_dm_plane_add_modifier(uint64_t **m=
+ods, uint64_t *size, uint64
+>
+>         if (*cap - *size < 1) {
+>                 uint64_t new_cap =3D *cap * 2;
+> -               uint64_t *new_mods =3D kmalloc(new_cap * sizeof(uint64_t)=
+, GFP_KERNEL);
+> +               uint64_t *new_mods =3D kmalloc_array(new_cap, sizeof(uint=
+64_t), GFP_KERNEL);
+>
+>                 if (!new_mods) {
+>                         kfree(*mods);
+> @@ -732,7 +732,7 @@ static int amdgpu_dm_plane_get_plane_modifiers(struct=
+ amdgpu_device *adev, unsig
+>         if (adev->family < AMDGPU_FAMILY_AI)
+>                 return 0;
+>
+> -       *mods =3D kmalloc(capacity * sizeof(uint64_t), GFP_KERNEL);
+> +       *mods =3D kmalloc_array(capacity, sizeof(uint64_t), GFP_KERNEL);
+>
+>         if (plane_type =3D=3D DRM_PLANE_TYPE_CURSOR) {
+>                 amdgpu_dm_plane_add_modifier(mods, &size, &capacity, DRM_=
+FORMAT_MOD_LINEAR);
+> --
+> 2.51.0
+>
 
