@@ -1,171 +1,225 @@
-Return-Path: <linux-kernel+bounces-817416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F0AB581EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:24:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FA2B581F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70DB7485CB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5279116A1FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CEC2773E3;
-	Mon, 15 Sep 2025 16:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364252641CA;
+	Mon, 15 Sep 2025 16:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kmvAgdRD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IeM7OfYn"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5522C1F7910;
-	Mon, 15 Sep 2025 16:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FC81F419B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757953456; cv=none; b=OPj5O/HRjyJN0Pt97MDRNBo6qUhuV5lLHaHH/QAhX+oEXkdnFc13OtBDvu2RandOLSlkfIlWWy4n341NxZCQVdl6ZqdOix0HPeNoFf/ypiNAaUiMNKuEnJ7Hx0MR6oNVuzGBk2OlIpUUcnksM3M4N8CpyKu9N3f5PZeWQsGaCx8=
+	t=1757953520; cv=none; b=X3jxSxNAPyPNB/pxr8HJnAprRZivau2jv80N93CUIeC797DZ3Ivhd1E8B8QG6GyGMxRaTvgzDx+CMZ6xSpr0Rg+CTNDA+d/Z0JEmfr2lXFQKlpxbu8pdvcUrVQlr0p+GAQk7FMfx81R2K+qT9oWIaycO/q6txwtrRfZ4cvtSz8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757953456; c=relaxed/simple;
-	bh=O5SwdmxxLNi13kb62q2OqCYx8wGzejzDqVMTzbO/oLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nByLGQIBzniHsU5uYLAGmmWlamKk8gZbRlj5b1w4PyZ66No2X0MOLUJO0TSF8jrLKjlrP4V0M4a31FT11YnfIv9BHzO2mfvUCRkcPSSIbVggy4z7sFKywcA/IvYVYhjEpqkmj3c2cmrpph4ySEdpS6vCXBOtJdMF3pqFXtnoRUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kmvAgdRD; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757953455; x=1789489455;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O5SwdmxxLNi13kb62q2OqCYx8wGzejzDqVMTzbO/oLM=;
-  b=kmvAgdRD9Z86wa2auMf/NSqgPtnQtUGHnITPYhEbEMoZ6RdQf2duroXn
-   9IWxzqsYYvVjGiYiIoJx7nSCGN1rBmWYXvE4D5H64gX/IZtk6k+iMCAZg
-   vioxpKK2VUeH0HQ03P93q4gDhWh6NnKb3n/bs1TZ5Fgx5q1Ag5pKkLNtb
-   9rCsdU22y1Bvon0rNH3tbdMD07BW4a981bfTRigVdDuhgEhF8AuZfOkKX
-   PlChBqurG/SOM+xkwqr39gS51lwKxwU1nyGQCcr/yXb73AIMbxIdwakPP
-   wBBDlleoSZG7gB/JpYg37fGxH+3yZtsqdVkTk88Kx+19nORJRUpdYXk0N
-   Q==;
-X-CSE-ConnectionGUID: WeQrXdrlSdO2PAAgccXhaw==
-X-CSE-MsgGUID: uv/xGNjXTdaNyKlWQiPGKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="47782486"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="47782486"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:24:14 -0700
-X-CSE-ConnectionGUID: 5JB3YnFGS3i1pKU71CnCaw==
-X-CSE-MsgGUID: e2KTI+UiQPe8ebRf8vvPPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="179053455"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.129]) ([10.125.111.129])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:24:10 -0700
-Message-ID: <090fd415-42e4-481f-8c77-0b3f2e9f3f63@intel.com>
-Date: Mon, 15 Sep 2025 09:24:09 -0700
+	s=arc-20240116; t=1757953520; c=relaxed/simple;
+	bh=m0VcHa+/JHQJXf451OE9Te576i9puC8LakrJ7RgeKaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DAS4baK1o5P4b9hauStz/zDMcR4lRiy8NdVMYFn4NFi6CL8YToK6hvw2YMjZAKsY4C9dHBCm+C7vsXW+agY8F3ia423xAHVhmXb+rJHg2DbY5jS07Qr8uflYpDijH1Lo5GTZ3bmgALQdLbskiO19/P1318qwg2/D7nP2gG+pW58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IeM7OfYn; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b0787fa12e2so624180666b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757953517; x=1758558317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kMJNhdJv+scko5BawZPjnYJ0aP4LRJcbG8zsCsFfSa8=;
+        b=IeM7OfYnTnWYba7Y9J2y8K8XetUEskes40N9e3akzAtLCEEGlmHmMys68RinqaeXk3
+         NLMUT75g++ECaFViOop+HiqEkHNlr5jvHh5Xyx2p7GgPKA+aF6kUFkeDlVPCxrNR4KT6
+         wpTZpc33kdy2HYciBIvwO8SZtSx4Up7qu7hHEMJV/iF50dR0uWinqORvhHhKwztrmU4x
+         rOzp/vzvZIwrnp7HSS6n5BsSJS/NmdhBoTA+2IUPQPsVCT4hN/NmOV7vVhdJTry6O1SS
+         o4/tRNr/SHkxE7fRDTdYlWeZNTwj3jg+HN5oTEl3ssC8XDkyJxB9SJH0xRQNcylrIp7l
+         Ps7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757953517; x=1758558317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kMJNhdJv+scko5BawZPjnYJ0aP4LRJcbG8zsCsFfSa8=;
+        b=NiqQT0ycOvBkMmAt6RsYE3kHXHVLvoObtGtqo3GEKDSutOHYIJtv2NvlEKDWQ9sWny
+         ozRmKxRu+l6uYAzP85W0fvU7YkHFblmWaPySbBGbAdVyRzY2fPUkw8fxiQA4Xr0KAWJR
+         Pze9vGZqETozIdBGk0+UuhS5Benp4t0q3+kV9NqsrV6fKgJibqlIBvCGoFOZJsovIKwJ
+         Fpm9/QAN+EhFcoZBlaE5JTuhrgP6uRwAGzHt+PaLACF2v4r2YDZs0nWGB2tC8uykiSbL
+         vH6BKO8ajtAowQs/pQHqcFeV/NRv7X4zo/vsaDOdnhOzOAb3F/gdqPl4ubCl32O7cHYf
+         ohow==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ4FmlgSG6lqG8Kt+M3/NZNh7XieigiVZG31vS9fTuVV0ckMd93gqgRNb47VXP2BKC/ozp+SddK0FRmSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLQ7StaMRGU7CH0eObginbwVg0tw2dyW5drWO275y0I/lVNHs8
+	XkBNqWJHHU9wytqUhsB5LxABh24aRtXNSOPwWj9WFflvqziqAt2IkhN0ndmb3UtswWydj9r58lT
+	Zi5DMsTZ6tmIOaAlb+QRBsucRLimgavE=
+X-Gm-Gg: ASbGncshvAlPv2xZ+7VJTXsCQCEod+wcK1Nn42eebnV4MUR7EXYVMjyI60lVETJFEp9
+	7cMXZUXoLMIvKOiSr+ZPxOOBcng3ieOdZTdhph+rqkiTzMeiXGHofihQi9vTL8B0flm5FVnuJzH
+	8UAOJBfyJ/r34qTgBeFwghFrVVZ8+iBp+0u5RTXmN2+lsHjso+vHMwUCpbuc7jTmOR4KFDklvxC
+	wdhQzidttZrhN3IErnG+Q==
+X-Google-Smtp-Source: AGHT+IGKKrKGYhH6a3eAVycEo8JHovvecpIDVESUCCwt0LR+vetnxGlT4YcHWXMDxH271NLb0pokN/iSIjUZjGOiddg=
+X-Received: by 2002:a17:907:6ea8:b0:b04:37b2:c184 with SMTP id
+ a640c23a62f3a-b07c35d4be0mr1434123466b.25.1757953516544; Mon, 15 Sep 2025
+ 09:25:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/11] cxl/region: Store HPA range in struct cxl_region
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-3-rrichter@amd.com>
- <fd4fc0f6-03a9-4134-9703-60705ec6898c@intel.com>
- <aMe96yaXueRvTARq@rric.localdomain>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <aMe96yaXueRvTARq@rric.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250910160833.3464-15-ryncsn@gmail.com> <20250915150719.3446727-1-clm@meta.com>
+In-Reply-To: <20250915150719.3446727-1-clm@meta.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Tue, 16 Sep 2025 00:24:39 +0800
+X-Gm-Features: AS18NWDS6bsQxblqYbh_bcvmIy7iEJRQRRFAqbNTw1YIXPg7Vr1ljkQHLNBiatg
+Message-ID: <CAMgjq7A1hqQ+yboCtT+JF=5Tfijph2s4ooSqNwnexQ9kwJOCtA@mail.gmail.com>
+Subject: Re: [PATCH v3 14/15] mm, swap: implement dynamic allocation of swap table
+To: Chris Mason <clm@meta.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 15, 2025 at 11:55=E2=80=AFPM Chris Mason <clm@meta.com> wrote:
+>
+> On Thu, 11 Sep 2025 00:08:32 +0800 Kairui Song <ryncsn@gmail.com> wrote:
+>
+> > From: Kairui Song <kasong@tencent.com>
+> >
+> > Now swap table is cluster based, which means free clusters can free its
+> > table since no one should modify it.
+> >
+> > There could be speculative readers, like swap cache look up, protect
+> > them by making them RCU protected. All swap table should be filled with
+> > null entries before free, so such readers will either see a NULL pointe=
+r
+> > or a null filled table being lazy freed.
+> >
+> > On allocation, allocate the table when a cluster is used by any order.
+> >
+> > This way, we can reduce the memory usage of large swap device
+> > significantly.
+> >
+> > This idea to dynamically release unused swap cluster data was initially
+> > suggested by Chris Li while proposing the cluster swap allocator and
+> > it suits the swap table idea very well.
+> >
+> > Co-developed-by: Chris Li <chrisl@kernel.org>
+> > Signed-off-by: Chris Li <chrisl@kernel.org>
+> > Signed-off-by: Kairui Song <kasong@tencent.com>
+> > Acked-by: Chris Li <chrisl@kernel.org>
+> > ---
+> >  mm/swap.h       |   2 +-
+> >  mm/swap_state.c |   9 +--
+> >  mm/swap_table.h |  37 ++++++++-
+> >  mm/swapfile.c   | 202 ++++++++++++++++++++++++++++++++++++++----------
+> >  4 files changed, 199 insertions(+), 51 deletions(-)
+> >
+>
+> [ ... ]
+>
+> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+> > index 89659928465e..faf867a6c5c1 100644
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> >
+>
+> [ ... ]
+>
+> > +/*
+> > + * Allocate a swap table may need to sleep, which leads to migration,
+> > + * so attempt an atomic allocation first then fallback and handle
+> > + * potential race.
+> > + */
+> > +static struct swap_cluster_info *
+> > +swap_cluster_alloc_table(struct swap_info_struct *si,
+> > +                      struct swap_cluster_info *ci,
+> > +                      int order)
+> >  {
+> > -     unsigned int ci_off;
+> > -     unsigned long swp_tb;
+> > +     struct swap_cluster_info *pcp_ci;
+> > +     struct swap_table *table;
+> > +     unsigned long offset;
+> >
+> > -     if (!ci->table)
+> > -             return;
+> > +     /*
+> > +      * Only cluster isolation from the allocator does table allocatio=
+n.
+> > +      * Swap allocator uses a percpu cluster and holds the local lock.
+> > +      */
+> > +     lockdep_assert_held(&ci->lock);
+> > +     lockdep_assert_held(&this_cpu_ptr(&percpu_swap_cluster)->lock);
+> > +
+> > +     table =3D kmem_cache_zalloc(swap_table_cachep,
+> > +                               __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_N=
+OWARN);
+> > +     if (table) {
+> > +             rcu_assign_pointer(ci->table, table);
+> > +             return ci;
+> > +     }
+> > +
+> > +     /*
+> > +      * Try a sleep allocation. Each isolated free cluster may cause
+> > +      * a sleep allocation, but there is a limited number of them, so
+> > +      * the potential recursive allocation should be limited.
+> > +      */
+> > +     spin_unlock(&ci->lock);
+> > +     if (!(si->flags & SWP_SOLIDSTATE))
+> > +             spin_unlock(&si->global_cluster_lock);
+> > +     local_unlock(&percpu_swap_cluster.lock);
+> > +     table =3D kmem_cache_zalloc(swap_table_cachep, __GFP_HIGH | GFP_K=
+ERNEL);
+> >
+> > -     for (ci_off =3D 0; ci_off < SWAPFILE_CLUSTER; ci_off++) {
+> > -             swp_tb =3D __swap_table_get(ci, ci_off);
+> > -             if (!swp_tb_is_null(swp_tb))
+> > -                     pr_err_once("swap: unclean swap space on swapoff:=
+ 0x%lx",
+> > -                                 swp_tb);
+> > +     local_lock(&percpu_swap_cluster.lock);
+> > +     if (!(si->flags & SWP_SOLIDSTATE))
+> > +             spin_lock(&si->global_cluster_lock);
+> > +     /*
+> > +      * Back to atomic context. First, check if we migrated to a new
+> > +      * CPU with a usable percpu cluster. If so, try using that instea=
+d.
+> > +      * No need to check it for the spinning device, as swap is
+> > +      * serialized by the global lock on them.
+> > +      *
+> > +      * The is_usable check is a bit rough, but ensures order 0 succes=
+s.
+> > +      */
+> > +     offset =3D this_cpu_read(percpu_swap_cluster.offset[order]);
+> > +     if ((si->flags & SWP_SOLIDSTATE) && offset) {
+> > +             pcp_ci =3D swap_cluster_lock(si, offset);
+> > +             if (cluster_is_usable(pcp_ci, order) &&
+> > +                 pcp_ci->count < SWAPFILE_CLUSTER) {
+> > +                     ci =3D pcp_ci;
+>                        ^^^^^^^^^^^^^
+> ci came from the caller, and in the case of isolate_lock_cluster() they
+> had just removed it from a list.  We overwrite ci and return something
+> different.
 
+Yes, that's expected. See the comment above. We have just dropped
+local lock so it's possible that we migrated to another CPU which has
+its own percpu cache ci (percpu_swap_cluster.offset).
 
-On 9/15/25 12:19 AM, Robert Richter wrote:
-> On 12.09.25 10:17:14, Dave Jiang wrote:
->>
->>
->> On 9/12/25 7:45 AM, Robert Richter wrote:
->>> Each region has a known host physical address (HPA) range it is
->>> assigned to. Endpoint decoders assigned to a region share the same HPA
->>> range. The region's address range is the system's physical address
->>> (SPA) range.
->>>
->>> Endpoint decoders in systems that need address translation use HPAs
->>> which are not SPAs. To make the SPA range accessible to the endpoint
->>> decoders, store and track the region's SPA range in struct cxl_region.
->>> Introduce the @hpa_range member to the struct. Now, the SPA range of
->>> an endpoint decoder can be determined based on its assigned region.
->>>
->>> Patch is a prerequisite to implement address translation which uses
->>> struct cxl_region to store all relevant region and interleaving
->>> parameters.
->>>
->>> Signed-off-by: Robert Richter <rrichter@amd.com>
->>
->> Just a nit below. Otherwise looks ok
->>
->> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
->>
->>> ---
->>>  drivers/cxl/core/region.c | 17 +++++++++++++++++
->>>  drivers/cxl/cxl.h         |  2 ++
->>>  2 files changed, 19 insertions(+)
->>>
->>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->>> index 2c37c060d983..777d04870180 100644
->>> --- a/drivers/cxl/core/region.c
->>> +++ b/drivers/cxl/core/region.c
->>> @@ -664,6 +664,11 @@ static int alloc_hpa(struct cxl_region *cxlr, resource_size_t size)
->>>  		return PTR_ERR(res);
->>>  	}
->>>  
->>> +	cxlr->hpa_range = (struct range) {
->>> +		.start = res->start,
->>> +		.end = res->end,
->>> +	};
->>> +
->>>  	p->res = res;
->>>  	p->state = CXL_CONFIG_INTERLEAVE_ACTIVE;
->>>  
->>> @@ -700,8 +705,14 @@ static int free_hpa(struct cxl_region *cxlr)
->>>  	if (p->state >= CXL_CONFIG_ACTIVE)
->>>  		return -EBUSY;
->>>  
->>> +	cxlr->hpa_range = (struct range) {
->>> +		.start = 0,
->>> +		.end = -1,
->>> +	};
->>> +
->>>  	cxl_region_iomem_release(cxlr);
->>>  	p->state = CXL_CONFIG_IDLE;
->>> +
->>
->> stray blank line
->>>  	return 0;
->>>  }
-> 
-> This small cleanup was intended and separates the return from other
-> statements to better group the code in (sort of) blocks. It is not
-> worth separate patch and it is common practice to have small cleanups
-> in the area of code that is changed. That allows small style fixes to
-> the code while reworking it, but avoids separate code cleanups causing
-> extra efforts, conflicts and the risk of changing stable code.
-> 
-> Anyway, let me know if you want me remove the change.
-
-Yeah please just drop the change. While it's nice to have, it may potentially cause backport issues generally speaking. 
-
-> 
-> Thanks,
-> 
-> -Robert
-
+To avoid fragmentation, drop the isolated ci and use the percpu ci
+instead. But you are right that I need to add the ci back to the list,
+or it will be leaked. Thanks!
 
