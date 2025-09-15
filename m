@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-817873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336A6B587E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:52:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FD2B587E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4FC620659B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 639EB7A7E0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A6C2D47F5;
-	Mon, 15 Sep 2025 22:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08A52D7DE2;
+	Mon, 15 Sep 2025 22:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJCOenAA"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvbjSjQR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB5C2B2D7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15AB2B2D7;
+	Mon, 15 Sep 2025 22:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757976727; cv=none; b=NiOMWFbbgPi7ue7vXJZoci/TWlRp81DzOwQbwk0LfgoiMP/41rJZt/XjGXTuMfRnjl+Pg1oZkcZ2KrMQLdZCntQHYWmpAiVqGA/6zooBaeoFJI6YG9sB9KXHm6tjmxzYq6ZPIzEwOPfhqcNLGcC0h8kSNaDT9x74d0SdSybRKxU=
+	t=1757977002; cv=none; b=XCuQ95VuewM7bI4GtrFZ0Fpne5Aeec3Mt8nIgjHpOZv70U7xVHE2Yqk+WAjZ7wZYG3B2a6fLP6pAJzoWVoeTs4TvnxwzU0mJquFxsi8rh7AjnMm99XePlLwOKjH/iYBJnJzMOT9VhY1zf7Tw5KOKy2s9Jv/5Byf2ElMxzRLkeOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757976727; c=relaxed/simple;
-	bh=gqy51CGjZs7L4fhYV0nNCQsfL5rlx8dGes18KMtP2G8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ay+1yDfwOvCtPHOnFVCjcp+Cm9YYw2bH3ZVkj6lYsr3vjSXl8B7RNSBF+sUDjo/6EO/hu+0RXAr/jALSysW2AJESAstG4a/8MFcRjrzQ6nuK+0kA8P98387B21AXZxjkpgoZ1Yj9BKPYceg7UNASf+MweLQ4jZ3eeWOUwVWVE+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJCOenAA; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-355739c7fc8so15134531fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757976724; x=1758581524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cm0/mnzPsesUmIeJ98TzZwQ2Akz/kNDhyhWBAXtAXDw=;
-        b=DJCOenAAlKon1CFk67aW8RCatnhrU1/WKDGbuT9KlO6LNdIZtsPvwWT7cRSKbxpxDu
-         IBj5n9WX0+qMpcV45DhaCIaq5UkZ72rj3XyCVfNMyGpnp95MTOkCvnA4SY5Ptw+YuBSl
-         ayjqcnBJ0PlvNgHiZObULJHR2gZ2Ksoz6z8GjmJqNH1ROU3eEAKLcMvmJ7dtKNKC5VFM
-         o6EFTxx7H267NdqmJ9p+B5VhRGkZMikH39c6sCzvV7qms38zlQCEBRaYXob1109+hOyP
-         /JllWCjefhMdi/bFzhDnU4fckETV3E8pQcSKhtr7TYEcHZU4VfFy8HExL6wxpzaUdYBA
-         XsOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757976724; x=1758581524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cm0/mnzPsesUmIeJ98TzZwQ2Akz/kNDhyhWBAXtAXDw=;
-        b=AUa218BBYIEwnbHgqAEU86GicdAFYD6EFs4TzANYbE5qrfTgfG7iSElU3HC4ir3c2g
-         0YglXzPdpsU3yHDZNSWd+4JzB+p7GUiVu36E8QU2Qd3aZaA0xpW6/RJG81RrlcIOZR5Q
-         V+uI8KzLbfoFlSy/2NHXhIRicdD0Hw/9E3xd9zTs1etW9BZsiar1KH3egSFsawSQNlZt
-         mJQZABgEFH2L1ShF/3O7FuJww/JkSkv0A8HssfBX0hkWtkDCTXYoBScNlXQunyJwWeGf
-         LTDVt2Pl4s2goGO3BcSf99Qn16rEIb0A2xV5Q/m1mrLqnmkipBrnY/InvNAQv3tlFWWJ
-         lJ0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7h8sSNNUBbCDH9AEqHCJKZgOdxoM2NG7FJjb18glvTMXhBTIKtZGti/Yx12vJZlbt+qXKMo01FJ8wW7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmJFD/AujfiQKC4L7DspMwduIsDpJE9MAr2F05dqKD/sds+jlv
-	wsFtGYNTGlrqOIJoZsH5RQ4Ot+bPSLVvxyiOzmzYPNlUMG05GlA12QF2CSWAeOgfMmH2Er6wy0B
-	5GtLFf+B3j7RLprUirIxR342OEUbYPRU=
-X-Gm-Gg: ASbGncsKgVrXEvPACFPVmswjztREkLPMu4TtROVGHplw22/Vz5Mb9AjkTVmgOLCDyLc
-	8pQlNAkBNPbjCax4UF1Z0Ywfh5DOLapLly6xtiPdYaf4fqqlxXIkcasnLGvZQTNyrSZ/fBY+cq1
-	fLp6wb18ZEJLKYocDvJHbM1/ONW5Bmwqn5F/DnII3XFaXYhAjBM/6YuoZaNAcrviRY34NLMfBAe
-	URFvA0=
-X-Google-Smtp-Source: AGHT+IHDRvcV0dV9VDhAcAMEZ21dqvL1noGOj01MZ+sfLv+YYHw5oyhSI+Q1GgqRspon0xC83RYI98h95ffW6T3retY=
-X-Received: by 2002:a2e:a016:0:20b0:336:7e31:6708 with SMTP id
- 38308e7fff4ca-351403eccb1mr33364351fa.37.1757976723624; Mon, 15 Sep 2025
- 15:52:03 -0700 (PDT)
+	s=arc-20240116; t=1757977002; c=relaxed/simple;
+	bh=TbuzNyZ7T+sq1u8dImr/tAIPvNrBs9FGgizyEUHTwQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dynyCXWEFmmDrbX2w7qNdBels/uOCnR2ZSGlOg4bJDVMYyHI1GyKjijyxOkZS6E44uiJNpwFXkmb6HKuDMlPbP9O3787YKddAJ5pt5eDtQY+E6Hd2pl6Z3VZJYs5W2yJEVUn7pGTjQqPKEDcKfyna9Zjnnx1vcwIlSKDBzvA/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvbjSjQR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2787CC4CEF1;
+	Mon, 15 Sep 2025 22:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757977001;
+	bh=TbuzNyZ7T+sq1u8dImr/tAIPvNrBs9FGgizyEUHTwQw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bvbjSjQRYLyOTlzELB2ix7N6WpoSZ8AUc+rAUQ2EogBePJDhLImIa2ybqll3JeRlq
+	 h2MSMYAe4KxruOzpe08deeYOugJXrUa3iCUuwRGChlCDPSt+nD4UgcIwD8bjn1yzmY
+	 5jlG6AKuzyB/fmrwN6ufsmn74V9S6E1TsILK2pHFr8Ze9tHK+UdEx4pqIf/1mpBtJ2
+	 MqeO0nDdm8PBBkfH5lr3mLyn+nqGj82zhfy5u/LXUSg3w2WZxqbLUO2IqqEEEw7E2A
+	 bSGBzdGUolh4zJ7Nmb7jgSEuhDAlU/4bjLxrwiKfVU6eHCbjzx+06rFM84Kn7q2xT3
+	 0OYfqwXKokofA==
+Date: Mon, 15 Sep 2025 23:56:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Burak Emir <bqe@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: linux-next: manual merge of the bitmap tree with the tip tree
+Message-ID: <aMiZpcBu2LDzwCje@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912134406.221443-1-onion0709@gmail.com> <62842992a3f18ca7c11e4887d3eced69644793ae.camel@mailbox.org>
-In-Reply-To: <62842992a3f18ca7c11e4887d3eced69644793ae.camel@mailbox.org>
-From: Luc Ma <onion0709@gmail.com>
-Date: Tue, 16 Sep 2025 06:52:19 +0800
-X-Gm-Features: AS18NWBzVkhxcm04lwXZqplHOT5g0VGEYgD3MlvxyGFbkTaem_RX_Qsv2EDXZCg
-Message-ID: <CAB3Z9RJPdCu50esK2mg9NkVihuWmZn7hpDdxeMEN1FBNpFtBrg@mail.gmail.com>
-Subject: Re: [PATCH] drm/sched: struct member doc fix
-To: phasta@kernel.org
-Cc: dri-devel@lists.freedesktop.org, Matthew Brost <matthew.brost@intel.com>, 
-	Danilo Krummrich <dakr@kernel.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QJDNgAD0/hVihI62"
+Content-Disposition: inline
+
+
+--QJDNgAD0/hVihI62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-On Mon, 15 Sept 2025 at 20:12, Philipp Stanner <phasta@mailbox.org> wrote:
->
-> On Fri, 2025-09-12 at 21:44 +0800, Luc Ma wrote:
-> > The mentioned function has been renamed since commit 180fc134d712
-> > ("drm/scheduler: Rename cleanup functions v2."), so let it refer to
-> > the current one.
-> >
-> > Signed-off-by: Luc Ma <onion0709@gmail.com>
->
-> Thx for the patch.
->
-> > ---
-> >  include/drm/gpu_scheduler.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-> > index 323a505e6e6a..6c4d0563e3d7 100644
-> > --- a/include/drm/gpu_scheduler.h
-> > +++ b/include/drm/gpu_scheduler.h
-> > @@ -546,7 +546,7 @@ struct drm_sched_backend_ops {
-> >   * @num_rqs: Number of run-queues. This is at most DRM_SCHED_PRIORITY_=
-COUNT,
-> >   *           as there's usually one run-queue per priority, but could =
-be less.
-> >   * @sched_rq: An allocated array of run-queues of size @num_rqs;
-> > - * @job_scheduled: once @drm_sched_entity_do_release is called the sch=
-eduler
-> > + * @job_scheduled: once @drm_sched_entity_flush is called the schedule=
-r
->
-> The change itself looks correct to me; however, a function must be
-> cross-referenced with parenthesis: "once drm_sched_entity_flush() =E2=80=
-=A6"
->
-> '@' is used for function parameters.
->
-> https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#highligh=
-ts-and-cross-references
->
-> Please provide that change in a v2.
-Thank you for pointing out that, I'll send v2.
+Today's linux-next merge of the bitmap tree got a conflict in:
 
->
-> Thank you,
-> P.
->
->
-> >   *                 waits on this wait queue until all the scheduled jo=
-bs are
-> >   *                 finished.
-> >   * @job_id_count: used to assign unique id to the each job.
->
+  rust/helpers/helpers.c
 
+between commit:
 
---=20
-Luc
+  ed17707bd8f33 ("rust: sync: Add memory barriers")
+
+=66rom the tip tree and commits:
+
+  ae384a4623fc3 ("rust: add bindings for bitops.h")
+  78d9de4ca3474 ("rust: add bindings for bitmap.h")
+
+=66rom the bitmap tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc rust/helpers/helpers.c
+index a16758a6ef395,abff1ef14d813..0000000000000
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@@ -8,7 -8,8 +8,9 @@@
+   */
+ =20
+  #include "auxiliary.c"
+ +#include "barrier.c"
++ #include "bitmap.c"
++ #include "bitops.c"
+  #include "blk.c"
+  #include "bug.c"
+  #include "build_assert.c"
+
+--QJDNgAD0/hVihI62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjImaQACgkQJNaLcl1U
+h9AbJggAgZ5zsFUe1z0PlBeAhQsc6vVnAs+cYlVKL0/qag4siF6yp+agW3rvBO+V
+67cQysmnwoL/Jk+wfHHLP0voKxw/sBjD+JqbL7H112akqWJbXJFo6K7f5g1V9yMw
+QOPLg+DmQ8PiZcmEAw4Ahdw/4ysHANEzyotxVBmxobUnC9oyS5EVIu/Qx+OvFSN0
+eKkilje0Qg9pH4njEIjSd9CjcujhxVjyGmL05QdSOVsr8w0UU3btHb4B5H0tHZ0S
+xoulJkTLACPiFIkPe3tCB88Dr+wSiknCTzvwzWuzWtrD3co8cWLyxbEcetUk4C6Q
+xtWCPycKqxFrP5HqpAOr4w6Uq4TYSQ==
+=3ZVg
+-----END PGP SIGNATURE-----
+
+--QJDNgAD0/hVihI62--
 
