@@ -1,201 +1,105 @@
-Return-Path: <linux-kernel+bounces-816513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11588B574D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:24:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F34CB574D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90370200B2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7973E1884446
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704D72F6581;
-	Mon, 15 Sep 2025 09:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C36E2F3614;
+	Mon, 15 Sep 2025 09:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR0xNUnd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="mT+NeYvz"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6642F6190;
-	Mon, 15 Sep 2025 09:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1387D2ECEB8;
+	Mon, 15 Sep 2025 09:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928254; cv=none; b=WjAmDFXziCGPOBF5rq/Sqhk4lnZBzWg66CLk948Rjg3FgOUW1/c0C/mieUUmiqFmuc8y6T4MK76EEskQT/w6yWwBumlMFrkF6Vwm64/WyVNA4DB1Ajn2whEItcy1hU0EPiNZTA/LarOlfm48MQnMq4TcqRp2Zd51Tfb9g+lLuCE=
+	t=1757928237; cv=none; b=Hl5+9yyQeV0NqrQADH7irk+1OoHDfmAoFtOs3VMOtNcH7GZIJNdxkvO8Fu5BGaXT2xLVz/4wML0rs+IFrCIpd6TJg9McwP2irOp3aQ47GfYxCQh6i1fmPXiP5/uW84Py7bQu75gYgzw4eJitqvy+iWXG7BVjy3QmZQbC4d8bZVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928254; c=relaxed/simple;
-	bh=d81UDQ9il8FU6Db3aUD1lTdKP3KeBctQ1wDuh2q3G4Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sCErzJjIYwMreosfcVs3L+9XZVSYslBM5FtxkZ25VMCVVhAoUX/B3aM5CIGTMn1DHc/26gKwc7K4kO5y3QQOuOd9QU8BsVkmUUzrJ/rn5Yhe1I4dOLgYcGVrKEHaoK+wML9XvHOjxSKjiPnnFZHtU9+DbvhL0yrdJQhuR0Bwih4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DR0xNUnd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B33C4CEF7;
-	Mon, 15 Sep 2025 09:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757928254;
-	bh=d81UDQ9il8FU6Db3aUD1lTdKP3KeBctQ1wDuh2q3G4Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DR0xNUndO4On9b+mIxPwq44blrk8wxDCt+JuVvumBXHZ45aN4h+IqEU52J/Fa6W5m
-	 edgI5+CyQ6j5kM/CuOOw0oNR4hepso42fid0vUq5BbIv7X2eAQKhDuy5H+gYxzMMxF
-	 Ao+sQEWoJVaQGplxgzrLqekdZOjuphoum3NWZUqQaUwnkxH1mSCcUqrhyw/UtwPzgj
-	 sgLNQChemhheasVdTi9sPOicel5sfPcIYTVz7JzNuU+3C8iiWjZtY724yLofQ93cux
-	 RdNI30emY2qqmQMH0NxpQHIcRKt766BGxUVzdLYSj0Tv7rl6Oli29F1ixNBCF+dFya
-	 Jr1liBXayjoZw==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Mon, 15 Sep 2025 18:23:15 +0900
-Subject: [PATCH 3/3] can: raw: reorder struct raw_sock's members to
- optimise packing
+	s=arc-20240116; t=1757928237; c=relaxed/simple;
+	bh=ibrtgmyavezo7/rV24wGdikXdfg56Q20YZWEB+mLWa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOq+u1UC9RxXat8VIIpGh1jfeR7MrGSeDnNZaWmdXt15KKP2N3mjldhOc1BZ5R9hhYBbSfbBJkuIa290aax0ecwjfOtK8ToBnz+EPiSTIrHi/svDJP9MEL5VKuIpBNnK9tZDEtdoyxiu/YGcstekZu/0/raqzhuQw2viLXAPpmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=mT+NeYvz; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1757928233;
+	bh=ibrtgmyavezo7/rV24wGdikXdfg56Q20YZWEB+mLWa0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mT+NeYvznIc4tPG4UG5JHS3hYDS7hbLnIscEPoWCJjLxsLpq8eXISCLHN3iQr6nXq
+	 Pmbzaou7G37f3CE3OrHyKvQjDsKQkNSE41iYJidnNRSU8IVII+WXzGW/NydWpEJX6p
+	 5II/Cn2fq61/rRvig2tbY5I36tEKVS4FXokWyQHI=
+Date: Mon, 15 Sep 2025 11:23:53 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Mark Brown <broonie@kernel.org>, 
+	Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: open list <linux-kernel@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Shuah Khan <shuah@kernel.org>
+Subject: Re: next-20250909: selftests/arm64/gcs/basic-gcs.c:390:30: error:
+ use of undeclared identifier 'HWCAP_GCS'
+Message-ID: <5fe12804-2538-42c5-b5c7-66d36ff947d9@t-8ch.de>
+References: <CA+G9fYv77X+kKz2YT6xw7=9UrrotTbQ6fgNac7oohOg8BgGvtw@mail.gmail.com>
+ <1e331ebb-3315-4cbe-b194-ccbeeaded4da@t-8ch.de>
+ <965c8d7e-c5f2-4bd8-ab7c-c3116632f015@sirena.org.uk>
+ <5e4d9943-3a8d-4281-9007-f49bfc66dc6d@weissschuh.net>
+ <b9b8b8cf-4920-4f9d-bcea-bea913058601@weissschuh.net>
+ <a1dc9839-ab45-4dd6-9eeb-4bbc35bf8d90@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-can-raw-repack-v1-3-5ea293bc6d33@kernel.org>
-References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
-In-Reply-To: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
-To: Oliver Hartkopp <socketcan@hartkopp.net>, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5421; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=d81UDQ9il8FU6Db3aUD1lTdKP3KeBctQ1wDuh2q3G4Q=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBnHb5uxOV07lXF7atCD+vPhxse0o6/el91YqhNUvunLn
- 9+be88zdpSyMIhxMciKKbIsK+fkVugo9A479NcSZg4rE8gQBi5OAZjInL8M/x3O3Vz8/1fbnYX5
- 6vsnv7YuiN6yY5fBa/b2IinpHSdME8UZGb4H6D/63rwt2M77x6vZZSpLmNd/qUqYGv/kV1/cBeH
- +C4wA
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a1dc9839-ab45-4dd6-9eeb-4bbc35bf8d90@sirena.org.uk>
 
-struct raw_sock has several holes. Reorder the fields to save 8 bytes.
+On 2025-09-12 12:14:00+0100, Mark Brown wrote:
+> On Fri, Sep 12, 2025 at 01:07:58PM +0200, Thomas Weißschuh wrote:
+> 
+> > The Makefile does *not* use -nostdinc, so the nolibc program probably finds the toolchain's glibc asm/hwcap.h.
+> > There also doesn't seem to be a static arm64 hwcap header in tools/include in the first place.
+> > I am still wondering how this works for the other tests.
+> 
+> make headers_install puts a copy in usr/include, probably we just need
+> to include that in the include path.
 
-Statistics before:
+Naresh, could you test the patch below?
+The other custom $(CC) rules in the gcs directory are also not
+respecting $(CFLAGS), but I'll leave these for now.
 
-  $ pahole --class_name=raw_sock net/can/raw.o
-  struct raw_sock {
-  	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
+diff --git a/tools/testing/selftests/arm64/gcs/Makefile b/tools/testing/selftests/arm64/gcs/Makefile
+index d2f3497a9..1fbbf0ca1 100644
+--- a/tools/testing/selftests/arm64/gcs/Makefile
++++ b/tools/testing/selftests/arm64/gcs/Makefile
+@@ -14,11 +14,11 @@ LDLIBS+=-lpthread
+ include ../../lib.mk
 
-  	/* XXX last struct has 1 bit hole */
+ $(OUTPUT)/basic-gcs: basic-gcs.c
+-       $(CC) -g -fno-asynchronous-unwind-tables -fno-ident -s -Os -nostdlib \
+-               -static -include ../../../../include/nolibc/nolibc.h \
++       $(CC) $(CFLAGS) -fno-asynchronous-unwind-tables -fno-ident -s -nostdlib -nostdinc \
++               -static -I../../../../include/nolibc -include ../../../../include/nolibc/nolibc.h \
+                -I../../../../../usr/include \
+                -std=gnu99 -I../.. -g \
+-               -ffreestanding -Wall $^ -o $@ -lgcc
++               -ffreestanding $^ -o $@ -lgcc
 
-  	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
-  	int                        bound;                /*   776     4 */
-  	int                        ifindex;              /*   780     4 */
-  	struct net_device *        dev;                  /*   784     8 */
-  	netdevice_tracker          dev_tracker;          /*   792     0 */
-  	struct list_head           notifier;             /*   792    16 */
-  	unsigned int               loopback:1;           /*   808: 0  4 */
-  	unsigned int               recv_own_msgs:1;      /*   808: 1  4 */
-  	unsigned int               fd_frames:1;          /*   808: 2  4 */
-  	unsigned int               xl_frames:1;          /*   808: 3  4 */
-
-  	/* XXX 4 bits hole, try to pack */
-  	/* Bitfield combined with next fields */
-
-  	struct can_raw_vcid_options raw_vcid_opts;       /*   809     4 */
-
-  	/* XXX 3 bytes hole, try to pack */
-
-  	canid_t                    tx_vcid_shifted;      /*   816     4 */
-  	canid_t                    rx_vcid_shifted;      /*   820     4 */
-  	canid_t                    rx_vcid_mask_shifted; /*   824     4 */
-  	int                        join_filters;         /*   828     4 */
-  	/* --- cacheline 13 boundary (832 bytes) --- */
-  	int                        count;                /*   832     4 */
-  	struct can_filter          dfilter;              /*   836     8 */
-
-  	/* XXX 4 bytes hole, try to pack */
-
-  	struct can_filter *        filter;               /*   848     8 */
-  	can_err_mask_t             err_mask;             /*   856     4 */
-
-  	/* XXX 4 bytes hole, try to pack */
-
-  	struct uniqframe *         uniq;                 /*   864     8 */
-
-  	/* size: 872, cachelines: 14, members: 20 */
-  	/* sum members: 860, holes: 3, sum holes: 11 */
-  	/* sum bitfield members: 4 bits, bit holes: 1, sum bit holes: 4 bits */
-  	/* member types with bit holes: 1, total: 1 */
-  	/* forced alignments: 1 */
-  	/* last cacheline: 40 bytes */
-  } __attribute__((__aligned__(8)));
-
-...and after:
-
-  $ pahole --class_name=raw_sock net/can/raw.o
-  struct raw_sock {
-  	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
-
-  	/* XXX last struct has 1 bit hole */
-
-  	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
-  	int                        bound;                /*   776     4 */
-  	int                        ifindex;              /*   780     4 */
-  	struct net_device *        dev;                  /*   784     8 */
-  	netdevice_tracker          dev_tracker;          /*   792     0 */
-  	struct list_head           notifier;             /*   792    16 */
-  	struct can_raw_vcid_options raw_vcid_opts;       /*   808     4 */
-  	unsigned int               loopback:1;           /*   812: 0  4 */
-  	unsigned int               recv_own_msgs:1;      /*   812: 1  4 */
-  	unsigned int               fd_frames:1;          /*   812: 2  4 */
-  	unsigned int               xl_frames:1;          /*   812: 3  4 */
-
-  	/* XXX 28 bits hole, try to pack */
-
-  	canid_t                    tx_vcid_shifted;      /*   816     4 */
-  	canid_t                    rx_vcid_shifted;      /*   820     4 */
-  	canid_t                    rx_vcid_mask_shifted; /*   824     4 */
-  	can_err_mask_t             err_mask;             /*   828     4 */
-  	/* --- cacheline 13 boundary (832 bytes) --- */
-  	int                        join_filters;         /*   832     4 */
-  	int                        count;                /*   836     4 */
-  	struct can_filter          dfilter;              /*   840     8 */
-  	struct can_filter *        filter;               /*   848     8 */
-  	struct uniqframe *         uniq;                 /*   856     8 */
-
-  	/* size: 864, cachelines: 14, members: 20 */
-  	/* sum members: 860 */
-  	/* sum bitfield members: 4 bits, bit holes: 1, sum bit holes: 28 bits */
-  	/* member types with bit holes: 1, total: 1 */
-  	/* forced alignments: 1 */
-  	/* last cacheline: 32 bytes */
-  } __attribute__((__aligned__(8)));
-
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
- net/can/raw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/can/raw.c b/net/can/raw.c
-index cec580ecd58e36931d1be05716e6beb9c93aa271..81f5de63bcfaacf3f51670159fb3d1d7d1fc6020 100644
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -87,19 +87,19 @@ struct raw_sock {
- 	struct net_device *dev;
- 	netdevice_tracker dev_tracker;
- 	struct list_head notifier;
-+	struct can_raw_vcid_options raw_vcid_opts;
- 	unsigned int loopback:1;
- 	unsigned int recv_own_msgs:1;
- 	unsigned int fd_frames:1;
- 	unsigned int xl_frames:1;
--	struct can_raw_vcid_options raw_vcid_opts;
- 	canid_t tx_vcid_shifted;
- 	canid_t rx_vcid_shifted;
- 	canid_t rx_vcid_mask_shifted;
-+	can_err_mask_t err_mask;
- 	int join_filters;
- 	int count;                 /* number of active filters */
- 	struct can_filter dfilter; /* default/single filter */
- 	struct can_filter *filter; /* pointer to filter(s) */
--	can_err_mask_t err_mask;
- 	struct uniqframe __percpu *uniq;
- };
- 
-
--- 
-2.49.1
+ $(OUTPUT)/gcs-stress-thread: gcs-stress-thread.S
+        $(CC) -nostdlib $^ -o $@
 
 
