@@ -1,268 +1,158 @@
-Return-Path: <linux-kernel+bounces-817616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1996DB58491
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AF0B58494
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2B294C5C1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0794C5D26
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2587C2E8DF3;
-	Mon, 15 Sep 2025 18:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kApsjmls"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5402E92C5;
+	Mon, 15 Sep 2025 18:28:32 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA16284679;
-	Mon, 15 Sep 2025 18:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D012D2E8DE7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757960893; cv=none; b=NwTxWoetZTHI46hS+gWSSxpVOaVIYo+/Lquuifo68iZvJd/6SVEFVz27CoW64L/xFnSpgLxGLXvU/+npfm52fHgEjq0q/hZdt/jE003kCHiOT2DnfXcN15GsmLyIBmuQKUx5+d+JKsKi3aF5SbUDzyay7d7+6SxoOSpXZC8H2BM=
+	t=1757960912; cv=none; b=iUUyQcIbvA6Kx/JTRmoeDvicM0v+Ys1dKlkER+N4OyRqmwm4iVXIqAJE/P0u4qkv4IXJLdvNv/IsaYk2qPcrCrXdPasAgwlLWhPwaINBIG4RTXMksf1CAtl/WA+kwXQ0WzECIHSAyVf2Yzq66CIS185YwU7k51RhL1UFp5pxjx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757960893; c=relaxed/simple;
-	bh=ABt6M1tDohzKjz7sdRyb04+ee8AHKlWw3ay3YR4MIOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IqdV+J+SATdXtTQfpU5rNIwFbGNdSJxlE55e267syLoout9IdNb90LyV9zlga/eWpCC1kmLtVcqDEQVJc312HHGrgkt+KzjKQZC1Ni9r6lA7NT1goapmEqt8lxhABkUUN2V+Qbs/X5EDFQjmvOsbMGL8HB4CmjkmXHhdAogQdTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kApsjmls; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FDXh9a023043;
-	Mon, 15 Sep 2025 18:28:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=wWcgHa
-	z9WZlOhtQ4LnaWODco0CY+vd+MOPf1D+zntUA=; b=kApsjmlsDs2d49cZ/nWMT4
-	uqpn1ybfUPb9Wn7O8BStAmXDyAzUGZlGvX9YgYEi2Ir2Zua5dNyZPf/Lxr8Ve8mi
-	Qs0Ev3/EAjFzLEKN0c2tVyqarnf4+JVSbm8pdSH6z301YhnQ+KS18VA0c8cqGbgp
-	VQ6NLeXsC1RfTr1ICpB71+W+JqQOPFPgT2qiEptycApN52fLwyEW+Po9hyQiN3wq
-	8l6teWvUP9AQBI33R8BzZc/+m9iRHBOhyUS64uoxe+Kb9fWMUCDyL/QLQjfGFxOK
-	9ggF+I62Pe6nTtMHSibOjFGvMUC1/VMD7+mWKSHM/fYhHlOVLNzxdp/soodemTNQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496avnmf54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 18:28:00 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FI1eav029472;
-	Mon, 15 Sep 2025 18:27:58 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kb0r14e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 18:27:58 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FIRvPU48169284
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 18:27:57 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9553158058;
-	Mon, 15 Sep 2025 18:27:57 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A59265805B;
-	Mon, 15 Sep 2025 18:27:56 +0000 (GMT)
-Received: from [9.61.244.242] (unknown [9.61.244.242])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 15 Sep 2025 18:27:56 +0000 (GMT)
-Message-ID: <fdad9c58-5a6f-460d-807b-fc5e6631b994@linux.ibm.com>
-Date: Mon, 15 Sep 2025 11:27:53 -0700
+	s=arc-20240116; t=1757960912; c=relaxed/simple;
+	bh=OL/0GKGewZF8kny8NXnh48JPLxV/0tjnh4Gpf7JLJi4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mRv3ha/NpM8UTSVw+Ccawu2EOwKApRbW/lgl7gzkxxLsIJ2uewWS+0fVJhI0UoPQWNcFnTk/eBOrZLZ/HQjnkXH0jP+Hwg9vGvvt996D90pXmKzbg7VIG0Snbx/irdcPe7stOSaVQYv63YC0G5Bd9BE+PKIeraaXLus22HWqO10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-893656f5776so128009039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:28:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757960910; x=1758565710;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J5prtZSnPNFgkoL+HuvQB6GO4JGzUJWAuc41w9I8/Hk=;
+        b=dwCZ0oH54Mqlk3+Le7FnX3Bh8ySmmKqTpmqGSyhHeQEwjnOylY5GwRMYvI0dC6OTYz
+         gSNBstnyWiNr1DUNhmsz3+CNB6Lo6AVHp5DN5zde283lwlIZQrchDWDo+Do8WaCTzSWt
+         3xhO6fZFyRM/sSff+twg7BFMKEZ6TeRnw3lyBe9N0LgE+lH/ayLFybY9GH9L3nyElHQC
+         p0wS9V5QCyLgMRhdoMXk96/o98o4GUmzRbRA6gd2p4AUB6DakW69353iyYGAleYw6mZG
+         UzpnLFqhtuxb0D4OwIWbnIEvrXVI2fbn5K9BrI0BT6uffZs+Yqnu4MwAHvjRZhSln/o0
+         kJnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvb8+SjsBX5CIE91eZ9pw+vBFzpfBh4EiBl2O/NqmxJPRv21qrRXNsn/RLPxPAZ0VkKbqUlqm7gK+xORI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8E0EUbf7/Ul/6SLDpQ87391yEPic70fM0WXLlZ64WyZlle2JI
+	nAkkCoZY3HtZczltozypeUbMjT0UAoB8KbRqA7ZuzbuP7VPlsEaF/ZdB3ZxahHDjPvjA/FqXyZG
+	vf+442NbabumoE1sV3PdaY1yECJ9yRM0PUaDQbwdGHqh2zX/5tp4IZfxAsZ4=
+X-Google-Smtp-Source: AGHT+IGEy/vfndE98rKOCai91YrvFiLwU0hLRS+adWf/d8RcSGMwyM+c8tJt8/GN4rWNGGMUXpCvpV2ysM43tIO7jsswlFUjjBuC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/10] vfio-pci/zdev: Add a device feature for error
- information
-To: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: alex.williamson@redhat.com, helgaas@kernel.org, schnelle@linux.ibm.com,
-        mjrosato@linux.ibm.com
-References: <20250911183307.1910-1-alifm@linux.ibm.com>
- <20250911183307.1910-9-alifm@linux.ibm.com>
- <d55b6b2e-3217-41e1-a95a-744dbbdbe618@kaod.org>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <d55b6b2e-3217-41e1-a95a-744dbbdbe618@kaod.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bJZDFJDB4jMiw85QHaHjZUw1mnMWmKBy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDAyOCBTYWx0ZWRfXyfV/7NYbPwFY
- VDzjKDB4RLxfkekcdVE9jZBeXhQw3GRm9+r/MYg67FPxAAQIN2UXyQzZFCUa5VU81Bu0AxXqowW
- 25HcF29jiOrvHrWBBTa39khMsMPUXe4SlptruCR/HoL8fGDGOZL3kdNCRZrk2jygLmeYTAgUvrv
- f5f3by4/4dKuIYsBFB0ZWfjOhbri5qb47pCxt62EtHDnV4xrYl/5PJ62STqBPaP1v8jBwkcuF3J
- PERjLUlCDPqkh4APJN875PXfwoeh/Aw4easjU9MnW9QGm8V03C9MeGmzJsc0m1d51NxvqM4FHOc
- bIyOGKVLYJEBke1+T0sgaSyxVw77wlQdUpzbVCmlty/URmSDm1Mc52N2PZ7WGpdAfuvEGKHsjBq
- 7WdjZt3w
-X-Authority-Analysis: v=2.4 cv=HecUTjE8 c=1 sm=1 tr=0 ts=68c85ab0 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=jbbMZsOuVxTQt3OaBu8A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: bJZDFJDB4jMiw85QHaHjZUw1mnMWmKBy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_07,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150028
+X-Received: by 2002:a05:6e02:2164:b0:424:b2c:a780 with SMTP id
+ e9e14a558f8ab-4240b2caa21mr18286065ab.1.1757960909965; Mon, 15 Sep 2025
+ 11:28:29 -0700 (PDT)
+Date: Mon, 15 Sep 2025 11:28:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c85acd.050a0220.2ff435.03a4.GAE@google.com>
+Subject: [syzbot] [bpf?] WARNING in maybe_exit_scc
+From: syzbot <syzbot+3afc814e8df1af64b653@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    f83ec76bf285 Linux 6.17-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=137d0e42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+dashboard link: https://syzkaller.appspot.com/bug?extid=3afc814e8df1af64b653
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a947c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14467b62580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/be9b26c66bc1/disk-f83ec76b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/53dc5627e608/vmlinux-f83ec76b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/398506a67fd8/bzImage-f83ec76b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3afc814e8df1af64b653@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+verifier bug: scc exit: no visit info for call chain (1)(1)
+WARNING: CPU: 1 PID: 6013 at kernel/bpf/verifier.c:1949 maybe_exit_scc+0x768/0x8d0 kernel/bpf/verifier.c:1949
+Modules linked in:
+CPU: 1 UID: 0 PID: 6013 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:maybe_exit_scc+0x768/0x8d0 kernel/bpf/verifier.c:1949
+Code: ff ff e8 cb 8e e7 ff c6 05 0a b5 bf 0e 01 90 48 89 ee 48 89 df e8 f8 41 fb ff 48 c7 c7 a0 9b b5 8b 48 89 c6 e8 59 33 a6 ff 90 <0f> 0b 90 90 e9 4e ff ff ff e8 0a ee 4d 00 e9 7f f9 ff ff 4c 8b 4c
+RSP: 0018:ffffc900041bf500 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888079840000 RCX: ffffffff817a4388
+RDX: ffff88807d3f8000 RSI: ffffffff817a4395 RDI: 0000000000000001
+RBP: ffff888079846328 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 1ffff92000837ea7
+R13: 0000000000000000 R14: ffff88805cf87400 R15: dffffc0000000000
+FS:  000055557c9b5500(0000) GS:ffff8881247b2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055557c9b5808 CR3: 0000000073b4d000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ update_branch_counts kernel/bpf/verifier.c:2040 [inline]
+ do_check kernel/bpf/verifier.c:20135 [inline]
+ do_check_common+0x20cc/0xb410 kernel/bpf/verifier.c:23264
+ do_check_main kernel/bpf/verifier.c:23347 [inline]
+ bpf_check+0x869f/0xc670 kernel/bpf/verifier.c:24707
+ bpf_prog_load+0xe41/0x2490 kernel/bpf/syscall.c:2979
+ __sys_bpf+0x4a3f/0x4de0 kernel/bpf/syscall.c:6029
+ __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
+ __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:6137
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd1d078eba9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffee0400aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fd1d09d5fa0 RCX: 00007fd1d078eba9
+RDX: 0000000000000048 RSI: 00002000000017c0 RDI: 0000000000000005
+RBP: 00007fd1d0811e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fd1d09d5fa0 R14: 00007fd1d09d5fa0 R15: 0000000000000003
+ </TASK>
 
 
-On 9/14/2025 11:26 PM, Cédric Le Goater wrote:
-> On 9/11/25 20:33, Farhan Ali wrote:
->> For zPCI devices, we have platform specific error information. The 
->> platform
->> firmware provides this error information to the operating system in an
->> architecture specific mechanism. To enable recovery from userspace for
->> these devices, we want to expose this error information to userspace. 
->> Add a
->> new device feature to expose this information.
->>
->> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
->> ---
->>   drivers/vfio/pci/vfio_pci_core.c |  2 ++
->>   drivers/vfio/pci/vfio_pci_priv.h |  8 ++++++++
->>   drivers/vfio/pci/vfio_pci_zdev.c | 34 ++++++++++++++++++++++++++++++++
->>   include/uapi/linux/vfio.h        | 14 +++++++++++++
->>   4 files changed, 58 insertions(+)
->>
->> diff --git a/drivers/vfio/pci/vfio_pci_core.c 
->> b/drivers/vfio/pci/vfio_pci_core.c
->> index 7dcf5439dedc..378adb3226db 100644
->> --- a/drivers/vfio/pci/vfio_pci_core.c
->> +++ b/drivers/vfio/pci/vfio_pci_core.c
->> @@ -1514,6 +1514,8 @@ int vfio_pci_core_ioctl_feature(struct 
->> vfio_device *device, u32 flags,
->>           return vfio_pci_core_pm_exit(device, flags, arg, argsz);
->>       case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
->>           return vfio_pci_core_feature_token(device, flags, arg, argsz);
->> +    case VFIO_DEVICE_FEATURE_ZPCI_ERROR:
->> +        return vfio_pci_zdev_feature_err(device, flags, arg, argsz);
->>       default:
->>           return -ENOTTY;
->>       }
->> diff --git a/drivers/vfio/pci/vfio_pci_priv.h 
->> b/drivers/vfio/pci/vfio_pci_priv.h
->> index a9972eacb293..a4a7f97fdc2e 100644
->> --- a/drivers/vfio/pci/vfio_pci_priv.h
->> +++ b/drivers/vfio/pci/vfio_pci_priv.h
->> @@ -86,6 +86,8 @@ int vfio_pci_info_zdev_add_caps(struct 
->> vfio_pci_core_device *vdev,
->>                   struct vfio_info_cap *caps);
->>   int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev);
->>   void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev);
->> +int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
->> +                  void __user *arg, size_t argsz);
->>   #else
->>   static inline int vfio_pci_info_zdev_add_caps(struct 
->> vfio_pci_core_device *vdev,
->>                             struct vfio_info_cap *caps)
->> @@ -100,6 +102,12 @@ static inline int 
->> vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev)
->>     static inline void vfio_pci_zdev_close_device(struct 
->> vfio_pci_core_device *vdev)
->>   {}
->> +
->> +static int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 
->> flags,
->> +                     void __user *arg, size_t argsz);
->
-> The extra ';' breaks builds on non-Z platforms.
->
-> C.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks for catching this, will fix.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thanks
-Farhan
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
->
->> +{
->> +    return -ENODEV;
->> +}
->>   #endif
->>     static inline bool vfio_pci_is_vga(struct pci_dev *pdev)
->> diff --git a/drivers/vfio/pci/vfio_pci_zdev.c 
->> b/drivers/vfio/pci/vfio_pci_zdev.c
->> index 2be37eab9279..261954039aa9 100644
->> --- a/drivers/vfio/pci/vfio_pci_zdev.c
->> +++ b/drivers/vfio/pci/vfio_pci_zdev.c
->> @@ -141,6 +141,40 @@ int vfio_pci_info_zdev_add_caps(struct 
->> vfio_pci_core_device *vdev,
->>       return ret;
->>   }
->>   +int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
->> +                  void __user *arg, size_t argsz)
->> +{
->> +    struct vfio_device_feature_zpci_err err;
->> +    struct vfio_pci_core_device *vdev =
->> +        container_of(device, struct vfio_pci_core_device, vdev);
->> +    struct zpci_dev *zdev = to_zpci(vdev->pdev);
->> +    int ret;
->> +    int head = 0;
->> +
->> +    if (!zdev)
->> +        return -ENODEV;
->> +
->> +    ret = vfio_check_feature(flags, argsz, VFIO_DEVICE_FEATURE_GET,
->> +                 sizeof(err));
->> +    if (ret != 1)
->> +        return ret;
->> +
->> +    mutex_lock(&zdev->pending_errs_lock);
->> +    if (zdev->pending_errs.count) {
->> +        head = zdev->pending_errs.head % ZPCI_ERR_PENDING_MAX;
->> +        err.pec = zdev->pending_errs.err[head].pec;
->> +        zdev->pending_errs.head++;
->> +        zdev->pending_errs.count--;
->> +        err.pending_errors = zdev->pending_errs.count;
->> +    }
->> +    mutex_unlock(&zdev->pending_errs_lock);
->> +
->> +    if (copy_to_user(arg, &err, sizeof(err)))
->> +        return -EFAULT;
->> +
->> +    return 0;
->> +}
->> +
->>   int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev)
->>   {
->>       struct zpci_dev *zdev = to_zpci(vdev->pdev);
->> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
->> index 75100bf009ba..a950c341602d 100644
->> --- a/include/uapi/linux/vfio.h
->> +++ b/include/uapi/linux/vfio.h
->> @@ -1478,6 +1478,20 @@ struct vfio_device_feature_bus_master {
->>   };
->>   #define VFIO_DEVICE_FEATURE_BUS_MASTER 10
->>   +/**
->> + * VFIO_DEVICE_FEATURE_ZPCI_ERROR feature provides PCI error 
->> information to
->> + * userspace for vfio-pci devices on s390x. On s390x PCI error 
->> recovery involves
->> + * platform firmware and notification to operating system is done by
->> + * architecture specific mechanism.  Exposing this information to 
->> userspace
->> + * allows userspace to take appropriate actions to handle an error 
->> on the
->> + * device.
->> + */
->> +struct vfio_device_feature_zpci_err {
->> +    __u16 pec;
->> +    int pending_errors;
->> +};
->> +#define VFIO_DEVICE_FEATURE_ZPCI_ERROR 11
->> +
->>   /* -------- API for Type1 VFIO IOMMU -------- */
->>     /**
->
->
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
