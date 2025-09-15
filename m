@@ -1,98 +1,116 @@
-Return-Path: <linux-kernel+bounces-816633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43372B57697
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:36:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80534B5768B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7883B3C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2FF2188D8BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D740A2FC029;
-	Mon, 15 Sep 2025 10:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A359F2FC86A;
+	Mon, 15 Sep 2025 10:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uA5pgx7j"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dpxKzI9C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86FE2FB63D
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E08C1F5F6;
+	Mon, 15 Sep 2025 10:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757932551; cv=none; b=qOD5vChfnV5EulAG1qvkThiSsIhRp9p5Z79wTTlPIaYiQnvOuU3FFlgXs+pX+DKoNB7AM156gKoHKxHECdN3j7kzJw4CjlG4WZ//u9ZT/TrN4JqnhnitHVlvU79xBtpWI6mTPcRNQ1AgOpSzPgT0Pw0iA/yuHqSU/YGZUGLIQcY=
+	t=1757932519; cv=none; b=ISvkpklw6eSvSDqsJ5NDkgJHXv9hfkHYiCKJ1bVBr2hb3o//TvAk9st+ZhOcV3dfSS4+fuPJr8Wsyu4dKwAt4+G29bvuD5KsyHrR8HMrTEEDuyuM6n80bztopVMqm5o4hlqbeDUJ/2pEin7o7NrXyMLL3OQXr+nXesJ667LZzs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757932551; c=relaxed/simple;
-	bh=GnPRJr8bD302g1idVWf4TFYMS+bTOr0gFLqD/VElnlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQs4q4UYkJXzxj4km9oXp9lF7jli8DoOpV/9rhZ6qHlV0hJZjO/e860WUi58m+YcQ9AJ29rcXqQTiHWI7r6b3reVvST5bllyotpZkopUwb5vFcLK07qPZO0iDgh1StsqNGvuyl3s6VgFDpUtn1ZCVqg5ZHFPQyc4soybvtuhljk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uA5pgx7j; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UgxAjeqJy1+oB7bCgdA2gcYmn4AIRVZ9GkWi6fbS6G8=; b=uA5pgx7jxIHyBFy30qLsN861Et
-	FLj7Z8T9JS/hr3Orow3hv8aF9jbHkQ/qBqwU4mAMJbnYqRKuzm75faBzrQwVNH0O62LPllDoEWbon
-	JG9zJTuiHgyRX0Gg9CBlPJxMH5KKf4K7OKRY4BGUc457bFljzQsz/pUR7hhkgR3PzSfoPAvAWgCST
-	tU/cVVOIvEg5nsRN7yTN9pWLFekUABB2W5V5gPaTkVMhwD1zvA1chvKQS4HJbpv1ZCZWqW0+w5ztQ
-	ypMBjcpJD5ldPZBPsnDoF5px/4JLHx1EKPmrhhQ8IlUj9yFTzn8WRxI7QNMH0QAk+puVGlFF7Z3U+
-	HQ373aNg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uy6Y7-0000000D6F6-0hE9;
-	Mon, 15 Sep 2025 10:35:07 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A7674302E03; Mon, 15 Sep 2025 12:35:06 +0200 (CEST)
-Date: Mon, 15 Sep 2025 12:35:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Will Deacon <will@kernel.org>
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org,
-	catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
-	npiggin@gmail.com, christophe.leroy@csgroup.eu, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, kees@kernel.org, masahiroy@kernel.org,
-	aliceryhl@google.com, ojeda@kernel.org,
-	thomas.weissschuh@linutronix.de, xur@google.com,
-	ruanjinjie@huawei.com, gshan@redhat.com, maz@kernel.org,
-	suzuki.poulose@arm.com, zhanjie9@hisilicon.com,
-	yangyicong@hisilicon.com, dianders@chromium.org,
-	gautam@linux.ibm.com, arnd@arndb.de, zhao.xichao@vivo.com,
-	rppt@kernel.org, lihuafei1@huawei.com, coxu@redhat.com,
-	jpoimboe@kernel.org, yaozhenguo1@gmail.com,
-	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org,
-	wangjinchao600@gmail.com, yury.norov@gmail.com,
-	thorsten.blum@linux.dev, x86@kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] watchdog: remove HARDLOCKUP_DETECTOR_PERF
-Message-ID: <20250915103506.GA3245006@noisy.programming.kicks-ass.net>
-References: <20250915035355.10846-1-cuiyunhui@bytedance.com>
- <aMfpwYPX6_i6ROOY@willie-the-truck>
+	s=arc-20240116; t=1757932519; c=relaxed/simple;
+	bh=/MPjI/zUoIcYG27E6oC5iuD/D6wLU15O8vIYfKQFP1o=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=p8IemmCNZA8mZW1s+vvWqb1byW5tJMPZZ+1XrsV7VAmn8Pn3T4i3js2rE4w00hvBh1J8QU2nQYv/7Tv3HHuWk1p+e7NAxtknGr+/ig+GmMOWzQGfESkRgZclX8sdKYFOLU7LhmYaqmB+RIjAJAwc8OYjeZKrK3OzhQNsvslqSFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dpxKzI9C; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757932518; x=1789468518;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/MPjI/zUoIcYG27E6oC5iuD/D6wLU15O8vIYfKQFP1o=;
+  b=dpxKzI9CBxS9rSM2rqPWji6VWOCtzxPu77ClovNdtCHc2tmhQIbF7RTl
+   BJQmY/+IzoApEu3YXAYU5JOH/TTMyAYEUDmPAcwdV0ZzYseBxyaKy9Az/
+   wgC/c07Iz29nQJQ4W/B8HVrH9K3zgLck5UWL8CEsvPmRlPWfsjoy5u6Wm
+   xwToWUdIiN2OhMzRZxpPgJFQDuK59ZnwJiZ+ySY3nyhxG6POUJMrCsmRP
+   ctot9pRakDPxn/fqsKNQFRFzyVBI5PhiBCIB6+3bvdPKg/LrqJzFqtYqG
+   CjaAgXvJZkgsSrq+YxsqBhfkS1OpdKjkPM4mkuk5KSffeY3iYjDzoSEpA
+   A==;
+X-CSE-ConnectionGUID: NsGXjZv/QOqHtGU7zJzMzg==
+X-CSE-MsgGUID: 089pDJHBS6aYuPlczc5hzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="63815056"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="63815056"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 03:35:15 -0700
+X-CSE-ConnectionGUID: c1BiExxOToWDc8KwEh0PRw==
+X-CSE-MsgGUID: Cv/TE8bwQaGDMDPGTwgGxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="205366000"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.39])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 03:35:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 15 Sep 2025 13:35:07 +0300 (EEST)
+To: Akiyoshi Kurita <weibu@redadmin.org>
+cc: platform-driver-x86@vger.kernel.org, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, derekjohn.clark@gmail.com, 
+    W_Armin@gmx.de, linux-doc@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, corbet@lwn.net
+Subject: Re: [PATCH] docs: wmi: lenovo-wmi-gamezone: fix typo in frequency
+In-Reply-To: <20250913173754.951858-1-weibu@redadmin.org>
+Message-ID: <c8b5c80d-beb0-796b-dc31-7daf4cadcc37@linux.intel.com>
+References: <20250913173754.951858-1-weibu@redadmin.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMfpwYPX6_i6ROOY@willie-the-truck>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Sep 15, 2025 at 11:26:09AM +0100, Will Deacon wrote:
+On Sun, 14 Sep 2025, Akiyoshi Kurita wrote:
 
->   | If all CPUs are hard locked up at the same time the buddy system
->   | can't detect it.
+> Fix a spelling mistake in lenovo-wmi-gamezone.rst
+> ("freqency" -> "frequency").
 > 
-> Ok, so why is that limitation acceptable? It looks to me like you're
-> removing useful functionality.
+> No functional change.
+> 
+> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+> ---
+>  Documentation/wmi/devices/lenovo-wmi-gamezone.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+> index 997263e51a7d..167548929ac2 100644
+> --- a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+> +++ b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+> @@ -153,7 +153,7 @@ data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
+>      [WmiDataId(1), read, Description("P-State ID.")] uint32 PStateID;
+>      [WmiDataId(2), read, Description("CLOCK ID.")] uint32 ClockID;
+>      [WmiDataId(3), read, Description("Default value.")] uint32 defaultvalue;
+> -    [WmiDataId(4), read, Description("OC Offset freqency.")] uint32 OCOffsetFreq;
+> +    [WmiDataId(4), read, Description("OC Offset frequency")] uint32 OCOffsetFreq;
+>      [WmiDataId(5), read, Description("OC Min offset value.")] uint32 OCMinOffset;
+>      [WmiDataId(6), read, Description("OC Max offset value.")] uint32 OCMaxOffset;
+>      [WmiDataId(7), read, Description("OC Offset Scale.")] uint32 OCOffsetScale;
 
-Yeah, this. I've run into this case waaay too many times to think it
-reasonable to remove the perf/NMI based lockup detector.
+Hi,
+
+There's a pre-existing patch to this [1] which I'm not very likely to 
+apply anyway as the typo is in the original interface and this section is 
+not exactly documentation for normal users.
+
+[1] https://patchwork.kernel.org/project/platform-driver-x86/patch/20250817170644.5855-1-rakuram.e96@gmail.com/
+
+-- 
+ i.
 
 
