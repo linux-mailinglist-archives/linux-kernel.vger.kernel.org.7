@@ -1,194 +1,218 @@
-Return-Path: <linux-kernel+bounces-816035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85876B56E79
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:02:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 000CAB56EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9453BBF85
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3F518957D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D00212548;
-	Mon, 15 Sep 2025 03:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784D121C179;
+	Mon, 15 Sep 2025 03:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G+Uo7hGn"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BrST37j7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7895A57C9F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2E757C9F;
+	Mon, 15 Sep 2025 03:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757905347; cv=none; b=TqqmuTt9HIvvLLVm/NGrYfpxoFN+nab1NldSK4V0VWQi0TbTCocwmQzVNnZgy6WgVng0/x7/DW9uW5tJeVqfEmpowdKBP8bQf9XRUXhGKkRYAeLlhXByi+fePYr64qb6Ih1rBiEtkDM3VrHyTA0mV0VRt2MHVPx/IifpxI3tS9o=
+	t=1757905480; cv=none; b=axSj+Rg6Wv8jnPoGAyijn6CABIYfs70QwXpnUjrTMbgqdtFLt021ohiqaToZOtNfocvQgN8HEwKxmQ2NGTig1H2A5gHAUfnFtMkvXdjGRFVw7w3dv73qP8G2P3jnm53TNXjQl3mvXPTotePWRpvuyx0609NxDsW1IEHFGIaRE8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757905347; c=relaxed/simple;
-	bh=fhnCjnA2uecuJbYizAIbJadlQYVFUl/FnXdkKah6TYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AmdrCv/lHzJi8CynlJi9u/1Iv1O5Oup6mzuClm3UkL7lbEf+yMKVyZ6GYdIa5D35BLCO8HZgJrTFkhGxyBxH0bnqtFv9Qv95z9IGtPlPBb/B122gcCQuwAUGJqiFba087ErveGTy9gbfvlOaWQTVjKpRvfz2puVdag12bedRaEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G+Uo7hGn; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <016e4d4c-c16b-45d5-a903-681afc6b4203@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757905341;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEcarrc2+8ifIeyobydV/xFWrr9hTTutZzw8IUFdV5g=;
-	b=G+Uo7hGnDZ1c7SlCcAmx4kxesEfclvRm6kNBIYrJE2rjg3psEjvldYdQdL9oVfBxFTYnNl
-	WYaVn1GJPmFzlifBpSeZ4jQIFuR0DifF7W2B6vUMRS+GttAoEuRTTlvsp9ZRnkG9uKkt0V
-	V8wD95ttVwwTScYDc30lsKlVEFeL++w=
-Date: Mon, 15 Sep 2025 11:02:14 +0800
+	s=arc-20240116; t=1757905480; c=relaxed/simple;
+	bh=/n08WvjcgZz64jmHuOYdy3h7tij0VWi6ys07urtBIAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G/8VA49gdzeCrv40cCuHbdMv4k5HABhzxaD95DS95ULivGbzCkrahH+jxVOz5vXc0nkp2z7xCJ12JgHZSXBhneeWpioO7ihPJUJCvaaCOVsGAS2H3bcvmLu8rIcxLcb0NtO8vGdpm1Jcll/mA9nXPXVViZ6uKwlsc1T5J0VhFuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BrST37j7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58EMKTKb027703;
+	Mon, 15 Sep 2025 03:04:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bfYDUawOr0FMXVNZV7xOILKvh+Egb3nrzK89Ssd3jck=; b=BrST37j71Jqb0oRe
+	VSiPDJn29jqzZHoZrt3jy+vNyfjO70Z1gHwxyLOVXJAT+BpBTNbOmeRTvLUD9Iah
+	5+TduzIi6ZkS56PNhoxDiA6qEoe7XXzfjLesAMZvsQ/DLnfaIeCEBNwD7HnsNX2h
+	iqfRRQ7YcsVMhuf8ByIoVSpW0o22O5fotSXTrVeOqUVXka/zypC+vjgdgLMnbsbI
+	nLrwefv+NyRB6mhhr3Jla5Gkcngndk4wSZ6YF68sMPP6ryhMm65XpFIa3JUicvw1
+	1xBReKMDn6Cm/pUMJFjT2nzR0oEmlDPQ1cK1U92KKNbKBwraIObwvyvhG0WCbQ2t
+	Sbp8HQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 494wyr3fc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Sep 2025 03:04:34 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58F34YEx013867
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Sep 2025 03:04:34 GMT
+Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Sun, 14 Sep
+ 2025 20:04:31 -0700
+Message-ID: <c040b551-17cd-4491-883a-bf33b4ce28f7@quicinc.com>
+Date: Mon, 15 Sep 2025 11:04:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new 1/3] mm/khugepaged: skip unsuitable VMAs earlier in
- khugepaged_scan_mm_slot()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11] Bluetooth: hci_qca: Fix SSR (SubSystem Restart) fail
+ when BT_EN is pulled up by hw
+To: <dmitry.baryshkov@oss.qualcomm.com>, <marcel@holtmann.org>,
+        <luiz.dentz@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>
+References: <20250827102519.195439-1-quic_shuaz@quicinc.com>
 Content-Language: en-US
-To: Dev Jain <dev.jain@arm.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, david@redhat.com
-References: <20250914143547.27687-1-lance.yang@linux.dev>
- <20250914143547.27687-2-lance.yang@linux.dev>
- <a62b7461-3faf-494c-bd00-0206de184a5a@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <a62b7461-3faf-494c-bd00-0206de184a5a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <20250827102519.195439-1-quic_shuaz@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pZa89s8EFLerjyau738EXJhoScZwh-4A
+X-Authority-Analysis: v=2.4 cv=SouQ6OO0 c=1 sm=1 tr=0 ts=68c78243 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=PXhdPGoDMKSCdWacWocA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAwMCBTYWx0ZWRfX/+RomGtGlZvk
+ 7D2J3usyJ6frRoFHgBkP2ymigYnmxGM3MuzUySD1irYsnJTqWBRkB9JQJ6Uql8SaO64DKztS+jr
+ qmUYdMeBT0Wu2/rpJqP++LGSuilyQCXt3vUv36rrBgd4GGTxVZ2QBjc063DL067JtFrkUhD+Ouk
+ TTVaY8vL+DxWbb1EeWZ+bkhbv5qrOozQGs+RlgUTq9zBBN8i2pu2/U7lwOwEbFTFv9vWrN9TGvQ
+ HxWKOoOQB8uN2BexjUweAHW++F81lWwOYeyP+iw9UrMxEwTUuGKwWXKzYoOZ1znvjMnT2I5e8Im
+ xQRrOe57zRyAVpruK/pY8PI0ocAZpOPDU3ZLaN1yik+nTZo1NsbtdYBSc/LQdQq2MBvWXJ6XJai
+ x2YjREO0
+X-Proofpoint-GUID: pZa89s8EFLerjyau738EXJhoScZwh-4A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_01,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 phishscore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130000
 
-Hey Dev,
+Hi 
 
-Thanks for taking time to review!
-
-On 2025/9/15 00:16, Dev Jain wrote:
+On 8/27/2025 6:25 PM, Shuai Zhang wrote:
+> When the host actively triggers SSR and collects coredump data,
+> the Bluetooth stack sends a reset command to the controller. However, due
+> to the inability to clear the QCA_SSR_TRIGGERED and QCA_IBS_DISABLED bits,
+> the reset command times out.
 > 
-> On 14/09/25 8:05 pm, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->>
->> Let's skip unsuitable VMAs early in the khugepaged scan; specifically,
->> mlocked VMAs should not be touched.
->>
->> Note that the only other user of the VM_NO_KHUGEPAGED mask is
->>   __thp_vma_allowable_orders(), which is also used by the MADV_COLLAPSE
->> path. Since MADV_COLLAPSE has different rules (e.g., for mlocked 
->> VMAs), we
->> cannot simply make the shared mask stricter as that would break it.
->>
->> So, we also introduce a new VM_NO_THP_COLLAPSE mask for that helper,
->> leaving the stricter checks to be applied only within the khugepaged path
->> itself.
->>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   include/linux/mm.h |  6 +++++-
->>   mm/huge_memory.c   |  2 +-
->>   mm/khugepaged.c    | 14 +++++++++++++-
->>   3 files changed, 19 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index be3e6fb4d0db..cb54d94b2343 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -505,7 +505,11 @@ extern unsigned int kobjsize(const void *objp);
->>   #define VM_REMAP_FLAGS (VM_IO | VM_PFNMAP | VM_DONTEXPAND | 
->> VM_DONTDUMP)
->>   /* This mask prevents VMA from being scanned with khugepaged */
->> -#define VM_NO_KHUGEPAGED (VM_SPECIAL | VM_HUGETLB)
->> +#define VM_NO_KHUGEPAGED \
->> +    (VM_SPECIAL | VM_HUGETLB | VM_LOCKED_MASK | VM_NOHUGEPAGE)
->> +
->> +/* This mask prevents VMA from being collapsed by any THP path */
->> +#define VM_NO_THP_COLLAPSE    (VM_SPECIAL | VM_HUGETLB)
+> To address this, this patch clears the QCA_SSR_TRIGGERED and
+> QCA_IBS_DISABLED flags and adds a 50ms delay after SSR, but only when
+> HCI_QUIRK_NON_PERSISTENT_SETUP is not set. This ensures the controller
+> completes the SSR process when BT_EN is always high due to hardware.
 > 
-> VM_NO_KHUGEPAGED should then be defined as VM_NO_THP_COLLAPSE | 
-> VM_LOCKED_MASK | VM_NOHUGEPAGE.
-
-Yep, it's a good cleanup ;)
-
-> But...
+> For the purpose of HCI_QUIRK_NON_PERSISTENT_SETUP, please refer to
+> the comment in `include/net/bluetooth/hci.h`.
 > 
-> I believe that the eligibility checking for khugepaged collapse is the 
-> business of
-> thp_vma_allowable_order(). This functionality should be put there, we 
-> literally
-> have a TVA_KHUGEPAGED flag :)
-
-Good spot. That's a much better apporach!
-
-My initial thinking was to keep thp_vma_allowable_order() as generic as
-possible, avoiding specific checks for individual callers ;)
-
-BUT you are right, the TVA_KHUGEPAGED flag is only passed from the
-khugepaged path, so the compiler will optimize out the branch for other
-callers, leaving no runtime overhead.
-
-Will rework this patch for v2 as your suggestion!
-
-Thanks,
-Lance
-
+> The HCI_QUIRK_NON_PERSISTENT_SETUP quirk is associated with BT_EN,
+> and its presence can be used to determine whether BT_EN is defined in DTS.
 > 
->>   /* This mask defines which mm->def_flags a process can inherit its 
->> parent */
->>   #define VM_INIT_DEF_MASK    VM_NOHUGEPAGE
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index d6fc669e11c1..2e91526a037f 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -134,7 +134,7 @@ unsigned long __thp_vma_allowable_orders(struct 
->> vm_area_struct *vma,
->>        * Must be checked after dax since some dax mappings may have
->>        * VM_MIXEDMAP set.
->>        */
->> -    if (!in_pf && !smaps && (vm_flags & VM_NO_KHUGEPAGED))
->> +    if (!in_pf && !smaps && (vm_flags & VM_NO_THP_COLLAPSE))
->>           return 0;
->>       /*
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 7c5ff1b23e93..e54f99bb0b57 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -345,6 +345,17 @@ struct attribute_group khugepaged_attr_group = {
->>   };
->>   #endif /* CONFIG_SYSFS */
->> +/**
->> + * khugepaged_should_scan_vma - check if a VMA is a candidate for 
->> collapse
->> + * @vm_flags: The flags of the VMA to check.
->> + *
->> + * Returns: true if the VMA should be scanned by khugepaged, false 
->> otherwise.
->> + */
->> +static inline bool khugepaged_should_scan_vma(vm_flags_t vm_flags)
->> +{
->> +    return !(vm_flags & VM_NO_KHUGEPAGED);
->> +}
->> +
->>   int hugepage_madvise(struct vm_area_struct *vma,
->>                vm_flags_t *vm_flags, int advice)
->>   {
->> @@ -2443,7 +2454,8 @@ static unsigned int 
->> khugepaged_scan_mm_slot(unsigned int pages, int *result,
->>               progress++;
->>               break;
->>           }
->> -        if (!thp_vma_allowable_order(vma, vma->vm_flags, 
->> TVA_KHUGEPAGED, PMD_ORDER)) {
->> +        if (!khugepaged_should_scan_vma(vma->vm_flags) ||
->> +            !thp_vma_allowable_order(vma, vma->vm_flags, 
->> TVA_KHUGEPAGED, PMD_ORDER)) {
->>   skip:
->>               progress++;
->>               continue;
+> After SSR, host will not download the firmware, causing
+> controller to remain in the IBS_WAKE state. Host needs
+> to synchronize with the controller to maintain proper operation.
+> 
+> Multiple triggers of SSR only first generate coredump file,
+> due to memcoredump_flag no clear.
+> 
+> add clear coredump flag when ssr completed.
+> 
+> When the SSR duration exceeds 2 seconds, it triggers
+> host tx_idle_timeout, which sets host TX state to sleep. due to the
+> hardware pulling up bt_en, the firmware is not downloaded after the SSR.
+> As a result, the controller does not enter sleep mode. Consequently,
+> when the host sends a command afterward, it sends 0xFD to the controller,
+> but the controller does not respond, leading to a command timeout.
+> 
+> So reset tx_idle_timer after SSR to prevent host enter TX IBS_Sleep mode.
+> 
+> ---
+> Changs since v10:
+> -- Update base patch to latest patch.
+> 
+> Changs since v8-v9:
+> -- Update base patch to latest patch.
+> -- add Cc stable@vger.kernel.org on signed-of.
+> 
+> Changes since v6-7:
+> - Merge the changes into a single patch.
+> - Update commit.
+> 
+> Changes since v1-5:
+> - Add an explanation for HCI_QUIRK_NON_PERSISTENT_SETUP.
+> - Add commments for msleep(50).
+> - Update format and commit.
+> 
+> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/bluetooth/hci_qca.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 4cff4d9be..2d6560482 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1653,6 +1653,39 @@ static void qca_hw_error(struct hci_dev *hdev, u8 code)
+>  		skb_queue_purge(&qca->rx_memdump_q);
+>  	}
+>  
+> +	/*
+> +	 * If the BT chip's bt_en pin is connected to a 3.3V power supply via
+> +	 * hardware and always stays high, driver cannot control the bt_en pin.
+> +	 * As a result, during SSR (SubSystem Restart), QCA_SSR_TRIGGERED and
+> +	 * QCA_IBS_DISABLED flags cannot be cleared, which leads to a reset
+> +	 * command timeout.
+> +	 * Add an msleep delay to ensure controller completes the SSR process.
+> +	 *
+> +	 * Host will not download the firmware after SSR, controller to remain
+> +	 * in the IBS_WAKE state, and the host needs to synchronize with it
+> +	 *
+> +	 * Since the bluetooth chip has been reset, clear the memdump state.
+> +	 */
+> +	if (!hci_test_quirk(hu->hdev, HCI_QUIRK_NON_PERSISTENT_SETUP)) {
+> +		/*
+> +		 * When the SSR (SubSystem Restart) duration exceeds 2 seconds,
+> +		 * it triggers host tx_idle_delay, which sets host TX state
+> +		 * to sleep. Reset tx_idle_timer after SSR to prevent
+> +		 * host enter TX IBS_Sleep mode.
+> +		 */
+> +		mod_timer(&qca->tx_idle_timer, jiffies +
+> +				  msecs_to_jiffies(qca->tx_idle_delay));
+> +
+> +		/* Controller reset completion time is 50ms */
+> +		msleep(50);
+> +
+> +		clear_bit(QCA_SSR_TRIGGERED, &qca->flags);
+> +		clear_bit(QCA_IBS_DISABLED, &qca->flags);
+> +
+> +		qca->tx_ibs_state = HCI_IBS_TX_AWAKE;
+> +		qca->memdump_state = QCA_MEMDUMP_IDLE;
+> +	}
+> +
+>  	clear_bit(QCA_HW_ERROR_EVENT, &qca->flags);
+>  }
+>  
+
+is there any update?
+
+BR,
+Shuai
+
 
 
