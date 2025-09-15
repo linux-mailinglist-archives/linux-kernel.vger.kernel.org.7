@@ -1,95 +1,49 @@
-Return-Path: <linux-kernel+bounces-816164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97572B5706C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:37:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9D6B57076
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A974189A731
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:37:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEA084E0418
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95291285C99;
-	Mon, 15 Sep 2025 06:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43800287512;
+	Mon, 15 Sep 2025 06:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="clK958h4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JQJXzOfX"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="boYOqDm+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECBE27FD49;
-	Mon, 15 Sep 2025 06:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB1320126A;
+	Mon, 15 Sep 2025 06:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757918213; cv=none; b=QGYzdAgwVkjC/SHyIqZlaHcKhDVh8RLuHctfDjwyjDiNyYwL7AymndIgN2Icb+lOjYWSUDP1TX0ILE7Un7lZWvDNBn3X6sCoVpiGni0c/RscVk5zFbuquoyJ6pDTtMz8Wc8rens2cxaqFEtdkQ6I1IGL0syPLW4sUd/J619CTWk=
+	t=1757918371; cv=none; b=hblFQXJmAUSXxfemPz6kHHnHXhwqTI2i4cLHiup84GhtkW9j97fuLndHfQzCpPprB/xv8J+MyWZJGz+XSAnZy83LIgvqAXlkjSuCA1hdOGNv7TTK73Xe55VWb2xIHkygILt5dKKM+2lfMEqQlG7cYk9nZTAhSQtIstHm+cDbdmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757918213; c=relaxed/simple;
-	bh=jduo0y4korFaMAY3lkityqAlQnFtCuA3rdQt5XSf2nQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Nz5gvxyI+JwskaYf2KWUq9fbTMpZKnjr1Ck1SvzRqCJ55sjveRGRtyRJao8yZVSIL7N/DDarF1HV81fdazVfJDMNGJrapvVMqDFqdgNgGTX49/3oMFVIOAbb7ACZcJ8M/a/XdP9pCtZWRf8PWPzagi7pWgPpQ1G0AMka+BQJuqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=clK958h4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JQJXzOfX; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id F3D43EC01FA;
-	Mon, 15 Sep 2025 02:36:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 15 Sep 2025 02:36:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1757918209; x=1758004609; bh=Ve
-	mF/O6xk+QKk00Tc0PpqO0z76i9pxzmarMIwRRAZGQ=; b=clK958h4nv5hLtiWmP
-	qDyaA4nRPCFCKZMno2+2L4l+wl9Wg6KY7vycGCC3UbfN7xdtJ8qNtg+s7r9r8pRl
-	o6sj8KkH78Dy+/cNXM+lzXYNWYXWs6vyZWgcslbheOs70/zRbWL7MgF7b6+jR9xF
-	RsczhGsoFgIFRipiaj3fBSzLmHIPiaOPxaygJ7umm7XgqMIWJ086tXIJt9VgjbM4
-	cwdcqcOJmBKf2VkXfsQQhToRU+l4g6svaX2JxZ8sZoMcIGDfhorxmqB8KLvS722M
-	9E6vkKa+o3TwCYBZWTNvnHfB38OsVKA4Jo3aa4Dg2pkAxX56TRvfTe068Gepbvu9
-	5Byg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1757918209; x=1758004609; bh=VemF/O6xk+QKk00Tc0PpqO0z76i9
-	pxzmarMIwRRAZGQ=; b=JQJXzOfXCZhsGEbXTFwwub3CxPikReA12lhKa/4rQ9oe
-	RdUy9ZVsdRZw2AuuuKNgb4IUIN4nY2O9eGt6cRjQ2YJ820Uhzgo8I+1/XUqPCJQa
-	SFuH63srZeiuLu/SIeNACqImarPrBmMmhvK/wuSCjtZx2hXi/jupyEzwZbkrvjhk
-	osTg/b7VZeHtz4dCmR9D3dKjTizcVxN2Ucw36DhY97N+uqZeOFgU0OJ5T/QGab4D
-	2tsxV+WoZlit3t+MCPhx6kCT3MZOhSf8NSF2tlDutyU/2Ndj4Abb2e63eMnMmJLQ
-	AuBan45RWIbaoB5sS80wfKaJlZI9T88OE46cpXmvEQ==
-X-ME-Sender: <xms:AbTHaCwHlumPj6ta0TTcXpyMVTVc-FoH5nGPA5WExvYj3hXE23WY-Q>
-    <xme:AbTHaJ_OiHf5BN6I4SYKntPt23-NcM6hK8W0tVawErTAsOdPRa0WpE7z2fAhMaLOi
-    VMcwPLh1jo4EJL1Jog>
-X-ME-Received: <xmr:AbTHaAzV61tGCO6d9xwo06KpfrLRjJ0Vouooh9qAYpMWiXOcXjqiqcGyGxxqRq9tqOTNsqyqlZgEYpbj0zqtuPRJRu80obwckeY9BQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefieellecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfgrnhhnvgcuifhr
-    uhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenucggtffrrghtthgvrhhnpeefheeltd
-    ehfeetjeefvdehteeutddtteelgeduueetjeevteeifeeuvdefffdvieenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopeelpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrd
-    hfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrvgguihhnghesnhhvihguihgrrdgtoh
-    hmpdhrtghpthhtoheplhhinhhugidqfhgsuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprhgtphhtthhopeguvghllhgv
-    rhesghhmgidruggvpdhrtghpthhtohepthgvtghhsehtohhothgrihdrnhgvthdprhgtph
-    htthhopehhrghnshhgsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:AbTHaBpWADBwujtKKbBYnYiyiga1rrEn1M8u6QMoxK8kTwzghxyjXQ>
-    <xmx:AbTHaJp8eoLR_VVDTIzhU4dQaORDF2wZbtGVGr8mY7a5EYkZgns76A>
-    <xmx:AbTHaJDS0ZcSA_4n-vgBsoLLo8J2rhl8mhSUVfSA5oeTkMTKiS4kgA>
-    <xmx:AbTHaPsXtubj9QXY95tPATrh8q0RG3Dw9TzGlWa3HcClhddSRgYLaw>
-    <xmx:AbTHaH2yeAM2Wc1SyCjtuek_Dc5N0lX9c2qC2tWEbq0RR2BVVdIolQ-a>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 15 Sep 2025 02:36:48 -0400 (EDT)
-From: Janne Grunau <j@jannau.net>
-Date: Mon, 15 Sep 2025 08:36:41 +0200
-Subject: [PATCH v3] fbdev/simplefb: Fix use after free in
- simplefb_detach_genpds()
+	s=arc-20240116; t=1757918371; c=relaxed/simple;
+	bh=pYcz2x7nSX/+Y3c0sAlQoX7P/VnQalB+Wcn61H6HfD4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X7zBnFqZRT+wb5E6robqUkSguuy4ggaSw/BpMo0aczxjN063vvUl0xHKOneeYi9qVjFAKXFAs3NepBr/vjKAA5q3NLy7E3yYCvYQXTFckR0XxiZoy8etnhaN9TttVjAGVMsCnC16hC21hhfmjYd0nv5C8mqawMSDbrKNopExaTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=boYOqDm+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c66:2dbc:e233:e1b4:15e7:45cd])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F4203EC1;
+	Mon, 15 Sep 2025 08:38:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757918289;
+	bh=pYcz2x7nSX/+Y3c0sAlQoX7P/VnQalB+Wcn61H6HfD4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=boYOqDm+/qQEuJLedBjI5x2UIAFvqjVRokr5CTteWsvvHevu8YhrFXODGy3dNtx6r
+	 nAqlKAPT0UDp9VjL5f7dZ9ITiWPYm5ZqJwRtG1LzCcWOBLCI09rBZ+Hg6AeF4k+RTj
+	 gsoE6Bl4zwiDfcfjunX0j9TqBwC0Y0KCwWnyQbts=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH v3 0/8] media: imx335: Vflip, active state and binning
+ support
+Date: Mon, 15 Sep 2025 12:09:06 +0530
+Message-Id: <20250915-imx335_binning-v3-0-16ecabf2090d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,241 +52,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-simplefb-genpd-uaf-v3-1-5bb51506a5b9@jannau.net>
-X-B4-Tracking: v=1; b=H4sIAPizx2gC/33NTQ6CMBCG4auQrq3pD0hx5T2Mi7GdQo0W0kKjI
- dzdwkoT4/L9knlmJhGDw0iOxUwCJhdd73PIXUF0B75F6kxuIpioWMM4je4x3NFeaYt+MHQCS2U
- lalbWBw6iIflwCGjdc0PPl9ydi2MfXtuPxNf1L5c45ZSZxkqQpS6NPt3Ae5j2Hkeyekl8GuqnI
- bJhlYLsGKWY/TKWZXkDVwwGqvkAAAA=
-X-Change-ID: 20250901-simplefb-genpd-uaf-352704761a29
-To: Hans de Goede <hansg@kernel.org>, Helge Deller <deller@gmx.de>, 
- Thierry Reding <treding@nvidia.com>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Daniel Huhardeaux <tech@tootai.net>, 
- stable@vger.kernel.org, Janne Grunau <j@jannau.net>
+X-B4-Tracking: v=1; b=H4sIAIq0x2gC/23MTQ7CIBhF0a00jMXwV0oduQ9jDBTafoOCAUNqm
+ u5dWgcm6vC+5J0FJRfBJXSqFhRdhgTBl+CHCnWj9oPDYEsjRlhNJJEYppnz+mbAe/ADtoLbzrW
+ MGqJROd2j62Hewcu19AjpEeJz9zPd1jelKP+mMsUEa8GMVI1VtaBnsE6n4E3Q0R67MKFNzOyjt
+ JT+KKwonGimbN8I28s/yrquL9uS6Gb5AAAA
+X-Change-ID: 20250606-imx335_binning-d43dce921b0a
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Tommaso Merciai <tomm.merciai@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8041; i=j@jannau.net;
- s=yk2025; h=from:subject:message-id;
- bh=jduo0y4korFaMAY3lkityqAlQnFtCuA3rdQt5XSf2nQ=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhozjm//Vcue9nrzk5CmN83wHl0vO3fDDVsIhfJ7mxZPyL
- /X0rqzP6yhlYRDjYpAVU2RJ0n7ZwbC6RjGm9kEYzBxWJpAhDFycAjAR0y8M/zNaNyt1HzfuWi0t
- 4xf6VPelytGXG+Nt4uftXvL697Mz8YwM/yzCq/6U1nDlJ2gkRHbzvfvr/mHR9b5Hv8ttLhoenhw
- 6mQcA
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2274;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=pYcz2x7nSX/+Y3c0sAlQoX7P/VnQalB+Wcn61H6HfD4=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBox7SPEqTvR9uVWqOoGTigGIts38DqlokhHbgq3
+ nd4p0qrIpWJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaMe0jwAKCRBD3pH5JJpx
+ RSjsD/91Z1dldh2qJ2H7LrYrEvx/Z92+XwfDcnh3Em7ADllaLPX3QSpTUIxeLtT18lyG9IFJtVf
+ Rc6pLYCtV+4ccamYTv8LVOmox3aAs8cYPLpBI1fFprNirlR7fae6MQ65p2ov8aggcDits9h1JlJ
+ bfTLOwJL+tT1UmxutnbaLVK174Y+EY426r+FGD9P+fm7UVVeUczejccPqU7wklV+blpHPEEiyc2
+ um3Kvr5bLyW7OluLfonUIt0RQ6fv3xCU3xkP7BTycqZU5wGbyD0Dn1BOx25vvU2B/nilvRCeMri
+ nVC480sMSOQGlM3gPpwRzTg0AIZE9amsV1C71bubLuQ6KUO/ONnFwkSujQ3+zRduxMUPyhyndZi
+ ElFcC1vDNJOQod/6YWbn12mKdgLVoY4x/y9kF7VWK/H9VQommdW1Vf2vF9dtJbQdMWqF3er95i5
+ BDxKX9vy0s6hjyCzpV8lPPaUIR3gEzY+jh+rgo4rTwOiG7MxKzQ9zhCBfMs7PBy3ESkpHZCUXP+
+ ZoncBQLS73azFuwPZREHQ+3kds84CQYKQ7TM6p9vGnuEiKwZknK8BNo+Q2bC1MGIAw0kQZcMS3T
+ PpSrukJUbFsrw0kAKiNxcjwICat+QXM71DK1hugI6FK7i48WzS7zFJ7KK0Pzx+AX3LV2Cx/udfu
+ xz53mIMlwrZz+Uw==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-The pm_domain cleanup can not be devres managed as it uses struct
-simplefb_par which is allocated within struct fb_info by
-framebuffer_alloc(). This allocation is explicitly freed by
-unregister_framebuffer() in simplefb_remove().
-Devres managed cleanup runs after the device remove call and thus can no
-longer access struct simplefb_par.
-Call simplefb_detach_genpds() explicitly from simplefb_destroy() like
-the cleanup functions for clocks and regulators.
+Hi,
 
-Fixes an use after free on M2 Mac mini during
-aperture_remove_conflicting_devices() using the downstream asahi kernel
-with Debian's kernel config. For unknown reasons this started to
-consistently dereference an invalid pointer in v6.16.3 based kernels.
+This series adds support for 2x2 binning mode for Sony IMX335, along
+with some improvements like using subdev active state, using
+{enable,disable}_streams APIs and fixing the native pixel array width to
+match the datasheet.
 
-[    6.736134] BUG: KASAN: slab-use-after-free in simplefb_detach_genpds+0x58/0x220
-[    6.743545] Read of size 4 at addr ffff8000304743f0 by task (udev-worker)/227
-[    6.750697]
-[    6.752182] CPU: 6 UID: 0 PID: 227 Comm: (udev-worker) Tainted: G S                  6.16.3-asahi+ #16 PREEMPTLAZY
-[    6.752186] Tainted: [S]=CPU_OUT_OF_SPEC
-[    6.752187] Hardware name: Apple Mac mini (M2, 2023) (DT)
-[    6.752189] Call trace:
-[    6.752190]  show_stack+0x34/0x98 (C)
-[    6.752194]  dump_stack_lvl+0x60/0x80
-[    6.752197]  print_report+0x17c/0x4d8
-[    6.752201]  kasan_report+0xb4/0x100
-[    6.752206]  __asan_report_load4_noabort+0x20/0x30
-[    6.752209]  simplefb_detach_genpds+0x58/0x220
-[    6.752213]  devm_action_release+0x50/0x98
-[    6.752216]  release_nodes+0xd0/0x2c8
-[    6.752219]  devres_release_all+0xfc/0x178
-[    6.752221]  device_unbind_cleanup+0x28/0x168
-[    6.752224]  device_release_driver_internal+0x34c/0x470
-[    6.752228]  device_release_driver+0x20/0x38
-[    6.752231]  bus_remove_device+0x1b0/0x380
-[    6.752234]  device_del+0x314/0x820
-[    6.752238]  platform_device_del+0x3c/0x1e8
-[    6.752242]  platform_device_unregister+0x20/0x50
-[    6.752246]  aperture_detach_platform_device+0x1c/0x30
-[    6.752250]  aperture_detach_devices+0x16c/0x290
-[    6.752253]  aperture_remove_conflicting_devices+0x34/0x50
-...
-[    6.752343]
-[    6.967409] Allocated by task 62:
-[    6.970724]  kasan_save_stack+0x3c/0x70
-[    6.974560]  kasan_save_track+0x20/0x40
-[    6.978397]  kasan_save_alloc_info+0x40/0x58
-[    6.982670]  __kasan_kmalloc+0xd4/0xd8
-[    6.986420]  __kmalloc_noprof+0x194/0x540
-[    6.990432]  framebuffer_alloc+0xc8/0x130
-[    6.994444]  simplefb_probe+0x258/0x2378
-...
-[    7.054356]
-[    7.055838] Freed by task 227:
-[    7.058891]  kasan_save_stack+0x3c/0x70
-[    7.062727]  kasan_save_track+0x20/0x40
-[    7.066565]  kasan_save_free_info+0x4c/0x80
-[    7.070751]  __kasan_slab_free+0x6c/0xa0
-[    7.074675]  kfree+0x10c/0x380
-[    7.077727]  framebuffer_release+0x5c/0x90
-[    7.081826]  simplefb_destroy+0x1b4/0x2c0
-[    7.085837]  put_fb_info+0x98/0x100
-[    7.089326]  unregister_framebuffer+0x178/0x320
-[    7.093861]  simplefb_remove+0x3c/0x60
-[    7.097611]  platform_remove+0x60/0x98
-[    7.101361]  device_remove+0xb8/0x160
-[    7.105024]  device_release_driver_internal+0x2fc/0x470
-[    7.110256]  device_release_driver+0x20/0x38
-[    7.114529]  bus_remove_device+0x1b0/0x380
-[    7.118628]  device_del+0x314/0x820
-[    7.122116]  platform_device_del+0x3c/0x1e8
-[    7.126302]  platform_device_unregister+0x20/0x50
-[    7.131012]  aperture_detach_platform_device+0x1c/0x30
-[    7.136157]  aperture_detach_devices+0x16c/0x290
-[    7.140779]  aperture_remove_conflicting_devices+0x34/0x50
-...
+These changes are done on top of a couple of already reviewed patches
+from Umang's series from last year that added support for vertical flip [1]
 
-Reported-by: Daniel Huhardeaux <tech@tootai.net>
-Cc: stable@vger.kernel.org
-Fixes: 92a511a568e44 ("fbdev/simplefb: Add support for generic power-domains")
-Signed-off-by: Janne Grunau <j@jannau.net>
+[1]: https://lore.kernel.org/all/20240830062639.72947-1-umang.jain@ideasonboard.com/
+
+There is some WIP to make the resolution freely configurable:
+ - [x] Add support for a cropped mode (1944x1100)
+ - [ ] Fix exposure timing limits when cropping
+ - [ ] Add support for a cropped binned mode
+ - [ ] Make it freely configurable (depends on new control for binning)
+
+Available in the branch here:
+https://github.com/jailuthra/linux/commits/imx335_binning
+
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 ---
 Changes in v3:
-- release power-domains on probe errors
-- set par->num_genpds when it's <= 1
-- set par->num_genpds to 0 after detaching
-- Link to v2: https://lore.kernel.org/r/20250908-simplefb-genpd-uaf-v2-1-f88a0d9d880f@jannau.net
+- Drop extra commas in reglist
+- Fix checkpatch check for wrong indentation in disable_streams
+- Add Kieran's R-by tags
+- Link to v2: https://lore.kernel.org/r/20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com
 
 Changes in v2:
-- reworked change due to missed use of `par->num_genpds` before setting
-  it. Missed in testing due to mixing up FB_SIMPLE and SYSFB_SIMPLEFB.
-- Link to v1: https://lore.kernel.org/r/20250901-simplefb-genpd-uaf-v1-1-0d9f3a34c4dc@jannau.net
----
- drivers/video/fbdev/simplefb.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index 1893815dc67f4c1403eea42c0e10a7ead4d96ba9..6acf5a00c2bacfab89c3a63bab3d8b1b091a20a8 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -93,6 +93,7 @@ struct simplefb_par {
- 
- static void simplefb_clocks_destroy(struct simplefb_par *par);
- static void simplefb_regulators_destroy(struct simplefb_par *par);
-+static void simplefb_detach_genpds(void *res);
- 
- /*
-  * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
-@@ -105,6 +106,7 @@ static void simplefb_destroy(struct fb_info *info)
- 
- 	simplefb_regulators_destroy(info->par);
- 	simplefb_clocks_destroy(info->par);
-+	simplefb_detach_genpds(info->par);
- 	if (info->screen_base)
- 		iounmap(info->screen_base);
- 
-@@ -445,13 +447,14 @@ static void simplefb_detach_genpds(void *res)
- 		if (!IS_ERR_OR_NULL(par->genpds[i]))
- 			dev_pm_domain_detach(par->genpds[i], true);
- 	}
-+	par->num_genpds = 0;
- }
- 
- static int simplefb_attach_genpds(struct simplefb_par *par,
- 				  struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	unsigned int i;
-+	unsigned int i, num_genpds;
- 	int err;
- 
- 	err = of_count_phandle_with_args(dev->of_node, "power-domains",
-@@ -465,26 +468,35 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
- 		return err;
- 	}
- 
--	par->num_genpds = err;
-+	num_genpds = err;
- 
- 	/*
- 	 * Single power-domain devices are handled by the driver core, so
- 	 * nothing to do here.
- 	 */
--	if (par->num_genpds <= 1)
-+	if (num_genpds <= 1) {
-+		par->num_genpds = num_genpds;
- 		return 0;
-+	}
- 
--	par->genpds = devm_kcalloc(dev, par->num_genpds, sizeof(*par->genpds),
-+	par->genpds = devm_kcalloc(dev, num_genpds, sizeof(*par->genpds),
- 				   GFP_KERNEL);
- 	if (!par->genpds)
- 		return -ENOMEM;
- 
--	par->genpd_links = devm_kcalloc(dev, par->num_genpds,
-+	par->genpd_links = devm_kcalloc(dev, num_genpds,
- 					sizeof(*par->genpd_links),
- 					GFP_KERNEL);
- 	if (!par->genpd_links)
- 		return -ENOMEM;
- 
-+	/*
-+	 * Set par->num_genpds only after genpds and genpd_links are allocated
-+	 * to exit early from simplefb_detach_genpds() without full
-+	 * initialisation.
-+	 */
-+	par->num_genpds = num_genpds;
-+
- 	for (i = 0; i < par->num_genpds; i++) {
- 		par->genpds[i] = dev_pm_domain_attach_by_id(dev, i);
- 		if (IS_ERR(par->genpds[i])) {
-@@ -506,9 +518,10 @@ static int simplefb_attach_genpds(struct simplefb_par *par,
- 			dev_warn(dev, "failed to link power-domain %u\n", i);
- 	}
- 
--	return devm_add_action_or_reset(dev, simplefb_detach_genpds, par);
-+	return 0;
- }
- #else
-+static void simplefb_detach_genpds(void *res) { }
- static int simplefb_attach_genpds(struct simplefb_par *par,
- 				  struct platform_device *pdev)
- {
-@@ -622,18 +635,20 @@ static int simplefb_probe(struct platform_device *pdev)
- 	ret = devm_aperture_acquire_for_platform_device(pdev, par->base, par->size);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Unable to acquire aperture: %d\n", ret);
--		goto error_regulators;
-+		goto error_genpds;
- 	}
- 	ret = register_framebuffer(info);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Unable to register simplefb: %d\n", ret);
--		goto error_regulators;
-+		goto error_genpds;
- 	}
- 
- 	dev_info(&pdev->dev, "fb%d: simplefb registered!\n", info->node);
- 
- 	return 0;
- 
-+error_genpds:
-+	simplefb_detach_genpds(par);
- error_regulators:
- 	simplefb_regulators_destroy(par);
- error_clocks:
+- Split runtime PM re-ordering from the patch introducing state support
+- Use v4l2_rect instead of macros for sensor native and crop sizes
+- Add new patch to introduce enable/disable streams API support with
+  s_stream fallback helper
+- Link to v1: https://lore.kernel.org/r/20250813-imx335_binning-v1-0-a42b687d8541@ideasonboard.com
 
 ---
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250901-simplefb-genpd-uaf-352704761a29
+Jai Luthra (6):
+      media: imx335: Update the native pixel array width
+      media: imx335: Update HBLANK range on mode change
+      media: imx335: Handle runtime PM in leaf functions
+      media: imx355: Use subdev active state
+      media: imx335: Support 2x2 binning
+      media: imx335: Switch to {enable,disable}_streams
+
+Umang Jain (2):
+      media: imx335: Rectify name of mode struct
+      media: imx335: Support vertical flip
+
+ drivers/media/i2c/imx335.c | 516 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 347 insertions(+), 169 deletions(-)
+---
+base-commit: 0e2ee70291e64a30fe36960c85294726d34a103e
+change-id: 20250606-imx335_binning-d43dce921b0a
 
 Best regards,
 -- 
-Janne Grunau <j@jannau.net>
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
