@@ -1,229 +1,247 @@
-Return-Path: <linux-kernel+bounces-816955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0BFB57B44
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:38:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2C3B57D7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C5D188BD4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4274E3BBAFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB42930B51F;
-	Mon, 15 Sep 2025 12:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A062E3191D3;
+	Mon, 15 Sep 2025 13:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="IQq8BUUM"
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2065.outbound.protection.outlook.com [40.107.114.65])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="gWNKxYT3"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C455830B514;
-	Mon, 15 Sep 2025 12:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.114.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FBF3191BA;
+	Mon, 15 Sep 2025 13:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757939883; cv=fail; b=LnjCmTBAkofoiOHedeasgN72OHbGdC3esMj8NmMRFDBr2QFKMfa+G8fZTTaImkgMnEpmE40XoUPbKcY7B97Xq2Wzh4z4hyMrLoJh/eetsqGLPjPH9+ZeBAfVYCE9Vci9MaO77tOavF3+3MCAsUJ1+XXsKjVrRKncNecv95CgYY4=
+	t=1757943296; cv=pass; b=Q1WYH9yQDGKQek84qimoDWHHYXInLT1OXAzKZPI6HSE/3R6GUOAMoTo7YHXGxiI7cefhPY+0URUdJ0uRzFnhpHzYQg83x3GoEHiOLDBs4X3i0DJnCUPN7Ylp4FzkJV/6VcUP3lOQVYGP1GpFXP8EVcr+PtLd5ULwt23fDHIifoI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757939883; c=relaxed/simple;
-	bh=vTk8hF/GUUAO4C3KEmAFUgLhsheEYtvz4UyLkQmnCeA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sR83jGqpj+dSemPdzu/3BtKrnukQrHXwrkJQ0EfFrD0u5gbBpyvEFlWzsJLrVeyMR0PgKPbUfxtQdLLVlcWvnjb2F9QYTTcjC+Dx4KsJBW1uExIkx+wU/6AbcQjQ6VREu56bgq2mlDh+SbVxkpmPv7Z1yQZwGAogfnlmMSPO8B4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=IQq8BUUM; arc=fail smtp.client-ip=40.107.114.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T+BT+CiHX9MRQ+8mu8xKzFiZKuOOsusK/mzdok+gUkgT4+1XSRg3MjdTy7t//yw/ZoYU9qzgIZ7bPiU36ppGeQXmKwgGeppdj57blyXzBCWywr3Ags9UZA5LFnfEbv1sc57PfDFc+dOIYv+8zlNu83sgp6v/IS0iKHXJLiYEO0UaQA7Spv/9LHo/Yr+4CacDRSHBo9Fb8iZyMkBgqGg2ldSXnsZWg9Pp0N0WjqxOue+PbRZ09WtvBoShy7QriVCmpRjeowL9g02ZoVGedQeFbHYwj4LE+8Lutd+/NFoWQ4s80nUoKeXZqfWqNYFpLaP+n8Da2XJlS94T+mrRJQ0zNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vTk8hF/GUUAO4C3KEmAFUgLhsheEYtvz4UyLkQmnCeA=;
- b=gHWnuXdneLYdYnPlYlL0WeINvJjIhuyvE+XSjix6ZcvMBvIAXKEPzdF3EWzJSA/9Xt896ouo7yYNZzqQVSkW4qaEc06rbup398d0Rx0OrM7STzbG1jc1bxXfZukKgPcjOtgtEnbDRzQxeoTzlS+eZON2cYWqdhpAoxi+59sghvFHN7gmuLJt/E/4smpArKKab4XKZ2jfY+CjtdhRyTLwV+HP817u5B8WFXMzNM3v6PQHWI2aDKgLiDbYYzbEAvOdsFr9cfmUYWsiPSQejO57VTldL16sge3WzYKGtttzMzlv13aMiEhaAX5qRI+SwzCDwostE3Vmv7cWNPRMWA0ctQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vTk8hF/GUUAO4C3KEmAFUgLhsheEYtvz4UyLkQmnCeA=;
- b=IQq8BUUM1wTDLom+IpnAd3LUJGGHikcgG+RC8UC0V8pa7ZChxR0BFcx+j+sdErMbcitMU3mxVhBxRgXAmjW4KBDpZyUJ41aciUCuzxOxl2wNdMl6xmNKQagIHSEbOCVp1ROusMU6lVt5CAlDPpGaMaQCwGHQqaP/v5EzwqEwJFw=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYRPR01MB12916.jpnprd01.prod.outlook.com (2603:1096:405:1b4::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 12:37:56 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 12:37:49 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: geert <geert@linux-m68k.org>, biju.das.au <biju.das.au@gmail.com>
-CC: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>, magnus.damm <magnus.damm@gmail.com>, Philipp
- Zabel <p.zabel@pengutronix.de>, "linux-can@vger.kernel.org"
-	<linux-can@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v2 0/7] Add suspend/resume support
-Thread-Topic: [PATCH v2 0/7] Add suspend/resume support
-Thread-Index: AQHcI9KoqkaRlcbvBUqixmJwAuo1VLSUKwuAgAAH1rA=
-Date: Mon, 15 Sep 2025 12:37:49 +0000
-Message-ID:
- <TY3PR01MB113461FBB064E71820BBB0ECB8615A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250912104733.173281-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdXx88-3j6Gu_ZK6tRV=RWu+T_yETaNEMw=rviRsNM7u6g@mail.gmail.com>
+	s=arc-20240116; t=1757943296; c=relaxed/simple;
+	bh=ao7uagQdF+wiUXAvY/n129ohD/vzWpXbHOuTR787tLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qfi9wfcmLfiiPs82A3Y3hji5JCBRFFameOeQOyQ85q1NduR/JYzloMYZ/B0FpwEoHJxVhtGlt8SRP0DS/7K8d6eicKtf4pabu13IVeY0Bk3OixuethvZmw9lIJUYIlCHbhCDxeGd5Do6EGfbM8camotmOEwZ4IG6SpacwSTMFSk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=gWNKxYT3; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757943268; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=c1F1G4DYgw5XKvAkAjRv2+e5pa6Kb4MHPVcAp86w2aDjx1S3PNpV+R4d2PE20vWnXdshV38JE96eMy9QpPWqUIcPAiYyrGl3S0rg/1+1kjcrHt/VPmFrD5CyzpPEEb0uebAGBlaFShFMz/8CxMh72Ajip+F05G1vwir9hp7GL80=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757943268; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=H9W8rcPrnhuT1ZCnz7GuLg7KS6O8tdbb1kw7ng7b4Ro=; 
+	b=fh7Mxm5/miP8QtX8RWjc/ndyuvcb9GFt5WPMxKhDvC75f91FJkisG0607fl8TNS0C9BpZA+YFW5y3jhfMRuY25eKwXsJw/Yd0YnTNgiwJklqUCkkhsT9l8HVJ2RSygKSrZt1U3g03OiHPGLPQiUY3kfVDgRaSiroZpns/8k2m6E=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757943268;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=H9W8rcPrnhuT1ZCnz7GuLg7KS6O8tdbb1kw7ng7b4Ro=;
+	b=gWNKxYT3iacQ5bX9zFR8huYqQ2axP5nqfG6MKE6J9ibXD4ixDM4UhqL4WDyWCtfH
+	al312FY4BZubd/KRtEuOxsKXYi0jc0D1X6jaDnfeF3PwrPDRKLO2oykImMrec6F1VLd
+	H2GbJCrY8iLvjsGNSl8AF+GQiMNOX6JXhYalw8K0=
+Received: by mx.zohomail.com with SMTPS id 1757943266394997.9637917932183;
+	Mon, 15 Sep 2025 06:34:26 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Chia-I Wu <olvaffe@gmail.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 05/10] mailbox: add MediaTek GPUEB IPI mailbox
+Date: Mon, 15 Sep 2025 14:38:02 +0200
+Message-ID: <8577914.T7Z3S40VBb@workhorse>
 In-Reply-To:
- <CAMuHMdXx88-3j6Gu_ZK6tRV=RWu+T_yETaNEMw=rviRsNM7u6g@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYRPR01MB12916:EE_
-x-ms-office365-filtering-correlation-id: 1cff13c3-587a-4d3f-9b9f-08ddf454ae4b
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?d3d2U0lHZndxYXhnb1ZmTmZ0V2xQdkk2eFYwYU4xbFBtaWp6R2NxZ2JMQkZ1?=
- =?utf-8?B?VFRjZ1hkdzZGL0lHWldiQ2RYdW9lK0xBMXVSK0ErNVVVcUhMbVpXbG5XMXRm?=
- =?utf-8?B?Z1F0dE81czREVE5CbTFacWtBeVNJbDNTb2s1cmhBSjVqaFZ0Mi9zVFRCNDJ1?=
- =?utf-8?B?blI4VzJ1NUlTekNnbGxIVmtJQTYzN2w5Y1JQK21BZkcrQzR1UUlZNkovaXJY?=
- =?utf-8?B?a3ZOQVN1MFVuRlgvQ25TaWRzZXBnVmR5b01wTHUzL1ZCS3VTL3pBd0Zvd3p0?=
- =?utf-8?B?ZnBtMXBqdkw3NFU3aW9Ba1RHQjhtUDFnMlNFcnovcEJpTm5LczRJclNxU25t?=
- =?utf-8?B?VE9oODVNZmorVmZ1M2V1KzNkY0RhT0ZiVm5QL0FyL0xlNk9kT09qaldvSHEz?=
- =?utf-8?B?cEVKQjV3OWZJUHhXR05wcmVZY1lhNDV4MHF1ODBZY01lbGxGMENJOTRlUSsr?=
- =?utf-8?B?TnZhaXVMOEpQRitVVDFTVjhmVXdKb1lIbjhQbGlocHVWUjNlVjY2Wm4wcVdq?=
- =?utf-8?B?SjFqQjdFdExrc2lkMDRHWnovRkxzcDRaN3E0bTh1dkkzU2liT282emlGbzlJ?=
- =?utf-8?B?N3k4WDAwVCtOUmQ5aUZtS3drNmlHcXpmK3ZsWU1lWkdrSE9ZaHN5RFlxYjlF?=
- =?utf-8?B?R3dmdXFod1ZnMnh4QVA4bDBRQTQzL1FjRUFxWWtmL1hnd1FjM01tVDdwQUxi?=
- =?utf-8?B?bUVMUjJjT1owRzFsdU83a1ZUQjN2V0pVOWpreDQ4YmZKY3VMb0xLb2dkLzFw?=
- =?utf-8?B?aExFMzBEQmM1S2YyWHhXM2VrbVVRcnc0TmNBUk5UMEhxd0lOalRUQmdIRUps?=
- =?utf-8?B?eWV3aFRxRkdPd3BYMTZpV1lVTGxyNVFHVFRmTHdjSVZPRjVjdGlicVliTmUv?=
- =?utf-8?B?U3NIdW1UQ01ETFgvMmVKS3ZPSENJV2hxdDNmVjcyMis1U0FIZlFIUzdJbVk1?=
- =?utf-8?B?VHRRZUtmdzZVN0FGYW5oU3crL1NtVFdVU3BCM2hkeWFEaXhYM3hKNmc5M1Nq?=
- =?utf-8?B?RWQ4M3JSNmFwZm1lTDVnbktkVjN6TVpucldEcitRdzZ4RjdwUjZQSDdBbXFO?=
- =?utf-8?B?amZRN0d6UVdlNERnTXJoMzhOWm50SGo0MVY1SVYrZFlneFlLL3ZUMG84VFoy?=
- =?utf-8?B?L2d5TmgwMDVZb2JlSnpSK29VdTRYNGRaT2RuTnhRVGsvUjR4UWJDMTFiSzFu?=
- =?utf-8?B?Ykk1bkUxakNSZTIvMkJRSnQ3VmdqZWIwcFJLSFplbmVhbFZUeHRzSFlXSmY3?=
- =?utf-8?B?UXdiN0hzMnZiZktvblk4Z3QydS9OeGhNYmF6c1JaVXIzdE05ZnJVTHhoYTlu?=
- =?utf-8?B?UFMyN1JiYzVzWWdqRmxlSUZ6ZlkzaWFoVWMxdVRNa1d6d2QwcDczVEM3UUIy?=
- =?utf-8?B?QkZXa2gxQnJPd1o4QTlmRWxDM2NKZk15VzN2b3VCS1FXUnhtRklTeDFvM1ND?=
- =?utf-8?B?Wk4zUHZmQ1JZUlBobFJXU2VLRW4zSHlPenpWWXd5b1E5STlwbksxMEJpY0xV?=
- =?utf-8?B?bHlmQ1J1bUtGblpUL1NTUUdoZS9xeStxb050L3lpd1JRSkN0aUM4Qmt1ZUxS?=
- =?utf-8?B?ZjI4WmpuZEdwZk81VEsvV2lrUU5kUE5OTU0yYkg4ZDc3enF6dk5ickszbktJ?=
- =?utf-8?B?UzlrS1VjZk1SVGpoUVpvZlNBYzcxelM0cU1JcWNBRStwWWlCL0FWYzJ0U1lv?=
- =?utf-8?B?eFFFOGlJdlFpd1VqQnNub1FsaXJiK2NXTEhPeUFKTVhKczJkRVFMb0xRYk9p?=
- =?utf-8?B?UkN0bDcvRURxRWl3eGZyYTZVN2FFd3dNR2dMazRnc1dzL2g0dlZEamcybUlo?=
- =?utf-8?B?RDlQdmJIVnBmUHBEckEvaVYvamJrbm9FUEhpdWsvSUxodzczSWRJeTVycmVs?=
- =?utf-8?B?SDBFK1Y3MFpPQ3JFMWZ4Tk1IdUUvWTBERnlWY2s3bU5XTTlwc2VJZytFMFJD?=
- =?utf-8?B?UWd6eG8raGF3QUppOXJMZGV5SzY2YVRrNWEwR0ZENHA2TVVFSVE4MlE5ZDB0?=
- =?utf-8?Q?xgCenZ3hb16ZpCrSVFMnQlT2rrw1xU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?R1QrUG4xeWgzSVRBQzkxZU1KQnpMOUplUnJ5d0Y2S3RHak9LQzdQQ2ZGaWxr?=
- =?utf-8?B?TFBqWjZnV1d4U0dFZlhHTThmR0xjK3l2UldmcVkyb1JBa0gzcC9IbllBa2pB?=
- =?utf-8?B?RWpPd2RsZ29PS3FvTmZPVXpoYUV0VXZiUk9tY1VTRUQ4c0s0MnhjeGZ4MHRT?=
- =?utf-8?B?Q3lsd0V6amdsL2hidDhrbm1ndURPSmxEc281eThvUTVRKzJWQXhtbzdORjZs?=
- =?utf-8?B?TS9ENGxycVNieU5RT0tqNHh3Rnl5Q1J1S01pdkxxcjF6a0lad09tU0NlQTBO?=
- =?utf-8?B?RFZmazQzVUVmbGpaZjhMcytkZE1iSzF2akdBUTVlN3BPRzMvK0IxWXN0Y3Iz?=
- =?utf-8?B?K3NEK0VTeDhkRVI5dHhZN3B4aU95YVArYVh3N0J3YWZEY01iSUZ2M3FIbW1l?=
- =?utf-8?B?cDNQYThRSW5CTVJZWlBwenJvU3hLNHZ2VUdVaC9Tc2xmYncvbEFRc1hvd2FQ?=
- =?utf-8?B?TXdXVDBNM2FtbkxQeDJ4ck9CdlVPKzVEQWRWcHQrVzRUWGtab1VoTXlpdGMv?=
- =?utf-8?B?WUhmSnFraGZMUjl2dFJyZEZwV2EzUlR1dEFJUEt4djNxVytEZzBNRHBDR0tQ?=
- =?utf-8?B?MGNrbnYxU0w0VzRVajk2T1gvaHZYTGFYOW1XOUVQamFyVDY4OHVaYWNZRGtv?=
- =?utf-8?B?RDJPOTVvZ0RTQTcwU29JNU8xZUt1bVVFcSsyQkR1RWEwY3d6UE9oZS82UG82?=
- =?utf-8?B?eWM2Wk9TVHF6OUtEcSs2VGM5bk1jY0wwOWd2QVV3Sk1PSWhzTmN0ZmlXbW5K?=
- =?utf-8?B?UWRhRkpra1Z2V3NXRmRweGZ0VUNiSk1jUHEvSnpjeTJTZ01vMVhiWjVvc3FV?=
- =?utf-8?B?N1lGMlRldW5jZmM5Yjg5cW83M0g1ZFBaUnpOUzNTbk0rQTc0UkZzNXlueFdE?=
- =?utf-8?B?Zml5NXc5NVltanNsWUJDSnhqR1V5TW5kSFcxQlhxeDEyT3hMaWROU2JGOXND?=
- =?utf-8?B?bnErWURZbFhCSk1KZmd1T2plcDk2ZlQ3bTl0VU5nUUVudzZoTXYzZXp6Smt6?=
- =?utf-8?B?QkJKVkVoUmtlSzNWZVVaSEVLMGF1ZkJuRUl3QTV0R3cxcU9UZ1lMLzF4V09G?=
- =?utf-8?B?a2ZSV3BPaFY0a0FkWGdGZk4rSmtWWnJCNk13aERGV2ZqaW5hdFpqZ1E4NWl2?=
- =?utf-8?B?dVk0TzRCb01MMmtTY2Z5aDJKcnVTREdIakVQcHo5cStJdjdCSzgwaklGRlhF?=
- =?utf-8?B?bWV6Ry9QMUNZdnNpOHU1R1k4RjFZNVhHMDJQQmJpQjQ3RG5UQnF4Tm5Eam50?=
- =?utf-8?B?VGowZ3U0aUxDV3U2TGhRN2c4b1gxRHdVa0s2c3lvQXFyMTVMcVN1MEFhMlM3?=
- =?utf-8?B?QUp5VUhRUk1DU29yZ01RUzRBZHhRdTQzTHJaR3RscjlqZWU4d1R4R0kyMklU?=
- =?utf-8?B?eVhkaWlXWnZNVS9uWW1YMWVsRzMyQ2c5djhjbUpGdVFQTndoOUUrRW1OdGEx?=
- =?utf-8?B?bWxuNFVUWVlkYkgveU5EcUFDYnc2VlFEQnh5RlRFRDNRT2h3ckNxSnZNQmxD?=
- =?utf-8?B?a0hHU0toRFpSbWpRV2xrTFlCL3NvMkhOemlJdWNiSVNrc0xXRUZ6VmhzSTF2?=
- =?utf-8?B?QXdGVHF5RHRkQldMeXgzQjA4WWo3SXZ6L1h0ZVptdDRwT1VacHk2U2EwQTVk?=
- =?utf-8?B?OVhuaU40aTF3KzZMTFk5SVZQUDREQXlNZ1JQY0kycXkvKzRkVVA2N2lRUmhU?=
- =?utf-8?B?UGQwU3BXbzNTR1ZGQklQczZaNmlpUDAwQ3hOUkJOcm5vNGx6ZW5YWTUwMmVl?=
- =?utf-8?B?S3EvdVdlY0R5WmZYeVVPWmFVRENYUENNOXZoKzR2Ry9PcC9Ed1U2M0p6Mllk?=
- =?utf-8?B?THdVdnlSOGE5UnlyQXk3bHdpQVA4Z2Z6b2orVFVFNjBsbmh4blJCaHRQMnRX?=
- =?utf-8?B?MUhHdFFGVzJaR1ZHek4vTjNwbnRhY0NoS2g5OFVJVThvMDlmVFNPM1czWGE3?=
- =?utf-8?B?ZFliMVBtL1g4dW12dkxKQlc0UmdwakNGcVVNNlpQK1k5R0V5TVIvRXNQUVZX?=
- =?utf-8?B?RFNEM2dtUjZNZmsySktZNGVpbkpld3VZMjZHOWpLTGozcUR2QmpyblI0KzM5?=
- =?utf-8?B?NzBYZ2ZLcFpwUkNSVkpWa3d4UFJBTGhZT2Zjc1NyRlhQSmx0Y2tYUkhZSVND?=
- =?utf-8?B?elNYdjhtTFJkU01yYnJSOGIrZjZROUtNaWlBM0x3ZE1GWnVHcFZTektZZ0NS?=
- =?utf-8?B?SVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <CAPaKu7Q+KAzEtKBWy8KO2Kp+H4y-Mqo34uo=jgH1_iooaDq3hA@mail.gmail.com>
+References:
+ <20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com>
+ <20250912-mt8196-gpufreq-v2-5-779a8a3729d9@collabora.com>
+ <CAPaKu7Q+KAzEtKBWy8KO2Kp+H4y-Mqo34uo=jgH1_iooaDq3hA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cff13c3-587a-4d3f-9b9f-08ddf454ae4b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2025 12:37:49.4723
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5kZ8uWNt1K92Ne1bQChW9PiSpGU1OpbJ/V0CgIKUdVKv8w8LDHz/5GoJ9ZVJB1e84PUBB2FBT19ro7pmeEJIe9KYrwJRlyUWuetoCpFRbNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12916
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-IEhpIEdlZXJ0LA0KDQpUaGFua3MgZm9yIHRoZSBmZWVkYmFjay4NCg0KPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02
-OGsub3JnPg0KPiBTZW50OiAxNSBTZXB0ZW1iZXIgMjAyNSAxMzowOA0KPiBTdWJqZWN0OiBSZTog
-W1BBVENIIHYyIDAvN10gQWRkIHN1c3BlbmQvcmVzdW1lIHN1cHBvcnQNCj4gDQo+IEhpIEJpanUs
-DQo+IA0KPiBPbiBGcmksIDEyIFNlcHQgMjAyNSBhdCAxMjo0NywgQmlqdSA8YmlqdS5kYXMuYXVA
-Z21haWwuY29tPiB3cm90ZToNCj4gPiBGcm9tOiBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVu
-ZXNhcy5jb20+IFRoaXMgcGF0Y2ggc2VyaWVzIGFkZHMNCj4gPiBwcm9wZXIgc3VzcGVuZC9yZXN1
-bWUgc3VwcG9ydCB0byB0aGUgUmVuZXNhcyBSLUNhciBDQU4tRkQgY29udHJvbGxlcg0KPiA+IGRy
-aXZlciwgYWZ0ZXIgdGhlIGN1c3RvbWFyeSBjbGVhbnVvcHMgYW5kIGZpeGVzLg0KPiA+IEl0IGFp
-bXMgdG8gZml4IENBTi1GRCBvcGVyYXRpb24gYWZ0ZXIgcmVzdW1lIGZyb20gczJyYW0gb24gc3lz
-dGVtcw0KPiA+IHdoZXJlIFBTQ0kgcG93ZXJzIGRvd24gdGhlIFNvQy4NCj4gPg0KPiA+IFRoaXMg
-cGF0Y2ggc2VyaWVzIGhhcyBiZWVuIHRlc3RlZCBvbiBSWi9HM0UgU01BUkMgRVZLLCBFYmlzdS00
-RCAoUi1DYXINCj4gPiBFMykgYW5kIFdoaXRlIEhhd2sgKFItQ2FyIFY0SCkuDQo+ID4NCj4gPiB2
-MS0+djI6DQo+ID4gICogQWRkZWQgbG9ncyBmcm9tIFJaL0czRQ0KPiA+ICAqIENvbGxlY3RlZCB0
-YWdzLg0KPiA+ICAqIE1vdmVkIGVuYWJsaW5nIG9mIFJBTSBjbGsgZnJvbSBwcm9iZSgpLg0KPiA+
-ICAqIEFkZGVkIFJBTSBjbGsgaGFuZGxpbmcgaW4gcmNhcl9jYW5mZF9nbG9iYWxfeyxkZX1pbml0
-KCkuDQo+ID4gICogRml4ZWQgdGhlIHR5cG8gaW4gZXJyb3IgcGF0aCBvZiByY2FyX2NhbmZkX3Jl
-c3VtZSgpLg0KPiANCj4gVGhhbmtzIGZvciB1cGRhdGluZyENCj4gDQo+IFRoaXMgc2VyaWVzIGJl
-aGF2ZXMgdGhlIHNhbWUgYXMgdjEgb24gRWJpc3UtNEQgKFItQ2FyIEUzKSBhbmQgV2hpdGUgSGF3
-ayAoUi1DYXIgVjRIKS4gIEhvd2V2ZXIsIHRoYXQNCj4gbWVhbnMgdGhlIHNtYWxsIHJlZ3Jlc3Np
-b24gSSBtZW50aW9uZWQgYmVmb3JlIFsxXSBpcyBzdGlsbCBwcmVzZW50Og0KPiANCj4gICAgIldo
-aWxlIHRoaXMgZml4ZXMgQ0FOLUZEIGFmdGVyIHJlc3VtZSBmcm9tIHMycmFtIG9uIFItQ2FyIEUz
-IChFYmlzdS00RCksDQo+ICAgICBpdCBkb2VzIGludHJvZHVjZSBhIHJlZ3Jlc3Npb24gb24gUi1D
-YXIgVjRIIChXaGl0ZSBIYXdrKTogYWZ0ZXIgcmVzdW1lDQo+ICAgICBmcm9tIHMyaWRsZSAoV2hp
-dGUgSGF3ayBkb2VzIG5vdCBzdXBwb3J0IHMycmFtKSwgQ0FOIGZyYW1lcyBzZW50IGJ5DQo+ICAg
-ICBvdGhlciBkZXZpY2VzIGFyZSBubyBsb25nZXIgcmVjZWl2ZWQsIGFuZCB0aGUgb3RoZXIgc2lk
-ZSBzb21ldGltZXMNCj4gICAgIHJlcG9ydHMgYSAiYnVzLW9mZiIuIg0KPiANCj4gTm90ZSB0aGF0
-IEkgZGlkIG15IHRlc3RpbmcgYmV0d2VlbiBDQU4tRkQgY2hhbm5lbCAwIG9uIEViaXN1LCBhbmQg
-Q0FOLUZEIGNoYW5uZWwgMyBvbiBXaGl0ZS1IYXdrLg0KPiANCj4gSSByZXRyaWVkIHdpdGggd2ly
-aW5nIGJldHdlZW4gQ0FOLUZEIGNoYW5uZWwgMCBhbmQgMSBvbiBXaGl0ZS1IYXdrLCBhbmQgd2l0
-aCB0aGF0IGNvbmZpZ3VyYXRpb24sIENBTi1GRA0KPiBzdGlsbCB3b3JrcyBhZnRlciBzMmlkbGUu
-DQo+IA0KPiAgICAiSG93ZXZlciwgdGhlIHVuZGVybHlpbmcgaXNzdWUgaXMgcHJlLWV4aXN0aW5n
-LCBhbmQgY2FuIGJlIHJlcHJvZHVjZWQNCj4gICAgIHdpdGhvdXQgdGhpcyBwYXRjaDogdGhlIENB
-Ti1GRCBjb250cm9sbGVyIGZhaWxzIGluIHRoZSBzYW1lIHdheSBhZnRlcg0KPiAgICAgZHJpdmVy
-IHVuYmluZC9yZWJpbmQuICBTbyBzb21ldGhpbmcgbXVzdCBiZSBtaXNzaW5nIGluIHRoZQ0KPiAg
-ICAgKGRlKWluaXRpYWxpemF0aW9uIHNlcXVlbmNlIGZvciB0aGUgUi1DYXIgR2VuNCBDQU4tRkQg
-cmVnaXN0ZXIgbGF5b3V0Lg0KPiAgICAgTm90ZSB0aGF0IGl0IGtlZXBzIG9uIHdvcmtpbmcgYWZ0
-ZXIgaWZkb3duL2lmdXAsIHdoaWNoIGRvZXMgbm90DQo+ICAgICByZWluaXRpYWxpemUgdGhlIGZ1
-bGwgY29udHJvbGxlci4iDQo+IA0KPiBTYW1lIGhlcmU6IENBTi1GRCBjaGFubmVsIDAgYW5kIDEg
-b24gV2hpdGUtSGF3ayBrZWVwIG9uIHdvcmtpbmcgYWZ0ZXIgdW5iaW5kL3JlYmluZCwgdW5saWtl
-IGNoYW5uZWwgMy4NCj4gU28gaXQgbG9va3MgbGlrZSB3ZSBoYXZlIGFuIGlzc3VlIGFnYWluIHdp
-dGggaGFuZGxpbmcgY2hhbm5lbHMgMiBhbmQgaGlnaGVyLi4uDQoNCg0KUlovRzNFIHVzZXMgY2gw
-IGFuZCBjaDQuIFNvIHByb2JsZW0gbWF5YmUgc3BlY2lmaWMgdG8gY2gzLg0KDQpDaGVlcnMsDQpC
-aWp1DQo=
+On Saturday, 13 September 2025 00:11:10 Central European Summer Time Chia-I=
+ Wu wrote:
+> On Fri, Sep 12, 2025 at 11:38=E2=80=AFAM Nicolas Frattaroli
+> <nicolas.frattaroli@collabora.com> wrote:
+> <snipped>
+> > +static irqreturn_t mtk_gpueb_mbox_thread(int irq, void *data)
+> > +{
+> > +       struct mtk_gpueb_mbox_chan *ch =3D data;
+> > +       int status;
+> > +
+> > +       status =3D atomic_cmpxchg(&ch->rx_status,
+> > +                               MBOX_FULL | MBOX_CLOGGED, MBOX_FULL);
+> > +       if (status =3D=3D (MBOX_FULL | MBOX_CLOGGED)) {
+> > +               mtk_gpueb_mbox_read_rx(ch);
+> > +               writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_C=
+LR);
+> > +               mbox_chan_received_data(&ch->ebm->mbox.chans[ch->num],
+> > +                                       ch->rx_buf);
+> Given what other drivers do, and how mtk_mfg consumes the data, we should
+>=20
+>   char buf[MAX_OF_RX_LEN]; //  MAX_OF_RX_LEN is 32; we can also
+> allocate it during probe
+>   mtk_gpueb_mbox_read_rx(ch);
+>   mbox_chan_received_data(..., buf);
+>=20
+> mtx_mfg makes a copy eventually anyway.
+
+We don't right now, at least not until after the callback returns.
+So we need to have the copy in the mtk_mfg callback, not after the
+completion. That's fine and I do want to do this as this is what
+the mailbox framework seems to expect clients to do.
+
+> We don't need to maintain any
+> extra copy.
+>=20
+> Then we might not need rx_status.
+
+We can probably get rid of it if we keep the per-channel
+interrupt handler. Otherwise, we may still need clogged,
+as we don't want to process interrupts on channels we have
+no user for.
+
+>=20
+> > +               atomic_set(&ch->rx_status, 0);
+> > +               return IRQ_HANDLED;
+> > +       }
+> > +
+> > +       return IRQ_NONE;
+> > +}
+> > +
+> > +static int mtk_gpueb_mbox_send_data(struct mbox_chan *chan, void *data)
+> > +{
+> > +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
+> > +       int i;
+> > +       u32 *values =3D data;
+> > +
+> > +       if (atomic_read(&ch->rx_status))
+> > +               return -EBUSY;
+> > +
+> > +       /*
+> > +        * We don't want any fancy nonsense, just write the 32-bit valu=
+es in
+> > +        * order. memcpy_toio/__iowrite32_copy don't work here, because=
+ fancy.
+> > +        */
+> > +       for (i =3D 0; i < ch->c->tx_len; i +=3D 4)
+> > +               writel(values[i / 4], ch->ebm->mbox_mmio + ch->c->tx_of=
+fset + i);
+> > +
+> > +       writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_SET);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int mtk_gpueb_mbox_startup(struct mbox_chan *chan)
+> > +{
+> > +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
+> > +       int ret;
+> > +
+> > +       atomic_set(&ch->rx_status, 0);
+> > +
+> > +       ret =3D clk_enable(ch->ebm->clk);
+> > +       if (ret) {
+> > +               dev_err(ch->ebm->dev, "Failed to enable EB clock: %pe\n=
+",
+> > +                       ERR_PTR(ret));
+> > +               goto err_clog;
+> > +       }
+> > +
+> > +       writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_CLR);
+> > +
+> > +       ret =3D devm_request_threaded_irq(ch->ebm->dev, ch->ebm->irq, m=
+tk_gpueb_mbox_isr,
+> > +                                       mtk_gpueb_mbox_thread, IRQF_SHA=
+RED | IRQF_ONESHOT,
+> > +                                       ch->full_name, ch);
+> I don't think this warrants a per-channel irq thread.
+>=20
+> mbox_chan_received_data is atomic. I think wecan start simple with
+> just a devm_request_irq for all channels. mtk_gpueb_mbox_isr can
+>=20
+>   read bits from MBOX_CTL_RX_STS
+>   for each bit set:
+>     read data from rx
+>     mbox_chan_received_data
+>   write bits to MBOX_CTL_IRQ_CLR
+>=20
+
+I don't like this approach. It brings us back to having to process
+multiple channels per ISR, keep track of when the interrupt should
+be enabled and disabled based on how many channels are in use, and
+also is not in line with what e.g. omap-mailbox.c does.
+
+Remember that `mbox_chan_received_data` synchronously calls the
+mailbox client's rx_callback. In mediatek_mfg's case, this is
+fairly small, though with the request to not make the rx buffer
+persist beyond the rx_callback it will gain an additional memory
+copy. But we can't guarantee that someone isn't going to put a
+slow operation in the path. Sure, it's going to be atomic, but
+waiting for a spinlock is atomic and not something an ISR would
+enjoy. I don't think mailbox clients would expect that if they
+take their time they'll stall the interrupt handler for every
+other channel.
+
+So we'd keep the interrupt disabled for all channels until the
+client that received a message has processed it.
+
+I can see myself getting rid of the handler and just having the
+thread function as the bottom half, but I'd really like to keep
+the one-IRQ-request-per-channel thing I've got going now as it
+made the code a lot easier to reason about. However, doing this
+would mean the interrupt is re-enabled after the generic upper
+half, when all the business logic that needs to not run
+concurrently for an individual channel is in the bottom half.
+
+As far as I can tell, this would then mean we'd have to add
+some concurrency exclusion mechanism to the bottom half.
+
+Moving all the logic into the upper half handler function
+would make that handler somewhat longer, and I don't know
+if IRQF_ONESHOT masks the interrupt for all users of that
+IRQ number or just for those with that dev_id. If it's per
+dev_id, then I'm fine with moving stuff up there. But from
+my reading of the core IRQ handling code, that does not
+appear to be the case; one channel getting a reply would
+mask *all* channels of the mailbox until the upper half is
+completed, and if the upper half calls into a driver
+callback synchronously, that may take a hot minute.
+
+Put differently: Is there a problem with one thread per used
+channel, or are we going off vibes here? The way it currently
+works uses the shared interrupt to mark just that one channel
+as busy with rx_status before letting the IRQ for all channels
+be unmasked again, which seems ideal to me.
+
+
 
