@@ -1,253 +1,144 @@
-Return-Path: <linux-kernel+bounces-817050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3F5B57D14
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:30:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57C7B57D29
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33BB04C0171
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8793E1884009
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D8C315D5B;
-	Mon, 15 Sep 2025 13:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8813B31987B;
+	Mon, 15 Sep 2025 13:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bNR4R6FA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kXVZgNRq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bNR4R6FA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kXVZgNRq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bTyXsVyN"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFAF315D2C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD86A3148CB
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942920; cv=none; b=B0nEZ4L3KsMLOukNJeGfxkej7XTkM5657/KOKnIA8eJOyQDDz1jbalTLqRNrNWjRSVKd8YAcX6kXTGx3DRFuRqLNFov/Yn4/DpfSTQWbZO2QYLzA+KjRSMbI9got4AxdUVKdjLgZZys/vgCtj25xcmdmxhIXsOU3FA14jjYd6hg=
+	t=1757942937; cv=none; b=Gj/eiMmkB7G+0P5kDN1T4HvUcJ1WW5UW67+LZ3TS1T1Xl7U3g7elj9h53gr0HR4ZQWBymczdw1BR9S1Dw6lwyA9/L6MyFsKPne09UiKq18qFqZqnhQGzUA6ZPTnAjA4tc8b7Bf7j1t8ViuftXlu211S7KBw1SnDp4iNmfjK7Lfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942920; c=relaxed/simple;
-	bh=1AW4t4m6IiHUftKocp6VIyAkHCIooVduXxKVptt40PQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZemURTt6iXR2aCGmrl/9sZysHR5B9tPhl2nlZwOPgYHnWVwga+DksSdzX8AOo7+jkG7CKJmo0b1VYokJZgJu1QTZxaO+oXvOa8LVc4DTl5b79VAeRvS3akDfh80dXYtlaGO4pp1S8Svtxf2zUCSgruObH38VRTDWkD9W45fr3w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bNR4R6FA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kXVZgNRq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bNR4R6FA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kXVZgNRq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 64A6B1FB3B;
-	Mon, 15 Sep 2025 13:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757942916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
-	b=bNR4R6FALKJQFagyxuMJVny9MRcdRheTibLPuOdI3N9VWPz1UVqy4t31q9NPZQiaDsgNxv
-	8domcKZEj0qkd6JIQsOHZSv1BnILvngKu7FNsZJrxmqz+rQ0fYm1fQ5z7tonW06c6t6Pvx
-	0QUFW5P6j5JaKurqRfXxa2TMsbsaxwE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757942916;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
-	b=kXVZgNRq73fYquBOv5Gd6JCZO2bjeCgVyRCbya/8OaDivP9pCcU4v4vylnfj3Uzb03VhgZ
-	wBEx95vInt4e0cAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=bNR4R6FA;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kXVZgNRq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757942916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
-	b=bNR4R6FALKJQFagyxuMJVny9MRcdRheTibLPuOdI3N9VWPz1UVqy4t31q9NPZQiaDsgNxv
-	8domcKZEj0qkd6JIQsOHZSv1BnILvngKu7FNsZJrxmqz+rQ0fYm1fQ5z7tonW06c6t6Pvx
-	0QUFW5P6j5JaKurqRfXxa2TMsbsaxwE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757942916;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fh2vl3+uAnoFHC+NjtnoTcOHnOS9CFU/hHs/bP7JMG0=;
-	b=kXVZgNRq73fYquBOv5Gd6JCZO2bjeCgVyRCbya/8OaDivP9pCcU4v4vylnfj3Uzb03VhgZ
-	wBEx95vInt4e0cAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4929B1372E;
-	Mon, 15 Sep 2025 13:28:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P7aLEYQUyGgUTgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 13:28:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E532FA0A06; Mon, 15 Sep 2025 15:28:31 +0200 (CEST)
+	s=arc-20240116; t=1757942937; c=relaxed/simple;
+	bh=ptDgOt9loL01vjXEcr2EORId3mL6P+tLCbDsLLyXacs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=kvrhLeX9X/v3Porr7uw3vfqIwwjzJbkQFFzW4XT9ioTLwfAL5p+Yxazkp5qk9jm1FrMPUNOlpqsIC/HdtyEOpM9lHCtJgclvRzfpMRxc2bxzSFxN0uAwdbADTrj3xKFCHf7cPaeRXnkLsEsqDqfndxqRUDODJb4VAybTiNqsfhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bTyXsVyN; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e92ce28278so1306673f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:28:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757942934; x=1758547734; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h4T755BDgP/qpBojCajXbDU09SOREwS+KrCJfs0q/wk=;
+        b=bTyXsVyND+oNO9i/ykBq0NBPMxor7uAIIGIt3xuQRmCL0RYsPaW3XMFvqzCUjW++tA
+         Sh4drzqeUeW5f7JqBKorZa6FQb8mCvDgyMwKDv3mM5/m68WjNH6wy03lmbAQmNvE3JRy
+         1DKSYijOnuhWUcwv4VAuV2gRHlbml/+LvQaOCjAAKHNjA1clMmEexDLlogwsxbhSGlQG
+         WsjlWpNo0kDN1pJgiK0DiqlxWLXX/W86RGkg0ppJTedZc/8S1Vn4fmT8Z/DluZLymQ0Y
+         F6nxQ+/J/R3J9f3ASxUi4mUK4FL7NCS5Zx0ckUXIdHooXu/p6mII3Q7JJH0AhhSbqX1a
+         K/jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757942934; x=1758547734;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h4T755BDgP/qpBojCajXbDU09SOREwS+KrCJfs0q/wk=;
+        b=Mv4V3rAXJfrRWb3j9ffOvjw74OnaY1VG9SUdV8G2EN/G007TgdnuaB/iJMou6RzVlc
+         Qe13GUO2p3Ee96Qm25whVxKrsLblM6WdnLsOUERIG9HYdrOZlqy/jM7xzSPpgCFUuteQ
+         ESRBOEzuMOL3FqpLtftXf8jhH/ovDuS18lZZ7KyCl6g9gilabrIaPUYPeQlvu+muThhT
+         9swseLrZlVNJWxqNp71xtXx3SX6HUipjjO/GAVi7x64PhwDyiJVzRweSTpy3Pv8MjpIt
+         Q+/ktyfAbboK4rRznv35+14Wn7ZojY8Enfj9wbkw1KnvDaW+SRZ+UqMniECTkkIkQfed
+         OddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpTe+CFQbphWQZtNwaG4UBn3SSsygnQs6Rd+xzR7Y/BlC0bPLS5nBJGzZLONdj54niR9XraWx5r/iU3jQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjablfUa8oaC/ii4RoqjwuxAOCB7i76qkV/Yo89iBMuUOAFIxK
+	+zgacpAB/izQT/h+a6versxxTYxnZN2FdvDl15EWh0mVT8uG9qPpNSV21ZVaMQQqG9s=
+X-Gm-Gg: ASbGncsKww1UL/hSRDFoOvcBgEV+UGoYZi89QN6S32n6s5MU1qPlsZtxbSZxgbYHlE6
+	osBpPWpgzTAN+MLTsqLQ4zOX1ySIZASh6ol+IMaNoZMt56ZrZgZ4XyjMhVa4xrf9RG80GIbCqVw
+	lGcqSmPJIQczluxb76yneBsyScECoromDhSdi97tfJhYW9B6DyfDetmxfcjweNp4pT/dsSIBMpB
+	DCLIK+mbMoVHorcPnXQKLvbdWHkJymWuWuE21BbIAVrez1Jc3OGMzesZ2SbMokckJU0L9NK4wqH
+	K2e8CqhqfH2zUSox3gVP9byr7/wgcc8v2ai6sk7tM4QboWwiyx8VR6AuLRMHNTPGcDL+JbftDDG
+	BRZdgVO3s+HC/ENc7nTJBijJF+thOz5RXJBk=
+X-Google-Smtp-Source: AGHT+IF2lZ75yypIgx7ZsKIckhx/rgZnX4SN4Pv/XeHMttF8TsxMtLWww+ac24EzQYJ8nkDOc2rCrg==
+X-Received: by 2002:a5d:5886:0:b0:3e7:4fda:fe0c with SMTP id ffacd0b85a97d-3e7657b9f3emr11555829f8f.15.1757942934041;
+        Mon, 15 Sep 2025 06:28:54 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:41:eee1:5042:e713:2e9a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e9fd89af70sm5978874f8f.43.2025.09.15.06.28.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 06:28:53 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
 Date: Mon, 15 Sep 2025 15:28:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 30/33] nsfs: add missing id retrieval support
-Message-ID: <bmkl6ii7y7fbkzndiukfuxpgsysli6552zzg2fsax4xqhgms73@wk7sfbp6hqyl>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
+Subject: [PATCH 2/3] arm64: dts: qcom: msm8939: Add missing MDSS reset
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-30-1a247645cef5@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 64A6B1FB3B
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim,suse.cz:email]
-X-Spam-Score: -2.51
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250915-msm8916-resets-v1-2-a5c705df0c45@linaro.org>
+References: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
+In-Reply-To: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Vincent Knecht <vincent.knecht@mailoo.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Fri 12-09-25 13:52:53, Christian Brauner wrote:
-> The mount namespace has supported id retrieval for a while already.
-> Add support for the other types as well.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On most MSM8939 devices, the bootloader already initializes the display to
+show the boot splash screen. In this situation, MDSS is already configured
+and left running when starting Linux. To avoid side effects from the
+bootloader configuration, the MDSS reset can be specified in the device
+tree to start again with a clean hardware state.
 
-Looks good. Feel free to add:
+The reset for MDSS is currently missing in msm8939.dtsi, which causes
+errors when the MDSS driver tries to re-initialize the registers:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ dsi_err_worker: status=6
+ dsi_err_worker: status=6
+ dsi_err_worker: status=6
+ ...
 
-								Honza
+It turns out that we have always indirectly worked around this by building
+the MDSS driver as a module. Before v6.17, the power domain was temporarily
+turned off until the module was loaded, long enough to clear the register
+contents. In v6.17, power domains are not turned off during boot until
+sync_state() happens, so this is no longer working. Even before v6.17 this
+resulted in broken behavior, but notably only when the MDSS driver was
+built-in instead of a module.
 
-> ---
->  fs/nsfs.c                 | 25 +++++++++++++------------
->  include/uapi/linux/nsfs.h |  6 ++++--
->  2 files changed, 17 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 22765fcab18e..8484bc4dd3de 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -177,6 +177,7 @@ static bool nsfs_ioctl_valid(unsigned int cmd)
->  	case NS_GET_TGID_FROM_PIDNS:
->  	case NS_GET_PID_IN_PIDNS:
->  	case NS_GET_TGID_IN_PIDNS:
-> +	case NS_GET_ID:
->  		return true;
->  	}
->  
-> @@ -226,18 +227,6 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
->  		argp = (uid_t __user *) arg;
->  		uid = from_kuid_munged(current_user_ns(), user_ns->owner);
->  		return put_user(uid, argp);
-> -	case NS_GET_MNTNS_ID: {
-> -		__u64 __user *idp;
-> -		__u64 id;
-> -
-> -		if (ns->ops->type != CLONE_NEWNS)
-> -			return -EINVAL;
-> -
-> -		mnt_ns = container_of(ns, struct mnt_namespace, ns);
-> -		idp = (__u64 __user *)arg;
-> -		id = mnt_ns->ns.ns_id;
-> -		return put_user(id, idp);
-> -	}
->  	case NS_GET_PID_FROM_PIDNS:
->  		fallthrough;
->  	case NS_GET_TGID_FROM_PIDNS:
-> @@ -283,6 +272,18 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
->  			ret = -ESRCH;
->  		return ret;
->  	}
-> +	case NS_GET_MNTNS_ID:
-> +		if (ns->ops->type != CLONE_NEWNS)
-> +			return -EINVAL;
-> +		fallthrough;
-> +	case NS_GET_ID: {
-> +		__u64 __user *idp;
-> +		__u64 id;
-> +
-> +		idp = (__u64 __user *)arg;
-> +		id = ns->ns_id;
-> +		return put_user(id, idp);
-> +	}
->  	}
->  
->  	/* extensible ioctls */
-> diff --git a/include/uapi/linux/nsfs.h b/include/uapi/linux/nsfs.h
-> index fa86fe3c8bd3..5d5bf22464c9 100644
-> --- a/include/uapi/linux/nsfs.h
-> +++ b/include/uapi/linux/nsfs.h
-> @@ -16,8 +16,6 @@
->  #define NS_GET_NSTYPE		_IO(NSIO, 0x3)
->  /* Get owner UID (in the caller's user namespace) for a user namespace */
->  #define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-> -/* Get the id for a mount namespace */
-> -#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
->  /* Translate pid from target pid namespace into the caller's pid namespace. */
->  #define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
->  /* Return thread-group leader id of pid in the callers pid namespace. */
-> @@ -42,6 +40,10 @@ struct mnt_ns_info {
->  /* Get previous namespace. */
->  #define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
->  
-> +/* Retrieve namespace identifiers. */
-> +#define NS_GET_MNTNS_ID		_IOR(NSIO, 5,  __u64)
-> +#define NS_GET_ID		_IOR(NSIO, 13, __u64)
-> +
->  enum init_ns_ino {
->  	IPC_NS_INIT_INO		= 0xEFFFFFFFU,
->  	UTS_NS_INIT_INO		= 0xEFFFFFFEU,
-> 
-> -- 
-> 2.47.3
-> 
+Cc: stable@vger.kernel.org
+Fixes: 61550c6c156c ("arm64: dts: qcom: Add msm8939 SoC")
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8939.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+index 68b92fdb996c26e7a1aadedf0f52e1afca85c4ab..eb64ec35e7f0e1c63b0b96f68d30006c2e440998 100644
+--- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+@@ -1249,6 +1249,8 @@ mdss: display-subsystem@1a00000 {
+ 
+ 			power-domains = <&gcc MDSS_GDSC>;
+ 
++			resets = <&gcc GCC_MDSS_BCR>;
++
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			#interrupt-cells = <1>;
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.50.1
+
 
