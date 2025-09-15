@@ -1,211 +1,268 @@
-Return-Path: <linux-kernel+bounces-816809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D581B5788C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38382B5788B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5738A16390B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:36:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980453B53DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B15304BBC;
-	Mon, 15 Sep 2025 11:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77DD2FDC54;
+	Mon, 15 Sep 2025 11:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOubP34f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="QLK0sUmb"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86720304BAB;
-	Mon, 15 Sep 2025 11:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC40B2FD1BC
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757935979; cv=none; b=OttWRK1IF/lG6TqWW1dxl2U6KnnE4+fEaxy3MaOvZL0eqgLhd7RuxYv3zilCnWCAPrbbvBk3ZCPXFA5KXUXswkMSkCRcmDdnhcz/OCejQnwbnonPuLMLa/01BrRkHnyunHRS35Y6VRkC4UiEeyFqlN1VKL8mGaXuF8ItfJ9gfZc=
+	t=1757936089; cv=none; b=Y72JPj5clltDXNFsorerzPrMAbFn9OD4JIy7z0Mrq411u3bpRiOBnlZFetsef5HBv5/H4k3QgZvLkHcX62Mvo1hzdxsq08TSiX3F6134qmrzEM5To3ICzqRKxiLeOMJ4yODyQ29j63fdou8QghLobTdJRqE1RM4NDGvXS1lwRx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757935979; c=relaxed/simple;
-	bh=8oYNqrrAlQEHTxjixTYfzlFOUreIiPXKTs7mp++pE0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bFbP7vNfM+8X4LNHPvtN0KPehA1/RX9W8pkbrYq0ajBOT4l3xyfjJm3exlvtTpv9XTC4nuVx7EQ8ZsA7tR/Etbusc5s0rmjpfGwF2bkg0FebX4DM0do7qq6IZo0Jwx0JNPo7LLixeXRl89zjH1PdO3GFxU3iAKhBTMJmcYtOTPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOubP34f; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757935978; x=1789471978;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8oYNqrrAlQEHTxjixTYfzlFOUreIiPXKTs7mp++pE0U=;
-  b=QOubP34fjeg/V+vVNQaNDNf/CV6tCzYNJcmF6LkgDflNnLuVhluvPkRH
-   eKKDAZE0z4kdwHgKllZm1A/m45DaWVg/EyschTAUB6QSXiPY8tEIQbJIO
-   8EG5f3w7XNEAVXW7KocheY9XFBbkL0lXAH2zQzKNe7KhUgEvou/rWRKtK
-   1Y0kQrgXGbq8uDIKP4UQNqb57b63GpadR8N7kOV3oP1xjC8okrGUKU/iv
-   TZABjswTf3PsFhjEKL2c22EudUBvSfcsYMOpJNGLOuCnuzvs3w1sHwbvU
-   uQ1I0kapi1FyYhYYbwAHmC2AQgM2DRQH2tw+XERSl+vkFEPa4o/p17mvp
-   g==;
-X-CSE-ConnectionGUID: FZGZljEYQ/KHZ1hJ7buxvw==
-X-CSE-MsgGUID: oyOD4ecZSb6VRxvN7TYNDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="59882595"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="59882595"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 04:32:57 -0700
-X-CSE-ConnectionGUID: CxmrLDUGRdmlr666bRvVTg==
-X-CSE-MsgGUID: eFIsTmacTnCX0JgmduWKgw==
-X-ExtLoop1: 1
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.30])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 04:32:55 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 2F4DE11FCCF;
-	Mon, 15 Sep 2025 14:32:52 +0300 (EEST)
-Date: Mon, 15 Sep 2025 14:32:52 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 2/4] ACPI: property: Add code comments explaining what
- is going on
-Message-ID: <aMf5ZNW9t_6tfsjy@kekkonen.localdomain>
-References: <5046661.31r3eYUQgx@rafael.j.wysocki>
- <2243680.irdbgypaU6@rafael.j.wysocki>
+	s=arc-20240116; t=1757936089; c=relaxed/simple;
+	bh=efRvVstIjj6wz2Ol2fhpYjEQLHopnQ/5AnbWG0dOE4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ntx9QagiakSUux+wefcigpZprY+PiJwhww1N8hsHUSZqOy/J3GdnLooTqi2rw6nnReWoLG4uYrnleNiZEiEjIei31IKAMh+ymMto+ujNMiTxORucV84Isxw8KXd4jW5eeVgBHTNCP9qMiYPMx+oG4KpFSsWNu7chdRCG8g+C9ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=QLK0sUmb; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77615d6af4fso3347074b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:34:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1757936087; x=1758540887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4NZhLJFAwarDAFKpIBv/PCVePqs917oamiLOEW2SkUg=;
+        b=QLK0sUmblGu4fiD/7BV320kAVlinUeOCeBdHVDpCQpJNPrIzUCpCpVaBlxMomA4/6B
+         kxHgZqu0+BaOlErHysyuJzk6c07Nf7NkK5rGdsuLsje2IvPvRyOcn5p7wYaPEDvV6wlG
+         r2HCdlG5jQ1OV0uAltjAYIeLs53Lap9pVBCNHeP3yk9vFjWbacoug2dR3lQOtAZBV03R
+         n/JXouN5FDqBiX2WCuwXCLSGfxrs1EJ8ggZl7aTolz85fcaTCm2Begee0y2HquJoaviW
+         GgN1NfXYi+B3T0YJUrOwNWYyJY0xTrCoWDZ3Nck+6M5dRFAAgwyPOBWpS08AptfYi0cE
+         E10Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757936087; x=1758540887;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4NZhLJFAwarDAFKpIBv/PCVePqs917oamiLOEW2SkUg=;
+        b=KaVOHFkABct8OMSFwv8XWVn94iJLSD4UfTV9LSn5+0/jmP9KGGvXEs1QV9/OZme54l
+         5ygQWEHSW3CWodcDDSlcjQMkjrKu7sfbL/RxcVSkWAydGAao/2KYHJTKJi6mLIv1O3wP
+         GaYujNY2xUZjwswaK2fZS2JgQV0drCV9HnOtDx/P1AuKkOtZg9bWBrb0CpfSWcDVdvi8
+         alv1Dfh2FwvUjG+YywTIR02Qq91TuocFN/HGFEzlonjFdoRYbALk72flYjwuqbO0tNg1
+         LQXkE1EDlyU1yqAFHQW5KSVi93jkJ1dQX8e87T5m7/Vct8+jY6WdHMjnoKW2NaEE1ATQ
+         Beug==
+X-Forwarded-Encrypted: i=1; AJvYcCUE65Z3SjdGQx/Pov/v/chOTOgrJKIZXJ387ak0geacBWVPpyYI9BCcN6me9HikR5k+/dMyeV1m4ig3Hxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVdmQQfk3pShD2xIEIwXQFLkN+ezU+O0f/B1MroQjNe8DqBhum
+	9fWzvP7xIobOAcNJSenm/OwYrUcGBo+szzayWOwEqS60k4kqsV9cM3R9jk+9uvG3sWM=
+X-Gm-Gg: ASbGncvmnMjoLeTYwFn5XJ5xPLIpIJN4dO173IcRpnxVqRWiFyP4vjvYPCHva59V9sJ
+	ZeOHSHr+h1fM3T9/pLBjaaSWf2yfIS6drUZKlzVsr3Ipy2DK7o6hCApH83pEm/wnuRwgeVV8HRc
+	kf3yUnRvHRt+5WpIP/+g8xs5awhDoNTNZ2rmEmzTC2AFUt9uAeVYaFTFPNUHZkgZPLLbD9ITacX
+	zy6B+8LKCJIImMNgEb4zKFiLkLNBOcZsgKVAnsO76Mybm2GZAbURwl9TRGKRkU3EwdiJDhIOM6Z
+	0K0M3ftvwz2gNRPcC1Yzs8EV+mQaSQud7rp7YUaNsyeLquzUJYlOiA5sXdrvczWWTZnv0DpBU6Y
+	HlyePFewIWZ/jYbjfHxH45+hM5B9jNAs4rpcz6oYep5HQVsMyr67jgiumRRb30JkAyOlxJLQe8Q
+	OrbaZdcWfKMpQCJlOZDXTnYZL/uzhbj6VtUbaLEE/u
+X-Google-Smtp-Source: AGHT+IEvPgrwUX4kCmCV9Syb0DjxG3MV45KBgsUck7q7xvM7/ZZuNyW0JKx0bHnMy+iU5gOgeVovvQ==
+X-Received: by 2002:a05:6a00:234b:b0:772:101f:5e46 with SMTP id d2e1a72fcca58-77612095aa7mr12504855b3a.12.1757936086667;
+        Mon, 15 Sep 2025 04:34:46 -0700 (PDT)
+Received: from ubuntu.. (202.60.225.077.static.cyberec.com. [202.60.225.77])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b3603asm12711839b3a.84.2025.09.15.04.34.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 04:34:46 -0700 (PDT)
+From: Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+To: dianders@chromium.org,
+	neil.armstrong@linaro.org,
+	jessica.zhang@oss.qualcomm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+Subject: [PATCH] drm/panel-edp: Add several panel configurations for mt8189 Chromebook
+Date: Mon, 15 Sep 2025 19:34:37 +0800
+Message-Id: <20250915113437.665345-1-wuzhongtian@huaqin.corp-partner.google.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2243680.irdbgypaU6@rafael.j.wysocki>
+Content-Transfer-Encoding: 8bit
 
-Hi Rafael,
+Add several panel configurations for mt8189 Chromebook. For B140HAK03.3,
+the enable timing required 50ms. For NV156FHM-N4S, the enable timing
+required 200ms. For N140HCA-EAC, the enable timing required 80ms. For
+N156HCA-EAB, the enable timing required 80ms. For MNE001BS1-4, the enable
+timing required 80ms. For MNF601BS1-3, the enable timing required 80ms,
+the disable timing required 50ms.
 
-On Fri, Sep 12, 2025 at 09:40:58PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> In some places in the ACPI device properties handling code, it is
-> unclear why the code is what it is.  Some assumptions are not documented
-> and some pieces of code are based on experience that is not mentioned
-> anywhere.
-> 
-> Add code comments explaining these things.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/acpi/property.c |   51 ++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 49 insertions(+), 2 deletions(-)
-> 
-> --- a/drivers/acpi/property.c
-> +++ b/drivers/acpi/property.c
-> @@ -108,7 +108,18 @@ static bool acpi_nondev_subnode_extract(
->  	if (handle)
->  		acpi_get_parent(handle, &scope);
->  
-> +	/*
-> +	 * Extract properties from the _DSD-equivalent package pointed to by
-> +	 * desc and use scope (if not NULL) for the completion of relative
-> +	 * pathname segments.
-> +	 *
-> +	 * The extracted properties will be held in the new data node dn.
-> +	 */
->  	result = acpi_extract_properties(scope, desc, &dn->data);
-> +	/*
-> +	 * Look for subnodes in the _DSD-equivalent package pointed to by desc
-> +	 * and create child nodes of dn if there are any.
-> +	 */
->  	if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->fwnode))
->  		result = true;
->  
-> @@ -153,6 +164,12 @@ static bool acpi_nondev_subnode_ok(acpi_
->  	acpi_handle handle;
->  	acpi_status status;
->  
-> +	/*
-> +	 * If the scope is unknown, the _DSD-equivalent package being parsed
-> +	 * was embedded in an outer _DSD-equivalent package as a result of
-> +	 * direct evaluation of an object pointed to by a reference.  In that
-> +	 * case, using a pathname as the target object pointer is invalid.
-> +	 */
->  	if (!scope)
->  		return false;
->  
-> @@ -172,6 +189,10 @@ static bool acpi_add_nondev_subnodes(acp
->  	bool ret = false;
->  	int i;
->  
-> +	/*
-> +	 * Every element in the links package is expected to represent a link
-> +	 * to a non-device node in a tree containing device-specific data.
-> +	 */
->  	for (i = 0; i < links->package.count; i++) {
->  		union acpi_object *link, *desc;
->  		acpi_handle handle;
-> @@ -182,22 +203,48 @@ static bool acpi_add_nondev_subnodes(acp
->  		if (link->package.count != 2)
->  			continue;
->  
-> -		/* The first one must be a string. */
-> +		/* The first one (the key) must be a string. */
->  		if (link->package.elements[0].type != ACPI_TYPE_STRING)
->  			continue;
->  
-> -		/* The second one may be a string, a reference or a package. */
-> +		/*
-> +		 * The second one (the target) may be a string, a reference or
-> +		 * a package.
-> +		 */
->  		switch (link->package.elements[1].type) {
->  		case ACPI_TYPE_STRING:
-> +			/*
-> +			 * The string is expected to be a full pathname or a
-> +			 * pathname segment relative to the given scope.  That
-> +			 * pathname is expected to point to an object returning
-> +			 * a package that contains _DSD-equivalent information.
-> +			 */
->  			result = acpi_nondev_subnode_ok(scope, link, list,
->  							 parent);
->  			break;
->  		case ACPI_TYPE_LOCAL_REFERENCE:
+B140HAK03.3
+edid-decode (hex):
 
-I think you get ACPI_TYPE_LOCAL_REFERENCE only when you evaluate a
-reference to a device object.
+00 ff ff ff ff ff ff 00 06 af a9 b7 00 00 00 00
+28 20 01 04 95 1f 11 78 03 f5 65 8f 55 5a 93 2a
+1f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 60 3b 80 04 71 38 52 40 10 10
+3e 00 35 ae 10 00 00 18 95 27 80 04 71 38 52 40
+10 10 3e 00 35 ae 10 00 00 18 00 00 00 fe 00 41
+55 4f 0a 20 20 20 20 20 20 20 20 20 00 00 00 fe
+00 42 31 34 30 48 41 4b 30 33 2e 33 20 0a 00 f1
 
-> +			/*
-> +			 * The reference is expected to point to an object
-> +			 * returning a package that contains _DSD-equivalent
-> +			 * information.
-> +			 */
->  			handle = link->package.elements[1].reference.handle;
->  			result = acpi_nondev_subnode_data_ok(handle, link, list,
->  							     parent);
->  			break;
->  		case ACPI_TYPE_PACKAGE:
+NV156FHM-N4S
+edid-decode (hex):
 
-And similarly, the result of an evaluation here is a package when a
-reference points to a name object (i.e. a data node).
+00 ff ff ff ff ff ff 00 09 e5 f2 0c 00 00 00 00
+10 22 01 04 a5 22 13 78 03 00 f5 97 5e 5b 93 29
+1f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 99 3b 80 10 71 38 50 40 30 20
+36 00 58 c2 10 00 00 1a 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 fe 00 42
+4f 45 20 43 51 0a 20 20 20 20 20 20 00 00 00 fe
+00 4e 56 31 35 36 46 48 4d 2d 4e 34 53 0a 00 dc
 
-> +			/*
-> +			 * This happens when the target package is embedded
-> +			 * within the links package as a result of direct
-> +			 * evaluation of an object pointed to by a reference.
-> +			 *
-> +			 * The target package is expected to contain _DSD-
-> +			 * equivalent information, but the scope in which it
-> +			 * is located in the original AML is unknown.  Thus
-> +			 * it cannot contain pathname segments represented as
-> +			 * strings because there is no way to build full
-> +			 * pathnames out of them.
-> +			 */
->  			desc = &link->package.elements[1];
->  			result = acpi_nondev_subnode_extract(desc, NULL, link,
->  							     list, parent);
-> 
+N140HCA-EAC
+edid-decode (hex):
 
+00 ff ff ff ff ff ff 00 0d ae 8f 14 00 00 00 00
+0f 22 01 04 a5 1f 11 78 03 28 65 97 59 54 8e 27
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 b4 3b 80 4a 71 38 34 40 50 3c
+68 00 35 ad 10 00 00 18 c2 2f 80 4a 71 38 34 40
+50 3c 68 00 35 ad 10 00 00 18 00 00 00 fd 00 28
+3c 44 44 10 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4e 31 34 30 48 43 41 2d 45 41 43 0a 20 01 90
+
+02 03 22 00 e3 05 80 00 e6 06 01 01 53 53 4b 72
+1a 00 00 03 01 28 3c 00 00 00 00 00 00 3c 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 62
+
+N156HCA-EAB
+edid-decode (hex):
+
+00 ff ff ff ff ff ff 00 0d ae 65 15 00 00 00 00
+0b 22 01 04 a5 22 13 78 03 28 65 97 59 54 8e 27
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 b4 3b 80 4a 71 38 34 40 50 36
+68 00 58 c1 10 00 00 18 c2 2f 80 4a 71 38 34 40
+50 36 68 00 58 c1 10 00 00 18 00 00 00 fd 00 28
+3c 44 44 10 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4e 31 35 36 48 43 41 2d 45 41 42 0a 20 01 50
+
+02 03 22 00 e3 05 80 00 e6 06 01 01 53 53 42 72
+1a 00 00 03 01 28 3c 00 00 00 00 00 00 3c 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b
+
+MNE001BS1-4
+edid-decode (hex):
+
+00 ff ff ff ff ff ff 00 0e 77 4b 14 00 00 00 00
+25 22 01 04 a5 1f 11 78 03 2c c5 94 5c 59 95 29
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 9a 36 80 a0 70 38 28 40 30 20
+36 00 35 ae 10 00 00 1a 00 00 00 fd 00 28 3c 43
+43 0e 01 0a 20 20 20 20 20 20 ae 2b 80 a0 70 38
+28 40 30 20 36 00 35 ae 10 00 00 1a 00 00 00 fc
+00 4d 4e 45 30 30 31 42 53 31 2d 34 0a 20 01 0e
+
+70 20 79 02 00 81 00 1e 72 1a 00 00 03 01 28 3c
+00 00 53 ff 53 ff 3c 00 00 00 00 e3 05 04 00 e6
+06 01 01 53 53 ff 2b 00 06 27 00 28 3b 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 b8 90
+
+MNF601BS1-3
+edid-decode (hex):
+
+00 ff ff ff ff ff ff 00 0e 77 19 15 00 00 00 00
+19 22 01 04 a5 22 13 78 03 2c c5 94 5c 59 95 29
+1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+01 01 01 01 01 01 9a 36 80 a0 70 38 28 40 30 20
+36 00 58 c1 10 00 00 1a ae 2b 80 a0 70 38 28 40
+30 20 36 00 58 c1 10 00 00 1a 00 00 00 fd 00 28
+3c 43 43 0e 01 0a 20 20 20 20 20 20 00 00 00 fc
+00 4d 4e 46 36 30 31 42 53 31 2d 33 0a 20 01 d4
+
+70 20 79 02 00 81 00 1e 72 1a 00 00 03 01 28 3c
+00 00 53 ff 53 ff 3c 00 00 00 00 e3 05 04 00 e6
+06 01 01 53 53 ff 2b 00 06 27 00 28 3b 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 b8 90
+
+Signed-off-by: Zhongtian Wu <wuzhongtian@huaqin.corp-partner.google.com>
+---
+ drivers/gpu/drm/panel/panel-edp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 62435e3cd9f4..15425b224a72 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -1909,6 +1909,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0x8bba, &delay_200_500_e50, "B140UAN08.5"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0xa199, &delay_200_500_e50, "B116XAN06.1"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0xa7b3, &delay_200_500_e50, "B140UAN04.4"),
++	EDP_PANEL_ENTRY('A', 'U', 'O', 0xb7a9, &delay_200_500_e50, "B140HAK03.3"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0xc4b4, &delay_200_500_e50, "B116XAT04.1"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0xc9a8, &delay_200_500_e50, "B140QAN08.H"),
+ 	EDP_PANEL_ENTRY('A', 'U', 'O', 0xcdba, &delay_200_500_e50, "B140UAX01.2"),
+@@ -1974,6 +1975,7 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT140FHM-N47"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c93, &delay_200_500_e200, "Unknown"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
++	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cf2, &delay_200_500_e200, "NV156FHM-N4S"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cf6, &delay_200_500_e200, "NV140WUM-N64"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
+ 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0d45, &delay_200_500_e80, "NV116WHM-N4B"),
+@@ -2006,11 +2008,13 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x142e, &delay_200_500_e80_d50, "N140BGA-EA4"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1441, &delay_200_500_e80_d50, "N140JCA-ELK"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x144f, &delay_200_500_e80_d50, "N140HGA-EA1"),
++	EDP_PANEL_ENTRY('C', 'M', 'N', 0x148f, &delay_200_500_e80, "N140HCA-EAC"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1468, &delay_200_500_e80, "N140HGA-EA1"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14a8, &delay_200_500_e80, "N140JCA-ELP"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14d4, &delay_200_500_e80_d50, "N140HCA-EAC"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14d6, &delay_200_500_e80_d50, "N140BGA-EA4"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x14e5, &delay_200_500_e80_d50, "N140HGA-EA1"),
++	EDP_PANEL_ENTRY('C', 'M', 'N', 0x1565, &delay_200_500_e80, "N156HCA-EAB"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x162b, &delay_200_500_e80_d50, "N160JCE-ELL"),
+ 	EDP_PANEL_ENTRY('C', 'M', 'N', 0x7402, &delay_200_500_e200_d50, "N116BCA-EAK"),
+ 
+@@ -2022,10 +2026,12 @@ static const struct edp_panel_entry edp_panels[] = {
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1104, &delay_200_500_e50_d100, "MNB601LS1-4"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x143f, &delay_200_500_e50, "MNE007QS3-6"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1448, &delay_200_500_e50, "MNE007QS3-7"),
++	EDP_PANEL_ENTRY('C', 'S', 'W', 0x144b, &delay_200_500_e80, "MNE001BS1-4"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1457, &delay_80_500_e80_p2e200, "MNE007QS3-8"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1462, &delay_200_500_e50, "MNE007QS5-2"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1468, &delay_200_500_e50, "MNE007QB2-2"),
+ 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x146e, &delay_80_500_e50_d50, "MNE007QB3-1"),
++	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1519, &delay_200_500_e80_d50, "MNF601BS1-3"),
+ 
+ 	EDP_PANEL_ENTRY('E', 'T', 'C', 0x0000, &delay_50_500_e200_d200_po2e335, "LP079QX1-SP0V"),
+ 
 -- 
-Kind regards,
+2.34.1
 
-Sakari Ailus
 
