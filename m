@@ -1,229 +1,257 @@
-Return-Path: <linux-kernel+bounces-817276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87F8B5800B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:10:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8615B58026
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815FD3A8512
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A6D1AA7A53
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD454343207;
-	Mon, 15 Sep 2025 15:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856D334572E;
+	Mon, 15 Sep 2025 15:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy750PT6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="C2WcLQgx"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202EE15D1;
-	Mon, 15 Sep 2025 15:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5533EB1C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948876; cv=none; b=YK4uSG1eHr+MgGCZmnr/8V8oh4FKRmxaV7AzVtrBfm8SZ4X9mhwOfeeZz7vLYLKUtjIwgBU43kEYHDPn9Pe3FIg5xqDCmGvT1qo1ZlZjcntapHjBETXB3rMNq0NnVYtdQimO0mrlqWJA/TXQOWHOtwqvkD0MU/37gZRwsS8emes=
+	t=1757948893; cv=none; b=gIdz4EdDlw+q4Msl8AF0wYNOzbs6MDZrskv+rAY7C6ktnkwtev/l/LHvntUGEsE9GRK0ZOV6edW7U+zrwSDTIi9N1bYPO5aGExSK1SQ181uB7+ahTBnUtGkH5th45DlMLmRZ5CKqTYdKZAB8Bk1RioilUds1TADwfKM9DXQJVos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948876; c=relaxed/simple;
-	bh=9lwPpC9IguRK7mLYf7stv3Gtgn5OqQMpmfJLewO9UyA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HkBXDkfWGY8Y4RdpzXovfj9a/RSMkngNMeSOp43OtMiB9V5vkxNaLeJsKRPXcyMAzvJjRHKqnuBvft7/xU+PNjRN1JWZ1PsLQuOt3gq5Kvz8hUvU5ZE3EPVeEVos8Ca5rwsruklzIo2mah6FQNjgDA2donk/D/q3YgbTg3sOZ18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cy750PT6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63448C4CEF1;
-	Mon, 15 Sep 2025 15:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757948876;
-	bh=9lwPpC9IguRK7mLYf7stv3Gtgn5OqQMpmfJLewO9UyA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Cy750PT6Xvj2Xm9XALiqKX0uPDNkoshZ/SSRYlKMu2lKNMNn8yx1b/fmXaMBmzTuE
-	 ojFvrh9O9recxkon2w3X0Cuv2e5uOu7p1UUBcejJbNh1ds5yj+WRCYKI5G+IE41v5c
-	 QT7UbuqPq6LItro9ZM63ejWex554beWu8eZgTZfBQDoxEIHTIzSlOGS/B4PnKelEI/
-	 Vg1eyQ8CUGVtjdNUJzc9/DKvs65Hx8tVgdtHj2sJhImnvZQAiReu/Rl+wAWZ7aJoF+
-	 xi6hZxmug7TTqePgArBvvWp9sG8CQfkXTRdwOk0cVc9nejJ1nZ8BqEcYIqBlupvqV1
-	 h4DQM1It+fz7Q==
-Message-ID: <4e6c3e28fe014d7350203b333c235188cdbe3dd2.camel@kernel.org>
-Subject: Re: [PATCH 1/5] Documentation: trace: histogram: Fix histogram
- trigger subsection number order
-From: Tom Zanussi <zanussi@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>,  Linux Kernel Tracing
- <linux-trace-kernel@vger.kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jonathan Corbet <corbet@lwn.net>
-Date: Mon, 15 Sep 2025 10:07:54 -0500
-In-Reply-To: <20250911042527.22573-2-bagasdotme@gmail.com>
-References: <20250911042527.22573-1-bagasdotme@gmail.com>
-	 <20250911042527.22573-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1757948893; c=relaxed/simple;
+	bh=dA6pA5Ne4a6f37qqveRmHhYYQ0u7mGdhS2lyQ8l6iYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkEaxgmnRtwTigCHYi6Q7spc57oYrt0ESoiNFJjEu9UQPqjwMZOREqF6GeLFx0tghT1/re30D8bd0zlCJQD2lpYpeJz4/irl65s1+Ib7JzkZc6MzDBgQ0Xr0BmwyhNpqO1rpkHgKJHs/WviMtq0ZSy+uGbfJyPNPcN1qgd4fGAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=C2WcLQgx; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62f261a128cso2600767a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757948889; x=1758553689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=du4+Nj+caAcVXvPJNgMrcC6ifVmP95m7J9IIXq2HKA0=;
+        b=C2WcLQgxqVs/afNY2WAaQx+itp9Fwmhf8dcLGDaVUIt/bB0SSr2aUdcVnkF+PQr+qz
+         Gsd+wIwwVEHYPPyDdwa539oF6NrfR+0qLKE/GrzpuyIw1UXB9Yhlth4WzIwayph/brBy
+         96IXpqW5iPCmxhMJwOFTuJNEDLPYa8P0QK7U0mvBygPzdhDyU8GKCeH6EHhTqbrjUN9s
+         1QImby0WPC/FTIxEd5ToZBvrtsQrDQVCdlmv+5EeVPibnqkTI9MNGb6YiKmQyA0V7BbU
+         mdzbo7meLtMihOLVJnQZN2KIQDyOVy/szDJzeuGw3L2lWLfR/hp3scERGX3onw7RolZd
+         t1/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757948889; x=1758553689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=du4+Nj+caAcVXvPJNgMrcC6ifVmP95m7J9IIXq2HKA0=;
+        b=qGYeFLP7kILBd0n49nx1rPrqSk+38MwrVNu8G2RcA8PwSvjpHzH22Ykx2ZTzyk9SZ3
+         /a17sauI1ypmqf9MBknbEawslrFFtioJSAsUYek1yf2SA6qHmSFvQJAOHC3C+JOGuUyT
+         46VYmZhi5W+4boLtVKLpBjxoxnATwRdJqs/VvrTxbToiRuca/tzLc2oOVc5RfkLGXaL2
+         bMVCQNUZIOfLqj27m36ixO5IygEl0ZMRfAqFcnq9kTliib7r0wIQdmCIy6FYmj/Rtaxd
+         gpn2IK/ODaS7WgiwD3Ws4t2MnaF72j8GxAqrLGKakryzQB5OpJzRoOYDGavS+xKIULKY
+         FXug==
+X-Forwarded-Encrypted: i=1; AJvYcCWqzhxHEurOtMOJG9LWkcdWDEy9UicVNMFXtN7/ksFoxAU70o1I2+U6loKPOQM2DR9Lr7/Mwl4+aP//QGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSfMyhvs/MZI1AENRrVarbaZxr58vhScIZIWHNu+IzOCtnCcEq
+	+cHtHTWfNcbX0AgGVE/Cd4cHiR83QPJx/XZWNI2/KCSjBPj892iRU6Mi/mpYKRkOavE=
+X-Gm-Gg: ASbGncskFQHEuwYEAjvdZTOpgeq7ytOGvQbGd/BkEP7kRiyjtA8h+yYac7bDY89niqM
+	ZEXkO4Fp75YKEXmnt78Pr0FruJHjHftHPGD+qfFUSZrNuAKa9khh+abkdlTCwTykcXj3/NuMTMR
+	v+48AGjEYQcVjjQWLDB5wdZAoufZ+dWIjrQxmIFSdMaoZnk4cRfQ/g18AHqmbm2IpKOOgPntcwu
+	YyoaoianveS6G8uB9kj/+DBxko8a8U8SW13jQnG5LEwHCVeJ3xVx9BNPrsdRwT5eHr1eLsMjFbw
+	iCkQzI1asLB4GZzVVUi4N902isVLf2xWOdYQSfqLsAs7/Wk1ynjh4okEG+ZxSZxOnyyhmggIOA7
+	rVHtCMCK2txqjzezJlSfMLRewUQ==
+X-Google-Smtp-Source: AGHT+IHp7bre9yTzOjiuwtKXuWQuLVV8hu55jTM4h8oB41ShjrWoQvO8peRk3KA18ea9HgC70X3Rqg==
+X-Received: by 2002:a05:6402:35cc:b0:62f:259f:af43 with SMTP id 4fb4d7f45d1cf-62f259fb180mr6223874a12.17.1757948889043;
+        Mon, 15 Sep 2025 08:08:09 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f1a24d2ebsm4657344a12.10.2025.09.15.08.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 08:08:08 -0700 (PDT)
+Date: Mon, 15 Sep 2025 17:08:01 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
+ blocks around
+Message-ID: <aMgr0dId_UfBptzW@pathway.suse.cz>
+References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
+ <aMLrGCQSyC8odlFZ@pathway.suse.cz>
+ <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
+ <84bjnhx91r.fsf@jogness.linutronix.de>
+ <aMPm8ter0KYBpyoW@pathway.suse.cz>
+ <aMPt8y-8Wazh6ZmO@pathway.suse.cz>
+ <aMQzD9CLP1F01Rry@pathway.suse.cz>
+ <84a52zy0iu.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84a52zy0iu.fsf@jogness.linutronix.de>
 
-On Thu, 2025-09-11 at 11:25 +0700, Bagas Sanjaya wrote:
-> Section numbering in subsections of "Histogram Trigger Command"
-> sections
-> is inconsistent in order. In particular, "'hist' trigger examples" is
-> erroneously numbered as 6.2, which is a leftover from=C2=A0 b8df4a3634e08=
-a
-> ("tracing: Move hist trigger Documentation to histogram.txt").
->=20
-> Fix the order.
+On Fri 2025-09-12 20:49:37, John Ogness wrote:
+> Hi Petr,
+> 
+> Summary: printk() is not in danger but we should correct a loose bounds
+> check.
+> 
+> On 2025-09-12, Petr Mladek <pmladek@suse.com> wrote:
+> > Honestly, I would really like to limit the maximal record size to
+> > 1/4 of the buffer size. I do not want to make the design more
+> > complicated just to be able to fill just one record, definitely.
+> 
+> So I was able to track this down. Your usage of
+> 
+> DEFINE_PRINTKRB(test_rb, 4, 4);
+> 
+> actually made it relatively easy because there are only 16
+> descriptors. All I needed to do was dump the descriptors before each
+> reserve, between reserve and commit, after commit, and when reserve
+> fails. This allowed me to easily see exactly how the ringbuffer is
+> behaving.
+> 
+> The problem can be reproduced with a single writer, no reader
+> needed. Using
+> 
+> #define MAX_RBDATA_TEXT_SIZE (0x256 - sizeof(struct prbtest_rbdata))
+> 
+> provides a wild range of attempts that trigger the problem within about
+> 20 write cycles.
+> 
+> The problem comes from the function data_make_reusable(). The job of
+> this function is to push the data_ring tail forward, one data block at a
+> time, while setting the related descriptors to reusable.
+> 
+> After pushing the tail forward, if it still has not pushed it far enough
+> for new requested reservation, it must push it further. For this it
+> _assumes the current position of the tail is a descriptor ID for the
+> next data block_. But what if the tail was pushed all the way to the
+> head? Then there is no next data block and it will read in garbage,
+> thinking it is the next descriptor ID to set reusable. And from there it
+> just goes crazy because it is reading garbage to determine how big the
+> data block is so that it can continue pushing the tail (beyond the head!).
+>
+> Example: Assume the 96 byte ringbuffer has a single message of 64
+> bytes. Then we try to reserve space for a 72-byte
+> message. data_make_reusable() will first set the descriptor of the
+> 64-byte message to reusable and push the tail forward to index 64. But
+> the new message needs 72 bytes, so data_make_reusable() will keep going
+> and read the descriptor ID at index 64, but there is only random garbage
+> at that position. 64 is the head and there is nothing valid after it.
 
-Looks good to me, thanks!
+Great catch and example!
 
-Reviewed-by: Tom Zanussi <zanussi@kernel.org>
+I wondered why data_make_reusable() needed to push the tail that far.
+The buffer was empty after making the 64 bytes long message free.
 
->=20
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> =C2=A0Documentation/trace/histogram.rst | 34 +++++++++++++++-------------=
--
-> --
-> =C2=A01 file changed, 17 insertions(+), 17 deletions(-)
->=20
-> diff --git a/Documentation/trace/histogram.rst
-> b/Documentation/trace/histogram.rst
-> index af6d2e15568ebd..d158dadaa42447 100644
-> --- a/Documentation/trace/histogram.rst
-> +++ b/Documentation/trace/histogram.rst
-> @@ -186,8 +186,8 @@ Documentation written by Tom Zanussi
-> =C2=A0=C2=A0 The examples below provide a more concrete illustration of t=
-he
-> =C2=A0=C2=A0 concepts and typical usage patterns discussed above.
-> =C2=A0
-> -'special' event fields
-> -------------------------
-> +2.1. 'special' event fields
-> +---------------------------
-> =C2=A0
-> =C2=A0=C2=A0 There are a number of 'special event fields' available for u=
-se as
-> =C2=A0=C2=A0 keys or values in a hist trigger.=C2=A0 These look like and =
-behave as
-> if
-> @@ -204,16 +204,16 @@ Documentation written by Tom Zanussi
-> =C2=A0=C2=A0=C2=A0=C2=A0 common_cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int=C2=A0 the cpu on which the event o=
-ccurred.
-> =C2=A0=C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =C2=A0
-> -Extended error information
-> ---------------------------
-> +2.2. Extended error information
-> +-------------------------------
-> =C2=A0
-> =C2=A0=C2=A0 For some error conditions encountered when invoking a hist t=
-rigger
-> =C2=A0=C2=A0 command, extended error information is available via the
-> =C2=A0=C2=A0 tracing/error_log file.=C2=A0 See Error Conditions in
-> =C2=A0=C2=A0 :file:`Documentation/trace/ftrace.rst` for details.
-> =C2=A0
-> -6.2 'hist' trigger examples
-> ----------------------------
-> +2.3. 'hist' trigger examples
-> +----------------------------
-> =C2=A0
-> =C2=A0=C2=A0 The first set of examples creates aggregations using the kma=
-lloc
-> =C2=A0=C2=A0 event.=C2=A0 The fields that can be used for the hist trigge=
-r are
-> listed
-> @@ -1608,8 +1608,8 @@ Extended error information
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Entries: 7
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Dropped: 0
-> =C2=A0
-> -2.2 Inter-event hist triggers
-> ------------------------------
-> +2.4. Inter-event hist triggers
-> +------------------------------
-> =C2=A0
-> =C2=A0Inter-event hist triggers are hist triggers that combine values fro=
-m
-> =C2=A0one or more other events and create a histogram using that data.=C2=
-=A0
-> Data
-> @@ -1685,8 +1685,8 @@ pseudo-file.
-> =C2=A0
-> =C2=A0These features are described in more detail in the following
-> sections.
-> =C2=A0
-> -2.2.1 Histogram Variables
-> --------------------------
-> +2.5. Histogram Variables
-> +------------------------
-> =C2=A0
-> =C2=A0Variables are simply named locations used for saving and retrieving
-> =C2=A0values between matching events.=C2=A0 A 'matching' event is defined=
- as an
-> @@ -1789,8 +1789,8 @@ or assigned to a variable and referenced in a
-> subsequent expression::
-> =C2=A0
-> =C2=A0Variables can even hold stacktraces, which are useful with syntheti=
-c
-> events.
-> =C2=A0
-> -2.2.2 Synthetic Events
-> -----------------------
-> +2.6. Synthetic Events
-> +---------------------
-> =C2=A0
-> =C2=A0Synthetic events are user-defined events generated from hist trigge=
-r
-> =C2=A0variables or fields associated with one or more other events.=C2=A0=
- Their
-> @@ -1846,7 +1846,7 @@ the command that defined it with a '!'::
-> =C2=A0At this point, there isn't yet an actual 'wakeup_latency' event
-> =C2=A0instantiated in the event subsystem - for this to happen, a 'hist
-> =C2=A0trigger action' needs to be instantiated and bound to actual fields
-> -and variables defined on other events (see Section 2.2.3 below on
-> +and variables defined on other events (see Section 2.7. below on
-> =C2=A0how that is done using hist trigger 'onmatch' action). Once that is
-> =C2=A0done, the 'wakeup_latency' synthetic event instance is created.
-> =C2=A0
-> @@ -2094,8 +2094,8 @@ histogram::
-> =C2=A0=C2=A0=C2=A0=C2=A0 Entries: 7
-> =C2=A0=C2=A0=C2=A0=C2=A0 Dropped: 0
-> =C2=A0
-> -2.2.3 Hist trigger 'handlers' and 'actions'
-> --------------------------------------------
-> +2.7. Hist trigger 'handlers' and 'actions'
-> +------------------------------------------
-> =C2=A0
-> =C2=A0A hist trigger 'action' is a function that's executed (in most case=
-s
-> =C2=A0conditionally) whenever a histogram entry is added or updated.
-> @@ -2526,8 +2526,8 @@ The following commonly-used handler.action
-> pairs are available:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kworker/3:2-135=C2=
-=A0=C2=A0 [003] d..3=C2=A0=C2=A0=C2=A0 49.823123: sched_switch:
-> prev_comm=3Dkworker/3:2 prev_pid=3D135 prev_prio=3D120 prev_state=3DT =3D=
-=3D>
-> next_comm=3Dswapper/3 next_pid=3D0 next_prio=3D120
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 <idle>-0=C2=A0=C2=A0=C2=A0=C2=A0 [004] ..s7=C2=A0=C2=A0=C2=A0 =
-49.823798: tcp_probe:
-> src=3D10.0.0.10:54326 dest=3D23.215.104.193:80 mark=3D0x0 length=3D32
-> snd_nxt=3D0xe3ae2ff5 snd_una=3D0xe3ae2ecd snd_cwnd=3D10 ssthresh=3D214748=
-3647
-> snd_wnd=3D28960 srtt=3D19604 rcv_wnd=3D29312
-> =C2=A0
-> -3. User space creating a trigger
-> ---------------------------------
-> +2.8. User space creating a trigger
-> +----------------------------------
-> =C2=A0
-> =C2=A0Writing into /sys/kernel/tracing/trace_marker writes into the ftrac=
-e
-> =C2=A0ring buffer. This can also act like an event, by writing into the
-> trigger
+My understanding is that it is combination of the following effects:
 
+  1. The message is wrapped.
+
+  2. The ring buffer does not support proper wrapping. Instead,
+     the non-sufficient space at the end of the buffer stays
+     unused (last wrap). And the messages will be written
+     from the beginning of the buffer (next wrap).
+
+      => the message will occupy more space than expected
+
+	  unused space from last wrap + full message size in new wrap
+
+In our case:
+
+    + size of the buffer: 96
+    + unused space in old wrap: 96 - 64 = 32
+    + occupied space in new wrap: 72
+
+    => total occupied space: = 32 + 72 = 104 > 96
+
+    => lpos passed to data_push_tail() is from a never used space
+
+    => This is why data_push_tail() tries to read
+       descriptor from a never used space and reads a garbage
+
+> This situation can never happen for printk because of your 1/4 limit
+> (MAX_LOG_TAKE_PART), although it is over-conservative.
+
+I would say that it is conservative. It would survive mistakes from the
+off-by-one family, ... ;-)
+
+And it is still far from practical limits. Because having this
+powerful ring buffer for 1, 2, or 4 messages looks line an overkill.
+
+> It is enough to limit messages to 1/2 of the data ring
+> (with Daniil's series). Otherwise the limit must be
+> "1/2 - sizeof(long)" to also leave room for the
+> trailing ID of a wrapping data block.
+
+I am not sure why it is important to push it to the limits.
+That said, I could live with it. Especially how, when we
+understood what happened.
+
+
+> I am still positive about Daniil's series.
+
+Yes, the patch which prevents wrapping for perfectly fitting messages
+looks good to me.
+
+> And we should fix
+> data_check_size() to be provide a proper limit as well as describe the
+> critical relationship between data_check_size() and
+> data_make_reusable().
+
+Yup.
+
+> I prefer not modify data_make_reusable() to handle this case. Currently
+> data_make_reusable() does nothing with the head, so it would introduce
+> new memory barriers. Also, the "push tail beyond head" scenario is a bit
+> odd to handle. It is better just to document the assumption and put in
+> the correct bounds checks.
+
+It might be possible to catch this in either in data_alloc().
+or in get_next_lpos(). They could ignore/yell about when
+the really occupied space would be bigger than DATA_SIZE(data_ring).
+
+Something like:
+
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index 17b741b2eccd..d7ba4c0d8c3b 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -1056,8 +1056,16 @@ static char *data_alloc(struct printk_ringbuffer *rb, unsigned int size,
+ 	do {
+ 		next_lpos = get_next_lpos(data_ring, begin_lpos, size);
+ 
+-		if (!data_push_tail(rb, next_lpos - DATA_SIZE(data_ring))) {
+-			/* Failed to allocate, specify a data-less block. */
++		/*
++		 * Double check that the really used space won't be bigger than
++		 * the ring buffer. Wrapped messages need to reserve more space,
++		 * see get_next_lpos.
++		 *
++		 * Specify a data-less block when the check or the allocation
++		 * fails.
++		 */
++		if (WARN_ON_ONCE(next_lpos - begin_lpos > DATA_SIZE(data_ring)) ||
++		    !data_push_tail(rb, next_lpos - DATA_SIZE(data_ring))) {
+ 			blk_lpos->begin = FAILED_LPOS;
+ 			blk_lpos->next = FAILED_LPOS;
+ 			return NULL;
+
+
+Similar check would need to be done also in data_realloc().
+
+I am not sure if it is worth it. Maybe, we could rule this out
+when we limit the allocated size to 1/2 or 1/4 of the ring buffer size.
+
+Best Regards,
+Petr
 
