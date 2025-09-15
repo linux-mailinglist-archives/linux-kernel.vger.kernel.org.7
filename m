@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-816003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439F6B56E0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2856CB56E12
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A5F189A585
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE78189A789
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA97223DD5;
-	Mon, 15 Sep 2025 01:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E52218EA2;
+	Mon, 15 Sep 2025 01:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSIXbF3H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZ/a/13l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D732E220F5C;
-	Mon, 15 Sep 2025 01:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA9E22B5AD;
+	Mon, 15 Sep 2025 01:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757901494; cv=none; b=Nf4bc6AND9JcMlgX3xTnK0NQH++nKEsDme4O4HS59r19adWWVc9OvjGzQqnHVZGdVVrkrTDHnI6lRIv8YfGQ/ncYxJwXOsp3e5jP4yAS/roXldvJ5O3artKGsN7o+F6NvWCOlzI2xTnUDyR4O09BOMcsqUeNIHGJ1Kw0HdJQUFo=
+	t=1757901496; cv=none; b=GX6cpkVIieOQnu8+c+538hwDZrscbY+//8REx8bxH7mvRp5ImmApYfP9zBLK/K9lDvw8Pv962Al6obO6isUd8jKGdi6bbAYCVkPekNSJHNlHmKokHf2et+RC63uBs+202cdQHPJUtkIolVFQoE4Rd9HuzxqI1iLM0frz0T8SRiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757901494; c=relaxed/simple;
-	bh=lwwcDoDvfbiO59qIbS3KSPJx7Imyoi3zWNGgCLtUpbA=;
+	s=arc-20240116; t=1757901496; c=relaxed/simple;
+	bh=nGvVrC45Vt9+6E5tO/9Zsq1bOPvFtQ8UtnVHJOeO4A4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=illH8M2Tvm/LLIzgFu7g0uRFShD7H5zzGmySmMBIhe7rcC19oazZXZJ3ksGmM/ksNHW1CfuPAmSXlJnBfcp2AjXoCa6k2ET9/j+ReQjHSdlLZyqJCCe93D18Q56SKN0AULpSF9e4DcQeaTe1qlpcNCeZtZy5+22NNudK1V/zX5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSIXbF3H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 364D4C4CEF7;
-	Mon, 15 Sep 2025 01:58:14 +0000 (UTC)
+	 MIME-Version; b=f7Nk+GHP2VLQ3glFRPwjXd4WsU6UYyR22S5Yviaqs0ahdrnmgiTaZnGflBAI41gG6EsfWyY0cALc4rd33oOWGcMewh8SYRnm03hcDUDIwJfpzHzXl3zH+N4CwXZwgURmggtwEs+ZrLXwCS6fsF7PCX48lAK6mf3HQ0U2r7xVUCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZ/a/13l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD88C4CEF0;
+	Mon, 15 Sep 2025 01:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757901494;
-	bh=lwwcDoDvfbiO59qIbS3KSPJx7Imyoi3zWNGgCLtUpbA=;
+	s=k20201202; t=1757901495;
+	bh=nGvVrC45Vt9+6E5tO/9Zsq1bOPvFtQ8UtnVHJOeO4A4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZSIXbF3HQeUNsua7xhtgFRxmM6uwD27cHJsPA39zVIJ/+b3Ow/J4bj0OOcEX4fJ4G
-	 Y+XpVVmglbAYHNkFqCHnhQU18w8/VG3Q5/hEmJDoRjpNFBW7URJ1069oRmhd0/Ia2/
-	 Z7ZW8nqBQwozDkEZrLk6VcJUsvdzrDCpNlO7raHromB0ltWaAI7bx+bEUojsG91SS4
-	 F4ZcgZ3YDVafcHivFxGBBPSvOV2/pmgQsoRvkR3RR+OZCtezxsKQLiFqLDhWyQVM0g
-	 jrnAT9GqKej3Z0pySZC0hFxbsYR8YnNAdBHE8m0HBH9rA/NoXUYwDzymi63vEshrw7
-	 J4p0cL7kj7BXw==
+	b=LZ/a/13l/K1JrCtefJnoQGLam5FR90aUMxEBXcPo0pELUkzQl4QrS7ftW9oXrJLi8
+	 pWAoUwc0TlelI102Agga97Ef8ZDzF7aVSKqyMeeQ5KDOFGcHD9+Y7U7U0dtR/BJdGV
+	 crJbVH/nQ6DMcg9zGbuj9W7O0t9Fq2yHw6CWkQ89jdo7rIzA1XjE7eksYZoKEDdSqX
+	 WmIX0rW+eVn26eQKBvwXJTbgDvjGGXgmRIrkjf8iBNKvI7cVlBJtlTHhiSeH5Y4cG/
+	 Wk0LxcLfvHmZQ3ZRmSAWcnXxWjfu868XaqaR8H4K8JmqVUQBPyPJrsWJkesyatSjw+
+	 jxS1ZjVbZ5kaw==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -47,9 +47,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 2/6] mm/damon/core: set effective quota on first charge window
-Date: Sun, 14 Sep 2025 18:58:03 -0700
-Message-Id: <20250915015807.101505-3-sj@kernel.org>
+Subject: [PATCH 3/6] mm/damon/lru_sort: use param_ctx correctly
+Date: Sun, 14 Sep 2025 18:58:04 -0700
+Message-Id: <20250915015807.101505-4-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250915015807.101505-1-sj@kernel.org>
 References: <20250915015807.101505-1-sj@kernel.org>
@@ -61,38 +61,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The effective quota of a scheme is initialized zero, which means there
-is no quota.  It is set based on user-specified time/quota/quota goals.
-But the later value set is done only from the second charge window.  As
-a result, a scheme having a user-specified quota can work as not having
-the quota (unexpectedly fast) for the first charge window.  In practical
-and common use cases the quota interval is not too long, and the
-scheme's target access pattern is restrictive.  Hence the issue should
-be modest.  That said, it is apparently an unintended misbehavior.  Fix
-the problem by setting esz on the first charge window.
+damon_lru_sort_apply_parameters() allocates a new DAMON context, stages
+user-specified DAMON parameters on it, and commits to running DAMON
+context at once, using damon_commit_ctx().  The code is, however,
+directly updating the monitoring attributes of the running context. This
+doesn't cause a real user problem but apparently this is an
+unintentional mistake that can cause code review confusions and future
+real problems.  Fix the wrong use of the parameter context.
 
-Fixes: 1cd243030059 ("mm/damon/schemes: implement time quota") # 5.16.x
+Fixes: a30969436428 ("mm/damon/lru_sort: use damon_commit_ctx()")
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/damon/core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ mm/damon/lru_sort.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 996647caca02..84de1cea5440 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -2142,8 +2142,10 @@ static void damos_adjust_quota(struct damon_ctx *c, struct damos *s)
- 		return;
+diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
+index 14d31009c09e..ab6173a646bd 100644
+--- a/mm/damon/lru_sort.c
++++ b/mm/damon/lru_sort.c
+@@ -219,7 +219,7 @@ static int damon_lru_sort_apply_parameters(void)
+ 		goto out;
+ 	}
  
- 	/* First charge window */
--	if (!quota->total_charged_sz && !quota->charged_from)
-+	if (!quota->total_charged_sz && !quota->charged_from) {
- 		quota->charged_from = jiffies;
-+		damos_set_effective_quota(quota);
-+	}
+-	err = damon_set_attrs(ctx, &damon_lru_sort_mon_attrs);
++	err = damon_set_attrs(param_ctx, &damon_lru_sort_mon_attrs);
+ 	if (err)
+ 		goto out;
  
- 	/* New charge window starts */
- 	if (time_after_eq(jiffies, quota->charged_from +
 -- 
 2.39.5
 
