@@ -1,165 +1,255 @@
-Return-Path: <linux-kernel+bounces-816743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A2CB577DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:16:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A46B577DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1D21885C97
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8252A162CD9
 	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E532FFDD9;
-	Mon, 15 Sep 2025 11:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8192FE581;
+	Mon, 15 Sep 2025 11:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="MWK5OpOa"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="hC44NQlc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k3XJlKRf"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7302FE57C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54802FFDF8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757934940; cv=none; b=VbYnm0WIXGCvB9PZ5UhmEQl7X6Htx/AqZHXVsH4ZPRUL3/t58/qgfenB5/yggguFYw2o7bYid4SLOa7sRF3kHQaSnEETL6dd/9kRrbmkAjE392TmBNUtWqd8GhBhW4bCZ7GBVH276bM2XwN48vzD9T3KZqBloOPb3vmI2Vt1XGU=
+	t=1757934944; cv=none; b=grh71BM+5WxOu35gCA56fbmT3gzvdDGPsnTvfXpWpgCCbWBnBs76TA/hReByIuapgNL/hjqlSOqyeLUuxJ0+dukO0lxN1MSzD/gAONOeDcUhVzpSmIdWSGb7H9GkSM1/MZwlmmMJ9kRi45xvnyibaUh4lNDQP1r3QEGAuzfxtGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757934940; c=relaxed/simple;
-	bh=+N860jjILz9WjHBmzobR6cwMMc5hddgDbocup4wZWZU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tqhM3ZTWQUlRotBWaw0iOetDSJxNOB6Gl87IOuy5AdqL15yUoQ6tWtP1IkoOTTPINdnUT5RP1jTlcSkeSxYsHpd97qU3mrBywof0EuZM72VH36llP1LByiqpHSeFICP8yGQx1TfcJfg0Fem0TLriVVrAGJao22Z/g0Zq8wUxuA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=MWK5OpOa; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b07c28f390eso520012166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1757934936; x=1758539736; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0bwrK+W/kVJgy2ql0Fi6gGVV6KZbMNKdsTPaoo3b7DQ=;
-        b=MWK5OpOaIlc1OEADg7O9mJxX2UG99rpTo5ip+3avrMeahnidtn6WmAdYPmNRQRSwqq
-         zlwBwS5Yz38B6ragbRRG33mNEAXvOg6C+lmpeoK4qhscaqzezgITxvZ4uRe+zbUBfmPi
-         9HJR1o4FOuFEoRMVM1CB0qmbUBc7ZjWa7DuBcX+M1ClRYQEP0r5d7CIEB5lyel+NFtA/
-         4n5uGaAPSN73J8zR8uQp0vsiwKfQA++wcsa0LvohFmOuNiTd47Qoo5NCEnZ7+OpUwd2M
-         MM1nJ+LNljPBlyaoR/j8MwGf4wZT1xnHnrwlskI5idfdGELMoAlmbeQr8AIjS4drUx6H
-         q2xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757934936; x=1758539736;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0bwrK+W/kVJgy2ql0Fi6gGVV6KZbMNKdsTPaoo3b7DQ=;
-        b=sLjmcxDrKf5iNkHfGyWhHmG9ICxXhYoyxsVUqZbcNYCDPQxPK03acGX2mdccTv3GkW
-         OFjL7W3jVdRmTRiBx/9rfm8+PfaBfqhC/0sQCgr06LQ1QdKCuvv2oOleSgIGB5YtxH1x
-         rpakZgYbgoWPu2YFSCd4VYhFQ6s486WPgS3/t/M/+znD/3RXmhKP99Hd/x5C4jnoIe9z
-         9QKAJzGsawuNRwWRE0fae8qR0EnxlSaQU3aVyeQrsbOAm2UcnJfViSQRbqCRrjIdHfwd
-         0oKk+Mdk7C7h/2BwmPUYcWWDe9UrOyCI7MSpJ1eRVqTnitROz6qdTMbq0S1xz8DJU0nJ
-         1adw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLPf8sGKfaFXjE+96oE5N5umuFypydktDMtuLkQIlWpfMsjKTx5NxGP2KH5xxVsSXvPbxWzLm796niMXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeRxPvmJV+1xIMTQHTsxvfkSWF5r3X46wqCb6VH4TdporxxsQ/
-	yB7GjPMLZRZf39xmzXGyW3j/OO/3nkdEFK8g7iRYKHILGlRhMBpMgo6o8qU1HDXveJk=
-X-Gm-Gg: ASbGncuH4NHCaQ6O3pLymkZ/I7+eVx7shKl01hpFsc0Cf3NQj9/5MV3V0mK70pyYTVK
-	4Z4hxMdy1kvp1xf4eTCSSzkZSzsGoCHdFGbAncZBQ7tbPQI08B/dXmXzuRW4guHdVoFgtZG9V85
-	VvjWKleHJ3tUttwlannj3zKhx2klqQ/GimPCeBpLD81L9B9AQq+7n32KkPIQ75bg9twtBvEqSyq
-	Tm7pEgrBSNts82UmVlzrSYRDPYuPyvd+8SjxDZBue1V0duOq1bo1/8DEZH/4PHJ0JsPJc+Z3SWX
-	mxVpA/ItRFStrk2LBK++dlHnVLJ/BD6D0g+JORUiQjmvn9NeeL0bF1m3ZYZM04vSH5FWg4sEToV
-	trOF18Oy54Va029NmtKvZ/2Sd8+nOCjoOCOTu8bX9y7VN+kyRz8hsC+64FpF0Nf1+7upPpauj+e
-	J6or3n
-X-Google-Smtp-Source: AGHT+IEmXxvaJJ9Thsbd/yEZn6zSBCmcT2cqQGQCUUMD42XZdQIGQ90LE23Fm93l8b7j1T6PqUPG3g==
-X-Received: by 2002:a17:907:983:b0:b0c:a265:c02c with SMTP id a640c23a62f3a-b0ca265c314mr699765966b.12.1757934936083;
-        Mon, 15 Sep 2025 04:15:36 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07d9e18c24sm561851366b.61.2025.09.15.04.15.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 04:15:35 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Mon, 15 Sep 2025 13:15:19 +0200
-Subject: [PATCH v5 2/2] remoteproc: qcom: pas: Add Milos remoteproc support
+	s=arc-20240116; t=1757934944; c=relaxed/simple;
+	bh=+v9vtWddxxoPrWmSwq+YPSZb80cwYRi99XZ+J3PHKRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sgkmfTodD25SrywslNayhjRokJYkhRhDQzmwGRe73YBGsl9gTwyGG/JFJ5J3mP8Qx2NNZT30SKWgjDiVmVx88/jDQVEoRe0diDJQn5nMV+xP8MFcm2jkqlpLOaML6XKuFgrvybGHoZ2TpPagAl82f1PjPb9gF4yKF/vZeFg6ru0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=hC44NQlc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k3XJlKRf; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 145651D00125;
+	Mon, 15 Sep 2025 07:15:41 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 15 Sep 2025 07:15:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1757934940; x=
+	1758021340; bh=IAndtAUsCCZ4OZ0O3J2t17ZV8RyUxpOpU+beMolgAwA=; b=h
+	C44NQlcRgaO5C1gbFzTIB/cQATSaNmnUyYFHKP3zUvKw500CbP0GKAOHBsPanR8Z
+	7BfVp1uc8BnszR7lz14CoV3NodQE5UGZrHdxHJZD/t6Hg/pJO5JFYAkdbPyGyWj0
+	cNDmtpTzT0/O2qVzadbRtYr3Q068S7Y+6UGm6ayRKF7Q4APLDXg0/UB29lYPDjdW
+	BRNPTyJq3B17H3enK5djdnZUEgOBWvz7m15yq0unGYru9fecqFfiuemoyzsQpLrH
+	vYeDn9qCNTeKTOdOAMWHxyUKvPYRWynt2ElAVUSOniDqxEY6hJEQ0vYKEsr7foAd
+	nqPTqDd3Gjo/fgfcEbVDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757934940; x=1758021340; bh=IAndtAUsCCZ4OZ0O3J2t17ZV8RyUxpOpU+b
+	eMolgAwA=; b=k3XJlKRfvMlMnloZhUcGIiFOqwEzPSP3h96gDL9U0DdZUAoe7wA
+	ds6pq+2umkMUVOVQPuR7P736pHGVkVHOrj6OU/TF4CfYlDWcbIE4E8Z/hUwICG2I
+	CWJM8msxG+EDadSrb19BqHSWm0mI6tyaZsqq4nJkNyDhd3FjXkVmUZpXuy6pebX5
+	jg+K/rzUH5acyxT2vtGrmcaH8/35Pz9S976F40/nLHMCgp7H7wAN5X5CRFqDc/Pq
+	ArREyf4Cpqhkxi0VTck/8eWIsB/jHRVPGm1ehVZBNceMn3uL9vIXM75xaRfxlsLY
+	aE+KAUxmQiX8N1zwA8BKFiBeQ2Lu2bwC/9w==
+X-ME-Sender: <xms:W_XHaIiDK23ijgrb8XDIb1ol2dJAWnNIS7N-u-87wEwVtZGsG3VGhQ>
+    <xme:W_XHaM5w0A3MlWeOJp6gvUrmAKoDDR3sN2vqvzhTplckPcs0xRHxnk8OFy5xG0pFX
+    mRbAnsB1NVxO_1EONw>
+X-ME-Received: <xmr:W_XHaI4s3TpC-L1ijhL35lCkJJPYGskiUisdFjnnMyyWhxNNzLcBqicB-WDSCg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvrdhjrghinhesrghrmhdrtg
+    homhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhorh
+    gvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepiihihies
+    nhhvihguihgrrdgtohhmpdhrtghpthhtohepsggrohhlihhnrdifrghngheslhhinhhugi
+    drrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhr
+    rggtlhgvrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehrvgguhhgrthdrtghomhdprh
+    gtphhtthhopehrhigrnhdrrhhosggvrhhtshesrghrmhdrtghomh
+X-ME-Proxy: <xmx:W_XHaCHf48sToTGooULKQeoQMfXVYDFtvwqxTwsjhtuZkcYRDyiYYQ>
+    <xmx:W_XHaOy4Mtreqw7ddoygYcWtbOAYX8rM5s-am4F-OBLk4FeBn4rGTw>
+    <xmx:W_XHaK3qPesJv7xVvmvf16sMr-9pXxDUxoZLQldewGkCRN__H3bI2w>
+    <xmx:W_XHaJOIUoAkR5WzlYktBzuHpb58CYeYtAclOrLSJMepA2xYoWCTuQ>
+    <xmx:XPXHaNy3nS20Asj_b-1W3W2gegClHfquAwM2V7rlds2kCnZVaZyCxUMA>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Sep 2025 07:15:38 -0400 (EDT)
+Date: Mon, 15 Sep 2025 12:15:36 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Dev Jain <dev.jain@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/khugepaged: Do not fail collapse_pte_mapped_thp() on
+ SCAN_PMD_NULL
+Message-ID: <3zfpaowb4owhpyseoiqj3vxo2e2nszynoun2ubsm2oqw67i6sr@hxtogb4t3npl>
+References: <xhan2av3fyl7qpsl4bhjtds2zeegrl57ehtc5grtkua3c3v3nz@vain5s6gpycl>
+ <a3ee891f-a025-4a71-8e7c-af5b52a8484f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-sm7635-remoteprocs-v5-2-96526cac59c6@fairphone.com>
-References: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
-In-Reply-To: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757934933; l=2001;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=+N860jjILz9WjHBmzobR6cwMMc5hddgDbocup4wZWZU=;
- b=wAZfi6x3+OqVADm1Ao+uS/Jrnveeo2PlNBkQppNDqF9qOMZo9JF1bMv9l3fr+CP7PWOz1RDX1
- PXsvGtR/STLDD+3hxmpvTuZpyv1TDlU4uNIyCwOSNjyvtA+yloZOjtS
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a3ee891f-a025-4a71-8e7c-af5b52a8484f@arm.com>
 
-Add the different remoteprocs found on the Milos SoC: ADSP, CDSP, MPSS
-and WPSS.
+On Sun, Sep 14, 2025 at 12:56:13PM +0530, Dev Jain wrote:
+> 
+> On 12/09/25 10:28 pm, Kiryl Shutsemau wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> > 
+> > MADV_COLLAPSE on a file mapping behaves inconsistently depending on if
+> > PMD page table is installed or not.
+> > 
+> > Consider following example:
+> > 
+> > 	p = mmap(NULL, 2UL << 20, PROT_READ | PROT_WRITE,
+> > 		 MAP_SHARED, fd, 0);
+> > 	err = madvise(p, 2UL << 20, MADV_COLLAPSE);
+> > 
+> > fd is a populated tmpfs file.
+> > 
+> > The result depends on the address that the kernel returns on mmap().
+> > If it is located in an existing PMD table, the madvise() will succeed.
+> > However, if the table does not exist, it will fail with -EINVAL.
+> > 
+> > This occurs because find_pmd_or_thp_or_none() returns SCAN_PMD_NULL when
+> > a page table is missing, which causes collapse_pte_mapped_thp() to fail.
+> > 
+> > SCAN_PMD_NULL and SCAN_PMD_NONE should be treated the same in
+> > collapse_pte_mapped_thp(): install the PMD leaf entry and allocate page
+> > tables as needed.
+> 
+> Thanks.
+> 
+> Besides this patch, the label maybe_install_pmd is misleading -
+> SCAN_PMD_NONE means that the pmd table exists, just that the pmd
+> entry is none, so the pmd is already installed.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+That's never ending confusion between PTE/PMD/P?D entry and table.
+Addressing it is out of scope of the patch :P
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 55a7da801183d54569452dbb48041fdc52bf9234..be4edd0c3eeefb80d3b25a48f6dfe0b7590bc624 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1255,6 +1255,26 @@ static const struct qcom_pas_data sdx55_mpss_resource = {
- 	.ssctl_id = 0x22,
- };
+> Along with this,
+> the argument bool install_pmd should likewise be install_huge_pmd.
+
+Well, if you rename install_pmd to install_huge_pmd it will overshadow
+the install_huge_pmd() function. And the label name is not a problem in
+my view.
+
+> 
+> > 
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > ---
+> >   mm/khugepaged.c | 25 ++++++++++++++++++++++++-
+> >   1 file changed, 24 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> > index b486c1d19b2d..9e76a4f46df9 100644
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -1488,6 +1488,28 @@ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
+> >   	return SCAN_SUCCEED;
+> >   }
+> > +static int install_huge_pmd(struct vm_area_struct *vma, unsigned long haddr,
+> > +			    pmd_t *pmd, struct folio *folio)
+> > +{
+> > +	struct mm_struct *mm = vma->vm_mm;
+> > +	pgd_t *pgd;
+> > +	p4d_t *p4d;
+> > +	pud_t *pud;
+> > +
+> > +	pgd = pgd_offset(mm, haddr);
+> > +	p4d = p4d_alloc(mm, pgd, haddr);
+> > +	if (!p4d)
+> > +		return SCAN_FAIL;
+> > +	pud = pud_alloc(mm, p4d, haddr);
+> > +	if (!pud)
+> > +		return SCAN_FAIL;
+> > +	pmd = pmd_alloc(mm, pud, haddr);
+> > +	if (!pmd)
+> > +		return SCAN_FAIL;
+> > +
+> > +	return set_huge_pmd(vma, haddr, pmd, folio, &folio->page);
+> > +}
+> > +
+> 
+> For the SCAN_PMD_NONE case, we are unconditionally traversing the pagetables
+> now which is not needed. How about, in set_huge_pmd(), we pass a boolean install_pmd,
+> and at the start of the function, call install_pmd() which will do the traversal
+> and the pmd_alloc()? That will also make it crystal clear that in the SCAN_PMD_NULL
+> case, we are first installing the PMD table and then setting it to huge. Right now
+> the distinction between the two cases is not clear.
+
+I just realized that my install_huge_pmd() doesn't use pmd that is pass
+in. And looking at code again, I think it is better to integrate the
+page table allocation directly into set_huge_pmd().
+
+See the patch below. I will submit it as v2, if there's no objections.
+
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index b486c1d19b2d..986718599355 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1472,15 +1472,32 @@ static void collect_mm_slot(struct khugepaged_mm_slot *mm_slot)
+ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 			pmd_t *pmdp, struct folio *folio, struct page *page)
+ {
++	struct mm_struct *mm = vma->vm_mm;
+ 	struct vm_fault vmf = {
+ 		.vma = vma,
+ 		.address = addr,
+ 		.flags = 0,
+-		.pmd = pmdp,
+ 	};
++	pgd_t *pgdp;
++	p4d_t *p4dp;
++	pud_t *pudp;
  
-+static const struct qcom_pas_data milos_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mbn",
-+	.dtb_firmware_name = "cdsp_dtb.mbn",
-+	.pas_id = 18,
-+	.dtb_pas_id = 0x25,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mx",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+	.smem_host_id = 5,
-+};
+ 	mmap_assert_locked(vma->vm_mm);
+ 
++	if (!pmdp) {
++		pgdp = pgd_offset(mm, addr);
++		p4dp = p4d_alloc(mm, pgdp, addr);
++		if (!p4dp)
++			return SCAN_FAIL;
++		pudp = pud_alloc(mm, p4dp, addr);
++		if (!pudp)
++			return SCAN_FAIL;
++		pmdp = pmd_alloc(mm, pudp, addr);
++		if (!pmdp)
++			return SCAN_FAIL;
++	}
 +
- static const struct qcom_pas_data sm8450_mpss_resource = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -1429,6 +1449,10 @@ static const struct qcom_pas_data sm8750_mpss_resource = {
- };
++	vmf.pmd = pmdp;
+ 	if (do_set_pmd(&vmf, folio, page))
+ 		return SCAN_FAIL;
  
- static const struct of_device_id qcom_pas_of_match[] = {
-+	{ .compatible = "qcom,milos-adsp-pas", .data = &sm8550_adsp_resource},
-+	{ .compatible = "qcom,milos-cdsp-pas", .data = &milos_cdsp_resource},
-+	{ .compatible = "qcom,milos-mpss-pas", .data = &sm8450_mpss_resource},
-+	{ .compatible = "qcom,milos-wpss-pas", .data = &sc7280_wpss_resource},
- 	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
-
+@@ -1556,6 +1573,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+ 	switch (result) {
+ 	case SCAN_SUCCEED:
+ 		break;
++	case SCAN_PMD_NULL:
+ 	case SCAN_PMD_NONE:
+ 		/*
+ 		 * All pte entries have been removed and pmd cleared.
 -- 
-2.51.0
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
