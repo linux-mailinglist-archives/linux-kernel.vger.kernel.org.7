@@ -1,205 +1,201 @@
-Return-Path: <linux-kernel+bounces-817259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C65B57FD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:03:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF07B57FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31DD20839A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE921AA197F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332BE341648;
-	Mon, 15 Sep 2025 15:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2994B21D3CC;
+	Mon, 15 Sep 2025 15:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b+EMtRhX"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbqtxhZU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62893002A3
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948479; cv=none; b=daPdgzn6xtzvY7n3spRgUuecDBS0eP5exh/r4zjoE4toVm05BzyWMOTcnZMf42fGoxuIcsguf6d7SirkWYZNoCuCU7F21sLMyaIqlXtfmzQ/lfz96q/0cy+Qz54CeGuYBVmNPTdb3F/U4j2nF4+PC0LnmjOXou+5aoujiJPoqEo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948479; c=relaxed/simple;
-	bh=XNzym3SlW68WTjuaImeS6uxut+Hkf13t1gya8khOoMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=aI5ZC/expUfHfaxrzxL7aY17fgzqzXkV7Kp/MUUGyP150dAYrVc0TdrAsGtnDnCzNaF04j3l3a5UXK145PgrndmyjTUk+3LkRE8BFMR5i5kjvnDJCj8kxtW9Y5i190S3zatszlrTrUp1kIQELUIiBsqP8cLL7/SYNdnxVR2tzlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b+EMtRhX; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2637b6e9149so331145ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:01:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757948467; x=1758553267; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f9K2ZNoVdFEQAo4l5PTBMo8u7yy6tT4YYzBB/JfpAiU=;
-        b=b+EMtRhXmbQPKQDIdxgKr5lFiiyJE7z0nBf5NKKAb9YWK9bhs5hcUJfEcUbnf4Gb0E
-         BaFd9u88VuW6tFvRhgxE1by2Ld0rGHTbZCAOoYtKRI1qrn9nmP1rA5yy8a2LZW10Mkqz
-         2XzVnJR7b+hP18EU8x4gKY5tawXRU2KEDBEZFvTA+BqfuVRLd3aFkbAb/jMS7b8H/ONS
-         feVikVt54/dBwuJuhaCZregXA/pBuapVUEhuGjAc2O5vWt6MyhL/dIJXR0eQUHMno9gI
-         RAu1hr+QFvajGSBbvv2dBZ0000e83hgkPw8jADdYXT2yDck43aymcBtgqnVvbwLu8IVQ
-         9lQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757948467; x=1758553267;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f9K2ZNoVdFEQAo4l5PTBMo8u7yy6tT4YYzBB/JfpAiU=;
-        b=eTCjN2p3AQ6JxBb9yc2fT3KkgjRjKc2Pvl3+OZamS+fsbWuLdBX4AJeE9fhmTigH5C
-         987K+bLJMveVhefwSrMbLfUe0ab2pH3V7f/8xVIGhxtkSSAQArc6+EeAKhB21vUkOmaU
-         L6HhLHvqzNDc0rw/iU2TfMLdAIb7UswQ8oxFPl/3BiqM7ZcBuZtjk3hMjDeIeVidjY/k
-         urljLkxsnK+1R4Dnb+6QGe7dpxBp7+enrKbMUn+D0jnTeUp3OtSN6Mj0O+JaDhOPIL4W
-         Utvi8DqCwTBGMJP43O6GUVbCk0Ze6ORPwg8E17mbBJXurq4zQ+egai4f12NjsxilveVE
-         O4NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJrb87eEoK7MmNXh8NZ1A0EFZCxxK90EHdG4bcvaTzFkY97rAC94GgJmR2QTFCw2C0TWJ39rxzLSf30CM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjONxjQ8A2hPY0UWfdhbxjkyN8cj8+5lD+y/5jAWoHm0AG+z/u
-	K1Jbu1PoxSF7pwtmwjRFM70tfbA4WrrCtgYasS8MPT4gCjT3HqHh6RMtlcKQb3hG5K9I372gsrB
-	Fp8WMyipiB0hBL/uhMB6/7VulXNsvX/jnYQqDI7vy
-X-Gm-Gg: ASbGncv1Vnj4CPHQTOqKahuCzQDSXa//DWBNrtXFP8/czsaBqi6ryvOluAXqop8Cw0f
-	e5aRBLEe/fwp5nLKGkjt4qvjvxYvZyL6b2qLOC+QxPenHycCXYCqjiYJaoBKI7RngX00pudKz/O
-	JZ77+o3+pt46P8FP77EHLXhUccDbByqCmWlXAw7D4nOVSy1LXl2yL0oTkxwm/O0kgHh9v4gAXav
-	giVjWuyq9ioC9AwVzd/zMKOIOeU9gaxLvkSvQWcaLrHZ/j/tQotlic=
-X-Google-Smtp-Source: AGHT+IGySltNDMqtEE6Huhdc1tR9G0RC/iwxIoxdqKUeG2fq3SitVMFnig3n05ncji36jZGgJEZr47n8UCv81x6Enc4=
-X-Received: by 2002:a17:902:ea08:b0:266:b8a2:f605 with SMTP id
- d9443c01a7336-266b8a2f830mr2974895ad.3.1757948466100; Mon, 15 Sep 2025
- 08:01:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8993019A0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757948471; cv=fail; b=SXPhobzoy9zHm5h2k9A1e8eGMcN0kgAyXsHsomOffAu745d2sglJdSBk9UW2DtVdQ1qyCJ7JCEYUoMW/yE9VybQL66+f9lxGP1M9K5Db91MjxaZTjtOjGrri8T8Ztn6HStbiBolHZ91npXSYHbPkCnn+h7xUiV/r5QkYCUp5w3E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757948471; c=relaxed/simple;
+	bh=gd7x2kDSG8acHkDz6r3Awd7k5zdyCecaCHqhlW3m0fo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jrViePyFht9KzGLrAMBcd3H6CA4cOi++isjfdYiXSMwL96s/u+aTwGspNv9zDrurxLXpdsyzc3p1iExlfrxVuMJjlI59ffF258QBTiQY938YEeLIhBHeTM8ATwYCrw4IpeS57Rw0PPiWCVyokY3b/o6VKH3gkZITigU9wYCRp44=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbqtxhZU; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757948469; x=1789484469;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=gd7x2kDSG8acHkDz6r3Awd7k5zdyCecaCHqhlW3m0fo=;
+  b=FbqtxhZUsl1EdMvXnJfUnrFEMbWrodvPbG9DENr2qQTkrsJVpbB2tKfA
+   y8ihvdmIRGnIn8DahBkwG4TUxgqoC1ytc2FNgV0AI+gBsuJLRW67sWK6l
+   K8S2Yh6HmZzxLv8pmRndqi3CbZv8pkSL55PYweMb4wro9csU+A4G7iFZU
+   OyCzPZdW1z3bDivV9NgW/71KjB6pI0fw6dmfjzi4UfK3SlXBrI7AyApFN
+   a/0Q0Y6K+h/0WSoay+yHxBHUDnzucP2Ssm4PR5cCqHpTGpvH4vuFaavYk
+   hsKpBtabVK08WeMo2QovTxxHcTvg4BIOl3pMCnuLBa/6SKHZBbVg3O0tP
+   g==;
+X-CSE-ConnectionGUID: 1VppX4ouR8CgRSWy0kJ3IQ==
+X-CSE-MsgGUID: unK+BOW5T36x38Ygsa57VQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="77655256"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="77655256"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 08:01:08 -0700
+X-CSE-ConnectionGUID: JjMOb6upSgyH3c0cU//f+Q==
+X-CSE-MsgGUID: qk4mjN5/RJ2/Kjfo3Ev+sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="205439467"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 08:01:07 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 08:01:07 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 15 Sep 2025 08:01:07 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.15) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 08:01:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U5rap0+eemT+7K6A8byekABGOEJzkux5FisQBiYIIWP1jwF8J6PVN35QUCd6zShXQ6BEn3rEgp3C+ms08KP7ua0p7DpahinJ967+Z3B6mRVjxFIMBpcAdOaLoq14GbJPKARIIampzNeM9wducDkAwRlS3P/6hbuUnjiRJbLtftKe/24lQTtIHh4EVwn4TQgcg99v+5gO3/500r7MGstNnc5aoStddsVxQ2DNW/qF89X+fzenpToQD8lz1YXYkbPLTihIimLUBBbTNxtbe9CORd/GQHeqD4yiIqW9qGFl/cG50xMpYHqRPzFZ+HPG/++oNYBQ5AnX7mIFpopCPYypJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gd7x2kDSG8acHkDz6r3Awd7k5zdyCecaCHqhlW3m0fo=;
+ b=B8VBaoCj6zTzh4YEgbpHb/CvilnA1f9d+xsvO51FTWC1WaJpGV3KPPqKcDUj+2MHLmu2MmBXjbodTztXLdrcocgvgw68dWYU0z8rbWAO/JkTgtJuFZSdV+AXulPyVZKl9kkJeXRBuNBVOuAEY+eXzpdLxci7NARerTFwtmjAWCus4fB0aXX/x1R8DmVHSb1nfxfHQ9YXeLFaenik1IpvVdns82Ci99IL/I63Mdgx/bptvt0sE2G7LGK0cl+W8EJ3JFlE+n9AjfX+b+CrzNUZag7BINVaLfPPQFT26SdhZJkHyekbV9njy/+VzKo1aTWrLk9Wttc6NNDouZFx6TDVDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by DS0PR11MB6328.namprd11.prod.outlook.com (2603:10b6:8:cc::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.19; Mon, 15 Sep 2025 15:01:03 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 15:01:03 +0000
+Date: Mon, 15 Sep 2025 10:01:00 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Yang Li <yang.lee@linux.alibaba.com>
+CC: <thomas.hellstrom@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Abaci
+ Robot" <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next 2/2] drm/xe: Remove duplicated include in
+ xe_tlb_inval.c
+Message-ID: <76tbazroiyw7xxfoncae6s3kv5rzfvzwkk4vhmj6feb6uabg73@mo7tlafcvaeg>
+References: <20250915080647.669569-1-yang.lee@linux.alibaba.com>
+ <20250915080647.669569-2-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250915080647.669569-2-yang.lee@linux.alibaba.com>
+X-ClientProxiedBy: SJ0PR05CA0093.namprd05.prod.outlook.com
+ (2603:10b6:a03:334::8) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250914181808.1957729-1-irogers@google.com>
-In-Reply-To: <20250914181808.1957729-1-irogers@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 15 Sep 2025 08:00:53 -0700
-X-Gm-Features: Ac12FXy_iXabN6eCwLi19NLkk4n6ATbOkH6fj37zAuckwN_qB8gDAsBy5dmJucI
-Message-ID: <CAP-5=fWz9Put0QznfXSf1ATXjcfQj1T2toZmXrXp502qU4fRSw@mail.gmail.com>
-Subject: Re: [PATCH v1] perf maps: Ensure kmap is set up for all inserts
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS0PR11MB6328:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7decf3b7-84a2-4ad2-583f-08ddf468b069
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8GOSgTsJnSSr0Yaa/S+FJ2rkVsiHQga/s6rytiAFF2nqPSW2DUdNFW++eUIG?=
+ =?us-ascii?Q?vVthPx1+TjzboksskopI9EC8YknGS04j14nNosFXnBKAikBwiiCjm9DUPlow?=
+ =?us-ascii?Q?G4ePb1cJIiBsfAA8QSE4CzcmiN5hI++8gayPfK+RWc4RhGemVaMUwTPky3TV?=
+ =?us-ascii?Q?1ne65cW3xH9v6XAxnY46+wvFSvVwJNcNtioigobHHVn2PCriTtX95nKAy1vr?=
+ =?us-ascii?Q?CvqKXPkO89qnYPtjrq8fQAAck1Mi8WKtBi88vLmpIXxpSnAnrr6U2cUcaSHk?=
+ =?us-ascii?Q?xKWf8AvH21tAY8Jr3Ctux/vezoop4ThWzoDnpXDsWDekOX6Spf/0WpaSzwWy?=
+ =?us-ascii?Q?W05UjQP+69YtmGVo1czR9/nRQ4uvXGh5i0SfPVMKWLdO+P0gcJK8g6WGeGK+?=
+ =?us-ascii?Q?4CM3yu/Dl1cOEfTOMxlUfjq/jM/5QFRwe5S8hxrjf7MRBodBUG6D/bPOyHQd?=
+ =?us-ascii?Q?lxqu6HNtjlXxO19CC+nRrNuAzpn+uuSn1SJ2KtVD1fKKsBIFyfDLogdKkE3x?=
+ =?us-ascii?Q?sIudZVPGvGZH0mNH9x+30KMtr5ZvrYpAghVVN6yl5UjZ9WAAVpNx2WpWNIB7?=
+ =?us-ascii?Q?6jRhiICM+lRKNQKb8NNCPJ8dsEknZE54mPdQZnDu3T0dkdE3km7znf5+ytBD?=
+ =?us-ascii?Q?ljxSwSVWVh7FrSl4yUiJyId4UqfeUjJPdWRnkuKxW24VjQW63C/TJmaBR7/y?=
+ =?us-ascii?Q?MTtZY9u6rPrOe3Bov+F2CiqdeJXQTvBYT8FvBSCpKg+doN0dYSSGbTs21dtG?=
+ =?us-ascii?Q?KoIhTsR+2mUFCmAEoEGESeYyVaB9JbL2NTrpCdgjJCgLi4PgUCjVNK9A5iX2?=
+ =?us-ascii?Q?2LnkdcKoDURR3fyaEWEV2YH2diCGJBsIDc8yjvObaW+C5sYAPJGJyr5ben1y?=
+ =?us-ascii?Q?Eqi/Pk+IGSFSUefUow/64zJtmwHQM3Icf2Eaz1PcZY3fRJd/+eDjgVSWHjml?=
+ =?us-ascii?Q?Wbg+95Hi9UD5lCnYhltHkF0lB0HpnOZv0njoajVyA6kk9gBuHge2SYmvhr6R?=
+ =?us-ascii?Q?Xv2tJssTe1di83FvvSweDolBRQ42GabrZyFSLu6pP2lfyJ7PqNzAk02/ZjMF?=
+ =?us-ascii?Q?1SdRtqx+MsrTgLCwvb1KM4JRdCCfrZ2Lqfpuoufqz5FsaDjliKdgi/GcN3z/?=
+ =?us-ascii?Q?m13VP/h+RY7CJ+vA3+lQJqa8KcTbsLcLv/akOAliYCWfIXPfgRykM3TpGFpa?=
+ =?us-ascii?Q?dXY/bcQEw8Y6plZU0/S9Up48mpn9j3UEZu9sSnFLK7ULAnfR0SEObmP+yHPz?=
+ =?us-ascii?Q?EA+KA7CDyia5cChq07Sb3sr77p3BxUcR3JnWRvIKfbEiwdb7p6/eJZTB4I35?=
+ =?us-ascii?Q?VYDLHW6I/ko/jK9T4vQzlgliZ5zNqZ592onbVArGpyT5wtxMu3ZOt1DV6saP?=
+ =?us-ascii?Q?kpseQ/Q=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TQfQ7BpiNK3aUWwI8dCTkLa8em9PRkR7U46VVQsutVhRy6Qf486yGXcbF2LO?=
+ =?us-ascii?Q?o9ks0zwFFRG5T7PT3i9hQYF55Ojsf01vcQ++eHU81lA/p2yf17xfebeSv5fq?=
+ =?us-ascii?Q?m1u/uIf7lzE8kyubZBh4YM9el/O6kW3OeygE3jELK9X313xVHtuSKq2vRC1t?=
+ =?us-ascii?Q?LSIruxedlU1t1HZnsKwrFnjuMTYr3p81hPXjnW6zbeyo6u9iHkANSgWSmWkU?=
+ =?us-ascii?Q?7yn5ujZWHvFnGDUMKXDP6yBIRfgt60emT4XG420NjP82rkJagz+iUBBD0Dhd?=
+ =?us-ascii?Q?GjtgFN2HyHelu2829Ij8mqvrXHKnmGqql8ieiMeEnou8xsIv3gJSgCMOABff?=
+ =?us-ascii?Q?tZ9B0jCU8ulfsiwhXL2LaAamhNQ2EjVpYKKAMUAGSrkmUcYfeaX5VdwpLmeS?=
+ =?us-ascii?Q?qCVvNTkyQv0T++9bsQlvta50PO1wUUzxutAHqMi9tCQebktuFJFuNY39ISsg?=
+ =?us-ascii?Q?nvGkx+cYsqs3rJwcici4bNWncmdz7DfZbPmBgTSvRUDinNNvaOZhlokwcM3e?=
+ =?us-ascii?Q?Rxtp3yDN12s/piUEJf0D5apVAZTjy9lsJhQ/+5cu7KPfyXfZXfdQ5htW79zq?=
+ =?us-ascii?Q?J8JuiLdx+N5o70z/aoN84N+u4KvVwIVPcKpzHO7MXIyroycG5w55LlQ9OsEs?=
+ =?us-ascii?Q?0EON+bEKb4MuYkRkubgGx5rcmD/a4uRHl9yl9flKGyrz88owtocoSke5qlag?=
+ =?us-ascii?Q?+22VaHO/P82ulDJkhs/3a60vTkltUGMmBVWqDOAn2VkHO5rEWW1FzAqtPLW5?=
+ =?us-ascii?Q?89s8Q8WD6dKsOFJjXRGJGvPIXVROzhaEJ5EAtSnDd8DNw/HDd6Km/TxSd2Ar?=
+ =?us-ascii?Q?rLt84O1S2T5gCgg2ZSnEekv0WwXBgMRFXE9eDNjvxkZ2LIncio3pFg3ExWFi?=
+ =?us-ascii?Q?EUNYB00SSEacFOQJSkNI0brva3MV/hyEzTWrycxK9C/FESKxI1SviJudhfwb?=
+ =?us-ascii?Q?mfq7JJt/rOCJMmdCvAJT2ScZjUXnkwM0cJ1PQgMTFUOr+J6W0c7G+Ibwi5Xe?=
+ =?us-ascii?Q?dja3HGxhbdEv844VGCpLWPoYpneTjm4GUGv9mGUymZqujvfPGSPIRb1Z8rIX?=
+ =?us-ascii?Q?D9YTVrA0sGkRLBhKSFQx/JcKmtwExjOmWoIkBdfztFJo7Zef/vEBRy7dNFaA?=
+ =?us-ascii?Q?lBkMBnQ+pkbZSVpWrNf6/x3tggfTm+BUOMqUZpye96jjMaZD4y/t9+b2LXRB?=
+ =?us-ascii?Q?hLOdz+kuNi3E4mLyorfmNJDC+Q6TFdPtPXXwTcaKJifnujncSlyHVbzoyIuy?=
+ =?us-ascii?Q?WS+4sxRMVG++9eankkwGjCQSwg/WlsdlWP9iyVgVwUjigGR2N7AxGQBeLh+k?=
+ =?us-ascii?Q?eJfzopHYhtAq+62PMAnLVD3XqxMhSmQhHxEuk7gSKVavQll3U+0oYFOr3N0o?=
+ =?us-ascii?Q?qfn9y4B/Cmach2x3WG9lWXp+p8KB+9aVkfFrhi42FhIwrYHNR2NuwZdGdPbE?=
+ =?us-ascii?Q?YD3Cd+Kg40EzXSMR9z1WHMA8ZwQKfP0fKVHqY1aF5S+cYmSdTU43tg1WEtc2?=
+ =?us-ascii?Q?pK5wQq4O768wOWSof8LvO6HH53gakm1HhFOW8fSDHVpwPKLvicNtT1LwV+1Z?=
+ =?us-ascii?Q?Qp6GhbHoqLYhn6zYAo4v2a/eEngCzPoTrHaB6tY9qgmex5KlKH4J7vghHp/v?=
+ =?us-ascii?Q?TA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7decf3b7-84a2-4ad2-583f-08ddf468b069
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 15:01:03.1184
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mjSPo3euAIei0IqQCe+8fyhHgyLvM0hfsX7wzNBS98ppTU0YyxvbbiBLaHCxqRSfHi5vKbuOg9VjJeiHkHs7XnIzLB/DHNTlXy5VrzQkF3s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6328
+X-OriginatorOrg: intel.com
 
-On Sun, Sep 14, 2025 at 11:18=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
-ote:
+On Mon, Sep 15, 2025 at 04:06:47PM +0800, Yang Li wrote:
+>The header files xe_tlb_inval.h is included twice in xe_tlb_inval.c,
+>so one inclusion of each can be removed.
 >
-> __maps__fixup_overlap_and_insert may split or directly insert a map,
-> when doing this the map may need to have a kmap set up for the sake of
-> the kmaps. The missing kmap set up fails the check_invariants test in
-> maps, later "Internal error" reports from map__kmap and ultimately
-> causes segfaults.
->
-> Similar fixes were added in commit e0e4e0b8b7fa ("perf maps: Add
-> missing map__set_kmap_maps() when replacing a kernel map") and commit
-> 25d9c0301d36 ("perf maps: Set the kmaps for newly created/added kernel
-> maps") but they missed cases. To try to reduce the risk of this,
-> update the kmap directly following any manual insert. This identified
-> another problem in maps__copy_from.
->
-> Fixes: e0e4e0b8b7fa ("perf maps: Add missing map__set_kmap_maps() when re=
-placing a kernel map")
-> Fixes: 25d9c0301d36 ("perf maps: Set the kmaps for newly created/added ke=
-rnel maps")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+>Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+>Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=24706
+>Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 
-This may be worth picking up for v6.17. It was a fairly regular source
-of crashes on basic commands like `perf record` for me on certain
-kernels. `perf record` by default is processing the whole perf.data
-file and if there were overlapping maps, from BPF symbol events
-typically, the broken kmap would trigger assertion failures and seg
-faults.
+similar comment as in the previous one. Please use `LANG=C sort -u` and
+submit as a single patch.
 
-Thanks,
-Ian
-
-> ---
->  tools/perf/util/maps.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-> index 85b2a93a59ac..779f6230130a 100644
-> --- a/tools/perf/util/maps.c
-> +++ b/tools/perf/util/maps.c
-> @@ -477,6 +477,7 @@ static int __maps__insert(struct maps *maps, struct m=
-ap *new)
->         }
->         /* Insert the value at the end. */
->         maps_by_address[nr_maps] =3D map__get(new);
-> +       map__set_kmap_maps(new, maps);
->         if (maps_by_name)
->                 maps_by_name[nr_maps] =3D map__get(new);
->
-> @@ -502,8 +503,6 @@ static int __maps__insert(struct maps *maps, struct m=
-ap *new)
->         if (map__end(new) < map__start(new))
->                 RC_CHK_ACCESS(maps)->ends_broken =3D true;
->
-> -       map__set_kmap_maps(new, maps);
-> -
->         return 0;
->  }
->
-> @@ -891,6 +890,7 @@ static int __maps__fixup_overlap_and_insert(struct ma=
-ps *maps, struct map *new)
->                 if (before) {
->                         map__put(maps_by_address[i]);
->                         maps_by_address[i] =3D before;
-> +                       map__set_kmap_maps(before, maps);
->
->                         if (maps_by_name) {
->                                 map__put(maps_by_name[ni]);
-> @@ -918,6 +918,7 @@ static int __maps__fixup_overlap_and_insert(struct ma=
-ps *maps, struct map *new)
->                          */
->                         map__put(maps_by_address[i]);
->                         maps_by_address[i] =3D map__get(new);
-> +                       map__set_kmap_maps(new, maps);
->
->                         if (maps_by_name) {
->                                 map__put(maps_by_name[ni]);
-> @@ -942,14 +943,13 @@ static int __maps__fixup_overlap_and_insert(struct =
-maps *maps, struct map *new)
->                                  */
->                                 map__put(maps_by_address[i]);
->                                 maps_by_address[i] =3D map__get(new);
-> +                               map__set_kmap_maps(new, maps);
->
->                                 if (maps_by_name) {
->                                         map__put(maps_by_name[ni]);
->                                         maps_by_name[ni] =3D map__get(new=
-);
->                                 }
->
-> -                               map__set_kmap_maps(new, maps);
-> -
->                                 check_invariants(maps);
->                                 return err;
->                         }
-> @@ -1019,6 +1019,7 @@ int maps__copy_from(struct maps *dest, struct maps =
-*parent)
->                                 err =3D unwind__prepare_access(dest, new,=
- NULL);
->                                 if (!err) {
->                                         dest_maps_by_address[i] =3D new;
-> +                                       map__set_kmap_maps(new, dest);
->                                         if (dest_maps_by_name)
->                                                 dest_maps_by_name[i] =3D =
-map__get(new);
->                                         RC_CHK_ACCESS(dest)->nr_maps =3D =
-i + 1;
-> --
-> 2.51.0.384.g4c02a37b29-goog
->
+thanks
+Lucas De Marchi
 
