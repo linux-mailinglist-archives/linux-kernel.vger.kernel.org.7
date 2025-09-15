@@ -1,105 +1,128 @@
-Return-Path: <linux-kernel+bounces-816509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F34CB574D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD181B574DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7973E1884446
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D61D3A83B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C36E2F3614;
-	Mon, 15 Sep 2025 09:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B4D2F0689;
+	Mon, 15 Sep 2025 09:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="mT+NeYvz"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbapCBXD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1387D2ECEB8;
-	Mon, 15 Sep 2025 09:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4305E2F49FD;
+	Mon, 15 Sep 2025 09:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757928237; cv=none; b=Hl5+9yyQeV0NqrQADH7irk+1OoHDfmAoFtOs3VMOtNcH7GZIJNdxkvO8Fu5BGaXT2xLVz/4wML0rs+IFrCIpd6TJg9McwP2irOp3aQ47GfYxCQh6i1fmPXiP5/uW84Py7bQu75gYgzw4eJitqvy+iWXG7BVjy3QmZQbC4d8bZVo=
+	t=1757928277; cv=none; b=W4yjWHon01Sh2gBzP90ni3A/PWbNfjtSydk9zppsDHx/BPbANANjeMu4rhkRDwshIs4GuAEKBYZmGwGg0SnK/9N3ricPefdvF3PMI1VApzNpkksjRBlVeyccUbjx/+Y2/Oe/8cA1Oz4jQtocecxzE3CGh9+Kk9vqgpHa635Ky4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757928237; c=relaxed/simple;
-	bh=ibrtgmyavezo7/rV24wGdikXdfg56Q20YZWEB+mLWa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOq+u1UC9RxXat8VIIpGh1jfeR7MrGSeDnNZaWmdXt15KKP2N3mjldhOc1BZ5R9hhYBbSfbBJkuIa290aax0ecwjfOtK8ToBnz+EPiSTIrHi/svDJP9MEL5VKuIpBNnK9tZDEtdoyxiu/YGcstekZu/0/raqzhuQw2viLXAPpmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=mT+NeYvz; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1757928233;
-	bh=ibrtgmyavezo7/rV24wGdikXdfg56Q20YZWEB+mLWa0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mT+NeYvznIc4tPG4UG5JHS3hYDS7hbLnIscEPoWCJjLxsLpq8eXISCLHN3iQr6nXq
-	 Pmbzaou7G37f3CE3OrHyKvQjDsKQkNSE41iYJidnNRSU8IVII+WXzGW/NydWpEJX6p
-	 5II/Cn2fq61/rRvig2tbY5I36tEKVS4FXokWyQHI=
-Date: Mon, 15 Sep 2025 11:23:53 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mark Brown <broonie@kernel.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>, Shuah Khan <shuah@kernel.org>
-Subject: Re: next-20250909: selftests/arm64/gcs/basic-gcs.c:390:30: error:
- use of undeclared identifier 'HWCAP_GCS'
-Message-ID: <5fe12804-2538-42c5-b5c7-66d36ff947d9@t-8ch.de>
-References: <CA+G9fYv77X+kKz2YT6xw7=9UrrotTbQ6fgNac7oohOg8BgGvtw@mail.gmail.com>
- <1e331ebb-3315-4cbe-b194-ccbeeaded4da@t-8ch.de>
- <965c8d7e-c5f2-4bd8-ab7c-c3116632f015@sirena.org.uk>
- <5e4d9943-3a8d-4281-9007-f49bfc66dc6d@weissschuh.net>
- <b9b8b8cf-4920-4f9d-bcea-bea913058601@weissschuh.net>
- <a1dc9839-ab45-4dd6-9eeb-4bbc35bf8d90@sirena.org.uk>
+	s=arc-20240116; t=1757928277; c=relaxed/simple;
+	bh=RgkgrwRypdT/518CgEj/V8LfEbAO8YRYx2xOm90hzPk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YM1Wxrnb67eDy0s8cezNXKJuM/Asp9L23eC7xAHqaosCV6mlayQFLEkibiqPvm1MRaNc/e2kOWU2I2cQMi88qUSuzlgK/veTaDHx5oePOCR/dZrkkC/bciWsT6CSiTbAbE9WOK2cuxGHzk2PQxCJaBBtFxN3Lg+Kar6d1TWv3Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbapCBXD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D1D1EC4CEF1;
+	Mon, 15 Sep 2025 09:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757928276;
+	bh=RgkgrwRypdT/518CgEj/V8LfEbAO8YRYx2xOm90hzPk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=XbapCBXDF3N0JCGizjXEEnzD31MMXQC03i/+s2l2R0wZ8miOI4LMi5Gg4yH2GlKd+
+	 Q6p/IdLWuIk3O4m0FpZ5lI2pKF+5siZCyzECvT+Y9LHHb6fMbXp/FNJbrOak3mz8xy
+	 PVdw03eFO4Wj5bF3mCqyGd6HKakkfAR6ZDU9B05omFHE5FzakQMTWdHqjgi51gFOm9
+	 EMzWFnvH1U1qqsNEicMESHpGGGhWu6VHZugCgkGnOZtnELneHxFgJLjJbYkjfZNBUZ
+	 endu4HugvKFXwjcJFtv84yplTu3poxGqmKcC4DtURMjGwFa72IZgv6lJ1c/MXLajAx
+	 7/Y8KfWSDjnpQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C31A1CAC598;
+	Mon, 15 Sep 2025 09:24:36 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Mon, 15 Sep 2025 13:24:18 +0400
+Subject: [PATCH] arm64: dts: qcom: ipq5018: add QUP3 I2C node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1dc9839-ab45-4dd6-9eeb-4bbc35bf8d90@sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250915-ipq5018-i2c-v1-1-46bbf27396d6@outlook.com>
+X-B4-Tracking: v=1; b=H4sIAEHbx2gC/x3MQQqAIBBA0avIrBNmBMu6SrSQGms2ZQoRiHdPW
+ r7F/wUyJ+EMkyqQ+JEs19lAnYL18OfOWrZmMGgsjkRa4m2RnBazavQYPA29ceSgFTFxkPe/zUu
+ tH1sLzpNdAAAA
+X-Change-ID: 20250911-ipq5018-i2c-0a0fa1762818
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Vandhiadevan Karunamoorthy <vkarunam@codeaurora.org>, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757928274; l=1420;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=5AMg7/oGtHNBWL+11z9Q/HGGQ9F6ll9nuoBPaZhI9aM=;
+ b=YRzjCtxRPYCTIZbfjE7Ch/iQgVk2FPQ2D3Z9XheAftOihKy/1/tmjGVVJNjCCP6dXt51fm4rq
+ wtSUjXqnECrAN3FPi6I7N+IBTc6A+E6Q/wpYazdNwaMdyxGBj0tyK4f
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On 2025-09-12 12:14:00+0100, Mark Brown wrote:
-> On Fri, Sep 12, 2025 at 01:07:58PM +0200, Thomas Weißschuh wrote:
-> 
-> > The Makefile does *not* use -nostdinc, so the nolibc program probably finds the toolchain's glibc asm/hwcap.h.
-> > There also doesn't seem to be a static arm64 hwcap header in tools/include in the first place.
-> > I am still wondering how this works for the other tests.
-> 
-> make headers_install puts a copy in usr/include, probably we just need
-> to include that in the include path.
+From: Vandhiadevan Karunamoorthy <vkarunam@codeaurora.org>
 
-Naresh, could you test the patch below?
-The other custom $(CC) rules in the gcs directory are also not
-respecting $(CFLAGS), but I'll leave these for now.
+Add node to support I2C bus inside of IPQ5018.
 
-diff --git a/tools/testing/selftests/arm64/gcs/Makefile b/tools/testing/selftests/arm64/gcs/Makefile
-index d2f3497a9..1fbbf0ca1 100644
---- a/tools/testing/selftests/arm64/gcs/Makefile
-+++ b/tools/testing/selftests/arm64/gcs/Makefile
-@@ -14,11 +14,11 @@ LDLIBS+=-lpthread
- include ../../lib.mk
+Signed-off-by: Vandhiadevan Karunamoorthy <vkarunam@codeaurora.org>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
- $(OUTPUT)/basic-gcs: basic-gcs.c
--       $(CC) -g -fno-asynchronous-unwind-tables -fno-ident -s -Os -nostdlib \
--               -static -include ../../../../include/nolibc/nolibc.h \
-+       $(CC) $(CFLAGS) -fno-asynchronous-unwind-tables -fno-ident -s -nostdlib -nostdinc \
-+               -static -I../../../../include/nolibc -include ../../../../include/nolibc/nolibc.h \
-                -I../../../../../usr/include \
-                -std=gnu99 -I../.. -g \
--               -ffreestanding -Wall $^ -o $@ -lgcc
-+               -ffreestanding $^ -o $@ -lgcc
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index e88b52006566fd39c0690e6fb53be743eb56d11b..5ba33255659e0a83562bd42048c7152bef04f1cd 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -504,6 +504,21 @@ blsp1_spi1: spi@78b5000 {
+ 			status = "disabled";
+ 		};
+ 
++		blsp1_i2c3: i2c@78b7000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x078b7000 0x600>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++			dmas = <&blsp_dma 9>, <&blsp_dma 8>;
++			dma-names = "tx", "rx";
++			status = "disabled";
++		};
++
+ 		qpic_bam: dma-controller@7984000 {
+ 			compatible = "qcom,bam-v1.7.4", "qcom,bam-v1.7.0";
+ 			reg = <0x07984000 0x1c000>;
 
- $(OUTPUT)/gcs-stress-thread: gcs-stress-thread.S
-        $(CC) -nostdlib $^ -o $@
+---
+base-commit: b0971d2008c644b9064d968d440fb9f44606d90c
+change-id: 20250911-ipq5018-i2c-0a0fa1762818
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
 
 
