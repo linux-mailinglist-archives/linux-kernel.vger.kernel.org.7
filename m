@@ -1,183 +1,93 @@
-Return-Path: <linux-kernel+bounces-817829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AC2B58731
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:12:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996D6B58737
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38274C020A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:12:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5F8D1AA8590
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC712C08B2;
-	Mon, 15 Sep 2025 22:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3982C08B2;
+	Mon, 15 Sep 2025 22:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tp2dAl7j"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fO+1hsr8"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA2C298CC4
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A042C0260
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757974352; cv=none; b=J6V2fr0i2BtJar23hbhYGwAX8oZhyo+krnsO5d+j6wcWEA6n5Qj+gEcming7z0BDmhBiwsjbEHKaO5/Bhb54EQPZx+KNJ72EhBmAEzmV+KwpV9AMJwp8FoFPHbBoRUgn5i1kvqs655l9EaGtrekHVrf6ywO6Jw6H43zwUsGsm/k=
+	t=1757974390; cv=none; b=lN2cRU8JG6uujt4+vur8CGezmupmgm/Mqknoyf3drbern7dz8z9w1Nc/5PboPp90Ai0e8qCw2uLXAFEZZsGHImFdcJ/Ftw0TbxOc8mFR0Wtbe5P8LC037tv2JdR4ooiXlulnclGcNu78rkpBchxXks9uiqujww5pHUKq3nEfYwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757974352; c=relaxed/simple;
-	bh=UxqqOLgeOcZVIT/anqZ+G+jfCLHIPv2RScY+P+RgxW4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TUT5Ew4IK/p/XVPNNjKIMy16huFXTZX1eR8lyWywzvRzgVhe6WoHAWNMEjwgZzWqtKy0DrNVLoBKMf/v1QW0/YluC44L3VN2kU5OSsrHudfX34P/CFWBXQK/SLhvuuoOK2M7DYSEIf2aHxlHa/6UQbpR74JmPVW1mNKSnV4EIHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tp2dAl7j; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329b750757aso3935486a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757974350; x=1758579150; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hr8LZude88xba8bJloaRJyQTYbUOUfQ4ZPSQ9KFa+7A=;
-        b=Tp2dAl7j/FTVbvgGHIyoJHc6BX+ch3zdcxpdwwZFOMghNAfaUcP5aYiheFo+/LNO+U
-         RuOfrV8MlNYT45sIy6O3enEVsP53A1n+1K6JdNiy/WhjZusRA87eQqLlXTHvvNzcOBVl
-         EErDz03M6hYvFaaPqJLFHmelHi427pHlhwP4I/LDuhvD6VanX+Hp5jdnn1Fx0IA5Nz/F
-         vRCx+g+ERnhGwrzAf4xfM6i51p1fulSIJ8p+QCD3ZSoiiWcxkm/I/yQBHjdktRs+D/yv
-         2magO4uKNotuZoG0CVHVLndXZemJUdXPjbHdepRpWtmoRNV8ShvzvVnJPWiF3AYO2bVW
-         0NkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757974350; x=1758579150;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hr8LZude88xba8bJloaRJyQTYbUOUfQ4ZPSQ9KFa+7A=;
-        b=ArsH89Ag/S6/LrH9MoPduY3SVfeGzLyeMxzxcsNh7clTu30h9GU4C47wr14NM7heVf
-         b0OF6nqeeyHMPNBwo3S8n+lGPQQSdIK2ywPQPHKPgB175jI8iFnsh/v6KDz4TFQ82FCd
-         g6pQm6dUrF66fJFKWTZAljpTt04VIFL1oDHSoQnHH8jZxK1u3nYzetJJGFt6aO8P2elL
-         vOlTv2kk4NMupUZykoVrl2zKdZx3AvFh7tYyhsNa6EFxAISfVasIvxBxJXqTdPlgxs07
-         Z5JSzzsZN7MVa+WM+uejIVynWpIoH56fusPGeqgq4PifIJGJDt/aSJbr9cVGxTrxLuGN
-         3euQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjuW5coPJRzZPvsCy75/O2tmEMixSjoFwz2hA9ekBUspwd3+/h7ygefHeJF6ZPAh1vKC3MeduugQkPjcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsuoLbidQkJEb6LSeYKxcFEKf47tY/MyeS5fBcz1I+ZiCuWJW+
-	Cqw2kcd6IMkV6WPHschxmxCDPs6I0qIjKYaYG2loVQRWmKXU4Z8LvjEMl3Rrq/5nSLndTxz6SNf
-	uMTP/3g==
-X-Google-Smtp-Source: AGHT+IFYB1LmHv0XQLVEdkS8gxXjB2AMclzITY7YSD46tThFFzfxBvuQrogabKdZsaRHQj7NStxA3mjEfRk=
-X-Received: from pjk14.prod.google.com ([2002:a17:90b:558e:b0:32e:27d9:eda1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c82:b0:32b:dfdb:b27f
- with SMTP id 98e67ed59e1d1-32de4f961d1mr18891549a91.17.1757974349882; Mon, 15
- Sep 2025 15:12:29 -0700 (PDT)
-Date: Mon, 15 Sep 2025 15:12:28 -0700
-In-Reply-To: <aca9d389-f11e-4811-90cf-d98e345a5cc2@intel.com>
+	s=arc-20240116; t=1757974390; c=relaxed/simple;
+	bh=Gt+D5JLy3ozcBhQzUhmYd8Cf6BrGurM0+4yoWKYa6/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZbaRKRsewGHRVqiH+uXeaXDguVN6iuz7Of1iv+4QVwDJPOGOjk+GbSfgpDxOelMEPeFieZioRSn/nauheRIccHJ3HPutaPb+NevudW4tOmWLRDR8xCekjbTaJbRQscTvPQYz9GT7uY/SgFJ5TQ1kOmr2f+3UX0DyNkUT9GAcu3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fO+1hsr8; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757974382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=O2RzCbaONtBiLM2iRZ147oYVwmAWP9HBYzSDSYZlKkk=;
+	b=fO+1hsr85eVLiPQloLb37dGetL1eUnVm19CG7cHyOjiI4bMRgM9nNhzo24OVmFFZvvTnZD
+	oQN2B7+lBcnbuxmCHRhnpwnfRGY7/f22XcmK4CwvKGMXsm8LMwGwZjf/uDf2QMdR0pnSMm
+	NrQM6RHtgaFtXThEsCCksq551H63Jp4=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: fips - replace simple_strtol with kstrtoint to improve fips_enable
+Date: Tue, 16 Sep 2025 00:12:45 +0200
+Message-ID: <20250915221244.2419149-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-14-seanjc@google.com>
- <aca9d389-f11e-4811-90cf-d98e345a5cc2@intel.com>
-Message-ID: <aMiPTEu_WfmEZiqT@google.com>
-Subject: Re: [PATCH v15 13/41] KVM: x86: Enable guest SSP read/write interface
- with new uAPIs
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 15, 2025, Xiaoyao Li wrote:
-> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> > @@ -6097,11 +6105,22 @@ static int kvm_get_set_one_reg(struct kvm_vcpu *vcpu, unsigned int ioctl,
-> >   static int kvm_get_reg_list(struct kvm_vcpu *vcpu,
-> >   			    struct kvm_reg_list __user *user_list)
-> >   {
-> > -	u64 nr_regs = 0;
-> > +	u64 nr_regs = guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ? 1 : 0;
-> 
-> I wonder what's the semantic of KVM returning KVM_REG_GUEST_SSP on
-> KVM_GET_REG_LIST. Does it ensure KVM_{G,S}ET_ONE_REG returns -EINVAL on
-> KVM_REG_GUEST_SSP when it's not enumerated by KVM_GET_REG_LIST?
-> 
-> If so, but KVM_{G,S}ET_ONE_REG can succeed on GUEST_SSP even if
-> !guest_cpu_cap_has() when @ignore_msrs is true.
+Replace simple_strtol() with the recommended kstrtoint() for parsing the
+'fips=' boot parameter. Unlike simple_strtol(), which returns a long,
+kstrtoint() converts the string directly to an integer and avoids
+implicit casting.
 
-Ugh, great catch.  Too many knobs.  The best idea I've got it to to exempt KVM-
-internal MSRs from ignore_msrs and report_ignored_msrs on host-initiated writes.
-That's unfortunately still a userspace visible change, and would continue to be
-userspace-visible, e.g. if we wanted to change the magic value for
-MSR_KVM_INTERNAL_GUEST_SSP.
+Check the return value of kstrtoint() and reject invalid values. This
+adds error handling while preserving existing behavior for valid values,
+and removes use of the deprecated simple_strtol() helper.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c78acab2ff3f..6a50261d1c5c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -511,6 +511,11 @@ static bool kvm_is_advertised_msr(u32 msr_index)
-        return false;
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ crypto/fips.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/crypto/fips.c b/crypto/fips.c
+index e88a604cb42b..65d2bc070a26 100644
+--- a/crypto/fips.c
++++ b/crypto/fips.c
+@@ -24,7 +24,10 @@ EXPORT_SYMBOL_GPL(fips_fail_notif_chain);
+ /* Process kernel command-line parameter at boot time. fips=0 or fips=1 */
+ static int fips_enable(char *str)
+ {
+-	fips_enabled = !!simple_strtol(str, NULL, 0);
++	if (kstrtoint(str, 0, &fips_enabled))
++		return 0;
++
++	fips_enabled = !!fips_enabled;
+ 	pr_info("fips mode: %s\n", str_enabled_disabled(fips_enabled));
+ 	return 1;
  }
- 
-+static bool kvm_is_internal_msr(u32 msr)
-+{
-+       return msr == MSR_KVM_INTERNAL_GUEST_SSP;
-+}
-+
- typedef int (*msr_access_t)(struct kvm_vcpu *vcpu, u32 index, u64 *data,
-                            bool host_initiated);
- 
-@@ -544,6 +549,9 @@ static __always_inline int kvm_do_msr_access(struct kvm_vcpu *vcpu, u32 msr,
-        if (host_initiated && !*data && kvm_is_advertised_msr(msr))
-                return 0;
- 
-+       if (host_initiated && kvm_is_internal_msr(msr))
-+               return ret;
-+
-        if (!ignore_msrs) {
-                kvm_debug_ratelimited("unhandled %s: 0x%x data 0x%llx\n",
-                                      op, msr, *data);
+-- 
+2.51.0
 
-Alternatively, simply exempt host writes from ignore_msrs.  Aha!  And KVM even
-documents that as the behavior:
-
-	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled MSRs.
-			Default is 0 (don't ignore, but inject #GP)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c78acab2ff3f..177253e75b41 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -544,7 +544,7 @@ static __always_inline int kvm_do_msr_access(struct kvm_vcpu *vcpu, u32 msr,
-        if (host_initiated && !*data && kvm_is_advertised_msr(msr))
-                return 0;
- 
--       if (!ignore_msrs) {
-+       if (host_initiated || !ignore_msrs) {
-                kvm_debug_ratelimited("unhandled %s: 0x%x data 0x%llx\n",
-                                      op, msr, *data);
-                return ret;
-
-So while it's technically an ABI change (arguable since it's guarded by an
-off-by-default param), I suspect we can get away with it.  Hmm, commit 6abe9c1386e5
-("KVM: X86: Move ignore_msrs handling upper the stack") exempted KVM-internal
-MSR accesses from ignore_msrs, but doesn't provide much in the way of justification
-for _why_ that's desirable.
-
-Argh, and that same mini-series extended the behavior to feature MSRs, again
-without seeming to consider whether or not it's actually desirable to suppress
-bad VMM accesses.  Even worse, that decision likely generated an absurd amount
-of churn and noise due to splattering helpers and variants all over the place. :-(
-
-commit 12bc2132b15e0a969b3f455d90a5f215ef239eff
-Author:     Peter Xu <peterx@redhat.com>
-AuthorDate: Mon Jun 22 18:04:42 2020 -0400
-Commit:     Paolo Bonzini <pbonzini@redhat.com>
-CommitDate: Wed Jul 8 16:21:40 2020 -0400
-
-    KVM: X86: Do the same ignore_msrs check for feature msrs
-    
-    Logically the ignore_msrs and report_ignored_msrs should also apply to feature
-    MSRs.  Add them in.
-
-For 6.18, I think the safe play is to go with the first path (exempt KVM-internal
-MSRs), and then try to go for the second approach (exempt all host accesses) for
-6.19.  KVM's ABI for ignore_msrs=true is already all kinds of messed up, so I'm
-not terribly concerned about temporarily making it marginally worse.
 
