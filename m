@@ -1,231 +1,93 @@
-Return-Path: <linux-kernel+bounces-817183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F48B57EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36524B57EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B07D7A818D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:28:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3D21632AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620B6324B22;
-	Mon, 15 Sep 2025 14:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BBE329F00;
+	Mon, 15 Sep 2025 14:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qbvCBD8m"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAK1rDeA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB962FFDF7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FB030C62F;
+	Mon, 15 Sep 2025 14:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946597; cv=none; b=g0ZwORwAaHu4f+rIjFF73MmHLVu4ruJRQpGbHyi9rsj4kQaSlRXpbRFdSoAuRKl2yWwG27TZPC911rMZ6WixYwuiR/Dx0XAdi/fcV9novJ6jCWK6z5mLehcSHQmH8KiT7QKNJ5bnkrAiZop6J6KB/8PfEWh9jnXOyEwk+sG8RcY=
+	t=1757946590; cv=none; b=RrYbsyRnd3ZFfr5HEreqhHlIClLH2WB5FxmmcNtJghxPg2ZThKErryZeeFkERvdQMfhfXd4Ec1QpssIFKukSC211ZzcTAsVPaQE26USJcELn2K/ACqHtPL8wg25AikLkDbxJ1jb/uUA77MhFgwo2lKtT01EkSNRZLdd3Aeg6ZR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946597; c=relaxed/simple;
-	bh=Vag2gnBb/vURH7J+sFwDP2yfkuPnkkqrFPGa8fWRmRg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QcLooeSi7wUKkN9mAP+9uAioiW74JKroiiLPUJp5kY/3NXjDJyTA/kMQ0Sh9eq4azqq8U/H9RcnkYqThlJRF5PSL/BuHBBVCtWHKinrVTKP/RdEi3keLFV4F+bxtX3aX0Z6XG4UDKiG5PsTrfwzsESW+4KtKKi3dUNcRTdq6U1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qbvCBD8m; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757946596; x=1789482596;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Vag2gnBb/vURH7J+sFwDP2yfkuPnkkqrFPGa8fWRmRg=;
-  b=qbvCBD8mDlUv90FAcC/xbSGBEQhljP1TgjRvLoftlTWD6Fpl98bIAm7Q
-   mERKlEMyc4HDiqJ0D9D4CZd95OA7bNhFCnWCjSMmSXNcymQCtNneaORxX
-   yEKFciz2bLbxmusnwl07dXkrigbi8M4cnw7yYgFIcJyxCybm7HXhl5gH1
-   LxUxaNAWn4EzYaBucKBT5FVa7JHvU3Smj5zIIrwF5sUJ/5PD68kkXDRd1
-   ZFMQUvaQajHfCSxXqloDFR7Fp5ozRGIjF5E/uwCPvlHKg0GHiodiCqNTR
-   BJ/p1EDRKjLI74gxhsoxlb9VOv4LElealo9RoEy4emDkArJDGO1lY03kZ
-   Q==;
-X-CSE-ConnectionGUID: LXjrnypeSNyBrbf8fuQoPA==
-X-CSE-MsgGUID: 5jpjx4GUTgyDK4/MLlSw3g==
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="47065475"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:29:55 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 07:29:32 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 15 Sep 2025 07:29:30 -0700
-From: <nicolas.ferre@microchip.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Cristian Birsan <cristian.birsan@microchip.com>, Ryan Wanner
-	<ryan.wanner@microchip.com>, Varshini Rajendran
-	<varshini.rajendran@microchip.com>, Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH 1/2] clk: at91: add ACR in all PLL settings
-Date: Mon, 15 Sep 2025 16:29:07 +0200
-Message-ID: <20250915142908.18737-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757946590; c=relaxed/simple;
+	bh=7lI5MZHznx5ErIR/NXuFs+vw+Oq/SkPWnTHMUhPjQl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QzQLqJUYowmbsTfbV+Qo5UYxBb5RlGNUk9f1vpSsNxRUTSilrY7uKN4tAYBA+7q8ebkfphduyQN35izNqwCEqYay0E83Xs59SW1EGzoWln2Sx4e9DkNhxyfymXZVaexs0rzWb+5Xh9ZsmAvNeKsiPu3GPwfhEucVL5NS6wxcxQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAK1rDeA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFF0C4CEF1;
+	Mon, 15 Sep 2025 14:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757946590;
+	bh=7lI5MZHznx5ErIR/NXuFs+vw+Oq/SkPWnTHMUhPjQl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RAK1rDeAsbkVB1QN1pawukGo03AAEGBrU9s0pA9ityTV+p+baNry4RLRRrbOSVkNP
+	 teQ8GcIaWRWIfcyvrPvC/uH1j8tGZ9MbmtEKdQasecFybVogEfiYpKZnxPM1lvBHyA
+	 rMQqwWf9gnaThMz1rbkU37dCcxChkuJQ3bXTUx4gsImlfcpzIcc6iVMPyFwR28Lrr5
+	 2BMh+JaYnOx/6Gm4aNTdzk3wfDtlJddMsT6sstoxOPJzHGM3iwYk8QXhBveSDse1Eq
+	 j6C25OM55yTiDV9v/gCsb5sQxkbBvBxZPahokEDSIZAlQWvzACphHCNFEGY+aL2i3O
+	 pjZa2cqjefIow==
+Date: Mon, 15 Sep 2025 16:29:41 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, 
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>, 
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, "H.J. Lu" <hjl.tools@gmail.com>, 
+	Florian Weimer <fweimer@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, jannh@google.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Yury Khrustalev <yury.khrustalev@arm.com>, 
+	Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v20 4/8] fork: Add shadow stack support to clone3()
+Message-ID: <20250915-aneignen-notdienst-c901d4b6df24@brauner>
+References: <20250902-clone3-shadow-stack-v20-0-4d9fff1c53e7@kernel.org>
+ <20250902-clone3-shadow-stack-v20-4-4d9fff1c53e7@kernel.org>
+ <20250905-nutria-befund-2f3e92003734@brauner>
+ <0ff8b70e-283f-4d56-8bab-bcae11cd5bdb@sirena.org.uk>
+ <202509050900.8A01B1E6@keescook>
+ <8caf310a-7179-4d4f-be73-2e25496a915f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8caf310a-7179-4d4f-be73-2e25496a915f@sirena.org.uk>
 
-From: Cristian Birsan <cristian.birsan@microchip.com>
+On Fri, Sep 05, 2025 at 05:02:33PM +0100, Mark Brown wrote:
+> On Fri, Sep 05, 2025 at 09:00:51AM -0700, Kees Cook wrote:
+> > On Fri, Sep 05, 2025 at 04:43:22PM +0100, Mark Brown wrote:
+> 
+> > > discover the problem fairly rapidly in testing.  ss_token would shorter
+> > > but the abbreviation is less clear, whatever name you prefer is fine by
+> > > me.
+> 
+> > Bike shed: shstk_token?
+> 
+> That also works and is fine by me, probably better than my idea.
 
-Add the ACR register to all PLL settings and provide the correct
-ACR value for each PLL used in different SoCs.
+Can you do a quick resend based on kernel-6.18.clone3?
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=kernel-6.18.clone3
 
-Suggested-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
-[nicolas.ferre@microchip.com: add sama7d65 and review commit message]
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/clk/at91/pmc.h      | 1 +
- drivers/clk/at91/sam9x60.c  | 2 ++
- drivers/clk/at91/sam9x7.c   | 5 +++++
- drivers/clk/at91/sama7d65.c | 4 ++++
- drivers/clk/at91/sama7g5.c  | 2 ++
- 5 files changed, 14 insertions(+)
-
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 4fb29ca111f7..5daa32c4cf25 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -80,6 +80,7 @@ struct clk_pll_characteristics {
- 	u16 *icpll;
- 	u8 *out;
- 	u8 upll : 1;
-+	u32 acr;
- };
- 
- struct clk_programmable_layout {
-diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-index db6db9e2073e..18baf4a256f4 100644
---- a/drivers/clk/at91/sam9x60.c
-+++ b/drivers/clk/at91/sam9x60.c
-@@ -36,6 +36,7 @@ static const struct clk_pll_characteristics plla_characteristics = {
- 	.num_output = ARRAY_SIZE(plla_outputs),
- 	.output = plla_outputs,
- 	.core_output = core_outputs,
-+	.acr = UL(0x00020010),
- };
- 
- static const struct clk_range upll_outputs[] = {
-@@ -48,6 +49,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
- 	.output = upll_outputs,
- 	.core_output = core_outputs,
- 	.upll = true,
-+	.acr = UL(0x12023010), /* fIN = [18 MHz, 32 MHz]*/
- };
- 
- static const struct clk_pll_layout pll_frac_layout = {
-diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-index 740f52906f6b..89868a0aeaba 100644
---- a/drivers/clk/at91/sam9x7.c
-+++ b/drivers/clk/at91/sam9x7.c
-@@ -107,6 +107,7 @@ static const struct clk_pll_characteristics plla_characteristics = {
- 	.num_output = ARRAY_SIZE(plla_outputs),
- 	.output = plla_outputs,
- 	.core_output = plla_core_outputs,
-+	.acr = UL(0x00020010), /* Old ACR_DEFAULT_PLLA value */
- };
- 
- static const struct clk_pll_characteristics upll_characteristics = {
-@@ -115,6 +116,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
- 	.output = upll_outputs,
- 	.core_output = upll_core_outputs,
- 	.upll = true,
-+	.acr = UL(0x12023010), /* fIN=[20 MHz, 32 MHz] */
- };
- 
- static const struct clk_pll_characteristics lvdspll_characteristics = {
-@@ -122,6 +124,7 @@ static const struct clk_pll_characteristics lvdspll_characteristics = {
- 	.num_output = ARRAY_SIZE(lvdspll_outputs),
- 	.output = lvdspll_outputs,
- 	.core_output = lvdspll_core_outputs,
-+	.acr = UL(0x12023010), /* fIN=[20 MHz, 32 MHz] */
- };
- 
- static const struct clk_pll_characteristics audiopll_characteristics = {
-@@ -129,6 +132,7 @@ static const struct clk_pll_characteristics audiopll_characteristics = {
- 	.num_output = ARRAY_SIZE(audiopll_outputs),
- 	.output = audiopll_outputs,
- 	.core_output = audiopll_core_outputs,
-+	.acr = UL(0x12023010), /* fIN=[20 MHz, 32 MHz] */
- };
- 
- static const struct clk_pll_characteristics plladiv2_characteristics = {
-@@ -136,6 +140,7 @@ static const struct clk_pll_characteristics plladiv2_characteristics = {
- 	.num_output = ARRAY_SIZE(plladiv2_outputs),
- 	.output = plladiv2_outputs,
- 	.core_output = plladiv2_core_outputs,
-+	.acr = UL(0x00020010),  /* Old ACR_DEFAULT_PLLA value */
- };
- 
- /* Layout for fractional PLL ID PLLA. */
-diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
-index a5d40df8b2f2..7dee2b160ffb 100644
---- a/drivers/clk/at91/sama7d65.c
-+++ b/drivers/clk/at91/sama7d65.c
-@@ -138,6 +138,7 @@ static const struct clk_pll_characteristics cpu_pll_characteristics = {
- 	.num_output = ARRAY_SIZE(cpu_pll_outputs),
- 	.output = cpu_pll_outputs,
- 	.core_output = core_outputs,
-+	.acr = UL(0x00070010),
- };
- 
- /* PLL characteristics. */
-@@ -146,6 +147,7 @@ static const struct clk_pll_characteristics pll_characteristics = {
- 	.num_output = ARRAY_SIZE(pll_outputs),
- 	.output = pll_outputs,
- 	.core_output = core_outputs,
-+	.acr = UL(0x00070010),
- };
- 
- static const struct clk_pll_characteristics lvdspll_characteristics = {
-@@ -153,6 +155,7 @@ static const struct clk_pll_characteristics lvdspll_characteristics = {
- 	.num_output = ARRAY_SIZE(lvdspll_outputs),
- 	.output = lvdspll_outputs,
- 	.core_output = lvdspll_core_outputs,
-+	.acr = UL(0x00070010),
- };
- 
- static const struct clk_pll_characteristics upll_characteristics = {
-@@ -160,6 +163,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
- 	.num_output = ARRAY_SIZE(upll_outputs),
- 	.output = upll_outputs,
- 	.core_output = upll_core_outputs,
-+	.acr = UL(0x12020010),
- 	.upll = true,
- };
- 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index 8385badc1c70..1340c2b00619 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -113,6 +113,7 @@ static const struct clk_pll_characteristics cpu_pll_characteristics = {
- 	.num_output = ARRAY_SIZE(cpu_pll_outputs),
- 	.output = cpu_pll_outputs,
- 	.core_output = core_outputs,
-+	.acr = UL(0x00070010),
- };
- 
- /* PLL characteristics. */
-@@ -121,6 +122,7 @@ static const struct clk_pll_characteristics pll_characteristics = {
- 	.num_output = ARRAY_SIZE(pll_outputs),
- 	.output = pll_outputs,
- 	.core_output = core_outputs,
-+	.acr = UL(0x00070010),
- };
- 
- /*
--- 
-2.43.0
 
 
