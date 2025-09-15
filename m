@@ -1,94 +1,93 @@
-Return-Path: <linux-kernel+bounces-817902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF930B58852
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18942B58856
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64FB93A4556
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7CC73AD225
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EEA2DC32E;
-	Mon, 15 Sep 2025 23:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEZDq2ig"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFE22D8773;
+	Mon, 15 Sep 2025 23:36:26 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7A2D47F1;
-	Mon, 15 Sep 2025 23:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610EE229B36;
+	Mon, 15 Sep 2025 23:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757979004; cv=none; b=YukYfDeezZ1zYMxwJF5/IojSofUA+7BWY3sRTM+MQmklLBoPCxLP0Go6JeB2H+GKFSMAV/5Qk4tgDdWTVhYcUFGptvDhugn5e4g1owxDk2gWFCB+9aWEOo/R7DRnaeOenD4Gy7mt2yt9Rq6ZqI8IOi3/e2k1njeCap/+s3X3PdM=
+	t=1757979386; cv=none; b=YbeWrntQ7Ee/Y0E846aHAnq6dzGU8fX6SVZXSSVsA33bGG0tR8iMAEUx5ljGz/uqVGmy5acWZk/2fZUVsfTOuONrarurKBYB6WUSH4LmH6gECtupGxxK9V59fvxF6WbGm+9ZjXKT8W+J9W/vxU0VrT+/27eiAPuf2GSigu/7t48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757979004; c=relaxed/simple;
-	bh=yoQbZRc/nb2BJoeq+on6jDO88ZNiKxPAGxL/dcMOaNI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PigDiK5Noo3d4c//015PxP61e4C9+WL58AH7ytHeLRwOuqZ85JvrOSega5Ykr06EwqlW7+b49c0yGhUFwifXjPVpegslBgASZ9uSXC32Vii0zcQiVh1XyHCkBle/6H1rJlcuhpRgLj7PF+TDjHrC1v7yKC6IXtYsI+0ggCjtXR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEZDq2ig; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F05FC4CEF1;
-	Mon, 15 Sep 2025 23:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757979004;
-	bh=yoQbZRc/nb2BJoeq+on6jDO88ZNiKxPAGxL/dcMOaNI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=fEZDq2ig4Fb3lhzbXc/i6d4wvLFAcWkdx22QStHL/vhN6l0+Yv2kwGCDlgxSB/mr5
-	 Q1XC7hItBMTeNDrYAoQPmMgVxDwkmnE37HKlymFWvprtKlc/X9Qi6K/AqVL5ZYuZ6O
-	 74pVX4lzAMOvSzL2+QTD4pSvY5xYD4Hxji8uiTrFewb3fXPbUMdklF4UDJWC+aekyR
-	 821ECkJ2A+GeoBK84hq8Mx5G1MYpnM97GzJTC+tSnrwEAf1Caqz8a4iyHiJd6amfhx
-	 Y+GapMiCZ5fSnrz3ImBg2YCKvZkp70HsF8d9bL9NLERo7D9Y3wnyA990vNGwmG2NI0
-	 QLXlMIx1QlYig==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD7739D0C18;
-	Mon, 15 Sep 2025 23:30:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757979386; c=relaxed/simple;
+	bh=iKc0rwv9nnPkO2ppIT8he/RWC6XXcgnPfLhnZFlFye0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m6CmDIeqVg6tXUs57vzI/v96ic+euNrmxUy6zD/QlXehQA57bpmwFPgGGds4vy6xhT3i6hPXUnhTu9WcvAmayunHmCtaAcAgbHT1olhFv+A5YGLzvWrsUSPGUpWM4/J+E+WMVw/KinQtfCIC3wt7gCBEX65gmHI0FMpbequxxMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 0318A1DF9D0;
+	Mon, 15 Sep 2025 23:36:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id EF8FB17;
+	Mon, 15 Sep 2025 23:36:13 +0000 (UTC)
+Date: Mon, 15 Sep 2025 19:37:16 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-mm@kvack.org, Kees Cook
+ <keescook@chromium.org>, Aleksa Sarai <cyphar@cyphar.com>, Al Viro
+ <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] uaccess: Comment that copy to/from inatomic requires
+ page fault disabled
+Message-ID: <20250915193716.5357b448@gandalf.local.home>
+In-Reply-To: <20250915164313.42644914@pumpkin>
+References: <20250910161820.247f526a@gandalf.local.home>
+	<20250915164313.42644914@pumpkin>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 1/1] net: phy: clear EEE runtime state in
- PHY_HALTED/PHY_ERROR
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175797900575.527844.13813808525579188622.git-patchwork-notify@kernel.org>
-Date: Mon, 15 Sep 2025 23:30:05 +0000
-References: <20250912132000.1598234-1-o.rempel@pengutronix.de>
-In-Reply-To: <20250912132000.1598234-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux@armlinux.org.uk, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 33i6gkzu83bfzdnbgkz68sni8e167bsf
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: EF8FB17
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18RfPw8aj/71xqwlywpNWAQzZY4z6xKu1g=
+X-HE-Tag: 1757979373-771640
+X-HE-Meta: U2FsdGVkX1/YJoZe9UBIgt61WeL/CIOcWy6Mxx2xXHClEjWsLi1jqg4Aq9gRdcvoWEhOJCDVGhrgnU7WIkhfw18LhHSrRIiYcEt0RrYgyMSSkb1bVZDaJYUd0VuDosC13lXdUBdR2c+wfWNfB5/SsauHh7NS8SEHG2lhAIzY3UrWpXOe/STds4w/GTcfqYnGICB8CF6fRfuLSZNimdC86U0oIoJ9vkn4QjqCRThosI5eJKEwCe0lMypVk/ZUa+oMwzUhGL2IPHZGaBfSrrXzTCSUXH7ma7SPQBnPvvs8Cyt22XkWbx93d9/1WufLv3BfbhMzqsuFPgAD63ehS+qr+0HzqXVOVxzJ
 
-Hello:
+On Mon, 15 Sep 2025 16:43:13 +0100
+David Laight <david.laight.linux@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 12 Sep 2025 15:20:00 +0200 you wrote:
-> Clear EEE runtime flags when the PHY transitions to HALTED or ERROR
-> and the state machine drops the link. This avoids stale EEE state being
-> reported via ethtool after the PHY is stopped or hits an error.
+> > @@ -124,7 +130,8 @@ __copy_from_user(void *to, const void __user *from, unsigned long n)
+> >   * Copy data from kernel space to user space.  Caller must check
+> >   * the specified block with access_ok() before calling this function.
+> >   * The caller should also make sure he pins the user space address
+> > - * so that we don't result in page fault and sleep.
+> > + * or call page_fault_disable() so that we don't result in a page fault
+> > + * and sleep.  
 > 
-> This change intentionally only clears software runtime flags and avoids
-> MDIO accesses in HALTED/ERROR. A follow-up patch will address other
-> link state variables.
+> It is worse than that - it must avoid a COW fault as well.
+> I suspect the comment should really be that these are not the functions you
+> are looking for, you probably want the 'nofault' variants.
 > 
-> [...]
+> Even if the code thinks it has pinned the user buffer it has to be better
+> to use the 'nofault' variant.
+> 
+> The only exception might be in code that already has page faults disabled.
+> But even then it would have to be pretty performance critical for normal code.
 
-Here is the summary with links:
-  - [net-next,v2,1/1] net: phy: clear EEE runtime state in PHY_HALTED/PHY_ERROR
-    https://git.kernel.org/netdev/net-next/c/0915cb224527
+OK, perhaps just change the comments to state that this is an internal
+version and should be avoided unless you know what you are doing. Otherwise
+use the _nofault() versions.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+-- Steve
 
