@@ -1,130 +1,200 @@
-Return-Path: <linux-kernel+bounces-817026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518D8B57C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CAA2B57C9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35244481BEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18456487928
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B37530CDA8;
-	Mon, 15 Sep 2025 13:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307E33112A4;
+	Mon, 15 Sep 2025 13:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EEQk+VY2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="OpGTjdSX"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A4D305E31;
-	Mon, 15 Sep 2025 13:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D67430C376
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942056; cv=none; b=pdG1C/v0mdvPq80O1WsIrExIy2vOXvW8cT6o49m3si1hY0Hq+85sASh5OTKjPsMmiQLci6L7YeArrEuzCwZjiwYh5d1YkwzSRJ5FDVqajM4yQOGyOn55yplyKI1e5FewFWGymh084t4OWuD8agdfiCaDvW6pjHHs/qZqR2QHpR8=
+	t=1757942301; cv=none; b=WaVanvMP9K9QWd6ODGFeQM+3g3vYjYLG9eQuxvdRhiqTzRKtvPVDass60dvOQWrILsKH40hGLss5s7IjaDq1ZrjpPu2a1A0+fHZXy9cJxydhbeWGp9FDyhge11LLrMdmAGEW8Tx+Vrr9R8AGvZMPQ6eiSmxoCGkAgc1Yh9RtzT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942056; c=relaxed/simple;
-	bh=Dle/WCXE1FdM2SDAFI+ZfumRAap/NFKRsz2OC6kLbMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orSsjQNhwuiv2tSqk8TybIQq9YD89ib8tnmIXon+zL4D5K0630aZm1YiscaYEwNndv0O0Y4ifoKlLw/olJd4XAy4gHLJEQJhrmWbM0XQuogt7uFhOMYVjvOLaUd7iP4Yatg29JdOfBcPBbFcBCQplpFftUruNr7JCisTgYQ264Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EEQk+VY2; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757942055; x=1789478055;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dle/WCXE1FdM2SDAFI+ZfumRAap/NFKRsz2OC6kLbMo=;
-  b=EEQk+VY2zgy3DD2NAPrFkOLEq5b8VpHcN2hMfI39JNt3gE1vZ5LhF6ID
-   FBTvTQ9wgDL6bdj+s9caEm1hN0453LnWW0084wQCJpQTaiIgEtim4obsS
-   b15ZudlCW/k3vyZvOsErzBh03V3zXHVx7yy4UsD5KXx9HJGVIdbVdJX7v
-   XnMtvZuuwvjWOGTz9rI5UHY+TFMDkk9/YEJ2L+LUZy6UzzzAptw3hiCdW
-   qpInlk3M28aaR/+UE2jf/Av7jnwoixYUU4/7R9tfvEKFXsaJ47muKK6i2
-   lxhwtf7iIPLF6BZdMJUHEdF3HsSUAwXC/BHuhnpjE765rpPPG+AtnoRgX
-   w==;
-X-CSE-ConnectionGUID: Zk9B7UcCSWu+U3KtotEUnw==
-X-CSE-MsgGUID: C+lAYfb2RsiklqLQYVyfhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="59890761"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="59890761"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 06:14:15 -0700
-X-CSE-ConnectionGUID: zpz3F27SSnSNkSqFUpMt/A==
-X-CSE-MsgGUID: ac8/E/joTTG4Igx2G0j/KQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="173942411"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa010.jf.intel.com with SMTP; 15 Sep 2025 06:14:11 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 15 Sep 2025 16:14:10 +0300
-Date: Mon, 15 Sep 2025 16:14:10 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Sven Peter <sven@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Hector Martin <marcan@marcan.st>
-Subject: Re: [PATCH 08/11] usb: typec: tipd: Update partner identity when
- power status was updated
-Message-ID: <aMgRIoaIbMDH3aAl@kuha.fi.intel.com>
-References: <20250914-apple-usb3-tipd-v1-0-4e99c8649024@kernel.org>
- <20250914-apple-usb3-tipd-v1-8-4e99c8649024@kernel.org>
+	s=arc-20240116; t=1757942301; c=relaxed/simple;
+	bh=0RcAsUV24yUDznAMeuxHRPsiGRsI8fv5Zds6fy6i9Uk=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=ORdKsYyiYYGH+HUpM6twZwubCGOJR8o9J0HuhKKkaLRO09TcKPiw7pQW6D1ImT/kf9iRlVeJTeiBiIX01ejsYMTYnU18b6qV8uHZrMU5rubrCQIZHVGc4oGX2KaKsqDjSOTBzpJlaJzK9e4FOdzzgVmetPXCymg9FtmmdN3VgyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=OpGTjdSX; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b7a40c7fc2so12622341cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1757942298; x=1758547098; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hKFloG2OMskyg6q1OeWWQ+GyNGPMMa+n6Zu3PGiVpJQ=;
+        b=OpGTjdSX8hgFCcYz9G9o/gTP9Cqw/gO3xOE4pX3rvOFQjXuqkFmXEVU88/S7puaY3g
+         TtRfpxlWngW/AHLhE2OdxGtT1d4SGUpdW471cFJ9qiwD1M48RZN7f8krKHQ7x+FHoysE
+         k5XLyt+73qciHMjeQGXYQAWylIQ1EB1o8KlpqmnxM163TztGD6YizI4n5dM37lx3dZjR
+         +q2XGIulte1i0WH8/iUL16z6xXLZlphBoD6DwTcQqzFyajbiz9FKb081Idv5DalzeT4C
+         T8KYaxjBnmc01FS0CwfdIgNwFYcmBzzjNKHGbZ2uQEtkxfj0iScrJyTMi5r3gc/3j1UB
+         DSwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757942298; x=1758547098;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hKFloG2OMskyg6q1OeWWQ+GyNGPMMa+n6Zu3PGiVpJQ=;
+        b=pV8k2IRBo1x7grI+9VWFlSFwCE7wVnho1ScwENML1JdmuU8iJkqwgH4s+qrDJLvs7i
+         bZiMaHnX14niAPvt6XlNi8jkjTlw8c4lEzibZQ5Dsxhd7sqeXAsDBpEnETk209i89TDz
+         gb8zpbkC0s5nWH6nsDU/0xEyTW6T+Hei18/51+HDkc/T7Y7wtpHmj6cdlhm1jvt4wl9y
+         XAb7/wBPB8oj7LfSWG9BxvbWNEtJq2abTufEba8yojm8u8JPWu4mOMfM8xLr+AjTwsmu
+         AzyjU+X0QjtIP/FNCdYek17PJEBaUYZKgH0Mnp/IFPynYz/TUsHfMWU9MuTP/YbqNsG3
+         IMuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXq2fFIcq+D9ACAQQ4B/W/UddACly11uNh1mZJUPdAq7nfvFQjAPjbyV71AcHh67fCe5XVFQgP5NP5vzfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP+zfvbDUn3UEZN7YUvrlhvR+UtfvxFaOBtEhom6SioL0mFzze
+	GHWHalfh3xMWHymZkO0wouqB5CL+lC5aue198S/Wk7sNqQuJQ4dl5CKD1H5Ho48hsXE=
+X-Gm-Gg: ASbGncuCIpG6MXSS87IbiLblwNZ1wCvPTCN2I0rLzfIXpCeVcrnXb3J01R9XJ80dXPF
+	3zj6qla+ll4j3ZEFKCYJOlG8qZXuA3MsqSd+4At9wg1wLW7KJF3YxK2/Qn7Q6zEmgnObZU8hDAY
+	TrfHOrRkI9H4ynxSe3iIfShTe3vtFFHNvyurDUYKGvk92XvRUHPdpDT1+mt5KNJRBXBWiBVDTQ2
+	Nxf8i45cgsTwdVuidZXx03Jj4aMPNFs1Xha98fiwLBVuto0dZfRrrwOLN3T35m5ZBIrZZxaV9VE
+	aayZDXnqvNQOeamBCJ2DyDDXekjb/HS7LZsZNZCSkf2FbZzV59hQ/DW46+KJpsDdXWfHpGETd/S
+	ycGUyU66WINL7P94/FhvXeJhMkyn/ghnBxenDZyb7Xd9bueCa8av8JRRch7LdR9e0xfAcEUGTYY
+	tDXILFhiZsIVXLfaJylQmo8wtstdaOPwCQIPHRNFFU/4prQ1T1Aue8FNkVRQ==
+X-Google-Smtp-Source: AGHT+IGhTCub12nlTzC/2ydYvMUFyaPaJp+cpRW8Vimb0YoCXu36wiRFpkqRncfi2zn9N0Fljc1+3w==
+X-Received: by 2002:a05:622a:2593:b0:4b7:9fc2:d9ba with SMTP id d75a77b69052e-4b79fc2ea42mr61050811cf.41.1757942298293;
+        Mon, 15 Sep 2025 06:18:18 -0700 (PDT)
+Received: from ?IPV6:2003:fa:af00:da00:8e63:e663:d61a:1504? (p200300faaf00da008e63e663d61a1504.dip0.t-ipconnect.de. [2003:fa:af00:da00:8e63:e663:d61a:1504])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-82a0d349ca3sm161109385a.64.2025.09.15.06.18.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 06:18:17 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------4i2MyFr7Y8HFl0Kd5nqzyczP"
+Message-ID: <cf87742b-2f6f-42a2-9d75-b2c766b8b275@grsecurity.net>
+Date: Mon, 15 Sep 2025 15:18:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914-apple-usb3-tipd-v1-8-4e99c8649024@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 00/41] KVM: x86: Mega-CET
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+Content-Language: en-US, de-DE
+From: Mathias Krause <minipli@grsecurity.net>
+Autocrypt: addr=minipli@grsecurity.net; keydata=
+ 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
+ RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
+In-Reply-To: <20250912232319.429659-1-seanjc@google.com>
 
-On Sun, Sep 14, 2025 at 12:56:13PM +0000, Sven Peter wrote:
-> From: Hector Martin <marcan@marcan.st>
-> 
-> Whenever the power status is changed make sure to also update the
-> partner identity to be able to detect changes once de-bouncing and mode
-> changes are added for CD321x.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Signed-off-by: Sven Peter <sven@kernel.org>
+This is a multi-part message in MIME format.
+--------------4i2MyFr7Y8HFl0Kd5nqzyczP
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Am 13.09.25 um 01:22 schrieb Sean Christopherson:
+> This series is (hopefully) all of the in-flight CET virtualization patches
+> in one big bundle.  Please holler if I missed a patch or three as this is what
+> I am planning on applying for 6.18 (modulo fixups and whatnot), i.e. if there's
+> something else that's needed to enable CET virtualization, now's the time...
+> 
+> Patches 1-3 probably need the most attention, as they are new in v15 and I
+> don't have a fully working SEV-ES setup (don't have the right guest firmware,
+> ugh).  Though testing on everything would be much appreciated.
+> 
+> I kept almost all Tested-by tags even for patches that I massaged a bit, and
+> only dropped tags for the "don't emulate CET stuff" patch.  In theory, the
+> changes I've made *should* be benign.  Please yell, loudly, if I broken
+> something and/or you want me to drop your Tested-by.
 
-> ---
->  drivers/usb/typec/tipd/core.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> index c7cf936e5a61a331271c05b68ff1b77b89c0f643..e16c6c07c72a3e285f1fc94db72bed8dc3217a1d 100644
-> --- a/drivers/usb/typec/tipd/core.c
-> +++ b/drivers/usb/typec/tipd/core.c
-> @@ -635,9 +635,16 @@ static irqreturn_t cd321x_interrupt(int irq, void *data)
->  	if (!tps6598x_read_status(tps, &status))
->  		goto err_unlock;
->  
-> -	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE)
-> +	if (event & APPLE_CD_REG_INT_POWER_STATUS_UPDATE) {
->  		if (!tps6598x_read_power_status(tps))
->  			goto err_unlock;
-> +		if (TPS_POWER_STATUS_PWROPMODE(tps->pwr_status) == TYPEC_PWR_MODE_PD) {
-> +			if (tps6598x_read_partner_identity(tps)) {
-> +				dev_err(tps->dev, "failed to read partner identity\n");
-> +				tps->partner_identity = (struct usb_pd_identity) {0};
-> +			}
-> +		}
-> +	}
->  
->  	if (event & APPLE_CD_REG_INT_DATA_STATUS_UPDATE)
->  		if (!tps->data->read_data_status(tps))
-> 
-> -- 
-> 2.34.1
-> 
+I retested this series on my Alder Lake NUC (i7-1260P) and with the
+attached hacky patch on top of Chao's QEMU branch[1] -- which points to
+commit 02364ef48c96 ("fixup! target/i386: Enable XSAVES support for CET
+states") for me right now -- the KUT CET tests[2] pass just fine on the
+host as well as within a guest, i.e. nested. Therefore my Tested-by
+still stands -- at least for the Intel/VMX part.
 
--- 
-heikki
+Thanks,
+Mathias
+
+[1] https://github.com/gaochaointel/qemu-dev#qemu-cet
+[2]
+https://lore.kernel.org/kvm/20250626073459.12990-1-minipli@grsecurity.net/
+--------------4i2MyFr7Y8HFl0Kd5nqzyczP
+Content-Type: text/x-patch; charset=UTF-8; name="qemu_cet_v15.diff"
+Content-Disposition: attachment; filename="qemu_cet_v15.diff"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL3RhcmdldC9pMzg2L2t2bS9rdm0uYyBiL3RhcmdldC9pMzg2L2t2bS9r
+dm0uYwppbmRleCBjZTNjNTJmZDBmN2QuLmQwN2RmYzcxNGEzYyAxMDA2NDQKLS0tIGEvdGFy
+Z2V0L2kzODYva3ZtL2t2bS5jCisrKyBiL3RhcmdldC9pMzg2L2t2bS9rdm0uYwpAQCAtNTMy
+MCw4ICs1MzIwLDcgQEAgc3RhdGljIGludCBrdm1fZ2V0X25lc3RlZF9zdGF0ZShYODZDUFUg
+KmNwdSkKICAgICByZXR1cm4gcmV0OwogfQogCi0jZGVmaW5lIEtWTV9YODZfUkVHX1NZTlRI
+RVRJQ19NU1IgICBCSVRfVUxMKDM1KQotI2RlZmluZSBSRUdfTVNSX0lOREVYKHgpICAgICAg
+ICAgICAgKEtWTV9YODZfUkVHX1NZTlRIRVRJQ19NU1IgfCB4KQorI2RlZmluZSBLVk1fWDg2
+X1JFR19TU1AgICAgICgweDIwMzAwMDAzVUxMIDw8IDMyIHwgMHgwMDAwMDAwMCkKIAogc3Rh
+dGljIGJvb2wgaGFzX2NldF9zc3AoQ1BVU3RhdGUgKmNwdSkKIHsKQEAgLTU0MDksOSArNTQw
+OCw5IEBAIGludCBrdm1fYXJjaF9wdXRfcmVnaXN0ZXJzKENQVVN0YXRlICpjcHUsIGludCBs
+ZXZlbCwgRXJyb3IgKiplcnJwKQogICAgIH0KIAogICAgIGlmIChoYXNfY2V0X3NzcChjcHUp
+KSB7Ci0gICAgICAgIHJldCA9IGt2bV9zZXRfb25lX3JlZyhjcHUsIFJFR19NU1JfSU5ERVgo
+MHVsbCksICZlbnYtPmd1ZXN0X3NzcCk7CisgICAgICAgIHJldCA9IGt2bV9zZXRfb25lX3Jl
+ZyhjcHUsIEtWTV9YODZfUkVHX1NTUCwgJmVudi0+Z3Vlc3Rfc3NwKTsKICAgICAgICAgaWYg
+KHJldCkgewotICAgICAgICAgICAgZXJyb3JfcmVwb3J0KCJGYWlsZWQgdG8gc2V0IEtWTV9S
+RUdfTVNSLCByZXQgPSAlZFxuIiwgcmV0KTsKKyAgICAgICAgICAgIGVycm9yX3JlcG9ydCgi
+RmFpbGVkIHRvIHNldCBLVk1fUkVHX01TUiwgcmV0ID0gJWQiLCByZXQpOwogICAgICAgICB9
+CiAgICAgfQogCkBAIC01NDg5LDkgKzU0ODgsOSBAQCBpbnQga3ZtX2FyY2hfZ2V0X3JlZ2lz
+dGVycyhDUFVTdGF0ZSAqY3MsIEVycm9yICoqZXJycCkKICAgICAgICAgZ290byBvdXQ7CiAg
+ICAgfQogICAgIGlmIChoYXNfY2V0X3NzcChjcykpIHsKLSAgICAgICAgcmV0ID0ga3ZtX2dl
+dF9vbmVfcmVnKGNzLCBSRUdfTVNSX0lOREVYKDB1bGwpLCAmZW52LT5ndWVzdF9zc3ApOwor
+ICAgICAgICByZXQgPSBrdm1fZ2V0X29uZV9yZWcoY3MsIEtWTV9YODZfUkVHX1NTUCwgJmVu
+di0+Z3Vlc3Rfc3NwKTsKICAgICAgICAgaWYgKHJldCkgewotICAgICAgICAgICAgICAgIGVy
+cm9yX3JlcG9ydCgiRmFpbGVkIHRvIGdldCBLVk1fUkVHX01TUiwgcmV0ID0gJWRcbiIsIHJl
+dCk7CisgICAgICAgICAgICAgICAgZXJyb3JfcmVwb3J0KCJGYWlsZWQgdG8gZ2V0IEtWTV9S
+RUdfTVNSLCByZXQgPSAlZCIsIHJldCk7CiAgICAgICAgIH0KICAgICB9CiAgICAgcmV0ID0g
+a3ZtX2dldF9hcGljKGNwdSk7Cg==
+
+--------------4i2MyFr7Y8HFl0Kd5nqzyczP--
 
