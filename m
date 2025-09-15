@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-817745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77607B585F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:19:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE375B585F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328DB3A7D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958732A4297
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820D928DF0B;
-	Mon, 15 Sep 2025 20:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AF5291C1E;
+	Mon, 15 Sep 2025 20:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HxFTcAEH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZqHnVo/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15184286412;
-	Mon, 15 Sep 2025 20:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4501827C150;
+	Mon, 15 Sep 2025 20:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757967544; cv=none; b=ct17YDQkiVcOONrMqxCB+nCVU/HWsHwaGqSvjfGz5No1IxuF76kWSMS2AscfTH4V0RNV6m6Y8HJjfuuqCw9L5Qu2ypuIZGHEuGTB9ByDb2/3TaAt3Bt760o6s4QcnT6ZL5PTL+tc5vtFg2IdIjr8Y8XjMtP2FbVXZ6PNlUwVm9U=
+	t=1757967580; cv=none; b=G2LVCdZ0NCYoai7uqChPqKQXQstHwK0Y4IIgPzAO3pdxxAzwNhnNWGn9XepM1PO8sReFXuFdJUX6TLyt0de7t/L7ZWCoBNU34vJxnvZ45tnL6Ys/80CdAZMSqDKXOgXXgvdfBEJVH97oc4LKZljsFSNwLVtH6zEZslGXlwEXmd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757967544; c=relaxed/simple;
-	bh=9It1wQ5uR41eu0ARWQzVLjUmtSCbCuUHt/xOPwPXjyM=;
+	s=arc-20240116; t=1757967580; c=relaxed/simple;
+	bh=XdJ7z/q77YUFL/QosenW4NKVcYFIhAWClP3csrjOEHE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKQAugw17i1H0GGLo0LKvudk/4z9R5Qs89FP9lfi5siUSnFO/Nfh5zQevLnLStzpVJRr5ejJeRQ5MzVnwvp89ptkA09Btm4cu8jVV4uRSvhCtiCiibtWZMxwF5yClFxbnLjLb7/qbcUEpJk3vw08bSbimG45u98aCboygISGqyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HxFTcAEH; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757967543; x=1789503543;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9It1wQ5uR41eu0ARWQzVLjUmtSCbCuUHt/xOPwPXjyM=;
-  b=HxFTcAEHGg55C58WWGUfKf3z1GgIQNbYpB2r4yh2oPllKyjM7yCBNHBB
-   WcMiJk3M8CbftssdQEskWPXQOcfkILwiyB2wTBoFftwVfc4bFZiCuDSCd
-   tPHn1fq8K61v5eGshh5MYBT9g0OhmP4h7QQeLTMFztOBPorqP35UWwtqq
-   EO1kmrgOUiQZZAYy0SMA/s3ULpDW9wnhzy6jma5n/BygfSGPqVRirREso
-   +gxIIdxM9C/IHbyjUszPUA6/dkRMmOfVJoU9KrLvGxcf4Wx5VIzeagUsp
-   dZQXUysxRFpviy+1AXARPFIH6nAZI9WLvcUZiK/s4hQcgcmPhku3XUU1U
-   w==;
-X-CSE-ConnectionGUID: JFrbaIraQs69rXMOlri+3A==
-X-CSE-MsgGUID: sakxFc+PSJKw8kOx++bPTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="77845092"
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="77845092"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 13:19:02 -0700
-X-CSE-ConnectionGUID: sX5dBo5DQt67lVIC6XZvWQ==
-X-CSE-MsgGUID: rMQOsQaqTeG+EtQSlM7dqg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="174281734"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.113])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 13:19:00 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 7FB5A11F785;
-	Mon, 15 Sep 2025 23:18:57 +0300 (EEST)
-Date: Mon, 15 Sep 2025 23:18:57 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 2/4] ACPI: property: Add code comments explaining what
- is going on
-Message-ID: <aMh0sRizzRFTtp6z@kekkonen.localdomain>
-References: <5046661.31r3eYUQgx@rafael.j.wysocki>
- <2243680.irdbgypaU6@rafael.j.wysocki>
- <aMf5ZNW9t_6tfsjy@kekkonen.localdomain>
- <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ufkk81QepX1nG0hv5wCnulbMmisWblDOjE5bMYPVSukvtwcmCRSeUbQhmkspY9RfRsKDXsyppW16UmHrajwAOjYr3e7i2H+WSZ/I0qLVE9e2+Jdp80FMOyNtY+/WGa9iwVz37tsfkVJYQjGoOgrB0vk/NScgA/9ExymHqiOrido=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZqHnVo/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 938B5C4CEF1;
+	Mon, 15 Sep 2025 20:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757967579;
+	bh=XdJ7z/q77YUFL/QosenW4NKVcYFIhAWClP3csrjOEHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EZqHnVo/0vRzL1QXtPlDyW6r5wT1/RXhbRcDV/QJDqD0XKxxh6MQ23H7OABUjt2mK
+	 Grlghu0fggLO5017FGMY4UIIxvlIlw2chH0Ewcql3s1kFY7kSsQF/Dok0LTC/Pn7Zf
+	 3sUgI+p7lztQaBlhl8AkNFbDPkkb0K81d14POIRd15kAeSGF1vrXFcIrZMs4mq9lC8
+	 EXdca9Wa7KqtgUoWWPR3OW8ms7veuUurvmEmkhaDlczzi35gKr1Auq82QGdyEWCW5y
+	 AL9iX3CsI1xr1ZxgQSD+eMF1SgbrDOh16/rSSIC/b67im/jRftRMPfjkeBERRhCUgl
+	 onhjUo0TpfT5Q==
+Date: Mon, 15 Sep 2025 15:19:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>, Jakub Kicinski <kuba@kernel.org>,
+	devicetree@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	DENG Qingfang <dqfext@gmail.com>, Lee Jones <lee@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Subject: Re: [net-next PATCH v18 3/8] dt-bindings: mfd: Document support for
+ Airoha AN8855 Switch SoC
+Message-ID: <20250915201938.GA3326233-robh@kernel.org>
+References: <20250915104545.1742-1-ansuelsmth@gmail.com>
+ <20250915104545.1742-4-ansuelsmth@gmail.com>
+ <175795551518.2905345.11331954231627495466.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
+In-Reply-To: <175795551518.2905345.11331954231627495466.robh@kernel.org>
 
-Hi Rafael,
-
-On Mon, Sep 15, 2025 at 02:27:16PM +0200, Rafael J. Wysocki wrote:
-> Hi Sakari,
+On Mon, Sep 15, 2025 at 12:01:47PM -0500, Rob Herring (Arm) wrote:
 > 
-> On Mon, Sep 15, 2025 at 1:32 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Rafael,
-> >
-> > On Fri, Sep 12, 2025 at 09:40:58PM +0200, Rafael J. Wysocki wrote:
-> > > +                     /*
-> > > +                      * The reference is expected to point to an object
-> > > +                      * returning a package that contains _DSD-equivalent
-> > > +                      * information.
-> > > +                      */
-> > >                       handle = link->package.elements[1].reference.handle;
-> > >                       result = acpi_nondev_subnode_data_ok(handle, link, list,
-> > >                                                            parent);
-> > >                       break;
-> > >               case ACPI_TYPE_PACKAGE:
-> >
-> > And similarly, the result of an evaluation here is a package when a
-> > reference points to a name object (i.e. a data node).
+> On Mon, 15 Sep 2025 12:45:39 +0200, Christian Marangi wrote:
+> > Document support for Airoha AN8855 Switch SoC. This SoC expose various
+> > peripherals like an Ethernet Switch, a NVMEM provider and Ethernet PHYs.
+> > 
+> > It does also support i2c and timers but those are not currently
+> > supported/used.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../bindings/mfd/airoha,an8855.yaml           | 173 ++++++++++++++++++
+> >  1 file changed, 173 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/airoha,an8855.yaml
+> > 
 > 
-> Well, I'm not sure how this remark is related to the new comment below.
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> Do you mean that this always happens when a reference is used in ASL
-> to point to the target here?
-
-As long as the target is a non-device object (or name or method object at
-least), which is required by DSD-guide for (non-string-)referenced objects.
-
+> yamllint warnings/errors:
 > 
-> But the comment would still be valid in that case, wouldn't it?
-
-After re-reading the first paragraph, I agree.
-
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.yaml:
+> 	Error in referenced schema matching $id: http://devicetree.org/schemas/nvmem/airoha,an8855-efuse.yaml
+> 	Tried these paths (check schema $id if path is wrong):
+> 	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
+> 	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/nvmem/airoha,an8855-efuse.yaml
 > 
-> > > +                     /*
-> > > +                      * This happens when the target package is embedded
-> > > +                      * within the links package as a result of direct
-> > > +                      * evaluation of an object pointed to by a reference.
-> > > +                      *
-> > > +                      * The target package is expected to contain _DSD-
-> > > +                      * equivalent information, but the scope in which it
-> > > +                      * is located in the original AML is unknown.  Thus
-> > > +                      * it cannot contain pathname segments represented as
-> > > +                      * strings because there is no way to build full
-> > > +                      * pathnames out of them.
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: soc@1 (airoha,an8855): efuse: {'compatible': ['airoha,an8855-efuse'], '#nvmem-cell-cells': 0, 'nvmem-layout': {'compatible': ['fixed-layout'], '#address-cells': 1, '#size-cells': 1, 'shift-sel-port0-tx-a@c': {'reg': [[12, 4]], 'phandle': 3}, 'shift-sel-port0-tx-b@10': {'reg': [[16, 4]], 'phandle': 4}, 'shift-sel-port0-tx-c@14': {'reg': [[20, 4]], 'phandle': 5}, 'shift-sel-port0-tx-d@18': {'reg': [[24, 4]], 'phandle': 6}, 'shift-sel-port1-tx-a@1c': {'reg': [[28, 4]], 'phandle': 7}, 'shift-sel-port1-tx-b@20': {'reg': [[32, 4]], 'phandle': 8}, 'shift-sel-port1-tx-c@24': {'reg': [[36, 4]], 'phandle': 9}, 'shift-sel-port1-tx-d@28': {'reg': [[40, 4]], 'phandle': 10}}} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/nvmem/airoha,an8855-efuse.yaml#"}
+> 	from schema $id: http://devicetree.org/schemas/mfd/airoha,an8855.yaml#
+> Documentation/devicetree/bindings/mfd/airoha,an8855.example.dtb: /example-0/mdio/soc@1/efuse: failed to match any schema with compatible: ['airoha,an8855-efuse']
 
-Is the "original AML" relevant? Aren't we just interested in how the
-evaluation result was reached instead of what was its actual path? We won't
-know the latter in any case. What would you think of:
+Why are we on v18 and still getting errors? I only review patches 
+without errors.
 
-			/*
-			 * Evaluating a reference results in a package object
-			 * (required by DSD guide) allocated on the fly. The
-			 * actual target object of the reference isn't
-			 * available.
-			 */
-
-I guess nothing prevents having further string references within the
-object?
-
-I think it'd be best to deprecate direct references in the DSD guide.
-
-> > > +                      */
-> > >                       desc = &link->package.elements[1];
-> > >                       result = acpi_nondev_subnode_extract(desc, NULL, link,
-> > >                                                            list, parent);
-> > >
-> >
-
--- 
-Kind regards,
-
-Sakari Ailus
+Rob
 
