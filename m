@@ -1,59 +1,84 @@
-Return-Path: <linux-kernel+bounces-817008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA05B57C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE631B57C52
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D2E4859E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0DC1A23870
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DA63064A4;
-	Mon, 15 Sep 2025 13:04:19 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B6D2F39AE;
-	Mon, 15 Sep 2025 13:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906CC30C379;
+	Mon, 15 Sep 2025 13:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S9KsEy/F"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC09302153
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941458; cv=none; b=fWqlLRsZStSw0FjJz02bZzbInP5EpmlI99XVXtbVTytS5Uc/eTcWWnFAbpP534gtj9PErmRx+KBeRJfuH/zZzcndnE7d5nT+gf/yIzi5/u8rhwkxPHZ96bBr8y+TQYeJT11lVsXiss6+rsssY8kKAYtUeL7RysyIEdGzKquYW6c=
+	t=1757941576; cv=none; b=ipStBlS93DiD1K1gajWLYP9hCPZ0jMNyLWCBfDY5q5ZVUAkfGoZ/2PtiMiE+HR/763QpYOFqgJpG0MzZNrYg15KmlPcv7Hne1otZ/x+94F/fSrG4ZVPuGRt56lFiEICrobtRdrOdDqFkrR2dQqgqHFbhEaEYSnE2iSD+QHlJ16g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941458; c=relaxed/simple;
-	bh=3BhfEvSq6B4wXQ8mcwwGAf7y+lrRcmlXaUS9Jf/JiiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nsbIHFzK3EwXu0MNSzv7kpdvPiTFzIQcQdRyy8B2fS3C+Prnxdmetaq5VXdq/2ZLqNP2kRvGpU3wNSSvvXT8w7qdfrqSzwGxEQbBfLPzzELB++Lq6lcOpnrQrC0mY6JLHvwJ0JdtFKIvatP03AQZ7lUi88nLdNIUTdbYcCy7/1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app2 (Coremail) with SMTP id TQJkCgCnOZO9DshoOWvRAA--.5421S2;
-	Mon, 15 Sep 2025 21:03:59 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1757941576; c=relaxed/simple;
+	bh=xvtyOxlt0sd5V+mr1Uz3PvxlTQ7hAmIsxOoPbAbzTuE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P4eW5uhlJXEoAPTLb0xkh3X3CHeeofYNSvEaJnhxiSKYYWOuSjpUiUlm8sIVUayoTE3Tnx9auiEDJ7IRsb9cPuRHUlkw5Qc3TNw2AaYw5Px5wNWOYwsC1aUueilUbbPJKOnN+azKnNzIudVAlQr+67QkSNXc+0ECXw+DHNtEQ1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S9KsEy/F; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77616dce48cso2032731b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757941575; x=1758546375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BDcFa+cXk5N40j8gIEFqJLaKFAmqCOwEkbotvenWYbY=;
+        b=S9KsEy/FlN/GvXLJC8A95Ri7QYpP0a67pwOlOfrVhKmHMckw47mdQdKGXZ84DyTliy
+         kMnbHx+/mSoa35bFFqMa/A/CPR8K5Yqt6tzey+Lbrc/9SN2HOfm6zPNHvNd3N83lfVZU
+         LdePnqCGkMRD/dQcs1jgGyE1hLE1XbMEInQgXc9bQEgqrO6tv7z/txJMFqqjZw5DM6pb
+         tZbsdc1Pnngz5EjCowk25rnW9pz1XaWQIItDjS86EvoeY7LL4uHllizc5XzNgmg+JzWH
+         m8fyE5Zg1CZQ5NMlrc6Tqw/PeAbIUHY0Anar87KI8xd7T/r4S6dm3uDeLNjtPuLIGVZA
+         OJCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757941575; x=1758546375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BDcFa+cXk5N40j8gIEFqJLaKFAmqCOwEkbotvenWYbY=;
+        b=Fz4f9McTsE/LI3p2tUyf/B+mOLBxZ0a7tJcMTKpx7WvtcUQqg8RdQ9JjYqtHpQ8h2Y
+         WLI0h8Y3vXob+hOczRGRM5433nHXqDfKRh4P7ctvmch/ZwGvIzFXAvusj7Xcl64/ZnF+
+         7KGAqavPPbe2p424wmf84gRe+YKYmyhkKcvQAFZZjW4NhQN2yGlgcCFwm216qtnymsVq
+         fupc5x1B1KtOyM1F8YYyI6Syjnoj0bCrJLDxCRXCLE3CnmYJBWAr7+3419i6Puot4lmU
+         kOSDsYkTaojyMSW8OdRdAJg/8JxBupsLbD0t1ef5T3YwPEdR2Q1BNBkwVhYGtuZV/XpF
+         n7fA==
+X-Forwarded-Encrypted: i=1; AJvYcCXC720WGRDxd14Ynxlpjk1gp8IoYHAoaVwaizeGNJOrKil2vA1FvbhM3wNS6rrihUHBpN0IVOpz6Iq+Ozw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUxJZ+gLYazixNM5/q9h5k/miiAzoTUIq7HYCkb8NuHjIzkwka
+	3q2ymE5ZoskMWfWwBUprRvZI0YmIKXpgUr3Y9UAYBzVrEUDwG0ZA3gv3
+X-Gm-Gg: ASbGncuEiADnmaz4tJai7eoNlZab0/s1JJIi8GcenizpkroNs1cbW3KcvbSFzKaIgJb
+	sjiOG7M2YhgG+lG0oJpDwkFLkjKk6r2hox8VK7vCC5nDaGuiftXSGC+vnYDWh0vYOhcc4rXeY/e
+	U7snp9Q2aLN7IlMQGc+G0ABSzwB67N8sg7ldg943CTk403LK2N6gZq71n89VDsHi7P9DjfiFwON
+	6feJ7A+k180sjvsLE1BOXse+wUB/Qg32PZYHEfNES7+0Mo/866PiZoMBGQKG2CDFnkg+9JspuE5
+	g7CSHUfxLMnYWx4VTTMXy3g9aprpM45+utJyHBw7U6c0XYJnLiKQvxPIlYVKl0wxSflSoIkGJiI
+	aoJ3KnjzwF+YhO3OEDQzPIWfbCv0W3O7n72ptXlPvv9I6P6RHwMJXnSnO65o=
+X-Google-Smtp-Source: AGHT+IEgPnJcnHP3rgj4/s7O4zA02USZLvX4VYAf4gtyDIGF/KoF1y/PyB3PZ5opq/mq4KZzbBRenw==
+X-Received: by 2002:a05:6a00:3a1c:b0:776:214f:2021 with SMTP id d2e1a72fcca58-776214f2858mr9475735b3a.31.1757941574392;
+        Mon, 15 Sep 2025 06:06:14 -0700 (PDT)
+Received: from localhost.localdomain ([113.218.252.158])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77613e4308csm10451133b3a.73.2025.09.15.06.06.11
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 15 Sep 2025 06:06:14 -0700 (PDT)
+From: chengkaitao <pilgrimtao@gmail.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	linux-phy@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>
-Subject: [PATCH v4 3/3] phy: eswin: Create eswin directory and add EIC7700 SATA PHY driver
-Date: Mon, 15 Sep 2025 21:03:56 +0800
-Message-Id: <20250915130356.799-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250915125902.375-1-luyulin@eswincomputing.com>
-References: <20250915125902.375-1-luyulin@eswincomputing.com>
+	chengkaitao <chengkaitao@kylinos.cn>
+Subject: [PATCH RESEND] block/mq-deadline: Replace DD_PRIO_MAX with DD_PRIO_COUNT
+Date: Mon, 15 Sep 2025 21:06:06 +0800
+Message-Id: <20250915130606.97949-1-pilgrimtao@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,291 +86,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgCnOZO9DshoOWvRAA--.5421S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF43tw4rZw4rGw1fAr45Awb_yoWfXFWxpF
-	4DCFyUWrWktF47Ka93J3WqkF13GrnFqrya9FyDKasIvFW3Jr18Za9Iqa95tFn0vrn7X3yU
-	K3sYqa47Ga15Aw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9C14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRJPE-UUUUU=
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-Created the eswin phy driver directory and added support for
-the SATA phy driver on the EIC7700 SoC platform.
+From: chengkaitao <chengkaitao@kylinos.cn>
 
-Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+Remove redundant DD_PRIO_MAX and enum types, Move DD_PRIO_COUNT
+into enum dd_prio{}, and similarly for DD_DIR_COUNT.
+
+Signed-off-by: chengkaitao <chengkaitao@kylinos.cn>
 ---
- drivers/phy/Kconfig                  |   1 +
- drivers/phy/Makefile                 |   1 +
- drivers/phy/eswin/Kconfig            |  14 ++
- drivers/phy/eswin/Makefile           |   2 +
- drivers/phy/eswin/phy-eic7700-sata.c | 192 +++++++++++++++++++++++++++
- 5 files changed, 210 insertions(+)
- create mode 100644 drivers/phy/eswin/Kconfig
- create mode 100644 drivers/phy/eswin/Makefile
- create mode 100644 drivers/phy/eswin/phy-eic7700-sata.c
+ block/mq-deadline.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 58c911e1b2d2..e82ebcfe534a 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -105,6 +105,7 @@ source "drivers/phy/allwinner/Kconfig"
- source "drivers/phy/amlogic/Kconfig"
- source "drivers/phy/broadcom/Kconfig"
- source "drivers/phy/cadence/Kconfig"
-+source "drivers/phy/eswin/Kconfig"
- source "drivers/phy/freescale/Kconfig"
- source "drivers/phy/hisilicon/Kconfig"
- source "drivers/phy/ingenic/Kconfig"
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index c670a8dac468..ed7444949259 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -17,6 +17,7 @@ obj-y					+= allwinner/	\
- 					   amlogic/	\
- 					   broadcom/	\
- 					   cadence/	\
-+					   eswin/	\
- 					   freescale/	\
- 					   hisilicon/	\
- 					   ingenic/	\
-diff --git a/drivers/phy/eswin/Kconfig b/drivers/phy/eswin/Kconfig
-new file mode 100644
-index 000000000000..3fcd76582c3b
---- /dev/null
-+++ b/drivers/phy/eswin/Kconfig
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Phy drivers for Eswin platforms
-+#
-+config PHY_EIC7700_SATA
-+	tristate "eic7700 Sata SerDes/PHY driver"
-+	depends on ARCH_ESWIN || COMPILE_TEST
-+	depends on HAS_IOMEM
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support SerDes/Phy found on ESWIN's
-+	  EIC7700 SoC.This Phy supports SATA 1.5 Gb/s,
-+	  SATA 3.0 Gb/s, SATA 6.0 Gb/s speeds.
-+	  It supports one SATA host port to accept one SATA device.
-diff --git a/drivers/phy/eswin/Makefile b/drivers/phy/eswin/Makefile
-new file mode 100644
-index 000000000000..db08c66be812
---- /dev/null
-+++ b/drivers/phy/eswin/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_PHY_EIC7700_SATA)	+= phy-eic7700-sata.o
-diff --git a/drivers/phy/eswin/phy-eic7700-sata.c b/drivers/phy/eswin/phy-eic7700-sata.c
-new file mode 100644
-index 000000000000..19b7ddf2583f
---- /dev/null
-+++ b/drivers/phy/eswin/phy-eic7700-sata.c
-@@ -0,0 +1,192 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * ESWIN SATA PHY driver
-+ *
-+ * Copyright 2024, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * Authors: Yulin Lu <luyulin@eswincomputing.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+
-+#define SATA_CLK_CTRL				0x0
-+#define SATA_AXI_LP_CTRL			0x08
-+#define SATA_MPLL_CTRL				0x20
-+#define SATA_P0_PHY_STAT			0x24
-+#define SATA_PHY_CTRL0				0x28
-+#define SATA_PHY_CTRL1				0x2c
-+#define SATA_REG_CTRL				0x34
-+#define SATA_REF_CTRL1				0x38
-+#define SATA_LOS_IDEN				0x3c
-+#define SATA_RESET_CTRL				0x40
-+
-+#define SATA_SYS_CLK_EN				BIT(28)
-+#define SATA_PHY_RESET				BIT(0)
-+#define SATA_PORT_RESET				BIT(1)
-+#define SATA_CLK_RST_SOURCE_PHY			BIT(0)
-+#define SATA_P0_PHY_TX_AMPLITUDE_GEN1_MASK	GENMASK(6, 0)
-+#define SATA_P0_PHY_TX_AMPLITUDE_GEN2_MASK	GENMASK(14, 8)
-+#define SATA_P0_PHY_TX_AMPLITUDE_GEN3_MASK	GENMASK(22, 16)
-+#define SATA_P0_PHY_TX_PREEMPH_GEN1_MASK	GENMASK(5, 0)
-+#define SATA_P0_PHY_TX_PREEMPH_GEN2_MASK	GENMASK(13, 8)
-+#define SATA_P0_PHY_TX_PREEMPH_GEN3_MASK	GENMASK(21, 16)
-+#define SATA_LOS_LEVEL_MASK			GENMASK(4, 0)
-+#define SATA_LOS_BIAS_MASK			GENMASK(18, 16)
-+#define SATA_M_CSYSREQ				BIT(0)
-+#define SATA_S_CSYSREQ				BIT(16)
-+#define SATA_REF_REPEATCLK_EN			BIT(0)
-+#define SATA_REF_USE_PAD			BIT(20)
-+#define SATA_MPLL_MULTIPLIER_MASK		GENMASK(22, 16)
-+#define SATA_P0_PHY_READY			BIT(0)
-+
-+#define PHY_READY_TIMEOUT			(usecs_to_jiffies(4000))
-+
-+struct eic7700_sata_phy {
-+	void __iomem *regs;
-+	struct phy *phy;
-+};
-+
-+static int wait_for_phy_ready(void __iomem *base, u32 reg, u32 checkbit,
-+			      u32 status)
-+{
-+	unsigned long timeout = jiffies + PHY_READY_TIMEOUT;
-+
-+	while (time_before(jiffies, timeout)) {
-+		if ((readl(base + reg) & checkbit) == status)
-+			return 0;
-+		usleep_range(50, 70);
-+	}
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int eic7700_sata_phy_init(struct phy *phy)
-+{
-+	struct eic7700_sata_phy *sata_phy = phy_get_drvdata(phy);
-+	u32 val;
-+	int ret;
-+
-+	/*
-+	 * The SATA_CLK_CTRL register offset controls the pmalive, rxoob, and
-+	 * rbc clocks gate provided by the PHY through the HSP bus, and it is
-+	 * not registered in the clock tree.
-+	 */
-+	val = readl(sata_phy->regs + SATA_CLK_CTRL);
-+	val |= SATA_SYS_CLK_EN;
-+	writel(val, sata_phy->regs + SATA_CLK_CTRL);
-+
-+	writel(SATA_CLK_RST_SOURCE_PHY, sata_phy->regs + SATA_REF_CTRL1);
-+	writel(FIELD_PREP(SATA_P0_PHY_TX_AMPLITUDE_GEN1_MASK, 0x42) |
-+	       FIELD_PREP(SATA_P0_PHY_TX_AMPLITUDE_GEN2_MASK, 0x46) |
-+	       FIELD_PREP(SATA_P0_PHY_TX_AMPLITUDE_GEN3_MASK, 0x73),
-+	       sata_phy->regs + SATA_PHY_CTRL0);
-+	writel(FIELD_PREP(SATA_P0_PHY_TX_PREEMPH_GEN1_MASK, 0x5) |
-+	       FIELD_PREP(SATA_P0_PHY_TX_PREEMPH_GEN2_MASK, 0x5) |
-+	       FIELD_PREP(SATA_P0_PHY_TX_PREEMPH_GEN3_MASK, 0x8),
-+	       sata_phy->regs + SATA_PHY_CTRL1);
-+	writel(FIELD_PREP(SATA_LOS_LEVEL_MASK, 0x9) |
-+	       FIELD_PREP(SATA_LOS_BIAS_MASK, 0x2),
-+	       sata_phy->regs + SATA_LOS_IDEN);
-+	writel(SATA_M_CSYSREQ | SATA_S_CSYSREQ,
-+	       sata_phy->regs + SATA_AXI_LP_CTRL);
-+	writel(SATA_REF_REPEATCLK_EN | SATA_REF_USE_PAD,
-+	       sata_phy->regs + SATA_REG_CTRL);
-+	writel(FIELD_PREP(SATA_MPLL_MULTIPLIER_MASK, 0x3c),
-+	       sata_phy->regs + SATA_MPLL_CTRL);
-+	usleep_range(15, 20);
-+
-+	/*
-+	 * The SATA_RESET_CTRL register offset controls reset/deassert for both
-+	 * the port and the PHY through the HSP bus, and it is not registered
-+	 * in the reset tree.
-+	 */
-+	val = readl(sata_phy->regs + SATA_RESET_CTRL);
-+	val &= ~(SATA_PHY_RESET | SATA_PORT_RESET);
-+	writel(val, sata_phy->regs + SATA_RESET_CTRL);
-+
-+	ret = wait_for_phy_ready(sata_phy->regs, SATA_P0_PHY_STAT,
-+				 SATA_P0_PHY_READY, 1);
-+	if (ret < 0)
-+		dev_err(&sata_phy->phy->dev,
-+			"PHY READY check failed\n");
-+	return ret;
-+}
-+
-+static int eic7700_sata_phy_exit(struct phy *phy)
-+{
-+	struct eic7700_sata_phy *sata_phy = phy_get_drvdata(phy);
-+	u32 val;
-+
-+	val = readl(sata_phy->regs + SATA_RESET_CTRL);
-+	val |= SATA_PHY_RESET | SATA_PORT_RESET;
-+	writel(val, sata_phy->regs + SATA_RESET_CTRL);
-+
-+	val = readl(sata_phy->regs + SATA_CLK_CTRL);
-+	val &= ~SATA_SYS_CLK_EN;
-+	writel(val, sata_phy->regs + SATA_CLK_CTRL);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops eic7700_sata_phy_ops = {
-+	.init		= eic7700_sata_phy_init,
-+	.exit		= eic7700_sata_phy_exit,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int eic7700_sata_phy_probe(struct platform_device *pdev)
-+{
-+	struct eic7700_sata_phy *sata_phy;
-+	struct phy_provider *phy_provider;
-+	struct device *dev = &pdev->dev;
-+
-+	sata_phy = devm_kzalloc(dev, sizeof(*sata_phy), GFP_KERNEL);
-+	if (!sata_phy)
-+		return -ENOMEM;
-+
-+	sata_phy->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(sata_phy->regs))
-+		return PTR_ERR(sata_phy->regs);
-+
-+	dev_set_drvdata(dev, sata_phy);
-+
-+	sata_phy->phy = devm_phy_create(dev, NULL, &eic7700_sata_phy_ops);
-+	if (IS_ERR(sata_phy->phy))
-+		return dev_err_probe(dev, PTR_ERR(sata_phy->phy),
-+				     "failed to create PHY\n");
-+
-+	phy_set_drvdata(sata_phy->phy, sata_phy);
-+
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+	if (IS_ERR(phy_provider))
-+		return dev_err_probe(dev, PTR_ERR(phy_provider),
-+				     "failed to register PHY provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id eic7700_sata_phy_of_match[] = {
-+	{ .compatible = "eswin,eic7700-sata-phy" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, eic7700_sata_phy_of_match);
-+
-+static struct platform_driver eic7700_sata_phy_driver = {
-+	.probe	= eic7700_sata_phy_probe,
-+	.driver = {
-+		.of_match_table	= eic7700_sata_phy_of_match,
-+		.name  = "eic7700-sata-phy",
-+	}
-+};
-+module_platform_driver(eic7700_sata_phy_driver);
-+
-+MODULE_DESCRIPTION("SATA PHY driver for the ESWIN EIC7700 SoC");
-+MODULE_AUTHOR("Yulin Lu <luyulin@eswincomputing.com>");
-+MODULE_LICENSE("GPL");
+diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+index b9b7cdf1d3c9..f1facbdf85c1 100644
+--- a/block/mq-deadline.c
++++ b/block/mq-deadline.c
+@@ -41,19 +41,17 @@ static const int fifo_batch = 16;       /* # of sequential requests treated as o
+ enum dd_data_dir {
+ 	DD_READ		= READ,
+ 	DD_WRITE	= WRITE,
++	DD_DIR_COUNT	= 2
+ };
+ 
+-enum { DD_DIR_COUNT = 2 };
+-
++/* Ensure that "DD_RT_PRIO < DD_BE_PRIO < DD_IDLE_PRIO" */
+ enum dd_prio {
+-	DD_RT_PRIO	= 0,
+-	DD_BE_PRIO	= 1,
+-	DD_IDLE_PRIO	= 2,
+-	DD_PRIO_MAX	= 2,
++	DD_RT_PRIO,
++	DD_BE_PRIO,
++	DD_IDLE_PRIO,
++	DD_PRIO_COUNT
+ };
+ 
+-enum { DD_PRIO_COUNT = 3 };
+-
+ /*
+  * I/O statistics per I/O priority. It is fine if these counters overflow.
+  * What matters is that these counters are at least as wide as
+@@ -441,7 +439,7 @@ static struct request *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
+ 	if (prio_cnt < 2)
+ 		return NULL;
+ 
+-	for (prio = DD_BE_PRIO; prio <= DD_PRIO_MAX; prio++) {
++	for (prio = DD_BE_PRIO; prio < DD_PRIO_COUNT; prio++) {
+ 		rq = __dd_dispatch_request(dd, &dd->per_prio[prio],
+ 					   now - dd->prio_aging_expire);
+ 		if (rq)
+@@ -475,7 +473,7 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+ 	 * Next, dispatch requests in priority order. Ignore lower priority
+ 	 * requests if any higher priority requests are pending.
+ 	 */
+-	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
++	for (prio = 0; prio < DD_PRIO_COUNT; prio++) {
+ 		rq = __dd_dispatch_request(dd, &dd->per_prio[prio], now);
+ 		if (rq || dd_queued(dd, prio))
+ 			break;
+@@ -530,7 +528,7 @@ static void dd_exit_sched(struct elevator_queue *e)
+ 	struct deadline_data *dd = e->elevator_data;
+ 	enum dd_prio prio;
+ 
+-	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
++	for (prio = 0; prio < DD_PRIO_COUNT; prio++) {
+ 		struct dd_per_prio *per_prio = &dd->per_prio[prio];
+ 		const struct io_stats_per_prio *stats = &per_prio->stats;
+ 		uint32_t queued;
+@@ -565,7 +563,7 @@ static int dd_init_sched(struct request_queue *q, struct elevator_queue *eq)
+ 
+ 	eq->elevator_data = dd;
+ 
+-	for (prio = 0; prio <= DD_PRIO_MAX; prio++) {
++	for (prio = 0; prio < DD_PRIO_COUNT; prio++) {
+ 		struct dd_per_prio *per_prio = &dd->per_prio[prio];
+ 
+ 		INIT_LIST_HEAD(&per_prio->dispatch);
+@@ -748,7 +746,7 @@ static bool dd_has_work(struct blk_mq_hw_ctx *hctx)
+ 	struct deadline_data *dd = hctx->queue->elevator->elevator_data;
+ 	enum dd_prio prio;
+ 
+-	for (prio = 0; prio <= DD_PRIO_MAX; prio++)
++	for (prio = 0; prio < DD_PRIO_COUNT; prio++)
+ 		if (dd_has_work_for_prio(&dd->per_prio[prio]))
+ 			return true;
+ 
 -- 
-2.25.1
+2.39.5 (Apple Git-154)
 
 
