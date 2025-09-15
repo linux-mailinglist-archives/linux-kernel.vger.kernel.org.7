@@ -1,202 +1,465 @@
-Return-Path: <linux-kernel+bounces-816872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF27B579B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:02:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D881FB579C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850C416F82B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:02:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF06C4E1F13
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F43C301469;
-	Mon, 15 Sep 2025 12:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B9D302CD8;
+	Mon, 15 Sep 2025 12:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="moxlKa93"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2WCnXf2"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621F52FD1A5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00C43019BA
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937741; cv=none; b=lfn4N7/dRvr48STcLvuqzLRL7m4pPG7YI2yKBJUdRqqLxvS2he5dtlsG30n8jphDaJOVBGiTyL6b1oOb6PWsSGgTmKdRkiSx5EWdqh7RHyzW31r8a2LkyTEVK3cukXNty4Z5rFpPSJBw4+tPE3fx7QlOIVOdjFiJDQatQnLAvFc=
+	t=1757937779; cv=none; b=VSBhX4s/4chQbV+/c6XlZ5L8ljG9RH9tsumK/vO7feM4Klqn34f3o3y8rAiLFcBWGb95rGOkXBugKbukrGXbhGRo1JPMspxtn4V2JDmU3EcuZvbg97Ndz1RSbY7fbBKYxZjc2aLEo/dWoujWFEymXI8MpSgnJYPxHovVnjnHGVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937741; c=relaxed/simple;
-	bh=Oo7O6bPRLLD3MAqlBMumXDbiGCVKFewvPrd138/93zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnmm72bV+2Tn7c0+FTDVX+VU5NpAW6zBD3Yl6JRydRya74qzBBnMtD5PxGKk8eBuNJc8dlQiWLh402GXzTuhwMj2tS7E8/Pr2lHKhw04e5wZxt/WvuuFfvNyn3ufUtZfamRjWC6xvV2fj217bgX/TsjIw9rg3+2spMXS8BsdjDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=moxlKa93; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8Fm1D027342
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:02:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IvAeXnBrUm3WtAxyNHUahdmztvfLEqQROq3blJbaPBE=; b=moxlKa93gMoU+EA+
-	pPc8xR2QA7jLN4py33tSgd6PAQWu3exrp2osAqFc4rJh4hH3YVUl7p8Kd/06k6yf
-	RUjEH/fMsY4C1A37rD4e8YJ/BfpqADJtaPT0wS2XQlvPp3yqLExlzDM/1lYUebxd
-	z3hgvQQCpvp8RoVhF8/pYmeXr9h4+TY0U2WYlHB1Gyrpmuo57xcKt5u7LW8Jxr89
-	1skN0wqWQkD8ydd0gnHU1xmQEW2V+K/ALZIdB4FleK/ZufdxfqIyeN6n779bczUT
-	ZSk/Rn3YXBCr2p0pCjPWect+5M7WedM4awVW6QV32zvoeMQGySTYzCAeKTtJuK5D
-	EXXoPw==
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495072mtfe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:02:19 +0000 (GMT)
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42407cbc8d1so7108625ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:02:18 -0700 (PDT)
+	s=arc-20240116; t=1757937779; c=relaxed/simple;
+	bh=sFJVLZ2KZ0Hcz5cJHFJSDExMCeJ3YzptQttWezMDcKI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMRkYgNXC8lmHSKh50NH9DGc3GlsZDZmU5nYyC2ySv0FNlrjf7/M1Zrs+XW+b5m2HogUuedXk02rdP++NhQ9g6RbX97pY7r5WA9/t5DpzcXhrxrdkj8NPwa/X5VRF5RES6WSa3fc+E6c0pEVbQqueeIUiowq68cGiMP/oTR2DxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2WCnXf2; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b4d4881897cso2635920a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:02:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757937776; x=1758542576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkXTp59y9C0MEqVnEurpqF7SQ6VGFRiSZtPfZgLQH78=;
+        b=K2WCnXf26Fma2ItmcNKbCk9+SfaVs/otvIt/CpCED6/kbhBnVxiiJBJ9YM9J6lYLGf
+         3V68wpoHuSyw/ibcfW0LMkF/dYk4l20Kr5bnpD8RN8K9Y8tJYlCFrnU73CpuObImNYEw
+         XUokdzRXwBnFtqzh3mv9aXocaeZbQZq8WyeLdZw+rtHq6RNOspTxrgfZFnbqXuHZ2+Rx
+         TeUyMJE8TpBIsWXxY8Yi/BizzAJ7hgfQzKOtQkisaZ9hYIwLbr+WeMyTlvROMq4WHw61
+         I5c/8XhZ4j7kfryiGRqVgZzYRLvU1yC/pRb7uePxTcmQw7ekngaEzEZ3Bz+2EN7nhI5M
+         +02A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757937738; x=1758542538;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvAeXnBrUm3WtAxyNHUahdmztvfLEqQROq3blJbaPBE=;
-        b=pEVmHVnSZeePfMcxa6SwORhPszDBBYTz7CU78cfNXGDMg69iutJWNYusu7wcuoYQke
-         gRAlH8hBmcBNQ8kmp258I5g9rbOsWKZJGHVnFKtrzrD7mh8irJRdWwgaQ3pI8n5ceF28
-         5V5+c9MKPsXgbeEY5xoWWJux0zrbxpb92ySkUoByfXxpAwRKHd7QjFLpXBejFmiKdaQb
-         HFlakloL3+v6xILlx1gyd/JHJq6YyiTdWunOwHzglyGrq+OvZBiu6LkELognBt+nkxrJ
-         nABDSUyDUePDZDDDtbJqwH/g5d0x/rQEPN2hBgk81Z0HtfYWP13rf3EclSLMcOCb+aoa
-         TR1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvsJKZ/tUbPl/QhVfVSxFzptG56qef6N5nH7EtC8Vr+THbjddidKq0nvrqTVJ6U4Ii0Js6pr0liBWR16g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqlcNm2sRBfo2VKtwqutnOItFNatj6/gMnYW+0W9WwO568tB1v
-	PgkAVoc3WGjsxia7Ik4CkIMPFetuFGNSsyVo2N5whmZPckuZ045dMLtm5NgpuJfMkO4AIz5wDjY
-	wnZStH5NXKRjWjKYOSwNnXtnr8WHyrM0xyshr2ZpFk4pxz827j//oHOS8kMlFvTaio/0=
-X-Gm-Gg: ASbGncsjYw9LPsBD5+k13Kbi42Ca0ID8UTuLFDCShhLKxBiVJOkSfcGtg1+pr8AMNSl
-	6yaFLoq/TI4Yb9bgUgpKLvTGH/e1XH0ZbBuCdYg4BQej9IG2TulAyGbN2U91gTakhk5fTh75gR+
-	fNBqBsjcH8+V/O/3R/0GWRKaXKe9xCDJWvIORT6aCeXGnyPP0WkHq98UZ2FFAj8prcyVbuy3xSH
-	VRqA4GZk/kqPwz9Nd5RA+VF5KDVRUmuDwmi66prurswJCA5i7VI2WuCTp1z8duMOlQ1OwMbA/zd
-	G57UaB0zsFbOQt9RFs639lY/l63cZYa4B9mpYTIECoEoqhLYshlem0BxSmqnPKroDmfA8tl6efs
-	IY4iMQhjjzi0OxeAkPUYaYgMdW5OQY27lJxApE6R2lkg99QuigBh4
-X-Received: by 2002:a05:6e02:3805:b0:424:db:3f52 with SMTP id e9e14a558f8ab-42400db43c7mr31984585ab.30.1757937737612;
-        Mon, 15 Sep 2025 05:02:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwSFZp4+rn504zHIkvMkDte9o/xIPIokYa2nEOEEH2hcptgXuwuAlyF+4kk8sIPNl3j0f/aA==
-X-Received: by 2002:a05:6e02:3805:b0:424:db:3f52 with SMTP id e9e14a558f8ab-42400db43c7mr31983785ab.30.1757937736970;
-        Mon, 15 Sep 2025 05:02:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-353725e1bc6sm19307291fa.27.2025.09.15.05.02.14
+        d=1e100.net; s=20230601; t=1757937776; x=1758542576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rkXTp59y9C0MEqVnEurpqF7SQ6VGFRiSZtPfZgLQH78=;
+        b=k1f+Rr+WObjsnNKkxHKhO8NPIn7Phatu/B2je+YrTRFEbxxDfBfX7ilnCt9ARytB4i
+         I85IjkJNhMRbG0Lmt1ww5Tyk8/nENynO04d5qbmKpX3ALCGlbDdmO4QVnGromMyBLtrw
+         p0KJEUwilKFpzfxMhyvXL61O+1Te5TF40QDd9Fbw4hMl1dyRer21kTe6RvrfZ6iQWuVL
+         80AzjfFI8pu13VpameltxiHLjp4tGh5uwCedrVG5oYVSqVF5FWv5lQbuv7E2QvqJ46YM
+         wN2KfriYm7QdeRHkIr4P4tAj5tVVXK1WWSpSdUis/hV/HxTv0BuEBOsep/AxhQycQKb2
+         oNJA==
+X-Gm-Message-State: AOJu0YykJ9DfO9bXk0xc4Gw2gtimfZfZksooxTPpwqWjKcOlcmc76TiG
+	bVqL5yFwgguXN0v0qQ6dMs7DZkzAfTgq5MjwTaKWgWhpDKTsTFbRJUM=
+X-Gm-Gg: ASbGncub5GCiDxlP3JkntuoLVPSaBKkV/i8wRqDi9FSh7e5a7eDJ9IUvO+tZlDjWTmj
+	2IIH6fNdGwgbw9ZQzbf+Rdfj14CpEMRvadq1ASz5NmDTtbrNR3m4KvzQkRc8Rpo76X5+XU0Nz7r
+	wbz52ZGC07n8Xhs26zs74Qm0a3TmPobgfLpwn4zdYAJGoejmBIJ2dJFMB4IIdBdRaKcGVbyp4C7
+	6g5MO6PuOYrcBJDoNxIwWH1tTmMHw2yvvaFyVlyVE25VQixcmjKISNaHQWR3eQ3o9/m8G9SQKti
+	rUjnXiU7S/g8FQnoIhiF/jOdtR/gq2CfbixXKQ616mbTQGnU5fVD820Hv1EqIJry4z4ECQ==
+X-Google-Smtp-Source: AGHT+IHL/HryR9tiooOb7lDGKCroEx2G99AHs7zmSQOVmt8ODb0sMPwpnyH24OUKIczYAVQ64mshQg==
+X-Received: by 2002:a17:902:fc4c:b0:263:d6b5:fbe1 with SMTP id d9443c01a7336-263d6b60724mr63969435ad.55.1757937773109;
+        Mon, 15 Sep 2025 05:02:53 -0700 (PDT)
+Received: from FZWforever ([223.160.191.120])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-264eeab7bc8sm41174815ad.28.2025.09.15.05.02.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 05:02:15 -0700 (PDT)
-Date: Mon, 15 Sep 2025 15:02:13 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v4 07/13] phy: qcom: qmp-usbc: Add DP PHY configuration
- support for QCS615
-Message-ID: <yvhj3blwga7dkc2cr5prc7covfcw5lrg56fptynn2j3pbmtrk3@el4qlbecbg2o>
-References: <20250911-add-displayport-support-for-qcs615-platform-v4-0-2702bdda14ed@oss.qualcomm.com>
- <20250911-add-displayport-support-for-qcs615-platform-v4-7-2702bdda14ed@oss.qualcomm.com>
- <sy4kyh3kd6s4nr75unt5r6gxnyeqq6bfjj4tizwiw2fvbw4ala@i3theqmwiv3d>
- <1741620e-1f92-4db9-8135-965a96f12590@oss.qualcomm.com>
+        Mon, 15 Sep 2025 05:02:52 -0700 (PDT)
+From: JaimeFine <jaimefine6@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	ojeda@kernel.org
+Cc: Jaime Fine <jaimefine6@gmail.com>
+Subject: [PATCH] rust: auxiliary: Fix 'initialialized' typo
+Date: Mon, 15 Sep 2025 20:02:27 +0800
+Message-ID: <20250915120235.1942-1-jaimefine6@gmail.com>
+X-Mailer: git-send-email 2.50.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1741620e-1f92-4db9-8135-965a96f12590@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyNSBTYWx0ZWRfX2kdGuvWTGQPS
- xCyN/15pw3/NlfxcPCQ2FRsG59f5mRBawOlRq6C34Cz3IZmSlJHy2KN90P8OkoOmuArn+wWDBv5
- AZrNSaqLeUQkYQd+oUeAAuRjWy66mScD2QAgz5CIjzy7qEwL/lL8DoMssrJi1o8lsUIWjpoEiUO
- NzG5al8MGMwYpqgQQzRAK7u5HGONeWMtBg7oEcDbgTYuS3lzfasZucN/jyYhBzwUeZzziWKWYch
- hy2bu7g2ZG/jqWoG3SiuPUXkpk/dRtjeTXCS6aDSZwM2IcD/P+9NjGy/QjMVLvJWguQHQuflA0q
- e9zJpGeasGE6KjXSwSEP2IisSadHB/9evdsBlrZe0zFopyecjQbYKRU7an6JTSmVo+YPdW+6f4Y
- o8Ny76fs
-X-Proofpoint-GUID: kqZfoAaACjfOZtVT5I0H86oTuZ8x49f-
-X-Authority-Analysis: v=2.4 cv=WcsMa1hX c=1 sm=1 tr=0 ts=68c8004b cx=c_pps
- a=i7ujPs/ZFudY1OxzqguLDw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=gzlAuExvAKsCTSaEeBUA:9 a=3ZKOabzyN94A:10
- a=wPNLvfGTeEIA:10 a=Ti5FldxQo0BAkOmdeC3H:22
-X-Proofpoint-ORIG-GUID: kqZfoAaACjfOZtVT5I0H86oTuZ8x49f-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0 spamscore=0
- suspectscore=0 phishscore=0 clxscore=1015 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130025
 
-On Mon, Sep 15, 2025 at 07:29:08PM +0800, Xiangxu Yin wrote:
-> 
-> On 9/12/2025 6:12 PM, Dmitry Baryshkov wrote:
-> > On Thu, Sep 11, 2025 at 10:55:04PM +0800, Xiangxu Yin wrote:
-> >> Introduce DisplayPort PHY configuration routines for QCS615, including
-> >> aux channel setup, lane control, voltage swing tuning, clock config and
-> >> calibration. These callbacks are registered via qmp_phy_cfg to enable DP
-> >> mode on USB/DP switchable Type-C PHYs.
-> >>
-> >> Add register define for QMP_DP_PHY_V2 series.
-> >>
-> >> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> >> ---
-> >>  drivers/phy/qualcomm/phy-qcom-qmp-dp-phy-v2.h |  21 +++
-> >>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c      | 251 ++++++++++++++++++++++++++
-> >>  2 files changed, 272 insertions(+)
-> >>
-> >> +static int qcs615_qmp_calibrate_dp_phy(struct qmp_usbc *qmp)
-> >> +{
-> >> +	static const u8 cfg1_settings[] = {0x13, 0x23, 0x1d};
-> > Are these the actual values or is it a C&P from the combo PHY?
-> 
-> 
-> These configurations are the same as those in combo, and I have compared
-> that they match the downstream sm6150 project configuration.
+From: Jaime Fine <jaimefine6@gmail.com>
 
-Let's keep them as is, thanks for the confirmation that you checked it
-against the vendor kernel.
+Suggested-by: onur-ozkan
 
-> 
-> From hardware programing guide, only defined AUX sequance with 
-> DP_PHY_PD_CTL set to 0x3d and DP_PHY_AUX_CFG1 set to 0x13.
-> 
-> Shall I update table to {0x13} only?
-> 
-> 
-> >> +	u8 val;
-> >> +
-> >> +	qmp->dp_aux_cfg++;
-> >> +	qmp->dp_aux_cfg %= ARRAY_SIZE(cfg1_settings);
-> >> +	val = cfg1_settings[qmp->dp_aux_cfg];
-> >> +
-> >> +	writel(val, qmp->dp_dp_phy + QSERDES_DP_PHY_AUX_CFG1);
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  static int qmp_usbc_usb_power_on(struct phy *phy)
-> >>  {
-> >>  	struct qmp_usbc *qmp = phy_get_drvdata(phy);
-> >>
-> >> -- 
-> >> 2.34.1
-> >>
+Link: https://github.com/Rust-for-Linux/linux/issues/1187
+Signed-off-by: Jaime Fine <jaimefine6@gmail.com>
+---
+ rust/kernel/auxiliary.rs | 357 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 357 insertions(+)
+ create mode 100644 rust/kernel/auxiliary.rs
 
+diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+new file mode 100644
+index 0000000..3626072
+--- /dev/null
++++ b/rust/kernel/auxiliary.rs
+@@ -0,0 +1,357 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Abstractions for the auxiliary bus.
++//!
++//! C header: [`include/linux/auxiliary_bus.h`](srctree/include/linux/auxiliary_bus.h)
++
++use crate::{
++    bindings, container_of, device,
++    device_id::{RawDeviceId, RawDeviceIdIndex},
++    driver,
++    error::{from_result, to_result, Result},
++    prelude::*,
++    types::Opaque,
++    ThisModule,
++};
++use core::{
++    marker::PhantomData,
++    ptr::{addr_of_mut, NonNull},
++};
++
++/// An adapter for the registration of auxiliary drivers.
++pub struct Adapter<T: Driver>(T);
++
++// SAFETY: A call to `unregister` for a given instance of `RegType` is guaranteed to be valid if
++// a preceding call to `register` has been successful.
++unsafe impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
++    type RegType = bindings::auxiliary_driver;
++
++    unsafe fn register(
++        adrv: &Opaque<Self::RegType>,
++        name: &'static CStr,
++        module: &'static ThisModule,
++    ) -> Result {
++        // SAFETY: It's safe to set the fields of `struct auxiliary_driver` on initialization.
++        unsafe {
++            (*adrv.get()).name = name.as_char_ptr();
++            (*adrv.get()).probe = Some(Self::probe_callback);
++            (*adrv.get()).remove = Some(Self::remove_callback);
++            (*adrv.get()).id_table = T::ID_TABLE.as_ptr();
++        }
++
++        // SAFETY: `adrv` is guaranteed to be a valid `RegType`.
++        to_result(unsafe {
++            bindings::__auxiliary_driver_register(adrv.get(), module.0, name.as_char_ptr())
++        })
++    }
++
++    unsafe fn unregister(adrv: &Opaque<Self::RegType>) {
++        // SAFETY: `adrv` is guaranteed to be a valid `RegType`.
++        unsafe { bindings::auxiliary_driver_unregister(adrv.get()) }
++    }
++}
++
++impl<T: Driver + 'static> Adapter<T> {
++    extern "C" fn probe_callback(
++        adev: *mut bindings::auxiliary_device,
++        id: *const bindings::auxiliary_device_id,
++    ) -> kernel::ffi::c_int {
++        // SAFETY: The auxiliary bus only ever calls the probe callback with a valid pointer to a
++        // `struct auxiliary_device`.
++        //
++        // INVARIANT: `adev` is valid for the duration of `probe_callback()`.
++        let adev = unsafe { &*adev.cast::<Device<device::CoreInternal>>() };
++
++        // SAFETY: `DeviceId` is a `#[repr(transparent)`] wrapper of `struct auxiliary_device_id`
++        // and does not add additional invariants, so it's safe to transmute.
++        let id = unsafe { &*id.cast::<DeviceId>() };
++        let info = T::ID_TABLE.info(id.index());
++
++        from_result(|| {
++            let data = T::probe(adev, info)?;
++
++            adev.as_ref().set_drvdata(data);
++            Ok(0)
++        })
++    }
++
++    extern "C" fn remove_callback(adev: *mut bindings::auxiliary_device) {
++        // SAFETY: The auxiliary bus only ever calls the probe callback with a valid pointer to a
++        // `struct auxiliary_device`.
++        //
++        // INVARIANT: `adev` is valid for the duration of `probe_callback()`.
++        let adev = unsafe { &*adev.cast::<Device<device::CoreInternal>>() };
++
++        // SAFETY: `remove_callback` is only ever called after a successful call to
++        // `probe_callback`, hence it's guaranteed that `Device::set_drvdata()` has been called
++        // and stored a `Pin<KBox<T>>`.
++        drop(unsafe { adev.as_ref().drvdata_obtain::<Pin<KBox<T>>>() });
++    }
++}
++
++/// Declares a kernel module that exposes a single auxiliary driver.
++#[macro_export]
++macro_rules! module_auxiliary_driver {
++    ($($f:tt)*) => {
++        $crate::module_driver!(<T>, $crate::auxiliary::Adapter<T>, { $($f)* });
++    };
++}
++
++/// Abstraction for `bindings::auxiliary_device_id`.
++#[repr(transparent)]
++#[derive(Clone, Copy)]
++pub struct DeviceId(bindings::auxiliary_device_id);
++
++impl DeviceId {
++    /// Create a new [`DeviceId`] from name.
++    pub const fn new(modname: &'static CStr, name: &'static CStr) -> Self {
++        let name = name.as_bytes_with_nul();
++        let modname = modname.as_bytes_with_nul();
++
++        // TODO: Replace with `bindings::auxiliary_device_id::default()` once stabilized for
++        // `const`.
++        //
++        // SAFETY: FFI type is valid to be zero-initialized.
++        let mut id: bindings::auxiliary_device_id = unsafe { core::mem::zeroed() };
++
++        let mut i = 0;
++        while i < modname.len() {
++            id.name[i] = modname[i];
++            i += 1;
++        }
++
++        // Reuse the space of the NULL terminator.
++        id.name[i - 1] = b'.';
++
++        let mut j = 0;
++        while j < name.len() {
++            id.name[i] = name[j];
++            i += 1;
++            j += 1;
++        }
++
++        Self(id)
++    }
++}
++
++// SAFETY: `DeviceId` is a `#[repr(transparent)]` wrapper of `auxiliary_device_id` and does not add
++// additional invariants, so it's safe to transmute to `RawType`.
++unsafe impl RawDeviceId for DeviceId {
++    type RawType = bindings::auxiliary_device_id;
++}
++
++// SAFETY: `DRIVER_DATA_OFFSET` is the offset to the `driver_data` field.
++unsafe impl RawDeviceIdIndex for DeviceId {
++    const DRIVER_DATA_OFFSET: usize =
++        core::mem::offset_of!(bindings::auxiliary_device_id, driver_data);
++
++    fn index(&self) -> usize {
++        self.0.driver_data
++    }
++}
++
++/// IdTable type for auxiliary drivers.
++pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<DeviceId, T>;
++
++/// Create a auxiliary `IdTable` with its alias for modpost.
++#[macro_export]
++macro_rules! auxiliary_device_table {
++    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
++        const $table_name: $crate::device_id::IdArray<
++            $crate::auxiliary::DeviceId,
++            $id_info_type,
++            { $table_data.len() },
++        > = $crate::device_id::IdArray::new($table_data);
++
++        $crate::module_device_table!("auxiliary", $module_table_name, $table_name);
++    };
++}
++
++/// The auxiliary driver trait.
++///
++/// Drivers must implement this trait in order to get an auxiliary driver registered.
++pub trait Driver {
++    /// The type holding information about each device id supported by the driver.
++    ///
++    /// TODO: Use associated_type_defaults once stabilized:
++    ///
++    /// type IdInfo: 'static = ();
++    type IdInfo: 'static;
++
++    /// The table of device ids supported by the driver.
++    const ID_TABLE: IdTable<Self::IdInfo>;
++
++    /// Auxiliary driver probe.
++    ///
++    /// Called when an auxiliary device is matches a corresponding driver.
++    fn probe(dev: &Device<device::Core>, id_info: &Self::IdInfo) -> Result<Pin<KBox<Self>>>;
++}
++
++/// The auxiliary device representation.
++///
++/// This structure represents the Rust abstraction for a C `struct auxiliary_device`. The
++/// implementation abstracts the usage of an already existing C `struct auxiliary_device` within
++/// Rust code that we get passed from the C side.
++///
++/// # Invariants
++///
++/// A [`Device`] instance represents a valid `struct auxiliary_device` created by the C portion of
++/// the kernel.
++#[repr(transparent)]
++pub struct Device<Ctx: device::DeviceContext = device::Normal>(
++    Opaque<bindings::auxiliary_device>,
++    PhantomData<Ctx>,
++);
++
++impl<Ctx: device::DeviceContext> Device<Ctx> {
++    fn as_raw(&self) -> *mut bindings::auxiliary_device {
++        self.0.get()
++    }
++
++    /// Returns the auxiliary device' id.
++    pub fn id(&self) -> u32 {
++        // SAFETY: By the type invariant `self.as_raw()` is a valid pointer to a
++        // `struct auxiliary_device`.
++        unsafe { (*self.as_raw()).id }
++    }
++
++    /// Returns a reference to the parent [`device::Device`], if any.
++    pub fn parent(&self) -> Option<&device::Device> {
++        let ptr: *const Self = self;
++        // CAST: `Device<Ctx: DeviceContext>` types are transparent to each other.
++        let ptr: *const Device = ptr.cast();
++        // SAFETY: `ptr` was derived from `&self`.
++        let this = unsafe { &*ptr };
++
++        this.as_ref().parent()
++    }
++}
++
++impl Device {
++    extern "C" fn release(dev: *mut bindings::device) {
++        // SAFETY: By the type invariant `self.0.as_raw` is a pointer to the `struct device`
++        // embedded in `struct auxiliary_device`.
++        let adev = unsafe { container_of!(dev, bindings::auxiliary_device, dev) };
++
++        // SAFETY: `adev` points to the memory that has been allocated in `Registration::new`, via
++        // `KBox::new(Opaque::<bindings::auxiliary_device>::zeroed(), GFP_KERNEL)`.
++        let _ = unsafe { KBox::<Opaque<bindings::auxiliary_device>>::from_raw(adev.cast()) };
++    }
++}
++
++// SAFETY: `Device` is a transparent wrapper of a type that doesn't depend on `Device`'s generic
++// argument.
++kernel::impl_device_context_deref!(unsafe { Device });
++kernel::impl_device_context_into_aref!(Device);
++
++// SAFETY: Instances of `Device` are always reference-counted.
++unsafe impl crate::types::AlwaysRefCounted for Device {
++    fn inc_ref(&self) {
++        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
++        unsafe { bindings::get_device(self.as_ref().as_raw()) };
++    }
++
++    unsafe fn dec_ref(obj: NonNull<Self>) {
++        // CAST: `Self` a transparent wrapper of `bindings::auxiliary_device`.
++        let adev: *mut bindings::auxiliary_device = obj.cast().as_ptr();
++
++        // SAFETY: By the type invariant of `Self`, `adev` is a pointer to a valid
++        // `struct auxiliary_device`.
++        let dev = unsafe { addr_of_mut!((*adev).dev) };
++
++        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
++        unsafe { bindings::put_device(dev) }
++    }
++}
++
++impl<Ctx: device::DeviceContext> AsRef<device::Device<Ctx>> for Device<Ctx> {
++    fn as_ref(&self) -> &device::Device<Ctx> {
++        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
++        // `struct auxiliary_device`.
++        let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
++
++        // SAFETY: `dev` points to a valid `struct device`.
++        unsafe { device::Device::from_raw(dev) }
++    }
++}
++
++// SAFETY: A `Device` is always reference-counted and can be released from any thread.
++unsafe impl Send for Device {}
++
++// SAFETY: `Device` can be shared among threads because all methods of `Device`
++// (i.e. `Device<Normal>) are thread safe.
++unsafe impl Sync for Device {}
++
++/// The registration of an auxiliary device.
++///
++/// This type represents the registration of a [`struct auxiliary_device`]. When an instance of this
++/// type is dropped, its respective auxiliary device will be unregistered from the system.
++///
++/// # Invariants
++///
++/// `self.0` always holds a valid pointer to an initialized and registered
++/// [`struct auxiliary_device`].
++pub struct Registration(NonNull<bindings::auxiliary_device>);
++
++impl Registration {
++    /// Create and register a new auxiliary device.
++    pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: &CStr) -> Result<Self> {
++        let boxed = KBox::new(Opaque::<bindings::auxiliary_device>::zeroed(), GFP_KERNEL)?;
++        let adev = boxed.get();
++
++        // SAFETY: It's safe to set the fields of `struct auxiliary_device` on initialization.
++        unsafe {
++            (*adev).dev.parent = parent.as_raw();
++            (*adev).dev.release = Some(Device::release);
++            (*adev).name = name.as_char_ptr();
++            (*adev).id = id;
++        }
++
++        // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
++        // which has not been initialized yet.
++        unsafe { bindings::auxiliary_device_init(adev) };
++
++        // Now that `adev` is initialized, leak the `Box`; the corresponding memory will be freed
++        // by `Device::release` when the last reference to the `struct auxiliary_device` is dropped.
++        let _ = KBox::into_raw(boxed);
++
++        // SAFETY:
++        // - `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`, which has
++        //   been initialized,
++        // - `modname.as_char_ptr()` is a NULL terminated string.
++        let ret = unsafe { bindings::__auxiliary_device_add(adev, modname.as_char_ptr()) };
++        if ret != 0 {
++            // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
++            // which has been initialized.
++            unsafe { bindings::auxiliary_device_uninit(adev) };
++
++            return Err(Error::from_errno(ret));
++        }
++
++        // SAFETY: `adev` is guaranteed to be non-null, since the `KBox` was allocated successfully.
++        //
++        // INVARIANT: The device will remain registered until `auxiliary_device_delete()` is called,
++        // which happens in `Self::drop()`.
++        Ok(Self(unsafe { NonNull::new_unchecked(adev) }))
++    }
++}
++
++impl Drop for Registration {
++    fn drop(&mut self) {
++        // SAFETY: By the type invariant of `Self`, `self.0.as_ptr()` is a valid registered
++        // `struct auxiliary_device`.
++        unsafe { bindings::auxiliary_device_delete(self.0.as_ptr()) };
++
++        // This drops the reference we acquired through `auxiliary_device_init()`.
++        //
++        // SAFETY: By the type invariant of `Self`, `self.0.as_ptr()` is a valid registered
++        // `struct auxiliary_device`.
++        unsafe { bindings::auxiliary_device_uninit(self.0.as_ptr()) };
++    }
++}
++
++// SAFETY: A `Registration` of a `struct auxiliary_device` can be released from any thread.
++unsafe impl Send for Registration {}
++
++// SAFETY: `Registration` does not expose any methods or fields that need synchronization.
++unsafe impl Sync for Registration {}
 -- 
-With best wishes
-Dmitry
+2.50.0.windows.1
+
 
