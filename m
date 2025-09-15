@@ -1,201 +1,140 @@
-Return-Path: <linux-kernel+bounces-815991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A61AB56DF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:48:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFA6B56DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B096189A4A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517A13BC433
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77788205E2F;
-	Mon, 15 Sep 2025 01:48:39 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72220200BAE;
+	Mon, 15 Sep 2025 01:48:56 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ECC13DDAA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECA5204096;
+	Mon, 15 Sep 2025 01:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757900919; cv=none; b=mTZXN7jI1WdikFEDvCXuiFpakrsje6OpmsGkNVzsmlLaYaGBGFgj8DlPRsTW7O1lY6yENV7s62EjLKONgpf+vkgZuH7qDLnVv9CgUpCF6eB/0XjXFWjXHPdjWEyDuLqof9/2XO2IFM13ZQFe4KCY8XAgUH8+xp/VcF7vuB7oIAU=
+	t=1757900936; cv=none; b=YbCLG3RMaTlGz7T+Y8Ai0mYdC/S6Q9WPufM/qOezDBqz7m2yPDnvOZnDzJyYcL3u5wU29FHLCWXhjgkpCn99iwV6o979BF8wXvuAGFRCiLRERpz/hOtktZmOU5djsuRzes/txsg54u2kFyf/d4gFfU8xpnY/4uJFcpu2WSIRfI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757900919; c=relaxed/simple;
-	bh=CkvpkExQAfH2OjXjHI8UI6S/tY7kRSr8lhntTVg3IGA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gA+7/skDFFCf6FDK5curuTGPztreOYtsIz/W7u+Yy7jsthUQp084vX78hsN4HMDWxnO8UzbbveAGIDQIiYHWFi0bC83TvCQuTCLvW0sdDw4r6ygWkHN5q71KVfOn2BGFc21brU+vPdG0LPcKJo+5QqvAwe22+X8u/sRSHsxpSfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-42408f6ecaaso1711895ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:48:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757900916; x=1758505716;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uZA9FXENjEJqXH4Rmvuhvla4h9SuV8+cY4bNMe6nevw=;
-        b=HuBz8IH2KpXP/5InPUE54v/mUFf9HZkbvAS/LVybniUfaDee/6shsqSrAPFHSwvzzB
-         XNAO8gI/GuqkjffpWlqgI1x+axjvl8WboCiRatOzepBYpmwObuktTdbrKLkqmsSE65cv
-         j+3feW3EMc2XzPmMxrGzOjfxqqGwPNkKkCqu6/Ay2V0JYKVm1Z2pO25ej4xUI66o4Imq
-         WrAwfklI7sfc6Xyn3IccakCUI5ryTn/Fa/T2veljSJuRQysTEzjQ73qZMVVY6gPKYnbI
-         hd76elQtMbTIregtdjrHNcvB/EgabDW1GMst0yIf2/zp5PF6nCIRFtIMJjXp+eDwCoRa
-         HgyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcnleAN8uMA7AgnYPnizgXysRC9mD6c8o324kq6rsOtXY1Xb1KFWGDtS29uMhTQSikBvFjUOMCN75EYAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX/F4uSWCRw488tgwjkt74ziSv031ebaBWp1AiI8hOnJHUh75y
-	ViB5OlXL3fpNN5lWxUKAE5lcpdkBa1WUjcunzXqcnOjUBdifd3pj82g46OzitlvXs5iatxic1qW
-	Th8U8T/Tkh5gm7YG0J1l4A9ROJBqR+196HR7ihPeKDsyDqyauUq2+3HBvZyg=
-X-Google-Smtp-Source: AGHT+IEk33NYKkGPfx3Ik0d6VrztbTutmIBK7teLaowH+HZDDSK2svO+/bFkWQGTd7s7td/Ae3UMnNjcZA+JMvd0yoN7N3XIq/tS
+	s=arc-20240116; t=1757900936; c=relaxed/simple;
+	bh=M6XMTiV72nwBgNPoTmi+Vfsl2IrEiguTpqxMhrTkadQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s6YPHdKQjq1HFNmJQ5HOEzNfpZ+IEwpZCiyRCINaiSTvyhUI1S6GysAekh9xKJ1roB30hDpCdfO+YyTDGrKOfYYfHVvcIGwtgj5zfYqoQk8NkM4Jd7CIuDb5oIzNMivb/Qjpzmh2SSZxSbgqvQXGFBml/LQWrxeMKrGQBJUrZyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cQ7CC5NM7z2VRhZ;
+	Mon, 15 Sep 2025 09:45:27 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id A42E1140296;
+	Mon, 15 Sep 2025 09:48:49 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 15 Sep 2025 09:48:49 +0800
+Received: from [10.67.120.171] (10.67.120.171) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 15 Sep 2025 09:48:48 +0800
+Message-ID: <a6be1e20-ed27-4883-8aaa-a49a2f5438a2@huawei.com>
+Date: Mon, 15 Sep 2025 09:48:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24e:0:b0:423:fc5c:c7b9 with SMTP id
- e9e14a558f8ab-423fc5cc9eemr33492245ab.1.1757900916438; Sun, 14 Sep 2025
- 18:48:36 -0700 (PDT)
-Date: Sun, 14 Sep 2025 18:48:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c77074.050a0220.50883.000f.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in __bch2_read_endio
-From: syzbot <syzbot+7fb23a5461e8c9d38a3e@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    7aac71907bde Merge tag 'nfs-for-6.17-3' of git://git.linux..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1336c362580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1ee07385471829e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=7fb23a5461e8c9d38a3e
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/097016e74836/disk-7aac7190.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bbf1c7ba046b/vmlinux-7aac7190.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b0ef6a7b95ca/bzImage-7aac7190.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7fb23a5461e8c9d38a3e@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in __bch2_read_endio+0xb2a/0x2240 fs/bcachefs/io_read.c:832
- __bch2_read_endio+0xb2a/0x2240 fs/bcachefs/io_read.c:832
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was stored to memory at:
- __bch2_checksum_bio+0x1097/0x1130 fs/bcachefs/checksum.c:239
- bch2_checksum_bio+0xc5/0x110 fs/bcachefs/checksum.c:252
- __bch2_read_endio+0x8e3/0x2240 fs/bcachefs/io_read.c:831
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was stored to memory at:
- put_unaligned_le64 include/linux/unaligned.h:43 [inline]
- poly1305_core_emit+0x46a/0x480 lib/crypto/poly1305-donna64.c:183
- poly1305_emit_generic include/crypto/internal/poly1305.h:55 [inline]
- poly1305_final+0x88/0x150 lib/crypto/poly1305.c:68
- __bch2_checksum_bio+0x1048/0x1130 fs/bcachefs/checksum.c:237
- bch2_checksum_bio+0xc5/0x110 fs/bcachefs/checksum.c:252
- __bch2_read_endio+0x8e3/0x2240 fs/bcachefs/io_read.c:831
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was stored to memory at:
- poly1305_core_blocks+0x65c/0x670 lib/crypto/poly1305-donna64.c:108
- poly1305_blocks_generic include/crypto/internal/poly1305.h:44 [inline]
- poly1305_blocks lib/crypto/poly1305.c:39 [inline]
- poly1305_update+0x158/0x380 lib/crypto/poly1305.c:45
- __bch2_checksum_bio+0x429/0x1130 fs/bcachefs/checksum.c:233
- bch2_checksum_bio+0xc5/0x110 fs/bcachefs/checksum.c:252
- __bch2_read_endio+0x8e3/0x2240 fs/bcachefs/io_read.c:831
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xb8e/0x1d80 kernel/workqueue.c:3319
- worker_thread+0xedf/0x1590 kernel/workqueue.c:3400
- kthread+0xd59/0xf00 kernel/kthread.c:463
- ret_from_fork+0x1e3/0x310 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-Uninit was created at:
- __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:5171
- alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2416
- alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
- alloc_pages_noprof mm/mempolicy.c:2507 [inline]
- folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2517
- filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1007
- ractl_alloc_folio mm/readahead.c:186 [inline]
- ra_alloc_folio mm/readahead.c:441 [inline]
- page_cache_ra_order+0x83c/0x13f0 mm/readahead.c:506
- page_cache_sync_ra+0x10ac/0x1410 mm/readahead.c:619
- filemap_get_pages+0xfb3/0x3a60 mm/filemap.c:2603
- filemap_read+0x5d2/0x2300 mm/filemap.c:2712
- bch2_read_iter+0x559/0x21b0 fs/bcachefs/fs-io-direct.c:222
- __kernel_read+0x7de/0xe20 fs/read_write.c:530
- integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0x17cb/0x4050 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x45d/0xe50 security/integrity/ima/ima_api.c:293
- process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:405
- ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:633
- security_file_post_open+0xbf/0x530 security/security.c:3160
- do_open fs/namei.c:3889 [inline]
- path_openat+0x5ac3/0x6760 fs/namei.c:4046
- do_filp_open+0x280/0x660 fs/namei.c:4073
- do_sys_openat2+0x1bb/0x2f0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_openat fs/open.c:1466 [inline]
- __se_sys_openat fs/open.c:1461 [inline]
- __x64_sys_openat+0x240/0x300 fs/open.c:1461
- x64_sys_call+0x3bcc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 3593 Comm: kworker/u8:10 Not tainted syzkaller #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Workqueue: events_unbound __bch2_read_endio
-=====================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] uacce: implement mremap in uacce_vm_ops to return
+ -EPERM
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: Zhangfei Gao <zhangfei.gao@linaro.org>, <wangzhou1@hisilicon.com>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-crypto@vger.kernel.org>, <fanghao11@huawei.com>,
+	<shenyang39@huawei.com>, <qianweili@huawei.com>, <linwenkai6@hisilicon.com>,
+	<liulongfang@huawei.com>
+References: <20250822103904.3776304-1-huangchenghai2@huawei.com>
+ <20250822103904.3776304-4-huangchenghai2@huawei.com>
+ <2025082208-coauthor-pagan-e72c@gregkh>
+ <CABQgh9GEZSasZq5bDthQrTZnJ_Uo8G-swDsrM_gWCecWbtTKgA@mail.gmail.com>
+ <2025090608-afloat-grumbling-e729@gregkh>
+ <868ceb0e-f4ba-4495-a1e1-0e387049281a@huawei.com>
+ <2025091358-doornail-underpaid-35ca@gregkh>
+From: huangchenghai <huangchenghai2@huawei.com>
+Content-Language: en-US
+In-Reply-To: <2025091358-doornail-underpaid-35ca@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On Sat, Sep 13, 2025 at 7:06 PM, Greg KH wrote:
+> On Sat, Sep 13, 2025 at 06:40:23PM +0800, huangchenghai wrote:
+>> On Sat, 6 Sept 2025 at 20:03, Greg KH wrote:
+>>> On Thu, Aug 28, 2025 at 01:59:48PM +0800, Zhangfei Gao wrote:
+>>>> Hi, Greg
+>>>>
+>>>> On Fri, 22 Aug 2025 at 19:46, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>>>> On Fri, Aug 22, 2025 at 06:39:03PM +0800, Chenghai Huang wrote:
+>>>>>> From: Yang Shen <shenyang39@huawei.com>
+>>>>>>
+>>>>>> The current uacce_vm_ops does not support the mremap operation of
+>>>>>> vm_operations_struct. Implement .mremap to return -EPERM to remind
+>>>>>> users
+>>>>> Why is this needed?  If mremap is not set, what is the value returned?
+>>>> Did some debug locally.
+>>>>
+>>>> By default, mremap is permitted.
+>>>>
+>>>> With mremap, the original vma is released,
+>>>> The vma_close is called and free resources, including q->qfr.
+>>>>
+>>>> However, vma->vm_private_data (q) is copied to the new vma.
+>>>> When the new vma is closed, vma_close will get q and q->qft=0.
+>>>>
+>>>> So disable mremap here looks safer.
+>>>>
+>>>>> And why is -EPERM the correct value to return here?  That's not what the
+>>>>> man pages say is valid :(
+>>>> if disable mremap, -1 is returned as MAP_FAILED.
+>>>> The errno is decided by the return value, -EPERM (-1) or -EINVAL (-22).
+>>>> man mremap only lists -EINVAL.
+>>>>
+>>>> However, here the driver wants to disable mremap, looks -EPERM is more suitable.
+>>> Disabling mremap is not a permission issue, it's more of an invalid
+>>> call?  I don't know, what do other drivers do?
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>> Hi Greg,
+>>
+>> Thank you for your feedback.
+>>
+>> The reason we need to explicitly disable mremap is that when the
+>> driver does not implement .mremap, it uses the default mremap
+>> method. This could lead to a risk scenario:
+>>
+>> An application might first mmap address p1, then mremap to p2,
+>> followed by munmap(p1), and finally munmap(p2). Since the default
+>> mremap copies the original vma's vm_private_data (i.e., q) to the
+>> new vma, both munmap operations would trigger vma_close, causing
+>> q->qfr to be freed twice(qfr will be set to null here, so repeated release
+>> is ok).
+> Great, can you please include that in the changelog text?
+>
+> thanks,
+>
+> greg k-h
+Sure, I will add changelog in the v2 patch lately.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+ChengHai
 
