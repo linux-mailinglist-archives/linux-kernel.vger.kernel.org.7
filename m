@@ -1,209 +1,123 @@
-Return-Path: <linux-kernel+bounces-815990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4B6B56DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA35B56DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BB43BC0DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFCE3BC419
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB421F91D6;
-	Mon, 15 Sep 2025 01:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009CA1F4CB3;
+	Mon, 15 Sep 2025 01:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rr1pCl5C"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwfgijX9"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2201F7910
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E190A523A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757900612; cv=none; b=GmfEF5WtMMd3bz48vZDw4s66O2jQUMnG+K8bWNSAJfXs/2n2JAIm8nlJDJ0XVuC6ZPunaeYG4VCNo3IK+QEcJQFenhMb4SWWtNwQ9A4lZH9XcEsYRtNniArFZ0RKpnXqK4AC1wuVrMbzKQLCWYRXCYU074HlBIJebC3A3Ohqh4E=
+	t=1757900326; cv=none; b=EVDWj66BtTiKtiSlvIBqywVBLdyXYtpDyTc690ijS/qexBm2nFhXiNsGT0NHZHWqPOboKiClAf8JweDqkNDK1fZaZCdfa0YGDo6tpvwk8rvnHD4jEjBSf17jkBlzcmst1quOc7TaLwfA0cdUqcG1THDUkaZoX0hXbnfLOzG/l3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757900612; c=relaxed/simple;
-	bh=zCsK6BlJ82HSf/uw1ZZxY8/o0y2bDbRzIHZtI3om1z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uhonm2DrqS4YfmxfC6OzhUuD289Y5gT6rPOJDP/CHVLKvlCXon4Da5q+TJEcEXkGl4FahRdRfddSvUJNMXAZe+3SRSZWan+k9ZXMFxlRvc4CnYGQj2vuJiJcBjTM3guyRzQBaIfdaCpX8LgQdk8vE7p2ydHRLYeNRGwb/7jq8fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rr1pCl5C; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 653FE3F2C5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1757900278;
-	bh=hcIzuhKiKNm6JVHXa92r6htbz03BDwVBOL/bRK53VK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=rr1pCl5Ckyu5hnZS3I+3Tv21XQIKVns+TdoBGgdGci8e2xiMfKh46392MfrDjXShb
-	 Tu0IEuj+KFMENbnwf4cJBFCLc14+HywYfMl7PUh6sD/sVG51t80QpF4OXPtLgy+luT
-	 bGiOfr6ebEHX6olOGT4a+4ruyJ8Uka4fP3+7495HtLIzsaOczhXYtfeNXYWTbPLxDu
-	 4/Xhjvp2RbMNIaL0zcPsvDX7uJsIX1GG7XJoCTTt5nr8/ZBhPoVPeApN/JZcsYgxK9
-	 jrF5LfE6Mv4dWFMnaW1FD2SIxwXKHA7wwIg9OqlbI/gGGa5bF+CbOcBRrjc3dbuHne
-	 XcrqulH4sGT3A==
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77618a8212cso2023763b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:37:58 -0700 (PDT)
+	s=arc-20240116; t=1757900326; c=relaxed/simple;
+	bh=Ca/QCDvXVR7AgonlUSjrZVQLJ/PN+fdGdJKjm9e7zHs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YWoHdDtXqcuIFyZorvhbIOLDQ6MQEUkV2MWhPle6RZNnTUbJ7DM1sP3hkrLxo0+dO8QlCalYyJ7cGhWnN0pVaW3gDpHy2q1AK2KSVk1ZynZhyJAPixUVfWB8rzePpmRvFKhZK81QiKb2PnwLBxILMnUjASiWvIVGJrgMov8qtKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwfgijX9; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7726c7ff7e5so2918119b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757900324; x=1758505124; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpbaRkToGs8yflVgnnAwbTXWW3ZX47JRzh85y74Z7nM=;
+        b=lwfgijX9J2/xjderEzsVsiOerI32Bh9/obAeW5Ntp4nis70gkCo/XAMWsRiRqv1ahU
+         FRO+uTYBDAPhBGPwzCEh8TZ83s/KuIpbdtlYrBTNFeJITYh5CGhHR3HYw6sSaSC07eTe
+         QJcRoZPCheyF8uGlAg8/Bn0ijfW+/nA8rsA2tgOELYbkmRDGgqiFl21bAEle3rVqpca+
+         J9zS0abqNurEwNFoXTC1vNX7d0f2JkHFKRudQjtn8dqUhBZe4DIknlsUlkaHWKlQXqLo
+         TCSdMSnFBBcrniSqNsdbesReJd0ih9QR2EzRJgdRpIjDTvhtA61sgkABEeAzhqSe6mnd
+         1LQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757900276; x=1758505076;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hcIzuhKiKNm6JVHXa92r6htbz03BDwVBOL/bRK53VK4=;
-        b=t8BbZPvXvdPo103MhdgxTQIiRyJ/2kuh4amBcuYa2GZqZY7XnHH7skm5kIHeViK+6y
-         qOoYtyL/LpaNvtMjCMyK0Y0i88jIN6NdgTiaf8s6LE9TjQkMBVMup3iJE5jE7Tx0UFep
-         FMIVNmqr0jgq/veyezR+4gGqk0BcMlsthqMhTj429gXQ9Xi40CzZnxrLiPjR9oe4IvPW
-         Ck5g/NeaYHkNTljg3ri4tLLpvq4SRdOui5bkm4J0mSEOqTRFKwrR38uoyFO5YoqZRqlu
-         WC2OVCaDY0ThvbKh1dG3rydWXgrfjsbbAa6Vl9SyZ2mVIw85Iv9cy6muaVEGFvU2jn72
-         V/Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCX9tvcllsT9dm9ZLhAoQouXr+V+Pp7dNki0inzuTbMnLoOFMjmIussVvVLYU/fH50/EFi8vhkjUQCe0e/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5UO8m7L13OtUWYcrc0pKss+JKe/Tia7ZOFEuI3GIVsyoLdynq
-	+vglQU0bF3KkxCydsz1jzQxnfHGGPctfG58xCgjHofU8S6hSfuPeLZujaf7LZtmgF7Zq1oT8VJP
-	F/Uwwok2LGwJeWzH8SaGkVuF+HM0Np96CwIOS9DGpPw/hVF9Q5PgLe2yCYCtV87QWDQILReJSwd
-	6zmZA//w==
-X-Gm-Gg: ASbGncs4L03ZsRECL0BJszZBYden+AxvIH4KPlv1eGO0lL0noUxbAuqREjVEacnoc1W
-	wm6DOujqickxQwqJXrYCPZZTVQsFO9kq4prG9ex1DTW6ILnuMsxHNmqqTW7VJ1EkBQPHy6sd/v+
-	N8VzX6yGSpztUC1EBmeDG8ky+owyzgGqyYi2FJqC6QTqbOisM5A5JsB44HTRS4P2npY6goLIncz
-	cgMGSE0RnPtsMEKMFCPT1Kj/Y8RPMKbG4mH8d/JdW4+eqRBOzg7IxmwzRtADEZdHntNwI0RPAdd
-	eoo47tVgLQ5Vh/ZZGT4bBCMXNAbg/xasCTNy3g1Oi5rwC1Wq
-X-Received: by 2002:a05:6a21:e097:b0:243:b62c:8a7d with SMTP id adf61e73a8af0-26024f5fa39mr14292925637.0.1757900276531;
-        Sun, 14 Sep 2025 18:37:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8+m1tT1GvSiNg/KYeKheOGpPJ5Kqk1MCOil0ukcnoPVBiEdtHbuWNT13Zum2HA/ItideTPg==
-X-Received: by 2002:a05:6a21:e097:b0:243:b62c:8a7d with SMTP id adf61e73a8af0-26024f5fa39mr14292900637.0.1757900276135;
-        Sun, 14 Sep 2025 18:37:56 -0700 (PDT)
-Received: from acelan-precision5470 ([2001:67c:1562:8007::aac:4468])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-776210c4a5bsm5747436b3a.47.2025.09.14.18.37.47
+        d=1e100.net; s=20230601; t=1757900324; x=1758505124;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NpbaRkToGs8yflVgnnAwbTXWW3ZX47JRzh85y74Z7nM=;
+        b=l/YgZzUlijfewdflB/Rk5+L9d4PtRtcWAqvmqCTkoxIswWcYxP6lgIITMIjry6Buvd
+         9qblV7K3Faah00R8npOFpeEDzzUENWm046ufSX89MoFzvBKXA6mgSTv1lM0Mzg35bn+1
+         00uoiRLHHLTlvBayeH7w50PZjFNlmURZoYTbLPTYC1J6fctDkW1X+o/Zj27pCYXtW/wE
+         IgpoczNrfo9fHNOQTnab5fMQu4LyGf9eMzxHMWc8fORnjgJykMn7Lf8Bi/eO2g6e8Xo9
+         ivzoSNXye+sCOH10/mV13hQy+BnEmxf5Z9IbmPKNhDLjNA8Cvn/Yk51fSviUTncbn28U
+         M6IA==
+X-Gm-Message-State: AOJu0YwO2ZVb08YIzPHW5AU9d82yGImQmH9EyVC1iof43mLEjaAoNGhA
+	ff+XWM3ZdXieox+oGgizUW/RkykxewaclRTyFM4w4KeMG8aQJOBwGICPecoWpAc4
+X-Gm-Gg: ASbGncsOzChXOpSrdalQMPE8lKfREO1fZZ1iy2AwW2loe4femX4ogMvih+6BLvQyoxU
+	VK8vVTC6d6v87UdI3xs0b+DfIUOg8xWp8hcEInjEixwXsLoWaL41MwzJNyOMKuPbZrtteiMXQbm
+	2Pi4F39xOC1tsOkXkwsY2wKTYg1X+S9PKQPrdzK6fF0T5m2fRewyrvBa89ygw4UKe7Z/FAf0/dz
+	ZeAw9x6fa7p3DrgH8gPLIM8iReA2nOKrpJWJMo2ujDZikGVtBvOtV1w6DXGhmhslxs8BbTfMcTF
+	fR61QJPCj3LM0SVmlCIN9gmRhcGeb6aLD9YgzhdliWGIzf2WPVcQWNPYLl+ME8P1BKGOFe/mk9G
+	yPflNl0vkkYb6lGg=
+X-Google-Smtp-Source: AGHT+IHvc7z/xYkpGEvqk1KW+D6wzVKpUsAsc4YLRJ7qpy7gtMveUMS/P/rYt093bXrfGXXMCKoQKA==
+X-Received: by 2002:a05:6a21:3394:b0:24f:b82d:4255 with SMTP id adf61e73a8af0-2602c90cc91mr13158746637.42.1757900323906;
+        Sun, 14 Sep 2025 18:38:43 -0700 (PDT)
+Received: from fedora ([2601:646:8081:3770::aac3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54d2c413e5sm537870a12.40.2025.09.14.18.38.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 18:37:55 -0700 (PDT)
-Date: Mon, 15 Sep 2025 09:37:37 +0800
-From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: nic_swsd@realtek.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Wang, Crag" <Crag.Wang@dell.com>, 
-	"Chen, Alan" <Alan.Chen6@dell.com>, "Alex Shen@Dell" <Yijun.Shen@dell.com>
-Subject: Re: [PATCH] r8169: enable ASPM on Dell platforms
-Message-ID: <rqeme247cojqejerkedcj7m6t6zglks3pe2wcro3xvprit6npt@s4ymo5357hiv>
-Mail-Followup-To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd@realtek.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Wang, Crag" <Crag.Wang@dell.com>, 
-	"Chen, Alan" <Alan.Chen6@dell.com>, "Alex Shen@Dell" <Yijun.Shen@dell.com>
-References: <20250912072939.2553835-1-acelan.kao@canonical.com>
- <cc91f4ab-e5be-4e7c-abcc-9cc399021e23@gmail.com>
+        Sun, 14 Sep 2025 18:38:43 -0700 (PDT)
+From: Collin Funk <collin.funk1@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ver_linux: Reference coreutils instead of sh-utils.
+In-Reply-To: <9ecf7c579454d89c73b8d2c29d13ddb1768079da.1755310602.git.collin.funk1@gmail.com>
+References: <9ecf7c579454d89c73b8d2c29d13ddb1768079da.1755310602.git.collin.funk1@gmail.com>
+Date: Sun, 14 Sep 2025 18:38:42 -0700
+Message-ID: <878qigpk9p.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cc91f4ab-e5be-4e7c-abcc-9cc399021e23@gmail.com>
+Content-Type: text/plain
 
-On Fri, Sep 12, 2025 at 05:30:52PM +0200, Heiner Kallweit wrote:
-> On 9/12/2025 9:29 AM, Chia-Lin Kao (AceLan) wrote:
-> > Enable PCIe ASPM for RTL8169 NICs on Dell platforms that have been
-> > verified to work reliably with this power management feature. The
-> > r8169 driver traditionally disables ASPM to prevent random link
-> > failures and system hangs on problematic hardware.
-> > 
-> > Dell has validated these product families to work correctly with
-> > RTL NIC ASPM and commits to addressing any ASPM-related issues
-> > with RTL hardware in collaboration with Realtek.
-> > 
-> > This change enables ASPM for the following Dell product families:
-> > - Alienware
-> > - Dell Laptops/Pro Laptops/Pro Max Laptops
-> > - Dell Desktops/Pro Desktops/Pro Max Desktops
-> > - Dell Pro Rugged Laptops
-> > 
-> I'd like to avoid DMI-based whitelists in kernel code. If more system
-> vendors do it the same way, then this becomes hard to maintain.
-I totally understand your point; I also don’t like constantly adding DMI
-info to the list. But this list isn’t for a single product name, it’s a
-product family that covers a series of products, and it probably won’t
-change anytime soon.
+Collin Funk <collin.funk1@gmail.com> writes:
 
-> There is already a mechanism for vendors to flag that they successfully
-> tested ASPM. See c217ab7a3961 ("r8169: enable ASPM L1.2 if system vendor
-> flags it as safe").
-Right, but writing the flag is not applicable for Dell manufacturing
-processes.
+> The Fileutils, Shellutils, and Textutils packages were combined to
+> create GNU Coreutils which had its first major release in 2003 [1]. It
+> is unlikely that someone is using Shellutils today, and likely that many
+> do not remember what the Shellutils package is.
+>
+> [1] https://www.gnu.org/software/shellutils/
+>
+> Signed-off-by: Collin Funk <collin.funk1@gmail.com>
+> ---
+>  scripts/ver_linux | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/ver_linux b/scripts/ver_linux
+> index d6f2362d3792..222e01eb9697 100755
+> --- a/scripts/ver_linux
+> +++ b/scripts/ver_linux
+> @@ -45,7 +45,7 @@ BEGIN {
+>  	printversion("Net-tools", version("ifconfig --version"))
+>  	printversion("Kbd", version("loadkeys -V"))
+>  	printversion("Console-tools", version("loadkeys -V"))
+> -	printversion("Sh-utils", version("expr --v"))
+> +	printversion("Coreutils", version("expr --v"))
+>  	printversion("Udev", version("udevadm --version"))
+>  	printversion("Wireless-tools", version("iwconfig --version"))
 
-> Last but not least ASPM can be (re-)enabled from userspace, using sysfs.
-That doesn't sound like a good solution to push the list to userspace.
+Hi Jonathan, friendly ping on this tiny patch I sent last month [1].
 
-Dell has already been working with Canonical for more than a decade to
-ship their products with r8169 ASPM enabled. Dell has also had lengthy
-discussions with Realtek to have this feature enabled by default in the
-r8169 driver. I think this is a good opportunity for Dell to work with
-Realtek to spot bugs and refine the r8169 driver.
+Thanks,
+Collin
 
-BTW, I found the dmi.h header file is missing in the patch, so I
-submitted a v2 patch.
-https://lore.kernel.org/lkml/20250915013555.365230-1-acelan.kao@canonical.com/T/#u
-> 
-> > Signed-off-by: Chia-Lin Kao (AceLan) <acelan.kao@canonical.com>
-> > ---
-> >  drivers/net/ethernet/realtek/r8169_main.c | 29 +++++++++++++++++++++++
-> >  1 file changed, 29 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-> > index 9c601f271c02..63e83cf071de 100644
-> > --- a/drivers/net/ethernet/realtek/r8169_main.c
-> > +++ b/drivers/net/ethernet/realtek/r8169_main.c
-> > @@ -5366,6 +5366,32 @@ static void rtl_init_mac_address(struct rtl8169_private *tp)
-> >  	rtl_rar_set(tp, mac_addr);
-> >  }
-> >  
-> > +bool rtl_aspm_new_dell_platforms(void)
-> > +{
-> > +	const char *family = dmi_get_system_info(DMI_PRODUCT_FAMILY);
-> > +	static const char * const dell_product_families[] = {
-> > +		"Alienware",
-> > +		"Dell Laptops",
-> > +		"Dell Pro Laptops",
-> > +		"Dell Pro Max Laptops",
-> > +		"Dell Desktops",
-> > +		"Dell Pro Desktops",
-> > +		"Dell Pro Max Desktops",
-> > +		"Dell Pro Rugged Laptops"
-> > +	};
-> > +	int i;
-> > +
-> > +	if (!family)
-> > +		return false;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(dell_product_families); i++) {
-> > +		if (str_has_prefix(family, dell_product_families[i]))
-> > +			return true;
-> > +	}
-> > +
-> > +	return false;
-> > +}
-> > +
-> >  /* register is set if system vendor successfully tested ASPM 1.2 */
-> >  static bool rtl_aspm_is_safe(struct rtl8169_private *tp)
-> >  {
-> > @@ -5373,6 +5399,9 @@ static bool rtl_aspm_is_safe(struct rtl8169_private *tp)
-> >  	    r8168_mac_ocp_read(tp, 0xc0b2) & 0xf)
-> >  		return true;
-> >  
-> > +	if (rtl_aspm_new_dell_platforms())
-> > +		return true;
-> > +
-> >  	return false;
-> >  }
-> >  
-> 
+[1] https://lore.kernel.org/all/9ecf7c579454d89c73b8d2c29d13ddb1768079da.1755310602.git.collin.funk1@gmail.com/
 
