@@ -1,237 +1,281 @@
-Return-Path: <linux-kernel+bounces-816246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC55B57182
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7A0B57338
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004C13BA297
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCE2188DFD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4673E2D6401;
-	Mon, 15 Sep 2025 07:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85962EF65B;
+	Mon, 15 Sep 2025 08:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="AYiyBdLb"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011053.outbound.protection.outlook.com [52.101.70.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6r7kSMo"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409D52D5410;
-	Mon, 15 Sep 2025 07:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921399; cv=fail; b=GqiJG/DLxQ6tu5H4vckHhq6dhH6aCBBudcYDohZKgJjOMhnpt3UVnlyMRLq0j9dmvhUVlUvbgtkT+bsClJs3lJsGYXJ9PWEjAjHJtrQstMJOiymb5Wuef0cH1NyvFMZ44OjxMjVm/Jx9uxDKg3uxvXfBObZ6vdLqX37UAicofoM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921399; c=relaxed/simple;
-	bh=dvBeHqr4imYeE0Qb9PJySzp5MjgAEJh/Z0RVA/KVZk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WduRbzpUUSqpiR4lGphSzxk3YS2eWPBjXl49SMlYUhStLSZmYwvI5KGohub9yHS6KQB8vuYLFxv2VXwCAkGXUVGjjcY70yj1wMbsW92rf8websvMUoZuKMWpVAON+KTlvb5UhEwHPawD/YDjKmiiPisBT/FUcYlViWx7uXsZaq4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=AYiyBdLb; arc=fail smtp.client-ip=52.101.70.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MTL7o5SKLpoOyF8rpZlqFsNNqjriGc5MCGPM6iNhM7bwwMpF7ervCvxu01iSzGnwcz7qY8d+/Vu/S3/AtrdmADz4d+ID1gRKL8PhJyBjbWK9kLVhJiEe0xMg8mZlrWw2fjXUfDtE+bUwFLTceaiaMlP3mB/t1FGpD1wfqE0o9t0JHBYpxqtB1Y8K9999fGFZ2Ftt43NMjbJ/joa1+cRhW91oesRfWaLzKj4QULp9E8UHDbehZ+VYd18SUIpe+EJxYXoACapSp5UW3ubUAzENnYW1vGmnV6Q6hmGFja9imhjxhg1XC/3rYZzzBOTMuA2nXjIo+R9SjnoW7SJH3zG26w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4J7rcDjlzsxUSKr7FbiXE4MaBEIPfByuaexWnWUofWc=;
- b=XRpMm7mXp9cA0JipAAznctqbs7mFE3OjItMt36N0NDS2TwTkZCL8IucF9dQjyb2zDWEOMxKn4Smn+aWV0j+pvJbuYSmeinekS/y70v54SfaUZTe1eVDQyXk386JidZqY+eThkBV/95fR/zSWYZsrAVaHNdiF+NxdSxNb3l7NdHidr57jP6jlC2mBtEIUik3s/ZNLvzoQpV39KoB4ukoj9EEx4hfAsQWLr9h8MVsmSkIg8roRjBaiasR+Pbik+6E/1ruaMbCtSOivzb8BnzB+KoAUjVmSV/6mm9NpasgmrMzZWfu71ZPSsuIUFC3DsWrF0W+THJGa9xMKjLeASvimAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4J7rcDjlzsxUSKr7FbiXE4MaBEIPfByuaexWnWUofWc=;
- b=AYiyBdLbkh5nDnYSw7CJe1WOaKdeeveSvb+4CyVzb3uJPHMbbHQFsjv9OsxGhNVJTzPc0IexLeCYHdQSLRI3q28KED7ESysysX+Gb74rZI9Ghv8P4kcS3z4yfcM8GJ7I6cbp09CzSZFltay+k21F45Z4IGx+l+2eOtePStBgLM9YaURONLfNJuGCARSOGOea5GAZLcF7aqBukPJwfIvPS0VMZ4qMOwcXVhk6U+4VdFN+IIAvCIdfHDDaUfMzCP/fYtTkdygDWG1gnIjBQcTRsJFRdLFNL1+Kao8rrasgFX4Lilhw+N4Pk+Im0/lxqCuUqEf9h91sjpFNXdGgNqlWVA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM0PR04MB6866.eurprd04.prod.outlook.com (2603:10a6:208:183::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 07:29:52 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.010; Mon, 15 Sep 2025
- 07:29:51 +0000
-Date: Mon, 15 Sep 2025 16:41:24 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Duje Mihanovi?? <duje@dujemihanovic.xyz>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] clk: mmp: pxa1908: Instantiate power driver
- through auxiliary bus
-Message-ID: <20250915084124.GG8224@nxa18884-linux.ap.freescale.net>
-References: <20250829-pxa1908-genpd-v3-0-2aacaaaca271@dujemihanovic.xyz>
- <20250829-pxa1908-genpd-v3-3-2aacaaaca271@dujemihanovic.xyz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829-pxa1908-genpd-v3-3-2aacaaaca271@dujemihanovic.xyz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI1PR02CA0054.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::13) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4D82D5C7A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757925706; cv=none; b=HFvNFMjLzg7xRCPDhN4hPPmN6nGDQsAEX9kRTAjK+//kFfRGSdCUCZFBpBydkaQVz9lzuSgcY1mIk43ahz813eHTvMj8jWU2x6pnxuWRbLH+Foezdau619hwD5lnFF3qCWtauvPqjD/ilS/4TexljLH0SgkMYlHZWNWkciJDdyY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757925706; c=relaxed/simple;
+	bh=j/cii1yAzGzohPiU1KFlQ8rBtMBQcxz3SdivvBJT8X4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F9MVfbUIhXqgKR8FYoOneBjZtwvIOm9fI1WgyuPIuT1i82PjIMLyFnxejD/s1qf73DVnV8urMth/iNQYx7s5maUukRNmbLXb/6ZkGhL970kHbWmmvrtkaB4obwAu9ZXx826JXeYfOYyImwjAgqYmQ5lOTsf5n7LDDD6DQYAnapc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6r7kSMo; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62f1eb1abb9so2077900a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757925703; x=1758530503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cgISx98LqP9kaV3d8bosANBzfIr7Kg1cDQ5T0j0QCmU=;
+        b=h6r7kSMoPe7Z7nF+0EvUSDDhVHjMAf260x/6Od1S6B/L+xzLZNW16QsJ/QQOvMSqnB
+         vpI84BRBM5xW6cYUGYGNszyIpXmwVq7HVCrGQvA2kL1NzAVx5tNQnc1wBNgZPVERbFv/
+         RNwvAAzHURL9AsaZOcEMyWuxM795NLisP8IiWb/TAH2bCr/TuyPJN5YSy+TIMSdvwGmh
+         vmQvN00cJofGoP2Ae2S3gOEzi1VArHEtj+/xXDjNrW5FbWgRBjzZWTMK0V/DeMOBDJiq
+         02sUAH9IBn/hdvjM58fsgseICCXHPuUfHFSNzr46DZ6Q2zd83A4BStC1OmmR6bcIPkEQ
+         VlUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757925703; x=1758530503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cgISx98LqP9kaV3d8bosANBzfIr7Kg1cDQ5T0j0QCmU=;
+        b=eouuDbIRJvtGtMRH1d35Z4v3JhJ8EpGqHFfxj7YTYKScmE/YywFpwy3vG6p9FmGAqz
+         HoegPUiurNcTOEGwN0FG5qJ3kCYaNvlYC9JT2ZPW+8W1iDqCvfhnk5luSkY0KfRC+qFK
+         YNHerk2wgwTC4+4B3LneQnTKgu4/8ocada6rND2+uRPeEP0QHzQ/oHBY2o3BbxoJXeZy
+         B9Jm47AIAYinQgSOuSdGvSGvkymIIqoBMl5IGt+6y8vLEZM8F/Zcpm9XcJFrb7TLCsqw
+         zKTXs4Gawcnv0E89o49Fdc8cX0uf5uYgn76JSpyXsxGiUp0/2LiUG1nA5uHMbl4QO9SB
+         l2+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWOwLUpTAkyhShlEMj/k8uwTDJs53QPkbvZD0kMx80SkIQO81SKFufj+uLr/TUKQwHEo38vYGmaaIzTM8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF90x82Bh3f4e3UtJFZrWEdDGyc2UQ+zLaXJmBaa3TctY+cUYx
+	+p2wfzoi5GKTisMh9orjvoVinIEfYzODdqClB4FkpIjNXMoxRoxGcKgVkCcErpvo6uxk/93eOWi
+	8KCcfCsF9tKsjiH62zM8BCd3Qs1lmF94=
+X-Gm-Gg: ASbGncu9axUEp49h0kN53M3ANrM7jU91odEY6/S+h75BS34Y9iBv+2AK6HtDbohrbIo
+	JDpAHPC7tZwtKmppyLGo1nFUu+Bi8MK2H8fC9H85BljVC7S7exMu0ZKvbpB2ieFtr7FOZFmdJHs
+	dPs2bLOzvN6d3Rb4nIs03wRVic1B7WNb2Dg46uZ+UEpoljlq2XW2F8BvtiJTrgldTBzEL1RnAYr
+	nzX7WwX8kBjtVTxJTUf0rEzhBcicfGHM+NFGbFO+w==
+X-Google-Smtp-Source: AGHT+IHkyfQN/X6YSXGcm0n3Xsx2Z/LBbcmlRhybxqOVSu6LYGl6I+NGgtmqZvKYR4JaE95bKWa0yigYD8lgsM0pc8A=
+X-Received: by 2002:a05:6402:520a:b0:628:28ee:958 with SMTP id
+ 4fb4d7f45d1cf-62ed97d864cmr12024012a12.3.1757925703009; Mon, 15 Sep 2025
+ 01:41:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM0PR04MB6866:EE_
-X-MS-Office365-Filtering-Correlation-Id: e536be50-7a54-4dc2-7e6f-08ddf429a885
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|19092799006|1800799024|366016|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/G9lUR8fdahaRG1/Qqw6k1If6k8P/RQ3wZBq12frs9QlbrT6svYc1O50H197?=
- =?us-ascii?Q?ySgjGeD677ySskKWX3jLdzz7WxlITyj4TjtwFPaBSQzOZ3hHAeQ5lpjcah+i?=
- =?us-ascii?Q?mHjboZ6viVtst1RO9tOXG39G8FgYHjkWi4wXjMM9f9ZBQbu9mmeozv0A1eCh?=
- =?us-ascii?Q?knJlA2wVESf2irrZy2Tjil2UfGCPsFyRMTpPX7nFqU6Lh/HEYGWX5j1sYf39?=
- =?us-ascii?Q?DpwX6byp7hqDnl7YCKljDA4LcZSC0HVue7d3fuRpdiuLgfsaQGp1iEstOvsg?=
- =?us-ascii?Q?l12jkV3U1XgVae005WWFhJPNay5/SuC8xxVduTG+NxhbC4Mo/mxHK280TSBw?=
- =?us-ascii?Q?337hv1xNdIc//Y6XPrjX6/cwBPaP536DbVkztNFXlc8JQzWePXEzkcUecvSy?=
- =?us-ascii?Q?CtzlEvWey8MT2fETCqB5YafgFUmLbzbJR+OO72QlIzxeFHnHPhyN85PXPYTN?=
- =?us-ascii?Q?w2ZoEzlttwK7MYRzUyYJEqUtfovoGDktv/JtS0nPl1kOIV/Jp0lNnX553+Zn?=
- =?us-ascii?Q?PbP80U5Fq25a+YU91jZv2RAkENVhG3SGotoOnFCn6+4/MOP5lX/ZpD/8cFhW?=
- =?us-ascii?Q?IRBhILjKhaTdx/eyj1K9NK31w5otJwgtbEyfjuqzAhAPVS9WKPkSVlbhkHVU?=
- =?us-ascii?Q?f0vFEXUtxT0yZlpL8Zb28Kj0fJ+qmiAle9e+IyizdTepBzTH87WFc7HZ4GUi?=
- =?us-ascii?Q?w0uifWOaAKj8J8SMqUr+8v1SCQd2nczueI3oDXFyPaUPNY4oQ73I27viqIMF?=
- =?us-ascii?Q?O5NIdi45bUib2gdIPq57n35vDZAfP8WiqtjTzPieFUo8muZ4mVcx2norrPQ2?=
- =?us-ascii?Q?nQqAAGk3fiVuGRRSbPM+NIVkZb6g15PONJEt7gOqaf1/a4IE7HeO/V2TRKnz?=
- =?us-ascii?Q?c/swFERXWmAQqSTeRPJdG0jmB1uyKaY8zsnN4P9/gPTG6FpG/BhL1STLrLQ1?=
- =?us-ascii?Q?EkVsZlThAB06Dr1ixdKveHAGAr1iFihYgRvA9DhPZBrCgynEH/c6OPDEsvcS?=
- =?us-ascii?Q?yGp1hxRjsY+4LQMVpDoXSaTS7KmSrlK50Iu6iTwlPvqrOQoo+Xt+97qdYDDU?=
- =?us-ascii?Q?W5qZVohzbes9C4uvIIatB989S2uk9+75urik7eX1Tvam/7jFoibex7jDQxKz?=
- =?us-ascii?Q?UPY25d9j5t3EW8movoJmuGwRemYFppn9UnjElQKUaT35zToE9sEp7nsLqNQJ?=
- =?us-ascii?Q?cLdegIW/Z4O3D3jPDs5IlP7BbclkeuY1dVnm2eCVAAVbZEPrpi2Rm2OGzdvh?=
- =?us-ascii?Q?+lGfRRgpM9fsVB+xvoe2M5AyO8akj1lcE1P8bPHU4UcUEiXKtVc5SjFcqn/W?=
- =?us-ascii?Q?z7GSjFE1TJ6pi6z+o/u+EEV/l2m6tTFhJhCuvvturYO+BHZYj+TLaGvr794T?=
- =?us-ascii?Q?DKwOyIr5E7yeuHY4DIFLJMZskQ9Me8WQBqXi16u9ij36hnVfMEn+Kj8kpn+q?=
- =?us-ascii?Q?oc3f4RE9jx9R4kVM+N3KTDZe657usr5o2T/LGYsznen7ZNxGR2zYog=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(19092799006)(1800799024)(366016)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?s0goErHCqQ50vpbCe4SoLOj5ABc7cFeF+W7B5KA22huKzRJhibNEDpF6uiDZ?=
- =?us-ascii?Q?KGgAZYqCVixeJUB9YcF87vftE1AC/f9F1QQPvejJk4CrVa/eLJpkm2rCzl3o?=
- =?us-ascii?Q?aXTqH50kgN1stmQs+sQ7Kln606L5YwI4WcmaK/pm98r3F5+nm0T7V6VPL9KO?=
- =?us-ascii?Q?lD6RRJgdoGIOXxcqcSndNC4xLMWMD3cemghD7VWgwiQ7rvBu2Rmm1emJVhY0?=
- =?us-ascii?Q?bcip6tS1whdsmr8KHo6jdd5HMjcXyIEA8qz8kCgI/tGMty2yMF3poy8GxTci?=
- =?us-ascii?Q?wjCFHu8t0j+x7v2W5Q8W89MImEeQvdkhf7GZI+phMZOp278GZbvXrD9LTOHH?=
- =?us-ascii?Q?nIoYNLd0R8vOE02296TRNuzC4P63IiLXLMkMBWGV4wYV7c6fI8xBhQU07NQc?=
- =?us-ascii?Q?bl9e6I8xjCE8c6t/BO3dkbC1Bb1BIVsBpgz7jOylchlVCVQFHg18IX39kbrl?=
- =?us-ascii?Q?w6g1dFnNIxl8V24k+AGHhjtOaSkTLYJjx4UUKsb5zVgnVHLH1z0LHv27Qwy0?=
- =?us-ascii?Q?70vBvV+11I+s/pgWGPzWu20QLBd0WDzcn2YsAC3+OYxVIC8fecGQbtnhq0d4?=
- =?us-ascii?Q?vCbm9QFg0+Yxovl2kEBf78xIiyZmVKQS2OnSaoD77AhCGbOiJj9vAxXavAVn?=
- =?us-ascii?Q?3n12vek/zbrcAFGwHRrKw1uu8uj+0qLRO8sth584PB+UYcphEUYzLIrUZVFC?=
- =?us-ascii?Q?z8wuuXfE2ib4HEtb6QvqxKU1zZc863J1x9DUydXkaEvnlXAo0HWXqxePOm0d?=
- =?us-ascii?Q?Oxd079tYzWTL4Q7SZMz7slL+dzXuMYt32L0v3UB3iduA4SGfpui/rFhDHvjQ?=
- =?us-ascii?Q?et8JN7h8G1iSSKyrKd1gxvOwnqA3DvwJUGuLYFtpW3XVJ+nH91cQuIowS8Pn?=
- =?us-ascii?Q?aCSJ6qy271H0zP29gC/suxr9PKwI7PA0tKKZPmF5qTB+YddrVDQAAink2EHp?=
- =?us-ascii?Q?973vjWCZ6f54ZnciuJuu6IYnujkuc69i+41EYs+gR1OR4f5SyIAHuWPa+U7H?=
- =?us-ascii?Q?uyXe8+izd5SieG0CGv+gPdM7br1gQHqjqDRG3yHogU1gHAu/m8DsxSkZYw5+?=
- =?us-ascii?Q?GSo7KU2jv3xGJ3SEmNRdBjd3z3eiL7xuoWrihz3gfA2UseuEf+YR7ncpSb0T?=
- =?us-ascii?Q?jXka3vzNdtG706GFHu+ExgxpfihjB9tnKV/U4RkP2J671IASHe8nrXybLFbz?=
- =?us-ascii?Q?ktNxpkvTbh5f8pCjgDDl1DRxpAsbO0XI0s9iiwXJUZb9zluS3R+3ql3WxGSE?=
- =?us-ascii?Q?v4gcrkg4VqIPATDBFg6gyf7RPgWi0PlxSo6S957frM92RmPRsGy2c1ybMt4p?=
- =?us-ascii?Q?3XITmJqKuxXpNks5bM0CUFH/zko+g9GXPDjmpafDXElRe+bPixuNJl7aiyUA?=
- =?us-ascii?Q?GNr0zxyC7hu7O7SwJM+/LIxTpX/8isjUwNxRzTNinVp8aUDlHP8bcDccSb0B?=
- =?us-ascii?Q?F1qgHCpokzNoMJtxkkfAfihQ4N4XzbZ2CbjxPby7jpCr0DJOgygM88it4g0Y?=
- =?us-ascii?Q?ZCogPEy1exMyfYKTvE5Uqf7J8ntVAu7w/UwVqWrFjh32ghEZBeS+8i81eCLz?=
- =?us-ascii?Q?1JlgkGWJCL6Dv5ghACEu435RMAUHXDu/nWElQpqw?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e536be50-7a54-4dc2-7e6f-08ddf429a885
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 07:29:51.6629
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: opwFpw9Rj9VBCpkwaJ60ILlqEK7Zbil7jlkmt+n9lyUhXmX15YYbmvIRW+1rD9jmFsDTcd5BSVs10Sxm87gD2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6866
+References: <8734afp0ct.fsf@igalia.com> <20250729233854.GV2672029@frogsfrogsfrogs>
+ <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
+ <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
+ <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
+ <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
+ <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com> <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+In-Reply-To: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 15 Sep 2025 10:41:31 +0200
+X-Gm-Features: AS18NWCek69Tk84GsNixOlHib1hJjxdEe89grKmQ4kSfVNmLbjuZvF9TkfIkZvE
+Message-ID: <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 29, 2025 at 06:21:06PM +0200, Duje Mihanovi?? wrote:
->The power domain driver shares the APMU clock controller's registers.
->Instantiate the power domain driver through the APMU clock driver using
->the auxiliary bus.
+On Mon, Sep 15, 2025 at 10:27=E2=80=AFAM Bernd Schubert <bernd@bsbernd.com>=
+ wrote:
 >
->Also create a separate Kconfig entry for the PXA1908 clock driver to
->allow (de)selecting the driver at will and selecting
->CONFIG_AUXILIARY_BUS.
 >
->Signed-off-by: Duje Mihanovi?? <duje@dujemihanovic.xyz>
->---
->v3:
->- Move driver back to pmdomain subsystem, use auxiliary bus to
->  instantiate the driver
 >
->v2:
->- Move to clk subsystem, instantiate the driver from the APMU clock
->  driver
->- Drop clock handling
->- Squash MAINTAINERS patch
->---
-> MAINTAINERS                        |  2 ++
-> drivers/clk/Kconfig                |  1 +
-> drivers/clk/mmp/Kconfig            | 10 ++++++++++
-> drivers/clk/mmp/Makefile           |  5 ++++-
-> drivers/clk/mmp/clk-pxa1908-apmu.c | 20 ++++++++++++++++++++
-> 5 files changed, 37 insertions(+), 1 deletion(-)
+> On 9/15/25 09:07, Amir Goldstein wrote:
+> > On Fri, Sep 12, 2025 at 4:58=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> >>
+> >> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
+> >>>
+> >>>
+> >>> On 9/12/25 13:41, Amir Goldstein wrote:
+> >>>> On Fri, Sep 12, 2025 at 12:31=E2=80=AFPM Bernd Schubert <bernd@bsber=
+nd.com> wrote:
+> >>>>>
+> >>>>>
+> >>>>>
+> >>>>> On 8/1/25 12:15, Luis Henriques wrote:
+> >>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+> >>>>>>
+> >>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
+> >>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
+> >>>>>>>>>
+> >>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if =
+libfuse
+> >>>>>>>>> could restart itself.  It's unclear if doing so will actually e=
+nable us
+> >>>>>>>>> to clear the condition that caused the failure in the first pla=
+ce, but I
+> >>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe resta=
+rts
+> >>>>>>>>> aren't totally crazy.
+> >>>>>>>>
+> >>>>>>>> I'm trying to understand what the failure scenario is here.  Is =
+this
+> >>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so=
+, what
+> >>>>>>>> is supposed to happen with respect to open files, metadata and d=
+ata
+> >>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could =
+run
+> >>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's g=
+oing
+> >>>>>>>> potentally to be out of sync, right?
+> >>>>>>>>
+> >>>>>>>> What are the recovery semantics that we hope to be able to provi=
+de?
+> >>>>>>>
+> >>>>>>> <echoing what we said on the ext4 call this morning>
+> >>>>>>>
+> >>>>>>> With iomap, most of the dirty state is in the kernel, so I think =
+the new
+> >>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED=
+, which
+> >>>>>>> would initiate GETATTR requests on all the cached inodes to valid=
+ate
+> >>>>>>> that they still exist; and then resend all the unacknowledged req=
+uests
+> >>>>>>> that were pending at the time.  It might be the case that you hav=
+e to
+> >>>>>>> that in the reverse order; I only know enough about the design of=
+ fuse
+> >>>>>>> to suspect that to be true.
+> >>>>>>>
+> >>>>>>> Anyhow once those are complete, I think we can resume operations =
+with
+> >>>>>>> the surviving inodes.  The ones that fail the GETATTR revalidatio=
+n are
+> >>>>>>> fuse_make_bad'd, which effectively revokes them.
+> >>>>>>
+> >>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP req=
+uests,
+> >>>>>> but probably GETATTR is a better option.
+> >>>>>>
+> >>>>>> So, are you currently working on any of this?  Are you implementin=
+g this
+> >>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a =
+closer
+> >>>>>> look at fuse2fs too.
+> >>>>>
+> >>>>> Sorry for joining the discussion late, I was totally occupied, day =
+and
+> >>>>> night. Added Kevin to CC, who is going to work on recovery on our
+> >>>>> DDN side.
+> >>>>>
+> >>>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
+> >>>>> server restart we want kernel to recover inodes and their lookup co=
+unt.
+> >>>>> Now inode recovery might be hard, because we currently only have a
+> >>>>> 64-bit node-id - which is used my most fuse application as memory
+> >>>>> pointer.
+> >>>>>
+> >>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-=
+sends
+> >>>>> outstanding requests. And that ends up in most cases in sending req=
+uests
+> >>>>> with invalid node-IDs, that are casted and might provoke random mem=
+ory
+> >>>>> access on restart. Kind of the same issue why fuse nfs export or
+> >>>>> open_by_handle_at doesn't work well right now.
+> >>>>>
+> >>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, whic=
+h
+> >>>>> would not return a 64-bit node ID, but a max 128 byte file handle.
+> >>>>> And then FUSE_REVALIDATE_FH on server restart.
+> >>>>> The file handles could be stored into the fuse inode and also used =
+for
+> >>>>> NFS export.
+> >>>>>
+> >>>>> I *think* Amir had a similar idea, but I don't find the link quickl=
+y.
+> >>>>> Adding Amir to CC.
+> >>>>
+> >>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thr=
+ead:
+> >>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkA=
+P8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> >>>
+> >>> Thanks for the reference Amir! I even had been in that thread.
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, w=
+hich
+> >>>>> will iterate over all superblock inodes and mark them with fuse_mak=
+e_bad.
+> >>>>> Any objections against that?
+> >>
+> >> What if you actually /can/ reuse a nodeid after a restart?  Consider
+> >> fuse4fs, where the nodeid is the on-disk inode number.  After a restar=
+t,
+> >> you can reconnect the fuse_inode to the ondisk inode, assuming recover=
+y
+> >> didn't delete it, obviously.
+> >
+> > FUSE_LOOKUP_HANDLE is a contract.
+> > If fuse4fs can reuse nodeid after restart then by all means, it should =
+sign
+> > this contract, otherwise there is no way for client to know that the
+> > nodeids are persistent.
+> > If fuse4fs_handle :=3D nodeid, that will make implementing the lookup_h=
+andle()
+> > API trivial.
+> >
+> >>
+> >> I suppose you could just ask for refreshed stat information and either
+> >> the server gives it to you and the fuse_inode lives; or the server
+> >> returns ENOENT and then we mark it bad.  But I'd have to see code
+> >> patches to form a real opinion.
+> >>
+> >
+> > You could make fuse4fs_handle :=3D <nodeid:fuse_instance_id>
+> > where fuse_instance_id can be its start time or random number.
+> > for auto invalidate, or maybe the fuse_instance_id should be
+> > a native part of FUSE protocol so that client knows to only invalidate
+> > attr cache in case of fuse_instance_id change?
+> >
+> > In any case, instead of a storm of revalidate messages after
+> > server restart, do it lazily on demand.
 >
->diff --git a/MAINTAINERS b/MAINTAINERS
->index 34e5e218e83e0ed9882b111f5251601dd6549d4e..88c0df09d7b354f95864f5a48daea3be14a90dc4 100644
->--- a/MAINTAINERS
->+++ b/MAINTAINERS
->@@ -2869,7 +2869,9 @@ ARM/Marvell PXA1908 SOC support
-> M:	Duje Mihanovi?? <duje@dujemihanovic.xyz>
-> L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> S:	Maintained
->+F:	Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
-> F:	arch/arm64/boot/dts/marvell/mmp/
->+F:	drivers/clk/mmp/Kconfig
-> F:	drivers/clk/mmp/clk-pxa1908*.c
-> F:	drivers/pmdomain/marvell/
-> F:	include/dt-bindings/clock/marvell,pxa1908.h
->diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->index 4d56475f94fc1e28823fe6aee626a96847d4e6d5..68a9641fc649a23013b2d8a9e9f5ecb31d623abb 100644
->--- a/drivers/clk/Kconfig
->+++ b/drivers/clk/Kconfig
->@@ -511,6 +511,7 @@ source "drivers/clk/imx/Kconfig"
-> source "drivers/clk/ingenic/Kconfig"
-> source "drivers/clk/keystone/Kconfig"
-> source "drivers/clk/mediatek/Kconfig"
->+source "drivers/clk/mmp/Kconfig"
-> source "drivers/clk/meson/Kconfig"
-> source "drivers/clk/mstar/Kconfig"
-> source "drivers/clk/microchip/Kconfig"
->diff --git a/drivers/clk/mmp/Kconfig b/drivers/clk/mmp/Kconfig
->new file mode 100644
->index 0000000000000000000000000000000000000000..b0d2fea3cda5de1284916ab75d3af0412edcf57f
->--- /dev/null
->+++ b/drivers/clk/mmp/Kconfig
->@@ -0,0 +1,10 @@
->+# SPDX-License-Identifier: GPL-2.0-only
->+
->+config COMMON_CLK_PXA1908
->+	bool "Clock driver for Marvell PXA1908"
+> For a network file system, probably. For fuse4fs or other block
+> based file systems, not sure. Darrick has the example of fsck.
+> Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
+> fuse-server gets restarted, fsck'ed and some files get removed.
+> Now reading these inodes would still work - wouldn't it
+> be better to invalidate the cache before going into operation
+> again?
 
-tristate for module built.
+Forgive me, I was making a wrong assumption that fuse4fs
+was using ext4 filehandle as nodeid, but of course it does not.
 
-Regards
-Peng
+The reason I made this wrong assumption is because fuse4fs *can*
+already use ext4 (64bit) file handle as nodeid, with existing FUSE protocol
+which is what my fuse passthough library [1] does.
+
+My claim was that although fuse4fs could support safe restart, which
+cannot read from recycled inode number with current FUSE protocol,
+doing so with FUSE_HANDLE protocol would express a commitment
+to this behavior.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/libfuse/commits/fuse_passthrough
 
