@@ -1,214 +1,126 @@
-Return-Path: <linux-kernel+bounces-816877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAB1B579D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:04:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D19B579F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0906218803EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8540A7A5395
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AD6305958;
-	Mon, 15 Sep 2025 12:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A842FFDE2;
+	Mon, 15 Sep 2025 12:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LFaKUbri";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LO/X1Iyc";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LFaKUbri";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LO/X1Iyc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bm/tibtD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81153302CB8
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51A242D88
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937878; cv=none; b=pkh/CONcjRLCkjAclvQGP2Kidwr3NDBvWy7PSVYMK5jOMSCfXAul3kMOzNcZzM8vOl6q7Pa3ADHPDdaill0E/QZyvvwqy0uIyWLMSN7rcSoBwF6/BAEk6LZZlvpX60HAE4U4p26daNChkk/Q3dL/ftzqIosFPMeRYRCTOuzRh/0=
+	t=1757938030; cv=none; b=KSF8n1uuqPP9QUUM2Z0qXxZN2+LNNpOHJboYkUjwPyYbWVixCUwGSLrpHIhyIY3/27/DO7thyiL4LL83GqZpCR/KGVWqRz5QdFh5a15cMMpFG9PnaIeKR5whu2RrxWxeDTyRGQtWG08D7pnoRaj4b0Ks1V9d8xdZl6l93Kqm9iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937878; c=relaxed/simple;
-	bh=TKLHmSn143LM+CSvnv0ajKbCEGc8gLJieCMukbTN57E=;
+	s=arc-20240116; t=1757938030; c=relaxed/simple;
+	bh=zc+skLfK6zn6FsLIxdXXxVmznAM9rO+sxDy3SSKA7+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PIHbDR0HPppTEeWpKSLYtx9YjfyPeQ46Jnep7lwGD6D0NO9PfO+QbPl4F9AWhiSdJXgb2nGCjaRYnFWy4145LnezX8D/XJgoLeglZejoVpWMGI6uhgGjJVrPIh3W7V/rOLhckcem2aS4PnF2OzTtdDJbest1rKCKrYrQ9676UBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LFaKUbri; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LO/X1Iyc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LFaKUbri; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LO/X1Iyc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=ku9KgbujJpxMdn7xNeGpg06RO9TSUE0bTesQfIzj8HizE5+c97rVasXK7HCYJcOzHO0WAFy/WdGIdGdRdHop9OvmCmK5ZmXgNmgfUYUugijwPKuWrO+Kshkr9FxPykTJVanotIpFLXfvMnBZSLwfFJxOObhwcBgbS/434HEz/6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bm/tibtD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757938028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zc+skLfK6zn6FsLIxdXXxVmznAM9rO+sxDy3SSKA7+c=;
+	b=bm/tibtDMNT65Bih8mHCXnJ2sESXff3MIWSXysNEAgCIp7/PGMxbm+8P0rU4AHYqy0yfMV
+	ZVCqLvPbdRxW7OdMkhSE3h1JrUQWWFCacyqZqXgORY2nGW5KmonvFTYJ18+KrT2LKrZbkq
+	1wp1kEIy8ws6EB07KEc8VXZpGFsq5jw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-3en9uUhQORGuQ9WPkrtFeQ-1; Mon,
+ 15 Sep 2025 08:07:06 -0400
+X-MC-Unique: 3en9uUhQORGuQ9WPkrtFeQ-1
+X-Mimecast-MFC-AGG-ID: 3en9uUhQORGuQ9WPkrtFeQ_1757938025
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AB63D1F8B0;
-	Mon, 15 Sep 2025 12:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757937874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
-	b=LFaKUbriuaxssWc8aokQp8aBdO5TFiQa516sK7E7ihAXh2g/DK4jqW6kI+epGTMnS1LdE7
-	6EoFH/IiFbci7tLAVS/6qNQMgmCrfvyPOTjXKcVi8xMgypqR9K099hz/lKNSpiqN9K93O8
-	VRRidbdQ6EatjuaGW1bHbTtMuDC98QI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757937874;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
-	b=LO/X1Iyc/VcnKo9OryF2429eTlNPVbA+Eny5LvFxhOezsRRq1CBVHPQ7FmYysF2pdFLrvT
-	BtqI0oeRiPClKeDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LFaKUbri;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="LO/X1Iyc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757937874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
-	b=LFaKUbriuaxssWc8aokQp8aBdO5TFiQa516sK7E7ihAXh2g/DK4jqW6kI+epGTMnS1LdE7
-	6EoFH/IiFbci7tLAVS/6qNQMgmCrfvyPOTjXKcVi8xMgypqR9K099hz/lKNSpiqN9K93O8
-	VRRidbdQ6EatjuaGW1bHbTtMuDC98QI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757937874;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
-	b=LO/X1Iyc/VcnKo9OryF2429eTlNPVbA+Eny5LvFxhOezsRRq1CBVHPQ7FmYysF2pdFLrvT
-	BtqI0oeRiPClKeDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CDAB1398D;
-	Mon, 15 Sep 2025 12:04:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eadJJtIAyGgGMgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 12:04:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5930AA0A06; Mon, 15 Sep 2025 14:04:34 +0200 (CEST)
-Date: Mon, 15 Sep 2025 14:04:34 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 22/33] pid: support ns lookup
-Message-ID: <f2sbqcorwm7x6weiduhectcrlwedcnpppfhiepjcmeij2xq5bv@j7yrhpkgjzr7>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-22-1a247645cef5@kernel.org>
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8828F1953964;
+	Mon, 15 Sep 2025 12:07:05 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.65])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5F19530002CE;
+	Mon, 15 Sep 2025 12:07:03 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 15 Sep 2025 14:05:41 +0200 (CEST)
+Date: Mon, 15 Sep 2025 14:05:38 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fix the racy usage of task_lock(tsk->group_leader)
+ in sys_prlimit64() paths
+Message-ID: <20250915120537.GB23082@redhat.com>
+References: <20250914110908.GA18769@redhat.com>
+ <20250914110937.GA18778@redhat.com>
+ <CAGudoHGwEYg7mpkD+deUhNT4TmYUmSgKr_xEVoNVUaQXsUhzGw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-22-1a247645cef5@kernel.org>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: AB63D1F8B0
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Spam-Score: -2.51
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHGwEYg7mpkD+deUhNT4TmYUmSgKr_xEVoNVUaQXsUhzGw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri 12-09-25 13:52:45, Christian Brauner wrote:
-> Support the generic ns lookup infrastructure to support file handles for
-> namespaces.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On 09/14, Mateusz Guzik wrote:
+>
+> On Sun, Sep 14, 2025 at 1:11 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > Change sys_prlimit64() to take tasklist_lock when necessary. This is not
+> > nice, but I don't see a better fix for -stable.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: c022a0acad53 ("rlimits: implement prlimit64 syscall")
+>
+> I think this is more accurate:
+> Fixes: 18c91bb2d872 ("prlimit: do not grab the tasklist_lock")
 
-Looks good. Feel free to add:
+Yes, thanks again.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> Unfortunately this syscall is used by glibc to get/set limits, the
+> good news is that almost all real-world calls (AFAICS) with the
+> calling task as the target. As in, performance-wise, this should not
+> be a regression and I agree it is more than adequate for stable.
 
-								Honza
+OK, good, I'll send v2 with the corrected "Fixes" tag.
 
-> ---
->  kernel/pid_namespace.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 20ce4052d1c5..228ae20299f9 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -23,6 +23,7 @@
->  #include <linux/sched/task.h>
->  #include <linux/sched/signal.h>
->  #include <linux/idr.h>
-> +#include <linux/nstree.h>
->  #include <uapi/linux/wait.h>
->  #include "pid_sysctl.h"
->  
-> @@ -122,6 +123,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
->  #endif
->  
-> +	ns_tree_add(ns);
->  	return ns;
->  
->  out_free_inum:
-> @@ -147,6 +149,7 @@ static void delayed_free_pidns(struct rcu_head *p)
->  
->  static void destroy_pid_namespace(struct pid_namespace *ns)
->  {
-> +	ns_tree_remove(ns);
->  	unregister_pidns_sysctls(ns);
->  
->  	ns_free_inum(&ns->ns);
-> @@ -473,6 +476,7 @@ static __init int pid_namespaces_init(void)
->  #endif
->  
->  	register_pid_ns_sysctl_table_vm();
-> +	ns_tree_add(&init_pid_ns);
->  	return 0;
->  }
->  
-> 
-> -- 
-> 2.47.3
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> As for something more longterm, what would you think about
+> synchronizing changes with a lock within ->signal?
+
+Agreed, we should probably change the locking, but I am not a new lock
+to protect just signal->rlim makes a lot of sense...
+
+We can probably reuse signal->stats_lock, but it needs to disable IRQs.
+Or ->siglock, but it is already overused.
+
+I dunno. In any case we need to cleanup the usage of ->group_leader,
+it seems there are more buggy users. I'll try to take another look
+this week. And probably it and ->real_parent should be moved to
+signal_struct.
+
+Thanks!
+
+Oleg.
+
 
