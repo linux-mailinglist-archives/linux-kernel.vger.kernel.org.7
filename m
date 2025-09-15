@@ -1,71 +1,73 @@
-Return-Path: <linux-kernel+bounces-817254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11CFB57FE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:06:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CF1B57FD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAFDE1888098
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:01:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EE04C1933
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39AD343D8D;
-	Mon, 15 Sep 2025 15:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317EF341655;
+	Mon, 15 Sep 2025 15:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gw/uQZm+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O1M3ARFv"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA2534321A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4AE33A00A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948424; cv=none; b=TYa+sdxjnrFPkbgcrVp5xIGET+YHk03vQkyGvLSvJl1LuOxPO++fV7BsK+A0HpTndQn04jFwbAh1/Dk9E5XxbIYNotuVU+OwJ5rcusklgCetj3RR5m+7Npj47DDg05Mly0Myfmc+hOt4tjhG0/50Q6ewvbZy1Um49WqwAUZd0dQ=
+	t=1757948427; cv=none; b=m2zc1VNQ08dq84wTyjt4Ryp4FtRmqQFu+uZbIlJgVU1mjAUfMHwgIGoRGy7OMSNRv93WpImraYlRnnS3ZmrtybQ2wf+e6CToyjhtlZjy9K9HiV/scBLu/rugqpnR3omwybOqrPg6DUydi9tumemFGjLAlCLdMEJCHBM/rRShwfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948424; c=relaxed/simple;
-	bh=orl97ADICI4ifLLSRLAlatiFb35y7EONMQ1cCnXv80k=;
+	s=arc-20240116; t=1757948427; c=relaxed/simple;
+	bh=FcB0J8nJCnkbAgJIwOIOkaEq/mdhOTYIfX59kkgSpCQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sGOLc92cN1+h2Bq8wW/jEbjYHlpa41LlY6/IE+knDp+2irtoOir6I8bevDi3KWHkppQ4q6jljFGY+bPLl+GAZiOLutVLNK6iFxJC2eHcnWoEapyslR2HCaPiJROoOK/72X1hpEu0t4mEHWN1yNYJ8MkslQ7eBTMQ5Sya0i5LXiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gw/uQZm+; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=dCyo3WVyVyExtWKbsnj3v+pELnGYjdia/PwBvBUyCv+O3TUBbsTrE6/ydUBTZ3o0si7amX+dGXTu7eCY4NlRe75zhn3nI5OD3HTsywgxAl+7QPHQpcJZ7xtndhepSpMQGWagfZTLB6eXKiKbXYrO03gvauiMO8s+w3SQVqKt0FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O1M3ARFv; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757948421;
+	s=mimecast20190719; t=1757948425;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gYezNvw2JXA2eYKqYkaBQbpJb87hLMjOLjuBiAHIOFM=;
-	b=gw/uQZm+J6Ns2m/RLDIymcbBkNrc07JU7NDhVdrOPMA82qcZvUjrwxfi28+tuz8MJn4lyw
-	B1vdNKYemHHAWkobvBaxdsKEixYhQ+/QJD25ILsGEQPAAI+xGDQOzknCInXKFtQIfiGFf3
-	x5+DAEQwdTtrfpEp1KUXAaI7jbmPo6E=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=hO1qmSi6Kg3GkGFkEhZd0Wm3EYi6+PyxTTG9VegyOck=;
+	b=O1M3ARFvQY7kAdD8IIX1fBXwJU1rPrrIMBuH7xOjJSdHMFPbwyqWlJa0EAgNsRCgQ1lvCo
+	whGaEiXUABA1+g11Ez3RFqQnu53J97ViwC53BBX74bSpTw4d1BqAazy8A1rLcX86I6SEdT
+	923ZtS/omqxDYkCBZDWufwGraDFqgo0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-623-a8maHv_bMTi7j2ShgmnP9w-1; Mon,
- 15 Sep 2025 11:00:17 -0400
-X-MC-Unique: a8maHv_bMTi7j2ShgmnP9w-1
-X-Mimecast-MFC-AGG-ID: a8maHv_bMTi7j2ShgmnP9w_1757948415
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-175-JlrRSjkXMIiztQWPewZJ_g-1; Mon,
+ 15 Sep 2025 11:00:21 -0400
+X-MC-Unique: JlrRSjkXMIiztQWPewZJ_g-1
+X-Mimecast-MFC-AGG-ID: JlrRSjkXMIiztQWPewZJ_g_1757948420
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8BCCE180057A;
-	Mon, 15 Sep 2025 15:00:15 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2D9471953952;
+	Mon, 15 Sep 2025 15:00:20 +0000 (UTC)
 Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.63])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8F66B1800447;
-	Mon, 15 Sep 2025 15:00:12 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8EFC11800446;
+	Mon, 15 Sep 2025 15:00:16 +0000 (UTC)
 From: Gabriele Monaco <gmonaco@redhat.com>
 To: linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
 	Waiman Long <longman@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v12 6/9] sched/isolation: Force housekeeping if isolcpus and nohz_full don't leave any
-Date: Mon, 15 Sep 2025 16:59:27 +0200
-Message-ID: <20250915145920.140180-17-gmonaco@redhat.com>
+Subject: [PATCH v12 7/9] cgroup/cpuset: Fail if isolated and nohz_full don't leave any housekeeping
+Date: Mon, 15 Sep 2025 16:59:28 +0200
+Message-ID: <20250915145920.140180-18-gmonaco@redhat.com>
 In-Reply-To: <20250915145920.140180-11-gmonaco@redhat.com>
 References: <20250915145920.140180-11-gmonaco@redhat.com>
 Precedence: bulk
@@ -77,55 +79,129 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Currently the user can set up isolcpus and nohz_full in such a way that
-leaves no housekeeping CPU (i.e. no CPU that is neither domain isolated
-nor nohz full). This can be a problem for other subsystems (e.g. the
-timer wheel imgration).
+Currently the user can set up isolated cpus via cpuset and nohz_full in
+such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
+domain isolated nor nohz full). This can be a problem for other
+subsystems (e.g. the timer wheel imgration).
 
-Prevent this configuration by invalidating the last setting in case the
-union of isolcpus (domain) and nohz_full covers all CPUs.
+Prevent this configuration by blocking any assignation that would cause
+the union of domain isolated cpus and nohz_full to covers all CPUs.
 
-Reviewed-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- kernel/sched/isolation.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ kernel/cgroup/cpuset.c | 63 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index a4cf17b1fab0..3ad0d6df6a0a 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -167,6 +167,29 @@ static int __init housekeeping_setup(char *str, unsigned long flags)
- 			}
- 		}
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 81a9239053a7..3cedc3580373 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1275,6 +1275,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
+ 		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
+ }
  
-+		/*
-+		 * Check the combination of nohz_full and isolcpus=domain,
-+		 * necessary to avoid problems with the timer migration
-+		 * hierarchy. managed_irq is ignored by this check since it
-+		 * isn't considered in the timer migration logic.
-+		 */
-+		iter_flags = housekeeping.flags & (HK_FLAG_KERNEL_NOISE | HK_FLAG_DOMAIN);
-+		type = find_first_bit(&iter_flags, HK_TYPE_MAX);
-+		/*
-+		 * Pass the check if none of these flags were previously set or
-+		 * are not in the current selection.
-+		 */
-+		iter_flags = flags & (HK_FLAG_KERNEL_NOISE | HK_FLAG_DOMAIN);
-+		first_cpu = (type == HK_TYPE_MAX || !iter_flags) ? 0 :
-+			    cpumask_first_and_and(cpu_present_mask,
-+				    housekeeping_staging, housekeeping.cpumasks[type]);
-+		if (first_cpu >= min(nr_cpu_ids, setup_max_cpus)) {
-+			pr_warn("Housekeeping: must include one present CPU "
-+				"neither in nohz_full= nor in isolcpus=domain, "
-+				"ignoring setting %s\n", str);
-+			goto free_housekeeping_staging;
-+		}
++/*
++ * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
++ * @prs: new or old partition_root_state
++ * @parent: parent cpuset
++ * Return: true if isolated_cpus needs modification, false otherwise
++ */
++static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
++{
++	if (!parent)
++		parent = &top_cpuset;
++	return prs != parent->partition_root_state;
++}
 +
- 		iter_flags = flags & ~housekeeping.flags;
+ /*
+  * partition_xcpus_add - Add new exclusive CPUs to partition
+  * @new_prs: new partition_root_state
+@@ -1339,6 +1352,42 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+ 	return isolcpus_updated;
+ }
  
- 		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
++/*
++ * isolated_cpus_can_update - check for isolated & nohz_full conflicts
++ * @add_cpus: cpu mask for cpus that are going to be isolated
++ * @del_cpus: cpu mask for cpus that are no longer isolated, can be NULL
++ * Return: false if there is conflict, true otherwise
++ *
++ * If nohz_full is enabled and we have isolated CPUs, their combination must
++ * still leave housekeeping CPUs.
++ */
++static bool isolated_cpus_can_update(struct cpumask *add_cpus,
++				     struct cpumask *del_cpus)
++{
++	cpumask_var_t full_hk_cpus;
++	int res = true;
++
++	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
++		return true;
++
++	if (del_cpus && cpumask_weight_and(del_cpus,
++			housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)))
++		return true;
++
++	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
++		return false;
++
++	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
++		    housekeeping_cpumask(HK_TYPE_DOMAIN));
++	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
++	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_active_mask);
++	if (!cpumask_weight_andnot(full_hk_cpus, add_cpus))
++		res = false;
++
++	free_cpumask_var(full_hk_cpus);
++	return res;
++}
++
+ static void update_exclusion_cpumasks(bool isolcpus_updated)
+ {
+ 	int ret;
+@@ -1464,6 +1513,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+ 	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
+ 	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+ 		return PERR_INVCPUS;
++	if (isolated_cpus_should_update(new_prs, NULL) &&
++	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
++		return PERR_HKEEPING;
+ 
+ 	spin_lock_irq(&callback_lock);
+ 	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+@@ -1563,6 +1615,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+ 		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
+ 			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
+ 			cs->prs_err = PERR_NOCPUS;
++		else if (isolated_cpus_should_update(prs, NULL) &&
++			 !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
++			cs->prs_err = PERR_HKEEPING;
+ 		if (cs->prs_err)
+ 			goto invalidate;
+ 	}
+@@ -1914,6 +1969,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+ 			return err;
+ 	}
+ 
++	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
++	    !isolated_cpus_can_update(tmp->delmask, tmp->addmask)) {
++		cs->prs_err = PERR_HKEEPING;
++		return PERR_HKEEPING;
++	}
++
+ 	/*
+ 	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
+ 	 * only).
+@@ -2934,6 +2995,8 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+ 		 * Need to update isolated_cpus.
+ 		 */
+ 		isolcpus_updated = true;
++		if (!isolated_cpus_can_update(cs->effective_xcpus, NULL))
++			err = PERR_HKEEPING;
+ 	} else {
+ 		/*
+ 		 * Switching back to member is always allowed even if it
 -- 
 2.51.0
 
