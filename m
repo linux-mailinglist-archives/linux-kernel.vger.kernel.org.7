@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-817835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32CE4B58740
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ECC4B58741
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCAD1AA86FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302FD18813A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECFE2C11CE;
-	Mon, 15 Sep 2025 22:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C082C0285;
+	Mon, 15 Sep 2025 22:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2K+xsvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB4kjVRM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360BF2BF3DB;
-	Mon, 15 Sep 2025 22:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB1D23957D;
+	Mon, 15 Sep 2025 22:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757974470; cv=none; b=s6OQG1gEPU6YuD4GYIlJirbNmxYThRntX1xsByJ3RZXNKVrU41CafopLDwkY7JRGCKDLgJCbbIuv2Lgay9ZvOwUO2J6qPHl9Zrv5Tj3Ko6C0ODIRJ1MXZNBZypcXyO9KygQQC0+IukgbFmbUWk/6pCJxmZZPhNIaZHh0srfC+j8=
+	t=1757974482; cv=none; b=KeDqihAza6gRT/h0050QWNLTsLANYGK6NO9neXCDPz5Ffw2OjZPSAfEO4rUWJz+uSr0KrhrPt3CbbZUILUvZ5wq0pCtf+xnyR+W2vzCfTpRmpbvjKirR5Nux9PIhtiZcCgVKjd9e1Acf3Tq+DL1sFrnony0J21s0xhN8tRhE9gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757974470; c=relaxed/simple;
-	bh=G9QFydMno78vIMuERvD1vHylGlQknikWMWrdzEAvphE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Y43bVGbTZBDCRfpbgvT3n8UgduJV/prK6z/qXHNzUdPPnqRkaeeDoQHBcJDUXrPKDPkhMWjxhKFpw0/F5fen/Q4mMfdKDXM1uTbhNvngGZxtsI5EBRQjqdh65p1XIXt1K6USNDZKglFsCpQqCFJNZLFj7jJi3fD1lKP2bLQ0JR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2K+xsvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93ED6C4CEF1;
-	Mon, 15 Sep 2025 22:14:28 +0000 (UTC)
+	s=arc-20240116; t=1757974482; c=relaxed/simple;
+	bh=42PF0UhqIVstyAZvj9Oxhvu2NgizRC3FkzlZTmN8t2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FIUBatP7BBwZDl27dZClZHjd/9pfZYxOV0y0WRUn0zZ9j+5sJO/LczbIesgfe8o4nP1tP+j/LcT/gieimvccIyt4wPOeN0FVPIeUxNqS5WQ2DxYeiMpTv3Q0+4iju3mC7RklLaDPIjlS+MdjpuQCS+f4GxfR5UXcD6txrfA2lOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB4kjVRM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A2FC4CEF9;
+	Mon, 15 Sep 2025 22:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757974468;
-	bh=G9QFydMno78vIMuERvD1vHylGlQknikWMWrdzEAvphE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=a2K+xsvYt99GxNvx53oREW2flSS5B/oWnhlSedBBqkQyNkOpOYUkijS8Ac7J/wxFa
-	 0RpNRK4zJ8dco2MUj5VkftPYJ1gHub4wycRv9eV24wEKk5HQC2I3dpJuN3eO8VxMzd
-	 +H9d94pJFqcUxiU02aJKR0aBSwFVu1HtXKWFWez2QwAIcqvsoY+mAqnoa9hfWCHNtS
-	 UnIcuB8Qb+9Gkvtm+wKrh1rK7AmOHGcdVPXLm8oteWfmxlJR/DXGhpBKrvb+quUOdt
-	 wWVxc9Dsl5s0RYfO04P7RlCNB10LhIgMNYwQMOsyOW+5opWq02mjM0Loep7StkjUTv
-	 ol5P4Rdn03PsQ==
-Date: Mon, 15 Sep 2025 17:14:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com,
-	mmareddy@quicinc.com
-Subject: Re: [PATCH v8 5/5] PCI: qcom: Add support for ECAM feature
-Message-ID: <20250915221427.GA1765361@bhelgaas>
+	s=k20201202; t=1757974481;
+	bh=42PF0UhqIVstyAZvj9Oxhvu2NgizRC3FkzlZTmN8t2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YB4kjVRMGqWWTf5wx+xKc4Av/dO5yqwEAym1wFCSV/5nWHnbNo5Lld+08DaWnhr7x
+	 9V3+gQGc8/EdEMv/AXCrXZMaL6yampUroqB8aArDG751VC+NlbtWXOKP2qaWOMKdpr
+	 B5/Wi7CWNBdNHM6JvaKQ7lEPQ9wXwvFJJQNTzQLUhwHovt8/LAajy0/kqRGbP8Mc4a
+	 RSqs8xBQwTTXpNMB1qMqjuTPXJxY7UmzvcoEOWizaWFp2/kRf8eL0PEC+fd0vHKzQ/
+	 mzNgMyB7qF6OJeezzh65LYAxBFVzQbUwWAl78Pc9ls9Iui6l2lAd0wrOKu0m63EhQ6
+	 4UXoVFJZKOu2Q==
+Date: Mon, 15 Sep 2025 15:14:36 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v1 1/1] kexec: Remove unused code in
+ kimage_load_cma_segment()
+Message-ID: <20250915221436.GA925462@ax162>
+References: <20250915155543.2912469-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,57 +61,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d12e002b-e99e-4963-a732-4873e13c5419@oss.qualcomm.com>
+In-Reply-To: <20250915155543.2912469-1-andriy.shevchenko@linux.intel.com>
 
-On Mon, Sep 15, 2025 at 12:48:06PM +0530, Krishna Chaitanya Chundru wrote:
-> On 9/13/2025 2:37 AM, Bjorn Helgaas wrote:
-> > On Wed, Sep 03, 2025 at 02:57:21PM -0500, Bjorn Helgaas wrote:
-> > > On Thu, Aug 28, 2025 at 01:04:26PM +0530, Krishna Chaitanya Chundru wrote:
+Hi Andy,
 
-> > And IIUC, this series adds support for ECAM whenever the DT 'config'
-> > range is sufficiently aligned.  In this new ECAM support, it looks
-> > like we look for and pay attention to 'bus-range' in this path:
-> > 
-> >    qcom_pcie_probe
-> >      dw_pcie_host_init
-> >        devm_pci_alloc_host_bridge
-> >          devm_of_pci_bridge_init
-> >            pci_parse_request_of_pci_ranges
-> >              devm_of_pci_get_host_bridge_resources
-> >                of_pci_parse_bus_range
-> >                  of_property_read_u32_array(node, "bus-range", ...)
-> >        dw_pcie_host_get_resources
-> >          res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config")
-> >          pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res)
-> > 
-> > Since qcom_pci_config_ecam() doesn't look at the root bus number at
-> > all, is this also an implicit restriction that the root bus must be
-> > bus 0?  Does qcom support root buses other than 0?
-> > 
-> QCOM supports only bus 0.
+On Mon, Sep 15, 2025 at 05:55:43PM +0200, Andy Shevchenko wrote:
+> clang is not happy about set but unused variable:
+> 
+> kernel/kexec_core.c:745:16: error: variable 'maddr' set but not used [-Werror,-Wunused-but-set-variable]
+>   745 |         unsigned long maddr;
+>       |                       ^
+> 1 error generated.
+> 
+> Fix the compilation breakage (`make W=1` build) by removing unused variable.
+> 
+> Fixes: 07d24902977e ("kexec: enable CMA based contiguous allocation")
 
-Since of_pci_parse_bus_range() reads the bus range from DT, is there a
-place that validates that the root bus is 0?
+I don't think this fixes tag is right. maddr definitely looks used in
+that diff. I think it is a follow up simplification that introduces
+this.
 
-> > > >   static int qcom_pcie_start_link(struct dw_pcie *pci)
-> > > >   {
-> > > >   	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> > > > @@ -326,6 +383,9 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
-> > > >   		qcom_pcie_common_set_16gt_lane_margining(pci);
-> > > >   	}
-> > > > +	if (pci->pp.ecam_enabled)
-> > > > +		qcom_pci_config_ecam(&pci->pp);
-> > 
-> > qcom_pcie_start_link() seems like a strange place to do this
-> > ECAM-related iATU configuration.  ECAM is a function of the host
-> > bridge, not of any particular Root Port or link.
-> > 
-> There is no API in pci-qcom.c related to the host bridge configuration
-> currently, as we want to configure before enumeration starts we added
-> it here, we can move this to qcom_pcie_host_init() if you are ok with
-> it.
+Fixes: f4fecb50d6e1 ("kexec_core: remove superfluous page offset handling in segment loading")
 
-Sounds like a better place to me.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-Bjorn
+Otherwise, this patch looks correct to me and GCC 16 will warn on this
+as well.
+
+  kernel/kexec_core.c: In function 'kimage_load_cma_segment':
+  kernel/kexec_core.c:745:23: error: variable 'maddr' set but not used [-Werror=unused-but-set-variable=]
+    745 |         unsigned long maddr;
+        |                       ^~~~~
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+>  kernel/kexec_core.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index 5357ed39e9d1..32722926bc7e 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -742,7 +742,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
+>  	struct kexec_segment *segment = &image->segment[idx];
+>  	struct page *cma = image->segment_cma[idx];
+>  	char *ptr = page_address(cma);
+> -	unsigned long maddr;
+>  	size_t ubytes, mbytes;
+>  	int result = 0;
+>  	unsigned char __user *buf = NULL;
+> @@ -754,7 +753,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
+>  		buf = segment->buf;
+>  	ubytes = segment->bufsz;
+>  	mbytes = segment->memsz;
+> -	maddr = segment->mem;
+>  
+>  	/* Then copy from source buffer to the CMA one */
+>  	while (mbytes) {
+> @@ -782,7 +780,6 @@ static int kimage_load_cma_segment(struct kimage *image, int idx)
+>  		}
+>  
+>  		ptr    += mchunk;
+> -		maddr  += mchunk;
+>  		mbytes -= mchunk;
+>  
+>  		cond_resched();
+> -- 
+> 2.50.1
+> 
 
