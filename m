@@ -1,208 +1,147 @@
-Return-Path: <linux-kernel+bounces-817515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE82B5831D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:14:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A912B58321
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F4A17AF5FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:13:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 658BB7AFA72
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42422C15B3;
-	Mon, 15 Sep 2025 17:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7B42DEA82;
+	Mon, 15 Sep 2025 17:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xoJByf5d"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Az9n0gr7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39852C2354
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859752DAFB7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757956402; cv=none; b=KFQkis1/8XzsWMcS7QnwDBpsukj8WiL9JlxZlJPnSs8kknwCs0mEzHQjflh9l09jooNCFM6LTbrm7t0LZ2lo0oraufHcRs/4/OrrQA7n5LDkIU/ByEhdQyBPFEMdDMh/UOcxsXmWO6cehrSzz89x4fwddrKcr9oV4c8nQA1ukKI=
+	t=1757956422; cv=none; b=P632FS6RvISRceMZiPBVOB9P8JR2QTwYa9qHWouqDZiawMczTy8bSuEQ1SPnNpdltQy2mDAhQxMspTsVpOFTWqTzSvOf9/UQ4wwKWHKWhS4A1TGkOj/yP1VFPELh+IA+DyfAq8GohXtwnCwf6a5qStEmXeNtiHQ9fgAON6kaADM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757956402; c=relaxed/simple;
-	bh=1oSp1s0dFry3KNYp3t9vHFsIxz86SXd/EE0jv4U2ShE=;
+	s=arc-20240116; t=1757956422; c=relaxed/simple;
+	bh=/CUKX5C/JOUX9o03xfQXMW/qD91kFk00c9sQWHjtdcI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ii3Lh2Z/FNET1sgS+QRrHiWMP9TuinEOA9kJIQX0XVRkqlb84CjEO0F9JO2ianZ2hjVyfOYBWbyA9fCmAPxfF0htxsiegKpUPQrp937GhyIexgCc36GTdQtQyFFPBBzXYAEDwCtNytXXHD6Rl8moKmju23MVLs2LrVRnSRn6q64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xoJByf5d; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62733e779bbso6732514a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:13:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=Pbs9knwBLZgipL5/y4weoKp2nIOZ2lhmInhUytvI2pOfIk7XGJfrO3lQpX2R1olQVCUjNZelk+TjC4iX0dgDIIn52LuF8th/e2jC7VVdkt4dRGH2Se2Po7QJM/+6mMcg4xzW+kID1BQr2ZdHIk7eppo30BLCGeCxIBEAF4iO+qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Az9n0gr7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e9042021faso1403748f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:13:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757956399; x=1758561199; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757956419; x=1758561219; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eVk/IwWAagDw/u1je9emE3yqPayy79NxUJ1XU+JfvRM=;
-        b=xoJByf5d4GagcSUYVtcl7PhxMZ6j2dVqBXHnQ0zSJHMG2fO761p7IPpyJ794c7F7Ff
-         /4vn2/Idmq0QMqv+g5zHC+X1L51ns47VP+qhGiX6X7nozvoeXvkKS3hAtwPz2RRyjv1e
-         eIfZ3QHDu8wBxuAtDD96JBVfww6FTtYy99x4NEquo+qnaS/3Xti89TOJVGP8lgYl8rTu
-         cA68XVwGJmSqyD8ggnLRQcGSHsUwjg/oCbd+4X7/UmCL5fJefipDnBy+kChALQrWpwJJ
-         lkVI267JgIPx7hUattrxdtQljUve1GXe8tQS90OelY9FVplM3wzVheJn2e7xy7F8Pwvg
-         IYHA==
+        bh=/CUKX5C/JOUX9o03xfQXMW/qD91kFk00c9sQWHjtdcI=;
+        b=Az9n0gr72l0D2XdW/5AjTY15fcvm0cldNI00TesnxXCwQuBW0uinaMvt0tXdo49jSK
+         X+P5GvHfQuI/ob3r0slFNVI664pHFKMJTKezCOTWku/1w1KT3HzPGuGHeD1gVPyqOEe0
+         EmOACodwUf06fYrut9hrJui3nIGqdVoTbFQYu55heLmCoXm+CEYef1UjLCCHbFirn7Wp
+         2xHvQ4sh0qYVpwP29cZzzMAKL15fQ2l1YrnfKPCaB7TxMlfuoAFKgg2veJhawpMdI5JF
+         qTjrcnZmn8fR3XvXzHuf/Y/8vUJm8B1IhwoXLzuNM8Mq6f9GCCSrWWYyGzbvuGwX5zdJ
+         +F3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757956399; x=1758561199;
+        d=1e100.net; s=20230601; t=1757956419; x=1758561219;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eVk/IwWAagDw/u1je9emE3yqPayy79NxUJ1XU+JfvRM=;
-        b=Toy7y+lwOSA2mn0zBTi2MVDRTbIgFgB2fdKtSh5kg6tMsGw33SqBzVRbYStJEO1uGY
-         IQlHyCjKE5fL5PC2r6hR1fWuA29fLcVzi33zsyndxir20pKKdoObTvgSKHswnzW0NTlM
-         A+WQvDykkpRNf+qVBDY2vpgQYoPnaXS8j9m5vXJ5d4P+xK6la1ctKUCKjRgvUm4w+lGe
-         aImLIBC4gbLpusg3Ziw8guKISlck+vkYWwlwLk7njn6MWlnccLRpcz5HGysjShifW+U6
-         hbnKdgdFTE1uZVwYgsMObr9A0seDeOMdppJfwuUoWGY/T+fv2rYecscvqwBqxmfP++0M
-         Uhmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoBlVrb/FDnpobZ2dehf9zOr2WWwX1lmWLg3GrqoX7sgBkznXN+cF3gK+Yd7edfjVOF/Xx+AfDWJCtuNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEnGMH0om/Kd4N8vKykZ4hLRVnt6Zb9ugOc0jMqP5jWpEZfPG1
-	3V7uUI/C2SH5ai+dgT2U5s8R95sfCauIhWvTNNQiHOy/VB+Wy20hiqXlQSxBbORkLs4DGQLNnok
-	dIsKBtyEkAmqJiT0oWRrVo4THCitmpV9g+tS/SZsX
-X-Gm-Gg: ASbGncu92kqiXbFhelNDmkaF0HM51sJSmK9Vwz7HUB4wvSpmEA4Z6axad8Y4h2HC/Bh
-	ayENaozfu11u9JAcoXMy0ytNT3DV1jDJEusevOFMsnUbTEHl8YN0RLc6Xoz60h9AgrGU7BoAOsf
-	l6zZnPqpftmUMqnLSWaNgUKa5tepKDiYk3cmuwxp8YmBT2P0us56q0Uve6KR1ANeRCrlXIFoJjE
-	1gg6KwW30IjDcL8kYab07nu1GWeiNO8Frm0xPUN0HIfkjB6AYyjHVYVJC0Quomfhg==
-X-Google-Smtp-Source: AGHT+IE9e1EULEJI4AgWzyYm2QJwTZpaG4jJtqmkHHf2fi6cZM9VIHvmyy6TtgCQIkqVmW1MbSDhcupuqSDyBvZva/A=
-X-Received: by 2002:a05:6402:3587:b0:62f:2ac2:af41 with SMTP id
- 4fb4d7f45d1cf-62f2ac2b11amr5417351a12.38.1757956398793; Mon, 15 Sep 2025
- 10:13:18 -0700 (PDT)
+        bh=/CUKX5C/JOUX9o03xfQXMW/qD91kFk00c9sQWHjtdcI=;
+        b=ZAa3Dc1e2mlDOnsGw1lpzFoocNRBT0YHZeCMG5Uazj5aTGHL5fVM7NA7E4z+VZYgx0
+         CYYlcqpWI9UsWvWmEKmVzoK83TMBfGUYDvDWvZCQCtUzG1XTGQPyDGX8TuOrbDS5/lf/
+         2fd1+zKFi3ojLbm6+Z58UDhNmWBVS/5xwxttSFIK5edsrVOTqF2MpG3voXe6/Fpj/l0S
+         GZtX3KlIYbSAICSn2OqucSqb08PFi5+nqSerrv+LLRrlUnn6QiZCYA5ruUkHzdpt0Mtq
+         kSiy5NQt3llYQVxn9mUIYmw6uPsQNJBqs7XiWFfvXSvPmCauj0hkaIEQJAIUUU/cmuoo
+         1pjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDvAUzivVd0Y2gQ0lPozRx2n5J99OZrM1IThcoov7yPlaRoLqbmvcViDLJPMQ9Yy6n4o6RgAm5bl09BW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9/meG6YbF/1k8fH4Su0FccNy8eSf/+vGkp90zp7mfsZRGaQJr
+	/iYFxnXqFDzmEE2vB00tw0LGSWW6Rlgk5RM4sK3ce0otihqPyXBKv1DTLOVEOtU3df8mF73m1LY
+	amc8Seuaks37aqQjDXEMVj/zSIGeTFG0=
+X-Gm-Gg: ASbGncsWkz+sJ4bvRr3MwrBvlWHPEorrciuBnnG6or2gml24huxFm/bPszCeeiwYr0l
+	JRwTh9UmYUZT6NGfo8kM+b/Mje79bZNsk9Dk2HE+nOfR6+8EMtkcgxHsRfrV5mw29EItNHk1Vh4
+	q4mARv4YT+whQ/bkfUPBlaN+KpMHb6ryreho/OEDNyEcWZzxDNSKNLWfmyrvH5NMYG3zBJ/s7uN
+	05Yf8mpJy5DIudeGATb7Vk=
+X-Google-Smtp-Source: AGHT+IFQp6tKSn0h8An2pvTCG8CcE6ze9qvxAkcXYS50TGAKAo3NTyQJ4AabHE3UlQlaIVm6zqWqil99iG9syQhTs44=
+X-Received: by 2002:a05:6000:2283:b0:3e7:6196:fdf2 with SMTP id
+ ffacd0b85a97d-3e765a0981amr9879648f8f.47.1757956418497; Mon, 15 Sep 2025
+ 10:13:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250830053404.763995-1-srosek@google.com> <CAJZ5v0hShKgPB42p4dOgKoRuMCkGhe+ZHMeAuFQO0Soa1ty_LQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hShKgPB42p4dOgKoRuMCkGhe+ZHMeAuFQO0Soa1ty_LQ@mail.gmail.com>
-From: =?UTF-8?Q?S=C5=82awomir_Rosek?= <srosek@google.com>
-Date: Mon, 15 Sep 2025 19:13:07 +0200
-X-Gm-Features: AS18NWCkhZDDdsM_oejLGVUXgZHAFu-N6GJOxDZIp7NmOXFFGPj3C2juSnvyHaI
-Message-ID: <CAF3aWvHTXiODVE72Q33KDS51j4QA7gXVSsvdRnvsHdBv4NzCfw@mail.gmail.com>
-Subject: Re: [PATCH v1 00/12] ACPI: DPTF: Move INT340X enumeration from DPTF
- core to thermal drivers
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Alex Hung <alexhung@gmail.com>, Hans de Goede <hansg@kernel.org>, 
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, AceLan Kao <acelan.kao@canonical.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
-	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250904-xsk-v3-0-ce382e331485@bootlin.com> <aLmfXuSwtQgwrCRC@boxer>
+In-Reply-To: <aLmfXuSwtQgwrCRC@boxer>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 15 Sep 2025 10:13:24 -0700
+X-Gm-Features: AS18NWBMiMS6XvzTlqJcTup9x50Fctx117wBc5Bi97DEiXSlmnUcLqRrkzlqQoo
+Message-ID: <CAADnVQKSHuFgd9KbAv_dUTiS2de=crjDtNLAp5tt7DhBQgZWEg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 00/14] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Alexis Lothore <alexis.lothore@bootlin.com>, Network Development <netdev@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
-
-First of all I would like to apologize for the late reply and thank
-you for your comments.
-
-On Mon, Sep 1, 2025 at 10:49=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
+On Thu, Sep 4, 2025 at 7:17=E2=80=AFAM Maciej Fijalkowski
+<maciej.fijalkowski@intel.com> wrote:
 >
-> On Sat, Aug 30, 2025 at 7:34=E2=80=AFAM Slawomir Rosek <srosek@google.com=
-> wrote:
+> On Thu, Sep 04, 2025 at 12:10:15PM +0200, Bastien Curutchet (eBPF Foundat=
+ion) wrote:
+> > Hi all,
 > >
-> > The Intel Dynamic Platform and Thermal Framework (DPTF) relies on
-> > the INT340X ACPI device objects. The temperature information and
-> > cooling ability are exposed to the userspace via those objects.
+> > This is a second version of a series I sent some time ago, it continues
+> > the work of migrating the script tests into prog_tests.
 > >
-> > Since kernel v3.17 the ACPI bus scan handler is introduced to prevent
-> > enumeration of INT340X ACPI device objects on the platform bus unless
-> > related thermal drivers are enabled. However, using the IS_ENABLED()
-> > macro in the ACPI scan handler forces the kernel to be recompiled
-> > when thermal drivers are enabled or disabled, which is a significant
-> > limitation of its modularity. The IS_ENABLED() macro is particularly
-> > problematic for the Android Generic Kernel Image (GKI) project which
-> > uses unified core kernel while SoC/board support is moved to loadable
-> > vendor modules.
+> > The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+> > are defined in xksxceiver.c. Since this script is used to test real
+> > hardware, the goal here is to leave it as it is, and only integrate the
+> > tests that run on veth peers into the test_progs framework.
 > >
-> > This patch set moves enumeration of INT340X ACPI device objects on
-> > the platform bus from DPTF core to thermal drivers. It starts with
-> > some code cleanup and reorganization to eventually remove IS_ENABLED()
-> > macro from the ACPI bus scan handler. Brief list of changes is listed
-> > below:
+> > Some tests are flaky so they can't be integrated in the CI as they are.
+> > I think that fixing their flakyness would require a significant amount =
+of
+> > work. So, as first step, I've excluded them from the list of tests
+> > migrated to the CI (see PATCH 13). If these tests get fixed at some
+> > point, integrating them into the CI will be straightforward.
 > >
-> > 1) Remove SOC DTS thermal driver case from the ACPI scan handler
-> >    since its dependency on INT340X driver is unrelated to DPTF
-> > 2) Move all INT340X ACPI device ids to the common header and update
-> >    the DPTF core and thermal drivers accordingly
-> > 3) Move dynamic enumeration of ACPI device objects on the platform bus
-> >    from the intel-hid and intel-vbtn drivers to the ACPI platform core
-> > 4) Move enumeration of INT340X ACPI device objects on the platform bus
-> >    from DPTF core to thermal drivers using ACPI platform core methods
+> > PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+> > tests available to test_progs.
+> > PATCH 2 to 5 fix small issues in the current test
+> > PATCH 7 to 12 handle all errors to release resources instead of calling
+> > exit() when any error occurs.
+> > PATCH 13 isolates some flaky tests
+> > PATCH 14 integrate the non-flaky tests to the test_progs framework
 > >
-> >
-> > Slawomir Rosek (12):
-> >   ACPI: DPTF: Ignore SoC DTS thermal while scanning
-> >   ACPI: DPTF: Move INT3400 device IDs to header
-> >   ACPI: DPTF: Move INT3401 device IDs to header
-> >   ACPI: DPTF: Move INT3402 device IDs to header
-> >   ACPI: DPTF: Move INT3403 device IDs to header
-> >   ACPI: DPTF: Move INT3404 device IDs to header
-> >   ACPI: DPTF: Move INT3406 device IDs to header
-> >   ACPI: DPTF: Move INT3407 device IDs to header
+> > Maciej, I've fixed the bug you found in the initial series. I've
+> > looked for any hardware able to run test_xsk.sh in my office, but I
+> > couldn't find one ... So here again, only the veth part has been tested=
+,
+> > sorry about that.
 >
-> Please avoid sending multiple patches with the same subject,
-> especially in one patch series.
+> Hi Bastien,
 >
-> Thanks!
->
+> just a heads up, I won't be able to review this until 15 sept. If anyone
+> else would pick this up earlier then good, otherwise please stay patient
+> :)
 
-The subjects are quite similar but they are not exactly the same.
-
-Originally the ACPI bus scan handler was added in 3230bbfce8a9
-("ACPI: introduce ACPI int340x thermal scan handler") to prevent
-enumeration of ACPI device objects in range INT3401~INT340B
-and only the INT3400 master device had their platform driver added
-in 816cab931f28 ("Thermal: introduce int3400 thermal driver").
-
-These days, however, each of INT3400~INT3407 device ID, representing
-a different kind of thermal device, has its own platform driver.
-Most of them, depending on X Lake generation, can also be enumerated
-on the ACPI bus using INTC1XXXX device ID. In addition INT3408~INT340B
-and some of The Wildcat Lake device IDs are not supported by any
-platform driver.
-
-To make the review process easier and minimize the risk of mistakes
-I decided to create separe patch for each ID in range INT3400~INT3407.
-The INT3400, INT3404 and INT3407 device ID can probably be renamed to
-Thermal Core, Fan and Power device ID, respectively, but I am not sure
-about the others.
-
-Alternatively they can be squashed into a single patch which moves
-all INT340X device IDs to the common header.
-
-Please let me know which way is better.
-
-Thanks, regards
-Slawek
-
-> >   ACPI: DPTF: Move PCH FIVR device IDs to header
-> >   ACPI: DPTF: Remove not supported INT340X IDs
-> >   ACPI: platform: Add macro for acpi platform driver
-> >   ACPI: DPTF: Move INT340X enumeration to modules
-> >
-> >  drivers/acpi/acpi_platform.c                  | 27 +++++++
-> >  drivers/acpi/dptf/dptf_pch_fivr.c             | 10 +--
-> >  drivers/acpi/dptf/dptf_power.c                | 20 +----
-> >  drivers/acpi/dptf/int340x_thermal.c           | 76 ++++---------------
-> >  drivers/acpi/fan.h                            | 10 +--
-> >  drivers/acpi/fan_core.c                       |  2 +-
-> >  drivers/acpi/int340x_thermal.h                | 76 +++++++++++++++++++
-> >  drivers/platform/x86/intel/hid.c              | 41 +---------
-> >  drivers/platform/x86/intel/vbtn.c             | 30 +-------
-> >  drivers/thermal/intel/Kconfig                 |  1 +
-> >  .../intel/int340x_thermal/int3400_thermal.c   | 12 +--
-> >  .../intel/int340x_thermal/int3401_thermal.c   |  5 +-
-> >  .../intel/int340x_thermal/int3402_thermal.c   |  5 +-
-> >  .../intel/int340x_thermal/int3403_thermal.c   | 12 +--
-> >  .../intel/int340x_thermal/int3406_thermal.c   |  5 +-
-> >  include/linux/platform_device.h               | 17 +++++
-> >  16 files changed, 161 insertions(+), 188 deletions(-)
-> >  create mode 100644 drivers/acpi/int340x_thermal.h
-> >
-> > --
+Maciej,
+Sep 15 is today... just bumping it in your todo list :)
+Pls take a look.
 
