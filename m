@@ -1,53 +1,87 @@
-Return-Path: <linux-kernel+bounces-816607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9F9B57620
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:19:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA962B575C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E555D167D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:19:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623C4188D39A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD6F2FC000;
-	Mon, 15 Sep 2025 10:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A90E2FABED;
+	Mon, 15 Sep 2025 10:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="la2ZADbE"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZBc6wlxT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F4D2FB97A;
-	Mon, 15 Sep 2025 10:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B92FB08A
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931578; cv=none; b=BXNUi++okcBw5w8HdzKyEOrvTnrEi0/GQM2LbEO4Ki1cHbllT0jGHAnCXsIxl82oQ7tJTXz2jhLVFtu4AJCGxkUgc8uIE2aigXLI3cB3MdWijzU6TXzIro68IWINqP+rvhPbdqQcA+u0HL71wvR97l+u6sZyov0HA4oMNLM16eE=
+	t=1757931144; cv=none; b=kAU0raC1/lfoZzbviFMhoITC3a6rXyqw4b1fSmELbWWnOtzdHhHqtno8bPqIgvtLnmL+cbMADRCle2uQ/AjCI5SawRuI3CR/kRyVGht6aFS9Dj6IJgOCVddJulnwmKbmkPCA3ybVqXyAk2qxuJeBqWznfTznTSSn0hWwnUZz4Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931578; c=relaxed/simple;
-	bh=x3PxWtmRzAKIbZR++zL3XjAWgJRia04yClB1sSPbt/M=;
+	s=arc-20240116; t=1757931144; c=relaxed/simple;
+	bh=jG342V/c+j5CoBX7FP4+dyAJiibjxkiQ+yvM5FWlx9c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBIsid6wlGiG4UbwJwx+3+aTUBoS4wCsvme9/3qvuHefCswbTQbbbiaCyZ10w1D55MEEoI9sixcVXEGnWyWmJ492ELLKZIeHmXABIeP9neQ0a6vgdx6LKu9/2gVbUoRCmbdJPKIhoBMKTeMlrW7BxukxYhGC+Xq66TvZN66tgro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=la2ZADbE; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 27A6D53400BE;
-	Mon, 15 Sep 2025 12:11:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1757931110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=X5dPNaHHQz5bsNUwGNxFPwLQAT3/h+xAt87Z0yh/F3Q=;
-	b=la2ZADbEfr1yYdZ49CflCBoOmEvSLv47xLB8KoknT6OHsKzohAPTOnKRtKPQ4WgyOOEw83
-	HQYp+J4ily3oyacydhUQYqYQ3ceV6wI4L+W3pIWAz/z3YTea94LcaR+ZK4GfgK6Onhw2aI
-	/ZtcIiCjhxGrdMYG9hm3L6WErXSniBg=
-Message-ID: <ad1764a3-12b3-4c30-9b79-313d9c1d37eb@ixit.cz>
-Date: Mon, 15 Sep 2025 12:11:49 +0200
+	 In-Reply-To:Content-Type; b=Ns+M86B4yc9UIN/gt4YTPQUZYP7j1XN7mSslfWeNhCSm75PP/rPI9pfnTJl1E4uugKwlhCwkP6Nwp2cgJKkATru8j69ZhX4w7pf6laMM3yjnryk+NsrT/MbGqybzx9vHTVD39Qu3JMv71/t4ol89bj6PzU/tPZhSSRiri4ZV7+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZBc6wlxT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8FhVk020564
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:12:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sKD/3kPWUFAIEKI0UmpKQAcxh9lP5Wru5KsNYI2Yxfo=; b=ZBc6wlxTY2NrEsig
+	4fQSCUgYY0661833ZRKf3dhutGaTAzFuHKLF3C1rfXISL2/jQUDk9D013zPWen2u
+	wZIPk1j2YBJ/R2kQl07dACQ8jGwRzyItehxgwlk9Edh24ZmWGBY6yc0NnX3mcafn
+	0HNtDPxk0fs1714LQ6pRoeqkF0tzHWRE4bSyy6Qwq2eP4gNuu37lfyKUwfMoHrVE
+	QTYIw+5pNEaUPbC9mwZ436p61Q2YDL6KYHHsKtmRQiCjQnjU/soVB0yVci1F8tab
+	OV68RFIxLx7hl3P/HKZr13Nn2vxowr3nXiMCJpb/wjfLKTnd2EgynxizCnhZNmG4
+	B0N/Yg==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4950pv4hf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:12:20 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b54b301d623so663639a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:12:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757931139; x=1758535939;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sKD/3kPWUFAIEKI0UmpKQAcxh9lP5Wru5KsNYI2Yxfo=;
+        b=X7jxglnutzEI4MEh8QkiOjiNQjW/WJyH6bnx5Mx2BuSVVRk8w3WIMsOokLWfFmmu4d
+         +4L6DvDLeIMm+QiwNuse6WH9U64gu0JeH2zJzjuz/9NESzRBbH9Gl1Z4SEX0n6JKmfKK
+         RIEwk1Gxr6XpwWu12tIK6FlkiQqGk8shr4yNEy08iQ6wlp8SprgVb7FICWOVva8tf7Ot
+         dyiHOAC1olxBm3nrMF9SlXszBcf3qWlhx2IljZhzwZsKbk9dSGQuMtNVpKmkCJpac+PZ
+         N0hF8CoowQGAHgDsAdo38B1cCSysX8m1RbJHqSdrT/GmgcJ27jhH99/s8rpdSmymN93I
+         dqYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6L04G1WAaq45sz/x4AMxSuIKSDqvbl1Q9zx0C3ZXO+zrs77DWJy6kMHSWn5n8uyUefVnrMHvXolIrHgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpC21FipFt8P+a1eO++mxnuh8V/8cNobXprki+On9fYg42wZG2
+	nz6PBp8R55T+c81H+SCWeHIyzXAEcjnsWPn2QpaslBkwOwTPfBp+dDl7G+x4zljzRJlUOON6QVS
+	t/K/bj0BrnwB+SsrxCM/mPecG46gbB4c09G6FmEHVuvMnI2kSQtShnfLbn1HpJRifh50=
+X-Gm-Gg: ASbGncv7POOZCZVawTWnxn60z2VuSy32i8UNq38/34fxmjBiJ+kdjuVPhgvXRPWzp9J
+	Q1V2SOTrVLRL2JA9fpUS7HzDC/8r+K2tcBPRe/KsE8E0NX7GadRCPk+BTm4PPa1lW72S66Q3nBL
+	tuUMHffTwFlmqX06GP2gL9J6GQ0N3Acm4uVQ/As+sm90YCFzunc/vNbZWvsEuOatHIgLkUQLSJt
+	HkI0iY1Dfh7xj17/YGvUvU6PIO7+jahoj5anFj46LKi0b1XfEr4DWypPdECvlg7iQkFATuqxFUQ
+	jWgg64F3apqg0ppCABH5p8yLmQHKHlqxIsj1p3ZzB+Tw2YaJ/I9p3UhCfIIQ/HvlMUVarEoI8LP
+	pwfZf8fc/GNImUpnhWoI0IgWoZr6eVZG3dKA=
+X-Received: by 2002:a05:6a21:328d:b0:264:10e4:f87 with SMTP id adf61e73a8af0-26410e411fbmr1664433637.4.1757931139305;
+        Mon, 15 Sep 2025 03:12:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxZXxZBGVcbThhG/IvVDI3mpTgc5wznmZnjs66RxbpQzCycjFMO9w4+/RnbJr+43MLjBFNnw==
+X-Received: by 2002:a05:6a21:328d:b0:264:10e4:f87 with SMTP id adf61e73a8af0-26410e411fbmr1664402637.4.1757931138808;
+        Mon, 15 Sep 2025 03:12:18 -0700 (PDT)
+Received: from [10.133.33.231] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b03cf65csm8329380a12.16.2025.09.15.03.12.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 03:12:18 -0700 (PDT)
+Message-ID: <f030649a-9505-4bda-9ce9-00eeee8d3b06@oss.qualcomm.com>
+Date: Mon, 15 Sep 2025 18:12:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,124 +89,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] drm: panel: nt36672a: Add support for novatek
- nt35596s panel
+Subject: Re: [PATCH v4 11/13] phy: qcom: qmp-usbc: Add USB/DP mutex handling
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Molly Sophia <mollysophia379@gmail.com>,
- Arnaud Ferraris <arnaud.ferraris@collabora.com>
-References: <20250913-nt35596s-v6-0-b5deb05e04af@ixit.cz>
- <20250913-nt35596s-v6-2-b5deb05e04af@ixit.cz>
- <xi65tabv4sgblzmw52wxci5wsrdahshvos5we5wko4kfcfyozp@y3vw5gt3elwv>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <xi65tabv4sgblzmw52wxci5wsrdahshvos5we5wko4kfcfyozp@y3vw5gt3elwv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+References: <20250911-add-displayport-support-for-qcs615-platform-v4-0-2702bdda14ed@oss.qualcomm.com>
+ <20250911-add-displayport-support-for-qcs615-platform-v4-11-2702bdda14ed@oss.qualcomm.com>
+ <nfugwwknnlxls75yo5rex6ggu5nzpq6enyx6e6nfnfei3icxjg@t7dnzcfcjw4o>
+ <cf6c2c2f-9878-4181-a3c8-9692423308bd@oss.qualcomm.com>
+ <q4dplt6fq3cneludcuhxevklaj6omeio3cjxw2owt4h3wistd6@arv23ri4cl75>
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+In-Reply-To: <q4dplt6fq3cneludcuhxevklaj6omeio3cjxw2owt4h3wistd6@arv23ri4cl75>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: g8sJg98S6DqU49MHrlZA7NyueMZitOeV
+X-Authority-Analysis: v=2.4 cv=PsWTbxM3 c=1 sm=1 tr=0 ts=68c7e684 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=CZmHqXGeirO8O24YQhMA:9
+ a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: g8sJg98S6DqU49MHrlZA7NyueMZitOeV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyOSBTYWx0ZWRfX32rhQVpXU6Xo
+ 69u9sdmO5Uhp6LhQb4qVO066LIeoBQJeVz1JvXmJ6UWdmNBMeQLqz37j2WO5OUw805RkYLF/ClH
+ vuZORWdu7SRUtBOxpBnFNXuLQJrot99s9MJ2po4sv2ua0aws2pr1tnyzLZr3JOrqqPjUJzfelxj
+ jB1II0MghTMIJopTDgmKBoLx6ZINiCGLbjnnOm7AvMBPXX6TfEQuUcd1htJkXbktqa2uHvI0DmQ
+ QOc5Ub4MVI7p/N1OCZ7Ex8w9hpggRGJrgQYcZB+bs4uWX8P3Cm2Br2nDC7uHHOgUNuW3iRxwJ30
+ GTQxWxeHi+qRZCymXiRWO9C3Es03J/1+2eXCOWWasvLZf0g2r4ydbs7oilvi4UmFl676TYbPlP0
+ WIb3Nn5v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_04,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 suspectscore=0
+ spamscore=0 bulkscore=0 adultscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509130029
 
-On 15/09/2025 03:29, Dmitry Baryshkov wrote:
-> On Sat, Sep 13, 2025 at 09:19:48PM +0200, David Heidelberg via B4 Relay wrote:
->> From: Molly Sophia <mollysophia379@gmail.com>
+
+On 9/12/2025 8:09 PM, Dmitry Baryshkov wrote:
+> On Fri, Sep 12, 2025 at 08:03:01PM +0800, Xiangxu Yin wrote:
+>> On 9/12/2025 6:32 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Sep 11, 2025 at 10:55:08PM +0800, Xiangxu Yin wrote:
+>>>> Introduce mutual exclusion between USB and DP PHY modes to prevent
+>>>> simultaneous activation.
+>>> Describe the problem that you are trying to solve first.
 >>
->> Novatek NT35596s is a generic DSI IC that drives command and video mode
->> panels.
->> Currently add support for the LCD panel from JDI connected with this IC,
->> as found on Xiaomi Mi Mix 2S phones.
-> 
-> Why are you adding it to the existing driver rather than adding a new
-> one?
-
-Hello, originally it started as a standalone driver (see v2 patchset), 
-but got merged due to similarities.
-
-v2 patchset:
-https://www.mail-archive.com/dri-devel@lists.freedesktop.org/msg404290.html
-
-If it's desired, I can switch it back to the standalone driver.
-
-> 
->>
->> Signed-off-by: Molly Sophia <mollysophia379@gmail.com>
->> Signed-off-by: Arnaud Ferraris <arnaud.ferraris@collabora.com>
->> Signed-off-by: David Heidelberg <david@ixit.cz>
->> ---
->>   drivers/gpu/drm/panel/Kconfig                  |   7 +-
->>   drivers/gpu/drm/panel/panel-novatek-nt36672a.c | 225 ++++++++++++++++++++++++-
->>   2 files changed, 222 insertions(+), 10 deletions(-)
->>
->>   
->>   MODULE_AUTHOR("Sumit Semwal <sumit.semwal@linaro.org>");
->> -MODULE_DESCRIPTION("NOVATEK NT36672A based MIPI-DSI LCD panel driver");
->> +MODULE_AUTHOR("Molly Sophia <mollysophia379@gmail.com>");
-> 
-> ??
-
-What's wrong with it?
-
-David
-
-> 
->> +MODULE_DESCRIPTION("NOVATEK NT36672A/NT35596S based MIPI-DSI LCD panel driver");
->>   MODULE_LICENSE("GPL");
->>
->> -- 
->> 2.51.0
+>> Ok.
 >>
 >>
-> 
+>>>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>>>> ---
+>>>>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 21 +++++++++++++++++++++
+>>>>  1 file changed, 21 insertions(+)
+>>>>
+>>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>>>> index 613239d15a6a3bba47a647db4e663713f127c93e..866277036089c588cf0c63204efb91bbec5430ae 100644
+>>>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>>>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usbc.c
+>>>> @@ -1061,6 +1061,19 @@ static int qmp_usbc_usb_power_off(struct phy *phy)
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> +static int qmp_check_mutex_phy(struct qmp_usbc *qmp, bool is_dp)
+>>> mutex has a very well defined use case - a sleeping lock. Please find
+>>> some ofther name.
+>>
+>> Then how about 'qmp_check_exclude_phy'?
+>
+> qmp_usbc_check_phy_status()?
 
--- 
-David Heidelberg
 
+Ok.
+
+
+>>
+>>>> +{
+>>>> +	if ((is_dp && qmp->usb_init_count) ||
+>>>> +	    (!is_dp && qmp->dp_init_count)) {
+>>>> +		dev_err(qmp->dev,
+>>>> +			"PHY is configured for %s, can not enable %s\n",
+>>>> +			is_dp ? "USB" : "DP", is_dp ? "DP" : "USB");
+>>>> +		return -EBUSY;
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>>  static int qmp_usbc_usb_enable(struct phy *phy)
+>>>>  {
+>>>>  	struct qmp_usbc *qmp = phy_get_drvdata(phy);
 
