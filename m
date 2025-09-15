@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-817451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A23A9B58263
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB6BB58274
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A171A20505
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:45:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C264833E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C3C288505;
-	Mon, 15 Sep 2025 16:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F862286419;
+	Mon, 15 Sep 2025 16:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="GkByLFyR"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BH2fRaPt"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F46286D78
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EE0269CF0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757954721; cv=none; b=hU3oSzs/wVJfAfTTHn8sthd2n0uaMJzfMXdyjyNUAbhUhZeOjV923ORvM9ddsPUdzbQqph8h0EsSwfHxvZm/ZJBxCbXfUHUg6udtkppnqotXj9fAOQmhB3DRTsIUQ45gS/WG59PuMRpjCj/0Y+9dFk5Z03HE8XA+mRrKVYtdUuU=
+	t=1757954812; cv=none; b=qPbADTaiLbfpLf8tBv8BISWl4blq6dPBS/BPzO2VOSQYzTHbiecyyJYMS0ZJc6HEefd0ETcBSsbIIi/Y+Rr5Oo0EXVOwjC0wAoXvl4E/rUqMzGEIBylklCDciFLOMmMOnSFs/QNpl2wdYdI5EmpIwSHdlUYW2rSBQkimfnP2iaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757954721; c=relaxed/simple;
-	bh=vkx6SM9gqmpLvlgtVI8pwEBIHZtD0Q9irwN6qy/aYaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSyYOIDgOu5wdS7NAjAwl6QjbjkMcPqQpEN5FRpuH3z701I2FacvtmSjnVmfk2THM0RvHzBnsb5WpmlJXRtiGaD7AtxBElR1HZV+8+mh14zjBNn6bc9+nAbrdY6rFHlO9ODzKuGwgs0DPhtMVZvyNAPy1ZeAw52lt2xGuo/iYmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=GkByLFyR; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-323266d6f57so5052453a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:45:19 -0700 (PDT)
+	s=arc-20240116; t=1757954812; c=relaxed/simple;
+	bh=CXzPlvutPWKdlESNZVRVQx98sF9Awv2WxTK5w9NjF8U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eInw0tBZgz4gU2ZXHwyE4EipHUEvPTMVUwK5UbyANtnWPlTTzoXuzhhsBE9PguuWwTr/US+L3/Vi1PogY2IkOOKr27/owBqhJfDyahok34tbomgS4MXLzDxBW3npI6zvgFCc5MvYgRp+1ppieCwodZ9nLu6tCptt02Vi0VCJo5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BH2fRaPt; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32e120e0e4aso3033558a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:46:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1757954719; x=1758559519; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MQDjqbiT9oGuFNrzjLvyS3Lnpn5E/CxPnw6kf2pPIuk=;
-        b=GkByLFyRvqxEfuYL3huoTyBK0nkCE8uRJOgfcclMmwYFbyrNOzldcYQhxYeQPdaWKm
-         js1U8uCjy5PDt+ESIHwafrbpHmKJtIAzWuBpPgRrHhWsbVjCmJO8FtYpR+pBDFfDmtk6
-         xvHvlm7pFFGb0bqH/TEK4lqNkQ3c/suEP5d2YA14yUZqW/by0Xs3cTrZ6RPURM08evFw
-         hnavkh4sBTMsSmG5IQgB3QDCjCijCjYM7yPD/Medmd/w1mURAxR+nOIAAeBhXNaMNLLJ
-         GlO6vrLlwFyvVLHH0voiNeijSy97e7pVBFQY25wxztQ+XTzhoj91nrFTgJtyrA5lVRCU
-         mGMg==
+        d=google.com; s=20230601; t=1757954810; x=1758559610; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6/ZMWPFkdx/KzUTCHS9r9FitNYaY9pudHoMyjc+mhE=;
+        b=BH2fRaPt3Hq/rdc2jX+E+TXgbgH7eOoVu7jDMdiOD7uh/imsKlnatzkvoQFFlTUUgh
+         itF+QVx2lR879boFhbUkzMnzr8DvX5HsyMhVtNT9sSxd0XEPA+xblr5H9g5J1cOgGpco
+         z8/GQQpnkQTSCauYi1IrEa367BXhj223TQxXIOA45EJYRyu9r7W3sk6aEktJFNZTKKHu
+         N7IqiETrFh47f1yUnrxvkflfvbPR4V/k9D+rKl8fVCaNDKrUf3gUy1afn/Mpb7x4pLbT
+         JmXM2RSqyBvOjQ+VykZ1tH9uWcOw62+i2Ljy6M92ODaK35Rn8zDTW4dxSRML9VKo8Cnp
+         1IyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757954719; x=1758559519;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQDjqbiT9oGuFNrzjLvyS3Lnpn5E/CxPnw6kf2pPIuk=;
-        b=Uq5mGSNEIv1yN3igarRKeJtveznMB22SKnnkWqXp9WUTbtbpOYHRou6ClK67XxBS/j
-         6lMPq+h8sUUcbCwCEdUl0aVRARnxd2UzYXalKMQRO777aRLLzih/VC0IMPx+r1EEoOpa
-         1PToY4dnoI66xBmUKyYF23LRscHiPXjGlaSXK68sz3jB+P8CQLdIuhWMgT5MYojlpgVE
-         1fZXSy1IpOlrGU4c1v9E6w4bNyhz00ARSEdGg8bhjGFAwSQPjpvORkUjPyXDdXZTRFWT
-         Z18zBeO8i3ReFReiLk6OOoD1Oa3QTxBARCFhDQE3RdPANavn5DB5FFyDy+gg7RcufPUq
-         rliQ==
-X-Gm-Message-State: AOJu0Yy3dsQdH5cCVez+1UYpIuDAM/AeROJI6J8MCO3sDln4HPKAvV2x
-	sLCy6l8Bqdz4drUcVYg7/iYF+/h7Rx2vYQvBv3EhGiL3HNkS3l9ZorLz8bhjq4zULWQ=
-X-Gm-Gg: ASbGncskziq1fbEIIFLllRYQ2nxJxOg1ChJ+unw1aMKrM55XHgCFGr219Ux5Z5AcVf8
-	NwOlJw+vD7El/ikVxrKlrA66oNfHVVDLbKO12rXLsOO+bvFpDsaxo69cEzrqc9dyPMxZ2T7C1Cg
-	TN6czw3nTvir6eBHf96Cm4BOvaYLK0TE8hYqPD86TX34lJySsBQwFA9h7dq+Vykx6M4ZK4iCJgJ
-	UnPW68rYNztmRzEAbwv2shabfcMlQBSfoduacqqEOWdHrQj32GT5c487X6guAmrqt8M9u+Il/2H
-	iV2oSOLrK+uECWxC1nIlr7HAMmoHr6TlXL2VkGgVaIPCUXd37Y5QYlfRMKxOTTgtI4EoTPLA
-X-Google-Smtp-Source: AGHT+IEueZRPYz6Ovwnbpjg7oIfp7yjCHZ9L0M0q/iZt1RonHcNLG+PurDsqJLquezOzfjlKgS1iDA==
-X-Received: by 2002:a17:90b:3d0e:b0:32b:ab1f:5113 with SMTP id 98e67ed59e1d1-32de4f7ee8fmr16124999a91.28.1757954719094;
-        Mon, 15 Sep 2025 09:45:19 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a3aa1a22sm12075579a12.52.2025.09.15.09.45.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 09:45:18 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uyCKL-00000004TKd-1naj;
-	Mon, 15 Sep 2025 13:45:17 -0300
-Date: Mon, 15 Sep 2025 13:45:17 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 04/28] iommu/io-pgtable-arm: Move selftests to a
- separate file
-Message-ID: <20250915164517.GL882933@ziepe.ca>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-5-smostafa@google.com>
+        d=1e100.net; s=20230601; t=1757954810; x=1758559610;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h6/ZMWPFkdx/KzUTCHS9r9FitNYaY9pudHoMyjc+mhE=;
+        b=v11Z9uTDGlyR3QjiPXPb3KBaYcvNY82pvHxx+hQoa651qzOow79JrO2IY4+UlYjbx9
+         Xe+mIX8MCDF3337tzY2ez5YNJnmf0cftsbn2mNvIeo3gbFBiDRZybVhUsRoro94DPkqR
+         Qz8Z7xw120ZJUJ8brVVLpuOyUacgL5tL5YNFRPtlo+fkDiHNN/Ii6OBMY4zS3aZGT5Ry
+         1wom6+YzZ26TwyauD7lzh0LXDAN0ifh4gbEngBidN9qMiDOQQNZtx4YmlHjynYCH4j9K
+         FSOgbnQf8B62zMat7cO/4mixu2etTWqcZFnnO8mqELtMNOqvzhSIJ+KpFY/HZ4VttbYk
+         yigQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfqQ+IR+V+M7bX5Zo/tau6n/OpXeIDdfZ3LJmIOdLtkKJfXp5+1cR4finy/BzfxJ+iCjLjuTv6cA9m+X4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynPa/LsKEvph8ypGhkcnyCJf84oMz5lmOO9xljublswvaGd+7k
+	NunvHkiqKvGMjh+uuwupG/9/vb0dTsjQOqG7wfquI/gBIsf518btZy6qFIV0Qphns2MQ+M2Hgpo
+	Arl0wKg==
+X-Google-Smtp-Source: AGHT+IFA9rXmjCzkTEmAvIT/PTTJwVPmxCScwhbyC7Fth5S4LVT3spvgUbpO5p9/DN7nyS/dgvZep2zQesM=
+X-Received: from pjbso12.prod.google.com ([2002:a17:90b:1f8c:b0:32b:5548:d659])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48d2:b0:32e:6fae:ba53
+ with SMTP id 98e67ed59e1d1-32e6faebc19mr3488056a91.8.1757954809999; Mon, 15
+ Sep 2025 09:46:49 -0700 (PDT)
+Date: Mon, 15 Sep 2025 09:46:48 -0700
+In-Reply-To: <aMgoGLL65vUPGYW0@AUSJOHALLEN.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819215156.2494305-5-smostafa@google.com>
+Mime-Version: 1.0
+References: <20250908201750.98824-1-john.allen@amd.com> <aMSkp7e7IryG2ZAj@google.com>
+ <aMgoGLL65vUPGYW0@AUSJOHALLEN.amd.com>
+Message-ID: <aMhC-EkMW0XSxxk6@google.com>
+Subject: Re: [PATCH v4 0/5] Enable Shadow Stack Virtualization for SVM
+From: Sean Christopherson <seanjc@google.com>
+To: John Allen <john.allen@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
+	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Aug 19, 2025 at 09:51:32PM +0000, Mostafa Saleh wrote:
-> Soon, io-pgtable-arm.c will be compiled as part of the KVM/arm64
-> in the hypervisor object, which doesn't have many of the kernel APIs,
-> as faux devices, printk...
+On Mon, Sep 15, 2025, John Allen wrote:
+> On Fri, Sep 12, 2025 at 03:54:31PM -0700, Sean Christopherson wrote:
+> > On Mon, Sep 08, 2025, John Allen wrote:
+> > > This series adds support for shadow stack in SVM guests
+> >                   ^
+> >                   |
+> >                 some
+> > 
+> > I mean, who cares about nested, right?
+> > 
+> > Sorry for being snippy, but I am more than a bit peeved that we're effectively
+> > on revision 6 of this series, and apparently no one has thought to do even basic
+> > tested of nested SVM.
 > 
-> We would need to factor this things outside of this file, this patch
-> moves the selftests outside, which remove many of the kernel
-> dependencies, which also is not needed by the hypervisor.
-> Create io-pgtable-arm-kernel.c for that, and in the next patch
-> the rest of the code is factored out.
+> Hi Sean,
+> 
+> I have been testing nested with this feature (or so I thought).
 
-Please send this as a stand alone patch, it looks like a good idea.
+The issue here is that Linux only supports shadow stacks at CPL3, i.e. only
+exercises MSR_IA32_U_CET, and for whatever reason the KVM-Unit-Test only tests
+MSR_IA32_U_CET too (and is stupidly not compatible with AMD due to requiring
+SHSTK *and* IBT).  So just running those in nested won't provide any coverage
+for S_CET.
 
-Also please add the boiler plate to wrap the selftest into a kunit and
-use the usual kunit machinery. We alredy have an kunit for
-smmuv3, it can just add another file to that.
+> Can you explain what you did to test and what wasn't working?
 
-Jason
+Read/write MSR_IA32_S_CET to a non-zero value from L2 by running the proposed
+selftest[*] in L1.  Because KVM doesn't propagate S_CET to/from vmcb12, the
+writes from L2 are effectively lost.
+
+An ever better way to cover this would be a selftest or KUT test to explicitly
+read/write MSRs in L2, and/or fill vmcs12/vmcb12 from L1 and verify L2 sees the
+desired value.
+
+https://lore.kernel.org/all/20250912232319.429659-37-seanjc@google.com
+
+> Apologies, and thanks for taking the time to look into the problem.
+
+No worries, I didn't intend to single you out, I was essentially just yelling at
+everyone involved :-)
 
