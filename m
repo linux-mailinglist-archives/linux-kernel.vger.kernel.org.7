@@ -1,179 +1,197 @@
-Return-Path: <linux-kernel+bounces-817484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B7FB582B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:04:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86001B582BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C5894E2371
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF831A2283A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31CF2765CD;
-	Mon, 15 Sep 2025 17:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F92877EE;
+	Mon, 15 Sep 2025 17:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1Ql8TxZp"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011045.outbound.protection.outlook.com [52.101.62.45])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="PswIMUK7"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0672080C8;
-	Mon, 15 Sep 2025 17:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757955871; cv=fail; b=JhBXj2Zzfu7+irGck5mz5jv17pqYb7KgeRoOzIriXoZXKEnxLTdmC0acvzE5QEPQxY/mUEup8jxKj3zqFAWf64YOPeWJ2rdn3w2RQ8sW9DZZJjbfH41T6LJwkVg7iR1CuUQ6Ic3Lj8EUmuPUBdio4qRtWTIhfianBvAxMlu5NUM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757955871; c=relaxed/simple;
-	bh=E5Xml0JDLS+kcMOZRw5gMjpNUAD3Hd2NDuzzFuTQEQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HmC0RSz6ZS4tgjvk8zfGD7O+BHAHtTEoaIlqbrlBSImVazz75+bpCpA/+NaL8dxYCFplONiba2cBFW5Havgh6sTqtfrnXDNgCHR/BT67EGEjBZLswl8AkyPxQbb30moSJN3LuwbSJ2GTvWCX5BDofne/xeQwb4GDgd3wepR6orA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1Ql8TxZp; arc=fail smtp.client-ip=52.101.62.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KFOU5RGaSAFud6An+S591gbU7KR4Fup5UONvxUjh2KdSuvkoPVDgtfAOfRRLouZcNMaU9XTfHTyqTIJ9Kv5XwBiRvsSw62+A0VtX57nut/QaGsSM6xLUZfbQKYVS/s5tqc27k5rhi6fGQwQZuwuYi2yNujVvMLzsNq4Kg9t8SZsRSdGFTfgFQrS9R/sHGxjtuG6gsToGyFZGRG29k4PAzxPuGxKsqp64FHUerNC1PSGAMPuSdXTTyYV+OW4wGgPK/7u14lJA3n3JXEPN+pmSMYOybTxGKNO7UBK5DPygKPTSVcwDVo3EyTR6MqUTZoUXZiAZgq6CkfCsYfnFWC8Egw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J2rXa1lrKKwcmOlsws9+x8St1Xr8tQRQHhMmE1V8sDo=;
- b=m0QE9J1BecSQxfMKIdnVkUYLffzuwiyuU/GyTTWEkbFbJWs/UV6n8lTx6zrGNYo2hvYZhgAvyIL/7+CynvAeP2BxOHh+YnilY1lDn+8wvd8klXEgb68dFMNLbG+IyS9L1xhvpqB9Tt/kWwj6zpfrSh84stt1uHd6eqToC1fE71QyOWeRXN+dxwUaiuIRMf/EsVI7OzWFCK3MXeaEcWQqENz/SbVRSr6BvyQtbb+gcps+8n0zCb/1OGWv+/nwFulH9UIJLjqYBPtnU8cFJVZACc6znwuJLdNTlC3MOpS345Zh5poipwXNFQC6l0+gLTo/cbc5Tfs6d3qcWQJMhfr4EA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J2rXa1lrKKwcmOlsws9+x8St1Xr8tQRQHhMmE1V8sDo=;
- b=1Ql8TxZpn5Fm4OfYvXzwtif1S7S29UoenwD1T/ro+sRzct9pBJ3yHYL94s2KDXl3Hm6zPWG0vlSmyzKFIHi6VXlMr0SQpoBa/WiDGbgyasyThFgvRf5A09iUnadSpZkxHt2GMKt9uAL95JdkKetQbvrX6tBLy6n0vVGxKtMZqk4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- BY5PR12MB4259.namprd12.prod.outlook.com (2603:10b6:a03:202::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 17:04:25 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9115.018; Mon, 15 Sep 2025
- 17:04:25 +0000
-Date: Mon, 15 Sep 2025 13:04:20 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: "Naik, Avadhut" <avadnaik@amd.com>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
-	bp@alien8.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] EDAC/mc_sysfs: Begin deprecating legacy sysfs
- EDAC interface
-Message-ID: <20250915170420.GA850348@yaz-khff2.amd.com>
-References: <20250909185748.1621098-1-avadhut.naik@amd.com>
- <20250909185748.1621098-6-avadhut.naik@amd.com>
- <20250910152427.GH11602@yaz-khff2.amd.com>
- <ba326dbd-5216-4294-b645-c4ff2a2f6578@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba326dbd-5216-4294-b645-c4ff2a2f6578@amd.com>
-X-ClientProxiedBy: BN9PR03CA0695.namprd03.prod.outlook.com
- (2603:10b6:408:ef::10) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DAF286424;
+	Mon, 15 Sep 2025 17:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757955915; cv=none; b=WHmEA47to1NhEcRpY6ohhhULM9Inj1v2Qt3vAXiQ7KSjMeK3wqyuEEFCX/+YqvimNWosZNKsM13dwXTDkzWNeuzXBghEEgNym5XrZ3SMF7gEYxii7+rz9xNlexV31+L/jo2pUKgoxZTRfRW3OTCi3UmrfzHCJnHEsYM9zZ/HfpA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757955915; c=relaxed/simple;
+	bh=UYHu4XvkaRjYogwIfNpvwksawDBauQBnyHYV6E8cpTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VFNiogxGUpXV5S1zgyUwqw6okGsptCVPsX8P2bMcb1CFyGk0adkp66v0OJaC+LWP82waytil5vJODFlslpy54NzIKze1exhOpxReLdSKXip7P7Zo8PFIYSUxWsiQjtKtv7UV1qCUeDqzPHtLZwZFFn5JgymDEgWBrEbOLMvO1CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=PswIMUK7; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [0.0.0.0] ([134.134.137.72])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58FH4vE22801932
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 15 Sep 2025 10:04:57 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58FH4vE22801932
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1757955898;
+	bh=JbWMiStndH0zdL0jqV2oFj5rZ7N3e7IVzr7NBcUkyX0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PswIMUK7RLrOYL724NWLO+FU07YSavIOCsEN0Lo3+H1kLXvlqoAAziDmyUeHPrE7i
+	 1TLh7s91nbQh/4uA+p7cLa5LY7e9/WOzOLv/2Nb/08l2Nkf5zagSiskgeSrKKXIffS
+	 DBjc+m3khQq0wLBsjBMRITk1MaGkH5/Q3SmQt+vHPDYat77jP2m4urEyW5MOL65NoJ
+	 wOokMJ2IpYolNK9TWk2lFWPf+d6OaztfznYv/FFdNPZJLHjR4hj8qqnRn8Nx08k6Nr
+	 alrKEX9VPXbMUG25G+QZWak9FXaAjpumFnFt0FI8USzG8u9oHbm3C1tGgkfYSYz0M1
+	 JDoRQq0MWQ05g==
+Message-ID: <65184bb3-0a36-49c3-b212-4b19f2df7092@zytor.com>
+Date: Mon, 15 Sep 2025 10:04:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|BY5PR12MB4259:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25d16858-cd50-4417-78c4-08ddf479ec36
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6gNDdABjA1bwSlmNwuO8XNy6V8aAcNy8ny29C9JMuEbNA7bbamSWIHtPhsbZ?=
- =?us-ascii?Q?xKbuwHfC2PcWFY4GZClzA4xDI5rVAtTYqMyAduYrdfr6WTaTz7gvc4YcVHCX?=
- =?us-ascii?Q?ElGPMtSMUNgK3QTE1kfrhp+JPNlWNOP22tgyVxqnjWQ4DewieC3eWgK7NHqv?=
- =?us-ascii?Q?QzhAqEhg9QwZxFwkCgQorhYO5CVgNAhj9l7omH/TQe2bjwrzDR+CDZ9HUAc2?=
- =?us-ascii?Q?tMVEa8pVHBwqTKIXOH4qQSf5co1xdPZkbavfxmWcsmLQfc6WtInel9zRuN17?=
- =?us-ascii?Q?YoS2ph8B46qu7bVYjZKMD3SAQO0Oks8bgox5jpBW7ph5lnr/DXoVmhbGVe30?=
- =?us-ascii?Q?nnJscDz6OP0eoSMGk8p6FAtjJRPTH7E1K6RnQO2+TTnQa9hQ2CiKDcw9zp2q?=
- =?us-ascii?Q?voEYgcnXsiLTIZ2pbS0Xte3kYVtB6hCAqlKMbEOnK/BvnNbxsiO+5sJT5aFC?=
- =?us-ascii?Q?hB+l9HU6voFYG0WWKT+GHBdFfk8zbqkGMfK0qN6AGqQ5HoLgUruou4J0npuD?=
- =?us-ascii?Q?NcSMxFH1Xx1TJM2zIYnWFjJqgdXxJUHT7QHAFug92SiYGkHoyOMuNerhlCQT?=
- =?us-ascii?Q?OfYy0123gBlwMhmA7OrfcgUduk4KtyF/sQucsfV9JHHtNrN3//ISCyKuCkoz?=
- =?us-ascii?Q?GHwmYdHPIGGjVpw/d4brs4oa9m3at0HFwEqaxsLaIpYB+QbE7sDOpz108nyx?=
- =?us-ascii?Q?lDf9qwKEKcXHAHHC37sq+2lFKrytmfc0sQCJttTjbEIQaK5/MukFC3xlvqc/?=
- =?us-ascii?Q?Qnm1e2P2rLXxNwlZtlFSvP4xfP7I0A/lVwJJo4VkMRfWKsZGTiduzbD2/mIx?=
- =?us-ascii?Q?KxXPqY3dIncu645rokqQ4J6FNf2jXKgAKIYwKMb752Ykbdm4KR47eL2XF5Hx?=
- =?us-ascii?Q?WHnTF4khTWPwJBNSkk9/FIRiPn+9wrYtaSb2+vPUmEBae9FGzcfk7NrhIqkq?=
- =?us-ascii?Q?SjkTRVT0gq38i+qbfwCfngM/bRLt204qAEEZji7FF2UxUOnxLX15H3Jtg9+T?=
- =?us-ascii?Q?7AiG6Rt/lN9lZq5vluZ7VmQ3kI7ArZGQtl7j+4p/CakWRvYgtYMu0zZ1yguF?=
- =?us-ascii?Q?IBz9R8u4JXQJsM5xdvarVXxcMybClUCbBUlarKQ08mu4UEURnPYMDeNR81AL?=
- =?us-ascii?Q?mDlsKt9FtuLbzQqZIuhqNQJUoPpeaglKLhR21twfOLUzdaZzBvbbvnC3oWLu?=
- =?us-ascii?Q?ndE1v5Zrtmf678NSmC8EXpkNQj4tJICOmjhVcFnnwMACQZdFB3A/6/zNJdB6?=
- =?us-ascii?Q?7m6Iv4qo4imkofE7zJgBAx1EtprZah/BrKTW6GpBsXYqxuc80MHchaOZrj5+?=
- =?us-ascii?Q?/WC+smi5JleDHzZXxiVXZL4Y5jSyL8Eaz7OfVpnR/SIOqOms2KKN39hEBWT2?=
- =?us-ascii?Q?kByN4kEqdL/doKLaLWZZO60rwHF61/ZXtZ2jMt7Ns1jytB9U7HbySVtIKqPX?=
- =?us-ascii?Q?W0MBpWI5s1I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ix1yGmJjBzDt281TfjJ9ZPySyH/52JkS1rVl7WOXPtQwrp9KSyBkk5s8wts1?=
- =?us-ascii?Q?4J7DOvUZDCD9bf03rrQcjLuAUK/+lwvN79mbuvVZ1S6y72L8FlGiYR7aJO3H?=
- =?us-ascii?Q?rZCF9eiagMqPA1TExTFfEHkJswvIcdRJ/gIgk3qz+PrDNx+pcXpGWY60Qs3z?=
- =?us-ascii?Q?dKn1kX3/woFrN1qlYYuY84HNhRj936sz6FEntEZ5O02IzYSOwtvXdYsFvJL9?=
- =?us-ascii?Q?Mig+hILZZ87uzEdPt6aTFnoZlDN4W6PROfxuhxQ/Ln/2WbgaSQFvwK98JRSl?=
- =?us-ascii?Q?Gn775INhwRhvfmFxR1/HCcYOUzaJ3QyAuiaJH0Uy44tnDpK/WKy6XPP43Djx?=
- =?us-ascii?Q?mXMa9/iPmURnBocpHGhjD5uISGPn/Dq6PdrGHCZnmNm6ydDrkJ8sOXQula4f?=
- =?us-ascii?Q?N0W2fT3SSTMVM5s+wRZncNYMHwYeIsvIYPDVotdnbbFw6tjzw6pFqa6A7GJ5?=
- =?us-ascii?Q?zSJ8+obpoH6Gb5Rs/H+tlmucW8EwosN8hf9K9B0V5l6J2+T9dQYUVPG/8SaO?=
- =?us-ascii?Q?gGOK2WAumKyBdE8fGnzEv2Q4nSuiXfyvYvzJHOjwWp8fZu+sUZVJSsch77D1?=
- =?us-ascii?Q?4T7ZHVIrUStduz+1+luJVKeOApLJD4W2n6CBf0v7bqtIOZYdEmTgeKDZjUvE?=
- =?us-ascii?Q?X2m+kUGVWh4qgBEkZ3hGUrmOI6qn8+D9J24IQnAdurdEQXaPresmRY1xp9Lg?=
- =?us-ascii?Q?m2lUDQUJljIhCaQ0Do5AW7IcrgP37Xz++42r6d8QEUncsXlmARinfncUapiR?=
- =?us-ascii?Q?EgMm1KmJO7YRqPwDj0OsTUFny6rhW0vwSREVg6eiockUxFY2y0/nwFopu4Ee?=
- =?us-ascii?Q?Fa0ePHyOpEJOu9qYArBKBAOhKoMFTpzirdGdtzuo1o1Q3lVMpc9EaDQvwBVH?=
- =?us-ascii?Q?22t08hJS92vz8YIBK4b74491Kuj81qrm2OdDS686ZNPf5R4O9xU9GlzFhdMB?=
- =?us-ascii?Q?bkLvA6RkiS+r2r6F8vYetkB4b5mwoEzdV5gjC3ZyvpyyavUGDS8HyslYkpzU?=
- =?us-ascii?Q?/DFdB3yEtiNRFvx0uyn6jf4ayUhxWV3KNDZ4+11eboQhzLDGixNZ6wUr3fHi?=
- =?us-ascii?Q?+4xcv5NONGu/UK4IAdLqxpbwMoewGNdD6Az7NW32jNZTnjT4IFMIm9g5zGmL?=
- =?us-ascii?Q?V+tgQ/RWsVKJq6D2WdBQ/ggtqDqB1+LzYGD/SQicfx+Zyx6DL8a9od1vlSUm?=
- =?us-ascii?Q?e2qVP7QElfHGnHkkhJlufBsw/D2qG23kYzH8j2NdxvtPXcXd5bYOWR+Iuyks?=
- =?us-ascii?Q?D6o0io1TqZb0Wg5PbQiAP8GUyMwd2+0PMo7IhQyMv8VGo90xideHVM0cKTnN?=
- =?us-ascii?Q?Rm+IhRp38hAIDK4KHd0U6Kdv7by5LZ/C3r2RYTwBAgny9g3pGvT3xfZ+JNUt?=
- =?us-ascii?Q?SR9DMoG5ugAM0TwqQ7bTfG9rDBOMVI1AqmCErrWSkJ/p1OcCtJLolxbj3gM2?=
- =?us-ascii?Q?ywGShezPuZPne/0lqnpqL0QsJxSphsTn9PTDNuS0HIvMdpIG3grQhhCeoKCi?=
- =?us-ascii?Q?GSZUWlGrXERZaza0Z/6WgNxwazYiFA8QGds44u6YqM3HMSXxgd8oMD9hmX62?=
- =?us-ascii?Q?VsnZMIm6LH/L+TL5RTzoeuBWX8fYoHLf0+fiVR2C?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25d16858-cd50-4417-78c4-08ddf479ec36
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 17:04:25.0143
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kzdq3wP4EPioKU5YfV2xgPbScGJ967AtiONntDJ/QKCucwi+uaalybHRKVDhz6mD8mufFl5sMOfNSwYzub2p3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4259
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 09/41] KVM: x86: Load guest FPU state when access
+ XSAVE-managed MSRs
+To: Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Mathias Krause <minipli@grsecurity.net>,
+        John Allen <john.allen@amd.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+        Xiaoyao Li <xiaoyao.li@intel.com>,
+        Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-10-seanjc@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250912232319.429659-10-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 12:38:44PM -0500, Naik, Avadhut wrote:
-
-[...]
-> > And maybe the warning can go in an short inline function? Sorry, I
-> > forgot if this came up already.
-> > 
-> > Also, "two future releases" is vague. And it may be confusing if this is
-> > backported.
-> >
-> > Does anyone have a better suggestion, or is this good as-is?
-> >
+On 9/12/2025 4:22 PM, Sean Christopherson wrote:
+> Load the guest's FPU state if userspace is accessing MSRs whose values
+> are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
+> to facilitate access to such kind of MSRs.
 > 
-> How about explicitly stating a release?
-> 6.20, for example.
->  
+> If MSRs supported in kvm_caps.supported_xss are passed through to guest,
+> the guest MSRs are swapped with host's before vCPU exits to userspace and
+> after it reenters kernel before next VM-entry.
+> 
+> Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
+> explicitly check @vcpu is non-null before attempting to load guest state.
+> The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
+> loading guest FPU state (which doesn't exist).
+> 
+> Note that guest_cpuid_has() is not queried as host userspace is allowed to
+> access MSRs that have not been exposed to the guest, e.g. it might do
+> KVM_SET_MSRS prior to KVM_SET_CPUID2.
+> 
+> The two helpers are put here in order to manifest accessing xsave-managed
+> MSRs requires special check and handling to guarantee the correctness of
+> read/write to the MSRs.
+> 
+> Co-developed-by: Yang Weijiang <weijiang.yang@intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> [sean: drop S_CET, add big comment, move accessors to x86.c]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-I think that may be okay, but I'm not sure.
 
-Boris, what do you think?
+Reviewed-by: Xin Li (Intel) <xin@zytor.com>
 
-Thanks,
-Yazen
+
+> ---
+>   arch/x86/kvm/x86.c | 86 +++++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 85 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index c5e38d6943fe..a95ca2fbd3a9 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -3801,6 +3804,66 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+>   	mark_page_dirty_in_slot(vcpu->kvm, ghc->memslot, gpa_to_gfn(ghc->gpa));
+>   }
+>   
+> +/*
+> + * Returns true if the MSR in question is managed via XSTATE, i.e. is context
+> + * switched with the rest of guest FPU state.  Note!  S_CET is _not_ context
+> + * switched via XSTATE even though it _is_ saved/restored via XSAVES/XRSTORS.
+> + * Because S_CET is loaded on VM-Enter and VM-Exit via dedicated VMCS fields,
+> + * the value saved/restored via XSTATE is always the host's value.  That detail
+> + * is _extremely_ important, as the guest's S_CET must _never_ be resident in
+> + * hardware while executing in the host.  Loading guest values for U_CET and
+> + * PL[0-3]_SSP while executing in the kernel is safe, as U_CET is specific to
+> + * userspace, and PL[0-3]_SSP are only consumed when transitioning to lower
+> + * privilegel levels, i.e. are effectively only consumed by userspace as well.
+> + */
+> +static bool is_xstate_managed_msr(struct kvm_vcpu *vcpu, u32 msr)
+> +{
+> +	if (!vcpu)
+> +		return false;
+> +
+> +	switch (msr) {
+> +	case MSR_IA32_U_CET:
+> +		return guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ||
+> +		       guest_cpu_cap_has(vcpu, X86_FEATURE_IBT);
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> +		return guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+> +	default:
+> +		return false;
+> +	}
+> +}
+
+With this new version of is_xstate_managed_msr(), which checks against vcpu
+capabilities instead of KVM, patch 9 of KVM FRED patches[1] no longer needs
+to make any change to it.  And this is the only conflict when I apply KVM
+FRED patches on top of this v15 mega-CET patch series.
+
+[1] https://lore.kernel.org/lkml/20250829153149.2871901-10-xin@zytor.com/
+
+
+
 
