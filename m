@@ -1,345 +1,340 @@
-Return-Path: <linux-kernel+bounces-816371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B713AB572F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C1CB572F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97483B7C45
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59DF3A9DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1F72EE294;
-	Mon, 15 Sep 2025 08:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6032EAD05;
+	Mon, 15 Sep 2025 08:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n6ubdRhq"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZG/wpcid"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2074.outbound.protection.outlook.com [40.107.237.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5582E5418;
-	Mon, 15 Sep 2025 08:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757925085; cv=none; b=S5aWMXlGM85Qbjp6pVeBPCDAQq8KJldSpnNFm0QC8nI4Et168y6iMxLviBJ/Q0Jwa4wP5I6LAyR1bKxRfi1luM5Oj3GnKFZQAstHz00hTyFB91rKeaF9jQtDM72Nf26+cgfgaC6zhgKXu/GXNMiC1HoSucLAYEl+fXyfnyGl1z8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757925085; c=relaxed/simple;
-	bh=cBpTVNqPicaQ2318y2FR5BI1VBvytrRzeoBNsCGZJeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n8+deyzI+LrKu8otx2OPLRpvDABD4zm770JVW2jpGraZ9Cajg2Kl5j9VEWSncA/rHu3pD/ZZEIzKhKh51BAsabzEx3RsnZqQ1i7JD9oLWmrZNfCKGrNc6kuFj9VcyoHzAZQAUG9WKyaOWMy/7MbRC+1f0SmR21pNmQ2+2tXPato=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n6ubdRhq; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-56-182.net.vodafone.it [5.90.56.182])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F159E19E5;
-	Mon, 15 Sep 2025 10:30:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757925002;
-	bh=cBpTVNqPicaQ2318y2FR5BI1VBvytrRzeoBNsCGZJeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n6ubdRhqEemjt7wZ/oCRovFq5wMyGe4T0jMUMJz1O4H8XzVXw3+C0ZiN6ZGfe2KMN
-	 8Q4OykSLzs2IoB5vo0lnFbMLSXtWgk2kYVE3NwN/LorCeC3IVY5KgnP2Swh763j3Gg
-	 sypj+7v6b6+9Mt+3TyX0nej8R+pI/jfQ/i6WlLY8=
-Date: Mon, 15 Sep 2025 10:31:14 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Dafna Hirschfeld <dafna@fastmail.com>, Keke Li <keke.li@amlogic.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Dan Scally <dan.scally@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/8] media: uapi: Introduce V4L2 extensible params
-Message-ID: <pmvm3rzynu6s6zaayg3gnjkdphcobuhwb6jwk3hpwpvkvl6e7a@l2ixrpgvatdx>
-References: <20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com>
- <20250820-extensible-parameters-validation-v4-1-30fe5a99cb1f@ideasonboard.com>
- <20250908073534.GD4105@pendragon.ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000722E6106
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757925158; cv=fail; b=Z+AM4BItAbH8ceUSudWtzEjd6d9V/C43EdgQiBSBanNYsIE9Kic8cvHLuDjeaRh+aiamUBEIT+3Sagtj3Ovj77uL6c0JeKVAgB5/KEIy6hvuzjxUeqfVfLZHieE0EY0h3KX6Zc9SsMSEPLOtfEVqNLRMlI880/hvMI4h3OZr5rs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757925158; c=relaxed/simple;
+	bh=Tw6vhvN1yYgWYtU1/03CbtFSa2wGuNcMweW5y94up5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WwyLb3wlgbqSC7c3zsQT9rVo2dGHxAisWT6UdGR3kLFS4Ue+rpmsAmfQOvSEjhRCZeIX2CXs6YkS62YdkSyCDWtVjAHX3AQ51NoM8t7HIkpOR8ajwo6FMS5IiKSFOUzHu8JB5FUn2N6Be3PBus5lnA9Fj0agS77FAgICVzh1gKo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZG/wpcid; arc=fail smtp.client-ip=40.107.237.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oTDb6BhDPntDMVNzQaN0H46qQHHdCZw61Xx6DBiGh/d6mM3BY04Ay2ewtMrPfB3ikcFfKyJ3KNYtAReZzXxhc8dxl4H4BR+7//oJZUpdyCc8KPZ4aNeE844I+S5rNkTO1bAV5OCoqCH1lsNyTh4vTww7Mi1EPT/KHbk5mjcWfXuLBJX5TsJjyONcLu9RH+AxCpg7eM8bhPY4ewZxP1cQpMhOQWTdyaqJUVOCD2wsJ4pJCC6JpsHG6apU6O+fqf0Usu4JajDEHUUCU2z3rHNgRX5NV/xzuBGuTHoMoZMbaOVgfkQW/je9ADRCrruFdyKY6VZOgqeiNBW1gao1fqvfEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nc9nC+Rnbr33Cr5fL+zk9kDZDS5yc7eYVDbV3OG3xOY=;
+ b=tpvdtVPId0TJGwW/eU5ffCF5gQNa16rUFwZrrfVpaDtnXoUzpy8IT4HvdOU4lyMPI34XwOmIHz8US71B0krOqw0zliDOrWDHbl2sc8RIX2MSBfy79gMCpkcmVuAeC79tw+W8CSXhWeWlbYrQi3hq8gcLnkNPkbBj9PiumR0jE3aFxXZKHJ0bhO6wgXH42R1/a7FFgiZtDK+NmQxkpwuRUwXLbD/07biqq7855eVotC8I98QqpIQetXUXka2Kp/38jnIkspIulGUwdglKaymNVPrR6dv3kbkKqV896LhXuoxScqPJvj+yRexXsu0usfoc0cJdL7PtyOL8oj2+uhDlHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nc9nC+Rnbr33Cr5fL+zk9kDZDS5yc7eYVDbV3OG3xOY=;
+ b=ZG/wpcidsbVKxsTLikO+NqbQXHuwXR8o7VRFd4YiZ0DFMoWM4AksLnI1yG0Ik/Zgij20PUTrsafVMQaDxieSud/fvSGN/d16MKznBSEqqKXqljLkNeDvOean7z0+UWp7938w1Tr66s0OrIwa0ewLWommVbMzKAtK7gtrXnmrrVE=
+Received: from BN0PR04CA0122.namprd04.prod.outlook.com (2603:10b6:408:ed::7)
+ by SN7PR12MB8770.namprd12.prod.outlook.com (2603:10b6:806:34b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 08:32:30 +0000
+Received: from BL6PEPF00020E5F.namprd04.prod.outlook.com
+ (2603:10b6:408:ed:cafe::5e) by BN0PR04CA0122.outlook.office365.com
+ (2603:10b6:408:ed::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.20 via Frontend Transport; Mon,
+ 15 Sep 2025 08:32:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BL6PEPF00020E5F.mail.protection.outlook.com (10.167.249.20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 15 Sep 2025 08:32:30 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 15 Sep
+ 2025 01:31:22 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 15 Sep
+ 2025 01:31:22 -0700
+Received: from [10.136.41.20] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Mon, 15 Sep 2025 01:31:15 -0700
+Message-ID: <dfc571c7-6bd0-409d-ab94-33e8032270fa@amd.com>
+Date: Mon, 15 Sep 2025 14:01:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250908073534.GD4105@pendragon.ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v21 3/6] sched: Add logic to zap balance callbacks
+ if we pick again
+To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
+CC: Joel Fernandes <joelagnelf@nvidia.com>, Qais Yousef <qyousef@layalina.io>,
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, "Juri
+ Lelli" <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider
+	<vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman
+	<mgorman@suse.de>, Will Deacon <will@kernel.org>, Waiman Long
+	<longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney"
+	<paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan
+	<xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "Daniel
+ Lezcano" <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	<kernel-team@android.com>
+References: <20250904002201.971268-1-jstultz@google.com>
+ <20250904002201.971268-4-jstultz@google.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250904002201.971268-4-jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E5F:EE_|SN7PR12MB8770:EE_
+X-MS-Office365-Filtering-Correlation-Id: bae87b8c-7174-4510-be48-08ddf432691d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M1JWeU5sRmxRNjdZYVBCUVlHb2JsNGdYMVhkL2NGQ3NkL2hYSjZubUR2cU9y?=
+ =?utf-8?B?QktrR2hSMndqcmE3WTJGNXh5S0VZeHN5MXMyamdRR2VCWE5iN2YzYnNhMmhU?=
+ =?utf-8?B?d2Q4aXAxZVJudFJVTGIvZHNFRXZZcEdHVDltaWJKaEdOb3hVbGE4cVN4bVNk?=
+ =?utf-8?B?ZDAvOGZRNlFQOFJPT3JuUjkxMmZCc2lMY3d0bXRKNVZyYXM0VWY3OVl3TmYx?=
+ =?utf-8?B?MEVQeVczdHZpNFRiR0diM1BtV3AvOGx4Q25TeVQ1K08xMVNrZHd6Qm8yME4x?=
+ =?utf-8?B?UlEvcUJ3S2RsMG8vamNkTUQ2RDNwWE0wYU5FVjFYWTE1T0hBUzF5NHpwNjZ2?=
+ =?utf-8?B?RVlrTjNNRUZhY1BleEVEa2x3ZjlMK0xWaXl2TVZiOWJ4ZVRlLzIvaXFqRkpn?=
+ =?utf-8?B?ZUtxOUxDMGwxeXk5WUtGTDQyYy9jZ3BCMXppMkFIOHU2TXI3ZHdjU2lVQnNm?=
+ =?utf-8?B?K1NCWnl1OUlPTDdnRmpmMWpiQVJndUxwRnRHbmVlY005VmZpMGZVS3lkSUNK?=
+ =?utf-8?B?NFlPa0VoQVJjTk1nK0FuZ003WVo4YnZwb0VYdVVySndPRU9ocnNSZDMwKzNn?=
+ =?utf-8?B?U255U2JHTVdPSTFORXVpeXJPNFVSa1U2UlFJaWw2eVlZV3hWclFMZ2VlaW9Z?=
+ =?utf-8?B?bE5RbDhZelZ5NCtKTnFjMnJXclpZUWZwMFVrOE9CUGJNaG9nTGJXNWhaRDNu?=
+ =?utf-8?B?K21hQjJKMVZvS2Y1Q0xvTkNaaTRJZHJaWThyTlpTVUVEOXNROWhlZ1hnZndD?=
+ =?utf-8?B?WGZzV0E1TzVjcUNDQ2xRSmxuekgxUVRDWjBtcFNJY2luaXZmdW1WYlRUUkRT?=
+ =?utf-8?B?WGU3cXFkMGJnQXROTkc0WEh0anI1MDJhUUFnUFBVY1MzVTA2bEVwS2MvTWJj?=
+ =?utf-8?B?VCtZSk95SVFCNWxOdDBjWFIzRGdtOGxZczBSQS9NbUVtWU1LRGU4UlhmNXJY?=
+ =?utf-8?B?enZ5SkJTaXJNY1dnQW9QQUZ1VTFnYzhVYVBSc0lVVkxKZjRlQ1V2VEs5YUNV?=
+ =?utf-8?B?cjkrdDNIQUp0cGdjaUVDYUd4RjhtRU05ODdBL0dIOWF1MlVxVXIwRTUvZ2JQ?=
+ =?utf-8?B?VXpOUHNwSDNHZENpL203Nk9NMEJBQktwQ29tWDZFSkw4eVdzNmV3aFFIUzJa?=
+ =?utf-8?B?YlpXa0poOFpDWFVraklodFRnS3dtTFRnYXBtSjFPQjFmRmpOTkdxYjFwSkwr?=
+ =?utf-8?B?RVJONTJQejVlbVNDVDRKcElrMU9FMFAybm0wTGhNeXRDZEdKWkMzOUlEb2Nx?=
+ =?utf-8?B?b2Zrck5DRzFRc0dmditzcWp5VkZ4SGFFL0JUTHFzcTZ4UEdzaVBRVklnQXZx?=
+ =?utf-8?B?a1lHYnZvSU9XY3h5MXFEaW12REZ3cy85MlMrekZsMk00Y2sxNVVGaEJZTmJl?=
+ =?utf-8?B?YmJZREpVR3g2YlUxMWJ6WnFNZit0TlRkdHJ0OWd5My9sU29XcGVVVnhaMnli?=
+ =?utf-8?B?UkFXa2I5R1c1UlZxVUJXTS9NbE5aYXNHaC8wTUFHeXhUM09aMnBoUFNvREhD?=
+ =?utf-8?B?QVhXVi9TMHE5NEFPTTJ3cmxNa2hEbVhiZXppZ21DTHVmSk5Jelo5c0ZqQWZD?=
+ =?utf-8?B?VFk2dGNCOUNlazZNdHp2UDVzdUc2aHNHQ3N2VDVTNzBhSGJPbkE0L0JxMkg1?=
+ =?utf-8?B?UTNDQ1JtTVhqNnV5R0JmWjdoVVU0aGtrYWV3SWlTMC9samNFd2tKVXpuYW5n?=
+ =?utf-8?B?YUdOdHl0K25uRm8ydmhrb2l3T3ZYVW1ZUVJmRUh3OFdKZGU1OFA2Zitjajkr?=
+ =?utf-8?B?bmVRYW5Ybm1KdjNWcWx5TS9scFBVT1BVbjBIdThHd1N0anp2c3VSU1ZFSUJo?=
+ =?utf-8?B?MFEzYnpVTEswRjY5VlJyMnJPb0JTNkV5dHVIQ080TlNTZmJ2TjNZWkk5a08r?=
+ =?utf-8?B?aVpZOFRvazk4aTI4alhzSkNJend0TnI3UHp2UEdKemwxQ2UvYjR5T051bkpl?=
+ =?utf-8?B?ZTVCTTJLeE1QYVZnaG9mVVRIZU55bWpHT0VsUm9vNFRKZG1WRmwxMmplUm9F?=
+ =?utf-8?B?RXI2S3hwei93PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 08:32:30.5306
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bae87b8c-7174-4510-be48-08ddf432691d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E5F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8770
 
-Hi Laurent
+Hello John,
 
-On Mon, Sep 08, 2025 at 09:35:34AM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Wed, Aug 20, 2025 at 02:58:09PM +0200, Jacopo Mondi wrote:
-> > Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
->
-> I expect more ISP-related helpers, such as extensible statistics
-> formats, and more. How about already moving this to v4l2-isp.h ?
->
-> > The header defines two types that all drivers that use the extensible
-> > parameters format for ISP configuration shall use to build their own
-> > format versions.
-> >
-> > The newly introduce type v4l2_params_block represent the
->
-> "The v4l2_params_block structure represents the"
->
-> except the structure name is v4l2_params_block_header.
->
-> > header to be prepend to each ISP configuration block and the
-> > v4l2_params_buffer type represent the base type for the configuration
-> > parameters buffer.
-> >
-> > The v4l2_params_buffer represents the container for the ISP
-> > configuration data block. The generic type is defined with a 0-sized
-> > data block that specific ISP implementation shall properly size
-> > according to their capabilities.
-> >
-> > [Add v4l2_params_buffer_size()]
-> > Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
-> > Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > ---
-> >  MAINTAINERS                                       |   6 +
-> >  include/uapi/linux/media/v4l2-extensible-params.h | 146 ++++++++++++++++++++++
-> >  2 files changed, 152 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index fe168477caa45799dfe07de2f54de6d6a1ce0615..67216d1e92d7ac81617bb3c4329e4096aa205706 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -26380,6 +26380,12 @@ F:	drivers/media/i2c/vd55g1.c
-> >  F:	drivers/media/i2c/vd56g3.c
-> >  F:	drivers/media/i2c/vgxy61.c
-> >
-> > +V4L2 EXTENSIBLE PARAMETERS FORMAT
-> > +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > +L:	linux-media@vger.kernel.org
-> > +S:	Maintained
-> > +F:	include/uapi/linux/media/v4l2-extensible-params.h
-> > +
-> >  VF610 NAND DRIVER
-> >  M:	Stefan Agner <stefan@agner.ch>
-> >  L:	linux-mtd@lists.infradead.org
-> > diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..aca643f505f2705eeca7337f0dd182bcfd1ea60d
-> > --- /dev/null
-> > +++ b/include/uapi/linux/media/v4l2-extensible-params.h
-> > @@ -0,0 +1,146 @@
-> > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
->
-> Why the MIT license ? And why GPL-2.0+ instead of GPL-2.0 ?
->
+On 9/4/2025 5:51 AM, John Stultz wrote:
+> With proxy-exec, a task is selected to run via pick_next_task(),
+> and then if it is a mutex blocked task, we call find_proxy_task()
+> to find a runnable owner. If the runnable owner is on another
+> cpu, we will need to migrate the selected donor task away, after
+> which we will pick_again can call pick_next_task() to choose
+> something else.
+> 
+> However, in the first call to pick_next_task(), we may have
+> had a balance_callback setup by the class scheduler. After we
+> pick again, its possible pick_next_task_fair() will be called
+> which calls sched_balance_newidle() and sched_balance_rq().
+> 
+> This will throw a warning:
+> [    8.796467] rq->balance_callback && rq->balance_callback != &balance_push_callback
+> [    8.796467] WARNING: CPU: 32 PID: 458 at kernel/sched/sched.h:1750 sched_balance_rq+0xe92/0x1250
+> ...
+> [    8.796467] Call Trace:
+> [    8.796467]  <TASK>
+> [    8.796467]  ? __warn.cold+0xb2/0x14e
+> [    8.796467]  ? sched_balance_rq+0xe92/0x1250
+> [    8.796467]  ? report_bug+0x107/0x1a0
+> [    8.796467]  ? handle_bug+0x54/0x90
+> [    8.796467]  ? exc_invalid_op+0x17/0x70
+> [    8.796467]  ? asm_exc_invalid_op+0x1a/0x20
+> [    8.796467]  ? sched_balance_rq+0xe92/0x1250
+> [    8.796467]  sched_balance_newidle+0x295/0x820
+> [    8.796467]  pick_next_task_fair+0x51/0x3f0
+> [    8.796467]  __schedule+0x23a/0x14b0
+> [    8.796467]  ? lock_release+0x16d/0x2e0
+> [    8.796467]  schedule+0x3d/0x150
+> [    8.796467]  worker_thread+0xb5/0x350
+> [    8.796467]  ? __pfx_worker_thread+0x10/0x10
+> [    8.796467]  kthread+0xee/0x120
+> [    8.796467]  ? __pfx_kthread+0x10/0x10
+> [    8.796467]  ret_from_fork+0x31/0x50
+> [    8.796467]  ? __pfx_kthread+0x10/0x10
+> [    8.796467]  ret_from_fork_asm+0x1a/0x30
+> [    8.796467]  </TASK>
+> 
+> This is because if a RT task was originally picked, it will
+> setup the rq->balance_callback with push_rt_tasks() via
+> set_next_task_rt().
+> 
+> Once the task is migrated away and we pick again, we haven't
+> processed any balance callbacks, so rq->balance_callback is not
+> in the same state as it was the first time pick_next_task was
+> called.
+> 
+> To handle this, add a zap_balance_callbacks() helper function
+> which cleans up the blance callbacks without running them. This
 
-Blindly copied from the rkisp1 header. I'll use GPL-2.0
+s/blance/balance/
 
-> > +/*
-> > + * Video4Linux2 extensible configuration parameters base types
-> > + *
-> > + * Copyright (C) 2025 Ideas On Board Oy
-> > + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > + */
-> > +
-> > +#ifndef _UAPI_V4L2_PARAMS_H_
-> > +#define _UAPI_V4L2_PARAMS_H_
-> > +
-> > +#include <linux/stddef.h>
-> > +#include <linux/types.h>
-> > +
-> > +#define V4L2_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
-> > +#define V4L2_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
-> > +
-> > +/*
-> > + * Reserve the first 8 bits for V4L2_PARAMS_FL_* flag.
-> > + *
-> > + * Platform-specific flags should be defined as:
-> > + * #define PLATFORM_SPECIFIC_FLAG0     ((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(0))
-> > + * #define PLATFORM_SPECIFIC_FLAG1     ((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(1))
-> > + */
-> > +#define V4L2_PARAMS_FL_PLATFORM_FLAGS(n)       ((n) + 8)
->
-> s/PLATFORM/DRIVER/
->
-> > +
-> > +/**
-> > + * struct v4l2_params_block_header - V4L2 extensible parameters block header
-> > + *
-> > + * This structure represents the common part of all the ISP configuration
-> > + * blocks. Each parameters block shall embed an instance of this structure type
-> > + * as its first member, followed by the block-specific configuration data. The
-> > + * driver inspects this common header to discern the block type and its size and
-> > + * properly handle the block content by casting it to the correct block-specific
-> > + * type.
->
-> The last sentence is not relevant for the userspace API.
->
-> > + *
-> > + * The @type field is one of the values enumerated by each platform-specific ISP
-> > + * block types which specifies how the data should be interpreted by the driver.
-> > + * The @size field specifies the size of the parameters block and is used by the
-> > + * driver for validation purposes.
->
->  * The @type field is an ISP driver-specific value that identifies the block type.
->  * The @size field specifies the size of the parameters block.
->
-> but that seems to duplicate the documentation of the fields below. I'd
-> move the field documentation up, and then only add additional paragraphs
-> when they contain extra information.
->
-> > + *
-> > + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_FL_* and
-> > + * platform-specific flags specified by the platform-specific header.
->
-> It's not platform-specific but ISP driver-specific (or you could just
-> write driver-specific).
->
-> > + *
-> > + * Documentation of the platform-specific flags handling is specified by the
-> > + * platform-specific block header type:
-> > + *
-> > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
-> > + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
->
-> I wouldn't mention specific platforms here, that won't really scale.
->
-> > + *
-> > + * Userspace is responsible for correctly populating the parameters block header
-> > + * fields (@type, @flags and @size) and the block-specific parameters.
->
-> This is the kind of information I think I would expect in
-> Documentation/userspace-api/media/v4l/extensible-parameters.rst more
-> than here. We usually keep documentation minimal in header files for the
-> userspace API, and document the behaviour in .rst files. This being
-> said, if you think having more documentation in the headers is better,
-> that could work too.
->
+> should be ok, as we are effectively undoing the state set in
+> the first call to pick_next_task(), and when we pick again,
+> the new callback can be configured for the donor task actually
+> selected.
+> 
+> Signed-off-by: John Stultz <jstultz@google.com>
+> ---
+> v20:
+> * Tweaked to avoid build issues with different configs
+> 
+> Cc: Joel Fernandes <joelagnelf@nvidia.com>
+> Cc: Qais Yousef <qyousef@layalina.io>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ben Segall <bsegall@google.com>
+> Cc: Zimuzo Ezeozue <zezeozue@google.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Metin Kaya <Metin.Kaya@arm.com>
+> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
+> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Suleiman Souhlal <suleiman@google.com>
+> Cc: kuyo chang <kuyo.chang@mediatek.com>
+> Cc: hupu <hupu.gm@gmail.com>
+> Cc: kernel-team@android.com
+> ---
+>  kernel/sched/core.c | 39 ++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 38 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index e0007660161fa..01bf5ef8d9fcc 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -5001,6 +5001,40 @@ static inline void finish_task(struct task_struct *prev)
+>  	smp_store_release(&prev->on_cpu, 0);
+>  }
+>  
+> +#if defined(CONFIG_SCHED_PROXY_EXEC)
 
-No worries, I wasn't sure how much documentation is the right amount
-of documentation. I'm fine reducing it.
+nit. This can be an "#ifdef CONFIG_SCHED_PROXY_EXEC" now.
 
-> > + *
-> > + * @type: The parameters block type (platform-specific)
-> > + * @flags: A bitmask of block flags (platform-specific)
-> > + * @size: Size (in bytes) of the parameters block, including this header
-> > + */
-> > +struct v4l2_params_block_header {
-> > +	__u16 type;
-> > +	__u16 flags;
-> > +	__u32 size;
-> > +} __attribute__((aligned(8)));
-> > +
-> > +/**
-> > + * v4l2_params_buffer_size - Calculate size of v4l2_params_buffer for a platform
-> > + *
-> > + * Users of the v4l2 extensible parameters will have differing sized data arrays
-> > + * depending on their specific parameter buffers. Drivers and userspace will
-> > + * need to be able to calculate the appropriate size of the struct to
-> > + * accommodate all ISP configuration blocks provided by the platform.
-> > + * This macro provides a convenient tool for the calculation.
-> > + *
-> > + * Each driver shall provide a definition of their extensible parameters
-> > + * implementation data buffer size. As an example:
-> > + *
-> > + * #define PLATFORM_BLOCKS_MAX_SIZE		\
-> > + *	sizeof(platform_block_0)	+	\
-> > + *	sizeof(platform_block_1)
-> > + *
-> > + * #define PLATFORM_BUFFER_SIZE			\
-> > + *	v4l2_params_buffer_size(PLATFORM_BLOCKS_MAX_SIZE)
-> > + *
-> > + * Drivers are then responsible for allocating buffers of the proper size
-> > + * by assigning PLATFORM_BUFFER_SIZE to the per-plane size of the videobuf2
-> > + * .queue_setup() operation and userspace shall use PLATFORM_BUFFER_SIZE
-> > + * when populating the ISP configuration data buffer.
->
-> Most if not all of this also seems to be information for drivers, not
-> for userspace. I doesn't belong in the UAPI documentation.
->
-> > + *
-> > + * @max_params_size: The total size of the ISP configuration blocks
-> > + */
-> > +#define v4l2_params_buffer_size(max_params_size) \
-> > +	(offsetof(struct v4l2_params_buffer, data) + (max_params_size))
-> > +
-> > +/**
-> > + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
-> > + *
-> > + * This struct contains the configuration parameters of the ISP algorithms,
-> > + * serialized by userspace into a data buffer. Each configuration parameter
-> > + * block is represented by a block-specific structure which contains a
-> > + * :c:type:`v4l2_params_block_header` entry as first member. Userspace populates
-> > + * the @data buffer with configuration parameters for the blocks that it intends
-> > + * to configure. As a consequence, the data buffer effective size changes
-> > + * according to the number of ISP blocks that userspace intends to configure and
-> > + * is set by userspace in the @data_size field.
-> > + *
-> > + * The parameters buffer is versioned by the @version field to allow modifying
-> > + * and extending its definition. Userspace shall populate the @version field to
-> > + * inform the driver about the version it intends to use. The driver will parse
-> > + * and handle the @data buffer according to the data layout specific to the
-> > + * indicated version and return an error if the desired version is not
-> > + * supported.
->
-> How does userspace know which versions are supported ?
->
+> +/*
+> + * Only called from __schedule context
+> + *
+> + * There are some cases where we are going to re-do the action
+> + * that added the balance callbacks. We may not be in a state
+> + * where we can run them, so just zap them so they can be
+> + * properly re-added on the next time around. This is similar
+> + * handling to running the callbacks, except we just don't call
+> + * them.
+> + */
+> +static void zap_balance_callbacks(struct rq *rq)
+> +{
+> +	struct balance_callback *next, *head;
+> +	bool found = false;
+> +
+> +	lockdep_assert_rq_held(rq);
+> +
+> +	head = rq->balance_callback;
+> +	while (head) {
+> +		if (head == &balance_push_callback)
+> +			found = true;
+> +		next = head->next;
+> +		head->next = NULL;
+> +		head = next;
+> +	}
+> +	rq->balance_callback = found ? &balance_push_callback : NULL;
+> +}
+> +#else
+> +static inline void zap_balance_callbacks(struct rq *rq)
+> +{
+> +}
 
-Good question. There are no negotiation/discoverability uAPI at the
-moment.
+nit.
 
-> > + *
-> > + * For each ISP block that userspace wants to configure, a block-specific
-> > + * structure is appended to the @data buffer, one after the other without gaps
-> > + * in between nor overlaps. Userspace shall populate the @data_size field with
-> > + * the effective size, in bytes, of the @data buffer.
-> > + *
-> > + * Drivers shall take care of properly sizing of the extensible parameters
-> > + * buffer @data array. The v4l2_params_buffer type is defined with a
-> > + * flexible-array-member at the end, which resolves to a size of 0 bytes when
-> > + * inspected with sizeof(struct v4l2_params_buffer). This of course is not
-> > + * suitable for neither buffer allocation in the kernel driver nor for proper
-> > + * handling in userspace of the @data buffer it has to populate.
-> > + *
-> > + * Drivers using this type in their userspace API definition are responsible
-> > + * for providing the exact definition of the @data buffer size using the
-> > + * v4l2_params_buffer_size() macro. The size shall be used
-> > + * by the driver for buffers allocation and by userspace for populating the
-> > + * @data buffer before queueing it to the driver
->
-> Most of those two paragraphs are driver documentation too.
->
-> > + *
-> > + * Drivers that were already using extensible-parameters before the introduction
-> > + * of this file define their own type-convertible implementation of this
-> > + * type, see:
-> > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
-> > + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
->
-> Drop this too.
->
+This can perhaps be reduced to a single line in light of Thomas' recent
+work to condense the stubs elsewhere:
+https://lore.kernel.org/lkml/20250908212925.389031537@linutronix.de/
 
-Ack.
+> +#endif
+> +
+>  static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
+>  {
+>  	void (*func)(struct rq *rq);
+> @@ -6941,8 +6975,11 @@ static void __sched notrace __schedule(int sched_mode)
+>  	rq_set_donor(rq, next);
+>  	if (unlikely(task_is_blocked(next))) {
+>  		next = find_proxy_task(rq, next, &rf);
+> -		if (!next)
+> +		if (!next) {
+> +			/* zap the balance_callbacks before picking again */
+> +			zap_balance_callbacks(rq);
+>  			goto pick_again;
+> +		}
+>  		if (next == rq->idle)
+>  			goto keep_resched;
 
-Thanks
-   j
+Should we zap the callbacks if we are planning to go through schedule()
+again via rq->idle since it essentially voids the last pick too?
 
-> > + *
-> > + * @version: The parameters buffer version (platform-specific)
-> > + * @data_size: The configuration data effective size, excluding this header
-> > + * @data: The configuration data
-> > + */
-> > +struct v4l2_params_buffer {
-> > +	__u32 version;
-> > +	__u32 data_size;
-> > +	__u8 data[] __counted_by(data_size);
-> > +};
-> > +
-> > +#endif /* _UAPI_V4L2_PARAMS_H_ */
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
+>  	}
+
+-- 
+Thanks and Regards,
+Prateek
+
 
