@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-816812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA9DB5788D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:38:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7234BB57883
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29EE51A27936
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF5D27B03A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFBA2FFDE4;
-	Mon, 15 Sep 2025 11:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACAD3002B2;
+	Mon, 15 Sep 2025 11:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ero2N126"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irHbUquB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E25A18A6CF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A782FFDFE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936148; cv=none; b=U8w32QSMq84O2ilLA8ee8bZH4MIDpbC6V2g/ABgsI09fvhwKoJpz6ab/+oBlBwcLqNMi80kmgN4trs40bgQoxSh0nFD1ViER7V4muqEy+aglA5YKBXkJm1A516B6ivdHOXI4dEqEBdZ08kyhXEiR0eJ7ueTETKG3oVWtYeMvuvg=
+	t=1757936149; cv=none; b=KM29f3nEe9NEgrDvzvo1+oKJ5PMFFj+yWByRBa5ARTvaVn7Li47ipAlI9cBhPEwzS80+PeIVvxV/a6upj/XjBeQzx9n3WqRvGY0TVJ/u/3da33rMAwohJRAlQaBXJvIP+HTngo4+0Omz9Q5/uY2Zsboh7CqduFxi8thyXCa59uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936148; c=relaxed/simple;
-	bh=YbyCcDqWw6FcXwd7+WDRZZ7cNwSItb6V3Z+Dbpw0JLc=;
+	s=arc-20240116; t=1757936149; c=relaxed/simple;
+	bh=g6iT4LnVK7VL5GwXa8h1y7q/YHk4y51nRdnBAvPMLHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPfhDkdJ03B19hvEcYkiXuDWHgkT0gu3P/ca2m+gqo6MTuhQrs1m1TLgkLzqb9nEz+9eWQPWKZdS57NDl1liexTKoGrIGnXyrxO/hWUtMNGBtGPiIt+7Yg2mmJ1SyvUhaYIzKTCQn5cGpnXcQ/2RmSF3WWmGg0JHZp0xhc/uYeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ero2N126; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=w8OW
-	2uDi6ErI3MM6zAfiPSI+Mt41RJCxxGd5LE7WsSU=; b=ero2N126KwHBQ+en+uOA
-	9KGVdnzdMnPPGVTe1WCVVjYAJysCVA3rmrKCdvuxx4lbA7UqVxSEkodnWI4A5Yh3
-	wM8t5bwe2xWsH51kpq/rhq1v1GD1LLyoMlEuL2k3iCnMkok//rm0/eYAD+f1Cf9q
-	BthISTz2ydq6UWplrek22zYlyXtuolDg8MJxc+Dy78y1S4rubX/mp8ZPfUSocPc6
-	QR4O4fWltYGT0k4y+Jz6K1RyLGYEEcXkjM5vcxegu2Zx6fHNrM2giy4/wXiYnwZU
-	buM7ceNUvgGr3KWQuXR0Tu3doIhYZIuMZT4TYyiKxFFEzvQPuvBu+Ex7g0MkfW3A
-	ww==
-Received: (qmail 2345910 invoked from network); 15 Sep 2025 13:35:40 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Sep 2025 13:35:40 +0200
-X-UD-Smtp-Session: l3s3148p1@8aotZ9U+AowgAwDPXxLYAMR913XberYj
-Date: Mon, 15 Sep 2025 13:35:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca@lucaceresoli.net>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	Jonas =?utf-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] i2c: muxes: Add GPIO-detected hotplug I2C
-Message-ID: <aMf6DLr8pTCP8tKn@shikoro>
-References: <20250915060141.12540-1-clamor95@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g53ydy3wxGwm8ByeIqbfguQ4bCe5OxD8mT4cvkCcXAVRrmA2n5wtr5wOS4lyCyoPJJQWS9KnSJG01A4W9ALFMKQersrqEYH1eo1aXyxssL8Xi8+f9/MjPKn6JPI3aMyKJViS793e4C63wbjX7pR7IniEAjSpIx0wEw1bHvR2oZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irHbUquB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 985F6C4CEF1;
+	Mon, 15 Sep 2025 11:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757936149;
+	bh=g6iT4LnVK7VL5GwXa8h1y7q/YHk4y51nRdnBAvPMLHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=irHbUquBjSFrawKk+3UEmche2gt/Rgpdr15gS2JmZS1dAWlbJlXBHbjg8gXR11Yqp
+	 +0Hq/9ortYg0Y/zWUUCIyy0K6u7iQLk2GngrdprqwAjvstszH+MGIy54oFkpGIx0ye
+	 KKrLh/V0L3NQGkKrJPO0FsH9PER9w+OHgY/I8AlUOaS6rDDJZTDStchF9/Am2QVN7l
+	 Ern40o9RIMirw5FmHcmpIWMXFeJ64dAut9owbvoKVl8v3FOCE6Gl6tuQSDnXl//x8/
+	 I80uS8tMkCCT2pb8G+3gUOlazd6j8iEg+BvPx9JHasL18daPL8EFs1yAzIk3qM/tes
+	 /AjpcK9rdKcBw==
+Date: Mon, 15 Sep 2025 13:35:45 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Devarsh Thakkar <devarsht@ti.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/29] drm/atomic: Only call atomic_destroy_state on a
+ !NULL pointer
+Message-ID: <20250915-dangerous-industrious-gecko-b25b7b@penduick>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-8-14ad5315da3f@kernel.org>
+ <20250902205247.GW13448@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MkrhhPs+peK3vGck"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="lzlgqubra4xlbor6"
 Content-Disposition: inline
-In-Reply-To: <20250915060141.12540-1-clamor95@gmail.com>
+In-Reply-To: <20250902205247.GW13448@pendragon.ideasonboard.com>
 
 
---MkrhhPs+peK3vGck
-Content-Type: text/plain; charset=utf-8
+--lzlgqubra4xlbor6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 08/29] drm/atomic: Only call atomic_destroy_state on a
+ !NULL pointer
+MIME-Version: 1.0
 
-On Mon, Sep 15, 2025 at 09:01:36AM +0300, Svyatoslav Ryhel wrote:
-> Implement driver for hot-plugged I2C busses, where some devices on
-> a bus are hot-pluggable and their presence is indicated by GPIO line.
-> This feature is used by the ASUS Transformers family, by the  Microsoft
-> Surface RT/2 and maybe more.
+On Tue, Sep 02, 2025 at 10:52:47PM +0200, Laurent Pinchart wrote:
+> On Tue, Sep 02, 2025 at 10:32:36AM +0200, Maxime Ripard wrote:
+> > The drm_atomic_state structure is freed through the
+> > drm_atomic_state_put() function, that eventually calls
+> > drm_atomic_state_default_clear() by default when there's no active
+> > users of that state.
+> >=20
+> > It then iterates over all entities with a state, and will call the
 >=20
-> ASUS Transformers expose i2c line via proprietary 40 pin plug and wire
-> that line through optional dock accessory. Devices in the dock are
-> connected to this i2c line and docks presence is detected by a dedicted
-> GPIO.
->=20
-> Micha=C5=82 Miros=C5=82aw (1):
->   i2c: muxes: Add GPIO-detected hotplug I2C
->=20
-> Svyatoslav Ryhel (1):
->   dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
->=20
->  .../bindings/i2c/i2c-hotplug-gpio.yaml        |  65 +++++
->  drivers/i2c/muxes/Kconfig                     |  11 +
->  drivers/i2c/muxes/Makefile                    |   1 +
->  drivers/i2c/muxes/i2c-hotplug-gpio.c          | 263 ++++++++++++++++++
->  4 files changed, 340 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-hotplug-gpi=
-o.yaml
->  create mode 100644 drivers/i2c/muxes/i2c-hotplug-gpio.c
+> Did you mean s/with a state/within the state/ ?
 
-Adding Herve and Luca to CC because they want to achieve the same with
-their I2C bus extensions, no?
+I'm not sure how to phrase it, but I meant "entities" that have a
+matching state structure. Encoders for example don't.
 
+> I'd also replace "entity" with "object" as mentioned in the review of a
+> previous patch.
 
---MkrhhPs+peK3vGck
+And bridges aren't objects :/
+
+> > atomic_destroy_state callback on the state pointer. The state pointer is
+> > mostly used these days to point to which of the old or new state needs
+> > to be freed, depending on whether the state was committed or not.
+> >=20
+> > So it all makes sense.
+> >=20
+> > However, with the hardware state readout support approaching, we might
+> > have a state, with multiple entities in it, but no state to free because
+> > we want them to persist. In such a case, state is going to be NULL, and
+> > thus we'll end up with NULL pointer dereference.
+>=20
+> I'm not sure to follow you here. Are we talking with objects whose old
+> and new states will both need to be preserved ? Or objects that have no
+> old state ?
+
+It's more of the latter, but not really. Objects, at this point of the
+series, will always have an old state.
+
+However, due to how the initial state is being built with hardware
+readout, we would move the old state of an entity/object/whatever to
+$object->state, and clear it from drm_atomic_state so it's not freed.
+
+so drm_atomic_state ends up with a whole bunch of objects that don't
+have an old state anymore, and drm_atomic_state_default_clear() chokes
+on that.
+
+Maxime
+
+--lzlgqubra4xlbor6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjH+ggACgkQFA3kzBSg
-KbaZGw/+J0rqDvCN0mzbRK4/L2rPwJ40Oqr9vwGBCvSQO17CpsszXK6scxjjmjzo
-FAhqL2+/9vCX08INJ/SoW3J4SwUcN+7pGmtrwYe8dI4VtJi9x9OxWsqkfNH/gif2
-sG9OOwVmmLSGy+OqWBqRd0WxoutA9Wb2BUV7UhbbmwEaA/yWjxyCi94zeABiHSKp
-rZw7oHPinOAB4nTEL2C01mGH7LnvJNZGqcO5DYK1W+d1PhBJAaDHD7bI3bIprVVK
-9oJpFUnT8EB3eik4NSveiiwm9cciUInBHGfNhZEtVepNNw3B2zJRQ2zz4RTdqVBa
-vEGWa5GoQcJqyTbmpezCP/MbA3ucGLEQ4X2JAB04fHYgQnCfiVRyrRe7KN/A8ygF
-fbQg/XbC0LIKxIhSUC1d1qUe/aqEHHMCUmNow0zniV6uDLkJ8jD5/OW3r/i59Fmu
-nbmjpOnbNa8fi2Pkp6xXLqMqu/+HkPdleCwbe4zdenxHRAEhv5hj7HR15WjZi89K
-SoTOcub5KhyajMspmDEHFL3DvxPv/8eCc1WngoLHIFJcRoyCKNENq+yX2LJ3VC1i
-gWfrvcY8mElmbi2JXVsSnhD19FztnbRY0AYJgx1qn4o+ikuY/39BmVdqoH0oFuwz
-3HqRCkjki5E07ZfHm0hTAtWvZQHfBhZNXcGLbW8TrB+ps4bDlgg=
-=W0qL
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMf6EQAKCRAnX84Zoj2+
+ds4WAX98P2TpRW0+Wg625O9mrd1bDzmxa7KteQ4ID+ZyQm39wgRPsGEEwcVEJ0yk
+nO0ooV0BfiXGnL5cpFsL7vNgrr+yQFxUB+wWibtzPr2ITMmRVF7i7wbIpaH+jstp
+18m/s/QBwA==
+=KewR
 -----END PGP SIGNATURE-----
 
---MkrhhPs+peK3vGck--
+--lzlgqubra4xlbor6--
 
