@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-817003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBC6B57C38
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7EEB57C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB65480874
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36541726E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06D130CDA8;
-	Mon, 15 Sep 2025 13:02:01 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE6D3093CA;
-	Mon, 15 Sep 2025 13:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D3730B525;
+	Mon, 15 Sep 2025 13:02:14 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.229.205.26])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA27302153;
+	Mon, 15 Sep 2025 13:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.229.205.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941321; cv=none; b=t52YLujWXyhTMzUyDNKCYl+iAVCxtoICapeIsacXjLeC8UHockfdA5d/KfHjhjw8p116iu3Z6y7L1VFZgdrr4IFxlvRPenG1GHy2tw3dB4dr91VqVwUE1W91AITaKeTg/sb/TUfaff2fA5ac1W+sUEsKBn13dp2xoa6GKT+SB5E=
+	t=1757941334; cv=none; b=l6N3WHTL8Kg5i0yH84+N2heXAZIsJeAubSJQd/+sPCrI3sfai8A/8k1OOqlerfeVyrunnaSTK21DEHTGOt8NB+RKdulrxXrtj3jy9a1E9ksbbf13DRvB3x3sj3f7eLbsjVrZOWHrkX3P1d2Qy/D/usJh0DB65N151iF3Xj5dcRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941321; c=relaxed/simple;
-	bh=R2Lk1cyFg0GsUHawE+a2oIwMUZYd71/kIsct6YqEqRg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m2q+7Iz/3G9kIIOZ3jfWVyfbtIrxuSMkLTxiMCUdJMKHy6ed5EtNfFWium0m1pW9/18gZBlIvJUyUioUNzbHLbPlxKsia6H+i9hZXH6ccZGuvJKkWuibG3kOXooSeVlhzrKO+6EUjVUTfoQWLAwQNii/PL3R4des0rWLAPkDgss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
-	by app1 (Coremail) with SMTP id TAJkCgC32xExDshoTnHRAA--.2751S2;
-	Mon, 15 Sep 2025 21:01:39 +0800 (CST)
-From: Yulin Lu <luyulin@eswincomputing.com>
-To: dlemoal@kernel.org,
-	cassel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	linux-phy@lists.infradead.org
-Cc: ningyu@eswincomputing.com,
-	zhengyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	fenglin@eswincomputing.com,
-	lianghujun@eswincomputing.com,
-	Yulin Lu <luyulin@eswincomputing.com>
-Subject: [PATCH v4 1/3] Document the EIC7700 SoC sata ahci
-Date: Mon, 15 Sep 2025 21:01:35 +0800
-Message-Id: <20250915130135.1497-1-luyulin@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250915125902.375-1-luyulin@eswincomputing.com>
-References: <20250915125902.375-1-luyulin@eswincomputing.com>
+	s=arc-20240116; t=1757941334; c=relaxed/simple;
+	bh=gGcVx0h19oVpdrzLf5vypiYgGjeeuj4oSq5m3ICnSzc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TcVrMAI1OsQstFPG35yUcpaNs1DsRUF9hfrqqVd7L4ndRYqbw8oDxsU7/+H1TUdQrtk/4+ohiHDSDakEvRlaTo1VpNY5B/0mv9757hvBdpBSyxbIbU17tZzUeyI7vb+tUxRDk0Vb8h2iMs49Hoe0zr4aeWm7VwYxV5sPmwLfGtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.229.205.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [106.117.96.180])
+	by mtasvr (Coremail) with SMTP id _____wA38FY1DshouWw4Ag--.6642S3;
+	Mon, 15 Sep 2025 21:01:43 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [106.117.96.180])
+	by mail-app2 (Coremail) with SMTP id zC_KCgBnfkIyDshooan+AQ--.39635S2;
+	Mon, 15 Sep 2025 21:01:41 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	edumazet@google.com,
+	davem@davemloft.net,
+	andrew+netdev@lunn.ch,
+	bbhushan2@marvell.com,
+	hkelam@marvell.com,
+	sbhatta@marvell.com,
+	gakula@marvell.com,
+	sgoutham@marvell.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH net] octeontx2-pf: Fix use-after-free bugs in otx2_sync_tstamp()
+Date: Mon, 15 Sep 2025 21:01:36 +0800
+Message-Id: <20250915130136.42586-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,136 +56,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgC32xExDshoTnHRAA--.2751S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4fGF4xAFyDWr4xGrW3Jrb_yoW5Aw1rpF
-	s7GrZrJFs2qryxXayxJF10kF1S9ws3CFyYkr1xt3W7JrZ8Wa4vqrsIy3W5Ga47Jr1xX34a
-	gFy3K3yjya12vrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRRBT5DUUUU
-X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
+X-CM-TRANSID:zC_KCgBnfkIyDshooan+AQ--.39635S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwYKAWjHGnsMaABgsE
+X-CM-DELIVERINFO: =?B?UTu7fQXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR13CxzN3cNJud0D/Kep4GKTmAQHqGBIdwgfOjnCakh/A1oqRkI3uY692KNQSXkfz8m2b2
+	AUTErYJCXs72Q01+xI0LpIMoSBbMD/KDjpdGlz/ro06lpk2dE4CHEAB1Gpf1IQ==
+X-Coremail-Antispam: 1Uk129KBj93XoWxGw1xtF4fKFWrtFWfKr45Jwc_yoWrJrWUp3
+	y5u345Aw15Jrn3JrsrJF409F1kJan5t34rWwn29rs3XFs3Gr1UXa45KF409F15GrWkAFZ3
+	Aas8trZ3XFn5t3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC2
+	0s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI
+	0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE
+	14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20x
+	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
+	JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU801v3UUUUU==
 
-Document the SATA AHCI controller on the EIC7700 SoC platform,
-including descriptions of its hardware configurations.
+The original code uses cancel_delayed_work() in otx2_ptp_destroy(), which
+does not guarantee that the delayed work item 'synctstamp_work' has fully
+completed if it was already running. This leads to use-after-free scenarios
+where otx2_ptp is deallocated by otx2_ptp_destroy(), while synctstamp_work
+remains active and attempt to dereference otx2_ptp in otx2_sync_tstamp().
 
-Retains the "ports-implemented" property in the DTS, because
-removing it and relying only on the firmware register causes
-problems. If the property is not present and we remove the
-module using `rmmod`, a reset is triggered that clears the
-register. As a result, inserting module again using `insmod`
-will lead to errors.
+A typical race condition is illustrated below:
 
-The detailed reasons are that the ports-implemented register is
-configured by the firmware (U-Boot on the HiFive Premier P550 board)
-before kernel entry and correctly set to 0x1. During probe,
-ahci_platform_enable_resources() -> ahci_platform_deassert_rsts() is
-called, and when the driver is removed,
-ahci_platform_disable_resources() -> ahci_platform_assert_rsts() is
-called. This reset clears the register, which is defined by the IP
-databook to reset to 0.
+CPU 0 (cleanup)           | CPU 1 (delayed work callback)
+otx2_remove()             |
+  otx2_ptp_destroy()      | otx2_sync_tstamp()
+    cancel_delayed_work() |
+    kfree(ptp)            |
+                          |   ptp = container_of(...); //UAF
+                          |   ptp-> //UAF
 
-Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+This is confirmed by a KASAN report:
+
+BUG: KASAN: slab-use-after-free in __run_timer_base.part.0+0x7d7/0x8c0
+Write of size 8 at addr ffff88800aa09a18 by task bash/136
+...
+Call Trace:
+ <IRQ>
+ dump_stack_lvl+0x55/0x70
+ print_report+0xcf/0x610
+ ? __run_timer_base.part.0+0x7d7/0x8c0
+ kasan_report+0xb8/0xf0
+ ? __run_timer_base.part.0+0x7d7/0x8c0
+ __run_timer_base.part.0+0x7d7/0x8c0
+ ? __pfx___run_timer_base.part.0+0x10/0x10
+ ? __pfx_read_tsc+0x10/0x10
+ ? ktime_get+0x60/0x140
+ ? lapic_next_event+0x11/0x20
+ ? clockevents_program_event+0x1d4/0x2a0
+ run_timer_softirq+0xd1/0x190
+ handle_softirqs+0x16a/0x550
+ irq_exit_rcu+0xaf/0xe0
+ sysvec_apic_timer_interrupt+0x70/0x80
+ </IRQ>
+...
+Allocated by task 1:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ otx2_ptp_init+0xb1/0x860
+ otx2_probe+0x4eb/0xc30
+ local_pci_probe+0xdc/0x190
+ pci_device_probe+0x2fe/0x470
+ really_probe+0x1ca/0x5c0
+ __driver_probe_device+0x248/0x310
+ driver_probe_device+0x44/0x120
+ __driver_attach+0xd2/0x310
+ bus_for_each_dev+0xed/0x170
+ bus_add_driver+0x208/0x500
+ driver_register+0x132/0x460
+ do_one_initcall+0x89/0x300
+ kernel_init_freeable+0x40d/0x720
+ kernel_init+0x1a/0x150
+ ret_from_fork+0x10c/0x1a0
+ ret_from_fork_asm+0x1a/0x30
+
+Freed by task 136:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3a/0x60
+ __kasan_slab_free+0x3f/0x50
+ kfree+0x137/0x370
+ otx2_ptp_destroy+0x38/0x80
+ otx2_remove+0x10d/0x4c0
+ pci_device_remove+0xa6/0x1d0
+ device_release_driver_internal+0xf8/0x210
+ pci_stop_bus_device+0x105/0x150
+ pci_stop_and_remove_bus_device_locked+0x15/0x30
+ remove_store+0xcc/0xe0
+ kernfs_fop_write_iter+0x2c3/0x440
+ vfs_write+0x871/0xd70
+ ksys_write+0xee/0x1c0
+ do_syscall_64+0xac/0x280
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+...
+
+Replace cancel_delayed_work() with cancel_delayed_work_sync() to ensure
+that the delayed work item is properly canceled before the otx2_ptp is
+deallocated.
+
+Fixes: 2958d17a8984 ("octeontx2-pf: Add support for ptp 1-step mode on CN10K silicon")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 ---
- .../bindings/ata/eswin,eic7700-ahci.yaml      | 79 +++++++++++++++++++
- 1 file changed, 79 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-new file mode 100644
-index 000000000000..40c44f0705ba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ata/eswin,eic7700-ahci.yaml
-@@ -0,0 +1,79 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/ata/eswin,eic7700-ahci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin EIC7700 SoC SATA Controller
-+
-+maintainers:
-+  - Yulin Lu <luyulin@eswincomputing.com>
-+  - Huan He <hehuan1@eswincomputing.com>
-+
-+description:
-+  AHCI SATA controller embedded into the EIC7700 SoC
-+  is based on the DWC AHCI SATA v5.00a IP core.
-+
-+select:
-+  properties:
-+    compatible:
-+      const: eswin,eic7700-ahci
-+  required:
-+    - compatible
-+
-+allOf:
-+  - $ref: snps,dwc-ahci-common.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: eswin,eic7700-ahci
-+      - const: snps,dwc-ahci
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: pclk
-+      - const: aclk
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: arst
-+
-+  ports-implemented:
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - phys
-+  - phy-names
-+  - ports-implemented
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    sata@50420000 {
-+        compatible = "eswin,eic7700-ahci", "snps,dwc-ahci";
-+        reg = <0x50420000 0x10000>;
-+        interrupt-parent = <&plic>;
-+        interrupts = <58>;
-+        clocks = <&clock 171>, <&clock 186>;
-+        clock-names = "pclk", "aclk";
-+        phys = <&sata_phy>;
-+        phy-names = "sata-phy";
-+        ports-implemented = <0x1>;
-+        resets = <&reset 96>;
-+        reset-names = "arst";
-+    };
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
+index e52cc6b1a26c..dedd586ed310 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ptp.c
+@@ -491,7 +491,7 @@ void otx2_ptp_destroy(struct otx2_nic *pfvf)
+ 	if (!ptp)
+ 		return;
+ 
+-	cancel_delayed_work(&pfvf->ptp->synctstamp_work);
++	cancel_delayed_work_sync(&pfvf->ptp->synctstamp_work);
+ 
+ 	ptp_clock_unregister(ptp->ptp_clock);
+ 	kfree(ptp);
 -- 
-2.25.1
+2.34.1
 
 
