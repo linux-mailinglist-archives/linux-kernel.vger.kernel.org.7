@@ -1,281 +1,344 @@
-Return-Path: <linux-kernel+bounces-816392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7A0B57338
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1F4B5733B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCE2188DFD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF5D188F8FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85962EF65B;
-	Mon, 15 Sep 2025 08:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B2C2EF67F;
+	Mon, 15 Sep 2025 08:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6r7kSMo"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="anoLQSM1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4D82D5C7A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409C72ECD34;
+	Mon, 15 Sep 2025 08:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757925706; cv=none; b=HFvNFMjLzg7xRCPDhN4hPPmN6nGDQsAEX9kRTAjK+//kFfRGSdCUCZFBpBydkaQVz9lzuSgcY1mIk43ahz813eHTvMj8jWU2x6pnxuWRbLH+Foezdau619hwD5lnFF3qCWtauvPqjD/ilS/4TexljLH0SgkMYlHZWNWkciJDdyY=
+	t=1757925738; cv=none; b=pJqxOKt01XBEovjjf+hxfHqtR9AoRNtWKNeDcKmxTL2O+Mft7GLiMgx+B6wVTT0eBpanpgvEAgAx1yVfvOOGtvuX6quqU/jSfCTa7ClEtjOv2yI+ToWSOz7HdsruGlLW4+wlXftk+8aZBbldOjLNBNo4nJkL2Zr1p2pbX9DCjZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757925706; c=relaxed/simple;
-	bh=j/cii1yAzGzohPiU1KFlQ8rBtMBQcxz3SdivvBJT8X4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F9MVfbUIhXqgKR8FYoOneBjZtwvIOm9fI1WgyuPIuT1i82PjIMLyFnxejD/s1qf73DVnV8urMth/iNQYx7s5maUukRNmbLXb/6ZkGhL970kHbWmmvrtkaB4obwAu9ZXx826JXeYfOYyImwjAgqYmQ5lOTsf5n7LDDD6DQYAnapc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6r7kSMo; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-62f1eb1abb9so2077900a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:41:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757925703; x=1758530503; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cgISx98LqP9kaV3d8bosANBzfIr7Kg1cDQ5T0j0QCmU=;
-        b=h6r7kSMoPe7Z7nF+0EvUSDDhVHjMAf260x/6Od1S6B/L+xzLZNW16QsJ/QQOvMSqnB
-         vpI84BRBM5xW6cYUGYGNszyIpXmwVq7HVCrGQvA2kL1NzAVx5tNQnc1wBNgZPVERbFv/
-         RNwvAAzHURL9AsaZOcEMyWuxM795NLisP8IiWb/TAH2bCr/TuyPJN5YSy+TIMSdvwGmh
-         vmQvN00cJofGoP2Ae2S3gOEzi1VArHEtj+/xXDjNrW5FbWgRBjzZWTMK0V/DeMOBDJiq
-         02sUAH9IBn/hdvjM58fsgseICCXHPuUfHFSNzr46DZ6Q2zd83A4BStC1OmmR6bcIPkEQ
-         VlUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757925703; x=1758530503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cgISx98LqP9kaV3d8bosANBzfIr7Kg1cDQ5T0j0QCmU=;
-        b=eouuDbIRJvtGtMRH1d35Z4v3JhJ8EpGqHFfxj7YTYKScmE/YywFpwy3vG6p9FmGAqz
-         HoegPUiurNcTOEGwN0FG5qJ3kCYaNvlYC9JT2ZPW+8W1iDqCvfhnk5luSkY0KfRC+qFK
-         YNHerk2wgwTC4+4B3LneQnTKgu4/8ocada6rND2+uRPeEP0QHzQ/oHBY2o3BbxoJXeZy
-         B9Jm47AIAYinQgSOuSdGvSGvkymIIqoBMl5IGt+6y8vLEZM8F/Zcpm9XcJFrb7TLCsqw
-         zKTXs4Gawcnv0E89o49Fdc8cX0uf5uYgn76JSpyXsxGiUp0/2LiUG1nA5uHMbl4QO9SB
-         l2+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWOwLUpTAkyhShlEMj/k8uwTDJs53QPkbvZD0kMx80SkIQO81SKFufj+uLr/TUKQwHEo38vYGmaaIzTM8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF90x82Bh3f4e3UtJFZrWEdDGyc2UQ+zLaXJmBaa3TctY+cUYx
-	+p2wfzoi5GKTisMh9orjvoVinIEfYzODdqClB4FkpIjNXMoxRoxGcKgVkCcErpvo6uxk/93eOWi
-	8KCcfCsF9tKsjiH62zM8BCd3Qs1lmF94=
-X-Gm-Gg: ASbGncu9axUEp49h0kN53M3ANrM7jU91odEY6/S+h75BS34Y9iBv+2AK6HtDbohrbIo
-	JDpAHPC7tZwtKmppyLGo1nFUu+Bi8MK2H8fC9H85BljVC7S7exMu0ZKvbpB2ieFtr7FOZFmdJHs
-	dPs2bLOzvN6d3Rb4nIs03wRVic1B7WNb2Dg46uZ+UEpoljlq2XW2F8BvtiJTrgldTBzEL1RnAYr
-	nzX7WwX8kBjtVTxJTUf0rEzhBcicfGHM+NFGbFO+w==
-X-Google-Smtp-Source: AGHT+IHkyfQN/X6YSXGcm0n3Xsx2Z/LBbcmlRhybxqOVSu6LYGl6I+NGgtmqZvKYR4JaE95bKWa0yigYD8lgsM0pc8A=
-X-Received: by 2002:a05:6402:520a:b0:628:28ee:958 with SMTP id
- 4fb4d7f45d1cf-62ed97d864cmr12024012a12.3.1757925703009; Mon, 15 Sep 2025
- 01:41:43 -0700 (PDT)
+	s=arc-20240116; t=1757925738; c=relaxed/simple;
+	bh=bLuFRrtZpntSyMvL7BEQp3qtuWlEXg+XcfMGbVNmTkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spUadUklGWU1GPtgDV9F0fllbDyGi9xGr8feumfUgdY6Ue8sjNpHCFcEFxele6i8wLaDUQfQ8nxkAjoijm1Nfu/nywPbI5d/xFDjO5l0l60/9YjqqCxG/yqurxhU+SOIVrlcNQ2HRxAOhYwWT5PAG6ZsOlyVqYHolWI03LWVn3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=anoLQSM1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5C7701744;
+	Mon, 15 Sep 2025 10:40:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757925656;
+	bh=bLuFRrtZpntSyMvL7BEQp3qtuWlEXg+XcfMGbVNmTkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=anoLQSM1j8s4PvZQyHqIhTsfJyxO1Ynj947BWqph4Yig7JJbFSHJ2tFaSOwGvKmVR
+	 9t9z6QAolvmrK6sbe53ZCuMx6aHrOOJozvgnq9ONqMEAALbCleZXgxBZLKXOa4bezR
+	 CY7imYIrVFqsVNxktlne3NDaKy+8UmAovc6jIrhU=
+Date: Mon, 15 Sep 2025 11:41:48 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>, Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/8] media: uapi: Introduce V4L2 extensible params
+Message-ID: <20250915084148.GC22385@pendragon.ideasonboard.com>
+References: <20250820-extensible-parameters-validation-v4-0-30fe5a99cb1f@ideasonboard.com>
+ <20250820-extensible-parameters-validation-v4-1-30fe5a99cb1f@ideasonboard.com>
+ <20250908073534.GD4105@pendragon.ideasonboard.com>
+ <pmvm3rzynu6s6zaayg3gnjkdphcobuhwb6jwk3hpwpvkvl6e7a@l2ixrpgvatdx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8734afp0ct.fsf@igalia.com> <20250729233854.GV2672029@frogsfrogsfrogs>
- <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
- <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com> <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
-In-Reply-To: <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 15 Sep 2025 10:41:31 +0200
-X-Gm-Features: AS18NWCek69Tk84GsNixOlHib1hJjxdEe89grKmQ4kSfVNmLbjuZvF9TkfIkZvE
-Message-ID: <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <pmvm3rzynu6s6zaayg3gnjkdphcobuhwb6jwk3hpwpvkvl6e7a@l2ixrpgvatdx>
 
-On Mon, Sep 15, 2025 at 10:27=E2=80=AFAM Bernd Schubert <bernd@bsbernd.com>=
- wrote:
->
->
->
-> On 9/15/25 09:07, Amir Goldstein wrote:
-> > On Fri, Sep 12, 2025 at 4:58=E2=80=AFPM Darrick J. Wong <djwong@kernel.=
-org> wrote:
-> >>
-> >> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
-> >>>
-> >>>
-> >>> On 9/12/25 13:41, Amir Goldstein wrote:
-> >>>> On Fri, Sep 12, 2025 at 12:31=E2=80=AFPM Bernd Schubert <bernd@bsber=
-nd.com> wrote:
-> >>>>>
-> >>>>>
-> >>>>>
-> >>>>> On 8/1/25 12:15, Luis Henriques wrote:
-> >>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
-> >>>>>>
-> >>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
-> >>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
-> >>>>>>>>>
-> >>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if =
-libfuse
-> >>>>>>>>> could restart itself.  It's unclear if doing so will actually e=
-nable us
-> >>>>>>>>> to clear the condition that caused the failure in the first pla=
-ce, but I
-> >>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe resta=
-rts
-> >>>>>>>>> aren't totally crazy.
-> >>>>>>>>
-> >>>>>>>> I'm trying to understand what the failure scenario is here.  Is =
-this
-> >>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so=
-, what
-> >>>>>>>> is supposed to happen with respect to open files, metadata and d=
-ata
-> >>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs could =
-run
-> >>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that's g=
-oing
-> >>>>>>>> potentally to be out of sync, right?
-> >>>>>>>>
-> >>>>>>>> What are the recovery semantics that we hope to be able to provi=
-de?
-> >>>>>>>
-> >>>>>>> <echoing what we said on the ext4 call this morning>
-> >>>>>>>
-> >>>>>>> With iomap, most of the dirty state is in the kernel, so I think =
-the new
-> >>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED=
-, which
-> >>>>>>> would initiate GETATTR requests on all the cached inodes to valid=
-ate
-> >>>>>>> that they still exist; and then resend all the unacknowledged req=
-uests
-> >>>>>>> that were pending at the time.  It might be the case that you hav=
-e to
-> >>>>>>> that in the reverse order; I only know enough about the design of=
- fuse
-> >>>>>>> to suspect that to be true.
-> >>>>>>>
-> >>>>>>> Anyhow once those are complete, I think we can resume operations =
-with
-> >>>>>>> the surviving inodes.  The ones that fail the GETATTR revalidatio=
-n are
-> >>>>>>> fuse_make_bad'd, which effectively revokes them.
-> >>>>>>
-> >>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP req=
-uests,
-> >>>>>> but probably GETATTR is a better option.
-> >>>>>>
-> >>>>>> So, are you currently working on any of this?  Are you implementin=
-g this
-> >>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a =
-closer
-> >>>>>> look at fuse2fs too.
-> >>>>>
-> >>>>> Sorry for joining the discussion late, I was totally occupied, day =
-and
-> >>>>> night. Added Kevin to CC, who is going to work on recovery on our
-> >>>>> DDN side.
-> >>>>>
-> >>>>> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
-> >>>>> server restart we want kernel to recover inodes and their lookup co=
-unt.
-> >>>>> Now inode recovery might be hard, because we currently only have a
-> >>>>> 64-bit node-id - which is used my most fuse application as memory
-> >>>>> pointer.
-> >>>>>
-> >>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-=
-sends
-> >>>>> outstanding requests. And that ends up in most cases in sending req=
-uests
-> >>>>> with invalid node-IDs, that are casted and might provoke random mem=
-ory
-> >>>>> access on restart. Kind of the same issue why fuse nfs export or
-> >>>>> open_by_handle_at doesn't work well right now.
-> >>>>>
-> >>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, whic=
-h
-> >>>>> would not return a 64-bit node ID, but a max 128 byte file handle.
-> >>>>> And then FUSE_REVALIDATE_FH on server restart.
-> >>>>> The file handles could be stored into the fuse inode and also used =
-for
-> >>>>> NFS export.
-> >>>>>
-> >>>>> I *think* Amir had a similar idea, but I don't find the link quickl=
-y.
-> >>>>> Adding Amir to CC.
-> >>>>
-> >>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling thr=
-ead:
-> >>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkA=
-P8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> >>>
-> >>> Thanks for the reference Amir! I even had been in that thread.
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTART, w=
-hich
-> >>>>> will iterate over all superblock inodes and mark them with fuse_mak=
-e_bad.
-> >>>>> Any objections against that?
-> >>
-> >> What if you actually /can/ reuse a nodeid after a restart?  Consider
-> >> fuse4fs, where the nodeid is the on-disk inode number.  After a restar=
-t,
-> >> you can reconnect the fuse_inode to the ondisk inode, assuming recover=
-y
-> >> didn't delete it, obviously.
+On Mon, Sep 15, 2025 at 10:31:14AM +0200, Jacopo Mondi wrote:
+> On Mon, Sep 08, 2025 at 09:35:34AM +0200, Laurent Pinchart wrote:
+> > On Wed, Aug 20, 2025 at 02:58:09PM +0200, Jacopo Mondi wrote:
+> > > Introduce v4l2-extensible-params.h in the Linux kernel uAPI.
 > >
-> > FUSE_LOOKUP_HANDLE is a contract.
-> > If fuse4fs can reuse nodeid after restart then by all means, it should =
-sign
-> > this contract, otherwise there is no way for client to know that the
-> > nodeids are persistent.
-> > If fuse4fs_handle :=3D nodeid, that will make implementing the lookup_h=
-andle()
-> > API trivial.
+> > I expect more ISP-related helpers, such as extensible statistics
+> > formats, and more. How about already moving this to v4l2-isp.h ?
 > >
-> >>
-> >> I suppose you could just ask for refreshed stat information and either
-> >> the server gives it to you and the fuse_inode lives; or the server
-> >> returns ENOENT and then we mark it bad.  But I'd have to see code
-> >> patches to form a real opinion.
-> >>
+> > > The header defines two types that all drivers that use the extensible
+> > > parameters format for ISP configuration shall use to build their own
+> > > format versions.
+> > >
+> > > The newly introduce type v4l2_params_block represent the
 > >
-> > You could make fuse4fs_handle :=3D <nodeid:fuse_instance_id>
-> > where fuse_instance_id can be its start time or random number.
-> > for auto invalidate, or maybe the fuse_instance_id should be
-> > a native part of FUSE protocol so that client knows to only invalidate
-> > attr cache in case of fuse_instance_id change?
+> > "The v4l2_params_block structure represents the"
 > >
-> > In any case, instead of a storm of revalidate messages after
-> > server restart, do it lazily on demand.
->
-> For a network file system, probably. For fuse4fs or other block
-> based file systems, not sure. Darrick has the example of fsck.
-> Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
-> fuse-server gets restarted, fsck'ed and some files get removed.
-> Now reading these inodes would still work - wouldn't it
-> be better to invalidate the cache before going into operation
-> again?
+> > except the structure name is v4l2_params_block_header.
+> >
+> > > header to be prepend to each ISP configuration block and the
+> > > v4l2_params_buffer type represent the base type for the configuration
+> > > parameters buffer.
+> > >
+> > > The v4l2_params_buffer represents the container for the ISP
+> > > configuration data block. The generic type is defined with a 0-sized
+> > > data block that specific ISP implementation shall properly size
+> > > according to their capabilities.
+> > >
+> > > [Add v4l2_params_buffer_size()]
+> > > Signed-off-by: Daniel Scally <dan.scally@ideasonboard.com>
+> > > Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
+> > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > ---
+> > >  MAINTAINERS                                       |   6 +
+> > >  include/uapi/linux/media/v4l2-extensible-params.h | 146 ++++++++++++++++++++++
+> > >  2 files changed, 152 insertions(+)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index fe168477caa45799dfe07de2f54de6d6a1ce0615..67216d1e92d7ac81617bb3c4329e4096aa205706 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -26380,6 +26380,12 @@ F:	drivers/media/i2c/vd55g1.c
+> > >  F:	drivers/media/i2c/vd56g3.c
+> > >  F:	drivers/media/i2c/vgxy61.c
+> > >
+> > > +V4L2 EXTENSIBLE PARAMETERS FORMAT
+> > > +M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > +L:	linux-media@vger.kernel.org
+> > > +S:	Maintained
+> > > +F:	include/uapi/linux/media/v4l2-extensible-params.h
+> > > +
+> > >  VF610 NAND DRIVER
+> > >  M:	Stefan Agner <stefan@agner.ch>
+> > >  L:	linux-mtd@lists.infradead.org
+> > > diff --git a/include/uapi/linux/media/v4l2-extensible-params.h b/include/uapi/linux/media/v4l2-extensible-params.h
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..aca643f505f2705eeca7337f0dd182bcfd1ea60d
+> > > --- /dev/null
+> > > +++ b/include/uapi/linux/media/v4l2-extensible-params.h
+> > > @@ -0,0 +1,146 @@
+> > > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR MIT) */
+> >
+> > Why the MIT license ? And why GPL-2.0+ instead of GPL-2.0 ?
+> 
+> Blindly copied from the rkisp1 header. I'll use GPL-2.0
+> 
+> > > +/*
+> > > + * Video4Linux2 extensible configuration parameters base types
+> > > + *
+> > > + * Copyright (C) 2025 Ideas On Board Oy
+> > > + * Author: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> > > + */
+> > > +
+> > > +#ifndef _UAPI_V4L2_PARAMS_H_
+> > > +#define _UAPI_V4L2_PARAMS_H_
+> > > +
+> > > +#include <linux/stddef.h>
+> > > +#include <linux/types.h>
+> > > +
+> > > +#define V4L2_PARAMS_FL_BLOCK_DISABLE	(1U << 0)
+> > > +#define V4L2_PARAMS_FL_BLOCK_ENABLE	(1U << 1)
+> > > +
+> > > +/*
+> > > + * Reserve the first 8 bits for V4L2_PARAMS_FL_* flag.
+> > > + *
+> > > + * Platform-specific flags should be defined as:
+> > > + * #define PLATFORM_SPECIFIC_FLAG0     ((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(0))
+> > > + * #define PLATFORM_SPECIFIC_FLAG1     ((1U << V4L2_PARAMS_FL_PLATFORM_FLAGS(1))
+> > > + */
+> > > +#define V4L2_PARAMS_FL_PLATFORM_FLAGS(n)       ((n) + 8)
+> >
+> > s/PLATFORM/DRIVER/
+> >
+> > > +
+> > > +/**
+> > > + * struct v4l2_params_block_header - V4L2 extensible parameters block header
+> > > + *
+> > > + * This structure represents the common part of all the ISP configuration
+> > > + * blocks. Each parameters block shall embed an instance of this structure type
+> > > + * as its first member, followed by the block-specific configuration data. The
+> > > + * driver inspects this common header to discern the block type and its size and
+> > > + * properly handle the block content by casting it to the correct block-specific
+> > > + * type.
+> >
+> > The last sentence is not relevant for the userspace API.
+> >
+> > > + *
+> > > + * The @type field is one of the values enumerated by each platform-specific ISP
+> > > + * block types which specifies how the data should be interpreted by the driver.
+> > > + * The @size field specifies the size of the parameters block and is used by the
+> > > + * driver for validation purposes.
+> >
+> >  * The @type field is an ISP driver-specific value that identifies the block type.
+> >  * The @size field specifies the size of the parameters block.
+> >
+> > but that seems to duplicate the documentation of the fields below. I'd
+> > move the field documentation up, and then only add additional paragraphs
+> > when they contain extra information.
+> >
+> > > + *
+> > > + * The @flags field is a bitmask of per-block flags V4L2_PARAMS_FL_* and
+> > > + * platform-specific flags specified by the platform-specific header.
+> >
+> > It's not platform-specific but ISP driver-specific (or you could just
+> > write driver-specific).
+> >
+> > > + *
+> > > + * Documentation of the platform-specific flags handling is specified by the
+> > > + * platform-specific block header type:
+> > > + *
+> > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_block_type`
+> > > + * - Amlogic C3: :c:type:`c3_isp_params_block_type`
+> >
+> > I wouldn't mention specific platforms here, that won't really scale.
+> >
+> > > + *
+> > > + * Userspace is responsible for correctly populating the parameters block header
+> > > + * fields (@type, @flags and @size) and the block-specific parameters.
+> >
+> > This is the kind of information I think I would expect in
+> > Documentation/userspace-api/media/v4l/extensible-parameters.rst more
+> > than here. We usually keep documentation minimal in header files for the
+> > userspace API, and document the behaviour in .rst files. This being
+> > said, if you think having more documentation in the headers is better,
+> > that could work too.
+> 
+> No worries, I wasn't sure how much documentation is the right amount
+> of documentation. I'm fine reducing it.
 
-Forgive me, I was making a wrong assumption that fuse4fs
-was using ext4 filehandle as nodeid, but of course it does not.
+Not necessarily reducing the documentation, but splitting it more
+clearly between UAPI and kernel API.
 
-The reason I made this wrong assumption is because fuse4fs *can*
-already use ext4 (64bit) file handle as nodeid, with existing FUSE protocol
-which is what my fuse passthough library [1] does.
+> > > + *
+> > > + * @type: The parameters block type (platform-specific)
+> > > + * @flags: A bitmask of block flags (platform-specific)
+> > > + * @size: Size (in bytes) of the parameters block, including this header
+> > > + */
+> > > +struct v4l2_params_block_header {
+> > > +	__u16 type;
+> > > +	__u16 flags;
+> > > +	__u32 size;
+> > > +} __attribute__((aligned(8)));
+> > > +
+> > > +/**
+> > > + * v4l2_params_buffer_size - Calculate size of v4l2_params_buffer for a platform
+> > > + *
+> > > + * Users of the v4l2 extensible parameters will have differing sized data arrays
+> > > + * depending on their specific parameter buffers. Drivers and userspace will
+> > > + * need to be able to calculate the appropriate size of the struct to
+> > > + * accommodate all ISP configuration blocks provided by the platform.
+> > > + * This macro provides a convenient tool for the calculation.
+> > > + *
+> > > + * Each driver shall provide a definition of their extensible parameters
+> > > + * implementation data buffer size. As an example:
+> > > + *
+> > > + * #define PLATFORM_BLOCKS_MAX_SIZE		\
+> > > + *	sizeof(platform_block_0)	+	\
+> > > + *	sizeof(platform_block_1)
+> > > + *
+> > > + * #define PLATFORM_BUFFER_SIZE			\
+> > > + *	v4l2_params_buffer_size(PLATFORM_BLOCKS_MAX_SIZE)
+> > > + *
+> > > + * Drivers are then responsible for allocating buffers of the proper size
+> > > + * by assigning PLATFORM_BUFFER_SIZE to the per-plane size of the videobuf2
+> > > + * .queue_setup() operation and userspace shall use PLATFORM_BUFFER_SIZE
+> > > + * when populating the ISP configuration data buffer.
+> >
+> > Most if not all of this also seems to be information for drivers, not
+> > for userspace. I doesn't belong in the UAPI documentation.
+> >
+> > > + *
+> > > + * @max_params_size: The total size of the ISP configuration blocks
+> > > + */
+> > > +#define v4l2_params_buffer_size(max_params_size) \
+> > > +	(offsetof(struct v4l2_params_buffer, data) + (max_params_size))
+> > > +
+> > > +/**
+> > > + * struct v4l2_params_buffer - V4L2 extensible parameters configuration
+> > > + *
+> > > + * This struct contains the configuration parameters of the ISP algorithms,
+> > > + * serialized by userspace into a data buffer. Each configuration parameter
+> > > + * block is represented by a block-specific structure which contains a
+> > > + * :c:type:`v4l2_params_block_header` entry as first member. Userspace populates
+> > > + * the @data buffer with configuration parameters for the blocks that it intends
+> > > + * to configure. As a consequence, the data buffer effective size changes
+> > > + * according to the number of ISP blocks that userspace intends to configure and
+> > > + * is set by userspace in the @data_size field.
+> > > + *
+> > > + * The parameters buffer is versioned by the @version field to allow modifying
+> > > + * and extending its definition. Userspace shall populate the @version field to
+> > > + * inform the driver about the version it intends to use. The driver will parse
+> > > + * and handle the @data buffer according to the data layout specific to the
+> > > + * indicated version and return an error if the desired version is not
+> > > + * supported.
+> >
+> > How does userspace know which versions are supported ?
+> 
+> Good question. There are no negotiation/discoverability uAPI at the
+> moment.
 
-My claim was that although fuse4fs could support safe restart, which
-cannot read from recycled inode number with current FUSE protocol,
-doing so with FUSE_HANDLE protocol would express a commitment
-to this behavior.
+One option is to add a read-only bitmask control to report the supported
+versions. Speaking of versions, I think they are meant to describe the
+API version (as in the layout of the standard structures), not
+driver-specific versions, so I would move the version definition to this
+header.
 
-Thanks,
-Amir.
+> > > + *
+> > > + * For each ISP block that userspace wants to configure, a block-specific
+> > > + * structure is appended to the @data buffer, one after the other without gaps
+> > > + * in between nor overlaps. Userspace shall populate the @data_size field with
+> > > + * the effective size, in bytes, of the @data buffer.
+> > > + *
+> > > + * Drivers shall take care of properly sizing of the extensible parameters
+> > > + * buffer @data array. The v4l2_params_buffer type is defined with a
+> > > + * flexible-array-member at the end, which resolves to a size of 0 bytes when
+> > > + * inspected with sizeof(struct v4l2_params_buffer). This of course is not
+> > > + * suitable for neither buffer allocation in the kernel driver nor for proper
+> > > + * handling in userspace of the @data buffer it has to populate.
+> > > + *
+> > > + * Drivers using this type in their userspace API definition are responsible
+> > > + * for providing the exact definition of the @data buffer size using the
+> > > + * v4l2_params_buffer_size() macro. The size shall be used
+> > > + * by the driver for buffers allocation and by userspace for populating the
+> > > + * @data buffer before queueing it to the driver
+> >
+> > Most of those two paragraphs are driver documentation too.
+> >
+> > > + *
+> > > + * Drivers that were already using extensible-parameters before the introduction
+> > > + * of this file define their own type-convertible implementation of this
+> > > + * type, see:
+> > > + * - Rockchip RkISP1: :c:type:`rkisp1_ext_params_cfg`
+> > > + * - Amlogic C3: :c:type:`c3_isp_params_cfg`
+> >
+> > Drop this too.
+> 
+> Ack.
+> 
+> > > + *
+> > > + * @version: The parameters buffer version (platform-specific)
+> > > + * @data_size: The configuration data effective size, excluding this header
+> > > + * @data: The configuration data
+> > > + */
+> > > +struct v4l2_params_buffer {
+> > > +	__u32 version;
+> > > +	__u32 data_size;
+> > > +	__u8 data[] __counted_by(data_size);
+> > > +};
+> > > +
+> > > +#endif /* _UAPI_V4L2_PARAMS_H_ */
 
-[1] https://github.com/amir73il/libfuse/commits/fuse_passthrough
+-- 
+Regards,
+
+Laurent Pinchart
 
