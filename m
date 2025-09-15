@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-816247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 186F6B57185
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D996B5717D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066FD18924E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22696188418F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF322D6620;
-	Mon, 15 Sep 2025 07:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A81F2D5A14;
+	Mon, 15 Sep 2025 07:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="J3gk/IUn"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="h6sEUr+M"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F71F4174;
-	Mon, 15 Sep 2025 07:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30AD2D46AF;
+	Mon, 15 Sep 2025 07:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921430; cv=none; b=u7SO5+t2xEUMURg54uz4nNAigtUwXHHdrWY/Jn2YexNZZNbKFWPNqeoc5mb0/z0mdYqTvxXSqHmUfA0YYiHq0YKlWRtpX4sf3fTxJEXtTUIDNtVYhZQLLk7JK9Xsxi42BaKyGatyyVHfo1SNWFU9LDKcMTyphnnQqiFtNzJ5Y74=
+	t=1757921376; cv=none; b=OVofeJ54TL6hZqPJcLMb6UUInVmFo4fkBSsa4LW/bB4ieijQYK+FbOvjD2jV8iSPUW23ogyZeHK3FB5/NxYpK2CcxtU0Z1I6nn1JmIGqUmwaBe+tipinjq62EhK29hrb2K0l3/I5Vslun9fkNXLng9r1C25X84p4wojdAAbKyQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921430; c=relaxed/simple;
-	bh=XcH7i1NU1nkQKzNcmQPjDrqXYBVW64HelzyptMyKuVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdDyFPnjrhg1eW8m+OYx+CeITy2BLCtXzUM2owPZiYJPVOHsxqR7HNP3nvR/+7oM4UUtqGlxjq8d9Wb5gOJh1NREyZTNYbekUPvpClYX2Fj6D19sZtgS2AxCoYQOfkEU66/Xpd2TAvlh3Njk1PqpNrf2WMQ8kzzy/qnCy50rWfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=J3gk/IUn; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=iiG+4BPtqocqvD5BfQ1WbBJoY22xYm8SxsvFP5Qb9Pk=;
-	b=J3gk/IUnjqDdVtZ1I9NEOZQysOSsqYMikjXTU/ngPgIunKH+pNW7fHmAmMpX/T
-	WyvWE5WUjMZqcIoAPbyW6U0PW9HMw6zWQF2JC203DUyiTL+VQ+X9/XMyvEPR6FxB
-	JqC2ZCqC8PXET/hu0thZQ6CnKtDpeRe75Shg6UBSQtAUc=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgC3dW9CwMdoe7d5BA--.6943S3;
-	Mon, 15 Sep 2025 15:29:07 +0800 (CST)
-Date: Mon, 15 Sep 2025 15:29:05 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
-Message-ID: <aMfAQXE4sRjru9I_@dragon>
-References: <20250910065312.176934-1-shawnguo2@yeah.net>
- <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
- <aMQbIu5QNvPoAsSF@dragon>
- <20250914174326.i7nqmrzjtjq7kpqm@airbuntu>
+	s=arc-20240116; t=1757921376; c=relaxed/simple;
+	bh=AZYff6B2X5xOnw0ElaH3FMka5USkGbkAnFbdjeSa91Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QAklTr5/+0o3Bw7Wxul2cL2f2u6RyAjFh1RTGAA+rakU5hODj2pj3/aG45pYsA3rKkgpkuMvw44RrUH31gae0WAtVN87gRFGhqliqQ2Q0CsI36F/xZ/4sPkHBeillPQBn80scp0Y9E/hoW+kQSAH0g/GSXHquXEpLDVyu2ynQig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=h6sEUr+M; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c22:d15:0:640:4031:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id 2EEA380BEF;
+	Mon, 15 Sep 2025 10:29:24 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JTJ3WYuMoqM0-O6cwJvSH;
+	Mon, 15 Sep 2025 10:29:23 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1757921363;
+	bh=VJqdXxD+DK6pXojKHstsCLjPvzxSY7UrQTBYHRfeZH4=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=h6sEUr+MaBrBzJfoNLV6+NqdVg1R+3PIwX9udRVNdNU1HMpejFCWW/hL5O27l3htb
+	 BzIWGXGT0KFloZBdgevqgcxvKasRzl/7RWJRj1dWKBJEyPE47C4N1eaG1uxUV0pdt5
+	 Jc6gR4HsyAHLAafnh2jXDkCw7IHuD8VFqBSmnxSo=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Mon, 15 Sep 2025 10:29:18 +0300
+From: Onur <work@onurozkan.dev>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu,
+ dakr@kernel.org, tamird@gmail.com, daniel@sedlak.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: less allocation in CString::try_from
+Message-ID: <20250915102918.77adc04a@nimda.home>
+In-Reply-To: <CAH5fLgi-VrhDSEjJA4Bg+5Wmr2JDAmmOc1FkfZAZ29SMqkX++w@mail.gmail.com>
+References: <20250915065401.20141-1-work@onurozkan.dev>
+	<CAH5fLgi-VrhDSEjJA4Bg+5Wmr2JDAmmOc1FkfZAZ29SMqkX++w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914174326.i7nqmrzjtjq7kpqm@airbuntu>
-X-CM-TRANSID:M88vCgC3dW9CwMdoe7d5BA--.6943S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw43JF1UAw4rXr17Xry3CFg_yoW8Cw43pF
-	WUu3y2y34kWa1Dtws2ya18u3WFvan8J3yjkFyUurnYvwsxJ3WYg3WUGa1UAFZ8A3ykG3Wq
-	qr1Ut39rXF4jkaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uz6wZUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIARNsmjHwEQhQAAA3R
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 14, 2025 at 06:43:26PM +0100, Qais Yousef wrote:
-> > > Why do you want to address the issue in the cpufreq core instead of
-> > > doing that in the cpufreq-dt driver?
-> > 
-> > My intuition was to fix the regression at where the regression was
-> > introduced by recovering the code behavior.
-> 
-> Isn't the right fix here is at the driver level still? We can only give drivers
-> what they ask for. If they ask for something wrong and result in something
-> wrong, it is still their fault, no?
+On Mon, 15 Sep 2025 09:26:00 +0200
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-I'm not sure.  The cpufreq-dt driver is following suggestion to use
-CPUFREQ_ETERNAL, which has the implication that core will figure out
-a reasonable default value for platforms where the latency is unknown.
-And that was exactly the situation before the regression.  How does it
-become the fault of cpufreq-dt driver?
+> On Mon, Sep 15, 2025 at 8:54=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.d=
+ev> wrote:
+> >
+> > Allocates buffer with the correct capacity upfront by
+> > using the length of the `CStr` to avoid extra and unnecessary
+> > re-allocation when converting from `CStr` to `CString`.
+> >
+> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> > ---
+> >  rust/kernel/str.rs | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> > index 6c892550c0ba..98d41d995e45 100644
+> > --- a/rust/kernel/str.rs
+> > +++ b/rust/kernel/str.rs
+> > @@ -946,9 +946,10 @@ impl<'a> TryFrom<&'a CStr> for CString {
+> >      type Error =3D AllocError;
+> >
+> >      fn try_from(cstr: &'a CStr) -> Result<CString, AllocError> {
+> > -        let mut buf =3D KVec::new();
+> > +        let bytes =3D cstr.to_bytes_with_nul();
+> >
+> > -        buf.extend_from_slice(cstr.to_bytes_with_nul(),
+> > GFP_KERNEL)?;
+> > +        let mut buf =3D KVec::with_capacity(bytes.len(),
+> > GFP_KERNEL)?;
+> > +        buf.extend_from_slice(bytes, GFP_KERNEL)?;
+>=20
+> I don't think this changes the number of allocations. KVec::new() does
+> not allocate.
+>=20
+> Alice
 
-> Alternatively maybe we can add special handling for CPUFREQ_ETERNAL value,
-> though I'd suggest to return 1ms (similar to the case of value being 0). Maybe
-> we can redefine CPUFREQ_ETERNAL to be 0, but not sure if this can have side
-> effects.
+Good to know, thanks!
 
-Changing CPUFREQ_ETERNAL to 0 looks so risky to me.  What about adding
-an explicit check for CPUFREQ_ETERNAL?
-
----8<---
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index fc7eace8b65b..053f3a0288bc 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -549,11 +549,15 @@ unsigned int cpufreq_policy_transition_delay_us(struct cpufreq_policy *policy)
-        if (policy->transition_delay_us)
-                return policy->transition_delay_us;
- 
-+       if (policy->cpuinfo.transition_latency == CPUFREQ_ETERNAL)
-+               goto default_delay;
-+
-        latency = policy->cpuinfo.transition_latency / NSEC_PER_USEC;
-        if (latency)
-                /* Give a 50% breathing room between updates */
-                return latency + (latency >> 1);
- 
-+default_delay:
-        return USEC_PER_MSEC;
- }
- EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
-
---->8---
-
-Shawn
-
+Onur
 
