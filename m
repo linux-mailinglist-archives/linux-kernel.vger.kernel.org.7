@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-817638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27029B584C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:39:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0104B584CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8950E4C5EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A861A27E67
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7912277814;
-	Mon, 15 Sep 2025 18:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964C280327;
+	Mon, 15 Sep 2025 18:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UCkD/Dgh"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kCgf5fI7"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3889C288C08
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8071E1A3D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757961533; cv=none; b=TXMQWicKx+YUF5tEyAJvDk23lOnlqhZYzzbPVlqQRUpNB9LhKoOD01/5PEC6BhPCRWze0xLLPv7WJE/UJ+NKcKeYOMIJRcmnvuzFwl8SJh+soYLDys1XqNpTD4dvjUmYY/I74fBnQQfw/OWpBKr46n2K5oojvVVR+1tNf7NV958=
+	t=1757961664; cv=none; b=AN+mE0tLycE1o3JpaE544osFUXeq81U21xnXObLGLdmuI9H+QIm+5jIRx+XdH7ynP96r1nbREf3eaW0TClhMO6wmfGV/RCIoaoO58u6zjzfswisGhgCBi8da5chnnFjpNicCX8ifm5ZDIG5s6V0FsGUBjPgGyoT1yPr71h9/DzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757961533; c=relaxed/simple;
-	bh=mhm9fIkIcjl7a1cbDRAMTSEGmJq9IAmll8Fnn/A32CQ=;
+	s=arc-20240116; t=1757961664; c=relaxed/simple;
+	bh=KZP+TrVDa2mVg5swamZhXIKeV5ub+2+6pTwADOsgmwk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9XRRpHuJ19YPIiw9YWyYRJtWnWoNKZZyY0hX78Vq2wF1XO4bhonPhXq1soiCehFBh2FNNY/b9LZKcRRmHWQjGtf5/tE7QGyhYkZSx8cIbSEQkiudsY843Z7hCZj7rLGmy06CQvOdEI9KMNC3lmh5JGz8KHqWAr155nEtyz9LXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UCkD/Dgh; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=N16pK3EOED/BI1NP35eD91fHWYqIBsqlu0SRVWkURQI25xLM4IbhoBVmkruVuo/jYqU5kJZPbCXMRGkXpu9qfcfrEzS0oaAsbNtguJ5pQ1ytPGtjzzOWOHyD4aaSu/TV6z82eIXVxQPB7sZJ3OKReJ/fhTO8OulFchU9NxBtts8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kCgf5fI7; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FEL7wD006312
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:38:51 GMT
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FGJQ4E005036
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:41:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7ZvFNed0T7k2vLP+CStAQL0NWTskP6Fm2LosIqYY0ko=; b=UCkD/DghafOnqoSw
-	L3cbah4SNpTv3PPIg/jLwZ+4+X6VEQNW7+6LX4azpyoaMPAkNmdJoUf+uBAW9s2J
-	UI3wrsiUlAe0TXYu3XXa97tlPrfMooiNmP9X0vtATkSaVzEt9fHgUTvOxvFtbtmx
-	WzQVISyC8EDf1yZrSRYc2H5jjbZx+1hCfi1TuKwgrXHKMxQpsXQilqRQ3rEvhE02
-	lViX/S5QlfSJjJumva0c/nYZV5shquw3qUH0WXA1WFBwID5PKW6AEi+U6hEY23Cv
-	eUHKp9rKgVR7+Tjs6lSlJ6C8Mf/tEG2K7qai8TuzKYVqTo1KipD9oANDd0HWvNNh
-	0QMZxQ==
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ljYBCGgfSqSCfxyG4JU8mZuZ
+	nMjA7d2IeNHfomCZO2E=; b=kCgf5fI7kztNRrUDyuQZ4glDS6gFDqf86UUOpoNp
+	TomWFzUUXpi5Su/qJU52IhNKGBtUfE+o2R6DQosAz8cvX0XF5v5SN9ncZzAY7yXH
+	Gj97wANRKfgJhX1E4EWSKU446A5LKmD9MG4RxVKsM5slsysV5G39VMnewcc+5q5x
+	2sxWW+KOKezJRhEJmQNBD+jqnlyXOj/PyvydaXBNw2KqpANxalZSjvCs6KmcQuEc
+	kzrRBitxXtOE0P2HsaO0A3Uev2KfWBhnTGsx5wViB7wUJvizYCV1Yr6137udEoud
+	fJrWVotLmcr1B34Qq0ZTLHmlBI6+FBuyi/03p5vAHCpw1Q==
 Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951che19p-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496g12ht9e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:38:51 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-77a517cbfa2so35062526d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:38:51 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:41:02 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-771c686372bso50651416d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:41:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757961530; x=1758566330;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZvFNed0T7k2vLP+CStAQL0NWTskP6Fm2LosIqYY0ko=;
-        b=uU07Iolx2cBrbu+ucqbevePCTwy2XW2n+y6BSD1sGae8RlDjh7GL7b4MndlIslsUaL
-         qR9Dms0incWAGSwgfgXEVmHhl21ZFz1ECTt+C1Gmxp+EUFrMOJKe4K196gGY1MFQllac
-         H4pdZdptS0eNnse/SbMyNt8kOI4dOXPZ7mQln99hP75cuMipmOWz/5y9il2tZWr0z57L
-         NB854153GA/o9ibl1ncJ0zXtMRp4iQgaJgcYxTIbTtnDypC8FPdGL/D+e42pC9sfksU6
-         JD0xuiTbt/shjxshli7VyQEFzMEzk7lvQVDf4GYyoQRx2F6HTA5UYqI8XkChzusCNh3a
-         +j7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFdfeTvutU3uR9gw+lCJ9birPKfunRHU38tuYd7JQrKOpFIUQMXKpisblrBGoW0u6J2GPc76bl3Ux22dg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPbMWBL8KYizOlEFeUgA3CmT3pHokF4jPAIGHPoEHaGCLQ5Ovw
-	sEPxdCRcRvu+UM8KxcfWK5z/s3jh8QYh3EAY5s16PImC2j5CV0u/L+jID1czexCvByy1BnObx0h
-	wHi7W5z+79tStj3iuqh+K6NeIfOoEMFOiPpPqKdAhrvLec71c6oS0aafvigpqD3eN76o=
-X-Gm-Gg: ASbGncuhaBJuM8Oviet/XxVPj8zWt48CLnutafaeIYc0JnZkgUpZilRQcd+o7ZodMc7
-	WGZ2RDSY3c/JEdLD9uBkq529UIXZQ1whDHednZpuqJAm1TBM48sfGIvt4mTWy+JtsWpfsrFnv9R
-	cwLjIkyYHZc6g5eHNTExDqrmvNWOM9N6glIv0dMzOac5jMJ4p2YL9hXMH7H93DOlgVl6S4S/XXY
-	X8DACspFoYpIDOUIqG7i+ZTNcUaNGG2jsbR81U+NC1jhKPYpfSLBOtcoZ9SpClsnLSuy/soW46M
-	ikLa1ZYOlQ4xkg8qPuSlucxEw3O8Xg0MJH3AH1iOg/mUxxfECAF4QZZqDMPZDQdMHu5tzlXR2cd
-	+j2OekP9DdFzCbrYh+VM1zw6Z17SXAlYjynOYEMDyQBjQEWh91khS
-X-Received: by 2002:a05:6214:2aae:b0:785:c012:cc71 with SMTP id 6a1803df08f44-785c012ce25mr34397446d6.22.1757961529746;
-        Mon, 15 Sep 2025 11:38:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFcYo39nIFSQwMRtH9wQGOFkG81XgQRHt/zFW69OUnDfhWL6P6ACP456SvE2c5pQ25KFKQUQ==
-X-Received: by 2002:a05:6214:2aae:b0:785:c012:cc71 with SMTP id 6a1803df08f44-785c012ce25mr34397106d6.22.1757961529254;
-        Mon, 15 Sep 2025 11:38:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757961661; x=1758566461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ljYBCGgfSqSCfxyG4JU8mZuZnMjA7d2IeNHfomCZO2E=;
+        b=YnmwUNwzaIG7SRB+wB4SXqfD2o2oOr1x27WLHqDUihmXtLZhMMuiKOrH2fz5iBR/i+
+         TB8YGW08gVuouydCU4NpRshxpVK2OLC/juImzj2VQ7QZEZBQMMEV0e7sZ5b17xpbtnV+
+         tIlF6d2rGYbfo/5KEgMk9fL82rA3duG+Sp5OpV7UWEeUYC30l1hDAo68XovK06qPpXYj
+         V0hGcSc5EMsAsrZYZ85NPuu8h4FxII70y0I+HdtXetDy8LcQiu/ecO8gKQJP7/m9FLO9
+         vZ3X1wkkF9HTuu3WUIImwMbv32tVQAoat8oKRk91PEb1/Bwr/3k0Mun9bWqzjgwqkHwO
+         Uzjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXD03iyy4NkfuMcwgfGbyJDsqoRPPvc+8KzyAZcXTJW4Xz1K+E+Lf2s9hNbM7z+BMPNfZy1IS/3EMrRKtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV+4hEcaJF8bVg8tsdRzHwlCmnNcbvom6fI6Qvygqswop7a/db
+	oV3cn5ZD4Wn+OPNHX0ul9+INrbOJG1MXFXujswYD+0aG6d22g2zsuf85NeQ81Mp4IkdRK/RWgiN
+	CVWG3H/ODAB8hD5Mfk26hS66iZtbxdDVL0LeJBcC3qZgTohY6ZK0Q2MocxX3suz6HQts=
+X-Gm-Gg: ASbGncs0fUVDhuZtor9iuKbl9A0dFkqFzI0705UYJsICq1pggbLrfnA7Fee4GfW6hk3
+	F2pInZw4WOLbT8dymmcYsXAmxgUG5zszddsqFCnPnd5YaUQgmm0JrqJG4XI2JUSmaenqajOCFiY
+	DUGKlCKKf2sBRNGUFnROTa3oTv1EaH+NMiU2EfKHhYD0v1aXL+cussi+/rVrX3b+AWrm/LNEGus
+	B2kxo1zB3m+udThOzDCD8/JU4+pcCQdhLN8o+9f/dmIBh+9OCk1GEiGfUnatgl7bqp8j4Esb+IX
+	0BOc0MZ719nWknUIB/AoFLG/aPttSb+HTCCl7I66xObocdfwiDHTMUrcAScJlVcBCvdbqnBvlmh
+	M40UY1+3C4gL9jGA789+v+nKALgjV9U+7Ll5fS1KfoKr42+frr13H
+X-Received: by 2002:a05:6214:1d09:b0:782:9454:ac7e with SMTP id 6a1803df08f44-7829454aefemr59893106d6.59.1757961660731;
+        Mon, 15 Sep 2025 11:41:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJ4P3hm3uzEP1hH4FxW3UdAgtApBC+WtCcYWvJh9nalHV5TC8f6T/4n1Oj9rePwfPz2OQYIQ==
+X-Received: by 2002:a05:6214:1d09:b0:782:9454:ac7e with SMTP id 6a1803df08f44-7829454aefemr59892716d6.59.1757961660101;
+        Mon, 15 Sep 2025 11:41:00 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1b39db54sm28662261fa.55.2025.09.15.11.38.45
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1be24e79sm29178661fa.59.2025.09.15.11.40.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 11:38:47 -0700 (PDT)
-Date: Mon, 15 Sep 2025 21:38:44 +0300
+        Mon, 15 Sep 2025 11:40:59 -0700 (PDT)
+Date: Mon, 15 Sep 2025 21:40:57 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
         Andrzej Hajda <andrzej.hajda@intel.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
@@ -97,174 +96,125 @@ Cc: Thomas Zimmermann <tzimmermann@suse.de>,
         Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
-Message-ID: <2ry3txigq3jyivtyz7i4c76g74vdgvlozsjkeswxalhu2vs5yx@jqswyjle632h>
+Message-ID: <zvqtehg66dbrrdmik6ylo2kdk74umfzo5hbfkizwsb352nlyqv@jgouvmbfwa4x>
 References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
  <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
- <03240fae-544f-4753-96c5-a116b4b5a318@suse.de>
- <20250915-active-placid-bustard-6e1faa@penduick>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915-active-placid-bustard-6e1faa@penduick>
-X-Authority-Analysis: v=2.4 cv=eeo9f6EH c=1 sm=1 tr=0 ts=68c85d3b cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=yJojWOMRYYMA:10 a=Cyg6RtkmpQHzVPyx2I8A:9 a=3ZKOabzyN94A:10
- a=wPNLvfGTeEIA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-ORIG-GUID: FT3BGS-pWtJKaj6kTcaYB3trgkf6bexu
-X-Proofpoint-GUID: FT3BGS-pWtJKaj6kTcaYB3trgkf6bexu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzNiBTYWx0ZWRfX1RCRekgB5iwg
- y17jYsG/wHzBXymvDp4ADnQadV7xeySdSTcYCYJPgLiKnC1moqpf7gXXaGUk1cPtlCR26AzbdUq
- 0GjTLDpM18mzWRiEgvc7POm5mH0fMXvAojWbOxd+wgftIn4QI/9P8+H0cCJGYDffM/aVdW6QK3M
- xDNDHEmNrTGG68ZWSpyMzzSts8/QS8ZE7cRiSwjke/aQhyycRwf3iP5qVBpQjpLXQDGT2wPDG6B
- x1og+z1IKennSwFKRwdFMb6YiDXWcU9zgIWM4MDlYXdosTg6Wd9oqeK7Hlq7YhAAKspxMkxAqrl
- fIVDs+Ez1MlcVx2cVRoJjG7p4Eu3BusWtB4PQjfyaLAFPTrC/7oPm8MqEzHLv36Jj07ZrCzKEIU
- bH9XRdCM
+In-Reply-To: <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
+X-Proofpoint-ORIG-GUID: f3lggWjReObu4UFaeNczotDv7UcWjnl4
+X-Proofpoint-GUID: f3lggWjReObu4UFaeNczotDv7UcWjnl4
+X-Authority-Analysis: v=2.4 cv=E5PNpbdl c=1 sm=1 tr=0 ts=68c85dbe cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=je0mVrs27Alq3b4RgjgA:9
+ a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX8OaXOHPFH4Lk
+ mUReDl+NfBQMyIxiigQyfJw2VJdBEmE4kdGVXgMTCkUJESd1t+FMjpgtJJw8HJrOKslp5N8zUOl
+ oxqzl3xue9hznSGdKPQ6LA0aBNV3idX87g8++orWoJafwOoSGJ9S78Jwo4M1AfY62BXVOFpCEM7
+ mgUlSgRzC2bngFMCEGWEcmZYcjqdX6MS4LKuyABEE+16NivjVJzZLboTrFkSRzt0Ce42NUbkYLr
+ om/dkNW7wNMG3BRVK/qd8cwtf6EbiW6LKW+AHOKhvuIlAlTdwPmsh5UulNa1DyDcL30up1TVVQj
+ oHVLw9Me+tQJiijLzlFBYkAQMJk0T4fImOFrLw8xi9wxN4C1oaQTjH19CSki+PUtmTH24u9fViI
+ 8AncMtsD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-15_07,2025-09-12_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
+ spamscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130036
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-On Mon, Sep 15, 2025 at 10:42:22AM +0200, Maxime Ripard wrote:
-> Hi Tohmas,
+On Tue, Sep 02, 2025 at 10:32:38AM +0200, Maxime Ripard wrote:
+> In order to enable drivers to fill their initial state from the hardware
+> state, we need to provide an alternative atomic_reset helper.
 > 
-> On Tue, Sep 02, 2025 at 03:44:54PM +0200, Thomas Zimmermann wrote:
-> > > +/**
-> > > + * drm_atomic_build_readout_state - Creates an initial state from the hardware
-> > > + * @dev: DRM device to build the state for
-> > > + *
-> > > + * This function allocates a &struct drm_atomic_state, calls the
-> > > + * atomic_readout_state callbacks, and fills the global state old states
-> > > + * by what the callbacks returned.
-> > > + *
-> > > + * Returns:
-> > > + *
-> > > + * A partially initialized &struct drm_atomic_state on success, an error
-> > > + * pointer otherwise.
-> > > + */
-> > > +static struct drm_atomic_state *
-> > > +drm_atomic_build_readout_state(struct drm_device *dev)
-> > > +{
-> > > +	struct drm_connector_list_iter conn_iter;
-> > > +	struct drm_atomic_state *state;
-> > > +	struct drm_mode_config *config =
-> > > +		&dev->mode_config;
-> > > +	struct drm_connector *connector;
-> > > +	struct drm_printer p =
-> > > +		drm_info_printer(dev->dev);
-> > > +	struct drm_encoder *encoder;
-> > > +	struct drm_plane *plane;
-> > > +	struct drm_crtc *crtc;
-> > > +	int ret;
-> > > +
-> > > +	drm_dbg_kms(dev, "Starting to build atomic state from hardware state.\n");
-> > > +
-> > > +	state = drm_atomic_state_alloc(dev);
-> > > +	if (WARN_ON(!state))
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +
-> > > +	state->connectors = kcalloc(config->num_connector, sizeof(*state->connectors), GFP_KERNEL);
-> > > +	if (WARN_ON(!state->connectors)) {
-> > > +		ret = -ENOMEM;
-> > > +		goto err_state_put;
-> > > +	}
-> > > +
-> > > +	state->private_objs = kcalloc(count_private_obj(dev), sizeof(*state->private_objs), GFP_KERNEL);
-> > > +	if (WARN_ON(!state->private_objs)) {
-> > > +		ret = -ENOMEM;
-> > > +		goto err_state_put;
-> > > +	}
-> > > +
-> > > +	drm_for_each_crtc(crtc, dev) {
-> > > +		const struct drm_crtc_funcs *crtc_funcs =
-> > > +			crtc->funcs;
-> > > +		struct drm_crtc_state *crtc_state;
-> > > +
-> > > +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->name);
-> > > +
-> > > +		if (crtc_funcs->atomic_readout_state) {
-> > > +			crtc_state = crtc_funcs->atomic_readout_state(crtc);
-> > > +		} else if (crtc_funcs->reset) {
-> > > +			crtc_funcs->reset(crtc);
-> > > +
-> > > +			/*
-> > > +			 * We don't want to set crtc->state field yet. Let's save and clear it up.
-> > > +			 */
-> > > +			crtc_state = crtc->state;
-> > > +			crtc->state = NULL;
-> > 
-> > Chancing the crtc->state pointer behind the back of the reset callback seems
-> > fragile. We never how if some other piece of the driver refers to it
-> > (although illegally).
+> This helper relies on each state having its own atomic_state_readout()
+> hooks. Each component will thus be able to fill the initial state based
+> on what they can figure out from the hardware.
 > 
-> I agree that it's clunky. I'm not sure who would use it at this point
-> though: we're in the middle of the drm_mode_config_reset(), so the
-> drivers' involvement is pretty minimal.
+> It also allocates a dummy drm_atomic_state to glue the whole thing
+> together so atomic_state_readout implementations can still figure out
+> the state of other related entities.
 > 
-> I did wonder if changing reset to return the object instead of setting
-> $OBJECT->state would be a better interface?
+> Link: https://lore.kernel.org/dri-devel/CAKMK7uHtqHy_oz4W7F+hmp9iqp7W5Ra8CxPvJ=9BwmvfU-O0gg@mail.gmail.com/
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c | 382 ++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/drm_mode_config.c   |   1 +
+>  include/drm/drm_atomic_helper.h     |   1 +
+>  include/drm/drm_bridge.h            |  21 ++
+>  include/drm/drm_connector.h         |  26 +++
+>  include/drm/drm_crtc.h              |  19 ++
+>  include/drm/drm_plane.h             |  27 +++
+>  7 files changed, 477 insertions(+)
 > 
-> > For now, wouldn't it be better to require a read-out helper for all elements
-> > of the driver's mode-setting pipeline?  The trivial implementation would
-> > copy the existing reset function and keep crtc->state to NULL.
-> 
-> I also considered that, but I'm not sure we can expect bridges to have
-> readout hooks filled for every configuration in the wild.
-> 
-> But maybe we can look during drm_mode_config_reset() at whether all the
-> objects have their hook filled, and if not fall back on reset for
-> everything.
-> 
-> It would make the implementation easier, but missing bridges
-> implementations would trigger a mode change when it might actually work
-> just fine since bridge state is pretty minimal.
+> +	drm_for_each_encoder(encoder, dev) {
+> +		struct drm_connector_state *enc_conn_state;
+> +		struct drm_crtc_state *enc_crtc_state;
+> +		struct drm_bridge *bridge;
+> +
+> +		/*
+> +		 * It works a bit differently for bridges. Because they are
+> +		 * using a drm_private_state, and because
+> +		 * drm_atomic_private_obj_init() asks for its initial state when
+> +		 * initializing, instead of doing it later on through a reset
+> +		 * call like the other entities, we can't have reset xor
+> +		 * readout.
 
-DP bridge drivers have a pretty big state (DPCD and all the features).
-Other bridge drivers randomly leak state to the non-state structs.
+Would it make sense to unify the way the bridges / priv_obj handle the
+state with the rest of the object types?
 
-> 
-> Idk.
-> 
-> > > --- a/include/drm/drm_bridge.h
-> > > +++ b/include/drm/drm_bridge.h
-> > > @@ -490,10 +490,31 @@ struct drm_bridge_funcs {
-> > >   	 * The @atomic_post_disable callback is optional.
-> > >   	 */
-> > >   	void (*atomic_post_disable)(struct drm_bridge *bridge,
-> > >   				    struct drm_atomic_state *state);
-> > > +	/**
-> > > +	 * @atomic_readout_state:
-> > > +	 *
-> > > +	 * Initializes,this bridge atomic state.
-> > > +	 *
-> > > +	 * It's meant to be used by drivers that wants to implement fast
-> > 
-> > 'want'
-> > 
-> > > +	 * / flicker-free boot and allows to initialize the atomic state
-> > 
-> > I think we should only call it flicker-free boot. Fast boot is misleading.
-> 
-> I agree, but it's also how it's been called by the only implementation
-> of it we have so far (i915), and the name of the module parameter that
-> controls it.
-
-I hope to be able to try implementing this for drm/msm (at least it will
-allow us to check how does that play with bridges).
-
-> 
-> Maxime
-
-
+> +		 *
+> +		 * We'll need a mandatory reset to create that initial, blank,
+> +		 * state, and then readout will fill that state later on if the
+> +		 * driver implements it.
+> +		 *
+> +		 * This also means we don't need to call the readout state
+> +		 * function if we don't have the bridge enabled (ie, if no
+> +		 * drm_connector_state->best_encoder points to bridge->encoder,
+> +		 * and / or if drm_connector_state->crtc is NULL).
+> +		 *
+> +		 * In such a case, we would get the blank state reset created
+> +		 * during registration.
+> +		 */
+> +
+> +		enc_conn_state = find_connector_state_for_encoder(state, encoder);
+> +		if (!enc_conn_state)
+> +			continue;
+> +
+> +		enc_crtc_state = drm_atomic_get_old_crtc_state(state, enc_conn_state->crtc);
+> +		if (!enc_crtc_state)
+> +			continue;
+> +
+> +		list_for_each_entry(bridge, &encoder->bridge_chain, chain_node) {
+> +			const struct drm_bridge_funcs *bridge_funcs = bridge->funcs;
+> +			struct drm_bridge_state *bridge_state;
+> +
+> +			bridge_state = drm_bridge_get_current_state(bridge);
+> +			if (WARN_ON(!bridge_state)) {
+> +				ret = -EINVAL;
+> +				goto err_state_put;
+> +			}
+> +
+> +			if (bridge_funcs->atomic_readout_state) {
+> +				ret = bridge_funcs->atomic_readout_state(bridge,
+> +									 bridge_state,
+> +									 enc_crtc_state,
+> +									 enc_conn_state);
+> +				if (WARN_ON(ret))
+> +					goto err_state_put;
+> +			}
+> +
+> +			drm_atomic_set_old_bridge_state(state, bridge, bridge_state);
+> +		}
+> +	}
+> +
 
 -- 
 With best wishes
