@@ -1,263 +1,107 @@
-Return-Path: <linux-kernel+bounces-817336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D612EB580E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:38:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1440B580F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849F717C91A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80B51AA74CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E99350D7B;
-	Mon, 15 Sep 2025 15:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9870217648;
+	Mon, 15 Sep 2025 15:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiiiSV9i"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+CjGK2Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2D7350D53
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329CB21FF44;
+	Mon, 15 Sep 2025 15:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757950197; cv=none; b=DDpbfIVo0Z8IkjcK35FeyxBk5dfa2D5jXqenSiJ0OBtmXLZwHZRheEq+5zu/5RtqGeUmSbHKsd42H0NEHgVNM5kP2bA/OLU0lYE2o1WVraEL0JAhQf7cDhk5zT1iYwPdS9KeDLFe1zvZqoWUscEgiNu1/uLaeGKsSIw8EUjZoBg=
+	t=1757950212; cv=none; b=fcI+mmAGToZLTkqROhIweIRT7Mzlyz/6/4LWig1fRXW9EOqrxTNrntB0lNR8U3bY5fl8EXD7lWzn7E9I8LSPy3t8M4i6fvl+y4Qjj6nppB4G0r5ffHUfSdSvJawN0/kCvm2tGKsWysINomT7TSa/bBqavB+hqXicpyih4ajSKEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757950197; c=relaxed/simple;
-	bh=YuGKbbBQeAOFe11AzIFAEXN5dtq282XmgJD2V7U1TQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=My4wpuFQMEFEYA5+/ukUvM+Glsuq+MjLFnXaFFKj5wjcNAPVDohShwPTqJUUz7KSrw7LIu1+ST+KA+Iq46O80Jwz5s96APYdyKhtYvhhkd9qyaYz/O3N8itaCczLI8EifMFMdx/IHOLlzsWKS3iP7u3meEooovWTeYtN/0OyWNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiiiSV9i; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62f1987d446so2826598a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:29:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757950194; x=1758554994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VsbTlX6nanbvH5f2tDWnICsM+5DdN8K//SzupK675NI=;
-        b=LiiiSV9iNYOldSHCmj+ZdpbqL0pqxO0wJmt7qJK6DtNQP3ZOQNla5jKDRrHzSd3WQp
-         /gFNLeErWnH0DqOnHQBPYB+nC6p5nLhtdnGcuESp119xkelii3at9EeUpXgcnon8TIOe
-         xZShgxzHIq81cfjgjkXMXbskQ4Z/qtpDtAonPqu2Fwa7Ri1dVzW1PJi/t2cQ1CYG/G+P
-         aiv1bKC+k4JvsV/igkVvZqzMsODg1dXhwVK4SxrTNVaqGjKxQa02fz55aKZazv4WecxQ
-         cdOKK6O6SC2M9Q/87GrvrB0/exszf15tsukNwsoU/0a23+GRsdV7coMDi3IK8ET+eR/i
-         SJ2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757950194; x=1758554994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VsbTlX6nanbvH5f2tDWnICsM+5DdN8K//SzupK675NI=;
-        b=FZMWyZydUu78/7cWSE7lrejqsmiye85ORS4M9iqQXTy1zM/s/1MlYtfkgqUMTfqP5I
-         K/ULCBB6t8cwGAPKhmxViJgwssR+YCCtGXm/0em33UoJ83rdFMd2TObqNvL1tBH46j5L
-         hJiDMN/MS4gCu4+cAw0nT9okr8dZJfQmX/iOKfM9pAhrxnww6eG9p2Anm8PA/zX3KMbM
-         jwEoCtBSrThvMxjVEsgC64JmH4z8NfVYxt2gAn651qKeu1pUI2pKh8p+MBoY4AqSx1P5
-         yUaElN4BpgeYviHJNEz2aHHQY8p5fxZHkUC7cjv63E2/A5jXpA0zE7sy5J/apjMLDkrt
-         hvjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmKeSF2Nj/7SjCg4exL2g4DZa+tR3uHjkXCCNopOOhPaDDccVFlE4H16K+mrkLLQnLN+Nqco+w5aZVHvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypXwFDFncJ15nAxNEH07UhlZFOF7IIYqM7gMVUIqxkNZP2C0hu
-	Dc4JZyrulgNnSjQs8vGH4scph8t6Np6Cjy9HJ3roneqYxtLHEP5Hr8qciaVeYsxWilMLWFr29gA
-	RRLceeuh9bAu7ypnqD6h0metwTutJ2Y8=
-X-Gm-Gg: ASbGncuXgOxnP8HZNNihjegqxzPa25LuqsuBjdskjCZwSp7Guit03Eb/yD1JTwFzoNP
-	4TlZJROZ5P2fB+WWGx71YYr3NuTatjhpFSqWsSy4L+9bDJfdXY4eKnwaovCXgQYR8ES9UViBUCp
-	+eQzV9pOin+TLZyXsjEGL8rNUq3IdbHN2e/yTNfXXtEXnEs8MggMuvscLz4GeLLg4QU+FwvgCWy
-	MUWnkB6ZpqeqTKr4Aqffq+nL71WLAJTG4OK4UFBBw==
-X-Google-Smtp-Source: AGHT+IHwo9Dbn1IBq1pRK2KYpbDo+aDAWPKHa2DN5fGM+stACl5ZbknSqG9QI2B/kqiprzOfMMxWr8rwlPxWBS5iOiY=
-X-Received: by 2002:a05:6402:2744:b0:62f:41d3:ece7 with SMTP id
- 4fb4d7f45d1cf-62f41d3eee5mr3475949a12.14.1757950193792; Mon, 15 Sep 2025
- 08:29:53 -0700 (PDT)
+	s=arc-20240116; t=1757950212; c=relaxed/simple;
+	bh=8gErwK9vl376zHParQc/U8TQQZ0l10guNX3poZqd8X0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=M3/8kjk1qPOdVd9vK/7sM1YZlu5KxW5nxzNtAsl38REZvWGgMHTaR5G6dnJ+Y0sxlukmc5ow33jy4i9mw2JU2Bs3zAedIGY4YHcCXQVzJoGC8zgobjhkTXcqOHo+PNOdVYtXYEkuwfhHWtxeDmK2gvW7oUTS2lh+mu43ZRuTtqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+CjGK2Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B87C4C4CEF1;
+	Mon, 15 Sep 2025 15:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757950211;
+	bh=8gErwK9vl376zHParQc/U8TQQZ0l10guNX3poZqd8X0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=l+CjGK2QimLHetqwHtfS3lquxFuLIAEohtmDOP9/470G9Z9iFcKMf7rJMV1aY4fM+
+	 sb86GhqmdD3pvoy5pZ6F2eKc9+oGcHttzgBbOkUwNqfTK58e80KKNoPHecFfNHiS43
+	 9l6s/zGEDQqW7U7dRajW6jL9WBLj01fez0RNOhvlveZC203JPms0a7+KnSevL/FtKm
+	 x5QNQOXmc00Vty4YWhB+oNqRH8NcsGv4B3lYqGh6d0qzPBi3ocvFXA7AgYsZgI+w3j
+	 wCPOhPrfU9B9cLKAiv0YmeCMTolm8jsMjWNaXQFi6FFVm3XwPDJm2IBXmmmvj6SfpM
+	 2cxVv8cSgNcuA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C4F39D0C18;
+	Mon, 15 Sep 2025 15:30:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915101510.7994-1-acsjakub@amazon.de> <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
- <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
-In-Reply-To: <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 15 Sep 2025 17:29:40 +0200
-X-Gm-Features: AS18NWDzs8ZYHHKEHo80wJYN_pBq_JfjRVuZAjz8emwmk1hcFxQPA6Q11EU_jCw
-Message-ID: <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
-Subject: Re: [PATCH] ovl: check before dereferencing s_root field
-To: Jan Kara <jack@suse.cz>, Jakub Acs <acsjakub@amazon.de>
-Cc: linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v6 0/5] dpll: zl3073x: Add support for devlink
+ flash
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175795021328.29952.16558907395592843610.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Sep 2025 15:30:13 +0000
+References: <20250909091532.11790-1-ivecera@redhat.com>
+In-Reply-To: <20250909091532.11790-1-ivecera@redhat.com>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: netdev@vger.kernel.org, jiri@resnulli.us, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ corbet@lwn.net, Prathosh.Satish@microchip.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com,
+ przemyslaw.kitszel@intel.com
 
-On Mon, Sep 15, 2025 at 4:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 15-09-25 15:01:13, Amir Goldstein wrote:
-> > On Mon, Sep 15, 2025 at 12:15=E2=80=AFPM Jakub Acs <acsjakub@amazon.de>=
- wrote:
-> > >
-> > > Calling intotify_show_fdinfo() on fd watching an overlayfs inode, whi=
-le
-> > > the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
-> > >
-> > > This issue was found by syzkaller.
-> > >
-> > > Race Condition Diagram:
-> > >
-> > > Thread 1                           Thread 2
-> > > --------                           --------
-> > >
-> > > generic_shutdown_super()
-> > >  shrink_dcache_for_umount
-> > >   sb->s_root =3D NULL
-> > >
-> > >                     |
-> > >                     |             vfs_read()
-> > >                     |              inotify_fdinfo()
-> > >                     |               * inode get from mark *
-> > >                     |               show_mark_fhandle(m, inode)
-> > >                     |                exportfs_encode_fid(inode, ..)
-> > >                     |                 ovl_encode_fh(inode, ..)
-> > >                     |                  ovl_check_encode_origin(inode)
-> > >                     |                   * deref i_sb->s_root *
-> > >                     |
-> > >                     |
-> > >                     v
-> > >  fsnotify_sb_delete(sb)
-> > >
-> > > Which then leads to:
-> > >
-> > > [   32.133461] Oops: general protection fault, probably for non-canon=
-ical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-> > > [   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0=
-000000000000037]
-> > > [   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tain=
-ted 6.17.0-rc6 #22 PREEMPT(none)
-> > >
-> > > <snip registers, unreliable trace>
-> > >
-> > > [   32.143353] Call Trace:
-> > > [   32.143732]  ovl_encode_fh+0xd5/0x170
-> > > [   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
-> > > [   32.144425]  show_mark_fhandle+0xbe/0x1f0
-> > > [   32.145805]  inotify_fdinfo+0x226/0x2d0
-> > > [   32.146442]  inotify_show_fdinfo+0x1c5/0x350
-> > > [   32.147168]  seq_show+0x530/0x6f0
-> > > [   32.147449]  seq_read_iter+0x503/0x12a0
-> > > [   32.148419]  seq_read+0x31f/0x410
-> > > [   32.150714]  vfs_read+0x1f0/0x9e0
-> > > [   32.152297]  ksys_read+0x125/0x240
-> > >
-> > > IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was =
-set
-> > > to NULL in the unmount path.
-> > >
-> > > Minimize the window of opportunity by adding explicit check.
-> > >
-> > > Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no al=
-ias")
-> > > Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-> > > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > Cc: linux-unionfs@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org
-> > > Cc: stable@vger.kernel.org
-> > > ---
-> > >
-> > > I'm happy to take suggestions for a better fix - I looked at taking
-> > > s_umount for reading, but it wasn't clear to me for how long would th=
-e
-> > > fdinfo path need to hold it. Hence the most primitive suggestion in t=
-his
-> > > v1.
-> > >
-> > > I'm also not sure if ENOENT or EBUSY is better?.. or even something e=
-lse?
-> > >
-> > >  fs/overlayfs/export.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> > > index 83f80fdb1567..424c73188e06 100644
-> > > --- a/fs/overlayfs/export.c
-> > > +++ b/fs/overlayfs/export.c
-> > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct inode *=
-inode)
-> > >         if (!ovl_inode_lower(inode))
-> > >                 return 0;
-> > >
-> > > +       if (!inode->i_sb->s_root)
-> > > +               return -ENOENT;
-> >
-> > For a filesystem method to have to check that its own root is still ali=
-ve sounds
-> > like the wrong way to me.
-> > That's one of the things that should be taken for granted by fs code.
-> >
-> > I don't think this is an overlayfs specific issue, because other fs wou=
-ld be
-> > happy if encode_fh() would be called with NULL sb->s_root.
->
-> Actually, I don't see where that would blow up? Generally references to
-> sb->s_root in filesystems outside of mount / remount code are pretty rare=
-.
-> Also most of the code should be unreachable by the time we set sb->s_root
-> to NULL because there are no open files at that moment, no exports etc. B=
-ut
-> as this report shows, there are occasional surprises (I remember similar
-> issue with ext4 sysfs files handlers using s_root without checking couple
-> years back).
->
+Hello:
 
-I am not sure that I understand what you are arguing for.
-I did a very naive grep s_root fs/*/export.c and quickly found:
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
-                          struct inode *parent)
-{
-...
-        if (!parent || inode =3D=3D d_inode(sb->s_root))
-                return *len;
+On Tue,  9 Sep 2025 11:15:27 +0200 you wrote:
+> Add functionality for accessing device hardware registers, loading
+> firmware bundles, and accessing the device's internal flash memory,
+> and use it to implement the devlink flash functionality.
+> 
+> Patch breakdown:
+> Patch1: helpers to access hardware registers
+> Patch2: low level functions to access flash memory
+> Patch3: support to load firmware bundles
+> Patch4: refactoring device initialization and helper functions
+>         for stopping and resuming device normal operation
+> Patch5: devlink .flash_update callback implementation
+> 
+> [...]
 
-So it's not an overlayfs specific issue, just so happens that zysbot
-likes to test overlayfs.
+Here is the summary with links:
+  - [net-next,v6,1/5] dpll: zl3073x: Add functions to access hardware registers
+    https://git.kernel.org/netdev/net-next/c/259ede9da4ec
+  - [net-next,v6,2/5] dpll: zl3073x: Add low-level flash functions
+    https://git.kernel.org/netdev/net-next/c/3639bd087679
+  - [net-next,v6,3/5] dpll: zl3073x: Add firmware loading functionality
+    https://git.kernel.org/netdev/net-next/c/ca017409da69
+  - [net-next,v6,4/5] dpll: zl3073x: Refactor DPLL initialization
+    https://git.kernel.org/netdev/net-next/c/ebb1031c5137
+  - [net-next,v6,5/5] dpll: zl3073x: Implement devlink flash callback
+    https://git.kernel.org/netdev/net-next/c/a1e891fe4ae8
 
-Are you suggesting that we fix all of those one by one?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> > Jan,
-> >
-> > Can we change the order of generic_shutdown_super() so that
-> > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
-> >
-> > Or is there a better solution for this race?
->
-> Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
-> In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
-> evict_inodes")) we've moved the call after evict_inodes() because otherwi=
-se
-> we were just wasting cycles scanning many inodes without watches. So movi=
-ng
-> it earlier wouldn't be great...
 
-Yes, I noticed that and I figured there were subtleties.
-
-In any case, Jakub, your patch is insufficient because:
-1. Checking sb->sb_root without a lock and without READ_ONCE()
-    and a matching WRITE_ONCE() is not safe
-2. sb_root can become NULL after the check since you are not holding
-    the s_umount lock
-
-Jakub,
-
-Instead of an unsafe check inside ovl_encode_fh(), I think it is better to =
-use
-super_trylock_shared() inside show_mark_fhandle() before calling
-exportfs_encode_fid()?
-
-Feels like the corner case is show_mark_fhandle() and there is no strong
-incentive to make this code very efficient.
-
-Jan, WDYT?
-
-Thanks,
-Amir.
 
