@@ -1,187 +1,76 @@
-Return-Path: <linux-kernel+bounces-817495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A9AB582D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:09:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86062B582ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9E201A22DB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B1F3B2629
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45CF28B7DA;
-	Mon, 15 Sep 2025 17:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOZnr5NZ"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C582C28505C;
+	Mon, 15 Sep 2025 17:09:19 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502FB28AB0B
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC46129B205
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757956113; cv=none; b=tvGpGNZ7ePEfXtQ1wDG/lOV+rN56xgUDr14puMlPTYq0WdL1ApNSFe4UdLwttoxxjj8zHRY1K+5kd/TmhYinZpgB2lkHOAs78bSRwXErkPTBj/vqFKIXpQwECvq2FlXFvuyb3RpFajE5JLNX3cJIvnLjRgxN/7261pQjZOVpO1I=
+	t=1757956159; cv=none; b=XUuVwJWzG6xOGgim2OhPDJTrH4xARNKt3txd066mJay93nYzmbz0LFbuUD6NJuPgJZ9yEBvyGjeCT6jD4LeNr3Oknt4ZwpwrI6d7lbyvfqegqxOpIr6tNFodVY7pubuwLqIC3tRSszUlWqkBBql5fwGSEzBoI+nf6RwuGHERfVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757956113; c=relaxed/simple;
-	bh=rA4oK+tFvW8saRL9hHBWOdi/CnB5VOu9oSDReal5vCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HVlXvH4/X1OfQQdMbuk3edm7VM/7NUj2NsOySuPqvaE+/bMXKwtCXIVbCDf1d/PDv+tCrMhZWUGFn5tQqN848G0Z9G9BMHLYbmvmnC9eCqDYk6/bUV0yb51LwTjBTYR5/B4JpYf9/fnvUNY2fZo9evmJCd3xopWzNOWHaCeqa64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOZnr5NZ; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ebe8dc13a3so472080f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757956110; x=1758560910; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iTwPZWRgNpDnHLSxSyIw8mfUUJjFauT8ZlfWIgp35xc=;
-        b=MOZnr5NZlIxwnaNr/KbfScNKHPoF1Opi7eap+hhPKSKLBW3GMWL0I5nM9Bq7ptQaIj
-         B3sni41yzCZs9LJTmm5+Ojfo+UQHT5JK7uBNL1wVYRLsgI6q64vIav7CvyRxGhwkUiTA
-         YV8O9TI6KjuvTAGcj19p3Ua3JKVKe/dz4AiKUeIXtRc8Hq+yIAzbKufuU1pZV5Oyxw3o
-         dbs0w6j9rFV2duREM0vglTQYzhGV+0PryTbDCpW6vO9UAxzlifdkv7m91QbcRYSGIzxO
-         vJxFLxKw3wTLym9jBp2BgwkAs73Eu1rA19i9DJsLKgC1xA4zIYvDQH9lS1ghCiw3FIqL
-         8ovQ==
+	s=arc-20240116; t=1757956159; c=relaxed/simple;
+	bh=fHqiXY9F30VvMHnjpTF1syx8dF7v4pfl9pdm2FAfsNM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=c4jqI0L3gafWl/V3liW68dbX+25JC6+wzjGZYT0Ww0m0AWbHDwWb/2sOFBg1LUsdOj4pkK2uqKygphsTkxHjBBFVRDk1djazKI+1K3a6qHW2cJwsggBkHI6jpM6sln1Y8PKHB0++PR1YJ7TwaiflJmiZjLBsQKeRYbSvTgFS6AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4155725a305so60275095ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:09:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757956110; x=1758560910;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iTwPZWRgNpDnHLSxSyIw8mfUUJjFauT8ZlfWIgp35xc=;
-        b=MTlaAZNqyDMZ6N28W8EfIHrFCUnUpzgUA3VRvtzgT4Df9WHYnmyqxuqs53tdNpq9Qz
-         3EELakMZv6LsfYuSxohCLnYeiBPo1Xjp01utTcr2uWa18IhwIDRY/+lgW5wPRPOSkd8S
-         axUkTrR/zhm8fjEvftQg+9yuvxd86lKQa1CT5OFbHx8/2xQOxF3F2VSC7hI7kvlvo8gX
-         3Ei6xga84GV07Zw6tgnCt764jY3+wA6E5WkcCnyYsx4MkulLCdR+Xn/BRgO5eOQhKajX
-         P9yn2exh/jbiupU0HNdSRe6dwQDVOeDjJc/8sWj+iBZX/w3P4txzjCFbTWGnGkROZ9M1
-         vl1g==
-X-Forwarded-Encrypted: i=1; AJvYcCW6xKP3rE1KPJU8eAK/tBx3a+V4+D1TlLWG8UQ43RMN2gyT9vXe6MYvT3DCAvDmgJLkrdFABiICa6bG4uM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNQmuf3eCrBfKcE7NuZsmNg1awyVxsAtlnr026bApLPtcR1a3w
-	g3KlI0asCq3w/tyzrBLNLXGlOLQpvGpYWqaB9wmJZgGkf15CRLWcsxc0
-X-Gm-Gg: ASbGnct3xXGMpAt5ox2PLisaOVcu+r4MMSmw7aGcuV6e+VbWztb0HKdCdvWd9l5CdO7
-	0U9KRkZEu7N0aIBCY/sDxwB8bQPFVs6JJP+9d0DOhalKC7n9cezMXtNuLkaK5qO8qvDY0zRTj9m
-	5uMW4HSPPsH9PPu1rnTXLviC+uDVBLFLEhM2hYb0fao+vkuOlnbW35WylgFmeAoyf3i54ONn1Ca
-	4THV6VO0aN6f5lM7uG6W/MjpJIerOZlMQpPXdJQQr+MdkFeK168L6/cbdFgSAC0dnxGZLajy6yC
-	kC2UjPBChT86uqNmsG9qu9thSezhTg1WHS6uDtGFOU6TcMHc1GXElnoM/p9e4k7EFTgNVrUp/x7
-	Aq+dqangIw1FI5qdGe2F41qQmJWrFTP5RVUS/3gwhB/qcR6/YP23OZxthaQMU5jIKxkmKgEB99r
-	XkRbwS6zrpwnujZXc=
-X-Google-Smtp-Source: AGHT+IFQFB1yQv+PaaUN5xBVG5IUrILWHiptNJo5/OGWy19Dj4NndkhYy6WTLYjr/FAFLigfT/gdGg==
-X-Received: by 2002:a05:6000:1acb:b0:3e5:d2f1:403d with SMTP id ffacd0b85a97d-3e7659e981fmr13510546f8f.36.1757956109456;
-        Mon, 15 Sep 2025 10:08:29 -0700 (PDT)
-Received: from flaviu-Aspire-E5-572G.. ([5.15.80.80])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7d369ea3bsm13146383f8f.0.2025.09.15.10.08.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 10:08:28 -0700 (PDT)
-From: Flaviu Nistor <flaviu.nistor@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Flaviu Nistor <flaviu.nistor@gmail.com>
-Subject: [PATCH 2/2] hwmon: tmp102: Add support for TMP110 and TMP113 devices
-Date: Mon, 15 Sep 2025 20:08:19 +0300
-Message-ID: <20250915170819.126668-2-flaviu.nistor@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250915170819.126668-1-flaviu.nistor@gmail.com>
-References: <20250915170819.126668-1-flaviu.nistor@gmail.com>
+        d=1e100.net; s=20230601; t=1757956157; x=1758560957;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fHqiXY9F30VvMHnjpTF1syx8dF7v4pfl9pdm2FAfsNM=;
+        b=LDxvasTxebZ6sQPz8DCMunb8CtPGzmwVbfcx80O83zEJgZALeoKh7QvxVkKxaBUkPX
+         3JVobWPyR6447gp57RNp2b8h2O+YADEFcKGUuUy0GU5YS/NA2/K0e2Gs7NPU9FBKljnl
+         H4jrUZSCBgzXIcu3Jz30M3Ex0AJCa/XprQ/j4HfV0G4qnmeNIZZ9SCKRnVP/Ra1hLSES
+         wOv4MHUZPMbDrjgh3d7jid+sedc6G6ane4HnRV87dm/3iglAUEqGpCea0a85WUzkLEVS
+         9+U4kiJa4J4ED0ptNV32wCdsKdqh0793xnwxWiCDjbzmfUwhGV7ovfLIEy7OZwhgZWYF
+         zKEQ==
+X-Gm-Message-State: AOJu0YytMkIHnMblm4jULdHU4qylX3G28yTpnfv3DF44wRseUONKaTtP
+	F1coMKW8LZn6jNU4xyayOToX602tdgiok1MZ3BOqrBmiy8ZCnpMnk5A15fpkZxpitT8Xlo9YHxK
+	ST/P2HMeUIj3kAb9H51i52QBqZrTwwjwK2HHq41rahifMxqO2JpVQDtlL/K0=
+X-Google-Smtp-Source: AGHT+IGLFSvx3tQfkAtBbZaWFqt4TxtRD5lloArKtHE6LYk8W4Sas5pdfDoEZHdApoImPzhp1GOt1jC1m//ySA+7PqTJUZEIE0jS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a2f:b0:423:f9af:b8c9 with SMTP id
+ e9e14a558f8ab-423f9afbb98mr64715085ab.18.1757956156869; Mon, 15 Sep 2025
+ 10:09:16 -0700 (PDT)
+Date: Mon, 15 Sep 2025 10:09:16 -0700
+In-Reply-To: <68b1f3ab.a70a0220.f8cc2.00ef.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c8483c.050a0220.3c6139.0d1a.GAE@google.com>
+Subject: Forwarded: WARNING in rtl8150_start_xmit/usb_submit_urb
+From: syzbot <syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-TMP110 and TMP113 temperature sensors are software compatible
-with TMP102 sensor but have different accuracy (maximum error).
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Flaviu Nistor <flaviu.nistor@gmail.com>
----
- Documentation/hwmon/tmp102.rst | 21 +++++++++++++++++++++
- drivers/hwmon/Kconfig          |  4 ++--
- drivers/hwmon/tmp102.c         |  4 ++++
- 3 files changed, 27 insertions(+), 2 deletions(-)
+***
 
-diff --git a/Documentation/hwmon/tmp102.rst b/Documentation/hwmon/tmp102.rst
-index b1f585531a88..3c2cb5bab1e9 100644
---- a/Documentation/hwmon/tmp102.rst
-+++ b/Documentation/hwmon/tmp102.rst
-@@ -11,6 +11,22 @@ Supported chips:
- 
-     Datasheet: http://focus.ti.com/docs/prod/folders/print/tmp102.html
- 
-+  * Texas Instruments TMP110
-+
-+    Prefix: 'tmp110'
-+
-+    Addresses scanned: none
-+
-+    Datasheet: http://focus.ti.com/docs/prod/folders/print/tmp110.html
-+
-+  * Texas Instruments TMP113
-+
-+    Prefix: 'tmp113'
-+
-+    Addresses scanned: none
-+
-+    Datasheet: http://focus.ti.com/docs/prod/folders/print/tmp113.html
-+
- Author:
- 
- 	Steven King <sfking@fdwdc.com>
-@@ -27,5 +43,10 @@ operating temperature has a minimum of -55 C and a maximum of +150 C.
- The TMP102 has a programmable update rate that can select between 8, 4, 1, and
- 0.5 Hz. (Currently the driver only supports the default of 4 Hz).
- 
-+The TMP110 and TMP113 are software compatible with TMP102, but have different
-+accuracy (maximum error) specifications. The TMP110 has an accuracy (maximum error)
-+of 1.0 degree, TMP113 has an accuracy (maximum error) of 0.3 degree, while TMP102
-+has an accuracy (maximum error) of 2.0 degree.
-+
- The driver provides the common sysfs-interface for temperatures (see
- Documentation/hwmon/sysfs-interface.rst under Temperatures).
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index d6769288a76e..a5626277c95e 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -2341,8 +2341,8 @@ config SENSORS_TMP102
- 	depends on I2C
- 	select REGMAP_I2C
- 	help
--	  If you say yes here you get support for Texas Instruments TMP102
--	  sensor chips.
-+	  If you say yes here you get support for Texas Instruments
-+	  TMP102, TMP110, TMP113 sensor chips.
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called tmp102.
-diff --git a/drivers/hwmon/tmp102.c b/drivers/hwmon/tmp102.c
-index 376e0eac8cc1..0df245d220d7 100644
---- a/drivers/hwmon/tmp102.c
-+++ b/drivers/hwmon/tmp102.c
-@@ -312,12 +312,16 @@ static DEFINE_SIMPLE_DEV_PM_OPS(tmp102_dev_pm_ops, tmp102_suspend, tmp102_resume
- 
- static const struct i2c_device_id tmp102_id[] = {
- 	{ "tmp102" },
-+	{ "tmp110" },
-+	{ "tmp113" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, tmp102_id);
- 
- static const struct of_device_id __maybe_unused tmp102_of_match[] = {
- 	{ .compatible = "ti,tmp102" },
-+	{ .compatible = "ti,tmp110" },
-+	{ .compatible = "ti,tmp113" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, tmp102_of_match);
--- 
-2.43.0
+Subject: WARNING in rtl8150_start_xmit/usb_submit_urb
+Author: viswanathiyyappan@gmail.com
 
+#syz test
 
