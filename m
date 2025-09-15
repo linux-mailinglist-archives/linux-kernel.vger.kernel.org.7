@@ -1,273 +1,263 @@
-Return-Path: <linux-kernel+bounces-817773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B453B5865B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5188EB5865E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468144C55B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E825200C6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3669E29E10B;
-	Mon, 15 Sep 2025 21:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42F82C0272;
+	Mon, 15 Sep 2025 21:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eUgBvziW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fvsg9P4y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04502E63C;
-	Mon, 15 Sep 2025 21:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757970370; cv=none; b=V2vvrkCdhEzscfUcLb1J/5dvOYJ9LefzkzhX1Y9JVc9McZQJBShC77ZQJFPjJKP24tfPPk6q71juRvp6MV4IT4XYd6fkbOCZ3RANCg7ThC1UKpuSiyRY2jlUbWldqdnmWGwqDyYo4j7FTEjfCuVlFiswe00EfaoQnEPmsic5AOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757970370; c=relaxed/simple;
-	bh=1rwaw35739SX89Wkk08mu+pzhLkhi0bNecALjoH1t/Q=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=dVmDyPE/EDbOqqyB8QUl8zT5RzEh2/pba0PQBazYrDv9QFVnXy57XjXnTE9JWZnzv3epzBPT8FsFaAKn/FXMmwMiLYAIn1px7OQhw4GhAX6/BCfCUmDiKe0jaIREtqC3vdS3kZBSwVFpe5yP0i1dApfER4D8jIsUNkudh0HlwEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eUgBvziW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FJrAH6031871;
-	Mon, 15 Sep 2025 21:05:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HJvrD4
-	VvubL/x9qUwmwj1HrK7vnilKoknCRBtlJQsE4=; b=eUgBvziW2Tn+19QwxUMGxI
-	UEIDUhdAac2NjvOZSZg7bs+hI6oA4wx3X8+t5eMgcpdjbxGv1Uw4mYprqqM59lcn
-	9pmwApt2mQZv+HpqbpCqKDObzE2HRlq3upyPXMmRFTUPm8b7ex53Qz8Z32k8NnEg
-	YG82vM9TdYYoV9q+LIR9+ksRzkPtyxsKLivxUyY6f+sY8UVdz7T9HHiGAWAiW/+W
-	xuDT/0iFxFYt+CI4qFfO8Xz04prbDttD3vHwi1xZ7sKwMb0aI+R5H0R4KzrQnKEH
-	6HrXbScBhothwvoAfReVuMc/1W66abBv0SiIqu5rUWY8GL61Hf9qir4z4YPq85rg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1tcr16-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 21:05:46 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FL0ITt006584;
-	Mon, 15 Sep 2025 21:05:45 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1tcr13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 21:05:45 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FHnk9t005963;
-	Mon, 15 Sep 2025 21:05:44 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxu0mak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 21:05:44 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FL5iqO24052470
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 21:05:44 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0860158050;
-	Mon, 15 Sep 2025 21:05:44 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED0BD58054;
-	Mon, 15 Sep 2025 21:05:42 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.24.60])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 15 Sep 2025 21:05:42 +0000 (GMT)
-Message-ID: <40e9c7bd15d4ab8b71ac335b5d896ed39c61980c.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: setting security.ima to fix security.evm for a
- file with IMA signature
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore	
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	
- <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
-References: <20250909041954.1626914-1-coxu@redhat.com>
-	 <5aeecf1aa6eff8ae0ea0a9e95d5df79aee338b32.camel@linux.ibm.com>
-	 <r3himk4z2aiyqsjstlpnda4wafeo7i4oum3n2dbvnasmtep5ex@zqodcpjmyx5b>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CA723814D;
+	Mon, 15 Sep 2025 21:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757970459; cv=fail; b=FyQyGMh3grjG6PjaMXySKuzYHkFuuL2QXS9Axuu46FxtMFRdmZ//RxJxjcCJLh1Vvmx5gI0JgJ5uG9960vIkU9rc60qTa5sdGlkJG1j6xnL21m1xdpvGFkFZja673VgRe0ICX17M8XFrJ7lKuS4RpXhRJxPbapNEGRdgZxuIhHk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757970459; c=relaxed/simple;
+	bh=9KuAX3hai4vI2bmTBse0QiuJ7bsEk4pcWVJVrX1ovnw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=E5w61uztCC81X9yWAcn9JbCkNOYPr8p9/lXlT5NDU27k922+33Y53wfAXr5CqvAeuuozh/c4X9MUCHhhHY6/kDsf9BfpKT5H5LsjGcpoH4eAb8ja3ieRg6rScT4Ni/xPMF/eSpgeXSc8IZtlHivvvcQxtQxss74RoOcbdiD1jNA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fvsg9P4y; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757970457; x=1789506457;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=9KuAX3hai4vI2bmTBse0QiuJ7bsEk4pcWVJVrX1ovnw=;
+  b=Fvsg9P4yO+2INvPnV0o+6iHcUrKjfpsrX7R7MPgcSYgpndrzSptrcMbP
+   FNTe92kKv6ytJWfnJm84n2VeMr0UGYc5RyhZhTpSWHmi8P0uAbmQ+clfE
+   TmSgmNvCQkSNWrIbL4UIrDJG/hf09IO9aicahpbBbBB/ggidd+bvCSqlG
+   OrmpUrR7e8zinH+GJdHoVZhCRJQ3FohIGB5H5hyqa2KM0CiSI8u3D5hvO
+   q1qtORISzNRqiQHbJ3w2MxkDthG85hXjJk/Eg0Ui+hBEZWK6obxtxDGTB
+   yZaKahKWlmFKYWZ/WNfjvDJu4Y27Jji8rUtk3avTB8ZHpo2VIq33kQui6
+   A==;
+X-CSE-ConnectionGUID: 8CEwNSKjSQut9s/vA71TNg==
+X-CSE-MsgGUID: qp4VLNOBSYqEZK+31Y0PLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="47811360"
+X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
+   d="scan'208";a="47811360"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 14:07:36 -0700
+X-CSE-ConnectionGUID: EM0+sVkZSnqs0iFNGi+reQ==
+X-CSE-MsgGUID: GbEXRCyYQhO4gWUWxWyZrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
+   d="scan'208";a="174367983"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 14:07:35 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 14:07:34 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 15 Sep 2025 14:07:34 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.35) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 14:07:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tG36IIP3oxqq14CwHS5Zbh82lWWOdMotjOr08WUpYejOngHuvW/K2Hxcc/dVO0f0vElsssKZWKKAb/ctX0ahkJRrIkJv0IHOYbaIUHpUGJQu3Mqws75nHX9w25kYd1tJLDzJ0cGmuxTy5LXBsisQTxiGGb0bmYx4sQiUQPSGeZK9FYHl73V9oe7+sK+ubQxztKkTvLgJX1HL+ynIJ/06zuDL2zYZlBoNODr8yiuq5D9fvZ7an7yU9cukheRzmJvh31SVPWuOTCHj4C2HV0SLY8FHBQXwULvclBUh4WfIRACrF04RpcZdh0QICBrsfzx/6/iHmVx95md1nlr8Gm0nPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gTR5P6SRscKzm1r7X+GdwaneEuS8qJSaWxWQ/LIq1r0=;
+ b=EqnfzSZFQlFDObsRowQO7cX577ZQTdn2a8xH6knKe3aAVnQsrPGS56z/uh0jGpvFJF6ElDQf2O+Jyl3Q9I+PFedx+mNoX16+gMhrOhI2Hu/tL4P1bpYnINy2ZV0q5PecdDhC9pjlf9dSTG1UpCbnkoPnhVbslGDE1tgJHd9g4J8upBrxFQbrUXEi4gXAhXmBCTtFdkne8bu5k1tSl6GpqLQh/wnwH3qVh4CoY9Qr1JWCdl0WlqahRSJZM/KdPIuUsFl/DrtfnuUJH9MNvZ/AorFNpLKoyCLJbxQ2/C6oG6uPZk9x2OtpkkgHaTBWbk9QVYXS4GF8kVG2i58GOasP0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by LV3PR11MB8725.namprd11.prod.outlook.com (2603:10b6:408:21e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
+ 2025 21:07:30 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 21:07:29 +0000
+Message-ID: <b56757b8-3055-455d-b31b-28094dd46231@intel.com>
+Date: Mon, 15 Sep 2025 14:07:26 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v18 00/33] x86,fs/resctrl: Support AMD Assignable
+ Bandwidth Monitoring Counters (ABMC)
+To: Borislav Petkov <bp@alien8.de>, Babu Moger <babu.moger@amd.com>
+CC: <corbet@lwn.net>, <tony.luck@intel.com>, <Dave.Martin@arm.com>,
+	<james.morse@arm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<kas@kernel.org>, <rick.p.edgecombe@intel.com>, <akpm@linux-foundation.org>,
+	<paulmck@kernel.org>, <frederic@kernel.org>, <pmladek@suse.com>,
+	<rostedt@goodmis.org>, <kees@kernel.org>, <arnd@arndb.de>, <fvdl@google.com>,
+	<seanjc@google.com>, <thomas.lendacky@amd.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <perry.yuan@amd.com>,
+	<manali.shukla@amd.com>, <sohil.mehta@intel.com>, <xin@zytor.com>,
+	<Neeraj.Upadhyay@amd.com>, <peterz@infradead.org>, <tiala@microsoft.com>,
+	<mario.limonciello@amd.com>, <dapeng1.mi@linux.intel.com>,
+	<michael.roth@amd.com>, <chang.seok.bae@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-coco@lists.linux.dev>, <kvm@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
+References: <cover.1757108044.git.babu.moger@amd.com>
+ <20250915112510.GAaMf3lkd6Y1E_Oszg@fat_crate.local>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250915112510.GAaMf3lkd6Y1E_Oszg@fat_crate.local>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 15 Sep 2025 17:05:42 -0400
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR16CA0063.namprd16.prod.outlook.com
+ (2603:10b6:907:1::40) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=OMsn3TaB c=1 sm=1 tr=0 ts=68c87faa cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=vUXcQdf43LBxS_wO:21 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8
- a=HqxqN70uwPQbf9qsMsIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Hb9tl43CgSe-KSuTfmjKazUmO_-C-evf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAwMSBTYWx0ZWRfX87li03ofpJF+
- HCHKhmuOAcBkaJZal5+daZ3wcs+uo6H0cV9S2VK+0NlxwIvqcPorXmzx0QBiY6dTx2G7jNTUh7+
- H+ZtILSU2LJ1D+1jx4VEBCXlGzYGLcfzOuGq6lJ3rjMH/DtXa7JlgE5DLULP7oFSi5Og0BWnWgI
- 9zAiDehp5phnU+Xmp1oioRh2PtwJj2Kx9r0MCXpvczDLPERvV3lm5KTAqrOiEk0z+t08HojiyUp
- RPCnsSdm0KEdwyoLoUH1g3OTdKdLSnme8Gf+EK0vRC5MWguSUPD6d56ecPEVvNRcMYnNvxeJtXe
- NCw4ZLUlLHpT9AnEuHzFvtQSxm9f4IBXevCsFTTb0ye1FleFclwDtH6ymMYEgFEjbiJdkmvwcZN
- GpdJ65/T
-X-Proofpoint-GUID: QSK9bfB-hjkujywSMo7Iqysud_JEJ5Vk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_08,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130001
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|LV3PR11MB8725:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e793509-b0dd-4152-0c4c-08ddf49be16d
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UWRpN3Ayb2VaTHVhTkE0MEhvakI3bmc1TjlybHRxVEtnMjVlR0tIUzU3dzYx?=
+ =?utf-8?B?K3krLy8rTjgyS0JLakFIeGErbVR3SFdzb3V1RXpmUWlJYlZlNW9WR1hTWHdF?=
+ =?utf-8?B?ZndIOUdDRU94MDVqQUNKYWs1bWZmbUFkOTcvQVFKcmFqbEtLdHN2dWxGNE5I?=
+ =?utf-8?B?dWJBcnk0ZDFWUFlQbE10NzVWcTlLQ3N3VDJWWWtDM1NJNHYvOGRSOUFneFE0?=
+ =?utf-8?B?V253TnpFTm8waEFZOXBJaVAwQnd6SWtrNlBSV0lheGgwSHlVMjhzOUY3MHFy?=
+ =?utf-8?B?WWpySnV4RDVjTUQ1RHp5RTZqNmhJVUErcTNoUDhDY2pSTjczZldraE56eWk5?=
+ =?utf-8?B?YkRGcDB3TDN5cGwzbXMybUpPRG1TMTZUSlNvZHJnZzdCM1BHL0lnbHcvMU0y?=
+ =?utf-8?B?bWdnc1pXRC9Cd2k0QWhRbFpqZWtQV2p6UUJDMmZYOVA3VUw3WWs1cVNiLzNK?=
+ =?utf-8?B?M2ZrQzU0Z3RtMjZXclRDNFEvcG1hUmdUQitVZ0NhdTNudUhxeHp4cFliUDFQ?=
+ =?utf-8?B?ZEtzZUNlb0wzaGQwZXNJeTFKcTgwbFFrdkpHc3p1T0FURitzRUtMcVJMN0pw?=
+ =?utf-8?B?SjlLYkszNis5M2d1TFNScTQ4TlZyMVdRZ2hUTGtNVlNVR2pOY2pyM2pWYVM3?=
+ =?utf-8?B?N05kcmsra3VDVW1wZWQ2NHB3YUJYbUVJaDY2ZGcxRVNyMnZzYnRMK3dadjdX?=
+ =?utf-8?B?aC85am5mVThYalZlejRmbzFRZ3YvWnAwWHprdEJpaHRvSTVsTVJ0Q1ZYcjJN?=
+ =?utf-8?B?ZUEwczh5QlJKRVRFNTl0a0FZazlpay9qMXpsNXBIdy9RbmZsZUxlcGtUVXh5?=
+ =?utf-8?B?dnU5QnhwV28ydUdUWHBMaUVpUTlLWnNWSDl5TkxNaTV6ZWo3SWpIV2lJY3NF?=
+ =?utf-8?B?ZzVPejBscmNlS21pOGkwSXlkeklIV05sOWd2bGd4QUZBKzQ5YVo3dThiQ0NY?=
+ =?utf-8?B?bDQxRkp3R0piOFpqRVYrMTQyL0V1RXdDRnBXZ2tBbEZnQTRtbUttSjZSVXJi?=
+ =?utf-8?B?SlFpd092UWg5OXhsbk9HT1k1RGpEVkk1NzVtU3p5MVRlYmRGbHJRVFhqUnlp?=
+ =?utf-8?B?ZGZ6L3VCUDV4NUNtenFrT2VPbCtkMWk0SVJJeEkydkRRNjRmNGxwWjlUMkRO?=
+ =?utf-8?B?L252MXhZZjlPTnkrZkhLL0xMdzBLK1F6RE51R0RhTFY4KzhpSXZLZUtjSERQ?=
+ =?utf-8?B?Vkp6SlkrUVA2UTE5RFlobzgzbDY0NVVuSitEZGRBWWJTVGwwTnVLMmRZa2tu?=
+ =?utf-8?B?bDVQTmJodU54QnUxMGVmY2lDaE12ZS9nNEJsMG9ha2tvM1QxODNud3lyc1c0?=
+ =?utf-8?B?ZzNUUzdPam1QV2ZEU1A2OUp2cHE1bFNKMmRpL084aFN3R3BaN2IzRWZrSTl2?=
+ =?utf-8?B?N1diMGFxT1VFeE10THF2bmh3Y1ZJb0t2YTJSUU1lZERLcU5SRnBjeDFSRE9U?=
+ =?utf-8?B?RUZ3d3dJZzJ2bk8vUklFSDIyRXp5MTdnM3d3VVNHTCs2UFI4MXRyd3pOdmNl?=
+ =?utf-8?B?R0hLWldyMzFsbXZ2S1NJU0VPN0JNM1dDd2trY0lXR3FGdktWV2JSTEFCOXpx?=
+ =?utf-8?B?SXZmL2pQNU5KRWZMbVlINmdTMzB2K2xGSEZvZGw4MitXTDVSY0ptTk9CS2xY?=
+ =?utf-8?B?eG5kSWg5R25TK0hIcFpmOXEvSzZjKzJxUEpucXN5THBxMlZ2anpBV2RoZ2I4?=
+ =?utf-8?B?a2QxVGNFWmFhOHlLUjA3VjJOcFJoNTBiL1J6LzcxN1FIODUrZlljWXdpNjdZ?=
+ =?utf-8?B?aDhFdGpKcCtOVW5BRXhMT2d6NEZnVEZ3V1pSWS80VkpkVFR3QVM2TTZzYndj?=
+ =?utf-8?B?T2NCZDZReHRTY1E2VDY4UjYvbVVLbGMwVStUbUJtcmVtbnRRUTkyOGZzWmQ4?=
+ =?utf-8?B?VzkzWDdBVE1DRURvcjFQWWlYNFArVGhCUDhEMXJHbEpjRTgzMWpTUjJNOXM1?=
+ =?utf-8?Q?a+/MgSuf1lk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?czBvNmkyQjdESyt2UjZqT3RSWnB1ZUluYVRCZ2NIOWJmRmdoY2xjUkx2TW40?=
+ =?utf-8?B?VTg3K0k1bDErQ3gwMmZKYzBnN1lvVGlxNGwzOEJseEV6N3ZLSEpGdXJQb3ds?=
+ =?utf-8?B?c1pzK2xvU1ZkemtOY096cS85dnV1QjZmS0xLNFdoTDREMVVCOEZtb01BNkEx?=
+ =?utf-8?B?RytQTEpNelFjNHIyR0NoUWJOMy9ZbVlFUFdVNEFPYmdPMmtsWXRlenZVL0xN?=
+ =?utf-8?B?RXJtc3ZEYnFhdCtXRXpPdzlpS1R5RnFSQWtlOU5LcXk4QldLeGZhZW1RZFpn?=
+ =?utf-8?B?RjZRMG82Y0FhWjdsdEFOUGJoSzBHRmYreTdPbHVpNkpkQ1BveFc5Z1ZSVmlJ?=
+ =?utf-8?B?YnI0NmlsTTFBWXJMVWdTQ1MwWmI5c1htNHh1VU5nL01qbEQybExUQ0piUTNC?=
+ =?utf-8?B?RVFnZ1BXWWtndXRHbnQ4czVTQmZUNWEwQ1pXUEhVUjlia0hUTk4rUXMxS2VZ?=
+ =?utf-8?B?SGkyZGFjL3Q5dXFFbUR6ZlFRNURkQ3UwRUp5bUI3S1M2a29xcFJRbnVtTEtM?=
+ =?utf-8?B?YkhRNXYxbmxxcmV6Z0lPL28ycW9zWHdKV1h2N2JHMXN6TlB0L005THl5V2ho?=
+ =?utf-8?B?R1RhYm1TSjl6aVg2RzNRVldkcFRHYmFDZ0k1VWxTc3FYRVRDWjREOHkxWUx5?=
+ =?utf-8?B?c1JRWFBvbjR1TlJCTnJQYVM4Sld6SlUyUHV6U3VmMHMwUzBkd2xTU0hYRlJt?=
+ =?utf-8?B?T2VBdnhkb1ZrRkU3bXpqNW5GK25ZQzBGU2ZCanNLc2MwNXBQNWRONjFPQUc5?=
+ =?utf-8?B?cFZUc2xQRVpmNEtDa20wdGZaYmhCcWNmc01Ma3RUQktJcW5oWmg4QUNraEhW?=
+ =?utf-8?B?Sy9Wb29YVHJUSzJYajU2Z2VDUSs5bzdiL0lSNDV0UXRGOFNBZlVObkRjS1Jx?=
+ =?utf-8?B?ckRwc3FMUFJMQW8vT0ErL0JvQmVRaW14eXZSZitBTTZDSkdzU0tQV2htYTdP?=
+ =?utf-8?B?VkYyOEtyYjAxZzNkblRJaVZHaUhjdG9zemN5T0M5SFRFZll0WGxPZXF2WUN2?=
+ =?utf-8?B?Zko4L2xwQjgvUlQ0VThXL2tWaVFhVWVXR0JrTjdkWUY1MUhqRjlkTTNWL2k4?=
+ =?utf-8?B?d3I4VzNjMkNUZjdYWXFDeFBlSjNwbzlYVlg4aGpxT2JUVnFhNFo4WnhheXFZ?=
+ =?utf-8?B?VWV2bGpzMHZ3OXFLRFJTZDRnS3FMWVRXZVAzMWtiRkdjYmlacW41d0F3UHlC?=
+ =?utf-8?B?R09jRzR1QUNBMmY3RWFadGlmWTJnOHBhMU9hS1VhMjR0RDFuMXFWWUZjQkE0?=
+ =?utf-8?B?RnRCbUlXK3JLcVdnVmR2S3lYZHFubFRqUUNqUS9Tckp2aDBhSDhlS3o0TFJx?=
+ =?utf-8?B?MFM3SHpsMi9Pa1EzejlvalNNS1hTV2dSUjk1cnhNTWtrZnNDaEtqVXVyMmYy?=
+ =?utf-8?B?YTRTV1FNVkhXRW44MktnbEpTeE1pdTRsV0hKc0JiUTRLWHBoTW1jbHVsdEp5?=
+ =?utf-8?B?eEtjMGpyL1VkUFpyRFpTcnY3eEJ0T3VSR0RuQXdnNXVsb1BEYVdWaWpmenE0?=
+ =?utf-8?B?b3pxV054MWVWQU0yRUpiVDJlR2Z5WUFOT2VxVGhkam9TaW1JT2N1bTVzR1hF?=
+ =?utf-8?B?SFRFYzdTNW80eHpjYzI1TTJpVS90VldyMmYxUnNMR2REL0Y0bWdwMzVVL1dP?=
+ =?utf-8?B?WHRjZEJod3JNWVBHbkNYMnIvbnNJL090VityNjZId0l6bjFqeDdJT2Y5QXVx?=
+ =?utf-8?B?L2trRUM5QUM0Z2JsOHFWS0tCYzlNZWN4ajZ4TlRVQ0dRVkh2d0NwOElyZ0g0?=
+ =?utf-8?B?L3JzSEdMMDdyNTNoU1p2eGYyaHlQTUpsZ2VRYzdWTzR0TjhSb28xOFhhZm5u?=
+ =?utf-8?B?QnppTnFlc0lxcVUyd3VqMno0Y0JNMkdSc1QzNnprOGRRWTcvODhsellWK09L?=
+ =?utf-8?B?QUYwd2pteWZoV0pJN0hBUUlaYmRMZUFFczJRKzZHTmZQMUl0eDg2QjNHWU1I?=
+ =?utf-8?B?TEFLdm9DQ3JGaHdsNjF5eE1mY1lrRGVVMXJPaFp0WnNZZnE1NkY2TTNpNUNh?=
+ =?utf-8?B?OFBUdmJyT0pGV0pyWVJQYWxLUUxlUGFLVHF1NTJaOW9PYmdlN3pFaVRpQ1dT?=
+ =?utf-8?B?cHhuVEJRUnZtMGlTYWk2c2hZSXJ2RGpNYUdHTTVKWlVHaXgyZk5zcE1wR2dy?=
+ =?utf-8?B?NmFLaTY0QmRia2ZoL2dQZDFHR2JXdXBrS245SmhHMXN3VWdkMTB3S1AwYkpj?=
+ =?utf-8?B?T0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e793509-b0dd-4152-0c4c-08ddf49be16d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 21:07:29.7552
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kR4LraPpnVo/A0PLbVQ60tR+p9K2Y42Gn5yB6sXuUqEp0ZJl0ZscuXhpX5T0zqvCWIs8e3EjRKxW3d7Hty0Aze4fw2V94j2KgeDChmKxCoc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8725
+X-OriginatorOrg: intel.com
 
-On Wed, 2025-09-10 at 09:20 +0800, Coiby Xu wrote:
-> On Tue, Sep 09, 2025 at 11:31:20AM -0400, Mimi Zohar wrote:
-> > On Tue, 2025-09-09 at 12:19 +0800, Coiby Xu wrote:
-> > > When both IMA and EVM fix modes are enabled, accessing a file with IM=
-A
-> > > signature won't cause security.evm to be fixed. But this doesn't happ=
-en
-> > > to a file with correct IMA hash already set because accessing it will
-> > > cause setting security.ima again which triggers fixing security.evm
-> > > thanks to security_inode_post_setxattr->evm_update_evmxattr.
-> > >=20
-> > > Let's use the same mechanism to fix security.evm for a file with IMA
-> > > signature.
-> > >=20
-> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> >=20
-> > Agreed, re-writing the file signature stored as security.ima would forc=
-e
-> > security.evm to be updated.
-> >=20
-> > Unfortunately, I'm missing something. ima_appraise_measurement() first =
-verifies
-> > the existing security.evm xattr, before verifying the security.ima xatt=
-r.  If
-> > the EVM HMAC fails to verify, it immediately exits ima_appraise_measure=
-ment().
-> > security.ima in this case is never verified.
-> >=20
-> > This patch seems to address the case where the existing security.evm is=
- valid,
-> > but the file signature stored in security.ima is invalid.  (To get to t=
-he new
-> > code, the "status" flag is not INTEGRITY_PASS.)  Re-writing the same in=
-valid
-> > file signature would solve an invalid security.evm, but not an invalid =
-IMA file
-> > signature.  What am I missing?
->=20
-> Hi, Mimi,
->=20
-> Thanks for raising the question! This patch is to address the case where
-> IMA signature is already added but security.evm doesn't yet exist. So
-> EVM HMAC fails to verify but there is no exiting
-> ima_appraise_measurement immediately.
->=20
-> And you are right that re-writing an invalid IMA file won't fix an
-> invalid IMA file signature. And even when IMA signature is valid, the
-> verification may fail because the key is missing from .ima keyring. This
-> happens because we need to turn off secure boot to enable fix mode. As a
-> result, CA keys won't be loaded into .machine keyring. Btw, if I'm not
-> mistaken, current IMA code assumes we are not supposed to fix IMA file
-> signature.
-> >=20
-> > > ---
-> > >  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++----=
---
-> > >  1 file changed, 21 insertions(+), 6 deletions(-)
-> > >=20
-> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integri=
-ty/ima/ima_appraise.c
-> > > index f435eff4667f..18c3907c5e44 100644
-> > > --- a/security/integrity/ima/ima_appraise.c
-> > > +++ b/security/integrity/ima/ima_appraise.c
-> > > @@ -595,12 +595,27 @@ int ima_appraise_measurement(enum ima_hooks fun=
-c, struct ima_iint_cache *iint,
-> > >  		integrity_audit_msg(audit_msgno, inode, filename,
-> > >  				    op, cause, rc, 0);
-> > >  	} else if (status !=3D INTEGRITY_PASS) {
-> > > -		/* Fix mode, but don't replace file signatures. */
-> > > -		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
-> > > -		    (!xattr_value ||
-> > > -		     xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG)) {
-> > > -			if (!ima_fix_xattr(dentry, iint))
-> > > -				status =3D INTEGRITY_PASS;
-> > > +		/*
-> > > +		 * Fix mode, but don't replace file signatures.
-> > > +		 *
-> > > +		 * When EVM fix mode is also enabled, security.evm will be
-> > > +		 * fixed automatically when security.ima is set because of
-> > > +		 * security_inode_post_setxattr->evm_update_evmxattr.
-> > > +		 */
-> > > +		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {
-> > > +			if (!xattr_value ||
-> > > +			    xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) {
-> > > +				if (ima_fix_xattr(dentry, iint))
-> > > +					status =3D INTEGRITY_PASS;
-> > > +			} else if (xattr_value->type =3D=3D EVM_IMA_XATTR_DIGSIG &&
-> > > +				   evm_revalidate_status(XATTR_NAME_IMA)) {
-> > > +				if (!__vfs_setxattr_noperm(&nop_mnt_idmap,
-> > > +							   dentry,
-> > > +							   XATTR_NAME_IMA,
-> > > +							   xattr_value,
-> > > +							   xattr_len, 0))
-> > > +					status =3D INTEGRITY_PASS;
-> > > +			}
-> > >  		}
+Hi Boris,
 
-Instead of re-writing the IMA signature without a clear explanation, define=
- a
-new EVM function named evm_fix_hmac() and add a call here in IMA. Only in E=
-VM
-fix mode would evm_fix_hmac() update the EVM hmac.
+On 9/15/25 4:25 AM, Borislav Petkov wrote:
+> On Fri, Sep 05, 2025 at 04:33:59PM -0500, Babu Moger wrote:
+>>  .../admin-guide/kernel-parameters.txt         |    2 +-
+>>  Documentation/filesystems/resctrl.rst         |  325 ++++++
+>>  MAINTAINERS                                   |    1 +
+>>  arch/x86/include/asm/cpufeatures.h            |    1 +
+>>  arch/x86/include/asm/msr-index.h              |    2 +
+>>  arch/x86/include/asm/resctrl.h                |   16 -
+>>  arch/x86/kernel/cpu/resctrl/core.c            |   81 +-
+>>  arch/x86/kernel/cpu/resctrl/internal.h        |   56 +-
+>>  arch/x86/kernel/cpu/resctrl/monitor.c         |  248 +++-
+>>  arch/x86/kernel/cpu/scattered.c               |    1 +
+>>  fs/resctrl/ctrlmondata.c                      |   26 +-
+>>  fs/resctrl/internal.h                         |   58 +-
+>>  fs/resctrl/monitor.c                          | 1008 ++++++++++++++++-
+>>  fs/resctrl/rdtgroup.c                         |  252 ++++-
+>>  include/linux/resctrl.h                       |  148 ++-
+>>  include/linux/resctrl_types.h                 |   18 +-
+>>  16 files changed, 2019 insertions(+), 224 deletions(-)
+> 
+> Ok, I've rebased and pushed out the pile into tip:x86/cache.
+> 
+> Please run it one more time to make sure all is good.
 
-        } else if (status !=3D INTEGRITY_PASS) {                           =
-      =20
-                /*                                                         =
-    =20
-                 * IMA fix mode updates the IMA file hash, which triggers E=
-VM  =20
-                 * to update security.evm.  ....                           =
-   =20
-                 *                                                         =
-    =20
-                 * Similarly, trigger fixing EVM HMAC for IMA file signatur=
-es.=20
-                 */                                                        =
-    =20
-                if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig) {    =
-    =20
-                        if (!xattr_value ||                                =
-    =20
-                            xattr_value->type !=3D EVM_IMA_XATTR_DIGSIG) { =
-      =20
-                                if (ima_fix_xattr(dentry, iint))           =
-    =20
-                                        status =3D INTEGRITY_PASS;         =
-      =20
-                        } else if (status =3D=3D INTEGRITY_NOLABEL) {      =
-        =20
-                                evm_fix_hmac(dentry, XATTR_NAME_IMA, ....);=
-   =20
-                        }                                                  =
-    =20
-                }               =20
+Thank you very much.
 
-> > >=20
-> > >  		/*
-> > >=20
-> > > base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> >=20
->=20
+I successfully completed as much testing as I can do without the hardware that has
+the feature. Will leave the actual feature sanity check to Babu.
 
+As far as the patches goes ...
+
+I noticed that you modified most changelogs to use closer to 80 characters per line,
+max of 81 characters. Considering this I plan to ignore the checkpatch.pl "Prefer a maximum
+75 chars per line ..." warning from now on when it comes to changelogs and replace it with
+a check for 80 characters with same guidance to resctrl contributors.
+
+Thank you very much for catching and fixing the non-ASCII characters in patch #29. I 
+added a new patch check step that checks for non-ASCII characters.
+
+Reinette
 
