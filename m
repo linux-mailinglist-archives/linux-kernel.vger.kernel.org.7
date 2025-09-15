@@ -1,229 +1,324 @@
-Return-Path: <linux-kernel+bounces-816471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71198B5742D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:11:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCAFB5742E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49D64404E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF61D189C63B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627162EFDA4;
-	Mon, 15 Sep 2025 09:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3132F1FC9;
+	Mon, 15 Sep 2025 09:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJRQgNbV"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WfM8E3u9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6kMFldpx";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WfM8E3u9";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6kMFldpx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEAB2D3ECC
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE9E2EC087
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757927502; cv=none; b=rQd3K+6LU/o4BxfJE/LiKKHQP1DqlRrSjkeoFSGzWtA6Gxo5PDsN+33JhIPArmLJteuR5JWtjVhWm+rmxWnIrA/lP/x3jhlu84huhi7rfA3gQ2DSH4L1ikGymkXmGLk7B0sRJJZJLE5Yw0WQrHFvVr0Pa86+CDVzjjiD0f0g2DA=
+	t=1757927504; cv=none; b=serp8SI8vXgAsE5vL6HLzNBiOaKDQyC1eMVHvWrN+8AgWdawteJLkrqfXwnhUX0K6KCRj6qKkuaOGCo2rJOpNTqbPVWEegwNZ36mSNDlTZzCNo8w+nwIYlXorAoKaoSm+7IvR05SCzAmtP5potHr2WR05BK81cBJf4xGD+1dgdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757927502; c=relaxed/simple;
-	bh=IdmjxnVRgFKvYi4EvbH9O0PCSB358ZLwIm/ltyiSdjY=;
+	s=arc-20240116; t=1757927504; c=relaxed/simple;
+	bh=PtUKxP22VKccM8JNMkpmiGisWzHyzl93jUWYUcR+0qI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c83ShmBLqgjLfwkkOKD6t1WgFgHkLkoJ5rYwL5AJDc85U60HFVkJTRXo70iGVFNAg2882gAaboDU7Uz+my15LOqi9rKScmP44JpZs5RnFkr/gJbgIEPyYh8TDEK4b2huQBJ5rurenZMxkSUNn9sKmmCxWNmpgEOlTfpk6ivuh8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJRQgNbV; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45e03730f83so17662705e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757927499; x=1758532299; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WCn95BTIPllEJXaRNBR7O2ZaWejHXVv/vaw1O/ijRvg=;
-        b=YJRQgNbVSCW1Aw2sHdpmp7CE4kKj2wSPBrYTsZcw751vTPUTvKfemtSmi7uKvEmwyp
-         c8TTDom1E/KLrZ2szUklmGG+sNPS2jNWKncMtgAdPv36tM4MMMQQmy0NJ/WwUrgOczQV
-         Wi8GerIp0hGeQqFJfkbz7mZw00p9Bhu+7JWLCagzaPx5lx+UuJwiIhQDwR+90ST6xC19
-         n0AqVldPbFmR8cOLeYCz+DvHhWq1Q4ci4zkPG5/2OqO39KWEP88sdDc3hk2gEcPQUoBY
-         8nzp4NCUpcwAGEZlIJm6CCM2tcmTDCJ7dAYjx0ccKrCl+RpN8JOuOfa1D6A23KKrVYz/
-         +dPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757927499; x=1758532299;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WCn95BTIPllEJXaRNBR7O2ZaWejHXVv/vaw1O/ijRvg=;
-        b=OWmF78NcMpNAkTWbRVKsO/m9qpbEH+B/7cnUoQAJynVloPIRm/8vfDJFzaV/GStWXQ
-         NLrhvuVSr6RN4Wke2z4bs9V3NgGNsIz3z6z+aQo8GscWz/csSjVZpenTioTPcH9U61MB
-         kjQLeqT/Mmhvbl0v4RdboeMJ6gr4Fu14mcCCmaXqy0k8R/x3nEALh6y8+RraMDpRx3z1
-         1KwpIDreipNcQBKyTc74DmtYCBVkq+ALloZviKYpSVa9E0pE0bKX3IClI8FnV5IDLsL4
-         qExWNRAoueKJhpNRBgL4NsI0YbjQYvyAqbq0lNlRr1LBCMALvlX7h4V1tsKelKB+MT31
-         27uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7y2X0ZKJdDhijx1mY1sgZf7HAHsRsORnmrXffcIF7njXNDYoKM1FhL2vmnJomaCDbYZOyMhPu9QWnYKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn8QIAeLBaTrRGVeIRN2rwnL3X2ooqMtMKfjXC8g2v89PPFMcc
-	8xrkOcEJfhhltPIdLoGsol0DpedsepYXbHhsSE31lIUiIXu4n2k5Zc68
-X-Gm-Gg: ASbGncsgHsXpDdLlgBUTXwgE8uzZRuWq/b/VDQoQOieMMLnVC4FHZScyvZcnoRaP6bD
-	zE2pCUWiCzOwCxAg/6miWDlBLios+/D4L+7sRPwerYjCLfa1sQwZBiSuHt50BiPvapoVTYRSQl9
-	RoaB7774XO5LL6anBXudGGRXFtAackiw3Ryj0+Xb51F2G8RChEVWyS6KY6sxFBfwXI8ndizEAiR
-	5ZTrDa+UQ4co37wUU8G7t7d4EKXPY9y2fuuuvR+wOZpckwfP9HmyJr5bNz49GjFYUOJSDFbGVXH
-	xqyDRfpUcLpSfJ94YaNiwKdyQy5lsCxgWdE2m/Tu9N2aHKhtk3o+mMgGGwgZJq0X8JzZL4YLAn9
-	6zLCKt6R6QnzjlScUDT5d5P0tqm/0BfVqLw==
-X-Google-Smtp-Source: AGHT+IHuR3WQVz7I46/sPhKiL+ybrfYStZYlG10jCx/8wiURkkGlKfhXHZbv/80jd39X1bHQWzXbzA==
-X-Received: by 2002:a05:600c:8a1b:20b0:45d:d3a1:70dd with SMTP id 5b1f17b1804b1-45f21221e50mr73711465e9.35.1757927498431;
-        Mon, 15 Sep 2025 02:11:38 -0700 (PDT)
-Received: from localhost ([45.10.155.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e813eb46f3sm10356821f8f.23.2025.09.15.02.11.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 02:11:38 -0700 (PDT)
-Message-ID: <63632c0f-8577-4ecd-8431-7d85fb464bab@gmail.com>
-Date: Mon, 15 Sep 2025 11:11:30 +0200
+	 In-Reply-To:Content-Type; b=NvBoNNV+HoW9Co+2S8EKAi/E0G7fCi53BpfOMQ88QPsOuWVUafJniyGXPkVl4bO13nsq8m56YTyNNEUvsg3pNU4ZnA+eBjEJ3g6YrAWDP2D8RwVcwU2j6AHGZyqA4PYmqE8Ted4L0aFEydS3kKsDKiS//41AZQwMyHQ+f+6P0g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WfM8E3u9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6kMFldpx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WfM8E3u9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6kMFldpx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D87A0336FF;
+	Mon, 15 Sep 2025 09:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757927499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mswFLX49hUvkD3CBKW4zwyJE1w1wVRYQV7+l8UyhGwM=;
+	b=WfM8E3u9rQcYV/6PYhKw1Qxvu+2S3inBZBNXimAMoJhF9CrHq6EfS0PUkoLTTVGvkqNHOa
+	NYBsrIaHcEBH2NQOr+ovPwwuRyhKPVuR/JvX5705h//bwjAYeoZ4bF4NrKR0zNb3HaNiSR
+	cCEK9XGAM+9pCxXJh2APdXvoAaBKgC4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757927499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mswFLX49hUvkD3CBKW4zwyJE1w1wVRYQV7+l8UyhGwM=;
+	b=6kMFldpxWz2fxlK9Cx4mpO188WDlhF7hhzxjG7Tn9A66dB3jCqk/Zz0FUk2jnxSaUDloeg
+	Rk8Nn+7geqThYHDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757927499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mswFLX49hUvkD3CBKW4zwyJE1w1wVRYQV7+l8UyhGwM=;
+	b=WfM8E3u9rQcYV/6PYhKw1Qxvu+2S3inBZBNXimAMoJhF9CrHq6EfS0PUkoLTTVGvkqNHOa
+	NYBsrIaHcEBH2NQOr+ovPwwuRyhKPVuR/JvX5705h//bwjAYeoZ4bF4NrKR0zNb3HaNiSR
+	cCEK9XGAM+9pCxXJh2APdXvoAaBKgC4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757927499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mswFLX49hUvkD3CBKW4zwyJE1w1wVRYQV7+l8UyhGwM=;
+	b=6kMFldpxWz2fxlK9Cx4mpO188WDlhF7hhzxjG7Tn9A66dB3jCqk/Zz0FUk2jnxSaUDloeg
+	Rk8Nn+7geqThYHDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7875A1372E;
+	Mon, 15 Sep 2025 09:11:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hD+iG0vYx2ildgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 15 Sep 2025 09:11:39 +0000
+Message-ID: <5920ffe5-b6b1-484b-b320-332b9eb9db82@suse.de>
+Date: Mon, 15 Sep 2025 11:11:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 4/5] net: gro: remove unnecessary df checks
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com,
- tariqt@nvidia.com, mbloch@nvidia.com, leon@kernel.org,
- ecree.xilinx@gmail.com, dsahern@kernel.org, ncardwell@google.com,
- kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
- aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
- alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
- linux-net-drivers@amd.com
-References: <20250901113826.6508-1-richardbgobert@gmail.com>
- <20250901113826.6508-5-richardbgobert@gmail.com>
- <willemdebruijn.kernel.868af9542505@gmail.com>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.868af9542505@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/29] drm/atomic: Add atomic_state_readout infrastructure
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-10-14ad5315da3f@kernel.org>
+ <03240fae-544f-4753-96c5-a116b4b5a318@suse.de>
+ <20250915-active-placid-bustard-6e1faa@penduick>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250915-active-placid-bustard-6e1faa@penduick>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,kernel.org,ideasonboard.com,kwiboo.se,iki.fi,ti.com,lists.freedesktop.org,vger.kernel.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-Willem de Bruijn wrote:
-> Richard Gobert wrote:
->> Currently, packets with fixed IDs will be merged only if their
->> don't-fragment bit is set. Merged packets are re-split into segments
->> before being fragmented, so the result is the same as if the packets
->> weren't merged to begin with.
-> 
-> This can perhaps be reworded a bit for clarity. Something like "With
-> the changes in the earlier patches in this series, the ID state (fixed
-> or incrementing) is now recorded for both inner and outer IPv4 headers,
-> so the restriction to only coalesce packets with fixed IDs can now be
-> lifted."
+Hi
 
-This restriction is unnecessary regardless of this patch series. I'll
-rephrase it anyway.
+Am 15.09.25 um 10:42 schrieb Maxime Ripard:
+> Hi Tohmas,
+>
+> On Tue, Sep 02, 2025 at 03:44:54PM +0200, Thomas Zimmermann wrote:
+>>> +/**
+>>> + * drm_atomic_build_readout_state - Creates an initial state from the hardware
+>>> + * @dev: DRM device to build the state for
+>>> + *
+>>> + * This function allocates a &struct drm_atomic_state, calls the
+>>> + * atomic_readout_state callbacks, and fills the global state old states
+>>> + * by what the callbacks returned.
+>>> + *
+>>> + * Returns:
+>>> + *
+>>> + * A partially initialized &struct drm_atomic_state on success, an error
+>>> + * pointer otherwise.
+>>> + */
+>>> +static struct drm_atomic_state *
+>>> +drm_atomic_build_readout_state(struct drm_device *dev)
+>>> +{
+>>> +	struct drm_connector_list_iter conn_iter;
+>>> +	struct drm_atomic_state *state;
+>>> +	struct drm_mode_config *config =
+>>> +		&dev->mode_config;
+>>> +	struct drm_connector *connector;
+>>> +	struct drm_printer p =
+>>> +		drm_info_printer(dev->dev);
+>>> +	struct drm_encoder *encoder;
+>>> +	struct drm_plane *plane;
+>>> +	struct drm_crtc *crtc;
+>>> +	int ret;
+>>> +
+>>> +	drm_dbg_kms(dev, "Starting to build atomic state from hardware state.\n");
+>>> +
+>>> +	state = drm_atomic_state_alloc(dev);
+>>> +	if (WARN_ON(!state))
+>>> +		return ERR_PTR(-ENOMEM);
+>>> +
+>>> +	state->connectors = kcalloc(config->num_connector, sizeof(*state->connectors), GFP_KERNEL);
+>>> +	if (WARN_ON(!state->connectors)) {
+>>> +		ret = -ENOMEM;
+>>> +		goto err_state_put;
+>>> +	}
+>>> +
+>>> +	state->private_objs = kcalloc(count_private_obj(dev), sizeof(*state->private_objs), GFP_KERNEL);
+>>> +	if (WARN_ON(!state->private_objs)) {
+>>> +		ret = -ENOMEM;
+>>> +		goto err_state_put;
+>>> +	}
+>>> +
+>>> +	drm_for_each_crtc(crtc, dev) {
+>>> +		const struct drm_crtc_funcs *crtc_funcs =
+>>> +			crtc->funcs;
+>>> +		struct drm_crtc_state *crtc_state;
+>>> +
+>>> +		drm_dbg_kms(dev, "Initializing CRTC %s state.\n", crtc->name);
+>>> +
+>>> +		if (crtc_funcs->atomic_readout_state) {
+>>> +			crtc_state = crtc_funcs->atomic_readout_state(crtc);
+>>> +		} else if (crtc_funcs->reset) {
+>>> +			crtc_funcs->reset(crtc);
+>>> +
+>>> +			/*
+>>> +			 * We don't want to set crtc->state field yet. Let's save and clear it up.
+>>> +			 */
+>>> +			crtc_state = crtc->state;
+>>> +			crtc->state = NULL;
+>> Chancing the crtc->state pointer behind the back of the reset callback seems
+>> fragile. We never how if some other piece of the driver refers to it
+>> (although illegally).
+> I agree that it's clunky. I'm not sure who would use it at this point
+> though: we're in the middle of the drm_mode_config_reset(), so the
+> drivers' involvement is pretty minimal.
+>
+> I did wonder if changing reset to return the object instead of setting
+> $OBJECT->state would be a better interface?
 
+Probably not. The reset helper is supposed to initialize the object's 
+software and hardware state. But in most drivers, we're currently mostly 
+setting the minimal software state here and simply assume that hardware 
+is off. Returning the state would water down semantics even further.
+
+Having said that, I could imaging building an atomic_clean_state 
+callback that replaces the reset callback. It would work alongside the 
+new atomic_readout_state callback.  Current reset could be build upon 
+that callback. The atomic_clean_state would intentionally only take care 
+of the software state and leave hardware state undefined. This reflects 
+the current realities of most DRM drivers.   From that clean state, DRM 
+could do an atomic commit that also initializes the hardware.
+
+>
+>> For now, wouldn't it be better to require a read-out helper for all elements
+>> of the driver's mode-setting pipeline?  The trivial implementation would
+>> copy the existing reset function and keep crtc->state to NULL.
+> I also considered that, but I'm not sure we can expect bridges to have
+> readout hooks filled for every configuration in the wild.
+>
+> But maybe we can look during drm_mode_config_reset() at whether all the
+> objects have their hook filled, and if not fall back on reset for
+> everything.
+
+That's what I meant, I think.
+
+>
+> It would make the implementation easier, but missing bridges
+> implementations would trigger a mode change when it might actually work
+> just fine since bridge state is pretty minimal.
+
+If there's an element in the pipeline that's missing the readout helper, 
+it might be safer to fallback to that modeset instead of ending up with 
+inconsistent state.
+
+Best regards
+Thomas
+
+>
+> Idk.
+>
+>>> --- a/include/drm/drm_bridge.h
+>>> +++ b/include/drm/drm_bridge.h
+>>> @@ -490,10 +490,31 @@ struct drm_bridge_funcs {
+>>>    	 * The @atomic_post_disable callback is optional.
+>>>    	 */
+>>>    	void (*atomic_post_disable)(struct drm_bridge *bridge,
+>>>    				    struct drm_atomic_state *state);
+>>> +	/**
+>>> +	 * @atomic_readout_state:
+>>> +	 *
+>>> +	 * Initializes,this bridge atomic state.
+>>> +	 *
+>>> +	 * It's meant to be used by drivers that wants to implement fast
+>> 'want'
 >>
->> Remove unnecessary don't-fragment checks.
->>
->> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
->> ---
->>  include/net/gro.h                 | 5 ++---
->>  net/ipv4/af_inet.c                | 3 ---
->>  tools/testing/selftests/net/gro.c | 9 ++++-----
->>  3 files changed, 6 insertions(+), 11 deletions(-)
->>
->> diff --git a/include/net/gro.h b/include/net/gro.h
->> index 322c5517f508..691f267b3969 100644
->> --- a/include/net/gro.h
->> +++ b/include/net/gro.h
->> @@ -448,17 +448,16 @@ static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *ip
->>  	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
->>  	const u16 ipid_offset = (id >> 16) - (id2 >> 16);
->>  	const u16 count = NAPI_GRO_CB(p)->count;
->> -	const u32 df = id & IP_DF;
->>  
->>  	/* All fields must match except length and checksum. */
->> -	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF)))
->> +	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | ((id ^ id2) & IP_DF))
->>  		return true;
-> 
-> This is just a cleanup?
-> 
-> If so, please make a brief note in the commit message. I end up
-> staring whether there is some deeper meaning relevant to the
-> functional change.
-> 
+>>> +	 * / flicker-free boot and allows to initialize the atomic state
+>> I think we should only call it flicker-free boot. Fast boot is misleading.
+> I agree, but it's also how it's been called by the only implementation
+> of it we have so far (i915), and the name of the module parameter that
+> controls it.
+>
+> Maxime
 
-Will do.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
->>  
->>  	/* When we receive our second frame we can make a decision on if we
->>  	 * continue this flow as an atomic flow with a fixed ID or if we use
->>  	 * an incrementing ID.
->>  	 */
->> -	if (count == 1 && df && !ipid_offset)
->> +	if (count == 1 && !ipid_offset)
->>  		NAPI_GRO_CB(p)->ip_fixedid |= 1 << inner;
->>  
->>  	return ipid_offset ^ (count * !(NAPI_GRO_CB(p)->ip_fixedid & (1 << inner)));
->> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
->> index fc7a6955fa0a..c0542d9187e2 100644
->> --- a/net/ipv4/af_inet.c
->> +++ b/net/ipv4/af_inet.c
->> @@ -1393,10 +1393,7 @@ struct sk_buff *inet_gso_segment(struct sk_buff *skb,
->>  
->>  	segs = ERR_PTR(-EPROTONOSUPPORT);
->>  
->> -	/* fixed ID is invalid if DF bit is not set */
->>  	fixedid = !!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCP_FIXEDID << encap));
->> -	if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
->> -		goto out;
-> 
-> I understand why the GRO constraint can now be relaxed. But why does
-> this also affect GSO?
-> 
-> Fixed ID is invalid on the wire if DF is not set. Is the idea behind
-> this change that GRO + GSO is just forwarding existing packets. Even
-> if the incoming packets were invalid on this point?
-> 
-
-Basically. Such packets are forwarded both with and without GRO, and since
-GSO restores the packets to their original form before forwarding, there is
-no reason not to perform GRO. These checks are redundant and are somewhat
-confusing.
-
-Note also that FIXEDID can only be set by GRO, and before this patch, GRO
-didn't accept packets that had fixed IDs with DF not set, so the GSO check
-was redundant anyway. With this patch, the removal of the GSO check is
-necessary as otherwise GSO will not be able to restore the packets to their
-original form.
-
->>  
->>  	if (!skb->encapsulation || encap)
->>  		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
->> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
->> index d5824eadea10..3d4a82a2607c 100644
->> --- a/tools/testing/selftests/net/gro.c
->> +++ b/tools/testing/selftests/net/gro.c
->> @@ -670,7 +670,7 @@ static void send_flush_id_case(int fd, struct sockaddr_ll *daddr, int tcase)
->>  		iph2->id = htons(9);
->>  		break;
->>  
->> -	case 3: /* DF=0, Fixed - should not coalesce */
->> +	case 3: /* DF=0, Fixed - should coalesce */
->>  		iph1->frag_off &= ~htons(IP_DF);
->>  		iph1->id = htons(8);
->>  
->> @@ -1188,10 +1188,9 @@ static void gro_receiver(void)
->>  			correct_payload[0] = PAYLOAD_LEN * 2;
->>  			check_recv_pkts(rxfd, correct_payload, 1);
->>  
->> -			printf("DF=0, Fixed - should not coalesce: ");
->> -			correct_payload[0] = PAYLOAD_LEN;
->> -			correct_payload[1] = PAYLOAD_LEN;
->> -			check_recv_pkts(rxfd, correct_payload, 2);
->> +			printf("DF=0, Fixed - should coalesce: ");
->> +			correct_payload[0] = PAYLOAD_LEN * 2;
->> +			check_recv_pkts(rxfd, correct_payload, 1);
->>  
->>  			printf("DF=1, 2 Incrementing and one fixed - should coalesce only first 2 packets: ");
->>  			correct_payload[0] = PAYLOAD_LEN * 2;
->> -- 
->> 2.36.1
->>
-> 
-> 
 
 
