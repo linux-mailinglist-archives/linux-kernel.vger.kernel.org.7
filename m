@@ -1,111 +1,170 @@
-Return-Path: <linux-kernel+bounces-817692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A93B58570
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E83CB58574
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9F11B23250
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF00E1B232BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B1A283CB5;
-	Mon, 15 Sep 2025 19:40:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACB0285CBB;
+	Mon, 15 Sep 2025 19:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XC0C+5Fj"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D7D212574;
-	Mon, 15 Sep 2025 19:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204E22857DF;
+	Mon, 15 Sep 2025 19:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757965239; cv=none; b=aSsyBj56WeVo/VgGbV0Wd6DYWrBRBhNypBRCcBbDi+iO5IqopcXnompjRoC/B8IwqR3NcyZHWrqU692UaTmEUXA7wTG85aiZuHVTd+laemZSc4SSmxzYCT1dwuvauNNhhl2UVxHQNgDGh4owWCIe9lVMSjCCm+pkCQTuzvk7GCk=
+	t=1757965358; cv=none; b=jeb53QwhCZJNuCLQInrv382t4dLmsH73yMQhg5P/fUXNOrga3+SaOqYnyJHUQ+bA887v8IgSV1GeozuXn5TMAryqhYZZH6HbZGfYMSqIx6oEOqlbidKypdUYqhN51IdJQuASZrVEneVayN2Iyx1ClOTUQV/SKsbtBWOmy1nWKjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757965239; c=relaxed/simple;
-	bh=g5xAknOdfENgPm/cKcyiCHJ9HVP9ZcMgVpHNO/PV2QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djFsF1A9XnURolynkW4DxdQaqyjn4an+lnJxfICCZEv65NxsUvdjFlAJzUrLPj0BxUoMfp8AbvsJtgekYgPtZpc2bEap7YFm7RERyPgiy1wAe5P28//2EJda1XaWti08vpYSTk7mAMXoooRnonbAO0rpTzH2gbvVsEo/SptwWPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F133C4CEF1;
-	Mon, 15 Sep 2025 19:40:36 +0000 (UTC)
-Date: Mon, 15 Sep 2025 20:40:33 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: will@kernel.org, broonie@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
-	ardb@kernel.org, scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
- operation
-Message-ID: <aMhrscd1gz_syMtL@arm.com>
-References: <20250816151929.197589-1-yeoreum.yun@arm.com>
- <20250816151929.197589-5-yeoreum.yun@arm.com>
- <aMRQIeIdyiWVR8a0@arm.com>
- <aMfrR0vserl/hfZ3@e129823.arm.com>
+	s=arc-20240116; t=1757965358; c=relaxed/simple;
+	bh=qvdfrmIh4NPZ+/uFWRTsWiFWhMxKPa1Mtj3ZAi4h9tc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XxItwPv+bNgwInIRrPsf9GtIxr8k0LZtJEygY777nbufJXrQgR4178TnOkI/WgoHUO2OlLKB/UZ3RlUxbjaXbdhKGZe0BNUZVEWZDd3CUFrAbYyi4RLEcsZZK4+3a+xfd3tD+iNCLCfMv8ZRSrbMDJrr88N5IHn9scHKsnoGv7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XC0C+5Fj; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1757965353; x=1758570153; i=markus.elfring@web.de;
+	bh=aUqQg47bU5dHFZff7pqPCsLxzj0NS3+A+Ftm+3s7ajI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XC0C+5Fj7JZSzWNU36ChN3OmMoB1epdRzinqri5OU/gKfsk/ouky1TrQBNubT5rm
+	 TFQy5v8P0pJohbdpRnEDZxmk91wRNuwahUOjHqTbAqTIRAhN65Z8Oj7qOf4v3rJuQ
+	 9RsXOHn/5u8z7Hdy7KH3yEicqTQTsJ32R2Ktqit9thbgJDx5cwzQDJxQCKNa+yF1r
+	 HwGFQ/pKEwcDjqklJrPhD158pdRtW6LdHu/FXmMG0deODnW4EZ4AK64zyxx7TwiHg
+	 x4Z5b3+Vd5vUYcSRjJiO2Z/tq0KR22DQvXbpTyWUKOc+GfEF6X6ZKX17C11L6hW8F
+	 pvQ6gRw0tSdyxbdDFQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.188]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mho0A-1uTbFA41mC-00hZRX; Mon, 15
+ Sep 2025 21:42:33 +0200
+Message-ID: <063c5035-36d3-4b81-8ae6-b05cf9d27066@web.de>
+Date: Mon, 15 Sep 2025 21:42:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMfrR0vserl/hfZ3@e129823.arm.com>
+User-Agent: Mozilla Thunderbird
+To: Nathan Lynch <nathan.lynch@amd.com>, Wei Huang <wei.huang2@amd.com>,
+ dmaengine@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, Vinod Koul <vkoul@kernel.org>
+References: <20250905-sdxi-base-v1-8-d0341a1292ba@amd.com>
+Subject: Re: [PATCH RFC 08/13] dmaengine: sdxi: Context creation/removal,
+ descriptor submission
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250905-sdxi-base-v1-8-d0341a1292ba@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LYT74sEP1AsKEyNdyJRJff4Rsm7TQbsDI8AXNbkcgvsYMaZN3Z3
+ zcb7feQqYncO+5ICYy4CxKRx2X+YcG+Sm8RAJzDBU9fK31rwH2mNxfB2n/C1JnnrJDuL/ZU
+ 98qtihPSvPCgN2EO1tpovT28mGJ44HCZ3oHomkMhnPDJf43osbNN+j2fqWHITZh+vn/2sKd
+ I8zQq7CD1PUbPRxqzJaIQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9fkPiu86wRc=;jzifq2Pz3xWhlo8+2ouT01F7nwy
+ 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
+ igymL2v8qdpOJHH3rae
 
-On Mon, Sep 15, 2025 at 11:32:39AM +0100, Yeoreum Yun wrote:
-> > On Sat, Aug 16, 2025 at 04:19:27PM +0100, Yeoreum Yun wrote:
-> > > diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-> > > index bc06691d2062..ab7003cb4724 100644
-> > > --- a/arch/arm64/include/asm/futex.h
-> > > +++ b/arch/arm64/include/asm/futex.h
-> > > @@ -7,17 +7,21 @@
-> > >
-> > >  #include <linux/futex.h>
-> > >  #include <linux/uaccess.h>
-> > > +#include <linux/stringify.h>
-> > >
-> > >  #include <asm/errno.h>
-> > >
-> > > -#define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
-> > > +#define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
-> >
-> > I just noticed - you might as well leave the name as is here, especially
-> > if in patch 6 you align down address and use CAS on a 64-bit value as
-> > per Will's comment (and it's no longer LLSC). I think renaming this is
-> > unnecessary.
-> 
-> Okay. I'll restore to use origin name.
-> But I think LSUI wouldn't be used with CAS according to patch 6's
-> comments from you and additionally i think
-> chaning the CAS would make a failure because of
-> change of unrelated field. i.e)
-> 
-> struct user_structure{
->   uint32 futex;
->   uint32 some_value;
-> };
-> 
-> In this case, the change of some_value from user side could make a
-> failure of futex atomic operation.
+=E2=80=A6
+> +++ b/drivers/dma/sdxi/context.c
+> @@ -0,0 +1,547 @@
+=E2=80=A6
+> +static void sdxi_cxt_free(struct sdxi_cxt *cxt)
+> +{
+> +	struct sdxi_dev *sdxi =3D cxt->sdxi;
+> +
+> +	mutex_lock(&sdxi->cxt_lock);
+> +
+> +	cleanup_cxt_tables(sdxi, cxt);
+> +	dma_pool_free(sdxi->cxt_ctl_pool, cxt->cxt_ctl, cxt->cxt_ctl_dma);
+> +	free_cxt(cxt);
+> +
+> +	mutex_unlock(&sdxi->cxt_lock);
+> +}
+=E2=80=A6
 
-Yes but the loop would read 'some_value' again, fold in 'futex' and
-retry. It would eventually succeed or fail after 128 iterations if the
-user keeps changing that location. Note that's also the case with LL/SC,
-the exclusive monitor would be cleared by some store in the same cache
-line (well, depending on the hardware implementation) and the STXR fail.
-From this perspective, CAS has better chance of succeeding.
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&sdxi->cxt_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.17-rc6/source/include/linux/mutex.h#L2=
+28
 
-> So I think it would be better to keep the current LLSC implementation
-> in LSUI.
-
-I think the code would look simpler with LL/SC but you can give it a try
-and post the code sample here (not in a new series).
-
-BTW, is there a test suite for all the futex operations? The cover
-letter did not mention any.
-
--- 
-Catalin
+Regards,
+Markus
 
