@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-816254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AF7B57191
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:34:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94167B57190
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1233189D943
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AFEB173BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CDC2882CE;
-	Mon, 15 Sep 2025 07:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673AD2D595F;
+	Mon, 15 Sep 2025 07:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cCAyuxC5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PpNo0Gm0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7882D660C;
-	Mon, 15 Sep 2025 07:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2792D46AF;
+	Mon, 15 Sep 2025 07:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921637; cv=none; b=Rdf1LrZ4Mg+68ObnTGHOkjOHRQaP8s9WPQ0xjMoUVHwYn3jY32x+nFpCRgpGpIxPEjPoaXVCrMTeIgao99ddAp9tCLOfRKTfrYHpRETTN32gursZKh4bs7XSK+w3NP8M3dNYYF5uUqwDeXmAcKTSuq+TJpHXajwsPwtDiD7hRzM=
+	t=1757921631; cv=none; b=EndEcJwCXLQC0liAvZd28DPQHi3DiaL6WrMrY+PJy82u2xg/fUPCoDh2Y5yyWW8k09R+z1cgxmQSWBSRPzMvlEGCQrMlZ4SkcqORqk4qswi9rOFzCLbqu97qjZTynudQroLosS4zI9YJt0R0/gNZ5nO2pnFq2EjDFggZvEkCWOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921637; c=relaxed/simple;
-	bh=DvSKAixkF9WiInHcecdF9r++YQfiD7ysh0j9y+sXxTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KjLlFrH9JMOgWZNnh7+FEXzv953ErhcjOQihdXvs080ot9cL+sbmmwQCvDEd36bNHuwgIAduvcNcpLxHuzVPwzXg0ypyqamXQmFbcRnT4FcT5NCaVfQ2w+jxAWArflZXv5Wr/UO9nJt3fiNebLr5L0LZy7Rs1HaqXqYgcJehnVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cCAyuxC5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rkpsss2z2H/w4p1k/6I9vrNo/EjRurZRDUMrR20n0EQ=; b=cCAyuxC54/f29XMk0QmhvUtjT0
-	to13Ka/dLEKj/oxdsL8sCx4dW71Bu5X79chkCFeweqvWfQQoHgri6YQc3peonBygp2V2Y7xmxHuR/
-	VjPy4QIq0LLo3yO5XJu8n/yeYfo2xAue3WxkgbxALnQQn0qopIrg0aX30yV4O2x1NfI1MwizNXjsW
-	hHuZuOREBTeL+cUvjayvIVzua2i+97/TKWnfTb0cFKRyTfuKktJAKikNiIdqk4DEBcOAQn/WJzUSy
-	GT+1P3YeDXOQRwBGzuMChyBI9QS2w9m7r2bJnQ3ZLxgN+cLOL7HCTko9AEsdN4Ey8mqhPp0EYm0W/
-	l68yokgg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uy3id-0000000AN4o-0H9x;
-	Mon, 15 Sep 2025 07:33:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 90A1C302E03; Mon, 15 Sep 2025 09:33:45 +0200 (CEST)
-Date: Mon, 15 Sep 2025 09:33:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>,
-	Elle Rhumsaa <elle@weathered-steel.dev>
-Subject: Re: [tip:locking/core 1/13] error[E0425]: cannot find function
- `atomic_add` in crate `bindings`
-Message-ID: <20250915073345.GR3419281@noisy.programming.kicks-ass.net>
-References: <202509131610.IPwv7fy3-lkp@intel.com>
- <aMWMVQiZxE_mv7va@tardis.local>
+	s=arc-20240116; t=1757921631; c=relaxed/simple;
+	bh=CvSpZpuhDtzZdxfbopkSom4BlyFhn0H99cY81Z+ClJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iCZz2avD6lbekSACZe2v9BwQxj0sxGCXjh7guKMZf3MRj2PlxR0idNajCSFIoO56w0Su9C9dKI8rdzfYH7LqRKf9ZmP+qvMJOHkIRIVQBIgyJwnaoHCRdi3MLUraYFcLH4s/qkJRDS/Lw9THxRzPgCmnAXu8tE9jb5j5wcMvtgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PpNo0Gm0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757921627;
+	bh=CvSpZpuhDtzZdxfbopkSom4BlyFhn0H99cY81Z+ClJ4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=PpNo0Gm0NGeq8BUqPEaE3VEteESp1T51bYoPqaOnH7v0WlIn2RZNrOED5yoZLgRWS
+	 e1TFKJSQT5faQR8H3/9zZUn9MAypxIdcoqz4J+JPljcpa5IcQ9WOpYZTHYj9eIR6rk
+	 yvitPSU5wIU9kNIrlI9EMBUsCqbpmxp0BLsCyOOVcEpKkhe6Ay2wVB7sox7L+EpBx8
+	 jTsXFoH68PEU7dja1RyyC1g63aE+Po3RfQnADOAYE0hY/YXvfN1h/rmVxjtDE8Or7D
+	 bnavYcMIvsHSxO1+qdnHpvZ5A+kCIg5tEOlgQt+wLJoKkMagR9yj1fHSYC4v6idDJb
+	 wpCkaCbCfybyQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CD81C17E0AC3;
+	Mon, 15 Sep 2025 09:33:46 +0200 (CEST)
+Message-ID: <8b1c1796-6de2-4526-9a29-d8649141b878@collabora.com>
+Date: Mon, 15 Sep 2025 09:33:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMWMVQiZxE_mv7va@tardis.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: serial: 8250_mtk: enable baud clock
+To: Daniel Golle <daniel@makrotopia.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Yu Jiaoliang <yujiaoliang@vivo.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Changqi Hu <changqi.hu@mediatek.com>, Sam Shih <sam.shih@mediatek.com>,
+ Steven Liu <steven.liu@mediatek.com>, John Crispin <john@phrozen.org>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <5d6acd2273e3c98a5cbc685ad94eff19c6b6d044.1757807642.git.daniel@makrotopia.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <5d6acd2273e3c98a5cbc685ad94eff19c6b6d044.1757807642.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 13, 2025 at 08:23:01AM -0700, Boqun Feng wrote:
-> Hi Peter,
+Il 14/09/25 01:59, Daniel Golle ha scritto:
+> Some MediaTek SoCs got a gated UART baud clock, which currently gets
+> disabled as the clk subsystem believes it would be unused. This results in
+> the uart freezing right after "clk: Disabling unused clocks" on those
+> platforms.
 > 
-> On Sat, Sep 13, 2025 at 04:00:27PM +0200, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-> > head:   502ae97746ab6d7b7b48d54b6a85a11815f390d0
-> > commit: eb57133305f61b612252382d0c1478bba7f57b67 [1/13] rust: sync: Add basic atomic operation mapping framework
+> To fix this request the "baud" clock as enabled to prevent disabling it
+> among with the unused clocks.
+> Runtime power management can probably also be restored to the state before
+> commit e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock
+> management"), but that isn't strictly needed to fix the regression
+> introduced by that commit.
 > 
-> I think we are missing this patch:
-> 
-> 	https://lore.kernel.org/rust-for-linux/20250905044141.77868-2-boqun.feng@gmail.com/
-> 
-> in locking/core. It should be applied before all atomic patches.
+> Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
+> Suggested-by: Sam Shih <sam.shih@mediatek.com>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Ah, let me go fix things.
+Is there any particular reason why you didn't en/disable the uart_clk in
+runtime PM ops?
+
+Cheers,
+Angelo
+
+> ---
+>   drivers/tty/serial/8250/8250_mtk.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+> index b44de2ed7413..9329ed1f759d 100644
+> --- a/drivers/tty/serial/8250/8250_mtk.c
+> +++ b/drivers/tty/serial/8250/8250_mtk.c
+> @@ -475,13 +475,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
+>   	int dmacnt;
+>   #endif
+>   
+> -	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
+> +	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
+>   	if (IS_ERR(data->uart_clk)) {
+>   		/*
+>   		 * For compatibility with older device trees try unnamed
+>   		 * clk when no baud clk can be found.
+>   		 */
+> -		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
+> +		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>   		if (IS_ERR(data->uart_clk)) {
+>   			dev_warn(&pdev->dev, "Can't get uart clock\n");
+>   			return PTR_ERR(data->uart_clk);
+
+
 
