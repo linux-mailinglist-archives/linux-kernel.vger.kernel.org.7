@@ -1,185 +1,292 @@
-Return-Path: <linux-kernel+bounces-817281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197F0B58018
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E703B58032
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EAA161CC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC62D18867FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E20A1DE4E5;
-	Mon, 15 Sep 2025 15:09:04 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D55A341648;
+	Mon, 15 Sep 2025 15:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnOB47F2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC9033EB15;
-	Mon, 15 Sep 2025 15:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577B0340DB7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948943; cv=none; b=QIWCXJwLkDXI0ioOsewAk4ulTJX2rA4xR5mtgklPw96Ps4JpFT4NQDYiB7JFeDqBivPaoS3TLFAdMheNPYUuKMcyIZ1wiwCqQxyFqTdQCNhQ8fW4OGnFm6NgCiBr6Qr5xSyXitwHR9eVNiwP+8+j724CGGWBGxy5I6b9v1Ky3SY=
+	t=1757948980; cv=none; b=T1TLRLirrnaYiRHUZpUfSHcjiKoYuOBbyUMBqLjcWQCHDvBXT1lw8326q64q3mXm9fbZpgdXX0lRc4JG5VRY4T0XAVYPJCZ2YW/OKUkHxU9XU29rTgo/Nxat1XrVNjkd+THwm/wr2trIoJkrHT3mDVMidQK3Pe1KfyZycnloCV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948943; c=relaxed/simple;
-	bh=2TS+njpHoWqfcXvZ/AG4mUlZy2MsCcBbzK85MJoZSWM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uexC6aVGHhPsOZ2AnPD3KM+wY6t2RdDbWyd5zs0sansc6OsH7ENDXTxNjaKONLiR0uY3y2Fa0+I26Qaq1JSJTPSahO+ImGVyMdI1lP9vlmhRuzinuMd22Ed7C8ryShSBtMBkeaKjaB2pqwE6/Q3MeuLNInLyYRViEFFQ34/tXdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cQT0g0Yt0z6GD5y;
-	Mon, 15 Sep 2025 23:07:31 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8D7481400DC;
-	Mon, 15 Sep 2025 23:08:58 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 15 Sep
- 2025 17:08:58 +0200
-Date: Mon, 15 Sep 2025 16:08:56 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org>
-CC: <nathan.lynch@amd.com>, Vinod Koul <vkoul@kernel.org>, Wei Huang
-	<wei.huang2@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, "Bjorn
- Helgaas" <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
-Subject: Re: [PATCH RFC 12/13] dmaengine: sdxi: Add Kconfig and Makefile
-Message-ID: <20250915160856.000005bc@huawei.com>
-In-Reply-To: <20250905-sdxi-base-v1-12-d0341a1292ba@amd.com>
-References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
-	<20250905-sdxi-base-v1-12-d0341a1292ba@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757948980; c=relaxed/simple;
+	bh=sAILtEQ6hGjB1SZc5TaU5PYDq7RHDNmXbwdIprhruRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d0c8uOt+cM5L86ZsSINNm/0fTbGNiNAEbUFOsoxD3VjpcISd4hxynK0B35sBxhMHKhssfiGHgTlZrfCMSaXwkISUZg8bGDlBrRtK/dUbIIDKP0lItNO040QILXT3/PggDJaPuVu5VK7Cc53XlajkS4o6DL+U9NzRtzpKIjgLcmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnOB47F2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF7E1C4AF09
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 15:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757948979;
+	bh=sAILtEQ6hGjB1SZc5TaU5PYDq7RHDNmXbwdIprhruRw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MnOB47F25pAVMRV7B7hOz+/+mz8iKxW4EC1uh2wRJouQGxZ8db9vC80o7Mj0Bcpzc
+	 78sBKRFywdV0HEO5N0KRUHTEeidc2pFutLjUOqTRlnJh3a5e6OLve0pQbYvPEKcNk+
+	 jr/cJzlITPy3WMtZ0BPLskDEXI0ndTO0/ZhyDln/opdykVUfOtRbuMOaXZLPnflZUQ
+	 dsKY0Ytk5+RszljahsY2Bcu0juZU/ngjxGIjupJDtMdOnLtlmdvxOcGvPobcOiRzsT
+	 cPep2YVYK/TETJYRHh306VuADIXZjwjkJwykO/7+6U25dnrm+OcL4lpJXFOX+Q+uhq
+	 MypiuGG5z/9BA==
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so27200855e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:09:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW4cBgh05Ve2+1tEHkJ3eLhy9ucRGNQOFgBdGHgMlVaf4o9l9jhDy6zNsFLHroYwa6B8yB34aKbccYYiP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlwPqZluwcjqCfAdI68unzz8oAPBYzSr6ejvM+jimfODiu2ZYp
+	hPGQQn/EMzRG2xWyL2MnTm/5MFjBTok4tnJKRSGOLrDUYOPJuUQQ9mei7F0h8q6/1WaSta2UGSY
+	LRBN5xBqISBflPUaAilxiPpGkzzIAP2ffuP1AwrmdJQ==
+X-Google-Smtp-Source: AGHT+IFZcDUDotIs1MFDsw2dmuzKjvdCb4zDoIEg+yTNJzNFpyVIBaetpEjE4dOCgEJV2HI6RJBat69v2VCnXmjopK4=
+X-Received: by 2002:a5d:55c6:0:b0:3e7:d909:4c1c with SMTP id
+ ffacd0b85a97d-3e7d9094ccemr8362992f8f.11.1757948978654; Mon, 15 Sep 2025
+ 08:09:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-11-ryncsn@gmail.com>
+In-Reply-To: <20250910160833.3464-11-ryncsn@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 15 Sep 2025 08:09:26 -0700
+X-Gmail-Original-Message-ID: <CACePvbUM1-xmgttL5R06qrULDq_eiHT0jPRpcfrZJX2ch6tZSg@mail.gmail.com>
+X-Gm-Features: AS18NWBTpBv2ceo-93-keDns1VW92yPyG7W7vfAHNpWFmTjFfAIjeCnq2vHXyIM
+Message-ID: <CACePvbUM1-xmgttL5R06qrULDq_eiHT0jPRpcfrZJX2ch6tZSg@mail.gmail.com>
+Subject: Re: [PATCH v3 10/15] mm, swap: wrap swap cache replacement with a helper
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 05 Sep 2025 13:48:35 -0500
-Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:
+Acked-by: Chris Li <chrisl@kernel.org>
 
-> From: Nathan Lynch <nathan.lynch@amd.com>
-> 
-> Add SDXI Kconfig that includes debug and unit test options in addition
-> to the usual tristate. SDXI_DEBUG seems necessary because
-> DMADEVICES_DEBUG makes dmatest too verbose.
-> 
-> One goal is to keep the bus-agnostic portions of the driver buildable
-> without PCI(_MSI), in case non-PCI SDXI implementations come along
-> later.
-> 
-> Co-developed-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
-It's up to the dma maintainer, but personally and for subsystems I
-do maintain this approach of putting the build files in at the end
-is not something I'd accept.
+Chris
 
-The reason being that it leads to issues in earlier patches being
-hidden with stuff not well separated.  I'd much rather see the driver
-built up so that it builds at each step with each new patch
-adding additional functionality.  Also avoids things like comments
-on the build dependencies in patch descriptions earlier in the series.
-They become clear as the code is with the patch.  The one about MSIX
-for example doesn't seem to be related to what is here.
-
-Anyhow, no idea if dma maintainers prefer that or this approach.
-
+On Wed, Sep 10, 2025 at 9:09=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> There are currently three swap cache users that are trying to replace an
+> existing folio with a new one: huge memory splitting, migration, and
+> shmem replacement. What they are doing is quite similar.
+>
+> Introduce a common helper for this. In later commits, this can be easily
+> switched to use the swap table by updating this helper.
+>
+> The newly added helper also makes the swap cache API better defined, and
+> make debugging easier by adding a few more debug checks.
+>
+> Migration and shmem replace are meant to clone the folio, including
+> content, swap entry value, and flags. And splitting will adjust each
+> sub folio's swap entry according to order, which could be non-uniform in
+> the future. So document it clearly that it's the caller's responsibility
+> to set up the new folio's swap entries and flags before calling the helpe=
+r.
+> The helper will just follow the new folio's entry value.
+>
+> This also prepares for replacing high-order folios in the swap cache.
+> Currently, only splitting to order 0 is allowed for swap cache folios.
+> Using the new helper, we can handle high-order folio splitting better.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 > ---
->  drivers/dma/Kconfig       |  2 ++
->  drivers/dma/Makefile      |  1 +
->  drivers/dma/sdxi/Kconfig  | 23 +++++++++++++++++++++++
->  drivers/dma/sdxi/Makefile | 17 +++++++++++++++++
->  4 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-> index 05c7c7d9e5a4e52a8ad7ada8c8b9b1a6f9d875f6..cccf00b73e025944681b03cffe441c372526d3f3 100644
-> --- a/drivers/dma/Kconfig
-> +++ b/drivers/dma/Kconfig
-> @@ -774,6 +774,8 @@ source "drivers/dma/fsl-dpaa2-qdma/Kconfig"
->  
->  source "drivers/dma/lgm/Kconfig"
->  
-> +source "drivers/dma/sdxi/Kconfig"
+>  mm/huge_memory.c |  4 +---
+>  mm/migrate.c     | 11 +++--------
+>  mm/shmem.c       | 10 ++--------
+>  mm/swap.h        |  5 +++++
+>  mm/swap_state.c  | 33 +++++++++++++++++++++++++++++++++
+>  5 files changed, 44 insertions(+), 19 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 26cedfcd7418..4c66e358685b 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3798,9 +3798,7 @@ static int __folio_split(struct folio *folio, unsig=
+ned int new_order,
+>                          * NOTE: shmem in swap cache is not supported yet=
+.
+>                          */
+>                         if (swap_cache) {
+> -                               __xa_store(&swap_cache->i_pages,
+> -                                          swap_cache_index(new_folio->sw=
+ap),
+> -                                          new_folio, 0);
+> +                               __swap_cache_replace_folio(folio, new_fol=
+io);
+>                                 continue;
+>                         }
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 8e435a078fc3..c69cc13db692 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -566,7 +566,6 @@ static int __folio_migrate_mapping(struct address_spa=
+ce *mapping,
+>         struct zone *oldzone, *newzone;
+>         int dirty;
+>         long nr =3D folio_nr_pages(folio);
+> -       long entries, i;
+>
+>         if (!mapping) {
+>                 /* Take off deferred split queue while frozen and memcg s=
+et */
+> @@ -615,9 +614,6 @@ static int __folio_migrate_mapping(struct address_spa=
+ce *mapping,
+>         if (folio_test_swapcache(folio)) {
+>                 folio_set_swapcache(newfolio);
+>                 newfolio->private =3D folio_get_private(folio);
+> -               entries =3D nr;
+> -       } else {
+> -               entries =3D 1;
+>         }
+>
+>         /* Move dirty while folio refs frozen and newfolio not yet expose=
+d */
+> @@ -627,11 +623,10 @@ static int __folio_migrate_mapping(struct address_s=
+pace *mapping,
+>                 folio_set_dirty(newfolio);
+>         }
+>
+> -       /* Swap cache still stores N entries instead of a high-order entr=
+y */
+> -       for (i =3D 0; i < entries; i++) {
+> +       if (folio_test_swapcache(folio))
+> +               __swap_cache_replace_folio(folio, newfolio);
+> +       else
+>                 xas_store(&xas, newfolio);
+> -               xas_next(&xas);
+> -       }
+>
+>         /*
+>          * Drop cache reference from old folio by unfreezing
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 5f395fab489c..8930780325da 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2086,10 +2086,8 @@ static int shmem_replace_folio(struct folio **foli=
+op, gfp_t gfp,
+>         struct folio *new, *old =3D *foliop;
+>         swp_entry_t entry =3D old->swap;
+>         struct address_space *swap_mapping =3D swap_address_space(entry);
+> -       pgoff_t swap_index =3D swap_cache_index(entry);
+> -       XA_STATE(xas, &swap_mapping->i_pages, swap_index);
+>         int nr_pages =3D folio_nr_pages(old);
+> -       int error =3D 0, i;
+> +       int error =3D 0;
+>
+>         /*
+>          * We have arrived here because our zones are constrained, so don=
+'t
+> @@ -2118,12 +2116,8 @@ static int shmem_replace_folio(struct folio **foli=
+op, gfp_t gfp,
+>         new->swap =3D entry;
+>         folio_set_swapcache(new);
+>
+> -       /* Swap cache still stores N entries instead of a high-order entr=
+y */
+>         xa_lock_irq(&swap_mapping->i_pages);
+> -       for (i =3D 0; i < nr_pages; i++) {
+> -               WARN_ON_ONCE(xas_store(&xas, new));
+> -               xas_next(&xas);
+> -       }
+> +       __swap_cache_replace_folio(old, new);
+>         xa_unlock_irq(&swap_mapping->i_pages);
+>
+>         mem_cgroup_replace_folio(old, new);
+> diff --git a/mm/swap.h b/mm/swap.h
+> index 6c4acb549bec..fe579c81c6c4 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -185,6 +185,7 @@ int swap_cache_add_folio(struct folio *folio, swp_ent=
+ry_t entry,
+>  void swap_cache_del_folio(struct folio *folio);
+>  void __swap_cache_del_folio(struct folio *folio,
+>                             swp_entry_t entry, void *shadow);
+> +void __swap_cache_replace_folio(struct folio *old, struct folio *new);
+>  void swap_cache_clear_shadow(int type, unsigned long begin,
+>                              unsigned long end);
+>
+> @@ -336,6 +337,10 @@ static inline void __swap_cache_del_folio(struct fol=
+io *folio, swp_entry_t entry
+>  {
+>  }
+>
+> +static inline void __swap_cache_replace_folio(struct folio *old, struct =
+folio *new)
+> +{
+> +}
 > +
->  source "drivers/dma/stm32/Kconfig"
->  
->  # clients
-> diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
-> index a54d7688392b1a0e956fa5d23633507f52f017d9..ae4154595e1a6250b441a90078e9df3607d3d1dd 100644
-> --- a/drivers/dma/Makefile
-> +++ b/drivers/dma/Makefile
-> @@ -85,6 +85,7 @@ obj-$(CONFIG_XGENE_DMA) += xgene-dma.o
->  obj-$(CONFIG_ST_FDMA) += st_fdma.o
->  obj-$(CONFIG_FSL_DPAA2_QDMA) += fsl-dpaa2-qdma/
->  obj-$(CONFIG_INTEL_LDMA) += lgm/
-> +obj-$(CONFIG_SDXI) += sdxi/
->  
->  obj-y += amd/
->  obj-y += mediatek/
-> diff --git a/drivers/dma/sdxi/Kconfig b/drivers/dma/sdxi/Kconfig
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c9757cffb5f64fbc175ded8d0c9d751f0a22b6df
-> --- /dev/null
-> +++ b/drivers/dma/sdxi/Kconfig
-> @@ -0,0 +1,23 @@
-> +config SDXI
-> +	tristate "SDXI support"
-> +	select DMA_ENGINE
-> +	select DMA_VIRTUAL_CHANNELS
-> +	select PACKING
-> +	help
-> +	  Enable support for Smart Data Accelerator Interface (SDXI)
-> +	  Platform Data Mover devices. SDXI is a vendor-neutral
-> +	  standard for a memory-to-memory data mover and acceleration
-> +	  interface.
+>  static inline unsigned int folio_swap_flags(struct folio *folio)
+>  {
+>         return 0;
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index f3a32a06a950..d1f5b8fa52fc 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -234,6 +234,39 @@ void swap_cache_del_folio(struct folio *folio)
+>         folio_ref_sub(folio, folio_nr_pages(folio));
+>  }
+>
+> +/**
+> + * __swap_cache_replace_folio - Replace a folio in the swap cache.
+> + * @old: The old folio to be replaced.
+> + * @new: The new folio.
+> + *
+> + * Replace an existing folio in the swap cache with a new folio. The
+> + * caller is responsible for setting up the new folio's flag and swap
+> + * entries. Replacement will take the new folio's swap entry value as
+> + * the starting offset to override all slots covered by the new folio.
+> + *
+> + * Context: Caller must ensure both folios are locked, also lock the
+> + * swap address_space that holds the old folio to avoid races.
+> + */
+> +void __swap_cache_replace_folio(struct folio *old, struct folio *new)
+> +{
+> +       swp_entry_t entry =3D new->swap;
+> +       unsigned long nr_pages =3D folio_nr_pages(new);
+> +       unsigned long offset =3D swap_cache_index(entry);
+> +       unsigned long end =3D offset + nr_pages;
 > +
-> +config SDXI_DEBUG
-> +	bool "SDXI driver debug"
-> +	default DMADEVICES_DEBUG
-> +	depends on SDXI != n
-> +	help
-> +	  Enable debug output from the SDXI driver. This is an option
-> +	  for use by developers and most users should say N here.
+> +       XA_STATE(xas, &swap_address_space(entry)->i_pages, offset);
 > +
-> +config SDXI_KUNIT_TEST
-> +       tristate "SDXI unit tests" if !KUNIT_ALL_TESTS
-> +       depends on SDXI && KUNIT
-> +       default KUNIT_ALL_TESTS
-> diff --git a/drivers/dma/sdxi/Makefile b/drivers/dma/sdxi/Makefile
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..c67e475689b45d6260fe970fb4afcc25f8f9ebc1
-> --- /dev/null
-> +++ b/drivers/dma/sdxi/Makefile
-> @@ -0,0 +1,17 @@
-> +# SPDX-License-Identifier: GPL-2.0
+> +       VM_WARN_ON_ONCE(!folio_test_swapcache(old) || !folio_test_swapcac=
+he(new));
+> +       VM_WARN_ON_ONCE(!folio_test_locked(old) || !folio_test_locked(new=
+));
+> +       VM_WARN_ON_ONCE(!entry.val);
 > +
-> +ccflags-$(CONFIG_SDXI_DEBUG) += -DDEBUG
-
-What does this actually do?  More modern drivers rarely
-do this any more because we have nice facilities like dynamic debug.
-
+> +       /* Swap cache still stores N entries instead of a high-order entr=
+y */
+> +       do {
+> +               WARN_ON_ONCE(xas_store(&xas, new) !=3D old);
+> +               xas_next(&xas);
+> +       } while (++offset < end);
+> +}
 > +
-> +obj-$(CONFIG_SDXI) += sdxi.o
-> +
-> +sdxi-objs += \
-> +	context.o     \
-> +	descriptor.o  \
-> +	device.o      \
-> +	dma.o         \
-> +	enqueue.o     \
-> +	error.o
-> +
-> +sdxi-$(CONFIG_PCI_MSI) += pci.o
-> +
-> +obj-$(CONFIG_SDXI_KUNIT_TEST) += descriptor_kunit.o
-> 
-
+>  /**
+>   * swap_cache_clear_shadow - Clears a set of shadows in the swap cache.
+>   * @type: Indicates the swap device.
+> --
+> 2.51.0
+>
 
