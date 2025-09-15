@@ -1,127 +1,193 @@
-Return-Path: <linux-kernel+bounces-816582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37384B575D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:13:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3311DB57606
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E7D3AE1E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCA117039C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A098E2FB63F;
-	Mon, 15 Sep 2025 10:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOwoYI0p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB3E2FE590;
+	Mon, 15 Sep 2025 10:14:56 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9E42FB627;
-	Mon, 15 Sep 2025 10:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDB12FB995;
+	Mon, 15 Sep 2025 10:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931185; cv=none; b=PWxpu+NHoUlqvGtLgwG5WTVKK1+ZJx04kU9Mj8jrjhafwwua+guKpyCTOqixia7nexpcX3F+qnOJYHkSROMiShqljzeNmSoO/OOqeJzwWfYpclpRh3bFaczcI/SJ8Mj2DS9O/qQeuW+04XdzLnJTXqd6SHMfABYMmz/BM6WnxPc=
+	t=1757931296; cv=none; b=MPlon1qwPZ+1guWe7oHHneh0mD9Grc7QtThayTEjJIocobOlZbGoycVmJG1HOsESAcexKFXW+TSh6bcrF8ROr4ZKMFf8hc7uhrxrEaw86/+4LRFC4EcrnQz3PKKnhHpqUpVcXzcZ/GFeaozXArmCEIOLBEVQEPmdQke3Unnpgdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931185; c=relaxed/simple;
-	bh=bb9Mg/D/jEHiaHsLAgrg6OSUxGwRv1ubjnV9xw/kiW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZBz5YQgCfQfZNU0qaaXuR6rpSDQMfXqjN/HtaFDGesqI3+coM+ji0yRnqXNPLDecdwt8HM3LCyclLrTe4RN3juJufoh3b8Bh1T/lB8E/lRuZIqZ8St/9nmABUP99W7UJVYktfNol237Nqj9kCkiJMnfHLMK8D/dHRf7UslPLbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOwoYI0p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDD41C4CEF7;
-	Mon, 15 Sep 2025 10:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757931184;
-	bh=bb9Mg/D/jEHiaHsLAgrg6OSUxGwRv1ubjnV9xw/kiW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MOwoYI0pzlw7L57/NjzW0kWEOhTeYrPAPpgYGQ+Sb3S7oWReSYYhzrBAzW3yCFmVw
-	 LkIGEggrjiW//byAc4Lh9OmKKssKd0v1WGASy9HhwnxwDB5net5ZNWuNGdx5zoZZeA
-	 lozqdOKVq/gKDD2zfdHOzTI8oRZzwkA6kHqAGpqHPFzFaJf11ITrsE3SksLByb4KTV
-	 UxRvvTVEjyjaeZMTpAWKqWH2CG12frOfhQCJye9XpSxfRpDOIiBKEwiRDVRwwVfpWS
-	 tRQfQsGQm032z0j7fhruWg7hFL4rQApVCUicVG9YGIUy7PoHjnJH6v8sz9X6WsR49M
-	 hkbTjspEj/ZLw==
-Date: Mon, 15 Sep 2025 12:13:02 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Drew Fustini <fustini@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v14 2/7] rust: pwm: Add Kconfig and basic data structures
-Message-ID: <upgthwp3cyohhe2gkzsramzshmvz3icjbhro6hgk2drbbqczi4@ygaanetydgjv>
-References: <20250820-rust-next-pwm-working-fan-for-sending-v14-0-df2191621429@samsung.com>
- <CGME20250820083542eucas1p221dacb3b69524b0dd6f7abf870adbe04@eucas1p2.samsung.com>
- <20250820-rust-next-pwm-working-fan-for-sending-v14-2-df2191621429@samsung.com>
+	s=arc-20240116; t=1757931296; c=relaxed/simple;
+	bh=X7JKtrR9TKegs7VrKC8AGSC4UiDTyaDLZ1135OCavxk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q1wA5HMeIM5CqKGM5L+X3M7zoSohkJI9/k1oYip2B9rwmlWOhSImVN8LCkf7QVmW666WWny/8cVFVYjNNT+OyhJTkHHGfPemYhnHVCHqaAz96axbwp0EsSoxBOUvpCchR//HzzIh+M0BajK5eZgxA83K5nNXsY//Q8LWrEgz8Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.43.101])
+	by APP-05 (Coremail) with SMTP id zQCowAD3lxHf5sdoHWn3Ag--.53429S2;
+	Mon, 15 Sep 2025 18:13:51 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: linux-riscv@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ved Shanbhogue <ved@rivosinc.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V12 0/5] riscv: mm: Add soft-dirty and uffd-wp support
+Date: Mon, 15 Sep 2025 18:13:38 +0800
+Message-Id: <20250915101343.1449546-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zryfvf6d45dfcezd"
-Content-Disposition: inline
-In-Reply-To: <20250820-rust-next-pwm-working-fan-for-sending-v14-2-df2191621429@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAD3lxHf5sdoHWn3Ag--.53429S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4xGry5XrWktFykurW3KFg_yoWrtrWxpF
+	4UG343tr4rtFyxKws3Xw1j9a1Yqan5t345Gw15J34rA3y7K3WjvrnY9a1rGF1DJF4UWryS
+	qrZIkr9093yqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9qb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE14v_Gw1l42xK82IYc2Ij64vIr41l4I8I3I
+	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+	GVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
+	0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0
+	rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJbIYCTnIWIevJa73UjIFyTuYvjxU958nDUUUU
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAgGB2jHtULAJQAAs4
 
+This patchset adds support for Svrsw60t59b [1] extension which is ratified now,
+also add soft dirty and userfaultfd write protect tracking for RISC-V.
 
---zryfvf6d45dfcezd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v14 2/7] rust: pwm: Add Kconfig and basic data structures
-MIME-Version: 1.0
+The patches 1 and 2 add macros to allow architectures to define their own checks
+if the soft-dirty / uffd_wp PTE bits are available, in other words for RISC-V,
+the Svrsw60t59b extension is supported on which device the kernel is running.
 
-Hello Michal,
+This patchset has been tested with kselftest mm suite in which soft-dirty, 
+madv_populate, test_unmerge_uffd_wp, and uffd-unit-tests run and pass,
+and no regressions are observed in any of the other tests.
 
-On Wed, Aug 20, 2025 at 10:35:37AM +0200, Michal Wilczynski wrote:
-> Introduce the foundational support for PWM abstractions in Rust.
->=20
-> This commit adds the `RUST_PWM_ABSTRACTIONS` Kconfig option to enable
-> the feature, along with the necessary build-system support and C
-> helpers.
->=20
-> It also introduces the first set of safe wrappers for the PWM
-> subsystem, covering the basic data carrying C structs and enums:
-> - `Polarity`: A safe wrapper for `enum pwm_polarity`.
-> - `Waveform`: A wrapper for `struct pwm_waveform`.
-> - `Args`: A wrapper for `struct pwm_args`.
-> - `State`: A wrapper for `struct pwm_state`.
+This patchset applies on top of v6.17-rc6.
 
-Args, State and Polarity are only needed for the consumer side of the
-PWM API in Rust, right?
+[1] https://github.com/riscv-non-isa/riscv-iommu/pull/543
 
-I don't particularily like like pwm_args and wonder if this really has
-to be exposed to Rust.
+V12:
+- Rename the macro API to pgtable_supports_soft_dirty/uffd_wp();
+- Add changes for setting VM_SOFTDIRTY flags conditionally;
+- Drop changes to show_smap_vma_flags();
+- Drop CONFIG_MEM_SOFT_DIRTY compile condition of clear_soft_dirty() and clear_soft_dirty_pmd();
+- Fix typos;
+- Add uffd_supports_wp_marker() and drop some ifdef CONFIG_PTE_MARKER_UFFD_WP.
 
-I think for State (and thus Polarity) we have to have it for the
-forseeable future.
+V11: https://lore.kernel.org/all/20250911095602.1130290-1-zhangchunyan@iscas.ac.cn/
+- Rename the macro API to pgtable_*_supported() since we also have PMD support;
+- Change the default implementations of two macros, make CONFIG_MEM_SOFT_DIRTY or
+  CONFIG_HAVE_ARCH_USERFAULTFD_WP part of the macros;
+- Correct the order of insertion of RISCV_ISA_EXT_SVRSW60T59B;
+- Rephrase some comments.
 
-Best regards
-Uwe
+V10: https://lore.kernel.org/all/20250909095611.803898-1-zhangchunyan@iscas.ac.cn/
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
 
---zryfvf6d45dfcezd
-Content-Type: application/pgp-signature; name="signature.asc"
+V9: https://lore.kernel.org/all/20250905103651.489197-1-zhangchunyan@iscas.ac.cn/
+- Add pte_soft_dirty/uffd_wp_available() API to allow dynamically checking
+  if the PTE bit is available for the platform on which the kernel is running.
 
------BEGIN PGP SIGNATURE-----
+V8: https://lore.kernel.org/all/20250619065232.1786470-1-zhangchunyan@iscas.ac.cn/)
+- Rebase on v6.16-rc1;
+- Add dependencies to MMU && 64BIT for RISCV_ISA_SVRSW60T59B;
+- Use 'Svrsw60t59b' instead of 'SVRSW60T59B' in Kconfig help paragraph;
+- Add Alex's Reviewed-by tag in patch 1.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjH5qsACgkQj4D7WH0S
-/k4H1QgApRy8liAOZrzb3w50HXnIjFUP1zT9oN5uSbu1nwLFcoyPu1JvjbpxW7g1
-aMBxeARi3PXREgQ6tZSbrWcb9+PiqySUS8tXIEawBr6Kskazxjtiz1LPYt0sLsuF
-z+IRMCWg4pPm8g3t47tYvNOFaBnd49AjzrbPJrrlsDV13eisMsbVfYdr+7ZdPQPC
-Evo9Pjzeg6jpKVWmp3OgFN6Mf83dFDB2XJKiZsDYRWuBjM6uJb3roiinPQfzKOAF
-zAF32eplMf+6CcGLoBgdVJlkG2hVh/5xBgjYw7Zk9I2zcwuDJ13wvM2umgbtBCVI
-aCZYiiFaLX1WA4w+SH6oQNi+C2WebQ==
-=pc6O
------END PGP SIGNATURE-----
+V7: https://lore.kernel.org/all/20250409095320.224100-1-zhangchunyan@iscas.ac.cn/
+- Add Svrsw60t59b [1] extension support;
+- Have soft-dirty and uffd-wp depending on the Svrsw60t59b extension to
+  avoid crashes for the hardware which don't have this extension.
 
---zryfvf6d45dfcezd--
+V6: https://lore.kernel.org/all/20250408084301.68186-1-zhangchunyan@iscas.ac.cn/
+- Changes to use bits 59-60 which are supported by extension Svrsw60t59b
+  for soft dirty and userfaultfd write protect tracking.
+
+V5: https://lore.kernel.org/all/20241113095833.1805746-1-zhangchunyan@iscas.ac.cn/
+- Fixed typos and corrected some words in Kconfig and commit message;
+- Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste
+  error;
+- Added Alex's Reviewed-by tag in patch 2.
+
+V4: https://lore.kernel.org/all/20240830011101.3189522-1-zhangchunyan@iscas.ac.cn/
+- Added bit(4) descriptions into "Format of swap PTE".
+
+V3: https://lore.kernel.org/all/20240805095243.44809-1-zhangchunyan@iscas.ac.cn/
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
+
+V2: https://lore.kernel.org/all/20240731040444.3384790-1-zhangchunyan@iscas.ac.cn/
+- Add uffd-wp supported;
+- Make soft-dirty uffd-wp and devmap mutually exclusive which all use
+  the same PTE bit;
+- Add test results of CRIU in the cover-letter.
+
+Chunyan Zhang (5):
+  mm: softdirty: Add pgtable_supports_soft_dirty()
+  mm: userfaultfd: Add pgtable_supports_uffd_wp()
+  riscv: Add RISC-V Svrsw60t59b extension support
+  riscv: mm: Add soft-dirty page tracking support
+  riscv: mm: Add userfaultfd write-protect support
+
+ arch/riscv/Kconfig                    |  16 +++
+ arch/riscv/include/asm/hwcap.h        |   1 +
+ arch/riscv/include/asm/pgtable-bits.h |  37 +++++++
+ arch/riscv/include/asm/pgtable.h      | 143 +++++++++++++++++++++++++-
+ arch/riscv/kernel/cpufeature.c        |   1 +
+ fs/proc/task_mmu.c                    |  15 ++-
+ fs/userfaultfd.c                      |  22 ++--
+ include/asm-generic/pgtable_uffd.h    |  17 +++
+ include/linux/mm.h                    |   3 +
+ include/linux/mm_inline.h             |  10 +-
+ include/linux/pgtable.h               |  12 +++
+ include/linux/userfaultfd_k.h         |  27 +++--
+ mm/debug_vm_pgtable.c                 |  10 +-
+ mm/huge_memory.c                      |  13 +--
+ mm/internal.h                         |   2 +-
+ mm/memory.c                           |   6 +-
+ mm/mmap.c                             |   6 +-
+ mm/mremap.c                           |  13 +--
+ mm/userfaultfd.c                      |  10 +-
+ mm/vma.c                              |   6 +-
+ mm/vma_exec.c                         |   5 +-
+ 21 files changed, 306 insertions(+), 69 deletions(-)
+
+-- 
+2.34.1
+
 
