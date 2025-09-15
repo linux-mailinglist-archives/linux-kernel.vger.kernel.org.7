@@ -1,213 +1,203 @@
-Return-Path: <linux-kernel+bounces-817522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282BAB58337
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:17:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F6BB58336
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17BE1A266ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:16:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86237B22EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62B12749D9;
-	Mon, 15 Sep 2025 17:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7351C2836A3;
+	Mon, 15 Sep 2025 17:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XbEsbDpx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PlUNacmv"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011048.outbound.protection.outlook.com [40.107.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE12261B91
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757956568; cv=none; b=PO0DIQTzE3vWSKpppKMXYnAmvcTu2URrgOfchAcpZmMM0mlIzG2GWTzt5rLX7K8yPQcv17l7XjUaeSox3KoDNc81+DmoiRrbmHMNY9rQAE+YKbloMRU16qAaedCVLHdKGRbaWbKIlLuQjJGI4ePXSZg3bqdqUmOW0JrkcBF0ShE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757956568; c=relaxed/simple;
-	bh=9+2vkzj2iDIL0fvux6pdmahGUFu2xjwUzTTwz8Htfec=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hlguo8cazYM56ozFaqZdFX26Lbtolr1m6rWiArMAgD1HDGa4DGH/A6qDzmWhVhp8LlLlZjvywiLnUsej/nq4p8dNJePZ4a+TkIVio2nwg88ho94udshNVRDw3mQaG5ELgtWYQWCNO172FlXsTr3Jw4Q4R5u+1E4jOtXnutY7PqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XbEsbDpx; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757956567; x=1789492567;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=9+2vkzj2iDIL0fvux6pdmahGUFu2xjwUzTTwz8Htfec=;
-  b=XbEsbDpxbWGPM8V+hY1N24WCne7y0kaZmtOHTdKZ85DQlZljh4nquHqv
-   hpyggcxHzeOvfIajHmvvKnmTcVQdpASfV41Eesxmlk0tQlIy8Tpfrdm64
-   3HwCJPgISYmRTOxz0E+4NPYxUaaaXtW6BGDAhasrwBlrRnwhNX/bp0PFA
-   XYjb51IqcSbc4j43M5Ov1H7jvJ10zy1NyrX/9nrDngs6IxoKHsEAhoWhO
-   j+aoYhX1jsJzvWMX8pEH9QvbPJamz4nhsoltfX7zuaT0Mw4maPdpnIZvB
-   JJsSIMy6jkKIf/0IC9VcLz4eshz3KDSlfqNnYciiTAAmTd/vL134wdfYL
-   A==;
-X-CSE-ConnectionGUID: g2foF23aSLu4XUEMdGvLtg==
-X-CSE-MsgGUID: S9Cv3AP5SbiBrroCwvvhEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="82813990"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="82813990"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:16:06 -0700
-X-CSE-ConnectionGUID: PTktcnSMTlaz+2zk79Bw6A==
-X-CSE-MsgGUID: KoQoEszaSJS6eMDSk+jNJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="179857476"
-Received: from schen9-mobl4.jf.intel.com (HELO [10.54.74.4]) ([10.54.74.4])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:16:05 -0700
-Message-ID: <abf5742091e290e26f49a0a7a28f54f19085e334.camel@linux.intel.com>
-Subject: Re: [PATCH v3 1/2] sched: Create architecture specific sched domain
- distances
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
- <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann	
- <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman	
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Tim Chen	
- <tim.c.chen@intel.com>, Vincent Guittot <vincent.guittot@linaro.org>, Libo
- Chen	 <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>, Len Brown
-	 <len.brown@intel.com>, linux-kernel@vger.kernel.org, K Prateek Nayak	
- <kprateek.nayak@amd.com>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
- Zhao Liu <zhao1.liu@intel.com>, Vinicius Costa Gomes
- <vinicius.gomes@intel.com>, Arjan Van De Ven	 <arjan.van.de.ven@intel.com>
-Date: Mon, 15 Sep 2025 10:16:05 -0700
-In-Reply-To: <857e86a9-9007-4942-b005-1574c919ad6b@intel.com>
-References: <cover.1757614784.git.tim.c.chen@linux.intel.com>
-	 <1aa0ae94e95c45c8f3353f12e6494907df339632.1757614784.git.tim.c.chen@linux.intel.com>
-	 <857e86a9-9007-4942-b005-1574c919ad6b@intel.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B261FBC92;
+	Mon, 15 Sep 2025 17:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757956588; cv=fail; b=IGTL84j4y3c++ob62XzG5PqD0SS+pL72ddNVMK5MgEa9KDyelewJnKipArj5gpZMpbHg+pWx3TzgcpBd+gcIQR+Sa+50sB6/2Z8bfvzk51C0381zWt1P/NsE93vPWeN9PbGuawhGF+yd3cYjct9f0mA0yg/rsaMnexsC99XyZ6I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757956588; c=relaxed/simple;
+	bh=EIZlXexuhwTK4uXdco6/SgErNgYC/2I1duqtGGQYdTo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j7KhC8Fehm/tVB3J+eS0iYZmKUsoH54BD/zc37bSR0/onmPfu2ezPkjnLnlWS1j+SMjBYNFFmoXbBaL0PFEzzpFKapQy0CQL0DqXYB7JZeafpXEc4HswpCD/zzhMuCUGnhrEzhXzfsGtRfXXTC5KJo3zoAe8/8Ny+KzJ7m9RFGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PlUNacmv; arc=fail smtp.client-ip=40.107.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eDArtF92J4H1kLLn51tf1ThsOsM/yvE6DYFswu/zTxrj7NdkdYs2R8d+cueFxE47q4pumOBXqVc3hP//FCYCVWWtl91WKJb3PPEWa+Bs0PJ89iA5UJrWApDHF44vm5oyxjxtJTGn2E+z8YMOjx1j2DWRcioFIL2V+kBoasB4wd+ac5NA2vshe5XQKcJoKJfk4S3ohogvzwXqWq34KHJq8ebCfsvK714Z8YFk1k/ySrwgZmw+6Eqz5IF7pYYmebfDnJTw4YIPC3J0o+5E7iPwGLthKIcYW9Rv/GvpKQKpB4tQTXU8h+s+A/ZW0OWKJdrQz3qXgd+CL/c2nt1Et0vwkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pNqE87MOOdsw+oc50ksW/5lPDvI9sb9esXO7lKrS21s=;
+ b=h3rrgnGAo+Tcfn21WZ/Iiihhwdd98oS1Iuyw+BDPI1UmlThtB5WPBfB2cEdc7HK4UP1yvPWpGIluHcNqjYUGwwnOBDfxC5bS5bgs6vLMK6W55XK/eWLP7mvGZg2YCwN+EEEE1F3wsvZJ5fgqv1k5qnEk1SfRp9886e9WLTYRzgG9S24b8+jCSgnA7jjUwx9Izr0yNLM+F+jJ/7dG17tb8vkioq2V3uxdH7OK89h09Qpor+TZjYI9Svv0Ed8CjnN61HFeRb5n41QeOghTfliNbh4qijsQtPz0vyaOd3pHDy0jrphEereHduzRxh/Q76GcqNWlQztEziWg1bzKPO/chQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pNqE87MOOdsw+oc50ksW/5lPDvI9sb9esXO7lKrS21s=;
+ b=PlUNacmvgUq7ONmJsyc6+puT6fUZfihUezrrkAenOjGeL9PwsxGd64/Nq39TGqKATfNDlYn5qVWLnepM6cxJVGbGRxgceNE4bKPj84fmBVqlnEOYfExQAuWhDmbUQJ43wUBvI+ZDtQxa5CA9wbk+n5GAf24E+K2L/B3tn9l/PRQMUAZzI4CIPe4HGPc8Q6Qb/Z68QQvU1LNYM6AGIj5lXPl+S0prrFjo5eGXsZ0BOz1yxpiPGNu6/+kE35FOzVG21EoH3CLFSn8UxtNXQ5oJolHvYg+7KYJcJBFvbZk5YxUxjSR+qgkyEs5WL6WZorEnDLB026jX7n8OGbbP2U8B4w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11)
+ by SA1PR12MB7442.namprd12.prod.outlook.com (2603:10b6:806:2b5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Mon, 15 Sep
+ 2025 17:16:22 +0000
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::e571:5f76:2b46:e0f8]) by CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::e571:5f76:2b46:e0f8%5]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 17:16:21 +0000
+Message-ID: <09b53dc4-79b2-4933-abcb-4b414860cea0@nvidia.com>
+Date: Mon, 15 Sep 2025 10:16:20 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] RDMA/core: Resolve MAC of next-hop device without ARP
+ support
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>, Edward Srouji <edwards@nvidia.com>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Cosmin Ratiu <cratiu@nvidia.com>, Vlad Dumitrescu <vdumitrescu@nvidia.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
+ Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>
+References: <20250907160833.56589-1-edwards@nvidia.com>
+ <20250907160833.56589-3-edwards@nvidia.com> <20250910083229.GK341237@unreal>
+ <CY8PR12MB71954BE7258390B4B7965E8FDC0EA@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250915163002.GJ882933@ziepe.ca>
+Content-Language: en-US
+From: Parav Pandit <parav@nvidia.com>
+In-Reply-To: <20250915163002.GJ882933@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4P222CA0007.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:303:114::12) To CY8PR12MB7195.namprd12.prod.outlook.com
+ (2603:10b6:930:59::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB7195:EE_|SA1PR12MB7442:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e0d61bb-407e-4044-1f85-08ddf47b978f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Rzd6djRiVzg1QVpYSVowanM2SkJKS3dITTdBUVBvcnc0TnppUFlOOXlZTEhN?=
+ =?utf-8?B?eDZib2p2VFFkSDZCOHA3K1lqNzNSRHBEbXZ0cFJEZ09aRzg5Z3E5VEovb3pJ?=
+ =?utf-8?B?OTkxNEQrNG55OWJ0dEZaNC9DcVM3UVozaEZ4SVpTQm5Ua0FiMktnR2RZMUk5?=
+ =?utf-8?B?elJhMXY0NWtUQ3FWYThqRUQ1SUhFeHJtbEJjN245Z3JwNHZreW8zZVV0K0p4?=
+ =?utf-8?B?WWRHcGh1T1RMMFU2ZDR5Tkp6UnZOajVxZjJGNU5DZzVwQi93VUswME1pNDl5?=
+ =?utf-8?B?eGZhY1VwTVNFTlZKRXUyYlVSNEVob2FnNTkrcVpUZzg0aGQzRTdJZHhaelRV?=
+ =?utf-8?B?TzlkZWdXQkM0ZHJYeTFjKzE1eVJoQU5JM3hMQjdoejQwUEN5TjlVb0hDdzM4?=
+ =?utf-8?B?U0pscG5DbUhEQnFBTUNCeko4dStMSjVPVEIwdmVCUUYycXl4WkpnWjFIZ2xS?=
+ =?utf-8?B?UjFQWElieFVreXlxdDFSZGs3NGVuTEZiUldkUkhmOTFxY2N6UXRIM0lhSnRW?=
+ =?utf-8?B?N3JkV0RYWkZ1S0duSnIvcHlaYW5vZFdqdnZ2WWJPTGdoTDl6Sk5Nd0dyREtW?=
+ =?utf-8?B?U1ZiM2JCWVNKTEsvWEkxZ3RNWE9ESGdkeWhuZGFGM3VpWXBZNi9MRzI5NlY0?=
+ =?utf-8?B?RG5EejE2MUROZklJdEVqQ3BsM0c1cTJlN1MzMVdhUmJseXFhVnYrcCs3OHB1?=
+ =?utf-8?B?UzF4TDk5VFNoWWxjby9iNERTejI5SEk5bk9lZ09sdFpucFhLQmNNY2UrNUlH?=
+ =?utf-8?B?aVN3WEczQVhmR3lCeUw3NW1OQjkydHJqSGlrYVdnaGhNTXdxY0xNeVV5UkFH?=
+ =?utf-8?B?MFhGL3kycXpNQ1l0YkV2cW94NkxsUGpoRVozeWdHMGVseDR3NkRISE5ENHZ2?=
+ =?utf-8?B?R2E2TVpwKzVvSmdERWZNT1dCaUFmN284SjR6M3I3OWIrOXUzZFgzR3NSYmxu?=
+ =?utf-8?B?UTR2Um9SbUtxQTZXeXlYUW9lQnVhQTIvSStiR29XTHFUbjFjdVNvVzQxV05C?=
+ =?utf-8?B?ZVBZRFBnTTFRdnduM1kvL1ZxY3JFUHVvcXA0UHdjSkVOdHFJUnIvemZ1aWRY?=
+ =?utf-8?B?MWdhbVNINFVOWXNTM2lSakM3dXlHbzN2V2tLc09lUWgxb1NjNENPdVluTkx5?=
+ =?utf-8?B?UHErSVl6UDM0RjU0WU1LU2JrOUtORFV0RUpvSHJVY05TT1NiRG1yZUh5b1pn?=
+ =?utf-8?B?c2duWC9ML002NFcveWZvOHRXYkdnUklablJLUVNLV2hRWXNOSmxzZ3ZoRWtJ?=
+ =?utf-8?B?M1hmSlRJcEYyd1BxakE0RFl1dE5KblRveFY5UUJKUGVBTm5WSWtUU3MxOTVi?=
+ =?utf-8?B?MlNMNFFvMmNJRFA0RVZITXoyNlNZYW9MbTNZTmxSeUR6QTlLYzBNYVJncTJh?=
+ =?utf-8?B?K0lZdUhjVmROd1NSMERLcGJkbnRBdzA3RndMZHcyZ2MvMTlQNVdxUk8wOVRL?=
+ =?utf-8?B?dWtYMVptYTBzRjdQRWR3bHZHeG8rbkw1eFVjZFRsM3VGSXlRaDZPRUFNa0pR?=
+ =?utf-8?B?c3E2QTNNdnFzVlMzTTVpazFjT29CSTd0czJZV2FZaU1HNUk1dlNFRW8ydTJX?=
+ =?utf-8?B?VlgzMm5DM0JKMjVKeTdDdlJRYU00TUZJd0hVU3k0YWRkSjVFUkhleUxjaFE5?=
+ =?utf-8?B?QjVsck1OSjZoMHlEWCtQR2xXZ29tOXh0ZkorVE5ZSE5YZk9xNGpSb1F6UDk2?=
+ =?utf-8?B?b0lYcHFWZklMREdoWEZvclR0V0ZYdDgvRmUxenE1ak1tYUFsNHhaTjZKOVJM?=
+ =?utf-8?B?QVRuVEhSQ1hjSWxXbE80V2dIMTBkaVN6bmxsbnlWenJ3Zllsa3dYMUtsUU1W?=
+ =?utf-8?B?WFFNWmdiQ2RhZkRialJSZ2Fkcnl6aFV4OFlxU0xyYlJkTWIyY2RhRkdZWUEy?=
+ =?utf-8?B?MWNBbXVVUE8vTlFoa2RBQThXZk5ESzFUajRuelNsU2RyQWpGY1pmd1J6MkF4?=
+ =?utf-8?Q?E29vaaIAxjo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WmFvVHRrVzRDSnN1R2dGQ2xMUDBoR2oxMWkzMk43ZEtQSlVGRGJMZ1ZCSE0r?=
+ =?utf-8?B?UXdBK1ZSN0xGeXJjeVNGcXM4ako5d0dlaVoxNkpldWFHVkJjdG1QT1BvV3VZ?=
+ =?utf-8?B?WWVXQVpXRGRhMUtoQ0lpMHJjRVNNU0lMQjFkNW5hVzJMVHcxUlVSOElnTDlm?=
+ =?utf-8?B?aGh2V09WbW9iczRFbGRnVXp1MTdJd0ExUm9ZWFVnVmxNbDBOd3Qwa0llcXpY?=
+ =?utf-8?B?MmVvd1dFTkk1ME5ORks4bnk5Wjlua0FnUEFsRVBzcnhEY3Z6ZExNQklwK3Zl?=
+ =?utf-8?B?TC96RmZ5KzlIZTZsWjhNWitsS1VRektQcE1EWlNwRGptSDFzUFZXNm44K2pX?=
+ =?utf-8?B?MFRCVHU0N3dQWFhtaWJKYXJyMlU4VGtXZTBTU01sSVdIc0FyVE51YlBMZHpy?=
+ =?utf-8?B?VEp6ZytLMjd4c29jWWdFZGdya01Sa045U1hoSkRQNFBOZ3BqSHQvTHZvVzZm?=
+ =?utf-8?B?eDhNV2F0c2FsZFFCOXVLQ2ZBVzhleWt2TDlveDZ0aWlYQkZGQ2hEQkJqT0JO?=
+ =?utf-8?B?WUFETmhnd0VSY3NKTUNIY1VWTHlxT2doQldIeGJ1WHlIT0V4NzVPcCtpakdp?=
+ =?utf-8?B?SytkQTFBUzBnN25OV3NLUjlWSlE1WVpuMjB5TUR2dHVsVmNyZHcyVzV5Nmht?=
+ =?utf-8?B?azZmYXNoTXVNQmRmUWoyZng4QzNlNHpjbkpzSXZKSzRGNVdmUGgyM1hWbjlU?=
+ =?utf-8?B?djY4bHB5bURYOUxtWW1rVlFNSlJibnhTTElkN1IrcmNVUE5nbUlGMmZHNjdo?=
+ =?utf-8?B?cnpSVysxT0RLMFIwRWZodkk4Q3NpSHNDL3U1RHBzSDd3ODM3dWV1V0lFc0Rj?=
+ =?utf-8?B?aFZXSGZhQnQwWHVaUWpEZGs4SnNzM1hES0VGNkFiZGhFbWhwa21qNlNCaU9u?=
+ =?utf-8?B?bVAveWNjL3lrbGV0cHpCNGNaeFRzN2lma3M0RU9JK0R2OTJ0bnNHTmxJRkQv?=
+ =?utf-8?B?M3I5enpqUElRS0E4TFdDQzgxQXgrYi9PTGw2SmYxQkoyM0x2OFdxYjNyN04y?=
+ =?utf-8?B?eGlEOElwYnRlQVpuUUpVYW4xL204WHlSMTdydmdQVlNteVhtamdBY0lJK3ZK?=
+ =?utf-8?B?VDhZVDN5ZGV5aDZWbVBJWVp5dkp5bzVhYmxDKzc3U05Nc0FDeXNUc0dxK0o2?=
+ =?utf-8?B?eFYyaURPdkVFcXV6a1p3MVBteWFTakVJUDJFQWlFUTZHVG5DbGNuczFxeHdT?=
+ =?utf-8?B?Yk5lckNGeE9PL1VZQ2xBZ29vcU5ZbDRVZm11aGxkaTJCSUUxeXYxeWRLYkRX?=
+ =?utf-8?B?M01EQnc1TDR4VGRHMnFGK2dqSlo3ZzNzcTJ2ZXNES2k4MGhrVEFyU1hWYi9q?=
+ =?utf-8?B?elh5Z0dsS1RUdWM5Z2JTMVcwOW0xa1RzRWIzb0YydFJBeVNpekpHWmQrZnE4?=
+ =?utf-8?B?aU11NkFHTXVYVE5BK3VzTlJnRXJMUk0xVXNtZUc0SzRabjZFNEZaaUNmc3Y2?=
+ =?utf-8?B?TEZ6a2ZLS1QvNWJMRFFISk5YdE9OS1BUVW1lN2Qzb2hDazRkaThxWXRrZzJt?=
+ =?utf-8?B?cmFhVWs1aFpWT1VyUzZGU2RNMGdzbXZxbUZtQXB2T2ozd1AwN2Rld0RTRThm?=
+ =?utf-8?B?b3NCVU9ZdlhPZm5xMXlWa3BsTXlGbCs1c2NOSVlBNytHRForelltRXBPNmxG?=
+ =?utf-8?B?SjRTU294VitZRDRwQ2Znb1FxSVZZa2JXRFN2SE5kMWViMG96RWhhYU9NQ0VF?=
+ =?utf-8?B?Y2g3eDA1RStDam51VnZkSzZJejNSaTNYSUVXdWdaSXk3SE1MQzlqZWs5WnhZ?=
+ =?utf-8?B?QTVveTVRSXczdTR5c3I5eWxzV21GTkhhNVFZUjgvc3NNRVhEN3h1UjJ1bnFT?=
+ =?utf-8?B?L3pGSzdtV2JSSjd3eG8vV2pEVlZJL0VXNFVPbmZ0L1NlYVExUTQ5M2RjMEc3?=
+ =?utf-8?B?VithaTNobmxGVklPREVDM1VreHk3TlEvTjJ5K0xtbkI0Q0J3bVo2V0lsaWlR?=
+ =?utf-8?B?K3ZqZmg5VDdNNk1KaHBMZTZGTFRnOTR0SjlrVFdaYXR1TFNGWWZhZ0Jwc2d4?=
+ =?utf-8?B?UmtqK1FQemRvbFJaZ2JmQjhpZTlFTUlQaHBmcUFVN1M0cFE1TjdXYVo5Smtj?=
+ =?utf-8?B?N3FrWVkwWVRPSDhvbmRDSWNJTDU1YVhHZkJVRWpQemJ3NWduOG5JWGk2cGVU?=
+ =?utf-8?Q?cMJWzyHY5WGH91pz4IAb31O2Y?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e0d61bb-407e-4044-1f85-08ddf47b978f
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7195.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 17:16:21.8879
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2gezCzVEfbP/7sKcY8aWptidldzUqdVBveGKKeGMz3vPOjDA+AzkRzvXh+INY9oybxjP2em7yKTO0CP7EpgUvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7442
 
-On Fri, 2025-09-12 at 13:24 +0800, Chen, Yu C wrote:
-> On 9/12/2025 2:30 AM, Tim Chen wrote:
-> > Allow architecture specific sched domain NUMA distances that can be
-> > modified from NUMA node distances for the purpose of building NUMA
-> > sched domains.
-> >=20
-> > The actual NUMA distances are kept separately.  This allows for NUMA
-> > domain levels modification when building sched domains for specific
-> > architectures.
-> >=20
-> > Consolidate the recording of unique NUMA distances in an array to
-> > sched_record_numa_dist() so the function can be reused to record NUMA
-> > distances when the NUMA distance metric is changed.
-> >=20
-> > No functional change if there's no arch specific NUMA distances
-> > are being defined.
-> >=20
->=20
-> [snip]
->=20
-> > +
-> > +void sched_init_numa(int offline_node)
-> > +{
-> > +	struct sched_domain_topology_level *tl;
-> > +	int nr_levels, nr_node_levels;
-> > +	int i, j;
-> > +	int *distances, *domain_distances;
-> > +	struct cpumask ***masks;
-> > +
-> > +	if (sched_record_numa_dist(offline_node, numa_node_dist, &distances,
-> > +				   &nr_node_levels))
-> > +		return;
-> > +
-> > +	WRITE_ONCE(sched_avg_remote_numa_distance,
-> > +		   avg_remote_numa_distance(offline_node));
-> > +
-> > +	if (sched_record_numa_dist(offline_node,
-> > +				   arch_sched_node_distance, &domain_distances,
-> > +				   &nr_levels)) {
-> > +		kfree(distances);
-> > +		return;
-> > +	}
-> > +	rcu_assign_pointer(sched_numa_node_distance, distances);
-> > +	WRITE_ONCE(sched_max_numa_distance, distances[nr_node_levels - 1]);
->=20
-> [snip]
->=20
-> > @@ -2022,7 +2097,6 @@ void sched_init_numa(int offline_node)
-> >   	sched_domain_topology =3D tl;
-> >  =20
-> >   	sched_domains_numa_levels =3D nr_levels;
-> > -	WRITE_ONCE(sched_max_numa_distance, sched_domains_numa_distance[nr_le=
-vels - 1]);
-> >  =20
->=20
-> Before this patch, sched_max_numa_distance is assigned a valid
-> value at the end of sched_init_numa(), after sched_domains_numa_masks
->   and sched_domain_topology_level are successfully created or appended
-> , the kzalloc() call should succeed.
->=20
-> Now we assign sched_max_numa_distance earlier, without considering
-> the status of NUMA sched domains. I think this is intended, because
->   sched domains are only for generic load balancing, while
->   sched_max_numa_distance is for NUMA load balancing; in theory, they
-> use different metrics in their strategies. Thus, this change should
-> not cause any issues.
->=20
->  From my understanding,
->=20
-> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
->=20
-> thanks,
-> Chenyu
+
+On 15-09-2025 09:30 am, Jason Gunthorpe wrote:
+> On Wed, Sep 10, 2025 at 10:55:36AM +0000, Parav Pandit wrote:
+>>>> This leads to incorrect behavior and may result in packet transmission
+>>> failures.
+>>>> Fix this by deferring MAC resolution to the IP stack via neighbour
+>>>> lookup, allowing proper resolution or error reporting as appropriate.
+>>> What is the difference here? For IPv4, neighbour lookup is ARP, no?
+>> It is but it is not the only way. A device may not do ARP by itself but it relies on the rest of the stack like vrf or ip vlan mode to resolve.
+>> A user may also set manual entry without explicit ARP.
+> I think it was just a mistake to use NOARP this way in RDMA, I looked
+> in the git history and there was no justification. That or it was
+> right in the 2.x days and netdev moved on to the current schem.
+>
+> I expect to just call the neighbor functions and if they can't work
+> for some reason they should fail?
+>
+> Jason
+
+Right. This is the patch does, to rely on the neighbour functions to 
+resolve without depending on the NOARP.
+
 
