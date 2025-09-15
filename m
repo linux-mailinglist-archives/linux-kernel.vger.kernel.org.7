@@ -1,247 +1,155 @@
-Return-Path: <linux-kernel+bounces-817062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2C3B57D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:37:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE32B57B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4274E3BBAFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BD33AFC27
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A062E3191D3;
-	Mon, 15 Sep 2025 13:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0313A30B51B;
+	Mon, 15 Sep 2025 12:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="gWNKxYT3"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UCH8gLQR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FBF3191BA;
-	Mon, 15 Sep 2025 13:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757943296; cv=pass; b=Q1WYH9yQDGKQek84qimoDWHHYXInLT1OXAzKZPI6HSE/3R6GUOAMoTo7YHXGxiI7cefhPY+0URUdJ0uRzFnhpHzYQg83x3GoEHiOLDBs4X3i0DJnCUPN7Ylp4FzkJV/6VcUP3lOQVYGP1GpFXP8EVcr+PtLd5ULwt23fDHIifoI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757943296; c=relaxed/simple;
-	bh=ao7uagQdF+wiUXAvY/n129ohD/vzWpXbHOuTR787tLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qfi9wfcmLfiiPs82A3Y3hji5JCBRFFameOeQOyQ85q1NduR/JYzloMYZ/B0FpwEoHJxVhtGlt8SRP0DS/7K8d6eicKtf4pabu13IVeY0Bk3OixuethvZmw9lIJUYIlCHbhCDxeGd5Do6EGfbM8camotmOEwZ4IG6SpacwSTMFSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=gWNKxYT3; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757943268; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=c1F1G4DYgw5XKvAkAjRv2+e5pa6Kb4MHPVcAp86w2aDjx1S3PNpV+R4d2PE20vWnXdshV38JE96eMy9QpPWqUIcPAiYyrGl3S0rg/1+1kjcrHt/VPmFrD5CyzpPEEb0uebAGBlaFShFMz/8CxMh72Ajip+F05G1vwir9hp7GL80=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757943268; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=H9W8rcPrnhuT1ZCnz7GuLg7KS6O8tdbb1kw7ng7b4Ro=; 
-	b=fh7Mxm5/miP8QtX8RWjc/ndyuvcb9GFt5WPMxKhDvC75f91FJkisG0607fl8TNS0C9BpZA+YFW5y3jhfMRuY25eKwXsJw/Yd0YnTNgiwJklqUCkkhsT9l8HVJ2RSygKSrZt1U3g03OiHPGLPQiUY3kfVDgRaSiroZpns/8k2m6E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757943268;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=H9W8rcPrnhuT1ZCnz7GuLg7KS6O8tdbb1kw7ng7b4Ro=;
-	b=gWNKxYT3iacQ5bX9zFR8huYqQ2axP5nqfG6MKE6J9ibXD4ixDM4UhqL4WDyWCtfH
-	al312FY4BZubd/KRtEuOxsKXYi0jc0D1X6jaDnfeF3PwrPDRKLO2oykImMrec6F1VLd
-	H2GbJCrY8iLvjsGNSl8AF+GQiMNOX6JXhYalw8K0=
-Received: by mx.zohomail.com with SMTPS id 1757943266394997.9637917932183;
-	Mon, 15 Sep 2025 06:34:26 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Chia-I Wu <olvaffe@gmail.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] mailbox: add MediaTek GPUEB IPI mailbox
-Date: Mon, 15 Sep 2025 14:38:02 +0200
-Message-ID: <8577914.T7Z3S40VBb@workhorse>
-In-Reply-To:
- <CAPaKu7Q+KAzEtKBWy8KO2Kp+H4y-Mqo34uo=jgH1_iooaDq3hA@mail.gmail.com>
-References:
- <20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com>
- <20250912-mt8196-gpufreq-v2-5-779a8a3729d9@collabora.com>
- <CAPaKu7Q+KAzEtKBWy8KO2Kp+H4y-Mqo34uo=jgH1_iooaDq3hA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07373019CA
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757939935; cv=none; b=SX8Er50pWVy+zi6rYsmF6V0QXqrD2pbNn0nZpaBnsddBKXwh6/RrqTGtF254hr986l5WhVXkoDLfQcOOTe921KVahFaYqYO3NlrCNuKHBwyjklxCIs9PY+eHbj2Io+IUZBxkBVoJ3gVF1sMQvpA5XXQ6aHAYQH3UrHI9Tnph8Vs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757939935; c=relaxed/simple;
+	bh=W6dMFmWzD1QXZl7PwQPC0i3LVEeYf81dRJdikE9rIKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elPxe2bp3CF6TBX5cuCJo5DilITh/3sHqLJpcVi/LhV7QL013jZBbgN9KnFOFZ2I31IbhhnK0u+yqKZi3j3yhwH7SDlGIQEVw3bfRQvo1oZDPU8QZp5KjsIpPy4pwQtZkGjZFkykFDfN/gzVtpG7wCJ7yJOaZE+4idD2gDBkjBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UCH8gLQR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8Fi6D008264
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:38:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Fmb6MUpiP+yHPdu02ocRwcBu
+	vBIq20AZnHMtS+w4EwQ=; b=UCH8gLQR4RnuhM13UUbEDCFo0LFUiCeSDngCZNC6
+	FhCOriPOEeljmMUTgd1lQA3lE2lsPd3MK7HKlDZ48Og7FI4FFko7Eb3Z58MY42bN
+	5QEoaY+3If7yGjsug84l8ZpFNnFXFU8bcEtKU7c68fXSAkQIskrexRaHJG7u7Oc4
+	NrARAjnSBUYD7c1ZDbGt11iYZ54DaWINQg23EUHoQM1lWloY8jP44S729E2TDRHG
+	eg3Yx/o5SCV/+hnr6EvtLd6qE0RetYZzpEK4RfY9PX0/TBtLYcfB4ZD2nFHW8X6S
+	FMZ9eVud1PwuqLLqKkhH5dj91WMkpAUrtcH4iaV+gwDxGQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495eqpurxd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:38:52 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-776164a4484so45431206d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:38:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757939931; x=1758544731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fmb6MUpiP+yHPdu02ocRwcBuvBIq20AZnHMtS+w4EwQ=;
+        b=qypwpENII25rep2nMUa/TPk+g5WNXA7u4WxudijRKm9t36TNLiBYWu6CMCIu/AZ0+8
+         Cl+hdGkB42xX/xNcOTfF7ZNW4hcSXf4batYU9TqYIQqTYsYOg6QX+xCUFdALyJWHwtdF
+         FhQsHacIgKEM0CG7CkfYx0qtQSRRVHuTOXOentmkt93Qn5D/XyODqhCECfv1BZbxR2Xs
+         QwvcM4p57igz7iztxcwIoUZbh4o7X7qrRslFKkqQtxPj5o32ecLUMxrEG+CcVxRqVAYz
+         SmPgDCNiOw7kbpcc+5AMfrAdrt+Fqd1TXGvL0WpV84kl9cI36yDCFv8SMZVv0DJAr1We
+         3pbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTa6bZcMVB7fWTaEtGO4Ub0wN/k+ZtA/rGmXGKwKgp/16hg/vWsnbbycD45hYqRfpkQLjeyVB0sqHZeag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+YOkr2gEKqCtn8hUtx2fk484NKGeQGHrug94U9KkCdTpN1s5E
+	pd08KhXKE6lsnm5z+WAYvW0fvFXwDz9JkyCrelwrTGRo51h2SJuqRzAv+YJZgfsyWWshPEZ/uW0
+	InTBNkoZAN2k4P/06QjcVD/87aid+RZFh979mvdSqy5Sb3bdQd+OWBdY3lZgYkVrieSY=
+X-Gm-Gg: ASbGncvArz3pui7bMlN5Cqk0AtnP6R2Xkzlb2mq9irI1IqxQT8Sddji2M1TM/kL2iwG
+	PG+C/xIYhEJCE9sXcmBxMJ/wPDZKWUx8WX1bVi79gAccA1kvcA3Dy1+ZFe134U6kuoRTZlk4Khr
+	dqzqnlmq/eNLBxFC951B1jcSbmY8DR5EQ4a/wViCWo++bnPKUWOippqqHmUEwtt5mRDltRzTmPf
+	NVs8P5FTz8hBmt0mkpsz31x7E4uGkbXdVjLpzp2nxEMqqYQAXbiG2pcwGPmW0wYclLAGtYxoyfa
+	GvAtOyvi+FyrGdWoyjauQf2dFzqiEem59bW1l4JfRwLekIW/evSG/396fKn77tPPGVlzyl0Ztem
+	vcq+XShgqjQbPK1tfXj+h3lzrNiAT4cOneJcQbZNd19H7EP93aKwR
+X-Received: by 2002:a05:6214:5004:b0:725:f1c3:2ab with SMTP id 6a1803df08f44-767c1f71efcmr141751116d6.43.1757939931362;
+        Mon, 15 Sep 2025 05:38:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECQ/ky4PMlA94VBI8Y6iP+p4utCJhLTah33pyYzU/Wknu7JOg31Xy7D9L0TMZRcWSzS6GnLA==
+X-Received: by 2002:a05:6214:5004:b0:725:f1c3:2ab with SMTP id 6a1803df08f44-767c1f71efcmr141750666d6.43.1757939930802;
+        Mon, 15 Sep 2025 05:38:50 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a547ae5bsm2588322e87.19.2025.09.15.05.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 05:38:49 -0700 (PDT)
+Date: Mon, 15 Sep 2025 15:38:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, dianders@chromium.org, m.szyprowski@samsung.com,
+        andy.yan@rock-chips.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/bridge: analogix_dp: Reuse
+ &link_train.training_lane[] to set DPCD DP_TRAINING_LANEx_SET
+Message-ID: <cen5nir6tn4ah5z7vgp6k5lxy3cobgzjzm3xmx5hjklr2fsrb3@cx3n47n3ji4n>
+References: <20250912034949.4054878-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912034949.4054878-1-damon.ding@rock-chips.com>
+X-Proofpoint-GUID: jP1wFbIV7j-QfGJv1P98vRhnNeszzhxQ
+X-Proofpoint-ORIG-GUID: jP1wFbIV7j-QfGJv1P98vRhnNeszzhxQ
+X-Authority-Analysis: v=2.4 cv=XJIwSRhE c=1 sm=1 tr=0 ts=68c808dc cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8
+ a=plrDVsGnED_3QBdGXOcA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDE4NiBTYWx0ZWRfX2Rf4cvoVEgYT
+ cNmc0K+lk103qe2bmxweJ6AshtZvlPqEvOX0PI7rMutfIHui+iyopFhylsie0JlIaTi0j3g6ply
+ pBfpubx2/Pa+MoyAt6QZcPjCtQtt0Q/OurKE5qHedB1N+kkk/48hSfqVVg4Dy2XkHPFxT3pj2b7
+ fqIjL/7T1U2+e9gu16Nge9cYWbtEghKRjJUFkjZ5+UrkIBiD8WbHvbA4IH2uv6ceAHgyBFhSQ53
+ B+WfezNixTvSw2DWq8iWnokoTR2YWePjE0ANozxgf4v/Hl8X06sYYCGw+9uLYDbKse+5ddXLEB/
+ ePB1NZAgBvx4sCedsAOyX3AmYMvJthh3bKuPWRWgVkQt/ddQX6rkMOwqWIkPtsPxG78UM+iwVfl
+ FOfQEvcN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509130186
 
-On Saturday, 13 September 2025 00:11:10 Central European Summer Time Chia-I=
- Wu wrote:
-> On Fri, Sep 12, 2025 at 11:38=E2=80=AFAM Nicolas Frattaroli
-> <nicolas.frattaroli@collabora.com> wrote:
-> <snipped>
-> > +static irqreturn_t mtk_gpueb_mbox_thread(int irq, void *data)
-> > +{
-> > +       struct mtk_gpueb_mbox_chan *ch =3D data;
-> > +       int status;
-> > +
-> > +       status =3D atomic_cmpxchg(&ch->rx_status,
-> > +                               MBOX_FULL | MBOX_CLOGGED, MBOX_FULL);
-> > +       if (status =3D=3D (MBOX_FULL | MBOX_CLOGGED)) {
-> > +               mtk_gpueb_mbox_read_rx(ch);
-> > +               writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_C=
-LR);
-> > +               mbox_chan_received_data(&ch->ebm->mbox.chans[ch->num],
-> > +                                       ch->rx_buf);
-> Given what other drivers do, and how mtk_mfg consumes the data, we should
->=20
->   char buf[MAX_OF_RX_LEN]; //  MAX_OF_RX_LEN is 32; we can also
-> allocate it during probe
->   mtk_gpueb_mbox_read_rx(ch);
->   mbox_chan_received_data(..., buf);
->=20
-> mtx_mfg makes a copy eventually anyway.
+On Fri, Sep 12, 2025 at 11:49:49AM +0800, Damon Ding wrote:
+> In analogix_dp_link_start(), &link_train.training_lane[] is used to
+> set phy PE/VS configurations, and buf[] is initialized with the same
+> values to set DPCD DP_TRAINING_LANEx_SET.
+> 
+> It makes sense to reuse &link_train.training_lane[] to set DPCD
+> DP_TRAINING_LANEx_SET, which can remove the redundant assignments
+> and make codes more consice.
+> 
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> ---
+> 
+> Changes in v2:
+> - Add Tested-by tag.
+> ---
+>  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
 
-We don't right now, at least not until after the callback returns.
-So we need to have the copy in the mtk_mfg callback, not after the
-completion. That's fine and I do want to do this as this is what
-the mailbox framework seems to expect clients to do.
-
-> We don't need to maintain any
-> extra copy.
->=20
-> Then we might not need rx_status.
-
-We can probably get rid of it if we keep the per-channel
-interrupt handler. Otherwise, we may still need clogged,
-as we don't want to process interrupts on channels we have
-no user for.
-
->=20
-> > +               atomic_set(&ch->rx_status, 0);
-> > +               return IRQ_HANDLED;
-> > +       }
-> > +
-> > +       return IRQ_NONE;
-> > +}
-> > +
-> > +static int mtk_gpueb_mbox_send_data(struct mbox_chan *chan, void *data)
-> > +{
-> > +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
-> > +       int i;
-> > +       u32 *values =3D data;
-> > +
-> > +       if (atomic_read(&ch->rx_status))
-> > +               return -EBUSY;
-> > +
-> > +       /*
-> > +        * We don't want any fancy nonsense, just write the 32-bit valu=
-es in
-> > +        * order. memcpy_toio/__iowrite32_copy don't work here, because=
- fancy.
-> > +        */
-> > +       for (i =3D 0; i < ch->c->tx_len; i +=3D 4)
-> > +               writel(values[i / 4], ch->ebm->mbox_mmio + ch->c->tx_of=
-fset + i);
-> > +
-> > +       writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_SET);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int mtk_gpueb_mbox_startup(struct mbox_chan *chan)
-> > +{
-> > +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
-> > +       int ret;
-> > +
-> > +       atomic_set(&ch->rx_status, 0);
-> > +
-> > +       ret =3D clk_enable(ch->ebm->clk);
-> > +       if (ret) {
-> > +               dev_err(ch->ebm->dev, "Failed to enable EB clock: %pe\n=
-",
-> > +                       ERR_PTR(ret));
-> > +               goto err_clog;
-> > +       }
-> > +
-> > +       writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_CLR);
-> > +
-> > +       ret =3D devm_request_threaded_irq(ch->ebm->dev, ch->ebm->irq, m=
-tk_gpueb_mbox_isr,
-> > +                                       mtk_gpueb_mbox_thread, IRQF_SHA=
-RED | IRQF_ONESHOT,
-> > +                                       ch->full_name, ch);
-> I don't think this warrants a per-channel irq thread.
->=20
-> mbox_chan_received_data is atomic. I think wecan start simple with
-> just a devm_request_irq for all channels. mtk_gpueb_mbox_isr can
->=20
->   read bits from MBOX_CTL_RX_STS
->   for each bit set:
->     read data from rx
->     mbox_chan_received_data
->   write bits to MBOX_CTL_IRQ_CLR
->=20
-
-I don't like this approach. It brings us back to having to process
-multiple channels per ISR, keep track of when the interrupt should
-be enabled and disabled based on how many channels are in use, and
-also is not in line with what e.g. omap-mailbox.c does.
-
-Remember that `mbox_chan_received_data` synchronously calls the
-mailbox client's rx_callback. In mediatek_mfg's case, this is
-fairly small, though with the request to not make the rx buffer
-persist beyond the rx_callback it will gain an additional memory
-copy. But we can't guarantee that someone isn't going to put a
-slow operation in the path. Sure, it's going to be atomic, but
-waiting for a spinlock is atomic and not something an ISR would
-enjoy. I don't think mailbox clients would expect that if they
-take their time they'll stall the interrupt handler for every
-other channel.
-
-So we'd keep the interrupt disabled for all channels until the
-client that received a message has processed it.
-
-I can see myself getting rid of the handler and just having the
-thread function as the bottom half, but I'd really like to keep
-the one-IRQ-request-per-channel thing I've got going now as it
-made the code a lot easier to reason about. However, doing this
-would mean the interrupt is re-enabled after the generic upper
-half, when all the business logic that needs to not run
-concurrently for an individual channel is in the bottom half.
-
-As far as I can tell, this would then mean we'd have to add
-some concurrency exclusion mechanism to the bottom half.
-
-Moving all the logic into the upper half handler function
-would make that handler somewhat longer, and I don't know
-if IRQF_ONESHOT masks the interrupt for all users of that
-IRQ number or just for those with that dev_id. If it's per
-dev_id, then I'm fine with moving stuff up there. But from
-my reading of the core IRQ handling code, that does not
-appear to be the case; one channel getting a reply would
-mask *all* channels of the mailbox until the upper half is
-completed, and if the upper half calls into a driver
-callback synchronously, that may take a hot minute.
-
-Put differently: Is there a problem with one thread per used
-channel, or are we going off vibes here? The way it currently
-works uses the shared interrupt to mark just that one channel
-as busy with rx_status before letting the IRQ for all channels
-be unmasked again, which seems ideal to me.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
+-- 
+With best wishes
+Dmitry
 
