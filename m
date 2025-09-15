@@ -1,212 +1,148 @@
-Return-Path: <linux-kernel+bounces-817572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3C4B583F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB8CB583FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCBD716D981
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132691AA318A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92D028A1ED;
-	Mon, 15 Sep 2025 17:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3886299923;
+	Mon, 15 Sep 2025 17:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Erbuebtv"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tG2/CdPj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408D4283FD9
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4703527A12B;
+	Mon, 15 Sep 2025 17:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757958604; cv=none; b=UwhG8i8cZOObKJhXK1ppyhggNm0/JWwW1HAGVY7Z5j9khXSJM9khw05N+kRI1FHQpjOQZ38pnLtCD5n63iciRfm3xMoRoUMPIlNmtlgrh/NnZ8/jiL/TtyJBjTsmnAjBwti+E9tX6eapbRY6DXYOvTAlF+O4p5J12xuEVn+5Tbo=
+	t=1757958650; cv=none; b=noeZVvLqLcqtsTrpOJ+598i+1ODZZ1aVLuLSOwSy2T5Is+LJ0ePQb9fcXZWlpJp7kO16NVbAlYCyN6thE+BPVAIXwNacbVQjenY/GpnagLhgca9+OVm5o0VppywLU5ulhywuAq3xCncy6aWNiLWt5Srusr/vKU9dJXOnK/UriQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757958604; c=relaxed/simple;
-	bh=X63k7EEPfIbzkbijj+NF+KbsXIHwYBQ6N5O3W/nlNx8=;
+	s=arc-20240116; t=1757958650; c=relaxed/simple;
+	bh=+XqlU8/ztReicKzQyBNA5n7TaZvOoYpp1H+eTWAgO4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ik2eMrnUkGeox2SG3q5B3WdApLgF7OoRB10sfDuAqX8ItReUsh31hBfK2i1ExvXtcR9C2+Ff2w/OOaJrURiUZXc+WBE57ygg4Vexf4wgrLOXWrknwDcGOQqo6K8On4qr02FSyR0NLAVlcsnvG8FMZqlyGAqJEiPU6hkU8PK1Oe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Erbuebtv; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-337f6cdaf2cso32802831fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757958600; x=1758563400; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nUoHh/QaA/cJemcuKzQ0L0kM7hvamnSwD+AbhFj55I=;
-        b=Erbuebtv43qrC+jN+jXplZZot1c86bhEp7Hdhjsqhi6SorXs6v+G549FOoDuwxU456
-         YZbrGL+Nk0/c2+gcnNWwMM/AWuYvOVLdP+WbgbyG9QaQ1Hp5nLio74FoTcWQ52yxfdQ0
-         LqYfRqaC7jkPnh6plfbZcsClM9nZcMlq7MdEyDjk8W378XfAbOmp65CFgYT0sfDl+nbt
-         xXpq2gRmWuxmCDcuUTwd3G8mKVbYgmXCRLK2JSuMJUlKUnNzV87ambphJrm8o5NViZMl
-         YcFqazslml7doqBcsMUohxC7lpAioUgO3reQZr/5J6GkHACv7EYoCDak1uQhK4sVDtvJ
-         F0cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757958600; x=1758563400;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8nUoHh/QaA/cJemcuKzQ0L0kM7hvamnSwD+AbhFj55I=;
-        b=ATMd+2Xtm5Rvvon3fk436Ooyq0nY0z2OUkoZ9TaghTh6MP5R1DOhlP2InMaFNPQwcI
-         ci7fJc7sySzOg4tNAFBvZgvzK2C6QHfknGu7hdjEJf0I9jJ/kTJkgiUP16s+hDuYr5b2
-         Mm6pmTweR4M1J9LJC6BPNPWss/pv+eOYy4fdzocr7S3R1/5at2ya8fCYBfO4SFxvXGZU
-         eUaF60ORM0b1kqwI5/iF5Fu2sP+KuNdOWOr2Y3H3mZ/vSB5e8Cyw6cnhDZ1wF/e2FBnk
-         JW7YgWOyXxjuNGJnTp0eyesDynhObwcxlM55X5zAywEBn9M/n8r5gt9hXrXF//eWmdhh
-         UD9Q==
-X-Gm-Message-State: AOJu0YzOJYG+KepyhUUSVNH3wQOI/JeVm7SYKBqbPo+OFgQTydyEM6BY
-	30PMVhpOiWdSunlz3hc0rJyJQmRei3MPbNW75UboQuoaoMVh72+RAYORiG6/Xih7k1nXUF6KTWp
-	/CsVcwQw=
-X-Gm-Gg: ASbGncvp+8Oy7Ye2r+y+eMJufGX+kBolKIKMSbWebxf7eN2PaXvvxRnYtKGdxs6H2VG
-	qfsaN5cP7bnrmPVr4GyOmAYmzCFe27v1Ln7b7CdJtdo3X+2r5Yz4hViKnTHX5Wzc4+BdP2wCHR7
-	TQOqxJlk/+FRATvHg3GfMh/i+WmN6cs5w6ZH4vSE/RJobVoeY1oKrY28+Sf5Ala9haf27xwz1A+
-	D3K6RptC8+AlK9FKlBR7CJhsOS0L3JyTQKchaWfY8cEbQ/2ntGjkjh5lx/TR5bnz5xA9LTiP1Mu
-	qAkrU+EQGw812w/ubd2UNJ43G7shRiwbAugObVpUViCgCAlXbaqKQXNJpzZc7W6G4ho97lC2Ip0
-	SdvldHoPmxMWcaTMHoHfZfLC1co2TV2T1FNnvdf17kMgkhjNGQJWMNYcInVx2S15nRemJgVhCsD
-	s=
-X-Google-Smtp-Source: AGHT+IHXonlyJsEwptAZtH8gqbNV18Yqqkb2gFcaLd8EoBqiR9uHczu/9wCsppE9vHLym1iN8/0B2Q==
-X-Received: by 2002:a2e:be1c:0:b0:353:dece:550c with SMTP id 38308e7fff4ca-353dece59f4mr29367421fa.37.1757958600095;
-        Mon, 15 Sep 2025 10:50:00 -0700 (PDT)
-Received: from rayden (h-37-123-177-177.A175.priv.bahnhof.se. [37.123.177.177])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1b2a925dsm27634961fa.46.2025.09.15.10.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 10:49:59 -0700 (PDT)
-Date: Mon, 15 Sep 2025 19:49:57 +0200
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: arm@kernel.org, soc@kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	op-tee@lists.trustedfirmware.org,
-	Bjorn Andersson <andersson@kernel.org>
-Subject: [GIT PULL] TEE add QCOMTEE driver for v6.18
-Message-ID: <20250915174957.GA2040478@rayden>
+	 Content-Disposition; b=bJyOQCV4adG2i78bTaAn+3bD9kuokG1Qby6FCMJBhoiFfi4/aNfSrWjkijxfaH88xa301vvx2mlmvCvAX/aYL9vINbAQx9fsT0/SdzspU3qr2C9PABtl3WLKPPe9widBnQ4+u/7DyhW7iOmoTA+S/G7W880jQyR7lLn7spz4dYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tG2/CdPj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C573C4CEF1;
+	Mon, 15 Sep 2025 17:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757958649;
+	bh=+XqlU8/ztReicKzQyBNA5n7TaZvOoYpp1H+eTWAgO4M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tG2/CdPjIfECoH5dm+TKKkpRyJImiUveYS1KV7vkfnhmusbwVSCiOIxBV4u59/hsm
+	 rMYig+54ZR4Tlw7zEkIpMioAb83Oa5Om31PsxAVzz2CJmA8ZuRSnYYcfQOb2Omu2Wv
+	 xTgZDwCuHxAAzgjx4ZV1aXz10rzQvEMT0RG8bnxeCfGoFcfpdJc0kPVCWl1NjJ9JgM
+	 RyajNwljDFErEv6DQ9rS2zF8JbvL5ZW4XJjMr/xEENLlaQP+seQnbPwN1EPipZFhyO
+	 J/7B4qxQMokTMFpM8fpLFERpWv0suEsfsqn6kl4Y+GC+dW5c9e16CpP5e9ZfK1SABD
+	 9C0+1UtdkjJHA==
+Date: Mon, 15 Sep 2025 18:50:45 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Wolfram Sang <wsa@kernel.org>
+Cc: Akhil R <akhilrajeev@nvidia.com>, Kartik Rajput <kkartik@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: linux-next: manual merge of the i2c tree with the arm-soc tree
+Message-ID: <aMhR9TJm5V5EqaoC@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9/+GJgKmKY22WZfy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-Hello arm-soc maintainers,
 
-Please pull this set of patches [1] adding a Qualcomm TEE (QTEE) driver to
-the TEE subsystem as described below. The QTEE patches depend on two
-patches from branch
-'20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-2-17f07a942b8d@oss.qualcomm.com'
-of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux
+--9/+GJgKmKY22WZfy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Björn asked me [2] to pull them from his tree.
+Hi all,
 
-This pull request is based on my previous pull request with
-tee-prot-dma-buf-for-v6.18 to avoid a few conflicts when merging.
+'s linux-next merge of the i2c tree got a conflict in:
 
-[1] https://lore.kernel.org/op-tee/20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com/
-[2] https://lore.kernel.org/op-tee/mir6lhkj456ra3i6w7def4rrtzw663f66l66cz4s3gxxvueeqk@ils2hjklbp4y/
+  Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
 
-Thanks,
-Jens
+between commit:
 
-The following changes since commit dbc2868b7b57fb4caa8e44a69e882dcf8e8d59bf:
+  804ebc2bdcc85 ("dt-bindings: i2c: nvidia,tegra20-i2c: Document Tegra264 I=
+2C")
 
-  optee: smc abi: dynamic protected memory allocation (2025-09-11 11:22:43 +0200)
+=66rom the arm-soc tree and commit:
 
-are available in the Git repository at:
+  69329daf16af7 ("dt-bindings: i2c: nvidia,tegra20-i2c: Add Tegra256 I2C co=
+mpatible")
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/tee-qcomtee-for-v6.18
+=66rom the i2c tree.
 
-for you to fetch changes up to dcc7a571a3665a16581b5b18ca6b113f60a9a41a:
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-  Documentation: tee: Add Qualcomm TEE driver (2025-09-15 17:34:06 +0200)
+diff --cc Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+index f0693b872cb6b,32c3b69ccf342..0000000000000
+--- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
+@@@ -80,12 -80,11 +80,17 @@@ properties
+            support for 64 KiB transactions whereas earlier chips supported=
+ no
+            more than 4 KiB per transactions.
+          const: nvidia,tegra194-i2c
++       - description: |
++           Tegra256 has 8 generic I2C controllers. The controllers are sim=
+ilar to
++           the previous generations, but have a different parent clock and=
+ hence
++           the timing parameters are configured differently.
++         const: nvidia,tegra256-i2c
+ +      - description:
+ +          Tegra264 has 17 generic I2C controllers, two of which are in th=
+e AON
+ +          (always-on) partition of the SoC. In addition to the features f=
+rom
+ +          Tegra194, a SW mutex register is added to support use of the sa=
+me I2C
+ +          instance across multiple firmwares.
+ +        const: nvidia,tegra264-i2c
+ =20
+    reg:
+      maxItems: 1
+@@@ -192,7 -191,7 +197,11 @@@ allOf
+              contains:
+                enum:
+                  - nvidia,tegra194-i2c
++                 - nvidia,tegra256-i2c
+ +                - nvidia,tegra264-i2c
+      then:
+        required:
+          - resets
 
-----------------------------------------------------------------
-Add Qualcomm TEE driver (QTEE)
+--9/+GJgKmKY22WZfy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This introduces a Trusted Execution Environment (TEE) driver for
-Qualcomm TEE (QTEE).
+-----BEGIN PGP SIGNATURE-----
 
-QTEE enables Trusted Applications (TAs) and services to run securely. It
-uses an object-based interface, where each service is an object with
-sets of operations.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIUfQACgkQJNaLcl1U
+h9B4DAf8COcoAPYvvYdJMilkIMan1GK1H3hmy2cEmARhScQjQrKL88ldXFsDqtsj
+0saVt20JjRp2e/cBXJrMYZdzVE/T0VDY0dW2mpQFmksbl/mLFfv5IPyxv06Fdel5
+3U/jqMI+mIGy1HtIcBZ4tklod8pg8tUCbxmJcHKZvmKBliZa/z1CB+0BbgEWVH+h
+446MdG+xtzI8npf5jxtSHhUpreTCExfUfoRvzSxglXjCuPSyM6uzjYcS5B1KvKN0
+ZqwgRsBN+LJq3EnEMfyC4n+R89ZIlmx/fc5gne2z37H/H3ucUikFK7u6SJ051xG4
+L9waE1WSQTcvxCDA3yRFHMcVMQudFw==
+=mTNS
+-----END PGP SIGNATURE-----
 
-Kernel and userspace services are also available to QTEE through a
-similar approach. QTEE makes callback requests that are converted into
-object invocations. These objects can represent services within the
-kernel or userspace process.
-
-We extend the TEE subsystem to understand object parameters and an ioctl
-call so client can invoke objects in QTEE:
-  - TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_*
-  - TEE_IOC_OBJECT_INVOKE
-
-The existing ioctl calls TEE_IOC_SUPPL_RECV and TEE_IOC_SUPPL_SEND are
-used for invoking services in the userspace process by QTEE.
-
-The TEE backend driver uses the QTEE Transport Message to communicate
-with QTEE. Interactions through the object INVOKE interface are
-translated into QTEE messages. Likewise, object invocations from QTEE
-for userspace objects are converted into SEND/RECV ioctl calls to
-supplicants.
-
-----------------------------------------------------------------
-Amirreza Zarrabi (11):
-      firmware: qcom: tzmem: export shm_bridge create/delete
-      firmware: qcom: scm: add support for object invocation
-      tee: allow a driver to allocate a tee_device without a pool
-      tee: add close_context to TEE driver operation
-      tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
-      tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
-      tee: increase TEE_MAX_ARG_SIZE to 4096
-      tee: add Qualcomm TEE driver
-      tee: qcom: add primordial object
-      tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
-      Documentation: tee: Add Qualcomm TEE driver
-
-Jens Wiklander (1):
-      Merge branch '20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-2-17f07a942b8d@oss.qualcomm.com' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux
-
- Documentation/tee/index.rst              |   1 +
- Documentation/tee/qtee.rst               |  96 ++++
- MAINTAINERS                              |   7 +
- drivers/firmware/qcom/qcom_scm.c         | 119 ++++
- drivers/firmware/qcom/qcom_scm.h         |   7 +
- drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
- drivers/tee/Kconfig                      |   1 +
- drivers/tee/Makefile                     |   1 +
- drivers/tee/qcomtee/Kconfig              |  12 +
- drivers/tee/qcomtee/Makefile             |   9 +
- drivers/tee/qcomtee/async.c              | 182 ++++++
- drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++++++
- drivers/tee/qcomtee/core.c               | 915 +++++++++++++++++++++++++++++++
- drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
- drivers/tee/qcomtee/primordial_obj.c     | 113 ++++
- drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
- drivers/tee/qcomtee/qcomtee_msg.h        | 304 ++++++++++
- drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
- drivers/tee/qcomtee/shm.c                | 150 +++++
- drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
- drivers/tee/tee_core.c                   | 127 ++++-
- drivers/tee/tee_private.h                |   6 -
- include/linux/firmware/qcom/qcom_scm.h   |   6 +
- include/linux/firmware/qcom/qcom_tzmem.h |  15 +
- include/linux/tee_core.h                 |  54 +-
- include/linux/tee_drv.h                  |  12 +
- include/uapi/linux/tee.h                 |  56 +-
- 27 files changed, 4410 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/tee/qtee.rst
- create mode 100644 drivers/tee/qcomtee/Kconfig
- create mode 100644 drivers/tee/qcomtee/Makefile
- create mode 100644 drivers/tee/qcomtee/async.c
- create mode 100644 drivers/tee/qcomtee/call.c
- create mode 100644 drivers/tee/qcomtee/core.c
- create mode 100644 drivers/tee/qcomtee/mem_obj.c
- create mode 100644 drivers/tee/qcomtee/primordial_obj.c
- create mode 100644 drivers/tee/qcomtee/qcomtee.h
- create mode 100644 drivers/tee/qcomtee/qcomtee_msg.h
- create mode 100644 drivers/tee/qcomtee/qcomtee_object.h
- create mode 100644 drivers/tee/qcomtee/shm.c
- create mode 100644 drivers/tee/qcomtee/user_obj.c
+--9/+GJgKmKY22WZfy--
 
