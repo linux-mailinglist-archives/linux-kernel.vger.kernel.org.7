@@ -1,141 +1,141 @@
-Return-Path: <linux-kernel+bounces-816750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158A0B577F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:20:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D8EB577F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6B717087B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D701218934B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EC82FDC55;
-	Mon, 15 Sep 2025 11:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F2E2FF178;
+	Mon, 15 Sep 2025 11:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d48efdLi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PksHnQkG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YMBeYwCv"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8BB2309B2;
-	Mon, 15 Sep 2025 11:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC472FE596;
+	Mon, 15 Sep 2025 11:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757935196; cv=none; b=pIba6taMNIRS3MbqlqAabLwVOEkj6lLvaluQcVs1Qcihq05Fn/u+jjKWyHQrxxVdGLiQly81aL/jEWYqkn43jQKKdX6PhkiVvGlz7QB7Ynjoj7cBw7+68HXmlecVJL8VxA8kxCMDKrBjjX2OXHU+x66QT206+TR0aWgq04DaBWI=
+	t=1757935251; cv=none; b=qT3UA86HmRvcaxjdpOw5IMtA+B9dIIm+XPRJd6fqX2BSUNyNWAQudX2pNDRSe0JXsuAGN2+OLpgK5nOpQASL3M5Y0jmsblb3I1PfQBDTIRdZFckoIWBIczNZZTkWDYbGvWLHOqKkbbYiHQZTU434jEjO197M6HT3EqW2x2Rs+MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757935196; c=relaxed/simple;
-	bh=uYTGOhsbXa0ucAORTyXGNU1yOdgccqwDw4jKSydkw4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uW8GIgjwAeYXh/9pYGI1ilT2k5QiQOEDxzabPMaqR9sJIU7c6nfv2fUGZ6tqy99Q4/MXKRAKUxBLeNPnLgFbyVWMvTDVdwUxx2TkSiQS2EHENNPfKyd7e79lykjgySk1YSK6OmiVxprbIx2ft53UXvIgH7wxOr7rsed5igyPvTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d48efdLi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F0aHfK021403;
-	Mon, 15 Sep 2025 11:19:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=RzaO4b3jqUKV+R1jZy05KPKafZ2dFe
-	rEnB2JNj90Jws=; b=d48efdLivBSU1F1HWhPeikxxDsHywuTXUJsDSfi3FoLKl3
-	s09S3Mwxlo4kCAYwJi8Zq+bIJOOZiIYd9EUM8AIrHSe9A61aWRqMXBC+yIIhUWtO
-	bTpWPE9U/od52slWEH2Mju7zh1OIyNljzQJFAm1dY02R464SORTo8hKD2EmQXvW0
-	5afF81w7y2GPOQkRP7Z84yNI2EBR1O69CMDNJzYa4mLHJMbTJuYdz4OVwraEPqy9
-	9Y5HQC3h4R5/iB17uf/oeFc0T83LDPAh7NC7xUUG3X0OtjX33rNbSosb9oPMCSjs
-	s57FUZSSVHRbxlyUD2FCwWEmrNJGGpMjLimmH3iA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494y1x1pas-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 11:19:46 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FBJjYr000418;
-	Mon, 15 Sep 2025 11:19:45 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494y1x1paq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 11:19:45 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FBFTXY022384;
-	Mon, 15 Sep 2025 11:19:45 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kxpe3v0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 11:19:45 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FBJh8O55837166
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 11:19:43 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 33EAB20040;
-	Mon, 15 Sep 2025 11:19:43 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7EB382004B;
-	Mon, 15 Sep 2025 11:19:40 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 15 Sep 2025 11:19:40 +0000 (GMT)
-Date: Mon, 15 Sep 2025 16:49:37 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 01/12] common/rc: Add _min() and _max() helpers
-Message-ID: <aMf2SUh0gLeQO7rw@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1757610403.git.ojaswin@linux.ibm.com>
- <9475f8da726b894dd152b54b1416823181052c2a.1757610403.git.ojaswin@linux.ibm.com>
- <5a22a799-a6b9-43d3-9226-d1d554d170e4@oracle.com>
+	s=arc-20240116; t=1757935251; c=relaxed/simple;
+	bh=zbH3Sq7UGPV7WPhhaxd8Yvi2wuxAjlLJYGnbPaOlAfo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ivpN8d6AKRLYpzdAPvRo39PuO9Yy4Z+M4PpZ7m/mv1MEzG2rKfLdYGjare12Jakhe4gaIbgpMgNcM1w4rmPnawyqIb76aFc/zWEkeBOvH71EOyz2QIjkavL/X2VsZcHhdwEAFu2bsTUKDRFeX01xjkSqxAsn5cG6LUCs6QUeu4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PksHnQkG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YMBeYwCv; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 4FD64EC02C5;
+	Mon, 15 Sep 2025 07:20:48 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 15 Sep 2025 07:20:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757935248;
+	 x=1758021648; bh=uEk7o86KA2BK6dW6CATkYcz9HATj19zLVA3hWqXLyMI=; b=
+	PksHnQkGtt0FGFUKelfpBE+O+Or9ft7uD5K2shvi6ZswaKtxTfYT9gk+WYI+Q23j
+	57barHkfQ9gVwOU5tz1Hr0vs1CyINrKHNV7yH3VYNvmWipHJgW/U1AO8RRC/zrZM
+	7gGom3ZRnCZ0olHMkfIQFQE+CEbt8fzQD0zBiritQ5i1ozLdHmsepKvvOLHLY9Xu
+	VHdMqZVL4w4rvhGTNNmP3OZl1F+4sCmyMyJ/KGVC/PpnNCMZZXBUDhbc9Surh51f
+	IK2wq9O8heecXgcEgMWQ/83g7UynILxoXfnF0tY9q7Bq26QiC7efgV6ztilHVBRz
+	pKcJJ7qKqfMpTSqeTRpBLQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757935248; x=
+	1758021648; bh=uEk7o86KA2BK6dW6CATkYcz9HATj19zLVA3hWqXLyMI=; b=Y
+	MBeYwCvxOa+y0fjL8aSRuIAYmJWcJCZP8dI1uw4dqfNWl0yrKeC9hPwccGTYAf1r
+	/M44FQV1wecMxVfdkGHZyiMgd5pgH1O+EHffm/Sh3ayFHR/+HrRS6PfDJMYJoE2K
+	jTjPDQBnXdwp1y/l4G1IKGJc6gATzZGyOpoyQU/aXXCSSHBsr/HUb9Qk+5WkoD/E
+	/CZN4bNLAvWiz0oAcdojRBjI44Tw9SQPI4HxcPUOP96KrQ8ok8jVJ4XoD/104pAX
+	rfV8cl07R+M18znMlXhOS+aDuT0xuzV9bFYmAdSeK2ehpZX9P6QkcTSSRyG61qCn
+	YWDyq9qstduOOCbTZOtEA==
+X-ME-Sender: <xms:j_bHaK7yocb90JvezdegEb_OhJo-vAsoJxs3066VXYjZ-wdtdVc2qQ>
+    <xme:j_bHaD7EWvdkLTOWl8ZRjKXWIcOQbpDbBDNeY3i16qghQ2l22S7tbxxPTjKWmz7Ve
+    l62_fEUicoRU1u5EfQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefjeehhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
+    thhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrkhdrrhhuth
+    hlrghnugesrghrmhdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghi
+    lhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprh
+    gtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehl
+    ihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehfthhhrghinheslh
+    hinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmhei
+    kehkrdhorhhgpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtoh
+    eplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:j_bHaEjGcLrS2FBmAyOM3faqS7XlIXi5iCAdZE3qLbuNIT8uWT9r2w>
+    <xmx:j_bHaBZW2rZO67iJEjbyMMYC_vbuXVqWo_-GY_t34A1IkLti42zZLw>
+    <xmx:j_bHaJ-oRKeoag4CAWD8VpQxbbc-lwg16R0f7XUJkoZkx9ln6TNXfQ>
+    <xmx:j_bHaDM82YI-J4N270SKIQaAjnx2opdP6HLtQ_e_bCv5sgN_GRPwzQ>
+    <xmx:kPbHaIIoAn8-4eaNMtACqgP7woLu1G0_fRf7JrFnRTscDMO2TtD_-HsE>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B4719700065; Mon, 15 Sep 2025 07:20:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a22a799-a6b9-43d3-9226-d1d554d170e4@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAxMCBTYWx0ZWRfX4PEjCcHcDazi
- ChJnYqEgF0f7QzeDdSRFGeGGKahaA1HZZmyIglhD0XOKju3ma5fiI9fiGJXwiEIH9NSIAwXMjMx
- 5z+5NzBv7xoCRdewcAOmyI4J9K+k2TDYcM7wGWnkVj9MucYc2w6qOS7q6r6b0buy6DQoFFlnUGO
- NyqVKcN4j2TKGue06hlMsorE+qRmqUMZI1IVZABVomqE4I83stG9UnHM2S2mKuOFNxGOq3tJDFV
- dU1VM1yhtk5X5XC8BnM54JMGSG/sRyO6AgzmWyrfFX28EeCrdgYcK7xHFafp4EAMjFF2UDX2TpB
- Rs41/s2S2sa2E2NW4/q2cTWLRnKlivdUQWbIl/8Suw7ETUqFMv2d64Eqrl4HofRr0JD7apsb/5y
- Wpv1NrpG
-X-Proofpoint-ORIG-GUID: _ARQOro69MyPk80WuckITckUz4zPTBcj
-X-Authority-Analysis: v=2.4 cv=euPfzppX c=1 sm=1 tr=0 ts=68c7f652 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=yPCof4ZbAAAA:8 a=8tsh_XVOevaKpRn8MqUA:9 a=CjuIK1q_8ugA:10 a=zgiPjhLxNE0A:10
-X-Proofpoint-GUID: A2FXZeoIDjSsugnX2y3qRDJhBVmKB57_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_04,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 phishscore=0 suspectscore=0 spamscore=0
- bulkscore=0 impostorscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130010
+X-ThreadId: A-ya5D5_Z2ZZ
+Date: Mon, 15 Sep 2025 13:20:18 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Finn Thain" <fthain@linux-m68k.org>,
+ "Peter Zijlstra" <peterz@infradead.org>
+Cc: "Will Deacon" <will@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-m68k@vger.kernel.org
+Message-Id: <57bca164-4e63-496d-9074-79fd89feb835@app.fastmail.com>
+In-Reply-To: <8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org>
+ <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
+ <20250915080054.GS3419281@noisy.programming.kicks-ass.net>
+ <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
+ <20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
+ <8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org>
+Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic operations
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 05:53:47PM +0100, John Garry wrote:
-> On 11/09/2025 18:13, Ojaswin Mujoo wrote:
-> > Many programs open code these functionalities so add it as a generic helper
-> > in common/rc
-> > 
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> Reviewed-by: John Garry <john.g.gary@oracle.com>
-> 
-> I just sent a patch for something similar for blktests to linux-block. I
-> wonder how much commonality there is for such helpers...
-> 
-> BTW, let me know if I should attribute some credit there. cheers
+On Mon, Sep 15, 2025, at 12:37, Finn Thain wrote:
+> On Mon, 15 Sep 2025, Peter Zijlstra wrote:
+>>
+>> > When you do atomic operations on atomic_t or atomic64_t, (sizeof(long)
+>> > - 1) probably doesn't make much sense. But atomic operations get used on 
+>> > scalar types (aside from atomic_t and atomic64_t) that don't have natural 
+>> > alignment. Please refer to the other thread about this: 
+>> > https://lore.kernel.org/all/ed1e0896-fd85-5101-e136-e4a5a37ca5ff@linux-m68k.org/
+>> 
+>> Perhaps set ARCH_SLAB_MINALIGN ?
+>> 
+>
+> That's not going to help much. The 850 byte offset of task_works into 
+> struct task_struct and the 418 byte offset of exit_state in struct 
+> task_struct are already misaligned.
 
-Thanks for the review John!
+Has there been any progress on building m68k kernels with -mint-align?
+IIRC there are only a small number of uapi structures that need
+__packed annotations to maintain the existing syscall ABI.
 
-I think the helpers are simple enough so credit is not needed :) 
-
-Thanks,
-Ojaswin
+       Arnd
 
