@@ -1,153 +1,97 @@
-Return-Path: <linux-kernel+bounces-816411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8C2B57394
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:52:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E41B57396
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A811A1A20925
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:53:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D7C67AB3D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EBB2F60C4;
-	Mon, 15 Sep 2025 08:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27EB2F6195;
+	Mon, 15 Sep 2025 08:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQ0NpqNv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="rBMdOFgF"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89C32F1FC1;
-	Mon, 15 Sep 2025 08:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9062F617B;
+	Mon, 15 Sep 2025 08:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757926214; cv=none; b=JdVssxwJ3lQPh+1Pi20lKPpa7k/ZCH9Y0B4+guMnoO++mxh4DpnUnvkYt9i1naAy09TBzAZL3utVpQHi3loDGZ4Vtqlu98wrHnXkDawSf0JNMVEA40aKbwwJYoNUmOERMo2tzW6b8FOXA8JZuoJ5Ud0y9FM1Rzs1IYWLNtJpBeA=
+	t=1757926222; cv=none; b=fhQu8nyH5jD4T2Ddrt/Lv+cFMPWhqayqMzKzEwvwIMHjEYo13cofPwTqWJD6y20MB59zWdhVxgB+IHgtmekoGp4+EJUdbnOFrgiiMhR8xOi48jhJexaUL7B/DCraZSUoZykVDdPWihenh5SvPqYQgk5dMWyza7Wiu2nUcBtZ2Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757926214; c=relaxed/simple;
-	bh=8YzhXVDGYfiV4HzTOVlRZNfrx9Hq7QkrlqseIUH0EYI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KGtQRqdvXvG3FmToUyB4OlRlMMnLGbOCNpz+HhCa+ZF+WOFZNzdRjGsoDtZDeu64wega8cCnE9HLOuEbKSX8AvuNcG7jRo42Y3oV+oTYYPjIgEsayckyvKmqOdh+zPx9yjd+JOmuEM8eCBzyelw4PAGRSsX8C3ap/n6RP+sDDsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQ0NpqNv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6B7A5C4CEF1;
-	Mon, 15 Sep 2025 08:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757926214;
-	bh=8YzhXVDGYfiV4HzTOVlRZNfrx9Hq7QkrlqseIUH0EYI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NQ0NpqNvkvYE0l4RSbPoTHOTPbGJT/+89CAcdxh0NsRxoRAjbL0UqHZmlT/T5RKX/
-	 dLjw0Y88xoRckdPuCvP9BVMwaOmpyA0fAg+Gv21ctOnoBhSmwloqsozM2cOGAbOG1V
-	 5jTzm2Fhbp/XmtyYFnM+Ugt0VpQ//jMva6/ZeTVaVYwxIc/3k+HfMdgVaDgAXf2apa
-	 4L4RgM7nQD6vf2wXbH+htk2SCzHEMVePCGKp5lMa9SNswE9n5HsRzuaymBtx3+Mmbd
-	 42sSuN7FwWg5E+ZU3mdN+nCCUjEmTI9IM/61mh0fb8V3XEd/yuokUlPGQAwBXAJnUD
-	 cexKP8k13A9PQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EB0CAC59A;
-	Mon, 15 Sep 2025 08:50:14 +0000 (UTC)
-From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
-Date: Mon, 15 Sep 2025 16:50:00 +0800
-Subject: [PATCH v4 8/8] arm64: dts: qcom: x1e80100-crd: Add charge limit
- nvmem
+	s=arc-20240116; t=1757926222; c=relaxed/simple;
+	bh=8Abhke+wAvVYQkvLFpimTgcFAOpAqB5J5c1BWvnj6sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGEQ+CipaG8MAWJUNZiXlDjw3x4DDKDEEn42xtLjG9pECFZT1i+N26CXPtbNkCzateAv5sPzqrtWaRmjwAA2eVW6ziR4+O6la9l5FJqJMAbv92NB9hj+Rj/GD5uUlJJsiejgFmCU2sWTqU2bFJgTZa7hnTSCxQS3GlAMaEpqPl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=rBMdOFgF; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1757926217;
+	bh=8Abhke+wAvVYQkvLFpimTgcFAOpAqB5J5c1BWvnj6sk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rBMdOFgFALT5WBUoAQ3UCud5d0XBSQHOm5o/wLr6dqavwRynzE/b8lWzZJtGaBEW9
+	 5cnjmGg7XyPtoDgqeOxq7odOl+cH7/3jWrloetMLDKPtisbhntuPKPnvsjiLR5GztA
+	 YlI7LMu/EBnU+uOJG/sfCyyM261B2xHyAkJypUF8=
+Date: Mon, 15 Sep 2025 10:50:17 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
+	linux-kselftest@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-kernel@vger.kernel.org, Tiwei Bie <tiwei.btw@antgroup.com>, 
+	Benjamin Berg <benjamin.berg@intel.com>
+Subject: Re: [PATCH 5/9] tools/nolibc: use __fallthrough__ rather than
+ fallthrough
+Message-ID: <6fff1ac0-2868-4377-b8a3-c10fe1a4c1f5@t-8ch.de>
+References: <20250915071115.1429196-1-benjamin@sipsolutions.net>
+ <20250915071115.1429196-6-benjamin@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-qcom_battmgr_update-v4-8-6f6464a41afe@oss.qualcomm.com>
-References: <20250915-qcom_battmgr_update-v4-0-6f6464a41afe@oss.qualcomm.com>
-In-Reply-To: <20250915-qcom_battmgr_update-v4-0-6f6464a41afe@oss.qualcomm.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
- David Collins <david.collins@oss.qualcomm.com>, 
- =?utf-8?q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- kernel@oss.qualcomm.com, devicetree@vger.kernel.org, 
- linux-usb@vger.kernel.org, Fenglin Wu <fenglin.wu@oss.qualcomm.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757926212; l=1975;
- i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
- bh=SlhYoRKUJUUMoUaX/eiBPiu6dsVcqAGHcuhRs7McyOc=;
- b=GjM4eAr5cx5pHz/1tZPKjDVs9VSuyjl3fTa8ewSgbClqY1eC7/sUZcfjjmU7pvnCMtXDPOAG7
- 06zPtmGQZVDAcZZ4W2W8vpM34ESmYDmse4lra4jYucpJIz5QMhiJLoM
-X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
- pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
-X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
- with auth_id=406
-X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Reply-To: fenglin.wu@oss.qualcomm.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915071115.1429196-6-benjamin@sipsolutions.net>
 
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+On 2025-09-15 09:11:11+0200, Benjamin Berg wrote:
+> From: Benjamin Berg <benjamin.berg@intel.com>
+> 
+> Use the version of the attribute with underscores to avoid issues if
+> fallthrough has been defined by another header file already.
 
-Add nvmem cells for getting charge control thresholds if they have
-been set previously.
+Not a really big fan, but as the underscore variant is documented there
+shouldn't be an issue.
 
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S OLED
-Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/x1-crd.dtsi         |  3 +++
- arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi | 20 ++++++++++++++++++++
- 2 files changed, 23 insertions(+)
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
 
-diff --git a/arch/arm64/boot/dts/qcom/x1-crd.dtsi b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-index c9f0d505267081af66b0973fe6c1e33832a2c86b..fee65391653ae9c2ee23f9f3954d9ed018c9aecd 100644
---- a/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1-crd.dtsi
-@@ -82,6 +82,9 @@ pmic-glink {
- 				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
- 				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
- 
-+		nvmem-cells = <&charge_limit_en>, <&charge_limit_end>, <&charge_limit_delta>;
-+		nvmem-cell-names = "charge_limit_en", "charge_limit_end", "charge_limit_delta";
-+
- 		/* Left-side rear port */
- 		connector@0 {
- 			compatible = "usb-c-connector";
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-index c02fd4d15c9649c222caaafa5ed2c777a10fb4f5..eb5562e4393c88faa16d9172ee2a1ceabef076ff 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-@@ -239,6 +239,26 @@ reboot_reason: reboot-reason@48 {
- 			};
- 		};
- 
-+		pmk8550_sdam_15: nvram@7e00 {
-+			compatible = "qcom,spmi-sdam";
-+			reg = <0x7e00>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x7e00 0x100>;
-+
-+			charge_limit_en: charge-limit-en@73 {
-+				reg = <0x73 0x1>;
-+			};
-+
-+			charge_limit_end: charge-limit-end@75 {
-+				reg = <0x75 0x1>;
-+			};
-+
-+			charge_limit_delta: charge-limit-delta@76 {
-+				reg = <0x76 0x1>;
-+			};
-+		};
-+
- 		pmk8550_gpios: gpio@8800 {
- 			compatible = "qcom,pmk8550-gpio", "qcom,spmi-gpio";
- 			reg = <0xb800>;
-
--- 
-2.34.1
-
-
+> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+> ---
+>  tools/include/nolibc/compiler.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/include/nolibc/compiler.h b/tools/include/nolibc/compiler.h
+> index 369cfb5a0e78..87090bbc53e0 100644
+> --- a/tools/include/nolibc/compiler.h
+> +++ b/tools/include/nolibc/compiler.h
+> @@ -41,8 +41,8 @@
+>  #  define __no_stack_protector __attribute__((__optimize__("-fno-stack-protector")))
+>  #endif /* __nolibc_has_attribute(no_stack_protector) */
+>  
+> -#if __nolibc_has_attribute(fallthrough)
+> -#  define __nolibc_fallthrough do { } while (0); __attribute__((fallthrough))
+> +#if __nolibc_has_attribute(__fallthrough__)
+> +#  define __nolibc_fallthrough do { } while (0); __attribute__((__fallthrough__))
+>  #else
+>  #  define __nolibc_fallthrough do { } while (0)
+>  #endif /* __nolibc_has_attribute(fallthrough) */
+> -- 
+> 2.51.0
+> 
 
