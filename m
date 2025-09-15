@@ -1,147 +1,242 @@
-Return-Path: <linux-kernel+bounces-817591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B2FB58435
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EBFAB58438
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6F116DF29
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:03:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE1C2A3511
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02101275B1B;
-	Mon, 15 Sep 2025 18:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB16286D7C;
+	Mon, 15 Sep 2025 18:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6gQHAwN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4KpjLbq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FA321CC71
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CA0EEBD
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757959393; cv=none; b=hDT9B7Nh20Vg29CRflbI4zPVVCyFN6mTukTKsrWY5yQPnZl34D1k9bjWiRoyIkzVSeJj7BjxZfMr2nHsCfkFl/tx119P4gmjiDWH9THPzJTqZ7j50lLNehbs9xb1Mds3Mfic2KDfDurjXjjMGiinakUmRH3ooII31eQbGTcHz74=
+	t=1757959546; cv=none; b=U2U8xtechdabfv+WQfkx84LS6OxvIASaPdxK/CpAeGq4ek52IPpL6O0IPNikfBUfzlAneDF6R3z/p+yfuxODLozl9StlaU+HuWvjFuAS1flkbV6hspwuUGp/RznjUSjeazoA76CkLunuNA9gXw0kqlPwuAzZ6b7P450Xz1SfSq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757959393; c=relaxed/simple;
-	bh=95ccvwynTPPBJ3VSneLqZ1zP/VaVb+UaV3d2KQZYJkQ=;
+	s=arc-20240116; t=1757959546; c=relaxed/simple;
+	bh=KaHs9H79igOzz5DG7HCVzqRefh3hSnWZpPs2XMjBIZw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gQ4X3I0yVVb4PcxsnPg8jrTN5HXjjlvN05Wrv6HwcmriujvyvA3MVYjkHfE5ZtPOJz9K6D4HB/0Wke9zY6xMxBJcHieQRFH2grPRV51hg2VX70Clp31SdnPH9NRz3jj796+USwEaPOOhv1LmQvoLD2SSj8hEIhvIG2yg20ZaOXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6gQHAwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD936C113D0
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:03:12 +0000 (UTC)
+	 To:Cc:Content-Type; b=WzJEavnxX3GheJMsNIaRqC3NJv3IZPH+6nuLCBuJx8Kb1PUx/JytsBGBvZ4fEAvftn96Y9A95caDK3ywoleAzF5hTFqfhSmXD0GLSFhJzhueMhT2uZXOJ9BiQv4Wmj8bV1wGUxunUwr4yVeiWhbQ9rLC3TMh8Wl5TuevWuO9hjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4KpjLbq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00D6FC4CEF7
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757959392;
-	bh=95ccvwynTPPBJ3VSneLqZ1zP/VaVb+UaV3d2KQZYJkQ=;
+	s=k20201202; t=1757959546;
+	bh=KaHs9H79igOzz5DG7HCVzqRefh3hSnWZpPs2XMjBIZw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=b6gQHAwNSHIM0m1optIKYBL3uLR1WmN984EcPGAyGqBs2pGtAsY++vKO03EZkFIwV
-	 +tRMRu5ftNCsop4lkHoIxHLopYpvorUXj/i0l1Q0NLY8RVi0PxAvrmS6Ubc1tYJbQ5
-	 dGRJysVxxfW8HtC2AgEEkXlEPB7dhWgScZezzJWvV1M+62hGmJ5PW1oT6877zcFZ4M
-	 8VipDL+Z3vuvQOsA0EPPdWRsBW8M6ME4wekPiGZ+8upRDpollWrgHgJyNwKyDS6rF2
-	 9X++AR7AI9cFawDF4VpooBVn/NrPr3dWNXN0g0mAFEtWBfcxPsCkxdEtyZhL9psuAJ
-	 FXRPzbT8IjBMw==
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-60f476eab6cso2410828d50.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:03:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUk8wQQr8Svod466mxSfvKlLHWhJQkN8otQyNMB7071wv3KLHhtduIWI/SLTul57vhrkro55Ysyfjj74fM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztn2mDgffiEmH1tUhrLbH3z9MGuQGEsjusz7hN3f5B/4hzCsKl
-	oeMe5t28kXD7q9u1yWz15PLHLHSwod301ndCE9dxnYbfE45A6FyQYIz9Pv7Xst6NT/E4lc7RW0w
-	jKF6TYnT8+cHSqD5x65s478FBsQzH7kCSEFgWfXijuA==
-X-Google-Smtp-Source: AGHT+IGznbxlru4z1wgEjBBcYPzKTJKderdVTriUrpm7drfmb1ZVpveUFgHxH+0dDwR+fAkdCmzAq4G/cfPwxyeMIDE=
-X-Received: by 2002:a05:690c:3388:b0:729:46de:38bf with SMTP id
- 00721157ae682-73064febdc6mr119361847b3.29.1757959392031; Mon, 15 Sep 2025
- 11:03:12 -0700 (PDT)
+	b=g4KpjLbqx31jLhD923f0mY+v4YHZCOkMswSAkqSfyYUE5dPBfnmAMLIP1yM3kidfz
+	 oz8pt0WwGgJhSk4dWWJgPm2TvC0dP9GowxDCdqsUScB3/eIe85Gy5nkNY9BOLJVptf
+	 6li9NZkji4PFaunTLNbml+AwEzDpDWHUQQLQ2X2SVOg2UsWWv9syBdUqZ0IOgZAWAX
+	 r9rSrfZkneRL5BwzyhptVP8wo5px+m1k3mqOMoO9UNqOrSxQVa+T+OmcBMqx/kyuzb
+	 uGlsTS/wEakCehdNAwzdS+irSP19U9varIYZhKOxJr+4cXSyDQjx4Ui/XPCz0dlbgz
+	 otkWMupHjY/KA==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6219b29ed57so1674078eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:05:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUANTWB5vQ4w9/TeZnlcOVVDhHMhHRZr6dzLR81TokWJytcdCs3Pt2jARPo/AU5UdItYTFct+0HSa9bd/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgO5daTpqirr7Ev4t/hhs+XR7mdao69QiGhIKIEdeiKZvxoBAx
+	pchxcUuPS8x7tlokZ3O8tKEdsWLm+ezVxhdU4O/K9vUx9ADvv7c5/FbGZmdxS4ARS6FALgPf2x9
+	UvJQCEf8qj1boUIwZOf9+Fva3rnZH/Sc=
+X-Google-Smtp-Source: AGHT+IE5z4L5y2+SXHun7uzV1DSTnQd8k1nuBntT8CHm4nvoEvWOAePm/emftEEH5UTVFzp5jRZtijuDolugjf2W/g4=
+X-Received: by 2002:a05:6820:6ac4:b0:61b:9bfa:593c with SMTP id
+ 006d021491bc7-621b2f4a501mr8746336eaf.3.1757959545272; Mon, 15 Sep 2025
+ 11:05:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910160833.3464-15-ryncsn@gmail.com> <20250915150719.3446727-1-clm@meta.com>
- <CAMgjq7A1hqQ+yboCtT+JF=5Tfijph2s4ooSqNwnexQ9kwJOCtA@mail.gmail.com>
- <6466a351-4c3a-4a02-b76f-8785daf36c0b@meta.com> <CACePvbUWGNq=TW2aP2zvcp9=Xt86hBPi3Ga1SLqjeZcyaKApoQ@mail.gmail.com>
-In-Reply-To: <CACePvbUWGNq=TW2aP2zvcp9=Xt86hBPi3Ga1SLqjeZcyaKApoQ@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Mon, 15 Sep 2025 11:03:01 -0700
-X-Gmail-Original-Message-ID: <CACePvbWiGZEuR1xHorjS2mXE-=Z4ZfpR8U_1jSMGMBe8PFnU_g@mail.gmail.com>
-X-Gm-Features: Ac12FXzKV5l_rqhgwUM_R0cj5e126WLF3vMosZkwhTpDsrGF8h_VyiI2EGR56GM
-Message-ID: <CACePvbWiGZEuR1xHorjS2mXE-=Z4ZfpR8U_1jSMGMBe8PFnU_g@mail.gmail.com>
-Subject: Re: [PATCH v3 14/15] mm, swap: implement dynamic allocation of swap table
-To: Chris Mason <clm@meta.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
+References: <5046661.31r3eYUQgx@rafael.j.wysocki> <2243680.irdbgypaU6@rafael.j.wysocki>
+ <aMf5ZNW9t_6tfsjy@kekkonen.localdomain> <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
+ <CAJZ5v0jVeSrDO6hrZhKgRZrH=FpGD4vNUjFD8hV9WwN9TLHjzQ@mail.gmail.com> <aMhSPQZxYB61wVYe@kekkonen.localdomain>
+In-Reply-To: <aMhSPQZxYB61wVYe@kekkonen.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Sep 2025 20:05:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iAG8PfeejzL3wUsW4b_9oakgAVi2vOQbvLkB7=rU85=g@mail.gmail.com>
+X-Gm-Features: AS18NWAZGJjROcAlFCHIK_GdZCQYG1yBXybMRruB_9ZDHpzYaMN5EpHyD4fon5w
+Message-ID: <CAJZ5v0iAG8PfeejzL3wUsW4b_9oakgAVi2vOQbvLkB7=rU85=g@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] ACPI: property: Add code comments explaining what
+ is going on
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 10:14=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
-:
->
-> On Mon, Sep 15, 2025 at 10:00=E2=80=AFAM Chris Mason <clm@meta.com> wrote=
-:
-> >
-> >
-> >
-> > On 9/15/25 12:24 PM, Kairui Song wrote:
-> > > On Mon, Sep 15, 2025 at 11:55=E2=80=AFPM Chris Mason <clm@meta.com> w=
-rote:
-> > >>
-> > >> On Thu, 11 Sep 2025 00:08:32 +0800 Kairui Song <ryncsn@gmail.com> wr=
-ote:
-> >
-> > [ ... ]
-> >              spin_lock(&si->global_cluster_lock);
-> > >>> +     /*
-> > >>> +      * Back to atomic context. First, check if we migrated to a n=
-ew
-> > >>> +      * CPU with a usable percpu cluster. If so, try using that in=
-stead.
-> > >>> +      * No need to check it for the spinning device, as swap is
-> > >>> +      * serialized by the global lock on them.
-> > >>> +      *
-> > >>> +      * The is_usable check is a bit rough, but ensures order 0 su=
-ccess.
-> > >>> +      */
-> > >>> +     offset =3D this_cpu_read(percpu_swap_cluster.offset[order]);
-> > >>> +     if ((si->flags & SWP_SOLIDSTATE) && offset) {
-> > >>> +             pcp_ci =3D swap_cluster_lock(si, offset);
-> > >>> +             if (cluster_is_usable(pcp_ci, order) &&
-> > >>> +                 pcp_ci->count < SWAPFILE_CLUSTER) {
-> > >>> +                     ci =3D pcp_ci;
-> > >>                        ^^^^^^^^^^^^^
-> > >> ci came from the caller, and in the case of isolate_lock_cluster() t=
-hey
-> > >> had just removed it from a list.  We overwrite ci and return somethi=
-ng
-> > >> different.
-> > >
-> > > Yes, that's expected. See the comment above. We have just dropped
-> > > local lock so it's possible that we migrated to another CPU which has
-> > > its own percpu cache ci (percpu_swap_cluster.offset).
-> > >
-> > > To avoid fragmentation, drop the isolated ci and use the percpu ci
-> > > instead. But you are right that I need to add the ci back to the list=
-,
-> > > or it will be leaked. Thanks!
-> >
-> > Yeah, the comment helped a lot (thank you).  It was just the leak I was
-> > worried about ;)
->
-> As Kairui said, that is not a leak, it is the intended behavior. It
-> rotates the listhead when fetching the ci from the list to avoid
-> repeatedly trying some fragment cluster which has a very low success
-> rate. Otherwise it can stall on the same fragmented list. It does look
-> odd at the first glance. That is the best we can do so far without
-> introducing a lot of repeating rotation logic to the caller. If you
-> find other ways to improve the reading without performance penalty and
-> make code simpler, feel free to make suggestions or even patches.
+Hi Sakari,
 
-Sorry I take back what I just said. There might be a real leak as you
-point out. My bad.
+On Mon, Sep 15, 2025 at 7:52=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Rafael,
+>
+> On Mon, Sep 15, 2025 at 07:12:44PM +0200, Rafael J. Wysocki wrote:
+> > On Mon, Sep 15, 2025 at 2:27=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> > >
+> > > Hi Sakari,
+> > >
+> > > On Mon, Sep 15, 2025 at 1:32=E2=80=AFPM Sakari Ailus
+> > > <sakari.ailus@linux.intel.com> wrote:
+> > > >
+> > > > Hi Rafael,
+> > > >
+> > > > On Fri, Sep 12, 2025 at 09:40:58PM +0200, Rafael J. Wysocki wrote:
+> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >
+> > > > > In some places in the ACPI device properties handling code, it is
+> > > > > unclear why the code is what it is.  Some assumptions are not doc=
+umented
+> > > > > and some pieces of code are based on experience that is not menti=
+oned
+> > > > > anywhere.
+> > > > >
+> > > > > Add code comments explaining these things.
+> > > > >
+> > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > > ---
+> > > > >  drivers/acpi/property.c |   51 +++++++++++++++++++++++++++++++++=
++++++++++++++--
+> > > > >  1 file changed, 49 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > --- a/drivers/acpi/property.c
+> > > > > +++ b/drivers/acpi/property.c
+> > > > > @@ -108,7 +108,18 @@ static bool acpi_nondev_subnode_extract(
+> > > > >       if (handle)
+> > > > >               acpi_get_parent(handle, &scope);
+> > > > >
+> > > > > +     /*
+> > > > > +      * Extract properties from the _DSD-equivalent package poin=
+ted to by
+> > > > > +      * desc and use scope (if not NULL) for the completion of r=
+elative
+> > > > > +      * pathname segments.
+> > > > > +      *
+> > > > > +      * The extracted properties will be held in the new data no=
+de dn.
+> > > > > +      */
+> > > > >       result =3D acpi_extract_properties(scope, desc, &dn->data);
+> > > > > +     /*
+> > > > > +      * Look for subnodes in the _DSD-equivalent package pointed=
+ to by desc
+> > > > > +      * and create child nodes of dn if there are any.
+> > > > > +      */
+> > > > >       if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, =
+&dn->fwnode))
+> > > > >               result =3D true;
+> > > > >
+> > > > > @@ -153,6 +164,12 @@ static bool acpi_nondev_subnode_ok(acpi_
+> > > > >       acpi_handle handle;
+> > > > >       acpi_status status;
+> > > > >
+> > > > > +     /*
+> > > > > +      * If the scope is unknown, the _DSD-equivalent package bei=
+ng parsed
+> > > > > +      * was embedded in an outer _DSD-equivalent package as a re=
+sult of
+> > > > > +      * direct evaluation of an object pointed to by a reference=
+.  In that
+> > > > > +      * case, using a pathname as the target object pointer is i=
+nvalid.
+> > > > > +      */
+> > > > >       if (!scope)
+> > > > >               return false;
+> > > > >
+> > > > > @@ -172,6 +189,10 @@ static bool acpi_add_nondev_subnodes(acp
+> > > > >       bool ret =3D false;
+> > > > >       int i;
+> > > > >
+> > > > > +     /*
+> > > > > +      * Every element in the links package is expected to repres=
+ent a link
+> > > > > +      * to a non-device node in a tree containing device-specifi=
+c data.
+> > > > > +      */
+> > > > >       for (i =3D 0; i < links->package.count; i++) {
+> > > > >               union acpi_object *link, *desc;
+> > > > >               acpi_handle handle;
+> > > > > @@ -182,22 +203,48 @@ static bool acpi_add_nondev_subnodes(acp
+> > > > >               if (link->package.count !=3D 2)
+> > > > >                       continue;
+> > > > >
+> > > > > -             /* The first one must be a string. */
+> > > > > +             /* The first one (the key) must be a string. */
+> > > > >               if (link->package.elements[0].type !=3D ACPI_TYPE_S=
+TRING)
+> > > > >                       continue;
+> > > > >
+> > > > > -             /* The second one may be a string, a reference or a=
+ package. */
+> > > > > +             /*
+> > > > > +              * The second one (the target) may be a string, a r=
+eference or
+> > > > > +              * a package.
+> > > > > +              */
+> > > > >               switch (link->package.elements[1].type) {
+> > > > >               case ACPI_TYPE_STRING:
+> > > > > +                     /*
+> > > > > +                      * The string is expected to be a full path=
+name or a
+> > > > > +                      * pathname segment relative to the given s=
+cope.  That
+> > > > > +                      * pathname is expected to point to an obje=
+ct returning
+> > > > > +                      * a package that contains _DSD-equivalent =
+information.
+> > > > > +                      */
+> > > > >                       result =3D acpi_nondev_subnode_ok(scope, li=
+nk, list,
+> > > > >                                                        parent);
+> > > > >                       break;
+> > > > >               case ACPI_TYPE_LOCAL_REFERENCE:
+> > > >
+> > > > I think you get ACPI_TYPE_LOCAL_REFERENCE only when you evaluate a
+> > > > reference to a device object.
+> > >
+> > > If it is so, the code below is just dead because the target here is
+> > > expected to be a named object (not a device), in which case it would
+> > > just be better to delete this code.
+> >
+> > Well, unless there's a bug in the ACPI tables attempting to add a
+> > reference to a device as a data-only subnode.  Of course, this won't
+> > work, but printing a message in that case may help.
+> >
+> > > Is this what you mean?
+> >
+> > I think it is and you are right: Referencing a named object will cause
+> > that object to be evaluated automatically and its return data to be
+> > embedded into the return package at the location of the reference.
+> >
+> > So I think that this piece is confusing and I'm going to get rid of it.
+>
+> Sounds reasonable. Maybe this change would be worth its own patch?
 
-Chris
+Yes, it would.
+
+> The DSD guide indeed requires the target evaluates to a package object
+> while a device object does not. The ACPICA doesn't document this behaviou=
+r
+> (or at least I'm not aware of it), which is probably why we have this cod=
+e
+> here.
+
+This is what generally happens when AML is evaluated.
+
+For instance, on SMP platforms, each CPU object is expected to contain
+multiple named objects like _CST, _CPC, _PSS etc.  Typically, each of
+these objects returns the same data for every CPU and typically, there
+is one internal named object referred to by, say, _CST for each CPU.
+Had references been returned in such cases, that wouldn't have worked.
 
