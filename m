@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-817238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C91CB57FB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:58:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF41CB57FA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707E17B1E86
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3ED3A2F1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106DD343212;
-	Mon, 15 Sep 2025 14:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E78A3375C0;
+	Mon, 15 Sep 2025 14:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XP/6ecZ9"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huqOC9Do"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E560632F76A;
-	Mon, 15 Sep 2025 14:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172E3321F3F;
+	Mon, 15 Sep 2025 14:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757948003; cv=none; b=JUIIyjVkXVbf2p6aiEuSCIJdWqfBQpgWwXfTJjMuCUq6ncHMmEEzsz4ssapNIdLQ+JLmjvgIEToDdTvVFxF/tlTWTaDDDADpF6L2XE4FE87xrCVZ9fJPKu0r+L3rYCIhqMO4JdY2Ei0gxJFifEoR4hbDlyXffNOwqxcxi7qH2N4=
+	t=1757948052; cv=none; b=Qe8/fsVsFU47shlvqvU9olBCAdmXW2Hy8vn5PQU6rsJqTv5tC2pT6nyDiqHIxipU/q71AKhaal+11DtqQmYzsVxhYgT5A9Lh79A/n1QYKh9BuJQy6PMlqHFdOPgsjt3/QCiThLWGYbqvc8RXl1j97JXsGHpxfQtvLs1ZGDK/dzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757948003; c=relaxed/simple;
-	bh=NI/V1BFu/xw0s0N3NYrfmXM+nPXpri1JQ+T381KWCLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eDebAc9QJP9Enn2NTMEbVcNZ53TYJqmDB2ecAgwgt8H8OEWyDKxjzrLmESUVrNn+WTLcQowFg5rGdaZ/KrCjnpR2eo3DHZaX40mUMpnwfdfxhHBjOCn8Qs1I1ZllwhOQiYZI6NJpHBwm4/Em12GPrzf1T/Lot5/2X4PJCcv95wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XP/6ecZ9; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1757948052; c=relaxed/simple;
+	bh=5zvV9UB2aUF1HHaCSUBXMQThneYkRcHlnJ3H82rt5bI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncA4Bkbs9aCqn+08S5f2xD8VyAC6G9lobn2YOmUgIPwGKxDV2ScfvHK8PLHan5fKh/FemRVVmimBh5IBFUUhWH+IBdmU2kOF7Tswm//rmaUBzEa4IA9y5p9zIlrbW1caIODtsyATuHOoj7REZz8NlFELB745be7c2FW7DuRG2LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huqOC9Do; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757948001; x=1789484001;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NI/V1BFu/xw0s0N3NYrfmXM+nPXpri1JQ+T381KWCLY=;
-  b=XP/6ecZ96pstD0Ap76SIZxes0dpb2cpnBVvtOQe3m1jWCYexlJTmkQdv
-   axDB8U+wXoWERcKCWQ19IST17sMOxaFkRcUwc0YzZbf1U8JnYjAjvFQpJ
-   GJjf0u8xhrdAulxDNp7cboXZoZXFsOC4I+7Ts/U3RHA6NYDnQUsP3Z6mF
-   T9iuUSjXC1dPOI1Y32jaBa/YhG8qXpv8owl4tQe+PJgPkUDqdH7L4WJPb
-   5KCJoPXdtFfTsVV1kdNQzlo4CPl7qRjIdFFbDRxgEM9Lscl0Zpt9IVy69
-   tIPTl3l3/kWgqcUD/UmZhy0zsHRL4hiVomYsspo/E+XS6Zqs79bRP+i5A
-   w==;
-X-CSE-ConnectionGUID: t4nJTFLUQceZvkt6u9W+ug==
-X-CSE-MsgGUID: OXxTyGUQRK+73AIK12XuEA==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757948051; x=1789484051;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5zvV9UB2aUF1HHaCSUBXMQThneYkRcHlnJ3H82rt5bI=;
+  b=huqOC9Dor9qLp3BNVidfYTMJdkgnh1qUdBK3I1g2ahR1WiidIBSCNPaw
+   4iHKgRQ33AUi2Jw2DfQzMS9Pgx6sK+bh89mN5qmPA9P3COedxLfrNH4ed
+   pii9/jHQ0PVUwUrNReHWEQ3eBCVSGnsByFZqRWtwi+DFEq0x7jFln5Ez/
+   4M64+Y0ZK6N9tCMWLR1h/i+sQ/b5U1CrSEPaDt3acEtS+kqgiuEF+ynB7
+   2CkFtpNZBpvr68YKhLl+MOprb0dRSlE4ur4bgDyIOLtLYv7yrgRSKGzho
+   DWKoT0CZSVJhxhs/YvNEfg0ECSpuQlEbTIPW9dBvcCmdVfQXGri/J+fiU
+   A==;
+X-CSE-ConnectionGUID: 01KJqS+tR5yM/0Ots+3yOg==
+X-CSE-MsgGUID: LdixdzM3QmOWdEnqOsCJ2w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="82795224"
 X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="45941907"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 07:53:20 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 07:53:17 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 15 Sep 2025 07:53:15 -0700
-Message-ID: <826bb7ba-c4fb-4dd9-9332-88140d7a0eb1@microchip.com>
-Date: Mon, 15 Sep 2025 16:53:15 +0200
+   d="scan'208";a="82795224"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:54:11 -0700
+X-CSE-ConnectionGUID: E3GBIukpQ82WZ5mySMLIug==
+X-CSE-MsgGUID: D+8ffKhCR6CpAUOP6jo9fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="174734971"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:54:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyAah-00000003HCK-2SRS;
+	Mon, 15 Sep 2025 17:54:03 +0300
+Date: Mon, 15 Sep 2025 17:54:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Changqi Hu <changqi.hu@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] tty: serial: 8250_mtk: enable baud clock
+Message-ID: <aMgoi8sQlNhc3CXq@smile.fi.intel.com>
+References: <2de07b0a6d51d5d3bf3e55cd03cf75adfc91ee7d.1757941345.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: at91: sam9x7: Add peripheral clock id for pmecc
-To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20250909103817.49334-1-balamanikandan.gunasundar@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250909103817.49334-1-balamanikandan.gunasundar@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2de07b0a6d51d5d3bf3e55cd03cf75adfc91ee7d.1757941345.git.daniel@makrotopia.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 09/09/2025 at 12:38, Balamanikandan Gunasundar wrote:
-> Add pmecc instance id in peripheral clock description.
-> 
-> Signed-off-by: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
+On Mon, Sep 15, 2025 at 02:06:37PM +0100, Daniel Golle wrote:
 
-Added to clk-microchip with fix of tab vs. space (made by Claudiu).
+...
 
-Thanks, regards,
-   Nicolas
+> -		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
+> +		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+>  		if (IS_ERR(data->uart_clk)) {
+>  			dev_warn(&pdev->dev, "Can't get uart clock\n");
+>  			return PTR_ERR(data->uart_clk);
 
-> ---
-> Changes in v2:
-> - Removed Acked-by tag that was added by mistake
-> 
->   drivers/clk/at91/sam9x7.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
-> index ffab32b047a0..bce60f7393d5 100644
-> --- a/drivers/clk/at91/sam9x7.c
-> +++ b/drivers/clk/at91/sam9x7.c
-> @@ -403,6 +403,7 @@ static const struct {
->   	{ .n = "pioD_clk",	.id = 44, },
->   	{ .n = "tcb1_clk",	.id = 45, },
->   	{ .n = "dbgu_clk",	.id = 47, },
-> +	{ .n = "pmecc_clk",     .id = 48, },
->   	/*
->   	 * mpddr_clk feeds DDR controller and is enabled by bootloader thus we
->   	 * need to keep it enabled in case there is no Linux consumer for it.
+Consider making this to be either dev_warn_once() / _ratelimited() or
+better to have
+
+	return dev_err_probe(...);
+
+This will allow to avoid flooding the logs when clock is not yet ready.
+The proposed change can be done in the separate patch.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
