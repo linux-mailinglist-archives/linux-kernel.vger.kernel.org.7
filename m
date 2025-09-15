@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-816601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B0EB57611
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:18:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7797FB57613
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1DB4430E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED293442DD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B80F2FB089;
-	Mon, 15 Sep 2025 10:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F9E2FABE8;
+	Mon, 15 Sep 2025 10:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="nF3u8lq4"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.219])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jiR8W1I8"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F6C2F90ED;
-	Mon, 15 Sep 2025 10:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.219
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931417; cv=pass; b=PCsTIGvvUGoFCGywgwcWiA4WUm6Ic/qE0UBxRMrQyw8bOaMHBQnc2k8eVWFIhH2NBETSw06Rp+cZo02upjhADVTGfDF+CAITDzOaGIWJdWZh32zDVQ6JTceDP7dD2V/lq3+ViFTdMCWK7BoCPzx2ZZu8CqLBM2/p0c8r6m8WzTY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931417; c=relaxed/simple;
-	bh=hiS6CWWzzSZrfwhMY6sTSReXu6EATGI7A8Jq+9VOfdE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D3F22DF9E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757931478; cv=none; b=gohS8M1dJZgPplKSYfUTkS4NirSVA1vYRbW9hP+e7Oyw3B5hFRe3KAH12I/C78oNezn1wgTfQJXxELDQnEklFzJh4/juPFNhmiq55g4bWOdzGiZWqQ1kaKQHGJuIZzNuDbndyJlJY4/N4xI1A/9tdSFbsYNMhowF8yfAjTe1yc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757931478; c=relaxed/simple;
+	bh=CkiX+SfKyNNzh/CR0iQ6mQNKdawIAKfXA08rWVJaslk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PMTyoSJilgzGJpDloUDA+FWqBdh2S57auBkN8a1pH5rdshV8VwPlIrEAsJCsB7eswA1CJ49NQWDCDotcmObo/tctKy5pZAvPysYDw4O92kz+d0EPV4LzFOBq1Kvp/5QJsjV30/vuAhegS2+kDh80sOOI6hv5e/4+qpNe6XAdtZ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net; spf=pass smtp.mailfrom=hartkopp.net; dkim=pass (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b=nF3u8lq4; arc=pass smtp.client-ip=81.169.146.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hartkopp.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hartkopp.net
-ARC-Seal: i=1; a=rsa-sha256; t=1757931405; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=mvX8m0ekeIojlHJw5I0KCOlLcZzw77UTNhK9yRf79RES9KCeGozlZHxyXjlXuYgqnV
-    wOBctuwFnk79sP6TASthOKXUtHI/h0Xrt58yho26n+0otAGhwg3ms5PWMtR5RL22csae
-    E78lWme+l/3cPH6RMpVANlSIWLb6RYGszHoj5IMgrfOE8DwgPSb4abp4BCCFRhDTruUa
-    DMoseT/m+SdzQWZWKqMAYiJn3Z7RZrbj8j460e59CQRnFmBup9yCzk9kdw87E8qG6Nob
-    6bQNQ46His72ee2foPknOCdw0tOKKfr4l675mce9kBEm/UcpyTV7WvaOGA6i59VO5ehU
-    otsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1757931405;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=S1j67qi4cL/1MfbwQIlWd+x1A4aY80skvZvrPOAqL8w=;
-    b=FH3qIDaFCVkYG6CQ6boG3jmWvPfXy44mEEq7OLhqwxkmzepZVaxRy1ywhOHiU8gbMK
-    I7aREgIdF4D3NKP/S6KXoicABBmd/WqpBF/zrKqYOOMWytfWfFm44ItPs6i1TqjFsGi6
-    BLH5FFfSsDp4ACuyUOKmH+X1hzCcneIu3P5pTKP2lhL50Fp10wXSos/rGOt0p3AUS8WI
-    d5BYnXPWuqUy11QVGbh6KND7X21x6tcgGTEEuo9iLUL7Z96GIrRxttPoZAsXmhX1bWEM
-    iSEIYwhWPcBZPoX/b9K9WakqTXi7mE2x7RwAubjAyKMpdXzLx//h/SnAqjkABHKUkB8T
-    FCgg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1757931405;
-    s=strato-dkim-0002; d=hartkopp.net;
-    h=In-Reply-To:From:References:Cc:To:Subject:Date:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=S1j67qi4cL/1MfbwQIlWd+x1A4aY80skvZvrPOAqL8w=;
-    b=nF3u8lq4Sm/b1+ZQS9y2SJ90q+j4doRaovLXndlPBEr5vKn/8kluQVY6oMQl6vfgSe
-    NTonUefUG5Gg6P/WRIx4uPHq0ZIxSFRWWP4eOtRry5pT2HnrmYhFQ8/qxcrvHl5YuDry
-    jV49dolnB5um/aq1qWHN0ET2ZcMa0hf8euiySaCBenrC99rit0QAiNtHKieV/2odAu25
-    TftfOjk8+YMPxubwBNnS1SCKqRlPEhEWbEQn80xYDoxgz1nQXxlSSu3MZ3j1rCGyH/Of
-    c6gO8JXiVc9a/gkrfgUanx2ZKRE8wlCDSO2eMV5e2Ik1i7dUq05oN4QIbPvItrnL293I
-    rf5w==
-X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjH4JKvMdQv2tTUsMr5owMnk64sm8VF6OpcIrgdno+M3mNGEGSIofQp0UJwtSeLY="
-Received: from [IPV6:2a02:b98:8b0e:d800:856:bd03:6d59:abd2]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id K2a23218FAGj0mn
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 15 Sep 2025 12:16:45 +0200 (CEST)
-Message-ID: <f96cd163-0364-4c14-882b-48c3f8e0f05a@hartkopp.net>
-Date: Mon, 15 Sep 2025 12:16:40 +0200
+	 In-Reply-To:Content-Type; b=r3S0Vl1Uaf+zDP0JqM4RgVJkGUdDCAdBEOM6LAC4mGncSAbBBL4j1zzqcxkAQihyEm42d8y3HOWsUI7eK0E9WznO6vM6YnWAwdK5kDqHMmawMW76hJzzjRb7Rmul3InRhObI2X4oEKUuIlz8HNPpCMa0YGs6aD56AHwEs+FPkbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jiR8W1I8; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 129291744;
+	Mon, 15 Sep 2025 12:16:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757931397;
+	bh=CkiX+SfKyNNzh/CR0iQ6mQNKdawIAKfXA08rWVJaslk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jiR8W1I8s3wsT9NIvLDvLoiMR/cm4NB1lZ7jWZxngS31BhXK/K+rwDUGm3E0gd10k
+	 jiFLdi4RJEMQL90KwHbGxHlvKgXzcG6gynUpx3zFFFJ1J7pkDVk5UIWN/dz9d5ve/U
+	 qkCoA0+DPZcv5tBn5X0bvWsX00KUAGjge1CbDJmY=
+Message-ID: <b6be187a-6005-4de7-8844-66fb957e394e@ideasonboard.com>
+Date: Mon, 15 Sep 2025 13:17:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,275 +49,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] can: raw: use bitfields to store flags in struct
- raw_sock
-To: Vincent Mailhol <mailhol@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
- <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
+Subject: Re: [PATCH v6 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
+ bridge
+To: Swamil Jain <s-jain1@ti.com>, Maxime Ripard <mripard@kernel.org>
+Cc: jyri.sarha@iki.fi, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ aradhya.bhatia@linux.dev, h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com,
+ praneeth@ti.com, u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250911110715.2873596-1-s-jain1@ti.com>
+ <20250911110715.2873596-4-s-jain1@ti.com>
+ <20250915-benevolent-military-penguin-d64871@penduick>
+ <4f0a00d9-4edc-4114-aca6-70d6bb654767@ti.com>
 Content-Language: en-US
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-In-Reply-To: <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <4f0a00d9-4edc-4114-aca6-70d6bb654767@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
+On 15/09/2025 11:55, Swamil Jain wrote:
+> Hi,
+> 
+> On 9/15/25 13:27, Maxime Ripard wrote:
+>> On Thu, Sep 11, 2025 at 04:37:15PM +0530, Swamil Jain wrote:
+>>> From: Jayesh Choudhary <j-choudhary@ti.com>
+>>>
+>>> Since OLDI consumes DSS VP clock directly as serial clock, mode_valid()
+>>> check cannot be performed in tidss driver which should be checked
+>>> in OLDI driver.
+>>>
+>>> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
+>>> Tested-by: Michael Walle <mwalle@kernel.org>
+>>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+>>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+>>> ---
+>>>   drivers/gpu/drm/tidss/tidss_oldi.c | 21 +++++++++++++++++++++
+>>>   1 file changed, 21 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/
+>>> tidss/tidss_oldi.c
+>>> index 7ecbb2c3d0a2..ada691839ef3 100644
+>>> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
+>>> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+>>> @@ -309,6 +309,26 @@ static u32
+>>> *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+>>>       return input_fmts;
+>>>   }
+>>>   +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
+>>> +                   struct drm_bridge_state *bridge_state,
+>>> +                   struct drm_crtc_state *crtc_state,
+>>> +                   struct drm_connector_state *conn_state)
+>>> +{
+>>> +    struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
+>>> +    struct drm_display_mode *adjusted_mode;
+>>> +    unsigned long round_clock;
+>>> +
+>>> +    adjusted_mode = &crtc_state->adjusted_mode;
+>>> +    round_clock = clk_round_rate(oldi->serial, adjusted_mode->clock
+>>> * 7 * 1000);
+>>> +    /*
+>>> +     * To keep the check consistent with dispc_vp_set_clk_rate(),
+>>> +     * we use the same 5% check here.
+>>> +     */
+>>> +    if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000,
+>>> round_clock) > 5)
+>>> +        return -EINVAL;
+>>> +    return 0;
+>>> +}
+>>> +
+>>
+>> If you're introducing that check to tidss, please use .5% like everyone
+>> else. I understand that you don't want to change tilcdc to avoid any
+>> regression, but that's not the case here
+>>
+> This is just to make the tolerance check consistent for mode validation
+> and setting clock rate. This patch isn't introducing anything new, we
+> are following this as dispc_vp_set_clk_rate() and
+> tidss_oldi_set_serial_clk() are already checking for 5% tolerance while
+> setting clock. To remove/modify, this needs extensive testing with other
+> K3 and K2G SoCs and can be handled as a separate patch.
 
-On 15.09.25 11:23, Vincent Mailhol wrote:
-> The loopback, recv_own_msgs, fd_frames and xl_frames fields of struct
-> raw_sock just need to store one bit of information.
-> 
-> Declare all those members as a bitfields of type unsigned int and
-> width one bit.
-> 
-> Add a temporary variable to raw_setsockopt() and raw_getsockopt() to
-> make the conversion between the stored bits and the socket interface.
-> 
-> This reduces struct raw_sock by eight bytes.
-> 
-> Statistics before:
-> 
->    $ pahole --class_name=raw_sock net/can/raw.o
->    struct raw_sock {
->    	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
-> 
->    	/* XXX last struct has 1 bit hole */
-> 
->    	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
->    	int                        bound;                /*   776     4 */
->    	int                        ifindex;              /*   780     4 */
->    	struct net_device *        dev;                  /*   784     8 */
->    	netdevice_tracker          dev_tracker;          /*   792     0 */
->    	struct list_head           notifier;             /*   792    16 */
->    	int                        loopback;             /*   808     4 */
->    	int                        recv_own_msgs;        /*   812     4 */
->    	int                        fd_frames;            /*   816     4 */
->    	int                        xl_frames;            /*   820     4 */
->    	struct can_raw_vcid_options raw_vcid_opts;       /*   824     4 */
->    	canid_t                    tx_vcid_shifted;      /*   828     4 */
->    	/* --- cacheline 13 boundary (832 bytes) --- */
->    	canid_t                    rx_vcid_shifted;      /*   832     4 */
->    	canid_t                    rx_vcid_mask_shifted; /*   836     4 */
->    	int                        join_filters;         /*   840     4 */
->    	int                        count;                /*   844     4 */
->    	struct can_filter          dfilter;              /*   848     8 */
->    	struct can_filter *        filter;               /*   856     8 */
->    	can_err_mask_t             err_mask;             /*   864     4 */
-> 
->    	/* XXX 4 bytes hole, try to pack */
-> 
->    	struct uniqframe *         uniq;                 /*   872     8 */
-> 
->    	/* size: 880, cachelines: 14, members: 20 */
->    	/* sum members: 876, holes: 1, sum holes: 4 */
->    	/* member types with bit holes: 1, total: 1 */
->    	/* forced alignments: 1 */
->    	/* last cacheline: 48 bytes */
->    } __attribute__((__aligned__(8)));
-> 
-> ...and after:
-> 
->    $ pahole --class_name=raw_sock net/can/raw.o
->    struct raw_sock {
->    	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
-> 
->    	/* XXX last struct has 1 bit hole */
-> 
->    	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
->    	int                        bound;                /*   776     4 */
->    	int                        ifindex;              /*   780     4 */
->    	struct net_device *        dev;                  /*   784     8 */
->    	netdevice_tracker          dev_tracker;          /*   792     0 */
->    	struct list_head           notifier;             /*   792    16 */
->    	unsigned int               loopback:1;           /*   808: 0  4 */
->    	unsigned int               recv_own_msgs:1;      /*   808: 1  4 */
->    	unsigned int               fd_frames:1;          /*   808: 2  4 */
->    	unsigned int               xl_frames:1;          /*   808: 3  4 */
+I'd like to switch to 0.5%, but as Swamil said, I think it's better to
+do it on top.
 
-This means that the former data structures (int) are not copied but bits 
-are set (shifted, ANDed, ORed, etc) right?
-
-So what's the difference in the code the CPU has to process for this 
-improvement? Is implementing this bitmap more efficient or similar to 
-copy the (unsigned ints) as-is?
-
-> 
->    	/* XXX 4 bits hole, try to pack */
->    	/* Bitfield combined with next fields */
-> 
->    	struct can_raw_vcid_options raw_vcid_opts;       /*   809     4 */
-> 
->    	/* XXX 3 bytes hole, try to pack */
-> 
->    	canid_t                    tx_vcid_shifted;      /*   816     4 */
->    	canid_t                    rx_vcid_shifted;      /*   820     4 */
->    	canid_t                    rx_vcid_mask_shifted; /*   824     4 */
->    	int                        join_filters;         /*   828     4 */
->    	/* --- cacheline 13 boundary (832 bytes) --- */
->    	int                        count;                /*   832     4 */
->    	struct can_filter          dfilter;              /*   836     8 */
-> 
->    	/* XXX 4 bytes hole, try to pack */
-> 
->    	struct can_filter *        filter;               /*   848     8 */
->    	can_err_mask_t             err_mask;             /*   856     4 */
-> 
->    	/* XXX 4 bytes hole, try to pack */
-> 
->    	struct uniqframe *         uniq;                 /*   864     8 */
-> 
->    	/* size: 872, cachelines: 14, members: 20 */
->    	/* sum members: 860, holes: 3, sum holes: 11 */
->    	/* sum bitfield members: 4 bits, bit holes: 1, sum bit holes: 4 bits */
->    	/* member types with bit holes: 1, total: 1 */
->    	/* forced alignments: 1 */
->    	/* last cacheline: 40 bytes */
->    } __attribute__((__aligned__(8)));
-> 
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-> ---
->   net/can/raw.c | 47 ++++++++++++++++++++++++++++-------------------
->   1 file changed, 28 insertions(+), 19 deletions(-)
-> 
-> diff --git a/net/can/raw.c b/net/can/raw.c
-> index db21d8a8c54d1b6a25a72c7a9d11d5c94f3187b5..cec580ecd58e36931d1be05716e6beb9c93aa271 100644
-> --- a/net/can/raw.c
-> +++ b/net/can/raw.c
-> @@ -87,10 +87,10 @@ struct raw_sock {
->   	struct net_device *dev;
->   	netdevice_tracker dev_tracker;
->   	struct list_head notifier;
-> -	int loopback;
-> -	int recv_own_msgs;
-> -	int fd_frames;
-> -	int xl_frames;
-> +	unsigned int loopback:1;
-> +	unsigned int recv_own_msgs:1;
-> +	unsigned int fd_frames:1;
-> +	unsigned int xl_frames:1;
->   	struct can_raw_vcid_options raw_vcid_opts;
->   	canid_t tx_vcid_shifted;
->   	canid_t rx_vcid_shifted;
-> @@ -560,8 +560,8 @@ static int raw_setsockopt(struct socket *sock, int level, int optname,
->   	struct can_filter sfilter;         /* single filter */
->   	struct net_device *dev = NULL;
->   	can_err_mask_t err_mask = 0;
-> -	int fd_frames;
->   	int count = 0;
-> +	int flag;
->   	int err = 0;
->   
->   	if (level != SOL_CAN_RAW)
-> @@ -682,44 +682,48 @@ static int raw_setsockopt(struct socket *sock, int level, int optname,
->   		break;
->   
->   	case CAN_RAW_LOOPBACK:
-> -		if (optlen != sizeof(ro->loopback))
-> +		if (optlen != sizeof(flag))
->   			return -EINVAL;
->   
-> -		if (copy_from_sockptr(&ro->loopback, optval, optlen))
-> +		if (copy_from_sockptr(&flag, optval, optlen))
->   			return -EFAULT;
->   
-> +		ro->loopback = !!flag;
-
-This is obviously an additional effort. Instead it a simple copy the 
-code makes a copy to an extra variable and then an assignment with bit 
-(shifting) operations.
-
-Best regards,
-Oliver
-
->   		break;
->   
->   	case CAN_RAW_RECV_OWN_MSGS:
-> -		if (optlen != sizeof(ro->recv_own_msgs))
-> +		if (optlen != sizeof(flag))
->   			return -EINVAL;
->   
-> -		if (copy_from_sockptr(&ro->recv_own_msgs, optval, optlen))
-> +		if (copy_from_sockptr(&flag, optval, optlen))
->   			return -EFAULT;
->   
-> +		ro->recv_own_msgs = !!flag;
->   		break;
->   
->   	case CAN_RAW_FD_FRAMES:
-> -		if (optlen != sizeof(fd_frames))
-> +		if (optlen != sizeof(flag))
->   			return -EINVAL;
->   
-> -		if (copy_from_sockptr(&fd_frames, optval, optlen))
-> +		if (copy_from_sockptr(&flag, optval, optlen))
->   			return -EFAULT;
->   
->   		/* Enabling CAN XL includes CAN FD */
-> -		if (ro->xl_frames && !fd_frames)
-> +		if (ro->xl_frames && !flag)
->   			return -EINVAL;
->   
-> -		ro->fd_frames = fd_frames;
-> +		ro->fd_frames = !!flag;
->   		break;
->   
->   	case CAN_RAW_XL_FRAMES:
-> -		if (optlen != sizeof(ro->xl_frames))
-> +		if (optlen != sizeof(flag))
->   			return -EINVAL;
->   
-> -		if (copy_from_sockptr(&ro->xl_frames, optval, optlen))
-> +		if (copy_from_sockptr(&flag, optval, optlen))
->   			return -EFAULT;
->   
-> +		ro->xl_frames = !!flag;
-> +
->   		/* Enabling CAN XL includes CAN FD */
->   		if (ro->xl_frames)
->   			ro->fd_frames = ro->xl_frames;
-> @@ -758,6 +762,7 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
->   {
->   	struct sock *sk = sock->sk;
->   	struct raw_sock *ro = raw_sk(sk);
-> +	int flag;
->   	int len;
->   	void *val;
->   
-> @@ -806,25 +811,29 @@ static int raw_getsockopt(struct socket *sock, int level, int optname,
->   	case CAN_RAW_LOOPBACK:
->   		if (len > sizeof(int))
->   			len = sizeof(int);
-> -		val = &ro->loopback;
-> +		flag = ro->loopback;
-> +		val = &flag;
->   		break;
->   
->   	case CAN_RAW_RECV_OWN_MSGS:
->   		if (len > sizeof(int))
->   			len = sizeof(int);
-> -		val = &ro->recv_own_msgs;
-> +		flag = ro->recv_own_msgs;
-> +		val = &flag;
->   		break;
->   
->   	case CAN_RAW_FD_FRAMES:
->   		if (len > sizeof(int))
->   			len = sizeof(int);
-> -		val = &ro->fd_frames;
-> +		flag = ro->fd_frames;
-> +		val = &flag;
->   		break;
->   
->   	case CAN_RAW_XL_FRAMES:
->   		if (len > sizeof(int))
->   			len = sizeof(int);
-> -		val = &ro->xl_frames;
-> +		flag = ro->xl_frames;
-> +		val = &flag;
->   		break;
->   
->   	case CAN_RAW_XL_VCID_OPTS: {
-> 
+ Tomi
 
 
