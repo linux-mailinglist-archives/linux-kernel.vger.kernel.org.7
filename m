@@ -1,138 +1,90 @@
-Return-Path: <linux-kernel+bounces-817853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4D6B5877A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:26:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01BC4B58784
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFA9480215
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:26:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A26464E1C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DEE2C11C5;
-	Mon, 15 Sep 2025 22:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMWX32t+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262782C1788;
+	Mon, 15 Sep 2025 22:28:12 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FAC221FB2;
-	Mon, 15 Sep 2025 22:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A6626AE4;
+	Mon, 15 Sep 2025 22:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757975157; cv=none; b=N56lu4OM3xHMlxp53z6Q3ZT8YCJJXVnsZ1t/3cKPIT7TqLyiX3K8jGMVqOvFO81arfuSKH/k4W94FHSZGMA/onVKUxoSdZb31i82E5Ip5TQG6zyKbwFUpqXspWAJ2LWyWUZkS+7YNxlCslAfW5C5WPVyHRQHt3v1M/eTmFg2MqY=
+	t=1757975291; cv=none; b=SlDsTQ7x13DZKi8f01PJW9t2G/0M+9YseJDDxE8RKGvnQfpHr0S0i24FujWVb4MZOQdwDVncbxCMoTui75ZUC2vZlRDjO1e2ixCL7QsqMpAg5YKMWZuugmvf49Ru3PkXGJb8Wr42/bSNJ7735/X4ZykHaPrxBcRNI5fVByn1C1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757975157; c=relaxed/simple;
-	bh=y0Wj48/xtxPpwAhubRkLvmghYWRpAu9ua6y3WxBmDa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gofHIwhYXmvlWWQP7JqN9PpW50s4rwxABEd+09ZWFIWrpjcIG93KoUCumlLoCeuaUYJaWcD4Kb+J1LRj2ebNf0hXUD/oz0eFroo9oBs4srcj6o28OjIXxorAL2YbZ1Vw9yCWb9PIZ8Q2W9PhUHsETm9Zcs/VcDvQdPoFSItS260=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMWX32t+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79490C4CEF1;
-	Mon, 15 Sep 2025 22:25:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757975157;
-	bh=y0Wj48/xtxPpwAhubRkLvmghYWRpAu9ua6y3WxBmDa4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=uMWX32t+t/9OUMSvAfg2F/pAaZIobB/ienlDatTwW4kUBxFPNT9miyUnaOEa5BWtQ
-	 VAn8zKa5ED/dBnsfSeTG8ZrmJER1kRJe25HVcLFaMY36JSbIW0lHfHJ1O9I0YAgHHQ
-	 NOddEr2zl9dOfmUN/a/dyB5iCvskKYCqciYk2Ckt5hqHshPulnWrs+MBZMzep1AaDb
-	 R+XBYgrxoal8yxzoBx4UKt6sHm/noUSUT726C6b+3gpib/Owf4ED3uUpmnunS+IcCm
-	 nbQoJsm3K7fKbQy9dTUPyCFelGIKaQcw4WBYUfClzYK3NE7oAOOUbXArQx5YYlGX/o
-	 bUVYfT+eIlgKQ==
-Date: Mon, 15 Sep 2025 23:25:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Jens Axboe <axboe@kernel.dk>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the tip tree with the block tree
-Message-ID: <aMiScHEWoOABPgt9@sirena.org.uk>
+	s=arc-20240116; t=1757975291; c=relaxed/simple;
+	bh=gj4vhmLZ80HZ49RFQNzOQ+6G+7wvHfi/fpS6n8Y4stY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NZOo0mnFH9Tp1MgWLVnhXWNdGEVMV3IY+un0Ty1ql2zy4Mn/eGqqUsF9mBm3WkCD/CKDINfltcHDePrI9Ggq42fvcVsMwaJAtuTjHSPm9PgceUam2tq/lFPkNS9uBEHfVGXlF76SRb4cow2Z/IUFhKtrBUrJSeBAk9XmONV9p6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 58FMRiB0034727;
+	Tue, 16 Sep 2025 07:27:44 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 58FMRefe034717
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 16 Sep 2025 07:27:44 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <afaca575-2393-4dd8-8159-1b79b01d007f@I-love.SAKURA.ne.jp>
+Date: Tue, 16 Sep 2025 07:27:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AA6Ro+XeRjQHJuVo"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] hfs: update sanity check of the root record
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "frank.li@vivo.com" <frank.li@vivo.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <56dd2ace-7e72-424d-a51a-67c48ae58686@I-love.SAKURA.ne.jp>
+ <0dc4e0a9888b7b772e8093fc40c2d44a22f49daf.camel@ibm.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <0dc4e0a9888b7b772e8093fc40c2d44a22f49daf.camel@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav204.rs.sakura.ne.jp
 
+On 2025/09/16 7:14, Viacheslav Dubeyko wrote:
+> On Fri, 2025-09-12 at 23:59 +0900, Tetsuo Handa wrote:
+>> syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
+>> operation when the inode number of the record retrieved as a result of
+>> hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for
+>> commit b905bafdea21 ("hfs: Sanity check the root record") checked
+>> the record size and the record type but did not check the inode number.
+>>
+>> Viacheslav Dubeyko considers that the fix should be in hfs_read_inode()
+>> but Viacheslav has no time for proposing the fix [1]. Also, we can't
+>> guarantee that the inode number of the record retrieved as a result of
+>> hfs_cat_find_brec(HFS_ROOT_CNID) is HFS_ROOT_CNID if we validate only in
+>> hfs_read_inode(). Therefore, while what Viacheslav would propose might
+>> partially overwrap with my proposal, let's fix an 1000+ days old bug by
+>> adding a sanity check in hfs_fill_super().
+>>
+> 
+> I cannot accept any fix with such comment. The commit message should explain the
+> issue and fix nature.
 
---AA6Ro+XeRjQHJuVo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Then, see v4 at https://lkml.kernel.org/r/427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp
 
-Hi all,
-
-Today's linux-next merge of the tip tree got a conflict in:
-
-  rust/kernel/block/mq/operations.rs
-
-between commit:
-
-  90d952fac8ac1 ("rust: block: add `GenDisk` private data support")
-
-=66rom the block tree and commit:
-
-  b6dd7b75496c5 ("rust: block: convert `block::mq` to use `Refcount`")
-
-=66rom the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc rust/kernel/block/mq/operations.rs
-index d098a8a3e4340,c0f95a9419c4e..0000000000000
---- a/rust/kernel/block/mq/operations.rs
-+++ b/rust/kernel/block/mq/operations.rs
-@@@ -6,15 -6,15 +6,16 @@@
- =20
-  use crate::{
-      bindings,
- -    block::mq::request::RequestDataWrapper,
- -    block::mq::Request,
- +    block::mq::{request::RequestDataWrapper, Request},
-      error::{from_result, Result},
-      prelude::*,
-+     sync::Refcount,
- -    types::ARef,
- +    types::{ARef, ForeignOwnable},
-  };
-- use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::Or=
-dering};
-+ use core::marker::PhantomData;
- =20
- +type ForeignBorrowed<'a, T> =3D <T as ForeignOwnable>::Borrowed<'a>;
- +
-  /// Implement this trait to interface blk-mq as block devices.
-  ///
-  /// To implement a block device driver, implement this trait as described=
- in the
-
---AA6Ro+XeRjQHJuVo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIknAACgkQJNaLcl1U
-h9C+Igf+JQDtrpqxBUNTepR+QMNKc24L9OOfwvzi+/DJ7I+0RPDe7q239ngPe+o3
-gBlr9Pw3x23UPqskbZfI2pj9byCEZYWEb2Qgx8fzyZjaZ8rc5ewX6Z7KApFjMuFB
-oAJgvwyvcLsnvFNDRYVCwlY1ktfC4SRuq3evS6gzBCzu37OH9EcnjCTRKZP5C6dL
-d1j9K8j/pMsasv7ggfiPFM4VPBUbH2R1WCFqDZOMHETbpNaEQbF5LVCS6hn6Pifd
-7jstauOF41Y2f2HiKsWuE1vX4e3H6f0Jcw+JeRJZMi3xtOFzofRYmCyvubxXJTPo
-K8b3ym2VqYZ515G3Zfnca+eN6NRrrQ==
-=PX4T
------END PGP SIGNATURE-----
-
---AA6Ro+XeRjQHJuVo--
 
