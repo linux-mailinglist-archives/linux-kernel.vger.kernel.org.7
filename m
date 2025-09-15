@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel+bounces-817032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D8BB57CA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342EDB57CA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906447AE737
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF28018955F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5E9314A8D;
-	Mon, 15 Sep 2025 13:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6248B311C2D;
+	Mon, 15 Sep 2025 13:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pojt6AqJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I97rt8Wy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C7D313261;
-	Mon, 15 Sep 2025 13:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E51312800
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942329; cv=none; b=Y1Jh136RXJ07k4hDHxAWA4b0W+kfpx71VyJt+96vZCJhTuqvfpZlhHZywuNlSrDVr3AsYwcBmqdZSVIq5xPe/C5Cg0tbY5Pl2iXqCVXut3T4yyV4xVILSiEN4odTYi+ohUUcN9oXrOZp2qTK9Hvva2EUO1DJWj+ea5Ig5xS4SNY=
+	t=1757942336; cv=none; b=YULA+Pls8fyVV4uwKwsMIh2QDtkbSKPZsswk8OvmOf9Enaz8gvXrE6mYWGMlpClvkMufpeeSIo/jLhwmSt8EV6BvUF8yKTWk0JS7SGJbRgSlMB9W34VlMOb/MTR6LFVLL6yBGZoqUuJJugZK8EoNIiQ+oeeAwhLQ4Or38TaWNA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942329; c=relaxed/simple;
-	bh=c4yZf5AiBVUDuy3InXPlki0Snp/s01BBP2Iy0btwSkM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gp497vhJrGVuqTPBRjG6imDdFmEaHt/riRy97Au1OtKho4WE63XFUSYRYlRQ0aaQmaFAtm67XGmpkDnsDIcdObK/QqlzPMoU+ekNJtX7hLo936cDBu2S3NEJsMrKN/KQcjKNSxhG2btKTeNnyIpvn1svCemTqPmsUl62+lCcuhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=pojt6AqJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 082A03FCE;
-	Mon, 15 Sep 2025 15:17:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757942242;
-	bh=c4yZf5AiBVUDuy3InXPlki0Snp/s01BBP2Iy0btwSkM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pojt6AqJkxMINXvJxQZxHVm7kpOq6nQXdFrHOCKJ9d3TD+/jS+I8y9gsrf8vcupuL
-	 s8Zl7wchKZWBz8yfxVDv7Hw9UUkXuXEbUWwm5I5sdhZTz8/VUwkCMxtvKhLDOLwUP/
-	 6zRThlCdMkxTV/zvFJ45dsEf46HQYAlESSmtJeTA=
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-Date: Mon, 15 Sep 2025 14:18:35 +0100
-Subject: [PATCH v3 3/3] media: imx-mipi-csis: Get number of active lanes
- via mbus_config
+	s=arc-20240116; t=1757942336; c=relaxed/simple;
+	bh=coOwMyQHXkTz8FDu4+hP/GBgwN4J5NtDSuvxSzgJTgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkyiWGe7YnXX9tnFZTg9bOa6k5tAmxSa/Hh+d1p1O8Aaza8n9wVmIyp42ev5IvDUkVeYsEBEKRXhSTqu45A8HFJtMeZNhirYeIWNjDZ9LZ+KvN50bH91hH6oAVOSuHNB1bgHpVDaTSHL9fcnYgMLb+2LKvHq1zqyyUCSC1h/6U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I97rt8Wy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46988C4AF0B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757942336;
+	bh=coOwMyQHXkTz8FDu4+hP/GBgwN4J5NtDSuvxSzgJTgU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=I97rt8Wy/HHyb6Jf09V1zJXWto0w0vNSlKzz5aSR4qpNptlGuHqaQkNo+QA3hTBev
+	 jlFmnqbGvrfkro5DdG45KAf5is9c8Jfk9ziGqqJqJ9+Oj9rD6RYruICf/5AppYF4Yz
+	 H+lkblPSUv+O5NqNZymziuQKz/OeavBGHjeRCtqMYLCG+yKNtOL4IUlhodqyhuxzqT
+	 yPOz+m4j/MKvbVsK5YvIgCa/nrL2mBmOEf+hNqhLQEJEstjZDoAR657PZfAzRgI130
+	 C3r678zl49iNII/XPyPo/NbAvBglhMvR1kwAlG/Qg25fRtSlpdv2FmMWA3rU05tKgf
+	 2xGuvSifuIE7g==
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74c1251df00so2156305a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:18:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGuCwAmQFRyNjridE2djDDZWRO1YZQCpoc1Q5bX0tYcf3IKK69t7gs2icHHsv2RIZabs2u8hypoE3EgTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf6IXhSUrmf199UkaeoC2qcTPNb60gABblU/RFuRzMPqJbuJL0
+	88yWmVxW6/ZIdERvZ09rDyWNS/MSkXVN5XWrSzbqrtWmkkPhKf4oSWka2Bd2MBb2p8DVMykMB1i
+	tYeZabgcZB+p6r9ri30eHh3ebIbmMN0c=
+X-Google-Smtp-Source: AGHT+IEpcuRSc3MDHlFe9TDySxc24ll0ZsZy+5Xvb8x8nLaNBT9Lv9dKicdTazMGgmSAUaLhaDM/ulAOWO9IeV6FrUg=
+X-Received: by 2002:a05:6830:8d2:b0:73e:94d4:ec6 with SMTP id
+ 46e09a7af769-75355daf04dmr7268800a34.28.1757942335532; Mon, 15 Sep 2025
+ 06:18:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-mbus-config-active-lanes-v3-3-97a1282a410b@ideasonboard.com>
-References: <20250915-mbus-config-active-lanes-v3-0-97a1282a410b@ideasonboard.com>
-In-Reply-To: <20250915-mbus-config-active-lanes-v3-0-97a1282a410b@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rui Miguel Silva <rmfrfs@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Isaac Scott <isaac.scott@ideasonboard.com>
-X-Mailer: b4 0.13.0
+References: <20250910065312.176934-1-shawnguo2@yeah.net> <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
+ <aMQbIu5QNvPoAsSF@dragon> <20250914174326.i7nqmrzjtjq7kpqm@airbuntu> <aMfAQXE4sRjru9I_@dragon>
+In-Reply-To: <aMfAQXE4sRjru9I_@dragon>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Sep 2025 15:18:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0i8L8w_ojua1ir3CGcwGSvE+3Jj0Sh5Cs1Yi8i4BX1Lbw@mail.gmail.com>
+X-Gm-Features: Ac12FXyAwdW-riCrTAP42SIBJxPCzjL2s62SpRjg0mEC2Yp-NeONok5neIsFcF4
+Message-ID: <CAJZ5v0i8L8w_ojua1ir3CGcwGSvE+3Jj0Sh5Cs1Yi8i4BX1Lbw@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The number of lanes actively used by a MIPI CSI transmitter may differ
-from that which is defined in device tree. As such, call on
-v4l2_get_active_data_lanes() to check if the driver reports a
-differing number of lanes to device tree, and use that number of active
-lanes.
+On Mon, Sep 15, 2025 at 9:29=E2=80=AFAM Shawn Guo <shawnguo2@yeah.net> wrot=
+e:
+>
+> On Sun, Sep 14, 2025 at 06:43:26PM +0100, Qais Yousef wrote:
+> > > > Why do you want to address the issue in the cpufreq core instead of
+> > > > doing that in the cpufreq-dt driver?
+> > >
+> > > My intuition was to fix the regression at where the regression was
+> > > introduced by recovering the code behavior.
+> >
+> > Isn't the right fix here is at the driver level still? We can only give=
+ drivers
+> > what they ask for. If they ask for something wrong and result in someth=
+ing
+> > wrong, it is still their fault, no?
+>
+> I'm not sure.  The cpufreq-dt driver is following suggestion to use
+> CPUFREQ_ETERNAL,
 
-If the number of active data lanes is invalid, or the op is not
-supported, use the number of lanes defined in device tree.
+Fair enough.
 
-Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
----
- drivers/media/platform/nxp/imx-mipi-csis.c | 3 +++
- 1 file changed, 3 insertions(+)
+Actually, there are a few other drivers that fall back to
+CPUFREQ_ETERNAL if they cannot determine transition_latency.
 
-diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-index 6afbedfe131e..d3424ad54b4e 100644
---- a/drivers/media/platform/nxp/imx-mipi-csis.c
-+++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-@@ -967,6 +967,9 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
- 	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
- 	csis_fmt = find_csis_format(format->code);
- 
-+	csis->num_data_lanes = v4l2_get_active_data_lanes(csis->source.pad,
-+							  csis->bus.num_data_lanes);
-+
- 	ret = mipi_csis_calculate_params(csis, csis_fmt);
- 	if (ret < 0)
- 		goto err_unlock;
+> which has the implication that core will figure out a reasonable default =
+value for
+> platforms where the latency is unknown.
 
--- 
-2.43.0
+Is this expectation realistic, though?  I'm not sure.
 
+The core can only use a hard-coded default fallback number, but would
+that number be really suitable for all of the platforms in question?
+
+> And that was exactly the situation before the regression.  How does it
+> become the fault of cpufreq-dt driver?
+
+The question is not about who's fault it is, but what's the best place
+to address this issue.
+
+I think that addressing it in cpufreq_policy_transition_delay_us() is
+a bit confusing because it is related to initialization and the new
+branch becomes pure overhead for the drivers that don't set
+cpuinfo.transition_latency to CPUFREQ_ETERNAL.
+
+However, addressing it at the initialization time would effectively
+mean that the core would do something like:
+
+if (policy->cpuinfo.transition_latency =3D=3D CPUFREQ_ETERNAL)
+        policy->cpuinfo.transition_latency =3D
+CPUFREQ_DEFAULT_TANSITION_LATENCY_NS;
+
+but then it would be kind of more straightforward to update everybody
+using CPUFREQ_ETERNAL to set cpuinfo.transition_latency to
+CPUFREQ_DEFAULT_TANSITION_LATENCY_NS directly (and then get rid of
+CPUFREQ_ETERNAL entirely).
+
+> > Alternatively maybe we can add special handling for CPUFREQ_ETERNAL val=
+ue,
+> > though I'd suggest to return 1ms (similar to the case of value being 0)=
+. Maybe
+> > we can redefine CPUFREQ_ETERNAL to be 0, but not sure if this can have =
+side
+> > effects.
+>
+> Changing CPUFREQ_ETERNAL to 0 looks so risky to me.  What about adding
+> an explicit check for CPUFREQ_ETERNAL?
+>
+> ---8<---
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index fc7eace8b65b..053f3a0288bc 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -549,11 +549,15 @@ unsigned int cpufreq_policy_transition_delay_us(str=
+uct cpufreq_policy *policy)
+>         if (policy->transition_delay_us)
+>                 return policy->transition_delay_us;
+>
+> +       if (policy->cpuinfo.transition_latency =3D=3D CPUFREQ_ETERNAL)
+> +               goto default_delay;
+
+Can't USEC_PER_MSEC be just returned directly from here?
+
+> +
+>         latency =3D policy->cpuinfo.transition_latency / NSEC_PER_USEC;
+>         if (latency)
+>                 /* Give a 50% breathing room between updates */
+>                 return latency + (latency >> 1);
+
+Side note for self: The computation above can be done once at the
+policy initialization time and transition_latency can be stored in us
+(and only converted to ns when the corresponding sysfs attribute is
+read).  It can be even set to USEC_PER_MSEC if zero.
+
+> +default_delay:
+>         return USEC_PER_MSEC;
+>  }
+>  EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
+>
+> --->8---
 
