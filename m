@@ -1,380 +1,271 @@
-Return-Path: <linux-kernel+bounces-816381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A201B5731B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77A3B57314
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DA8161D0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:36:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5559B188B565
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED6F2F0686;
-	Mon, 15 Sep 2025 08:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595422ECD05;
+	Mon, 15 Sep 2025 08:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rOvI2GGV"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2053.outbound.protection.outlook.com [40.107.100.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q7+dvvSe"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793CF2E9EC6;
-	Mon, 15 Sep 2025 08:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757925365; cv=fail; b=iybtzht6dmxhhM4J6iNLlP2vXakzruc7TA0itspfUAO8XT+X6ainjXHUCekT797MIX/ZenbM1hN4jSZ2AUkFRUwv0kqR+5qfF4vXij97rLMxdUUeF8trR+uUDlnOC+kuSnEfJqwH7okXMj8zBJEiMkBIyxcb/qPzpU+6FUNIyE0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757925365; c=relaxed/simple;
-	bh=wQrPULds2DfYAzaQ1mim3Ph1BcPl8J0kauRnkv+WmEs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hTsITSefhsCZS8xDWanpQgam9iMPx0T04GmhJPvJNs+yUYHNt7zIqaTHWZS1xvh5T/EXGqQ/QwqfTpUltRzN/b1njysKeOJaC5pw1IuVUqUy9X3eqrCCr7/jIUzArUMH3CUCYTRRk5angJCI0S5safcpom0LtciKFDhzytTkGJQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rOvI2GGV; arc=fail smtp.client-ip=40.107.100.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CdLcvYr77D3V1GFpQ/BYBbouSR9UxZqkmMHyWKOSqXWyt780S8Th1rALEBMDL0377v7dE/hQsFSivZSIh6R88M9gSceP2LT4kyLhzX+e1GgkBvY6c01rnu7QfnlXIUPFJBPgibezUL5mhkIw2OeCh450HKFoqrDv9jLAVJtfqlA+XKxJqTtyuvq48NiFZVMQLHiaCa7P7LUvhYIVYYGIDFgGlnO5c5EnFWCF0wwfWbewZU5smGA3qxFH5ktFAslXQrtfzp+Huiy0TVCYXbfSfgX4sQZqA91jeJxSRsZ1yMNvW0zA2UllrSj7zoV0sQD6WhrNxFU9DnEl4+P1O6e5IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5+7xzu2TqCSZQdzPiepLQxO3vbI6eorOZ/UIvlG774E=;
- b=iLCRo8GwZMoLtQAvxgaj7+eDCgkB5BBtdYFry3DSgIBjD+Dw+SVpOrzr8fnqdar03Fz7ySnUKQUiSD+QEuhfKSRch4Mt1A9n39t9y0TQEb9z6ALacOoJzAVWZzdkbUUC42NV3u2zOnbWa2QXFUg35gynkb2+y8YngeFZSEm+7UQYKWA5zjYF9MdJrjdW80N/NLqqyL2Ev3xuAhhs3Zb2ZIKevYsp1go+twV3a/K1fV6WlGMxR3u+qL8xm9d1XRQPgrbNNirZ7aFn80dxTNCmV2573oz3u0ElT3Yx3hxGBbPbZo9SMcxyrgzPxyTN23vlr5VmgCB4Yl+WYIQHg4RhXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5+7xzu2TqCSZQdzPiepLQxO3vbI6eorOZ/UIvlG774E=;
- b=rOvI2GGVztuV+IEMl4H/5JGONZhCh87Wztge2OfeHUy+83E3DVgHAyG5symgkC7Ti5I2bJuxaqQH9fqA1dfV92wMq2LHbKcQQmqFuT+epPNpjWxhIpxskkrR0AhAHnrJKurjDDLGsZtk2JSw2+Em89FCVFqVkjgmc43h241NV8XD69mlCJ4HVA+zlZ+Lvk7K8/vZxjZURb/mR51oXKFZtzv8XtL9e1hUiURE5qVn1BjDrs3TQeR8nDH3UTgAMUr9X67oTw38rElRTAiwFpE4DQYmWn4gH8rbnfxPndfbzY8oSxSmIM2lNstW1WDiCf3gARpEAclvBQ54YP/GycZ1rQ==
-Received: from MN2PR19CA0003.namprd19.prod.outlook.com (2603:10b6:208:178::16)
- by BL1PR12MB5972.namprd12.prod.outlook.com (2603:10b6:208:39b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 15 Sep
- 2025 08:35:57 +0000
-Received: from BN3PEPF0000B06B.namprd21.prod.outlook.com
- (2603:10b6:208:178:cafe::3f) by MN2PR19CA0003.outlook.office365.com
- (2603:10b6:208:178::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.20 via Frontend Transport; Mon,
- 15 Sep 2025 08:35:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN3PEPF0000B06B.mail.protection.outlook.com (10.167.243.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.0 via Frontend Transport; Mon, 15 Sep 2025 08:35:57 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
- 2025 01:35:47 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 15 Sep 2025 01:35:46 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Mon, 15 Sep 2025 01:35:35 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Catalin Marinas <catalin.marinas@arm.com>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, "Sabrina
- Dubroca" <sd@queasysnail.net>, <netdev@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gal Pressman
-	<gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, Jason Gunthorpe
-	<jgg@nvidia.com>, Michael Guralnik <michaelgur@nvidia.com>, Moshe Shemesh
-	<moshe@nvidia.com>, Will Deacon <will@kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Gerald Schaefer
-	<gerald.schaefer@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, "Heiko
- Carstens" <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, Justin Stitt
-	<justinstitt@google.com>, <linux-s390@vger.kernel.org>,
-	<llvm@lists.linux.dev>, Ingo Molnar <mingo@redhat.com>, Bill Wendling
-	<morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
-	<ndesaulniers@google.com>, Salil Mehta <salil.mehta@huawei.com>, "Sven
- Schnelle" <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
-	<x86@kernel.org>, Yisen Zhuang <yisen.zhuang@huawei.com>, Arnd Bergmann
-	<arnd@arndb.de>, Leon Romanovsky <leonro@mellanox.com>,
-	<linux-arch@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Mark
- Rutland" <mark.rutland@arm.com>, Michael Guralnik <michaelgur@mellanox.com>,
-	<patches@lists.linux.dev>, Niklas Schnelle <schnelle@linux.ibm.com>, "Jijie
- Shao" <shaojijie@huawei.com>, Patrisious Haddad <phaddad@nvidia.com>
-Subject: [PATCH net-next V2] net/mlx5: Improve write-combining test reliability for ARM64 Grace CPUs
-Date: Mon, 15 Sep 2025 11:35:08 +0300
-Message-ID: <1757925308-614943-1-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C95E1C3C11
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757925353; cv=none; b=erJvoZb/pibwX0h7uOIU+eulJrWS4BD9zCFlYSsU1n2havqGA2HmWmuKttVPnDpIHSWJ0DiHkTxl9hWr5D500+h+7wEbO/x21PPOHIW2JDTrDjW1ZeVmLH11QEam6a/zPORS4VIN3YohUK/v4lYb7ab44PxgWkH28tib1Yfg43k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757925353; c=relaxed/simple;
+	bh=lGEaAAijE6kmtm/u5jiL71cC11FN9bLP6+AImaRq1ao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ESY7JTtqP3eztaVnXoZHMamGqVf1Xtys0//pWaJnduUN7Mje8LkElWF2TOvyaZgu5SQg/5lQuLVeLVHrf278dx2ByLkBfBIZSWIwE6SoIg7H1o5vMvlwrL55fNGNSUyvlnK7TwER4LNWxIA4rbDOz+aR2D887oGnsIEMNauCEYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q7+dvvSe; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-57171d58ebfso2092052e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757925349; x=1758530149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sh7TW/Ve4npOGl0ZyWerfFSPimsdKplSnqZUaXacERE=;
+        b=q7+dvvSeAXRyIeEzdV+QHoXEEseAH5/5Gh/U2FAqeyUEmEkc2iC7eOOHC1vDRxhXsy
+         AvdfrVzo8ntUcCxQ2Zy65VYgjYcxYqj1DUp6GtF4J2ftdfyTBPf4TR3BH2W1LXuDcDT6
+         NYK7ibgc88pNLGMMUYWz32vAQLWZgaQuHkzMzTqpqCJ+3emd/ewyApUc2RnG5qR3Io9B
+         aQ/6YZCG/dVgHx4DH+3S6BBNs8p09tG1PceXHyt8H/udHA5vW6VnCUZo8zjXz6ZznShr
+         MIsPxGICnRVPRvSKD4X6J5TUmj7onSXI+w/IPMXcHxOwzZq+nikvlPlAvUxV8tWa6Xzx
+         y9ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757925349; x=1758530149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sh7TW/Ve4npOGl0ZyWerfFSPimsdKplSnqZUaXacERE=;
+        b=lDxBIbTQYjCSKrRAmBgxbv5L0xcGb1JxAiFXzI62PPfVjCqg855wcxJopSv0SKMG0t
+         knSi4CudVJtWW5SIoJqLh2er6FVrGBRCcWyZuWCKJQiN2YaC3/ofhQHHBiHkuYgwP7HG
+         QvLLNKcVoc7xrpp5M0WFIywVRK6tI1edL4avvg+K7ZaBA7gRuS1wiUbxtH5tbP97afvo
+         3L9oorSCkcCQQinlWzxQEXk7sSHUvrtX9YKbY8cLbPqWt01nFZztkc4aWvrzAWNvPBkb
+         FE33OLV3sTpSFdwXyvs/2Lp0DuX/d7aRAeXO78wH1YTpdLLuLsotaBmqZaHnabUhlw3M
+         iJYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVW2JKGgLctuVRSWFtmGXao9TCzJ+jFXJYZq0b0JQk0dK3on6khROvtORv6OEBpa2OWrNwV8iRdYWlDhCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxitbSvD/VmGh4RQwcoEsMr0wXz0xpenR0tU3CHyrd8zvvBKO/4
+	/IX4+NzsyYSnP9TxttmVNt6iDsD4uoyeWztFVGJk7sptrIfGfLyeVcrhhnQgiqkFAdl2wHK/MV1
+	eiiEo3Ay39PznStfTf4SALTG+kdJbwmCQYsbsu/5g4A==
+X-Gm-Gg: ASbGnctZ1BGun/UghcU6AXlTWUfqPi9LrgrfMYCyxqpGQdlOt9TnyYCtSNCuFoYXtHa
+	2yMn6gLbmRJfG6xsPRMwwbr9BdjXWuN+V9vzn+6aLTPoyGORsKVE6rUx92fJXzdtcDYIbgLZAF5
+	WRiWRV0pejTWWwTOjLGC0NL9aqXcvz81RKBUhL0M8HyZIWOBDKturR10t7nDNb6LINmMxJGhSQ2
+	QG+EeuGeWYv913Xiw==
+X-Google-Smtp-Source: AGHT+IELPJH0yiYJRtqNxqiBlJNj2HXfxCwVKTaGQUndbi2n7nTd+Q0uzLmLln2Ahd6RCFrGxTAftvlwA6pCqv4NdTU=
+X-Received: by 2002:a05:6512:3409:b0:55b:73e4:1581 with SMTP id
+ 2adb3069b0e04-5705be2353amr3236909e87.3.1757925349439; Mon, 15 Sep 2025
+ 01:35:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06B:EE_|BL1PR12MB5972:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b5d6194-1796-458e-7336-08ddf432e49c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ngA+L5vR3nH1N/kUn3TJKv+d0r020PiOuxS1BwhNayP29zzJAcE4nTvkVC8y?=
- =?us-ascii?Q?uR5ELW9phd7TbqwnNiv2w4VeC/iQgIxtE+hViPHGCIrbkE3zNR4cCYAvX79D?=
- =?us-ascii?Q?1kHR8ny3xyM1p9a/OFIu/UXqnTTOg5HNm4HiRNwVCZjrqKHbrHWg38CHkokK?=
- =?us-ascii?Q?QrAvMpTYoSLnrJ6PvSB5bXAWe1pGqt1vAYc3R/g0Yi6+wW/G46FKimtT5WE6?=
- =?us-ascii?Q?mPFA8vxUb7FAcTAIOZ0d38uTYannqLECYB5CKtL8u/8WMdUZ8C+WCKErOelp?=
- =?us-ascii?Q?S+MIGvXJWqQ/s/f0PE8Z01cuT0lVYQZr3Yrn9sPktoBTwNyGFS0ttdGXEcnI?=
- =?us-ascii?Q?lE2ufpd71Tx25uLVRwDsKtpTD+pQXTcvJElq82go+ID/uUQtjx2LrK3/s/g1?=
- =?us-ascii?Q?ujKhohOL7wd77lgB/qCJjFzFpwZsZIIHm/2t3eFlm9opqwFXkot2tsOzwKUq?=
- =?us-ascii?Q?qaNrDbny6d/ijKfUJ2X1jD+RjQUl+Gm+5X9sReb2HSflq5WFZuJm/I82XhC+?=
- =?us-ascii?Q?U7/71sOkMLiVkd5LPelXFWebGQwyvZcu4INASm2OMt3G4vpv4d2h44XvdVZ+?=
- =?us-ascii?Q?+RHYSyFJ6e7xSVrdWgfRP4Aa7BSxAKBOGVLQfTG/1ambrJVaAtg5Gjbzhtrg?=
- =?us-ascii?Q?9q26WRc2P18l3Jj9nXrgcwgT9QdYjaHGXy8lWuqPqDAzTqIA8ehUKCCX0ILc?=
- =?us-ascii?Q?cOTN/ZQNtrmxgOWkrxYx2iqra9MKfnCa2JGLKx0MWd51WlDzqiMWdUfYg+wC?=
- =?us-ascii?Q?dLoR3KJP3p8FEZKyNo/A73Ed5uFb8JEsY2UrcVN87KITui6E19e5O/cxZTDb?=
- =?us-ascii?Q?ZyK0rjI2hs1CXh8is8HJLjfli9wXrP5sqRW+KbDdKxkbQVmK8aBqLJRQlzFc?=
- =?us-ascii?Q?L5Or1vViSrxKJgLH6tHFLkCaHYLHs5vDHFUmrM1U4JEXF7jtkWnDi6Q/1Rs1?=
- =?us-ascii?Q?lXvr+OW221Jyg4WIDGI576416sW4xONDglVXT0RzOkiSKDcWfkVN0xW97ypw?=
- =?us-ascii?Q?7ttT6Seys6KAeheS0rQXaZJdwY0Ffrqgy1u0DJw936UBI2Tu+yudqeCK2hJ3?=
- =?us-ascii?Q?BEUePrh7bAnEKjBU7Rsm/oacSzP5xc45vnhzZ1D0AAGDBpuMCejZ5a02a7Yk?=
- =?us-ascii?Q?dhRAEJFnlLi8Bpj9qtiYwW9iqhNsmvF+Wa56EIBdNdZrM9XjjMgmdZhxb2rp?=
- =?us-ascii?Q?IaDYU9wExfWrHvImS2x6VkHuNZQIFxyIqePu6P97uKTmVS6R8SrqF4Umr0+S?=
- =?us-ascii?Q?3UUhPmzRe/UNRpAPx3FEjOydXeI70OhlLwWVBlXtK0VOlB6gOaP8caP3RQFo?=
- =?us-ascii?Q?aV/CXKJxQhxa2z0H/mhdbid+rVYYGB7PUrNl+2uYoUZkohRxbGyd52eQzvbC?=
- =?us-ascii?Q?nFYuMacAGI/jJPM980uQPaDwdvptZXBwRGNegHx1nb6Z3uWvvHIu6mptllD3?=
- =?us-ascii?Q?XgmaSlHuoDJM/WQzfpWu8AXpM2+arNtbaXazAeXH7SdN6K+AMwscYLc44YFD?=
- =?us-ascii?Q?/DeE2UL/8Rza22fntL5dW6ydxHrWqXk/W01Q8K8pfxRplN5HPspZYs4XdQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 08:35:57.5997
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5d6194-1796-458e-7336-08ddf432e49c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B06B.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5972
+References: <20250912060650.2180691-1-gary.yang@cixtech.com>
+ <20250912060650.2180691-2-gary.yang@cixtech.com> <CACRpkdYgTjerG5mks_+3sjhKKYtCsFY=1NWhgw_YEuib7gZm3g@mail.gmail.com>
+ <TYUPR06MB5876BB28E3C30EEB9BB05997EF15A@TYUPR06MB5876.apcprd06.prod.outlook.com>
+In-Reply-To: <TYUPR06MB5876BB28E3C30EEB9BB05997EF15A@TYUPR06MB5876.apcprd06.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 15 Sep 2025 10:35:37 +0200
+X-Gm-Features: Ac12FXzmf8LIusbRII3-Fz1NuUc_y68ko5C640f0pew8cVktZo0LvMElNxPe0Sw
+Message-ID: <CACRpkdYKnFAyq8C5h2=5NQ8AU92RmzShNHd6+=21rWednjv-fA@mail.gmail.com>
+Subject: Re: [v2 1/3] pinctrl: cix: Add pin-controller support for sky1
+To: Gary Yang <gary.yang@cixtech.com>
+Cc: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Patrisious Haddad <phaddad@nvidia.com>
+On Mon, Sep 15, 2025 at 9:09=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> w=
+rote:
 
-Write combining is an optimization feature in CPUs that is frequently
-used by modern devices to generate 32 or 64 byte TLPs at the PCIe level.
-These large TLPs allow certain optimizations in the driver to HW
-communication that improve performance. As WC is unpredictable and
-optional the HW designs all tolerate cases where combining doesn't
-happen and simply experience a performance degradation.
+> > Using a NULL func->name to terminate the array looks a bit dangerous.
+>
+> Checking whether this pointer is a null pointer is generally acceptable. =
+A name maps to a mux value.
+> I think that it is safe. Of course, your suggestion is also a good idea. =
+If you think this is not safe, we will
+> change codes as your suggestions.
 
-Unfortunately many virtualization environments on all architectures have
-done things that completely disable WC inside the VM with no generic way
-to detect this. For example WC was fully blocked in ARM64 KVM until
-commit 8c47ce3e1d2c ("KVM: arm64: Set io memory s2 pte as normalnc for
-vfio pci device").
+It's OK just a suggestion. There are many ways to do this, first fix
+other problems.
 
-Trying to use WC when it is known not to work has a measurable
-performance cost (~5%). Long ago mlx5 developed an boot time algorithm
-to test if WC is available or not by using unique mlx5 HW features to
-measure how many large TLPs the device is receiving. The SW generates a
-large number of combining opportunities and if any succeed then WC is
-declared working.
+There are things in the language and the kernel that can help
+you to check boundaries of arrays such as these functions so
+you can't write code that index out of range, e.g.
 
-In mlx5 the WC optimization feature is never used by the kernel except
-for the boot time test. The WC is only used by userspace in rdma-core.
-
-Sadly modern ARM CPUs, especially NVIDIA Grace, have a combining
-implementation that is very unreliable compared to pretty much
-everything prior. This is being fixed architecturally in new CPUs with a
-new ST64B instruction, but current shipping devices suffer this problem.
-
-Unreliable means the SW can present thousands of combining opportunities
-and the HW will not combine for any of them, which creates a performance
-degradation, and critically fails the mlx5 boot test. However, the CPU
-is very sensitive to the instruction sequence used, with the better
-options being sufficiently good that the performance loss from the
-unreliable CPU is not measurable.
-
-Broadly there are several options, from worst to best:
-1) A C loop doing a u64 memcpy.
-   This was used prior to commit ef302283ddfc
-   ("IB/mlx5: Use __iowrite64_copy() for write combining stores")
-   and failed almost all the time on Grace CPUs.
-
-2) ARM64 assembly with consecutive 8 byte stores. This was implemented
-   as an arch-generic __iowriteXX_copy() family of functions suitable
-   for performance use in drivers for WC. commit ead79118dae6
-   ("arm64/io: Provide a WC friendly __iowriteXX_copy()") provided the
-   ARM implementation.
-
-3) ARM64 assembly with consecutive 16 byte stores. This was rejected
-   from kernel use over fears of virtualization failures. Common ARM
-   VMMs will crash if STP is used against emulated memory.
-
-4) A single NEON store instruction. Userspace has used this option for a
-   very long time, it performs well.
-
-5) For future silicon the new ST64B instruction is guaranteed to
-   generate a 64 byte TLP 100% of the time
-
-The past upgrade from #1 to #2 was thought to be sufficient to solve
-this problem. However, more testing on more systems shows that #3 is
-still problematic at a low frequency and the kernel test fails.
-
-Thus, make the mlx5 use the same instructions as userspace during the
-boot time WC self test. This way the WC test matches the userspace and
-will properly detect the ability of HW to support the WC workload that
-userspace will generate. While #4 still has imperfect combining
-performance, it is substantially better than #2, and does actually give
-a performance win to applications. Self-test failures with #2 are like
-3/10 boots, on some systems, #4 has never seen a boot failure.
-
-There is no real general use case for a NEON based WC flow in the
-kernel. This is not suitable for any performance path work as getting
-into/out of a NEON context is fairly expensive compared to the gain of
-WC. Future CPUs are going to fix this issue by using an new ARM
-instruction and __iowriteXX_copy() will be updated to use that
-automatically, probably using the ALTERNATES mechanism.
-
-Since this problem is constrained to mlx5's unique situation of needing
-a non-performance code path to duplicate what mlx5 userspace is doing as
-a matter of self-testing, implement it as a one line inline assembly in
-the driver directly.
-
-Lastly, this was concluded from the discussion with ARM maintainers
-which confirms that this is the best approach for the solution:
-https://lore.kernel.org/r/aHqN_hpJl84T1Usi@arm.com
-
-Signed-off-by: Patrisious Haddad <phaddad@nvidia.com>
-Reviewed-by: Michael Guralnik <michaelgur@nvidia.com>
-Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- .../net/ethernet/mellanox/mlx5/core/Makefile  |  6 +++++
- .../mlx5/core/lib/wc_neon_iowrite64_copy.c    | 14 +++++++++++
- .../mlx5/core/lib/wc_neon_iowrite64_copy.h    | 12 ++++++++++
- drivers/net/ethernet/mellanox/mlx5/core/wc.c  | 24 +++++++++++++++++--
- 4 files changed, 54 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.c
- create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.h
-
-Find V1 here:
-https://lore.kernel.org/all/1757572873-602396-1-git-send-email-tariqt@nvidia.com/
-
-V2: no changes, extended the CC list.
-
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/Makefile b/drivers/net/ethernet/mellanox/mlx5/core/Makefile
-index d77696f46eb5..06d0eb190816 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/Makefile
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/Makefile
-@@ -176,3 +176,9 @@ mlx5_core-$(CONFIG_PCIE_TPH) += lib/st.o
- 
- obj-$(CONFIG_MLX5_DPLL) += mlx5_dpll.o
- mlx5_dpll-y :=	dpll.o
++struct sky1_pin_desc {
++       const struct pinctrl_pin_desc pin;
++       const struct sky1_function_desc functions[4];
++};
 +
-+#
-+# NEON WC specific for mlx5
-+#
-+mlx5_core-$(CONFIG_KERNEL_MODE_NEON) += lib/wc_neon_iowrite64_copy.o
-+FLAGS_lib/wc_neon_iowrite64_copy.o += $(CC_FLAGS_FPU)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.c
-new file mode 100644
-index 000000000000..8c07d2040607
---- /dev/null
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.c
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB
-+/* Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved. */
-+
-+#include "lib/wc_neon_iowrite64_copy.h"
-+
-+void mlx5_wc_neon_iowrite64_copy(void __iomem *to, const void *from)
-+{
-+	asm volatile
-+	("ld1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%0]\n\t"
-+	"st1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%1]"
-+	:
-+	: "r"(from), "r"(to)
-+	: "memory", "v0", "v1", "v2", "v3");
-+}
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.h b/drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.h
-new file mode 100644
-index 000000000000..ff2a2e263190
---- /dev/null
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/wc_neon_iowrite64_copy.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB */
-+/* Copyright (c) 2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved. */
-+
-+#ifndef __MLX5_LIB_WC_NEON_H__
-+#define __MLX5_LIB_WC_NEON_H__
-+
-+/* Executes a 64 byte copy between the two provided pointers via ARM neon
-+ * instruction.
-+ */
-+void mlx5_wc_neon_iowrite64_copy(void __iomem *to, const void *from);
-+
-+#endif /* __MLX5_LIB_WC_NEON_H__ */
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/wc.c b/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-index 2f0316616fa4..44c2ac953ea2 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-@@ -7,6 +7,11 @@
- #include "mlx5_core.h"
- #include "wq.h"
- 
-+#ifdef CONFIG_KERNEL_MODE_NEON
-+#include "lib/wc_neon_iowrite64_copy.h"
-+#include <asm/neon.h>
-+#endif
-+
- #define TEST_WC_NUM_WQES 255
- #define TEST_WC_LOG_CQ_SZ (order_base_2(TEST_WC_NUM_WQES))
- #define TEST_WC_SQ_LOG_WQ_SZ TEST_WC_LOG_CQ_SZ
-@@ -249,6 +254,22 @@ static int mlx5_wc_create_sq(struct mlx5_core_dev *mdev, struct mlx5_wc_sq *sq)
- 	return err;
- }
- 
-+static void mlx5_iowrite64_copy(struct mlx5_wc_sq *sq, __be32 mmio_wqe[16],
-+				size_t mmio_wqe_size)
-+{
-+#ifdef CONFIG_KERNEL_MODE_NEON
-+	if (cpu_has_neon()) {
-+		kernel_neon_begin();
-+		mlx5_wc_neon_iowrite64_copy(sq->bfreg.map + sq->bfreg.offset,
-+					    mmio_wqe);
-+		kernel_neon_end();
-+		return;
-+	}
-+#endif
-+	__iowrite64_copy(sq->bfreg.map + sq->bfreg.offset, mmio_wqe,
-+			 mmio_wqe_size / 8);
-+}
-+
- static void mlx5_wc_destroy_sq(struct mlx5_wc_sq *sq)
- {
- 	mlx5_core_destroy_sq(sq->cq.mdev, sq->sqn);
-@@ -288,8 +309,7 @@ static void mlx5_wc_post_nop(struct mlx5_wc_sq *sq, bool signaled)
- 	 */
- 	wmb();
- 
--	__iowrite64_copy(sq->bfreg.map + sq->bfreg.offset, mmio_wqe,
--			 sizeof(mmio_wqe) / 8);
-+	mlx5_iowrite64_copy(sq, mmio_wqe, sizeof(mmio_wqe));
- 
- 	sq->bfreg.offset ^= buf_size;
- }
++struct sky1_pinctrl_soc_info {
++       const struct sky1_pin_desc *pins;
++       unsigned int npins;
++};
 
-base-commit: 1f24a240974589ce42f70502ccb3ff3f5189d69a
--- 
-2.31.1
+It is possible to use a flexible array with the intrinsic
+__counted by() here, e.g. instead of:
 
+struct sky1_pin_desc {
+     const struct pinctrl_pin_desc pin;
+     const struct sky1_function_desc functions[4];
+
+You can use:
+
++ size_t nfunctions;
++ const struct sky1_function_desc functions[] __counted_by(nfunctions);
+
+If you grep counted_by in the kernel you find many other
+examples of how we use this.
+
+But flexible arrays is a bit complicated and dangerous so maybe you
+want to avoid it altogether. Also I'm not sure it works when you put
+things containing a flexible array into another array... I never tried it.
+
+> > Then you can use nfuncs to iterate over the array of function names, an=
+d
+> > define a macro like this:
+> >
+> > #define SKY_PINFUNCTION(_muxval, _functions, _nfunctions)   \
+> > (struct sky1_function_desc) {                                  \
+> >                 .muxval =3D (muxval),                        \
+> >                 .functions =3D (_functions),                    \
+> >                 .nfuncs =3D (_nfunctions),                  \
+> >         }
+> >
+> > And then this:
+> >
+> > +static const struct sky1_pin_desc sky1_pinctrl_s5_pads[] =3D {
+> > > +       {
+> > > +               .pin =3D PINCTRL_PIN(0, "GPIO1"),
+> > > +               .functions =3D {
+> > > +                       [0] =3D {0, "GPIO1"},
+> > > +               },
+> > > +       },
+> > > +       {
+> > > +               .pin =3D PINCTRL_PIN(1, "GPIO2"),
+> > > +               .functions =3D {
+> > > +                       [0] =3D {0, "GPIO2"},
+> > > +               },
+> >
+> > > +       },
+> >
+> > becomes
+> >
+> > static const struct sky1_pin_desc sky1_pinctrl_s5_pads[] =3D {
+> >     SKY_PINFUNCTION(PINCTRL_PIN(0, "GPIO1"),  "GPIO1", 1),
+> >     SKY_PINFUNCTION(PINCTRL_PIN(1, "GPIO2"),  "GPIO2", 1),
+> >
+> > I don't know about using the PINCTRL_PIN() macro here though, can't you=
+ just
+> > put in 0, 1...?
+> >
+> > Anyway I think you get the idea.
+> >
+>
+> First, let us review the struct sky1_pin_desc, it contains two members, o=
+ne is the struct pinctrl_pin_desc.
+>
+> struct pinctrl_pin_desc {
+>         unsigned int number;
+>         const char *name;
+>         void *drv_data;
+> };
+>
+> PINCTRL_PIN is used to initialize this struct in kernel. It locates in in=
+clude/linux/pinctrl/pinctrl.h
+>
+> #define PINCTRL_PIN(a, b) { .number =3D a, .name =3D b }
+>
+> PINCTRL_PIN(0, "GPIO1") defines a pin, its number is 0, its name is "GPIO=
+1".
+
+Ah I saw it wrong, sorry :(
+
+You're right about this of course.
+
+But I think you can still use a macro to define the long pin tables?
+Albeit macros with flexible arguments is a bit hard to write.
+Save it until everything else is working.
+
+> > If this is the implied pattern for this driver, write as a comment to t=
+he above
+> > function that this pin controller place all pins into a single group wi=
+th one pin
+> > and that this is why this works.
+> >
+> > The normal (as can be seen from the pin control documentation
+> > https://docs.kernel.org/driver-api/pin-control.html ) is to group pins,=
+ so e.g.
+> >
+> > uart0_rx_tx_grp =3D { pin1, pin2 };
+> > i2c0_sda_scl_grp =3D { pin1, pin2 };
+> >
+> > Then this is combined with functions such as uart0 and i2c0:
+> >
+> > function, group
+> > ("uart0", uart0_rx_tx_grp)
+> > ("i2c0", i2c0_sda_scl_grp)
+> >
+> > Here you see the two pins are used for uart in the first case and for i=
+2c in the
+> > second case, it's the same pins, but members of two different groups, a=
+nd
+> > these groups are then used with a function.
+> >
+> > The possible functions for a group are then defined somewhere so these
+> > settings can be applied.
+> >
+> > Maybe this pattern is something you have in your driver because the cod=
+e was
+> > copied from some other driver which use one group per pin, it's not cer=
+tain
+> > that this is the best layout for the cix SoC so look it over!
+>
+> First maybe you ignore that fact the struct sky1_pinctrl_group is differe=
+nt from
+> the struct group_desc. It only saves the config of a pin from dts. it doe=
+sn't include
+> pin function part. As we know, a pin only has a config at the same time. =
+One group map to a pin.
+> The pin function part is included in the struct sky1_function_desc. One p=
+in can map
+> serval functions. There are four functions on sky1. We define the sky1_gp=
+io_functions array.
+> It is used to select the pin functions.
+>
+> Second, you are right. the pinctrl driver support new scheme is seldom in=
+ kernel. You take mt723 as
+> an example before. Some codes come from the pinctrl driver on MTK. We mod=
+ify them to adopt our platform.
+> If I misunderstand or miss anything, please let me know.
+
+Yes I can see that the driver is based on the MTK driver, my point is that
+make sure you are not following it too closely, because what is good for
+the mtk chips is not necessarily good for the cix chips.
+
+But if you feel convenient with one group per pin and you are convinced
+this is the best for your driver, go ahead with this scheme!
+
+Yours,
+Linus Walleij
 
