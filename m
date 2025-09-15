@@ -1,44 +1,53 @@
-Return-Path: <linux-kernel+bounces-816748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFEE0B577EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A750B5792A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E4E188882F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F7A16E1FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E5E2FC013;
-	Mon, 15 Sep 2025 11:18:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91289EAF9;
-	Mon, 15 Sep 2025 11:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0786304BA8;
+	Mon, 15 Sep 2025 11:50:43 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00737303C85;
+	Mon, 15 Sep 2025 11:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757935122; cv=none; b=LVjQA472l96T6LJ3IylnPLflxVoJ+K5u9oTL6bAepkO1hLy06mGb8i/5wkwpNJ9jdtndM9Z5j7Fq4sAOSHECvDx0BID2chtQNplzmHPPRmWS7gUF7jDm+IS7RT7n4Do1oh/Mt3ntGmiz5XNdQmpOAMLxmt9OEDMMBYzJJLzPijc=
+	t=1757937043; cv=none; b=aa8dUsVkyLk8h3wVPjjk5cooFKC4Fe9p4DxP32g6azDk/HUHVc/gJORUTF3q+RKzD4Mp4v6TAuA1aYKLiFGQzpft0IVS1xQnvwzyPTfW/o7fRuvLSRZnCeDDv0mm24cJRpoOMkE6PxU3ZKW3GCsvjsuULOvr0n6xTP1JPcyfR7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757935122; c=relaxed/simple;
-	bh=f0hmLvMuvCxh8nkmja7MUq5f2MYxAtl9YZaE7Pxk3h4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=m/Ig2BFQidOANbyPJ/LJ/ySMwd5NqhN2weNeSTh2KGtsHgVI5B/KpaYHY3fGG5QlmroIPl7awBs2vHp13Jc11UChLKX4SHcMDbPU4Thz92O7u0y9k1u6VKi4f+XbPIKI8IGAVMy29uRr+B6iALtVS82zEFsaNjdSEqKyZ3m4Oxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cQMwZ3GGVzYQvsN;
-	Mon, 15 Sep 2025 19:18:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 0B9CA1A0C12;
-	Mon, 15 Sep 2025 19:18:37 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgDXcmoL9sdo8NktCg--.1840S2;
-	Mon, 15 Sep 2025 19:18:36 +0800 (CST)
-Message-ID: <3861018c-96a2-4055-94ca-39f7a8e631f3@huaweicloud.com>
-Date: Mon, 15 Sep 2025 19:18:35 +0800
+	s=arc-20240116; t=1757937043; c=relaxed/simple;
+	bh=slLaPaXqm4+66dpacFCrcqHE+39qtJjBzOocuF1xi6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tMkXIyr8U+cvwfYT1x2g5NFoBTKDeKwWWa4Roj6ofZxvi7nYxWjWcIRkCwOIazM0h6qjU1wkmdbpdkBVf7fZNN1kfC0QisjXmAUTRYpD++DvZJjIGsg7QFVYiwnXttH0YWdDDl3b05z92HnI+MJmx5XKrh2TctCxpctd+DlvJrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cQMxX3w10z9sxn;
+	Mon, 15 Sep 2025 13:19:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id lsQzt4OAL5QC; Mon, 15 Sep 2025 13:19:28 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQMxW2nkYz9sxl;
+	Mon, 15 Sep 2025 13:19:27 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 27EFC8B766;
+	Mon, 15 Sep 2025 13:19:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id niL9xnZy0o5E; Mon, 15 Sep 2025 13:19:27 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6E3148B763;
+	Mon, 15 Sep 2025 13:19:26 +0200 (CEST)
+Message-ID: <c52c2589-9d7b-4ac7-a61f-68fa9ba18308@csgroup.eu>
+Date: Mon, 15 Sep 2025 13:19:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,75 +55,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC -v2 00/11] Refactor cpus mask setting
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20250909033233.2731579-1-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgDXcmoL9sdo8NktCg--.1840S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF4kur1DWw18Kw4UGw1fCrg_yoW8XF13pF
-	WY93WkAa95Gr18K3Z7u3yxWF40ga1Dt3W7JFn5t34xJr109F1qyryktas8uFy3Gr9xG34U
-	ZayaqanavF9rA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Subject: Re: [PATCH RESEND 03/62] init: sh, sparc, x86: remove unused
+ constants RAMDISK_PROMPT_FLAG and RAMDISK_LOAD_FLAG
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
+ Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+ Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
+ Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev,
+ stable+noautosel@kernel.org
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-4-safinaskar@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250913003842.41944-4-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2025/9/9 11:32, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
+Le 13/09/2025 à 02:37, Askar Safin a écrit :
+> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> This patch series refactors the CPU mask configuration logic for both
-> cpuset.cpus and cpuset.cpus.exclusive settings. The primary goal is to
-> improve code readability through comprehensive function restructuring.
+> They were used for initrd before c8376994c86.
 > 
-> The CPU mask update process follows these steps:
-> 1. Parse user input
-> 2. Skip processing if no actual change to CPU mask
-> 3. Compute trial cpuset's effective exclusive CPUs
-> 4. Validate changes and return error if invalid
-> 5. Handle partition state changes resulting from CPU mask modifications
-> 6. Apply new CPU mask to the cpuset
-> 7. Propagate changes through the hierarchy
+> c8376994c86c made them unused and forgot to remove them
 > 
-> The series is organized as follows:
-> patches 1-3: Code cleanup and preparation for refactoring
-> patches 4-9: Refactoring of cpuset.cpus configuration logic
-> patches 10-11: Refactoring of cpuset.cpus.exclusive configuration logic
-> 
+> Fixes: c8376994c86c ("initrd: remove support for multiple floppies")
+> Cc: <stable+noautosel@kernel.org> # because changes uapi headers
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
 > ---
+>   arch/sh/kernel/setup.c                | 2 --
+>   arch/sparc/kernel/setup_32.c          | 2 --
+>   arch/sparc/kernel/setup_64.c          | 2 --
+>   arch/x86/include/uapi/asm/bootparam.h | 2 --
+>   arch/x86/kernel/setup.c               | 2 --
+>   5 files changed, 10 deletions(-)
 > 
-> Changes from v1:
-> - Patch 1: Use direct comparison (cs == &top_cpuset) instead of the
->            cpuset_is_root() helper function
-> - Patch 6: Updated comments for better clarity
-> - Patch 7: Refactored validate_partition to replace the previous
->            invalidate_cs_partition implementation
-> - Patch 8: Renamed acpus_validate_change to cpus_allowed_validate_change
-> - Patch 9: Updated commit message with more detailed information
+> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+> index 039a51291002..d66f098e9e9f 100644
+> --- a/arch/sh/kernel/setup.c
+> +++ b/arch/sh/kernel/setup.c
+> @@ -71,8 +71,6 @@ EXPORT_SYMBOL(sh_mv);
+>   extern int root_mountflags;
 > 
-
-Hi, Longman,
-
-I would be grateful if you could take a look at this series when you have a moment.
-
--- 
-Best regards,
-Ridong
+>   #define RAMDISK_IMAGE_START_MASK       0x07FF
+> -#define RAMDISK_PROMPT_FLAG            0x8000
+> -#define RAMDISK_LOAD_FLAG              0x4000
+> 
+>   static char __initdata command_line[COMMAND_LINE_SIZE] = { 0, };
+> 
+> diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
+> index 704375c061e7..eb60be31127f 100644
+> --- a/arch/sparc/kernel/setup_32.c
+> +++ b/arch/sparc/kernel/setup_32.c
+> @@ -172,8 +172,6 @@ extern unsigned short root_flags;
+>   extern unsigned short root_dev;
+>   extern unsigned short ram_flags;
+>   #define RAMDISK_IMAGE_START_MASK       0x07FF
+> -#define RAMDISK_PROMPT_FLAG            0x8000
+> -#define RAMDISK_LOAD_FLAG              0x4000
+> 
+>   extern int root_mountflags;
+> 
+> diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
+> index 63615f5c99b4..f728f1b00aca 100644
+> --- a/arch/sparc/kernel/setup_64.c
+> +++ b/arch/sparc/kernel/setup_64.c
+> @@ -145,8 +145,6 @@ extern unsigned short root_flags;
+>   extern unsigned short root_dev;
+>   extern unsigned short ram_flags;
+>   #define RAMDISK_IMAGE_START_MASK       0x07FF
+> -#define RAMDISK_PROMPT_FLAG            0x8000
+> -#define RAMDISK_LOAD_FLAG              0x4000
+> 
+>   extern int root_mountflags;
+> 
+> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+> index dafbf581c515..f53dd3f319ba 100644
+> --- a/arch/x86/include/uapi/asm/bootparam.h
+> +++ b/arch/x86/include/uapi/asm/bootparam.h
+> @@ -6,8 +6,6 @@
+> 
+>   /* ram_size flags */
+>   #define RAMDISK_IMAGE_START_MASK       0x07FF
+> -#define RAMDISK_PROMPT_FLAG            0x8000
+> -#define RAMDISK_LOAD_FLAG              0x4000
+> 
+>   /* loadflags */
+>   #define LOADED_HIGH    (1<<0)
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index 1b2edd07a3e1..6409e766fb17 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -223,8 +223,6 @@ extern int root_mountflags;
+>   unsigned long saved_video_mode;
+> 
+>   #define RAMDISK_IMAGE_START_MASK       0x07FF
+> -#define RAMDISK_PROMPT_FLAG            0x8000
+> -#define RAMDISK_LOAD_FLAG              0x4000
+> 
+>   static char __initdata command_line[COMMAND_LINE_SIZE];
+>   #ifdef CONFIG_CMDLINE_BOOL
+> --
+> 2.47.2
+> 
+> 
 
 
