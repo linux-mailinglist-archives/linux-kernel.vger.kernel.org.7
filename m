@@ -1,125 +1,159 @@
-Return-Path: <linux-kernel+bounces-816762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2727B57806
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613E4B5780A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DAD63A6B53
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:26:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C4D3A5E69
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762432FDC54;
-	Mon, 15 Sep 2025 11:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277302FC013;
+	Mon, 15 Sep 2025 11:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h7V6iMvm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeOCvMMM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4801D54D8;
-	Mon, 15 Sep 2025 11:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834AD21FF48
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757935579; cv=none; b=uHyduihPEMS2sDjUx5HSAv/VksFqBpV+lZfTrmxoO9hpyyRQe8r48Z0f40IqjIiqqC3hYVCk/6GbFhdXpXN7oBA13Xjz+SymbWjzzYnGal+fppFTaBtDj2UjPRphTakTZxjpmCQNX7MLqlF3eqzz/V9vltqqC/O0GEfIIxMw8d4=
+	t=1757935623; cv=none; b=gOnIFn97/6jD63M9xbx3/PDliEWbv1pihLj0TeZo2sGGoroOM0+WxsRoFldS5Tc5kRwA1Rfx9nv3bJx5HKUGVdpA8PdKJXK7HW+ELVCqEjQeCmV8tZ+nyiZMgi3Z0vDdrW/f/6CkB4yEyPMEQhwI4lKJannvZcrsd//XBQcvEXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757935579; c=relaxed/simple;
-	bh=EyCbsyd109jlA6dWKPGR31a04u6NZDtlezBFxPWAehg=;
+	s=arc-20240116; t=1757935623; c=relaxed/simple;
+	bh=DIj0yhp4gbJoo1YTXeu1yB+1QIwWPgPRInkx0vYUyyU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxPTAYy1Z5aunDKYfI3AjZDAPWjnESFO85nS1phmWde+yMUnaidXFhgvfjmXwk6pyC/AUrqt5LPoAEOu+NiAfiBfwevd+NtPGhye7ayJCRdq20TLR1rFyCkKht7y2uJ+MFxSI/0yCKgaxOt7lAJCF1hGNJ/IkUsfRH4nVtMyvhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h7V6iMvm; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B29E40E019E;
-	Mon, 15 Sep 2025 11:26:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Q_gETiq9zByM; Mon, 15 Sep 2025 11:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757935560; bh=og5A2WyNgFf7VMif0EZi46Of8DzCnjQ3vDeonAI/acM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=MMHry6Wrd31Lifkfz7APlrenxF3c3N7yaYN4fK4YiebxNBEIvBZptfGHdVCyNgjaI6sbnoGBrqkJB0nMw/PkaF/x3qNppl1bgtVu2Ee4k3EKBafsCHQEZUPZt6pZPcQVenagVAck8xbQuycF+jHfnHGxWYXIcriaDogEL02oOBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeOCvMMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAFFFC4CEF1;
+	Mon, 15 Sep 2025 11:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757935623;
+	bh=DIj0yhp4gbJoo1YTXeu1yB+1QIwWPgPRInkx0vYUyyU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h7V6iMvmKJs5863dr5nkmFZiU3qP66keqlZx93dvM7YITmmnEqhBm2jC399/6c/X9
-	 eY9gbp2YoNgadnZBfoFQRnkRzlgBnuOUnHMozopc4WqAyEnde3RgQSU2ZKcSxtYueK
-	 mHx8p9+ZPwV8veJYk7A+Ck7xylMOptWVKSqdpjw+CpAxXm+Zs+I4P0DEsXZEWdyOvp
-	 FfA4vvdC86enrUgOLIYL8T0pgOiW0/24oqTiK1bYXdnsXGFT4DfZTIeaBOiEXLSiqi
-	 14CwdGeryMyaE5B0iUBHnuV2ThAOwslGsCZBipQvKxeOPCyjjuKV/KawE6Bd068WpV
-	 V2Bmjdk1ffPhdrPbv5wfJF2mfNiyDze3a2ZZvsxj9b+ENTDuF0to2nIWwssoxxCB38
-	 Hl3aF8O3sVyvsbRT0/tYpHLQbutKZZsgUt/Xc1Pq6Q2JwemjjmoLxp27NN+L00dRDk
-	 Tb6vyvnJPk0Og9cRuZCUqT2miGRJnyCefzZ+Ha36VFdJTV+DON9EhwTszRBOWBYALn
-	 gf4fZLpCRe+tzlMPeOR1JKGjJ49XwBOBF7SRmbBYa5220t3cwGd9t1ukJ1f8PX7Oyn
-	 9J0iMhzitSbc984GGwPNmzIiYzgWY5gidjaCJ/+iE41ptd6pIkWIrQaJLl/GHFpO+9
-	 Q0/zyASL+1qe81MtgrUGcbL8=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id D3EBF40E01A3;
-	Mon, 15 Sep 2025 11:25:17 +0000 (UTC)
-Date: Mon, 15 Sep 2025 13:25:10 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, tony.luck@intel.com, reinette.chatre@intel.com,
-	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, kas@kernel.org, rick.p.edgecombe@intel.com,
-	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
-	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
-	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
-	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
-	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
-	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
-	tiala@microsoft.com, mario.limonciello@amd.com,
-	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
-	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
-	gautham.shenoy@amd.com
-Subject: Re: [PATCH v18 00/33] x86,fs/resctrl: Support AMD Assignable
- Bandwidth Monitoring Counters (ABMC)
-Message-ID: <20250915112510.GAaMf3lkd6Y1E_Oszg@fat_crate.local>
-References: <cover.1757108044.git.babu.moger@amd.com>
+	b=CeOCvMMMkQhHjPXvwGUoryyTOpbtkPvxwxT77GsjhXYqetPrf00cwrMVvXriCBOh8
+	 8d+OoGvGo0M7Is/d9p8Bk5Kd7Sw3xe5HWGjlUkHSdO4YW35eu7yHNl5x4ytlffeCaC
+	 K/JCNwBYKz0ChCT+BGRDpTpOiFjogFqAc27snwRLoKBVz2cV/dw0patGE6AkM8SI31
+	 4e5CCOWcCAHAFczwQREQ7Kc7vMmyw9dZA8KpGV5PrOz81ASXcbnS7Tx9PMH6BtSbuf
+	 5CKe+sCIQyYjMDUSeB2x7SauH+6YYTPFygrjxCcf7M0T3qTNfTvl9Ghf/TcOaNPUDg
+	 AVCL4xxJGg2HQ==
+Date: Mon, 15 Sep 2025 13:27:00 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
+ initialization
+Message-ID: <20250915-heavenly-athletic-lionfish-aa7b8b@penduick>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
+ <9f17dfd9-a4d4-41e9-b988-bd8ca858e5e7@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="bjstnpmexvpjhaxq"
 Content-Disposition: inline
-In-Reply-To: <cover.1757108044.git.babu.moger@amd.com>
+In-Reply-To: <9f17dfd9-a4d4-41e9-b988-bd8ca858e5e7@suse.de>
 
-On Fri, Sep 05, 2025 at 04:33:59PM -0500, Babu Moger wrote:
->  .../admin-guide/kernel-parameters.txt         |    2 +-
->  Documentation/filesystems/resctrl.rst         |  325 ++++++
->  MAINTAINERS                                   |    1 +
->  arch/x86/include/asm/cpufeatures.h            |    1 +
->  arch/x86/include/asm/msr-index.h              |    2 +
->  arch/x86/include/asm/resctrl.h                |   16 -
->  arch/x86/kernel/cpu/resctrl/core.c            |   81 +-
->  arch/x86/kernel/cpu/resctrl/internal.h        |   56 +-
->  arch/x86/kernel/cpu/resctrl/monitor.c         |  248 +++-
->  arch/x86/kernel/cpu/scattered.c               |    1 +
->  fs/resctrl/ctrlmondata.c                      |   26 +-
->  fs/resctrl/internal.h                         |   58 +-
->  fs/resctrl/monitor.c                          | 1008 ++++++++++++++++-
->  fs/resctrl/rdtgroup.c                         |  252 ++++-
->  include/linux/resctrl.h                       |  148 ++-
->  include/linux/resctrl_types.h                 |   18 +-
->  16 files changed, 2019 insertions(+), 224 deletions(-)
 
-Ok, I've rebased and pushed out the pile into tip:x86/cache.
+--bjstnpmexvpjhaxq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
+ initialization
+MIME-Version: 1.0
 
-Please run it one more time to make sure all is good.
+On Tue, Sep 02, 2025 at 03:18:17PM +0200, Thomas Zimmermann wrote:
+> Hi
+>=20
+> Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+> > Bridges implement their state using a drm_private_obj and an
+> > hand-crafted reset implementation.
+> >=20
+> > Since drm_private_obj doesn't have a set of reset helper like the other
+> > states, __drm_atomic_helper_bridge_reset() was initializing both the
+> > drm_private_state and the drm_bridge_state structures.
+> >=20
+> > This initialization however was missing the drm_private_state.obj
+> > pointer to the drm_private_obj the state was allocated for, creating a
+> > NULL pointer dereference when trying to access it.
+> >=20
+> > Fixes: 751465913f04 ("drm/bridge: Add a drm_bridge_state object")
+> > Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > ---
+> >   drivers/gpu/drm/drm_atomic_state_helper.c | 8 ++++++++
+> >   1 file changed, 8 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/dr=
+m/drm_atomic_state_helper.c
+> > index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..b962c342b16aabf4e3bea52=
+a914e5deb1c2080ce 100644
+> > --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+> > @@ -707,10 +707,17 @@ void drm_atomic_helper_connector_destroy_state(st=
+ruct drm_connector *connector,
+> >   	__drm_atomic_helper_connector_destroy_state(state);
+> >   	kfree(state);
+> >   }
+> >   EXPORT_SYMBOL(drm_atomic_helper_connector_destroy_state);
+> > +static void __drm_atomic_helper_private_obj_reset(struct drm_private_o=
+bj *obj,
+> > +						  struct drm_private_state *state)
+> > +{
+> > +	memset(state, 0, sizeof(*state));
+>=20
+> This argument is guaranteed to be zero'd, I think. No need for a memset.
+>
+> > +	state->obj =3D obj;
+> > +}
+> > +
+> >   /**
+> >    * __drm_atomic_helper_private_obj_duplicate_state - copy atomic priv=
+ate state
+> >    * @obj: CRTC object
+> >    * @state: new private object state
+> >    *
+> > @@ -796,10 +803,11 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_st=
+ate);
+> >    */
+> >   void __drm_atomic_helper_bridge_reset(struct drm_bridge *bridge,
+> >   				      struct drm_bridge_state *state)
+> >   {
+> >   	memset(state, 0, sizeof(*state));
+>=20
+> Another unnecessary memset?
 
-Thx.
+I guess the two can be seen as redundant, but I'd argue the one in
+__drm_atomic_helper_private_obj_reset should still be there.
 
--- 
-Regards/Gruss,
-    Boris.
+What guarantees that the pointer points to a zero'd structure?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Maxime
+
+--bjstnpmexvpjhaxq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMf3+wAKCRAnX84Zoj2+
+duAMAX4xw8C8UQB2U4qimHV/KWPOBbMcqvFXGq8mi7KpjsX3KUN9niJbwsCskBxr
+aHibY0ABgI4ij7jrHirhgw5fa46AFGuNxRM5p2jgxs7zz0MefovMEj8WCCgnYQo9
+W6wsPy9zbQ==
+=6S4m
+-----END PGP SIGNATURE-----
+
+--bjstnpmexvpjhaxq--
 
