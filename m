@@ -1,101 +1,89 @@
-Return-Path: <linux-kernel+bounces-816838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143F9B578E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981D9B578E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EAC97AF35C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E5411756A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752601E49F;
-	Mon, 15 Sep 2025 11:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DB230102E;
+	Mon, 15 Sep 2025 11:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Uv9pjGXI"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q84tqTHL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E8A2FD7D3;
-	Mon, 15 Sep 2025 11:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFC33009D8;
+	Mon, 15 Sep 2025 11:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936822; cv=none; b=QQZ5noEJAFt8shdT6ErQH8jlua098t8gTA3MXmF9dV14uYNGblmBFFosz7BbmfeJfL4ymOnl8beHANHaQBQfR7JAORgNNXRJC4/JHg2//F4WJeV9erGtHhuG1t96W7Qe0YM1/zEQql7LAxYMaDNZUwfDDlFfda3K4/2233MUsjg=
+	t=1757936838; cv=none; b=huBZc+OmoJkhjPFgWGkbr+s7y12jVmOr596G/7wH36FiNXv4GR65ybj8D2p52YcCUYN69kSGN2wzNyBWXv35Wy6GctPBx8DG8Elco2K6vSckUo8W6d4ium6GRA/jcPk+9cIMuWgOzAaBH3zJohd8nHT6LnCKbjDkjsAdY/rsmKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936822; c=relaxed/simple;
-	bh=YH1lYv37rvuaCIt3LkdDU2QwLfCom7OlCQhnjTrSLaM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VEeHkUMpCK2Vjh/pizfvGUcT6Ts3aKN+ey54bcsrGEQMDc4lILiL5P6F11QM7YHdpI9NgRJ89zkLqQOxr3RCUoQ+9OqXrkp1iVd7usBzhrj57GzrFyGbyBlot1qtnuuVO+E+Esqi0/y1cKQtJThktaYDM5/S8Am4qMIwKGPxaJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Uv9pjGXI; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=g7
-	bBZ08Y30YBsmASg69y6dlkae34XywuX+RyAixm0dw=; b=Uv9pjGXIfw6UMFCeeb
-	EnxoUMEgtn/DY1qMT70OwSudd4X4Z+5NciXB5gJ/EOAS2oMrNiLtO3tr0HssMl9F
-	a1ZU1aJoub1DSeWasHglvtxlfhVhQc+Bhy+irzCK7LjVfm9R0Aqtt1rMVoJZQD7c
-	ERGLzvZOnLNH717HkflvjNZ04=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgAnhAuW_Mdoi3VIDA--.37972S4;
-	Mon, 15 Sep 2025 19:46:31 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: pdeschrijver@nvidia.com,
-	pgaikwad@nvidia.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linmq006@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: tegra: tegra124-emc: Fix a reference leak in emc_ensure_emc_driver()
-Date: Mon, 15 Sep 2025 19:46:29 +0800
-Message-Id: <20250915114629.174472-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757936838; c=relaxed/simple;
+	bh=iYwdHd0yHyr9COcnUzQB7EY8HcVxM1IsSoPv8mO5MAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSm5NTbo6EPrJr61qjIi8SwwuU7qNiHHs7WmZ35MKz8XBelztXHFuq9eGMiOOanrB2RkcsFleoA57X/iHp64TZrljtrID8P5TKVLdi9pzs7Zpw0TYPKp4pDc4yzuH50SGPjNGBH1mAfu1BvySztJRrAGPEX3mR+gQ02ahbg3OPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q84tqTHL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SFBbBvmmOnzTd5d+84TyP6wYT17N3spITLaBM1O9CQ0=; b=q84tqTHLOELd2tL88iYJBD6tN6
+	htlwQzgKZLA740qa2qwSb3vW5+fF76toEwTU7xFWGXemJDRPryzgNrIS7F7dJ9rgl/NaK6wmUT1Mp
+	fFRcEMxvAnzXdJxPa5Xud1xbrNAXR4Q14csQgGoWgvrRYniXqJfjmkw2Eb7ry+7vS7c8gtO+58iq5
+	nhnMQH6T7T0KjFEWQC4UEev0jaGb7cGv3zp6vfRSn47ihAIyjw3ot7eSEizkW+t9cXPf4Xi2P3MEF
+	63+mkgqXJj4SPu9Qbee6quXcagAtnZgtud+j3YfmrE1d8xWQpZN9yGZHRhC95kE8AajC30Qr2ury3
+	4HgYhRNQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uy7fm-0000000EUzB-3hNt;
+	Mon, 15 Sep 2025 11:47:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6BAB9300212; Mon, 15 Sep 2025 13:47:06 +0200 (CEST)
+Date: Mon, 15 Sep 2025 13:47:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	David Laight <David.Laight@aculab.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>,
+	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
+	Alejandro Colomar <alx@kernel.org>
+Subject: Re: [PATCH perf/core 0/3] uprobes/x86: change error path for uprobe
+ syscall
+Message-ID: <20250915114706.GC3245006@noisy.programming.kicks-ass.net>
+References: <20250905205731.1961288-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgAnhAuW_Mdoi3VIDA--.37972S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Jw1DXry5XF1DCF43Jr4kXrb_yoWDZrbEkF
-	4jv3s7Xw45Cr1UCF15Gr4fZryIyFn8WF4vvFy7tFZ3G345ur45Xr45ursakrnIg3yDCa4D
-	WF10g398Gr98CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMsjjDUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEBnJbmjH+kpShwAAsk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905205731.1961288-1-jolsa@kernel.org>
 
-put_device() is only called on the error path, causing a reference leak
-on the success path. Fix this by calling put_device() once pdev is no
-longer needed.
+On Fri, Sep 05, 2025 at 10:57:28PM +0200, Jiri Olsa wrote:
 
-Fixes: 6d6ef58c2470 ("clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/clk/tegra/clk-tegra124-emc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Jiri Olsa (2):
+>       uprobes/x86: Return error from uprobe syscall when not called from trampoline
+>       selftests/bpf: Fix uprobe_sigill test for uprobe syscall error value
+> 
+>  arch/x86/kernel/uprobes.c                               |  2 +-
+>  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c | 34 ++++++----------------------------
+>  2 files changed, 7 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
-index 2a6db0434281..b9f2f47ec6e5 100644
---- a/drivers/clk/tegra/clk-tegra124-emc.c
-+++ b/drivers/clk/tegra/clk-tegra124-emc.c
-@@ -197,8 +197,9 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
- 	tegra->emc_node = NULL;
- 
- 	tegra->emc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
-+
- 	if (!tegra->emc) {
--		put_device(&pdev->dev);
- 		pr_err("%s: cannot find EMC driver\n", __func__);
- 		return NULL;
- 	}
--- 
-2.25.1
-
+Thanks!
 
