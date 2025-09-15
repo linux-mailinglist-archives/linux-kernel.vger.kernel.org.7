@@ -1,163 +1,151 @@
-Return-Path: <linux-kernel+bounces-817721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217ACB5859F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:56:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBD6B585A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28F657B2775
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5573A6D37
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD5E287515;
-	Mon, 15 Sep 2025 19:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URrTDOqs"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259D2874E3;
+	Mon, 15 Sep 2025 19:57:32 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AB323E229
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAC5279DDD
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757966115; cv=none; b=p+zZYOr5/Hkal+Y8tHhJebjeS00Mo3LkMd7BSLPaF0LS46kkH67hPaP5QtLM6bWFx7vQcBiKrVK2n90oZ3kmoHwgONXNpCoBq+Hks6/4pckbd3FUDmV8qzYQ4Ub9uKedKUwR6lAxq/iJMoyV1MR7Ii0IP/gNyHmSdGEZB1wAbmc=
+	t=1757966252; cv=none; b=ego9Hje/yAvurP7ben0HUtepJZ31MuxfiJqTxeFFJPyAdUycKVpJAPKk5eVD0g3lCGpbZuSjN70/7Uf1nds6BgNEX+Fp0tFUxCI6TdSnu91MDyjgJY9Sw6bcUHnsw7U+hUnR7UZaTGoyjnYs9Kvtgmhd4rqQhmPHRsSMzHT1+z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757966115; c=relaxed/simple;
-	bh=oX6S3cWQPf1Wb59k65AxqPaya62lhiPp4qMPjhmTyNc=;
-	h=From:MIME-Version:Date:Message-ID:Subject:To:Cc:Content-Type; b=RMrIeMzQRQsO2R4Nwivfz4DVrRBejjQ8Ky+05EB27VnLu6gV2gCoW3Urn0WjLoW94MlEij9vZyFG5sMUa+8aYXmsm2p6znriSDGBcEFEbbhtqh6QgeJhLv3nC/l/Q3OOU6FoL64qI8xTjBPDNWRjajNohcTDHxf+rBvEr0cjLZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URrTDOqs; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8250869d5d8so397948885a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757966112; x=1758570912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LrHpUBXq6LbkNxh4bGp0NBkouZcQAg01k90RPNhfloY=;
-        b=URrTDOqsZlnEx07R/uklzEm654OnofT6MxN5fYpSgrPXi71RR0Mgyp5e2oAaTOfBj+
-         Qflz01ocnq+fLRT7ZNJyI8C45GR4FtDbjhRfQvlrWpi/8PUwY+eSzYyZhUdUrps+O46X
-         bPq2ytbrtX/wY3jafv3I4B8E4LeIIJOLschV0TBH+7MO7n8Lx4J97+maw1Xa816Vzgh/
-         huErKJiBxKZVm+jejUQBEz80v++ccXsLQ2ClqkeG0asg9HbYzLlbIl7gtl8XaGONmXTA
-         sfWRzf3pCRu74zXq1P14Vk1MOhHCGR73FI+3Z1FAJSWB6Gm7be5u8PIf9jX46hLyV8Ru
-         JT9w==
+	s=arc-20240116; t=1757966252; c=relaxed/simple;
+	bh=VWgGilGF/rjd71gdgLN4FzRihvvihonjoWSLYGIKoDE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jTMnw7ZEq6kcRIqjl5/iJNcK7kGsw5e0TCD8Bms4vfpO8AwXR5dJGj9ctJQ/69glotRZKpM4VaWBPAVDCXm6irZSf6MHoH+qIwqgcf4ZEULfppC/Ox3ONgG7TGA+awm/otxh0x187y8617+nvgl815ur1/Y5gjDPipIOcDmm9QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42407cbc8d1so13443675ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:57:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757966112; x=1758570912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date
-         :mime-version:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LrHpUBXq6LbkNxh4bGp0NBkouZcQAg01k90RPNhfloY=;
-        b=m0Gkk17B6i7IJm78EusbRIwUJ1J+Si8s0t/O4hI9croHIUJDR8msCvirfOcbFvDK2h
-         ILszamrZQqpWWDfrgzTEC5TyQIrE9N15uziaWqqGm81XhJ6gvSd49aFUgrpkPVc8n4xL
-         qIJo+e5i3ajYOdpuVpWKoLHa/bm2+p36y/t4zbl7luimsDpZzKQeQAjkj0o43f39+LsC
-         GsdDtUhpviJbJrjYP8Z1Rc9N984t4XZGsHfhWuLEzoSnPD9P1MQ46bJwroNdR9UEDo0C
-         /mWszJHCBbUSmfKAyenAf1M5yOT3lIuMHXODPsElD0iauGnjuZ059uDxIQT/Z9bPmlF1
-         2haA==
-X-Gm-Message-State: AOJu0YzW7C+cQ+CVGIRmZT/PXKEOGInYvQJ2wUAx90A7gyXBi5FV4pDf
-	/m3a+L4d4DLi9FHDX+ypCck010q8eO8oIVyqRWu2QpUK9YAB6g2zzIxsUjmQFVjqTxT2hnNAysH
-	Za6X1Mo5+8XqJUeow+kEqBw5A5HG6iTtkVQ==
-X-Gm-Gg: ASbGncsmOmqqBK6joWXfwZcq+Y3FA74eGxOgS9xCXyUBFxG38z1XRIdJyyEpJjWWXI0
-	+8LG/XSwDHPpf7Ro1FtzlNKb8cI4vbYAtqIa2UbES9gfv1ZmucBZCWeHZEj4Bo7yBESdS5zVvMp
-	CFgw8ZX38dPimz/lQLyy7IhMaY6S+qOLRdGpd17vcU2AXgEHXbO5nRW/7F5tYd498B44i9zzM4q
-	ru9AJ4=
-X-Google-Smtp-Source: AGHT+IFUzzuKQ8JsfJOXQyRYVUMVYOuuFNnM/IAsaG2fXI4NKfNZLDWdB0liX7BfPt053GTWuMSCzOJ5Fhqsf3ub5oA=
-X-Received: by 2002:a05:620a:178a:b0:82a:1dc8:2139 with SMTP id
- af79cd13be357-82a1dc82187mr450528285a.13.1757966111509; Mon, 15 Sep 2025
- 12:55:11 -0700 (PDT)
-Received: from 377903785069 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 15 Sep 2025 15:55:10 -0400
-Received: from 377903785069 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 15 Sep 2025 15:55:10 -0400
-From: Forest Crossman <cyrozap@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20230601; t=1757966250; x=1758571050;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u7u677u+FRX2HTabBo3vsuCN2+Wdc3q65kRzXTtKfSg=;
+        b=SEQykq7hwkXsyURXMUcb9fkOHTTmuwkPpBBG0IU7DLCX/UPtVnXnr6EfrDXFUFtHH3
+         wITwJi6Oqb2E0SGB7kn7WCJTae4rZDlKc5sP+RyGAKymVHKUDVvdkzE5N7vpooKPwShz
+         a/9MgsanTHQUnMqe5sBD7fhZ/hbH4d8na5W52FcVH0CyIL9/7rKuQDJ7vTPj0ykv+WoK
+         oc6MyXktof/VMynR0ZpmINMHtnNd11+aBFJ9y7YirZMss2mOvbW0eMAxqZAF5PbaKkCF
+         D/cSLJvM4ePKEdeTuzrWE31yr/FuYfGHbv+5Wuw6rp5H0UXK3uhS7L8C4GUSJCfvV0N9
+         +Xhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPS8eHSzvT0v89GvJMNjiyaER8MNFFkOxGThrlwWtSg9m2c5rd+Ow4slQTtamhris87FegBiQiNnzyQl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR8J5P/fpA7bnyRhxnPzBJ2ABx6i2YXnPiEg7NRl9R5AByiAiZ
+	oZ77wv+GakR+3AMDYaaDddxEYtzypE+DqbtqO9m5MgFRr45VDM8nFhJqhHk61pOqwLhABDvGPUD
+	SdPNfRvExETHtR9Lyyo/h4ZQp5FBiYb0d6EbehG7qP9TXQvDJIjCffZoVSHE=
+X-Google-Smtp-Source: AGHT+IEfW6NwqGU1Snh4ZVpBc4AtlgMUTmqs/A7vV7cjMiciIcZxMmgNB6nJ/Y1zq86wHuMMLHk0dkHwGb1E20or0kvVnM1b8i6g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 15 Sep 2025 15:55:10 -0400
-X-Gm-Features: Ac12FXzjEDjGuN-06MEOsUYrs9iJmmp3HVtQ3bq0H83JzQKrw5fDVigzNACASBA
-Message-ID: <CAO3ALPxU5RzcoueC454L=WZ1qGMfAcnxm+T+p+9D8O9mcrUbCQ@mail.gmail.com>
-Subject: [PATCH] usb: mon: Increase BUFF_MAX to 64 MiB to support multi-MB URBs
-To: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:19cf:b0:412:fa25:dd54 with SMTP id
+ e9e14a558f8ab-4209e36cf49mr163685275ab.14.1757966249805; Mon, 15 Sep 2025
+ 12:57:29 -0700 (PDT)
+Date: Mon, 15 Sep 2025 12:57:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c86fa9.050a0220.2ff435.03ac.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in add_timer
+From: syzbot <syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-The usbmon binary interface currently truncates captures of large
-transfers from higher-speed USB devices. Because a single event capture
-is limited to one-fifth of the total buffer size, the current maximum
-size of a captured URB is around 240 KiB. This is insufficient when
-capturing traffic from modern devices that use transfers of several
-hundred kilobytes or more, as truncated URBs can make it impossible for
-user-space USB analysis tools like Wireshark to properly defragment and
-reassemble higher-level protocol packets in the captured data.
+Hello,
 
-The root cause of this issue is the 1200 KiB BUFF_MAX limit, which has
-not been changed since the binary interface was introduced in 2006.
+syzbot found the following issue on:
 
-To resolve this issue, this patch increases BUFF_MAX to 64 MiB. The
-original comment for BUFF_MAX based the limit's calculation on a
-saturated 480 Mbit/s bus. Applying the same logic to a modern USB 3.2
-Gen 2=C3=972 20 Gbit/s bus (~2500 MB/s over a 20ms window) indicates the
-buffer should be at least 50 MB. The new limit of 64 MiB covers that,
-plus a little extra for any overhead.
+HEAD commit:    63a796558bc2 Revert "net: usb: asix: ax88772: drop phylink..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=11906b12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c302bcfb26a48af
+dashboard link: https://syzkaller.appspot.com/bug?extid=07b635b9c111c566af8b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-With this change, both users and developers should now be able to debug
-and reverse engineer modern USB devices even when running unmodified
-distro kernels.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Please note that this change does not affect the default buffer size. A
-larger buffer is only allocated when a user explicitly requests it via
-the MON_IOCT_RING_SIZE ioctl, so the change to the maximum buffer size
-should not unduly increase memory usage for users that don't
-deliberately request a larger buffer.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2ee11780421b/disk-63a79655.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ea93cc1dbd6d/vmlinux-63a79655.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1ca443049a6a/bzImage-63a79655.xz
 
-Fixes: 6f23ee1fefdc ("USB: add binary API to usbmon")
-Link: https://lore.kernel.org/CAO3ALPzdUkmMr0YMrODLeDSLZqNCkWcAP8NumuPHLjNJ=
-8wC1kQ@mail.gmail.com
-Signed-off-by: Forest Crossman <cyrozap@gmail.com>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+07b635b9c111c566af8b@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6273 at kernel/time/timer.c:1247 add_timer+0x73/0x90 kernel/time/timer.c:1247
+Modules linked in:
+CPU: 1 UID: 0 PID: 6273 Comm: syz.4.86 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:add_timer+0x73/0x90 kernel/time/timer.c:1247
+Code: e8 03 42 80 3c 38 00 74 05 e8 69 1d 76 00 48 8b 73 10 48 89 df ba 04 00 00 00 5b 41 5e 41 5f e9 d3 ef ff ff e8 ee ab 12 00 90 <0f> 0b 90 5b 41 5e 41 5f c3 cc cc cc cc cc 66 66 66 66 66 66 2e 0f
+RSP: 0018:ffffc9000b847980 EFLAGS: 00010293
+RAX: ffffffff81ad0262 RBX: ffffffff8f742880 RCX: ffff88802e6e9e00
+RDX: 0000000000000000 RSI: 00000000000061d8 RDI: ffffffff8f742880
+RBP: ffffc9000b847ac8 R08: ffff88801b68f8fb R09: 1ffff110036d1f1f
+R10: dffffc0000000000 R11: ffffed10036d1f20 R12: 00000000000061d8
+R13: ffff88807e627000 R14: ffffffff8f742888 R15: dffffc0000000000
+FS:  00007fdd1c7e46c0(0000) GS:ffff888125d18000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056332c8bc2b8 CR3: 0000000028848000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ mpc_timer_refresh net/atm/mpc.c:1419 [inline]
+ atm_mpoa_mpoad_attach net/atm/mpc.c:802 [inline]
+ atm_mpoa_ioctl+0x2c3/0xca0 net/atm/mpc.c:1460
+ do_vcc_ioctl+0x36d/0x9e0 net/atm/ioctl.c:159
+ svc_ioctl+0x1ee/0x770 net/atm/svc.c:611
+ sock_do_ioctl+0xdc/0x300 net/socket.c:1238
+ sock_ioctl+0x576/0x790 net/socket.c:1359
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdd1b98eba9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fdd1c7e4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fdd1bbd5fa0 RCX: 00007fdd1b98eba9
+RDX: 0000000000000000 RSI: 00000000000061d8 RDI: 0000000000000004
+RBP: 00007fdd1c7e4090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fdd1bbd6038 R14: 00007fdd1bbd5fa0 R15: 00007fffd3ee7758
+ </TASK>
+
+
 ---
- drivers/usb/mon/mon_bin.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/usb/mon/mon_bin.c b/drivers/usb/mon/mon_bin.c
-index c93b43f5bc46..e713fc5964b1 100644
---- a/drivers/usb/mon/mon_bin.c
-+++ b/drivers/usb/mon/mon_bin.c
-@@ -68,18 +68,20 @@
-  * The magic limit was calculated so that it allows the monitoring
-  * application to pick data once in two ticks. This way, another applicati=
-on,
-  * which presumably drives the bus, gets to hog CPU, yet we collect our da=
-ta.
-- * If HZ is 100, a 480 mbit/s bus drives 614 KB every jiffy. USB has an
-- * enormous overhead built into the bus protocol, so we need about 1000 KB=
-.
-+ *
-+ * Originally, for a 480 Mbit/s bus this required a buffer of about 1 MB. =
-For
-+ * modern 20 Gbps buses, this value increases to over 50 MB. The maximum
-+ * buffer size is set to 64 MiB to accommodate this.
-  *
-  * This is still too much for most cases, where we just snoop a few
-  * descriptor fetches for enumeration. So, the default is a "reasonable"
-- * amount for systems with HZ=3D250 and incomplete bus saturation.
-+ * amount for typical, low-throughput use cases.
-  *
-  * XXX What about multi-megabyte URBs which take minutes to transfer?
-  */
--#define BUFF_MAX  CHUNK_ALIGN(1200*1024)
--#define BUFF_DFL   CHUNK_ALIGN(300*1024)
--#define BUFF_MIN     CHUNK_ALIGN(8*1024)
-+#define BUFF_MAX  CHUNK_ALIGN(64*1024*1024)
-+#define BUFF_DFL      CHUNK_ALIGN(300*1024)
-+#define BUFF_MIN        CHUNK_ALIGN(8*1024)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
- /*
-  * The per-event API header (2 per URB).
---=20
-2.50.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
