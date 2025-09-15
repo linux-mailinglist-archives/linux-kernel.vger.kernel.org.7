@@ -1,222 +1,439 @@
-Return-Path: <linux-kernel+bounces-817466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98ABB5828C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:49:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B14B58290
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6345A3BDFC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:49:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ABEC170350
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AED121423C;
-	Mon, 15 Sep 2025 16:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE7D258CED;
+	Mon, 15 Sep 2025 16:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjC8jrRj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="lKXRkmUp";
+	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="Sghgowdr"
+Received: from mx0b-003cac01.pphosted.com (mx0b-003cac01.pphosted.com [205.220.173.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A276C1B0F23
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757954982; cv=none; b=pSNJvD1LorE6qV+Dv71vylSGoxh4x3IiKCKN7I3tBQYCwTCEnwXeo7dTi3WwRMZKcap3GKoJaEXr6AMQoaHyFTBuSCXWxDJUACDYxWiM11PMgSzuwlBQSPIfr4+fv4zL5XdAX+EAzpdfMevBamEbLu+gFWs+2YQ7KG1QYRlXi/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757954982; c=relaxed/simple;
-	bh=15jYDy5tTR6Fclkhhxv3icxIsUyCJvZ5gCySly5JyFw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aZlI3wRm1i9z6NwVQKLonksipw45bZ8TN1sTvaEsbwZLVFO6wbFo+BghVqKv/ROmPmLf1iiaNNGgOYG/1K2F3fCytzsmi1H4ZfcFQ8AJv39554wqkbio1HNA+meWBm9SBQlKQE1zmDMl6MN5wTQgcRlEGZIFVw3XRLkOdCfdGpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjC8jrRj; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757954981; x=1789490981;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=15jYDy5tTR6Fclkhhxv3icxIsUyCJvZ5gCySly5JyFw=;
-  b=OjC8jrRjQIe1s2ElrI2pOwoLcJjnRkjIEutbUKf2LAlOm6IqLSeAvkE9
-   zE1bwMV1xpm61FuanhgDNBMMSVJqGAAX0Iqu/yC4l3XvhB71jEvX4YMs1
-   ujxp6CgggLbE1HSU7+Zf8t26CYEVHSCKd06QNRBmrkaGydAOzN5iGUgRs
-   WKcTH9eNQyobvXfGK/USzrC5MVJPA/pBR8wJh9SCuOJxZd2yZzhnvDScV
-   8dhaHeP1WqwbnqX2QFifAW9xU7VvMUwe9F6BuNfGPPBCg6utaFNlv0S47
-   TaVNkUdW6csWN0w0iidCiCgafGTadRTO5xdVGBcflnIQqwTk2YhiKPIrh
-   w==;
-X-CSE-ConnectionGUID: CuldZrSpTBqgSXofRkD8NQ==
-X-CSE-MsgGUID: Upg/QAU0TJq9rlEFYJfnzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70901188"
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="70901188"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:49:40 -0700
-X-CSE-ConnectionGUID: D5c0t1zsRQ+HIhg14hRZgQ==
-X-CSE-MsgGUID: Q+4Dk3kzQBqPW6/9rG/NUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="174768940"
-Received: from unknown (HELO [10.54.74.4]) ([10.54.74.4])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:49:40 -0700
-Message-ID: <131ea54e7eb41d9d63d7aa4304aadf7719990892.camel@linux.intel.com>
-Subject: Re: [PATCH v3 1/2] sched: Create architecture specific sched domain
- distances
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
- <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann	
- <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman	
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Tim Chen	
- <tim.c.chen@intel.com>, Vincent Guittot <vincent.guittot@linaro.org>, Libo
- Chen	 <libo.chen@oracle.com>, Abel Wu <wuyun.abel@bytedance.com>, Len Brown
-	 <len.brown@intel.com>, linux-kernel@vger.kernel.org, K Prateek Nayak	
- <kprateek.nayak@amd.com>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
- Zhao Liu <zhao1.liu@intel.com>, Vinicius Costa Gomes
- <vinicius.gomes@intel.com>, Arjan Van De Ven	 <arjan.van.de.ven@intel.com>
-Date: Mon, 15 Sep 2025 09:49:39 -0700
-In-Reply-To: <857e86a9-9007-4942-b005-1574c919ad6b@intel.com>
-References: <cover.1757614784.git.tim.c.chen@linux.intel.com>
-	 <1aa0ae94e95c45c8f3353f12e6494907df339632.1757614784.git.tim.c.chen@linux.intel.com>
-	 <857e86a9-9007-4942-b005-1574c919ad6b@intel.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2492B661
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.173.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757955109; cv=fail; b=XowKMnTr9vhlp/aU8e9n28lznpbqWfPrMa4CQToJWrk8re0Heig295+wASNq+bp/StZG3t6CtHFLQ9PMS0gwC6XkJHvzSOA1ERweEJ7cY+q3eNZ1iUR5AlbnTqy5uiLXqvu05NCBd0MCDJIyoO5aRhS8HVW+dS3sjBiD2RwZfjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757955109; c=relaxed/simple;
+	bh=eIShoAHr4QtFL3mO26+HTMn7M6lcl3Zs7cWWyO/Nj0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LTkbDFuU1mdW55Hjn53H67KmDhrdokhi8tX3sE4sNapArzMcsSGjytPnxwJkhpznELrw6USw3OiLqPUsGa5Oz+esfHUdulHorNAgoOoQ/O5PfuA+QVOE12QOXr24aUkN9oRvTynRsAb5ChuJJZ15VWpsfSdqWLrOyKI/MI+nj0s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=lKXRkmUp; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=Sghgowdr; arc=fail smtp.client-ip=205.220.173.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
+Received: from pps.filterd (m0187215.ppops.net [127.0.0.1])
+	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F5a67h012202;
+	Mon, 15 Sep 2025 09:51:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=ppfeb2020; bh=
+	tnHEy14BRKlrIC9t/sW43scxj0gGctbTynT/G2wwXmg=; b=lKXRkmUpsdYqorVI
+	HCA490nj1ZFQDHhd6FI79VloJQbM330fNoe4CeRj8DxOA9wUKJXgMFOpK1l7WKVZ
+	I/cilUe79jDz5vaU+StQglSaf8WbTdCfWZn16bQ+bD1RqpNsd+ccFtlob9tMRy6U
+	yPWeHb6i2mW6zUGfjX9JHqCuLz1lteweKhwsff/GDpfWk7ZDKKXi1M5uk/ixwfZ4
+	y0xNdlUQH9XJqPWwb/btlkER3ixXW1QZkQ0qJxjxexChNES/BF5TmcbLziAPJ1cj
+	F6z9Dt+FVSMMtTX1RSBmmNMe4sTe/oZtmUKdKoXFKz6Q6mRjN1qjq8uilqZD16KB
+	1UQFeg==
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
+	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 4957wmuer4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Sep 2025 09:51:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GRqHMO32w+RX+92wbOQ8e3IPm9ydDeUSA2aLmllAr4r533eixABwXsumY/rm+hVUjMpXz8GNca3lWgvU6k0o6qEWiq/pf3WW1tLZsk7Z28M5KkMqP9r9lCN0V1r1DqntG5wXlZcWaNMKtqRgX0CTKGwqe3uasGAWuUBVOQrdYJUWqUNdPNyJiUd5lAYLdV1XBwNQYiPH5wKY8fa6y4w/EJYURqBqTu1JiPs6U64YUC9NDpMGkrlRtcT0uFFOAjvdDxuYzGEkHZtTig978u+5lPj499zOFmFAXKnTPdxQKEGp16boSM1sAHZGA/3HEmHfZkF9nyrLRSJ5hbXIAgZu+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tnHEy14BRKlrIC9t/sW43scxj0gGctbTynT/G2wwXmg=;
+ b=BSTUDdM+TWewrviB/KP5Ewl/5Kz1UvVuyedgyJv1XYEDfxub4G1GilYU+Nw/Y/loDedqD1R8HxcdtwNtNfY6eD4xE2GjElEGXZX6VqzFjvWSoKBvzyuA0JLkcYY43xr6NJVWv1v8Rxt9DleQMZzZtIJcvpMe/zgSJOvwYRquBznl5wwtbl3gphv5yzZK8t0KPAXWZyaHVzPbtln0Ya+ZZlaHAGS/rZKGKnu8aEjWcEW7dvEerrfP3YMAYVU0IVV+zvWjsewBgxc7vJ9C7dYJ8aQjUoab7oQtnL1NmO+oVFB0YXazWBUVXJkrFH7/nokMWAZQ5kGkFY3G/x/iE+Cc3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
+ dkim=pass header.d=keysight.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tnHEy14BRKlrIC9t/sW43scxj0gGctbTynT/G2wwXmg=;
+ b=Sghgowdrq7MSnPGfKWRjBGu42KGCNVgTF5iqa113S+/N5Hq5r09GTNRTKeBDzaIpn6kJ1BTHADZGY0zfsNmvBCliJ0UCBe5WaawXHBjHuCAIKiuQw9HpfjJ5gVhl1g9zKgT4MixF3DLrpqkW/lbX60yMzKpVmcfzLwSEeqeP650=
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
+ by BL3PR17MB6089.namprd17.prod.outlook.com (2603:10b6:208:3b8::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Mon, 15 Sep
+ 2025 16:51:06 +0000
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 16:51:06 +0000
+From: John Ripple <john.ripple@keysight.com>
+To: john.ripple@keysight.com
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+        andrzej.hajda@intel.com, blake.vermeer@keysight.com,
+        dianders@chromium.org, dri-devel@lists.freedesktop.org,
+        jernej.skrabec@gmail.com, jonas@kwiboo.se,
+        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+        matt_laubhan@keysight.com, mripard@kernel.org,
+        neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
+        tzimmermann@suse.de
+Subject: [PATCH V6] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode  with HPD
+Date: Mon, 15 Sep 2025 10:50:55 -0600
+Message-ID: <20250915165055.2366020-1-john.ripple@keysight.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250912210805.2910936-1-john.ripple@keysight.com>
+References: <20250912210805.2910936-1-john.ripple@keysight.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY3P220CA0012.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:930:fb::12) To PH7PR17MB6130.namprd17.prod.outlook.com
+ (2603:10b6:510:1f5::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|BL3PR17MB6089:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2325d7fa-defe-4e78-e57c-08ddf478105a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F05gH5oe8Fjv8s5f1aLaxO/ikXy/1jod4CIzWMJjgCaMQMNGMf0UG/Qig4cD?=
+ =?us-ascii?Q?MyGtgqngdUQ3cMtsKV59bg357ZbbyfW6iCJjFAGlFV5tvTBW7c0LQLVMYBHI?=
+ =?us-ascii?Q?vv8njYyYvh7YIVq3FEm4Ckv+TQvhn4iiUlsiLLhDzNP4CTbuLa+GBNMFYN/U?=
+ =?us-ascii?Q?jBdEiiK2I5xMzUquQX5gEcYJDqAy7EFqNq+zgRD+sZ2TXgBp3MEqJYImn6VD?=
+ =?us-ascii?Q?t2vTFR4CAS0WemSVYQ5vfuIKYHYP0XT14X7KmgGGqiOdIYOqfTe8wIicQizd?=
+ =?us-ascii?Q?id9zl573wqIv2BWZ8oG6Zn9aO/WKOCzT8+puYXQ0pKRyVTdN7fZG/cCaq8H5?=
+ =?us-ascii?Q?AUNPTLYqEvbPP1qVyZqhZRaXCia0qVn+teWCfgXzio/Z7Yx1Td1BIBdPVRHR?=
+ =?us-ascii?Q?uyJRvJyGruHjsPF/wZmm5pyMhNKhRIfeaSslSpKOeCTKVkO+21l1qqWs55NF?=
+ =?us-ascii?Q?DUoh6VKEenMbSlBXbM/TNvGjy4Cxq4QyGpuJLxpsEEmkARMAmSbcKMfmHQdI?=
+ =?us-ascii?Q?Snqjkr+zplYSFG7UbOUMndSTk8ROuu0WkS+KIeA5p53j8SEkv+W6O/d2qSH3?=
+ =?us-ascii?Q?BZWwUlv9SK0w+VUv0XXn/DCUD6kPFnCFl4fGhTsLJXTFrm92So1Lyr1yEsF1?=
+ =?us-ascii?Q?mmft/kgq5JCwgJ6pO/xcmYo79onOPwsn7MOYS2pMdMj4zn6tF/yICX9qd41e?=
+ =?us-ascii?Q?LM8wwgNKMgZR4UAy9AuV+hjU4iZ3PKfPfww4Fs3udE6Jy3CTQZ3c9iyXH1m0?=
+ =?us-ascii?Q?dq8hDHWVpwq4ie/xjxkdCnAOrOKgBGfsUSoQEvM4lVyxhKVNgdaiymj3wEWP?=
+ =?us-ascii?Q?OYKpTTrFSZxErrEZilaG0o6eNPqKxAZsHl5ic2d938fJLTPRTyvW+d/lFE2e?=
+ =?us-ascii?Q?+1JKWQ5QCJa5mChqZbCfqx3SFpOzp2TEix+3hUSlgqZKYVBVLfmKoELAwl85?=
+ =?us-ascii?Q?0qUri8mNxGONrAJLQXX7TlWXNmeqDeYuFxbvTB3RhGEqBAw6l90MaAoQb4UT?=
+ =?us-ascii?Q?2xck+vH0Yj/jftGrExyAeGsDCeAQCi2VUgmjKLBLzqKwDJUcpRFQe+knjcmh?=
+ =?us-ascii?Q?B5oxclNysRYRW3cDv8zF6P/OSEIoWtT4/Pfc94GMK0q6O8pJVWbRiqxVVWSh?=
+ =?us-ascii?Q?QbE4STbfdNBiOlfKK0lROLx+9/VBYFyNFPFcMmTSA/kzvn4l8yFoyoEG/rU6?=
+ =?us-ascii?Q?6dAr+oyXJIb4IM8PMVlnG+T9zvFEV/aeRKAnCZd/mCgo8J7Q+wRk84iiQOGD?=
+ =?us-ascii?Q?WbgPgOVuI10DwBUav7BLFGco/zMWeE8OnO4ObMlrAjXetLOrjxPPJwZ37tgj?=
+ =?us-ascii?Q?qC4+K1gbJJvZbu7cWgaSlmRVYUL1m9ED5vdbHFLef3ujksFKkhFsVEvGNilY?=
+ =?us-ascii?Q?f9e1Cl2mTcReCFWpLpbdFJxhggs0NekuZVXVqnAP7k7yQa/2JNfu4zW9o/Qs?=
+ =?us-ascii?Q?5z0QYPRPJpc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kHN4aA4XTxdjCmp39osKUn7dp1tXgyxZtItGWnTMASl3HV4IyTcUYK83IFeL?=
+ =?us-ascii?Q?JWWp65lg/0K2JZ5OzKl3dV2TvogEhnsYr7TzVHBsWBqdB8GviCzreq9KrP89?=
+ =?us-ascii?Q?S/ugsputgKSLUmH8X1pdQDN5hZ/qY3DuoEcLQ61AM0arlt0t2DuMCpqpEqNX?=
+ =?us-ascii?Q?pvCOXj1DFED8eI9moHSv+iCCR3dJbMDvdCv9NuZJza1E3dpIUOXjjNuGBtmC?=
+ =?us-ascii?Q?I5/9IkVLnE6x5GF5Z0cDg8rPJlDQqcRpP77qTU0dgHopEq3HLQklOVHYfSLb?=
+ =?us-ascii?Q?2bNCA2Lu5q1NIN6neRVw9BG1mnyFf6D5hotYZMMSNwm5K72O7OC995AEG0G3?=
+ =?us-ascii?Q?Ddf3dC3Ksh0c8PIGuh9LUH3Ib1zeG5a1i1PtEdIbAHOqlEL4WdPvH1siWQHa?=
+ =?us-ascii?Q?ro85krN4JU4G1lzTk4TdIMjfYMTstQw9wWELFzJPSPIzpVlKkcAgcp61x8zw?=
+ =?us-ascii?Q?iax6AuPqn0mbGhCAQMttW7E8UPphuB0j0liK1WOHmSirlpaj29FIJ+8pxD+q?=
+ =?us-ascii?Q?H/C0EprA43hHgIK8dIHi2jjhhyf8z3fqKujawfXwMZzyJZbFo2Gci1Vq/fxD?=
+ =?us-ascii?Q?HuBMlV8JQkmEYNO6aqprln3ssDw/V9avVLH2sTBhDy0+p3k7Ml5lEw4/aArc?=
+ =?us-ascii?Q?jTPGtx4VhRdUpUeyPnOHu9nSv97S0peuv7dlOs/Re1lc+F2ILkapgcUi9SEQ?=
+ =?us-ascii?Q?e/SplAKgizQ66FKuUbNRh8OOYIglEEaGWaVWsDUtInDlFDSnPZr1rKNZGT6A?=
+ =?us-ascii?Q?Eqkc/ngwtt4zPDIq/r78nZEXVWOps6DBRqgIDqxQlQGuURRpxCDVkdgS5urV?=
+ =?us-ascii?Q?nUiKncoIxhHeOiDmFkPKk+iGUERNMB59OzuEBUtr+70pWFKrMpGmZ8uPeBKF?=
+ =?us-ascii?Q?rpJzikYHvRc+/pwXop0TWcLMeKwrNzI7n/W8y3aucIN6kZ9elXBJW6/4Ng80?=
+ =?us-ascii?Q?ENEXl5LGOor8yONr3ICuT3BlfhGGrrgmKQVWrtA+hKulInIk0gUW0dCnt6+Y?=
+ =?us-ascii?Q?+ysEKx4FiKlgsjV0fhF9EuG5WyWpYlF1hO9Kn17QhEq6u3RBhSTK+09IaHVv?=
+ =?us-ascii?Q?H+ChVVzUiSKAS6sGL7NcBlru6YvaPGf+OZ3b+rcZ73f2Oni2M/5SHB9aaLyC?=
+ =?us-ascii?Q?Au/n68wTsvkm3okh5ezuwoWepbQndpjhUhoiJRwG/SfdRF8ta6rL0WYrxBrL?=
+ =?us-ascii?Q?3+2/LTRiXm4WkmP9mXsUG/+245JMoeHBVxNCv30MYONFjBbjXYdqsrKo1L9i?=
+ =?us-ascii?Q?C6LUvwBgXgsVAiO+ZfpMVyO8iluIAd6I8qRH2mqHnOXwoRpYTLsbRRE/xDWc?=
+ =?us-ascii?Q?Qu2QSAgGUoj0LQ9SbK7kAIdhG+BdnJaJioLdGPSz/Q/wYXAYOcbAR8F7f47M?=
+ =?us-ascii?Q?M2eh2at2/e8BLZrTiyQU2eVkLicEWHP8V7zA8BjlpR4Q8QA6zBmMzY691Igh?=
+ =?us-ascii?Q?JH4qcz7wA/BufJM9QwsZgLiuVOW8I1jrkbuCYoEQbO1gyQQSemQWGSEuZFfS?=
+ =?us-ascii?Q?S25WLWmCcdLVD36iyygM5jQcJ2sqKKY1O2FSQPjKXuXKt9Tk+VNp3zjCJoV/?=
+ =?us-ascii?Q?k06Bwk9HYtpAxCmX/Rwu8pApfolTH1dj93WPl7XOHmWUgDll9Mo9aIqUEkBK?=
+ =?us-ascii?Q?Qg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	m97CTUixnEu3F1g5waik5MLTZqGg152N/P0Af1F9/1hk0VEKBrRgfeoh/3VJrnmPtgczxixoVPRhZeRWAc8EnoQBy8yWgTyEs2iJgZ2QPwonEd0/DN+Lheij6TGb5pjK2EzsP1cSGi/fzWuUendvqPK8bOwY9x+IjiaceF12OSchpdax9SaoFkAbnSXFKDDbBD6rW5Q+G31NXw+EktSlCxKjAk80TmtwTjLIXteyJzSiSLPOqlasgLBq6c+8P7/KXYjmuWOuLf45+7tkLrfl6IbnHqaRD9lr1/YqoR7PJHTM1IB/UUk6Udja1XaI0TqloPvCkPb0trTxxXx44mPFNJmn8G10usfsVFCCWH2dSyamtdhk8Vm2c699jInPVdFnf/CgmX86FHmzqS30LUmZfFt4hXKNkXN64Q15lUMEf9PotSeCnwz1kJvbyvithMhcFm2jdH0bVTmfz45gi8KsaJDafdV3JvKQazPySbYUoq714CzxvSDc+KewYOVK1kPtcGP7D1CYcGb1sK0Q51bMmga+92g146kdykOCfPWcoXRC+KzctAMvLyIzEGkDy9PLs5h12Vgj9JKrsd6PuvBxMT1w5V1IExkv1rCfdjd2egoCD4FgWNds4ddSa6AgyOEQ
+X-OriginatorOrg: keysight.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2325d7fa-defe-4e78-e57c-08ddf478105a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 16:51:06.6873
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ImEvEz0goQNk2QoxcaI27f5LMpANeuk+fIHfx+c2dElxnWUGF1e2y91ZcxYwwEnxSqkZsnZcmaglnG7UKteXbpYrbCMh1IDe5yzaplziqBg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR17MB6089
+X-Proofpoint-ORIG-GUID: kvCIUpmb_Q3vdUNKA9Q0MzVE3soRCZ5l
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDExMCBTYWx0ZWRfX2Fm+cDIXNGwj
+ EyfKTPkLGtjFaPLg1SB3EYue8cF2ToSqAOWk/41nhU6qiCzdkAzVx6ukGJuvHxz9FaDeN34nddZ
+ 6CPPJFmKqUJtJ9zyq2C98eclW6dJ6zID5zFekubLY/UedkWWTqEM1EhNXF2lOE3d0Mz1dEscROH
+ 1CxuVrhyelQUO42wiq2GsvZrw8cYZ5sq/+37mX1MyWc7dZwljHrpHLAlw9eOfKA0+2GJ/kCFv0g
+ 98FKzhv4YKeTkUMXFD4bBsz1rMxvwdTYGwXRBUXJyMbyCYUMQo2Tni1nKlJOEjV/hcUAq54mtUl
+ iIc5/uklD55qJEC/VF5jJtuBMx2vQyjuuPR/zU439OJzTYUjQgkXx4eMR8REzmsE3k8SpTkmf32
+ YE6Q8WFQ
+X-Proofpoint-GUID: kvCIUpmb_Q3vdUNKA9Q0MzVE3soRCZ5l
+X-Authority-Analysis: v=2.4 cv=e/gGSbp/ c=1 sm=1 tr=0 ts=68c843ff cx=c_pps
+ a=LKjW2ISLMUJKWi9uHAe9VQ==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10 a=vu2TTH8h0NUA:10 a=F6MVbVVLAAAA:8
+ a=_28Ee_KPWOKEt6bo-YsA:9 a=6mxfPxaA-CAxv1z-Kq-J:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_06,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 adultscore=0 spamscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509130110
 
-On Fri, 2025-09-12 at 13:24 +0800, Chen, Yu C wrote:
-> On 9/12/2025 2:30 AM, Tim Chen wrote:
-> > Allow architecture specific sched domain NUMA distances that can be
-> > modified from NUMA node distances for the purpose of building NUMA
-> > sched domains.
-> >=20
-> > The actual NUMA distances are kept separately.  This allows for NUMA
-> > domain levels modification when building sched domains for specific
-> > architectures.
-> >=20
-> > Consolidate the recording of unique NUMA distances in an array to
-> > sched_record_numa_dist() so the function can be reused to record NUMA
-> > distances when the NUMA distance metric is changed.
-> >=20
-> > No functional change if there's no arch specific NUMA distances
-> > are being defined.
-> >=20
->=20
-> [snip]
->=20
-> > +
-> > +void sched_init_numa(int offline_node)
-> > +{
-> > +	struct sched_domain_topology_level *tl;
-> > +	int nr_levels, nr_node_levels;
-> > +	int i, j;
-> > +	int *distances, *domain_distances;
-> > +	struct cpumask ***masks;
-> > +
-> > +	if (sched_record_numa_dist(offline_node, numa_node_dist, &distances,
-> > +				   &nr_node_levels))
-> > +		return;
-> > +
-> > +	WRITE_ONCE(sched_avg_remote_numa_distance,
-> > +		   avg_remote_numa_distance(offline_node));
-> > +
-> > +	if (sched_record_numa_dist(offline_node,
-> > +				   arch_sched_node_distance, &domain_distances,
-> > +				   &nr_levels)) {
-> > +		kfree(distances);
-> > +		return;
-> > +	}
-> > +	rcu_assign_pointer(sched_numa_node_distance, distances);
-> > +	WRITE_ONCE(sched_max_numa_distance, distances[nr_node_levels - 1]);
->=20
-> [snip]
->=20
-> > @@ -2022,7 +2097,6 @@ void sched_init_numa(int offline_node)
-> >   	sched_domain_topology =3D tl;
-> >  =20
-> >   	sched_domains_numa_levels =3D nr_levels;
-> > -	WRITE_ONCE(sched_max_numa_distance, sched_domains_numa_distance[nr_le=
-vels - 1]);
-> >  =20
->=20
-> Before this patch, sched_max_numa_distance is assigned a valid
-> value at the end of sched_init_numa(), after sched_domains_numa_masks
->   and sched_domain_topology_level are successfully created or appended
-> , the kzalloc() call should succeed.
->=20
-> Now we assign sched_max_numa_distance earlier, without considering
-> the status of NUMA sched domains. I think this is intended, because
->   sched domains are only for generic load balancing, while
->   sched_max_numa_distance is for NUMA load balancing; in theory, they
-> use different metrics in their strategies. Thus, this change should
-> not cause any issues.
+Add support for DisplayPort to the bridge, which entails the following:
+- Get and use an interrupt for HPD;
+- Properly clear all status bits in the interrupt handler;
 
-Yes, now sched_max_numa_distance is used in conjunction with
-sched_numa_node_distance.  So putting them together is okay.
+Signed-off-by: John Ripple <john.ripple@keysight.com>
+---
+V1 -> V2: Cleaned up coding style and addressed review comments
+V2 -> V3:
+- Removed unused HPD IRQs
+- Added mutex around HPD enable/disable and IRQ handler.
+- Cleaned up error handling and variable declarations
+- Only enable IRQs if the i2c client has an IRQ
+- Moved IRQ_EN to ti_sn65dsi86_resume()
+- Created ti_sn65dsi86_read_u8() helper function
+V3 -> V4:
+- Formatting
+- Allow device tree to set interrupt type.
+- Use hpd_mutex over less code.
+V4 -> V5:
+- Formatting.
+- Symmetric mutex use in hpd enable/disable functions.
+- Only set and clear specific bits for IRQ enable and disable.
+- Better error handling in interrupt.
+V5 -> V6:
+- Formatting.
+- Convert pr_ to dev_ for printing.
+- Add error check to regmap_clear_bits() call.
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 112 ++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
->=20
->  From my understanding,
->=20
-> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
-
-Thanks.
-
-Tim
-
->=20
-> thanks,
-> Chenyu
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index ae0d08e5e960..3d161148801a 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -106,10 +106,21 @@
+ #define SN_PWM_EN_INV_REG			0xA5
+ #define  SN_PWM_INV_MASK			BIT(0)
+ #define  SN_PWM_EN_MASK				BIT(1)
++
++#define SN_IRQ_EN_REG				0xE0
++#define  IRQ_EN					BIT(0)
++
++#define SN_IRQ_EVENTS_EN_REG			0xE6
++#define  HPD_INSERTION_EN			BIT(1)
++#define  HPD_REMOVAL_EN				BIT(2)
++
+ #define SN_AUX_CMD_STATUS_REG			0xF4
+ #define  AUX_IRQ_STATUS_AUX_RPLY_TOUT		BIT(3)
+ #define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
+ #define  AUX_IRQ_STATUS_NAT_I2C_FAIL		BIT(6)
++#define SN_IRQ_STATUS_REG			0xF5
++#define  HPD_REMOVAL_STATUS			BIT(2)
++#define  HPD_INSERTION_STATUS			BIT(1)
+ 
+ #define MIN_DSI_CLK_FREQ_MHZ	40
+ 
+@@ -152,7 +163,9 @@
+  * @ln_assign:    Value to program to the LN_ASSIGN register.
+  * @ln_polrs:     Value for the 4-bit LN_POLRS field of SN_ENH_FRAME_REG.
+  * @comms_enabled: If true then communication over the aux channel is enabled.
++ * @hpd_enabled:   If true then HPD events are enabled.
+  * @comms_mutex:   Protects modification of comms_enabled.
++ * @hpd_mutex:     Protects modification of hpd_enabled.
+  *
+  * @gchip:        If we expose our GPIOs, this is used.
+  * @gchip_output: A cache of whether we've set GPIOs to output.  This
+@@ -190,7 +203,9 @@ struct ti_sn65dsi86 {
+ 	u8				ln_assign;
+ 	u8				ln_polrs;
+ 	bool				comms_enabled;
++	bool				hpd_enabled;
+ 	struct mutex			comms_mutex;
++	struct mutex			hpd_mutex;
+ 
+ #if defined(CONFIG_OF_GPIO)
+ 	struct gpio_chip		gchip;
+@@ -221,6 +236,23 @@ static const struct regmap_config ti_sn65dsi86_regmap_config = {
+ 	.max_register = 0xFF,
+ };
+ 
++static int ti_sn65dsi86_read_u8(struct ti_sn65dsi86 *pdata, unsigned int reg,
++				u8 *val)
++{
++	int ret;
++	unsigned int reg_val;
++
++	ret = regmap_read(pdata->regmap, reg, &reg_val);
++	if (ret) {
++		dev_err(pdata->dev, "fail to read raw reg %#x: %d\n",
++			reg, ret);
++		return ret;
++	}
++	*val = (u8)reg_val;
++
++	return 0;
++}
++
+ static int __maybe_unused ti_sn65dsi86_read_u16(struct ti_sn65dsi86 *pdata,
+ 						unsigned int reg, u16 *val)
+ {
+@@ -379,6 +411,7 @@ static void ti_sn65dsi86_disable_comms(struct ti_sn65dsi86 *pdata)
+ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
+ {
+ 	struct ti_sn65dsi86 *pdata = dev_get_drvdata(dev);
++	const struct i2c_client *client = to_i2c_client(pdata->dev);
+ 	int ret;
+ 
+ 	ret = regulator_bulk_enable(SN_REGULATOR_SUPPLY_NUM, pdata->supplies);
+@@ -413,6 +446,13 @@ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
+ 	if (pdata->refclk)
+ 		ti_sn65dsi86_enable_comms(pdata, NULL);
+ 
++	if (client->irq) {
++		ret = regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN,
++					 IRQ_EN);
++		if (ret)
++			dev_err(pdata->dev, "Failed to enable IRQ events: %d\n", ret);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1211,6 +1251,8 @@ static void ti_sn65dsi86_debugfs_init(struct drm_bridge *bridge, struct dentry *
+ static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+ {
+ 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
++	const struct i2c_client *client = to_i2c_client(pdata->dev);
++	int ret;
+ 
+ 	/*
+ 	 * Device needs to be powered on before reading the HPD state
+@@ -1219,11 +1261,35 @@ static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+ 	 */
+ 
+ 	pm_runtime_get_sync(pdata->dev);
++
++	mutex_lock(&pdata->hpd_mutex);
++	pdata->hpd_enabled = true;
++	mutex_unlock(&pdata->hpd_mutex);
++
++	if (client->irq) {
++		ret = regmap_set_bits(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
++				      HPD_REMOVAL_EN | HPD_INSERTION_EN);
++		if (ret)
++			dev_err(pdata->dev, "Failed to enable HPD events: %d\n", ret);
++	}
+ }
+ 
+ static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
+ {
+ 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
++	const struct i2c_client *client = to_i2c_client(pdata->dev);
++	int ret;
++
++	if (client->irq) {
++		ret = regmap_clear_bits(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
++					HPD_REMOVAL_EN | HPD_INSERTION_EN);
++		if (ret)
++			dev_err(pdata->dev, "Failed to disable HPD events: %d\n", ret);
++	}
++
++	mutex_lock(&pdata->hpd_mutex);
++	pdata->hpd_enabled = false;
++	mutex_unlock(&pdata->hpd_mutex);
+ 
+ 	pm_runtime_put_autosuspend(pdata->dev);
+ }
+@@ -1309,6 +1375,41 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_sn65dsi86 *pdata)
+ 	return 0;
+ }
+ 
++static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
++{
++	struct ti_sn65dsi86 *pdata = private;
++	struct drm_device *dev = pdata->bridge.dev;
++	u8 status;
++	int ret;
++	bool hpd_event;
++
++	ret = ti_sn65dsi86_read_u8(pdata, SN_IRQ_STATUS_REG, &status);
++	if (ret) {
++		dev_err(pdata->dev, "Failed to read IRQ status: %d\n", ret);
++		return IRQ_NONE;
++	}
++
++	hpd_event = status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS);
++
++	dev_dbg(pdata->dev, "(SN_IRQ_STATUS_REG = %#x)\n", status);
++	ret = regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
++	if (ret) {
++		dev_err(pdata->dev, "Failed to clear IRQ status: %d\n", ret);
++		return IRQ_NONE;
++	}
++
++	if (!status)
++		return IRQ_NONE;
++
++	/* Only send the HPD event if we are bound with a device. */
++	mutex_lock(&pdata->hpd_mutex);
++	if (pdata->hpd_enabled && hpd_event)
++		drm_kms_helper_hotplug_event(dev);
++	mutex_unlock(&pdata->hpd_mutex);
++
++	return IRQ_HANDLED;
++}
++
+ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
+ 			      const struct auxiliary_device_id *id)
+ {
+@@ -1931,6 +2032,7 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 	dev_set_drvdata(dev, pdata);
+ 	pdata->dev = dev;
+ 
++	mutex_init(&pdata->hpd_mutex);
+ 	mutex_init(&pdata->comms_mutex);
+ 
+ 	pdata->regmap = devm_regmap_init_i2c(client,
+@@ -1971,6 +2073,16 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 	if (strncmp(id_buf, "68ISD   ", ARRAY_SIZE(id_buf)))
+ 		return dev_err_probe(dev, -EOPNOTSUPP, "unsupported device id\n");
+ 
++	if (client->irq) {
++		ret = devm_request_threaded_irq(pdata->dev, client->irq, NULL,
++						ti_sn_bridge_interrupt,
++						IRQF_ONESHOT,
++						dev_name(pdata->dev), pdata);
++
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to request interrupt\n");
++	}
++
+ 	/*
+ 	 * Break ourselves up into a collection of aux devices. The only real
+ 	 * motiviation here is to solve the chicken-and-egg problem of probe
 
