@@ -1,62 +1,50 @@
-Return-Path: <linux-kernel+bounces-816893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C25B57A1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:13:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C581CB57A23
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EE71A2783D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3520F189A99C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79CC305E29;
-	Mon, 15 Sep 2025 12:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D92306B0A;
+	Mon, 15 Sep 2025 12:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSR2ZDJl"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LZTRnQ1u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13596305E09;
-	Mon, 15 Sep 2025 12:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF24306B15;
+	Mon, 15 Sep 2025 12:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938405; cv=none; b=QTSjEcf3bBhEIIEmWcyzIE6TOcPRMD4WRXcQ/+NEcotq/8VyGpkE3pLiwmAh9ACpgVX3IK5OeObHOGrKEL2zB3/Qy+wQBw2ejiX1hDYMwN2e/bZYqTTHz+RIT5TCMSoJU0q0VR6n4UDTf2F+T3qiuKlmDduJzqGDjvbviKWQZLs=
+	t=1757938515; cv=none; b=lYeA7E1ZjWMT9bbre1AQAfdx4ejkx5A6Mc6vRAbrOgnuR/BCrXQ7HgY8E3E+aCfVPZg1aNEWiWG6uqJTbu0OvB87XiR0dWsVfXyoLGUQeIZwUwTly4cdEfbg3hILwwLTOrxU+g19AtiJzLE0V4pLTmHHyXQA3MTgN80J9QY2HSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938405; c=relaxed/simple;
-	bh=N+eJ0gU44hVx/MW9LCq46yXd5OHmuJCxQYNhv441Ql8=;
+	s=arc-20240116; t=1757938515; c=relaxed/simple;
+	bh=Una6Hs/ck9bAAALrjnU+o0p2zO7jFHKyVqQGCI1gvvU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0na/+DuDvLNPKw0WXVpCGWkH7T5lN1l1XB6UrmGfS5GIWyDmMyosrajW5Okf6V0Ur2lE0uh8PbBKGhJgaTZNP8xEpnn/ph2hJxoVCoLUtKpYklKocOCYUK2JGY0jZdcLtEvnXj4O4eIevsJTxaDGDtJ9InbR3o2Yaj4yMuo7as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSR2ZDJl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE01C4CEF1;
-	Mon, 15 Sep 2025 12:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757938404;
-	bh=N+eJ0gU44hVx/MW9LCq46yXd5OHmuJCxQYNhv441Ql8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=DSR2ZDJlBr3Wz4wRY+2/aAxWZSLSTpc8cbCBn919mwyiZSGq1+6EYpGqVA0cI+Kil
-	 TqjE5KE/mMgstLFFBbXddlGj4l6x0jJHRyg7M1GG3aIJRnoFBIhCV+nlrbeNcU+v5H
-	 WJA3Vxp4AgCNsADMhg5o0p3u0JmoXzKaC6NGkjJoj2nx5eBd5Vmc3Y8kRVw9DBEg5+
-	 FXC/nHThtqA0WnchXGu1Nh4DWBTgIfu07n1mJBahrb5OVDx499jSGkLvm27bV03WcV
-	 TXciRp9D5W24P+w8Ecf/7m3/ImM/yiJbBKA35s/3Xj+Qom7LlmXT4X3NWdfqvQJc5i
-	 I5C8tnFC0At2w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C3D2ECE1105; Mon, 15 Sep 2025 05:13:23 -0700 (PDT)
-Date: Mon, 15 Sep 2025 05:13:23 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jan Engelhardt <ej@inai.de>
-Cc: Sudarsan Mahendran <sudarsanm@google.com>, vbabka@suse.cz,
-	Liam.Howlett@oracle.com, cl@gentwo.org, harry.yoo@oracle.com,
-	howlett@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	maple-tree@lists.infradead.org, rcu@vger.kernel.org,
-	rientjes@google.com, roman.gushchin@linux.dev, surenb@google.com,
-	urezki@gmail.com
-Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
-Message-ID: <f5792407-d2b9-42b3-bc85-ed14eac945ec@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250913000935.1021068-1-sudarsanm@google.com>
- <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dc3+p+MoPNJYp+HshFSnHUcj3wcGedXDeSpk8upQC38PHUZ1U62BqkHWphpOQ5CfY2660RJhK8NsWEkXAqpuO57/9q1t/o+Qep/n4ym7ZyT784snGgHO6Rhgk4yO1u+8shmr7PEEp0sdeo6QclTnT8QUlhf15pDvCegYrLOfuAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LZTRnQ1u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C12B0C4CEF1;
+	Mon, 15 Sep 2025 12:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757938514;
+	bh=Una6Hs/ck9bAAALrjnU+o0p2zO7jFHKyVqQGCI1gvvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LZTRnQ1uXjpSZP/w2Ns5p96l1aaB26xge580VvyiG2xWC9dvZ7vo5vJUkfiE6ffei
+	 0nN34sQpoXVGn6vEjW7ntfG+xVmNqUBzLGiGT6bn1++xjpdbcfe9o1sU8rTFyUtOP3
+	 LpPlf2PswgwjlwunSzUTPP6JhPGFFUHSMfui+dqs=
+Date: Mon, 15 Sep 2025 14:14:59 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: JaimeFine <jaimefine6@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	ojeda@kernel.org
+Subject: Re: [PATCH] rust: auxiliary: Fix 'initialialized' typo
+Message-ID: <2025091515-prison-eats-cb1e@gregkh>
+References: <20250915120235.1942-1-jaimefine6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,44 +53,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <qs3967pq-4nq7-67pq-2025-r7259o0s52p4@vanv.qr>
+In-Reply-To: <20250915120235.1942-1-jaimefine6@gmail.com>
 
-On Mon, Sep 15, 2025 at 09:51:25AM +0200, Jan Engelhardt wrote:
+On Mon, Sep 15, 2025 at 08:02:27PM +0800, JaimeFine wrote:
+> From: Jaime Fine <jaimefine6@gmail.com>
 > 
-> On Saturday 2025-09-13 02:09, Sudarsan Mahendran wrote:
-> >
-> >Summary of the results:
-> >
-> >- Significant change (meaning >10% difference
-> >  between base and experiment) on will-it-scale
-> >  tests in AMD.
-> >
-> >Summary of AMD will-it-scale test changes:
-> >
-> >Number of runs : 15
-> >Direction      : + is good
+> Suggested-by: onur-ozkan
+
+What specific "typo" is being changed here?
+
+> Link: https://github.com/Rust-for-Linux/linux/issues/1187
+> Signed-off-by: Jaime Fine <jaimefine6@gmail.com>
+> ---
+>  rust/kernel/auxiliary.rs | 357 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 357 insertions(+)
+>  create mode 100644 rust/kernel/auxiliary.rs
 > 
-> If STDDEV grows more than mean, there is more jitter,
-> which is not "good".
+> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+> new file mode 100644
+> index 0000000..3626072
+> --- /dev/null
+> +++ b/rust/kernel/auxiliary.rs
 
-This is true.  On the other hand, the mean grew way more in absolute
-terms than did STDDEV.  So might this be a reasonable tradeoff?
+You added a whole file, you did not modify an existing one :(
 
-Of course, if adjustments can be made to keep the increase in mean while
-keeping STDDEV low, that would of course be even better.
+Also, please use scripts/get_maintainer.pl to determine who to send
+patches to.
 
-							Thanx, Paul
+thanks,
 
-> >|            | MIN        | MAX        | MEAN       | MEDIAN     | STDDEV     |
-> >|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
-> >| brk1_8_processes
-> >| BASE       | 7,667,220  | 7,705,767  | 7,682,782  | 7,676,211  | 12,733     |
-> >| TEST       | 9,477,395  | 10,053,058 | 9,878,753  | 9,959,360  | 182,014    |
-> >| %          | +23.61%    | +30.46%    | +28.58%    | +29.74%    | +1,329.46% |
-> >
-> >| mmap2_256_processes
-> >| BASE       | 7,483,929  | 7,532,461  | 7,491,876  | 7,489,398  | 11,134     |
-> >| TEST       | 11,580,023 | 16,508,551 | 15,337,145 | 15,943,608 | 1,489,489  |
-> >| %          | +54.73%    | +119.17%   | +104.72%   | +112.88%   | +13,276.75%|
-> 
+greg k-h
 
