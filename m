@@ -1,234 +1,139 @@
-Return-Path: <linux-kernel+bounces-817732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EEEB585C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:13:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7FFB585C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A531AA4E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620B22A393F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9AB28C84F;
-	Mon, 15 Sep 2025 20:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A5428BA83;
+	Mon, 15 Sep 2025 20:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUtK8wJx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8Btn4AG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7763F2747B;
-	Mon, 15 Sep 2025 20:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAC02747B;
+	Mon, 15 Sep 2025 20:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757967211; cv=none; b=hH8fui/SUslM7k4yrIAnGGUB8Ju4IhqDRFG74u0VDeNxUXA54NPqW174ab9FasLf2Zb8j23J23lHYYSn4doWvw/zYoENgqBGxNAybeGmPRnJXd7yfexcz8/zS3gP67jPaCapm/t+JyjsCwzCbGTkgAV4vpf2+MuHCF2Dw2DkquQ=
+	t=1757967247; cv=none; b=FhoD795vgwTbiWoA2W8gyYtCSZMHpUG0tNRXY1KkSC+9zK+CG2vc26Tk3PfAWZIyWmX/v9hWhHMxale2x96q6/0CEtKFGXUEii0gHybukAv992P8yTAyUqrF6oBx8fslH2Y0hrJCJXh75k7Fksp2/IgOKbgj2BFTBthLhXzVKdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757967211; c=relaxed/simple;
-	bh=sCG6ETdfTXdU2pnnMtozox8YjbeWgsBQMnCaCblSvgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CDPZlT6PL4Xsj64vicIFoGSEWEe/v9slMDZFrvsG213Z9Trfus9zNbnBwZKb4nXN2/YyUsxuWrOuaWZFHy8hZBQAuhWH673Ykqhkr7QQ830izU3Nwct/ZEe1exQCnDVGq838zn2KZNS5xWD1/Ob+Sy+AITwo92mKZZ2218DcrRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUtK8wJx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2474C4CEF1;
-	Mon, 15 Sep 2025 20:13:25 +0000 (UTC)
+	s=arc-20240116; t=1757967247; c=relaxed/simple;
+	bh=ilJWNxayMThwb1eakcWmL389I9ycMd+B4CpHlsqDUns=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N39nO4ZcT3IvVWeI4MP1doo6egk8iMGlBgpVA7cqCqbXjHEig3gpSMkNhz6y0cTSOv+gt+8ZbSO4WciBkNC6BBMuELOXjsBlthRS5NexeLKsI3ViSk2y5Bdalb+TzRzVrbdxBaKCnKMGEcniN4s7ls1sXxB+VDIsOr1QXwpB9hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8Btn4AG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19046C4CEF1;
+	Mon, 15 Sep 2025 20:14:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757967211;
-	bh=sCG6ETdfTXdU2pnnMtozox8YjbeWgsBQMnCaCblSvgk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hUtK8wJxUjCzDYLa5vedEHLvsx5Af0pWXUKHmFdth0E7Ds3tPKgFwXhFA2Dhw4YXP
-	 ga1bGxoH9FNInZ1/DbtTcIKMc2hLqL1Xa2jXs0fk52BlAA1IpcCqS1nbeYU5qzcyJ7
-	 G8z68f7IeRhPL2OTGyJC7cxWTxwyJ/gkV1ULq3YBv0tXx7J5Tv2C5ncBTXbVEAxACa
-	 YHMJ/IuoJKoE9ZWzsZhK6FEukKJZzMv8uQMlKfzvTsfp8G0KzSemAado53Uaa/LSHQ
-	 JnVJv9E7IiBlBffIwVI/b/owd/BaaKg2w5MvpgjmpIVoBnApXEJD7Pv0VbMTGCv14J
-	 rh23Z04Iet+wQ==
-Date: Mon, 15 Sep 2025 21:13:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <20250915211321.47865d3d@jic23-huawei>
-In-Reply-To: <aMge0jYwYCiY72Yb@smile.fi.intel.com>
-References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com>
-	<20250915-bd79112-v5-2-a74e011a0560@gmail.com>
-	<aMge0jYwYCiY72Yb@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1757967247;
+	bh=ilJWNxayMThwb1eakcWmL389I9ycMd+B4CpHlsqDUns=;
+	h=Date:From:To:Cc:Subject:From;
+	b=t8Btn4AGX624oRNqXDwTHnU3jPEwCss5S9TQ3VYUW/Wcrx4HRy4AjiVmUBQ0CJI7P
+	 smuviIyBwbe7BJf7pw7vhn29glDqakqvWIqy/X1MwqBff+X1/dLw656zwtne3TSr/O
+	 dZD9wlra5C8wCwdgDDtVR5UKve2SabnvVvOPXqWXUVg/FiCA2PoP9M5hENgwdjPu2Q
+	 X4e5VWfQL9H88rfqga8q4vpemOWWxBGP9CTGsDnRDKsbGNVD6+Eq1zRDSYx5PDbuAT
+	 wb5jFkQgQGG6LbYB5XAo72DrJoy/L4Ny1JFnrXAyVr04vuSXJlfTrQ+Pdv9fnEHIR4
+	 AvHuBJglIeZaw==
+Date: Mon, 15 Sep 2025 21:14:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	buildfailureaftermergeofthevfstree@sirena.org.uk,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure in the vfs tree
+Message-ID: <aMhzi0WpakpN7oH5@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="g22mec4zZxJjSZ1x"
+Content-Disposition: inline
 
-On Mon, 15 Sep 2025 17:12:34 +0300
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-> On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:
-> > The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> > be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-> > 
-> > The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> > voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> > daisy-chain configuration) and maximum sampling rate is 1MSPS.
-> > 
-> > The IC does also support CRC but it is not implemented in the driver.  
-> 
-> ...
-> 
-> > +static int bd79112_probe(struct spi_device *spi)
-> > +{
-> > +	struct bd79112_data *data;
-> > +	struct iio_dev *iio_dev;
-> > +	struct iio_chan_spec *cs;
-> > +	struct device *dev = &spi->dev;
-> > +	unsigned long gpio_pins, pin;
-> > +	unsigned int i;
-> > +	int ret;
-> > +
-> > +	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> > +	if (!iio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	data = iio_priv(iio_dev);
-> > +	data->spi = spi;
-> > +	data->dev = dev;
-> > +	data->map = devm_regmap_init(dev, NULL, data, &bd79112_regmap);
-> > +	if (IS_ERR(data->map))
-> > +		return dev_err_probe(dev, PTR_ERR(data->map),
-> > +				     "Failed to initialize Regmap\n");
-> > +
-> > +	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
-> > +	if (ret < 0)
-> > +		return dev_err_probe(dev, ret, "Failed to get the Vdd\n");  
-> 
-> > +	data->vref_mv = ret / 1000;  
-> 
-> I still think moving to _mV is the right thing to do.
-> There is no 'mv' in the physics for Volts.
+--g22mec4zZxJjSZ1x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm not disagreeing with this review but I'm also not going to hold a
-driver back for that given timing is pretty much such that I merge it
-today or it sits a cycle and this one is very near...
-I'll get fussier on this once we have written up some guidance and may
-well send a patch to modify existing recent cases like this one!
+Hi all,
 
-> 
-> > +	ret = devm_regulator_get_enable(dev, "iovdd");
-> > +	if (ret < 0)
-> > +		return dev_err_probe(dev, ret, "Failed to enable I/O voltage\n");
-> > +
-> > +	data->read_xfer[0].tx_buf = &data->read_tx[0];
-> > +	data->read_xfer[0].len = sizeof(data->read_tx);
-> > +	data->read_xfer[0].cs_change = 1;
-> > +	data->read_xfer[1].rx_buf = &data->read_rx;
-> > +	data->read_xfer[1].len = sizeof(data->read_rx);
-> > +	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);  
-> 
-> > +	devm_spi_optimize_message(dev, spi, &data->read_msg);  
-> 
-> And if it fails?..
-I've added the following and applied the series.
+After merging the vfs tree, today's linux-next build (arm64 defconfig)
+failed like this:
 
-Note I'm cutting this fine so if we get any build issues or similar
-it might well get pushed back to next cycle yet!
+/tmp/next/build/fs/nsfs.c:582:27: error: initialization of 'struct file * (=
+*)(const struct path *, unsigned int)' from incompatible pointer type 'stru=
+ct file * (*)(struct path *, unsigned int)' [-Wincompatible-pointer-types]
+  582 |         .open           =3D nsfs_export_open,
+      |                           ^~~~~~~~~~~~~~~~
+/tmp/next/build/fs/nsfs.c:582:27: note: (near initialization for 'nsfs_expo=
+rt_operations.open')
 
-diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
-index b406d4ee5411..d15e06c8b94d 100644
---- a/drivers/iio/adc/rohm-bd79112.c
-+++ b/drivers/iio/adc/rohm-bd79112.c
-@@ -454,12 +454,18 @@ static int bd79112_probe(struct spi_device *spi)
-        data->read_xfer[1].rx_buf = &data->read_rx;
-        data->read_xfer[1].len = sizeof(data->read_rx);
-        spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
--       devm_spi_optimize_message(dev, spi, &data->read_msg);
-+       ret = devm_spi_optimize_message(dev, spi, &data->read_msg);
-+       if (ret < 0)
-+               return dev_err_probe(dev, ret,
-+                                    "Failed to optimize SPI read message\n");
- 
-        data->write_xfer.tx_buf = &data->reg_write_tx[0];
-        data->write_xfer.len = sizeof(data->reg_write_tx);
-        spi_message_init_with_transfers(&data->write_msg, &data->write_xfer, 1);
--       devm_spi_optimize_message(dev, spi, &data->write_msg);
-+       ret = devm_spi_optimize_message(dev, spi, &data->write_msg);
-+       if (ret < 0)
-+               return dev_err_probe(dev, ret,
-+                                    "Failed to optimize SPI write message\n");
- 
-        ret = devm_iio_adc_device_alloc_chaninfo_se(dev, &bd79112_chan_template,
-                                                    BD79112_MAX_NUM_CHANNELS - 1,
-> 
-> > +	data->write_xfer.tx_buf = &data->reg_write_tx[0];
-> > +	data->write_xfer.len = sizeof(data->reg_write_tx);
-> > +	spi_message_init_with_transfers(&data->write_msg, &data->write_xfer, 1);
-> > +	devm_spi_optimize_message(dev, spi, &data->write_msg);
-> > +
-> > +	ret = devm_iio_adc_device_alloc_chaninfo_se(dev, &bd79112_chan_template,
-> > +						    BD79112_MAX_NUM_CHANNELS - 1,
-> > +						    &cs);
-> > +
-> > +	/* Register all pins as GPIOs if there are no ADC channels */
-> > +	if (ret == -ENOENT)
-> > +		goto register_gpios;
-> > +
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	iio_dev->num_channels = ret;
-> > +	iio_dev->channels = cs;
-> > +
-> > +	for (i = 0; i < iio_dev->num_channels; i++)
-> > +		cs[i].datasheet_name = bd79112_chan_names[cs[i].channel];
-> > +
-> > +	iio_dev->info = &bd79112_info;
-> > +	iio_dev->name = "bd79112";
-> > +	iio_dev->modes = INDIO_DIRECT_MODE;
-> > +
-> > +	/*
-> > +	 * Ensure all channels are ADCs. This allows us to register the IIO
-> > +	 * device early (before checking which pins are to be used for GPIO)
-> > +	 * without having to worry about some pins being initially used for
-> > +	 * GPIO.
-> > +	 */
-> > +	for (i = 0; i < BD79112_NUM_GPIO_EN_REGS; i++) {
-> > +		ret = regmap_write(data->map, BD79112_FIRST_GPIO_EN_REG + i, 0);
-> > +		if (ret)
-> > +			return dev_err_probe(dev, ret,
-> > +					     "Failed to initialize channels\n");
-> > +	}
-> > +
-> > +	ret = devm_iio_device_register(data->dev, iio_dev);
-> > +	if (ret)
-> > +		return dev_err_probe(data->dev, ret, "Failed to register ADC\n");
-> > +
-> > +register_gpios:
-> > +	gpio_pins = bd79112_get_gpio_pins(iio_dev->channels,
-> > +					  iio_dev->num_channels);
-> > +
-> > +	/* If all channels are reserved for ADC, then we're done. */
-> > +	if (!gpio_pins)
-> > +		return 0;
-> > +
-> > +	/* Default all the GPIO pins to GPI */
-> > +	for_each_set_bit(pin, &gpio_pins, BD79112_MAX_NUM_CHANNELS) {
-> > +		ret = bd79112_gpio_dir_set(data, pin, GPIO_LINE_DIRECTION_IN);
-> > +		if (ret)
-> > +			return dev_err_probe(dev, ret,
-> > +					     "Failed to mark pin as GPI\n");
-> > +	}
-> > +
-> > +	data->gpio_valid_mask = gpio_pins;
-> > +	data->gc = bd79112_gpio_chip;
-> > +	data->gc.parent = dev;
-> > +
-> > +	return devm_gpiochip_add_data(dev, &data->gc, data);
-> > +}  
-> 
+Caused by an interaction with commit
 
+  06c4ff965e95b ("nsfs: support file handles")
+
+=66rom the vfs-brauner tree and
+
+  efa6ab3688a54 ("export_operations->open(): constify path argument")
+
+I've fixed it up as below and can carry as required.
+
+=46rom 56e625f1566ee6e3940c625a393b3b4e75806b3f Mon Sep 17 00:00:00 2001
+=46rom: Mark Brown <broonie@kernel.org>
+Date: Mon, 15 Sep 2025 21:03:13 +0100
+Subject: [PATCH] nsfs: Fix up merge
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ fs/nsfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 8484bc4dd3deb..32cb8c835a2ba 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -571,7 +571,7 @@ static int nsfs_export_permission(struct handle_to_path=
+_ctx *ctx,
+ 	return 0;
+ }
+=20
+-static struct file *nsfs_export_open(struct path *path, unsigned int oflag=
+s)
++static struct file *nsfs_export_open(const struct path *path, unsigned int=
+ oflags)
+ {
+ 	return file_open_root(path, "", oflags, 0);
+ }
+--=20
+2.47.2
+
+=2E
+
+--g22mec4zZxJjSZ1x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIc4oACgkQJNaLcl1U
+h9CyAwf/VLSSwom0yUiU0ih6pUDDmQsXUANoiHBgFLtBv1EPp6uIm9/vjX/u1WW1
+C75Tf8jV9uT+DvRqbVstxEauaZcW+Sohz675XvWHpikrRZe6ONqZW0IPwqY/U0VV
+ehiD23h/GYtT/js21M8+uzNu23I73pWVFQwENN7rwxnD0szbIvvqal53Ng6M+aRh
+5xWWroFo69mg2Mi+P4IxGLzI8OyeW/E/eU42Gig1nNPEAFqIMUw5756CvMNHYvVT
+ECE+VTlFVbG67nquOgMj1NQcOsm9snkgPOweTrSI0/LeEV2q9hHNfHrDDthZ20xt
+p19yy4sHRoYTcUBa3lP5bayJrkI1MQ==
+=gb/M
+-----END PGP SIGNATURE-----
+
+--g22mec4zZxJjSZ1x--
 
