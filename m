@@ -1,114 +1,124 @@
-Return-Path: <linux-kernel+bounces-816323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC2D1B5726E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46052B57280
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3323017E1A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EE0416181F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76452EFDB7;
-	Mon, 15 Sep 2025 08:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C497E2EA73C;
+	Mon, 15 Sep 2025 08:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uorC5lsH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMJEH/fp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061212EE617;
-	Mon, 15 Sep 2025 08:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA8F2EA15C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757923360; cv=none; b=Z7MEY9+MOUDu/LAc6zoXsUMcEZzNXGaZ7Rz4iw79h6Z8YfBcWfHiKGjVsj21Dqv05T11XTa4xXzxsB4XREeRikWz5W5Sm/znL+QEWE/arsgkfZTZLqiV/gLaGgab0h+i18sV+PgW9pC3b+QXUU1yWA+PJWh+OUVFigG/zoWnyaI=
+	t=1757923541; cv=none; b=QRVag7Hu2dolS2r9/hZrhA/jejDnpD5IP2ihu7NQZlaPrS+WG3VscmIxUdJjdArgvFcwBASxw0mbSkK1CqiyuTHEIYglokRkUrnrTYo5R9Cqhyllr+QrP6h+43LEA4NhGiymHU5WEXthADFEAhaNX/XBMtZt7bvGKs1n7nhFqiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757923360; c=relaxed/simple;
-	bh=yEm2bzoiP+h/01QXVowc2unEj0br7/I+82JQsjglZt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFYF1X2NgALhEtsxNFqNxx/Ff1w3ULRLdqvhPVTzNM4V6OQyDMD3OCrFJaa82EURH3bx4oCa4AIBleoof17cuaaCqWLhOBR6MP7HOOmTO2+gpqcjEKQlYKRVGZPkHF8NfzoPFVwseHEA+aJFSI7rGVYNndfspOEFdAva06VBegY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uorC5lsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C793C4AF09;
-	Mon, 15 Sep 2025 08:02:37 +0000 (UTC)
+	s=arc-20240116; t=1757923541; c=relaxed/simple;
+	bh=lzzHpXrl4T+O1eFsZmhBzn3Qp59jklkv+WRQqIpRaxo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eBcDnrraWg+TJQXLoKp1BlGbvvlMwwqu+OYOcG64ZlBfnwYTDCiV6nsT/6VAMiUiv9Vs7U4Z/LuLoexMoTEiHWUnpi6DCLBy4+h5KEZZsNrgGDwVmXXncn3+5Q2lHQ3lFtdE5CxSZtuosB0L/c/YoKjP2lkmi/noQdQGLuyrVHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMJEH/fp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F67C4CEF1;
+	Mon, 15 Sep 2025 08:05:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757923358;
-	bh=yEm2bzoiP+h/01QXVowc2unEj0br7/I+82JQsjglZt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uorC5lsHLES+BCYb8oEHYS7RGXDtLY0MYCZlFj/JgkPCIg7eVxjft9QeVc/O4+JiD
-	 VWYAyx/HXk8vuDOvoaIgZawtwa7duDJUL5RhO+mPaWfVAsoDevA1cGNVR4oNVVaZaj
-	 zP7GONv5P2+Dh5H5tX8dqDa7NKGy2bVK9xZdHmyGX74mM/HxaEDBkUF4rMo+8fdvIi
-	 0j7rMpquFaNuK0jESLtzfC8vpVbd1j8L4pSt9q/vo1RNoqqVHG53783DBRKtDO21cx
-	 pMIX6YzQ0hTN2NMj4FI2o1D8ZWJ4dcq5cULVdz8VN2jb+34BuQKN9RANHzY56C9zpQ
-	 sYnvOFrD8+IyA==
-Date: Mon, 15 Sep 2025 11:02:32 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Mahanta Jambigi <mjambigi@linux.ibm.com>
-Cc: Kriish Sharma <kriish.sharma2006@gmail.com>, alibuda@linux.alibaba.com,
-	dust.li@linux.alibaba.com, sidraya@linux.ibm.com,
-	wenjia@linux.ibm.com, tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] net/smc: replace strncpy with strscpy for ib_name
-Message-ID: <20250915080232.GA9353@unreal>
-References: <20250908180913.356632-1-kriish.sharma2006@gmail.com>
- <20250910100100.GM341237@unreal>
- <24ced585-1b7f-4577-9cb5-8d6e60ecb363@linux.ibm.com>
- <20250912090713.GV341237@unreal>
- <947756ad-f9aa-479f-b463-4c97ff23a936@linux.ibm.com>
+	s=k20201202; t=1757923540;
+	bh=lzzHpXrl4T+O1eFsZmhBzn3Qp59jklkv+WRQqIpRaxo=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=RMJEH/fppeez5XHLej251shsdGH3YLaGuO/xeYNuD0mxteNCLH4kw6YERzIxbgOhE
+	 cqTjx1hHQYbBT/ah8bGX5rHmjv7zdfi5x++4YXC9U8Nkn+B92dI94DlXT/MTTrRAsx
+	 vqMESklN65bpJy8NkY6LA4HDjAihzl6lWZTcAsb/qPM8vho3rCCkInTR9YUIpFnSu8
+	 EApV+OKHD3z/pKUa6SbkXMEtfN12LxJ3u+Gqx+2gKNOVY3HEOopsn97pILJpnM+aNp
+	 MjqLh3iO2LbmF5IQskxI6A+StEI0grnoE3lAbXdwSiwP9iTBbV1rQ5ecC+ycJZMTRF
+	 k1BVMWt5toZ4A==
+Message-ID: <2f1c3f5f-7ab2-4b11-8368-b9c925cbea7c@kernel.org>
+Date: Mon, 15 Sep 2025 16:05:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <947756ad-f9aa-479f-b463-4c97ff23a936@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, bintian.wang@honor.com, feng.han@honor.com
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: fix zero-sized extent for
+ precache extents
+To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org
+References: <20250915035246.98055-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250915035246.98055-1-wangzijie1@honor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 12:24:16PM +0530, Mahanta Jambigi wrote:
-> On 12/09/25 2:37 pm, Leon Romanovsky wrote:
-> > On Fri, Sep 12, 2025 at 01:18:52PM +0530, Mahanta Jambigi wrote:
-> >> On 10/09/25 3:31 pm, Leon Romanovsky wrote:
-> >>>> --- a/net/smc/smc_pnet.c
-> >>>> +++ b/net/smc/smc_pnet.c
-> >>>> @@ -450,7 +450,7 @@ static int smc_pnet_add_ib(struct smc_pnettable *pnettable, char *ib_name,
-> >>>>  		return -ENOMEM;
-> >>>>  	new_pe->type = SMC_PNET_IB;
-> >>>>  	memcpy(new_pe->pnet_name, pnet_name, SMC_MAX_PNETID_LEN);
-> >>>> -	strncpy(new_pe->ib_name, ib_name, IB_DEVICE_NAME_MAX);
-> >>>> +	strscpy(new_pe->ib_name, ib_name);
-> >>>
-> >>> It is worth to mention that caching ib_name is wrong as IB/core provides
-> >>> IB device rename functionality.
-> >>
-> >> In our case we hit this code path where we pass *PCI_ID*
-> >> as the *ib_name* using *smc_pnet* tool(smc_pnet -a <pnet_name> -D
-> >> <PCI_ID>). I believe PCI_ID will not change, so caching it here is fine.
-> > 
-> > If I remember, you are reporting that cached ib_name through netlink much later.
-> > 
-> > The caching itself is not an issue, but incorrect reported name can be seen as
-> > a wrong thing to do.
+On 9/15/25 11:52, wangzijie wrote:
+> Script to reproduce:
+> f2fs_io write 1 0 1881 rand dsync testfile
+> f2fs_io fallocate 0 7708672 4096 testfile
+> f2fs_io write 1 1881 1 rand buffered testfile
+> fsync testfile
+> umount
+> mount
+> f2fs_io precache_extents testfile
 > 
-> In what case we can see this incorrect reported name, could you please
-> elaborate.
+> When the data layout is something like this:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    NEW_ADDR
+> [1]      A+1                [1]    0x0
+> ...
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> During precache_extents, we map the last block(valid blkaddr) in dnode1:
+> map->m_flags |= F2FS_MAP_MAPPED;
+> map->m_pblk = blkaddr(valid blkaddr);
+> map->m_len = 1;
+> then we goto next_dnode, meet the first block in dnode2(hole), goto sync_out:
+> map->m_flags & F2FS_MAP_MAPPED == true, and we make zero-sized extent.
+> 
+> Rebased on patch[1], this patch can cover these cases to avoid zero-sized extent:
+> A,B,C is valid blkaddr
+> case1:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    NEW_ADDR
+> [1]      A+1                [1]    0x0
+> ...                         ....
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> case2:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    C (C!=B+1)
+> [1]      A+1                [1]    C+1
+> ...                         ....
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> case3:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    C (C!=B+2)
+> [1]      A+1                [1]    C+1
+> ...                         ....
+> [1015]   A+1015
+> [1016]   B (B!=A+1016)
+> [1017]   B+1                [1017] 0x0
+> 
+> [1] https://lore.kernel.org/linux-f2fs-devel/20250912081250.44383-1-chao@kernel.org/
+> 
+> Fixes: c4020b2da4c9 ("f2fs: support F2FS_IOC_PRECACHE_EXTENTS")
+> Signed-off-by: wangzijie <wangzijie1@honor.com>
 
-Did you open net/smc/smc_pnet.c?
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Everything that uses ib_name in that file is incorrect.
-
-From glance look:
-1. smc_pnet_find_ib() returns completely random results if device is
-renamed in parallel.
-2. SMC_PNETID_GET returns wrong names. It returns cached name which
-doesn't exist anymore.
-
-IB devices have stable indexes in similar way to netdevice. The code
-should rely on it and not on the name.
-
-Thanks
+Thanks,
 
