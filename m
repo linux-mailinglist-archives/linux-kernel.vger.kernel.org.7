@@ -1,175 +1,144 @@
-Return-Path: <linux-kernel+bounces-817621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFABB5849E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:30:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA006B58486
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D8D1A263CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B354C4F55
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31504288C08;
-	Mon, 15 Sep 2025 18:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DE12E7F2E;
+	Mon, 15 Sep 2025 18:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqWSpndJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0R/xPtq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876E230CD95;
-	Mon, 15 Sep 2025 18:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE4D2E2DCF;
+	Mon, 15 Sep 2025 18:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757961017; cv=none; b=LVfWMM+RQS7MyxtBbLmoZT6bqbmssufIe4kwJBjAQwv9KRDpeI8J4kTH2o/uN9H/vDNvsw6naGw4w8fC23h0ifvo5NhvISHiSNbooUKVG9WApU0bvb6ZtsKJe9MaHSOJbG/Q31ohB5vFpz5/LcSjQcDY7gXfTZj+R+xCNvf4PQU=
+	t=1757960815; cv=none; b=CluiYfv485kERMzLDleAFEl54HHuW5T8zIxRnO92RYfGY8aGCvO8iREPJzSHTerBF0CazKhCHbAbQ7NDlx5PzNGF8dvmz1Bl7LzTvMRkXa3M33OHRFRXEeMt9dA41GR4m6+6V73wiAnBScJhxb5FoJXj9vC1S+feLxjk/vWcb8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757961017; c=relaxed/simple;
-	bh=WGVvkUpHbJrKqCuo2vUXTzTO+Jv4JiDs/XNg/A33U+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjWuwY9HeK87L+3TGc0Xk1qncJ4PR1mN0wzOQpGA9EvcS7UAdjQpRbc6RQ2CcITGIqT0qR5M4WGBaS7UnzQAPyiXYVQ+gMSogQfMU1VtGdQkrkVTDZvqm6yBS8F54SW3hhok7rQZYpXyVk5ylMqpDDynfMzlwXh1tkCJaRuIgWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqWSpndJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD4A0C4CEF7;
-	Mon, 15 Sep 2025 18:30:15 +0000 (UTC)
+	s=arc-20240116; t=1757960815; c=relaxed/simple;
+	bh=ZlwLFFbUZ7SUw1fTcU2d+newTqMg71wB985Uf0+wEDk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sM0kNuCkAVhWKa83buNaPmssCHKFwXGa0vUSmEK5IXZ86wmuzuOiV0KwWG9B2zdVMlIiD67XvFVFpeylBtDfV2LAzWVSoQVllQHttZ2e1vyTFenkdhMv7EosaGqxzTisDrrnSwzHyb0q+gXXwynbOHPzmW1NGOkioyCzbcI5Zug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0R/xPtq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BE0C4CEFA;
+	Mon, 15 Sep 2025 18:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757961017;
-	bh=WGVvkUpHbJrKqCuo2vUXTzTO+Jv4JiDs/XNg/A33U+A=;
+	s=k20201202; t=1757960815;
+	bh=ZlwLFFbUZ7SUw1fTcU2d+newTqMg71wB985Uf0+wEDk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WqWSpndJe1MVmR4pLgKi5jpBjouTH7LVyMrETWcnDoX44XOAoTWjWhItYeq5nWV9C
-	 7kKBUiK/jOvTquW20rNG7x58xcleYxQv4yXpMeMZZI6uLZCrTy7PqRqCHdNwGl0atr
-	 2aJLQHNjmWM0+rdEozbfqoY7X2nI48vdcAAnDstBmvBJIjzBCZd8nVzEEpLTw2Cca5
-	 R60b+HQMIFjtN6yJSeywUZFUevmrS9YiirvbPMpqLrU77WtjJUc5yGe08ppMwOxlM7
-	 Zdl/g5m24UQ6+DXrgvKhbaf5byfDcPRP+ZtxLMXhQ3mo8aGicOwYv5+TPVaMUuagrj
-	 tF2nn5hdc2VcA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject:
- [PATCH v2 3/5] ACPI: property: Add code comments explaining what is going on
-Date: Mon, 15 Sep 2025 20:25:13 +0200
-Message-ID: <3008321.e9J7NaK4W3@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <5922318.DvuYhMxLoT@rafael.j.wysocki>
-References: <5922318.DvuYhMxLoT@rafael.j.wysocki>
+	b=a0R/xPtqF4vOpA4RsS+6m6W4efIbgihjPzTJWDO46T7vsYoTolCa/wg0cQQZWjwLn
+	 V2JX80luxNk04KPKMTnH+CAwOfnQxhwHnFZx1PKfnVymKNDkYFdpYVDpBY6dteG5MB
+	 wjzEDW/UGZ3Yhp4cYIN6O7GSF5Q2lRCcB5JFUFr3+bK0j1M39jIq77VGseOnszyrY1
+	 a4mAfVrEPGTli/BV6+K+v5bLMAba/0PZyRvrswH49qnpGiBpR2lMe3G/RZOfWQBk24
+	 286/JS2abr8+pOLycaIxHjnPvD1mt1rKG5s7sYjze3aWO5+tKOs9Rgo6WQo/rRZKEP
+	 Zdk05PZeVrtSg==
+From: SeongJae Park <sj@kernel.org>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/6] mm/damon/core: reset age if nr_accesses changes between non-zero and zero
+Date: Mon, 15 Sep 2025 11:26:51 -0700
+Message-Id: <20250915182652.110173-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250915145158.1425390-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, 15 Sep 2025 07:51:57 -0700 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
 
-In some places in the ACPI device properties handling code, it is
-unclear why the code is what it is.  Some assumptions are not documented
-and some pieces of code are based on knowledge that is not mentioned
-anywhere.
+> On Sun, 14 Sep 2025 18:58:02 -0700 SeongJae Park <sj@kernel.org> wrote:
+> 
+> > DAMON resets the age of a region if its nr_accesses value has
+> > significantly changed. Specifically, the threshold is calculated as 20%
+> > of largest nr_accesses of the current snapshot.  This means that regions
+> > changing the nr_accesses from zero to small non-zero value or from a
+> > small non-zero value to zero will keep the age.  Since many users treat
+> > zero nr_accesses regions special, this can be confusing.  Kernel code
+> > including DAMOS' regions priority calculation and DAMON_STAT's idle time
+> > calculation also treat zero nr_accesses regions special.  Make it
+> > unconfusing by resetting the age when the nr_accesses changes between
+> > zero and a non-zero value.
+> 
+> Hi SJ,
+> 
+> Thank you for the patch, I think the goal of the patch makes sesne to me.
+> I have a small nit / idea which I think makes the code a bit clearer, at least
+> for me. It seems that we basically want to XOR the two values's zero-ness, so
+> maybe something like 
+> 
+> (!!r->nr_accesses) ^ (!!r->last_nr_access) or
+> (r->nr_accesses == 0) ^ (r->last_nr_access == 0)
+> 
+> Can achieve the goal?
 
-Add code comments explaining these things.
+Thank you for the idea, this makes sense!
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+> I know bitwise operations are sometimes harder to
+> understand, so I am just throwing the idea out there : -) 
 
-v1 -> v2:
-   * Previously [2/4]
-   * Rebase on top of the new [2/5]
-   * Rephrase the comment under ACPI_TYPE_PACKAGE
+To be honest I'm one of people who are not familiar with XOR.  I had to spend a
+minute to understand the above.  Maybe we can replace '^' with '!=', and it is
+easier to read for me.  If you don't mind, I will use below in the next
+version:
 
----
- drivers/acpi/property.c |   46 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+   else if ((r->nr_accesses == 0) != (r->last_nr_accesses == 0))
 
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -108,7 +108,18 @@ static bool acpi_nondev_subnode_extract(
- 	if (handle)
- 		acpi_get_parent(handle, &scope);
- 
-+	/*
-+	 * Extract properties from the _DSD-equivalent package pointed to by
-+	 * desc and use scope (if not NULL) for the completion of relative
-+	 * pathname segments.
-+	 *
-+	 * The extracted properties will be held in the new data node dn.
-+	 */
- 	result = acpi_extract_properties(scope, desc, &dn->data);
-+	/*
-+	 * Look for subnodes in the _DSD-equivalent package pointed to by desc
-+	 * and create child nodes of dn if there are any.
-+	 */
- 	if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->fwnode))
- 		result = true;
- 
-@@ -133,6 +144,12 @@ static bool acpi_nondev_subnode_ok(acpi_
- 	acpi_handle handle;
- 	acpi_status status;
- 
-+	/*
-+	 * If the scope is unknown, the _DSD-equivalent package being parsed
-+	 * was embedded in an outer _DSD-equivalent package as a result of
-+	 * direct evaluation of an object pointed to by a reference.  In that
-+	 * case, using a pathname as the target object pointer is invalid.
-+	 */
- 	if (!scope)
- 		return false;
- 
-@@ -162,6 +179,10 @@ static bool acpi_add_nondev_subnodes(acp
- 	bool ret = false;
- 	int i;
- 
-+	/*
-+	 * Every element in the links package is expected to represent a link
-+	 * to a non-device node in a tree containing device-specific data.
-+	 */
- 	for (i = 0; i < links->package.count; i++) {
- 		union acpi_object *link, *desc;
- 		bool result;
-@@ -171,17 +192,38 @@ static bool acpi_add_nondev_subnodes(acp
- 		if (link->package.count != 2)
- 			continue;
- 
--		/* The first one must be a string. */
-+		/* The first one (the key) must be a string. */
- 		if (link->package.elements[0].type != ACPI_TYPE_STRING)
- 			continue;
- 
--		/* The second one may be a string or a package. */
-+		/* The second one (the target) may be a string or a package. */
- 		switch (link->package.elements[1].type) {
- 		case ACPI_TYPE_STRING:
-+			/*
-+			 * The string is expected to be a full pathname or a
-+			 * pathname segment relative to the given scope.  That
-+			 * pathname is expected to point to an object returning
-+			 * a package that contains _DSD-equivalent information.
-+			 */
- 			result = acpi_nondev_subnode_ok(scope, link, list,
- 							 parent);
- 			break;
- 		case ACPI_TYPE_PACKAGE:
-+			/*
-+			 * This happens when a reference is used in AML to
-+			 * point to the target.  Since the target is expected
-+			 * to be a named object, a reference to it will cause it
-+			 * to be avaluated in place and its return package will
-+			 * be embedded in the links package at the location of
-+			 * the reference.
-+			 *
-+			 * The target package is expected to contain _DSD-
-+			 * equivalent information, but the scope in which it
-+			 * is located in the original AML is unknown.  Thus
-+			 * it cannot contain pathname segments represented as
-+			 * strings because there is no way to build full
-+			 * pathnames out of them.
-+			 */
- 			desc = &link->package.elements[1];
- 			result = acpi_nondev_subnode_extract(desc, NULL, link,
- 							     list, parent);
+Please let me know if I'm missing something or you have other opinions.
+
+> 
+> 
+> Anyways, the rest of it looks good to me, please feel free to add my review!
+> 
+> Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+
+Thank you!
+
+> 
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > ---
+> >  mm/damon/core.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/mm/damon/core.c b/mm/damon/core.c
+> > index be5942435d78..996647caca02 100644
+> > --- a/mm/damon/core.c
+> > +++ b/mm/damon/core.c
+> > @@ -2261,6 +2261,9 @@ static void damon_merge_regions_of(struct damon_target *t, unsigned int thres,
+> >  	damon_for_each_region_safe(r, next, t) {
+> >  		if (abs(r->nr_accesses - r->last_nr_accesses) > thres)
+> >  			r->age = 0;
+> > +		else if ((!r->nr_accesses && r->last_nr_accesses) ||
+> > +				(r->nr_accesses && !r->last_nr_accesses))
+> > +			r->age = 0;
+> >  		else
+> >  			r->age++;
+> >  
+> > -- 
+> > 2.39.5
+> 
+> Sent using hkml (https://github.com/sjp38/hackermail)
 
 
+Thanks,
+SJ
 
+[...]
 
