@@ -1,209 +1,224 @@
-Return-Path: <linux-kernel+bounces-817473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD4B5829E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:56:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E64A4B582A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF45D3B6238
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F308202019
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85E9283CB8;
-	Mon, 15 Sep 2025 16:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC85F2836A3;
+	Mon, 15 Sep 2025 16:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="c70sDKW0"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kv1MgRPw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECA01E50E;
-	Mon, 15 Sep 2025 16:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4E71E50E;
+	Mon, 15 Sep 2025 16:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757955354; cv=none; b=nxsDiC2GXnnvC97xXw0gjKOHr6yebkX55uixbg+UeCb/M9tD7HKjndRHP9CRWmWzKDa0Wx154Xty0DNNBegDi1fgS1cWy3TUXzvjpwf9KEBNfjKbedo0cra+AbkzQVqVBQhZ2u1JTMnE3GqBUY5bTt/pTcWOhwyx31JrKMM7ZMM=
+	t=1757955453; cv=none; b=TVXMq/FHt3eE3qgw5jXfWQLUUUkDOqqm72xpZmDDI04jYMTk6Cmxd4dmxSER9cN9Gyma2F3VjlUCSdeIP+0WCDnXUTXflsJoADMfJ+hd4NdzZWZByRfFTpnr5wiyuDX04QQJ+Y5R+5EyhtUUjbLhxc1PyVzmYAx0qAfEPn2P31g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757955354; c=relaxed/simple;
-	bh=ScHNo7xeAxbc9qs152ZJaY9kt3AjpGFgAP5bYGwbDhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+YoxyXZb6DNrSYf9IaCexYsQhk4f8KOFkPcFGtfOiQPdv/Iugcnhlh+YTABLFRdzRHtC82wNYeWlIcLHlcDl4utA4L+a1MHKpjkX/A2X17+xQkd9LSczP54a7VQ30hA8MXVEzQ3xwfsJZdSdgZFAREcl1GRZCFvb/E9dSjsKCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=c70sDKW0; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-56-182.net.vodafone.it [5.90.56.182])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 82062B0B;
-	Mon, 15 Sep 2025 18:54:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757955272;
-	bh=ScHNo7xeAxbc9qs152ZJaY9kt3AjpGFgAP5bYGwbDhM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c70sDKW0Y91oM30vf++vp2z4pVbkNOEdGBxrMH87+iYEavirzIxXtUCKhgFzwH/KH
-	 ivQOwVUa5MFYJGAYc2gUP6A0ScAbeK8jx6ft6jvJouGoxqtvgUx+q/8AkW3LX4d1VE
-	 TQ8R7eqIgg2YgosbNbUJkyuF4YlP8QN+qRW6CNj8=
-Date: Mon, 15 Sep 2025 18:55:44 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Dafna Hirschfeld <dafna@fastmail.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: rkisp1: Improve frame sequence correctness on
- stats and params buffers
-Message-ID: <rthpkuipbpbp2lv2ddmruwb7fmpkmtlsnx3q6kk7gaskzpdaar@5bk3r44f2mpo>
-References: <20250908094200.48002-1-stefan.klug@ideasonboard.com>
+	s=arc-20240116; t=1757955453; c=relaxed/simple;
+	bh=KSBDwLPy2x6t0WiHDEURMXiA6bwd5BAK0QgGgy61VjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fJauLgND7ItC9ibfzGLenhAY3fIj4qoOTZwLSoaykr30bNaNveinXhIY0RufZesfzWRq3UkNeMBBklWjgnGOWq1fa0xY6+nm/QpqunDSxRHVaAsPDMmbaozGeA70eL/99Mm9NMRR/dL6PpdN+FhE2W+td9phAkEKcsnYp6CabAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kv1MgRPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D2BC4CEF1;
+	Mon, 15 Sep 2025 16:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757955452;
+	bh=KSBDwLPy2x6t0WiHDEURMXiA6bwd5BAK0QgGgy61VjY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Kv1MgRPw7ZRxEuUjgGF/YTqxgCsSXrZefC3Wp/jYW9wNiGvqnnekca9q7oopApVzt
+	 RE+HMygc3swppx6S/i3E3GHUc6c3xt8auNAWPDn8K1fNdOKonQOUmU4V03CyccaUy7
+	 BByUOewoefuoV6IqI/d5KGAZmRfHcjo+Z1n0vbEj0w2rXF+HwKDJLaI9P+rn4AKjtX
+	 DSTiyrUCo8u8pdYSnE2FPa/5EDj5f/LuVHaqMgpuTpJD9t2yhWpwNaj/Y0Qal1XaGe
+	 sgohB0/mk7dAkkLYWhdBQyu2zRXxD8nkqgWt8x0LScIGx7ZkOLaJeapHtbzXyamJ4O
+	 qtvdUyk8gqy4Q==
+Date: Mon, 15 Sep 2025 17:57:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Askar Safin <safinaskar@zohomail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the vfs tree with the vfs-next tree
+Message-ID: <aMhFePOxxlOtQwU2@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J4aiT/eBKQxTMcDA"
 Content-Disposition: inline
-In-Reply-To: <20250908094200.48002-1-stefan.klug@ideasonboard.com>
 
-Hi Stefan
 
-On Mon, Sep 08, 2025 at 11:41:48AM +0200, Stefan Klug wrote:
-> On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
-> handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
-> and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
-> commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
-> debugfs var for irq delay") a warning was added for that. There are two
-> cases where this condition can occur:
->
-> 1. The v-sync and the frame-end belong to the same frame. This means,
->    the irq was heavily delayed and the warning is likely appropriate.
->
-> 2. The v-sync belongs to the next frame. This can happen if the vertical
->    blanking between two frames is very short.
->
-> The current code always handles case 1 although case 2 is in my
-> experience the more common case and happens in regular usage. This leads
+--J4aiT/eBKQxTMcDA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would rather argue that 8524fa22fd2f is possibily wrong, and case 1)
-would imply the interrupt has been delayed for the whole frame
-duration (+ blanking), which seems unlikely to me ?
+Hi all,
 
-True we handle stats collection and parameters programming in irq
-context, which is less than ideal and could take time (I wonder if we
-should use a threaded irq, but that's a different problem)
+Today's linux-next merge of the vfs tree got a conflict in:
 
-If that's the case and we only should care about 2) would simply
-handling RKISP1_CIF_ISP_FRAME before RKISP1_CIF_ISP_V_START be enough ?
+  fs/namespace.c
 
-> to incorrect sequence numbers on stats and params buffers which in turn
-> breaks the regulation in user space. Fix that by adding a frame_active
-> flag to distinguish between these cases and handle the start of frame
-> either at the beginning or at the end of the rkisp1_isp_isr().
->
-> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> ---
->  .../platform/rockchip/rkisp1/rkisp1-common.h    |  1 +
->  .../media/platform/rockchip/rkisp1/rkisp1-isp.c | 17 +++++++++++++----
->  2 files changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> index ca952fd0829b..adf23416de9a 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> @@ -222,6 +222,7 @@ struct rkisp1_isp {
->  	struct media_pad pads[RKISP1_ISP_PAD_MAX];
->  	const struct rkisp1_mbus_info *sink_fmt;
->  	__u32 frame_sequence;
-> +	bool frame_active;
->  };
->
->  /*
-> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> index 8c29a1c9309a..1469075b2d45 100644
-> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
->  	}
->
->  	isp->frame_sequence = -1;
-> +	isp->frame_active = false;
->
->  	sd_state = v4l2_subdev_lock_and_get_active_state(sd);
->
-> @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
->   * Interrupt handlers
->   */
->
-> -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
-> +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
->  {
->  	struct v4l2_event event = {
->  		.type = V4L2_EVENT_FRAME_SYNC,
->  	};
->
-> +	isp->frame_sequence++;
-> +	isp->frame_active = true;
-> +
->  	event.u.frame_sync.frame_sequence = isp->frame_sequence;
->  	v4l2_event_queue(isp->sd.devnode, &event);
->  }
-> @@ -1112,14 +1116,15 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
->  	rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
->
->  	/* Vertical sync signal, starting generating new frame */
-> -	if (status & RKISP1_CIF_ISP_V_START) {
-> -		rkisp1->isp.frame_sequence++;
-> -		rkisp1_isp_queue_event_sof(&rkisp1->isp);
-> +	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
-> +		status &= ~RKISP1_CIF_ISP_V_START;
-> +		rkisp1_isp_sof(&rkisp1->isp);
->  		if (status & RKISP1_CIF_ISP_FRAME) {
->  			WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
->  			rkisp1->debug.irq_delay++;
->  		}
->  	}
-> +
->  	if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
->  		/* Clear pic_size_error */
->  		isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
-> @@ -1138,6 +1143,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
->  	if (status & RKISP1_CIF_ISP_FRAME) {
->  		u32 isp_ris;
->
-> +		rkisp1->isp.frame_active = false;
->  		rkisp1->debug.complete_frames++;
->
->  		/* New frame from the sensor received */
-> @@ -1152,5 +1158,8 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
->  		rkisp1_params_isr(rkisp1);
->  	}
->
-> +	if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active)
+between commits:
 
-I think you can drop the  && !rkisp1->isp.frame_active because if you
-get here and 'status & RKISP1_CIF_ISP_V_START' it means that:
+  1e5f0fb41fccf ("vfs: fs/namespace.c: remove ms_flags argument from do_rem=
+ount")
+  807602d8cfc8b ("vfs: output mount_too_revealing() errors to fscontext")
+  96ff702edaec8 ("mnt: support ns lookup")
 
-1) frame_active was false and you have entered the above
+=66rom the vfs-next tree and commits:
 
-        if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
+  ead5706f63cd8 ("do_{loopback,change_type,remount,reconfigure_mnt}(): cons=
+tify struct path argument")
+  5423426a79dd4 ("switch do_new_mount_fc() to fc_mount()")
+  9d84d519f9fe4 ("copy_mnt_ns(): use guards")
 
-   and now the RKISP1_CIF_ISP_V_START bit in 'status' has been cleared
-   so you don't need to handle VSYNC here
+=66rom the vfs tree.
 
-2) frame_active was true and you delayed handling V_START till here.
-   If also ISP_FRAME was set, frame_start has been set to false here
-   above. If ISP_FRAME was not set then it has been delivered by a
-   previous interrupt and then frame_start is false.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-So I guess it's enough to check if at this point RKISP1_CIF_ISP_V_START
-is still set in 'status' ?
+diff --cc fs/namespace.c
+index e3ac6e06be70d,aeeb33bf3e7b3..0000000000000
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@@ -90,7 -80,16 +90,15 @@@ static DECLARE_RWSEM(namespace_sem)
+  static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+  static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+  static struct mnt_namespace *emptied_ns; /* protected by namespace_sem */
+ -static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+ =20
++ static inline void namespace_lock(void);
++ static void namespace_unlock(void);
++ DEFINE_LOCK_GUARD_0(namespace_excl, namespace_lock(), namespace_unlock())
++ DEFINE_LOCK_GUARD_0(namespace_shared, down_read(&namespace_sem),
++ 				      up_read(&namespace_sem))
++=20
++ DEFINE_FREE(mntput, struct vfsmount *, if (!IS_ERR(_T)) mntput(_T))
++=20
+  #ifdef CONFIG_FSNOTIFY
+  LIST_HEAD(notify_list); /* protected by namespace_sem */
+  #endif
+@@@ -153,10 -195,26 +161,10 @@@ static void mnt_ns_release_rcu(struct r
+  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+  {
+  	/* remove from global mount namespace list */
+- 	if (!is_anon_ns(ns))
+ -	if (!list_empty(&ns->mnt_ns_list)) {
+ -		mnt_ns_tree_write_lock();
+ -		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+ -		list_bidir_del_rcu(&ns->mnt_ns_list);
+ -		mnt_ns_tree_write_unlock();
+ -	}
+++	if (!list_empty(&ns->mnt_ns_list))
+ +		ns_tree_remove(ns);
+ =20
+ -	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
+ -}
+ -
+ -static int mnt_ns_find(const void *key, const struct rb_node *node)
+ -{
+ -	const u64 mnt_ns_id =3D *(u64 *)key;
+ -	const struct mnt_namespace *ns =3D node_to_mnt_ns(node);
+ -
+ -	if (mnt_ns_id < ns->seq)
+ -		return -1;
+ -	if (mnt_ns_id > ns->seq)
+ -		return 1;
+ -	return 0;
+ +	call_rcu(&ns->ns.ns_rcu, mnt_ns_release_rcu);
+  }
+ =20
+  /*
+@@@ -3229,7 -3310,7 +3250,7 @@@ static int do_reconfigure_mnt(const str
+   * If you've mounted a non-root directory somewhere and want to do remount
+   * on it - tough luck.
+   */
+- static int do_remount(struct path *path, int sb_flags,
+ -static int do_remount(const struct path *path, int ms_flags, int sb_flags,
+++static int do_remount(const struct path *path, int sb_flags,
+  		      int mnt_flags, void *data)
+  {
+  	int err;
+@@@ -3669,30 -3720,20 +3660,22 @@@ static int do_new_mount_fc(struct fs_co
+  	if (IS_ERR(mnt))
+  		return PTR_ERR(mnt);
+ =20
++ 	sb =3D fc->root->d_sb;
++ 	error =3D security_sb_kern_mount(sb);
++ 	if (unlikely(error))
++ 		return error;
++=20
+ -	if (unlikely(mount_too_revealing(sb, &mnt_flags)))
+++	if (unlikely(mount_too_revealing(sb, &mnt_flags))) {
+++		errorfcp(fc, "VFS", "Mount too revealing");
++ 		return -EPERM;
+++	}
++=20
+  	mnt_warn_timestamp_expiry(mountpoint, mnt);
+ =20
+- 	error =3D lock_mount(mountpoint, &mp);
+- 	if (!error) {
+- 		error =3D do_add_mount(real_mount(mnt), mp.mp,
+- 				     mountpoint, mnt_flags);
+- 		unlock_mount(&mp);
+- 	}
+- 	if (error < 0)
+- 		mntput(mnt);
++ 	LOCK_MOUNT(mp, mountpoint);
++ 	error =3D do_add_mount(real_mount(mnt), &mp, mnt_flags);
++ 	if (!error)
++ 		retain_and_null_ptr(mnt); // consumed on success
+  	return error;
+  }
+ =20
+@@@ -4202,14 -4247,7 +4175,7 @@@ struct mnt_namespace *copy_mnt_ns(unsig
+  		while (p->mnt.mnt_root !=3D q->mnt.mnt_root)
+  			p =3D next_mnt(skip_mnt_tree(p), old);
+  	}
+- 	namespace_unlock();
+-=20
+- 	if (rootmnt)
+- 		mntput(rootmnt);
+- 	if (pwdmnt)
+- 		mntput(pwdmnt);
+-=20
+ -	mnt_ns_tree_add(new_ns);
+ +	ns_tree_add_raw(new_ns);
+  	return new_ns;
+  }
+ =20
 
-However, as said, it's seems unlikely to that your above 1) can
-happen. Have you ever hit a WARN() again with this patch applied ?
+--J4aiT/eBKQxTMcDA
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +		rkisp1_isp_sof(&rkisp1->isp);
-> +
->  	return IRQ_HANDLED;
->  }
-> --
-> 2.48.1
->
->
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjIRXcACgkQJNaLcl1U
+h9CzmQf+NDA4AxtEL8iv1jgg2huysWw2t1Lj5iwtCtAUSToM6DUv/4pmSmXOnKuM
+sbmwlThizKuryr8YWqSVHGzDLm7GBsOCf/q3fyqPCYNXz1qqDyKjOgUvD8y0Ssj5
+5723/kd3RgSFPzt5d7gXqVqdAxCHr1BNGzg0rf2kpKo2b8dS2I2tEiHYY6FtxDoT
+AfM9cXFYLNpACpwEHLt8omwcDtr05zCDdBAcD5qtVlfOpmyL7DY2tc//aGxovbXp
+YWvajtf3JXTj+AJ+bMuPkr/OxXTU5Kuh6jQnukWHwNLy2Eq6uhb3OqxQvJjLRS44
+yOhPJgam+ydc+j52c5pPcizgxqY6mA==
+=XZQK
+-----END PGP SIGNATURE-----
+
+--J4aiT/eBKQxTMcDA--
 
