@@ -1,380 +1,177 @@
-Return-Path: <linux-kernel+bounces-817418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C44B581F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2D5B581F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BAA3B6F6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E10D16D5A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3AB27A448;
-	Mon, 15 Sep 2025 16:26:38 +0000 (UTC)
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C81827A103;
+	Mon, 15 Sep 2025 16:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CSkOOOHi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DE024DCE9;
-	Mon, 15 Sep 2025 16:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6456524DCE9;
+	Mon, 15 Sep 2025 16:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757953598; cv=none; b=G0tNLrE5D8RnGQeu39bpTGof2emv7250oqydtaAxwjZsIK1GjIJGov/19I1V/Hg8cHZk4Qw9Q6a3NHqLu02T5qN/Av0cjFuJSjCaoqTiBu5YZ0tY2QxaiUiS2GmWFcxMj7/y4nLFWwQxF/rdrWMzMgaQcMmMciucrXuMitlVE4M=
+	t=1757953621; cv=none; b=chMdG8Yc6tvvWTf3r1rp5727C1STHNjD/BerJ8qGHPiO2xOl4+l5IlzlMD0JkncfIR+WlldF7OId7GyphyxmzKcrB7XGwxO1M4MiHxnv+nXstneHyOMjuowJvCvsxRE9pfkGtlVTbdfLIAfz6ouQxDHFTEWtiQosrapc6qGdmac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757953598; c=relaxed/simple;
-	bh=JTSY3ld7tW1cgh4uGWv9l2bQ8qf7J7s86kqL4TosX70=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzcJMvyJVacYWl1IlpjeDihdTL5ffDlPLurstfJAWtDYnJyC/QxW878tyRz3yQV9PaVa/7B/T+lIl/rxwMof8evWM1i2IEkrvQNPi4xzcPrE+q2x05sJnkg9AyOr6X1ti22dYfaczO0aVW15l7DPkV48X+saKfxJrVV+y/HpE1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w003.hihonor.com (unknown [10.68.17.88])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4cQVl54WGxzYmZhf;
-	Tue, 16 Sep 2025 00:25:53 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w003.hihonor.com
- (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 00:26:24 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 00:26:23 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <akpm@linux-foundation.org>, <feng.han@honor.com>, <lenb@kernel.org>,
-	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-pm@vger.kernel.org>, <liulu.liu@honor.com>,
-	<lorenzo.stoakes@oracle.com>, <pavel@kernel.org>, <rafael@kernel.org>,
-	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
-	<tglx@linutronix.de>, <zhongjinji@honor.com>
-Subject: Re: [PATCH v9 2/2] mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse order
-Date: Tue, 16 Sep 2025 00:26:19 +0800
-Message-ID: <20250915162619.5133-1-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <aMJ619kjFm00c4OP@tiehlicka>
-References: <aMJ619kjFm00c4OP@tiehlicka>
+	s=arc-20240116; t=1757953621; c=relaxed/simple;
+	bh=JJjoz8iiqJhmNZfKOSMi6Un11Z5v49/PkAlyrOo9J5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u79GdbuOqqnTc3yNSe2zmFPPH0kRMOEnN9tOItA9ao1qxuIHaTr4lzFhbzXx+gtdnMvlN9X5EHEq0jJW9/4IP6Mh56yJ+9oMmVzBrRWrAVEYcJX5YySTis1pFUlNpJSigCfbWAXpTP4PPh4nEWHap6f0FMWpLuq5Ebok+tRgo1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CSkOOOHi; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757953620; x=1789489620;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JJjoz8iiqJhmNZfKOSMi6Un11Z5v49/PkAlyrOo9J5o=;
+  b=CSkOOOHizgr/RW7nX/uAsBERIP2COB4DThvjs5RGKHRVesrjImw3D4zE
+   1cKIBteliB4yF4iSYQcUaxwHWMknjXZKG4mMPCq8R305opiR9po4B2rH3
+   IycTE92XxfGeGrZzyxmweISP1TKsgtR07ZS9mdYCWz3UupUgZpuEEFinu
+   esgFXS1q6/3sYeANQK1WGk/JTroQED4O7xgfZhRJbxcSWOiJmhVSVog9f
+   FOovVjpLgWtmqxSuhiS497iHlPXC91rrRf5//mjC+CAyuDdNwBp0fksNB
+   2ozI8fQrhBr9bBiIl5bdzk3QReZnYezRMSW0aP7UK7QZwCSbyOfExkHXF
+   A==;
+X-CSE-ConnectionGUID: kM5X7HfBQHSR2IjxI1+3ZA==
+X-CSE-MsgGUID: cJYqNygLTcqGsHKP5VocAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="60288376"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="60288376"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:26:56 -0700
+X-CSE-ConnectionGUID: EhG1VS+xTLGNAkC8/sm9lA==
+X-CSE-MsgGUID: pPBgcjI3SeWtt6gNtT3wiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="205646801"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.129]) ([10.125.111.129])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 09:26:54 -0700
+Message-ID: <45b9e636-d611-4e81-9f3d-ce23df2fac0d@intel.com>
+Date: Mon, 15 Sep 2025 09:26:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a018.hihonor.com
- (10.68.17.250)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/11] cxl/region: Separate region parameter setup and
+ region construction
+To: Robert Richter <rrichter@amd.com>
+Cc: Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20250912144514.526441-1-rrichter@amd.com>
+ <20250912144514.526441-7-rrichter@amd.com>
+ <3d44af04-f7d6-4625-b07d-40173bc95c35@intel.com>
+ <aMfA1hlZWfNdnEy5@rric.localdomain>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <aMfA1hlZWfNdnEy5@rric.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This perf report evaluates the benefits that process_mrelease gains after
-applying the patch. However, in this test, process_mrelease is not called
-directly. Instead, the kill signal is proactively intercepted, and the
-killed process is added to the oom_reaper queue to trigger the reaper
-worker. This simulates the way LMKD calls process_mrelease, which helps
-simplify the testing process.
 
-Since the perf report is too complicated, let us focus on the key points
-from the report.
 
-Key points:
-1. Compared to the version without the patch, the total time reduced by
-exit_mmap plus reaper work is roughly equal to the reduction in total
-pte spinlock waiting time.
-2. With the patch applied, for certain functions, the reaper performs
-more times, such as folio_remove_rmap_ptes, but the time spent by
-exit_mmap on folio_remove_rmap_ptes decreases accordingly.
+On 9/15/25 12:31 AM, Robert Richter wrote:
+> On 12.09.25 14:10:06, Dave Jiang wrote:
+>>
+>>
+>> On 9/12/25 7:45 AM, Robert Richter wrote:
+>>> To construct a region, the region parameters such as address range and
+>>> interleaving config need to be determined. This is done while
+>>> constructing the region by inspecting the endpoint decoder
+>>> configuration. The endpoint decoder is passed as a function argument.
+>>>
+>>> With address translation the endpoint decoder data is no longer
+>>> sufficient to extract the region parameters as some of the information
+>>> is obtained using other methods such as using firmware calls.
+>>>
+>>> In a first step, separate code to determine and setup the region
+>>> parameters from the region construction. Temporarily store all the
+>>> data to create the region in the new struct cxl_region_context. Add a
+>>> new function setup_region_parameters() to fill that struct and later
+>>> use it to construct the region. This simplifies the extension of the
+>>> function to support other methods needed, esp. to support address
+>>> translation.
+>>>
+>>> Patch is a prerequisite to implement address translation.
+>>>
+>>> Signed-off-by: Robert Richter <rrichter@amd.com>
+>>> ---
+>>>  drivers/cxl/core/region.c | 50 +++++++++++++++++++++++++++++----------
+>>>  1 file changed, 38 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>>> index 106692f1e310..57697504410b 100644
+>>> --- a/drivers/cxl/core/region.c
+>>> +++ b/drivers/cxl/core/region.c
+>>> @@ -3414,6 +3414,26 @@ static int match_region_by_range(struct device *dev, const void *data)
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +struct cxl_region_context {
+>>> +	struct cxl_endpoint_decoder *cxled;
+>>> +	struct cxl_memdev *cxlmd;
+>>> +	struct range hpa_range;
+>>> +	int interleave_ways;
+>>> +	int interleave_granularity;
+>>> +};
+>>> +
+>>> +static int setup_region_params(struct cxl_endpoint_decoder *cxled,
+>>> +			       struct cxl_region_context *ctx)
+>>> +{
+>>> +	ctx->cxled = cxled;
+>>> +	ctx->cxlmd = cxled_to_memdev(cxled);
+>>> +	ctx->hpa_range = cxled->cxld.hpa_range;
+>>> +	ctx->interleave_ways = cxled->cxld.interleave_ways;
+>>> +	ctx->interleave_granularity = cxled->cxld.interleave_granularity;
+>>
+>> You can init like this:
+>>
+>> 	*ctx = (struct cxl_region_context) {
+>> 		.cxled = cxled,
+>> 		.cxlmd = cxled_to_memdev(cxled),
+>> 		.hpa_range = cxled->cxld.hpa_range,
+>> 		.interleave_ways = cxled->cxld.interleave_ways,
+>> 		.interleave_granularity = cxled->cxld.interleave_granularity,
+>> 	};
+> 
+> Will change that for readability and to zero-init possibly missing
+> members.
+> 
+>>
+>>
+>>> +
+>>> +	return 0;
+>>
+>> Can probably make this function void if no expected errors and only assignments.
+> 
+> A later extension to the code may return an error code, so I prepared
+> the function interface already for this.
 
-Summary of measurements (ms):
-+----------------------------------------------------------------+
-| Category                      | Applying patch | Without patch |
-+-------------------------------+----------------+---------------+
-| Total running time            |    132.6       |    167.1      |
-|   (exit_mmap + reaper work)   |  72.4 + 60.2   |  90.7 + 76.4  |
-+-------------------------------+----------------+---------------+
-| Time waiting for pte spinlock |     1.0        |    33.1       |
-|   (exit_mmap + reaper work)   |   0.4 + 0.6    |  10.0 + 23.1  |
-+-------------------------------+----------------+---------------+
-| folio_remove_rmap_ptes time   |    42.0        |    41.3       |
-|   (exit_mmap + reaper work)   |  18.4 + 23.6   |  22.4 + 18.9  |
-+----------------------------------------------------------------+
+I realized that when I saw it in the later patch. So please ignore the comment.
 
-Report without patch:
+> 
+> -Robert
+> 
+>>
+>> DJ
 
-Arch: arm64
-Event: cpu-clock (type 1, config 0)
-Samples: 6355
-Event count: 90781175
-do_exit
- |--93.81%-- mmput
- |    |--99.46%-- exit_mmap
- |    |    |--76.74%-- unmap_vmas
- |    |    |    |--9.14%-- [hit in function]
- |    |    |    |--34.25%-- tlb_flush_mmu
- |    |    |    |--31.13%-- folio_remove_rmap_ptes
- |    |    |    |--15.04%-- __pte_offset_map_lock
- |    |    |    |--5.43%-- free_swap_and_cache_nr
- |    |    |    |--1.80%-- _raw_spin_lock
- |    |    |    |--1.19%-- folio_mark_accessed
- |    |    |    |--0.84%-- __tlb_remove_folio_pages
- |    |    |    |--0.37%-- mas_find
- |    |    |    |--0.37%-- percpu_counter_add_batch
- |    |    |    |--0.20%-- __mod_lruvec_page_state
- |    |    |    |--0.13%-- f2fs_dirty_data_folio
- |    |    |    |--0.04%-- __rcu_read_unlock
- |    |    |    |--0.04%-- tlb_flush_rmaps
- |    |    |    |          folio_remove_rmap_ptes
- |    |    |     --0.02%-- folio_mark_dirty
- |    |    |--12.72%-- free_pgtables
- |    |    |--2.65%-- folio_remove_rmap_ptes
- |    |    |--2.50%-- __vm_area_free
- |    |    |    |--11.49%-- [hit in function]
- |    |    |    |--81.08%-- kmem_cache_free
- |    |    |    |--4.05%-- _raw_spin_unlock_irqrestore
- |    |    |     --3.38%-- anon_vma_name_free
- |    |    |--1.03%-- folio_mark_accessed
- |    |    |--0.96%-- __tlb_remove_folio_pages
- |    |    |--0.54%-- mas_find
- |    |    |--0.46%-- tlb_finish_mmu
- |    |    |    |--96.30%-- free_pages_and_swap_cache
- |    |    |    |    |--80.77%-- release_pages
- |    |    |--0.44%-- kmem_cache_free
- |    |    |--0.39%-- __pte_offset_map_lock
- |    |    |--0.30%-- task_work_add
- |    |    |--0.19%-- __rcu_read_unlock
- |    |    |--0.17%-- fput
- |    |    |--0.13%-- __mt_destroy
- |    |    |--0.10%-- down_write
- |    |    |--0.07%-- unlink_file_vma
- |    |    |--0.05%-- percpu_counter_add_batch
- |    |    |--0.02%-- free_swap_and_cache_nr
- |    |    |--0.02%-- flush_tlb_batched_pending
- |    |    |--0.02%-- uprobe_munmap
- |    |    |--0.02%-- _raw_spin_unlock
- |    |    |--0.02%-- unlink_anon_vmas
- |    |     --0.02%-- up_write
- |    |--0.40%-- fput
- |    |--0.10%-- mas_find
- |     --0.02%-- __vm_area_free
- |--5.19%-- task_work_run
- |--0.42%-- exit_files
- |          put_files_struct
- |--0.35%-- exit_task_namespaces
-
-Children  Self      Command         Symbol
-90752605  0         TEST_PROCESS    do_exit
-90752605  0         TEST_PROCESS    get_signal
-85138600  0         TEST_PROCESS    __mmput
-84681480  399980    TEST_PROCESS    exit_mmap
-64982465  5942560   TEST_PROCESS    unmap_vmas
-22598870  1599920   TEST_PROCESS    free_pages_and_swap_cache
-22498875  3314120   TEST_PROCESS    folio_remove_rmap_ptes
-10985165  1442785   TEST_PROCESS    _raw_spin_lock
-10770890  57140     TEST_PROCESS    free_pgtables
-10099495  399980    TEST_PROCESS    __pte_offset_map_lock
-8199590   1285650   TEST_PROCESS    folios_put_refs
-4756905   685680    TEST_PROCESS    free_unref_page_list
-4714050   14285     TEST_PROCESS    task_work_run
-4671195   199990    TEST_PROCESS    ____fput
-4085510   214275    TEST_PROCESS    __fput
-3914090   57140     TEST_PROCESS    unlink_file_vma
-3542680   28570     TEST_PROCESS    free_swap_and_cache_nr
-3214125   2114180   TEST_PROCESS    free_unref_folios
-3142700   14285     TEST_PROCESS    swap_entry_range_free
-2828430   2828430   TEST_PROCESS    kmem_cache_free
-2714150   528545    TEST_PROCESS    zram_free_page
-2528445   114280    TEST_PROCESS    zram_slot_free_notify
-
-Arch: arm64
-Event: cpu-clock (type 1, config 0)
-Samples: 5353
-Event count: 76467605
-kthread
-|--99.57%-- oom_reaper
-|    |--0.28%-- [hit in function]
-|    |--73.58%-- unmap_page_range
-|    |    |--8.67%-- [hit in function]
-|    |    |--41.59%-- __pte_offset_map_lock
-|    |    |--29.47%-- folio_remove_rmap_ptes
-|    |    |--16.11%-- tlb_flush_mmu
-|    |    |           free_pages_and_swap_cache
-|    |    |    |--9.49%-- [hit in function]
-|    |    |--1.66%-- folio_mark_accessed
-|    |    |--0.74%-- free_swap_and_cache_nr
-|    |    |--0.69%-- __tlb_remove_folio_pages
-|    |    |--0.41%-- __mod_lruvec_page_state
-|    |    |--0.33%-- _raw_spin_lock
-|    |    |--0.28%-- percpu_counter_add_batch
-|    |    |--0.03%-- tlb_flush_mmu_tlbonly
-|    |     --0.03%-- __rcu_read_unlock
-|    |--19.94%-- tlb_finish_mmu
-|    |    |--23.24%-- [hit in function]
-|    |    |--76.39%-- free_pages_and_swap_cache
-|    |    |--0.28%-- free_pages
-|    |     --0.09%-- release_pages
-|    |--3.21%-- folio_remove_rmap_ptes
-|    |--1.16%-- __tlb_remove_folio_pages
-|    |--1.16%-- folio_mark_accessed
-|    |--0.36%-- __pte_offset_map_lock
-|    |--0.28%-- mas_find
-|     --0.02%-- __rcu_read_unlock
-|--0.17%-- tlb_finish_mmu
-|--0.15%-- mas_find
-|--0.06%-- memset
-|--0.04%-- unmap_page_range
- --0.02%-- tlb_gather_mmu
-
-Children  Self      Command       Symbol
-76467605  0         oom_reaper    kthread
-76139050  214275    oom_reaper    oom_reaper
-56054340  4885470   oom_reaper    unmap_page_range
-23570250  385695    oom_reaper    __pte_offset_map_lock
-23341690  257130    oom_reaper    _raw_spin_lock
-23113130  23113130  oom_reaper    queued_spin_lock_slowpath
-20627540  1371360   oom_reaper    free_pages_and_swap_cache
-19027620  614255    oom_reaper    release_pages
-18956195  3399830   oom_reaper    folio_remove_rmap_ptes
-15313520  3656960   oom_reaper    tlb_finish_mmu
-11799410  11785125  oom_reaper    cgroup_rstat_updated
-11285150  11256580  oom_reaper    _raw_spin_unlock_irqrestore
-9028120   0         oom_reaper    tlb_flush_mmu
-8613855   1342790   oom_reaper    folios_put_refs
-5442585   485690    oom_reaper    free_unref_page_list
-4299785   1614205   oom_reaper    free_unref_folios
-3385545   1299935   oom_reaper    free_unref_page_commit
-
-Report with patch:
-
-Arch: arm64
-Event: cpu-clock (type 1, config 0)
-Samples: 5075
-Event count: 72496375
-|--99.98%-- do_notify_resume
-|    |--92.63%-- mmput
-|    |    |--99.57%-- exit_mmap
-|    |    |    |--0.79%-- [hit in function]
-|    |    |    |--76.43%-- unmap_vmas
-|    |    |    |    |--8.39%-- [hit in function]
-|    |    |    |    |--42.80%-- tlb_flush_mmu
-|    |    |    |    |           free_pages_and_swap_cache
-|    |    |    |    |--34.08%-- folio_remove_rmap_ptes
-|    |    |    |    |--9.51%-- free_swap_and_cache_nr
-|    |    |    |    |--2.40%-- _raw_spin_lock
-|    |    |    |    |--0.75%-- __tlb_remove_folio_pages
-|    |    |    |    |--0.48%-- mas_find
-|    |    |    |    |--0.36%-- __pte_offset_map_lock
-|    |    |    |    |--0.34%-- percpu_counter_add_batch
-|    |    |    |    |--0.34%-- folio_mark_accessed
-|    |    |    |    |--0.20%-- __mod_lruvec_page_state
-|    |    |    |    |--0.17%-- f2fs_dirty_data_folio
-|    |    |    |    |--0.11%-- __rcu_read_unlock
-|    |    |    |    |--0.03%-- _raw_spin_unlock
-|    |    |    |    |--0.03%-- tlb_flush_rmaps
-|    |    |    |     --0.03%-- uprobe_munmap
-|    |    |    |--14.19%-- free_pgtables
-|    |    |    |--2.52%-- __vm_area_free
-|    |    |    |--1.52%-- folio_remove_rmap_ptes
-|    |    |    |--0.83%-- mas_find
-|    |    |    |--0.81%-- __tlb_remove_folio_pages
-|    |    |    |--0.77%-- folio_mark_accessed
-|    |    |    |--0.41%-- kmem_cache_free
-|    |    |    |--0.36%-- task_work_add
-|    |    |    |--0.34%-- fput
-|    |    |    |--0.32%-- __pte_offset_map_lock
-|    |    |    |--0.15%-- __rcu_read_unlock
-|    |    |    |--0.15%-- __mt_destroy
-|    |    |    |--0.09%-- unlink_file_vma
-|    |    |    |--0.06%-- down_write
-|    |    |    |--0.04%-- lookup_swap_cgroup_id
-|    |    |    |--0.04%-- uprobe_munmap
-|    |    |    |--0.04%-- percpu_counter_add_batch
-|    |    |    |--0.04%-- up_write
-|    |    |    |--0.02%-- flush_tlb_batched_pending
-|    |    |    |--0.02%-- _raw_spin_unlock
-|    |    |    |--0.02%-- unlink_anon_vmas
-|    |    |     --0.02%-- tlb_finish_mmu
-|    |    |               free_unref_page
-|    |    |--0.38%-- fput
-|    |     --0.04%-- mas_find
-|    |--6.21%-- task_work_run
-|    |--0.47%-- exit_task_namespaces
-|    |--0.16%-- ____fput
-|     --0.04%-- mm_update_next_owner
-
-Children  Self      Command         Symbol
-72482090  0         TEST_PROCESS    get_signal
-67139500  0         TEST_PROCESS    __mmput
-67139500  0         TEST_PROCESS    mmput
-66853800  528545    TEST_PROCESS    exit_mmap
-51097445  4285500   TEST_PROCESS    unmap_vmas
-21870335  0         TEST_PROCESS    tlb_flush_mmu
-21870335  1371360   TEST_PROCESS    free_pages_and_swap_cache
-20384695  485690    TEST_PROCESS    release_pages
-18427650  1814195   TEST_PROCESS    folio_remove_rmap_ptes
-13799310  13785025  TEST_PROCESS    cgroup_rstat_updated
-12842215  12842215  TEST_PROCESS    _raw_spin_unlock_irqrestore
-9485240   14285     TEST_PROCESS    free_pgtables
-7785325   428550    TEST_PROCESS    folios_put_refs
-4899755   642825    TEST_PROCESS    free_unref_page_list
-4856900   42855     TEST_PROCESS    free_swap_and_cache_nr
-4499775   14285     TEST_PROCESS    task_work_run
-4385495   114280    TEST_PROCESS    ____fput
-3971230   714250    TEST_PROCESS    zram_free_page
-3899805   14285     TEST_PROCESS    swap_entry_range_free
-3785525   185705    TEST_PROCESS    zram_slot_free_notify
-399980    399980    TEST_PROCESS    __pte_offset_map_lock
-
-Arch: arm64
-Event: cpu-clock (type 1, config 0)
-Samples: 4221
-Event count: 60296985
-kthread
-|--99.53%-- oom_reaper
-|    |--0.17%-- [hit in function]
-|    |--55.77%-- unmap_page_range
-|    |    |--20.49%-- [hit in function]
-|    |    |--58.30%-- folio_remove_rmap_ptes
-|    |    |--11.48%-- tlb_flush_mmu
-|    |    |--3.33%-- folio_mark_accessed
-|    |    |--2.65%-- __tlb_remove_folio_pages
-|    |    |--1.37%-- _raw_spin_lock
-|    |    |--0.68%-- __mod_lruvec_page_state
-|    |    |--0.51%-- __pte_offset_map_lock
-|    |    |--0.43%-- percpu_counter_add_batch
-|    |    |--0.30%-- __rcu_read_unlock
-|    |    |--0.13%-- free_swap_and_cache_nr
-|    |    |--0.09%-- tlb_flush_mmu_tlbonly
-|    |     --0.04%-- __rcu_read_lock
-|    |--32.21%-- tlb_finish_mmu
-|    |    |--88.69%-- free_pages_and_swap_cache
-|    |--6.93%-- folio_remove_rmap_ptes
-|    |--1.90%-- __tlb_remove_folio_pages
-|    |--1.55%-- folio_mark_accessed
-|    |--0.69%-- __pte_offset_map_lock
-|    |--0.45%-- mas_find_rev
-|    |    |--21.05%-- [hit in function]
-|    |     --78.95%-- mas_prev_slot
-|    |--0.12%-- mas_prev_slot
-|    |--0.10%-- free_pages_and_swap_cache
-|    |--0.07%-- __rcu_read_unlock
-|    |--0.02%-- percpu_counter_add_batch
-|     --0.02%-- lookup_swap_cgroup_id
-|--0.12%-- mas_find_rev
-|--0.12%-- unmap_page_range
-|--0.12%-- tlb_finish_mmu
-|--0.09%-- tlb_gather_mmu
- --0.02%-- memset
-
-Children  Self      Command       Symbol
-60296985  0         oom_reaper    kthread
-60011285  99995     oom_reaper    oom_reaper
-33541180  6928225   oom_reaper    unmap_page_range
-23670245  5414015   oom_reaper    folio_remove_rmap_ptes
-21027520  1757055   oom_reaper    free_pages_and_swap_cache
-19399030  2171320   oom_reaper    tlb_finish_mmu
-18970480  885670    oom_reaper    release_pages
-13785025  13785025  oom_reaper    cgroup_rstat_updated
-11442285  11442285  oom_reaper    _raw_spin_unlock_irqrestore
-7928175   1871335   oom_reaper    folios_put_refs
-4742620   371410    oom_reaper    free_unref_page_list
-3928375   942810    oom_reaper    free_unref_folios
-3842665   14285     oom_reaper    tlb_flush_mmu
-3385545   728535    oom_reaper    free_unref_page_commit
-585685    571400    oom_reaper    __pte_offset_map_lock
 
