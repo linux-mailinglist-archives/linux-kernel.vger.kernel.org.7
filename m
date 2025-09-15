@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-817686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A56B58562
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF529B58565
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 490BC163EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBEB168C3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6FD283CA7;
-	Mon, 15 Sep 2025 19:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E9E27E041;
+	Mon, 15 Sep 2025 19:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tq5XpbLa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XwzDcp8p"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BE7320F;
-	Mon, 15 Sep 2025 19:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B25D27604E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757964981; cv=none; b=TBoJDWqlR7A9p7nDdZtmfuigksJpoyThGK4gADYYGtt9p+JNgHhy86LVJLvw0UJSMbsXqylJVQ60+gRT3cuGykec/RV650WZE8Wq4P0r8B+6nX9gTOX/NvdGDEI3NNlqqsvd07NIjXRdMGlzrRKArZrloOch7TwfLhPUnITF/38=
+	t=1757964995; cv=none; b=Z3WVonCP9xg0yjmREB+n/QIpi/gbh3w9Lp9kne9QvcVf4FwfQMezobaxeEFf9H0sgqswUcIrSVGDlbSUkX0IdtpQ0+uGuhPbpPf/1Ly/ikuPPrGV7HJqdF6pnt2LfgcGWjovJiZtFK7fkQKMtOwlsfAEaaufot8NfoPrWO2mdfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757964981; c=relaxed/simple;
-	bh=xIiCA6XEsrWkWIw6mHGpGZiKaHps/gNNAYLbHZYqqj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j8Pt4ZhNw/J0KFO5I+xQjMbYTEMLWcCSCMCyUIn2m6aUTBBV7PiX0p1XHksoR661L7isg+KaH/9/3gXF6Ije7CGkSmxqlSGpHPDu4PYXT9I92Cyo6lht4CRob7PnXFcQPr8oy6noowrsoDiiwar4nJuDKRcmISpskWmxVpIEVok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tq5XpbLa; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757964979; x=1789500979;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xIiCA6XEsrWkWIw6mHGpGZiKaHps/gNNAYLbHZYqqj8=;
-  b=Tq5XpbLaNHBbKlScR4AuNz3HZvfHWQfNBqmF1fXKkaWy5cI1Xk06QK9j
-   BxoDNx6upziijcNr/AZ6skLcDml0tqsOxrogBM8K3K2vFqxx2+TMG/lR0
-   +ZMdCF+TCXFVyGzesPIyaWW5tRa+gs5Rfa2TOetqEKeT1GFkiciY6Xqfm
-   DqnZZHq6RYX640wB6ats7begSTBnf/1KIqXrR1AXrf9CUT9UXBrJTQ8wr
-   5P6J+E2czrl3JgcRZl3k60viVn07kHnhe/QPvR8dhKah4QO9MYcD40m8v
-   bbjlK71sbxSN5jK+L3ChWSZ9rS5oHYIsuQmTfvrcB7uyLPpos8gFYSCgD
-   Q==;
-X-CSE-ConnectionGUID: UxHDi4ccQQSeKZ1QAlywpw==
-X-CSE-MsgGUID: E86gYZ0ARMe8EWkEq2/b6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="82827217"
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="82827217"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 12:36:18 -0700
-X-CSE-ConnectionGUID: Y8hQESkPS4qErw9rZtB5/g==
-X-CSE-MsgGUID: ite+/TU1Qyacu+j/+yt5kA==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 5b01dd97f97c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 15 Sep 2025 12:36:15 -0700
-Received: from kbuild by 5b01dd97f97c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyEzl-0000cl-0J;
-	Mon, 15 Sep 2025 19:36:13 +0000
-Date: Tue, 16 Sep 2025 03:36:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lakshay Piplani <lakshay.piplani@nxp.com>, wbg@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com, shashank.rebbapragada@nxp.com,
-	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: Re: [PATCH 2/2] counter: nxp-pcf85363-stopwatch: Add driver for NXP
- PCF85263/PCF85363 stopwatch
-Message-ID: <202509160317.ig0aBXeu-lkp@intel.com>
-References: <20250915071415.1956219-2-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1757964995; c=relaxed/simple;
+	bh=uEAC5p+AjUNa10foDlmnZ/iJXlzmcT/Zp18GyN1xzQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2Zv7yrszAP6/cvRH9/iv6J+6ygwhVnANk6hRe70lrTKHgqs8n3jUGV566CmDLJOvYy2enNwY2qYYi56b+xuN4hvj2tQWFF/5Qti25FyfrxA55yYWgnDunQJJ4qv2umQI3egSxOTkLnGUvi1E9s7wn9NcbgUY1s4XNCPnS8WjJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XwzDcp8p; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-423fe622487so25972005ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757964991; x=1758569791; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/QRhMXbwN6ZOtvgpddJaVy3QSoQt+zsOVvdVieAZwxg=;
+        b=XwzDcp8pXiwXK+G7p1rIal7nBp0ZsMVgd1uOBSdOo+IY7lhbwEHGgQvF/dvDAey8ed
+         l/fuzHlfd8iFFAME6wZ7xjIdaXZcZ8tih4BQ2e78fqT44a+70Cj/piU9xTxOqzMFpo/I
+         gW+RkI9Y/bMizSQvggvMnmtVVMCMNCDbXGsFXdJqHhaCE0+JrWTrtr/ZWbVvf8L77WL9
+         hnSZphFz8WcFyhFOUh8byfMZKLg8jRh1B9wqURvbzJM0mcc6ToXl69TvJgzRrosYqV8C
+         4feT7Mx/KuSEet/h1TTtSLQjP4JPGVEboyvZia26xjInOQ3/BtWyV5mtj8AqYIZaWjMp
+         0DPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757964991; x=1758569791;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QRhMXbwN6ZOtvgpddJaVy3QSoQt+zsOVvdVieAZwxg=;
+        b=u4nE3uUKExCptupl5w2SC3gYHfi1GDAGtAGViytVOox6KE/VWLsnt36PO+jcISKxNQ
+         5wb01MTNuTXeF2RRzOUoseX7f7NcGJgLcKkMZPq+N/Ed/TLPcTvizSmr0CrtbLcVrjxs
+         IaF9LJ7EizYOEIZqzRVC3qX24fH0UOqKhTnJHLGOTcd42FiyjhUUxujNUChmoC+01YHN
+         R90p2OIGGEk/kBDv6RaN/WTfUDE/nxYMelSkKt9ODLzOa0etgizpg4ta4t3/JebQBmVC
+         y4foo7PGhDAIjEwgx7qlfBvJPtbBHvSZFh1EWiW7LqvYDcGtOU5kbIFVwOXfH1z3tcks
+         wERg==
+X-Forwarded-Encrypted: i=1; AJvYcCXE3KpkiWFTn3V5VSxI68Syadlw/+Fz2Iqd0ceTiDhRi45m0eJMeQsaGL45BCb3oGaPlZFreShsMFNjT7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOpkbYITsMZP46N2mR5gWEOUkk1eototWwrcd84Ky5Q7W7MXiy
+	Zl3MZZhXrnmrtvnFQ8I+cdkh3M4hhFA8hkWLTR+fLj3vTwHJR1iXAEFigzifWV/b7sg=
+X-Gm-Gg: ASbGnctOcQcXfCbCYEQbatPHJ+ZpRoUZ4TtGgbA35YWPTvBSL+ZZ8NQybZF+DsbZpwc
+	i6rHHI6o1prbL8lNIjKE8xv3oCtQLD527i8zrbsVVvrOg5eQf6n2hJrpiTc0t4ZglDGXmFl590R
+	nQLKCQxLROrxPMumtUrjORVPCUtKEqu7G/nxoCgV/ye+nP1O6rebDjMvUXP1YCXQDjaZS7+QS7U
+	ZPyifPgIr/nbUx0E0m5XPNWTKg+1CvlBe+jaEDaoeNiCm1z/k9gW5qOY3aYrQyLIEkubwHMQCVe
+	HEm8h/QHcJiySBugttInHY83xbwRsx/Z4nShQRtdPN48xcgCBepMiMwWPrXhP9OATYGXnIgo6ZM
+	ItHgp5tAYvs/EW4bLJ1f1inxbMffoAQ==
+X-Google-Smtp-Source: AGHT+IFEYX/oPDGLIujkgUjpKHkd+AJzUSAlzQhNdyXjqsuLxj3O8GToO+/Ue90TwQzp6EYj8c6BCw==
+X-Received: by 2002:a05:6e02:18cd:b0:424:71:32e5 with SMTP id e9e14a558f8ab-42400713e12mr52694585ab.31.1757964991321;
+        Mon, 15 Sep 2025 12:36:31 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5191117917bsm1281543173.10.2025.09.15.12.36.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 12:36:30 -0700 (PDT)
+Message-ID: <a58fee04-db3d-4c53-ae27-2e39b53e5e84@kernel.dk>
+Date: Mon, 15 Sep 2025 13:36:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915071415.1956219-2-lakshay.piplani@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] io_uring/zcrx: fix ifq->if_rxq is -1, get
+ dma_dev is NULL
+To: Feng zhou <zhoufeng.zf@bytedance.com>, asml.silence@gmail.com,
+ almasrymina@google.com, kuba@kernel.org, edumazet@google.com,
+ pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com, tariqt@nvidia.co,
+ mbloch@nvidia.com, leon@kernel.org, andrew+netdev@lunn.ch,
+ dtatulea@nvidia.com
+Cc: netdev@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangzhenze@bytedance.com,
+ wangdongdong.6@bytedance.com
+References: <20250912140133.97741-1-zhoufeng.zf@bytedance.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250912140133.97741-1-zhoufeng.zf@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Lakshay,
+On 9/12/25 8:01 AM, Feng zhou wrote:
+> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+> 
+> ifq->if_rxq has not been assigned, is -1, the correct value is
+> in reg.if_rxq.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.17-rc6 next-20250912]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Lakshay-Piplani/counter-nxp-pcf85363-stopwatch-Add-driver-for-NXP-PCF85263-PCF85363-stopwatch/20250915-152227
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250915071415.1956219-2-lakshay.piplani%40nxp.com
-patch subject: [PATCH 2/2] counter: nxp-pcf85363-stopwatch: Add driver for NXP PCF85263/PCF85363 stopwatch
-config: i386-randconfig-141-20250916 (https://download.01.org/0day-ci/archive/20250916/202509160317.ig0aBXeu-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509160317.ig0aBXeu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509160317.ig0aBXeu-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/counter/nxp-pcf85363-stopwatch.c:375:34: warning: unused variable 'dev_ids' [-Wunused-const-variable]
-     375 | static const struct of_device_id dev_ids[] = {
-         |                                  ^~~~~~~
-   1 warning generated.
-
-
-vim +/dev_ids +375 drivers/counter/nxp-pcf85363-stopwatch.c
-
-   374	
- > 375	static const struct of_device_id dev_ids[] = {
-   376		{ .compatible = "nxp,pcf85263atl", .data = &pcf_85263_config },
-   377		{ .compatible = "nxp,pcf85363atl", .data = &pcf_85363_config },
-   378		{ }
-   379	};
-   380	MODULE_DEVICE_TABLE(of, dev_ids);
-   381	
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jens Axboe
+
 
