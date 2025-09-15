@@ -1,355 +1,331 @@
-Return-Path: <linux-kernel+bounces-817652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E93BB584ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:47:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B37B584EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9152C3B206F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:47:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9D61AA165A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FBB279DDD;
-	Mon, 15 Sep 2025 18:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4379F2773E9;
+	Mon, 15 Sep 2025 18:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SQZv40TT"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JmR2/+x5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE78242D69
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757962017; cv=fail; b=qKg+2G3p4tJSdKWu8O0WjYoSGQMIgJGo18YxnBbHMaooa/6g7iZHgnG2f/Ue5+IDEpEJ8+uMPINK08ef9p08wwxXk+FIrtvYCNq2zQ96yyOB3SaN/UQcxzm4BlxSw5s49QU/X2qDMi6zRrGTIejnSPGk6pRZ7NRewNULY/aSGP4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757962017; c=relaxed/simple;
-	bh=IVSdSO6dx901fFO0scs5n1j/lC3C6zSb4WRo/zA7Yxs=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=ncm+KdHICkN0OztvG3VtsARco84OpCZbXrvGlS0CysWZDveeAb0+mcMDmy5mgPekSV51AzJo93nk0O2XEKcn3ojDUPcLLL5OjH/wVL7yyAyo8fcdR/yakKFUi+ZMn+VaJmy4LRzlu6X/hRW7UREhaev7d/OgYKYqzxCbvU/Bxls=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SQZv40TT; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FBg0is011065
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:46:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=dAR6MxBWQCTYR+pWQ2k45wRaBwmSOSpWL1/FtpMrHwQ=; b=SQZv40TT
-	Jusj859U0k5THBABaFz2cbf/UWkEu3pGQOywxjZsRqYAO0EzQxEQcdWu4Oe5QxC1
-	4WYgBmLcGJ8VblMwXBdJ95o5N31Mo5IP8Hd4y/bTHChimYuWZvaygohoQ6F4p+Xw
-	J3wZ7js/IUnkbzjLdQegHIfkGomIrRj3vL6Esf/LrjtcH2MZPCsIOnbMQ01q/R3Q
-	gCK53TwOV5krusiuHcC+sWVvw/P4UJnmtU9/3ICleR8Am67JSRnO6BVAhdnK9GHo
-	Wle1i9PXMlukkB7yvMhC6ekZfU5f3ES1yxRqh1yw84hN5pshSWXN9mmTXzIVPISq
-	iYdDgg1CoJ3ICQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509y4pbf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:46:55 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FIdZcU017091
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:46:54 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509y4pb4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 18:46:53 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FIg4CU023648;
-	Mon, 15 Sep 2025 18:46:53 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509y4pb1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 18:46:53 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X7MjuYij1aPqocOXJP64DAM+UgHSQgCjYZz6rlW7JOEdmYbJb+CYXNDM+C3eTlhU/amr3OYmf4sY8TfkF+vn8qDWhRh0LYVXvc2X5AUrojeSxGOStgs/aPtDcRZoeXFARnr9P4y16bdYwjVDhFK9QpRKzIiWzne63LjqKLulsy0tn/d3U4u82pVnxfXA9FT28pVyw6EtDKCuamORA2Mo4JgU34m0mN6/9JJYBX9FgtbfQAUpi7neooElNNowYCfPhZVsBjBsoIRhfYm2RKE49KEQHkQvn0w6d85yF/fmF7ABHGuCMYZhmWCDruSup65HsXzlhPAOiCDIkwsdLgygcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ihgHZ/pkBOj/e+FAWWElHpqoQi5eMW6AETY2yoOU5sE=;
- b=MlwazNAi/CrwqVnfr9IAtbvG7/0yDLDu9V0PZFzxjKZEjirnFmzqmaeRvJ6FauPA+ciu4MRoXkLN/Kz3GaRgREyxM6GFb3ZO74gby0b156rDOTgnw0xnT2L3MyGSJQONjoFqtm8ePvwhPrHv72XWYUlmfoeKJGAs63Mk3sZuP39ekVZ1vN5Gj0ziCpnUEIFhYPrq2i20jUtufzstMZMEzLw4jYppEDSeS7KXCHguHItB+Dj923pfTxaW8gvuGXToN4U7GrwUkZBz7YDdXCL5Qn1LaV4IoO2RLvgwxBlgoivvDjOKGgPoMLmL+V8gtteH1pdQfvtYajjTKUMlVla6FQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by MW4PR15MB4347.namprd15.prod.outlook.com (2603:10b6:303:bc::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Mon, 15 Sep
- 2025 18:46:49 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%3]) with mapi id 15.20.9094.021; Mon, 15 Sep 2025
- 18:46:49 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lyican53@gmail.com" <lyican53@gmail.com>
-CC: "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "seanjc@google.com"
-	<seanjc@google.com>, Xiubo Li <xiubli@redhat.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "sboyd@kernel.org"
-	<sboyd@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "idryomov@gmail.com"
-	<idryomov@gmail.com>,
-        "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Thread-Topic: [EXTERNAL] [RFC] Fix potential undefined behavior in
- __builtin_clz usage with GCC 11.1.0
-Thread-Index: AQHcJeu5wfTHJUHF30qNNLZu4keaVbSUllcA
-Date: Mon, 15 Sep 2025 18:46:49 +0000
-Message-ID: <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
-References:
- <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
-In-Reply-To:
- <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|MW4PR15MB4347:EE_
-x-ms-office365-filtering-correlation-id: 7834dcb2-aa88-4145-7db1-08ddf4883a92
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VDBxbUxvaC9OTnNselVnckx0b2ZjYzlFWDJYREpCWTl4UEJzL29HU0F4bzBJ?=
- =?utf-8?B?Z096VFlsa2hrTXh0Y0djSnQwTWhOSURqNW5CeG5Nc0p0Z1U1UDR1S1JvelpQ?=
- =?utf-8?B?UnorR1gxa0Z6ZTZGVkFsM3RVUDRNaGRZVFFtZ0pRRnhWMXdaQ1hwSjhtZjB5?=
- =?utf-8?B?c3o4TTZiWTJCYTFVS1N5cUxMREFWNVVVdGZ0TFQ5d2svYlFZaVR4YU5xYXZM?=
- =?utf-8?B?UGhYTFVkS1J0cnlQdDByS0swTmZkbjFpQ2t4cHViTzErbHBMekZxMXgvbmNK?=
- =?utf-8?B?dnU4ZUcyQXJlNHdmUFY5VEZLMkdYSCtlMjRpSlRyU3RWWVZ4blMwM1FvQ1g5?=
- =?utf-8?B?Z0hxMTRGNlFRd0NGWWlKN3huR29YT3J4S1JlSFJtdWJBeHBuMWpYaEtDOEVt?=
- =?utf-8?B?TEJvMk9NdWsvRXFBUStiTyt0czI2YWNvOWQxUitLbmNzaWtaN2NQVGluMVJ4?=
- =?utf-8?B?ZThmR1VmdWNXdXk2MWdIVzkvU2ZIclNiUDRiTkpoSmxtczdqamJxUkxWSTJC?=
- =?utf-8?B?NmEyWVMreDJhUGF4QndWQzlQV25ZcmpYR3lCWk91NWlzK0tabVRBRUc1N0NJ?=
- =?utf-8?B?TXQ0WUl1d1p2cDlENVQxN1hIU2dGd0xTUGRkRXExUDdScmlOUzB6VmNWYmdQ?=
- =?utf-8?B?d1huZHpRUlB4c3FNeHVJdUg4Z0FZSytNbTVyYUl2cEdBRHF6UTVWN0F6TTh2?=
- =?utf-8?B?RjdnVUxzOUNyTytNYWZ0R2plT0dUQUxHUm8xQjRpTDdObFpUcmpLdHAvOUdz?=
- =?utf-8?B?S3pCSy9aTHVjYk5VSUg0RFJINWVTQTdqTDlKWkhIZ1V0UUV2dzVOanNxSkgv?=
- =?utf-8?B?TWNpdWFnSnpKSk9VeGJxTXV5K3Q4MXBoTnVuQ001eXNxeWJmaEVKaVI3b21M?=
- =?utf-8?B?SDQraFVQU3l2U3ozQlR4M3d0VDFsZTIxd2RYZ0NwWVhlbjhHaytTdDU1bllP?=
- =?utf-8?B?ajFLOEw4M3VMK0VhWTZvMVpVdEh2bXJzYXo5bXI5U3g3aTJ6L1N1OThCQ0pJ?=
- =?utf-8?B?dEFTM0xxUlhaRzhXcGpXc3FDblhNeThhOHhXbDhzRnZUeXRacmdyM3ozbDds?=
- =?utf-8?B?OHlPOGxmRGdNM1gvTUszUzR2eFdjVHU0TmRLY1UvanZuWkUxaGpMK2llcStv?=
- =?utf-8?B?NGJhMXdrZkcvOC8rc0ZFc2hjMWhZR2JiYlBLQXpYZzJ0YnRaWXN6bHlWZXBJ?=
- =?utf-8?B?VXByM2FybVAyTGNxQUxuaVpYL0JZZjVoNFN5bkFnRkNNcVRPcE5LQWlkTWx2?=
- =?utf-8?B?aG5tRGZFMENJYyt0YktXY1dCNHpYUjNBWS9iNXFRN0d5SDd1U0xRRUdWeC9s?=
- =?utf-8?B?d2l6ZlZIUzJPN2M0ZGlOWnNyVUFvUVRUR2pwYXpDTnlGTmZ0ZVoxK2M3Q1hX?=
- =?utf-8?B?UzNGdEk5b1B5aStVWHVzeVk0VGVOaERGaTBsN0drZi9TRGlrSDh3cHF6cVlE?=
- =?utf-8?B?bjJtOHJzdFA2clVCdDdYajYreDhTQ2Z3aENDeDdLUXRMSi9yZ0QvbG56bXJO?=
- =?utf-8?B?YmM2bFpiVmdGZWtMNk9ZT3EwLzd2a0l0SFRkMHlUVmljdDI1WDNDdktUVGc2?=
- =?utf-8?B?ZmhXdEdaVFBqNVBmbVBZNXA2LzB0WFI1N0lmRUVwV0kvYWo3L01FYVdNMVRS?=
- =?utf-8?B?eGJZUDZwUTBWbXJwSDBkUXluby9nanBQaCt3alp1YzVDVzZnL2YvN3hydjRo?=
- =?utf-8?B?V2poUmFYRE02VTNXQStoRE5YRDE0eE9FMTZobGVOYkl2ZGV0RWhkand0Nmha?=
- =?utf-8?B?WnYvb2t3U1d3TE1kTEhIRWZjQ1JVTkJ0SUYvOUlXaGtEVUNkT0w0aThubmFM?=
- =?utf-8?B?cWtBeGR1bS9NVlVUVjJlZWplcktlNnRURDhQYnV1eHRVUUxDYlpVb2R5WDR1?=
- =?utf-8?B?dHc0UnVudVpBNG9JRVhlNzQ3dDVYRHBPTnNIMWJBaHpJVjJjcFJoSHVaWVR0?=
- =?utf-8?B?SHNIU0pCZ1doak9tRU9kOWxrUHJOSGpFRXA3MFdrWEJ1eHhIN1h2YlV1Nk40?=
- =?utf-8?Q?H+gKy+kjUCoKxNzFxsoP4eqzZNwh5g=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UWtRTDdLYmtVd29BRlFUUHpka0EyekNQU2lEdEgxQ0pUV0poaFZKS29aWGo1?=
- =?utf-8?B?RXNlemFYUnJLU1pEay9RNmd5SVUrYkhkMVpGNGhqZUd6cFgyQm0rRmdhcFp5?=
- =?utf-8?B?R1Yzc1BLcUlEbHF6QjJGTlMxeWxnci9QTFN6aGl2N2YwdjdSN0kxbGtEcVY2?=
- =?utf-8?B?SVhBNm1UMXVkR2p3ZE92MnhSaHdCOUpiMkxRbkpaNnBRY3NiN3h4Vi80Vi9X?=
- =?utf-8?B?aVJHS0M5bEt3cHNpZjllbUJ3c0NSYVErNTg4QUZ6bC8xOHVqeWJDcmdQV2U3?=
- =?utf-8?B?VkdVWGthOHRLaTFwcmNnbzkvMGhaanZtZlgwd0VYMlBINWUzK21LN0RWZ1Fw?=
- =?utf-8?B?clcvQzNLdHZlVTRESElLdGgwZFlsY1d6MnF1YkhuUnU3OGc2ZXZZMVVjL2VV?=
- =?utf-8?B?Mmo0c2hObHBWeVZOMURrY2xhN29wOE9oakNUWHUzUjJxTHBIQVRrVkNKZzZJ?=
- =?utf-8?B?KzJqdEhGUzA3aGVNLzVxYU9MMll3d0VEbVV6MnFRYndHb21MVDlaL1hGR3pF?=
- =?utf-8?B?TTh4M0lFL1lvWDhGQjZMem42dnhBNGppZjdMaCtMakFuQnpVY0RJdm9sS2tq?=
- =?utf-8?B?eUNpZVBLTFhCLytNanp2RmROdThHa1VXR2R0Q0t1bUx6MGxHWDF4aUl6OGVm?=
- =?utf-8?B?enZtTzVmbitmL2JuVDVQeUhuay9DNTdaYUIzbVV5ZnF5SVRqQjc0a3pwWFJU?=
- =?utf-8?B?V3Q1eGkwS0g4YmJHdVlSbSsxMml1QXEwZEoyY3g4NkVzQ3JuaEZ0aTR5TVQ5?=
- =?utf-8?B?UENsbDljVE1DS3JleGluc1J6Ukl2YURvenRXWEY4dkllaU9nQnlGMmFtanpj?=
- =?utf-8?B?cDJHRmRnM0FJT2d1anJHSG5hZW1wZnlGM21wazF5NkdQNEh0ZXorREhCUlJU?=
- =?utf-8?B?YmJBSUhmUmlRZFR0anZFVW5ZTGdsMkNKcCt4clllckw4REVlMjhyVUhKbk52?=
- =?utf-8?B?Q0VISktxT1hIMVB4V21YajczN0cyNFdTY0dOZ2VqaG5yZlBxL3Qwa0Z6VFpJ?=
- =?utf-8?B?UXI0MDRCZzJsUlUxaGtObmkrRk5jOFQ4WHNZWlFiL2R3S1FJWUpyNEE3U1Rp?=
- =?utf-8?B?WmZjbEFpUWtVZWY4SEpuQ1dmNTczN2ZWYWszQkw5TTdnYVJVUm4wUXpsTkVu?=
- =?utf-8?B?TXd2bnVkanJIbW1FTWkyZCs4YmkzRDVlMmFqditpWjJrTzMrOUZla3VSNG80?=
- =?utf-8?B?aVJHN3BDV1RZSFlNNzg5cmZtWnZsRndiTkN2VFJDR3hoUkdVR2xqR0hFTDUx?=
- =?utf-8?B?UXBrVXpnV3pyb0l4QTdJOXhmN2FzNktHOTZlQS8wRmJWT1FUSnhwcEVNR3Rn?=
- =?utf-8?B?Tkl3ekNTZk1OUnF2N09sczRVRXA3bUZzcEVqeGx5a3FCOThFUW9FWE1wZkR6?=
- =?utf-8?B?ZEJGblV3WnpqOUlibW9YVTdJcDYrSGhBU1RzOVVFaG80N0JBVVNQRWJmbXd4?=
- =?utf-8?B?dG5vWGFhUnhMbDg2RGlHdUlDTU5YdExtcEJ5R1hYYkxVWnZlSTNvb2N4QitU?=
- =?utf-8?B?Ni9ha3hRNTJiSWFLaENsUk9wQmNYSGpObWp2MU9jK2hvZWx2UER5ZVRoaHdq?=
- =?utf-8?B?ZUtFSkFRR2xnNzgyNzFkajVRZ3ljMkY0cWJRMUplR0tYaDJLS3VCOXR5QXN4?=
- =?utf-8?B?RXRnK0M2aE8xcGI3NVNnNTBMcE90NStuOFpHMzlwZjdRRUpCSVVCVFYrSFFm?=
- =?utf-8?B?UXNnd0ZFVnVhVWpJaWRTOEhLOXNjSC9hNGY1d1V4anoxZlBMV09BRUJGb2kx?=
- =?utf-8?B?Ri9kbmJQajNQUDVuRkNoZi9jZGFRbWZFZEU3R0I5anVXYVJQcTV4RytyM0V1?=
- =?utf-8?B?cDJhYkpYUCtGTktnTDI4TFFoSys5ZGZxWlFRQWphRzZqRVRvYm5FaXdDK1A3?=
- =?utf-8?B?U01MaEU3VThRdzhWMHdBeWxJNXhRYUtxYUYrd1h1eFpoVE82UmhETTQ2Uk56?=
- =?utf-8?B?YyttV0R4TlJjdUc3a0o2SGZQdTNwN3BwYnQ1WHk5MEd4Nm1LWVFweGFHWmU0?=
- =?utf-8?B?cXp6Q2E1RmJQMUVWM3lIYldoeEQwbDlpTndIZkFGWmU3dXZ2SkNKNW1rTkhn?=
- =?utf-8?B?T0hYeC9uOUtudTV3a3dLdkpGVm0yc3NTSWp0MGNSMzhZVFhwaGdlSkRBbkpX?=
- =?utf-8?B?SmhrUUZ6NzcrS1I4Q2ZFYmJuWEluQW1DMWlqM1NETjh3YS94N2lwa1NKMEVM?=
- =?utf-8?Q?8k+XwaVzY36tlORecQ3lhxU=3D?=
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7834dcb2-aa88-4145-7db1-08ddf4883a92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2025 18:46:49.1322
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fjMTO7enKLG5ePshCBp4So2BCFnmZVl0Jgpkd/kBxWaTQGY5Mt9IIZF85eSciy9Unn+0KeGJgnUN+M8z3Lg4NA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR15MB4347
-X-Proofpoint-ORIG-GUID: vIZKDh-J21dKy3z7lwKv8GyuXkvKrb8C
-X-Authority-Analysis: v=2.4 cv=OPYn3TaB c=1 sm=1 tr=0 ts=68c85f1e cx=c_pps
- a=aLy/yOIiKxSZstcXcC3bSw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=mDV3o1hIAAAA:8 a=49XOPMxaPgPVv4gptbcA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyMCBTYWx0ZWRfXxG1APcMNtAi3
- gPiBzBNd13inaRwPY8DObuVvYCmPdlNlnaBVzQ/ojEXtvK6zxtf1o7WB8BLN1qBFxIU0elHs34o
- 4E3U1zN4p2d0ASJTGBNMSwKV813mLFNWmnzh6tzFFzMcX/lISJ+hTARWvUSAobIZz24oZokkT98
- HCR4kyBYFisyCtyamNZoq1LEVVUPX9f69tR4Oao8vpSffenRPg0gUsRdnArHkgq3aJCrOZ0Apgt
- NSwnF7nqwvGRDGlZ3DKn3O20diqBAV4dCTo5iMszv+dzFZ6M/8hGpxrudUa/J/VEb1iBghw8DQF
- SEs3q3yyieP2D2BvlyYsR7lPhtso/1Swrzv1jxj91aomkZyXGy3oEGtXQvs4mILjxm2SFmjwJZd
- GE7TmfcI
-X-Proofpoint-GUID: 6Gz6lQiGOWhsGeMSKTuxFaw3j4Y20qWB
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <90618F0BA9BEAB4D811634174DF1458A@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8898D84A3E
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757962062; cv=none; b=O1woGRNzHOLIZh6hbn1RamLuYDlTKRuERpf98fplU8YKzylFqLB0y9H/XlfuULFLnNY3ACuIBuCEbkKhiyvOhxUGKhtaQb+AJZ5+zAm3icdFYqz2eeLBhf05N0TGW+Yes7PJGOZOQYNaRQhtJLFHMkjlZR/J8euhjVr9MoVkeGc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757962062; c=relaxed/simple;
+	bh=s6VwqVQ+c8+rEHPxJq/easr8mMRoWX33+ZNH1zS9Q2o=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FL5edXQQvIH3vPkGu+54gSj5ZEPBdgVPF47rDJAZPfUekthnoALVFTmz+CQOzk3bXO32gZUtxSq2Mg0aJuce9FZzoJWrRj/nQFzf2qpYYX4ncWnbYYi/+aEajcq67nE8EJIHx42WC08o6Vu4iN8wLKqJlszvnBnCoGVCLzieIAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JmR2/+x5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757962059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZI7f4YMNOAeZxeTy5RiM2JRm5pmLx1biSSJx9+R+1g=;
+	b=JmR2/+x5sau2CqXlckERuj4Esa14kZ4kGH7szmOadaS/TTiehio1VH/pwLmKA6BPphCYoC
+	1fxiwlqCPb7XTu8jGTkMqOjDNJb1ddPlbZHcxtYgcsNDB3lh/J2I+KQou/ySGCcOBn860E
+	9arCk02z/4FSPCmXft9con0Na/tqS1Q=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-423-LnqqMjK7OS-VK5bsiz0vJA-1; Mon, 15 Sep 2025 14:47:38 -0400
+X-MC-Unique: LnqqMjK7OS-VK5bsiz0vJA-1
+X-Mimecast-MFC-AGG-ID: LnqqMjK7OS-VK5bsiz0vJA_1757962057
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7814871b57dso21760736d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:47:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757962057; x=1758566857;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WZI7f4YMNOAeZxeTy5RiM2JRm5pmLx1biSSJx9+R+1g=;
+        b=wcrj1PXQ3Xe3NzyhKjfx5Ff+3365L6Rkz8nNa10AELaf0gEnXgpvnhRGOAoAiNRxi8
+         WIi2AhwHsf6ngvfmAFYvyoXDCqOyX/BjEQ1BH/SHZOBwfkmZc2eHgDz4zqRhp5FGS0NU
+         oWKl/dyByvT7ykC9WXLvy28XpJX5/Xd6gdOKK7qAnJPEpH00+wX8Br5T8cIWDkv1mddI
+         PwdLcQl0duO6NgeisUtbDlRWgdk4uO8odv8cbrGiEUJtCDkDFqjZjqmXXq5OknGN+zKW
+         6nP9J4ISokX/00mbK2o4HXSWomrCGbyBtF/HlcrUON1JeXTCqAtpVP3QSAfD1htOuODG
+         Hv5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWs6D8Xn8ps3ae7BlR5JmfVJoHpHMQVGaEoLISEWVZLpgnLsobRqLTzwTbG5qzFgMzzhsSIOcvBltcomRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl7Gx2e+Raos0tEXW1EwRa5nSB5PnnBxKzVgDbdkgBU0g+OJCz
+	cFLE4xlraMCurPvytiIeX9PVgcHs/u6GqoZ1JRokaCLGNANIBLnACW+zVyG+GjvXka7EmqNIeyA
+	E0heTd5hTdqdk/GNQfoljAKpyPIvNsCw7sujTxcvfMbfzoZKHaPNJdJofTJzB8q6zeA==
+X-Gm-Gg: ASbGncstNoDCIpYJrZMOFVd3/h5AOJoDMULXUxnVtlyfwKVLs/LF+Q7OXG4TH2bgFFx
+	5vxDK1/0LgFm2eM7qIjuirkg1/qufKdwa3YrdVv6UxpmkvL7ZAaPXeGnjw9hq9t3aDh5CJGN7ms
+	L5782XC4rGMJAwrg+n4RbPKBFYamY6v7Dfk2QazJ6rkfh3LhsmfT5IDwGtUd7j8WzTOlrYR/4Kg
+	N+FqpSwlF1W3w3hnyEIfh4Rc0M5KGfjgoO+j/IIkOK+MsHDRFEfClAs2ih6roR0WLLFaIae8BZP
+	eXvt9jV2srBhIItDJC+fYLeIN8QNXFvhCWYkxH2QSZcDmqu3Ldekh94+jTzzYHeALMSy6Q69fdQ
+	6nurdAdIjow==
+X-Received: by 2002:a05:6214:5d8f:b0:772:45a0:4e28 with SMTP id 6a1803df08f44-77245a04e73mr107521996d6.5.1757962057292;
+        Mon, 15 Sep 2025 11:47:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnG9DDP8M3F19FmwkPZUR0vsROM4QsVFDDaWSbYnuO0aIvhwGSTXKRwMqoSv09x9SszyR1iA==
+X-Received: by 2002:a05:6214:5d8f:b0:772:45a0:4e28 with SMTP id 6a1803df08f44-77245a04e73mr107521536d6.5.1757962056671;
+        Mon, 15 Sep 2025 11:47:36 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-76ea4229bdesm59492186d6.45.2025.09.15.11.47.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 11:47:36 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <eaae38ba-36ed-4d1b-aefb-10b9a1874845@redhat.com>
+Date: Mon, 15 Sep 2025 14:47:35 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re:  [RFC] Fix potential undefined behavior in __builtin_clz usage
- with GCC 11.1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_07,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1011 phishscore=0 spamscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=2 engine=8.19.0-2507300000 definitions=main-2509130020
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC -v2 04/11] cpuset: Refactor exclusive CPU mask
+ computation logic
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
+ <20250909033233.2731579-5-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250909033233.2731579-5-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-09-15 at 10:51 +0800, =E9=99=88=E5=8D=8E=E6=98=AD wrote:
-> Hi all,
->=20
-> I've identified several instances in the Linux kernel where __builtin_clz=
-()
-> is used without proper zero-value checking, which may trigger undefined
-> behavior when compiled with GCC 11.1.0 using -march=3Dx86-64-v3 -O1 optim=
-ization.
->=20
-> PROBLEM DESCRIPTION:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> GCC bug 101175 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D101175  ) =
-causes
-> __builtin_clz() to generate BSR instructions without proper zero handling=
- when
-> compiled with specific optimization flags. The BSR instruction has undefi=
-ned
-> behavior when the source operand is zero, potentially causing incorrect r=
-esults.
->=20
-> The issue manifests when:
-> - GCC version: 11.1.0 (potentially other versions)
-> - Compilation flags: -march=3Dx86-64-v3 -O1
-> - Code pattern: __builtin_clz(value) where value might be 0
->=20
-> AFFECTED LOCATIONS:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> 1. HIGH RISK: net/ceph/crush/mapper.c:265
-> Problem: __builtin_clz(x & 0x1FFFF) when (x & 0x1FFFF) could be 0
-> Impact: CRUSH hash algorithm corruption in Ceph storage
->=20
-> 2. HIGH RISK: drivers/scsi/elx/libefc_sli/sli4.h:3796
-> Problem: __builtin_clz(mask) in sli_convert_mask_to_count() with no zero =
-check
-> Impact: Incorrect count calculations in SCSI operations
->=20
-> 3. HIGH RISK: tools/testing/selftests/kvm/dirty_log_test.c:314
-> Problem: Two __builtin_clz() calls without zero validation
-> Impact: KVM selftest framework reliability
->=20
-> 4. MEDIUM RISK: drivers/clk/clk-versaclock7.c:322
-> Problem: __builtin_clzll(den) but prior checks likely prevent den=3D0
-> Impact: Clock driver calculations (lower risk due to existing checks)
->=20
-> COMPARISON WITH SAFE PATTERNS:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->=20
-> The kernel already implements safe patterns in many places:
->=20
-> // Safe pattern from include/asm-generic/bitops/builtin-fls.h
-> return x ? sizeof(x) * 8 - __builtin_clz(x) : 0;
->=20
-> // Safe pattern from arch/powerpc/lib/sstep.c
-> op->val =3D (val ? __builtin_clz(val) : 32);
->=20
-> PROPOSED FIXES:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> 1. net/ceph/crush/mapper.c:
-> - int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
-> + u32 masked =3D x & 0x1FFFF;
-> + int bits =3D masked ? __builtin_clz(masked) - 16 : 16;
->=20
-> 2. drivers/scsi/elx/libefc_sli/sli4.h:
-> if (method) {
-> - count =3D 1 << (31 - __builtin_clz(mask));
-> + count =3D mask ? 1 << (31 - __builtin_clz(mask)) : 0;
-> count *=3D 16;
->=20
-> 3. tools/testing/selftests/kvm/dirty_log_test.c:
-> - limit =3D 1 << (31 - __builtin_clz(pages));
-> - test_dirty_ring_count =3D 1 << (31 - __builtin_clz(test_dirty_ring_coun=
-t));
-> + limit =3D pages ? 1 << (31 - __builtin_clz(pages)) : 1;
-> + test_dirty_ring_count =3D test_dirty_ring_count ?
-> + 1 << (31 - __builtin_clz(test_dirty_ring_count)) : 1;
->=20
-> REPRODUCTION:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> Based on the GCC bug report and analysis of the kernel code patterns, this
-> issue can be reproduced by:
->=20
-> 1. Compiling affected code with: gcc -march=3Dx86-64-v3 -O1
-> 2. Examining generated assembly for BSR instructions
-> 3. Triggering code paths where the __builtin_clz argument could be zero
->=20
-> QUESTIONS:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> 1. Should I prepare formal patches for each affected subsystem?
+On 9/8/25 11:32 PM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> The current compute_effective_exclusive_cpumask function handles multiple
+> scenarios with different input parameters, making the code difficult to
+> follow. This patch refactors it into two separate functions:
+> compute_excpus and compute_trialcs_excpus.
+>
+> The compute_excpus function calculates the exclusive CPU mask for a given
+> input and excludes exclusive CPUs from sibling cpusets when cs's
+> exclusive_cpus is not explicitly set.
+>
+> The compute_trialcs_excpus function specifically handles exclusive CPU
+> computation for trial cpusets used during CPU mask configuration updates,
+> and always excludes exclusive CPUs from sibling cpusets.
+>
+> This refactoring significantly improves code readability and clarity,
+> making it explicit which function to call for each use case and what
+> parameters should be provided.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset.c | 103 ++++++++++++++++++++++++++---------------
+>   1 file changed, 65 insertions(+), 38 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index a31b05f58e0e..6015322a10ac 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1400,38 +1400,25 @@ bool cpuset_cpu_is_isolated(int cpu)
+>   }
+>   EXPORT_SYMBOL_GPL(cpuset_cpu_is_isolated);
+>   
+> -/*
+> - * compute_effective_exclusive_cpumask - compute effective exclusive CPUs
+> - * @cs: cpuset
+> - * @xcpus: effective exclusive CPUs value to be set
+> - * @real_cs: the real cpuset (can be NULL)
+> - * Return: 0 if there is no sibling conflict, > 0 otherwise
+> +/**
+> + * rm_siblings_excl_cpus - Remove exclusive CPUs that are used by sibling cpusets
+> + * @parent: Parent cpuset containing all siblings
+> + * @cs: Current cpuset (will be skipped)
+> + * @excpus:  exclusive effective CPU mask to modify
+>    *
+> - * If exclusive_cpus isn't explicitly set or a real_cs is provided, we have to
+> - * scan the sibling cpusets and exclude their exclusive_cpus or effective_xcpus
+> - * as well. The provision of real_cs means that a cpumask is being changed and
+> - * the given cs is a trial one.
+> + * This function ensures the given @excpus mask doesn't include any CPUs that
+> + * are exclusively allocated to sibling cpusets. It walks through all siblings
+> + * of @cs under @parent and removes their exclusive CPUs from @excpus.
+>    */
+> -static int compute_effective_exclusive_cpumask(struct cpuset *cs,
+> -					       struct cpumask *xcpus,
+> -					       struct cpuset *real_cs)
+> +static int rm_siblings_excl_cpus(struct cpuset *parent, struct cpuset *cs,
+> +					struct cpumask *excpus)
+>   {
+>   	struct cgroup_subsys_state *css;
+> -	struct cpuset *parent = parent_cs(cs);
+>   	struct cpuset *sibling;
+>   	int retval = 0;
+>   
+> -	if (!xcpus)
+> -		xcpus = cs->effective_xcpus;
+> -
+> -	cpumask_and(xcpus, user_xcpus(cs), parent->effective_xcpus);
+> -
+> -	if (!real_cs) {
+> -		if (!cpumask_empty(cs->exclusive_cpus))
+> -			return 0;
+> -	} else {
+> -		cs = real_cs;
+> -	}
+> +	if (cpumask_empty(excpus))
+> +		return retval;
+>   
+>   	/*
+>   	 * Exclude exclusive CPUs from siblings
+> @@ -1441,20 +1428,60 @@ static int compute_effective_exclusive_cpumask(struct cpuset *cs,
+>   		if (sibling == cs)
+>   			continue;
+>   
+> -		if (cpumask_intersects(xcpus, sibling->exclusive_cpus)) {
+> -			cpumask_andnot(xcpus, xcpus, sibling->exclusive_cpus);
+> +		if (cpumask_intersects(excpus, sibling->exclusive_cpus)) {
+> +			cpumask_andnot(excpus, excpus, sibling->exclusive_cpus);
+>   			retval++;
+>   			continue;
+>   		}
+> -		if (cpumask_intersects(xcpus, sibling->effective_xcpus)) {
+> -			cpumask_andnot(xcpus, xcpus, sibling->effective_xcpus);
+> +		if (cpumask_intersects(excpus, sibling->effective_xcpus)) {
+> +			cpumask_andnot(excpus, excpus, sibling->effective_xcpus);
+>   			retval++;
+>   		}
+>   	}
+>   	rcu_read_unlock();
+> +
+>   	return retval;
+>   }
+>   
+> +/*
+> + * compute_excpus - compute effective exclusive CPUs
+> + * @cs: cpuset
+> + * @xcpus: effective exclusive CPUs value to be set
+> + * Return: 0 if there is no sibling conflict, > 0 otherwise
+> + *
+> + * If exclusive_cpus isn't explicitly set , we have to scan the sibling cpusets
+> + * and exclude their exclusive_cpus or effective_xcpus as well.
+> + */
+> +static int compute_excpus(struct cpuset *cs, struct cpumask *excpus)
+> +{
+> +	struct cpuset *parent = parent_cs(cs);
+> +
+> +	cpumask_and(excpus, user_xcpus(cs), parent->effective_xcpus);
+> +
+> +	if (!cpumask_empty(cs->exclusive_cpus))
+> +		return 0;
+> +
+> +	return rm_siblings_excl_cpus(parent, cs, excpus);
+> +}
+> +
+> +/*
+> + * compute_trialcs_excpus - Compute effective exclusive CPUs for a trial cpuset
+> + * @trialcs: The trial cpuset containing the proposed new configuration
+> + * @cs: The original cpuset that the trial configuration is based on
+> + * Return: 0 if successful with no sibling conflict, >0 if a conflict is found
+> + *
+> + * Computes the effective_xcpus for a trial configuration. @cs is provided to represent
+> + * the real cs.
+> + */
+> +static int compute_trialcs_excpus(struct cpuset *trialcs, struct cpuset *cs)
+> +{
+> +	struct cpuset *parent = parent_cs(trialcs);
+> +	struct cpumask *excpus = trialcs->effective_xcpus;
+> +
+> +	cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
+> +	return rm_siblings_excl_cpus(parent, cs, excpus);
+> +}
+> +
+>   static inline bool is_remote_partition(struct cpuset *cs)
+>   {
+>   	return !list_empty(&cs->remote_sibling);
+> @@ -1496,7 +1523,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>   	 * Note that creating a remote partition with any local partition root
+>   	 * above it or remote partition root underneath it is not allowed.
+>   	 */
+> -	compute_effective_exclusive_cpumask(cs, tmp->new_cpus, NULL);
+> +	compute_excpus(cs, tmp->new_cpus);
+>   	WARN_ON_ONCE(cpumask_intersects(tmp->new_cpus, subpartitions_cpus));
+>   	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
+>   	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+> @@ -1545,7 +1572,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
+>   		cs->partition_root_state = PRS_MEMBER;
+>   
+>   	/* effective_xcpus may need to be changed */
+> -	compute_effective_exclusive_cpumask(cs, NULL, NULL);
+> +	compute_excpus(cs, cs->effective_xcpus);
+>   	reset_partition_data(cs);
+>   	spin_unlock_irq(&callback_lock);
+>   	update_unbound_workqueue_cpumask(isolcpus_updated);
+> @@ -1746,12 +1773,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>   
+>   	if ((cmd == partcmd_enable) || (cmd == partcmd_enablei)) {
+>   		/*
+> -		 * Need to call compute_effective_exclusive_cpumask() in case
+> +		 * Need to call compute_excpus() in case
+>   		 * exclusive_cpus not set. Sibling conflict should only happen
+>   		 * if exclusive_cpus isn't set.
+>   		 */
+>   		xcpus = tmp->delmask;
+> -		if (compute_effective_exclusive_cpumask(cs, xcpus, NULL))
+> +		if (compute_excpus(cs, xcpus))
+>   			WARN_ON_ONCE(!cpumask_empty(cs->exclusive_cpus));
+>   
+>   		/*
+> @@ -2033,7 +2060,7 @@ static void compute_partition_effective_cpumask(struct cpuset *cs,
+>   	 *  2) All the effective_cpus will be used up and cp
+>   	 *     has tasks
+>   	 */
+> -	compute_effective_exclusive_cpumask(cs, new_ecpus, NULL);
+> +	compute_excpus(cs, new_ecpus);
+>   	cpumask_and(new_ecpus, new_ecpus, cpu_active_mask);
+>   
+>   	rcu_read_lock();
+> @@ -2112,7 +2139,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+>   		 * its value is being processed.
+>   		 */
+>   		if (remote && (cp != cs)) {
+> -			compute_effective_exclusive_cpumask(cp, tmp->new_cpus, NULL);
+> +			compute_excpus(cp, tmp->new_cpus);
+>   			if (cpumask_equal(cp->effective_xcpus, tmp->new_cpus)) {
+>   				pos_css = css_rightmost_descendant(pos_css);
+>   				continue;
+> @@ -2214,7 +2241,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+>   		cpumask_copy(cp->effective_cpus, tmp->new_cpus);
+>   		cp->partition_root_state = new_prs;
+>   		if (!cpumask_empty(cp->exclusive_cpus) && (cp != cs))
+> -			compute_effective_exclusive_cpumask(cp, NULL, NULL);
+> +			compute_excpus(cp, cp->effective_xcpus);
+>   
+>   		/*
+>   		 * Make sure effective_xcpus is properly set for a valid
+> @@ -2363,7 +2390,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   		 * for checking validity of the partition root.
+>   		 */
+>   		if (!cpumask_empty(trialcs->exclusive_cpus) || is_partition_valid(cs))
+> -			compute_effective_exclusive_cpumask(trialcs, NULL, cs);
+> +			compute_trialcs_excpus(trialcs, cs);
+>   	}
+>   
+>   	/* Nothing to do if the cpus didn't change */
+> @@ -2499,7 +2526,7 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   		 * Reject the change if there is exclusive CPUs conflict with
+>   		 * the siblings.
+>   		 */
+> -		if (compute_effective_exclusive_cpumask(trialcs, NULL, cs))
+> +		if (compute_trialcs_excpus(trialcs, cs))
+>   			return -EINVAL;
+>   	}
+>   
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-Yes, please, send the formal patch for Ceph case.
-
-> 2. Are there other instances I should investigate?
-> 3. Would adding a kernel-wide safe wrapper for __builtin_clz be appropria=
-te?
-> 4. Would the maintainers like me to create a proof-of-concept test case?
-
-Yes, it will be great to have this proof-of-concept test case for Ceph case=
-. I
-am still trying to imagine a real use-case when we could have likewise issu=
-e. I
-believe it could be very useful to have some Kunit-based unit-test(s) for t=
-his
-subsystem in Ceph.
-
-Thanks,
-Slava.
 
