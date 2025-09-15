@@ -1,62 +1,95 @@
-Return-Path: <linux-kernel+bounces-816629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7234B57679
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:34:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94382B57671
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA60443A85
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:34:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D0A172579
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123112FC86A;
-	Mon, 15 Sep 2025 10:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEEF2FCC1D;
+	Mon, 15 Sep 2025 10:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n52fYylc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lIlQptSF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QGX+aFGC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lIlQptSF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QGX+aFGC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7652FC892;
-	Mon, 15 Sep 2025 10:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483572FCC1B
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757932410; cv=none; b=eO6WAj6sOMRln/hycgeqh+hSwBOUBZx3L6WQydIJX57clKAcAlbfl+5LlrYkMvMWAE/XQEOy7yhBF4ePkYHf3GkuLiGi7HdHM6Cxz7aI0E/CBm+aPeC8xXvblKt5+4cHszsRH1pW55jEeP/j0MbEoinHPBAG2+VRY9uLZrUZhvg=
+	t=1757932403; cv=none; b=VmoPNsaRpnD5YK77ByGYOZWe9TubQ/PxajUR1M/s1qBFeKsOwWFVSrfvSlJSz/bbjV6oePj4Ry/+9hNJQQLVe8owuYd+pUCwqnfhlBH5Q/aw+FV8sBHSNGde3SxYZafsP2zL6vxd252+eTZCtAQFqCXxRGIlSRKmC1MEz5VeaOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757932410; c=relaxed/simple;
-	bh=B+vY08F4i/HnCv1ScZcxAk8Aza1H/zvJQLkJgxXZeNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qlrhzXH4WYJTe9d/1W3mX/E65vnK1y6Pkbwjgq5hHvNJb39Xj+QF6O1+W9OkosBx+lZMUuhWTq0FaXC6Y7l+mq+yBUMvXY5znqAPvy2uiROcqcd7ij0AIidHYT2JBIFdnahTFIhY9gw+47ZOu9dBnSm2SYsTyyJoNmDTwRnBd5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n52fYylc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8FiYk018062;
-	Mon, 15 Sep 2025 10:33:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hEwwZy8ATsI5rPJueJK8Mx9VooV1umz/QHEkRLAcREw=; b=n52fYylc7qSgB3eV
-	Yq8T9m4YvkV6suTPvdHEhNr2U53aDcWrxgSkfOVypocqN2xVZVjtVnnXxQPJPuHw
-	3TTVcLRgsoochUq7FSUQ0Eiu0B4gqImRFTAzWfzWb1ilwhwwblo/cu/eX9aakQ7u
-	wvs0TZWcn0NEF9PQSzvKq9tbKDaWShs9sBF2p4ouUr/vSuMSL5WWDdip5rG61H/s
-	Nh+2GQB40NMUZucg6oT4/6DhdOs+ekqubCdUghiyeodBdc5CPOyQ7bSDiIdEB+HH
-	RpgEQJloWZAVcqcWzBmeVveUvaJb3ppg1Mh/R13CrBCkp/MbYdO48Kug2l886uLD
-	csqK7A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4950u54h7c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 10:33:23 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58FAXNwQ011646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 10:33:23 GMT
-Received: from [10.218.18.194] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Mon, 15 Sep
- 2025 03:33:16 -0700
-Message-ID: <8f8df889-3f88-4b9b-a238-16044796d897@quicinc.com>
-Date: Mon, 15 Sep 2025 16:03:14 +0530
+	s=arc-20240116; t=1757932403; c=relaxed/simple;
+	bh=qxePdgiFJe95fxFkOp8ZocK1eJsHZdux78yLn8awL9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PGuXIhXzwgYTkAeCu1PlVVP63Dw4WUytC17Jc0vpuPQnyTgT17sCPMdLV1/50kXZ0EQG2jQcAVp78Xlcb8FxvBaGHqSOamId8vQbDccO5FYwfbFGNtwC4MNYTmUmYebPYHuLJ/KBe4Fwvri07/z3JljySMSVIey85BTBY+ntr9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lIlQptSF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QGX+aFGC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lIlQptSF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QGX+aFGC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 481CF33722;
+	Mon, 15 Sep 2025 10:33:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757932398; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KBAuNS0TTvxvtzR+Tz8ifqkXTWv7/rtPAWRDBL4D7c4=;
+	b=lIlQptSFuR/rJDS3hKyu2w41wwiwgNJ22smYoCFZ0B8huApYv0mO7km1SSvMYT4p40mulk
+	fnq1r/mViDDDZi0S+74Agv1o5OaU2Pj6u/Gia/dXx3H6oqTGfahIcsZDpWZ17idVCmc4IR
+	6Li8gzHivz2zseuCbg2DSBafNuxynzc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757932398;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KBAuNS0TTvxvtzR+Tz8ifqkXTWv7/rtPAWRDBL4D7c4=;
+	b=QGX+aFGCdAL1ZCDP5rtIrbCaA0NqJJYzwqucSfxCVuvBOfj1ZXW0dMC7+skuXg4/YTaMDC
+	VxUPIGXFE3O9w0DQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lIlQptSF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QGX+aFGC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757932398; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KBAuNS0TTvxvtzR+Tz8ifqkXTWv7/rtPAWRDBL4D7c4=;
+	b=lIlQptSFuR/rJDS3hKyu2w41wwiwgNJ22smYoCFZ0B8huApYv0mO7km1SSvMYT4p40mulk
+	fnq1r/mViDDDZi0S+74Agv1o5OaU2Pj6u/Gia/dXx3H6oqTGfahIcsZDpWZ17idVCmc4IR
+	6Li8gzHivz2zseuCbg2DSBafNuxynzc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757932398;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KBAuNS0TTvxvtzR+Tz8ifqkXTWv7/rtPAWRDBL4D7c4=;
+	b=QGX+aFGCdAL1ZCDP5rtIrbCaA0NqJJYzwqucSfxCVuvBOfj1ZXW0dMC7+skuXg4/YTaMDC
+	VxUPIGXFE3O9w0DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 044CA1368D;
+	Mon, 15 Sep 2025 10:33:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ULY0O23rx2i6EgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 15 Sep 2025 10:33:17 +0000
+Message-ID: <38570a2a-c01a-4cd3-a72d-8fa909b33348@suse.de>
+Date: Mon, 15 Sep 2025 12:33:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,92 +97,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/14] arm64: dts: qcom: lemans-evk: Enable PCIe
- support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Wasim Nazir
-	<wasim.nazir@oss.qualcomm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <kernel@oss.qualcomm.com>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>
-References: <20250908-lemans-evk-bu-v4-0-5c319c696a7d@oss.qualcomm.com>
- <20250908-lemans-evk-bu-v4-7-5c319c696a7d@oss.qualcomm.com>
- <cb2a5c93-0643-4c6b-a97f-b947c9aad32c@oss.qualcomm.com>
+Subject: Re: [PATCH v5] drm: Replace the deprecated DRM_* logging macros in
+ gem helper files
+To: Athul Raj Kollareth <krathul3152@gmail.com>, michal.wajdeczko@intel.com
+Cc: skhan@linuxfoundation.org, dri-devel@lists.freedesktop.org,
+ linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org,
+ simona@ffwll.ch, mripard@kernel.org
+References: <aLczDHV_yGnnRKbr@Terra>
 Content-Language: en-US
-From: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
-In-Reply-To: <cb2a5c93-0643-4c6b-a97f-b947c9aad32c@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <aLczDHV_yGnnRKbr@Terra>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FwbzkJhGeavS9d001wAdTXfxE2E5nA0T
-X-Proofpoint-ORIG-GUID: FwbzkJhGeavS9d001wAdTXfxE2E5nA0T
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzMSBTYWx0ZWRfX5A8o8LawJiuj
- ZfRqPlGLcbUehF2ldAHuPlAYE2Zqi8490lZVou3ouPVQ84oPO2siT3oo17b5qPtRA5V8tQB0+9K
- fAByYXkREws+8q8Qg0vEIH6v3zmQKuqjfgAiTK5GfjJrUmtRS3+GbgvkjcSrYbzLkW20iXz7VOK
- 1Tj6GWGgVSS1STzo1UEkAyO+JL6ALV7r9Nf/t2RgM+tLsluqsidDhCDf7StCNYzqFDYqiiXefss
- 6f/Df74X+3PeRvCbSNzbles0aJYf0ItTBZnq5DD7PhaCDSCRDb9K7ab42OHzc+i+GhTz4FSzJaQ
- V6OXqbUCHYobs7eCJUkKzMC44XxHgUE/WbV5OkCelgwLVfvdWlIGGn27sNcV98qN6JWpJaBP6UK
- q60A0o10
-X-Authority-Analysis: v=2.4 cv=JvzxrN4C c=1 sm=1 tr=0 ts=68c7eb73 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=XuqPMlvQ3-AsHj1PTisA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_04,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 suspectscore=0 clxscore=1011 impostorscore=0
- spamscore=0 adultscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130031
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,intel.com];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 481CF33722
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
 
-On 9/12/2025 5:57 PM, Konrad Dybcio wrote:
-> On 9/8/25 10:19 AM, Wasim Nazir wrote:
->> From: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
->>
->> Enable PCIe0 and PCIe1 along with the respective phy-nodes.
->>
->> PCIe0 is routed to an m.2 E key connector on the mainboard for wifi
->> attaches while PCIe1 routes to a standard PCIe x4 expansion slot.
->>
->> Signed-off-by: Sushrut Shree Trivedi <quic_sushruts@quicinc.com>
->> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
->> ---
-> [...]
+
+Am 02.09.25 um 20:10 schrieb Athul Raj Kollareth:
+> Replace the DRM_* logging macros used in gem helper files with the
+> appropriate ones specified in /include/drm/drm_print.h.
 >
->> +		perst-pins {
->> +			pins = "gpio2";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-down;
->> +		};
-> Pulling down an active-low pin is a bad idea
+> Signed-off-by: Athul Raj Kollareth <krathul3152@gmail.com>
+> Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
 
-Ack, we should do pull up.
-we took reference from the previous targets which seems to be wrong.
-we will make it pull up.
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Bjorn,
-can you make this change while applying or shall we send new series.
-
-- Sushrut
-
+> ---
+> Changes in v5:
+>      - Minor style fix.
 >
-> Konrad
+> Changes in v4:
+>      - Some codestyle corrections.
+>      - Remove OOM error logging in drm_gem_init().
+>
+> Changes in v3:
+>      - Revert all changes to drm_gem_objects_lookup().
+>      - Use drm_device from minor.
+>
+> Changes in v2:
+>      - Change drm_gem_objects_lookup() to take a drm_device* argument.
+>      - Make appropriate changes to all calls of drm_gem_objects_lookup().
+> ---
+>   drivers/gpu/drm/drm_gem.c            | 16 ++++++++--------
+>   drivers/gpu/drm/drm_gem_dma_helper.c |  2 +-
+>   2 files changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+> index 4a89b6acb6af..fb12cc2051d8 100644
+> --- a/drivers/gpu/drm/drm_gem.c
+> +++ b/drivers/gpu/drm/drm_gem.c
+> @@ -101,10 +101,8 @@ drm_gem_init(struct drm_device *dev)
+>   
+>   	vma_offset_manager = drmm_kzalloc(dev, sizeof(*vma_offset_manager),
+>   					  GFP_KERNEL);
+> -	if (!vma_offset_manager) {
+> -		DRM_ERROR("out of memory\n");
+> +	if (!vma_offset_manager)
+>   		return -ENOMEM;
+> -	}
+>   
+>   	dev->vma_offset_manager = vma_offset_manager;
+>   	drm_vma_offset_manager_init(vma_offset_manager,
+> @@ -783,9 +781,10 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
+>   int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>   			   int count, struct drm_gem_object ***objs_out)
+>   {
+> -	int ret;
+> -	u32 *handles;
+> +	struct drm_device *dev = filp->minor->dev;
+>   	struct drm_gem_object **objs;
+> +	u32 *handles;
+> +	int ret;
+>   
+>   	if (!count)
+>   		return 0;
+> @@ -805,7 +804,7 @@ int drm_gem_objects_lookup(struct drm_file *filp, void __user *bo_handles,
+>   
+>   	if (copy_from_user(handles, bo_handles, count * sizeof(u32))) {
+>   		ret = -EFAULT;
+> -		DRM_DEBUG("Failed to copy in GEM handles\n");
+> +		drm_dbg_core(dev, "Failed to copy in GEM handles\n");
+>   		goto out;
+>   	}
+>   
+> @@ -853,12 +852,13 @@ EXPORT_SYMBOL(drm_gem_object_lookup);
+>   long drm_gem_dma_resv_wait(struct drm_file *filep, u32 handle,
+>   				    bool wait_all, unsigned long timeout)
+>   {
+> -	long ret;
+> +	struct drm_device *dev = filep->minor->dev;
+>   	struct drm_gem_object *obj;
+> +	long ret;
+>   
+>   	obj = drm_gem_object_lookup(filep, handle);
+>   	if (!obj) {
+> -		DRM_DEBUG("Failed to look up GEM BO %d\n", handle);
+> +		drm_dbg_core(dev, "Failed to look up GEM BO %d\n", handle);
+>   		return -EINVAL;
+>   	}
+>   
+> diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
+> index 4f0320df858f..a507cf517015 100644
+> --- a/drivers/gpu/drm/drm_gem_dma_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+> @@ -582,7 +582,7 @@ drm_gem_dma_prime_import_sg_table_vmap(struct drm_device *dev,
+>   
+>   	ret = dma_buf_vmap_unlocked(attach->dmabuf, &map);
+>   	if (ret) {
+> -		DRM_ERROR("Failed to vmap PRIME buffer\n");
+> +		drm_err(dev, "Failed to vmap PRIME buffer\n");
+>   		return ERR_PTR(ret);
+>   	}
+>   
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
+
 
