@@ -1,155 +1,147 @@
-Return-Path: <linux-kernel+bounces-816956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE32B57B47
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:39:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F92B57B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BD33AFC27
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:39:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20C767A3CAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0313A30B51B;
-	Mon, 15 Sep 2025 12:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375D230B529;
+	Mon, 15 Sep 2025 12:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UCH8gLQR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2sISqCN"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07373019CA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401C72F99B5
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757939935; cv=none; b=SX8Er50pWVy+zi6rYsmF6V0QXqrD2pbNn0nZpaBnsddBKXwh6/RrqTGtF254hr986l5WhVXkoDLfQcOOTe921KVahFaYqYO3NlrCNuKHBwyjklxCIs9PY+eHbj2Io+IUZBxkBVoJ3gVF1sMQvpA5XXQ6aHAYQH3UrHI9Tnph8Vs=
+	t=1757940038; cv=none; b=cgs3XLGROVBAXgkLlNKwKeuUC1IUQ5imqmXKkJYOG7sC8GM8J1JzwsLkKJof/U8TZjfoJsP9R/8oHqnqs54b/4zcivpXw6BBP31btsB/OEiUtlzUJha9mGXCFouwF59tU48BBuRIVHuEVGW/q6S43oVyJa2ieGAu0DCoXXHIISs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757939935; c=relaxed/simple;
-	bh=W6dMFmWzD1QXZl7PwQPC0i3LVEeYf81dRJdikE9rIKk=;
+	s=arc-20240116; t=1757940038; c=relaxed/simple;
+	bh=dNJnJsH0bwlUv9iv5mm0gr5b4wshCly50clBeI+rCXY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elPxe2bp3CF6TBX5cuCJo5DilITh/3sHqLJpcVi/LhV7QL013jZBbgN9KnFOFZ2I31IbhhnK0u+yqKZi3j3yhwH7SDlGIQEVw3bfRQvo1oZDPU8QZp5KjsIpPy4pwQtZkGjZFkykFDfN/gzVtpG7wCJ7yJOaZE+4idD2gDBkjBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UCH8gLQR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F8Fi6D008264
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:38:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Fmb6MUpiP+yHPdu02ocRwcBu
-	vBIq20AZnHMtS+w4EwQ=; b=UCH8gLQR4RnuhM13UUbEDCFo0LFUiCeSDngCZNC6
-	FhCOriPOEeljmMUTgd1lQA3lE2lsPd3MK7HKlDZ48Og7FI4FFko7Eb3Z58MY42bN
-	5QEoaY+3If7yGjsug84l8ZpFNnFXFU8bcEtKU7c68fXSAkQIskrexRaHJG7u7Oc4
-	NrARAjnSBUYD7c1ZDbGt11iYZ54DaWINQg23EUHoQM1lWloY8jP44S729E2TDRHG
-	eg3Yx/o5SCV/+hnr6EvtLd6qE0RetYZzpEK4RfY9PX0/TBtLYcfB4ZD2nFHW8X6S
-	FMZ9eVud1PwuqLLqKkhH5dj91WMkpAUrtcH4iaV+gwDxGQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495eqpurxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:38:52 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-776164a4484so45431206d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:38:52 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hpZvURD1e7+Bh+Ibk6IImb+B8ViCyKOMLetJAbIRuLPzvxey/TYzIbJ7b182fW7QALHFx0MdY9dYsa5z8wrtwAedHeU26y4YQZmCDSuXtepJUzBzpJWd8IMGWeEvdxuKtbp/7Emh5kJ9IAItwUnTNBXkYfXwBDMESe1l06uGxtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2sISqCN; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-266fa7a0552so6975065ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:40:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757940036; x=1758544836; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNJnJsH0bwlUv9iv5mm0gr5b4wshCly50clBeI+rCXY=;
+        b=I2sISqCN0QdjPoe/B/DieEqe0D0/p/1imHlfUY3RxRhmq0g9CNuPr4BUWSUUI//aoj
+         mrFnXxolSZ3AKVPZxC8JvIocAep6zTzEA4Pj6FdLq4y6FQl4e6uJkIdKU/g6N26pQ4p+
+         v747gQot8tviWtnowB+/EfutA6Mp/9cOFvnWGO1POOjoZFnjeXqbd+r65aT0klJG3Mn2
+         JSsmHFqtbZT0Y3kKh/F9OASFUi7cZUrQFeDHpHCxol32NxwJZK1xOhG0KADaZD3NxkW5
+         PqWEE8mAf/suuN+l+opg7qBnuLiyRx6xsIhCQ7/KPWr/OgKGEJbX1ZwY708qKY4eAB1O
+         NfGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757939931; x=1758544731;
+        d=1e100.net; s=20230601; t=1757940036; x=1758544836;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Fmb6MUpiP+yHPdu02ocRwcBuvBIq20AZnHMtS+w4EwQ=;
-        b=qypwpENII25rep2nMUa/TPk+g5WNXA7u4WxudijRKm9t36TNLiBYWu6CMCIu/AZ0+8
-         Cl+hdGkB42xX/xNcOTfF7ZNW4hcSXf4batYU9TqYIQqTYsYOg6QX+xCUFdALyJWHwtdF
-         FhQsHacIgKEM0CG7CkfYx0qtQSRRVHuTOXOentmkt93Qn5D/XyODqhCECfv1BZbxR2Xs
-         QwvcM4p57igz7iztxcwIoUZbh4o7X7qrRslFKkqQtxPj5o32ecLUMxrEG+CcVxRqVAYz
-         SmPgDCNiOw7kbpcc+5AMfrAdrt+Fqd1TXGvL0WpV84kl9cI36yDCFv8SMZVv0DJAr1We
-         3pbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTa6bZcMVB7fWTaEtGO4Ub0wN/k+ZtA/rGmXGKwKgp/16hg/vWsnbbycD45hYqRfpkQLjeyVB0sqHZeag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+YOkr2gEKqCtn8hUtx2fk484NKGeQGHrug94U9KkCdTpN1s5E
-	pd08KhXKE6lsnm5z+WAYvW0fvFXwDz9JkyCrelwrTGRo51h2SJuqRzAv+YJZgfsyWWshPEZ/uW0
-	InTBNkoZAN2k4P/06QjcVD/87aid+RZFh979mvdSqy5Sb3bdQd+OWBdY3lZgYkVrieSY=
-X-Gm-Gg: ASbGncvArz3pui7bMlN5Cqk0AtnP6R2Xkzlb2mq9irI1IqxQT8Sddji2M1TM/kL2iwG
-	PG+C/xIYhEJCE9sXcmBxMJ/wPDZKWUx8WX1bVi79gAccA1kvcA3Dy1+ZFe134U6kuoRTZlk4Khr
-	dqzqnlmq/eNLBxFC951B1jcSbmY8DR5EQ4a/wViCWo++bnPKUWOippqqHmUEwtt5mRDltRzTmPf
-	NVs8P5FTz8hBmt0mkpsz31x7E4uGkbXdVjLpzp2nxEMqqYQAXbiG2pcwGPmW0wYclLAGtYxoyfa
-	GvAtOyvi+FyrGdWoyjauQf2dFzqiEem59bW1l4JfRwLekIW/evSG/396fKn77tPPGVlzyl0Ztem
-	vcq+XShgqjQbPK1tfXj+h3lzrNiAT4cOneJcQbZNd19H7EP93aKwR
-X-Received: by 2002:a05:6214:5004:b0:725:f1c3:2ab with SMTP id 6a1803df08f44-767c1f71efcmr141751116d6.43.1757939931362;
-        Mon, 15 Sep 2025 05:38:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECQ/ky4PMlA94VBI8Y6iP+p4utCJhLTah33pyYzU/Wknu7JOg31Xy7D9L0TMZRcWSzS6GnLA==
-X-Received: by 2002:a05:6214:5004:b0:725:f1c3:2ab with SMTP id 6a1803df08f44-767c1f71efcmr141750666d6.43.1757939930802;
-        Mon, 15 Sep 2025 05:38:50 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a547ae5bsm2588322e87.19.2025.09.15.05.38.49
+        bh=dNJnJsH0bwlUv9iv5mm0gr5b4wshCly50clBeI+rCXY=;
+        b=ULfZqizBxbI2YkQcFUBTx5cAX61Qlxk/uNslR5TJpNteOAvIguyCNwzK2Ur617TquF
+         MvIyDXwgBsLhQqqHylmfHPGN+IJA9x0BG4UzDr6rQ7mZSzl3ZAY/bKcHFpZW1ekEHJeU
+         bpg5LcJrL+cWPXxOq7EdxGyAxdJlvN3FdT9ZpKyOZMAmswLRoyyd4ZPqu3/dfRmh8JEn
+         Aw8FMAe2fnMWfiyimeuWyQ7aHuwLOe2qwLfkqHW2omTz5cb+MaQgpeIJwqL+n8tJvXNi
+         GMbhBWiGlgVNIzFIQykO21WEOmxoRA7wNQ2u9bcFe8PkuUWO+kSr7Sg1mKehRCseQPAS
+         t/xQ==
+X-Gm-Message-State: AOJu0Yzf8BmhGJL9YZ/JS4JrZWS2SUis4g7ZjAUbFnlPQnM4lW/JB2oH
+	elWsZip4XE4tqmdG8ly5QOLjQcJlCdYamp2hTM3SJV+CB0YwEqc9nbhy
+X-Gm-Gg: ASbGncvbTsnapo/2nIZqZKHvcv3A8q7Vmb16RWCPNXljhsyLawmfSyHDB9OEcJywNCK
+	XmmGi/id3iO975Hcafefory7ZRVVr2oWSItSpzjJOULu8kYEwACOmVnFx6wR3x+VpjmFJrsz9yN
+	E/bBUurlSU+ypajGkKXMPn4GH74i/OHrCtgvr+MHcs0gPWyTo7ysa/1N77UmjR6iLM2lCUba31J
+	iJM4XnFgrrx8TVxcxJ93B3QRR/2eHvnoDj4L7bK6bcdksSdoZXvJXDjWJ2wkk38mGXKHW0O/Eam
+	X2qqXTlnzOBVYh2L12esmWhDHNIKcMjTqZ4NNGCUS+0HTQozIvUHy4gRxEtsWkK3uEUeHK32H1F
+	KR5hgWGSF96TJBS8Mzc1G1GU4ZgHxLQpCkKbv
+X-Google-Smtp-Source: AGHT+IHhTD9B3Sdd7GngwxsOkjj4gaAYEGinNPhIKE81JuyUWnx5sHsOsSR6QPKASvI6Pv3nndfZjQ==
+X-Received: by 2002:a17:902:ef46:b0:246:bce2:e837 with SMTP id d9443c01a7336-25d271485a2mr163639975ad.49.1757940036320;
+        Mon, 15 Sep 2025 05:40:36 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2635c79cd21sm55033945ad.49.2025.09.15.05.40.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 05:38:49 -0700 (PDT)
-Date: Mon, 15 Sep 2025 15:38:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, dianders@chromium.org, m.szyprowski@samsung.com,
-        andy.yan@rock-chips.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: analogix_dp: Reuse
- &link_train.training_lane[] to set DPCD DP_TRAINING_LANEx_SET
-Message-ID: <cen5nir6tn4ah5z7vgp6k5lxy3cobgzjzm3xmx5hjklr2fsrb3@cx3n47n3ji4n>
-References: <20250912034949.4054878-1-damon.ding@rock-chips.com>
+        Mon, 15 Sep 2025 05:40:35 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CB28B420A6BD; Mon, 15 Sep 2025 19:40:29 +0700 (WIB)
+Date: Mon, 15 Sep 2025 19:40:29 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux cgroups <cgroups@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrea Righi <arighi@nvidia.com>,
+	Johannes Bechberger <me@mostlynerdless.de>,
+	Changwoo Min <changwoo@igalia.com>,
+	Shashank Balaji <shashank.mahadasyam@sony.com>,
+	Ingo Molnar <mingo@kernel.org>, Jake Rice <jake@jakerice.dev>,
+	Cengiz Can <cengiz@kernel.wtf>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH v2 2/4] Documentation: cgroup-v2: Add section numbers
+Message-ID: <aMgJPWETGVt_AE9i@archie.me>
+References: <20250915081942.25077-1-bagasdotme@gmail.com>
+ <20250915081942.25077-3-bagasdotme@gmail.com>
+ <duppgeomaflt6fbymdk5443glmw7d3bgli2yu7gx6awb7q2dhn@syjq5mmia6pb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aPEdF1//wg19KKDS"
 Content-Disposition: inline
-In-Reply-To: <20250912034949.4054878-1-damon.ding@rock-chips.com>
-X-Proofpoint-GUID: jP1wFbIV7j-QfGJv1P98vRhnNeszzhxQ
-X-Proofpoint-ORIG-GUID: jP1wFbIV7j-QfGJv1P98vRhnNeszzhxQ
-X-Authority-Analysis: v=2.4 cv=XJIwSRhE c=1 sm=1 tr=0 ts=68c808dc cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8
- a=plrDVsGnED_3QBdGXOcA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
- a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDE4NiBTYWx0ZWRfX2Rf4cvoVEgYT
- cNmc0K+lk103qe2bmxweJ6AshtZvlPqEvOX0PI7rMutfIHui+iyopFhylsie0JlIaTi0j3g6ply
- pBfpubx2/Pa+MoyAt6QZcPjCtQtt0Q/OurKE5qHedB1N+kkk/48hSfqVVg4Dy2XkHPFxT3pj2b7
- fqIjL/7T1U2+e9gu16Nge9cYWbtEghKRjJUFkjZ5+UrkIBiD8WbHvbA4IH2uv6ceAHgyBFhSQ53
- B+WfezNixTvSw2DWq8iWnokoTR2YWePjE0ANozxgf4v/Hl8X06sYYCGw+9uLYDbKse+5ddXLEB/
- ePB1NZAgBvx4sCedsAOyX3AmYMvJthh3bKuPWRWgVkQt/ddQX6rkMOwqWIkPtsPxG78UM+iwVfl
- FOfQEvcN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0
- malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130186
-
-On Fri, Sep 12, 2025 at 11:49:49AM +0800, Damon Ding wrote:
-> In analogix_dp_link_start(), &link_train.training_lane[] is used to
-> set phy PE/VS configurations, and buf[] is initialized with the same
-> values to set DPCD DP_TRAINING_LANEx_SET.
-> 
-> It makes sense to reuse &link_train.training_lane[] to set DPCD
-> DP_TRAINING_LANEx_SET, which can remove the redundant assignments
-> and make codes more consice.
-> 
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> 
-> ---
-> 
-> Changes in v2:
-> - Add Tested-by tag.
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <duppgeomaflt6fbymdk5443glmw7d3bgli2yu7gx6awb7q2dhn@syjq5mmia6pb>
 
 
--- 
-With best wishes
-Dmitry
+--aPEdF1//wg19KKDS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 15, 2025 at 02:20:59PM +0200, Michal Koutn=C3=BD wrote:
+> On Mon, Sep 15, 2025 at 03:19:25PM +0700, Bagas Sanjaya <bagasdotme@gmail=
+=2Ecom> wrote:
+> > Add section numbers, following the numbering scheme in the manual
+> > toctree. Note that sectnum:: directive cannot be used as it also
+> > numbers the docs title.
+>=20
+> Erm, so in addition to keeping manual ToC in sync, we'd also need to
+> maintain the section numbers manually?
+
+Right.
+
+>=20
+> What about dropping the numbers from manual ToC and sections? (If manual
+> ToC is to be preserved.)
+
+Nope. To be fair, we also want section numbers for htmldocs readers, though.
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--aPEdF1//wg19KKDS
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMgJNwAKCRD2uYlJVVFO
+owUWAQDOV37Jt9sGtdMfo9OFbV+SKpl+FM7rQVpTGqsGX5TCAgD/YCIODJf7QdFr
+0241ELSDVsy6ZHhshkKBKhCObdEmkgw=
+=Y3IF
+-----END PGP SIGNATURE-----
+
+--aPEdF1//wg19KKDS--
 
