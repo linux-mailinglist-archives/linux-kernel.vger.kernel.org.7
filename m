@@ -1,143 +1,181 @@
-Return-Path: <linux-kernel+bounces-817180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D9DB57EF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7926EB57EE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A22C3BA0AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A719A189B011
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DED32A82A;
-	Mon, 15 Sep 2025 14:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B874132A83F;
+	Mon, 15 Sep 2025 14:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r3sqyolF"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RMtWfSvN"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FF22F39AE;
-	Mon, 15 Sep 2025 14:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1968327A0C
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757946458; cv=none; b=I9X1KODb5Sweh4hknjTye/1pcgjnJ/Ml6RenXbVAnjW/kMM81vqCbnfz2v11zeovLeQgCzz5ER2pb2vrXu3RkelzAgoV8NTiTZ9OV5tUXD/PkqJ8bbgO4FeM/daNQvc6J4SkhDvF2xtyXtMnSb31oAXw7yRXY1a/zL+Kdmf2/Ww=
+	t=1757946424; cv=none; b=IvnqomoZtXNIlyeeYvvSZ4TC0BqYPCwHTzc9iWvlvo5xiap9hXHWTbb3sL7kw2gE132p0U1VWYu+qwiIkPUiwv8T1+L+1evWo4vkOD0OUSPkBsFkWfyAhrgRIh2eRg42xsbCMdz7nbAILh0bLgmzWaHlRuBRtA49X/WfcEG4LFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757946458; c=relaxed/simple;
-	bh=UR2OzmXG8ec89TIxokqMWyC22lGLqmnSJ94CoLJ8Oj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQZYEgkFHtWoYcvaomCq7nSiVf95qTMBvqoz68Jz06DBQDUqMuZBZ/LDNN/iRuMPCtaZjklgeio4y+x3KGiDfZ8Do/65W+BGKjw+kfUpbLgNN5RXdJUWi31b6khxURBpjDDikjTjHoyvmdrGC7vTjtxx1ea69yrxsguHtG55/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r3sqyolF; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F9auat018700;
-	Mon, 15 Sep 2025 14:26:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=93gOvoDcBdDF+uhxagbjeVgcwGtEHX
-	2Ajjpa7s8ksys=; b=r3sqyolFInDCeWDViJZMPqSncd/mubfFPzlJRMqhGniqLt
-	i0svHLuD24/wgKmko+PVfQ0dPS0L2xwCX9nuPIoU9im8LEl3TB6JbNtlFKrp9c9f
-	Ul60BOC/R1QomaUkpW5Q9qksws694I8cEAxtvwtovsRKjGRlT3J0aqxOTYqF6d6F
-	65szjdMct/qYq2awarrH5MXGmNQCWF78ggkDxUs1cPXK6zLVHGdYKWYt9f44VC0R
-	iMQ5o1EkXSywDP5INlMBBEKuZ8lwCbdbwIVBDtjv9MI/zOk6rAAfdIJXxv56KfMZ
-	xAJIJDE73H9lJu0ZuWDBOHseGxExRNhG51NBsHxA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat1gxj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 14:26:19 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58FE2KcE000732;
-	Mon, 15 Sep 2025 14:26:19 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat1gxc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 14:26:19 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FBale5022328;
-	Mon, 15 Sep 2025 14:26:18 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kxpevrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 14:26:17 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FEQD2U58196468
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 14:26:14 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E294D20043;
-	Mon, 15 Sep 2025 14:26:13 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE34720040;
-	Mon, 15 Sep 2025 14:26:13 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 15 Sep 2025 14:26:13 +0000 (GMT)
-Date: Mon, 15 Sep 2025 16:26:12 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Venkat <venkat88@linux.ibm.com>
-Cc: Julian Sun <sunjunchao@bytedance.com>, tj@kernel.org,
-        akpm@linux-foundation.org, stable@vger.kernel.org,
-        songmuchun@bytedance.com, shakeelb@google.com, hannes@cmpxchg.org,
-        roman.gushchin@linux.dev, mhocko@suse.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, riteshh@linux.ibm.com,
-        ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        cgroups@vger.kernel.org, linux-mm@vger.kernel.org
-Subject: Re: [linux-next20250911]Kernel OOPs while running generic/256 on
- Pmem device
-Message-ID: <20250915142612.1412769A80-agordeev@linux.ibm.com>
-References: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com>
- <BAEAC2F7-7D7F-49E4-AB21-10FC0E4BF5F3@linux.ibm.com>
- <CAHSKhteHC26yXVFtjgdanfM7+vsOVZ+HHWnBYD01A4eiRHibVQ@mail.gmail.com>
- <240A7968-D530-4135-856A-CE90D269D5E6@linux.ibm.com>
+	s=arc-20240116; t=1757946424; c=relaxed/simple;
+	bh=4kDRsdMHX+x78ly2T+SWI794hARsVpUs1q8YjwbxA9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L+bnSE+UKscdYf/a1QM/ocn+EP1u6w7GyXNJN1UKdw1vF+A1RexsuI9kkPNaP5pH/QA1uTjcZfXm/VrsKSrzE/2VESSHNetFlhRnEcd1Jz4/ysUIZM0c3DaknbZGPqtS0L/Wex8YHNWR9nlTG2ePKK4TPGjZn4S/uUQj/tHPV3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RMtWfSvN; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4ee7a430-f92d-409b-89a8-f084605eda98@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757946419;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAWgOkmD5YFn/glj5ESxRFYtDt9wouSNosBxkMLToC4=;
+	b=RMtWfSvN2qkTyq23TvknU+5jvUqth0eJ3sjEEUmnn10qqNEr6tx9r+h0yY6RMyv1kCk0r4
+	zIyPO366ZYwoY+5zfGRmEq3DkpIg3KMU79RepORdOGYx5bnKvzJ05r4u3mgoznxoLYHDSH
+	2oZZ2LDu6Zv8X1czsurKsRzk4EJeSoY=
+Date: Mon, 15 Sep 2025 22:26:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <240A7968-D530-4135-856A-CE90D269D5E6@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=BKWzrEQG c=1 sm=1 tr=0 ts=68c8220b cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=OU48e3ldqOrICINtdUEA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: jgtZKvDpLeX2b3zEu8f2-Dy7WMTShlp-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX8rssnOatAT47
- qK4h0PeWsydAe0MHXzSRtuYWyO575+9NysLJBvrGV6juLdCCu6snHKxKDFdJJKo31gh+AWG/lqp
- JCbTkekkCgnHIudxddKp5Qsj6Oml6txHzFZZ9iIojl35whvWSirBu9qgHHJv8DQGtPo2cWmsM/2
- 9FAJt4Li/srUK7PgaVNFHZBjmDdiOd5Dd+kercpV0Bi7B13WgEbXUfQ+HnBrquXDnF/YWzlLxdH
- tMQLRuqWhsSlZNYbKpbyOYLYG2l5k743FHJi7SvDZBILwkoM9LfFHD2/7WhlFAz4mbKI8BV5b65
- nxLJnGik0jq5Ld2KyrctTPfSI0E/JuANG6/mVJ8F7SbxuLsxOtqFfb9+I+x3sOH/LJwyeMP44J3
- z2t7BtXP
-X-Proofpoint-ORIG-GUID: k3kwdpkBN8cmqlPUljTfmONvIC_Jnwqg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_05,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1011 malwarescore=0 priorityscore=1501 adultscore=0
- suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
+Subject: Re: [PATCH mm-new 2/3] mm: clean up and expose is_guard_pte_marker()
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Kairui Song <kasong@tencent.com>
+References: <20250914143547.27687-1-lance.yang@linux.dev>
+ <20250914143547.27687-3-lance.yang@linux.dev>
+ <a0133269-82dc-4249-bb78-202b44a4a25e@lucifer.local>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <a0133269-82dc-4249-bb78-202b44a4a25e@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 15, 2025 at 07:49:26PM +0530, Venkat wrote:
-> Hello,
+Hi Lorenzo,
+
+Thanks for taking time to review!
+
+On 2025/9/15 21:54, Lorenzo Stoakes wrote:
+> On Sun, Sep 14, 2025 at 10:35:46PM +0800, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> is_guard_pte_marker() performs a redundant check because it calls both
+>> is_pte_marker() and is_guard_swp_entry(), both of which internally check
+>> for a PTE marker.
+>>
+>> is_guard_pte_marker()
+>>   |- is_pte_marker()
+>>   |   `- is_pte_marker_entry()  // First check
+>>   `- is_guard_swp_entry()
+>>       `- is_pte_marker_entry()  // Second, redundant check
+>>
 > 
-> Thanks for the fix. This is fixing the reported issue.
+> I mean, it expands to:
 > 
-> While sending out the patch please add below tag as well.
+> is_swap_pte(pte) && is_pte_marker_entry(pte_to_swp_entry(pte)) &&
+> is_pte_marker_entry(pte_to_swp_entry(pte))
+
+Yes, that's a much clearer way to lay it out ;)
+
 > 
-> Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> So I don't think it's really unreasonable to expect compiler magic here...
+> 
+> But you're right that I should have just used is_swap_pte() really, it's a bit
+> silly not to, so this is fine :)
 
-And Reported-by as well, if I may add ;)
+Exactly. Glad we're on the same page!
 
-> Regards,
-> Venkat.
+> 
+>> While a modern compiler could likely optimize this away, let's have clean
+>> code and not rely on it ;)
+> 
+> Please don't put smileys in commit messages :) as cute as they are, this is
+> going on the permanent kernel record and while we all love them, it's
+> probably not the best place to put them :P
+> 
+>>
+>> Also, make it available for hugepage collapsing code.
+> 
+> Nit but put a newline after this.
 
-Thanks!
+Got it. Will fix up all nits in v2.
+
+> 
+> I think probably if I'm really really nitty I'd say that you should put
+> this bit first, as it's the primary motivation for the change, and put the
+> refactoring stuff after.
+
+Ah, right. The motivation for exposing the helper should come first. I'll
+reorder this changelog in v2.
+
+> 
+>> Cc: Kairui Song <kasong@tencent.com>
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> 
+> This seems fine to me, so:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Thanks,
+Lance
+
+> 
+>> ---
+>>   include/linux/swapops.h | 6 ++++++
+>>   mm/madvise.c            | 6 ------
+>>   2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+>> index 59c5889a4d54..7f5684fa043b 100644
+>> --- a/include/linux/swapops.h
+>> +++ b/include/linux/swapops.h
+>> @@ -469,6 +469,12 @@ static inline int is_guard_swp_entry(swp_entry_t entry)
+>>   		(pte_marker_get(entry) & PTE_MARKER_GUARD);
+>>   }
+>>
+>> +static inline bool is_guard_pte_marker(pte_t ptent)
+>> +{
+>> +	return is_swap_pte(ptent) &&
+>> +	       is_guard_swp_entry(pte_to_swp_entry(ptent));
+>> +}
+>> +
+>>   /*
+>>    * This is a special version to check pte_none() just to cover the case when
+>>    * the pte is a pte marker.  It existed because in many cases the pte marker
+>> diff --git a/mm/madvise.c b/mm/madvise.c
+>> index 35ed4ab0d7c5..bd46e6788fac 100644
+>> --- a/mm/madvise.c
+>> +++ b/mm/madvise.c
+>> @@ -1069,12 +1069,6 @@ static bool is_valid_guard_vma(struct vm_area_struct *vma, bool allow_locked)
+>>   	return !(vma->vm_flags & disallowed);
+>>   }
+>>
+>> -static bool is_guard_pte_marker(pte_t ptent)
+>> -{
+>> -	return is_pte_marker(ptent) &&
+>> -		is_guard_swp_entry(pte_to_swp_entry(ptent));
+>> -}
+>> -
+>>   static int guard_install_pud_entry(pud_t *pud, unsigned long addr,
+>>   				   unsigned long next, struct mm_walk *walk)
+>>   {
+>> --
+>> 2.49.0
+>>
+
 
