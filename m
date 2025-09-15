@@ -1,455 +1,487 @@
-Return-Path: <linux-kernel+bounces-816833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225CBB578C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:44:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B045B5791C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765CF188F509
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219CE7B19EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704102FFDE0;
-	Mon, 15 Sep 2025 11:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="g+UjgV0e"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A5A1E87B;
-	Mon, 15 Sep 2025 11:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BD0303A06;
+	Mon, 15 Sep 2025 11:50:39 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBFE3009E7;
+	Mon, 15 Sep 2025 11:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936590; cv=none; b=e5sj7/99XtOtvWsFqm1FX+WnxccVJAqD0qAIyJFitOemkEnJQ+4eL4km4ArrOXnxl+c0keqIYbfH2WphuA0nn4UG0gXbNbCmLgaoATT8UgbHWpEJ+/ImWWTD+CCvJgt7PRO7Fwod+XBUzz8CifcdMp/vyohdeqMUIdJaTluqkaU=
+	t=1757937038; cv=none; b=RhgpmOtNIKVUIkJfFmZxPMZHW/SFHybs+cqzOTVw8EnsSwSjOtqHda0idhnSE4TqTSa8FcrcbltZpVkdnWHmma2cLpFnR+3/YE0E9QL8aDy7ZHuBHncR2smb2pkSarF3JSCUUiQtoyw129jgjEtL8t+N9aeRDiEKndRh+Dpl6v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936590; c=relaxed/simple;
-	bh=HEzdyDFXkbP9JUN6fUEa6cGxJMAAw0uCEMc4jm99RxI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JuVBCbDwDcUaubDrYqvlvniIlURo61hMaL0Z2/N0jHiy6GyjYFDPBn4MjUcewj8UDvyiptuFjKuKTobXVp5y9T565LVjBaNgQu7Z0UIyNmJABOgrtpUq+WD3806dz1Fo4Xjr7mLnpcrUZBeZ/4vUAhByxpzXlAA8sD2FPHbaQDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=g+UjgV0e; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F9bPK1019175;
-	Mon, 15 Sep 2025 11:43:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=jX11MQ
-	xPNBISFxcol0oL9sWGm4w42kLCHqWzUkck0bk=; b=g+UjgV0eJ1naDZ5r6fWueF
-	tgHJEDEnRG9yDb0k2TbGmwB1xseRku08LZwnhkRfCWnhG3i3U/Ovd4koIvg88Dd+
-	15Z70iThnfsXhCqA2/7VrdMhaH7fKHLw/Ozj6MXZolw4N3flLMe0LvIhe0D8K+I/
-	OsK2BS5XvSz9i9cUbJYsB4BKSmq657iKCMm2NCwZM7VykSWk2QV1XQxPhsGixmb6
-	KfnPnZB84K5aJ/uVoqEtAfv772TiZVhzrjpLfgHbZ29hgOfLZlaD4Ih/pHSEXAmF
-	8o9RoMRY0JMJWAVxITdgFUhQj2jRcYiObtWK12xTeDHQcVI5AB6WPCstg/CCSOQA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat0kaj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 11:43:04 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58FAoCl1029498;
-	Mon, 15 Sep 2025 11:43:02 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kb0pcfw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Sep 2025 11:43:02 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58FBh1qb28771024
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 15 Sep 2025 11:43:01 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A294E58063;
-	Mon, 15 Sep 2025 11:43:01 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D5A5E58055;
-	Mon, 15 Sep 2025 11:42:59 +0000 (GMT)
-Received: from [9.87.138.96] (unknown [9.87.138.96])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 15 Sep 2025 11:42:59 +0000 (GMT)
-Message-ID: <197d61dcb036c1038180acf26042b82d4320b9f2.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 07/10] s390/pci: Store PCI error information for
- passthrough devices
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Cc: alex.williamson@redhat.com, helgaas@kernel.org, mjrosato@linux.ibm.com
-Date: Mon, 15 Sep 2025 13:42:59 +0200
-In-Reply-To: <20250911183307.1910-8-alifm@linux.ibm.com>
-References: <20250911183307.1910-1-alifm@linux.ibm.com>
-	 <20250911183307.1910-8-alifm@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757937038; c=relaxed/simple;
+	bh=a0VRXbta8K9gtk+IGHOwOU6MaIwzucwt5cPvZhkP+xE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qHbQsrk3JqQEy7tJ5SvGf8UVLyLSqDHQl/YKRK3b6NUFnQaS3lAtif9EkhF6RelfSez/7oB5LWNM+qe+ju9bq9pLtl2qtEfG6s+SYrEInN8d8TKksNY77Lxo4ZV0z6SJ2WXi8ISFApobG5jUEyDa9Ax/4ZB7LSKFVj7T4PA69fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cQNTb42Jgz9syc;
+	Mon, 15 Sep 2025 13:43:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id cfGBSkOtiCmq; Mon, 15 Sep 2025 13:43:47 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQNTZ1TZpz9syZ;
+	Mon, 15 Sep 2025 13:43:46 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E29168B766;
+	Mon, 15 Sep 2025 13:43:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id bAFn8JW7pVEL; Mon, 15 Sep 2025 13:43:45 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5E4998B763;
+	Mon, 15 Sep 2025 13:43:44 +0200 (CEST)
+Message-ID: <ba78173a-9312-40fc-a88a-d94764ed6010@csgroup.eu>
+Date: Mon, 15 Sep 2025 13:43:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=BKWzrEQG c=1 sm=1 tr=0 ts=68c7fbc8 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=h0cegru4K6vSp0ebvysA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: DPeKLJYxrHxHXuIUTv0bnKSwWRyckEkT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX1zglfpap2fVX
- fN1LYZJSkJ98xqHHCNo4+etWT4juC2U3TQUUIOyL9wtWc+81ZqYlWxSsfX/h0c8mXLilz1Pc7v+
- gn43hh7XsZO9srtkLRdtLP2lhmLR6Q7cCl1Y4jP0sqXAuSbKvUzJOP9wGf2FIJaYeCIm4oYnI6a
- fOHwZw7qPuyXMFCg55g1T/8iLYyyi89saImoU1TaSHP6DJ7mbold+iMMvyC+nlyKORIx0/MAQs8
- XxhDCp2I4HS2+PxB6uoa+ucmtUm+HCw8ScENdIxnU+XD+45h/FSPqlD0jAvsjJrE1HgCOnJNBSn
- P+ugV0go8kXN4ojqsOPz4V6LIpt0PA66+GUmLQwZZEcLj9dd0jVzdj+LiEOkylXd+SKFUy1KpcD
- n9hKewBm
-X-Proofpoint-ORIG-GUID: DPeKLJYxrHxHXuIUTv0bnKSwWRyckEkT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_04,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0
- suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 04/62] init: x86, arm, sh, sparc: remove variable
+ rd_image_start, which controls starting block number of initrd
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
+ Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+ Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
+ Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-5-safinaskar@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250913003842.41944-5-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-09-11 at 11:33 -0700, Farhan Ali wrote:
-> For a passthrough device we need co-operation from user space to recover
-> the device. This would require to bubble up any error information to user
-> space.  Let's store this error information for passthrough devices, so it
-> can be retrieved later.
->=20
-> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+
+
+Le 13/09/2025 à 02:37, Askar Safin a écrit :
+> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> This is preparation for initrd removal
+> 
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
 > ---
->  arch/s390/include/asm/pci.h      | 28 ++++++++++
->  arch/s390/pci/pci.c              |  1 +
->  arch/s390/pci/pci_event.c        | 95 +++++++++++++++++++-------------
->  drivers/vfio/pci/vfio_pci_zdev.c |  2 +
->  4 files changed, 88 insertions(+), 38 deletions(-)
->=20
-> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
-> index f47f62fc3bfd..72e05af90e08 100644
-> --- a/arch/s390/include/asm/pci.h
-> +++ b/arch/s390/include/asm/pci.h
-> @@ -116,6 +116,31 @@ struct zpci_bus {
->  	enum pci_bus_speed	max_bus_speed;
->  };
-> =20
-> +/* Content Code Description for PCI Function Error */
-> +struct zpci_ccdf_err {
-> +	u32 reserved1;
-> +	u32 fh;                         /* function handle */
-> +	u32 fid;                        /* function id */
-> +	u32 ett         :  4;           /* expected table type */
-> +	u32 mvn         : 12;           /* MSI vector number */
-> +	u32 dmaas       :  8;           /* DMA address space */
-> +	u32 reserved2   :  6;
-> +	u32 q           :  1;           /* event qualifier */
-> +	u32 rw          :  1;           /* read/write */
-> +	u64 faddr;                      /* failing address */
-> +	u32 reserved3;
-> +	u16 reserved4;
-> +	u16 pec;                        /* PCI event code */
-> +} __packed;
-> +
-> +#define ZPCI_ERR_PENDING_MAX 16
+>   Documentation/arch/x86/boot.rst       | 4 ++--
+>   arch/arm/kernel/atags_parse.c         | 2 --
+>   arch/sh/include/asm/setup.h           | 1 -
+>   arch/sh/kernel/head_32.S              | 2 +-
+>   arch/sh/kernel/setup.c                | 9 +--------
+>   arch/sparc/boot/piggyback.c           | 4 ++--
+>   arch/sparc/kernel/head_32.S           | 4 ++--
+>   arch/sparc/kernel/head_64.S           | 6 ++++--
+>   arch/sparc/kernel/setup_32.c          | 5 -----
+>   arch/sparc/kernel/setup_64.c          | 5 -----
+>   arch/x86/boot/header.S                | 2 +-
+>   arch/x86/include/uapi/asm/bootparam.h | 5 +----
+>   arch/x86/kernel/setup.c               | 5 -----
+>   include/linux/initrd.h                | 3 ---
+>   init/do_mounts_rd.c                   | 8 +++-----
+>   15 files changed, 17 insertions(+), 48 deletions(-)
+> 
+> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+> index 77e6163288db..118aa7b69667 100644
+> --- a/Documentation/arch/x86/boot.rst
+> +++ b/Documentation/arch/x86/boot.rst
+> @@ -189,7 +189,7 @@ Offset/Size Proto           Name                    Meaning
+>   01F1/1         ALL(1)          setup_sects             The size of the setup in sectors
+>   01F2/2         ALL             root_flags              If set, the root is mounted readonly
+>   01F4/4         2.04+(2)        syssize                 The size of the 32-bit code in 16-byte paras
+> -01F8/2         ALL             ram_size                DO NOT USE - for bootsect.S use only
+> +01F8/2         ALL             ram_size                DO NOT USE - for bootsect.S use only - used to control initrd, which was removed from Linux in 2025
 
-16 pending error events sounds like a lot for a single devices. This
-also means that the array alone already spans more than 2 cache lines
-(256 byte on s390x). I can't imagine that we'd ever have that many
-errors pending. This is especially true since a device already in an
-error state would be the least likely to cause more errors. We have
-seen cases of 2 errors in the past, so maybe 4 would give us good head
-room?
+Is this change really needed/usefull. Here people can think it shall not 
+be used because it is removed in 2025. But it reality it was already 
+DO-NOT-USE 20 years old.
 
-> +struct zpci_ccdf_pending {
-> +	size_t count;
-> +	int head;
-> +	int tail;
-> +	struct zpci_ccdf_err err[ZPCI_ERR_PENDING_MAX];
-> +};
-> +
->  /* Private data per function */
->  struct zpci_dev {
->  	struct zpci_bus *zbus;
-> @@ -191,6 +216,8 @@ struct zpci_dev {
->  	struct iommu_domain *s390_domain; /* attached IOMMU domain */
->  	struct kvm_zdev *kzdev;
->  	struct mutex kzdev_lock;
-> +	struct zpci_ccdf_pending pending_errs;
-> +	struct mutex pending_errs_lock;
->  	spinlock_t dom_lock;		/* protect s390_domain change */
->  };
->=20
---- snip ---
+>   01FA/2         ALL             vid_mode                Video mode control
+>   01FC/2         ALL             root_dev                Default root device number
+>   01FE/2         ALL             boot_flag               0xAA55 magic number
+> @@ -308,7 +308,7 @@ Offset/size:        0x1f8/2
+>   Protocol:      ALL
+>   ============   ===============
+> 
+> -  This field is obsolete.
+> +  This field is obsolete. Used to control initrd, which was removed from Linux in 2025.
+
+Same comment, this field has been obsolete long before the removal of 
+initrd in 2025 so that new comment bring confusion.
+
+> 
+>   ============   ===================
+>   Field name:    vid_mode
+> diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+> index 4ec591bde3df..a3f0a4f84e04 100644
+> --- a/arch/arm/kernel/atags_parse.c
+> +++ b/arch/arm/kernel/atags_parse.c
+> @@ -90,8 +90,6 @@ __tagtable(ATAG_VIDEOTEXT, parse_tag_videotext);
+>   #ifdef CONFIG_BLK_DEV_RAM
+>   static int __init parse_tag_ramdisk(const struct tag *tag)
+>   {
+> -       rd_image_start = tag->u.ramdisk.start;
+> -
+>          if (tag->u.ramdisk.size)
+>                  rd_size = tag->u.ramdisk.size;
+> 
+> diff --git a/arch/sh/include/asm/setup.h b/arch/sh/include/asm/setup.h
+> index 84bb23a771f3..d1b97c5726e4 100644
+> --- a/arch/sh/include/asm/setup.h
+> +++ b/arch/sh/include/asm/setup.h
+> @@ -10,7 +10,6 @@
+>   #define PARAM  ((unsigned char *)empty_zero_page)
+> 
+>   #define MOUNT_ROOT_RDONLY (*(unsigned long *) (PARAM+0x000))
+> -#define RAMDISK_FLAGS (*(unsigned long *) (PARAM+0x004))
+>   #define ORIG_ROOT_DEV (*(unsigned long *) (PARAM+0x008))
+>   #define LOADER_TYPE (*(unsigned long *) (PARAM+0x00c))
+>   #define INITRD_START (*(unsigned long *) (PARAM+0x010))
+> diff --git a/arch/sh/kernel/head_32.S b/arch/sh/kernel/head_32.S
+> index b603b7968b38..4382c0f058c8 100644
+> --- a/arch/sh/kernel/head_32.S
+> +++ b/arch/sh/kernel/head_32.S
+> @@ -28,7 +28,7 @@
+>          .section        .empty_zero_page, "aw"
+>   ENTRY(empty_zero_page)
+>          .long   1               /* MOUNT_ROOT_RDONLY */
+> -       .long   0               /* RAMDISK_FLAGS */
+> +       .long   0               /* RAMDISK_FLAGS - used to control initrd, which was removed from Linux in 2025 */
+>          .long   0x0200          /* ORIG_ROOT_DEV */
+>          .long   1               /* LOADER_TYPE */
+>          .long   0x00000000      /* INITRD_START */
+> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+> index d66f098e9e9f..50f1d39fe34f 100644
+> --- a/arch/sh/kernel/setup.c
+> +++ b/arch/sh/kernel/setup.c
+> @@ -70,8 +70,6 @@ EXPORT_SYMBOL(sh_mv);
+> 
+>   extern int root_mountflags;
+> 
+> -#define RAMDISK_IMAGE_START_MASK       0x07FF
+> -
+>   static char __initdata command_line[COMMAND_LINE_SIZE] = { 0, };
+> 
+>   static struct resource code_resource = {
+> @@ -273,19 +271,14 @@ void __init setup_arch(char **cmdline_p)
+> 
+>          printk(KERN_NOTICE "Boot params:\n"
+>                             "... MOUNT_ROOT_RDONLY - %08lx\n"
+> -                          "... RAMDISK_FLAGS     - %08lx\n"
+>                             "... ORIG_ROOT_DEV     - %08lx\n"
+>                             "... LOADER_TYPE       - %08lx\n"
+>                             "... INITRD_START      - %08lx\n"
+>                             "... INITRD_SIZE       - %08lx\n",
+> -                          MOUNT_ROOT_RDONLY, RAMDISK_FLAGS,
+> +                          MOUNT_ROOT_RDONLY,
+>                             ORIG_ROOT_DEV, LOADER_TYPE,
+>                             INITRD_START, INITRD_SIZE);
+> 
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -       rd_image_start = RAMDISK_FLAGS & RAMDISK_IMAGE_START_MASK;
+> -#endif
+> -
+>          if (!MOUNT_ROOT_RDONLY)
+>                  root_mountflags &= ~MS_RDONLY;
+>          setup_initial_init_mm(_text, _etext, _edata, _end);
+> diff --git a/arch/sparc/boot/piggyback.c b/arch/sparc/boot/piggyback.c
+> index 6d74064add0a..a9cc55254ff8 100644
+> --- a/arch/sparc/boot/piggyback.c
+> +++ b/arch/sparc/boot/piggyback.c
+> @@ -220,8 +220,8 @@ int main(int argc,char **argv)
+> 
+>          /*
+>           * root_flags = 0
+> -        * root_dev = 1 (RAMDISK_MAJOR)
+> -        * ram_flags = 0
+> +        * root_dev = 1 (1 used to mean RAMDISK_MAJOR, i. e. initrd, which was removed from Linux)
+
+At the end of your series RAMDISK_MAJOR still exists so this comment is 
+wrong.
+
+> +        * ram_flags = 0 (used to control initrd, which was removed from Linux in 2025)
+>           * sparc_ramdisk_image = "PAGE aligned address after _end")
+>           * sparc_ramdisk_size = size of image
+>           */
+
+Shouldn't this block be droped entirely ?
+
+> diff --git a/arch/sparc/kernel/head_32.S b/arch/sparc/kernel/head_32.S
+> index 38345460d542..46f0e39b9037 100644
+> --- a/arch/sparc/kernel/head_32.S
+> +++ b/arch/sparc/kernel/head_32.S
+> @@ -65,7 +65,7 @@ empty_zero_page:      .skip PAGE_SIZE
+>   EXPORT_SYMBOL(empty_zero_page)
+> 
+>          .global root_flags
+> -       .global ram_flags
+> +       .global ram_flags /* used to control initrd, which was removed from Linux in 2025 */
+
+Can we remove this line completely instead of adding a comment ?
+
+>          .global root_dev
+>          .global sparc_ramdisk_image
+>          .global sparc_ramdisk_size
+> @@ -81,7 +81,7 @@ root_flags:
+>          .half   1
+>   root_dev:
+>          .half   0
+> -ram_flags:
+> +ram_flags: /* used to control initrd, which was removed from Linux in 2025 */
+
+Same, why not remove this object completely ?
+
+>          .half   0
+>   sparc_ramdisk_image:
+>          .word   0
+> diff --git a/arch/sparc/kernel/head_64.S b/arch/sparc/kernel/head_64.S
+> index cf0549134234..4480c0532fe9 100644
+> --- a/arch/sparc/kernel/head_64.S
+> +++ b/arch/sparc/kernel/head_64.S
+> @@ -52,7 +52,9 @@ stext:
+>    * Fields should be kept upward compatible and whenever any change is made,
+>    * HdrS version should be incremented.
+>    */
+> -        .global root_flags, ram_flags, root_dev
+> +        .global root_flags
+> +        .global ram_flags /* used to control initrd, which was removed from Linux in 2025 */
+
+Same, can you remove them ?
+Such comments in the code are generaly pointless, you can recover 
+history with 'git log'.
+
+> +        .global root_dev
+>           .global sparc_ramdisk_image, sparc_ramdisk_size
+>          .global sparc_ramdisk_image64
+> 
+> @@ -71,7 +73,7 @@ root_flags:
+>           .half   1
+>   root_dev:
+>           .half   0
+> -ram_flags:
+> +ram_flags: /* used to control initrd, which was removed from Linux in 2025 */
+
+Same, remove.
+
+>           .half   0
+>   sparc_ramdisk_image:
+>           .word   0
+> diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
+> index eb60be31127f..fb46fb3acf54 100644
+> --- a/arch/sparc/kernel/setup_32.c
+> +++ b/arch/sparc/kernel/setup_32.c
+> @@ -170,8 +170,6 @@ static void __init boot_flags_init(char *commands)
+> 
+>   extern unsigned short root_flags;
+>   extern unsigned short root_dev;
+> -extern unsigned short ram_flags;
+> -#define RAMDISK_IMAGE_START_MASK       0x07FF
+> 
+>   extern int root_mountflags;
+> 
+> @@ -335,9 +333,6 @@ void __init setup_arch(char **cmdline_p)
+>          if (!root_flags)
+>                  root_mountflags &= ~MS_RDONLY;
+>          ROOT_DEV = old_decode_dev(root_dev);
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -       rd_image_start = ram_flags & RAMDISK_IMAGE_START_MASK;
+> -#endif
+> 
+>          prom_setsync(prom_sync_me);
+> 
+> diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
+> index f728f1b00aca..79b56613c6d8 100644
+> --- a/arch/sparc/kernel/setup_64.c
+> +++ b/arch/sparc/kernel/setup_64.c
+> @@ -143,8 +143,6 @@ static void __init boot_flags_init(char *commands)
+> 
+>   extern unsigned short root_flags;
+>   extern unsigned short root_dev;
+> -extern unsigned short ram_flags;
+> -#define RAMDISK_IMAGE_START_MASK       0x07FF
+> 
+>   extern int root_mountflags;
+> 
+> @@ -640,9 +638,6 @@ void __init setup_arch(char **cmdline_p)
+>          if (!root_flags)
+>                  root_mountflags &= ~MS_RDONLY;
+>          ROOT_DEV = old_decode_dev(root_dev);
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -       rd_image_start = ram_flags & RAMDISK_IMAGE_START_MASK;
+> -#endif
+> 
+>   #ifdef CONFIG_IP_PNP
+>          if (!ic_set_manually) {
+> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+> index 9bea5a1e2c52..0ced2e9f100e 100644
+> --- a/arch/x86/boot/header.S
+> +++ b/arch/x86/boot/header.S
+> @@ -235,7 +235,7 @@ hdr:
+>                  .byte setup_sects - 1
+>   root_flags:    .word ROOT_RDONLY
+>   syssize:       .long ZO__edata / 16
+> -ram_size:      .word 0                 /* Obsolete */
+> +ram_size:      .word 0                 /* Used to control initrd, which was removed from Linux in 2025 */
+
+Same, just remove, or make 'reserved' if you need to keep the space.
+
+>   vid_mode:      .word SVGA_MODE
+>   root_dev:      .word 0                 /* Default to major/minor 0/0 */
+>   boot_flag:     .word 0xAA55
+> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
+> index f53dd3f319ba..bf56549f79bb 100644
+> --- a/arch/x86/include/uapi/asm/bootparam.h
+> +++ b/arch/x86/include/uapi/asm/bootparam.h
+> @@ -4,9 +4,6 @@
+> 
+>   #include <asm/setup_data.h>
+> 
+> -/* ram_size flags */
+> -#define RAMDISK_IMAGE_START_MASK       0x07FF
+> -
+>   /* loadflags */
+>   #define LOADED_HIGH    (1<<0)
+>   #define KASLR_FLAG     (1<<1)
+> @@ -37,7 +34,7 @@ struct setup_header {
+>          __u8    setup_sects;
+>          __u16   root_flags;
+>          __u32   syssize;
+> -       __u16   ram_size;
+> +       __u16   ram_size; /* used to control initrd, which was removed from Linux in 2025 */
+
+Rename it to 'reserved'.
+
+>          __u16   vid_mode;
+>          __u16   root_dev;
+>          __u16   boot_flag;
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index 6409e766fb17..797c3c9fc75e 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -222,8 +222,6 @@ extern int root_mountflags;
+> 
+>   unsigned long saved_video_mode;
+> 
+> -#define RAMDISK_IMAGE_START_MASK       0x07FF
+> -
+>   static char __initdata command_line[COMMAND_LINE_SIZE];
+>   #ifdef CONFIG_CMDLINE_BOOL
+>   char builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
+> @@ -541,9 +539,6 @@ static void __init parse_boot_params(void)
+>          bootloader_version  = bootloader_type & 0xf;
+>          bootloader_version |= boot_params.hdr.ext_loader_ver << 4;
+> 
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -       rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
+> -#endif
+>   #ifdef CONFIG_EFI
+>          if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
+>                       EFI32_LOADER_SIGNATURE, 4)) {
+> diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+> index f1a1f4c92ded..6320a9cb6686 100644
+> --- a/include/linux/initrd.h
+> +++ b/include/linux/initrd.h
+> @@ -5,9 +5,6 @@
+> 
+>   #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
+> 
+> -/* starting block # of image */
+> -extern int rd_image_start;
+> -
+>   /* size of a single RAM disk */
+>   extern unsigned long rd_size;
+> 
+> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+> index f7d53bc21e41..8e0a774a9c6f 100644
+> --- a/init/do_mounts_rd.c
+> +++ b/init/do_mounts_rd.c
+> @@ -17,11 +17,9 @@
+>   static struct file *in_file, *out_file;
+>   static loff_t in_pos, out_pos;
+> 
+> -int __initdata rd_image_start;         /* starting block # of image */
+
+Why do you need to change this really ? In any case this entire file 
+goes away in a later patch so you shouldn't bother to update that.
 
 > -
->  /* Content Code Description for PCI Function Availability */
->  struct zpci_ccdf_avail {
->  	u32 reserved1;
-> @@ -76,6 +59,41 @@ static bool is_driver_supported(struct pci_driver *dri=
-ver)
->  	return true;
->  }
-> =20
-> +static void zpci_store_pci_error(struct pci_dev *pdev,
-> +				 struct zpci_ccdf_err *ccdf)
-> +{
-> +	struct zpci_dev *zdev =3D to_zpci(pdev);
-> +	int i;
-> +
-> +	mutex_lock(&zdev->pending_errs_lock);
-> +	if (zdev->pending_errs.count >=3D ZPCI_ERR_PENDING_MAX) {
-> +		pr_err("%s: Cannot store PCI error info for device",
-> +				pci_name(pdev));
-> +		mutex_unlock(&zdev->pending_errs_lock);
+>   static int __init ramdisk_start_setup(char *str)
+>   {
+> -       rd_image_start = simple_strtol(str,NULL,0);
+> +       /* will be removed in next commit */
 
-I think the error message should state that the maximum number of
-pending error events has been queued. As with the ZPI_ERR_PENDING_MAX I
-really don't think we would reach this even at 4 vs 16 max pending but
-if we do I agree that having the first couple of errors saved is
-probably nice for analysis.
+Useless comment, don't add such burden.
 
-> +		return;
-> +	}
-> +
-> +	i =3D zdev->pending_errs.tail % ZPCI_ERR_PENDING_MAX;
-> +	memcpy(&zdev->pending_errs.err[i], ccdf, sizeof(struct zpci_ccdf_err));
-> +	zdev->pending_errs.tail++;
-> +	zdev->pending_errs.count++;
+>          return 1;
+>   }
+>   __setup("ramdisk_start=", ramdisk_start_setup);
+> @@ -60,7 +58,7 @@ identify_ramdisk_image(struct file *file, loff_t pos,
+>          unsigned char *buf;
+>          const char *compress_name;
+>          unsigned long n;
+> -       int start_block = rd_image_start;
+> +       int start_block = 0;
 
-With tail being int this would be undefined behavior if it ever
-overflowed. Since the array is of fixed length that is always smaller
-than 256 how about making tail, head, and count u8. The memory saving
-doesn't matter but at least overflow becomes well defined.
+Don't change, it is removed later.
 
-> +	mutex_unlock(&zdev->pending_errs_lock);
-> +}
-> +
-> +void zpci_cleanup_pending_errors(struct zpci_dev *zdev)
-> +{
-> +	struct pci_dev *pdev =3D NULL;
-> +
-> +	mutex_lock(&zdev->pending_errs_lock);
-> +	pdev =3D pci_get_slot(zdev->zbus->bus, zdev->devfn);
-> +	if (zdev->pending_errs.count)
-> +		pr_err("%s: Unhandled PCI error events count=3D%zu",
-> +				pci_name(pdev), zdev->pending_errs.count);
+> 
+>          buf = kmalloc(size, GFP_KERNEL);
+>          if (!buf)
+> @@ -196,7 +194,7 @@ int __init rd_load_image(char *from)
+>          if (IS_ERR(in_file))
+>                  goto noclose_input;
+> 
+> -       in_pos = rd_image_start * BLOCK_SIZE;
+> +       in_pos = 0;
 
-I think this could be a zpci_dbg(). That way you also don't need the
-pci_get_slot() which is also buggy as it misses a pci_dev_put(). The
-message also doesn't seem useful for the user. As I understand it this
-would happen if a vfio-pci user dies without handling all the error
-events but then vfio-pci will also reset the slot on closing of the
-fds, no? So the device will get reset anyway.
+Same
 
-> +	memset(&zdev->pending_errs, 0, sizeof(struct zpci_ccdf_pending));
+>          nblocks = identify_ramdisk_image(in_file, in_pos, &decompressor);
+>          if (nblocks < 0)
+>                  goto done;
+> --
+> 2.47.2
+> 
+> 
 
-If this goes wrong and we subsequently crash or take a live memory dump
-I'd prefer to have bread crumbs such as the errors that weren't cleaned
-up. Wouldn't it be enough to just set the count to zero and for debug
-the original count will be in s390dbf. Also maybe it would make sense
-to pull the zdev->mediated_recovery clearing in here?
-
-> +	mutex_unlock(&zdev->pending_errs_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(zpci_cleanup_pending_errors);
-> +
->  static pci_ers_result_t zpci_event_notify_error_detected(struct pci_dev =
-*pdev,
->  							 struct pci_driver *driver)
->  {
-> @@ -169,7 +187,8 @@ static pci_ers_result_t zpci_event_do_reset(struct pc=
-i_dev *pdev,
->   * and the platform determines which functions are affected for
->   * multi-function devices.
->   */
-> -static pci_ers_result_t zpci_event_attempt_error_recovery(struct pci_dev=
- *pdev)
-> +static pci_ers_result_t zpci_event_attempt_error_recovery(struct pci_dev=
- *pdev,
-> +							  struct zpci_ccdf_err *ccdf)
->  {
->  	pci_ers_result_t ers_res =3D PCI_ERS_RESULT_DISCONNECT;
->  	struct zpci_dev *zdev =3D to_zpci(pdev);
-> @@ -188,13 +207,6 @@ static pci_ers_result_t zpci_event_attempt_error_rec=
-overy(struct pci_dev *pdev)
->  	}
->  	pdev->error_state =3D pci_channel_io_frozen;
-> =20
-> -	if (needs_mediated_recovery(pdev)) {
-> -		pr_info("%s: Cannot be recovered in the host because it is a pass-thro=
-ugh device\n",
-> -			pci_name(pdev));
-> -		status_str =3D "failed (pass-through)";
-> -		goto out_unlock;
-> -	}
-> -
->  	driver =3D to_pci_driver(pdev->dev.driver);
->  	if (!is_driver_supported(driver)) {
->  		if (!driver) {
-> @@ -210,12 +222,22 @@ static pci_ers_result_t zpci_event_attempt_error_re=
-covery(struct pci_dev *pdev)
->  		goto out_unlock;
->  	}
-> =20
-> +	if (needs_mediated_recovery(pdev))
-> +		zpci_store_pci_error(pdev, ccdf);
-> +
->  	ers_res =3D zpci_event_notify_error_detected(pdev, driver);
->  	if (ers_result_indicates_abort(ers_res)) {
->  		status_str =3D "failed (abort on detection)";
->  		goto out_unlock;
->  	}
-> =20
-> +	if (needs_mediated_recovery(pdev)) {
-> +		pr_info("%s: Recovering passthrough device\n", pci_name(pdev));
-
-I'd say technically we're not recovering the device here but rather
-leaving it alone so user-space can take over the recovery. Maybe this
-could be made explicit in the message. Something like:
-
-""%s: Leaving recovery of pass-through device to user-space\n"
-
-> +		ers_res =3D PCI_ERS_RESULT_RECOVERED;
-> +		status_str =3D "in progress";
-> +		goto out_unlock;
-> +	}
-> +
->  	if (ers_res !=3D PCI_ERS_RESULT_NEED_RESET) {
->  		ers_res =3D zpci_event_do_error_state_clear(pdev, driver);
->  		if (ers_result_indicates_abort(ers_res)) {
-> @@ -258,25 +280,20 @@ static pci_ers_result_t zpci_event_attempt_error_re=
-covery(struct pci_dev *pdev)
->   * @pdev: PCI function for which to report
->   * @es: PCI channel failure state to report
->   */
-> -static void zpci_event_io_failure(struct pci_dev *pdev, pci_channel_stat=
-e_t es)
-> +static void zpci_event_io_failure(struct pci_dev *pdev, pci_channel_stat=
-e_t es,
-> +				  struct zpci_ccdf_err *ccdf)
->  {
->  	struct pci_driver *driver;
-> =20
->  	pci_dev_lock(pdev);
->  	pdev->error_state =3D es;
-> -	/**
-> -	 * While vfio-pci's error_detected callback notifies user-space QEMU
-> -	 * reacts to this by freezing the guest. In an s390 environment PCI
-> -	 * errors are rarely fatal so this is overkill. Instead in the future
-> -	 * we will inject the error event and let the guest recover the device
-> -	 * itself.
-> -	 */
-> +
->  	if (needs_mediated_recovery(pdev))
-> -		goto out;
-> +		zpci_store_pci_error(pdev, ccdf);
->  	driver =3D to_pci_driver(pdev->dev.driver);
->  	if (driver && driver->err_handler && driver->err_handler->error_detecte=
-d)
->  		driver->err_handler->error_detected(pdev, pdev->error_state);
-> -out:
-> +
->  	pci_dev_unlock(pdev);
->  }
-> =20
-> @@ -312,6 +329,7 @@ static void __zpci_event_error(struct zpci_ccdf_err *=
-ccdf)
->  	pr_err("%s: Event 0x%x reports an error for PCI function 0x%x\n",
->  	       pdev ? pci_name(pdev) : "n/a", ccdf->pec, ccdf->fid);
-> =20
-> +
->  	if (!pdev)
-
-Nit, stray empty line.
-
->  		goto no_pdev;
-> =20
-> @@ -322,12 +340,13 @@ static void __zpci_event_error(struct zpci_ccdf_err=
- *ccdf)
->  		break;
->  	case 0x0040: /* Service Action or Error Recovery Failed */
->  	case 0x003b:
-> -		zpci_event_io_failure(pdev, pci_channel_io_perm_failure);
-> +		zpci_event_io_failure(pdev, pci_channel_io_perm_failure, ccdf);
->  		break;
->  	default: /* PCI function left in the error state attempt to recover */
-> -		ers_res =3D zpci_event_attempt_error_recovery(pdev);
-> +		ers_res =3D zpci_event_attempt_error_recovery(pdev, ccdf);
->  		if (ers_res !=3D PCI_ERS_RESULT_RECOVERED)
-> -			zpci_event_io_failure(pdev, pci_channel_io_perm_failure);
-> +			zpci_event_io_failure(pdev, pci_channel_io_perm_failure,
-> +					ccdf);
->  		break;
->  	}
->  	pci_dev_put(pdev);
-> diff --git a/drivers/vfio/pci/vfio_pci_zdev.c b/drivers/vfio/pci/vfio_pci=
-_zdev.c
-> index a7bc23ce8483..2be37eab9279 100644
-> --- a/drivers/vfio/pci/vfio_pci_zdev.c
-> +++ b/drivers/vfio/pci/vfio_pci_zdev.c
-> @@ -168,6 +168,8 @@ void vfio_pci_zdev_close_device(struct vfio_pci_core_=
-device *vdev)
-> =20
->  	zdev->mediated_recovery =3D false;
-> =20
-> +	zpci_cleanup_pending_errors(zdev);
-> +
->  	if (!vdev->vdev.kvm)
->  		return;
-> =20
 
