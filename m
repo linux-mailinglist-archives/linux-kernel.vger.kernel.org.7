@@ -1,158 +1,186 @@
-Return-Path: <linux-kernel+bounces-816864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090AAB57998
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:59:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668A1B57AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0AC3B9EDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED103BADF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F933019C8;
-	Mon, 15 Sep 2025 11:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JkBXfelQ"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F3D2F0C7C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3A23081D9;
+	Mon, 15 Sep 2025 12:21:15 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0101030C35A;
+	Mon, 15 Sep 2025 12:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937439; cv=none; b=cJOr/VX4a9AGAILk6o3AvK81xggu8cfWnEOj/LlIASwFXZpOUioyDQiT5L+h9FduiigHl7LRKdWI5x9pYcdvlfyj3tQhcDCFVCqoNbNX831a2SWKLrH0fKeu910GC7qpf8mXrmfYEeEaxoVpotg+w8zwmWWMi2ujRtUE7WFOS10=
+	t=1757938874; cv=none; b=n1HsfQjcgyuTD5e21sqFRi+TaeHO7gurdpAPKSucOE88iCi4ZkR5UANI9eZhZnEDdbpjgHsBzhZcoH4JWN+EE3trbe5mwGt2E+LMzNefnQlWyncMR1Zb3/UPnRV+eEjBN+zLC9a9XI1pqCIw5AOHPFsAtr5iDLMr3ioHRUzQP9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937439; c=relaxed/simple;
-	bh=4iIsT/e0SkZkgz6cT/6zDmKcSsAO4TPDDaXg4J888mU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mUZHVaOAWSU+PMZboI58awDnq+cGs19czfH5thmqFlG0u6Y72Y9Sfq+cAFAYwtl+7rD1UVQ8gFyFPLb4KUHK3nP6Ux4ev0r1kaAAQMXJaQSgJfEunBdMRj2ObDl4VvCyQlsWyrcURVmWeV3pISsX0czi8v31erjhTD+zRBfCTDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JkBXfelQ; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32df1321879so1786844a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757937437; x=1758542237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nGJm8DYIvDlO/KkwD8vnmqae7TgyeCejeZ/3X9vddjo=;
-        b=JkBXfelQjExfOkJuzaIYeCjBy61YbFf13yL15Io6y8wBOlMz71sU0OrKiNNIjkIh9r
-         lFqVlkQTjQsa4D7hvpa4n2FRtW4MxUk/o6aQ61qUseCTBVi8e6ai1wxAm9IAIaW8i0mQ
-         0+NYaQ0IPIbY+ukY6/xRngxrjkrJucjGWyRoCWrBscnGOiAWMN3mvNKpf5NV2OE8Jwar
-         UBh0VGs51hbKq6+FA9Q3fyY6iRk2wQbjLhVo4H3ItjchqwFfiRq7U3rvEY6gKrwW6GvO
-         s5m9crVN6zy8MtrX6pWIPy7rIXaTD4DSLl2b+1zI4q0s/X9ZpxrNBtASPMVIr7kY3jDl
-         q5Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757937437; x=1758542237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nGJm8DYIvDlO/KkwD8vnmqae7TgyeCejeZ/3X9vddjo=;
-        b=i8FsOoq8rRxoU95eWRU6ZNE9KXjKl548ywQ6PScZCM0bUfd4xlJPMZnmI5j9VbIStR
-         kM6fEJ0A2FZAzAC3R6Qb6j6r+5IwpZiDIJmdj0cuz0LwwUL7pCSaV3Hzx5xvYYpDaFMQ
-         C31kchCP2B85h1397kseYhEPKH0Ix/YHTy8WrGr2MSxcCB/xFHdIrukKuRlcDHRZehCR
-         GdTmX1neVcpqCrlpRiJAW2HKq5maoZov3afRvhOnvFHz54AldPoyQwH3U4EvwzwqgXxr
-         BqrWPYSKQyURZzI3ZHfOwzyWepnk7QknQQCWFX259gTMjP2hjkbb6Jxxxea61lYI1oxB
-         hPdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvtpBa3I8oi+4Z17Ur6m4GGXFIFaIKLuDPUb2WK+1mSlopwdCzZIJS53GtKxGvXTpS4RY+d2xm08m8Ojk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVeJpc0AFeJ6fxJuzkiIovyvLvjKCZHBvEJuSdh6zvaewYqgdu
-	Gyj1Yc0XeFTSDz0yY455FI9WpLN4gNH4VWEFrUfytSkHBndqu+wqwk/oD9MHULltMdPxPR0ciF/
-	36E4uQeFOWeeniQiQgpKA2tP946jhAJV4fKYyAdT9dg==
-X-Gm-Gg: ASbGnctfeYeB1FBiRoh7w2hTLw26C9TgTo5TcDrJW/R0QjV4Wdv7OLE6GFprNxw1Z4o
-	fFEbLd0BjSzqH/nfXEDIt1RsVJOA+/67EPyTDwGDg2/ahGunGx/2B6tMnoP4JXy5nz7U5ddRLpJ
-	vHXXyzm8HUq1LGwqJuzgc8hl8PDKAAznk4LO/oWmfHRytPsAM+gQcxbgppzLF5UT6BLfXm5smkF
-	EyFb86Gw7H5PhlurBGWeO2WHwg=
-X-Google-Smtp-Source: AGHT+IHC9MtMM4aoht490pTslenJiMyVWixD64PNiClIAKHESGsSGqs2QzKXHaL4Reakb94ywmWjqmzVBmseZb4+OWE=
-X-Received: by 2002:a17:90b:3810:b0:32e:749d:fcb4 with SMTP id
- 98e67ed59e1d1-32e749dff67mr2285280a91.6.1757937436607; Mon, 15 Sep 2025
- 04:57:16 -0700 (PDT)
+	s=arc-20240116; t=1757938874; c=relaxed/simple;
+	bh=9RLcS91I7/JfJmj5gROsGNlF/zDbJRvo+2amvvvj6yQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TZykKVC7pyy/mtCA1vR/XeLkskmICdXY19JpPrfPvCxndFS44alE5iIUJ4F532oWvlsA4WuBwV4zI8geUSt6dNvu6T9GrDT/dhkkcCBBVl9rofLH8ppvpAvkcE5pfqExzTh/P8Q8g9s2W9uIlci+63ND7ILUaB00dcJvoAIgEEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cQNnR0pmTz9sxp;
+	Mon, 15 Sep 2025 13:57:31 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id CofbtF7b-0VV; Mon, 15 Sep 2025 13:57:31 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQNnQ5DNGz9sxl;
+	Mon, 15 Sep 2025 13:57:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 981DC8B766;
+	Mon, 15 Sep 2025 13:57:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id aYicW_kKuipv; Mon, 15 Sep 2025 13:57:30 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 227808B763;
+	Mon, 15 Sep 2025 13:57:30 +0200 (CEST)
+Message-ID: <99563c3d-7322-4164-81f3-0d28e91ed653@csgroup.eu>
+Date: Mon, 15 Sep 2025 13:57:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912034538.1406132-1-zhangjian.3032@bytedance.com> <4a639a86-37e2-4b3d-b870-f85f2c86cb81@lunn.ch>
-In-Reply-To: <4a639a86-37e2-4b3d-b870-f85f2c86cb81@lunn.ch>
-From: Zhang Jian <zhangjian.3032@bytedance.com>
-Date: Mon, 15 Sep 2025 19:57:05 +0800
-X-Gm-Features: AS18NWBh34xROiv3qqyYwXVx8rfGAbuctXdOp2l0uDfwsHFQdd4X0dtuYdgDNtM
-Message-ID: <CA+J-oUvsnovtMGKVAWnw-eG6SZvNZLEOsf-8zp6BEwzq4_wvhw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH 1/1] Revert "drivers/net/ftgmac100: fix
- DHCP potential failure with systemd"
-To: Andrew Lunn <andrew@lunn.ch>, Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, andrew+netdev@lunn.ch, 
-	guoheyi@linux.alibaba.com, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 06/62] arm: init: remove special logic for setting
+ brd.rd_size
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
+ Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+ Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
+ Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-7-safinaskar@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250913003842.41944-7-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 13, 2025 at 4:25=E2=80=AFAM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Fri, Sep 12, 2025 at 11:45:38AM +0800, Jian Zhang wrote:
-> > This reverts commit 1baf2e50e48f10f0ea07d53e13381fd0da1546d2.
->
-> > * rtnetlink is setting the link down
-> > * the PHY state_queue is triggered and calls ftgmac100_adjust_link
-> > -     /* Release phy lock to allow ftgmac100_reset to acquire it, keepi=
-ng lock
-> > -      * order consistent to prevent dead lock.
-> > -      */
-> > -     if (netdev->phydev)
-> > -             mutex_unlock(&netdev->phydev->lock);
-> > -
-> > -     ftgmac100_reset(priv);
-> > -
-> > -     if (netdev->phydev)
-> > -             mutex_lock(&netdev->phydev->lock);
-> > -
-> > +     /* Reset the adapter asynchronously */
-> > +     schedule_work(&priv->reset_task);
-> >  }
->
-> So we are swapping one set of bugs for another set of bugs.
->
-Yes, If the full reset is necessary.
-In commit 855944ce1cc4 (=E2=80=9Cftgmac100: Add a reset task and use it for
-link changes=E2=80=9D, about 8 years ago)
-it was mentioned that a full hardware reset is required, and it also
-notes that the rtnl lock is held.
 
-> No other adjust_link callback messes with locks like this.  Have you
-> investigated what actually needs to be done by adjust_link?
->
-> Determining maccr in ftgmac100_reset_and_config_mac() look relevant.
-> Does it actually need a reset, or is it sufficient to just set the
-> bits in FTGMAC100_OFFSET_MACCR?
->
 
-I checked most drivers=E2=80=99 adjust_link callbacks, and they basically o=
-nly
-write to a few MAC controller registers.
-I also tried calling only `ftgmac100_reset_and_config_mac` and did
-some tests, the network works fine
-but I=E2=80=99m not sure this change is correct, which is why I wanted to
-revert to the previous code.
+Le 13/09/2025 à 02:37, Askar Safin a écrit :
+> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> There is no any reason for having special mechanism
+> for setting ramdisk size.
+> 
+> Also this allows us to change rd_size variable to static
 
-> ftgmac100_config_pause() is called from ftgmac100_set_pauseparam()
-> suggesting it can be called at any time.
->
-> So i think the crux of the problem is what needs to happen to set bits
-> in MACCR.
->
-Yes, I think so too. However, here we just need to do some necessary
-register configurations,
-and that should be sufficient.
+Can you squash patches 6 to 9 all together ?
 
-Hi Jacky;
+> 
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+> ---
+>   arch/arm/kernel/atags_parse.c | 12 ------------
+>   drivers/block/brd.c           |  8 ++++----
+>   include/linux/initrd.h        |  3 ---
+>   3 files changed, 4 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+> index a3f0a4f84e04..615d9e83c9b5 100644
+> --- a/arch/arm/kernel/atags_parse.c
+> +++ b/arch/arm/kernel/atags_parse.c
+> @@ -87,18 +87,6 @@ static int __init parse_tag_videotext(const struct tag *tag)
+>   __tagtable(ATAG_VIDEOTEXT, parse_tag_videotext);
+>   #endif
+> 
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -static int __init parse_tag_ramdisk(const struct tag *tag)
+> -{
+> -       if (tag->u.ramdisk.size)
+> -               rd_size = tag->u.ramdisk.size;
+> -
+> -       return 0;
+> -}
+> -
+> -__tagtable(ATAG_RAMDISK, parse_tag_ramdisk);
+> -#endif
+> -
+>   static int __init parse_tag_serialnr(const struct tag *tag)
+>   {
+>          system_serial_low = tag->u.serialnr.low;
+> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+> index 0c2eabe14af3..72f02d2b8a99 100644
+> --- a/drivers/block/brd.c
+> +++ b/drivers/block/brd.c
+> @@ -27,6 +27,10 @@
+> 
+>   #include <linux/uaccess.h>
+> 
+> +static unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+> +module_param(rd_size, ulong, 0444);
+> +MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+> +
+>   /*
+>    * Each block ramdisk device has a xarray brd_pages of pages that stores
+>    * the pages containing the block device's contents.
+> @@ -209,10 +213,6 @@ static int rd_nr = CONFIG_BLK_DEV_RAM_COUNT;
+>   module_param(rd_nr, int, 0444);
+>   MODULE_PARM_DESC(rd_nr, "Maximum number of brd devices");
+> 
+> -unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+> -module_param(rd_size, ulong, 0444);
+> -MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+> -
+>   static int max_part = 1;
+>   module_param(max_part, int, 0444);
+>   MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
+> diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+> index 6320a9cb6686..b42235c21444 100644
+> --- a/include/linux/initrd.h
+> +++ b/include/linux/initrd.h
+> @@ -5,9 +5,6 @@
+> 
+>   #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
+> 
+> -/* size of a single RAM disk */
+> -extern unsigned long rd_size;
+> -
+>   /* 1 if it is not an error if initrd_start < memory_start */
+>   extern int initrd_below_start_ok;
+> 
+> --
+> 2.47.2
+> 
+> 
 
-I=E2=80=99m not sure if you=E2=80=99re familiar with these, Could you give =
-us some suggestions?
-
->         Andrew
-Jian
 
