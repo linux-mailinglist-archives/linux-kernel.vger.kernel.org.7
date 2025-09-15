@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-816307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47506B57210
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:57:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5271BB57212
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADDCD1898A2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D9793B281D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAD92E9EA8;
-	Mon, 15 Sep 2025 07:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuX7y5CG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590272E9EB9;
+	Mon, 15 Sep 2025 07:58:59 +0000 (UTC)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AAA2C0F72
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77342C0F72
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757923044; cv=none; b=HwE1r963bh+mykKSYxDIDEkhoetYUWJD0K8o6CzvbCVZWain4u+HiN4k6wAdhvHaUG2SjZqleV9turn11oyKdq1CVYS2r7afgaXZKtKCfsQ5c19WfGTad/6yy+ELQ4QcXBY6yZjO233Vubc/srUmIg/qqmOFzF8YwZOexhADdNM=
+	t=1757923139; cv=none; b=QjBUoL394w/hku7RXXTq40Qhg+60IYb4cYjAGZS2LTLRiGn3L4uhuhWuW/+eLw9WA3ttyk9hJ/rNAhQvTUdByI7RyV2YuXsMizlPoHER4tozX2EPVZdQKMeI9+AAtBD1uJc9MuMsGZoR7ZnQg/1EPr8Q6IaWfJBroZSGdiGVg3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757923044; c=relaxed/simple;
-	bh=q/0U/158AZ4ADjs4BrXmACq7kZLr07vkwdPfqFBcMzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pClnDS208nHfeRhp2WFco8FTtLJNA64apIibrkl9Idt07nJPH4H1q8jBJLAdyXcpa8e/5WD9CTegZ7GRWBczobr7smDhG7Njpj8kPHqBoCwH5ozS7YHwC5kv7xPlcEiQO+Bs3G2/cqsPeOwq1o8y6+rlk/6VxuSQ5WaUkQ5kvBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuX7y5CG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E55C4CEF1;
-	Mon, 15 Sep 2025 07:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757923040;
-	bh=q/0U/158AZ4ADjs4BrXmACq7kZLr07vkwdPfqFBcMzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iuX7y5CGUnEbwMbYWFJXOA4GdJRIdIbN75rGnSyYcpoosTOrP8OdtFQUV9eNkwTy+
-	 sEmLRzbTQSdtRaLTZPORboynAS0OtUkYHaP1b2fJxaRdHBJl37Ys87+eAOjVbWoVb9
-	 X0PPlEBMK5faNzB0w6seT9mJnAmnpSbYOnesXHivJr1V9ynxTsiWxr+PEJWzGSBC7Q
-	 9bq9umeEyyetWJa7CoiAszF0K0xkNDfVKexnWcf+SL+hqqwQquTTtzkY8KeJUZr9EI
-	 tLxM3unljELz6LQ29GQN08plyGPYQkDitNldsIO1UVZf8daIHtcv+nDB2NcpTmCnGK
-	 vm5gO5qEBvSrg==
-Date: Mon, 15 Sep 2025 09:57:18 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Swamil Jain <s-jain1@ti.com>
-Cc: jyri.sarha@iki.fi, tomi.valkeinen@ideasonboard.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	aradhya.bhatia@linux.dev, h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, 
-	praneeth@ti.com, u-kumar1@ti.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
- bridge
-Message-ID: <20250915-benevolent-military-penguin-d64871@penduick>
-References: <20250911110715.2873596-1-s-jain1@ti.com>
- <20250911110715.2873596-4-s-jain1@ti.com>
+	s=arc-20240116; t=1757923139; c=relaxed/simple;
+	bh=Sqn/ZgxgCNgAXSMJCtC7zdfFksm2UGuPqP4avjgv+jE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFNF66TcnpShgQip3fbShbrJ4/d0E25u0WxDzWLmmh6I7sj+VNR2KAyYXg7sb4Hy5pCplQgM8I38lMTJvnE3TQayM2dZ82/rLoJZ6qWRCrCs4ebpdnTINZcxwz/vZEI49e/cm43cODRyzXyVrzv/n4H+z+MWB+XE+yU2HTzevqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5300b29615cso3447601137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:58:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757923136; x=1758527936;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EdEbGsEznj/+fcW4LYAFT5Nf2skbq2ng99E8wh/Fflw=;
+        b=sxMNJGZ3dKKUj1S/RRl1RtYEqMNU0utuix9EYDH9EGMAodQw/VWAvNBbW2lFB4rRdl
+         8jAVPy2Rhh0g/+UW5lPegIMZbNO4AvqnYkotlSG9iOvLmwmz6+wlpC97bmiVDoar/NVF
+         o7D3F7FqMThNYeg/yk+MBgCw0BZX7z6r7ufDX+FQ/NwAuuyjP7xOZF189BzjY5FUZvG/
+         +iKXcV1M2pOHC+Sz3Id+QXYfK1+nuSEeLi1kapHQLJGGifaho09jPcjdBhlj6yaYQiH/
+         6zs6Xe0ntBZu5eWC4ugFPWKjsXJ/qhNrK8MbH3b7U0IonyvEhata1vwXsLYzELgv2G0P
+         wNrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKz2m9cd02ZaCewBNFDcbJkR2yPmQ9Rfbh+L2fckXZHowLu0tCvS8gnZGiZUIEAhSYFGg1bVMnttaIxA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyugmnf6US9mPo5fQPocfN0WysoKP+MErZcWVZsXFoVZOdfRU31
+	g3+djrmgh3mMWpkl41krO/wVHTI5V091jp5L8qmPyv1n6Dh2fgVI6a4H0aPIS7Ie
+X-Gm-Gg: ASbGncvJvRg2udnAc9WaP2jh822LDRSEOziSzDrwztX7FiHbOZA30CM0UmOE+QHV/VS
+	gGFAx+aL124Htfb+WVd6HlGhDXPtWjDQhjEWYPfDl9PlKhVHWjV6JN52+iuIbNxnaAsz/uDlmUE
+	i9bEN9DFTuPzncZncA+yacdcizg+P9ln5GwehJsI3romeKjUw/zFs5zEqp4I20fABOLk5pqzdDs
+	kI6t2c/xVDrQX4zDVKYzi4R3rIT385iwNsHq/CbjOAj7O4YzZT+5LKPl0Q4+kWlbx2hPMrU1scV
+	O4jgtUCliIqoq/wAGYOUu6zgar3wmwNy5xwL8qMxDTUlwQ4eGcII1clqKeUPlv5i4Lhw7/KWsDN
+	aiKWmD/S7MDYA1OxcpcIlZBnqfbjVQuQsFgirY7oRcXNmJ/+zOUJGCd7bM7lc
+X-Google-Smtp-Source: AGHT+IGO5ODNLahUuh0aoaRDjj/NjkphZQtiinD0d7gANs1bHvVB4EZPh0p3/EN8xr5r7CCwhLVGVw==
+X-Received: by 2002:a05:6102:424e:b0:537:f1db:768d with SMTP id ada2fe7eead31-55611298a66mr4276380137.28.1757923135815;
+        Mon, 15 Sep 2025 00:58:55 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8ccd3bd595csm2212580241.10.2025.09.15.00.58.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 00:58:55 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-53042807be7so2740627137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:58:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUF5pPWneI4fczoQCoDHP/LdjkLFEb5EAS1X9aRWXp+2d1+AFmFosIcfawmACXIc6JK8Vgw0jcxRHWJT24=@vger.kernel.org
+X-Received: by 2002:a05:6102:808f:b0:4fb:ebe1:7db1 with SMTP id
+ ada2fe7eead31-5560bb47790mr4450426137.12.1757923135481; Mon, 15 Sep 2025
+ 00:58:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="el2eopg2lseizadf"
-Content-Disposition: inline
-In-Reply-To: <20250911110715.2873596-4-s-jain1@ti.com>
+References: <20250912130911.185674-1-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250912130911.185674-1-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 15 Sep 2025 09:58:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWKu3X1tihsa-ouuoSpOaAhuKB-fOZMo8_CSN4fROeLmw@mail.gmail.com>
+X-Gm-Features: AS18NWDKwSEGTsUnPuKBqop6XzqwZT8QTZhdu8_6I5VGZEgrXV10p4SrcksRn8s
+Message-ID: <CAMuHMdWKu3X1tihsa-ouuoSpOaAhuKB-fOZMo8_CSN4fROeLmw@mail.gmail.com>
+Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Remove extra semicolon in rcar_gen3_phy_usb2_remove()
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 12 Sept 2025 at 15:09, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Remove an extraneous semicolon after the closing brace of
+> rcar_gen3_phy_usb2_remove().
+> This has no functional impact, but cleans up the code style.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
---el2eopg2lseizadf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
- bridge
-MIME-Version: 1.0
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Sep 11, 2025 at 04:37:15PM +0530, Swamil Jain wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
->=20
-> Since OLDI consumes DSS VP clock directly as serial clock, mode_valid()
-> check cannot be performed in tidss driver which should be checked
-> in OLDI driver.
->=20
-> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-> Tested-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_oldi.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/t=
-idss_oldi.c
-> index 7ecbb2c3d0a2..ada691839ef3 100644
-> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
-> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-> @@ -309,6 +309,26 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(str=
-uct drm_bridge *bridge,
->  	return input_fmts;
->  }
-> =20
-> +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
-> +				   struct drm_bridge_state *bridge_state,
-> +				   struct drm_crtc_state *crtc_state,
-> +				   struct drm_connector_state *conn_state)
-> +{
-> +	struct tidss_oldi *oldi =3D drm_bridge_to_tidss_oldi(bridge);
-> +	struct drm_display_mode *adjusted_mode;
-> +	unsigned long round_clock;
-> +
-> +	adjusted_mode =3D &crtc_state->adjusted_mode;
-> +	round_clock =3D clk_round_rate(oldi->serial, adjusted_mode->clock * 7 *=
- 1000);
-> +	/*
-> +	 * To keep the check consistent with dispc_vp_set_clk_rate(),
-> +	 * we use the same 5% check here.
-> +	 */
-> +	if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000, round_clock) > 5)
-> +		return -EINVAL;
-> +	return 0;
-> +}
-> +
+Gr{oetje,eeting}s,
 
-If you're introducing that check to tidss, please use .5% like everyone
-else. I understand that you don't want to change tilcdc to avoid any
-regression, but that's not the case here
+                        Geert
 
-Maxime
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---el2eopg2lseizadf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMfG3QAKCRAnX84Zoj2+
-dldJAYCiEHV1ceEiTFu359foivjBu67853uO4czf5z0Te8gaOhblPP4a6Cemo1rV
-qsP942MBfRlns+YcsJXk61kQgM7IhxPRgQoyJQwMIx0DT5eAg1Rs0dwbLSkJmj5T
-4SHdn+i6bw==
-=R9ZU
------END PGP SIGNATURE-----
-
---el2eopg2lseizadf--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
