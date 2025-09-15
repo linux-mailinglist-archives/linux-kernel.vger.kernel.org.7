@@ -1,195 +1,110 @@
-Return-Path: <linux-kernel+bounces-816493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C04B57481
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58092B57449
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF23171C45
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155BE189FA40
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442E22F3C0F;
-	Mon, 15 Sep 2025 09:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F3D2F28F0;
+	Mon, 15 Sep 2025 09:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CyfOA+Xj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S3Bjprbw"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71DC2F28F5;
-	Mon, 15 Sep 2025 09:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8282F0C5D
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757927810; cv=none; b=FeuqD3ZIR4OJfd2FWthq3e5mfDyWp2+PjZtVie8u+JpR4jlkeLlg3zCtYKUAc0biitYjXjc7s0xr6zpMlThk/mQjF7uP933N+kyLqzIlbze+NeLylrbataToPYz54jxrZGBsiX42DlMFMEKWGqwLN0zmiyegQ+ubcEQn1BLsLKM=
+	t=1757927678; cv=none; b=LJ+Bmbz3HeUrrUyVath5DmzY9kLe+rcB7VOuxf/eirbHss2yAu3qjsyp6aGso+GXDWbIOwn8cR2+FILlL3Ldjmyo5q36KuVY2kPXXqh63gieG4ND/yh50qfenKUcX6KqVjr2f6xUuPJoAQ8vz19JRtGFQqM/xrBuWQ3wwTjFzrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757927810; c=relaxed/simple;
-	bh=CMC8x2eBSJ4UoaxkrrTOqREVcL7ID4H/ORR4uPkIaKs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u1vUzoClay/mO0f8KwZQQx8sg0sBGnkoTR4/Rayf4axhlEEGYHe4AerTFlj2H+KPAqEHEFmzLN+1YGGGM9bbawsyBBDZ2x8GNKjIICzbK3EqphtF/GTTjJ0Cswv3VkKjd4E/0wyuD6o1SIn6VAWdn6ToLANlWMpZ282moAcZZ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CyfOA+Xj; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757927809; x=1789463809;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CMC8x2eBSJ4UoaxkrrTOqREVcL7ID4H/ORR4uPkIaKs=;
-  b=CyfOA+XjOn13Yt7j46HsQ3zJaYKN+vJlOG6tz982cBxJoC+GFqnyiSM5
-   BBO7kcgPQCbB9lAvW6c5UX4pb6DyoT7LYQi7JcizpvwLM+I4dk/Kzl5M+
-   XFGH35JnhGBlONnuu7pax03QTL/B52uRZv95JUa4ddoe89gKfaGfQjtai
-   tQ2K9rmf2Md5UoOOmSgD/4MHofoWmZSO4H/oodc/xn8r4YyHmBy/PfOVf
-   jtwie4XRzhpDN0KhK1AfjNlASIKs7vqPe/L2V1Fb/5Cny55K2X/CsTLF5
-   cgD4M8dV62WgYF3AwKSwxNPLiE8qx1tjBSqxsDI508junTHPTtIFKZmd5
-   g==;
-X-CSE-ConnectionGUID: Ym82EHa8R86ojPSayzQPGw==
-X-CSE-MsgGUID: tD1C3uIFRD2hT5vKKgSOSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="70857648"
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="70857648"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 02:16:48 -0700
-X-CSE-ConnectionGUID: 0w9WvEPQRPa+8YXnCTITGQ==
-X-CSE-MsgGUID: SJZwvFJSQ4O4aV07xwZEpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="174392724"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.39])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 02:16:39 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	David Airlie <airlied@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	"Michael J . Ruhl" <mjruhl@habana.ai>,
-	linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v2 11/11] PCI: Convert BAR sizes bitmasks to u64
-Date: Mon, 15 Sep 2025 12:13:58 +0300
-Message-Id: <20250915091358.9203-12-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
-References: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1757927678; c=relaxed/simple;
+	bh=KmJnxss+MoY7NrV8YJ1jLGKE3+2RMVeAE6TDsl1qkWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caQqzbQCLFL+q3P61ve+sMxHiW0349upcKYy4EN+rFRR26tww6l1tJdsJ7MWJxNZv80kwyk90GNn1zEVFC6NUxKaiU9JkWC9uKdyajScK/sAboPY3dDgZ825HhVsGWdaEPGHy4n0cjeacNiKt1eXJbapKDLZMoKgCHkGOwSvwQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S3Bjprbw; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so34916625e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:14:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757927674; x=1758532474; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aku+CpnvWW9zhF6+nPeIxknoBC5KeYin4IOVLZZ/1pw=;
+        b=S3BjprbwnbQU6XcqP5P+Zvo7Aas9yso/B+OpSv9rTj/9QzlJC0VSumIHd1Y8DIczhp
+         KtC53YgreatyzbudzsVo2WlawgN7P2goKo89P2d04wnqPeD4z8nlxXejUHTA3PT4mhzi
+         iggN2G6vJ1jhxzyRhPYQlJDCdQplE8Jx+qGU+IHiuvV7NZ6E4mfsM70m3goEOvZsqLJJ
+         7erq4shgI54JCBitvnsAeIhkY/Ak30UyaMSVLpf38mniM1lz4bxucmozDehFtegbesZ2
+         vFS0LOEC3FrhWsKx1wiLgatz40s+jbZEJjl8ja8PUloldRbTx4UIrhBCm5lAtAG8sOxu
+         ob4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757927674; x=1758532474;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aku+CpnvWW9zhF6+nPeIxknoBC5KeYin4IOVLZZ/1pw=;
+        b=OBBayNzEzvdoDdClWbmX3IrEPfXtJzAY66vNJq22azkQGvTXGjxMnnKM1WdoeY2+nm
+         aayjMnYQ7hTTEQXchNK575yg1oa6kAEEThSymZq8Dd8y5LDzIhKUQTfrR5cpoprg8phV
+         LUw0gkMwwGJwms4TIw8WN5EFzvdmseFJa9wAqXd1zQh/JqTeMdxmwtCz7KcJR0GxUAff
+         bGTlzT8wESm81GXVAeHrP4W1zEEOfify1JsQz175sq63HW5u1t55BLQ/ulDlt0n6EHhl
+         nrJrJFtGMcGIditslEbHDl+bKnECQimONNbR+WZ5Y54r42i9zfLMwVHq3Q9ks0bWd2kq
+         3tuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRnzuo26rMtnhIGh99euuKf3xakEc4eauAVrYWiR9Xur/ve8ZLYG6sm52up/BnfUgntHDDQXuL/DpxuG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfd7a6ildkVguGOaVljYigDD5wybIe/enRBqboM/Aljf5k4x97
+	amou+bt8opKB3JQGvjCCp5Veu0MQOyzuG2qBkTrTVwlmLERWc1knqVsYrqLRLVaLtng=
+X-Gm-Gg: ASbGncvr4Pi8RR5TDO2Kh0YFL8O8OKOf7QErGWjWR2cXXK8F4dke01J+rDan7cLDTYN
+	8xMDMM4P/hOxwjzKsweQuysHaFa3s8qQYS8RhCDCo/Y8hlVvZ1XzjocPKrVEeAPXSQKwHNEc1Ja
+	9uex8Ge2BpYtASbGXoQ2EmcfPYLLYmfnN5vKNDDtoRuYeBciM09cievtd9HGyeWQDZgfoJgyXbk
+	ZkBXi3vVZDYmJvvpRP5OXzALeFLbWjKuwMbyeF4zRgAPMXLdmZmI4blj0jnspEY3gMTbL+8RhHx
+	+GfcDblKg588DY2a2guYAUFGpwXROr42NElu2OnJi4joultudLjqLI1m10cT2wuW33p+b8rQMGa
+	DGmcNqUvNEm1UBueTcAtUemjadi8=
+X-Google-Smtp-Source: AGHT+IGfbN1nly0tHEF/LPKTpBacJhCDeNphPgRpeP/LXLn8yUoq10STJSdN75g2RpiF61gi81auIw==
+X-Received: by 2002:a05:600c:3b1f:b0:45c:b6fa:352e with SMTP id 5b1f17b1804b1-45f2130999emr113157655e9.18.1757927674493;
+        Mon, 15 Sep 2025 02:14:34 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e017bfd14sm170533075e9.21.2025.09.15.02.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 02:14:34 -0700 (PDT)
+Date: Mon, 15 Sep 2025 12:14:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Feng Chen <feng.chen@amlogic.com>
+Cc: Liang Yang <liang.yang@amlogic.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Mark Brown <broonie@kernel.org>, linux-amlogic@lists.infradead.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] spi: amlogic: Fix some error checking in
+ aml_sfc_dma_buffer_setup()
+Message-ID: <aMfY9P3L0yWdWe6-@stanley.mountain>
+References: <aMepB7E95kwYvx0o@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMepB7E95kwYvx0o@stanley.mountain>
 
-PCIe r6.2 section 7.8.6 defines resizable BAR sizes beyond the
-currently supported maximum of 128TB which will require more than u32
-to store the entire bitmask.
+On Mon, Sep 15, 2025 at 08:49:59AM +0300, Dan Carpenter wrote:
+> There was supposed to be a "ret = " assignment here but it was
+> accidentally left off so the error checking doesn't work.
+> 
+> Fixes: 4670db6f32e9 ("spi: amlogic: add driver for Amlogic SPI Flash Controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Convert Resizable BAR related functions to use u64 bitmask for BAR
-sizes to make the typing more future-proof.
+Sorry, I should have checked lore before I sent this.  It's already been
+patched.
 
-The support for the larger BAR sizes themselves is not added at this
-point.
-
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/xe/xe_vram.c | 2 +-
- drivers/pci/iov.c            | 2 +-
- drivers/pci/pci-sysfs.c      | 2 +-
- drivers/pci/rebar.c          | 4 ++--
- include/linux/pci.h          | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_vram.c b/drivers/gpu/drm/xe/xe_vram.c
-index ca02744fb369..22b998727eb2 100644
---- a/drivers/gpu/drm/xe/xe_vram.c
-+++ b/drivers/gpu/drm/xe/xe_vram.c
-@@ -70,7 +70,7 @@ static void resize_vram_bar(struct xe_device *xe)
- 
- 		if (!pci_rebar_size_supported(pdev, LMEM_BAR, rebar_size)) {
- 			drm_info(&xe->drm,
--				 "Requested size: %lluMiB is not supported by rebar sizes: 0x%x. Leaving default: %lluMiB\n",
-+				 "Requested size: %lluMiB is not supported by rebar sizes: 0x%llx. Leaving default: %lluMiB\n",
- 				 (u64)pci_rebar_size_to_bytes(rebar_size) >> 20,
- 				 pci_rebar_get_possible_sizes(pdev, LMEM_BAR),
- 				 (u64)current_size >> 20);
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index 51844a9176a0..d2741c4f3315 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -1370,7 +1370,7 @@ EXPORT_SYMBOL_GPL(pci_iov_vf_bar_set_size);
- u32 pci_iov_vf_bar_get_sizes(struct pci_dev *dev, int resno, int num_vfs)
- {
- 	u64 vf_len = pci_resource_len(dev, resno);
--	u32 sizes;
-+	u64 sizes;
- 
- 	if (!num_vfs)
- 		return 0;
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 5eea14c1f7f5..b6920114d538 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1544,7 +1544,7 @@ static ssize_t __resource_resize_show(struct device *dev, int n, char *buf)
- 	pci_config_pm_runtime_get(pdev);
- 
- 	ret = sysfs_emit(buf, "%016llx\n",
--			 (u64)pci_rebar_get_possible_sizes(pdev, n));
-+			 pci_rebar_get_possible_sizes(pdev, n));
- 
- 	pci_config_pm_runtime_put(pdev);
- 
-diff --git a/drivers/pci/rebar.c b/drivers/pci/rebar.c
-index 27185892ada4..ea8620e4bc18 100644
---- a/drivers/pci/rebar.c
-+++ b/drivers/pci/rebar.c
-@@ -105,7 +105,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
-  * Return: A bitmask of possible sizes (bit 0=1MB, bit 31=128TB), or %0 if
-  *	   BAR isn't resizable.
-  */
--u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
-+u64 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
- {
- 	int pos;
- 	u32 cap;
-@@ -155,7 +155,7 @@ EXPORT_SYMBOL_GPL(pci_rebar_size_supported);
-  */
- int pci_rebar_get_max_size(struct pci_dev *pdev, int bar)
- {
--	u32 sizes;
-+	u64 sizes;
- 
- 	sizes = pci_rebar_get_possible_sizes(pdev, bar);
- 	if (!sizes)
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index a4236aafad24..bb10c7eb49e2 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1422,7 +1422,7 @@ void pci_release_resource(struct pci_dev *dev, int resno);
- /* Resizable BAR related routines */
- int pci_rebar_bytes_to_size(u64 bytes);
- resource_size_t pci_rebar_size_to_bytes(int size);
--u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar);
-+u64 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar);
- bool pci_rebar_size_supported(struct pci_dev *pdev, int bar, int size);
- int pci_rebar_get_max_size(struct pci_dev *pdev, int bar);
- int __must_check pci_resize_resource(struct pci_dev *dev, int i, int size);
--- 
-2.39.5
+regards,
+dan carpenter
 
 
