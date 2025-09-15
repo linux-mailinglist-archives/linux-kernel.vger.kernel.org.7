@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-816830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96875B578B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:43:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1B9B578BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E533B1E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3631890E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C07E214A9E;
-	Mon, 15 Sep 2025 11:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405802FFDCB;
+	Mon, 15 Sep 2025 11:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Reb/9G62"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1rIBLGq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A957A2FFDE2;
-	Mon, 15 Sep 2025 11:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850D12FDC52;
+	Mon, 15 Sep 2025 11:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757936532; cv=none; b=a8T65ZeIflYHZhAslTScTazCEPU1wVDcE9jL1ad8olChKhBa21UJIFoMfNY0a0Brt8rNKgRA9wdNzdwsn2j+G7y2YZ7EwtYSy4IWW1adAtYmufHbsqTF9dknSi7shtKt6nNOj1nphPXa7Q4j5mv9iVXMkOThccqMP/HbYNXQ8aw=
+	t=1757936551; cv=none; b=AO9ADskXC+Nib4+G6DhDu5Cea8seUhyuWOZjcVDv/D/rfXbZVcO/J9jwWkmZsuEp5+SwUBhB1CmCRaS7kr7qP1yMZpLKfsDvV+djeQ54eLOdEUK2dziCUd5AhBi0Rw3ESM068Res48eYAAv7aDz7yT0F47tUF3vm3lgYLhsZZQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757936532; c=relaxed/simple;
-	bh=f9AZ6ETGhgOlD9k/ZxuW8BeYMmQM+TaA/I74h6msMzM=;
+	s=arc-20240116; t=1757936551; c=relaxed/simple;
+	bh=ajbPUytumu0CYluhZI1VFCY6fxojox7Qh/NgvsPboFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWVYR4tWISQTz77GPLWM1U/kArOET4F2YA6NPoDHdvzF4Hna3gZSCvve9YjM8Npri7vQ5dYziqJ86Cpivy4/eHW7JtvDyq8/gSoMqY2GyrHygA84y0zQ8VHSEZTMXmGq4lFQxiPzWY1yfedQuthwhkmoVaZZFTxlhzFiN/cYUg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Reb/9G62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78DFC4CEF7;
-	Mon, 15 Sep 2025 11:42:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DL3pvXG+8WmA3t8uljAm0Cqnx4Bsp5IVEqN5NI6FZXCagenZn3EPoBukI4qAM2yvAZso66dtSd4yuDsWnQ/VI68B1OyjyA0FvwQljzzKDJgSl9mlrpIouYn2Fe3HX51vQe2wh6kt8zYAJM+wa//3r1QJLE5Au9pcxM6Ub0t8+u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1rIBLGq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF12BC4CEF1;
+	Mon, 15 Sep 2025 11:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757936532;
-	bh=f9AZ6ETGhgOlD9k/ZxuW8BeYMmQM+TaA/I74h6msMzM=;
+	s=k20201202; t=1757936551;
+	bh=ajbPUytumu0CYluhZI1VFCY6fxojox7Qh/NgvsPboFA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Reb/9G62tOG8PU9Hb/xKDN5bmyg9zz54YcvMN7a02rfgSnhhxEV3y/LtUpEuSdUSj
-	 U2NTxTTz060S1kFl1Y9Xs/8TdgF3YwjgbXiZHUXTCNilcmk0ut8c7Zgm3wfRtfFqcN
-	 JZb7W+l6ij0bIU623xhg3SQxrj6E2Tv0oHsQ8oIZgE6etlpdrqE6Bi+cIIx/6+Xi4k
-	 X2PdlRNFTE2pDgcQI242ZHch/vrP/LP/o5Y4510Up9rIfEmUpl/GQd3tS7hBcoDwxn
-	 iX+3+p9RiKdr+gcztuYgoZiK1taRoLvmk5yj1r8l2vkxLbvcRv7BSElyeQEflG7csp
-	 YQ7jPBRUIaJIw==
-Date: Mon, 15 Sep 2025 13:42:04 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2 11/33] net: use ns_common_init()
-Message-ID: <20250915-ungeduldig-erlegen-f3d3770f15d3@brauner>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
- <20250912-work-namespace-v2-11-1a247645cef5@kernel.org>
- <ucldl3baqsuuiwzmubrkloblxfjvcecfhjd2nyvl6boccc3qlh@bumwo2wjyvgr>
+	b=f1rIBLGq1tBvYdIR7PEsmaY8uolPSNmShYsgQhMCF8ydQUZc/pI+e09ACURJ6WnoW
+	 LpTkgnLXc+7f6IjlP2nIi0eFhimGYfO42x1B9yVVUcXNqK4phQdN/9KsBOjA8TWeNO
+	 cTnK59Ht/M2WnqL1kR4OE2mXVc2n6NHl+mx4B9xq07KGZJXC9s/GX6lSkl7hPBVInj
+	 V9rC6eJsCyck4qtIwyJ0YCD8n+Kw5RQ6A6SNi1db9ECX+Gl7rBFkfvwogOZc0u/E/3
+	 IyH/cVLWtCfFtVkJvDVUbLW3UtlZrl8H1gOVGliWC0BlUYsAB7ixZv3BHTqwLw6Fw8
+	 QAe75IVc63u3g==
+Date: Mon, 15 Sep 2025 12:42:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 7/7] regulator: s2mps11: add support for S2MPS16
+ regulators
+Message-ID: <f1944f1f-334a-4194-90a3-946c57528927@sirena.org.uk>
+References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914124227.2619925-8-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xI+eyQ6kVMST17yA"
 Content-Disposition: inline
-In-Reply-To: <ucldl3baqsuuiwzmubrkloblxfjvcecfhjd2nyvl6boccc3qlh@bumwo2wjyvgr>
+In-Reply-To: <20250914124227.2619925-8-ivo.ivanov.ivanov1@gmail.com>
+X-Cookie: Use a pun, go to jail.
 
-On Mon, Sep 15, 2025 at 01:07:06PM +0200, Jan Kara wrote:
-> On Fri 12-09-25 13:52:34, Christian Brauner wrote:
-> > Don't cargo-cult the same thing over and over.
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> ...
-> 
-> > @@ -559,7 +572,9 @@ struct net *copy_net_ns(unsigned long flags,
-> >  		goto dec_ucounts;
-> >  	}
-> >  
-> > -	preinit_net(net, user_ns);
-> > +	rv = preinit_net(net, user_ns);
-> > +	if (rv < 0)
-> > +		goto dec_ucounts;
-> 
-> Umm, this seems to be leaking 'net' on error exit.
 
-Sorry about this:
+--xI+eyQ6kVMST17yA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-index 5fb7bd8ac45a..466de530c495 100644
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -572,12 +572,13 @@ struct net *copy_net_ns(unsigned long flags,
-                goto dec_ucounts;
-        }
+On Sun, Sep 14, 2025 at 03:42:27PM +0300, Ivaylo Ivanov wrote:
 
--       rv = preinit_net(net, user_ns);
--       if (rv < 0)
--               goto dec_ucounts;
-        net->ucounts = ucounts;
-        get_user_ns(user_ns);
+> +static int s2mps16_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+> +{
+> +	unsigned int ramp_val, ramp_shift, ramp_reg;
+> +	int rdev_id = rdev_get_id(rdev);
+> +
+> +	switch (rdev_id) {
 
-+       rv = preinit_net(net, user_ns);
-+       if (rv < 0)
-+               goto put_userns;
-+
-        rv = down_read_killable(&pernet_ops_rwsem);
-        if (rv < 0)
-                goto put_userns;
+..
 
-Thanks for noticing! Fixed in-tree.
+> +		ramp_shift = S2MPS16_BUCK_RAMP_SHIFT4;
+> +		break;
+> +	default:
+> +		return 0;
+> +	}
+
+The operation should not be present if it's not supported, and should
+error out if mistakenly called on an invalid regulator.
+
+--xI+eyQ6kVMST17yA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjH+6AACgkQJNaLcl1U
+h9D0JAf/USq3/KVRC+2grlWD9G3VRW4/Ag3cmNm3nycXs410YXU+fDOeD6mjUe4g
+RRReRKHAZ/BUNq7ZdxhTuRHZpuRFL7lSgMNVqoPZUS4kOLkapl7qD7F8RRXW3kKV
+mtQX+kOas8wEuZZEs6eX0idaRl4R2tIS9sWFqIyezfXBJjGijXoiPYR12BF9NWfx
+itl9wA72GUDyhAJQNf/KMNqOVSFm+3aj+NWg/K3c8Y56J7yMW2+EOfpFGuB+1R0r
+ZcIihamxSp1LvrsIOo4cwWvFrJUmWEpLaiN91JyaboAAdF8pEJXyilEfKXVhESuj
+vj3ZwStB1FZaMP+m2NlXql8O4F3pHw==
+=WpDM
+-----END PGP SIGNATURE-----
+
+--xI+eyQ6kVMST17yA--
 
