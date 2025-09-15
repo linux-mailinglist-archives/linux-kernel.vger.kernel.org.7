@@ -1,218 +1,189 @@
-Return-Path: <linux-kernel+bounces-816342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C7DB572A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8371B572A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0B653AE4E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E841897F4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9FD2EAB70;
-	Mon, 15 Sep 2025 08:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50F92D5932;
+	Mon, 15 Sep 2025 08:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="peH66S1M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VNFC/sx3"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1593F2EB5C4;
-	Mon, 15 Sep 2025 08:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898762DC790
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 08:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757924116; cv=none; b=n9Nj5lC7wZ3SSdGzGTWxGNC02FDIi9KF/isfI+8YRGSVQB2fmTc9mD1xsxo6qxaTJqZ35elAceS5Z6PZlGI+QKsZxBCzdR+sNTFRGiBVakIeDvMTayLFYmYBaYmbrRmP5V5oc6JK+AJlAv53yFa6jxK2TIXmtL84EPB04h+z1kg=
+	t=1757924176; cv=none; b=XojW29sjPDpORHCGfwHs7RxWZngLQgtKmZbPRyjGyBWrIUSistDiMmyIz6oFOOyZNwhYjwy0W5DWo56P578ggeAauRoHSSn4j3bHirjYTKmmG/VTGBHqQobCmr/+dJoxKpgAPIizMe6NfSABeFi/saz6MM5PXsl7OXDgD5B/ngw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757924116; c=relaxed/simple;
-	bh=mpw1Kp/ruV8064l6dcTGb8KpE+L8YZqt3SSB47iPlo0=;
+	s=arc-20240116; t=1757924176; c=relaxed/simple;
+	bh=6z3Z7C73OIfPX0yWv8b6RagZ5dQiDhHWZ3Vr7RGt6pA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IVLGil6Ho832jpSMWk4+Xcx6rpqKW5oLxMt89izFlP5D6n6JqRPt8tvR6YV2qIHJ2k4IPgl6P3JsV1RQual5AIZyLfiyDc7WLo+AaFEbECHeEK3WygCDKBSdo37oHKVuZ/hhc17xFTgXIABreh+Wnr/Lt34kVNtzJzb7iHB531g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=peH66S1M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93D4C4CEF1;
-	Mon, 15 Sep 2025 08:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757924114;
-	bh=mpw1Kp/ruV8064l6dcTGb8KpE+L8YZqt3SSB47iPlo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=peH66S1MaL/o5ItLrB+kDxmnPsq9tk53l1nKj5PFQAY7UlTolv/oeUbJ8dP4CuEwz
-	 yVJ2U3mDcclKIL+pJ7MvcHbLaQXVoadr590BASq+j3+XbNQUhTqfRtZ1BEqRiA23i0
-	 E6tcSm3VKTTS42rKBMAYqxTQtX1e1UXcsLTfvnwcoy8FtFWnG1TgKD0IfVIhxPHBo3
-	 sA7gPahnYjouLq07rtGr/fspDIqe9abSsQ0v6BWtN4J3podytFClcXZQmEyeckPvf8
-	 DxslL10q5RDuxRlv8ZcKXSkNbVjDN0ohQXPN6FGEk3JQdjyUJi/fYc/f927/skzN6M
-	 9s8wrlhV8nB7A==
-Date: Mon, 15 Sep 2025 13:44:58 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com, vkoul@kernel.org, 
-	kishon@kernel.org, dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, tglx@linutronix.de, 
-	johan+linaro@kernel.org, thippeswamy.havalige@amd.com, namcao@linutronix.de, 
-	mayank.rana@oss.qualcomm.com, shradha.t@samsung.com, inochiama@gmail.com, 
-	quic_schintav@quicinc.com, fan.ni@samsung.com, devicetree@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pci@vger.kernel.org, spacemit@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] dt-bindings: phy: spacemit: introduce PCIe root
- complex
-Message-ID: <tmdq6iut5z2bzemduovvyarya6ho2lwlxvvqqhazw6dnnyjpq3@72xrd2pij42h>
-References: <20250813184701.2444372-1-elder@riscstar.com>
- <20250813184701.2444372-4-elder@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nen5w7svqDYETC93yDamzTyulnAI0TG9Mfkfj12uSCs8adYfjyjHCLJOdF+g+SLM5VFXBaHo9BsC3c12Joj9TIUS9hXrUzIPkGkAIu0oBXYpqG6UjFcyH0tqt2ofDvhY/4iz/gXkTORTmPjYosSgge5QW2M5F39A+QL4g9D/fOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VNFC/sx3; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so36576425e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:16:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757924171; x=1758528971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6z3Z7C73OIfPX0yWv8b6RagZ5dQiDhHWZ3Vr7RGt6pA=;
+        b=VNFC/sx3wOPf30HWatJXU44uFJOVYqyjW5YVa7U99DcUiyJLnUHpeJFZ6Epq4Icljn
+         AVMJA/7kFtHILGmFHSsgASYWlhuTcPnsi1Uru6klDxSycVhhYfW7vg5KFUoIB+B/dWmp
+         qZ+h66DQ/jbwYU0sAkTxyaSoPGxDsbEvmTCMvM2w4SWkZGksRqVys0CTrRLf6Az4s+mO
+         bDujY44ILbmrtK66WGXKhtvE5cRbWLcPvsgJ2NmRlQAUvWGnuRt6TWlsGAJI90J+wFCU
+         lKiki8jPo80i4SNgT+Sbc04IOfCxe1lj3aUq8cD43RSDLk12dZIFdh1nPlIrA9a9Bs2R
+         HImQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757924171; x=1758528971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6z3Z7C73OIfPX0yWv8b6RagZ5dQiDhHWZ3Vr7RGt6pA=;
+        b=ctov5/2jydctbfNaI4IZoQ+2Jik2YUFW5W9Sf7SWmuG7pe4ScGy61GvY9v5Vf8di1A
+         b1e0INXCnr9hVKh9BfUgum/oHB3nSx5CwPKdjDcf4Vzrk/DLaNb9onp3TfK5OjlCA2Jl
+         qvkN3X611bENo8Z/tERNiaqSXFiuKd3Ph2dVqlPYWQuzdhMkJQHcTJH879YOqvzxiXpL
+         dEfhdcX7kpjqN9nrpQ/uBg4ctfHmlVm71hgZAWwmI4JBRR6fhmFLHnMTaJVcy0UKTeET
+         KWGfKLIX4yRPdF1zuFjOP71KTdGocdlfPmIhnwYqlTJ0NgkXWJZGocvzNb9YKM/flKy3
+         Opog==
+X-Forwarded-Encrypted: i=1; AJvYcCUXcejX/W+A0m6+6QT8Jji1yRs4PcxmbMR2FK/dxSr6szNm01yaBQNk9sIylDONeFjzTI/kEnktI/08dqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLPKBC/e1fYgivKQDfXLDbrtFXj9ZUNY9VQzAoQCgqLPZ8A8lS
+	1m0X1MyKN1XJR3lHOe+jva1UeLnyRsfEgOX/9kxcR7Olbvo7fukagVEbXebneKaBIkZTn75n48O
+	Fou1Z
+X-Gm-Gg: ASbGncv3pw1uTsDrqnEj3D23olNpXSv1MCrsG/g+nQf4bNSabY/hjYwHKPMe4D7b+0c
+	m1c09f2SpJZjqA8HFS1OnVrkSfEQYHdkRFi4/QuyZ3S3PL2QNRD4s302vURVSNu8Ol5sRrFxhLM
+	eSLYUhzAPAwAS03pE5G1iDAhqdaoiNzUw+BT8nUcFJj0j+Q9Ahf25YjdQ3ZwInabYNmCgTlKGoL
+	hU5QrBVLCJ2VakyvFLN77JvCndX6BCASGo1neF89dn3vBPzxpK+af/zqGKC07drviD193S45pdi
+	DIoxVJmp2CIaOeZYYcEdbAc4GPFz4BcQGp94rP9qWC8hvX8N99OtzYLi7tW6JI0OfkTxx3i0jNG
+	cJ+2VrWB66eJgm5LFgA+96ub/cg+Dq5wsSPkcRqigjWXvxSrGiM9MpeOhNGr1KNvyFvA4uhYfsx
+	g=
+X-Google-Smtp-Source: AGHT+IG9ADJOGJHiLNHtmyFvsxdkRWhIY8D3P1njgd4vRiYHvm+bJsi1mseG2lcnGCAoPjHV4BmllA==
+X-Received: by 2002:a05:600c:4685:b0:45c:b607:ea95 with SMTP id 5b1f17b1804b1-45f211e6054mr118534785e9.18.1757924170623;
+        Mon, 15 Sep 2025 01:16:10 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45f2abd2c03sm61731665e9.13.2025.09.15.01.16.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 01:16:10 -0700 (PDT)
+Date: Mon, 15 Sep 2025 10:16:08 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Commit Links [was: Linux 6.17-rc5]
+Message-ID: <4iceeja4kbnb4cir26kme6z6wabnnyu6trc2qo7ye7po65wemr@i2tyg7cfq54x>
+References: <CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com>
+ <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5ieuvb2krvmvozck"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250813184701.2444372-4-elder@riscstar.com>
+In-Reply-To: <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
 
-On Wed, Aug 13, 2025 at 01:46:57PM GMT, Alex Elder wrote:
 
-Subject should have 'pci' prefix, not 'phy'.
+--5ieuvb2krvmvozck
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Commit Links [was: Linux 6.17-rc5]
+MIME-Version: 1.0
 
-> Add the Device Tree binding for the PCIe root complex found on the
-> SpacemiT K1 SoC.  This device is derived from the Synopsys Designware
-> PCIe IP.  It supports up to three PCIe ports operating at PCIe gen 2
-> link speeds (5 GT/sec).  One of the ports uses a combo PHY, which is
-> typically used to support a USB 3 port.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  .../bindings/pci/spacemit,k1-pcie-rc.yaml     | 141 ++++++++++++++++++
->  1 file changed, 141 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/spacemit,k1-pcie-rc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-rc.yaml b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-rc.yaml
-> new file mode 100644
-> index 0000000000000..6bcca2f91a6fd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-rc.yaml
-> @@ -0,0 +1,141 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/spacemit,k1-pcie-rc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SpacemiT K1 PCI Express Root Complex
-> +
-> +maintainers:
-> +  - Alex Elder <elder@riscstar.com>
-> +
-> +description:
-> +  The SpacemiT K1 SoC PCIe root complex controller is based on the
-> +  Synopsys DesignWare PCIe IP.
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-pcie-rc.yaml
-> +
-> +  reg:
-> +    items:
-> +      - description: DesignWare PCIe registers
-> +      - description: ATU address space
-> +      - description: PCIe configuration space
-> +      - description: Link control registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: atu
-> +      - const: config
-> +      - const: link
-> +
-> +  clocks:
-> +    items:
-> +      - description: DWC PCIe Data Bus Interface (DBI) clock
-> +      - description: DWC PCIe application AXI-bus Master interface clock
-> +      - description: DWC PCIe application AXI-bus Slave interface clock.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: dbi
-> +      - const: mstr
-> +      - const: slv
-> +
-> +  resets:
-> +    items:
-> +      - description: DWC PCIe Data Bus Interface (DBI) reset
-> +      - description: DWC PCIe application AXI-bus Master interface reset
-> +      - description: DWC PCIe application AXI-bus Slave interface reset.
-> +      - description: Global reset; must be deasserted for PHY to function
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dbi
-> +      - const: mstr
-> +      - const: slv
-> +      - const: global
-> +
-> +  interrupts-extended:
-> +    maxItems: 1
+Hello Linus,
 
-What is the purpose of this property? Is it for MSI or INTx?
+On Fri, Sep 12, 2025 at 08:24:06AM +0200, Jiri Slaby wrote:
+> On 08. 09. 25, 0:25, Linus Torvalds wrote:
+> > So please: don't add useless information to commits in general, but in
+> > _particular_ don't add "Link:" tags that only point back to the
+> > original submission email. Yes, we have tooling that does it
+> > automatically, but tooling should not be used to increase the human
+> > burden. Tooling should _help_, not hurt.
+>=20
+> I disagree. In a bug-reporter role, I use these Links pointing to the
+> patches every time. So unless there is a way (I did not find one), they a=
+re
+> very useful.
+>=20
+> My use case is (mostly) dig out the thread/patch (grep Link, and b4 or
+> https://lore.kernel.org/all -> raw) and reply to it as it causes some iss=
+ue.
+>=20
+> In a backporter role, I use the Links to look at the thread to see the
+> _whole_ patchset instead of guess work from the linear commit log.
 
-> +
-> +  spacemit,syscon-pmu:
-> +    description:
-> +      PHandle that refers to the APMU system controller, whose
-> +      regmap is used in managing resets and link state.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  device_type:
-> +    const: pci
-> +
-> +  max-link-speed:
-> +    const: 2
++1, after a bisection I typically lookup the thread, too, to have my
+regression report in the right thread. IMHO this is really useful
+because the next person hitting the same problem (maybe?) finds my
+report easily. So for me the Link trailer is useful, too.
+=20
+> > Make the links be something *useful*. Make them point to the report
+> > for the bug that was the cause of the commit. Make them point to the
+> > discussion that explains the impetus for the commit. But do *not*
+> > mindlessly just use tooling to create a link that doesn't add anything
+> > that isn't already right there in the commit.
+> >=20
+> > I realize that people think the link makes the commit look more "real"
+> > or whatever. And I've heard people claim that discussion happens later
+> > in the thread that the link points to. Neither of those are actually
+> > true. When bugs happen, people don't go to the original emailed patch
+> > to talk about them. Much of the time the reporter can't even tell
+> > which patch caused it - and if they did bisect it, we already have the
+> > information - there's no value add in going back to the original
+> > emailed patch.
 
-Why do you need to limit it to 5 GT/s always?
+The true fact is probably that *most* people don't go back to the email
+thread to reply there (either because the breaking commit isn't known
+yet or they just start a new thread). Yes, the few who do can probably
+easily lookup the thread on lore, but clicking on a link is easier (and
+makes sure you find the version of the patch that was applied and not
+an earlier version). (Or a later version that the maintainer failed to
+notice before applying an earlier version.)
 
-> +
-> +  num-viewport:
-> +    const: 8
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - spacemit,syscon-pmu
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - device_type
-> +  - max-link-speed
+> > So if a link doesn't have any extra relevant information in it, just
+> > don't add it at all in some misguided hope that tomorrow it will be
+> > useful.
+> >=20
+> > Make "Link:" tags be something to celebrate, not something to curse
+> > because they are worthless and waste peoples time.
 
-Same comment as above.
+What will you do if a question arises on a commit without a Link:
+trailer? I guess you will lookup the shortlog on lore?
+If the Link trailer was skipped because there is no relevant discussion
+in the thread that resulted in application of the patch, you will still
+look at it, just taking more time to eventually find it. So while I
+agree this is a dead end with and without Link: most of the time, not
+adding the Link: doesn't prevent you exploring that dead end, but only
+results in more effort to find it.
 
-> +  - bus-range
-> +  - num-viewport
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
-> +    pcie0: pcie@ca000000 {
-> +        compatible = "spacemit,k1-pcie-rc";
-> +        reg = <0x0 0xca000000 0x0 0x00001000>,
-> +              <0x0 0xca300000 0x0 0x0001ff24>,
-> +              <0x0 0x8f000000 0x0 0x00002000>,
-> +              <0x0 0xc0b20000 0x0 0x00001000>;
-> +        reg-names = "dbi",
-> +                    "atu",
-> +                    "config",
-> +                    "link";
-> +
-> +        ranges = <0x01000000 0x8f002000 0x0 0x8f002000 0x0 0x100000>,
+Best regards
+Uwe
 
-I/O port CPU address starts from 0.
+--5ieuvb2krvmvozck
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Mani
+-----BEGIN PGP SIGNATURE-----
 
--- 
-மணிவண்ணன் சதாசிவம்
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjHy0YACgkQj4D7WH0S
+/k5N0gf+J0xIkKyOMo83XBpgrND+XA1T0PnlsRJphfc7lnHDPQV2HVZochoTkgwP
+8JgbyhmXa0JsXFshed2SNGs+j/nm9MAE2yMgbhfX1EngWBw1Lqr4ULmnWi59KNvl
+OuPmkd8GX1BbU7HicPAB4aeD3673J5v4bOITad+FMmgYlRdOn7juXcUsOmmIH2BI
+tBe5wPRAfMqkCOkVyR2UeXYp4j2V5+j2WoRaa6COQDW+/8wuMFJ25e0dNA2tk1YR
+F4bo6I7uZVeD/AIrYIV3UFhFYXyyFH6Bqs/L/Rel2AtsvTLcSg6sNHTxVVjfbIRI
+qxP6ybeBCe0DMXb3NYXIpKlqkZfrBA==
+=dO9I
+-----END PGP SIGNATURE-----
+
+--5ieuvb2krvmvozck--
 
