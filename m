@@ -1,98 +1,250 @@
-Return-Path: <linux-kernel+bounces-816940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9EBDB57B0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:31:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C14B57B1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95767A910C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0691A188FB2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7D53002A0;
-	Mon, 15 Sep 2025 12:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE19730BF6B;
+	Mon, 15 Sep 2025 12:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cf8wf+jC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+ob66qH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6762AD24;
-	Mon, 15 Sep 2025 12:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC943019DE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757939240; cv=none; b=b9YpG9M2qiE+GpXa1pH/2zrLriGzbYP2BZrWvBAZJAUvVtA+9kAi7c2UK6PTDAaPQMKoB5vwDQKxReHuLv8cKKaynRK2RgwgT2HyPocN6VqV8wFpvucr2Se8LLBrp/ctT5DuKlRJ2Q+o3HGqMGxPLx7pjr3Zh4XbAEl9Jlb72kk=
+	t=1757939249; cv=none; b=WMeMdovdp8R3zw5GxdXSgQOm9ZeJ13G468PIZ5prcGD0twp8hGB9mh7jaHn5TY8KyUI3f2kAUEeo4EvWzGsqoS/5PZmVhVTNFPAlowKcwed0Df1cYu0RvD53gS6gdDB19IGdsQsGTAjHAVvfGoVSznp5DKTtLjzkvat3A8lJpCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757939240; c=relaxed/simple;
-	bh=hzvoZDxJjvZEzFahfQI9/ys/P8WfMSn7GHZeMGHj4x8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZmZK9ulQ6fRZB95qAn5IRb0nzVGNRgF40kRfEefIakGF1rlNpk6H/i5xFfK4edj+UaD86QGW89GAIDiv52gNsTAhdnLIuzlG6QWQW31V0nNOQBAfNDCXkltjKFonNHgQUYL17cMPTZx3SvPbRu2NR657CT7XXbLOsFmVGrUsb5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cf8wf+jC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EDD6C4CEF7;
-	Mon, 15 Sep 2025 12:27:18 +0000 (UTC)
+	s=arc-20240116; t=1757939249; c=relaxed/simple;
+	bh=RKSFfbGcm2+n1SCMDWQaq5ACjOkXSXR1Jz63OUPhNfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BDmOKD80ggfMXukJdnVivP2ErEsngajZNWQdNW5XDAXfhdQA7k6eCpj08imqCRSWWLXi33RVD7suqMfj1LIXUOjQAxN9b1EFbVl7BkKAA6LEMWWTJa32434BL50UFy/zg0kBUAwvPdbpOPG8i/jG28VQ8cjtlnKYnYVwyxTi5vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+ob66qH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BC7C4CEF9
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757939240;
-	bh=hzvoZDxJjvZEzFahfQI9/ys/P8WfMSn7GHZeMGHj4x8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cf8wf+jCSXg0VazZ2TxhDlLfdnCFDlzyFxno9iAj7+CzSp0zfR3E1dcBfjp2HmGbN
-	 CGMQrOaNWD4zGRSnkbC67byhcPtWgsKDMomedECtk4SFqcqI59Q74B3HXx7KYo2IC4
-	 CEEjpBAkZPnlsDAjgWCg2aIQDDUOFJMvu3xtTDuUlRbfWQzVEtZxJZ9/JqBicNWHzW
-	 iUYa0wI1mkY2M8q8Cw4VwzqxupJ8GBn6PYWoWbhTvpka41Tu29ATv1jKhmHXgdCruB
-	 5FXUUSWnUlkRT7wLIr2AKOlU3qm74iTT6hR9sEmIDlkAApHpd4tuaifMtvdRYyyGJK
-	 FBs9+g0yhCwYA==
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-s390@vger.kernel.org,
-	Heiko Carstens <hca@linux.ibm.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] initrd: Fix unused variable warning in rd_load_image() on s390
-Date: Mon, 15 Sep 2025 14:27:09 +0200
-Message-ID: <20250915-gelernt-gegossen-4663965109c0@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250911094908.1308767-2-thorsten.blum@linux.dev>
-References: <20250911094908.1308767-2-thorsten.blum@linux.dev>
+	s=k20201202; t=1757939248;
+	bh=RKSFfbGcm2+n1SCMDWQaq5ACjOkXSXR1Jz63OUPhNfM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=A+ob66qH4G+RiPsMouyZ5yVLpNRcaWRSfrN0JHItby5Nx32HQJKVMFpufp8bCiN+H
+	 HHWXz7ykSBwsYzci3WA3D2vnJeyAubXAAKGu74fU3vwg1kVgii7Wg7exCp1btpRVuF
+	 qFeOyZ53c8MrI3fv6Swli6tpfZ+wpRt7OZOOGInyRp2syDGQjHOfhBiMhu48yA2A+C
+	 zZVUbxYc7kZDYWneUG0xHsHWKHyrVQzAwke74zv3sR0bibZVP2zval6r9QBwFs0pON
+	 gjW5ML/Kq1xcLaxGvH9GZs4UK8/KAGj5R+1ZH5h4LvPWbSkBfw7Mwhmq3jP/O2/LQS
+	 JQS317YVnozEA==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-746d754f656so2971496a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:27:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXUIAfMS8J8eCKf/8k8zBCiAT5FAVx+aT73n2vYlkBw+XqhTV679TzL61oSx+RbGBfUdJ0oNASzns7u77c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwII6o0fAKTzj3ts+xOgzcnT1+X2K4ARkpUbls2C8xT6i8Syp/Y
+	prNbir1aGvrhzPCLSQ8SZL1dozXZbRQARCr0OakjcqesgXwJbqPlkfa4gDcmq+4kEGb+4m1Ha+g
+	C07v/Tzv2UgqAEAMSlA+3N0Fed8l9WPQ=
+X-Google-Smtp-Source: AGHT+IE6ypWT+o/QQu9xqx/WP436dtT20oqRYRBRCgFJc4RydutPS+oW2mY6jvB84KZ0v4Ij//flGQtF3v2+iHlI8tI=
+X-Received: by 2002:a05:6830:82e6:b0:745:4b08:eea9 with SMTP id
+ 46e09a7af769-753552da33dmr8165646a34.30.1757939247951; Mon, 15 Sep 2025
+ 05:27:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1240; i=brauner@kernel.org; h=from:subject:message-id; bh=hzvoZDxJjvZEzFahfQI9/ys/P8WfMSn7GHZeMGHj4x8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWScYFOe0npz/W2Hx51/2drbw8RWOs6482Rah/VKRm6ul W2yqkK5HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPx28zIsOLt6/oFO33WT1xw 5unp9iW23WoNM76knpRKU9j9dY3DZQaGv0J3/jdaJ87qniblI61Z8NP9uFnZ2SsLncK2bl3mdHw eNw8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <5046661.31r3eYUQgx@rafael.j.wysocki> <2243680.irdbgypaU6@rafael.j.wysocki>
+ <aMf5ZNW9t_6tfsjy@kekkonen.localdomain>
+In-Reply-To: <aMf5ZNW9t_6tfsjy@kekkonen.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Sep 2025 14:27:16 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
+X-Gm-Features: Ac12FXx8LSrrunyBiiNznOMNT6WX1PRcGZM1xU20-IJwBea6kXIXAWmzsDfB5iA
+Message-ID: <CAJZ5v0ivX3s=pChGZ_+zeUswJgMPDH2Wi_cGeATyh+M9Tb0LYw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] ACPI: property: Add code comments explaining what
+ is going on
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Sep 2025 11:49:08 +0200, Thorsten Blum wrote:
-> The local variables 'rotator' and 'rotate' (used for the progress
-> indicator) aren't used on s390. Building the kernel with W=1 generates
-> the following warning:
-> 
-> init/do_mounts_rd.c:192:17: warning: variable 'rotate' set but not used [-Wunused-but-set-variable]
->  192 |         unsigned short rotate = 0;
->      |                        ^
-> 1 warning generated.
-> 
-> [...]
+Hi Sakari,
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
+On Mon, Sep 15, 2025 at 1:32=E2=80=AFPM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Rafael,
+>
+> On Fri, Sep 12, 2025 at 09:40:58PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > In some places in the ACPI device properties handling code, it is
+> > unclear why the code is what it is.  Some assumptions are not documente=
+d
+> > and some pieces of code are based on experience that is not mentioned
+> > anywhere.
+> >
+> > Add code comments explaining these things.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/acpi/property.c |   51 +++++++++++++++++++++++++++++++++++++++=
++++++++--
+> >  1 file changed, 49 insertions(+), 2 deletions(-)
+> >
+> > --- a/drivers/acpi/property.c
+> > +++ b/drivers/acpi/property.c
+> > @@ -108,7 +108,18 @@ static bool acpi_nondev_subnode_extract(
+> >       if (handle)
+> >               acpi_get_parent(handle, &scope);
+> >
+> > +     /*
+> > +      * Extract properties from the _DSD-equivalent package pointed to=
+ by
+> > +      * desc and use scope (if not NULL) for the completion of relativ=
+e
+> > +      * pathname segments.
+> > +      *
+> > +      * The extracted properties will be held in the new data node dn.
+> > +      */
+> >       result =3D acpi_extract_properties(scope, desc, &dn->data);
+> > +     /*
+> > +      * Look for subnodes in the _DSD-equivalent package pointed to by=
+ desc
+> > +      * and create child nodes of dn if there are any.
+> > +      */
+> >       if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->f=
+wnode))
+> >               result =3D true;
+> >
+> > @@ -153,6 +164,12 @@ static bool acpi_nondev_subnode_ok(acpi_
+> >       acpi_handle handle;
+> >       acpi_status status;
+> >
+> > +     /*
+> > +      * If the scope is unknown, the _DSD-equivalent package being par=
+sed
+> > +      * was embedded in an outer _DSD-equivalent package as a result o=
+f
+> > +      * direct evaluation of an object pointed to by a reference.  In =
+that
+> > +      * case, using a pathname as the target object pointer is invalid=
+.
+> > +      */
+> >       if (!scope)
+> >               return false;
+> >
+> > @@ -172,6 +189,10 @@ static bool acpi_add_nondev_subnodes(acp
+> >       bool ret =3D false;
+> >       int i;
+> >
+> > +     /*
+> > +      * Every element in the links package is expected to represent a =
+link
+> > +      * to a non-device node in a tree containing device-specific data=
+.
+> > +      */
+> >       for (i =3D 0; i < links->package.count; i++) {
+> >               union acpi_object *link, *desc;
+> >               acpi_handle handle;
+> > @@ -182,22 +203,48 @@ static bool acpi_add_nondev_subnodes(acp
+> >               if (link->package.count !=3D 2)
+> >                       continue;
+> >
+> > -             /* The first one must be a string. */
+> > +             /* The first one (the key) must be a string. */
+> >               if (link->package.elements[0].type !=3D ACPI_TYPE_STRING)
+> >                       continue;
+> >
+> > -             /* The second one may be a string, a reference or a packa=
+ge. */
+> > +             /*
+> > +              * The second one (the target) may be a string, a referen=
+ce or
+> > +              * a package.
+> > +              */
+> >               switch (link->package.elements[1].type) {
+> >               case ACPI_TYPE_STRING:
+> > +                     /*
+> > +                      * The string is expected to be a full pathname o=
+r a
+> > +                      * pathname segment relative to the given scope. =
+ That
+> > +                      * pathname is expected to point to an object ret=
+urning
+> > +                      * a package that contains _DSD-equivalent inform=
+ation.
+> > +                      */
+> >                       result =3D acpi_nondev_subnode_ok(scope, link, li=
+st,
+> >                                                        parent);
+> >                       break;
+> >               case ACPI_TYPE_LOCAL_REFERENCE:
+>
+> I think you get ACPI_TYPE_LOCAL_REFERENCE only when you evaluate a
+> reference to a device object.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+If it is so, the code below is just dead because the target here is
+expected to be a named object (not a device), in which case it would
+just be better to delete this code.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Is this what you mean?
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+> > +                     /*
+> > +                      * The reference is expected to point to an objec=
+t
+> > +                      * returning a package that contains _DSD-equival=
+ent
+> > +                      * information.
+> > +                      */
+> >                       handle =3D link->package.elements[1].reference.ha=
+ndle;
+> >                       result =3D acpi_nondev_subnode_data_ok(handle, li=
+nk, list,
+> >                                                            parent);
+> >                       break;
+> >               case ACPI_TYPE_PACKAGE:
+>
+> And similarly, the result of an evaluation here is a package when a
+> reference points to a name object (i.e. a data node).
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
+Well, I'm not sure how this remark is related to the new comment below.
 
-[1/1] initrd: Fix unused variable warning in rd_load_image() on s390
-      https://git.kernel.org/vfs/vfs/c/7c1d7695216f
+Do you mean that this always happens when a reference is used in ASL
+to point to the target here?
+
+But the comment would still be valid in that case, wouldn't it?
+
+> > +                     /*
+> > +                      * This happens when the target package is embedd=
+ed
+> > +                      * within the links package as a result of direct
+> > +                      * evaluation of an object pointed to by a refere=
+nce.
+> > +                      *
+> > +                      * The target package is expected to contain _DSD=
+-
+> > +                      * equivalent information, but the scope in which=
+ it
+> > +                      * is located in the original AML is unknown.  Th=
+us
+> > +                      * it cannot contain pathname segments represente=
+d as
+> > +                      * strings because there is no way to build full
+> > +                      * pathnames out of them.
+> > +                      */
+> >                       desc =3D &link->package.elements[1];
+> >                       result =3D acpi_nondev_subnode_extract(desc, NULL=
+, link,
+> >                                                            list, parent=
+);
+> >
+>
+> --
 
