@@ -1,91 +1,122 @@
-Return-Path: <linux-kernel+bounces-816153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0BAB5703F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:29:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713F0B5703D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01C6C189AA84
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:29:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F55167041
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 06:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1086281504;
-	Mon, 15 Sep 2025 06:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50603280327;
+	Mon, 15 Sep 2025 06:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N8eGrAd9"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W6kCdIpg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08E41D63F7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ADE17C21E;
 	Mon, 15 Sep 2025 06:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757917750; cv=none; b=D4Vgh/dms3Uc4rRJduT2Uwg7VKRSPiUve1G1a54bahRvVm+15mgMevBkpmTuykjPSARiDRgZ724WWqkthDaqPuvFDJnwisVpUc1SOOsCtuy6IUvzJLFZPB2SrtpKS4PHwPTmwqjqFJ+FKoeZj+YcsHzm5BKrx8Vr91bd+uIfo0A=
+	t=1757917748; cv=none; b=joum+oKK3vXoBSkJBq1vJdX3trvLZQ96Gb46OU0g/5HNSXDhOKlyu3EQSLreslO1sm7CLEmxyZAKKdy0nZ7Bcg30ANVSoBdTk+ljyuA+qWERSnTeRuZhC8H32gbwBIZAbuVQu3mfGMZL57xGvej6tRQPwY3nsHcVbC7mD/HUszs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757917750; c=relaxed/simple;
-	bh=FFuT5NX7cpSgcO6YIvMO0vxOF71nhfjyErPRNz2NRlE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=khICXoLB0/8F/EF2+DN36v98v9AkIEm4O4k0Qf4OGhZOaJmB/2xhzgPT2kMO0NDvpWjsblvgHhaNQxgXULH7UZoodT/VlrgX3zulaVyg3d1la+TPoqsKfknZ9JwBXP6LQMo8a9STBQeyct6MxZED1mPJuEqbD3BQP+B1X3iIYGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=N8eGrAd9; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c66:2dbc:e233:e1b4:15e7:45cd])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C9F34C71;
-	Mon, 15 Sep 2025 08:27:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757917662;
-	bh=FFuT5NX7cpSgcO6YIvMO0vxOF71nhfjyErPRNz2NRlE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=N8eGrAd9MUiqOeidydsQDMB8llNKt3+oErcHtEacsKpRhI4w+G5BWAvov5PRJtQJo
-	 H4E06TmkcX2t2fVMnaxU/BKSJXIHZkgxf2zTgBNYp2KdShwfcYuuq5XQiXlJaZdA3Z
-	 txCF0uH/TyIxkhpfWLrMF6dLrUn1cb63WwqwW+hI=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757917748; c=relaxed/simple;
+	bh=piW19FiZACKRsxhgOH5XKTA2SE5fqfb/eQ8PMSGuMfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tBz0pP4k1YM51fr/29e4XnAgaswOs8L7OzN0TzXckZot+KtJ2Ut3iCVZphnMvPQ7hZiN4gzknMfPRz+l3Q8l1teskIhGRe3YWoAw7y8pbiKUFCBTDyzLtsY186jy8JwNKeaAsNOfamUsIhSgYKblRJfrPLcJbQdJuavIXV9eR/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W6kCdIpg; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757917746; x=1789453746;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=piW19FiZACKRsxhgOH5XKTA2SE5fqfb/eQ8PMSGuMfM=;
+  b=W6kCdIpg6TvZrZ3TIv55DtF7Pex1gb5BOZRe5BQqZ7r76BkpAwkIWCg+
+   uMA+XZVdoK46/l+iEoQCFsOu/Inyd7TmEBEY/eOoFp5yP8eTsh8wsoI9w
+   2fwu7rRHwBSeZY9xcdIG8pncg6W0O96/6Fbs2EQRqxzjMHQU0oEXTLNlj
+   ruIC2llfnJHRucsyH94d7bywDu+iMgWuOWCd74GhVaBl7W0AMcBl7jlo0
+   tQhwBowebQIc/daBGjHd3hkMPVe1eQpB6HUkIDF+e2epI4dGq4MYOffdA
+   3UR7nhvcU8FEmigLnzOLg/b2DGkU4QnQEAkQRxnoU08fKkz7zu63X470k
+   g==;
+X-CSE-ConnectionGUID: N2UxVss5TJ6tlJiGBPUASQ==
+X-CSE-MsgGUID: LVIpFrvdSnGnqhOq4XrtjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="63983345"
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="63983345"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:29:06 -0700
+X-CSE-ConnectionGUID: yR8u5o4jRKqpolLqI25Tcg==
+X-CSE-MsgGUID: 0KTlnC2LQu6WH/vg3O7mbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
+   d="scan'208";a="178885191"
+Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 23:29:03 -0700
+Message-ID: <b328aae7-ba4f-4710-a65a-79e670f92ca2@intel.com>
+Date: Mon, 15 Sep 2025 14:29:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <175758928516.1246375.13284167198046981915@ping.linuxembedded.co.uk>
-References: <20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com> <20250911-imx335_binning-v2-5-30a28df74df6@ideasonboard.com> <175758928516.1246375.13284167198046981915@ping.linuxembedded.co.uk>
-Subject: Re: [PATCH v2 5/8] media: imx335: Handle runtime PM in leaf functions
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Tommaso Merciai <tomm.merciai@gmail.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Mon, 15 Sep 2025 11:58:53 +0530
-Message-ID: <175791773319.7481.4286008141874758651@freya>
-User-Agent: alot/0.12.dev28+gd2c823fe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 04/41] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs
+ support
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-5-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250912232319.429659-5-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Kieran,
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Enable KVM_{G,S}ET_ONE_REG uAPIs so that userspace can access MSRs and
+> other non-MSR registers through them, along with support for
+> KVM_GET_REG_LIST to enumerate support for KVM-defined registers.
+> 
+> This is in preparation for allowing userspace to read/write the guest SSP
+> register, which is needed for the upcoming CET virtualization support.
+> 
+> Currently, two types of registers are supported: KVM_X86_REG_TYPE_MSR and
+> KVM_X86_REG_TYPE_KVM. All MSRs are in the former type; the latter type is
+> added for registers that lack existing KVM uAPIs to access them. The "KVM"
+> in the name is intended to be vague to give KVM flexibility to include
+> other potential registers.  More precise names like "SYNTHETIC" and
+> "SYNTHETIC_MSR" were considered, but were deemed too confusing (e.g. can
+> be conflated with synthetic guest-visible MSRs) and may put KVM into a
+> corner (e.g. if KVM wants to change how a KVM-defined register is modeled
+> internally).
+> 
+> Enumerate only KVM-defined registers in KVM_GET_REG_LIST to avoid
+> duplicating KVM_GET_MSR_INDEX_LIST, and so that KVM can return _only_
+> registers that are fully supported (KVM_GET_REG_LIST is vCPU-scoped, i.e.
+> can be precise, whereas KVM_GET_MSR_INDEX_LIST is system-scoped).
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Link: https://lore.kernel.org/all/20240219074733.122080-18-weijiang.yang@intel.com [1]
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Co-developed-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Thanks for the review.
-
-Quoting Kieran Bingham (2025-09-11 16:44:45)
-> Quoting Jai Luthra (2025-09-11 09:14:21)
-> > Simplify .s_stream callback implementation by moving the runtime PM
-> > calls to the leaf functions. This patch should not affect any
-> > functionality.
-> >=20
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
->=20
-> Looks reasonable to me and although the stop_streaming function changes
-> to no longer return a value - it was previously unused so no functional
-> change indeed as far as I can see:
-
-Yeah it was unused before. This anyway gets fixed when switching to streams
-API in the last patch of the series.
-
->=20
-> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->=20
-> > ---
-> >  drivers/media/i2c/imx335.c | 51 ++++++++++++++++++++------------------=
---------
-> >  1 file changed, 22 insertions(+), 29 deletions(-)
-> >=20
-
-Thanks,
-    Jai
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
