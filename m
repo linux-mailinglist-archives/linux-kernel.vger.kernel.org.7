@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-816422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF28B573AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:55:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFEAB573B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78C518981DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:55:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510FA16AE56
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 08:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EF32F28E7;
-	Mon, 15 Sep 2025 08:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="vbwVVjC0"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF72280324;
-	Mon, 15 Sep 2025 08:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCED72F5321;
+	Mon, 15 Sep 2025 08:54:52 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4D12F0696;
+	Mon, 15 Sep 2025 08:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757926453; cv=none; b=uhBAFtfKHA8S7niiF6+A0ZPykgll//0aLHcY+r/gG4aTFJYqaJ1ecrI4kB/RgNKCzrF6hXAHZ3ALF1Xx2sd+0+JijBCiUqXvZSmkTKzMpEATMMG2OqD3mWQRnRkea8Grw4BNCVOnhRz5wt16f+GaY0v/JVz88u55XU7R2Zjbv78=
+	t=1757926492; cv=none; b=GnYQi+Lf2U/UHsvwkRkWEHxYv4yBTXHzM9BBS0xoW0TDOAz+DXSQ+E1OQKnX+0zZZmUfovp+vhJGrp+YCMJJBSPo6UwwlapBYnzEI6agCTQH9XU5tt19sV+GqjvGDPeoTI54KZstRv4torSL2NkSEqFT0BRjcKnK7KMHD4vr+ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757926453; c=relaxed/simple;
-	bh=3QH8jfxnxiJC5/pA5g969OM6/iyZecl36CeunWruEnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSxAGmNYcqGYZVIDAtOVf4qYKKGEAP2e8/aLnugZEYjdvI4QaAXaJNX/BHRkWjqlGkloNS71Y5+ywkRsYNbFaNDAXL4qk3GHvjjIVGjXbxUz6CnXQ3+/VRkykeqjw5p/wSHc/xhBQmgPYlx8vvnKK72TP9X6V4+ILRcFVpwpBdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=vbwVVjC0; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cQJjq47vJz9t6h;
-	Mon, 15 Sep 2025 10:54:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1757926447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eXYT8VnndAIVnGLP4Y41Pax3Xg6FNmOji9mCCp6RHuE=;
-	b=vbwVVjC0GQifCpkzoJjmCtcxRLBNtUVCAYP48GIReoj1rov11buL5yAV3BFe+RcVfXTDAb
-	16hE8Ndnqa1dbePbDOZBHFemF8IjWkEVNdaGs8pGKDSu++QrCCI9q5p14OMoBFZMeM6REU
-	YGSB9E/d+3ZAs9o58Bv0GzzhV8YzbCEibd3RmJ7wo3PUL1REHaHkaS9DFyhq0X0qK0HKe7
-	kzOMt3kWh5uL0+G+wjLY3MCDN1GUczsUJc0pev1x2RvV64CSvIQf6cVQ8Qp+n/AFKqUTe9
-	Kx0y8yGZ8F84bpnLjpYS8Me8l5nDQZrXVyP0X7xlK/Q7DQUrnjPD81f2wdoAZA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 15 Sep 2025 10:54:00 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-Cc: alexjlzheng@tencent.com, brauner@kernel.org, djwong@kernel.org, 
-	hch@infradead.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, yi.zhang@huawei.com
-Subject: Re: [PATCH 1/4] iomap: make sure iomap_adjust_read_range() are
- aligned with block_size
-Message-ID: <eyyshgzsxupyen6ms3izkh45ydh3ekxycpk5p4dbets6mpyhch@q4db2ayr4g3r>
-References: <vath6pctmyay5ruk43zwj3jd274sx2kqbjkfgvhg3bnmn75oar@373wvrue5pal>
- <20250914124006.3597588-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1757926492; c=relaxed/simple;
+	bh=FqMfWhz6R7kWnn+nzywynCJfDgvX6OtKKVEedLJuU7k=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=sce4Cec6e1QKwGLIeae//Atni4UxA1vbhmgYB0R8FMWkoP6GspFNiwAA7cI0MexZsumKYIdKikojkc8k8hZp0qNYjxGFsmUQ26SetBxi7nITQoR1vQgTMJYYfwr6PAt3calRU0PTjI/T7uk3iMUSdClWUoETH/W0xu4RosBfDPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bxnr9Y1MdoF3YKAA--.21196S3;
+	Mon, 15 Sep 2025 16:54:48 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJBxTMFX1MdouPGWAA--.32715S3;
+	Mon, 15 Sep 2025 16:54:48 +0800 (CST)
+Subject: Re: [PATCH v1 2/2] LoongArch: Return 0 for user tasks in
+ arch_stack_walk_reliable()
+To: Jinyang He <hejinyang@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, Xi Zhang <zhangxi@kylinos.cn>,
+ live-patching@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250909113106.22992-1-yangtiezhu@loongson.cn>
+ <20250909113106.22992-3-yangtiezhu@loongson.cn>
+ <5e45a1a9-4ac3-56ee-1415-0b2128b4ed9a@loongson.cn>
+ <c3431ce4-0026-3a05-fa50-281cd34aba4e@loongson.cn>
+ <26036193-f570-3a17-e6d3-45ad70704198@loongson.cn>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <47be74ad-c01c-cf79-b7a4-3f05f85c2f71@loongson.cn>
+Date: Mon, 15 Sep 2025 16:54:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914124006.3597588-1-alexjlzheng@tencent.com>
-X-Rspamd-Queue-Id: 4cQJjq47vJz9t6h
+In-Reply-To: <26036193-f570-3a17-e6d3-45ad70704198@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJBxTMFX1MdouPGWAA--.32715S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Zr4UAFW3Kry7KFyxXryUtwc_yoW8Gr18pr
+	92gF43KF4kJw1qvF97Kr4kWFyaqa97J3s8Kr1rt34DCr1qqr13GF1xKw45uFZxZrn5K3ya
+	vr4jgr95uF4DAagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AK
+	xVWxJr0_GcWln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
+	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
+	1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
+	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jz2NtUUUUU=
 
-On Sun, Sep 14, 2025 at 08:40:06PM +0800, Jinliang Zheng wrote:
-> On Sun, 14 Sep 2025 13:45:16 +0200, kernel@pankajraghav.com wrote:
-> > On Sat, Sep 14, 2025 at 11:37:15AM +0800, alexjlzheng@gmail.com wrote:
-> > > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > 
-> > > iomap_folio_state marks the uptodate state in units of block_size, so
-> > > it is better to check that pos and length are aligned with block_size.
-> > > 
-> > > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > ---
-> > >  fs/iomap/buffered-io.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > > index fd827398afd2..0c38333933c6 100644
-> > > --- a/fs/iomap/buffered-io.c
-> > > +++ b/fs/iomap/buffered-io.c
-> > > @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
-> > >  	unsigned first = poff >> block_bits;
-> > >  	unsigned last = (poff + plen - 1) >> block_bits;
-> > >  
-> > > +	WARN_ON(*pos & (block_size - 1));
-> > > +	WARN_ON(length & (block_size - 1));
-> > Any reason you chose WARN_ON instead of WARN_ON_ONCE?
+On 2025/9/12 上午9:55, Jinyang He wrote:
+> On 2025-09-11 19:49, Tiezhu Yang wrote:
 > 
-> I just think it's a fatal error that deserves attention every time
-> it's triggered.
-> 
+>> On 2025/9/10 上午9:11, Jinyang He wrote:
+>>> On 2025-09-09 19:31, Tiezhu Yang wrote:
+>>>
+>>>> When testing the kernel live patching with "modprobe livepatch-sample",
+>>>> there is a timeout over 15 seconds from "starting patching transition"
+>>>> to "patching complete", dmesg shows "unreliable stack" for user tasks
+>>>> in debug mode. When executing "rmmod livepatch-sample", there exists
+>>>> the similar issue.
 
-Is this a general change or does your later changes depend on these on
-warning to work correctly?
+...
 
-> > 
-> > I don't see WARN_ON being used in iomap/buffered-io.c.
-> 
-> I'm not sure if there are any community guidelines for using these
-> two macros. If there are, please let me know and I'll be happy to
-> follow them as a guide.
+>> for this case, get_stack_info() does not return 0 due to in_task_stack()
+>> is not true, then goto error, state->stack_info.type = STACK_TYPE_UNKNOWN
+>> and state->error = true. In arch_stack_walk_reliable(), the loop will be
+>> break and it returns -EINVAL, thus causing unreliable stack.
+> The stop position of a complete stack backtrace on LoongArch should be
+> the top of the task stack or until the address is_entry_func.
+> Otherwise, it is not a complete stack backtrace, and thus I think it
+> is an "unreliable stack".
+> I'm curious about what the ORC info at this PC.
 
-We typically use WARN_ON_ONCE to prevent spamming.
+The unwind process has problem, I have found the root cause and am
+working to fix the "unreliable stack" issue, it should and can find
+the last frame, and then the user_mode() check is not necessary.
 
---
-Pankaj
+Thanks,
+Tiezhu
+
 
