@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-817201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67837B57F36
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:37:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1CFB57F35
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8822076A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:37:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588B51891C10
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120C032A822;
-	Mon, 15 Sep 2025 14:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4D532F743;
+	Mon, 15 Sep 2025 14:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZN2e6kb8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVs88B5y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6199F32143D;
-	Mon, 15 Sep 2025 14:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6317F320A17;
+	Mon, 15 Sep 2025 14:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947015; cv=none; b=iCF1kgrIqDrWidJhmMVgl7lny4liKd9TwXbyiLfpN605VhjgYc72QNp3U5JhKJUW7/NYwXd/cE4Pxz+bl4l/GfLYTR3q8oTh6xGOJsLDuPYAGZtDYrImRJkhZoxB+FQdWrXDvcYYA7yODc4BzkxSZ+0tyeONP6xc59V7Oq1CPAw=
+	t=1757947020; cv=none; b=BPAf1y73SjP4uecD8rUAsfaia2oeQ7okqG4htATU7fCBX9Saa7+uT4wKjwf6pSG1JXMbSPmqysm3ND5REQ9POqUuup3lIECWrt4IQjJu+EjVI/51zJWjPLtyBdm0VTbqdiERHTvUxUBGz9Nsl+AQABfBh81vgTMG/AxImgXIoIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947015; c=relaxed/simple;
-	bh=DC9uy+dVdl3WE0T3/WYt5Rj+8+1fLNzMGLUJt/1fWFE=;
+	s=arc-20240116; t=1757947020; c=relaxed/simple;
+	bh=LaVVBqstrujneGbAzHLz7nrkIsdxKDKzrualI52ZIIs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=K5fOyW7fuUaUKDTeTqE/y6YcZlvm1ravAmWseZkFT8EqyFIeu09pcS1TiSnb+nrIR5w+91uo9w+lB+LdABrGL7MPQJzRyD9KSkVAPwsk3ZD5BknIwI7X3scPwUUhgL6EeVd1d4qTM9FZ9epRXsqQRvyZAOP4tMqQSRIgclx0P4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZN2e6kb8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9839CC4CEFB;
-	Mon, 15 Sep 2025 14:36:50 +0000 (UTC)
+	 MIME-Version; b=sXHhUwn/gwu6sYThoHezrBVwjXEvbXq8gn0zpekXzyE1cFIFK8lRe7lxpbWUuEIQVPPm/PyE/aB/kU1+/8iExT6EpxRDOfgblEBL++1bTgio8BadFNGOyma9fSWcqxXOoE79vqrMLUVcxvdPFcLg2UjlPd65f6/8goX4p/I/ucI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVs88B5y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 625ACC4CEF1;
+	Mon, 15 Sep 2025 14:36:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757947014;
-	bh=DC9uy+dVdl3WE0T3/WYt5Rj+8+1fLNzMGLUJt/1fWFE=;
+	s=k20201202; t=1757947020;
+	bh=LaVVBqstrujneGbAzHLz7nrkIsdxKDKzrualI52ZIIs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZN2e6kb83a8RLhtHiGG11XNIk+RikQBnovHZSe/LBKI7GxxMjokxx21qsamISZjbz
-	 y8KiZoJmLPujUBrfyvZENQgd9Wj7anvwB7KTU79GAZt59bhzhSD3nS8Ql6CplWFvdK
-	 DO4uWDOtkLejOkBARy+WPRrgdmENTnwAjjZegilKjzUVqtLD7sdgYVldzADSUNkP0R
-	 V+LRQl6+jlRXCPInsMkUGfM07/0DPEYSbfbcgUcnwsEYT3lOz7QEX/yV3gaSE2OQfw
-	 1EnFieg0pvTk8tmphZh6B4qiAjEAF3RgCKcfNuEX5iv6M0Vas8KYYewZcS1mrCqE02
-	 3cig+ofLrp55w==
+	b=WVs88B5yPRlclUwE4sdDfug96OsJwa/zEnVNdGpbhF5zYb68Ql2WhaTZABRcwSHKv
+	 Zk9BU8nb9qRPHabu3/j47DThmakS/S1dxGaGrU+z/vwUqtlC506/ScQu9O75IblX4Y
+	 7+QwCb3VH72OdO5JpBd2MiIcBLSTsYUVJRekL7Qd6HKC0I8nXzaV+To1d3giw6uJDt
+	 dwTyz8u2kCoCaTSd3wQW79C42tsz1//NRN0ldFgfHqYDDHbHZM4Oa4IsVcwaBYVSGB
+	 i0OSM9QX0sOFzq0Dlv8gaocWM8Sb7DYeMyINVOjTFakLd3sEEv/9LPSixot9k2QaMp
+	 RwvKVaVQ2Sffw==
 From: Michael Walle <mwalle@kernel.org>
 To: Frank Binns <frank.binns@imgtec.com>,
 	Matt Coster <matt.coster@imgtec.com>,
@@ -64,9 +64,9 @@ Cc: Andrew Davis <afd@ti.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Michael Walle <mwalle@kernel.org>
-Subject: [PATCH 2/3] clk: keystone: don't cache clock rate
-Date: Mon, 15 Sep 2025 16:34:39 +0200
-Message-Id: <20250915143440.2362812-3-mwalle@kernel.org>
+Subject: [PATCH 3/3] arm64: dts: ti: add GPU node
+Date: Mon, 15 Sep 2025 16:34:40 +0200
+Message-Id: <20250915143440.2362812-4-mwalle@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250915143440.2362812-1-mwalle@kernel.org>
 References: <20250915143440.2362812-1-mwalle@kernel.org>
@@ -78,51 +78,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TISCI firmware will return 0 if the clock or consumer is not
-enabled although there is a stored value in the firmware. IOW a call to
-set rate will work but at get rate will always return 0 if the clock is
-disabled.
-The clk framework will try to cache the clock rate when it's requested
-by a consumer. If the clock or consumer is not enabled at that point,
-the cached value is 0, which is wrong. Thus, disable the cache
-altogether.
+The J722S features a BXS-4 GPU. Add the node for it.
 
 Signed-off-by: Michael Walle <mwalle@kernel.org>
 ---
-I guess to make it work correctly with the caching of the linux
-subsystem a new flag to query the real clock rate is needed. That
-way, one could also query the default value without having to turn
-the clock and consumer on first. That can be retrofitted later and
-the driver could query the firmware capabilities.
+ .../arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Regarding a Fixes: tag. I didn't include one because it might have a
-slight performance impact because the firmware has to be queried
-every time now and it doesn't have been a problem for now. OTOH I've
-enabled tracing during boot and there were just a handful
-clock_{get/set}_rate() calls.
----
- drivers/clk/keystone/sci-clk.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index c5894fc9395e..d73858b5ca7a 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -333,6 +333,14 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+index d0cfd6821b18..d02f7fba327b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+@@ -1232,6 +1232,17 @@ dsi0: dsi@30500000 {
+ 		status = "disabled";
+ 	};
  
- 	init.ops = &sci_clk_ops;
- 	init.num_parents = sci_clk->num_parents;
++	gpu: gpu@fd80000 {
++		compatible = "ti,am62p-gpu", "img,img-bxs-4-64", "img,img-rogue";
++		reg = <0x00 0x0fd80000 0x00 0x80000>;
++		clocks = <&k3_clks 237 3>;
++		clock-names = "core";
++		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>;
++		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>,
++				<&k3_pds 242 TI_SCI_PD_EXCLUSIVE>;
++		power-domain-names = "a", "b";
++	};
 +
-+	/*
-+	 * A clock rate query to the SCI firmware will return 0 if either the
-+	 * clock itself is disabled or the attached device/consumer is disabled.
-+	 * This makes it inherently unsuitable for the caching of the clk
-+	 * framework.
-+	 */
-+	init.flags = CLK_GET_RATE_NOCACHE;
- 	sci_clk->hw.init = &init;
- 
- 	ret = devm_clk_hw_register(provider->dev, &sci_clk->hw);
+ 	vpu: video-codec@30210000 {
+ 		compatible = "ti,j721s2-wave521c", "cnm,wave521c";
+ 		reg = <0x00 0x30210000 0x00 0x10000>;
 -- 
 2.39.5
 
