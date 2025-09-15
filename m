@@ -1,210 +1,199 @@
-Return-Path: <linux-kernel+bounces-817552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69240B583AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:31:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E66B583B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B064C18AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:31:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3941AA4015
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9703E286424;
-	Mon, 15 Sep 2025 17:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A451F285C91;
+	Mon, 15 Sep 2025 17:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyhZUOUz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D6yF07HM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCB11917F0;
-	Mon, 15 Sep 2025 17:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CD2284684;
+	Mon, 15 Sep 2025 17:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757957476; cv=none; b=MVLSBM/45eSPkKVJX/n47RMffpfBRv6yPPajvxWYS6Cx++Rx676LiET/Nqek/YjZkz/9QTaZ7Okq0zKkF9rYcvmO4UsYwbcoBwIRaCdayLuAwvlBmW7Z0AWywOZ4EUy6IFVxL1n4ii6HqVGQI48pWvoCTZmycfKKorxZTqUi46I=
+	t=1757957613; cv=none; b=i7B7/dz9oS1GmsnNPxlkn4chdQLCAt0grPSHBdVjcyGyuXBs/PKnaKivjLRBo+9qModUExR8PTbdCQQh32CJOZambCfk8TLyrEmZnTctZRPL/l9gAoeGd1wYNn8lrFwTGvPvHDldNTD3OI0EOgcw6JFvRFgEwRzXKEms+e7CBvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757957476; c=relaxed/simple;
-	bh=22K4wg/U7hxV+5smlo1jNvFUEqXuzp4zR5U2MMNEi6c=;
+	s=arc-20240116; t=1757957613; c=relaxed/simple;
+	bh=tcA5ilNGhf5LDCGb0wQj3jRtCt/yW5+rVMlOSjIZFag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PC6tz+n4Rx7LXpDLzpn3vwuxNZpqGKn5+SGRGYVltvWl2/TM2jOwl5OPx27zJ4nJLhhtee5z+LYQ481Pzkk5SmtmmR+VsrwEWb7z6ohow47wRIGlrXJ6yH1PlNV37cSA/+3Zt1fuF7Nagv4BJyFTA2Jj0kPZhisU1ljlOvJcIY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyhZUOUz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B080C4CEF1;
-	Mon, 15 Sep 2025 17:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757957475;
-	bh=22K4wg/U7hxV+5smlo1jNvFUEqXuzp4zR5U2MMNEi6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DyhZUOUz0RoTHn9hALgJ0yqXK+epIoCkIZ5xLx6jL+qhLLec4IvfcnarJm3UMvq6n
-	 VJyhZz86PussaYNngPeRx9hcuA8NBmizJXqLFO71pb9ZvJwph8bG8ClRCiETvE4FAE
-	 8y1k7F4iEPx2T7lkXxheV6Cz9S90B6wz+XNuZnlNuww+5+FZ7Kt1bj/BO6TFJms14B
-	 1ejxCtDzsoON4+7jzADsPhy/lDm9PiLGv+qQ4uk4A3HIltJu2sMboA7E5m9fZR3nId
-	 obrveM1PZLE6VgUMAYdha0FIH3FDwicvLUEHVrAAd6Q/Otk2yd6Mq60JX4ToU13nt0
-	 KB77uPFK65bvg==
-Date: Mon, 15 Sep 2025 18:31:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: t.antoine@uclouvain.be
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] dt-bindings: power: supply: add support for
- MAX77759 fuel gauge
-Message-ID: <20250915-presoak-answering-2df6fca532ad@spud>
-References: <20250915-b4-gs101_max77759_fg-v6-0-31d08581500f@uclouvain.be>
- <20250915-b4-gs101_max77759_fg-v6-2-31d08581500f@uclouvain.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7nPPW2magHnW6OEWP0qQjl/4supxMqcEyCJLHeo9+9o4gtKMtusswTCX4pv0L5coaSBFGQtwRN9QCpXY4U50L1n/OANXJumVZQkHGGiLBkHlVu3edPVbBgFtm1GHQ+/MBed3WnoS4k8Abo7q8XZh1N79bhStrhgh9hWmHC1on0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D6yF07HM; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757957612; x=1789493612;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tcA5ilNGhf5LDCGb0wQj3jRtCt/yW5+rVMlOSjIZFag=;
+  b=D6yF07HM/D0U+a8ozdaSkHPilY/Cu5LjC558iFFRpRsLztXG8Ax6Fek8
+   HFNF7ZOR84DB1ojNk/6sDyu5jvAgxZtosRjOAwgTw9c3IyQGvWwxLrYLo
+   KYPCtj0jrFsXN09jhlWiDzrQE3zv03bXUSwmfOb32Dcw6pxqY3hr3ph5S
+   3zg+fVHX6pL1zkejE4Kga/pT2OZjlUmj6TE13cmviAJsPlWE9YA19QCHh
+   KhgV+nZuWVUv8QcpMYq+fj6FQcvNJnOB9VGY1QkHvkyV4KFC3L0VN8q6J
+   3FxadTVfqSCTL/ec0+EievdARoc62neL+G8vO+jymV6U5a895JCZHvoxj
+   w==;
+X-CSE-ConnectionGUID: XiV2NU09Tk6JMZGEJinrJQ==
+X-CSE-MsgGUID: 3WrYf+fRQou2wS5WxYeb9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="77832487"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="77832487"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:33:23 -0700
+X-CSE-ConnectionGUID: PZ65g/EDS1KR6VeXQ2N8UA==
+X-CSE-MsgGUID: AdkmSubKSW6orL1pB1KVFA==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 5b01dd97f97c) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 15 Sep 2025 10:32:01 -0700
+Received: from kbuild by 5b01dd97f97c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uyD3X-0000Ux-01;
+	Mon, 15 Sep 2025 17:31:59 +0000
+Date: Tue, 16 Sep 2025 01:31:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: caohang@eswincomputing.com, gregkh@linuxfoundation.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, Thinh.Nguyen@synopsys.com,
+	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	Hang Cao <caohang@eswincomputing.com>,
+	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Subject: Re: [PATCH v3 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
+Message-ID: <202509160138.P7gRM9Bt-lkp@intel.com>
+References: <20250915091051.2148-1-caohang@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V7ywmi7UEdonQGBv"
-Content-Disposition: inline
-In-Reply-To: <20250915-b4-gs101_max77759_fg-v6-2-31d08581500f@uclouvain.be>
-
-
---V7ywmi7UEdonQGBv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250915091051.2148-1-caohang@eswincomputing.com>
 
-On Mon, Sep 15, 2025 at 12:14:11PM +0200, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
->=20
-> The Maxim MAX77759 is a companion PMIC for USB Type-C. It contains
-> Battery Charger, Fuel Gauge, temperature sensors, USB Type-C Port
-> Controller (TCPC), NVMEM, and additional GPIO interfaces
->=20
-> Use max77759-fg compatible to avoid conflict with drivers for other
-> functions.
->=20
-> The battery node is used to pass the REPCAP and ICHGTERM values
-> needed for the initialization of the fuel gauge.
->=20
-> The nvmem cells are used to get initialization values and to backup
-> the learning and the number of cycles. It should work out of the box
-> with gs101-oriole and gs101-raven which were previously running
-> Android.
->=20
-> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
-> ---
->  .../bindings/power/supply/maxim,max77759.yaml      | 78 ++++++++++++++++=
-++++++
->  1 file changed, 78 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max7775=
-9.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max77759.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4d45739fcaf26273ec57b6004=
-9d6d0421df38efb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max77759.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/supply/maxim,max77759.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim Integrated MAX77759 fuel gauge
-> +
-> +maintainers:
-> +  - Thomas Antoine <t.antoine@uclouvain.be>
-> +
-> +allOf:
-> +  - $ref: power-supply.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77759-fg
+Hi,
 
-Compatible doesn't match the filename, why?
-I assume the "fg" is fuel-gauge, but can this device be anything else?
+kernel test robot noticed the following build warnings:
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  shunt-resistor-micro-ohms:
-> +    description: The value of the current sense resistor in microohms.
-> +
-> +  monitored-battery:
-> +    description: |
-> +      The fuel gauge needs the following battery properties:
-> +      - charge-full-design-microamp-hours
-> +      - charge-term-current-microamp
-> +
-> +  nvmem-cells:
-> +    maxItems: 1
-> +    description: |
-> +      Saved fuel gauge state. This state will be used during the initial=
-ization
-> +      and saved on exit. It must be initialized beforehand.
-> +      Its layout must be composed of
-> +        - RCOMP0 (characterization of the open-circuit voltage)
-> +        - TCOMPO (temperature compensation information)
-> +        - FULLCAPREP (reported full capacity)
-> +        - QRTABLE00, QRTABLE10, QRTABLE20, QRTABLE30 (cell capacity info=
-rmation)
-> +        - cv_mixcap (remaining capacity of the cell without empty compen=
-sation)
-> +        - cv_halftime (time-to-full characterization time constant)
-> +      They must all be aligned on 2 bytes. A valid CRC8 checksum must
-> +      also be found at the end (polynomial x^8 + x^2 + x + 1).
-> +
-> +  nvmem-cell-names:
-> +    const: fg_state
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - shunt-resistor-micro-ohms
-> +  - monitored-battery
-> +  - nvmem-cells
-> +  - nvmem-cell-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      fuel-gauge@36 {
-> +        compatible =3D "maxim,max77759-fg";
-> +        reg =3D <0x36>;
-> +        interrupts-extended =3D <&gpa9 3 IRQ_TYPE_LEVEL_LOW>;
-> +        shunt-resistor-micro-ohms =3D <5000>;
-> +        monitored-battery =3D <&battery>;
-> +        nvmem-cells =3D <&fg_state>;
-> +        nvmem-cell-names =3D "fg_state";
-> +      };
-> +    };
->=20
-> --=20
-> 2.51.0
->=20
->=20
+[auto build test WARNING on usb/usb-testing]
+[also build test WARNING on usb/usb-next usb/usb-linus robh/for-next pza/reset/next linus/master v6.17-rc6 next-20250912]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---V7ywmi7UEdonQGBv
-Content-Type: application/pgp-signature; name="signature.asc"
+url:    https://github.com/intel-lab-lkp/linux/commits/caohang-eswincomputing-com/dt-bindings-usb-Add-ESWIN-EIC7700-USB-controller/20250915-171407
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+patch link:    https://lore.kernel.org/r/20250915091051.2148-1-caohang%40eswincomputing.com
+patch subject: [PATCH v3 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
+config: i386-buildonly-randconfig-003-20250915 (https://download.01.org/0day-ci/archive/20250916/202509160138.P7gRM9Bt-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509160138.P7gRM9Bt-lkp@intel.com/reproduce)
 
------BEGIN PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509160138.P7gRM9Bt-lkp@intel.com/
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMhNXwAKCRB4tDGHoIJi
-0sRgAQCjqqflLyAGWFrRi9i49mBqc64Q5aJTvzf5BXIZ2PChjwEAkPVtsA7uquCk
-/BXHf9Qn5OBUhgIJRrEJx+MnTRQsIQ4=
-=gunl
------END PGP SIGNATURE-----
+All warnings (new ones prefixed by >>):
 
---V7ywmi7UEdonQGBv--
+>> drivers/usb/dwc3/dwc3-eic7700.c:225:12: warning: 'dwc3_eswin_runtime_idle' defined but not used [-Wunused-function]
+     225 | static int dwc3_eswin_runtime_idle(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/dwc3/dwc3-eic7700.c:210:12: warning: 'dwc3_eswin_runtime_resume' defined but not used [-Wunused-function]
+     210 | static int dwc3_eswin_runtime_resume(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/dwc3/dwc3-eic7700.c:196:12: warning: 'dwc3_eswin_runtime_suspend' defined but not used [-Wunused-function]
+     196 | static int dwc3_eswin_runtime_suspend(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/dwc3/dwc3-eic7700.c:181:12: warning: 'dwc3_eswin_pm_resume' defined but not used [-Wunused-function]
+     181 | static int dwc3_eswin_pm_resume(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/dwc3/dwc3-eic7700.c:166:12: warning: 'dwc3_eswin_pm_suspend' defined but not used [-Wunused-function]
+     166 | static int dwc3_eswin_pm_suspend(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/dwc3_eswin_runtime_idle +225 drivers/usb/dwc3/dwc3-eic7700.c
+
+   165	
+ > 166	static int dwc3_eswin_pm_suspend(struct device *dev)
+   167	{
+   168		struct dwc3 *dwc = dev_get_drvdata(dev);
+   169		struct dwc3_eswin *eswin = to_dwc3_eswin(dwc);
+   170		int ret;
+   171	
+   172		ret = dwc3_pm_suspend(&eswin->dwc);
+   173		if (ret)
+   174			return ret;
+   175	
+   176		clk_bulk_disable_unprepare(eswin->num_clks, eswin->clks);
+   177	
+   178		return 0;
+   179	}
+   180	
+ > 181	static int dwc3_eswin_pm_resume(struct device *dev)
+   182	{
+   183		struct dwc3 *dwc = dev_get_drvdata(dev);
+   184		struct dwc3_eswin *eswin = to_dwc3_eswin(dwc);
+   185		int ret;
+   186	
+   187		ret = clk_bulk_prepare_enable(eswin->num_clks, eswin->clks);
+   188		if (ret) {
+   189			dev_err(dev, "Failed to enable clocks: %d\n", ret);
+   190			return ret;
+   191		}
+   192	
+   193		return dwc3_pm_resume(&eswin->dwc);
+   194	}
+   195	
+ > 196	static int dwc3_eswin_runtime_suspend(struct device *dev)
+   197	{
+   198		struct dwc3 *dwc = dev_get_drvdata(dev);
+   199		struct dwc3_eswin *eswin = to_dwc3_eswin(dwc);
+   200		int ret;
+   201	
+   202		ret = dwc3_runtime_suspend(&eswin->dwc);
+   203		if (ret)
+   204			return ret;
+   205	
+   206		clk_bulk_disable_unprepare(eswin->num_clks, eswin->clks);
+   207		return 0;
+   208	}
+   209	
+ > 210	static int dwc3_eswin_runtime_resume(struct device *dev)
+   211	{
+   212		struct dwc3 *dwc = dev_get_drvdata(dev);
+   213		struct dwc3_eswin *eswin = to_dwc3_eswin(dwc);
+   214		int ret;
+   215	
+   216		ret = clk_bulk_prepare_enable(eswin->num_clks, eswin->clks);
+   217		if (ret) {
+   218			dev_err(dev, "Failed to enable clocks: %d\n", ret);
+   219			return ret;
+   220		}
+   221	
+   222		return dwc3_runtime_resume(&eswin->dwc);
+   223	}
+   224	
+ > 225	static int dwc3_eswin_runtime_idle(struct device *dev)
+   226	{
+   227		return dwc3_runtime_idle(dev_get_drvdata(dev));
+   228	}
+   229	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
