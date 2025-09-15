@@ -1,178 +1,158 @@
-Return-Path: <linux-kernel+bounces-816012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F45FB56E29
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:13:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD28B56E2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1032F1796C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A430189B907
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C99121FF48;
-	Mon, 15 Sep 2025 02:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D740C220F5C;
+	Mon, 15 Sep 2025 02:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c6NeE9NZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="RET7wyI+"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34191F8ACA
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530A921E098
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757902392; cv=none; b=USGnb03CE0knTUsufpxBtIZhNafC9ssYY3LbHjw2M8l5p8vgGhy43C5r+ROR4hsPjgts1sGyBOD2q26SFy+wpNSNDuOr0PS3p/mvDXUoXJdFADxxZAeQPMw63f3Ok4bMx9KUXUHaGNNRmKmSj8dPSnccIevY1S/M/+sYg4OAIx0=
+	t=1757902410; cv=none; b=fvdVISwAbeesPsEXsVzaiIo8+slQqo8WdsjiWODY+CFKazf2ECeL73gkjlU0NEh97rBoaEBFQYyAufRs2SJiDuIDS8SyIcZH2s7SOzhEI2VJ90HbtaJ1Ow99zlUHWaYkDi+gC2gIkT5XJTWDlJDWCU9QpGwlxD/Ng5HgVy6pk4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757902392; c=relaxed/simple;
-	bh=ohUpipTMt4gASQi64UZFtyaRndLD5f1QK+vaH5E35dU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qo4AvEL4ybumDmUn+YbzQZG2tPt0T3NEjWKL5nX51ZbH83R8SnTMMz0cjvHxtmHy+UM7tRb+VPQcFABqZ4MjqGU3V2H3UwiryCLjmRIIlYCRoNDDFjdveWE4XxQ6qvpKMnx46zu8cx5M7bIyKzSilZKMIz2RmDgDAuaOf1ORvO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c6NeE9NZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ELoYWX004264
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8U+/es2auF/UpL8wkEHJ/UTOBmDkqedpQR+r1cxVz0Q=; b=c6NeE9NZym9u3/Y1
-	5GGelEyagUcFuSUPXxt0viCk06INZ5fs9W1IwIkbbpl7gEuI7Z0rQ4BROpupGSXj
-	nRizF2zIY8vfBZOrUDrfoNHw2aXlHodU6m/UFN6hBpOMuY/NAuePKC74EUwEU5BF
-	9IbVmUln3q/jJ0jJ2czalrzp/kyJ2CPQLLHUQIDgNePGKlzZ5bVFCpUElcB7Re99
-	UD0G2BVJHQ1lXUed0yvgTRcWpt9nVl9HEBbHnv1QG3Mf7VVh2/ilrShdY/JFnfqq
-	2DewBZKI8Wq1XlGKrt4zkqwXYSHbJrZLlFVhQahNUaaLuJFGOJd4NAu4txbrLsqd
-	itqLxg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 494yxkb5wy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:13:09 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77260707951so5561529b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 19:13:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757902388; x=1758507188;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8U+/es2auF/UpL8wkEHJ/UTOBmDkqedpQR+r1cxVz0Q=;
-        b=d1sx2fqWdvb/E5jXZ4djvK3D84Il3zplFTfs4TKziGgLp/erzkSf/R3B9yujkwN7TR
-         8csK5wB5IvkkTNZ5E4ikS9b3Nsa7tJyhEfoF5jKKPnsXasVUXnybQhDAVcvpybC3wKDj
-         BrgzAT1vzIM6NasacONfzmwgj+5y3NW6M03d71M02F0MfiRhvwBYtPJly2GGK8rYjihP
-         s07ot98n6yw+brjVDJ9VK6XNFmDwBIh0G1LAD9UgprBe+b+a8xcPFr6SvZQkIobLMWsj
-         J7vpT1ME/D2dRw/Q4r5sq0IcwyTM3kpcgHxTaaTTfhccFsCN9giDTnlR57vr5a18JUaY
-         4dVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTTqLAenpRQUKqzuGAPaeyAvpi+PGry3Tz7adOSEn5kSwOPykd2Xy0X7l8P0k5+hABDyRghAoUQaTGgEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoKzcnHF03ncSMjT66Ry9BAzbfRIfjONDqoD68Eyzq9AhgWsbB
-	fDWzj005kq0aL+ZAfTjkXHaPWY976UGtsQZ9H4eSEW4jpFqxOE0XOXTVTgTQR9khwTHkolT1vZu
-	kWug/El00lMQPXoOq0I6/DTn11AwDRf38ubFLf0golSGf+tlsEKIXTwL5dTimovuz0cY=
-X-Gm-Gg: ASbGncugpddtoBP/eL2xcW8zaZ9SlpZymVlpe47l2zBX+6eTrYuzgHxVrw+8bFPydHO
-	bfcfHKY3bXQtI8aRilpROc8msuTTt815PywxM8Ic1kuUQ0HtXLOLGdd8AztM1LQhTlEGtqN8vAf
-	Jv3etF5CJphta+BuKrtK9f53dCppuabBShfmVlmzdsIsiaWL88pkQ9+HLIDRs9xAEA8AzxtylAh
-	M/arTQxRUOYmo2QYehozlr2Zg9jqIb3RKLsGnJALAzJ700gCYWAtSRopX+Bf64NVu4+AN0Co3dP
-	GWZsShu1GAtHOjeIbwFg1gz2OFd9oEl/sRIrvRXvAD3uEa1EkJ9CQz85A8Wi/33CM0g0yrfZAkv
-	PSgNBhSA3QHDjVn/AVjBAHqJVuT1Iow==
-X-Received: by 2002:a05:6a20:c40a:b0:262:23dd:2e8c with SMTP id adf61e73a8af0-26223dd314fmr5121177637.44.1757902388559;
-        Sun, 14 Sep 2025 19:13:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNdmgeYdPGgEBBnW9LZnrDbOV/8e3BmXeugleNAIQXSUHtKSZ13d9gG/jmrPwhW3MoO6DJ+g==
-X-Received: by 2002:a05:6a20:c40a:b0:262:23dd:2e8c with SMTP id adf61e73a8af0-26223dd314fmr5121157637.44.1757902388124;
-        Sun, 14 Sep 2025 19:13:08 -0700 (PDT)
-Received: from [10.133.33.184] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a3aa1a22sm10159814a12.52.2025.09.14.19.13.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Sep 2025 19:13:07 -0700 (PDT)
-Message-ID: <77342c70-3b75-4ccb-ae3a-c0418511a33e@oss.qualcomm.com>
-Date: Mon, 15 Sep 2025 10:12:58 +0800
+	s=arc-20240116; t=1757902410; c=relaxed/simple;
+	bh=SMqAydrRlAWaSLUNJ6U8LSRxn7jkqUpS4uBIprB2vRI=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=FykzJiYOGfzU7P9SO3RWmCL86LiyTxwahqkAkDx/zLr7v5ghoS3qcUERbvqwkp75ayBwnH1oRiRGADTfQXChDKx0frVIKFaj9wEnvlLShcLKFr/tduRdWld+w+fTNI8TJjpRi0Orqa2wYx/DWrE+t+THYP6V5W0LE75INWXeIb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=RET7wyI+; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1757902400;
+	bh=6J20VH7voOyYroc7sd9mKpuRhnqygSA4dyoSLLqxRHc=;
+	h=Subject:From:To:Cc:Date;
+	b=RET7wyI+uYL1ZDx+gaIsj+SAAaoN8t4X90mneLv15rom0Fm29zZHh/Ed1WbOlZYV7
+	 gTYGB8UmEQanMKNvTArQ9OfsQ9CxCSzfrOrmHdbI/bX4hENeu/j9/LqyURN1FoqdII
+	 NLw2wYuZ3G8RLQ3k89clt8E2Jxsc4TXhGimVYrwMaxuHZPuKfS1cxgNS411rXFzheA
+	 pkoAZbpn43mt1lnFVDmizzX0YuNBGwD+ASCbyBxvHuLDgcuGOYO76J5R4xRCNfQN70
+	 LY6CgBtsj1zH0p5K+tfGR5wQvNVfJMZhMbOp2c8dI7jb1MAdmMDa6WrzYwASL9Gt2N
+	 eoRxqVgCotlog==
+Received: from [192.168.68.113] (unknown [180.150.112.213])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 25AD7640BB;
+	Mon, 15 Sep 2025 10:13:18 +0800 (AWST)
+Message-ID: <5793039afcedeb28179a3c9909631d8251abc73e.camel@codeconstruct.com.au>
+Subject: [GIT PULL] aspeed: further devicetree changes for v6.18
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: soc <soc@lists.linux.dev>
+Cc: linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
+Date: Mon, 15 Sep 2025 11:43:18 +0930
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] add sysfs nodes to configure TPDA's registers
-To: James Clark <james.clark@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
-References: <20250827105545.7140-1-jie.gan@oss.qualcomm.com>
- <49bf23dc-705e-45ab-a2e3-fbb798cd8e34@linaro.org>
-Content-Language: en-US
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-In-Reply-To: <49bf23dc-705e-45ab-a2e3-fbb798cd8e34@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyMiBTYWx0ZWRfX7k9xckD1gCEm
- ozd5cIO6MftvA9QMjXoJucdbpmUEkZYDPydFLSVUvF7a6qRhU2otyYqEU9sbDgecxKMa1hzkM/P
- 3TnRNySLQahdUOOCGTHZ7L5KOad/EinVi0ddfmnq9i9fJt54UzElmoUgovc79lo27jUklA3gxS6
- wQuAMI5vtNr45uLQRh4odL0JYUT0++xgwoPTrrdQx3lN/6nQhugprZtGZ3b6BBeiiNW2iXr2e56
- NXFpFqYb6KhLOIeiC/yO2ssLZQ3NQMHJqlSi+iMsz/+mihKQnWR5oTbQD9FYPasc1KE7BYYJS3i
- ruV4G7veQxYdBQENfz6N3iqjNI6ssdpA2Ea22CKNs/3TL3aoN5rX1bxn0+vkdnG0c+n3p5+Wuty
- ibQ5MJwZ
-X-Proofpoint-ORIG-GUID: 38V37mpLA27HkXUEeCwsB7iqHgGwKF3J
-X-Authority-Analysis: v=2.4 cv=KfjSsRYD c=1 sm=1 tr=0 ts=68c77635 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=KKAkSRfTAAAA:8 a=iF4Rue9Sqs3gHakc6bMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 38V37mpLA27HkXUEeCwsB7iqHgGwKF3J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_01,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 impostorscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 phishscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130022
 
+Hello SoC maintainers,
 
+This is a second 6.18 PR for the ASPEED devicetrees, following the
+first at [1].
 
-On 8/27/2025 7:59 PM, James Clark wrote:
-> 
-> 
-> On 27/08/2025 11:55 am, Jie Gan wrote:
->> Patchset 1 introduces configuration of the cross-trigger registers with
->> appropriate values to enable proper generation of cross-trigger packets.
->>
->> Patchset 2 introduces a logic to configure the TPDA_SYNCR register,
->> which determines the frequency of ASYNC packet generation. These packets
->> assist userspace tools in accurately identifying each valid packet.
->>
->> Patchset 3 introduces a sysfs node to initiate a flush request for the
->> specific port, forcing the data to synchronize and be transmitted to the
->> sink device.
->>
->> Changes in V3:
->> 1. Optimizing codes according to James's comment.
->> Link to V2 - https://lore.kernel.org/all/20250827042042.6786-1- 
->> jie.gan@oss.qualcomm.com/
->>
->> Changes in V2:
->> 1. Refactoring the code based on James's comment for optimization.
->> Link to V1 - https://lore.kernel.org/all/20250826070150.5603-1- 
->> jie.gan@oss.qualcomm.com/
->>
->> Tao Zhang (3):
->>    coresight: tpda: add sysfs nodes for tpda cross-trigger configuration
->>    coresight: tpda: add logic to configure TPDA_SYNCR register
->>    coresight: tpda: add sysfs node to flush specific port
->>
->>   .../testing/sysfs-bus-coresight-devices-tpda  |  50 ++++
->>   drivers/hwtracing/coresight/coresight-tpda.c  | 278 ++++++++++++++++++
->>   drivers/hwtracing/coresight/coresight-tpda.h  |  33 ++-
->>   3 files changed, 360 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight- 
->> devices-tpda
->>
-> 
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> 
+Cheers,
 
-Gentle ping.
+Andrew
 
-Thanks,
-Jie
+[1]: https://lore.kernel.org/soc/cb634cffaf0db9d25fb3062f0eee41e03955321f.c=
+amel@codeconstruct.com.au/
+
+---
+
+The following changes since commit b785b5d88cc27a521ea22b3afd85804c4c321d4a=
+:
+
+  ARM: dts: aspeed: x570d4u: convert NVMEM content to layout syntax (2025-0=
+8-11 09:37:48 +0930)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/bmc/linux.git tags/aspeed=
+-6.18-devicetree-1
+
+for you to fetch changes up to 3708a165a98c23cc83216deda88bc7d64ba85527:
+
+  ARM: dts: aspeed: Drop syscon "reg-io-width" properties (2025-09-10 16:20=
+:40 +0930)
+
+----------------------------------------------------------------
+Further ASPEED devicetree updates for v6.18
+
+New platforms:
+
+- Meta Clemente
+
+  Clemente is a compute-tray platform using an AST2600 SoC
+
+Updated platforms:
+
+- Harma (Meta): Hot-swap controller, power monitoring, GPIO names
+
+There are also some devicetree cleanups from Rob and Krzysztof that touch a
+variety of platforms and the DTSIs. These lead to fewer warnings emitted fo=
+r the
+ASPEED devicetrees.
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: dts: aspeed: Minor whitespace cleanup
+
+Leo Wang (3):
+      dt-bindings: arm: aspeed: add Meta Clemente board
+      ARM: dts: aspeed: Add NCSI3 and NCSI4 pinctrl nodes
+      ARM: dts: aspeed: clemente: add Meta Clemente BMC
+
+Peter Yin (3):
+      ARM: dts: aspeed: harma: add power monitor support
+      ARM: dts: aspeed: harma: revise gpio name
+      ARM: dts: aspeed: harma: add mp5990
+
+Rob Herring (Arm) (3):
+      ARM: dts: aspeed: Fix/add I2C device vendor prefixes
+      ARM: dts: aspeed: Drop "sdhci" compatibles
+      ARM: dts: aspeed: Drop syscon "reg-io-width" properties
+
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml        |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                               |    1 +
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ampere-mtjefferson.dts      |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-arm-stardragon4800-rep2.dts |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts       |    4 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts       | 1283 +++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts          |   43 +--
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts        |   36 +--
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-santabarbara.dts   |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-tiogapass.dts      |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts      |   12 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts             |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dts                |    8 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-lenovo-hr855xg2.dts         |    4 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-nvidia-gb200nvl-bmc.dts     |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-palmetto.dts            |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-opp-zaius.dts               |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-quanta-s6q.dts              |    4 +-
+ arch/arm/boot/dts/aspeed/aspeed-bmc-vegman.dtsi                 |    2 +-
+ arch/arm/boot/dts/aspeed/aspeed-g4.dtsi                         |    1 -
+ arch/arm/boot/dts/aspeed/aspeed-g5.dtsi                         |    2 -
+ arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi                 |   10 +
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi                         |    6 +-
+ 23 files changed, 1360 insertions(+), 73 deletions(-)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.d=
+ts
 
 
