@@ -1,97 +1,74 @@
-Return-Path: <linux-kernel+bounces-816031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199A8B56E5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:43:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40984B56E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C0C1899EB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCE4D16A079
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52491229B18;
-	Mon, 15 Sep 2025 02:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9183222585;
+	Mon, 15 Sep 2025 02:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="hXyEE6uU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eK/uq/e/"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gWbZW3Cv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DA02135D7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4251DF248
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757904162; cv=none; b=I6mK1NX978dHvYMYRE6Un9q5onutR5fqGkSIbSt4vfz8ZnapRKhdH1OotYyuPAGLAMDep0zPYbPYlV3LZ9Kx9t3hiLJoDkpYSjvRbgZWmm7AhFSLRReawF3QQp4zurRg3lDL0OP7Cp4OMsFUtKqW3gXbmprHz2GVVDb3zYXyHPI=
+	t=1757904443; cv=none; b=Oxb6Hn6uj5jf2MZ7Au3ssGVfe7WNWUk2+pTBtXHd9+ahJJaCSlckgVyiymgUFuqZTMUpKtbNP9/eBmfQ87jJK4UHEJkbqkfPfqRibtaNLqLWV2zvbPgYxG4eu4KVzozCCdLiLYc+OUMZlZc0t6ywVk7MelV12nb9201ZfWFg8jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757904162; c=relaxed/simple;
-	bh=Ho5UJC2hsjz61eJM1tcK+RtY5/qUrc+U5k+EQw7ixxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JOOXyFImF2WXXN16F1d/9vqLbwOYIqEQJFIzdvsBsy69ab3PgrXIc94escRF8fjjQmQfKDuCTZ610Hs2HS9/OARt+V5NYoL1HdVNurFQGGK8s5tzQYayCkqtTN6EnwrOr8jPJEHPypLyvJ1AtLcWOvq25nIp54PtEDGhJmAOfs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=hXyEE6uU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eK/uq/e/; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id BBFF91D0008A;
-	Sun, 14 Sep 2025 22:42:39 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Sun, 14 Sep 2025 22:42:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1757904159; x=
-	1757990559; bh=k+1xFx1bqcSZnjU5LG3bHBbaKfjqK+CEGtY+X0biaxM=; b=h
-	XyEE6uU2fDkbHtpEbrH/F6TaG9tSdecQ4fB/e31kidDiR1VaqcsMRfwIrdfV9jb7
-	SfCbrZUrlFDWmI3DErKNq6PiI4ZnZpaJzkNSkiLaMOJWv9dgqNkmFqFCeYhnp826
-	teMG+wLOg1ioyurqjDuTzQRiCDqKT4UzGVzgB5ipu3OAD7hgBL4lM1cDbnqyv/gT
-	sxHM83bxTmpntM5ydAR/zA4AWIfm7HGncR8RmdfUNqXnIysf+iUNPc44l7mP7Umd
-	He62BhxTITbZ+gIQ0jrBF35u+FU1bv0eGfCbe2fAawsoBeiE0cVLACH/Bm4H1YNw
-	z2WThQWWDg5jGJtkQOLRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1757904159; x=1757990559; bh=k
-	+1xFx1bqcSZnjU5LG3bHBbaKfjqK+CEGtY+X0biaxM=; b=eK/uq/e/FOepIoZGo
-	5JUxvpmnMqLVqpCgvWn1VHSxgbr7nXfP7RXr9lYTfBL9f/AyQYPlX8gKY2IxxoLt
-	WUO3ifyiibgrX/v3JeyY8DhxNFYqcHC24VbmyQNQGPacuy7wZz8QxTbSuxzwbr5l
-	ocZ0ruf0ij14hsnMZT6y7MzhY2wtKt9Gg00rRRuFxZyNl6ZyDYELlivIZrmp9I+A
-	wIFWIXZcbxj0VwiEdnFIQzsNKIhd410zw3Z10D2asi32meP3SMZVBasPEuZDj3yV
-	BzfdzU3gZIG00+Zz8WztXL79otJDXJjNY47eYMe7OwS0UYiLcKkpmvGflwLybfy0
-	T4PDg==
-X-ME-Sender: <xms:H33HaN7itsyfQarjCqUzbRX1GmZ1mS7FxdptH1fIKkTyKCPP-ioFzg>
-    <xme:H33HaD2KIAxPNx5iit58ElHXnC1fnhjyQ5R-a21urZ5Yp9WdvSKnir4Daz8_w5jrH
-    -0FxlVlUWzvd0wGeHU>
-X-ME-Received: <xmr:H33HaGaV4Vk37wH5E31PexkfnHEqe_g6qP0N4-cBEZSSMFdLqsru3b79Qa5JeKqJDL0ffyj5ykqWekXJuisPrpRM6uQjPBJN1KXJw8-VEvhxp9U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefieehvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtre
-    dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejuedvgf
-    duudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgvrhfu
-    ihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
-    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
-    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:H33HaDDz4voQURn3JTiLWaHOxR9UW2dlkhle1WAnlmspNEUynBtOTw>
-    <xmx:H33HaA-jMDu8YCmLjjsP7wjd9_-MXxsOQ7TLz5KfOMBrsCuaBtsDmg>
-    <xmx:H33HaL_vhm4EoD4hYAnbDAyOCYcUrDBHbXnHsPPRVPo_Dsp4EcS9Ww>
-    <xmx:H33HaPcxuNmQNDHraVVk_oSEp_AuY_Z7uOBjN-dxQKU4ZQLmHiV1ug>
-    <xmx:H33HaH8_xPt9KiUWxm6Wa9tvbxJKKByefxZl09KOUmgVCxy0B8jMSyHw>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 22:42:38 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] firewire: core: use helper macro to compare against current jiffies
-Date: Mon, 15 Sep 2025 11:42:32 +0900
-Message-ID: <20250915024232.851955-3-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250915024232.851955-1-o-takashi@sakamocchi.jp>
-References: <20250915024232.851955-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1757904443; c=relaxed/simple;
+	bh=OOFDWJmS/f2uGkz6mS7atM5O/HZ8ia2l4cQssj9gFGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aJ7ENgvdkXLaSvGgABM1o6r1R1ng62uwlX5dRrCIDGKEG8bVk5Di+9OAGvhUShMmrls11kNhB2UCr6DVj7hfqKODc5vbWz+UaAozdnGnCQvOzwr82wNwXSQxwhz/QUfBlUsXL3EGp50Wk6F2y3TGgqNJ4trCqjRGXZ0RzlmBcBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gWbZW3Cv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757904440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tXbb4k0WVEIXwl73Se7rsi16GpKXRhgcEypjnLnCxSQ=;
+	b=gWbZW3CvMqfKYq6PSKwlhMIpvPPizrvccZYKNVn1RWkgL5dcy9tEqBQOgsp88RYRXGVI6u
+	qnS9cbYlzE6Io7dkcrCxOavgSB7U3OH+c7f3h/RLVTAwzs+gwdcQUeAKtB2DQyGRBdpI1A
+	gdVVsv5fy4uiCt6P6bW5n1gLx4K6Wq0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-12-7lvU5FqcOUyefsuZCnGIAA-1; Sun,
+ 14 Sep 2025 22:47:15 -0400
+X-MC-Unique: 7lvU5FqcOUyefsuZCnGIAA-1
+X-Mimecast-MFC-AGG-ID: 7lvU5FqcOUyefsuZCnGIAA_1757904434
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5D40B1956050;
+	Mon, 15 Sep 2025 02:47:14 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.230])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 71AEC1800447;
+	Mon, 15 Sep 2025 02:47:06 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	eperezma@redhat.com
+Cc: jonah.palmer@oracle.com,
+	kuba@kernel.org,
+	jon@nutanix.com,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net V2 1/2] vhost-net: unbreak busy polling
+Date: Mon, 15 Sep 2025 10:47:02 +0800
+Message-ID: <20250915024703.2206-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,67 +76,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The pattern of calling either time_before64() or time_after64() with
-get_jiffies_64() can be replaced with the corresponding helper macros.
+Commit 67a873df0c41 ("vhost: basic in order support") pass the number
+of used elem to vhost_net_rx_peek_head_len() to make sure it can
+signal the used correctly before trying to do busy polling. But it
+forgets to clear the count, this would cause the count run out of sync
+with handle_rx() and break the busy polling.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Fixing this by passing the pointer of the count and clearing it after
+the signaling the used.
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 67a873df0c41 ("vhost: basic in order support")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/firewire/core-card.c   | 4 ++--
- drivers/firewire/core-cdev.c   | 2 +-
- drivers/firewire/core-device.c | 3 +--
- 3 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/vhost/net.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
-index 2541e8bb4b75..b5e01a711145 100644
---- a/drivers/firewire/core-card.c
-+++ b/drivers/firewire/core-card.c
-@@ -240,7 +240,7 @@ static void br_work(struct work_struct *work)
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index c6508fe0d5c8..16e39f3ab956 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1014,7 +1014,7 @@ static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
+ }
  
- 	/* Delay for 2s after last reset per IEEE 1394 clause 8.2.1. */
- 	if (card->reset_jiffies != 0 &&
--	    time_before64(get_jiffies_64(), card->reset_jiffies + secs_to_jiffies(2))) {
-+	    time_is_after_jiffies64(card->reset_jiffies + secs_to_jiffies(2))) {
- 		trace_bus_reset_postpone(card->index, card->generation, card->br_short);
- 
- 		if (!queue_delayed_work(fw_workqueue, &card->br_work, secs_to_jiffies(2)))
-@@ -308,7 +308,7 @@ static void bm_work(struct work_struct *work)
- 	irm_id   = card->irm_node->node_id;
- 	local_id = card->local_node->node_id;
- 
--	grace = time_after64(get_jiffies_64(), card->reset_jiffies + msecs_to_jiffies(125));
-+	grace = time_is_before_jiffies64(card->reset_jiffies + msecs_to_jiffies(125));
- 
- 	if ((is_next_generation(generation, card->bm_generation) &&
- 	     !card->bm_abdicate) ||
-diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
-index 9e90c79becdb..1be8f5eb3e17 100644
---- a/drivers/firewire/core-cdev.c
-+++ b/drivers/firewire/core-cdev.c
-@@ -1324,7 +1324,7 @@ static void iso_resource_work(struct work_struct *work)
- 		todo = r->todo;
- 		// Allow 1000ms grace period for other reallocations.
- 		if (todo == ISO_RES_ALLOC &&
--		    time_before64(get_jiffies_64(), client->device->card->reset_jiffies + secs_to_jiffies(1))) {
-+		    time_is_after_jiffies64(client->device->card->reset_jiffies + secs_to_jiffies(1))) {
- 			schedule_iso_resource(r, msecs_to_jiffies(333));
- 			skip = true;
- 		} else {
-diff --git a/drivers/firewire/core-device.c b/drivers/firewire/core-device.c
-index 7d5821cd9b37..457a0da024a7 100644
---- a/drivers/firewire/core-device.c
-+++ b/drivers/firewire/core-device.c
-@@ -855,8 +855,7 @@ static void fw_device_shutdown(struct work_struct *work)
+ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
+-				      bool *busyloop_intr, unsigned int count)
++				      bool *busyloop_intr, unsigned int *count)
  {
- 	struct fw_device *device = from_work(device, work, work.work);
+ 	struct vhost_net_virtqueue *rnvq = &net->vqs[VHOST_NET_VQ_RX];
+ 	struct vhost_net_virtqueue *tnvq = &net->vqs[VHOST_NET_VQ_TX];
+@@ -1024,7 +1024,8 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
  
--	if (time_before64(get_jiffies_64(),
--			  device->card->reset_jiffies + SHUTDOWN_DELAY)
-+	if (time_is_after_jiffies64(device->card->reset_jiffies + SHUTDOWN_DELAY)
- 	    && !list_empty(&device->card->link)) {
- 		fw_schedule_device_work(device, SHUTDOWN_DELAY);
- 		return;
+ 	if (!len && rvq->busyloop_timeout) {
+ 		/* Flush batched heads first */
+-		vhost_net_signal_used(rnvq, count);
++		vhost_net_signal_used(rnvq, *count);
++		*count = 0;
+ 		/* Both tx vq and rx socket were polled here */
+ 		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, true);
+ 
+@@ -1180,7 +1181,7 @@ static void handle_rx(struct vhost_net *net)
+ 
+ 	do {
+ 		sock_len = vhost_net_rx_peek_head_len(net, sock->sk,
+-						      &busyloop_intr, count);
++						      &busyloop_intr, &count);
+ 		if (!sock_len)
+ 			break;
+ 		sock_len += sock_hlen;
 -- 
-2.48.1
+2.34.1
 
 
