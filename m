@@ -1,412 +1,270 @@
-Return-Path: <linux-kernel+bounces-817493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37FEB582D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A339B582F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7E262A13C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BD53A9AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 17:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9717B2D7DD9;
-	Mon, 15 Sep 2025 17:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E47D286D7C;
+	Mon, 15 Sep 2025 17:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZPA5f6y/"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="cLLM5mAt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZO9t8Rge"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCA4261B91;
-	Mon, 15 Sep 2025 17:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D0D261B91;
+	Mon, 15 Sep 2025 17:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757956041; cv=none; b=imTkhgZ0yNyuXulqYZ4ydRWbqYCxpLOrTKBn3+Z9zhOV4dAHHLiPySS31fj7IYkCUGkK8rq4L0QAyoQGbqbHBYob0f12zLFJ1tv1Xvy7GIBAtfx6Zql1O2Fpex6knZwhJb5VEG0yGRKWQPMlB6qrdOpbvwAEpM+fAP2WP43mTWo=
+	t=1757956230; cv=none; b=s6cfrMZXmPBaH3gZdMxiFeAMHA6yb8sQsx0eGniYqk/aQb3ecZI5fRM3MmZ/T5NHZ1vSW2s4RNFO6KJtRFSwKB35PuXvHAqdScMrY2xDg/KfIFC+Nu+CRDaNJzh9P2j/nFDa00t+U9xyJwePoxxI1dNmIu8FGKlb6G5TSr3M/wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757956041; c=relaxed/simple;
-	bh=qeilsRwEs9JHRw0hX35gdC10jXev2u0uQOZPOb523R4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qI2wL8WXgiw6hJFraoYGHd8GZy2dmLNPWtSo5ndYPj3ZjzXDCUJZJRTMMff4WA5iPWyHzvN0AgfkWfIjawkgDoH+C4OiK9tf2ZDSscZQY6Mdik6VCmPRHo0DB7Jr9IA05xduKdobatyt2/+nck8fRR1VAjiWqqKWGuP9PZIuzLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZPA5f6y/; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 8FEEA1A09DD;
-	Mon, 15 Sep 2025 17:07:17 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 65D846063F;
-	Mon, 15 Sep 2025 17:07:17 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 888B1102F2B16;
-	Mon, 15 Sep 2025 19:07:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757956036; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=HeSRne8hf27jj3oT7aSQnAmbULkaO0oyiQdL/Xcz6pM=;
-	b=ZPA5f6y/wzeqN5lzuTsmgHwpkehQ90DXybdmcaKg5wqqIfOlJRdtPyakGdPAXOvy+5B3CN
-	JxIpgH/Br4gEKHyqkoXhboxFViHE+GHcnfi5E4hJ+X8CWH5INQDXYSlZaI5kTaBJoI/fRY
-	7fyABa0nGHBDQP+aS+ECFNe/taYx5WHpMUQ7b4mRCd9lNIAjFZZFj/pSMZhwdA8XCK8t93
-	VKyrYOKjawdx+cC9LM14vu55sEf+HWlBXVQsUzIFkNb89e0bBBaM2D42eeBNQ2ZnbaN8z6
-	aW0l1kcaK0DdKog8R5IoOahwpa7Z1PwSESgsLH6+W5wg8TjQv2Pygai0gQjNXg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Mon, 15 Sep 2025 19:06:30 +0200
-Subject: [PATCH net-next v3 5/5] net: pse-pd: pd692x0: Add devlink
- interface for configuration save/reset
+	s=arc-20240116; t=1757956230; c=relaxed/simple;
+	bh=Xcd8mkoke1PVc0kSxJqNK6HgqRhXX6+2c1GRg7aMeJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hlwBWDHvZh9vTn85OzUszOYNXqkUYeM+5RdhsY1WAirUubu4qipY4s/aebSCeUpohTC0R/gF53RgG+rRRqIUogyepb5WfYcxx6AEsIo9Wsf0Os2rFEVdDPySVWKEamz8DWgU8oGXtnDb1dCd5C0XWhj05cISBqRYwXnGAaS/qY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=cLLM5mAt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZO9t8Rge; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D1EF07A017E;
+	Mon, 15 Sep 2025 13:10:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 15 Sep 2025 13:10:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1757956224; x=1758042624; bh=0l
+	L3So/stgVGMNw6jx5A9K3nOGAawQRCu/hP06Lb/X0=; b=cLLM5mAtdFizLChk83
+	2Av0Zwm9OoR80YFS/MXDv4SaGTHzYQBzebhizfVuD07Qz9CTmwKHBvdKOc8+wn3n
+	Pj8+Uk8HBfYWYBWftYBzyp1IJDZXvm3xzapnqucFsryXSFZ8XyaJcBNHymQR1N9B
+	FCIAH4+rz7FfDEYfI+kZNj4/cShuCGxoStmSiX3HCTbSIvGPwR1Lp6PonDbbni1M
+	RxwEg62//sRboIf0AYHkNn9dip76L0hHbUQp735a7o3/SpJKl2UcPpw7keVJXlD+
+	LOooIotXfX3MN1A88TWF8Ry/aV+4z3oJPtzU8LAl8VuTu9jGDtP1l1fEeV3jOYpd
+	5iHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1757956224; x=1758042624; bh=0lL3So/stgVGMNw6jx5A9K3nOGAa
+	wQRCu/hP06Lb/X0=; b=ZO9t8RgeiyJBbOr71c2D2KKV9R7+fDjIJO3Zm+NyLi/3
+	7fAUblsLyFjRewFa2vz6V2EM0URhQZlDYZgDzXd2esS7iR9IdFiPTjwXHnhF9aZB
+	eNj1nSqXhDfmIIWWJ7IW/59HBold84dthaHovMKQRRVBzeaA594ihZ+mnJruAvoR
+	cpwxvj1gz2mR7mDG4WRooTf6sbG9+T8e8t/z9ik7vRCRKMNrl+SfdHV8v88VSFdU
+	uFfsRF9YiYGL2kZ9hT4La7CXANr23JMrDzn7CYDxWFT00M8DJgBDgkICJsdm6dTn
+	eTJG4WL6ql8mHNMMQXKwIQcpavVtX4puFtSSvUBILw==
+X-ME-Sender: <xms:gEjIaFpCjVRxtDLpSS4KYILgM53q_mqpUS2ndNtRJF35dn7V-oBe0Q>
+    <xme:gEjIaPR3lJTsDWCc50_H5pKfEMCg3l1C-M1gvPC4a4m9zfL1RGz_qOrty7zVihb4P
+    DltZjvCAEVPoLZJ2SA>
+X-ME-Received: <xmr:gEjIaP1FVWKP6CokBK4QehZs7gpSuz1xL9xWx30d2nnaEmU3vwGVX-n1BQYLXd5xPeekS_QJ00gFemSHQGxFoJ8BDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefkedvhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomheppfhikhhlrghsucfu
+    npguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghsse
+    hrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepheduleetteekgffffedu
+    feeuvdejiedvkefhveeifeegffehledtvdevhfefteegnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgu
+    sehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepjhgrtghophhordhmohhnughisehiuggvrghsohhnsghorghrugdrtghomhdprhgtph
+    htthhopehlrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgt
+    ohhmpdhrtghpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhikhhlrghsrdhsohguvghrlhhunhguodhr
+    vghnvghsrghssehrrghgnhgrthgvtghhrdhsvg
+X-ME-Proxy: <xmx:gEjIaLDY-Pn2oFRbzQ-oJLG5IFzP5zZwAH8Ma_ttRf1o8zE5WiOIpQ>
+    <xmx:gEjIaLiAy9iaA7q3rZD9YCrCHRrJ9QSeiqfsQm0_KcKoSl3XC1lq5Q>
+    <xmx:gEjIaNOsKYZFN1V7gNnmLBYq7SBn_AAM-TX58iu5DuoLC8_Wtd_mPA>
+    <xmx:gEjIaL8lQL5T3a_U2TUc4_UDnur_LWlLHnNxcFls8h9DpR5B17RTqQ>
+    <xmx:gEjIaBNkZYD70lPuhFvivwCundqzIO0lX5JKzbZ1aNdbC2ojlfsiOcL0>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 15 Sep 2025 13:10:23 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 00/12] media: Add support for R-Car ISP using Dreamchip RPPX1 ISP
+Date: Mon, 15 Sep 2025 19:07:31 +0200
+Message-ID: <20250915170743.106249-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-feature_poe_permanent_conf-v3-5-78871151088b@bootlin.com>
-References: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
-In-Reply-To: <20250915-feature_poe_permanent_conf-v3-0-78871151088b@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Jiri Pirko <jiri@resnulli.us>, Simon Horman <horms@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>
-Cc: kernel@pengutronix.de, Dent Project <dentproject@linuxfoundation.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, 
- "Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>
-X-Mailer: b4 0.15-dev-8cb71
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+Hello,
 
-Add devlink conf_save and conf_reset ops to enable userspace management
-of the PSE's permanent configuration stored in non-volatile memory.
-The save_conf allows saving the current configuration to non-volatile
-memory. The reset_conf attribute restores factory defaults configurations.
+This series adds support for two different devices that together enable
+ISP support on Renesas R-Car Gen4 ISP processing. The first driver added
+is for Dreamchip RPPX1 ISP, this device purely deals with image
+processing algorithms, statistics and image conversion; but have no DMA
+engines. The second driver is for the R-Car ISP CORE, this device
+deals with DMA to/from the RPPX1 ISP and provides a V4L2 user-space
+interface for the ISP.
 
-Skip hardware configuration initialization on probe when a saved
-configuration is already present in non-volatile memory (detected via user
-byte set to 42).
+The R-Car ISP driver uses the RPPX1 framework to drive the ISP and
+together the two devices provide a functional ISP. For detailed
+description of the RPPX1 see patch 1/12, and for details about the R-Car
+ISP see commit message in patch 2/12.
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
+The RPPX1 ISP is similar to functionality and design to the Rk1ISP
+already supported upstream. For this reason this series reuses the pixel
+format for ISP parameters (RK1E) and statistics (RK1S) as the user-space
+ABI to configure the ISP. The primary difference to Rk1iSP is the over
+all pipeline design and the register layout out is different enough to
+make it impractical to bolt it on the existing drivers.
 
-Changes in v2:
-- Move on from sysfs to devlink param for userspace management.
+However on a functional block level the blocks amiable and their
+register layout mapped to the buffer formats are similar enough to make
+the reuse practical. Another difference is that RPPX1 operates at a
+hight bitdepth then Rk1ISP, but this is easily supported by scaling the
+values to/from the buffers.
 
-Changes in v3:
-- Move on from devlink param to new devlink conf uAPI.
----
- Documentation/networking/devlink/index.rst   |   1 +
- Documentation/networking/devlink/pd692x0.rst |  24 ++++
- MAINTAINERS                                  |   1 +
- drivers/net/pse-pd/pd692x0.c                 | 160 ++++++++++++++++++++++++++-
- 4 files changed, 183 insertions(+), 3 deletions(-)
+All functional blocks present on the RPPX1 are not yet added to the
+driver, but most are. Hence not all configuration blocks of the Rk1E 
+extensible format are supported, but most if not all can be added. 
 
-diff --git a/Documentation/networking/devlink/index.rst b/Documentation/networking/devlink/index.rst
-index ba381ecadc3dc..336b4cc00bd14 100644
---- a/Documentation/networking/devlink/index.rst
-+++ b/Documentation/networking/devlink/index.rst
-@@ -97,6 +97,7 @@ parameters, info versions, and other features it supports.
-    netdevsim
-    nfp
-    octeontx2
-+   pd692x0
-    prestera
-    qed
-    sfc
-diff --git a/Documentation/networking/devlink/pd692x0.rst b/Documentation/networking/devlink/pd692x0.rst
-new file mode 100644
-index 0000000000000..d7166f6f3ba91
---- /dev/null
-+++ b/Documentation/networking/devlink/pd692x0.rst
-@@ -0,0 +1,24 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===========================
-+PSE PD692x0 devlink support
-+===========================
-+
-+This document describes the devlink features implemented by the PSE
-+``PD692x0`` device drivers.
-+
-+Operations
-+==========
-+
-+The ``PD692x0`` drivers implement the following devlink operations.
-+
-+.. list-table:: Devlink ops implemented
-+   :widths: 5 85
-+
-+   * - Name
-+     - Description
-+   * - ``conf_save``
-+     - Save the current configuration to non-volatile memory.
-+   * - ``conf_reset``
-+     - Reset the current and saved configuration located the non-volatile
-+       memory.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 429303a9447f3..cc6f7a8986b04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20300,6 +20300,7 @@ L:	netdev@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/pse-pd/
- F:	Documentation/networking/devlink/devlink-conf.rst
-+F:	Documentation/networking/devlink/pd692x0.rst
- F:	drivers/net/pse-pd/
- F:	net/devlink/conf.c
- F:	net/ethtool/pse-pd.c
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 782b1abf94cb1..97f9c0648fdb6 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -14,6 +14,7 @@
- #include <linux/pse-pd/pse.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
-+#include <net/devlink.h>
- 
- #define PD692X0_PSE_NAME "pd692x0_pse"
- 
-@@ -30,6 +31,8 @@
- #define PD692X0_FW_MIN_VER	5
- #define PD692X0_FW_PATCH_VER	5
- 
-+#define PD692X0_USER_BYTE	42
-+
- enum pd692x0_fw_state {
- 	PD692X0_FW_UNKNOWN,
- 	PD692X0_FW_OK,
-@@ -80,6 +83,9 @@ enum {
- 	PD692X0_MSG_GET_PORT_PARAM,
- 	PD692X0_MSG_GET_POWER_BANK,
- 	PD692X0_MSG_SET_POWER_BANK,
-+	PD692X0_MSG_SET_USER_BYTE,
-+	PD692X0_MSG_SAVE_SYS_SETTINGS,
-+	PD692X0_MSG_RESTORE_FACTORY,
- 
- 	/* add new message above here */
- 	PD692X0_MSG_CNT
-@@ -103,11 +109,13 @@ struct pd692x0_priv {
- 	bool last_cmd_key;
- 	unsigned long last_cmd_key_time;
- 
-+	bool cfg_saved;
- 	enum ethtool_c33_pse_admin_state admin_state[PD692X0_MAX_PIS];
- 	struct regulator_dev *manager_reg[PD692X0_MAX_MANAGERS];
- 	int manager_pw_budget[PD692X0_MAX_MANAGERS];
- 	int nmanagers;
- 	struct pd692x0_matrix *port_matrix;
-+	struct devlink *dl;
- };
- 
- /* Template list of communication messages. The non-null bytes defined here
-@@ -193,6 +201,24 @@ static const struct pd692x0_msg pd692x0_msg_template_list[PD692X0_MSG_CNT] = {
- 		.key = PD692X0_KEY_CMD,
- 		.sub = {0x07, 0x0b, 0x57},
- 	},
-+	[PD692X0_MSG_SET_USER_BYTE] = {
-+		.key = PD692X0_KEY_PRG,
-+		.sub = {0x41, PD692X0_USER_BYTE},
-+		.data = {0x4e, 0x4e, 0x4e, 0x4e,
-+			 0x4e, 0x4e, 0x4e, 0x4e},
-+	},
-+	[PD692X0_MSG_SAVE_SYS_SETTINGS] = {
-+		.key = PD692X0_KEY_PRG,
-+		.sub = {0x06, 0x0f},
-+		.data = {0x4e, 0x4e, 0x4e, 0x4e,
-+			 0x4e, 0x4e, 0x4e, 0x4e},
-+	},
-+	[PD692X0_MSG_RESTORE_FACTORY] = {
-+		.key = PD692X0_KEY_PRG,
-+		.sub = {0x2d, 0x4e},
-+		.data = {0x4e, 0x4e, 0x4e, 0x4e,
-+			 0x4e, 0x4e, 0x4e, 0x4e},
-+	},
- };
- 
- static u8 pd692x0_build_msg(struct pd692x0_msg *msg, u8 echo)
-@@ -1268,9 +1294,12 @@ static int pd692x0_setup_pi_matrix(struct pse_controller_dev *pcdev)
- 	if (ret)
- 		goto err_managers_req_pw;
- 
--	ret = pd692x0_hw_conf_init(priv);
--	if (ret)
--		goto err_managers_req_pw;
-+	/* Do not init the conf if it is already saved */
-+	if (!priv->cfg_saved) {
-+		ret = pd692x0_hw_conf_init(priv);
-+		if (ret)
-+			goto err_managers_req_pw;
-+	}
- 
- 	pd692x0_of_put_managers(priv, manager);
- 	kfree(manager);
-@@ -1727,14 +1756,118 @@ static const struct fw_upload_ops pd692x0_fw_ops = {
- 	.cleanup = pd692x0_fw_cleanup,
- };
- 
-+/* Devlink Params APIs */
-+enum pd692x0_devlink_param_id {
-+	PD692X0_DEVLINK_PARAM_ID_BASE = DEVLINK_PARAM_GENERIC_ID_MAX,
-+	PD692X0_DEVLINK_PARAM_ID_SAVE_CONF,
-+	PD692X0_DEVLINK_PARAM_ID_RESET_CONF,
-+};
-+
-+struct pd692x0_devlink {
-+	struct pd692x0_priv *priv;
-+};
-+
-+static int pd692x0_dl_conf_save(struct devlink *devlink,
-+				struct netlink_ext_ack *extack)
-+{
-+	struct pd692x0_devlink *dl = devlink_priv(devlink);
-+	struct pd692x0_priv *priv = dl->priv;
-+	struct pd692x0_msg msg, buf = {0};
-+	int ret;
-+
-+	mutex_lock(&priv->pcdev.lock);
-+	ret = pd692x0_fw_unavailable(priv);
-+	if (ret)
-+		goto out;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_SET_USER_BYTE];
-+	ret = pd692x0_sendrecv_msg(priv, &msg, &buf);
-+	if (ret)
-+		goto out;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_SAVE_SYS_SETTINGS];
-+	ret = pd692x0_send_msg(priv, &msg);
-+	if (ret) {
-+		dev_err(&priv->client->dev,
-+			"Failed to save the configuration (%pe)\n",
-+			ERR_PTR(ret));
-+		goto out;
-+	}
-+
-+	msleep(50); /* Sleep 50ms as described in the datasheet */
-+
-+	ret = i2c_master_recv(priv->client, (u8 *)&buf, sizeof(buf));
-+	if (ret != sizeof(buf)) {
-+		if (ret >= 0)
-+			ret = -EIO;
-+		goto out;
-+	}
-+
-+	ret = 0;
-+
-+out:
-+	mutex_unlock(&priv->pcdev.lock);
-+	return ret;
-+}
-+
-+static int pd692x0_dl_conf_reset(struct devlink *devlink,
-+				 struct netlink_ext_ack *extack)
-+{
-+	struct pd692x0_devlink *dl = devlink_priv(devlink);
-+	struct pd692x0_priv *priv = dl->priv;
-+	struct pd692x0_msg msg, buf = {0};
-+	int ret;
-+
-+	mutex_lock(&priv->pcdev.lock);
-+	ret = pd692x0_fw_unavailable(priv);
-+	if (ret)
-+		goto out;
-+
-+	msg = pd692x0_msg_template_list[PD692X0_MSG_RESTORE_FACTORY];
-+	ret = pd692x0_send_msg(priv, &msg);
-+	if (ret) {
-+		dev_err(&priv->client->dev,
-+			"Failed to reset the configuration (%pe)\n",
-+			ERR_PTR(ret));
-+		goto out;
-+	}
-+
-+	msleep(100); /* Sleep 100ms as described in the datasheet */
-+
-+	ret = i2c_master_recv(priv->client, (u8 *)&buf, sizeof(buf));
-+	if (ret != sizeof(buf)) {
-+		if (ret >= 0)
-+			ret = -EIO;
-+		goto out;
-+	}
-+
-+	ret = pd692x0_hw_conf_init(priv);
-+	if (ret) {
-+		dev_err(&priv->client->dev,
-+			"Error configuring ports matrix (%pe)\n",
-+			ERR_PTR(ret));
-+	}
-+
-+out:
-+	mutex_unlock(&priv->pcdev.lock);
-+	return ret;
-+}
-+
-+static const struct devlink_ops pd692x0_dl_ops = {
-+	.conf_save = pd692x0_dl_conf_save,
-+	.conf_reset = pd692x0_dl_conf_reset,
-+};
-+
- static int pd692x0_i2c_probe(struct i2c_client *client)
- {
- 	static const char * const regulators[] = { "vdd", "vdda" };
- 	struct pd692x0_msg msg, buf = {0}, zero = {0};
-+	struct pd692x0_devlink *pd692x0_dl;
- 	struct device *dev = &client->dev;
- 	struct pd692x0_msg_ver ver;
- 	struct pd692x0_priv *priv;
- 	struct fw_upload *fwl;
-+	struct devlink *dl;
- 	int ret;
- 
- 	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators),
-@@ -1793,6 +1926,9 @@ static int pd692x0_i2c_probe(struct i2c_client *client)
- 		}
- 	}
- 
-+	if (buf.data[2] == PD692X0_USER_BYTE)
-+		priv->cfg_saved = true;
-+
- 	priv->np = dev->of_node;
- 	priv->pcdev.nr_lines = PD692X0_MAX_PIS;
- 	priv->pcdev.owner = THIS_MODULE;
-@@ -1813,7 +1949,24 @@ static int pd692x0_i2c_probe(struct i2c_client *client)
- 				     "failed to register to the Firmware Upload API\n");
- 	priv->fwl = fwl;
- 
-+	dl = devlink_alloc(&pd692x0_dl_ops, sizeof(*pd692x0_dl), dev);
-+	if (!dl) {
-+		dev_err(dev, "devlink_alloc failed\n");
-+		ret = -ENOMEM;
-+		goto err_unregister_fw;
-+	}
-+
-+	pd692x0_dl = devlink_priv(dl);
-+	pd692x0_dl->priv = priv;
-+	priv->dl = dl;
-+	devlink_register(dl);
-+
- 	return 0;
-+
-+err_unregister_fw:
-+	firmware_upload_unregister(priv->fwl);
-+
-+	return ret;
- }
- 
- static void pd692x0_i2c_remove(struct i2c_client *client)
-@@ -1821,6 +1974,7 @@ static void pd692x0_i2c_remove(struct i2c_client *client)
- 	struct pd692x0_priv *priv = i2c_get_clientdata(client);
- 
- 	pd692x0_managers_free_pw_budget(priv);
-+	devlink_unregister(priv->dl);
- 	firmware_upload_unregister(priv->fwl);
- }
- 
+A libcamera pipeline reusing the Rk1ISP IPA have been posted [1] and it 
+can exercise all function block enabled by this series. It produce good 
+images using all algorithms available.
+
+Patch 1/12 adds the foundation for the RPPX1 framework. It deals with
+probing all function blocks making sure every blocks version register is
+supported and setup a "passthru" pipeline that just debayer RAW images.
+
+Patch 2/12 integrates the adds the R-Car ISP CORE DMA parts and 
+integrates with the RPPX1 framework added in patch 1/12.
+
+Patches 3/12 to 12/12 extends the RPPX1 framewok with the logic to drive 
+the different IPS modules.
+
+The sum of the work pass v4l2-compliance. A test suite for the enabled
+function blocks exists and pass. The work have also been tested with
+various libcamera utilities and compliance tests together with a IMX219
+and IMX462 sensor on R-Car V4H.
+
+Biggest change from v1 is that more function blocks have been enabled, 
+and some small bugs found and fixed. See individual patches for 
+changelog.
+
+Niklas Söderlund (12):
+  media: rppx1: Add framework to support Dreamchip RPPX1 ISP
+  media: rcar-isp: Add support for ISPCORE
+  media: rppx1: Add support for AWB measurement parameters and
+    statistics
+  media: rppx1: Add support for AWB gain settings
+  media: rppx1: Add support for Auto Exposure Measurement
+  media: rppx1: Add support for Histogram Measurement
+  media: rppx1: Add support for Black Level Subtraction
+  media: rppx1: Add support for Color Correction Matrix
+  media: rppx1: Add support for Lens Shade Correction
+  media: rppx1: Add support for Gamma Correction
+  media: rppx1: Add support for Bayer Demosaicing
+  media: rppx1: Add support for Bilateral Denoising
+
+ MAINTAINERS                                   |    6 +
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/dreamchip/Kconfig      |    3 +
+ drivers/media/platform/dreamchip/Makefile     |    6 +
+ .../media/platform/dreamchip/rppx1/Kconfig    |   11 +
+ .../media/platform/dreamchip/rppx1/Makefile   |   33 +
+ .../platform/dreamchip/rppx1/rpp_module.c     |   40 +
+ .../platform/dreamchip/rppx1/rpp_module.h     |  157 +++
+ .../platform/dreamchip/rppx1/rpp_params.c     |   80 ++
+ .../platform/dreamchip/rppx1/rpp_stats.c      |   30 +
+ .../media/platform/dreamchip/rppx1/rppx1.c    |  337 ++++++
+ .../media/platform/dreamchip/rppx1/rppx1.h    |   99 ++
+ .../platform/dreamchip/rppx1/rppx1_acq.c      |  147 +++
+ .../platform/dreamchip/rppx1/rppx1_awbg.c     |   67 ++
+ .../media/platform/dreamchip/rppx1/rppx1_bd.c |  210 ++++
+ .../platform/dreamchip/rppx1/rppx1_bdrgb.c    |   80 ++
+ .../platform/dreamchip/rppx1/rppx1_bls.c      |  175 +++
+ .../platform/dreamchip/rppx1/rppx1_cac.c      |   29 +
+ .../platform/dreamchip/rppx1/rppx1_ccor.c     |  180 +++
+ .../media/platform/dreamchip/rppx1/rppx1_db.c |  156 +++
+ .../platform/dreamchip/rppx1/rppx1_dpcc.c     |   76 ++
+ .../platform/dreamchip/rppx1/rppx1_exm.c      |  140 +++
+ .../media/platform/dreamchip/rppx1/rppx1_ga.c |   83 ++
+ .../platform/dreamchip/rppx1/rppx1_hist.c     |  249 ++++
+ .../platform/dreamchip/rppx1/rppx1_hist256.c  |   46 +
+ .../media/platform/dreamchip/rppx1/rppx1_is.c |   42 +
+ .../platform/dreamchip/rppx1/rppx1_lin.c      |   60 +
+ .../platform/dreamchip/rppx1/rppx1_lsc.c      |  194 +++
+ .../platform/dreamchip/rppx1/rppx1_ltm.c      |   48 +
+ .../platform/dreamchip/rppx1/rppx1_ltmmeas.c  |   41 +
+ .../platform/dreamchip/rppx1/rppx1_outif.c    |   45 +
+ .../platform/dreamchip/rppx1/rppx1_outregs.c  |   75 ++
+ .../platform/dreamchip/rppx1/rppx1_rmap.c     |   64 +
+ .../platform/dreamchip/rppx1/rppx1_rmapmeas.c |   47 +
+ .../platform/dreamchip/rppx1/rppx1_shrp.c     |   64 +
+ .../platform/dreamchip/rppx1/rppx1_wbmeas.c   |  188 +++
+ .../platform/dreamchip/rppx1/rppx1_xyz2luv.c  |   26 +
+ .../media/platform/renesas/rcar-isp/Kconfig   |    1 +
+ .../media/platform/renesas/rcar-isp/Makefile  |    2 +-
+ .../media/platform/renesas/rcar-isp/core-io.c | 1053 +++++++++++++++++
+ .../media/platform/renesas/rcar-isp/core.c    |  790 +++++++++++++
+ .../media/platform/renesas/rcar-isp/csisp.c   |   48 +-
+ .../platform/renesas/rcar-isp/risp-core.h     |  163 +++
+ include/media/rppx1.h                         |   33 +
+ 45 files changed, 5418 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/media/platform/dreamchip/Kconfig
+ create mode 100644 drivers/media/platform/dreamchip/Makefile
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/Kconfig
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/Makefile
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rpp_module.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rpp_module.h
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rpp_params.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rpp_stats.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1.h
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_acq.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_awbg.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_bd.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_bdrgb.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_bls.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_cac.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_ccor.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_db.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_dpcc.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_exm.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_ga.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_hist.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_hist256.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_is.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_lin.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_lsc.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_ltm.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_ltmmeas.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_outif.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_outregs.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_rmap.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_rmapmeas.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_shrp.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_wbmeas.c
+ create mode 100644 drivers/media/platform/dreamchip/rppx1/rppx1_xyz2luv.c
+ create mode 100644 drivers/media/platform/renesas/rcar-isp/core-io.c
+ create mode 100644 drivers/media/platform/renesas/rcar-isp/core.c
+ create mode 100644 drivers/media/platform/renesas/rcar-isp/risp-core.h
+ create mode 100644 include/media/rppx1.h
 
 -- 
-2.43.0
+2.51.0
 
 
