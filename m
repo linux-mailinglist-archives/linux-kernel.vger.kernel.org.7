@@ -1,158 +1,100 @@
-Return-Path: <linux-kernel+bounces-816910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAEAB57A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:23:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949B9B57ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9ED16AAE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C119A480F41
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B330B511;
-	Mon, 15 Sep 2025 12:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611633093DE;
+	Mon, 15 Sep 2025 12:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9QcWGS2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOL987am"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1233B30ACFE;
-	Mon, 15 Sep 2025 12:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B595E3002A0;
+	Mon, 15 Sep 2025 12:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757938868; cv=none; b=osvk+6CcFKT7n8HaY4qR1Xlg9U0oWhaFoOWJal2LjwRHDFifaOwxVXAmyBTqXQyqJp8PzedcftuBAUh5EbnMpwNL1WCWPbQUriVj9qPZ7LXIDlbZHWB+twyHtsCyfI8buph5bJKyb41c3IQbUUWaP7hDQVsUd+gkPAmzirf6fOI=
+	t=1757938921; cv=none; b=Ys44g4j9p48S7lsTSEM1ugYQVG2dY03PN4ajKFF6zwRE8b5JYnXpLkGGNqgpLxVMbolTBrl/8nd31gF5f3m7gVgNeV8BxZUsR0cZuuAQdPNkwLuVnVt6/Vx85m1RqG6qqm6VqVxDWODd1fkPjG4TEKyC73epkofCjuYGRbC1yRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757938868; c=relaxed/simple;
-	bh=LEyuDfqznR2YHQ87wE74oJBcoUDxPxiAciNx30pZ9iA=;
+	s=arc-20240116; t=1757938921; c=relaxed/simple;
+	bh=wqChBPKYTZwSBTY+wUKCdLB+xWLXUmuk7h+6PsQOCpA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axRCgRBMHnzlmW9+py0DelKffSaRXA/N6M8qdo9cGRyNAGvpJ/QquS6N9z3/ErSQW+vym1GCjl5/xg9WYaispjyXbvZeEIaRLQUR8bnDMuD0/5wIf47dSQ/H0urvjP9iLalGv5UuMDl+frASoGCpWK+HxX6OilZufbVZzxDkFKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9QcWGS2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FCDEC4CEF1;
-	Mon, 15 Sep 2025 12:21:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5sooY//eUl3bPwy5U39CuFdtXY1fiOQ6LWsUY9DUEvqIwo0t69Z2GiuvkYP+U7rcdzSnZAmRNuEvzGDEJLQ29JOFoK0DeboBh1F02UlDr1T9kHLhL0zmusc0F89pxIaD8moBxxNZkrUiWQMcsf1R1HMT2rfUY7M3cZ7FhMWALM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOL987am; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A042AC4CEF5;
+	Mon, 15 Sep 2025 12:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757938867;
-	bh=LEyuDfqznR2YHQ87wE74oJBcoUDxPxiAciNx30pZ9iA=;
+	s=k20201202; t=1757938921;
+	bh=wqChBPKYTZwSBTY+wUKCdLB+xWLXUmuk7h+6PsQOCpA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X9QcWGS2tL1F1aC9Gp3/fvIYoALDYWpziM54JiXpaXM00YY3oQK//lq4ebb8uDNCj
-	 RPjGc5LT0rUYAOHUNxTVOVqwkCac0eYe2/4rNrtLpI7oT25chOGBVZMvBcKOQTFAyy
-	 MMb4tc6bed/HgN7Sg2GvIPa6cMb+Aq0WzMxq7fZjn2ikxQB8nJiAjIncNUJeDJ2n3X
-	 0m8MtsHrhrugwNGpF3DLumhse2ihyQK//LCb3RrOtzRc/9dSv/BMmDpmVruwCK93Zd
-	 Fm+E382bgrF6ZBf4rUDh6rzufpNmEK2wNmrOoOQHIj3OtQuNj9pdtY0Ag/VvpI7YdM
-	 6X2CMS5L/8yOg==
-Date: Mon, 15 Sep 2025 14:21:04 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2 3/9] drm/bridge: add
- drm_for_each_bridge_in_chain_scoped()
-Message-ID: <20250915-bulky-visionary-hamster-3a6c10@penduick>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
- <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-3-edb6ee81edf1@bootlin.com>
- <7gpqrxlxxuarbp5b7bycukbbjdcuonlhn4zm6xinnrlqzrbeu7@rrpcwxnxxrag>
- <20250819180137.28ca89c0@booty>
+	b=JOL987am8SHXNwbrbwaJ5504uBX2I9gN6ifz1m9Ju66XJT9O7+SZpjuI7eYH13YjN
+	 Xj0PK3EpBP+iWwdxlzUIIS1yoOojz/bL/wTP2z5X/yDfL8ZJaOehdhZBTPsRzOpjhI
+	 +pF+TBBqbTfJUdRGgK+nRziNEqv3YJQYxKpyFi59vXWvNYcVWUY9DIDJSaWHTGVSDo
+	 PUgCOrmwV98dNRKaR0WEHE+C2SJELgHAK54axLhy13ktSvLJ2Y3gfLHpTpIVnYXUbQ
+	 UUCCUb4BKYFKyUeTw1aF/GFS3REWkuouzypruNMeyQx/XjSWYRoRzLj+QRmxwJ8T0D
+	 ub3YwUWBPZqSA==
+Date: Mon, 15 Sep 2025 14:21:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Mark Tinguely <mark.tinguely@oracle.com>, ocfs2-devel@lists.linux.dev, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	jlbec@evilplan.org, mark@fasheh.com, willy@infradead.org, david@fromorbit.com
+Subject: Re: [External] : [PATCH] ocfs2: retire ocfs2_drop_inode() and
+ I_WILL_FREE usage
+Message-ID: <20250915-anlocken-brummen-b86b3cba8ccf@brauner>
+References: <f3671198-5231-41cf-b0bc-d1280992947a@oracle.com>
+ <CAGudoHHT=P_UyZZpx5tBRHPE+irh1b7PxFXZAHjdHNLcEWOxAQ@mail.gmail.com>
+ <8ddcaa59-0cf0-4b7c-a121-924105f7f5a6@linux.alibaba.com>
+ <rvavp2omizs6e3qf6xpjpycf6norhfhnkrle4fq4632atgar5v@dghmwbctf2mm>
+ <f9014fdb-95c8-4faa-8c42-c1ceea49cbd9@linux.alibaba.com>
+ <fureginotssirocugn3aznor4vhbpadhwy7fhaxzeullhrzp7y@bg5gzdv6mrif>
+ <CAGudoHGui53Ryz1zunmd=G=Rr9cZOsWPFW7+GGBmxN4U_BNE4A@mail.gmail.com>
+ <tmovxjz7ouxzj5r2evjjpiujqeod3e22dtlriqqlgqwy4rnoxd@eppnh4jf72dq>
+ <CAGudoHHNhf2epYMLwmna3WVvbMuiHFmPX+ByVbt8Qf3Dm4QZeg@mail.gmail.com>
+ <CAGudoHEBDA1XKu8WTPQ4Nn+GTUWg_FMUavcAddBQ=5doY1aQxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="c573rpqk2yt63efe"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250819180137.28ca89c0@booty>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEBDA1XKu8WTPQ4Nn+GTUWg_FMUavcAddBQ=5doY1aQxw@mail.gmail.com>
 
+On Tue, Sep 09, 2025 at 11:57:11AM +0200, Mateusz Guzik wrote:
+> On Tue, Sep 9, 2025 at 11:52 AM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >
+> > On Tue, Sep 9, 2025 at 11:51 AM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Mon 08-09-25 17:39:22, Mateusz Guzik wrote:
+> > > > I think generic_delete_inode is a really bad name for what the routine
+> > > > is doing and it perhaps contributes to the confusion in the thread.
+> > > >
+> > > > Perhaps it could be renamed to inode_op_stub_always_drop or similar? I
+> > > > don't for specifics, apart from explicitly stating that the return
+> > > > value is to drop and bonus points for a prefix showing this is an
+> > > > inode thing.
+> > >
+> > > I think inode_always_drop() would be fine...
+> >
+> > sgtm. unfortunately there are quite a few consumers, so I don't know
+> > if this is worth the churn and consequently I'm not going for it.
+> >
+> > But should you feel inclined... ;-)
+> 
+> Actually got one better: inode_just_drop(), so that it is clear this
+> is not doing anything else.
 
---c573rpqk2yt63efe
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/9] drm/bridge: add
- drm_for_each_bridge_in_chain_scoped()
-MIME-Version: 1.0
-
-On Tue, Aug 19, 2025 at 06:01:37PM +0200, Luca Ceresoli wrote:
-> Hi Maxime,
->=20
-> On Tue, 19 Aug 2025 15:47:06 +0200
-> Maxime Ripard <mripard@kernel.org> wrote:
->=20
-> > > +/**
-> > > + * drm_for_each_bridge_in_chain_scoped - iterate over all bridges at=
-tached
-> > > + *                                       to an encoder
-> > > + * @encoder: the encoder to iterate bridges on
-> > > + * @bridge: a bridge pointer updated to point to the current bridge =
-at each
-> > > + *	    iteration
-> > > + *
-> > > + * Iterate over all bridges present in the bridge chain attached to =
-@encoder.
-> > > + *
-> > > + * Automatically gets/puts the bridge reference while iterating, and=
- puts
-> > > + * the reference even if returning or breaking in the middle of the =
-loop.
-> > > + */
-> > > +#define drm_for_each_bridge_in_chain_scoped(encoder, bridge)		\
-> > > +	for (struct drm_bridge *bridge __free(drm_bridge_put) =3D		\
-> > > +	     drm_bridge_chain_get_first_bridge(encoder);		\ =20
-> >=20
-> > So my understanding is that the initial value of bridge would be cleaned
-> > up with drm_bridge_put...
-> >=20
-> > > +	     bridge;							\
-> > > +	     bridge =3D drm_bridge_get_next_bridge_and_put(bridge)) =20
-> >=20
-> > ... but also when iterating?
-> >=20
-> > So if we have more than 0 values, we put two references?
->=20
-> No, this is not the case. The __free action is executed only when
-> exiting the entire for loop, not a single iteration.
->
-> This is consistent with the fact that the loop variable is persistent
-> across iterations.
->
-> I tested this macro in both cases:
->=20
->  * looping over the entire chain the final value of @bridge will be
->    NULL and the cleanup action won't call drm_bridge_put()
->  * breaking before the last element, @bridge is non-NULL and the
->    cleanup action does call drm_bridge_put()
->=20
-> See examples such as for_each_child_of_node_scoped() and other OF
-> iterators which work in the same way (which is no coincidence, I used
-> them as starting point for writing this patch).
-
-Ack,
-
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Maxime
-
---c573rpqk2yt63efe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMgEsAAKCRAnX84Zoj2+
-dtUdAX0Ss+hGq7VrYz+ksbTuiMAsW9D+O2++YU47lAvqHIAMAc1e7jjPGmuF3ahL
-CqPHyuQBfRsjFIOqpvdLfTChXYNowymVsrkgjdBpszrb1mTtQ3i5fiM0NLbZ4dth
-vca3U9CAtQ==
-=Xe1C
------END PGP SIGNATURE-----
-
---c573rpqk2yt63efe--
+That's a simple git sed tbh. Just send it to me this week. All big
+changes should be done by now.
 
