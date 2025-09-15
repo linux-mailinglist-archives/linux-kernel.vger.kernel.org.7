@@ -1,133 +1,195 @@
-Return-Path: <linux-kernel+bounces-816854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE395B5797A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:56:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDBFB57A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33E5480A1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:54:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089B81A28246
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D136130498D;
-	Mon, 15 Sep 2025 11:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yg5psPh4"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D63043D4
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3628D307AD5;
+	Mon, 15 Sep 2025 12:20:41 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13DD27FD49;
+	Mon, 15 Sep 2025 12:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937219; cv=none; b=Ete+zy/++i+HNmFtj6Aa8jd0+v/lNrohwBOYuEcq+vHFDyt1F9LAMyAOJpsvR58Suv+KPVqC6PxeiER9GxhYdymxrxpLlZZv/21KiZfSnU/QIdMNu6/2xrNoF2dYkGt4wNRbRl8mkGBULxBGwEBUpx9s5RoRPdOnLPFvcP31AUA=
+	t=1757938840; cv=none; b=KTkBWnsxxdJSSXJa5t7R9k/5iGbELLcN1SBBrjvQR37fJjidliedAGbNwNAN42pAHRtvovt/VVvWcCNluDVUoannPwcBaE2bKCqm9M2WJgsVQqffrZGsitcSViIhPoWxU+eWdBDM8L66Hn7LFrkUHXN+Evwo3I3xlvlh+7EAkh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937219; c=relaxed/simple;
-	bh=0ILSGIiItmyMCE7xHI853y8dy3amB33rFGrcT6q6w44=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ip/e8vsfx4TNJklrZKkTyRdixisUPwQMrypkxjimSR+AVcrymyf1EkXORnvVmSQepX9kHQspPepflu2upe7QFlqDAqgo/aVcPMq09wLNsphkD8bEunrK5djhzsQCsINOqx2jCe/YaXZUbEjTKaksX9BaZrmu1OPbYi4BPD+LsFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yg5psPh4; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so2895136f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 04:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757937216; x=1758542016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9rsfkbv0EL7aToRl/37b12mldmjeHZasuzSc06g/5c=;
-        b=Yg5psPh4WYZ92pfMU1Q8RGDtkgtbVzBijRhhArXWxcjCQh7G2fsyAIeW+QpA1vE1Io
-         nCv/WF4UgrliahfuxHIJLVjISmUpoAJYkxt0siwxT0iq6BmS7ZU+MgulJvzepOA5yXuv
-         yzUMbfAXMl4dbqDCITwYp920tI8Lj1lAoIuUGNAJacC2seqrYv8qHW2ANiApNh77wJNc
-         VI37DsVmgptMc5/oXJTjIhioAO1KxAg+69q9c2L1Qr6UKEFLaUogMB+C9lTQYejLLnsF
-         8EwaHXq7nuy5DlVrNXOuqgAzrPoJmNRg0IV5lY7l0IWhqOKrxywuJrRNuc5G6SQUUT0f
-         mJNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757937216; x=1758542016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S9rsfkbv0EL7aToRl/37b12mldmjeHZasuzSc06g/5c=;
-        b=vyrBYKa4PJbZpMCEBvth8qUTXhGBEFYd9ots1jysKmhZv+ga43Jj0cHQGcXzDojD4V
-         VvLLZNXAvuCQ7kBSsWnuklzCWHbM+xkSpgbcG7KoAUD+cLuUBdEmFFoqT4spOJWi9MbZ
-         QhAvjE4S6KQh9Mg+qK0G0kwFTiE8RfF1gg077tcm6FlYe1QtfZslGgB0m/iIrMEoHHI2
-         nE6Xc3eK8YRW5gdydPvAyiF6xrzQ9JVU2SMhYHBIn4HMxdNuAkieTTQAvHcSYPfU/QE8
-         TKBe17rqDFjAJAayXNpaL8XdtXW3dYr7J8VTBjk9rRDomxXylVRFUSiN5Fgr614YJtzy
-         R47w==
-X-Forwarded-Encrypted: i=1; AJvYcCWo8FAWhBL+1xpip6jqdkFxd+0PjK5Q0pHwYlTZe2LPPDLuXu/9U5yWsPv/T13BpQhbKBt2dE8p33SfLSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Xf1T2dEp7AwFX56t+jErpSzNdiSzHmZEDBbrhR1hOJbXPnRX
-	FeyXSkVNm4Htnj8QmPfRNmYrG3GOuRJ4lURJU2425Aidb0ByJoIoHbF4oerEXlocWVfj1LpNK+c
-	yhOKgC2kM12+SMNvf3kj9Xb6fkEcCcCg=
-X-Gm-Gg: ASbGncuj379hLN6MJZEWfOdo50qSNjRCiXNJaAi289c8hOjJJDgJp8zSa4cYXNbWOZh
-	PCKkr7fuWaW6AIRXws0fK+wPB1/CSC0OJUfn43fSQgb/i2cVHy3xwCEMqRDz3PfK19467GSHSiB
-	uDCmb37SUAw4F180f7Ego/CB0abNuH7/NEIW5K1oG3Ib/fbws/0RCBx8A8yKl3uwQ4jIwaTgUje
-	fjq8TUKgE+aHCbzAVw=
-X-Google-Smtp-Source: AGHT+IGfEQTtfZM/ItJCozrT631R5nXA0YD+rGtclPjyGWg2BWC+ZOF/elBODu9mAt1IorwWM6bWM2cMtMtquc7HPHI=
-X-Received: by 2002:a05:6000:1884:b0:3ea:558d:8e33 with SMTP id
- ffacd0b85a97d-3ea558d92femr3441083f8f.11.1757937215754; Mon, 15 Sep 2025
- 04:53:35 -0700 (PDT)
+	s=arc-20240116; t=1757938840; c=relaxed/simple;
+	bh=D/7KskjWGePd5lUSyB950r7KaGQ+t6CMELLiiCCjoR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aU4AUazivDeU3t+9gZkBhGYS8zye33+zt8Ha10Te78XdnKag4yWWLhtm8RKhy9xZ1dP/jfohKrqG7azNxX+0XU9Ah3cvp/S+md5JV6CBBGhy9OfhSnJ2e5j/fjFrnIb2vXkkekSR6E7LMWt74m3rOKWzhm4FVSO43VOfYgXxOGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cQNhn1N0hz9sxb;
+	Mon, 15 Sep 2025 13:53:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id anqguhIbwei8; Mon, 15 Sep 2025 13:53:29 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQNhm09sdz9sxY;
+	Mon, 15 Sep 2025 13:53:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CE0528B766;
+	Mon, 15 Sep 2025 13:53:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id xl8Y1gVm9bTH; Mon, 15 Sep 2025 13:53:27 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B538F8B763;
+	Mon, 15 Sep 2025 13:53:26 +0200 (CEST)
+Message-ID: <b7ecad05-9880-4443-b2d2-843cf6fcc937@csgroup.eu>
+Date: Mon, 15 Sep 2025 13:53:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915060141.12540-1-clamor95@gmail.com> <aMf6DLr8pTCP8tKn@shikoro>
-In-Reply-To: <aMf6DLr8pTCP8tKn@shikoro>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Mon, 15 Sep 2025 14:53:23 +0300
-X-Gm-Features: AS18NWBLkeKaqjltS4302C4IX18eul5NJVuVOImh89VIisTr8ceAaA7N6g0u10Y
-Message-ID: <CAPVz0n3m9VOV5unVHhU67XQnk4jckA+zyJdCHXu2fFxCSht4JQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] i2c: muxes: Add GPIO-detected hotplug I2C
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca@lucaceresoli.net>, 
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>, 
-	=?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
-	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 06/62] arm: init: remove special logic for setting
+ brd.rd_size
+To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+ Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Aleksa Sarai <cyphar@cyphar.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Julian Stecklina <julian.stecklina@cyberus-technology.de>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
+ Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
+ Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+ initramfs@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
+ linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+ devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+ Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
+ Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+References: <20250913003842.41944-1-safinaskar@gmail.com>
+ <20250913003842.41944-7-safinaskar@gmail.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250913003842.41944-7-safinaskar@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-=D0=BF=D0=BD, 15 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 14:35 Wolf=
-ram Sang
-<wsa+renesas@sang-engineering.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, Sep 15, 2025 at 09:01:36AM +0300, Svyatoslav Ryhel wrote:
-> > Implement driver for hot-plugged I2C busses, where some devices on
-> > a bus are hot-pluggable and their presence is indicated by GPIO line.
-> > This feature is used by the ASUS Transformers family, by the  Microsoft
-> > Surface RT/2 and maybe more.
-> >
-> > ASUS Transformers expose i2c line via proprietary 40 pin plug and wire
-> > that line through optional dock accessory. Devices in the dock are
-> > connected to this i2c line and docks presence is detected by a dedicted
-> > GPIO.
-> >
-> > Micha=C5=82 Miros=C5=82aw (1):
-> >   i2c: muxes: Add GPIO-detected hotplug I2C
-> >
-> > Svyatoslav Ryhel (1):
-> >   dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
-> >
-> >  .../bindings/i2c/i2c-hotplug-gpio.yaml        |  65 +++++
-> >  drivers/i2c/muxes/Kconfig                     |  11 +
-> >  drivers/i2c/muxes/Makefile                    |   1 +
-> >  drivers/i2c/muxes/i2c-hotplug-gpio.c          | 263 ++++++++++++++++++
-> >  4 files changed, 340 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-hotplug-g=
-pio.yaml
-> >  create mode 100644 drivers/i2c/muxes/i2c-hotplug-gpio.c
->
-> Adding Herve and Luca to CC because they want to achieve the same with
-> their I2C bus extensions, no?
->
 
-I have no idea what you are talking about, this an original series I
-have sent 2 years ago but now I decided that would be nice to have it
-in mainline Linux.  Here is a link to patchset from 19th Jun 2023
-https://lkml.org/lkml/2023/6/19/781
+
+Le 13/09/2025 à 02:37, Askar Safin a écrit :
+> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> There is no any reason for having special mechanism
+> for setting ramdisk size.
+
+That's you opinion.
+
+You should explain why.
+
+> 
+> Also this allows us to change rd_size variable to static
+> 
+> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+> ---
+>   arch/arm/kernel/atags_parse.c | 12 ------------
+>   drivers/block/brd.c           |  8 ++++----
+>   include/linux/initrd.h        |  3 ---
+
+What about:
+
+arch/mips/kernel/setup.c:early_param("rd_size", rd_size_early);
+
+Is it unrelated ?
+
+>   3 files changed, 4 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+> index a3f0a4f84e04..615d9e83c9b5 100644
+> --- a/arch/arm/kernel/atags_parse.c
+> +++ b/arch/arm/kernel/atags_parse.c
+> @@ -87,18 +87,6 @@ static int __init parse_tag_videotext(const struct tag *tag)
+>   __tagtable(ATAG_VIDEOTEXT, parse_tag_videotext);
+>   #endif
+> 
+> -#ifdef CONFIG_BLK_DEV_RAM
+> -static int __init parse_tag_ramdisk(const struct tag *tag)
+> -{
+> -       if (tag->u.ramdisk.size)
+> -               rd_size = tag->u.ramdisk.size;
+> -
+> -       return 0;
+> -}
+> -
+> -__tagtable(ATAG_RAMDISK, parse_tag_ramdisk);
+> -#endif
+> -
+>   static int __init parse_tag_serialnr(const struct tag *tag)
+>   {
+>          system_serial_low = tag->u.serialnr.low;
+> diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+> index 0c2eabe14af3..72f02d2b8a99 100644
+> --- a/drivers/block/brd.c
+> +++ b/drivers/block/brd.c
+> @@ -27,6 +27,10 @@
+> 
+>   #include <linux/uaccess.h>
+> 
+> +static unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+> +module_param(rd_size, ulong, 0444);
+> +MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+> +
+>   /*
+>    * Each block ramdisk device has a xarray brd_pages of pages that stores
+>    * the pages containing the block device's contents.
+> @@ -209,10 +213,6 @@ static int rd_nr = CONFIG_BLK_DEV_RAM_COUNT;
+>   module_param(rd_nr, int, 0444);
+>   MODULE_PARM_DESC(rd_nr, "Maximum number of brd devices");
+> 
+> -unsigned long rd_size = CONFIG_BLK_DEV_RAM_SIZE;
+> -module_param(rd_size, ulong, 0444);
+> -MODULE_PARM_DESC(rd_size, "Size of each RAM disk in kbytes.");
+> -
+>   static int max_part = 1;
+>   module_param(max_part, int, 0444);
+>   MODULE_PARM_DESC(max_part, "Num Minors to reserve between devices");
+> diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+> index 6320a9cb6686..b42235c21444 100644
+> --- a/include/linux/initrd.h
+> +++ b/include/linux/initrd.h
+> @@ -5,9 +5,6 @@
+> 
+>   #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
+> 
+> -/* size of a single RAM disk */
+> -extern unsigned long rd_size;
+> -
+>   /* 1 if it is not an error if initrd_start < memory_start */
+>   extern int initrd_below_start_ok;
+> 
+> --
+> 2.47.2
+> 
+> 
+
 
