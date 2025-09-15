@@ -1,90 +1,128 @@
-Return-Path: <linux-kernel+bounces-817855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BC4B58784
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB5BB58782
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A26464E1C3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1112B3BFF4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262782C1788;
-	Mon, 15 Sep 2025 22:28:12 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283352C1583;
+	Mon, 15 Sep 2025 22:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btiFbV66"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A6626AE4;
-	Mon, 15 Sep 2025 22:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61851280A5A;
+	Mon, 15 Sep 2025 22:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757975291; cv=none; b=SlDsTQ7x13DZKi8f01PJW9t2G/0M+9YseJDDxE8RKGvnQfpHr0S0i24FujWVb4MZOQdwDVncbxCMoTui75ZUC2vZlRDjO1e2ixCL7QsqMpAg5YKMWZuugmvf49Ru3PkXGJb8Wr42/bSNJ7735/X4ZykHaPrxBcRNI5fVByn1C1o=
+	t=1757975290; cv=none; b=qZZCDAJCB7RbnumFG6BRxlRT2jvgO7BBcVAHwvW1oCnZRtF/GEPJrHsfweOewzrTfEvlsM/PRkc6kxvPZCVajTbCabcK/PAC1xmK0DCnvhf2RQrUuBVyVgCRfqHo0Vd5SswRyTeS81R0s8CCv6a2QNEJTNFld8ex6FjFknCkX4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757975291; c=relaxed/simple;
-	bh=gj4vhmLZ80HZ49RFQNzOQ+6G+7wvHfi/fpS6n8Y4stY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZOo0mnFH9Tp1MgWLVnhXWNdGEVMV3IY+un0Ty1ql2zy4Mn/eGqqUsF9mBm3WkCD/CKDINfltcHDePrI9Ggq42fvcVsMwaJAtuTjHSPm9PgceUam2tq/lFPkNS9uBEHfVGXlF76SRb4cow2Z/IUFhKtrBUrJSeBAk9XmONV9p6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 58FMRiB0034727;
-	Tue, 16 Sep 2025 07:27:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 58FMRefe034717
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 16 Sep 2025 07:27:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <afaca575-2393-4dd8-8159-1b79b01d007f@I-love.SAKURA.ne.jp>
-Date: Tue, 16 Sep 2025 07:27:39 +0900
+	s=arc-20240116; t=1757975290; c=relaxed/simple;
+	bh=Wcpg6tFqbeXrFoRBlvkg7Sf+BtHE6/mi4vJgwFoUZ7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAL6e8EpyXPJgBKPZ1TXHPF4pj5VD7BG9YenEa0Ar1/lRoFRMGil5uukQ/PVyXEo43p4iRWsjs0eybSuVy4Nukk2Syrdcpswp5ikeq8s3STS/BoXIb+60d1/HxJq31C5x8JyLJf/oFvYPRzT0CaPQDVyfPBTuKGoQkYxTRp+L30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btiFbV66; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE259C4CEF1;
+	Mon, 15 Sep 2025 22:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757975290;
+	bh=Wcpg6tFqbeXrFoRBlvkg7Sf+BtHE6/mi4vJgwFoUZ7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=btiFbV66ndT5PiIZKyhZnWESs8zz13HkVRGGazrbMKTT4i+wheS/50P4tznON9TyA
+	 a58Hw/PgCuOAvxPnuSLa/Sl0Cr4WPrfPd5Aae+v1MEk7ZhupfTtxeqdXD49BcpCmjR
+	 j04dEBmtBubaNUzCl/IOXOUzUcuSaywrmwoE/r31Ded7UHFyuLbQGcmyBSHG5iy1Ay
+	 dnZDqqyZ0L2NHVjXaNZsZzyLlpsoNEk736iFJTsw059hVGtLtLEl5gJRickoHqnJr+
+	 UMwJRFPkvIVIM725yAa3peQjy4+9NywQ/bqbohEuAm/i9n+0WhUTjicS5UtSncs+Ux
+	 gd2aTTgxJ1EQw==
+Date: Mon, 15 Sep 2025 15:27:58 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
+	Sabrina Dubroca <sd@queasysnail.net>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Moshe Shemesh <moshe@nvidia.com>, Will Deacon <will@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Justin Stitt <justinstitt@google.com>, linux-s390@vger.kernel.org,
+	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+	Bill Wendling <morbo@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+	Yisen Zhuang <yisen.zhuang@huawei.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Leon Romanovsky <leonro@mellanox.com>, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Guralnik <michaelgur@mellanox.com>, patches@lists.linux.dev,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	Patrisious Haddad <phaddad@nvidia.com>
+Subject: Re: [PATCH net-next V2] net/mlx5: Improve write-combining test
+ reliability for ARM64 Grace CPUs
+Message-ID: <20250915222758.GC925462@ax162>
+References: <1757925308-614943-1-git-send-email-tariqt@nvidia.com>
+ <20250915221859.GB925462@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] hfs: update sanity check of the root record
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <56dd2ace-7e72-424d-a51a-67c48ae58686@I-love.SAKURA.ne.jp>
- <0dc4e0a9888b7b772e8093fc40c2d44a22f49daf.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <0dc4e0a9888b7b772e8093fc40c2d44a22f49daf.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav204.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915221859.GB925462@ax162>
 
-On 2025/09/16 7:14, Viacheslav Dubeyko wrote:
-> On Fri, 2025-09-12 at 23:59 +0900, Tetsuo Handa wrote:
->> syzbot is reporting that BUG() in hfs_write_inode() fires upon unmount
->> operation when the inode number of the record retrieved as a result of
->> hfs_cat_find_brec(HFS_ROOT_CNID) is not HFS_ROOT_CNID, for
->> commit b905bafdea21 ("hfs: Sanity check the root record") checked
->> the record size and the record type but did not check the inode number.
->>
->> Viacheslav Dubeyko considers that the fix should be in hfs_read_inode()
->> but Viacheslav has no time for proposing the fix [1]. Also, we can't
->> guarantee that the inode number of the record retrieved as a result of
->> hfs_cat_find_brec(HFS_ROOT_CNID) is HFS_ROOT_CNID if we validate only in
->> hfs_read_inode(). Therefore, while what Viacheslav would propose might
->> partially overwrap with my proposal, let's fix an 1000+ days old bug by
->> adding a sanity check in hfs_fill_super().
->>
+On Mon, Sep 15, 2025 at 03:18:59PM -0700, Nathan Chancellor wrote:
+> On Mon, Sep 15, 2025 at 11:35:08AM +0300, Tariq Toukan wrote:
+> ...
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/Makefile b/drivers/net/ethernet/mellanox/mlx5/core/Makefile
+> > index d77696f46eb5..06d0eb190816 100644
+> > --- a/drivers/net/ethernet/mellanox/mlx5/core/Makefile
+> > +++ b/drivers/net/ethernet/mellanox/mlx5/core/Makefile
+> > @@ -176,3 +176,9 @@ mlx5_core-$(CONFIG_PCIE_TPH) += lib/st.o
+> >  
+> >  obj-$(CONFIG_MLX5_DPLL) += mlx5_dpll.o
+> >  mlx5_dpll-y :=	dpll.o
+> > +
+> > +#
+> > +# NEON WC specific for mlx5
+> > +#
+> > +mlx5_core-$(CONFIG_KERNEL_MODE_NEON) += lib/wc_neon_iowrite64_copy.o
+> > +FLAGS_lib/wc_neon_iowrite64_copy.o += $(CC_FLAGS_FPU)
 > 
-> I cannot accept any fix with such comment. The commit message should explain the
-> issue and fix nature.
+> Does this work as is? I think this needs to be CFLAGS instead of FLAGS
+> but I did not test to verify.
 
-Then, see v4 at https://lkml.kernel.org/r/427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp
+Also, Documentation/core-api/floating-point.rst states that code should
+also use CFLAGS_REMOVE_ for CC_FLAGS_NO_FPU as well as adding
+CC_FLAGS_FPU.
 
+  CFLAGS_REMOVE_lib/wc_neon_iowrite64_copy.o += $(CC_FLAGS_NO_FPU)
+
+Cheers,
+Nathan
 
