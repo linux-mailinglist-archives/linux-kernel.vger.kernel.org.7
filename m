@@ -1,53 +1,39 @@
-Return-Path: <linux-kernel+bounces-816847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A750B5792A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E3AB577EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2F7A16E1FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99001188ADC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0786304BA8;
-	Mon, 15 Sep 2025 11:50:43 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00737303C85;
-	Mon, 15 Sep 2025 11:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B592FB63E;
+	Mon, 15 Sep 2025 11:19:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8DDEAF9;
+	Mon, 15 Sep 2025 11:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937043; cv=none; b=aa8dUsVkyLk8h3wVPjjk5cooFKC4Fe9p4DxP32g6azDk/HUHVc/gJORUTF3q+RKzD4Mp4v6TAuA1aYKLiFGQzpft0IVS1xQnvwzyPTfW/o7fRuvLSRZnCeDDv0mm24cJRpoOMkE6PxU3ZKW3GCsvjsuULOvr0n6xTP1JPcyfR7w=
+	t=1757935182; cv=none; b=Y27gFch6St9Bi2HX3LLfPb2OUCQwIo682NS2zDo9FL2c2tTz1FZbneUMnJuvaxXZu6+j/Wh9SVnUVz5abT0xsg5ITB0BsmefGpAOS5Oc5ODy9VNmTYphpCkH1RTQhac7yU4TTs3wNKE5MxuHHqrAKTxXGk8ln/nL7+s1ppknbtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937043; c=relaxed/simple;
-	bh=slLaPaXqm4+66dpacFCrcqHE+39qtJjBzOocuF1xi6c=;
+	s=arc-20240116; t=1757935182; c=relaxed/simple;
+	bh=ezmIh4yAIIyC5Ofx9OYfMJK6a3eTs8fzX06OGshPKFg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMkXIyr8U+cvwfYT1x2g5NFoBTKDeKwWWa4Roj6ofZxvi7nYxWjWcIRkCwOIazM0h6qjU1wkmdbpdkBVf7fZNN1kfC0QisjXmAUTRYpD++DvZJjIGsg7QFVYiwnXttH0YWdDDl3b05z92HnI+MJmx5XKrh2TctCxpctd+DlvJrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cQMxX3w10z9sxn;
-	Mon, 15 Sep 2025 13:19:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lsQzt4OAL5QC; Mon, 15 Sep 2025 13:19:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cQMxW2nkYz9sxl;
-	Mon, 15 Sep 2025 13:19:27 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 27EFC8B766;
-	Mon, 15 Sep 2025 13:19:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id niL9xnZy0o5E; Mon, 15 Sep 2025 13:19:27 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6E3148B763;
-	Mon, 15 Sep 2025 13:19:26 +0200 (CEST)
-Message-ID: <c52c2589-9d7b-4ac7-a61f-68fa9ba18308@csgroup.eu>
-Date: Mon, 15 Sep 2025 13:19:26 +0200
+	 In-Reply-To:Content-Type; b=KJqa2OGm8VoRw0nlJUYq8N0MV2cKjrXBWBlL2jZI8vVKUCkCxJvOKOq8dg0R7LctRUQWeKLPG/MZA9euQCeAIe5CbaCzMk/ysEsHPcRsdMKpm5DMCs/9haFZAtNixQd9tuz3rt4rVxlIto5iE5ENp85yFGk+HnSFsGB+RdUWSeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D6971424;
+	Mon, 15 Sep 2025 04:19:31 -0700 (PDT)
+Received: from [10.57.70.220] (unknown [10.57.70.220])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C7D73F694;
+	Mon, 15 Sep 2025 04:19:34 -0700 (PDT)
+Message-ID: <d407a381-099b-4ec6-a20e-aeff4f3d750f@arm.com>
+Date: Mon, 15 Sep 2025 13:19:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,138 +41,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 03/62] init: sh, sparc, x86: remove unused
- constants RAMDISK_PROMPT_FLAG and RAMDISK_LOAD_FLAG
-To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
- Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
- Aleksa Sarai <cyphar@cyphar.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Julian Stecklina <julian.stecklina@cyberus-technology.de>,
- Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>,
- Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>,
- Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
- linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org,
- Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
- initramfs@vger.kernel.org, linux-api@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-efi@vger.kernel.org,
- linux-ext4@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>,
- linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
- devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
- Kees Cook <kees@kernel.org>, Thorsten Blum <thorsten.blum@linux.dev>,
- Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev,
- stable+noautosel@kernel.org
-References: <20250913003842.41944-1-safinaskar@gmail.com>
- <20250913003842.41944-4-safinaskar@gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250913003842.41944-4-safinaskar@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 0/7] Nesting support for lazy MMU mode
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+ Mark Rutland <Mark.Rutland@arm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908191602.61160a7990b9ea418de758c7@linux-foundation.org>
+ <d1b4ff2a-052f-4556-91ae-273962edbed0@redhat.com>
+ <338ef811-1dab-4c4e-bc5f-8ebd8cb68435@arm.com>
+ <5a0818bb-75d4-47df-925c-0102f7d598f4-agordeev@linux.ibm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <5a0818bb-75d4-47df-925c-0102f7d598f4-agordeev@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+On 15/09/2025 08:28, Alexander Gordeev wrote:
+> On Fri, Sep 12, 2025 at 05:25:27PM +0200, Kevin Brodsky wrote:
+>
+> Hi Kevin,
+>
+>> Based on the outcome of the discussion with David on patch 2 [1p], there
+>> is indeed an alternative approach that we should seriously consider. In
+>> summary:
+>>
+>> * Keep the API stateless, handle nesting with a counter in task_struct
+>> * Introduce new functions to temporarily disable lazy_mmu without
+>> impacting nesting, track that with a bool in task_struct (addresses the
+>> situation in mm/kasan/shadow.c and possibly some x86 cases too)
+>> * Move as much handling from arch_* to generic functions
+>>
+>> What the new generic infrastructure would look like:
+>>
+>> struct task_struct {
+>>     ...
+>> #ifdef CONFIG_ARCH_LAZY_MMU
+>>     struct {
+>>         uint8_t count;
+>>         bool enabled; /* or paused, see below */
+>>     } lazy_mmu_state;
+>> #endif
+>> }
+>>
+>> * lazy_mmu_mode_enable():
+> This helper is parameter-free, assuming the MMU unit does not need any
+> configuration other than turning it on/off. That is currently true, but
+> (as I noted in my other mail) I am going to introduce a friend enable
+> function that accepts parameters, creates an arch-specific state and
+> uses it while the lazy mmu mode is active.
 
+Yes I think that's fine.
 
-Le 13/09/2025 à 02:37, Askar Safin a écrit :
-> [Vous ne recevez pas souvent de courriers de safinaskar@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> They were used for initrd before c8376994c86.
-> 
-> c8376994c86c made them unused and forgot to remove them
-> 
-> Fixes: c8376994c86c ("initrd: remove support for multiple floppies")
-> Cc: <stable+noautosel@kernel.org> # because changes uapi headers
-> Signed-off-by: Askar Safin <safinaskar@gmail.com>
+> That does not impact your design (AFAICT), except one change below.
+>
+>>     if (!lazy_mmu_state.count) {
+>>         arch_enter_lazy_mmu_mode();
+>>         lazy_mmu_state.enabled = true;
+>>     }
+>>     lazy_mmu_state.count++;
+>>
+>> * lazy_mmu_mode_disable():
+>>     lazy_mmu_count--;
+>>     if (!lazy_mmu_state.count) {
+>>         lazy_mmu_state.enabled = false;
+>>         arch_leave_lazy_mmu_mode();
+>>     } else {
+>>         arch_flush_lazy_mmu_mode();
+>>     }
+>>
+>> * lazy_mmu_mode_pause():
+>>     lazy_mmu_state.enabled = false;
+>>     arch_leave_lazy_mmu_mode();
+> This needs to be arch_pause_lazy_mmu_mode(), otherwise the arch-specific
+> state will be lost.
+>
+>> * lazy_mmu_mode_resume();
+>>     arch_enter_lazy_mmu_mode();
+> Conversely, this needs to be arch_resume_lazy_mmu_mode(). And it can not
+> be arch_enter_lazy_mmu_mode(), since a lazy_mmu_mode_resume() caller does
+> not know the parameters passed to the lazy_mmu_mode_enable(...)-friend.
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Got it, that makes sense. Even without your proposal, it is probably a
+good idea to allow arch's to behave differently on pause/resume.
 
-> ---
->   arch/sh/kernel/setup.c                | 2 --
->   arch/sparc/kernel/setup_32.c          | 2 --
->   arch/sparc/kernel/setup_64.c          | 2 --
->   arch/x86/include/uapi/asm/bootparam.h | 2 --
->   arch/x86/kernel/setup.c               | 2 --
->   5 files changed, 10 deletions(-)
-> 
-> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-> index 039a51291002..d66f098e9e9f 100644
-> --- a/arch/sh/kernel/setup.c
-> +++ b/arch/sh/kernel/setup.c
-> @@ -71,8 +71,6 @@ EXPORT_SYMBOL(sh_mv);
->   extern int root_mountflags;
-> 
->   #define RAMDISK_IMAGE_START_MASK       0x07FF
-> -#define RAMDISK_PROMPT_FLAG            0x8000
-> -#define RAMDISK_LOAD_FLAG              0x4000
-> 
->   static char __initdata command_line[COMMAND_LINE_SIZE] = { 0, };
-> 
-> diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
-> index 704375c061e7..eb60be31127f 100644
-> --- a/arch/sparc/kernel/setup_32.c
-> +++ b/arch/sparc/kernel/setup_32.c
-> @@ -172,8 +172,6 @@ extern unsigned short root_flags;
->   extern unsigned short root_dev;
->   extern unsigned short ram_flags;
->   #define RAMDISK_IMAGE_START_MASK       0x07FF
-> -#define RAMDISK_PROMPT_FLAG            0x8000
-> -#define RAMDISK_LOAD_FLAG              0x4000
-> 
->   extern int root_mountflags;
-> 
-> diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
-> index 63615f5c99b4..f728f1b00aca 100644
-> --- a/arch/sparc/kernel/setup_64.c
-> +++ b/arch/sparc/kernel/setup_64.c
-> @@ -145,8 +145,6 @@ extern unsigned short root_flags;
->   extern unsigned short root_dev;
->   extern unsigned short ram_flags;
->   #define RAMDISK_IMAGE_START_MASK       0x07FF
-> -#define RAMDISK_PROMPT_FLAG            0x8000
-> -#define RAMDISK_LOAD_FLAG              0x4000
-> 
->   extern int root_mountflags;
-> 
-> diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-> index dafbf581c515..f53dd3f319ba 100644
-> --- a/arch/x86/include/uapi/asm/bootparam.h
-> +++ b/arch/x86/include/uapi/asm/bootparam.h
-> @@ -6,8 +6,6 @@
-> 
->   /* ram_size flags */
->   #define RAMDISK_IMAGE_START_MASK       0x07FF
-> -#define RAMDISK_PROMPT_FLAG            0x8000
-> -#define RAMDISK_LOAD_FLAG              0x4000
-> 
->   /* loadflags */
->   #define LOADED_HIGH    (1<<0)
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 1b2edd07a3e1..6409e766fb17 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -223,8 +223,6 @@ extern int root_mountflags;
->   unsigned long saved_video_mode;
-> 
->   #define RAMDISK_IMAGE_START_MASK       0x07FF
-> -#define RAMDISK_PROMPT_FLAG            0x8000
-> -#define RAMDISK_LOAD_FLAG              0x4000
-> 
->   static char __initdata command_line[COMMAND_LINE_SIZE];
->   #ifdef CONFIG_CMDLINE_BOOL
-> --
-> 2.47.2
-> 
-> 
+I hope we can avoid forcing all arch's to define arch_pause/arch_resume
+though, since only s390 will use it for the foreseeable future. Using
+optional macros should do the trick.
 
+- Kevin
 
