@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-817133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEED7B57E52
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81ABDB57E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FF63A89C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:02:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFA93A28AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DA831A54C;
-	Mon, 15 Sep 2025 14:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAAA20B800;
+	Mon, 15 Sep 2025 14:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h7SWvRLo"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+u9tdzp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFBA313261
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB481F3B96
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944920; cv=none; b=EMX3d+wWH2Mn/7XKsfTm21A9TWqnoktBkON1Tt34B7kUNTmVSa9vf0U/sK7rB4HUrdBSgz+2GkqpOUXt/IfVGpiKKl1UkD3VOraflq4BNczVXnHtAFkbGujki5tIpuy5ymWUv3LnuHhZdimsCFZ3PnAeOZN2Iz+3GWtZEPa3SWg=
+	t=1757944871; cv=none; b=QljrwIvvXI/Gf01tnlO0m89Myh9CFeOU2Pslens7g4FXvfhovLMJJgWEP1EQUIdaMBVIqMKFIulYhwy8xnmrhepvK0YX+7UlHq+1zgCOSNzmJNrXwXNJU8DBAeqBPlhfHDsX1moAoa9/fY32Fbat0FKm7DVW+w1FUxspOkjP3t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944920; c=relaxed/simple;
-	bh=CwUy7xI3aeGV2jHi752NlVRGAmuCtCfD9OUAYRdA1bA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LQNfKH8PLjBae9y74YRuwsFkLNHw3t+m5yNDe5ZWi2GbUfbJPgT3r2z9b36Wl/6KHANb4nzwuSKyvXhOKGhcXHneC2LQmT8Ar88XW0qoE77ji/ZPa2yK7NkJC40c0p91XFKJmeXewZ6DADypoWRk2vZ67YAFO0YzxC/sbvtOuwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h7SWvRLo; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757944905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=AhJ4pkDiJ0lWkmhamxXqTKU3eDM1TJhpY4CZ/P9eJwI=;
-	b=h7SWvRLorPI/hS+JB+Q5OH1c0BtLwcdyC1iqMl/fC/0e6SMC/9ih8/4d4iySxlDt58aOsW
-	GE43IfUiziAt0TrrZ5P7OsJE+575EuEad6mh1NNL17DeLS4bJbIf+dhJA6H38TuOWMRE9p
-	g0P3cavDxaeaC6BHAOthYONZlIltqKs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH] rust: cpufreq: streamline find_supply_names
-Date: Mon, 15 Sep 2025 15:59:54 +0200
-Message-ID: <20250915135954.2329723-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757944871; c=relaxed/simple;
+	bh=8olvie8tLQ2mhtW55gwpyxifDR7KCERuklBIHTYWwxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VybfwR92YaYwp1Qa3G/L6qkmpafCds2sqC/voT5BCnQHAjC+hCdfaU27p9dKgnrMkGqpiY2WFk/+ttRcr2rVWSkJdrtynNAa0IMKhvFRFvFE1pyS5Vi+jYxTsfo5GsGPVi5zNQmyC1dasxmMTVw752Kg9wO8Qy1LaS8qunOCbPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+u9tdzp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29AE7C4CEF1;
+	Mon, 15 Sep 2025 14:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757944870;
+	bh=8olvie8tLQ2mhtW55gwpyxifDR7KCERuklBIHTYWwxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P+u9tdzpymz6xsyciaB6n3rt32DVJ8+TkdA7u70VzV72+k5dfIPdjeJj4BiAV+zKq
+	 JwdqgqXiaXa9ZOFhYxBmdHIQQ1J+YbxXvkezAfMpAbWdM/v3gmNMLZr4DryGCc0xuJ
+	 4aGtt9LYRSI+K270uEvon56jV/zEAzOjadorNAY2R31CCG0DUgHOcjSy7qVwIID+VC
+	 FOYjTJhwajK4xIOdABSmdLMyKmZWIKZweFortDGA/PR7vnLLl2lleaO2D2wJAckTYY
+	 KoaZWXsO7U5wdxe+NIb4cIKw8/UmhlyUFgs2mOlYNKMzs9veniITYpVrrQbm2szDQ1
+	 Y4K+eoPfacPAg==
+Date: Mon, 15 Sep 2025 17:01:01 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
+	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] kho: add support for preserving vmalloc
+ allocations
+Message-ID: <aMgcHWxsEWnKzzcN@kernel.org>
+References: <20250908103528.2179934-1-rppt@kernel.org>
+ <20250908103528.2179934-2-rppt@kernel.org>
+ <20250908141423.GJ616306@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908141423.GJ616306@nvidia.com>
 
-Remove local variables from find_supply_names() and use .and_then() with
-the more concise kernel::kvec![] macro, instead of KVec::with_capacity()
-followed by .push() and Some().
-
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/cpufreq/rcpufreq_dt.rs | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
-index 7e1fbf9a091f..224d063c7cec 100644
---- a/drivers/cpufreq/rcpufreq_dt.rs
-+++ b/drivers/cpufreq/rcpufreq_dt.rs
-@@ -28,15 +28,11 @@ fn find_supply_name_exact(dev: &Device, name: &str) -> Option<CString> {
- /// Finds supply name for the CPU from DT.
- fn find_supply_names(dev: &Device, cpu: cpu::CpuId) -> Option<KVec<CString>> {
-     // Try "cpu0" for older DTs, fallback to "cpu".
--    let name = (cpu.as_u32() == 0)
-+    (cpu.as_u32() == 0)
-         .then(|| find_supply_name_exact(dev, "cpu0"))
-         .flatten()
--        .or_else(|| find_supply_name_exact(dev, "cpu"))?;
--
--    let mut list = KVec::with_capacity(1, GFP_KERNEL).ok()?;
--    list.push(name, GFP_KERNEL).ok()?;
--
--    Some(list)
-+        .or_else(|| find_supply_name_exact(dev, "cpu"))
-+        .and_then(|name| kernel::kvec![name].ok())
- }
+On Mon, Sep 08, 2025 at 11:14:23AM -0300, Jason Gunthorpe wrote:
+> On Mon, Sep 08, 2025 at 01:35:27PM +0300, Mike Rapoport wrote:
+> > +static struct kho_vmalloc_chunk *new_vmalloc_chunk(struct kho_vmalloc_chunk *cur)
+> > +{
+> > +	struct kho_vmalloc_chunk *chunk;
+> > +	int err;
+> > +
+> > +	chunk = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> > +	if (!chunk)
+> > +		return NULL;
+> > +
+> > +	err = kho_preserve_phys(virt_to_phys(chunk), PAGE_SIZE);
+> > +	if (err)
+> > +		goto err_free;
+> 
+> kzalloc() cannot be preserved, the only thing we support today is
+> alloc_page(), so this code pattern shouldn't exist.
  
- /// Represents the cpufreq dt device.
--- 
-2.51.0
+kzalloc(PAGE_SIZE) can be preserved, it's page aligned and we don't have to
+restore it into a slab cache. But this maybe indeed confusing for those who
+copy paste the code, so I'll change it.
 
+> Call alloc_page() and use a kho_preserve_page/folio() like the luo
+> patches were doing. The pattern seems common it probably needs a small
+> alloc/free helper.
+> 
+> > +	for (int i = 0; i < vm->nr_pages; i += (1 << order)) {
+> > +		phys_addr_t phys = page_to_phys(vm->pages[i]);
+> > +
+> > +		err = __kho_preserve_order(track, PHYS_PFN(phys), order);
+> > +		if (err)
+> > +			goto err_free;
+> 
+> I think you should make a helper inline to document what is happening here:
+> 
+> /*
+>  * Preserve a contiguous aligned list of order 0 pages that aggregate
+>  * to a higher order allocation. Must be restored using
+>  * kho_restore_page() on each order 0 page.
+>  */
+> kho_preserve_pages(page, order);
+
+Maybe.
+ 
+> Jason
+
+-- 
+Sincerely yours,
+Mike.
 
