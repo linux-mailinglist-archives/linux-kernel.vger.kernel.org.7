@@ -1,206 +1,319 @@
-Return-Path: <linux-kernel+bounces-817741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C0BB585E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0774B585E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 22:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCF774E2483
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2EB20285C
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F50A2874F3;
-	Mon, 15 Sep 2025 20:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1981828DB46;
+	Mon, 15 Sep 2025 20:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intrigued.uk header.i=@intrigued.uk header.b="4bMsOLyF"
-Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021107.outbound.protection.outlook.com [52.101.100.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Ki1YE0Qf"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE131C5F2C;
-	Mon, 15 Sep 2025 20:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757967391; cv=fail; b=IrzJJ0S3/DR+1tuBczzkxsGQNRjC/rxVUv35VQuJVMD43TvTnAjtsYHPLFBjvvdi1+DAr64jtp9YqFaas4zSOBP6wZoNEAZMgaBFxoFZVUbkhAYd0654UGutFjMDMIUovbV/XiUdZALH9u+C4bAkl6oHNz1ukrJxmjMUGcyEbbk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757967391; c=relaxed/simple;
-	bh=IyVxXBqKa1o26k12/UnL+TMGi2GPnYGwEHXqazNsKzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=VXLVhHX9fKM86b6JyBTPO6jpOIQ0T8XhbAEq2ync8VL5FD8CaZC+6Zwy3VnPEQzIvTFL+CLO1QSL2nFkMV8bCBO20BbtVRDm73OCSQb8cA5eeVZi4M66NgrdYyBephmQLWLWRC20LstRX7WS/lDXET/VuRtrIYG+yqvudVqdx/A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=intrigued.uk; spf=pass smtp.mailfrom=intrigued.uk; dkim=pass (2048-bit key) header.d=intrigued.uk header.i=@intrigued.uk header.b=4bMsOLyF; arc=fail smtp.client-ip=52.101.100.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=intrigued.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intrigued.uk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hpqmqm5K8qHzFUmWeThSHC1ByGKjai2OPI0v0p5T+zs2NFZjYyMe6O1AqfF/tx1DHPvJHX6P/4k6lTdnfahM5Ne3pXphbNcG7CEkM8Kog6X+NzbCe0bI8w86uK9UnZ3fDSN0Li5/M3XE+s4CNicH6659feIpP1JKjkb6gYW7AfyVfius01jkxa+yIYGNDntfSvFANXPeXWM6392OgWkWfLEL7ZTnqlSn+xzAO7dNULeBzz03APBIgTJSYS1Mkz43OyolSJTExAv5ghFuQCj21kE+Z3IqzBXHwHW/pCblMsK+Eo9LQUsRUlp2XlDPrKL1r6YWZ/RUAadYsh94R33gSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EXqUKuRTHyMVPm2pUSw5mCM/DCDKMDky2QAP1O8q7D0=;
- b=Ga+8C95VVoyFU8DsIoOJJkTv77hylif5KHGg+gmQRvgJF7oz+gsA6l54BUTvEu3KVvx6SxsRPGohUr2td1hidwQc96CX6RHkPHPmwsKhf2YulO9ioGshU9BEGcoMVx1jvxSKHiT7AzDDXW9wgSNjUjA+1Hp1AwlTNeVfeQp7mWiN7VAKUbeyJ9vOc2txwKqEy/XZxMM/7p+ovphWM8NEb1exM/uk/j2gQ2hrApFQIf2GLLBSGOELUi7HNKHXZJhOWhvXD6viTsDNQwZtvag21nK7Q0YVvEkoCplVyWv94QPeoqUOgpq3vFfSdpM6bDk8bPaUcc04hTqg6ZIO8tTE7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intrigued.uk; dmarc=pass action=none header.from=intrigued.uk;
- dkim=pass header.d=intrigued.uk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intrigued.uk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EXqUKuRTHyMVPm2pUSw5mCM/DCDKMDky2QAP1O8q7D0=;
- b=4bMsOLyFpzjy9AmSWscG2X+HtriO7dBpBMWcw+GTaDaVSIKeOo15Bb/TRS+My/yyDu9WKItgmbZSvnRyJ5PMfMoiSQrU9rRXj8bErlWPKvW76Vhi5LB3zTuYNlR1v/TuAtBNR57MlmrlbnHf9Ml/m0NMzQC8yo0seGx5GaBMioiL22EGx9GbFtSaoFc/gZSzVRZW0Z3e8e9ZAKkOuLSsuoa2YGFPS78fTXrVuwcvwMglryae+4AIRPwtSFWRPm6VyQnejSaovBVAeuu2HEkZrT4J4N9b4Yak6rZnGqPYBPAlaMcVURdbUJT59L9DifLiDZG41HBmSBnHLjANlQYklw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intrigued.uk;
-Received: from LO4P123MB4995.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:1f2::7)
- by LO0P123MB6784.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:309::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Mon, 15 Sep
- 2025 20:16:26 +0000
-Received: from LO4P123MB4995.GBRP123.PROD.OUTLOOK.COM
- ([fe80::e23f:f6b0:a91b:4ec2]) by LO4P123MB4995.GBRP123.PROD.OUTLOOK.COM
- ([fe80::e23f:f6b0:a91b:4ec2%4]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
- 20:16:25 +0000
-Date: Mon, 15 Sep 2025 21:16:24 +0100
-From: Joseph Bywater <joseph@intrigued.uk>
-To: Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: PROBLEM: net: qede: QL41262 unable to TX packets with multiple VLAN
- tags
-Message-ID: <aMh0GP2KFOi5FJrd@intrigued.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-ClientProxiedBy: LO4P123CA0199.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a5::6) To LO4P123MB4995.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1f2::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CEC2820CE
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757967487; cv=none; b=fShhGZfuEbIxAAK73vCfVqiUG2tDZfMGSJ9CUdbm83ncKQpK6iROHTmkSpjrQwcV331hNF3dqnjPCROBzPN2sXARs5bmRoO6BqvFHodEpcfwSw1lF9MWfIRHzgME1c8dRGp26OPGQkL6AcAJJbCWdHmUmV/j+4/CTB7r/2FKHaU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757967487; c=relaxed/simple;
+	bh=2MgQN39RZNmvFtL6QEsLDuDn4gBHd05USt/arPyBRAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hymegN9JOMW4Zcqu4zvgf6h0mEaYOkRHfvZFPBDmRiFTfXxKARBKgw+0xoL+dGFQe0c6/xqpjllzTm8Rfam6aTJx4WqZ5rYGuRhUocMPi/CpDZn+bRn/ZAJxQRo9CiMR4WF8LP5hILWi5zahgzY+dsmqa8DArIt+nt0pkh2Erk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=Ki1YE0Qf; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3df726ecff3so2541631f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:18:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1757967483; x=1758572283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sJJhpppygvVmFx5yZMKGD+Tn+q1juVpsqVaPDYy/WKI=;
+        b=Ki1YE0QfOKsCMU3FJmKVoejdRhkz7cD5/teJibjgpbP+pmAKR1w+ZCi27vXBa8AV86
+         Vpg9JA70b9KC/YEW28FVXKQmtrlCL9zADMhEwGOMEeQ+FZ6Fpdn4KeiWlOggQi2fbqvK
+         XhBubpXk5p8PZNioTXhdOsAtd+0SdrMgSbT7c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757967483; x=1758572283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sJJhpppygvVmFx5yZMKGD+Tn+q1juVpsqVaPDYy/WKI=;
+        b=nejV73fm8OCiLrxMq8u0NjwqUg90KHE/k68s5B6VyV6HOzrYYdp/o++KtrF/TknLIT
+         GGYiKDQdFWqyNRDUCH1Ex3EENzV3uF8v94wgIXovSms3lV8f8aeCkGqPIevSFljS6SJW
+         0qT9mYrBpDjuQosiDxMYg/1Rp8BNyQeTE0zap64FL/nWhmAmDUWznrtUI7KPyumCmV8l
+         f6/XEu/JgowOF5dVm5h4+BTKPGgvYsW7ByLu7Kg0mx9W9RPnjJpgvi7aLfW4DQeukaiF
+         cCHDeFMckqFN9+rVBGdmfHHsJbNesR9Boti3fN06pLrgijonPqtef5JOju7AI/WVklOF
+         z/kg==
+X-Gm-Message-State: AOJu0YyjEf1Y+ex/ZTC/TRO0RjiQxny5rZVycEqBPrToQTuiRXIlehlI
+	Zhhv7vm4BmA762ZhVTndr2n7XuFrw4442Gmd6b0fifXTAPBqe7TOfwV2eFH+YdgPfU6coZJ6EPO
+	jg1zL
+X-Gm-Gg: ASbGncuVS1dMBDxgL7o09dzYP5rO0XAcop1OwNswwgX9KQjLZ5EPCVdf2oUPGbeSVJo
+	sq/SxR2C3pRPX9bjEMIAz4eIkUsoXWQV+i56KqZsPNHEv7RjDHq9a7DXNspZVbUl4cqQox2fEuT
+	IoXJjmKUnCmmh/C+79qFV7Sv3oYFEhNm9AeyWu13eTpW1yztU5UFbJVouluYCLK+dVpbrFSlYDQ
+	2vSHCH4q1obxxwuOB2YJK8Hub8xW7tQyQQnxr4uHIFWZIAyYO8JUTWvQm02ZP3ry7fjS2Zj1uun
+	1UlmckHlwSwPwzuSvU7sDPpjlBtIS3+m+j+gzSc6wvV5O0EDMqPrNteF/5uLnKFy/1VZzCINqgp
+	MNrT4c8gsa3Ht5jHhnCUr/o/JsNO0zV+SwfNzUUYx+nMsOOGEdr/r5hjeQ/4FKHI=
+X-Google-Smtp-Source: AGHT+IFJ+/QD5nMmjdc2FRI9EvoQtf3vRrLAQzEz0v92T7rDYMmiD5ZEG6MjexO8fnAd7KKKm9hfpQ==
+X-Received: by 2002:a05:6000:438a:b0:3eb:5ff:cb2e with SMTP id ffacd0b85a97d-3eb05ffcfdbmr2622016f8f.29.1757967483330;
+        Mon, 15 Sep 2025 13:18:03 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.40.230])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7d369ea3bsm13724160f8f.0.2025.09.15.13.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 13:18:02 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Oliver Graute <oliver.graute@kococonnector.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	linux-input@vger.kernel.org
+Subject: [PATCH 1/2] Input: edt-ft5x06 - fix report rate handling by sysfs
+Date: Mon, 15 Sep 2025 22:16:31 +0200
+Message-ID: <20250915201748.1712822-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO4P123MB4995:EE_|LO0P123MB6784:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b9628fe-70a3-4092-0def-08ddf494bf20
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GZHzaQ6s6IhkltO6u2uvVBijZ8Xn+16YXnNNZwoOVjAhoDO1Y05nfOZlLDk4?=
- =?us-ascii?Q?rNZVvTfGTfxdAy/ZTy8TDHYTMA4S48K5mSRftbPtbLbk4gxMrIMc31k2k1Cu?=
- =?us-ascii?Q?0ZVntRdTZCist64tDfhFoD5XdQIBCwiNBvkJBpz3nPhjd44oesJdjLGKyN94?=
- =?us-ascii?Q?d2Tk7OCqrQgUJ9wh2iYTTZI7l0tO6HX7VsboMRHFMwCxMyC0zS7rFk58Bc2X?=
- =?us-ascii?Q?FEJ1FPd918Y152sm2TL+6LNQ+FhCAli2xo+FqtSh42UxMRfC02xaO/XZxXyq?=
- =?us-ascii?Q?69QKNULFbNQAVQ0YVwypL+kr9DIW2ycJPXTAjEwenb8fRpRe3FqqDB1n61NZ?=
- =?us-ascii?Q?kcabZ01QqbFgMTuY3HGdPCxsDOl+4VtTcto2AZ2pURC8pN5ooJ0p2sIB5yrQ?=
- =?us-ascii?Q?WmxjwVRYjaYlf8bfxlsLJSe9Te/ltkE7Si+ULMWhdXx7EUfJPQo2dbK77trx?=
- =?us-ascii?Q?iHuak5H0LCs60D8oXYQCD3T/iKmEbiUSM9z0Vg5UQuDBDr2YEkMfxrw8Zeq5?=
- =?us-ascii?Q?tS+0tbDjqrnC0bADw3l1EDBxqmoPl3OjXZkBMBFdCveiFR9Br075llJVs6r9?=
- =?us-ascii?Q?w/02F849MPKAkiKw92Irg5eZ+/EDx4l7C5hEJN5WA+TlirVuOSBlY5Pa9jNF?=
- =?us-ascii?Q?re+h5TQVpA2PmBBfz/p7k3pc0K6Qd8U16KSjQQXdRUxjxx42YdRJM3J/LISK?=
- =?us-ascii?Q?KiM8UQ/V+IUvAcxj3Y+Xl4CYFIFnegZUVfIgGcSu6OtryzgA5MV7S2rPLBlx?=
- =?us-ascii?Q?Tks7b5/1Msxh9TIrTiwTwKmPq6kEBWQ0DF8tlyvmk8uknGY7RbZKpN0yVvo/?=
- =?us-ascii?Q?x0UCq07e1QfDAN1QWqSO5CUevo01Csr07fUS4ucynBqQBTQCkK5kZv5P8Qqw?=
- =?us-ascii?Q?hofyZ13YDJ37c/fEHNxJm8aJEylL/UfL6tMH9RpLonovyCgk4rZ37oTunTuP?=
- =?us-ascii?Q?dhALv8pvmGTLMMLID7F6izVt5AvGwwwYE/+YSrSpNUSGeoCHeuQVyv/YF5cg?=
- =?us-ascii?Q?6pPj2pkgSK8jqZOqA8USADfXOtLn/B5UzeHNWrl/3DVlf6aycHiHVmpVQzA+?=
- =?us-ascii?Q?bxm9Ha85Huwn8sYGEBFDlGYT0l2ZdK4QMooTtbs4a+0S24k/b56oe2S1jzYt?=
- =?us-ascii?Q?GD0LOX/6FZ242qnpyo3rfm7xhVcmT7iwhPMQJ7Va+rQKKMwk/qXDr5XrJWag?=
- =?us-ascii?Q?t7VJOq5V9vMpGckxnTX5owYVam8y98EqlroqLVmVMNiLHrBCV+DWdqfwUCag?=
- =?us-ascii?Q?OClUKuX6afcyudCi2l6Se/s0AmbNRcwuiDJRr0/592G7lJtNEtG0jUL7li4j?=
- =?us-ascii?Q?FDoi6nGn/IMVsLzpjZ5xMKa81mmCH3mHSOOItMDBVnev2LgqTw6CC0XNRKgB?=
- =?us-ascii?Q?58GD5F8c97dEMShOKHgigviN5tVwNlssqg6M/qLSa0BOKohGxEakeCuLpEYW?=
- =?us-ascii?Q?QAKu1s0j2GE4zKCh4pMRJ2MmGy/bvIkHSMlxG714hs6CSJgnpFoTpg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO4P123MB4995.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?B/GuT4KnBIXxQd7sshfCWPwQMR0AUSyV2HD4BdZqgFsnil3+yGrRk2SAYqIh?=
- =?us-ascii?Q?Y6oe0mwq5NM5JLjCmuxXIlBJNs9BTxhRMaBHYvRf+bVwLHu4k+rmuNkce4Lr?=
- =?us-ascii?Q?q1ZPej6QLkJFf3hiVJ9HOKu0ZC3KHct2X6btkqNUUclhTv8uLz99/jWIlxsN?=
- =?us-ascii?Q?yMrRr27loq1xHmnruQzB73jklfQScykqVsJnh8QYxgUH51QPRaSVoL+ZKHUD?=
- =?us-ascii?Q?+uov0a1g02s9Au1SXa+eo6vPfjD5LJmPIQMvZLFHi7/gqtl8yLDCfqaoU1pI?=
- =?us-ascii?Q?Tihi5yitQg5jx1rVPFZfhKGMHXmm0l5AVTpzvkiciGVRzeitKau3Pluxs8lG?=
- =?us-ascii?Q?U2TuKxPWYtd8d8wXyszT/8LNbU0fgeYk5HTnexDg+7Wf9XZMQEhetB1YhF2C?=
- =?us-ascii?Q?kCJpsvytQagUKlfR4uh2xha6MBnnX4vi22M9+ohb7mXLaQDvvsykXDwsuizi?=
- =?us-ascii?Q?FGt4/1O5b7obCb6HkaYbeJvJysGova5XHhocgWyoq0aMLAtPE5La3IrRgijC?=
- =?us-ascii?Q?Uwqz28rmMu+EVv3TCQi6VJ4RXBds1vdkPRH8TWa+B6siByxaTNDBfqi1BqUc?=
- =?us-ascii?Q?Ykh4hz3lPt9eiXL1IhS/MohFXq41OPCzITC7IEtcgOXDSfYjuA8YKUZfOX95?=
- =?us-ascii?Q?xNcR12qwEAM2Ry8sgmwPnIdiZYWHQyg+DHq26B1FTCgsU1y30kjPwQwC5lnD?=
- =?us-ascii?Q?MkLRWNzp+91zNhcYpfGtQhspfwVwLUe3uXxWZ2RZUc9g7H6RNs3c0LosVBCG?=
- =?us-ascii?Q?+UwG2UU9vOkLNZN9bF8Q0RtJmufrEw52xKORVBleHnem0RZton6X2sZqFYgd?=
- =?us-ascii?Q?oavDxhzTrP+vYG3I1HzibP6gJWqcpVqlKjjyoddz9SJ+8wO8qG4BGiikXWc7?=
- =?us-ascii?Q?u4nH70ERHq6SFokq2JdEFTais0cwOce5PxuZ3SnhhgMPzjj9geMkvWdJA6ge?=
- =?us-ascii?Q?ejjXUvyr7nT3/ihtAGvtct8/C016fTyCA+XglurmhcLAiHXBpvzXJ2lzATvn?=
- =?us-ascii?Q?68EI/I82/fgWIvtmMfBmgQ6U6Y/yuGrrvTOqCCTyJAEigXgrvhp95SNrWCpq?=
- =?us-ascii?Q?ihf/XAtrrytDDBa1cs0sO98hRx2ReRo8omaL25e0UOSKJEvDwKoUPGm7Mg/m?=
- =?us-ascii?Q?EH6roxkfFN0cWIZ/vR+3DDOdKScJio9Sjuiizg4bsBGMv5q6Jjc4RnSQmXpn?=
- =?us-ascii?Q?t6QhK+XdKFFje2uUVinGaSrL0c/mmRf0w1C5doTyCJUVFMawf20TU1AvtUIU?=
- =?us-ascii?Q?IgN0oKGaXgifDyOUAynHCPmaTuT6u6i87tjWi/eab2diswKX6XSomkjsC5MK?=
- =?us-ascii?Q?wxKBE58O6lvNDG9JC/CnuZoZzye7r9i+1FYaM2COSurQJ1RpDhCQg9b5I3oM?=
- =?us-ascii?Q?XxIzMlJaNo8gbB3f5u1qaFEnBLdg5kX8fOQVO57GPOy8/ChiEA4KL6VF8I7a?=
- =?us-ascii?Q?Uu6QvSZG98cJ1fTI7sywsCBD/mNgKRcH5KLk7Cc/52t9wBcQitl+deXx8PZo?=
- =?us-ascii?Q?IG6s+cagA6QUqyo0TP6HZhE71nMP/73jqZBV66OEbVpnLjjWPeRe88eamx3N?=
- =?us-ascii?Q?QXoSBQ+M1lceARRgC1ppJxTu297D8HzX6OuYNHH0?=
-X-OriginatorOrg: intrigued.uk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b9628fe-70a3-4092-0def-08ddf494bf20
-X-MS-Exchange-CrossTenant-AuthSource: LO4P123MB4995.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 20:16:25.8373
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 42dcc6dd-439a-483c-99c4-86bd4e2f0f10
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TUWO+kj1BvHpONYKDDg9Iro7m88mSuMvTvpto2QujTe2bK2lw0XbzCkmg/AQyPWgW0qg66U8N69L627M1B6dDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P123MB6784
+Content-Transfer-Encoding: 8bit
 
-Hi,
+In the driver probe, the report-rate-hz value from device tree is written
+directly to the M12 controller register, while for the M06 it is divided
+by 10 since the controller expects the value in units of 10 Hz. That logic
+was missing in the sysfs handling, leading to inconsistent behavior
+depending on whether the value came from device tree or sysfs.
 
-I have been having a problem with a QLogic QL41262 NIC (using the qede driver)
-that is unable to TX packets with more than one VLAN tag. RX works fine,
-even with more than 2 VLAN tags applied. 
+This patch makes the report-rate handling consistent by applying the same
+logic in both cases. Two dedicated functions, report_rate_hz_{show,store},
+were added for the following reasons:
 
-I set up a test with two servers, one with an Intel NIC (ixgbe, .101), 
-and the other with the QL41262 (qede, .102). I created interfaces on each server as follows:
+- Avoid modifying the more generic edt_ft5x06_setting_{show,store} and
+  thus prevent regressions.
+- Properly enforce lower and upper limits for the M06 case. The previous
+  version accepted invalid values for M06, since it relied on the M12
+  limits.
+- Return an error when the property is not supported (e.g. M09), to avoid
+  misleading users into thinking the property is handled by the
+  controller.
 
-ip link add link eth0 eth0.10 type vlan id 10
-ip link add link eth0.10 eth0.10.20 type vlan id 20
-ip addr add 10.50.10.<101-102>/24 dev eth0.10
-ip addr add 10.50.20.<101-102>/24 dev eth0.10.20
-ip link set up eth0
-ip link set up eth0.10
-ip link set up eth0.10.20
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
 
-I then attempted to ping from the Intel server to the QLogic:
+ drivers/input/touchscreen/edt-ft5x06.c | 158 +++++++++++++++++++++----
+ 1 file changed, 135 insertions(+), 23 deletions(-)
 
-ping 10.50.10.102 (single VLAN tag) -> works
-ping 10.50.20.102 (double VLAN tag) -> does not work
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index bf498bd4dea9..d7a269a0528f 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -516,9 +516,136 @@ static EDT_ATTR(offset_y, S_IWUSR | S_IRUGO, NO_REGISTER, NO_REGISTER,
+ /* m06: range 20 to 80, m09: range 0 to 30, m12: range 1 to 255... */
+ static EDT_ATTR(threshold, S_IWUSR | S_IRUGO, WORK_REGISTER_THRESHOLD,
+ 		M09_REGISTER_THRESHOLD, EV_REGISTER_THRESHOLD, 0, 255);
+-/* m06: range 3 to 14, m12: range 1 to 255 */
+-static EDT_ATTR(report_rate, S_IWUSR | S_IRUGO, WORK_REGISTER_REPORT_RATE,
+-		M12_REGISTER_REPORT_RATE, NO_REGISTER, 0, 255);
++
++static int edt_ft5x06_report_rate_get(struct edt_ft5x06_ts_data *tsdata)
++{
++	unsigned int val;
++	int error;
++
++	if (tsdata->reg_addr.reg_report_rate == NO_REGISTER)
++		return -EOPNOTSUPP;
++
++	error = regmap_read(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
++			    &val);
++	if (error)
++		return error;
++
++	if (tsdata->version == EDT_M06)
++		val *= 10;
++
++	if (val != tsdata->report_rate) {
++		dev_warn(&tsdata->client->dev,
++			 "report-rate: read (%d) and stored value (%d) differ\n",
++			 val, tsdata->report_rate);
++		tsdata->report_rate = val;
++	}
++
++	return 0;
++}
++
++static ssize_t report_rate_show(struct device *dev,
++				struct device_attribute *dattr, char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
++	size_t count;
++	int error;
++
++	mutex_lock(&tsdata->mutex);
++
++	if (tsdata->factory_mode) {
++		error = -EIO;
++		goto out;
++	}
++
++	error = edt_ft5x06_report_rate_get(tsdata);
++	if (error) {
++		dev_err(&tsdata->client->dev,
++			"Failed to fetch attribute %s, error %d\n",
++			dattr->attr.name, error);
++		goto out;
++	}
++
++	count = sysfs_emit(buf, "%d\n", tsdata->report_rate);
++out:
++	mutex_unlock(&tsdata->mutex);
++	return error ?: count;
++}
++
++static int edt_ft5x06_report_rate_set(struct edt_ft5x06_ts_data *tsdata,
++				      unsigned int val)
++{
++	if (tsdata->reg_addr.reg_report_rate == NO_REGISTER)
++		return -EOPNOTSUPP;
++
++	if (tsdata->version == EDT_M06)
++		tsdata->report_rate = clamp_val(val, 30, 140);
++	else
++		tsdata->report_rate = clamp_val(val, 1, 255);
++
++	if (val != tsdata->report_rate) {
++		dev_warn(&tsdata->client->dev,
++			 "report-rate %dHz is unsupported, use %dHz\n",
++			 val, tsdata->report_rate);
++		val = tsdata->report_rate;
++	}
++
++	if (tsdata->version == EDT_M06)
++		val /= 10;
++
++	return regmap_write(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
++			    val);
++}
++
++static ssize_t report_rate_store(struct device *dev,
++				 struct device_attribute *dattr,
++				 const char *buf, size_t count)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
++	unsigned int val;
++	u8 limit_low;
++	u8 limit_high;
++	int error;
++
++	mutex_lock(&tsdata->mutex);
++
++	if (tsdata->factory_mode) {
++		error = -EIO;
++		goto out;
++	}
++
++	error = kstrtouint(buf, 0, &val);
++	if (error)
++		goto out;
++
++	if (tsdata->version == EDT_M06) {
++		limit_low = 30;
++		limit_high = 140;
++	} else {
++		limit_low = 1;
++		limit_high = 255;
++	}
++
++	if (val < limit_low || val > limit_high) {
++		error = -ERANGE;
++		goto out;
++	}
++
++	error = edt_ft5x06_report_rate_set(tsdata, val);
++	if (error) {
++		dev_err(&tsdata->client->dev,
++			"Failed to update attribute %s, error: %d\n",
++			dattr->attr.name, error);
++		goto out;
++	}
++
++out:
++	mutex_unlock(&tsdata->mutex);
++	return error ?: count;
++}
++
++static DEVICE_ATTR_RW(report_rate);
+ 
+ static ssize_t model_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -572,7 +699,7 @@ static struct attribute *edt_ft5x06_attrs[] = {
+ 	&edt_ft5x06_attr_offset_x.dattr.attr,
+ 	&edt_ft5x06_attr_offset_y.dattr.attr,
+ 	&edt_ft5x06_attr_threshold.dattr.attr,
+-	&edt_ft5x06_attr_report_rate.dattr.attr,
++	&dev_attr_report_rate.attr,
+ 	&dev_attr_model.attr,
+ 	&dev_attr_fw_version.attr,
+ 	&dev_attr_header_errors.attr,
+@@ -595,8 +722,7 @@ static void edt_ft5x06_restore_reg_parameters(struct edt_ft5x06_ts_data *tsdata)
+ 	if (reg_addr->reg_offset_y != NO_REGISTER)
+ 		regmap_write(regmap, reg_addr->reg_offset_y, tsdata->offset_y);
+ 	if (reg_addr->reg_report_rate != NO_REGISTER)
+-		regmap_write(regmap, reg_addr->reg_report_rate,
+-			     tsdata->report_rate);
++		edt_ft5x06_report_rate_set(tsdata, tsdata->report_rate);
+ }
+ 
+ #ifdef CONFIG_DEBUG_FS
+@@ -1029,8 +1155,8 @@ static void edt_ft5x06_ts_get_parameters(struct edt_ft5x06_ts_data *tsdata)
+ 	if (reg_addr->reg_offset_y != NO_REGISTER)
+ 		regmap_read(regmap, reg_addr->reg_offset_y, &tsdata->offset_y);
+ 	if (reg_addr->reg_report_rate != NO_REGISTER)
+-		regmap_read(regmap, reg_addr->reg_report_rate,
+-			    &tsdata->report_rate);
++		edt_ft5x06_report_rate_get(tsdata);
++
+ 	tsdata->num_x = EDT_DEFAULT_NUM_X;
+ 	if (reg_addr->reg_num_x != NO_REGISTER) {
+ 		if (!regmap_read(regmap, reg_addr->reg_num_x, &val))
+@@ -1289,21 +1415,7 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client)
+ 	if (tsdata->reg_addr.reg_report_rate != NO_REGISTER &&
+ 	    !device_property_read_u32(&client->dev,
+ 				      "report-rate-hz", &report_rate)) {
+-		if (tsdata->version == EDT_M06)
+-			tsdata->report_rate = clamp_val(report_rate, 30, 140);
+-		else
+-			tsdata->report_rate = clamp_val(report_rate, 1, 255);
+-
+-		if (report_rate != tsdata->report_rate)
+-			dev_warn(&client->dev,
+-				 "report-rate %dHz is unsupported, use %dHz\n",
+-				 report_rate, tsdata->report_rate);
+-
+-		if (tsdata->version == EDT_M06)
+-			tsdata->report_rate /= 10;
+-
+-		regmap_write(tsdata->regmap, tsdata->reg_addr.reg_report_rate,
+-			     tsdata->report_rate);
++		edt_ft5x06_report_rate_set(tsdata, report_rate);
+ 	}
+ 
+ 	dev_dbg(&client->dev,
+-- 
+2.43.0
 
-In the failing case, with two VLANs, I can see the generated ARP response
-using tcpdump from eth0.10.20 down to the eth0 interface.
-However, I do not receive this ARP packet on the server with the Intel NIC, 
-and the packet counters on the switch do not increase.
-
-Here is a truncated output from ethtool:
-rx-vlan-offload: on [fixed]
-tx-vlan-offload: on [fixed]
-rx-vlan-filter: on [fixed]
-vlan-challenged: off [fixed]
-tx-vlan-stag-hw-insert: off [fixed]
-rx-vlan-stag-hw-parse: off [fixed]
-rx-vlan-stag-filter: off [fixed]
-
-I have tested this on 6.8.0-79-generic, Ubuntu 24.04.
-Additionally, I tested a similar setup with other NICs, which worked without issue (drivers listed):
-- mlx5_core
-- ixgbe
-- ice
-
-Is this a known limitation of QLogic NICs? If not, are you able to
-advise on further tests I may be able to perform?
-
-Thanks,
-Joe
-
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+branch: edt-ft5x06-report-rate
 
