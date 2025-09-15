@@ -1,346 +1,194 @@
-Return-Path: <linux-kernel+bounces-816049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169B2B56EA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:05:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85876B56E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D201892081
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9453BBF85
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 03:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBC8278E7B;
-	Mon, 15 Sep 2025 03:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D00212548;
+	Mon, 15 Sep 2025 03:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="acJME7Kx"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G+Uo7hGn"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DB4217648;
-	Mon, 15 Sep 2025 03:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7895A57C9F
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757905362; cv=none; b=Xoxe1bGLLsXSEgGjQwocw7HzHZTQmd9UIU6PWJl13G2+8iRe+tLnEkTfM6JfMirB9GDGON0nAAWmzlJqS/Pv+4JgO+pMVLeZtvvcYON1XylyNDOnmRV2KB9P2NLkJMAvPIfNnQhT0lIyQKhYYvl+Cvu60nyiSNeL1aLAH66XXok=
+	t=1757905347; cv=none; b=TqqmuTt9HIvvLLVm/NGrYfpxoFN+nab1NldSK4V0VWQi0TbTCocwmQzVNnZgy6WgVng0/x7/DW9uW5tJeVqfEmpowdKBP8bQf9XRUXhGKkRYAeLlhXByi+fePYr64qb6Ih1rBiEtkDM3VrHyTA0mV0VRt2MHVPx/IifpxI3tS9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757905362; c=relaxed/simple;
-	bh=31yO4TRTCBZzSpP9t4qT/PKGa0hKqrLkjTbFClwjWtc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gQKl8XzR00aRyM7zDIeyMpcOV3xI0fo5xfUJf/TS2J+zieLGiDD7C0Pi2Zk14CJgeGxFRgRrrl5a5I9y+1Oz3WL6dRnqwf9rp3j35IL01hKiVUx2jhLHlQLm3MDXko/sLxh0RSjJv9lKzulRoE6/V0THQw7FK0XR09aVCAhA2N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=acJME7Kx; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 6e36d40e91e011f0b33aeb1e7f16c2b6-20250915
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:To:From; bh=seoFI9sb8jsOoQr0o4LYSqC8+Y0WVevN1xF9pB21Ocg=;
-	b=acJME7KxAtCpt9TxtPyz9ogP/MbID51watCIEbxQgTXOjV0QfcSNBv2n6p9o+ShiTvtE2V3xa+oB5Jlj4JawPAOKpwcaTeIZtW/cUmaqoH3OakCyrAR0bKRPvJ8aS24+lFw0aSYEEnQcQ9fFmrwmsyEpO6MvIPoOdhToB9SQnIk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.4,REQID:c86a0e84-51b6-43d2-968f-b9662a0fa91d,IP:0,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:1ca6b93,CLOUDID:7edb50a9-24df-464e-9c88-e53ab7cf7153,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	5,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,A
-	V:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 6e36d40e91e011f0b33aeb1e7f16c2b6-20250915
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <kyrie.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1065788039; Mon, 15 Sep 2025 11:02:35 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 15 Sep 2025 11:02:34 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 15 Sep 2025 11:02:33 +0800
-From: Kyrie Wu <kyrie.wu@mediatek.com>
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Kyrie Wu <kyrie.wu@mediatek.com>,
-	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-Subject: [PATCH v9 12/12] media: mediatek: jpeg: add jpeg smmu sid setting
-Date: Mon, 15 Sep 2025 11:02:11 +0800
-Message-ID: <20250915030212.22078-13-kyrie.wu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250915030212.22078-1-kyrie.wu@mediatek.com>
-References: <20250915030212.22078-1-kyrie.wu@mediatek.com>
+	s=arc-20240116; t=1757905347; c=relaxed/simple;
+	bh=fhnCjnA2uecuJbYizAIbJadlQYVFUl/FnXdkKah6TYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AmdrCv/lHzJi8CynlJi9u/1Iv1O5Oup6mzuClm3UkL7lbEf+yMKVyZ6GYdIa5D35BLCO8HZgJrTFkhGxyBxH0bnqtFv9Qv95z9IGtPlPBb/B122gcCQuwAUGJqiFba087ErveGTy9gbfvlOaWQTVjKpRvfz2puVdag12bedRaEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G+Uo7hGn; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <016e4d4c-c16b-45d5-a903-681afc6b4203@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757905341;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AEcarrc2+8ifIeyobydV/xFWrr9hTTutZzw8IUFdV5g=;
+	b=G+Uo7hGnDZ1c7SlCcAmx4kxesEfclvRm6kNBIYrJE2rjg3psEjvldYdQdL9oVfBxFTYnNl
+	WYaVn1GJPmFzlifBpSeZ4jQIFuR0DifF7W2B6vUMRS+GttAoEuRTTlvsp9ZRnkG9uKkt0V
+	V8wD95ttVwwTScYDc30lsKlVEFeL++w=
+Date: Mon, 15 Sep 2025 11:02:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH mm-new 1/3] mm/khugepaged: skip unsuitable VMAs earlier in
+ khugepaged_scan_mm_slot()
+Content-Language: en-US
+To: Dev Jain <dev.jain@arm.com>
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ akpm@linux-foundation.org, lorenzo.stoakes@oracle.com, david@redhat.com
+References: <20250914143547.27687-1-lance.yang@linux.dev>
+ <20250914143547.27687-2-lance.yang@linux.dev>
+ <a62b7461-3faf-494c-bd00-0206de184a5a@arm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <a62b7461-3faf-494c-bd00-0206de184a5a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-Migadu-Flow: FLOW_OUT
 
-Add a configuration to set jpeg dec & enc smmu sid
+Hey Dev,
 
-Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
----
- .../platform/mediatek/jpeg/mtk_jpeg_core.c    | 37 +++++++++++++++++++
- .../platform/mediatek/jpeg/mtk_jpeg_core.h    | 15 ++++++++
- .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.c  | 23 ++++++++++++
- .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.c  | 23 ++++++++++++
- 4 files changed, 98 insertions(+)
+Thanks for taking time to review!
 
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-index 1b6d691186f4..50aee7fe5142 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
-@@ -15,6 +15,7 @@
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <media/v4l2-event.h>
-@@ -1614,6 +1615,20 @@ static irqreturn_t mtk_jpeg_enc_done(struct mtk_jpeg_dev *jpeg)
- 	return IRQ_HANDLED;
- }
- 
-+static void mtk_jpeg_enc_set_smmu_sid(struct mtk_jpegenc_comp_dev *jpeg)
-+{
-+	struct mtk_jpeg_dev *mjpeg = jpeg->master_dev;
-+
-+	if (!mjpeg->variant->support_smmu || !jpeg->smmu_regmap)
-+		return;
-+
-+	regmap_update_bits(jpeg->smmu_regmap, JPEG_ENC_SMMU_SID,
-+			   JPG_REG_GUSER_ID_MASK <<
-+			   JPG_REG_ENC_GUSER_ID_SHIFT,
-+			   JPG_REG_GUSER_ID_ENC_SID <<
-+			   JPG_REG_ENC_GUSER_ID_SHIFT);
-+}
-+
- static void mtk_jpegenc_worker(struct work_struct *work)
- {
- 	struct mtk_jpegenc_comp_dev *comp_jpeg[MTK_JPEGENC_HW_MAX];
-@@ -1675,6 +1690,9 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 	jpeg_dst_buf->frame_num = ctx->total_frame_num;
- 	ctx->total_frame_num++;
- 	mtk_jpeg_enc_reset(comp_jpeg[hw_id]->reg_base);
-+
-+	mtk_jpeg_enc_set_smmu_sid(comp_jpeg[hw_id]);
-+
- 	mtk_jpeg_set_enc_dst(ctx,
- 			     comp_jpeg[hw_id]->reg_base,
- 			     &dst_buf->vb2_buf);
-@@ -1702,6 +1720,20 @@ static void mtk_jpegenc_worker(struct work_struct *work)
- 	v4l2_m2m_job_finish(jpeg->m2m_dev, ctx->fh.m2m_ctx);
- }
- 
-+static void mtk_jpeg_dec_set_smmu_sid(struct mtk_jpegdec_comp_dev *jpeg)
-+{
-+	struct mtk_jpeg_dev *mjpeg = jpeg->master_dev;
-+
-+	if (!mjpeg->variant->support_smmu || !jpeg->smmu_regmap)
-+		return;
-+
-+	regmap_update_bits(jpeg->smmu_regmap, JPEG_DEC_SMMU_SID,
-+			   JPG_REG_GUSER_ID_MASK <<
-+			   JPG_REG_DEC_GUSER_ID_SHIFT,
-+			   JPG_REG_GUSER_ID_DEC_SID <<
-+			   JPG_REG_DEC_GUSER_ID_SHIFT);
-+}
-+
- static void mtk_jpegdec_worker(struct work_struct *work)
- {
- 	struct mtk_jpeg_ctx *ctx = container_of(work, struct mtk_jpeg_ctx,
-@@ -1785,6 +1817,9 @@ static void mtk_jpegdec_worker(struct work_struct *work)
- 	jpeg_dst_buf->frame_num = ctx->total_frame_num;
- 	ctx->total_frame_num++;
- 	mtk_jpeg_dec_reset(comp_jpeg[hw_id]->reg_base);
-+
-+	mtk_jpeg_dec_set_smmu_sid(comp_jpeg[hw_id]);
-+
- 	mtk_jpeg_dec_set_config(comp_jpeg[hw_id]->reg_base,
- 				jpeg->variant->support_34bit,
- 				&jpeg_src_buf->dec_param,
-@@ -1944,6 +1979,7 @@ static struct mtk_jpeg_variant mtk8196_jpegenc_drvdata = {
- 	.cap_q_default_fourcc = V4L2_PIX_FMT_JPEG,
- 	.multi_core = true,
- 	.jpeg_worker = mtk_jpegenc_worker,
-+	.support_smmu = true,
- };
- 
- static const struct mtk_jpeg_variant mtk8195_jpegdec_drvdata = {
-@@ -1970,6 +2006,7 @@ static const struct mtk_jpeg_variant mtk8196_jpegdec_drvdata = {
- 	.cap_q_default_fourcc = V4L2_PIX_FMT_YUV420M,
- 	.multi_core = true,
- 	.jpeg_worker = mtk_jpegdec_worker,
-+	.support_smmu = true,
- };
- 
- static const struct of_device_id mtk_jpeg_match[] = {
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
-index 33f7fbc4ca5e..6e8304680393 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/clk.h>
- #include <linux/interrupt.h>
-+#include <linux/mfd/syscon.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-fh.h>
-@@ -34,6 +35,14 @@
- 
- #define MTK_JPEG_MAX_EXIF_SIZE	(64 * 1024)
- 
-+#define JPEG_DEC_SMMU_SID				0
-+#define JPEG_ENC_SMMU_SID				0
-+#define JPG_REG_GUSER_ID_MASK			0x7
-+#define JPG_REG_GUSER_ID_DEC_SID		0x4
-+#define JPG_REG_GUSER_ID_ENC_SID		0x5
-+#define JPG_REG_DEC_GUSER_ID_SHIFT		8
-+#define JPG_REG_ENC_GUSER_ID_SHIFT		4
-+
- #define MTK_JPEG_ADDR_MASK GENMASK(1, 0)
- 
- /**
-@@ -65,6 +74,7 @@ enum mtk_jpeg_ctx_state {
-  * @multi_core:		mark jpeg hw is multi_core or not
-  * @jpeg_worker:		jpeg dec or enc worker
-  * @support_34bit:	flag to check support for 34-bit DMA address
-+ * @support_smmu:	flag to check if support smmu
-  */
- struct mtk_jpeg_variant {
- 	struct clk_bulk_data *clks;
-@@ -82,6 +92,7 @@ struct mtk_jpeg_variant {
- 	bool multi_core;
- 	void (*jpeg_worker)(struct work_struct *work);
- 	bool support_34bit;
-+	bool support_smmu;
- };
- 
- struct mtk_jpeg_src_buf {
-@@ -150,6 +161,7 @@ struct mtk_jpegdec_clk {
-  * @hw_param:		jpeg encode hw parameters
-  * @hw_state:		record hw state
-  * @hw_lock:		spinlock protecting the hw device resource
-+ * @smmu_regmap:	SMMU registers mapping
-  */
- struct mtk_jpegenc_comp_dev {
- 	struct device *dev;
-@@ -163,6 +175,7 @@ struct mtk_jpegenc_comp_dev {
- 	enum mtk_jpeg_hw_state hw_state;
- 	/* spinlock protecting the hw device resource */
- 	spinlock_t hw_lock;
-+	struct regmap *smmu_regmap;
- };
- 
- /**
-@@ -177,6 +190,7 @@ struct mtk_jpegenc_comp_dev {
-  * @hw_param:			jpeg decode hw parameters
-  * @hw_state:			record hw state
-  * @hw_lock:			spinlock protecting hw
-+ * @smmu_regmap:		SMMU registers mapping
-  */
- struct mtk_jpegdec_comp_dev {
- 	struct device *dev;
-@@ -190,6 +204,7 @@ struct mtk_jpegdec_comp_dev {
- 	enum mtk_jpeg_hw_state hw_state;
- 	/* spinlock protecting the hw device resource */
- 	spinlock_t hw_lock;
-+	struct regmap *smmu_regmap;
- };
- 
- /**
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-index e453a1634f33..da753a636eaa 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
-@@ -624,6 +624,25 @@ static int mtk_jpegdec_hw_init_irq(struct mtk_jpegdec_comp_dev *dev)
- 	return 0;
- }
- 
-+static int mtk_jpegdec_smmu_init(struct mtk_jpegdec_comp_dev *dev)
-+{
-+	struct mtk_jpeg_dev *master_dev = dev->master_dev;
-+
-+	if (!master_dev->variant->support_smmu)
-+		return 0;
-+
-+	dev->smmu_regmap =
-+		syscon_regmap_lookup_by_phandle(dev->plat_dev->dev.of_node,
-+						"mediatek,smmu-config");
-+	if (IS_ERR(dev->smmu_regmap)) {
-+		return dev_err_probe(dev->dev, PTR_ERR(dev->smmu_regmap),
-+				     "mmap smmu_base failed(%ld)\n",
-+				     PTR_ERR(dev->smmu_regmap));
-+	}
-+
-+	return 0;
-+}
-+
- static int mtk_jpegdec_hw_probe(struct platform_device *pdev)
- {
- 	struct mtk_jpegdec_clk *jpegdec_clk;
-@@ -677,6 +696,10 @@ static int mtk_jpegdec_hw_probe(struct platform_device *pdev)
- 	dev->master_dev = master_dev;
- 	master_dev->max_hw_count++;
- 
-+	ret = mtk_jpegdec_smmu_init(dev);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, dev);
- 	pm_runtime_enable(&pdev->dev);
- 	ret = devm_clk_bulk_get(dev->dev,
-diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-index f30dccc93ecf..5e8a5cb4850e 100644
---- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-+++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
-@@ -348,6 +348,25 @@ static int mtk_jpegenc_hw_init_irq(struct mtk_jpegenc_comp_dev *dev)
- 	return 0;
- }
- 
-+static int mtk_jpegenc_smmu_init(struct mtk_jpegenc_comp_dev *dev)
-+{
-+	struct mtk_jpeg_dev *master_dev = dev->master_dev;
-+
-+	if (!master_dev->variant->support_smmu)
-+		return 0;
-+
-+	dev->smmu_regmap =
-+		syscon_regmap_lookup_by_phandle(dev->plat_dev->dev.of_node,
-+						"mediatek,smmu-config");
-+	if (IS_ERR(dev->smmu_regmap)) {
-+		return dev_err_probe(dev->dev, PTR_ERR(dev->smmu_regmap),
-+				     "mmap smmu_base failed(%ld)\n",
-+				     PTR_ERR(dev->smmu_regmap));
-+	}
-+
-+	return 0;
-+}
-+
- static int mtk_jpegenc_hw_probe(struct platform_device *pdev)
- {
- 	struct mtk_jpegenc_clk *jpegenc_clk;
-@@ -399,6 +418,10 @@ static int mtk_jpegenc_hw_probe(struct platform_device *pdev)
- 	dev->master_dev = master_dev;
- 	master_dev->max_hw_count++;
- 
-+	ret = mtk_jpegenc_smmu_init(dev);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, dev);
- 	pm_runtime_enable(&pdev->dev);
- 	ret = devm_clk_bulk_get(dev->dev,
--- 
-2.45.2
+On 2025/9/15 00:16, Dev Jain wrote:
+> 
+> On 14/09/25 8:05 pm, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> Let's skip unsuitable VMAs early in the khugepaged scan; specifically,
+>> mlocked VMAs should not be touched.
+>>
+>> Note that the only other user of the VM_NO_KHUGEPAGED mask is
+>>   __thp_vma_allowable_orders(), which is also used by the MADV_COLLAPSE
+>> path. Since MADV_COLLAPSE has different rules (e.g., for mlocked 
+>> VMAs), we
+>> cannot simply make the shared mask stricter as that would break it.
+>>
+>> So, we also introduce a new VM_NO_THP_COLLAPSE mask for that helper,
+>> leaving the stricter checks to be applied only within the khugepaged path
+>> itself.
+>>
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> ---
+>>   include/linux/mm.h |  6 +++++-
+>>   mm/huge_memory.c   |  2 +-
+>>   mm/khugepaged.c    | 14 +++++++++++++-
+>>   3 files changed, 19 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index be3e6fb4d0db..cb54d94b2343 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -505,7 +505,11 @@ extern unsigned int kobjsize(const void *objp);
+>>   #define VM_REMAP_FLAGS (VM_IO | VM_PFNMAP | VM_DONTEXPAND | 
+>> VM_DONTDUMP)
+>>   /* This mask prevents VMA from being scanned with khugepaged */
+>> -#define VM_NO_KHUGEPAGED (VM_SPECIAL | VM_HUGETLB)
+>> +#define VM_NO_KHUGEPAGED \
+>> +    (VM_SPECIAL | VM_HUGETLB | VM_LOCKED_MASK | VM_NOHUGEPAGE)
+>> +
+>> +/* This mask prevents VMA from being collapsed by any THP path */
+>> +#define VM_NO_THP_COLLAPSE    (VM_SPECIAL | VM_HUGETLB)
+> 
+> VM_NO_KHUGEPAGED should then be defined as VM_NO_THP_COLLAPSE | 
+> VM_LOCKED_MASK | VM_NOHUGEPAGE.
+
+Yep, it's a good cleanup ;)
+
+> But...
+> 
+> I believe that the eligibility checking for khugepaged collapse is the 
+> business of
+> thp_vma_allowable_order(). This functionality should be put there, we 
+> literally
+> have a TVA_KHUGEPAGED flag :)
+
+Good spot. That's a much better apporach!
+
+My initial thinking was to keep thp_vma_allowable_order() as generic as
+possible, avoiding specific checks for individual callers ;)
+
+BUT you are right, the TVA_KHUGEPAGED flag is only passed from the
+khugepaged path, so the compiler will optimize out the branch for other
+callers, leaving no runtime overhead.
+
+Will rework this patch for v2 as your suggestion!
+
+Thanks,
+Lance
+
+> 
+>>   /* This mask defines which mm->def_flags a process can inherit its 
+>> parent */
+>>   #define VM_INIT_DEF_MASK    VM_NOHUGEPAGE
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index d6fc669e11c1..2e91526a037f 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -134,7 +134,7 @@ unsigned long __thp_vma_allowable_orders(struct 
+>> vm_area_struct *vma,
+>>        * Must be checked after dax since some dax mappings may have
+>>        * VM_MIXEDMAP set.
+>>        */
+>> -    if (!in_pf && !smaps && (vm_flags & VM_NO_KHUGEPAGED))
+>> +    if (!in_pf && !smaps && (vm_flags & VM_NO_THP_COLLAPSE))
+>>           return 0;
+>>       /*
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index 7c5ff1b23e93..e54f99bb0b57 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -345,6 +345,17 @@ struct attribute_group khugepaged_attr_group = {
+>>   };
+>>   #endif /* CONFIG_SYSFS */
+>> +/**
+>> + * khugepaged_should_scan_vma - check if a VMA is a candidate for 
+>> collapse
+>> + * @vm_flags: The flags of the VMA to check.
+>> + *
+>> + * Returns: true if the VMA should be scanned by khugepaged, false 
+>> otherwise.
+>> + */
+>> +static inline bool khugepaged_should_scan_vma(vm_flags_t vm_flags)
+>> +{
+>> +    return !(vm_flags & VM_NO_KHUGEPAGED);
+>> +}
+>> +
+>>   int hugepage_madvise(struct vm_area_struct *vma,
+>>                vm_flags_t *vm_flags, int advice)
+>>   {
+>> @@ -2443,7 +2454,8 @@ static unsigned int 
+>> khugepaged_scan_mm_slot(unsigned int pages, int *result,
+>>               progress++;
+>>               break;
+>>           }
+>> -        if (!thp_vma_allowable_order(vma, vma->vm_flags, 
+>> TVA_KHUGEPAGED, PMD_ORDER)) {
+>> +        if (!khugepaged_should_scan_vma(vma->vm_flags) ||
+>> +            !thp_vma_allowable_order(vma, vma->vm_flags, 
+>> TVA_KHUGEPAGED, PMD_ORDER)) {
+>>   skip:
+>>               progress++;
+>>               continue;
 
 
