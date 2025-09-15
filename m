@@ -1,182 +1,125 @@
-Return-Path: <linux-kernel+bounces-817432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21666B58222
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:32:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D31BB5821B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE84D188A117
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6298B7A7BBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4081328488F;
-	Mon, 15 Sep 2025 16:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0173329BDA3;
+	Mon, 15 Sep 2025 16:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="DiMtGw/u"
-Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kYdiNsCR"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922A925CC42;
-	Mon, 15 Sep 2025 16:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD95266B67
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757953796; cv=none; b=TMEFA/Nczcqb3nQmTPfbN+xNgkt4pni22B0vBpwt/KJzdIpHDp3B5oN5uc3i1FUCSIBhqmllg9jHojhn86d1NWYchuQCn6Xeh0RD6XxInq1VAwZEShNVzZNUbvbvBy3ygeitL1E20poSd+YkDyydYnHdpHifrV2KPRzW5DGEkr8=
+	t=1757953806; cv=none; b=h4iTWT4P12UEG/i8mZQV9SobVIKAdFeSpdlPTT79FL7tqZbGWAgiKkJjnnpNhydU9rs+L18AIL04y9zOleb3UIhKBX3VYwc2QD/Iu9wo8gEE+mePzSM09leghC4ZuAHZnyI3GzjkpbeE5fKIHlPR/V5k4V7bBjsChLg++Z/v5M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757953796; c=relaxed/simple;
-	bh=Cw/nigGtI16TbuhEzvn6dldJ3Eb7lgUvIkmt5HCwQak=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aYWfhgGA5A8PlyE7twA7ZeIQ14lApPmGidhDuNXYEVB896bfOMLP0yIyq46nBEeCU/yxQSggfI7xTyaHC0w/sH2ZFS27rNNIUxSXDQNEftaWY+E5SGsE7jFPTjabeHp7EmjaLWzFVuzHF4oM5JC3R9eVazklWaPhOuMZQP6LXF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=DiMtGw/u; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=q+Rz01jnhZrKhL2yDuA2zWsb7SrFCfsHx3X9jrl/ySE=;
-	b=DiMtGw/unnVszkGXeB0iAIK0NMPg16E/Fmf/kqDkPOJQPQero0Jvm1OSLsw4Lgg4LlmX+huEg
-	vIJWo5vsYzMLXNZ7CN5vsKWBI704t6GN1v+BVwlkxF8BX4+Ruod3DJjVMTuUMnhsq6uea6RM66j
-	7nj5OtvzoGYw2Vfpdm025Bw=
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cQVqJ0GrCzYlBF4;
-	Tue, 16 Sep 2025 00:29:32 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 00:29:51 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 00:29:51 +0800
-From: zhongjinji <zhongjinji@honor.com>
-To: <mhocko@suse.com>
-CC: <rientjes@google.com>, <shakeel.butt@linux.dev>,
-	<akpm@linux-foundation.org>, <tglx@linutronix.de>, <liam.howlett@oracle.com>,
-	<lorenzo.stoakes@oracle.com>, <surenb@google.com>, <lenb@kernel.org>,
-	<rafael@kernel.org>, <pavel@kernel.org>, <linux-mm@kvack.org>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<liulu.liu@honor.com>, <feng.han@honor.com>, <zhongjinji@honor.com>
-Subject: [PATCH v10 2/2] mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse order
-Date: Tue, 16 Sep 2025 00:29:46 +0800
-Message-ID: <20250915162946.5515-3-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250915162946.5515-1-zhongjinji@honor.com>
-References: <20250915162946.5515-1-zhongjinji@honor.com>
+	s=arc-20240116; t=1757953806; c=relaxed/simple;
+	bh=vUGjtDlWHqc7aYh89cQ36SLdWbgpmL9Jq5i3Isp4Wl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtPt1zFCsmnwPbgcYX1YFFqO5DqYfy1Aq85sSsrGuieR4WmljI0lLw4J5BWd6mEfNopIzdNw20qYrA9T6XBQIsL8yFX71LCI1rfBcq0FIqq1Jz9dYALNXOWUJdRj1Gmb0JLIGh07PvwBEtpqKn1fgd1WuHJpaxmbBtS0lqbHfcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kYdiNsCR; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-721504645aaso35018816d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:30:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1757953804; x=1758558604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n1VOOirKbSUY53Upw24PRoYLUiz7i9vMoYI+GCjhpHs=;
+        b=kYdiNsCR/WAaLi+ucyGBMO55xkRQWg+vfVDdKi9hfZfS/41uCtHVCzTonDFSnlxXNM
+         /XqLbwEMiK6pczgd/oXzDVnYiFpkc8omOLk/XRkehg8eb6YXXLWLS/MPAkU4ve60Jvwk
+         vBcLd+gkAgK2EVCkwqTgsg75nYWmOMpi5YCN3hrx7gGSPbybl81pMhE09zz9dwKWlHMn
+         ZigJdJ2mm7kFSjU6Xr5O6VzkfIf4iYBQiV+2GqqHTJHHG2XAsLalVE6k24k08y81LmUa
+         nZrnWSnyC7kX9RogGqCgfKaQdssCKAywhsZ5LpksgWuTmlKO4ULi/0W+jHSSiKo6UBjS
+         1T+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757953804; x=1758558604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n1VOOirKbSUY53Upw24PRoYLUiz7i9vMoYI+GCjhpHs=;
+        b=BuceeBbctkLANYdkj5UsxPsf+NrU8/8rxMQoFf0gMxRo64ObYlfQswoVd8f0W1jK1i
+         atv/hlQYcyZQhOl3jTh0c+wj/qb3vf8zg/EGMMdcP943WxJ13mXA+HTGTaUXxJow9Ekw
+         3Y5mRJvNU0wL/dg6wsQMyz10gRRYADQ1qV4lWPB6NPG5ri9oSfnh/deNauMXU4LHVXk6
+         s0KDEv7NFTZB1SkslWbR7/nGI2I/PfxeK7CLP8cOsxK65ncUeqOjTOwJyx4qdClh1enw
+         60E7HMPpNZG92700fKh1DtpqRP1lizrKkjFz9KAiiaJUUV0P0uHm3GhkQVhWqoR/bIC7
+         YlwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqEzIu6AeNbGSStW6Sgqu3n6z+K2ZlHeoiYhzY0U8J1pnsoWygamC6rGO2rJR4SEDBA1NQfVCVsWiP2pA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJAIdDU8tPj9VBiPjqw0NhIpYcf97U0SzuYLpbRhhuv2je6LLV
+	7LRrTkVrf01uXzOtI6bQ7gb1cUFrL0AkqPXtYe536qcWKmKVAEnlSj/87eRZhtpLk6k=
+X-Gm-Gg: ASbGncu5+Px2Rg3z4VF849HsJ3j4HA1ignRY4xNhOBq0Oc5FpirWOhc9lycZ+xh2Fwb
+	qvzIu7jzDlL/l/YMYhajTopAZnKiFWhVLUcaT/tzvfN53mNlnsi6xqzZVGUh7/J4rv0T9+zNrZf
+	Iuka35WOmZK+EeRDtGL0d/tmXBBxcK2c45DTe5z5i9uoY+VAzo81yYOIXWpgZN6/sZuXzOuabLa
+	IGM0BAGojDPf90dfOtmshbJCX3Ybbe59RMs6SoDWsE4LkrhkbXUWUKpb8tbRQjdD1cxQcurCr4m
+	OX52DFoDhw8KLn3pLt8MPSt4cIPN+CE0LwxMm3augHg01g9UlUC0O+mneaqXd7dFuSrA9Y3r5Rk
+	S4nQ3Tqw=
+X-Google-Smtp-Source: AGHT+IFpYayzIAQ2DLYNp4GTlaAjiT/s2zeuAVfqLIyN4DNy83AQcUYuU8GaWSr9Jp9eLTdSRXR9Bw==
+X-Received: by 2002:a05:6214:27c9:b0:78c:9dd7:d97e with SMTP id 6a1803df08f44-78c9e242532mr5385896d6.51.1757953803412;
+        Mon, 15 Sep 2025 09:30:03 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-781f4401f3bsm24381986d6.65.2025.09.15.09.30.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 09:30:02 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uyC5a-00000004TDO-10U1;
+	Mon, 15 Sep 2025 13:30:02 -0300
+Date: Mon, 15 Sep 2025 13:30:02 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Parav Pandit <parav@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Edward Srouji <edwards@nvidia.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	Vlad Dumitrescu <vdumitrescu@nvidia.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+	Gal Pressman <gal@nvidia.com>
+Subject: Re: [PATCH 2/4] RDMA/core: Resolve MAC of next-hop device without
+ ARP support
+Message-ID: <20250915163002.GJ882933@ziepe.ca>
+References: <20250907160833.56589-1-edwards@nvidia.com>
+ <20250907160833.56589-3-edwards@nvidia.com>
+ <20250910083229.GK341237@unreal>
+ <CY8PR12MB71954BE7258390B4B7965E8FDC0EA@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
- (10.68.17.250)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR12MB71954BE7258390B4B7965E8FDC0EA@CY8PR12MB7195.namprd12.prod.outlook.com>
 
-Although the oom_reaper is delayed and it gives the oom victim chance to
-clean up its address space this might take a while especially for
-processes with a large address space footprint. In those cases
-oom_reaper might start racing with the dying task and compete for shared
-resources - e.g. page table lock contention has been observed.
+On Wed, Sep 10, 2025 at 10:55:36AM +0000, Parav Pandit wrote:
+> > > This leads to incorrect behavior and may result in packet transmission
+> > failures.
+> > >
+> > > Fix this by deferring MAC resolution to the IP stack via neighbour
+> > > lookup, allowing proper resolution or error reporting as appropriate.
+> > 
+> > What is the difference here? For IPv4, neighbour lookup is ARP, no?
+> It is but it is not the only way. A device may not do ARP by itself but it relies on the rest of the stack like vrf or ip vlan mode to resolve.
+> A user may also set manual entry without explicit ARP.
 
-Reduce those races by reaping the oom victim from the other end of the
-address space.
+I think it was just a mistake to use NOARP this way in RDMA, I looked
+in the git history and there was no justification. That or it was
+right in the 2.x days and netdev moved on to the current schem.
 
-It is also a significant improvement for process_mrelease(). When a process
-is killed, process_mrelease is used to reap the killed process and often
-runs concurrently with the dying task. The test data shows that after
-applying the patch, lock contention is greatly reduced during the procedure
-of reaping the killed process.
+I expect to just call the neighbor functions and if they can't work
+for some reason they should fail?
 
-The test is conducted on arm64. The following basic perf numbers show that
-applying this patch significantly reduces pte spin lock contention.
-
-Without the patch:
-|--99.57%-- oom_reaper
-|    |--73.58%-- unmap_page_range
-|    |    |--8.67%-- [hit in function]
-|    |    |--41.59%-- __pte_offset_map_lock
-|    |    |--29.47%-- folio_remove_rmap_ptes
-|    |    |--16.11%-- tlb_flush_mmu
-|    |--19.94%-- tlb_finish_mmu
-|    |--3.21%-- folio_remove_rmap_ptes
-
-With the patch:
-|--99.53%-- oom_reaper
-|    |--55.77%-- unmap_page_range
-|    |    |--20.49%-- [hit in function]
-|    |    |--58.30%-- folio_remove_rmap_ptes
-|    |    |--11.48%-- tlb_flush_mmu
-|    |    |--3.33%-- folio_mark_accessed
-|    |--32.21%-- tlb_finish_mmu
-|    |--6.93%-- folio_remove_rmap_ptes
-|    |--0.69%-- __pte_offset_map_lock
-
-Detailed breakdowns for both scenarios are provided below. The cumulative time
-for oom_reaper plus exit_mmap(victim) in both cases is also summarized, making
-the performance improvements clear.
-+----------------------------------------------------------------+
-| Category                      | Applying patch | Without patch |
-+-------------------------------+----------------+---------------+
-| Total running time            |    132.6       |    167.1      |
-|   (exit_mmap + reaper work)   |  72.4 + 60.2   |  90.7 + 76.4  |
-+-------------------------------+----------------+---------------+
-| Time waiting for pte spinlock |     1.0        |    33.1       |
-|   (exit_mmap + reaper work)   |   0.4 + 0.6    |  10.0 + 23.1  |
-+-------------------------------+----------------+---------------+
-| folio_remove_rmap_ptes time   |    42.0        |    41.3       |
-|   (exit_mmap + reaper work)   |  18.4 + 23.6   |  22.4 + 18.9  |
-+----------------------------------------------------------------+
-
-From this report, we can see that:
-1. The reduction in total time comes mainly from the decrease in time spent
-on pte spinlock and other locks.
-2. oom_reaper performs more work in some areas, but at the same time,
-exit_mmap also handles certain tasks more efficiently, such as
-folio_remove_rmap_ptes.
-
-Here is a more detailed perf report. [1]
-
-link: https://lore.kernel.org/all/20250915162619.5133-1-zhongjinji@honor.com/
-
-Signed-off-by: zhongjinji <zhongjinji@honor.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-Acked-by: Michal Hocko <mhocko@suse.com>
----
- mm/oom_kill.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 88356b66cc35..28fb36be332b 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -516,7 +516,7 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
- {
- 	struct vm_area_struct *vma;
- 	bool ret = true;
--	VMA_ITERATOR(vmi, mm, 0);
-+	MA_STATE(mas, &mm->mm_mt, ULONG_MAX, ULONG_MAX);
- 
- 	/*
- 	 * Tell all users of get_user/copy_from_user etc... that the content
-@@ -526,7 +526,13 @@ static bool __oom_reap_task_mm(struct mm_struct *mm)
- 	 */
- 	set_bit(MMF_UNSTABLE, &mm->flags);
- 
--	for_each_vma(vmi, vma) {
-+	/*
-+	 * It might start racing with the dying task and compete for shared
-+	 * resources - e.g. page table lock contention has been observed.
-+	 * Reduce those races by reaping the oom victim from the other end
-+	 * of the address space.
-+	 */
-+	mas_for_each_rev(&mas, vma, 0) {
- 		if (vma->vm_flags & (VM_HUGETLB|VM_PFNMAP))
- 			continue;
- 
--- 
-2.17.1
-
+Jason
 
