@@ -1,134 +1,167 @@
-Return-Path: <linux-kernel+bounces-817137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BCBB57E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:05:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B9DB57E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C4094E1744
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D713F3A7EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED4F3093C4;
-	Mon, 15 Sep 2025 14:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A6830F544;
+	Mon, 15 Sep 2025 14:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="r3yRAoc5"
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com [74.125.224.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJgoLG9Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5631D555
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82AC1D555;
+	Mon, 15 Sep 2025 14:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757945121; cv=none; b=P2/XT4Pfou3aYje42trt1MA4j1b3jyt6a9Q97keF2pS1gZmF8ZHZNXBLzwjImsuifu58fwRr0UhX0YgeXTkE/33JlaSy/egtAR+snsZCiWtXSo69U/mK7oVgJQEUm3oYZC4AhvuiYkFSQWwCIf3h95nmqIKGrPoZNMyqtr663Zk=
+	t=1757945134; cv=none; b=LPmkOfZo3uHtZ27OjSk90aQ6GBrZTkjZpo+0Z4d1rkyd1gYEFsxra6bDeJT2tdEo3Q0Y0SZsen/506ozZXjGzYcH4FYa+qB1rzy1EFB00xXx/WHOxm5d2EAzyrAGkOY9+EOEYmGtQh41lTQxp0suZyC1s1xjgPU0ggRyhbI+Vl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757945121; c=relaxed/simple;
-	bh=C+r9QydbdeWXlv7FnOvwDgfSKZyi0JtsDi6wUiXpcAw=;
+	s=arc-20240116; t=1757945134; c=relaxed/simple;
+	bh=GGWTXMnsvErJb2h3pKbkZRJqvllX1YeT8+dWpSMY+/c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3435bnFa0OYPTOsFrDCuFORBYmVjyfAk6C/RQUJQ4X1BTqMIwdJH3WwKXuvKDcsG0yXXsx6mjNt2w7e2/PQ8bxeX3O3ExQpddbPGMvkoMPyi/0tovhNjefmISchbWRZJvfXyzzvzkxK5Zwzk2jsSMo4Zzbjzuocfml4Nu6/0wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=r3yRAoc5; arc=none smtp.client-ip=74.125.224.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-629061bb7e3so853176d50.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1757945119; x=1758549919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bwYnkwtdfCqWLl9gcBIyB33wD9YpSZTIVWI9Hj0NbHI=;
-        b=r3yRAoc5yU/UTJ0pohGFtYeyt3bFTFCXAJS/C9RnL+3Gi136AAXUpBzLLx9k22S3qr
-         /n9E2+1WxQWNgDb/NZLiJsL5Uy+dLHsHv73aeDL53GobX3rL068P4rgrYj1FTC9k2myH
-         sXpoWHnOCz+gMOotI8LlRcfMXzJpo2I9S5pCkDzKjsshviJPiMqdPss1V3+eZXJqyjLk
-         fndPqEsj0JQa6uDmZQzNpfDl5aO6C+Ss/oJeGBJNOvkGjGkTX7mrrrVqEFA91yYSZ1jC
-         atBrV0LgKkuNOn9yv41zxfwgiHG4P69oh3Jl4/dOlH2TszOoljmWPaVq2/l3D2HM3lvy
-         RSeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757945119; x=1758549919;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bwYnkwtdfCqWLl9gcBIyB33wD9YpSZTIVWI9Hj0NbHI=;
-        b=B5fmmGy+94ogwFWUJN5+tAbN5BO5kdRS9lymGew8F3ACiTyifXVefm95rHoPU1cTef
-         QyP5x/9nOhypSwqa60v2znq7c9nQ42gAyOPNdDEh+BPnlea/e/wSngs0PHxom/+2nNos
-         fjZ5K43WOr+h7DJ+eG1jSasxIPfifXPAkXiwEkflpKqBLjOrZzxPpS6UsqatGoIsq9eJ
-         WPn+v0YJJhNIW7JgKoerrBG3Ji/Da8HHrmS1LJgbybIihiwcDk5t0bXUWRgQFLVDlFlr
-         3TMqBQoUyNuI7ATBGIUmGhe8R45Uin1/d2qTdDSRy0qI3Ad/QLsxtPjiMSVSVGHXET6C
-         RY7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJyEanz3+/wQ/3Gz3MJ93sWsecjK5Pmi44Ftrg8KMULKTbjJVNlRZACgWiNPLQy3DXudOH6LtAZTJcH9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAvUrQ2oPUIXAqPWYxWqRRfY/lgwe2QpmGuCDmIJzquJjI+2CJ
-	15r6RoEs4HOQb/yIX09m+BdnSKgUN+69pBjW8qOAKJ1SbcGlPTiXD4VG0Qp5UG2rUg==
-X-Gm-Gg: ASbGncuK3/N7KOGOx8m5K6keRTxg0wpEuhv6DFnAdxVWulONyX3Ar/oUquaN7Dt4rzE
-	wyyyOR/Bj3CNeYOvu83bXoMSDT+2escQVtXY/uHOlQT5QZrqI73DAaUkCx8PPHoC8qiRU8+Bs+d
-	1hndO2gj02Hrz9f2Q+SX+S7x7UrI/qRPo3XRGqxlSaNM3ccDUx8rVe3yxsj9kFd8nFmucVFFlAe
-	YlAQVBTXcYAv4N5lKJhE4J9X3h/h8GPMeNO/7yZR9Xes1wRt/zRKetwlt6Tqu/QXelz7KUCCfYx
-	lBgbODdhwFNE5M5kDW6m4JXl7NFHYulPTQKrKd9TVXRFpcRbrHcCqVbx4ZvicLbvxovWgK2HvhI
-	n0WBqQRlFFcyxl6xeTQuWQNGww0EcxjqJ+79DK7+JNNa4yWPBGGR1
-X-Google-Smtp-Source: AGHT+IHKOwAZPyuZ8MCrgdObQBKROdhMB9ALbM4MZEg1IGWdFzuJ1297fvboQyVsLtiGKky0GtLGFg==
-X-Received: by 2002:a53:e8cb:0:b0:62c:204:5dfe with SMTP id 956f58d0204a3-62c02046306mr5284610d50.4.1757945118538;
-        Mon, 15 Sep 2025 07:05:18 -0700 (PDT)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-77a987c2099sm32195346d6.35.2025.09.15.07.05.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 07:05:17 -0700 (PDT)
-Date: Mon, 15 Sep 2025 10:05:15 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Xu Yang <xu.yang_2@nxp.com>
-Cc: gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, jun.li@nxp.com
-Subject: Re: [PATCH] usb: gadget: zero: add function wakeup support
-Message-ID: <95ff48ae-5cdb-4e3d-aeb9-1b6cc33412dd@rowland.harvard.edu>
-References: <20250915090230.1280460-1-xu.yang_2@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkjFBkQ40asBKgjIIyTTQlFeNIYwEpyO5UfNMWofg5FnzNJtHBYMLKjA0ELfdOwScgEblalP60QzUS+dy0O5eJ/pYaL3F/WO50R9ayRw4BMwU7MDM8reDvGSvvHIlrLkZf1O92XpISFY7khc+484Ow1fPZO4JDvys+3296n7rLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJgoLG9Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C8C5C4CEF1;
+	Mon, 15 Sep 2025 14:05:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757945134;
+	bh=GGWTXMnsvErJb2h3pKbkZRJqvllX1YeT8+dWpSMY+/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PJgoLG9YCmgt/nfsqCliDQBcjNMtYABcybsaMDTjh1bl0ymbH+apjITS/WVMSd6H2
+	 FCgmQMGvGYGol8RvvSRn1LlT9ZY25PrmEzQP2JGgm01OAGhRp0si+U79SmkWDvGjqe
+	 rlSHNu9d5JHHeV4bpGBBzPcVP4r9OUQQ6JJk9LQZUxQQ6nuVA9Ty3Fq3j4rbPPvOD0
+	 AhjaEG2rrSs5t/GbahnkGV5qFCyER11d2F9HXc/ZICObO5842j0Osm7GpRL+otdRvP
+	 csfLk4s5J75pR85kMulqQ+uYAMDoPoHO1g0ojJ6fEOcs08cO6M2eUfp9FH9uNpQkvs
+	 j+IfO+Wrica8w==
+Date: Mon, 15 Sep 2025 09:05:31 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, 
+	Sumit Garg <sumit.garg@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Apurupa Pattapu <quic_apurupa@quicinc.com>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuldeep Singh <quic_kuldsing@quicinc.com>, 
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH v12 00/11] Trusted Execution Environment (TEE) driver for
+ Qualcomm TEE (QTEE)
+Message-ID: <mir6lhkj456ra3i6w7def4rrtzw663f66l66cz4s3gxxvueeqk@ils2hjklbp4y>
+References: <20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com>
+ <CAHUa44Fow6BhkdTki=rt2psOC=dq99cRgwXsVagmQU7fttXyCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915090230.1280460-1-xu.yang_2@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHUa44Fow6BhkdTki=rt2psOC=dq99cRgwXsVagmQU7fttXyCw@mail.gmail.com>
 
-On Mon, Sep 15, 2025 at 05:02:30PM +0800, Xu Yang wrote:
-> When the device working at enhanced superspeed, it needs to send function
-
-Is this also true when the device is connected at regular (not enhanced) 
-SuperSpeed?
-
-> remote wakeup signal to the host instead of device remote wakeup. Add
-> function wakeup support for the purpose.
+On Fri, Sep 12, 2025 at 10:21:55AM +0200, Jens Wiklander wrote:
+> Hi,
 > 
-> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
-> ---
->  drivers/usb/gadget/legacy/zero.c | 27 ++++++++++++++++++---------
->  1 file changed, 18 insertions(+), 9 deletions(-)
+> On Fri, Sep 12, 2025 at 6:07 AM Amirreza Zarrabi
+> <amirreza.zarrabi@oss.qualcomm.com> wrote:
+> >
+> > This patch series introduces a Trusted Execution Environment (TEE)
+> > driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
+> > and services to run securely. It uses an object-based interface, where
+> > each service is an object with sets of operations. Clients can invoke
+> > these operations on objects, which can generate results, including other
+> > objects. For example, an object can load a TA and return another object
+> > that represents the loaded TA, allowing access to its services.
+> >
+> [snip]
 > 
-> diff --git a/drivers/usb/gadget/legacy/zero.c b/drivers/usb/gadget/legacy/zero.c
-> index a05785bdeb30..fe286b597f9f 100644
-> --- a/drivers/usb/gadget/legacy/zero.c
-> +++ b/drivers/usb/gadget/legacy/zero.c
-> @@ -147,6 +147,12 @@ static struct usb_gadget_strings *dev_strings[] = {
->  	NULL,
->  };
->  
-> +static struct usb_function *func_lb;
-> +static struct usb_function_instance *func_inst_lb;
-> +
-> +static struct usb_function *func_ss;
-> +static struct usb_function_instance *func_inst_ss;
-> +
->  /*-------------------------------------------------------------------------*/
->  
->  static struct timer_list	autoresume_timer;
-> @@ -156,6 +162,7 @@ static void zero_autoresume(struct timer_list *unused)
->  {
->  	struct usb_composite_dev	*cdev = autoresume_cdev;
->  	struct usb_gadget		*g = cdev->gadget;
-> +	int status;
+> I'm OK with the TEE patches, Sumit and I have reviewed them.
+> 
 
-Please use the same style for your new code as for the existing code.  
-In this case, use tabs to align "status" with "*g" and "*cdev".
+Happy to hear that.
 
-Alan Stern
+> There were some minor conflicts with other patches I have in the pipe
+> for this merge window, so this patchset is on top of what I have to
+> avoid merge conflicts.
+> 
+> However, the firmware patches are for code maintained by Björn.
+> Björn, how would you like to do this? Can I take them via my tree, or
+> what do you suggest?
+> 
+
+Please pull:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git 20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-2-17f07a942b8d@oss.qualcomm.com
+
+Regards,
+Bjorn
+
+> It's urgent to get this patchset into linux-next if it's to make it
+> for the coming merge window. Ideally, I'd like to send my pull request
+> to arm-soc during this week.
+> 
+> Cheers,
+> Jens
+> 
+> >
+> > ---
+> > Amirreza Zarrabi (11):
+> >       firmware: qcom: tzmem: export shm_bridge create/delete
+> >       firmware: qcom: scm: add support for object invocation
+> >       tee: allow a driver to allocate a tee_device without a pool
+> >       tee: add close_context to TEE driver operation
+> >       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+> >       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
+> >       tee: increase TEE_MAX_ARG_SIZE to 4096
+> >       tee: add Qualcomm TEE driver
+> >       tee: qcom: add primordial object
+> >       tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
+> >       Documentation: tee: Add Qualcomm TEE driver
+> >
+> >  Documentation/tee/index.rst              |   1 +
+> >  Documentation/tee/qtee.rst               |  96 ++++
+> >  MAINTAINERS                              |   7 +
+> >  drivers/firmware/qcom/qcom_scm.c         | 119 ++++
+> >  drivers/firmware/qcom/qcom_scm.h         |   7 +
+> >  drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
+> >  drivers/tee/Kconfig                      |   1 +
+> >  drivers/tee/Makefile                     |   1 +
+> >  drivers/tee/qcomtee/Kconfig              |  12 +
+> >  drivers/tee/qcomtee/Makefile             |   9 +
+> >  drivers/tee/qcomtee/async.c              | 182 ++++++
+> >  drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++++++
+> >  drivers/tee/qcomtee/core.c               | 915 +++++++++++++++++++++++++++++++
+> >  drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
+> >  drivers/tee/qcomtee/primordial_obj.c     | 113 ++++
+> >  drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
+> >  drivers/tee/qcomtee/qcomtee_msg.h        | 304 ++++++++++
+> >  drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
+> >  drivers/tee/qcomtee/shm.c                | 150 +++++
+> >  drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
+> >  drivers/tee/tee_core.c                   | 127 ++++-
+> >  drivers/tee/tee_private.h                |   6 -
+> >  include/linux/firmware/qcom/qcom_scm.h   |   6 +
+> >  include/linux/firmware/qcom/qcom_tzmem.h |  15 +
+> >  include/linux/tee_core.h                 |  54 +-
+> >  include/linux/tee_drv.h                  |  12 +
+> >  include/uapi/linux/tee.h                 |  56 +-
+> >  27 files changed, 4410 insertions(+), 28 deletions(-)
+> > ---
+> > base-commit: 8b8aefa5a5c7d4a65883e5653cf12f94c0b68dbf
+> > change-id: 20241202-qcom-tee-using-tee-ss-without-mem-obj-362c66340527
+> >
+> > Best regards,
+> > --
+> > Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+> >
 
