@@ -1,158 +1,139 @@
-Return-Path: <linux-kernel+bounces-817617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07AF0B58494
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:28:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED30B5849D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0794C5D26
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:28:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1CA27B19D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5402E92C5;
-	Mon, 15 Sep 2025 18:28:32 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF28F31327C;
+	Mon, 15 Sep 2025 18:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsmOQ5L3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D012D2E8DE7
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ACC3064B4;
+	Mon, 15 Sep 2025 18:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757960912; cv=none; b=iUUyQcIbvA6Kx/JTRmoeDvicM0v+Ys1dKlkER+N4OyRqmwm4iVXIqAJE/P0u4qkv4IXJLdvNv/IsaYk2qPcrCrXdPasAgwlLWhPwaINBIG4RTXMksf1CAtl/WA+kwXQ0WzECIHSAyVf2Yzq66CIS185YwU7k51RhL1UFp5pxjx4=
+	t=1757961013; cv=none; b=NajhMEmQnobcAocs5k7GuxK9xIf+XlkqE8L6tek3r5FU/JFFHIQ1XbohRm7ih+UuYiSLyIZ5suwAVOcT196Q0vB7E9EclGs+iy2f4x5Mmeibb13NncVHaOHL3yyQyvAaPJN4oADxzWGa2ykrR7kFWtMQ5jn8NKGuMILSipytkhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757960912; c=relaxed/simple;
-	bh=OL/0GKGewZF8kny8NXnh48JPLxV/0tjnh4Gpf7JLJi4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mRv3ha/NpM8UTSVw+Ccawu2EOwKApRbW/lgl7gzkxxLsIJ2uewWS+0fVJhI0UoPQWNcFnTk/eBOrZLZ/HQjnkXH0jP+Hwg9vGvvt996D90pXmKzbg7VIG0Snbx/irdcPe7stOSaVQYv63YC0G5Bd9BE+PKIeraaXLus22HWqO10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-893656f5776so128009039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:28:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757960910; x=1758565710;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J5prtZSnPNFgkoL+HuvQB6GO4JGzUJWAuc41w9I8/Hk=;
-        b=dwCZ0oH54Mqlk3+Le7FnX3Bh8ySmmKqTpmqGSyhHeQEwjnOylY5GwRMYvI0dC6OTYz
-         gSNBstnyWiNr1DUNhmsz3+CNB6Lo6AVHp5DN5zde283lwlIZQrchDWDo+Do8WaCTzSWt
-         3xhO6fZFyRM/sSff+twg7BFMKEZ6TeRnw3lyBe9N0LgE+lH/ayLFybY9GH9L3nyElHQC
-         p0wS9V5QCyLgMRhdoMXk96/o98o4GUmzRbRA6gd2p4AUB6DakW69353iyYGAleYw6mZG
-         UzpnLFqhtuxb0D4OwIWbnIEvrXVI2fbn5K9BrI0BT6uffZs+Yqnu4MwAHvjRZhSln/o0
-         kJnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvb8+SjsBX5CIE91eZ9pw+vBFzpfBh4EiBl2O/NqmxJPRv21qrRXNsn/RLPxPAZ0VkKbqUlqm7gK+xORI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8E0EUbf7/Ul/6SLDpQ87391yEPic70fM0WXLlZ64WyZlle2JI
-	nAkkCoZY3HtZczltozypeUbMjT0UAoB8KbRqA7ZuzbuP7VPlsEaF/ZdB3ZxahHDjPvjA/FqXyZG
-	vf+442NbabumoE1sV3PdaY1yECJ9yRM0PUaDQbwdGHqh2zX/5tp4IZfxAsZ4=
-X-Google-Smtp-Source: AGHT+IGEy/vfndE98rKOCai91YrvFiLwU0hLRS+adWf/d8RcSGMwyM+c8tJt8/GN4rWNGGMUXpCvpV2ysM43tIO7jsswlFUjjBuC
+	s=arc-20240116; t=1757961013; c=relaxed/simple;
+	bh=PpVc0ofa6DSO9T/pi2noMuQNRfKErz0RqnpeJC76Weg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TEnCzu0iQucyon56paOIau+xv8N604CR2UOtuVSufWk9CD8poPh3lPW8Mlbaxp0zKxvLZ8vDBRLtqU6Obt4RYBH5n+zxYqLSn6J+vKgliCEN01jVcMn4X+Mce7eIiPWb4bl8D7Swiy2Px0XckryfyWz76OicLELMA6Zl5nS8oA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsmOQ5L3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3115C4CEFA;
+	Mon, 15 Sep 2025 18:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757961013;
+	bh=PpVc0ofa6DSO9T/pi2noMuQNRfKErz0RqnpeJC76Weg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LsmOQ5L3eZVJU8zoX3n14ShPXX4doLixyVCrah06DGprhSk83nImEpLCUsi6s514/
+	 fLRCZajXY01e9firKjgRC5o1S+Dt9y0rwfzY+fKlpeQZIaTjHsX2M5+tl34SMCCgQI
+	 Ap99rJK17jymyi/346K5rJkiAVpck4cI3ye2BurfRCcjgo37hgqKWYhW8PItMUoQqn
+	 PPnhn1SE1JgHXkUadqZnfjlxf1U+E+HZGtm70Rg3/sYqiYJxVzAGGZXUS927mUl8oQ
+	 Mfyl1I0KN0ED44hWj6fNG3v3aAephHqXnEj28f4Az2Yyb3vPP/H2B8JN5iipCHmeZE
+	 FxMMgrm2FrUZA==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject:
+ [PATCH v2 4/5] ACPI: property: Do not pass NULL handles to acpi_attach_data()
+Date: Mon, 15 Sep 2025 20:28:52 +0200
+Message-ID: <8578679.T7Z3S40VBb@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5922318.DvuYhMxLoT@rafael.j.wysocki>
+References: <5922318.DvuYhMxLoT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2164:b0:424:b2c:a780 with SMTP id
- e9e14a558f8ab-4240b2caa21mr18286065ab.1.1757960909965; Mon, 15 Sep 2025
- 11:28:29 -0700 (PDT)
-Date: Mon, 15 Sep 2025 11:28:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c85acd.050a0220.2ff435.03a4.GAE@google.com>
-Subject: [syzbot] [bpf?] WARNING in maybe_exit_scc
-From: syzbot <syzbot+3afc814e8df1af64b653@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-syzbot found the following issue on:
+In certain circumstances, the ACPI handle of a data-only node may be
+NULL, in which case it does not make sense to attempt to attach that
+node to an ACPI namespace object, so update the code to avoid attempts
+to do so.
 
-HEAD commit:    f83ec76bf285 Linux 6.17-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=137d0e42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=3afc814e8df1af64b653
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a947c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14467b62580000
+This prevents confusing and unuseful error messages from being printed.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be9b26c66bc1/disk-f83ec76b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/53dc5627e608/vmlinux-f83ec76b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/398506a67fd8/bzImage-f83ec76b.xz
+Also document the fact that the ACPI handle of a data-only node may be
+NULL and when that happens in a code comment.  In addition, make
+acpi_add_nondev_subnodes() print a diagnostic message for each data-only
+node with an unknown ACPI namespace scope.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3afc814e8df1af64b653@syzkaller.appspotmail.com
+Fixes: 1d52f10917a7 ("ACPI: property: Tie data nodes to acpi handles")
+Cc: 6.0+ <stable@vger.kernel.org> # 6.0+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-------------[ cut here ]------------
-verifier bug: scc exit: no visit info for call chain (1)(1)
-WARNING: CPU: 1 PID: 6013 at kernel/bpf/verifier.c:1949 maybe_exit_scc+0x768/0x8d0 kernel/bpf/verifier.c:1949
-Modules linked in:
-CPU: 1 UID: 0 PID: 6013 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:maybe_exit_scc+0x768/0x8d0 kernel/bpf/verifier.c:1949
-Code: ff ff e8 cb 8e e7 ff c6 05 0a b5 bf 0e 01 90 48 89 ee 48 89 df e8 f8 41 fb ff 48 c7 c7 a0 9b b5 8b 48 89 c6 e8 59 33 a6 ff 90 <0f> 0b 90 90 e9 4e ff ff ff e8 0a ee 4d 00 e9 7f f9 ff ff 4c 8b 4c
-RSP: 0018:ffffc900041bf500 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888079840000 RCX: ffffffff817a4388
-RDX: ffff88807d3f8000 RSI: ffffffff817a4395 RDI: 0000000000000001
-RBP: ffff888079846328 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 1ffff92000837ea7
-R13: 0000000000000000 R14: ffff88805cf87400 R15: dffffc0000000000
-FS:  000055557c9b5500(0000) GS:ffff8881247b2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055557c9b5808 CR3: 0000000073b4d000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- update_branch_counts kernel/bpf/verifier.c:2040 [inline]
- do_check kernel/bpf/verifier.c:20135 [inline]
- do_check_common+0x20cc/0xb410 kernel/bpf/verifier.c:23264
- do_check_main kernel/bpf/verifier.c:23347 [inline]
- bpf_check+0x869f/0xc670 kernel/bpf/verifier.c:24707
- bpf_prog_load+0xe41/0x2490 kernel/bpf/syscall.c:2979
- __sys_bpf+0x4a3f/0x4de0 kernel/bpf/syscall.c:6029
- __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
- __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:6137
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd1d078eba9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffee0400aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007fd1d09d5fa0 RCX: 00007fd1d078eba9
-RDX: 0000000000000048 RSI: 00002000000017c0 RDI: 0000000000000005
-RBP: 00007fd1d0811e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fd1d09d5fa0 R14: 00007fd1d09d5fa0 R15: 0000000000000003
- </TASK>
-
+v1 -> v2:
+   * Previously [3/4]
+   * Rebase on top of new [2-3/5]
+   * Reformat the "unknown scope" message and downgrade it to "debug" (it
+     may not indicate any functional issue)
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/acpi/property.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--- a/drivers/acpi/property.c
++++ b/drivers/acpi/property.c
+@@ -124,6 +124,10 @@ static bool acpi_nondev_subnode_extract(
+ 		result = true;
+ 
+ 	if (result) {
++		/*
++		 * This will be NULL if the desc package is embedded in an outer
++		 * _DSD-equivalent package and its scope cannot be determined.
++		 */
+ 		dn->handle = handle;
+ 		dn->data.pointer = desc;
+ 		list_add_tail(&dn->sibling, list);
+@@ -224,6 +228,8 @@ static bool acpi_add_nondev_subnodes(acp
+ 			 * strings because there is no way to build full
+ 			 * pathnames out of them.
+ 			 */
++			acpi_handle_debug(scope, "subnode %s: Unknown scope\n",
++					  link->package.elements[0].string.pointer);
+ 			desc = &link->package.elements[1];
+ 			result = acpi_nondev_subnode_extract(desc, NULL, link,
+ 							     list, parent);
+@@ -396,6 +402,9 @@ static void acpi_untie_nondev_subnodes(s
+ 	struct acpi_data_node *dn;
+ 
+ 	list_for_each_entry(dn, &data->subnodes, sibling) {
++		if (!dn->handle)
++			continue;
++
+ 		acpi_detach_data(dn->handle, acpi_nondev_subnode_tag);
+ 
+ 		acpi_untie_nondev_subnodes(&dn->data);
+@@ -410,6 +419,9 @@ static bool acpi_tie_nondev_subnodes(str
+ 		acpi_status status;
+ 		bool ret;
+ 
++		if (!dn->handle)
++			continue;
++
+ 		status = acpi_attach_data(dn->handle, acpi_nondev_subnode_tag, dn);
+ 		if (ACPI_FAILURE(status) && status != AE_ALREADY_EXISTS) {
+ 			acpi_handle_err(dn->handle, "Can't tag data node\n");
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
