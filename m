@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-817054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEF3B57D3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:32:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A97B57D36
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63F82A0323
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:30:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C2184E1E59
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A061E31B80B;
-	Mon, 15 Sep 2025 13:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1113128C7;
+	Mon, 15 Sep 2025 13:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aOnKUDbF"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iP/hQB7Z"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84BA315D3F
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CFB313E39;
+	Mon, 15 Sep 2025 13:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942940; cv=none; b=LsMtsID4qSbhq3iWOhmpuC7Z6ARVcbS6NwcWLGmS6PPBMAqPkBeZsv0Ydl5VbrbA9AzLpF7GapYC5UcEkdzskpndFwLIL/dLDz1XXRdHX9UxC0chgBHxkdqX45EBeNd2lKBp+Itei68+3bOos1EIaTN4bwuwrpm8CO+xEK5VO+g=
+	t=1757943131; cv=none; b=rbb7g+sIJ9n6oUT4q0l/SNFNdnNdwOTfka2Q9CJ527GNpz7U/qHH8KwMRs/cIcwjsQgFzv+pVoxiqjpA/SFuCO6jM10OfX8dbyg4DjiCK+TpdCwE9jM68q2QVkLwAtLW7Xch85ML4sBbp3GGwQrMkeAcuR8QuijgG2qO4cyoUq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942940; c=relaxed/simple;
-	bh=8SarEJ16dSlZ9x1yrNhQOTftvxArDoGFQxpONMxdWhg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qZphQE4BLiuN364Ef02ZYI0zyVUWEFHZaMD1CLPvYfFcCBoTnrOZflzqEJjRwJ+IU4hpBXum55Pdleqpyb+fIPaKnszgTRKZy51txQVXTSYsFOps92JLTcxJ/giiH+A1TfbHnKZnGZ/lyN0EbgWMm0oh1PGDZoSdOgkg9/KDWBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aOnKUDbF; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45f2f10502fso4876405e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757942935; x=1758547735; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TVHbhdFlZbCxCpedbs0oq4d1TdjX8kTA2AdsFzOlTX4=;
-        b=aOnKUDbFR1raxqstrrMnLs5ypmeW7+AMEVklnkECqgrc4fy2fRdI+Lmn0VOvRx7jZD
-         oCfji401BjVk/5MoU1xNP16B/dDiFORlmLOkHebSxIA+oIGO/LlIlZreER9qle+vMhkc
-         OICEZfNCkWcx6LdmZc5h10XtNy6EArBCUz1f8Nka7vanhDeNYmOcMIILAl0fqgNT/MZ7
-         /hnpLgmOdgDp19jyf10cFEU+uVn8PNRHfD9hSUuroHGDX1TEIXaD79WSZZzvBH70BTst
-         d3q8EdV3wWiIKSSfoLYD2BZkmvKaSodY3Yhco6S5nqFm3q8hwFPaUtzoE2+NjA7cEPOk
-         9UzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757942935; x=1758547735;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TVHbhdFlZbCxCpedbs0oq4d1TdjX8kTA2AdsFzOlTX4=;
-        b=aUvJhmKbbW2XeK8b0Juss44N66O32Efit4E3xpxZx1DYZcJ9g4NOkkC3nQn8+HzwIF
-         Z89QWRPA+ZUHjpu88KMa7WDisWLanFB1VgUTy9Ct2xzLJNr8wlZRIHYHNqKgRXRDUO+A
-         /sl07IkQOzA2Iow9bFzPUBf3d5pvBfEDhVjXc1Ya/6um3w5eBHwitXHqckkBxd66gyaG
-         NvbuNUQm+ckp1VUHN5nukxobdpzPG7biRA+0QxX6y3BLhdPkA952oLaMrgix9tAQ6thJ
-         fzaC2qaGOwAms9R5kVW3VsGdcpJ1TCJ1pxg+guQU36amgQ7b3FP7kkGHWCjJyiRHO/rf
-         Lpdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzr8bRpgyZt7YsgCQAn+5Xp9tS3Kf9hsh2L3zoaQvWeNiAb5a/xc4ENZ0GtJQairUL7ThC2LpaAIGFC1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzn+OPzFlI6458N0MG3VJU8Pn9M/nsqy1zeQxXpmnrHxVmOgTG
-	z3vcp+JoJbPJAsq4jGhW9R1iyGYcTG0rrImbPBYqhIYiD4b5bhD//F4+zKFbqwwkmAE=
-X-Gm-Gg: ASbGncuxwAhWLcemRljUR31dT1M9EfpVKvePtiYFc3QKRBxX7qqjBzfvzGlYrMBALbV
-	hwSApvD/EidCzVFyqtbRa8HumtGmvOUKqFTcs0CDbBoptLgV+YjAY5MJ2Tc0GD/y1lV6PLow7Yz
-	7XiBQ9tWeSuKdnUDP/mVZUnZSrXlBxBSKaMU6n8nxJDrcIY/1xv8VafWWXw+Hco+m5yu9mxrw2S
-	iBKna3xwaopM8R82GbIhjs1fHNkzpzj+vFm1kFohb26kyB3tREJPbuswM3LVPLl0rNFojCn8ak4
-	mLe0+rwCpH+/OkPEhUxOM3ElEUS5yy/PAV8ipizw8gHEjC9v3JAjGAcgsK9J7BM5wCEoG/B+e2x
-	GhC1oYpRwmEhei0NYINBxTx6la2sAkIXu70o=
-X-Google-Smtp-Source: AGHT+IGJnCCPqoXVoOCe6Ybp+0WcFTMjegCGCm0f9UTm2uDhPrB0URHDEtkSoTR5+vGjmhJzeUElrA==
-X-Received: by 2002:a05:600c:2317:b0:45d:d9ca:9f8a with SMTP id 5b1f17b1804b1-45f211ff8c7mr80370585e9.27.1757942934909;
-        Mon, 15 Sep 2025 06:28:54 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff21:41:eee1:5042:e713:2e9a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e9fd89af70sm5978874f8f.43.2025.09.15.06.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 06:28:54 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Mon, 15 Sep 2025 15:28:32 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: msm8916: Add SDCC resets
+	s=arc-20240116; t=1757943131; c=relaxed/simple;
+	bh=k7APw+7V8PNd8IB0fAO6nOf+PeE0WSb2I+w3OW89x10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Is2/JXI8g/k8ULJvhLRvcVwg+5yrtoz1EPsQM8m7rhG+0dGIjMgWADUNwHPVUPyOMli+7QuajzRdhmIlo+77oqFRy+wuJbZkoqdDshz+hvf9btN5EWxD9UuOWbdFFZ0oYwxDcTIVune35HtHVP2nZMT+QFpyKvCSuA6Vov3H3uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iP/hQB7Z; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-56-182.net.vodafone.it [5.90.56.182])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5F748D4;
+	Mon, 15 Sep 2025 15:30:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757943049;
+	bh=k7APw+7V8PNd8IB0fAO6nOf+PeE0WSb2I+w3OW89x10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iP/hQB7Zutz0NwyinWcdTqovZFAdiTd98hd3Zh9P3IRrC7xx8nwYCjOdI8bmEneG+
+	 6cd5+8mHWijpos30s62l1cJr9B+bTxhWdsZmfGHSTKZnQl0aSat3+tzpdr4u+BxcIr
+	 utZhbyITMiYF7QCZRBecgNc27yhL+/kzxzzJtZd4=
+Date: Mon, 15 Sep 2025 15:31:58 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Keke Li <keke.li@amlogic.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Dan Scally <dan.scally@ideasonboard.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 5/8] media: v4l2-core: Introduce v4l2-params.c
+Message-ID: <jhynzoppwi22vnrdzrvqixsbvntsli7sj2vtsxrevtmxluveps@q6yzgvlqmxxb>
+References: <20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f@ideasonboard.com>
+ <202508240704.AZwGXBaw-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-msm8916-resets-v1-3-a5c705df0c45@linaro.org>
-References: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
-In-Reply-To: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vincent Knecht <vincent.knecht@mailoo.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202508240704.AZwGXBaw-lkp@intel.com>
 
-Add the missing resets for the two SDCC controllers to allow fully
-resetting previous hardware state from the bootloader.
+Question for media maintainers...
 
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
-Unlike the previous two commits with the MDSS resets, this is more
-"cleanup" than "fix", so I omitted the Fixes tag and Cc stable here.
-There are no reported issues with the reset omitted.
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+I'm not sure how I should better handle this one
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index de0c10b54c86c7795b7a0d1ecd80652e60e117b6..d3a25a837488c940f7f9dd08d0aa4054aeed014c 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -2127,6 +2127,7 @@ sdhc_1: mmc@7824900 {
- 				 <&gcc GCC_SDCC1_APPS_CLK>,
- 				 <&xo_board>;
- 			clock-names = "iface", "core", "xo";
-+			resets = <&gcc GCC_SDCC1_BCR>;
- 			pinctrl-0 = <&sdc1_default>;
- 			pinctrl-1 = <&sdc1_sleep>;
- 			pinctrl-names = "default", "sleep";
-@@ -2148,6 +2149,7 @@ sdhc_2: mmc@7864900 {
- 				 <&gcc GCC_SDCC2_APPS_CLK>,
- 				 <&xo_board>;
- 			clock-names = "iface", "core", "xo";
-+			resets = <&gcc GCC_SDCC2_BCR>;
- 			pinctrl-0 = <&sdc2_default>;
- 			pinctrl-1 = <&sdc2_sleep>;
- 			pinctrl-names = "default", "sleep";
+On Sun, Aug 24, 2025 at 07:16:21AM +0800, kernel test robot wrote:
+> Hi Jacopo,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on a75b8d198c55e9eb5feb6f6e155496305caba2dc]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Jacopo-Mondi/media-uapi-Introduce-V4L2-extensible-params/20250820-210503
+> base:   a75b8d198c55e9eb5feb6f6e155496305caba2dc
+> patch link:    https://lore.kernel.org/r/20250820-extensible-parameters-validation-v4-5-30fe5a99cb1f%40ideasonboard.com
+> patch subject: [PATCH v4 5/8] media: v4l2-core: Introduce v4l2-params.c
+> config: nios2-randconfig-002-20250824 (https://download.01.org/0day-ci/archive/20250824/202508240704.AZwGXBaw-lkp@intel.com/config)
+> compiler: nios2-linux-gcc (GCC) 9.5.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250824/202508240704.AZwGXBaw-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202508240704.AZwGXBaw-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    nios2-linux-ld: drivers/media/v4l2-core/v4l2-params.o: in function `v4l2_params_buffer_validate':
+>    v4l2-params.c:(.text+0x124): undefined reference to `vb2_plane_vaddr'
+> >> v4l2-params.c:(.text+0x124): relocation truncated to fit: R_NIOS2_CALL26 against `vb2_plane_vaddr'
+>
 
--- 
-2.50.1
+Clearly v4l2-params.c (now v4l2-isp.c) depends on VIDEOBUF2_CORE
 
+Right now v4l2-params.c gets compiled in as part of the
+videodev-objs Makefile target. IOW is not gated by a KConfig option.
+
+To select (or better, depend) on VIDEOBUF2_CORE I should guard
+v4l2-params.c with a KConfig option so that I can 'depend on
+VIDEOBUF2_CORE'. Drivers that use the v4l2-params.c helper would then
+have to 'select V4L2_PARAMS` (or similar).
+
+Is this the best approach or are there alternatives I might be missing ?
+
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
 
