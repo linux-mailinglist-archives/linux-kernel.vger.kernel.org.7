@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-817892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C3DB58830
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:24:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF930B58852
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 008A54E19AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64FB93A4556
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 23:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3297828CF5D;
-	Mon, 15 Sep 2025 23:24:38 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EEA2DC32E;
+	Mon, 15 Sep 2025 23:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEZDq2ig"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5ED27A93A
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7A2D47F1;
+	Mon, 15 Sep 2025 23:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757978677; cv=none; b=IwnEvjnAkpI/qsdcKCsgvcs92K8YzC+ZwHE8e5VsBUbavUAFT3MIxVTmv9txorBxIp9vPV1ZwKJLtqfXhZZI6F88TUmY6lx/ubZwgQBxPrz/uNPJaZD2IdA5lUYLbHUoBo4kSLjMiKIcJoyqu44WlYiGmuOgB5ZIGbaNB96f8Ug=
+	t=1757979004; cv=none; b=YukYfDeezZ1zYMxwJF5/IojSofUA+7BWY3sRTM+MQmklLBoPCxLP0Go6JeB2H+GKFSMAV/5Qk4tgDdWTVhYcUFGptvDhugn5e4g1owxDk2gWFCB+9aWEOo/R7DRnaeOenD4Gy7mt2yt9Rq6ZqI8IOi3/e2k1njeCap/+s3X3PdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757978677; c=relaxed/simple;
-	bh=YBGSr20gCEOXjQbEZIKirtJLcEsf7gczZA1ljfbtJn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LKd+81PM5Fb/SG8iJao6oAH0Z3GbD8B+FW43hxXKegdvpRA+vEXqy/tm8r/7baKXvNxua2zLu9soRy3ppHkj8e/teSUWaABNbKlMhNKq3tCiGBw3APig5X0sHd8QoygGIStAheeVGWJzhVpn5x+1pVd2VrfTWbk6/wIdznXNr8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf11.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 82C161407B7;
-	Mon, 15 Sep 2025 23:24:27 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf11.hostedemail.com (Postfix) with ESMTPA id BAE4020029;
-	Mon, 15 Sep 2025 23:24:25 +0000 (UTC)
-Date: Mon, 15 Sep 2025 19:25:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Akhilesh Patil <akhilesh@ee.iitb.ac.in>,
- Nam Cao <namcao@linutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Zhen
- Ni <zhen.ni@easystack.cn>
-Subject: Re: [GIT PULL] rv fixes for 6.17-rc7
-Message-ID: <20250915192527.38f80056@gandalf.local.home>
-In-Reply-To: <20250915073529.20364-2-gmonaco@redhat.com>
-References: <20250915073529.20364-2-gmonaco@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757979004; c=relaxed/simple;
+	bh=yoQbZRc/nb2BJoeq+on6jDO88ZNiKxPAGxL/dcMOaNI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=PigDiK5Noo3d4c//015PxP61e4C9+WL58AH7ytHeLRwOuqZ85JvrOSega5Ykr06EwqlW7+b49c0yGhUFwifXjPVpegslBgASZ9uSXC32Vii0zcQiVh1XyHCkBle/6H1rJlcuhpRgLj7PF+TDjHrC1v7yKC6IXtYsI+0ggCjtXR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEZDq2ig; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F05FC4CEF1;
+	Mon, 15 Sep 2025 23:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757979004;
+	bh=yoQbZRc/nb2BJoeq+on6jDO88ZNiKxPAGxL/dcMOaNI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=fEZDq2ig4Fb3lhzbXc/i6d4wvLFAcWkdx22QStHL/vhN6l0+Yv2kwGCDlgxSB/mr5
+	 Q1XC7hItBMTeNDrYAoQPmMgVxDwkmnE37HKlymFWvprtKlc/X9Qi6K/AqVL5ZYuZ6O
+	 74pVX4lzAMOvSzL2+QTD4pSvY5xYD4Hxji8uiTrFewb3fXPbUMdklF4UDJWC+aekyR
+	 821ECkJ2A+GeoBK84hq8Mx5G1MYpnM97GzJTC+tSnrwEAf1Caqz8a4iyHiJd6amfhx
+	 Y+GapMiCZ5fSnrz3ImBg2YCKvZkp70HsF8d9bL9NLERo7D9Y3wnyA990vNGwmG2NI0
+	 QLXlMIx1QlYig==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD7739D0C18;
+	Mon, 15 Sep 2025 23:30:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: bbiurxi95usotmpwfa6ntky1hj1x14mj
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: BAE4020029
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/WkyYs4yskSbuSx8K63DGsp6Els5mJffI=
-X-HE-Tag: 1757978665-690942
-X-HE-Meta: U2FsdGVkX19Ri4VPG9fvXMCdc+Ls9vW0yMXhBuLANE/iKLLhBc5fIpY2dikSW9IrQdttk1upsTJ1usEUseKfuPE+G6rm9jm4bJ/frgNKqWvyF/CaDKzHBF3b7UZpuzHRLxSOVi/Vow1T+86H9Ng/sMTsKaFRwhiF9NhcF1+RD7dZC+nzOn4Ai4/oO7q+tTwQKshWUe/R0lqRX4yIie14G8dTiXJrJgUFr/Xk4oz+QPseGm9ZmdkqLzH+5UCOmmyAuNe6x5+n1wYhvB1mL5zttdHwUgFgcTEg2Y5Rh9O2yUOksxXac+kY5+/MBawuOu1c3a7c7QGnUPqTOGiCIw6rDYXCsrA+0ZjFTRiryFPHEfsnOvr3X21Jwaw/RbmxPqfTZDv7qmSfHAG3EyL4xEttfkGodBbYWlz3
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 1/1] net: phy: clear EEE runtime state in
+ PHY_HALTED/PHY_ERROR
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175797900575.527844.13813808525579188622.git-patchwork-notify@kernel.org>
+Date: Mon, 15 Sep 2025 23:30:05 +0000
+References: <20250912132000.1598234-1-o.rempel@pengutronix.de>
+In-Reply-To: <20250912132000.1598234-1-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux@armlinux.org.uk, kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-On Mon, 15 Sep 2025 09:35:30 +0200
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+Hello:
 
-> Steve,
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 12 Sep 2025 15:20:00 +0200 you wrote:
+> Clear EEE runtime flags when the PHY transitions to HALTED or ERROR
+> and the state machine drops the link. This avoids stale EEE state being
+> reported via ethtool after the PHY is stopped or hits an error.
 > 
-
-Hi Gabriele,
-
-> The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c:
+> This change intentionally only clears software runtime flags and avoids
+> MDIO accesses in HALTED/ERROR. A follow-up patch will address other
+> link state variables.
 > 
->   Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git@gitlab.com:glemco/linux tags/rv-6.17-rc7
+> [...]
 
-Note, the above git path requires having a git account and permission to
-your repo. Is your repo public? I can't even see it on:
+Here is the summary with links:
+  - [net-next,v2,1/1] net: phy: clear EEE runtime state in PHY_HALTED/PHY_ERROR
+    https://git.kernel.org/netdev/net-next/c/0915cb224527
 
-  https://github.com/glemco?tab=repositories
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Also, it shouldn't be "tags/", just show the tag itself.
 
-Thanks,
-
--- Steve
 
