@@ -1,200 +1,140 @@
-Return-Path: <linux-kernel+bounces-817027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CAA2B57C9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449A2B57C9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 15:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18456487928
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98945189DA89
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 13:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307E33112A4;
-	Mon, 15 Sep 2025 13:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF10028506D;
+	Mon, 15 Sep 2025 13:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="OpGTjdSX"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oPi9ooxI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D67430C376
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 13:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A1530CDBE;
+	Mon, 15 Sep 2025 13:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757942301; cv=none; b=WaVanvMP9K9QWd6ODGFeQM+3g3vYjYLG9eQuxvdRhiqTzRKtvPVDass60dvOQWrILsKH40hGLss5s7IjaDq1ZrjpPu2a1A0+fHZXy9cJxydhbeWGp9FDyhge11LLrMdmAGEW8Tx+Vrr9R8AGvZMPQ6eiSmxoCGkAgc1Yh9RtzT4=
+	t=1757942325; cv=none; b=cjZXlwkBfI/i9/5r4dVS3ZvNVz1H9ktz/NrNStl1DJihlau34YLcr/V85iXivrzq+4NHUxYjrk68LB3vDdTrXn2584UD0g2yJzkDGdBH/srAzuGJW3n+ZtANQXWVUTbJgsGOwypfNRq2fafdg23Lc3yTCCM/TBsu+QWe0HCE9lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757942301; c=relaxed/simple;
-	bh=0RcAsUV24yUDznAMeuxHRPsiGRsI8fv5Zds6fy6i9Uk=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=ORdKsYyiYYGH+HUpM6twZwubCGOJR8o9J0HuhKKkaLRO09TcKPiw7pQW6D1ImT/kf9iRlVeJTeiBiIX01ejsYMTYnU18b6qV8uHZrMU5rubrCQIZHVGc4oGX2KaKsqDjSOTBzpJlaJzK9e4FOdzzgVmetPXCymg9FtmmdN3VgyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=OpGTjdSX; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b7a40c7fc2so12622341cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 06:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=grsecurity.net; s=grsec; t=1757942298; x=1758547098; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hKFloG2OMskyg6q1OeWWQ+GyNGPMMa+n6Zu3PGiVpJQ=;
-        b=OpGTjdSX8hgFCcYz9G9o/gTP9Cqw/gO3xOE4pX3rvOFQjXuqkFmXEVU88/S7puaY3g
-         TtRfpxlWngW/AHLhE2OdxGtT1d4SGUpdW471cFJ9qiwD1M48RZN7f8krKHQ7x+FHoysE
-         k5XLyt+73qciHMjeQGXYQAWylIQ1EB1o8KlpqmnxM163TztGD6YizI4n5dM37lx3dZjR
-         +q2XGIulte1i0WH8/iUL16z6xXLZlphBoD6DwTcQqzFyajbiz9FKb081Idv5DalzeT4C
-         T8KYaxjBnmc01FS0CwfdIgNwFYcmBzzjNKHGbZ2uQEtkxfj0iScrJyTMi5r3gc/3j1UB
-         DSwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757942298; x=1758547098;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hKFloG2OMskyg6q1OeWWQ+GyNGPMMa+n6Zu3PGiVpJQ=;
-        b=pV8k2IRBo1x7grI+9VWFlSFwCE7wVnho1ScwENML1JdmuU8iJkqwgH4s+qrDJLvs7i
-         bZiMaHnX14niAPvt6XlNi8jkjTlw8c4lEzibZQ5Dsxhd7sqeXAsDBpEnETk209i89TDz
-         gb8zpbkC0s5nWH6nsDU/0xEyTW6T+Hei18/51+HDkc/T7Y7wtpHmj6cdlhm1jvt4wl9y
-         XAb7/wBPB8oj7LfSWG9BxvbWNEtJq2abTufEba8yojm8u8JPWu4mOMfM8xLr+AjTwsmu
-         AzyjU+X0QjtIP/FNCdYek17PJEBaUYZKgH0Mnp/IFPynYz/TUsHfMWU9MuTP/YbqNsG3
-         IMuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq2fFIcq+D9ACAQQ4B/W/UddACly11uNh1mZJUPdAq7nfvFQjAPjbyV71AcHh67fCe5XVFQgP5NP5vzfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP+zfvbDUn3UEZN7YUvrlhvR+UtfvxFaOBtEhom6SioL0mFzze
-	GHWHalfh3xMWHymZkO0wouqB5CL+lC5aue198S/Wk7sNqQuJQ4dl5CKD1H5Ho48hsXE=
-X-Gm-Gg: ASbGncuCIpG6MXSS87IbiLblwNZ1wCvPTCN2I0rLzfIXpCeVcrnXb3J01R9XJ80dXPF
-	3zj6qla+ll4j3ZEFKCYJOlG8qZXuA3MsqSd+4At9wg1wLW7KJF3YxK2/Qn7Q6zEmgnObZU8hDAY
-	TrfHOrRkI9H4ynxSe3iIfShTe3vtFFHNvyurDUYKGvk92XvRUHPdpDT1+mt5KNJRBXBWiBVDTQ2
-	Nxf8i45cgsTwdVuidZXx03Jj4aMPNFs1Xha98fiwLBVuto0dZfRrrwOLN3T35m5ZBIrZZxaV9VE
-	aayZDXnqvNQOeamBCJ2DyDDXekjb/HS7LZsZNZCSkf2FbZzV59hQ/DW46+KJpsDdXWfHpGETd/S
-	ycGUyU66WINL7P94/FhvXeJhMkyn/ghnBxenDZyb7Xd9bueCa8av8JRRch7LdR9e0xfAcEUGTYY
-	tDXILFhiZsIVXLfaJylQmo8wtstdaOPwCQIPHRNFFU/4prQ1T1Aue8FNkVRQ==
-X-Google-Smtp-Source: AGHT+IGhTCub12nlTzC/2ydYvMUFyaPaJp+cpRW8Vimb0YoCXu36wiRFpkqRncfi2zn9N0Fljc1+3w==
-X-Received: by 2002:a05:622a:2593:b0:4b7:9fc2:d9ba with SMTP id d75a77b69052e-4b79fc2ea42mr61050811cf.41.1757942298293;
-        Mon, 15 Sep 2025 06:18:18 -0700 (PDT)
-Received: from ?IPV6:2003:fa:af00:da00:8e63:e663:d61a:1504? (p200300faaf00da008e63e663d61a1504.dip0.t-ipconnect.de. [2003:fa:af00:da00:8e63:e663:d61a:1504])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-82a0d349ca3sm161109385a.64.2025.09.15.06.18.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 06:18:17 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------4i2MyFr7Y8HFl0Kd5nqzyczP"
-Message-ID: <cf87742b-2f6f-42a2-9d75-b2c766b8b275@grsecurity.net>
-Date: Mon, 15 Sep 2025 15:18:12 +0200
+	s=arc-20240116; t=1757942325; c=relaxed/simple;
+	bh=K168Nz0/cSOMcDV5Ibjm1ORQDmfgPC7IGoVfDOOSL+o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fSzni+cd6sWutjPJfH5pN/fMLj+IBy2DM/1+UvJpMjW2COvRGvdRA9wNdU8eTk3lccH49P6tEu/ccMGu8a+EbWR/AHxhoVuHyzfUk1585nWV3q56mxYrBJdHgaHfOjr7ONzHsFLEHZXa/bDc2uDm5aLj8meerbdENGd/3UJG8vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oPi9ooxI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E43D11744;
+	Mon, 15 Sep 2025 15:17:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757942240;
+	bh=K168Nz0/cSOMcDV5Ibjm1ORQDmfgPC7IGoVfDOOSL+o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=oPi9ooxIybJfeENFQJOqbO+uh9kdSW9cB4wvM25ugmvLs02/B/0MVG1zAyEN+P4Cx
+	 QFJySqYsAu3RSOOW9DWY9XKdj6DBkyFFVHjWths/W3RSoLJKl69++RXsIo6EHPXDPp
+	 Ox5B/qNAvS2bS8lvGMlgEQStM+oi3nrqGr4zGOKU=
+From: Isaac Scott <isaac.scott@ideasonboard.com>
+Subject: [PATCH v3 0/3] media: imx-mipi-csis: Get the number of active
+ lanes from mbus_config
+Date: Mon, 15 Sep 2025 14:18:32 +0100
+Message-Id: <20250915-mbus-config-active-lanes-v3-0-97a1282a410b@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/41] KVM: x86: Mega-CET
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
-Content-Language: en-US, de-DE
-From: Mathias Krause <minipli@grsecurity.net>
-Autocrypt: addr=minipli@grsecurity.net; keydata=
- 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
- RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
-In-Reply-To: <20250912232319.429659-1-seanjc@google.com>
-
-This is a multi-part message in MIME format.
---------------4i2MyFr7Y8HFl0Kd5nqzyczP
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACgSyGgC/03MTQ6CMBBA4auYrh3SHwroynsYF0M7wCTSmrYSE
+ 8LdbVy5/Bbv7SJTYsrietpFoo0zx1BhzifhFgwzAftqoaW28qIsrOM7g4th4hnQFd4Inhgog2r
+ R28H1qIZO1PyVaOLPb31/VE8prlCWRPg3lEZJrVvTKNsZq3tQwBnRNdnFUm7sCXMMY8TkGxdXc
+ Rxfb9mITrIAAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rui Miguel Silva <rmfrfs@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Frank Li <Frank.Li@nxp.com>, Isaac Scott <isaac.scott@ideasonboard.com>
+X-Mailer: b4 0.13.0
 
-Am 13.09.25 um 01:22 schrieb Sean Christopherson:
-> This series is (hopefully) all of the in-flight CET virtualization patches
-> in one big bundle.  Please holler if I missed a patch or three as this is what
-> I am planning on applying for 6.18 (modulo fixups and whatnot), i.e. if there's
-> something else that's needed to enable CET virtualization, now's the time...
-> 
-> Patches 1-3 probably need the most attention, as they are new in v15 and I
-> don't have a fully working SEV-ES setup (don't have the right guest firmware,
-> ugh).  Though testing on everything would be much appreciated.
-> 
-> I kept almost all Tested-by tags even for patches that I massaged a bit, and
-> only dropped tags for the "don't emulate CET stuff" patch.  In theory, the
-> changes I've made *should* be benign.  Please yell, loudly, if I broken
-> something and/or you want me to drop your Tested-by.
+It is possible that the number of desired active MIPI CSI2 data lanes
+does not match the maximum listed in device tree. Add a helper function
+to v4l2_common that calls the get_mbus_config op to get the number of
+actively used data lanes in drivers that support it.
 
-I retested this series on my Alder Lake NUC (i7-1260P) and with the
-attached hacky patch on top of Chao's QEMU branch[1] -- which points to
-commit 02364ef48c96 ("fixup! target/i386: Enable XSAVES support for CET
-states") for me right now -- the KUT CET tests[2] pass just fine on the
-host as well as within a guest, i.e. nested. Therefore my Tested-by
-still stands -- at least for the Intel/VMX part.
+Compare it to the number of lanes configured in device tree, and if its
+invalid, use the number present in device tree.
 
-Thanks,
-Mathias
+This series also uses the helper in imx-mipi-csis driver to set the
+currently configured num_data_lanes, while keeping track of the number
+of data lanes set in device tree to ensure we can still use all possible
+lanes if we need to, and the upstream subdev driver requests them.
 
-[1] https://github.com/gaochaointel/qemu-dev#qemu-cet
-[2]
-https://lore.kernel.org/kvm/20250626073459.12990-1-minipli@grsecurity.net/
---------------4i2MyFr7Y8HFl0Kd5nqzyczP
-Content-Type: text/x-patch; charset=UTF-8; name="qemu_cet_v15.diff"
-Content-Disposition: attachment; filename="qemu_cet_v15.diff"
-Content-Transfer-Encoding: base64
+Tested on v6.15, compile tested on v6.17-rc6.
 
-ZGlmZiAtLWdpdCBhL3RhcmdldC9pMzg2L2t2bS9rdm0uYyBiL3RhcmdldC9pMzg2L2t2bS9r
-dm0uYwppbmRleCBjZTNjNTJmZDBmN2QuLmQwN2RmYzcxNGEzYyAxMDA2NDQKLS0tIGEvdGFy
-Z2V0L2kzODYva3ZtL2t2bS5jCisrKyBiL3RhcmdldC9pMzg2L2t2bS9rdm0uYwpAQCAtNTMy
-MCw4ICs1MzIwLDcgQEAgc3RhdGljIGludCBrdm1fZ2V0X25lc3RlZF9zdGF0ZShYODZDUFUg
-KmNwdSkKICAgICByZXR1cm4gcmV0OwogfQogCi0jZGVmaW5lIEtWTV9YODZfUkVHX1NZTlRI
-RVRJQ19NU1IgICBCSVRfVUxMKDM1KQotI2RlZmluZSBSRUdfTVNSX0lOREVYKHgpICAgICAg
-ICAgICAgKEtWTV9YODZfUkVHX1NZTlRIRVRJQ19NU1IgfCB4KQorI2RlZmluZSBLVk1fWDg2
-X1JFR19TU1AgICAgICgweDIwMzAwMDAzVUxMIDw8IDMyIHwgMHgwMDAwMDAwMCkKIAogc3Rh
-dGljIGJvb2wgaGFzX2NldF9zc3AoQ1BVU3RhdGUgKmNwdSkKIHsKQEAgLTU0MDksOSArNTQw
-OCw5IEBAIGludCBrdm1fYXJjaF9wdXRfcmVnaXN0ZXJzKENQVVN0YXRlICpjcHUsIGludCBs
-ZXZlbCwgRXJyb3IgKiplcnJwKQogICAgIH0KIAogICAgIGlmIChoYXNfY2V0X3NzcChjcHUp
-KSB7Ci0gICAgICAgIHJldCA9IGt2bV9zZXRfb25lX3JlZyhjcHUsIFJFR19NU1JfSU5ERVgo
-MHVsbCksICZlbnYtPmd1ZXN0X3NzcCk7CisgICAgICAgIHJldCA9IGt2bV9zZXRfb25lX3Jl
-ZyhjcHUsIEtWTV9YODZfUkVHX1NTUCwgJmVudi0+Z3Vlc3Rfc3NwKTsKICAgICAgICAgaWYg
-KHJldCkgewotICAgICAgICAgICAgZXJyb3JfcmVwb3J0KCJGYWlsZWQgdG8gc2V0IEtWTV9S
-RUdfTVNSLCByZXQgPSAlZFxuIiwgcmV0KTsKKyAgICAgICAgICAgIGVycm9yX3JlcG9ydCgi
-RmFpbGVkIHRvIHNldCBLVk1fUkVHX01TUiwgcmV0ID0gJWQiLCByZXQpOwogICAgICAgICB9
-CiAgICAgfQogCkBAIC01NDg5LDkgKzU0ODgsOSBAQCBpbnQga3ZtX2FyY2hfZ2V0X3JlZ2lz
-dGVycyhDUFVTdGF0ZSAqY3MsIEVycm9yICoqZXJycCkKICAgICAgICAgZ290byBvdXQ7CiAg
-ICAgfQogICAgIGlmIChoYXNfY2V0X3NzcChjcykpIHsKLSAgICAgICAgcmV0ID0ga3ZtX2dl
-dF9vbmVfcmVnKGNzLCBSRUdfTVNSX0lOREVYKDB1bGwpLCAmZW52LT5ndWVzdF9zc3ApOwor
-ICAgICAgICByZXQgPSBrdm1fZ2V0X29uZV9yZWcoY3MsIEtWTV9YODZfUkVHX1NTUCwgJmVu
-di0+Z3Vlc3Rfc3NwKTsKICAgICAgICAgaWYgKHJldCkgewotICAgICAgICAgICAgICAgIGVy
-cm9yX3JlcG9ydCgiRmFpbGVkIHRvIGdldCBLVk1fUkVHX01TUiwgcmV0ID0gJWRcbiIsIHJl
-dCk7CisgICAgICAgICAgICAgICAgZXJyb3JfcmVwb3J0KCJGYWlsZWQgdG8gZ2V0IEtWTV9S
-RUdfTVNSLCByZXQgPSAlZCIsIHJldCk7CiAgICAgICAgIH0KICAgICB9CiAgICAgcmV0ID0g
-a3ZtX2dldF9hcGljKGNwdSk7Cg==
+---------
 
---------------4i2MyFr7Y8HFl0Kd5nqzyczP--
+Changes v2 -> v3:
+
+- Rename dt_lanes to max_data_lanes
+- Remove check for < 0 on unsigned int max_data_lanes in
+  v4l2_get_active_data_lanes()
+- Added comment to explain that mbus_config is expected to be zeroed at
+  init in drivers implementing get_mbus_config subdev pad op
+- Wrapped signature in header file and source for
+  v4l2_get_active_data_lanes()
+- Added kernel-doc documentation for v4l2_get_active_data_lanes()
+- Added debug message to indicate an invalid number of active lanes
+- Changed csis->max_data_lanes to csis->num_data_lanes
+- Changed uses of csis->bus.num_data_lanes to csis->num_data_lanes where
+  appropriate to make csis->bus immutable after probe
+
+Changes v1 -> v2:
+
+- Added helper function to get active data lanes in v4l2-common
+- Store the maximum data lanes possible, as configured in device tree
+- Added media: prefix to commit titles
+
+Isaac Scott (3):
+  media: v4l: Add helper to get number of active lanes via a pad
+  media: imx-mipi-csis: Store the number of data_lanes configured in dt
+  media: imx-mipi-csis: Get number of active lanes via mbus_config
+
+ drivers/media/platform/nxp/imx-mipi-csis.c |  8 ++++++-
+ drivers/media/v4l2-core/v4l2-common.c      | 25 ++++++++++++++++++++++
+ include/media/v4l2-common.h                |  1 +
+ 3 files changed, 33 insertions(+), 1 deletion(-)
+
+--
+2.43.0
+
+---
+Isaac Scott (3):
+      media: v4l: Add helper to get number of active lanes via a pad
+      media: imx-mipi-csis: Store the number of data_lanes configured in dt
+      media: imx-mipi-csis: Get number of active lanes via mbus_config
+
+ drivers/media/platform/nxp/imx-mipi-csis.c | 17 +++++++++++-----
+ drivers/media/v4l2-core/v4l2-common.c      | 32 ++++++++++++++++++++++++++++++
+ include/media/v4l2-common.h                | 21 ++++++++++++++++++++
+ 3 files changed, 65 insertions(+), 5 deletions(-)
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20250915-mbus-config-active-lanes-14ad58c7a186
+
+Best regards,
+-- 
+Isaac Scott <isaac.scott@ideasonboard.com>
+
 
