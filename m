@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-817458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB6BB58274
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:47:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8641B58282
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C264833E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE281781A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F862286419;
-	Mon, 15 Sep 2025 16:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5C92BDC02;
+	Mon, 15 Sep 2025 16:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BH2fRaPt"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KR2CIY9k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EE0269CF0
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 16:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01822877F7;
+	Mon, 15 Sep 2025 16:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757954812; cv=none; b=qPbADTaiLbfpLf8tBv8BISWl4blq6dPBS/BPzO2VOSQYzTHbiecyyJYMS0ZJc6HEefd0ETcBSsbIIi/Y+Rr5Oo0EXVOwjC0wAoXvl4E/rUqMzGEIBylklCDciFLOMmMOnSFs/QNpl2wdYdI5EmpIwSHdlUYW2rSBQkimfnP2iaM=
+	t=1757954835; cv=none; b=oyTUsiHLcx/PkNgfNg3/nlMvIWioQ7+G+vgd7gOanN32IMlZE9mHU8ChiOtxMi9E6dbcJllb29ftFqLVCUTDrh5gS7i6cY2sKnN6dLeNl0C365mdF15rnlgOtDcyX8cxXTpPAeBwyiGPsv9N0/2Zsh9gC25vYImYGJsFg7134DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757954812; c=relaxed/simple;
-	bh=CXzPlvutPWKdlESNZVRVQx98sF9Awv2WxTK5w9NjF8U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eInw0tBZgz4gU2ZXHwyE4EipHUEvPTMVUwK5UbyANtnWPlTTzoXuzhhsBE9PguuWwTr/US+L3/Vi1PogY2IkOOKr27/owBqhJfDyahok34tbomgS4MXLzDxBW3npI6zvgFCc5MvYgRp+1ppieCwodZ9nLu6tCptt02Vi0VCJo5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BH2fRaPt; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32e120e0e4aso3033558a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757954810; x=1758559610; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6/ZMWPFkdx/KzUTCHS9r9FitNYaY9pudHoMyjc+mhE=;
-        b=BH2fRaPt3Hq/rdc2jX+E+TXgbgH7eOoVu7jDMdiOD7uh/imsKlnatzkvoQFFlTUUgh
-         itF+QVx2lR879boFhbUkzMnzr8DvX5HsyMhVtNT9sSxd0XEPA+xblr5H9g5J1cOgGpco
-         z8/GQQpnkQTSCauYi1IrEa367BXhj223TQxXIOA45EJYRyu9r7W3sk6aEktJFNZTKKHu
-         N7IqiETrFh47f1yUnrxvkflfvbPR4V/k9D+rKl8fVCaNDKrUf3gUy1afn/Mpb7x4pLbT
-         JmXM2RSqyBvOjQ+VykZ1tH9uWcOw62+i2Ljy6M92ODaK35Rn8zDTW4dxSRML9VKo8Cnp
-         1IyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757954810; x=1758559610;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h6/ZMWPFkdx/KzUTCHS9r9FitNYaY9pudHoMyjc+mhE=;
-        b=v11Z9uTDGlyR3QjiPXPb3KBaYcvNY82pvHxx+hQoa651qzOow79JrO2IY4+UlYjbx9
-         Xe+mIX8MCDF3337tzY2ez5YNJnmf0cftsbn2mNvIeo3gbFBiDRZybVhUsRoro94DPkqR
-         Qz8Z7xw120ZJUJ8brVVLpuOyUacgL5tL5YNFRPtlo+fkDiHNN/Ii6OBMY4zS3aZGT5Ry
-         1wom6+YzZ26TwyauD7lzh0LXDAN0ifh4gbEngBidN9qMiDOQQNZtx4YmlHjynYCH4j9K
-         FSOgbnQf8B62zMat7cO/4mixu2etTWqcZFnnO8mqELtMNOqvzhSIJ+KpFY/HZ4VttbYk
-         yigQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfqQ+IR+V+M7bX5Zo/tau6n/OpXeIDdfZ3LJmIOdLtkKJfXp5+1cR4finy/BzfxJ+iCjLjuTv6cA9m+X4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynPa/LsKEvph8ypGhkcnyCJf84oMz5lmOO9xljublswvaGd+7k
-	NunvHkiqKvGMjh+uuwupG/9/vb0dTsjQOqG7wfquI/gBIsf518btZy6qFIV0Qphns2MQ+M2Hgpo
-	Arl0wKg==
-X-Google-Smtp-Source: AGHT+IFA9rXmjCzkTEmAvIT/PTTJwVPmxCScwhbyC7Fth5S4LVT3spvgUbpO5p9/DN7nyS/dgvZep2zQesM=
-X-Received: from pjbso12.prod.google.com ([2002:a17:90b:1f8c:b0:32b:5548:d659])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48d2:b0:32e:6fae:ba53
- with SMTP id 98e67ed59e1d1-32e6faebc19mr3488056a91.8.1757954809999; Mon, 15
- Sep 2025 09:46:49 -0700 (PDT)
-Date: Mon, 15 Sep 2025 09:46:48 -0700
-In-Reply-To: <aMgoGLL65vUPGYW0@AUSJOHALLEN.amd.com>
+	s=arc-20240116; t=1757954835; c=relaxed/simple;
+	bh=AYGzSlRsXTSxiB0nCeZZldU8jcbwpn+7WX58ynn8QzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFDg55fezFRtkjU1iI6+qLMx5k7tJ/pYAv3qr7MHBY1XNXLmLx6U4pmY5k1gIizeMd8Xz3qUSfL9dhLJUU39phHKRsW5+J03MbXRev+lg4zcX1/CAOdgmde1RhA39KmxeHKDEedk73vc++BuILrwORzcRKbCXRIY6ZYNCucr+R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KR2CIY9k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 278ADC4CEFD;
+	Mon, 15 Sep 2025 16:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757954835;
+	bh=AYGzSlRsXTSxiB0nCeZZldU8jcbwpn+7WX58ynn8QzU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KR2CIY9kKmW1I2C+wNwOfFy1Cimq4ycroixQFv0gnodTaYRtelUrHsaV7Gsfrkvdd
+	 TtagClzYFPTy25O34F+AscdKuRvYoQLUjBJehcEoE5o19eDrs+gaP/Mcv70bKkkgRq
+	 12z6+y/aMyWoYlES+3K26xQDxN6W8AmwwwE87JnxwXnKVdjM27AZvyh0gKxBakfiSw
+	 ZzqUbgT149Wlz6mLCF1GAqE9fVHn1YxzMdDptqK5uhUgRG8W6XXmzINLT4g6yE4faK
+	 Q8aGTE7rUyPlWBBC8LLXll6Aw/pKfuVn+LEF2v4+sn5Ne2erVo99NzVTKuSQnnRa99
+	 2AoGZhVTIKh7w==
+Date: Mon, 15 Sep 2025 17:47:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anup Patel <anup@brainfault.org>, Arnd Bergmann <arnd@arndb.de>,
+	Joel Stanley <jms@tenstorrent.com>, Joel Stanley <joel@jms.id.au>,
+	Michael Neuling <mikey@neuling.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@kernel.org>, Andy Gross <agross@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
+Subject: Re: [PATCH 6/7] riscv: dts: Add Tenstorrent Blackhole A0 SoC PCIe
+ cards
+Message-ID: <20250915-mouth-banner-ddfb2e48bdb3@spud>
+References: <20250913-tt-bh-dts-v1-0-ddb0d6860fe5@tenstorrent.com>
+ <20250913-tt-bh-dts-v1-6-ddb0d6860fe5@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250908201750.98824-1-john.allen@amd.com> <aMSkp7e7IryG2ZAj@google.com>
- <aMgoGLL65vUPGYW0@AUSJOHALLEN.amd.com>
-Message-ID: <aMhC-EkMW0XSxxk6@google.com>
-Subject: Re: [PATCH v4 0/5] Enable Shadow Stack Virtualization for SVM
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
-	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iHNPxCzVrL8Nj8IA"
+Content-Disposition: inline
+In-Reply-To: <20250913-tt-bh-dts-v1-6-ddb0d6860fe5@tenstorrent.com>
 
-On Mon, Sep 15, 2025, John Allen wrote:
-> On Fri, Sep 12, 2025 at 03:54:31PM -0700, Sean Christopherson wrote:
-> > On Mon, Sep 08, 2025, John Allen wrote:
-> > > This series adds support for shadow stack in SVM guests
-> >                   ^
-> >                   |
-> >                 some
-> > 
-> > I mean, who cares about nested, right?
-> > 
-> > Sorry for being snippy, but I am more than a bit peeved that we're effectively
-> > on revision 6 of this series, and apparently no one has thought to do even basic
-> > tested of nested SVM.
-> 
-> Hi Sean,
-> 
-> I have been testing nested with this feature (or so I thought).
 
-The issue here is that Linux only supports shadow stacks at CPL3, i.e. only
-exercises MSR_IA32_U_CET, and for whatever reason the KVM-Unit-Test only tests
-MSR_IA32_U_CET too (and is stupidly not compatible with AMD due to requiring
-SHSTK *and* IBT).  So just running those in nested won't provide any coverage
-for S_CET.
+--iHNPxCzVrL8Nj8IA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Can you explain what you did to test and what wasn't working?
+On Sat, Sep 13, 2025 at 02:31:05PM -0700, Drew Fustini wrote:
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b2b08023643a2cebd4f924579024290bb355c9b3
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/tenstorrent/blackhole-a0-card.dts
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/dts-v1/;
+> +
+> +#include "blackhole-a0.dtsi"
+> +
+> +/ {
+> +	model = "Tenstorrent Blackhole A0 SoC PCIe card";
+> +	compatible = "tenstorrent,blackhole-a0-card", "tenstorrent,blackhole-a0";
+> +
+> +	memory@0 {
+> +		device_type = "memory";
+> +		reg = <0x4000 0x30000000 0x1 0x00000000>;
 
-Read/write MSR_IA32_S_CET to a non-zero value from L2 by running the proposed
-selftest[*] in L1.  Because KVM doesn't propagate S_CET to/from vmcb12, the
-writes from L2 are effectively lost.
+This isn't at address zero as the node address claims.
 
-An ever better way to cover this would be a selftest or KUT test to explicitly
-read/write MSRs in L2, and/or fill vmcs12/vmcb12 from L1 and verify L2 sees the
-desired value.
+> +	};
+> +};
+> diff --git a/arch/riscv/boot/dts/tenstorrent/blackhole-a0.dtsi b/arch/riscv/boot/dts/tenstorrent/blackhole-a0.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..517b6442ff0fe61659069e29318ad3f01bc504e2
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/tenstorrent/blackhole-a0.dtsi
+> @@ -0,0 +1,112 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +// Copyright 2025 Tenstorrent AI ULC
+> +/dts-v1/;
+> +
+> +/ {
+> +	compatible = "tenstorrent,blackhole-a0";
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	cpus {
+> +		#address-cells = <0x1>;
+> +		#size-cells = <0x0>;
+> +		timebase-frequency = <50000000>;
+> +
+> +		cpu@0 {
+> +			compatible = "sifive,x280", "sifive,rocket0", "riscv";
+> +			device_type = "cpu";
+> +			reg = <0>;
+> +			mmu-type = "riscv,sv57";
 
-https://lore.kernel.org/all/20250912232319.429659-37-seanjc@google.com
+> +			riscv,isa = "rv64imafdcv_zicsr_zifencei_zfh_zba_zbb_sscofpmf";
 
-> Apologies, and thanks for taking the time to look into the problem.
+What's the benefit of retaining this property?
 
-No worries, I didn't intend to single you out, I was essentially just yelling at
-everyone involved :-)
+> +			riscv,isa-base = "rv64i";
+> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicsr",
+> +					       "zifencei", "zfh", "zba", "zbb", "sscofpmf";
+> +			riscv,cboz-block-size = <0x40>;
+
+cboz block size, but no zicboz in your extensions list?
+
+--iHNPxCzVrL8Nj8IA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMhDCAAKCRB4tDGHoIJi
+0pMaAP9p1TqTxoGqAjuErcVPuS5xegEUGST8rXU3p5YRl2CUTAEAtTVesw+pKK3+
+WxaX6WKQ5s5k4Ny2jsJ6byBiC4PHbQ4=
+=+taw
+-----END PGP SIGNATURE-----
+
+--iHNPxCzVrL8Nj8IA--
 
