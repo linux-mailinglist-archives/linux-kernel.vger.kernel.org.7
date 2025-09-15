@@ -1,59 +1,110 @@
-Return-Path: <linux-kernel+bounces-816876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66E0B579CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:04:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAB1B579D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37FB616776B
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0906218803EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAFD305044;
-	Mon, 15 Sep 2025 12:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AD6305958;
+	Mon, 15 Sep 2025 12:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um+iNDaY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LFaKUbri";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LO/X1Iyc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LFaKUbri";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LO/X1Iyc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703BA2E2EEF
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81153302CB8
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757937839; cv=none; b=X9f653BYVjng5H6/vNgaSLiMtYnTIbSAAmuhRzpz0LgDQGUlPSixJBH8CcxqQKGhA/vySODLrQ7/NLsHV5bxZJS831oT00Ep3ms4ZErUFGg5Jl19BHc+sLPZpgHkmQ/L+B27OdHI1GwPW+4Ls6fzqlFvjKswkqFdmivKV4gJKg0=
+	t=1757937878; cv=none; b=pkh/CONcjRLCkjAclvQGP2Kidwr3NDBvWy7PSVYMK5jOMSCfXAul3kMOzNcZzM8vOl6q7Pa3ADHPDdaill0E/QZyvvwqy0uIyWLMSN7rcSoBwF6/BAEk6LZZlvpX60HAE4U4p26daNChkk/Q3dL/ftzqIosFPMeRYRCTOuzRh/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757937839; c=relaxed/simple;
-	bh=tTfy69vuxcsU0PPDO3wtMtWUyYHQN7GhuK5IHt9W66w=;
+	s=arc-20240116; t=1757937878; c=relaxed/simple;
+	bh=TKLHmSn143LM+CSvnv0ajKbCEGc8gLJieCMukbTN57E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zprek4FhfzOrjI5i5sXH555/6T4jUD+yG1wSWRp6wGWT6U3YMAwDWIykM1mmsM/hXqVsAz7ahLKMgGoJ8AX2h1gackyH5nvzQvmORq6d+ws/es1nFZSd7ECRAwfQhhqRp+3azACrTItAXFho06Q/E7q9P1MTPUZvTEJvLGUQbDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um+iNDaY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDD70C4CEF1;
-	Mon, 15 Sep 2025 12:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757937839;
-	bh=tTfy69vuxcsU0PPDO3wtMtWUyYHQN7GhuK5IHt9W66w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=um+iNDaY5sm+GI9HU+djJgAGEmA9bdYR1bLywEgyWVD9icTvUIamHBufH4D7TrB4h
-	 NFT5JcBypNaV222BxoAm6IVKhLNi2ybdCUKXGAUXiF5VU0ASS3XFv8jUyqNLzoYlCO
-	 vq3QgtHm5idvE55znTw+A/uFOwjc3Z8vZO9lqq115dPSJqAUObxMbOJcn44IRX/1J3
-	 Shk7WHjYKrWWAsMNvhzhYiGkGvKWFMx5k9TJswCLYJjLPmGfro+k9ETBPxzAM84Ycf
-	 4molWQjeSug33NlkJ2Np5aH+ipu9v+cog81j8a7HQmn8EvmhWM5heCYc4WJHtalgcK
-	 SvLSdMVI7IhlQ==
-Date: Mon, 15 Sep 2025 14:03:56 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Taotao Chen <chentao325@qq.com>
-Cc: "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>, 
-	"joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>, "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>, 
-	"tursulin@ursulin.net" <tursulin@ursulin.net>, "andi.shyti@linux.intel.com" <andi.shyti@linux.intel.com>, 
-	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	kernel test robot <oliver.sang@intel.com>, chentaotao <chentaotao@didiglobal.com>
-Subject: Re: [PATCH v2 1/2] drm/i915: set O_LARGEFILE in __create_shmem()
-Message-ID: <eijc4lnkdfsk6l4go2psyt4g6ufrha7sijeearcvuo7nqrbkby@kqod2veuvaco>
-References: <20250822030651.28099-1-chentaotao@didiglobal.com>
- <tencent_EA6C39EF0B78D46EA32051C7151E859A2F08@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIHbDR0HPppTEeWpKSLYtx9YjfyPeQ46Jnep7lwGD6D0NO9PfO+QbPl4F9AWhiSdJXgb2nGCjaRYnFWy4145LnezX8D/XJgoLeglZejoVpWMGI6uhgGjJVrPIh3W7V/rOLhckcem2aS4PnF2OzTtdDJbest1rKCKrYrQ9676UBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LFaKUbri; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LO/X1Iyc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LFaKUbri; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LO/X1Iyc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AB63D1F8B0;
+	Mon, 15 Sep 2025 12:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757937874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
+	b=LFaKUbriuaxssWc8aokQp8aBdO5TFiQa516sK7E7ihAXh2g/DK4jqW6kI+epGTMnS1LdE7
+	6EoFH/IiFbci7tLAVS/6qNQMgmCrfvyPOTjXKcVi8xMgypqR9K099hz/lKNSpiqN9K93O8
+	VRRidbdQ6EatjuaGW1bHbTtMuDC98QI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757937874;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
+	b=LO/X1Iyc/VcnKo9OryF2429eTlNPVbA+Eny5LvFxhOezsRRq1CBVHPQ7FmYysF2pdFLrvT
+	BtqI0oeRiPClKeDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LFaKUbri;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="LO/X1Iyc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757937874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
+	b=LFaKUbriuaxssWc8aokQp8aBdO5TFiQa516sK7E7ihAXh2g/DK4jqW6kI+epGTMnS1LdE7
+	6EoFH/IiFbci7tLAVS/6qNQMgmCrfvyPOTjXKcVi8xMgypqR9K099hz/lKNSpiqN9K93O8
+	VRRidbdQ6EatjuaGW1bHbTtMuDC98QI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757937874;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j9D5JOnLIGbPLQ/ZIcQ3I5eG7ibeoSdEgH4Y40mwguw=;
+	b=LO/X1Iyc/VcnKo9OryF2429eTlNPVbA+Eny5LvFxhOezsRRq1CBVHPQ7FmYysF2pdFLrvT
+	BtqI0oeRiPClKeDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9CDAB1398D;
+	Mon, 15 Sep 2025 12:04:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eadJJtIAyGgGMgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Sep 2025 12:04:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5930AA0A06; Mon, 15 Sep 2025 14:04:34 +0200 (CEST)
+Date: Mon, 15 Sep 2025 14:04:34 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 22/33] pid: support ns lookup
+Message-ID: <f2sbqcorwm7x6weiduhectcrlwedcnpppfhiepjcmeij2xq5bv@j7yrhpkgjzr7>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-22-1a247645cef5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,44 +113,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_EA6C39EF0B78D46EA32051C7151E859A2F08@qq.com>
+In-Reply-To: <20250912-work-namespace-v2-22-1a247645cef5@kernel.org>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: AB63D1F8B0
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[27];
+	RCVD_TLS_LAST(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.cz,gmail.com,vger.kernel.org,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,kernel.dk,cmpxchg.org,suse.com,google.com,redhat.com,oracle.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	R_RATELIMIT(0.00)[to_ip_from(RL9r1cnt7e4118fjryeg1c95sa)];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Spam-Score: -2.51
 
-Hi Taotao,
+On Fri 12-09-25 13:52:45, Christian Brauner wrote:
+> Support the generic ns lookup infrastructure to support file handles for
+> namespaces.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-> > Without O_LARGEFILE, file->f_op->write_iter calls
-> > generic_write_check_limits(), which enforces a 2GB (MAX_NON_LFS) limit,
-> > causing -EFBIG on large writes.
-> > 
-> > In shmem_pwrite(), this error is later masked as -EIO due to the error
-> > handling order, leading to igt failures like gen9_exec_parse(bb-large).
-> > 
-> > Set O_LARGEFILE in __create_shmem() to prevent -EFBIG on large writes.
-> > 
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202508081029.343192ec-lkp@intel.com
-> > Fixes: 048832a3f400 ("drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter")
-> > Signed-off-by: Taotao Chen <chentaotao@didiglobal.com>
+Looks good. Feel free to add:
 
-...
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> Just a gentle ping on this patch. Any further comments or plans to pick it
-> up?
+								Honza
 
-Unfortunately your patch has not been picked up by our CI, now I
-re-run the test.
-
-In any case, your second patch can't be merged yet because your
-previous one(*) has been applied to the wrong branch from
-Christian while it should have gone through drm-intel-gt-next.
-Now we need to wait for a backmerge.
-
-In any case, if the tests succeed, I can already apply your first
-patch so that it gets included in the Wednesday's pull request.
-
-While the second patch, that is not a fix, has plenty of time and
-can wait the backmerge.
-
-Andi
-
-(*) 048832a3f400 ("drm/i915: Refactor shmem_pwrite() to use kiocb and write_iter")
+> ---
+>  kernel/pid_namespace.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 20ce4052d1c5..228ae20299f9 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/signal.h>
+>  #include <linux/idr.h>
+> +#include <linux/nstree.h>
+>  #include <uapi/linux/wait.h>
+>  #include "pid_sysctl.h"
+>  
+> @@ -122,6 +123,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+>  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
+>  #endif
+>  
+> +	ns_tree_add(ns);
+>  	return ns;
+>  
+>  out_free_inum:
+> @@ -147,6 +149,7 @@ static void delayed_free_pidns(struct rcu_head *p)
+>  
+>  static void destroy_pid_namespace(struct pid_namespace *ns)
+>  {
+> +	ns_tree_remove(ns);
+>  	unregister_pidns_sysctls(ns);
+>  
+>  	ns_free_inum(&ns->ns);
+> @@ -473,6 +476,7 @@ static __init int pid_namespaces_init(void)
+>  #endif
+>  
+>  	register_pid_ns_sysctl_table_vm();
+> +	ns_tree_add(&init_pid_ns);
+>  	return 0;
+>  }
+>  
+> 
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
