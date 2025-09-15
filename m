@@ -1,183 +1,157 @@
-Return-Path: <linux-kernel+bounces-816599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7216BB5760C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:18:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD07B57615
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7887A20034E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241E71AA2A13
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 10:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B0F2FB966;
-	Mon, 15 Sep 2025 10:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE00D28C006;
+	Mon, 15 Sep 2025 10:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="H24x3boB"
-Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGLssWT4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C0B2E6122;
-	Mon, 15 Sep 2025 10:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E781DB546
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757931332; cv=none; b=EmvZiYD4WQ3W2hxA449i3mCGCQ5o1135pnsm6Fy8F/tMgvdhrz+4rwepiN/Eqpc/cvsmQF/fLAoUz7RqFmoKMP+UqHl7KVIgvMGLyMoVnBu1iaZm7B6L9rh41pe9scxoGCHPIrUhEJoMZrIZunYbZZ3XnIlleArZGcCcOly6A1E=
+	t=1757931414; cv=none; b=fltHvsQCa++uFpL+pVATagWs3FbIun5biRsTv+XY/zeExZ5eD9pVf2eTQy20ypnEgQrQgWmydTJX5LbSSyVvVuuSWMPMuBYAQfMUMG5e9eJzouj7MbFPqCwG+H/IymrudMMgmdawtbL883zsYGlSotfrn8ZAQ+lKtccltkSV/kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757931332; c=relaxed/simple;
-	bh=+gcpMbiu9oLbl6QoezcqlIaQLCZv0/EesdUcLulXk/s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bkTf+Opj2PSzBuycoxfop3AzmS92FdSnLJ2k8epQPEMezJNnixWxrbdVeHlUY9D29la1Zg4ygqQxVT/sSB+JSjTT/fD89h1BvFpBpP8E1UYAuhqLnZHUtTkPmPC5J3bkoRxAc17HUg3H7bb/tnLu6Ca0Pn2WgCFDrIMKfH7PA1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=H24x3boB; arc=none smtp.client-ip=35.83.148.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1757931330; x=1789467330;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ZvQ+c1vVkSnOsX9uWa42mm4Y1xQwU137w0177dY9K94=;
-  b=H24x3boBcu7v1A3/uJTfnOxp8P981JG2swrZSt9XU7DucuDjV3VyLivX
-   4yWT2n2Zj9yQePOQ0ME79SqLNp53SJMacUH3aAwvS1dr7Zg0mJ1/LCMoh
-   QtY315muCAZSL2VP36DBtlJ5NNlJsa5UciTDt/eRwuizOxdLBtLYZ+7J5
-   aw+BQ+X15D+zKthFF1QKCtnVm9ClZvk/8+Dd6sGitJFcMmfvYjcDz9iN7
-   GhqEslj/cYLymWDGCYtu8/jl+z9r2maGO5tIPT3JgEkX8Cwf2SkyM6qWs
-   EgZvM1S5oWOlnNaABvGstPVuYTQ8h1HDPJ+j1ov12k2Wg9BgzLBPU6uD5
-   g==;
-X-CSE-ConnectionGUID: 7V3sTs8+QaOed5oQ3RG/4A==
-X-CSE-MsgGUID: nBUeqQLETPOV8up8YAT6gQ==
-X-IronPort-AV: E=Sophos;i="6.18,265,1751241600"; 
-   d="scan'208";a="2890406"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 10:15:28 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:44557]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.60.76:2525] with esmtp (Farcaster)
- id 0f51da61-bb62-4199-98c0-c13ee554b8ea; Mon, 15 Sep 2025 10:15:28 +0000 (UTC)
-X-Farcaster-Flow-ID: 0f51da61-bb62-4199-98c0-c13ee554b8ea
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 15 Sep 2025 10:15:25 +0000
-Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
- (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Mon, 15 Sep 2025
- 10:15:24 +0000
-From: Jakub Acs <acsjakub@amazon.de>
-To: <linux-unionfs@vger.kernel.org>
-CC: <acsjakub@amazon.de>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein
-	<amir73il@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] ovl: check before dereferencing s_root field
-Date: Mon, 15 Sep 2025 10:15:10 +0000
-Message-ID: <20250915101510.7994-1-acsjakub@amazon.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1757931414; c=relaxed/simple;
+	bh=ZiVvWIffehN2Q6Px9dVsyvsbdVXJBkYiBFE/Cflc4qk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b5rjpmOWnap7M/vnD4WpHApknNfF4xAu43p/ksVVl2VgwqkDBzkw+7lmnL8qBFnhq2k8i/VFnuXlRx4nEh9IdAH4yiggDbc2071j49uHEFHWL7IZMUo482s0SyFoe1RdTh9TTN7J/2rdVtIUoVPzRRY70gNBqud4rCXwarBxA3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGLssWT4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2A3C113D0
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 10:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757931413;
+	bh=ZiVvWIffehN2Q6Px9dVsyvsbdVXJBkYiBFE/Cflc4qk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XGLssWT4/F3bP0ic7ZWfSFozXiC0UkaExsNgal0uoepHOigBRzWgnAoTvoXz/0LyO
+	 /Zjxrk5kBeBbdjUwij3JzopT23NGw/+tOpvtmFjNhVj04Q8IRCXqgiJZ/KF5RDYAoj
+	 Y7YqM0wtBWGoWPbml+BKqmE0giIHyHtsloTFclzloyju4YJWmXxqg9Sw9GVhL8MK8W
+	 aBVCp4ceZqe8dno6VXAA1h/zG0x9eT54wMSuHHH2V7rArbZRuO8si7OvJoSRxNq/zJ
+	 yhbDvmxz7O2SvuMDAzfzgUzNNG6MTk9gl8twSQUf53DOGbnh7lNWVCpCt5kX/FfMm1
+	 7pdeiZL/k/wsQ==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-753a9c8dabeso962952a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 03:16:52 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yynfbt1oVmKyb0U7ece2PJsk9u7+j6/kw1rjOGxNvLEOVIgoThM
+	rQY8Z8Hdf5nZo4CD172QAthNozR6Pf+cZEIqK7zggeenBgvYIid8DxhN/DuDmumai6ZX6x4+3PO
+	tXoap/lt7NwB8WzvF4vQ90kZ92r8QcmE=
+X-Google-Smtp-Source: AGHT+IHkc9WA1H1RAzKSXflZFNZUb5BQK4FvLF4EHvdkLxrAnXIuGEhgXx7Jom4DNm6HBoQZRGmY5ncRbgMzQeiN+RA=
+X-Received: by 2002:a05:6830:65d2:20b0:757:5bc5:3f2f with SMTP id
+ 46e09a7af769-7575bc544c7mr1998812a34.36.1757931412233; Mon, 15 Sep 2025
+ 03:16:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D033UWA004.ant.amazon.com (10.13.139.85) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+References: <20250915085702.519996-1-maz@kernel.org> <20250915085702.519996-3-maz@kernel.org>
+In-Reply-To: <20250915085702.519996-3-maz@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 15 Sep 2025 12:16:36 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iMQJV6mXS3STN6qkNT+eBpC8wGwOorA=-N8Jt+9dDm4A@mail.gmail.com>
+X-Gm-Features: Ac12FXwK7HYdc3TEF2ZC4JVY_CmEo3BbTiV6hYw23p4jbXZLrpzMKN2MNXJ-Jik
+Message-ID: <CAJZ5v0iMQJV6mXS3STN6qkNT+eBpC8wGwOorA=-N8Jt+9dDm4A@mail.gmail.com>
+Subject: Re: [PATCH v2 02/25] ACPI: irq: Add IRQ affinity reporting interface
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
-the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
+On Mon, Sep 15, 2025 at 10:57=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrot=
+e:
+>
+> Plug the irq_populate_fwspec_info() helper into the ACPI layer
+> to offer an IRQ affinity reporting function. This is currently
+> only supported for the CONFIG_ACPI_GENERIC_GSI configurations,
+> but could later be extended to legacy architectures if necessary.
+>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 
-This issue was found by syzkaller.
+Acked-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
 
-Race Condition Diagram:
-
-Thread 1                           Thread 2
---------                           --------
-
-generic_shutdown_super()
- shrink_dcache_for_umount
-  sb->s_root = NULL
-
-                    |
-                    |             vfs_read()
-                    |              inotify_fdinfo()
-                    |               * inode get from mark *
-                    |               show_mark_fhandle(m, inode)
-                    |                exportfs_encode_fid(inode, ..)
-                    |                 ovl_encode_fh(inode, ..)
-                    |                  ovl_check_encode_origin(inode)
-                    |                   * deref i_sb->s_root *
-                    |
-                    |
-                    v
- fsnotify_sb_delete(sb)
-
-Which then leads to:
-
-[   32.133461] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-[   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
-[   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted 6.17.0-rc6 #22 PREEMPT(none)
-
-<snip registers, unreliable trace>
-
-[   32.143353] Call Trace:
-[   32.143732]  ovl_encode_fh+0xd5/0x170
-[   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
-[   32.144425]  show_mark_fhandle+0xbe/0x1f0
-[   32.145805]  inotify_fdinfo+0x226/0x2d0
-[   32.146442]  inotify_show_fdinfo+0x1c5/0x350
-[   32.147168]  seq_show+0x530/0x6f0
-[   32.147449]  seq_read_iter+0x503/0x12a0
-[   32.148419]  seq_read+0x31f/0x410
-[   32.150714]  vfs_read+0x1f0/0x9e0
-[   32.152297]  ksys_read+0x125/0x240
-
-IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
-to NULL in the unmount path.
-
-Minimize the window of opportunity by adding explicit check.
-
-Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias")
-Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
-
-I'm happy to take suggestions for a better fix - I looked at taking
-s_umount for reading, but it wasn't clear to me for how long would the
-fdinfo path need to hold it. Hence the most primitive suggestion in this
-v1.
-
-I'm also not sure if ENOENT or EBUSY is better?.. or even something else?
-
- fs/overlayfs/export.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-index 83f80fdb1567..424c73188e06 100644
---- a/fs/overlayfs/export.c
-+++ b/fs/overlayfs/export.c
-@@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct inode *inode)
- 	if (!ovl_inode_lower(inode))
- 		return 0;
- 
-+	if (!inode->i_sb->s_root)
-+		return -ENOENT;
- 	/*
- 	 * Root is never indexed, so if there's an upper layer, encode upper for
- 	 * root.
--- 
-2.47.3
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+> ---
+>  drivers/acpi/irq.c   | 19 +++++++++++++++++++
+>  include/linux/acpi.h |  7 +++++++
+>  2 files changed, 26 insertions(+)
+>
+> diff --git a/drivers/acpi/irq.c b/drivers/acpi/irq.c
+> index 76a856c32c4d0..d1595156c86a4 100644
+> --- a/drivers/acpi/irq.c
+> +++ b/drivers/acpi/irq.c
+> @@ -300,6 +300,25 @@ int acpi_irq_get(acpi_handle handle, unsigned int in=
+dex, struct resource *res)
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_irq_get);
+>
+> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
+> +                                           unsigned int index)
+> +{
+> +       struct irq_fwspec_info info;
+> +       struct irq_fwspec fwspec;
+> +       unsigned long flags;
+> +
+> +       if (acpi_irq_parse_one(handle, index, &fwspec, &flags))
+> +               return NULL;
+> +
+> +       if (irq_populate_fwspec_info(&fwspec, &info))
+> +               return NULL;
+> +
+> +       if (!(info.flags & IRQ_FWSPEC_INFO_AFFINITY_VALID))
+> +               return NULL;
+> +
+> +       return info.affinity;
+> +}
+> +
+>  /**
+>   * acpi_set_irq_model - Setup the GSI irqdomain information
+>   * @model: the value assigned to acpi_irq_model
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 1c5bb1e887cd1..c506ae4bacc86 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1509,12 +1509,19 @@ static inline int acpi_parse_spcr(bool enable_ear=
+lycon, bool enable_console)
+>
+>  #if IS_ENABLED(CONFIG_ACPI_GENERIC_GSI)
+>  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
+ *res);
+> +const struct cpumask *acpi_irq_get_affinity(acpi_handle handle,
+> +                                           unsigned int index);
+>  #else
+>  static inline
+>  int acpi_irq_get(acpi_handle handle, unsigned int index, struct resource=
+ *res)
+>  {
+>         return -EINVAL;
+>  }
+> +static inline const struct cpumask *acpi_irq_get_affinity(acpi_handle ha=
+ndle,
+> +                                                         unsigned int in=
+dex)
+> +{
+> +       return NULL;
+> +}
+>  #endif
+>
+>  #ifdef CONFIG_ACPI_LPIT
+> --
+> 2.39.2
+>
 
