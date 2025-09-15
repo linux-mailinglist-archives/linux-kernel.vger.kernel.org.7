@@ -1,365 +1,150 @@
-Return-Path: <linux-kernel+bounces-816256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293A3B57198
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFBFB57195
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784061887412
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9898189E0E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C942D2D5C86;
-	Mon, 15 Sep 2025 07:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6A82D6620;
+	Mon, 15 Sep 2025 07:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZO9xkfD/"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G9hJLdQe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AC82D6629
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C502D46AF
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921683; cv=none; b=JpgRDLES9DJpF46AhKAcf+gWLzP9/tv5Z72i6iIe76UOLekuVrsBw1Xs8+05pBCpu7GgKFZZx1tPqPkVLYZkYrYwM8VzeHODQfkv3n+5DrFOT329g3KlG1lx2pbyzXjHmSSC3Jm2c5SbTRFs7X7+gdIJMssoMlfUWLmq0RzaLSs=
+	t=1757921679; cv=none; b=MLLM8eiG8hB185TDGyA6AW6vMZC98cz619w0etoXSdQjgsiFeeJOiSwEY074Cp/+wWn5jIdZh3kbzO2QzqKyliVIIF5iu2h10OQhQAuyfXtn5JdhdvZ3CGKSMJWbV7pSde/otlxQmMNhu5W4RBaWyFAnBwRIxrGmW3E6atRp9Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921683; c=relaxed/simple;
-	bh=2HMhB+z9Wmbw+6HNUryCiUx8upi/xjPSlu9nG2BaTWY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E3HPEjrNMgOm0h1eztVYwiP05RmTPkuz4OYZYvqekW+P3qW9twNctRwJKvuTHqkycf8D/o1WN6UnWAmUUvlHNpuLhJMQ1uAKvlo7hV4Q7wlGzmR9QFkE9YWEZZPYwWNQBlD46yJFhr7QDFgX1g6AzqztAwHxFJx919f1HI+dLyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZO9xkfD/; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7761b392d50so2841780b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757921680; x=1758526480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=c0rUlxu9dxRa7SjOGu2hjs3bhYsbBAOKtMENXiwjFtw=;
-        b=ZO9xkfD/TwnT1ONGKuYl18f3n8m1g+VxTipAgvmh0X8dNVuIa36yylVLTPNEMenzdJ
-         +5lgzjdY7mG1Yhig56cLiivAcq69VGxR0/Rm2ovpYdKub796v8t0td9v5S98vXV+7R/e
-         pQxqWV3qMGrDwfoEYkBS1ByXRYPAQoFVXWNYTJNpu8VVa/aTMKH/KfDB8lh44Tbb1Qfs
-         mSZWUY5idAp7xhb+821mbt9t9XzO3rnThbg12HQ+4/ku4SmjNnmGGaroYfdb6rXTplhm
-         TJcE2kDURgyTfrO2hNa7QwJTQEpjfJ6i5SNlYGwmfosSdoiEX0wDLcTLNYuJ9SD2AAhf
-         wp4Q==
+	s=arc-20240116; t=1757921679; c=relaxed/simple;
+	bh=pA7xq58Fqd27paAbgr3RheVO9d78UaJb5yfTRDMvo64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UtoNsDuETCN5YuVYKKw1PIC5Uy/jwAAjcEY0U6REnGNA00cZskC7kISs+Dfgz1yhgTjaERIMsIkhOZpwjxOyrkmPJuLOv0VSJhSfjqqTRWXo5kaqefoTU1WnjbsDTOZ7B+afDpv6nNQPuJpL0UqSOylrdcc48rj8ZdB1dA54ZIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G9hJLdQe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58F7I2Y2016738
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:34:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	w4oCzwIzZYIKPOJu+YqMNrlbG390YP6aeKNtC8d1OOE=; b=G9hJLdQe2GulXu6n
+	1EdMfPas3FfDfPhKzVmZ8TTFKddGgtSGV2ex7iy30aRrXTGbk/D5AJAGkact2jK2
+	U+rYbzrrif5Tb/78i3WkTnmhqwPk1YgPTz82gl7jmyNPKYIMQLa1ASa/jM1scJMb
+	MYnL4iuvpLZ2uiKIP7P1yRTGkDMMCY2981hM9HXXjgSaGshdAxfYgfmodERzV8Rq
+	k0wZ5XFGOl89+Ab1QobSZAAi4/vV6f8UJ/LNAw+obdGWM7xc5FSv1XPn5g5v0W6C
+	TYObtLf2VTbaSyla5NXYacyePYYTS1KiWrVNxvpOCk8ISrTEuNX/IcynjwQfdKhU
+	TP7zww==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951snkr47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:34:37 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-780e20b83b3so4049726d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:34:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757921680; x=1758526480;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c0rUlxu9dxRa7SjOGu2hjs3bhYsbBAOKtMENXiwjFtw=;
-        b=LNMoiDN6pzG40ayMjZdaCcqF9gbQs2qBdq2txpO2UkyHzg+ZuMSAV8piCcgciT4yjk
-         zT2888YaFV8w70MDcLCJmj7pIqgLfR4lvnJU/ayFGZa9HbfFHE86wmIKvGsXxdM8QPRB
-         yf5fFTiwom5YECWsSfXB5dgDJuQCzBwPd0WFneD3m+TqtX2Kw5hdVc5+4g8tbDKMUF8V
-         xB3t4MoAkGco5qaI1GSkrLanrRpCxIUEHvd03VmNCirIy1RSKZSvI6ztnymVT4O6Zl8h
-         +z3oXeFarnPrDhOHtkxKV7Ug18AGbLI+QrcSsfnembTiqrK86gxELYDgdmIJFdX9dgo2
-         x/IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUa32YwjIrW3jmkBsOqfi0GG+/j+7tmfZ4jmrjxbODZww3hpMsZFIWDMDN30yWVjsYzWC3jsZs6b/HQOBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDYxsJONQO/UJ+ZkzztK7Bk3epi3mI9CPz5j6w5YeHDeKp+gka
-	r0qLA5c+J9HTZSW2PyC+H2Rmtcygy3vGHW8CDxUqJyC2PYEwNXrJwIxl/wI4MDvB/fY=
-X-Gm-Gg: ASbGncuqWnRlad4+wyAukNJrEIPBuSUXqKLOluwtCWKj4KJbJ4ZyZOOkuHQveyiNfMC
-	RYR7vOd0Y7mfi6yJ7cqtrl6xBtBj+JRgW7i31YYNJ8mKJXrqVOToygjALJgIfX2tsuYkHiZHfl8
-	DDGtYCNEwX0zCuq79x3HO1Ws/jq5O9i33MvBgksNtej0j1Gg0Cjarn0Gtz2VBJ91bukDNM/tBgQ
-	kFbFa5XO5xj2nCmJkHuJS5GzvahKLMxR1xADbEV86LIFt0jmq5GOjFZhqIY/ACYOCOGokmTJMFt
-	JGamtaCEt9nyFTEcZgL7jYUpi2k3KYFppFb7zmd4JUf+QuKvfnw4uvWHSJnTTCHBisNR5/5rN/U
-	3cR9GH8r5v/60uGXh4wQYug9Flbpbc+upJqseBujP0AOY+NMWIPuoUGWWGNDiDwqSaWrzPdKsrQ
-	LcXUIFz7gEyQ==
-X-Google-Smtp-Source: AGHT+IGWBBFTvXjPkwhC1q3K/gyU/0rSmSOfhvtAxOVjYW+gf7TUoGsC85i/QUCRghpMZknvfprsuQ==
-X-Received: by 2002:a05:6a20:7343:b0:243:aca2:e500 with SMTP id adf61e73a8af0-2602c04a56fmr14074924637.29.1757921679721;
-        Mon, 15 Sep 2025 00:34:39 -0700 (PDT)
-Received: from N91GQ2C6R9.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a387cd4bsm11050234a12.35.2025.09.15.00.34.35
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 15 Sep 2025 00:34:39 -0700 (PDT)
-From: sheng.zhao@bytedance.com
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	xieyongji@bytedance.com,
-	Sheng Zhao <sheng.zhao@bytedance.com>
-Subject: [PATCH] vduse: Use fixed 4KB bounce pages for arm64 64KB page size
-Date: Mon, 15 Sep 2025 15:34:29 +0800
-Message-Id: <20250915073429.54027-1-sheng.zhao@bytedance.com>
-X-Mailer: git-send-email 2.32.0 (Apple Git-132)
+        d=1e100.net; s=20230601; t=1757921676; x=1758526476;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w4oCzwIzZYIKPOJu+YqMNrlbG390YP6aeKNtC8d1OOE=;
+        b=EOqfTzSeOFCGc5dzi40xwsUH/kyXEIjJhRs7hpbPzEsZKbBt4QeS19ifIq4V4RzuMQ
+         SNp8STx+HYSjqA/LLEHA08Y4vruB8SmaJHp37KU378GBQXOC4QbJ/xELVafBOQwr7BKr
+         xUoXn3xE7WrKCptRbxPR1WUbWsYeHH1KnINXKfhe5HC9wH9e/vZ2v1cXBj0/EpLPx6WM
+         s/UZvB31T5aWLjDAf1XW5CYIY4HzZ8oFXciFTdM7PkbyJGMUa1DQC0259YGoLyxSB8Bo
+         Rp0YiIW5Kz42B5ZUDBogbPNzRXWLLrP+oa1mLLnzrKMrR0B53EGHgMgD/aJVLm9S3OO8
+         kW7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNAsiLpUKCfkuBayF0MZl7Rw1EGX4oFGbWNJNC3aIEwHJc4BY61gvSiaQwkNQuoRZMPd+a2y1WottiYQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0V5DI+JVrODrScf/GBSF2ScsOKo2Hd/4Y/02J8TJR7S/gJy+1
+	Zng8nOGuVq3jrbcAEac1/gZdJrL1k4SxUi7t5sxp+QYpi4S3Gl+rVKy9HqdEuDYkkO/ETk51l1b
+	VDnvkjEEOdZDYBvCILV7apAwXgnupkbDs0fGg1Wzwoab4CgL/+AihLcII7T7UkZx+VFlgom2izk
+	c=
+X-Gm-Gg: ASbGncv8bZrj2UOrPkE2EMes4ydKaDqbgEnmowJVn1Xth1aqfUloVbBU1C1P0+UuzOa
+	k9/ZVCKg99xSEjn4LENaWX7aMgSXoBiyXvzDpGwcEpjRPNS2l+Cjg5Kbd924SJMuPpqRFR05PLC
+	aA4y2bNwBLULG5AZQjhlVN7uIa5CePsmWr+EOzXxwdwAZtsryKPkzSLJTPHmBif8fWynlflcO1e
+	xBnwMXTvMafN7Q6XVhpt0Qu2Nn7wZakbijwyS8m/rlbMm83z2AUGP6n38Z8NKS8G7HQnjYO5/AL
+	5UrpdEqEEB7c+h2jiTF5+3JS6MYnCYGF9TLLDJGGOLlTUNEDLdU/kTbnojI763KZDlOPUw/vefi
+	BgQNLVVaEp0G5NakIA8gmeA==
+X-Received: by 2002:a05:622a:91:b0:4b5:a0fb:599e with SMTP id d75a77b69052e-4b77cfcdec6mr106907661cf.2.1757921676136;
+        Mon, 15 Sep 2025 00:34:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+u642mK5pX59NxQG3Z3A6Le4TijvPukrqmOimpRbxXKQNPvZpPbBJQAlASOVx2+OpCvmMaw==
+X-Received: by 2002:a05:622a:91:b0:4b5:a0fb:599e with SMTP id d75a77b69052e-4b77cfcdec6mr106907521cf.2.1757921675693;
+        Mon, 15 Sep 2025 00:34:35 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07ce4dbedbsm611094766b.9.2025.09.15.00.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 00:34:35 -0700 (PDT)
+Message-ID: <281701de-181e-439b-97f9-4bfd103f7977@oss.qualcomm.com>
+Date: Mon, 15 Sep 2025 09:34:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: sdm845-starqltechn: fix slpi
+ reserved mem
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250912-starqltechn_slpi-v2-0-5ca5ddbbe7b4@gmail.com>
+ <20250912-starqltechn_slpi-v2-1-5ca5ddbbe7b4@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250912-starqltechn_slpi-v2-1-5ca5ddbbe7b4@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=JO87s9Kb c=1 sm=1 tr=0 ts=68c7c18d cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=958_26X1zRvj7spRbiAA:9 a=QEXdDO2ut3YA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: p7XoN_Hvm4F1KEfs_moCT2AwM_PAR6Fo
+X-Proofpoint-GUID: p7XoN_Hvm4F1KEfs_moCT2AwM_PAR6Fo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDA0MCBTYWx0ZWRfX7mHgV7FOJrTh
+ Mqu8oAX8r0gzolQO7uZiAuHg2kNUfRDiENWOJ59t4p49zdbCBInm93T8zlmas56vB6QaADIU6lG
+ vLAvg87SiCoFM5GqcWLDbYlb/y2qHPia64FG0BEUgE1VxSKoWc4n8J/ItwMMZyMOyYtS2JxuXqT
+ W9CM4XfL8BOWG9PA2DPll9yb3Lt48B2T7KWB4dHADfUkqNnWaupJT3Mtr487hZiPpB+tETV6IO5
+ prtdCcy0eckt5lpVaq+kBGBvHSZN5Aqc9nek1w5JT7SlaAFJ08nju1L0BfnV7jQGjGPrzIKbDQK
+ +M8olqAT3WmymT2nPEqLP/ZmlWcWF/LpvU5j/oKSNZFcd/opk+puL3C+gMThvVwZNerlk0pCtAj
+ KU/IekKW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_03,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 adultscore=0
+ malwarescore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130040
 
-From: Sheng Zhao <sheng.zhao@bytedance.com>
+On 9/12/25 8:56 PM, Dzmitry Sankouski wrote:
+> When adding adsp reserved mem, slpi reserved memory was shrunk
+> according to vendor kernel log:
+> 
+> `Removed memory: created DMA memory pool at 0x0000000096700000, size 15 M`
+> 
+> However, kernel failed to load firmware with 15MiB reserved region:
+> 
+> `[   14.885885] qcom_q6v5_pas 5c00000.remoteproc: segment outside memory range`
+> 
+> Increase slpi reserved region to 16MiB.
+> 
+> Fixes: 58782c229e3e ("arm64: dts: qcom: sdm845-starqltechn: add initial sound support")
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
 
-The allocation granularity of bounce pages is PAGE_SIZE. This may cause
-even small IO requests to occupy an entire bounce page exclusively. The
-kind of memory waste will be more significant on arm64 with 64KB pages.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-So, optimize it by using fixed 4KB bounce pages.
-
-Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
----
- drivers/vdpa/vdpa_user/iova_domain.c | 120 +++++++++++++++++----------
- drivers/vdpa/vdpa_user/iova_domain.h |   5 ++
- 2 files changed, 83 insertions(+), 42 deletions(-)
-
-diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
-index 58116f89d8da..768313c80b62 100644
---- a/drivers/vdpa/vdpa_user/iova_domain.c
-+++ b/drivers/vdpa/vdpa_user/iova_domain.c
-@@ -103,19 +103,26 @@ void vduse_domain_clear_map(struct vduse_iova_domain *domain,
- static int vduse_domain_map_bounce_page(struct vduse_iova_domain *domain,
- 					 u64 iova, u64 size, u64 paddr)
- {
--	struct vduse_bounce_map *map;
-+	struct vduse_bounce_map *map, *head_map;
-+	struct page *tmp_page;
- 	u64 last = iova + size - 1;
- 
- 	while (iova <= last) {
--		map = &domain->bounce_maps[iova >> PAGE_SHIFT];
-+		map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
- 		if (!map->bounce_page) {
--			map->bounce_page = alloc_page(GFP_ATOMIC);
--			if (!map->bounce_page)
--				return -ENOMEM;
-+			head_map = &domain->bounce_maps[(iova & PAGE_MASK) >> BOUNCE_PAGE_SHIFT];
-+			if (!head_map->bounce_page) {
-+				tmp_page = alloc_page(GFP_ATOMIC);
-+				if (!tmp_page)
-+					return -ENOMEM;
-+				if (cmpxchg(&head_map->bounce_page, NULL, tmp_page))
-+					__free_page(tmp_page);
-+			}
-+			map->bounce_page = head_map->bounce_page;
- 		}
- 		map->orig_phys = paddr;
--		paddr += PAGE_SIZE;
--		iova += PAGE_SIZE;
-+		paddr += BOUNCE_PAGE_SIZE;
-+		iova += BOUNCE_PAGE_SIZE;
- 	}
- 	return 0;
- }
-@@ -127,12 +134,17 @@ static void vduse_domain_unmap_bounce_page(struct vduse_iova_domain *domain,
- 	u64 last = iova + size - 1;
- 
- 	while (iova <= last) {
--		map = &domain->bounce_maps[iova >> PAGE_SHIFT];
-+		map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
- 		map->orig_phys = INVALID_PHYS_ADDR;
--		iova += PAGE_SIZE;
-+		iova += BOUNCE_PAGE_SIZE;
- 	}
- }
- 
-+static unsigned int offset_in_bounce_page(dma_addr_t addr)
-+{
-+	return (addr & ~BOUNCE_PAGE_MASK);
-+}
-+
- static void do_bounce(phys_addr_t orig, void *addr, size_t size,
- 		      enum dma_data_direction dir)
- {
-@@ -163,7 +175,7 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
- {
- 	struct vduse_bounce_map *map;
- 	struct page *page;
--	unsigned int offset;
-+	unsigned int offset, head_offset;
- 	void *addr;
- 	size_t sz;
- 
-@@ -171,9 +183,10 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
- 		return;
- 
- 	while (size) {
--		map = &domain->bounce_maps[iova >> PAGE_SHIFT];
--		offset = offset_in_page(iova);
--		sz = min_t(size_t, PAGE_SIZE - offset, size);
-+		map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
-+		head_offset = offset_in_page(iova);
-+		offset = offset_in_bounce_page(iova);
-+		sz = min_t(size_t, BOUNCE_PAGE_SIZE - offset, size);
- 
- 		if (WARN_ON(!map->bounce_page ||
- 			    map->orig_phys == INVALID_PHYS_ADDR))
-@@ -183,7 +196,7 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
- 		       map->user_bounce_page : map->bounce_page;
- 
- 		addr = kmap_local_page(page);
--		do_bounce(map->orig_phys + offset, addr + offset, sz, dir);
-+		do_bounce(map->orig_phys + offset, addr + head_offset, sz, dir);
- 		kunmap_local(addr);
- 		size -= sz;
- 		iova += sz;
-@@ -218,7 +231,7 @@ vduse_domain_get_bounce_page(struct vduse_iova_domain *domain, u64 iova)
- 	struct page *page = NULL;
- 
- 	read_lock(&domain->bounce_lock);
--	map = &domain->bounce_maps[iova >> PAGE_SHIFT];
-+	map = &domain->bounce_maps[iova >> BOUNCE_PAGE_SHIFT];
- 	if (domain->user_bounce_pages || !map->bounce_page)
- 		goto out;
- 
-@@ -236,7 +249,7 @@ vduse_domain_free_kernel_bounce_pages(struct vduse_iova_domain *domain)
- 	struct vduse_bounce_map *map;
- 	unsigned long pfn, bounce_pfns;
- 
--	bounce_pfns = domain->bounce_size >> PAGE_SHIFT;
-+	bounce_pfns = domain->bounce_size >> BOUNCE_PAGE_SHIFT;
- 
- 	for (pfn = 0; pfn < bounce_pfns; pfn++) {
- 		map = &domain->bounce_maps[pfn];
-@@ -246,7 +259,8 @@ vduse_domain_free_kernel_bounce_pages(struct vduse_iova_domain *domain)
- 		if (!map->bounce_page)
- 			continue;
- 
--		__free_page(map->bounce_page);
-+		if (!((pfn << BOUNCE_PAGE_SHIFT) & ~PAGE_MASK))
-+			__free_page(map->bounce_page);
- 		map->bounce_page = NULL;
- 	}
- }
-@@ -254,8 +268,12 @@ vduse_domain_free_kernel_bounce_pages(struct vduse_iova_domain *domain)
- int vduse_domain_add_user_bounce_pages(struct vduse_iova_domain *domain,
- 				       struct page **pages, int count)
- {
--	struct vduse_bounce_map *map;
--	int i, ret;
-+	struct vduse_bounce_map *map, *head_map;
-+	int i, j, ret;
-+	int inner_pages = PAGE_SIZE / BOUNCE_PAGE_SIZE;
-+	int bounce_pfns = domain->bounce_size >> BOUNCE_PAGE_SHIFT;
-+	struct page *head_page = NULL;
-+	bool need_copy;
- 
- 	/* Now we don't support partial mapping */
- 	if (count != (domain->bounce_size >> PAGE_SHIFT))
-@@ -267,16 +285,23 @@ int vduse_domain_add_user_bounce_pages(struct vduse_iova_domain *domain,
- 		goto out;
- 
- 	for (i = 0; i < count; i++) {
--		map = &domain->bounce_maps[i];
--		if (map->bounce_page) {
-+		need_copy = false;
-+		head_map = &domain->bounce_maps[(i * inner_pages)];
-+		head_page = head_map->bounce_page;
-+		for (j = 0; j < inner_pages; j++) {
-+			if ((i * inner_pages + j) >= bounce_pfns)
-+				break;
-+			map = &domain->bounce_maps[(i * inner_pages + j)];
- 			/* Copy kernel page to user page if it's in use */
--			if (map->orig_phys != INVALID_PHYS_ADDR)
--				memcpy_to_page(pages[i], 0,
--					       page_address(map->bounce_page),
--					       PAGE_SIZE);
-+			if ((head_page) && (map->orig_phys != INVALID_PHYS_ADDR))
-+				need_copy = true;
-+			map->user_bounce_page = pages[i];
- 		}
--		map->user_bounce_page = pages[i];
- 		get_page(pages[i]);
-+		if ((head_page) && (need_copy))
-+			memcpy_to_page(pages[i], 0,
-+				       page_address(head_page),
-+				       PAGE_SIZE);
- 	}
- 	domain->user_bounce_pages = true;
- 	ret = 0;
-@@ -288,8 +313,12 @@ int vduse_domain_add_user_bounce_pages(struct vduse_iova_domain *domain,
- 
- void vduse_domain_remove_user_bounce_pages(struct vduse_iova_domain *domain)
- {
--	struct vduse_bounce_map *map;
--	unsigned long i, count;
-+	struct vduse_bounce_map *map, *head_map;
-+	unsigned long i, j, count;
-+	int inner_pages = PAGE_SIZE / BOUNCE_PAGE_SIZE;
-+	int bounce_pfns = domain->bounce_size >> BOUNCE_PAGE_SHIFT;
-+	struct page *head_page = NULL;
-+	bool need_copy;
- 
- 	write_lock(&domain->bounce_lock);
- 	if (!domain->user_bounce_pages)
-@@ -297,20 +326,27 @@ void vduse_domain_remove_user_bounce_pages(struct vduse_iova_domain *domain)
- 
- 	count = domain->bounce_size >> PAGE_SHIFT;
- 	for (i = 0; i < count; i++) {
--		struct page *page = NULL;
--
--		map = &domain->bounce_maps[i];
--		if (WARN_ON(!map->user_bounce_page))
-+		need_copy = false;
-+		head_map = &domain->bounce_maps[(i * inner_pages)];
-+		if (WARN_ON(!head_map->user_bounce_page))
- 			continue;
--
--		/* Copy user page to kernel page if it's in use */
--		if (map->orig_phys != INVALID_PHYS_ADDR) {
--			page = map->bounce_page;
--			memcpy_from_page(page_address(page),
--					 map->user_bounce_page, 0, PAGE_SIZE);
-+		head_page = head_map->user_bounce_page;
-+
-+		for (j = 0; j < inner_pages; j++) {
-+			if ((i * inner_pages + j) >= bounce_pfns)
-+				break;
-+			map = &domain->bounce_maps[(i * inner_pages + j)];
-+			if (WARN_ON(!map->user_bounce_page))
-+				continue;
-+			/* Copy user page to kernel page if it's in use */
-+			if ((map->orig_phys != INVALID_PHYS_ADDR) && (head_map->bounce_page))
-+				need_copy = true;
-+			map->user_bounce_page = NULL;
- 		}
--		put_page(map->user_bounce_page);
--		map->user_bounce_page = NULL;
-+		if (need_copy)
-+			memcpy_from_page(page_address(head_map->bounce_page),
-+					 head_page, 0, PAGE_SIZE);
-+		put_page(head_page);
- 	}
- 	domain->user_bounce_pages = false;
- out:
-@@ -581,7 +617,7 @@ vduse_domain_create(unsigned long iova_limit, size_t bounce_size)
- 	unsigned long pfn, bounce_pfns;
- 	int ret;
- 
--	bounce_pfns = PAGE_ALIGN(bounce_size) >> PAGE_SHIFT;
-+	bounce_pfns = PAGE_ALIGN(bounce_size) >> BOUNCE_PAGE_SHIFT;
- 	if (iova_limit <= bounce_size)
- 		return NULL;
- 
-@@ -613,7 +649,7 @@ vduse_domain_create(unsigned long iova_limit, size_t bounce_size)
- 	rwlock_init(&domain->bounce_lock);
- 	spin_lock_init(&domain->iotlb_lock);
- 	init_iova_domain(&domain->stream_iovad,
--			PAGE_SIZE, IOVA_START_PFN);
-+			BOUNCE_PAGE_SIZE, IOVA_START_PFN);
- 	ret = iova_domain_init_rcaches(&domain->stream_iovad);
- 	if (ret)
- 		goto err_iovad_stream;
-diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
-index 7f3f0928ec78..23139a2eaf5c 100644
---- a/drivers/vdpa/vdpa_user/iova_domain.h
-+++ b/drivers/vdpa/vdpa_user/iova_domain.h
-@@ -19,6 +19,11 @@
- 
- #define INVALID_PHYS_ADDR (~(phys_addr_t)0)
- 
-+#define BOUNCE_PAGE_SHIFT	12
-+#define BOUNCE_PAGE_SIZE	(1 << BOUNCE_PAGE_SHIFT)
-+#define BOUNCE_PAGE_MASK	(~(BOUNCE_PAGE_SIZE - 1))
-+#define BOUNCE_PAGE_ALIGN(addr)	(((addr) + BOUNCE_PAGE_SIZE - 1) & ~(BOUNCE_PAGE_SIZE - 1))
-+
- struct vduse_bounce_map {
- 	struct page *bounce_page;
- 	struct page *user_bounce_page;
--- 
-2.20.1
-
+Konrad
 
