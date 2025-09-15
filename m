@@ -1,100 +1,237 @@
-Return-Path: <linux-kernel+bounces-817132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CDBB57E42
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:02:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386B0B57E47
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0CE4188D98A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:02:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 841E97A48F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82EA30F55C;
-	Mon, 15 Sep 2025 14:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B956315D5B;
+	Mon, 15 Sep 2025 14:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqEXiorW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zo3fbmFc"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434D20CCCA;
-	Mon, 15 Sep 2025 14:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B3830F813
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757944916; cv=none; b=tTXC30niyup5vxndiR3D9gJYOGjE/m3j+f7bkla+Ae1XWLyN9CcPMytFhPCcXm5cfWrgWOWt4WWs7ToZ7VlkeHenFuuSHhd/cqZqAhNadvC4F78skynX5Vlb/eu7BFMdZZ3nF+rArxWqmXRHUfZaXaW0yjqj7WWcJ21nc45sxjc=
+	t=1757944928; cv=none; b=NEbCmn7PAyKcxe+wZR5bDk+AkdEKUjbkD7fgMmwdzJZ0UgO4GvFTNAMB844Eu1ylF500xqAMfW9BaqyxKGU4mX2nf9PQdzKxMpTt9GeH4lAhMzh9oM5V15bcdjTAkLmVjr+uz2TpLm0cxVjOBhdkQdqSaea3/u4jLX5KLYRsMro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757944916; c=relaxed/simple;
-	bh=KXhpX+I9cqFa8/Brd3t1pN6QW8/ieopeH5GV9QGl6+c=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=ZSZ6Q5KLpBC4fTrmXLQf9OJ3PDvz+RzJXKG5t9Jia06zFPoNVKD662n5mJ9ooL+z2Qlyow2qkJYjslxhr4aLvleGkeUqL3QfiiFUS0R4aLwfa3V1MF4qLRyCkP/Xic0LdPp2M3Vygi81EMmbh0Zh1F+zX+j2gmrpOqlRhbN/XsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqEXiorW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F789C4CEF7;
-	Mon, 15 Sep 2025 14:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757944915;
-	bh=KXhpX+I9cqFa8/Brd3t1pN6QW8/ieopeH5GV9QGl6+c=;
-	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
-	b=YqEXiorWXIlgYi6mGicFLw+n3pYi5983wdej1RWRLNNoTKmoRo7BL/knJC7s2srsx
-	 ividi6kdGvcz7Jh/TqWOQ++BySawnRjLPViUhzhkwA2+fEFk47sLu9+d8MboSx4L6w
-	 BTk/ynlY1a1GLKBfCOLzTZPlQ2RMv9Z0JW/nzlMy+KR2KBOSsqANDu+3sZmGlETGdz
-	 pCV5+lhgf5neMGpPFre+on+VDdUQuUQ4ydsR28CC50O6UhQ1+P0/hHNtyW+paZLyq+
-	 Dn9XGF1mD2HRH/lVQmgig8WiGl2LjZUUC4o9Zr27ZWDOf8dr1/vGw1UbOcGsnDc1M0
-	 TFfBLUFg7ytjQ==
-Content-Type: multipart/signed;
- boundary=7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Mon, 15 Sep 2025 16:01:50 +0200
-Message-Id: <DCTFGN6IH4MM.2UXRHE7M6O9TS@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Ioana Ciornei" <ioana.ciornei@nxp.com>
-Subject: Re: [PATCH v2 4/9] gpio: regmap: add the .fixed_direction_output
- configuration parameter
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Linus Walleij"
- <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Shawn
- Guo" <shawnguo@kernel.org>, "Lee Jones" <lee@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Frank Li" <Frank.Li@nxp.com>
-X-Mailer: aerc 0.16.0
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-5-ioana.ciornei@nxp.com>
- <DCTDUJO0PS8B.1LD03WTEMNRVP@kernel.org>
- <4awrlgj33bg33gg4ianqk5ypchrygppkqyyojfliznitbtzu5h@xsgnk25syvqq>
-In-Reply-To: <4awrlgj33bg33gg4ianqk5ypchrygppkqyyojfliznitbtzu5h@xsgnk25syvqq>
+	s=arc-20240116; t=1757944928; c=relaxed/simple;
+	bh=+Q3O4y2WBPEBJ57wa/R6DL7ZmuMwhkbQ43LHQdgjuIs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PIpGNVqajngoP5H/06IxTUmXBzXZlDHFSP09gYUq2Ubw/6gfhinX9/DvKJ+jLOBawEhIgxEXTSVPn5J9cqpKuoB/PlTnDeJpx0PlbXGwAy0C5qOaEMyxGIy1w41Ax3yO0rC3PLNxko0gh0Ga+TtEmb/eERyXV8sgysD3EignTTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zo3fbmFc; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32e0b0014d9so1783272a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:02:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757944926; x=1758549726; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bb9kTddrcG1gYn0lmn1o+H87GYwOEccP+2QZchmvwOg=;
+        b=zo3fbmFcf2efimSk7k2eDIAZ6dl+Xd59BakIzZidnjdGP/iEbq88Sh6tpWPH9TGPzL
+         O6IlAehDkyQOPssxaSb5GlVpvwr/la3LW/rTEtwISE2T5T5qrpCUNOHX4DRWbmVW0wQV
+         /DUusrqA0DLcwdrNV31CHObXFKpvjXoWtrpruSrUuXuliz/qU//ff5G+wzrjYCmYf1xx
+         JrTuoO41BxxQobY3qhoo+MQG7yd0ZZuXbMN7g7iFTySoFVmWBSzjvUEmQzaKh1bokM3c
+         iC89lMug8Dgae9dLxWAol008eoj/eTG7Lhvr6/aq+mumRAS4BCmrvXhkUX/9spCbjlWk
+         CHKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757944926; x=1758549726;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bb9kTddrcG1gYn0lmn1o+H87GYwOEccP+2QZchmvwOg=;
+        b=Xfx04EuO2Q9wPENJ3igxogmdvi69Y9loxNT9eGJ8UMYD0pQVGChg0noHxIwp9CqgZ9
+         28fTHAu2BaQOWyXwWBjNlm35L1LV5DmSxxKfskAEvJIg5LOGLgxCxt6+Q9tuPa+6uXku
+         ZHqQDzstoB0VN0EkE8MLoG2rYJsOAmev8FYjEiLd+/5IcFnxzkcVOUu+ZcgZa6dEHK6g
+         yGt5wtnMm7qAKz/AruHLf4os6YZ/frOAMusxUQwpNE45zllz3N54j0NZZ3WRxbDD9QQ8
+         38F1olW0eMQM0ujC78QQPJHOdW+qSwc8/3G/DkIVwY5cByEgSwr2Ym6c/uFPvn092stZ
+         1jUQ==
+X-Gm-Message-State: AOJu0YxgvdtD5Wb3F+jTtarpWWZOkQrLnG52uKpv7di0r0l3FELcELRr
+	WifbThFSbI681FRhQyUjuQ9hUcEcrGGZ1nV5lu8+1lhelpf/yasWV1sX5y6DpjfFwZRlTXkbGN+
+	c2amA/Q==
+X-Google-Smtp-Source: AGHT+IF9VAl5yAYXme8hs+kHQJw7I6NLurDhLwOz+4NYmaOAMQ0rFyNNX/YVGnRr456xKTFFoiMubABtny4=
+X-Received: from pjhu33.prod.google.com ([2002:a17:90a:51a4:b0:32e:7439:c086])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2dc4:b0:32d:f89f:9300
+ with SMTP id 98e67ed59e1d1-32df89fb457mr10300075a91.8.1757944926072; Mon, 15
+ Sep 2025 07:02:06 -0700 (PDT)
+Date: Mon, 15 Sep 2025 07:02:04 -0700
+In-Reply-To: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68
 Mime-Version: 1.0
+References: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
+Message-ID: <aMgcXJ3lbrTwOzzO@google.com>
+Subject: Re: [RFC] Fix potential undefined behavior in __builtin_clz usage
+ with GCC 11.1.0
+From: Sean Christopherson <seanjc@google.com>
+To: "=?utf-8?B?6ZmI5Y2O5pit?=" <lyican53@gmail.com>
+Cc: linux-kernel@vger.kernel.org, idryomov@gmail.com, xiubli@redhat.com, 
+	ceph-devel@vger.kernel.org, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+	linux-scsi@vger.kernel.org, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Ioana,
++Yuri
 
-> So you are suggesting gpio-regmap to allocate the bitmap using
-> devm_bitmap_alloc() and base its size on config->ngpio, then copy into
-> it the bitmap passed by the caller, right?  Yes, that does seem more
-> error proof in terms of memory handling. Will change it in the next
-> version.
+On Mon, Sep 15, 2025, =E9=99=88=E5=8D=8E=E6=98=AD wrote:
+> Hi all,
+>=20
+> I've identified several instances in the Linux kernel where __builtin_clz=
+()
+> is used without proper zero-value checking, which may trigger undefined
+> behavior when compiled with GCC 11.1.0 using -march=3Dx86-64-v3 -O1 optim=
+ization.
+>=20
+> PROBLEM DESCRIPTION:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> GCC bug 101175 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D101175) ca=
+uses
+> __builtin_clz() to generate BSR instructions without proper zero handling=
+ when
+> compiled with specific optimization flags. The BSR instruction has undefi=
+ned
+> behavior when the source operand is zero, potentially causing incorrect r=
+esults.
+>=20
+> The issue manifests when:
+> - GCC version: 11.1.0 (potentially other versions)
+> - Compilation flags: -march=3Dx86-64-v3 -O1
+> - Code pattern: __builtin_clz(value) where value might be 0
+>=20
+> AFFECTED LOCATIONS:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> 1. HIGH RISK: net/ceph/crush/mapper.c:265
+> Problem: __builtin_clz(x & 0x1FFFF) when (x & 0x1FFFF) could be 0
+> Impact: CRUSH hash algorithm corruption in Ceph storage
+>=20
+> 2. HIGH RISK: drivers/scsi/elx/libefc_sli/sli4.h:3796
+> Problem: __builtin_clz(mask) in sli_convert_mask_to_count() with no zero =
+check
+> Impact: Incorrect count calculations in SCSI operations
+>=20
+> 3. HIGH RISK: tools/testing/selftests/kvm/dirty_log_test.c:314
+> Problem: Two __builtin_clz() calls without zero validation
+> Impact: KVM selftest framework reliability
 
-Yes exactly.
+In practice, neither pages nor test_dirty_ring_count can be zero.   Pages i=
+s
+guaranteed to be a large-ish value, as vm->page shift is guaranteed to be a=
+t
+most 16, DIRTY_MEM_BITS is 30, and the guest/host adjustments just do minor
+tweaks.  Not to mention the test would fail miserably if pages were ever ze=
+ro.
 
--michael
+	pages =3D (1ul << (DIRTY_MEM_BITS - vm->page_shift)) + 3;
+	pages =3D vm_adjust_num_guest_pages(vm->mode, pages);
+	if (vm->page_size < getpagesize())
+		pages =3D vm_num_host_pages(vm->mode, pages);
 
---7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68
-Content-Type: application/pgp-signature; name="signature.asc"
+The user could deliberately set test_dirty_ring_count to zero, but the test=
+ would
+crash due to a divide-by-zero before reaching this point.
 
------BEGIN PGP SIGNATURE-----
+> 4. MEDIUM RISK: drivers/clk/clk-versaclock7.c:322
+> Problem: __builtin_clzll(den) but prior checks likely prevent den=3D0
+> Impact: Clock driver calculations (lower risk due to existing checks)
+>=20
+> COMPARISON WITH SAFE PATTERNS:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+>=20
+> The kernel already implements safe patterns in many places:
+>=20
+> // Safe pattern from include/asm-generic/bitops/builtin-fls.h
+> return x ? sizeof(x) * 8 - __builtin_clz(x) : 0;
+>=20
+> // Safe pattern from arch/powerpc/lib/sstep.c
+> op->val =3D (val ? __builtin_clz(val) : 32);
+>=20
+> PROPOSED FIXES:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> 1. net/ceph/crush/mapper.c:
+> - int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
+> + u32 masked =3D x & 0x1FFFF;
+> + int bits =3D masked ? __builtin_clz(masked) - 16 : 16;
+>=20
+> 2. drivers/scsi/elx/libefc_sli/sli4.h:
+> if (method) {
+> - count =3D 1 << (31 - __builtin_clz(mask));
+> + count =3D mask ? 1 << (31 - __builtin_clz(mask)) : 0;
+> count *=3D 16;
+>=20
+> 3. tools/testing/selftests/kvm/dirty_log_test.c:
+> - limit =3D 1 << (31 - __builtin_clz(pages));
+> - test_dirty_ring_count =3D 1 << (31 - __builtin_clz(test_dirty_ring_coun=
+t));
+> + limit =3D pages ? 1 << (31 - __builtin_clz(pages)) : 1;
+> + test_dirty_ring_count =3D test_dirty_ring_count ?
+> + 1 << (31 - __builtin_clz(test_dirty_ring_count)) : 1;
+>=20
+> REPRODUCTION:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Based on the GCC bug report and analysis of the kernel code patterns, thi=
+s
+> issue can be reproduced by:
+>=20
+> 1. Compiling affected code with: gcc -march=3Dx86-64-v3 -O1
+> 2. Examining generated assembly for BSR instructions
+> 3. Triggering code paths where the __builtin_clz argument could be zero
+>=20
+> QUESTIONS:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> 1. Should I prepare formal patches for each affected subsystem?
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaMgcTxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/i5SwGAmEBY61tAUoDus3BsCNkojKBx5G5zhyBA
-wWcea5fgeTWEeDKURrAxtI+kko4Vpkw7AX4vL1ZdiV0IbxzW7vL1yu62fJcxqs1R
-jmys1Q1+92kQ9kEedU4DsMD2klPQlJGPUE8=
-=UCzZ
------END PGP SIGNATURE-----
+Don't bother for the KVM selftest, it's not a problem in practice and check=
+ing
+for zero will only add confusion by incorrectly implying that pages and/or
+test_dirty_ring_count can ever be zero.
 
---7d5ad4a4091b191b6d2051c27ab850068be519bdfceb7bbf813ae88a9b68--
+> 2. Are there other instances I should investigate?
+> 3. Would adding a kernel-wide safe wrapper for __builtin_clz be appropria=
+te?
+
+Maybe?  At a glance, several of the calls to __builtin_clz() could be repla=
+ced
+with fls() or fls64(), or a fls8() or fls16() (which don't exist, yet).  Th=
+is is
+probably a question for the bitops maintainer, Yuri, now Cc'd.
+
+> 4. Would the maintainers like me to create a proof-of-concept test case?
+>=20
+> This analysis is based on static code review and comparison with the know=
+n
+> GCC bug behavior. Further testing by the respective subsystem maintainers
+> would be valuable to confirm the impact.
+>=20
+> Best regards,
+> Huazhao Chen
+> lyican53@gmail.com
+>=20
+> ---
+>=20
+> This analysis affects multiple subsystems and should be addressed to ensu=
+re
+> deterministic behavior across different GCC versions and optimization lev=
+els.
+> I'm happy to assist with testing or patch development if the maintainers
+> confirm this is indeed an issue worth addressing.
 
