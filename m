@@ -1,95 +1,73 @@
-Return-Path: <linux-kernel+bounces-817146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6303B57E73
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:11:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8B5B57E75
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652D8188EED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:10:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5453717236E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CC531AF0A;
-	Mon, 15 Sep 2025 14:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B1A31A57B;
+	Mon, 15 Sep 2025 14:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/y+L3Lc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GwJUxQV8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2604A3054E5;
-	Mon, 15 Sep 2025 14:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0D73093C4;
+	Mon, 15 Sep 2025 14:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757945406; cv=none; b=k+YZkifH81QP+ZU3rczTuhdzL9xS8G3fpPkW/Yn8/FKXvxGpafya7zBDsMtKPG3Gdf42jbs9M4BfLY/iiel1dVeWpvRA4BRHO2suv4K96MOqTSGl5VTrmjYO5sMIfPZJLcvm++CuGwa2Ursits/FDWGB+qmbyuNupuswTvK888U=
+	t=1757945516; cv=none; b=tSYuYrx5yd6BEqAh2nopxPio+OSAUco3r3pv1dzZWNcx5HKfVcyqOVeG3sP5Wk/asqDtgztl8T8/mG+/r4vTdpS6sCrBxaw4r3F8WuIVYy+afwzaytvW4T56KWT8QjSIJU5p8IPC1iZz0NKxe94Mn0qOUVP4aTrukHUqXH00Y8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757945406; c=relaxed/simple;
-	bh=U3l0JLONT4lR2oTb62J9IVRuDlQmdYpgsvB2Snp9ORQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nCmyQzXz8qr4oa2QPF1lTeXPkSUpLYslBVwMnvgc9Tqv+CSgbBqB69CGdl6MGYohMNPuNc6lNjtIH6507NlJQYjCJBFpZGcyUsWxqVdZHKCIEb3OnaSu74YZhJ2KwIf1p5gN4T+a3lm8eIhod7cl5gsRs/UrMdP6ytahroQPpLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/y+L3Lc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCADC4CEF5;
-	Mon, 15 Sep 2025 14:10:04 +0000 (UTC)
+	s=arc-20240116; t=1757945516; c=relaxed/simple;
+	bh=oGOOunK0PfxXrRUADZFrrgGhaNn8PL1UAVWMiQNouXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d+mg4oGMX0FLjtOUktAE/2LxEjlrGpaOnxMfVRAyTwMA0/NUUfRM5dHGRsGyxgALF2rr7NI+Rcq+LWJS+hQH1KuQXHbh98c9RTAk3cm2ypRGAraYIc8yLMfizPqWM3KGR8GB5U8f9Y/MNss7/7ck3rfYm1E53p1PkP70XXHuEFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GwJUxQV8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E448C4CEF5;
+	Mon, 15 Sep 2025 14:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757945405;
-	bh=U3l0JLONT4lR2oTb62J9IVRuDlQmdYpgsvB2Snp9ORQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a/y+L3LcAc5X+wvN16zUgThJ2UTZTPDuiN85XVHdldJEuUBQzLVF+aKvJNpX0OuUT
-	 BOhCpX/GdxyhHQvqxpfvykNBLoSGN4ZLb3uD/SWduv9iVPJ7AkO0lrsJf2X5HdUwkf
-	 YeRbjgQJkBzn9u/hk/PXYUzIgh1qbhXjYcMmhXw6AblEZCeM6XANmNsg5c91i+uLKn
-	 LLJZ127u4pj4BYWxLw5HZwdYzi/jRmG6GbljTRHNu/4IobFcKpREDT39M8vFeh3SUE
-	 RseRBVYo3+oIZ6p/Apd51olf7VHZnNhixWEdSlbFdjgZfsyDeJtsF+LMPzwgwDoFlQ
-	 pg+qCW39sa2Yg==
+	s=k20201202; t=1757945516;
+	bh=oGOOunK0PfxXrRUADZFrrgGhaNn8PL1UAVWMiQNouXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GwJUxQV8siDLGdpB2C0MzNpgUOqvlBfWj0YSHqd4QgiJZsgAJgxr3ffqM9dSQXiu9
+	 KqnQq6BjCxOgby8JDped5Z2qKGQIEe9ysM0zreF1n87oFN4vFTOpHuje3R/h10wm7T
+	 CcsxyF4EMaKAWeRjKbGjtq22Diy3Y+Wegm293uQ2vodrJS9wdWkQJ2KjlVaxnmekod
+	 Rnk+73piDbMBLG6N3j5mEqSiiVVELy8jGwcFDR2Sw9g8f5y+/j63IOaVEJxvJfMmxU
+	 bqpbFMgKexDsP06B/o4GWxsChbYP1Ud/5f91F4Fxv6nQ61Ngt6sSkR3Fhc4al16wWZ
+	 /OFiY9fx+nlQw==
+Date: Mon, 15 Sep 2025 16:11:52 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: rename generic_delete_inode() and generic_drop_inode()
-Date: Mon, 15 Sep 2025 16:10:00 +0200
-Message-ID: <20250915-kniegelenk-patient-5e891d940586@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250915125729.2027639-1-mjguzik@gmail.com>
-References: <20250915125729.2027639-1-mjguzik@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Simon Schuster <schuster.simon@siemens-energy.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
+Message-ID: <20250915-apotheke-freuen-694e4fc923c6@brauner>
+References: <20250904113334.18822d43@canb.auug.org.au>
+ <20250908120229.7a4e6db9@canb.auug.org.au>
+ <20250910104944.3e420e96@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1131; i=brauner@kernel.org; h=from:subject:message-id; bh=U3l0JLONT4lR2oTb62J9IVRuDlQmdYpgsvB2Snp9ORQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSckLPk4Z0iFCTMPOfYhSKbRxbX0yZVdDLXFt6vcbWIW uGy7K9PRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESWeTL8U5qyo4jXcceBhc+E mGf5//3TxTyrWSxMoHfWP7NZi69vEmX4726eoSfys0eZg+GuGK+8dLff0WdbWjfNU3q44eV/Hjl vVgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250910104944.3e420e96@canb.auug.org.au>
 
-On Mon, 15 Sep 2025 14:57:29 +0200, Mateusz Guzik wrote:
-> generic_delete_inode() is rather misleading for what the routine is
-> doing. inode_just_drop() should be much clearer.
+> > I am still seeing this failure.
 > 
-> The new naming is inconsistent with generic_drop_inode(), so rename that
-> one as well with inode_ as the suffix.
+> From today, I have instead just reverted these three commits:
 > 
-> No functional changes.
-> 
-> [...]
+>   c6ac444ff20c ("nios2: implement architecture-specific portion of sys_clone3")
+>   bbc46b23af5b ("arch: copy_thread: pass clone_flags as u64")
+>   edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
 
-Applied to the vfs-6.18.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.misc
-
-[1/1] fs: rename generic_delete_inode() and generic_drop_inode()
-      https://git.kernel.org/vfs/vfs/c/f99b3917789d
+Sorry about this, I was pretty sick for a bit and wasn't near a
+computer. I'll pick the fix now.
 
