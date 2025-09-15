@@ -1,124 +1,104 @@
-Return-Path: <linux-kernel+bounces-816268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F4FB571B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:40:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F37B571BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29BF317C4AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CCE3B396B
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22F02D839F;
-	Mon, 15 Sep 2025 07:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ADE2D97BB;
+	Mon, 15 Sep 2025 07:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="Q6e9zPLp"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R5RU+4H8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VChVCQH8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD9A2D7805;
-	Mon, 15 Sep 2025 07:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F12D2D8783
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757921981; cv=none; b=IMdA65+nyRzgvl/Vlafta5VNJwbaSdZ3OlUYdABkBzuQqv6xhSzcFE6DV8KUnvK84+PhqBJMs3l5YXAOm5QZ24DGT+xR2TSNUaumpRtC1ePcjZ8ceVXuMC1lt4c097arJ2Pn/yXai4T+m7dXrTHTKjumdK8hl6lLy1PFCsCkbaE=
+	t=1757921984; cv=none; b=AZHmuZdAO43mhY3r1svk1aRN8pn9qqPoyAvODRe/mt1pCNprbQ8nrrmWrXkxhkQq0s5ES3w2Hk+l8k3//1nGwoQ5tkwCvNFhH2i82XhOnj6cUPuTnUEZfIyJorL9K0htxEKNzkZnXYthwvTRy37ZF4SKJlYKgTcdGGr6nUPAiXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757921981; c=relaxed/simple;
-	bh=4Pb/V0LrYWVwi0b+Il7zbDAYpXPAXnFwlg+4Rq+OFxc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OOq9kJTdi+epX8ji9oTj8OxWGSW8C9EZzG95Sy/XxT/bC04sUGmGKdl3ZgjiAIawowYuO2SjH65quaMlFCiFgV/yCl30owE6HNjKgp0jt/OsIbKpW9DV+1CVdkSY3qUOT6+j8V/EJ/T7ScPM/SN2Y8JF3vgvuaesB5fqFtOp5LE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=Q6e9zPLp; arc=none smtp.client-ip=212.227.126.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1757921973; x=1758526773;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=4Pb/V0LrYWVwi0b+Il7zbDAYpXPAXnFwlg+4Rq+OFxc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Q6e9zPLpjiZIx/JAm9AftL+MtGTRZo1dw0B8sY9y5RTRJoJ2wV8Wwlcz0jdHsyDe
-	 GcmOWGEd/54aWrBNEGcqSWWoHdjGzPXOTrxTHuejhoQ6AGlnVnKFadS4FiMZCbUA1
-	 TTKDMxEMOjlSBAFmaFrAWy88aoLLfpTs1b4PXG5qpEc234PtSsgUNB/iHxUN1ioZL
-	 6UKS9/foJV7UV7/YmjgPpaXuosGBa3FK4WwwU6cBnwnOgRGottF/7b11Wygi8deAz
-	 c1MTwIAyzDmxYN8TTDOHcVhr5Fo6RkZ9X5Ka21t7mUgdRozwSK62cyL/RZpbCw7Gx
-	 Q+deIcibBGayILlwdA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.235.193]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MryGj-1uabbs2Ahp-00fOp4; Mon, 15 Sep 2025 09:39:33 +0200
-Message-ID: <03c64dcf-f553-4918-ae1a-d4cd427da6cd@oldschoolsolutions.biz>
-Date: Mon, 15 Sep 2025 09:39:32 +0200
+	s=arc-20240116; t=1757921984; c=relaxed/simple;
+	bh=4E85oH5E9Zzy/ABqxPb8kOunSpXHlqPS+tsJFRbOTb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/4nZNm6zvrCDYzUKpo+XhD2dmWpYviq7uj4ka2zmZbdmGxhrJOsKV5lqJexcrvy9lnpc3sxRXOM/i9Z8tBlzc7qspvd37gURC5MmIdMSGKHQocNSdp1AaVLJXt6UOqZHrh0zFZqO2OOBNNXe1Ddvqsg+wfumFHIhFaaotsFjxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R5RU+4H8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VChVCQH8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 15 Sep 2025 09:39:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757921975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MpEiPV7wEY17f5IV+r2JTWh/WyLf4D/MFLe7AaM4sTU=;
+	b=R5RU+4H8F3fTK5DthtlQ6CMXyMwhRfjChvEuvaAG1DG5/gJyNwAqFwbZm397JAD2Ch3nGj
+	V7VZpk7KI9e3c9pGQbU1KmSPASG81y3FeFbCqbUqw9Dm+bOjfxRzaVrmB65k2I9UrKVxwy
+	60ED1OmRX3UAV8TVJUK+574yzgRknSB1BcXKOPPRJ6HZmSX8/GSTwjxN3rbS85XUwWJPHg
+	2FUtegME2sfe32Dy6pRdoNvDsdOmDnx5gXUVUbyqX5Fs1GC/wuqvnx3kR2R7t1Za4fM6i5
+	EPZmCwQ9hQIsmeDBArhqePBnkd6TZtXiFG3cwgVTngLn0FSLXvv9OFmo1OX8Bw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757921975;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MpEiPV7wEY17f5IV+r2JTWh/WyLf4D/MFLe7AaM4sTU=;
+	b=VChVCQH8Y7yAVx07IYUL5SC6nLDb7f4T8NLSI/nfEIdE6DPiVpqDexxT8KoA6kql8MOcEO
+	Uqxu/Lp+oKc8oeCw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Hillf Danton <hdanton@sina.com>
+Cc: linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v3 2/3] softirq: Provide a handshake for canceling
+ tasklets via polling
+Message-ID: <20250915073933.L7UOtfkj@linutronix.de>
+References: <20250904142526.1845999-1-bigeasy@linutronix.de>
+ <20250905101502.6525-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v8 2/3] arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14
- device tree structure
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz>
- <20250909-hp-x14-x1p-v8-2-8082ab069911@oldschoolsolutions.biz>
- <aMbBOgNc-382vwMY@linaro.org>
- <cdd2ac5e-d02e-4dc8-a4b4-06baad5679e9@oldschoolsolutions.biz>
-Content-Language: en-US
-In-Reply-To: <cdd2ac5e-d02e-4dc8-a4b4-06baad5679e9@oldschoolsolutions.biz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:o5fwt2RQiXXHmYY4bZTNlnm8TFhVcDzkDZqwdLKhgHE2qPCVXwq
- r9pUeoOk+kvUCoON6g3FpNTtG8JT/AV0FyKwIkRrTrra18URDyWccfA/QR+lRtvd8Nl6LdF
- 8fWsIPSvu/gNAhKeQSmTGWbVEwiNiMXeLtXyeK70QHKy+eDPPSppXcC0HWGA6Ba43MvIgl0
- LTE5s00jFRAsgfV7fvFjQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:v3ApN73J6zg=;5+ms1KNwPHFVxSBESpGVSd6KCt5
- +cAF6Gghi2xY8BkUa9mKwl1SAGlZmCdH15sHsvIJcqntBkS+YD7tU3kBIrWQPMLSriOaDh4ka
- WROjD6k/bEDZI80e/erxN+aB+v2yeTk3VdlCNlyKOxVNBWQuOa1Ex+pKRMGcwPz7WSvH3Wrt7
- TqOFNotWAYeodsyw8KvKmqnmQBOWQ034bZcL1IZhxhILPK3ZY2ddMM4SxiP1D6DIvNfQfeo+s
- L5OFJI87/0PWIK7LVGDeF3pz8sWZcmrFvP+rgWNKbqYLCfs7vp0sYVmUo+wickWt979GFfn1l
- RpM+WJb7yohvkDtzgCjsbHLf2LuEeW5j3OCcVPYKl1LZoiDUP5thD2wnX9bBrlJlJOmqZavR9
- zy/plvtzN3rI31ZfbiC1R9VfWU+iTptlKKhgSypRHDu3u1iSFTPe05YtKzukUtLIFp+d+uv81
- giMUGvhXezCobFvYoSa/4dK0wdJFxLFliYfWMcNfWwgDKiJpzNSiQu2GlbsFJ+ONlldZmU+HU
- x/2HujKR1rZDmCVG0Wx2vsMw0qxfWefBRQcvWLB692eeVEISb0ShJKIFx5zM3MtjwkFH6JnB0
- 92IS6BumhxYlBky1Pzv2BuufLPgma68FKRbBcQ1bJ2Ps00XcZmqWtekrUQg/s7d0O/WBkUXyA
- I2XghwgQRhwWzOIKFJnIakrzMnybXhh03hZQb0pGtZLoaA6vYSCDTq43ChboC5qnzRp3LPb8S
- 5ihqjI90LGsXf7dIxwQ7SB8tcVCRGJvaSjWNrh9q/2n2ETVoI2gsEEFxw24anKffbggNJhG5L
- vzObP1iduMcNhx/JrDbQ2Jj539i/xi9ljCbgIv5r62HUvBZVLW9nknp43eEhhQuY4q80GLv/u
- iABh21YKt3W0asaB9+GeCBNyF/xxEv8viOyMWs1lhRADeAFU9VhvW9jJEfnzvxcAo1uAq07qB
- KfYmS+7x3kpS4MnUTrYGENtgO3lSaeZhqcr6XwkTE6y16Pk3Zsb0+BNk5MShLylVX1CwhzAJK
- T/wWFh5oWbB5mC/Hry0ZoCNtjOPtdWb6sqLdX1Qe0r4EZecK9P6Jdrqu6gDZR1I6UQfMz84Nz
- mJnXokvzSJZ4Pb44hOaWCXfpcFhwqT4ySGaKB/rX2FZiuwzkn+yVXWwwmPIR2AaRV+upgbwt4
- mUXtkCTiwFQVlffx763a7geb3XNOlHCGp2b0VA4PbGfUJe9WrdFE0tKAQNAYTHpNPiQy22gNL
- pKm2k5dy5C8dlnxppvWFLgacWdP57HV5nXAnWXmAErkceC8lJUH+iOigG8oIpE6OZNfmdk6yO
- WFZuYGhtOn8mD/eyEL7nLcH5MUiaDpHhCFQMS5qW0vBU5Git1OriK06FPSzmqBySBq9U6aKwi
- QS8Z7xnsHM1B1M11lM0lvrzPVLznRx7BMXxR8Q0yM+Dya4TSJ9niKV6yM/XxvBJdhAL+sofMe
- Fk9rbGQjz0El85/rVeOvIb68vGyzHLHMBSr/ZStCb0FP6vL69YgjpHwaAm6BCiLjEcXKyBJkX
- LebbM34gkxQZXWUB5tqFgAz1PH1lM8d2fAg95E4Zn77zLVmrhRGboKRp/uHZECpY+ekTE34Sr
- KicL4O+nm0YD+nvngFsoITt/GvQbBeyi7MJSdhCRt7v5PQRQkhm1e+b95I2C/fRdIyuf99o12
- uubWGhQglYrCg8BpkbweizvQLJOTR7N79xAJy2fT52rISBNrbUf5Wgst9PfGi+1FXbuUVunS6
- 1khN/8IN9a8wUrYgPO0my8/vcHr/UUiwB8w==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250905101502.6525-1-hdanton@sina.com>
 
-On 14.09.25 15:23, Jens Glathe wrote:
-> oof wow thanks for the hint. Will redo.
+On 2025-09-05 18:15:01 [+0800], Hillf Danton wrote:
+> 	CPU0			CPU1
+> 	----			----
+> 	lock A
+> 				tasklet C callback
+> 				lock A
+> 	cancel tasklet B
+> 	DEADLOCK-01
+> 
+> After this work could DEADLOCK-01 be triggered, given no chance for DEADLOCK-02 ?
+> 
+> 	CPU2			CPU3
+> 	----			----
+> 	lock A
+> 				timer C callback
+> 				lock A
+> 	timer_delete_sync(timer B)
+> 	DEADLOCK-02
 
-It's now sent as v9. [1]
+You are not supposed to acquire the lock, that is also acquired in the
+callback, while canceling the timer/ tasklet.
+Tell me please, how is this relevant?
 
-with best regards
+If lock A is acquired on CPU0/ 2 then tasklet/ timer on CPU1/ 3 can't
+make progress. Now CPU0/ 2 waits for the callback to complete. This
+deadlocks as of today regardless of PREEMPT_RT and this change.
 
-Jens
+The difference is that !RT requires two CPU for this to happen while RT
+is efficient and can trigger this with just one CPU.
 
-[1]:=20
-https://lore.kernel.org/all/20250915-hp-x14-x1p-v9-0-fa457ca30ffe@oldschoo=
-lsolutions.biz/
-
+Sebastian
 
