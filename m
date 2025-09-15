@@ -1,232 +1,179 @@
-Return-Path: <linux-kernel+bounces-817654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1152B584F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:49:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD22B584F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 20:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C768165B0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B891AA7BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 18:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB3E2773F4;
-	Mon, 15 Sep 2025 18:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE41B27C842;
+	Mon, 15 Sep 2025 18:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hgv4B9sx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EuNE+aar"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F901CAA6C
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E81C215F42
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757962153; cv=none; b=OvqB2L6Mi4rZqO8YnZo9bVzid4ASexSedcsm3Wv4J5/+0O5sTTO/rnQpgJZSMrOCJYZkBtL5QasxD60ll6lcUXcnX6EcL+txd3dMr1HVHQrAEWpFfcXtnvJ9Iu573VGMjQ1OZt7bnon87cW6zZE4DqYFUpkYZgPoAGZFF51GsgA=
+	t=1757962421; cv=none; b=TkyP6F+MMO9/nLyDKkSAiLR1nfszsITXjsGzUceGo+6XES0aZ3R+0TqupAPJG7tr6UQVEpxoqIh9okIoFShzL4lCtAOPXBkrzjaXsgyS927fvc7lytW4/21YHiQC6FoddG///w4odKhyQv+ktoKe04P+fFC+78Vfw8DfnGf+pVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757962153; c=relaxed/simple;
-	bh=Ldk2SWPviVFCNNNr0HHMvL5tbmBOCu/heCetnLeh4Ak=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nP5lmAl7Rf0Z+WiiaZHwL8O6fjcOdk9GUQudtXJ3yrfSy9GjT0TKV6IeqhHMcJ9GO+Nd8UW75wB+q6KmYcElN589TNZ6DlIa7NrcmAsqpUZknDD1Vxc5nnGpU/5bdK4VX79TuZ0Q5jCZXPfNb1jyNgNrMEl0iQ2pQRnbBQEZtDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hgv4B9sx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757962150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jm8gfVBZ7kTZ29XgGNG8P/V5RcE1ds8Nn8Aqd6J8NeY=;
-	b=Hgv4B9sx342j+xXHsyMkF/L8xNbEjR8aAJ6U7M3+MyukGkt2suJczKtaBVrZrEyx7iqftZ
-	K6RCoZ3yzdKO88ziz5oLDskSfcfjwC82t7WmBfQQt5knurbVGsK3W6k3IcB4EjbUQLnlzD
-	NO//+v5dUYQ3Bi4UBcUr5g03AKgVL2Y=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-lMsth65ZOT2r-T_YhnLepw-1; Mon, 15 Sep 2025 14:49:08 -0400
-X-MC-Unique: lMsth65ZOT2r-T_YhnLepw-1
-X-Mimecast-MFC-AGG-ID: lMsth65ZOT2r-T_YhnLepw_1757962148
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-776164a4484so54162316d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:49:08 -0700 (PDT)
+	s=arc-20240116; t=1757962421; c=relaxed/simple;
+	bh=WaCGK7JVGkNZfy8wWvMHPjeoKB2xSuL6UkAla4ZV4uE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxhrjaL9eXf+aY0E/Umg4I91Is/z5m2HFeVAs4McmCHddsF/Z72I5NjRVVZaj1Zuxf8KwCiIIMZS43mUTHiNNOPcRmYCWEog273dgFudFTb93FlejP6e/7EOxKGr6vNNhmW2KktLAeo79Oap4/C3yjGdmINtPUxLdGMUTkxE0dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EuNE+aar; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FDrBfA009023
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:53:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=nMMKPwbFMSjvy9PWk7yGxyrz
+	P5qxhwSObKoN7zz9Cmg=; b=EuNE+aarumICU53Pb8nbWw1vWJELMwtngsr/NFhj
+	b67tH0/faAVXM8BakGNmxzZL/eduCfCUAQ5+knxk3lp63THxklrq5jhZZOsjC9c6
+	rYhIyXq9WCA/I1qxRoAmbRRUj6sYT6CS738RLMZUXPU20MWvtdKAq2ZtI9mWI/jD
+	5ja3P28kw8CeSkfuwXvWnghnPmgBJeKGJ0FD6Ppqlbxce14ELRdSkIDDstuJAjK9
+	tXF/CWtbY9GrrQpleEC9M/mOAeomKPXO84c84sfITddHT01T2T11KX/Xirf9HDkC
+	1LVewdCj0d01yUnv0q4qsbqR/EOIOnXmbrJxBfCBFbTWlQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495eqpw0u9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:53:38 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b345aff439so120778921cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 11:53:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757962148; x=1758566948;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jm8gfVBZ7kTZ29XgGNG8P/V5RcE1ds8Nn8Aqd6J8NeY=;
-        b=JHzZ3ZCTOiNCGrXUefOmCdHv9unNKu4buOaD6T7bsfl+6AbBTmHV/ecs554Vlib7/q
-         RJ9quRSX7zeGjp8Ee0bb8wLpN2qHVR6a9q5rbGBZ0Hn8YxBGAJyFxQcNH4YvDUiTS4N+
-         XlsX2e0VodHeaMqp7tvF/kV7/RBTpZtsxIvLrg7y78h3OvN8j4W0mJmhL1S+49n5Dgrh
-         ZKIfXZ1NURayoouL50QZNjxrjB6NMq5A8CwY8NLoFCKabaeYFI2wYjz3Mf2UDmRETOsz
-         F7r4vwGn+P0jE6IaMugFNgextzSheKVZNqvzjVqb6hzk2tLHzrWhfWujMeR1MoS3okiv
-         9XzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmMNSzyOLRyGkG/9T+nUDqf/ONmjywVVw/HTMN3PCWVkgfgLZPtoV6h70zDbBbFvHZtZFpfpWmPd/YrSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmyHFt1zzHfVfXToOFIHYZ/jZCpw0I4I6yH7Jxmx+RvogXPDNS
-	id1xTnO41bha12sQ1VrQ85ziZq5rlkFcnJgkxnvgQ68CFS11g+xYc8rEj53IfxPjhq5J6wUf6NR
-	S11qlzAdNaXDOS2QlPxVvvJA+A1ElKpLa+hQeKsd86chKGgwgN9J6ojDrtVBMEBgbww==
-X-Gm-Gg: ASbGncsfrlyJyJgd16DFUrv1kIaqag7jnbwTph9SHVP/ZQAS4dtrgDpBoC6nd7YSj9o
-	zn9JSTJvdN9XXdo20qdylS/zISTpYI/td+AelVpsDqC+L7x5wRmqRiPGr0Qm+Kch3zJ5Iwi/XrI
-	S1de1ue3r4SFojkRodNHJ6iQ/Ggd42Pt5LSsivG4ZtBg+VXD/F14kkVQvzgDcI4Z42ta9sDR9S+
-	flZjpauaUzPk3w+EpGzFFvY8eVF3FLraPa3tPpfnsF8AwAm5PkJFryyMLInqLJ9rhCmer7eil5C
-	SXOi8jtTQr1oAzLWJ3vaU8qWA9fMyFxnLioVFEeN/Mtx9pR/G9WqrCl6HOzutF73jHCWvu6/kSs
-	6oztHh05ExA==
-X-Received: by 2002:ad4:5ba3:0:b0:720:e5a:fe3b with SMTP id 6a1803df08f44-767c46cd6c7mr165366496d6.58.1757962147926;
-        Mon, 15 Sep 2025 11:49:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFo3ntzAafInR/QDbS4xk0XJuXQBwpwYhaIwxitcYDukXsk9+FEmwXEdAJFJ8+MdNz2jYAJ2w==
-X-Received: by 2002:ad4:5ba3:0:b0:720:e5a:fe3b with SMTP id 6a1803df08f44-767c46cd6c7mr165366236d6.58.1757962147479;
-        Mon, 15 Sep 2025 11:49:07 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7890598971bsm13624556d6.25.2025.09.15.11.49.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 11:49:07 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <dfc4da47-2694-4470-ba14-ee62b91e52e0@redhat.com>
-Date: Mon, 15 Sep 2025 14:49:06 -0400
+        d=1e100.net; s=20230601; t=1757962417; x=1758567217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nMMKPwbFMSjvy9PWk7yGxyrzP5qxhwSObKoN7zz9Cmg=;
+        b=YyGudzJLS2MmFaSG0N+E/8CtjY5mc4oH3+8QKH1M3ydaEFrzMP1yw19G9otY1bZPhS
+         CBWboMxvFVE+khveuLXgqAE4BL8OxQu5eRN/NoS0SaiztwqYm/WnA9JwRUxfP+ZStEzY
+         h2Ma07BAVYBHy6vqqmKAvHSGGt+UL7doVZLdDskTOogpf2YPK78EbGR2xKxbsrCMMl7v
+         A6Edkj58WRZkCMo0dgr3MoiUjBGQWXYKFcxsMlEXI7j5QvU+IiGFNRpS92wy+sDgCLra
+         CAZ+vSgc16Ys/N55UhC2BF0XO3iplgAankY3JUa1zAmnLnPyjarUvMuqYD/QhaOuh/jd
+         OUOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVp1ZSHMI2f7LnJILDjnSUa5eSaeKQKKSF92HiqvNhOVO1KjCQp+PjC0yOFZZyJXtmMS1BM77lRCs+fS28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxI7t2ftmDGAio4Pix9tj3VP7Ev6aYMqa4/qsOV7BcQjbIHd0u
+	leT1NnGsMPqDt28sCtSgy+L5IgoA6tZy6m2+wV2YiwylhRR6snQtuQ+12k1HJBqo7BEd6aCQbHW
+	FxEniEQWp48a+iem4mS+FcuBnhBDPPxgesuBCG0bvRGx9/riK6pUA69M+okioE1RSmmk=
+X-Gm-Gg: ASbGncurMGby6M16FXywxo5JPE+Uz/Jph1GrQgVpyZFsOLtCSeB8EGC715l9eQDHiJG
+	yEjL1uuYKnXo6JoPqh3NR3GnUqxgz4tE7Mfy1YTKL6AGz11oyo2OjC8Akwb+YWWwd6k1943miOK
+	JzxKmLXwOx0yL4tKvpY7hDLyGCmlgPOnt8MNCZgKuxmyCqZn/IohBeHm71QZdZO5DM3t34kwzph
+	NfKQMjhwk4ImH08N7X9Beb/qVAy7sWvNGailr+Hp/MlBrXncqptdlJhM5wWXCeu2Y1oGETszg9N
+	iCWb/1L/I5ycJmTj59uNcFazBeiV2loOcp2q+jwCmOiMRmM5geHad/H/hXU2BAQTps3ey0v/8rW
+	ZLT9kOg7egeuSiWm/BLzP0mfJZbb0gduqpYPyJXRUTsPyB2SHlO/F
+X-Received: by 2002:ac8:7d89:0:b0:4b7:95da:b3c7 with SMTP id d75a77b69052e-4b795dac12amr105744081cf.48.1757962417422;
+        Mon, 15 Sep 2025 11:53:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHl1bgwAg6xsiD3botpPruuj1Z5eTwC4YuXll3Zv1jmcPqXrGVhLUi0yvP8XfARs9TjfTPNrg==
+X-Received: by 2002:ac8:7d89:0:b0:4b7:95da:b3c7 with SMTP id d75a77b69052e-4b795dac12amr105743251cf.48.1757962416589;
+        Mon, 15 Sep 2025 11:53:36 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1a8211afsm28253981fa.45.2025.09.15.11.53.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 11:53:35 -0700 (PDT)
+Date: Mon, 15 Sep 2025 21:53:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Harikrishna Shenoy <h-shenoy@ti.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, sjakhade@cadence.com, yamonkar@cadence.com,
+        lumag@kernel.org, dianders@chromium.org, jani.nikula@intel.com,
+        luca.ceresoli@bootlin.com, andy.yan@rock-chips.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devarsht@ti.com, u-kumar1@ti.com,
+        s-jain1@ti.com, tomi.valkeinen@ideasonboard.com
+Subject: Re: [PATCH v5 2/2] drm: bridge: cdns-mhdp8546: Add support for DSC
+ and FEC
+Message-ID: <d6l5vwx5s5oopyhniqbc3wputceblazpry2omeja2qvak37y2m@dbge4vedh7ko>
+References: <20250915103041.3891448-1-h-shenoy@ti.com>
+ <20250915103041.3891448-3-h-shenoy@ti.com>
+ <pwd4hocrxrnfymby6szzp7irlveoa36er7yn5ivlht5mwxrpdz@r237bd3epols>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC -v2 05/11] cpuset: refactor CPU mask buffer
- parsing logic
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
- <20250909033233.2731579-6-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20250909033233.2731579-6-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <pwd4hocrxrnfymby6szzp7irlveoa36er7yn5ivlht5mwxrpdz@r237bd3epols>
+X-Proofpoint-GUID: POArYlGFtqM4MadEX1A0618qHYGtpsD4
+X-Proofpoint-ORIG-GUID: POArYlGFtqM4MadEX1A0618qHYGtpsD4
+X-Authority-Analysis: v=2.4 cv=XJIwSRhE c=1 sm=1 tr=0 ts=68c860b2 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=e5mUnYsNAAAA:8 a=Br2UW1UjAAAA:8 a=sozttTNsAAAA:8
+ a=aquk1Lx4SgTA5jucOdcA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
+ a=Vxmtnl_E_bksehYqCbjh:22 a=WmXOPjafLNExVIMTj843:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDE4NiBTYWx0ZWRfX5XZwtceryGkZ
+ ZdFlKPIC29Nc/nZmBmQv59Wzwn2fI5X94m2XYxwzAdiaRkWpT10z++Gm14kyl6Xnl8WPiAKtkch
+ 1GRh055L52feWlPHUC4w0Dwxx9bokm2+wMN9iXLKaOoffywGYz+ta+7CJkVTtWZ9UHpK7LEkh2E
+ w66jdzphv+RDfi7fHqx7gRYGRrXtIOCYAlQE4L8ROZRE925rqmWdBgY1RnhIe/a8Leq5UpuYcRX
+ thVYrd7VOdHM277u/WF7msK59JJ/H03cQWQh3/8480wm0lkE2xd2BG3braFlu6Kz2WrRDjIphzv
+ Cqm8c6bBqBjDpH0swkKNbQhan+sm9D87A3/SKv8+7po/96B/RhyXw4+OiRwBKDuHvnbdXJWbQiN
+ 48RbpjJb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_07,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509130186
 
-On 9/8/25 11:32 PM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> The current implementation contains redundant handling for empty mask
-> inputs, as cpulist_parse() already properly handles these cases. This
-> refactoring introduces a new helper function parse_cpuset_cpulist() to
-> consolidate CPU list parsing logic and eliminate special-case checks for
-> empty inputs.
->
-> Additionally, the effective_xcpus computation for trial cpusets has been
-> simplified. Rather than computing effective_xcpus only when exclusive_cpus
-> is set or when the cpuset forms a valid partition, we now recalculate it
-> on every cpuset.cpus update. This approach ensures consistency and allows
-> removal of redundant effective_xcpus logic in subsequent patches.
->
-> The trial cpuset's effective_xcpus calculation follows two distinct cases:
-> 1. For member cpusets: effective_xcpus is determined by the intersection
->     of cpuset->exclusive_cpus and the parent's effective_xcpus.
-> 2. For non-member cpusets: effective_xcpus is derived from the intersection
->     of user_xcpus and the parent's effective_xcpus.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 59 +++++++++++++++++++++---------------------
->   1 file changed, 30 insertions(+), 29 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 6015322a10ac..55674a5ad2f9 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -169,6 +169,11 @@ static inline bool is_partition_invalid(const struct cpuset *cs)
->   	return cs->partition_root_state < 0;
->   }
->   
-> +static inline bool cs_is_member(const struct cpuset *cs)
-> +{
-> +	return cs->partition_root_state == PRS_MEMBER;
-> +}
-> +
->   /*
->    * Callers should hold callback_lock to modify partition_root_state.
->    */
-> @@ -1478,7 +1483,13 @@ static int compute_trialcs_excpus(struct cpuset *trialcs, struct cpuset *cs)
->   	struct cpuset *parent = parent_cs(trialcs);
->   	struct cpumask *excpus = trialcs->effective_xcpus;
->   
-> -	cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
-> +	/* trialcs is member, cpuset.cpus has no impact to excpus */
-> +	if (cs_is_member(cs))
-> +		cpumask_and(excpus, trialcs->exclusive_cpus,
-> +				parent->effective_xcpus);
-> +	else
-> +		cpumask_and(excpus, user_xcpus(trialcs), parent->effective_xcpus);
-> +
->   	return rm_siblings_excl_cpus(parent, cs, excpus);
->   }
->   
-> @@ -2348,6 +2359,19 @@ static void update_sibling_cpumasks(struct cpuset *parent, struct cpuset *cs,
->   	rcu_read_unlock();
->   }
->   
-> +static int parse_cpuset_cpulist(const char *buf, struct cpumask *out_mask)
-> +{
-> +	int retval;
-> +
-> +	retval = cpulist_parse(buf, out_mask);
-> +	if (retval < 0)
-> +		return retval;
-> +	if (!cpumask_subset(out_mask, top_cpuset.cpus_allowed))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
->   /**
->    * update_cpumask - update the cpus_allowed mask of a cpuset and all tasks in it
->    * @cs: the cpuset to consider
-> @@ -2364,34 +2388,9 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->   	bool force = false;
->   	int old_prs = cs->partition_root_state;
->   
-> -	/*
-> -	 * An empty cpus_allowed is ok only if the cpuset has no tasks.
-> -	 * Since cpulist_parse() fails on an empty mask, we special case
-> -	 * that parsing.  The validate_change() call ensures that cpusets
-> -	 * with tasks have cpus.
-> -	 */
-> -	if (!*buf) {
-> -		cpumask_clear(trialcs->cpus_allowed);
-> -		if (cpumask_empty(trialcs->exclusive_cpus))
-> -			cpumask_clear(trialcs->effective_xcpus);
-> -	} else {
-> -		retval = cpulist_parse(buf, trialcs->cpus_allowed);
-> -		if (retval < 0)
-> -			return retval;
-> -
-> -		if (!cpumask_subset(trialcs->cpus_allowed,
-> -				    top_cpuset.cpus_allowed))
-> -			return -EINVAL;
-> -
-> -		/*
-> -		 * When exclusive_cpus isn't explicitly set, it is constrained
-> -		 * by cpus_allowed and parent's effective_xcpus. Otherwise,
-> -		 * trialcs->effective_xcpus is used as a temporary cpumask
-> -		 * for checking validity of the partition root.
-> -		 */
-> -		if (!cpumask_empty(trialcs->exclusive_cpus) || is_partition_valid(cs))
-> -			compute_trialcs_excpus(trialcs, cs);
-> -	}
-> +	retval = parse_cpuset_cpulist(buf, trialcs->cpus_allowed);
-> +	if (retval < 0)
-> +		return retval;
->   
->   	/* Nothing to do if the cpus didn't change */
->   	if (cpumask_equal(cs->cpus_allowed, trialcs->cpus_allowed))
-> @@ -2400,6 +2399,8 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->   	if (alloc_tmpmasks(&tmp))
->   		return -ENOMEM;
->   
-> +	compute_trialcs_excpus(trialcs, cs);
-> +
->   	if (old_prs) {
->   		if (is_partition_valid(cs) &&
->   		    cpumask_empty(trialcs->effective_xcpus)) {
-Reviewed-by: Waiman Long <longman@redhat.com>
+On Mon, Sep 15, 2025 at 02:06:58PM +0300, Dmitry Baryshkov wrote:
+> On Mon, Sep 15, 2025 at 04:00:41PM +0530, Harikrishna Shenoy wrote:
+> > From: Swapnil Jakhade <sjakhade@cadence.com>
+> > 
+> > Enable support for Display Stream Compression (DSC) in independent
+> > mode with a single stream, along with Forward Error Correction (FEC)
+> > in the Cadence MHDP8546 DisplayPort controller driver.
+> > 
+> > FEC is required when DSC is enabled to ensure reliable transmission
+> > of the compressed stream.
+> > 
+> > Signed-off-by: Swapnil Jakhade <sjakhade@cadence.com>
+> > Signed-off-by: Harikrishna Shenoy <h-shenoy@ti.com>
+> > ---
+> >  drivers/gpu/drm/bridge/cadence/Makefile       |   2 +-
+> >  .../drm/bridge/cadence/cdns-mhdp8546-core.c   | 367 ++++++++-
+> >  .../drm/bridge/cadence/cdns-mhdp8546-core.h   |  68 ++
+> >  .../drm/bridge/cadence/cdns-mhdp8546-dsc.c    | 695 ++++++++++++++++++
+> >  .../drm/bridge/cadence/cdns-mhdp8546-dsc.h    | 285 +++++++
+> >  5 files changed, 1392 insertions(+), 25 deletions(-)
+> >  create mode 100644 drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-dsc.c
+> >  create mode 100644 drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-dsc.h
+> > 
+> > +		goto err;
+> > +	}
+> > +
+> > +	if (ret > 0)
+> > +		return 0;
+> > +err:
+> > +	return ret;
+> > +}
+> 
+> Consider extracting a common helper and using it here and in the Intel
+> DP driver. Also please use new DPCD helpers which return 0 instead of
+> size.
 
+For the reference, some time ago one of my colleagues implemented DP DSC
+support for the drm/msm driver. It didn't go in for multiple reasons,
+but feel free to use it as an inspiration for possible generic helpers.
+See https://patchwork.freedesktop.org/series/113240/
+
+
+-- 
+With best wishes
+Dmitry
 
