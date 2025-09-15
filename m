@@ -1,211 +1,94 @@
-Return-Path: <linux-kernel+bounces-817228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F4FB57F93
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6192FB57FA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 16:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7BE47B29B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC52188A9C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0473433CE98;
-	Mon, 15 Sep 2025 14:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC15C3376BC;
+	Mon, 15 Sep 2025 14:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I9O0Sdmh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AGoRAb/g";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I9O0Sdmh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AGoRAb/g"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F6qrvgO8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A8D1EDA09
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C363D303C85
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 14:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757947737; cv=none; b=c690ifNPf/UjplgXimMhPQYP2D8MNvKEeRulGI7bZ0oKp0yGZ7ybH3okH4cy5uTBfEZHQe4c2TFdfWLsKZTHNss0agdf2DbP4yiyciC+Yh2B4MH9D/BFVi4yS8XYD4txmOQE6JE/5lhmeoiL6hnb7+OvmnazPOozfYIGirarz2E=
+	t=1757947893; cv=none; b=ftTj0u6OPGqUB41mqxQnphqM22UjPLqPMBe20Do9NJHQn9IbreT/qJD29hESltFwqnFa85jp8Ko37YvhzWK4k/r+y4qkP2KLLcM4BeONCIyOAE0O8MTUCQW3DGdL1wMtfx+U4jg6ORwo/ZOSSPQQdpbDP6vfFmDjUreATtZmSUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757947737; c=relaxed/simple;
-	bh=3DDLdQw9l4yhLhC73WMvvAYU/EJ45fZ1e2SudfROE8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVo5K1NCft5YkydQNZGDfnor3fDWNqef6BeNCOCJB0Jv7+C5poYHCMLZvKTWdLTeZ+x4aClCgIlQigLprRFKxpKglNihtWZIlpoz5WNKm1zWfjZ7LR10i34w8FQ+dQoIoxZHprY14WEJlwRk0WdlY6mpnBwyUZBKT7Jwxo6vIo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I9O0Sdmh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AGoRAb/g; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I9O0Sdmh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AGoRAb/g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 66A27336BF;
-	Mon, 15 Sep 2025 14:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757947732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ap6nhA3/+gtoJHuI04qrOYozdQiOul79wCfN91QZhnU=;
-	b=I9O0SdmhFZfMKjoBS4nVHp/f3tB8zWPxrX3W8eGXWi0pPT7OaQJ0/eScpxX2VDv9dagloS
-	IeTwmYd3gC7DOw4/s1o9ZMOYWH/aEqPQRISD8mxWU8WdayqQYiG38HZDf3UEZf9+ngRj1k
-	1vuNzKlIcdYY2V5J3Wp+FhVK5dfLvy4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757947732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ap6nhA3/+gtoJHuI04qrOYozdQiOul79wCfN91QZhnU=;
-	b=AGoRAb/gfJHfSIapcuEOVPx31VTepMneWehKeaG/KwKsVvSNrdqJ2/73SmYoTmQLHvpDZx
-	f//KV9sF4ZGndTAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757947732; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ap6nhA3/+gtoJHuI04qrOYozdQiOul79wCfN91QZhnU=;
-	b=I9O0SdmhFZfMKjoBS4nVHp/f3tB8zWPxrX3W8eGXWi0pPT7OaQJ0/eScpxX2VDv9dagloS
-	IeTwmYd3gC7DOw4/s1o9ZMOYWH/aEqPQRISD8mxWU8WdayqQYiG38HZDf3UEZf9+ngRj1k
-	1vuNzKlIcdYY2V5J3Wp+FhVK5dfLvy4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757947732;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ap6nhA3/+gtoJHuI04qrOYozdQiOul79wCfN91QZhnU=;
-	b=AGoRAb/gfJHfSIapcuEOVPx31VTepMneWehKeaG/KwKsVvSNrdqJ2/73SmYoTmQLHvpDZx
-	f//KV9sF4ZGndTAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5176D1372E;
-	Mon, 15 Sep 2025 14:48:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wZ1oE1QnyGg9aAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 15 Sep 2025 14:48:52 +0000
-Message-ID: <ba26b2e3-0f90-442d-adba-af04829b0f3e@suse.cz>
-Date: Mon, 15 Sep 2025 16:48:52 +0200
+	s=arc-20240116; t=1757947893; c=relaxed/simple;
+	bh=ILSmyGjjjPTW+WRuEVQr2WchD7jAPn598TgvovC8S38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oq8eiebWCL3/MVAqQNMjLloocK0PwCSamt1WjTukTU7KcFH+p3DWsVlb0DuXnQYwayrlRPyP1aMZVJqFhI61JVj/b5W8bN6DRhM8FEH8/cEg68e26t8KexLzdUZ5X0+O57o4oFSTjnaaaAtr0IWChCzpSTRnmjtS3Ztz/v3vORQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F6qrvgO8; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757947892; x=1789483892;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ILSmyGjjjPTW+WRuEVQr2WchD7jAPn598TgvovC8S38=;
+  b=F6qrvgO83GMhz9FmxvWS4eeLx/14tk8iMcjJ2Hql4zijVOLcvkO47Xpk
+   7VCH25rhzbTFAWJtkN5bsgCdxvDE2kiYiM343N7WfADyx6hqeTBjP6vvC
+   toR77qtThY1YqR5bwQAN0yvhoC5FOK9lMD2k2+BIekJqk7KSxhcVZ4gcN
+   ftNMnBtVBkYMI1O+xmk1sa6ZX7BKr6qQAxypMAXFEDhMXqTsqYJD+B127
+   Wh+2De6krtolTsq1z6DTkhQxJlGzu8I1s7o37MHajnbnraNjbHdI0/XUs
+   zEbRnhg+u7rlraYrVURDEBgo09FuitDr6s8dyCCC9q1ZoMQmYn4Rzjijs
+   w==;
+X-CSE-ConnectionGUID: Mq+IhUN4QmGiTiDAHu4hgQ==
+X-CSE-MsgGUID: yHSuCtjRSWW+VbMlJ+Y5Jg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="60277771"
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="60277771"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:49:27 -0700
+X-CSE-ConnectionGUID: M/Dv7FwLSbCvArd+GAedCw==
+X-CSE-MsgGUID: wq03szasQkaogxWceGHEIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="179900261"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 07:49:27 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyAWC-00000003H7k-2Mal;
+	Mon, 15 Sep 2025 17:49:24 +0300
+Date: Mon, 15 Sep 2025 17:49:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] mfd: intel-lpss: Add Intel Wildcat Lake LPSS PCI IDs
+Message-ID: <aMgndOuIP01o8ti0@smile.fi.intel.com>
+References: <20250915112936.10696-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] slab: validate slab before using it in
- alloc_single_from_partial()
-Content-Language: en-US
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250915-slub-slab-validation-v2-0-314690fc1532@suse.cz>
- <20250915-slub-slab-validation-v2-5-314690fc1532@suse.cz>
- <aMghx7WTJP9NHoNe@hyeyoo>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <aMghx7WTJP9NHoNe@hyeyoo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915112936.10696-1-ilpo.jarvinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 9/15/25 16:25, Harry Yoo wrote:
-> On Mon, Sep 15, 2025 at 03:55:12PM +0200, Vlastimil Babka wrote:
->> @@ -2825,13 +2821,21 @@ static void *alloc_single_from_partial(struct kmem_cache *s,
->>  
->>  	lockdep_assert_held(&n->list_lock);
->>  
->> +#ifdef SLUB_DEBUG
-> 
-> I'm sure you meant CONFIG_SLUB_DEBUG ;)
-> 
-> With that adjusted, looks good to me,
-> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+On Mon, Sep 15, 2025 at 02:29:36PM +0300, Ilpo Järvinen wrote:
+> Add Intel Wildcat Lake PCI IDs.
 
-Doh yes, thanks a lot :)
->> +	if (s->flags & SLAB_CONSISTENCY_CHECKS) {
->> +		if (!validate_slab_ptr(slab)) {
->> +			slab_err(s, slab, "Not a valid slab page");
->> +			return NULL;
->> +		}
->> +	}
->> +#endif
->> +
->>  	object = slab->freelist;
->>  	slab->freelist = get_freepointer(s, object);
->>  	slab->inuse++;
->>  
->>  	if (!alloc_debug_processing(s, slab, object, orig_size)) {
->> -		if (validate_slab_ptr(slab))
->> -			remove_partial(n, slab);
->> +		remove_partial(n, slab);
->>  		return NULL;
->>  	}
-> 
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
