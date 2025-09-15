@@ -1,71 +1,95 @@
-Return-Path: <linux-kernel+bounces-816494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753F0B57499
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:20:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4EAB57430
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4981A2235E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:18:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538FE441B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5842F2914;
-	Mon, 15 Sep 2025 09:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ED92F0C67;
+	Mon, 15 Sep 2025 09:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="OFCXcuUo"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HyC8Qm9t"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BDF2F0C64;
-	Mon, 15 Sep 2025 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538012ED846
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 09:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757927841; cv=none; b=bdz4tax04+U6jLKpVz82SRSX5VJPUQPWyMf3QhBwbGcf2YSgYU63PEACjAI5ITndA430h/Rxyfwangdy3arQMAHW419vm8xnVZM0P+IM3791t/XxVCkM4v9eEqJ03FMIK2pTZNjc9aevLfJ0sg5Xpd1C0eZso9T1RJqL9aLUlqA=
+	t=1757927531; cv=none; b=eZkBJyj1NYG6xu0h0ZrjxHKthS3Qdqh2nVbbaQ46FlV3WUPXHEhS0qROMI/RVxtkMBmvpgqOKTCBKpR7g3gHE/uUC30GISLlENH8dmcPHydzBBAYAZVv6SqlQABJ3VCfEPMu3G0Ht0KHK6MoIkh7hbH5F+fRVNpAp2vxUpE23oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757927841; c=relaxed/simple;
-	bh=zfbydqOh+dk1zNcsBtslvIQY6yi3mBOP1C29nui2VcI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gSNdi5xIAMFCcKqJuFdStkIQSp5loJHjSTEAM+QRzEUH9dOWX9gWtSP2mHpjRH0EwxVsCOJOM5iNGRSy5d17FzxBNd1pt51J9Z0wB6a7g/YS4DAH8We4djdeSs1XOyMsgOffwFeaCUnLr9KsHy1aquiGjNerAJ6WQv9OqRXAHfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=OFCXcuUo; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757927840; x=1789463840;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zfbydqOh+dk1zNcsBtslvIQY6yi3mBOP1C29nui2VcI=;
-  b=OFCXcuUos/Y72GyXSlFfdK76TdCu4QBRsNVu/kyZDxjuiWO10s5yDA+f
-   U4dTkQhwvXblghfOzSto7lCtMHDSTP+rpJsojF6/XMZXNJ4skTbi5WiGy
-   /hz0fCsUZS5z4WPSDr5SSB5MgeHctc7/n9hNvEZGfvBMnx/TgsQ5r5Mu1
-   Pbd+CgCxolwAgvpe6c36d8GfGBH+4rCYvYo7jkN4JYFP6doEa+40Aw2qm
-   rfhHx4aR/IQ6Dj4RMNTSHsecxbnjwWK5clk8uCV9SSQB8Ryq7HtZ+NFhf
-   p7ueFNi9i8lGw3Cc61QFGM8m+4zRFYFEZXJI6vGXcevHQhxdSPv2e2FDj
-   g==;
-X-CSE-ConnectionGUID: D9R2LNivTDmP0BykzHc4zw==
-X-CSE-MsgGUID: OdHmFyjUQPG9P7zwgDpDVw==
-X-IronPort-AV: E=Sophos;i="6.18,265,1751266800"; 
-   d="scan'208";a="46505434"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 02:17:13 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 02:16:31 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 15 Sep 2025 02:16:29 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next] net: phy: micrel: Add Fast link failure support for lan8842
-Date: Mon, 15 Sep 2025 11:11:49 +0200
-Message-ID: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757927531; c=relaxed/simple;
+	bh=YMyUO4ZSxSVOsCD3A/Ao02x8ck9F7ZcDeav94TcyBQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E7JkydBgPzbRCQLxAf+BPsIJFTzIRbc5wetcSyCP4hjXWGMFNO8SKNdjeBH0e2w4LHm5JDCjpYcTAwC2JJCwmFcAF0WLxJpfATLZDJFAOLNzE24SqiDevHWDeWZJD2q24XlcUg0R46d3V/i4O1dYmXxj+tqiax2ORXw73AwruCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HyC8Qm9t; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32e1b2dba00so1235122a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757927530; x=1758532330; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z912WmA+67ALWSaIKEWQEm3fb/lfEWHjZZbHUaxsCYg=;
+        b=HyC8Qm9tNP270pXki8zd3sjk8GmeiJx5fivPGSky/i4Vj5T8ZcS3qIa6w364xsGVvb
+         9KHCrRMplCGsoL+J9PtwD8FmyfICubAqNeQ2azLbWSsen/Mx7sHPZO4FebC4hk18QkCG
+         vq6Kn7nnEhdrXwU9eXHrdJhiwhuLofb/tF9HZM+8Pq1OiBvXN8MsvMHRbOBNI8e0dU/7
+         oBS6ZDyNTJ14gqlGTl/W2FBLQgbBDzi9UzLjoFIjb1AXxwwws6klcfeAXYBK4nsnyufs
+         JNNl7wrbe3WqmoR2r706u+k6tisI5qMNNwnnovD50vvjeObplqVB0zClP7YJ5euqyVMs
+         3mFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757927530; x=1758532330;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z912WmA+67ALWSaIKEWQEm3fb/lfEWHjZZbHUaxsCYg=;
+        b=i3XsMjg85/3OZDHCIZDkR8te+S2E+49yKNrRQyvWejtF2kC7NEnef3qhwDYiFExKil
+         8J0JFk5BCIvl/7BIpqTkUTwBbOxW0c1uDH9pPm5aNyqQxdkUobpNZ334f3rU/M8aYTOz
+         uMZMuxOqZhOXHt1mJTpvwdZOE3ymEJvZJLO9owgkZTokD9DFtfVAh/yPZoBTqfTll6Hg
+         clocZQN7r+fgCKVjnVNCb2ik7KruR44e10X1N6DqzOYVTAP1Zd3Cx2MKeRfDt+oMlK55
+         jpnb5qMtTUiuyPs0FvBPzyM0sqm3MRHY705nqDp9SEW95ePTT/Sha+zjqh7HUdRslF//
+         q8/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUpt+HO05jbsUcMzAnBlaABQtQBcr69REeqm/qwFBt383R5BHcvbiBSNhmkvud8dwR0svJaI4JG1BvOTOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUEBS7YoGztsO+rL5Jbsv892wk/0i2h7WCLKKYJGIcEqSd7qYT
+	GXWMTVPo6rLODuRwL8mVBdyEPBmLbrrTQaGLt0bF9cIfoqH0OIqcIKS6
+X-Gm-Gg: ASbGncsorhKILFUY5/FwfeEftzjh8JwljpdZx0OJFkABzirIIIujF1L4s9aQLo2ivx2
+	FdJJ/u45IueEI5pyvIzOTdeG55PINvxvx9las/E43+VC89NhdahH2qbqbHNS1Tr7TNsRL1P7Yp0
+	/YQVl7JuFj9o5eUQmMQIZUo1ob4kdUm6c2nlB0RskYDNf3jfkZePd2FBbQP6aqWkPNnpYLZUPyL
+	uDYeT3Kq+NeJdnuhdi9lEBz9FcJzdmZhb9AZIpQBWKfDIQknhcbuXBeGHYNBsMfRYlBA25AiC7j
+	WXV8DEsCzw/EG7h0LvvnXLZn2Q9axPQ/GnvCR/33klP1SddZuH+CkjG8TmU947FYANwH9QB2KeX
+	8e4qUipFhZJ0cv2/8svNpV3ddvyqsZkUf3A==
+X-Google-Smtp-Source: AGHT+IHUHoRnBUAizNQ0Y7bS8vqoAmmxVHF9oFrvfp8wcyILr5tPIdrCluwCWQp30ooP5fOFV+uolA==
+X-Received: by 2002:a17:90b:5110:b0:32e:4194:52a with SMTP id 98e67ed59e1d1-32e41940830mr4235639a91.9.1757927529654;
+        Mon, 15 Sep 2025 02:12:09 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32e0f101943sm6901264a91.1.2025.09.15.02.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 02:12:09 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: kernel@pankajraghav.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	brauner@kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH 1/4] iomap: make sure iomap_adjust_read_range() are aligned with block_size
+Date: Mon, 15 Sep 2025 17:12:07 +0800
+Message-ID: <20250915091207.4094376-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <eyyshgzsxupyen6ms3izkh45ydh3ekxycpk5p4dbets6mpyhch@q4db2ayr4g3r>
+References: <eyyshgzsxupyen6ms3izkh45ydh3ekxycpk5p4dbets6mpyhch@q4db2ayr4g3r>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,143 +97,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add support for fast link failure for lan8842, when this is enabled the
-PHY will detect link down immediately (~1ms). The disadvantage of this
-is that also small instability might be reported as link down.
-Therefore add this feature as a tunable configuration and the user will
-know when to enable or not. By default it is not enabled.
+On Mon, 15 Sep 2025 10:54:00 +0200, kernel@pankajraghav.com wrote:
+> On Sun, Sep 14, 2025 at 08:40:06PM +0800, Jinliang Zheng wrote:
+> > On Sun, 14 Sep 2025 13:45:16 +0200, kernel@pankajraghav.com wrote:
+> > > On Sat, Sep 14, 2025 at 11:37:15AM +0800, alexjlzheng@gmail.com wrote:
+> > > > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> > > > 
+> > > > iomap_folio_state marks the uptodate state in units of block_size, so
+> > > > it is better to check that pos and length are aligned with block_size.
+> > > > 
+> > > > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> > > > ---
+> > > >  fs/iomap/buffered-io.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > > 
+> > > > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > > > index fd827398afd2..0c38333933c6 100644
+> > > > --- a/fs/iomap/buffered-io.c
+> > > > +++ b/fs/iomap/buffered-io.c
+> > > > @@ -234,6 +234,9 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
+> > > >  	unsigned first = poff >> block_bits;
+> > > >  	unsigned last = (poff + plen - 1) >> block_bits;
+> > > >  
+> > > > +	WARN_ON(*pos & (block_size - 1));
+> > > > +	WARN_ON(length & (block_size - 1));
+> > > Any reason you chose WARN_ON instead of WARN_ON_ONCE?
+> > 
+> > I just think it's a fatal error that deserves attention every time
+> > it's triggered.
+> > 
+> 
+> Is this a general change or does your later changes depend on these on
+> warning to work correctly?
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/micrel.c | 77 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 75 insertions(+), 2 deletions(-)
+No, there is no functional change.
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index e403cbbcead5b..a946c34dbbf79 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -107,6 +107,7 @@
- #define LAN8814_INTC				0x18
- #define LAN8814_INTS				0x1B
- 
-+#define LAN8814_INT_FLF				BIT(15)
- #define LAN8814_INT_LINK_DOWN			BIT(2)
- #define LAN8814_INT_LINK_UP			BIT(0)
- #define LAN8814_INT_LINK			(LAN8814_INT_LINK_UP |\
-@@ -2805,6 +2806,14 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
- 	return ret;
- }
- 
-+/**
-+ * LAN8814_PAGE_PCS - Selects Extended Page 0.
-+ *
-+ * This page appaers to control the fast link failure and there are different
-+ * debug info registers.
-+ */
-+#define LAN8814_PAGE_PCS 0
-+
- /**
-  * LAN8814_PAGE_AFE_PMA - Selects Extended Page 1.
-  *
-@@ -5910,7 +5919,8 @@ static int lan8842_config_intr(struct phy_device *phydev)
- 		if (err)
- 			return err;
- 
--		err = phy_write(phydev, LAN8814_INTC, LAN8814_INT_LINK);
-+		err = phy_write(phydev, LAN8814_INTC,
-+				LAN8814_INT_LINK | LAN8814_INT_FLF);
- 	} else {
- 		err = phy_write(phydev, LAN8814_INTC, 0);
- 		if (err)
-@@ -5986,7 +5996,7 @@ static irqreturn_t lan8842_handle_interrupt(struct phy_device *phydev)
- 		return IRQ_NONE;
- 	}
- 
--	if (irq_status & LAN8814_INT_LINK) {
-+	if (irq_status & (LAN8814_INT_LINK | LAN8814_INT_FLF)) {
- 		phy_trigger_machine(phydev);
- 		ret = IRQ_HANDLED;
- 	}
-@@ -6055,6 +6065,67 @@ static int lan8842_update_stats(struct phy_device *phydev)
- 	return 0;
- }
- 
-+#define LAN8842_FLF				15 /* 0x0e */
-+#define LAN8842_FLF_ENA				BIT(1)
-+#define LAN8842_FLF_ENA_LINK_DOWN		BIT(0)
-+
-+static int lan8842_get_fast_down(struct phy_device *phydev, u8 *msecs)
-+{
-+	int ret;
-+
-+	ret = lanphy_read_page_reg(phydev, LAN8814_PAGE_PCS, LAN8842_FLF);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret & LAN8842_FLF_ENA)
-+		*msecs = ETHTOOL_PHY_FAST_LINK_DOWN_ON;
-+	else
-+		*msecs = ETHTOOL_PHY_FAST_LINK_DOWN_OFF;
-+
-+	return 0;
-+}
-+
-+static int lan8842_set_fast_down(struct phy_device *phydev, const u8 *msecs)
-+{
-+	if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_ON)
-+		return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
-+					      LAN8842_FLF,
-+					      LAN8842_FLF_ENA |
-+					      LAN8842_FLF_ENA_LINK_DOWN,
-+					      LAN8842_FLF_ENA |
-+					      LAN8842_FLF_ENA_LINK_DOWN);
-+
-+	if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_OFF)
-+		return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
-+					      LAN8842_FLF,
-+					      LAN8842_FLF_ENA |
-+					      LAN8842_FLF_ENA_LINK_DOWN, 0);
-+
-+	return -EINVAL;
-+}
-+
-+static int lan8842_get_tunable(struct phy_device *phydev,
-+			       struct ethtool_tunable *tuna, void *data)
-+{
-+	switch (tuna->id) {
-+	case ETHTOOL_PHY_FAST_LINK_DOWN:
-+		return lan8842_get_fast_down(phydev, data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int lan8842_set_tunable(struct phy_device *phydev,
-+			       struct ethtool_tunable *tuna, const void *data)
-+{
-+	switch (tuna->id) {
-+	case ETHTOOL_PHY_FAST_LINK_DOWN:
-+		return lan8842_set_fast_down(phydev, data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
- static void lan8842_get_phy_stats(struct phy_device *phydev,
- 				  struct ethtool_eth_phy_stats *eth_stats,
- 				  struct ethtool_phy_stats *stats)
-@@ -6299,6 +6370,8 @@ static struct phy_driver ksphy_driver[] = {
- 	.handle_interrupt = lan8842_handle_interrupt,
- 	.get_phy_stats	= lan8842_get_phy_stats,
- 	.update_stats	= lan8842_update_stats,
-+	.get_tunable	= lan8842_get_tunable,
-+	.set_tunable	= lan8842_set_tunable,
- 	.cable_test_start	= lan8814_cable_test_start,
- 	.cable_test_get_status	= ksz886x_cable_test_get_status,
- }, {
--- 
-2.34.1
+I added it only because the correctness of iomap_adjust_read_range() depends on
+it, so it's better to hightlight it now.
 
+```
+	/* move forward for each leading block marked uptodate */
+	for (i = first; i <= last; i++) {
+		if (!ifs_block_is_uptodate(ifs, i))
+			break;
+		*pos += block_size; <-------------------- if not aligned, ...
+		poff += block_size;
+		plen -= block_size;
+		first++;
+	}
+```
+
+> 
+> > > 
+> > > I don't see WARN_ON being used in iomap/buffered-io.c.
+> > 
+> > I'm not sure if there are any community guidelines for using these
+> > two macros. If there are, please let me know and I'll be happy to
+> > follow them as a guide.
+> 
+> We typically use WARN_ON_ONCE to prevent spamming.
+
+If you think it's better, I will send a new version.
+
+thanks,
+Jinliang Zheng. :)
+
+> 
+> --
+> Pankaj
 
