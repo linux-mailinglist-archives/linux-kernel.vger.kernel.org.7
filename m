@@ -1,135 +1,59 @@
-Return-Path: <linux-kernel+bounces-816008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04357B56E1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DD2B56E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 04:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 487B57A1937
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:01:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A9997A3F62
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 02:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443D721D5B3;
-	Mon, 15 Sep 2025 02:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C5D21FF26;
+	Mon, 15 Sep 2025 02:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rv6Idl0y"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBYdeh9P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366D21C8629
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 02:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F4B1EA7CF;
+	Mon, 15 Sep 2025 02:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757901796; cv=none; b=g+Zksm4/7LO/EwRxTLzcDuid+FdcNRgdDo1M+27ewggLj0pEr8UJdmk2bKYu+oNt4Md3yg/NII4PWVmwwBk1TrnABBGbzu6ZJ5pKsYNDRbdWC8YSIS/KEV52IZGGcO2+YyGifnPSR830lqgLMC4jxPb7wwUoj5/iU7crd30rc8Q=
+	t=1757902209; cv=none; b=Lk0YHv48ADUsDM39RjQRVQUykBw8uQdCvX1Mx37riXz3EtwI1UZyhqmNukTxeYcNLPPDcb3BW8IPiLEg4vNPJB+hIDkUhSj+YgU7coVO8U0nQrpnIMdhs304mIQ/caGavWEvs0But7v13cy2S5U+cXJxCsd8tlZRHibJywjI/IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757901796; c=relaxed/simple;
-	bh=dwEnk+JUy+plSH589xKHA8fu3lw4UwydsjYzisg/b04=;
+	s=arc-20240116; t=1757902209; c=relaxed/simple;
+	bh=rEX1fVC1mzbS+16jNs5mhKp7yx2T9TgN8z5RmGbee3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hwa2V16luiLWx60/7GJOaEKZ1T2vzfjabluFRZFcBQ5relmwLryYK+mYQE7d4gq/63oIAx0FJ+Dcc6/Z9EF46HnIscCmComlMcCzDJGOOlkn74+PbmZbobUFrlOifjWdc3SW2O/NiiO/iPERLL7HQ6aLHRSkguJ7NBdcyu6pEzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rv6Idl0y; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b523fb676efso2607111a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 19:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757901794; x=1758506594; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOygL22yeiI/c6chOsAL099+jLfX4ygYuBDAjkKbT5k=;
-        b=Rv6Idl0yeeUOlPmqKUtz99fVG07ZJdK2iN/x3ppIkVirqgGRBiGaAJsS/gnAgadRW0
-         2auYQj+tMxYTlIoF3pS6eG7e4fykWm070s/MSdZ/vDGvnpg956lXJVdmuhc4Wl9x7Wm9
-         p97QO3U7X2RALUZCRBXTtpvco+axu40xlvQX/k6D9rgIs4ontpY2Y+Wn9phfKhloIfZj
-         D4qOOF1XTJeACiU1dS9iPRHGY9FLSoiTd/iHGFQ9g7o5iJ0CzwZvxLWs5LtZ2yx7az1c
-         e3Lbn16MUqWOppXSDk+aAcgRD5/dzkXnBnkinscXYgLi4he3Gml1pJBGjnX6HSF+JgwA
-         8Xbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757901794; x=1758506594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JOygL22yeiI/c6chOsAL099+jLfX4ygYuBDAjkKbT5k=;
-        b=iSZ17bmU6n4ohGRQHkR/RRNMk1f+uNz2pzGLyfcyIRV1w5lDWOW/ixPQheA4ennmSt
-         XoFzxnapf+huCWclMQt9N/9spYnH6F8BWypQNyBuFUeJo4rTm9r0FD3cNICZRVJxrUhg
-         8Uh8t85H5MPj+PytROeycfsXjScJVv+HSMDPGVIogyI61l48JAMgCEC54pLauDloBwzd
-         piW0HQ+g7NrTTIiblpQtlv4O0en8PXQL3LTN/kfBKFeNxKyBS9ojnuG7G1FMuA3dptUh
-         ftHjdRHmY8LzoYreEck1qnyw2GJ3Z7ycn2R3SImVDRo3Zs2JVx9lznRM62zL+U3tuhql
-         wu9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmK/nO7nfCKqkQvEOL7Jpf8iedRejlA0o6xGgicESqUTcfvYAgC+p17hfnmsMUp+tkwXQniCsqrdNnSmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVMazkG2CsElGx73nhoVokSZeHHW2wijDnAGcjjQ4WfFhCv2f3
-	9xXgKu8mkGz3YAwSc1pgsEVeNYp+HuO4I64ZkNUnSQKTpRkBd40OLalc
-X-Gm-Gg: ASbGncu6fGcn1Og3H5VYjUWmlSZJuwzOAF/s5F/Gs5MI/cd0zr3fjn3Y9OALpT9tHgR
-	KCBEIyvpdLo3E5Ie+kzg0MDR6rH3u4Q6lN+OtDwUkZNooJMVPt1d/eCxeYm1cTzMvvJO//bgUMe
-	IBboBk1osdm+C2SoWZifAe60RMSSReH025gyvKnS9n5Xt9/riJDSPoziN5o+jmtsh7J//B1ZaNu
-	+KLjypjUnXoXuimrk6efLOWSfSpM+HvU9c8D5F67Vj+T8/8cjrOJuNubonf6nwmfu8AwiWf18dC
-	NqEKpL30QYOHhOGY1U0owWnVVtJOv8Ws3JCqfSt8IlOTbAiMnrTIJrU0kVNJZoWPgEQLlXBCaY7
-	dLoJdc+FLO84GJm+j7Qbp4oRcZoTP5W3tmSr8fUE=
-X-Google-Smtp-Source: AGHT+IEeqkh40QJM9zjJ8HL43W+1enVBlgkaCaBCrqZXNAUnxXXVQNA79eZr3zdQ3nIBlPPQ1opd6Q==
-X-Received: by 2002:a17:903:f85:b0:260:5bab:8cad with SMTP id d9443c01a7336-2605babb245mr90876965ad.29.1757901794287;
-        Sun, 14 Sep 2025 19:03:14 -0700 (PDT)
-Received: from localhost ([185.49.34.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-261333a972dsm51596705ad.75.2025.09.14.19.03.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 19:03:13 -0700 (PDT)
-Date: Mon, 15 Sep 2025 10:03:06 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>, Rong Xu <xur@google.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	David Kaplan <david.kaplan@amd.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, Nam Cao <namcao@linutronix.de>,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-mm@kvack.org, llvm@lists.linux.dev,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com, "David S. Miller" <davem@davemloft.net>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 15/21] mm/ksw: add test module
-Message-ID: <aMdz2gMb5YC3G3md@mdev>
-References: <20250912101145.465708-1-wangjinchao600@gmail.com>
- <20250912101145.465708-16-wangjinchao600@gmail.com>
- <69198449-411b-4374-900a-16dc6cb91178@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UWjzK9Lmmf0lV/AQv5LT9kSDGtWVRRbBGiELO6+8Ddcb9S/dHtGunkP9jZOOfQB908R0HomKvd7wxDw4MM4Tk0u8X/nD3EsMyeYUPAYZy2Mwflw0V3WaVTWzhedG7ol0ow92gfmsGWVfiq5eEy/y4c0WzJRyNG3lxi0LU769OqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBYdeh9P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27DEC4CEF5;
+	Mon, 15 Sep 2025 02:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757902209;
+	bh=rEX1fVC1mzbS+16jNs5mhKp7yx2T9TgN8z5RmGbee3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RBYdeh9PBwMXjlnJAb1wjcbHGAoDImxAKz47bXpWHiTAF6Gp8EauznbQt9qDxeWTo
+	 blkoEnPrhyCmUb4m/GYU3hPZzp3Y3W2hgr5C3WTGfw8/lQ+yzKK/3YxFzx9qe7acbg
+	 PskOFVcpDncUc3NbasdGobRA1wY8Prit4tipzUQvfuCTB0hDdShA89C6dTc+CMk3mt
+	 DXTW+imC6kCD3Y2zZRUnPf1rrtfqLEGJLKmlcVn9FezSjLOnEuG3dyzdfZAnZ+Km7/
+	 3WvPPB176fsKr99FA62BZUZwcaewfZC9D9JWMXd6xWvesN8ypzu9JrDQz+ZxPvz00/
+	 /WHzAVBC1Rl2Q==
+Date: Sun, 14 Sep 2025 21:10:08 -0500
+From: Rob Herring <robh@kernel.org>
+To: Guoniu Zhou <guoniu.zhou@nxp.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: media: ti,ds90ub953: Add third cell
+ for GPIO controller
+Message-ID: <20250915015309.GA2329507-robh@kernel.org>
+References: <20250911-ds90ub953-v2-0-03ee76eb6b59@nxp.com>
+ <20250911-ds90ub953-v2-1-03ee76eb6b59@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -138,39 +62,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69198449-411b-4374-900a-16dc6cb91178@infradead.org>
+In-Reply-To: <20250911-ds90ub953-v2-1-03ee76eb6b59@nxp.com>
 
-On Fri, Sep 12, 2025 at 09:07:11PM -0700, Randy Dunlap wrote:
+On Thu, Sep 11, 2025 at 04:44:22PM +0800, Guoniu Zhou wrote:
+> Add third cell for GPIO controller to select GPIO output source. 0 to
+> select output source from local GPIO data, 1 to select output source
+> from remote compatible deserializer GPIO data.
 > 
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/media/i2c/ti,ds90ub953.yaml | 8 +++++---
+>  Documentation/devicetree/bindings/media/i2c/ti,ds90ub960.yaml | 4 ++--
+>  2 files changed, 7 insertions(+), 5 deletions(-)
 > 
-> On 9/12/25 3:11 AM, Jinchao Wang wrote:
-> > diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-> > index fdfc6e6d0dec..46c280280980 100644
-> > --- a/mm/Kconfig.debug
-> > +++ b/mm/Kconfig.debug
-> > @@ -320,3 +320,13 @@ config KSTACK_WATCH
-> >  	  the recursive depth of the monitored function.
-> >  
-> >  	  If unsure, say N.
-> > +
-> > +config KSTACK_WATCH_TEST
-> > +	tristate "KStackWatch Test Module"
-> > +	depends on KSTACK_WATCH
-> > +	help
-> > +	  This module provides controlled stack exhaustion and overflow scenarios
-> > +	  to verify the functionality of KStackWatch. It is particularly useful
-> > +	  for development and validation of the KStachWatch mechanism.
-> 
-> typo:	                                        ^^^^^^^^^^^
-Thanks, will be fix in next version.
-> 
-> > +
-> > +	  If unsure, say N.
-> 
-> -- 
-> ~Randy
-> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ti,ds90ub953.yaml b/Documentation/devicetree/bindings/media/i2c/ti,ds90ub953.yaml
+> index 2e129bf573b79e0ca8f25b4ec5fc6ea76c50abd7..de759413a36060d3be6f2c3b67de48ee6e4d29f2 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/ti,ds90ub953.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/ti,ds90ub953.yaml
+> @@ -19,10 +19,12 @@ properties:
+>        - ti,ds90ub971-q1
+>  
+>    '#gpio-cells':
+> -    const: 2
+> +    const: 3
+>      description:
+>        First cell is the GPIO pin number, second cell is the flags. The GPIO pin
+>        number must be in range of [0, 3].
+> +      Third cell is GPIO output source(0 for local gpio data, 1 for remote
+> +      gpio data from remote compatible deserializer).
 
--- 
-Jinchao
+Changing the cell size is an ABI break unless 3 cells was supported in 
+OS before which I don't think it would be given GPIO cell meaning is 
+pretty standardized. You could just all a flag to the 2nd cell I think. 
+Or if 0-3 are local GPIOs, then make remote ones a different range.
+
+Rob
 
