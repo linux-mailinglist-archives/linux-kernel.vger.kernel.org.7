@@ -1,93 +1,297 @@
-Return-Path: <linux-kernel+bounces-816285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E81AB571DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:48:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F53B571E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C74D16F447
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:48:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08B507AD4E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4079B2DF3D9;
-	Mon, 15 Sep 2025 07:48:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856BF2E2EEF;
+	Mon, 15 Sep 2025 07:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eAdBbE/F"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E17A2D663E
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 07:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5AF2D6E4B;
+	Mon, 15 Sep 2025 07:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757922484; cv=none; b=j6o5t4plSIxvAlBMrD305yc1ErzgnadBtqXpBiIJiTrsuS4eLCAb5WJoN/2CWN8KiO7RPrJQ/ZRfsvTcTRHkl0Etk+U/88/EqW8DKHvNsjtzi2pEODtbgnEVeSm0jTkueBqfktfIbECeE3f462jYKn3kz6diuEx/E25urba5FCo=
+	t=1757922496; cv=none; b=SLl40gfmD0ZNNVsLyEU7zJ6WpsXQetd1x1pBi1sol0MH4A3TjsWHPuPD9WEXblWKtHWjzXxXBAlJiTKKym32yjprIeFAr26pmnz6HXFy03v7kMJI8RW0sPjkU7yeY00J2+HcuVUFtM0QkVoYWLqOHoZGH9DzkEMn76rf4cEOuAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757922484; c=relaxed/simple;
-	bh=sDqJwn9c7svvbHL1gVSSlKD6t7Spn2ExhaOMtxottpk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MOsKBOEG6qxemKcJV747vvP/6zlLZQiZ8iTnQYszQB9yoUCd0qx8A3Mv7xkHtpT8PQx9pssdHrxNR+TezMJf8edmMxfDZN7489NzF5L4p52YM3CVKd3Myd+iO1LtiG7Xi3Gs0jQlF4s3mqvcvFdNUBW3VZmzau4ClTe6a7ZzyWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-40f7be8ecf2so114926295ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 00:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757922482; x=1758527282;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6mUB+sqn22sEooHqNX4QjIWNl0SVDHgDFAZHnR3by08=;
-        b=W6yh9NsbzkrQuYZWYDAqZM/v6CDkvtd+BvMx3FISMpul4qwCeTIP8DaqZYC9yvrNZ6
-         68WTOoycxTUpMKMeogPza4FWwIAu+PtTdJLwfWeTInIEa1b+KESbIZTRwQjNMVpPBPGu
-         nRKjZmyrE7PnQst7WqGrFILOK3ayUzY9lk5ecVOMEKI9UrJlK/yo2vbrnBCb1fTZF+U8
-         TClc6onTUw3Fs8AAMct4AoxlfX2huCI8E/+XRSHctbvpquGPry2643D7VSWkklrzuEEb
-         8crhFc93A3RiZZJVIWNRaTAw3tc2tYUgLCIJKAlvXHrEnkKIjR4ocqVXFxAqce9zQDaF
-         WJ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXNZWdR3pn0SdIqSnZWk87saJwEHpAEqzyhCNq1WQJI5Zq+U8WhkJ3hl+n1D1iJd0OGsE/7ZiVDezg2To=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXM2BfLOkcuYFmCQ9DXPPHGl1T95l8/fHh6YdyEz9RQyp8QDCr
-	0YtHqrbBADna2iAhHhhEkE/gbR9OJber+PjNOv27dBMM/3WGLjcOi8mjJaFsSSj6Lkeewvfd3J4
-	pj9Hx51zS2+FQ7oZtxKLh1d+4WtV0tEMdAVHAD3jhAK45Xbwx7nUZMvTiaEk=
-X-Google-Smtp-Source: AGHT+IE4CuAPdzy8E4AvKc8mu1VORU1gsGkMG2LeH46HuG2nXACKeM9R4m04zBUAqJVQdjLVNxByaK5Y3triGrs0MdUjLeTFvwJq
+	s=arc-20240116; t=1757922496; c=relaxed/simple;
+	bh=vB9GcUmcfOQtoFZZDhDvPQi1G6RyCsjXZqj9XRwFDDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iR8bdTtOrr+XNEl8lme0n1ucsCJnG3GGVYyd4TsUIx1NNLJvT0ZfI0rwR0ERQQ5zt8mniRxoe1T4f7/5224HhkonqBmdPXr45SxtukrjSPIFOOCsY2W87ABCM8pSN1Dajx4XIepuFDTSyrAzUh8xgRT1rpVD1YMWF0RH0Ih45NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eAdBbE/F; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757922492;
+	bh=vB9GcUmcfOQtoFZZDhDvPQi1G6RyCsjXZqj9XRwFDDg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eAdBbE/FYgw8uAuc6mgi4EXUTYPU+wCaeYzWmnTAU9LDniagsTtXnRYgKgslS3t5w
+	 Mb/Rpyrx3bfezOUOnz3+Az18Mf6d8LWOzqWFY/2ZWNzcuxZ+Lnf8/MhMsDLveLhbrS
+	 eu/iAySEqG+q8hHVBpSuFWBPxkZDNEKAAjouigISkJsmmLw5rqbwBhRd9hLnHNH1tP
+	 99bT8pEadDq5zdLkBu05NQD7MBaedKH0gNFtwMvZZ6iaKArjCoXZepCXEMOis+xhse
+	 81N6Et83WvkPh5Z/iMjqKnmcO4yaVOuJ3m5M9b/0dB+b2sXEUg30dpokq5+xawQqNN
+	 1k2ThEXkQfxcg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EBEAF17E0F88;
+	Mon, 15 Sep 2025 09:48:11 +0200 (CEST)
+Message-ID: <a36c5bfe-be01-431b-9d4f-eb41a085bef7@collabora.com>
+Date: Mon, 15 Sep 2025 09:48:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fe9:b0:423:f9c6:f21b with SMTP id
- e9e14a558f8ab-423f9c6f2d1mr51696275ab.8.1757922482721; Mon, 15 Sep 2025
- 00:48:02 -0700 (PDT)
-Date: Mon, 15 Sep 2025 00:48:02 -0700
-In-Reply-To: <0000000000008b529305ec20dacc@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c7c4b2.050a0220.2ff435.0391.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] kernel BUG in dnotify_free_mark
-From: syzbot <syzbot+06cc05ddc896f12b7ec5@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, amir73il@gmail.com, 
-	christian@brauner.io, hdanton@sina.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, 
-	viro@ZenIV.linux.org.uk, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add VCP support for
+ mt8196
+To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Jjian Zhou <Jjian.Zhou@mediatek.com>,
+ Hailong Fan <Hailong.Fan@mediatek.com>
+References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+ <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+Il 14/09/25 14:29, Xiangzhi Tang ha scritto:
+> Add the new binding document for MediaTek Video Companion
+> Processor(VCP) on MediaTek mt8196.
+> 
+> Signed-off-by: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+> ---
+>   .../remoteproc/mediatek,mt8196-vcp.yaml       | 165 ++++++++++++++++++
+>   1 file changed, 165 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml b/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> new file mode 100644
+> index 000000000000..71a55943843b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> @@ -0,0 +1,165 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/mediatek,mt8196-vcp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Video Companion Processor (VCP)
+> +
+> +maintainers:
+> +  - Xiangzhi Tang <Xiangzhi.Tang@mediatek.com>
+> +
+> +description:
+> +  The MediaTek VCP enables the SoC control the MediaTek Video Companion Risc-V coprocessor.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt8196-vcp
+> +
+> +  reg:
+> +    items:
+> +      - description: sram base
+> +      - description: cfg group IO
+> +      - description: cfg core group IO
+> +      - description: cfg sec group IO
+> +      - description: vcp rdy group IO
+> +
+> +  reg-names:
+> +    items:
+> +      - const: sram
+> +      - const: cfg
+> +      - const: cfg_core
 
-commit 55ad333de0f80bc0caee10c6c27196cdcf8891bb
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Mon Dec 30 07:34:08 2024 +0000
+sram, cfg-global, cfg-core, cfg-sec, vcp-vlp-ao-ready
 
-    fs/ntfs3: Unify inode corruption marking with _ntfs_bad_inode()
+> +      - const: cfg_sec
+> +      - const: vcp_vlp_ao_rsvd7
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  mboxes:
+> +    maxItems: 5
+> +
+> +  mbox-names:
+> +    maxItems: 5
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  iommus:
+> +    description:
+> +      Using MediaTek iommu to apply larb ports for Multimedia Memory
+> +      Management Unit and address translation
+> +      Documentation/devicetree/bindings/iommu/arm,smmu-v3.yaml
+> +    maxItems: 1
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  "^vcp@[a-f0-9]+$":
+> +    type: object
+> +    description:
+> +      The MediaTek VCP integrated to SoC might be a multi-core version.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15420e42580000
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586
-dashboard link: https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e3dffd180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13f9e08d180000
+"may feature one or multiple cores"
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> +      The other cores are represented as child nodes of the boot core.
+> +      There are some integration differences for the IP like the usage of
+> +      address translator for translating SoC bus addresses into address
+> +      space for the processor.
+> +
+> +      The SRAM are shared by all cores, each VCP core only using a piece
 
-#syz fix: fs/ntfs3: Unify inode corruption marking with _ntfs_bad_inode()
+s/piece/portion of/g
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> +      SRAM memory. The power of SRAM should be enabled before booting VCP cores.
+
+How do you enable the SRAM power?
+
+Is there a regulator, a power domain, both, or what?
+
+> +      The size of SRAM are varied on differnt SoCs.
+> +
+> +      The VCP cores has differences on different SoCs to support for
+> +      Hart.
+> +
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - mediatek,vcp-core
+> +
+> +      reg:
+> +        description: The base address and size of SRAM.
+> +        maxItems: 1
+> +
+> +      reg-names:
+> +        const: sram
+> +
+> +      mtk,vcp-core-twohart:
+
+1. s/mtk,/mediatek,/g
+2. there's no description, what does "twohart" mean?
+
+> +        enum: [0, 1]
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +      mtk,vcp-sram-offset:
+> +        description:
+> +          Allocated SRAM memory for each VCP core used.
+
+vcp-sram-offset is the same as the iostart in `reg`, so you don't need this
+property at all.
+
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +    required:
+> +      - compatible
+> +      - reg
+> +      - reg-names
+> +      - mtk,vcp-core-twohart
+> +      - mtk,vcp-sram-offset
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - mboxes
+> +  - mbox-names
+> +  - power-domains
+> +  - iommus
+> +  - memory-region
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/power/mt8196-power.h>
+> +
+> +    vcp: vcp@31800000 {
+> +        compatible = "mediatek,mt8196-vcp";
+> +        reg = <0x31800000 0x60000>,
+> +              <0x31a04000 0xa000>,
+> +              <0x31bd0000 0x1000>,
+> +              <0x31a70020 0x100>,
+> +              <0x1c00091c 0x4>;
+> +        reg-names = "sram",
+> +                    "cfg",
+> +                    "cfg_core",
+> +                    "cfg_sec",
+> +                    "vcp_vlp_ao_rsvd7";
+> +
+> +        interrupts = <GIC_SPI 787 IRQ_TYPE_LEVEL_HIGH 0>;
+> +
+> +        mboxes = <&vcp_mailbox0>,
+> +                 <&vcp_mailbox1>,
+> +                 <&vcp_mailbox2>,
+> +                 <&vcp_mailbox3>,
+> +                 <&vcp_mailbox4>;
+> +        mbox-names = "mbox0", "mbox1", "mbox2", "mbox3", "mbox4";
+
+Is there any descriptive name that can be used for mbox-names?
+
+As in, what is mbox0 used for? what is mbox1 used for? etc.
+
+> +
+> +        power-domains = <&scpsys MT8196_POWER_DOMAIN_MM_PROC_DORMANT>;
+> +        iommus = <&mm_smmu 160>;
+> +        memory-region = <&vcp_resv_mem>;
+> +
+> +        vcp@0 {
+> +            compatible = "mediatek,vcp-core";
+> +            reg = <0x0 0x31000>;
+> +            reg-names = "sram";
+> +            mtk,vcp-core-twohart = <1>;
+
+Is the first core always "twohart"?
+
+If it is, there's no need to even have this property, as you can add that to
+the driver, either in form of platform data (if this changes per-SoC) or just
+hardcoded.
+
+Regards,
+Angelo
+
+> +            mtk,vcp-sram-offset = <0x0>;
+> +        };
+> +
+> +        vcp@31000 {
+> +            compatible = "mediatek,vcp-core";
+> +            reg = <0x31000 0x60000>;
+> +            reg-names = "sram";
+> +            mtk,vcp-core-twohart = <0>;
+> +            mtk,vcp-sram-offset = <0x31000>;
+> +        };
+> +    };
+
 
