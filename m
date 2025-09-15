@@ -1,238 +1,172 @@
-Return-Path: <linux-kernel+bounces-816212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C541EB57112
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E207B5711A
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E3341898F24
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8A2189CD64
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ED22C0286;
-	Mon, 15 Sep 2025 07:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4agMFM94"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2079.outbound.protection.outlook.com [40.107.237.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5252D46D6;
+	Mon, 15 Sep 2025 07:20:34 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D13285C88;
-	Mon, 15 Sep 2025 07:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757920761; cv=fail; b=oMKy43F21mgOHwSkvpdUUL0ovUimt7+3/JCZY6qTXalJ4oR89AwFwqEuk5+kKpN5lGa1ZoYdwz1/xIvk1TK4c0UcGry9EzCIQdHOZqavEAhdkzoyVornU/v88N+BeOU/Mb+2LoyjiGt6nZtTPWflKo3AyWm3TVuNuqih8rGObsI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757920761; c=relaxed/simple;
-	bh=0YTFyaH12auwRJ+i7YQykLmW4UFukIIZ7+wl1aAe5zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Y6HfVrLuIew+z+NsfJfwf8mu4STKBSlOXBpwPNEHWHanlR1iv0IvxWIuVoprLxlPMg+Y/Z/AoOzczt3DFh064czeuOFZJpVQzVOV9pIiF4RJYPR1jlvS2fcljJSWWoeF/Gk2lxytwmgIlMRH4ug83hzZMMwkcQDYS2skawyeG6c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4agMFM94; arc=fail smtp.client-ip=40.107.237.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HSegOFLT287PO6puerBFQjdAwHfg5yhdIiKla5is6ukrk/srIymXJzkDxSMTXf9aToA4MQYznX3+1ijjdKBYjZDcyJxcGgA/fliI6WdPOlWmV411EJk/Oic9l4bpQ8rB6Ivnwx/qS3QiUjXiRrKq9YI630d5YFpxZ7GBh7RyvmsfuWHty4om0gp7W0AdMYm39ZtAjiOy0HoKDferIo70wznRzXcziHT2ys2mi9u3UjEA/+KywfEtldgdBEw7O8M8if5TJyK61bCZU2DEKf2s/XJVJVm9CYORjgFs3LuJG0xqHmvdEkv+8LJOjn2mEx78Mnvf8yD5iiEAagazqI5LYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BTiAibCb8L5xTysAuI0lO5eRqTC3bWDkmz0cF4oExTk=;
- b=SrHbjMZ0mJTpkDe+mOJ1iRzBvZFAVICaOrnh35o/UnKsRZMOlEQ6k4p9uEU5NAXiOqbaN1iwhXFi6VBs1A0h4ncyKttbHsz+qPnThXWOpKtoDsBSekLYBdg7akLw2nQIaMoQuNQcxjK2QMNdnjuDhfr3QSLr/eYDG0tk8RfhB7rS0xW4JKxl1gXuvfX6+CStUvfi6FxXf4RVyrzA6/fKHoxpLh270SaehQ3M0vf3616NdhtOCDpPMjvTb2dlLN+drGDtzPd6TR7ygLZZ6kwZiWgsJ/GKyF+Uwp7RLPVHtU9Jyga8j2pu+p7MGnGmYP4MyiB2qTfrX9rn/5npNYvPhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BTiAibCb8L5xTysAuI0lO5eRqTC3bWDkmz0cF4oExTk=;
- b=4agMFM94qsJX1suRfZhZ4gdIdwJX9Kl+3z6fQom3y3xNXrosbwd1pAPGi1sTI1flRVOv6rz56VRrPA7nJ+8CgfOeL9OoGzJg/Y2P5g5r316voHub9B8irLdDRT/HTlkazREEiG1AAKaSOFY3UIWq7iwgjKxfIepdyebBR5cgxYI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by DM4PR12MB6010.namprd12.prod.outlook.com (2603:10b6:8:6a::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.18; Mon, 15 Sep 2025 07:19:13 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%5]) with mapi id 15.20.9115.018; Mon, 15 Sep 2025
- 07:19:13 +0000
-Date: Mon, 15 Sep 2025 09:19:07 +0200
-From: Robert Richter <rrichter@amd.com>
-To: Dave Jiang <dave.jiang@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH v3 02/11] cxl/region: Store HPA range in struct cxl_region
-Message-ID: <aMe96yaXueRvTARq@rric.localdomain>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-3-rrichter@amd.com>
- <fd4fc0f6-03a9-4134-9703-60705ec6898c@intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd4fc0f6-03a9-4134-9703-60705ec6898c@intel.com>
-X-ClientProxiedBy: FR2P281CA0168.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:99::17) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A1B285C88;
+	Mon, 15 Sep 2025 07:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757920833; cv=none; b=TSeZehquiqlzF72pUoq/4IWy5EM1hC5AWUPX48qHj6bx1VgEKZAmGpAzdbFkfFSx2ufA2krBJT/X1N+zgSW9jcSZa3t2bydYI32ivNGVXvjXOd6MjYGT1MFweiK2al2OHClkz5xY5gRY6ui/HOcSRQEO2OlS18xT8O2V+fCURuA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757920833; c=relaxed/simple;
+	bh=I7xDKviED18tRAwRWdO7pefy9g69KzrkDP4FAVDHnRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ByTxDn6LaZlhvjEgBFuGiU3hOh1mlg/yqto8DNaCTsvghFVU0W28VxCPxdl9rUP8tqFZ6up1ZH4DTm9vMBVKBWxvKa6JGLhD5zCCnl0VVSdhPbdHFxBWpgtPizOhn69NhvxyqrqGxkccPBf3tgxJ5a7F+9tIBKKLJWMnactQpnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af7be.dynamic.kabel-deutschland.de [95.90.247.190])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 39B436028F362;
+	Mon, 15 Sep 2025 09:19:40 +0200 (CEST)
+Message-ID: <b1487963-a07e-4850-98f7-0eda07c31214@molgen.mpg.de>
+Date: Mon, 15 Sep 2025 09:19:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|DM4PR12MB6010:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5548830f-f6f6-4c6b-9339-08ddf4282c03
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?439+xpaYSKYa3AVNb1dwPlrB6fd0YqitTuaLvUhy5bmyOTPMlfcumM6xBalI?=
- =?us-ascii?Q?2yF6ZCCEbnAq5HcBMVS6zJnnAw5+TuDfUSSNuKL4EBUDBSW4XUMu9tfII2xB?=
- =?us-ascii?Q?qskSt6D+qBZCDb46k30Wonsw7KuVSJX0CrmccVpUvPrboZgW7focIEW02PmH?=
- =?us-ascii?Q?g3VYOUq5vGuDM+vodSVNH5kINWqn82j9xylXbaJfqH8fFVncEp50FZwvTinw?=
- =?us-ascii?Q?foz4qJwrca/qdqNbWwa+dUf2AY3OjPStMQTdB0Doo0HvgeC6eevykmF4liP+?=
- =?us-ascii?Q?PVX+c8NwBZ+erZAUQVb/1DoyewSUvfuCUBsPjEF4vjN16PVKIAWKv4CpNUcd?=
- =?us-ascii?Q?pzOxiLVVjysTo8aCZvIKIhzVsQgQ5Qv9ZXj63Bf/eHhHKWfbEnfUxqGguwAj?=
- =?us-ascii?Q?e0hcPvGzMECOpp/V0KICt+aII/5SKssCC38f0nOJgXdmNLP0CEmWPwKZxXw1?=
- =?us-ascii?Q?ul3Jt215eg9J2t58Cgx1cw9v3UzktBMIotV/4/f7ETNcrglnWem139EVISMq?=
- =?us-ascii?Q?jx4x9WNMUu7Ozc2deqQlmNGke7zXhFsBU/UaMGdro78VSuYPKBtgA1MzbgYQ?=
- =?us-ascii?Q?/3s2T/GiQfTNTu1vpaccGdm74kKWhaIqunS/yhrjLo/kYPtDLQpgwQ9LKyYR?=
- =?us-ascii?Q?4R6PwOQrEdBsVhnXs3utrzMG8mQipr9n7UR7JPfo8r7bV5bAxFLmjMu2hibS?=
- =?us-ascii?Q?qpAJTjUIUt3ps6zmO1Phzzhni9KHRt076OSBNqB3HmrX9KJo9RG8DvdgT5Tp?=
- =?us-ascii?Q?EVEz0GGJEkkPSKjnjHB3dg+dwI6c1iD3lW+gL67v0qzdPPR/cotXp385vX/6?=
- =?us-ascii?Q?s88CBu9YprAZTl+Tko6+SRjkqvPUTbTA5s68IouenpCcJO5h7bl4qBsY7OY3?=
- =?us-ascii?Q?owHxpzuvYBcO70EPb5sOAYxlUdWGEKwV1yPhtjlQmtZpVkgIy8VwpYPQts0B?=
- =?us-ascii?Q?lFlZqXPgPk3P9GEF9oiIp/MKCbLfaM1ZEyZ+XMg/NwVn1DMMH+hPYsnbJncp?=
- =?us-ascii?Q?UTaOsB3y0fSIdaMsNiWpfMvcTJeNbY9UrJvumJa8/ZG36RXOJ8K1SbHEgknZ?=
- =?us-ascii?Q?VOGOdCnQ1L2fnW1nDnmw9ujcNc6ARAxg4wtQxPIOgCtl6N7SHwAd6Nh1KUVL?=
- =?us-ascii?Q?RmqYrLeLRsyP3eHyO2u29/YuRUJsWviEjvDR7tO6KKb0mbjHWkyajuy5Vaeb?=
- =?us-ascii?Q?N6XkvXR6mlOHiKNqVye+NQ3opObAU9z4NQvsf3Mquz/3BezyeVWsg7LIe5F/?=
- =?us-ascii?Q?59QULgSAoe3xqIKZlYoV8vhWL84jHtJ6FXs8gsfw+ZUIQKswWA0D0v8+7Wnq?=
- =?us-ascii?Q?qpXJeRSd4d9idCcogt4+9dQ/oj2IbKFSPgg5gY3O2lU2beeCzFtmPWql2Med?=
- =?us-ascii?Q?iXU1twYPD6uUhLIU3YywfEM7vvDaN4EldqTS4O6bZbruK9b97g6siUP1xiva?=
- =?us-ascii?Q?gzYUVapjkbI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UNqZmIAgYk9SHkYDrxzA561nDyniFwHIOSQuSJN1QTk54uoMBPKnzAAIErN+?=
- =?us-ascii?Q?TFt4+1coPyxLg8a1iWQjSjPyTXznKzH8A0Dbd1QHt5R5sboAUj1iNkjoyD08?=
- =?us-ascii?Q?pbfKOGfgCld4mj8hp5A9MvK+WjtRXEYaaPTc13877e+CtPKqt5a1Z7NXBXwt?=
- =?us-ascii?Q?O46FowLX2hctXCdy+qDvIQAce0PRm1TZagVPgv7mdoY7o90QsBkK4lp1ktqq?=
- =?us-ascii?Q?HsM+/SzV6Hc65fHN48E/Clnhui4zPbxSRR7bbpeu8hNxNdSCzIDaHDtq10W3?=
- =?us-ascii?Q?iNpJZuGh1SsXC1+nfrTPZN0WAex9jK5tV+AktGEASwgN83vXS3xv+G4YkciO?=
- =?us-ascii?Q?YUItomNNiiss4XRf0zG5FQP2iEd3RpyEyYsnz+1QseeHQjNL+6anEJj6f1o7?=
- =?us-ascii?Q?W8dETXe8vEYnsuhcr3K2hIaIeZw2yx4B28NHmBgW7X3STVYRnX35EperKWow?=
- =?us-ascii?Q?Dx0yJFhh45oRymzQzg1NPfSYySPSvJVgbJivRcJ40uSULFrZyXBj/nzc4KJ5?=
- =?us-ascii?Q?0y1askJCigwO95cH/d5QFJVgWPfu0b/NuFoRmzrZS3H5BXtm3EHWTgPuhlop?=
- =?us-ascii?Q?2hj8/POqg5u7+aCBg1QDekCtzfGIgkbKLde+3eIsjr0z83km/DmXY4uc3I67?=
- =?us-ascii?Q?yB26zUlh5m7IcIlYDeD6bweNPHsaI7cdRbSFbJVkTguSQpEwY3BCjpR4ZvK7?=
- =?us-ascii?Q?qBkxfo2p8jGuI595rrhj8qXqrRD6nz8TuxoduQmye+JTJ3u3vG0Dhc6fI+2O?=
- =?us-ascii?Q?2jSsuHdpqJ88oidT3P7+UJa1z+jmRBkGlhEdJgMPgUq+Vn86GjqsXXJikqId?=
- =?us-ascii?Q?tjlF9DD+bE6C+ELMh9UqowZKv5wOG5S2QnwGk9M/rfxWepYFL5tEN/tAS7nF?=
- =?us-ascii?Q?/8JbC0Q2Fi4p8ayFZe6oJNEhM5iiNWsIX4zPLTL8uQZF0Jzrf+cwS0U58eVs?=
- =?us-ascii?Q?MtFHRY9ehUfB/JP06tTVJaI94CL/1WWXt8+fpkCyRPXpsB4GRNy/qOPLvmTB?=
- =?us-ascii?Q?B9Kmmqc5C6Kd68KEWHqNE0j33p34lZ0QJXpEEtaCo140QiJMEiFxuwesr7qo?=
- =?us-ascii?Q?XxtB1H/uHkZWsZqtxkhZjqSIA9LW2X7isVLoZYW3zcnxWN94eXFdVxhVr6n4?=
- =?us-ascii?Q?WSsLLFPJSA74zp4Cvw4keTPmGLOa6hUOIPYIBArCPCkEvP5OLyUjzsDaQXiT?=
- =?us-ascii?Q?HnyqfUKaw1hNnlOV0IfwDq+5lxQ31/3H0vQ4mO4bDTsLCiPQv+WcFFDiZhH5?=
- =?us-ascii?Q?ksIbxAppp4rAI3zZ9EQpcwaJ6esxBp+KJYr8pKrNAR60OQ/EFMwLm9oAJW9G?=
- =?us-ascii?Q?oIyi5t6sdpgZp2GIrijFgYArZUNNgp8OsPY9Q7paEvRDB49sbt3L+9n8wasl?=
- =?us-ascii?Q?drzdngVJMeYvpFL9qOBPct70jRT514syE8nyh7Pr3f7SUVr6M0AcFtCj15Pr?=
- =?us-ascii?Q?YbIEC29wUsxVrYAG2Ct5P5byEj4dLf8TeccSxkI6/iv7L+iHkChb+UowpMe2?=
- =?us-ascii?Q?ylYD+b7Mg7eu0OKzOTbqHkqxRD2XUgqYPBRoxDoH7h1WFR2CWnPegZkcRlKL?=
- =?us-ascii?Q?4a+f8gIevCESBzW8NnXjAQ9VlPt0CQhOIEKtrlCx?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5548830f-f6f6-4c6b-9339-08ddf4282c03
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 07:19:13.3894
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B0yhpwLLLG8408fUuT/CWR3bvw1IQSB9j4pK2366toC1mxgjL47E2Ues6jGkh9Hjd/+v4zAu8mksoy4ltqc9ng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 9/9] md/raid1,raid10: Fix: Operation continuing on 0
+ devices.
+To: Kenta Akagi <k@mgml.me>
+Cc: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+ Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
+ Guoqing Jiang <jgq516@gmail.com>, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250915034210.8533-1-k@mgml.me>
+ <20250915034210.8533-10-k@mgml.me>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250915034210.8533-10-k@mgml.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12.09.25 10:17:14, Dave Jiang wrote:
-> 
-> 
-> On 9/12/25 7:45 AM, Robert Richter wrote:
-> > Each region has a known host physical address (HPA) range it is
-> > assigned to. Endpoint decoders assigned to a region share the same HPA
-> > range. The region's address range is the system's physical address
-> > (SPA) range.
-> > 
-> > Endpoint decoders in systems that need address translation use HPAs
-> > which are not SPAs. To make the SPA range accessible to the endpoint
-> > decoders, store and track the region's SPA range in struct cxl_region.
-> > Introduce the @hpa_range member to the struct. Now, the SPA range of
-> > an endpoint decoder can be determined based on its assigned region.
-> > 
-> > Patch is a prerequisite to implement address translation which uses
-> > struct cxl_region to store all relevant region and interleaving
-> > parameters.
-> > 
-> > Signed-off-by: Robert Richter <rrichter@amd.com>
-> 
-> Just a nit below. Otherwise looks ok
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> > ---
-> >  drivers/cxl/core/region.c | 17 +++++++++++++++++
-> >  drivers/cxl/cxl.h         |  2 ++
-> >  2 files changed, 19 insertions(+)
-> > 
-> > diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> > index 2c37c060d983..777d04870180 100644
-> > --- a/drivers/cxl/core/region.c
-> > +++ b/drivers/cxl/core/region.c
-> > @@ -664,6 +664,11 @@ static int alloc_hpa(struct cxl_region *cxlr, resource_size_t size)
-> >  		return PTR_ERR(res);
-> >  	}
-> >  
-> > +	cxlr->hpa_range = (struct range) {
-> > +		.start = res->start,
-> > +		.end = res->end,
-> > +	};
-> > +
-> >  	p->res = res;
-> >  	p->state = CXL_CONFIG_INTERLEAVE_ACTIVE;
-> >  
-> > @@ -700,8 +705,14 @@ static int free_hpa(struct cxl_region *cxlr)
-> >  	if (p->state >= CXL_CONFIG_ACTIVE)
-> >  		return -EBUSY;
-> >  
-> > +	cxlr->hpa_range = (struct range) {
-> > +		.start = 0,
-> > +		.end = -1,
-> > +	};
-> > +
-> >  	cxl_region_iomem_release(cxlr);
-> >  	p->state = CXL_CONFIG_IDLE;
-> > +
-> 
-> stray blank line
-> >  	return 0;
-> >  }
+Dear Kenta,
 
-This small cleanup was intended and separates the return from other
-statements to better group the code in (sort of) blocks. It is not
-worth separate patch and it is common practice to have small cleanups
-in the area of code that is changed. That allows small style fixes to
-the code while reworking it, but avoids separate code cleanups causing
-extra efforts, conflicts and the risk of changing stable code.
 
-Anyway, let me know if you want me remove the change.
+Thank you for your patch, and well-written commit message and test. 
+Reading just the summary, I didn’t know what it’s about. Should you 
+resend, maybe:
 
-Thanks,
+ > md/raid1,raid10: Fix logging `Operation continuing on 0 devices.`
 
--Robert
+Am 15.09.25 um 05:42 schrieb Kenta Akagi:
+> Since commit 9a567843f7ce ("md: allow last device to be forcibly
+> removed from RAID1/RAID10."), RAID1/10 arrays can now lose all rdevs.
+> 
+> Before that commit, losing the array last rdev or reaching the end of
+> the function without early return in raid{1,10}_error never occurred.
+> However, both situations can occur in the current implementation.
+> 
+> As a result, when mddev->fail_last_dev is set, a spurious pr_crit
+> message can be printed.
+> 
+> This patch prevents "Operation continuing" printed if the array
+> is not operational.
+> 
+> root@fedora:~# mdadm --create --verbose /dev/md0 --level=1 \
+> --raid-devices=2  /dev/loop0 /dev/loop1
+> mdadm: Note: this array has metadata at the start and
+>      may not be suitable as a boot device.  If you plan to
+>      store '/boot' on this device please ensure that
+>      your boot-loader understands md/v1.x metadata, or use
+>      --metadata=0.90
+> mdadm: size set to 1046528K
+> Continue creating array? y
+> mdadm: Defaulting to version 1.2 metadata
+> mdadm: array /dev/md0 started.
+> root@fedora:~# echo 1 > /sys/block/md0/md/fail_last_dev
+> root@fedora:~# mdadm --fail /dev/md0 loop0
+> mdadm: set loop0 faulty in /dev/md0
+> root@fedora:~# mdadm --fail /dev/md0 loop1
+> mdadm: set device faulty failed for loop1:  Device or resource busy
+> root@fedora:~# dmesg | tail -n 4
+> [ 1314.359674] md/raid1:md0: Disk failure on loop0, disabling device.
+>                 md/raid1:md0: Operation continuing on 1 devices.
+> [ 1315.506633] md/raid1:md0: Disk failure on loop1, disabling device.
+>                 md/raid1:md0: Operation continuing on 0 devices.
+
+Shouldn’t the first line of the critical log still be printed, but your 
+patch would remove it?
+
+> root@fedora:~#
+> 
+> Fixes: 9a567843f7ce ("md: allow last device to be forcibly removed from RAID1/RAID10.")
+> Signed-off-by: Kenta Akagi <k@mgml.me>
+> ---
+>   drivers/md/raid1.c  | 9 +++++----
+>   drivers/md/raid10.c | 9 +++++----
+>   2 files changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index febe2849a71a..b3c845855841 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1803,6 +1803,11 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>   		update_lastdev(conf);
+>   	}
+>   	set_bit(Faulty, &rdev->flags);
+> +	if ((conf->raid_disks - mddev->degraded) > 0)
+> +		pr_crit("md/raid1:%s: Disk failure on %pg, disabling device.\n"
+> +			"md/raid1:%s: Operation continuing on %d devices.\n",
+> +			mdname(mddev), rdev->bdev,
+> +			mdname(mddev), conf->raid_disks - mddev->degraded);
+>   	spin_unlock_irqrestore(&conf->device_lock, flags);
+>   	/*
+>   	 * if recovery is running, make sure it aborts.
+> @@ -1810,10 +1815,6 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>   	set_bit(MD_RECOVERY_INTR, &mddev->recovery);
+>   	set_mask_bits(&mddev->sb_flags, 0,
+>   		      BIT(MD_SB_CHANGE_DEVS) | BIT(MD_SB_CHANGE_PENDING));
+> -	pr_crit("md/raid1:%s: Disk failure on %pg, disabling device.\n"
+> -		"md/raid1:%s: Operation continuing on %d devices.\n",
+> -		mdname(mddev), rdev->bdev,
+> -		mdname(mddev), conf->raid_disks - mddev->degraded);
+>   }
+>   
+>   static void print_conf(struct r1conf *conf)
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index be5fd77da3e1..4f3ef43ebd2a 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -2059,11 +2059,12 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>   	set_bit(Faulty, &rdev->flags);
+>   	set_mask_bits(&mddev->sb_flags, 0,
+>   		      BIT(MD_SB_CHANGE_DEVS) | BIT(MD_SB_CHANGE_PENDING));
+> +	if (enough(conf, -1))
+> +		pr_crit("md/raid10:%s: Disk failure on %pg, disabling device.\n"
+> +			"md/raid10:%s: Operation continuing on %d devices.\n",
+> +			mdname(mddev), rdev->bdev,
+> +			mdname(mddev), conf->geo.raid_disks - mddev->degraded);
+>   	spin_unlock_irqrestore(&conf->device_lock, flags);
+> -	pr_crit("md/raid10:%s: Disk failure on %pg, disabling device.\n"
+> -		"md/raid10:%s: Operation continuing on %d devices.\n",
+> -		mdname(mddev), rdev->bdev,
+> -		mdname(mddev), conf->geo.raid_disks - mddev->degraded);
+>   }
+>   
+>   static void print_conf(struct r10conf *conf)
+
+
+Kind regards,
+
+Paul
 
