@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-816546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC1EB5753E
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:50:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C19B57540
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 11:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD0A3AFADF
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52139200481
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 09:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B252F9999;
-	Mon, 15 Sep 2025 09:50:44 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961EB1DE4F6;
-	Mon, 15 Sep 2025 09:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608742F6183;
+	Mon, 15 Sep 2025 09:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETCw2ARP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DA01E47B3;
+	Mon, 15 Sep 2025 09:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757929844; cv=none; b=NPzZSPhm8q8aLDSeshOVCr8pmyXH5ycdIpGPTlotkzlvlzjLCFQ/NWqbuOAwvkB7mFwd8eECFQPAXuoNK702UnxEm28YQCz5fvLxSVCB1zsPL11MfsLaCnJT73MxBuv+YpYiiBrTEcmp52C9NjdDwc3oeDUNywWZasLZOOhJL7o=
+	t=1757929852; cv=none; b=grjFyvgbUFYutqQsFKYgZgItxf6yKrhtwXxWB5TxSU+GfVlosx/HtM2puiOlMsTAQYM9HfFw+/rz56tA14eCbRHwEDfkXJ1X2htTa9O0lMuPOQACsqSbq7dHx8BfwrBtLCm4rtQUgakNKQU3Ge1+paP/hm8iNkEpzBXNElXpG+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757929844; c=relaxed/simple;
-	bh=H43jQh2/OR4og+peubxGV8dFkGR0ES1D/EW+GQmVya0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=AQ+NGv726bZgTuVZ3pF/RvYm3UqGNxxVBvCZ99pM0zns+UKHlRteRTx0LSOSQ8R2do8tGg4bhNVfz1tOkce/WTuVJvc67cf2A5gy6T3/goQxoKkPnxtRKlf7BBenNAqf6mA64pJ0LWCnFLP97qmMdz6KdR88Oa08H1S/7KIexgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from weishangjuan$eswincomputing.com ( [10.12.96.155] ) by
- ajax-webmail-app2 (Coremail) ; Mon, 15 Sep 2025 17:50:01 +0800 (GMT+08:00)
-Date: Mon, 15 Sep 2025 17:50:01 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?6Z+m5bCa5aif?= <weishangjuan@eswincomputing.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, yong.liang.choong@linux.intel.com,
-	vladimir.oltean@nxp.com, rmk+kernel@armlinux.org.uk,
-	faizal.abdul.rahim@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
-	boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	emil.renner.berthing@canonical.com, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v6 1/2] dt-bindings: ethernet: eswin: Document for
- EIC7700 SoC
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <50496bf2-1d10-4d89-addb-f4fe774497d9@kernel.org>
-References: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
- <20250912055612.2884-1-weishangjuan@eswincomputing.com>
- <50496bf2-1d10-4d89-addb-f4fe774497d9@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1757929852; c=relaxed/simple;
+	bh=R+4gah+r4MFQSrR6c810iz7S0zKTbnc0EO7PgcX/Xn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caRqqIfJ+yNEpNRxTL0gbzOurk1f5JhEaBGI01oB/qVG8TF5i7dUpDnyibIaJ2AtsIGwoCxtUjmbds7LoOtR3RA45e0LMYacPPf4fDSYkX9EGa9AJXenT2HcjYCmgjo+dCKf1TGitck0w8KADdSmM3qM++KbgT7ZrgrzEmVpaPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETCw2ARP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1E1C4CEF1;
+	Mon, 15 Sep 2025 09:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757929852;
+	bh=R+4gah+r4MFQSrR6c810iz7S0zKTbnc0EO7PgcX/Xn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ETCw2ARPYr7Lm/34wSIp3bX+Ms/FWpO2KA8ybk9Pgg/zcCg1lOwvdso2rTct5DiqX
+	 K9Ey2q3ZNPkNuli3K3TDxG9uh8kahwseQrHfnSPc7fJ/yUI26PmhojUSyIZEI0dr0f
+	 cgHmciKOkNppxoKv8MeffyfJXw1qgSmIkZpI5QBWJ0AeyidHVcuWFJiaLAZUMlMzlT
+	 JEdqEZAnk4f+gQh8keqpX0OlF6819mcbWDJuQALtkMuq09P9WNgJLx3N6BY7mMm2qS
+	 fNYb1s8MR9edHy7wbQIfsqZJ13ZkZkhFVRC2OV9GKOBI8Z3JQxRRoaCkXBIj7Yx0aH
+	 9YzOcDpoo/w4A==
+Date: Mon, 15 Sep 2025 11:50:49 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: use str_plural() to simplify the code
+Message-ID: <fol4hemfnbh7km5dfdkbrfxx3txc4wtv7jvdn4h2xlzxlcoyht@ax7ml3rq53zs>
+References: <20250818083629.503250-1-zhao.xichao@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <45afe6bc.1302.1994cc80846.Coremail.weishangjuan@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgA31pRJ4cdoWlTRAA--.24971W
-X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/1tbiAQEGEGjG7f
-	gnDAACsE
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7m42mtvfe7tfiq4e"
+Content-Disposition: inline
+In-Reply-To: <20250818083629.503250-1-zhao.xichao@vivo.com>
 
-RGVhciBLcnp5c3p0b2YgS296bG93c2tpLAoKSSBhbSB3cml0aW5nIHRvIHNpbmNlcmVseSBhcG9s
-b2dpemUgZm9yIG9taXR0aW5nIHlvdXIgIlJldmlld2VkLWJ5IiB0YWcKaW4gdGhlIHY2IHBhdGNo
-IHNlcmllcyB3aXRob3V0IHByb3ZpZGluZyBhbiBleHBsYW5hdGlvbi4gVGhpcyB3YXMgYW4gb3Zl
-cnNpZ2h0Cm9uIG15IHBhcnQsIGFuZCBJIHRydWx5IHJlZ3JldCBhbnkgaW5jb252ZW5pZW5jZSBv
-ciBmcnVzdHJhdGlvbiBpdCBoYXMgY2F1c2VkLgoKVGhlIHJlYXNvbiB3aHkgSSBkaWRuJ3QgYWRk
-IHRhZ3MgaXMgdGhhdCBJIG1hZGUgbW9kaWZpY2F0aW9ucyB0byB0aGUgZGVzY3JpcHRpb24KaW4g
-dGhlIFlBTUwgZmlsZS4gRHVlIHRvIHRoZXNlIGNoYW5nZXMgdGhhdCBhbHRlciB0aGUgY29udGVu
-dCB5b3UgaGF2ZSBwcmV2aW91c2x5CnZpZXdlZCwgSSBiZWxpZXZlIHRoZXNlIG1vZGlmaWNhdGlv
-bnMgbWF5IHJlcXVpcmUgYSByZSBleGFtaW5hdGlvbiBhbmQgdGhlcmVmb3JlCnNob3VsZCBub3Qg
-YmUgcmV0YWluZWQgd2l0aG91dCB5b3VyIGNvbmZpcm1hdGlvbi4KCkkgdW5kZXJzdGFuZCB0aGF0
-IHdoZW4gc3VibWl0dGluZyB0aGUgcGF0Y2gsIEkgc2hvdWxkIGNsZWFybHkgc3RhdGUgdGhlIHJl
-YXNvbi4KSSBoYXZlIGNhcmVmdWxseSByZWFkIHRoZSBzdWJtaXNzaW9uIGd1aWRlbGluZXMgYW5k
-IHdpbGwgZW5zdXJlIGZ1bGwgY29tcGxpYW5jZQp3aXRoIHRoZSBwcm9jZXNzIGluIGFsbCBmdXR1
-cmUgY29udHJpYnV0aW9ucywgaW5jbHVkaW5nIHByb3BlciB1c2Ugb2YgYjQgYW5kIGNsZWFyCmNv
-bW11bmljYXRpb24gb2YgY2hhbmdlcy4KClRoYW5rIHlvdSBmb3IgeW91ciBwYXRpZW5jZSBhbmQg
-Z3VpZGFuY2UuCgpCZXN0IHJlZ2FyZHMsClNoYW5nanVhbiBXZWkKCgo+IC0tLS0t5Y6f5aeL6YKu
-5Lu2LS0tLS0KPiDlj5Hku7bkuro6ICJLcnp5c3p0b2YgS296bG93c2tpIiA8a3J6a0BrZXJuZWwu
-b3JnPgo+IOWPkemAgeaXtumXtDoyMDI1LTA5LTEyIDIxOjE0OjI0ICjmmJ/mnJ/kupQpCj4g5pS2
-5Lu25Lq6OiB3ZWlzaGFuZ2p1YW5AZXN3aW5jb21wdXRpbmcuY29tLCBkZXZpY2V0cmVlQHZnZXIu
-a2VybmVsLm9yZywgYW5kcmV3K25ldGRldkBsdW5uLmNoLCBkYXZlbUBkYXZlbWxvZnQubmV0LCBl
-ZHVtYXpldEBnb29nbGUuY29tLCBrdWJhQGtlcm5lbC5vcmcsIHBhYmVuaUByZWRoYXQuY29tLCBy
-b2JoQGtlcm5lbC5vcmcsIGtyemsrZHRAa2VybmVsLm9yZywgY29ub3IrZHRAa2VybmVsLm9yZywg
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnLCBtY29xdWVsaW4uc3RtMzJAZ21h
-aWwuY29tLCBhbGV4YW5kcmUudG9yZ3VlQGZvc3Muc3QuY29tLCB5b25nLmxpYW5nLmNob29uZ0Bs
-aW51eC5pbnRlbC5jb20sIHZsYWRpbWlyLm9sdGVhbkBueHAuY29tLCBybWsra2VybmVsQGFybWxp
-bnV4Lm9yZy51aywgZmFpemFsLmFiZHVsLnJhaGltQGxpbnV4LmludGVsLmNvbSwgcHJhYmhha2Fy
-Lm1haGFkZXYtbGFkLnJqQGJwLnJlbmVzYXMuY29tLCBpbm9jaGlhbWFAZ21haWwuY29tLCBqYW4u
-cGV0cm91c0Bvc3MubnhwLmNvbSwganN6aGFuZ0BrZXJuZWwub3JnLCBwLnphYmVsQHBlbmd1dHJv
-bml4LmRlLCBib29uLmtoYWkubmdAYWx0ZXJhLmNvbSwgMHgxMjA3QGdtYWlsLmNvbSwgbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZywgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgbGludXgtc3Rt
-MzJAc3QtbWQtbWFpbG1hbi5zdG9ybXJlcGx5LmNvbSwgZW1pbC5yZW5uZXIuYmVydGhpbmdAY2Fu
-b25pY2FsLmNvbQo+IOaKhOmAgTogbmluZ3l1QGVzd2luY29tcHV0aW5nLmNvbSwgbGlubWluQGVz
-d2luY29tcHV0aW5nLmNvbSwgbGl6aGkyQGVzd2luY29tcHV0aW5nLmNvbSwgcGlua2VzaC52YWdo
-ZWxhQGVpbmZvY2hpcHMuY29tCj4g5Li76aKYOiBSZTogW1BBVENIIHY2IDEvMl0gZHQtYmluZGlu
-Z3M6IGV0aGVybmV0OiBlc3dpbjogRG9jdW1lbnQgZm9yIEVJQzc3MDAgU29DCj4gCj4gT24gMTIv
-MDkvMjAyNSAwNzo1Niwgd2Vpc2hhbmdqdWFuQGVzd2luY29tcHV0aW5nLmNvbSB3cm90ZToKPiA+
-IEZyb206IFNoYW5nanVhbiBXZWkgPHdlaXNoYW5nanVhbkBlc3dpbmNvbXB1dGluZy5jb20+Cj4g
-PiAKPiA+IEFkZCBFU1dJTiBFSUM3NzAwIEV0aGVybmV0IGNvbnRyb2xsZXIsIHN1cHBvcnRpbmcg
-Y2xvY2sKPiA+IGNvbmZpZ3VyYXRpb24sIGRlbGF5IGFkanVzdG1lbnQgYW5kIHNwZWVkIGFkYXB0
-aXZlIGZ1bmN0aW9ucy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogWmhpIExpIDxsaXpoaTJAZXN3
-aW5jb21wdXRpbmcuY29tPgo+ID4gU2lnbmVkLW9mZi1ieTogU2hhbmdqdWFuIFdlaSA8d2Vpc2hh
-bmdqdWFuQGVzd2luY29tcHV0aW5nLmNvbT4KPiAKPiBUaGVyZSBpcyBubyBleHBsYW5hdGlvbiBv
-ZiBkcm9wcGluZyB0aGUgdGFnLiBQbGVhc2UgcmVhZCBDQVJFRlVMTFkKPiBzdWJtaXR0aW5nIHBh
-dGNoZXMuCj4gCj4gQ29tcGFyaW5nIGFsc28gZmFpbHM6Cj4gCj4gYjQgZGlmZiAnPDIwMjUwOTEy
-MDU1MzUyLjI4MzItMS13ZWlzaGFuZ2p1YW5AZXN3aW5jb21wdXRpbmcuY29tPicKPiBVc2luZyBj
-YWNoZWQgY29weSBvZiB0aGUgbG9va3VwCj4gLS0tCj4gQW5hbHl6aW5nIDU1IG1lc3NhZ2VzIGlu
-IHRoZSB0aHJlYWQKPiBQcmVwYXJpbmcgZmFrZS1hbSBmb3IgdjY6IGR0LWJpbmRpbmdzOiBldGhl
-cm5ldDogZXN3aW46IERvY3VtZW50IGZvcgo+IEVJQzc3MDAgU29DCj4gRVJST1I6IENvdWxkIG5v
-dCBmYWtlLWFtIHZlcnNpb24gdjYKPiAtLS0KPiBDb3VsZCBub3QgY3JlYXRlIGZha2UtYW0gcmFu
-Z2UgZm9yIHVwcGVyIHNlcmllcyB2Ngo+IAo+IEkgYW0gbm90IGdvaW5nIHRvIHJldmlldyB0d2lj
-ZSwgc28geW91IGNhbiBkcm9wIG15IHRhZyBhZ2FpbiB3aXRob3V0Cj4gZXhwbGFuYXRpb24uCj4g
-Cj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo=
+
+--7m42mtvfe7tfiq4e
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: use str_plural() to simplify the code
+MIME-Version: 1.0
+
+On Mon, Aug 18, 2025 at 04:36:29PM +0800, Xichao Zhao wrote:
+> Use the string choice helper function str_plural() to simplify the code.
+>=20
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/pwm/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> index 0d66376a83ec..732d22dee035 100644
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+> @@ -2620,7 +2620,7 @@ static int pwm_seq_show(struct seq_file *s, void *v)
+>  		   (char *)s->private, chip->id,
+>  		   pwmchip_parent(chip)->bus ? pwmchip_parent(chip)->bus->name : "no-b=
+us",
+>  		   dev_name(pwmchip_parent(chip)), chip->npwm,
+> -		   (chip->npwm !=3D 1) ? "s" : "");
+> +		   str_plural(chip->npwm));
+> =20
+>  	pwm_dbg_show(chip, s);
+
+I'm not sure this is an improvement. While the code is shorter and might
+compile to more efficient code, it's also less readable.
+
+I tend to do just
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index ea2ccf42e814..5b75f4a08496 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -2696,11 +2696,10 @@ static int pwm_seq_show(struct seq_file *s, void *v)
+ {
+ 	struct pwm_chip *chip =3D v;
+=20
+-	seq_printf(s, "%s%d: %s/%s, %d PWM device%s\n",
++	seq_printf(s, "%s%d: %s/%s, npwm: %d\n",
+ 		   (char *)s->private, chip->id,
+ 		   pwmchip_parent(chip)->bus ? pwmchip_parent(chip)->bus->name : "no-bus=
+",
+-		   dev_name(pwmchip_parent(chip)), chip->npwm,
+-		   (chip->npwm !=3D 1) ? "s" : "");
++		   dev_name(pwmchip_parent(chip)), chip->npwm);
+=20
+ 	pwm_dbg_show(chip, s);
+=20
+instead, or drop the output of npwm completely given its value
+implicitly clear by the number of lines following this output.
+
+Best regards
+Uwe
+
+--7m42mtvfe7tfiq4e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjH4XcACgkQj4D7WH0S
+/k5jKQf9Gk4jgrfC9v4mMaNZpNCkQGNdovUupapNlWDdOLkYz6KMteHiRvAma2BV
+5xNQJrU3sI+0hAGBEVfgmftp0VFyIk2qtxL7DP+fxtk5WnDyFmReS8MzM4ZjAtL0
+cTSOf6Ex4EPLkfiuF4QqukUKS14ONtT1SuGuBayTJ4XvqM+ZVjc4tIzU4q6uDJPz
+8pZpF15hveiB0VSkAXu6BY9ymsb2mD/R/u0z8oYUyLuA38mOyMNmI+BgG3XEcs/q
+YGhQO2SyYcht2i7y3TdFmgDOd+LeRI0jpoysKpjUq2k/dSbcKI2KFMCG4B6XNfmW
+PKpxnRHRknGkkfCM3FqyT2u3YirozQ==
+=w6pb
+-----END PGP SIGNATURE-----
+
+--7m42mtvfe7tfiq4e--
 
