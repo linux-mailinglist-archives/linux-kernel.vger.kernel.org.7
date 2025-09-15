@@ -1,173 +1,92 @@
-Return-Path: <linux-kernel+bounces-816993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE60B57C1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE4DB57C1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B8D3A857C
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:57:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB07188D9F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131BA30C61A;
-	Mon, 15 Sep 2025 12:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9748330BF58;
+	Mon, 15 Sep 2025 12:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWTasVeA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="g+RmTuZu"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E81D30C376
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E701B7F4
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757941064; cv=none; b=N7wvTEVyqbVxCrjLzZR7h5sO3B2FhOG/ArrJ1pldh3hYCe9a6Fv23HWK/X/e20kE189ygnRK95Q8/CDp1k4rpmlpxlrAWZytXREk9GYBd8VDh+/2bS0SBvVKwOzF9cubMlMOKSLnGoTjnk7xYO9DR7DvBifgriB0G9fM3bjM6Yc=
+	t=1757941106; cv=none; b=aq5wwO5Xb72m9wCNGy2Ct6CLvuKUecdocGbRTExkD0PAWKIZDQo7tocs1twgqGG5gbuVSLSq595qfp2vFUIHn8wiMnoZknPc1SVRm8QmnED4Rl7VOLQ80xDIKm0WboQDXQqormFUjRKcUZOJ5hKH6z8ree2/1lN5dlJpUBMPD3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757941064; c=relaxed/simple;
-	bh=ulKSlbeY89urU1NmlWnfV3YU5EPXs0DX1UXGa+Q3K/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eDQVBnYVIpz6k0yI0VloqsKhtp+wcJ0AOo6BC4wS73rAfYo9d24p+1tFf75bdEgZI6klGkRRkemVYlLQ8ZayRFyYJafPSJYwUnUHds2xCGpgmloddV77agD2ddIr0/uC4b2JCGYlLqJlwMLPs7kt4Q+nmbtSO5BEy+JC/1UfVLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWTasVeA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E630DC4CEF5
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757941063;
-	bh=ulKSlbeY89urU1NmlWnfV3YU5EPXs0DX1UXGa+Q3K/4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PWTasVeAwjIJpvCr4aq+9o8kk72ibHJdBhz14LuBZV9TMtDX0XIJuL9gs9bI8GSRc
-	 eentuAy2E9jzun7pkw0W8vtSSE9rsqnSvCntDpJ2PbCOqroRmSkEIs3Umvvh9Z/+Dt
-	 KJQQQw71bPOioZBxnvdaNMyDwc2pKE/CfSmtlOA1hZREZMwVQQds+sSWxSaWKe1rfM
-	 8BgShY36KaF4XCh9quBcJ2Ejs3T9YoEAJ+PYBxDcoA233qKVzzPypx7VtuGULU58Lm
-	 7rkLWmuUDW7hEHXHW9WVF+vpLMthy4VgLONe1fys9C0yhg9X+suHVhwk211gQRsFIq
-	 6BFpG5qD4r41Q==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-74526ca79beso3612346a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 05:57:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8sFf/QrmKX4i9iUYFO708amXY8kLdR2k3Zj34JmF7WLosYUrz5ocGucEJu2Ax2cX7hZuhacfICbN57qY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8r2KL7x8bJL/PqXImMiI53SAOcKY3DW8t22H25+4KW2guYg17
-	KjgGKLw42QNhRUBLcF/Am/P4AbrH2SuTVere27SRwdYPHu5bMun467Kcjaoa/ANLL+B/TkJEWcH
-	VMfULBBsm/ynmnEi1dCdn5wSgLBDQSiE=
-X-Google-Smtp-Source: AGHT+IH7eC7ap1vbLWJ7LIJn9DDB9jGF1thqKBpffYH7okiwBW8idpEX+LHY5pmbjHOwMv51qdMfNTswXtyjOv0I/eo=
-X-Received: by 2002:a05:6808:1b28:b0:43b:7a77:6b8 with SMTP id
- 5614622812f47-43b8da333f0mr5451545b6e.47.1757941063218; Mon, 15 Sep 2025
- 05:57:43 -0700 (PDT)
+	s=arc-20240116; t=1757941106; c=relaxed/simple;
+	bh=ebhkGIruC5i/FbgEaRjCiwG2YW6JYIRkGe7tknIt6nM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CmuOxnUrRYcmPByGchLjrb30AjeGQ6f9D45+tlu4q6RX4NBg2sB3fNAz92GUBicGo0QBHhuwqh1OMTUKLIHIHZHAWv4JGjQl6vF08qC0YS9RzmQWqr2geHnshG/ByV12QybW0os1Xmn+rx0TRK93cn+uY40JIMKfUA1w55O1YE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=g+RmTuZu; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TVj8P4Pj5fCQ12Bix0xX+D9gH7f1HIB+aFF57H5Z4+Q=; b=g+RmTuZu0WlkQxw4q1vgBaFT9M
+	fyFwD6FFncLND04Gc3ps++Q/CroAP6oMHNWVyXZPpRuOeOL0G63EVpFRL6poeDnUvfnqNf7k6b/BE
+	VlReFs5QSepLlfc2EYEigeSNfteEXsKWAPN7om60js2/kSQG9LWhaMRsvEPmEddmjrB9nw2/diWeC
+	GZy3f3YLCwKYOAOiK8+rir6h5jJvSAvyFT//D92bE5vn93Ps89aeE0+jtoIDynib+e3BjR1SOuXQc
+	y/hKW/7GZX/YzqPE5V2QWc638gNOU4tHbH5AF+zGir75I/EHlxA+e86wl7rl7W5Ci8/WCw1+ft1bp
+	JP+veUnA==;
+Received: from [191.204.197.103] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uy8mf-00Boro-AK; Mon, 15 Sep 2025 14:58:17 +0200
+Message-ID: <57ac07c0-d4a8-4839-8454-de19fdf2f3a4@igalia.com>
+Date: Mon, 15 Sep 2025 09:58:11 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5046661.31r3eYUQgx@rafael.j.wysocki> <3014880.e9J7NaK4W3@rafael.j.wysocki>
- <aMf9YRHA8jRgMPAr@kekkonen.localdomain>
-In-Reply-To: <aMf9YRHA8jRgMPAr@kekkonen.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 15 Sep 2025 14:57:31 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hPjWHwSSc9cTdC76RypWGPUYrkqw+W3Vb52uy_UJpk9A@mail.gmail.com>
-X-Gm-Features: Ac12FXzO3bE6mspFRW59O99bQ_5MIBbj6Q82vloHhMMUd9RwBdaCC0UsMUE0CUE
-Message-ID: <CAJZ5v0hPjWHwSSc9cTdC76RypWGPUYrkqw+W3Vb52uy_UJpk9A@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] ACPI: property: Do not pass NULL handles to acpi_attach_data()
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] selftest/futex: Make the error check more precise
+ for futex_numa_mpol
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Waiman Long <longman@redhat.com>, kernel-dev@igalia.com
+References: <20250904165556.56926-1-andrealmeid@igalia.com>
+ <20250915075117.ts5Z9WGG@linutronix.de>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20250915075117.ts5Z9WGG@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Sakari,
+Hi Sebastian,
 
-On Mon, Sep 15, 2025 at 1:50=E2=80=AFPM Sakari Ailus
-<sakari.ailus@linux.intel.com> wrote:
->
-> Hi Rafael,
->
-> On Fri, Sep 12, 2025 at 09:42:55PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > In certain circumstances, the ACPI handle of a data-only node may be
-> > NULL, in which case it does not make sense to attempt to attach that
-> > node to an ACPI namespace object, so update the code to avoid attempts
-> > to do so.
-> >
-> > This prevents confusing and unuseful error messages from being printed.
-> >
-> > Also document the fact that the ACPI handle of a data-only node may be
-> > NULL, and when that happens, in a code comment.
-> >
-> > In addition, make acpi_add_nondev_subnodes() print a diagnostic message
-> > for each data-only node with an unknown ACPI namespace scope.
-> >
-> > Fixes: 1d52f10917a7 ("ACPI: property: Tie data nodes to acpi handles")
-> > Cc: 6.0+ <stable@vger.kernel.org> # 6.0+
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  drivers/acpi/property.c |   12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> >
-> > --- a/drivers/acpi/property.c
-> > +++ b/drivers/acpi/property.c
-> > @@ -124,6 +124,10 @@ static bool acpi_nondev_subnode_extract(
-> >               result =3D true;
-> >
-> >       if (result) {
-> > +             /*
-> > +              * This will be NULL if the desc package is embedded in a=
-n outer
-> > +              * _DSD-equivalent package and its scope cannot be determ=
-ined.
-> > +              */
->
-> I think indeed this happens in particular when when references to
-> non-device nodes; there's no handle because when you get is basically a
-> dynamically allocated copy of a node.
+Em 15/09/2025 04:51, Sebastian Andrzej Siewior escreveu:
+> On 2025-09-04 13:55:55 [-0300], André Almeida wrote:
+>> Instead of just checking if the syscall failed as expected, check as
+>> well what is the error code returned, to check if it's match the
+>> expectation and it's failing in the correct error path inside the
+>> kernel.
+> 
+> André, these two are the only ones that are still pending?
+> 
 
-I know for a fact that this happens, that's why I'm adding the comment here=
-.
+For now, yes. I have more selftests cleanups that I would like to send, 
+but they will be done on top of those two, so I would prefer to get 
+those queued first.
 
-> >               dn->handle =3D handle;
-> >               dn->data.pointer =3D desc;
-> >               list_add_tail(&dn->sibling, list);
-> > @@ -245,6 +249,8 @@ static bool acpi_add_nondev_subnodes(acp
-> >                        * strings because there is no way to build full
-> >                        * pathnames out of them.
-> >                        */
-> > +                     acpi_handle_info(scope, "Unknown namespace scope =
-of node %s\n",
-> > +                                      link->package.elements[0].string=
-.pointer);
-> >                       desc =3D &link->package.elements[1];
-> >                       result =3D acpi_nondev_subnode_extract(desc, NULL=
-, link,
-> >                                                            list, parent=
-);
-> > @@ -408,6 +414,9 @@ static void acpi_untie_nondev_subnodes(s
-> >       struct acpi_data_node *dn;
-> >
-> >       list_for_each_entry(dn, &data->subnodes, sibling) {
-> > +             if (!dn->handle)
-> > +                     continue;
-> > +
-> >               acpi_detach_data(dn->handle, acpi_nondev_subnode_tag);
-> >
-> >               acpi_untie_nondev_subnodes(&dn->data);
-> > @@ -422,6 +431,9 @@ static bool acpi_tie_nondev_subnodes(str
-> >               acpi_status status;
-> >               bool ret;
-> >
-> > +             if (!dn->handle)
-> > +                     continue;
-> > +
-> >               status =3D acpi_attach_data(dn->handle, acpi_nondev_subno=
-de_tag, dn);
-> >               if (ACPI_FAILURE(status) && status !=3D AE_ALREADY_EXISTS=
-) {
-> >                       acpi_handle_err(dn->handle, "Can't tag data node\=
-n");
-> >
-> >
-> >
->
-> --
-> Kind regards,
->
-> Sakari Ailus
+Thanks!
 
