@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-817691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38B5B5856F
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A93B58570
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 21:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DFD71B22615
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9F11B23250
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 19:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24070285404;
-	Mon, 15 Sep 2025 19:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g9P1LQHn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B1A283CB5;
+	Mon, 15 Sep 2025 19:40:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E1D280335
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D7D212574;
+	Mon, 15 Sep 2025 19:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757965155; cv=none; b=uzHshM9TtPtAWhQ9GFHSfZZ82U7DwBAgASmw3t0vK1r2c0yeJQpUAZs+j+6SJBR0N2fOCCjaeJljMupiVx7vAlagamQ5GRDe3kvImgqRBf7Nmo+UuNXITB1ZhLSo+8sPPmZp+CKOzIyI+8zYtnjHxAsTX/vy4oZGRPMc00HvIsM=
+	t=1757965239; cv=none; b=aSsyBj56WeVo/VgGbV0Wd6DYWrBRBhNypBRCcBbDi+iO5IqopcXnompjRoC/B8IwqR3NcyZHWrqU692UaTmEUXA7wTG85aiZuHVTd+laemZSc4SSmxzYCT1dwuvauNNhhl2UVxHQNgDGh4owWCIe9lVMSjCCm+pkCQTuzvk7GCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757965155; c=relaxed/simple;
-	bh=87rhYXHDtQiCMzx57VS1w3vd9t5iVIWXWbpAfZ5d7+Y=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZG0Z0ZHeMgUN+lIQ8w0hCndBYG3x4B93E03uLXBPg6po71W0Yx41oQ0SVaBJ3h0H6+yfekhaRgaKug3kVbrm+/vUdVFTHtqhu/EzBwFZKTMcSQU/+fICpfniFPbVhZ4cDjy8hqM3BoY83vyJ/v8RVogTIhc2ClE2LCB+3mTlhzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g9P1LQHn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757965152;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S7HkFYGg6A427CkTE8Uu+596fVOO9ot2LNl0j4v3H3A=;
-	b=g9P1LQHniy2w4LSIq1eGA+0bX7y7vlO24tN7P8L0qx2ZWOkcB/wRwqol4uS1E0dLsSpaI5
-	P1GSKdPxOuGc36Xq5gkqVfxzcIDwNGhkhunx8F8NMRQfDVWqeM8C/hbya9MSnNwKE3fZTz
-	jiAX645t6gzRIiAvsjlKfkQhyNeb+K0=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-PS0s5_CTPQGZdvGd3hXf0g-1; Mon, 15 Sep 2025 15:39:11 -0400
-X-MC-Unique: PS0s5_CTPQGZdvGd3hXf0g-1
-X-Mimecast-MFC-AGG-ID: PS0s5_CTPQGZdvGd3hXf0g_1757965151
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b633847b94so117160351cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:39:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757965151; x=1758569951;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S7HkFYGg6A427CkTE8Uu+596fVOO9ot2LNl0j4v3H3A=;
-        b=XEdoKETHwfA+RUowbNRltajutbF5erHxNlCTVT/Rt7t+ofVznCjGcJr12b+2AqZNYm
-         3/dPGSKJvg8+lmBkEXrgqrjtzPsXVT+yION4UK9pOVrU0kOeKFMDLT1Ltu6PTpbsC1/b
-         p7FAbLyOrx9xuBLMr0I+DObVkN0WM9o8ajj11DMvOUX65BqFzB+K2AKSJpuMscpj8UEb
-         ZT88RnbsVa4JoBws/JJYPwD23bbgHlwRRcOTW6rHiQjJMXytRBJQsg1/S2YR8ywFpogU
-         QmKpNdvqCpz/HDv3LY1oahn7FEZ+Jd1a+smfdtTls3daTkLw7xNhY6AFGonDS0gRLxwV
-         Drhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCu8gqjqVJwn6kFOs/sJ8e+GbvmIW6E3sxl5ohnDjIk077fYW9oKvxZyjWeGrd6Y464EAgg7XofGNBruc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKfMJpj4mw20wyXpvyvIHYxp03x5Eby14L1sdmlzPt51z1gNLz
-	ddiTyGRLs4eLSwKjHQHisetljZzEOSkCn4YDkGFAoMaa7qIBFI9RxX0D1XGE+s00F/dnlftmIPD
-	NDsE6od4SP4q/X6yQu130M2c8+gtRP3eEyJxo6NzGATmZnFvEE9FfJG+Hch14MT4Z7Q==
-X-Gm-Gg: ASbGncvJmMpjb2PDywBHXHb5AXfSa6wHUrtKuj6ENCAPt1Q2A00MKICS7NhMGnssmEb
-	zpsDpwcKQHqxfGyu+Q2EyVBFPz08I+VvLtFvleqAQg5RFqlfuhmurXUjIplD0DxGvAlNf5ooHGi
-	BGYB5I1pPFU8W3GcqLTJeByBReCjMEH5ZW/2GHGvPhMLaoSpEdBztj1paMH0OFtr1+KEJxgupWI
-	lDxQRtkNW57TGb1QGGtN/lwz96hpHLlsbJd8tTtR/Q0li62j72J0iD7Lz+t+sG2GTIZLcECEQxV
-	Szg7OIAtZyjs1qV7XnI/AJXgWnfdD1sKBsnHtHnmFx6b2t5zUDEjZeDHxbG76KvLst80P/TWu/n
-	ybMgxmRKN9A==
-X-Received: by 2002:a05:622a:4e9a:b0:4b7:9972:1d8c with SMTP id d75a77b69052e-4b799dd639amr103831551cf.54.1757965150563;
-        Mon, 15 Sep 2025 12:39:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7pID2mDTqz46UkO3VdcT/XS3fmKdEaUkct2TWo3/kc/qTZwcCyfeBGxHuQNXAXCw+g5ytnQ==
-X-Received: by 2002:a05:622a:4e9a:b0:4b7:9972:1d8c with SMTP id d75a77b69052e-4b799dd639amr103831151cf.54.1757965149996;
-        Mon, 15 Sep 2025 12:39:09 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639dd12bbsm73788181cf.43.2025.09.15.12.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 12:39:09 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <cb1e7156-8043-452e-bdd3-076f72c51bee@redhat.com>
-Date: Mon, 15 Sep 2025 15:39:08 -0400
+	s=arc-20240116; t=1757965239; c=relaxed/simple;
+	bh=g5xAknOdfENgPm/cKcyiCHJ9HVP9ZcMgVpHNO/PV2QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=djFsF1A9XnURolynkW4DxdQaqyjn4an+lnJxfICCZEv65NxsUvdjFlAJzUrLPj0BxUoMfp8AbvsJtgekYgPtZpc2bEap7YFm7RERyPgiy1wAe5P28//2EJda1XaWti08vpYSTk7mAMXoooRnonbAO0rpTzH2gbvVsEo/SptwWPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F133C4CEF1;
+	Mon, 15 Sep 2025 19:40:36 +0000 (UTC)
+Date: Mon, 15 Sep 2025 20:40:33 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: will@kernel.org, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
+ operation
+Message-ID: <aMhrscd1gz_syMtL@arm.com>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-5-yeoreum.yun@arm.com>
+ <aMRQIeIdyiWVR8a0@arm.com>
+ <aMfrR0vserl/hfZ3@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC -v2 10/11] cpuset: use parse_cpulist for setting
- cpus.exclusive
-To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
- hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
- <20250909033233.2731579-11-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20250909033233.2731579-11-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMfrR0vserl/hfZ3@e129823.arm.com>
 
-On 9/8/25 11:32 PM, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->
-> Previous patches made parse_cpulist handle empty cpu mask input.
-> Now use this helper for exclusive cpus setting. Also, compute_trialcs_xcpus
-> can be called with empty cpus and handles it correctly.
->
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   kernel/cgroup/cpuset.c | 25 +++++++++----------------
->   1 file changed, 9 insertions(+), 16 deletions(-)
->
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index de61520f1e44..785a2740b0ea 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -2567,27 +2567,20 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->   	bool force = false;
->   	int old_prs = cs->partition_root_state;
->   
-> -	if (!*buf) {
-> -		cpumask_clear(trialcs->exclusive_cpus);
-> -		cpumask_clear(trialcs->effective_xcpus);
-> -	} else {
-> -		retval = cpulist_parse(buf, trialcs->exclusive_cpus);
-> -		if (retval < 0)
-> -			return retval;
-> -	}
-> +	retval = parse_cpuset_cpulist(buf, trialcs->exclusive_cpus);
-> +	if (retval < 0)
-> +		return retval;
->   
->   	/* Nothing to do if the CPUs didn't change */
->   	if (cpumask_equal(cs->exclusive_cpus, trialcs->exclusive_cpus))
->   		return 0;
->   
-> -	if (*buf) {
-> -		/*
-> -		 * Reject the change if there is exclusive CPUs conflict with
-> -		 * the siblings.
-> -		 */
-> -		if (compute_trialcs_excpus(trialcs, cs))
-> -			return -EINVAL;
-> -	}
-> +	/*
-> +	 * Reject the change if there is exclusive CPUs conflict with
-> +	 * the siblings.
-> +	 */
-> +	if (compute_trialcs_excpus(trialcs, cs))
-> +		return -EINVAL;
->   
->   	/*
->   	 * Check all the descendants in update_cpumasks_hier() if
-Reviewed-by: Waiman Long <longman@redhat.com>
+On Mon, Sep 15, 2025 at 11:32:39AM +0100, Yeoreum Yun wrote:
+> > On Sat, Aug 16, 2025 at 04:19:27PM +0100, Yeoreum Yun wrote:
+> > > diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+> > > index bc06691d2062..ab7003cb4724 100644
+> > > --- a/arch/arm64/include/asm/futex.h
+> > > +++ b/arch/arm64/include/asm/futex.h
+> > > @@ -7,17 +7,21 @@
+> > >
+> > >  #include <linux/futex.h>
+> > >  #include <linux/uaccess.h>
+> > > +#include <linux/stringify.h>
+> > >
+> > >  #include <asm/errno.h>
+> > >
+> > > -#define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> > > +#define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> >
+> > I just noticed - you might as well leave the name as is here, especially
+> > if in patch 6 you align down address and use CAS on a 64-bit value as
+> > per Will's comment (and it's no longer LLSC). I think renaming this is
+> > unnecessary.
+> 
+> Okay. I'll restore to use origin name.
+> But I think LSUI wouldn't be used with CAS according to patch 6's
+> comments from you and additionally i think
+> chaning the CAS would make a failure because of
+> change of unrelated field. i.e)
+> 
+> struct user_structure{
+>   uint32 futex;
+>   uint32 some_value;
+> };
+> 
+> In this case, the change of some_value from user side could make a
+> failure of futex atomic operation.
 
+Yes but the loop would read 'some_value' again, fold in 'futex' and
+retry. It would eventually succeed or fail after 128 iterations if the
+user keeps changing that location. Note that's also the case with LL/SC,
+the exclusive monitor would be cleared by some store in the same cache
+line (well, depending on the hardware implementation) and the STXR fail.
+From this perspective, CAS has better chance of succeeding.
+
+> So I think it would be better to keep the current LLSC implementation
+> in LSUI.
+
+I think the code would look simpler with LL/SC but you can give it a try
+and post the code sample here (not in a new series).
+
+BTW, is there a test suite for all the futex operations? The cover
+letter did not mention any.
+
+-- 
+Catalin
 
