@@ -1,135 +1,218 @@
-Return-Path: <linux-kernel+bounces-816951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4BD7B57B32
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:36:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933A0B57B35
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 14:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB26168CCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:36:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23C7A7AB009
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 12:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3760B3093BC;
-	Mon, 15 Sep 2025 12:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA960305E20;
+	Mon, 15 Sep 2025 12:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="linoQn/z"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LKde6aeD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2085B20330
-	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757939761; cv=none; b=tmSAb1tl04h+YjdZ5yYBbVHPlX5g7QW616ng4hVshD/hDcO8hkEK/EE+I+93kFQzr9eDCtk/Cac7vZgkEJtjuLnDp4Wp5K8Pq6pFzd/aljV6AHWtDaWkI4Cz3IFIADQzNSO046cHM0JYXh7Ulvj2qLW3m6gim9IHi1xCovLyUkk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757939761; c=relaxed/simple;
-	bh=8WAKX9Yt0aPAj7BPYhrIG/WG5HjmT+BCIgCWmzHGujs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=prK1xbcydnwK9hk78UC3bSnAynzs8rtISJWxCDTnZX4Zp42LqdJRSUdHoGRuKK0NXwB8huSucCBfKlZ0/5naLAZjhnOZNZZeCBH5St8ihltLoxM0H7XmIVkjwo5JbP8Cg/UPbTm9UBRFoRtQuIYtGJqdiFZ4MpiwZDQ/ohQVb74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=linoQn/z; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E732D5943
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 12:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757939811; cv=fail; b=XQBOdbn2ILGJAR8sIXmJEqhrAxI3Hh/1Sy5ZKmjw11A4L5xjOuJgfiJqU/tWXpdpLNKDZTufSOdE7dOPWk+zuiY7OXxn5Nsk65YXNgX1srGeucfi2sWsoWHv3+LblWTZj6GkI9/kksjCHkEyDd9L15bcj0zQ4ksWWCI834RF6Uo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757939811; c=relaxed/simple;
+	bh=yUzUVUOoOlUnOIRuDTvzrT5QR2ccC6Qb18Cbstq0FCs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CPNFzGwrYD3WBl/Vy52fGmxSM5CxYQxPNWDWK99NzzX06USOXrv/JCyY44Q0Eje6qbdW7VMxhNXfx1x+q1j/miDKSuNRp7FrMlEHdwwv3mmUd19nM5/vAS8cgwY7/dRpNxp9lFpE8atv80LNfwnrmlTjtzCSs771CRHQrNKE+Mc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LKde6aeD; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1757939760; x=1789475760;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=8WAKX9Yt0aPAj7BPYhrIG/WG5HjmT+BCIgCWmzHGujs=;
-  b=linoQn/zGOooE2nARukwjlIRbSj/aCZ/p0kSKyGuL8Dhs8V6hiNYre9n
-   TAkMR2cSo9YuOYtGRHIyGDJGoAZ619Psp1MX+DgwpeDpAZJCmP1QZS0kh
-   ww+WlF9d0n9eWagSynEt7uGaBkWWt3fqXrnj7I1abCZY8nz0/3XqgDsYP
-   4uhf9l08Fyzug/Vd9i3PwsJmSH1UekQYgJOzlVuv9fwT6NQ6JV9/kZe9Z
-   LjLcLNrZkTgpr8RXyWTuAppHv99pZ6LuOVGrXC9Uiegi3GHhv4yU3V+lt
-   WZ7hNyq9kcWzkAgmT5ehTZE6MptKq1BWKjp0SFBwtoO1L13pqrYHzic5F
-   A==;
-X-CSE-ConnectionGUID: sq4SIjShQDG3RWVIwKVdaw==
-X-CSE-MsgGUID: c9y2E6emQa6v91bNyc89Pg==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757939809; x=1789475809;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=yUzUVUOoOlUnOIRuDTvzrT5QR2ccC6Qb18Cbstq0FCs=;
+  b=LKde6aeDhvkwtaghutafUCba7uSU9257CZJhkRxv2MYQZV8wv2bgkmlt
+   zShHbCElfFnqeGBoqfrHlllBAilUhsNPe2ErJxmf1Hvpcwd/YJin23+uC
+   F4k6x0ROVJyKbrtmoG30QvR9tNJLtoho9iKQ8L+RvRt6WX7EDYdQF59+Y
+   SUeQjbWtMFqNNBh5wVaKljfT143o2AKIa9LQrepPbJdfx7MPiSbJl5h6w
+   pukOm7K0kzZmh1zufbCXJOKLBpbELopl16nEseGsQzmohBGzw+7/5Z5Gk
+   KSc290jk14jY0izjv76QnBvOB2YEfNA4ygzWZ2JeRy+AHs462vhQI8MfH
+   Q==;
+X-CSE-ConnectionGUID: xV+IBSCjTRaq4fVb8SUJSA==
+X-CSE-MsgGUID: IE8NiovWRh6/sctnMfnweQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="62819945"
 X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
-   d="scan'208";a="46513138"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Sep 2025 05:35:59 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 15 Sep 2025 05:35:56 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 15 Sep 2025 05:35:54 -0700
-From: <nicolas.ferre@microchip.com>
-To: Arnd Bergmann <arnd@arndb.de>, <arm@kernel.org>, <soc@kernel.org>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Linux Kernel list
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Conor Dooley <conor@kernel.org>, Robert Marko <robert.marko@sartura.hr>,
-	Daniel Machon <daniel.machon@microchip.com>
-Subject: [GIT PULL] ARM: microchip: SoC updates for 6.18 #1
-Date: Mon, 15 Sep 2025 14:35:47 +0200
-Message-ID: <20250915123548.13722-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
+   d="scan'208";a="62819945"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 05:36:48 -0700
+X-CSE-ConnectionGUID: 05mZ+FAqQjSxAw17sOiNlQ==
+X-CSE-MsgGUID: nZ74D9GwSUKDsG8E1PiiEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,266,1751266800"; 
+   d="scan'208";a="174559981"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 05:36:49 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 05:36:48 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 15 Sep 2025 05:36:48 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.23)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 15 Sep 2025 05:36:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=W4BPxg8V/pYUnC1IOSx1kjIMydsTFOSCn4IujNQ19aPDCh7kTgakpOJ9Z+1a4FMHVQSS//C7QnwLoLc1FJOaiQuWpmFfFoapvq9w713cgwhhsjbrwfqPTJLdlt4rpL66nSN16xXS8IvAWE9VfepRUxjf2SkTyVRjF/6a6IcTo3v+lsyJX3UjW621EcSB97CzzzBqkDEy7sYRlVkMkk5UyuEyvBmsIzT1pbDBYpvbfxt9YzbR6hakVW3hn1mDqgAKJfz8JU9UUgJJtABvgLI0Q1w1iDzpclW2w1aG+VP4TZg+nI1e4m6mVdMD0P5ajhuy5M+Vees2C2bo2wPS1NzyHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uKOzeEGz4sowVZJXy+hHITK6vkfXbWWd80GIY2P1mKw=;
+ b=GcitAA6ho+7H81cbWxAIn63lZXLmnGdvy2Dnv8ULeE1AFs8/f7bL7cTCYrm/7wRMuhTGx1/MmeoOC3meye3+mh2hM9qsfDXqtVqYzDWIsNQ/EdJhA1bLkPotiB1wo8MplK0fkC/zyon462Ge1Z4nCjtA0ha3wIY65s6LK74yuvXC4z3VOBD54CJTMFgMGCsrJed65ogWEubWMStb6kVVAP37N+wwbu3uNuXzt5jnNMm0Ce3Bp3LafaOqecak7oaWnUesTC0CmDMFp/VdCSYorXfnyI5f0VaB7u+7DXxJpAliZuT/S0t10Qp471njOn4TIScuVbIKi6+/lCWjWnrooA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
+ by SJ5PPF01FB7113C.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::804) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 12:36:45 +0000
+Received: from CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
+ ([fe80::76d2:8036:2c6b:7563%6]) with mapi id 15.20.9115.020; Mon, 15 Sep 2025
+ 12:36:44 +0000
+Date: Mon, 15 Sep 2025 08:36:39 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Yang Li <yang.lee@linux.alibaba.com>
+CC: <lucas.demarchi@intel.com>, <thomas.hellstrom@linux.intel.com>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Abaci
+ Robot" <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next 2/2] drm/xe: Remove duplicated include in
+ xe_tlb_inval.c
+Message-ID: <aMgIV3JkpxyZKCkN@intel.com>
+References: <20250915080647.669569-1-yang.lee@linux.alibaba.com>
+ <20250915080647.669569-2-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250915080647.669569-2-yang.lee@linux.alibaba.com>
+X-ClientProxiedBy: SJ0PR03CA0202.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::27) To CYYPR11MB8430.namprd11.prod.outlook.com
+ (2603:10b6:930:c6::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: microchip
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|SJ5PPF01FB7113C:EE_
+X-MS-Office365-Filtering-Correlation-Id: c15ce997-6bde-413b-5b64-08ddf4548795
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6Ni1jI/Ttq48ToSTi/uyNtbznBurh3vbEu9wDBC2oIDwhWXs3yvcF9XbHsMI?=
+ =?us-ascii?Q?9vUL4vwklV0QjRzTUZhL0UzhVd18RaLjdIFhylVSDCvT9+SIJKR2i0VPk/OL?=
+ =?us-ascii?Q?oVx2ijrSgMr4GW8ky/mVmQg1z0vaLCPWGEpDeLepB3Nu+Y8bgSw5l9Djjo/2?=
+ =?us-ascii?Q?k4/jZIP5CsMMVbNVMKeEJgTgYzB1UBAq4KoqCaKghMq/bjYHHGN0LG4Jtsln?=
+ =?us-ascii?Q?P1a3mSkRfxKpDgKmhpDvZ02mHY6o4Ok4qgz+mJ+FHomSVN6m0IpWajVEsre5?=
+ =?us-ascii?Q?nKPVFVLPQNGpSTBKUuKbyPx7ImWa2gPRP+EW/5gMK6dO1TIYcszqBrexvUAX?=
+ =?us-ascii?Q?rdBegxfoR2SPqAg3ejXZMHcbGe1M86djV2BfSh2OrmrAWjnkHuV2worGdBzz?=
+ =?us-ascii?Q?4/QLsAi2s0OhJhTQh+Zci8YAAIuaTzKLixuYRJ/oNsVfXSuW5bvNXw4Ox+Fd?=
+ =?us-ascii?Q?0DUxea8pc06W1WfFLlrkXLcA5TpTxiKzFNHiUeaXxtSY1gPNtc346mT0kKdW?=
+ =?us-ascii?Q?AJedM4AUHv5ifL0H+zIlyJqqfMJxeq2rQPhPFYQqfhRiQ5NKctcrKWPXZS7s?=
+ =?us-ascii?Q?7B2KLNkKybTjpHFursAyBJiuumz0Yx7kw2Yx7jYec0Y6cC+5MmnVc3T/X7+q?=
+ =?us-ascii?Q?UG4urFoqC1L5ph+3P6qdbqrkdGmb3QLFplr7RgdH5SOP9BzjIwFbLUmJAC8c?=
+ =?us-ascii?Q?GEHEFg+OZ0Ii4HuzMlP6EaBn81ty5T2a7JCds9Z05Oz5Gz5iFoPJYKaIeJzJ?=
+ =?us-ascii?Q?eA8YCjCEXcSPwXYRhT1xgTqpfF75xenpveKz3MgOHNob0ohUc+cK4bxitAMB?=
+ =?us-ascii?Q?sNLmz/ig5Lv0AGhwBMPwf2c6ON8xy2b8Luujz0sKQR5oXV6FWGAq1+8E+bBy?=
+ =?us-ascii?Q?kGeqaHvhdjp50pij7y/1kRx3XKlm7pUMuWKch1Ha//UhZaUAWyFpH0AxtEXN?=
+ =?us-ascii?Q?b3IG1XrB7Lfo32l2IqeSQD8Lavq+0TcqZzqGENcazckWdN8vAIjpc10NL1OD?=
+ =?us-ascii?Q?N+NB2yv177kEzLgaOeAnL7a/dqlQd4WkeGBx21O3oix6ncXwBQhXLmGK4Ttt?=
+ =?us-ascii?Q?aREZ83HOVznfBLS8/EOgigH16rkZ0+gzR5hMldIcScRWjzRaihY7LQRLyTIo?=
+ =?us-ascii?Q?TFZCv+CDvxshTAkYe33hkeQD2fvgFZp+mmJtXUV+KhJaBWb+ELFAeQH+vPn3?=
+ =?us-ascii?Q?15QEh+zw7QLUJpZiwCh2G1ZMLXrP+lFtCfUjkWdiDDWE84sxT+Ft1IqIPO4X?=
+ =?us-ascii?Q?X61FXpBZ7xP/oH0+jbbpDWIU7J9+mr0iXSH5PrHAC3At1leqMytMqbJubmMX?=
+ =?us-ascii?Q?1P3qtRoSTvwjGlrfY8FYatwX2op/PCQ0N0Vv6TXvwV1Q0XDqOT0LoLFa4rKF?=
+ =?us-ascii?Q?zhB4uxw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Knar00VYn6oHMJWoCE0UVIlI3K+xf8CRqIbHYmoqxpMr3esNffKktrGZvqGJ?=
+ =?us-ascii?Q?3FpdxC7UDNcITSTUPs74yP+8ObcyfjtlgKAUGkfjhgOSj/A0mZDG9P3jCUw5?=
+ =?us-ascii?Q?HLDR71HfMm/GFPlWun70hP1D4pTcDU+uOA5maIEjbknomB4sAjbKMJBnj4r0?=
+ =?us-ascii?Q?A1BSi7Kv5mk0NffZ3Ps3xDid4SUQTpnXZMhohaNYrlo2xsaConK2EFosQHLm?=
+ =?us-ascii?Q?EnG+y/TXRH2y3rpLGjiO/43Tla0WDie3KC3mP58eyDRWwdYIjp8GBo0AcjN2?=
+ =?us-ascii?Q?8vqzdFsOXO9G1ovnymL8FHrIYQtc9OkPap+BiXopA7n5WJ7jnBJbhotRub80?=
+ =?us-ascii?Q?WgF4HX+wacUTGWiZaw6H9V4IA3RHXzMxC3Z8QlTKnGkfW+sTg7AqjVFmR/3G?=
+ =?us-ascii?Q?EThqvV0YGDKwJv+Gmskgh5vD0vZ4e3tV1ABVso1R7mfnhxEm9nF9qEMOV/jX?=
+ =?us-ascii?Q?i+dCMSwztXl5oU3H6HGN8HreBhckBTEq1wu8zKzFdRRmS+sL8lvA9tNgmCl/?=
+ =?us-ascii?Q?NDDv56NzpzM4Nsc8z3ovWwcJHu1pVbb2lOeyIkRgfE00Hcq+G7s46a8Bc28a?=
+ =?us-ascii?Q?6wnbSRui+s8dZ2RHxIYwMiOIvteydO3IvHqoKVMFveah49Lmz8pBg7jSj1hF?=
+ =?us-ascii?Q?swCYs0DE9l1d/2vMg27wTNflPVgPfTTWLshnLlPb09ah6IWo5DikENlSGJCu?=
+ =?us-ascii?Q?VayEz4SC5n63xvKn7FLl5ls2t3/jBI0utQQD2FfdkiBWR65tUJnPrWe4TqF/?=
+ =?us-ascii?Q?hIHKj42xIo83OCFmJ04ltrnHd+ZNjoto+6fm+YmOiN3eMgFem4GgGRuqiYhj?=
+ =?us-ascii?Q?5Fmb3AWfIbPxuD8HsuOeKJ24iaAkCoGb0G7+mOb1M194uaeHFASRm7p29Uku?=
+ =?us-ascii?Q?A6HdhNTSk89isBDeUTOoce+6ZEmhBd+I3UxICLf6BulC/0tMQVfuKYZDMUrq?=
+ =?us-ascii?Q?wK9FogVY9tHXgaJE7S3+eLj/0fOEDrdX2d7zgrIsqrL9ZYdHVwsZUJE2i1WZ?=
+ =?us-ascii?Q?L5bZHIqSM6u+WB9IKBFOV37Krs3fjrHJWEqPSFlJvCVTcK7b5IwqYi46nh9z?=
+ =?us-ascii?Q?l9FYmypJwkp1kS9gQjDvYA/X8SCZdgfWmQlJuSjDJh7g1KrR6qRPNtlne3x3?=
+ =?us-ascii?Q?kh85yTwKLQ4gf3Hmg5jC7EkBRXQvJSyXuw2umyqnzZfV36/7uoD/NZabKTwH?=
+ =?us-ascii?Q?9fXlip8hHyIY+rEO4s/zDesqxa6vc6LvcDfnE5QtEtprPx/mcMnIGeMBpBNL?=
+ =?us-ascii?Q?UWlWzW/pDdGL7osLdEUTBRhc9KC9fih51FKAN+Ning8FQwTPIq0fzb0ut3gK?=
+ =?us-ascii?Q?+1iSVfDXmPKirBqAFR16QH0fORf98xPMsLcUjq+tWWqr2c98ZjFoZ/kTU824?=
+ =?us-ascii?Q?15o1ya91FyMhzAmYjHqx5AvHLT+MwSrB24hN2cZbKq3r7HXQMDssB0LpQffc?=
+ =?us-ascii?Q?ih385yiVtq5iD91toVQFgJ4/KkjsxwBounqD3PjbOfZK42PzoZODP7E8caEF?=
+ =?us-ascii?Q?I0RP8VH8q01fIu2/eFy0G8lwro7GQm7JLfKrC+ulGb2D/Uzyb+sJSW8GIJWG?=
+ =?us-ascii?Q?6TZAKJM6em0EqK+C9UiKaBAiAMQR8SvO87I0BFQP?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c15ce997-6bde-413b-5b64-08ddf4548795
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 12:36:44.7981
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YgNnQuVvfMVLkiUHy4mSwy8+3QMi2MB8N1ctYGFbnM/1xKeYjmz9UCyjPBnVVnmGNICs8Zm995D1Varwj2P/QA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF01FB7113C
+X-OriginatorOrg: intel.com
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Mon, Sep 15, 2025 at 04:06:47PM +0800, Yang Li wrote:
+> The header files xe_tlb_inval.h is included twice in xe_tlb_inval.c,
+> so one inclusion of each can be removed.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=24706
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  drivers/gpu/drm/xe/xe_tlb_inval.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_tlb_inval.c b/drivers/gpu/drm/xe/xe_tlb_inval.c
+> index e6e97b5a7b5c..41e80d609815 100644
+> --- a/drivers/gpu/drm/xe/xe_tlb_inval.c
+> +++ b/drivers/gpu/drm/xe/xe_tlb_inval.c
+> @@ -17,7 +17,6 @@
+>  #include "xe_tlb_inval.h"
+>  #include "xe_mmio.h"
+>  #include "xe_pm.h"
+> -#include "xe_tlb_inval.h"
 
-Dear arm-soc maintainers,
+in both patches, please remove the other occurence so we
+keep the alphabetical order.
 
-Here are the SoC changes for 6.18 which set the Kconfig infrastrucutre for
-addition of the Microchip LAN969x SoC.
-
-Thanks, best regards,
-  Nicolas
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/microchip-soc-6.18
-
-for you to fetch changes up to 38b22cde38aba61eafd752c8a2e43e631014e58a:
-
-  crypto: atmel-aes: make it selectable for ARCH_MICROCHIP (2025-09-09 10:34:22 +0200)
-
-----------------------------------------------------------------
-Microchip ARM64 SoC updates for v6.18:
-
-This update includes:
-- basic infrastructure support for Microchip LAN969x SoC
-- SoC ARCH symbols (existing SparX-5, new LAN969x) under the
-  ARCH_MICROCHIP hidden symbol (already in use by AT91 in 6.17)
-- addition of that new symbol for drivers that are shared by
-  Microchip SoC-s now and in the future
-
-----------------------------------------------------------------
-Robert Marko (8):
-      arm64: Add config for Microchip SoC platforms
-      arm64: lan969x: Add support for Microchip LAN969x SoC
-      mfd: at91-usart: Make it selectable for ARCH_MICROCHIP
-      tty: serial: atmel: make it selectable for ARCH_MICROCHIP
-      spi: atmel: make it selectable for ARCH_MICROCHIP
-      i2c: at91: make it selectable for ARCH_MICROCHIP
-      char: hw_random: atmel: make it selectable for ARCH_MICROCHIP
-      crypto: atmel-aes: make it selectable for ARCH_MICROCHIP
-
- arch/arm64/Kconfig.platforms   | 51 +++++++++++++++++++++++++----------
- drivers/char/hw_random/Kconfig |  2 +-
- drivers/crypto/Kconfig         |  2 +-
- drivers/i2c/busses/Kconfig     |  2 +-
- drivers/mfd/Kconfig            |  2 +-
- drivers/spi/Kconfig            |  2 +-
- drivers/tty/serial/Kconfig     |  2 +-
- 7 files changed, 43 insertions(+), 20 deletions(-)
-
--- 
-Nicolas Ferre
+>  #include "xe_trace.h"
+>  
+>  /**
+> -- 
+> 2.43.7
+> 
 
