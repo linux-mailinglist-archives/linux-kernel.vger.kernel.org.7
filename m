@@ -1,149 +1,127 @@
-Return-Path: <linux-kernel+bounces-819628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F276DB5A3C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:22:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0820FB5A3C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6A9486533
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:22:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997D51BC82E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399322877C1;
-	Tue, 16 Sep 2025 21:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE92287515;
+	Tue, 16 Sep 2025 21:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b="UaKh37wl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EZ7tx/gM"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MOwq0Avk"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26222283FF0;
-	Tue, 16 Sep 2025 21:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B049E27280A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758057731; cv=none; b=nyXj0SeOrYPqZjbhH7vIbt6NBjzLAwUtvFxzAneODsTtqv/1CX3cS9u8JKRfju4GJ0sfF/OpB36awi+L3YoBbwoD67hPx4Hx4tY2OpoGDu9h5YCvyq8Xu7TItncXPAnV8YSD5Vf/qf5cDI6llwjfJrzJf0e0ivANLmJwwcio6wI=
+	t=1758057787; cv=none; b=k8K4ngqVTyC0Iy7BhQIVa5QYhw1JsG5Eptb9eQbsOcR++q33EuW6+GRtcbCmHCf3+wrtrmrlsXYsUmylZ92nRQVDNpLQECqKLIdP/L/ZhqOwy+/Pz6jmRu1zbYcxBX8X6Ksek9E06VCmAOLcgiMasNTT2+gBR7krP935zKBJC8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758057731; c=relaxed/simple;
-	bh=3SbTO4vzXD864bsh3AB7JLbIIijaYBcFvEXTUelLAvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C+rbENo5uxGnBRU+M+y7lQAPwHwDyVXfIWdl+PqF/wBQ16yzPq9WfnH5E1XL4ckt/Qznpdo0mKGeEgBvUlPq2uCLPUcXyzE9M6fi1teEy2vo/yzlYEGB0vPcAXEPGuPqI/cUEiLF0KprItUPva3IsfLStyUZe89j0+QUrFbbs5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com; spf=fail smtp.mailfrom=bsdio.com; dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b=UaKh37wl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EZ7tx/gM; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bsdio.com
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.stl.internal (Postfix) with ESMTP id E98EC1D00013;
-	Tue, 16 Sep 2025 17:22:07 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 16 Sep 2025 17:22:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsdio.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1758057727;
-	 x=1758144127; bh=FNr3jSgck4Jl1pEEorXXSsO/QSdN0TeOX27XjWwmQk4=; b=
-	UaKh37wlbPKHlBiGONx3UjBj5NgdojVqfo8d3QxGRsauJnwIXj2jgGCNgDCp25qa
-	/B5KIWykoM13chpDfbneih6g5Zo+29Z/NtOgFFLKU0uJ4w7GtvepB2ul7AAQFB8p
-	1+kvgKyD/JhPoojC2vUD/N5GPwIh9/7Lu6unmB3nhtDa0KWYVkdKBoXb5Y0s0w/a
-	4WyXyWKs2RX3KC1rb66QyV1+xy6uHucOrU/iCLu+wMjBaZIApHT97VMbYdiN7IlW
-	95YVLa2XxiJOGf2BYtLS89u6ElOGY+o8cr2+fyA5nEmaRc/UxmhD3jV5hYBEfV+s
-	eyDA4UT/XOQN6QlG3nOS0Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758057727; x=
-	1758144127; bh=FNr3jSgck4Jl1pEEorXXSsO/QSdN0TeOX27XjWwmQk4=; b=E
-	Z7tx/gMX+JHnfBo28xUh1LQhXMbww/GQURpZbheyiYKUde1AonfnGScS0+OYzFOv
-	jzWuH0Lb28j67bJBhujQVR488bNfaWAu3EVAE9UL4pioiV5gv2ZF8/1SsnyMozGs
-	acHErhAmLXUYwHlFYhBAeuCRkVz4KGg+08Ez5JOs2XPSJfIjhtI0rAbwY+iY+ybV
-	pIXrasuNQRa8RkY57Gt/X11jQtj5TWkotsGWF3cNqJiX/I+VHJASeIJNCeIL6sh3
-	BfsJiY4WTZSj0YvWDuSPeqieYXK4dWB9UMRWDPhPxyMajBwQCmb3BFfdNZQSQetH
-	i9IqCVJ9LzbHqQJv6Sv3w==
-X-ME-Sender: <xms:_tTJaAKQKp7Zx4a7W-0SuIKbrn4Bbn4qt7HlFyGLUFnS45Hr4me-3A>
-    <xme:_tTJaPU3JOP9QYcDrO8NSjeqRuXYaH48mIe0V78puLRtATa_7psA-UUwPLauP5PJh
-    noT7ED6IlmZQ4CLDow>
-X-ME-Received: <xmr:_tTJaDZcvwkXms7lKTTYJvyhdOqy2qX2s3qBXipxcxf9KCGMawsg2CXnOsjjfkAgjI3F4gQR>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegudeigecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptfgvsggvtggt
-    rgcuvehrrghnuceorhgvsggvtggtrgessghsughiohdrtghomheqnecuggftrfgrthhtvg
-    hrnhephfekvdekvdfhtddvteehueeuleetjefhieehjeeuhfdtuddtvdeguddtkeevlefh
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgvsg
-    gvtggtrgessghsughiohdrtghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhope
-    hrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehjohgvlhesjhhmshdrihgurdgruhdprhgtphhtthhopegrnhgurhgvfies
-    tghouggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghpthhtohepuggvvhhitggvth
-    hrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
-    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqrghsphgvvggusehlihhsthhsrdhoiihlrggsshdrohhrgh
-X-ME-Proxy: <xmx:_tTJaGwAbLGEIWQxH1_sErMKpB4r7kcgnDzjmrYpHY9WofmhEt3joA>
-    <xmx:_tTJaD1zm9G09z0Bz4RuXAMs5vHrs9mDe4HL6Wkg2Q8vOtRzv0togQ>
-    <xmx:_tTJaHl1f1GFfbgnQKogxvFKOQk8RaHDvyUO4u5Jt2wfqTCugEdmPQ>
-    <xmx:_tTJaC-MWptvSdycC-vRg_NaG9Rd3YNHQsUMXVLnP6c_P9DPQgbnPw>
-    <xmx:_9TJaPLRa3mNp1XgIDDKwGqhASuZQIht9nOJpR7B8O5flWLDdlVBYBJi>
-Feedback-ID: i5b994698:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Sep 2025 17:22:05 -0400 (EDT)
-Message-ID: <e9b0d9c8-9117-4c75-93a7-1c334d823d99@bsdio.com>
-Date: Tue, 16 Sep 2025 15:22:04 -0600
+	s=arc-20240116; t=1758057787; c=relaxed/simple;
+	bh=7d7fyEYUl0ACJpbrJxaRgpnFSnvwlBZGD5NItbZRgx0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KzdnrqwF9KkLYsFt2rnTKD5wv2zi2+MNEWB7dkW5FrSnRFNOLLoKgfaud+jx+n3FbSLE8/a9cDiao8gh7idQMqYzQccbOOtXTjU4ZodQhUCNrjsXDZXHncYnBqdA3s8HeHmiupair+wJ+yEy6RhIbt9TNedvRTn0zdGwidldLk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MOwq0Avk; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e931c858dbbso3847262276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758057784; x=1758662584; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1/ZO0MqZiDI6fHTwbXd86RNAJbgLdrJ10yQLcCe1K2k=;
+        b=MOwq0AvkD07vR8CfMxTsrMVlGyyrL7s06z93o6ydMUY2mKEywuFERdXB2EtmLDqzcT
+         Oa+KiKcmo6gAxVtI4GXFjQHMIYtDn+Ou4D6HQuEmU3OEKbb1FU5oJ4nfSoHaohWnfOJc
+         uiRyIjcqQLphoHZPeeT1mswv1Yg0lRfP8RH32yMrfEfzTAAs4z5kDSCsa5/Kmofg0CXE
+         Hl5/O8fITOlKG2WLYYroUl6Yz6p3OtiBM0huSpRMJtft6DwbYw0OMeZ7QsE2MVe6zjaw
+         B5HUAlZ3bndKLBCNN2g7xX8tz9NxoaMMEhutKhhm7oU2UUGQ5G7j+CdC+PHY1ZvXcCo4
+         kM1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758057784; x=1758662584;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1/ZO0MqZiDI6fHTwbXd86RNAJbgLdrJ10yQLcCe1K2k=;
+        b=Oa+fjvkdwzKE8TsTu223IpMFK4tTl9us/9S8ry/mdDqsNwtaWeUbV1HLoOYEbQMagG
+         p1HkyTlFhfPDxRTy2ebLGNTPqS5FRO/V8t1v2YXYoyt7dyU/rsS0WQopfrg4CeEJhtlV
+         d7YVtmY41du78kCpA1DUW+x6pCGN8Hq4QEsQe2GYTeUI1f40yUm9C+fe/sJCb6NihilV
+         Ydlx62K3EvJLg6D9VqWVxmRwe53QpkdaPF7mA+TM9PwCUtvmlYui0R3zVHAbEYPrqq8N
+         AAADWf3Zn7EPDuSgl4qNfHfY6eokXe6bSpCMWtc2esjEKELVcnJFVO9ruAFSWeP7704i
+         c92A==
+X-Forwarded-Encrypted: i=1; AJvYcCVoLjOowMhNXpoWJNTLPPrwDFgzwsZbcErTR3Ccc8sIZMTRjlq7oLxg5xuACBvovkeFtibld4zq9P4mq+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhWKMkp5V1MDDcEqkfRZICvpLNoo0bd9XAXhCddTQPzGMH1wJE
+	MjOiRM5uxPMc+RNFe8eURVJJJuUTbNZWtruwuHtIuwtBD5RH2FaNkd+YqRa3L8Urvw==
+X-Gm-Gg: ASbGncsJonQRgNJIAzgkVsflyqwMdahhV1b2zzJPnMPdwTraFkjR0KW8p18wQWUrgtT
+	K0vYKUdliGeLIFu6ch1LGz/HxAMIaSC4w746yHSkFKsLxrcjq0OTyVYIA7+W9vfnTDhKq5WSfHW
+	cCGEBLeKnMlt47frIcOUI6xxqDvNV2W4fR41OZlDWojHu9E7R83dr0k2TiSBzOu+xyQA5GFwRMp
+	mFseter3f5fYlkEtzsBLHdSpNwHa6ly1H6v9sBL0hM8kR8VyxgnJWERaFwARO196zlgzskxtaTs
+	+hjdlWfzd5gTKkgD+MFcSlscpoiMbNKPAn6a1cTvGPSJHSs+Xq/0lMkvuuMZOEYTV9BisTRU0zO
+	CorO3WIWm83DnOUedcwmOuG5zpBdeSBONVSgPkh3q2hUrRMikxAWtveNWfsSZ6X6BnScFsaPVuB
+	schkV3BBCL4MvbjQ==
+X-Google-Smtp-Source: AGHT+IF9km1aJwEt+1aGPxCzX4qDZv8bfQl194903OwDWSZ+8/On9Gh9pLdqJIZx54NMGgPjHY2hVg==
+X-Received: by 2002:a05:6902:4203:b0:e90:6ed1:ec51 with SMTP id 3f1490d57ef6-ea3d9a34108mr13441041276.14.1758057784374;
+        Tue, 16 Sep 2025 14:23:04 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea3f0fe5fcesm3633731276.29.2025.09.16.14.23.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 14:23:03 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:22:51 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Kairui Song <ryncsn@gmail.com>
+cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+    Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, 
+    Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>, 
+    Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+    Kemeng Shi <shikemeng@huaweicloud.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Ying Huang <ying.huang@linux.alibaba.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
+    Yosry Ahmed <yosryahmed@google.com>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+    linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH v4 00/15] mm, swap: introduce swap table as swap cache
+ (phase I)
+In-Reply-To: <20250916160100.31545-1-ryncsn@gmail.com>
+Message-ID: <99f57a96-611a-b6be-fe00-3ac785154d1c@google.com>
+References: <20250916160100.31545-1-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
- ALTRAD8 BMC
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250911051009.4044609-1-rebecca@bsdio.com>
- <20250911051009.4044609-3-rebecca@bsdio.com>
- <58a092c5-5dd0-4718-831a-e25ecb184087@lunn.ch>
- <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
- <74e68c53-2696-4f86-97d3-c0b0a74d4669@lunn.ch>
- <92bcdac9-44b1-4fc8-892a-01ef0ed0b7e0@bsdio.com>
- <3f5e82ec-d96e-4258-b117-9876313f5402@lunn.ch>
-Content-Language: en-US
-From: Rebecca Cran <rebecca@bsdio.com>
-In-Reply-To: <3f5e82ec-d96e-4258-b117-9876313f5402@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 9/16/25 13:07, Andrew Lunn wrote:
+On Wed, 17 Sep 2025, Kairui Song wrote:
+> V4 changes:
+> - Patch 14: fix potential cluster leak when attemp a sleep allocation of
+>   swap table: Just remove the logic that check and return the percpu
+>   cluster, it was trying to avoid fragmentation, which wasn't very
+>   successfully and may not work at all if there are multiple devices.
+>   The fragmentation is not a serious issue and given the chance of
+>   hitting that race is extremely low, let's just ignore that [ Chris Meson ].
 
-> Now, it looks like all other aspeed-g5 boards also don't link to the
-> PHY. But the driver does seem to support adding an 'mdio' node within
-> the ethernet node, and listing the PHYs. Something like:
->
->         mdio {
->                  #address-cells = <1>;
->                  #size-cells = <0>;
->
->                  ethphy0: ethernet-phy@0 {
->                          reg = <0>;
->                  };
->          };
->
-> And then you can add a phy-handle to point to it.
->
-> Then the question is, did Aspeed mess up the RGMII delays for g5? You
-> can try phy-mode = 'rgmii-id' and see if it works.
+And in Patch 11 I can see that you've made an important fix to the
+!folio_ref_freeze() block in __folio_migrate_mapping(): there had been a
+swap_cluster_unlock(ci) which you've fixed to swap_cluster_unlock_irq(ci):
+I was going to report that, with the WARNING and "BUG: sleeping function"s
+it caused, but you're ahead of me.
 
-I can't get that to work, with either 'rgmii-id' or 'rgmii'.
+Thanks also for fixing the shmem_replace_folio() locking and stats
+update, which I'd noticed too (but never hit): looks good now.
 
-It says "Failed to connect to phy".
+Hugh
 
-
--- 
-Rebecca Cran
-
+> - Patch 8 & 9: move some changes from Patch 9 to Patch 8 to avoid build
+>   error, no code change. [ Baolin Wang ]
+> - Patch 9: Fix locking section issue, should protect the shmem statistic
+>   update with spin lock irq. Also fix an warn on condition.
+> Link to V3:
+> - https://lore.kernel.org/linux-mm/20250910160833.3464-1-ryncsn@gmail.com/
 
