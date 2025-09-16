@@ -1,301 +1,262 @@
-Return-Path: <linux-kernel+bounces-819643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B97B5A3FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:31:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BDBB5A401
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BA63A96FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7461BC25E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BB42F7459;
-	Tue, 16 Sep 2025 21:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FB928643F;
+	Tue, 16 Sep 2025 21:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UCJ7K+1f"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B129A30E;
-	Tue, 16 Sep 2025 21:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="rcHTEiml"
+Received: from fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.158.153.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACB231BCA4;
+	Tue, 16 Sep 2025 21:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.158.153.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758058256; cv=none; b=uHaKz85fo9eBNHC/vBozAxO8pX2l2zfQbBfkWZTZ3wugU5TwcjGPY4gk98wqCvRcSRz/dAYXjnKyirolrMpiaTIcPCtSbNrkP4ZLa1YRfu5s9xDfDxlkzJV1BMYnfEImN0a7OY/KdaTTmpmaIGmEkYF6drMxbiUYc1+IrI528TE=
+	t=1758058313; cv=none; b=lizwwOV+68bQuNm75lVIW7Bl8+kWzBbsPb3xqUzV3KHqh79i0sCcQOLm1QWCRy3AvLGV+zD8f34lKqik1pQze3ilAEllgPB6AY/GsDA3krmGisifEZ0MRKTDmyIyyDHFUUsz/VBURQoAyWze1wk1y4aC9jNmsV53AXByNAMoB90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758058256; c=relaxed/simple;
-	bh=gJ9wZRVbw3udYzRjVbZa++IA+J+QJ8U5tc09EX/KI5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SrlPJpeSjYsbFLYu6XqjGZMOobFOZTQdi9+ar8dSAdieGwvSpslm6EVDjGCeZsZiG4xpAWOsLF1NMVXu8h0bJ8yDikFO1wGf2oKD8kj8D+60C8aKkwZav6CrYQm+I/CCsUw/8nCN8szLSgF67nwNWaWzz+1BXYJ+VRcKB6Qx250=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UCJ7K+1f; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E3BAB20171A9;
-	Tue, 16 Sep 2025 14:30:51 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E3BAB20171A9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758058252;
-	bh=QMrQd7BUWalzmb/hq+iMlexb31ti2rSYy0sE6qUO1AI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UCJ7K+1fN8x4tc0jV34ovb7Z+/a+h3a6Zsc0CRzpo+BXxyMu2F4o/sM/Tx310uwuh
-	 kgXPHMY3ohT1L/SnCR/ocVTEE7FgfuprXm6Ub98s2JwftWAmJIdf9nGsWabAsVa6hp
-	 JXi0TgH9tmR3OYopjspICMT6fkJYTnttLjxJe4/k=
-Message-ID: <79f5d0ac-0b3e-70fc-2cbe-8a2352642746@linux.microsoft.com>
-Date: Tue, 16 Sep 2025 14:30:51 -0700
+	s=arc-20240116; t=1758058313; c=relaxed/simple;
+	bh=tPSnCIJ2fjfvyUqz1Sz7AtvwoH0aRAKH0F+xy1WtxRg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sDbEKj7J2LRzkPgZvxrE3ggT4d3X8BL5W+KBRbq57rMoYVNHChrghMnG3a7MjihDX1u430PhZ1Aq5Um+AxvLPQn1g6E4E173r23SWL1lEVs9RPSSolYJdMYHe2CJuoMIpjcJRcVvB28NqP8lhgEimvCfdbz6Us/gMBTUl2gUwBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=rcHTEiml; arc=none smtp.client-ip=18.158.153.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758058311; x=1789594311;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ilQ/73+qBfqOHe+b+q+TP6map5E/gKjcyIq4SalEjEc=;
+  b=rcHTEiml9YOpTdgXOI8QSVZE3QA6KQwyAyiTCUG51FMZb4auPeIcxm0A
+   nw+rz5iT4zfOBfuQYjiH6hXnuKtDYZAsyC6fcv+7CZBiv5vSNE9dN49wf
+   rCBWDoNDvPbOKasqOiz/gBRipvyvUElSJU4qeHiwLkaSOo1lalUsJ7zjl
+   MklsVG27gEPTWm7E5fjpnzgTecIB85gDBuR9j2Ohx42VOHEm8Ngz5jHC8
+   3o/brV3FPNiVunxncIjYIKop7KaGq4AjNyGhxacfPzStYgsuIlu+0rJ0D
+   mdzwF48qKhX1i61hofBYy9u3RlXvVdHPa4CLlN+UPCBrzooQ3ApXVGLP0
+   A==;
+X-CSE-ConnectionGUID: pfmAMyMnTturDRrqzkmVLw==
+X-CSE-MsgGUID: NJ/yPmNES6aIScBUv8DgPQ==
+X-IronPort-AV: E=Sophos;i="6.18,270,1751241600"; 
+   d="scan'208";a="2099145"
+Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
+  by internal-fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 21:31:40 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:2298]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.1.3:2525] with esmtp (Farcaster)
+ id 55ff7b84-21b9-4458-87e5-c739e8f7df6b; Tue, 16 Sep 2025 21:31:40 +0000 (UTC)
+X-Farcaster-Flow-ID: 55ff7b84-21b9-4458-87e5-c739e8f7df6b
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 16 Sep 2025 21:31:37 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 16 Sep 2025
+ 21:31:31 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: <luc.vanoostenryck@gmail.com>, <rostedt@goodmis.org>, <mingo@redhat.com>,
+	<akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>, <sj@kernel.org>,
+	<David.Laight@ACULAB.COM>, <Jason@zx2c4.com>,
+	<andriy.shevchenko@linux.intel.com>, <bvanassche@acm.org>,
+	<keescook@chromium.org>, <linux-sparse@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jonnyc@amazon.com>, <farbere@amazon.com>, <stable@vger.kernel.org>,
+	Christoph Hellwig <hch@infradead.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, "Matthew Wilcox (Oracle)"
+	<willy@infradead.org>
+Subject: [PATCH 5/7 5.10.y] minmax: allow min()/max()/clamp() if the arguments have the same signedness.
+Date: Tue, 16 Sep 2025 21:31:25 +0000
+Message-ID: <20250916213125.8952-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v1 4/6] x86/hyperv: Add trampoline asm code to transition
- from hypervisor
-Content-Language: en-US
-To: Michael Kelley <mhklinux@outlook.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
- "arnd@arndb.de" <arnd@arndb.de>
-References: <20250910001009.2651481-1-mrathor@linux.microsoft.com>
- <20250910001009.2651481-5-mrathor@linux.microsoft.com>
- <SN6PR02MB41570D14679ED23C930878CCD415A@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: Mukesh R <mrathor@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41570D14679ED23C930878CCD415A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D043UWA002.ant.amazon.com (10.13.139.53) To
+ EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-On 9/15/25 10:55, Michael Kelley wrote:
-> From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Tuesday, September 9, 2025 5:10 PM
->>
->> Introduce a small asm stub to transition from the hypervisor to linux
-> 
-> I'd argue for capitalizing "Linux" here and in other places in commit
-> text and code comments throughout this patch set.
+From: David Laight <David.Laight@ACULAB.COM>
 
-I'd argue against it. A quick grep indicates it is a common practice,
-and in the code world goes easy on the eyes :).
+commit d03eba99f5bf7cbc6e2fdde3b6fa36954ad58e09 upstream.
 
->> upon devirtualization.
-> 
-> In this patch and subsequent patches, you've used the phrase "upon
-> devirtualization", which seems a little vague to me. Does this mean
-> "when devirtualization is complete" or perhaps "when the hypervisor
-> completes devirtualization"? Since there's no spec on any of this,
-> being as precise as possible will help future readers.
+The type-check in min()/max() is there to stop unexpected results if a
+negative value gets converted to a large unsigned value.  However it also
+rejects 'unsigned int' v 'unsigned long' compares which are common and
+never problematc.
 
-since control comes back to linux at the callback here, i fail to 
-understand what is vague about it. when hyp completes devirt, 
-devirt is complete.
+Replace the 'same type' check with a 'same signedness' check.
 
->>
->> At a high level, during panic of either the hypervisor or the dom0 (aka
->> root), the nmi handler asks hypervisor to devirtualize.
-> 
-> Suggest:
-> 
-> At a high level, during panic of either the hypervisor or Linux running
-> in dom0 (a.k.a. the root partition), the Linux NMI handler asks the
-> hypervisor to devirtualize.
-> 
->> As part of that,
->> the arguments include an entry point to return back to linux. This asm
->> stub implements that entry point.
->>
->> The stub is entered in protected mode, uses temporary gdt and page table
->> to enable long mode and get to kernel entry point which then restores full
->> kernel context to resume execution to kexec.
->>
->> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
->> ---
->>  arch/x86/hyperv/hv_trampoline.S | 105 ++++++++++++++++++++++++++++++++
->>  1 file changed, 105 insertions(+)
->>  create mode 100644 arch/x86/hyperv/hv_trampoline.S
->>
->> diff --git a/arch/x86/hyperv/hv_trampoline.S b/arch/x86/hyperv/hv_trampoline.S
->> new file mode 100644
->> index 000000000000..27a755401a42
->> --- /dev/null
->> +++ b/arch/x86/hyperv/hv_trampoline.S
->> @@ -0,0 +1,105 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * X86 specific Hyper-V kdump/crash related code.
-> 
-> Add a qualification that this is for root partition only, and not for
-> general guests?
+The new test isn't itself a compile time error, so use static_assert() to
+report the error and give a meaningful error message.
 
-i don't think it is needed, it would be odd for guests to collect hyp
-core. besides makefile/kconfig shows this is root vm only
+Due to the way builtin_choose_expr() works detecting the error in the
+'non-constant' side (where static_assert() can be used) also detects
+errors when the arguments are constant.
 
->> + *
->> + * Copyright (C) 2025, Microsoft, Inc.
->> + *
->> + */
->> +#include <linux/linkage.h>
->> +#include <asm/alternative.h>
->> +#include <asm/msr.h>
->> +#include <asm/processor-flags.h>
->> +#include <asm/nospec-branch.h>
->> +
->> +/*
->> + * void noreturn hv_crash_asm32(arg1)
->> + *    arg1 == edi == 32bit PA of struct hv_crash_trdata
-> 
-> I think this is "struct hv_crash_tramp_data".
+Link: https://lkml.kernel.org/r/fe7e6c542e094bfca655abcd323c1c98@AcuMS.aculab.com
+Signed-off-by: David Laight <david.laight@aculab.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+(cherry picked from commit d03eba99f5bf7cbc6e2fdde3b6fa36954ad58e09)
+Signed-off-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Eliav Farber <farbere@amazon.com>
+---
+ include/linux/minmax.h | 60 ++++++++++++++++++++++--------------------
+ 1 file changed, 32 insertions(+), 28 deletions(-)
 
-correct
-
->> + *
->> + * The hypervisor jumps here upon devirtualization in protected mode. This
->> + * code gets copied to a page in the low 4G ie, 32bit space so it can run
->> + * in the protected mode. Hence we cannot use any compile/link time offsets or
->> + * addresses. It restores long mode via temporary gdt and page tables and
->> + * eventually jumps to kernel code entry at HV_CRASHDATA_OFFS_C_entry.
->> + *
->> + * PreCondition (ie, Hypervisor call back ABI):
->> + *  o CR0 is set to 0x0021: PE(prot mode) and NE are set, paging is disabled
->> + *  o CR4 is set to 0x0
->> + *  o IA32_EFER is set to 0x901 (SCE and NXE are set)
->> + *  o EDI is set to the Arg passed to HVCALL_DISABLE_HYP_EX.
->> + *  o CS, DS, ES, FS, GS are all initialized with a base of 0 and limit 0xFFFF
->> + *  o IDTR, TR and GDTR are initialized with a base of 0 and limit of 0xFFFF
->> + *  o LDTR is initialized as invalid (limit of 0)
->> + *  o MSR PAT is power on default.
->> + *  o Other state/registers are cleared. All TLBs flushed.
-> 
-> Clarification about "Other state/registers are cleared":  What about
-> processor features that Linux may have enabled or disabled during its
-> initial boot? Are those still in the states Linux set? Or are they reset to
-> power-on defaults? For example, if Linux enabled x2apic, is x2apic
-> still enabled when the stub is entered?
-
-correct, if linux set x2apic, x2apic would still be enabled.
-
->> + *
->> + * See Intel SDM 10.8.5
-> 
-> Hmmm. I downloaded the latest combined SDM, and section 10.8.5
-> in Volume 3A is about Microcode Update Resources, which doesn't
-> seem applicable here. Other volumes don't have a section 10.8.5.
-
-google ai found it right away upon searching: intel sdm 10.8.5 ia-32e
-
->> + */
->> +
->> +#define HV_CRASHDATA_OFFS_TRAMPCR3    0x0    /*	 0 */
->> +#define HV_CRASHDATA_OFFS_KERNCR3     0x8    /*	 8 */
->> +#define HV_CRASHDATA_OFFS_GDTRLIMIT  0x12    /* 18 */
->> +#define HV_CRASHDATA_OFFS_CS_JMPTGT  0x28    /* 40 */
->> +#define HV_CRASHDATA_OFFS_C_entry    0x30    /* 48 */
-> 
-> It seems like these offsets should go in a #include file along
-> with the definition of struct hv_crash_tramp_data. Then the
-> BUILD_BUG_ON() calls in hv_crash_setup_trampdata() could
-> check against these symbolic names instead of hardcoding
-> numbers that must match these.
-
-yeah, that works too and was the first cut. but given the small
-number of these, and that they are not used/needed anywhere else,
-and that they will almost never change, creating another tiny header
-in a non-driver directory didn't seem worth it.. but i could go
-either way.
-
->> +#define HV_CRASHDATA_TRAMPOLINE_CS    0x8
-> 
-> This #define isn't used anywhere.
-
-removed
-
->> +
->> +	.text
->> +	.code32
->> +
->> +SYM_CODE_START(hv_crash_asm32)
->> +	UNWIND_HINT_UNDEFINED
->> +	ANNOTATE_NOENDBR
-> 
-> No ENDBR here, presumably because this function is entered via other
-> than an indirect CALL or JMP instruction. Right?
-> 
->> +	movl	$X86_CR4_PAE, %ecx
->> +	movl	%ecx, %cr4
->> +
->> +	movl %edi, %ebx
->> +	add $HV_CRASHDATA_OFFS_TRAMPCR3, %ebx
->> +	movl %cs:(%ebx), %eax
->> +	movl %eax, %cr3
->> +
->> +	# Setup EFER for long mode now.
->> +	movl	$MSR_EFER, %ecx
->> +	rdmsr
->> +	btsl	$_EFER_LME, %eax
->> +	wrmsr
->> +
->> +	# Turn paging on using the temp 32bit trampoline page table.
->> +	movl %cr0, %eax
->> +	orl $(X86_CR0_PG), %eax
->> +	movl %eax, %cr0
->> +
->> +	/* since kernel cr3 could be above 4G, we need to be in the long mode
->> +	 * before we can load 64bits of the kernel cr3. We use a temp gdt for
->> +	 * that with CS.L=1 and CS.D=0 */
->> +	mov %edi, %eax
->> +	add $HV_CRASHDATA_OFFS_GDTRLIMIT, %eax
->> +	lgdtl %cs:(%eax)
->> +
->> +	/* not done yet, restore CS now to switch to CS.L=1 */
->> +	mov %edi, %eax
->> +	add $HV_CRASHDATA_OFFS_CS_JMPTGT, %eax
->> +	ljmp %cs:*(%eax)
->> +SYM_CODE_END(hv_crash_asm32)
->> +
->> +	/* we now run in full 64bit IA32-e long mode, CS.L=1 and CS.D=0 */
->> +	.code64
->> +	.balign 8
->> +SYM_CODE_START(hv_crash_asm64)
->> +	UNWIND_HINT_UNDEFINED
->> +	ANNOTATE_NOENDBR
-> 
-> But this *is* entered via an indirect JMP, right? So back to my
-> earlier question about the state of processor feature enablement.
-> If Linux enabled IBT, is it still enabled after devirtualization and
-> the hypervisor invokes this entry point? Linux guests on Hyper-V
-> have historically not enabled IBT, but patches that enable it are
-> now in linux-next, and will go into the 6.18 kernel. So maybe
-> this needs an ENDBR64.
-
-IBT would be disabled in the transition here.... so doesn't really
-matter. ENDBR ok too..
-
->> +SYM_INNER_LABEL(hv_crash_asm64_lbl, SYM_L_GLOBAL)
->> +	/* restore kernel page tables so we can jump to kernel code */
->> +	mov %edi, %eax
->> +	add $HV_CRASHDATA_OFFS_KERNCR3, %eax
->> +	movq %cs:(%eax), %rbx
->> +	movq %rbx, %cr3
->> +
->> +	mov %edi, %eax
->> +	add $HV_CRASHDATA_OFFS_C_entry, %eax
->> +	movq %cs:(%eax), %rbx
->> +	ANNOTATE_RETPOLINE_SAFE
->> +	jmp *%rbx
->> +
->> +	int $3
->> +
->> +SYM_INNER_LABEL(hv_crash_asm_end, SYM_L_GLOBAL)
->> +SYM_CODE_END(hv_crash_asm64)
->> --
->> 2.36.1.vfs.0.0
->>
-> 
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index e8e9642809e0..501fab582d68 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -11,9 +11,8 @@
+  *
+  * - avoid multiple evaluations of the arguments (so side-effects like
+  *   "x++" happen only once) when non-constant.
+- * - perform strict type-checking (to generate warnings instead of
+- *   nasty runtime surprises). See the "unnecessary" pointer comparison
+- *   in __typecheck().
++ * - perform signed v unsigned type-checking (to generate compile
++ *   errors instead of nasty runtime surprises).
+  * - retain result as a constant expressions when called with only
+  *   constant expressions (to avoid tripping VLA warnings in stack
+  *   allocation usage).
+@@ -21,23 +20,30 @@
+ #define __typecheck(x, y) \
+ 	(!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+ 
+-#define __no_side_effects(x, y) \
+-		(__is_constexpr(x) && __is_constexpr(y))
++/* is_signed_type() isn't a constexpr for pointer types */
++#define __is_signed(x) 								\
++	__builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),	\
++		is_signed_type(typeof(x)), 0)
+ 
+-#define __safe_cmp(x, y) \
+-		(__typecheck(x, y) && __no_side_effects(x, y))
++#define __types_ok(x, y) \
++	(__is_signed(x) == __is_signed(y))
+ 
+-#define __cmp(x, y, op)	((x) op (y) ? (x) : (y))
++#define __cmp_op_min <
++#define __cmp_op_max >
+ 
+-#define __cmp_once(x, y, unique_x, unique_y, op) ({	\
++#define __cmp(op, x, y)	((x) __cmp_op_##op (y) ? (x) : (y))
++
++#define __cmp_once(op, x, y, unique_x, unique_y) ({	\
+ 		typeof(x) unique_x = (x);		\
+ 		typeof(y) unique_y = (y);		\
+-		__cmp(unique_x, unique_y, op); })
++		static_assert(__types_ok(x, y),		\
++			#op "(" #x ", " #y ") signedness error, fix types or consider u" #op "() before " #op "_t()"); \
++		__cmp(op, unique_x, unique_y); })
+ 
+-#define __careful_cmp(x, y, op) \
+-	__builtin_choose_expr(__safe_cmp(x, y), \
+-		__cmp(x, y, op), \
+-		__cmp_once(x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y), op))
++#define __careful_cmp(op, x, y)					\
++	__builtin_choose_expr(__is_constexpr((x) - (y)),	\
++		__cmp(op, x, y),				\
++		__cmp_once(op, x, y, __UNIQUE_ID(__x), __UNIQUE_ID(__y)))
+ 
+ #define __clamp(val, lo, hi)	\
+ 	((val) >= (hi) ? (hi) : ((val) <= (lo) ? (lo) : (val)))
+@@ -46,17 +52,15 @@
+ 		typeof(val) unique_val = (val);				\
+ 		typeof(lo) unique_lo = (lo);				\
+ 		typeof(hi) unique_hi = (hi);				\
++		static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)), 	\
++				(lo) <= (hi), true),					\
++			"clamp() low limit " #lo " greater than high limit " #hi);	\
++		static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");	\
++		static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");	\
+ 		__clamp(unique_val, unique_lo, unique_hi); })
+ 
+-#define __clamp_input_check(lo, hi)					\
+-        (BUILD_BUG_ON_ZERO(__builtin_choose_expr(			\
+-                __is_constexpr((lo) > (hi)), (lo) > (hi), false)))
+-
+ #define __careful_clamp(val, lo, hi) ({					\
+-	__clamp_input_check(lo, hi) +					\
+-	__builtin_choose_expr(__typecheck(val, lo) && __typecheck(val, hi) && \
+-			      __typecheck(hi, lo) && __is_constexpr(val) && \
+-			      __is_constexpr(lo) && __is_constexpr(hi),	\
++	__builtin_choose_expr(__is_constexpr((val) - (lo) + (hi)),	\
+ 		__clamp(val, lo, hi),					\
+ 		__clamp_once(val, lo, hi, __UNIQUE_ID(__val),		\
+ 			     __UNIQUE_ID(__lo), __UNIQUE_ID(__hi))); })
+@@ -66,14 +70,14 @@
+  * @x: first value
+  * @y: second value
+  */
+-#define min(x, y)	__careful_cmp(x, y, <)
++#define min(x, y)	__careful_cmp(min, x, y)
+ 
+ /**
+  * max - return maximum of two values of the same or compatible types
+  * @x: first value
+  * @y: second value
+  */
+-#define max(x, y)	__careful_cmp(x, y, >)
++#define max(x, y)	__careful_cmp(max, x, y)
+ 
+ /**
+  * umin - return minimum of two non-negative values
+@@ -82,7 +86,7 @@
+  * @y: second value
+  */
+ #define umin(x, y)	\
+-	__careful_cmp((x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull, <)
++	__careful_cmp(min, (x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull)
+ 
+ /**
+  * umax - return maximum of two non-negative values
+@@ -90,7 +94,7 @@
+  * @y: second value
+  */
+ #define umax(x, y)	\
+-	__careful_cmp((x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull, >)
++	__careful_cmp(max, (x) + 0u + 0ul + 0ull, (y) + 0u + 0ul + 0ull)
+ 
+ /**
+  * min3 - return minimum of three values
+@@ -142,7 +146,7 @@
+  * @x: first value
+  * @y: second value
+  */
+-#define min_t(type, x, y)	__careful_cmp((type)(x), (type)(y), <)
++#define min_t(type, x, y)	__careful_cmp(min, (type)(x), (type)(y))
+ 
+ /**
+  * max_t - return maximum of two values, using the specified type
+@@ -150,7 +154,7 @@
+  * @x: first value
+  * @y: second value
+  */
+-#define max_t(type, x, y)	__careful_cmp((type)(x), (type)(y), >)
++#define max_t(type, x, y)	__careful_cmp(max, (type)(x), (type)(y))
+ 
+ /**
+  * clamp_t - return a value clamped to a given range using a given type
+-- 
+2.47.3
 
 
