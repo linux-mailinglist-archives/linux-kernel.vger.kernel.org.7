@@ -1,122 +1,164 @@
-Return-Path: <linux-kernel+bounces-818548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D845B59323
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A03B5933A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CDEA1751A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2563B98D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C3A27D784;
-	Tue, 16 Sep 2025 10:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A160A298CA5;
+	Tue, 16 Sep 2025 10:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjVktaW7"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CIKH2PUe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D32BE655
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBBB29E114
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758017798; cv=none; b=VnrEE5F6K3kLTrFGauAYHulJtSsn7LqO8K2f8+trvnqrtu7zf0cvvRDq9h5tFkGEnbN6mi6Q7KtIVda5bMFeHUJwSNmaVGGeE4o0VC24/rIngpC9WIBTFShHPbp2/D5Q4paQch21W/AbS+Hm0dtu2DU9Qw87MT9Ftm4JyLFoxSQ=
+	t=1758017875; cv=none; b=qpTRH6Ae+EAg8LBteSSLn9j2rZeAuP3WBW5ZfBu1ezLa0AI9QGuAJg5COUbCgPJ1Z6EoznagVCqfEzAejMdLYgvPgg7fqrgmWnKbfZhOTXwCn8DD4dh1ZePU+GQacCbR88WKi7U2fwZpFKLnz7gjBkTVMuxddsYTvO/ry4v7y3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758017798; c=relaxed/simple;
-	bh=VmZzhETWZwgrAXAyoyBia2dF4hbrFav1Sum4dtojLBk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UTqQAv+T3Ue9NpPZXFyj2XqenLPd7UwGu6F39BB1zhSPRqLK+d3HorgTqusajtTVXNaRdHluHHXinnbtXSQaqoelLBVN2pMVvXdRYRkXXePcGfUG/4os2yn0/6pC2wGQgBtzqz+kYY1V896BxUZUSt6uFFV0aHhxqmQgBTOHgiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kjVktaW7; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ebe8dc13a3so938004f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758017795; x=1758622595; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VmZzhETWZwgrAXAyoyBia2dF4hbrFav1Sum4dtojLBk=;
-        b=kjVktaW7AZ99MOW897CGo5btfUWpf5Fb98oj+ECi76u3iIobYRNGf4/kp5iYe88+m4
-         l06c4S0s/HwgcG0VGt/bOg+Kh4Mg+hrrkEkQbd6/RiTatzJgztYtinQcreZIwInaYVb0
-         i4TwmOmdUl3xmVqHu0B9mUsU0DadHCzsFVRr6yNWrgvz6247d0R0315jjSMqaa0UpA8Q
-         vFDv5+W6hkH+8AlQYGqO7fk7Tg0S4xtlA2TTdckNufDJB+jzxv1Zq/TBTIamnUGFb0M5
-         k0Osfkiu9QbJ08SjvbkM6Vi16tA1w6NyBLIaEqRGW7+/VKzKdGodA1CrT9KOrOQJ7FTt
-         ZyzA==
+	s=arc-20240116; t=1758017875; c=relaxed/simple;
+	bh=/cvaAE2HoDQnjzYGy471yA14D/oJLdLlepOzXO6YJTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBrOq2eYYmcCSgjP1F7YZxPFtHIMsSrNm4W1+IYi0CXz2//PbDzaAEXWhcO1plDn8SazSJjvNeY1aoN/iZ6ERWVEPhdKnXgAFIw/rImUSEigG51R+/InBGCBsGMZPlOnmNECbTVDPj/YnguL1NO6W/WG156l974NIjgBF2q0kvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CIKH2PUe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9sFW2014169
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:17:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=2Er1pNum/WmhMsDVwFK5vpTl
+	0bY+Xaqs3dc/o+OSOUw=; b=CIKH2PUeyqmm4yHUnP0Kod6NjJwBKmeJCzMVunQ9
+	ukcYme1sv6tyUgnK0nE0u0OMV5O2J2JJSVJ70Bz9KNKmYT54hQlIfnN1g7coe+Ph
+	bOzmveFKp6mqhPqPZttgo9XLwoKAfcYIrXdkbhKWvUWSjuajFCTNhva2CJZ6J0m5
+	3jHsG0/vf88kLi9wbCBrOAGn440ViPnLuhrxA+KH03faI7jE35Fgry5emKhxfm+8
+	VzwIgVD9HVXqMZM8rhtSGoBsMjEFgN3KHxaP+NLvxkjvaHjINiKeR7daN60R5MmX
+	pnEGAZli1y4uEdV8OduZHz7QulKGFv7KZPxs+xwzTBT9cQ==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496x5asm5m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:17:53 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b7ad72bc9dso32772501cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:17:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758017795; x=1758622595;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VmZzhETWZwgrAXAyoyBia2dF4hbrFav1Sum4dtojLBk=;
-        b=r9kF+dNZ63ou/25iW/jqaWLkGuvYUHqxV9M/1IDah13WNUJhcYrqHcO9Dp1zBX6H+w
-         dsfbrNo3z+IGjgdteTbXqRVwSVfssEwLWnJU7HMhzRi/cqY0uFMhwl9OVnN1qcAL6HhB
-         UEbb7l7b/1OzYQW+WI9qh2nMP5cDbkdaE2IIFVrJJjz0mvsNwBe6B3zVi7pL2FV+EWmk
-         vPonlNa7nA7ingH6Ca9ScFWvU5LOsNTKOH+0nswW7bO3NSGzSt128IaaHsYYiAfQmXQu
-         ZbGnsoxb78NJkmLAVyZr6phN6vXZ6Ie/A9wf9KSFysme8/SBrVNm0JQRSUYkid/OY9gh
-         X9NA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgqhSRJq4LUetl3Qkp4ZT7EfpeoGQi1Rr9Nlyarz6581xMTgY8p5Na0FCrgXEj7zldWuSEtuT3P6afUT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtwXsY3gIdxd+JjHZhNL+LKEVyFgI/+0AR35ptxmj7dRT2XbSl
-	CpR40G47Bp7bNFNmepRxftv6BQrQSFaZJuxl+1x/e6bCuwqQQZuKP918
-X-Gm-Gg: ASbGncvmOu246pcGr1veUsogTQ3mPb6Ipu79Q0O285E7gLRq4+Mnv6nkwbvgeyjZ8kF
-	KCI4l4D4s5J/OZyTxNk04pzjXdCLjV3UfRGKHH1AG5FJqCacK0pZFBrfOW0GAjP6i8Ab2SiGFUZ
-	OUIsO5D1eTaFgqsk/ch1B3yi4FlmfwVPZX8PVkPj2vC/GcJ9kDZCHDuIjEm20c0/g2L7c3fEMMj
-	RmypYyrwpUrkl2/nH/QWS5T00TxiMyJeR64xVpTwRWCauj60CXii2PMjRxknxbvro2x7NINeVkw
-	uL8rYX/0VaUuarHt7CQeyC8H5oL0BlhW+HHknNV49IABfBPXk8yvAtn8EQ4EUGuwvtLzbrwf7TA
-	1VTFuNYWGkXYscLHnCip+qSRzFY963QU=
-X-Google-Smtp-Source: AGHT+IEsDQnZ3ALRjZKNZkTIB6aa3ymyhHeIfAjtkOgrgqYBTsLvorpYR1r3Og+DA0Xw9SYb3SSGQg==
-X-Received: by 2002:a05:6000:1acb:b0:3e5:d2f1:403d with SMTP id ffacd0b85a97d-3e7659e981fmr16107836f8f.36.1758017795283;
-        Tue, 16 Sep 2025 03:16:35 -0700 (PDT)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037b9ebbsm229691635e9.11.2025.09.16.03.16.34
+        d=1e100.net; s=20230601; t=1758017872; x=1758622672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Er1pNum/WmhMsDVwFK5vpTl0bY+Xaqs3dc/o+OSOUw=;
+        b=gfV5gfGowtUzHORNNm/OhFsk7x9bqgUYowBKJYBsL7x53fKYMF8pNUTgcA/fvB/o20
+         QDFD482VkmnIwoFTYwXpzeSfrmQ/ey+/PecUgtIQANWf2nCMuVdGjWqOuU/KYFSjOuyZ
+         5MyuEoHXCcKqvM+Q8QzvqvZjquSOJPNH/G59L0r27YXfaIj96p+F/IVTlawWJWXq2gOk
+         MuXWwfOoIfezaInaroPb0GHqgcp1S76gBigL88l494KibmX9mhlS1MbeJK0wMBD1Uk3m
+         jMVJnUKwSZGGVdFVpyACv6OhX7TMAAf5Nl/1HvyHsUjdcwCZ1YnpEKp6Xnb5cU0uPN/Y
+         6ChA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZZE/Z03AVLn1wxOPB4B58g/PD5pv8KNaPyNafrC+dB6gmyB0MVVq/wjfFxlto1B3cOUECSapA5C2hLzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIwzqRU9IhAgJ62sArz3Z3YDWWYDUzPfqbDxTKOHHCeXKX8RqY
+	U6ZsnmuksNfXz7MqXfBxt9/1DXGzVvRSI9TUpHP9Nmf/dsg0VkcVPYk/E9z3EzQRGRxL1+HisU4
+	+PCg9MIT4MBRRbPVX4xbz/pDxNfPlfld/8Mg0vPPuW++kxCKmMSav17S4plsuUgphQ54=
+X-Gm-Gg: ASbGncs52P/1lXI4eHqgUfPmyN2l6x39Z3TM/Bp4J0TMrn90ytj6AeHWnUFe6DmoiuV
+	tPjGfdQUUmxstksKJUBOWQ/HM3m6xfwL/vO/AVB1CUOV0x6K8UdBfQ2XVmf9yy5qDqhVWwnWUfL
+	agFJ+UnPw5MhEuZzg0KCh0bbrzpNwIrlstdvj2JuOltmd0PGLao547tTswUUHmSfwnSWsBsDrNW
+	uOX94P4xWqNbuPeNm7kpWHxVujaMpfjtus2wM4ePeTQhGcsNOGJ3Deyo82/G0MoVYcF9RhBkJOB
+	KQkhx74r4qFaWwlbdPDX+nbVdih5zIVqAri4kV6/fJ0dcAkta/eAswABug58LswuoVXg89J9LXH
+	J9AwGVXDgwgIwQYqkY7tjibF/7i6pT6tIjOgOg9oLqt6DIBkG2F+D
+X-Received: by 2002:a05:622a:1f16:b0:4b1:247f:4e0f with SMTP id d75a77b69052e-4b77d0e8accmr201211381cf.57.1758017872325;
+        Tue, 16 Sep 2025 03:17:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGG3/RyuWQfRZW1mY1j1shvOvp1blH44FZkzAOAV9d+81uzHG2LCJYhHB+EHzub9I/8NxYxnA==
+X-Received: by 2002:a05:622a:1f16:b0:4b1:247f:4e0f with SMTP id d75a77b69052e-4b77d0e8accmr201210971cf.57.1758017871659;
+        Tue, 16 Sep 2025 03:17:51 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e5d5e70c8sm4310701e87.52.2025.09.16.03.17.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 03:16:34 -0700 (PDT)
-Message-ID: <bb6ab3f73b6f18d7e8c37c28481a13a7808ba44e.camel@gmail.com>
-Subject: Re: [PATCH] i3c: master: adi: fix header location
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: alexandre.belloni@bootlin.com, Jorge Marques <jorge.marques@analog.com>,
-  Frank Li <Frank.Li@nxp.com>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 16 Sep 2025 11:17:00 +0100
-In-Reply-To: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
-References: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+        Tue, 16 Sep 2025 03:17:50 -0700 (PDT)
+Date: Tue, 16 Sep 2025 13:17:49 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: rpmh-regulator: Update pmic-id property
+ info
+Message-ID: <le4fsudu7fh6q5sstz5zndizfssgiycswzhmzuoioccxvth5mo@weyftlxiohlz>
+References: <20250916-glymur-rpmh-regulator-driver-v1-0-bb9b00e93a61@oss.qualcomm.com>
+ <20250916-glymur-rpmh-regulator-driver-v1-2-bb9b00e93a61@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-glymur-rpmh-regulator-driver-v1-2-bb9b00e93a61@oss.qualcomm.com>
+X-Proofpoint-GUID: ShCEn1s3lCI6_wvkalDxFpSv_hH_akvr
+X-Proofpoint-ORIG-GUID: ShCEn1s3lCI6_wvkalDxFpSv_hH_akvr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDAxMCBTYWx0ZWRfX/iC3Jz3aGk1g
+ V4tS12CAOX2eKmGC92+jUgwv/cefbdjKzhX369X7HIqzxfY8Ire7nO5buri1li0GynoHikhNSP5
+ tSr4ZpsLsvRVcXDQ/IyXMGXEQ84kc0k02TasMjQqRaOoUXIzqIFP/2k1eAnQ+pDU4I1pgaC5Fd8
+ rU6CTeZ1sA5MvjEtKK0JW0jldP3Zdq0a3qpofXamUVTtp0aeHkmyChQ2pyJTjPsGxcTvnpKkRrK
+ c7c11rU1E2qL0KykFnqez1T6cSTM211H/pdbMhF985+5KuzfSuL7inb5rNTbcT0K/yecsxMVUk8
+ fK7nIbhJfNopK2oCrGBaTJY5Jm5+JmWhe2SaX6aEmOpMjuU1hzJ7+YtkAPm6rO/QUFJhPEgqmZ2
+ HnwCg3GO
+X-Authority-Analysis: v=2.4 cv=WpQrMcfv c=1 sm=1 tr=0 ts=68c93951 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=8Yl64O_mmtZwUmTP7D0A:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160010
 
-On Tue, 2025-09-16 at 11:12 +0200, alexandre.belloni@bootlin.com wrote:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
->=20
-> The adi-axi-common header has been moved to the upper directory.
->=20
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On Tue, Sep 16, 2025 at 01:28:16PM +0530, Kamal Wadhwa wrote:
+> On new targets like Glymur, `pmic-id` will have this new
+> format `[A-N]_E[0-3]`.
+
+This is a statement regarding the patch. Please desribe why you have to
+perform the change.
+
+> Update the property description to
+> reflect this information.
+> 
+> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
 > ---
+>  Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+> index 40e57b10ebbebeff130871b6d978df64111b6f29..40ddc64577e78b5c0dbb7b4e8893a08e8b37c92e 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+> @@ -108,7 +108,7 @@ properties:
+>          RPMh resource name suffix used for the regulators found
+>          on this PMIC.
+>      $ref: /schemas/types.yaml#/definitions/string
+> -    enum: [a, b, c, d, e, f, g, h, i, j, k, l, m, n]
+> +    pattern: "^[a-n]|[A-N]_E[0-3]+$"
+>  
+>    qcom,always-wait-for-ack:
+>      description: |
+> 
+> -- 
+> 2.25.1
+> 
 
-Acked-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-
-> =C2=A0drivers/i3c/master/adi-i3c-master.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi=
--i3c-
-> master.c
-> index 162f9eed39aa..18597ba1f1c3 100644
-> --- a/drivers/i3c/master/adi-i3c-master.c
-> +++ b/drivers/i3c/master/adi-i3c-master.c
-> @@ -10,7 +10,7 @@
-> =C2=A0#include <linux/clk.h>
-> =C2=A0#include <linux/err.h>
-> =C2=A0#include <linux/errno.h>
-> -#include <linux/fpga/adi-axi-common.h>
-> +#include <linux/adi-axi-common.h>
-> =C2=A0#include <linux/i3c/master.h>
-> =C2=A0#include <linux/interrupt.h>
-> =C2=A0#include <linux/io.h>
+-- 
+With best wishes
+Dmitry
 
