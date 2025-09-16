@@ -1,397 +1,151 @@
-Return-Path: <linux-kernel+bounces-818917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4196B59815
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:47:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF17B59817
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7293B17DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589A9461286
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D45530C35D;
-	Tue, 16 Sep 2025 13:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B9E3019BE;
+	Tue, 16 Sep 2025 13:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyGjFUBd"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gWzSaSOK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD261A9FAA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A33101F2;
+	Tue, 16 Sep 2025 13:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030427; cv=none; b=M5rMzQEBp5k6nsy4ul3WXgoTLwyNsd3B4oJCflja7reO8YDpJ6x/d/V+dJT+3LHGl6z6oXP86cBr5Ck3ADCpqTV07vuS/CkdY2ocUr3S7RwSsbp1WIbe6/EOIv/mxxaDUs6DQqqQbYeauZlHW/G0siBxwtewO1qFTJJVZMesz6Y=
+	t=1758030492; cv=none; b=s59/a7GDz4zVbwVvD2u30DcU4IUGibU9dL1De1dJfAnt/wL+L7jUJWKLOjyW77eElUb7ceBUg1JRfpM84JSKYaZbLLAiL6SgSHQ96KeE1XcgU2w1NOJp/a+5WeiOjmyF4Zs0OEzsC7Rh9MUKdrHOKvfkX7kM0JdrokEV4YckhOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030427; c=relaxed/simple;
-	bh=d5sEWR17U25DAQ6oehWF9Og8c/Wdt5u0yUxA1W0dQTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nSJCNcWnK5LHT4tIVsZU/T6bLrkAGKeHl1WFyS2DdnYCYSPvy2SigghEVKZqf5NtJ7V7/6048DoGxa0HI6N2j9WQsvDrF5784yNczucIEx9JrlRjUygBelZZ0RxAYfBO1ZuMM7JgyHCQL/LVKxhtPmfNdctzX+xxoQXUTLN33X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyGjFUBd; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ec4d6ba12eso663335f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758030424; x=1758635224; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3CM2qaX5pVBBNYAELqYFtRQ1NuXIiKMqwPlPQg7yz3w=;
-        b=GyGjFUBdDcfTeBiNv7TfS7U4a0+zl6sze4O9vihCgrvBhCmNIt9yi9inDO+7ly+lOH
-         MN/h0IN03Po6rQQltYru9tnXig5qVXpKxTE2hZEDxRQYjkzzkHuat48Qc+emUHM6yAVn
-         rePoSEf49SqZcFehyTgfb2uj2IvTKAUAaqcIXH3OqZZSpALvwpSA+CswdvM95aB+oi3x
-         GXBdhttpjyEp0UgG5FipHUWyzRpuhugoZEIVQI29uEf5YGnkDl91/jjwUDXFjKfZyp4y
-         981+ytaJfSTDSTE7UAj10txdCH4escpxIMQwBU2YPGovnQ/mbyC8Sa3GGlkUMoGNoMi2
-         K+kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758030424; x=1758635224;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3CM2qaX5pVBBNYAELqYFtRQ1NuXIiKMqwPlPQg7yz3w=;
-        b=o3iP6dyVKd1OFIOnMvPL1OX4MKKPDhZOiJicXgPHH7AdH3+AI789dnE9nCWX2Pu8hz
-         HbZT1VDliD1PFW2PR55LC0iGkhZF7BDGAbI5IUs91Avy/KV6AW1fFele1cpb/A/cQFrO
-         0fuCQrAGld52296sjk1V3Poev+vETXjIT+S+UWrC8t3YS2rqrBgS91JmdWCh0fUpYqxO
-         ZU7l9/aibSLXrJ0Sw688plpcDg1+bC8WD54SeRiRmLhXPtYOAmJ5NYp1TctvpyoM43wP
-         UrUH8D8cWXZvi6SqT7ZXY6SRQAZy4ILvlxXUxp+m/kbKCZEcUvK8HoY08V8Sjd1B6DZV
-         bkXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJeDAIQshrUgpBA2EHeY3SN8HL7huGtudaKPckvMfPs8+P4bHFyW9+E6PXAbQmF1gp3suzNQ5flOWhckY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiLzm7oGYOBtTcVFwkXhHetoTcWatSj6aAOQtkdX9e3TlwNNBt
-	E7N2NjzvOwoqyXJforccnP8Jso6mCTo6VeTNXaEt7b8Onh6iaEFdYDdG
-X-Gm-Gg: ASbGnctWM8UrD0UkhZaSe1q0qZi+KceicWhxVBd+hCxFTSwSBjjvEpqakEBSstz12k8
-	yfzwcZpEgA6AlWfcE5U5L96uzjDhSJWDwydoCjAxmpMB6OTPWflY2grdM5isBGMrHsY17gI+dt1
-	E7fiGhE/mPeZBgqQt+ov3toPxdnc8nhywKJ+EphXP/HHa4jHm+Mo1l1eUUvzBGXtP1exml9HpFG
-	HW4GEofC4HJie5nwlyzhYi2uOx2cctzqP40yvKW1/KkXb6zGT53jh/aeutLnrXR51bV1hYE1l3v
-	MmKhul268Mjr+kNrHQgdOvbMvK8p/99P6uStGudN9A3rBvopp2d5q6IgAxTEusLHmincgcKQqtE
-	JcBmOmpcd2UlBqEeMuEcGZF28BQ9R7XrIyA==
-X-Google-Smtp-Source: AGHT+IE0g2tbTZD+K6JDDeehba442dHQbFSeZqIVWreC4t3gDG74nWQXd5+aAaYR+7bLotRLNjtV3A==
-X-Received: by 2002:a05:6000:40c9:b0:3c7:df1d:3d9 with SMTP id ffacd0b85a97d-3e7659c4ba9mr12829580f8f.39.1758030423185;
-        Tue, 16 Sep 2025 06:47:03 -0700 (PDT)
-Received: from localhost ([45.10.155.18])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8e7692c9asm13485412f8f.30.2025.09.16.06.46.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 06:47:02 -0700 (PDT)
-Message-ID: <dca173e6-f23d-4f54-8ace-74329439c7da@gmail.com>
-Date: Tue, 16 Sep 2025 15:46:52 +0200
+	s=arc-20240116; t=1758030492; c=relaxed/simple;
+	bh=hyuKb6rkQURLOfxtkeFWXUDdUhfYigc2HSrSLSq7jaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VS/E8YFf0VKOq5v55PyGCAbj/a3JQB025+oKVhcp6unJKld63Kjm5DZCNNVfzchaxNUzD1dwJaFJrConao7ouTqgXgyN9DQenADUYtF5oUa9eBkdEk+CnXFm8Ap8lIzFEHrqt5u/+e0FDZbz/n/Zg1iL/uf1J9sYtUMUbPFltFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gWzSaSOK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G7GL1v020054;
+	Tue, 16 Sep 2025 13:48:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ZJqOdMzCpzPDq3m56tecE9bqsioz+tE7IPA7wHqNm
+	VU=; b=gWzSaSOKWiMC0SCFLSCHjAuOY8Fgn9qYS7w5sxp7gCX2NID6vLuSdL6DK
+	IfKbIgn+cQzFYZyzc+l97TO5UNklgrUv3zKwWo7A1YU2MaGIRVHRNil/nN54hmRG
+	yPbSkLrk8ratI10PnUqgDpSYgNKI1wuvKAyVtABz9mvvg8ecgBL3r7CVEuwEXQwY
+	glapCwljmaSOLYVgi7GRXvRL3XNA5/9uV7IsUFAZkR96/ENpgsvyTpV1LilwK3EG
+	xux7Lfo/iLrG9Gg2DvQYCHvfMhfruhiRI1vKeV3cs6PaSQqthP56TAani0WzNaHj
+	u4KnoPeeu8uSGxZzX7kGvCWr0h/Yg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat7w7d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 13:48:08 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58GDm85x025065;
+	Tue, 16 Sep 2025 13:48:08 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat7w79-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 13:48:08 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58GBEVJd018637;
+	Tue, 16 Sep 2025 13:48:07 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 495n5mbw07-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 13:48:07 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58GDm3M115597912
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Sep 2025 13:48:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 883022004E;
+	Tue, 16 Sep 2025 13:48:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D36920040;
+	Tue, 16 Sep 2025 13:48:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 16 Sep 2025 13:48:03 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+        Kees Cook <kees@kernel.org>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Juergen Christ <jchrist@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: [PATCH v2 0/4] s390: Fix and optimize __flogr() inline assembly
+Date: Tue, 16 Sep 2025 15:47:59 +0200
+Message-ID: <20250916134803.874580-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v5 3/5] net: gso: restore ids of outer ip headers
- correctly
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- netdev@vger.kernel.org, pabeni@redhat.com, ecree.xilinx@gmail.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
- mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
- ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
- aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
- alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
- linux-net-drivers@amd.com
-References: <20250915113933.3293-1-richardbgobert@gmail.com>
- <20250915113933.3293-4-richardbgobert@gmail.com>
- <willemdebruijn.kernel.1b773a265e8dc@gmail.com>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <willemdebruijn.kernel.1b773a265e8dc@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=BKWzrEQG c=1 sm=1 tr=0 ts=68c96a98 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=JPAbe6LxEtc0jUXev0wA:9
+X-Proofpoint-GUID: gYCdbgO0aHIEEAPfUaXuqFkUGh-iXkB4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfXz3Z7A178VOHN
+ ep1Sov813ega64aFgMe6IYhhgTtsp5Xdx2UyPeZ86kBNLwMA05PMkIrra72jq8hCgP78WzuHNRY
+ 62tMwaigk9nij1s0UWxDmqBpTbL77ApNjGbephBMffJf7OIJS6sEjEqvAWKGixUxXr2Qo9U15A0
+ H5A/oNbr427M8PshyUY61Qv9WYfcigbzWDYFt0S6n0mStXU19Ek/19qmpwo7Oy4QHzUhd3G9K93
+ xXlLQiISRPoe8IYvzdSolswC2fqrS591/QpRoysFCI/5m4Vy1Rzvf9xB8NjI0QdFVza6MRY+48c
+ MMOQ9HTOT6s8HARH6ox8xXDbrrJL4PZWovfB/lEZiAUGF8ExNAfW5TKowNsJfGDJgRnliWW+ZwF
+ oL2Bynjw
+X-Proofpoint-ORIG-GUID: yY1hrQJ8tkwJV8Fs2X0KtHI9herUS2_T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-Willem de Bruijn wrote:
-> Richard Gobert wrote:
->> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
->> be mangled. Outer IDs can always be mangled.
->>
->> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
->> both inner and outer IDs to be mangled.
->>
->> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
->>
->> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
->> Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
->> ---
->>  .../networking/segmentation-offloads.rst      | 22 ++++++++++++-------
->>  .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 +++++--
->>  drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++++++++----
->>  include/linux/netdevice.h                     |  9 ++++++--
->>  include/linux/skbuff.h                        |  9 +++++++-
->>  net/core/dev.c                                |  5 ++++-
->>  net/ipv4/af_inet.c                            | 13 +++++------
->>  net/ipv4/tcp_offload.c                        |  5 +----
->>  8 files changed, 59 insertions(+), 29 deletions(-)
->>
->> diff --git a/Documentation/networking/segmentation-offloads.rst b/Documentation/networking/segmentation-offloads.rst
->> index 085e8fab03fd..72f69b22b28c 100644
->> --- a/Documentation/networking/segmentation-offloads.rst
->> +++ b/Documentation/networking/segmentation-offloads.rst
->> @@ -43,10 +43,19 @@ also point to the TCP header of the packet.
->>  For IPv4 segmentation we support one of two types in terms of the IP ID.
->>  The default behavior is to increment the IP ID with every segment.  If the
->>  GSO type SKB_GSO_TCP_FIXEDID is specified then we will not increment the IP
->> -ID and all segments will use the same IP ID.  If a device has
->> -NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when performing TSO
->> -and we will either increment the IP ID for all frames, or leave it at a
->> -static value based on driver preference.
->> +ID and all segments will use the same IP ID.
->> +
->> +For encapsulated packets, SKB_GSO_TCP_FIXEDID refers only to the outer header.
->> +SKB_GSO_TCP_FIXEDID_INNER can be used to specify the same for the inner header.
->> +Any combination of these two GSO types is allowed.
->> +
->> +If a device has NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when
->> +performing TSO and we will either increment the IP ID for all frames, or leave
->> +it at a static value based on driver preference.  For encapsulated packets,
->> +NETIF_F_TSO_MANGLEID is relevant for both outer and inner headers, unless the
->> +DF bit is not set on the outer header, in which case the device driver must
->> +guarantee that the IP ID field is incremented in the outer header with every
->> +segment.
-> 
-> Is this introducing a new device requirement for advertising
-> NETIF_F_TSO_MANGLEID that existing devices may not meet?
->   
+v2:
 
-No. As I discussed previously with Paolo, existing devices already increment outer
-IDs. It is even a requirement for GSO partial, as already stated in the documentation.
-This preserves the current behavior. It just makes it explicit. Actually, we are
-now even explicitly allowing the mangling of outer IDs if the DF-bit is set.
+- Split patches differently, so that the first patch is the actual
+  fix, which addresses the reported warning / error. The subsequent
+  patches are optimizations
 
->>  
->>  UDP Fragmentation Offload
->> @@ -124,10 +133,7 @@ Generic Receive Offload
->>  Generic receive offload is the complement to GSO.  Ideally any frame
->>  assembled by GRO should be segmented to create an identical sequence of
->>  frames using GSO, and any sequence of frames segmented by GSO should be
->> -able to be reassembled back to the original by GRO.  The only exception to
->> -this is IPv4 ID in the case that the DF bit is set for a given IP header.
->> -If the value of the IPv4 ID is not sequentially incrementing it will be
->> -altered so that it is when a frame assembled via GRO is segmented via GSO.
->> +able to be reassembled back to the original by GRO.
->>  
->>  
->>  Partial Generic Segmentation Offload
->> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
->> index b8c609d91d11..505c4ce7cef8 100644
->> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
->> @@ -1289,8 +1289,12 @@ static void mlx5e_shampo_update_ipv4_tcp_hdr(struct mlx5e_rq *rq, struct iphdr *
->>  	tcp->check = ~tcp_v4_check(skb->len - tcp_off, ipv4->saddr,
->>  				   ipv4->daddr, 0);
->>  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4;
->> -	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id)
->> -		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_FIXEDID;
->> +	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id) {
->> +		bool encap = rq->hw_gro_data->fk.control.flags & FLOW_DIS_ENCAPSULATION;
->> +
->> +		skb_shinfo(skb)->gso_type |= encap ?
->> +					     SKB_GSO_TCP_FIXEDID_INNER : SKB_GSO_TCP_FIXEDID;
-> 
-> I think more common style is
-> 
->     encap ? SKB_GSO_TCP_FIXEDID_INNER :
->             SKB_GSO_TCP_FIXEDID;
-> 
-> (as used in ef100_make_tso_desc below)
-> 
->> +	}
->>  
->>  	skb->csum_start = (unsigned char *)tcp - skb->head;
->>  	skb->csum_offset = offsetof(struct tcphdr, check);
->> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
->> index e6b6be549581..03005757c060 100644
->> --- a/drivers/net/ethernet/sfc/ef100_tx.c
->> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
->> @@ -189,6 +189,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->>  {
->>  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
->>  	unsigned int len, ip_offset, tcp_offset, payload_segs;
->> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
->>  	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
->>  	unsigned int outer_ip_offset, outer_l4_offset;
->>  	u16 vlan_tci = skb_vlan_tag_get(skb);
->> @@ -200,8 +201,17 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->>  	bool outer_csum;
->>  	u32 paylen;
->>  
->> -	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
->> -		mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
->> +	if (encap) {
->> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID_INNER)
->> +			mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
->> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
->> +			mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
->> +	} else {
->> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
->> +			mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
->> +		mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
->> +	}
->> +
->>  	if (efx->net_dev->features & NETIF_F_HW_VLAN_CTAG_TX)
->>  		vlan_enable = skb_vlan_tag_present(skb);
->>  
->> @@ -245,8 +255,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->>  			      ESF_GZ_TX_TSO_OUTER_L4_OFF_W, outer_l4_offset >> 1,
->>  			      ESF_GZ_TX_TSO_ED_OUTER_UDP_LEN, udp_encap && !gso_partial,
->>  			      ESF_GZ_TX_TSO_ED_OUTER_IP_LEN, encap && !gso_partial,
->> -			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, encap ? mangleid :
->> -								     ESE_GZ_TX_DESC_IP4_ID_NO_OP,
->> +			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, mangleid_outer,
->>  			      ESF_GZ_TX_TSO_VLAN_INSERT_EN, vlan_enable,
->>  			      ESF_GZ_TX_TSO_VLAN_INSERT_TCI, vlan_tci
->>  		);
->> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
->> index f3a3b761abfb..3d19c888b839 100644
->> --- a/include/linux/netdevice.h
->> +++ b/include/linux/netdevice.h
->> @@ -5290,13 +5290,18 @@ void skb_warn_bad_offload(const struct sk_buff *skb);
->>  
->>  static inline bool net_gso_ok(netdev_features_t features, int gso_type)
->>  {
->> -	netdev_features_t feature = (netdev_features_t)gso_type << NETIF_F_GSO_SHIFT;
->> +	netdev_features_t feature;
->> +
->> +	if (gso_type & (SKB_GSO_TCP_FIXEDID | SKB_GSO_TCP_FIXEDID_INNER))
->> +		gso_type |= __SKB_GSO_TCP_FIXEDID;
->> +
->> +	feature = ((netdev_features_t)gso_type << NETIF_F_GSO_SHIFT) & NETIF_F_GSO_MASK;
->>  
->>  	/* check flags correspondence */
->>  	BUILD_BUG_ON(SKB_GSO_TCPV4   != (NETIF_F_TSO >> NETIF_F_GSO_SHIFT));
->>  	BUILD_BUG_ON(SKB_GSO_DODGY   != (NETIF_F_GSO_ROBUST >> NETIF_F_GSO_SHIFT));
->>  	BUILD_BUG_ON(SKB_GSO_TCP_ECN != (NETIF_F_TSO_ECN >> NETIF_F_GSO_SHIFT));
->> -	BUILD_BUG_ON(SKB_GSO_TCP_FIXEDID != (NETIF_F_TSO_MANGLEID >> NETIF_F_GSO_SHIFT));
->> +	BUILD_BUG_ON(__SKB_GSO_TCP_FIXEDID != (NETIF_F_TSO_MANGLEID >> NETIF_F_GSO_SHIFT));
->>  	BUILD_BUG_ON(SKB_GSO_TCPV6   != (NETIF_F_TSO6 >> NETIF_F_GSO_SHIFT));
->>  	BUILD_BUG_ON(SKB_GSO_FCOE    != (NETIF_F_FSO >> NETIF_F_GSO_SHIFT));
->>  	BUILD_BUG_ON(SKB_GSO_GRE     != (NETIF_F_GSO_GRE >> NETIF_F_GSO_SHIFT));
->> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
->> index ca8be45dd8be..937acb1869a1 100644
->> --- a/include/linux/skbuff.h
->> +++ b/include/linux/skbuff.h
->> @@ -674,7 +674,7 @@ enum {
->>  	/* This indicates the tcp segment has CWR set. */
->>  	SKB_GSO_TCP_ECN = 1 << 2,
->>  
->> -	SKB_GSO_TCP_FIXEDID = 1 << 3,
->> +	__SKB_GSO_TCP_FIXEDID = 1 << 3,
->>  
->>  	SKB_GSO_TCPV6 = 1 << 4,
->>  
->> @@ -707,6 +707,13 @@ enum {
->>  	SKB_GSO_FRAGLIST = 1 << 18,
->>  
->>  	SKB_GSO_TCP_ACCECN = 1 << 19,
->> +
->> +	/* These indirectly map onto the same netdev feature.
->> +	 * If NETIF_F_TSO_MANGLEID is set it may mangle both inner and outer
->> +	 * IDs.
-> 
-> prefer to keep IDs. on the previous line even if over 80 chars.
-> 
->> +	 */
->> +	SKB_GSO_TCP_FIXEDID = 1 << 30,
->> +	SKB_GSO_TCP_FIXEDID_INNER = 1 << 31,
->>  };
->>  
->>  #if BITS_PER_LONG > 32
->> diff --git a/net/core/dev.c b/net/core/dev.c
->> index 93a25d87b86b..17cb399cdc2a 100644
->> --- a/net/core/dev.c
->> +++ b/net/core/dev.c
->> @@ -3769,7 +3769,10 @@ static netdev_features_t gso_features_check(const struct sk_buff *skb,
->>  		features &= ~dev->gso_partial_features;
->>  
->>  	/* Make sure to clear the IPv4 ID mangling feature if the
->> -	 * IPv4 header has the potential to be fragmented.
->> +	 * IPv4 header has the potential to be fragmented. For
->> +	 * encapsulated packets, the outer headers are guaranteed to
->> +	 * have incrementing IDs if DF is not set so there is no need
->> +	 * to clear the IPv4 ID mangling feature.
-> 
-> Why is this true. Or, why is it not also true for non-encapsulated or
-> inner headers?
-> 
-> The same preconditions (incl on DF) are now tested in inet_gro_flush
-> 
+v1:
 
-This comment is about the IDs that TSO generates, not the IDs that GRO accepts.
-I'll rewrite the comment to make it clearer.
+https://lore.kernel.org/all/20250910151216.646600-1-hca@linux.ibm.com/
 
-This statement is true because of the requirement specified above, that device
-drivers must increment the outer IDs if the DF-bit is not set. This means that
-MANGLEID cannot turn incrementing IDs into fixed IDs in the outer header if the
-DF-bit is not set (unless the IDs were already fixed, after the next patch) so
-there is no need to clear NETIF_F_TSO_MANGLEID.
+A recent optimization of the s390 specific ffs() and ffs64()
+implementations leads to a new compiler warning. Instead of reverting the
+optimization address this with the rather new assume attribute, which
+generates even better code, if supported by compilers.
 
-This isn't true for non-encapsulated or inner headers because nothing guarantees
-that MANGLEID won't mangle incrementing IDs into fixed IDs.
+Since the assume attribute may be useful for others as well, add the
+__assume macro to compiler attributes, so it is kernel wide available,
+instead of adding an s390 specific optimization.
 
->>  	 */
->>  	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4) {
->>  		struct iphdr *iph = skb->encapsulation ?
->> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
->> index 76e38092cd8a..fc7a6955fa0a 100644
->> --- a/net/ipv4/af_inet.c
->> +++ b/net/ipv4/af_inet.c
->> @@ -1393,14 +1393,13 @@ struct sk_buff *inet_gso_segment(struct sk_buff *skb,
->>  
->>  	segs = ERR_PTR(-EPROTONOSUPPORT);
->>  
->> -	if (!skb->encapsulation || encap) {
->> -		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
->> -		fixedid = !!(skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID);
->> +	/* fixed ID is invalid if DF bit is not set */
->> +	fixedid = !!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCP_FIXEDID << encap));
->> +	if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
->> +		goto out;
->>  
->> -		/* fixed ID is invalid if DF bit is not set */
->> -		if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
->> -			goto out;
->> -	}
->> +	if (!skb->encapsulation || encap)
->> +		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
->>  
->>  	ops = rcu_dereference(inet_offloads[proto]);
->>  	if (likely(ops && ops->callbacks.gso_segment)) {
->> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
->> index 1949eede9ec9..e6612bd84d09 100644
->> --- a/net/ipv4/tcp_offload.c
->> +++ b/net/ipv4/tcp_offload.c
->> @@ -471,7 +471,6 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
->>  	const u16 offset = NAPI_GRO_CB(skb)->network_offsets[skb->encapsulation];
->>  	const struct iphdr *iph = (struct iphdr *)(skb->data + offset);
->>  	struct tcphdr *th = tcp_hdr(skb);
->> -	bool is_fixedid;
->>  
->>  	if (unlikely(NAPI_GRO_CB(skb)->is_flist)) {
->>  		skb_shinfo(skb)->gso_type |= SKB_GSO_FRAGLIST | SKB_GSO_TCPV4;
->> @@ -485,10 +484,8 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
->>  	th->check = ~tcp_v4_check(skb->len - thoff, iph->saddr,
->>  				  iph->daddr, 0);
->>  
->> -	is_fixedid = (NAPI_GRO_CB(skb)->ip_fixedid >> skb->encapsulation) & 1;
->> -
->>  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4 |
->> -			(is_fixedid * SKB_GSO_TCP_FIXEDID);
->> +			(NAPI_GRO_CB(skb)->ip_fixedid * SKB_GSO_TCP_FIXEDID);
-> 
-> ip_fixedid can now be 0, 1 (outer), 2 (inner) or 3 (inner and outer).
-> 
-> Not all generate a valid SKB_GSO type.
+Heiko Carstens (4):
+  s390/bitops: Limit return value range of __flogr()
+  compiler_types: Add __assume macro
+  s390/bitops: Use __assume() for __flogr() inline assembly return value
+  s390/bitops: Cleanup __flogr()
 
-Since SKB_GSO_TCP_FIXEDID_INNER == SKB_GSO_TCP_FIXEDID << 1, all the values
-listed above generate the correct set of SKB_GSO types. This fact is also
-used in inet_gso_segment (SKB_GSO_TCP_FIXEDID << encap).
+ arch/s390/include/asm/bitops.h | 21 ++++++++++++++-------
+ include/linux/compiler_types.h | 23 +++++++++++++++++++++++
+ init/Kconfig                   | 10 ++++++++++
+ 3 files changed, 47 insertions(+), 7 deletions(-)
 
->>  
->>  	tcp_gro_complete(skb);
->>  	return 0;
->> -- 
->> 2.36.1
->>
-> 
-> 
+-- 
+2.48.1
 
 
