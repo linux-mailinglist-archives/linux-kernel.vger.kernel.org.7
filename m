@@ -1,84 +1,252 @@
-Return-Path: <linux-kernel+bounces-818229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDF5B58E81
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6141DB58E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C3E485946
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:34:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD2F48789E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B22C2AA2;
-	Tue, 16 Sep 2025 06:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFE62DEA74;
+	Tue, 16 Sep 2025 06:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpQ9XHDX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VHzeaEHq"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4791B87F0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB46F28C864
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758004492; cv=none; b=ktGJ2L4xxtERTgZSU7CBogrLklJtwzWpQXZrnYehqr/dlRcKzl0+pcsfGZbR3UAoZ08Z49cb/nVsJJsTwO4wjwpKF2koz1O7afseU6CJFlRpiCaOvf4Y8R42Jq+HrIPECFh460mNOlrHYLujgag82Am5ke4Hg2aniPQghDVdkCo=
+	t=1758004602; cv=none; b=i+YFwDeCH4joLUtrfXE/OQoFMy+x1NMjkGNaPcS8Oye8uPt7Cpd/1csznpL9D4RPYsymsrbqlXeJCZSkXIHBu1KiCZQxj98krYPuPFrUMui37R4LNQh659yAsrDYXR12pIaTJX+8A/wl1l6xChEbFlYZlc6FsFrRJSvlK9jtgMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758004492; c=relaxed/simple;
-	bh=pqjBLluBDQsx3isgteQFTFwq6cPulY/6rttR++T3Xyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFq8ir0W/iC4UNd5mNXD3JHpe5vcrTmM+MeS2tqIS/7P7OCtti2j21lkHHry340eIae3bNdF/zDEczMhdnZoUv3/AOTyRqvJRFNHaTARFwzyfi89x9jKyyCKfbl3I7P5nD6MNVJk5CQKLG/TSQWnpBBm6U9CO8SDhSVHP2F2uzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpQ9XHDX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BAA9C4CEF9
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758004492;
-	bh=pqjBLluBDQsx3isgteQFTFwq6cPulY/6rttR++T3Xyc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gpQ9XHDX833jyUljjskl76BPPtpu4k5D1tpTOAeZTE4DUsQLOKtm4H7M5UkkEgMvM
-	 Sh7aG44idUPtev1UMi/OZBePLqiy+wL9hKuN5XGlxFoEWPWddBaREhrKJm/XC9aiPr
-	 D4HnTLnfmC3qlmOefJrav7hrhN0OUGIPt6N6n76Qi8iCYZmYZE/WdmUShwdUnpQ9sp
-	 7sKNnDj+pVLpCmJWl7hmFzMGT99//SfmvGmKtm51QavQUyq+a9C1ucYm7OF/9MXs81
-	 L1/Fza0eYyDEXVF5RvEOrdKI412eOKhGUXPcBl4opkqqZFiI0PkLxeffqo0jDmul1z
-	 9uROzHYnrnO/w==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62f261a128cso3816443a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 23:34:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVAN7Ogji1TyPyYZ4hRoLEVD7yg/XSQ0VUTg1WQ82hYsvayv4g7YPbBuMwwzdiD28SgAC/TCrz0hMPj0S0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8Ps7CGIsN2XSoaBP3rdT+tIDNlJ/Er/Pst8l9gIJOLUBnpFcY
-	qAps90C5VNos+Mmgbj1uAGTzRjUq8Pcwax5fdvNlvKriKgLboqy+mzXhK1zi5D2OslzOZ/klkV5
-	eaqeKz+sCqpvYingKCWamD3I6dTBaxts=
-X-Google-Smtp-Source: AGHT+IGbVpVja4RdWz+7aJho3zauKYxHQiUpYzMYJRNGcKt/uxnZZB17Q5QRMvQM+HiDDyTJFNiIZzM5UVJ1/RVWVL0=
-X-Received: by 2002:a05:6402:524a:b0:62f:51ed:1625 with SMTP id
- 4fb4d7f45d1cf-62f51ed211emr3740767a12.35.1758004490747; Mon, 15 Sep 2025
- 23:34:50 -0700 (PDT)
+	s=arc-20240116; t=1758004602; c=relaxed/simple;
+	bh=rUvcScBLoZU8fzKtqY5cbasx953IQcO448w5T9XTDZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=qIqBrch9ExiDEfmNxXq2PtO+eN+ifnmmeiMiUeu5bVTq7dQ/tpbKn2xxtN0sAqHYjaF7UnzdxqgGdyYfXWa//GNlu5blLz0I4M5SzFs164PFhQb0o0OeJXarq3vnMGSlBjexxdqkkg/0wprK2d2xu+LlqSbGxlIjjAC0TF++ABk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VHzeaEHq; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250916063631euoutp0132cf6494cdf5c92728feb5bcd6d9195f~lr9yS8TT-2334323343euoutp01Z
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:36:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250916063631euoutp0132cf6494cdf5c92728feb5bcd6d9195f~lr9yS8TT-2334323343euoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758004591;
+	bh=e8zCzPxkp38sYJ95jM1nxXGrrOQtRyH8XIFlD4ueBWE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=VHzeaEHqHwGfn+4pr3kDK8XLLKG0XL5u51knFHg2jfFzzPq65p2DmiBILMSPyh9Ba
+	 AIb7R2/Ts1MDS2gPI2C9A/ULnq0BgyP2lWP2b6RN+C9QW4rkJK8hRnKyaJFfXa3GGF
+	 8+fb531Til+wVYLKhT5zPdCMSjKz62r6bzZooeYU=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250916063631eucas1p2ac9679f96c1dd56f0b8780fb6577dbd6~lr9x6lV142077820778eucas1p2-;
+	Tue, 16 Sep 2025 06:36:31 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250916063630eusmtip1a946e2bd904c9117f10cfd349b47a889~lr9xMO4HL1411414114eusmtip1Y;
+	Tue, 16 Sep 2025 06:36:30 +0000 (GMT)
+Message-ID: <65e3d97e-4a24-4696-9bca-c3f7833144d2@samsung.com>
+Date: Tue, 16 Sep 2025 08:36:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912032619.9846-1-ethan.ferguson@zetier.com> <20250912032619.9846-2-ethan.ferguson@zetier.com>
-In-Reply-To: <20250912032619.9846-2-ethan.ferguson@zetier.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 16 Sep 2025 15:34:38 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9PW_p6KZJu-Yz=wCm7S_-MV94FFY3G0U1on1DUBPDQ5g@mail.gmail.com>
-X-Gm-Features: AS18NWDlf1id8Vil0W_4v2aPprK8H4P6QdwWDNDV5wa8TYpZKRmtciyiBaD0xjo
-Message-ID: <CAKYAXd9PW_p6KZJu-Yz=wCm7S_-MV94FFY3G0U1on1DUBPDQ5g@mail.gmail.com>
-Subject: Re: [PATCH v7 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-To: Ethan Ferguson <ethan.ferguson@zetier.com>
-Cc: sj1557.seo@samsung.com, yuezhang.mo@sony.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, cpgs@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 1/2] iommu/exynos: Implement register set and fault
+ handling on SysMMU v9
+To: "myunggeun.ji" <myunggeun.ji@samsung.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Joerg Roedel
+	<joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Cc: Jongho Park <jongho0910.park@samsung.com>, kiisung lee
+	<kiisung.lee@samsung.com>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250915051320.3378957-2-myunggeun.ji@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250916063631eucas1p2ac9679f96c1dd56f0b8780fb6577dbd6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250915051106epcas2p1c1bdb06ec2ec65aad8a96ffe155ed8b6
+X-EPHeader: CA
+X-CMS-RootMailID: 20250915051106epcas2p1c1bdb06ec2ec65aad8a96ffe155ed8b6
+References: <20250915051320.3378957-1-myunggeun.ji@samsung.com>
+	<CGME20250915051106epcas2p1c1bdb06ec2ec65aad8a96ffe155ed8b6@epcas2p1.samsung.com>
+	<20250915051320.3378957-2-myunggeun.ji@samsung.com>
 
-On Fri, Sep 12, 2025 at 12:26=E2=80=AFPM Ethan Ferguson
-<ethan.ferguson@zetier.com> wrote:
+On 15.09.2025 07:13, myunggeun.ji wrote:
+> SysMMU v9 has a bit different registers.
+> - Major and Minor version BIT are changed to BIT[31:28] and BIT[27:24]
+> - FLPT(First Level Page Table) offset is changed.
+> - interrupt status register has different bits w.r.t. previous SysMMU
+>    versions
 >
-> Add support for reading / writing to the exfat volume label from the
-> FS_IOC_GETFSLABEL and FS_IOC_SETFSLABEL ioctls
+> Add correct register set and fault handling  for SysMMU v9,
+> according to all mentioned differences.
 >
-> Co-developed-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> Signed-off-by: Ethan Ferguson <ethan.ferguson@zetier.com>
-Applied it to #dev.
-Thanks!
+> Signed-off-by: myunggeun.ji <myunggeun.ji@samsung.com>
+> ---
+>   drivers/iommu/exynos-iommu.c | 73 +++++++++++++++++++++++++++++++-----
+>   1 file changed, 64 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index b6edd178fe25..00f4129a7bf2 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -152,7 +152,9 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
+>   
+>   #define MMU_MAJ_VER(val)	((val) >> 7)
+>   #define MMU_MIN_VER(val)	((val) & 0x7F)
+> -#define MMU_RAW_VER(reg)	(((reg) >> 21) & ((1 << 11) - 1)) /* 11 bits */
+> +#define MMU_RAW_VER(reg)	(((reg) >> 28 < 7) ? \
+> +				(((reg) >> 21) & ((1 << 11) - 1)) : \
+> +				(((reg) >> 24) & ((1 << 8) - 1)))
+>   
+>   #define MAKE_MMU_VER(maj, min)	((((maj) & 0xF) << 7) | ((min) & 0x7F))
+>   
+> @@ -171,6 +173,17 @@ static u32 lv2ent_offset(sysmmu_iova_t iova)
+>   #define REG_V7_CAPA1		0x874
+>   #define REG_V7_CTRL_VM		0x8000
+>   
+> +/* v9.x registers */
+> +#define REG_V9_CTRL_VM				0x8000
+> +#define REG_MMU_CONTEXT0_CFG_ATTRIBUTE_VM       0x8408
+> +
+> +#define MMU_MAJ_VER_V9(val)		((val) >> 4)
+> +#define MMU_MIN_VER_V9(val)		((val) & 0xF)
+> +#define MMU_RAW_VER_V9(reg)		(((reg) >> 24) & ((1 << 8) - 1)) /* 8 bits */
+> +
+> +#define MAKE_MMU_VER_V9(maj, min)	((((maj) & 0xF) << 7) | ((min) & 0xF))
+> +#define MAKE_MMU_VM_OFFSET(vid)		((vid) * 0x1000)
+> +
+>   #define has_sysmmu(dev)		(dev_iommu_priv_get(dev) != NULL)
+>   
+>   static struct device *dma_dev;
+> @@ -228,6 +241,14 @@ static const char * const sysmmu_v7_fault_names[] = {
+>   	"RESERVED"
+>   };
+>   
+> +static const char * const sysmmu_v9_fault_names[] = {
+> +	"PTW",
+> +	"PAGE",
+> +	"ACCESS PROTECTION",
+> +	"CONTEXT_FAULT",
+> +	"RESERVED"
+> +};
+> +
+>   /*
+>    * This structure is attached to dev->iommu->priv of the master device
+>    * on device add, contains a list of SYSMMU controllers defined by device tree,
+> @@ -363,6 +384,19 @@ static int exynos_sysmmu_v7_get_fault_info(struct sysmmu_drvdata *data,
+>   	return 0;
+>   }
+>   
+> +static int exynos_sysmmu_v9_get_fault_info(struct sysmmu_drvdata *data,
+> +					   unsigned int itype,
+> +					   struct sysmmu_fault *fault)
+> +{
+> +	u32 info = readl(SYSMMU_REG(data, fault_info));
+> +
+> +	fault->addr = readl(SYSMMU_REG(data, fault_va));
+> +	fault->name = sysmmu_v9_fault_names[itype % 5];
+> +	fault->type = (info & BIT(20)) ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ;
+> +
+> +	return 0;
+> +}
+> +
+>   /* SysMMU v1..v3 */
+>   static const struct sysmmu_variant sysmmu_v1_variant = {
+>   	.flush_all	= 0x0c,
+> @@ -420,6 +454,21 @@ static const struct sysmmu_variant sysmmu_v7_vm_variant = {
+>   	.get_fault_info	= exynos_sysmmu_v7_get_fault_info,
+>   };
+>   
+> +/* SysMMU v9: VM capable register layout */
+> +static const struct sysmmu_variant sysmmu_v9_vm_variant = {
+> +	.pt_base        = 0x8404,
+> +	.flush_all      = 0x8010,
+> +	.flush_entry    = 0x8014,
+> +	.flush_start    = 0x8020,
+> +	.flush_end      = 0x8024,
+> +	.int_status     = 0x8060,
+> +	.int_clear      = 0x8064,
+> +	.fault_va       = 0x8070,
+> +	.fault_info     = 0x8074,
+> +
+> +	.get_fault_info = exynos_sysmmu_v9_get_fault_info,
+> +};
+> +
+>   static struct exynos_iommu_domain *to_exynos_domain(struct iommu_domain *dom)
+>   {
+>   	return container_of(dom, struct exynos_iommu_domain, domain);
+> @@ -522,19 +571,26 @@ static void __sysmmu_get_version(struct sysmmu_drvdata *data)
+>   	ver = readl(data->sfrbase + REG_MMU_VERSION);
+>   
+>   	/* controllers on some SoCs don't report proper version */
+> +
+>   	if (ver == 0x80000001u)
+>   		data->version = MAKE_MMU_VER(1, 0);
+>   	else
+>   		data->version = MMU_RAW_VER(ver);
+>   
+> -	dev_dbg(data->sysmmu, "hardware version: %d.%d\n",
+> -		MMU_MAJ_VER(data->version), MMU_MIN_VER(data->version));
+> +	if (data->version != 0x91)
+> +		dev_err(data->sysmmu, "hardware version: %d.%d\n",
+> +			MMU_MAJ_VER(data->version), MMU_MIN_VER(data->version));
+> +	else if (data->version == 0x91)
+> +		dev_err(data->sysmmu, "hardware version: %d.%d\n",
+> +			MMU_MAJ_VER_V9(data->version), MMU_MIN_VER_V9(data->version));
+
+Sorry, this starts looking over-engineered. Simply split data->version 
+into data->major_version and data->minor_version and fill them with 
+proper values. There is no point storing them together differently for 
+each hw version and then decoding in each use.
+
+
+>   
+> -	if (MMU_MAJ_VER(data->version) < 5) {
+> +	if (data->version == 0x91) {
+> +		data->variant = &sysmmu_v9_vm_variant;
+> +	} else if (MMU_MAJ_VER(data->version) < 5) {
+>   		data->variant = &sysmmu_v1_variant;
+>   	} else if (MMU_MAJ_VER(data->version) < 7) {
+>   		data->variant = &sysmmu_v5_variant;
+> -	} else {
+> +	} else if (MMU_MAJ_VER(data->version) < 9) {
+>   		if (__sysmmu_has_capa1(data))
+>   			__sysmmu_get_vcr(data);
+>   		if (data->has_vcr)
+> @@ -763,10 +819,9 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>   	if (IS_ERR(data->pclk))
+>   		return PTR_ERR(data->pclk);
+>   
+> -	if (!data->clk && (!data->aclk || !data->pclk)) {
+> -		dev_err(dev, "Failed to get device clock(s)!\n");
+> -		return -ENOSYS;
+> -	}
+> +	/* There is no clock information after v9 */
+> +	if (!data->clk && (!data->aclk || !data->pclk))
+> +		dev_warn(dev, "Failed to get device clock(s)!\n");
+
+If there is really no separate clock to control, then check that 
+explicitly instead of printing a misleading warning.
+
+>   	data->clk_master = devm_clk_get_optional(dev, "master");
+>   	if (IS_ERR(data->clk_master))
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
