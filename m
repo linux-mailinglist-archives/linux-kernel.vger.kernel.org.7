@@ -1,199 +1,139 @@
-Return-Path: <linux-kernel+bounces-818437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CD0B591BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8E6B591C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591B1165D31
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:07:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB103218B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39C3286427;
-	Tue, 16 Sep 2025 09:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED38B28CF42;
+	Tue, 16 Sep 2025 09:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/jYVygX"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vysoebr9"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B6C275B1F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059A7299ABF;
+	Tue, 16 Sep 2025 09:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013641; cv=none; b=fA3q5lyj2O8vT6rXUiMkJR+eSV+Bgcjx7n3xHjhMd027EyiLSVacgvOQotYTGb37MImzJARikcNeS0DXP7Hom4KYFlNYLKkQ+kOPvCO2lrrlytjZLnaTRU+iJ4NWJyhNAra2gzmRtfi+Sju3lTFKmQv/BKELKVUzyZVuHfcYpTE=
+	t=1758013682; cv=none; b=Ghxhx5o+ZCkgAzrNdavVnYVbt6a4qePnDMTFVmfaSPTnpakWbappIPx/DS4zM/me/zS4tKf/1WxKKOI6iYYTeSI2V6XNHkeQ4GUoEVBC+HAXGbRM+Akw4M6M7XD0O32f06FZCQwr5lrfcVElI7FUBOjMCz1sm3Faecp3Ijeu5dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013641; c=relaxed/simple;
-	bh=5ooUVIqnuNrsVLTe5d4hJ5HkrOZupo/iH+rcDvzKvoo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DNQI0seD8Fp7SrvgMZ1GC4ce5yyBSVMn2PYnVyynSc4Oc+2ObXJ8BfWq0IMfpapYRVo2kgUbQk6xQTkG96sQ2vr7luNSClqzDV8fo/OwFj/+nq944h6C/YfXf9rxi7AdBeWCWuW0EoM9x1InI0/h1Vu+Ol81JyojK3J94qHaqOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/jYVygX; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso38152605e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758013638; x=1758618438; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=y2sIITgEDWZdcO/sXZ85Mvn3hZAdFIIPOJDbEun6R/M=;
-        b=M/jYVygXvs4cSTAJL9j3dSzFQ+btiZA21hzrdTRd/qm7Z/iIF1rhKGs0mTUxghr+RG
-         IuJycD/irs9EktXZSiZNUZjVvXw8HboD3oasE+fst4KLkhvXj2I8CatuM9ajUyYkT7OR
-         v9l0lDIHXx91GUmqAiFSe6usGF+TBYZunmaxRtkXWsuXFQS7s/Dm15n8ld9jynbVMvoA
-         SEdDVeJc53OFQtAu8C2RR1FFk+kbBzQMW4Yd7uGvCx0es/cYREBhYV0uTGsXFhLLQclQ
-         pcpueEoIi6xgs3eXunPo69fYsa04HeQbq2EeNa4owlAB95iwT3MjHHwNjt6JrCfKqIkS
-         Dp3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758013638; x=1758618438;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y2sIITgEDWZdcO/sXZ85Mvn3hZAdFIIPOJDbEun6R/M=;
-        b=hI1nBfkjMUBCju6NvTpU/xLKU8jpE+WwUwFMmC2J4J9arwQxjhPgRX9F5/7cUgVfNo
-         HSAODPiGPUN7gTyR7mJliux+DzYX+Mxs5vAsh6kmCVQiP0QglPyrKKd97z/PlzB1G5yD
-         yDHAobd2qCi5/Gp9d29Ix2GMRdLwCxZn5XVGQGfDGDXKS63LBdryPkp8iKLCicHRdxgK
-         t88EoD4aL7fuZpMB/S/8dyJPxsLNLqciPOd5+7U5YSF5zKN1gE/EjUw59onujjQLKvUl
-         EQTEH+mI/IKefT7tsiCUgLd+C4zPpSqsq6hc/2ljea6mFQV0KA0wN1dl7pUuZyl+LymS
-         6xJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPhIti49j1K/P3KlIPGzpciuxIyNB0Fx1e/Jy1nXgl1PLSjzLtsND+GfX1B6aHQ0eRLGJMCJeDIMLqv8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoD2+B4JY3l+rHQceJ6zLha5BKgnIhZEjLUim2lja53pzMNBug
-	NC2nqbcChLW1in1ns1G1FmCxXB/lKFIR8RzI9YKN45QiFF2cgdEhklUU
-X-Gm-Gg: ASbGncst6w+E92X7IxSN93LzDXII+rMD3S6FTMK8ie6utT1J4ELVBN3LVsuWnQVWyCd
-	w/yrQbiW9ng0cerj915rmTyk0MSwlKYVl/OBbkqe/pFD8yCBOrW+ALR1adSv5ZkjfNdPAP9ZLKA
-	BC6IS1zK6VtQI65cB9YKocYGkFx3RPvzcTAdJ6M6hG7e+E5aLwP9cxRZwHEn5dNIzLZ0zqOZYFD
-	+l9xMANbV0zmweE7v9CqefxWvnM/3OAsFy7xQoTQkP1DCeTIWF1hGPITUvVxOM+WSEn9wrZQiYr
-	9q+Qk2HAes5Io3vkyefJcJ7+HWOEV984b5U56IdCAxu9GSGUeCC3TsT52rKBML+KWETQI0gOXEn
-	s8QkwQ4jls5dwGnzn+PN30+1Lh2sHRjISiNwvqPIs/ymIhUnuSAVDqqlGwn94yaYDnWkZPm9AKO
-	RtzNtDfFrXxJ1X+Z1VLqEUlZX55DM=
-X-Google-Smtp-Source: AGHT+IEuR5WQEBjj4/xvD5G9A1WwnGivKz0/sMVmdKU1XiTsdSofMByYMjzCbnjKIX3aOCcY/494jg==
-X-Received: by 2002:a05:600c:1992:b0:456:fc1:c26d with SMTP id 5b1f17b1804b1-45f211c8437mr129293605e9.2.1758013637683;
-        Tue, 16 Sep 2025 02:07:17 -0700 (PDT)
-Received: from localhost (2a02-8440-7509-4cd6-9055-f88b-940e-15eb.rev.sfr.net. [2a02:8440:7509:4cd6:9055:f88b:940e:15eb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32081248sm15568305e9.0.2025.09.16.02.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 02:07:17 -0700 (PDT)
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Date: Tue, 16 Sep 2025 11:07:10 +0200
-Subject: [PATCH v7] bus: firewall: move stm32_firewall header file in
- include folder
+	s=arc-20240116; t=1758013682; c=relaxed/simple;
+	bh=6xt04xpty1JSfJO88ASmH0zplql7Vn6k9OxniC/OWNM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSKMlVB4HD0qDEAjyNSEMHsbQ/cjTeHdX/JDBphsRVCbwNt7mdJXvMY6l4i/X31i6vRaJvNYjpCvVAVWSbEbIyUfa+M9G2MERUT0umP1nTcrm1e4527/FzSUObO+EiDRefYZID+bN3pqNAHDvkSNzhSjc+Aek6sWhlK1pmZwFZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vysoebr9; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58G97j121334931;
+	Tue, 16 Sep 2025 04:07:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758013665;
+	bh=eC/sulH2mseeaiObNeLNUQGTpaf84l7yndW7viSPpP8=;
+	h=From:To:CC:Subject:Date;
+	b=vysoebr9SxI1haSqG0XZJLoHLedO/UH1CHRUpD9cEVGKAq1lRmRAm867MGKL2IJEu
+	 QwNMAvPWO7xpT0mZoREShhL6fNxAPoAyXPToOk/tBgeTwnX48QYeOwkHqlgpgyOAUI
+	 h3nxiCgjCVonq9ENfBKawTMp87dPXvNzJ4PEGiw4=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58G97j5R4052228
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 16 Sep 2025 04:07:45 -0500
+Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 16
+ Sep 2025 04:07:45 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 16 Sep 2025 04:07:45 -0500
+Received: from localhost (ula0502350.dhcp.ti.com [172.24.233.249])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58G97icV1377927;
+	Tue, 16 Sep 2025 04:07:44 -0500
+From: Paresh Bhagat <p-bhagat@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am62d2-evm: Fix regulator properties
+Date: Tue, 16 Sep 2025 14:37:36 +0530
+Message-ID: <20250916090736.2299127-1-p-bhagat@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250916-b4-firewall-upstream-v7-1-6038cf1e61d8@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAL0oyWgC/x3MSQqAMAxA0atI1ga0WK1eRVxUTTXgROoE4t0tL
- t/i/wc8CZOHKnpA6GTP6xJQxBF0o10GQu6DQSVKJ2WaY5uhY6HLThMem9+F7Iy9I6ONsSp1BkK
- 6CTm+/23dvO8HXeR4NGYAAAA=
-X-Change-ID: 20250916-b4-firewall-upstream-dfe8588a21f8
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-X-Mailer: b4 0.15-dev-dfb17
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Clément Le Goffic <clement.legoffic@foss.st.com>
+Fix missing supply for regulators TLV7103318QDSERQ1 and TPS22918DBVR.
+Correct padconfig and gpio for TLV7103318QDSERQ1.
 
-Other driver than rifsc and etzpc can implement firewall ops, such as
-rcc.
-In order for them to have access to the ops and type of this framework,
-we need to get the `stm32_firewall.h` file in the include/ folder.
+Reference Docs
+Datasheet - https://www.ti.com/lit/ug/sprujd4/sprujd4.pdf
+Schematics - https://www.ti.com/lit/zip/sprcal5
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
-Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
+Fixes: 1544bca2f188e ("arm64: dts: ti: Add support for AM62D2-EVM")
+Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
 ---
-This v7 is a subset of the v6 and other prior versions, splited to simplify
-the review and merging process.
 
-Changes in v7:
-- None
-- Link to v6: https://lore.kernel.org/all/20250909-b4-ddrperfm-upstream-v6-1-ce082cc801b5@gmail.com/
----
- drivers/bus/stm32_etzpc.c                       | 3 +--
- drivers/bus/stm32_firewall.c                    | 3 +--
- drivers/bus/stm32_rifsc.c                       | 3 +--
- {drivers => include/linux}/bus/stm32_firewall.h | 0
- 4 files changed, 3 insertions(+), 6 deletions(-)
+Boot logs
+https://gist.github.com/paresh-bhagat12/9a4a1aec5119ceedb386743921432c91
 
-diff --git a/drivers/bus/stm32_etzpc.c b/drivers/bus/stm32_etzpc.c
-index 7fc0f16960be..4918a14e507e 100644
---- a/drivers/bus/stm32_etzpc.c
-+++ b/drivers/bus/stm32_etzpc.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/bus/stm32_firewall.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/init.h>
-@@ -16,8 +17,6 @@
- #include <linux/platform_device.h>
- #include <linux/types.h>
- 
--#include "stm32_firewall.h"
--
- /*
-  * ETZPC registers
-  */
-diff --git a/drivers/bus/stm32_firewall.c b/drivers/bus/stm32_firewall.c
-index 2fc9761dadec..ef4988054b44 100644
---- a/drivers/bus/stm32_firewall.c
-+++ b/drivers/bus/stm32_firewall.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/bus/stm32_firewall.h>
- #include <linux/bus/stm32_firewall_device.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -18,8 +19,6 @@
- #include <linux/types.h>
- #include <linux/slab.h>
- 
--#include "stm32_firewall.h"
--
- /* Corresponds to STM32_FIREWALL_MAX_EXTRA_ARGS + firewall ID */
- #define STM32_FIREWALL_MAX_ARGS		(STM32_FIREWALL_MAX_EXTRA_ARGS + 1)
- 
-diff --git a/drivers/bus/stm32_rifsc.c b/drivers/bus/stm32_rifsc.c
-index 4cf1b60014b7..643ddd0a5f54 100644
---- a/drivers/bus/stm32_rifsc.c
-+++ b/drivers/bus/stm32_rifsc.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/bus/stm32_firewall.h>
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/init.h>
-@@ -16,8 +17,6 @@
- #include <linux/platform_device.h>
- #include <linux/types.h>
- 
--#include "stm32_firewall.h"
--
- /*
-  * RIFSC offset register
-  */
-diff --git a/drivers/bus/stm32_firewall.h b/include/linux/bus/stm32_firewall.h
-similarity index 100%
-rename from drivers/bus/stm32_firewall.h
-rename to include/linux/bus/stm32_firewall.h
+Tag used
+next-20250915
 
----
-base-commit: 46a51f4f5edade43ba66b3c151f0e25ec8b69cb6
-change-id: 20250916-b4-firewall-upstream-dfe8588a21f8
+ arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Best regards,
---  
-Clément Le Goffic <legoffic.clement@gmail.com>
+diff --git a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+index 83af889e790a..d202484eec3f 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+@@ -146,6 +146,7 @@ vdd_mmc1: regulator-4 {
+ 		regulator-name = "vdd_mmc1";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc_3v3_sys>;
+ 		regulator-boot-on;
+ 		enable-active-high;
+ 		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
+@@ -165,14 +166,16 @@ vcc_3v3_sys: regulator-5 {
+ 	};
+ 
+ 	vddshv_sdio: regulator-6 {
++		/* output of TLV7103318QDSERQ1 */
+ 		compatible = "regulator-gpio";
+ 		regulator-name = "vddshv_sdio";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&vddshv_sdio_pins_default>;
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc_5v0>;
+ 		regulator-boot-on;
+-		gpios = <&main_gpio1 31 GPIO_ACTIVE_HIGH>;
++		gpios = <&main_gpio0 59 GPIO_ACTIVE_HIGH>;
+ 		states = <1800000 0x0>,
+ 			 <3300000 0x1>;
+ 		bootph-all;
+@@ -334,7 +337,7 @@ AM62DX_IOPAD(0x01d4, PIN_INPUT, 7) /* (C15) UART0_RTSn.GPIO1_23 */
+ 
+ 	vddshv_sdio_pins_default: vddshv-sdio-default-pins {
+ 		pinctrl-single,pins = <
+-			AM62DX_IOPAD(0x1f4, PIN_OUTPUT, 7) /* (M19) GPMC0_CLK.GPIO1_31 */
++			AM62DX_IOPAD(0x00f0, PIN_INPUT, 7) /* (Y21) GPIO0_59 */
+ 		>;
+ 		bootph-all;
+ 	};
+-- 
+2.34.1
 
 
