@@ -1,129 +1,104 @@
-Return-Path: <linux-kernel+bounces-818072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF657B58C61
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F79B58C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84EAA52288A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915583AEE40
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7259F238C33;
-	Tue, 16 Sep 2025 03:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E5A252904;
+	Tue, 16 Sep 2025 03:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UGLQ/BKZ"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5AWsJOa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F7F2DC78E
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469E286342;
+	Tue, 16 Sep 2025 03:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757993686; cv=none; b=JutTnguPmllYMwx7opvRf9tPsCJosUsOgPHc7/SD99WacVdrjR7UAb9tsCbWBPNzzKUirVGLngFdT8uHxWSyDUYr7lok6UkcJiNrKIxod85Uxg379euWUcA2Jitguab+BBgcHbIiHuMxhldR/MjZ2kopMuprIHloAtSf8nlXeuQ=
+	t=1757993718; cv=none; b=UcC8sPgzN83vTjDkR7ho3pRCoBCf9sdH39RTp3yFypNRMPi/VMMoi2oGPgKs/w9L11x31n8MCq4DhmIQlY7ta/KZFj9Nt5D/vpqNTvNzC75JKOFIEEN71BGQ7r1VH2hfFsU1MYYZag1+smR4F+jcaEX4rhzkuSTZ0sbPqRUEjLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757993686; c=relaxed/simple;
-	bh=Bf5M0wDVyjmLpufynWNuCBe6dk/UAi6KHba0EhMNqPI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eTR/eL1jt9NzOFSVpHdC6jMnaxcbJf7bYCtEH6/iIZwGgpxl1P18yHbVS6GHrsM8c+d+noaDm1ItcZq4hw8NyrrB0ypL/F0r+XKrPpgDID5saE5fJ/xKaZUdvJ2dH2Fco2eaO2Lhfe37nGijcu3e/jfgkL+t6LIO1qJM0WZg//8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UGLQ/BKZ; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4b4bcb9638aso185981cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:34:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757993684; x=1758598484; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YMZ5lKmbLJZs0sTmBXRh0OiWyde0GCv4H9+GGRjeQVQ=;
-        b=UGLQ/BKZDDMyEdd1c0rGvf6eFV45dfrzZufzkK8QPkQ4nlg6jT8x9o7uDOrXZV+nfh
-         p5CDmGEI3Z4zchUJ1DDrXzXK4yyRhu8MLeizDW3qkJmvZ4r9m5qLIvDDPViu1bXobLNz
-         7wBBjDGP/cPCzQ3oKYM5DVl1nuZjlUkl/0gWExr1B7VoXRLcKl8qVSWaKy8JleAguTpQ
-         az2LFBu9/vyH4aJ6vf1O+XrCye9oYP3MrCP5Z35QZAT35w2xxae+32z8dZPtd/EzluJc
-         6Z9lZhc2B4cFv8FgW04GwWHmhMvhOYfXnO6HpWpjty2sXw0ORO3B8xDLX5qEMllz+pQn
-         5P0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757993684; x=1758598484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YMZ5lKmbLJZs0sTmBXRh0OiWyde0GCv4H9+GGRjeQVQ=;
-        b=KyNgF2CDeAlRJodbn8tchr1fMTYL/SRKfmDPkgjcgHPNktrek7u9vsDZLfduyRMeHI
-         Rc/DCrmASmGU+Cm+tO3LNKV/nMLMfEpGmVkf7UHCT5nPd22Ol3Ig7bNyeg0qAWbjkYBO
-         Cprvyu0kdUkNPhMSZcRHoOeBbPchq5xHpWQHIC30LRqjLMGCii8W1hnEG8f+KIunOB+j
-         kGybEhbpJ06IsLXUicjTsvN26J/KU874KLogSFhd2fyeaYjcO5r3GZ2bpl8tDtMklnne
-         wh/G+c1w26q/QSkYk+nPg+KgM2rAM9CdBUfRXoWp7N9ZzNDe4sbLhIVqyZwZEm0CyjJj
-         IaqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVD+nlvwkGdXbbxk2DNV8/nmZ/pX0Dg4o8jxxdBouZH+Tk1s7YJ8O1x2CrLeAedrgN3fyO/s8qTojn/h00=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe0NNbBsjExvM/wcd7aajOYr/oHjPfePRiD9bhmAiukvtet74M
-	FnVI0QGMn+ZoPr9sqq/pJ7RIRPxoFOYnmYB3CUnJ8KZPqCtdC39FTdnI3d2jKIRvjGUi12IBiZf
-	Kv0OXBxHGp8Kj6kMFH2RMz+Ok+33nNO0IzbzwuzII
-X-Gm-Gg: ASbGnctHCpEaYZDWKRkTG8SzWrKxx74BUpu+bcEyNGcbm2VN5ikwmKJfRCRVPI7YB1q
-	UCCbShrg81Ms8tql6cxxgntgh8jn8TJFgZfTYGydjw94uowBDGFDhcWTGRg4PtvrqMCsVdxZobI
-	ZmnE4IGywu+AH99xWPjAGgOIUfSgUW1P6g3I/mOt2DesEPKdVRt6QxbmeaoSOf9yhKomArF22D8
-	Uekw2E5nf8ZQzrDS9q0fj0=
-X-Google-Smtp-Source: AGHT+IG0tLHQDD8iSbrXw6mju+J9wxXyLa1qHB0bsrF0octifG7vFGZvVIpRvkEgTZsG+dJtW94GZDAeiFWqum8oLZQ=
-X-Received: by 2002:a05:622a:1882:b0:4b5:d6bb:f29b with SMTP id
- d75a77b69052e-4b7b1cc603emr3746531cf.8.1757993683985; Mon, 15 Sep 2025
- 20:34:43 -0700 (PDT)
+	s=arc-20240116; t=1757993718; c=relaxed/simple;
+	bh=W3dvzS2tlUSzksksMbckc+tKdCVNe/7RjYtxNtoI1mg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WQ9noAi/NCqYHZRX1qxRGlbp0wDa6A0kGN9PQm/vcgqUw4LXlzEWGBPwu9ah6qpxrGyCB5e540I77jX6PTZbsXoMwdYy2RiYJ0RQhOr9DME6Dzwhp4BB7RsZ5gZUn10CwZstlsycKnOQk0lrH1Lg71z5I0gqgLa5vCXle6+OYDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5AWsJOa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDF9C4CEEB;
+	Tue, 16 Sep 2025 03:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757993716;
+	bh=W3dvzS2tlUSzksksMbckc+tKdCVNe/7RjYtxNtoI1mg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Q5AWsJOavN7d0+ussS1+eigFHxX/F9GrsUQQ97HLn6HbAGJQzkyuImy0S4raht+Xh
+	 DYN2QH/w9zZp9ZXmHr/15RTswsAh8eE4xbaUzfBqr/nGfmpcrr3NExy2SWqIsJGdoZ
+	 Jw6I+2RzceutyGZNcntMaIe87v6/BdU11/vOTApZZjcTAVo8pGCNQIwYZRWbuxFL0V
+	 72peq0NhggItH+2Tltb6526xjM+9Ryjdy1N4AAkOleMA1rvWQpcYQPfKYLULOJPB9W
+	 OsdXUiGk4dG4ESDgvOfFqnDWJH8xiOB7s7BG48Yh/L3f5onoM9aSCNA09r/o9NTrCW
+	 NWzIZk1aqNFKw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/7] mm/damon: define and use DAMON initialization check function
+Date: Mon, 15 Sep 2025 20:35:04 -0700
+Message-Id: <20250916033511.116366-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915230224.4115531-1-surenb@google.com> <20250915171112.f71a7606a7f9fd3054662bed@linux-foundation.org>
- <CAJuCfpFQCgQLSrzfVjV+J4tkYbOx_W9v-kWmoo-rmh5hs9gEXA@mail.gmail.com> <20250915195633.96236cecebd8777243a770bc@linux-foundation.org>
-In-Reply-To: <20250915195633.96236cecebd8777243a770bc@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 15 Sep 2025 20:34:33 -0700
-X-Gm-Features: AS18NWAkqXfW0D9syyeJP9E39KHxrmmhUpYaOE7SM5QDAEH2ZhD9dv2yJcaAuws
-Message-ID: <CAJuCfpH1JW8vwOFF2H2SOxZqoJHadXsTc6C=LUS_=twcf=k9qQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org, 
-	usamaarif642@gmail.com, rientjes@google.com, roman.gushchin@linux.dev, 
-	harry.yoo@oracle.com, shakeel.butt@linux.dev, 00107082@163.com, 
-	pyyjason@gmail.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 15, 2025 at 7:56=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Mon, 15 Sep 2025 19:48:14 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> >
-> > > Perhaps we can tell people what accurate:no actually means.  It is a
-> > > rather disturbing thing to see!  How worried should our users be abou=
-t
-> > > it?
-> >
-> > Right. How about adding a section like this:
-> >
-> > Supported markers in v2:
-> > accurate:no
-> >               Absolute values of the counters in this line are not
-> >               accurate because of the failure to allocate storage requi=
-red
-> >               to track some of the allocations made at this location.
-> >               Deltas in these counters are accurate, therefore counters
-> >               can be used to track allocation size and count changes.
-> >
-> >
-> > If this looks good,
->
-> looks awesome ;)
->
-> > could you fold it into the existing patch or
-> > should I respin?
->
-> A little fixlet would be preferred (by me, at least).
+If DAMON is tried to be used by its API callers when it is not yet
+successfully initialized, the callers could be crashed.  Such issues
+actually happened and were fixed [1].  DAMON API callers are therefore
+having their own hacks for seeing if it is safe to use DAMON or not.
+Those built on an untreliable assumption that DAMON should be ready to
+be used on module init time.  DAMON initialization could fail if
+KMEM_CACHE() fails, though.  Also those are basically duplications that
+make their maintenance difficult.
 
-Ok, should I post a fixup patch or you will do that in-place?
+Make it reliable and easy to maintain, by implementing a new DAMON core
+layer API function for seeing if DAMON is ready to be used or not, and
+replacing the hacks of DAMON API callers with the new core layer
+function.
+
+Changes from RFC
+(https://lore.kernel.org/20250912023946.62337-1-sj@kernel.org)
+- Rebase on latest mm-new
+
+[1] https://lore.kernel.org/20250909022238.2989-1-sj@kernel.org
+
+SeongJae Park (7):
+  mm/damon/core: implement damon_initialized() function
+  mm/damon/stat: use damon_initialized()
+  mm/damon/reclaim: use damon_initialized()
+  mm/damon/lru_sort: use damon_initialized()
+  samples/damon/wsse: use damon_initialized()
+  samples/damon/prcl: use damon_initialized()
+  samples/damon/mtier: use damon_initialized()
+
+ include/linux/damon.h |  1 +
+ mm/damon/core.c       | 10 ++++++++++
+ mm/damon/lru_sort.c   |  9 +++++++--
+ mm/damon/reclaim.c    |  9 +++++++--
+ mm/damon/stat.c       | 10 ++++++----
+ samples/damon/mtier.c | 11 +++++++----
+ samples/damon/prcl.c  | 11 +++++++----
+ samples/damon/wsse.c  | 15 +++++++++------
+ 8 files changed, 54 insertions(+), 22 deletions(-)
+
+
+base-commit: b6a9d79765ceb52c8889fd24e1ff3169cc12c80b
+-- 
+2.39.5
 
