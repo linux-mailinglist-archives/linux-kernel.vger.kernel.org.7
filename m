@@ -1,287 +1,346 @@
-Return-Path: <linux-kernel+bounces-819156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F67B59C3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F00B59C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5F11C033DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728D51C034AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA89345722;
-	Tue, 16 Sep 2025 15:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F5973629A0;
+	Tue, 16 Sep 2025 15:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Eq6yaV8P"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011041.outbound.protection.outlook.com [40.107.130.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7KnRHpI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378C522689C;
-	Tue, 16 Sep 2025 15:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758037055; cv=fail; b=ifjb92/TDB2ZXkXwhmWNw/jWEIqNEKlTppMv9DjnbdpSAQKJhReFA8VhRyBNJroV53qrjAcpTEF8AorTcZ9DYBSfCS6tdEyLv/2tJ6vnnYkDeVsS/f9zav5dBgZb3ZVfTpfmWm/T5Ecjj6tfKmf0AJl6amwBi0HUXaRiR6zm+KM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758037055; c=relaxed/simple;
-	bh=3e1hLbMclXgDqCybAv66MLJhTDw58h4U5zjaCRrhRu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jZWTZvZJWIPGAV7EGIOwN4TGGZ3E+C7IRGh8ZebWC7wDKNe8IDnR9WDOV9k8OIFnOW9hwvFLRGmBteBJGm7LsiegOxJ38swr1Kh+2nTsl1Q29dZJI/PVc/TjHb09QnVcHfrlwOSxxA1FUcNGwrUt3zbsqp8Y54VGSsOsiSShh2M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Eq6yaV8P; arc=fail smtp.client-ip=40.107.130.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ceyobsFihRkGBnjPrXiv9jmqk4C2Rsw2wEXhHoz/kLSYH/BS/dfSbIBlAKzWDGW4r+E7WVu8Bf+G7aFtZjE/fKvc3ecEUM9H0Jt/nTj48FzhwzzIpqGdCEwWioAa4YRsuYtHF+GyXzcsDATu/fL/4HNnngoOKgP4otl1RqeZMrqrjzE9ofRwWCtpM5k2eCcWA2+3XE9g0JnGQcYMIkipgVWTIE3ILVBJZA+EF/jpOFnGnMTHwFDMNS/zaGSgsql83EpL3n3HZ1+RGtO23AStoTzwQvBTsQna51yJAGucUcnF/5VpaP546lIEbcSj/e9A7g5+xibrT6g49DQUQXzBGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T6aMXbqr1GFnobQNmfycpDr+ec5LDh0+QMssCitFY9k=;
- b=hrED1ygw0xmkYMs5RvMAxNMeoUHbt5mcJk6fqZ3jXD6GyL/KcyF5cQTI9dOeZEzt2o1unKsk3FbyiV+CWgrO5vRnyBMjPYep2mis0pJymY67rUvqFFebUgrze98rBynLFwdPPVCbKJ8FPWPCGfQ657nGjSfDtNziXnQ2QgGQhqReETkiGkXYrxSK3jyF72kcUtZVj+MtvRz3Pqd+ITtNFgM4SyKN6TCBVA9JC9+l2Vbd2vgUnow5bVr1XC7HrpHOQ5BItx87GQcvbzKPIAS9kzHrDK0ZqYrQItx6Aij/hkCZAC/1Z1BrWw3SQ4CJGNZ2VIhGOu5gXSSsWf646EUOcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T6aMXbqr1GFnobQNmfycpDr+ec5LDh0+QMssCitFY9k=;
- b=Eq6yaV8PPhg7TlkiIZO3nP0fYwaX11lCqfS7hW6LbYYbFY3keHUPIvAI5/dZrY3VX8pfz8M9fXeY4QOM9AbLis4lDbYUbx6Q/zgYJqNFw5DbRQ4uZKsxGtlkcVmOyRmZdhUGLRwYuWIfS48Yyo80pLlz/XKegQxIo16gF1n+LYLgUrnte38nZ30xVwaGHzmqbYgbraCXxX8doHzDXv4m4tcX3Pz7ICApd8ZBKa60IxkD88wIdCRCWFbo7AaIR6wFpHZ1QX6qdM9vyMBfFcT3yDl8fz0pTlc8mSEneuMrURBnBPhMWn6EYzR+RQrKgBQBP1qFN6LFuhnZesjZRPa4rQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by AM9PR04MB8892.eurprd04.prod.outlook.com (2603:10a6:20b:40b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
- 2025 15:37:29 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
- 15:37:29 +0000
-Date: Tue, 16 Sep 2025 11:37:21 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Haibo Chen <haibo.chen@nxp.com>
-Cc: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] spi: spi-nxp-fspi: add the support for sample data
- from DQS pad
-Message-ID: <aMmEMQoa4LMBtkYI@lizhi-Precision-Tower-5810>
-References: <20250916-flexspi-ddr-v1-0-69358b5dc862@nxp.com>
- <20250916-flexspi-ddr-v1-3-69358b5dc862@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-flexspi-ddr-v1-3-69358b5dc862@nxp.com>
-X-ClientProxiedBy: BY3PR03CA0001.namprd03.prod.outlook.com
- (2603:10b6:a03:39a::6) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013ED35CEC2;
+	Tue, 16 Sep 2025 15:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758037084; cv=none; b=jrVStDkmsfSELqpVPHRSFh1mUUtRwpeHkCJ91aY+7as7Ls632nnY6oZ+6eDXzOWrRs8ps+DEc5oucGdWAl7MunjXmOX2MD3DnL9WLoRewyPfOTRtxDMIcKRkcIli6fiuyGFjWAUcdtE45uQnVX3VrQ9B34w2xBTE0ma4IEehp3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758037084; c=relaxed/simple;
+	bh=/KNRhTipWVEIQwkpHzS6ivBX9n/DOl4tBR3cuI/sKLI=;
+	h=Content-Type:Date:Message-Id:To:From:Subject:Cc:MIME-Version:
+	 Content-Disposition; b=cN8YVGxaHnCplpXCSRgc3K127FuqpcbSvEBjf2nou2R9DkWU31Leucg7xjjGi3Zm9oqHwPEHYq3Arf9Y0l8yALkjrmmxZxVyEYDwG2qH+ixwv1s5+qxVHJfTq+E8a8e91oeYMDa7OTVdI/HcW5viSHQQxb/mStG5+Qf8LRS1bZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7KnRHpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 845C2C4CEF0;
+	Tue, 16 Sep 2025 15:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758037083;
+	bh=/KNRhTipWVEIQwkpHzS6ivBX9n/DOl4tBR3cuI/sKLI=;
+	h=Date:To:From:Subject:Cc:From;
+	b=g7KnRHpIbRKZAVpQcT685hjTtTn8EG/icpphN+G3m1Kvkiw2Pu54ECF4aGiV7pF2y
+	 oFHQD/DPLJyvFWpmLhiy//KcRg78rWguMDZfsJHQXkVT/447IiFhTW498/VOt0hx3a
+	 UntE3fc/42QgjZMKSpDmpbG15aB6X6k+HxxuZ6/CekLU4tcbaXCImXyQFYN+XJlbNI
+	 PABL+ApRX9iL+FZmE8LN3UBscF3Excg/3fnzUk2Ld7l+eR8Ift8BTNSShtRdKDy/ii
+	 LuDNESEKcShbNxr/FZeg0ib+60GZsaJWZNm62v3fXv8Vk6oCjb78B3LngT1Fr6Fhmk
+	 g/5oYdeGE3GWQ==
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 16 Sep 2025 17:37:59 +0200
+Message-Id: <DCUC4SY6SRBD.1ZLHAIQZOC6KG@kernel.org>
+To: "Dave Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: [GIT PULL] DRM Rust changes for v6.18
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Daniel Almeida" <daniel.almeida@collabora.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Benno Lossin" <lossin@kernel.org>,
+ <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM9PR04MB8892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53e1817a-cdf3-42ad-04df-08ddf536f196
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?j1wp7QPcB0xA/PSi2Hm/xLiXuW0cCibxEnV2FSqzi1iwNSqfHqIS549FJxlZ?=
- =?us-ascii?Q?Q2WOvfcnBoGArCOTdijfkkg9Dun2XSi/hUUJF2SBJRabejXQ6fg5Q3FHM2o/?=
- =?us-ascii?Q?YbBUyBEcekMbcy9yriMMBZ0G6B+RxsxUCW68I4BPdws6Bs3pzKhbMnuOXcF+?=
- =?us-ascii?Q?whY948V6xXG4So+vkbam4IwW1+ZXW+oFWho2jBKEOS9maI2Dz7hy9WUKdWtH?=
- =?us-ascii?Q?iWp4Y0hqIeQuG/UbultYbY3UzVxmwhlaZbdEWhUMCm8niTbKvNZOvyGxJ7xW?=
- =?us-ascii?Q?XzCZVAquE7p+8a12TbAZJG6uT7fCXOy4b5YC8Tb02t43thr2Arcf9ks44XKD?=
- =?us-ascii?Q?tj3ubKZeJAreHsJjijAy9LKn5yrZmJ7ZgYf/HJGk7IOYqkLr8CPKe/KEKfpj?=
- =?us-ascii?Q?r+HnYMbwm3uQz46iRMbuO6E45dBa0l+mj78kbT21e5yupwRfp9IGuofEtMkT?=
- =?us-ascii?Q?bvJWQUXOO23mRan1dSZI1d9AlREx8syTrKU12m8OLr5u5uVoJtCJJBYTuQGs?=
- =?us-ascii?Q?FeC4C4oIcX8ZMXhRNkrOyMUypZiHwDzPzKGoiGqkl024zb3SUt7IU0JjwV5J?=
- =?us-ascii?Q?hgjbpj3ZLebg9u/o8AKBfUcbGNzDFlKAq1B2+N/kfZGjn+3Icvuo3aZdB3Il?=
- =?us-ascii?Q?e1WcINWvOqCpAJ5yATsacQjWrOkfURTcm8q+mdgDQkCK2/Sn2+xjNhwRGLq2?=
- =?us-ascii?Q?yJzZvlXy/w5YYbMu0xZigv/DpJbLEcFJ8HkD+Y2vnZW2XG6G/tBRaQIu/79B?=
- =?us-ascii?Q?PbUEJC7xSJGvl6cNFm0hguu30BZv7/MV5OlRP8TsR2UV7Sg+0JXAsb5VY7F/?=
- =?us-ascii?Q?ZfVhquL8oazkxaFNhkOKgTGZ/ccX+21qns5o4OvfwRahO39R3dx5aZSVcE37?=
- =?us-ascii?Q?QaXqGlrHbzpEcZsLK/vwdShgYaFdMyjqUeWjbicQd1ekBXBDpaUsmRbs0sGU?=
- =?us-ascii?Q?UpvH9AibkP6dyI8wsNnpZaR2Hzm7+GBIXiWNQBMiKjicNEYWewc1rivpGA1Q?=
- =?us-ascii?Q?auRtGmG5uM89mmZWeyD5qLTqgUmi8LiOWoIb4IUQ2CtMqu7GMv1enmcBuOKA?=
- =?us-ascii?Q?pS0eCXtJxClA2k7dEG7rcL3G9NCxkQ7p1hOLFWREh4K3JBm6FS+cZFqrKarx?=
- =?us-ascii?Q?0xIFNSLaduWKFXRF4M1mxMhYcTFODC5oSukJfYfjzirnuSf6KqZf8bSy2WHz?=
- =?us-ascii?Q?I0ufxlR414X+WKbXMUw3E/2osD3WZ6kQjrs2qYvcjTd0RunwfVFuk0qnVt9o?=
- =?us-ascii?Q?pY82l1z6LOboA6w1+Acz9rN71060LpYe7t4lHCleKJLwQAH/yVfjZmQLmGIO?=
- =?us-ascii?Q?GlQ4VFqglv01QOPuOeuOOWTm5Xl5UexeaMyQwxpFstzcMB9ggZLjvk68aUwV?=
- =?us-ascii?Q?NevRKQ4SFBEogwubvfJUGgeYUthLbHOdiJ2VUgWzv5qiqDQmuDQ3kl34h/r5?=
- =?us-ascii?Q?yY+XNlaCSPIzu5wbAb6PVvgtjq36ZQGgwP6Uypr4gH6MYBqc81N+GQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CtdViF+eqEMdWa96LZvVuK3OiqHE+VNAkP1yeTxk7IAG2gNeHNjrw0fDvBlZ?=
- =?us-ascii?Q?NvmzpVAoFxJHbXtSa2fLF6nFHt2i2++GJ+LwvyO7BmrGXTV3/xbl9JyOjhO1?=
- =?us-ascii?Q?LMd8ejuaQIxnQwbF/idRiahys9bj+t4C2Sk/bKBmvJICppZSl1FGblOwTmY9?=
- =?us-ascii?Q?yotXS3yQ0zMaefzt2sMXXqejAGYJ9KpcglMavwSq2w+eWbYQQHyzldVOCOVc?=
- =?us-ascii?Q?7Q/J2IF8bcq7gC6wVJtnnAiqROZTy9yoVskPhDVFLQ/EdlBgwuvK8BWN3+Xm?=
- =?us-ascii?Q?rHIXDyJNN1CK4eE+ZD4lMGVdpIBSi0bRaH4Q7Yh4g6lMQ8mLSPND0Y9Q99iM?=
- =?us-ascii?Q?NTThOg0SK1eusCUCZg0kmNCn1pE+tp8A1PlAmxIFTxbeQ1t7ZNr2S2HlDrII?=
- =?us-ascii?Q?W+Fhkhz41inNWKazAoWnbwogwFfV/19i7FhxDTeQHObENKoztIFxvf89fE77?=
- =?us-ascii?Q?sW6iyiOMu57+Hz9NDHnZur/X+Jg+7xMpchK9ZinAPiSAGAJ2eMGMTJagWIrH?=
- =?us-ascii?Q?SGHlFEqGWE9wlQiwEexxh/SarxkLm8mJh6/ZVVXvTXVndD8EoJPOZ/nIJ+KX?=
- =?us-ascii?Q?6pTFOvMqBPTJdZHpuFkEBVnEydolKAMCcqONEOMrnP1GwnqbpM8iUJavrZEx?=
- =?us-ascii?Q?yFV6YxTlt1CdqrBZrdtgzv7F2/6GnVKGVyqpaAqUROED92zK0+2zlzk9m8Lc?=
- =?us-ascii?Q?4QcDl13k460o/REFs4uLOdRgc8GhJ3VnDZHSEiAW+u8Drg+7GDXRnF7G7obV?=
- =?us-ascii?Q?WjJIYzptS1tXnTCOWNEoJ3BymxMdVWdqTEK83xEewif8eKOD0jWhQDCUod54?=
- =?us-ascii?Q?WL2jg8yx6gxaXYpE6GgF73RmEL2FiVn37LteS11D22vj8VZUrrRLk4M9Ea+s?=
- =?us-ascii?Q?WaUmlu2pyTogiXX1k5xZBgJ1dsqj5/MHCr2lvlNFaUy3ezj1nNqEH4M9nMfs?=
- =?us-ascii?Q?lRvHXv5ogdA6dGNYzdF2vuYMpjKX9bPrM0YAnQWHXZ5/u9PfFFQ3N6NeHlCH?=
- =?us-ascii?Q?5z+C8csNDH9RMWWCIgacH3uX58N/s53LOIe9Ro/Oc4Pg4eTy3xZrChZXDulr?=
- =?us-ascii?Q?SPtWGE+ByCPYJVWTCIe/GHViTbekEl3NcvaUhN7AEXO/L9cYZvJi6FkeyKrY?=
- =?us-ascii?Q?19uzCG9rW+1ZE3BXpJniyxNQaLdnHNU9ohOJIsYk5tV6o2a/AAlk3Ez7yjrf?=
- =?us-ascii?Q?xWOkUTuvZVeW+o4Ob84eo7hD+iUYghj5A93imCKTTks6g1H6qTNO0Ww+fNX+?=
- =?us-ascii?Q?KMoocS3ChUKg96UOBZSTRLL42wJ9LNVnsotpSSWFEk4mG6jkHqy5bQA3XAn5?=
- =?us-ascii?Q?6/Hb+b2MA+m7zeKevVFpvc40AkWk//ECdQWC+RJr8a/wMdn6Tz21sJ66FoZz?=
- =?us-ascii?Q?hDYmVJAn+kRvvMxpOAgnRIiMi6lVHAVOKJWoK1HDHjTHES6LFGEpduMmf33n?=
- =?us-ascii?Q?7jV4xezw9S2dqzhfMhLu5+BqZqK1MNSwkkW0uph47McuJJCkF0ntT3Xu3HCm?=
- =?us-ascii?Q?KDBn93yJzknCUbbIqvDDGA8gvO9Iv/31r+EbYxPPVFrkz94lhRrqixc08PsM?=
- =?us-ascii?Q?QVVFg3TeZ7pYFLMbmgu16hQpPOO0ARZMfHCHZjVq?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53e1817a-cdf3-42ad-04df-08ddf536f196
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:37:28.9227
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sH3r4NmzeO1BkG602qtfNwpQfRvjwmFTS9Rx7vDbn9lWHWr9ex7X5cZqsINhEkeA0tB62LL0UGO4aU/W/qAMdA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8892
+Content-Disposition: inline
+X-Mutt-Fcc: =Sent Items
+X-TUID: mKg+BHoYSeyx
 
-On Tue, Sep 16, 2025 at 03:56:42PM +0800, Haibo Chen wrote:
-> flexspi define four mode for sample clock source selection.
-> Here is the list of modes:
-> mode 0: Dummy Read strobe generated by FlexSPI Controller and loopback
->         internally
-> mode 1: Dummy Read strobe generated by FlexSPI Controller and loopback
->         from DQS pad
-> mode 2: Reserved
-> mode 3: Flash provided Read strobe and input from DQS pad
->
-> In default, flexspi use mode 0 after reset. And for DTR mode, flexspi
-> only support 8D-8D-8D mode. For 8D-8D-8D mode, IC suggest to use mode 3,
-> otherwise read always get incorrect data.
->
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> ---
->  drivers/spi/spi-nxp-fspi.c | 52 ++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 50 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-> index 6b3e6b427ba84734a2359a964635a8f05cd146fd..be1e56072b94f38af934556055e321d9834bb07b 100644
-> --- a/drivers/spi/spi-nxp-fspi.c
-> +++ b/drivers/spi/spi-nxp-fspi.c
-> @@ -400,6 +400,7 @@ struct nxp_fspi {
->  	struct pm_qos_request pm_qos_req;
->  	int selected;
->  #define FSPI_NEED_INIT		(1 << 0)
-> +#define FSPI_DTR_MODE		(1 << 1)
+Hi Dave and Sima,
 
-Can you change to use BIT(1)
+Please pull the following DRM Rust changes.
 
-Frank
->  	int flags;
->  };
->
-> @@ -657,6 +658,43 @@ static void nxp_fspi_clk_disable_unprep(struct nxp_fspi *f)
->  	return;
->  }
->
-> +/*
-> + * Sample Clock source selection for Flash Reading
-> + * Four modes defined by fspi:
-> + * mode 0: Dummy Read strobe generated by FlexSPI Controller
-> + *         and loopback internally
-> + * mode 1: Dummy Read strobe generated by FlexSPI Controller
-> + *         and loopback from DQS pad
-> + * mode 2: Reserved
-> + * mode 3: Flash provided Read strobe and input from DQS pad
-> + *
-> + * fspi default use mode 0 after reset
-> + */
-> +static void nxp_fspi_select_rx_sample_clk_source(struct nxp_fspi *f,
-> +						 bool op_is_dtr)
-> +{
-> +	u32 reg;
-> +
-> +	/*
-> +	 * For 8D-8D-8D mode, need to use mode 3 (Flash provided Read
-> +	 * strobe and input from DQS pad), otherwise read operaton may
-> +	 * meet issue.
-> +	 * This mode require flash device connect the DQS pad on board.
-> +	 * For other modes, still use mode 0, keep align with before.
-> +	 * spi_nor_suspend will disable 8D-8D-8D mode, also need to
-> +	 * change the mode back to mode 0.
-> +	 */
-> +	if (op_is_dtr) {
-> +		reg = fspi_readl(f, f->iobase + FSPI_MCR0);
-> +		reg |= FSPI_MCR0_RXCLKSRC(3);
-> +		fspi_writel(f, reg, f->iobase + FSPI_MCR0);
-> +	} else {
-> +		reg = fspi_readl(f, f->iobase + FSPI_MCR0);
-> +		reg &= ~FSPI_MCR0_RXCLKSRC(3);	/* select mode 0 */
-> +		fspi_writel(f, reg, f->iobase + FSPI_MCR0);
-> +	}
+Besides the DRM changes, this PR also contains some new DMA & scatterlist
+infrastructure (incl. some alloc dependencies), with Nova as a first user.
 
+It also includes a few AsBytes and FromBytes additions needed by Nova.
 
-	reg = fspi_readl(f, f->iobase + FSPI_MCR0);
-	if (op_is_dtr)
-		reg |= FSPI_MCR0_RXCLKSRC(3);
-	else
-		reg &= ~FSPI_MCR0_RXCLKSRC(3);  /* select mode 0 */
-	fspi_writel(f, reg, f->iobase + FSPI_MCR0);
+I merged this cycle's pin-init PR from Benno, since Nova is the first user
+taking advantage of the new features included.
 
-Is it better?
+There are a couple of conflicts with other trees (Rust, MM, Driver Core, Li=
+nus),
+but they are mostly around includes and all trivial [1..8] -- no semantic
+conflicts.
 
-Frank
-> +}
-> +
->  static void nxp_fspi_dll_calibration(struct nxp_fspi *f)
->  {
->  	int ret;
-> @@ -738,15 +776,18 @@ static void nxp_fspi_dll_override(struct nxp_fspi *f)
->  static void nxp_fspi_select_mem(struct nxp_fspi *f, struct spi_device *spi,
->  				const struct spi_mem_op *op)
->  {
-> +	/* flexspi only support one DTR mode: 8D-8D-8D */
-> +	bool op_is_dtr = op->cmd.dtr && op->addr.dtr && op->dummy.dtr && op->data.dtr;
->  	unsigned long rate = op->max_freq;
->  	int ret;
->  	uint64_t size_kb;
->
->  	/*
->  	 * Return, if previously selected target device is same as current
-> -	 * requested target device.
-> +	 * requested target device. Also the DTR or STR mode do not change.
->  	 */
-> -	if (f->selected == spi_get_chipselect(spi, 0))
-> +	if ((f->selected == spi_get_chipselect(spi, 0)) &&
-> +	    (!!(f->flags & FSPI_DTR_MODE) == op_is_dtr))
->  		return;
->
->  	/* Reset FLSHxxCR0 registers */
-> @@ -763,6 +804,13 @@ static void nxp_fspi_select_mem(struct nxp_fspi *f, struct spi_device *spi,
->
->  	dev_dbg(f->dev, "Target device [CS:%x] selected\n", spi_get_chipselect(spi, 0));
->
-> +	nxp_fspi_select_rx_sample_clk_source(f, op_is_dtr);
-> +
-> +	if (op_is_dtr)
-> +		f->flags |= FSPI_DTR_MODE;
-> +	else
-> +		f->flags &= ~FSPI_DTR_MODE;
-> +
->  	nxp_fspi_clk_disable_unprep(f);
->
->  	ret = clk_set_rate(f->clk, rate);
->
-> --
-> 2.34.1
->
+All changes have been in -next for a couple of rounds; the latest nova-core
+series from Alex for one cycle.
+
+- Danilo
+
+[1] https://lore.kernel.org/all/20250905124634.68da9a1e@canb.auug.org.au/
+[2] https://lore.kernel.org/all/20250905125139.109081b2@canb.auug.org.au/
+[3] https://lore.kernel.org/all/20250905125653.0ebc7580@canb.auug.org.au/
+[4] https://lore.kernel.org/all/20250905144449.437ef3cf@canb.auug.org.au/
+[5] https://lore.kernel.org/all/20250912120159.1d6518cc@canb.auug.org.au/
+[6] https://lore.kernel.org/all/20250912135146.0c3ea18f@canb.auug.org.au/
+[7] https://lore.kernel.org/all/aMlfiBynRQrbW3BT@sirena.org.uk/
+[8] https://lore.kernel.org/all/aMlhpIhjbrDR4C8L@sirena.org.uk/
+
+The following changes since commit 043d9c6928b010be7902a01b5cdfa7d754535b1a=
+:
+
+  drm/bridge: anx7625: register content protect property (2025-08-20 08:22:=
+01 -0700)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/rust/kernel.git tags/drm-rust-next-202=
+5-09-16
+
+for you to fetch changes up to 299eb32863e584cfff7c6b667c3e92ae7d4d2bf9:
+
+  gpu: nova-core: Add base files for r570.144 firmware bindings (2025-09-13=
+ 23:17:48 +0900)
+
+----------------------------------------------------------------
+DRM Rust changes for v6.18
+
+Alloc
+  - Add BorrowedPage type and AsPageIter trait
+  - Implement Vmalloc::to_page() and VmallocPageIter
+  - Implement AsPageIter for VBox and VVec
+
+DMA & Scatterlist
+  - Add dma::DataDirection and type alias for dma_addr_t
+  - Abstraction for struct scatterlist and struct sg_table
+
+DRM
+  - In the DRM GEM module, simplify overall use of generics, add
+    DriverFile type alias and drop Object::SIZE.
+
+Nova (Core)
+  - Various register!() macro improvements (paving the way for lifting
+    it to common driver infrastructure)
+  - Minor VBios fixes and refactoring
+  - Minor firmware request refactoring
+  - Advance firmware boot stages; process Booter and patch its
+    signature, process GSP and GSP bootloader
+  - Switch development fimrware version to r570.144
+  - Add basic firmware bindings for r570.144
+  - Move GSP boot code to its own module
+  - Clean up and take advantage of pin-init features to store most of
+    the driver's private data within a single allocation
+  - Update ARef import from sync::aref
+  - Add website to MAINTAINERS entry
+
+Nova (DRM)
+  - Update ARef import from sync::aref
+  - Add website to MAINTAINERS entry
+
+Pin-Init
+  - Merge pin-init PR from Benno
+    - `#[pin_data]` now generates a `*Projection` struct similar to the
+      `pin-project` crate.
+
+    - Add initializer code blocks to `[try_][pin_]init!` macros: make
+      initializer macros accept any number of `_: {/* arbitrary code
+      */},` & make them run the code at that point.
+
+    - Make the `[try_][pin_]init!` macros expose initialized fields via
+      a `let` binding as `&mut T` or `Pin<&mut T>` for later fields.
+
+Rust
+  - Various methods for AsBytes and FromBytes traits
+
+Tyr
+  - Initial Rust driver skeleton for ARM Mali GPUs.
+    - It can power up the GPU, query for GPU metatdata through MMIO and
+      provide the metadata to userspace via DRM device IOCTL (struct
+      drm_panthor_dev_query).
+
+----------------------------------------------------------------
+Alexandre Courbot (33):
+      gpu: nova-core: register: add missing space in register!()
+      gpu: nova-core: register: allow fields named `offset`
+      gpu: nova-core: register: improve documentation for basic registers
+      gpu: nova-core: register: simplify @leaf_accessor rule
+      gpu: nova-core: register: remove `try_` accessors for relative regist=
+ers
+      gpu: nova-core: register: move OFFSET declaration to I/O impl block
+      gpu: nova-core: register: fix documentation and indentation
+      gpu: nova-core: register: add missing doccomments for fixed registers=
+ I/O accessors
+      gpu: nova-core: register: add fields dispatcher internal rule
+      gpu: nova-core: register: improve `Debug` implementation
+      gpu: nova-core: register: generate correct `Default` implementation
+      gpu: nova-core: register: split @io rule into fixed and relative vers=
+ions
+      gpu: nova-core: register: use #[inline(always)] for all methods
+      gpu: nova-core: register: redesign relative registers
+      gpu: nova-core: falcon: add distinct base address for PFALCON2
+      gpu: nova-core: register: add support for register arrays
+      gpu: nova-core: falcon: use register arrays for FUSE registers
+      gpu: nova-core: register: add support for relative array registers
+      gpu: nova-core: falcon: align DMA transfers to 256 bytes
+      rust: transmute: add `as_bytes` method for `AsBytes` trait
+      rust: transmute: add `as_bytes_mut` method to `AsBytes` trait
+      rust: transmute: add `from_bytes_copy` method to `FromBytes` trait
+      gpu: nova-core: vbios: replace pci::Device with device::Device
+      gpu: nova-core: vbios: store reference to Device where relevant
+      gpu: nova-core: require `Send` on `FalconEngine` and `FalconHal`
+      gpu: nova-core: move GSP boot code to its own module
+      gpu: nova-core: add Chipset::name() method
+      gpu: nova-core: firmware: move firmware request code into a function
+      gpu: nova-core: firmware: add support for common firmware header
+      gpu: nova-core: firmware: process Booter and patch its signature
+      gpu: nova-core: firmware: process and prepare the GSP firmware
+      gpu: nova-core: firmware: process the GSP bootloader
+      gpu: nova-core: firmware: use 570.144 firmware
+
+Alistair Popple (1):
+      gpu: nova-core: Add base files for r570.144 firmware bindings
+
+Benno Lossin (6):
+      rust: pin-init: examples: error: use `Error` in `fn main()`
+      rust: pin-init: README: add information banner on the rename to `pin-=
+init`
+      rust: pin-init: rename `project` -> `project_this` in doctest
+      rust: pin-init: add pin projections to `#[pin_data]`
+      rust: pin-init: add code blocks to `[try_][pin_]init!` macros
+      rust: pin-init: add references to previously initialized fields
+
+Christian S. Lima (1):
+      rust: transmute: Add methods for FromBytes trait
+
+Daniel Almeida (1):
+      rust: drm: Introduce the Tyr driver for Arm Mali GPUs
+
+Danilo Krummrich (15):
+      rust: page: implement BorrowedPage
+      rust: alloc: vmalloc: implement Vmalloc::to_page()
+      rust: alloc: implement VmallocPageIter
+      rust: page: define trait AsPageIter
+      rust: alloc: kbox: implement AsPageIter for VBox
+      rust: alloc: layout: implement ArrayLayout::size()
+      rust: alloc: kvec: implement AsPageIter for VVec
+      rust: dma: implement DataDirection
+      rust: dma: add type alias for bindings::dma_addr_t
+      rust: scatterlist: Add abstraction for sg_table
+      samples: rust: dma: add sample code for SGTable
+      MAINTAINERS: rust: dma: add scatterlist files
+      gpu: nova-core: take advantage of pci::Device::unbind()
+      Merge drm-misc-next-2025-08-21 into drm-rust-next
+      Merge tag 'pin-init-v6.18' of https://github.com/Rust-for-Linux/linux=
+ into drm-rust-next
+
+John Hubbard (1):
+      gpu: nova-core: register: minor grammar and spelling fixes
+
+Lyude Paul (3):
+      rust: drm: gem: Simplify use of generics
+      rust: drm: gem: Add DriverFile type alias
+      rust: drm: gem: Drop Object::SIZE
+
+Philipp Stanner (1):
+      MAINTAINERS: Add website of Nova GPU driver
+
+Rhys Lloyd (2):
+      gpu: nova-core: vbios: use size_of instead of magic number
+      gpu: nova-core: vbios: change PmuLookupTableEntry to use size_of
+
+Shankari Anand (2):
+      drm: nova: update ARef import from sync::aref
+      gpu: nova-core: Update ARef imports from sync::aref
+
+ Documentation/gpu/nova/core/todo.rst              |  19 -
+ MAINTAINERS                                       |  19 +-
+ drivers/gpu/drm/Kconfig                           |   2 +
+ drivers/gpu/drm/Makefile                          |   1 +
+ drivers/gpu/drm/nova/driver.rs                    |   4 +-
+ drivers/gpu/drm/nova/gem.rs                       |  10 +-
+ drivers/gpu/drm/tyr/Kconfig                       |  19 +
+ drivers/gpu/drm/tyr/Makefile                      |   3 +
+ drivers/gpu/drm/tyr/driver.rs                     | 205 ++++++
+ drivers/gpu/drm/tyr/file.rs                       |  56 ++
+ drivers/gpu/drm/tyr/gem.rs                        |  18 +
+ drivers/gpu/drm/tyr/gpu.rs                        | 219 ++++++
+ drivers/gpu/drm/tyr/regs.rs                       | 108 +++
+ drivers/gpu/drm/tyr/tyr.rs                        |  22 +
+ drivers/gpu/nova-core/driver.rs                   |  13 +-
+ drivers/gpu/nova-core/falcon.rs                   | 113 ++--
+ drivers/gpu/nova-core/falcon/gsp.rs               |  16 +-
+ drivers/gpu/nova-core/falcon/hal.rs               |   2 +-
+ drivers/gpu/nova-core/falcon/hal/ga102.rs         |  47 +-
+ drivers/gpu/nova-core/falcon/sec2.rs              |  13 +-
+ drivers/gpu/nova-core/fb.rs                       |   2 +-
+ drivers/gpu/nova-core/firmware.rs                 | 107 ++-
+ drivers/gpu/nova-core/firmware/booter.rs          | 375 ++++++++++
+ drivers/gpu/nova-core/firmware/fwsec.rs           |  17 +-
+ drivers/gpu/nova-core/firmware/gsp.rs             | 243 +++++++
+ drivers/gpu/nova-core/firmware/riscv.rs           |  91 +++
+ drivers/gpu/nova-core/gpu.rs                      | 216 ++----
+ drivers/gpu/nova-core/gsp.rs                      |  22 +
+ drivers/gpu/nova-core/gsp/boot.rs                 | 137 ++++
+ drivers/gpu/nova-core/gsp/fw.rs                   |   7 +
+ drivers/gpu/nova-core/gsp/fw/r570_144.rs          |  29 +
+ drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs |   1 +
+ drivers/gpu/nova-core/nova_core.rs                |   1 +
+ drivers/gpu/nova-core/regs.rs                     |  84 +--
+ drivers/gpu/nova-core/regs/macros.rs              | 789 ++++++++++++++++++=
+----
+ drivers/gpu/nova-core/util.rs                     |  20 -
+ drivers/gpu/nova-core/vbios.rs                    | 176 +++--
+ rust/bindings/bindings_helper.h                   |   2 +
+ rust/helpers/helpers.c                            |   1 +
+ rust/helpers/scatterlist.c                        |  24 +
+ rust/kernel/alloc/allocator.rs                    |  52 ++
+ rust/kernel/alloc/allocator/iter.rs               | 102 +++
+ rust/kernel/alloc/allocator_test.rs               |  29 +
+ rust/kernel/alloc/kbox.rs                         |  40 +-
+ rust/kernel/alloc/kvec.rs                         |  40 +-
+ rust/kernel/alloc/layout.rs                       |   5 +
+ rust/kernel/devres.rs                             |   6 +-
+ rust/kernel/dma.rs                                |  86 ++-
+ rust/kernel/drm/driver.rs                         |   3 +
+ rust/kernel/drm/gem/mod.rs                        |  93 ++-
+ rust/kernel/lib.rs                                |   2 +
+ rust/kernel/page.rs                               |  87 ++-
+ rust/kernel/scatterlist.rs                        | 491 ++++++++++++++
+ rust/kernel/transmute.rs                          | 114 +++-
+ rust/kernel/workqueue.rs                          |   9 +-
+ rust/pin-init/README.md                           |  12 +
+ rust/pin-init/examples/error.rs                   |   4 +-
+ rust/pin-init/src/lib.rs                          |   4 +-
+ rust/pin-init/src/macros.rs                       | 239 ++++++-
+ rust/uapi/uapi_helper.h                           |   1 +
+ samples/rust/rust_dma.rs                          |  35 +-
+ samples/rust/rust_driver_pci.rs                   |   2 +-
+ 62 files changed, 4022 insertions(+), 687 deletions(-)
+ create mode 100644 drivers/gpu/drm/tyr/Kconfig
+ create mode 100644 drivers/gpu/drm/tyr/Makefile
+ create mode 100644 drivers/gpu/drm/tyr/driver.rs
+ create mode 100644 drivers/gpu/drm/tyr/file.rs
+ create mode 100644 drivers/gpu/drm/tyr/gem.rs
+ create mode 100644 drivers/gpu/drm/tyr/gpu.rs
+ create mode 100644 drivers/gpu/drm/tyr/regs.rs
+ create mode 100644 drivers/gpu/drm/tyr/tyr.rs
+ create mode 100644 drivers/gpu/nova-core/firmware/booter.rs
+ create mode 100644 drivers/gpu/nova-core/firmware/gsp.rs
+ create mode 100644 drivers/gpu/nova-core/firmware/riscv.rs
+ create mode 100644 drivers/gpu/nova-core/gsp.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/boot.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/fw.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/fw/r570_144.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs
+ create mode 100644 rust/helpers/scatterlist.c
+ create mode 100644 rust/kernel/alloc/allocator/iter.rs
+ create mode 100644 rust/kernel/scatterlist.rs
 
