@@ -1,86 +1,108 @@
-Return-Path: <linux-kernel+bounces-818693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48FEB5953C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:33:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA4BB59541
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043E51BC85EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3DC1645E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35042D3EC1;
-	Tue, 16 Sep 2025 11:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71E7306B31;
+	Tue, 16 Sep 2025 11:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VvnILw2n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZzV0iWwc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ulsCkgJd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZzV0iWwc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ulsCkgJd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA632DC76B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F252D8DD3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758022351; cv=none; b=MHwFsFhpSO0c4PjpFY8rXtLM+YUhFjurOl+Gca90CbgTbOoRCBW7+9KgOURWnJR9HLPIoIa48bQ/uJ+mINW5TGGs4v3F4R86nX1QHqjVhG1ERwErWcB7nZEPP1LB8JeQHkrze8Kg9fyMz5aTFcpJ4WhieD9jFrgRf1jQKcj3aWk=
+	t=1758022468; cv=none; b=YRy6DDKLxOmWxjL4ObXv6wyuyTtcQYq57jhZoriszmpeozfDuFeUIA5T36qOeB92tttqoMgt8tHMhJ87B6gDYwVL6ZKJGUe8MGQqCSGMd7wmIh/xJSl4f6NXbLPYx0DnDtuLyFxlAd9iLWq9cFW7S6Xibv1Bdq8VufLEd89wF+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758022351; c=relaxed/simple;
-	bh=qrKm7Hjc2f6pjKnmdlrxFhFRJ74oWb1RCb7bzHCChWo=;
+	s=arc-20240116; t=1758022468; c=relaxed/simple;
+	bh=jwda/6LBG50JcQMwFvG4rqPYkyTWOkeUBQzc/cXs8fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sBLHMG5/42hrx23C0ickPufuE0hAUCg11DJpbKrBDWG0B/dZnCOXp5iOynB5I6QJUtoprtxpD0Wa+xat/lQ9KV3//n//q8qMUghM26bibSOL8L0KSX2vmmKhyfqmHLTP2Cjqpa13uizJQKpT4758/1I6u9hYo9Jv3HH2+OTTz7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VvnILw2n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758022348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9hCLZ50vYlDxaPnHwAZOwSPKZAjcTojGhWt+bNONuqk=;
-	b=VvnILw2npz5dsOBFwt7dOpOVduRHIoHNV3wiIM5SqFR4sdlaWqcIR0oUYVBfibnhSIxwvl
-	UffO0Fp0JCBqbK23m7sA6t1Nz51Go9yn90pDSARhOBQA5i54VijUe0a39cPHhrLPTV23Ro
-	YTbmfQhpuAyOznIlzUAtUGPiMNHaJq8=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-140-AtP0HQ_5NM6pJLds3SjhZg-1; Tue,
- 16 Sep 2025 07:32:25 -0400
-X-MC-Unique: AtP0HQ_5NM6pJLds3SjhZg-1
-X-Mimecast-MFC-AGG-ID: AtP0HQ_5NM6pJLds3SjhZg_1758022343
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTwvn5Vg/0Ij7ADHPJZTsuoq/CgIigpy7wDImzbEJ8KcKbPCFBy2/1TIe0fklQHhukJtgYQWUD7PB1nZPk9QDB8lu7bkLyHSSo3KzcWW1DIafwMinjZ9xGRKg6YQmvs22hgUG5r+DBsQchKGHjUgEGYitbYk/TvTwjiBMziFHoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZzV0iWwc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ulsCkgJd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZzV0iWwc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ulsCkgJd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1983F1800298;
-	Tue, 16 Sep 2025 11:32:22 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.65])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7A2121800447;
-	Tue, 16 Sep 2025 11:32:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 16 Sep 2025 13:30:58 +0200 (CEST)
-Date: Tue, 16 Sep 2025 13:30:49 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [RESEND PATCH] sched: restore the behavior of put_task_struct()
- for non-rt
-Message-ID: <20250916113043.GA32038@redhat.com>
-References: <aMf1RzZHjdoPNOv_@uudg.org>
- <20250915113812.GB3245006@noisy.programming.kicks-ass.net>
- <20250915123539.GC23082@redhat.com>
- <20250916100953.GG3245006@noisy.programming.kicks-ass.net>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C912C21FF4;
+	Tue, 16 Sep 2025 11:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758022464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5fhBm9oRUq/7LCO1SyruLQVKq17cgO0pzPjr5cDTj58=;
+	b=ZzV0iWwcoKjp7+Gy1ZV+BpXEIOt5ZcdiWXAkNVrrekCNUoUQRtlMWthaTgG7AW5SIYMyIJ
+	317AnruR+qSDy65As8tGZpkm2ppMAo3fk3XAgCYhiVjvAYtctBlrf/ePO229N07lFi7kvd
+	jbMC1jeu8KtHWZtmS2+giDlaxuporkg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758022464;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5fhBm9oRUq/7LCO1SyruLQVKq17cgO0pzPjr5cDTj58=;
+	b=ulsCkgJdSXAE7/HZLZpLAjWF5RNEZoJwYRIavxhpzDtXVvVaeb9qbezCibJRGcaUUyXi9W
+	rs5q+ynr7jQYN+Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758022464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5fhBm9oRUq/7LCO1SyruLQVKq17cgO0pzPjr5cDTj58=;
+	b=ZzV0iWwcoKjp7+Gy1ZV+BpXEIOt5ZcdiWXAkNVrrekCNUoUQRtlMWthaTgG7AW5SIYMyIJ
+	317AnruR+qSDy65As8tGZpkm2ppMAo3fk3XAgCYhiVjvAYtctBlrf/ePO229N07lFi7kvd
+	jbMC1jeu8KtHWZtmS2+giDlaxuporkg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758022464;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5fhBm9oRUq/7LCO1SyruLQVKq17cgO0pzPjr5cDTj58=;
+	b=ulsCkgJdSXAE7/HZLZpLAjWF5RNEZoJwYRIavxhpzDtXVvVaeb9qbezCibJRGcaUUyXi9W
+	rs5q+ynr7jQYN+Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB54613ACD;
+	Tue, 16 Sep 2025 11:34:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kIS3LUBLyWgyZgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 16 Sep 2025 11:34:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 777E6A0A56; Tue, 16 Sep 2025 13:34:16 +0200 (CEST)
+Date: Tue, 16 Sep 2025 13:34:16 +0200
+From: Jan Kara <jack@suse.cz>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: linux-block <linux-block@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, LTP List <ltp@lists.linux.it>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, Christian Brauner <brauner@kernel.org>, 
+	chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Anuj Gupta <anuj20.g@samsung.com>, 
+	Kanchan Joshi <joshi.k@samsung.com>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: next-20250915: LTP chdir01 df01_sh stat04 tst_device.c:97:
+ TBROK: Could not stat loop device 0
+Message-ID: <h3ov4pformuvguwsxtziqui2alarqno37kdru4bjsppeok4sth@yb4iposv7okd>
+References: <CA+G9fYuFdesVkgGOow7+uQpw-QA6hdqBBUye8CKMxGAiwHagOA@mail.gmail.com>
+ <arfepejkmgi63wepbkfhl2jjbhleh5degel7i3o7htgwjsayqg@z3pjoszloxni>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,68 +111,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916100953.GG3245006@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <arfepejkmgi63wepbkfhl2jjbhleh5degel7i3o7htgwjsayqg@z3pjoszloxni>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-7.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.it,lists.linaro.org,lists.linux.dev,kernel.org,suse.cz,arndb.de,linaro.org,zeniv.linux.org.uk,gmail.com,oracle.com,samsung.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -7.80
 
-On 09/16, Peter Zijlstra wrote:
->
-> On Mon, Sep 15, 2025 at 02:35:40PM +0200, Oleg Nesterov wrote:
-> > On 09/15, Peter Zijlstra wrote:
-> > >
-> > > Why have !RT behave differently? That is, why isn't this simply a
-> > > 'buggy' comment/changelog issue?
-> >
-> > Well, this was discussed several times, in particular see
-> > https://lore.kernel.org/all/CAHk-=whtj+aSYftniMRG4xvFE8dmmYyrqcJyPmzStsfj5w9r=w@mail.gmail.com/
-> >
-> > And task_struct->rcu_users was introduced to avoid RCU call in put_task_struct() ...
->
-> Ah, I forgot about that thing.. Although I had vague memories of that
-> argument on rcu_assign_pointer() vs RCU_INIT_POINTER().
->
-> > But I won't really argue if you decide to remove this !RT optimization, although
-> > I think it would be better to do this in a separate patch.
->
-> Right. So when they wanted to remove that preemptible() clause, I was
-> like why again do we have this !RT exception at all, and can't we get
-> rid of that.
->
-> If git isn't confusing me again, this got merged in this cycle. But so
-> far no benchmark came and told us this was a bad idea.
+On Tue 16-09-25 13:04:42, Jan Kara wrote:
+> On Tue 16-09-25 12:57:26, Naresh Kamboju wrote:
+> > The following LTP chdir01 df01_sh and stat04 tests failed on the rock-pi-4b
+> > qemu-arm64 on the Linux next-20250915 tag build.
+> > 
+> > First seen on next-20250915
+> > Good: next-20250912
+> > Bad: next-20250915
+> > 
+> > Regression Analysis:
+> > - New regression? yes
+> > - Reproducibility? yes
+> > 
+> > * rk3399-rock-pi-4b, ltp-smoke
+> > * qemu-arm64, ltp-smoke
+> > * qemu-arm64-compat, ltp-smoke
+> >  - chdir01
+> >   - df01_sh
+> >   - stat04
+> > 
+> > Test regression: next-20250915: LTP chdir01 df01_sh stat04
+> > tst_device.c:97: TBROK: Could not stat loop device 0
+> 
+> This is really strange. Those failing tests all start to complain that
+> /dev/loop0 doesn't exist (open gets ENOENT)... The fact that this is
+> limited to only a few archs suggests it's some race somewhere but I don't
+> see any relevant changes in linux-block in last three days...
 
-I still think it would be safer to merge this patch from Luis before
-v6.17, then possibly remove this special case in a separate patch...
+Ha, Mark Brown tracked this [1] to changes in VFS tree in
+extensible_ioctl_valid(). More discussion there I guess.
 
-> So what do we do now... do we restore the !RT exception (so far there
-> aren't any numbers to suggest this mattered) or do we let it be for a
-> bit and then go and clean things up?
+[1] https://lore.kernel.org/all/02da33e3-6583-4344-892f-a9784b9c5b1b@sirena.org.uk
 
-It is not that simple. Please note that put_task_struct_rcu_user()
-delays put(tsk->usage), not free(tsk).
+								Honza
 
-So for example with this change
-
-> @@ -305,7 +288,7 @@ void release_task(struct task_struct *p)
->  	if (thread_group_leader(p))
->  		flush_sigqueue(&p->signal->shared_pending);
->
-> -	put_task_struct_rcu_user(p);
-> +	put_task_struct(p);
->
->  	p = leader;
->  	if (unlikely(zap_leader))
-
-This code
-
-	rcu_read_lock();
-	tsk = find_task_by_vpid(...);
-	if (tsk)
-		get_task_struct(tsk);
-	rcu_read_unlock();
-
-becomes wrong, get_task_struct(tsk) can increment tsk->usage == 0.
-
-Oleg.
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
