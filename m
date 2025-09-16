@@ -1,202 +1,142 @@
-Return-Path: <linux-kernel+bounces-819744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2CADB7DE5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E62B7DE37
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BA416B2A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76089325727
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504AB2ED853;
-	Tue, 16 Sep 2025 23:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4127E2D3A9B;
+	Tue, 16 Sep 2025 23:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTK4PiKK"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="oz5GUvGS"
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91EE2D46B1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758065825; cv=none; b=BTktU5DflDTCT4nIJUjivcSXEow5aGPpK9Pq/N7CM4gqqN7dEmFkfGKCysW1iFqrObtac03bDodnpf1xVSebLKGkl+2i7/i1tYJderQoQ+MX/yztGl+mcg5N24URIHOIAtCJTrPpNMXvHgTuFYe8ikZ3Jp8shpZ+4TEM25Q+Eac=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758065825; c=relaxed/simple;
-	bh=jmIFrzhuCkeTq8aoCDJ2rAhb/3DfzKmeBEvuiDdglA8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FpZeYJA4k8hCArMvU14Hxrr0hva1b5qGy0NpM3sHDHRke2IIpChUSb3WTBMbiJHKrQosKMK85c/0zYne17+wxDCuSeU7f41icb3Kbv0ZsjGo6FTdMiO4sXUh6fxIzzX8i61z/CklYUn3uwJYWF4P171Um7sZXr09Ip81nNDZar4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTK4PiKK; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b54c707374fso2081797a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758065823; x=1758670623; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lxdcHcBGjhOznZ861gxh1q71v55lbCXoAFjQMQ3zSXI=;
-        b=fTK4PiKKBcMBx3xOI1xivxXwdJF4lt1JDhbQpQpWyyfDzqnkbkDETQMoxV3hxUSNDF
-         fw4RqLMbWHjBgoAx2OZWnlI3f965OV+OVM1iE5znn+PgxLJgQeBTFmLsARI3/p8PWB2T
-         xcj/4+jBgbZzFsNWV2kRuue86gCXl2NHy309ZptcnMM0+2ALnljmNY3h/LYvrpoZhNrL
-         q7zHrttD09wAbUuz4A0eQZMi1sO+c9hwN4UlwAIAQpDWEr1XHhvRMPTpIEmry5fezaV5
-         bxB0COo+sys19JUS4T90RnIq5jsFoVrHv7z5RiuE4IJepP3aduv5UGP60Al5176jkx0n
-         y9Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758065823; x=1758670623;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lxdcHcBGjhOznZ861gxh1q71v55lbCXoAFjQMQ3zSXI=;
-        b=sOmaAhRAFlQp/Xv60fJNQ52RrVJgtI1lAMLzkBqKn+QuaxYlQU1zoMLoHx/s1Nywbh
-         c+1QgGI0SB/qoHzNmt5iKyyCgdOW72vkRZxqQ5KpURygJLOPgMstsm6IeQaj0DQARwOS
-         pHXCMoYLpQ5iIDv4456Gm8VrOEostrmUS05GhXM9K19JsQw/3KDDcGn+H2x0f1tmfSav
-         mTH+hmL9x2OuBNEVGp7JklZ74HBg/5Vec4vvw3RXFtxH7cQK+CkaTTkgDIor6AX4MTrc
-         2ceoEuIvUEZlCHE5FCLjNhSDSFuOArnb/yXeQSEAHshS/xRH7aJEbatFNb6+T6fpZxLC
-         Zebw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaDpghfjXHsptwskTW5Uh9JAFZwetHxkgsNXhlqJaIJfdtvsvv7KD+jNLfv/qwD8orNKKj+0dSX41jMws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIeQBs9qBkpjTQ/K7SbnDNIXlRuZKbB2BzayzLnd6RuNcuO8kV
-	zRlKXoKRNLYG5a9a+4rFq/R9OVCN32YlMEykh6KZ6ABBQZL59eUKGwiVRzxjPLke
-X-Gm-Gg: ASbGnctsc4Vy8yeb9Fb8fhJ39YEnthlkK7vWx4JzcAVW3LyHk00ZUVUClBj7A3OkFad
-	0FdhbKMrfStmK51SAO2eg8IovSfb2Og2rRJPWNGNI70Grtam3ogj+e62Qmaeiku5rHIKJ2c8t86
-	UyU66QXkE4vlXNHZnllHDskIvGIBQbyv09OvWuaR5JmZ3AGmaKrvd1fREAIEtviHTqm30DvkpDs
-	coq8q4r+TKz6j2f4CR71BAYeGdhHYdPYHnYAZE5SX78LLVTEZFcdQ2wqg+23HoPhRkgf6YNwIhT
-	s5j/Jo60pg8wdtTdFlF+wZFqzgl6xDczcJm1cz8GbO72mPAqjCPQNZ8prhBZpOQB0sS36eOP4gU
-	Kh8glEZUbvFHR4HAfkAHTdoToWw==
-X-Google-Smtp-Source: AGHT+IHxLbxAZnUj1CScDSKSM3GL/HL/XAd0FoSZ3hZKt/QN7icZfLqKgH8sOlEwoiR3+HsctkbmDg==
-X-Received: by 2002:a17:902:7448:b0:249:2318:7a2d with SMTP id d9443c01a7336-26811d9273fmr669685ad.19.1758065823035;
-        Tue, 16 Sep 2025 16:37:03 -0700 (PDT)
-Received: from [192.168.1.135] ([2804:14d:90a8:4498::371])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b8eb4737sm10108298a12.9.2025.09.16.16.36.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 16:37:02 -0700 (PDT)
-From: Gustavo Silva <gustavograzs@gmail.com>
-Date: Tue, 16 Sep 2025 20:38:24 -0300
-Subject: [PATCH v6 2/2] iio: ABI: document accelerometer event attributes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D481F4701;
+	Tue, 16 Sep 2025 23:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758065986; cv=pass; b=tE/7gNqdDxwSz0ZOYnY9zj6d5foFgDgviBBSKaF2nixnHqj4O+Eell3pZ42TOUmClYSuAI/sR1nrumqG/dwSmvvjTAQ98shwulJKfvS020WXEn8G4AP8lroIxTFQNLHsJc3ba/VUk116nzS6UMfmvAceKstkBsuaxmNLRkkNKgs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758065986; c=relaxed/simple;
+	bh=PFsoJQKsPOMTHBjFZPpV9hcgwDa9sL0vhxEZilWRMgo=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=YOa7hlvMrijBaT1bJ4XUEufJx21/cxEBVpZN7+8tkVC4HhNF+1XXRTYT4xWcA0pWETWqwKOwPrWYoD7kvPS/pC8XSr2MMSF5aJUiLThv5MPEztEQHaW7nEdDeL5TUsW77t9cw8OXskt+nCAIyi10+NyVOQ02ZQXE7KMG76GZk30=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=oz5GUvGS; arc=pass smtp.client-ip=157.107.129.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 92B6E10A40A15;
+	Wed, 17 Sep 2025 08:39:34 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id X-ez8NUZDHzX; Wed, 17 Sep 2025 08:39:30 +0900 (JST)
+Received: from webmail.redadmin.org (redadmin.org [192.168.11.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: weibu@redadmin.org)
+	by www.redadmin.org (Postfix) with ESMTPSA id 05504109D55C5;
+	Wed, 17 Sep 2025 08:39:30 +0900 (JST)
+DMARC-Filter: OpenDMARC Filter v1.4.2 www.redadmin.org 05504109D55C5
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=192.168.11.50
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1758065970;
+	cv=none; b=bjCczSjfmxObxUTNgqjEpei+4R0BahKXFWqYiHqPxtg3P09QX/Dhcu+4vKFUle226yrGfD0UBJlLanxyqroq+L7UkaZtRoXUmjzEk3zFyA3ub5Us7tD8eC8wjMkusBxin5KkXNbWLYrKEaw4vA1rglDmnFZOzGOSXW1CoEbdHJk=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1758065970; c=relaxed/relaxed;
+	bh=3rQK+DBBPyMcARL0z/kIhvopLlplPjKFYeDcfVSaDYQ=;
+	h=DKIM-Filter:DKIM-Signature:MIME-Version:Date:From:To:Cc:Subject:
+	 In-Reply-To:References:Message-ID:X-Sender:Content-Type:
+	 Content-Transfer-Encoding; b=TuddA/DzD2XRk7S/9SVAFkU72zvEdct+WWLb0lmzbRpO0FgPFcFfue2pPrtOwmsCdC/SDDeNlRsEkD4XvkdpwMSVAycT7SWbcR4NY1zziAPRfc7sMwqW2sSwsxouxfMF9qjV1/agxCzjEVjp9BJVydI54LEVu/G5az0RG9F2BaY=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 05504109D55C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1758065970;
+	bh=3rQK+DBBPyMcARL0z/kIhvopLlplPjKFYeDcfVSaDYQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oz5GUvGSH/48oSZeUxsnrbB8+YuPEXKeqxhuRJLfbh821RcFQesENUjaJBThqmtAs
+	 NvRDuX46a5Tlraa3jCPWB6ahyiOJLNxtrB+gRb0wxarker8pDdMW/AprzkdFtVAAr2
+	 5YXf9pIv3XwW3l0YeuM7fpT3XWmnhqzls4g3jVR4=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-bmi270-v6-2-6acd8d26a862@gmail.com>
-References: <20250916-bmi270-v6-0-6acd8d26a862@gmail.com>
-In-Reply-To: <20250916-bmi270-v6-0-6acd8d26a862@gmail.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gustavo Silva <gustavograzs@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758065905; l=4613;
- i=gustavograzs@gmail.com; s=20250915; h=from:subject:message-id;
- bh=jmIFrzhuCkeTq8aoCDJ2rAhb/3DfzKmeBEvuiDdglA8=;
- b=Pz5QdTxcOVElNPSF9gagWNFeCT0go4cKUSZtUVWmRX7pfVomIz+MtkCJhuk3gUlW8dyVHoF0e
- uTCnfZmfcpeAoVWI7dqKKfFtc1B47Sh45wyLi4nxkiEuhOsbYo+YMR4
-X-Developer-Key: i=gustavograzs@gmail.com; a=ed25519;
- pk=kYkFqZEIlab+1AaYMvpqhTQxwPXcJiTXdMaBQbfORrg=
+Date: Wed, 17 Sep 2025 08:39:29 +0900
+From: weibu@redadmin.org
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: wmi: lenovo-wmi-gamezone: fix typo in frequency
+In-Reply-To: <877bxyfkw7.fsf@trenco.lwn.net>
+References: <20250913173845.951982-1-weibu@redadmin.org>
+ <877bxyfkw7.fsf@trenco.lwn.net>
+Message-ID: <a88c47e98139a6264670879407fb09a3@redadmin.org>
+X-Sender: weibu@redadmin.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add ABI documentation for accelerometer event-related sysfs attributes
-exposed by the bmi270 driver. These include threshold, period, and
-enable controls for adaptive magnitude (any-motion) and rate of change
-(no-motion) event detection.
+Hi Jon,
 
-Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
----
- Documentation/ABI/testing/sysfs-bus-iio | 34 +++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+You’re right — that block is a verbatim MOF listing decoded by bmfdec, 
+and the misspelling comes from the vendor-provided Description string. 
+So this isn’t an editing error in the docs.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 2fb2cea4b19249743398b1ff0b538b03ced0340b..b45d1ba6972848a6024746d7d741146e35a55ebb 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -908,6 +908,7 @@ What:		/sys/.../iio:deviceX/events/in_accel_y_roc_rising_en
- What:		/sys/.../iio:deviceX/events/in_accel_y_roc_falling_en
- What:		/sys/.../iio:deviceX/events/in_accel_z_roc_rising_en
- What:		/sys/.../iio:deviceX/events/in_accel_z_roc_falling_en
-+What:		/sys/.../iio:deviceX/events/in_accel_x&y&z_roc_rising_en
- What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_rising_en
- What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_falling_en
- What:		/sys/.../iio:deviceX/events/in_anglvel_y_roc_rising_en
-@@ -991,6 +992,7 @@ What:		/sys/.../events/in_accel_y_raw_thresh_rising_value
- What:		/sys/.../events/in_accel_y_raw_thresh_falling_value
- What:		/sys/.../events/in_accel_z_raw_thresh_rising_value
- What:		/sys/.../events/in_accel_z_raw_thresh_falling_value
-+What:		/sys/.../events/in_accel_mag_adaptive_rising_value
- What:		/sys/.../events/in_anglvel_x_raw_thresh_rising_value
- What:		/sys/.../events/in_anglvel_x_raw_thresh_falling_value
- What:		/sys/.../events/in_anglvel_y_raw_thresh_rising_value
-@@ -1129,6 +1131,7 @@ Description:
- 		will get activated once in_voltage0_raw goes above 1200 and will become
- 		deactivated again once the value falls below 1150.
- 
-+What:		/sys/.../events/in_accel_roc_rising_value
- What:		/sys/.../events/in_accel_x_raw_roc_rising_value
- What:		/sys/.../events/in_accel_x_raw_roc_falling_value
- What:		/sys/.../events/in_accel_y_raw_roc_rising_value
-@@ -1177,6 +1180,7 @@ Description:
- 
- What:		/sys/.../events/in_accel_x_thresh_rising_period
- What:		/sys/.../events/in_accel_x_thresh_falling_period
-+What:		/sys/.../events/in_accel_roc_rising_period
- What:		/sys/.../events/in_accel_x_roc_rising_period
- What:		/sys/.../events/in_accel_x_roc_falling_period
- What:		/sys/.../events/in_accel_y_thresh_rising_period
-@@ -1187,6 +1191,7 @@ What:		/sys/.../events/in_accel_z_thresh_rising_period
- What:		/sys/.../events/in_accel_z_thresh_falling_period
- What:		/sys/.../events/in_accel_z_roc_rising_period
- What:		/sys/.../events/in_accel_z_roc_falling_period
-+What:		/sys/.../events/in_accel_mag_adaptive_rising_period
- What:		/sys/.../events/in_anglvel_x_thresh_rising_period
- What:		/sys/.../events/in_anglvel_x_thresh_falling_period
- What:		/sys/.../events/in_anglvel_x_roc_rising_period
-@@ -1344,6 +1349,15 @@ Description:
- 		number or direction is not specified, applies to all channels of
- 		this type.
- 
-+What:		/sys/.../iio:deviceX/events/in_accel_x_mag_adaptive_rising_en
-+What:		/sys/.../iio:deviceX/events/in_accel_y_mag_adaptive_rising_en
-+What:		/sys/.../iio:deviceX/events/in_accel_z_mag_adaptive_rising_en
-+KernelVersion:	2.6.37
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Similar to in_accel_x_thresh[_rising|_falling]_en, but here the
-+		magnitude of the channel is compared to the adaptive threshold.
-+
- What:		/sys/.../iio:deviceX/events/in_accel_mag_referenced_en
- What:		/sys/.../iio:deviceX/events/in_accel_mag_referenced_rising_en
- What:		/sys/.../iio:deviceX/events/in_accel_mag_referenced_falling_en
-@@ -2386,3 +2400,23 @@ Description:
- 		Value representing the user's attention to the system expressed
- 		in units as percentage. This usually means if the user is
- 		looking at the screen or not.
-+
-+What:		/sys/.../events/in_accel_value_available
-+KernelVersion:	6.18
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		List of available threshold values for acceleration event
-+		generation. Applies to all event types on in_accel channels.
-+		Units after application of scale and offset are m/s^2.
-+		Expressed as:
-+
-+		- a range specified as "[min step max]"
-+
-+What:		/sys/.../events/in_accel_period_available
-+KernelVersion:	6.18
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		List of available periods for accelerometer event detection in
-+		seconds, expressed as:
-+
-+		- a range specified as "[min step max]"
+I’ll drop this patch. If it helps future readers, I can send a follow-up 
+that adds a short note saying the MOF listing is verbatim and typos are 
+preserved.
 
--- 
-2.51.0
+Thanks for the careful review!
 
+Akiyoshi
+
+2025-09-17 00:59 に Jonathan Corbet さんは書きました:
+> Akiyoshi Kurita <weibu@redadmin.org> writes:
+> 
+>> Fix a spelling mistake in lenovo-wmi-gamezone.rst
+>> ("freqency" -> "frequency").
+>> 
+>> No functional change.
+>> 
+>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+>> ---
+>>  Documentation/wmi/devices/lenovo-wmi-gamezone.rst | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst 
+>> b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+>> index 997263e51a7d..167548929ac2 100644
+>> --- a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+>> +++ b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+>> @@ -153,7 +153,7 @@ data using the `bmfdec 
+>> <https://github.com/pali/bmfdec>`_ utility:
+>>      [WmiDataId(1), read, Description("P-State ID.")] uint32 PStateID;
+>>      [WmiDataId(2), read, Description("CLOCK ID.")] uint32 ClockID;
+>>      [WmiDataId(3), read, Description("Default value.")] uint32 
+>> defaultvalue;
+>> -    [WmiDataId(4), read, Description("OC Offset freqency.")] uint32 
+>> OCOffsetFreq;
+>> +    [WmiDataId(4), read, Description("OC Offset frequency")] uint32 
+>> OCOffsetFreq;
+>>      [WmiDataId(5), read, Description("OC Min offset value.")] uint32 
+>> OCMinOffset;
+> 
+> I don't have the device in question and can't test this ... but the 
+> text
+> in question has the appearance of being literal output from the bmfdec
+> utility.  Do we know that this is some sort of editing error rather 
+> than
+> an accurate reflection of what the tool prints?
+> 
+> Thanks,
+> 
+> jon
 
