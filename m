@@ -1,152 +1,140 @@
-Return-Path: <linux-kernel+bounces-819678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816EFB5A921
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E19B5BD65
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E803B24B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58FC3BEA78
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873D12222D1;
-	Tue, 16 Sep 2025 22:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D990126773C;
+	Tue, 16 Sep 2025 22:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEuvnzma"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ucs+ZyB+"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1671E9B1C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE69E4A04
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758060228; cv=none; b=aDgkWT3gRnRZLyU9vnpoXJX1FBc77deLuwJ0fo9/+AzQYpgR/LlXrdSdfCsFtntBsUxrOOyalzuS+37PLZMbCUHf8sO6NjdaIfo3Zj0aUGIcuDSfcBUVox8YzDMqLSqpa5WXK03pisOBEwZOH+1J88IVpgP7XK2mFnhZAYyvbtw=
+	t=1758060276; cv=none; b=rDXnOcQHw27hFetUD6fFLknYyflLr6uaKXYTdm/GFgyaUdXlLvNvw+hmB7W5rlZcOeuOeENCCjOL8nTQbhdZQG9Zkr1L88DeMCrFP+yuyH2xWEi04mQ4ZH8j/5N7YCTzgM9dNd/voEI/zBRsjbh1w00mte/GcJm7o9vN7MpP+7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758060228; c=relaxed/simple;
-	bh=rngYmVobiGFs88K9afobninraV2yxLvnoogWo8W+5NM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Nyf6O0xpPu9oBVcyPCuIRc5G0227S+HL+G74L5mPBO9Vxh8id2l6pmvzOJEIEfSVLMZnSf3ijE/cP/B/EBYs/m+HJgDEVRobQVrW6cP+Ydd0cJcXA/8KNROmj5WFhrLdmkja0PicR03cI1bkHw2bQgZHddBDs3VYUsg4qUkRWRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEuvnzma; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0e7bc49263so469570466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:03:46 -0700 (PDT)
+	s=arc-20240116; t=1758060276; c=relaxed/simple;
+	bh=8Dz3xveRLNWxE4m+S3m0+eWLQADWkiJx9NmSO4GJqto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tiBK3zWRe3oXRAOdMflVWzmzLjvmjO53GHFOgn3hNp2T1hEp8h/lZ35TWpoeRi8YHzyoe9z0amEAnD/6F+JX9y94HerwH3+iKPceY47d7g/mnpPHgZqYyLvIgzzG8XK76dfhh/eqbjKXwVqHDSiNOX5LxoUac/aW+9nig4TrHJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ucs+ZyB+; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b79b0eaac0so20711cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758060225; x=1758665025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=o0Ob/UE4RTVxiwS8RzGBBRyiZqvn0MV4NxGM4WOAL0E=;
-        b=ZEuvnzmaJG8e6mGdrfvaoP/Ij6kqyosv9K+1qvc8fjwX0nzYieBGdF4JxZPRaVklHN
-         67BDL/7QwUT0Xa9fgRqPsOwvONMbVsThIxrWeVpJI6B2hJvYA5TWnQRnYqWe6Dcxv7df
-         WDBVtwnfegrOWXNnKNXi+fuI8qAM3grgkYVHfRMCbNvF5ZRJGm5hyaNhh+X4X5q9a3Qk
-         arNpUbt5nJCxDl5s0UgduJqE41PHaVyk1QuhH8NalC4FDRT9M8bKuRAxDP3Uob0ypigz
-         DZPSPzW5dZ0fdG/GYGAC4GGGGg9m+eVV4lOQy9ETOJDjYIscerF3L+3WHOx5570VTM3Y
-         Xo4w==
+        d=google.com; s=20230601; t=1758060273; x=1758665073; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GO0OExCnC+Sl5h2asp7Gvh1+SINfuTNdIpxLbVzAb3Q=;
+        b=ucs+ZyB+Fr8l+/rbNY8twX30sRV1b0lfIjKOqfCTDjLNR8SbDGPApyOKW2TBbdcMsg
+         M5GZwHurVvZbiFVHvihp5p02HOuK4EYx9IWK5+ZMFzzu5sz+gIhanaG2jPEclILRD+Me
+         ygm0PSL64vG82YXUBh30kkXIprKmZ9HsuzwJcQ3s5y40hVkDN10Ws3QhivUiF3E7KNhb
+         yYCc6hPqk81XRC5xxq5p4VT4YEdL5TEGScPl+pGhuhHBcMtOqg87haZrXQGH4u1wRr7b
+         C7D+Bw+4bwW6gZ0XiJNsr+JuGTWwy6ctiJNhiQ216Pr7AqKEA0+aC6MEqAMPmVqNeAPw
+         Y22Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758060225; x=1758665025;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o0Ob/UE4RTVxiwS8RzGBBRyiZqvn0MV4NxGM4WOAL0E=;
-        b=ZnEsMt7dgHv+D39eFjrdTcyRUbevRMCw3WAeMsbZJ54/yLGC3Z46Gt7y2dpLxc0Fhm
-         RdJm2Jdiq1MnXOphNBm0pj3zjydPxxCMma7bksgg513hmO5SP42X5fhT6hixWcVb5AtL
-         f6HIcoSawQiLrDQaEv2wYbFIHG5b9yZk/sPVyIyX76jVarP2UQREDpO/LQpgjo5YbUaq
-         TCt9qrqyaK/pcteqkdoiiPGgDLuai0V10o2AEDZp92Wir2RuTzGKqy8U1MpfPnY73/vQ
-         D60TU6833N/kEsNZ3f734cVvOaS9vawzhqTXYNyrV7AI/haGMa29+E3EDjmkP8yI88GP
-         gj0g==
-X-Forwarded-Encrypted: i=1; AJvYcCX6brxhufJ+IoseKGArQho2YToizNHLZIYf3MhMYwzXum42UkcWFFw21SC3+eM9OVb4Xt7XYp2VE5+RCU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIY8wujNdLdP2SrAbSIXFNOjIGu9Mnncr4YfgoIuI+XYRWtkCh
-	eBg4aKzShWhiuDDlbU5iP3DpOJ014Fs5LSouz+fCWY3eWR7y5EYw7SXj
-X-Gm-Gg: ASbGncuzLfg+gI9HqzTZuSnfTQirJbXok7LPcfHKc2WVBr3rmeWVpjaf+HZzGUHBnOQ
-	0ahEU/4WTGygwQcIGEjsRoaIe7YwPm7vYswM3tcy56qbZ+mzVZL/p66BrKcGxC0XlMOuHoY4ksq
-	uWsXoPAoBtAIRGNJJSLDII5HTZCODCQjgnyrRP/GTxBJLQfyyoGNteWR7NGXMmEhlfNrybv0XSV
-	wYubxJADWxafx4jjkMJsr8W16H7kSN2ZrrXSqDSy7dMNbmiUsOxHDyEfKeyb0sre196sbbV3UkI
-	QxurX+ro0v9atkgvvFSiclDSCximv/d1IUSHOahYre8gdiofpM7HOvd5UoxczYyZ7Aj67i01Dp0
-	NERDLrFzD2wpG01kovVlUKJ6xZViBxY2l/TOw1j5pf1ACyFX8tQUZhJnFV1ARh+H+fGaR
-X-Google-Smtp-Source: AGHT+IEQodNvL7Edth6QjxYHTIysPZRAz+uUM7UuZtp4kejKP8E79m/qDu+L/TqlV6RUd269kcVcYg==
-X-Received: by 2002:a17:907:9713:b0:b04:8358:26fa with SMTP id a640c23a62f3a-b1bc02f66ecmr1410466b.33.1758060225245;
-        Tue, 16 Sep 2025 15:03:45 -0700 (PDT)
-Received: from ?IPV6:2001:861:3385:e20:6384:4cf:52c5:3194? ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da43esm1237094866b.14.2025.09.16.15.03.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 15:03:44 -0700 (PDT)
-Message-ID: <235312e0-b912-4e10-874a-e6364131aaee@gmail.com>
-Date: Wed, 17 Sep 2025 00:03:43 +0200
+        d=1e100.net; s=20230601; t=1758060273; x=1758665073;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GO0OExCnC+Sl5h2asp7Gvh1+SINfuTNdIpxLbVzAb3Q=;
+        b=ZXP9VcrXyg0FYcm/v9hGMsCCeaOxlT4VfxH3O6mCsHbeNOF24rSJ452Bkmk/j5lh2s
+         bKp/rxqDAaG7067yc0SoV01n8VxS798Ur2CuaDJ/w5DDOQyDH+AQ162tYR7cq+uB5BwV
+         SFUXMrf6lkBPFSkCoOTNgiYzUYAIn6TXQrAtlCbNkXFvz0/kbgS+IgS4zwQUgKsJuTzS
+         +qU27xZb1MIYXOf5PK6I91+Thrurs0N5NX9aoOP0OGM9yvotDWMXWqGLdpTQhBEaUtpx
+         sJOurTvSL8uUj4OSdHK3avDx4OB8k771hwLNwQMdQHTDnerU5idnqyCpYr2h/7pHk2dT
+         WIJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7xt8/fzP/PGJx0YCdxgEaQCKffN2PsKENZ/jVhD9ecLLQwHilVh5nwrFeJa4zKVhXCkVn0eiQZd6r2/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXDg3tSS4eR0kMrUIzi3OgXVTLBqgWtMQFMvo4g/v/ApgOjVh5
+	yyuL62HvYGEtsNbw2jx93SC8crMPy8uWg59DfrKIvkZSnZDnagBuD33TfuuvL6CwXiZv4Zp/TwV
+	Xf1Uqu7EGo8qT/q25BEVXLtRtFXGrUkzg31ertRva
+X-Gm-Gg: ASbGncsvqIylglc5xzkbmMFX43WocipCiFr2F4Y0K/mkrE3QAFA+3x5cuqlhuUavY2T
+	wvq1te7JVbYXmJTj1riqi648eVb7AFiLFFbhBxQIfHwrGUBO6PJ++f9JfKOnaNXt2hkzzX3YoyA
+	ruGQ7yZV81rCTDokylCSjKSIj6OLMOssbNnmKyH5MTTNIecumueJevlld47/zJN2ZeOh7sZ3c85
+	TD9l5elSdpR5+c2RGh/MsI04dMiXjPh/0g0vfxV/mc=
+X-Google-Smtp-Source: AGHT+IGsKu+cTvUnrE+14NjFE3JwC3AX5wEjcsUr7wNzlgTYrg4z9FFihrHIMkxTd4MhTiMWV/kr4UXdJ0+aCZG77NE=
+X-Received: by 2002:a05:622a:512:b0:4b2:febb:fc96 with SMTP id
+ d75a77b69052e-4ba2dbd8e7fmr647301cf.9.1758060273178; Tue, 16 Sep 2025
+ 15:04:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] STi device-tree display subsystem rework
-From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
-To: Alain Volmat <alain.volmat@foss.st.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Patrice Chotard <patrice.chotard@foss.st.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
-Content-Language: en-US, fr
-In-Reply-To: <20250717-sti-rework-v1-0-46d516fb1ebb@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250916-mm-rcuwait-v1-1-39a3beea6ec3@linutronix.de>
+In-Reply-To: <20250916-mm-rcuwait-v1-1-39a3beea6ec3@linutronix.de>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 16 Sep 2025 15:04:21 -0700
+X-Gm-Features: AS18NWAo0S1mrj9xxOmoISz9k1x-YAMjgdLRC_PrTLqqMXhYSeUwuLtYX6ohgmk
+Message-ID: <CAJuCfpE-DPBp-0b0908FHvguSo_PqxE2LdUXvBiMLu1UCd5icQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: forward declare struct rcuwait together with rcuwait_wake_up()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-Le 17/07/2025 à 21:15, Raphael Gallais-Pou a écrit :
-> This serie aims to rework the display-subsystem node, which was
-> previously included directly within the SoC node.  This was wrong
-> because it is an abstraction and describes how IPs behave together, not
-> what the hardware is.  Instead, extract display-subsystem outside of the
-> SoC node, and let IPs describe their connections.  Doing so helps the
-> readability, and eases the understanding of the hardware.
-> 
-> Several nodes have been renamed to stick to the generic names defined in
-> the device-tree specification.
-> 
-> This series depends on another sent a few days ago.  It is not critical
-> though, since not having it only triggers warnings when building
-> deprecated device-trees.  Please see link below.
-> 
-> Link: https://lore.kernel.org/lkml/20250714-sti-rework-v2-0-f4274920858b@gmail.com
-> 
-> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+On Tue, Sep 16, 2025 at 6:59=E2=80=AFAM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> At the point of the forward declaration of rcuwait_wake_up()
+> in mmap_lock.h 'struct rcuwait' may have not yet been declared,
+> leading to compiler errors.
+>
+> Add an explicit forward declaration for the struct.
+>
+> Fixes: 75404e07663b ("mm: move mmap/vma locking logic into specific files=
+")
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 > ---
-> Raphael Gallais-Pou (4):
->        drm/sti: check dma_set_coherent_mask return value
->        drm/sti: make use of drm_of_component_probe
->        ARM: dts: sti: extract display subsystem out of soc
->        ARM: dts: sti: remove useless cells fields
-> 
-Hi,
+> This doesn't seem to break any in-tree code right now.
+> I stumbled upon it while building a series for the next cycle.
+> Instead of putting this fix into my series and spamming all the mm
+> maintainers with it, maybe this could be part of the last mm bugfix pull
+> for this cycle.
 
-@Patrice
-Would you agree to make the device-tree patches go through drm-misc 
-instead of your tree ? So that the breaking change lands in -next in the 
-same time as the driver changes.
+`struct rcuwait` is defined inside include/linux/types.h and
+mmap_lock.h includes that file. Could you please explain in more
+detail what exactly failed when you were building it?
 
-I will send another series to convert display subsystem bindings to DT 
-schema as soon as the series is merged.
-
-@Alain
-Do you prefer to merge it yourself or you rather let me do it ?
-
-Best regards,
-Raphaël>   arch/arm/boot/dts/st/stih410.dtsi | 316 
-++++++++++++++++++++++----------------
->   drivers/gpu/drm/sti/sti_drv.c     |  18 +--
->   2 files changed, 192 insertions(+), 142 deletions(-)
 > ---
-> base-commit: b9a572f471993d3e8bf874fcb57f331d66650440
-> change-id: 20250401-sti-rework-b009551a362c
-> 
+>  include/linux/mmap_lock.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> index 11a078de9150df1beff4f0bfb16e199333767614..9792dd4fff0ff73829833aae8=
+ea3229a31757d61 100644
+> --- a/include/linux/mmap_lock.h
+> +++ b/include/linux/mmap_lock.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_MMAP_LOCK_H
+>
+>  /* Avoid a dependency loop by declaring here. */
+> +struct rcuwait;
+>  extern int rcuwait_wake_up(struct rcuwait *w);
+>
+>  #include <linux/lockdep.h>
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250916-mm-rcuwait-03c5fe95f36d
+>
 > Best regards,
-
+> --
+> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+>
 
