@@ -1,228 +1,349 @@
-Return-Path: <linux-kernel+bounces-819655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90D1B5A427
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:46:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAFFB5A432
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5459217D692
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D715B46058E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B2727990C;
-	Tue, 16 Sep 2025 21:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EA12F9D9E;
+	Tue, 16 Sep 2025 21:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cCgJD2C4"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012001.outbound.protection.outlook.com [52.101.43.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="laC4ObbZ"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB419276022;
-	Tue, 16 Sep 2025 21:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758059205; cv=fail; b=XGs7M7xoDEypQDFSbBUDE+STHwQIxztySU58/Ji3YQWgRB/T4WpZM6dtj9x6vWGpEGAoGHw1q6vdjum2DvUngilO7gbl6Sktzoafla5FMEhG7GJSBYma2mduhR+g2NuryWw1bdB0/zl1IpD8dm5Zh2Vj4NNNhofAevNya4yMKfg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758059205; c=relaxed/simple;
-	bh=xZYFxyHB38t5Z2fydO+CaOIHJ/fkA5tSz4Q58004JcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KUg/wTfjlr1u9Bqaz/82pLeM7xx0Udd1UjuAcH3Ko83hAZYzd6qgqwJ4bDO/cnSsJ0CUlHAtDugrUopiybdB6ZaG1/Ywx4ZLmckOiZco0G/4jv7RbW4vvFwYZ/fjdzYXW4iwPjlFRqsAmu5rtz4ZM5gBC/NAdedMe59CM8YcMDM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cCgJD2C4; arc=fail smtp.client-ip=52.101.43.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lSez+poGGGIWRgbLaMLWnP9yudJzuEHe+lt0G/cStTMPnJXEfhfuAn/7mQkozSi2gP38Z6wbLJU5Io9eqCDmz4GRlZI+xxJegNYRN58MTisiE6n95YLjNSGKdYqvxqKGgtDS4qQYih2FVnaf5qBYhNfICbQ1cLDfn3wtPtNJ1SluqX9rTgin+A9AaWjEjkWyIRPZM2E8medAGPAKghl37qpLHWmqPOPkWOfFuSzwIeNdy4gnk7Wyj+qHKxb9bcGdHHVEQsDBFvNSLZ06Wr40ZW69YcxsQP5pphl5DsCie66gxgwDLimNENWS0rBrjAOCkTb+F40BgiguhBOSiz+SgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VzYn6suwl1Y7iFd2kxDdlabKU0IG8KEFdIuNf4CXq3I=;
- b=snRBeIWe9GaZJN0hiVbHsbf+kc2HH9/OHrVwEl0JKL1VO8Y5XSLYDBYWfITrB6SH1ue336vn2sY0n+wlWDyGdS1efDsipQnvuq0D5HX0+rTXf5E1HX9ASur66lnrR8GIICHzF8Q7TTMdpKitk54gwgswim75K0aO30zbhJgj6ObZbT/g0DouVnln4/0YEyoCfoDQ6LY4F71zBTHTniqd4DWX5T2+e62KN/NmcV6HRFEmlClbonL/rHoD9ixiQedUxZULKUc56u/r1xY5Ep5xyKJvbZzicsT0BiXjYcOzX1OuIJHREap6ia2UfOJNE0qpryFYLb3pam/CvtcsmuoAWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VzYn6suwl1Y7iFd2kxDdlabKU0IG8KEFdIuNf4CXq3I=;
- b=cCgJD2C4S/QZLLhAs570fYN20E7hfdf4RDckX47u1wnrLwCM6ObF6pUX9abwVfkjKRtb9Xh3ml75U2dL80V89Orkm3uvDgmdDrUrzVy4n4q62sAPM3kTOv4i5UDzd6cbKEzS40yoocOPHkYDz1/yIQ8atydOcfycvf3ikpbstJhK1G/r243Hdsumi+6cecxNIoaCBQPy1LrTEbQVVASraJn4/JkJHMsBW1ZqeH+XXI3PEd1O8etMhA2jZ2adMeqhlATTxAcMoYw/Stl4y8QH7eXL2NEEfPlsGq5ek25oOBNQ/OwMVPHXnzVf+NCu0Li19yVZgk7SgYWbznMd3na2Mg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB8317.namprd12.prod.outlook.com (2603:10b6:8:f4::10) by
- IA0PPF6E99B1BC1.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd1) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
- 2025 21:46:36 +0000
-Received: from DS0PR12MB8317.namprd12.prod.outlook.com
- ([fe80::8ca4:5dd7:f617:f15c]) by DS0PR12MB8317.namprd12.prod.outlook.com
- ([fe80::8ca4:5dd7:f617:f15c%6]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 21:46:36 +0000
-Date: Tue, 16 Sep 2025 23:46:30 +0200
-From: Thierry Reding <treding@nvidia.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Wolfram Sang <wsa@kernel.org>, Akhil R <akhilrajeev@nvidia.com>, 
-	Kartik Rajput <kkartik@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the i2c tree with the arm-soc tree
-Message-ID: <ofp27qiwsw7jj5ne3y7kp2lpycwg37bvhswidwe6jfazs2czzp@76gzsofmliyc>
-X-NVConfidentiality: public
-References: <aMhR9TJm5V5EqaoC@sirena.org.uk>
- <aMh_eKWqkuLODo2r@shikoro>
- <e70f4454-d0f5-4b3e-9751-730781f056f9@sirena.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6lqxeyrn23wgxklf"
-Content-Disposition: inline
-In-Reply-To: <e70f4454-d0f5-4b3e-9751-730781f056f9@sirena.org.uk>
-X-ClientProxiedBy: FR4P281CA0106.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:bb::10) To DS0PR12MB8317.namprd12.prod.outlook.com
- (2603:10b6:8:f4::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BA82D9494
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758059222; cv=none; b=WMJWdo5Y5zot4HXXUSQd1r7LqY0KC5gnBa5ruBABkYvv/qNsrqUm/awzbqTvqKLR9ZsyMKPPOXQ27Mk6GX4nA7YF+gZCMqxqKwlxp1/7pBse5WIzEcR+CTmS2T8Rfu1PB2YNRHyvBNibk2ZCpnNVYBso0BcB1fljdamCN4oDXAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758059222; c=relaxed/simple;
+	bh=FHTxmvYwAyxzn1/GDbWQAY7lYeEMR32ENzK3j+HLyfs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oZcCPG4qRUi82pXvo4wbj6bHtAZmEKy4i23U96h+6UEDUFOoiHa7UQmxmF+Nhf5kRaMm4Xcf1P1esoKn3WdHuZcAnveTA3sV4K1s0r7zp3WVPQTm9FfsYxzaHTikBdcgeuAfDlPz1BRokOZlSnOA5OXOTvKJoNF9vMPHYDOde04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=laC4ObbZ; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b4bcb9638aso194761cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758059220; x=1758664020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8cORpR7NP/vc984PKQDAJOieXaROC8axwk2H5vOdW60=;
+        b=laC4ObbZvS5Lz5krtwqZ8SKJk1+EkFdXndVSvJ/PFpOYpgBsY69DKBGOd4oeXJIveY
+         PnGorHhT1bd8RwHzepMrtrjfiT3S/x9/6IZ7QEprRqTV2yQicDgBGXGlESRlavRdhM25
+         puY76EXxliWUqB73TsO5eKGwpqyimpzJxbbuQJ6W7GBjLAbirdg1Y62/f7Tgamqs3y0B
+         IM5uuRtSZBleAvlDeIUAm3JdOxDGYDwRd0EPBP+J3hP97AYmLAw1ftjfDXYdzqayKPXq
+         h07qy90ka9awReMtkox1vfCbCuWCBrmCfIWXWARUXFIJ9jDfab6qCtakTmag9XAnpX7p
+         zk2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758059220; x=1758664020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8cORpR7NP/vc984PKQDAJOieXaROC8axwk2H5vOdW60=;
+        b=w8e5Cs0ldkVCPSYN4NogrUVux0h8wwA+K3jJhbNju8FjMb9vMn5jPj0uoVgaCi0IK8
+         8r3kBiGxdtNl5v5ExeEd3YEAX/+XxruQ2h5RQ2PPuwHmsIl9iPA7y4vVyNJATUgJnJRx
+         GpFRvSK4mEKlPDCvAfY6cDg7pC5n9LyKM9MksOfdJk0zZXBsdROikBYo1lDIKGZthRhR
+         0q78oMRLrhGUFMiK8Wm7/eYjV1cgDFrLR8j63o3M95mTjLrUNAlXnMGZ4dSpLUxJN7jq
+         oih3JFMsd+PFItC8YqEUaP5sZtA3KmYy2DqiMzluug/vie7ToZXHLSZhi/WdLSVU9Qc7
+         5l2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXewm9U/JdzR/WnoefBdkt65zkveY6qtNNuGx8eHrThMEOmvXe5M30eWFzdmbOCAkj0FnH7iNxqexJHQrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSZBmUwmFvOjp3tbz4xo4riY15DhMVU+5HB0aPuobFEb+cQ1W6
+	MJL0bV+h4smizYGJLgTeRQN74UE2UGGwQ6h+BemupeBQBJJK/HbwRYq2GJEIzPh9B+4S5RawRGs
+	RXSJUHyQtoAY7tlbGIhTX0vtbT1M9NNKQm6odX0Zy
+X-Gm-Gg: ASbGncssq0rJ2XvHKT9QC+iaW7CGizAGOoirBghjCx0QDrchaImVpRE91RvZPQ4jb26
+	DXEFbreDKBlIJ+BHRW4SLpVdmN1MYpSikLNt9ZlmWzW7TUgzR1C0FcSgFQtnPfHtMVKID/XOmqk
+	POC/j+QRgAdPgpwa3OAMJ0Ho3wwEc1z7wdn1zYOBhTpOtQEMw6v+TeI9DF4QLz4ljw0kPPNAalI
+	ZW1HLMouZSpTPcsvxRIEmEHVowsxYu9dVzYTjyaol0ilJkYLKddjkI=
+X-Google-Smtp-Source: AGHT+IG8pJr4Ku/EyvmNj7ByPDO1y93cWqsNmE/h4IbXm3vcafdNzffACFkfdJfTBgdN/uG7iO/k1NvDgpQ8Ad+czjk=
+X-Received: by 2002:a05:622a:199a:b0:4b5:d6bb:f29b with SMTP id
+ d75a77b69052e-4b9dd893ec8mr2081351cf.8.1758059219140; Tue, 16 Sep 2025
+ 14:46:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB8317:EE_|IA0PPF6E99B1BC1:EE_
-X-MS-Office365-Filtering-Correlation-Id: 171a62f2-0788-4908-08a5-08ddf56a8226
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yiIW5+YTs0MOXx4Ut3RML7kGbXw/iktOn3Fn0SBrw7/iEo5f38XctTvPed2I?=
- =?us-ascii?Q?KUkEEzNpe6HpA9joYW7GHRdbjIW8EAVWA6ezthiw17kxp7xpqmNCmGdCPA9N?=
- =?us-ascii?Q?qaf9wOBXuct5Il8IoCyAsYCiUZw9ZhOtlU83Ot6ug0dLdzGF3ZaGowsv1YIo?=
- =?us-ascii?Q?SKw1b168fKT9q/9gVjHbfaTwmyTgA+bF5s/cUVN7LtO7jDTY0uTFUA7Qh0ub?=
- =?us-ascii?Q?oyDy3hp+fVRj1xnMnpCqjNwQHMqAIIVnDG1PxKVJ/b8QC8atnxyV9zBEHURP?=
- =?us-ascii?Q?6p0Wi/QrubkGS+Bn7OBIvzCKZ8MAjoij67mWp3uWRRR7eyLJDBc/BglH7Ant?=
- =?us-ascii?Q?9f31Jt8mOUelRBResA1Czq97eSc7k5kUs5v5HRQQkuQU8YJGNoCshJqutCBq?=
- =?us-ascii?Q?WiFkbfr3YJhIpt/6OzqtUUKdBhb1431s5ZJ5KUcX4Mo8wdnp4JpVQCxucD3t?=
- =?us-ascii?Q?koz7dFOdiwFW8pRvM2HA0M37W6p3xMCI9HZ118eMBcr7DCeAlQ0apRHTMlEj?=
- =?us-ascii?Q?B/e2whhw6wFzkG7eMJfeObnoaVYoBe/BQEMvv4uvuHsHn/l6gqUwEe0Bt2l8?=
- =?us-ascii?Q?3bTypIP3IUl7EBzFSyeX8D+i8CNmxAq/CY5qY14afnlw80m4sYQVliVBSBOi?=
- =?us-ascii?Q?Btpiy3KEf1PoiMGAUgF1ct+CAYcRSVrxBthlrXzEiNz2pB3BOk6aQVOWjWrj?=
- =?us-ascii?Q?0ywA5tGb+tKYZvvbwpqyih9fY7SE2IlAPG6fhUgOyGsJ9v7vh9IyMujdKAA9?=
- =?us-ascii?Q?l8bIbJRo/rCnutea8xUZDlUQADHri4OPX706r65sM5v4fFBVfxkhV51xAf4C?=
- =?us-ascii?Q?zv0miBVLEhgxzUKqaeVEt4XCYyRDKJNqzyMFiWS8VnSPtFebr6GbnCRtooiw?=
- =?us-ascii?Q?/FDNd8gmSJLluv+bHKlziKKD/W1N94Ps4smWZWtbavVf15goNU8tsST0iHNE?=
- =?us-ascii?Q?GrWPAmF/iyKA+I3i2psbiGSUxZF5b29wC+Zf4eoNqowAOaYV8Bve7ZEMACYD?=
- =?us-ascii?Q?QrW9ebge1j9Z35lvk/y0yJkFuPqBDLN2BT/B+tDrsPXPVeSbzz/J0b8xsnk4?=
- =?us-ascii?Q?yd2QbItyyUwd3azNzV1afGoaH1z8M+qNg1LvNHNELHeCx02setp7ssCpCAZ8?=
- =?us-ascii?Q?kmAiHuyXTWxbyXg2DZ5JX8azWnWGKZHNTjTpXqY5RTtxR0IeRv8cy9Ssvwuo?=
- =?us-ascii?Q?npu1wkiAuAoIs+nu4fPR7QW8UTQn4uDsZuGShjFKqUxK6fNrpGMTfd/KyeKP?=
- =?us-ascii?Q?FRMRhyBGEng/dGk/+niXyoHsiBx0RwcEmnHyG52FkWo5mMtRixciaQv3cYyd?=
- =?us-ascii?Q?fUJUurtO/c8DeUXjWAl64nV3/jwtYLeGTP/T7K+wg2Q99zoVfcX41vf09iEc?=
- =?us-ascii?Q?SXWv4qTo+A46XVxRBN1GN67f/7cphxgpCC38UkzH4DsaJIIyr8OmOoXhbMll?=
- =?us-ascii?Q?lQNQoMR8x7s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB8317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YcbnSEoIiCSfysZqa6hGcAmvUju7fcL6xX/6drdUNr1cMEBSJOJWfdmO/FG9?=
- =?us-ascii?Q?/FrgllZ5/bat51ftoKjHzg+a9i2rV2uInb56f0+Q2SC5/CqATOX9Qd++rijH?=
- =?us-ascii?Q?9FeL0AWU5XkN/9PXcv+NNKpmvDoEQ/+bv8k+le6hngfHy4q/hjS5Gn4Lv934?=
- =?us-ascii?Q?xKYTNxK2ay8Stz1So60n89vV7sIxppjq0ztnB2QUjOMTPTGlL69+H1jXX7Lp?=
- =?us-ascii?Q?VKX7t2KvhQt3hebdg+qYN/wqju3YFPtRhUHfc4vrx2lRqa4Q8iPiA9/2rXby?=
- =?us-ascii?Q?w2xEbp5RTd4jR1Us7XDvWfV3IS6l/EWuKPVjsfLvUlRXCF3ptR0tVJU/YU2W?=
- =?us-ascii?Q?qd1Kn6j0XatBO03j37fXoJA/qEUmWh1AMnsKr4m5q4GDx3Q7cmmJHneqGE1s?=
- =?us-ascii?Q?tGneJEo6dRMtfAIjJfWw8ThediAJ76nx/4UxU6F4WWS9770XUQqmVlOPp2Wa?=
- =?us-ascii?Q?xVdTo74/dhEw6e5cLWt1MRap/1kYa2FOlFNFMc2nOPlohVbVP2hw08Evejsa?=
- =?us-ascii?Q?4NVfVAHitpRJst5LJpGUSRHsO6BPWu9BuUYN1RfWCsy7ZM6ZfxQRJ5oDnoxb?=
- =?us-ascii?Q?frlDgKBx2f2ZMHiLNTH4Su9B98WHkBySjgE1unitjmmTAxAjBUZ8UB/BnZDb?=
- =?us-ascii?Q?YPl1VvEQGx9jj4Wf3fT+X4zxJl4DQTek8CR7Lccvm1Go/FoG0gOj/f5YlBpo?=
- =?us-ascii?Q?/sydhVDtJuG8exT/4G3FI0mUj9KFKJr2+E+pC0HZXYbVs3hDt3uZHRCv9ljJ?=
- =?us-ascii?Q?2kn6TpHcQ6u8IN8cFmQm7GNGjEfQJ7YtON+qBW25HGhNdDN6cTXfRUjz3xy5?=
- =?us-ascii?Q?CjTSpwIQCvBigzx62IxFgbLT9CPzqGjLgcfcb3Gt92hBNbyF6+6j7mXpooDJ?=
- =?us-ascii?Q?hsi6BlUw8izAWc0jyN5jtla1VXsSlVl2NeTvtZp3UfYF6trD0JJCcmZcnoeX?=
- =?us-ascii?Q?6fAH1Ta/3DgiZdIREvOLVzydDOJdj/1MuF+IIVyE+uNsnefCQ0CSNDpfqbxW?=
- =?us-ascii?Q?1e9//gZwZIAiNoUPZXGJ9qBiUElPNQuZox3uutDvagibhCK8awTWETBJ6BF/?=
- =?us-ascii?Q?ybc5YSYx0FXgdfiWby1Sz7bqTsn0fnDAIT1sCJxFa4MV6XV9J6jIvkhxp/hE?=
- =?us-ascii?Q?WwRNSU0GkgoXYSMRFxR8N55PhHJKAEJF2RjTw8CQ3f71R03ym79LkPSZ4xtM?=
- =?us-ascii?Q?ShDptodcC1PvMYUAkeNrdRad/1J+kyaNTGj2KIfvT5Akz3Q+V6wJLf/Ql2aw?=
- =?us-ascii?Q?bgPkIbfncGP348h5NBaeIU+CWumLEEAVKVS8B/Ygg+FGivaA5+fu93iu2YC2?=
- =?us-ascii?Q?LkHXG3HfEQYk5Fky0iD1490RhjZ9Or8e7U1AShd/RbZT8sq9z9iJH0kfcmlq?=
- =?us-ascii?Q?Cf1sJyQvwgfi+DiemymI32hLHzxIc88oXIqv4UEf0wPDVRClxT/apKNC4DbF?=
- =?us-ascii?Q?K6gyQjY7HN/O2G/q/cMisPmp3apEPd99frnW5TFkbYeNn0IlGop6Yf0i48Ok?=
- =?us-ascii?Q?jo2cF+8ir80NVxtpY+wg0crvaDHL45YPOmYK4o7rSke6p4qPEhP6nzt1zjBf?=
- =?us-ascii?Q?El/BUHnAUu6aLdAdKgx2Hxk7VVBAObd71C/kX/cARDob9Ckbs8qW9YRaY5wX?=
- =?us-ascii?Q?/eyQdWmsxIIjjnag2Nf+JplglT8PgDHoXQtj6+Zz+5t5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 171a62f2-0788-4908-08a5-08ddf56a8226
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8317.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 21:46:35.7329
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oDzeZ85b8yqiC2AQh0oWCOs9b4SwB3W2lV2AsTHRIvxkKyM0MYU9C/KniuORDgPqsnSe1jeISntqVjnfLAiitQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF6E99B1BC1
-
---6lqxeyrn23wgxklf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250915230224.4115531-1-surenb@google.com> <2d8eb571-6d76-4a9e-8d08-0da251a73f33@suse.cz>
+ <CAJuCfpHXAhGZb1aOPyHOPiTWSwQJi570THqJQcjrVPf=4Dt3xQ@mail.gmail.com> <a8519bca-ae16-4642-84a1-4038b12e8bb0@gmail.com>
+In-Reply-To: <a8519bca-ae16-4642-84a1-4038b12e8bb0@gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 16 Sep 2025 14:46:47 -0700
+X-Gm-Features: AS18NWDiLEtpy2aZT2Vj6GfSOG8yRsirQN9jUBpKyJCyPlYfizq21u9MuuiIH3E
+Message-ID: <CAJuCfpFJabb02OK8Rj08d7WU_7AM674i=vsZxzfw7i7h-PGftQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, kent.overstreet@linux.dev, 
+	hannes@cmpxchg.org, rientjes@google.com, roman.gushchin@linux.dev, 
+	harry.yoo@oracle.com, shakeel.butt@linux.dev, 00107082@163.com, 
+	pyyjason@gmail.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: manual merge of the i2c tree with the arm-soc tree
-MIME-Version: 1.0
 
-On Mon, Sep 15, 2025 at 11:13:06PM +0100, Mark Brown wrote:
-> On Mon, Sep 15, 2025 at 11:04:56PM +0200, Wolfram Sang wrote:
->=20
-> > > 's linux-next merge of the i2c tree got a conflict in:
-> > >=20
-> > >   Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml
-> > >=20
-> > > between commit:
-> > >=20
-> > >   804ebc2bdcc85 ("dt-bindings: i2c: nvidia,tegra20-i2c: Document Tegr=
-a264 I2C")
-> > >=20
-> > > from the arm-soc tree and commit:
->=20
-> > ? Usually such patches go via I2C? And v6 was still under discussion? Do
-> > i miss something?
->=20
-> IIRC it came into arm-soc from Tegra but ICBW there.
+On Tue, Sep 16, 2025 at 2:11=E2=80=AFPM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 16/09/2025 16:51, Suren Baghdasaryan wrote:
+> > On Tue, Sep 16, 2025 at 5:57=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> >>
+> >> On 9/16/25 01:02, Suren Baghdasaryan wrote:
+> >>> While rare, memory allocation profiling can contain inaccurate counte=
+rs
+> >>> if slab object extension vector allocation fails. That allocation mig=
+ht
+> >>> succeed later but prior to that, slab allocations that would have use=
+d
+> >>> that object extension vector will not be accounted for. To indicate
+> >>> incorrect counters, "accurate:no" marker is appended to the call site
+> >>> line in the /proc/allocinfo output.
+> >>> Bump up /proc/allocinfo version to reflect the change in the file for=
+mat
+> >>> and update documentation.
+> >>>
+> >>> Example output with invalid counters:
+> >>> allocinfo - version: 2.0
+> >>>            0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setu=
+p_data_nodes
+> >>>            0        0 arch/x86/kernel/alternative.c:2090 func:alterna=
+tives_smp_module_add
+> >>>            0        0 arch/x86/kernel/alternative.c:127 func:__its_al=
+loc accurate:no
+> >>>            0        0 arch/x86/kernel/fpu/regset.c:160 func:xstatereg=
+s_set
+> >>>            0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_=
+realloc
+> >>>            0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_=
+enable_hybrid_capacity_scale
+> >>>            0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 fun=
+c:init_amd_l3_attrs
+> >>>        49152       48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_de=
+vice_create accurate:no
+> >>>        32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_=
+gen_pool_create
+> >>>            0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_thr=
+eshold_create_device
+> >>>
+> >>> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> >>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> >>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+> >>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> >>
+> >> With this format you could instead print the accumulated size of alloc=
+ations
+> >> that could not allocate their objext (for the given tag). It should be=
+ then
+> >> an upper bound of the actual error, because obviously we cannot recogn=
+ize
+> >> moments where these allocations are freed - so we don't know for which=
+ tag
+> >> to decrement. Maybe it could be more useful output than the yes/no
+> >> information, although of course require more storage in struct codetag=
+, so I
+> >> don't know if it's worth it.
+> >
+> > Yeah, I'm reluctant to add more fields to the codetag and increase the
+> > overhead until we have a usecases. If that happens and with the new
+> > format we can add something like error_size:<value> to indicate the
+> > amount of the error.
+> >
+> >>
+> >> Maybe a global counter of sum size for all these missed objexts could =
+be
+> >> also maintained, and that wouldn't be an upper bound but an actual cur=
+rent
+> >> error, that is if we can precisely determine that when freeing an obje=
+ct, we
+> >> don't have a tag to decrement because objext allocation had failed on =
+it and
+> >> thus that allocation had incremented this global error counter and it'=
+s
+> >> correct to decrement it.
+> >
+> > That's a good idea and should be doable without too much overhead. Than=
+ks!
+> > For the UAPI... I think for this case IOCTL would work and the use
+> > scenario would be that the user sees the "accurate:no" mark and issues
+> > ioctl command to retrieve this global counter value.
+> > Usama, since you initiated this feature request, do you think such a
+> > counter would be useful?
+> >
+>
+>
+> hmm, I really dont like suggesting changing /proc/allocinfo as it will br=
+eak parsers,
+> but it might be better to put it there?
+> If the value is in the file, I imagine people will be more prone to looki=
+ng at it?
+> I am not completely sure if everyone will do an ioctl to try and find thi=
+s out?
+> Especially if you just have infra that is just automatically collecting i=
+nfo from
+> this file.
 
-In the past I've usually picked up DT bindings patches into the Tegra
-tree because they are needed in order to validate the corresponding DT
-changes.
+The current file reports per-codetag data and not global counters. We
+could report it somewhere in the header but the first question to
+answer is: would this be really useful (not in a way of  "nice to
+have" but for a concrete usecase)? If not then I would suggest keeping
+things simple until there is a need for it.
 
-Note also that I only applied the DT bindings patch from the v6 series
-because it was already acked by device tree maintainers and there have
-not been any objections to the DT bits, nor are they relevant to the
-driver changes still being reviewed.
-
-In the meantime, we have follow-on patches for Tegra264 that are being
-blocked by the lack of I2C DT nodes. In order to unblock those I want to
-get the DT bindings patch merged along with the DT changes for v6.18 so
-that we can make progress on these other patches.
-
-We'll continue revising the driver series and address all the feedback
-that's been provided.
-
-Thanks,
-Thierry
-
---6lqxeyrn23wgxklf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjJ2rYACgkQ3SOs138+
-s6Hzww//SzLMck9Gak8isXp78gw5qweuMI+JN2m6uL51ZUzatFh46iapEhmUfCB9
-A7mSr8LYnb9Df2xA8cE6vCXoXmf1cZW2nBk37BysD50eS8yfsyHrADSi4QgABGjK
-0SkjfaYvi+wy2DDMLmsX3+RTjm+bWx67hXUCZWJU9Or1j75Ogaxf70EAAZwKehBR
-y8D8rcxlymKFFMur+9WVQRVA1HFpTuRvxUZUPBCdNTa93vCVbXrtzJecDzq9svWv
-PzWXNjcakwpDA9V0vdma1t+cv783WLxFeawK3NJMtSYtVgMYq6L1HrMvQcpUwprd
-vLSn31U36mT4sWWadt6BJgOuPQ4aJyujIp7b2p0cbVbSDh169K3NIFUIEaGaqPGq
-6/zA5ENrJWjiNf+k+59hKE1HZugV64sh52kpluXnEKFKKVGX1nqTprAx2/xTCVIV
-OzpngJhb17W0ewLqVaahj6bo/eKQCvByUe3jwIVD48bMxeBGVXgOoGNBXWOxG4IL
-wPbj7gM7d3qWMtCIBA6xyH5ivd2VmUaT3xHBxy7AYgxjAT6msX2Q1ZaJGk2MbE/Q
-Iu06ohzyMuMb81sAA7I8pnbJdBuKXhj/e8yxGMDKv/0XyXapvfeiqY0s8ATaRsx4
-MK2dRmSqqp+YbwOQrmXAnOrSCvdPVNBWnVwAIMv5uDFf1f8W6iE=
-=iWq3
------END PGP SIGNATURE-----
-
---6lqxeyrn23wgxklf--
+>
+> >>
+> >>> ---
+> >>> Changes since v1[1]:
+> >>> - Changed the marker from asterisk to accurate:no pair, per Andrew Mo=
+rton
+> >>> - Documented /proc/allocinfo v2 format
+> >>> - Update the changelog
+> >>> - Added Acked-by from v2 since the functionality is the same,
+> >>> per Shakeel Butt, Usama Arif and Johannes Weiner
+> >>>
+> >>> [1] https://lore.kernel.org/all/20250909234942.1104356-1-surenb@googl=
+e.com/
+> >>>
+> >>>  Documentation/filesystems/proc.rst |  4 ++++
+> >>>  include/linux/alloc_tag.h          | 12 ++++++++++++
+> >>>  include/linux/codetag.h            |  5 ++++-
+> >>>  lib/alloc_tag.c                    |  4 +++-
+> >>>  mm/slub.c                          |  2 ++
+> >>>  5 files changed, 25 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/filesystems/proc.rst b/Documentation/files=
+ystems/proc.rst
+> >>> index 915a3e44bc12..1776a06571c2 100644
+> >>> --- a/Documentation/filesystems/proc.rst
+> >>> +++ b/Documentation/filesystems/proc.rst
+> >>> @@ -1009,6 +1009,10 @@ number, module (if originates from a loadable =
+module) and the function calling
+> >>>  the allocation. The number of bytes allocated and number of calls at=
+ each
+> >>>  location are reported. The first line indicates the version of the f=
+ile, the
+> >>>  second line is the header listing fields in the file.
+> >>> +If file version is 2.0 or higher then each line may contain addition=
+al
+> >>> +<key>:<value> pairs representing extra information about the call si=
+te.
+> >>> +For example if the counters are not accurate, the line will be appen=
+ded with
+> >>> +"accurate:no" pair.
+> >>>
+> >>>  Example output.
+> >>>
+> >>> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> >>> index 9ef2633e2c08..d40ac39bfbe8 100644
+> >>> --- a/include/linux/alloc_tag.h
+> >>> +++ b/include/linux/alloc_tag.h
+> >>> @@ -221,6 +221,16 @@ static inline void alloc_tag_sub(union codetag_r=
+ef *ref, size_t bytes)
+> >>>       ref->ct =3D NULL;
+> >>>  }
+> >>>
+> >>> +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag)
+> >>> +{
+> >>> +     tag->ct.flags |=3D CODETAG_FLAG_INACCURATE;
+> >>> +}
+> >>> +
+> >>> +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag)
+> >>> +{
+> >>> +     return !!(tag->ct.flags & CODETAG_FLAG_INACCURATE);
+> >>> +}
+> >>> +
+> >>>  #define alloc_tag_record(p)  ((p) =3D current->alloc_tag)
+> >>>
+> >>>  #else /* CONFIG_MEM_ALLOC_PROFILING */
+> >>> @@ -230,6 +240,8 @@ static inline bool mem_alloc_profiling_enabled(vo=
+id) { return false; }
+> >>>  static inline void alloc_tag_add(union codetag_ref *ref, struct allo=
+c_tag *tag,
+> >>>                                size_t bytes) {}
+> >>>  static inline void alloc_tag_sub(union codetag_ref *ref, size_t byte=
+s) {}
+> >>> +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag) {=
+}
+> >>> +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag) { =
+return false; }
+> >>>  #define alloc_tag_record(p)  do {} while (0)
+> >>>
+> >>>  #endif /* CONFIG_MEM_ALLOC_PROFILING */
+> >>> diff --git a/include/linux/codetag.h b/include/linux/codetag.h
+> >>> index 457ed8fd3214..8ea2a5f7c98a 100644
+> >>> --- a/include/linux/codetag.h
+> >>> +++ b/include/linux/codetag.h
+> >>> @@ -16,13 +16,16 @@ struct module;
+> >>>  #define CODETAG_SECTION_START_PREFIX "__start_"
+> >>>  #define CODETAG_SECTION_STOP_PREFIX  "__stop_"
+> >>>
+> >>> +/* codetag flags */
+> >>> +#define CODETAG_FLAG_INACCURATE      (1 << 0)
+> >>> +
+> >>>  /*
+> >>>   * An instance of this structure is created in a special ELF section=
+ at every
+> >>>   * code location being tagged.  At runtime, the special section is t=
+reated as
+> >>>   * an array of these.
+> >>>   */
+> >>>  struct codetag {
+> >>> -     unsigned int flags; /* used in later patches */
+> >>> +     unsigned int flags;
+> >>>       unsigned int lineno;
+> >>>       const char *modname;
+> >>>       const char *function;
+> >>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> >>> index 79891528e7b6..12ff80bbbd22 100644
+> >>> --- a/lib/alloc_tag.c
+> >>> +++ b/lib/alloc_tag.c
+> >>> @@ -80,7 +80,7 @@ static void allocinfo_stop(struct seq_file *m, void=
+ *arg)
+> >>>  static void print_allocinfo_header(struct seq_buf *buf)
+> >>>  {
+> >>>       /* Output format version, so we can change it. */
+> >>> -     seq_buf_printf(buf, "allocinfo - version: 1.0\n");
+> >>> +     seq_buf_printf(buf, "allocinfo - version: 2.0\n");
+> >>>       seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
+> >>>  }
+> >>>
+> >>> @@ -92,6 +92,8 @@ static void alloc_tag_to_text(struct seq_buf *out, =
+struct codetag *ct)
+> >>>
+> >>>       seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
+> >>>       codetag_to_text(out, ct);
+> >>> +     if (unlikely(alloc_tag_is_inaccurate(tag)))
+> >>> +             seq_buf_printf(out, " accurate:no");
+> >>>       seq_buf_putc(out, ' ');
+> >>>       seq_buf_putc(out, '\n');
+> >>>  }
+> >>> diff --git a/mm/slub.c b/mm/slub.c
+> >>> index af343ca570b5..9c04f29ee8de 100644
+> >>> --- a/mm/slub.c
+> >>> +++ b/mm/slub.c
+> >>> @@ -2143,6 +2143,8 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cac=
+he *s, void *object, gfp_t flags)
+> >>>        */
+> >>>       if (likely(obj_exts))
+> >>>               alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->si=
+ze);
+> >>> +     else
+> >>> +             alloc_tag_set_inaccurate(current->alloc_tag);
+> >>>  }
+> >>>
+> >>>  static inline void
+> >>
+>
 
