@@ -1,184 +1,168 @@
-Return-Path: <linux-kernel+bounces-819032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD982B59A65
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CABCB59A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA51F3BC498
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0310527100
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28CD31E0FD;
-	Tue, 16 Sep 2025 14:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6417B324B1B;
+	Tue, 16 Sep 2025 14:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kDtnJkv6"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B1WzdFiB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A1F28B7DA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADEC2EA489
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758033056; cv=none; b=CoFAm5js9kyvRHargCezwvRLf19tugCauvZxhIzoBLqShtppLrSK0K/8KZQAwrEANMXfZJ2b+hFoh27oAReE5/ENtDJSVQ8WnFA6i0X25fhO7TNFBpEKSZRi8ItWRLGwwEomljQvphEx+gNz8k/eqr703oxdaVrwpZJIQUv9C8c=
+	t=1758033056; cv=none; b=F9J5yowNcIibZLir7ZaEc3H7J6SmwWGoxz4sYDXqLVyhX8MEwsmnanHjeow/8oOZd/RcWmN38ylRee/kAUo3Upi/ht9tGKWsNOBvuul2/hOaGWKfoEPc91KPaTk146NsYBhwfonIIIyVndnfwQesIXFR5nBGNw5Tt/a38qn1Qq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758033056; c=relaxed/simple;
-	bh=7yYcx+PfwWgDTCyvf4xJyoeS4icmM+bVNdZS7wZmrS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyGZM/J4VYqJt2WKYe4tolE3i+HDwc9HRyEs6oy7pLs66m0UqaeCr9jqxRAjx84Mc4QjJmUcX9+fHMqkBCXq9CmJDlf8F7kO7eX79xlfUuqK2P93HCR+fTl5COL4aQP9Rj6XyQg7kpxiXJlNV7gLug/qyol4EsZ9lOu+Zj4AgFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kDtnJkv6; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77b0a93e067so484467b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758033051; x=1758637851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TiffAS7cC9zkCAeD5hrwe++ErwkU044VbYitXleZroU=;
-        b=kDtnJkv6Cnv327iH9MKZVOVJsEpQz+tZlpLBgBb3rd/MDsypVboIx+dCDjPwnNiyZ9
-         0plZj/8Uj1lgdWPeCKNiDbJ1v2FwjD6zaKI6IcKtiqQWbZsfsjP1s7XR0HR1RITPnD2M
-         a2cfx1hfIZneyvDONznuSbEUBM/qtbMOwRUbY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758033051; x=1758637851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TiffAS7cC9zkCAeD5hrwe++ErwkU044VbYitXleZroU=;
-        b=NLIMapTv8G0D1YnGExg39zZPyVsxEWZwssgipdJVnis0uXc1XacK36s0AbGq6+hH3d
-         CRx2j50uvy7+fqgXNWZysSH/UX0qM/iNb8DR2u+SNYdzv9G1ztEf3XaHGtyDkRz6pf95
-         YrcvOzQqhVmEjRA3ixTe9VXQ0dJuVo/bsDs6ffpYQPVmfyFIqWltv8Vm4HRSWiLSkV2E
-         KvcohrjmNLGHUHFmKHPT58JalPYClshILoS01icpct/Zgr11KbgphQu4XnmSUb6dObH2
-         B7aD0eEyInp0eS9Q0VLMXYcmS7gX+U1HAOOJQibsT+PPeQQXfRoWNyryR7H4nGfwMung
-         KGyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUspenNJo+uybD5K8iD+pUDpU0BHA42eRqR+QRe1Y5B4X3WzIsEdyS70dB1fRkYNpj+9GOBk7ccmMrPMmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycMLrEnbRFQ4Hm7xDQyoyvIfybF0Rwl8xNqhjA7TlqWhhy8o6j
-	xJs/wW7MzZWx/pC1vifEf8M7p4TWVMIm0n8UqbwZxdWSoGViFhUjdlGvzqq3xPeNn1uHJ3JPryd
-	83kc=
-X-Gm-Gg: ASbGncuIvzdnHEqrldYfYIsQLMb9MumE29P6vDs9tKYOrbCSOuoiIl5QvI00XFY6ZMg
-	aFKlylUAhYJblEr8COVtF+jELK/y7bHcgQFWQnxiHccPqVK8GYaUALy64vhWMuXKrnxyXnRozgJ
-	ubtnFfABYiEWj8jm+v46ZLKyI+LPqjIiTcA/WLvZBygWdAWKV3ZTBT/gP0RM70CPW/VZHfU8y8C
-	lGOMVn8TwjwJo2+pvif4Nq/ZaB0a/CLN2moQIYp0cE7DqM71o/eVm7x6wn1n7mVwWJZEJkikCD8
-	tvMWq2CFmrHdCVqVFb7bJmg39TAhv2+XXMArcav2Ropye2g/RmGaIHemkVYaqDEHd2TnEwsbgfZ
-	IwbYhcSfmPXc3EXzVrcets90AZzuShFe+hX7cvDFLfx9z+2xOkWxHYY6jF8XQQ3oE7A==
-X-Google-Smtp-Source: AGHT+IFbqQdLB/x7JMmUC3gC4/SA8lilgaZvhwdPjxBVxSNVSNfnnSzgxsMYZgQai4H7N+5YAS0+dQ==
-X-Received: by 2002:a05:6a20:1586:b0:24c:af7e:e55 with SMTP id adf61e73a8af0-2602a593825mr21234035637.10.1758033049355;
-        Tue, 16 Sep 2025 07:30:49 -0700 (PDT)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com. [209.85.215.173])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760955263fsm15937859b3a.8.2025.09.16.07.30.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 07:30:48 -0700 (PDT)
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b52047b3f19so3869825a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:30:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEsgFKnY22t0E4j06bEejMEVFZG8k8ALWdGXyi5lz58ZeIAtiPhmGSnuqua1tM0liircK7q6S5kUNcR2I=@vger.kernel.org
-X-Received: by 2002:a17:903:3885:b0:267:fac6:f099 with SMTP id
- d9443c01a7336-267fac6f0bdmr882655ad.38.1758033047184; Tue, 16 Sep 2025
- 07:30:47 -0700 (PDT)
+	bh=+trAVtA/0EbWkj/7hbe68mcCHJVeD4GHIk4+IXLr0KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZCkfJ3eEDLdAvHkJ4u6WsyjT4K6Xt4AJdAEcxsNJ9WMxpcD6Rrvl3UzY1Lw0z/5/89w7s1Y0k9QQ/rP+L6mlTct4//wHRlCCf98HHQxzfqzb/uLXmSgcJIGRg5UuvLdp4YktJf4SBRilp4qErtxUuS4QNUV2HY/Y5tw8NmvFccA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B1WzdFiB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Hw7+LBg9WA2gnlZUob3Phb5kC61ygv5fJ0boTwKhn+M=; b=B1WzdFiBPVSHuKnWvNtEfr/hHL
+	5XmEavo6HFRMDjWriEDVi30ZMNZKOcWStTHZPZ2kTADuAokhPNesxKkx02Cry0Z+/CTIKnr/KpdcH
+	g5h1GIKGKb9pEN0MlLX0S0G6kE3V9Vi1izUlRFxSUikorfvUOmyeH3mNbP4izg0HWCL/VacqOZe3P
+	4xbZmYYwfpCOjaDFr67LxgOwMFuQ2A1apnSAi1pg2AIMNFfGvq4VekN9W03mB+wNrLptC/uFEEfPL
+	ssjtzHdInouRt56bAjVum7GAlyEwbpH+sSd+YpwPMYhmlyoh8KUS7gmCxNjZmHxV9ta7SH2o2o4Gk
+	OMqRQo+Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyWhh-00000006KdN-1Ly5;
+	Tue, 16 Sep 2025 14:30:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 363BA300328; Tue, 16 Sep 2025 16:30:44 +0200 (CEST)
+Date: Tue, 16 Sep 2025 16:30:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com
+Subject: Re: [RFC][PATCH] sched/deadline: Fix dl_server getting stuck,
+ allowing cpu starvation
+Message-ID: <20250916143044.GL3245006@noisy.programming.kicks-ass.net>
+References: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
+ <20250916052904.937276-1-jstultz@google.com>
+ <aMklFqjbmxMKszkJ@jlelli-thinkpadt14gen4.remote.csb>
+ <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+ <aMldnFrGfcMECbmK@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910183353.2045339-1-john.ripple@keysight.com> <202509161344.FPfsjq01-lkp@intel.com>
-In-Reply-To: <202509161344.FPfsjq01-lkp@intel.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 16 Sep 2025 07:30:35 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VZ8=o3D4iQ+hMFKup+8LuUh74BOyf7YLX-VHRkcU7TrA@mail.gmail.com>
-X-Gm-Features: AS18NWDcO5yWc3JLU6eUzWEdoHiHgHWEJMNFpIAQ3YTFuxgHuOAPRPJlbYq6e8M
-Message-ID: <CAD=FV=VZ8=o3D4iQ+hMFKup+8LuUh74BOyf7YLX-VHRkcU7TrA@mail.gmail.com>
-Subject: Re: [PATCH V3] drm/bridge: ti-sn65dsi86: Add support for DisplayPort
- mode with HPD
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, John Ripple <john.ripple@keysight.com>, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, Laurent.pinchart@ideasonboard.com, 
-	airlied@gmail.com, andrzej.hajda@intel.com, blake.vermeer@keysight.com, 
-	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
-	matt_laubhan@keysight.com, mripard@kernel.org, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, simona@ffwll.ch, tzimmermann@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMldnFrGfcMECbmK@jlelli-thinkpadt14gen4.remote.csb>
 
-Hi,
+On Tue, Sep 16, 2025 at 02:52:44PM +0200, Juri Lelli wrote:
+> On 16/09/25 13:01, Peter Zijlstra wrote:
+> > On Tue, Sep 16, 2025 at 10:51:34AM +0200, Juri Lelli wrote:
+> > 
+> > > > @@ -1173,7 +1171,7 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+> > > >  
+> > > >  		if (!dl_se->server_has_tasks(dl_se)) {
+> > > >  			replenish_dl_entity(dl_se);
+> > > > -			dl_server_stopped(dl_se);
+> > > > +			dl_server_stop(dl_se);
+> > > >  			return HRTIMER_NORESTART;
+> > > >  		}
+> > > 
+> > > It looks OK for a quick testing I've done. Also, it seems to make sense
+> > > to me. The defer timer has fired (we are executing the callback). If the
+> > > server hasn't got tasks to serve we can just stop it (clearing the
+> > > flags) and wait for the next enqueue of fair to start it again still in
+> > > defer mode. hrtimer_try_to_cancel() is redundant (but harmless),
+> > > dequeue_dl_entity() I believe we need to call to deal with
+> > > task_non_contending().
+> > > 
+> > > Peter, what do you think?
+> > 
+> > Well, the problem was that we were starting/stopping the thing too
+> > often, and the general idea of that commit:
+> > 
+> >   cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+> > 
+> > was to not stop the server, unless it's not seen fair tasks for a whole
+> > period.
+> > 
+> > Now, the case John trips seems to be that there were tasks, we ran tasks
+> > until budget exhausted, dequeued the server and did start_dl_timer().
+> > 
+> > Then the bandwidth timer fires at a point where there are no more fair
+> > tasks, replenish_dl_entity() gets called, which *should* set the
+> > 0-laxity timer, but doesn't -- because !server_has_tasks() -- and then
+> > nothing.
+> > 
+> > So perhaps we should do something like the below. Simply continue
+> > as normal, until we do a whole cycle without having seen a task.
+> > 
+> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > index 5b64bc621993..269ca2eb5ba9 100644
+> > --- a/kernel/sched/deadline.c
+> > +++ b/kernel/sched/deadline.c
+> > @@ -875,7 +875,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+> >  	 */
+> >  	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
+> >  	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
+> > -		if (!is_dl_boosted(dl_se) && dl_se->server_has_tasks(dl_se)) {
+> > +		if (!is_dl_boosted(dl_se)) {
+> >  
+> >  			/*
+> >  			 * Set dl_se->dl_defer_armed and dl_throttled variables to
+> > @@ -1171,12 +1171,6 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+> >  		if (!dl_se->dl_runtime)
+> >  			return HRTIMER_NORESTART;
+> >  
+> > -		if (!dl_se->server_has_tasks(dl_se)) {
+> > -			replenish_dl_entity(dl_se);
+> > -			dl_server_stopped(dl_se);
+> > -			return HRTIMER_NORESTART;
+> > -		}
+> > -
+> >  		if (dl_se->dl_defer_armed) {
+> >  			/*
+> >  			 * First check if the server could consume runtime in background.
+> > 
+> > 
+> > Notably, this removes all ->server_has_tasks() users, so if this works
+> > and is correct, we can completely remove that callback and simplify
+> > more.
+> > 
+> > Hmm?
+> 
+> But then what stops the server when the 0-laxity (defer) timer fires
+> again a period down the line?
 
-On Mon, Sep 15, 2025 at 10:46=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> Hi John,
->
-> kernel test robot noticed the following build warnings:
->
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/UPDATE-20250911-02=
-3707/John-Ripple/drm-bridge-ti-sn65dsi86-break-probe-dependency-loop/202508=
-20-235209
-> base:   linus/master
-> patch link:    https://lore.kernel.org/r/20250910183353.2045339-1-john.ri=
-pple%40keysight.com
-> patch subject: [PATCH V3] drm/bridge: ti-sn65dsi86: Add support for Displ=
-ayPort mode with HPD
-> config: x86_64-randconfig-161-20250916 (https://download.01.org/0day-ci/a=
-rchive/20250916/202509161344.FPfsjq01-lkp@intel.com/config)
-> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202509161344.FPfsjq01-lkp@intel.com/
->
-> smatch warnings:
-> drivers/gpu/drm/bridge/ti-sn65dsi86.c:1385 ti_sn_bridge_interrupt() error=
-: uninitialized symbol 'status'.
->
-> vim +/status +1385 drivers/gpu/drm/bridge/ti-sn65dsi86.c
->
-> b8670cf7e6a41b John Ripple  2025-09-10  1365  static irqreturn_t ti_sn_br=
-idge_interrupt(int irq, void *private)
-> b8670cf7e6a41b John Ripple  2025-09-10  1366  {
-> b8670cf7e6a41b John Ripple  2025-09-10  1367    struct ti_sn65dsi86 *pdat=
-a =3D private;
-> b8670cf7e6a41b John Ripple  2025-09-10  1368    struct drm_device *dev =
-=3D pdata->bridge.dev;
-> b8670cf7e6a41b John Ripple  2025-09-10  1369    u8 status;
-> b8670cf7e6a41b John Ripple  2025-09-10  1370    int ret;
-> b8670cf7e6a41b John Ripple  2025-09-10  1371    bool hpd_event =3D false;
-> b8670cf7e6a41b John Ripple  2025-09-10  1372
-> b8670cf7e6a41b John Ripple  2025-09-10  1373    mutex_lock(&pdata->hpd_mu=
-tex);
-> b8670cf7e6a41b John Ripple  2025-09-10  1374    if (!pdata->hpd_enabled) =
-{
-> b8670cf7e6a41b John Ripple  2025-09-10  1375            mutex_unlock(&pda=
-ta->hpd_mutex);
-> b8670cf7e6a41b John Ripple  2025-09-10  1376            return IRQ_HANDLE=
-D;
-> b8670cf7e6a41b John Ripple  2025-09-10  1377    }
-> b8670cf7e6a41b John Ripple  2025-09-10  1378
-> b8670cf7e6a41b John Ripple  2025-09-10  1379    ret =3D ti_sn65dsi86_read=
-_u8(pdata, SN_IRQ_STATUS_REG, &status);
-> b8670cf7e6a41b John Ripple  2025-09-10  1380    if (ret)
-> b8670cf7e6a41b John Ripple  2025-09-10  1381            pr_err("Failed to=
- read IRQ status: %d\n", ret);
->
-> status isn't initialized on error.
->
-> b8670cf7e6a41b John Ripple  2025-09-10  1382    else
-> b8670cf7e6a41b John Ripple  2025-09-10  1383            hpd_event =3D sta=
-tus & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS);
-> b8670cf7e6a41b John Ripple  2025-09-10  1384
-> b8670cf7e6a41b John Ripple  2025-09-10 @1385    if (status) {
->                                                     ^^^^^^
-> warning
+At that point we'll actually run the server, right? And then
+__pick_task_dl() will hit the !p case and call dl_server_stopped().
 
-It looks like the bot reported this on an old version. The newest is
-v7 [1] and things should be OK there. Yell if I missed something. :-)
-
-[1] https:/lore.kernel.org/r/20250915174543.2564994-1-john.ripple@keysight.=
-com
+If idle==1 it will actually stop the server, otherwise it will set
+idle=1 and around we go.
 
