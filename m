@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-818856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2088CB59745
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D139BB59750
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB6D13B19E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA4A1884307
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1988C248F7D;
-	Tue, 16 Sep 2025 13:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A672641E3;
+	Tue, 16 Sep 2025 13:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBSaukzj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mRVFmcCq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870284E07;
-	Tue, 16 Sep 2025 13:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9823118BBB9;
+	Tue, 16 Sep 2025 13:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028650; cv=none; b=oOxkM+RSLfrMnEuzsmLnZYG1SZt6+2WvQ8XMHWp3pWS+eSWYNdFKtwni6v4bURpxyIVgtLs60JXIed8cmX7J+JmqzRF+79Q0RapMyBjwN3GmogNMqjRJV4iTxDceMndg77k/iZhnTsQ4GXEGw8i0LTtMP3UJ4vJfFmDaUvvHF2Q=
+	t=1758028703; cv=none; b=r5H3BeD12Pg4huoDIgaUh0uoB7lgNG8apVQ6Cr15KpNxu6mcpSuboXKQsTd+TA4um/TT5ycMIy5wQ8ZWd0FCt3GmadSe3Wi24LHtGTw3kogaRqil2BcbVmbydwua8NGLdT7tpFWF+cBilGf5AZweYgC1lAqgsnWUq6y3eKIrzT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028650; c=relaxed/simple;
-	bh=3t8ZsnXaWXeJN2lg5VW6FMHXGeclZ+Rixxfa9OmBFFE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=a74Va4w+EzvrO8jl/4J7acP8X56AMYfiQYD70NWywioH4wEhjHuW2t7/wd7zlC6eYHAQ2V9kxvKIPRtlHB6uQtaQoI1iAmQ6w7ed9Hd90yKZbulvDLbhL9LO7+jje0ikGkIsKw/CBEVcPS8jkF14qU5dNY+V6nYYJfAOaqpWvmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBSaukzj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB14C4CEF0;
-	Tue, 16 Sep 2025 13:17:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758028650;
-	bh=3t8ZsnXaWXeJN2lg5VW6FMHXGeclZ+Rixxfa9OmBFFE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YBSaukzjv01zvCYkxPcJBGQq6SRcosbJBGyOTjLSFxR7AqCJyuX7eEUl0Nf9yD5TZ
-	 woPRfu9dNVdrt8hUGmWk6JUzIjrCEKbMF6Lu3ypmVkboe+wf6GM/viuEMoEi1+HMgD
-	 yiXTo+BPZRRHeMQabwUHBWDTW50xGtN8/MAkBj+nEgmENbS+GV4257HLVcvtrInp0k
-	 ZZZQs5W2cwxd7C0HsxnwFFzT09toh9nAwpOOPCTs7kgH6L54hFHP5igwhOjxfeimVF
-	 Q1pB7BKjLsB+PxHou65oqrmQxx7WwQXUWjtegWxBv9Qgh4XgO6z8vryT1zCffx+rli
-	 oRkpGo/2bDyiA==
-From: Mark Brown <broonie@kernel.org>
-To: Liang Yang <liang.yang@amlogic.com>, Feng Chen <feng.chen@amlogic.com>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>, linux-amlogic@lists.infradead.org, 
- linux-spi@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250913201612.1338217-1-colin.i.king@gmail.com>
-References: <20250913201612.1338217-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] spi: amlogic: Fix error checking on regmap_write
- call
-Message-Id: <175802864838.134241.18442416794301154547.b4-ty@kernel.org>
-Date: Tue, 16 Sep 2025 14:17:28 +0100
+	s=arc-20240116; t=1758028703; c=relaxed/simple;
+	bh=o1unkVugJ3cjNh/HKEybTFE+KqKTmgi0REPAVQpl0os=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vos7v+r3dpvQoV02g+v6WuN98Lq+FS8xTS9hq2H6gPK4Ju8LULafISwQxgSNNkGcF8eiV/fyNu1uDnnObH0nLTTFDVPUv2fNFGXGquxEWeeZUyylgdtwA3sXmPlIqiZnu4LQwkPUsV65Rejt03K4/pGzTtVF9l64QGDmkBo8ylM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mRVFmcCq; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758028702; x=1789564702;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o1unkVugJ3cjNh/HKEybTFE+KqKTmgi0REPAVQpl0os=;
+  b=mRVFmcCqkGw9zHqDBxqTBframj3KQYiOvDx5sNDebi1NlqYm8oOgsDpI
+   ScM3ahwOywX67eHwGw18TUo4nZG/NPe0V458hV/xXss+SzExH2wdSULeY
+   Xdtt4y3DCqJof5bxTHxqXZuDii7+1zOdq7xaDKmDbhltESNkpAxRC2Yf0
+   adJeqLImZiMGTEPEhTo4A+mcjKdGpICpJRj13TWQK30fDTeHJcbbiJqBO
+   Sw8dZHmmkCe6kss4a3aUDZIMVEgPSGOT8ZjFB7j3zILQW3pTq/i6tr+yd
+   2DKGYNk1QnIcsJ0S5zx2soSkqkPazmGaPamVe7lx87uyuNxYqQbn/WRI0
+   w==;
+X-CSE-ConnectionGUID: B2z7iXEJRIyoKkZCFDqpxA==
+X-CSE-MsgGUID: 3quQ6ycoR3uHjqlv8hSigQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="62944288"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="62944288"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:18:21 -0700
+X-CSE-ConnectionGUID: yDR/HkHcQoS5gnQgkTq3IA==
+X-CSE-MsgGUID: rx/HMWt9QCKsYbBAFzbRVQ==
+X-ExtLoop1: 1
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:18:19 -0700
+Date: Tue, 16 Sep 2025 15:18:16 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
+Message-ID: <aMljmOCTOLdgBWfh@black.igk.intel.com>
+References: <20250916124518.2857524-1-raag.jadav@intel.com>
+ <aMldk7M05W77rRw_@smile.fi.intel.com>
+ <aMld2nQFIIt1aZwa@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMld2nQFIIt1aZwa@smile.fi.intel.com>
 
-On Sat, 13 Sep 2025 21:16:11 +0100, Colin Ian King wrote:
-> Currently a call to regmap_write is not being error checked because the
-> return checke is being performed on the variable ret and this variable
-> is not assigned the return value from the regmap_write call. Fix this
-> by adding in the missing assignment.
-> 
-> 
+On Tue, Sep 16, 2025 at 03:53:46PM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 16, 2025 at 03:52:35PM +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 16, 2025 at 06:15:18PM +0530, Raag Jadav wrote:
+> > > Convert to use devm_kmemdup_array() which is more robust.
+> > 
+> > FWIW,
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Applied to
+Thank you.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> However, you might also want to use sizeof(*clks) IIUC.
 
-Thanks!
+It's a double pointer and could lead to misinterpretation.
 
-[1/1] spi: amlogic: Fix error checking on regmap_write call
-      commit: 18dda9eb9e11b2aeec73cbe2a56ab2f862841ba4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Raag
 
