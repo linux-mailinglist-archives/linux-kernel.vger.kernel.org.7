@@ -1,183 +1,114 @@
-Return-Path: <linux-kernel+bounces-818477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FA9B5923E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:31:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523B2B5924D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BD5189EE08
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB03C1B27240
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9892BE035;
-	Tue, 16 Sep 2025 09:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="YZNuJBqu"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5904729B776;
+	Tue, 16 Sep 2025 09:35:17 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153B529ACCD
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82C6296BB6;
+	Tue, 16 Sep 2025 09:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758015075; cv=none; b=qRJge6DjM23vLTXTLGyTilSKXOCzzsYqBOmIEatWs9/aV2tOnpRCXJ5c8fHWuBwsmfjdKUfZ0OOQkM3XonDf59gThnzCBHWzD7/ow+4IEZ/7SoOIV0uyGQEdxO5KkE7i8i10wsgUuDyP9DXSf8OOuYMY7OtdpZpqR0b8LoBWjuE=
+	t=1758015316; cv=none; b=j6XEFZaaBwdKwcS/Xz/ycM5ckQldMxi3q51gc4ltG3bi33oynxXp7O2xiVZIwgYYQXR0obCS9mkVQKZ1TqoQQ+XfJffSMRbaGIKFT8lDcas3RAwCjYHkVg83+eU1/OGmofTNXXBNiBDWM+/IDD3cEMar46bTcJ/ueXQm/Y6stm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758015075; c=relaxed/simple;
-	bh=G5DKJK3CELjgpndrNA/+eHqI1RVUDy7+NIgwgAlKssg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4YR2W3O0vzTm9fw9kxSeVD8ow5SIlqiAet6cHxK/325lh3r+7nUloGVEIQb5QTH1rBnvLEIFc/W7tyICPqc8sjQN60ydBtaLGzW8JlLxDppk/vwoLxxtBUeR9RtRi4Rz+oZsnACs2Vmfh8W4KLfn5AL9RZB/uBwU/UgHRgY2ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=YZNuJBqu; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de56a042dso34403105e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:31:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1758015071; x=1758619871; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ACpTvDk4rKkRfQ2RQ4sxr8j1UikIa22f7RQMKzB/pRg=;
-        b=YZNuJBquxbhPFirZrZK7NYrrhJrCjpOG0kGgAY47Lr7F0TXTMcCVUdtjFuhDb88l51
-         2BszKTLLZnttGF7JJCiX9urlimaYhq2mA3nRKB7P16jim67VSirJ1MSqOS/YCpxPpU3N
-         JMrSkC1yarTUQ6Iu0TEjD8qke4gl+zLXsSN9YxP3rNJPBDjnIn814v0ZPPysHE37iMyi
-         n47vbPjX8wjZ5es8QWIbrtA5v6DCXorVwW+lL6keMhUW9KufG3KkNbYLJx5kRGmFB4h0
-         XLpxdS2G9uxm1jUYIItn0FsRG00A7rIPQKfTFi9Mn6KXU+9FXoiRvyDhTRHGoUySTLgz
-         0s3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758015071; x=1758619871;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACpTvDk4rKkRfQ2RQ4sxr8j1UikIa22f7RQMKzB/pRg=;
-        b=aTKovDJPMVLiAhAIb1tLh6XMKyHH3QBhdUUfJJxAqvwd8uYytEXYzLl11q7Smo9jta
-         hB+mx2mUiWmjkfF58LF7Gn55Omfdj7RLJOR2QBgYUs3wseFbGLmnDCTgFs6Dfi5f8v9z
-         dvcx19ITSa9FiFtiYgZRVTWtM6/kxZj5LAab9b3CQKs0FWK2Hm7bHBhHFSFms8qbrFvw
-         LnMZNn8JFj0vjmcctq8nckOFcz02WIt0Ed61z/Eq64KFU8QBjwDljX/RyxRb3RnDni1K
-         St5y4CKsaCDc45PUgbYLCPuSRCB73vP4s7Gw3W72xBB1T/eX/yx67XaSOqM3a5RDH8h5
-         dZxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaeHPHubz7fw1z5as93dVakzIx4Z1WYcqz2Veke2yVDKVBM2+RvewsJxKSQ7nkaE8bftHPxiweijndh5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Yq6oq3/DMGQV825b1X9vEIfiIv8NwO+JgmOdUI/A/W+MveDw
-	snpqi4xj5Wk11rjoiRhvP0EgJ2mbaE2+IpUZiGRYcKTHsPaHxdg0P2v/gPFAHsSlOL4=
-X-Gm-Gg: ASbGncucdS5DYFtXKiQB5eGVSkaxqyt8sDMNzHP4VaGec0UXLsmYlMB1wdskh/PAWy/
-	QgnvsOtyj+Rp65YiDo20C9ZRQJ5VJp8gP0fN304ljZRYepIdx/QOhHE3Pw2BnL8NnwXfkVl1Bkt
-	+XLKuZ6akuKaLgPQDrEUQXdPBBLPpgg5hRDV5SZza2lZnFveo3UJ45qsJWTlPUzs9R65R/Til1a
-	wCi1swEiqIZIKtwxxKi2jwy1ZJzxSlglIh7SAnJ4pVR5yrSREE7uE+vuakX1pvicWEnH4NKX8M1
-	fA2X+9FoG8ieMchomm7ei++dP3JUa8g8OvuwpiB6ZR0xsYRnvMNhPhPHdhxdsmb+4nxnI5imPN7
-	9F/489afhM8FxZUphBUbvx4De
-X-Google-Smtp-Source: AGHT+IH8DCDGESmWObhYAAet3S0BhH1Fzzukf1zx3cCjpw50+fa6UzbNTX5giSJQmy/9uVP0YCa3Ow==
-X-Received: by 2002:a05:600c:828c:b0:45d:98be:ee95 with SMTP id 5b1f17b1804b1-45f211caa67mr130397715e9.3.1758015071252;
-        Tue, 16 Sep 2025 02:31:11 -0700 (PDT)
-Received: from jiri-mlt ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f325a32f6sm13224245e9.2.2025.09.16.02.31.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 02:31:10 -0700 (PDT)
-Date: Tue, 16 Sep 2025 11:31:02 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Prathosh Satish <Prathosh.Satish@microchip.com>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
- reference property
-Message-ID: <nj6wipqud7gnaiuvj6cl4sum7zfyp7jdvjb63op6ff4ruz7rjx@5rtkshsuxojl>
-References: <20250815144736.1438060-1-ivecera@redhat.com>
- <20250820211350.GA1072343-robh@kernel.org>
- <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
- <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
- <bc39cdc9-c354-416d-896f-c2b3c3b64858@redhat.com>
- <CAL_JsqL5wQ+0Xcdo5T3FTyoa2csQ9aW8ZxxMxVOhRJpzc7fGhA@mail.gmail.com>
- <4dc015f7-63ad-4b44-8565-795648332ada@redhat.com>
- <350cecaf-9e41-4c34-8bc0-4b1c93b0ddfe@lunn.ch>
- <dcca9d10-b2b7-4534-abe6-999a9013a8e9@redhat.com>
+	s=arc-20240116; t=1758015316; c=relaxed/simple;
+	bh=jCU4xSa9+1LGaPsyL6OfJbFmHOlnj4FeIJVIUBrpyeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nSiuIGgT16X6c4xhXfHtbxVn6rrlgrbvEQGiH/H0LyJh/F+jYcML7/aSoJ2tVGFY3gu1zh6YNZGJN6Js176F2h3SADBORHdJPYYHb110c1o96jv3dDvlPwHwAxJhdlrVdjBtKg3evvu1AkLUkmTgW78PB9uslFVfaCSg7py3N5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQxZl4ZmPzKHN74;
+	Tue, 16 Sep 2025 17:35:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4758C1A0E1E;
+	Tue, 16 Sep 2025 17:35:12 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgAncIxIL8loVknDCg--.4503S4;
+	Tue, 16 Sep 2025 17:35:10 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	hsiangkao@linux.alibaba.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/2] ext4: fix an data corruption issue in nojournal mode
+Date: Tue, 16 Sep 2025 17:33:35 +0800
+Message-ID: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dcca9d10-b2b7-4534-abe6-999a9013a8e9@redhat.com>
+X-CM-TRANSID:gCh0CgAncIxIL8loVknDCg--.4503S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrWrCry5Zw17KFWrCFWrGrg_yoWDKwb_uF
+	WvyF98JrsYqaySkFW3Krs8WrySkrWIgr18Xan5K3ZxKryUJFnruan3KrZ3ZrnF9F4F93s8
+	JFyqvw4xZwnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Wed, Sep 10, 2025 at 02:51:33PM +0200, ivecera@redhat.com wrote:
->On 09. 09. 25 3:50 odp., Andrew Lunn wrote:
->> > > > Yesterday I was considering the implementation from the DPLL driver's
->> > > > perspective and encountered a problem when the relation is defined from
->> > > > the Ethernet controller's perspective. In that case, it would be
->> > > > necessary to enumerate all devices that contain a “dpll” property whose
->> > > > value references this DPLL device.
->> > > 
->> > > Why is that?
->> > 
->> > Because the DPLL driver has to find a mac-address of the ethernet
->> > controller to generate clock identity that is used for DPLL device
->> > registration.
->> 
->> Maybe this API is the wrong way around? Maybe what you want is that
->> the MAC driver says to the DPLL driver: hey, you are my clock
->> provider, here is an ID to use, please start providing me a clock?
->
->Yes, this could be fine but there is a problem because clock id is part
->of DPLL device and pins registration and it is not possible to change
->the clock id without full de-re-registration. I have provided in zl3073x
->a user to change the clock id via devlink but it means that the driver
->has to unregister all dpll devices and pins and register them under
->different clock id.
->
->> So it is the MAC driver which will follow the phandle, and then make a
->> call to bind the dpll to the MAC, and then provide it with the ID?
->
->In fact that would be enough to expose from the DPLL core a function
->to change clock id of the existing DPLL devices.
->
->E.g.
->
->int dpll_clock_id_change(struct module *module, u64 clock_id,
->			 u64 new_clock_id)
->{
->	struct dpll_device *dpll_pos;
->	struct dpll_pin *pin_pos;
->	unsigned long i;
->
->	mutex_lock(&dpll_lock);
->	/* Change clock_id of all devices registered by given module
->	 * with given clock_id.
->	 */
->	xa_for_each(&dpll_device_xa, i, dpll_pos) {
->		if (dpll->clock_id == clock_id &&
->		    dpll->module == module)
->			dpll_pos->clock_id = new_clock_id;
->		}
->	}
->	/* Change clock_id of all pins registered by given module
->	 * with given clock_id.
->	 */
->	xa_for_each(&dpll_pin_xa, i, pos) {
->		if (pin_pos->clock_id == clock_id &&
->		    pin_pos->module == module) {
->			pos->clock_id = new_clock_id;
->		}
->	}
->	mutex_unlock(&dpll_lock);
->}
->
->With this, the standalone DPLL driver can register devices and pins with
->arbitrary clock_id and then the MAC driver can change it.
->
->Thoughts?
+From: Zhang Yi <yi.zhang@huawei.com>
 
-The clock_id in dpll is basically a property. It is not used in uapi
-(other then for show and obtaining the device id). So if you introduce
-a mean the change this property, I don't see a problem with that.
+Hello!
 
+This series fixes an data corruption issue reported by Gao Xiang in
+nojournal mode. The problem is happened after a metadata block is freed,
+it can be immediately reallocated as a data block. However, the metadata
+on this block may still be in the process of being written back, which
+means the new data in this block could potentially be overwritten by the
+stale metadata and trigger a data corruption issue. Please see below
+discussion with Jan for more details:
 
->
->Thanks,
->Ivan
->
+  https://lore.kernel.org/linux-ext4/a9417096-9549-4441-9878-b1955b899b4e@huaweicloud.com/
+
+Patch 1 strengthens the same case in ordered journal mode, theoretically
+preventing the occurrence of stale data issues. 
+Patch 2 fix this issue in nojournal mode.
+
+Regards,
+Yi.
+
+Zhang Yi (2):
+  jbd2: ensure that all ongoing I/O complete before freeing blocks
+  ext4: wait for ongoing I/O to complete before freeing blocks
+
+ fs/ext4/ext4_jbd2.c   | 11 +++++++++--
+ fs/jbd2/transaction.c | 13 +++++++++----
+ 2 files changed, 18 insertions(+), 6 deletions(-)
+
+-- 
+2.46.1
+
 
