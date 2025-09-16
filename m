@@ -1,167 +1,175 @@
-Return-Path: <linux-kernel+bounces-818161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D017B58DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB378B58DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7FB487756
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:13:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8388B485E64
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8367265CC9;
-	Tue, 16 Sep 2025 05:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAACC26E6FB;
+	Tue, 16 Sep 2025 05:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9HdjQS1"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vC8XY4ck"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DAF25F988
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB4817C91;
+	Tue, 16 Sep 2025 05:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757999579; cv=none; b=E6C/qlQ5f5pcCVq+KwOlVK2AFCwSCXWL9xaGFndibOKga+ngmPyU3zErOqAysl8uR+keVmk1Ivj1cwQHuH4yf4mOwmaTMjYei3EfXysC7EjbhR0Q9HA1bhOn9dNzcMm1KFxv8dwqNQwG/tVpuKDZXHiysOaI8fFjShgpHRueSlA=
+	t=1757999787; cv=none; b=PvipL4pipLct/iqQzmbDQuLy5L0vn94cRuIuv4sEAii/9qlokbMIIllgP7DdwCXiIfvqP5kVMVkPWIK49OZoD9hU9lAbRpo7bZk5vcunlOWcJrP8ClJREnAut3/FTt1FoX7vUK72AqI6uhrN6HqWVT5KL+AMUyuWtwPaXoglHkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757999579; c=relaxed/simple;
-	bh=YCagT15TJjexqc1Up8uabF4bbwgjLWA6JZqJVkY1Ick=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uPbX+toVNcnp6lLX6DlKGDJoJj3ct3am41baMx4FlsZSy1rulcwRqS4lmZIJQgusqPrv2fbYmKXYA7y2TXnW43oIxvDukREcILMBRLlsV5ZjhECnRZa/Oo0rBvaeiAz9eNruWx85m0FAl/d4EYhgX9Z46OVejimkG99OpdQqsnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9HdjQS1; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b54b55c6eabso2954466a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:12:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757999576; x=1758604376; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBOq3NZ+rM2h9sy3fGHWYF48a38jqJCkuNGc5MxKF+A=;
-        b=l9HdjQS12U4qnpW3qm+sVeeDpgaAqXXT7kyu9Y+UNv+E6HOgJ3PJjhBv4o/xI1zlAa
-         tOBrrFwLyXa0j5PNKdIhpHGgMfeCh0e6xrr19Fg+lnyuiU3aKWVwWmPtW7DiN2/jtKdp
-         vx5IXI/iUqXxh3fNSnP4uYZCOM2AdICJVrdZDYSPYB53xJEuoHxusBoqNXjUdgN5/Bbe
-         uD7sra6ZYzf4GOxdA8/pTNiJWYBykDEXm0e9Xeh3leHV4xTxAgUm6a61CRwWyAmoN6QQ
-         ly5nXNJYkS+YGJWHYnU8T1HFMbplQ2By/jQaLK/LjgmAQ5J0sIerHuPw3nLKHrHDw4fQ
-         rYVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757999576; x=1758604376;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cBOq3NZ+rM2h9sy3fGHWYF48a38jqJCkuNGc5MxKF+A=;
-        b=WfTA0QQz7Jb0agWv+czbd7Ao47h80X++9MWVA4iKudlCM4f5FdsmP3rg6zoo5HcdNe
-         sVrQz4sjdh6v5UROQTHChzaWia1fmpqh+7pex++sxn7XxOgUjY9gySimof++kBQoznvG
-         gBky2AC875Ih3KQWnZIdIilyFJJKZ8kdm+LtbUyfYMk/geC2vogBp6TXXtBFBhKfIDLt
-         jh95YGUGKAKYD0Zs4Qehhz2RE5r+QoejE0wF/prYVFdRpw4I7v5Q7HvbOMlijYgewApW
-         GGexlqqIn06v5VpuQUNKsq0JXxo6pOlUQjZQK9A6lgck9YQTte5hcIxoMKAeJ8MMViPP
-         yCbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjvLTUJockOeqqPIPwwz7Qd/BTe+MBOXN/QphbLVNcEQ0kzQO1wfYoT5j2Urdt39BksPIdA8bOgVxf9dY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuau0qesdzIuBBXTKOKGn68IC3w+Ldjw5I4+RvFIJISFoJ74JN
-	a1qw24mJtKdblZpwVaRFCWEcl2qT+nkeoakie2aQo6O4FmrxrrnQSsW9
-X-Gm-Gg: ASbGncu07gtjTr1s7/9fpsuQtJnwJIuxAgvCczuLo2FXEL5JM1b9gaYmBukFjMDNet6
-	0CmG8xh4JegUKF9X63vZqB0IPOoZ57B7A57J4O2Ilz7MKkV//hmX9GjdOYxRGyV1XUlzOQyIBJ5
-	WUX+mSWvU7QbkXiOSSOSFpxDhzXJMGRhWtXSn3eGYEhHuDQAzY8cv2Ecjf0CzphNqwZNV78b20o
-	RvO+RXx/1q6VORY/AUMxQwohsRQM3VhXpDj8wzkRSZZizONg/23RrR4LhaY71D9C9tXvRhQ4LTQ
-	uMksaj1tzsaLF09JUa45sxjWjD6gvtkItkJFojsUcAEpY0H61d+HOvG9TE1oqhkZrTHHkaXLUg5
-	cHzqmFOU9VOX8KVn43ECvlBzxhcsi9AVTLQt/0k0=
-X-Google-Smtp-Source: AGHT+IE7OBjzV/92I2FhRFhRyz0p6Dc1x8NjHMGdKfNgjrPBrsrB5BEKW/jgDKL3ClaLwqWrxBdTgQ==
-X-Received: by 2002:a17:903:2f08:b0:24a:f79e:e5eb with SMTP id d9443c01a7336-25d26e455a4mr180824495ad.49.1757999575963;
-        Mon, 15 Sep 2025 22:12:55 -0700 (PDT)
-Received: from cortexauth ([2402:e280:2313:10b:d917:bfec:531b:9193])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26295996ff6sm80994095ad.64.2025.09.15.22.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 22:12:55 -0700 (PDT)
-From: Deepak Sharma <deepak.sharma.472935@gmail.com>
-To: jikos@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Deepak Sharma <deepak.sharma.472935@gmail.com>,
-	syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
-Subject: [PATCH v2] HID: cp2112: Add parameter validation to data length
-Date: Tue, 16 Sep 2025 10:40:55 +0530
-Message-ID: <20250916051055.317581-1-deepak.sharma.472935@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757999787; c=relaxed/simple;
+	bh=A18KZ9rlQr2JosW5W/tWPmxNteaChiuEhHIIR8hiA7U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dBYPYrlc0zktXZwtOVXCZjuF8Qtn34cH/eO2PalcrNsDjflAeXzrxrihMMU5fIy+03Y60E3L9NcjOqO9rTR/EGut0VUyGge+epck94HU4+no0SDTLnwlt7xdYqyyoHLSvffc8yqBdH9dkJg/pOEOvUiHr+BF8ejnIsqogFpjP40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vC8XY4ck; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6B6C4CEEB;
+	Tue, 16 Sep 2025 05:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757999786;
+	bh=A18KZ9rlQr2JosW5W/tWPmxNteaChiuEhHIIR8hiA7U=;
+	h=From:Subject:Date:To:Cc:From;
+	b=vC8XY4ck/xXyYfkSUnV+deexg3AOlbEc1uy2lkdElNLyr0axNlBv2jlPIYcn99BGs
+	 kKJaKnPN4td5YPax0g9T7Wq0Leh6bdTLxXkta4n5Cr8lOStYzcOIg5P/xCnLaGLu0+
+	 OBM5y8wjxQ29C6dtaxBaV0gxQS/sY7+/PFGqAjxmJemjgIEOSV5URD4Q2QVwn2qjBD
+	 syFHgY4gYtAy+7Gpk/7FR1JMQjQ8PDtIAswO1VP0jhmRbcKWESz0ogbosLfmD3q6si
+	 ZAgbNOV212Ltkqpj+u5CjtOmuLv+fYAAuGFl+fqLGVl90+RGCCxWnb4cIUjRrCBdxB
+	 HljXBnVyHtyWA==
+From: Drew Fustini <fustini@kernel.org>
+Subject: [PATCH v2 0/3] RISC-V: Detect Ssqosid extension and handle srmcfg
+ CSR
+Date: Mon, 15 Sep 2025 22:13:40 -0700
+Message-Id: <20250915-ssqosid-v6-17-rc5-v2-0-2d4b0254dfd6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAATyyGgC/x3MPQqAMAxA4auUzAZiof5dRRxqjZrFagNFEO9uc
+ fyG9x5QTsIKg3kgcRaVeBTYykDY/bExylIMlqyjnnpUvaLKgrnBusUUHK4h0Nx0viVvoXRn4lX
+ u/zlO7/sByF/0M2MAAAA=
+X-Change-ID: 20250909-ssqosid-v6-17-rc5-fcc0b68a70a2
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: =?utf-8?q?Kornel_Dul=C4=99ba?= <mindal@semihalf.com>, 
+ Adrien Ricciardi <aricciardi@baylibre.com>, 
+ James Morse <james.morse@arm.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
+ Atish Patra <atish.patra@linux.dev>, 
+ Vasudevan Srinivasan <vasu@rivosinc.com>, guo.wenjia23@zte.com.cn, 
+ liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Drew Fustini <fustini@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4530; i=fustini@kernel.org;
+ h=from:subject:message-id; bh=A18KZ9rlQr2JosW5W/tWPmxNteaChiuEhHIIR8hiA7U=;
+ b=owGbwMvMwCF2+43O4ZsaG3kYT6slMWSc+LQypff3T90NfmXewe4LzaPuG3z/Eu69uDg/ZuPdx
+ WpvdB95d5SyMIhxMMiKKbJs+pB3YYlX6NcF819sg5nDygQyhIGLUwAmssCPkWE/p52BSLXx+ZD8
+ vbs/if7c73xvdrjQk+RfrBuXX/7vOUuC4Td77O3b91J2C6yYKf9Zr2O7sGaKSNKjy/+6f73I6Y7
+ mf8kCAA==
+X-Developer-Key: i=fustini@kernel.org; a=openpgp;
+ fpr=1B6F948213EA489734F3997035D5CD577C1E6010
 
-This is v2 for the earlier patch, where a few bounds check were
-unnecessarily strict. This patch also removes the use of magic numbers
+This series adds support for the RISC-V Quality-of-Service Identifiers
+(Ssqosid) extension [1] which adds the srmcfg register. This CSR 
+configures a hart with two identifiers: a Resource Control ID (RCID)
+and a Monitoring Counter ID (MCID). These identifiers accompany each
+request issued by the hart to shared resource controllers.
 
-Syzkaller reported a stack OOB access in cp2112_write_req caused by lack
-of parameter validation for the user input in I2C SMBUS ioctl codeflow
-in the report
+Background on RISC-V QoS:
 
-I2C device drivers are "responsible for checking all the parameters that
-come from user-space for validity" as specified at Documentation/i2c/dev-interface
+The Ssqosid extension is used by the RISC-V Capacity and Bandwidth
+Controller QoS Register Interface (CBQRI) specification [2]. QoS in
+this context is concerned with shared resources on an SoC such as cache
+capacity and memory bandwidth. Intel and AMD already have QoS features
+on x86 and ARM has MPAM. There is an existing user interface in Linux:
+the resctrl virtual filesystem [3].
 
-Add the parameter validation for the data->block[0] to be bounded by
-I2C_SMBUS_BLOCK_MAX + the additional compatibility padding
+The srmcfg CSR provides a mechanism by which a software workload (e.g.
+a process or a set of processes) can be associated with an RCID and an
+MCID. CBQRI defines operations to configure resource usage limits, in
+the form of capacity or bandwidth. CBQRI also defines operations to
+configure counters to track the resource utilization.
 
-Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7617e19c8a59edfbd879
-Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+Goal for this series:
+
+These two patches are taken from the implementation of resctrl support
+for RISC-V CBQRI. Please refer to the proof-of-concept RFC [4] for
+details on the resctrl implementation. More recently, I have rebased
+the CBQRI support on mainline [5]. Big thanks to James Morse for the
+tireless work to extract resctrl from arch/x86 and make it available
+to all archs.
+
+I think it makes sense to first focus on the detection of Ssqosid and
+handling of srmcfg when switching tasks. It has been tested against a
+QEMU branch that implements Ssqosid and CBQRI [6]. A test driver [7]
+was used to set srmcfg for the current process. This allows switch_to
+to be tested without resctrl.
+
+Changes in v2:
+ - Restore the per-cpu fix from RFC v2 that was missed in v1:
+   change DEFINE_PER_CPU to DECLARE_PER_CPU in qos.h and move
+   DEFINE_PER_CPU to qos.c
+ - Introduce a patch that adds Ssqosid to riscv/extensions.yaml
+ - Link to v1: https://lore.kernel.org/r/20250910-ssqosid-v6-17-rc5-v1-0-72cb8f144615@kernel.org
+
+Changes in v1:
+ - Rename all instances of the sqoscfg CSR to srmcfg to match the
+   ratified Ssqosid spec
+ - Link RFC v2: https://lore.kernel.org/linux-riscv/20230430-riscv-cbqri-rfc-v2-v2-0-8e3725c4a473@baylibre.com/
+
+Changes in RFC v2:
+ - change DEFINE_PER_CPU to DECLARE_PER_CPU for cpu_sqoscfg in qos.h to
+   prevent linking error about multiple definition. Move DEFINE_PER_CPU
+   for cpu_sqoscfg into qos.c
+ - renamed qos prefix in function names to sqoscfg to be less generic
+ - handle sqoscfg the same way has_vector and has_fpu are handled in the
+   vector patch series
+ - Link to RFC v1: https://lore.kernel.org/linux-riscv/20230410043646.3138446-1-dfustini@baylibre.com/
+
+[1] https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
+[2] https://github.com/riscv-non-isa/riscv-cbqri/releases/tag/v1.0
+[3] https://docs.kernel.org/filesystems/resctrl.html
+[4] https://lore.kernel.org/linux-riscv/20230419111111.477118-1-dfustini@baylibre.com/
+[5] https://github.com/tt-fustini/linux/tree/b4/cbqri-v6-17-rc5
+[6] https://github.com/tt-fustini/qemu/tree/riscv-cbqri-rqsc-pptt
+[7] https://github.com/tt-fustini/linux/tree/ssqosid-v6-17-rc5-debug
+
+Signed-off-by: Drew Fustini <fustini@kernel.org>
 ---
- drivers/hid/hid-cp2112.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+Drew Fustini (3):
+      dt-bindings: riscv: Add Ssqosid extension description
+      RISC-V: Detect the Ssqosid extension
+      RISC-V: Add support for srmcfg CSR from Ssqosid ext
 
-diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
-index 482f62a78c41..13dcd2470d92 100644
---- a/drivers/hid/hid-cp2112.c
-+++ b/drivers/hid/hid-cp2112.c
-@@ -689,7 +689,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
- 			count = cp2112_write_read_req(buf, addr, read_length,
- 						      command, NULL, 0);
- 		} else {
--			count = cp2112_write_req(buf, addr, command,
-+			/* Copy starts from data->block[1] so the length can
-+			 * be at max I2C_SMBUS_CLOCK_MAX + 1
-+			 */
-+			
-+			if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
-+				count = -EINVAL;
-+			else
-+				count = cp2112_write_req(buf, addr, command,
- 						 data->block + 1,
- 						 data->block[0]);
- 		}
-@@ -700,7 +707,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
- 						      I2C_SMBUS_BLOCK_MAX,
- 						      command, NULL, 0);
- 		} else {
--			count = cp2112_write_req(buf, addr, command,
-+			/* data_length here is data->block[0] + 1
-+			 * so make sure that the data->block[0] is
-+			 * less than or equals I2C_SMBUS_BLOCK_MAX + 1
-+			*/
-+			if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
-+				count = -EINVAL;
-+			else
-+				count = cp2112_write_req(buf, addr, command,
- 						 data->block,
- 						 data->block[0] + 1);
- 		}
-@@ -709,7 +723,14 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
- 		size = I2C_SMBUS_BLOCK_DATA;
- 		read_write = I2C_SMBUS_READ;
- 
--		count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
-+		/* data_length is data->block[0] + 1, so 
-+		 * so data->block[0] should be less than or
-+		 * equal to the I2C_SMBUS_BLOCK_MAX + 1
-+		*/
-+		if (data->block[0] > I2C_SMBUS_BLOCK_MAX + 1)
-+			count = -EINVAL;
-+		else
-+			count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
- 					      command, data->block,
- 					      data->block[0] + 1);
- 		break;
+ .../devicetree/bindings/riscv/extensions.yaml      |  6 ++++
+ MAINTAINERS                                        |  7 ++++
+ arch/riscv/Kconfig                                 | 17 +++++++++
+ arch/riscv/include/asm/csr.h                       |  8 +++++
+ arch/riscv/include/asm/hwcap.h                     |  1 +
+ arch/riscv/include/asm/processor.h                 |  3 ++
+ arch/riscv/include/asm/qos.h                       | 41 ++++++++++++++++++++++
+ arch/riscv/include/asm/switch_to.h                 |  3 ++
+ arch/riscv/kernel/Makefile                         |  2 ++
+ arch/riscv/kernel/cpufeature.c                     |  1 +
+ arch/riscv/kernel/qos/Makefile                     |  2 ++
+ arch/riscv/kernel/qos/qos.c                        |  5 +++
+ 12 files changed, 96 insertions(+)
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250909-ssqosid-v6-17-rc5-fcc0b68a70a2
+
+Best regards,
 -- 
-2.51.0
+Drew Fustini <fustini@kernel.org>
 
 
