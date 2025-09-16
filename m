@@ -1,136 +1,115 @@
-Return-Path: <linux-kernel+bounces-817987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F29B58B29
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:28:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C5BB58B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C3E174EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:28:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 596277A9C65
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1599120F067;
-	Tue, 16 Sep 2025 01:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="J98MyLcb"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7484F13B293;
-	Tue, 16 Sep 2025 01:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734A821FF48;
+	Tue, 16 Sep 2025 01:30:11 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677141DF265;
+	Tue, 16 Sep 2025 01:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757986130; cv=none; b=LYBEQSXtIKsVCYfiUlMfaVxcL582Z04DXlBnJCVinp87EdKds0sCGaiEKgX+mSnbiTXD5GFD548cUqaJJKk0+Sh4LXWMokBEMWUW/i3CdztDwlwKpQQvHSjUfAYIfMSVP04go/RVd72C+ZkJmz9bT5UyIeGS3Nwmu0Zz6Lh6C/M=
+	t=1757986211; cv=none; b=QiavSt2pbrwrEByiMAgAYg9eM3vs8icCyYOOLIJsgmenIl58O3nRNWKqPy3KDr/Vp/AFsUS+5Y0NyxYonL/Gb8PohVwxQCfs6i/msDtxUNaGMoSkyfAbQiEgNPs34m4b1BkTs2hsK6snnVmpQPLtdpNVnjQlkQcYqhPYF1IZwDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757986130; c=relaxed/simple;
-	bh=dOrtMow+yygUOhhXu/PCIEqWa9NtW5uvhs7mmCFFDXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FYjhOyknzXgA7+kT2MIZ/CkLHIpEpX5xkFAtl1EAU6ndBVlujaBqjZ9ZE9fwrWoSIGlbOxdb2VzqMCT0ZzUd+e+aHiEDnusEkNECG8nSkFfpVAM35kyZdjPJZc1sjHSmnFtX6j6YuHWKllCzkGw98IvCOl7jmRaEmJfZEe8Vtr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=J98MyLcb; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1757986002;
-	bh=r40/9/byFQ5Kdho5bSZgFzvBLnr6GNZb9hi7qVjYjLk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=J98MyLcbMRG94NEiVPEjeSXACyzHlGMhioQe+AoZz+U5Pl5VQ3tvrizeCPZchXSH0
-	 d2rMdEy5H/PcgpFTo13OzEfrZ4GonSnL1tUb0wvZGI64BXUf/kaItCe4zy6dRa1XJM
-	 oVipO6zCRqLqhivuCR8IJ8o6LMSpaqpg8K/p6Q98=
-X-QQ-mid: esmtpgz16t1757985994tb691f01f
-X-QQ-Originating-IP: 9WqvNV5m81o9OAQGGCKKLjLtxMwpN1LWrrj43UnBIq8=
-Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 16 Sep 2025 09:26:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13026834714890684059
-From: Chaoyi Chen <kernel@airkyi.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	David Wu <david.wu@rock-chips.com>
-Cc: sebastian.reichel@collabora.com,
-	ziyao@disroot.org,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>
-Subject: [PATCH net-next] Revert "net: ethernet: stmmac: dwmac-rk: Make the clk_phy could be used for external phy"
-Date: Tue, 16 Sep 2025 09:26:28 +0800
-Message-ID: <0A3F1D1604FEE424+20250916012628.1819-1-kernel@airkyi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757986211; c=relaxed/simple;
+	bh=Rm0gHAfk+FjEIZWY7YKRbPW4JOwxvHlJnH3iKfsrlHY=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CkuZ0cO3xhJrM9skK4Ged5yMsIiYddUUTGFf0yFZrpgzF/PGL7sCX0PXZ/CKHUxsP5WIMpPxJhH+CSi163LDbtYo0Wixq3n1TfEh7K6cl+oNo1n5m7rvu4eFWxnmwi8vPU8Sm71EdYUx5aHx2Kp0Ooef1KglET/1wb7/mZImxAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxaNGXvcho2cUKAA--.23230S3;
+	Tue, 16 Sep 2025 09:29:59 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJAxvsGVvcho7lSYAA--.49454S3;
+	Tue, 16 Sep 2025 09:29:59 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: KVM: rework pch_pic_update_batch_irqs()
+To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Xianglai Li <lixianglai@loongson.cn>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250913002907.69703-1-yury.norov@gmail.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <0e330fc0-1200-6a02-7b21-78064fc63a2e@loongson.cn>
+Date: Tue, 16 Sep 2025 09:27:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20250913002907.69703-1-yury.norov@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: NpSUeF22LnzDaMKYiEuFqevqeK1MYzf4iSkkCu3fQqOjrNgyfGsywGra
-	GMwsWfxhO5M0UlGrG374jH3Xa17Hadfevx69JtfBFyquyr68EHvK2gqjtNyOyGoN5N/9Ypm
-	kv2vOCH1CMFRpEpIgjYRQ4sSB5udtTSTunJKOV7T8qxujPtCch7tkg2wkeh3aY97izqA7zs
-	fNXf6auP3iTDII0WIJKE9Vltww++i4bLigltiLAncAP7lsgqPay9ChFGa2sxFMpXFSxkRUY
-	IwLGia11ARql5Ns2AvaY2uG+nPJpXN/KnzHaVl2+I5OI0r6qtg7kXLjJN1i0dPSHDedKhUd
-	T+PdR1TWVAMpVmesdSinSeyyZDWVmffXSDAgV88zwpKYQ8Gq6yuQr+VyVwoSM8+h96Tm+z+
-	2KutP7P6l+B5dU/6fULMPT4BnM+MQr7iNsYP19RJm79bjmiepNqfxbjs6b21AsjrcnsLrnJ
-	EAKuVCXTj5X7ze5uXsIQBXeYa2SDOSrXiUEFiE50dqj5xOV9znX4FbpLeCNQXvnFBkRelAB
-	FsVObfsXPkF0WkkL+619MIYdebgIOFIBx3c2t5Xe2VjtDokOc4Xitf2eprN8YvgcVULfnLa
-	OlnhGfIoX2E9URDE+Lrbj7S/f8plgVl/ok2vV/W0LOcD3WCS3S3ez6xM0rfr2A/QCpPuBex
-	8XGoTFjaDSUilnJkOizFTOeG2SavuAvNPlzPjAB0DYksyIVmUE9Om69N8nL9S0zyVez7No1
-	XQU4G9/uczKgpSlwBVZqiM2LIaucy41R4WKSeefH/4j+mu1JCf+n2horpNVZCsaNmG3QQWC
-	zo5Bu9MIFGZxBHe3foojnFqdZ02SDzWGyEdxAcdwwNmhG6SfD5zwaND74VHf5UzjvZpFty+
-	AhYAiM9/If3Q55L+HCWcd5BbrrCEb9ZMzW8zlvJ0wcflYp8sT3LiBQwYwAx4fDtI4IdkAys
-	xRiJLq952WEZ+uDHpDt5/KlbJma6R/bcVeWasD1XDg7yJeg==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID:qMiowJAxvsGVvcho7lSYAA--.49454S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7CF1DGFW5AF47WFyDtr4UJrc_yoW8GF1UpF
+	W5uanIkFs5Gr1DXFy8uayUtF4ayrnrtr1SgF9F934xKrnxtr1FvF1kGrWkX3W5K393GF4I
+	vrs3tr1Sqa47AacCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4
+	CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
+	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jUsqXU
+	UUUU=
 
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-This reverts commit da114122b83149d1f1db0586b1d67947b651aa20.
 
-As discussed, the PHY clock should be managed by PHY driver instead
-of other driver like dwmac-rk.
+On 2025/9/13 上午8:29, Yury Norov (NVIDIA) wrote:
+> Use proper bitmap API and drop all the housekeeping code.
+> 
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> ---
+>   arch/loongarch/kvm/intc/pch_pic.c | 11 +++--------
+>   1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/loongarch/kvm/intc/pch_pic.c b/arch/loongarch/kvm/intc/pch_pic.c
+> index 119290bcea79..57e13ae51d24 100644
+> --- a/arch/loongarch/kvm/intc/pch_pic.c
+> +++ b/arch/loongarch/kvm/intc/pch_pic.c
+> @@ -35,16 +35,11 @@ static void pch_pic_update_irq(struct loongarch_pch_pic *s, int irq, int level)
+>   /* update batch irqs, the irq_mask is a bitmap of irqs */
+>   static void pch_pic_update_batch_irqs(struct loongarch_pch_pic *s, u64 irq_mask, int level)
+>   {
+> -	int irq, bits;
+> +	DECLARE_BITMAP(irqs, 64) = { BITMAP_FROM_U64(irq_mask) };
+> +	unsigned int irq;
+>   
+> -	/* find each irq by irqs bitmap and update each irq */
+> -	bits = sizeof(irq_mask) * 8;
+> -	irq = find_first_bit((void *)&irq_mask, bits);
+> -	while (irq < bits) {
+> +	for_each_set_bit(irq, irqs, 64)
+>   		pch_pic_update_irq(s, irq, level);
+> -		bitmap_clear((void *)&irq_mask, irq, 1);
+> -		irq = find_first_bit((void *)&irq_mask, bits);
+> -	}
+>   }
+>   
+>   /* called when a irq is triggered in pch pic */
+> 
+Thanks for doing this.
 
-Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 266c53379236..49f92cd79aa8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1410,15 +1410,12 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
- 		clk_set_rate(plat->stmmac_clk, 50000000);
- 	}
- 
--	if (plat->phy_node) {
-+	if (plat->phy_node && bsp_priv->integrated_phy) {
- 		bsp_priv->clk_phy = of_clk_get(plat->phy_node, 0);
- 		ret = PTR_ERR_OR_ZERO(bsp_priv->clk_phy);
--		/* If it is not integrated_phy, clk_phy is optional */
--		if (bsp_priv->integrated_phy) {
--			if (ret)
--				return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
--			clk_set_rate(bsp_priv->clk_phy, 50000000);
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Cannot get PHY clock\n");
-+		clk_set_rate(bsp_priv->clk_phy, 50000000);
- 	}
- 
- 	return 0;
--- 
-2.49.0
+Reviewed-by: Bibo Mao <maobibo@loongson.cn>
 
 
