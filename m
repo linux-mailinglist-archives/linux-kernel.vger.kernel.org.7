@@ -1,352 +1,174 @@
-Return-Path: <linux-kernel+bounces-818816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148EAB596BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74349B596BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9F13A714F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE9A3A7C5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294BD21D3DC;
-	Tue, 16 Sep 2025 12:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C16223DFB;
+	Tue, 16 Sep 2025 12:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v9aHHxgI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cPijuh2v";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v9aHHxgI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cPijuh2v"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ddYDXekm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7FF21CA13
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CC621CC6A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027467; cv=none; b=V5spZBTxxO3Dxc7wkUhfsFHE0fJE266wIHPR8O2MAUYQDKLw70nNi6FrXqF+QbEpPvFvh/Zh8S1aQ7ymfJiGq6P8seQYc7k38mAiJy+qQ4V4rOAwGoki6ED17MOx7xXjNuNxOzN21SlINLU1mBRJK+E+9g7gE+L6r4bi2ujLEIM=
+	t=1758027568; cv=none; b=g4SFX62Bka2BlBt517UYRtUqWobH24Hgjg9Lng4f+1AC4I1auhRm9lcg/ScwU06mWU3komGzhQXC23IU/cm7DPDIMuuu1sfjpfZf5h134wtmcIqd+6m+dBzLh88Bh0TlpZpp3SYuO89R0qSJ2bTdYpCAwZnpPfRSk5YR6sC2WxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027467; c=relaxed/simple;
-	bh=CzoIkVdd3FYdaOi0LweryO3N/tRmRx8qHEkZMhQTWow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rijlQp3+MpPlfWyffAHQPC0L+JJ+quIBh/Rh+RBSyZsWaTJ8lvwsR1OGbBpuLISowo+2cr0KHaEJYOiMecRjxoNW6IFePX+rdR5dMJEsj05KJMAX6At1P5gyM/vgOdKvZp+I4Yz07y3Xod7gEAjmpJ6s7qQKjDnw6gtLqEUfDfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v9aHHxgI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cPijuh2v; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v9aHHxgI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cPijuh2v; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A32E41F78A;
-	Tue, 16 Sep 2025 12:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758027462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CkP3NToZFKJteLfj2RxkpRM0Xk1p7/95fzpEMEOduZQ=;
-	b=v9aHHxgILtD7B7ZCmg/JFQHJO1CryXdfu0GjttwmMRX/T3evsvqN+k8Hg+ZMT/Z55cgp/J
-	1nwBbpV0lIVgOj50GeMEZtHThwexz9RRH0z/K71if81GYeGvX0NqmBLbYG59WiZFHK+oxr
-	mX5GSI+mTsywfn97ISKZcN+gCXDUnvA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758027462;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CkP3NToZFKJteLfj2RxkpRM0Xk1p7/95fzpEMEOduZQ=;
-	b=cPijuh2vNSlFsC1dxz/LoaNAMnopEa9d4FS38vfXaLaYrDoUClEqblrv/La0F8R7GP1Zos
-	22lXexXbzHWKKJCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=v9aHHxgI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cPijuh2v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758027462; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CkP3NToZFKJteLfj2RxkpRM0Xk1p7/95fzpEMEOduZQ=;
-	b=v9aHHxgILtD7B7ZCmg/JFQHJO1CryXdfu0GjttwmMRX/T3evsvqN+k8Hg+ZMT/Z55cgp/J
-	1nwBbpV0lIVgOj50GeMEZtHThwexz9RRH0z/K71if81GYeGvX0NqmBLbYG59WiZFHK+oxr
-	mX5GSI+mTsywfn97ISKZcN+gCXDUnvA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758027462;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CkP3NToZFKJteLfj2RxkpRM0Xk1p7/95fzpEMEOduZQ=;
-	b=cPijuh2vNSlFsC1dxz/LoaNAMnopEa9d4FS38vfXaLaYrDoUClEqblrv/La0F8R7GP1Zos
-	22lXexXbzHWKKJCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 838C813A63;
-	Tue, 16 Sep 2025 12:57:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id c9XCH8ZeyWg5BgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 16 Sep 2025 12:57:42 +0000
-Message-ID: <2d8eb571-6d76-4a9e-8d08-0da251a73f33@suse.cz>
-Date: Tue, 16 Sep 2025 14:57:42 +0200
+	s=arc-20240116; t=1758027568; c=relaxed/simple;
+	bh=P0qwYvA0hb3DcRu8UXrOaavNtZ/NhaQ2xXab7mtLRyc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DXMgciALXYM7rlBjrIrr6jaMGa+NjN8hGs9J++LsOhXlCm9vASBxnNj+VVBIVA6z6ywmPSlkF/szBYMrhuM6qnxzA2eTBP7RZ9Fwomz4v8TeCdWpqnyECMXMRiWp+MbvovCzBngqdVyyTQ08p+k8K+EecYsN0k5FXGb71q0jssY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ddYDXekm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9dsXn005334
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:59:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DDS7iQ2sUp2SmkYHHdOoYA
+	K+CHQVWqs2GBO+RrVwbH8=; b=ddYDXekmwC8EO2CA3hhIo7Vzt6ni0/AXWoUms3
+	y8mGTTelw8jGKE5wCo3NxL7ZRVHO1xOWCVfwrxz78LeTspwmA9d01QTsyWowDKI7
+	vk1zhVklMIn9FcqcD27eJIomMcrkenJ9G9/yp8YbfIvr8lCy/aVtkS2CBqx1mCv1
+	tORdW7Up1TDx0y0AfFHuJveyDnhW8OttlyZuiL4PydgdL3rA/RRAiFHCAW2GNc0m
+	S2axasTtPOfyK52Xjo0TB5TMAiplb74BBV46EydYcxIvM8PUKRdGR3HWKQxSns5T
+	wCbN2ZPQmVDzI9ccM5gq4f3S5v/NKqSZlZXjw4EEytZ33/tw==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496g5n4jht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:59:26 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7725a76dcb4so3830703b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:59:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758027565; x=1758632365;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DDS7iQ2sUp2SmkYHHdOoYAK+CHQVWqs2GBO+RrVwbH8=;
+        b=hrITt8TYYbnsw+cAlS5g8eR6/DUVVODTAN6TO5yjd0qB53I41VqakjbttaRnpuAmiE
+         2/a91KlsvAT9Fu2K82m/7d/y2fdFklTdzOSlSxsHkCRWQ2jXr+XlMAPjwIapXI6akrtg
+         2yFR0av8pdErS5jg58qXo2+8nKrP1Qa/TMCw6MAU3gQsc70sWK2i9fj26qO87NrdTgpO
+         dWjS0FSiu7OwkpESKMn2bP9hjCiT70PAJ8rsHTuYPRpjyQun0WK1StpISXJ9QvTuPcl0
+         QP+S9e+GaPUNULuxS0GrhbPYlGiabiqzSfYO6QSNvdVHQEWyPE0ew+F7xZLysTKNqIe5
+         mckQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZRZs5aWnpC+yacVjxfkh8cP2MCU/rxNxGfSPNF7E5INig7wfXw4ArtjrtaUl6SYhJGj+JbKpY6EFqoHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1X+gb3T0ff7G9VQIdEYvxl4CbJyIxwcCqda+ctv3NDtQDTTro
+	u9JXZ2H5UFpYu5AM5nX4/qTdNR7TUNKY5h4W9sl16IMQ1XEkjzhKXjtkqubSiBpWPxyTFq2F3kp
+	WFe2HDrJcbJlWl1lNsnNjuTMBFtlytSMQM6Dx1h1JlPM6E8j4dQgTMcLqBJ3cvc907o0=
+X-Gm-Gg: ASbGnctlTFNvXWwo0V78L2bBDe6sWHwvHddElseLjrvOZLKgpEWRU/btaw0rrU7AkHc
+	Gl9xrW+fAD7d1qyPR3hLNHJtPvtCs3Hm1iufsmUOb1WDAzKBuh+s6tYvWi9jI0lMH6PVOzosTKo
+	MBp5GUfJNQMfqm/c6vo9qT7nOONWnzexpBs1pnXeZu/dzXggG5jrBHv6eWww/vNgsGZfJvZ4Dn+
+	OtBhQuacHm2TjI9bMqHEJK7RjCqDjsFEPidgMztd9NQRxnbgSAsmQXKxhE9pUeeGqxkxTmlRo3b
+	uNci6VOEwogIRXCXlFjJMl7jhk6iIaG4q7v5B8Xl26t0N8rbFkHrG+1WPWaGhaoE/dIH2fSM7GM
+	i46cR/OGVGbsqZ7xpGCqr70Jm/w==
+X-Received: by 2002:a05:6a00:1915:b0:772:490f:e31e with SMTP id d2e1a72fcca58-77a8432bcc1mr2458551b3a.3.1758027565356;
+        Tue, 16 Sep 2025 05:59:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNCEXypeYOzurtCkAx+/w7KzjXac9vn7A0jWvpleu1CWy7D2+PPFBYaKHUtFTpp8QbDgBXvg==
+X-Received: by 2002:a05:6a00:1915:b0:772:490f:e31e with SMTP id d2e1a72fcca58-77a8432bcc1mr2458507b3a.3.1758027564846;
+        Tue, 16 Sep 2025 05:59:24 -0700 (PDT)
+Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a46b7asm16057113b3a.22.2025.09.16.05.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 05:59:24 -0700 (PDT)
+From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Subject: [PATCH v2 0/4] rpmh-regulators: Update rpmh-regulator driver and
+ dt-bindings for Glymur
+Date: Tue, 16 Sep 2025 18:28:51 +0530
+Message-Id: <20250916-glymur-rpmh-regulator-driver-v2-0-c6593ff9b4be@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, hannes@cmpxchg.org, usamaarif642@gmail.com,
- rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com,
- shakeel.butt@linux.dev, 00107082@163.com, pyyjason@gmail.com,
- pasha.tatashin@soleen.com, souravpanda@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250915230224.4115531-1-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250915230224.4115531-1-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,cmpxchg.org,gmail.com,google.com,oracle.com,163.com,soleen.com,kvack.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:mid,suse.cz:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: A32E41F78A
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+X-B4-Tracking: v=1; b=H4sIAAtfyWgC/42NQQ6CMBBFr2Jm7ZAWhFhX3sOwKO0ITSjFqTQSw
+ t2tnMDNT97Pz/sbRGJHEW6nDZiSiy5MGcrzCcygp57Q2cxQirIWSjbYj6tfGHn2AzL1y6jfgdG
+ yS8R4FUbVl8pY2xBkxcz0dJ9D/2gzDy7m9Xq8Jflr/xQniQK7TnVCkKp0I+8hxuK16NEE74sc0
+ O77/gXgnYyTzwAAAA==
+X-Change-ID: 20250916-glymur-rpmh-regulator-driver-80c9543cdd6e
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        dmitry.baryshkov@oss.qualcomm.com, konrad.dybcio@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+        jishnu.prakash@oss.qualcomm.com
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758027560; l=1492;
+ i=kamal.wadhwa@oss.qualcomm.com; s=20241018; h=from:subject:message-id;
+ bh=P0qwYvA0hb3DcRu8UXrOaavNtZ/NhaQ2xXab7mtLRyc=;
+ b=kv9ZkeOg5ihX1LqJtdrpD7Q2u1Jlub9ilXCJrCJkeUmT9HkA+9Rj9nMiBZoV7m8b9n1nWWjVI
+ NICLs4WLD3bAt+rsM43/XIBufStIj7uzc1xJdZigGi08hq050AViRKd
+X-Developer-Key: i=kamal.wadhwa@oss.qualcomm.com; a=ed25519;
+ pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
+X-Proofpoint-GUID: N_y82F3JBD8aLKRmq7PvKGav8ph1VnYW
+X-Proofpoint-ORIG-GUID: N_y82F3JBD8aLKRmq7PvKGav8ph1VnYW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NyBTYWx0ZWRfX/7aB8WIT6C0F
+ ucg1BtbwLV3oDAc5AIlk//tREH/6yOlTbQHOZJ5RxdYxBXTvyR/89b/+KCRveEaDwBCfM2w086w
+ p45QbNtfVLkgAciT+ImztkHRg4GPp2SbBafRjXB4XEeyuDn7Tc3227KspXs5ZyEO/J4WTMqGmul
+ 5y0y3sh/s+LW0MNG8f3He+lTE6S5PCApQD1nG+g8Ub89S6DItrmHIyVfplSDEXfHFX2qVDHrgCC
+ 9mVSYAt50g5ndzGI+DU71uNckZL8zkVa3bsUGIBOS/PMAQZmZX1j5EBkMK56O86UNjLCEbsr5CH
+ YSsW/1u/RdHcwipte6vihjQSSFWX1GEfp+D6K9/vGZJFzyULELNN5PLfjLyPAg6dJVSgTEtDeXy
+ YNuKS8yp
+X-Authority-Analysis: v=2.4 cv=SaD3duRu c=1 sm=1 tr=0 ts=68c95f2e cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=1jzprTmAGkQg8sxLlQ0A:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 malwarescore=0 phishscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150087
 
-On 9/16/25 01:02, Suren Baghdasaryan wrote:
-> While rare, memory allocation profiling can contain inaccurate counters
-> if slab object extension vector allocation fails. That allocation might
-> succeed later but prior to that, slab allocations that would have used
-> that object extension vector will not be accounted for. To indicate
-> incorrect counters, "accurate:no" marker is appended to the call site
-> line in the /proc/allocinfo output.
-> Bump up /proc/allocinfo version to reflect the change in the file format
-> and update documentation.
-> 
-> Example output with invalid counters:
-> allocinfo - version: 2.0
->            0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_data_nodes
->            0        0 arch/x86/kernel/alternative.c:2090 func:alternatives_smp_module_add
->            0        0 arch/x86/kernel/alternative.c:127 func:__its_alloc accurate:no
->            0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_set
->            0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_realloc
->            0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_enable_hybrid_capacity_scale
->            0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:init_amd_l3_attrs
->        49152       48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create accurate:no
->        32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_gen_pool_create
->            0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_threshold_create_device
-> 
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Acked-by: Usama Arif <usamaarif642@gmail.com>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+This series contains patches to update rpmh-regulator driver and
+dt-bindings for supporting the PMIC voltage regulators present on the
+boards with Qualcomm's next gen compute SoC - Glymur.
 
-With this format you could instead print the accumulated size of allocations
-that could not allocate their objext (for the given tag). It should be then
-an upper bound of the actual error, because obviously we cannot recognize
-moments where these allocations are freed - so we don't know for which tag
-to decrement. Maybe it could be more useful output than the yes/no
-information, although of course require more storage in struct codetag, so I
-don't know if it's worth it.
+Device tree changes aren't part of this series and will be posted
+separately after the official announcement of the Glymur SoC.
 
-Maybe a global counter of sum size for all these missed objexts could be
-also maintained, and that wouldn't be an upper bound but an actual current
-error, that is if we can precisely determine that when freeing an object, we
-don't have a tag to decrement because objext allocation had failed on it and
-thus that allocation had incremented this global error counter and it's
-correct to decrement it.
+Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+---
+Changes in v2:
+- Updated pmic-id dt binding's change commit message to elaborate `why` the
+  dt-binding change is needed
+- Updated commit message for driver change related to new resource name patch
+  to clarify that `resource name` refers to `cmd-db resource names`.
+- Link to v1: https://lore.kernel.org/r/20250916-glymur-rpmh-regulator-driver-v1-0-bb9b00e93a61@oss.qualcomm.com
 
-> ---
-> Changes since v1[1]:
-> - Changed the marker from asterisk to accurate:no pair, per Andrew Morton
-> - Documented /proc/allocinfo v2 format
-> - Update the changelog
-> - Added Acked-by from v2 since the functionality is the same,
-> per Shakeel Butt, Usama Arif and Johannes Weiner
-> 
-> [1] https://lore.kernel.org/all/20250909234942.1104356-1-surenb@google.com/
-> 
->  Documentation/filesystems/proc.rst |  4 ++++
->  include/linux/alloc_tag.h          | 12 ++++++++++++
->  include/linux/codetag.h            |  5 ++++-
->  lib/alloc_tag.c                    |  4 +++-
->  mm/slub.c                          |  2 ++
->  5 files changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 915a3e44bc12..1776a06571c2 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -1009,6 +1009,10 @@ number, module (if originates from a loadable module) and the function calling
->  the allocation. The number of bytes allocated and number of calls at each
->  location are reported. The first line indicates the version of the file, the
->  second line is the header listing fields in the file.
-> +If file version is 2.0 or higher then each line may contain additional
-> +<key>:<value> pairs representing extra information about the call site.
-> +For example if the counters are not accurate, the line will be appended with
-> +"accurate:no" pair.
->  
->  Example output.
->  
-> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-> index 9ef2633e2c08..d40ac39bfbe8 100644
-> --- a/include/linux/alloc_tag.h
-> +++ b/include/linux/alloc_tag.h
-> @@ -221,6 +221,16 @@ static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)
->  	ref->ct = NULL;
->  }
->  
-> +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag)
-> +{
-> +	tag->ct.flags |= CODETAG_FLAG_INACCURATE;
-> +}
-> +
-> +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag)
-> +{
-> +	return !!(tag->ct.flags & CODETAG_FLAG_INACCURATE);
-> +}
-> +
->  #define alloc_tag_record(p)	((p) = current->alloc_tag)
->  
->  #else /* CONFIG_MEM_ALLOC_PROFILING */
-> @@ -230,6 +240,8 @@ static inline bool mem_alloc_profiling_enabled(void) { return false; }
->  static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_tag *tag,
->  				 size_t bytes) {}
->  static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes) {}
-> +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag) {}
-> +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag) { return false; }
->  #define alloc_tag_record(p)	do {} while (0)
->  
->  #endif /* CONFIG_MEM_ALLOC_PROFILING */
-> diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-> index 457ed8fd3214..8ea2a5f7c98a 100644
-> --- a/include/linux/codetag.h
-> +++ b/include/linux/codetag.h
-> @@ -16,13 +16,16 @@ struct module;
->  #define CODETAG_SECTION_START_PREFIX	"__start_"
->  #define CODETAG_SECTION_STOP_PREFIX	"__stop_"
->  
-> +/* codetag flags */
-> +#define CODETAG_FLAG_INACCURATE	(1 << 0)
-> +
->  /*
->   * An instance of this structure is created in a special ELF section at every
->   * code location being tagged.  At runtime, the special section is treated as
->   * an array of these.
->   */
->  struct codetag {
-> -	unsigned int flags; /* used in later patches */
-> +	unsigned int flags;
->  	unsigned int lineno;
->  	const char *modname;
->  	const char *function;
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index 79891528e7b6..12ff80bbbd22 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -80,7 +80,7 @@ static void allocinfo_stop(struct seq_file *m, void *arg)
->  static void print_allocinfo_header(struct seq_buf *buf)
->  {
->  	/* Output format version, so we can change it. */
-> -	seq_buf_printf(buf, "allocinfo - version: 1.0\n");
-> +	seq_buf_printf(buf, "allocinfo - version: 2.0\n");
->  	seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
->  }
->  
-> @@ -92,6 +92,8 @@ static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
->  
->  	seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
->  	codetag_to_text(out, ct);
-> +	if (unlikely(alloc_tag_is_inaccurate(tag)))
-> +		seq_buf_printf(out, " accurate:no");
->  	seq_buf_putc(out, ' ');
->  	seq_buf_putc(out, '\n');
->  }
-> diff --git a/mm/slub.c b/mm/slub.c
-> index af343ca570b5..9c04f29ee8de 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2143,6 +2143,8 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_t flags)
->  	 */
->  	if (likely(obj_exts))
->  		alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size);
-> +	else
-> +		alloc_tag_set_inaccurate(current->alloc_tag);
->  }
->  
->  static inline void
+---
+Kamal Wadhwa (4):
+      dt-bindings: rpmh-regulator : Add compatibles for PMH01XX & PMCX0102
+      dt-bindings: rpmh-regulator: Update pmic-id property description
+      regulator: rpmh-regulator: Add support for new resource name format
+      regulator: rpmh-regulator: Add RPMH regulator support for Glymur
+
+ .../bindings/regulator/qcom,rpmh-regulator.yaml    |   39 +-
+ drivers/regulator/qcom-rpmh-regulator.c            | 1322 ++++++++++++--------
+ 2 files changed, 811 insertions(+), 550 deletions(-)
+---
+base-commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
+change-id: 20250916-glymur-rpmh-regulator-driver-80c9543cdd6e
+
+Best regards,
+-- 
+Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
 
 
