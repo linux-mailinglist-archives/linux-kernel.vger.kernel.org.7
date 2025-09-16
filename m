@@ -1,159 +1,229 @@
-Return-Path: <linux-kernel+bounces-819163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D821FB59C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4629B59C5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0C9F7A78C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:40:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54B427B16E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9271635CEAD;
-	Tue, 16 Sep 2025 15:42:27 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD11345722
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758037347; cv=none; b=SZ+JZ8ymDnbVQzt54tvx7/D+MiWxbOGWGZDHMdg4VPmEBm0xayqiUw/Fq+bvZCJ5yqrns/uehmGHmaK0IfjFUBZi74rbpXaBP0C2+cT7gNYKjhT1sSZ2+0ibjrZIDq2w1Hyl+WU9B1MzpimcHYynlGMSjWtmKijBfVg0MzTYH5I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758037347; c=relaxed/simple;
-	bh=D8sjOdiT4z2oYG1XEIbAWxGYXzY3r8Vt0ZCJzv0C9M8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMjb9f8Y9R3vzvRBEbm4JuAVe3bOfz/sS5utTzURKSVZlECH3sZ3vEnE1pScXdJnn5J6PPqfukB4cT8NaPP8usZ5jK+AdLa1LOPKc7SavmEgAMvrBLvS4nfhQatBNOohBC79V01HCT0RCZ3+eHLYKNtoBTq3mImTDDJVLFQ7Wyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost [127.0.0.1])
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 58GFfn80294667;
-	Tue, 16 Sep 2025 10:41:49 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.18.1/8.18.1/Submit) id 58GFfmi4294661;
-	Tue, 16 Sep 2025 10:41:48 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Tue, 16 Sep 2025 10:41:48 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Ash Logan <ash@heyquark.com>
-Cc: arnd@arndb.de, christophe.leroy@csgroup.eu,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        officialTechflashYT@gmail.com, AWilcox@wilcox-tech.com,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: 32-bit HIGHMEM and game console downstreams
-Message-ID: <aMmFPCwU-mVxBbsv@gate>
-References: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
- <aMbNwBrxtBSPl8NQ@gate>
- <95d176d1-e1be-4594-91bd-caf0d68fd532@heyquark.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559635FC05;
+	Tue, 16 Sep 2025 15:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="d1Sv6TwV"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010010.outbound.protection.outlook.com [52.101.69.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1457237172;
+	Tue, 16 Sep 2025 15:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758037408; cv=fail; b=Z1VUWaXeHQzNPIUCMwd0gwpmCEF18iu1fgrxW6988O698loLlfTNz/BA5kIZVh0lezRYpZLhG8ymUSKtmQD/rVffaEI/m4Z9LT3dQeVTzsz7LyIHOmxG0KpbjUwBx8rb/J7M1Kyaq1JfS5qmLoMHfdXYX5mNX5NBwNwqdTpMFlE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758037408; c=relaxed/simple;
+	bh=k+x+EejTrEPCClAUj8qWUiDk5ytAGrR5sorute4BePQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jQ+Npf2KqwzDFYTmCe1+AD6D6z10LKAOioSLrBsgf8KPeGcTl09K/naje1ruWvple8aYEcViglep6ZJaVYsQxtRPdjdUvEPataoiHl6oIkZaWCN/lP7qjkZsGzWU+IeNXXxrpf2ELPcYw6nBLLxI1/neXYLDppOcgABV6a1yNCU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=d1Sv6TwV; arc=fail smtp.client-ip=52.101.69.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DDsNX8dOr5B+6SqSNVx+FBfDuAJLJWddvqvCA/52LgQYfT2YNNP9u+AHo1HmW1kbFexrsJ9E713ax9uywbV1UfNUQUyQHG7RmznktOsTI+Z5kgb4E7rSJFV8BCef7fBxNdjywZ43GlHcwXlM6bUHQy9WFexaSVs9dv5EURLrcChtXW0PlecWejnIqjFWbqKwfUWxNaD7jGu9FTmIs5hW5+ARC6c6zbd48g0hZ7AXA1DFncVdgsVg7Rac0+N7vWVAKYCAK1EP2aXECbazzphnS/W4MyD06QCdrdnzECuDz4Q4zOTxbFobWtLWTF/cUjwcfjtqPYABHKq8HV1qEy/Tlg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v5nOAF2llBOtTZWdWb28XQBREVpTnzlNfzAhD9nleR0=;
+ b=omeP2VlQ0PgzlQzaw11eqjCjndP1OPwTYMqQYQeegY88TMZSfRVD4uMpmu/4gPRREbwWa19F/iFTli5sVJHmKeSP8JyF9k6fMyAl7meFNPBiIfMkb2Jzulj0WX+QOLquhExdZWOuygYUXM/+lC3Uf+tCzjES3pr7r9pYja5WDsg0mObb7MjzII0zYjm3GmTYx1DKzVjhRuhgPewG6QHazXjBpL5plP5sFqzokNlamMAvMkgEzRJ+egSfz46TJZTQ9DScGn6If0Wpw2wt3E63ER5auW2hW2hhIhxtOU7+wL5mRW1rPu9ZtWPb3B+x1FrJ65rze8j01ytre4PlNKPY6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v5nOAF2llBOtTZWdWb28XQBREVpTnzlNfzAhD9nleR0=;
+ b=d1Sv6TwVwZBNzA0WPqzb1vi/BiHE0+j2qKgdd50N5sqCpoDuAt+8sGdOh9wTu1OrxF55jLXXwa48Kf9445cVCNFkCOhKuP7w2vSHwMNBTmYsvuAWOb9cOgb8JIqCkS+2N1JTMsVGNRdzOgI56/DUWnBwW0fxF6YyAMhCeWEwPXhw4yxWHFI9yJtWc+hGhkFL0gdc/rMo1wZQ9BQytxU2Epnrzu0WQVyVZ22lP44bRnDnAb5mipILlF8fE+rkUWLNljvSJLObB2m6UGOCIVN2V5CrgXf7e5cTPLTKukZibZP2TY7sGj4oy9IKkKSOIDu37BaSh4bS/W+a+OcNmCAqNA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM7PR04MB7110.eurprd04.prod.outlook.com (2603:10a6:20b:119::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
+ 2025 15:43:23 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
+ 15:43:23 +0000
+Date: Tue, 16 Sep 2025 11:43:16 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Haibo Chen <haibo.chen@nxp.com>
+Cc: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] spi: spi-nxp-fspi: Add OCT-DTR mode support
+Message-ID: <aMmFlClUOkFG3TyH@lizhi-Precision-Tower-5810>
+References: <20250916-flexspi-ddr-v1-0-69358b5dc862@nxp.com>
+ <20250916-flexspi-ddr-v1-5-69358b5dc862@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-flexspi-ddr-v1-5-69358b5dc862@nxp.com>
+X-ClientProxiedBy: SJ0PR03CA0372.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::17) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95d176d1-e1be-4594-91bd-caf0d68fd532@heyquark.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM7PR04MB7110:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8b03a82b-6ca1-4f66-083f-08ddf537c4f4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|19092799006|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+3LWNuJNz7TqTg33ZLXyfRL6v0hjXOYJZXH9M9WdYj1/8luKyE1hzKmOQJ0f?=
+ =?us-ascii?Q?FY7Gg6uFUcEl0+woe5IMZa1idZcbMwYm9f9x5gHtddPvlvmLpPjCUihzRKH9?=
+ =?us-ascii?Q?R/8wdEKFmBFUhBBd3qJzsuZik/v4A/Xt7jgdCTZBQSLeoR68bCfPXlMfyYMb?=
+ =?us-ascii?Q?TXwJ8UNbClMlXN+Sdt1raC/EdIifILh7qtqm7saSoKLarJFtGEVzKFHLUHqZ?=
+ =?us-ascii?Q?yPxKxS3hAcD3cQY2jjzbM0QSej83H6KI+7XkEamCw8wSUWJpHJDxapxJloAk?=
+ =?us-ascii?Q?WOV1IIfm4LHJE8x91HaaeoArFGH5k3XV6pEYWGa/Ftgrk73roDYKBZZAzKa1?=
+ =?us-ascii?Q?/cHyNtqk4/gAvrnHA9yrztTF7bVkZHCNYSLCI4+k1YSuH4xZq7zCVPj8oni3?=
+ =?us-ascii?Q?yuC9ImqJehb8sTeNCZxYBcEemGLkNqde1N2Jcjv/5X4HRjsPJciQCbUyE0Qw?=
+ =?us-ascii?Q?C8feQc6hNBZzxL2wc+FP2aleLrAvA83zDmtZ3g7i429owqsQl68HV6nuLm7x?=
+ =?us-ascii?Q?ucWWd0Od/qdesPDgPASmNKkJxDc4a0MyJjsVSIWXD114IgTGJpvxuJ7Esyrf?=
+ =?us-ascii?Q?Fqa5CpI0ZwlfHwU/78FNNMCoIdpak/mcKSR/0ZKtAOt5xomfoISgaNIBwf0B?=
+ =?us-ascii?Q?gtykyXnymft6kZjxn/Z3usF5yw26bGOBNP0gIailIIzAirTrJZcBBiIV3KE+?=
+ =?us-ascii?Q?l/G8+o2EclP0C1RTdvfuJjPRYerYsQtzb3/FVqZfgZcwi0Yl7kGAIgTZszME?=
+ =?us-ascii?Q?UtfbykCRkRI3a/7mGER/RNTWAqdQ2ezxyYHsbXDQLKBuPgSTWBDpAnil++kc?=
+ =?us-ascii?Q?hI4Q5iKUnWpD0Z1dF7nuOXRZyZKuSgm7DuFuTu8i1y4fqzjAdTV5yEA3EjRS?=
+ =?us-ascii?Q?yuBW6NJGMi/07A2AohF8ncixf1aqE/QfndUTpAKMcBZTuzifyCCMKql+OMSm?=
+ =?us-ascii?Q?ClDHWoGyqZMCmkLGsEBYlO478Pz4VP0kD43LwrflUxK65aSSexNqUzfQR8Vh?=
+ =?us-ascii?Q?VS6hYxl8Kyhv/ylMhbpRc7XMjTNsunZYK00szfwK8RR+Tal4QyVMTtQ8hpJh?=
+ =?us-ascii?Q?ELha4+e3BlKLPy+86/OF0/0ih7HJKpkE3Ji+HVrJoNIyImGJuHrpHTOWsnTo?=
+ =?us-ascii?Q?weMjCt6OGQoyRnL2KDXyWTijbDhHz7/U9BdxEahawAYJobvi7pgAFUlyFTmp?=
+ =?us-ascii?Q?5Fn/4stqSFTdNMjDDltK+kuD+SuZj08sMfVPMK0YNRNxWLWIetk9D+LeTY/t?=
+ =?us-ascii?Q?hQnuHfrvGmEGV/JlriD5dMZmU/6Dei6qhw5Rkphk81I6yToAdOa8f+I697HW?=
+ =?us-ascii?Q?5LQKxZQyawN3eLViLOeE2+1FgjKqlIIYCnaUWvhTllEIKbiKEw8UxUa3inFP?=
+ =?us-ascii?Q?suGi+nXX2BK7+WECmv1N4UuEMD63asP3fxlJpt8HNUZF/TxwX95ws3Pqt7Sy?=
+ =?us-ascii?Q?fJWzo1YAFp+f83qIOJ6j/14hOUYqInMc4EVSovQ0V95ObJaZCPuiMw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(19092799006)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+6RVlXXHd2L9MW2Np0QI+I7yF2dIfhSKwgoIhxC99QpV38wJIftsxA0Tcvqu?=
+ =?us-ascii?Q?gaHkyQ3jtTYvQqi/d6heAz6UJRBOjHbvQ1DIRCmOvPNcEQN++a8821VKaiCV?=
+ =?us-ascii?Q?yBPxw6o+yR6Pc9B/z1cXdAT7yDZ6IwcxO1l+Wx+q9eUWQREcR3vymroxadFk?=
+ =?us-ascii?Q?A10+pKHvnn8JZaXruokG/Uac+ukSED+twXOMMGAuhAJpdTg/t80y/JBWh52N?=
+ =?us-ascii?Q?yIx+fBZC+BL725eQf0tujiGjGd2Ml+O9QOlYNbi/3HkuT32VeSeoGOb5lOpD?=
+ =?us-ascii?Q?ChAoosEoapYArSq+/talCDcmyqXjoSVxqi5bBdyE3fxX6wMOyXlVxJuLBFpB?=
+ =?us-ascii?Q?vR71RC9B95++rUSawsGAWtD5y/B4+E/LUzxJcn7xcMuWIV24tVY8Qj1Lo+eg?=
+ =?us-ascii?Q?JRItYQHUrA4F13z6gIpzK5NeJqWIqrZCmbX04umiKgjDya0lUVWK3uvIgldi?=
+ =?us-ascii?Q?UjkLZuwn7pwTJ4yZ0Gv4OaUyzWIwdItmSCJ2e0iwyAECU7mWzfdWaGz2nCPm?=
+ =?us-ascii?Q?amcgxl/JUh7uIqV4gK6uJmYxHB2fat4qcKVWHNswDQt1tiO85tuO5eS29wyo?=
+ =?us-ascii?Q?8+2MgoUXFt5+3hBJInPaBwcp1RulifoSwsnODlMFV9CikxDBBZCGbdASicZL?=
+ =?us-ascii?Q?SmjwdgP5HhGVWxBzEf8RBraXwBkqjyZ346w1sr/+NIgg2RHvEm9InllnZ+wE?=
+ =?us-ascii?Q?XijzkLhLvpZIVKgrKigExalej6dSLfIoXUXoQZKnuE30yEpXwr+ySrDA0Qvf?=
+ =?us-ascii?Q?ANYQSQLJP6NzcN50Gr4BYGeigIss6g7zsFyO0XrBJAbppe5VJA8zS0ssAWew?=
+ =?us-ascii?Q?p1NhVnIet/2D3H5H5d2x1D+tucbksn4OElHth3HtVyQZfsO8p5A6z3Yv+YmR?=
+ =?us-ascii?Q?RKhjyENHDZm65dFkQRhkBK12bAGhPj6KflCokyEwMGDHZ4o/PHXI7YAHdtdL?=
+ =?us-ascii?Q?IHiZ9df6I/JB1LPBxtZoU18yJ8cAZ8gEFXxYuSuhA+CBGF56kaApuOFkh9MG?=
+ =?us-ascii?Q?LF2x25cIBZS2e25JgwU4xsJZRoiuW8bJAdOmwGeVZfscn1xfCcPr0cgXx5eA?=
+ =?us-ascii?Q?82qOozqmom2U/2LAqgKn3jRb9dcGz3Zcc/GL8hvPzc2iUrPqwfWAQv3nw+6E?=
+ =?us-ascii?Q?CVOKr1tEdXUSf9tuQEZmrkVqTccln+BUKxi5MJc83zizivNeXDkkPVJsbYjR?=
+ =?us-ascii?Q?tnbSMNY3JhogXcqCFYCisYUompBWLRMwBm7XMIqzex2DFur1mh4erpZ0Dcvx?=
+ =?us-ascii?Q?EKPS++GtBekNXxGGMdNZ6If48jJ+2TVLOBTV2p0172v51EWXl5DSOjNmtqe1?=
+ =?us-ascii?Q?nxS+IlR8d/sY3lBnF59SgEC7k6dcqpV13CRBOp7wydRhUCGgvKUhQ6wAqVPb?=
+ =?us-ascii?Q?+rg4JblbkO3iU6WMR9svxPKMiuZnTrBtiCKqRJyY3mOJ2pB4bl8ucsHtIWkS?=
+ =?us-ascii?Q?9p68yOGe+O7nlhAHIFJR42NHYn9EdOCTSLeg5MeZulIqodB0NanWnVcZEX4S?=
+ =?us-ascii?Q?bscIvD0TEWFqZkYnpcW0+1PSkldI0q7Ro9zVaMVLPVyUG6IkBPtWQSE/p/eK?=
+ =?us-ascii?Q?e5JOscHgtXgJU4ZMVxQASUMtTuHqSatjeEkSZqp/?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b03a82b-6ca1-4f66-083f-08ddf537c4f4
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:43:23.4630
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: McNnP4BS6EkGGQv3Ae7mW6Fxf4uIlY1HkQVkRzo2RCzkPy9TmOvy58LBpn3dyowX/o78TAu6mYZNks2M5Ck3iw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7110
 
-On Tue, Sep 16, 2025 at 12:10:14PM +1000, Ash Logan wrote:
-> On 15/9/25 00:14, Segher Boessenkool wrote:
-> > On Sat, Sep 13, 2025 at 08:53:08PM +1000, Ash Logan wrote:
-> > > Wii (2006)
-> > > - 1x PowerPC 750CL "Broadway" @ 729MHz
-> > > - 24MB "MEM1" + 64MB "MEM2" (non-contiguous - MEM2 starts 256MiB in)
-> > > - Kernel 4.19 (+ CIP patchset), dev has been working on forward-porting all
-> > > the drivers one major version at a time (he's currently up to 5.15 last I
-> > > checked) + limited upstream support (hardware bringup, UART, not many
-> > > peripherals)
-> > 
-> > There *aren't* many peripherals, so that is quite okay :-)
-> 
-> That's true. The lack of a UART or similar does make USB kinda essential for
-> an input device in my opinion, though getting it working is Complicated for
-> DMA reasons. (I think this is the main thing holding the downstream back in
-> their rebasing efforts)
+On Tue, Sep 16, 2025 at 03:56:44PM +0800, Haibo Chen wrote:
+> Add OCT-DTR mode support in default, since flexspi do not supports
+> swapping bytes on a 16 bit boundary in OCT-DTR mode, so mark swap16
+> as false.
+>
+> lx2160a do not support DQS, so add a quirk to disable DTR mode for this
+> platform.
+>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> ---
+>  drivers/spi/spi-nxp-fspi.c | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+> index 15b094e8e892f0b61c1f320bba897fa1f588be91..389cb20872db6d9653a146eac7182b9a4574496b 100644
+> --- a/drivers/spi/spi-nxp-fspi.c
+> +++ b/drivers/spi/spi-nxp-fspi.c
+> @@ -330,6 +330,8 @@
+>
+>  /* Access flash memory using IP bus only */
+>  #define FSPI_QUIRK_USE_IP_ONLY	BIT(0)
+> +/* Disable DTR */
+> +#define FSPI_QUIRK_DISABLE_DTR	BIT(1)
+>
+>  struct nxp_fspi_devtype_data {
+>  	unsigned int rxfifo;
+> @@ -344,7 +346,7 @@ static struct nxp_fspi_devtype_data lx2160a_data = {
+>  	.rxfifo = SZ_512,       /* (64  * 64 bits)  */
+>  	.txfifo = SZ_1K,        /* (128 * 64 bits)  */
+>  	.ahb_buf_size = SZ_2K,  /* (256 * 64 bits)  */
+> -	.quirks = 0,
+> +	.quirks = FSPI_QUIRK_DISABLE_DTR,
+>  	.lut_num = 32,
+>  	.little_endian = true,  /* little-endian    */
+>  };
+> @@ -1236,6 +1238,13 @@ static const struct spi_controller_mem_ops nxp_fspi_mem_ops = {
+>  };
+>
+>  static const struct spi_controller_mem_caps nxp_fspi_mem_caps = {
+> +	.dtr = true,
+> +	.swap16 = false,
+> +	.per_op_freq = true,
+> +};
+> +
+> +static const struct spi_controller_mem_caps nxp_fspi_mem_caps_quirks = {
+> +	.dtr = false,
+>  	.per_op_freq = true,
+>  };
+>
+> @@ -1351,7 +1360,12 @@ static int nxp_fspi_probe(struct platform_device *pdev)
+>  	ctlr->bus_num = -1;
+>  	ctlr->num_chipselect = NXP_FSPI_MAX_CHIPSELECT;
+>  	ctlr->mem_ops = &nxp_fspi_mem_ops;
+> -	ctlr->mem_caps = &nxp_fspi_mem_caps;
+> +
+> +	if (f->devtype_data->quirks & FSPI_QUIRK_DISABLE_DTR)
+> +		ctlr->mem_caps = &nxp_fspi_mem_caps_quirks;
 
-We often threw something on the EXI bus, either something that directly
-converts to USB (like the EXIUSB board we did), or anything goes really,
-it is a really simple bus so an FPGA or a CPLD or XS1 or even pure
-software works.
+the name 'nxp_fspi_mem_caps_quirks' is too general.
 
-> > > Wii U (2012)
-> > > - 3x PowerPC 750CL "Espresso" @ 1.2GHz
-> > 
-> > It is not a 750CL.  We never found out what the model # is, if indeed it
-> > has one!  But the CPU cores are compatible to the Broadway, sure, there
-> > even are configuration bits to make it do the bugs that were fixed in
-> > Espresso!  (Just like Broadway can emulate a Gekko, 750CXe, the GCN
-> > thing).
-> > 
-> > It does have its own PVR value of course, that is something at least :-)
-> > 
-> > (Espresso is one chip btw, with three mostly symmetrical cores).
-> 
-> Yeah, I was just going for the closest "public" chip :) I think the PVR is
-> closer to the CXe too, but all the HIDs, missing THRM, missing frequency
-> scaling - it's very CL-y...
+nxp_fspi_mem_caps_disable_dtr?
 
-The 750CX and 750CXe (and so, Gekko as well) have a PVN of 8, it is
-just a 750 after all.  750FX has 0x7000 though, and 750GX has 0x7002.
-Espresso is 0x7001, maybe it is somwhat inbetween FX and GX wrt
-implementation process or the like.
-
-The numbering is a bit of a mess, yeah :-)
-
-> > > - 32MB "MEM1" + 2GB "MEM2" (also starts 256MiB in) + various small SRAMs
-> > 
-> > It has 32MB MEM1?  Huh.  Why?
-> 
-> New generation upgrade? MEM1 does get used for Wii U software too, usually
-> to keep framebuffers and other 3D things, so I guess they wanted just a
-> little more for all the 1080p buffers the new console juggles.
-
-Ah, it appears the MEM1 is not implemented as 1T-SRAM anymore, but just
-is a hunk of off-the-shelf DDR2 (or GDDR3, or DDR3, or whatever they
-used; it doesn't matter so much).  Those come in power-of-two sizes
-mostly :-)
-
-There only is 3MB of 1T on WiiU, for the graphics memory.
-
-> > > Distribution-wise, we're supported by ArchPOWER [5], Adélie Linux [6], and
-> > > other distros. The Wii U's Espresso has CPU errata requiring a patched
-> > > compiler,
-> > 
-> > Can you remind me what that is about?  It shouldn't be too hard to
-> > include it in mainline GCC.
-> 
-> The short version is "every stwcx. should be prefaced with a dcbst" -
-> something to do with bus snooping (store-with-flush, store-with-kill) I'd
-> guess. I have some GCC patches drafted (activated by -mcpu=espresso) here:
-> https://gitlab.com/linux-wiiu/smp-patches
-
-Ah cool.  I'm maintainer for PowerPC GCC these days, I'll be happy to
-work with whoever wants to do a good patch (not this one, it is not a
-different CPU type, we shouldn't pretend it is, the actual patch can be
-just a handful of lines).
-
-> I'm impressed by how often IBM stuffed up atomics during this generation.
-> The Xbox 360 has an extremely similar issue despite being an entirely
-> different lineage of chip.
-
-It is not very similar at all.  Both have some issues related to
-(off-core) coherency stuff, something for which there were no good
-testing frameworks in that era.  And that is where the similarity ends.
-
-This needs full-system emulation to test well, probably interpreting
-the whole VHDL, for all cores and the caches and the fabric.  Or special
-ASICs to implement the whole thing at a hundred of a percent of real
-speed.
-
-> No surprise the console vendors all went to x86
-> and ARM right after, I suppose.
-
-Both of which had similar (but even worse) bugs, yeah :-)
-
-
-Segher
+Frank
+> +	else
+> +		ctlr->mem_caps = &nxp_fspi_mem_caps;
+> +
+>  	ctlr->dev.of_node = np;
+>
+>  	ret = devm_add_action_or_reset(dev, nxp_fspi_cleanup, f);
+>
+> --
+> 2.34.1
+>
 
