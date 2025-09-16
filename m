@@ -1,162 +1,264 @@
-Return-Path: <linux-kernel+bounces-819267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBAEB59DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC843B59DB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9FFB7B7426
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768CC1C00B21
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B352F260F;
-	Tue, 16 Sep 2025 16:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9006327F16A;
+	Tue, 16 Sep 2025 16:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RQjQ1r9p"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GEhOLZYO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sV7YXVNF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07FF2F25F8;
-	Tue, 16 Sep 2025 16:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30C42F25F8;
+	Tue, 16 Sep 2025 16:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758040317; cv=none; b=CU1Jg+vhSx/H8oi7TYdJg2w5qFjbuZ+EugDuIZZHMsHQKOnHM2DuJH3qDnRh2H/Gc5J+HXpUHSAk609/9RgV2Veed++7pNwxFsnr5RlhTpMiSIfdiIepOO7nvBDxHl3w5rcoj17n+TclAFzdWtgD01pl7QIEgNjP8npIOV5bW94=
+	t=1758040392; cv=none; b=MpiUgx8LVkznJ3u0v5+YoY4hm3CAm0auEhkV/AZiHtHqCuFchVJN4TTdQxmaWqOsd0UcpI8R96kcAl9xDs6PFj2em9IA/XD9Dq/ukxUjxwcGRn/BzXe5MQI+qakurYmMyslD3qTmsqDAny5nouM/JuPFO6YMlyIhwCnUawkAR9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758040317; c=relaxed/simple;
-	bh=UkgDQw75WYXJjxzsWkhyF4zMxd/CFHN8RU/ii/r9QIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nmEXF5NPBGN1K0C8SzyeFdtbIeuOZ4exNH+GiSXB3z2ao0lR4q3CkBEfDuaZNijCYzt0IPN6Rtm6qaanD1sxBHfrYYnzrzLe8dQH/U1AyhNBgzt64SRhxkoic/Fd6JBf9q1wBhobIOJA4t8EgcMab1+sRZJZMDbZ/5EvjAwa4CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RQjQ1r9p; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58GGVdia054473;
-	Tue, 16 Sep 2025 11:31:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758040300;
-	bh=itxuQcHMsO2sCC/s11nHQCOTF7hajHe73/POeriiI4w=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=RQjQ1r9p8EcA1WSa7oi4/rwWPRasiLs1yiDk5u+TvYz8WYSxvfAbR/6MP0g5CNtaJ
-	 cEJOvcA6HiG2Zz1++i9b3fma+Nx+kII8HTaiogfZsXIH1kkcvmJV61A+QfNY7uHphE
-	 /RayxG1w7DFNk0PHtJmbKLIkmuK28mN6fp6rK9yY=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58GGVdwQ1664678
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 16 Sep 2025 11:31:39 -0500
-Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 16
- Sep 2025 11:31:39 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE203.ent.ti.com
- (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 16 Sep 2025 11:31:39 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58GGVc3F1900098;
-	Tue, 16 Sep 2025 11:31:39 -0500
-Message-ID: <5b793fa1-e075-4a14-a28d-7aaf0d5b1619@ti.com>
-Date: Tue, 16 Sep 2025 11:31:38 -0500
+	s=arc-20240116; t=1758040392; c=relaxed/simple;
+	bh=q+j0EmfTuB1UzOhI8pAGiouFGTQKA3kEDTpkj0zjHG0=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=gOF4LmiVvHDQWroAA9Rt0y35Wh80R0+FY5be9LqwAYEcluZLegGRWLt06SQ/9SEgNp5UpU71rk68Ty3yPezNstSnbL8Lz+9nelynSD/BYiNPcAoYn7+iMZeeyV4ZGUVyphZY+JyZ4zWHPDbSXSRFELLzh9ORiUfqhZvUBqWvedg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GEhOLZYO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sV7YXVNF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250916163004.674341701@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758040388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=QAHJKycBV24FB7D+5sgN+DCQ8BtvYWGyoFjnG0jF1+Y=;
+	b=GEhOLZYOHp5C638N6Rsuee1kTC0rYKv5bwoA67L0S28vT6AEFAilXoAXHK1RTjW5v8sMnN
+	Z4IjqkUEo6lHX0J4FSjUh24xozx+6NeydkTVGnuyE4WIuElD1ETs0oy2Wphr0XCukR6qSC
+	OWIDKIAMCaPcbgs0jNBkR1K2lvRx5UAkzcpyp3Fjsbj0jWd6Aet/dpcox2cEkyObElCw2v
+	Xv64gOHlSJyJKgKAmp2tqyqSORCna7OMkQEKQgsOKma1oFB4ZmyKr470EHX3f+aHwJHnZL
+	4uKaga73pYP/zymmuSbR0U0577bWYWRDcvE0jBJpJi5ioURaonJoD7Dc7/FV8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758040388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=QAHJKycBV24FB7D+5sgN+DCQ8BtvYWGyoFjnG0jF1+Y=;
+	b=sV7YXVNFf4kk3eGZA9fyUCDgJyEji7uiLDNlbiVtw2tZX9TqOBAQqt4Whov7Oat8X2WHOq
+	0ymKt0WYDEZYY9Dg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ kernel test robot <lkp@intel.com>,
+ Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Nathan Chancellor <nathan@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+ x86@kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+Subject: [patch V2 0/6] uaccess: Provide and use scopes for user masked access
+Date: Tue, 16 Sep 2025 18:33:07 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] dt-bindings: nvmem: Introduce nvmem efuse binding for
- TI K3 SoCs
-To: Judith Mendez <jm@ti.com>, Srinivas Kandagatla <srini@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bryan
- Brattlof <bb@ti.com>
-References: <20250916154809.545283-1-jm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250916154809.545283-1-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 9/16/25 10:48 AM, Judith Mendez wrote:
-> On K3 SoCs there are efuse registers scattered across the memory
-> map. In order to reference these efuse registers like gp-sw which
-> may store SW REV information or other general purpose information
-> for drivers to consume, treat them appropriately as efuse devices
-> with nvmem framework.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> This patch is not complete and is sent as an RFC to get some initial
-> thoughts on this implementation to solve [0].
-> 
-> [0] https://lore.kernel.org/linux-mmc/736f09e0-075a-48e0-9b32-6b8805a7ee2a@kernel.org
-> ---
->   .../devicetree/bindings/nvmem/ti,efuses.yaml  | 36 +++++++++++++++++++
->   1 file changed, 36 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml b/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
-> new file mode 100644
-> index 0000000000000..fffca65cdbfe0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
-> @@ -0,0 +1,36 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/nvmem/ti,efuses.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI SoC eFuse-based NVMEM
-> +
-> +maintainers:
-> +  - Judith Mendez <jm@ti.com>
-> +
-> +allOf:
-> +  - $ref: nvmem.yaml#
-> +  - $ref: nvmem-deprecated-cells.yaml#
+This is a follow up on the initial V1 to make the masked user access more
+accessible:
 
-As the name suggests, this old fix-layout is deprecated, you
-should look at using the newer NVMEM layouts style for this node.
+   https://lore.kernel.org/r/20250813150610.521355442@linutronix.de
 
-> +
-> +properties:
-> +  compatible:
-> +    - const: ti,am62p-efuse
+After reading through the discussions in the V1 thread, I sat down
+and thought about this some more.
 
-You mention in the commit message, there are a couple efuse regions
-in the AM62P SoC, so does this apply generally to all of them, or
-should you have this be specific to the "gp-sw" efuse region you
-are describing here?
+My initial reason to tackle this was that the usage pattern is tedious:
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    efuse@43000230 {
-> +        compatible = "ti,am62p-efuse";
-> +        reg = <0x43000230 0x4>;
+	if (can_do_masked_user_access())
+		from = masked_user_read_access_begin((from));
+	else if (!user_read_access_begin(from, sizeof(*from)))
+		return -EFAULT;
+	unsafe_get_user(val, from, Efault);
+	user_read_access_end();
+	return 0;
+Efault:
+	user_read_access_end();
+	return -EFAULT;
 
-The efuse region at 0x43000230 is 96bits, so this should be 0xc not 0x4 size.
+This obviously has some interesting ways to get it wrong and after a while
+I came to the conclusion that this really begs for a scope based
+implementation with automatic cleanup.
 
-Andrew
+After quite some frustrating fights with macro limitations, I finally came
+up with a scheme, which provides scoped guards for this.
 
-> +    };
-> +
-> +...
+This allows to implement the above as:
+
+	scoped_masked_user_read_access(ptr, return -EFAULT,
+		scoped_get_user(val, ptr); );
+	return 0;
+
+The scope hides the masked user magic and ensures that the proper
+access_end() variant is invoked when leaving the scope.
+
+It provides a scope local fault label ('scope_fault:'), which has to
+be used by the user accesses within the scope. The label is placed
+before the exit code ('return -EFAULT' in the above example)
+
+The provided scoped_get/put_user() macros use 'scope_fault'
+internally, i.e. they expand to
+
+    unsafe_get/put_user(val, ptr, scope_fault)
+
+Obvioulsly nothing prevents using unsafe_get/put_user() within the scope
+and supplying a wrong label:
+
+	scoped_masked_user_read_access(ptr, return -EFAULT,
+		unsafe_get_user(val, ptr, fail); );
+	return 0;
+fail:
+	return -EFAULT;
+
+This bug is caught at least by clang, but GCC happily jumps outside the
+cleanup scope.
+
+Using a dedicated label is possible as long as it is within the scope:
+
+	scoped_masked_user_read_access(ptr, return -EFAULT, {
+		unsafe_get_user(*val, ptr, fail);
+		return 0;
+	fail:
+		*val = 99;
+	});
+	return -EFAULT;
+
+That example does not make a lot of sense, but at least it's correct :)
+
+In that case the error code 'return -EFAULT' is only used when the
+architecture does not support masked access and user_access_begin()
+fails. That error exit code must obviously be run _before_ the cleanup
+scope starts because user_access_begin() does not enable user access
+on failure.
+
+Unfortunately clang < version 17 has issues with scope local labels, which
+means that ASM goto needs to be disabled for clang < 17 to make this
+work. GCC seems to be doing fine (except for not detecting the above label
+scope bug).
+
+The user pointer 'ptr' is aliased with the eventually modified pointer
+within the scope, which means that the following would work correctly:
+
+	bool result = true;
+
+	scoped_masked_user_read_access(ptr, result = false,
+		scoped_get_user(val, ptr); );
+
+        if (!result) {
+	   	// ptr is unmodified even when masking modified it
+		// within the scope, so do_magic() gets the original
+		// value.
+		do_magic(ptr);
+	}
+
+Not sure whether it matters. The aliasing is not really required for the
+code to function and could be removed if there is a real argument against
+it.
+
+Looking at the compiler output for this scope magic.
+
+bool set_usr_val(u32 val, u32 *ptr)
+{
+	scoped_masked_user_read_access(ptr, return false,
+		scoped_get_user(val, ptr); );
+	return true;
+}
+
+On x86 with masked access and ASM goto supported clang-19 compiles
+it to:
+
+0000000000000b60 <set_usr_val>:
+ b60:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+ b65:	48 b8 ef cd ab 89 67 	movabs $0x123456789abcdef,%rax
+ b6c:	45 23 01 
+ b6f:	48 39 c7             	cmp    %rax,%rsi
+ b72:	48 0f 47 f8          	cmova  %rax,%rsi
+ b76:	90                   	nop    // STAC	
+ b77:	90                   	nop
+ b78:	90                   	nop
+ b79:	31 c0                	xor    %eax,%eax
+ b7b:	89 37                	mov    %edi,(%rsi)
+ b7d:	b0 01                	mov    $0x1,%al
+ b7f:	90                   	nop    // scope_fault: CLAC
+ b80:	90                   	nop
+ b81:	90                   	nop
+ b82:	2e e9 00 00 00 00    	cs jmp b88 <set_usr_val+0x28>
+
+GCC 14 and 15 are not so smart and create an extra error exit for it:
+
+0000000000000bd0 <set_usr_val>:
+ bd0:	e8 00 00 00 00       	call   bd5 <set_usr_val+0x5>
+ bd5:	48 b8 ef cd ab 89 67 	movabs $0x123456789abcdef,%rax
+ bdc:	45 23 01 
+ bdf:	48 39 c6             	cmp    %rax,%rsi
+ be2:	48 0f 47 f0          	cmova  %rax,%rsi
+ be6:	90                   	nop    // STAC
+ be7:	90                   	nop
+ be8:	90                   	nop
+ be9:	89 3e                	mov    %edi,(%rsi)
+ beb:	90                   	nop    // CLAC
+ bec:	90                   	nop
+ bed:	90                   	nop
+ bee:	b8 01 00 00 00       	mov    $0x1,%eax
+ bf3:	e9 00 00 00 00       	jmp    bf8 <set_usr_val+0x28>
+ bf8:	90                   	nop    // scope_fault: CLAC
+ bf9:	90                   	nop
+ bfa:	90                   	nop
+ bfb:	31 c0                	xor    %eax,%eax
+ bfd:	e9 00 00 00 00       	jmp    c02 <set_usr_val+0x32>
+
+
+That said, the series implements the scope infrastructure and converts the
+existing users in futex, x86/futex and select over to the new scheme. So
+far it nicely held up in testing.
+
+The series applies on top of Linus tree and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git uaccess/masked
+
+Changes vs. V1:
+	- use scopes with automatic cleanup
+	- provide read/write/rw variants to accommodate PowerPC
+	- use the proper rw variant in the futex code
+	- avoid the read/write begin/end mismatch by implementation :)
+	- implement u64 user access for some shady ARM variant which lacks it
+
+Thanks,
+
+	tglx
+---
+Thomas Gleixner (6):
+      ARM: uaccess: Implement missing __get_user_asm_dword()
+      kbuild: Disable asm goto on clang < 17
+      uaccess: Provide scoped masked user access regions
+      futex: Convert to scoped masked user access
+      x86/futex: Convert to scoped masked user access
+      select: Convert to scoped masked user access
+
+---
+ arch/arm/include/asm/uaccess.h |   17 ++++
+ arch/x86/include/asm/futex.h   |   76 ++++++++------------
+ fs/select.c                    |   14 +--
+ include/linux/uaccess.h        |  151 +++++++++++++++++++++++++++++++++++++++++
+ init/Kconfig                   |    7 +
+ kernel/futex/futex.h           |   37 +---------
+ 6 files changed, 214 insertions(+), 88 deletions(-)
+
 
 
