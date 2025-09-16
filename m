@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-819009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C329B599FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A41B59A2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6261C054E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B933C4A242B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A328258ED4;
-	Tue, 16 Sep 2025 14:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE93338F3F;
+	Tue, 16 Sep 2025 14:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSuZ369x"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="ZmjL6RjW"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E049221DA5
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835251078F;
+	Tue, 16 Sep 2025 14:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758032388; cv=none; b=lS887ZhPz8eFS9Eg2k2nSdZfeLdUfr5bOloF/bIQmWDk7jCRYZKeJhjaxtlWJS8LYhRQ2ydJr/oT9kpOesBwgnKSrnTMhYruo3P/eed8vlrXGl+ofpccgvtcZLvpUd/+hdpPJcDlUZkj0yPc0OkcoZ5oZssDX92yF0cESzScsdU=
+	t=1758032418; cv=none; b=aWWGDc/ruSasPIParLoXU5A1Crb6QBaQLNw9YWkYbEcrZI89ko+yI05Yc15mlT8jgR4vjKqa4+YftWdftCD4ynnQY4txrWiiyglLdtfzHtcOstv0UqME1Kq6C7YnA0oqsR5v9ckUJ9zZovYXID3NiNkUiksedRCjAvxLon4G8uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758032388; c=relaxed/simple;
-	bh=IkW4nK/vinXYi2bfrKKAAwnIOc30dbD41Dd6dOR/Ldo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMMbwNehl8JhhrP6nUcHbeY7CZjYi7DGMBpdGPPPl/r/LxeNq/G5DmCa9gmwQOfnLsSMKC0KDEcB2I04cpInZDiVT8/XHD/79GSRKdHyZ1/uz4bpeb1cQ9W/Aouo6G1CCYjPbE1dRzhWpmPp3KsEG8681Hv5RpKzXQD4Zw4KCPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSuZ369x; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ea3e223ba2so2298181f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758032386; x=1758637186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EtjNvPki9FX33kkHGpqKgjuJyKPvLiypLHYyt3prAwM=;
-        b=dSuZ369x3at3HvOo1zi/P7neUerMH16IN8qEEjX/PgKSQp6+YOLK16HhHDMsCuCwvA
-         vdT32WSgailg55IEn4kbgpql03gu2tJ+bGlDZ6iBECv2RGbTYBnKio4s+lusm93A0mrf
-         dxnS9OCGdk1u6+H9a3bFve10aKB7Vf3U/YEjlyH26gfYQCsfoV3hXVCBB0eOr7P9TpbH
-         9+vDRmi9PoQHSY7IUGgA9rPsJoOPjTmiBsv+7hlO9AZWC8MUuX9PegxB0phvkcoOPawu
-         yokVmsQvr42UZCdMAwj9yulPaxWHaC93PHenkaF4RPYQ6rm63Rmqt9b4lz72bD4KhDgL
-         fG6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758032386; x=1758637186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EtjNvPki9FX33kkHGpqKgjuJyKPvLiypLHYyt3prAwM=;
-        b=ok2aHYbhlEM1jD2un7DVFWDC3DKAHAMPjh3SLAxKDT2PHBMqavbP2k7JuvSVefqaBv
-         dPCwusVF7s33p4V/91F64stqxXiirw8ojRo7jOcxGY5O4B3MOTJRP5VphoX5kldkYIbK
-         GoyrK9GftGewFCm6IrcS2Y+mb4nWMYkMPoe3ZHpGMrDPEA4PD0cJoxBy1QC5CURg41kM
-         lgbWMIkPqXiFGB2mLbLNmbakdjwEuJ489twjjeXLsAulNYTgyvPk8lIE8mdqeMyA4tdK
-         Pwqc0MdaiGLfZcA6wcUQ8V2wAOL2ikL085h/iAxSSdUnOk/dNKXMPZSorWaqpJwU4zSO
-         Ro5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjCpFJ9shsTqlgNbQNY4aHiJmoCRpHk79LOjDloyqUxTNYsC6x/4aLq4/WgbPhjFNhZoU0HeSXtrstiLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIlrfM9dHV1FrCJFVu52E8dinp0iriBThRuXIoKbNPu6jtLa46
-	iSlf+aykVpN3lVOQVRWuCl9zrF0SGGTNmB8xY6F2CqVOFLxpii3qbmQYGRMM+ezZ6jk=
-X-Gm-Gg: ASbGncvVtsdDQm/aX9gYF3IFOmYnXfA4HAyOZb/rqzjpGgESHCPTsd5btxlTggB4JrH
-	SbIMEBF1CxVRpgeDaNB0LDXjq43DkohtGkgGdjqiyhHrbt/K9COjul5/qBfJ912+w1uUuolXvCZ
-	G2usFhYs8izsLNjrBAvnv+syNl1fNWhVaTzeZk+DcQN6YoOG/LdnaqxHkxpRzbj4GXRo5g5XdVX
-	e9KTnty68yjKoxbD9wf4mk40Y66Dzyn9N/uAbIpoGf8/G2dcZihCZB0GpzeCH+2By0qFxEZcFTV
-	2g3JMiIAzI7eg3J13p9skzhdvNjAxkk+npbSmXWFKgwU/7TaQOAwObFXBANJSAOjN4NfZKzg0MY
-	WdAAGff7I0bdJhe5MqC/gkktRvMZ2Owk=
-X-Google-Smtp-Source: AGHT+IFdcw9hqpwZPogQtp5veCDSAw8ABo2+U1X+L5NI/DxNsiFcjHEYgUJ3E2vGvtEZVPnSECGu8w==
-X-Received: by 2002:a05:6000:18a7:b0:3d4:eac4:9db2 with SMTP id ffacd0b85a97d-3e765782b5fmr18609594f8f.5.1758032385579;
-        Tue, 16 Sep 2025 07:19:45 -0700 (PDT)
-Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037d7595sm220245015e9.24.2025.09.16.07.19.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 07:19:45 -0700 (PDT)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: lemans: Remove unnecessary cells from DSI nodes
-Date: Tue, 16 Sep 2025 17:19:31 +0300
-Message-ID: <20250916141931.601957-1-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758032418; c=relaxed/simple;
+	bh=gxDtgHz7G1qQsGNenAHFPQ0Z2+aX6Y9VV1cwAM/Bx0k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HTyM+OWagcmXP9a77A4Dw/wLqFTpzMGsdjpg20w7K4ZvS9ppNYzanCZc/9ZZDA86HYDYTGH5w11AJly7ZIlyMgHsTebJukeslwgUXpGGchvGH+TpCIn9QpHIsNXC1DdcZoqqjTyZl8yk+4210DK1XqB2mMU+Dxk9fT7LX5C/OJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=ZmjL6RjW; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6F8B140506
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758032415; bh=zYbUqQqq5gBAL5NIx7a64DWZNoB49w8Fp0Gj3T0pxnM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ZmjL6RjWsOZ3eAjNFWsOuzjJ0Ru9j9OUpBRNBMRLLKNfG48ZXDy7L1DBpuUggW6Sb
+	 Kchk7t0p0giMOvQ+nErBhBHHuOMLmgD2X0Os32s4ZIHYuaOxRxO95RmmZmombPAI6x
+	 VnU5WL1lASRpwAuGmchNSyDbfhNSbjgWo95ypTGez30DhV5nm91BcgQrda0Fc34U/0
+	 X14t+pZGhwYrqfWabPVAD1U+rr8gEiYrdFwLfCtkOMSSbfMIOyv5m5HgVyts62/am/
+	 E1zv0QBP7UDkqON3AtqWjJI0Wa2A6d5d4VTIaaxZMvOTJYdeTACO+Jawj+JyfdW1fg
+	 eH5UgPsER07pA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6F8B140506;
+	Tue, 16 Sep 2025 14:20:15 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Andrew Morton <akpm@linux-foundation.org>, Kalesh Singh
+ <kaleshsingh@google.com>
+Cc: minchan@kernel.org, lorenzo.stoakes@oracle.com, david@redhat.com,
+ Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de,
+ kernel-team@android.com, android-mm@google.com, stable@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook
+ <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar
+ <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jann Horn
+ <jannh@google.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] mm: fix off-by-one error in VMA count limit checks
+In-Reply-To: <20250915153642.7f46974a536a3af635f49a89@linux-foundation.org>
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915163838.631445-2-kaleshsingh@google.com>
+ <20250915153642.7f46974a536a3af635f49a89@linux-foundation.org>
+Date: Tue, 16 Sep 2025 08:20:14 -0600
+Message-ID: <87v7lifpi9.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Fix warnings
-Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@ae00000/dsi@ae94000:
-unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+Andrew Morton <akpm@linux-foundation.org> writes:
 
-Fixes: 73db32b01c9f ("arm64: dts: qcom: sa8775p: add Display Serial Interface device nodes")
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
----
-I haven't found a pending patch for this, so here it goes, sorry if someone
-already sent.
+> On Mon, 15 Sep 2025 09:36:32 -0700 Kalesh Singh <kaleshsingh@google.com> wrote:
+>
+>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>
+> lol.
+>
+> x1:/usr/src/25> grep "Fixes.*1da177e4c3f4" ../gitlog|wc -l
+> 661
+>
+> we really blew it that time!
 
- arch/arm64/boot/dts/qcom/lemans.dtsi | 6 ------
- 1 file changed, 6 deletions(-)
+A few years back I made a list of the most-fixed commits in the kernel
+history; unsurprisingly that one (I call it the "original sin") came out
+on top:
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-index fd6eb6fbe29a..a551f2a274a2 100644
---- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-@@ -4524,9 +4524,6 @@ mdss0_dsi0: dsi@ae94000 {
- 				operating-points-v2 = <&mdss_dsi_opp_table>;
- 				power-domains = <&rpmhpd SA8775P_MMCX>;
- 
--				#address-cells = <1>;
--				#size-cells = <0>;
--
- 				status = "disabled";
- 
- 				ports {
-@@ -4606,9 +4603,6 @@ mdss0_dsi1: dsi@ae96000 {
- 				operating-points-v2 = <&mdss_dsi_opp_table>;
- 				power-domains = <&rpmhpd SA8775P_MMCX>;
- 
--				#address-cells = <1>;
--				#size-cells = <0>;
--
- 				status = "disabled";
- 
- 				ports {
--- 
-2.43.0
+  https://lwn.net/Articles/914632/
 
+Perhaps the time has come to update that analysis.
+
+jon
 
