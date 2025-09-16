@@ -1,257 +1,85 @@
-Return-Path: <linux-kernel+bounces-818470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2FBB5922B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:27:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8315B5924B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91AFA5204C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC941B26B4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C06A291C1E;
-	Tue, 16 Sep 2025 09:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D728C860;
+	Tue, 16 Sep 2025 09:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OfTAy+CC"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Xk471+dk"
+Received: from mail-244104.protonmail.ch (mail-244104.protonmail.ch [109.224.244.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB8A18DF9D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAD618DF9D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014788; cv=none; b=a6YPO287fg+pZAXPz5I7aZPJKmuR42VUEIwyCTTbVkKq3gm0eVTrsuXtspsdq0odM46Fld6bKJblKw+8j4t0ag5ahg3EQ2CcK1RpeYLwk3zUlB/YRR+QpDmk+dSGMatTDToxmZkkLO0XnpE4QyMkgckcdRitWhLI3oyfQvx4Xgw=
+	t=1758015264; cv=none; b=uxKlS6r2StmpxPl1dr/0yd2lZrcu+7rOuw7NohOPUVU6GcYq12Twn3joI+syF45HyZiNeq+lZSLuDiU8tv58YWOw5KNND5mvIoDwvy6RtzFDfJiE5NCf2nHnyNl1PvVsjHK2qhDtErXJMln3KfzDDgI9mCBn5P6wRZBdOqLEYnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014788; c=relaxed/simple;
-	bh=4lfVZ57BQxvk8n1ZAcb8ezDDNgaWzRWeSYP8fyFLr1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZrIhG8pH9oePgxiw52qWItMR2JdGLNcu7x2Hcf1pGO0oW7hFdT5QlCN2/4yxKST+n2rUEr6M0Ex2ImfXNP+MVWH2qIzNEzJM9E0EMjk/vP8ZoePJcIKbluYjXq2FsVybTcVPenfgOINDRsz8tX6jzcKhKu6jBil2ucdzVZjjDqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OfTAy+CC; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-758a28587e5so2009589a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758014786; x=1758619586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zk5r8Hw8cLLoguwRNZkamSDZOj0muwUPjejxUY6OYbk=;
-        b=OfTAy+CC51/cnDTAHKDDRoRN4gpHt0i8DvKqkQEnw0Kf0CgxmZJ75c/68hQCoyjCHQ
-         HiuMirGJalcmpP5d0bwd7jyBsVW/aAYwEwzlMi7Cc8pQV5lOrxtarjS0Q8HpFMHfGSpa
-         rVzu8wohUqozBNPJ0YCM49ITebk+Un5PMnplQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758014786; x=1758619586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zk5r8Hw8cLLoguwRNZkamSDZOj0muwUPjejxUY6OYbk=;
-        b=TOggqTNmqS6wXuYs6iCVkldSP14tq0vV4ifit/O9Tg0m3PWIB28e/9e/DeBuN8nlA5
-         p3NAnz1MMW8d+nbsv3dZl/dpMv61rd4M+H9Cj5ON+q95SsyVbgTu04cjVfOqG+3KCkuU
-         h7NUnOFNgoHzJVMwWPVVNUBm7iPtUBcBmNDbVDVJsr2K1G23D1LGjDI/8KZdYhZ5eKxI
-         hKd6iojsbatu4jrH2Pz8dOArQf7Nmwh9JwnueXcqLBGfZ5HnBIa3Rs7ywwZ5suBe26ac
-         q9uqcG0HjepjEc692gkc8FGmDKyKOs9LIySxywke3Zj6V2LDKfRNH4bU2tSzdOb1RzOq
-         5EHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxL7Pn/uu0va+XBx+Sob/RFiSZv4MIvHINktVymU6Uk6A0eTN8yWmc6ltiafhqYf+2RyNLOU3q6KtB9xo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuScI7lH+5NIXCHJJfaXbOyOkzbvfsNwHqIawTjA4sOcmZiFpX
-	wnFLCNh/q2xZUK/XNYD3N/OAePyBBYT76KhNajYpHV7EcZ2j4X/AF8v9pmtEnSOMpOieOinfZoY
-	s7qjLo1ylM6F0jUHQDcR8S54pp/acmFPvJxLjk2BE
-X-Gm-Gg: ASbGncvo/O9eDWBRwb0nV2TXE9JHX/UUXX24qCUvroKZ/MZvG2SQwKURxg/CVTT9blK
-	9xflGCDNzr+D9Qpu9Gu3bat4+/0w92rf84/bORf0BZdJIB4klGU0B5ZLRI+09rnISP0uTymG3eI
-	slvthJTGNP+A1f8jyP2+gi9rLOnr9QNJdraP0uWyWNx80GJ0XUz77wiYhRcWjbAT2WL17fMvvWN
-	ZHc/avMrBJTBespYCp0mI8Hmj9vYBE3RLNP
-X-Google-Smtp-Source: AGHT+IHANShcalJc4XqYSlztXKHAo+w8oe1Ln+QgGhP21DfPXVSEG5nbhJg8sgCMOFA0nRdsdtxVQPWh2BeY9SM6zJM=
-X-Received: by 2002:a05:6830:6201:b0:746:d8f0:56ab with SMTP id
- 46e09a7af769-7534f698fcfmr10436118a34.0.1758014786002; Tue, 16 Sep 2025
- 02:26:26 -0700 (PDT)
+	s=arc-20240116; t=1758015264; c=relaxed/simple;
+	bh=jE9at7fuwyQViSp34l5f0xdOjpqR5lphLXmvDy1XnpU=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NLwHwIkYKSOKM24oC4j2oGozjdW6iRdb+GuTzk8PMfu2TENbkhJD7VsVtwy2hotjO1zysOsRMY0bgOMQOpvIMkeW07xxDOj45dstRlgg+C9LuYM5XlwOpN0P/Du1TG+YiHynTnjDsp19WV+uDnp3RCtrG8wHyVR4MJOoTmhyfv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Xk471+dk; arc=none smtp.client-ip=109.224.244.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1758014820; x=1758274020;
+	bh=jE9at7fuwyQViSp34l5f0xdOjpqR5lphLXmvDy1XnpU=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Xk471+dknsaV3IrIpCQ+oUypn/h28CAR1urerOWgKXW0ZqixFwWpU6VYypLIZt4xl
+	 aj54QAYFOGG2t2jyvl08E0NLbw6QRBQnDhQH46K/GabPausJkASZs10pmiddLN/Dgp
+	 yJOQMw/N50rS+XaBvWMnQB1q0Ho8cbcKRe0NV0VCEFldt0GcoPqb+W3FKOHR/2swna
+	 tucTktUNsDs5O9wC9/Ypt2sFdMMT8I+92KuhrAiqTYNK3XWa0+b20SPExO6NbSteZo
+	 TUgVWsa8KiXIys4KWJZBzoSwuKXmZsx7f2j+OnJf+SHMaq5sQiVAae4hPb/LFmmVWg
+	 L33E1jzqtJVIw==
+Date: Tue, 16 Sep 2025 09:26:56 +0000
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Turritopsis Dohrnii Teo En Ming <teo.en.ming@protonmail.com>
+Cc: "??\"ceo@teo-en-ming-corp.com\"" <ceo@teo-en-ming-corp.com>
+Subject: Linux Kernel 6.18 To Allow Rust And C Code To Use The Same Memory Model
+Message-ID: <1EX43nkFgMTiy2Fa-F_e5d02guQlasaamaw-EbFaIkjKttQDbGx6GwiC3F61hKcLMNxenrgBxsYpOsKYc-a6BN70bi66zpiuyY-BI9K40cQ=@protonmail.com>
+Feedback-ID: 39510961:user:proton
+X-Pm-Message-ID: e64140dd1ca7f9d151d5b7cf3cd0b364e608992f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912143911.445452-1-treapking@chromium.org> <CAGETcx_bzjiLcQSXhCGM1gg2Xy=fgD2FPAdt3ZHDJmY357WnHg@mail.gmail.com>
-In-Reply-To: <CAGETcx_bzjiLcQSXhCGM1gg2Xy=fgD2FPAdt3ZHDJmY357WnHg@mail.gmail.com>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Tue, 16 Sep 2025 17:26:15 +0800
-X-Gm-Features: Ac12FXzGMG2Z-5Pc6OqkUh0ucllWTMLHijqaQ6IRDJ87MDxY3DibH_pHGm-o9fw
-Message-ID: <CAEXTbpdPGLtjai_3jxyEPcOaDM1D=bhw4M8Gz4U78k_BcobY6w@mail.gmail.com>
-Subject: Re: [PATCH v3] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	linux-kernel@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Saravana,
+Subject: Linux Kernel 6.18 To Allow Rust And C Code To Use The Same Memory =
+Model
 
-Thanks for the review.
+Good day from Singapore,
 
-On Sat, Sep 13, 2025 at 2:30=E2=80=AFAM Saravana Kannan <saravanak@google.c=
-om> wrote:
->
-> On Fri, Sep 12, 2025 at 7:48=E2=80=AFAM Pin-yen Lin <treapking@chromium.o=
-rg> wrote:
-> >
-> > Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-> > and resume, and functions like device_reorder_to_tail() and
-> > device_link_add() doesn't try to reorder the consumers with such flag.
-> >
-> > However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
-> > check this flag before triggering dpm_wait, leading to potential hang
-> > during suspend/resume.
-> >
-> > This can be reproduced on MT8186 Corsola Chromebook with devicetree lik=
-e:
-> >
-> > usb-a-connector {
-> >         compatible =3D "usb-a-connector";
-> >         port {
-> >                 usb_a_con: endpoint {
-> >                         remote-endpoint =3D <&usb_hs>;
-> >                 };
-> >         };
-> > };
-> >
-> > usb_host {
-> >         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
-> >         port {
-> >                 usb_hs: endpoint {
-> >                         remote-endpoint =3D <&usb_a_con>;
-> >                 };
-> >         };
-> > };
->
-> We've had SYNC_STATE_ONLY devlink for years in the kernel. Also,
-> SYNC_STATE_ONLY device links get deleted once the consumer device
-> probes. You also can't suspend a device before it probes.
+Here=E2=80=99s a news article I=E2=80=99d like to share.
 
-In this case, "usb-a-connector" is a descriptive-only node that has no
-driver binding into it, and this is why the SYNC_STATE_ONLY link never
-gets deleted.
+Article: Linux Kernel 6.18 To Allow Rust And C Code To Use The Same Memory =
+Model
+Link: https://www.phoronix.com/news/Rust-Atomic-LKMM-Linux-6.18
+Date of article: 15 Sep 2025
 
-Also, out of curiosity, does that mean a system might not suspend if I
-add a device node but doesn't include its driver in the kernel?
->
-> Why are you hitting this issue only now? Something doesn't sound
-> right. I'm asking this because I'm wondering if some other recent
-> change broke any of my statements/design decisions above.
-
-For our team, we didn't describe the on-board USB topology until
-Stephen's series for the on-board USB hub support[1]. So, on previous
-platforms we worked on, we don't have a graph connection from the USB
-hosts and the USB connectors.
-
-One explanation is that there aren't many use cases where you want to
-add a graph connection to a node without a driver binding into that.
-However, the code has been here for so many years, so I'm not sure if
-this explanation really makes sense either.
-
-[1]: https://lore.kernel.org/all/20240223005823.3074029-3-swboyd@chromium.o=
-rg/
->
-> Not to fix this, but to also ensure better suspend/resume ordering in
-> the future, you might want to add a "post-init-suppliers" to the real
-> supplier node here and point it to the real consumer here. This will
-> also help break the cycle here. Because even with this fix, all it
-> does is avoid enforcing any ordering between these two devices. It is
-> just working based on the order in DT, which you shouldn't count on
-> for correctness.
-
-In this case, there is no driver for "usb-a-connector", so we don't
-need any dependency between them.
->
-> Thanks,
-> Saravana
+Thank you.
 
 Regards,
-Pin-yen
->
-> >
-> > In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
-> > between usb_host (supplier) and usb-a-connector (consumer) is created.
-> >
-> > Export device_link_flag_is_sync_state_only() and use it to check this i=
-n
-> > dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
-> >
-> > Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_ST=
-ATE_ONLY flag")
-> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> > ---
-> >
-> > Changes in v3:
-> > - Squash to one patch and fix the export approach
-> >
-> > Changes in v2:
-> > - Update commit message
-> > - Use device_link_flag_is_sync_state_only()
-> >
-> >  drivers/base/base.h       | 1 +
-> >  drivers/base/core.c       | 2 +-
-> >  drivers/base/power/main.c | 6 ++++--
-> >  3 files changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/base/base.h b/drivers/base/base.h
-> > index 123031a757d9..80415b140ce7 100644
-> > --- a/drivers/base/base.h
-> > +++ b/drivers/base/base.h
-> > @@ -248,6 +248,7 @@ void device_links_driver_cleanup(struct device *dev=
-);
-> >  void device_links_no_driver(struct device *dev);
-> >  bool device_links_busy(struct device *dev);
-> >  void device_links_unbind_consumers(struct device *dev);
-> > +bool device_link_flag_is_sync_state_only(u32 flags);
-> >  void fw_devlink_drivers_done(void);
-> >  void fw_devlink_probing_done(void);
-> >
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index d22d6b23e758..741aa0571fc7 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -287,7 +287,7 @@ static bool device_is_ancestor(struct device *dev, =
-struct device *target)
-> >  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
-> >                                  DL_FLAG_CYCLE | \
-> >                                  DL_FLAG_MANAGED)
-> > -static inline bool device_link_flag_is_sync_state_only(u32 flags)
-> > +inline bool device_link_flag_is_sync_state_only(u32 flags)
-> >  {
-> >         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_ONL=
-Y;
-> >  }
-> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > index 2ea6e05e6ec9..73a1916170ae 100644
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *d=
-ev, bool async)
-> >          * walking.
-> >          */
-> >         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_n=
-ode)
-> > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> > +                   !device_link_flag_is_sync_state_only(link->flags))
-> >                         dpm_wait(link->supplier, async);
-> >
-> >         device_links_read_unlock(idx);
-> > @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *d=
-ev, bool async)
-> >          * unregistration).
-> >          */
-> >         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_n=
-ode)
-> > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> > +                   !device_link_flag_is_sync_state_only(link->flags))
-> >                         dpm_wait(link->consumer, async);
-> >
-> >         device_links_read_unlock(idx);
-> > --
-> > 2.51.0.384.g4c02a37b29-goog
-> >
+
+Mr. Turritopsis Dohrnii Teo En Ming
+Targeted Individuals Singapore
+GIMP =3D Government-Induced Medical Problems
+16 Sep 2025 Tuesday 5.26 PM Singapore Time
+
+
+
+
+
 
