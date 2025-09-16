@@ -1,84 +1,103 @@
-Return-Path: <linux-kernel+bounces-818116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DF6B58CD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:33:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EA3B58CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 443A02A66F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B59E16D00B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58175238C19;
-	Tue, 16 Sep 2025 04:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4870A226CF0;
+	Tue, 16 Sep 2025 04:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ffhRuEUS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93A82A1CF;
-	Tue, 16 Sep 2025 04:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fuTrmShw"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A912192D68;
+	Tue, 16 Sep 2025 04:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757997196; cv=none; b=h5jhlm4d2v4hDszVJtNOKFL8csewvuu3zZh58Tu3/qT+mJCRZ0K356U1tajb41tZZsLyQoyqvyEaOLlAXrXr3U+GzbUxz9FVC2glVKZsWs3TWMkzQEW1wzqMl7CaUHObP+y9fg5jXnWycjEe5bniT5Eh5P216/JUYgmVJp4GcR8=
+	t=1757997439; cv=none; b=oHEFlEheMYvjR8ptfLc38DNMEryy+Vq2BhFnU2xXu8+DD8eli2AVxOBkz1wvUINvYtP3w/Q96/edGtJ1vlLFNcBRCAQb+aeDZ/lppdT2QyipQ0Hb177riqUPG1b83sMEaUZp5hAFDmShd6zkIhOyK2/UFoCG3av0J7QkkqyEL8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757997196; c=relaxed/simple;
-	bh=RFJkSWDFhqm9IbEFagXwquv4UPK9KKARrTLze/LmtU8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Bk6jwgt/qtatlvuo5tOl4nf3JdOm+z6syT0F/WCFc3U+MoiwY0fXAFxQ18N7RzscQGvUGwoX3OmazZ2QS7dP/QQ1z/42ajKVtBzu6bty0OabFpHyDQb7t0IiUSYGE20b/VUXtq8DODXn40BwKUe4TrQ673IGrOJd1Ohj3K6EIxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ffhRuEUS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB161C4CEF7;
-	Tue, 16 Sep 2025 04:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757997193;
-	bh=RFJkSWDFhqm9IbEFagXwquv4UPK9KKARrTLze/LmtU8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ffhRuEUSl+esw54iNYqPLjXZkB7pm9/qU6PwF7PfqZ0m7i4oOU94h54q9jAHt/nS4
-	 s+f9QUzJNC2ahUAeHoEjZ3N44lirm2epKio2vvbtZatpjoIm0CqJ1pGpaX0G3knn/D
-	 6VCEkQjCFe6KZvDs/IDzmvGpZi1wTL3t2fx/haT8=
-Date: Mon, 15 Sep 2025 21:33:12 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: damon@lists.linux.dev, kernel-team@meta.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/7] mm/damon: define and use DAMON initialization check
- function
-Message-Id: <20250915213312.12892156442f3a795a0a01f5@linux-foundation.org>
-In-Reply-To: <20250916033511.116366-1-sj@kernel.org>
-References: <20250916033511.116366-1-sj@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757997439; c=relaxed/simple;
+	bh=CShTfZpGczfFrLBRj7s/RV74xX9WX6BZtxgU2R1SziQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Cz2I7ri1826WXnkk6Zd0Y0XELw0jCAdKiOz28EQVmnEdK1/XXC1RjCz5/YIRk4puKzlVvOipeLmSGy+F8U0mC2FDhSgWtxzSBT+/0qkin1SF0ZuwgJF75K2trqux4biy4NHhvfTJTJIT8AD7mezbhWO2HdKnSU8OlwnXnfqhOnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=fuTrmShw; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.94.176.163] (unknown [167.220.238.195])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C14F720154FB;
+	Mon, 15 Sep 2025 21:37:08 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C14F720154FB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757997432;
+	bh=TsF1tN5HktiST0NuMxgGEIwidWlEyKyRgB4CNwSS9tA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=fuTrmShwbV6fFQYGiCQmuhPZ5N0LKvSjFtw3Ba5bmX7qOVQcGpOf70Bsb7oQr27Ok
+	 6hASdAh364VNgm4cAslwjWkJ7Jr3DWLWcYYDhaQp+fecg741iZUEYloJFEHuOtsG1j
+	 b/NvOrvrGLRnFbTqQdtaoIWpqZN7hfN4aSLmws3w=
+Message-ID: <b723ad91-e1ce-4b8d-8a0f-32ace00ad619@linux.microsoft.com>
+Date: Tue, 16 Sep 2025 10:07:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 1/3] fbdev: hyperv_fb: Remove hyperv_fb driver
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ Michael Kelley <mhklinux@outlook.com>, "deller@gmx.de" <deller@gmx.de>,
+ "arnd@arndb.de" <arnd@arndb.de>, "soci@c64.rulez.org" <soci@c64.rulez.org>,
+ "gonzalo.silvalde@gmail.com" <gonzalo.silvalde@gmail.com>,
+ "rdunlap@infradead.org" <rdunlap@infradead.org>,
+ "bartosz.golaszewski@linaro.org" <bartosz.golaszewski@linaro.org>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <E2D7F2119CB4>
+ <1757437112-2509-1-git-send-email-ptsm@linux.microsoft.com>
+ <8a958fe8-fbba-4bd6-a79d-fd310f08f8d7@suse.de>
+ <SN6PR02MB415755A10BD2C9D0E7F847FCD40EA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <ccc6011c-d1bb-48b1-bf35-6fea1b1e8a49@linux.microsoft.com>
+ <SN6PR02MB41578C2984A84B4D0AA17943D408A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <d452d75a-5a0a-42c2-9ea1-fcd08b09176c@suse.de>
+Content-Language: en-US
+From: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
+In-Reply-To: <d452d75a-5a0a-42c2-9ea1-fcd08b09176c@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 15 Sep 2025 20:35:04 -0700 SeongJae Park <sj@kernel.org> wrote:
+Hi Thomas,
 
-> If DAMON is tried to be used by its API callers when it is not yet
-> successfully initialized, the callers could be crashed.  Such issues
-> actually happened and were fixed [1].  DAMON API callers are therefore
-> having their own hacks for seeing if it is safe to use DAMON or not.
-> Those built on an untreliable assumption that DAMON should be ready to
-> be used on module init time.  DAMON initialization could fail if
-> KMEM_CACHE() fails, though.
+>>> Is deprecating the driver a mandatory step?
+>>>
+>> I'm not aware of a mandatory requirement, at least not in the sense
+>> of it being documented in Documentation/process like other aspects
+>> of the Linux kernel development process. So I would say it's up to
+>> the Maintainers for Hyper-V and FBDEV as to whether the Hyper-V
+>> FB driver should go through a deprecation phase before being
+>> removed.
+>>
+>> Of course, the purpose of the deprecation phase is to be "nice"
+>> to users of the driver by giving them some warning that it is going
+>> away. That gives them an opportunity to raise objections, and/or
+>> to do any necessary migration to the replacement driver. I suspect
+>> there aren't many (or any?) users of Hyper-V FB that can't just move
+>> to the Hyper-V DRM driver, but who knows. We might be surprised.
+> 
+> Let's mark the driver as unmaintained now. There should be a kernel LTS 
+> release around December [1], after which hyperv-fb could be removed. 
+> Anyone with hard dependencies on hyperv-fb can remain in the LTS for a 
+> few more years.
 
-Wait.  Is there any realistic expectation that KMEM_CACHE() will fail
-when DAMON uses it?  We do have the convention of assuming that
-__init-time allocations do not fail.  If they do, an oops or panic is
-an acceptable response.
+Sure, I will send patch deprecating hyperv_fb driver.
 
-Are these problems actually real-world demonstrable things, or has
-someone been playing with fault injection or, ...?
-
-> Also those are basically duplications that
-> make their maintenance difficult.
-
-Unclear.  This means that the client hacks are no longer necessary after
-these changes?
-
+Thanks,
+Prasanna
 
