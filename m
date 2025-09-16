@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-819605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 241F0B5A39B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:08:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91BEB5A3A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60AD93A4285
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:08:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0CD23A43E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B4129ACD8;
-	Tue, 16 Sep 2025 21:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694F22E11C5;
+	Tue, 16 Sep 2025 21:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8umpCHb"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9N0xzyf"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425EC2798E5
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA7A285406
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056914; cv=none; b=fo5yGb/sEXlPDHNSd0O/F+syqfzvWmverwSI7WFOkMUjUUQaUuw2njTWP5TAdporxT6YtQ5DHOMmCe6Wya/CbfW152w3Jk4N0vAG5VBJIfQhxVuOQdA4Pv5+iFiQCyRxNlBkSZ+CMkLhfb0ulySKgxZ5sNVtOYelpyRBc9th+fM=
+	t=1758056915; cv=none; b=LbdUdhys+Y7oRR7oPyDDQLpLAsqJExzz5yDyO+PKGJ2uTeDPpSegNkYRxJSvSzH8WVGVqXdWYZ+ndDtjFKepvvyqKGoJo/sjhshxpuJ6Yta+nr47lmKLsK1iAkth+/D/XM2bVZ2Yz/vbhFoGWNvAbr/RcZSO7l11puOjNFzFpsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056914; c=relaxed/simple;
-	bh=SuiPmK+Crh42Wn2BmX/TuMGhY6YmRUh+uPBkvuNcLk8=;
+	s=arc-20240116; t=1758056915; c=relaxed/simple;
+	bh=DlLhTKO7E6kipPFiDWDrXkdNVJqENLuVKM7fTBvX0cw=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZKGUwjGSEc9NGkTtcxbNeD1GcxwKmONvDIXgMbUS4VB4MRIhqIL6eKgmKBQslwRvexki9vNoE550TeIuLEYWnvod1XMVEdkFZfmEC8uSpNKkIA4TsfSsbV7t2c65AYyJdFl1RGZyK1lEftfWAs0FOn1q1y3QQJvTed3jH2QfBAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8umpCHb; arc=none smtp.client-ip=209.85.210.170
+	 MIME-Version; b=ZtStLlH/NL6+UI4Ov/weiV+wwQTA0qcyVLB0KgW36MAa9eHN/V+RF81xJpqxi1ZqtudfL1htaKroL7WcDqouM6pvP5/jECn8wms83WvLfyzaBT2LsdxXF/Qxndn66jDpmrWQSaOivnGJut2MxbW4hjmP39U/sCoKw/rWxnKSkuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9N0xzyf; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77619f3f41aso3489523b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:33 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77287fb79d3so4555466b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758056912; x=1758661712; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758056913; x=1758661713; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JXlqsfnKLagrxPr3VzrTdqYzxgGnKLHikbQ3zw87L3c=;
-        b=C8umpCHbwZZ2llAQ1djBycVECywlKd5mAd1G02oPuDt4hYOusHAsdriA084wbIHFkK
-         91eP+zDaGyanHdZ8W4h5uE+vy6ZXSlMWOpA2kAvyFJ847YgYUiWiw3OMXJEGDm2l51JG
-         b4/m9x1c4ynmk7ZPWEhk2bQsxHDMbbHa3bcDSbT5CIsDyZEGc72J5gstBWlUdDAJhaRS
-         m2AQn9Hmd8ke2vy4m7xmnmpP5cm6rtIxXKXIkiqu1ncowVja+a02bVEEMah7e7gNG6yr
-         6UYGdygIodxgcA7KwCVN0PXQX1SUn3On+JAJObjvwukIvyvWK5YYPMfml/iAYwcZROIF
-         rRyA==
+        bh=3aO3jHV+TCdh3X4sNWUTMqSI+YaJsDjuOHp0znGhivY=;
+        b=U9N0xzyfEQUBL8PK1losqd20q4K2VTGX7CBUYDv9hJu7fUwk9ecySeZl6FekaKeBnV
+         xMeQJkMS+TF6874Bbjt0iTUl0yYkEsaX9tZWwiHjyOtCcUlfAVQFpxa2NN9FTm8OjsYz
+         C1MYcfG+GlK0IZNGWHOQOQx+H4CunbkIEAvvWPUkrqXuJHZKCHciBgKVilg23o12G31M
+         pD071wBahvmnJAk5a3Mi189akA/CCorbjIeFXLFk+r2PRVnryyiWIf42tCvC3Gpa3Kbf
+         hDRYS9oPaznL9zaeGH8XwtPL2SjcfCVw2/bzvSbmg9Wmk3RbrVFwFatWuk8btQpHaMMI
+         rBjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758056912; x=1758661712;
+        d=1e100.net; s=20230601; t=1758056913; x=1758661713;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JXlqsfnKLagrxPr3VzrTdqYzxgGnKLHikbQ3zw87L3c=;
-        b=pkDZclCMLOQgfknfVk4T6XZ6ohHIc2CUZ2ooj+pP9ctqg5a8+L+R+Ah9eUgce7uZbL
-         xBMdZEGqzrYOpG61+IEz4Kv4ZPK16OuqE5hokd9yXXrbCWuUMVqth2XHmXzS4dGWjD3r
-         GOoU4gM1ZDhrCuJC/r84+OIq7w4Ez7m0EywDfYA2Z//VGcVrh2+Z/d0dWpxTgAaYg+Hx
-         rsx8LRwOjMZU+sSSfIsdvFl5yNyLd4uRNjI/w1fDMO18KkVIh9j8DysRr4ljW8jzr/Ko
-         mqK1KAPYjdqeFqCrSovB7vbpww3LA8I3YKZpC4UWXiZTSLDHQB0ujWoI4QMSQGlNn6xB
-         eC5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXLamdwKlesTNe9bAxsvO8MO2VYZUlauVX8dxDWwESX8Gz/EbYeoDViptdgkebeTSaSdkoeqA1zxze2SgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Zc+RxOD9ZJudysR944SNm4zSbovAAhe48cvsjiQ8c7wuz3AJ
-	4J4wZ/oAZ4wZq55WBj+k3AFQ32DrVa745hGseNIJW30Yfkxtq97I+pWV
-X-Gm-Gg: ASbGncvtqWJpw/LvkoQE7UAjM99cKwRIyOYQ48sU3ofmYIWy3shlB8T9Zh0g9R8sJr/
-	H3KKJM4aSFfTtFxnl69J8QCjnb9vhmTNedEwJx+0esrYZap5AWehBkn+LluRag7So8dBE123719
-	CNZOvyuXCpyTCwhlhKpI8W+oiDLd+0uuwBJmWJ75t3VYkp/tKWL9t2Iu0H+hg3qW++Cn1rht31j
-	LYM7HqC8GBOG/yj5Znpm09dYN0ikw9w4SSxkTYDpdPlJk4NHpJDPAYj4D0h7U9B47b2LTtzyl8B
-	P3XwwLnBp156hj9B72V6VjM8S/sCe6KYXiZJmk3bX8W1Tja+8/rbO3zqKKLmr0G/YwPrNb0Pk76
-	VXd5EDRp0Oek/wk6Y2c3jHwnDf75hRkEda2Jgin6y2X91RQzwpVYGJSo0eQ7BkvrA4d+KUWxOLX
-	BfQx+44ht4uA==
-X-Google-Smtp-Source: AGHT+IGpEOt2m53Rpg1wAIXOJxhtQSEdxYW2LFFzym9M525oZbCACFLRLKzow9N2bwg0rZ2ZXol3rg==
-X-Received: by 2002:a17:903:19e8:b0:267:776b:a315 with SMTP id d9443c01a7336-267776ba382mr100151885ad.32.1758056912450;
-        Tue, 16 Sep 2025 14:08:32 -0700 (PDT)
+        bh=3aO3jHV+TCdh3X4sNWUTMqSI+YaJsDjuOHp0znGhivY=;
+        b=XI8TXgmIxsTn3yQm7dMphM/Hok/OdHhaNE4iPlIoKyCijU7HWoTiem6cfajM0cZyo3
+         moG4oRzD7a2XeU0//UklL7HemmPpihlMfgL5QDuXC18ZZqTyiuGjcZJcNRLUrbJAy85l
+         RUW77qkz7kHM5tmAru9yUzdUQ1Wo/einrtjuGK6CSv32eTa576Q3ytUPNDPN8yTzBIzJ
+         bYmlcfWziHdk0jFS5UOVbF7gaeiPpLGoouGNSvL93TZzYDdKu7UVES0UWheUWBj9LW5h
+         5IicSwgHNlcLNCYfUSkJoOFCBMMseZGqLRKrow4MvPsl+xYOh5YfmMqSPd6Pd6yN6RJ/
+         /t4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgcjiBuXpBVVC417gFlFuzQuIFoudkKfG0yuZ9ZWUo8wjMgst5uZmDsR3nYCyObARMRqHWinxKMKs8K4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYZcf/2jF+tkeqDPQsnBBEXUn7nWnz9WbdCCLPzaBb8jBy7M4/
+	0dI55/JXXX92wteRxy3jCo9mUVsISelka1XyEpVoWUX2d2ZBF7ziAYlvpkp8/iiE
+X-Gm-Gg: ASbGncvRiiyLAP/7SOwx2ncq1sa+NSMfxWFs56yhvk9FVB3Osc56OXn7oJhvORAlTVx
+	iNTIDt7z0xwedYI6fjf72R9DTSi1cXA4NEU1y2bunkJi9LcGQt5YmShyZAon1WGFmQWzecs2vlj
+	JgX/qXdfs9htPu4vucM4IAf3HT9qUpAAdeSeRpGxWZksVulXyX+CqCkCjBNwpOOjKt9arMLDEOA
+	WZqbAuLQieEqL8xFLLCShZ8X03ezLXn+6dk44h4DZo/WK0eL5kKXqbxC3LzhR/+b0sw1aYE01ps
+	197uWOdJp2V7HJ/xOkONi6raYWJGPEekBQz/JR65NnQ6D58PDWUzOTknX5jQProrfDu+nCl1xgI
+	rIXmkKlVu88AjGT3FAObh0avETs5TJ4z/s+VD4dPzwZIFE7vmWdBbIVERWessTAo7m9ppYiZ6cB
+	xGQEuVUd9+ieI0xfoAwapu
+X-Google-Smtp-Source: AGHT+IErllrXZhiuO08ZvjuaFN67hMPleqZ0DLgAdBUq+kGFJqCmxYGCY5kLycBvM6DB//Dz8cM39w==
+X-Received: by 2002:a05:6a00:1415:b0:776:1dbf:375b with SMTP id d2e1a72fcca58-7761dbf39f0mr18060001b3a.6.1758056913491;
+        Tue, 16 Sep 2025 14:08:33 -0700 (PDT)
 Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-26711e5d42csm62779625ad.78.2025.09.16.14.08.31
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77607b392fcsm16649240b3a.87.2025.09.16.14.08.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 14:08:31 -0700 (PDT)
+        Tue, 16 Sep 2025 14:08:33 -0700 (PDT)
 From: Chia-I Wu <olvaffe@gmail.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
@@ -86,9 +86,9 @@ To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/10] drm/panthor: rename and document wait_ready
-Date: Tue, 16 Sep 2025 14:08:14 -0700
-Message-ID: <20250916210823.4033529-2-olvaffe@gmail.com>
+Subject: [PATCH 02/10] drm/panthor: rename and document lock_region
+Date: Tue, 16 Sep 2025 14:08:15 -0700
+Message-ID: <20250916210823.4033529-3-olvaffe@gmail.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 In-Reply-To: <20250916210823.4033529-1-olvaffe@gmail.com>
 References: <20250916210823.4033529-1-olvaffe@gmail.com>
@@ -100,63 +100,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename wait_ready to mmu_hw_wait_ready.
+Rename lock_region to mmu_hw_cmd_lock.
 
 Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 ---
- drivers/gpu/drm/panthor/panthor_mmu.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/panthor/panthor_mmu.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 6dec4354e3789..d3af4f79012b4 100644
+index d3af4f79012b4..8600d98842345 100644
 --- a/drivers/gpu/drm/panthor/panthor_mmu.c
 +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -503,7 +503,17 @@ static void free_pt(void *cookie, void *data, size_t size)
- 	kmem_cache_free(pt_cache, data);
+@@ -545,8 +545,17 @@ static int write_cmd(struct panthor_device *ptdev, u32 as_nr, u32 cmd)
+ 	return status;
  }
  
--static int wait_ready(struct panthor_device *ptdev, u32 as_nr)
+-static void lock_region(struct panthor_device *ptdev, u32 as_nr,
+-			u64 region_start, u64 size)
 +/**
-+ * mmu_hw_wait_ready() - Wait until the AS is inactive
++ * mmu_hw_cmd_lock() - Issue a LOCK command
 + * @ptdev: Device.
-+ * @as_nr: AS to wait.
++ * @as_nr: AS to issue command to.
++ * @region_start: Start of the region.
++ * @size: Size of the region.
 + *
-+ * An AS can accept one command at a time. This function waits until the AS is
-+ * inactive and is ready to accept the next command.
-+ *
-+ * Return: 0 on success, a negative error code otherwise.
++ * Issue a LOCK command to invalidate MMU caches and block future transactions
++ * for a region.
 + */
-+static int mmu_hw_wait_ready(struct panthor_device *ptdev, u32 as_nr)
++static void mmu_hw_cmd_lock(struct panthor_device *ptdev, u32 as_nr, u64 region_start, u64 size)
  {
- 	int ret;
- 	u32 val;
-@@ -528,7 +538,7 @@ static int write_cmd(struct panthor_device *ptdev, u32 as_nr, u32 cmd)
- 	int status;
+ 	u8 region_width;
+ 	u64 region;
+@@ -609,7 +618,7 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
+ 	 * power it up
+ 	 */
  
- 	/* write AS_COMMAND when MMU is ready to accept another command */
--	status = wait_ready(ptdev, as_nr);
-+	status = mmu_hw_wait_ready(ptdev, as_nr);
- 	if (!status)
- 		gpu_write(ptdev, AS_COMMAND(as_nr), cmd);
+-	lock_region(ptdev, as_nr, iova, size);
++	mmu_hw_cmd_lock(ptdev, as_nr, iova, size);
  
-@@ -601,7 +611,7 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
- 
- 	lock_region(ptdev, as_nr, iova, size);
- 
--	ret = wait_ready(ptdev, as_nr);
-+	ret = mmu_hw_wait_ready(ptdev, as_nr);
+ 	ret = mmu_hw_wait_ready(ptdev, as_nr);
  	if (ret)
- 		return ret;
- 
-@@ -617,7 +627,7 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
- 	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
- 
- 	/* Wait for the unlock command to complete */
--	return wait_ready(ptdev, as_nr);
-+	return mmu_hw_wait_ready(ptdev, as_nr);
- }
- 
- static int mmu_hw_do_operation(struct panthor_vm *vm,
 -- 
 2.51.0.384.g4c02a37b29-goog
 
