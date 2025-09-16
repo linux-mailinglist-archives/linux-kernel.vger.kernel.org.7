@@ -1,284 +1,165 @@
-Return-Path: <linux-kernel+bounces-819739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB92AB7DAAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02FAB7DA1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B94324F94
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:34:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DCD31B226D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067D42D373E;
-	Tue, 16 Sep 2025 23:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EA3261B65;
+	Tue, 16 Sep 2025 23:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K5GAjMmh"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013031.outbound.protection.outlook.com [40.93.201.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SKdSFMo4"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F5FBA45;
-	Tue, 16 Sep 2025 23:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758065643; cv=fail; b=suYidq9lKcPIeAgL9LhB9xw1MOCouzF2peq3SCl14OfTUM0X0zyUh12Y36WXqvcqQmC704K6KGfp9ETtrt7grioQ/TgJCNuf6dsItOmC4WuajG3BRBs2iBuSCfEJPRq48jbIHDryKD0PjO3d5Jl9yPQqwdlBZ1vqK5DwwAr9NIs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758065643; c=relaxed/simple;
-	bh=cYbFvgsqJvx77YcFNU8KUU1P7f2bKCoOrk1pZbPmXPk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMxygnWvfhbgKUeJ82rlltmxKGuezmBjoaj2IsnJewJZ4PiKjwaRdXdC2lV3LwoNI6JzsrTcEGPuneAjDIZBNEuAZ5ipK6PS8qj4bdBMZdSV1lzoHTT72hRlbvp84QOX93MZG0FKG23lCirFok7adLQ1fRje436KcYOPjXyPTgY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K5GAjMmh; arc=fail smtp.client-ip=40.93.201.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aPBzAIgUyzmyLzAUM8xfoKkR/3IzuWpfbmrH4n82d+KfVHU4gEqsB1X4cAzKBeT4o4DVKtay21If6PLys8Pnajhrli+LTXYb4g9wn4bFQ8Yslt0lN7ObpP94s4b5U8AahpxZBn7petXpYdNKeYzHfN6Vwvb4hSTicZjZYkAsQlG0U6q0/5h3SQ1tehqa3GORzlGRrdJ1+TK3GPM6pu56V2nw/YSMGqb9Z5OkNzZ4dqMAyBN5+TF7FmgFtjnX2jNPLY0kKQ8TRD6E9pNRW74FpdG/L2EJ0KmYcaT3aPufHiHYIkvDwCDr+X5og4/x8LIDqRWcsRLP69GBKGX7/1BJWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cj8fLV3BBwNmrLeQQfjwntZ/T4urDB8PG/NecqD4WrE=;
- b=VEoMgFpaAkj2/GmFNVe+g1EM7HnZkfKPKe0VfDdVpu57/8bmt6FxTZ6YpaLvmakQCkxhela84pssX8EF9HtlUtuFUsX6T3XMzqk9kWNz08my6mHWAkjBMSGatZFBwSynlklVow6JSIMRfcur2qgDnkGLBLQikDbWtcQe33vdGg5rO699c5S8Puxo8jpKY1qKFI9OpBwp37UUnLtQBtCBcLWRkygUFF+k6ve/tstgIXTv95dOqoY0SwjD+trEHqc0W5wjU2cS6KdWfculytkWdAT4jb90eCZrXW66ZWrV8PW04ILJFenOYfYCeT8bJOYL1d3G015mtQNGqD1lNZsPGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cj8fLV3BBwNmrLeQQfjwntZ/T4urDB8PG/NecqD4WrE=;
- b=K5GAjMmhQuRje2tg2YexhXkkGVV4I+v/AM3GuRRDk0tW2qYhjCqw7HC3aAbE7C8w+OWnoD8MVIxhl7b25d34OYfmQprAcJmE9KBS6ZuPFSDbs+4HeyGX5uV9Ij7eP1s/B3jCPDL8KtKO39ekBNZnMz4U6d3wFp4P5TxNC9Z6qj0=
-Received: from BYAPR08CA0003.namprd08.prod.outlook.com (2603:10b6:a03:100::16)
- by SA3PR12MB9227.namprd12.prod.outlook.com (2603:10b6:806:398::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Tue, 16 Sep
- 2025 23:33:55 +0000
-Received: from SN1PEPF000397B3.namprd05.prod.outlook.com
- (2603:10b6:a03:100:cafe::e3) by BYAPR08CA0003.outlook.office365.com
- (2603:10b6:a03:100::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.22 via Frontend Transport; Tue,
- 16 Sep 2025 23:33:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF000397B3.mail.protection.outlook.com (10.167.248.57) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 23:33:54 +0000
-Received: from localhost (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 16 Sep
- 2025 16:33:53 -0700
-Date: Tue, 16 Sep 2025 18:33:35 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Ackerley Tng <ackerleytng@google.com>
-CC: <kvm@vger.kernel.org>, <linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <david@redhat.com>, <tabba@google.com>,
-	<vannapurve@google.com>, <ira.weiny@intel.com>, <thomas.lendacky@amd.com>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <vbabka@suse.cz>,
-	<joro@8bytes.org>, <pratikrajesh.sampat@amd.com>, <liam.merwick@oracle.com>,
-	<yan.y.zhao@intel.com>, <aik@amd.com>
-Subject: Re: [PATCH RFC v1 1/5] KVM: guest_memfd: Remove preparation tracking
-Message-ID: <20250916233335.wv2lf4fiejlw53o2@amd.com>
-References: <20250613005400.3694904-1-michael.roth@amd.com>
- <20250613005400.3694904-2-michael.roth@amd.com>
- <diqztt1vf198.fsf@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD03BA45
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758065628; cv=none; b=OzmG6v16mT7cqEOYbwFiUhNvEzF+X983UxdYUJnpUqLpmoAJxN13s7hscAlgnfIRSpqn9qXRIaGxj6dOdWsowJxVu5YuZChjSax6Lx+w/quO7GAcWQ6ljolorGGkKWVf7OwpTVBwiakhRJKa8SXGo1c/z0QDeLBOe5yGYlukrvg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758065628; c=relaxed/simple;
+	bh=+BBQUal0gcLkU4J+/wGKUcLf+qGcByY5UaOyrYgF5Lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T19EYDX3EFV0WOBjswmunDfu9/eHDLNuIbcAtmFNr5gEqVn427DYuZQrmfsKCGOub3Gcofp9si+hRd3WtZFK8TmKxBDani267Xqgdg5dfc/Bj+X6UAGwOah43bsgB7RJKwkcv0Yb+fub2wt7F6g2k5Jty0QUKrItKFqM6oBJj3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SKdSFMo4; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b48eabaef3so60519701cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1758065626; x=1758670426; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K1wN9hF9riUo1dM90iinoi52Pit9VGaxH3PleUBd1GE=;
+        b=SKdSFMo4fmuUASOw4OJxPPvhR9QnS0miCepjUlsWYnN1HC6Ti1yPugBo4t45SV6cFg
+         jChT314A+vNmjpBreZbG1y6cjw3vrKhulF8pdb0nMMe2sDK3msPgkNz0Lacbs0bxhwVJ
+         /4PtiTd6A6oYje2KhGvESgyaBR1zvBv7ytKyI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758065626; x=1758670426;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1wN9hF9riUo1dM90iinoi52Pit9VGaxH3PleUBd1GE=;
+        b=sGVKF1KsT6HAbu+26GNYgKty/7kH5lJSeRJ6MEdgUv2FsFE1p/QPVq9lO0nNoY51oj
+         gIJSPylvJwSHzFxPpuoICBSw1xxtee4CZTBQ/Bm1kZnVHtTaBp3mcCZ1ABEpmOkcYEc4
+         yYNrhGwegob8w1IM17glnQwkVSZ914gmGHJdYY+XxqF6+G/LOAuxAPhv57dFXHKGpAZy
+         nHpN3LVDtGqz7XhBFBNTcHYRFbHJbocBfdWB0vQRh/4PAAwRg89eRx40W8dwNWR3pfYy
+         VvcvSrvKQGx7bxvLk4mWnxnABzU/VvSfzv3Yl5s4OBk2dQCHChuQnIDVyTkKRVlPDZ1Z
+         TZog==
+X-Forwarded-Encrypted: i=1; AJvYcCVAL3KIp1ldkoT8VEIlRZekQLCdlZmZQ1xFEbIsSvSY5D8ulhdudHzdTPGNvUskzoBcEJ4Lc9sO+LqwQ+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsOoIj4GA0Mls7U0K/8TWcAlC0138fsRvR4pK49+X+uRhCe0a8
+	GZDkRCvGSFhPYnxitcCLbmC24WjmKB3MocftZSYKn2lykvhsjisi/Z/sQMaWb1DpgLA=
+X-Gm-Gg: ASbGncvz01OeyBPjdvJ/2ap0lknbHKvJmgCrPlc1UoiVVtrqQo8j0j3DNwzQYKgfjW7
+	IOBlqjqR3Pc+WXf9ZVLpTRh9KqV7W9zOQXCOVvYwpVRKZf1FEwUrB7U96atxYQpVYUKctsczXm4
+	k5aENhs8+43LTOrVmt0abwlaeJ2rUcj4kytympkp9MkuPiGbvuAWDxmRudm/5NumoxutOJ6SjDm
+	MMQkMmFopO/avuzHsVJCQpNF0UcPrs7+T9RZEXRXEBwcxC6lZ9J6nzA7r0Mra6VE0Pa1eFXe37O
+	WQrL7Kk7KJ3qSHcMi5gtXLNzp4+y1p9WBbMtnJUoDwdIxDzDKGhwG19hB+9fAryDXWel3IPozAq
+	S9/G95LdcJyvh+u/A8OTfG+be8ELReAglrPKWWYqCmYvZBqG3S0ox+hAT5wTNPahy6WxeZ1JcJO
+	fYCvU2OiF44+0KZsPesVN52UX1xeMgDSlPfVX2lp2g79o=
+X-Google-Smtp-Source: AGHT+IFRoshFhSAZ+T4lV66dmVbNfAnq3iuZJVF6Kg/ulCHno1XN9HC4PMC+28LuE6bhaFncVLfjmQ==
+X-Received: by 2002:ac8:58c1:0:b0:4b3:122f:89d6 with SMTP id d75a77b69052e-4ba69d351d6mr3407291cf.45.1758065625673;
+        Tue, 16 Sep 2025 16:33:45 -0700 (PDT)
+Received: from [192.168.226.35] (207-181-222-53.s5939.c3-0.hnc-cbr1.chi-hnc.il.cable.rcncustomer.com. [207.181.222.53])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b639cb1b33sm89168221cf.14.2025.09.16.16.33.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 16:33:45 -0700 (PDT)
+Message-ID: <c32f5c8b-0c62-4567-9d82-081ecb0889b1@linuxfoundation.org>
+Date: Tue, 16 Sep 2025 17:33:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <diqztt1vf198.fsf@google.com>
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF000397B3:EE_|SA3PR12MB9227:EE_
-X-MS-Office365-Filtering-Correlation-Id: 578fca2a-af35-454c-4542-08ddf5797feb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|1800799024|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CMNN4QLmxXNsrvAj+KuNh7HH4TK3kRkWPsR09mQSvoKuUotxXdWrUgoku05z?=
- =?us-ascii?Q?EEjZu25hS695YlUATCqylgG/RoKztOJXSpPW3xL62J1fhmRlX3sb6SMexNo6?=
- =?us-ascii?Q?1cB1cTLp6CmU+rgx29oCYEoU5FuMoPR5+F6QnW83xV0vA0xerw0KaltWg7e3?=
- =?us-ascii?Q?68hWySwUf2wbS0onl4F52KJXpU3zgHVIABjogbwJ2siNrl19/ekfp5gt5/PD?=
- =?us-ascii?Q?nUzjCIK3CcRXSoByr1d5Jw/KDMH+Kpcy8DQQNnCZZhZFyM+EMKnDHX1aAUjx?=
- =?us-ascii?Q?zj7tmWiRpiRo/MTG2Wdn64fjwCBbMRWELPWIvDwSXbP9jacpt5CsasnoQGz4?=
- =?us-ascii?Q?4XkdfJ3dgrBdv9Zxv6Ni02NfqD8/DSLHJs0gUHW4UDAkHgbniwXD28n11xWl?=
- =?us-ascii?Q?xPRolsiQtuaaSGohmJkPBxfirW1gH2vuzPkA3zKQVd73f/NxbYAFNa1e6KOz?=
- =?us-ascii?Q?OrNBI12mmyWIbL9WfdQ3bqfHVFH21V/gtZLh4by3Jq7Gs3/BWpHICxFw/JVS?=
- =?us-ascii?Q?/h13R14kFPMc6FJT90bJw799NWb59hHsv9IKiwPGZwcgtBMOEzYH9Xo9+iBj?=
- =?us-ascii?Q?fbCSMZ8OdsBIxRYDBhXaDcWXqxno85voyV7E2QFqlIlG/YJbtB8F2em+Ksm1?=
- =?us-ascii?Q?s/BuBuMU7rlpnliuhyOExv071dKN1Wy7Fh3hdVSAAV6sajMBRnb8jyzrEDux?=
- =?us-ascii?Q?0jxfhkyZRqK56d3n185XBZXABQ3oVirkAojyoc7YyFUup8H/gki7w7TppF1O?=
- =?us-ascii?Q?slPg4f+zU33yyyxIxnZ01QXeQUw9OscmjlgxPZzB8RjELBMj9Vf0hsaG9QJm?=
- =?us-ascii?Q?6Gf/XRgbe275lHwu6gSmV/lxo9tHA1fjMFDw+E3B2bMibzejmXzG+/MKvnSF?=
- =?us-ascii?Q?O0Qj5QT8loubao4GT3HiGxEafvQNbASJQQJlzA/k2QsZEU2HHP/cyyDTgPDO?=
- =?us-ascii?Q?L1ViKcouck70+tbkO1vmUJccQuH5Tg+ymNzldWB9/etCofC2kUMZD9gjWHEK?=
- =?us-ascii?Q?/yKtjzMVcDgAsYof/OOeZVzrdH+1MHtwCH336yy3CU6wgwA/yimygwzodFyR?=
- =?us-ascii?Q?ObiQPg8j3wF+3QTGrUXxvOooU1iBsPAbHjtetc5xzAicdvSFjpNLTeULV312?=
- =?us-ascii?Q?31OqM33CSuhioozQowFzGMINwqjttel4cHrdzACSUHY4GbMPZy4t8eh9RcPi?=
- =?us-ascii?Q?74/XjCqqvoxlViOlsskS2ay1RwWVyQXL7JdDslm1r/K/5J15sOjoyeVK0wai?=
- =?us-ascii?Q?j4aztq30kR/zAlZ41fjjvZIXN/lIJ2tzKxeeDPWN2KZzrXN/Pvh84jhCk8k+?=
- =?us-ascii?Q?6MjRJDk3T74V02dqrR773LM8XfmNgYRchxSIZ1cnl9PiEkuAy2WlSGlx6x+a?=
- =?us-ascii?Q?OfTwYxOm1V2GRGdp3fRsiVh9xxI/Uji9PwKDjNqJEpa3dLg6sWho+ZyE3mQI?=
- =?us-ascii?Q?hINOt6okx6WNcivjtmeDwrqxd5WhP16N8y5HLriDoj26PTg02rPre9FXC+HL?=
- =?us-ascii?Q?LE0GOHByw+Be7HE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(1800799024)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 23:33:54.1804
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 578fca2a-af35-454c-4542-08ddf5797feb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF000397B3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9227
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] usbip: Fix locking bug in RT-enabled kernels
+To: Alan Stern <stern@rowland.harvard.edu>, Lizhi Xu
+ <lizhi.xu@windriver.com>, Valentina Manea <valentina.manea.m@gmail.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org,
+ syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <4f7805f7-805a-4678-8844-c38a97650dda@rowland.harvard.edu>
+ <20250916014143.1439759-1-lizhi.xu@windriver.com>
+ <61e796d2-0139-4459-a4e3-f27892384de2@rowland.harvard.edu>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <61e796d2-0139-4459-a4e3-f27892384de2@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 25, 2025 at 04:08:19PM -0700, Ackerley Tng wrote:
-> Michael Roth <michael.roth@amd.com> writes:
+On 9/16/25 09:47, Alan Stern wrote:
+> On Tue, Sep 16, 2025 at 09:41:43AM +0800, Lizhi Xu wrote:
+>> Interrupts are disabled before entering usb_hcd_giveback_urb().
+>> A spinlock_t becomes a sleeping lock on PREEMPT_RT, so it cannot be
+>> acquired with disabled interrupts.
+>>
+>> Save the interrupt status and restore it after usb_hcd_giveback_urb().
+>>
+>> syz reported:
+>> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+>> Call Trace:
+>>   dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>>   rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
+>>   spin_lock include/linux/spinlock_rt.h:44 [inline]
+>>   mon_bus_complete drivers/usb/mon/mon_main.c:134 [inline]
+>>   mon_complete+0x5c/0x200 drivers/usb/mon/mon_main.c:147
+>>   usbmon_urb_complete include/linux/usb/hcd.h:738 [inline]
+>>   __usb_hcd_giveback_urb+0x254/0x5e0 drivers/usb/core/hcd.c:1647
+>>   vhci_urb_enqueue+0xb4f/0xe70 drivers/usb/usbip/vhci_hcd.c:818
+>>
+>> Reported-by: syzbot+205ef33a3b636b4181fb@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=205ef33a3b636b4181fb
+>> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+>> ---
+>> V1 -> V2: fix it in usbip
+>>
+>>   drivers/usb/usbip/vhci_hcd.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+>> index e70fba9f55d6..eb6de7e8ea7b 100644
+>> --- a/drivers/usb/usbip/vhci_hcd.c
+>> +++ b/drivers/usb/usbip/vhci_hcd.c
+>> @@ -809,15 +809,15 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+>>   no_need_xmit:
+>>   	usb_hcd_unlink_urb_from_ep(hcd, urb);
+>>   no_need_unlink:
+>> -	spin_unlock_irqrestore(&vhci->lock, flags);
+>>   	if (!ret) {
+>>   		/* usb_hcd_giveback_urb() should be called with
+>>   		 * irqs disabled
+>>   		 */
+>> -		local_irq_disable();
+>> +		spin_unlock(&vhci->lock);
+>>   		usb_hcd_giveback_urb(hcd, urb, urb->status);
+>> -		local_irq_enable();
+>> +		spin_lock(&vhci->lock);
+>>   	}
+>> +	spin_unlock_irqrestore(&vhci->lock, flags);
+>>   	return ret;
+>>   }
 > 
-> > guest_memfd currently uses the folio uptodate flag to track:
-> >
-> >   1) whether or not a page had been cleared before initial usage
-> >   2) whether or not the architecture hooks have been issued to put the
-> >      page in a private state as defined by the architecture
-> >
-> > In practice, 2) is only actually being tracked for SEV-SNP VMs, and
-> > there do not seem to be any plans/reasons that would suggest this will
-> > change in the future, so this additional tracking/complexity is not
-> > really providing any general benefit to guest_memfd users. Future plans
-> > around in-place conversion and hugepage support, where the per-folio
-> > uptodate flag is planned to be used purely to track the initial clearing
-> > of folios, whereas conversion operations could trigger multiple
-> > transitions between 'prepared' and 'unprepared' and thus need separate
-> > tracking, will make the burden of tracking this information within
-> > guest_memfd even more complex, since preparation generally happens
-> > during fault time, on the "read-side" of any global locks that might
-> > protect state tracked by guest_memfd, and so may require more complex
-> > locking schemes to allow for concurrent handling of page faults for
-> > multiple vCPUs where the "preparedness" state tracked by guest_memfd
-> > might need to be updated as part of handling the fault.
-> >
-> > Instead of keeping this current/future complexity within guest_memfd for
-> > what is essentially just SEV-SNP, just drop the tracking for 2) and have
-> > the arch-specific preparation hooks get triggered unconditionally on
-> > every fault so the arch-specific hooks can check the preparation state
-> > directly and decide whether or not a folio still needs additional
-> > preparation. In the case of SEV-SNP, the preparation state is already
-> > checked again via the preparation hooks to avoid double-preparation, so
-> > nothing extra needs to be done to update the handling of things there.
-> >
-> > Signed-off-by: Michael Roth <michael.roth@amd.com>
-> > ---
-> >  virt/kvm/guest_memfd.c | 47 ++++++++++++++----------------------------
-> >  1 file changed, 15 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> > index 35f94a288e52..cc93c502b5d8 100644
-> > --- a/virt/kvm/guest_memfd.c
-> > +++ b/virt/kvm/guest_memfd.c
-> > @@ -421,11 +421,6 @@ static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slo
-> >  	return 0;
-> >  }
-> >  
-> > -static inline void kvm_gmem_mark_prepared(struct folio *folio)
-> > -{
-> > -	folio_mark_uptodate(folio);
-> > -}
-> > -
-> >  /*
-> >   * Process @folio, which contains @gfn, so that the guest can use it.
-> >   * The folio must be locked and the gfn must be contained in @slot.
-> > @@ -435,13 +430,7 @@ static inline void kvm_gmem_mark_prepared(struct folio *folio)
-> >  static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >  				  gfn_t gfn, struct folio *folio)
-> >  {
-> > -	unsigned long nr_pages, i;
-> >  	pgoff_t index;
-> > -	int r;
-> > -
-> > -	nr_pages = folio_nr_pages(folio);
-> > -	for (i = 0; i < nr_pages; i++)
-> > -		clear_highpage(folio_page(folio, i));
-> >  
-> >  	/*
-> >  	 * Preparing huge folios should always be safe, since it should
-> > @@ -459,11 +448,8 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+> This looks right to me; it's the same pattern that the other host
+> controller drivers use.  However, the final decision is up to the usbip
+> maintainers.
 > 
-> While working on HugeTLB support for guest_memfd, I added a test that
-> tries to map a non-huge-page-aligned gmem.pgoff to a huge-page aligned
-> gfn.
+> Also, there are several other places in the usbip drivers where
+> usb_hcd_giveback_urb() gets called; shouldn't they all be changed to
+> follow this pattern?
 > 
-> I understand that config would destroy the performance advantages of
-> huge pages, but I think the test is necessary since Yan brought up the
-> use case here [1].
-> 
-> The conclusion in that thread, I believe, was to allow binding of
-> unaligned GFNs to offsets, but disallow large pages in that case. The
-> next series for guest_memfd HugeTLB support will include a fix similar
-> to this [2].
-> 
-> While testing, I hit this WARN_ON with a non-huge-page-aligned
-> gmem.pgoff.
-> 
-> >  	WARN_ON(!IS_ALIGNED(slot->gmem.pgoff, 1 << folio_order(folio)));
-> 
-> Do you all think this WARN_ON can be removed?
 
-I think so.. I actually ended up dropping this WARN_ON() for a similar
-reason:
+Looks good to me.
++1 on changing all other instances - can we do that?
 
-  https://github.com/AMDESE/linux/commit/c654cd144ad0d823f4db8793ebf9b43a3e8a7c48
-
-but in that case it was to deal with memslots where most of the GPA
-ranges are huge-page aligned to the gmemfd, and it's just that the start/end
-GPA ranges have been split up and associated with other memslots. In that case
-I still try to allow hugepages but force order 0 in kvm_gmem_get_pfn()
-for the start/end ranges.
-
-I haven't really considered the case where entire GPA range is misaligned
-with gmemfd hugepage offsets but the proposed handling seems reasonable
-to me... I need to take a closer look at whether the above-mentioned
-logic is at odds with what is/will be implemented in
-kvm_alloc_memslot_metadata() however as that seems a bit more restrictive.
-
-Thanks,
-
-Mike
-
-> 
-> Also, do you think kvm_gmem_prepare_folio()s interface should perhaps be
-> changed to take pfn, gfn, nr_pages (PAGE_SIZE pages) and level?
-> 
-> I think taking a folio is kind of awkward since we're not really setting
-> up the folio, we're setting up something mapping-related for the
-> folio. Also, kvm_gmem_invalidate() doesn't take folios, which is more
-> aligned with invalidating mappings rather than something folio-related.
-> 
-> [1] https://lore.kernel.org/all/aA7UXI0NB7oQQrL2@yzhao56-desk.sh.intel.com/
-> [2] https://github.com/googleprodkernel/linux-cc/commit/371ed9281e0c9ba41cfdc20b48a6c5566f61a7df
-> 
-> >  	index = gfn - slot->base_gfn + slot->gmem.pgoff;
-> >  	index = ALIGN_DOWN(index, 1 << folio_order(folio));
-> > -	r = __kvm_gmem_prepare_folio(kvm, slot, index, folio);
-> > -	if (!r)
-> > -		kvm_gmem_mark_prepared(folio);
-> >  
-> > -	return r;
-> > +	return __kvm_gmem_prepare_folio(kvm, slot, index, folio);
-> >  }
-> >  
-> > 
-> > [...snip...]
-> > 
-> 
+thanks,
+-- Shuah
 
