@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-818763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41C8B59623
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:27:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9CB9B59625
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0FFF1BC7B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56214E7313
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB68F313267;
-	Tue, 16 Sep 2025 12:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A871631329A;
+	Tue, 16 Sep 2025 12:25:27 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7632830FC15;
-	Tue, 16 Sep 2025 12:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E55A312824;
+	Tue, 16 Sep 2025 12:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758025526; cv=none; b=K1swAcgmqDc2U2dZHucBAh2zyZ6yhRtg7lm723YfdCtnj/ZICcHFyrjPIFEDx5lWG0ug/jJg+amcZwcyVC6a5r3TBDW4ZRu9k+iC0ibRV6WKKb74U1RYNNgHX5LRPZEHBbCLF4gekcs+mFGBXO/TtTsECFy3xSbdStbqFyCvRIM=
+	t=1758025527; cv=none; b=IxKeFN75m471rBlFKKv4+tQ1fLIBLIq5m+0wp+IU+ViXm5cMLQkhF5BMkfUoKVilWmOY5ULBYk50PsW0S9j0XP9Vw72Ntpeec6NessBy++NoMA3ZYA6Hlbc/JBkLbNfuhxKGVzPC/wFrEhNSjEQPIL+nelEg2vbUGckdEVOytnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758025526; c=relaxed/simple;
-	bh=pncgwftl2MGsAF4N7q+zqQcHheOR4n68YnBtiTiOJqM=;
+	s=arc-20240116; t=1758025527; c=relaxed/simple;
+	bh=biYVcZsr6avenyL+S5XwG0aYxE0pUuqhJ7XB6H97Aa4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=utwxEzJCa7KAY40VKJ46z4tuHLcF4dBbtpfRXfxocp8pyHE4JO01owSaMV1IHv7EfaGlUCKYtO92fpQvP+wVElcVwVo82wRGwsv0/pQVgygsqsojRomMuS/w3uvsokDod+IAtUYMG6c3o9btxFYdcposfV4rtWwhfySUPR+Y/gM=
+	 MIME-Version; b=gr7frsTmu2TdjNInoR4fmJwc611CTr9GSDb8bialUQG9R09WL+pHoEdMDIK+57cHP1spSHawINdvmR3/nJhB1Ikzdkxo4iG/Wpd4igKZ3rB9oYi5q0pb/mry0Q68LaViAaVh2Orce8jgrFse0FVRllO88+VF4fhyvrFjUSDRuik=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxO9ItV8lo+PEKAA--.23470S3;
-	Tue, 16 Sep 2025 20:25:17 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8BxF9EuV8lo_PEKAA--.23305S3;
+	Tue, 16 Sep 2025 20:25:18 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJCxXMEsV8lo4VSZAA--.42297S3;
+	by front1 (Coremail) with SMTP id qMiowJCxXMEsV8lo4VSZAA--.42297S4;
 	Tue, 16 Sep 2025 20:25:17 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>,
@@ -41,9 +41,9 @@ Cc: WANG Rui <wangrui@loongson.cn>,
 	rust-for-linux@vger.kernel.org,
 	loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] objtool/LoongArch: Mark special atomic instruction as INSN_BUG type
-Date: Tue, 16 Sep 2025 20:25:14 +0800
-Message-ID: <20250916122516.21013-2-yangtiezhu@loongson.cn>
+Subject: [PATCH v2 2/2] objtool/LoongArch: Mark types based on break immediate code
+Date: Tue, 16 Sep 2025 20:25:15 +0800
+Message-ID: <20250916122516.21013-3-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20250916122516.21013-1-yangtiezhu@loongson.cn>
 References: <20250916122516.21013-1-yangtiezhu@loongson.cn>
@@ -54,11 +54,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxXMEsV8lo4VSZAA--.42297S3
+X-CM-TRANSID:qMiowJCxXMEsV8lo4VSZAA--.42297S4
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxZF47JF4kXFWrCw4DKr1UXFc_yoW5CFW8pa
-	1DZ3s5Jr4rWrn3KwnrJ3y5urW3Krs3WrWIqFnxG3s2krWaqr95XF1kKr10yF1kJw4Fgr1I
-	9rn3Zw17uF1jyagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoW7uF1DXF45CFyUtr4rur45Arc_yoW8GrWfpr
+	s8ur9Fgr4UWF1fAwn7J3yUXas8JrZ3WrWIgF1Sg34Ikr9aq3s8Xr1UKFnFkFs7K3yFga48
+	XFnxZr17uF4YywcCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
 	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
 	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
@@ -74,103 +74,43 @@ X-Coremail-Antispam: 1Uk129KBj93XoWxZF47JF4kXFWrCw4DKr1UXFc_yoW5CFW8pa
 	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
 	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0epB3UUUUU==
 
-When compiling with LLVM and CONFIG_RUST is set, there exists the
-following objtool warning:
+If the break immediate code is 0, it should mark the type
+as INSN_TRAP. If the break immediate code is 1, it should
+mark the type as INSN_BUG.
 
-  rust/compiler_builtins.o: warning: objtool: __rust__unordsf2(): unexpected end of section .text.unlikely.
+While at it, format the code style and add the code comment
+for nop.
 
-objdump shows that the end of section .text.unlikely is a atomic
-instruction:
-
-  amswap.w        $zero, $ra, $zero
-
-According to the LoongArch Reference Manual, if the amswap.w atomic
-memory access instruction has the same register number as rd and rj,
-the execution will trigger an Instruction Non-defined Exception, so
-mark the above instruction as INSN_BUG type to fix the warning.
-
+Suggested-by: WANG Rui <wangrui@loongson.cn>
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- tools/arch/loongarch/include/asm/inst.h | 12 ++++++++++++
- tools/objtool/arch/loongarch/decode.c   | 21 +++++++++++++++++++++
- 2 files changed, 33 insertions(+)
+ tools/objtool/arch/loongarch/decode.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/tools/arch/loongarch/include/asm/inst.h b/tools/arch/loongarch/include/asm/inst.h
-index c25b5853181d..d68fad63c8b7 100644
---- a/tools/arch/loongarch/include/asm/inst.h
-+++ b/tools/arch/loongarch/include/asm/inst.h
-@@ -51,6 +51,10 @@ enum reg2i16_op {
- 	bgeu_op		= 0x1b,
- };
- 
-+enum reg3_op {
-+	amswapw_op	= 0x70c0,
-+};
-+
- struct reg0i15_format {
- 	unsigned int immediate : 15;
- 	unsigned int opcode : 17;
-@@ -96,6 +100,13 @@ struct reg2i16_format {
- 	unsigned int opcode : 6;
- };
- 
-+struct reg3_format {
-+	unsigned int rd : 5;
-+	unsigned int rj : 5;
-+	unsigned int rk : 5;
-+	unsigned int opcode : 17;
-+};
-+
- union loongarch_instruction {
- 	unsigned int word;
- 	struct reg0i15_format	reg0i15_format;
-@@ -105,6 +116,7 @@ union loongarch_instruction {
- 	struct reg2i12_format	reg2i12_format;
- 	struct reg2i14_format	reg2i14_format;
- 	struct reg2i16_format	reg2i16_format;
-+	struct reg3_format	reg3_format;
- };
- 
- #define LOONGARCH_INSN_SIZE	sizeof(union loongarch_instruction)
 diff --git a/tools/objtool/arch/loongarch/decode.c b/tools/objtool/arch/loongarch/decode.c
-index b6fdc68053cc..707f339b1840 100644
+index 707f339b1840..2e555c4060c5 100644
 --- a/tools/objtool/arch/loongarch/decode.c
 +++ b/tools/objtool/arch/loongarch/decode.c
-@@ -278,6 +278,25 @@ static bool decode_insn_reg2i16_fomat(union loongarch_instruction inst,
- 	return true;
- }
- 
-+static bool decode_insn_reg3_fomat(union loongarch_instruction inst,
-+				   struct instruction *insn)
-+{
-+	switch (inst.reg3_format.opcode) {
-+	case amswapw_op:
-+		if (inst.reg3_format.rd == LOONGARCH_GPR_ZERO &&
-+		    inst.reg3_format.rk == LOONGARCH_GPR_RA &&
-+		    inst.reg3_format.rj == LOONGARCH_GPR_ZERO) {
-+			/* amswap.w $zero, $ra, $zero */
-+			insn->type = INSN_BUG;
-+		}
-+		break;
-+	default:
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- int arch_decode_instruction(struct objtool_file *file, const struct section *sec,
- 			    unsigned long offset, unsigned int maxlen,
- 			    struct instruction *insn)
-@@ -309,6 +328,8 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+@@ -331,10 +331,16 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+ 	if (decode_insn_reg3_fomat(inst, insn))
  		return 0;
- 	if (decode_insn_reg2i16_fomat(inst, insn))
- 		return 0;
-+	if (decode_insn_reg3_fomat(inst, insn))
-+		return 0;
  
- 	if (inst.word == 0)
+-	if (inst.word == 0)
++	if (inst.word == 0) {
++		/* andi $zero, $zero, 0x0 */
  		insn->type = INSN_NOP;
+-	else if (inst.reg0i15_format.opcode == break_op) {
+-		/* break */
++	} else if (inst.reg0i15_format.opcode == break_op &&
++		   inst.reg0i15_format.immediate == 0x0) {
++		/* break 0x0 */
++		insn->type = INSN_TRAP;
++	} else if (inst.reg0i15_format.opcode == break_op &&
++		   inst.reg0i15_format.immediate == 0x1) {
++		/* break 0x1 */
+ 		insn->type = INSN_BUG;
+ 	} else if (inst.reg2_format.opcode == ertn_op) {
+ 		/* ertn */
 -- 
 2.42.0
 
