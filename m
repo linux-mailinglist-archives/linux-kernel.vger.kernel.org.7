@@ -1,226 +1,138 @@
-Return-Path: <linux-kernel+bounces-818907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10487B597EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:41:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824E4B597EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640AD16783B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:41:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C5677B4DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C1928488D;
-	Tue, 16 Sep 2025 13:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED892F7456;
+	Tue, 16 Sep 2025 13:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxqCfa0r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvZ/T4ya"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57601FBEB9;
-	Tue, 16 Sep 2025 13:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF84028488D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030081; cv=none; b=gYBcDQ54B2QtxXPK2nIQ3hiNbA/bO/r8ZmVzp5HMTBfTfWRu6uBIHlDx00Tw1Sk7m2smxL/K8OdXREWECTQhgMXekYLhd6H6g1BEh8Cv0LR6qNGg4lNyzRNeUCQzFO7cxMXxLRSQTcls56YeETVkk6IduUou4jik6Bckcettrh4=
+	t=1758030142; cv=none; b=KJtiHIEuR0Cb6CmaDFr1t1qCctjcZjVX01VfiUWe2wIppQjYfvXfi1kfbx4JjW+HT6VwvCctXsxU2XoWaKjmXQT57GBADmtMhtewg3FWIITMbLsOWDF7XTqHwDv2u22tzb7cVnVLw/MOFAGQzDIZZQw+f2aFYkNefiPwPagX0+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030081; c=relaxed/simple;
-	bh=aiyMzqzBWGGU8cyeVwz3oJkAAY95LgOEzy5eDZj2Buk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMj02cx38w36ivNFVz8oW0KljB4feBp1JtSMgM5H7MlcJ7SgSyonlALo0q01cLBRfMy+5Pz6Yb/p7l+nbz+Taw8bGSqA8pmc5TY6K2uwK08Y7nDGYpD+JsZAD0qCE054sb59gqh2hJ/gR7VgxwIxwRindid3W5sgXm6d7i3E+6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxqCfa0r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F30D2C4CEEB;
-	Tue, 16 Sep 2025 13:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758030079;
-	bh=aiyMzqzBWGGU8cyeVwz3oJkAAY95LgOEzy5eDZj2Buk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nxqCfa0r1lPsZkdFXdXts6x/iqTRy8eixiE+k2tCa3dPTHo8JfUO66FQTYzB7gmRw
-	 AvxpqSXe5G21dPcn7ujemAev2r79F8c/9cWuFQNgi+ULzFU+FeWP/aNYuiiOjzqRYV
-	 xjBOZQzDLYUJ4470xyIZn6dOk+4qHvVnp/X6EBJsJMIreJ/mpWqEKJx1711NjE+3oD
-	 1m5dmtHzEXB8hkA6mKC1Px4REbM82wRBtWQ0uJxBoKDO2sQ4WW+A5SKo4bzSBFrg+G
-	 w4RGXUgB/vjSr/Wn+wJGhzN804SpzN9cz/5vIjFygCtcDTs2duRSEYiUhTbrpKLbB0
-	 jm+7LkNeOxLBw==
-Date: Tue, 16 Sep 2025 15:41:16 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, "John B. Wyatt IV" <jwyatt@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: Re: [PATCH v12 9/9] timers: Exclude isolated cpus from timer
- migration
-Message-ID: <aMlo_K8koZ6HH2kh@localhost.localdomain>
-References: <20250915145920.140180-11-gmonaco@redhat.com>
- <20250915145920.140180-20-gmonaco@redhat.com>
+	s=arc-20240116; t=1758030142; c=relaxed/simple;
+	bh=vdr5u5q9Bhj48crDv1gBhQAyvxe62lx71S66JxSvogA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dOTOq3uyTgsXvJ1mvI2YKe/3VW+s7TpBlAd6dwvluoK9wEIBKUTz312UyrklkGOj9DATOgGeUXK1phUQioMmU8yCukAA3fcknuh8QeENJoseuFg7OmRjpmDidRmgSpEZcWwkBfU7GtQMkVfGtd7dTpCDOoiOPMz8JhtirYlDv4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IvZ/T4ya; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62ef469bb2cso7487484a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758030139; x=1758634939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DDOzSlxCOtDzcq9eIlh4Lly5zShsc9FWB3XHBDP+e2s=;
+        b=IvZ/T4yae3wlfJlbt2zzKfoaz5A7yYBdexXjf2u12tbKK2N5QNpl3AYkmemW4De2Qt
+         7eUw2yYzI1HG5LXBCK9NHYWEirQuoBsuzQpz0Szf/8jFIvPtnk3Zys8Z0PGE+qCabZWa
+         gC9DxErx3o4+u3bbA9pvmEsPsdN/svN8vg9xnmS12KhbDU8dDao4zK5guA4xLFLrn1MT
+         aXMIcSrAvcJe6+6Nv4Fo71dJfgITPMTZ6ftzy7rUk/w74RMYIM53Kew+QVl6awqs8yhh
+         F3F9tf+8lIW1gEewbN1qNt+0L/ismpj6zabRWug+kgmzkQRMxGjG6BSpTv5tJWI+tVTd
+         Jc1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758030139; x=1758634939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DDOzSlxCOtDzcq9eIlh4Lly5zShsc9FWB3XHBDP+e2s=;
+        b=dWIwMnGRgWX+HIJmKdpFQJtNQCCoeFR1IIGWAlvsUXHkYkBbidBVCp352hEDd1c2HL
+         EFD6RPcoMJ2Tfp7AG4aZmQuQnuacBYTYUfMQdDtOQXgxpxnSDxPWIQmUKdCWYO8N01yP
+         kO0g2ER8iaRBaj5srThgCureR9Zr3+wSIFDPR28W5k3vYfnDxOG71w40esuZHHzYFWI7
+         ru3JEus6mIS682Lo1yDwIM2e71EKVO1jpdEIieuo8p0d+GcVpY47gLMwltG4C1nffnC/
+         fg0XyNfcNy7zMQAPxxKPyRqfevvLnPjTvmiJo4O3l0Uk6CDyP/wW5ePD+DDG45ju38D7
+         5HFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFzdyQKPpQUnbPD7TnXb5XeYG1U94e142vD6i3pcPCZA9mtnu9Rv4xn5c1TFefwH5EnYmcI3t/+v/hUKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTOiP8j68m8ODLsnbNtlSns3z/pZgpgxuyDxeI9CKdsIRDjTfB
+	cffqBvTYqObbE+BansFfvjyPgxKXHz653DF7vxt75GEM+9zIRO81ceODrrfx8ud6r9VdGGjUDZt
+	nGib8lzpgId5X1yKjY44ia2kCWw6mbkU=
+X-Gm-Gg: ASbGncszN0DayHmu31Nfb9E9gDO5cxpbWDJT2ua6SW6fAGYz/Z3U2gJ8VupBacntox0
+	GvGZ/c/aHBBfUL9v3TaTIdWMaivf21jV6KC+Ud7ft+sfBF+yQlnyEz2hVOhqy05RG3zUeFrYPCY
+	xCwAmMrLzaBvXU6oBizKoqR9zUbkyBiPO6zS0JupnfuAMN76iMBqhs8UJRYTs+5p7E0vShaZPdd
+	jmwIDw=
+X-Google-Smtp-Source: AGHT+IESTWeH4wSxjUaitY/65yvL9/8pzc5zN9froOQ+oJHxJy2uWXIcKOi3fMWT1IW9U5NJbPpKnRWop2D6Pg2q27M=
+X-Received: by 2002:a17:907:3e21:b0:b04:5e64:d7ce with SMTP id
+ a640c23a62f3a-b07c381eb0emr1760478266b.35.1758030138986; Tue, 16 Sep 2025
+ 06:42:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915145920.140180-20-gmonaco@redhat.com>
+References: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
+In-Reply-To: <20250826185643235jApHbqi4zaPaZWVy6_Pot@zte.com.cn>
+From: Alex Shi <seakeel@gmail.com>
+Date: Tue, 16 Sep 2025 21:41:42 +0800
+X-Gm-Features: AS18NWAzvTU5pCxBju5qtOwMpUpsMins7tNgGMYJPeMC-JL7B2y_3lBiKBu_7JA
+Message-ID: <CAJy-Amk5UTE2HN_Pcd5kbvCsa247CZ9sSMNX==itXeJkWuj-NQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] Docs/zh_CN: Translate filesystems docs to
+ Simplified Chinese
+To: shao.mingyin@zte.com.cn
+Cc: alexs@kernel.org, si.yanteng@linux.dev, dzm91@hust.edu.cn, corbet@lwn.net, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, 
+	wang.longjie1@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Mon, Sep 15, 2025 at 04:59:30PM +0200, Gabriele Monaco a écrit :
-> Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
-> Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
+Applied! Thanks!
+Alex
 
-Two people, one tester? :-)
-
-> +/**
-> + * tmigr_isolated_exclude_cpumask - Exclude given CPUs from hierarchy
-> + * @exclude_cpumask: the cpumask to be excluded from timer migration hierarchy
-> + *
-> + * This function can be called from cpuset code to provide the new set of
-> + * isolated CPUs that should be excluded from the hierarchy.
-> + * Online CPUs not present in exclude_cpumask but already excluded are brought
-> + * back to the hierarchy.
-> + * Functions to isolate/unisolate need to be called locally and can sleep.
-> + */
-> +int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
-> +{
-> +	struct work_struct __percpu *works __free(free_percpu) =
-> +		alloc_percpu(struct work_struct);
-> +	cpumask_var_t cpumask_unisol __free(free_cpumask_var) = CPUMASK_NULL;
-> +	cpumask_var_t cpumask_isol __free(free_cpumask_var) = CPUMASK_NULL;
-> +	int cpu;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	if (!alloc_cpumask_var(&cpumask_isol, GFP_KERNEL))
-> +		return -ENOMEM;
-> +	if (!alloc_cpumask_var(&cpumask_unisol, GFP_KERNEL))
-> +		return -ENOMEM;
-> +	if (!works)
-> +		return -ENOMEM;
-> +
-> +	cpumask_andnot(cpumask_unisol, cpu_online_mask, exclude_cpumask);
-> +	cpumask_andnot(cpumask_unisol, cpumask_unisol, tmigr_available_cpumask);
-> +	/* Set up the mask earlier to avoid races with the migrator CPU */
-> +	cpumask_or(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_unisol);
-> +	for_each_cpu(cpu, cpumask_unisol) {
-> +		struct work_struct *work = per_cpu_ptr(works, cpu);
-> +
-> +		INIT_WORK(work, tmigr_cpu_unisolate);
-> +		schedule_work_on(cpu, work);
-> +	}
-> +
-> +	cpumask_and(cpumask_isol, exclude_cpumask, tmigr_available_cpumask);
-> +	cpumask_and(cpumask_isol, cpumask_isol, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
-> +	/*
-> +	 * Handle this here and not in the cpuset code because exclude_cpumask
-> +	 * might include also the tick CPU if included in isolcpus.
-> +	 */
-> +	for_each_cpu(cpu, cpumask_isol) {
-> +		if (!tick_nohz_cpu_hotpluggable(cpu)) {
-> +			cpumask_clear_cpu(cpu, cpumask_isol);
-> +			break;
-> +		}
-> +	}
-> +	/* Set up the mask earlier to avoid races with the migrator CPU */
-> +	cpumask_andnot(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_isol);
-> +	for_each_cpu(cpu, cpumask_isol) {
-> +		struct work_struct *work = per_cpu_ptr(works, cpu);
-> +
-> +		INIT_WORK(work, tmigr_cpu_isolate);
-> +		schedule_work_on(cpu, work);
-> +	}
-
-This is racy at various levels:
-
-* The tmigr_available_cpumask clear can race with the cpumask_set_cpu() in
-  tmigr_cpu_unisolate(), risking overwrites when CPUs are on the same bitmap
-  chunk (bitmap operations aren't atomic).
-
-* tmigr_cpu_isolate() and tmigr_cpu_unisolate() can now run concurrently and
-  then cpumask_set_cpu() can race with cpumask_clear_cpu() on
-  tmigr_available_cpumask, risking overwrites, though the real problem is
-  on the precedent point.
-  
-* tmigr_cpu_isolate() can race with tmigr_cpu_isolate() on other CPUs so
-  the calls to cpumask_clear_cpu() can race. That's fine because
-  tmigr_available_cpumask is already set to those CPUs but that still
-  leaves un uncomfortable taste. That would leave an excuse for KSCAN to warn
-  for example.
-
-* Similar with tmigr_cpu_unisolate() racing together.
-
-So, something like that should be added?
-
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 08e29fc01479..6615e56c8b0d 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -1473,7 +1473,6 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
- 	int migrator;
- 	u64 firstexp;
- 
--	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
- 		if (!tmc->available)
- 			return 0;
-@@ -1489,11 +1488,11 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
- 	}
- 
- 	if (firstexp != KTIME_MAX) {
--		migrator = cpumask_any(tmigr_available_cpumask);
-+		migrator = cpumask_any_but(tmigr_available_cpumask, cpu);
- 		work_on_cpu(migrator, tmigr_trigger_active, NULL);
- 	}
- 
--	return 0;
-+	return 1;
- }
- 
- static int tmigr_set_cpu_available(unsigned int cpu)
-@@ -1506,7 +1505,7 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 
- 	if (tmigr_is_isolated(cpu))
- 		return 0;
--	cpumask_set_cpu(cpu, tmigr_available_cpumask);
-+
- 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
- 		if (tmc->available)
- 			return 0;
-@@ -1516,7 +1515,19 @@ static int tmigr_set_cpu_available(unsigned int cpu)
- 			__tmigr_cpu_activate(tmc);
- 		tmc->available = true;
- 	}
--	return 0;
-+	return 1;
-+}
-+
-+static int tmigr_online_cpu(unsigned int cpu)
-+{
-+	if (tmigr_set_cpu_available(cpu) > 0)
-+		cpumask_set_cpu(cpu, tmigr_available_cpumask);
-+}
-+
-+static int tmigr_offline_cpu(unsigned int cpu)
-+{
-+	if (tmigr_clear_cpu_available(cpu) > 0)
-+		cpumask_clear_cpu(cpu, tmigr_available_cpumask);
- }
- 
- static void tmigr_cpu_isolate(struct work_struct *ignored)
-@@ -1601,8 +1612,7 @@ int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
- static int __init tmigr_late_init(void)
- {
- 	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
--				 tmigr_set_cpu_available,
--				 tmigr_clear_cpu_available);
-+				 tmigr_online_cpu, tmigr_offline_cpu);
- }
- 
- static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
-
--- 
-Frederic Weisbecker
-SUSE Labs
+<shao.mingyin@zte.com.cn> =E4=BA=8E2025=E5=B9=B48=E6=9C=8826=E6=97=A5=E5=91=
+=A8=E4=BA=8C 19:12=E5=86=99=E9=81=93=EF=BC=9A
+>
+> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+>
+> translate the filesystems docs into Simplified Chinese.
+> v3->v4
+> resolve patch damage issues.
+>
+> Shao Mingyin (5):
+> Docs/zh_CN: Translate ubifs.rst to Simplified Chinese
+> Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chinese
+> Docs/zh_CN: Translate gfs2.rst to Simplified Chinese
+> Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chinese
+> Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chinese
+>
+> Wang Longjie (2):
+> Docs/zh_CN: Translate dnotify.rst to Simplified Chinese
+> Docs/zh_CN: Translate inotify.rst to Simplified Chinese
+>
+>  .../zh_CN/filesystems/dnotify.rst             |  67 ++++
+>  .../zh_CN/filesystems/gfs2-glocks.rst         | 199 ++++++++++
+>  .../zh_CN/filesystems/gfs2-uevents.rst        |  97 +++++
+>  .../translations/zh_CN/filesystems/gfs2.rst   |  57 +++
+>  .../translations/zh_CN/filesystems/index.rst  |  17 +-
+>  .../zh_CN/filesystems/inotify.rst             |  80 ++++
+>  .../filesystems/ubifs-authentication.rst      | 354 ++++++++++++++++++
+>  .../translations/zh_CN/filesystems/ubifs.rst  | 114 ++++++
+>  8 files changed, 984 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/dnotify.=
+rst
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-glo=
+cks.rst
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2-uev=
+ents.rst
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/gfs2.rst
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/inotify.=
+rst
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs-au=
+thentication.rst
+>  create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rs=
+t
 
