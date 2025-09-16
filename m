@@ -1,180 +1,87 @@
-Return-Path: <linux-kernel+bounces-819650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED89B5A414
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:39:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D6FB7D313
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F87583055
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFF31BC4218
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8A52D9493;
-	Tue, 16 Sep 2025 21:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wpjpdlV2"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7D229B8D8;
+	Tue, 16 Sep 2025 22:12:41 +0000 (UTC)
+Received: from cynthia.allandria.com (cynthia.allandria.com [50.242.82.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BDA31BCAE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDA1283680;
+	Tue, 16 Sep 2025 22:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=50.242.82.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758058735; cv=none; b=EdkvChOGVJ2HfRHIhMFn5jshLsAXE/4v0vLuvf5B4nqPbsXkT5uiPMi9ef467tPapj8ZHlQANN3mlk8rcKquRImNWZnXeykVo5ND05fh+VRTQ2NinC4B/RuK+ohSvJZeKiT2+3cWV60/DRMIV4kNrgBUnnBEItwKngVlLxwA+7U=
+	t=1758060761; cv=none; b=KJf1iliYjPaXwUqf74Y/w4NvHG8++3ddqiOiksgfU7N/s5ibP2TaJbRen570/huLgrdjkh021wMWtxzHhFc1+8FmDvTOdaIdIQf2evsSRbrAh1PEbH/GWL02iX+qdRyXPjK2l1M5NRLGjEEG+xstxf+gYVPIwG1YaO2D7rcdT4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758058735; c=relaxed/simple;
-	bh=ry7qkTB0pJG0crn45IaGPPnZtArUza62ClgAt7diaKQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AJP9272PgjdsNkfH6yMPfJPT8XgRUHF0o3IhCczjor97PpuJL40LXKkK6l6kgyMtdsv7d0mIggoUMk6LWQyRlGhXszXMVDoPNfYHbh8DEEfuFE900Llcz1p85B0S6+Km3Q3KMUNEDqWbPGZ6CiPwoI173eyhpriDlKCcy+ReD0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wpjpdlV2; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec2211659so678377a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:38:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758058734; x=1758663534; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N3b3Tk/l8MqsriYm3Qf+JFhCnUPMjiU2DQ5fPBKzlm4=;
-        b=wpjpdlV2GhQTD91Ta5eX5siWUFbN7US6sLSpp8857mx0hm+AGZEskIQEoWrtzSaHsj
-         3YS4Rt3/1BSguL9dIPA6PEZ0FhiCeTVHX28kqcaBH6Z8s84FZKVVrNiMRbWGrjZDMCj6
-         uc9LfK09Ff0968zxpYpp22Fg3aohyMIaRM8zbeEIW+OXFy/Z8zWNfvbVYnlTzkixWY7b
-         HdTMnuPplklppuPadcOZJ0Mtk0O+uwTeLJZbOkZbQ67DGEQ3Sm04KDTdUTkXByDIE8P4
-         CGFBdt1ZTeDJezKTygsKU3sIBkytXfPTSNR6jPbsgjcfoXR3soBRKdkf2x+h7HI71zna
-         UnpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758058734; x=1758663534;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N3b3Tk/l8MqsriYm3Qf+JFhCnUPMjiU2DQ5fPBKzlm4=;
-        b=OWD4q5ym29s4AL6yFKwV28QakTqrKR8GauRCXm1DPiHOswDVahJnxet5SGBaodrcPf
-         UnjI83kX0chqguThI7OwV6Gtf6ywzBB1UD496vF9wg/nCqmhkFLfe2oMMO6hdfkg2ZGd
-         Fah87+eJq8zpaH3JW9n7HRN3nX85wHwbQI+4RlRg+Ma9WAhpDCCRlltOYKFhiqjS19gm
-         fjtEEB2Gp0wBambNq9wewPXRa5Xzg12bvH8s4zNYeYj0RjZ7qXCbTax7/BD24q9yYT/V
-         P+T+A8KqoKF2dn92taTCbfCOLmdf3qKikQtZhSmFFOWDsXdIUM9DycWJ2ke+Hm/OvA4i
-         D2fA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuD7CzI//JqbKCqsyR/Uml8JFjy5Q3N/4DQhmmjq1wvYtD/4dROYkKEBJCpv/cCE7wsNeubmKBQIoLoOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQyM032O6uj1KJxGUP7fr1z2Gr9aDsk2NBUTNKUF4nsmgj4Dyn
-	+Se5Myu0rtk+a3TUy3uryifGHsp57kdnQFHm+dezWLwiBY+e/ECgkBEntWjVVH0jzjzIrlZJUjy
-	ME5sIUQ==
-X-Google-Smtp-Source: AGHT+IFpPyFP3pZHDiGP08zKKpUK8E7Uz0NLVkZDtHl1SG5g6WnVLCUlyN3v3omtp5YZLceLqn/eINYnI94=
-X-Received: from pjbsq6.prod.google.com ([2002:a17:90b:5306:b0:32e:834b:ea49])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c43:b0:32b:6cf2:a2cf
- with SMTP id 98e67ed59e1d1-32de4ecfef6mr20983631a91.14.1758058733733; Tue, 16
- Sep 2025 14:38:53 -0700 (PDT)
-Date: Tue, 16 Sep 2025 14:38:52 -0700
-In-Reply-To: <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com>
+	s=arc-20240116; t=1758060761; c=relaxed/simple;
+	bh=K20w/tR4L5Hr+p3kQf9+3/eXO3aQKHRleh4af8OXvXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnDW4SJMB7O6H/Wn2f98SGJO1a+R0vdABpZXfxgJ7Bq9vstqZSIhR5DfUJ8ahhnpP7XtDjXxecx38GaGx5LBHYnDyLi8THg6ehGkQ2EsF9Q074DDgU6TObcAFA5Tnoqr8yO598/80f/mFeXKnfkRIOf15nVDLziEVlgDcx7+MfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allandria.com; spf=none smtp.mailfrom=allandria.com; arc=none smtp.client-ip=50.242.82.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=allandria.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=allandria.com
+Received: from flar by cynthia.allandria.com with local (Exim 4.84_2)
+	(envelope-from <flar@allandria.com>)
+	id 1uydO6-0003P1-CD; Tue, 16 Sep 2025 14:38:58 -0700
+Date: Tue, 16 Sep 2025 14:38:58 -0700
+From: Brad Boyer <flar@allandria.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Finn Thain <fthain@linux-m68k.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@vger.kernel.org
+Subject: Re: [RFC v2 3/3] atomic: Add alignment check to instrumented atomic
+ operations
+Message-ID: <20250916213858.GA12681@allandria.com>
+References: <cover.1757810729.git.fthain@linux-m68k.org>
+ <e5a38b0ccf2d37185964a69b6e8657c992966ff7.1757810729.git.fthain@linux-m68k.org>
+ <20250915080054.GS3419281@noisy.programming.kicks-ass.net>
+ <4b687706-a8f1-5f51-6e64-6eb09ae3eb5b@linux-m68k.org>
+ <20250915100604.GZ3245006@noisy.programming.kicks-ass.net>
+ <8247e3bd-13c2-e28c-87d8-5fd1bfed7104@linux-m68k.org>
+ <57bca164-4e63-496d-9074-79fd89feb835@app.fastmail.com>
+ <1c9095f5-df5c-2129-df11-877a03a205ab@linux-m68k.org>
+ <534e8ff8-70cb-4b78-b0b4-f88645bd180a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-30-seanjc@google.com>
- <aMmynhOnU/VkcXwI@AUSJOHALLEN.amd.com> <aMnAVtWhxQipw9Er@google.com> <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com>
-Message-ID: <aMnY7NqhhnMYqu7m@google.com>
-Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
- GHCB when it's valid
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <534e8ff8-70cb-4b78-b0b4-f88645bd180a@app.fastmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 
-On Tue, Sep 16, 2025, John Allen wrote:
-> On Tue, Sep 16, 2025 at 12:53:58PM -0700, Sean Christopherson wrote:
-> > On Tue, Sep 16, 2025, John Allen wrote:
-> > > On Fri, Sep 12, 2025 at 04:23:07PM -0700, Sean Christopherson wrote:
-> > > > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> > > > index 0cd77a87dd84..0cd32df7b9b6 100644
-> > > > --- a/arch/x86/kvm/svm/sev.c
-> > > > +++ b/arch/x86/kvm/svm/sev.c
-> > > > @@ -3306,6 +3306,9 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
-> > > >  	if (kvm_ghcb_xcr0_is_valid(svm))
-> > > >  		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
-> > > >  
-> > > > +	if (kvm_ghcb_xss_is_valid(svm))
-> > > > +		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
-> > > > +
-> > > 
-> > > It looks like this is the change that caused the selftest regression
-> > > with sev-es. It's not yet clear to me what the problem is though.
-> > 
-> > Do you see any WARNs in the guest kernel log?
-> > 
-> > The most obvious potential bug is that KVM is missing a CPUID update, e.g. due
-> > to dropping an XSS write, consuming stale data, not setting cpuid_dynamic_bits_dirty,
-> > etc.  But AFAICT, CPUID.0xD.1.EBX (only thing that consumes the current XSS) is
-> > only used by init_xstate_size(), and I would expect the guest kernel's sanity
-> > checks in paranoid_xstate_size_valid() to yell if KVM botches CPUID emulation.
-> 
-> Yes, actually that looks to be the case:
-> 
-> [    0.463504] ------------[ cut here ]------------
-> [    0.464443] XSAVE consistency problem: size 880 != kernel_size 840
-> [    0.465445] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/fpu/xstate.c:638 paranoid_xstate_size_valid+0x101/0x140
+On Tue, Sep 16, 2025 at 02:37:21PM +0200, Arnd Bergmann wrote:
+> arch/m68k selects CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS for anything
+> other than Dragonball, so I would not expect much performance difference
+> at all, unless CASL on unaligned data ends up causing alignment traps
+> as it does on most architectures.
 
-Can you run with the below printk tracing in the host (and optionally tracing in
-the guest for its updates)?  Compile tested only.
+I believe it depends on the exact CPU. The 68060 user manual has a
+section called "Emulating CAS2 and CAS Misaligned" discussing the
+handling of such instances through software emulation. The 68040
+user manual doesn't have any similar section. I haven't looked at
+the exception handlers in the kernel to see if such cases are being
+handled. The documentation says it results in an unimplemented
+integer exception, and the handler has to manually lock the bus
+while performing normal memory operations.
 
-There should be very few XSS updates, so this _shouldn't_ spam/crash your host :-)
+	Brad Boyer
+	flar@allandria.com
 
----
- arch/x86/kvm/svm/sev.c |  6 ++++--
- arch/x86/kvm/x86.c     | 15 ++++++++++++---
- 2 files changed, 16 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 0cd32df7b9b6..8ac87d623767 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -3306,8 +3306,10 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
- 	if (kvm_ghcb_xcr0_is_valid(svm))
- 		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
- 
--	if (kvm_ghcb_xss_is_valid(svm))
--		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
-+	if (kvm_ghcb_xss_is_valid(svm)) {
-+		if (__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
-+			pr_warn("Dropped XSS update, val = %llx\n", data);
-+	}
- 
- 	/* Copy the GHCB exit information into the VMCB fields */
- 	exit_code = kvm_ghcb_get_sw_exit_code(ghcb);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c78acab2ff3f..a846ed69ce2c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4118,13 +4118,22 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		}
- 		break;
- 	case MSR_IA32_XSS:
--		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
-+		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES)) {
-+			pr_warn("Guest CPUID doesn't have XSAVES\n");
- 			return KVM_MSR_RET_UNSUPPORTED;
-+		}
- 
--		if (data & ~vcpu->arch.guest_supported_xss)
-+		if (data & ~vcpu->arch.guest_supported_xss) {
-+			pr_warn("Invalid XSS: supported = %llx, val = %llx\n",
-+				vcpu->arch.guest_supported_xss, data);
- 			return 1;
--		if (vcpu->arch.ia32_xss == data)
-+		}
-+		if (vcpu->arch.ia32_xss == data) {
-+			pr_warn("XSS already set to val = %llx, eliding updates\n", data);
- 			break;
-+		}
-+
-+		pr_warn("XSS updated to val = %llx, marking CPUID dirty\n", data);
- 		vcpu->arch.ia32_xss = data;
- 		vcpu->arch.cpuid_dynamic_bits_dirty = true;
- 		break;
-
-base-commit: 14298d819d5a6b7180a4089e7d2121ca3551dc6c
---
 
