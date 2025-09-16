@@ -1,200 +1,130 @@
-Return-Path: <linux-kernel+bounces-818019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A191B58BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3A9B58BB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE324E2549
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127C217A174
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9D022128B;
-	Tue, 16 Sep 2025 02:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFC8238C33;
+	Tue, 16 Sep 2025 02:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jL+sjT8W"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlPKPcqC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5B2136E37;
-	Tue, 16 Sep 2025 02:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A08136E37;
+	Tue, 16 Sep 2025 02:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757988370; cv=none; b=Cg+3IhPyuUnD0JxPizke2IiJoJHjh9eGN8fihNesFAm3FPZgUWuaPcb9I6Si13bKGiUpxX1q9sJ4XCE9IN30svjjyiqec/z2NG+cv3CUKtWj/Vn34LYgomPy6gXCIwW1pPLRp3B04HwmztWSQDGO84+yjl4DztA/SV/nJOpLh1k=
+	t=1757988389; cv=none; b=u9nDWzyiY6+67oiBXLerKq2E5ieYJ49mtzaiTmWIak+hrRzIuo85zREsuxOZ0rZhxQ30HcuXsb/E7/x+zQHpxI2SB2yXH4c8X2icMG6Wwqv/V5jlvSe/PM4rhc3Sqz30pv/O0uKiutipKRXcKjYRC1ZmUxLcgGvRQm0/i5Cprsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757988370; c=relaxed/simple;
-	bh=a8bDLh7c1+1HYxlKFNm8S8LVRA0Sb6ymZBWNe5CeqTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L3TAqB9JlyCDNDIw/uaG/OoeDxya4KydRA6BXKnYWG5F/x5matSCo8Dll3NWwV1F8GEvpQolaLugcJvXCbF775F7JfAJxkhBD72IJzABU90WK0bJdZIM1jEIpeUPKBXfaJTdEFGxBfu42sKxQiZZP2fzFWXu2JfFABztwSzM488=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jL+sjT8W; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CXMu3eCXoJ8HkOdIOQ7EpJZojz8SCQvbpExRjKFiGQo=; b=jL+sjT8WYCZJL0womNo3ToEwMv
-	lnjJglFtPbG2ewMXieorUhLxSp4hhg9v+n/bP/0nvGSFSve3qOcfpCjXAV5Xp3fJVswA41c03J9bb
-	UAp7DHOm9ddWXeQSCPFU+Q+ZF+g25NHqVp8RyJeOeiMCb9phwwFmmmahelM4epQajLgGOdlm+aynR
-	TuNZmeaWwT3ljviwWENXrDpoNUvtfEMuJzu4BlWfibshF2vLxv8oyeXd/tKcFTeGIt0vZgeO98n54
-	YUr9gZz6+qtrV7an4Cg+UFc1J8p4LYhgMTw6hP8a7A1zRfediKTlEfdhr8dI/AOOFYGdkPQ21OKBi
-	r9LQA7WQ==;
-Received: from [58.29.143.236] (helo=[192.168.1.7])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uyL4u-00C4PC-6J; Tue, 16 Sep 2025 04:05:56 +0200
-Message-ID: <73e0c4f7-7a47-4ecb-b9b6-cd20ac982ff3@igalia.com>
-Date: Tue, 16 Sep 2025 11:05:50 +0900
+	s=arc-20240116; t=1757988389; c=relaxed/simple;
+	bh=9kK68Xs+KCmxOIP2SAhilPIrfTsceTJZcF5LekB7CjI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DkZlWFKWieXSZ2UdFS5DqIxpHr1ogZeLFl3lHr841I+zYH405owGXK1derK9jyvW4qK1cqjLiVluxqOgF58Z8D1FFNmf5MkJtRHHxbUcQvnR5Py88Xm1aIMaPrqIiiO+ERtaIpCxrH2k1RRCtSIn14clf64SRSx8ccILYsnl2D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlPKPcqC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DA2E2C4CEF1;
+	Tue, 16 Sep 2025 02:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757988388;
+	bh=9kK68Xs+KCmxOIP2SAhilPIrfTsceTJZcF5LekB7CjI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=nlPKPcqCkuRy7II+o0WDa1b/voNXMCByVg+5KMOKTd31IcKDiHP6Fp5VZuYA3W4ba
+	 MxTnUbhhMwKviZzvE9pJtFkD6/Z36AGZdR7IPMs0fH1HG24wbDDMzp+yWp3RMhCxUZ
+	 V4zAXVjJgU2vY81WZ9E58T7dGwG935ilnEJHr7kflO1RdBwG22+6Uym8IL3JjfLPkV
+	 gPDnIXRgZdlmdBHZkNrK9qr1Q3ec5JBw6oX3pFn3tbfwzaKPd2wXaiidQ85TOlV0zI
+	 OybKc0txpzF34+ao2DDBQ/ztUB8b+Wbetll8x3/8ik5JmBNws7vXhQuE1OOIchgS8D
+	 cISqLjBEi0bpA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7199CAC592;
+	Tue, 16 Sep 2025 02:06:28 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH v5 0/2] clk: amlogic: add video-related clocks for S4 SoC
+Date: Tue, 16 Sep 2025 10:06:05 +0800
+Message-Id: <20250916-add_video_clk-v5-0-e25293589601@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "sched_ext: Skip per-CPU tasks in
- scx_bpf_reenqueue_local()"
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
- Cheng-Yang Chou <yphbchou0911@gmail.com>, sched-ext@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250912161438.529446-1-arighi@nvidia.com>
- <978215f1-40d1-4c77-b436-2710029d5acc@igalia.com> <aMfC7sxzVYbRKYps@gpd4>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <aMfC7sxzVYbRKYps@gpd4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA3GyGgC/3XNSwrCMBSF4a2UjI3cvNrEkfsQKXlVg9VIK0Ep3
+ bvRSbXV4bnw/XdAve+C79GmGFDnU+hDvOQhVgWyR305eBxc3ogCFVARgbVzdQrOx9q2J+wsk0Z
+ woYBIlM218024v3u7fd7H0N9i93jnE3ld/5USwYA5+KopGWtYSbb63MZDsGsbz+jVSnTykvC5p
+ 9kbQ43QoqEK+NKzyStY/GfZSwbcKmKkUT88//Rq7nn2woMF4niltfz24zg+Aapg/Y1sAQAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757988387; l=1583;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=9kK68Xs+KCmxOIP2SAhilPIrfTsceTJZcF5LekB7CjI=;
+ b=nkaxWwNE5fra2bm3s9BXD4almurc1c50e/MeIIel3z6gjw+9eMM/sYz0NEoQvw99qUNoZiwcP
+ 5xi9b8BjZ3jAnCPUugGo5SfS5d6mXEvuQ+pT7SKmPR3u8+p6qYRjGZi
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-Hi Andrea,
+This patch introduces new clock support for video processing components
+including the encoder, demodulator and CVBS interface modules.
 
-On 9/15/25 16:40, Andrea Righi wrote:
-> Hi Changwoo,
-> 
-> On Mon, Sep 15, 2025 at 04:22:20PM +0900, Changwoo Min wrote:
->> Hi Andrea,
->>
->> On 9/13/25 01:14, Andrea Righi wrote:
->>> scx_bpf_reenqueue_local() can be called from ops.cpu_release() when a
->>> CPU is taken by a higher scheduling class to give tasks queued to the
->>> CPU's local DSQ a chance to be migrated somewhere else, instead of
->>> waiting indefinitely for that CPU to become available again.
->>>
->>> In doing so, we decided to skip migration-disabled tasks, under the
->>> assumption that they cannot be migrated anyway.
->>>
->>> However, when a higher scheduling class preempts a CPU, the running task
->>> is always inserted at the head of the local DSQ as a migration-disabled
->>> task. This means it is always skipped by scx_bpf_reenqueue_local(), and
->>> ends up being confined to the same CPU even if that CPU is heavily
->>> contended by other higher scheduling class tasks.
->>>
->>> As an example, let's consider the following scenario:
->>>
->>>    $ schedtool -a 0,1, -e yes > /dev/null
->>>    $ sudo schedtool -F -p 99 -a 0, -e \
->>>      stress-ng -c 1 --cpu-load 99 --cpu-load-slice 1000
->>>
->>> The first task (SCHED_EXT) can run on CPU0 or CPU1. The second task
->>> (SCHED_FIFO) is pinned to CPU0 and consumes ~99% of it. If the SCHED_EXT
->>> task initially runs on CPU0, it will remain there because it always sees
->>> CPU0 as "idle" in the short gaps left by the RT task, resulting in ~1%
->>> utilization while CPU1 stays idle:
->>>
->>>       0[||||||||||||||||||||||100.0%]   8[                        0.0%]
->>>       1[                        0.0%]   9[                        0.0%]
->>>       2[                        0.0%]  10[                        0.0%]
->>>       3[                        0.0%]  11[                        0.0%]
->>>       4[                        0.0%]  12[                        0.0%]
->>>       5[                        0.0%]  13[                        0.0%]
->>>       6[                        0.0%]  14[                        0.0%]
->>>       7[                        0.0%]  15[                        0.0%]
->>>     PID USER       PRI  NI  S CPU  CPU%▽MEM%   TIME+  Command
->>>    1067 root        RT   0  R   0  99.0  0.2  0:31.16 stress-ng-cpu [run]
->>>     975 arighi      20   0  R   0   1.0  0.0  0:26.32 yes
->>>
->>> By allowing scx_bpf_reenqueue_local() to re-enqueue migration-disabled
->>> tasks, the scheduler can choose to migrate them to other CPUs (CPU1 in
->>> this case) via ops.enqueue(), leading to better CPU utilization:
->>>
->>>       0[||||||||||||||||||||||100.0%]   8[                        0.0%]
->>>       1[||||||||||||||||||||||100.0%]   9[                        0.0%]
->>>       2[                        0.0%]  10[                        0.0%]
->>>       3[                        0.0%]  11[                        0.0%]
->>>       4[                        0.0%]  12[                        0.0%]
->>>       5[                        0.0%]  13[                        0.0%]
->>>       6[                        0.0%]  14[                        0.0%]
->>>       7[                        0.0%]  15[                        0.0%]
->>>     PID USER       PRI  NI  S CPU  CPU%▽MEM%   TIME+  Command
->>>     577 root        RT   0  R   0 100.0  0.2  0:23.17 stress-ng-cpu [run]
->>>     555 arighi      20   0  R   1 100.0  0.0  0:28.67 yes
->>>
->>> It's debatable whether per-CPU tasks should be re-enqueued as well, but
->>> doing so is probably safer: the scheduler can recognize re-enqueued
->>> tasks through the %SCX_ENQ_REENQ flag, reassess their placement, and
->>> either put them back at the head of the local DSQ or let another task
->>> attempt to take the CPU.
->>>
->>> This also prevents giving per-CPU tasks an implicit priority boost,
->>> which would otherwise make them more likely to reclaim CPUs preempted by
->>> higher scheduling classes.
->>>
->>> Fixes: 97e13ecb02668 ("sched_ext: Skip per-CPU tasks in scx_bpf_reenqueue_local()")
->>> Cc: stable@vger.kernel.org # v6.15+
->>> Signed-off-by: Andrea Righi <arighi@nvidia.com>
->>> ---
->>>    kernel/sched/ext.c | 6 +-----
->>>    1 file changed, 1 insertion(+), 5 deletions(-)
->>>
->>> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
->>> index 236dce2fc13b4..4c3592e26ee45 100644
->>> --- a/kernel/sched/ext.c
->>> +++ b/kernel/sched/ext.c
->>> @@ -5726,12 +5726,8 @@ __bpf_kfunc u32 scx_bpf_reenqueue_local(void)
->>>    		 * CPUs disagree, they use %ENQUEUE_RESTORE which is bypassed to
->>>    		 * the current local DSQ for running tasks and thus are not
->>>    		 * visible to the BPF scheduler.
->>> -		 *
->>> -		 * Also skip re-enqueueing tasks that can only run on this
->>> -		 * CPU, as they would just be re-added to the same local
->>> -		 * DSQ without any benefit.
->>>    		 */
->>> -		if (p->migration_pending || is_migration_disabled(p) || p->nr_cpus_allowed == 1)
->>> +		if (p->migration_pending)
->>>    			continue;
->>
->> I think it is okay to keep "p->nr_cpus_allowed == 1" to the
->> condition. When a task is pinned to a *single* CPU, there is no
->> other place for a scheduler to put the task. Additionally, adding
->> the condition is acceptable in your example of the first task
->> running on either CPU 0 or 1.
-> 
-> Yeah, I was also conflicted about whether to keep `nr_cpus_allowed == 1` or
-> not. The main reason I lean toward re-enqueuing all tasks is that some
-> schedulers may want to re-evaluate other task properties when a CPU is
-> stolen, even if the target CPU doesn't change.
-> 
-> For instance, a scheduler that adjusts time slices in function of the
-> amount of waiting tasks may want to re-evaluate the assigned time slice
-> after a preemption from a higher scheduling class, even if the task is
-> bound to the same CPU.
-> 
-> There's also the fact that the running task is added back to the head of
-> the local DSQ on preemption from a higher scheduling class. If it's a
-> per-CPU task with a long time slice assigned and we don't re-enqueue it, it
-> may block more critical tasks that have arrived in the meantime.
-> 
-> Overall, I think the re-enqueue cost is small and it keeps the door open
-> for more flexible policies. What do you think?
+The related clocks have passed clk-measure verification.
 
-That makes sense. A BPF scheduler might want to readjust its time slice
-according to the current load.
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Changes in v5:
+- Add Acked-by tags from Conor.
+- Remove unnecessary flags as suggested by Jerome.
+- Link to v4: https://lore.kernel.org/r/20250909-add_video_clk-v4-0-5e0c01d47aa8@amlogic.com
 
-Acked-by: Changwoo Min <changwoo@igalia.com>
+Changes in v4:
+- Add Acked-by tags from Rob and Krzysztof.
+- Fix compilation errors.
+- Link to v3: https://lore.kernel.org/r/20250905-add_video_clk-v3-0-8304c91b8b94@amlogic.com
 
-Regards,
-Changwoo Min
+Changes in v3:
+- Rebase with Jerome's latest code base.
+- Link to v2: https://lore.kernel.org/r/20250814-add_video_clk-v2-0-bb2b5a5f2904@amlogic.com
+
+Changes in v2:
+- Removed lcd_an clock tree (previously used in meson series but obsolete in
+newer chips).
+- Removed Rob's 'Acked-by' tag due to dt-binding changes (Is it necessary?).
+- Link to v1: https://lore.kernel.org/r/20250715-add_video_clk-v1-0-40e7f633f361@amlogic.com
+
+---
+Chuan Liu (2):
+      dt-bindings: clock: add video clock indices for Amlogic S4 SoC
+      clk: amlogic: add video-related clocks for S4 SoC
+
+ drivers/clk/meson/s4-peripherals.c                 | 206 ++++++++++++++++++++-
+ .../clock/amlogic,s4-peripherals-clkc.h            |  11 ++
+ 2 files changed, 213 insertions(+), 4 deletions(-)
+---
+base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
+change-id: 20250715-add_video_clk-dc38b5459018
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
 
