@@ -1,169 +1,111 @@
-Return-Path: <linux-kernel+bounces-818444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D87B591D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E44BB591CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522DC1B22A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:12:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC6D165B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BDF29A310;
-	Tue, 16 Sep 2025 09:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C47292B2E;
+	Tue, 16 Sep 2025 09:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQ6C4vPi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iz/MheB0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EE829898B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9346E42A96;
+	Tue, 16 Sep 2025 09:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013909; cv=none; b=EZn1Z4E+rbaCGgADLFicux1mF8L9PQDLOCNtorxCUcsyNGU5XljHNcuMGfM8xnRR32VBGrIA8pHBt67mXFoCTsb/Nyq4M8/+509EIS5HrMO40wjGhfYZOyG0vU9dZ74Rd+ZHyKkS2tdLRuUl/AaG94KALJmGR4uUVq6G6rcK1x8=
+	t=1758013884; cv=none; b=YWsVw0wQ7VZSJPC25LyVdOQBZRgzJ3VIdQcfWb6u7q7sfGt8YL4l3GY4zQSJnoU+xVZowX2Dszsq/M4YNTWeeDEpztTI1KTAwlbENFNVE9KJejIkH1FF4mSVvshTBJ1meCQFcFCt0S7XHN8HIGT8qMY0tZFxxCBw1hSQObH0MzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013909; c=relaxed/simple;
-	bh=zMt+lj07w4o0jqg5XJ/ynsRarpPmoVl62tOzbhSFTo4=;
+	s=arc-20240116; t=1758013884; c=relaxed/simple;
+	bh=KkPyIIbyd5SJjuqod3wdkU2p2Zh9ZN9dF3Jz2Jnh14w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6sxhTOGMgCajON0PXzETWsUPqF/z60ONiateD130PyDQ7F3JpuFLb3E6WOVV0/NDS2vG9zoNwxEw/aCjmrRkLhJ6kTMCt8kEEjo1j3MYaais6yU2xcNJyVClDr2A22NDuBVqgv8xsv7yRKm37orvPLM6A6xPVuq5pq3hQXuD1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQ6C4vPi; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758013908; x=1789549908;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zMt+lj07w4o0jqg5XJ/ynsRarpPmoVl62tOzbhSFTo4=;
-  b=mQ6C4vPi6xTlDTcKuPQfIf6NvmgiV5F08dExvsSP4iUu4ooHyzqYjgxJ
-   CErfwJM3tmZgIlb7S3mQKPV2838CTIEq4n4X2LYsM9f6cjMVaijVR6KRW
-   XMO9Y6A+eGPLXRpc/iG+ezFdUCaGf5zSBZyQGH05dQSrb3HgA9xvbl0sx
-   fMekRHN23vIW8HdyZ999BpOCdDlKf1X+rlir1pEuhAwINnc78TtKeqBfS
-   3yrDez06Vj5ad8FH/e98D5pkh1Bc9TuefBbvy4Cu+VEaBhOwY3x/kPtr2
-   WXDX/9dX1NDGm04XgOufn0eMqfYWUMOMkpMwYyimqWCoIex+hUg2HoNtr
-   Q==;
-X-CSE-ConnectionGUID: MNnty9PoRNq2CtXZcBrRnw==
-X-CSE-MsgGUID: mEFCnxATQ7qBa9O/ywQANw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="60156178"
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="60156178"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 02:11:42 -0700
-X-CSE-ConnectionGUID: uZhwW8IrSsG2Bt+G9sPI2Q==
-X-CSE-MsgGUID: vXVH7QybRG+5S4cYC1RT9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="205672250"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 16 Sep 2025 02:11:40 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyRir-00008V-1z;
-	Tue, 16 Sep 2025 09:11:37 +0000
-Date: Tue, 16 Sep 2025 17:10:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mikisabate@gmail.com>,
-	linux-riscv@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	pjw@kernel.org, palmer@dabbelt.com, alex@ghiti.fr,
-	wangyuli@uniontech.com, chenhuacai@kernel.org, mikisabate@gmail.com
-Subject: Re: [PATCH] riscv: kgdb: Prefer strscpy instead of strcpy
-Message-ID: <202509161619.eJeLbfU0-lkp@intel.com>
-References: <20250915200644.200498-1-mikisabate@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8DHlipMiDFscAi/24gnf8YCdcw+Yxl9upZ5uEvIqwMy6WzwHYwKIubcTiSKG4ZQnx1RQEAHGX9Rf/6oVwENXs0idvyBszbzXiiKQWQ2XEhwAO+TGfH0xrKXtrqL+kB48GdsujsbVmGwTGB3cr9cc+8ODBlWpq3Y+SPu4A37zmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iz/MheB0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0C2B140E01A2;
+	Tue, 16 Sep 2025 09:11:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zIaqC3HLNQ9L; Tue, 16 Sep 2025 09:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758013875; bh=QWJBpCxYGdhhSeLXQ8ldzOPuqWrT3lCtih2UBg+SiEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iz/MheB0csedEfyBEa+OtYeLXTZ7jC4FHJuGUmtU2JErkakOF7ixRTLPrEoJS+p/n
+	 xTlQ8aKSJq7KILBNxkqFBq8NJji1w1/bFT3QxymiSf0elE/d66qF8lIygWpkqGlGvo
+	 OXlmKiWVSJCT6l0hJ8UwOumlj5sJswW4bR02xwc7fs8vyrEJ1ioKP/UskPkkHvAYM9
+	 wW1iKwLy/SlpKT3iOxOEqfha92efzeXPlv4NnX/ynB0ch71JmNtwckRNtdmxwungLY
+	 jmIVmFxGjjHaDf6At9Gtjpc45liuNSGHi5o75oceefknuZ592q0OMyT1kj9R8usDBz
+	 8UPs36thYuH+e8CP9rrfalwM16vO8keyJEOEpX5B6k98qVPyTdqBgOJw2H9tIT5WW5
+	 9rOZ7By/GZGzjSTQkzH8ld8rpM0OMBjaqpnLEV7OBy19C2hZODmVegHAtu90uTy7Ad
+	 Q+YT0r8ro74zafqKQO0DS5hN29j8NFBorZK3wM3RLbJlqItYa0ttNTohhlF3lkMPG2
+	 kgO1ipRIuo3Q3eLxrHANpYo+1dDPtMMgu63DLTNwNFuxKa7NljXqKYpK/wr7SMtfOk
+	 Fil5HoP1/jLI+FH/gfJatDlhp1aib5eSb/++iP649C7fDzcq98fj0ke2Y5iFA7YLLn
+	 F5aP2LL/SJTR+erhbN7NZom8=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 5589940E01AC;
+	Tue, 16 Sep 2025 09:11:03 +0000 (UTC)
+Date: Tue, 16 Sep 2025 11:10:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Bert Karwatzki <spasswolf@web.de>,
+	Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org, linux-edac@vger.kernel.org,
+	linux-acpi@vger.kernel.org, x86@kernel.org, rafael@kernel.org,
+	qiuxu.zhuo@intel.com, nik.borisov@suse.com,
+	Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: spurious mce Hardware Error messages in next-20250912
+Message-ID: <20250916091055.GAaMkpn72GrFnsueCF@fat_crate.local>
+References: <20250915010010.3547-1-spasswolf@web.de>
+ <20250915175531.GB869676@yaz-khff2.amd.com>
+ <45d4081d93bbd50e1a23a112e3caca86ce979217.camel@web.de>
+ <426097525d5f9e88a3f7e96ce93f24ca27459f90.camel@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915200644.200498-1-mikisabate@gmail.com>
+In-Reply-To: <426097525d5f9e88a3f7e96ce93f24ca27459f90.camel@web.de>
 
-Hi Miquel,
+On Mon, Sep 15, 2025 at 11:43:26PM +0200, Bert Karwatzki wrote:
+> After re-cloning linux-next I tested next-20250911 and I get no mce error messages
+> even if I set the check_interval to 10.
 
-kernel test robot noticed the following build errors:
+Yazen, I've zapped everything from the handler unification onwards:
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.17-rc6 next-20250915]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+28e82d6f03b0 x86/mce: Save and use APEI corrected threshold limit
+c8f4cea38959 x86/mce: Handle AMD threshold interrupt storms
+5a92e88ffc49 x86/mce/amd: Define threshold restart function for banks
+922300abd79d x86/mce/amd: Remove redundant reset_block()
+9b92e18973ce x86/mce/amd: Support SMCA corrected error interrupt
+fe02d3d00b06 x86/mce/amd: Enable interrupt vectors once per-CPU on SMCA systems
+cf6f155e848b x86/mce: Unify AMD DFR handler with MCA Polling
+53b3be0e79ef x86/mce: Unify AMD THR handler with MCA Polling
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Miquel-Sabat-Sol/riscv-kgdb-Prefer-strscpy-instead-of-strcpy/20250916-040750
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250915200644.200498-1-mikisabate%40gmail.com
-patch subject: [PATCH] riscv: kgdb: Prefer strscpy instead of strcpy
-config: riscv-randconfig-002-20250916 (https://download.01.org/0day-ci/archive/20250916/202509161619.eJeLbfU0-lkp@intel.com/config)
-compiler: riscv32-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509161619.eJeLbfU0-lkp@intel.com/reproduce)
+until this is properly sorted out, now this close to the merge window.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509161619.eJeLbfU0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/ptrace.h:5,
-                    from arch/riscv/kernel/kgdb.c:6:
-   arch/riscv/kernel/kgdb.c: In function 'kgdb_arch_handle_qxfer_pkt':
->> include/linux/compiler.h:197:67: error: static assertion failed: "must be array"
-     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
-         |                                                                   ^~~~~~~~~~~~~~
-   include/linux/compiler.h:202:28: note: in expansion of macro '__BUILD_BUG_ON_ZERO_MSG'
-     202 | #define __must_be_array(a) __BUILD_BUG_ON_ZERO_MSG(!__is_array(a), \
-         |                            ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/string.h:80:40: note: in expansion of macro '__must_be_array'
-      80 |  sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) + \
-         |                                        ^~~~~~~~~~~~~~~
-   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
-      25 | #define __CONCAT(a, b) a ## b
-         |                        ^
-   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
-      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-         |                           ^~~~~~~~
-   include/linux/string.h:114:2: note: in expansion of macro 'CONCATENATE'
-     114 |  CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |  ^~~~~~~~~~~
-   arch/riscv/kernel/kgdb.c:268:3: note: in expansion of macro 'strscpy'
-     268 |   strscpy(remcom_out_buffer, riscv_gdb_stub_target_desc);
-         |   ^~~~~~~
->> include/linux/compiler.h:197:67: error: static assertion failed: "must be array"
-     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
-         |                                                                   ^~~~~~~~~~~~~~
-   include/linux/compiler.h:202:28: note: in expansion of macro '__BUILD_BUG_ON_ZERO_MSG'
-     202 | #define __must_be_array(a) __BUILD_BUG_ON_ZERO_MSG(!__is_array(a), \
-         |                            ^~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/string.h:80:40: note: in expansion of macro '__must_be_array'
-      80 |  sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) + \
-         |                                        ^~~~~~~~~~~~~~~
-   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
-      25 | #define __CONCAT(a, b) a ## b
-         |                        ^
-   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
-      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-         |                           ^~~~~~~~
-   include/linux/string.h:114:2: note: in expansion of macro 'CONCATENATE'
-     114 |  CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |  ^~~~~~~~~~~
-   arch/riscv/kernel/kgdb.c:271:3: note: in expansion of macro 'strscpy'
-     271 |   strscpy(remcom_out_buffer, riscv_gdb_stub_cpuxml);
-         |   ^~~~~~~
-
-
-vim +197 include/linux/compiler.h
-
-230fa253df6352 Christian Borntraeger 2014-11-25  193  
-cb7380de9e4cbc Kees Cook             2025-02-05  194  #ifdef __CHECKER__
-243c90e917f5cf Vincent Mailhol       2025-03-29  195  #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) (0)
-cb7380de9e4cbc Kees Cook             2025-02-05  196  #else /* __CHECKER__ */
-243c90e917f5cf Vincent Mailhol       2025-03-29 @197  #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
-cb7380de9e4cbc Kees Cook             2025-02-05  198  #endif /* __CHECKER__ */
-cb7380de9e4cbc Kees Cook             2025-02-05  199  
+Thanks, Bert, for reporting!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
