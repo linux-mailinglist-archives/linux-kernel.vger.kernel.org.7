@@ -1,165 +1,124 @@
-Return-Path: <linux-kernel+bounces-819646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEC5B5A408
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:32:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A40CB5A412
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6565824F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3AA9327B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB8F2882CE;
-	Tue, 16 Sep 2025 21:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="EAxXTn6h"
-Received: from fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com [35.158.23.94])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275E12DC34D;
+	Tue, 16 Sep 2025 21:37:57 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2E431BCA4;
-	Tue, 16 Sep 2025 21:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.158.23.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC0031BCAE;
+	Tue, 16 Sep 2025 21:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758058347; cv=none; b=iY3OvjGnbWKuTIP5c0An9sFaAx0+SOyBKjCcqPe/zw04TkET3JrY1rBEBqD/ojLW3HHfnvIN52JFakfKVOn1icmVx4HrEeb6zhM2QFuJU6tfhtyge/Aa13+T/c8dzPJTyoygV+6Zf0b4WRgrYXF4PFh1wSQoG9ckACpdzANUgjQ=
+	t=1758058676; cv=none; b=H1M3+B1pznRqgTsZSvA4EyztXTKgy9ENFFsVYQC/Mmf3hQAtWvqsl0W1cfKFwZwhcPiW9Gph1uYGLeDb5dvS1XjXOlFqFw7mGdvqYnou+kBiB0pjSnmw4+xKs86bdS2qSWjZaBzpfTu6ZklsxiPeZSi1WaEWwzFeyIizL0wNPyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758058347; c=relaxed/simple;
-	bh=xCYkeH4QYr4X+Yb4JUrvhynQnySKOolUu9xUmaQc9tY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aLKERRqZsPYFhMhF9xKmxJ+ZOj8pplCj/UZoQhKrYCu61sFeSOOQwgZM8GJkB0DyoOFRx0uoyG812LSYH4/emx0vnsyR+oC2t+XXaonACGgJ9cY+abe7yZ6GVZJb/0jeeGFzUhGOC5E+MzWKneun65fCMG1KfbpuFDv5FgyZtd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=EAxXTn6h; arc=none smtp.client-ip=35.158.23.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758058345; x=1789594345;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QLnkLMqtlLfDtwSeYQL7WGkG6mzWc6R9ymixNvsiunA=;
-  b=EAxXTn6hyN/EtOkddESurYPuIvPNJQcYTNystkxFKa5UNK/nK1bheLaK
-   3OVteONaTOHTDfysdWFZjz2hYQv3Dqcvj0+2/IyE009WR0/dJ18OYP4Ds
-   USNkgnD7Ahcrc0VrXaHwiRQIEUTXpci65l8m6sLMZMYhc2OidCO+i0oRF
-   tMLouZ9wAC/FXT+kOtV5H5idrb8UHJ7V31u4R41DjIm8l4WjxwnOpoCVV
-   MpMU3fIW/l/bPPjtQe+ENOohJf0IRP65eZCS66upUCeHKA1vUKdtSxU4G
-   5fYQkMm+Q9EHXqJpoh7eqmIYifreEmL2u542YVdhv7Wptejf9FqXLcdWV
-   g==;
-X-CSE-ConnectionGUID: +1KHj2xgR/eqU/BdJydXew==
-X-CSE-MsgGUID: GCB106dVQFq8EOYtO3oG0Q==
-X-IronPort-AV: E=Sophos;i="6.18,270,1751241600"; 
-   d="scan'208";a="2215156"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-008.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 21:32:23 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:4626]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.21.26:2525] with esmtp (Farcaster)
- id f4cef716-ed49-4dbd-844b-4631a4751e69; Tue, 16 Sep 2025 21:32:23 +0000 (UTC)
-X-Farcaster-Flow-ID: f4cef716-ed49-4dbd-844b-4631a4751e69
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 16 Sep 2025 21:32:22 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 16 Sep 2025
- 21:32:17 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <luc.vanoostenryck@gmail.com>, <rostedt@goodmis.org>, <mingo@redhat.com>,
-	<akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>, <sj@kernel.org>,
-	<David.Laight@ACULAB.COM>, <Jason@zx2c4.com>,
-	<andriy.shevchenko@linux.intel.com>, <bvanassche@acm.org>,
-	<keescook@chromium.org>, <linux-sparse@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jonnyc@amazon.com>, <farbere@amazon.com>, <stable@vger.kernel.org>,
-	Christoph Hellwig <hch@infradead.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, "Matthew Wilcox (Oracle)"
-	<willy@infradead.org>
-Subject: [PATCH 7/7 5.10.y] minmax: relax check to allow comparison between unsigned arguments and signed constants
-Date: Tue, 16 Sep 2025 21:32:11 +0000
-Message-ID: <20250916213211.10519-1-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758058676; c=relaxed/simple;
+	bh=3AZ0KeE/Qw0esnEUtKMTkPcociOMrHH2b80m+6xxFrU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bJwm49i2KMIS2weKzo9djSa2YXPypq7KYS1KzROatrPH967NbphMb9CiWI9kuyfR82hzgEq5P4dGbw5J+f3eS6v2GWnmhy3/aZq7u0aXwAGoxvqRxZdJHJXrASzUxci00Sk/rzdGJbN6EziiM0XyeDO3Uw/cieSA6UKysOBjSlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uydMh-000000005cc-1stf;
+	Tue, 16 Sep 2025 21:37:31 +0000
+Date: Tue, 16 Sep 2025 22:37:27 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Changqi Hu <changqi.hu@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v3] serial: 8250_mtk: Enable baud clock and manage in runtime
+ PM
+Message-ID: <de5197ccc31e1dab0965cabcc11ca92e67246cf6.1758058441.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWB004.ant.amazon.com (10.13.138.84) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: David Laight <David.Laight@ACULAB.COM>
+Some MediaTek SoCs got a gated UART baud clock, which currently gets
+disabled as the clk subsystem believes it would be unused. This results in
+the uart freezing right after "clk: Disabling unused clocks" on those
+platforms.
 
-commit 867046cc7027703f60a46339ffde91a1970f2901 upstream.
+Request the baud clock to be prepared and enabled during probe, and to
+restore run-time power management capabilities to what it was before commit
+e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock
+management") disable and unprepare the baud clock when suspending the UART,
+prepare and enable it again when resuming it.
 
-Allow (for example) min(unsigned_var, 20).
-
-The opposite min(signed_var, 20u) is still errored.
-
-Since a comparison between signed and unsigned never makes the unsigned
-value negative it is only necessary to adjust the __types_ok() test.
-
-Link: https://lkml.kernel.org/r/633b64e2f39e46bb8234809c5595b8c7@AcuMS.aculab.com
-Signed-off-by: David Laight <david.laight@aculab.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-(cherry picked from commit 867046cc7027703f60a46339ffde91a1970f2901)
-Signed-off-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
+Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- include/linux/minmax.h | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+v3: squash into single patch
+v2: add managing run-time PM in dedicated patch
 
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index f76b7145fc11..dd52969698f7 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -9,13 +9,18 @@
- /*
-  * min()/max()/clamp() macros must accomplish three things:
-  *
-- * - avoid multiple evaluations of the arguments (so side-effects like
-+ * - Avoid multiple evaluations of the arguments (so side-effects like
-  *   "x++" happen only once) when non-constant.
-- * - perform signed v unsigned type-checking (to generate compile
-- *   errors instead of nasty runtime surprises).
-- * - retain result as a constant expressions when called with only
-+ * - Retain result as a constant expressions when called with only
-  *   constant expressions (to avoid tripping VLA warnings in stack
-  *   allocation usage).
-+ * - Perform signed v unsigned type-checking (to generate compile
-+ *   errors instead of nasty runtime surprises).
-+ * - Unsigned char/short are always promoted to signed int and can be
-+ *   compared against signed or unsigned arguments.
-+ * - Unsigned arguments can be compared against non-negative signed constants.
-+ * - Comparison of a signed argument against an unsigned constant fails
-+ *   even if the constant is below __INT_MAX__ and could be cast to int.
-  */
- #define __typecheck(x, y) \
- 	(!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-@@ -25,9 +30,14 @@
- 	__builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),	\
- 		is_signed_type(typeof(x)), 0)
+ drivers/tty/serial/8250/8250_mtk.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+index b44de2ed7413..5875a7b9b4b1 100644
+--- a/drivers/tty/serial/8250/8250_mtk.c
++++ b/drivers/tty/serial/8250/8250_mtk.c
+@@ -435,6 +435,7 @@ static int __maybe_unused mtk8250_runtime_suspend(struct device *dev)
+ 	while
+ 		(serial_in(up, MTK_UART_DEBUG0));
  
--#define __types_ok(x, y) 			\
--	(__is_signed(x) == __is_signed(y) ||	\
--		__is_signed((x) + 0) == __is_signed((y) + 0))
-+/* True for a non-negative signed int constant */
-+#define __is_noneg_int(x)	\
-+	(__builtin_choose_expr(__is_constexpr(x) && __is_signed(x), x, -1) >= 0)
-+
-+#define __types_ok(x, y) 					\
-+	(__is_signed(x) == __is_signed(y) ||			\
-+		__is_signed((x) + 0) == __is_signed((y) + 0) ||	\
-+		__is_noneg_int(x) || __is_noneg_int(y))
++	clk_disable_unprepare(data->uart_clk);
+ 	clk_disable_unprepare(data->bus_clk);
  
- #define __cmp_op_min <
- #define __cmp_op_max >
+ 	return 0;
+@@ -445,6 +446,7 @@ static int __maybe_unused mtk8250_runtime_resume(struct device *dev)
+ 	struct mtk8250_data *data = dev_get_drvdata(dev);
+ 
+ 	clk_prepare_enable(data->bus_clk);
++	clk_prepare_enable(data->uart_clk);
+ 
+ 	return 0;
+ }
+@@ -475,13 +477,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
+ 	int dmacnt;
+ #endif
+ 
+-	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
++	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
+ 	if (IS_ERR(data->uart_clk)) {
+ 		/*
+ 		 * For compatibility with older device trees try unnamed
+ 		 * clk when no baud clk can be found.
+ 		 */
+-		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
++		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 		if (IS_ERR(data->uart_clk)) {
+ 			dev_warn(&pdev->dev, "Can't get uart clock\n");
+ 			return PTR_ERR(data->uart_clk);
 -- 
-2.47.3
-
+2.51.0
 
