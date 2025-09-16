@@ -1,98 +1,83 @@
-Return-Path: <linux-kernel+bounces-817997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB78B58B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:40:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF3CB58B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9461117187F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 372053B1353
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395D221E091;
-	Tue, 16 Sep 2025 01:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81846221558;
+	Tue, 16 Sep 2025 01:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdSjEaxG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baZQh+Zg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5961F542E;
-	Tue, 16 Sep 2025 01:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56CD2135AD;
+	Tue, 16 Sep 2025 01:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757986815; cv=none; b=gAb4bpeZ5haa7YFpa4b9rcfOZUDwII3nOOgm38vKkcJBX9/1U2kqegVL5r0MUhwLs1MFr5nWoBk9UHfQ2BhPvWzqAjiSv83CWawZ9tRTMDrWPzzsF6HdMlM/hy+xHKNNitF7v4lSctl+LgOp/QjZNI+ujOANICedk/216GYV9J8=
+	t=1757986884; cv=none; b=L7GvDIYb6e+vIPnxjA9+39QRCLjAsm56UsxwN60yNPSkC8jaN7k05KvGH1yqqOqUF2HOVLPt0wmMlHw7f+5j3/qk0/0Yll6eBPhq35uEEeMSW5nO7Ifc18uMBcgt0svwVCulhdbCdSez84EM+JgqDvATscfRKQH0Uh0a0r4JbtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757986815; c=relaxed/simple;
-	bh=XEkpR8NWRQZ1eWEHnM8hYiYezDkGF/Zxa6o+qN2kpZg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ek/YsrHFbxPPTqwzeCJM2OojOMILmH9Ph8hTzO6Cjacofvj28Zj5gGxxEOCk8S8ZfZ5CSIZMdGYKvVKJ2DbkzAvgmLUr4N177okbqA9CroKbo+cWZ72M6Ig12e3orbBu+kjf8F4qB6VU4sm6qahJJRAv7C0WWZIxXe1Gnezqfzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdSjEaxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22B54C4CEF1;
-	Tue, 16 Sep 2025 01:40:14 +0000 (UTC)
+	s=arc-20240116; t=1757986884; c=relaxed/simple;
+	bh=8hwQcwBHz2zuy1ceLhAuHCSU5WJ152SvEZ/BnmXPAnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X5DyJXadQ4oDYxTd8036Y8FRmsAJvwVntWW0XsC1yUryRd4T5IuzxUOGdJma69r81mVvr2s9rMqjWqVxibagICTkJ8Fe2YakuCImvo7nvmTiKiIUfUnGXzWDCQcWW8d0Y7hOSmZ20Suyg1S3TIrGjoM8ITlF0yx3AM7FeoUrWkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baZQh+Zg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B67C4CEF1;
+	Tue, 16 Sep 2025 01:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757986814;
-	bh=XEkpR8NWRQZ1eWEHnM8hYiYezDkGF/Zxa6o+qN2kpZg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SdSjEaxGaLSLA1gG8WFngzR0Os6PDV02sI70IHhG5he4Ws+E4VBxm0Uo8UqjXiOog
-	 XHXk+4FMpBJqbTsOEoeWVGM9Qsi2Gd+QdGfoWnxOZhhjxTxSnzFr/+OSUFtIyYgNuk
-	 dGLH7RYVOfylunbwvXw1pZt2GtqNewfN6OGCqmr+odBhoqTKWOAZ4WiO14xR2jt9oa
-	 CKfJ7+doivHCKENnseF5HKeoW4Tqa+E4H1FpVghKgBOxXyAgf85O8zSmzGtZJ6D/2Y
-	 +vvsjTrEeQiFo8foWhPRF7NZtBuPUYYQRlSALvI/YB6qWzCFsKe5VPKzKxteZATRBp
-	 FYdSFfFPGeBQQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE00039D0C17;
-	Tue, 16 Sep 2025 01:40:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1757986884;
+	bh=8hwQcwBHz2zuy1ceLhAuHCSU5WJ152SvEZ/BnmXPAnY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=baZQh+Zg8nNrO1680vkA2olUSKrxkFZBUqJQI63+xryyLibk78TRlw0NSuyMb6EEO
+	 oA5mj4aVqpPc8oQ7Hs3h+efA+4ZoIiTfRawD2FoL89AcECgPCdCzAKf6BiGWVrw7BA
+	 ju+Qnm3xWBh62qdNtCxo7YHHWJaLxME2n9UpFj1uPDpufxfGSLiEtZ243FzqyydMei
+	 gvY/VJhEkFET8Uz3NtW2a9FDH5oFKMj2xZ+H9WOc6J4Gu+/DbzH2uci5wDsWS85VDi
+	 JGLEHqr6rgiUkC+iX2Ki4YFdXYfG6texEFGGHhdezhYfhTtGj1xuXI99uLT2uZkc7Y
+	 ajvfKqmfW5TOw==
+Date: Mon, 15 Sep 2025 18:41:23 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Petr Machata
+ <petrm@nvidia.com>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bonding: fix xfrm offload feature setup on
+ active-backup mode
+Message-ID: <20250915184123.505d2bb8@kernel.org>
+In-Reply-To: <20250915083742.423741-1-liuhangbin@gmail.com>
+References: <20250915083742.423741-1-liuhangbin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/3] tools: ynl: rst: display attribute-set
- doc
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175798681550.561918.14633148960106754244.git-patchwork-notify@kernel.org>
-Date: Tue, 16 Sep 2025 01:40:15 +0000
-References: <20250913-net-next-ynl-attr-doc-rst-v3-0-4f06420d87db@kernel.org>
-In-Reply-To: <20250913-net-next-ynl-attr-doc-rst-v3-0-4f06420d87db@kernel.org>
-To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-Cc: corbet@lwn.net, donald.hunter@gmail.com, kuba@kernel.org,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, jiri@resnulli.us, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, chuck.lever@oracle.com,
- jacob.e.keller@intel.com, fw@strlen.de, idosch@nvidia.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Sat, 13 Sep 2025 15:29:50 +0200 you wrote:
-> Some attribute-set have a documentation (doc:), but they are not
-> displayed in the RST / HTML version. This series adds the missing
-> parsing of these 'doc' fields.
+On Mon, 15 Sep 2025 08:37:41 +0000 Hangbin Liu wrote:
+> The active-backup bonding mode supports XFRM ESP offload. However, when
+> a bond is added using command like `ip link add bond0 type bond mode 1
+> miimon 100`, the `ethtool -k` command shows that the XFRM ESP offload is
+> disabled. This occurs because, in bond_newlink(), we change bond link
+> first and register bond device later. So the XFRM feature update in
+> bond_option_mode_set() is not called as the bond device is not yet
+> registered, leading to the offload feature not being set successfully.
 > 
-> While at it, it also fixes how the 'doc' fields are declared on multiple
-> lines.
-> 
-> [...]
+> To resolve this issue, we can modify the code order in bond_newlink() to
+> ensure that the bond device is registered first before changing the bond
+> link parameters. This change will allow the XFRM ESP offload feature to be
+> correctly enabled.
 
-Here is the summary with links:
-  - [net-next,v3,1/3] tools: ynl: rst: display attribute-set doc
-    https://git.kernel.org/netdev/net-next/c/a51126424f75
-  - [net-next,v3,2/3] netlink: specs: team: avoid mangling multilines doc
-    https://git.kernel.org/netdev/net-next/c/515c0ead788f
-  - [net-next,v3,3/3] netlink: specs: explicitly declare block scalar strings
-    https://git.kernel.org/netdev/net-next/c/12e74931ee97
-
-You are awesome, thank you!
+This reportedly doesn't apply.. I suppose we want it to go via net?
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+pw-bot: cr
 
