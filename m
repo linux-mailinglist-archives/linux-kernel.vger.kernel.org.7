@@ -1,203 +1,223 @@
-Return-Path: <linux-kernel+bounces-818685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E63B59524
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0005B59532
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3CCC2A7CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72AEF17D775
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC5F2D877A;
-	Tue, 16 Sep 2025 11:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3AB2F7479;
+	Tue, 16 Sep 2025 11:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJWv7pYz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K+KteQDS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2HYnNweU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C2YrNbPC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P80PGseX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D152D7DD9;
-	Tue, 16 Sep 2025 11:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350942D9485
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758022227; cv=none; b=E40+pdI7sqBbDoK/o+B7JR+KDWdQzTKb2msZsFTBWK/7nirPezgehmzSiLhsFryCEstbWiWVx8O9XdrmefDn/3ifdt9TFzeFH5l60ubxykcPHmJ+tOt2MLfUHMm3bviZvWhd8jJMpScaKwVyOXTARddIij8PRAwtsSj/HlkDGU0=
+	t=1758022259; cv=none; b=VMPzmgXEOULNoyBbILcvWIQvH5bvWw+FAHXThN9qgGVM5KQEfp3M38hPhurs1KUbNKoUd8vNSdOwm3Y8zQxpyfO8OHH/Pvbl+R4rnthrTktVzDcqYSRVtpd6/5VnQ4cZtXi5XqyZsJov6w2GhiI65Kqfew7kzgd96NAsiyB70tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758022227; c=relaxed/simple;
-	bh=7AJ9SosdEk5i+W5nY4k1TcpdprbApX10Mjk/qkDMzKg=;
+	s=arc-20240116; t=1758022259; c=relaxed/simple;
+	bh=32dkxhu6HAIEJvzNQhoowNml5eGueKq/8PzdYr2S9Hs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMP75xlwyAHVt0ytNn070LFbOXKTWFOC8A3S1KtVYVDOuj4ZtMbazlnF7RhOm14k5ZHQTw8ittmiYjscBKQsuW/eBk4ZAbRRHBGA6NgA8hvlXHheeS8cPDM/lDafz1HjcwoyJdubIykCnPtPmCuzrdIruaL5KZqCE8C+5R1yZ50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJWv7pYz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52CDAC4CEEB;
-	Tue, 16 Sep 2025 11:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758022226;
-	bh=7AJ9SosdEk5i+W5nY4k1TcpdprbApX10Mjk/qkDMzKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tJWv7pYzjnz9AgGz7GlLduVeiX96rkxfOM2efkdioY9vI3Ha+7F42iNpd/x0rdL8N
-	 NbzxzJNS+/ZkLGClPURCk4vLTgUKXKMbiUkl/cWOiZrBvDGYIzJewbLkwISd7pIIBD
-	 +DquBLYCy19dtblssKgBy1Ggp6r5agRf8D8Gly+dWR9axyOHY50se4fIaLupEk1PYz
-	 ibyJRZ5AEo29JXQ+vUaYuhqFZTH5sSk3OpnHxbeGKzNmGzMvUGfCiH1jqZpARuZwgt
-	 8Jc479DR9Q+/YVfDQB9sah/GXh83vBStGxf9OErB3Z41IvtGnd9rhwUKxR+ZATGfQM
-	 MWijYO5zuuyIg==
-Date: Tue, 16 Sep 2025 13:30:20 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Nicolas Schier <nsc@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
- vmlinux.unstripped
-Message-ID: <aMlKTPpNXrRW6v_7@example.org>
-References: <cover.1755535876.git.legion@kernel.org>
- <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
- <aMeqgPVfJcjBLhl8@levanger>
- <aMkN1m55vejTii_H@example.org>
- <aMkvtg55F1gJ5feM@levanger>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFKwUq7g3RwSTYQy+jw2fQr2krVeypwLwuvtmCIUixaVjf+FV9OEzwsEAwkoWSR7i3Iz1fqaseLjq4eHSmEyoYbzZFKVONt7AW0ERZqs2VCLm7CuJ/XG7y/3uyF420rf9rxUx/x80lzin7Mg8LUsOe1tkTAjTq66D5AecvwBH4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K+KteQDS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2HYnNweU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C2YrNbPC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P80PGseX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D156F1F7E7;
+	Tue, 16 Sep 2025 11:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758022255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZi2f1CBEBptehyfy3qkarMRPDwbc/rWar+FgCxqvMQ=;
+	b=K+KteQDSKf8IsG3uOwQ0HI3VKeMlPnxjvhs2zFYfvcYwqltHVn8uu3sCgCpQOCqGx2JD3y
+	/Ltr8/4XZ4Y9a0HlQ2S6qIrYOwZPHu8JIhpT1Jy2pZV4kO3hbPwBYqIzmw9qm2KeMIKTcW
+	hebhRV64eWqTWEkKmUUH1DE0fmq5lQ8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758022255;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZi2f1CBEBptehyfy3qkarMRPDwbc/rWar+FgCxqvMQ=;
+	b=2HYnNweUFk8LZUijfjj6klmqAUE83RkQVtUmRo6YqCRwEuht8dBdu0cgI+fABbhT64WKKg
+	HpkgcGkBKY6o0dAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758022254; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZi2f1CBEBptehyfy3qkarMRPDwbc/rWar+FgCxqvMQ=;
+	b=C2YrNbPCJgZVyvW01AxrfbMoCsRKcx0pG8PXSk0T2Y+lco6umc5acktS/zGE647YMOK/CV
+	mVblxMVniZzoxwEBtgrC/uSijzWfboIsvTYnr81nezJniQv46tdS/K4zQEwMLOeDf0bArb
+	qJp9j+HM/sxJ9zefrGHbin+n4ApImXw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758022254;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZi2f1CBEBptehyfy3qkarMRPDwbc/rWar+FgCxqvMQ=;
+	b=P80PGseXB7KGB2c7EEkrdGLUPK7RjxJlT4t5M2QwTES4YV8Fci5Uwq2UJKvnEXDxP+whSR
+	dY9DgOpCgOGj6eDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6FDA13ACD;
+	Tue, 16 Sep 2025 11:30:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Zw2TMG5KyWg/ZQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 16 Sep 2025 11:30:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 6A962A0A56; Tue, 16 Sep 2025 13:30:39 +0200 (CEST)
+Date: Tue, 16 Sep 2025 13:30:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Jakub Acs <acsjakub@amazon.de>, 
+	linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] ovl: check before dereferencing s_root field
+Message-ID: <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
+References: <20250915101510.7994-1-acsjakub@amazon.de>
+ <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
+ <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
+ <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aMkvtg55F1gJ5feM@levanger>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Tue, Sep 16, 2025 at 11:36:54AM +0200, Nicolas Schier wrote:
-> On Tue, Sep 16, 2025 at 09:12:22AM +0200, Alexey Gladkov wrote:
-> > On Mon, Sep 15, 2025 at 07:56:16AM +0200, Nicolas Schier wrote:
-> > > On Mon, Aug 18, 2025 at 06:54:57PM +0200, Alexey Gladkov wrote:
-> > > > From: Masahiro Yamada <masahiroy@kernel.org>
-> > > > 
-> > > > Keep the .modinfo section during linking, but strip it from the final
-> > > > vmlinux.
-> > > > 
-> > > > Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
-> > > > 
-> > > > This change will allow the next commit to extract the .modinfo section
-> > > > from the vmlinux.unstripped intermediate.
-> > > > 
-> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > ---
-> > > >  include/asm-generic/vmlinux.lds.h | 2 +-
-> > > >  scripts/Makefile.vmlinux          | 2 +-
-> > > >  scripts/mksysmap                  | 3 +++
-> > > >  3 files changed, 5 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > > > index ae2d2359b79e9..cfa63860dfd4c 100644
-> > > > --- a/include/asm-generic/vmlinux.lds.h
-> > > > +++ b/include/asm-generic/vmlinux.lds.h
-> > > > @@ -831,6 +831,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> > > >  
-> > > >  /* Required sections not related to debugging. */
-> > > >  #define ELF_DETAILS							\
-> > > > +		.modinfo : { *(.modinfo) }				\
-> > > >  		.comment 0 : { *(.comment) }				\
-> > > >  		.symtab 0 : { *(.symtab) }				\
-> > > >  		.strtab 0 : { *(.strtab) }				\
-> > > > @@ -1044,7 +1045,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> > > >  	*(.discard.*)							\
-> > > >  	*(.export_symbol)						\
-> > > >  	*(.no_trim_symbol)						\
-> > > > -	*(.modinfo)							\
-> > > >  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
-> > > >  	*(.gnu.version*)						\
-> > > >  
-> > > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > > > index 4f2d4c3fb7372..e2ceeb9e168d4 100644
-> > > > --- a/scripts/Makefile.vmlinux
-> > > > +++ b/scripts/Makefile.vmlinux
-> > > > @@ -86,7 +86,7 @@ endif
-> > > >  # vmlinux
-> > > >  # ---------------------------------------------------------------------------
-> > > >  
-> > > > -remove-section-y                                   :=
-> > > > +remove-section-y                                   := .modinfo
-> > > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> > > >  
-> > > >  quiet_cmd_strip_relocs = OBJCOPY $@
-> > > > diff --git a/scripts/mksysmap b/scripts/mksysmap
-> > > > index 3accbdb269ac7..a607a0059d119 100755
-> > > > --- a/scripts/mksysmap
-> > > > +++ b/scripts/mksysmap
-> > > > @@ -79,6 +79,9 @@
-> > > >  / _SDA_BASE_$/d
-> > > >  / _SDA2_BASE_$/d
-> > > >  
-> > > > +# MODULE_INFO()
-> > > > +/ __UNIQUE_ID_modinfo[0-9]*$/d
-> > > > +
-> > > >  # ---------------------------------------------------------------------------
-> > > >  # Ignored patterns
-> > > >  #  (symbols that contain the pattern are ignored)
-> > > > -- 
-> > > > 2.50.1
-> > > > 
-> > > 
-> > > Hi Alexey,
-> > > 
-> > > with this patch applied, I still get a warning from objcpy as Masahiro
-> > > and Stephen wrote [1,2]
-> > > 
-> > >   SORTTAB vmlinux.unstripped
-> > > + sorttable vmlinux.unstripped
-> > > + nm -S vmlinux.unstripped
-> > > + ./scripts/sorttable -s .tmp_vmlinux.nm-sort vmlinux.unstripped
-> > > + is_enabled CONFIG_KALLSYMS
-> > > + grep -q ^CONFIG_KALLSYMS=y include/config/auto.conf
-> > > + cmp -s System.map .tmp_vmlinux2.syms
-> > > + echo vmlinux.unstripped: ../scripts/link-vmlinux.sh
-> > > # OBJCOPY vmlinux
-> > >   objcopy --remove-section=.modinfo vmlinux.unstripped vmlinux
-> > > objcopy: vmlinux.unstripped: warning: empty loadable segment detected at vaddr=0xffff8000807a0000, is this intentional?
-> > > 
-> > > (arm64, allnoconfig)
-> > > 
-> > > Kind regards,
-> > > Nicolas
-> > > 
-> > > 
-> > > [1]: https://lore.kernel.org/linux-kbuild/CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com/
-> > > [2]: https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
-> > > 
-> > 
-> > Hm. I missed that. I need to investigate how to fix this. Nothing comes
-> > to mind right now.
+On Mon 15-09-25 17:29:40, Amir Goldstein wrote:
+> On Mon, Sep 15, 2025 at 4:07 PM Jan Kara <jack@suse.cz> wrote:
+> > > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
+> > > > index 83f80fdb1567..424c73188e06 100644
+> > > > --- a/fs/overlayfs/export.c
+> > > > +++ b/fs/overlayfs/export.c
+> > > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct inode *inode)
+> > > >         if (!ovl_inode_lower(inode))
+> > > >                 return 0;
+> > > >
+> > > > +       if (!inode->i_sb->s_root)
+> > > > +               return -ENOENT;
+> > >
+> > > For a filesystem method to have to check that its own root is still alive sounds
+> > > like the wrong way to me.
+> > > That's one of the things that should be taken for granted by fs code.
+> > >
+> > > I don't think this is an overlayfs specific issue, because other fs would be
+> > > happy if encode_fh() would be called with NULL sb->s_root.
+> >
+> > Actually, I don't see where that would blow up? Generally references to
+> > sb->s_root in filesystems outside of mount / remount code are pretty rare.
+> > Also most of the code should be unreachable by the time we set sb->s_root
+> > to NULL because there are no open files at that moment, no exports etc. But
+> > as this report shows, there are occasional surprises (I remember similar
+> > issue with ext4 sysfs files handlers using s_root without checking couple
+> > years back).
+> >
 > 
-> Same here.  Only thing I could find until now is
+> I am not sure that I understand what you are arguing for.
+> I did a very naive grep s_root fs/*/export.c and quickly found:
+
+You're better with grep than me ;). I was grepping for '->s_root' as well
+but all the hits I had looked into were related to mounting and similar and
+eventually I got bored. Restricting the grep to export ops indeed shows
+ceph, gfs2 and overlayfs are vulnerable to this kind of problem.
+
+> static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
+>                           struct inode *parent)
+> {
+> ...
+>         if (!parent || inode == d_inode(sb->s_root))
+>                 return *len;
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/diff/scripts/link-vmlinux.sh?id=90ceddcb495008ac8ba7a3dce297841efcd7d584
+> So it's not an overlayfs specific issue, just so happens that zysbot
+> likes to test overlayfs.
 > 
-> where '2>/dev/null' is appended exactly to prevent this very warning.
-> But for me, it doesn't feel good doing that when stripping to vmlinux.
+> Are you suggesting that we fix all of those one by one?
 
-Yes, that's not a very good approach. It will hide other errors that will
-definitely need to be seen. I think the commit you mentioned is actually
-incorrect. I think there should be a different solution.
+No. I agree we need to figure out a way to make sure export ops are not
+called on a filesystem being unmounted. Standard open_by_handle() or NFS
+export cannot race with generic_shutdown_super() (they hold the fs mounted)
+so fsnotify is a special case here.
 
-I think in the case of .modinfo, we can change the flag in the section
-since we are going to delete it anyway.
+I actually wonder if fanotify event (e.g. from inode deletion postponed to
+some workqueue or whatever) cannot race with umount as well and cause the
+same problem...
 
-diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-index dbbe3bf0cf23..9a118b31d0dc 100644
---- a/scripts/Makefile.vmlinux
-+++ b/scripts/Makefile.vmlinux
-@@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
- remove-symbols := -w --strip-symbol='__mod_device_table__*'
- 
- quiet_cmd_strip_relocs = OBJCOPY $@
--      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
-+      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< && \
-+                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
-                          $(remove-symbols) $< $@
- 
- targets += vmlinux
+> > > Can we change the order of generic_shutdown_super() so that
+> > > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
+> > >
+> > > Or is there a better solution for this race?
+> >
+> > Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
+> > In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
+> > evict_inodes")) we've moved the call after evict_inodes() because otherwise
+> > we were just wasting cycles scanning many inodes without watches. So moving
+> > it earlier wouldn't be great...
+> 
+> Yes, I noticed that and I figured there were subtleties.
+
+Right. After thinking more about it I think calling fsnotify_sb_delete()
+earlier is the only practical choice we have (not clearing sb->s_root isn't
+much of an option - we need to prune all dentries to quiesce the filesystem
+and leaving s_root alive would create odd corner cases). But you don't want
+to be iterating millions of inodes just to clear couple of marks so we'll
+have to figure out something more clever there.
+
+								Honza
 -- 
-Rgrds, legion
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
