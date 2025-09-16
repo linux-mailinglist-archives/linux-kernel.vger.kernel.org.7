@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-818466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACBAB5921D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B99B5B59224
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845AD482922
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62950526D37
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA47296BA4;
-	Tue, 16 Sep 2025 09:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C16A29BDB8;
+	Tue, 16 Sep 2025 09:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DgVimv++"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dT0RQQsl"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EE5299AAA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE2529B78D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014738; cv=none; b=R58vZpu6oJ2KIjT63weIlYJDWmNv1PG96Abow0L6xeJwEAXHaxvOpzEY9qKUdLd9EW2RAAD1zWV5mEKVXb00nXd59B7rFiwNyhEpBj9s4R7WbxfTkFwsvlNdEec7qVdQqsEVGBXsmm10DV9YTnjKwDyBE+Y17Q/In2NDndaTMpQ=
+	t=1758014751; cv=none; b=W2gm9L0v1mOa3jrjGWFAuqx37y7CdMH32FBFatZOo21ovJCveelojzcWYOdbZ3K7wb1DjVMt5M06jcgzyn/Xim24N9FJqmcLcYJbVsTgOy5g/wncOWkaSIcLf7GXga0QaMTvLK0hF9s780OFffZ7gKXWUi4IIFPTCWdQYD7xTa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014738; c=relaxed/simple;
-	bh=94nfd9D2/3JrQ92cFxfHxwSHOkP/1U5/RVIAJbOP5v0=;
+	s=arc-20240116; t=1758014751; c=relaxed/simple;
+	bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLq8QcgljA5jqPMYq/oaKbgZ7xOTHJlO+w1RCmXHBvox4rgXN/sG77t3kDv+0gX5jAtLdsQ00Bf2LwsNzYK+fJYrYwXtmSVRyrs8lKQqAs/2kqDxCrCCk4ZokEJwAE6WzwBM5keYEZ9qdZ8zIXV4sNaBruL8i8F3NTNZZ4kLjCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DgVimv++; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6524AC4AF0B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758014738;
-	bh=94nfd9D2/3JrQ92cFxfHxwSHOkP/1U5/RVIAJbOP5v0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DgVimv++zCTtvcsPbf0fL8LD41opT+4QyXK8f1XH3ct+STVNU6Qv1kuo4eYIefhXk
-	 sJZa3HnsWVJ3jCL2Ud/3DFeSh4IEC+dUdR3RDXyWpmYVj0e5XSGy3LRdlnJNpDu6JA
-	 1qOH9//dIRricRGIu0acwC5+9qmSYnT9IJ5gy8FsJvJa8Dj3zlbWLXvKxSnDpDKQlC
-	 TJaCDwolBEufxPZsxOimiKY+qebkg2ioqJ59uvU7mK+kUkZ1knhO9bb+Ek9kbIT+c1
-	 B+tRzstMeduDlrF1nykB/sw2eghONbeWEpLLZk2DE5qCULJUKGlKt7UjVomFxj5liL
-	 sgPUUaoGhH9Jg==
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3df15fdf0caso4041891f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:25:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1RUUFb3rsMIc2//fa600bs3ocoSp/gpN4IWJ5PyPU1AoRMoAc4yg7YPspidfOyo6UDdrplSeE3nNSEqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1ybHTdLWvaLHTd1nsmm9/XFzkZ7kCAhohbp/5GntM3skZrLmT
-	qZUUUL6oru/P7GpWlBEviWo10o3AYJmhi/9ECZoDHLP/3a57iNTQ3zQNa12OCfG0GwPu54Lw411
-	GbStzPPepcRWFTNqKxTHLBzyPRcf0UsY=
-X-Google-Smtp-Source: AGHT+IFJHiRuQQ163JGnK5u5j/SLTzwdI+SdpUJ+UN87XgMbQzd6zH3QI8OublorMeiT+hg5VU2kmXWaq3EwVJlSQOg=
-X-Received: by 2002:a05:6000:e:b0:3e9:9282:cff8 with SMTP id
- ffacd0b85a97d-3e99282d39amr6395145f8f.5.1758014736884; Tue, 16 Sep 2025
- 02:25:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=G6jpUPzBN8tgrDWLzkV7CbxtmOTu/KAxgHvB8ix4SfzfQ18COoGbwu0jCmmIDY36oKmYVVUXMMdNCa1Jtz96odEuQ5SBphr2PF4Ey6UTCteThfASwXpP7SKZkR9Tb4YTTStkO6qngRLrUK5dY3Zei6lCK+HaiNFJMyCGyVmD4SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dT0RQQsl; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-265f97930baso3460145ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758014749; x=1758619549; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
+        b=dT0RQQsl5eje7hoAfPCSV5cH16kUHaJsx/OLYQ/4UzEfSN5Y7zVtlbkRz38i+Xbdee
+         ftV8068+/eTu47ZV4UFRTANTk2T1XfHXjxJTIa0t05FXfRgE+tBsuDLPTu5TsoE4qzUS
+         3tvyTT7vdyW07G73hn/lXzEg9dVEZVWHxjNicVgfiFH3pOXlNuCSGg6G3OGhK84h4a8/
+         B7ZPZCgRC/ibUw7LFO+MNHq7Kbm0a2IxPUI1boPQHV1gv9CChl+FYUbENeWRVOPOasTm
+         mgstynIf5MNv6meFrxVsuCenfl9kWH8u7oPbimZaG8ARLrYrfuTvPN43mKhAdnfvq+8f
+         HbvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758014749; x=1758619549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IaRryEebvbTqiupWQqjYkSHOIl894hb08zd2AGUVKwQ=;
+        b=Fd1pa6CixQdgySIu4QdyyU7HvxHpOau1Y/bbdoixYsrXiWlCUsABqbUUfxkhofAeAi
+         VVq2NfgOp5UbzEclPavvKPdpU+UB6o7Hyo7Dx2rmvpyVF2aGIE6HL6viWU737gr7nPtJ
+         r5jUddP+lhb0aM/tDc7vsXSdBLr9E2VfIJANQ3WwlMNs4PxNFkfr4L7lBA8cbePVmm2L
+         XHPd/v0S731KXf8lyDb9FgkZieo7q9PLIPrcbP9usNBC3U5QhgtwDHBIp/MZLofDFsgI
+         Xrl3/0SCOHN80s2HQQVifI/e/lptJii6DVjwehJWiC2IRQFadd/KX9BTzPTjEEmG8MEl
+         bcxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoucfqfxkWvAYP3eBx1nZ29ehdiwOnzOnHXfO3COi9eYpn8/H+FTilpp3GAt8uFUcdcCVIU0pYDMufbPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5QdnRRT61hj8gNXLfA2x6QjWdbwxYHmXzcHbkcj1vYkQjxChs
+	iF2DAJ/qruCUhPwe6QxjK/wCHwiay2J1NTDIX3nBjIe0JDOkxeJDvHSYpMwZDhPfQ2Pkoxl9u2Q
+	aqZtq4S/qGIVrmkOxkMZH+aUQdWzflAY=
+X-Gm-Gg: ASbGncts8D13Kb59BHRCV8yibN2kPE3lWQi8i0HHydJjBddm8tk1jc45ZYFnlW4Hssi
+	rbT4tG3pziYeONs5SlrWnCVJUDSbLHIxe29se14POEWo/by3V6KrYx5++91D1lrSB8VObp45mE6
+	9yLSc0aZFB83ChRaM8ZHyml98//PDD7lGXWGxSusGbpeyqO10Kj4LyyPolRjv/DIicfSloPeMIn
+	TIFLvGrPm1LnJYptK6UrWmqi29gLE9a6pCo9nsETqvroJbhL1oOws6Q9u/Lp0TNoF6c+HLkRxKR
+	+VOkQwWjnxMED3G6uqy+PBNfEQ==
+X-Google-Smtp-Source: AGHT+IFbZW+x9x9wRPjcu0fUDKKV+FI4Ux2olLrfd71XqGlZeb06RKz20GRATJ3RhC04PqeZ4amtqqROnzbUAvJFtis=
+X-Received: by 2002:a17:903:234e:b0:267:b357:b63f with SMTP id
+ d9443c01a7336-267b357ba4cmr28322155ad.11.1758014749004; Tue, 16 Sep 2025
+ 02:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6191817.lOV4Wx5bFT@fvogt-thinkpad>
-In-Reply-To: <6191817.lOV4Wx5bFT@fvogt-thinkpad>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 16 Sep 2025 17:25:24 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQnkP0noK_s0ho36OdxN4-EOgFyvLeTgA+w+YTwUb2d9g@mail.gmail.com>
-X-Gm-Features: AS18NWDYfF6_0jctcxDyY9_0G5irzA_3PV00ZRemrogDa3rebAgcSAfN-qRgBhA
-Message-ID: <CAJF2gTQnkP0noK_s0ho36OdxN4-EOgFyvLeTgA+w+YTwUb2d9g@mail.gmail.com>
-Subject: Re: [PATCH] riscv: kprobes: Fix probe address validation
-To: Fabian Vogt <fvogt@suse.de>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Marvin Friedrich <marvin.friedrich@suse.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+References: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
+In-Reply-To: <20250813-core-cstr-fanout-1-v3-0-a15eca059c51@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 16 Sep 2025 11:25:35 +0200
+X-Gm-Features: AS18NWBte47JR71hFkT2j6pdf07EXnpt9Cw80lEcllpwl7SjI3e6diSfmzb9hqQ
+Message-ID: <CANiq72mrY92-msShBgiqqRpewiTqLANb-uH8+nPfAqKivCWjUw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] rust: use `kernel::{fmt,prelude::fmt!}`
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 11:25=E2=80=AFPM Fabian Vogt <fvogt@suse.de> wrote:
+On Wed, Aug 13, 2025 at 5:39=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
 >
-> When adding a kprobe such as "p:probe/tcp_sendmsg _text+15392192",
-> arch_check_kprobe would start iterating all instructions starting from
-> _text until the probed address. Not only is this very inefficient, but
-> literal values in there (e.g. left by function patching) are
-> misinterpreted in a way that causes a desync.
+> This is series 2a/5 of the migration to `core::ffi::CStr`[0].
+> 20250704-core-cstr-prepare-v1-0-a91524037783@gmail.com.
+>
+> This series depends on the prior series[0] and is intended to go through
+> the rust tree to reduce the number of release cycles required to
+> complete the work.
+>
+> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
+> can be taken through Miguel's tree (where the other series must go).
+>
+> [0] https://lore.kernel.org/all/20250704-core-cstr-prepare-v1-0-a91524037=
+783@gmail.com/
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-LGTM! This prevents bad p->offset from causing problems.
+Applied to `rust-next` -- thanks everyone!
 
-Acked-by: Guo Ren <guoren@kernel.org>
+If any maintainer has a problem with this, please shout.
 
->
-> Fix this by doing it like x86: start the iteration at the closest
-> preceding symbol instead of the given starting point.
->
-> Fixes: 87f48c7ccc73 ("riscv: kprobe: Fixup kernel panic when probing an i=
-llegal position")
-> Signed-off-by: Fabian Vogt <fvogt@suse.de>
-> Signed-off-by: Marvin Friedrich <marvin.friedrich@suse.com>
-> ---
->  arch/riscv/kernel/probes/kprobes.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/kernel/probes/kprobes.c b/arch/riscv/kernel/probe=
-s/kprobes.c
-> index c0738d6c6498..8723390c7cad 100644
-> --- a/arch/riscv/kernel/probes/kprobes.c
-> +++ b/arch/riscv/kernel/probes/kprobes.c
-> @@ -49,10 +49,15 @@ static void __kprobes arch_simulate_insn(struct kprob=
-e *p, struct pt_regs *regs)
->         post_kprobe_handler(p, kcb, regs);
->  }
->
-> -static bool __kprobes arch_check_kprobe(struct kprobe *p)
-> +static bool __kprobes arch_check_kprobe(unsigned long addr)
->  {
-> -       unsigned long tmp  =3D (unsigned long)p->addr - p->offset;
-> -       unsigned long addr =3D (unsigned long)p->addr;
-> +       unsigned long tmp, offset;
-> +
-> +       /* start iterating at the closest preceding symbol */
-> +       if (!kallsyms_lookup_size_offset(addr, NULL, &offset))
-> +               return false;
-> +
-> +       tmp =3D addr - offset;
->
->         while (tmp <=3D addr) {
->                 if (tmp =3D=3D addr)
-> @@ -71,7 +76,7 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
->         if ((unsigned long)insn & 0x1)
->                 return -EILSEQ;
->
-> -       if (!arch_check_kprobe(p))
-> +       if (!arch_check_kprobe((unsigned long)p->addr))
->                 return -EILSEQ;
->
->         /* copy instruction */
-> --
-> 2.51.0
->
->
->
->
-
-
---=20
-Best Regards
- Guo Ren
+Cheers,
+Miguel
 
