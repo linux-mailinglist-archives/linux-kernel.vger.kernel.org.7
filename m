@@ -1,185 +1,154 @@
-Return-Path: <linux-kernel+bounces-818325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1C6B58FE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:02:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9452B58FEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28951B2009E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE503AC765
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C040283145;
-	Tue, 16 Sep 2025 08:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0QVOMsq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBE1283121;
+	Tue, 16 Sep 2025 08:02:27 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C813722A4E5;
-	Tue, 16 Sep 2025 08:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39A035950;
+	Tue, 16 Sep 2025 08:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758009737; cv=none; b=b7To01SFECFZ8GrL4NsmiUJK8J4SfrtlOTO9+C6OGFzEQL7vTrEq1fq41f25el84hP62MdcA6JKdFLKihx0WBqxbk9cGiArzpwuWHW3gZbqi3vXxQNtKbky765RL6c+9/kNG1/1ADbAtkzSlUEcofHWKidh72r7RFx9HC7GTQCs=
+	t=1758009746; cv=none; b=upO7xZ0O2eiXEbKBmwvrvvuNqMqx8bauZTirKBr/CmyZf4vcjuT5fRR6it9WmE1fiJ+DLyQVDYj6CP358pzFIkT/tWsQbPVaWoQblVA3mmErfRa7ojXijaD2NmQefSb3JUOhLYgNJGmjBeDAfJTpxhEDlHbTnz9KXDE64dQHGY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758009737; c=relaxed/simple;
-	bh=s9H96yzOvyDhrCT9H89TpRBnZBcfroxAOZERsxRauhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uFDhNkVydxmzDgKMieY7xA0pLt05liNEQvswqaV97W7ue7eOZlRbJpAjGyIflPgGHBHFS26PSAMhdgbxWdx09xXKqXQSkOTFvEaQRF22OsbN97cHKZUE38ufqqEtotRuZ4/H0iJC/cySX8YqugKHY9sHS1FLUYJ33raJ7Cekqds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0QVOMsq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11EA5C4CEEB;
-	Tue, 16 Sep 2025 08:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758009737;
-	bh=s9H96yzOvyDhrCT9H89TpRBnZBcfroxAOZERsxRauhk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R0QVOMsqj8KA4c5DncyUHwMj20jefIUJOeFoUsgi/kembFr7xhduup9gUz4UJFlCa
-	 XbV5Gv9//DkqFOpjIpNB91noZR4Hg/p4C+KwnX8yLrjZ8YYXlFt3NrOpsn5ln8dV65
-	 DfjJD2oLIOs+RCk3R6Ihhe/GLYvqGjIMkzBMcohIE69eN+UdVECIj8ToUEujHT3CQM
-	 ipv2pHcgr1rSCy9nJyk4iuFMZN+CcNTv8X1jwKTSkW1GFDjnKeGhkIoTL9588N2igA
-	 N9XPJmQ9Sr89ex7FoDHobUNEYXm8/4kRtF/h5c4d+0BWxhQIqmoTo3I6ABR9dqH3GZ
-	 9RA6g/PteR6ig==
-Date: Tue, 16 Sep 2025 09:02:06 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <20250916090206.02f601be@jic23-huawei>
-In-Reply-To: <c1d21e3c-b0a3-40a5-b693-a38673f8bf53@gmail.com>
-References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com>
-	<20250915-bd79112-v5-2-a74e011a0560@gmail.com>
-	<aMge0jYwYCiY72Yb@smile.fi.intel.com>
-	<20250915211321.47865d3d@jic23-huawei>
-	<c1d21e3c-b0a3-40a5-b693-a38673f8bf53@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758009746; c=relaxed/simple;
+	bh=NDowxoHyjvn7mhhgjiaojNZOrdeAy6ObkXIbQtgn9G0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n+XbZbk+Lff5MUDJUkxj1cjWGqdba1fkub1aV14SlCGVmiq7PU91ohmBp0W7Ot7rLNeSkEYsxOthJffdPAQXspmo9agnkwpOv+awE0/7tiNVSjgzpTMxxnxLxCqZvbTC9zRU14RVWg03bx3QQe0X6C32eYm2zTew6+rXaAuNuSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cQvWf6cb9zYQtG4;
+	Tue, 16 Sep 2025 16:02:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 841871A1ABE;
+	Tue, 16 Sep 2025 16:02:21 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgBHko6NGcloY_K7Cg--.29687S2;
+	Tue, 16 Sep 2025 16:02:21 +0800 (CST)
+Message-ID: <a7296ecc-7d29-41aa-abc1-eec0900ce351@huaweicloud.com>
+Date: Tue, 16 Sep 2025 16:02:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Tue, 16 Sep 2025 07:52:07 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> On 15/09/2025 23:13, Jonathan Cameron wrote:
-> > On Mon, 15 Sep 2025 17:12:34 +0300
-> > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> >   
-> >> On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:  
-> >>> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> >>> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-> >>>
-> >>> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> >>> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> >>> daisy-chain configuration) and maximum sampling rate is 1MSPS.
-> >>>
-> >>> The IC does also support CRC but it is not implemented in the driver.  
-> >>
-> >> ...
-> >>  
-> >>> +static int bd79112_probe(struct spi_device *spi)
-> >>> +{
-> >>> +	struct bd79112_data *data;
-> >>> +	struct iio_dev *iio_dev;
-> >>> +	struct iio_chan_spec *cs;
-> >>> +	struct device *dev = &spi->dev;
-> >>> +	unsigned long gpio_pins, pin;
-> >>> +	unsigned int i;
-> >>> +	int ret;
-> >>> +
-> >>> +	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> >>> +	if (!iio_dev)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	data = iio_priv(iio_dev);
-> >>> +	data->spi = spi;
-> >>> +	data->dev = dev;
-> >>> +	data->map = devm_regmap_init(dev, NULL, data, &bd79112_regmap);
-> >>> +	if (IS_ERR(data->map))
-> >>> +		return dev_err_probe(dev, PTR_ERR(data->map),
-> >>> +				     "Failed to initialize Regmap\n");
-> >>> +
-> >>> +	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
-> >>> +	if (ret < 0)
-> >>> +		return dev_err_probe(dev, ret, "Failed to get the Vdd\n");  
-> >>  
-> >>> +	data->vref_mv = ret / 1000;  
-> >>
-> >> I still think moving to _mV is the right thing to do.
-> >> There is no 'mv' in the physics for Volts.  
-> > 
-> > I'm not disagreeing with this review but I'm also not going to hold a
-> > driver back for that given timing is pretty much such that I merge it
-> > today or it sits a cycle and this one is very near...
-> > I'll get fussier on this once we have written up some guidance and may
-> > well send a patch to modify existing recent cases like this one!  
-> 
-> As I replied to Andy, I am disagreeing with this. I hope we won't start 
-> renaming variables with capital letters :(
-> 
-> >>  
-> >>> +	ret = devm_regulator_get_enable(dev, "iovdd");
-> >>> +	if (ret < 0)
-> >>> +		return dev_err_probe(dev, ret, "Failed to enable I/O voltage\n");
-> >>> +
-> >>> +	data->read_xfer[0].tx_buf = &data->read_tx[0];
-> >>> +	data->read_xfer[0].len = sizeof(data->read_tx);
-> >>> +	data->read_xfer[0].cs_change = 1;
-> >>> +	data->read_xfer[1].rx_buf = &data->read_rx;
-> >>> +	data->read_xfer[1].len = sizeof(data->read_rx);
-> >>> +	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);  
-> >>  
-> >>> +	devm_spi_optimize_message(dev, spi, &data->read_msg);  
-> >>
-> >> And if it fails?..  
-> > I've added the following and applied the series.  
-> 
-> Thanks!
-> 
-> > Note I'm cutting this fine so if we get any build issues or similar
-> > it might well get pushed back to next cycle yet!
-> > 
-> > diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
-> > index b406d4ee5411..d15e06c8b94d 100644
-> > --- a/drivers/iio/adc/rohm-bd79112.c
-> > +++ b/drivers/iio/adc/rohm-bd79112.c
-> > @@ -454,12 +454,18 @@ static int bd79112_probe(struct spi_device *spi)
-> >          data->read_xfer[1].rx_buf = &data->read_rx;
-> >          data->read_xfer[1].len = sizeof(data->read_rx);
-> >          spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
-> > -       devm_spi_optimize_message(dev, spi, &data->read_msg);
-> > +       ret = devm_spi_optimize_message(dev, spi, &data->read_msg);
-> > +       if (ret < 0)
-> > +               return dev_err_probe(dev, ret,
-> > +                                    "Failed to optimize SPI read message\n");
-> >     
-> 
-> I am not really sure under what conditions the 
-> devm_spi_optimize_message() could fail. It might be enough to print a 
-> warning and proceed, but I don't think returning is a problem either.
-
-No. Don't proceed on an unexpected failure whatever it is.  That's
-storing up problems that may surface in a weird way later that is much
-harder to debug.
-
-Jonathan
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC -v2 11/11] cpuset: use partition_cpus_change for
+ setting exclusive cpus
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
+ <20250909033233.2731579-12-chenridong@huaweicloud.com>
+ <7937af93-9652-4032-93c9-7d7d8571c52b@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <7937af93-9652-4032-93c9-7d7d8571c52b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHko6NGcloY_K7Cg--.29687S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWr45tr4UXw48uFyrtF15CFg_yoW5KF48pF
+	18JrW7JrWUJw18Gw1UXr1DXryUJwsrJ3WDJr1DJF1rJF17AF12qr1UXw1vgr4UJw4xJr18
+	JF1UJrnrZFy5ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1aZX5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
-> 
-> Thanks a lot for going an extra mile and taking care of this!
-> 
-> Yours,
-> 	-- Matti
-> 
+
+On 2025/9/16 4:05, Waiman Long wrote:
+> On 9/8/25 11:32 PM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> Previous patches have refactored partition_cpus_change. Now replace the
+>> exclusive cpus setting logic with this helper function.
+> Nit: The term "refactor" usually mean updating the code of an existing function, sometimes
+> extracting out code into new helper functions. In your case, partition_cpus_change() is a new helper
+> function. This is also an issue in some of the earlier patches. I would prefer using phrase like "A
+> previous patch has introduced a new helper function partition_cpus_change()"
+
+Thank you, will update.
+
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset.c | 29 ++---------------------------
+>>   1 file changed, 2 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index 785a2740b0ea..6a44dfabe9dd 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -2562,8 +2562,6 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>>   {
+>>       int retval;
+>>       struct tmpmasks tmp;
+>> -    struct cpuset *parent = parent_cs(cs);
+>> -    bool invalidate = false;
+>>       bool force = false;
+>>       int old_prs = cs->partition_root_state;
+>>   @@ -2595,32 +2593,9 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset
+>> *trialcs,
+>>       if (alloc_tmpmasks(&tmp))
+>>           return -ENOMEM;
+>>   -    if (old_prs) {
+>> -        if (cpumask_empty(trialcs->effective_xcpus)) {
+>> -            invalidate = true;
+>> -            cs->prs_err = PERR_INVCPUS;
+>> -        } else if (prstate_housekeeping_conflict(old_prs, trialcs->effective_xcpus)) {
+>> -            invalidate = true;
+>> -            cs->prs_err = PERR_HKEEPING;
+>> -        } else if (tasks_nocpu_error(parent, cs, trialcs->effective_xcpus)) {
+>> -            invalidate = true;
+>> -            cs->prs_err = PERR_NOCPUS;
+>> -        }
+>> +    trialcs->prs_err = PERR_NONE;
+>> +    partition_cpus_change(cs, trialcs, &tmp);
+>>   -        if (is_remote_partition(cs)) {
+>> -            if (invalidate)
+>> -                remote_partition_disable(cs, &tmp);
+>> -            else
+>> -                remote_cpus_update(cs, trialcs->exclusive_cpus,
+>> -                           trialcs->effective_xcpus, &tmp);
+>> -        } else if (invalidate) {
+>> -            update_parent_effective_cpumask(cs, partcmd_invalidate,
+>> -                            NULL, &tmp);
+>> -        } else {
+>> -            update_parent_effective_cpumask(cs, partcmd_update,
+>> -                        trialcs->effective_xcpus, &tmp);
+>> -        }
+>> -    }
+>>       spin_lock_irq(&callback_lock);
+>>       cpumask_copy(cs->exclusive_cpus, trialcs->exclusive_cpus);
+>>       cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
+> Reviewed-by: Waiman Long <longman@redhat.com>
+
+-- 
+Best regards,
+Ridong
 
 
