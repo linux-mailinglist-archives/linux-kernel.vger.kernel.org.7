@@ -1,149 +1,112 @@
-Return-Path: <linux-kernel+bounces-819602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D856B5A391
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:05:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49F2B5A382
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 50D9A4E10DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06CC92A77E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F7F304BD0;
-	Tue, 16 Sep 2025 21:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C883283145;
+	Tue, 16 Sep 2025 21:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="h5aOGJfg"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hj4HcfEa"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2179F2F9DA4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B64131BCBE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056647; cv=none; b=GbAHYRfDlRrMA4jBIMWDowwPwvt3YUroBg+2cVjfH6PU0hNEw65XeOcFClAcWdVbb1u3UDai6gE9Ro1Tho0002aFWYMXNuXtu4SZf8d4BV/ArC81RCBVAnjfrJ8deMa0/yZc/Q8j2lcf6IY0BtYidmkrP1UuH7YX2N/IY4VQaTI=
+	t=1758056614; cv=none; b=Ns3kB3Gr7PVK4eTyRblHc7DanM61Xz58ll94yWQLSmO7F4pXCvctAE8lfveNkQlxKwUNeoETy7hgA9nux5NHYrYLEUb5t5v6bwPxWXivzMKQ1E1M00Vl7VinOtoMyKVCPZBo10emsbYAmqXxoOMib4jC1MSTEVwhRgBHMRyqo68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056647; c=relaxed/simple;
-	bh=6mdeYyd3hF07QuqGuLzQcOwjnfUK2lpqXDhP/AFlcKY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P/nEbffsP/o4Ag2SccRAWisPsj/YTS84IaknYrKwnP2hFIOhW6Fp5q8ANPuZssqm1t72Iyg5s00F/GwyRnlzV74vqCm1FbrDlB03JDACu/qut53MlvPFy5w+kT2nYcioxRjaURpZTnkMQI47FL80w4H54zipG6/GDffBCVGSeus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=h5aOGJfg; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-621132816c8so2818164eaf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:04:01 -0700 (PDT)
+	s=arc-20240116; t=1758056614; c=relaxed/simple;
+	bh=Hv7Vr+4DmF1NAynwqYk0R8yOmTu+jrbIsDyVpEsF+QA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XeM+mcIkO/Z5KJbuUi1RGco54pNBx+ZROpVgSy35fGPRq1YERlkrXIEnbBz6uyC9wHfM9t8ZJlIvNnpcFYbUfd8cV+OxpLteGUX6GBZnlCJOcqdTpKwqh+B81QqD9cVm2TDhqssd9z8upt4Cw1Gb8LE/YxRxFS1oF081kicKo1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hj4HcfEa; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8a967f3a873so1725809241.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758056641; x=1758661441; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zuUiBdYdOzhT/4QysYZeoKXL89SuD8knZroyb1BNveM=;
-        b=h5aOGJfg4OJRznwjIgshyjYLaAF+hMYWs2h8rTC7TaDYdoJLUvFIiPKPDT1FnSk05W
-         k5oScwJEiM7Hhh9DlpaP7oQ60kOBTD/4J5M544qgooZKiuninpTusKYOmodW2jOFFITx
-         2niLX9GfAwrf+lZisftqj/Lj01B+eO0OtNHssh0dICPNs+N9F+oEZp+P2kV0VeTdUcMh
-         FAvlGHxCy4vqZFfDxegAnAw+6NmM+JYLJ/SIF7LJQ0nQvK1Og57hW5yBFwVdhK0Zm6Z7
-         hfm2AL7nMGa2qDAOUwYxfzXVtjCdVZUPmSwplDKvIhzPfeIhq3BH/ChRmbfXhCyMMaQv
-         CWFA==
+        d=gmail.com; s=20230601; t=1758056612; x=1758661412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E0dXITVgbCSbxBrfxo6QtCTx6YlY24kmhjJHsjw5K1k=;
+        b=hj4HcfEaXOvVG0vNntMttS0ksfjViIyajT5xkMo1GV89Kkg98A6sf6mSyEqgDfDAyA
+         9pdQhswmT9wWGr2+gjKJT/0ywVRCE8bJoEX5lZHO6lhqn8EFM/UaD3AEU2eiSmuGc3L3
+         dVclXaFhQfzxkOqZTYuym5F867eYIgPrCrM4gf8LVSfH20+B/NkVz4YOWX1MxHA+yyWi
+         YHmoRYuWn/AeMlVk/hoAGEDr9lX0I7Jv03ElCX+gtYItBboLe216Qyuc0H645Gg6NGQQ
+         jKn+5WwH4QUe3ZNYJ4ma/pIvtk7KrcB87m1UAJqSDMKwnBh7V90X2S9MINt6TQnqvJIc
+         XG5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758056641; x=1758661441;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758056612; x=1758661412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zuUiBdYdOzhT/4QysYZeoKXL89SuD8knZroyb1BNveM=;
-        b=qu9Lwayp2HqPD3xux17NLMlLh5QS62gucgbk97BCO83kl3AEKpf+9GMSlBwY6mbEl3
-         NDiV3TBrtndHc18/6MGJh637oFZzw/+1SimRX9rvRrghFpQM3Ty2OmL1E6mqqHjZdDLj
-         Puqg7HM08yjY+adUW0emUeJLpscha+QE7FCkmUgOazFo+DvWuybW3P/vOQS01a2dHkqO
-         Pu1CQeJitW5+WMoBxNPesQEtKgje/ZIut+wghIx9Sm1IX4rwSWQVKjuUHVi8GPX8dVKw
-         rDMuvvhANVOoqA1kqML92HVfsCCMXKRqDiy1rXHQenFWhe2/3PdNiDLRMD+O4qjIaKRN
-         7BDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXasJMLP5NSxwTlvI483fuCv5+oVFU+I1zfy5dTQvkCPExTZ7xQB2Kaw1lifCnRWK71XfRY/qVas371L8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBP8yz4TuZa36L69HMuOSVvCqzbwesvGsMLXF6//7iZWMzqhFN
-	LXuWwkJwCoJcyWDhbXNeS87GdbHxsYt68WMx8ukxy7SCVVNU659SAQ/iKgs4gajeSPo=
-X-Gm-Gg: ASbGncvBWuk8XInLnPip0tJgragdeu/zOPZGiXzpyBkd/Oj/gORPgod4a2zkj6TXC9P
-	1qHwdwW5j3WdRJdzgHfBI6bFQZvdh6cP2S01oInNQTaQJTU4kQOrUd1VV0l2KgEcDV04mOXemiy
-	vkhvRzU14F0nCfL3tMY/Zelwrp2xvd/8BgmByW1ifAXa+VOJTYYOEHx/sPaDGsSJlV1+aJGHRXe
-	wuRnL9nEVI/sD4NGTSHz62E47JDt9OIzd7xkxPVP0T+GxSMhaChs+EDuLBMbgTyxCJORrulS0M4
-	pQowJEQmBZzlAfRcwP+ghKBwinbTP9NJg5ZVsgt9MU0NUQoxazu7Tmo83JUIPmuPrktDw1sZaQH
-	c2R52efv7cIQWBBpZ1uP+de5xIhUq
-X-Google-Smtp-Source: AGHT+IEThmTUM++mlzzS2GM17+096Q+59Aps0AMQsj3pnAzcqsCTdD0X+SDwFBXwlrpK1soPiyj0Ug==
-X-Received: by 2002:a05:6808:1302:b0:438:3b69:ab91 with SMTP id 5614622812f47-43b8da9ed09mr8658219b6e.50.1758056641220;
-        Tue, 16 Sep 2025 14:04:01 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:70a1:e065:6248:ef8b])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b8294ac06sm3540044b6e.14.2025.09.16.14.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 14:03:59 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Tue, 16 Sep 2025 16:02:57 -0500
-Subject: [PATCH v2 7/7] iio: buffer: document that buffer callback must be
- context safe
+        bh=E0dXITVgbCSbxBrfxo6QtCTx6YlY24kmhjJHsjw5K1k=;
+        b=gBookEG9+UsVPZfjOihYUhR7W83kuM4H6ZmLarpDttvlUjVSU1I4vphoQ+CRMJRem6
+         qhWm4+SpQDMXprOVgQI0UycjU7N33Q/WFhEMBg3RBJ7TAkmjXfbkCJImQOojKVTyuFF7
+         w3KPRAi+m8JKQ8hSiO18vmN4zg1d/GLtQiGYOjWGKheBwEHJRmKefOdNAyYaJBS5oncY
+         W1RUJXsbndUOuVfarpbs6NPs4D0FNK/OlYRWc9uuth0Z9h5HfK3VM9gVnpx3U20IfKcZ
+         XukTk3D4V9G3Lvn5XaK5eXlTv9ZqLp0tITva4+k09du4aN/XSQtXNGvfQ2ym4xudnlsr
+         zzLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLG84RJGeQMFlRy/Asyk2KELLQSc1vtJ72gZAuKBm9kblioYe53uYcNnRMqCfe3chl1ZzOSJH3WnMXhSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi3gnMnyORDBkErU4BWZhvaIZHIPEdodJgvcVR0ApbGaxAXTfR
+	4Dw0JvLzFdqPc7wBjc5gRGoAffNM57mfuOQNa/PfDwE1Z+IY1KVqKsqCRDGf5iHzMVq7UBFO6vq
+	n4Pyq3csVRolS/Hf+NSXZlA+yUw/xTjk=
+X-Gm-Gg: ASbGncvkuehlXSB4q5G5UznMs5edRXh6sxCWPNHvj7IPNbJOcYXvm8tusKvM03ChwKp
+	bGcUKse5PZW8AefaCWhr5BUNpnT0Jvo8Ei5X8sKh95lyzNFfLtp4qxqblLwjJbUwc/0Nt7Jsusw
+	MtdQuRjOhZlCbTyFPgVFngOHjISuwesHxeamtL8dW/agkJYIsIT0VRp8rSH2rJ2dkwIK5mVPDNY
+	mOo/2502w9+BqcMzCH0Nq/Q2jgClg==
+X-Google-Smtp-Source: AGHT+IFQtjDJJdg2xNwseUwhQKihM75rYX5/lCi3hKIPAIZQBMmRrQBLb8fGXO8jJX1XhSuHopiQoo6saypXCd3uzMM=
+X-Received: by 2002:a05:6122:8cd:b0:53f:e51a:9a4b with SMTP id
+ 71dfb90a1353d-54a16cc2c38mr5877681e0c.10.1758056612104; Tue, 16 Sep 2025
+ 14:03:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-iio-doc-push-to-buffers-context-v2-7-8b17937a6cc7@baylibre.com>
-References: <20250916-iio-doc-push-to-buffers-context-v2-0-8b17937a6cc7@baylibre.com>
-In-Reply-To: <20250916-iio-doc-push-to-buffers-context-v2-0-8b17937a6cc7@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1632; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=6mdeYyd3hF07QuqGuLzQcOwjnfUK2lpqXDhP/AFlcKY=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoydCttq6RvmTZHapP29zuCyinYPpvWDq5o1dGF
- 29WTFK09xGJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMnQrQAKCRDCzCAB/wGP
- wDLUB/92zOe0kO9ppzodI74aYR9FNSaUt/TvOjLFc1GmaR3PblmKWJ4ZOo/YbGDfD9p5xaD08wF
- mtmHDt5X+NYKOGKRIZa+qUXi3MXdQk2Ji9iu6q5zpAAz3+617cJwOX+ZcF4mN+kTotzHnrLQrQb
- FPoL6gIXPKfbYR1tYJ5Cg4eslkpn87OC2Er6I/yNsmKBxcN0lapsQhoddTxjRYDL6ljSJNhWThP
- Foh2qQEJQBHTr1s8Yi9obAjbTXSTwCFXiHRoVQ9DS8lFV8MbIoiGroLYqiDv+/EU6LCEsbVIHU6
- j4xDgvtpohHD2migse5WmWL950+x7kN6VmEHOKWtmlAkdujt
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+References: <20250916-chuwi-panel-quirk-v1-1-ec5c6aa5a663@gmail.com>
+In-Reply-To: <20250916-chuwi-panel-quirk-v1-1-ec5c6aa5a663@gmail.com>
+From: Brett Mastbergen <brett.mastbergen@gmail.com>
+Date: Tue, 16 Sep 2025 17:03:21 -0400
+X-Gm-Features: AS18NWBeu3sYs4iEYelY4vI74bfAl6r_9rqmoGBXDaecCR4uSp61RCjbC0Dv8NU
+Message-ID: <CAOcC6hK++jyPGhTww1CjF+Kf_d_WN3-odDuuHcRzU6z6-YwkeA@mail.gmail.com>
+Subject: Re: [PATCH] drm: panel-orientation-quirks: Add quirk for Chuwi
+ MiniBook X
+To: brett.mastbergen@gmail.com
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document that the callback registered with iio_channel_get_all_cb()
-must be safe to call from any context since it is called from by
-iio_push_to_buffer() which can be called in any context.
+On Tue, Sep 16, 2025 at 2:25=E2=80=AFPM Brett Mastbergen via B4 Relay
+<devnull+brett.mastbergen.gmail.com@kernel.org> wrote:
+>
+> From: Brett Mastbergen <brett.mastbergen@gmail.com>
+>
+> This adds a DMI orientation quirk for the Chuwi MiniBook X which
+> has a display mounted 90 degrees rotated.
+>
+> Signed-off-by: Brett Mastbergen <brett.mastbergen@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+Ah, I see a similar patch was sent for this device about a month ago.
+Only difference is I look for the exact vendor string.  Take whichever
+is preferable.
+https://lore.kernel.org/dri-devel/20250809111200.10086-1-iburaky.dev@gmail.=
+com/
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/buffer/industrialio-buffer-cb.c | 1 +
- include/linux/iio/consumer.h                | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/buffer/industrialio-buffer-cb.c b/drivers/iio/buffer/industrialio-buffer-cb.c
-index 3e27385069edb5b717a4c56e72dff2c0a238fa07..f4ebff9684936365ec179489d9041d8bdbe58738 100644
---- a/drivers/iio/buffer/industrialio-buffer-cb.c
-+++ b/drivers/iio/buffer/industrialio-buffer-cb.c
-@@ -13,6 +13,7 @@
- 
- struct iio_cb_buffer {
- 	struct iio_buffer buffer;
-+	/* Must be safe to call from any context (e.g. must not sleep). */
- 	int (*cb)(const void *data, void *private);
- 	void *private;
- 	struct iio_channel *channels;
-diff --git a/include/linux/iio/consumer.h b/include/linux/iio/consumer.h
-index a38b277c2c02cb85a766d645a046bdfa534db51a..5039558267e4c17b2e09246036d0df352e242d06 100644
---- a/include/linux/iio/consumer.h
-+++ b/include/linux/iio/consumer.h
-@@ -131,7 +131,8 @@ struct iio_cb_buffer;
- /**
-  * iio_channel_get_all_cb() - register callback for triggered capture
-  * @dev:		Pointer to client device.
-- * @cb:			Callback function.
-+ * @cb:			Callback function. Must be safe to call from any context
-+ *			(e.g. must not sleep).
-  * @private:		Private data passed to callback.
-  *
-  * NB right now we have no ability to mux data from multiple devices.
-
--- 
-2.43.0
-
+Thanks!
 
