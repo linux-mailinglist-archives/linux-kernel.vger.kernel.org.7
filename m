@@ -1,135 +1,112 @@
-Return-Path: <linux-kernel+bounces-818253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BF6B58EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF3DB58EC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFFB1B25FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8FC521DCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402C92E4274;
-	Tue, 16 Sep 2025 07:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B89F2E3B18;
+	Tue, 16 Sep 2025 07:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="d8KiUw1P"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="miXOqrnv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4AA2BAF9;
-	Tue, 16 Sep 2025 07:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2912773E9;
+	Tue, 16 Sep 2025 07:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758006664; cv=none; b=g+WJ4WPLidPhzx6iO0LPdcGudxJH4UiK7K2TEqKpQ/VdZCnQe3sYS0IGgTR69EZLJg7aojuERLDOCkqhrhMOOEe91QOOxu4k3mRT2eSfvbPC7ZoraBLt78oMC8Cq/AjZ2Q6of8f4GzUgALAo+qdy4XHgtA/HHnZIhopwBQQEF6g=
+	t=1758006451; cv=none; b=qTOuKYlOQIbXJM4vqjXvtBz8ftNOGXHPUJ77r784NC9XWcZKoMA/63lvr7nXnxRA1Vf6TVi5uJW9awlc6X4D2F2anqcyfHJBXgKnFrc24caBChotkbYVYX2W9cX6mvrsY+qxCCOJeRxbnTQ9GOXWYQinLZIqCoPZVx0GsJZPNmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758006664; c=relaxed/simple;
-	bh=W5ajTpSNMNJWbfWHVcFvQAWx4kBahExAyHsoGBmxcyE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNBU7/9hMLryZ1aXpUBeK9+K0ATMOGXtk/WIH4mpKLzz20hLcaIoyOvCNl07Zz2nnh+ZmsGQe+SKISnhXOFUEr2pk096KJuoXcwDWFL+PqAFQWRWVATbc+2wJiBpK8LifZNsmWl+RtgDbcPqmhh6RNDknuAVGf5DfJwTEqmbTU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=d8KiUw1P; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1758006451; c=relaxed/simple;
+	bh=MEaBnohzWA8YxhLDfM0OxmPLj95mJXNJ+dbbv5pP7jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JVzrMojWC7LR6u24mEJC55LAM/SKW3Lk43KYIVAYdG+Wm2I+M1RR5UxldOQnsquIp1UkNuA4QevbbpMFtDPn5mkNKGjzoRh/LI7j8ieD6PR/w6X9eh3gcJjP6kBcHjk/OxEh8FLicAY0rsNufxCrrkvZEQ3Ge7GdxQelcooYUXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=miXOqrnv; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758006662; x=1789542662;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W5ajTpSNMNJWbfWHVcFvQAWx4kBahExAyHsoGBmxcyE=;
-  b=d8KiUw1PAF0CTxKY5RbvhUlCGQm8bVFyAB2e5GmeVejLCrYvhmI8hFvp
-   3hm5EVkptx7wcYwBFh3jrl5UWsRxYoe2xtkN6BRtZuqoWOOYSVQqZ8Br/
-   UbVEos/3LfxGBDadRawv3RhLgqSGpXy3nc9Nzx2n6FdEG9vnbk9Ov7crG
-   6WNlwaCEFz7iY2hsHVNHIUAewF4jJMLneWDCu3vZAxcCTx1kT9fInruDz
-   4BiMNdhMT9pwBbkjmiHrXvE+mzPxtrN7LkccfCrj0TfIhk3WdvEW/Owil
-   QUhUZmdwkY0rbM/i2zfV06riSuCBEOn8NHO015CBqitmRh1cOACb/M9ze
-   A==;
-X-CSE-ConnectionGUID: IFmucD1jTJGMc+TDfuaTuQ==
-X-CSE-MsgGUID: Rhyib+rKQ7G9UsGeAGA/lw==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758006449; x=1789542449;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MEaBnohzWA8YxhLDfM0OxmPLj95mJXNJ+dbbv5pP7jI=;
+  b=miXOqrnvhdO0QD94v8pZp4rKZtrSuwGmnXOFzCSP4xAHAHSh4vo3kiqZ
+   Cdiq1MyDqQpR3BUuvdGh7f6UhWyyQaNR6J7cOi6U19OofolQssA4nVorf
+   Au7g88zjWnUw4Ic02/wfw6/ngQwbrJQPxcjimk93n5EEm43PwCq0O1+JO
+   Zs8HRo31Lq8ELXLeaGDFfr9ZK4WRD2+3Z24mjnc2Jb0aZN8KRbwJwrxe9
+   ahRxOoYhb3me1vi4f2BX6QhJMgmGffcnOozQk7a65Zb0NIYhvxgDJkS7a
+   KZJi1PMylikWq7m/O5vkwydRMeGm65Sx+bEVnNJ9iPTEhenFOofeuGZwe
+   w==;
+X-CSE-ConnectionGUID: mLxrpapTSseL5lj2F6m3XA==
+X-CSE-MsgGUID: JkYce3gjShyQl0E0qGuE4g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="77718049"
 X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="277928140"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 00:11:00 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 16 Sep 2025 00:10:56 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Tue, 16 Sep 2025 00:10:56 -0700
-Date: Tue, 16 Sep 2025 09:07:00 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: phy: micrel: Add Fast link failure support
- for lan8842
-Message-ID: <20250916070700.qxhnjwy4r3brvdys@DEN-DL-M31836.microchip.com>
-References: <20250915091149.3539162-1-horatiu.vultur@microchip.com>
- <aMgAKIn0YRyxK0Fn@shell.armlinux.org.uk>
+   d="scan'208";a="77718049"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:07:11 -0700
+X-CSE-ConnectionGUID: P4f97KpmQQeTqUgnvYyzdw==
+X-CSE-MsgGUID: dVw3sHYrRPeJtMaDclOjfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="205827322"
+Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:07:09 -0700
+Message-ID: <5afee11a-c4e9-4f44-85b8-006ab1b1433f@intel.com>
+Date: Tue, 16 Sep 2025 15:07:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <aMgAKIn0YRyxK0Fn@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 14/41] KVM: VMX: Emulate read and write to CET MSRs
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-15-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250912232319.429659-15-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The 09/15/2025 13:01, Russell King (Oracle) wrote:
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Add emulation interface for CET MSR access. The emulation code is split
+> into common part and vendor specific part. The former does common checks
+> for MSRs, e.g., accessibility, data validity etc., then passes operation
+> to either XSAVE-managed MSRs via the helpers or CET VMCS fields.
+> 
+> SSP can only be read via RDSSP. Writing even requires destructive and
+> potentially faulting operations such as SAVEPREVSSP/RSTORSSP or
+> SETSSBSY/CLRSSBSY. Let the host use a pseudo-MSR that is just a wrapper
+> for the GUEST_SSP field of the VMCS.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> [sean: drop call to kvm_set_xstate_msr() for S_CET, consolidate code]
 
-Hi Russell,
+Is the change/update of "drop call to kvm_set_xstate_msr() for S_CET" 
+true for this patch?
 
-> 
-> On Mon, Sep 15, 2025 at 11:11:49AM +0200, Horatiu Vultur wrote:
-> > +static int lan8842_set_fast_down(struct phy_device *phydev, const u8 *msecs)
-> > +{
-> > +     if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_ON)
-> > +             return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
-> > +                                           LAN8842_FLF,
-> > +                                           LAN8842_FLF_ENA |
-> > +                                           LAN8842_FLF_ENA_LINK_DOWN,
-> > +                                           LAN8842_FLF_ENA |
-> > +                                           LAN8842_FLF_ENA_LINK_DOWN);
-> > +
-> > +     if (*msecs == ETHTOOL_PHY_FAST_LINK_DOWN_OFF)
-> > +             return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
-> > +                                           LAN8842_FLF,
-> > +                                           LAN8842_FLF_ENA |
-> > +                                           LAN8842_FLF_ENA_LINK_DOWN, 0);
-> 
-> Would this be more readable?
-> 
->         u16 flf;
-> 
->         switch (*msecs) {
->         case ETHTOOL_PHY_FAST_LINK_DOWN_OFF:
->                 flf = 0;
->                 break;
-> 
->         case ETHTOOL_PHY_FAST_LINK_DOWN_ON:
->                 flf = LAN8842_FLF_ENA | LAN8842_FLF_ENA_LINK_DOWN;
->                 break;
-> 
->         default:
->                 return -EINVAL;
->         }
-> 
->         return lanphy_modify_page_reg(phydev, LAN8814_PAGE_PCS,
->                                       LAN8842_FLF,
->                                       LAN8842_FLF_ENA |
->                                       LAN8842_FLF_ENA_LINK_DOWN, flf);
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Yes, I think it looks nicer.
-I will update this in the next version.
-
-> 
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
-
--- 
-/Horatiu
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
