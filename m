@@ -1,81 +1,150 @@
-Return-Path: <linux-kernel+bounces-819556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20A1B5A317
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:31:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D3BB5A325
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE77F460321
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:30:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2651885D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99F6332516;
-	Tue, 16 Sep 2025 20:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FCF3054D0;
+	Tue, 16 Sep 2025 20:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrZWCvCZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V20q9Xo0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F5D32857B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E613705BF;
 	Tue, 16 Sep 2025 20:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758054326; cv=none; b=pm/Hnxsw3aWn/+g3cEFXlm+/wzLtUDqFhk8EtEB7WelCeaTBHGFzS7RAOH7LINSOalDMT2If6GhsB/i5THcotQP4uL+0N/q/Dk47Or6dsgrvgY9cmacjMJn12Ha3uhwtd82VLEjiC7j144mcKrxZEBcW6yk2GRECp8iZ5DuRN2w=
+	t=1758054326; cv=none; b=MyCAsV6gUL+PIc3010s3xoDl8Qa+eRlZTVFjcxot1LrXKXH477LcfRycTJkh8A1ckg0N6O51wzJaKGC3ZXmFINWZPcj7aRoUpO4QA+wu/BGBIBHe8ZC3h65LtQxLaYjQBbkDBay6CIlvOQH4hDr3IPogNvPQaBIywCfHXOVQTxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758054326; c=relaxed/simple;
-	bh=CvgkQu4TUhOa47lyuAbCn4/3+TH4DxnUlcqkKV9Nk4w=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bGe+o9kAS6NhCtxnZujxdbXpiYSFdRT8jx6r2S7H9JnVfFwLlfMAQqoAH9vXeCvFdEZzogfbBjupQeNo5U5VV3vVcESU6ifVhddwYPoOlF93SqTsNb1ajYlHlNZWDFCtT/SCBBjtuZ/SUvX2EtUsgyzHHXWzNky+gN2VUCDG7sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrZWCvCZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B4F6C4CEEB;
-	Tue, 16 Sep 2025 20:25:22 +0000 (UTC)
+	bh=D+uWf9FTrNZ5XT1lEEynxKDh80jQlO2m6fXZN2h5Ado=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MSyw3juPPeGYt/yYZNAXNWfCH2cNBmsD2xp8U/MMtwslsCpbgTls0+zt6MGz/hyjMY+PWB/idZuQ0Vf4OmdYzHzPL/mMQCmNMy4keT8qmBbTweOsjqyDO5PhlaY7Ls7l8Id9ZFYczIedsetBtA52iUOg+fED8UoLtmtuGx6Qr7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V20q9Xo0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 83E3EC16AAE;
+	Tue, 16 Sep 2025 20:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758054326;
-	bh=CvgkQu4TUhOa47lyuAbCn4/3+TH4DxnUlcqkKV9Nk4w=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=QrZWCvCZ0nm3fq3SLqWP96pHJzjZXsfyJW2UTrCEN3WbkyvYtEadE7Ap12cOmzrlV
-	 KL4dUhzrY+/kr77UG0dmgPn6AXMPdAcqoP/80qIGn5Eukm7rkQG+2qDKdCWJq6KvYh
-	 20X8KyIyP6t7qNkFMlndw1ZwhMY3HbYOpLwIH+pCCYgVbBrKP0RwEIBrwGqjn0v7hr
-	 cvdDpUeeM1+tS1LtW+zUYKizxOtmsGIcSo41L+LZFyGBMuOarSp4s2Gj7OOnJsiQqC
-	 2uicdq1weVQv3SDmIGV/bMDYEskyGKp2QhlpfKSN9ys0gELEUvvfQahJKFiwPwwi6v
-	 hOavFbzeHWsww==
-Message-ID: <39d35f3d-6fbc-4cb3-ab80-4e2b275b06c0@kernel.org>
-Date: Tue, 16 Sep 2025 21:25:21 +0100
+	bh=D+uWf9FTrNZ5XT1lEEynxKDh80jQlO2m6fXZN2h5Ado=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=V20q9Xo0lEzJgC99QAWvPWoDp0uogcKMcJnek1L79qqlUGGQ261tuwpDhAOgLsEHm
+	 +/tF95jnMFPm2QpOSoV67ZI5lFw8xviG0H5ygJTmY/jIc0ayFm4qy1Smb92PdWOs3o
+	 ugJ9YsmRmOHAua+SedbO9iv1k+pAu9lHK1bAuIuFvLrPn0i8Ksix1FFXfUpJTH7ZPD
+	 aMe21cQVNlTDpyTi9OT/pOOrdJ1zjAZ+7hhWfI/pJhnP8GcjDuS33zNyDIjA8tDN8N
+	 wZGfAIbRYlpZ26df4gGH5HWGXsJ+uF3r8TxCMPNtqr8VEUk3KspQoASsUrTCH2Xs3J
+	 c+Csr1N5RV1QA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FF1CAC598;
+	Tue, 16 Sep 2025 20:25:26 +0000 (UTC)
+From: Dang Huynh via B4 Relay <devnull+dang.huynh.mainlining.org@kernel.org>
+Date: Wed, 17 Sep 2025 03:25:22 +0700
+Subject: [PATCH 25/25] dts: unisoc: orangepi-i96: Enable SD Card
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH bpf-next 1/2] bpftool: Add HELP_SPEC_OPTIONS in token.c
-To: Tao Chen <chen.dylane@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250916054111.1151487-1-chen.dylane@linux.dev>
-Content-Language: en-GB
-In-Reply-To: <20250916054111.1151487-1-chen.dylane@linux.dev>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250917-rda8810pl-drivers-v1-25-9ca9184ca977@mainlining.org>
+References: <20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org>
+In-Reply-To: <20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org>
+To: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, Dang Huynh <dang.huynh@mainlining.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758054322; l=1432;
+ i=dang.huynh@mainlining.org; s=20250917; h=from:subject:message-id;
+ bh=qcvVxoXavmL/qbncOuYL4/AA9pp1j7YRntSv1snSw4A=;
+ b=TmsiEoRuyNtRCinPmNRJPzsRLAOD+OfUVej7sM4TKuiv/lAlcCXOZO2yuj/YlaqpZKI2qoRoe
+ gli9x6SUlcyCqeLBNQVNnFpfLrzGx9+fwjvYNgu+FokiMeRoJphyvZF
+X-Developer-Key: i=dang.huynh@mainlining.org; a=ed25519;
+ pk=RyzH4CL4YU/ItXYUurA51EVBidfx4lIy8/E4EKRJCUk=
+X-Endpoint-Received: by B4 Relay for dang.huynh@mainlining.org/20250917
+ with auth_id=526
+X-Original-From: Dang Huynh <dang.huynh@mainlining.org>
+Reply-To: dang.huynh@mainlining.org
 
-2025-09-16 13:41 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
-> $ ./bpftool token help
-> 
-> Usage: bpftool token { show | list }
->        bpftool token help
->        OPTIONS := { {-j|--json} [{-p|--pretty}] | {-d|--debug} }
-> 
-> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
-> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+From: Dang Huynh <dang.huynh@mainlining.org>
+
+Since we have a SDMMC controller, we can use the SD card slot on the
+Orange Pi i96.
+
+Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+---
+ arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts b/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts
+index a1d61ef138d12bb3ecb4b24513cc1a7dfbac3107..fbb7b5be62051627e80d940cb5e5ccff9047c13c 100644
+--- a/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts
++++ b/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts
+@@ -6,6 +6,7 @@
+ 
+ /dts-v1/;
+ 
++#include <dt-bindings/gpio/gpio.h>
+ #include "rda8810pl.dtsi"
+ 
+ / {
+@@ -27,6 +28,13 @@ memory@80000000 {
+ 		reg = <0x80000000 0x10000000>;
+ 	};
+ 
++	vdd_sdmmc: regulator-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_sdmmc";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++	};
++
+ 	uart_clk: uart-clk {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <921600>;
+@@ -34,6 +42,18 @@ uart_clk: uart-clk {
+ 	};
+ };
+ 
++&mmc1 {
++	status = "okay";
++	no-sdio;
++	no-mmc;
++	bus-width = <4>;
++	max-frequency = <30000000>;
++	cd-gpios = <&gpiob 4 GPIO_ACTIVE_LOW>;
++	vmmc-supply = <&vdd_sdmmc>;
++	rda,mclk-adj = /bits/ 8 <1>;
++	rda,mclk-inv;
++};
++
+ &uart3 {
+ 	status = "okay";
+ 	clocks = <&uart_clk>;
+
+-- 
+2.51.0
 
 
-Acked-by: Quentin Monnet <qmo@kernel.org>
-
-Thanks!
-
-I'll review your v2 with Alexei's comment addressed for your second patch.
 
