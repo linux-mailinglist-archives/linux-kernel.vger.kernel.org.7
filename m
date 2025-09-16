@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-818710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E9B4B59587
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:51:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E8FB59589
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32812A5C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683FA2A5DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689E330B53D;
-	Tue, 16 Sep 2025 11:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C40305943;
+	Tue, 16 Sep 2025 11:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNad3RKY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEqBsvqP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B945823FC49;
-	Tue, 16 Sep 2025 11:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4787F2877CF;
+	Tue, 16 Sep 2025 11:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023463; cv=none; b=GpVe51IMkJWwXhDi3oJiyBZoRILYho7UAed4I8Ev4HaAvLh3lujg5e17n2vH86+yASbHAv3Yk614puAW0DY1laItTaGyMKe1Tm4Pqa+pkOfyRt7LfJxfC3aR+sYpRx3Ik7JpEqqjzI4an+XGCz1pQoa0uYAiKkE5m1UVd4PzEIg=
+	t=1758023530; cv=none; b=Qt4oKidPrMxGTvMpiwkeSa7G0MhD1h20WCf8HVX5SyLR4ReLKX7/LsAV1AUy64JMx0csuMJPJVJus3zYiPjgmLBj7o2Zf7NCnZYk+/YV2kRQha+Kl6Ceoeo1Zbiij7lyfPz/Rgpq6O5thfZJpsHB2h3vweirlUH+IfgbdSHmGfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023463; c=relaxed/simple;
-	bh=O9kG38pgi0D/E0EHSpH0PQiWWgf3wcmCdMWQGXzMU7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uNY9tN5Vkr8uIxIUHJFAE+6WNleZfvJBbfuvkiNlNE2L2Kvvl6w3puki2ynyLCZ6q8O75b2DL8Yu9GOZA7AM09/fj8eo1bPJNOGPHUtG2pQduk26tcXKVJPmSdk7y4y3+xLRhB1WXLKPlWwzz2LqTUuGxvMcaut6V/K1DqM9qE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNad3RKY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F20C4CEEB;
-	Tue, 16 Sep 2025 11:50:59 +0000 (UTC)
+	s=arc-20240116; t=1758023530; c=relaxed/simple;
+	bh=uJbIiJv24vaUhiW5Rf3jsrKdADpkLVXM9KALYs09blc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=V8mLjveYMnjail3ZoN6553knHndHE4PX448Ach7arh1v5lq6c/HUiiEGHeccrcS9zvVfDQqPgBfLSxD7BkLM4xdht/S/QxY4cAJJRvYAARgPZKDoLxKIwLGNp+Xok4i2PMgJslEcc97xvqV4ReIxLJbFZSDla2PfFQy1/fwXqiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEqBsvqP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20E81C4CEEB;
+	Tue, 16 Sep 2025 11:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758023463;
-	bh=O9kG38pgi0D/E0EHSpH0PQiWWgf3wcmCdMWQGXzMU7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kNad3RKYUNxDWVNVggn8mkMBbzsSSHdr8HOOSsGLVY58B3KHr5YS3dLj8I0vphP+a
-	 rgqq1ZjQLWRFd46s7QHqK5IimfxD9xVsev36qnb6c/tA8hQmQwWWrgk1FLavTJpEaB
-	 PTa9OU9P3icuBmAJ+RzL1nDBxkCEXKv2becKF5A90bUMX1oo9i2m/nI1uW32VPOywC
-	 fKELvj+jwfexhjZLjkMkraO7Tp+Ql3wz1/a1zR7ZKf4geHkIhbPmixJ5Z77sp0GOGW
-	 WxW6pHCSF9Ahvjc68x7wqvTBbxVE/mVFUB4bKWrzkRi0KUMGshGdwC5FWhqox5p7gc
-	 cCFZWkDN4KzYg==
-Date: Tue, 16 Sep 2025 12:50:56 +0100
+	s=k20201202; t=1758023529;
+	bh=uJbIiJv24vaUhiW5Rf3jsrKdADpkLVXM9KALYs09blc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tEqBsvqP+0XFFUiJaDHBDRqlOUHQfvJhmrLmq+ONXPNM77t9YpceYPD1CVO4kFyh9
+	 D64YaTeOUs1IWAQzuWvZjEjMEdT7yC8buvEIdHBIthZILoFPplvgyf+WKYl36jXjPl
+	 mInJ/AbSPN8gJAVKyewZwV+RgdI1nupdKBkhH6tOH65IMgt7gp5UFDn3bRbgCEaXPB
+	 K5u3wSvpoj/8ugvoEsXVof7kLsCbQbUU2IM5LsgDhz0qWktHSxsyjzdWyNRvJff73j
+	 1mgDF5RYsyXXARAFxzQUT2PmMLybOllhqM/lLKOhsPv05mVlU06csNDwyun74vQDQr
+	 0Jz6hXPbp5VQQ==
+Date: Tue, 16 Sep 2025 12:52:05 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Alex Elder <elder@riscstar.com>, lgirdwood@gmail.com,
-	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mat.jonczyk@o2.pl, dlan@gentoo.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, linux.amoon@gmail.com, troymitchell988@gmail.com,
-	guodong@riscstar.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v13 0/7] spacemit: introduce P1 PMIC support
-Message-ID: <c8bcfff9-9d2a-426d-9df8-100efd2af64f@sirena.org.uk>
-References: <20250825172057.163883-1-elder@riscstar.com>
- <175690199980.2656286.5459018179105557107.b4-ty@kernel.org>
- <ec882a78-9604-45b1-9405-8f2f958f307c@riscstar.com>
- <7aba368e-709b-49b0-b62c-f2f8250c8628@sirena.org.uk>
- <20250916084229.GG1637058@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Xin Li <xin@zytor.com>
+Subject: linux-next: manual merge of the kvm-x86 tree with the tip-fixes tree
+Message-ID: <aMlPZcYlk7hRlMkE@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,48 +58,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CsiSrB0XCw5iECYx"
+	protocol="application/pgp-signature"; boundary="o++B5AeyijXALTFS"
 Content-Disposition: inline
-In-Reply-To: <20250916084229.GG1637058@google.com>
-X-Cookie: The people rule.
 
 
---CsiSrB0XCw5iECYx
+--o++B5AeyijXALTFS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 09:42:29AM +0100, Lee Jones wrote:
-> On Thu, 11 Sep 2025, Mark Brown wrote:
-> > On Thu, Sep 11, 2025 at 11:36:41AM -0500, Alex Elder wrote:
+Hi all,
 
-> > > How should these two patches be merged?  Mark has reviewed the
-> > > regulator patch 3 and Alexandre has acked the RTC patch 4.
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-> > We'd both have been expecting them to go via MFD.
+  arch/x86/include/asm/cpufeatures.h
 
-> Why?  I don't see any dependencies between them (usually a shared MFD
-> header-file).  If there are no deps, it should be taken through its own
-> repo, no?
+between commits:
 
-I used to just apply things but at some point Linus complained about
-cases where the MFD ended up not getting merged (missing the merge
-window or whatever) so I've been treating them like they had an actual
-dependency.
+  2f8f173413f1c ("x86/vmscape: Add conditional IBPB mitigation")
+  e19c06219985f ("x86/cpufeatures: Add support for Assignable Bandwidth Mon=
+itoring Counters (ABMC)")
 
---CsiSrB0XCw5iECYx
+=66rom the tip-fixes tree and commit:
+
+  3c7cb84145336 ("x86/cpufeatures: Add a CPU feature bit for MSR immediate =
+form instructions")
+
+=66rom the kvm-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/x86/include/asm/cpufeatures.h
+index b2a562217d3ff,8738bd783de22..0000000000000
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@@ -495,8 -496,7 +496,9 @@@
+  #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TS=
+A-SQ */
+  #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TS=
+A-L1 */
+  #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers usin=
+g VERW before VMRUN */
+ -#define X86_FEATURE_MSR_IMM		(21*32+14) /* MSR immediate form instruction=
+s */
+ +#define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-u=
+serspace, see VMSCAPE bug */
+ +#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring C=
+ounters */
+++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instruction=
+s */
+ =20
+  /*
+   * BUG word(s)
+
+--o++B5AeyijXALTFS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJTx8ACgkQJNaLcl1U
-h9BVtAf/Vdh8eegOI/zDdzbexE8BWvzGsLLj34YbPnkG9avqAWDdyOGlUm7qZ7dD
-gB+EXJIgXSb/6TaCBjLAgBNzsLI1B4V90Se36dcaypQXvhfZaVE6a/ASWlkIMsse
-sJN80MRTL3ycen6usUT19d43eP0GSoXOolHECjE6iZ7lGoijBNvNJf4RTIRzAEKY
-tl5AsUWUcGeNXhMvANijktnE4+kZOq/bqe6CY/qrBuSi4Ftv6gSzFwoZ0RP+GhnZ
-nDh9KEbF1AR00hzX+JnjeDDRyQupVDgf+XbJl/9hFIG4glOsERztZ6LmB77twMIF
-rIInm45SJIFTn6x7WaD9kMxf4Gkhww==
-=B/MB
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJT2QACgkQJNaLcl1U
+h9Abywf8Cx3bVmLRE6DmhIYhL3zv0Kx2o7krQsdmmt2Zb29EDLufknvHmgVw6cTx
+1EwvDqxx0OaynKFyVs7VswIfEZw416laH6Q0+4/j+AvAUBHApi3Quocd6hMo7WpY
+Zg21cGBS7wkiNdAbQqb8mIp/56WCC72J2Scm16hml7XKBSSTJOcMYqCwV8MI/WUw
+IMweaQL19hL3uKDHUPD2WWEtwIseJ64XoF97cOSys19IDcrFgww7qgHkmOXuGY4S
+NkyuGg4sZtS+7tzQylSf6Vkzydm9EN9mzLQGpRieZ/r6OlUUckcnjFLibIJ3em0M
+xSPQJ0n0ZVrydUjgD/CbNbZp+APpXQ==
+=Or9m
 -----END PGP SIGNATURE-----
 
---CsiSrB0XCw5iECYx--
+--o++B5AeyijXALTFS--
 
