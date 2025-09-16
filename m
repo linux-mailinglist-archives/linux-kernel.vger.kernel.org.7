@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-818075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC384B58C64
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:35:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BECB58C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B973B6C73
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:35:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F5077A690D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2CD264A60;
-	Tue, 16 Sep 2025 03:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21762275105;
+	Tue, 16 Sep 2025 03:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZgVIllP7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCaLOGwZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6620C260565;
-	Tue, 16 Sep 2025 03:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932C260565;
+	Tue, 16 Sep 2025 03:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757993719; cv=none; b=Zh4JHLwLla9WngQ4GPc+yqlffKEpO0KtWiasPzOLPt5TxO9g0XnSJCigm+W6XEoaKOMB1oPp7MyA23BULVNBVOiNUYGigoKezZCG055CwHvvHswpW4EcOaXZ/orKpfJPibgI7ykqkZHncsOVrr/CLPnEUJKDbSuqgo4t0RL7dZ4=
+	t=1757993722; cv=none; b=goWYHFCyVmogFHcKcWcGtJMwZ+v40TO4xbpcixiytVXzqTr+Gj1o242v2tTIttK5isea7DTsD2V3q2cduxcA/3CMpJQT3k0BaYvVqlYIl+ivP7nLAnR4akJQBZK2e7PhIlvuRHMXVN/MhtBKOt9/SEANc2y2IrW4ELPgWxRYpsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757993719; c=relaxed/simple;
-	bh=yq6FzsyzX8HDFFWIsvaokYnQzl9M5W1Jr+HzsSN6nWg=;
+	s=arc-20240116; t=1757993722; c=relaxed/simple;
+	bh=AfFc3OpSjbhPeNbz+Yb9iOakhYwHCt/NFSR70/mcjZU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A4tJAOYHP1i1B/60vg/xjbYLeUrqs96EJQKelV67/mPHwtQU1H0lmT1MQ9MOLU1uQ0AtYMTlO1WfYEQOvy3EY0WTX0BYIBlQyJwkeLXFCltICBnWG1fXwgIaVnK850PEer6thQt1N7P7Pczb8Zj8WNWZUPqbsRif5yO0nfqD9aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZgVIllP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D41C4CEF9;
-	Tue, 16 Sep 2025 03:35:18 +0000 (UTC)
+	 MIME-Version; b=RgxWpPgRA3A2oAMNeDU4yYpE0hkbv1A1TeyPdUMjVFhP4443AuPi0j3ONrSVPq1/42pCbBtj3kTsGNOoQ8SH7SO4RV7wzDPec22FE/OMLnJLBo99dwDC57peDEsdqz1mISEuiT1xIPGc4Ys7sYkS1ReAK/dPA00o9ug2U0tjniw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCaLOGwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE366C4CEEB;
+	Tue, 16 Sep 2025 03:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757993719;
-	bh=yq6FzsyzX8HDFFWIsvaokYnQzl9M5W1Jr+HzsSN6nWg=;
+	s=k20201202; t=1757993720;
+	bh=AfFc3OpSjbhPeNbz+Yb9iOakhYwHCt/NFSR70/mcjZU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZgVIllP7jG1t5xaNp6Ej7+6h6D0S3fE4uC/XLFrEWCBoHupYxjo9jV8rDMtz0S3LQ
-	 nSZfP4F1iftVGRQFLXoEfzfEu6hrCwigUaTVghy+Uh2475SNcT6Vc+ZaBN19ZR1F7q
-	 EH9fdMvVUtRXl8y01N9V8dL0SoALaK3UjU3OBTnN4dA7SiZvo/f6g4ZUOpWgRx8HZO
-	 j4gSlqY+X6drLgbfTvW7KyNnpbH/6dU1S6yy16KXPRd92YW5bNuTuSRb95+gx1XoQh
-	 xIcz6dCNGllxAKbbucMBlLLCZTKCiaAsrI0OouakMAihQ0vW/nF68rW7qsF81YRvP4
-	 kWSCCN3mKRzzw==
+	b=iCaLOGwZMAAJUlm+iZk8xywaYfHX/rCIdKmJ0AenkSvV/KiDRTAceiXlRsY9M6iVV
+	 T8LNEoolqh6ge7VDc6/k7bzJi3vckF6xt/TBebnEU5PvB2Oty5fJzrOVZju5FXG2Km
+	 BVVtijmUVBPg8wgA1z3ID0USW3grfC7+XHZXTjAuB7xMGKRG2E5BjK9PF78HnlIuKF
+	 6pRTFaxvX10IxERc8GeQi30SaP5AvT7BH0twMDd9Dg3fxuT0SlLv+htgCIuBJn+Ewb
+	 fcbVv1jlhhS+GqB7Po4dt8YdoOHZ/nk1euOotZUHBPBCJAC9lCsJepc+s4YRrzeNow
+	 GR/ShJkmHhW9A==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -47,9 +47,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 2/7] mm/damon/stat: use damon_initialized()
-Date: Mon, 15 Sep 2025 20:35:06 -0700
-Message-Id: <20250916033511.116366-3-sj@kernel.org>
+Subject: [PATCH 3/7] mm/damon/reclaim: use damon_initialized()
+Date: Mon, 15 Sep 2025 20:35:07 -0700
+Message-Id: <20250916033511.116366-4-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250916033511.116366-1-sj@kernel.org>
 References: <20250916033511.116366-1-sj@kernel.org>
@@ -61,56 +61,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DAMON_STAT is assuming DAMON is ready to use in module_init time, and
+DAMON_RECLAIM is assuming DAMON is ready to use in module_init time, and
 uses its own hack to see if it is the time.  Use damon_initialized(),
 which is a way for seeing if DAMON is ready to be used that is more
 reliable and better to maintain instead of the hack.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/damon/stat.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ mm/damon/reclaim.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/mm/damon/stat.c b/mm/damon/stat.c
-index 87bcd8866d4b..c4fbd8cfa5eb 100644
---- a/mm/damon/stat.c
-+++ b/mm/damon/stat.c
-@@ -214,8 +214,6 @@ static void damon_stat_stop(void)
- 	damon_destroy_ctx(damon_stat_context);
- }
- 
--static bool damon_stat_init_called;
--
- static int damon_stat_enabled_store(
- 		const char *val, const struct kernel_param *kp)
- {
-@@ -229,7 +227,7 @@ static int damon_stat_enabled_store(
- 	if (is_enabled == enabled)
+diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
+index 590f9d6c55ef..7ba3d0f9a19a 100644
+--- a/mm/damon/reclaim.c
++++ b/mm/damon/reclaim.c
+@@ -349,7 +349,7 @@ static int damon_reclaim_enabled_store(const char *val,
  		return 0;
  
--	if (!damon_stat_init_called)
+ 	/* Called before init function.  The function will handle this. */
+-	if (!ctx)
 +	if (!damon_initialized())
- 		/*
- 		 * probably called from command line parsing (parse_args()).
- 		 * Cannot call damon_new_ctx().  Let damon_stat_init() handle.
-@@ -250,12 +248,16 @@ static int __init damon_stat_init(void)
- {
- 	int err = 0;
+ 		goto set_param_out;
  
--	damon_stat_init_called = true;
+ 	err = damon_reclaim_turn(enable);
+@@ -372,8 +372,13 @@ MODULE_PARM_DESC(enabled,
+ 
+ static int __init damon_reclaim_init(void)
+ {
+-	int err = damon_modules_new_paddr_ctx_target(&ctx, &target);
++	int err;
+ 
 +	if (!damon_initialized()) {
 +		err = -ENOMEM;
 +		goto out;
 +	}
++	err = damon_modules_new_paddr_ctx_target(&ctx, &target);
+ 	if (err)
+ 		goto out;
  
- 	/* probably set via command line */
- 	if (enabled)
- 		err = damon_stat_start();
- 
-+out:
- 	if (err && enabled)
- 		enabled = false;
- 	return err;
 -- 
 2.39.5
 
