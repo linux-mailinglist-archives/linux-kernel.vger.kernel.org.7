@@ -1,81 +1,101 @@
-Return-Path: <linux-kernel+bounces-817973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2F4B58ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:10:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED781B58AE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1053ADC64
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D93D17E53A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1561E1C02;
-	Tue, 16 Sep 2025 01:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6tEYVOR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0870B1E5714;
+	Tue, 16 Sep 2025 01:10:31 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E661397;
-	Tue, 16 Sep 2025 01:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9981C84C0;
+	Tue, 16 Sep 2025 01:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757985018; cv=none; b=X0oll3IFaeuIMsAYyOMCIR+6GkTJvl+hU51Nqo0ItmEER5bYgwEJMXAwNpEc0ZrYzC++305GkJq/ovgp+yljIzkzILFV+WxjnNWmwB7F5Ux493yIexzxvLBkeiULK40bBYUMhrWRpZpa9wIH6hLnHKdYzRVwP5qvVXiBjRkIT9U=
+	t=1757985030; cv=none; b=kk6OtZiC3/KuE9W6M4YJW0XI+FVsZYP85aXG8DNXEeRSQSWgHxuDhh57A0Pqr5Rmd7MM9Hbp60LjtwAiew021rv+2poRqacu57k+XIaoN4jJgDKKCom1AHDNS8+hhqNEgPwRwxrLo1Uk+yTl1eoggeRA26CffS4Wcgm+6INpU6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757985018; c=relaxed/simple;
-	bh=kOJRebOyNrjtGQTHYFxOMmCbyn7l6GlPyxXq/vEITR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=muOHVnhK44J5IovOEeEHMgTr+I24xRzgNNgDnocwo702Av7TZYHMI4rUuk0B4Enr3TWBWy+lMElSOB0bNKWWbmRgGs8h0XF7UlEfNR80kWJsM3ik58rSTI16TqAf/aZtGFkqcxr6FigtToqKFkS3Tca0CrJaMudmPsPkV+wguMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6tEYVOR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C380C4CEF1;
-	Tue, 16 Sep 2025 01:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757985017;
-	bh=kOJRebOyNrjtGQTHYFxOMmCbyn7l6GlPyxXq/vEITR4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b6tEYVORKtq5k8fBdicdRDr13J9nfXjirDWwjUxutxLGZttb4HmFdNQQydUVcDyLy
-	 r+5vv/+//odchuC6QLnJkrA5DCA3YDxtcPW0ZbSLZxXs3XguLmODL2P1qEkmiU4/HQ
-	 FMoLTLPmuH6q5nOnvfTJIP1RJJEiJokgQqm5Jmnol4xAVAFWKyjMT1kzVp2e1H5unA
-	 DEfazjPPfnP1m30pw4QZTjsv/LtOGH0Fm/ynrby6itxOuDC6yD2HX1aeDKleqwr5Di
-	 QFD7sDZ+jTKkfe0enM/dY+BTkM9Df3RI7utZHpJeiq1HMxYHgMb/Gd+5qqF+c42rhv
-	 5CuQ5ZO3Xv1Sg==
-Date: Mon, 15 Sep 2025 18:10:15 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Felix Fietkau <nbd@nbd.name>
-Subject: Re: [PATCH net-next] ppp: enable TX scatter-gather
-Message-ID: <20250915181015.67588ec2@kernel.org>
-In-Reply-To: <20250912095928.1532113-1-dqfext@gmail.com>
-References: <20250912095928.1532113-1-dqfext@gmail.com>
+	s=arc-20240116; t=1757985030; c=relaxed/simple;
+	bh=y3MeIsefnG5tLWf7LJp6Nrk2brtQsFgp+68E4kEaiDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JxwRiwWESSco8z4jN1unpFcjV0QBuVO4vEs7pRE3K+Gbce/NVPWumYr4whyM7Zb3BUg+H7UqgVghv8R3uL9R8o0+uAX9VTLHEcH1DG5BA/BA+pqIrwlpwd6Z1C1FdzRgU1pc2P/RAy4eA/y3XoMd2D2/Ekvb2IuILMoCCeu/4iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cQkJP1973z2VRcm;
+	Tue, 16 Sep 2025 09:07:01 +0800 (CST)
+Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
+	by mail.maildlp.com (Postfix) with ESMTPS id 495251400CB;
+	Tue, 16 Sep 2025 09:10:24 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
+ (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
+ 2025 09:10:23 +0800
+Message-ID: <bdc702db-a898-4b92-bc5f-db802fe235b5@hisilicon.com>
+Date: Tue, 16 Sep 2025 09:10:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PM / devfreq: hisi: Fix potential UAF in OPP handling
+To: Pengjie Zhang <zhangpengjie2@huawei.com>, <myungjoo.ham@samsung.com>,
+	<kyungmin.park@samsung.com>, <cw00.choi@samsung.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<zhenglifeng1@huawei.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
+	<linhongye@h-partners.com>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>
+References: <20250915062135.748653-1-zhangpengjie2@huawei.com>
+Content-Language: en-US
+From: Jie Zhan <zhanjie9@hisilicon.com>
+In-Reply-To: <20250915062135.748653-1-zhangpengjie2@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemr500004.china.huawei.com (7.202.195.141)
 
-On Fri, 12 Sep 2025 17:59:27 +0800 Qingfang Deng wrote:
-> When chan->direct_xmit is true, and no compressors are in use, PPP
-> prepends its header to a skb, and calls dev_queue_xmit directly. In this
-> mode the skb does not need to be linearized.
-> Enable NETIF_F_SG and NETIF_F_FRAGLIST, and add .ndo_fix_features()
-> callback to conditionally disable them if a linear skb is required.
-> This is required to support PPPoE GSO.
 
-Seems a bit racy. We can't netdev_update_features() under the spin lock
-so there's going to be a window of time where datapath will see new
-state but netdev flags won't be cleared, yet?
 
-We either need to add a explicit linearization check in the xmit path,
-or always reset the flags to disabled before we start tweaking the
-config and re-enable after config (tho the latter feels like a bit of 
-a hack).
--- 
-pw-bot: cr
+On 9/15/2025 2:21 PM, Pengjie Zhang wrote:
+> Ensure all required data is acquired before calling dev_pm_opp_put(opp)
+> to maintain correct resource acquisition and release order.
+> 
+> Fixes: 7da2fdaaa1e6 ("PM / devfreq: Add HiSilicon uncore frequency scaling driver")
+> Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
+> ---
+>  drivers/devfreq/hisi_uncore_freq.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Pengjie,
+
+Yeah dev_pm_opp_put() should be after dev_pm_opp_get_freq().
+Thanks for spotting this.
+
+Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+> 
+> diff --git a/drivers/devfreq/hisi_uncore_freq.c b/drivers/devfreq/hisi_uncore_freq.c
+> index 96d1815059e3..c1ed70fa0a40 100644
+> --- a/drivers/devfreq/hisi_uncore_freq.c
+> +++ b/drivers/devfreq/hisi_uncore_freq.c
+> @@ -265,10 +265,11 @@ static int hisi_uncore_target(struct device *dev, unsigned long *freq,
+>  		dev_err(dev, "Failed to get opp for freq %lu hz\n", *freq);
+>  		return PTR_ERR(opp);
+>  	}
+> -	dev_pm_opp_put(opp);
+>  
+>  	data = (u32)(dev_pm_opp_get_freq(opp) / HZ_PER_MHZ);
+>  
+> +	dev_pm_opp_put(opp);
+> +
+>  	return hisi_uncore_cmd_send(uncore, HUCF_PCC_CMD_SET_FREQ, &data);
+>  }
+>  
 
