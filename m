@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-819680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC55B5BEF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:05:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C20B5BEFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 00:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2D61BC24BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8088A7B316F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9642B285077;
-	Tue, 16 Sep 2025 22:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D012DC34D;
+	Tue, 16 Sep 2025 22:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TmB0SquX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="A8q7tEap"
+Received: from mail-vk1-f225.google.com (mail-vk1-f225.google.com [209.85.221.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5398021E098;
-	Tue, 16 Sep 2025 22:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40DE26773C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758060326; cv=none; b=K66ERRL8I4bs3DiqUl6bo7AOheRGQC5rOPcZNfiy3ZUQe59XCljsV8uS4UJ/wK2Yb2I2g6/KXFp/votnguyBfndockW6F16506Kb7vqCZBdanaw8eTNaJnHlzsPKO6JpjlhBt6z+QI6gHhKXdaCOPO9For/82ChBK7vpvrCJ5o0=
+	t=1758060372; cv=none; b=SYjEYlsp7qSO7ONlL/iDMq6PEv7rQhbGOcCVnbFWZNyIX3nsPkzgdyVHJdUaxh0W/eOXL5QEWFZVH17e2nRW966Y+jiH7R8DchZYVBWZKMG6uEZGtZV/LC7Bo58Rplc8FcbwBpMB12ztz6dXYhwvUGprs3IwxDpskyTTu8bBFHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758060326; c=relaxed/simple;
-	bh=huuM+ARkPDCxyOXO1vNoTClH0iOFBCoWPzK9y9RCrzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gO03W/judNfB0yvPovqdGNZ2C5HbjvAp1xE5N4JC7slo9zCxwcnqOEI43/aVYcaL/rk93WESWLs2QibSG7W5jFilbDhlUjVWNTqyXlWH+Ecbt9Acyw1+f1KFfa4TQt28BBqk6IpJKhn+5hp4G2MVc6L4XM95jSGrr5QTRxl1JdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TmB0SquX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0NhlOmwwkbZxCW85MLAxOa0IFUPYAvjNPwpAMzd4f7U=; b=TmB0SquXq7T6jSiGvoN6t1GMKP
-	WCDhj8wDFT/A5PtG/BREIkNIGFYYAxh0o98TF9TGgB45iejGzcgjHgrDRf8QbExubYbvnSsGTo7iM
-	HkqW4BWHrciZDw7mdTmFDRUGMUNxD6s20rxchpp0SM9C518HluqC8mgPS09hTXWLXCuo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uydnP-008cU8-I7; Wed, 17 Sep 2025 00:05:07 +0200
-Date: Wed, 17 Sep 2025 00:05:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rebecca Cran <rebecca@bsdio.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
- ALTRAD8 BMC
-Message-ID: <cc00cc74-778f-45ae-b48f-be26c91f78c7@lunn.ch>
-References: <20250911051009.4044609-1-rebecca@bsdio.com>
- <20250911051009.4044609-3-rebecca@bsdio.com>
- <58a092c5-5dd0-4718-831a-e25ecb184087@lunn.ch>
- <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
- <74e68c53-2696-4f86-97d3-c0b0a74d4669@lunn.ch>
- <92bcdac9-44b1-4fc8-892a-01ef0ed0b7e0@bsdio.com>
- <3f5e82ec-d96e-4258-b117-9876313f5402@lunn.ch>
- <e9b0d9c8-9117-4c75-93a7-1c334d823d99@bsdio.com>
+	s=arc-20240116; t=1758060372; c=relaxed/simple;
+	bh=0T3RfCRDcnpozJXeQUuhKRw9ET2REuSg2YGW2FlpbJ0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U7aDPvVbqmMJyZFFXT0r/O9PA1AqmBUUoyZ/gQhMdBVdSpUhpaI20zJTd5xzVIwCVg3GG+ItPg/Z/Z9uUkCdFtLfRsZeTTFIVL/9OpMknCMb25g4uH5j+R+nCD0UiiW1/bQYutV7TbZMeE/SyfLgmuSNSgfukCJPnYyHn83QDEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=A8q7tEap; arc=none smtp.client-ip=209.85.221.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-vk1-f225.google.com with SMTP id 71dfb90a1353d-54a1bef404fso3319104e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:06:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1758060370; x=1758665170; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyhEptnkjYKvTtDaCmbO0qvaJj1u/0HzrshZ6BHXL2g=;
+        b=A8q7tEapTkZQ1Ew071AOO8E5XBAjEx6WJ2lhrI3lsktwlpFOlHH8CnF6+F+xVWW/hU
+         SD572Aw2BbHYlzptdVQd0ml3K3/+1QGxCcqtworHLXCTPY9H6l4guQqRj6eTzuXD6gHC
+         tQm3OR2zO1aZv/Y+Y7BAZNm9YzHq4K1BJmMx28IReb1hh2WFC5XHasrqXQRYzZVv3Ci2
+         yqQCdZi461OAPBAovgoI5BeAy9AuyM+F5g5awD72cRive27GwUclALcV/kHUKDUtMR5d
+         2iMos0p1GaGm0jvym6/aEShSvDQiG8H6QfYLqWZgnGRij6MXssJb99y3aUS3II4I2fcG
+         KAEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758060370; x=1758665170;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oyhEptnkjYKvTtDaCmbO0qvaJj1u/0HzrshZ6BHXL2g=;
+        b=QQ5tM3yDbBPmwunVGPfIqdmjvSUtIPBimw0pYLTh5QnzitdakItupiv/PrpOfeUagg
+         C79BmE2CH6kF4X6U2MNtqBmB5GF0cX+YtwfdR7kC5ulEKYAJMuhmIiGXRIm6HMmUBNx7
+         IDhBtJM/OYDsbp1k3y0fW0wROQ87/Xmt+pRqTnBZfHXN4FgdRnUqTH6wqEMZC7vfEbOv
+         WrioehI7AL0LFnHSPDMnDSSmPxatTVL7dJ229wcLHdofYcUoNwkPZKOnLzKNMWWUK+3M
+         eP/jAzmrz8G+PFbefXpoERiN2nB3ptH9e6fCKh8JMQhugiSaROEH03T5HND7IBVp35Hy
+         C/9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ1+Xnzpcy2aWHfuYJuZtG578LROt1FGhN+a7WaosPtpDIWlTYIFX78Rs7UCEVTMoZ7PLTQ4yWUvIB/Bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLbJLCXiBU8lrwOvwHasjkkvXRzUNcof+QKO8ws2ktgB0tXUEE
+	4iJ0GIsCXuYWlZumpkwAZTwCRRnkqU6OSnf5oY8iA4fUzb7qH58j+Nn7KBpEr2+7M+7j2a8HJ0M
+	okGsqbXrysVN/q1e9t5ofwP/oD77u/Ihavblm
+X-Gm-Gg: ASbGncs1GXZ8pT6ReLWRfSjey3M8XlCyE1n2e4TlaS/BwUn9lSbWdF4WC5hViGEIpvM
+	3glieFVm4BSmCtT+TTlECrnEvgdATBP1tyNHdqCEL4KUgDK8mYpQ1ayEAvIiaB36Pj4yl1/cx+x
+	3nrCoR8y8w0CyOYSj/rVs3sRAwTmjpS4eqC8CWKtFUPsi6tQQlehe7NLdU15/U89A5tH9HBRXBa
+	2UMmDJrh6N6WnsiEkhGu4p4tNnfJfM5QkaOS/RNfx/EbPGYT5VUsKNbUlADeELlZnr/KKafDyzH
+	reAZXb1P6SeuXYnlU/gUqwmN21HaTV93Xh0jrRlFEg0MUdIrQjO9A4Kg8h94lPnSiJlxUAToQg=
+	=
+X-Google-Smtp-Source: AGHT+IEzFWi2OlWmB6cbeEaJlNpwq3SZVqUGZX2zuzQBFkjFOWfMIWTfg3D9KsLmzXHUiHz5L79IAjQs2mnu
+X-Received: by 2002:a05:6122:1795:b0:540:68c4:81a2 with SMTP id 71dfb90a1353d-54a60b8b059mr36111e0c.14.1758060369613;
+        Tue, 16 Sep 2025 15:06:09 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.128])
+        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-54a0d1b95a0sm1704081e0c.2.2025.09.16.15.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 15:06:09 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-ushankar.dev.purestorage.com (dev-ushankar.dev.purestorage.com [10.7.70.36])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id C61A4340853;
+	Tue, 16 Sep 2025 16:06:08 -0600 (MDT)
+Received: by dev-ushankar.dev.purestorage.com (Postfix, from userid 1557716368)
+	id B6B3FE41646; Tue, 16 Sep 2025 16:06:08 -0600 (MDT)
+From: Uday Shankar <ushankar@purestorage.com>
+Subject: [PATCH 0/3] selftests: ublk: kublk: fix feature list
+Date: Tue, 16 Sep 2025 16:05:54 -0600
+Message-Id: <20250916-ublk_features-v1-0-52014be9cde5@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9b0d9c8-9117-4c75-93a7-1c334d823d99@bsdio.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAELfyWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0Mz3dKknOz4tNTEktKi1GJdA/PENJNUYyPDVNNEJaCegqLUtMwKsHn
+ RsbW1ANaEpHJfAAAA
+X-Change-ID: 20250916-ublk_features-07af4e321e5a
+To: Caleb Sander Mateos <csander@purestorage.com>, 
+ Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Uday Shankar <ushankar@purestorage.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Sep 16, 2025 at 03:22:04PM -0600, Rebecca Cran wrote:
-> On 9/16/25 13:07, Andrew Lunn wrote:
-> 
-> > Now, it looks like all other aspeed-g5 boards also don't link to the
-> > PHY. But the driver does seem to support adding an 'mdio' node within
-> > the ethernet node, and listing the PHYs. Something like:
-> > 
-> >         mdio {
-> >                  #address-cells = <1>;
-> >                  #size-cells = <0>;
-> > 
-> >                  ethphy0: ethernet-phy@0 {
-> >                          reg = <0>;
-> >                  };
-> >          };
-> > 
-> > And then you can add a phy-handle to point to it.
-> > 
-> > Then the question is, did Aspeed mess up the RGMII delays for g5? You
-> > can try phy-mode = 'rgmii-id' and see if it works.
-> 
-> I can't get that to work, with either 'rgmii-id' or 'rgmii'.
-> 
-> It says "Failed to connect to phy".
+This patch simplifies kublk's implementation of the feature list
+command, fixes a bug where a feature was missing, and adds a test to
+ensure that similar bugs do not happen in the future.
 
-That probably means i have the wrong reg value. Try 1, 2, ... 31.
+Signed-off-by: Uday Shankar <ushankar@purestorage.com>
+---
+Uday Shankar (3):
+      selftests: ublk: kublk: simplify feat_map definition
+      selftests: ublk: kublk: add UBLK_F_BUF_REG_OFF_DAEMON to feat_map
+      selftests: ublk: add test to verify that feat_map is complete
 
-Or put a printk() in phy_find_first() to print the value of addr.
+ tools/testing/selftests/ublk/Makefile           |  1 +
+ tools/testing/selftests/ublk/kublk.c            | 32 +++++++++++++------------
+ tools/testing/selftests/ublk/test_generic_13.sh | 16 +++++++++++++
+ 3 files changed, 34 insertions(+), 15 deletions(-)
+---
+base-commit: da7b97ba0d219a14a83e9cc93f98b53939f12944
+change-id: 20250916-ublk_features-07af4e321e5a
 
-	Andrew
+Best regards,
+-- 
+Uday Shankar <ushankar@purestorage.com>
+
 
