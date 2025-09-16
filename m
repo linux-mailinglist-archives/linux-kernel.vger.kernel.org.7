@@ -1,104 +1,128 @@
-Return-Path: <linux-kernel+bounces-819076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1CBB59B07
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:56:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94341B59B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D677B3598
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380172A31CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C9D34DCEE;
-	Tue, 16 Sep 2025 14:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5ED340D9C;
+	Tue, 16 Sep 2025 14:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UE5/zGQT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wK3l/APS"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CF01F5434;
-	Tue, 16 Sep 2025 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0673E309DB0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758034347; cv=none; b=kJykvgnQ6+vXZliniCJGvnw7oNHhkrLlAjmuFiZe3rUew+gjtbnqNIj3YbU1QybyA4W++5BkjF5Qc2g5T6PHRFpexpBinaxTiFcio7dR3zsEqvCEDg1bKYi+6RzHZTFJM7ggzCifSoqBXZQ6hQsknni1zy/QndVBQ/tYpxoFl+8=
+	t=1758034366; cv=none; b=DEIDC/cgbfrpMVTpufOcNZiEhSYoArCdbWlhPGh5PNXC3/TdjuLXzL1MrLyRkGp7ixtctMHmf5faqdC2foGjZxxSG9zSXTBCLZ0Miu8tBAYcGLLP6B5+D/Hj47jEpE5nqPS8i49FQGkfYKGMrUGUkrYk5Nw8iPzwb8//ej9y1aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758034347; c=relaxed/simple;
-	bh=iedr2VF4WgKF4s8fT143kxHZWTFhY70Xv/8PokaAkjM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fc3uEfQVYmYipoJoSgwt25C7h7T9mtrbRz/R1kv1gYiyDbuwN7g3sR9SllYqi91RWO36peslBPKD7Tu/TK0yUFTkjjiegSAdwjvsCqGAs3EX+nHLX89kQUDdKjFQMDuLReujpvdSsE4CezjiU9EkrokPcuD6roIHWVTU15QUpHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UE5/zGQT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D2C6C4CEEB;
-	Tue, 16 Sep 2025 14:52:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758034347;
-	bh=iedr2VF4WgKF4s8fT143kxHZWTFhY70Xv/8PokaAkjM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UE5/zGQTZZmVI3HZg0CHcKyR+srReuHLDD5D/r9xJkSt6uFbDSYCrAlhdX7e4/kFF
-	 1MNH/L2NlS8UlbS/YpPkGEskH6oUuIny12R1KJRjHHoOXkTbGxUyvixkIRZWz5zIPc
-	 uCYiT7+30nu1m8ReixOEERloAY66tL4klRtg3M6bE7Uc2mWMxkYUdlGxOTgs+rs+f1
-	 nmZVI5ak/PXPNzpG2dHbnSEZomIvu2C4BbBMIfSQIiKgDhJZC4MhxLUXEfjFY8SMFO
-	 cJDA2MgoQ5XdWumJGwW8x2flHhN5pgI63KlSLPQhUGNXeTpA1fp44InrIm/RqWbsng
-	 oBXOJJRvZKwNQ==
-From: Lee Jones <lee@kernel.org>
-To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Jean-Jacques Hiblot <jjhiblot@traphandler.com>, 
- Jacopo Mondi <jacopo@jmondi.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Daniel Thompson <danielt@kernel.org>, 
- Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- threeway@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-In-Reply-To: <20250910-leds-v5-0-bb90a0f897d5@vinarskis.com>
-References: <20250910-leds-v5-0-bb90a0f897d5@vinarskis.com>
-Subject: Re: (subset) [PATCH v5 0/4] leds: privacy-led support for
- devicetree
-Message-Id: <175803434216.3847280.5284437769175227452.b4-ty@kernel.org>
-Date: Tue, 16 Sep 2025 15:52:22 +0100
+	s=arc-20240116; t=1758034366; c=relaxed/simple;
+	bh=m2KOOvaQcGDrt/TmvHVj0MM4XbMIsCoimcHdlZ8dRwg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cNfa3k1DSVHdQsC1YBNlahbLjGmYpNvhUv+NzrzAmNtsC/ocdZ8HaDz9X8/fi7iuVuOwgXsb8GqT6VoYIgVm9fkVD601ZwohQIk1xPZjLDTC6pFJnvodOemFZ1GDOaLZZGFxD9MVJ+Eo8iKDUAcpuqMUV4dpWJ1rZDEFo6ql/vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wK3l/APS; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so498669a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758034364; x=1758639164; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5E3qnbdqRNKYtwnt8hzs7H9oNeW9zi+yEz9lSm4V2OA=;
+        b=wK3l/APSVW/g1b1DqbjdWNqm0xuGuSfMp4lGC9uO0sOG9CGWRZ8mDHS59uPu9zyMOe
+         kTpqRbcoRu4i4ZQ+KSs4x8eK+iYqEAJk1S77eEca5ALdsTJVV9iCW4Io/zWgo7snqVSt
+         Fx1DPkvpoOuGzRxR5G6hr4gb1RFWL+xCW1m3irAiH4pdaMQm+u0O9AWtjjxrdsYRTS4M
+         jvtZMX30q3MjLh7bh8USeBeZTzG8SSeQOK6jVMl9Vfa7GPDewhKioID3FkL1ek5HX0KM
+         aliIzIIpqU3mdgxwu1swpCS2WTrIvwwpmVmpGY8WABZTcsupquVIfPeiJrzC8W4cvJX7
+         PCEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758034364; x=1758639164;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5E3qnbdqRNKYtwnt8hzs7H9oNeW9zi+yEz9lSm4V2OA=;
+        b=g49aIaXHieOIaDyg7x5Imk+Lc/9iYU/S5XwQZfNIbDf/CeXjiEorW8fVx/IQrWXJfS
+         9KQtwx5sR1SH+RqR+T7XIcroL2HgHLpjMbWYL/cSmu23nXkrzlOZrwKDK6hMDYukx89M
+         c6cHaC0wJdOy8D16/beTy9/t5X/608SdZs5/4DnsnroMd/gPxsIkE+Fb+9d87F0sib9s
+         jiy+ba+RknSoKd6PvfkJ2ZvdcTB9nv7HJ6BRgln5iCkdlyXj+8Ifxu7eU4O4FN7ZNi3u
+         H2e6fGHao9Sg8avU+JVv2d3sTFlUXhmwnUsgBarxmIb+3aBrsEcawp+xI/v13px70Pss
+         katQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWs5NceCWfE/h3RSDRVdkfiIWqnAr8mYX9iW1tyk3pVKVlrdGKAR6cfg9LCRt4r7N5BSphuhKuHS/YQezs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaRvruK+WsJqKFfXBTPAKRA9EKv3Ynu0RXFKBJgt+/TM8kiAcf
+	qnLTlvAkQ1SXrWcXnuqi//z9fFxIJJp3WdSYWd/fAxt1/yH0qe6koQUE7WxmK7CN57ht0vRVolE
+	mxM9XwA==
+X-Google-Smtp-Source: AGHT+IGjfmJpQ4lC0iEqMON72LWTyS6jym2vxg8R+T/51zsgl4TA6F8PBYAw3kwQhUfPdOeDMTUPr0z2AnE=
+X-Received: from pjh16.prod.google.com ([2002:a17:90b:3f90:b0:32e:8014:992f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a8a:b0:32e:1213:1ea0
+ with SMTP id 98e67ed59e1d1-32e121321dbmr13796123a91.16.1758034364191; Tue, 16
+ Sep 2025 07:52:44 -0700 (PDT)
+Date: Tue, 16 Sep 2025 07:52:42 -0700
+In-Reply-To: <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+Mime-Version: 1.0
+References: <20250825055208.238729-1-namjain@linux.microsoft.com>
+ <20250825094247.GU3245006@noisy.programming.kicks-ass.net>
+ <f154d997-f7a6-4379-b7e8-ac4ba990425c@linux.microsoft.com>
+ <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
+ <efc06827-e938-42b5-bb45-705b880d11d9@linux.microsoft.com> <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
+Message-ID: <aMl5ulY1K7cKcMfo@google.com>
+Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Roman Kisel <romank@linux.microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mhklinux@outlook.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, 10 Sep 2025 14:01:07 +0200, Aleksandrs Vinarskis wrote:
-> Re-spin of RFC patch from ~2.5 years ago [1]. v4l2 controls for privacy
-> LEDs has landed, but the DT part was left out. Introduce missing
-> dt-bindings, and commonize 'leds' parameter. Finally, add a patch to
-> enable privacy-led on Lenovo Thinkpad x13s.
+On Tue, Sep 16, 2025, Paolo Bonzini wrote:
+> On 8/27/25 01:04, Roman Kisel wrote:
+> > On 8/26/2025 5:07 AM, Peter Zijlstra wrote:
+> > > I do not know what OpenHCL is. Nor is it clear from the code what NMIs
+> > > can't happen. Anyway, same can be achieved with breakpoints / kprobes.
+> > > You can get a trap after setting CR2 and scribble it.
+> > > 
+> > > You simply cannot use CR2 this way.
+> > 
+> > The code in question runs with interrupts disabled, and the kernel runs
+> > without the memory swapping when using that module - the kernel is
+> > a firmware to host a vTPM for virtual machines. Somewhat similar to SMM.
+> > That should've been reflected somewhere in the comments and in Kconfig,
+> > we could do better. All in all, the page fault cannot happen in that
+> > path thus CR2 won't be trashed.
+> > 
+> > Nor this kind of code can be stepped through in a self-hosted
+> > kernel debugger like kgdb. There are other examples of such code iiuc:
 > 
-> With recent inflow of arm64-power laptops (Snapdragon X1E/X1P) which
-> mostly use MIPI cameras, this feature becomes more desired. Original
-> rebased patch is still working as expected (with respective DT changes)
-> on Dell XPS 9345.
-> 
-> [...]
+> As Sean mentioned, you do have to make sure that this is annotated as
+> noinstr (not instrumentable).  And also just use assembly - KVM started with
+> a similar asm block, though without the sketchy "register asm",
 
-Applied, thanks!
+Ooh, yeah, don't use "register asm".  I missed that when I peeked at the code.
+Using "register asm" will most definitely cause problems, because the compiler
+doesn't track usage in C code, i.e. will happily use the GPR and clobber your
+asm value in the process.  That inevitably leads to very confusing and somewhat
+transient errors.  E.g. if someone inserts a printk for debugging, the call to
+printk can clobber the very state it's trying to print.
 
-[1/4] dt-bindings: leds: add generic LED consumer documentation
-      commit: 3f5df63955756fbe253a2a26043accf7318fa53a
-[2/4] dt-bindings: leds: commonize leds property
-      commit: 22420da3662a69d8894ee624494213a5888a1e87
-[3/4] leds: led-class: Add devicetree support to led_get()
-      commit: 7010cc08a6fd4ae4e68b05ec4f52c36cc0122f4c
+> and I was initially skeptical but using a dedicated .S file was absolutely
+> the right thing to do.
 
---
-Lee Jones [李琼斯]
-
++1000 to putting the assembly in a .S file.  I too was a bit skeptical about
+moving the entire sequence into proper assembly; thankfully, some non-KVM folks
+talked us into it :-)
 
