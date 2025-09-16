@@ -1,49 +1,47 @@
-Return-Path: <linux-kernel+bounces-818721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F274B595A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:58:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51C4B595AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C782176192
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A75E482087
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B4E3090FB;
-	Tue, 16 Sep 2025 11:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C2B3074AA;
+	Tue, 16 Sep 2025 11:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="wJMwRSgH";
-	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="4/0x/5Gr"
-Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H1cnPYD1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517422D321A;
-	Tue, 16 Sep 2025 11:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374EF13D638
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023903; cv=none; b=cjYd7pKKM3AvLIcAciPLeVU3BuGzv31j5cWZIVWlssK7dvG8W+FvF45lAw5FX9jyMiM/CkHFotMSDjqWa7gTQZ+/ZRG8giElAuxEugsLxmJOnVRd9cCQs1abDwXClawlif4TybIYWG/wDR5nU29ldCsNXTSRE2BJOQnvJSVKKO8=
+	t=1758023943; cv=none; b=IMew2eAwUQgs4tag2w3kmGXepo5iYdrvHabkx0mElRvOEQEcA0a1ZCpWlVo4xWSG9fAyjq4lEXr5Wq1ms3dttfBNoETxzOLtxPBt24Va9TvvV8r5eqlT1euiWVGHMq4hGTq4Hle14LxSUkJ/wFk0FvxpIhEnLi3glMofN4GbTNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023903; c=relaxed/simple;
-	bh=1YPNFfoeAQBH+th3wqHjduaxBhKPbi+z5V6okeM97BE=;
+	s=arc-20240116; t=1758023943; c=relaxed/simple;
+	bh=l0akH1pOI7VHWCI32nI6OFz/8zDEY4ma6aLvch4pKm0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JzfXjv1GqyUb1WEDQMBFIv1CXdXPnWk++5GXYJ7J/H2Qfh8YrEpk3j7dMhLmoQfim3oFAm/ZurpFPt7rzjM4g2giPuzsmwo+R8isEjsHRROIXfXPIE5YN5LPCH3mIRUbwlC8Ptp5pJI/JWp5EfMEvtIVo6ZFo+zSrV7fX1yWlvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=wJMwRSgH; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=4/0x/5Gr; arc=none smtp.client-ip=51.159.152.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
-DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1758023885; bh=Vt5D5ja1ArnEts1Avrr6X5v
-	/PXe6QruSoOeAgliPLpU=; b=wJMwRSgHL4zMOrkNn1U0JE1dhtYXuIy3dnqnvhIr+tm6vbdde5
-	4xBskxixrjONjcM9yePUW1LSp9meSFH4oyP/fo+noExysUyMpiNuO2HxTK0R9DEMNrp0zDPTwwL
-	WpX+KzcyqiPB6rEJTSD48UB9TvpteJMuWHXAz+GP82GjKfE2hDChxBd1W3N0VJNMexEUbaSVDjp
-	Db+8g2EKmUal8KFLdJ9SiFN8LO4ijAEXmjp8Ln6H1OkFFzOOmPqL1E72DdKkdrEoIF+glTu9i3I
-	BzRKtGrgPP5CzFc6QPdHqarPA1W+baIXT0auGlSSylUfC9ePvxGmmU+G5Jjt5aYaH/A==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1758023885; bh=Vt5D5ja1ArnEts1Avrr6X5v
-	/PXe6QruSoOeAgliPLpU=; b=4/0x/5GramnDSOzKXdsGKhZX/dKTSZ1R/R3zQcfE2p9/l82Z9M
-	mCNnTuQ4azA49T5jf3nO0UVO/H+8At/i8FCA==;
-Message-ID: <3b4f8837-e0a8-4e8c-9d33-5f107e41c55d@damsy.net>
-Date: Tue, 16 Sep 2025 13:58:04 +0200
+	 In-Reply-To:Content-Type; b=FXLH4TVqAVHipwBbOJg/9nF7j/9t2ghT3qmnCuzR790xet0w3lj/YpsH2YSIkd3sqzr3VgqvaMpL383VUnTCg0zK+C049iE3Yb32jDeZsaw6mMXnaaG108ChTRFqaKtMdlqB8Iaz4v8lx5Ly2CPAVcEfpEWo/QJ3UcdkPn1eFtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H1cnPYD1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6E9EAC6F;
+	Tue, 16 Sep 2025 13:57:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758023862;
+	bh=l0akH1pOI7VHWCI32nI6OFz/8zDEY4ma6aLvch4pKm0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=H1cnPYD14k7okOcUrX1s98xea3/yOeNpMPPAOGMw3jLJiTsKuWkuyecIS3r1PMUA6
+	 ynaOIe1Y4jwztbWi3nzheob7UwxkFFhI91U6xqj7PaPyyd/BhC3nlniui2VSuBjwU3
+	 Iu78CK13sjz5T5H57TFfy5QIkIkS+qlxdq92X8IA=
+Message-ID: <b82accff-d43d-4cac-a97a-764d0b31501c@ideasonboard.com>
+Date: Tue, 16 Sep 2025 14:58:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,139 +49,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] drm/amdgpu: make non-NULL out fence mandatory
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <20250916070846.5107-1-pierre-eric.pelloux-prayer@amd.com>
- <f66cc34f-b54b-4f91-a6fe-11a146c516b2@amd.com>
- <9e1964bf-7748-4e41-9048-b1a5ad63a8c9@damsy.net>
- <8a5f0bc8-4d3a-4e47-902e-7527759d1494@amd.com>
+Subject: Re: [PATCH v6 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
+ bridge
+To: Swamil Jain <s-jain1@ti.com>
+Cc: h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, praneeth@ti.com,
+ u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jyri.sarha@iki.fi,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, aradhya.bhatia@linux.dev
+References: <20250911110715.2873596-1-s-jain1@ti.com>
+ <20250911110715.2873596-4-s-jain1@ti.com>
 Content-Language: en-US
-From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
-In-Reply-To: <8a5f0bc8-4d3a-4e47-902e-7527759d1494@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250911110715.2873596-4-s-jain1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-
-Le 16/09/2025 à 12:52, Christian König a écrit :
-> On 16.09.25 11:46, Pierre-Eric Pelloux-Prayer wrote:
->>
->>
->> Le 16/09/2025 à 11:25, Christian König a écrit :
->>> On 16.09.25 09:08, Pierre-Eric Pelloux-Prayer wrote:
->>>> amdgpu_ttm_copy_mem_to_mem has a single caller, make sure the out
->>>> fence is non-NULL to simplify the code.
->>>> Since none of the pointers should be NULL, we can enable
->>>> __attribute__((nonnull))__.
->>>>
->>>> While at it make the function static since it's only used from
->>>> amdgpuu_ttm.c.
->>>>
->>>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
->>>> ---
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 17 ++++++++---------
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h |  6 ------
->>>>    2 files changed, 8 insertions(+), 15 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>>> index 27ab4e754b2a..70b817b5578d 100644
->>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->>>> @@ -284,12 +284,13 @@ static int amdgpu_ttm_map_buffer(struct ttm_buffer_object *bo,
->>>>     * move and different for a BO to BO copy.
->>>>     *
->>>>     */
->>>> -int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
->>>> -                   const struct amdgpu_copy_mem *src,
->>>> -                   const struct amdgpu_copy_mem *dst,
->>>> -                   uint64_t size, bool tmz,
->>>> -                   struct dma_resv *resv,
->>>> -                   struct dma_fence **f)
->>>> +__attribute__((nonnull))
->>>
->>> That looks fishy.
->>>
->>>> +static int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
->>>> +                      const struct amdgpu_copy_mem *src,
->>>> +                      const struct amdgpu_copy_mem *dst,
->>>> +                      uint64_t size, bool tmz,
->>>> +                      struct dma_resv *resv,
->>>> +                      struct dma_fence **f)
->>>
->>> I'm not an expert for those, but looking at other examples that should be here and look something like:
->>>
->>> __attribute__((nonnull(7)))
->>
->> Both syntax are valid. The GCC docs says:
->>
->>     If no arg-index is given to the nonnull attribute, all pointer arguments are marked as non-null
+On 11/09/2025 14:07, Swamil Jain wrote:
+> From: Jayesh Choudhary <j-choudhary@ti.com>
 > 
-> Never seen that before. Is that gcc specifc or standardized?
+> Since OLDI consumes DSS VP clock directly as serial clock, mode_valid()
+> check cannot be performed in tidss driver which should be checked
+> in OLDI driver.
 
-clang supports it:
+Please explain here a bit more what's going on here. You say
+mode_valid() cannot be done in tidss. Why not? Then you add atomic_check
+to oldi driver here, why is that the same as model_valid in tidss?
 
-https://clang.llvm.org/docs/AttributeReference.html#id10
+> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
 
-And both syntaxes are already used in the drm subtree by i915.
+What bug does this fix?
 
-Pierre-Eric
-
+> Tested-by: Michael Walle <mwalle@kernel.org>
+> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_oldi.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
->>
->>
->>>
->>> But I think for this case here it is also not a must have to have that.
->>
->> I can remove it if you prefer, but it doesn't hurt to have the compiler validate usage of the functions.
-> 
-> Yeah it's clearly useful, but I'm worried that clang won't like it.
-> 
-> Christian.
-> 
->>
->> Pierre-Eric
->>
->>
->>>
->>> Regards,
->>> Christian.
->>>
->>>>    {
->>>>        struct amdgpu_ring *ring = adev->mman.buffer_funcs_ring;
->>>>        struct amdgpu_res_cursor src_mm, dst_mm;
->>>> @@ -363,9 +364,7 @@ int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
->>>>        }
->>>>    error:
->>>>        mutex_unlock(&adev->mman.gtt_window_lock);
->>>> -    if (f)
->>>> -        *f = dma_fence_get(fence);
->>>> -    dma_fence_put(fence);
->>>> +    *f = fence;
->>>>        return r;
->>>>    }
->>>>    diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
->>>> index bb17987f0447..07ae2853c77c 100644
->>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
->>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
->>>> @@ -170,12 +170,6 @@ int amdgpu_copy_buffer(struct amdgpu_ring *ring, uint64_t src_offset,
->>>>                   struct dma_resv *resv,
->>>>                   struct dma_fence **fence, bool direct_submit,
->>>>                   bool vm_needs_flush, uint32_t copy_flags);
->>>> -int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
->>>> -                   const struct amdgpu_copy_mem *src,
->>>> -                   const struct amdgpu_copy_mem *dst,
->>>> -                   uint64_t size, bool tmz,
->>>> -                   struct dma_resv *resv,
->>>> -                   struct dma_fence **f);
->>>>    int amdgpu_ttm_clear_buffer(struct amdgpu_bo *bo,
->>>>                    struct dma_resv *resv,
->>>>                    struct dma_fence **fence);
-> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+> index 7ecbb2c3d0a2..ada691839ef3 100644
+> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
+> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+> @@ -309,6 +309,26 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+>  	return input_fmts;
+>  }
+>  
+> +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
+> +				   struct drm_bridge_state *bridge_state,
+> +				   struct drm_crtc_state *crtc_state,
+> +				   struct drm_connector_state *conn_state)
+> +{
+> +	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
+> +	struct drm_display_mode *adjusted_mode;
+> +	unsigned long round_clock;
+> +
+> +	adjusted_mode = &crtc_state->adjusted_mode;
+> +	round_clock = clk_round_rate(oldi->serial, adjusted_mode->clock * 7 * 1000);
+> +	/*
+> +	 * To keep the check consistent with dispc_vp_set_clk_rate(),
+> +	 * we use the same 5% check here.
+> +	 */
+> +	if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000, round_clock) > 5)
+> +		return -EINVAL;
+> +	return 0;
+> +}
+> +
+>  static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+>  	.attach	= tidss_oldi_bridge_attach,
+>  	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
+> @@ -317,6 +337,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+>  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+>  	.atomic_reset = drm_atomic_helper_bridge_reset,
+> +	.atomic_check = tidss_oldi_atomic_check,
+>  };
+>  
+>  static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
 
 
