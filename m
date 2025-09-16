@@ -1,95 +1,98 @@
-Return-Path: <linux-kernel+bounces-819463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82703B5A105
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:11:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCC0B5A11C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C7D46017B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:11:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8EEB4E207C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113712DF14A;
-	Tue, 16 Sep 2025 19:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5D32DF13C;
+	Tue, 16 Sep 2025 19:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xpoy/I++"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OdbHvbYs"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6619032D5D4;
-	Tue, 16 Sep 2025 19:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DE326E6FB
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758049908; cv=none; b=PzihxJFzIChuiYQmUunrx1e9rNwVkQXXiqaCsWZ9bQTlzYhzPOrUk02PEU986LPCCDmrN4eBtE/WnMHJ34asRjfbKOtnwmLXm4HZcNQ/h9KLvJ9g60/AfYojNdfqS1P/m5cYVpiBJy1l7FrgPTHhaCJ84ekH/8zG6DJdi8AcfbE=
+	t=1758049995; cv=none; b=X9uaTuElx3RmM/ZWjMiizBe3rYw2k8Z7Bkx6AMxvsKLSvzhAVPZkjQD/eerVHMbAtlJUzCQupPQ8wPTkz7zwk30nKHtIDXge0H/e8ENCvUVGLiSOhn+mIJU+xerIoX9XoXEFvge0MIkHGuzR/PgVlC6i631hf2tBaGxZHwBLsmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758049908; c=relaxed/simple;
-	bh=77LfXigEtGlbgD9o+XCEovUBSCV7wv0QPbV2QyOTQ74=;
+	s=arc-20240116; t=1758049995; c=relaxed/simple;
+	bh=OfcPz91lW0Vh8uuafTjAUzoa+yvWon5QDCCxA1+xfAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dl0ktaAx2G2qbE37WTSBuF9Jc2VW8zC53JOl5QjQoxFtAJLuof+KyCICUaqMDaFdgySI+MY/FEHwrNMvsTJW4WS5JLF0bQXRuCN1ysjSBqLTfM/7uVYwl2DWcctpnNUgWORgwGf3e0RIjeEYYksi1YOGqaRQZAaK02dxITkRZ6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xpoy/I++; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F31C4CEEB;
-	Tue, 16 Sep 2025 19:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758049908;
-	bh=77LfXigEtGlbgD9o+XCEovUBSCV7wv0QPbV2QyOTQ74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xpoy/I++lGP4rRlLa+mbG+YXAQcVFWba92OSiuz6fksltvX59u6uUZiU0MqRbTAK4
-	 1bBEGJ5alG/ARQintuFBaRx1v6jb4L3uM0Go0xzo/kVYZPPhRDst4UV6WSA/dwwTdP
-	 nO/PhE/kIHj66LcLqrfIG9I69x00Qs6nB+oQL8/7weTODHjg/H9m19IYSzU5DXpntC
-	 3iAK7sufS9Bm5+zkzenff1IJb57AJMbWOqgRjtRQl4H0wFjNqDh6rITBoFnlV4tTvU
-	 SHnrlYB+kV0ZGUOSKCU/ypaBBNX7DPRuLSXUtdHglNa/v74nG7lyib5pNTq//6E5Is
-	 01JquE6PHMfuA==
-Date: Tue, 16 Sep 2025 20:11:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
-	Amir Dahan <system64fumo@protonmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: display: panel: panel-simple: Add
- lg,sw49410 compatible
-Message-ID: <20250916-lazily-postage-f673a5cc6a26@spud>
-References: <20250915-judyln-panel-v2-0-01ab2199fea5@postmarketos.org>
- <20250915-judyln-panel-v2-3-01ab2199fea5@postmarketos.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgwdwKBwALydXFQXq/61Rg8I58jHYR2e/GTWDpy9yf6NfibrQ7gCnnkmP9bH/TnOhSwqUHTlJvzYP/1c1rQoy0FJsBsixagGHypVQN7i/GuTwOjA8eTp1ElvArm+LpYnve2ilQI4B4r8Wo94K9YxYvppXzFU5BqeBvwRSSSgrR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OdbHvbYs; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 3CB824E40C71;
+	Tue, 16 Sep 2025 19:13:04 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 11FEE6061E;
+	Tue, 16 Sep 2025 19:13:04 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 76EE9102F16A7;
+	Tue, 16 Sep 2025 21:12:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758049983; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=MasoXUdCQrht0je9DvK2uV3fHTpYnuPSASEiFGg2BqE=;
+	b=OdbHvbYs83/ljHGgkuxTZTZMJ50syFiczM9oPSmf2VUjdZZSgNPun/37kUiz0YS6lzryjC
+	pQNg1jj0vKZkSW8zrE0LyqVdhN/e2M3DvL3nqV3vTKMEjK9YgGIynns5Dcy7nQ+qHSyEkO
+	pQ3jfsdZVUBNSum5XX+MFbjw4XcWyS770wWKTfBTk1xrDFbomTZwIM3ZtufF8GmZE8aqi0
+	MxtpOFeJyeg6jfQEyqG4mszKxl3fz7Rea4EhlTdmAZHPgspw1qHQvKFo+XlRQltfALDAt9
+	JaLlfRlHBDjdlGKDo5EkFO51zv3imnMCEoHzjxxloU9gE7Sak0iCguywDmnPWg==
+Date: Tue, 16 Sep 2025 21:12:44 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Jorge Marques <jorge.marques@analog.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the i3c tree
+Message-ID: <2025091619124436ec80e5@mail.local>
+References: <aMh95LzHnl-9-w5Y@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0DFJbOukSxWiYyHE"
-Content-Disposition: inline
-In-Reply-To: <20250915-judyln-panel-v2-3-01ab2199fea5@postmarketos.org>
-
-
---0DFJbOukSxWiYyHE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aMh95LzHnl-9-w5Y@sirena.org.uk>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Hello Mark,
 
---0DFJbOukSxWiYyHE
-Content-Type: application/pgp-signature; name="signature.asc"
+On 15/09/2025 21:58:12+0100, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the i3c tree, today's linux-next build (x86 allmodconfig)
+> failed like this:
+> 
+> /tmp/next/build/drivers/i3c/master/adi-i3c-master.c:13:10: fatal error: linux/fpga/adi-axi-common.h: No such file or directory
+>    13 | #include <linux/fpga/adi-axi-common.h>
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> 
+> Caused by commit
+> 
+>   63cae74bea7cc ("i3c: master: Add driver for Analog Devices I3C Controller IP")
+> 
+> I have used the version from next-20250912 instead.
 
------BEGIN PGP SIGNATURE-----
+Thanks for the heads up, I didn't realize I wasn't rebased on top of
+v6.17-rc1. I sent a patch but I will only be able to push it tomorrow so
+the i3c tree is going to fail again today.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMm2bgAKCRB4tDGHoIJi
-0saIAP0Se5/ZuR1n68jiyM3j4srO+TBLhsWyZ2N+aqiYkKml6gEA2nMhDo+He3bJ
-NbVdDObz6e5yqG1+j59AkbmHVZCkuwk=
-=rbRy
------END PGP SIGNATURE-----
-
---0DFJbOukSxWiYyHE--
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
