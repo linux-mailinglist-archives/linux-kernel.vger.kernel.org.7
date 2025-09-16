@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-819043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5EBB59A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:42:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC6DB59A90
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34961188D0F5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718DF3B9991
 	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBAF334386;
-	Tue, 16 Sep 2025 14:38:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF05313E39
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E43D33EB16;
+	Tue, 16 Sep 2025 14:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+Q8lbQv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BE63081AE;
+	Tue, 16 Sep 2025 14:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758033517; cv=none; b=YOGY+8Ju0Y/c4VsLXgaZmuuzDI7Eq7r2s41yJZpNKZdu+XKKjCA2Q7kB2YFGnZ2cUrr09gWnBP1NaqZQyKIR7OUJQLP+ZGWFN86pFlzZxOfpKY0p+LlBVXlOxf5NurhS0WFYKvVSWzPcV8YiCRN23NPm4CpJ/mPY1u9cP5Vg2do=
+	t=1758033535; cv=none; b=D0Mt/XvXX+2jopZcqBFeFPIbojy87gDczqNeipNMsHT0uar/ovY7Zy2hgwp9dXJTn2VT7w9MWHaNLqaiwCyyagrBWdLXD+hOp2OtRLaLdbx6njpoTf06i6M5tMhNqnZ4pUNEmDdi5/1+3QBAlP/9Zz85L3jxGbjyWoUJBECjZCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758033517; c=relaxed/simple;
-	bh=MMiBakgTXgsppLhre/lgCobdOkw5V7t+nmyIjY9of18=;
+	s=arc-20240116; t=1758033535; c=relaxed/simple;
+	bh=Ph/hIiO+tXjORKxzfu06YoivQsZaFkxYB4pQsUq4gpQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxPuNMrn3jMcZxtCWrIGKseaUOmWQIEsmsYHF1IsDA7inq4b6Gw//VG0zy3qmEccyTd8PnPqUapwwAaq6yFpFoukQSlnxhXHr030rm0X4rDDTyM/f001nVyD4QgtB4/Q49hI7x6UJREIgiVGkxfFCHMJSCFubgAZVMrVyoWju1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D046FEC;
-	Tue, 16 Sep 2025 07:38:27 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 22BEE3F673;
-	Tue, 16 Sep 2025 07:38:33 -0700 (PDT)
-Date: Tue, 16 Sep 2025 15:38:31 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-coco@lists.linux.dev>,
-	Chao Gao <chao.gao@intel.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Salman Nabi <salman.nabi@arm.com>
-Subject: Re: [RFC PATCH 0/1] Arm Live Firmware activation support
-Message-ID: <20250916-energetic-debonair-mongrel-dfcafb@sudeepholla>
-References: <20250625142722.1911172-1-andre.przywara@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sf9FxGW+yWha84yJlVqeAhNaPs7M0f6OXTtfKHKvX9DOPNJL+DmRR7S3KKm4belqof8AIQi35NAbL/shV+373M7j72bDqqOi+6VnDt9zJ/TjT4xe1UphDNeIhBLZkqLGPM5V751tn9x+i1j5EmqKse+z3Q9W7ePvRCpM/yherv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+Q8lbQv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C2FAC4CEEB;
+	Tue, 16 Sep 2025 14:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758033535;
+	bh=Ph/hIiO+tXjORKxzfu06YoivQsZaFkxYB4pQsUq4gpQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k+Q8lbQvzfiLPscbR5ZPBPkpIbgIzkAK2T0BtjPuBHrfNmtyNZj/YF2ioJPAu+aqT
+	 k0Fj5O2OQ1MMzl3YYquE394xUYf9bbOTEbgwFoppUmMbqRQKQbQmxJ/af6CuOV+Ct2
+	 sKjZxOjK/W5NMn3Z1o+rQ0FB78oookqGpHcoucoZ1FOPU8LXl8KgBkD25Txo9bfdhL
+	 hkwet2ivAS5IRwptEjYJl735BJoSktrlFCsOILzOWHB/GWz+YtSaHdmKkxx24a9q1e
+	 eT0tDZHSOp3d0yvhUYi3GttGy7WSLJgG1HXn8jer+jI+O1V+vV6aGKuYr5nRGCxCUd
+	 SSSsnYJSBNujA==
+Date: Tue, 16 Sep 2025 15:38:47 +0100
+From: Lee Jones <lee@kernel.org>
+To: a0282524688@gmail.com
+Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+	andi.shyti@kernel.org, mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
+	jdelvare@suse.com, alexandre.belloni@bootlin.com,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH RESEND v14 0/7] Add Nuvoton NCT6694 MFD drivers
+Message-ID: <20250916143847.GF3585920@google.com>
+References: <20250912091952.1169369-1-a0282524688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250625142722.1911172-1-andre.przywara@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250912091952.1169369-1-a0282524688@gmail.com>
 
-On Wed, Jun 25, 2025 at 03:27:21PM +0100, Andre Przywara wrote:
-> Hi,
-> 
-> (please feel free to add people interested on this from the x86 side
-> as you see fit)
-> 
-> this is a proposal for a driver for the Arm Live Firmware Activation (LFA)
-> specification[1]. LFA provides an interface to allow "activating" firmware
-> updates without a reboot.
-> In contrast to Intel's TDX [2] approach (which seems only concerned about
-> some confidential computing related firmware blob), and even OCP's
-> "impactless" updates[3], the Arm approach just lists a number of
-> "activatable" firmware images, and does not limit their scope. In
-> particular those updates can (and will) be for firmware bits used by the
-> application processors (which OCP seems to rule out), including runtime
-> secure firmware (TF-A/BL31), confidential compute firmware, and
-> potentially even UEFI runtime firmware.
-> Initially we have the whole chain demoing the Arm Confidential Computing
-> firmware (RMM) update, which is conceptually the same as Intel's TDX
-> proposal.
-> 
-> So our design approach is to create a directory under /sys/firmware, and
-> just list all images there, as directories named by their GUID.
-> Then the properties of each image can be queried and the activation
-> triggered by the sysfs files inside each directory. For details see the
-> commit message of the patch.
-> This is admittedly a somewhat raw interface, though even in that form
-> it's good enough for testing. Eventually I would expect some fwupd
-> plugin to wrap this nicely for any admins or end users.
-> 
-> The purpose of this RFC is to get some feedback on the feasibility of
-> this interface, and to understand how this would relate to the other two
-> approaches (TDX + OCP "impactless" updates).
-> 
+Enjoy!
 
-Thanks for the details and I agree we need opinions from x86 community
-if possible but definitely from cloud/hyperscale community using these
-user interfaces ? While x86 and Arm may provide its own user interface,
-are hyperscale community happy with that ? I briefly read the unified
-(arch agnostic) requirements specification [3] but will there be a
-requirement to have a unified user interface from the OS ?
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-We don't want to define something Arm specific to just abandon it quickly
-if and when hyperscale community comes back with such a request for unified
-user interface.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-I am not against having Arm specific interface, just getting clarification
-in terms of requirements even before diving into technical review of the
-patch here.
+are available in the Git repository at:
 
-Anyone from hyperscale community ? Please provide directions here.
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-gpio-hwmon-i2c-can-rtc-watchdog-v6.18
+
+for you to fetch changes up to d463bb140583609f78f61d48c3dfb6f46c5cb062:
+
+  rtc: Add Nuvoton NCT6694 RTC support (2025-09-16 14:41:58 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, GPIO, HWMON, I2C, CAN, RTC and Watchdog due for the v6.18 merge window
+
+----------------------------------------------------------------
+Ming Yu (7):
+      mfd: Add core driver for Nuvoton NCT6694
+      gpio: Add Nuvoton NCT6694 GPIO support
+      i2c: Add Nuvoton NCT6694 I2C support
+      can: Add Nuvoton NCT6694 CANFD support
+      watchdog: Add Nuvoton NCT6694 WDT support
+      hwmon: Add Nuvoton NCT6694 HWMON support
+      rtc: Add Nuvoton NCT6694 RTC support
+
+ MAINTAINERS                         |  12 +
+ drivers/gpio/Kconfig                |  12 +
+ drivers/gpio/Makefile               |   1 +
+ drivers/gpio/gpio-nct6694.c         | 499 +++++++++++++++++++
+ drivers/hwmon/Kconfig               |  10 +
+ drivers/hwmon/Makefile              |   1 +
+ drivers/hwmon/nct6694-hwmon.c       | 949 ++++++++++++++++++++++++++++++++++++
+ drivers/i2c/busses/Kconfig          |  10 +
+ drivers/i2c/busses/Makefile         |   1 +
+ drivers/i2c/busses/i2c-nct6694.c    | 196 ++++++++
+ drivers/mfd/Kconfig                 |  15 +
+ drivers/mfd/Makefile                |   2 +
+ drivers/mfd/nct6694.c               | 388 +++++++++++++++
+ drivers/net/can/usb/Kconfig         |  11 +
+ drivers/net/can/usb/Makefile        |   1 +
+ drivers/net/can/usb/nct6694_canfd.c | 832 +++++++++++++++++++++++++++++++
+ drivers/rtc/Kconfig                 |  10 +
+ drivers/rtc/Makefile                |   1 +
+ drivers/rtc/rtc-nct6694.c           | 297 +++++++++++
+ drivers/watchdog/Kconfig            |  11 +
+ drivers/watchdog/Makefile           |   1 +
+ drivers/watchdog/nct6694_wdt.c      | 307 ++++++++++++
+ include/linux/mfd/nct6694.h         | 102 ++++
+ 23 files changed, 3669 insertions(+)
+ create mode 100644 drivers/gpio/gpio-nct6694.c
+ create mode 100644 drivers/hwmon/nct6694-hwmon.c
+ create mode 100644 drivers/i2c/busses/i2c-nct6694.c
+ create mode 100644 drivers/mfd/nct6694.c
+ create mode 100644 drivers/net/can/usb/nct6694_canfd.c
+ create mode 100644 drivers/rtc/rtc-nct6694.c
+ create mode 100644 drivers/watchdog/nct6694_wdt.c
+ create mode 100644 include/linux/mfd/nct6694.h
 
 -- 
-Regards,
-Sudeep
+Lee Jones [李琼斯]
 
