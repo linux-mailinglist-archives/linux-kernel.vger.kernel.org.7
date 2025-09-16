@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-819668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C38B5A453
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:54:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE49B5A45A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600281C05312
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC4341883040
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27734323F40;
-	Tue, 16 Sep 2025 21:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790CB31FEF3;
+	Tue, 16 Sep 2025 21:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1auR8Pt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqkHM2AE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BCF31FECA;
-	Tue, 16 Sep 2025 21:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3F5328572;
+	Tue, 16 Sep 2025 21:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758059656; cv=none; b=hxcJ9AVHAVgFILMRKMIaV8fA7WGkyKrY3KowrnxRT2xRk7iwE3DOyxW34q8P+V85wPGn36cPHHIU2/KmY3dEve2Im5P8GGKxh9+qOnmyDpKYkoe6Bq9SLwVi5WdiJ6vVNUC+nGRi8RYWmyslRkejdUbfx9tospuCZ9Af2ZLfXWU=
+	t=1758059674; cv=none; b=lhUv6MPut+++nmnN/fzFPCFzxprD8rm50D4ZWad8OW95V8HPPR9slBulw828zc+6cXgyVplWfeDBo0jdnIkO3Ci8kLxq0GUp5CJMEDMLDVvwkmyMdKvRwpkz9zoOzLGeFHxM48e8gnGQLkvx5lig6o9CwWXKcwHOAh98aiVsD+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758059656; c=relaxed/simple;
-	bh=uD2qX1Uel1p/YrCYZ0w2oIREUJEihLSaGL7baU3SX04=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SAwbJ9zL8ae+HMMU9tG/DNxyJyRtJ6fJt9h3b963tNJ1Gcq5Q6mYC1VorVRgy/mAxuzu5htO4V+TUbNWyk+BYVbxVYW/345xnZwFwrCWYup+A0j38i6+kuEaDwetnKmdd3yeDcsKeM4s/4mUCeMyS7yFY3il/PnZq/lGoCHALo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1auR8Pt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61614C4CEF9;
-	Tue, 16 Sep 2025 21:54:12 +0000 (UTC)
+	s=arc-20240116; t=1758059674; c=relaxed/simple;
+	bh=4alxzrUdOK5CtjJJqQwPxV2gCyf0hBSdvjtFuyZab4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9mdAhedCx9AiuMQTG1y4EBBOGfIee7k+wi9yIzgSP3zWu6AHblvJCmpooptgB4H6CUqyyfVrW+soqbFepCXaak6Ak9vMxDzZwMk84+kpMQ07geb9LUmPGznINwMAyHDOW2WFLAey4ZnHN+NMh4+5PHQVNEgHixlnvSrRjnTJPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqkHM2AE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3EAAC4CEEB;
+	Tue, 16 Sep 2025 21:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758059656;
-	bh=uD2qX1Uel1p/YrCYZ0w2oIREUJEihLSaGL7baU3SX04=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=p1auR8Pt42Tym0qXlywjGsGpI7yOQUKBihw+ZbyLwgwqRAcacfgBwNuNLc4IpdXkB
-	 j//1lYuA63R42y7IpOA3LzEJhiOVRxeijucpj8mpDLBqBRmEflGhUZQwrQ+hamHwzO
-	 LBPqBYA2gNOACgVcGrhRZ20m32MvlhFAIis83zXBz6nzuaqglL/TUD3q5lea0tY3AQ
-	 OUEPZs4Gazbn5xpjYCQm7oVQyrkPNE/ZdbxeZYwSjJu+SnFJUduaSRhfoFtDusmlmt
-	 zLUszYZeaxYao3yCC/7bl1Wa7I2TVFXYI6mvpPuFFM86yyUNRhcnKzrahsoAD9MejF
-	 J2vy1PjVIKDqA==
+	s=k20201202; t=1758059674;
+	bh=4alxzrUdOK5CtjJJqQwPxV2gCyf0hBSdvjtFuyZab4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cqkHM2AElvFo1Vqq/Rh2bjQMcAEERYu7c5C2fACPhHmXNYCbIxyUddnL9b6n4fueV
+	 Fr4KCV1HLUM3XhpMAzkRRpctAFMhkU9kCzlcBtp1NS96Zzmi8ayiQxC/VU6qTP+LNO
+	 h/VdnaoSPV3ahJyHxZ8V1py3XzMkDN44689Sr1O3TkJMiCoYe0wQQCRiKBeOrViv4/
+	 ybymEkJ8FymTHWJ4F3csd2DYCNF4+DrBtr/KhnUL/Z30Oz3PZmLyBVyyT8WKeAcjp2
+	 xYrsD78cUbdHeMTYPIaw8SVweg7GaJO4dL/m7txn47ah4yk3/lsAAnbkE/tX7OPkZE
+	 ywa4zhpI+zP7w==
+Date: Tue, 16 Sep 2025 22:54:29 +0100
 From: Mark Brown <broonie@kernel.org>
-To: lee@kernel.org, lgirdwood@gmail.com, alexandre.belloni@bootlin.com, 
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- Alex Elder <elder@riscstar.com>
-Cc: mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com, 
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
- linux.amoon@gmail.com, troymitchell988@gmail.com, guodong@riscstar.com, 
- linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250825172057.163883-1-elder@riscstar.com>
-References: <20250825172057.163883-1-elder@riscstar.com>
-Subject: Re: (subset) [PATCH v13 0/7] spacemit: introduce P1 PMIC support
-Message-Id: <175805965212.251163.14858159964329617503.b4-ty@kernel.org>
-Date: Tue, 16 Sep 2025 22:54:12 +0100
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] kselftest/arm64: Add lsfe to the hwcaps test
+Message-ID: <73cba923-facd-4c9a-a5dc-2413ef8b055c@sirena.org.uk>
+References: <20250818-arm64-lsfe-v3-0-af6f4d66eb39@kernel.org>
+ <20250818-arm64-lsfe-v3-3-af6f4d66eb39@kernel.org>
+ <aMnTm59nrA5lBxN5@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="p8SWN4j5J2YR9ElS"
+Content-Disposition: inline
+In-Reply-To: <aMnTm59nrA5lBxN5@willie-the-truck>
+X-Cookie: The people rule.
 
-On Mon, 25 Aug 2025 12:20:49 -0500, Alex Elder wrote:
-> The SpacemiT P1 is an I2C-controlled PMIC that implements 6 buck
-> converters and 12 LDOs.  It contains a load switch, ADC channels,
-> GPIOs, a real-time clock, and a watchdog timer.
-> 
-> This series introduces a multifunction driver for the P1 PMIC as
-> well as drivers for its regulators and RTC.
-> 
-> [...]
 
-Applied to
+--p8SWN4j5J2YR9ElS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+On Tue, Sep 16, 2025 at 10:16:11PM +0100, Will Deacon wrote:
+> On Mon, Aug 18, 2025 at 08:21:20PM +0100, Mark Brown wrote:
 
-Thanks!
+> > +	/* LDFADD H0, H0, [X0] */
+> > +	asm volatile(".inst 0x7c200000"
+> > +		     : "+r" (memp)
 
-[3/7] regulator: spacemit: support SpacemiT P1 regulators
-      commit: 8b84d712ad849172f6bbcad57534b284d942b0b5
+> Doesn't this corrupt H0 without the compiler knowing? It's probably
+> easier to use STFADD.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Yeah, that's more correct and easier than specifying constraints.  In
+practice it should be safe as the compiler is unlikely to use FP in the
+instructions it generates and it's a caller saved register.  The program
+is in general not careful with constraints.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> > +		     :
+> > +		     : "cc", "memory");
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> Why do you need the "cc" clobber?
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+It's overkill.
 
-Thanks,
-Mark
+--p8SWN4j5J2YR9ElS
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJ3JQACgkQJNaLcl1U
+h9AdSwf+KQSnGogEd+URgYtj9MeVv6Hiw0FX45ZsYI85Bi0KOmP+Nu9Tw1jbTfsM
+JgVvX+UfLVkSnmDHbdvTT8KSJ92bCk7p8vm/liTHygyQmmYVXaQMoVNGLdkCngtH
+DcLWwf6FKzeJfp5wO1nM7PR36ITmX9H8DaTszOFPzbzpcy3VKkJ5xlhB27Lpehav
+NBfz3XpkdnZpyxwdE1fsHwiQE6tZC5uesLXRt7gDHrFk5jI4OhmMYSyg9PfR39f3
+Z7qrEp8pZM6JNQcHpkJu+W7KLwGe/AXXj2SYjAy0uHfciTEUYIQBwj9+vmY6NdYW
+8hTyvGXk1ls7EfGSbDIGjGSZOzKkAA==
+=0H3m
+-----END PGP SIGNATURE-----
+
+--p8SWN4j5J2YR9ElS--
 
