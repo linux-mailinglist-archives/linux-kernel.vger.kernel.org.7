@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-819199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CB2B59CC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:01:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB217B59CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2497C2A38F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3660A1653C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F3D280014;
-	Tue, 16 Sep 2025 16:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D81C291C13;
+	Tue, 16 Sep 2025 16:01:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Ep1/oysy"
-Received: from fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.156.205.64])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bjEzItVX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A334925B1D2
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.156.205.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8EF27EFFA;
+	Tue, 16 Sep 2025 16:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038475; cv=none; b=RLMa1kC2YkD+IRzKFl9krK1cnqWP5HqNgFagojwpPCfWXlfHuqAfAGx7cTIAxId3s/znxQvuPzxOSBM51JvKfwgbySNqpNlzTmgcWvSiBcgVzLh1EQy7n2IBFJ3m2ZfWarQnGbeLis7HNbVlNPfGj/kxK/i8TR3tL2vsbxzKMqQ=
+	t=1758038479; cv=none; b=Gn8B2BLMEchgaRS6k/mQOv3jc7gcCfhjPhzvfQLFEXqsDv8JyT47z08cFQB1b86FAAUiX3HFLJ220TpaiLdOHveXdkcnbQod+1H4a+g8tRZ/sMrOvN4f8mlkIS2u6KwNdHpjMYaS6ehTL87NLEoesuM/UF3UJbUdfUoqvPbWv/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038475; c=relaxed/simple;
-	bh=hpUw8W5+cnm9fvCvLxzyMXjefa4TjV1m+7m1d3xJMyU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qps7NIn2C6Bpe34EQMuYw4Pi8PJ5/HEde0olTqjLyKwT2uJvaVHUxWWYgcxHnThW0h/OVRdwNZbpskYKcvSnba/ngRe86X1NIpxJIFgJc6mTSDbPASlUoHXZNGbvY4Zk9TCAAn5jnuhzraCj83A7e0TU5LAOwKyNF/fz2wLLoY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Ep1/oysy; arc=none smtp.client-ip=18.156.205.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758038473; x=1789574473;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hpUw8W5+cnm9fvCvLxzyMXjefa4TjV1m+7m1d3xJMyU=;
-  b=Ep1/oysyaX2gJzjHZ+3NKQ+Y8yWE472FVlQXkQn/Az9TyIQE6+hfP1R+
-   M7cTLg3Vm3Y5TtSc2r4sOEhXydzrULijZGVcNFQ702wilHjuXWT8zI6q0
-   +VrKtp/Adcibn7+KVfLj17+l+tZuZOHJj1M9RF3/LlefdZqyGAQoEtj4L
-   hbOnSaJycmQbew/POhyk+mEB+kOYLgaLpIEXW9zhiN4CrP2ZpFVXBV5Qi
-   xWdSaPN38PBJGSUJDZ9oNk1Yc8vBxOa3cfZaEhp2kvZv3ikUFXE4sINQQ
-   I78pbb2VKI2fZH59JThCBtwbHvlBYYs9hEDxym8TpU+0qS3ssbdFFvwUN
-   g==;
-X-CSE-ConnectionGUID: OSCbBS2fQUK/Eg8hSZOMfw==
-X-CSE-MsgGUID: izjZ7urrTy2YhIcaCOlGvg==
-X-IronPort-AV: E=Sophos;i="6.18,269,1751241600"; 
-   d="scan'208";a="2200005"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-001.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 16:01:03 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:9521]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.36.68:2525] with esmtp (Farcaster)
- id 2912b711-80ed-42fa-9ad3-79858e40f9d0; Tue, 16 Sep 2025 16:01:03 +0000 (UTC)
-X-Farcaster-Flow-ID: 2912b711-80ed-42fa-9ad3-79858e40f9d0
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 16 Sep 2025 16:01:02 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.227) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 16 Sep 2025 16:00:55 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <sieberf@amazon.com>
-CC: <bsegall@google.com>, <dietmar.eggemann@arm.com>, <dwmw@amazon.co.uk>,
-	<graf@amazon.com>, <jschoenh@amazon.de>, <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <mingo@redhat.com>, <peterz@infradead.org>,
-	<tanghui20@huawei.com>, <vincent.guittot@linaro.org>,
-	<vineethr@linux.ibm.com>, <wangtao554@huawei.com>, <zhangqiao22@huawei.com>
-Subject: Re: [PATCH v2] sched/fair: Forfeit vruntime on yield
-Date: Tue, 16 Sep 2025 18:00:35 +0200
-Message-ID: <20250916160036.584174-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250916140228.452231-1-sieberf@amazon.com>
-References: <20250916140228.452231-1-sieberf@amazon.com>
+	s=arc-20240116; t=1758038479; c=relaxed/simple;
+	bh=21Krwcpj0+SngOBRLh60xP/UrVLCJttLw4rK8+5Jz2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZDDlMyEfJ34pKLNP+9Fp5VMvRRjx92ycSCSyMcC95/zr9IREOwQyVeDY2QxpHXwtSBU9X/63tePbjQs6GvJ9zAhQRLG987mnBXLhGe9ntP61Cllet+ER0oCg5Y5pet39y4N0FXjkTHV3U6zJVGgWG6fM6BZpfugruUphSJ9+Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bjEzItVX; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 88E9B40E01A5;
+	Tue, 16 Sep 2025 16:01:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IK9AvWzGmseb; Tue, 16 Sep 2025 16:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758038463; bh=No517GNEZAwn0tEDWDqJ1SJLHxLK2NW7CPuDfryTxqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bjEzItVXIpkoGyWsMWLwYpRrE/kVRcqxaszssCcFQBoyMujoqKujYVvZgnjek8wmR
+	 9VeuoMldMJ8vUqF3LQDWIMdH2TZRVOhY0yDUkMGJwqmF/jdYZ5HDn/ng1x7odqS0VQ
+	 9M311y05wmfsYaHMOlEx4FM6H06CEgayjZW0XuhqUV3ja4446Cxmi8GuRefP2/NPlQ
+	 9d0JKIgz5GXqpiPiaCgIIPaqJu8gVQQdeIX3B+EY3O2v57+nahELmyNBguWzys0ij0
+	 DZoBLLq16fJbdv12RRV270lVT8KzcYAawO2Rxx2qCNEjld6nanumUqg3xsT+Y7h6C9
+	 l17q+pY4dJJuOEHxxw/TOl9u1KOgEoMQTCSab3bVOqT5t+B5qRdq63XDxPyHCfOVrH
+	 eSJiNqXcSrdip6yc1biw4SxgFsx7b5JBXTSvZUpz18T7apB9fL49PUF4CpeBe0I0pW
+	 31CIhkOLUWvvIbt/tXmfClNaRZV/fLmajJwgObx9xbML0ft8OUP18JtAv7LNZirhEJ
+	 LY81T7W6QCQkqjVHSBRrFhE6w/CNLAd4sJu+tDuGfJgCNZjasmrOA1DsQIQ2qe9dUj
+	 5Eeh3TnwnBVl4H26N6X3dd5C0TWj6bHbDiYD6cSMKSgsl4Y5tbdG0woXglBYL1lxFg
+	 Mh5sHNvbxymW1TIo1dq4ADzY=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2F01440E01A3;
+	Tue, 16 Sep 2025 16:00:43 +0000 (UTC)
+Date: Tue, 16 Sep 2025 18:00:36 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>,
+	Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, herbert@gondor.apana.org.au, nikunj@amd.com,
+	davem@davemloft.net, aik@amd.com, ardb@kernel.org,
+	john.allen@amd.com, michael.roth@amd.com, Neeraj.Upadhyay@amd.com,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] x86/sev: Add new dump_rmp parameter to
+ snp_leak_pages() API
+Message-ID: <20250916160036.GHaMmJpHHIW7RybFXD@fat_crate.local>
+References: <cover.1757969371.git.ashish.kalra@amd.com>
+ <18ddcc5f41fb718820cf6324dc0f1ace2df683aa.1757969371.git.ashish.kalra@amd.com>
+ <20250916131221.GCaMliNe3NVmOwzHEN@fat_crate.local>
+ <45528c22-9fe7-4f7d-97e9-1d58a0415b08@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D038UWC002.ant.amazon.com (10.13.139.238) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <45528c22-9fe7-4f7d-97e9-1d58a0415b08@amd.com>
 
-QWZ0ZXIgZnVydGhlciB0ZXN0aW5nIEkgdGhpbmsgd2Ugc2hvdWxkIHN0aWNrIHdpdGggdGhlIG9y
-aWdpbmFsIGFwcHJvYWNoIG9yCml0ZXJhdGUgb24gdGhlIHZydW50aW1lIGZvcmZlaXRpbmcuCgpU
-aGUgdnJ1bnRpbWUgZm9yZmVpdGluZyBkb2Vzbid0IHdvcmsgd2VsbCB3aXRoIGNvcmUgc2NoZWR1
-bGluZy4gVGhlIGNvcmUKc2NoZWR1bGVyIHBpY2tzIHRoZSBiZXN0IHRhc2sgYWNyb3NzIHRoZSBT
-TVQgbWFzaywgYW5kIHRoZW4gdGhlIHNpYmxpbmdzIHJ1biBhCm1hdGNoaW5nIHRhc2sgbm8gbWF0
-dGVyIHdoYXQuIFRoaXMgbWVhbnMgdGhlIGNvcmUgc2NoZWR1bGVyIGNhbiBrZWVwIHBpY2tpbmcK
-dGhlIHlpZWxkaW5nIHRhc2sgb24gdGhlIHNpYmxpbmcgZXZlbiBhZnRlciBpdCBiZWNvbWVzIGlu
-ZWxpZ2libGUgKGJlY2F1c2UgaXQncwpwcmVmZXJyYWJsZSB0aGFuIGZvcmNlIGlkbGUpLiBJbiB0
-aGlzIHNjZW5hcmlvIHRoZSB2cnVudGltZSBvZiB0aGUgeWllbGRpbmcKdGFzayBydW5zIGF3YXkg
-cmFwaWRseSwgd2hpY2ggY2F1c2VzIHByb2JsZW1hdGljIGltYmFsYW5jZXMgbGF0ZXIgb24uCgpQ
-ZXJoYXBzIGFuIGFsdGVybmF0aXZlIGlzIHRvIGZvcmZlaXQgdGhlIHZydW50aW1lIChzZXQgaXQg
-dG8gdGhlIGRlYWRsaW5lKSwgYnV0Cm9ubHkgb25jZS4gSS5lIGRvbid0IGRvIGl0IGlmIHRoZSB0
-YXNrIGlzIGFscmVhZHkgaW5lbGlnaWJsZT8gSWYgdGhlIHRhc2sgaXMKaW5lbGlnaWJsZSB0aGVu
-IHdlIHNpbXBseSBpbmNyZW1lbnQgdGhlIGRlYWRsaW5lIGFzIGluIG15IG9yaWdpbmFsIHBhdGNo
-PwoKUGV0ZXIsIGxldCBtZSBrbm93IHlvdXIgdGhvdWdodHMgb24gdGhpcy4KClRlc3RpbmcgZGF0
-YSBiZWxvdyBzaG93aW5nIHRoZSB2cnVudGltZSBmb3JmZWl0IHlpZWxkcyBiYWQgbWF4IHJ1biBk
-ZWxheXM6CnZydW50aW1lIGZvcmZlaXQ6CuKAoiAqKnlpZWxkX2xvb3AqKjogNC4zN3MgcnVudGlt
-ZSwgbWF4IGRlbGF5IDI3Mi45OW1zCuKAoiAqKmJ1c3lfbG9vcCoqOiAxMy41NHMgcnVudGltZSwg
-bWF4IGRlbGF5IDU1Mi4wMW1zCgpkZWFkbGluZSBjbGFtcDosCuKAoiAqKmJ1c3lfbG9vcCoqOiA5
-LjI2cyBydW50aW1lLCBtYXggZGVsYXkgNC4xMW1zCuKAoiAqKnlpZWxkX2xvb3AqKjogOS4yNXMg
-cnVudGltZSwgbWF4IGRlbGF5IDcuNzdtcwoKVGVzdCBwcm9ncmFtOgojZGVmaW5lIFBSX1NDSEVE
-X0NPUkVfU0NPUEVfVEhSRUFEIDAKI2RlZmluZSBQUl9TQ0hFRF9DT1JFX1NDT1BFX1RIUkVBRF9H
-Uk9VUCAxCiNlbmRpZgoKI2luY2x1ZGUgPHNjaGVkLmg+CiNpbmNsdWRlIDx0aW1lLmg+CiNpbmNs
-dWRlIDx1bmlzdGQuaD4KI2luY2x1ZGUgPHN5cy9wcmN0bC5oPgojaW5jbHVkZSA8c3RkbGliLmg+
-CgppbnQgbWFpbihpbnQgYXJnYywgY2hhciAqYXJndltdKSB7CiAgICBpbnQgc2hvdWxkX3lpZWxk
-ID0gKGFyZ2MgPiAxKSA/IGF0b2koYXJndlsxXSkgOiAxOwogICAgdGltZV90IHByb2dyYW1fc3Rh
-cnQgPSB0aW1lKE5VTEwpOwoKICAgIC8vIENyZWF0ZSBjb3JlIGNvb2tpZSBmb3IgY3VycmVudCBw
-cm9jZXNzCiAgICBwcmN0bChQUl9TQ0hFRF9DT1JFLCBQUl9TQ0hFRF9DT1JFX0NSRUFURSwgMCwg
-UFJfU0NIRURfQ09SRV9TQ09QRV9USFJFQUQsIDApOwoKICAgIHBpZF90IHBpZCA9IGZvcmsoKTsK
-CiAgICBpZiAocGlkID09IDApIHsKICAgICAgICAvLyBDaGlsZDogeWllbGQgZm9yIDVzIHRoZW4g
-YnVzeSBsb29wIChpZiBzaG91bGRfeWllbGQgaXMgMSkKICAgICAgICBpZiAoc2hvdWxkX3lpZWxk
-KSB7CiAgICAgICAgICAgIHRpbWVfdCBzdGFydCA9IHRpbWUoTlVMTCk7CiAgICAgICAgICAgIHdo
-aWxlICh0aW1lKE5VTEwpIC0gc3RhcnQgPCA1ICYmIHRpbWUoTlVMTCkgLSBwcm9ncmFtX3N0YXJ0
-IDwgMzApIHsKICAgICAgICAgICAgICAgIHNjaGVkX3lpZWxkKCk7CiAgICAgICAgICAgIH0KICAg
-ICAgICB9CiAgICAgICAgd2hpbGUgKHRpbWUoTlVMTCkgLSBwcm9ncmFtX3N0YXJ0IDwgMzApIHsK
-ICAgICAgICAgICAgLy8gYnVzeSBsb29wCiAgICAgICAgfQogICAgfSBlbHNlIHsKICAgICAgICAv
-LyBQYXJlbnQ6IHNoYXJlIGNvb2tpZSB3aXRoIGNoaWxkLCB0aGVuIGJ1c3kgbG9vcAogICAgICAg
-IHByY3RsKFBSX1NDSEVEX0NPUkUsIFBSX1NDSEVEX0NPUkVfU0hBUkVfVE8sIHBpZCwgUFJfU0NI
-RURfQ09SRV9TQ09QRV9USFJFQUQsIDApOwogICAgICAgIHdoaWxlICh0aW1lKE5VTEwpIC0gcHJv
-Z3JhbV9zdGFydCA8IDMwKSB7CiAgICAgICAgICAgIC8vIGJ1c3kgbG9vcAogICAgICAgIH0KICAg
-IH0KCiAgICByZXR1cm4gMDsKfQoKUmVwcm86CnRhc2tzZXQgLWMgMCwxIGNvcmVfeWllbGRfbG9v
-cCAxICYgICNhcmcgMSA9IGRvIHlpZWxkCnRhc2tzZXQgLWMgMCwxIGNvcmVfeWllbGRfbG9vcCAw
-ICYgICNhcmcgMCA9IGRvbid0IHlpZWxkCgoKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50cmUgKFNv
-dXRoIEFmcmljYSkgKFByb3ByaWV0YXJ5KSBMaW1pdGVkCjI5IEdvZ29zb2EgU3RyZWV0LCBPYnNl
-cnZhdG9yeSwgQ2FwZSBUb3duLCBXZXN0ZXJuIENhcGUsIDc5MjUsIFNvdXRoIEFmcmljYQpSZWdp
-c3RyYXRpb24gTnVtYmVyOiAyMDA0IC8gMDM0NDYzIC8gMDcK
+On Tue, Sep 16, 2025 at 08:58:42AM -0500, Tom Lendacky wrote:
+> Did the patch merge correctly? I can't see how it would fail since both
+> the original and new definitions are in separate parts of the #ifdef... It
+> should have failed even before given the way it was changed.
+> 
+> Maybe I'm missing something.
 
+Nah, you're right. Because your patch is moving sev_evict_cache(), I ended up
+resolving it wrong. Sorry for the noise.
+
+Ashish, all patches against tip go ontop of the tip/master branch. Please redo
+your set ontop.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
