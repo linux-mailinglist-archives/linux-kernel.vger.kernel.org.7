@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-819687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964DAB7D5B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D38B7D5C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23DA43BCA71
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9C73AC6A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2237A296BB8;
-	Tue, 16 Sep 2025 22:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAF92BE7CC;
+	Tue, 16 Sep 2025 22:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YBibXGdN"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxKy4Vrc"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD57433C4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4500520E6F3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758060964; cv=none; b=qL/ABtS4IR+FY1KZbTbfONbj7aLF//NCXjv9sSIO1GUp8l4nwSI1S0QcOa7zXBLoV7AqO8NsM/VfZnSs7qCxQULVaUAYGRDIrdVbv86zo9Kpft8E5kjZWzm/51izPH4VV5tn3xRl/T9uP5AO1UmdDcPLBril0/M3MbEFREqjMGs=
+	t=1758061004; cv=none; b=pv2b1RVxCOTCz2j+GyhYxqpFp9QZGkEFq9vMLKRYwLi5t7GRuIXxVOjO/vLJTe+bWh+tFTONglDTrR9DmOJvxPSVCsXZRE+vPSmPkAxPJScEROXaDGWwwvHRi8+bjFP9fCPC3zaabsTpF+Wf2ewDNjyeG9g/y6d9iLtSAa1iVPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758060964; c=relaxed/simple;
-	bh=vEQkrCZoFVZ5UELyo023tUb6H8j5Ao0wikIS02ojfec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s2Jut85zwh2eLYdEP4dDCjEPB3aAySiewEXDjvcVAUmjcXLTEvtPUCnoTjYU3k6OvEGWJJdpUv6nW8oZVz4/9ZiWITDzbM7DsRjetk56fUnsx01LkJzczij2Ge1Zy+HGc/advzSMI2RnECKvNyPfxqgufY414aWW1S8HW2AlKeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YBibXGdN; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b78657a35aso92241cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:16:01 -0700 (PDT)
+	s=arc-20240116; t=1758061004; c=relaxed/simple;
+	bh=ZhrtNX2kW4+SEm0NDR3oatPjuXJvSmAGowa5Ma02sfQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jQx5QARNO3SYu1/HrIN8JfxiVGJGnpi5y/xfpwfhK4cLLXaBeok6Wxs5xf9UVNcohQ1B+qjMJAT8jani1fECga8ke8FybAIHqlXlmOBf9BK3Mpmucy7IuDAKHyew3HgMx8Ke60T/lDHAzxvQigfQwwsXDS3ldb+gBOfdXNkE5fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SxKy4Vrc; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3318dd36a8fso3051002fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:16:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758060961; x=1758665761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XCBNi/ou5yRHx7+ah+D+ieL7ClLUcNgw9Fw0BKqDeFY=;
-        b=YBibXGdNgTtc1u6OoVvC9fcA94g9btaf1eUYrdUVafhM0p7Y/6knzEVgmKt9r500nR
-         fpq9EGK+Gm5aFMyhllvdVbMl+mHStf1OH6LPEMHXgZxn2jpAUONow1HtdqixamtXRGU2
-         w7uGNhNW88l6/xOvTi5HURZNEg7aTZC0EZHeMqyscuSyjwjbPXvEksDjAhyH5S50woRz
-         R5QPlycyvhEX28A774pjha3TCnR3XyjiEAkWJPVTdP2YtWRDHihqV4eP9vwWXsCm8hln
-         f4kA4y1CsNAIjK3vr2uYfCgD+Yts3z/BSJRFSuGDOy4+GcMMd550W/Qav26lwazBCUMI
-         ZOcg==
+        d=gmail.com; s=20230601; t=1758061002; x=1758665802; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ykbi9ORR6F/chC/kV2ctSfLFRdnZlKnXwUjsJoavaTU=;
+        b=SxKy4VrcMoh0eYAxDY4MNWX9pcdyCoEU1I/knjhVy4Gyv6q2WMKcgyaLgu8fcMmpIk
+         21C0dobTWZluv6lDhyonKKqpL3Unf/xSfT3uA4mG2fD2rwuU+ClLK4g1kUOD7AuBVJNo
+         I03OBZpoTnd/a8NdvdO8XrMhZUxw2nYgyBztTETTU3XJYs4huj2OB+nVXtviwEH2ApQl
+         Wwvm7g07JGSgJ7SM2n9kMRtC7R3B+RXOH1g/YPczazQerjq4ON5AKE6Och+qeA3KSFl8
+         JegJq42pmGzSvK/xh5nia89hTI3A/M6gChlrE+6fgoskzRRM/UQzTAdyReEci8q4/O/s
+         MKbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758060961; x=1758665761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCBNi/ou5yRHx7+ah+D+ieL7ClLUcNgw9Fw0BKqDeFY=;
-        b=or/tXtlQJeBheyyiAxmQ3Ly7tntQeI0f8g/K5Fg6LQIlJRv4EIItQlh33qP4b5pgnU
-         FaXBkMP/T7pKuc1yACKgu4H9A4fQbmp2jZXRwxrNlBNkCI8RDbhQ+pg9j/ofGDy1feY3
-         eeRaozbC/TnTR/umJIFQVUrgS7ukNkKV1o4CAb+5PvsGcXPbNjxzWoZoPn+ahpV2zIkz
-         oIrKfDQfnVfzCfLK3YBPMlrlGq8sgjENJ29N5UneaGq2eFjgdigQrBeNBQ4S7yuhzNdE
-         9p5DXYLoNiENG24LAbVU78+K36WML+r6mLujELYmtEY/ReS23UrEauZ6Ox9PSMI3CR1E
-         ZCnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc4q3c/gAgY8GihLgPZiVF+T7G5b45Wn5zPDqc9xG36FZw3bBGoU41hgM+MbJS/1WWbCii4AcrAK9E9AY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXNDfue9OlDnu2D/2BtheXkmqR1GymPB1MhWCpRy+f/x7iU0x9
-	fzQJ+9Fom/mR+fbrZDQ2TJa90g/JvZw+7zGwm2nttl6FAA6y2dmUQzcyXNtDiJnrzqeibnOQK5o
-	XNeg74GHAgu4Vgx0meisKGzufGKAIiwqLhhFW+fAA
-X-Gm-Gg: ASbGncvCjlhiHkyIYOBWq3MOniUWzD9kvneUyQ2g8FE6Fn/CKiQTfi4tLWPy+kYPmli
-	+zJmzToHrVpnAejZovN8DiXB1VbikLxhgSDDA0+vhfnRPDHU7Dd/YEXoXYViFjMfInWyRywn3TL
-	HB9KNR+Qjpjo+/ZdaXmZRUu3ynAkMNq/9rAIYA7wurFVwYkJEt63Weqsfe0+yuEvD+C+4zDi5AN
-	ytEk9YGtdDx8Ys8rLzveEvKOcxjQ71+OQMGUk0ZZNTadz4fBVJdc+TIloaE0Vw=
-X-Google-Smtp-Source: AGHT+IFwZOxD9kLzPCB1lILJmI0xgkzuMmGn6adIQK8bdZ9yMIliCNXUh+Z4nqxF5q5gbdz8Rfginp11jxz6hV6K3Jo=
-X-Received: by 2002:ac8:5d08:0:b0:4b7:9a9e:833f with SMTP id
- d75a77b69052e-4ba2e66f6d0mr969151cf.7.1758060960355; Tue, 16 Sep 2025
- 15:16:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758061002; x=1758665802;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ykbi9ORR6F/chC/kV2ctSfLFRdnZlKnXwUjsJoavaTU=;
+        b=BHJxoOEAsz2Ed1AD9EXHxP6TdGd0ekTpi0GlH6DWJIKOhm+CcWsfv1aoMfwbEQpyal
+         ZvOkpeIbfT1rir2LZ/wilZwiNnW3AlKkm01deHxi9oPH8ifuYx0vN6DgEii3SO/ZhASr
+         Oo6vgukYGhVaYdAYng8G1u8OibUqg6121ONqGDhqR8SkkUtOjzTGZJW/sisE8lIEj0k3
+         7XmI+rIZ3EbBKMl0t6K06pIWWTGaAMKU5ALR3RDhDekbMBax0GX7Vs6VMtIk+faVP0fb
+         DVWmAGAzIj3k0zNzzMUO9Xxc0M/MXk+giXdnUZJqWzDQi3XDAKUtDuFfAHZW4htUE1fg
+         GTsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX2MyHA2BjvABxasV9xdPIbIAfjBbeQ9c9yGJXZX1pKmW+NC07T3S2wQ9BmGazYMMfZH08x/r0hUb2oJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5jbBtU2TwIlUZjAfJJaH0btcXJitzFTpUe7KPqFl6cy+8gZq6
+	Eo8nqYzmgCcXAMf8UyLWR0CUCSIPMsOL6GpKE8d7OV9xSLfWtEC913eh0AMZqfOiLSIubg==
+X-Gm-Gg: ASbGncssp8kMNz7AWi3CYHZqh3NPFdHFkSkvHaou6VXGrP0xPzYqqioDTdN5xs5v6eS
+	3+PJ+SNQlhD8mTZ5Km4VyL4Nw0P1jLPLXgnVJYH4qCeHP5wzVkDeInhGvFjN4JPZTDtA2x1tJbK
+	IOAs0ByFL25Mh+WB7GICFJzds76DsM/Ppc5/PWCtj5Vmf024jB6OZy7I1brcsrAOphuKtqxjJZQ
+	b6VjETDrtGrJHaoIu15cM71FgOJ8hIxknl6JRR56rPQ/tIwdAxZGrB9Ej7a56hKkqWl02eDvbAE
+	0LlHLPUot/NLiGDP2h0408siXaExe7pHorwHv40Clw/LJwTz+xfz+WgJDMuZ5rf+yu63iWvKwl/
+	pSeK0byrVBzHUCuEzL7nubkzF0CdIjSGhhbqCY+esc5sjrqHE5hfti8pwjkX5Sl9DQIDmua54GZ
+	20gJVxcaeMk7QAm2si0qX5rKjnh8U9ycRqJAc=
+X-Google-Smtp-Source: AGHT+IEZnSDUvYgihKJtLaN2Xpm1odOGPMiQ/3sbr28jrHO6rgLxPXvbdax1sAYKsoitj5HevBF6BQ==
+X-Received: by 2002:a05:6870:b251:b0:2d6:6688:a625 with SMTP id 586e51a60fabf-335c014cba9mr29867fac.37.1758061002296;
+        Tue, 16 Sep 2025 15:16:42 -0700 (PDT)
+Received: from [10.0.11.20] (57-132-132-155.dyn.grandenetworks.net. [57.132.132.155])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7598664d715sm1707318a34.0.2025.09.16.15.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 15:16:41 -0700 (PDT)
+Message-ID: <c36676c1640cefad7f8066a98be9b9e99d233bef.camel@gmail.com>
+Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
+From: brian.scott.sampson@gmail.com
+To: Kuniyuki Iwashima <kuni1840@gmail.com>, christian@heusel.eu
+Cc: davem@davemloft.net, difrost.kernel@gmail.com, dnaim@cachyos.org, 
+	edumazet@google.com, horms@kernel.org, kuba@kernel.org, kuniyu@amazon.com, 
+	linux-kernel@vger.kernel.org, mario.limonciello@amd.com,
+ netdev@vger.kernel.org, 	pabeni@redhat.com, regressions@lists.linux.dev
+Date: Tue, 16 Sep 2025 17:16:40 -0500
+In-Reply-To: <20250611164339.2828069-1-kuni1840@gmail.com>
+References: <58be003a-c956-494b-be04-09a5d2c411b9@heusel.eu>
+	 <20250611164339.2828069-1-kuni1840@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160110.266190-1-surenb@google.com> <4c4e97c1-7f93-4c09-a235-ab169a998ef0@gmail.com>
-In-Reply-To: <4c4e97c1-7f93-4c09-a235-ab169a998ef0@gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 16 Sep 2025 22:15:49 +0000
-X-Gm-Features: AS18NWCPPfExsO_fHti7iMCfKkGoQVQGtNzFsTAs87brLA4n_LMr0i3QIz8xI9Q
-Message-ID: <CAJuCfpFc=qUAnS=-YuW_CRgF6GUz-7_ZEMFEL-n+XY6MAr7ytg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] fixup: alloc_tag: mark inaccurate allocation counters
- in /proc/allocinfo output
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
-	hannes@cmpxchg.org, rientjes@google.com, roman.gushchin@linux.dev, 
-	harry.yoo@oracle.com, shakeel.butt@linux.dev, 00107082@163.com, 
-	pyyjason@gmail.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 8:50=E2=80=AFPM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
->
->
-> On 16/09/2025 17:01, Suren Baghdasaryan wrote:
-> > Document new "accurate:no" marker.
-> >
-> > Fixes: 39d117e04d15 ("alloc_tag: mark inaccurate allocation counters in=
- /proc/allocinfo output")
-> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> > Based on mm-new
-> >
-> >  Documentation/filesystems/proc.rst | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesys=
-tems/proc.rst
-> > index 1776a06571c2..17668f82ff1c 100644
-> > --- a/Documentation/filesystems/proc.rst
-> > +++ b/Documentation/filesystems/proc.rst
-> > @@ -1014,6 +1014,14 @@ If file version is 2.0 or higher then each line =
-may contain additional
-> >  For example if the counters are not accurate, the line will be appende=
-d with
-> >  "accurate:no" pair.
-> >
-> > +Supported markers in v2:
-> > +accurate:no
-> > +              Absolute values of the counters in this line are not
->
-> s/values/value/ maybe? :)> +              accurate because of the failure=
- to allocate storage required
+> Thanks for the report.
+>=20
+> Could you test the diff below ?
+>=20
+> look like some programs start listen()ing before setting
+> SO_PASSCRED or SO_PASSPIDFD and there's a small race window.
+>=20
+> ---8<---
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index fd6b5e17f6c4..87439d7f965d 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -1971,7 +1971,8 @@ static void unix_maybe_add_creds(struct sk_buff
+> *skb, const struct sock *sk,
+> =C2=A0	if (UNIXCB(skb).pid)
+> =C2=A0		return;
+> =C2=A0
+> -	if (unix_may_passcred(sk) || unix_may_passcred(other)) {
+> +	if (unix_may_passcred(sk) || unix_may_passcred(other) ||
+> +	=C2=A0=C2=A0=C2=A0 !other->sk_socket) {
+> =C2=A0		UNIXCB(skb).pid =3D get_pid(task_tgid(current));
+> =C2=A0		current_uid_gid(&UNIXCB(skb).uid, &UNIXCB(skb).gid);
+> =C2=A0	}
+> ---8<---
+Just came across this when troubleshooting a resume from suspend issue
+where I'm get a black screen after suspend. Initially saw this with my
+distribution's(Linux 6.16.7-2-cachyos) kernel, and confirmed the issue
+in the latest version of the vanilla mainline kernel. Bisection is also
+pointing to commit 3f84d577b79d2fce8221244f2509734940609ca6.=20
 
-Maybe... English is not my first or second language, so I'm not really sure=
-...
+This patch appears to be already applied in the mainline kernel, so
+this might be something different. I'm new to mailing lists, so wasn't
+sure if I should report this issue here or start a new email chain.
 
->
-> s/storage required/memory/
-
-I'm fine with the proposed changes. Andrew, if you agree with them,
-could you please fold them in when you pick up this patch?
-
->
-> > +              to track some of the allocations made at this location.
-> > +              Deltas in these counters are accurate, therefore counter=
-s
-> > +              can be used to track allocation size and count changes.
-> > +
->
-> >  Example output.
-> >
-> >  ::
-> >
-> > base-commit: 199236646ffd82b5a5bcf2bca1579ea06cb0ae74
->
+--=20
+ Brian Sampson <brian.scott.sampson@gmail.com>
 
