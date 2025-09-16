@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-818579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029DAB59391
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:26:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA44B59397
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D75737ABE85
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322271BC750D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5116F3090D5;
-	Tue, 16 Sep 2025 10:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E72309F0C;
+	Tue, 16 Sep 2025 10:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sOwHfbyv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMusTQaZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DCB306489;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74E330649A;
 	Tue, 16 Sep 2025 10:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758018217; cv=none; b=IQmoRT13ZFDBdeXxuBGw5J+ut+FrXQHRVWVb8ph8eGAY3AqHPqXNhHk9DZg3vJ3KDWqTWvFbZqDCHLXj+8L1lelcQTT0GxyHlgFbvJ2FBVXaLLrQ+jV5Ngo4vauMoBua8tCcS0F/Jb5S2Lox37SMk3tPgXR3b/jueGVoOjhjkcw=
+	t=1758018217; cv=none; b=ltI567c/QXmRN7XD/pXULAzvfKk5DB9nagacvWgZp10hUmvb/SX2f0tzy0D5rvjXe9YNpzFlYeYNEA20yJLjBGsr2hv3LhUvPockpPERYJv+qLxv1Ba1xx8YhkaW/Ug3XtLxKz44Lb5EYybhl/Cts9aHpHFk1KqV3YWfnR+Brns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758018217; c=relaxed/simple;
-	bh=Um/5hSZElcigGfGfqDdP8kwoICyt5uQYwgvn0kBeh7E=;
+	bh=g16JMyLKdDH7hbXVKVhgpa5lgoUGSLSeYBfDxjGikfg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iWFV9tf5w6lLvz0ueCrS87ds8teh9UXDaJh0XNhRAKsuR2sUwUQHrm46OuT9wMOR6AcILzOiOqbog5lEpZzgv/5Cg2fDgiLAddU9j4+vXNhRNeX/MagcM2KMsmbJCO7mWN7JqKnCwuwxk6XE2Es2vGzqimtEkhKXtzDPu2Hw0w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sOwHfbyv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6766AC4CEFA;
+	 Content-Type:MIME-Version; b=VOo8ZoiZBndfPnIphzvHD4LE7R5hnuYRpScA/YkjRaQuEgETFLIf8NOsL99fMopfJHaVQAAYoziAIkLannaieAC+YhGr2d9FMiahOMruB4ptpYbyBmKlJlNfI/7L2pYn9iIgQ2OvUREpGBdjNihaVFrci1vVCOiaJu7G8c0lkiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMusTQaZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A5E2C4CEFC;
 	Tue, 16 Sep 2025 10:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758018217;
-	bh=Um/5hSZElcigGfGfqDdP8kwoICyt5uQYwgvn0kBeh7E=;
+	bh=g16JMyLKdDH7hbXVKVhgpa5lgoUGSLSeYBfDxjGikfg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sOwHfbyvR3bEWMSRSTdnxYKjaVonkFwyge95ReqFDnc15ZbSG1h9pHK/4KF27Nvv7
-	 LWA7iT+rdq6vfx5ykTFLR70ruMQJn4dta8LczWY+jX6YDYMrzBhJJcpZXhL1oYTLAy
-	 Hfb9o/3Sc/1BkPFMhaDH9rC2RouqU7JcvQ7pzziTkrDzJ+nmfWct4riNTvZ6yBJK1P
-	 n+IYEDOtLl7StXxcOD22K8fBXCvtGuqXLpegBu1+cIPjDhN7UsxDowEKuH+LgZ9Q5G
-	 edQsEsEBeTeRHV7dKNUf/mGMuL9aaaPXjqc3Q0CHmOUQ/tAW2MWnMvcfiVITKVXFUe
-	 j26gZp8UpRZrA==
+	b=BMusTQaZBNfUbpxG8sADvkCzGSUkKxsNtMirlkgf9qgCE3YjTr0sN9s3X89c2I+xL
+	 90NfQ3E3DZItyRYnw4+GMltKKaYpxqRDG6QmZ1KWk3scRioJ4uYAsqsT1VavEGe2kA
+	 xYSha43gYi+z1SfqfaLzQyYkGNVeGNeq/FzsQ8HcvWzo09fvqjxxkO7qanwXi4LkPA
+	 W42WP9GElxVbzdg9ZeKHBK37ocwjPRJcqZN6WseLa0M3rwdad+FjyM3JdeTZCzXXyC
+	 IF13zNrzrcUqOjccEarvnMorQ6H+5G6Nu8DnCn1XZFLk+9LsCCaGlv+Q/g3RSWZBsk
+	 E1KUUDnOxIgpA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uySqT-0000000BBPW-06vI;
+	id 1uySqT-0000000BBPb-0GID;
 	Tue, 16 Sep 2025 12:23:33 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>,
@@ -50,9 +50,9 @@ To: Jonathan Corbet <corbet@lwn.net>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 13/21] tools/docs: sphinx-build-wrapper: add an argument for LaTeX interactive mode
-Date: Tue, 16 Sep 2025 12:22:49 +0200
-Message-ID: <7238e04135bde9e98808ee1b35ec09e5df1fb10f.1758018030.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v6 14/21] tools/docs,scripts: sphinx-*: prevent sphinx-build crashes
+Date: Tue, 16 Sep 2025 12:22:50 +0200
+Message-ID: <d2b15a3387c1de6d4aa7f3c59f3cf6afd78ad584.1758018030.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1758018030.git.mchehab+huawei@kernel.org>
 References: <cover.1758018030.git.mchehab+huawei@kernel.org>
@@ -66,75 +66,88 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-By default, we use LaTeX batch mode to build docs. This way, when
-an error happens, the build fails. This is good for normal builds,
-but when debugging problems with pdf generation, the best is to
-use interactive mode.
+On a properly set system, LANG and LC_ALL is always defined.
+However, some distros like Debian, Gentoo and their variants
+start with those undefioned.
 
-We already support it via LATEXOPTS, but having a command line
-argument makes it easier:
+When Sphinx tries to set a locale with:
 
-Interactive mode:
-	./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs peci -v -i
-	...
-	Running 'xelatex --no-pdf  -no-pdf -recorder  ".../Documentation/output/peci/latex/peci.tex"'
-	...
+	locale.setlocale(locale.LC_ALL, '')
 
-Default batch mode:
-        ./scripts/sphinx-build-wrapper pdfdocs --sphinxdirs peci -v
-	...
-	Running 'xelatex --no-pdf  -no-pdf -interaction=batchmode -no-shell-escape -recorder  ".../Documentation/output/peci/latex/peci.tex"'
-	...
+It raises an exception, making Sphinx fail. This is more likely
+to happen with test containers.
+
+Add a logic to detect and workaround such issue by setting
+locale to C.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- tools/docs/sphinx-build-wrapper | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ tools/docs/sphinx-build-wrapper | 11 +++++++++++
+ tools/docs/sphinx-pre-install   | 14 +++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
 diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
-index a65a2297eb40..413f51575de8 100755
+index 413f51575de8..629abb99b9f3 100755
 --- a/tools/docs/sphinx-build-wrapper
 +++ b/tools/docs/sphinx-build-wrapper
-@@ -173,7 +173,7 @@ class SphinxBuilder:
-         if not verbose:
-             self.sphinxopts += ["-q"]
+@@ -45,6 +45,7 @@ the newer version.
+ """
  
--    def __init__(self, builddir, verbose=False, n_jobs=None):
-+    def __init__(self, builddir, verbose=False, n_jobs=None, interactive=None):
-         """Initialize internal variables"""
-         self.verbose = None
+ import argparse
++import locale
+ import os
+ import shlex
+ import shutil
+@@ -457,6 +458,16 @@ class SphinxBuilder:
+         if not sphinxdirs:
+             sphinxdirs = os.environ.get("SPHINXDIRS", ".")
  
-@@ -183,7 +183,11 @@ class SphinxBuilder:
-         self.kernelversion = os.environ.get("KERNELVERSION", "unknown")
-         self.kernelrelease = os.environ.get("KERNELRELEASE", "unknown")
-         self.pdflatex = os.environ.get("PDFLATEX", "xelatex")
--        self.latexopts = os.environ.get("LATEXOPTS", "-interaction=batchmode -no-shell-escape")
++        #
++        # The sphinx-build tool has a bug: internally, it tries to set
++        # locale with locale.setlocale(locale.LC_ALL, ''). This causes a
++        # crash if language is not set. Detect and fix it.
++        #
++        try:
++            locale.setlocale(locale.LC_ALL, '')
++        except locale.Error:
++            self.env["LC_ALL"] = "C"
 +
-+        if not interactive:
-+            self.latexopts = os.environ.get("LATEXOPTS", "-interaction=batchmode -no-shell-escape")
-+        else:
-+            self.latexopts = os.environ.get("LATEXOPTS", "")
+         #
+         # sphinxdirs can be a list or a whitespace-separated string
+         #
+diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
+index d6d673b7945c..663d4e2a3f57 100755
+--- a/tools/docs/sphinx-pre-install
++++ b/tools/docs/sphinx-pre-install
+@@ -26,6 +26,7 @@ system pacage install is recommended.
+ """
  
-         if not verbose:
-             verbose = bool(os.environ.get("KBUILD_VERBOSE", "") != "")
-@@ -567,12 +571,16 @@ def main():
-     parser.add_argument('-j', '--jobs', type=jobs_type,
-                         help="Sets number of jobs to use with sphinx-build")
- 
-+    parser.add_argument('-i', '--interactive', action='store_true',
-+                        help="Change latex default to run in interactive mode")
+ import argparse
++import locale
+ import os
+ import re
+ import subprocess
+@@ -422,8 +423,19 @@ class MissingCheckers(AncillaryMethods):
+         """
+         Gets sphinx-build version.
+         """
++        env = os.environ.copy()
 +
-     args = parser.parse_args()
- 
-     PythonVersion.check_python(MIN_PYTHON_VERSION)
- 
-     builder = SphinxBuilder(builddir=args.builddir,
--                            verbose=args.verbose, n_jobs=args.jobs)
-+                            verbose=args.verbose, n_jobs=args.jobs,
-+                            interactive=args.interactive)
- 
-     builder.build(args.target, sphinxdirs=args.sphinxdirs, conf=args.conf,
-                   theme=args.theme, css=args.css, paper=args.paper)
++        # The sphinx-build tool has a bug: internally, it tries to set
++        # locale with locale.setlocale(locale.LC_ALL, ''). This causes a
++        # crash if language is not set. Detect and fix it.
+         try:
+-            result = self.run([cmd, "--version"],
++            locale.setlocale(locale.LC_ALL, '')
++        except Exception:
++            env["LC_ALL"] = "C"
++            env["LANG"] = "C"
++
++        try:
++            result = self.run([cmd, "--version"], env=env,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               text=True, check=True)
 -- 
 2.51.0
 
