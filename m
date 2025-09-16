@@ -1,128 +1,97 @@
-Return-Path: <linux-kernel+bounces-819077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94341B59B05
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3091B59B04
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380172A31CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D94E189F646
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5ED340D9C;
-	Tue, 16 Sep 2025 14:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wK3l/APS"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82BF28C84F;
+	Tue, 16 Sep 2025 14:52:57 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0673E309DB0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA58309DB0;
+	Tue, 16 Sep 2025 14:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758034366; cv=none; b=DEIDC/cgbfrpMVTpufOcNZiEhSYoArCdbWlhPGh5PNXC3/TdjuLXzL1MrLyRkGp7ixtctMHmf5faqdC2foGjZxxSG9zSXTBCLZ0Miu8tBAYcGLLP6B5+D/Hj47jEpE5nqPS8i49FQGkfYKGMrUGUkrYk5Nw8iPzwb8//ej9y1aU=
+	t=1758034377; cv=none; b=uI4k5yiRqYdfUlt6/AO3BpicFhxMWJ3W7c+vWqKTIFlWtIJ/1Mwu8MUV7G/vB85S8BD3v5oyXLRXICaPcoCr7elE0JH5Vb2tutwXtc2lMXeuQmRgG9WogOx3xi/uz6v4Jf2gmY6SOkOqNBTe4b6VGB+Yx5QIYqwuWDHTYjjWFfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758034366; c=relaxed/simple;
-	bh=m2KOOvaQcGDrt/TmvHVj0MM4XbMIsCoimcHdlZ8dRwg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cNfa3k1DSVHdQsC1YBNlahbLjGmYpNvhUv+NzrzAmNtsC/ocdZ8HaDz9X8/fi7iuVuOwgXsb8GqT6VoYIgVm9fkVD601ZwohQIk1xPZjLDTC6pFJnvodOemFZ1GDOaLZZGFxD9MVJ+Eo8iKDUAcpuqMUV4dpWJ1rZDEFo6ql/vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wK3l/APS; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so498669a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758034364; x=1758639164; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5E3qnbdqRNKYtwnt8hzs7H9oNeW9zi+yEz9lSm4V2OA=;
-        b=wK3l/APSVW/g1b1DqbjdWNqm0xuGuSfMp4lGC9uO0sOG9CGWRZ8mDHS59uPu9zyMOe
-         kTpqRbcoRu4i4ZQ+KSs4x8eK+iYqEAJk1S77eEca5ALdsTJVV9iCW4Io/zWgo7snqVSt
-         Fx1DPkvpoOuGzRxR5G6hr4gb1RFWL+xCW1m3irAiH4pdaMQm+u0O9AWtjjxrdsYRTS4M
-         jvtZMX30q3MjLh7bh8USeBeZTzG8SSeQOK6jVMl9Vfa7GPDewhKioID3FkL1ek5HX0KM
-         aliIzIIpqU3mdgxwu1swpCS2WTrIvwwpmVmpGY8WABZTcsupquVIfPeiJrzC8W4cvJX7
-         PCEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758034364; x=1758639164;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5E3qnbdqRNKYtwnt8hzs7H9oNeW9zi+yEz9lSm4V2OA=;
-        b=g49aIaXHieOIaDyg7x5Imk+Lc/9iYU/S5XwQZfNIbDf/CeXjiEorW8fVx/IQrWXJfS
-         9KQtwx5sR1SH+RqR+T7XIcroL2HgHLpjMbWYL/cSmu23nXkrzlOZrwKDK6hMDYukx89M
-         c6cHaC0wJdOy8D16/beTy9/t5X/608SdZs5/4DnsnroMd/gPxsIkE+Fb+9d87F0sib9s
-         jiy+ba+RknSoKd6PvfkJ2ZvdcTB9nv7HJ6BRgln5iCkdlyXj+8Ifxu7eU4O4FN7ZNi3u
-         H2e6fGHao9Sg8avU+JVv2d3sTFlUXhmwnUsgBarxmIb+3aBrsEcawp+xI/v13px70Pss
-         katQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWs5NceCWfE/h3RSDRVdkfiIWqnAr8mYX9iW1tyk3pVKVlrdGKAR6cfg9LCRt4r7N5BSphuhKuHS/YQezs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaRvruK+WsJqKFfXBTPAKRA9EKv3Ynu0RXFKBJgt+/TM8kiAcf
-	qnLTlvAkQ1SXrWcXnuqi//z9fFxIJJp3WdSYWd/fAxt1/yH0qe6koQUE7WxmK7CN57ht0vRVolE
-	mxM9XwA==
-X-Google-Smtp-Source: AGHT+IGjfmJpQ4lC0iEqMON72LWTyS6jym2vxg8R+T/51zsgl4TA6F8PBYAw3kwQhUfPdOeDMTUPr0z2AnE=
-X-Received: from pjh16.prod.google.com ([2002:a17:90b:3f90:b0:32e:8014:992f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a8a:b0:32e:1213:1ea0
- with SMTP id 98e67ed59e1d1-32e121321dbmr13796123a91.16.1758034364191; Tue, 16
- Sep 2025 07:52:44 -0700 (PDT)
-Date: Tue, 16 Sep 2025 07:52:42 -0700
-In-Reply-To: <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
+	s=arc-20240116; t=1758034377; c=relaxed/simple;
+	bh=uWFwdCKgY4KtJCBw76nmYl/luYzpUeAdJ6G3lD0fkpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HF1bKk+DEVOfY1y108l1wH5dP0wsW2iScF1d5RhnlC8NAIQKtBTUN3d1SlJOAYhpfFYbHQJZA6/pZPLJoA3q0iEkefD15oWUyECj5eXMcSRE7HaJeWBCM88uqrnyvA8zAmfyy+2Q897hdBjvAr+89/bRB/EAei97KN2Hkh9gkDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id E5F862C06649;
+	Tue, 16 Sep 2025 16:52:44 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id D6FE235A08; Tue, 16 Sep 2025 16:52:44 +0200 (CEST)
+Date: Tue, 16 Sep 2025 16:52:44 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: wufan@kernel.org
+Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dhowells@redhat.com,
+	ignat@cloudflare.com, herbert@gondor.apana.org.au,
+	davem@davemloft.net, jarkko@kernel.org, zohar@linux.ibm.com,
+	eric.snowberg@oracle.com
+Subject: Re: [PATCH v2] KEYS: X.509: Fix Basic Constraints CA flag parsing
+Message-ID: <aMl5vAB1qmRw6eZT@wunner.de>
+References: <20250911225356.2678-1-wufan@kernel.org>
+ <20250915211550.2610-1-wufan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250825055208.238729-1-namjain@linux.microsoft.com>
- <20250825094247.GU3245006@noisy.programming.kicks-ass.net>
- <f154d997-f7a6-4379-b7e8-ac4ba990425c@linux.microsoft.com>
- <20250826120752.GW4067720@noisy.programming.kicks-ass.net>
- <efc06827-e938-42b5-bb45-705b880d11d9@linux.microsoft.com> <27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com>
-Message-ID: <aMl5ulY1K7cKcMfo@google.com>
-Subject: Re: [PATCH] x86/hyperv: Export hv_hypercall_pg unconditionally
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mhklinux@outlook.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915211550.2610-1-wufan@kernel.org>
 
-On Tue, Sep 16, 2025, Paolo Bonzini wrote:
-> On 8/27/25 01:04, Roman Kisel wrote:
-> > On 8/26/2025 5:07 AM, Peter Zijlstra wrote:
-> > > I do not know what OpenHCL is. Nor is it clear from the code what NMIs
-> > > can't happen. Anyway, same can be achieved with breakpoints / kprobes.
-> > > You can get a trap after setting CR2 and scribble it.
-> > > 
-> > > You simply cannot use CR2 this way.
-> > 
-> > The code in question runs with interrupts disabled, and the kernel runs
-> > without the memory swapping when using that module - the kernel is
-> > a firmware to host a vTPM for virtual machines. Somewhat similar to SMM.
-> > That should've been reflected somewhere in the comments and in Kconfig,
-> > we could do better. All in all, the page fault cannot happen in that
-> > path thus CR2 won't be trashed.
-> > 
-> > Nor this kind of code can be stepped through in a self-hosted
-> > kernel debugger like kgdb. There are other examples of such code iiuc:
-> 
-> As Sean mentioned, you do have to make sure that this is annotated as
-> noinstr (not instrumentable).  And also just use assembly - KVM started with
-> a similar asm block, though without the sketchy "register asm",
+On Mon, Sep 15, 2025 at 09:15:50PM +0000, wufan@kernel.org wrote:
+> Fix the X.509 Basic Constraints CA flag parsing to correctly handle
+> the ASN.1 DER encoded structure. The parser was incorrectly treating
+> the length field as the boolean value.
+[...]
+> Link: https://datatracker.ietf.org/doc/html/rfc5280
+> Link: https://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf
+> Fixes: 30eae2b037af ("KEYS: X.509: Parse Basic Constraints for CA")
+> Signed-off-by: Fan Wu <wufan@kernel.org>
 
-Ooh, yeah, don't use "register asm".  I missed that when I peeked at the code.
-Using "register asm" will most definitely cause problems, because the compiler
-doesn't track usage in C code, i.e. will happily use the GPR and clobber your
-asm value in the process.  That inevitably leads to very confusing and somewhat
-transient errors.  E.g. if someone inserts a printk for debugging, the call to
-printk can clobber the very state it's trying to print.
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
 
-> and I was initially skeptical but using a dedicated .S file was absolutely
-> the right thing to do.
+> @@ -623,8 +626,13 @@ int x509_process_extension(void *context, size_t hdrlen,
+>  			return -EBADMSG;
+>  		if (v[1] != vlen - 2)
+>  			return -EBADMSG;
+> -		if (vlen >= 4 && v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1)
+> +		/* Empty SEQUENCE means CA:FALSE (default value omitted per DER) */
+> +		if (v[1] == 0)
+> +			return 0;
+> +		if (vlen >= 5 && v[2] == ASN1_BOOL && v[3] == 1 && v[4] == 0xFF)
+>  			ctx->cert->pub->key_eflags |= 1 << KEY_EFLAG_CA;
+> +		else
+> +			return -EBADMSG;
+>  		return 0;
+>  	}
 
-+1000 to putting the assembly in a .S file.  I too was a bit skeptical about
-moving the entire sequence into proper assembly; thankfully, some non-KVM folks
-talked us into it :-)
+For anyone who didn't follow the discussion and/or isn't familiar
+with ASN.1, the patch first checks for a well-formed "CA:FALSE",
+then checks for a well-formed "CA:TRUE", finally rejects anything
+else as malformed.
+
+Thanks,
+
+Lukas
 
