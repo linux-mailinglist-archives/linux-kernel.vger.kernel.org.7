@@ -1,131 +1,243 @@
-Return-Path: <linux-kernel+bounces-818407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2821B59158
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:54:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6259B5915B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AE59523C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5704C17081A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346B528BAB9;
-	Tue, 16 Sep 2025 08:54:35 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F9428C860;
+	Tue, 16 Sep 2025 08:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b="cIf8yvt8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H8t1WVWb"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AB427A909
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B90D280A56;
+	Tue, 16 Sep 2025 08:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758012874; cv=none; b=QRnKkI9ZGLvsKd8JK+sw6UfzVqF8bJUj1rlL7hUDnSJHhBsYNkG5955Ae19WPER4UHmpXQiKA6vOlIFh8lRB2pYHNhESUjMkBxuHWq55k14CfPxVdPgVCu+by4o66FL841rUQh0WcXOls/FoW+yTs/i0rmn9UTJPpYPebI63jr0=
+	t=1758012914; cv=none; b=uDUyrxS4KxTgbegATzu9y5lBQMSPYs0a47aVxD5NieRnV0VaZu7g0XiYKcbAHJ4ML3Pn0Nn4PuGo3DEXflmC38Ge3wv8aqyD6ejsDdKyA5kgrK1be1atM7ACJnnkEHwslnuBAqKVcWI/PNgZHKwZPOjf38fLv7NkqhDltjzKY/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758012874; c=relaxed/simple;
-	bh=rWSFg93zJw/EVdFHHieAIdWz85smh+2OhFH0HRdsVR8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=COIKazve348Hyb8BHctde7X/yYakrcJ6kWcN5MiYUJPJZM+tggwyJ+zCNxaDZfuxL5gE8HsbZPKpU8rq9UzuTWNpbDAxcfT6vMQsIwrS4MGcYfx23SLt6QvKJ4vWOB1s3okA311YJALBiB4DgwWaoUDh/UNW0c1tm0yOKKovvqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-42407cbc8d1so19664085ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:54:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758012872; x=1758617672;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TcDWRbd+yIuJdUm2xw0Yx2oXd0R8a0H3/AvRt2C8dk=;
-        b=qlz71kwcyVRSmWjXmm4F6PD2R3ntNHJ5PDigDdzt0IW8GEm5r8rZGme1/DD397a3jW
-         I5e+CKbZ/FnUXBGkwuSfcrcJJLfc8XXcXJ5vwF9/EX4mXxk1N9RGSGbhoB80dSHG+bXP
-         GEKKyVt46R/dTRTAbsd78pTZJrlyzUDuPTbTDm4EaFyttDoG0yZFLL0HzoIQdGTNN9/w
-         +rjzQyxqsTVbpw/19Q+qBzaW5XQpXNdDMX05EedE0la6F8j6YhkFIAts7q8zAXXAH4qc
-         C9G+L2gMfTmV1XlfYFK4diQndX/S4mxS77gN8eYmAF05LxZhDEKAEa0czMZQrD79efa3
-         KS+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzLoTyLSL9XmP/TgzECMBkxzYKDUvyhy+nMdeZ4lMoKQmssaTYh0Eq2UE9gB6iuSmEtnkZbQ5kUlXvlh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7NLRJAAgeX29l1DbkCI2Nqi4zgOtb8I/HvA+j+Vgfdfwh0dcr
-	OVhd2zyuCO++U2lGJtEUx2ysSioHUkRikp2QWkEZ//f9uu19nOgaLdYPLqWXsyY55fzndYZljlu
-	Y6CYAbLVS26SWqL5kH29ZXORL9ySK3tqrLB0nIe2q/T4/EpKb6kk1+CYsvpw=
-X-Google-Smtp-Source: AGHT+IFwt6D47g9F04dozxpZAXZD1svcTDwOwgWtjSPXWunGFTumQCoHUno7PfdvlJA/15zVscsHe9iNXSUCU9Pe0z99dY/bKrY1
+	s=arc-20240116; t=1758012914; c=relaxed/simple;
+	bh=bTZ+VfeWzw63KZ3vzCqQwXjBV8fgJ+HHfsa0rsa7Jq8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=P10uGZ3EH7mUwh0JRAnK3zvYqrhiN0+EZqGq3b2Uu4uEtePtItkARq0Krj3VeXtZxJPl8AjBD/T9esTd7guyduNQiKfvce4RlgUgpD85BGYsuEjPSd98Mj4WIuLXOMBgyqcV28IJuGFjQOBMNDfB9CP1ysuKJqH6fEF807MIu8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl; spf=pass smtp.mailfrom=whynothugo.nl; dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b=cIf8yvt8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H8t1WVWb; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whynothugo.nl
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 1C87C1D00221;
+	Tue, 16 Sep 2025 04:55:10 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 16 Sep 2025 04:55:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=whynothugo.nl;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1758012909; x=1758099309; bh=1ulH8g7Li7zG++T0/MO6PWY+rqx4PTpm
+	j/wnHfCR1vg=; b=cIf8yvt860x+aSG4LH3Oqr2DL6nm0bWQq+p8JOW3CBdYHpvy
+	6GmhQOgJKKarCcLBe3hEaze2RBDc7epTklge/Pjco2mjpFPi/fL/NooAWBk6Rqp4
+	HZl7zvzjdSIr83Q1fyJrOONd4Sl1qyx44MQ3O9f6COd8nYE6mSW90H/7LCW+IC5g
+	eUtkZ1NY7bm6gPUSbm1sfKjEFmvMb+XklB0/oMWGxx84L7+9E+GJJf9s4LLrBY3V
+	NLt5E24ZfH1d8j0iGT6tKIG2WnstFqYeTj72DCoJA66OdY4DYjAEsQlhjzc2vfYI
+	25Zfzt0Bf6fTGtZFfOf1JgyM+thdGmXRJbbmXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758012909; x=
+	1758099309; bh=1ulH8g7Li7zG++T0/MO6PWY+rqx4PTpmj/wnHfCR1vg=; b=H
+	8t1WVWbjCaYevmG2g3boG4+rszZVsqTXZ5EH7fmKgCkBNdGu/bwAHRxkf+fTxbsn
+	XayVDXTNOaNFVdk+X3Tnqn9ZrbFzvcKIiFuAAl6cW2Jdzh6dj9xU0r84lJAersqq
+	WUiN89pgvHdXnohzlbOIuRSmIxDOIJCyAMxSdn/oZVoF9YoTdUiCT+Z0/nByUSYk
+	4cUDOZAg46p8TRS/lE8Vee+htpNfjPYNBClVJA+C6qPksasjiJlkhuCTzW9AvTeW
+	WRM2Q6XZ1tPhwRH8ezxxmfPhSMZeGlsx2fVNU+bL+xRrqHkBN0qTex4tPzQEH2bJ
+	D+myToFwvCAAL8Aoo0XOQ==
+X-ME-Sender: <xms:7SXJaOcBgfc3hyy0V88jYTz2X9R83srQUbkwCv2g4BaoEwRw34r30A>
+    <xme:7SXJaIN1jaTyjV9yTLM3yEKvJFztBwjE0J1CwPq5pRvFURwBJ_wCfCtBMD_zD32zF
+    tP1HB41g97kUWvsKQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfjuhhgohcu
+    qfhsvhgrlhguohcuuegrrhhrvghrrgdfuceohhhughhoseifhhihnhhothhhuhhgohdrnh
+    hlqeenucggtffrrghtthgvrhhnpeffleffgfdtkeffudekudeghfdtledukeeguefgteel
+    udeukedtueekgeegfffgudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthh
+    husgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehhuhhgohesfihhhihnohhthhhughhordhnlhdpnhgspghrtghpthhtohepudefpd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgt
+    phhtthhopegsrghgrghsughothhmvgesghhmrghilhdrtghomhdprhgtphhtthhopehrug
+    hunhhlrghpsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvgdrhhgr
+    nhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheptghorhgsvghtse
+    hlfihnrdhnvghtpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:7SXJaJCx4hOenCD6YBq1wodpfVv5l3S0CmnP-QJT8npHWgOqlg_r-w>
+    <xmx:7SXJaGCCN9MBaAEbU_XTW4fTBinQxrPMmw6H0hlHhUDWsWB2v4lMHQ>
+    <xmx:7SXJaAECY9xR7D9MjMhPKFmrUROQPOK9t0dISAmchwjNDhASBIx2EQ>
+    <xmx:7SXJaN5TXGPLxDr6udiwC9I4Gor-431BL5Udl1F6Uf_LT4HDyOApcg>
+    <xmx:7SXJaPisxNyG8PZ--U6qVWJoUJG86k8sszX3jJPBo0TNYLj8m4roOjiE>
+Feedback-ID: ib8c04050:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 795541B4006D; Tue, 16 Sep 2025 04:55:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:419:de32:2ce2 with SMTP id
- e9e14a558f8ab-420a53aeadbmr147875485ab.32.1758012872433; Tue, 16 Sep 2025
- 01:54:32 -0700 (PDT)
-Date: Tue, 16 Sep 2025 01:54:32 -0700
-In-Reply-To: <689d0a4a.050a0220.7f033.0164.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c925c8.050a0220.50883.0019.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in cfg80211_rehash_bss
-From: syzbot <syzbot+dc6f4dce0d707900cdea@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    46a51f4f5eda Merge tag 'for-v6.17-rc' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17077b12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
-dashboard link: https://syzkaller.appspot.com/bug?extid=dc6f4dce0d707900cdea
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148db47c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fd7762580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-46a51f4f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ccc826c963ac/vmlinux-46a51f4f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/79f8a247dcf5/bzImage-46a51f4f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dc6f4dce0d707900cdea@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 43 at net/wireless/scan.c:1666 rb_insert_bss net/wireless/scan.c:1666 [inline]
-WARNING: CPU: 0 PID: 43 at net/wireless/scan.c:1666 cfg80211_rehash_bss+0x1e6/0x540 net/wireless/scan.c:1723
-Modules linked in:
-CPU: 0 UID: 0 PID: 43 Comm: kworker/u4:3 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound cfg80211_wiphy_work
-RIP: 0010:rb_insert_bss net/wireless/scan.c:1666 [inline]
-RIP: 0010:cfg80211_rehash_bss+0x1e6/0x540 net/wireless/scan.c:1723
-Code: e8 48 c1 e8 03 42 0f b6 04 30 84 c0 0f 85 33 03 00 00 ff 45 00 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d e9 0c 3d af 00 cc 90 <0f> 0b 90 4c 8b 2c 24 4c 89 ef e8 7b 4c 02 fa 84 c0 74 78 e8 e2 dd
-RSP: 0018:ffffc900005e6f20 EFLAGS: 00010246
-RAX: ffffffff8acfee15 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff88801f0c8000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880113f6c68 R08: 0000000000000000 R09: 0000000000000002
-R10: 0000000000000002 R11: 0000000000000000 R12: ffff888043c281a0
-R13: ffff88801a485430 R14: dffffc0000000000 R15: ffff88801a484c20
-FS:  0000000000000000(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c009610000 CR3: 0000000011e4c000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- cfg80211_update_assoc_bss_entry+0x3f6/0x6a0 net/wireless/scan.c:3471
- cfg80211_ch_switch_notify+0x3c1/0x780 net/wireless/nl80211.c:20399
- ieee80211_sta_process_chanswitch+0xad4/0x2870 net/mac80211/mlme.c:-1
- ieee80211_rx_mgmt_beacon+0x19c7/0x2cd0 net/mac80211/mlme.c:7523
- ieee80211_sta_rx_queued_mgmt+0x4ed/0x4470 net/mac80211/mlme.c:8093
- ieee80211_iface_process_skb net/mac80211/iface.c:1696 [inline]
- ieee80211_iface_work+0x652/0x12d0 net/mac80211/iface.c:1753
- cfg80211_wiphy_work+0x2b8/0x470 net/wireless/core.c:435
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+X-ThreadId: Ar2Xryr4sLlg
+Date: Tue, 16 Sep 2025 10:54:39 +0200
+From: "Hugo Osvaldo Barrera" <hugo@whynothugo.nl>
+To: "Bagas Sanjaya" <bagasdotme@gmail.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Documentation" <linux-doc@vger.kernel.org>,
+ "Linux EFI" <linux-efi@vger.kernel.org>
+Cc: "Ard Biesheuvel" <ardb@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, "Randy Dunlap" <rdunlap@infradead.org>
+Message-Id: <b629ff7e-a223-467f-8e32-78f825bd31ac@app.fastmail.com>
+In-Reply-To: <20250916073244.590483-1-bagasdotme@gmail.com>
+References: <20250916073244.590483-1-bagasdotme@gmail.com>
+Subject: Re: [PATCH v2] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+On Tue, 16 Sep 2025, at 09:32, Bagas Sanjaya wrote:
+> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+>
+> Since the Handover Protocol was deprecated, the recommended approach is
+> to provide an initrd using a UEFI boot service with the
+> LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
+> approach has been no more than an admonition with a link to an existing
+> implementation.
+>
+> Provide a short explanation of this functionality, to ease future
+> implementations without having to reverse engineer existing ones.
+>
+> Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+> Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
+> [Bagas: Don't use :ref: link to EFI stub documentation and refer to
+> OVMF/edk2 implementation]
+> Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+> Changes since v1 [1]:
+>
+>   * Apply wording suggestion (Ard)
+>   * Replace candyboot reference with OVMF (Ard)
+>   * Invert patch subject prefix
+>
+> [1]: 
+> https://lore.kernel.org/linux-doc/20250910015738.14848-2-bagasdotme@gmail.com/
+>
+>  Documentation/admin-guide/efi-stub.rst |  3 ++
+>  Documentation/arch/x86/boot.rst        | 38 ++++++++++++++++++++------
+>  2 files changed, 33 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/efi-stub.rst 
+> b/Documentation/admin-guide/efi-stub.rst
+> index 090f3a185e1897..f8e7407698bd2a 100644
+> --- a/Documentation/admin-guide/efi-stub.rst
+> +++ b/Documentation/admin-guide/efi-stub.rst
+> @@ -79,6 +79,9 @@ because the image we're executing is interpreted by 
+> the EFI shell,
+>  which understands relative paths, whereas the rest of the command line
+>  is passed to bzImage.efi.
+> 
+> +.. hint::
+> +   It is also possible to provide an initrd using a Linux-specific UEFI
+> +   protocol at boot time. See :ref:`pe-coff-entry-point` for details.
+> 
+>  The "dtb=" option
+>  -----------------
+> diff --git a/Documentation/arch/x86/boot.rst 
+> b/Documentation/arch/x86/boot.rst
+> index 77e6163288db08..32eea3d2807e1c 100644
+> --- a/Documentation/arch/x86/boot.rst
+> +++ b/Documentation/arch/x86/boot.rst
+> @@ -1431,12 +1431,34 @@ The boot loader *must* fill out the following 
+> fields in bp::
+>  All other fields should be zero.
+> 
+>  .. note::
+> -     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+> -     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
+> -     loading protocol (refer to [0] for an example of the bootloader side of
+> -     this), which removes the need for any knowledge on the part of the EFI
+> -     bootloader regarding the internal representation of boot_params or any
+> -     requirements/limitations regarding the placement of the command line
+> -     and ramdisk in memory, or the placement of the kernel image itself.
+> +   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+> +   entry point described below.
+> 
+> -[0] 
+> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
+> +.. _pe-coff-entry-point:
+> +
+> +PE/COFF entry point
+> +===================
+> +
+> +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed 
+> as a
+> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
+> +implementation details.
+
+I must insist that it's a terrible idea to replace an actual link with the
+name of the source file.
+
+This might be (marginally) more convenient for somebody who's editing the
+documentation, but it becomes completely useless for somebody who's READING
+the documentation. Documentation needs to target readers.
+
+For someone reading https://www.kernel.org/doc/html/latest/arch/x86/boot.html,
+the above filename conveys no useful information.
+
+> +
+> +The stub loader can request the initrd via a UEFI protocol. For this 
+> to work,
+> +the firmware or bootloader needs to register a handle which carries
+> +implementations of the ``EFI_LOAD_FILE2`` protocol and the device path
+> +protocol exposing the ``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media 
+> device path.
+> +In this case, a kernel booting via the EFI stub will invoke
+> +``LoadFile2::LoadFile()`` method on the registered protocol to 
+> instruct the
+> +firmware to load the initrd into a memory location chosen by the 
+> kernel/EFI
+> +stub.
+> +
+> +This approach removes the need for any knowledge on the part of the EFI
+> +bootloader regarding the internal representation of boot_params or any
+> +requirements/limitations regarding the placement of the command line 
+> and
+> +ramdisk in memory, or the placement of the kernel image itself.
+> +
+> +For sample implementations, refer to `the original u-boot 
+> implementation`_ or
+> +`the OVMF implementation`_.
+> +
+> +.. _the original u-boot implementation: 
+> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
+> +.. _the OVMF implementation: 
+> https://github.com/tianocore/edk2/blob/1780373897f12c25075f8883e073144506441168/OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.c
+>
+> base-commit: f44a29784f685804d9970cfb0d3439c9e30981d7
+> -- 
+> An old man doll... just what I always wanted! - Clara
+
+-- 
+Hugo
 
