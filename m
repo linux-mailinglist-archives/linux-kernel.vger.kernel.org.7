@@ -1,95 +1,112 @@
-Return-Path: <linux-kernel+bounces-818089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D36B58C7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74362B58C86
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BCD3AB7B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85DE3204AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6719E285C8A;
-	Tue, 16 Sep 2025 03:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD5128D830;
+	Tue, 16 Sep 2025 03:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OsQN2Jzt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Gya+LUhD"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BE0221F2D;
-	Tue, 16 Sep 2025 03:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6AD233D9C;
+	Tue, 16 Sep 2025 03:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757994745; cv=none; b=fcakGjdCuzKZBOyGDBgTBUeflw5VOecs6R2RxIuKAwFWc5wGs9A8JI+atia7zhVM5hWQ+hT5zdlFM2ITuzDGvFBPJA+tdHrsz4VjEhA6ousavBbuw7V66JGlsj75H/VlAyGxNiPmIE4vtdiFD369YfcOroqR1Lm0eeEc439qmME=
+	t=1757995001; cv=none; b=VG94qzn+1A/vVdsZQSezcEOz34MehkuiS0cULOlumTGOGAxshqbEYKoWs5PnFjEHGxnRZPxb1dRQbHp/zJH4Ze75FFKZ6QLj6B/wJNhSs1pYLKMDx/FsOBg8yQhc93+H6eBIBQUCJJH8HV2cp5Rw3Ew0JYNhVL+2Xcr3XPnEJEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757994745; c=relaxed/simple;
-	bh=U6JxDMkVHB3XlX/9cQ/I2sPNKBRRoZiFmbtNoTrXKa4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OfodFccp4eIade1ve5dSMuJqewwFq4NPfdOYHlQStSMnELE3x1g+ROAwuFLZrotUn0YbIXb9GL0o+jluuEzVLx3LifGMuzgKhxkRMsMVMk7feY8Gv9048kXfO8DefBYXHBNztC2vNOKWAxu222jkbHjEULuAX1J2vKq1pBcHb4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OsQN2Jzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0802AC4CEEB;
-	Tue, 16 Sep 2025 03:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757994745;
-	bh=U6JxDMkVHB3XlX/9cQ/I2sPNKBRRoZiFmbtNoTrXKa4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OsQN2JztTjwkSYM58ujeukp87a4ECEkelesp8ge0DINPmvZSy5h/p1xe4h9mURfSv
-	 FQiqDNxLHR4XatBx12+aIJ0QPxbZlpILve6PDnMXpemSMLwq91AIpoPya0owAU45WA
-	 b9ZaFNFNdB7wMxMhO0pbZYH7WY269Sbd9PMrOpEA=
-Date: Mon, 15 Sep 2025 20:52:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, damon@lists.linux.dev,
- kernel-team@meta.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/6] mm/damon/core: reset age if nr_accesses changes
- between non-zero and zero
-Message-Id: <20250915205224.aa2de8de6dad1bb4c048cec8@linux-foundation.org>
-In-Reply-To: <20250915182652.110173-1-sj@kernel.org>
-References: <20250915145158.1425390-1-joshua.hahnjy@gmail.com>
-	<20250915182652.110173-1-sj@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757995001; c=relaxed/simple;
+	bh=IhRqGH+mDSxYQwGsnSKG7Q7bcY4B8OSLGwI4BLjoXds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkN9zdTC4T7KbClo50T5n+xoL+ekXvBtmVtCWevcRR/d2vYcxAtrWbuQoUAIxHBS01SsDLhPdI9M/4ttdTlPkiXNj5uxkXu1LpwVdwfA0UA2xe+UPN/RM/61S4VAgIK+ayaDUkVFHzlEK473SuwvsfZmKl1DstmDoblZqkDwGNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Gya+LUhD; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uph5aHv/n19lelcCRPrreyQYMbwW8KOpqDyim4t/BPk=; b=Gya+LUhDiz9ftcN0dbd/HhuUQo
+	ntihO4DCc5n0VF8c+PywSJOYWabQMP73o8D4mHFGcJwmDsSfxLF3G4GZ5LVlr5x0NBPQVFo51oovl
+	gTiNraq8tkrigsDQRtDTjmxmOtpb1EFxGvpXuVcOKs+ApFEbGKdXGYJqNQ7DIH4RG+X/dn1C4dyOq
+	hWJZoSAP6NQCk+pLsvPj3CHOFLITXeIQKF3yTxmT7PF1YU/qQfWQnaHXuwpLEBCKbUoOcLjsoSwp2
+	3cOF92p/AAqvX7yXn+9c5C6RZFfTJuce2iLbMsaJu8KPl58wNGkf9wGcCetbDhzM9p6pOwXS53v3j
+	U2GFM43g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyMnx-00000005nOq-14tn;
+	Tue, 16 Sep 2025 03:56:33 +0000
+Date: Tue, 16 Sep 2025 04:56:33 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>,
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 18/33] mnt: support ns lookup
+Message-ID: <20250916035633.GM39973@ZenIV>
+References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+ <20250912-work-namespace-v2-18-1a247645cef5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-work-namespace-v2-18-1a247645cef5@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, 15 Sep 2025 11:26:51 -0700 SeongJae Park <sj@kernel.org> wrote:
+On Fri, Sep 12, 2025 at 01:52:41PM +0200, Christian Brauner wrote:
+> Move the mount namespace to the generic ns lookup infrastructure.
+> This allows us to drop a bunch of members from struct mnt_namespace.
 
-> > Thank you for the patch, I think the goal of the patch makes sesne to me.
-> > I have a small nit / idea which I think makes the code a bit clearer, at least
-> > for me. It seems that we basically want to XOR the two values's zero-ness, so
-> > maybe something like 
-> > 
-> > (!!r->nr_accesses) ^ (!!r->last_nr_access) or
-> > (r->nr_accesses == 0) ^ (r->last_nr_access == 0)
-> > 
-> > Can achieve the goal?
-> 
-> Thank you for the idea, this makes sense!
-> 
-> > I know bitwise operations are sometimes harder to
-> > understand, so I am just throwing the idea out there : -) 
-> 
-> To be honest I'm one of people who are not familiar with XOR.  I had to spend a
-> minute to understand the above.  Maybe we can replace '^' with '!=', and it is
-> easier to read for me.  If you don't mind, I will use below in the next
-> version:
-> 
->    else if ((r->nr_accesses == 0) != (r->last_nr_accesses == 0))
-> 
-> Please let me know if I'm missing something or you have other opinions.
+>  static void mnt_ns_tree_remove(struct mnt_namespace *ns)
+>  {
+>  	/* remove from global mount namespace list */
+> -	if (!is_anon_ns(ns)) {
+> -		mnt_ns_tree_write_lock();
+> -		rb_erase(&ns->mnt_ns_tree_node, &mnt_ns_tree);
+> -		list_bidir_del_rcu(&ns->mnt_ns_list);
+> -		mnt_ns_tree_write_unlock();
+> -	}
+> -
+> -	call_rcu(&ns->mnt_ns_rcu, mnt_ns_release_rcu);
+> -}
+> -
+> -static int mnt_ns_find(const void *key, const struct rb_node *node)
+> -{
+> -	const u64 mnt_ns_id = *(u64 *)key;
+> -	const struct mnt_namespace *ns = node_to_mnt_ns(node);
+> +	if (!is_anon_ns(ns))
+> +		ns_tree_remove(ns);
 
-I have to say, using xor as a shorthand for what-was-really-intended
-always bursts my brain.  I have to stop, think about it and mentally
-turn the implementation back into what-was-really-intended.  Maybe
-that's just me.
+Conflicts with "mnt_ns_tree_remove(): DTRT if mnt_ns had never been
+added to mnt_ns_list".
 
-Ditto less-than-utterly-trivial :?  expressions.  Perhaps it's because
-if-then-else best suits how our minds work.
+FWIW, the right thing to do here is
+
+	if (!RB_EMPTY_NODE(to_ns_common(ns)->ns_tree_node))
+		ns_tree_remove(ns);
 
 
