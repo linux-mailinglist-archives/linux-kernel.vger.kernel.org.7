@@ -1,101 +1,87 @@
-Return-Path: <linux-kernel+bounces-819485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E14B5A184
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:36:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7F5B5A185
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F89488120
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856541B28009
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B22727EFE3;
-	Tue, 16 Sep 2025 19:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pf+xkC50"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620572D7DF2;
+	Tue, 16 Sep 2025 19:36:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19A527A907;
-	Tue, 16 Sep 2025 19:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AFA27A442
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758051365; cv=none; b=nLgCCH6y1z0mx33XTNDeDzy7emRUdFfW1Z/PFYJ292FFe7tbvKmYPVxnwthui6d5U23kZIrtylSSYXxjG3PKBpqub0Tk3eDXJ8kArpjxgA873H2PRr0FuRTcl0+juUwXkzs+9zTTpULhz436r7j2jCOKiDB5FSNjwlEfY3CfCP8=
+	t=1758051367; cv=none; b=l0NEl0eAEpDOgzLvSnTnugB0G3ImjBwfKN6/BqpGLqHapT3PbRAOYu8QdmoLkw9oqvv6Q/62UG060ubFQQXs5jIyInyOBTM0/7gn4rqDktA6wB+0OWYYCWpdlNlykqPaHID8gH4UpQtZcXQyd8R69VzVwZvw177U7GqwQxBep0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758051365; c=relaxed/simple;
-	bh=ghR7W+6OUpqFqZvySPtXRRnnWTRyswPrma1f/7NfxfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m1jkG5OJ+WhoaRc0mea8BY9nBp+QeMi91aJkCIqo4gCAy+OrLlDd1BhxOS63yJYv30HMS+OTOiWFk/EjAEn6yGGNPw7UEC0f1V3x7DZWe/vh+de9GUvAPT0OpN/Bj7pNHhR37uxKi/sv3XZaiRFri1xQ0/XeXZDS9ntqRv8OLVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pf+xkC50; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08295C4CEEB;
-	Tue, 16 Sep 2025 19:36:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758051365;
-	bh=ghR7W+6OUpqFqZvySPtXRRnnWTRyswPrma1f/7NfxfY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pf+xkC50Z8w4iBf8i4FVLF3nUB0UJUEQdWf/4ouPzp5iPOPJmQ8V2v8/3+Y7IuYeO
-	 DWSsLPh1zYyuWBHoIMNsuqCOBgsVxJQieY/qdXr42pPNBNzLCbJiSiM2kJdtn9LKie
-	 OX2/rNKyQyUfaY4IXH4k14gM0jHh5tsRRZNR2IhnG515xl74jO1xeJl+9usTADlKF8
-	 FZ6PBCfXVx6y5enFbWzuP58bJ+Qe0bI1SI6VnKDx8HZ1xeppFpIqaHXOBVo/JjNHtq
-	 XB7vNgIQUNr8/+sYMv2Nju/IwTa1CJa9ZZR1P17hgLSXSId13VXNiItS2qruv53nJm
-	 xKibcABpOHQAA==
-From: Conor Dooley <conor@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	E Shattow <e@freeshell.de>
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Subject: Re: [PATCH v3 0/5] riscv: dts: starfive: Add Milk-V Mars CM (Lite) SoM
-Date: Tue, 16 Sep 2025 20:35:56 +0100
-Message-ID: <20250916-evacuee-postbox-8b576a82e868@spud>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250905144011.928332-1-e@freeshell.de>
-References: <20250905144011.928332-1-e@freeshell.de>
+	s=arc-20240116; t=1758051367; c=relaxed/simple;
+	bh=/GCsXmpGJH8UcGzsb2PQWy+Dd/7tGl8xv4UA5G2EXL4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QCsQUuGLWQUPTYTxSM26UHfyTte/OaKowVxJwBXrkciAfMfWPdeaXx4fultUq71hXOpgzTD7xj+6PNXdJkBDAgHVygGwVmNptKXVETaRDyjsd5PRn679Ttq8LjyzoneSxYbHXyAvS9GUdAnVQ8W/vYkYA0/BYq6hlbG+yrnV3U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-40f7be8ecf2so159969185ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:36:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758051364; x=1758656164;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O367QokAfAYPSahfznzD0NtkuQY1HqC4LK1K7EMoSfg=;
+        b=LYs3hb1rlfLD2Sy71RyUQucRbwHZE5lOzAB3yy+HKIrelJzFx0n5EzV2xeIT1cya4Z
+         zh0nHI6+u0NABlgAV2muw9nFilXmGzqGRcv5X4SxadeBS5gontUgc3x78vckFhrravAu
+         RrRwXuOhhKI4R1IOwEzqLye9cI/wkNvPfiygcB2Kjpxlmn8/zBbU1nx1GZENXvXfpXBG
+         cSjbkhbsR0fCBCA+aAfIytItakinStpMtgGtKcauBW5q3fH8I7H9Ns9ZKoLUziafXsDm
+         SDvjWswrxrgE8BjoD7EzBP+FIhWyfPebjNH3+qWu1IeT3ipXDoQ2sXIvO9oXOVydB0bD
+         tW+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVXAVU7DPcxsIKYYc5jPN5j7LFByhgPAXok8bTJY7NVI5UUpk8ktFQ5+9B6vTCj/U8FnEkGUULEdkv9TWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJy26jq5f3meK8V9uBFG4fPOKLEoP7WM0p2stFMh2BkirZM/Wa
+	fKDARCwDLiVaE2Aj58k+koibYUpM194NDtyoTAgy9fNJSz+3yUDVMozGBkCgCWDovYWC1/7DdRD
+	PD/0sxeNLolgCaIWyeKKMR2WUotZ3KVK++bkzbvVAcHhsLrfQmjVLRXTSFG0=
+X-Google-Smtp-Source: AGHT+IEGWbtGFaW3nqQOhP+PxqFdPrP/Woz3LQb4/D9rfrPaYNh16BQu35QhVt5KBYdCRpOq0H3O3dJxJxmmBLjsSQK4wnpkT1Sc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1195; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=jlPwUGixLoNmykuR6H7mnfwCfEkNvHVsl2XHNQnmeWE=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBkn98jUzrz69YiyxrTMLXtOXtDxWOLScl7m/6tpqSETB Apf1/1/2lHKwiDGxSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJdO1lZGhcxRnjWLt+J882 Nr97R+3f2a74fdv8gtBDmW+NRimb0+czMmxffeaU9ePLAgbc9w5l9eZeiyxhOn3Uhm3b7gQHx52 r+tkB
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:154c:b0:418:84eb:ea20 with SMTP id
+ e9e14a558f8ab-420a311d40emr170189985ab.15.1758051364603; Tue, 16 Sep 2025
+ 12:36:04 -0700 (PDT)
+Date: Tue, 16 Sep 2025 12:36:04 -0700
+In-Reply-To: <CAL4kbRPknFFpz9OHU8GruOU-berH3tTqJZZSivzR0mXhAOinHg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c9bc24.050a0220.2ff435.042b.GAE@google.com>
+Subject: Re: [syzbot] [gfs2?] general protection fault in gfs2_print_dbg (3)
+From: syzbot <syzbot+fa7122891ab9e0bbc6a7@syzkaller.appspotmail.com>
+To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hello,
 
-On Fri, 05 Sep 2025 07:39:38 -0700, E Shattow wrote:
-> Milk-V Mars CM and Mars CM Lite System-on-Module both are based on the
-> StarFive JH7110 SoC and compatible with the Raspberry Pi CM4IO Classic IO
-> Board carrier. Mars CM Lite is Mars CM without the eMMC storage component
-> on mmc0 and the mmc0 interface configured instead for SD Card use. The
-> optional WiFi+BT chipset is connected via SDIO on the mmc1 interface that
-> would otherwise be connected to an SD Card slot on the StarFive
-> VisionFive2 reference design.
-> 
-> [...]
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Applied to riscv-dt-for-next, thanks!
+Reported-by: syzbot+fa7122891ab9e0bbc6a7@syzkaller.appspotmail.com
+Tested-by: syzbot+fa7122891ab9e0bbc6a7@syzkaller.appspotmail.com
 
-[1/5] riscv: dts: starfive: add common board dtsi for Milk-V Mars CM variants
-      https://git.kernel.org/conor/c/651b30c58775
-[2/5] dt-bindings: riscv: starfive: add milkv,marscm-emmc
-      https://git.kernel.org/conor/c/d1829e0b2f06
-[3/5] riscv: dts: starfive: add Milk-V Mars CM system-on-module
-      https://git.kernel.org/conor/c/8d193bc0aa2e
-[4/5] dt-bindings: riscv: starfive: add milkv,marscm-lite
-      https://git.kernel.org/conor/c/12a29108384c
-[5/5] riscv: dts: starfive: add Milk-V Mars CM Lite system-on-module
-      https://git.kernel.org/conor/c/4cce8b2503ab
+Tested on:
 
-Thanks,
-Conor.
+commit:         05af7647 Add linux-next specific files for 20250916
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f9b762580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e269dbc7717119a2
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa7122891ab9e0bbc6a7
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1211f762580000
+
+Note: testing is done by a robot and is best-effort only.
 
