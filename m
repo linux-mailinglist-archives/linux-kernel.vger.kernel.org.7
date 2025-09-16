@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-818074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A67B58C63
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:35:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC384B58C64
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A71718891FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B973B6C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C7A24DD00;
-	Tue, 16 Sep 2025 03:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2CD264A60;
+	Tue, 16 Sep 2025 03:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5leU4h2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZgVIllP7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46993CA5E;
-	Tue, 16 Sep 2025 03:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6620C260565;
+	Tue, 16 Sep 2025 03:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757993718; cv=none; b=IWECSYYtFZeRxR9YFKDsz6I1HQChY7T/GNZUtd/KTwjMATjxKelyPt3WcDteEoas3vDQuFwzOQ0tvtTec8HHF8SOkjtO/MxvlnXKv5hbemr5jbBBj0ZZjHT2HuEBx9seEpoOofWNHG5g4cZ1lHvcFCNlJ6RgxgoSs8YMDX9+D10=
+	t=1757993719; cv=none; b=Zh4JHLwLla9WngQ4GPc+yqlffKEpO0KtWiasPzOLPt5TxO9g0XnSJCigm+W6XEoaKOMB1oPp7MyA23BULVNBVOiNUYGigoKezZCG055CwHvvHswpW4EcOaXZ/orKpfJPibgI7ykqkZHncsOVrr/CLPnEUJKDbSuqgo4t0RL7dZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757993718; c=relaxed/simple;
-	bh=9JcNBf3R6YvBmotNSylUCQN1TyYW4gyunQci2uE4WFk=;
+	s=arc-20240116; t=1757993719; c=relaxed/simple;
+	bh=yq6FzsyzX8HDFFWIsvaokYnQzl9M5W1Jr+HzsSN6nWg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IQvA8PLXmx/IW8Kr2wOcWmXCt6ofUnMYdSQHGn6oXpuyRHSPf8S0+FMMuw1jRodOeM4jo87r3kgRZGK5l61X+WcEjIFegfaPzmj+yBFpLPIWoNWsPKKF3W4Ij9JCi5PN0JA2/6k2gV4BukhfNuO4cW9dNJCKfxFRft0nWCQEIGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5leU4h2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DA3C4CEF9;
-	Tue, 16 Sep 2025 03:35:17 +0000 (UTC)
+	 MIME-Version; b=A4tJAOYHP1i1B/60vg/xjbYLeUrqs96EJQKelV67/mPHwtQU1H0lmT1MQ9MOLU1uQ0AtYMTlO1WfYEQOvy3EY0WTX0BYIBlQyJwkeLXFCltICBnWG1fXwgIaVnK850PEer6thQt1N7P7Pczb8Zj8WNWZUPqbsRif5yO0nfqD9aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZgVIllP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D41C4CEF9;
+	Tue, 16 Sep 2025 03:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757993717;
-	bh=9JcNBf3R6YvBmotNSylUCQN1TyYW4gyunQci2uE4WFk=;
+	s=k20201202; t=1757993719;
+	bh=yq6FzsyzX8HDFFWIsvaokYnQzl9M5W1Jr+HzsSN6nWg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m5leU4h24iIaQ6mZznhs9PW6jvp8aW8gZKhwvsdZb92V5iSdWE4qTRHkBXPc3DSlN
-	 zf8/lD+fNNViNqCKK93TyvvbwHLPBUJF3+Gc3SzYGR1EY/n7VxH2Mkd5qsJseb5d3X
-	 cy2kjGjooVQEZx/AMAxwPeysfx1rdiKEvykqzJ8jXW8euso5Q4uuqD+d919dr+HXZ8
-	 dvntW0cZb1QExRthOwA6JBaPgI0uwI82JcchB/nd5BYH/Q7AMBkkmACjfcAA48toSF
-	 Z/+/OaQ+E2AB0j661UN20M8C9o/mtPmEMy/PF+j5A4Jf60ut8zTIiRKvOmqMet24Tv
-	 fBPY6Stm1IdMQ==
+	b=ZgVIllP7jG1t5xaNp6Ej7+6h6D0S3fE4uC/XLFrEWCBoHupYxjo9jV8rDMtz0S3LQ
+	 nSZfP4F1iftVGRQFLXoEfzfEu6hrCwigUaTVghy+Uh2475SNcT6Vc+ZaBN19ZR1F7q
+	 EH9fdMvVUtRXl8y01N9V8dL0SoALaK3UjU3OBTnN4dA7SiZvo/f6g4ZUOpWgRx8HZO
+	 j4gSlqY+X6drLgbfTvW7KyNnpbH/6dU1S6yy16KXPRd92YW5bNuTuSRb95+gx1XoQh
+	 xIcz6dCNGllxAKbbucMBlLLCZTKCiaAsrI0OouakMAihQ0vW/nF68rW7qsF81YRvP4
+	 kWSCCN3mKRzzw==
 From: SeongJae Park <sj@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: SeongJae Park <sj@kernel.org>,
@@ -47,9 +47,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 1/7] mm/damon/core: implement damon_initialized() function
-Date: Mon, 15 Sep 2025 20:35:05 -0700
-Message-Id: <20250916033511.116366-2-sj@kernel.org>
+Subject: [PATCH 2/7] mm/damon/stat: use damon_initialized()
+Date: Mon, 15 Sep 2025 20:35:06 -0700
+Message-Id: <20250916033511.116366-3-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250916033511.116366-1-sj@kernel.org>
 References: <20250916033511.116366-1-sj@kernel.org>
@@ -61,56 +61,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If DAMON is tried to be used when it is not yet successfully
-initialized, the caller could be crashed.  DAMON core layer is not
-providing a reliable way to see if it is successfully initialized and
-therefore ready to be used, though.  As a result, DAMON API callers are
-implementing their own hacks to see it.  The hacks simply assume DAMON
-should be ready on module init time.  It is not reliable as DAMON
-initialization can indeed fail if KMEM_CACHE() fails, and difficult to
-maintain as those are duplicates.  Implement a core layer API function
-for better reliability and maintainability to replace the hacks with
-followup commits.
+DAMON_STAT is assuming DAMON is ready to use in module_init time, and
+uses its own hack to see if it is the time.  Use damon_initialized(),
+which is a way for seeing if DAMON is ready to be used that is more
+reliable and better to maintain instead of the hack.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- include/linux/damon.h |  1 +
- mm/damon/core.c       | 10 ++++++++++
- 2 files changed, 11 insertions(+)
+ mm/damon/stat.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/damon.h b/include/linux/damon.h
-index aa7381be388c..cae8c613c5fc 100644
---- a/include/linux/damon.h
-+++ b/include/linux/damon.h
-@@ -938,6 +938,7 @@ static inline unsigned int damon_max_nr_accesses(const struct damon_attrs *attrs
+diff --git a/mm/damon/stat.c b/mm/damon/stat.c
+index 87bcd8866d4b..c4fbd8cfa5eb 100644
+--- a/mm/damon/stat.c
++++ b/mm/damon/stat.c
+@@ -214,8 +214,6 @@ static void damon_stat_stop(void)
+ 	damon_destroy_ctx(damon_stat_context);
  }
  
- 
-+bool damon_initialized(void);
- int damon_start(struct damon_ctx **ctxs, int nr_ctxs, bool exclusive);
- int damon_stop(struct damon_ctx **ctxs, int nr_ctxs);
- bool damon_is_running(struct damon_ctx *ctx);
-diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 775121ae7a9b..93848b4c6944 100644
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -2863,6 +2863,16 @@ void damon_update_region_access_rate(struct damon_region *r, bool accessed,
- 		r->nr_accesses++;
- }
- 
-+/**
-+ * damon_initialized() - Return if DAMON is ready to be used.
-+ *
-+ * Return: true if DAMON is ready to be used, false otherwise.
-+ */
-+bool damon_initialized(void)
-+{
-+	return damon_region_cache != NULL;
-+}
-+
- static int __init damon_init(void)
+-static bool damon_stat_init_called;
+-
+ static int damon_stat_enabled_store(
+ 		const char *val, const struct kernel_param *kp)
  {
- 	damon_region_cache = KMEM_CACHE(damon_region, 0);
+@@ -229,7 +227,7 @@ static int damon_stat_enabled_store(
+ 	if (is_enabled == enabled)
+ 		return 0;
+ 
+-	if (!damon_stat_init_called)
++	if (!damon_initialized())
+ 		/*
+ 		 * probably called from command line parsing (parse_args()).
+ 		 * Cannot call damon_new_ctx().  Let damon_stat_init() handle.
+@@ -250,12 +248,16 @@ static int __init damon_stat_init(void)
+ {
+ 	int err = 0;
+ 
+-	damon_stat_init_called = true;
++	if (!damon_initialized()) {
++		err = -ENOMEM;
++		goto out;
++	}
+ 
+ 	/* probably set via command line */
+ 	if (enabled)
+ 		err = damon_stat_start();
+ 
++out:
+ 	if (err && enabled)
+ 		enabled = false;
+ 	return err;
 -- 
 2.39.5
 
