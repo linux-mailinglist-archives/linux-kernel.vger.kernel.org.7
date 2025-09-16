@@ -1,101 +1,120 @@
-Return-Path: <linux-kernel+bounces-818057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F164B58C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:16:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 156DEB58C44
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F39485DCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894B4162685
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B4A25D21A;
-	Tue, 16 Sep 2025 03:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE6624DCE5;
+	Tue, 16 Sep 2025 03:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghnep31B"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="qLiL7R0f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7B12AD24;
-	Tue, 16 Sep 2025 03:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA4F2EAE3;
+	Tue, 16 Sep 2025 03:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757992553; cv=none; b=S8QdckW5aI+VrF5OFsUYnbsG6+FfQmYiZO2u8OCkKVkYkjvpriU6kqFUjuxd2B3PAabI6NQGoJgKb/woPpY9i19tu/5spbx7krZcIBmE6idCro5JX9AdAAArhKcHtDKRtMF/DrDWwtugR4N66pNUNw8pNZAeLMvuRBE/Eq8f9i8=
+	t=1757992580; cv=none; b=HKbZVdnGZYt74KU/+S1WeRav/3f3zIA+066BqXdbmnCxA68BhqbYT1TWvYhITI123y6iA2sm1XJdrz+0LImHDoNzvsVSBzvX6R3+SvSY9DBXF8k1kGjRtU4iqacLQi3Upew6ODppTKVGJ5KmLxMhaSTNi4aPIfKf5UypUCF2/vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757992553; c=relaxed/simple;
-	bh=Q+ZVTVz4mEvUkB+hpSZhEe9TJff7bsWdkkhr92sx/0Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qlVM8Tf1pEnwAqC/kS73IghoiTTKvBJKxhFg5VZ08/N9R2P4fl1cY+Ts1BB4K49fjuaqghhy4UHt9FwRUlgbFXDbqr5LBGebQknlxgphEZPQHzydNetj181HGKEfsLozkLoxSk13+/BwU/TFKkQDx3GeTAybCtuMvetD1rW79iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghnep31B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34A3C4CEEB;
-	Tue, 16 Sep 2025 03:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757992552;
-	bh=Q+ZVTVz4mEvUkB+hpSZhEe9TJff7bsWdkkhr92sx/0Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ghnep31BqKD/QI5//aXn+PGWVlVVqTd59xS+nluKGfAIZ2K3QjLcqmB32MYENgJ9D
-	 Xg8c8wHroj1Bo5EpTAI/BnZPZlOlx6dCgy+1tEKeO4Ujcr2L+GAS2YwfRlYf1KbgzL
-	 HEfe97qgyByZ+uwppvRb77tgTQRBewjDhMNTUqkP0z42fyZNj6NVoH6Ye6GHw16JVv
-	 zgl9KdctOri1oNyLuPJzUj4foa1118dkP7vsLvXNPanvBnq1M/2/wgmd1WMaDdHKlT
-	 QnsNQIlLALMy0G9nj+m4QK7RQ+2toIK1do3l/X83c30uWiy9pWkxHaYIquYelERVkV
-	 46Myp3LxWK+sg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"# 6 . 11 . x" <stable@vger.kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: [PATCH] mm/damon/lru_sort: use param_ctx for damon_attrs staging
-Date: Mon, 15 Sep 2025 20:15:49 -0700
-Message-Id: <20250916031549.115326-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1757992580; c=relaxed/simple;
+	bh=KQgIDFeYj6BfahlWkfqkbzH/E4fZL8fqkKbPwk5VHm8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lpC+tvoQzVAlavu/i+HH80J7euY37ed0YbzA0Qssfk06absh7rmHfELK9DlvxlOpYXVYLE2N/jnDJPnunmngZamT3XHAsV6SGxATH6X2lHVuKmD34/DHf+xHODcHTKYMDAnIPzKXIV/83OHD6S4KR2nbDaqzJ7QWd4YgO/dEiO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=qLiL7R0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8A2C4CEF0;
+	Tue, 16 Sep 2025 03:16:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757992579;
+	bh=KQgIDFeYj6BfahlWkfqkbzH/E4fZL8fqkKbPwk5VHm8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qLiL7R0fKERFaeUDekpvnT0bCQ6X1MJ36FqoZwhuZrNzvtGm9MkQu9m08+MI4WZwM
+	 TzBCMurJMdOsYoEgNdNN3ZGQpUPubYUYOjWvvM/9imNNEYhG6BNYZqtqjDxf7V2NNc
+	 F/gly7u3moLwHxdh8lc10HKrP88+9PrO3jsPjU6s=
+Date: Mon, 15 Sep 2025 20:16:18 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kyle Meyer <kyle.meyer@hpe.com>
+Cc: corbet@lwn.net, david@redhat.com, linmiaohe@huawei.com,
+ shuah@kernel.org, tony.luck@intel.com, jane.chu@oracle.com,
+ jiaqiyan@google.com, Liam.Howlett@oracle.com, bp@alien8.de,
+ hannes@cmpxchg.org, jack@suse.cz, joel.granados@kernel.org,
+ laoar.shao@gmail.com, lorenzo.stoakes@oracle.com, mclapinski@google.com,
+ mhocko@suse.com, nao.horiguchi@gmail.com, osalvador@suse.de,
+ rafael.j.wysocki@intel.com, rppt@kernel.org, russ.anderson@hpe.com,
+ shawn.fan@intel.com, surenb@google.com, vbabka@suse.cz,
+ linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline
+ for HugeTLB pages
+Message-Id: <20250915201618.7d9d294a6b22e0f71540884b@linux-foundation.org>
+In-Reply-To: <aMiu_Uku6Y5ZbuhM@hpe.com>
+References: <aMiu_Uku6Y5ZbuhM@hpe.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-damon_lru_sort_apply_parameters() allocates a new DAMON context, stages
-user-specified DAMON parameters on it, and commits to running DAMON
-context at once, using damon_commit_ctx().  The code is, however,
-directly updating the monitoring attributes of the running context.  And
-the attributes are over-written by later damon_commit_ctx() call.  This
-means that the monitoring attributes parameters are not really working.
-Fix the wrong use of the parameter context.
+On Mon, 15 Sep 2025 19:27:41 -0500 Kyle Meyer <kyle.meyer@hpe.com> wrote:
 
-Fixes: a30969436428 ("mm/damon/lru_sort: use damon_commit_ctx()")
-Cc: <stable@vger.kernel.org> # 6.11.x
-Signed-off-by: SeongJae Park <sj@kernel.org>
-Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
----
-This was a part of misc fixes and improvements for 6.18 [1], but Joshua
-thankfully found this is fixing a real user visible bug.  So sending this
-separately as a hotfix.
+> Soft offlining a HugeTLB page reduces the HugeTLB page pool.
+> 
+> Commit 56374430c5dfc ("mm/memory-failure: userspace controls soft-offlining pages")
+> introduced the following sysctl interface to control soft offline:
+> 
+> /proc/sys/vm/enable_soft_offline
+> 
+> The interface does not distinguish between page types:
+> 
+>     0 - Soft offline is disabled
+>     1 - Soft offline is enabled
+> 
+> Convert enable_soft_offline to a bitmask and support disabling soft
+> offline for HugeTLB pages:
+> 
+> Bits:
+> 
+>     0 - Enable soft offline
+>     1 - Disable soft offline for HugeTLB pages
+> 
+> Supported values:
+> 
+>     0 - Soft offline is disabled
+>     1 - Soft offline is enabled
+>     3 - Soft offline is enabled (disabled for HugeTLB pages)
+> 
+> Existing behavior is preserved.
 
-[1] https://lore.kernel.org/20250915015807.101505-4-sj@kernel.org
+um, why?  What benefit does this patch provide to our users? 
+Use-cases, before-and-after scenarios, etc?
 
- mm/damon/lru_sort.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Update documentation and HugeTLB soft offline self tests.
+> 
+> Reported-by: Shawn Fan <shawn.fan@intel.com>
 
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index 14d31009c09e..ab6173a646bd 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -219,7 +219,7 @@ static int damon_lru_sort_apply_parameters(void)
- 		goto out;
- 	}
- 
--	err = damon_set_attrs(ctx, &damon_lru_sort_mon_attrs);
-+	err = damon_set_attrs(param_ctx, &damon_lru_sort_mon_attrs);
- 	if (err)
- 		goto out;
- 
+Interesting.  What did Shawn report? (Closes:!).
 
-base-commit: ea93a9235c1c6e61cfa6e5612b7b6b3fc41e79e1
--- 
-2.39.5
+> Suggested-by: Tony Luck <tony.luck@intel.com>
+> Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+>
+> ...
+>
+>  .../ABI/testing/sysfs-memory-page-offline     |  3 ++
+>  Documentation/admin-guide/sysctl/vm.rst       | 28 ++++++++++++++++---
+>  mm/memory-failure.c                           | 17 +++++++++--
+>  .../selftests/mm/hugetlb-soft-offline.c       | 19 ++++++++++---
+>  4 files changed, 56 insertions(+), 11 deletions(-)
+
+I'll add it because testing, but please do explain why I added it?
 
