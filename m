@@ -1,263 +1,336 @@
-Return-Path: <linux-kernel+bounces-819111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50640B59BB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:14:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F609B59BA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F28F1BC8161
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFCD582112
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B0434A32A;
-	Tue, 16 Sep 2025 15:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8A33074A9;
+	Tue, 16 Sep 2025 15:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N4A1/ucP"
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iGpJkTyp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFDE316905
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBA9199935
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035147; cv=none; b=sgrILn8tnTwT1VR0Y0arb1Qgs9GRweQqkbCsdWElcQtQpHyJHRgKbWsFfOZndZJ3RLoz88VnlWK9ycI8waPCmXX0YC3Idzaey7FdRdiPVb4w5SaaH0aUa3H3k1ZhGPXcU9t9YO52NY6XBvfhbT+Mp4r8ECZFayk+fhaL+Is5kas=
+	t=1758035230; cv=none; b=Qe7dL7y+OYYhenGdgdWh7PmdhU/m1aP2mFuhysDV2pKaMZtVqs4h4pvs6UUgbboGH2UrcMaD74YD81B9vH0g0tLYadee74Va7qg6TQIMKTiTOr1PfpYXgyDwoJ5fREYQjlPYZRY7Fok2kn1V++FnCFw5h9pjMz2IVA3EzzbUg1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035147; c=relaxed/simple;
-	bh=F7TH0mHOufsrdPht32H+JQ8FUdtP859/VvL+8zQrqm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z+AsJZEXdiybRyeHJW1sAYXgspivLHs3eIcevXDZIiMeSp9j20BXwHVOTUXj7LOOCwnVPDFB2c4+Mg3sUx/+VgISvz0coIx5l39ElNL/Ipr+ZBkyUliZ7L02drzoMNx2Ze2160zxQHX++9YSkHlTbGnTtLo/IAQtrn5oTrWIVNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N4A1/ucP; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-62ee43b5e5bso7560716a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758035143; x=1758639943; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BiyKSJrj1ScNh8hb9va1qCJpWH8585vbS7xritzSO9k=;
-        b=N4A1/ucP9IF+q8kU4TEwbvhifovKrkYg7aLY9hMIckaOggRWL30qJPFS1RYkuwhLOh
-         dFnYmr60Jnq9h1fi5h4vLLX+DTZN2xS8Pcpkhjj1la4nLpOSR73FIkXpdV+GJY7abr1W
-         864xvDCCNl2qp7HYzx8rUJEck82wtJGGrMvqCAdrAB/D3l+FiqayoyorPlq9EdbfP1+y
-         pePt+CilYkNnEPuiH54b3njvN4NgtIcSk8PANuwTpiBehkkAO02vV8aRQG1WXLuCWhqZ
-         5GPSMhgA5MaJ2E41iwJV9RcT4yThWRU2d+axXSefm9s3o20/eo7EWO6HVgLg2wJEjCCZ
-         I/FQ==
+	s=arc-20240116; t=1758035230; c=relaxed/simple;
+	bh=zYBCqbg4hFbcYDRPtV6S9sC7TipiXrdnfebWryX347k=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lv6d6wxzhmdgqjhZ24+ZBLkzCXpZq+xrsqi5o/Kc3ttv3faARfRkPDGoiKImk0MEErzW8G/bKMM9/gC9cxg3gDxEDEO8GMpuknxolxndEGrYdhjy071PYFLDCvq4E+dC94ZQzDWQSGk3Sb9ocIGWLzpfDhVsnFj0adhoV3LCC0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iGpJkTyp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GA47Rr020643
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:07:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JFlHJcm0NEs/TTyIKVe+yzkGYyRx/SeQAW0+5i88u5c=; b=iGpJkTypJYYFsB0J
+	qPfYcYaNEF1XaXAPDN58IfnNvjb3mmqeIDMtEB3ljni3rZ48yT6YNI822RypFxX2
+	q6ZVaPHFm6xCTmsSzznBXsqInmXIxCcqozNWNX4o7ejXrJfqb2soa2uvDa7lg3WV
+	d0y6o+CtuLCyEqp5XQhaRQyr7gYSlsESzuCWxTkBcq+m4Wmv5GPKPMmrSLJXFLwM
+	ELudt1h2mjTGEkrnKUjr478TkrIq1UHkGd7kii8N1LT06Xl+jiquvyOuFjBsfeaT
+	eHURngKx9mcLzhTRuqyWtkf6wE4flJ6xN661qouF6n5GyhKSqqRwgiq1isW4DE80
+	F/YPZg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951chh7j0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:07:07 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b5f818eea9so106879401cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:07:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758035143; x=1758639943;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BiyKSJrj1ScNh8hb9va1qCJpWH8585vbS7xritzSO9k=;
-        b=gFiDGcz9lXUdPyJhOSArSQowccfWm8lTmnG6elYKjlztg9R/mG7YO8rckhXiCzVe4x
-         ul1/QOBSHLNF7SjlLAqanu2lgeC61WMuWGWRXtirdjDvkUG2AC/4m88tjt60LhYPemq6
-         HeUtSNkoAR0qpXWYEvziFdheMmgqo056M/fAd4qCBnf3XylZ8NPDQKa1uNil7ZDg+SaQ
-         5b9swjZSrCv0Dq4qMBGtbUTuNuLb/OatAepSGUIZknARim4c1MTJaV6btWeVOGgYLj29
-         JAg4OEzfY4/eWDIGBBHnsXVpMClZ70jwDpxwrvrBY+e0wT9+LYxwFl8cNjpOP6hew1d8
-         tGng==
-X-Forwarded-Encrypted: i=1; AJvYcCUb02P/yyZnr4grn43yD90vSfvZpeTMg7DPsdn+U7Z31D3q3ihandcECBS811qsf1FhVRaMVCtx6O6kQtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRRNIDM+f7NWsd0Flgk6Zd39GKEk7ed9BH+wxgErjqHqjIoTNl
-	u7C4nZ/BQZTFfAvUkXdA21hNhiwgFNkUrdLZLPD5ggdePeOpkoYR/ZvH86mlRL8h74I=
-X-Gm-Gg: ASbGncuicEPsGhacAksIVFXvO27NwCaSeCYIHQP9mBVgIZA7gAmpxmCmdXrgkYZhXl6
-	CIZGyP2iVPy+xIZVSwlEYgT/mkLKIAJTus/RdJd6PpCaVjdzVuGIbuEpuyn7e/4H/KmEF74H/Ee
-	yYsNPBCOOgt0YlEacY5ZlA6aT0XrmKR/RPYd5996GhjkCQnyCC8qNSRXpreFGgTOp0Pd6soKTO1
-	e8zrbrU0pTb1O10buZXHwMkrUvVYEoa4q8pvhE/nx7V9qEVWGE3ecEHiL87Hy85jlNfTtDTn22z
-	iNpg7El2vrwNb2zh4DZ6CDjinMtKQ3Vsq0XwqRfZ4t6O1ztdwnbd8TQmyq4SNQ8ap2BvEt968KO
-	4huuPwl3MDU7j2RiHpaLZ9rWWeWKaGDIQ+LaF2IPX
-X-Google-Smtp-Source: AGHT+IFhbwbNhkYg+ETnqXroHcXGUstXVVDk1CbBu9aIob1lDSG5kSskDYRdTkKvfdLeY1okFNAfmQ==
-X-Received: by 2002:a05:6402:26d6:b0:62e:dfaa:a921 with SMTP id 4fb4d7f45d1cf-62edfaaaca7mr14991589a12.32.1758035143014;
-        Tue, 16 Sep 2025 08:05:43 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f365573e7sm4626518a12.27.2025.09.16.08.05.42
+        d=1e100.net; s=20230601; t=1758035225; x=1758640025;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JFlHJcm0NEs/TTyIKVe+yzkGYyRx/SeQAW0+5i88u5c=;
+        b=ixowAlLFLSyTfKhe4vN8CXfBuo8EQrZsW/xZYxmQktfOTgwUw3WepvNz9pfkp1UUwR
+         moYQpdewQMaHrHJhK8eGTCsFNTGlV6r64KhYNr+FXtLyivdHnqzVJgoisQ/xleAoqBRn
+         Knp4+TONO45OqJXI9uYDeBaycx5Prx8bTtrnv0/C63JjXuGLGXzMhFtm3nSajgVDxe/m
+         FqD1hdf+SqQL6iEFMzaeQgHCs2TgZ3u8ErDgTOoqR1gg5ReqAAwXNmtstiAaqE85Cx1U
+         UdtW0tPeq8icL6yBj6Z2+HTmiFJLYQDCiz7Kdd7AYZSlTuK3D/2dD88HS+e2+WGg0K3d
+         6wJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTzBRKWO6/kWeO/cqFEopbpvxvXJMbbCRl4OmuS6Cx36lWoeqLPnC2CAsjEKi/j6oyLYqPEZH0a31h9YA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqJ0iMU1Kc+RXXBVMmd/qPZmGyvgivFEy72W3yvXOl5WK7JTAp
+	+GPHunmw16H8Yf6c/VjoI2nD92sdWW2w/GGQpvghCrq6I81kmnPTN6o51Ux8eJkBKJrwyiBqo7S
+	Rtf0t9ka6raLeqwhXK84zoTVDDUdtsYGUzDiwfXreCgvHZwNWCS1U1RPAxAT73VMgSNU=
+X-Gm-Gg: ASbGncsoPrfBP6LBj/C9iNavENpE0l5pXlmgQ2Tt9ZroyChEeEKPKo3wnO5EFOXpIpP
+	3tJRNRfX6zmK9RFGUwnmOP3eP4T8j5eX2JV1bq4dYOiIy21ehCGp8g2kvAAslpV+4QIRGcF2zss
+	bn7mTAUJikf0KNcm0+EXXWQF1cvUMjGVSO+dkSiQoferMWObpfObIkZbU/2wfwUW+NrP/H5Ppzf
+	4DDIArzJPzUczqCZeGna8CDJwvrbGSrC9GwyXo32kIGEpSol5oGgiF8um47aQ6jNxHqM8RiWZdb
+	m8ufAkCDuEjO9gbiBotqISDxdVNUZNEluIdOTzWQZHVEgEunw1NUqhQ5tjOxQSw2UoiMupp0DUI
+	=
+X-Received: by 2002:ac8:5952:0:b0:4b4:989a:a292 with SMTP id d75a77b69052e-4b77cfbb938mr189532361cf.26.1758035224582;
+        Tue, 16 Sep 2025 08:07:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4swe9zBBtQqq7Swph0ODOiJLcS9vfrieWkyGPzeKphOyP7/QWRsp5/edjNCn6yFXoDZAl3g==
+X-Received: by 2002:ac8:5952:0:b0:4b4:989a:a292 with SMTP id d75a77b69052e-4b77cfbb938mr189531181cf.26.1758035223679;
+        Tue, 16 Sep 2025 08:07:03 -0700 (PDT)
+Received: from trex (152.red-79-144-196.dynamicip.rima-tde.net. [79.144.196.152])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0156abecsm225260475e9.4.2025.09.16.08.07.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 08:05:42 -0700 (PDT)
-Date: Tue, 16 Sep 2025 17:05:41 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH printk v1 1/1] printk: nbcon: Allow unsafe write_atomic()
- for panic
-Message-ID: <aMl8xX9QCM9jslLH@pathway.suse.cz>
-References: <20250912121852.2666874-1-john.ogness@linutronix.de>
- <20250912121852.2666874-2-john.ogness@linutronix.de>
+        Tue, 16 Sep 2025 08:07:03 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Tue, 16 Sep 2025 17:07:01 +0200
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+Cc: Praveen Talari <praveen.talari@oss.qualcomm.com>,
+        Alexey Klimov <alexey.klimov@linaro.org>,
+        Praveen Talari <quic_ptalari@quicinc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
+        quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+        quic_arandive@quicinc.com, quic_shazhuss@quicinc.com, krzk@kernel.org
+Subject: Re: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime
+ resume
+Message-ID: <aMl9Fbuyq7hdXvQC@trex>
+References: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
+ <DCNLSFVPCKMV.K1UE3J3K6JQD@linaro.org>
+ <DCOJFRU8KNFL.14VPXK9QZC9T4@linaro.org>
+ <5b7b8c9f-48c5-45cd-8366-c8c048eaa757@oss.qualcomm.com>
+ <DCPUJPHR8NUB.1SRB4D7ONSRBY@linaro.org>
+ <2c5fd01a-543b-4108-ac54-80d1d87b65a3@oss.qualcomm.com>
+ <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
+ <cb96f3cd-7427-4644-b7ca-26b763867db4@oss.qualcomm.com>
+ <df05da7e-fd9d-48a6-bffc-e84749cd8e96@oss.qualcomm.com>
+ <aMl2hOYTjBuCo4AM@trex>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250912121852.2666874-2-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMl2hOYTjBuCo4AM@trex>
+X-Authority-Analysis: v=2.4 cv=eeo9f6EH c=1 sm=1 tr=0 ts=68c97d1b cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=UlsMzGb/nx+Jy78HFkoo8g==:17
+ a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=KKAkSRfTAAAA:8 a=o8Ad3ZvNeqkkIsAbXqoA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: 1vSsHPvCC91xlodxd-ueTsW_pBqhm_Aa
+X-Proofpoint-GUID: 1vSsHPvCC91xlodxd-ueTsW_pBqhm_Aa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzNiBTYWx0ZWRfX/UF906nZq+Fi
+ ouS5cejs3faVkGwznt6n2FT9gjOuc05yaI2vv4WMDxYAzo4YbmM9MmBCDR4rAfZqzgbkU4RQwkS
+ tABPeMD2iwCZ8PQ14tiJ9iDpE90t605SKeAvJi+y/n6R3XgythWL4Up+HjD4PyAPOE56V0gEPW8
+ N/alQCpYfVfKYN3R+U6ETbjHaVzb1XnoRf4Q1Lnovj9bbBg6vpvF11H9sQr4HgGhBdWPXA32AoF
+ Wtr9ugTzVhvP7Iov+4fJJj4owiB9bkRKJCNcr6LQY4ZBVOdzQkFlzmVyKRJSpiZR8Pf9Snx9c6s
+ 9+unRieq6VL/cxhH9YzZonYbzI0LRzudLtR6eq2cEI4maBW//+cynX4hghobkeqiJ1ARdlbobPQ
+ pKi1IkDN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130036
 
-On Fri 2025-09-12 14:24:52, John Ogness wrote:
-> There may be console drivers that have not yet figured out a way
-> to implement safe atomic printing (->write_atomic() callback).
-> These drivers could choose to only implement threaded printing
-> (->write_thread() callback), but then it is guaranteed that _no_
-> output will be printed during panic. Not even attempted.
+On 16/09/25 16:39:00, Jorge Ramirez wrote:
+> On 16/09/25 12:20:25, Praveen Talari wrote:
+> > Hi Alexey
+> > 
+> > Thank you for your support.
+> > 
+> > On 9/15/2025 7:55 PM, Praveen Talari wrote:
+> > > Hi Alexey,
+> > > 
+> > > On 9/15/2025 3:09 PM, Alexey Klimov wrote:
+> > > > (removing <quic_mnaresh@quicinc.com> from c/c -- too many mail not
+> > > > delivered)
+> > > > 
+> > > > Hi Praveen,
+> > > > 
+> > > > On Mon Sep 15, 2025 at 7:58 AM BST, Praveen Talari wrote:
+> > > > > Hi Alexey,
+> > > > > 
+> > > > > Really appreciate you waiting!
+> > > > > 
+> > > > > On 9/11/2025 2:30 PM, Alexey Klimov wrote:
+> > > > > > Hi Praveen,
+> > > > > > 
+> > > > > > On Thu Sep 11, 2025 at 9:34 AM BST, Praveen Talari wrote:
+> > > > > > > Hi Alexy,
+> > > > > > > 
+> > > > > > > Thank you for update.
+> > > > > > > 
+> > > > > > > On 9/10/2025 1:35 AM, Alexey Klimov wrote:
+> > > > > > > > 
+> > > > > > > > (adding Krzysztof to c/c)
+> > > > > > > > 
+> > > > > > > > On Mon Sep 8, 2025 at 6:43 PM BST, Alexey Klimov wrote:
+> > > > > > > > > On Mon Sep 8, 2025 at 5:45 PM BST, Praveen Talari wrote:
+> > > > > > > > > > A deadlock is observed in the
+> > > > > > > > > > qcom_geni_serial driver during runtime
+> > > > > > > > > > resume. This occurs when the pinctrl
+> > > > > > > > > > subsystem reconfigures device pins
+> > > > > > > > > > via msm_pinmux_set_mux() while the serial device's interrupt is an
+> > > > > > > > > > active wakeup source. msm_pinmux_set_mux() calls disable_irq() or
+> > > > > > > > > > __synchronize_irq(), conflicting with the active wakeup state and
+> > > > > > > > > > causing the IRQ thread to enter an uninterruptible (D-state) sleep,
+> > > > > > > > > > leading to system instability.
+> > > > > > > > > > 
+> > > > > > > > > > The critical call trace leading to the deadlock is:
+> > > > > > > > > > 
+> > > > > > > > > >        Call trace:
+> > > > > > > > > >        __switch_to+0xe0/0x120
+> > > > > > > > > >        __schedule+0x39c/0x978
+> > > > > > > > > >        schedule+0x5c/0xf8
+> > > > > > > > > >        __synchronize_irq+0x88/0xb4
+> > > > > > > > > >        disable_irq+0x3c/0x4c
+> > > > > > > > > >        msm_pinmux_set_mux+0x508/0x644
+> > > > > > > > > >        pinmux_enable_setting+0x190/0x2dc
+> > > > > > > > > >        pinctrl_commit_state+0x13c/0x208
+> > > > > > > > > >        pinctrl_pm_select_default_state+0x4c/0xa4
+> > > > > > > > > >        geni_se_resources_on+0xe8/0x154
+> > > > > > > > > >        qcom_geni_serial_runtime_resume+0x4c/0x88
+> > > > > > > > > >        pm_generic_runtime_resume+0x2c/0x44
+> > > > > > > > > >        __genpd_runtime_resume+0x30/0x80
+> > > > > > > > > >        genpd_runtime_resume+0x114/0x29c
+> > > > > > > > > >        __rpm_callback+0x48/0x1d8
+> > > > > > > > > >        rpm_callback+0x6c/0x78
+> > > > > > > > > >        rpm_resume+0x530/0x750
+> > > > > > > > > >        __pm_runtime_resume+0x50/0x94
+> > > > > > > > > >        handle_threaded_wake_irq+0x30/0x94
+> > > > > > > > > >        irq_thread_fn+0x2c/xa8
+> > > > > > > > > >        irq_thread+0x160/x248
+> > > > > > > > > >        kthread+0x110/x114
+> > > > > > > > > >        ret_from_fork+0x10/x20
+> > > > > > > > > > 
+> > > > > > > > > > To resolve this, explicitly manage the wakeup IRQ state within the
+> > > > > > > > > > runtime suspend/resume callbacks. In the
+> > > > > > > > > > runtime resume callback, call
+> > > > > > > > > > disable_irq_wake() before enabling resources. This preemptively
+> > > > > > > > > > removes the "wakeup" capability from the IRQ, allowing subsequent
+> > > > > > > > > > interrupt management calls to proceed
+> > > > > > > > > > without conflict. An error path
+> > > > > > > > > > re-enables the wakeup IRQ if resource enablement fails.
+> > > > > > > > > > 
+> > > > > > > > > > Conversely, in runtime suspend, call
+> > > > > > > > > > enable_irq_wake() after resources
+> > > > > > > > > > are disabled. This ensures the interrupt is configured as a wakeup
+> > > > > > > > > > source only once the device has fully
+> > > > > > > > > > entered its low-power state. An
+> > > > > > > > > > error path handles disabling the wakeup IRQ
+> > > > > > > > > > if the suspend operation
+> > > > > > > > > > fails.
+> > > > > > > > > > 
+> > > > > > > > > > Fixes: 1afa70632c39 ("serial: qcom-geni:
+> > > > > > > > > > Enable PM runtime for serial driver")
+> > > > > > > > > > Signed-off-by: Praveen Talari <praveen.talari@oss.qualcomm.com>
+> > > > > > > > > 
+> > > > > > > > > You forgot:
+> > > > > > > > > 
+> > > > > > > > > Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > > > > > > > > 
+> > > > > > > > > Also, not sure where this change will go, via
+> > > > > > > > > Greg or Jiri, but ideally
+> > > > > > > > > this should be picked for current -rc cycle since regression is
+> > > > > > > > > introduced during latest merge window.
+> > > > > > > > > 
+> > > > > > > > > I also would like to test it on qrb2210 rb1 where this regression is
+> > > > > > > > > reproduciable.
+> > 
+> > Since I don't have this board, could you kindly validate the new change and
+> > run a quick test on your end?
+> > 
+> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > index 83eb075b6bfa..3d6601dc6fcc 100644
+> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> > @@ -215,7 +215,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev
+> > *pctldev,
+> >          */
+> >         if (d && i != gpio_func &&
+> >             !test_and_set_bit(d->hwirq, pctrl->disabled_for_mux))
+> > -               disable_irq(irq);
+> > +               disable_irq_nosync(irq);
+> > 
+> >         raw_spin_lock_irqsave(&pctrl->lock, flags);
 > 
-> As a result, developers may be tempted to implement unsafe
-> ->write_atomic() callbacks and/or implement some sort of custom
-> deferred printing trickery to try to make it work. This goes
-> against the principle intention of the nbcon API as well as
-> endangers other nbcon drivers that are doing things correctly
-> (safely).
 > 
-> As a compromise, allow nbcon drivers to implement unsafe
-> ->write_atomic() callbacks by providing a new console flag
-> CON_NBCON_ATOMIC_UNSAFE. When specified, the ->write_atomic()
-> callback for that console will *only* be called during the
-> final "hope and pray" flush attempt at the end of a panic:
-> nbcon_atomic_flush_unsafe().
+> sorry Praveen, didnt see this proposal. testing on my end as well.
 > 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> Link: https://lore.kernel.org/lkml/b2qps3uywhmjaym4mht2wpxul4yqtuuayeoq4iv4k3zf5wdgh3@tocu6c7mj4lt
-> ---
->  include/linux/console.h |  3 +++
->  kernel/printk/nbcon.c   | 17 ++++++++++++++---
->  kernel/printk/printk.c  | 23 ++++++++++++++++-------
->  3 files changed, 33 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/console.h b/include/linux/console.h
-> index 8f10d0a85bb4..ec68ecd13f85 100644
-> --- a/include/linux/console.h
-> +++ b/include/linux/console.h
-> @@ -185,6 +185,8 @@ static inline void con_debug_leave(void) { }
->   *			printing callbacks must not be called.
->   * @CON_NBCON:		Console can operate outside of the legacy style console_lock
->   *			constraints.
-> + * @CON_NBCON_ATOMIC_UNSAFE: The write_atomic() callback is not safe and is
-> + *			therefore only used by nbcon_atomic_flush_unsafe().
->   */
->  enum cons_flags {
->  	CON_PRINTBUFFER		= BIT(0),
-> @@ -196,6 +198,7 @@ enum cons_flags {
->  	CON_EXTENDED		= BIT(6),
->  	CON_SUSPENDED		= BIT(7),
->  	CON_NBCON		= BIT(8),
-> +	CON_NBCON_ATOMIC_UNSAFE	= BIT(9),
->  };
->  
->  /**
-> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-> index 646801813415..8c2966b85ac3 100644
-> --- a/kernel/printk/nbcon.c
-> +++ b/kernel/printk/nbcon.c
-> @@ -972,14 +972,18 @@ static bool nbcon_emit_next_record(struct nbcon_write_context *wctxt, bool use_a
->  	/*
->  	 * This function should never be called for consoles that have not
->  	 * implemented the necessary callback for writing: i.e. legacy
-> -	 * consoles and, when atomic, nbcon consoles with no write_atomic().
-> +	 * consoles and, when atomic, nbcon consoles with no write_atomic()
-> +	 * or an unsafe write_atomic() without allowing unsafe takeovers.
->  	 * Handle it as if ownership was lost and try to continue.
->  	 *
->  	 * Note that for nbcon consoles the write_thread() callback is
->  	 * mandatory and was already checked in nbcon_alloc().
->  	 */
-> -	if (WARN_ON_ONCE((use_atomic && !con->write_atomic) ||
-> -			 !(console_srcu_read_flags(con) & CON_NBCON))) {
-> +	if (WARN_ON_ONCE(!(console_srcu_read_flags(con) & CON_NBCON) ||
-> +			 (use_atomic &&
-> +			  (!con->write_atomic ||
-> +			   (!ctxt->allow_unsafe_takeover &&
-> +			    (console_srcu_read_flags(con) & CON_NBCON_ATOMIC_UNSAFE)))))) {
 
-The condition seems to be correct. But it is evil. I wonder whether
-it would make sense to replace this with:
+just tested on my end and all modules load - deadlocked before this
+update so there is progress (now we can load the network driver)
 
-	flags = console_srcu_read_flags(con);
+I can see however irq/92 (threaded) stuck in D-state inside runtime pm
 
-	if (WARN_ON_ONCE(!(flags & CON_NBCON) ||
-			 !console_is_usable(con, flags, use_atomic, ctxt->allow_unsafe_takeover))) {
+root@qrb2210-rb1-core-kit:~# echo w > /proc/sysrq-trigger                                                                                                                              
+[  498.247349] sysrq: Show Blocked State
+[  498.251190] task:irq/92-4a8c000. state:D stack:0     pid:80
+tgid:80    ppid:2      task_flags:0x208040 flags:0x00000010
+[  498.262334] Call trace:
+[  498.264812]  __switch_to+0xf0/0x1c0 (T)  
+[  498.268777]  __schedule+0x110/0x9bc
 
 
-Note that I have added the 4th parameter intentionally, see below.
+with irq92 being:
+92: 199870  0  0   0  msmgpio  11 Level     4a8c000.serial:wakeup
 
->  		nbcon_context_release(ctxt);
->  		return false;
->  	}
-> @@ -1606,6 +1610,13 @@ static void __nbcon_atomic_flush_pending(u64 stop_seq, bool allow_unsafe_takeove
->  		if (!console_is_usable(con, flags, true))
->  			continue;
->  
-> +		/*
-> +		 * It is only allowed to use unsafe ->write_atomic() from
-> +		 * nbcon_atomic_flush_unsafe().
-> +		 */
-> +		if ((flags & CON_NBCON_ATOMIC_UNSAFE) && !allow_unsafe_takeover)
-> +			continue;
-> +
->  		if (nbcon_seq_read(con) >= stop_seq)
->  			continue;
->  
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 0efbcdda9aab..1cfc6801eed0 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3206,13 +3206,22 @@ static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handove
->  			u64 printk_seq;
->  			bool progress;
->  
-> -			/*
-> -			 * console_flush_all() is only responsible for nbcon
-> -			 * consoles when the nbcon consoles cannot print via
-> -			 * their atomic or threaded flushing.
-> -			 */
-> -			if ((flags & CON_NBCON) && (ft.nbcon_atomic || ft.nbcon_offload))
-> -				continue;
-> +			if (flags & CON_NBCON) {
-> +				/*
-> +				 * console_flush_all() is only responsible for nbcon
-> +				 * consoles when the nbcon consoles cannot print via
-> +				 * their atomic or threaded flushing.
-> +				 */
-> +				if (ft.nbcon_atomic || ft.nbcon_offload)
-> +					continue;
-> +
-> +				/*
-> +				 * It is only allowed to use unsafe ->write_atomic() from
-> +				 * nbcon_atomic_flush_unsafe().
-> +				 */
-> +				if ((flags & CON_NBCON_ATOMIC_UNSAFE) && !do_cond_resched)
-> +					continue;
-> +			}
->  
->  			if (!console_is_usable(con, flags, !do_cond_resched))
->  				continue;
+this log changes over time but it is alwas irq/92:
 
-Adding extra check looks error prone. I think that also
-__nbcon_atomic_flush_pending_con() has to be patched.
-Otherwise, it might end up in an infinite loop.
-It is called directly from nbcon_device_release().
+root@qrb2210-rb1-core-kit:~# echo w > /proc/sysrq-trigger                                                                                                   [90/66818]
+[  613.019101] sysrq: Show Blocked State                                                                                                                              
+[  613.023055] task:irq/92-4a8c000. state:D stack:0     pid:80    tgid:80    ppid:2      task_flags:0x208040 flags:0x00000010                                         
+[  613.034189] Call trace:                                                                                                                                            
+[  613.036770]  __switch_to+0xf0/0x1c0 (T)                                                                                                                            
+[  613.040779]  __schedule+0x35c/0x9bc                                                                                                                                
+[  613.044412]  schedule+0x34/0x110                                                                                                                                   
+[  613.047782]  rpm_resume+0x17c/0x690                                                                                                                                
+[  613.051359]  __pm_runtime_resume+0x4c/0x98                                                                                                                         
+[  613.055556]  handle_threaded_wake_irq+0x30/0x80                                                                                                                    
+[  613.060168]  irq_thread_fn+0x28/0xa8                                                                                                                               
+[  613.063864]  irq_thread+0x178/0x338                                                                                                                                
+[  613.067434]  kthread+0x12c/0x210                                                                                                                                   
+[  613.070735]  ret_from_fork+0x10/0x20                                                                                                                               
+root@qrb2210-rb1-core-kit:~#                                                                                                                                          
+root@qrb2210-rb1-core-kit:~# echo w > /proc/sysrq-trigger                                                                                                             
+[  617.586960] sysrq: Show Blocked State                                                              
+[  617.590771] task:irq/92-4a8c000. state:D stack:0     pid:80    tgid:80    ppid:2      task_flags:0x208040 flags:0x00000010                                        
+[  617.601906] Call trace:                                                                            
+[  617.604442]  __switch_to+0xf0/0x1c0 (T)                                                            
+[  617.608408]  __schedule+0x35c/0x9bc                                                                
+[  617.612074]  0x766c7362                                                                            
+root@qrb2210-rb1-core-kit:~#                                                                          
+root@qrb2210-rb1-core-kit:~#                                                                                                                                          
+root@qrb2210-rb1-core-kit:~# echo w > /proc/sysrq-trigger                           
+[  619.656937] sysrq: Show Blocked State                                                                                                                              
+[  619.660847] task:irq/92-4a8c000. state:D stack:0     pid:80    tgid:80    ppid:2      task_flags:0x208040 flags:0x00000010
+[  619.672009] Call trace:                                                                                                                                            
+[  619.674531]  __switch_to+0xf0/0x1c0 (T)                                                                                                                            
+[  619.678508]  __schedule+0x35c/0x9bc                                                                                                                                
+[  619.682102]  schedule+0x34/0x110                                                                                                                                   
+[  619.685488]  schedule_timeout+0x80/0x104                                                                                                                           
+root@qrb2210-rb1-core-kit:~#                                                                                                                                          
+root@qrb2210-rb1-core-kit:~#                                                                                                                                          
+root@qrb2210-rb1-core-kit:~# echo w > /proc/sysrq-trigger                           
+[  624.786811] sysrq: Show Blocked State                                                                                                                              
+root@qrb2210-rb1-core-kit:~#                                                                                                                                          
+root@qrb2210-rb1-core-kit:~#                                                                                                                                          
+root@qrb2210-rb1-core-kit:~# echo w > /proc/sysrq-trigger                           
+[  630.546744] sysrq: Show Blocked State                                                                                                                              
+[  630.550593] task:irq/92-4a8c000. state:D stack:0     pid:80    tgid:80    ppid:2      task_flags:0x208040 flags:0x00000010
+[  630.561724] Call trace:                                                                                                                                            
+[  630.564219]  __switch_to+0xf0/0x1c0 (T)                                                                                                                            
+[  630.568138]  __schedule+0x35c/0x9bc                                                                                                                                
+[  630.571729]  0x766c7362                                                                                                                                            
+root@qrb2210-rb1-core-kit:~#
 
-Note that this patch added the check only to the other caller
-__nbcon_atomic_flush_pending().
-
-It would be more reliable when the check was integrated into
-console_is_usable(). I guess that you did not do it because
-it added another parameter...
-
-I would personally prefer to add the 4th parameter.
-
-Or maybe, we could define @allow_unsafe_takeover via a global variable,
-e.g. panic_nbcon_allow_unsafe_takeover. And it might be valid
-only on the panic CPU, e.g.
-
-static inline
-bool nbcon_allow_unsafe_takeover(void)
-{
-	return panic_on_this_cpu() && panic_nbcon_allow_unsafe_takeover;
-}
-
-It is a kind of hack. But it might be better than the 4th parameter.
-And it would simplify few other APIs.
-
-Best Regards,
-Petr
 
