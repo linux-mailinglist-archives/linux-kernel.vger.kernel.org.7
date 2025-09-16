@@ -1,100 +1,102 @@
-Return-Path: <linux-kernel+bounces-817952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43207B58972
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE7FB58977
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31F994E26D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:31:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F1EC4E26FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0083822D4F9;
-	Tue, 16 Sep 2025 00:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF162239E91;
+	Tue, 16 Sep 2025 00:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HZyyk1Pp"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4aTSkGX"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C0722422B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3AD1FF7B3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982559; cv=none; b=NWhHd1C9XAHqg76fYpYZs12X2wKpN+IJpCfFh6lJVozWTwg2K+IKduORwPpUSQv5WA+06cPPhSPPdVEIiViPbBWbAlhfYEYqW8kepc/LOwYi5y4ZYISwpzpgQR83v/QjGDIP9xNx7xce+RdIkx6rtLd6MLMQzg8TOrx1xVqwfdE=
+	t=1757982566; cv=none; b=JXfDmGFVe7Dioy/MhL+RZeKNeRlPqv8TSxjTfFxc9lc2Qm4x/OWEoRNGfe3aWjv4Pdzb8xpruPlA3CynO6S2AgrtpSS7pZqQMeizXppzpAV0hmElHgPzaWafnLY7X4UAAi7XuJoBvnPFdWykgWmod2+O0m74ysmF84ZySH//lBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982559; c=relaxed/simple;
-	bh=2wOnBKKCaFqNYjyYc1v49OMoQyv2y72DCIFRe5yU+wc=;
+	s=arc-20240116; t=1757982566; c=relaxed/simple;
+	bh=fZMcGOq8pzFqzBnyHPQZyj8sd8INTo/alNIKN/HnQlY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p7VoZuXH41ihgsTPfzNTbH45hjl3oUh1n6sb5In819R3McyZdI7JEum8o/6WZ0SpJqejDzBMttYoXT8SPnSssn/GVaVlRZdrgv4uB1Z5faQmPEhJ7V4YYBXzw2w5+Coghnr0wexd4Q1RR+Ysy061KU+FGcXpdkc3PpgPaKuQrCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HZyyk1Pp; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=C2Z27QVd1TrVZTJdOYogGPBDSG8wszs1uHNCvgCdPtHovGFDLbZ/g5dNbLASJlSjzhaRBZ7fEaDuu65WM2R/qY9GVMH19qIJKHQUubhY22gfy4aovehmTxZOF13iXJ7rlI2ghMlc7Mh5tkfraJrNf+JWIAVXAwT6QvE5norn7fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4aTSkGX; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77618a8212cso3107342b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:29:17 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ea7fcddd8so33667a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:29:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757982557; x=1758587357; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757982564; x=1758587364; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ncvI8QqpwL/ZLQ3Rb9ROAQpWcIVFT5sOJk27qsYiqbQ=;
-        b=HZyyk1Pp0fzQQFhPR65T0OOEvU5Nr6Akj3u6rFzcIg/zviamSRMZO639CDTZI1GuKK
-         TExUvqFZJG0p1keRzpQKnYT4zbhE28odMoCLycgDnIpTs1L8x5rV9uR9xdFX5ZTdfNTw
-         7RAF6ZiV3Vh9ZQ2T4qLarkJHWQSIoZA0fFJFiwPEe4VqjsDhCaHzLHYJVKPJweIHqnJ1
-         BixfdYHdpHk+qRpyZ5rndkTVUdu9LxlhkRqpXutVFXSkowJm3Xp+ddgLK77FZQjdTte7
-         o/+z4baZVPhA+qAliT2ndfm06s6v3zwsWEOmwV7p3q3R/yyH0sV6m/O+nLWMSkes2QwP
-         xodw==
+        bh=59afqtQ1ZW4R1cwGm0JEKyCwHwkB3xWI6A7bm2gudqM=;
+        b=n4aTSkGXoc/GlinVw9BLDYsvwuGIGuD/7aef/LYWBhsmhKyUF++oDLXmhhJzLIxOAi
+         nU7znwjhnMvsNuOz/O/HkaM9mjgAAK4eboT2K6w9ie8Wi6cLNd9gslMLuqgzFsPmJFyR
+         DNEilqhBVN5cuOkcyqVVpu57gQw2vW0O0sGqxs2FFW9fyocsNuSYOkAC7XeIrbu5AO12
+         nNrDx2cDbtozMlQ18b0sxnljvn5qZBtwh02vSVq3BiTz3xo5XUuqQm7DH8YHtqrqhXlz
+         bqJdGZ1M/4Si+lZa6NcW3US/KPmO11pND5wEDrB0JA8vvxrTUaZ++ZNLW19pi7yTiNpY
+         v3qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757982557; x=1758587357;
+        d=1e100.net; s=20230601; t=1757982564; x=1758587364;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ncvI8QqpwL/ZLQ3Rb9ROAQpWcIVFT5sOJk27qsYiqbQ=;
-        b=a/B0ozsI3cxLPvJ2ODrhYludVdVk5XRT1TfYJ7ZnPawOA0CsM+SWZDfq3pyDOZJQJ6
-         qqsqYCO1lwKZpJHb9CV6k1+qO3Ni5P8zySdk8ow3eSqpugCc7saauNenckXmzn7r/nvG
-         5H959lA6UfTHez8G95m37sdwxYbzye0k2qiLSQx+ioaSQob63zpinKuBSkGGyCc7Kh92
-         evJoboKENKBmUi79HMYPk8XvWf8lEBf70U0v0EuXIi+daeiyYquqkhQFnz083KRG23oz
-         WcmRt0SLb9NLgje7gC0D6B7sm2iVi0+M6VKObsyJjMx9rQYLF2OlICCUGcmk0rDWkACc
-         leeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXnTOc3WCySclQdcng8t5oGkkX3NtDshEIj8EW+NYqzC2NxcCORd3QyD4EDDJwVPQexG/ua+h+F7GyR10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcfDcDfSP+51MsjgZKhEKu6GMeFoMj2jTYr0HH1KGoqswJT/Ox
-	1ucC8NgR4PRQJJdREhYyA/W8uRY62W73oVTLo5Ywmn4SSdtlw5h1xPUqlIP9K588DPKeifXz/qL
-	p1mPHNA==
-X-Google-Smtp-Source: AGHT+IHkRT4DqkkQPQ6Wz5aWthlvDZ9K4ii4O1nKvY9tLx3KTJzRJCPn4VDALnbl5lqF54kV9tqqjrI/mfE=
-X-Received: from pgcs188.prod.google.com ([2002:a63:77c5:0:b0:b4c:5356:a130])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:e083:b0:240:1e4a:64cc
- with SMTP id adf61e73a8af0-266e19e33bcmr585198637.12.1757982557184; Mon, 15
- Sep 2025 17:29:17 -0700 (PDT)
-Date: Mon, 15 Sep 2025 17:25:55 -0700
-In-Reply-To: <20250821213841.3462339-1-seanjc@google.com>
+        bh=59afqtQ1ZW4R1cwGm0JEKyCwHwkB3xWI6A7bm2gudqM=;
+        b=e+nTIGgi3+Tv0ZyzcM5VWHo1oWka7y6Fgfnnod74WuZsvqj3+ISS2CKprCmlhPoaij
+         bwoaU8MMJcJglF7vCPXRaq5FOkoV2JAVqMyerTDqD1/qgeF3aRAVeXftATCK9gSUk6lY
+         GUYMawcNhZPiMBdppgB642Cy7MI2sWAzOH7a8RW+NgwV3ug7bCBadMwizRK7z0qlZqmO
+         E3iUaoQQIHeZuivK3/15+I+xIBsfr5QK1+km1FHnk4QwNMUiBn/CFEvc5GLquXylW/5R
+         wdBZBrWheuY3WNRrmwfLqCxY+SeIK3EbRH5kz0K7WgYZVytxvlJPgpOu4Q4UGvumjveZ
+         yv1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUGinqfaGccO6YMJDwa7QP3jnlfDKIMt4SRaAxb2TCxmVZzlDfoCxBXWCHDzh8TErMIP6DOkc1dzCawBEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw5jtEzD4jhcKW8bSkRxFz3uVFiprb4ubsKj/8AovVNCdwgsA5
+	q6ErJN1/vHUpwGtBAvVN0fvLjWzko4x44Pk1x28u50T8QCzwfQLoPGyi6ZlEWKuI0M+HEjqlkcK
+	UI/E/QA==
+X-Google-Smtp-Source: AGHT+IHdRyVQ1cTTutce6si835oernHf1LkOFl/hzxk2zcb+YDP6Cz1iCOnHtPpotb8+e4+NPdghVuEgiw8=
+X-Received: from pjbsp14.prod.google.com ([2002:a17:90b:52ce:b0:32e:9dc1:de9e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cecf:b0:246:cf6a:f00f
+ with SMTP id d9443c01a7336-25d2647015dmr196452855ad.31.1757982564063; Mon, 15
+ Sep 2025 17:29:24 -0700 (PDT)
+Date: Mon, 15 Sep 2025 17:25:57 -0700
+In-Reply-To: <20250903002951.118912-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250821213841.3462339-1-seanjc@google.com>
+References: <20250903002951.118912-1-thorsten.blum@linux.dev>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <175798183763.622105.13979061125365252819.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: SEV: Save the SEV policy if and only if LAUNCH_START succeeds
+Message-ID: <175798208020.624679.16533836332687059035.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: SVM: Replace kzalloc() + copy_from_user() with memdup_user()
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Kim Phillips <kim.phillips@amd.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Thorsten Blum <thorsten.blum@linux.dev>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Thu, 21 Aug 2025 14:38:41 -0700, Sean Christopherson wrote:
-> Wait until LAUNCH_START fully succeeds to set a VM's SEV/SNP policy so
-> that KVM doesn't keep a potentially stale policy.  In practice, the issue
-> is benign as the policy is only used to detect if the VMSA can be
-> decrypted, and the VMSA only needs to be decrypted if LAUNCH_UPDATE and
-> thus LAUNCH_START succeeded.
+On Wed, 03 Sep 2025 02:29:50 +0200, Thorsten Blum wrote:
+> Replace kzalloc() followed by copy_from_user() with memdup_user() to
+> improve and simplify svm_set_nested_state().
+> 
+> Return early if an error occurs instead of trying to allocate memory for
+> 'save' when memory allocation for 'ctl' already failed.
 > 
 > 
 > [...]
 
 Applied to kvm-x86 svm, thanks!
 
-[1/1] KVM: SEV: Save the SEV policy if and only if LAUNCH_START succeeds
-      https://github.com/kvm-x86/linux/commit/2f5f8fb9de09
+[1/1] KVM: SVM: Replace kzalloc() + copy_from_user() with memdup_user()
+      https://github.com/kvm-x86/linux/commit/fc55b4cda00a
 
 --
 https://github.com/kvm-x86/linux/tree/next
