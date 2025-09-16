@@ -1,164 +1,350 @@
-Return-Path: <linux-kernel+bounces-818105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08CA8B58CB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:18:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DD4B58CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12AA87B1A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FB11BC1A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2961521018A;
-	Tue, 16 Sep 2025 04:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3B0231A24;
+	Tue, 16 Sep 2025 04:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z0GsWpC0"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TYXEiQSi"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FB972610
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4C823027C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757996303; cv=none; b=Nq7QIO2fnp8sA9ao5AIEa2U4MAzOkrC868vGHvRJZwC3oAX45zGnURLbawJOb63Mz3Q9OncYVDcxiu1JpB34slku9DfsfmDSFMfEIpGJ+cAlCu3NfVUTPA06ubgX6JVChni1nJrsphQMBX0awbti6fXBWpGCSxrGWiK0ohHym0c=
+	t=1757996420; cv=none; b=BjfqLAoE/ciPg3EINaQKRlnYrbaBTgFPfm4jcDaFfEeL8LEAo0eX7uWwp1dxBHX/DDgf8BlVYtnARUQDolgQ97R1oAeOJalUnEpetX5Ys8gyCJ4TqeMtQU7KX8cC9ga7zGlNhodcCRKkY6aBKHZTtCNN4dMGB9qvQNersllMzSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757996303; c=relaxed/simple;
-	bh=C6dV338ymu+/gyGLDuEaNA6dYPqvf+Lf8iiEvwyaMXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sUq7KtYG+LGSPIuww1an8xyIkVzQQazA/DheZQO26LgbCVoQ8taYuUVpfuHRwyK0NpPCkQmnnT/3VmnO33XTAic4gkZamoB/HhLSReCeR1V4FA2Sha127F8s7E6TxlvIIux6ugvmVr2xFIO/ecHfaol1lAeNsRV5vNLolg0ji2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z0GsWpC0; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-33ca74c62acso45243781fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:18:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757996300; x=1758601100; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w3gIbBvSTMVTmTzAF2o8La1xhOnztTpPgX6dUoQiGdY=;
-        b=z0GsWpC01CzEj6vojTseTfbGZ1kyg7+UveiaSpH+PR/h76qifXcBuubOiNRURLScW6
-         bcwHvic7YXdQZtjTI3IWqiVFYaeRqH8if4OtwG0rPkqi/UBTwsc1eZSApuqyQomMh1+x
-         5GTm6jZ4dZcYS660BLv+hOQEAQWV1oMy4QtQE0j9ez6B/pYeEPDrBTKvsYVZfrdQcAPJ
-         8lZQDMcmSgWnY0aMpqxMbHAO8B2/LmIEjpFvNtNuUfaLfNUuL57hB3rAJ0UW+9T+hCFs
-         uq/HJMKfA9LktrvsfSiigKbuwiIUuxo4DNz/IT/FLnwXQ0T3VZK5iBluDCFaPZZpxb6U
-         Xmow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757996300; x=1758601100;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w3gIbBvSTMVTmTzAF2o8La1xhOnztTpPgX6dUoQiGdY=;
-        b=SBhI2JLhPYXy1+AJzDs+qUucJaR93AIdw+yXNpu25v4VL7KM7faqnQ8PdpF0BdV+Uh
-         5dAoF+BaBsB6uA89mf0YGQOZZlI4xrLhW1Ruo3TZ2+e+UzpB9IJGWOQZ4l+rbMotVwJv
-         a7Cy4m5/ot8iX18R8Urrpu3Kje9IxyNZarGNLfznzrJpc86CgP5i0TkvzMDjisvrpQTH
-         0p46ge8dRJgC6tIEU3AoJmfq4A9miEgt1kUZSCUM723CXU8t6RoidWlRPNTi+iqHpz4u
-         L0z2FJ6etrCLsS4Ol/HlwKaySToj21qlRDpIReaDhqKKXAX7nF1U4Y5TiOEPkZFQIGUC
-         84Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdATF/coTPgIzGRNQkbUyS09Qyc04kDBOhsMvQZQ9wFN41dJoDiINxUtOxDnKgxLAIoAMWsspkWTD2n7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrMcHDaIkaGdgmMJ5K1AOHQW1b9mrcBc+eUiC0u9iOhnjvhYc1
-	FiCaCUkvUg9yR+uvo8Kb06JKPSYXQ91+/ut8SmnbW4oF2SKJGStS/6FFhFFczOFOkxbl3/69I/v
-	aiZ3WXPxmMJxpsSzSU4afu2bZ7Yr74Q8Xn8gBszo=
-X-Gm-Gg: ASbGncsBWge2b3AFmq1SfzRd/Bi8sk2IWrkCCZduCA7OFD5pUV+VrNYjms7VP557Anr
-	45fMdmFdpiwgkWwSvyubzVacBz3mdeIxgAx7SY6nW0mS4F4lh1PouwX7OGo7HLAFtUU47WbCUfG
-	TVvuOxjzPrSVfpGHgbeReF9hGUKCOtIhNZ1L9xLYGWMlqVxQfoMW+gvPJhWZGmHLPQekbfTn1SV
-	5IrZkC8Ejo8nK2/LHb5/xujuU4tPbSToZ+dHora8g==
-X-Google-Smtp-Source: AGHT+IHzPoGgykwebyupupNSD2WrE0n1OLGYOzoqztVP3XAzi0GgrZBbMusw2lBh/FNZsjFGmRbeeq0P44/f3vNN8+s=
-X-Received: by 2002:a2e:b8c6:0:b0:356:25da:89df with SMTP id
- 38308e7fff4ca-35625da948bmr32206241fa.20.1757996299431; Mon, 15 Sep 2025
- 21:18:19 -0700 (PDT)
+	s=arc-20240116; t=1757996420; c=relaxed/simple;
+	bh=FNpzI283uj9d+7DDiZm0fiTCZHqhu+7F43u5H/HqvYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fB2cS42PWp7qof40XQJEwHQ+Pbvsb/oqBHKaLUOUFxXPgra6BzYGEzl9udroJJyOy8uue4Cpz+VDlI1xVq89/6dacSsoaLIWyDZiAVKBuqYyPeJWIWLM4EYypUecU8XF2MTDt3tpN9rhYg+PBOzF1YFx5UiLCyo01GnotPKpxdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TYXEiQSi; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FH2QuI018825;
+	Tue, 16 Sep 2025 04:19:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=IMYX6+
+	/wntLjFi3USIzJdtXyuVTz2+S4Fd2MtaqIWMg=; b=TYXEiQSiRJmu5WpTmxhaQ9
+	AKkx5EUg0fTDuOaTEHpYuO1M1VXrrLHJfvR2TxTp6n1aMRaxL6MzeJYxotK9YQ/9
+	CVlVpgh92PvpeP2MGL6UiRAowMejH5u1mJurZqM1fh9/phqzT8e7CwDc3Pmzc2KC
+	7lzbzPjvA3lodeRF/EGId8EgKaWZ1FnxVqgS5JErZkuAfVhui8gUMqEfcSyQbGY8
+	/sS9r6d4vT8HCL05UAi3LuKMxMq0p5VAZCGV/ZpymHaSPArBWtC/Rf53VNSreak5
+	HRt7a6Kc+ubNdfIZnKOD2k0rm+K1Ez8j1qNU+bKbSrVchImGy3gycKZuP4BgllFA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat54sh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 04:19:46 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58G4HWLU024900;
+	Tue, 16 Sep 2025 04:19:45 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat54se-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 04:19:45 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G2AnxZ029536;
+	Tue, 16 Sep 2025 04:19:44 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kb0t5q9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 04:19:44 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58G4Je4A51183924
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Sep 2025 04:19:40 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EC3E720040;
+	Tue, 16 Sep 2025 04:19:39 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 46C1920049;
+	Tue, 16 Sep 2025 04:19:32 +0000 (GMT)
+Received: from [9.39.20.171] (unknown [9.39.20.171])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 16 Sep 2025 04:19:32 +0000 (GMT)
+Message-ID: <2129847d-8058-424e-89b1-5d072b281ce3@linux.ibm.com>
+Date: Tue, 16 Sep 2025 09:49:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702114924.091581796@infradead.org> <20250702121158.465086194@infradead.org>
- <CANDhNCpDW-fg6DK8Wcgwq-1fgaYSkxL1G6ChUkC4K6Mpk04aEQ@mail.gmail.com>
-In-Reply-To: <CANDhNCpDW-fg6DK8Wcgwq-1fgaYSkxL1G6ChUkC4K6Mpk04aEQ@mail.gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 15 Sep 2025 21:18:07 -0700
-X-Gm-Features: AS18NWDZgx6RgZHU7TGQy2DPVEQL1XWJjYR8dSNG1TwCKegUMyLIhwriJNK8QO8
-Message-ID: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server handling
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, clm@meta.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC V2 3/8] powerpc: introduce arch_enter_from_user_mode
+To: Shrikanth Hegde <sshegde@linux.ibm.com>,
+        Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, oleg@redhat.com, kees@kernel.org,
+        luto@amacapital.net, wad@chromium.org, deller@gmx.de, ldv@strace.io,
+        macro@orcam.me.uk, charlie@rivosinc.com, akpm@linux-foundation.org,
+        bigeasy@linutronix.de, ankur.a.arora@oracle.com, naveen@kernel.org,
+        thomas.weissschuh@linutronix.de, Jason@zx2c4.com, peterz@infradead.org,
+        tglx@linutronix.de, namcao@linutronix.de, kan.liang@linux.intel.com,
+        mingo@kernel.org, oliver.upton@linux.dev, mark.barnett@arm.com,
+        atrajeev@linux.vnet.ibm.com, rppt@kernel.org, coltonlewis@google.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20250908210235.137300-2-mchauras@linux.ibm.com>
+ <20250908210235.137300-5-mchauras@linux.ibm.com>
+ <188f79ef-6ad4-4144-b73b-9e1090f4fc95@linux.ibm.com>
+Content-Language: en-US, en-IN, en-GB
+From: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>
+In-Reply-To: <188f79ef-6ad4-4144-b73b-9e1090f4fc95@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=BKWzrEQG c=1 sm=1 tr=0 ts=68c8e562 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=S892im0M2olbNhx55RsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Dby_u1cUep2zOakaY6LBdvUsnq6ffJx3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX2rpdrMZCdB2v
+ DArpuFXmyiEbjR+BXx6sfK9bNjQDO2zSm1u8ukai7yAkIisWOcRIFn0SKCgazNnshDZ1iBUrvQJ
+ Sw+ti8b9mg3n2ICxpEMC1j7tGGjIQ7xFYRwukQqvIk6yl/Z1Nl+nvbGsnfgfqmPjHnv/oM0x6OJ
+ 01iiKCr2pXTKveErvJC/ZE/ELS9auylW09ChrU3HIE+e7zZlryhJzZtI2hBmAHhAft2Clt5kosO
+ gDPomokiuTZzM6pv8ESWswJW3mgW0wnmFeFStMzxjIsEjRbL+1KHnO7OswISIZikhgxJ8AhQrxG
+ Kw83fXK5uDqe7gauNnJxf+YDd97XQj9YlLBU2Oz49+MT/Z/olgzokAxJ+mcnPQMxPFlFrRnGqWB
+ 4/4QJFBc
+X-Proofpoint-ORIG-GUID: 7nzj9B2-PAMJBT1O8w32L4ndZvImg3DU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_01,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1011 malwarescore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-On Mon, Sep 15, 2025 at 3:29=E2=80=AFPM John Stultz <jstultz@google.com> wr=
-ote:
-> From my initial debugging, it seems like the dl_se->dl_server_active
-> is set, but the dl_se isn't enqueued, and because active is set we're
-> short cutting out of dl_server_start(). I suspect the revert re-adding
-> dl_server_stop() helps because it forces dl_server_active to be
-> cleared and so we keep the dl_server_active and enqueued state in
-> sync.   Maybe we are dequeueing the dl_server from update_curr_dl_se()
-> due to dl_runtime_exceeded() but somehow not re-enqueueing it via
-> dl_server_timer()?
+
+On 9/14/25 2:32 PM, Shrikanth Hegde wrote:
 >
+>
+> On 9/9/25 2:32 AM, Mukesh Kumar Chaurasiya wrote:
+>> - Implement the hook arch_enter_from_user_mode for syscall entry.
+>
+> nit: for generic syscall infra.
+Cool, will change this.
+>
+>> - Move booke_load_dbcr0 from interrupt.c to interrupt.h
+>>
+>> No functional change intended.
+>>
+>> Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+>> ---
+>>   arch/powerpc/include/asm/entry-common.h | 96 +++++++++++++++++++++++++
+>>   arch/powerpc/include/asm/interrupt.h    | 23 ++++++
+>>   arch/powerpc/kernel/interrupt.c         | 22 ------
+>>   3 files changed, 119 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/entry-common.h 
+>> b/arch/powerpc/include/asm/entry-common.h
+>> index 3af16d821d07e..49607292bf5a5 100644
+>> --- a/arch/powerpc/include/asm/entry-common.h
+>> +++ b/arch/powerpc/include/asm/entry-common.h
+>> @@ -5,7 +5,103 @@
+>>     #ifdef CONFIG_GENERIC_IRQ_ENTRY
+>>   +#include <asm/cputime.h>
+>> +#include <asm/interrupt.h>
+>>   #include <asm/stacktrace.h>
+>> +#include <asm/tm.h>
+>> +
+>> +static __always_inline void arch_enter_from_user_mode(struct pt_regs 
+>> *regs)
+>> +{
+>> +    if (IS_ENABLED(CONFIG_PPC_IRQ_SOFT_MASK_DEBUG))
+>> +        BUG_ON(irq_soft_mask_return() != IRQS_ALL_DISABLED);
+>> +
+>> +    BUG_ON(regs_is_unrecoverable(regs));
+>> +    BUG_ON(!user_mode(regs));
+>> +    BUG_ON(regs_irqs_disabled(regs));
+>> +
+>> +#ifdef CONFIG_PPC_PKEY
+>> +    if (mmu_has_feature(MMU_FTR_PKEY)) {
+>> +        unsigned long amr, iamr;
+>> +        bool flush_needed = false;
+>> +        /*
+>> +         * When entering from userspace we mostly have the AMR/IAMR
+>> +         * different from kernel default values. Hence don't compare.
+>> +         */
+>> +        amr = mfspr(SPRN_AMR);
+>> +        iamr = mfspr(SPRN_IAMR);
+>> +        regs->amr  = amr;
+>> +        regs->iamr = iamr;
+>> +        if (mmu_has_feature(MMU_FTR_KUAP)) {
+>> +            mtspr(SPRN_AMR, AMR_KUAP_BLOCKED);
+>> +            flush_needed = true;
+>> +        }
+>> +        if (mmu_has_feature(MMU_FTR_BOOK3S_KUEP)) {
+>> +            mtspr(SPRN_IAMR, AMR_KUEP_BLOCKED);
+>> +            flush_needed = true;
+>> +        }
+>> +        if (flush_needed)
+>> +            isync();
+>> +    } else
+>> +#endif
+>> +        kuap_assert_locked();
+>> +
+>> +    booke_restore_dbcr0();
+>> +
+>> +    account_cpu_user_entry();
+>> +
+>> +    account_stolen_time();
+>> +
+>> +    /*
+>> +     * This is not required for the syscall exit path, but makes the
+>> +     * stack frame look nicer. If this was initialised in the first 
+>> stack
+>> +     * frame, or if the unwinder was taught the first stack frame 
+>> always
+>> +     * returns to user with IRQS_ENABLED, this store could be avoided!
+>> +     */
+>> +    irq_soft_mask_regs_set_state(regs, IRQS_ENABLED);
+>> +
+>> +    /*
+>> +     * If system call is called with TM active, set _TIF_RESTOREALL to
+>> +     * prevent RFSCV being used to return to userspace, because POWER9
+>> +     * TM implementation has problems with this instruction 
+>> returning to
+>> +     * transactional state. Final register values are not relevant 
+>> because
+>> +     * the transaction will be aborted upon return anyway. Or in the 
+>> case
+>> +     * of unsupported_scv SIGILL fault, the return state does not much
+>> +     * matter because it's an edge case.
+>> +     */
+>> +    if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
+>> +            unlikely(MSR_TM_TRANSACTIONAL(regs->msr)))
+>> +        set_bits(_TIF_RESTOREALL, &current_thread_info()->flags);
+>> +
+>> +    /*
+>> +     * If the system call was made with a transaction active, doom 
+>> it and
+>> +     * return without performing the system call. Unless it was an
+>> +     * unsupported scv vector, in which case it's treated like an 
+>> illegal
+>> +     * instruction.
+>> +     */
+>> +#ifdef CONFIG_PPC_TRANSACTIONAL_MEM
+>> +    if (unlikely(MSR_TM_TRANSACTIONAL(regs->msr)) &&
+>> +        !trap_is_unsupported_scv(regs)) {
+>> +        /* Enable TM in the kernel, and disable EE (for scv) */
+>> +        hard_irq_disable();
+>> +        mtmsr(mfmsr() | MSR_TM);
+>> +
+>> +        /* tabort, this dooms the transaction, nothing else */
+>> +        asm volatile(".long 0x7c00071d | ((%0) << 16)"
+>> +                :: "r"(TM_CAUSE_SYSCALL|TM_CAUSE_PERSISTENT));
+>> +
+>> +        /*
+>> +         * Userspace will never see the return value. Execution will
+>> +         * resume after the tbegin. of the aborted transaction with the
+>> +         * checkpointed register state. A context switch could occur
+>> +         * or signal delivered to the process before resuming the
+>> +         * doomed transaction context, but that should all be handled
+>> +         * as expected.
+>> +         */
+>> +        return;
+>> +    }
+>> +#endif // CONFIG_PPC_TRANSACTIONAL_MEM
+>
+> nit: Better to follow standard comment practices.
+>         /* CONFIG_PPC_TRANSACTIONAL_MEM */
+>
+Sure.
+>> +}
+>> +#define arch_enter_from_user_mode arch_enter_from_user_mode
+>>     #endif /* CONFIG_GENERIC_IRQ_ENTRY */
+>>   #endif /* _ASM_PPC_ENTRY_COMMON_H */
+>> diff --git a/arch/powerpc/include/asm/interrupt.h 
+>> b/arch/powerpc/include/asm/interrupt.h
+>> index 56bc8113b8cde..6edf064a0fea2 100644
+>> --- a/arch/powerpc/include/asm/interrupt.h
+>> +++ b/arch/powerpc/include/asm/interrupt.h
+>> @@ -138,6 +138,29 @@ static inline void nap_adjust_return(struct 
+>> pt_regs *regs)
+>>   #endif
+>>   }
+>>   +static inline void booke_load_dbcr0(void)
+>> +{
+>> +#ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>> +       unsigned long dbcr0 = current->thread.debug.dbcr0;
+>> +
+>> +       if (likely(!(dbcr0 & DBCR0_IDM)))
+>> +               return;
+>> +
+>> +       /*
+>> +        * Check to see if the dbcr0 register is set up to debug.
+>> +        * Use the internal debug mode bit to do this.
+>> +        */
+>> +       mtmsr(mfmsr() & ~MSR_DE);
+>> +       if (IS_ENABLED(CONFIG_PPC32)) {
+>> +               isync();
+>> +               global_dbcr0[smp_processor_id()] = mfspr(SPRN_DBCR0);
+>> +       }
+>> +       mtspr(SPRN_DBCR0, dbcr0);
+>> +       mtspr(SPRN_DBSR, -1);
+>> +#endif
+>> +}
+>> +
+>
+> Please run checkpatch.pl --strict on the series and fix the simple
+> ones such as need to using tabs, spaces and alignments, extra lines etc.
+>
+Sure, will fix these.
 
-So further digging, it looks like when the problem occurs, we call
-start_dl_timer() to set the hrtimer, then when the hrtimer later
-fires, we call dl_server_timer(), which catches on the `if
-(!dl_se->server_has_tasks(dl_se))` case, which then calls
-replenish_dl_entity() and dl_server_stopped() and finally
-HRTIMER_NORESTART.  With dl_server_stopped() having set
-dl_se->dl_server_idle before returning false (and notably not calling
-dl_server_stop() which would clear dl_server_active).
+Thanks,
 
-However, dl_server_idle doesn't persist for very long, as we
-dl_server_update is shortly called setting it back to 0 before calling
-update_curr_dl_se() which I suspect is dequeueing the dl_server.
+Mukesh
 
-From this point it seems we get into a situation where the timer
-doesn't fire again. And nothing enqueues the dl_server entity back
-onto the runqueue, so it never picks from the fair sched and we see
-the starvation on that core.
-
-After we get into the problematic state, the rq->fair_server looks like:
-$3 =3D {rb_node =3D {__rb_parent_color =3D 18446612689482602296, rb_right =
-=3D
-0x0, rb_left =3D 0x0}, dl_runtime =3D 50000000, dl_deadline =3D 1000000000,
-  dl_period =3D 1000000000, dl_bw =3D 52428, dl_density =3D 52428, runtime =
-=3D
-49615739, deadline =3D 217139555275, flags =3D 0, dl_throttled =3D 0,
-  dl_yielded =3D 0, dl_non_contending =3D 0, dl_overrun =3D 0, dl_server =
-=3D
-1, dl_server_active =3D 1, dl_defer =3D 1, dl_defer_armed =3D 0,
-  dl_defer_running =3D 0, dl_server_idle =3D 0, dl_timer =3D {node =3D {nod=
-e =3D
-{__rb_parent_color =3D 18446612689482602384,
-        rb_right =3D 0xffff8881b9d1cbf8, rb_left =3D 0x0}, expires =3D
-215349181777}, _softexpires =3D 215349181777,
-    function =3D 0xffffffff813849d0 <dl_task_timer>, base =3D
-0xffff8881b9d1c300, state =3D 0 '\000', is_rel =3D 0 '\000', is_soft =3D 0
-'\000',
-    is_hard =3D 1 '\001'}, inactive_timer =3D {node =3D {node =3D
-{__rb_parent_color =3D 18446612689482602448, rb_right =3D 0x0, rb_left =3D
-0x0},
-      expires =3D 0}, _softexpires =3D 0, function =3D 0xffffffff8137faa0
-<inactive_task_timer>, base =3D 0xffff8881b9c1c300, state =3D 0 '\000',
-    is_rel =3D 0 '\000', is_soft =3D 0 '\000', is_hard =3D 1 '\001'}, rq =
-=3D
-0xffff8881b9d2cc00,
-  server_has_tasks =3D 0xffffffff81363620 <fair_server_has_tasks>,
-server_pick_task =3D 0xffffffff8136c2d0 <fair_server_pick_task>,
-  pi_se =3D 0xffff8881b9d2d738}
-
-I'm still getting a bit lost in the dl_server state machine, but it's
-clear we're falling through a crack.
-
-My current theory is that in dl_server_timer() we probably should be
-calling dl_server_stop() instead of dl_server_stopped(), as that seems
-to avoid the problem for me, but I'm also worried it might cause
-problems with not setting dl_server_idle, though again my sense of the
-state machine there is foggy.
-
-thanks
--john
+>> +
+>>   static inline void booke_restore_dbcr0(void)
+>>   {
+>>   #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>> diff --git a/arch/powerpc/kernel/interrupt.c 
+>> b/arch/powerpc/kernel/interrupt.c
+>> index 0d8fd47049a19..2a09ac5dabd62 100644
+>> --- a/arch/powerpc/kernel/interrupt.c
+>> +++ b/arch/powerpc/kernel/interrupt.c
+>> @@ -78,28 +78,6 @@ static notrace __always_inline bool 
+>> prep_irq_for_enabled_exit(bool restartable)
+>>       return true;
+>>   }
+>>   -static notrace void booke_load_dbcr0(void)
+>> -{
+>> -#ifdef CONFIG_PPC_ADV_DEBUG_REGS
+>> -    unsigned long dbcr0 = current->thread.debug.dbcr0;
+>> -
+>> -    if (likely(!(dbcr0 & DBCR0_IDM)))
+>> -        return;
+>> -
+>> -    /*
+>> -     * Check to see if the dbcr0 register is set up to debug.
+>> -     * Use the internal debug mode bit to do this.
+>> -     */
+>> -    mtmsr(mfmsr() & ~MSR_DE);
+>> -    if (IS_ENABLED(CONFIG_PPC32)) {
+>> -        isync();
+>> -        global_dbcr0[smp_processor_id()] = mfspr(SPRN_DBCR0);
+>> -    }
+>> -    mtspr(SPRN_DBCR0, dbcr0);
+>> -    mtspr(SPRN_DBSR, -1);
+>> -#endif
+>> -}
+>> -
+>>   static notrace void check_return_regs_valid(struct pt_regs *regs)
+>>   {
+>>   #ifdef CONFIG_PPC_BOOK3S_64
+>
 
