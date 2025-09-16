@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-817937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D40B58937
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2204B58942
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4CD03B5DAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DA3D3B3671
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB3F1C84A6;
-	Tue, 16 Sep 2025 00:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7BD1D7E26;
+	Tue, 16 Sep 2025 00:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ntBJszff"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hO1Do+cq"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF5A19EEC2
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25E61A9B58
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982364; cv=none; b=WLyb/LItmnL25b/RavrLj4dV8gV8KFCBRpGbk9h9CujhVm6UofnTxW/9owa/BpaUtmVlFiaP/9fDnRX47ypNId/f3oTDFCap6uyZwMbCmXLTk0p2cO97ZWiP5tj5+j4TF7dpGuDhdh7z2WqzfW8OCGqK0dEOqrtdU7ibCDbTXaM=
+	t=1757982406; cv=none; b=EhP9njKgbKQF+x5ZyxCDuC+d9HSw3LdRbdER06z309RDYwXhnQG1HjkvkJSxCbls+Tdf8nicg++paQxS2BTmW8Od04QkCA17Py09JNgQzOietJEp2RbOEdNiQ4O2MBNmNbiqKABnJDui0kKS/34vIWm4we/05yswxw2GxfwHrf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982364; c=relaxed/simple;
-	bh=1XEahfw11WB7naFPbozfbOMsJ9u8Y82L3C6vT6vKLRY=;
+	s=arc-20240116; t=1757982406; c=relaxed/simple;
+	bh=cnvhbFmTcyALwq0L6KJioIroByTdgWEgWbFNzgvWNfQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=ZEFFmNqF8M8XPUd5vM0P9fLRIuF71GW7/P7z/r+78ZUHO/fxAKNG/2RrqyfeeXAp4ZHluEtUNPUIVsGjPEEFH7XRVJI3b4SUGRGN8AXGlty2s9T4uOEp0DyKtLfHYM7bITm4A+wJOL+fnckFmeG49N21mUifxSRAacJQhUV95xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ntBJszff; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=ljhkcbd0pNMaoFNrg6cGCS9nPSJxsYE/u1F/r4x3ApnEBlJs3ozwJBlgvJ7R41Fo6zjpySny3PkNn+Z5Q3l7loYLlRQ69taZA2G89v2iHWAUCS+b+aNqmCOmbAFgVJEnPTuMZ8X0mSG5zh6i1HLDFgGHZd1/UY+44Y4msCGU5xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hO1Do+cq; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54ad69f143so4898018a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:26:02 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24457f59889so49124645ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757982362; x=1758587162; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tCHKfv6VFh/5PpKS2D0UKIipcdXrypGgn90uGCY5r2M=;
-        b=ntBJszff/muNrIl9pjK7jSm146hlKM6YGfmzEZaGAx/1t6qypnjUZ15aKmhOc9Td5Q
-         5j0/Y4PdHg6NfF0Cds95vYFnekjqfc30QKQhz8ElUnRxRUg/WCLBrEt6nh9RzcwA1Ebc
-         mD9cdvb8D3uhPBxkJJDN7znn3P1GX1FUWb8F8LUgdE7uyfPaZKb/DeCXjajHtIpnJsma
-         m3w5adOMBUg7kV6ZbKLWxvy7K5dOhlEDTM6NfIeVXFgcfkV+Cz+V/QyRl7w90A8EIcfI
-         QnJVpjVxZKXCsg9S0t5bJDaW8e3DAU7xFSO3vZ4CZ2BrO7yB66d1b+DtVZyFaWIYV3xE
-         j/uA==
+        d=google.com; s=20230601; t=1757982404; x=1758587204; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5HErJT+zZxpaz3D/5r9TYIS9HH59s5D9HZXheG5gZRM=;
+        b=hO1Do+cqajGpmDSBn0olUrkMBMH4NCy9veFMxrK9ew4Fu/3BwGIkiVPCMHvbjUJcV3
+         vrsbZ4ctBbWNS28fY2SDA1oQRaV8x3esOnGYbY4TxW3Q7oIDSkA0RnaKXmboIjClI0nT
+         RjA+qdxLuQeRouGLf3U1w8Qmpu8eE0HGQtGyHp8WKC2gvOfXqTRtI68JobzKHLVLK35M
+         CvR6ALwqFWoK4J+MWgsiBGUDtSgMuJ0m1KfsQ8ZaICMYiw0Gls2D+ZABkBKuezbnHMFJ
+         wzm5zIAdBveEh92sGVxWO0nfV8FYRHCwwvm3qoLTQ4BKGGmCZECfVAjmQjTq86RbrEd0
+         uyjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757982362; x=1758587162;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tCHKfv6VFh/5PpKS2D0UKIipcdXrypGgn90uGCY5r2M=;
-        b=WiLYQCsY7PYW4ifnnHYhDAFdEwjW59yjGaar82b4WLqXshMKq2/zgJgkVupdb0S0JP
-         6qgJGJT2uVpChNNMkt7e5Qr40hh2jYBQXoGq8Gw5I08QNQYZOR3CuKn0DYRCLV7SrwsX
-         4DCE1hppj2AzgO6z97hC6A91EzFT9bjWs2ce8TEkbL2fldfi/dPUY39Fv2ZG2223BVYh
-         E33FBS/NtWLWVoll8dbxkaCRfrpYmrS/EE5XDPdd94JN20LOZ8/jzhzeHoVCBT41JBXD
-         zktfof7nZ3Hjjs+w6KJ3Bfv33PTJPriJpBkOP3FxF12HrJ1mHyYTs6xNfImV8lFdXhe6
-         TE1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3rrLHTAKX/Pf+ayv0eMlRn5yZKTmq8kxhVgK2N/uhKzeLL11yLnSRGokRpY7kdALIAK8JbtLpcxOV0ts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkr0DO2c1RS2tTShWfzSkUdGKBfmu+wCKdM/Pkj9gCFA2ZsZif
-	WhXAmdSvL6HPaYmnNPJzrzmt0X7YxbFLcdncOBXBbiQHyFJBpRio/ylIR2aKQ0rWbLkWQtezvBH
-	3FfMXpQ==
-X-Google-Smtp-Source: AGHT+IFK7yZRGtN4+sWH0Tl1jTnKIUO/gTV4gtNXMz8IEc3dZig0WD1nlGNQNEu68T5bSy1NdK2EZzPQr8c=
-X-Received: from pgcs188.prod.google.com ([2002:a63:77c5:0:b0:b4e:65c4:b5c8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:258a:b0:251:9f29:4553
- with SMTP id adf61e73a8af0-2602a49d9e5mr17497882637.10.1757982362155; Mon, 15
- Sep 2025 17:26:02 -0700 (PDT)
-Date: Mon, 15 Sep 2025 17:25:33 -0700
-In-Reply-To: <20250722110005.4988-1-lirongqing@baidu.com>
+        d=1e100.net; s=20230601; t=1757982404; x=1758587204;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5HErJT+zZxpaz3D/5r9TYIS9HH59s5D9HZXheG5gZRM=;
+        b=cA24FASPOD6O2gg6KUNn18S3ftYvDOr4uBWsNKlNgWjq3wooTsoNpDrjjyKRlJ9H3V
+         FiDR7JEjNPEORDKOyqvaZyiV4JoMjI/nQyTRpzFNAlmYYbckyFwjGb6mww1d7y1Vopmo
+         wWRqZBfvrp6UAesD3AdAogEljnX1CdAxqUJdZ7oeq9JRHVaeFZywHebeu3hi8YdGhE6e
+         6cfTHzF9BspaBnovsb2oZFHNYrD73UGTn5jrGQ3oafRb7nrtIHtQ5QFVu5SPoScNg/Lz
+         guhv9ZcP2vhYY4OL39jL97YFXQTPIgpN2HpHZ/I5jlICD1rF0CukX7/fKXve5FXmByaS
+         5G5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVaJ6xjCm6e4tPu+3eeUgvmWlhoxVLiKLwfw21KNEotv7GzW6DzK2KMS+Qt3L1Sl0LfpL4uxmdYPSSY3qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH0poqUei4DyP3gFltIh/Go6QwTRztbhGq2zn+CUrvXRVrOEYn
+	XvF8k2myc8WJrYGpaJkrj7z0XYEkaM2ivpJG83YojjEm9Ob8amxz9QKuwlI4Nnu9XnoMcR/kniR
+	8SxAMig==
+X-Google-Smtp-Source: AGHT+IEXcOlqEynPdUtfk1M9vVESGR/13AAj4MidAL8m/pOelS2mXMYUIsm19xBmBwuCgDsJXDfsGCPjiLQ=
+X-Received: from plbkl13.prod.google.com ([2002:a17:903:74d:b0:264:1805:b649])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1acf:b0:25f:9682:74ae
+ with SMTP id d9443c01a7336-25f9682760bmr131062305ad.29.1757982404046; Mon, 15
+ Sep 2025 17:26:44 -0700 (PDT)
+Date: Mon, 15 Sep 2025 17:25:35 -0700
+In-Reply-To: <20250828005249.39339-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250722110005.4988-1-lirongqing@baidu.com>
+References: <20250828005249.39339-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <175798205117.624172.7341980262867703436.b4-ty@google.com>
-Subject: Re: [PATCH][v2] x86/kvm: Prefer native qspinlock for dedicated vCPUs
- irrespective of PV_UNHALT
+Message-ID: <175798202141.623675.2546293939402072087.b4-ty@google.com>
+Subject: Re: [PATCH v2] x86/kvm: Force legacy PCI hole to UC when overriding
+ MTRRs for TDX/SNP
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, vkuznets@redhat.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lirongqing <lirongqing@baidu.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Gonda <pgonda@google.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, 
+	"=?UTF-8?q?J=C3=BCrgen=20Gro=C3=9F?=" <jgross@suse.com>, Korakit Seemakhupt <korakit@google.com>, Jianxiong Gao <jxgao@google.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>, Binbin Wu <binbin.wu@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Tue, 22 Jul 2025 19:00:05 +0800, lirongqing wrote:
-> The commit b2798ba0b876 ("KVM: X86: Choose qspinlock when dedicated
-> physical CPUs are available") states that when PV_DEDICATED=1
-> (vCPU has dedicated pCPU), qspinlock should be preferred regardless of
-> PV_UNHALT.  However, the current implementation doesn't reflect this: when
-> PV_UNHALT=0, we still use virt_spin_lock() even with dedicated pCPUs.
+On Wed, 27 Aug 2025 17:52:49 -0700, Sean Christopherson wrote:
+> When running as an SNP or TDX guest under KVM, force the legacy PCI hole,
+> i.e. memory between Top of Lower Usable DRAM and 4GiB, to be mapped as UC
+> via a forced variable MTRR range.
 > 
-> This is suboptimal because:
-> 1. Native qspinlocks should outperform virt_spin_lock() for dedicated
->    vCPUs irrespective of HALT exiting
-> 2. virt_spin_lock() should only be preferred when vCPUs may be preempted
->    (non-dedicated case)
+> In most KVM-based setups, legacy devices such as the HPET and TPM are
+> enumerated via ACPI.  ACPI enumeration includes a Memory32Fixed entry, and
+> optionally a SystemMemory descriptor for an OperationRegion, e.g. if the
+> device needs to be accessed via a Control Method.
 > 
 > [...]
 
 Applied to kvm-x86 guest, thanks!
 
-[1/1] x86/kvm: Prefer native qspinlock for dedicated vCPUs irrespective of PV_UNHALT
-      https://github.com/kvm-x86/linux/commit/960550503965
+[1/1] x86/kvm: Force legacy PCI hole to UC when overriding MTRRs for TDX/SNP
+      https://github.com/kvm-x86/linux/commit/0dccbc75e18d
 
 --
 https://github.com/kvm-x86/linux/tree/next
