@@ -1,178 +1,397 @@
-Return-Path: <linux-kernel+bounces-818916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25688B59813
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:46:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4196B59815
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 874721893B9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7293B17DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE1A31B80F;
-	Tue, 16 Sep 2025 13:45:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4637031A54D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D45530C35D;
+	Tue, 16 Sep 2025 13:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GyGjFUBd"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD261A9FAA
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030340; cv=none; b=da5YdUJIBN9h7diN3mf9iwzFNfL1+V8J7Y+J+Pr1X/7P/mSgi0dfkXdWmSIwRq29Eswv+Gfr1ei9RZymF5GpxLuRWC0FyhufSPO6ZJk/R2V7Pcf+h2re+G+f92g00DErffZHn/xTPak70A8wyXJYeV9RCeajpZb4TlMz1F0Imwo=
+	t=1758030427; cv=none; b=M5rMzQEBp5k6nsy4ul3WXgoTLwyNsd3B4oJCflja7reO8YDpJ6x/d/V+dJT+3LHGl6z6oXP86cBr5Ck3ADCpqTV07vuS/CkdY2ocUr3S7RwSsbp1WIbe6/EOIv/mxxaDUs6DQqqQbYeauZlHW/G0siBxwtewO1qFTJJVZMesz6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030340; c=relaxed/simple;
-	bh=fVlNw793Cvpl8k3NvZ1IBi327yZSlQft4OAyJD9aoTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FURrhhHNXyiElMpqd0fBLiD1MrBf738PpEaoVSjwKJ/WVj27+xGxUkGA43/PM5b9aOYaAOfGzHYsUaN2bekDJqV7amHBy61DgegXIMoiEou854/X6pxEKnuNmmfQldzd2r52tCnDeCG4wtvSYnEhZFeVUrjTJo2lHl2DYWjei00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F3F6113E;
-	Tue, 16 Sep 2025 06:45:29 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0286D3F66E;
-	Tue, 16 Sep 2025 06:45:34 -0700 (PDT)
-Date: Tue, 16 Sep 2025 14:45:32 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, broonie@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
-	ardb@kernel.org, scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
- operation
-Message-ID: <aMlp_Covl57nnVoe@J2N7QTR9R3.cambridge.arm.com>
-References: <20250816151929.197589-1-yeoreum.yun@arm.com>
- <20250816151929.197589-5-yeoreum.yun@arm.com>
- <aMRQIeIdyiWVR8a0@arm.com>
- <aMfrR0vserl/hfZ3@e129823.arm.com>
- <aMhrscd1gz_syMtL@arm.com>
- <aMh4q4-xAPHnaOul@willie-the-truck>
- <aMkLb6jPiSbzeRWL@arm.com>
- <aMk1qxS3htyaTgEQ@e129823.arm.com>
- <aMlcf5oUNZU65u_I@J2N7QTR9R3.cambridge.arm.com>
- <aMllyaObyciHEEFX@e129823.arm.com>
+	s=arc-20240116; t=1758030427; c=relaxed/simple;
+	bh=d5sEWR17U25DAQ6oehWF9Og8c/Wdt5u0yUxA1W0dQTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSJCNcWnK5LHT4tIVsZU/T6bLrkAGKeHl1WFyS2DdnYCYSPvy2SigghEVKZqf5NtJ7V7/6048DoGxa0HI6N2j9WQsvDrF5784yNczucIEx9JrlRjUygBelZZ0RxAYfBO1ZuMM7JgyHCQL/LVKxhtPmfNdctzX+xxoQXUTLN33X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GyGjFUBd; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ec4d6ba12eso663335f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758030424; x=1758635224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3CM2qaX5pVBBNYAELqYFtRQ1NuXIiKMqwPlPQg7yz3w=;
+        b=GyGjFUBdDcfTeBiNv7TfS7U4a0+zl6sze4O9vihCgrvBhCmNIt9yi9inDO+7ly+lOH
+         MN/h0IN03Po6rQQltYru9tnXig5qVXpKxTE2hZEDxRQYjkzzkHuat48Qc+emUHM6yAVn
+         rePoSEf49SqZcFehyTgfb2uj2IvTKAUAaqcIXH3OqZZSpALvwpSA+CswdvM95aB+oi3x
+         GXBdhttpjyEp0UgG5FipHUWyzRpuhugoZEIVQI29uEf5YGnkDl91/jjwUDXFjKfZyp4y
+         981+ytaJfSTDSTE7UAj10txdCH4escpxIMQwBU2YPGovnQ/mbyC8Sa3GGlkUMoGNoMi2
+         K+kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758030424; x=1758635224;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3CM2qaX5pVBBNYAELqYFtRQ1NuXIiKMqwPlPQg7yz3w=;
+        b=o3iP6dyVKd1OFIOnMvPL1OX4MKKPDhZOiJicXgPHH7AdH3+AI789dnE9nCWX2Pu8hz
+         HbZT1VDliD1PFW2PR55LC0iGkhZF7BDGAbI5IUs91Avy/KV6AW1fFele1cpb/A/cQFrO
+         0fuCQrAGld52296sjk1V3Poev+vETXjIT+S+UWrC8t3YS2rqrBgS91JmdWCh0fUpYqxO
+         ZU7l9/aibSLXrJ0Sw688plpcDg1+bC8WD54SeRiRmLhXPtYOAmJ5NYp1TctvpyoM43wP
+         UrUH8D8cWXZvi6SqT7ZXY6SRQAZy4ILvlxXUxp+m/kbKCZEcUvK8HoY08V8Sjd1B6DZV
+         bkXg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJeDAIQshrUgpBA2EHeY3SN8HL7huGtudaKPckvMfPs8+P4bHFyW9+E6PXAbQmF1gp3suzNQ5flOWhckY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiLzm7oGYOBtTcVFwkXhHetoTcWatSj6aAOQtkdX9e3TlwNNBt
+	E7N2NjzvOwoqyXJforccnP8Jso6mCTo6VeTNXaEt7b8Onh6iaEFdYDdG
+X-Gm-Gg: ASbGnctWM8UrD0UkhZaSe1q0qZi+KceicWhxVBd+hCxFTSwSBjjvEpqakEBSstz12k8
+	yfzwcZpEgA6AlWfcE5U5L96uzjDhSJWDwydoCjAxmpMB6OTPWflY2grdM5isBGMrHsY17gI+dt1
+	E7fiGhE/mPeZBgqQt+ov3toPxdnc8nhywKJ+EphXP/HHa4jHm+Mo1l1eUUvzBGXtP1exml9HpFG
+	HW4GEofC4HJie5nwlyzhYi2uOx2cctzqP40yvKW1/KkXb6zGT53jh/aeutLnrXR51bV1hYE1l3v
+	MmKhul268Mjr+kNrHQgdOvbMvK8p/99P6uStGudN9A3rBvopp2d5q6IgAxTEusLHmincgcKQqtE
+	JcBmOmpcd2UlBqEeMuEcGZF28BQ9R7XrIyA==
+X-Google-Smtp-Source: AGHT+IE0g2tbTZD+K6JDDeehba442dHQbFSeZqIVWreC4t3gDG74nWQXd5+aAaYR+7bLotRLNjtV3A==
+X-Received: by 2002:a05:6000:40c9:b0:3c7:df1d:3d9 with SMTP id ffacd0b85a97d-3e7659c4ba9mr12829580f8f.39.1758030423185;
+        Tue, 16 Sep 2025 06:47:03 -0700 (PDT)
+Received: from localhost ([45.10.155.18])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8e7692c9asm13485412f8f.30.2025.09.16.06.46.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 06:47:02 -0700 (PDT)
+Message-ID: <dca173e6-f23d-4f54-8ace-74329439c7da@gmail.com>
+Date: Tue, 16 Sep 2025 15:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMllyaObyciHEEFX@e129823.arm.com>
+Subject: Re: [PATCH net-next v5 3/5] net: gso: restore ids of outer ip headers
+ correctly
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ netdev@vger.kernel.org, pabeni@redhat.com, ecree.xilinx@gmail.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
+ mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
+ ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
+ aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
+ alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
+ linux-net-drivers@amd.com
+References: <20250915113933.3293-1-richardbgobert@gmail.com>
+ <20250915113933.3293-4-richardbgobert@gmail.com>
+ <willemdebruijn.kernel.1b773a265e8dc@gmail.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <willemdebruijn.kernel.1b773a265e8dc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 02:27:37PM +0100, Yeoreum Yun wrote:
-> Hi Mark,
+Willem de Bruijn wrote:
+> Richard Gobert wrote:
+>> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
+>> be mangled. Outer IDs can always be mangled.
+>>
+>> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
+>> both inner and outer IDs to be mangled.
+>>
+>> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
+>>
+>> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+>> Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
+>> ---
+>>  .../networking/segmentation-offloads.rst      | 22 ++++++++++++-------
+>>  .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 +++++--
+>>  drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++++++++----
+>>  include/linux/netdevice.h                     |  9 ++++++--
+>>  include/linux/skbuff.h                        |  9 +++++++-
+>>  net/core/dev.c                                |  5 ++++-
+>>  net/ipv4/af_inet.c                            | 13 +++++------
+>>  net/ipv4/tcp_offload.c                        |  5 +----
+>>  8 files changed, 59 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/Documentation/networking/segmentation-offloads.rst b/Documentation/networking/segmentation-offloads.rst
+>> index 085e8fab03fd..72f69b22b28c 100644
+>> --- a/Documentation/networking/segmentation-offloads.rst
+>> +++ b/Documentation/networking/segmentation-offloads.rst
+>> @@ -43,10 +43,19 @@ also point to the TCP header of the packet.
+>>  For IPv4 segmentation we support one of two types in terms of the IP ID.
+>>  The default behavior is to increment the IP ID with every segment.  If the
+>>  GSO type SKB_GSO_TCP_FIXEDID is specified then we will not increment the IP
+>> -ID and all segments will use the same IP ID.  If a device has
+>> -NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when performing TSO
+>> -and we will either increment the IP ID for all frames, or leave it at a
+>> -static value based on driver preference.
+>> +ID and all segments will use the same IP ID.
+>> +
+>> +For encapsulated packets, SKB_GSO_TCP_FIXEDID refers only to the outer header.
+>> +SKB_GSO_TCP_FIXEDID_INNER can be used to specify the same for the inner header.
+>> +Any combination of these two GSO types is allowed.
+>> +
+>> +If a device has NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when
+>> +performing TSO and we will either increment the IP ID for all frames, or leave
+>> +it at a static value based on driver preference.  For encapsulated packets,
+>> +NETIF_F_TSO_MANGLEID is relevant for both outer and inner headers, unless the
+>> +DF bit is not set on the outer header, in which case the device driver must
+>> +guarantee that the IP ID field is incremented in the outer header with every
+>> +segment.
 > 
-> [...]
-> > > diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-> > > index 1d6d9f856ac5..0aeda7ced2c0 100644
-> > > --- a/arch/arm64/include/asm/futex.h
-> > > +++ b/arch/arm64/include/asm/futex.h
-> > > @@ -126,6 +126,60 @@ LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
-> > >  LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
-> > >  LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
-> > >
-> > > +
-> > > +#define LSUI_CMPXCHG_HELPER(suffix, start_bit)                                 \
-> > > +static __always_inline int                                                     \
-> > > +__lsui_cmpxchg_helper_##suffix(u64 __user *uaddr, u32 oldval, u32 newval)      \
-> > > +{                                                                              \
-> > > +       int ret = 0;                                                            \
-> > > +       u64 oval, nval, tmp;                                                    \
-> > > +                                                                               \
-> > > +       asm volatile("//__lsui_cmpxchg_helper_" #suffix "\n"                    \
-> > > +       __LSUI_PREAMBLE                                                         \
-> > > +"      prfm    pstl1strm, %2\n"                                                \
-> > > +"1:    ldtr    %x1, %2\n"                                                      \
-> > > +"      mov     %x3, %x1\n"                                                     \
-> > > +"      bfi     %x1, %x5, #" #start_bit ", #32\n"                               \
-> > > +"      bfi     %x3, %x6, #" #start_bit ", #32\n"                               \
-> > > +"      mov     %x4, %x1\n"                                                     \
-> > > +"2:    caslt   %x1, %x3, %2\n"                                                 \
-> > > +"      sub     %x1, %x1, %x4\n"                                                \
-> > > +"      cbz     %x1, 3f\n"                                                      \
-> > > +"      mov     %w0, %w7\n"                                                     \
-> > > +"3:\n"                                                                         \
-> > > +"      dmb     ish\n"                                                          \
-> > > +"4:\n"                                                                         \
-> > > +       _ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)                                   \
-> > > +       _ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)                                   \
-> > > +       : "+r" (ret), "=&r" (oval), "+Q" (*uaddr), "=&r" (nval), "=&r" (tmp)    \
-> > > +       : "r" (oldval), "r" (newval), "Ir" (-EAGAIN)                            \
-> > > +       : "memory");                                                            \
-> > > +                                                                               \
-> > > +       return ret;                                                             \
-> > > +}
-> > > +
-> > > +LSUI_CMPXCHG_HELPER(lo, 0)
-> > > +LSUI_CMPXCHG_HELPER(hi, 32)
-> > > +
-> > > +static __always_inline int
-> > > +__lsui_cmpxchg_helper(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-> > > +{
-> > > +       int ret;
-> > > +       unsigned long uaddr_al;
-> > > +
-> > > +       uaddr_al = ALIGN_DOWN((unsigned long)uaddr, sizeof(u64));
-> > > +
-> > > +       if (uaddr_al != (unsigned long)uaddr)
-> > > +               ret = __lsui_cmpxchg_helper_hi((u64 __user *)uaddr_al, oldval, newval);
-> > > +       else
-> > > +               ret = __lsui_cmpxchg_helper_lo((u64 __user *)uaddr_al, oldval, newval);
-> > > +
-> > > +       if (!ret)
-> > > +               *oval = oldval;
-> > > +
-> > > +       return ret;
-> > > +}
-> >
-> > I think Will expects that you do more of this in C, e.g. have a basic
-> > user cmpxchg on a 64-bit type, e.g.
-> >
-> > /*
-> >  * NOTE: *oldp is NOT updated if a fault is taken.
-> >  */
-> > static __always_inline int
-> > user_cmpxchg64_release(u64 __usr *addr, u64 *oldp, u64 new)
-> > {
-> > 	int err = 0;
-> >
-> > 	asm volatile(
-> > 	__LSUI_PREAMBLE
-> > 	"1:	caslt	%x[old], %x[new], %[addr]\n"
-> > 	"2:\n"
-> > 	_ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)
-> > 	: [addr] "+Q" (addr),
-> > 	  [old] "+r" (*oldp)
-> > 	: [new] "r" (new)
-> > 	: "memory"
-> > 	);
-> >
-> > 	return err;
-> > }
-> >
-> > That should be the *only* assembly you need to implement.
-> >
-> > Atop that, have a wrapper that uses get_user() and that helper above to
-> > implement the 32-bit user cmpxchg, with all the bit manipulation in C:
+> Is this introducing a new device requirement for advertising
+> NETIF_F_TSO_MANGLEID that existing devices may not meet?
+>   
+
+No. As I discussed previously with Paolo, existing devices already increment outer
+IDs. It is even a requirement for GSO partial, as already stated in the documentation.
+This preserves the current behavior. It just makes it explicit. Actually, we are
+now even explicitly allowing the mangling of outer IDs if the DF-bit is set.
+
+>>  
+>>  UDP Fragmentation Offload
+>> @@ -124,10 +133,7 @@ Generic Receive Offload
+>>  Generic receive offload is the complement to GSO.  Ideally any frame
+>>  assembled by GRO should be segmented to create an identical sequence of
+>>  frames using GSO, and any sequence of frames segmented by GSO should be
+>> -able to be reassembled back to the original by GRO.  The only exception to
+>> -this is IPv4 ID in the case that the DF bit is set for a given IP header.
+>> -If the value of the IPv4 ID is not sequentially incrementing it will be
+>> -altered so that it is when a frame assembled via GRO is segmented via GSO.
+>> +able to be reassembled back to the original by GRO.
+>>  
+>>  
+>>  Partial Generic Segmentation Offload
+>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+>> index b8c609d91d11..505c4ce7cef8 100644
+>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+>> @@ -1289,8 +1289,12 @@ static void mlx5e_shampo_update_ipv4_tcp_hdr(struct mlx5e_rq *rq, struct iphdr *
+>>  	tcp->check = ~tcp_v4_check(skb->len - tcp_off, ipv4->saddr,
+>>  				   ipv4->daddr, 0);
+>>  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4;
+>> -	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id)
+>> -		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_FIXEDID;
+>> +	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id) {
+>> +		bool encap = rq->hw_gro_data->fk.control.flags & FLOW_DIS_ENCAPSULATION;
+>> +
+>> +		skb_shinfo(skb)->gso_type |= encap ?
+>> +					     SKB_GSO_TCP_FIXEDID_INNER : SKB_GSO_TCP_FIXEDID;
 > 
-> Thanks for your suggestion. But small question.
-> I think it's enough to use usafe_get_user() instead of get_user() in here
-> since when FEAT_LSUI enabled, it doeesn't need to call
-> uaccess_ttbr0_enable()/disable().
+> I think more common style is
+> 
+>     encap ? SKB_GSO_TCP_FIXEDID_INNER :
+>             SKB_GSO_TCP_FIXEDID;
+> 
+> (as used in ef100_make_tso_desc below)
+> 
+>> +	}
+>>  
+>>  	skb->csum_start = (unsigned char *)tcp - skb->head;
+>>  	skb->csum_offset = offsetof(struct tcphdr, check);
+>> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
+>> index e6b6be549581..03005757c060 100644
+>> --- a/drivers/net/ethernet/sfc/ef100_tx.c
+>> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
+>> @@ -189,6 +189,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>>  {
+>>  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
+>>  	unsigned int len, ip_offset, tcp_offset, payload_segs;
+>> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>>  	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
+>>  	unsigned int outer_ip_offset, outer_l4_offset;
+>>  	u16 vlan_tci = skb_vlan_tag_get(skb);
+>> @@ -200,8 +201,17 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>>  	bool outer_csum;
+>>  	u32 paylen;
+>>  
+>> -	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
+>> -		mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>> +	if (encap) {
+>> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID_INNER)
+>> +			mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
+>> +			mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>> +	} else {
+>> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
+>> +			mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>> +		mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
+>> +	}
+>> +
+>>  	if (efx->net_dev->features & NETIF_F_HW_VLAN_CTAG_TX)
+>>  		vlan_enable = skb_vlan_tag_present(skb);
+>>  
+>> @@ -245,8 +255,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
+>>  			      ESF_GZ_TX_TSO_OUTER_L4_OFF_W, outer_l4_offset >> 1,
+>>  			      ESF_GZ_TX_TSO_ED_OUTER_UDP_LEN, udp_encap && !gso_partial,
+>>  			      ESF_GZ_TX_TSO_ED_OUTER_IP_LEN, encap && !gso_partial,
+>> -			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, encap ? mangleid :
+>> -								     ESE_GZ_TX_DESC_IP4_ID_NO_OP,
+>> +			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, mangleid_outer,
+>>  			      ESF_GZ_TX_TSO_VLAN_INSERT_EN, vlan_enable,
+>>  			      ESF_GZ_TX_TSO_VLAN_INSERT_TCI, vlan_tci
+>>  		);
+>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+>> index f3a3b761abfb..3d19c888b839 100644
+>> --- a/include/linux/netdevice.h
+>> +++ b/include/linux/netdevice.h
+>> @@ -5290,13 +5290,18 @@ void skb_warn_bad_offload(const struct sk_buff *skb);
+>>  
+>>  static inline bool net_gso_ok(netdev_features_t features, int gso_type)
+>>  {
+>> -	netdev_features_t feature = (netdev_features_t)gso_type << NETIF_F_GSO_SHIFT;
+>> +	netdev_features_t feature;
+>> +
+>> +	if (gso_type & (SKB_GSO_TCP_FIXEDID | SKB_GSO_TCP_FIXEDID_INNER))
+>> +		gso_type |= __SKB_GSO_TCP_FIXEDID;
+>> +
+>> +	feature = ((netdev_features_t)gso_type << NETIF_F_GSO_SHIFT) & NETIF_F_GSO_MASK;
+>>  
+>>  	/* check flags correspondence */
+>>  	BUILD_BUG_ON(SKB_GSO_TCPV4   != (NETIF_F_TSO >> NETIF_F_GSO_SHIFT));
+>>  	BUILD_BUG_ON(SKB_GSO_DODGY   != (NETIF_F_GSO_ROBUST >> NETIF_F_GSO_SHIFT));
+>>  	BUILD_BUG_ON(SKB_GSO_TCP_ECN != (NETIF_F_TSO_ECN >> NETIF_F_GSO_SHIFT));
+>> -	BUILD_BUG_ON(SKB_GSO_TCP_FIXEDID != (NETIF_F_TSO_MANGLEID >> NETIF_F_GSO_SHIFT));
+>> +	BUILD_BUG_ON(__SKB_GSO_TCP_FIXEDID != (NETIF_F_TSO_MANGLEID >> NETIF_F_GSO_SHIFT));
+>>  	BUILD_BUG_ON(SKB_GSO_TCPV6   != (NETIF_F_TSO6 >> NETIF_F_GSO_SHIFT));
+>>  	BUILD_BUG_ON(SKB_GSO_FCOE    != (NETIF_F_FSO >> NETIF_F_GSO_SHIFT));
+>>  	BUILD_BUG_ON(SKB_GSO_GRE     != (NETIF_F_GSO_GRE >> NETIF_F_GSO_SHIFT));
+>> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+>> index ca8be45dd8be..937acb1869a1 100644
+>> --- a/include/linux/skbuff.h
+>> +++ b/include/linux/skbuff.h
+>> @@ -674,7 +674,7 @@ enum {
+>>  	/* This indicates the tcp segment has CWR set. */
+>>  	SKB_GSO_TCP_ECN = 1 << 2,
+>>  
+>> -	SKB_GSO_TCP_FIXEDID = 1 << 3,
+>> +	__SKB_GSO_TCP_FIXEDID = 1 << 3,
+>>  
+>>  	SKB_GSO_TCPV6 = 1 << 4,
+>>  
+>> @@ -707,6 +707,13 @@ enum {
+>>  	SKB_GSO_FRAGLIST = 1 << 18,
+>>  
+>>  	SKB_GSO_TCP_ACCECN = 1 << 19,
+>> +
+>> +	/* These indirectly map onto the same netdev feature.
+>> +	 * If NETIF_F_TSO_MANGLEID is set it may mangle both inner and outer
+>> +	 * IDs.
+> 
+> prefer to keep IDs. on the previous line even if over 80 chars.
+> 
+>> +	 */
+>> +	SKB_GSO_TCP_FIXEDID = 1 << 30,
+>> +	SKB_GSO_TCP_FIXEDID_INNER = 1 << 31,
+>>  };
+>>  
+>>  #if BITS_PER_LONG > 32
+>> diff --git a/net/core/dev.c b/net/core/dev.c
+>> index 93a25d87b86b..17cb399cdc2a 100644
+>> --- a/net/core/dev.c
+>> +++ b/net/core/dev.c
+>> @@ -3769,7 +3769,10 @@ static netdev_features_t gso_features_check(const struct sk_buff *skb,
+>>  		features &= ~dev->gso_partial_features;
+>>  
+>>  	/* Make sure to clear the IPv4 ID mangling feature if the
+>> -	 * IPv4 header has the potential to be fragmented.
+>> +	 * IPv4 header has the potential to be fragmented. For
+>> +	 * encapsulated packets, the outer headers are guaranteed to
+>> +	 * have incrementing IDs if DF is not set so there is no need
+>> +	 * to clear the IPv4 ID mangling feature.
+> 
+> Why is this true. Or, why is it not also true for non-encapsulated or
+> inner headers?
+> 
+> The same preconditions (incl on DF) are now tested in inet_gro_flush
+> 
 
-Regardless of uaccess_ttbr0_enable() and uaccess_ttbr0_disable()
-specifically, API-wise unsafe_get_user() is only supposed to be called
-between user_access_begin() and user_access_end(), and there's some
-stuff we probably want to add there (e.g. might_fault(), which
-unsafe_get_user() lacks today).
+This comment is about the IDs that TSO generates, not the IDs that GRO accepts.
+I'll rewrite the comment to make it clearer.
 
-Do we call those?
+This statement is true because of the requirement specified above, that device
+drivers must increment the outer IDs if the DF-bit is not set. This means that
+MANGLEID cannot turn incrementing IDs into fixed IDs in the outer header if the
+DF-bit is not set (unless the IDs were already fixed, after the next patch) so
+there is no need to clear NETIF_F_TSO_MANGLEID.
 
-Mark.
+This isn't true for non-encapsulated or inner headers because nothing guarantees
+that MANGLEID won't mangle incrementing IDs into fixed IDs.
+
+>>  	 */
+>>  	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4) {
+>>  		struct iphdr *iph = skb->encapsulation ?
+>> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+>> index 76e38092cd8a..fc7a6955fa0a 100644
+>> --- a/net/ipv4/af_inet.c
+>> +++ b/net/ipv4/af_inet.c
+>> @@ -1393,14 +1393,13 @@ struct sk_buff *inet_gso_segment(struct sk_buff *skb,
+>>  
+>>  	segs = ERR_PTR(-EPROTONOSUPPORT);
+>>  
+>> -	if (!skb->encapsulation || encap) {
+>> -		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
+>> -		fixedid = !!(skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID);
+>> +	/* fixed ID is invalid if DF bit is not set */
+>> +	fixedid = !!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCP_FIXEDID << encap));
+>> +	if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
+>> +		goto out;
+>>  
+>> -		/* fixed ID is invalid if DF bit is not set */
+>> -		if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
+>> -			goto out;
+>> -	}
+>> +	if (!skb->encapsulation || encap)
+>> +		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
+>>  
+>>  	ops = rcu_dereference(inet_offloads[proto]);
+>>  	if (likely(ops && ops->callbacks.gso_segment)) {
+>> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
+>> index 1949eede9ec9..e6612bd84d09 100644
+>> --- a/net/ipv4/tcp_offload.c
+>> +++ b/net/ipv4/tcp_offload.c
+>> @@ -471,7 +471,6 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
+>>  	const u16 offset = NAPI_GRO_CB(skb)->network_offsets[skb->encapsulation];
+>>  	const struct iphdr *iph = (struct iphdr *)(skb->data + offset);
+>>  	struct tcphdr *th = tcp_hdr(skb);
+>> -	bool is_fixedid;
+>>  
+>>  	if (unlikely(NAPI_GRO_CB(skb)->is_flist)) {
+>>  		skb_shinfo(skb)->gso_type |= SKB_GSO_FRAGLIST | SKB_GSO_TCPV4;
+>> @@ -485,10 +484,8 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
+>>  	th->check = ~tcp_v4_check(skb->len - thoff, iph->saddr,
+>>  				  iph->daddr, 0);
+>>  
+>> -	is_fixedid = (NAPI_GRO_CB(skb)->ip_fixedid >> skb->encapsulation) & 1;
+>> -
+>>  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4 |
+>> -			(is_fixedid * SKB_GSO_TCP_FIXEDID);
+>> +			(NAPI_GRO_CB(skb)->ip_fixedid * SKB_GSO_TCP_FIXEDID);
+> 
+> ip_fixedid can now be 0, 1 (outer), 2 (inner) or 3 (inner and outer).
+> 
+> Not all generate a valid SKB_GSO type.
+
+Since SKB_GSO_TCP_FIXEDID_INNER == SKB_GSO_TCP_FIXEDID << 1, all the values
+listed above generate the correct set of SKB_GSO types. This fact is also
+used in inet_gso_segment (SKB_GSO_TCP_FIXEDID << encap).
+
+>>  
+>>  	tcp_gro_complete(skb);
+>>  	return 0;
+>> -- 
+>> 2.36.1
+>>
+> 
+> 
+
 
