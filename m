@@ -1,67 +1,77 @@
-Return-Path: <linux-kernel+bounces-819620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72A0B5A3B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:14:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0010B5A3B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87EEA3ADE48
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:14:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E38687A895D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765682E7162;
-	Tue, 16 Sep 2025 21:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789A82DC783;
+	Tue, 16 Sep 2025 21:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKIC000t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ralJvAev"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D475F31BCB6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC85D31BCB6;
+	Tue, 16 Sep 2025 21:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758057243; cv=none; b=ghEKcge5YT0VX/bx6ml4e6ylbZcnSxk/JmNtrK+5z40JTZ+NXRPNpKRGLb8Bkede/SVRZpQENQ+N3pW9f7URJQgq2usrvnoCyeMpAIIDRbTiQzk7qYw5E8V2Vrzn9iYZJSFB/RImn8sP3gLfLISWV9+k4erxNVSkLJ+uGycioxs=
+	t=1758057248; cv=none; b=M2S+Ewut3R3LtzxzwZ+3yz4tMugJs2PbiXqypKiFclOIl00drOfydwcY6ytAGmNmAagTFUPp4iPNFmiyTAlUX21PHhu95KgmO+KSxVX2tb8uBOKZIbqTEyp6vo67Elfhntftew4JPK+BfZoXgudtxxGM4MOy80Q4urp9/KruNbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758057243; c=relaxed/simple;
-	bh=K6QIVOKKiauyeGJ2OmH64VPm/LdUrqJZS2Q1LLOKYHk=;
+	s=arc-20240116; t=1758057248; c=relaxed/simple;
+	bh=fhcQ7mAvVQamgqtHY+IP4JtTNxdI5gFnZDUASczOQrA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hN7KreyUo6Sr2GjstUcRReOqRxkfRgZKpHt2Il7TbUVLGL0Pl7brlG/xEDlDy+zOhyZanhNBmErE6uGK+h0/sNBtpU/wHSlLUe/KGo7UHQPhzBnGgVErWmSwDpMUMVocemr2BIGdJec3LghuHuLzKJosxcpUpe61ZPosWdU759w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKIC000t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 896B2C4CEF0;
-	Tue, 16 Sep 2025 21:14:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=BJKd41VNKoJwczfmWfSJg+YvGdesLNjSf2L3FdItRb6FldI2f/kQKgRvOeVFFPtXL/IF6P0i7omRDws6bCkF4tCGOfEtmoD8UMORAho4pGIfgyWzrx7Pbti4Kz3j74zlVA6avwLxWd3QjJzORiJgYbJ9vNyzaBwjjMDUqdbu6zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ralJvAev; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BA2C4CEFA;
+	Tue, 16 Sep 2025 21:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758057243;
-	bh=K6QIVOKKiauyeGJ2OmH64VPm/LdUrqJZS2Q1LLOKYHk=;
+	s=k20201202; t=1758057248;
+	bh=fhcQ7mAvVQamgqtHY+IP4JtTNxdI5gFnZDUASczOQrA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YKIC000t9zgbfhZj7Haafps3nC5ZbOvaN3gQFKr5R6Lqd4RbzZdb0HrvCHDmNoLyw
-	 o+G7sO56655SUxyyNL2VSezKtC7ciWy4oRTH7dBx5h4RDKdAME76WmsuKmapPMMeZd
-	 wjdCff6DPZm+d2CqZ6jzF0Vib3No5DcS7YmxijnzkmTXWAI+HWlpEAvSY3/j3XGU0r
-	 x9uFoJ7I5zsPSz+dCEjHU5bqKBl8YJsIiErG8VLnbXeF6f5wuToFav2iTlnxsO1C+Z
-	 WlRfTaDd1gM7/h/2KbW+g3rt7b1XK17FhckOIw5GfaGMTehrRtpyXjMnYAMRY+OuvV
-	 qpZaxU8I97xpg==
+	b=ralJvAevmAck43ywds4IRoOCtDf/FHWU52FahALhd1vamULYr5PErWWEbusFxfDuY
+	 FPtnmNDbFZtp0aMq6X4k865RchoW/AUkyeEx39wEaOeoF8mKVIMSyJ4vEEDunsuCqA
+	 keWDAIbNqS4CE72O5EQo24hR0ASWju6mnyYZ9hC5IaHMEU1G2M0S+KiRhryVW9t+4V
+	 Id19tGEOHisWHaLVLg6UeyIOdhQwdyFliSNufFnmXfAEW32W598I8+xvsGOMH3T4Tl
+	 0+kk/IdXJWNEJ+i9qqecslrXGGZScEXMo9mVJ/mVVTszxHXgB9n1XvIWchQrAJw/BG
+	 x4U60EYlkIjNw==
 From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Sam Edwards <cfsworks@gmail.com>
-Cc: kernel-team@android.com,
+To: linux-trace-kernel@vger.kernel.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Baruch Siach <baruch@tkos.co.il>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
+	linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org,
+	oleg@redhat.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	thiago.bauermann@linaro.org,
+	broonie@kernel.org,
+	yury.khrustalev@arm.com,
+	kristina.martsenko@arm.com,
+	liaochang1@huawei.com,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sam Edwards <CFSworks@gmail.com>
-Subject: Re: [PATCH v2 0/3] Type correctness cleanup for ARM64 MMU initialization
-Date: Tue, 16 Sep 2025 22:13:48 +0100
-Message-Id: <175805162005.266431.9349963404486851031.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] arm64: Enable UPROBES with GCS
+Date: Tue, 16 Sep 2025 22:13:49 +0100
+Message-Id: <175805110604.263842.2881563818650081445.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250904005209.1494370-1-CFSworks@gmail.com>
-References: <20250904005209.1494370-1-CFSworks@gmail.com>
+In-Reply-To: <20250825033421.463669-1-jeremy.linton@arm.com>
+References: <20250825033421.463669-1-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,30 +81,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 03 Sep 2025 17:52:06 -0700, Sam Edwards wrote:
-> This is a small series of type correctness and readability improvements for
-> ARM64's MMU initialization code. When I first encountered this code, the heavy
-> use of u64 to represent both virtual and physical addresses made it difficult
-> to understand where the demarcations were. I made most of the changes in this
-> series while troubleshooting a different problem (fixed in a separate patch) to
-> make that boundary a little clearer. I am submitting it now in the hopes that
-> this will improve maintainability and readability for others.
+On Sun, 24 Aug 2025 22:34:14 -0500, Jeremy Linton wrote:
+> Currently uprobes and the Arm Guarded Control Stack (GCS) feature are
+> exclusive of each other. This restriction needs to be lifted in order
+> to utilize GCS for generic Linux distro images where the expectation
+> is that core debugging features like uprobes work.
+> 
+> This series adds some user accessors to read/push/pop the userspace
+> shadow stack. It then utilizes those functions in the uprobe paths as
+> needed to synchronize GCS with the changes in control flow at probe
+> locations.
 > 
 > [...]
 
-I must confess, I don't personally see a huge amount of value from these
-changes. However, I've probably just got used to things and so if this
-would've helped you understand the code when you first came across it
-recently then I think it's worth having.
+Applied to arm64 (for-next/uprobes), thanks!
 
-Applied to arm64 (for-next/mm), thanks!
-
-[1/3] arm64: mm: Cast start/end markers to char *, not u64
-      https://git.kernel.org/arm64/c/030b3ffbdac7
-[2/3] arm64: mm: Make map_fdt() return mapped pointer
-      https://git.kernel.org/arm64/c/c56aa9a67a08
-[3/3] arm64: mm: Represent physical memory with phys_addr_t and resource_size_t
-      https://git.kernel.org/arm64/c/b868fff5b10b
+[1/7] arm64: probes: Break ret out from bl/blr
+      https://git.kernel.org/arm64/c/47687aa4d9c9
+[2/7] arm64: uaccess: Move existing GCS accessors definitions to gcs.h
+      https://git.kernel.org/arm64/c/ea920b50ac9f
+[3/7] arm64: uaccess: Add additional userspace GCS accessors
+      https://git.kernel.org/arm64/c/9cd2a7f1180f
+[4/7] arm64: probes: Add GCS support to bl/blr/ret
+      https://git.kernel.org/arm64/c/efb07ac534e2
+[5/7] arm64: uprobes: Add GCS support to uretprobes
+      https://git.kernel.org/arm64/c/4a601714bb24
+[6/7] arm64: Kconfig: Remove GCS restrictions on UPROBES
+      https://git.kernel.org/arm64/c/cc66c711e58f
+[7/7] uprobes: uprobe_warn should use passed task
+      https://git.kernel.org/arm64/c/ba1afc94deb8
 
 Cheers,
 -- 
