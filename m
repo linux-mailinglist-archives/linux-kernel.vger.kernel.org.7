@@ -1,177 +1,124 @@
-Return-Path: <linux-kernel+bounces-818332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54CEB5900C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:09:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67CB2B5900D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9371BC2A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97A4189DA6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D67328643A;
-	Tue, 16 Sep 2025 08:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6191128689A;
+	Tue, 16 Sep 2025 08:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="Yqx/j/r/"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EZqFn9JT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D6F215F5C;
-	Tue, 16 Sep 2025 08:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13359272E56;
+	Tue, 16 Sep 2025 08:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758010167; cv=none; b=ALTiyPDyFsrlojqsZsgja8RO88/kGVuZ3xWAv3KFK9gE1iy6zWlK7CJjbARy9ozS49+GFblD2TgCylZMX9bV5+VuRyee5aRNtoK8tRlqwo1lLVlywgIN8ugd1IXEPWAQJnSkpm8pHAZBoL5wuHNhRc5U9YjKIazoWj37N4EZqrg=
+	t=1758010230; cv=none; b=hZoaPUimuSBbV2NkS3wvnWHkiQIL9+XMlSn9BhM+w+q3ZJi22LFpilU6qX62YnJT8JtZJIlOvOsznHPmgQsKPgmDhZTK3mDo1gwH4QDJpusGmLD7EdBLfMyMKTmRmPFCIZqVWgdnWtsp8cwzJ/UJFS8IssEkadZBQn9E+QJEyE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758010167; c=relaxed/simple;
-	bh=zCsQM74xxQ/YFa9HAgDC9C0C9+24BpvrEsptMKAGWtA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=tdLqDuXMmqFBT709BMSWySIwQ0VDHE6kpmHNj7Hi59fgSqtkmnmSy7BDexKLOs1l+2SBvr8yn6p7+MfMDCDje2+Jj0t5wR7/okZWt503udAU5lfV7OPxCiBmNWrYcPp0931qKy9YxhizpA9c/Uc8pqpN0p1woTH8yq776iIUitg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=Yqx/j/r/; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
-	s=altu2504; t=1758010089;
-	bh=hnz1bmTaV/5rTkG6fQYUXPwPMQpIN6l4+8uksyKRibc=;
-	h=From:To:Subject:Date:Message-Id;
-	b=Yqx/j/r/sywiY6HXX33Um5SkHpij9EiSfRnVjL0jzZOrY2k5YlP9a7MpDWWpSXBCB
-	 EpgcsOZ16fV4MN3cp9emjGUtUt5LAYeDsQjtc7FACM1CiCAjHdh2UNcPzwghmBCN/O
-	 x8DYrslNVj6/+mUbE7j2B6C9wvEJPX7RTcpJCNXI=
-X-QQ-mid: zesmtpsz3t1758010087t3fbefdff
-X-QQ-Originating-IP: /Rz0qBK4PaPleHiuURFFZblXxEBkxSyRKTOxW50+KgI=
-Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 16 Sep 2025 16:08:05 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1933021998724514567
-EX-QQ-RecipientCnt: 18
-From: Chaoyi Chen <kernel@airkyi.com>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Dragan Simic <dsimic@manjaro.org>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: Enable DisplayPort for rk3588-evb2
-Date: Tue, 16 Sep 2025 16:08:02 +0800
-Message-Id: <20250916080802.125-1-kernel@airkyi.com>
-X-Mailer: git-send-email 2.17.1
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: OYM+rvgdyOKCfzKs2hBoZ41UqiVw1szp+Uvg0bdOZNWRXiTfIrvq65Ig
-	/ptJtjWX7z+PfjPWbYpLJySNp4qy9HTM/rHj0pV6WBWBvovoJ32LlpYITquyi4lNouCtZSA
-	b6NGWtbhEzmx3NrMuyjMwtx29lieFCBzmmZj/H6pmz46i8WgEBdE4tyXzUf+LjMFBls9Nbp
-	8ODzFrzdZ/ShMUFQvim1nUVEoU94FPjv02pXr3xiv+f9ZAuTEy273RwQVwju8savNdJaJK5
-	J6zL20sLestjtmxugzNRlKIGOhwgn6t0KjpVlWZxnbJmCFk0rGLm++rQzMXb6atWFE0DFjh
-	SE00FXOq3X0i9dhrSrUr7uw8k2K8QcyNRg5xYEkAu9ymjhvm6O/8kcS2+0mDncvUJFpyVy3
-	s02+M520kYKTMWI8/4e95d5XZOQhccDnUYvZUglwtrjUU3uVuioDTeR4vDDwNqAYSQ5xF2r
-	rrfubO20dborA39qadDADZ1btectN6eitSOti05GJneHVGvXHVB4Ro4DN6yFnmbY5W7EFI/
-	jbuOtWsgwG5c6hkPSPyOaZf7AncQP6PSsERT5rjEcnxofdHXEi30/IHJtSRHaEUogvmeLqx
-	gb/j1YPW8wMandPRp3FSO08mZVFzqGHOIVUohoqQ7vlRxvn9qD5zoQ8Q41taeUn7YUZxftj
-	8bsby9+HfLW8erpzpWz2JcG6ZMMVU/0g3hu1bdNumwgt85ztTX0Z8otsOJ+j1gBTCRoYC+a
-	n8j2lltEk1ZXaAwtfjjUfJTnz/pxZAsCMKrHU4YpyqX1O72z+THIo6nhIS21EsXXyGQ1nnT
-	8Hz53O2PEJBFOqZpSKkg3oXGTVfdZt4PmFVHlbLKy/puALErIxte1H8mX65rVbuphEjHvjq
-	+tpnpX3TFuLrKPOtcP8ZBTOYXgI6StCQQtmdoz+ey0IF5UQ8O1DELDRjGno/JDuyRw1mdkg
-	nPZDDqy9OZCeQ00bcFJuuX2A1GrWEPIzrz0jfMygR8cyaTuRcJzBDQPIMPHF/Dl3lyRo=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+	s=arc-20240116; t=1758010230; c=relaxed/simple;
+	bh=2Nv+n5LL6mu6ryi5KjrNmaa+IvdLmvVgC46XijpjkRA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bw3uvmMHKGZgq/KWG/lv7NJJjWCuVQ0cBAyteK5aaj/GcHoLNd4/sFS+7L6tSy7/RTu6X71GHsoS6z875/6QWPyReJ8bwjL6a3LEOjXolUSmKrtirUOTFJdusXjzY4ii1rNcj4Y/BG2ydFx4OJWgVBS2RoLigKsAdj4Q0zJ7jNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EZqFn9JT; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758010229; x=1789546229;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=2Nv+n5LL6mu6ryi5KjrNmaa+IvdLmvVgC46XijpjkRA=;
+  b=EZqFn9JTXoq6HjVp1PMPSNklesjyGevskNLB2fLPThIGGfZ1NsuatikL
+   i5Gi3dBqqiLH4BpupxeiBEFwqv+clOp7zTraKXal6bdURVoyCLPAwvIe2
+   7EQjzKLedTici1h5gQoOa/633JAz80ck89ly27PMhU5Yn2zob6S+XAJUP
+   PlbakxYnERmScBSvltPILpG7Scx4bDFH6syfPQ4+uNtTIgdt60HXBYuQg
+   tS3TjMJJs2VJYB+laMGKStK9WDf0VeHO5rnLIvqqGJaISYXtLPC4zb3yM
+   5vbSsFFuEvxgyxAgb+4qTjWiH/BQ9e7s+1nvfUnKb8EKVn6q2dwmWRL/j
+   g==;
+X-CSE-ConnectionGUID: T+Yz+RHXTGGApqQALP5YNg==
+X-CSE-MsgGUID: heGPYWqGSXqYLroz+xCw6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="60354470"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="60354470"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:10:28 -0700
+X-CSE-ConnectionGUID: uSMxwofqSSiLvP8QlO82Gg==
+X-CSE-MsgGUID: cVgCIi54S3W3S3sjpX2baw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="174686701"
+Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:10:25 -0700
+Message-ID: <6a638dc4-bd99-4a93-8498-2ba1c0c61b30@intel.com>
+Date: Tue, 16 Sep 2025 16:10:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 14/41] KVM: VMX: Emulate read and write to CET MSRs
+To: Chao Gao <chao.gao@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-15-seanjc@google.com>
+ <5afee11a-c4e9-4f44-85b8-006ab1b1433f@intel.com> <aMkWT/8cBVwi2mfN@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aMkWT/8cBVwi2mfN@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+On 9/16/2025 3:48 PM, Chao Gao wrote:
+> On Tue, Sep 16, 2025 at 03:07:06PM +0800, Xiaoyao Li wrote:
+>> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+>>> From: Yang Weijiang <weijiang.yang@intel.com>
+>>>
+>>> Add emulation interface for CET MSR access. The emulation code is split
+>>> into common part and vendor specific part. The former does common checks
+>>> for MSRs, e.g., accessibility, data validity etc., then passes operation
+>>> to either XSAVE-managed MSRs via the helpers or CET VMCS fields.
+>>>
+>>> SSP can only be read via RDSSP. Writing even requires destructive and
+>>> potentially faulting operations such as SAVEPREVSSP/RSTORSSP or
+>>> SETSSBSY/CLRSSBSY. Let the host use a pseudo-MSR that is just a wrapper
+>>> for the GUEST_SSP field of the VMCS.
+>>>
+>>> Suggested-by: Sean Christopherson <seanjc@google.com>
+>>> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+>>> Tested-by: Mathias Krause <minipli@grsecurity.net>
+>>> Tested-by: John Allen <john.allen@amd.com>
+>>> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> Signed-off-by: Chao Gao <chao.gao@intel.com>
+>>> [sean: drop call to kvm_set_xstate_msr() for S_CET, consolidate code]
+>>
+>> Is the change/update of "drop call to kvm_set_xstate_msr() for S_CET" true
+>> for this patch?
+> 
+> v14 has that call, but it is incorrect. So Sean dropped it. See v14:
+> 
+> https://lore.kernel.org/kvm/20250909093953.202028-12-chao.gao@intel.com/
 
-The rk3588 evb2 board has a full size DisplayPort connector, enable
-for it.
+Sorry, my fault. I missed it somehow, when bouncing between the 3 MSR 
+handlers.
 
-Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
----
- .../boot/dts/rockchip/rk3588-evb2-v10.dts     | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
-index 91fe810d38d8..0e5af61f66fe 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-evb2-v10.dts
-@@ -25,6 +25,18 @@ chosen {
- 		stdout-path = "serial2:1500000n8";
- 	};
- 
-+	dp-con {
-+		compatible = "dp-connector";
-+		label = "DP OUT";
-+		type = "full size";
-+
-+		port {
-+			dp_con_in: endpoint {
-+				remote-endpoint = <&dp0_out_con>;
-+			};
-+		};
-+	};
-+
- 	hdmi-con {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -106,6 +118,24 @@ vcc5v0_usbdcin: regulator-vcc5v0-usbdcin {
- 	};
- };
- 
-+&dp0 {
-+	pinctrl-0 = <&dp0m0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&dp0_in {
-+	dp0_in_vp2: endpoint {
-+		remote-endpoint = <&vp2_out_dp0>;
-+	};
-+};
-+
-+&dp0_out {
-+	dp0_out_con: endpoint {
-+		remote-endpoint = <&dp_con_in>;
-+	};
-+};
-+
- &gpu {
- 	mali-supply = <&vdd_gpu_s0>;
- 	sram-supply = <&vdd_gpu_mem_s0>;
-@@ -916,6 +946,8 @@ &usb_host1_xhci {
- };
- 
- &vop {
-+	assigned-clocks = <&cru DCLK_VOP2_SRC>;
-+	assigned-clock-parents = <&cru PLL_V0PLL>;
- 	status = "okay";
- };
- 
-@@ -929,3 +961,10 @@ vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
- 		remote-endpoint = <&hdmi0_in_vp0>;
- 	};
- };
-+
-+&vp2 {
-+	vp2_out_dp0: endpoint@a {
-+		reg = <ROCKCHIP_VOP2_EP_DP0>;
-+		remote-endpoint = <&dp0_in_vp2>;
-+	};
-+};
--- 
-2.49.0
+>>
+>>> Signed-off-by: Sean Christopherson <seanjc@google.com>
+>>
+>> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
 
