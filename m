@@ -1,197 +1,256 @@
-Return-Path: <linux-kernel+bounces-817962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DCAB589F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:45:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28ADB58A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9FA16F3DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C893AD9B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F6519E99F;
-	Tue, 16 Sep 2025 00:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FAD1C8621;
+	Tue, 16 Sep 2025 00:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IbR+1mAh"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="lXPrNVdu"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2125.outbound.protection.outlook.com [40.107.117.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5DE1CD2C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983550; cv=none; b=J/NtRKqSoY+BKUruHbynsbCUt0dROK3WP1y/oUSeGHwui3mI5OHp7cQv3qddhiFC3lIQFmQw0u0X70ysbZcy+YdnVxHScwa5tEsjBOmthNpA6JeJeyj/ScAHUhF2ew//RDF/FDmBCa8UUHpkHckOUq++YOoF9qzA5Gxx9JAkDl8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983550; c=relaxed/simple;
-	bh=gwhpEoyFfBb8Zpg4ySaSAjePIxaGSz3xwreL/Z1eaA8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GkbldAxYGWCkoavC4MM8HyIm//h2qrJ9L1V33fh5Am8KxuwkpaNVscpInUeHaIWYS8zli7C/2cE8WxkBKrc3X4WeXC11jsqcs0f4KOZ0gh/lCLQ4GaSQRXKU8qjKZCaHxvLMwjoCGdpfvdhetmXgeCo9SLu4EcGuy+MZxTJS42E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IbR+1mAh; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FLfnON007323;
-	Tue, 16 Sep 2025 00:45:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=cKHMWebgaeczhOOiQ1Ar8OrapYhO7
-	vsShzCqAQ2z+EA=; b=IbR+1mAhszIUyWAYuy/+LVxcGRZHgQl7jvL3pJz6eBRxP
-	0k43nZ5VDZc/yxVySIIsGr9WqEp9O0N9EdKAT8XnSCTAdFl+fXu5pGN+FenkOxt8
-	e5GYIGK2AKAdWFnqABZGVAHBlwhwSNqOK8q8M2ck6Jca3u776zYrhNOZrRtI6fH4
-	nK8eePGoaI3jUF/zXRfjxj5RRNeAOBb+TbNRqZMTDRLhjvSeRoBZG6Cc7RJtqaPw
-	lhOCLB6bXFtxcqrVZ+qK4uCniwmZyux+N5/1JdiP/+O1IzXBYi4Cl8qDdsLcZtmk
-	XlGYZmwZDNOp7Yw/fn9VVmdYivW77k8JH701L1esQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4950nf3k5q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 00:45:33 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58FLW0IU033818;
-	Tue, 16 Sep 2025 00:45:32 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 494y2bpqvy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 00:45:31 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58G0jVGI031429;
-	Tue, 16 Sep 2025 00:45:31 GMT
-Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 494y2bpqvq-1;
-	Tue, 16 Sep 2025 00:45:31 +0000
-From: Jane Chu <jane.chu@oracle.com>
-To: david@redhat.com, harry.yoo@oracle.com, osalvador@suse.de,
-        liushixin2@huawei.com, muchun.song@linux.dev,
-        akpm@linux-foundation.org, jannh@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] mm/hugetlb: fix copy_hugetlb_page_range() to use ->pt_share_count
-Date: Mon, 15 Sep 2025 18:45:20 -0600
-Message-ID: <20250916004520.1604530-1-jane.chu@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0143A1D2;
+	Tue, 16 Sep 2025 00:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757983689; cv=fail; b=j6oQZknmj++FIZcpxDS+4ilw55OVBVnKEwdMQPKzob3ESDt8uUeIcQKTM3PbDNowchIpt/3UUiuSgQQOBYjDHMwxxzIuDSLRSHK5VyOOCLo4c8I99h4Ejf55mpORrteB0y8aIx3Lpc1h9IlgMmSKeeixDVH8yDMf2RgB4BeHkRQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757983689; c=relaxed/simple;
+	bh=ZwHJBYZz5iKMb4RlZUYPQBBNZnaLyo/Bf0iPv3yiZxw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=L4cOxJEJ3BHkm9PedZf56IHXd+o1vBy4OytpzkbY68o907tgSm++qIDcaCiIoOmDxhauIM3Qg5Vo4QVdHbgfZyqKXuwxd2muNStiyXgRFNF0hxOIl1OiVGVKxnVWAAxt3V2TQAEGhRw9bX0jXMNjIXL+MkASWPvxOA+JEnTrC2o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=lXPrNVdu; arc=fail smtp.client-ip=40.107.117.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HsDa3DhRyyKuQvThJxQVE8HaKQ/2rb1qWDuHCnPG9TI7IJGncvGZbmFTq7B55GFq8BKkAzZc8QFoImbdBtn+wGRanILy+BhutqMZqtlno+vwQRW5LOFrq5rVOE9DfXLUestB7AhbCfK9k95toh7w2Q8sej0KxTeeJh7otIZz5NaAN0zS0yl1ovQ/zczFHoQqmkiuzF9diO/ObDmmb3DJcJW9QdeqUNaW21mLznuWYrRIQL+9KcIx7H+79C8/iQYd2Qqp95LSHSqipwapUH2oaAwxzjSRMOamGN4y4+NUah6Q59+lE9KcZpnFoCs9+dxRwZjZT98jOfizymvcTi8b2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3pTSd1DVJctFQ0D5zpJi0dbq1Qy/abJ/vXQKSZzdiZM=;
+ b=CZ/+HFC6hKhD4jYOrGjM68po9qWZG+tZ8InIIGLzhQQsFced5gJ/xYmz24OKZZLweVA9MfFSa9jrTpKOEIpwiXrUZRsmo6KoBQ+Gw1+PPDf6vysE3Quzn+mJBDU9ACgtYApYC0eFhNwXVrbrfy1x9WwHCu4SsncojcA9nkTIHGkfynJz70cq2J2AOBzOmdLr24ndlbLB3k++WfxGEDe7RTy5iaOc0ZsZtGKWC5xMR2b0NlBojQx/PifPe4S8EfgVpmQg0t4cDJUngQonH62Woi2Ul3EZPUKPZ5vf9sHYqX7IEhEShayzJLOaR4VxQcS5Unu3pCAfy4EgZQWQ0wypWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3pTSd1DVJctFQ0D5zpJi0dbq1Qy/abJ/vXQKSZzdiZM=;
+ b=lXPrNVdus19sI9LrMuZo+9+mVsBZM5qxAOO8spa79DLaO6+sI6WoTWaTkgFY2/GJLQJkjVh87g445m3///EoQ+gRV85WbOe0X+LFfgsk1kycIRdGh/GqZaQbzC1bZXUEpnDaIp0H5yb0HZuMhYm4qDAOpdCi3rZu9UyXODMrrycLI6mwAsgr8la3lN49ZgPOBRP5mpEsq2D3ZTxXQgEejh6bVCXGf3XeOVeIqiPxtN3pkd9JmahjwUPgUmjm4SfX4PXIkHRQ2IdC1AkO1xjYZJ7BgeOZOAvA5h5Tm9oZXBXVW6Mfsqa8LUQUB4ihyCblrEYe/oW9ppBrgkpJDajzhw==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by KL1PR0601MB5447.apcprd06.prod.outlook.com (2603:1096:820:c4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
+ 2025 00:48:03 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%6]) with mapi id 15.20.9115.018; Tue, 16 Sep 2025
+ 00:48:02 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/4] usb: uhci: Add reset control support
+Thread-Topic: [PATCH 2/4] usb: uhci: Add reset control support
+Thread-Index: AQHcJhPhbbHslUEF6kON960PS3sCXbSUSFmAgACyfHA=
+Date: Tue, 16 Sep 2025 00:48:02 +0000
+Message-ID:
+ <OS8PR06MB7541673C83BA9B189F04538AF214A@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20250915073926.3057368-1-ryan_chen@aspeedtech.com>
+ <20250915073926.3057368-3-ryan_chen@aspeedtech.com>
+ <3cf94df2-48e1-4cbe-8f0a-84f05cb9760d@rowland.harvard.edu>
+In-Reply-To: <3cf94df2-48e1-4cbe-8f0a-84f05cb9760d@rowland.harvard.edu>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|KL1PR0601MB5447:EE_
+x-ms-office365-filtering-correlation-id: facea6f3-1ac4-441e-5252-08ddf4bab0b7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?xLiZ4D0DUEQWZOcTSv+gTqYAOZQ410NCTTRFP4Tv1plZejPu1J7WFULm4O6C?=
+ =?us-ascii?Q?eE9alfRpYKlF4eZ1uU7b9yAGzOP33P24yiuCYKk1NkZsrRDBrvg48oCwA7Km?=
+ =?us-ascii?Q?rfe/mPiXVc1pFPc8l0o6qVRQT/oP0Sp4p/yiwgHqGUaJSKz4DowIPcQXLZRF?=
+ =?us-ascii?Q?HKZAM/MLo8+DoZ8saOicBp2Sh4FfAbRZs/NkwhCCGbXNy4F1fKrfM17Uzuev?=
+ =?us-ascii?Q?pFdy6Y4hhOGgLwQgwheGg4Sgz90VHLnEWxTVu9RvZUeVEc1+l2rwgNFhaDmY?=
+ =?us-ascii?Q?ngSd5n7I7+7+utScNCzVzBbGOsVCjEd+xxTzxtZbtYKvtN4tIlwxOsP8x2cF?=
+ =?us-ascii?Q?4gPz5MUaujSSqmqDjMJDoq2iifSJEZAwM9Jjf2V2Syq6Jf0cHiFmNCPSL2lH?=
+ =?us-ascii?Q?p5qOO/l2sB+19doSb8ZNdeFDywgGEhEvtiC9gXfB5akofYqvd70zfB+XkpTW?=
+ =?us-ascii?Q?N3O83dXe5Umh9MW1Qv4xyl4mp/l1tYJMw0YejFHjgRXcXco6+cLKarFJQTvK?=
+ =?us-ascii?Q?cskdnfcIClwN6KCkYCBOVjMFhtqyVaWwLu2dwhw6dmguKtItveIi5K00Kc3K?=
+ =?us-ascii?Q?IO9PReV7M/LpvgkF0fZkY17EIONLv3VczxLVsKAV/+7DFdPk/b8vCIyR7Cyy?=
+ =?us-ascii?Q?NS5m42My3qk9HvMWM0Zn44oBjreHrcEkGJRM03uGMEMC5/elErAMlxpckMzT?=
+ =?us-ascii?Q?QVFDyBGqeNB87Yl7JV/2uScw4iCoJwpeS7hND2EJooB696BlZS4uzETZ9b2N?=
+ =?us-ascii?Q?couMUET5Rdg/r2nWYVkGEiOXsmSvQPJXc3TAJwkAULjGozfR2TB/0DvMVeGn?=
+ =?us-ascii?Q?v4kXdgEKdmU2hrjqxmZf/X8yc08SB2x4rD6KrNWbo7Odw4rD0GukAd5EwrqS?=
+ =?us-ascii?Q?GodbpVIFj1Y72W6laN7syYOmyFRNFv3eEDJJtojfzeVq6z7BaUBsdsqhTplH?=
+ =?us-ascii?Q?RbVUtkU5I5wOTQRlVsboIcTWmeuEnJ4Ripqysj9hQcf+WTyBncWKO/X+BymE?=
+ =?us-ascii?Q?HMZ+37UdcosNXBchAhqXD4BdxzWYpoTSAeBw76DcjsxaLj8zy7EDjendanFk?=
+ =?us-ascii?Q?DoOdQrMqgIWRMiYoSn6phdQYjXljt1ERoYWxVVAJPZtiO5o4L2mKk60Q4Avs?=
+ =?us-ascii?Q?3XkE8qAFvrO1R/VdxopO1IzxhrhcBIK7Uf3vXF4N+7x6KbhCmUIjPDlB7NMu?=
+ =?us-ascii?Q?7DDP+CJ3xvuGYSVW9h3UmKFKYSm4jCcX/wgfm8NYEeyatYrXDIxzjccBeAhU?=
+ =?us-ascii?Q?97Z9m9+eAMz42sbMnakIdiJ029NFuk01unTOYSmu+zQelg7r5BIVPRCPoZFt?=
+ =?us-ascii?Q?61v67MJnKPwTD+bdmIS/bWhs52RJYPRw2YeXg6iuj04aH64Rld0D835yi/9H?=
+ =?us-ascii?Q?Zvr3Q0fj2fm59zpX+30w7z4eHcZT7KmpKvYrAaQBuQieAEFHw/dfiOBjF24R?=
+ =?us-ascii?Q?z9viRtwjOBR2081hD88hT32hcdRu6AWwMncQFphckcR6P7NY5QJaJQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?tT1d5JWBFqaYqe7AZk6Um0/DpxihEOS+LEd6iHOTdQ5LuV7TsnYTZrXFhqQ1?=
+ =?us-ascii?Q?I2LjNsc+uTALHqpDBM5GZOPQOHm4gaoi6Hb5Fvd/ZjmGPGLCuObb7CFYqH4E?=
+ =?us-ascii?Q?TLs2y6Qj/IA0+NrA3GCIFa0iyz92a1jBR96TkHBAReY3ijULgsylWK274X7m?=
+ =?us-ascii?Q?chQdFGmo/NVz6bOnu7Mx2Ft8uV97Wy0xMfjPCJ40nFcg2BJ6/laZh8bGQODe?=
+ =?us-ascii?Q?1vmDMbAaGU7KKFdGOE+neMxw0aKO0cxPV+/StTaj5bHIswEjQqHrgYhtCCUV?=
+ =?us-ascii?Q?CwCnJaoQqwEwICMX9reslnyOo4rjcTDLUfgnbBtBHKpkfD7FJJPAlkpzukns?=
+ =?us-ascii?Q?n5ky11AMYc6IK9LGxijxeCTp5E8ha0RxClhqPai2YwwA/WCz+xtsDpZpzETv?=
+ =?us-ascii?Q?7NIpFQ9w+zFtL3JtxLS0G2LCRMusT0XMh/ww+jxUXBMbTlJ7pKMK6Y3lI1hq?=
+ =?us-ascii?Q?utYDg7DdQ/h63XNXmWA/6qy7i4i8yymLUmXLBCVY3RHOArFOhtpozZrIvrf0?=
+ =?us-ascii?Q?LKmSP2iHxCCAxGwYquvWjaSvryxh3TFlXRHojULK7KCqs3LzfWnsi7WnFKnC?=
+ =?us-ascii?Q?65uZIyeZE/w9KTXHYWuO0z0ftW3oPBVJN6aVbjnmqIMM3b6PPkOyAyaa1djC?=
+ =?us-ascii?Q?V4nEQQGMMBLgziX1GbgEaXz/1tKA/1tW/ZjOYiwyZNUfxpKDmO1lLKDhr8fO?=
+ =?us-ascii?Q?T3JPH+BRSl9whEidQS+ByzdfywiR2DpvGltPxkziJGZAkEmJT1jd6hNOYs+o?=
+ =?us-ascii?Q?/K6XxtdVtZSLZFoWJlYW6O+EZm0y5ApIsvwiJjMNVhjlEc3p2b9n6TSFSl3Z?=
+ =?us-ascii?Q?dTlgiw5w971y9y3iwWA1CfzZYffqZFJDwn9ENFENg4GyGHtWry4v+QV4k0Wq?=
+ =?us-ascii?Q?i4g3USK84cuWwHh72Uuop01POEMVsBlEQeJmmNvqsA4/Scii1igSXRhxlXcX?=
+ =?us-ascii?Q?2iYFb3EeMCtgimhj2vWrpjyfBOmdLmQJXVlYZRvOkyPtsph8RsrYhjZBKIyq?=
+ =?us-ascii?Q?1FG0lor4gAveuJdklY6LxT9WzBFKUQlQTcWNxQjDlOS7s6NZLoRdoWen2e8x?=
+ =?us-ascii?Q?EXJKPFqNukT0A/FK8Ytey/Ow9yNOJzjp95LlZUsN7sUTSTu0J3Slg5uTC6B5?=
+ =?us-ascii?Q?vPqfDonWIyhKsy9ubE2GoBhpebk5BIEVxqDNARz3KnMPS9WsFGsapjconySu?=
+ =?us-ascii?Q?mi7k9j/4ETSm+EsFpEBUCgTdMZHtG3LZ07IIdV2gS2762M1f6DLzmwOw75b4?=
+ =?us-ascii?Q?/EAsyVJtdv9ZXpSUBC9bMQfATXaAErSQGyRz2UJLkAIRnBXJKMFQEvT4Kbq6?=
+ =?us-ascii?Q?NhXQUu3m3mV01RQvX1ntsbaI0ka7KjsxndnhYj/jhs+B0lGyScr1MJYREt9S?=
+ =?us-ascii?Q?S2ayKa4YagXckJMAgOk0jR1AoZN037l63I3iDqRKQKdJnpwddy+t01/Nubrh?=
+ =?us-ascii?Q?VK+d2tqiymLvxiV3gWbBqQLxQ9MFQ27/tP1zHyBEoT5fdpEBynbLIJal8gXs?=
+ =?us-ascii?Q?WR+tJ2CxK4ZSHEXiJM2zeBOi0BB0l3sA3PAuh03lvsEkkJ6gkfkj6FVQPXKB?=
+ =?us-ascii?Q?PXsGbDiP3+R+P6JwunMFiOt3aEJd11mk6xrNd+Eg?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-15_09,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 adultscore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509160005
-X-Authority-Analysis: v=2.4 cv=S7vZwJsP c=1 sm=1 tr=0 ts=68c8b32d b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=9LJWlUjqVvmiLGY7KaoA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyOSBTYWx0ZWRfX9CsDnGVdf/sW
- SOZ1PjeYOFgwDDTc8Zb8uBepPWu4nYEG14G6YqC+wLUCWPcPfBO8LPQ0cazp9zCF96ip4GV1gWe
- mclPSJtvlsq+8p8Vi+vqIYsFrkuJW/M2n8Tu8ttdwGZ146NRn0E+OcD1oqUlOWxx8NYeZ44z9jR
- LBfvVUUoKJ9OBW8xJyygGYhJ0gbUn335XMk+Fozep1OxpN1h2GRS+YAL0UaDLGCDnmxt3Nenhfh
- Mo79b5wjdrcNSsUBUfoDuft6if7x/JtlX+NgGcBE/foGntm1K2Fe5Xa5FkesMamL7ZZ1mAVsWaL
- /Y62K24aIkjclAbnZWoMDXUOJtKQ9cGfWD8k55wEJDj78M8fq7zt/Ow0Gf5dcCwlkfws65myxSF
- 2/O8Z7P/
-X-Proofpoint-ORIG-GUID: 9znWzjxjMMnxGbh1T15wy8SUdChk_Nkq
-X-Proofpoint-GUID: 9znWzjxjMMnxGbh1T15wy8SUdChk_Nkq
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: facea6f3-1ac4-441e-5252-08ddf4bab0b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2025 00:48:02.2040
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zje7r+H/1aE6Zb5HtxSmXEFaS7f/zFeElffp76LdP0BnHI8E3AJRjnUT2JReh5FqNPEtJVzaQ7vRvok/sOkrXaVKOLSx+FRrporZsqT0OEE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5447
 
-commit 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-introduced ->pt_share_count dedicated to hugetlb PMD share count tracking,
-but omitted fixing copy_hugetlb_page_range(), leaving the function relying on
-page_count() for tracking that no longer works.
+> Subject: Re: [PATCH 2/4] usb: uhci: Add reset control support
+>=20
+> On Mon, Sep 15, 2025 at 03:39:24PM +0800, Ryan Chen wrote:
+> > Some SoCs, such as the Aspeed AST2700, require the UHCI controller to
+> > be taken out of reset before it can operate. Add optional reset
+> > control support to the UHCI platform driver.
+> >
+> > The driver now acquires an optional reset line from device tree,
+> > deasserts it during probe, and asserts it again in the error path and
+> > shutdown.
+> >
+> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > ---
+> >  drivers/usb/host/uhci-hcd.h      |  1 +
+> >  drivers/usb/host/uhci-platform.c | 19 +++++++++++++++++--
+> >  2 files changed, 18 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/uhci-hcd.h b/drivers/usb/host/uhci-hcd.h
+> > index 13ee2a6144b2..4326d1f3ca76 100644
+> > --- a/drivers/usb/host/uhci-hcd.h
+> > +++ b/drivers/usb/host/uhci-hcd.h
+> > @@ -445,6 +445,7 @@ struct uhci_hcd {
+> >  	short load[MAX_PHASE];			/* Periodic allocations */
+> >
+> >  	struct clk *clk;			/* (optional) clock source */
+> > +	struct reset_control *rsts;		/* (optional) clock reset */
+> >
+> >  	/* Reset host controller */
+> >  	void	(*reset_hc) (struct uhci_hcd *uhci);
+> > diff --git a/drivers/usb/host/uhci-platform.c
+> > b/drivers/usb/host/uhci-platform.c
+> > index 62318291f566..010c458e7d8f 100644
+> > --- a/drivers/usb/host/uhci-platform.c
+> > +++ b/drivers/usb/host/uhci-platform.c
+> > @@ -11,6 +11,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/device.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> >
+> >  static int uhci_platform_init(struct usb_hcd *hcd)  { @@ -132,19
+> > +133,33 @@ static int uhci_hcd_platform_probe(struct platform_device
+> *pdev)
+> >  		goto err_rmr;
+> >  	}
+> >
+> > +	uhci->rsts =3D devm_reset_control_array_get_optional_shared(&pdev->de=
+v);
+> > +	if (IS_ERR(uhci->rsts)) {
+> > +		ret =3D PTR_ERR(uhci->rsts);
+> > +		goto err_clk;
+> > +	}
+> > +	ret =3D reset_control_deassert(uhci->rsts);
+> > +	if (ret)
+> > +		goto err_clk;
+> > +
+> >  	ret =3D platform_get_irq(pdev, 0);
+> >  	if (ret < 0)
+> > -		goto err_clk;
+> > +		goto err_reset;
+> >
+> >  	ret =3D usb_add_hcd(hcd, ret, IRQF_SHARED);
+> >  	if (ret)
+> > -		goto err_clk;
+> > +		goto err_reset;
+> >
+> >  	device_wakeup_enable(hcd->self.controller);
+> >  	return 0;
+> >
+> >  err_clk:
+> >  	clk_disable_unprepare(uhci->clk);
+> > +
+> > +err_reset:
+> > +	if (!IS_ERR_OR_NULL(uhci->rsts))
+> > +		reset_control_assert(uhci->rsts);
+>=20
+> This error handler was added in the wrong place.  It should come before
+> err_clk, so that if an error occurs in platform_get_irq(), the clock will=
+ be
+> unprepared and disabled.
 
-When lazy page table copy for hugetlb is disabled, that is, revert
-commit bcd51a3c679d ("hugetlb: lazy page table copies in fork()")
-fork()'ing with hugetlb PMD sharing quickly lockup -
+Thanks, will update in next version.
 
-[  239.446559] watchdog: BUG: soft lockup - CPU#75 stuck for 27s!
-[  239.446611] RIP: 0010:native_queued_spin_lock_slowpath+0x7e/0x2e0
-[  239.446631] Call Trace:
-[  239.446633]  <TASK>
-[  239.446636]  _raw_spin_lock+0x3f/0x60
-[  239.446639]  copy_hugetlb_page_range+0x258/0xb50
-[  239.446645]  copy_page_range+0x22b/0x2c0
-[  239.446651]  dup_mmap+0x3e2/0x770
-[  239.446654]  dup_mm.constprop.0+0x5e/0x230
-[  239.446657]  copy_process+0xd17/0x1760
-[  239.446660]  kernel_clone+0xc0/0x3e0
-[  239.446661]  __do_sys_clone+0x65/0xa0
-[  239.446664]  do_syscall_64+0x82/0x930
-[  239.446668]  ? count_memcg_events+0xd2/0x190
-[  239.446671]  ? syscall_trace_enter+0x14e/0x1f0
-[  239.446676]  ? syscall_exit_work+0x118/0x150
-[  239.446677]  ? arch_exit_to_user_mode_prepare.constprop.0+0x9/0xb0
-[  239.446681]  ? clear_bhb_loop+0x30/0x80
-[  239.446684]  ? clear_bhb_loop+0x30/0x80
-[  239.446686]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-There are two options to resolve the potential latent issue:
-  1. warn against PMD sharing in copy_hugetlb_page_range(),
-  2. fix it.
-This patch opts for the second option.
-While at it, simplify the comment, the details are not actually relevant
-anymore.
-
-Fixes: 59d9094df3d79 ("mm: hugetlb: independent PMD page table shared count")
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
----
- include/linux/mm_types.h |  5 +++++
- mm/hugetlb.c             | 15 +++++----------
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 08bc2442db93..a643fae8a349 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -631,6 +631,11 @@ static inline int ptdesc_pmd_pts_count(struct ptdesc *ptdesc)
- {
- 	return atomic_read(&ptdesc->pt_share_count);
- }
-+
-+static inline bool ptdesc_pmd_is_shared(struct ptdesc *ptdesc)
-+{
-+	return !!ptdesc_pmd_pts_count(ptdesc);
-+}
- #else
- static inline void ptdesc_pmd_pts_init(struct ptdesc *ptdesc)
- {
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index eed59cfb5d21..6cfe0b43ab8f 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5594,18 +5594,13 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
- 			break;
- 		}
- 
--		/*
--		 * If the pagetables are shared don't copy or take references.
--		 *
--		 * dst_pte == src_pte is the common case of src/dest sharing.
--		 * However, src could have 'unshared' and dst shares with
--		 * another vma. So page_count of ptep page is checked instead
--		 * to reliably determine whether pte is shared.
--		 */
--		if (page_count(virt_to_page(dst_pte)) > 1) {
-+#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
-+		/* If the pagetables are shared, there is nothing to do */
-+		if (ptdesc_pmd_is_shared(virt_to_ptdesc(dst_pte))) {
- 			addr |= last_addr_mask;
- 			continue;
- 		}
-+#endif
- 
- 		dst_ptl = huge_pte_lock(h, dst, dst_pte);
- 		src_ptl = huge_pte_lockptr(h, src, src_pte);
-@@ -7602,7 +7597,7 @@ int huge_pmd_unshare(struct mm_struct *mm, struct vm_area_struct *vma,
- 	hugetlb_vma_assert_locked(vma);
- 	if (sz != PMD_SIZE)
- 		return 0;
--	if (!ptdesc_pmd_pts_count(virt_to_ptdesc(ptep)))
-+	if (!ptdesc_pmd_is_shared(virt_to_ptdesc(ptep)))
- 		return 0;
- 
- 	pud_clear(pud);
--- 
-2.43.5
-
+>=20
+> Alan Stern
+>=20
+> > +
+> >  err_rmr:
+> >  	usb_put_hcd(hcd);
+> >
+> > --
+> > 2.34.1
 
