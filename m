@@ -1,149 +1,153 @@
-Return-Path: <linux-kernel+bounces-818222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FACCB58E5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:20:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFBFB58E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5120C322566
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:20:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E8A3A86F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C119E2DE704;
-	Tue, 16 Sep 2025 06:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C961FBC92;
+	Tue, 16 Sep 2025 06:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ryDH4r2S"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bn4k/Yu3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oKTU2dC1"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E41227A929;
-	Tue, 16 Sep 2025 06:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38F8191F91
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758003614; cv=none; b=IX+XK2nldhYibh/SaBV/Qy6cymqnTM4aPW98Zk3BlcMaPA0u26JNdkBwGRhLbZ50R70u2+y/RJssTNPoPOWC4qoGUs2xcjUFeD6XZwFPx7yxLh6SIgXEQInci4dgqJG0bEt1P8TKRFf5lzDvuD7Q7sZAld9sN1/tUF5j/E9GvgM=
+	t=1758003674; cv=none; b=JqX3hF+zvZmUTu/+TWSJJeFBFltN4Tbko/4mLUAloiXNw70NTm5ka7yApj+dB73dstmjclFe0l6NUX9mr3g01YHDfuj89d/8cJYLdU9k+CyMyRx2yOM6OO53y5CXZqyJONLvCExroLx/7wyzMISmZvchtocUuNSln2LrLp7Y8FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758003614; c=relaxed/simple;
-	bh=5JDnRaQKgcPzsHc9wsuIR0+WxobhE70MviEX2H8JAlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cVLOC0APjy8yAwVSCk0WjsUys+LJLIg94IFOOcP6g8Yv4IU+NYco2PyElrY+tEl7v23I1baSgYU7iWp/T4ZdA78P9XLOxkheEO3Mv6NB0YQRIU2REUeO/dVgAMJYv7+ZYKBzveABG/1j2XhWDBjwh6Yd4YllZylYx8XHrUX1hrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ryDH4r2S; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 99B611A0E1D;
-	Tue, 16 Sep 2025 06:20:08 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5CAB7606A8;
-	Tue, 16 Sep 2025 06:20:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 55A32102F1690;
-	Tue, 16 Sep 2025 08:19:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758003607; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=3HBTexW+VffHyjUaff25+tlaT6n2Mdp4mm9FvxRcR1Y=;
-	b=ryDH4r2SL53YoHsRwFcuHKSQstAP+TxmMffDZPecme8G5zxLOY78XECvIOWXbet5i6lcxj
-	lXsjSjFw/8S97Q8jwpcQElqe5EOdaKL8IWh3gKBnIBXjLuZrPaFwZg0vHEcFYJwP8fAy/c
-	GcxPE6bQCJmxnwNHC4ALuoXoOZy7C8BJCcYAFCsEJ2w9DWaV/bNgEUlIaQ6g5yZk3j+B13
-	7nN2SSm3rSO8qjcpJXMSAunPqOR+GOfa3mRjsaz87R1+IAt6+ZOuMiPl8B7RL/qw4G+e4B
-	OJyEVTAqt2Z/lJoYxP4JFmlF64EPbQUqqZASGfMvNnb3ua1Czu8133DbIQBfHA==
-Date: Tue, 16 Sep 2025 08:19:55 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, Luca Ceresoli
- <luca@lucaceresoli.net>, Andi Shyti <andi.shyti@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>, =?UTF-8?B?TWljaGE=?=
- =?UTF-8?B?xYIgTWlyb3PFgmF3?= <mirq-linux@rere.qmqm.pl>, Jonas
- =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] i2c: muxes: Add GPIO-detected hotplug I2C
-Message-ID: <20250916081955.2826c6a8@bootlin.com>
-In-Reply-To: <aMgzzqhXeOi5cn3f@ninjato>
-References: <20250915060141.12540-1-clamor95@gmail.com>
-	<aMf6DLr8pTCP8tKn@shikoro>
-	<CAPVz0n3m9VOV5unVHhU67XQnk4jckA+zyJdCHXu2fFxCSht4JQ@mail.gmail.com>
-	<aMgzzqhXeOi5cn3f@ninjato>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758003674; c=relaxed/simple;
+	bh=ujZLo3G9D3KSU0fcX2s0BK7RsyEbvx4U7Z4wiC4J5D8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=mM2gZUXQD5bmECjCebdlXoxqiFk6SVKq8XPYpXH0eehvnVHBv4lWLW583XUwHr9bG4bbsxr1ous1+lAY2ud3SEcarpfN7klOPrLf8nI5W689fQ/uimGPUPsert7c69CXKdHDyRDNrduJhkDRj1JCmhms2aeRm4lqY3M/7B47OE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bn4k/Yu3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oKTU2dC1; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 858B97A0276;
+	Tue, 16 Sep 2025 02:21:06 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 16 Sep 2025 02:21:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1758003666;
+	 x=1758090066; bh=xjyueAXEmWPEqLrRzLXEg+Jxf3wlaTkFjrq4o1OfOb0=; b=
+	Bn4k/Yu3QuSvb/F9KSUsKbWKShCAwc+XVf74skhDyiKwumQ1Hd3Qp9B2M/sCxiHW
+	XcAJ5wXHq8aDL0jVr3q76sKLwoBASIBKZ7RVvrPS0WwntURSyCZIi8/jDMvalP0d
+	DoNUGiJw35QPFZphV6ZWI+wcGuGjb11yDPlLLmhxC9xmX/gS5P8dA5XU+uzi+Ayf
+	62Y9pqToEngyI731c35+4mEfXibQwdB8g/TTpJna+MG+O9JaDQxesqPdCHKHM+Zh
+	+SOZ20AELgSzfEb8D76TiME0tUfGwXirOFT4FyX6tgCZnbJwxpmyg6cA1uBZyAd1
+	exOyvXj+vekl7i4tKcatfg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758003666; x=
+	1758090066; bh=xjyueAXEmWPEqLrRzLXEg+Jxf3wlaTkFjrq4o1OfOb0=; b=o
+	KTU2dC1H0UltUgtkG4QSNsbAfNEC6GyVBOl4zt3+fZlO4PyqyNSoizX2KoqyFQEh
+	2ZFiyHuGJ4IALN59BbIGGDnoEHGcvpOntxXxN4NN4ofQRNqgG7uodxarJzRv5cb8
+	nTCYRaZ/CZ+FOKtAOXCGCz1GnN9ieiB3fgRDMBynn2nSneXqvhOMcdNCuEdSN3m5
+	8TUHVfdcKMBoidj6D7rDTYqe6jHrj7Y7FK5EfMP3OcVddBJv5NX4mp+PpmlE3f9O
+	KL7YrUSOgykvPEnBUg0hmqbWuXc8JEwnli+MSc4KjUaZRf3K11Mzg4ARvSDzUzIj
+	4SmeTkj5yeOSl6LbdSLuQ==
+X-ME-Sender: <xms:0QHJaN_xzSyOwfU9Uo31SDIihXRhGtsnoPr-1AhXrBKLoWdcDoZ1Jw>
+    <xme:0QHJaBtyiL6m5CN7DCU3TQ5Imd5qYV_MritapegMBwhra96EclPCy817JZXLGpYKV
+    0Sc-DoH0KKU5N3Dzeo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefleekfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupd
+    hrtghpthhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepohhf
+    fhhitghirghlthgvtghhfhhlrghshhihthesghhmrghilhdrtghomhdprhgtphhtthhope
+    grshhhsehhvgihqhhurghrkhdrtghomhdprhgtphhtthhopehlihhnuhigphhptgdquggv
+    vheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
+    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprgifihhltghogies
+    fihilhgtohigqdhtvggthhdrtghomh
+X-ME-Proxy: <xmx:0QHJaMDFaCoirxWjy9HyBoPkBR3rXgoCjkgkjNh4ne1kS-5MfxvoNg>
+    <xmx:0QHJaLdw05ATlXhl1Qqkiy3whw7HD8BKVGKFe-RT7bCtZhx0vIGB5Q>
+    <xmx:0QHJaLOF6LCGiXJD9h-7-_A-w8sqFBz9HE7dNxgFVOQRzO_lyZSvjQ>
+    <xmx:0QHJaLJNYt4WWbmACfasDgexQrWdfiJ9dL34F-cy-8d_9hiQBC5FxA>
+    <xmx:0gHJaLC0NyI6JICwRGIm6Sk-7XVtO4cjK1OLwnWlnf1b63tMNLyZnZL3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id ACC30700069; Tue, 16 Sep 2025 02:21:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-ThreadId: ADclxERWIs8s
+Date: Tue, 16 Sep 2025 08:20:35 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ash Logan" <ash@heyquark.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ officialTechflashYT@gmail.com, "A. Wilcox" <AWilcox@wilcox-tech.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>
+Message-Id: <39164c56-78f8-4bac-acd2-a996149c1c57@app.fastmail.com>
+In-Reply-To: <11e667d6-2210-47f0-a9ec-a134a60e138c@heyquark.com>
+References: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+ <432e049f-886d-4734-ad59-52569a796046@app.fastmail.com>
+ <11e667d6-2210-47f0-a9ec-a134a60e138c@heyquark.com>
+Subject: Re: 32-bit HIGHMEM and game console downstreams
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+On Tue, Sep 16, 2025, at 03:57, Ash Logan wrote:
+> On 13/9/25 23:52, Arnd Bergmann wrote:
+>
+>> Like most other machines, this one is probably fine with a combination
+>> of a custom LOWMEM_SIZE setting and using zram-highmem, even if we
+>> end up removing support for highmem page cache.
+>
+> Good shout - I'm now testing a 2G/2G split which allows for 1536MiB 
+> lowmem. I know that's a somewhat aggressive setting for userspace, so 
+> we'll see if anything breaks. I read Rasbian shipped similar kernels and 
+> had issues with Wine, though that's not a common use case on PowerPC ^^
 
-On Mon, 15 Sep 2025 17:42:06 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+For experiments I would suggest going all the way to 2GB lowmem on MEM2,
+which would require running without MEM1. At least on powerpc you have
+complete flexibility with the vmsplit, compared to arm and x86 that
+only have a few distinct options.
 
-> On Mon, Sep 15, 2025 at 02:53:23PM +0300, Svyatoslav Ryhel wrote:
-> > пн, 15 вер. 2025 р. о 14:35 Wolfram Sang
-> > <wsa+renesas@sang-engineering.com> пише:  
-> > >
-> > > On Mon, Sep 15, 2025 at 09:01:36AM +0300, Svyatoslav Ryhel wrote:  
-> > > > Implement driver for hot-plugged I2C busses, where some devices on
-> > > > a bus are hot-pluggable and their presence is indicated by GPIO line.
-> > > > This feature is used by the ASUS Transformers family, by the  Microsoft
-> > > > Surface RT/2 and maybe more.
-> > > >
-> > > > ASUS Transformers expose i2c line via proprietary 40 pin plug and wire
-> > > > that line through optional dock accessory. Devices in the dock are
-> > > > connected to this i2c line and docks presence is detected by a dedicted
-> > > > GPIO.
-> > > >
-> > > > Michał Mirosław (1):
-> > > >   i2c: muxes: Add GPIO-detected hotplug I2C
-> > > >
-> > > > Svyatoslav Ryhel (1):
-> > > >   dt-bindings: i2c: Document GPIO detected hot-plugged I2C bus
-> > > >
-> > > >  .../bindings/i2c/i2c-hotplug-gpio.yaml        |  65 +++++
-> > > >  drivers/i2c/muxes/Kconfig                     |  11 +
-> > > >  drivers/i2c/muxes/Makefile                    |   1 +
-> > > >  drivers/i2c/muxes/i2c-hotplug-gpio.c          | 263 ++++++++++++++++++
-> > > >  4 files changed, 340 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-hotplug-gpio.yaml
-> > > >  create mode 100644 drivers/i2c/muxes/i2c-hotplug-gpio.c  
-> > >
-> > > Adding Herve and Luca to CC because they want to achieve the same with
-> > > their I2C bus extensions, no?  
-> 
-> Sorry, a misunderstanding: the question was for Herve and Luca. I wanted
-> to ask for a comment from them if this is the same problem (which I
-> think it is). The question was not meant for you.
-> 
+If you run into problems with ~1.8GB user addressing, you can still
+see where exactly the problem is and whether it's fixable. E.g. If
+there is a single process that tries to actually use most of the
+available RAM, it will likely fail when it runs out of address
+space in malloc(), and there is not much we can do about that.
 
-Indeed, we try to handle the same use case.
+>> The smaller devices are probable getting problematic sooner, 96MB
+>> in the Wii is already really tight and this only gets worse over
+>> time.
+>
+> The maintainer of that downstream claims to be able to boot modern 
+> text-mode distros on the GameCube' 24MB, which I find really impressive!
 
-The i2c-hotplug-gpio.c driver handles only an connector with an I2C bus.
+24MB is impressive indeed. In my latest tests I did not get below 32MB
+(+swap) on an ARMv7 kernel with Debian Bookworm, and major features
+turned off in both kernel and userland.
 
-On our side, we try to have something more generic that can handle more
-than one I2C and some other busses and resources (gpio, pwm, ...) wired
-to a connector.
+On a simpler musl+busybox userland and even more feature reduced
+kernel (no network, initramfs-only) I could get to ~10MB, but then it
+doesn't really do anything besides showing a shell.
 
-To move this i2c-hotplug-gpio to our proposal direction, this should become
-a connector driver with a i2c bus extension and an addon DT describing the
-i2c devices available on the addon board.
-
-The connector driver should monitor the gpio and apply the addon DT when it
-detects the addon plugged.
-
-Also, I am waiting for conclusions in the export symbols discussion [1] to
-re-spin the i2c bus extension series.
-
-Best regards,
-Hervé
-
-[1]: https://lore.kernel.org/all/20250902105710.00512c6d@booty/
-
--- 
-Hervé Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+    Arnd
 
