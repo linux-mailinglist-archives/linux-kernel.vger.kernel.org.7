@@ -1,195 +1,208 @@
-Return-Path: <linux-kernel+bounces-819709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A4EB7EA1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 594D1B7E9E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6430B2A65EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73DB2A7C0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D020C29D282;
-	Tue, 16 Sep 2025 22:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1807B2BEC2E;
+	Tue, 16 Sep 2025 22:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZkcLUZC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="rq90x2VE"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11022124.outbound.protection.outlook.com [52.101.53.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B5B2BDC2A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758062541; cv=none; b=hSMch40YwjE0rKPPfCy6+TgYhVGEcVdG/KjWYxyPTTQq9aWbGFgwca2zMmg1awXfCH+SJif/Rh47VCGxXd6tvYMiyLYU7+tipXjRyPSk579tKVltNB92wQJaVW6Ey8yzjyy0ljbbAADrq08QLbh51e0Ynka09aoF0r7A/tMrUUo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758062541; c=relaxed/simple;
-	bh=t4iTrV+CqcFLDpG4Gp8BKSUYWO2Ix48fUK0eR2N/m20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kC2+v7a3dg1iO4OM3+nlzbfP8dcV0AiGW4+JeGJgjdI4ig3l83soraWxOv5eYJip4fHfxxlMUaTyITxKS/zsoFBrkmjGqcSUKo1IoTm0lfxqmKpMl7GUYMUzC1vc14QB/nd5eBV1LKfHDs2k6fQcdm/0WxmyEtQ/iTO2kSq/Fbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZkcLUZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93B25C4AF09
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758062540;
-	bh=t4iTrV+CqcFLDpG4Gp8BKSUYWO2Ix48fUK0eR2N/m20=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KZkcLUZCDSstkZ3Ty026dyokebf5jPCTNbVbbw7XSxBv6QWqs0Jw4YBWjxIU+INE6
-	 IEf/UAFqrndL9634RW5NgSlYc2z2ei242KeZvvWQWiuMeyz3Tmqo5XsX/ydqQ4BDYt
-	 MhtLjbwffmITqL4fEi4olcX82T906tXyWejOQQ8OUO9Jt2iG9IoiBspEm+Cxc8OFCs
-	 xmUvJNkv0YJSo11UnyBYw2LLI3BhYT5lmWDYOZ5OXlXtVxG7ODY3E5HaAJNlpJkWD3
-	 Yj20CyNOmHf8qZM5+Kk56wGchd7ZVguUAOjGDbGP2TEpNHfX65n1OPwHr++3Iqpoj1
-	 beoT7wy6y1J5w==
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45f28aba94cso30865e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:42:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdOboBDlxz52l9SuTQVDp+InfaS3zYZyvzhjlZLiquKCrP3lchd8At8jpsiRdzIM8etwYc7ljE8ewtZe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGIfpnxtmhfJ/BIkayETCIEkpbFZlan8DAF9RlvhktU/N3SWdo
-	BGXkGxsIHe2F3dSfNr6pnDfTJ2QUM1dBJMbAiZDY+YWDKNZwTetj6ilftMqwTr57Vkd4toj5y1V
-	BvvZ8LS0pH/UvfbCucrI2JQbHC6oPx5s+RKNmmyCx
-X-Google-Smtp-Source: AGHT+IHWLOmuD/tU8v3ni2BKIAlWeib4S+ucs/1zjlARg1seSLctmJGnrUIwP3gUbQopXbQ3T+B3asPvoCAu+Yfk/Lg=
-X-Received: by 2002:a05:600c:26c5:b0:45c:b4fb:f0b3 with SMTP id
- 5b1f17b1804b1-461a07c7283mr159535e9.3.1758062539040; Tue, 16 Sep 2025
- 15:42:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917061E3DF2
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758062691; cv=fail; b=AIyuWvyESQ99f0o6oiXiuV7rTGweoXIoUfgQKMjTQ0s71y4XtEKaJCVejV4L/vqGfP0M/DmHuyRGH5sSqlwPQL6GPsw4mFNZ2fz3YX18eL8e6ZIfsKim+w7mJPhmoOaDk0vMDGKWlvm0UtCjK7foaq8VfpE6j4xqLsoVQuwIaiM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758062691; c=relaxed/simple;
+	bh=o2zzNeXsagb0QKDvjx0+H7jvWq08EFgb5548FRudeOM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jfw/O8ejMCElwJkstuoK6AJ4klKVLN+hkG9eJMLyIMUiZai7ELYP+w9CAJwAb97DqfbO08JDBP+QBnPb+yOJdQc0huu4MBMfRe2ZceQfkhZqhQj+q7XxHat+ll+EdDkGgVmhT9WHSfQ7oAmq96vSUtr3mJMgEtDi8j2zowFmLoM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=rq90x2VE; arc=fail smtp.client-ip=52.101.53.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IRQoNT47Yq7jEg8ox56AyeYD56MvREkp6ytCSQkiXue7QnQYToBVlKuyK4r/XtADkeQcG9tnpvNZHTIJj7ZSxxJSy6yjSPIEexO637aS+tURrMCG1MKnQ3V0JyjvKBkghL+fk2osJJt/WOsL/sMRKS0jaZomCEy0QoCrDMztem22jHXhQuTzarcEaAjpGw5+Cwvwncp4dpB9GO+/sumKfDmS0MgMZI5IFCNKJtNrQ5GDQMhFYkFW4N46WyWVsWdbsE/Hl6wQFdJ6CHZ8p4R3OzLQOZFaeGBu9E/ej6I1kbY8r/VYl1xCLQdyl+z6d58cdzS47xopATBHgIyYuDkIPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JPlJSBTsZoqZTJ4A/kE7FkXsDdRC1XrKHkKhWnN7HCY=;
+ b=fQKJZFH29Oik71Ui8YcvgI/tl7ZyrRxawN8+7dKO33qN8Wb52Uq/y2ruGIE1CDcUxkiPBUcozQm7HIo+W1/gpnt70VPx8NMMbMN8ygqSDk3jqCIZ7du0E0/0wgt3Zo7nnG7MqnIEzNrEL6aeeajZ71x5+7z6Nnj0lwkpn5KP97op9tc55qWQZirSzAk6A8tCX/mC5ruscsRFNsHrSNgZ46aOX6DvXijxEmP734zfTwJ6d7SIJrKHyPNSrRl7trzAE87H470KdUA+v1ZiCJBwv9SBLzXOLOOdvTFRAeQudfDAr0QhtZkslwq+YAViGNYizg8JJ/dbEG5ta9acBgkqMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JPlJSBTsZoqZTJ4A/kE7FkXsDdRC1XrKHkKhWnN7HCY=;
+ b=rq90x2VEWVBN3z4GICR2rPJeUiCLRuajcs8dObIdiZ74N8drRi8ta+Dq717Pb6wVVhwW45mREy+kkX7VQvn0wYH7A6G23OrfCSPiIrbT/zelpu98WEst2C5BO3r7jwBxzNRpNOWw8S7Zp9lTgXTqY6KsMRQeywVUmtWda9BfqbM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from BN0PR01MB6862.prod.exchangelabs.com (2603:10b6:408:161::11) by
+ BN0PR01MB7117.prod.exchangelabs.com (2603:10b6:408:150::24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.22; Tue, 16 Sep 2025 22:44:44 +0000
+Received: from BN0PR01MB6862.prod.exchangelabs.com
+ ([fe80::8a1e:34a8:2ad9:7f83]) by BN0PR01MB6862.prod.exchangelabs.com
+ ([fe80::8a1e:34a8:2ad9:7f83%2]) with mapi id 15.20.9115.018; Tue, 16 Sep 2025
+ 22:44:44 +0000
+From: Carl Worth <carl@os.amperecomputing.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Jie Gan <quic_jiegan@quicinc.com>
+Cc: coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] coresight: Fix data argument to coresight_enable_helpers
+Date: Tue, 16 Sep 2025 15:44:41 -0700
+Message-Id: <20250916224441.3008824-1-carl@os.amperecomputing.com>
+X-Mailer: git-send-email 2.39.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0384.namprd04.prod.outlook.com
+ (2603:10b6:303:81::29) To BN0PR01MB6862.prod.exchangelabs.com
+ (2603:10b6:408:161::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
- <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
-In-Reply-To: <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 16 Sep 2025 15:42:07 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
-X-Gm-Features: AS18NWDQO70jEWQyR-tJB4PbRe5EI87TY1HG1tDIFqnOkXu_DbegsZNLqYZwqoM
-Message-ID: <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
-Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
-To: Barry Song <21cnbao@gmail.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR01MB6862:EE_|BN0PR01MB7117:EE_
+X-MS-Office365-Filtering-Correlation-Id: 885c2d8a-8612-40b9-5aa7-08ddf572a17b
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GTvkA4h/fNiq7sda2oqvTjvD1CkNxhnlo6NZvJJnN3aN+VIhqQXFAMHrx0a6?=
+ =?us-ascii?Q?EFrOhh8xneJx3LNgQBxPpH4xbXSMKK+1qtDHdD+teCel6wbJx23hNVos+zj/?=
+ =?us-ascii?Q?f7nQI1IiK//8BDHPmBmwx+S/t1Xix0L0pKhi75VhAneERSz1Mphv+fuVprhA?=
+ =?us-ascii?Q?0qf9VqGDN53KURko3vWtLKJWgK4eLytna3KmHYGVgOFNi/4YAZ3jBUWXAewq?=
+ =?us-ascii?Q?MGSV0xUhA1KDKkUki8cWnhMLlsBPeJU9MVc5FM4qp4d6JBNWmYvoC8nC0UCg?=
+ =?us-ascii?Q?hux50U2fzzsVF+43BU9wh9O9MzlB0MNPSc8JYjfVQMfNtXl3VSymw3Q8Hu7P?=
+ =?us-ascii?Q?eXdgVSnzcrFa5dzfiELzTru3rqsV0eiIaydTk2BZdD4w+kmj4n7QWG5gKvSB?=
+ =?us-ascii?Q?ox3EgUGr8XcXmuUYjp4uIcZg81uzdT1FGYopHpflGMHhr3T1xRzWrWAFy3EB?=
+ =?us-ascii?Q?1eiYMf5jJcL3PrlcLbWGqGgSoRU41/rgV7BSpHjND8L5Kw4JLtgY/4E4f/w3?=
+ =?us-ascii?Q?Jhn30nkM3Wgojq5FRjAST/gfbfKZ7ckN9icIgKj5Moe2LxXqS8wsb0U1bH0g?=
+ =?us-ascii?Q?+1Wv34XN/AsRqO82AIIMomOX7kcUy3orewoHdhG6LXO7uW8Hab08nOdSsCZW?=
+ =?us-ascii?Q?iwtgGDJx7QnW9wcwsour4KuWwQ2GHRa/JvEMA2NJIZQBVNHK4MahbPwbq/dJ?=
+ =?us-ascii?Q?flJ9SY/J3/imirkTOyQ/dqFbJiNSwFSLV1zixhLck37HKDdC5oOWd6tR/2/o?=
+ =?us-ascii?Q?PcvHHTsJLpdaXuMPe/9SFpKqNMDvx5WxkpJDH35H6TQNEBzBckT7P+1eZq+h?=
+ =?us-ascii?Q?REKUYgGXDUOx7iKtCuP9DnfpRBURimbRCxdusDCPkUt1V4qRatM5Zri0vs5G?=
+ =?us-ascii?Q?TOyClS8qT9dZqww5Tedb8Y+v1ciUyejY39lNR7SlCbyp+1ZHvv7l+TgBHA0q?=
+ =?us-ascii?Q?TkId87BhwRbLeyv73kIc9Z3YL2fqychy94FiJlESqKfejui0D4eOOEWp9HxL?=
+ =?us-ascii?Q?U+NX5y5BOwcpbcTqL4/KkLkEB5VL6iAcDOAcVSKvsbC+Jpf/+V/ZbcPmoBF4?=
+ =?us-ascii?Q?gY14fbKOQo4pi3JIfL778W48nbiGzjJvYM0am8UUndPLaoa7rsMaHr+W0tfb?=
+ =?us-ascii?Q?sggnBEFXq6T39CWpTfvYrq38TnzyTKetGffbsPcxSaYs9EpTc7u1Ze4hikjt?=
+ =?us-ascii?Q?Iucz40fN8wq33lyvKSyKhYacVMqOu3L60b0N6tT6lP41mzVQ34+zXbN8GdpT?=
+ =?us-ascii?Q?v9NNvcVIVYfgHrpCXFOzL5YsC7ix5bgg9KESSFnA0GORGLMZTaC7duLOd5bZ?=
+ =?us-ascii?Q?TJ7qQ1WnW0f2Q+oKS52xTJbZL2R/kFaZXRQYFnE50LDXwOG22Akk4PSvMJCS?=
+ =?us-ascii?Q?Jk5GCsqw5y6tva+NfexWyNUJRi0/jhEBcQt/cyd8zVbiDD6aOQzOGF/E9ArV?=
+ =?us-ascii?Q?BS9Wkd7Gs0K5/6c74L26Zlt2ICrC6xk0yU4nkj0eNwpRqwTLI0GoiA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR01MB6862.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pzMmAZOQI0kFFnHunCf8x5xFFvNRc0nAisyX/7dogcsLOTK1vH2RySEKnTkz?=
+ =?us-ascii?Q?KnyE2/ImBt5w5xcG5ELk8JJlKJJ4JroQ6A6fRsSg/vyhiBA7s99IpWYfl32k?=
+ =?us-ascii?Q?CWF1i1Slnwo1UWyyREMQ+65D5q2s7HjcWq1ywNCosbeH/v4DuxHgGyEgK7+e?=
+ =?us-ascii?Q?GXI5fD+6ouRRIra8YhsZwVz6SJjUN49GM3HdMI1qKm/9g/rNY4NkzpwsGQP1?=
+ =?us-ascii?Q?iuX3RwBhsGJrYrIVLh7Pcmtmh/Nd+utVNj1lxxZYk/308mVVjBpML6dy6VZO?=
+ =?us-ascii?Q?R6Y3NJc9TPbLzcCXL5EqP0vr2n0mKEoCiz9YD0iGvlIanhSsV+nDhynjEFM7?=
+ =?us-ascii?Q?cdIcM9sC42c10Qc9nrt4SQwJ1Y5jjmj25AHfwaDlnkXhV6NDgupr86xRARml?=
+ =?us-ascii?Q?djHt/+NHikupEZd20MBQOCiRDa7zy2zRdcQvvHLaiuWsSUOErHqyWtG7kWgr?=
+ =?us-ascii?Q?j4BOUEhAgeCPT5ceiorJgRp9QjArrhnZ55EYiKHRz4X9Nl9sOMlZA0S6+yJN?=
+ =?us-ascii?Q?g2zPhH+Wj58lEqbG6klyPsueWEEDrMykqZwsi6qrTposiKXliNTZNNqTdd1H?=
+ =?us-ascii?Q?7xuS0ROukJIVv4ZMokud7ia8jAhBHfPgzmQClDTctUR3VEqqDPuVHE3z6dbQ?=
+ =?us-ascii?Q?uv7VBZFilZoxAEGnks8I3QJ7CPUixh5Rca5f/V1v+TAPk5gDNOdutE1Xhhhy?=
+ =?us-ascii?Q?hoQ9+YPclZ7zf9ieAWksASfki979al/fFvsxyf0KzzjwiZB6r6U9bvjlUyLQ?=
+ =?us-ascii?Q?3uq6woPDbwyI6IRGkrz8OWe9YHIwhkSefTtA5YLyjoQMBOQwWEFN8g5RJszs?=
+ =?us-ascii?Q?1wJBh4txj1hx2tdEYwCmC8ej9CkEaIhPK5BJxbJ1yAutOdPUAN/nwzQajJ5o?=
+ =?us-ascii?Q?ZyDfwA8UoxwUulACj7chSuMdauMvlCH4We1iCtRQCZ7pdTmL2bHEMw/C6CaF?=
+ =?us-ascii?Q?KjpsPkHH/uT6OOi1Mf2SoYpu9+G6fcEVZx3dAa8zJ7p269bol1MLS8+Cnwjn?=
+ =?us-ascii?Q?nPDAfhlRuKsTroZsWFH2+yGKjAsQ3SZCgloCy4MGD0VwOCvH0oyn2VpJH2qB?=
+ =?us-ascii?Q?Ts9hpgKajKrmkEilKW33xDg7nuRKW4pJyA7NEU1nvyhlw68krHuuIjbvffDm?=
+ =?us-ascii?Q?WARypPjz1yKNfF+8HOAJ+1eyen66cQKeJLkxruqTDlcaVByWdwv5cRmUEUQa?=
+ =?us-ascii?Q?tNmSm4xCubI2l9dhRrGCJXlvMyjqhXefqE8y1AgST+OSdH8he2HMi3jTptV+?=
+ =?us-ascii?Q?V/bFmKxonfhXi0RPRmBXbqrABcqv1tJI6Uy7zR55Tmt2qj/bqZt8PMOMyEaT?=
+ =?us-ascii?Q?D7dhiYFEN/MzBY76Xr6CR4f1/ryz9oMRB9CoCQmrXR569jQv32yr8RdqIxES?=
+ =?us-ascii?Q?z1r4mGsUSsMRBkp7vtfnb6ACpjy5SucbJGSx3Mz7fl5opxv0HVZJMgEMhfOK?=
+ =?us-ascii?Q?XnjfWvzjJFIn9bK9f6p891MTE1Zhdxt4UqP6DxfcMqIbnpfmYPWluqbEzsRI?=
+ =?us-ascii?Q?QqKIdN8U76djwa2xawk79cjmR0wYjkrWVfv+IyQeiD3bqfH2Hf2kK6w1pg5c?=
+ =?us-ascii?Q?5bq8CmcqR6gXabGvUlG8WzCHJg/jefIKfJCdEjigWhJgTRi827IeXpGmricC?=
+ =?us-ascii?Q?/JO+12neQS0eD1JQhLkQcoI=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 885c2d8a-8612-40b9-5aa7-08ddf572a17b
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR01MB6862.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 22:44:44.4725
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o+PSh5OBKi4PrY7a/DIJ6oDB4JZF6Co7pE2eWtRqFGR7HUjtc2FpBxJeH70kYfnn3Ukt0wZd/9Pvk3lw1Nru9EyurgXi/4ze0oBReJ8ydyU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR01MB7117
 
-On Tue, Sep 16, 2025 at 3:00=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Wed, Sep 17, 2025 at 12:01=E2=80=AFAM Kairui Song <ryncsn@gmail.com> w=
-rote:
-> >
-> > From: Chris Li <chrisl@kernel.org>
-> >
-> > Swap table is the new swap cache.
-> >
-> > Signed-off-by: Chris Li <chrisl@kernel.org>
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > ---
-> >  Documentation/mm/index.rst      |  1 +
-> >  Documentation/mm/swap-table.rst | 72 +++++++++++++++++++++++++++++++++
-> >  MAINTAINERS                     |  1 +
-> >  3 files changed, 74 insertions(+)
-> >  create mode 100644 Documentation/mm/swap-table.rst
-> >
-> > diff --git a/Documentation/mm/index.rst b/Documentation/mm/index.rst
-> > index fb45acba16ac..828ad9b019b3 100644
-> > --- a/Documentation/mm/index.rst
-> > +++ b/Documentation/mm/index.rst
-> > @@ -57,6 +57,7 @@ documentation, or deleted if it has served its purpos=
-e.
-> >     page_table_check
-> >     remap_file_pages
-> >     split_page_table_lock
-> > +   swap-table
-> >     transhuge
-> >     unevictable-lru
-> >     vmalloced-kernel-stacks
-> > diff --git a/Documentation/mm/swap-table.rst b/Documentation/mm/swap-ta=
-ble.rst
-> > new file mode 100644
-> > index 000000000000..acae6ceb4f7b
-> > --- /dev/null
-> > +++ b/Documentation/mm/swap-table.rst
-> > @@ -0,0 +1,72 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +
-> > +:Author: Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com=
->
-> > +
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +Swap Table
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Swap table implements swap cache as a per-cluster swap cache value arr=
-ay.
-> > +
-> > +Swap Entry
-> > +----------
-> > +
-> > +A swap entry contains the information required to serve the anonymous =
-page
-> > +fault.
-> > +
-> > +Swap entry is encoded as two parts: swap type and swap offset.
-> > +
-> > +The swap type indicates which swap device to use.
-> > +The swap offset is the offset of the swap file to read the page data f=
-rom.
-> > +
-> > +Swap Cache
-> > +----------
-> > +
-> > +Swap cache is a map to look up folios using swap entry as the key. The=
- result
-> > +value can have three possible types depending on which stage of this s=
-wap entry
-> > +was in.
-> > +
-> > +1. NULL: This swap entry is not used.
-> > +
-> > +2. folio: A folio has been allocated and bound to this swap entry. Thi=
-s is
-> > +   the transient state of swap out or swap in. The folio data can be i=
-n
-> > +   the folio or swap file, or both.
->
-> This doesn=E2=80=99t look quite right.
->
-> the folio=E2=80=99s data must reside within the folio itself?
+In the commit being fixed, coresight_enable_path() was changed to call
+coresight_enable_helpers() with a final argument of 'path' rather than
+'sink_data'. This was invalid, resulting in derefencing a pointer to
+a 'struct coresight_path' as if it were a 'struct perf_output_handle'.
 
-For swap out cases that is true. The swap in case you allocate the
-folio first then read data from swap file to folio. There is a window
-swap file that has the data and folio does not.
+The compiler could not flag the error since there are several layers
+of function calls treating the pointer as void*.
 
-> The data might also be in a swap file, or not.
+Fix to correctly pass the sink_data pointer as the final argument to
+coresight_enable_helpers(), exactly as it was before the buggy commit.
 
-The data only in swap file is covered by "data can be in the folio or
-swap file", it is an OR relationship.
+Bug can be reproduced with:
 
-I think my previous statement still stands correct considering both
-swap out and swap in. Of course there is always room for improvement
-to make it more clear. But folio always has the data is not true for
-swap in. If you have other ways to improve it, please feel free to
-suggest.
+$ perf record -e cs_etm//k -C 0-9 dd if=/dev/zero of=/dev/null
 
+Showing an oops as follows:
 
-> On a 32-bit system, I=E2=80=99m guessing the swap table is 2 KB, which is=
- about
-> half of a page?
+[   88.696535] Unable to handle kernel paging request at virtual address 000f6e84934ed19e
+...
+[   88.911293] Call trace:
+[   88.913728]  tmc_etr_get_buffer+0x30/0x80 [coresight_tmc] (P)
+[   88.919463]  catu_enable_hw+0xbc/0x3d0 [coresight_catu]
+[   88.924677]  catu_enable+0x70/0xe0 [coresight_catu]
+[   88.929542]  coresight_enable_path+0xb0/0x258 [coresight]
 
-Yes, true. I consider that but decide to leave it out of the document.
-There are a lot of other implementation details the document does not
-cover, not just this aspect. This document provides a simple
-abstracted view (might not cover all the detail cases). One way to
-address that is add a qualification "on a 64 bit system". What do you
-say? I don't want to talk about the 32 bit system having half of a
-page in this document, I consider that too much detail. The 32 bit
-system is pretty rare nowadays.
+Fixes: 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
+Signed-off-by: Carl Worth <carl@os.amperecomputing.com>
+---
+ drivers/hwtracing/coresight/coresight-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Chris
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index fa758cc21827..b1077d73c988 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -510,7 +510,7 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
+ 		type = csdev->type;
+ 
+ 		/* Enable all helpers adjacent to the path first */
+-		ret = coresight_enable_helpers(csdev, mode, path);
++		ret = coresight_enable_helpers(csdev, mode, sink_data);
+ 		if (ret)
+ 			goto err_disable_path;
+ 		/*
+-- 
+2.39.5
+
 
