@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-819246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94B2B59D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:19:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A311AB59D5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2EA3AD9A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9BF3BC0E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E30E2D0298;
-	Tue, 16 Sep 2025 16:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED73EEAB;
+	Tue, 16 Sep 2025 16:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mwv+33IG"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHFL47LH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9053E2E62CB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53272F616D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758039315; cv=none; b=UXdNklAU78oCEOhOjNcSgDwfIR7as6TN0EbHyUnh3AsYKpov6IGH6bc76dff2ADz5FsGioroBE31dgz0I5K5N6nze/TYXXKleYiHqfpgfoIxnCJgl0zHWTX6AdnCOQHEQOEQ5XZOO8E17W2hlEEulnnU6M2raZtXNx13lsXWFOs=
+	t=1758039394; cv=none; b=X3WFi+lNXzDPo4Nh4Wtf/1qT+Lx8SjGy3Qrw7WTuCTt0QJK8XmClAKXN6wbYePd2bsWPvwE4f4cPR8uSfNL5fwd109FHI65pery39QDJQyGczOFLWJyr6d1yAfdGwS4511eRDT1DPpyXUmeWIxmAx2uU3gsXjnF66VsFQvOLaKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758039315; c=relaxed/simple;
-	bh=Fau07E6HejNdul8Szkqjw5bZVaz1B/kG8LVY6o+QQXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BDTp7rNj/kIojgcZAtTv7MEg3Mm1aKCfzPD39BvaOwx0ZjsYBJpyqfyBFKwyCnPfLD89xAR2bXJg14j25xlGG8ZTUEV5KnsYKmkT/6tgfcyw5X7ztSJDbZSGgLJZVBbr3E9pLd6jgK8r/7gXPve9Fwm2m2nCvxziQAyGD1SPv0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mwv+33IG; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <92171eea-e7ff-4cf3-a923-a4efabe6dec5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758039310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6KBC+nK2RkCVHyAeUAqIGl3Ld5/CTaXGUV+afM+Gk2Q=;
-	b=mwv+33IGWF3UtH3Ox7yDBt52Th4X3q2lOv1rKUQtPNXdB3h004TYtPSCukr9bbo8jCCnJ/
-	nTal+zQASg9EIoGny57dGANLfSFEb4W2fXHbsE9g9zhSBbQ5kqnACQGcjwwtLtRU8TwNuG
-	PjPL0lH032Se/Ysti0VNgWgenMLsbFA=
-Date: Tue, 16 Sep 2025 09:15:06 -0700
+	s=arc-20240116; t=1758039394; c=relaxed/simple;
+	bh=gfe/h63MwQ37snmGzXAelvumcKpDp1mT8vZk101TVIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GxZw682BoIUMAjJ5XYOnpW8FBpN/3icBsMuDG6uaDH6jvDBttteETwBHfkHM7hL+Cq9pAxoy1IsAr5JofhmMbMg+dsRjuN0kxMMVYTBfCyQNxM+/wUmuQnj4PcSngWqFhCpMyxY67UPqpfPNF1ZiLtNkQGUPrBm7lVQJcgcc+6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHFL47LH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89636C113D0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:16:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758039394;
+	bh=gfe/h63MwQ37snmGzXAelvumcKpDp1mT8vZk101TVIs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pHFL47LHV811NkCr0BjQCu805bmHO8gyi2a56Z/wcdWBSwY1o/w9HXINprVEUoP9j
+	 r69qh8OgN7ZS34hNzk4WM+26Ba3CQRqjObpJGnMYqJsjxQX8CkZ/GlZhCebIswX6tq
+	 w6Csso2IiGLI+IuZqZVixyR6uy9sj5z6NnjvTcbnEk0RxI1zwcGdzuxwLE1TILjRu6
+	 yOnFjBckE53zDra+TAucLQmwZehDuu6Jfa9SsoJHiMO4W11quIOCgVnAMGtmbtUPyA
+	 YEvlD9TV/2QtICDfCPCpa7EiCha740SXKylnno5aHNeO9twaysXcfGVYlVFwsNj5zq
+	 hI28osqLWm0vQ==
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-827ec18434aso329629685a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:16:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6OiDw+UCxSYEyfgVLvuoMkmnTTem1GKtQLatIXFgplvf7dcwIdBzG2tovfQEepPAQmyZp+EezHvRYiZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCb8VG10ZLWKxe0RPaVLaveIqMGUewPuj0HtrK0VHoZmFoTcOj
+	rhuC92KdKyaNKD7rfJYMoeANS4nr9MhyZNyfIyjmB+4QkppoEeQmUeZx5JAHKokfW3t+n0O/KjC
+	Jk7HYGP4k3bNIvKCKD8RGugT2FyTAk/U=
+X-Google-Smtp-Source: AGHT+IGlME22nfvdEBMMgv4l5HAb32nvutakxh/wHR7lHuhi2MDeQ8dABzpNaYx48xvlZvk2yCwru9yk/lZMLXcnZps=
+X-Received: by 2002:a05:620a:4720:b0:80a:8704:1ca5 with SMTP id
+ af79cd13be357-823fdad0d08mr2156145585a.35.1758039393622; Tue, 16 Sep 2025
+ 09:16:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
- edwards@nvidia.com, jgg@ziepe.ca, leon@kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "yanjun.zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
+ <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
+ <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
+ <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
+ <CAEXv5_g2xMwSXGJ=X1FEiA8_YQnSXKwHFW3Cv5Ki5wwLkhAfuA@mail.gmail.com>
+ <CAADnVQLuUGaWaThSb94nv8Bb_qgA0cyr9=YmZgxuEtLaQLWzKw@mail.gmail.com>
+ <CAEXv5_griDfE03D1wDLH8chgCz0R2qZ5dAeiG0Rcg5sAicnMsg@mail.gmail.com> <CAEXv5_hKQqFH_7zmxr7moBpt07B-+ZWB=qfWOb+Rn9Vj=7EX+g@mail.gmail.com>
+In-Reply-To: <CAEXv5_hKQqFH_7zmxr7moBpt07B-+ZWB=qfWOb+Rn9Vj=7EX+g@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 16 Sep 2025 09:16:21 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6vSkYLyjGm60YZvruVKHrT+0tf4ZUdyp5ftd3hZB6cxg@mail.gmail.com>
+X-Gm-Features: AS18NWALBX8kvdE_q3ArIdoxc3YDpPiTJ2wk750BR7VtHxbrcwjwIBXbNk7Wmzs
+Message-ID: <CAPhsuW6vSkYLyjGm60YZvruVKHrT+0tf4ZUdyp5ftd3hZB6cxg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
+To: David Windsor <dwindsor@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/25 8:34 AM, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    5f540c4aade9 Add linux-next specific files for 20250910
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/df0dfb072f52/disk-5f540c4a.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/20649042ae30/vmlinux-5f540c4a.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4c16358268b8/bzImage-5f540c4a.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+On Tue, Sep 16, 2025 at 8:25=E2=80=AFAM David Windsor <dwindsor@gmail.com> =
+wrote:
+[...]
+> >
+> > makes sense thanks
+> >
+>
+> Hi,
+>
+> Thinking about this more, hashmaps are still problematic for this case.
+>
+> Meaning, placing a hook on security_cred_free alone for garbage
+> collection / end-of-life processing isn't enough - we still have to
+> deal with prepare/commit_creds. This flow works by having
+> prepare_creds clone an existing cred object, then commit_creds works
+> by swapping old creds with new one atomically, then later freeing the
+> original cred. If we are not very careful there will be a period of
+> time during which both cred objects could be valid, and I think this
+> is worth the feature alone.
 
-This problem is fixed by a fix in https://github.com/zhuyj/linux.git 
-v6.17_fix_gid_table_release_one
+With cred local storage, we still need to deal with prepare/commit creds,
+right? cred local storage only makes sure the storage is allocated and
+freed. The BPF LSM programs still need to initiate the data properly
+based on the policy. IOW, whether we have cred local storage or not,
+it is necessary to handle all the paths that alloc/free the cred. Did I mis=
+s
+something here?
 
-I will make an official patch and send it out very soon.
-
-Zhu Yanjun
-
-> 
-> ------------[ cut here ]------------
-> GID entry ref leak for dev syz1 index 2 ref=615
-> WARNING: drivers/infiniband/core/cache.c:809 at release_gid_table drivers/infiniband/core/cache.c:806 [inline], CPU#0: kworker/u8:2/36
-> WARNING: drivers/infiniband/core/cache.c:809 at gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886, CPU#0: kworker/u8:2/36
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-> Workqueue: ib-unreg-wq ib_unregister_work
-> RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-> RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
-> Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 a0 43 91 8c 4c 89 e6 44 89 fa e8 fb 67 f5 f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
-> RSP: 0018:ffffc90000ac7908 EFLAGS: 00010246
-> RAX: 621d731dcb27e200 RBX: ffff88806241b8d8 RCX: ffff888141289e40
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-> RBP: 1ffff1100c48371b R08: ffff8880b8724253 R09: 1ffff110170e484a
-> R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff888027503e00
-> R13: ffff88806241b800 R14: ffff8880289a2400 R15: 0000000000000002
-> FS:  0000000000000000(0000) GS:ffff8881259f0000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555569847588 CR3: 00000000338c8000 CR4: 00000000003526f0
-> Call Trace:
->   <TASK>
->   ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
->   device_release+0x99/0x1c0 drivers/base/core.c:-1
->   kobject_cleanup lib/kobject.c:689 [inline]
->   kobject_release lib/kobject.c:720 [inline]
->   kref_put include/linux/kref.h:65 [inline]
->   kobject_put+0x228/0x480 lib/kobject.c:737
->   process_one_work kernel/workqueue.c:3263 [inline]
->   process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
->   worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
->   kthread+0x711/0x8a0 kernel/kthread.c:463
->   ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:158
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->   </TASK>
-> 
-> 
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-
+Thanks,
+Song
 
