@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-819502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BABAB5A1B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:59:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026C1B5A1B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E68816EAB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:59:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B887D4E1B91
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FFB2E3387;
-	Tue, 16 Sep 2025 19:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3872D061E;
+	Tue, 16 Sep 2025 20:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u7lPfXRJ"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WiA3Ub8X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7712C15B8
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB522E5B3D;
+	Tue, 16 Sep 2025 20:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758052777; cv=none; b=Dc/is96ME/t69xdgy8LMmLHwWpW1+hn/W27Os+rZ93ZFFSXIXwaZnMgjuAVsMgBr/92Yq3bpm4+67m6+b5cqmT8y+yk5/CS4xd/4De1Tj6T+GNkGvXTdUOJEWGl9WWNW2B7H9Lh5nhH+GoTH4GC/GCS6G0g1w9oOsdkyxUFPj7A=
+	t=1758052817; cv=none; b=d4YNcnnLVHRh75peQi9sSEREYGPvezWhaqnkTqNUckgLZvVg0FAl52qzbeBCK61JkpbwB6ZOBvPCDrK5NeFV+4yO65g8YYZESqzpUXFgyOF43Z7tCfhoSluERipdJN5EONHJmHWs5Hsg5K4XOgN52kMA0JVVi7GXFXZTxGIL4y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758052777; c=relaxed/simple;
-	bh=Vdu1BZwep+6IsmxierDdcJvK3W/IMo/wNXpYCrdmdRM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fuYy3+ByZcgN7m/8H6+h4engzMtW8ZIFE5wadSqoZxNpzvuKJoLKOGVtQ+m9y3dk4JXKLFzawD2ze+xActoJYFffQCts19ZnUbzpKc1RVqxTNQp9QmfYSZgua8hKx3WPRhZ1B4/wxvaeDxw2W1+3FABakc97PiLbvw786WNJwd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u7lPfXRJ; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7724877cd7cso5977423b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758052775; x=1758657575; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTTCcsDBpjW/mF3lSMHNghy/htFIT4NWUYSMKsa6IZY=;
-        b=u7lPfXRJYT4xiNYWh0IS4nTB+M+0k/kuv92dLVKYvwabDWJDkCPkfq6PMk8NV7+Vce
-         FmEEf0D4UOqhDzIIzyhEHfYhOzdgmIdDYdW3tQBIrF3BdX0LygeWW4oSdEF29uNOBsWp
-         BVNCUfEiaxm7cMIZ7Ldnbgci2pHO3CkjlZnMqH95oC4gD7QTMsaqw46/I3QHYgWw53h4
-         fd3R6m/rJLRO46xPakwvwN5a/TcbR+MSfMbbGHEVwz83rdfvVmffoCxeZdlVW4Jav3Yw
-         ntwVieIfJalsfS2i4P9gQozkEefHaRpriPS0QLfBOhb/j5x97RO7SDkh2DCkJymAuiol
-         SyZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758052775; x=1758657575;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTTCcsDBpjW/mF3lSMHNghy/htFIT4NWUYSMKsa6IZY=;
-        b=mEjuXtL6t+y5+zCTvApM31XHJan/0QtzhKZD1FPtP7VI6ZKQFrvDU5MQkVxYZw10rQ
-         LWUYexFLNCAWBQRhcAtpnOaKAVCa+ntLBuediqLj9Ql7C4h8ZmeXiV0r3K/UMjxP/c+v
-         gCF9rmex+A1lE5sUhrSAx5WoGIvw+q8PpdGG6o+Jskt41/4GqZEAtwwWoqwG8h7Q+8TE
-         vZ0SzoDDVI/mv8U6nXXTANvLSWnsAvcWs9g62xkCgPxf1Vu8/qCn/j+Th1mqQwgGn0Ja
-         Y1lVvpt8AOCAAweYGK+8uIDM04TgQic2+k4TZjUxCmKITUWT6rbMc+5RA/VQ9X8zdjRw
-         V+KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXB6nGRwF0wY2cy9yyp+Ng/q3CwZen1Mm2ntIXgxT2SCJToD9d+HN6e/IbhKPn3vp6qri3s4iLbRT5l/9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyowLYYlfD5K6XKeQXd3L0Qlzku00MFd5o9UlPCo+bQrs35QiV8
-	cIGxQ+e8tdDfTo6RfguyoHeo3YPaKu2VvAR+ZizanUna7Op5dDdAXPuogLT0guYIuOxaloJ05qA
-	abma3mA==
-X-Google-Smtp-Source: AGHT+IEeOCLimp7Ef9XmIJDiwc7xsmOvJEWyAAUZvqolTLhCOh3V/BzP6YzcM++J0XFW+IbDbzqAEX2zdus=
-X-Received: from pjbdb3.prod.google.com ([2002:a17:90a:d643:b0:329:6ac4:ea2e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:430d:b0:250:f80d:b334
- with SMTP id adf61e73a8af0-26027c13362mr22964220637.0.1758052774975; Tue, 16
- Sep 2025 12:59:34 -0700 (PDT)
-Date: Tue, 16 Sep 2025 12:59:33 -0700
-In-Reply-To: <2e0b5ee6-deae-4eba-89dc-4abfd63b1578@intel.com>
+	s=arc-20240116; t=1758052817; c=relaxed/simple;
+	bh=l5RcyRudbMnKY2qL2IjniShJoq21cxYpHC73/ta/rIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKPaWAU7uLY9UvqmPmuW1RZ6na1tDJcYO1gy2FDveKFIT55XvDwzEC7lJojTm49m7G8mgXwbZrbA54Il7CwZFOSf1+HcM3d62owdSKbcTCd3hiB5WM8chf9vYNyf+v3IuGf2maGDT9fayUTimCutD6W20UBpSsO/cXIfgF6QG9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WiA3Ub8X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18E73C4CEEB;
+	Tue, 16 Sep 2025 20:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758052816;
+	bh=l5RcyRudbMnKY2qL2IjniShJoq21cxYpHC73/ta/rIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WiA3Ub8XYcwT1DFXZ/U0zg5fVLhMo7zwb3vorV4CSHFeQkUaVUq0q/CcVo5dbTCRk
+	 aPvmEYLA9+g3C/ITecGWf6qg5a8JnZVAk3Qe5uBKQIvTfxwC/4lgnrY2pC6YWbDFK5
+	 arFTIMQKar9g7mjl3iQlr2LF3mDLMra3Snc4fUmcG0LunKMwM5V2jviFidtfZpvqrQ
+	 w7KXuW/8WmwN7zuWpmN8xPWfrGl0Y5R97VRre8Av68zN8Irn9vejQ51dZ1i1vWPA2T
+	 9fqDiTXb0y1BhPfgTm1rp1aAgCixpG7jTm/0U3ApDjycvMMxdO5JvDRFch0alA+nwd
+	 TuZEb8t8eLaEA==
+Date: Tue, 16 Sep 2025 13:00:14 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kornel =?utf-8?Q?Dul=C4=99ba?= <mindal@semihalf.com>,
+	Adrien Ricciardi <aricciardi@baylibre.com>,
+	James Morse <james.morse@arm.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Atish Patra <atish.patra@linux.dev>,
+	Vasudevan Srinivasan <vasu@rivosinc.com>, guo.wenjia23@zte.com.cn,
+	liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: riscv: Add Ssqosid extension
+ description
+Message-ID: <aMnBzqgoUrLMAtxw@x1>
+References: <20250915-ssqosid-v6-17-rc5-v2-0-2d4b0254dfd6@kernel.org>
+ <20250915-ssqosid-v6-17-rc5-v2-1-2d4b0254dfd6@kernel.org>
+ <20250916-landfall-easeful-782b60eb7d69@spud>
+ <aMm4n2PlI8JqmK2c@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827011726.2451115-1-sagis@google.com> <175798193779.623026.2646711972824495792.b4-ty@google.com>
- <2e0b5ee6-deae-4eba-89dc-4abfd63b1578@intel.com>
-Message-ID: <aMnBpRnI4fNx390T@google.com>
-Subject: Re: [PATCH v2] KVM: TDX: Force split irqchip for TDX at irqchip
- creation time
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Sagi Shahar <sagis@google.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="10bvof6Yj50fwpad"
+Content-Disposition: inline
+In-Reply-To: <aMm4n2PlI8JqmK2c@x1>
 
-On Tue, Sep 16, 2025, Xiaoyao Li wrote:
-> On 9/16/2025 8:25 AM, Sean Christopherson wrote:
-> > On Tue, 26 Aug 2025 18:17:26 -0700, Sagi Shahar wrote:
-> > > TDX module protects the EOI-bitmap which prevents the use of in-kernel
-> > > I/O APIC. See more details in the original patch [1]
-> > > 
-> > > The current implementation already enforces the use of split irqchip for
-> > > TDX but it does so at the vCPU creation time which is generally to late
-> > > to fallback to split irqchip.
-> > > 
-> > > [...]
-> > 
-> > Applied to kvm-x86 misc, thanks!
-> 
-> The latest one of this patch is v4:
-> 
-> https://lore.kernel.org/all/20250904062007.622530-1-sagis@google.com/
 
-Yeah, I had applied v2 quite some time ago, just took me a while to do final
-testing and send the "thank you".
+--10bvof6Yj50fwpad
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > [1/1] KVM: TDX: Force split irqchip for TDX at irqchip creation time
-> >        https://github.com/kvm-x86/linux/commit/2569c8c5767b
-> 
-> What got queued, added a superfluous new line in tdx_vm_init()
+On Tue, Sep 16, 2025 at 12:21:03PM -0700, Drew Fustini wrote:
+> On Tue, Sep 16, 2025 at 07:36:01PM +0100, Conor Dooley wrote:
+> > On Mon, Sep 15, 2025 at 10:13:41PM -0700, Drew Fustini wrote:
+> > > Document the ratified Supervisor-mode Quality of Service ID (Ssqosid)
+> > > extension v1.0.
+> > >=20
+> > > Link: https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
+> > > Signed-off-by: Drew Fustini <fustini@kernel.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
+b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > index ede6a58ccf5347d92785dc085a011052c1aade14..38e3d8d38cce55022ea70=
+eb52423b1163e3cb097 100644
+> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > @@ -165,6 +165,12 @@ properties:
+> > >              ratified at commit d70011dde6c2 ("Update to ratified sta=
+te")
+> > >              of riscv-j-extension.
+> > > =20
+> > > +        - const: ssqosid
+> > > +          description: |
+> > > +            The ratified Supervisor-mode Quality of Service ID (Ssqo=
+sid)
+> > > +            extension v1.0 which adds the Supervisor Resource Manage=
+ment
+> > > +            Configuration (srmcfg) CSR.
+> >=20
+> > Please cite when it was added, as is done for other extensions.
+>=20
+> I had seen the pattern of commit X from Unpriv or Priv spec but I was
+> having trouble adapting that for Ssqosid as it has its own v1.0 PDF.
+>=20
+> However, I now notice 'zacas' seems to have its own spec. Would this
+> work for 'ssqosid'?
+>=20
+>         - const: ssqosid
+>           description: |
+>             The Ssqosid extension for Quality of Service ID is ratified
+> 	      as v1.0 in commit 5059e0ca641c of riscv-ssqosid.
 
-Drat.  I force pushed to fix that goof, and added Kai's Acked-by in the process.
+I'll change it to use the kernel style of commit reference:
 
-[1/1] KVM: TDX: Reject fully in-kernel irqchip if EOIs are protected, i.e. for TDX VMs
-      https://github.com/kvm-x86/linux/commit/b3a37bff8daf
+        - const: ssqosid
+          description: |
+            The Ssqosid extension for Quality of Service ID is ratified
+            as v1.0 in commit 5059e0ca641c  ("Merge pull request #7 from
+	    ved-rivos/Ratified") of riscv-ssqosid.
+
+-Drew
+
+--10bvof6Yj50fwpad
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSy8G7QpEpV9aCf6Lbb7CzD2SixDAUCaMnBvwAKCRDb7CzD2Six
+DGI2AQDqcVG90uwlP30BH0fXNY11iff7sli6pD7f9SZz6jEMrAEA2BRJtcXM8MdC
+qHtH4+VmDypq4EK6VlAvtKryUzkWigU=
+=euQh
+-----END PGP SIGNATURE-----
+
+--10bvof6Yj50fwpad--
 
