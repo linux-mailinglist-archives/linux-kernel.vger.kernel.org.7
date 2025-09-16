@@ -1,110 +1,137 @@
-Return-Path: <linux-kernel+bounces-819498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FF3B5A1AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CED87B5A1AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57CD87A1B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:49:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1969C7A3135
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3811827E7DA;
-	Tue, 16 Sep 2025 19:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DD02E3387;
+	Tue, 16 Sep 2025 19:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HRWZGMG4"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H0+eeMU/"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1057A2E54BB;
-	Tue, 16 Sep 2025 19:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91D282F1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758052253; cv=none; b=eFJBB/3T7GGD+7J6+ddXBCXmOXEKzWVC4jOYne39tRl6VMJt9WWK45a4gkRhlVKUlvlvGKxTn+dzUwf41Y11u/nNM5zq2KOLlmi81qahW9okJkOzZPh6sN20F0xo64xNZ0Pr6TH6vej2D/BfpKjeA8V6obrJDSXIgkNjzQdidr8=
+	t=1758052413; cv=none; b=ruP4FxTWWc6sqfFUK77v4TorTOUvSdxS2U/tFd2utTFxPeMtwr3+WF56lMUrwnAA7yREe3G0p4r9uHAq/KtFXWe/EfdBwtPCc+MBPVLsZx1+sMzuVGdsyvVjbNyHuY1EqyGOdH4Tae7QqswO3y9LFt3SzBB8JVUlxigBZB5j6vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758052253; c=relaxed/simple;
-	bh=rxU6PVmG83yicsKvP+6XTEJSdKPkh2zwzFo9IUSgHhg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pfhkXBzbDYPPdQqKHecRH/sB2GC7dNSK5GpdQcfHXnP+aaGjHrvODipbEiHsJ9iWqxYoYwyyPY29aBJ9LVZd8chZ/njOhjVkjm1lHAOTGQHsIiwr+C8rzIyrIZiasc7iaIBisoXPZJZAu/GgIEQKDmEn25kNWnarYGuDhgq+oa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HRWZGMG4; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758052252; x=1789588252;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rxU6PVmG83yicsKvP+6XTEJSdKPkh2zwzFo9IUSgHhg=;
-  b=HRWZGMG4/IC5cDhjbXiVRIz3jU6i06cuyWFGO+PZSYKegVLAmIxj7+O/
-   W0iosH1DZzmOL/QjxcfomItshIZRhOQdP6Khq7Ain5CrixTJlc5Fp87V/
-   J+T61Xz8LOEEgXsbsO/7j4xyLTse0AKrp1JJ2l+lwhaJ6opYN1H1H/Y5f
-   uIcu7D8pGLVb2ddmg9id1/AGkU8EER6GKd5nLW24Cr7Agrdx5bdcLt2N/
-   37RiGjGqdf6RNQdqqSgN8j022d311cDJvnok6+9O47By/L9zItYhgwWAH
-   a8RV7lB9IqlZ0czXDmrQhMrF/RNE8e8S7zEM/tmm/p7exHH0Dj/Dp+d5h
-   Q==;
-X-CSE-ConnectionGUID: OpVEzCAsSoaW6AVT1s3wKQ==
-X-CSE-MsgGUID: iEhMxX1lQ0qgWColzJt/pQ==
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="47129849"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 12:50:49 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 16 Sep 2025 12:50:17 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Tue, 16 Sep 2025 12:50:17 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <sre@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <linux@armlinux.org.uk>
-CC: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 3/3] ARM: dts: at91: sama7g5ek: add microchip,lpm-connection on shdwc node
-Date: Tue, 16 Sep 2025 12:50:32 -0700
-Message-ID: <e7b5108c07bd2b0b2bd83b22b373f0edeb6adc1a.1758051358.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1758051358.git.Ryan.Wanner@microchip.com>
-References: <cover.1758051358.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1758052413; c=relaxed/simple;
+	bh=3T9D2t1qq69LqhN17EDkyhBUgxegMxL2fRfUXiYb7qE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tWeu28hwe/Ff4I1kW/WPBoL45TjGiHfGZUL7CDnzbROJ0EcISr2N07pn+i27W7+GxpAAQq3FFo6vNI0F1bpYoO/BYPcmfFowHgSoROH9QBrY8vQVHAg/LNzWRdBEWgpTams4Z5OY9RljQztN554oxIXxUPZ/zU8tYHs2vddd9/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0+eeMU/; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45f29dd8490so29219565e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758052409; x=1758657209; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Op/mfZsVaCIiTyvcgrObOgRcD7fjVHYfzWijrbsL1E4=;
+        b=H0+eeMU/odAE2HFN91lkgYZbFr9UjZqmOnfFf1IUkva9P3H28pTiKdQtVAqPj5WVrf
+         l5MeqimiUyvt4jF2MrhF4c93jfb9qR4389blVOPwnwfmJMzk5rP7/n3Cltm8Wc4+SSSn
+         0RtocYq7A1NFedPaBxaJkSY7z5JNygUT3mxrNcIcH5IloDpHkpM25HfGjaKXQ/0cq3UV
+         lBdJiw2CSD9uDUl13xuDfX1hBKanbprTPyqZTblbBVSpPqnj/uOJX7rCOTlmDU48gVGw
+         JpJ6iTNqnmC9GChTpxSpBkhoYzw9Gws+LKhje2y+e6xLEkl8VNeK0qi0PJWqbQeESI+6
+         3sCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758052409; x=1758657209;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Op/mfZsVaCIiTyvcgrObOgRcD7fjVHYfzWijrbsL1E4=;
+        b=hTp6y4YxJl3HRpx06VKR8TSL0yWC0ovm9XHVCbacKQZIC5wQGjrE5Qr7sLiLn+3ahO
+         htZFdM25wZ5X8tNcf68IRZWr65kunKypOXwOTY2xr1dQoHvB4AUDLcjOj9bs+T636bcH
+         dMCIhXaQfD/IwN0oPbx4uhA4dxz6BxkQDrTvXoeDuzrsECFA3sGOU3kyc5WraMPYGIW2
+         9JEB/ezKYmk0a2mIXmB+zBkySueC+c9H7GtlHJJ4IWhTIr5Yp9JfEqOB5Kl7ugeQwh2U
+         L33k8zBLLPbdxjmJ7nwpmW4/xvas8KepO2hNYiI4C/QJFqfYGNeq2RtsUqM5TG2an9f3
+         x8XA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8N+D1GK/cYXG5X9jOM09/bY1Fsyiqi4iij2sfehcSRv+MQO52ds4+DRV0YOR9wskB/Qgj2ccMVVni+lM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9QMPneCK/yAMrDrCrqNVjviVocaOO0QzMs4UT68DB6sz11+Cg
+	R9MHjWzC8H3jNm69Grir8XnK2tUn4evbMfZMI12ctgwwvq8dcLfecM6O
+X-Gm-Gg: ASbGncsqFXJYCMRiu7YvvdFdwIVrOoI4zQ5MJIImQcRu424h37rVRRGoUOoFJEmcLcD
+	zsbVopy1znHCt26mPRu+zfGqFmd8sI8zoZdcftrHBDrGVolFiABRLp9mVfY5BopYVfn0L0z67HB
+	LmMm8BmDw/fZhrNCGhDz8d+FPlL7ObyzUEExKVAlJivOs5lBjadrCpyJgG9acCHFRzKDsCBiK5R
+	f5cY9vw/xzdq7YGMJhQyJe310+lWqzr0hrBa6N4oUJQJ5B0g+esjQXLsPhbORop7i58TsCyfsd9
+	dLzrf49S38AHBuECz6RcfQcxwConhuYJGDVlTJworpyFtD5syM78TFsDmzY6bXHUBcsNB4XTbk5
+	XjKytMDwgLLxcaqEs8O0Lpj4l54A6JaEr2dsVoSE+XsjzNKyjaA==
+X-Google-Smtp-Source: AGHT+IFsJDK9nhbWZy8UpoS+giPB9I8eqLFrqS1+V+EAPmi5yJXPv9nuFGXnTz8G4O98qeZZKmgX/w==
+X-Received: by 2002:a05:600c:3505:b0:45f:2843:e76b with SMTP id 5b1f17b1804b1-45f2843e99cmr107649975e9.2.1758052409285;
+        Tue, 16 Sep 2025 12:53:29 -0700 (PDT)
+Received: from [10.221.203.56] ([165.85.126.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46138694957sm7592775e9.4.2025.09.16.12.53.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 12:53:28 -0700 (PDT)
+Message-ID: <c9533a24-a02a-4601-9b4d-197b03634c4f@gmail.com>
+Date: Tue, 16 Sep 2025 22:53:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/1] net/mlx5: Clean up only new IRQ glue on
+ request_irq() failure
+To: Shay Drori <shayd@nvidia.com>,
+ Mohith Kumar Thummaluru <mohith.k.kumar.thummaluru@oracle.com>,
+ "saeedm@nvidia.com" <saeedm@nvidia.com>, "leon@kernel.org"
+ <leon@kernel.org>, "tariqt@nvidia.com" <tariqt@nvidia.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "jacob.e.keller@intel.com" <jacob.e.keller@intel.com>,
+ "elic@nvidia.com" <elic@nvidia.com>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Anand Khoje <anand.a.khoje@oracle.com>,
+ Manjunath Patil <manjunath.b.patil@oracle.com>,
+ Rama Nichanamatlu <rama.nichanamatlu@oracle.com>,
+ Rajesh Sivaramasubramaniom <rajesh.sivaramasubramaniom@oracle.com>,
+ Rohit Sajan Kumar <rohit.sajan.kumar@oracle.com>,
+ Moshe Shemesh <moshe@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Qing Huang <qing.huang@oracle.com>
+References: <1eda4785-6e3e-4660-ac04-62e474133d71@oracle.com>
+ <d9bea817-279c-4024-9bff-c258371b3de7@nvidia.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <d9bea817-279c-4024-9bff-c258371b3de7@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Add microchip,lpm-connection binding to shdwc node. On SAMA7G5-EK REV4
-LPM is connected to GMAC1's PHY, 24MHz oscillator and PMIC. On board
-PMIC is not listed here as it is only treated on BSR mode
-uncoditionally.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- arch/arm/boot/dts/microchip/at91-sama7g5ek.dts | 1 +
- 1 file changed, 1 insertion(+)
+On 16/09/2025 8:24, Shay Drori wrote:
+> Hi, sorry for the late response :(
+> 
+> On 27/06/2025 9:50, Mohith Kumar Thummaluru wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+..
 
-diff --git a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-index 3924f62ff0fb..50e9a5a5732a 100644
---- a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
-@@ -872,6 +872,7 @@ &sdmmc2 {
- 
- &shdwc {
- 	debounce-delay-us = <976>;
-+	microchip,lpm-connection = <&gmac1 &main_xtal>;
- 	status = "okay";
- 
- 	input@0 {
--- 
-2.43.0
+> 
+> now that the condition is only one line, you need to remove the
+> parenthesis.
+> 
+> other than that.
+> Reviewed-by: Shay Drory <shayd@nvidia.com>
+> 
+
+LGTM.
+
+Acked-by: Tariq Toukan <tariqt@nvidia.com>
 
 
