@@ -1,145 +1,103 @@
-Return-Path: <linux-kernel+bounces-818278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93837B58F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:35:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0560B58F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3764C321BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA4E1BC24A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26832E717B;
-	Tue, 16 Sep 2025 07:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5994E2E9EAE;
+	Tue, 16 Sep 2025 07:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CtmzkV96"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bOPTnE6K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822B2E6127
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAD3DDC3;
+	Tue, 16 Sep 2025 07:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758008112; cv=none; b=oY6yQSqHXMWWCQZ1wn5jboiWvHq7TbdHNdtYBqL4ww7xcVCcZuwJ2cJMrT6RTqslM2LcknxdkWy7O7Fp8khb6VUbvq/CH7aHb9DAfKcXKRog2aEE+m8NyXpMMk3f+tw0SKXfI+Yd6Qe6fUf8NQ6WRNQIwPOnJMVJym9jZOIeEWg=
+	t=1758008302; cv=none; b=XKprv4gAYYneC05YUViDMiWGO5zZ/x3lTQlzQZ8DID/gXY8pUygw8+3aB3LTVc3o2Wc+ZZ92DnMiQ/mPYCXkS2c29kdgiz7iirYE/7AmLX+yRazw7X+tdESjzXuV7BJjehVf42tyBjUxZAPLMrqCvtIdDXqYrq2ri6l0wSU8DmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758008112; c=relaxed/simple;
-	bh=D6d9ekdBEhyb3G2A9aDEOXln00Ab2y76UPi2l9PmD4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S0WN3pNHBk93XARxDCwGvcHrzqSCyynnwxd/JveiFKbBtxrsYUbakkRQaA9Fqe69c61vLDgcuA01J1LYYiddXpXTDl5PJkpgJppIIZkF1m0MZqxGwWoWUQxu893cRj51TYq5vAfNQBACgsFmbA8O2ofCNhPqt6l6QVWkq48LG7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CtmzkV96; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758008109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D6d9ekdBEhyb3G2A9aDEOXln00Ab2y76UPi2l9PmD4M=;
-	b=CtmzkV96Vv9ucMAcc22Rj07rWdIGUiyaQx4PBF7z8JMTzInlBsh4LLNKQizorBhB/pism+
-	zTxvvUOWxMV4MBVcbLuqPdjU9iMZrivUVutuxxMPCtvACniZABhlBJrMb3ptwPCJkigJj0
-	gQY9E8JWnltHuQ6E0MUQkLsd2EKVnoA=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-3XqeCxgTO7yc72cgtyrG2w-1; Tue, 16 Sep 2025 03:35:05 -0400
-X-MC-Unique: 3XqeCxgTO7yc72cgtyrG2w-1
-X-Mimecast-MFC-AGG-ID: 3XqeCxgTO7yc72cgtyrG2w_1758008105
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-329dca88b5aso6144556a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:35:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758008104; x=1758612904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D6d9ekdBEhyb3G2A9aDEOXln00Ab2y76UPi2l9PmD4M=;
-        b=fTX1XFO6eXrgb8UUVmPDy+5Rra9nWL/7W6zn5sxONULSwyNOaT3mAJExq4iUvrZN+3
-         Syf2zhmAq9OAGbtBKPEAESX6dgfPF8TswuILbqPylIzvKzKG1FHXEBZHAlGvitgCpBpg
-         EbIOoR4RFCeF94LCHhPQsjVZcRc8oug5Q2/Bb/O/+N0qpC+LqKZeuB2Dsa5XZpqjbS5z
-         YDD9ApPMkF4vLCB3m/TPnUtaLipRTf+9tI+XpyroFqJ6JBJuwigEhxh8z/eqknUqh/Fi
-         oTnelQHp9mZ+NzYLkm5BFlE17b70YtKzCofQy4otiLBTO/SbKA2a82KTpATcYbBvB/fU
-         puBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhHIr5tE8Vwuw493EkvlDT5k868jyngH5NPaBq5TRZ+3URwdiXJet9blHzXPw+XCRk4QaObJGB1EHRhTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXnX4a2MNi0mKRaruryDqe2jQ+6e/n0JHxTa71O+7E4cNJY//c
-	4Rd9+DvDQPhRxKAz1kercI0Hrt3KH+v+NQT0c4Vjag4aVH6QZexVg/XSp4q+UReIotROKUGdsh0
-	RzJfbrviJaYPDZT1X8i/1fdL1FCZ/n1TmUVF2mQcwRgZNI8WvXcQgOQ4oM7WARdm0QTbEw3oT46
-	IVfc8uVt5I4tW1R/l5TsEFp40+8KB+/TNqWm71skcI
-X-Gm-Gg: ASbGncvSGmwmZg2+2e1W4opr/vMisIF8ffLLLNn1vzCi0+cFWHgtVvQsmbV7lpPC8EC
-	GNtxvrKr6ZtmKQy6EemEo3J8BhQOTxjlMhmCS6Xzqr6T7vtNvNpMPddzG44InN2d+NKl6kdO3M0
-	17hpDYhiEA/t3z6dNWMg==
-X-Received: by 2002:a17:90b:268b:b0:32d:e027:9b26 with SMTP id 98e67ed59e1d1-32ea61f40eemr1655233a91.13.1758008104599;
-        Tue, 16 Sep 2025 00:35:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE41+0nEZ7uR68Mnvkj3byTsvAEGDCXOwLITAVl6OsB+Oh86L0Un50ZLiDd2YqmZSU5tm/eVC4SN1t81Pb26VA=
-X-Received: by 2002:a17:90b:268b:b0:32d:e027:9b26 with SMTP id
- 98e67ed59e1d1-32ea61f40eemr1655196a91.13.1758008103710; Tue, 16 Sep 2025
- 00:35:03 -0700 (PDT)
+	s=arc-20240116; t=1758008302; c=relaxed/simple;
+	bh=ntW9cv/diewtJoXEs+ayKjjq8OIScxKxcqsED+U4jF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jx6bebd2h9KLcwVmI7z0yedzW2+wyEwP/uplp5NArNlH+91rXuOs7OealyAEUd4h6vWtyMlyDZPAStd0vKgCQshlWi+olIRdb4enp06tbQRZPHG2iEldMMfKtZaDxrF6Jj+vU+q7ggRm/ITpRhs4CD1isAE+6Dp92cburP3qqks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bOPTnE6K; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758008301; x=1789544301;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ntW9cv/diewtJoXEs+ayKjjq8OIScxKxcqsED+U4jF8=;
+  b=bOPTnE6KNJ5CF0GSuSj/5c5ypz7qD+BMy4TlMZnbdKveEVlhwyUWhXd7
+   sZ1ZWF3FnNmvDbLxBgVa5WuB9eYr3/j9SNC/z8x+3ewwt9147jF9f+JEu
+   LEoHegaN5N9U6azkfgj144qPoDGjLlGFBRDO0qTIOu3TYMRD03P/1hZyF
+   lXcu++bOaS2ExQARKrBKXNJVzySte2skR7OmDdE8ECeXcChWgD/CF6ypf
+   Jbq4QHx4n/pgen/cnCpEH/KCacepQ7eJs9bhJIVC/uvH1N4Bn2bK3tJzx
+   NQub66USestdlYEzMTlHI4WyRfV6Vy/77eo2gmL5xKMb1LwBraIzjYWlx
+   Q==;
+X-CSE-ConnectionGUID: dYvD9fxMS6qQ/jXyjDkMwg==
+X-CSE-MsgGUID: LVZam2qSSJe2w8R80hCDlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="85715357"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="85715357"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:37:49 -0700
+X-CSE-ConnectionGUID: ffj9HxvcSGmkUdbzltIiXQ==
+X-CSE-MsgGUID: peUc4/7TT4aw1Ib2clPOFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="175653312"
+Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:37:46 -0700
+Message-ID: <455f690d-6720-406f-a83f-dc98ce3b7ab3@intel.com>
+Date: Tue, 16 Sep 2025 15:37:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
- <CACGkMEvWNOjFU0pgiS=LF2B+yEC-y_RU3w_P5_dr10RPH+5xrg@mail.gmail.com> <328b3f8f-cca7-4d8f-9335-24341b40b2d5@bytedance.com>
-In-Reply-To: <328b3f8f-cca7-4d8f-9335-24341b40b2d5@bytedance.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 16 Sep 2025 15:34:52 +0800
-X-Gm-Features: AS18NWCI_RI0SXTKAt8c2DrKB370dG1BgGK6HWboIC6YYEbwdDnxbL9kobwsFbc
-Message-ID: <CACGkMEvXH+VpA-2sJ39QL4Rb3Gg0VCOKn5BApRpft=583Qcp2g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] vduse: Use fixed 4KB bounce pages for
- arm64 64KB page size
-To: Sheng Zhao <sheng.zhao@bytedance.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	xieyongji@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 15/41] KVM: x86: Save and reload SSP to/from SMRAM
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-16-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250912232319.429659-16-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 7:07=E2=80=AFPM Sheng Zhao <sheng.zhao@bytedance.co=
-m> wrote:
->
->
->
-> =E5=9C=A8 2025/9/15 16:21, Jason Wang =E5=86=99=E9=81=93:
-> > On Mon, Sep 15, 2025 at 3:34=E2=80=AFPM <sheng.zhao@bytedance.com> wrot=
-e:
-> >>
-> >> From: Sheng Zhao <sheng.zhao@bytedance.com>
-> >>
-> >> The allocation granularity of bounce pages is PAGE_SIZE. This may caus=
-e
-> >> even small IO requests to occupy an entire bounce page exclusively.
-> >
-> > This sounds more like an issue of the IOVA allocating that use the
-> > wrong granular?
-> >
->
-> Sorry, the previous email has a slight formatting issue.
->
-> The granularity of the IOVA allocator is customized during the
-> initialization of the vduse domain, and this value is also modified in
-> this commit.
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Save CET SSP to SMRAM on SMI and reload it on RSM. KVM emulates HW arch
+> behavior when guest enters/leaves SMM mode,i.e., save registers to SMRAM
+> at the entry of SMM and reload them at the exit to SMM. Per SDM, SSP is
+> one of such registers on 64-bit Arch, and add the support for SSP.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Ok, let's add this to the changelog.
-
-Btw, do you have perf numbers to demonstrate the benefit?
-
-Thanks
-
->
-> Thanks
->
-> >> The
-> >> kind of memory waste will be more significant on arm64 with 64KB pages=
-.
-> >>
-> >> So, optimize it by using fixed 4KB bounce pages.
-> >>
-> >> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
-> >
-> > Thanks
-> >
->
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
 
