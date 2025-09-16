@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-819316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C1EB59E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD78B59E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4034611DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5DEF3BAE7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5692F5A3A;
-	Tue, 16 Sep 2025 16:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC26393DF3;
+	Tue, 16 Sep 2025 16:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHORhLbi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ngku2T5P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174AA2F5A1B;
-	Tue, 16 Sep 2025 16:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF25313D66;
+	Tue, 16 Sep 2025 16:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758041909; cv=none; b=JvsneKmK9cVesFwvQ2VtOamyxe6dhcme+h26ao6JUwzOrJXjIM5lkxLaz1qYtdKReyghyWhI5b99gBNN0p3TafHZR9L4lWAxa6P0WCUvrN8evA5dKi2k3LL7REL7Wypzcxmd1vanhjNvV0T5AQt3iKD4Zbw3bsLGAckf5Uuwr5Q=
+	t=1758041910; cv=none; b=bz5E7JlndTfmRss0L93TFT4ouo46UCzuAPwai6YW2aG6FosLIY2AAEoHvEvf4HrIL5h7ytoHyqJzxkU4BQRwShvuqA/eCUo+bB37hecom3N+fN2wq1YQqlUJgXa87B6e5r1BATUZ0y0JqEOZBV6yssrTuxrcY5EVz5GUBVWMZZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758041909; c=relaxed/simple;
-	bh=G/yS9dMi8fkZ4Pq7XgA0Tg1r/43UEJ49L4sCtfbjS88=;
+	s=arc-20240116; t=1758041910; c=relaxed/simple;
+	bh=bKHcHuor+4bFUIlsOLdnuePweUwd6K2Id97nKLmzew4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CGW4O0V/g7dsIG7n+Yt2XyJcsJZE4i2Ma3vvtehYuzw77mOD2N7ijxCV/Bw9+NhDbf+ktnuvwxM80LyXfoyO4oFB+519X2H60xlo//Jg8ujiiPSMFktCiG+AHMx6QbGK/q3gmRRriomyf9YsS6UHJGXTGDbHYpxUkp4emn/r0u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHORhLbi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8E7C4CEF0;
-	Tue, 16 Sep 2025 16:58:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=WlmORczAbgEqakZiWZKcd+eC2nRT20ZWQHRKhH+dgrzLEES8MZxI6yCbTc79dpCzKkzHcQZ1SKA5/S+8/opiWgSQxFU0JMwUyRom3F/nugcHl+LrCDq3mbXOOq2fpsqNbLUcaBeohfcwlHNF+NMTd3LeaYBLnb000pZpuG32laY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ngku2T5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB79AC4AF09;
+	Tue, 16 Sep 2025 16:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758041908;
-	bh=G/yS9dMi8fkZ4Pq7XgA0Tg1r/43UEJ49L4sCtfbjS88=;
+	s=k20201202; t=1758041910;
+	bh=bKHcHuor+4bFUIlsOLdnuePweUwd6K2Id97nKLmzew4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RHORhLbijCTaSE3kITQu/mNNf8CEPNVRUvk0I3GQMLU46+FRkoNNvZf8Bwyn9wgms
-	 wKKOCC94v+1zxUFJ7idNoEnyG2rRfdRGB0qDAbtFToom9GfHCoyTc6QTjl4pNsFRGm
-	 VstU4SAH7IFxvaWE2fWApGrYJ0ifUEL2brrP+WgEWaaioiGPTJUOTmmMoICcJAGBKn
-	 GoKAwUiz6UoivqSd5IWr2a7Y5+wycCooH7v42RZ34Z+Ao9WnupoyGgeYYPa5cBh2oS
-	 cWTyN6LlwTSiATk6shUIzJyV08eODooYrB9WeHU+XkpIJZr4hFgqWMIUew6lqgOXFG
-	 HCV07TnkXSI1g==
+	b=Ngku2T5PvAFs0MFTlqGT5N5hb9KLToKKyMDIxKqXeNeVL12CLI4316IFJjubpJizn
+	 3ZDxSkI8OpqKHJT0JPis3I2UnaTTVN+d5L93houVtdoY+/Slav+WHqO2bzCkvp4K0O
+	 gDDBKiDJJ4vzuV+yP5WBUn7EGfTrs1JGbNwBwCBgoMjIhRIVubt20GXz/+WfzU2Mdk
+	 rjIRM2n5i2L/OisXo2b+iowL0gKYdkNSBUHRR6OnQCovoC9EvMCNfSIaf1z1W0Y67B
+	 OemCpkKUwTALrXq8sdcpbL6TtshH6tXmWlp38YvekcEySXq+JtvAk4QtBhV5LeCttc
+	 CR9EZdBWdac9w==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
+To: andi.shyti@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	konradybcio@kernel.org,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: linux-i2c@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v9 0/3] arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
-Date: Tue, 16 Sep 2025 11:58:12 -0500
-Message-ID: <175804189851.3983789.1320674094931062717.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH RESEND v5 1/2] dt-bindings: i2c: qcom-cci: Document QCM2290 compatible
+Date: Tue, 16 Sep 2025 11:58:14 -0500
+Message-ID: <175804189858.3983789.17257692199206822662.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250915-hp-x14-x1p-v9-0-fa457ca30ffe@oldschoolsolutions.biz>
-References: <20250915-hp-x14-x1p-v9-0-fa457ca30ffe@oldschoolsolutions.biz>
+In-Reply-To: <20250911212102.470886-1-loic.poulain@oss.qualcomm.com>
+References: <20250911212102.470886-1-loic.poulain@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,25 +67,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 15 Sep 2025 09:35:03 +0200, Jens Glathe wrote:
-> This patch series adds support for the HP Omnibook X Laptop 14-fe1xxx. [1]
+On Thu, 11 Sep 2025 23:21:01 +0200, Loic Poulain wrote:
+> The CCI on QCM2290 is the interface for controlling camera sensor over I2C.
+> It requires only two clocks.
 > 
-> Since this is actually the same model as the 14-fe0xxx, but with an
-> X1P-42-100 SoC (Purwa), it needs a slightly different device tree.
-> To have as minimal duplicate definition as possible, the hp X14 gets
-> unified into a dtsi (and it stays compatible to the derived
-> device trees, like the Ultrabook G1q).
 > 
-> [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: arm: qcom: Add HP Omnibook X14 AI X1P4200 variant
-      commit: a58d6100ee2c4a732fb4e1520885958480a82110
-[2/3] arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14 device tree structure
-      commit: 72b50c2fd887f632501ce69e03d8e6bb35c8a1e8
-[3/3] arm64: dts: qcom: x1-hp-x14: Add support for X1P42100 HP Omnibook X14
-      commit: f8f7cc59dcd234f0dcc4964ff2188a7a2ae09fd6
+[1/2] dt-bindings: i2c: qcom-cci: Document QCM2290 compatible
+      (no commit info)
+[2/2] arm64: dts: qcom: qcm2290: Add CCI node
+      commit: e645096d1f6dadcead09c722a3fbc6c44a45fece
 
 Best regards,
 -- 
