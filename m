@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-819587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A601B5A36F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:48:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525ACB5A370
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5B11B2706B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41AAD3208F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076C3279DA9;
-	Tue, 16 Sep 2025 20:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5D91B85F8;
+	Tue, 16 Sep 2025 20:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qYy8jNN2"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/9mhZwU"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1371720322
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97C631BCBE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758055679; cv=none; b=ncf7EDN47cTbPrDQJRF6ylCBs5t2X92DC3xx9KD6eosj+h8BAgGS9paj5A86VXKsY9YU1GJ4dwBYgA5YnesOUKnMEnBTP9hrGCqH8h9FCJITHjvIqbUtL2BWR5BQ0T+wkuteBN/GtbaSWtZ3MTffB6LqJp01AaLwf0G0i1WPXks=
+	t=1758055684; cv=none; b=MG2D26Ou+7V1vhF4cZSzz7+oqmztDNmBDukqXpO8zZ7tvEwK2SLlDWuQG16bBm9tUqXikhg88vIHDI0p2vCqZfWJlsJIBc3uTpWgDy7CyfoE8rQn8qdfLbW3vpBcB7U4PtTn5YmgCDuKbAgHAVOPNAP52X3MDnlyagecTXgGyZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758055679; c=relaxed/simple;
-	bh=5LOtOvG0uZRYTUfXZNxjgKsrj0X+tLZMaTz9hrmMXWo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bJKW7hqpmmWGwL8WhNw4pDDY7CXAp38TK/8k9E0PUn1yi1dHsMNzIJ/+pr1JR2z20h+V1ZTD6soRvgLgDeBnVKR14crDh2Bcpuj0lbDBQtQqsmq7I5uKV02ZLI7UnJcXlh+Q6JOZtuRNqOqsyrH46GgAB30bIw/J3w4KGR+gTE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qYy8jNN2; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-324e41e946eso10270541a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:47:57 -0700 (PDT)
+	s=arc-20240116; t=1758055684; c=relaxed/simple;
+	bh=+KL8rfCF8REg0hsyvWX6grF3wDtueBlcvpkD+pM3Zws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JOoHq8QFFxnPgpurjNa2lyz7N7JKnrSflzz2pw6Q6yUjHIDfety43MDmz53v40F7pziRRS39wlUkZ9kOpzyMMKN/yAbL6FlNTSP3SS9NByXUEYGLWvX7TByy+agUE6FYGT3EhWdVit8UOjmGdTthzpVGhRUGUjiMx856UY32lzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/9mhZwU; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e9042021faso2362054f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758055677; x=1758660477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2sEpQLjl2WNs8/HYK8bftPiYxpo6l5tl0uB8hRIbdiM=;
-        b=qYy8jNN2dPyFBlIyBgRiAOpZAv6qUkNGjpp26GOPCh9NrP1N+OlwzTchmQ/n7KxY8w
-         7NyXpRX0zZUApMdV852/gShPBTcXaI6piVXb5m40Z417XdcSaw6If9vUVF2BYYoClDMm
-         EbTOGldvAMm0982UbU+I0lOTbC0RY094brO5v1AL6L94R/ssY1zUPnJJyby4UzS/6tGl
-         omQ5T859FoQW3Z5WBJb3itrRpyzqvXoAIB2MP+VppWcH/KIGjzBr7C7P5IthVXo40bzv
-         S/AQAkbqYYFnw8WKUWbim8GGj5qm+ZkFDPBrnXijHpOkL2cS2uRik1wc+sI+GcUYX6tv
-         Z50A==
+        d=gmail.com; s=20230601; t=1758055680; x=1758660480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wnUpZJEnRBwm4SA8hacWkv0qxtpcVpis+ipIASBsxLg=;
+        b=j/9mhZwUEMJ0QRXzJ3FW3ykL6JD9I+MALkgLEalDTL7Y/MfCMo+vQ6z8ecBB+oE//b
+         Wl0N6lw/gGcc3bpirDiPkZoFnPwqVrxC93q5Y9K0MG62BWGOlVL2CQcj7GLkBXw2rH0o
+         r50uEh6AD4KWO9sW3uGdycM4s9dGPNkIMv8NS1iPYAhbBHZQr2m+tdK383B/2e+xPKFf
+         udEdvRPptcVQFkJHc7GTeqep0chHmukxbylTBvoUbtlYPide74lXHKmSaE0ptPc+Mi9E
+         iRkLKTrdwhuzKQMN3rCe1aMFjNqsxhBRflzhUPeyvejo6aZU3zXNUeX/b0gdHxXPkEr3
+         c4yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758055677; x=1758660477;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2sEpQLjl2WNs8/HYK8bftPiYxpo6l5tl0uB8hRIbdiM=;
-        b=Q4/uoKyXgEiPzwDVT42XXD60UPhMUwGUoCPZV0NmCKJKrKDorVqgQMrh7TbcfKxyg7
-         4F+QPytVsMG/eEzdywaFaCKsR+qDVNfBFWvThoWmIFQ55DTzfO7DZWt7wvqiJKASlohC
-         tA4VHvBLNFURbSkfJBNX46BdErfpkILPjF9qUE317ewhWLztPH4Xxv5ar3C8xr5WaIYY
-         FaxtNDvS3jxtGFuV0jR4+fsx6hlhm6b/bOAgi5Ino45cZQUXcfQkLfWmiC2egxfwzAKH
-         Q/UcvIOAgGQOmOaq8+2RuWrEg+0+nMnrhyTnfKhGSK5+sdEJ45jLtD0nw47WXlR4uo2U
-         69Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqABrPaG+nknuQ1o4lfjKq083b/QjtfPLUSAsuAjE2VFYYmvWEma9J5oHrjWPSyctX5T6rMY2HgtrUZzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7EyxhFZ9d7dPp4x7cosp/RoiFySV5YUkCoH0p3EN1DzUGeePa
-	onXuD4Z8GwFTXFWUpFasBvG2RVJrLd8FFNgvpcvH36OMg90/MD1cu8yYw2MUnzwFd5hojEk3Vav
-	Pp6FXXg==
-X-Google-Smtp-Source: AGHT+IGieBabQ84lUpv4CHkgWxfWTDjuzczfFf6L8mojgHp4lRCUjtkkivIdK4cMJ5pijh0pKkQiWAHwm6A=
-X-Received: from pjbsn7.prod.google.com ([2002:a17:90b:2e87:b0:325:220a:dd41])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:582f:b0:32b:c5a9:7be9
- with SMTP id 98e67ed59e1d1-32de4fa1e11mr18480542a91.25.1758055676784; Tue, 16
- Sep 2025 13:47:56 -0700 (PDT)
-Date: Tue, 16 Sep 2025 13:47:55 -0700
-In-Reply-To: <CALMp9eR91k0t9kSzpvM=-=yePGYmLHggjfvvhmD-qaxBCnRn+Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1758055680; x=1758660480;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wnUpZJEnRBwm4SA8hacWkv0qxtpcVpis+ipIASBsxLg=;
+        b=n2rJSK2iWRLVE+QskKQ64FOQ9Egh/04cUJXcWUuYggfvMfaG13nM7OmGiZ87B2d0So
+         agMcW2ZMNZE4dATn0KoPrCjLfhwIUjrV+fm8/4WK5cwr2EadD7VBupDsZHwt9Vkp++bQ
+         7MZ0VbuQfLMwFOIILt+BtWO5SD1wmc8j1OsXPAGH4bjdQUB/02sUnbgLhy6FGwMLfcPS
+         /tHYWK7+3SnJJswNny6krhTapnnyAXIkCYnz+ekmy/QGvjAV4I6Uo3OaXjLrbkvOxdbJ
+         8E3cJ7E4GXMztWFrMxf4Cyyva23HgHzswfP43dpQ1zr4BAa48dXsN45GSyrp71kZ0QNC
+         DGBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZpZtTAJOhUQ8UC1Kwb2seO6aINJwdT1EBBsmJ5ROkd4Bhb91t49U/Ob7L16zg0Pz07Vq1XfmO0cEnrzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznpl9k3qkePxEB/w62hmQe2BpX1cOa07pI0HMlEhpOVtE/WF09
+	r3nGfFQoSGH4ZPVZ1aKaaAAklV57p47WjFw7PFnLbFNVtV6eVK+Ed+nT
+X-Gm-Gg: ASbGncsjQYQRcbesXcDGuitd4a7FgZQWeCFgk43whCqnamz2Pv5/yS4m0ajJEXiHvui
+	8GUecqxQHGg2QYyeDmIHDhXIccfY21QtkRhw6fBeyyTGh1mQpa1A5Ri5A3OsFIHSVt3virAQivp
+	O41d07jRvVJZ5xOCe/P6EVJnEtrZFcQSNRWXkyL5HsNaC3NSCAx1N1rZfoTzAWFvC68BVkoRvnl
+	mdBIvhch0y8f4DkE+vZunrmbgSA1TlIHIYEszWE7WqzxzEyAzaOG9Cp0KWQ+VUFpK2m84wslAFd
+	xERQPtlrKiQLdHGZk8xfrBDG+mjZcXHA8xDhm+Lhelg1V7di2CvNyl3Bnv0UpGPAtSdLTOmAeSN
+	H8YVITrXbUaXpVFbCWRAjoFZf1l2QHu6ravM190rbRS8qwRc+gnFDdDlmiOhTfddgJuGzrTl/v2
+	hHxHSNHZoN1A6p3/vifQ==
+X-Google-Smtp-Source: AGHT+IEkxcTio6GGFoM3muCkeaaC3BaAbrW6vbBnnuCs4pDQo46lP6f91xDpDnWdbW4d1+fTPKzarQ==
+X-Received: by 2002:a05:6000:18a7:b0:3d4:eac4:9db2 with SMTP id ffacd0b85a97d-3e765782b5fmr20202818f8f.5.1758055679917;
+        Tue, 16 Sep 2025 13:47:59 -0700 (PDT)
+Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdb0a2752sm2366465f8f.56.2025.09.16.13.47.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 13:47:59 -0700 (PDT)
+Message-ID: <4429cad8-5363-4bd0-8b7a-36396d322464@gmail.com>
+Date: Tue, 16 Sep 2025 21:47:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240815123349.729017-1-mlevitsk@redhat.com> <20240815123349.729017-2-mlevitsk@redhat.com>
- <Zr_JX1z8xWNAxHmz@google.com> <fa69866979cdb8ad445d0dffe98d6158288af339.camel@redhat.com>
- <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
- <ZsYQE3GsvcvoeJ0B@google.com> <8a88f4e6208803c52eba946313804f682dadc5ee.camel@redhat.com>
- <ZsiVy5Z3q-7NmNab@google.com> <CALMp9eR91k0t9kSzpvM=-=yePGYmLHggjfvvhmD-qaxBCnRn+Q@mail.gmail.com>
-Message-ID: <aMnM-_tg0fl4903y@google.com>
-Subject: Re: [PATCH v3 1/4] KVM: x86: relax canonical check for some x86
- architectural msrs
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: mlevitsk@redhat.com, kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] alloc_tag: avoid warnings when freeing
+ non-compound "tail" pages
+Content-Language: en-GB
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
+ shakeel.butt@linux.dev, 00107082@163.com, pasha.tatashin@soleen.com,
+ souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250915212756.3998938-1-surenb@google.com>
+ <20250915212756.3998938-4-surenb@google.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20250915212756.3998938-4-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025, Jim Mattson wrote:
-> On Fri, Aug 23, 2024 at 6:59=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> > Heh, and for MPX, the SDM kinda sorta confirms that LA57 is ignored, th=
-ough I
-> > doubt the author of this section intended their words to be taken this =
-way :-)
-> >
-> >   WRMSR to BNDCFGS will #GP if any of the reserved bits of BNDCFGS is n=
-ot zero or
-> >   if the base address of the bound directory is not canonical. XRSTOR o=
-f BNDCFGU
-> >   ignores the reserved bits and does not fault if any is non-zero; simi=
-larly, it
-> >   ignores the upper bits of the base address of the bound directory and=
- sign-extends
-> >   the highest implemented bit of the linear address to guarantee the ca=
-nonicality
-> >   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^^^
-> >   of this address.
->=20
-> I don't believe there was ever a CPU that supported both MPX and LA57. :)
->=20
-> Late to the party, as usual, but my interest was piqued by the failure
-> of KVM_SET_NESTED_STATE prior to v6.13 if L1 had CR4.LA57 set, L2 did
-> not, and the VMCS12.HOST_GSBASE had a kernel address > 48 bits wide.
-> The canonicalization checks for the *host* state in the VMCS were done
-> using the guest's CR4.LA57.
->=20
-> Shouldn't this series have been cc'd to stable?
 
-Yes :-(
 
-That's my fault.  I balked at the size/scope of the changes, but in hindsig=
-ht
-that was a mistake.
+On 15/09/2025 22:27, Suren Baghdasaryan wrote:
+> When freeing "tail" pages of a non-compount high-order page, we properly
+> subtract the allocation tag counters, however later when these pages are
+> released, alloc_tag_sub() will issue warnings because tags for these pages
+> are NULL.
+> This issue was originally anticipated by Vlastimil in his review [1] and
+> then recently reported by David.
+> Prevent warnings by marking the tags empty.
+> 
+> [1] https://lore.kernel.org/all/6db0f0c8-81cb-4d04-9560-ba73d63db4b8@suse.cz/
+> 
+> Suggested-by: David Wang <00107082@163.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+>  mm/page_alloc.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+
+Acked-by: Usama Arif <usamaarif642@gmail.com>
+
 
