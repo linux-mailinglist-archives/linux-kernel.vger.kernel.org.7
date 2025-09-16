@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-819607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C48B5A3A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E55DB5A3A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D698175A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C177A527257
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DF92E613B;
-	Tue, 16 Sep 2025 21:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856372EA74C;
+	Tue, 16 Sep 2025 21:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuBinTVG"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0aS1tCn"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D9529BDBC
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501C12E0927
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056916; cv=none; b=MDU0AjK6ABiyR1QuSFTdm4KHQPHVGFjhfiqv5rDhtc+FImvwRCYYDV+eZtyfMZDoZhF9j/pNxB+nuPMQpnGNdwilR94sYqlkK9Y1wgXgIVBf+ffxzBC2wNt051xdJjrcLQuFX6FH6xIWpSBGQ9B+FTf8+Cv1O5oJa2FPSskO3dw=
+	t=1758056917; cv=none; b=akibfAqXwthVFepLJmf0koqQy4rzKlemBD2fl3PRYb4ofl1SWPFZWetGyuXGMCtLiFTmx30US0ZljCCoItjWsUmsFmKzb/PpZy/57GpvB2eTCUYgkGxhDpBUm17tMwJ9m74hvPNMM38vtJkqa5IILfCZxhTAfa4iKhX+7mztzCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056916; c=relaxed/simple;
-	bh=i5GnbfqmVnxkYXcn6CYjj6fTv/8HIbej9YLPdSgDdGw=;
+	s=arc-20240116; t=1758056917; c=relaxed/simple;
+	bh=keetleYLbtbVy91k6dr/luSH+DnOKYGG3IugmPX2Jx8=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=avv2Wdn267Ii5Hqi1IEm3YvTa1Wv8SFT7yUNGioVhhb1JGsCWT5fUIUaoaZ+aJ09zznUIboHfCvB7dzQyOc3CRFYASOeuTgI7icCRR6ZoaSaA2eZ+hRqsJub/6inmIuKO0YorJB+GEhc8WPSUGUjVaKkiPHRkXz6Xz6DAu5lqLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuBinTVG; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=TBX6vfAJuAzKheuF/IEKfTbbt0ARwC0RubGYudEdr8lFjOjlbw9Yr82W0ILRe60Yqtm3mruuBAGOZCW+4x0bVqrUuPlkb4prrR/ieUqiWewvR02th23ExJ6yUFGQpV6RLhlvBXNaXFfj/50Q2oDtxuNpslFZEbVXff77ZhlT/Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0aS1tCn; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4c3d8bd21eso3895401a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:35 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so258540b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758056914; x=1758661714; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758056916; x=1758661716; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m2+AVyP8cdYBqUaKkF99fDBOfCpjrDMFd2oAZFqPACM=;
-        b=HuBinTVG90IMNcpKXgiLSo2OB2WK1eAD3fwKH6S6Wmlhyqe2M+grUhKuWqz6Pqf4qK
-         1E6UwETSibQZ29DDTHs1vTqFkRAS1mblPo8ixAOYYar64s+XaL4oixD4qIWGwa7uOFts
-         olj6Qgh0DZF5gYy+bNtNRghdGjFcD9M2grTi03tY6sc/iKYH/TKCa+MM0+OzUtAQ3w3F
-         JMaRkaO6Wy2hwIknk1ruABaY+2D5LEkfJIwgFfhjVAiimLh367oei1JpN6qKGSURoYGM
-         0Me+6zmhjbzjLlJfaxOcBmkMZ6mTq0bgg15ycZf8/oyGjqdFlOwmexStRxIztRr5fw6f
-         cufg==
+        bh=3qBTryJ9bSqwjcArHStS8Ii28Lxu8QftxwwZnxNDyHM=;
+        b=B0aS1tCn1rqgACU/NIHZHbSSX6QutXdFWxAoAE7qBWbHTNvEDZqBx5HK0BBKWfzNn9
+         EIrVCBZCoPLs1t0OXTGiYfUOkILR5mzZIzphVMVyhc3mpy9BvfXafZ90V3kfSEgMHZAu
+         xTkW4FHXGEqefu/pChI0UM0fy0XypY/uJT8mUrhpoZkGJEaOrU9gBwm7JlO+qsUh0/03
+         v5EA2bPxz7frr614/w8V3xvfIyQhH0ro8UtarPaGp0oh12i4aTeQPHzvbGSnB3wfwXzC
+         DVI73+f+p1v5umZ/+CIiTfyaPnpTKHrZMT3vv6MNrPIt5yu8os3PUhwsc0rk88GiQ/iH
+         MPqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758056914; x=1758661714;
+        d=1e100.net; s=20230601; t=1758056916; x=1758661716;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m2+AVyP8cdYBqUaKkF99fDBOfCpjrDMFd2oAZFqPACM=;
-        b=k14qqf2zMxMqorMooIHEX2HAVwgoQgTOOK/rojzCBFmIEN66WpqX2OHZYBV9iZdrF0
-         AlskpGRn1Xt1RbzbiC9R0PV1yh8DCdSPI0aRpoCJkQrHdsJihU84ygc7ZkPMJ42D0k1U
-         p9/FkiAAwukbdn/JyH4zw29mofjh02ZwM4Un0sc8bg1CDLrJmmR5zF43hlYFavL6HcR6
-         gSagcWOkXjqqKPeBfYXjZCdrvNndZBevnsw15BCPrDrz9KRClw9VWBumwx/91qDhKDS1
-         Gj3m5x5x/qTkb8p3RphtozOlmkSAkTaIhfs3OyMo9KyjmlL6RozNT9hJv2Gn8YfsS6FL
-         bqMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC6l6LqrIFIwz3/lQu1KbFsRppQTd0vAu1YqEJwJ5wC1h5joO/ec91MA0WkHwb7DkX7s/iDGmMsWALVRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNEroKOY4vCUx3Dcrda9MEGNfKQnbyR4zdbbzHmfe3HuLvbXhA
-	T9vpZ9OetSGElq62G8bYHVliYrftIYQJ7I1/TntwT+LyrrWYJq+wR2TG
-X-Gm-Gg: ASbGncvnTimuO+Jt5B4jFQwFmHWpng0yA8TnmRD4y1GOlCN14EDACurJqEITGcvXQcX
-	rsuB+UTa92I0xkNAkO1UZqv25sT5pCGQwhWwGOijykAihAof2t9/2nqps5TZjR6Wejb7Af7JX/h
-	FeNj/mYuTM2Tk0nT4UbDineQU/rY6jImGaw5k5GFCkURp7ABApJE0CBlmuLkQDVQfig4GXGWMLF
-	tOltW+A/mil5AshBMmhXuieHEpA/U/kIqGXJ0Br7PpWw7//01uoHY+0ZlMHU6FhK1rt5k4HZhgI
-	csgi6Ep3qIsSsCO/5ijqmGuquK4z/5Ge8UYhRksYOo55madrx31YjMAyeWtf4/g364PXvKJ+es2
-	nv91rbTYwJ0tErbiCW3BryihKhDLFiXtwkOCBXJKRMcEk2Ky5VLdAJoaMy4Qy4heZ+TVDpJxri/
-	Jad0vcgoALyw==
-X-Google-Smtp-Source: AGHT+IE30vWEscVxco130cSQzQXEWjfzODa+kIkYNIPjO8BENCWK1VbimiHaV06bj4bFJuwZm56sfQ==
-X-Received: by 2002:a17:90b:1649:b0:32e:1b1c:f8b8 with SMTP id 98e67ed59e1d1-32e1b1cfc95mr15610484a91.26.1758056914499;
-        Tue, 16 Sep 2025 14:08:34 -0700 (PDT)
+        bh=3qBTryJ9bSqwjcArHStS8Ii28Lxu8QftxwwZnxNDyHM=;
+        b=GjQ9Gz4fpDT1RqtJq0zfYP2wwNy1zNnhsVs8Xui5ZK1zFC3nP7afHr6HIkAyjMInuS
+         +ZTA66K0xPnVetPrH2EvAkxx7da9Geobz0pvXeoGNP5LXo5+nqVvJb0bcErZK3nqkOXl
+         whYoknQhYaXkcdBCiCwGu5pLY+onzgVEw1kencBtZAG9xIUTi03plZVpbZ8P0RrJ0d6s
+         FpDrU62qhJ1h9fPJw8f0SWGpyK1B/szYEI3NtlXZd/H/HJGfDPHbrnWmnVW5BODVbPK5
+         qNyA4SBvsqdI6es0mS5aNUCUKnY1NxjQjOWhsGxXLjHsESqljMKIHqmRDCyZdVKrKUwE
+         XfXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWT+4Tkzp92dxEyPFf4SY2XpFoDegXHK5T85puFPOW8YX/hKPDGogTLJTVqIXq+swmpctOIorxt7ujXq/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzScxtEhtnA34biKdRZWFkoRkAqnuy7KrHOqoulfEkF1g+XSi4f
+	jqahvNmnjv2D99093ZyTAQFcWldTk6Fkb1OjVICeFeVLFy0NnBzZvKvxJQEW+edn
+X-Gm-Gg: ASbGncvXHdIiSfO/tPJT165yNG8bgExrCeEtASzZaseu/7HFthpTjDwuTUW9J3KV698
+	W8QPsgG1/0LwUveg7RTlxfBizIpswJm8P4wPI7RNq9vxfyNGBNP/+p19V25IzzUJu559dSNQmYX
+	aF7Qgr7SdisCTnioFUyhPTiDvVRKSb2BNoqpsC2QSazs2IhvctW9QBSbI7iZgy/WY2aPcckqIEd
+	g2v2AkzbHtvq2P6OSTvjBy9GFnUTkWH2+2KYc1up5xJ0XHuV/S1gxQT2ywKgsnKS5LVahEGZk2a
+	rpvf3nW9Owmlevs8c6VkpJKcPoNHSpInYNV30Z+fgDnHS1PvliJo4yUaFcqskl51eqteoGXaZAs
+	wzMEgioI23ukj+5MrYj2SsGEEHstN9Hxwwzc3NpZMVlTAgL5NROgrKEQ+xnkr9azS/QkZWmVJ91
+	76U8J7SbJEDSwSkuxzvkhM
+X-Google-Smtp-Source: AGHT+IHWXv3+qPwh3jeyVqrxQ3AsWNAJSiHWtN1VPL8/0k/qsLEXEMTQqUrw+IdDG19B6HX27/F2QA==
+X-Received: by 2002:a05:6a00:f06:b0:770:4753:b984 with SMTP id d2e1a72fcca58-77a85f9fb2cmr4577695b3a.16.1758056915586;
+        Tue, 16 Sep 2025 14:08:35 -0700 (PDT)
 Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32ed2705f71sm475216a91.28.2025.09.16.14.08.34
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77607b18371sm17263851b3a.49.2025.09.16.14.08.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 14:08:34 -0700 (PDT)
+        Tue, 16 Sep 2025 14:08:35 -0700 (PDT)
 From: Chia-I Wu <olvaffe@gmail.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
@@ -86,9 +86,9 @@ To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 03/10] drm/panthor: add mmu_hw_cmd_unlock
-Date: Tue, 16 Sep 2025 14:08:16 -0700
-Message-ID: <20250916210823.4033529-4-olvaffe@gmail.com>
+Subject: [PATCH 04/10] drm/panthor: add mmu_hw_cmd_update
+Date: Tue, 16 Sep 2025 14:08:17 -0700
+Message-ID: <20250916210823.4033529-5-olvaffe@gmail.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 In-Reply-To: <20250916210823.4033529-1-olvaffe@gmail.com>
 References: <20250916210823.4033529-1-olvaffe@gmail.com>
@@ -100,46 +100,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a simple helper for the UNLOCK command.
+Add a simple helper for the UPDATE command.
 
 Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 ---
- drivers/gpu/drm/panthor/panthor_mmu.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panthor/panthor_mmu.c | 33 +++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 8600d98842345..953348f9afdb8 100644
+index 953348f9afdb8..727339d80d37e 100644
 --- a/drivers/gpu/drm/panthor/panthor_mmu.c
 +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -588,6 +588,19 @@ static void mmu_hw_cmd_lock(struct panthor_device *ptdev, u32 as_nr, u64 region_
- 	write_cmd(ptdev, as_nr, AS_COMMAND_LOCK);
+@@ -545,6 +545,27 @@ static int write_cmd(struct panthor_device *ptdev, u32 as_nr, u32 cmd)
+ 	return status;
  }
  
 +/**
-+ * mmu_hw_cmd_unlock() - Issue an UNLOCK command
++ * mmu_hw_cmd_update() - Issue an UPDATE command
 + * @ptdev: Device.
 + * @as_nr: AS to issue command to.
++ * @transtab: Addr of the translation table.
++ * @transcfg: Bitmask of AS_TRANSCFG_*.
++ * @memattr: Bitmask of AS_MEMATTR_*.
 + *
-+ * Issue an UNLOCK command to unblock transactions for a locked region. The
-+ * region is implied by the last mmu_hw_cmd_lock call.
++ * Issue an UPDATE command to invalidate MMU caches and update the translation
++ * table.
 + */
-+static void mmu_hw_cmd_unlock(struct panthor_device *ptdev, u32 as_nr)
++static int mmu_hw_cmd_update(struct panthor_device *ptdev, u32 as_nr, u64 transtab, u64 transcfg,
++			     u64 memattr)
 +{
-+	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
++	gpu_write64(ptdev, AS_TRANSTAB(as_nr), transtab);
++	gpu_write64(ptdev, AS_MEMATTR(as_nr), memattr);
++	gpu_write64(ptdev, AS_TRANSCFG(as_nr), transcfg);
++
++	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
 +}
 +
- static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
- 				      u64 iova, u64 size, u32 op)
- {
-@@ -633,7 +646,7 @@ static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, int as_nr,
- 	 * at the end of the GPU_CONTROL cache flush command, unlike
- 	 * AS_COMMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT.
- 	 */
--	write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
-+	mmu_hw_cmd_unlock(ptdev, as_nr);
+ /**
+  * mmu_hw_cmd_lock() - Issue a LOCK command
+  * @ptdev: Device.
+@@ -674,11 +695,7 @@ static int panthor_mmu_as_enable(struct panthor_device *ptdev, u32 as_nr,
+ 	if (ret)
+ 		return ret;
  
- 	/* Wait for the unlock command to complete */
- 	return mmu_hw_wait_ready(ptdev, as_nr);
+-	gpu_write64(ptdev, AS_TRANSTAB(as_nr), transtab);
+-	gpu_write64(ptdev, AS_MEMATTR(as_nr), memattr);
+-	gpu_write64(ptdev, AS_TRANSCFG(as_nr), transcfg);
+-
+-	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
++	return mmu_hw_cmd_update(ptdev, as_nr, transtab, transcfg, memattr);
+ }
+ 
+ static int panthor_mmu_as_disable(struct panthor_device *ptdev, u32 as_nr)
+@@ -689,11 +706,7 @@ static int panthor_mmu_as_disable(struct panthor_device *ptdev, u32 as_nr)
+ 	if (ret)
+ 		return ret;
+ 
+-	gpu_write64(ptdev, AS_TRANSTAB(as_nr), 0);
+-	gpu_write64(ptdev, AS_MEMATTR(as_nr), 0);
+-	gpu_write64(ptdev, AS_TRANSCFG(as_nr), AS_TRANSCFG_ADRMODE_UNMAPPED);
+-
+-	return write_cmd(ptdev, as_nr, AS_COMMAND_UPDATE);
++	return mmu_hw_cmd_update(ptdev, as_nr, 0, AS_TRANSCFG_ADRMODE_UNMAPPED, 0);
+ }
+ 
+ static u32 panthor_mmu_fault_mask(struct panthor_device *ptdev, u32 value)
 -- 
 2.51.0.384.g4c02a37b29-goog
 
