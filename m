@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-818732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F076AB595C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:09:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF2BB595B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF9B168E1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0811E4E5481
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C4D30E820;
-	Tue, 16 Sep 2025 12:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D33B304BBE;
+	Tue, 16 Sep 2025 12:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UX4EWgXH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QUY3ce9a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3206530DEB4;
-	Tue, 16 Sep 2025 12:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B557E2DC79E;
+	Tue, 16 Sep 2025 12:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758024531; cv=none; b=o1KNE++Bn0IyjXI8Rg5G4RwV8CIEP6roc2lopqe7WtUWul7A63YxsG2uWNLeEeO96/Z3MzxZVxVRNN8LuPtm8wmYRcQOQFOo8sNR5XT/e8F3z+FCXdLAzw2RMkWKihhPM36vRC1Qq5p7yG5wTaUJLDDg/tW2UvLquLcIMIw7b8k=
+	t=1758024286; cv=none; b=A01yy3oaQ95P/lbVcN+JOGix4QFRFdV4jo0fEGlR4P1Uoid323A63SpEBOpakHzxzSvVqfMoZvKHDpD/P3k9/6SOxiPb/jN0kn3vx2KOblp4dPV0LBOL1TEY0eII+EDOFSyLzDql3C1xYZwgetzuqI9Lq4lR6dpGpJpI3iTOHnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758024531; c=relaxed/simple;
-	bh=lroRgaiNQjTEgIzOrH59+2moAsgRYB7bHRVnEv4zEs8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E1qWNEwcOFk9XGfvNeuJNdGNaL+1diAv6LdwrAOyMFwdG1/vgzssc0NYbGOq+vsAIL7AldiIIyMwVBn2XBpI3oYtCWSl9RKj//dEiRE17txnshlgaq5MUDwdPetPpu2jfHAEzR9OjPpAqc6+CWuHWEN0SDXeOYqj0e+SNQNXHto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UX4EWgXH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD60C4CEEB;
-	Tue, 16 Sep 2025 12:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758024530;
-	bh=lroRgaiNQjTEgIzOrH59+2moAsgRYB7bHRVnEv4zEs8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UX4EWgXHkfs9xl/c7N5Nw5eHl8xYqGwEIjGbFUF7hUx0/GVRQ1w36cVWwGh/Oo5mt
-	 ZEyDDiZ1iEfURMWl6fGz8+7j6Fk0wgrQarP9dbqTPNxnZgkDTM/c7tIjtZ9xhNrwaN
-	 +HcVW4ekMLhCXUFr8dSc5lY0/p9JD4AS7LxwADEKoRkXQrfK2XOBK/JLC/7+/WJIdr
-	 sl7RvZLr6wjy9E5V/HdGYMSDIvX6DMD0Vc6Swk6rY9OyHqw4AdkEtTkxBLsQ4NWLcT
-	 rswCJ/jci0iW4I9wZ94xwZyhlZK4jJRq5+Y/9cA4+fqtVLEMh0vBS12QKu/wAJRmUR
-	 EXlnn5gCU0XLA==
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Prasad Kumpatla <quic_pkumpatl@quicinc.com>, 
- Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com, 
- prasad.kumpatla@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com, 
- stable@vger.kernel.org
-In-Reply-To: <20250914131549.1198740-1-mohammad.rafi.shaik@oss.qualcomm.com>
-References: <20250914131549.1198740-1-mohammad.rafi.shaik@oss.qualcomm.com>
-Subject: Re: [PATCH v1] ASoC: qcom: sc8280xp: Fix sound card driver name
- match data for QCS8275
-Message-Id: <175802452817.111062.2711141246036859762.b4-ty@kernel.org>
-Date: Tue, 16 Sep 2025 13:08:48 +0100
+	s=arc-20240116; t=1758024286; c=relaxed/simple;
+	bh=SCxMx4yEem5tSoETGmO1maR9jyrWfm8TqZNB0zt9vOw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pifne5Eqy2/Q9Xgnu141Fzx4B5yizYb6kYrr45nnl8vWjWazwWdtPvpfo+Mf9X9cpPaxXkPAIfPbHOmtR+avXfRAzWRv3y6GHaXYBrjr8dL9ffhH3+gtf7QGOloDAm3LgonCkezCe2Z613LdW5eRRD+GR94abIaGiyNyuScedyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QUY3ce9a; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758024284; x=1789560284;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SCxMx4yEem5tSoETGmO1maR9jyrWfm8TqZNB0zt9vOw=;
+  b=QUY3ce9aP4da3ibNMqYG79wrOkFj/8+csWgyG1eaox9l0FPCkGoTRtOD
+   VnVJwvbmHwpxrgWGi8rZ0vM8CcLNRQqxKWSNpAuY4dBANnO8uMuDcIxIx
+   SFvL7/++iQaxsE0Mk8NVGsVffI5NdV18/qP50Ct/4GOIXWYT91IUHZMe4
+   fLU/pyYGLrdL9J0bMQZJtaDQjOrYvhLUB35bNNoZGwcQ9gw8ahlSQdR12
+   eOfhOLUuigGxQViGOp21GnN87wnorrOQEU+NHCBrTKrcxKtv5xD4A/vtC
+   jfzpH0fqH4SIH62OFUsKEb2xk4wfz6YHcLMXm5xK2e7viHEhzbMfaQsPF
+   w==;
+X-CSE-ConnectionGUID: XkjKfuFGT8uhpJdZbls9qg==
+X-CSE-MsgGUID: ni8xyfJsRAm9PV7wOj0dhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="59347147"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="59347147"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:04:43 -0700
+X-CSE-ConnectionGUID: +tfY37zWQQeVhM7X2GtGXQ==
+X-CSE-MsgGUID: jk21zKWcS7WwUSZnHEVknw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="180058260"
+Received: from gklab-kleszczy-dev.igk.intel.com ([10.102.25.215])
+  by orviesa005.jf.intel.com with ESMTP; 16 Sep 2025 05:04:41 -0700
+From: Konrad Leszczynski <konrad.leszczynski@intel.com>
+To: davem@davemloft.net,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cezary.rojewski@intel.com,
+	sebastian.basierski@intel.com,
+	Konrad Leszczynski <konrad.leszczynski@intel.com>
+Subject: [PATCH net v4 0/2] net: stmmac: misc fixes
+Date: Tue, 16 Sep 2025 14:09:30 +0200
+Message-Id: <20250916120932.217547-1-konrad.leszczynski@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+Content-Transfer-Encoding: 8bit
 
-On Sun, 14 Sep 2025 18:45:49 +0530, Mohammad Rafi Shaik wrote:
-> The QCS8275 board is based on Qualcomm's QCS8300 SoC family, and all
-> supported firmware files are located in the qcs8300 directory. The
-> sound topology and ALSA UCM configuration files have also been migrated
-> from the qcs8275 directory to the actual SoC qcs8300 directory in
-> linux-firmware. With the current setup, the sound topology fails
-> to load, resulting in sound card registration failure.
-> 
-> [...]
+This series adds two fixes addressing KASAN panic on ethtool usage and
+flow stop on TC block setup when interface down.
 
-Applied to
+Patchset has been created as a result of discussion at [1].
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+v2 can be found at [2].
+v3 can be found at [3].
 
-Thanks!
+[1] https://lore.kernel.org/netdev/20250826113247.3481273-1-konrad.leszczynski@intel.com/
+[2] https://lore.kernel.org/netdev/20250828100237.4076570-1-konrad.leszczynski@intel.com/
+[3] https://lore.kernel.org/netdev/20250916092507.216613-1-konrad.leszczynski@intel.com/
 
-[1/1] ASoC: qcom: sc8280xp: Fix sound card driver name match data for QCS8275
-      commit: c7a321e4e90e1bd072697bc050b9426e04cffc6a
+v3 -> v4:
+- add missing Reviewed-by lines
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+v2 -> v3:
+- replace strcpy with ethtool_puts per suggestion
+- removed extension patch for printing enhanced descriptors
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+v1 -> v2:
+- add missing Fixes lines
+- add missing SoB lines
+- removed all non-fix patches. These will be sent in separate series
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Karol Jurczenia (1):
+  net: stmmac: check if interface is running before TC block setup
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Konrad Leszczynski (1):
+  net: stmmac: replace memcpy with ethtool_puts in ethtool
 
-Thanks,
-Mark
+ drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c    | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
 
 
