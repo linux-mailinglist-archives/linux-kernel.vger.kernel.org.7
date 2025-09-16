@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-818869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0693DB59773
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:23:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E936B59781
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE8F016F526
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:23:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87FC07A7C58
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C4315D21;
-	Tue, 16 Sep 2025 13:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5CFFC1D;
+	Tue, 16 Sep 2025 13:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ioam/oqf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jeIYMd/q"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8E330C606
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94D51D7E41
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028982; cv=none; b=c/H3CzHglsR3GgP6dp8B+C+MbRYBM4cezSuI1dTh+2GoKb5DFBNzpe11rB8CSiQU637GrDDH5tH6KhKbbwmX4t8jti6gCO854TQDWFe1ex+Y2flTUpWfZ9OjX8/HR6aU1QbYE8IDNMIMe0A7jZmEAMREUL8+8DDP4pZV+zQZ6Lk=
+	t=1758029102; cv=none; b=X+0Yf8chQe8r3+k6IwFsJ6HOwHadHt0JVsLDW8x7JgDWa0na7jCofUvSrRXah2vdqAfjvDxdj0UUjr5hN8guf8zrC0VZ4FH4598DwpfkXvDKYBhv4zdWPFAYOMM80JWybyhEv9shzstitXsAzbZMjBN+1uextmzPGp7MaaD8miE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028982; c=relaxed/simple;
-	bh=1IguQoOXA8FrFKBeUbtVgSy6pYqlTs5cyzQln/TF98I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jFIUYYrq7XzG60Ay9+xi3zoiy1+bZDj4wf/BYBSOcSUn+HycDnmee2JW2vTEAu7laUh90dMO2lf1H5LnAR0CIr7tEOANgpefwppQpf1iIdV5bkx8oTWjf9lRWz/agOFtYaodR7WJYdXtjbVU6e96kN4U2ijhouKsEIl/f+axTKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ioam/oqf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758028979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/oP4iLXlqo17dgLSrgkQgZcHvE5Do89KtwinnL3mfgo=;
-	b=ioam/oqfK9PWUJUcgXrzHoH2jakDC+YhJHx5ffPzIvhSaSCNv6RNjCgeyAoh3ZBG8K16te
-	M02DRFvSou+EstuGZX/AnKpJ1s6Qx4yxxzuYHKPzXiqq/+3WKjm8/Ch9Nm6wDazcdoBCzO
-	hAarNXM9nMgRYnmKAnMbYEs/aNYd58w=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-546-QcAc5MPjP7Svf3mdacHczg-1; Tue, 16 Sep 2025 09:22:58 -0400
-X-MC-Unique: QcAc5MPjP7Svf3mdacHczg-1
-X-Mimecast-MFC-AGG-ID: QcAc5MPjP7Svf3mdacHczg_1758028977
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e9c932a4dfso1276639f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:22:58 -0700 (PDT)
+	s=arc-20240116; t=1758029102; c=relaxed/simple;
+	bh=s8ThdCXM5O9yyBHIfDFZ9OEayAHX03FFFGLLjXjF7XY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/qa63ps6BNVQ1rX51jucFq59yek76Q1DPZJrjr1Iuqp0kwbClc1cf9uTIoV0oec8kkWZrzyKgw/PUKfwCmXuKacp2RHWpbe+YCKSOHS69U0KEDbrmToygm2Z/lrjA56rQzdQ4ZKc2V1gIOeZG8PHm+XCUIHd3syn+A2BpHtT94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jeIYMd/q; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b042cc3954fso990405466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:24:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758029098; x=1758633898; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwfKh8YcNEbswE2yYv8jHBhvIioj0iL2kRQaWZR7TS4=;
+        b=jeIYMd/qRHO+nPBNV5EseY3/4XkcyAp9gayRU5pCXHVJYBIhZMwzNpcKQEuDLXP+n0
+         hRv6WaRsqF6Ex0gQ0qpwcj64LW0uIrA8ciLh5U7qSFL8B1w/zkZnBTiXUCzyEZBjDurA
+         K6CR9IXZBnBFGym4LBqzhiLHAgJgfBnNoGae8Si//bWDUMWlcAY1EeHoQVodaONgiHa0
+         bxJO0hKeD1TWbAt5q6sAG5RvONO8mQGXGLAcjDAbl7uFwgx0MrTYOOuwmfJYj0dkOQxe
+         fpuXn0D4l7gsCNF31gjZFhGfIMV1dL6ARMSoTS295WLe/s0NQVrjR2TRHl7BFK0DKxUW
+         fbWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758028977; x=1758633777;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/oP4iLXlqo17dgLSrgkQgZcHvE5Do89KtwinnL3mfgo=;
-        b=IMoZ3tlIRG0FolQ5Y+Lq2LZoN1VaMjvBoZE/apYkF6mN89iuWu/e25YjuG4sGkQ+5I
-         XSSrcxA/N27zYPcuNrpfKqmE0fgyWJ3BMJAnQKJiSZ3VLfN18MltQIeuYYN9fGaiLMfq
-         zxcgBefsu5VOC3bFTaUxCq/kT/AF78pA0LzEFFI6atUq6F66QPIzzCPcN4TibeuGpP6I
-         yMk1XTWqNuK7p5XXo5GqnZhI2yWPVm1S2nGEfrMc50oYEctf1gcxiDskanmvZCCum5+N
-         QxfBMT3yqYDsu4dzhnel1d0uMJNHXjR1jG2QdLo9BmVYTAj3QT8FIroexuSkZLuSxDXP
-         JYYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoXDdscXz9so9AjcijXcADjVPew1PvmqBuC4N2DuZLLSeojj62ZZKT1zUNDRY19ZOtKLmIsmD3X69kQ/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzKaNREKCHjOCT9HAPhZmXBLCgbyKU6gt4HB4rJfjMQqv7s8Js
-	iuuhiRK5Zx3sJwk3AAT59WVuFxQFoBLYCr+oKBST8VIOYnv/mAO+VKEZI44V9jWJ2yW8A+KvABk
-	oHNXFNcrX6p6zMtPw/qnDSmpeets+OzGCDQmLAnI+pLqJsum4+hG8rDyljCYwKoZnMA==
-X-Gm-Gg: ASbGncupG3kt4cc3J9nkcmZhruWk8Z7oxiB/v1n26juKji7HYhBMeJHWNzhzXGP5IMY
-	Nbl6Y+uKS3qrrLPUIXUOacnWx6nMYPROKWNnCmGg//mPNZQyVvs+diAzfwaJeVmybWKd8ARAsPS
-	Hae7TqvIId/sjBlpKbB/ZGBL9y0x09z9yMLy2SV3WlmlkoU1BZqLQb6shznnBvCVsG4+4vwuc9J
-	bSeFiSVih6O1AoIVagusysMXy7zHPNRN7ESxBKTToTsA7bq17oZMUVNO+uDKlNs9pMINietCxuy
-	Fq1JRKgyOb5CcGtghSss9pUGnOtE8HYXYq3MLTSSp1nzLlUsG0HD5pDTMr6/RPoXcPafVh0ptYm
-	A54VDoP1vOLje
-X-Received: by 2002:a05:6000:1a87:b0:3ec:db87:e88f with SMTP id ffacd0b85a97d-3ecdb87ebbcmr933083f8f.58.1758028976909;
-        Tue, 16 Sep 2025 06:22:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4ZY5gUmJ119iAt2SKTgVZxX4OPWSH9fLEx7WX7rL1qK5MveunydRadRnPWxfpxv4RDz+i+w==
-X-Received: by 2002:a05:6000:1a87:b0:3ec:db87:e88f with SMTP id ffacd0b85a97d-3ecdb87ebbcmr933036f8f.58.1758028976410;
-        Tue, 16 Sep 2025 06:22:56 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e96dee54d8sm11914722f8f.12.2025.09.16.06.22.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 06:22:55 -0700 (PDT)
-Message-ID: <0b5b0d1d-438a-4e41-99c8-a6f61d7581b4@redhat.com>
-Date: Tue, 16 Sep 2025 15:22:54 +0200
+        d=1e100.net; s=20230601; t=1758029098; x=1758633898;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gwfKh8YcNEbswE2yYv8jHBhvIioj0iL2kRQaWZR7TS4=;
+        b=JbpUqTWp1bpyFCvu47pPCXWhD26Wt1391iuCycS+k1fXGBaAG5bL886aY9WZgUFWHw
+         qVf3zauAyFMOnpYyE3XazCKeYcoPV6b53+nz/f4q89pzsnz/MGD2k8NCklCH2MESmgUH
+         9euS1ksFMEBNJVSbnkGE2kGkXfuKLSMK7iAXEx5dQhOTW6pbQjUq/H+cKiY7SWiR9593
+         QF/bYOtjBw8lKxpn4L1ZG5hdvmO0qjSDYUsDwF7IaZBtcQudkqCISquhhERJdihztgnT
+         UU/VrKgeNWAEKwd2nrrATJy0qroIZkKSeW2zwOl3s7nZENBEAUJoKVZFkGkmA5EVHzt9
+         9GNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeyy8hPzSa84O83FvGFnjYzJ9vcri46SuQ/GMBk+MZeNNn3ZL040DIQjFxbgOgO6nCAEI8X9na4ZmO6F0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj+AZz15CTDxPF5XnjJyUxfNZBb9GDFnKox2yJ4gv8TGuE/xP+
+	XY8BVc1opD1i0FX05FJ/f8JV4/bJFP9RDVnI8YV50jWCr7U974/n5Cw1IaHtVSEYH5c=
+X-Gm-Gg: ASbGncvdJc4+6hjyb+tSewjNUydAR8Ttc5x3bsB2UjlDY/rX+d1Tv8vR7W9Db0LVWH4
+	5kGnCUMMOMJOhPWdCOO7N4H1I/kR0TGTSa7L10k4Y3swq1K4Q6w/e7uOH0g3LmN95fvoTwga+VG
+	Aj57J/BWuOZ8vRbBLJIspcmfcxS7d8PTQWI6dBdcx7yMxx585aq9ReF7d3guu4EoSt4TfOgV5hT
+	HcfQSU+6KRRFAllzNv81s3oB28dIBMHHTtYfqTgnu01lRdVJLLIUOLkS6UU2VeNJqKH1gHuUfX2
+	vLOG1j3xYos/2grMtdj6rghEtiiRPPQz4XPnjqnWsPexeIwu5wAArTUswUY/xQkpKLjtGiDe8NB
+	3rEVzPFgSWXokXl5fWNKFxgpyhj/4xRx9xTYMEY0z4jRa50ZtvrP7WIvtDSiYxidT
+X-Google-Smtp-Source: AGHT+IE9kjhldcCIBvjPr9jo7lRPPHVqNSYEJDmsT9jH1F0DRGqPEBku/9BloIv9jKtuTpavenfoLw==
+X-Received: by 2002:a17:907:d16:b0:afe:c6a0:d116 with SMTP id a640c23a62f3a-b07c3572d31mr1812203466b.18.1758029098143;
+        Tue, 16 Sep 2025 06:24:58 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32f202dsm1164355266b.84.2025.09.16.06.24.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 06:24:57 -0700 (PDT)
+Date: Tue, 16 Sep 2025 15:24:56 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
+	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+	kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <t3uk3k4h3l53yajoe3xog2njmdn3jhkmdphv3c4wnpvcqniz4n@opgigzazycot>
+References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
+ <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] net: mana: Add standard counter rx_missed_errors
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, longli@microsoft.com, kotaranov@microsoft.com,
- horms@kernel.org, shradhagupta@linux.microsoft.com,
- dipayanroy@linux.microsoft.com, shirazsaleem@microsoft.com,
- rosenp@gmail.com, linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <1757908698-16778-1-git-send-email-ernis@linux.microsoft.com>
- <1757908698-16778-3-git-send-email-ernis@linux.microsoft.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <1757908698-16778-3-git-send-email-ernis@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="36zni4ukkwfibixi"
+Content-Disposition: inline
+In-Reply-To: <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
 
-On 9/15/25 5:58 AM, Erni Sri Satya Vennela wrote:
-> Report standard counter stats->rx_missed_errors
-> using hc_rx_discards_no_wqe from the hardware.
-> 
-> Add a dedicated workqueue to periodically run
-> mana_query_gf_stats every 2 seconds to get the latest
-> info in eth_stats and define a driver capability flag
-> to notify hardware of the periodic queries.
-> 
-> To avoid repeated failures and log flooding, the workqueue
-> is not rescheduled if mana_query_gf_stats fails.
 
-Can the failure root cause be a "transient" one? If so, this looks like
-a dangerous strategy; is such scenario, AFAICS, stats will be broken
-until the device is removed and re-probed.
+--36zni4ukkwfibixi
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+MIME-Version: 1.0
 
-/P
+Hello,
 
+On Tue, Sep 16, 2025 at 10:44:40AM +0200, AngeloGioacchino Del Regno wrote:
+> @@ -119,19 +128,24 @@ static int sdam_probe(struct platform_device *pdev)
+>  	if (!sdam)
+>  		return -ENOMEM;
+> =20
+> -	sdam->regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
+> -	if (!sdam->regmap) {
+> -		dev_err(&pdev->dev, "Failed to get regmap handle\n");
+> -		return -ENXIO;
+> -	}
+> +	sparent =3D to_spmi_device(dev->parent);
+> +	sub_sdev =3D devm_spmi_subdevice_alloc_and_add(dev, sparent);
+> +	if (IS_ERR(sub_sdev))
+> +		return PTR_ERR(sub_sdev);
+> =20
+> -	rc =3D of_property_read_u32(pdev->dev.of_node, "reg", &sdam->base);
+> +	rc =3D of_property_read_u32(dev->of_node, "reg", &sdam_regmap_config.re=
+g_base);
+
+It's a bit ugly that you pass the address of an unsigned int as u32*.
+But this isn't new, so fine for me. (Also for all Linux archs we have
+sizeof(unsigned int) =3D=3D 4, so AFAICT it's safe anyhow.)
+
+>  	if (rc < 0) {
+>  		dev_err(&pdev->dev, "Failed to get SDAM base, rc=3D%d\n", rc);
+>  		return -EINVAL;
+>  	}
+> =20
+> -	rc =3D regmap_read(sdam->regmap, sdam->base + SDAM_SIZE, &val);
+> +	sdam->regmap =3D devm_regmap_init_spmi_ext(&sub_sdev->sdev, &sdam_regma=
+p_config);
+> +	if (IS_ERR(sdam->regmap)) {
+> +		dev_err(&pdev->dev, "Failed to get regmap handle\n");
+
+dev_err_probe()
+
+> +		return PTR_ERR(sdam->regmap);
+> +	}
+> +
+> +	rc =3D regmap_read(sdam->regmap, SDAM_SIZE, &val);
+>  	if (rc < 0) {
+>  		dev_err(&pdev->dev, "Failed to read SDAM_SIZE rc=3D%d\n", rc);
+>  		return -EINVAL;
+> @@ -159,7 +173,7 @@ static int sdam_probe(struct platform_device *pdev)
+>  	}
+>  	dev_dbg(&pdev->dev,
+>  		"SDAM base=3D%#x size=3D%u registered successfully\n",
+> -		sdam->base, sdam->size);
+> +		sdam_regmap_config.reg_base, sdam->size);
+> =20
+>  	return 0;
+>  }
+> @@ -181,3 +195,4 @@ module_platform_driver(sdam_driver);
+> =20
+>  MODULE_DESCRIPTION("QCOM SPMI SDAM driver");
+>  MODULE_LICENSE("GPL v2");
+> +MODULE_IMPORT_NS("SPMI");
+
+If it's exactly the files that #include <linux/spmi.h> should have that
+namespace import, you can put the MODULE_IMPORT_NS into that header.
+
+Best regards
+Uwe
+
+--36zni4ukkwfibixi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjJZSUACgkQj4D7WH0S
+/k5X2gf8CPcy37sX+3TAvMselYC6a5KTw9qBUgRRRW2xU0jMLPVSugZd9i7RFBsX
+qcP6Xq/FcBLfEIdwT9uwud13CtVdV6qyNQaWgz+BnrTomiNrrr4wZTVrOOhNgSDi
+VElZSzvXwu+7EZQLmdGAwoXB3HnCHuShI5LiCUQ0zi4pYoMoAc4Tw6htJhjM7NJ2
+48eZomVZ2s+xwPA17EyHn9FaHiisgWV/tjxRtL9P5Kt79qZNel8MXHgWU4jFEUDm
+hqciH+VQhquuUhU/UfWhV0q4Q6aJ2acuI+AsHcWctTI1Whgdtm0Ddr8/iJmUjitw
+JNecAkD3czkJvfdQpE1uSbxMdDBrww==
+=Jcue
+-----END PGP SIGNATURE-----
+
+--36zni4ukkwfibixi--
 
