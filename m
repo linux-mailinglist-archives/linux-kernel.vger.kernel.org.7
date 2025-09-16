@@ -1,388 +1,370 @@
-Return-Path: <linux-kernel+bounces-817939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBFBB5893F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295FBB58975
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C592A4057
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5250B1B2652A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2781C4609;
-	Tue, 16 Sep 2025 00:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8928C1EB193;
+	Tue, 16 Sep 2025 00:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SG0ywjNI"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="VXTHCz8W"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100101AF0B6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D221A8F84;
+	Tue, 16 Sep 2025 00:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982377; cv=none; b=mRUWNIb8edM82uth5ZjTdM1vYbkWx3rS/eI5y3+9HmVjugp6YHoRGPkktqTcVQ01ajclqw9fW0lXG+fFus1h1aY8k2ca9IhzE499/Vn7dp0L2O4jFG08XIELPNy0hM6vTEenw4b3Y+CTE3ZtwQsWhTsGR37zjSsKQCz09sJdyvU=
+	t=1757982552; cv=none; b=Kvi9EGoDzPaZd+UrrMG+N9nX07wp8RDFHeYh7I5X8FT15j8f6fdKcQmpU0ep/lVHh44L9K5/YTdbV7dobSluxyc/6rmyB5ATaiPFgfgnZH3gqjXJzn200fL3LYB6GDMTdAHBg4kRbP3CzU87DltYCP85JEBIviPORDpkXgGY0WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982377; c=relaxed/simple;
-	bh=kiTurHeFXoQhvrBU060XgEcZWouebGYCXVT0eL6zTdo=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=eo9CFFnvkiqNwtQet+IVb9TFmbGVp+Tl8SxHV3ruloqWjNXw7Kbgd51zvMhHlRmqMU6IClwNSwIsLZWupNNZicfILgKJzO/EOG3mFf2tiVTBrGIoyYhusFB7mLwxtfT4YVVY/t+vq0pLaKNWDhjhJRRPxS+9BfrojoNDZtOsCpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SG0ywjNI; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b61161c30fso37579651cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:26:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757982372; x=1758587172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YrQdLfepk/w2iXAJyjmjvgilXJ/wfbidNvxgQH2F0L0=;
-        b=SG0ywjNIN7gysYJmprsaPaTtQCzEQfuMcE34IbVke7VthT8HdZEy9WeHS/G8q4TwtQ
-         vh7Q03ftti3vXWSvMSjAjhLMfIEpazlCs7V8qNawzOEVj0bU4RaG+jJns9ilHl8ayPT5
-         /cqrZ4yuPBvVMcNL4fsX0CDzmXnns3qWm46WDOVuIVnDyZxQo8LBLFXDc3311iAjXgjU
-         rA3qp43IQ8M9JIOo5HWODafjRK6K+qx23XTCB9KnJB6EWsiuMpHUDJ43+8EZh6O5FoFj
-         SqsHhTI61vocAnhrc/eXHFheWY05xOnIzXGmDcyjIqE3FqZtPPF6+KGVG7t40+z8oh72
-         1ADw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757982372; x=1758587172;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YrQdLfepk/w2iXAJyjmjvgilXJ/wfbidNvxgQH2F0L0=;
-        b=LUDAP06D7Mi4D05fkPSNQiVNq+qgHhTxer8+KbM65BDOKl+LMfAiyF3ClmR1ZYwbwf
-         IkUjudyyA+SUqyNHxvoslSSqsIRn/4Je9Qwusab+1vgt+7kpnhfi3PhgiqH+2s8wKhS1
-         LKZbWIiXsA+uuoJLth9xxp3qjAjXdFvRO2tiwIatDPv6dYGG8lKHPD4jq1NDSlUabZOb
-         AtQimF034k4LT48hKiLvvzvpJwWO9RphV4TYPGL+AMs70hTylxKlD2/Qt0wPk+ZP07SE
-         sfEDT3D4SfZUz83pE4P0sAU2FkF1SAcCnR0gQ6FIg1jqeiBckASLxZPAKgT2abLHgaw2
-         Negg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0jETArHgZNNCdkm5Q4lWSiomzE/XDqCrXOYYMIZe6zAF/8meiAQa73PZVZC9ehUx3j25kcjVwg0Sco9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy53cCByiJ9wvgIpOkUJVyNMudTiLbeV1WfdvnoMITU+ofIBO0j
-	o5CnMV5oS2icf7DcMAsACW021p1uVxUV8XOdjKZggF8VOHKAjXdsgcWd
-X-Gm-Gg: ASbGnct9Ed2SOOnu2tWr0c1KTMaaWNDbl6STtitw7Qo0zklpfdT+WIKnfMO2+fVii9Z
-	p899gi2uthEKjsQhYXPL/BSSXUnxO1XeLV8Y78T9xin1VEczKIR7g06jGaAtgmJrhv12HusxA4x
-	H4UHdh3Jr6J9UusYGTGEkXqmlh0ZbtYIYsojwCrmArJkAj6iMYwcIolHpaCCpVd/J7mivZ1r3J7
-	tm1JI+9EvPMIxMS6OhScL6AcmRrshbdTyzUdlbmDZvcNsinE6fusmKyrf8PjSdxFDTyAlriWgrt
-	cntsJT5z47gxrtfJDlCJ5ZQrAydrs3wu+bCm65g/4mFQawr2H9Njj9sSv411s2fVUhktMX2na6h
-	jA4QeWG2KqVFQqLNrysEBcUc0QAZW6byMmhdFSbZQdMLM9X14usVwFLG1X/vjRy2RbslJCqC+O1
-	n2yQ==
-X-Google-Smtp-Source: AGHT+IGM6iACBTW2X/lbc13C/EWnjDVmZZOUHlBx2dGDH79CKlll69VUqCR4ul8bNoq8qrxRV8T9iQ==
-X-Received: by 2002:ac8:5f13:0:b0:4b0:82d9:7cb5 with SMTP id d75a77b69052e-4b77cff578fmr166033931cf.26.1757982371567;
-        Mon, 15 Sep 2025 17:26:11 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-7890598971bsm17415036d6.25.2025.09.15.17.26.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 17:26:10 -0700 (PDT)
-Date: Mon, 15 Sep 2025 20:26:10 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Richard Gobert <richardbgobert@gmail.com>, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- ecree.xilinx@gmail.com, 
- willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- horms@kernel.org, 
- corbet@lwn.net, 
- saeedm@nvidia.com, 
- tariqt@nvidia.com, 
- mbloch@nvidia.com, 
- leon@kernel.org, 
- dsahern@kernel.org, 
- ncardwell@google.com, 
- kuniyu@google.com, 
- shuah@kernel.org, 
- sdf@fomichev.me, 
- aleksander.lobakin@intel.com, 
- florian.fainelli@broadcom.com, 
- alexander.duyck@gmail.com, 
- linux-kernel@vger.kernel.org, 
- linux-net-drivers@amd.com, 
- Richard Gobert <richardbgobert@gmail.com>
-Message-ID: <willemdebruijn.kernel.1b773a265e8dc@gmail.com>
-In-Reply-To: <20250915113933.3293-4-richardbgobert@gmail.com>
-References: <20250915113933.3293-1-richardbgobert@gmail.com>
- <20250915113933.3293-4-richardbgobert@gmail.com>
-Subject: Re: [PATCH net-next v5 3/5] net: gso: restore ids of outer ip headers
- correctly
+	s=arc-20240116; t=1757982552; c=relaxed/simple;
+	bh=uGPSHlcs+/HsyKkPTQ7SfNiYqC5w9smzuiUGL0taLVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JB5NylP2m5z/LfGmkSpkuq9Uek4hWnG/CxyQbpZ2JeugUnCA6TC8NZalUEBdVIfiDnnbg+LwI62ITI2No+Hzkaq60qNnq7uhuSxUfsGwBrdkMUYKYC4EK/lygxj1dPnbHi7+tQwW+1jYmS9ZAYE4uE8SHHon950b93Hk3yotKks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=VXTHCz8W; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FMWfWo005974;
+	Tue, 16 Sep 2025 00:28:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	pps0720; bh=JeQNhzfrN0EKJc5m3B6rgoGZeoNOz02TDwWp+7qV6n4=; b=VXTH
+	Cz8Wndbr56Z/+TNwqIADM/dW+6vJ9hchmFdGX7n+LBohfMru93AoZ4zEpFgz+7NO
+	zUjqy0N7qwPpFQX/iwiZwAIyuvLg4oU+3hmJrTH3EM3FQBGhjNABNLC4PNg2yuG1
+	KxIKeNQTb6gKhE+cifdUqCDNVkSpOK4oENebK0mphC9ghfUXx2yNMO7sgDXCWUZA
+	C6EKvHCkRImdVUo+wMpNvRdsfr5el7OfAo9SKl+OIFhbpJ65AGIkZ8zouKwCXPh0
+	PQ04gEVtmSDcWFGLNQbQsgO7WUVaRqHSpyDteL+QvTcbt0w9Sqktzza6fwNR5gWf
+	L7yk63l0re0e09FTAg==
+Received: from p1lg14878.it.hpe.com (p1lg14878.it.hpe.com [16.230.97.204])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 4951tv0d87-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 00:28:12 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id D3CC6130D6;
+	Tue, 16 Sep 2025 00:28:08 +0000 (UTC)
+Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 917DA80FDF1;
+	Tue, 16 Sep 2025 00:27:53 +0000 (UTC)
+Date: Mon, 15 Sep 2025 19:27:41 -0500
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: akpm@linux-foundation.org, corbet@lwn.net, david@redhat.com,
+        linmiaohe@huawei.com, shuah@kernel.org, tony.luck@intel.com,
+        jane.chu@oracle.com, jiaqiyan@google.com
+Cc: Liam.Howlett@oracle.com, bp@alien8.de, hannes@cmpxchg.org, jack@suse.cz,
+        joel.granados@kernel.org, kyle.meyer@hpe.com, laoar.shao@gmail.com,
+        lorenzo.stoakes@oracle.com, mclapinski@google.com, mhocko@suse.com,
+        nao.horiguchi@gmail.com, osalvador@suse.de, rafael.j.wysocki@intel.com,
+        rppt@kernel.org, russ.anderson@hpe.com, shawn.fan@intel.com,
+        surenb@google.com, vbabka@suse.cz, linux-acpi@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH v2] mm/memory-failure: Support disabling soft offline for
+ HugeTLB pages
+Message-ID: <aMiu_Uku6Y5ZbuhM@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Authority-Analysis: v=2.4 cv=A4ZsP7WG c=1 sm=1 tr=0 ts=68c8af1c cx=c_pps
+ a=UObrlqRbTUrrdMEdGJ+KZA==:117 a=UObrlqRbTUrrdMEdGJ+KZA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+ a=MvuuwTCpAAAA:8 a=OTHRfgTbXkvfc_ALrMIA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: bHHao-PP1aUuVyGxBvtgR0XoZ4QQJ_X2
+X-Proofpoint-ORIG-GUID: bHHao-PP1aUuVyGxBvtgR0XoZ4QQJ_X2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDA0MCBTYWx0ZWRfX+CKGST4nKMub
+ YRJ2fPK6XENK2tsNJk6ATlsHUqmDBGgBm1qFaniRG5lR0YYS/upvUud9ElAsZ5VRtoaZ+14/I/H
+ TFm5O0CJgZnN6NjzgHoemXIDpqP7nTBmoHOfxVdNHDd82DmQiRKbuJs++/qrENrSSjYGGAfUVIC
+ rq4EUgc6obc8u5hvD+QvxSbDE9IVROn+9TJfYMUain3PO23GbAQ++YoBYmeKIbYQcnmrHVcQOx2
+ fWGVTFtu0HmkAYjcgHYSRx5WLtVS2F1uYKXXeaEhu7WSgu3Cc4n1WzGO1b5pdqgIEj1TKDKqU5C
+ ZcDF6Ldys1UDiCMf45egb293pBycFm0AyqTvRnA8vtOF1IIbn1Q95VluQiDmXtX7OgKq/2klCit
+ TFY065/l
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-15_09,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130040
 
-Richard Gobert wrote:
-> Currently, NETIF_F_TSO_MANGLEID indicates that the inner-most ID can
-> be mangled. Outer IDs can always be mangled.
-> 
-> Make GSO preserve outer IDs by default, with NETIF_F_TSO_MANGLEID allowing
-> both inner and outer IDs to be mangled.
-> 
-> This commit also modifies a few drivers that use SKB_GSO_FIXEDID directly.
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
-> Reviewed-by: Edward Cree <ecree.xilinx@gmail.com> # for sfc
-> ---
->  .../networking/segmentation-offloads.rst      | 22 ++++++++++++-------
->  .../net/ethernet/mellanox/mlx5/core/en_rx.c   |  8 +++++--
->  drivers/net/ethernet/sfc/ef100_tx.c           | 17 ++++++++++----
->  include/linux/netdevice.h                     |  9 ++++++--
->  include/linux/skbuff.h                        |  9 +++++++-
->  net/core/dev.c                                |  5 ++++-
->  net/ipv4/af_inet.c                            | 13 +++++------
->  net/ipv4/tcp_offload.c                        |  5 +----
->  8 files changed, 59 insertions(+), 29 deletions(-)
-> 
-> diff --git a/Documentation/networking/segmentation-offloads.rst b/Documentation/networking/segmentation-offloads.rst
-> index 085e8fab03fd..72f69b22b28c 100644
-> --- a/Documentation/networking/segmentation-offloads.rst
-> +++ b/Documentation/networking/segmentation-offloads.rst
-> @@ -43,10 +43,19 @@ also point to the TCP header of the packet.
->  For IPv4 segmentation we support one of two types in terms of the IP ID.
->  The default behavior is to increment the IP ID with every segment.  If the
->  GSO type SKB_GSO_TCP_FIXEDID is specified then we will not increment the IP
-> -ID and all segments will use the same IP ID.  If a device has
-> -NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when performing TSO
-> -and we will either increment the IP ID for all frames, or leave it at a
-> -static value based on driver preference.
-> +ID and all segments will use the same IP ID.
-> +
-> +For encapsulated packets, SKB_GSO_TCP_FIXEDID refers only to the outer header.
-> +SKB_GSO_TCP_FIXEDID_INNER can be used to specify the same for the inner header.
-> +Any combination of these two GSO types is allowed.
-> +
-> +If a device has NETIF_F_TSO_MANGLEID set then the IP ID can be ignored when
-> +performing TSO and we will either increment the IP ID for all frames, or leave
-> +it at a static value based on driver preference.  For encapsulated packets,
-> +NETIF_F_TSO_MANGLEID is relevant for both outer and inner headers, unless the
-> +DF bit is not set on the outer header, in which case the device driver must
-> +guarantee that the IP ID field is incremented in the outer header with every
-> +segment.
+Soft offlining a HugeTLB page reduces the HugeTLB page pool.
 
-Is this introducing a new device requirement for advertising
-NETIF_F_TSO_MANGLEID that existing devices may not meet?
-  
->  
->  UDP Fragmentation Offload
-> @@ -124,10 +133,7 @@ Generic Receive Offload
->  Generic receive offload is the complement to GSO.  Ideally any frame
->  assembled by GRO should be segmented to create an identical sequence of
->  frames using GSO, and any sequence of frames segmented by GSO should be
-> -able to be reassembled back to the original by GRO.  The only exception to
-> -this is IPv4 ID in the case that the DF bit is set for a given IP header.
-> -If the value of the IPv4 ID is not sequentially incrementing it will be
-> -altered so that it is when a frame assembled via GRO is segmented via GSO.
-> +able to be reassembled back to the original by GRO.
->  
->  
->  Partial Generic Segmentation Offload
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-> index b8c609d91d11..505c4ce7cef8 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-> @@ -1289,8 +1289,12 @@ static void mlx5e_shampo_update_ipv4_tcp_hdr(struct mlx5e_rq *rq, struct iphdr *
->  	tcp->check = ~tcp_v4_check(skb->len - tcp_off, ipv4->saddr,
->  				   ipv4->daddr, 0);
->  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4;
-> -	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id)
-> -		skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_FIXEDID;
-> +	if (ntohs(ipv4->id) == rq->hw_gro_data->second_ip_id) {
-> +		bool encap = rq->hw_gro_data->fk.control.flags & FLOW_DIS_ENCAPSULATION;
-> +
-> +		skb_shinfo(skb)->gso_type |= encap ?
-> +					     SKB_GSO_TCP_FIXEDID_INNER : SKB_GSO_TCP_FIXEDID;
+Commit 56374430c5dfc ("mm/memory-failure: userspace controls soft-offlining pages")
+introduced the following sysctl interface to control soft offline:
 
-I think more common style is
+/proc/sys/vm/enable_soft_offline
 
-    encap ? SKB_GSO_TCP_FIXEDID_INNER :
-            SKB_GSO_TCP_FIXEDID;
+The interface does not distinguish between page types:
 
-(as used in ef100_make_tso_desc below)
+    0 - Soft offline is disabled
+    1 - Soft offline is enabled
 
-> +	}
->  
->  	skb->csum_start = (unsigned char *)tcp - skb->head;
->  	skb->csum_offset = offsetof(struct tcphdr, check);
-> diff --git a/drivers/net/ethernet/sfc/ef100_tx.c b/drivers/net/ethernet/sfc/ef100_tx.c
-> index e6b6be549581..03005757c060 100644
-> --- a/drivers/net/ethernet/sfc/ef100_tx.c
-> +++ b/drivers/net/ethernet/sfc/ef100_tx.c
-> @@ -189,6 +189,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->  {
->  	bool gso_partial = skb_shinfo(skb)->gso_type & SKB_GSO_PARTIAL;
->  	unsigned int len, ip_offset, tcp_offset, payload_segs;
-> +	u32 mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
->  	u32 mangleid = ESE_GZ_TX_DESC_IP4_ID_INC_MOD16;
->  	unsigned int outer_ip_offset, outer_l4_offset;
->  	u16 vlan_tci = skb_vlan_tag_get(skb);
-> @@ -200,8 +201,17 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->  	bool outer_csum;
->  	u32 paylen;
->  
-> -	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
-> -		mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
-> +	if (encap) {
-> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID_INNER)
-> +			mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
-> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
-> +			mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
-> +	} else {
-> +		if (skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID)
-> +			mangleid = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
-> +		mangleid_outer = ESE_GZ_TX_DESC_IP4_ID_NO_OP;
-> +	}
-> +
->  	if (efx->net_dev->features & NETIF_F_HW_VLAN_CTAG_TX)
->  		vlan_enable = skb_vlan_tag_present(skb);
->  
-> @@ -245,8 +255,7 @@ static void ef100_make_tso_desc(struct efx_nic *efx,
->  			      ESF_GZ_TX_TSO_OUTER_L4_OFF_W, outer_l4_offset >> 1,
->  			      ESF_GZ_TX_TSO_ED_OUTER_UDP_LEN, udp_encap && !gso_partial,
->  			      ESF_GZ_TX_TSO_ED_OUTER_IP_LEN, encap && !gso_partial,
-> -			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, encap ? mangleid :
-> -								     ESE_GZ_TX_DESC_IP4_ID_NO_OP,
-> +			      ESF_GZ_TX_TSO_ED_OUTER_IP4_ID, mangleid_outer,
->  			      ESF_GZ_TX_TSO_VLAN_INSERT_EN, vlan_enable,
->  			      ESF_GZ_TX_TSO_VLAN_INSERT_TCI, vlan_tci
->  		);
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index f3a3b761abfb..3d19c888b839 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -5290,13 +5290,18 @@ void skb_warn_bad_offload(const struct sk_buff *skb);
->  
->  static inline bool net_gso_ok(netdev_features_t features, int gso_type)
->  {
-> -	netdev_features_t feature = (netdev_features_t)gso_type << NETIF_F_GSO_SHIFT;
-> +	netdev_features_t feature;
-> +
-> +	if (gso_type & (SKB_GSO_TCP_FIXEDID | SKB_GSO_TCP_FIXEDID_INNER))
-> +		gso_type |= __SKB_GSO_TCP_FIXEDID;
-> +
-> +	feature = ((netdev_features_t)gso_type << NETIF_F_GSO_SHIFT) & NETIF_F_GSO_MASK;
->  
->  	/* check flags correspondence */
->  	BUILD_BUG_ON(SKB_GSO_TCPV4   != (NETIF_F_TSO >> NETIF_F_GSO_SHIFT));
->  	BUILD_BUG_ON(SKB_GSO_DODGY   != (NETIF_F_GSO_ROBUST >> NETIF_F_GSO_SHIFT));
->  	BUILD_BUG_ON(SKB_GSO_TCP_ECN != (NETIF_F_TSO_ECN >> NETIF_F_GSO_SHIFT));
-> -	BUILD_BUG_ON(SKB_GSO_TCP_FIXEDID != (NETIF_F_TSO_MANGLEID >> NETIF_F_GSO_SHIFT));
-> +	BUILD_BUG_ON(__SKB_GSO_TCP_FIXEDID != (NETIF_F_TSO_MANGLEID >> NETIF_F_GSO_SHIFT));
->  	BUILD_BUG_ON(SKB_GSO_TCPV6   != (NETIF_F_TSO6 >> NETIF_F_GSO_SHIFT));
->  	BUILD_BUG_ON(SKB_GSO_FCOE    != (NETIF_F_FSO >> NETIF_F_GSO_SHIFT));
->  	BUILD_BUG_ON(SKB_GSO_GRE     != (NETIF_F_GSO_GRE >> NETIF_F_GSO_SHIFT));
-> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> index ca8be45dd8be..937acb1869a1 100644
-> --- a/include/linux/skbuff.h
-> +++ b/include/linux/skbuff.h
-> @@ -674,7 +674,7 @@ enum {
->  	/* This indicates the tcp segment has CWR set. */
->  	SKB_GSO_TCP_ECN = 1 << 2,
->  
-> -	SKB_GSO_TCP_FIXEDID = 1 << 3,
-> +	__SKB_GSO_TCP_FIXEDID = 1 << 3,
->  
->  	SKB_GSO_TCPV6 = 1 << 4,
->  
-> @@ -707,6 +707,13 @@ enum {
->  	SKB_GSO_FRAGLIST = 1 << 18,
->  
->  	SKB_GSO_TCP_ACCECN = 1 << 19,
-> +
-> +	/* These indirectly map onto the same netdev feature.
-> +	 * If NETIF_F_TSO_MANGLEID is set it may mangle both inner and outer
-> +	 * IDs.
+Convert enable_soft_offline to a bitmask and support disabling soft
+offline for HugeTLB pages:
 
-prefer to keep IDs. on the previous line even if over 80 chars.
+Bits:
 
-> +	 */
-> +	SKB_GSO_TCP_FIXEDID = 1 << 30,
-> +	SKB_GSO_TCP_FIXEDID_INNER = 1 << 31,
->  };
->  
->  #if BITS_PER_LONG > 32
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 93a25d87b86b..17cb399cdc2a 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -3769,7 +3769,10 @@ static netdev_features_t gso_features_check(const struct sk_buff *skb,
->  		features &= ~dev->gso_partial_features;
->  
->  	/* Make sure to clear the IPv4 ID mangling feature if the
-> -	 * IPv4 header has the potential to be fragmented.
-> +	 * IPv4 header has the potential to be fragmented. For
-> +	 * encapsulated packets, the outer headers are guaranteed to
-> +	 * have incrementing IDs if DF is not set so there is no need
-> +	 * to clear the IPv4 ID mangling feature.
+    0 - Enable soft offline
+    1 - Disable soft offline for HugeTLB pages
 
-Why is this true. Or, why is it not also true for non-encapsulated or
-inner headers?
+Supported values:
 
-The same preconditions (incl on DF) are now tested in inet_gro_flush
+    0 - Soft offline is disabled
+    1 - Soft offline is enabled
+    3 - Soft offline is enabled (disabled for HugeTLB pages)
 
->  	 */
->  	if (skb_shinfo(skb)->gso_type & SKB_GSO_TCPV4) {
->  		struct iphdr *iph = skb->encapsulation ?
-> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-> index 76e38092cd8a..fc7a6955fa0a 100644
-> --- a/net/ipv4/af_inet.c
-> +++ b/net/ipv4/af_inet.c
-> @@ -1393,14 +1393,13 @@ struct sk_buff *inet_gso_segment(struct sk_buff *skb,
->  
->  	segs = ERR_PTR(-EPROTONOSUPPORT);
->  
-> -	if (!skb->encapsulation || encap) {
-> -		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
-> -		fixedid = !!(skb_shinfo(skb)->gso_type & SKB_GSO_TCP_FIXEDID);
-> +	/* fixed ID is invalid if DF bit is not set */
-> +	fixedid = !!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCP_FIXEDID << encap));
-> +	if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
-> +		goto out;
->  
-> -		/* fixed ID is invalid if DF bit is not set */
-> -		if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
-> -			goto out;
-> -	}
-> +	if (!skb->encapsulation || encap)
-> +		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
->  
->  	ops = rcu_dereference(inet_offloads[proto]);
->  	if (likely(ops && ops->callbacks.gso_segment)) {
-> diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
-> index 1949eede9ec9..e6612bd84d09 100644
-> --- a/net/ipv4/tcp_offload.c
-> +++ b/net/ipv4/tcp_offload.c
-> @@ -471,7 +471,6 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
->  	const u16 offset = NAPI_GRO_CB(skb)->network_offsets[skb->encapsulation];
->  	const struct iphdr *iph = (struct iphdr *)(skb->data + offset);
->  	struct tcphdr *th = tcp_hdr(skb);
-> -	bool is_fixedid;
->  
->  	if (unlikely(NAPI_GRO_CB(skb)->is_flist)) {
->  		skb_shinfo(skb)->gso_type |= SKB_GSO_FRAGLIST | SKB_GSO_TCPV4;
-> @@ -485,10 +484,8 @@ INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
->  	th->check = ~tcp_v4_check(skb->len - thoff, iph->saddr,
->  				  iph->daddr, 0);
->  
-> -	is_fixedid = (NAPI_GRO_CB(skb)->ip_fixedid >> skb->encapsulation) & 1;
-> -
->  	skb_shinfo(skb)->gso_type |= SKB_GSO_TCPV4 |
-> -			(is_fixedid * SKB_GSO_TCP_FIXEDID);
-> +			(NAPI_GRO_CB(skb)->ip_fixedid * SKB_GSO_TCP_FIXEDID);
+Existing behavior is preserved.
 
-ip_fixedid can now be 0, 1 (outer), 2 (inner) or 3 (inner and outer).
+Update documentation and HugeTLB soft offline self tests.
 
-Not all generate a valid SKB_GSO type.
->  
->  	tcp_gro_complete(skb);
->  	return 0;
-> -- 
-> 2.36.1
-> 
+Reported-by: Shawn Fan <shawn.fan@intel.com>
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+---
 
+Tony's patch:
+* https://lore.kernel.org/all/20250904155720.22149-1-tony.luck@intel.com
+
+v1:
+* https://lore.kernel.org/all/aMGkAI3zKlVsO0S2@hpe.com
+
+v1 -> v2:
+* Make the interface extensible, as suggested by David.
+* Preserve existing behavior, as suggested by Jiaqi and David.
+
+Why clear errno in self tests?
+
+madvise() does not set errno when it's successful and errno is set by madvise()
+during test_soft_offline_common(3) causing test_soft_offline_common(1) to fail:
+
+# Test soft-offline when enabled_soft_offline=1
+# Hugepagesize is 1048576kB
+# enable_soft_offline => 1
+# Before MADV_SOFT_OFFLINE nr_hugepages=7
+# Allocated 0x80000000 bytes of hugetlb pages
+# MADV_SOFT_OFFLINE 0x7fd600000000 ret=0, errno=95
+# MADV_SOFT_OFFLINE should ret 0
+# After MADV_SOFT_OFFLINE nr_hugepages=6
+not ok 2 Test soft-offline when enabled_soft_offline=1
+
+---
+ .../ABI/testing/sysfs-memory-page-offline     |  3 ++
+ Documentation/admin-guide/sysctl/vm.rst       | 28 ++++++++++++++++---
+ mm/memory-failure.c                           | 17 +++++++++--
+ .../selftests/mm/hugetlb-soft-offline.c       | 19 ++++++++++---
+ 4 files changed, 56 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-memory-page-offline b/Documentation/ABI/testing/sysfs-memory-page-offline
+index 00f4e35f916f..d3f05ed6605e 100644
+--- a/Documentation/ABI/testing/sysfs-memory-page-offline
++++ b/Documentation/ABI/testing/sysfs-memory-page-offline
+@@ -20,6 +20,9 @@ Description:
+ 		number, or a error when the offlining failed.  Reading
+ 		the file is not allowed.
+ 
++		Soft-offline can be controlled via sysctl, see:
++		Documentation/admin-guide/sysctl/vm.rst
++
+ What:		/sys/devices/system/memory/hard_offline_page
+ Date:		Sep 2009
+ KernelVersion:	2.6.33
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 4d71211fdad8..ace73480eb9d 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -309,19 +309,39 @@ physical memory) vs performance / capacity implications in transparent and
+ HugeTLB cases.
+ 
+ For all architectures, enable_soft_offline controls whether to soft offline
+-memory pages.  When set to 1, kernel attempts to soft offline the pages
+-whenever it thinks needed.  When set to 0, kernel returns EOPNOTSUPP to
+-the request to soft offline the pages.  Its default value is 1.
++memory pages.
++
++enable_soft_offline is a bitmask:
++
++Bits::
++
++	0 - Enable soft offline
++	1 - Disable soft offline for HugeTLB pages
++
++Supported values::
++
++	0 - Soft offline is disabled
++	1 - Soft offline is enabled
++	3 - Soft offline is enabled (disabled for HugeTLB pages)
++
++The default value is 1.
++
++If soft offline is disabled for the requested page type, EOPNOTSUPP is returned.
+ 
+ It is worth mentioning that after setting enable_soft_offline to 0, the
+ following requests to soft offline pages will not be performed:
+ 
++- Request to soft offline from sysfs (soft_offline_page).
++
+ - Request to soft offline pages from RAS Correctable Errors Collector.
+ 
+-- On ARM, the request to soft offline pages from GHES driver.
++- On ARM and X86, the request to soft offline pages from GHES driver.
+ 
+ - On PARISC, the request to soft offline pages from Page Deallocation Table.
+ 
++Note:
++	Soft offlining a HugeTLB page reduces the HugeTLB page pool.
++
+ extfrag_threshold
+ =================
+ 
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index fc30ca4804bf..0ad9ae11d9e8 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -64,11 +64,14 @@
+ #include "internal.h"
+ #include "ras/ras_event.h"
+ 
++#define SOFT_OFFLINE_ENABLED		BIT(0)
++#define SOFT_OFFLINE_SKIP_HUGETLB	BIT(1)
++
+ static int sysctl_memory_failure_early_kill __read_mostly;
+ 
+ static int sysctl_memory_failure_recovery __read_mostly = 1;
+ 
+-static int sysctl_enable_soft_offline __read_mostly = 1;
++static int sysctl_enable_soft_offline __read_mostly = SOFT_OFFLINE_ENABLED;
+ 
+ atomic_long_t num_poisoned_pages __read_mostly = ATOMIC_LONG_INIT(0);
+ 
+@@ -150,7 +153,7 @@ static const struct ctl_table memory_failure_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_ZERO,
+-		.extra2		= SYSCTL_ONE,
++		.extra2		= SYSCTL_THREE,
+ 	}
+ };
+ 
+@@ -2799,12 +2802,20 @@ int soft_offline_page(unsigned long pfn, int flags)
+ 		return -EIO;
+ 	}
+ 
+-	if (!sysctl_enable_soft_offline) {
++	if (!(sysctl_enable_soft_offline & SOFT_OFFLINE_ENABLED)) {
+ 		pr_info_once("disabled by /proc/sys/vm/enable_soft_offline\n");
+ 		put_ref_page(pfn, flags);
+ 		return -EOPNOTSUPP;
+ 	}
+ 
++	if (sysctl_enable_soft_offline & SOFT_OFFLINE_SKIP_HUGETLB) {
++		if (folio_test_hugetlb(pfn_folio(pfn))) {
++			pr_info_once("disabled for HugeTLB pages by /proc/sys/vm/enable_soft_offline\n");
++			put_ref_page(pfn, flags);
++			return -EOPNOTSUPP;
++		}
++	}
++
+ 	mutex_lock(&mf_mutex);
+ 
+ 	if (PageHWPoison(page)) {
+diff --git a/tools/testing/selftests/mm/hugetlb-soft-offline.c b/tools/testing/selftests/mm/hugetlb-soft-offline.c
+index f086f0e04756..b87c8778cadf 100644
+--- a/tools/testing/selftests/mm/hugetlb-soft-offline.c
++++ b/tools/testing/selftests/mm/hugetlb-soft-offline.c
+@@ -5,6 +5,8 @@
+  *   offlining failed with EOPNOTSUPP.
+  * - if enable_soft_offline = 1, a hugepage should be dissolved and
+  *   nr_hugepages/free_hugepages should be reduced by 1.
++ * - if enable_soft_offline = 3, hugepages should stay intact and soft
++ *   offlining failed with EOPNOTSUPP.
+  *
+  * Before running, make sure more than 2 hugepages of default_hugepagesz
+  * are allocated. For example, if /proc/meminfo/Hugepagesize is 2048kB:
+@@ -32,6 +34,9 @@
+ 
+ #define EPREFIX " !!! "
+ 
++#define SOFT_OFFLINE_ENABLED		(1 << 0)
++#define SOFT_OFFLINE_SKIP_HUGETLB	(1 << 1)
++
+ static int do_soft_offline(int fd, size_t len, int expect_errno)
+ {
+ 	char *filemap = NULL;
+@@ -56,6 +61,7 @@ static int do_soft_offline(int fd, size_t len, int expect_errno)
+ 	ksft_print_msg("Allocated %#lx bytes of hugetlb pages\n", len);
+ 
+ 	hwp_addr = filemap + len / 2;
++	errno = 0;
+ 	ret = madvise(hwp_addr, pagesize, MADV_SOFT_OFFLINE);
+ 	ksft_print_msg("MADV_SOFT_OFFLINE %p ret=%d, errno=%d\n",
+ 		       hwp_addr, ret, errno);
+@@ -83,7 +89,7 @@ static int set_enable_soft_offline(int value)
+ 	char cmd[256] = {0};
+ 	FILE *cmdfile = NULL;
+ 
+-	if (value != 0 && value != 1)
++	if (value < 0 || value > 3)
+ 		return -EINVAL;
+ 
+ 	sprintf(cmd, "echo %d > /proc/sys/vm/enable_soft_offline", value);
+@@ -155,13 +161,17 @@ static int create_hugetlbfs_file(struct statfs *file_stat)
+ static void test_soft_offline_common(int enable_soft_offline)
+ {
+ 	int fd;
+-	int expect_errno = enable_soft_offline ? 0 : EOPNOTSUPP;
++	int expect_errno = 0;
+ 	struct statfs file_stat;
+ 	unsigned long hugepagesize_kb = 0;
+ 	unsigned long nr_hugepages_before = 0;
+ 	unsigned long nr_hugepages_after = 0;
+ 	int ret;
+ 
++	if (!(enable_soft_offline & SOFT_OFFLINE_ENABLED) ||
++	     (enable_soft_offline & SOFT_OFFLINE_SKIP_HUGETLB))
++		expect_errno = EOPNOTSUPP;
++
+ 	ksft_print_msg("Test soft-offline when enabled_soft_offline=%d\n",
+ 		       enable_soft_offline);
+ 
+@@ -198,7 +208,7 @@ static void test_soft_offline_common(int enable_soft_offline)
+ 	// No need for the hugetlbfs file from now on.
+ 	close(fd);
+ 
+-	if (enable_soft_offline) {
++	if (expect_errno == 0) {
+ 		if (nr_hugepages_before != nr_hugepages_after + 1) {
+ 			ksft_test_result_fail("MADV_SOFT_OFFLINE should reduced 1 hugepage\n");
+ 			return;
+@@ -219,8 +229,9 @@ static void test_soft_offline_common(int enable_soft_offline)
+ int main(int argc, char **argv)
+ {
+ 	ksft_print_header();
+-	ksft_set_plan(2);
++	ksft_set_plan(3);
+ 
++	test_soft_offline_common(3);
+ 	test_soft_offline_common(1);
+ 	test_soft_offline_common(0);
+ 
+-- 
+2.51.0
 
 
