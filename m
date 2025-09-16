@@ -1,96 +1,226 @@
-Return-Path: <linux-kernel+bounces-818906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB6BB597E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10487B597EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF844611E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:40:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640AD16783B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8A8315D47;
-	Tue, 16 Sep 2025 13:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C1928488D;
+	Tue, 16 Sep 2025 13:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PBvn7xUk"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxqCfa0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC3E28315A;
-	Tue, 16 Sep 2025 13:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57601FBEB9;
+	Tue, 16 Sep 2025 13:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030025; cv=none; b=On2mU2w6LOiYu8ZB6aLc5Q0zgA4PqYLwJkctAI+2xu58vn8QUEgqt7DS1jbHgiqb2BUd41hYKjunLsL2UPbxt+BBd4/nn7VJVVIglmR1H+rHbYYDCbZD0DXh3E8KuzvGqfpu/gQPdlGplbND5Gz5RrmGa5tQ+S1/D0I74L5pewU=
+	t=1758030081; cv=none; b=gYBcDQ54B2QtxXPK2nIQ3hiNbA/bO/r8ZmVzp5HMTBfTfWRu6uBIHlDx00Tw1Sk7m2smxL/K8OdXREWECTQhgMXekYLhd6H6g1BEh8Cv0LR6qNGg4lNyzRNeUCQzFO7cxMXxLRSQTcls56YeETVkk6IduUou4jik6Bckcettrh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030025; c=relaxed/simple;
-	bh=UhTq+R/AUTW6A3P9mK1PbaeFocy/C4nhfcZgpQRqIzE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uOn+KmSTw7U9jmN3aYK3cyUuZdm22bCkiw73lErt9eTcA/QDXykcVLoLHZR6pmRnMJS4gkfQT1k8wW3xe6z0ereW62Kabn1Tvb2TgWCy6ltn85nZq93B8P1WNuFL2KW/DBWCrGnMasNlTeKTir4Dyb2RMicY/ixrVebvxaIKZ0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PBvn7xUk; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 400A740506
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1758030022; bh=/m0af4HgbIhj1vQuCxwLnH+xOx3/lPu6/JnM8FLaM3o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PBvn7xUkY4P63BNYkyZuH6TtW1A0GGX5fEngTQhahRsYvcnOkAt9z4SpvBEACcwJA
-	 RlCL0iRORyHoU4ydSDg1p/bDjh+G/ZES54pmuxl7whdqy+4dOyeGwb7nuSotKfwUP0
-	 Y8/EoPE5TG7j4boQoKW0Mdc6gLNb8Yjyjs5wy6pQsMlLBsH9lRZcsaNgZm8aGKXwzi
-	 BWY1uwgFidkFOf1jY3X0kxp+aLmB5tW340C1sgFRZaobaQGljsj4Lr2L6hNz4y9Eov
-	 Voz3O/ZTLeQXWEw9fKMiFY+QWBSweT0GcwV3hH5/YOIq/ed5NoSdh7c9ftHtbqNTqz
-	 4xpQVaS7a9qZg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 400A740506;
-	Tue, 16 Sep 2025 13:40:22 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Hugo Osvaldo Barrera <hugo@whynothugo.nl>, Bagas Sanjaya
- <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux EFI <linux-efi@vger.kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
-In-Reply-To: <b629ff7e-a223-467f-8e32-78f825bd31ac@app.fastmail.com>
-References: <20250916073244.590483-1-bagasdotme@gmail.com>
- <b629ff7e-a223-467f-8e32-78f825bd31ac@app.fastmail.com>
-Date: Tue, 16 Sep 2025 07:40:21 -0600
-Message-ID: <87zfaufrcq.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1758030081; c=relaxed/simple;
+	bh=aiyMzqzBWGGU8cyeVwz3oJkAAY95LgOEzy5eDZj2Buk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMj02cx38w36ivNFVz8oW0KljB4feBp1JtSMgM5H7MlcJ7SgSyonlALo0q01cLBRfMy+5Pz6Yb/p7l+nbz+Taw8bGSqA8pmc5TY6K2uwK08Y7nDGYpD+JsZAD0qCE054sb59gqh2hJ/gR7VgxwIxwRindid3W5sgXm6d7i3E+6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxqCfa0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F30D2C4CEEB;
+	Tue, 16 Sep 2025 13:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758030079;
+	bh=aiyMzqzBWGGU8cyeVwz3oJkAAY95LgOEzy5eDZj2Buk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nxqCfa0r1lPsZkdFXdXts6x/iqTRy8eixiE+k2tCa3dPTHo8JfUO66FQTYzB7gmRw
+	 AvxpqSXe5G21dPcn7ujemAev2r79F8c/9cWuFQNgi+ULzFU+FeWP/aNYuiiOjzqRYV
+	 xjBOZQzDLYUJ4470xyIZn6dOk+4qHvVnp/X6EBJsJMIreJ/mpWqEKJx1711NjE+3oD
+	 1m5dmtHzEXB8hkA6mKC1Px4REbM82wRBtWQ0uJxBoKDO2sQ4WW+A5SKo4bzSBFrg+G
+	 w4RGXUgB/vjSr/Wn+wJGhzN804SpzN9cz/5vIjFygCtcDTs2duRSEYiUhTbrpKLbB0
+	 jm+7LkNeOxLBw==
+Date: Tue, 16 Sep 2025 15:41:16 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, "John B. Wyatt IV" <jwyatt@redhat.com>,
+	"John B. Wyatt IV" <sageofredondo@gmail.com>
+Subject: Re: [PATCH v12 9/9] timers: Exclude isolated cpus from timer
+ migration
+Message-ID: <aMlo_K8koZ6HH2kh@localhost.localdomain>
+References: <20250915145920.140180-11-gmonaco@redhat.com>
+ <20250915145920.140180-20-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250915145920.140180-20-gmonaco@redhat.com>
 
-"Hugo Osvaldo Barrera" <hugo@whynothugo.nl> writes:
+Le Mon, Sep 15, 2025 at 04:59:30PM +0200, Gabriele Monaco a écrit :
+> Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
+> Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
 
->> +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed 
->> as a
->> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
->> +implementation details.
->
-> I must insist that it's a terrible idea to replace an actual link with the
-> name of the source file.
->
-> This might be (marginally) more convenient for somebody who's editing the
-> documentation, but it becomes completely useless for somebody who's READING
-> the documentation. Documentation needs to target readers.
->
-> For someone reading https://www.kernel.org/doc/html/latest/arch/x86/boot.html,
-> the above filename conveys no useful information.
+Two people, one tester? :-)
 
-When the documentation is rendered into HTML, that file reference will
-be turned into a link automatically, and people reading it on kernel.org
-will not notice the difference.
+> +/**
+> + * tmigr_isolated_exclude_cpumask - Exclude given CPUs from hierarchy
+> + * @exclude_cpumask: the cpumask to be excluded from timer migration hierarchy
+> + *
+> + * This function can be called from cpuset code to provide the new set of
+> + * isolated CPUs that should be excluded from the hierarchy.
+> + * Online CPUs not present in exclude_cpumask but already excluded are brought
+> + * back to the hierarchy.
+> + * Functions to isolate/unisolate need to be called locally and can sleep.
+> + */
+> +int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
+> +{
+> +	struct work_struct __percpu *works __free(free_percpu) =
+> +		alloc_percpu(struct work_struct);
+> +	cpumask_var_t cpumask_unisol __free(free_cpumask_var) = CPUMASK_NULL;
+> +	cpumask_var_t cpumask_isol __free(free_cpumask_var) = CPUMASK_NULL;
+> +	int cpu;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	if (!alloc_cpumask_var(&cpumask_isol, GFP_KERNEL))
+> +		return -ENOMEM;
+> +	if (!alloc_cpumask_var(&cpumask_unisol, GFP_KERNEL))
+> +		return -ENOMEM;
+> +	if (!works)
+> +		return -ENOMEM;
+> +
+> +	cpumask_andnot(cpumask_unisol, cpu_online_mask, exclude_cpumask);
+> +	cpumask_andnot(cpumask_unisol, cpumask_unisol, tmigr_available_cpumask);
+> +	/* Set up the mask earlier to avoid races with the migrator CPU */
+> +	cpumask_or(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_unisol);
+> +	for_each_cpu(cpu, cpumask_unisol) {
+> +		struct work_struct *work = per_cpu_ptr(works, cpu);
+> +
+> +		INIT_WORK(work, tmigr_cpu_unisolate);
+> +		schedule_work_on(cpu, work);
+> +	}
+> +
+> +	cpumask_and(cpumask_isol, exclude_cpumask, tmigr_available_cpumask);
+> +	cpumask_and(cpumask_isol, cpumask_isol, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE));
+> +	/*
+> +	 * Handle this here and not in the cpuset code because exclude_cpumask
+> +	 * might include also the tick CPU if included in isolcpus.
+> +	 */
+> +	for_each_cpu(cpu, cpumask_isol) {
+> +		if (!tick_nohz_cpu_hotpluggable(cpu)) {
+> +			cpumask_clear_cpu(cpu, cpumask_isol);
+> +			break;
+> +		}
+> +	}
+> +	/* Set up the mask earlier to avoid races with the migrator CPU */
+> +	cpumask_andnot(tmigr_available_cpumask, tmigr_available_cpumask, cpumask_isol);
+> +	for_each_cpu(cpu, cpumask_isol) {
+> +		struct work_struct *work = per_cpu_ptr(works, cpu);
+> +
+> +		INIT_WORK(work, tmigr_cpu_isolate);
+> +		schedule_work_on(cpu, work);
+> +	}
 
-Thanks,
+This is racy at various levels:
 
-jon
+* The tmigr_available_cpumask clear can race with the cpumask_set_cpu() in
+  tmigr_cpu_unisolate(), risking overwrites when CPUs are on the same bitmap
+  chunk (bitmap operations aren't atomic).
+
+* tmigr_cpu_isolate() and tmigr_cpu_unisolate() can now run concurrently and
+  then cpumask_set_cpu() can race with cpumask_clear_cpu() on
+  tmigr_available_cpumask, risking overwrites, though the real problem is
+  on the precedent point.
+  
+* tmigr_cpu_isolate() can race with tmigr_cpu_isolate() on other CPUs so
+  the calls to cpumask_clear_cpu() can race. That's fine because
+  tmigr_available_cpumask is already set to those CPUs but that still
+  leaves un uncomfortable taste. That would leave an excuse for KSCAN to warn
+  for example.
+
+* Similar with tmigr_cpu_unisolate() racing together.
+
+So, something like that should be added?
+
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 08e29fc01479..6615e56c8b0d 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -1473,7 +1473,6 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
+ 	int migrator;
+ 	u64 firstexp;
+ 
+-	cpumask_clear_cpu(cpu, tmigr_available_cpumask);
+ 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
+ 		if (!tmc->available)
+ 			return 0;
+@@ -1489,11 +1488,11 @@ static int tmigr_clear_cpu_available(unsigned int cpu)
+ 	}
+ 
+ 	if (firstexp != KTIME_MAX) {
+-		migrator = cpumask_any(tmigr_available_cpumask);
++		migrator = cpumask_any_but(tmigr_available_cpumask, cpu);
+ 		work_on_cpu(migrator, tmigr_trigger_active, NULL);
+ 	}
+ 
+-	return 0;
++	return 1;
+ }
+ 
+ static int tmigr_set_cpu_available(unsigned int cpu)
+@@ -1506,7 +1505,7 @@ static int tmigr_set_cpu_available(unsigned int cpu)
+ 
+ 	if (tmigr_is_isolated(cpu))
+ 		return 0;
+-	cpumask_set_cpu(cpu, tmigr_available_cpumask);
++
+ 	scoped_guard(raw_spinlock_irq, &tmc->lock) {
+ 		if (tmc->available)
+ 			return 0;
+@@ -1516,7 +1515,19 @@ static int tmigr_set_cpu_available(unsigned int cpu)
+ 			__tmigr_cpu_activate(tmc);
+ 		tmc->available = true;
+ 	}
+-	return 0;
++	return 1;
++}
++
++static int tmigr_online_cpu(unsigned int cpu)
++{
++	if (tmigr_set_cpu_available(cpu) > 0)
++		cpumask_set_cpu(cpu, tmigr_available_cpumask);
++}
++
++static int tmigr_offline_cpu(unsigned int cpu)
++{
++	if (tmigr_clear_cpu_available(cpu) > 0)
++		cpumask_clear_cpu(cpu, tmigr_available_cpumask);
+ }
+ 
+ static void tmigr_cpu_isolate(struct work_struct *ignored)
+@@ -1601,8 +1612,7 @@ int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
+ static int __init tmigr_late_init(void)
+ {
+ 	return cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
+-				 tmigr_set_cpu_available,
+-				 tmigr_clear_cpu_available);
++				 tmigr_online_cpu, tmigr_offline_cpu);
+ }
+ 
+ static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
