@@ -1,291 +1,147 @@
-Return-Path: <linux-kernel+bounces-819419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2358B5A06F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:22:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF404B5A072
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AE41BC07A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FAB22A0BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D977296BC5;
-	Tue, 16 Sep 2025 18:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D615B2C11E9;
+	Tue, 16 Sep 2025 18:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Q0ir9bX+"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BHZOcV+c"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0D7219E8D;
-	Tue, 16 Sep 2025 18:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758046953; cv=pass; b=ef78bqpQ3WfHMVBE75mVRsnSjYbMLttP3IDE/bLiyBFzbZoJP4odp263rwu/LvF3YzENG46L9iEkTVJyZWPpjxGsLpZ67IRlzbAmHWh+5FkWoGB/tGhf9XgV9LNNGZSUQKdp2XW8fosX1lEle/asV+R93Xfpbfls/RFs4cAzl9E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758046953; c=relaxed/simple;
-	bh=ck1stxpUEghTVhCWuaD2ALNlnwlHoBDPnSHhS7rTAlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YARyDLKwY2BsnJDrWIdJuiLfhd7ANHZZRqA7giZIb5GUJrb29V8ugY/5WNBRJnfPxcVS4F0i42Y0fW9trA6lcMQjgE4EOHGI2pReNbTb5s8UN9JFatuRE4Jnbjin5xHNZ4QLM2smCmnTvsLgrfoI2q8NaI24getZ8SwxjXUWdSk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Q0ir9bX+; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758046935; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Fgmxy5E0ctPoUJ0TQE/08pxAMYnLVrXTw7LKxUKJ7ojdELpTU/z0co0en1NIgJMULH0Qw8h4+2nfgH+mh1rqrSq36gagG4+AdpOqQTMJ9hDycHUBlJ4ZrR0lyJLa15CfifY3awyHaX+S4wDUq01TUjrZQdyezZvFa1UpQ31Wbck=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758046935; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7Zdii59csrnw3oi5ffFxtLKvVki1YW4SPTo2ODMbysE=; 
-	b=MRoCBPim5HmBrnxux4dCjIGrmDWO0r2yFkYacDKteYAxdciY1fbUDoYZO87RfCUQ2yn6luHHNjJwHUJOt2QgROpdQ4nfBhxHXLPOOXVl2VHy+6eBReLjLj+fWoOtgUrpY1SuhMis9KnaaiyNYB5t4ckVg6FR/PQq4Cfx7qW3FUc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758046935;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=7Zdii59csrnw3oi5ffFxtLKvVki1YW4SPTo2ODMbysE=;
-	b=Q0ir9bX+SO+wQd5fWvphLUM732R6TjiMCLpEUNOyMS/1kQlZjFSatb8BT8slE0Kz
-	01M1ZMVj49hErooVHSeLf5L+tAx6y4VDGhdfsdhXFGQ5ujUXCkb1CmhmFaAJnKhHOnM
-	GVYzkxm1MBsf+v41brHLs+TAg6psMB5ZFajS84cA=
-Received: by mx.zohomail.com with SMTPS id 1758046932947661.3912322672463;
-	Tue, 16 Sep 2025 11:22:12 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id C8C84180733; Tue, 16 Sep 2025 20:22:02 +0200 (CEST)
-Date: Tue, 16 Sep 2025 20:22:02 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/2] driver: reset: th1520-aon: add driver for
- poweroff/reboot via AON FW
-Message-ID: <i6slr5csro54ys5g7diqyacq4deidwm6f2nhpm2uwmgjlu6tyn@otrbpij4vdya>
-References: <20250818074906.2907277-1-uwu@icenowy.me>
- <20250818074906.2907277-2-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDECC286419
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758047000; cv=none; b=VtXV2TrKnTz2ruyuWwf0MKt6Lx3xBclSzitTit6puGB4jkPZ4CEIDgw57roiVEmSS3ccJgHSoOvN+l6eqi0N3/+WloZpIAIQ+2z9rkgNhe6QExq9IvXa8IBJPykJZPAyBqdHBlv0WzSGWn/VNM9Wgi2g1WnraJzh4/HnFw2HhJk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758047000; c=relaxed/simple;
+	bh=MWP0yXO5hqblKAsf86sVb92EBQ6Tee6NsUCw9nEvo9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VxruMw3YRGiUdwv/NUkJxR6FCOXDwkEF6iUVmj8ehv9LnXbmshd31MOUDsYC2+lHC5174oBzutbcsl2yhlNYhXKI8Akzawmu9XkdG7UlBxkG6lBaLukdU5QLECVXXivdSqHSa9uPWWCkxCzFN4YScwbyhEEFpqgVncP1aP8G1VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BHZOcV+c; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2637b6e9149so26395ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758046997; x=1758651797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxUZE7TC0xZyMAyFa+6mdSBsb32RFob5X99goi87Xdw=;
+        b=BHZOcV+c6MvOfCF65mjwe2IECKvFxVl2aV2YgpzUCnkCAPcYhJJVMweggAcfmmLOIe
+         2RV9aX5ubl/xGN/A9Lkl5iHYRnNCxLahMeFB20QpHZ9A2tT5gcx7soK4U/UpdeuVma3J
+         i7n2UtmYDVwc1SaptmDPUfClDnslr+ozNmj5dYzjpjQezKEsa78W3yEy7ZoHBtB5t6LC
+         mGTdm6imIgfYUrVjpyDpmmZPjgaLHYwlkTGoOq3oyYSpDSrPFi7DGlmKfh1sENmglEgC
+         VTzOtoHzZYMDNNZSWa5FLUzvl8D2OI+o2UaZmkoxNav7lwfybTzYQRQCeac5o7ljViKc
+         5rXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758046997; x=1758651797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxUZE7TC0xZyMAyFa+6mdSBsb32RFob5X99goi87Xdw=;
+        b=I0Rn3f0OgGCM92U92LJIBp5AsFM86ZtumgqqUmimB9u4fkP88bwzNknY02c6c30RDi
+         8aWxXkzXfnxwUfeeN4ex+1+G3oEmUNfkCGt1pshOArPKWw6JLfn6Zn814yL5zRTf9T2c
+         CVcgfWo7w/HE9MIMH1WjiJHiEAQSAsoiU0l2tsw8wlyXwBXrWPnPlQPPFVLiitKCqZpH
+         9rhHaR8JNwdczeh0fS7+SCWeexqr9C8vvlSMy0cwsYdnesIpjGkS+9ZiDh0q/q2BgRFz
+         H1lzFqWLMQ0yjLo4qCNcBmoD0qoxZ5lyK/d7K+koMZK3ImdD0O0q7CPtiE25NX2pCpGO
+         P6BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlxOQ9cyhDK26taT4wv1MIiuFg8ntId2IyvA0+dbuJ7l4t/o/RFkcu+2YivR0S0VypA/yZ6h8hj6m1bv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMsWEzYeOU3q2zKFa/bz6Lekk6E6NMCveVUIMx1NwmBEQPCfTV
+	/XcwOk2+e3gcB5kFVfXMNYy3Hw7UwobusaGUJFiJYERk/6w5UHlrKkpibQU3PKRh5fk8MFP84Jf
+	IXJfSlXX2D2vW3504pKVnnKhiONInaHf9G6lupnxS
+X-Gm-Gg: ASbGncvZ3rdGD1XTCyayG6gAsQODmggIdJmX41HWeDlDGIwHLGJtxR0Gqq60fK32QfA
+	GwiffrAKIY5ADEw0fbPVmj7L7TJDIBdSXzIDALgHXUvAl/dlB7h9HVWU7Ij62/PtF9XpP0QaZVm
+	O3xI0azWSPqpWRugbbuorZZAsCTzvzSz9lhxvrMzd7NEqywt0nT/4UWivbYmunm3Yvffn3dZwTX
+	e7t90ymqJg65RxL7qv5FJfmhULNh9JRxGgu7QHHmCcBaiEpvy8jwmg=
+X-Google-Smtp-Source: AGHT+IFeMeqAy+cuIfy8BDPUr07CVnLWSx0isY1COTxmQUhbfeHhUc/gJKs+z9vTXpQo6NDvDMpWAnnnlJDkjgySN7E=
+X-Received: by 2002:a17:902:d2c9:b0:266:b8a2:f605 with SMTP id
+ d9443c01a7336-2680120ed16mr333025ad.3.1758046996934; Tue, 16 Sep 2025
+ 11:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="32snbj5fo7anp2ks"
-Content-Disposition: inline
-In-Reply-To: <20250818074906.2907277-2-uwu@icenowy.me>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.4.7
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <i6slr5csro54ys5g7diqyacq4deidwm6f2nhpm2uwmgjlu6tyn@otrbpij4vdya>+zmo_0_sebastian.reichel@collabora.com
-
-
---32snbj5fo7anp2ks
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915163838.631445-8-kaleshsingh@google.com> <20250915194158.472edea5@gandalf.local.home>
+ <CAC_TJvconNNKPboAbsfXFBboiRCYgE2AN23ask1gdaj9=wuHAQ@mail.gmail.com>
+ <20250916115220.4a90c745@batman.local.home> <CAC_TJvdkVPcw+aKEjUOmTjwYfe8BevR51X_JPOo69hWSQ1MGcw@mail.gmail.com>
+ <20250916134833.281e7f8b@gandalf.local.home> <CAC_TJvc6aqjBRZ05wyGb49AU+-aKpSph=ZSk3fdV2xraXi-_nQ@mail.gmail.com>
+ <20250916140245.5894a2aa@gandalf.local.home>
+In-Reply-To: <20250916140245.5894a2aa@gandalf.local.home>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Tue, 16 Sep 2025 11:23:03 -0700
+X-Gm-Features: AS18NWDeydKXZzxWqGElteJppqO6QozHlpb4s_Ylp5BcEhKGMmDvVoyYUojBOGg
+Message-ID: <CAC_TJvfAQDiL9PydWnKE6TDMcCzw0xrsLMZVZLe6eO0R1LODhA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded trace event
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
+	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
+	kernel-team@android.com, android-mm@google.com, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] driver: reset: th1520-aon: add driver for
- poweroff/reboot via AON FW
-MIME-Version: 1.0
 
-Hi,
+On Tue, Sep 16, 2025 at 11:01=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+>
+> On Tue, 16 Sep 2025 10:57:43 -0700
+> Kalesh Singh <kaleshsingh@google.com> wrote:
+>
+> > > BTW, why the hash of the mm pointer and not the pointer itself? We sa=
+ve
+> > > pointers in lots of places, and if it is the pointer, you could use a=
+n
+> > > eprobe to attache to the trace event to dereference its fields.
+> >
+> > In Android we try to avoid exposing raw kernel pointers to userspace
+> > for security reasons: raising /proc/sys/kernel/kptr_restrict to 2
+> > immediately after symbols are resolved for necessary telemetry tooling
+> > during early boot. I believe this is also why rss_stat uses the hash
+> > and not the raw pointer.
+>
+> When it comes to tracing, you already lost. If it goes into the ring buff=
+er
+> it's a raw pointer. BPF doesn't use the output of the trace event, so you
+> are exposing nothing from that. It uses the proto directly.
 
-On Mon, Aug 18, 2025 at 03:49:05PM +0800, Icenowy Zheng wrote:
-> This driver implements poweroff/reboot support for T-Head TH1520 SoCs
-> running the AON firmware by sending a message to the AON firmware's WDG
-> part.
->=20
-> This is a auxiliary device driver, and expects the AON channel to be
-> passed via the platform_data of the auxiliary device.
->=20
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-> ---
+My understanding is that the BPF tracepoint type uses the trace event
+fields from TP_STRUCT__entry(); whereas the raw tracepoint type has
+access to the proto arguments. Please CMIW: Isn't what we'd be adding
+to the trace buffer is the hashed mm_id value?
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+>
+> Heck, if you enable function tracing, you are exposing every function
+> address it traces via the raw data output.
 
-Greetings,
+Right, security doesn't allow compiling CONFIG_FUNCTION_TRACER  in
+Android production kernels.
 
--- Sebastian
+Thanks,
+Kalesh
 
->  MAINTAINERS                             |  1 +
->  drivers/power/reset/Kconfig             |  7 ++
->  drivers/power/reset/Makefile            |  1 +
->  drivers/power/reset/th1520-aon-reboot.c | 98 +++++++++++++++++++++++++
->  4 files changed, 107 insertions(+)
->  create mode 100644 drivers/power/reset/th1520-aon-reboot.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index daf520a13bdf6..e138a1e96ceea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21730,6 +21730,7 @@ F:	drivers/mailbox/mailbox-th1520.c
->  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
->  F:	drivers/pinctrl/pinctrl-th1520.c
->  F:	drivers/pmdomain/thead/
-> +F:	drivers/power/reset/th1520-aon-reboot.c
->  F:	drivers/power/sequencing/pwrseq-thead-gpu.c
->  F:	drivers/reset/reset-th1520.c
->  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index 77ea3129c7080..8248895ca9038 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -225,6 +225,13 @@ config POWER_RESET_ST
->  	help
->  	  Reset support for STMicroelectronics boards.
-> =20
-> +config POWER_RESET_TH1520_AON
-> +	tristate "T-Head TH1520 AON firmware poweroff and reset driver"
-> +	depends on TH1520_PM_DOMAINS
-> +	help
-> +	  This driver supports power-off and reset operations for T-Head
-> +	  TH1520 SoCs running the AON firmware.
-> +
->  config POWER_RESET_TORADEX_EC
->  	tristate "Toradex Embedded Controller power-off and reset driver"
->  	depends on ARCH_MXC || COMPILE_TEST
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index b7c2b5940be99..51da87e05ce76 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -25,6 +25,7 @@ obj-$(CONFIG_POWER_RESET_QNAP) +=3D qnap-poweroff.o
->  obj-$(CONFIG_POWER_RESET_REGULATOR) +=3D regulator-poweroff.o
->  obj-$(CONFIG_POWER_RESET_RESTART) +=3D restart-poweroff.o
->  obj-$(CONFIG_POWER_RESET_ST) +=3D st-poweroff.o
-> +obj-$(CONFIG_POWER_RESET_TH1520_AON) +=3D th1520-aon-reboot.o
->  obj-$(CONFIG_POWER_RESET_TORADEX_EC) +=3D tdx-ec-poweroff.o
->  obj-$(CONFIG_POWER_RESET_TPS65086) +=3D tps65086-restart.o
->  obj-$(CONFIG_POWER_RESET_VERSATILE) +=3D arm-versatile-reboot.o
-> diff --git a/drivers/power/reset/th1520-aon-reboot.c b/drivers/power/rese=
-t/th1520-aon-reboot.c
-> new file mode 100644
-> index 0000000000000..8256c1703ebe8
-> --- /dev/null
-> +++ b/drivers/power/reset/th1520-aon-reboot.c
-> @@ -0,0 +1,98 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * T-HEAD TH1520 AON Firmware Reboot Driver
-> + *
-> + * Copyright (c) 2025 Icenowy Zheng <uwu@icenowy.me>
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/firmware/thead/thead,th1520-aon.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of.h>
-> +#include <linux/reboot.h>
-> +#include <linux/slab.h>
-> +
-> +#define TH1520_AON_REBOOT_PRIORITY 200
-> +
-> +struct th1520_aon_msg_empty_body {
-> +	struct th1520_aon_rpc_msg_hdr hdr;
-> +	u16 reserved[12];
-> +} __packed __aligned(1);
-> +
-> +static int th1520_aon_pwroff_handler(struct sys_off_data *data)
-> +{
-> +	struct th1520_aon_chan *aon_chan =3D data->cb_data;
-> +	struct th1520_aon_msg_empty_body msg =3D {};
-> +
-> +	msg.hdr.svc =3D TH1520_AON_RPC_SVC_WDG;
-> +	msg.hdr.func =3D TH1520_AON_WDG_FUNC_POWER_OFF;
-> +	msg.hdr.size =3D TH1520_AON_RPC_MSG_NUM;
-> +
-> +	th1520_aon_call_rpc(aon_chan, &msg);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int th1520_aon_restart_handler(struct sys_off_data *data)
-> +{
-> +	struct th1520_aon_chan *aon_chan =3D data->cb_data;
-> +	struct th1520_aon_msg_empty_body msg =3D {};
-> +
-> +	msg.hdr.svc =3D TH1520_AON_RPC_SVC_WDG;
-> +	msg.hdr.func =3D TH1520_AON_WDG_FUNC_RESTART;
-> +	msg.hdr.size =3D TH1520_AON_RPC_MSG_NUM;
-> +
-> +	th1520_aon_call_rpc(aon_chan, &msg);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int th1520_aon_reboot_probe(struct auxiliary_device *adev,
-> +				  const struct auxiliary_device_id *id)
-> +{
-> +	struct device *dev =3D &adev->dev;
-> +	int ret;
-> +
-> +	/* Expect struct th1520_aon_chan to be passed via platform_data */
-> +	ret =3D devm_register_sys_off_handler(dev, SYS_OFF_MODE_POWER_OFF,
-> +					    TH1520_AON_REBOOT_PRIORITY,
-> +					    th1520_aon_pwroff_handler,
-> +					    adev->dev.platform_data);
-> +
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register power off handler\n");
-> +		return ret;
-> +	}
-> +
-> +	ret =3D devm_register_sys_off_handler(dev, SYS_OFF_MODE_RESTART,
-> +					    TH1520_AON_REBOOT_PRIORITY,
-> +					    th1520_aon_restart_handler,
-> +					    adev->dev.platform_data);
-> +
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register restart handler\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct auxiliary_device_id th1520_aon_reboot_id_table[] =3D=
- {
-> +	{ .name =3D "th1520_pm_domains.reboot" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, th1520_aon_reboot_id_table);
-> +
-> +static struct auxiliary_driver th1520_aon_reboot_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "th1520-aon-reboot",
-> +	},
-> +	.probe =3D th1520_aon_reboot_probe,
-> +	.id_table =3D th1520_aon_reboot_id_table,
-> +};
-> +module_auxiliary_driver(th1520_aon_reboot_driver);
-> +
-> +MODULE_AUTHOR("Icenowy Zheng <uwu@icenowy.me>");
-> +MODULE_DESCRIPTION("T-HEAD TH1520 AON-firmware-based reboot driver");
-> +MODULE_LICENSE("GPL");
-> --=20
-> 2.50.1
->=20
-
---32snbj5fo7anp2ks
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjJqsoACgkQ2O7X88g7
-+ppT6hAAmwlFj8ocXSPVhmF7KbvyppRfxrJm4WmWJLMx2P38T0TScYKRRFbSOHiA
-05BMM39pP5UmminoYfIuF7dQCNzUi3s3Z3kXKZcsgRtxEnZDbAK4UnMk+Z4WslQN
-hBKG40WyAYXm63LLSl/errms4DalJlXy+0vTxMy5ygAB7rP8/NL7nCDrZ4FYnJt6
-SXrzGxItZoSHJbXNiCaxKdqUvyhIWpvteh6F6qC9scl4BAUwHR0owXTqqQyoeA6w
-Ikl4sD2KOFRfvfuTS+JooinIS+IPhp57ycLb3CuH5x/OhYxw2C9OCdXUKfwHMof9
-TQDya+VNdWaRf5mX7gGd2mwbHHCBxM7/PuC25z3yAWDcCcTu+vpMcujNP6IxZXxN
-BNVoxDMDYpHPPAYrBaCTur5KIokrIiOX6zQeb/UvEC3JAgUKB0Paz3X89lqI4TXH
-/0Wx3EJM5j0Pduz0QKOr/IqmvlCU/KL3p61pYxd3NhyC4/htEPq660YoaPIhnJ4E
-kSiKX6HMjITUc0OjpNexVZgcAqJGH7/52xH7rMolR2r1/pQfjcnnusIOG7MYw8NA
-oXfxgVw9R7GqJujwWWg6q7/zk9IofFKPoHcgw2WH1beAC8GCRBAIwul/kHlQ/p7q
-L3l6uTBHnN+1wzgfJL9jlYHSeYJ3CDcAd66geMHYqKGEOE5Lua8=
-=T58L
------END PGP SIGNATURE-----
-
---32snbj5fo7anp2ks--
+>
+> -- Steve
 
