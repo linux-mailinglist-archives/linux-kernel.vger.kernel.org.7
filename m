@@ -1,110 +1,121 @@
-Return-Path: <linux-kernel+bounces-818049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DA6B58C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:58:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6B5B58C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:58:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBAA1BC4221
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2AD520168
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394E4242D9A;
-	Tue, 16 Sep 2025 02:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB9725D216;
+	Tue, 16 Sep 2025 02:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M145WT4S"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxEVaw8b"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F10486353
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0674B23ABA1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757991512; cv=none; b=GKqRyoEOk3FqOEIcGX9eloigO4nUKrEaOa0Tfg/v2OlP3KB/KzryBo9kfAv942mYWuvbI88wJR3lCE9nd+jc2IzlRplt4QP5uVYs3qlRYi1dvfe8LnE+aVC/RATQsvtnmoYStmd1ZjdEqWEfV2+Cdbz6DlBhi0wtxu4H8q0D3rs=
+	t=1757991520; cv=none; b=uSEzGjUphTALvG9WIzUP5VBL32zTFXggSkftQ1LpttVAyA01f2SYOiB38KLRJlJwqdnKR9OJlTIqHiKExfCkrGVgbl+fwC0CCSXRFuS98m+KWvHUu+XbgTDQGq5rQZ9YF4zoNrRP0Q/bwZlxDeYspP5Z9GGY8/nzqo5xeALbEXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757991512; c=relaxed/simple;
-	bh=0WNzQt6DCc1oCSopHUcGNsX0og3Qo+mNU8x/1pWS9J8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DbmqCs5slVL5XuYJag3qBW9rOsbhzJCjaJN4Lf9ac8wdeRRINIZA2uS23JskUpvFbeSXRWIGYhT2iUuE4fRvw0JaRfYRvvUtZ42gB7GhW+Z0aWGFm/+1yHBXQ7HepO8VLwpbeo9h0om1uJt82uSdR+YKL0wJCW5wDH58Vi3kDKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M145WT4S; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1757991520; c=relaxed/simple;
+	bh=7XO66tFZ7sDtnbhU8FMTHuC7bAcZAOuj24LDeP0n+JU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJYH1nSh/8UK2V3tlO+dSaHRPVRO28Aq3U2N6kqt06MwPSQrVzDQNShBkTNxzg9DIciWIwxMt3Zc++4gXHP0mTXMKZxo5aUclD+jp42kyxVEgj1BCqgcl+0jBOK4FbEPyx5PHn4E0Y5bN0QJyxISnIW//uFm0YkSllxWZRqncd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxEVaw8b; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6051afbfso36419147b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:58:30 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24cde6c65d1so42687945ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:58:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757991510; x=1758596310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0WNzQt6DCc1oCSopHUcGNsX0og3Qo+mNU8x/1pWS9J8=;
-        b=M145WT4Ss1/MVQpODuXyGL91Z4sDRfDXG2y17ZS4Nbp3xb3TfZlQZ7rDnUykYpKF5L
-         iaSeF3CaoRjRbg+eHPDEB0W2sFRW4oifb1ZfQ6zlnndwhd4Q6Khnfw99SIGMGX2ReYNu
-         okUOHiG/f474zdp6NgauRr56mY5PQXzmRGIsJtYNKPUJibH+uSIFNxLGgna08wx6Sp10
-         gvG4q+NLtj2jligTfx1KxGLIZDoCPZS7lKiDdXB4S9U5Qi9Tj5KljnEf2h3Rx128tgHD
-         222jY22ZpIUovH4MLFp3j48HB0laWzhs57bPzVtrQXaNMYY2E0/FgLtDKoxsP+RpIssD
-         ibKw==
+        d=gmail.com; s=20230601; t=1757991518; x=1758596318; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQgTdWvdAbQBkxXTr6NMR0psWz9YegO9W+coZ5goAHs=;
+        b=kxEVaw8bf9vuBlp2ZbMHx8xvRrOnKLl+SRELST874YRW/9R3lKOjE/oU/DTMwJGFyy
+         5JWfUEs3HyfDMASVLzU89WA3Rvf1zazHsutNSDv6IvGT8tHh8Y6Ce7sV+U6aR3i+nILF
+         OoHJs3AaXDfhtTWQMWQFVho3Gn1UTBFbe4A5FYns3rHUiZWnj2DIqBSybEOW0aKF3Byq
+         kJ06WrhU+MM6j+8SdWeELVVLnmSaSQchi4RyNLXRfU9W6v3biM6PJN5B7sivChPDJGLs
+         ugt56e6+7MwX4UVxcJQjL2Lq0Doz0W4sXWs7eTI1VbUCpeMJdpdzavEZB9kRnAhPDo4q
+         r8rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757991510; x=1758596310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0WNzQt6DCc1oCSopHUcGNsX0og3Qo+mNU8x/1pWS9J8=;
-        b=oX8juoTkALucyouLwRSzOSS/Io4kUr1gAwpminN0K24cOuTZVTFhoB2dFjTjuXAiSn
-         ybABG42Nh3zLIbOiJWGJGwP7Tq+b7gLG3Pgm0zv1Ttzbio70S3l/8MnuNeljRBzeP7bj
-         xIL6T/MJD/vB4dapU8l1rCvh+VFlhraw9wLyeGq0HJWc6w/7jcnQcXqhYHZRTiI/Piqi
-         M9Bl+Cbw7GrEoAX8irQlCA3VpNcn9Xf/1p/mPJriOiysE9MUwcPiq1W1ACIgtNHnTeA5
-         dmK+QPn1AB4nPObx+X8/LrjBE/EhV/dME5PxtJz4W2VegDLuI3oXU/uxlCPNYO+r5dBe
-         IdPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB17+uHjE3e4NqA2VZYoIcF5jXWe1DCLeA1t/sefxwW3jQ/K4yGL/QEI06ZplxszcL7djEIqzyl9H7jUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEBmDA0CydekAMbpeD0HPfaIGfQzomoB+nDWBs/lObJWuaDh2p
-	udADoAH14NJ7lskS20GFrQqyVkiFSwNIrzfGrspE17kL46X14PrcGdyiGRynnRtFkqJuTPQ/0iq
-	kxh24WF041Abra2yWt32lJM0y+Oc4o8U=
-X-Gm-Gg: ASbGncsbpHc2rrL5Se8auhPjeNq7f8OxFHDdKtMxNVkX0No6wABjiop2xWr8T+fK5eE
-	B6Cc8cEZM4yqH7m2S+OiBKuc+mS2rbfGYkLZPt4o3f4sBiwz6N8GrEare4d/LcrjkWgLwDkvmFB
-	lQE5ys7zlIJZGrZ4mMk02KiyqX7iB4ffl2ObGaPNVaBJra6cb7nS10ZaVFrqAdAwxiU5ka3lkV5
-	htHzhiEnGxpsy9yHWCF0yYBXvOCe9vdqE8=
-X-Google-Smtp-Source: AGHT+IFoV8QGVxMrnTri70cXeQyLaQNEjmdLeZFLqkE+amnPx3JsydwAPu1HRgnuRf2sZ6BK97hxGf+G6+9fDlrhK/A=
-X-Received: by 2002:a05:690c:6488:b0:735:4c38:34 with SMTP id
- 00721157ae682-7354c380739mr40186397b3.27.1757991510063; Mon, 15 Sep 2025
- 19:58:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757991518; x=1758596318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aQgTdWvdAbQBkxXTr6NMR0psWz9YegO9W+coZ5goAHs=;
+        b=RrgS5x9yQIGtXSOHFkmVLv3Tp7amS2pwk7f235R61CElPtH8CCv2XAgHy/yOHoYhIS
+         IGWtQAMrb6LfT2Qv8Z6womD9jf14EzGCXfvM4bAtnlrvmtLakePZl7Q6AhLvejxhdMgZ
+         xUONg0QKscOjTB7YSwfJDCQ6Dl/xAmL779n9Z8LoOEM8jcO193p3qbqYZ07bDjIGe4dD
+         W2FP9q2aHxOcrGOLjy1GR1bFZwzi0MHxOi6TsySPsHUYIxTWSyvSRUBwufC3Tf/Ye1qk
+         1zQQguB7qWilx0u7aFKzEaSp7/PfbfAUkjaJFr7QKZlVrGmPJXG0IXLga+xlwaqliphR
+         EyTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCJ/Mjb2tlFdC/Fsxu3hhZbrDeGCv2WOs2gEkUqjzYEMy5sk4oWhM3QiZQ3WcCxneXX7wHv5dqOEHQKE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2MalLx2p7Gaf3y4QEuw6/kncKPE4fr37ep2jfvcSYz3Ou9hnY
+	2wHNTKxu6jRIlgQK4RislzvMhFMU1dgzEsh4fvVdo0umTzgw6VhT49CT
+X-Gm-Gg: ASbGnctCS/5FK4P5dv0/DwM4KrmXMUDRyuMClOz2mIsegH/gjhHw7EvX8drSKrHxqv+
+	uPN3iahBEGJzHY6ghd4zJZySowcUiTGkU0IHS8eDv8EixTjvafK72AWO9xGccuKgUMmytnq2ItX
+	Irml9QJY249TjcnL8mIK3DEqS0VPecNG9EsG3N4qvtHYlirJbxVB6vM3nLPp7Uzvx6FWjFCY7wr
+	Yrw6pfQbobhCptCHbCrI9DyP7yx2nf/kalMylbFeojp5pCp9m5uEQDLxzdsjRgizDfnK1u506h0
+	Dew7PamRG+INme4q2rsLta9agwzVH6Y95I5zDCSHIWpSPR4FzBLBclQLC4aGM1UDAgwGnYnURFO
+	QX+cVzJOBqrVG4vxXvmsqk5u/zAWbZKLc3zpgsA==
+X-Google-Smtp-Source: AGHT+IEpu9RPplREq+3dMnA9cO4wkDr5H7kfF9jU5qM/IUS4/1bFfNRe4izqZKvwQuiVIt05YcDmPQ==
+X-Received: by 2002:a17:903:388b:b0:250:6d0e:1e40 with SMTP id d9443c01a7336-25d242f2f14mr151186285ad.7.1757991518269;
+        Mon, 15 Sep 2025 19:58:38 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-267b0bbabe6sm22016895ad.107.2025.09.15.19.58.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 19:58:37 -0700 (PDT)
+Date: Tue, 16 Sep 2025 02:58:31 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Petr Machata <petrm@nvidia.com>, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bonding: fix xfrm offload feature setup on
+ active-backup mode
+Message-ID: <aMjSVwIv7f9VDvHL@fedora>
+References: <20250915083742.423741-1-liuhangbin@gmail.com>
+ <20250915184123.505d2bb8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912095928.1532113-1-dqfext@gmail.com> <20250915181015.67588ec2@kernel.org>
-In-Reply-To: <20250915181015.67588ec2@kernel.org>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Tue, 16 Sep 2025 10:57:49 +0800
-X-Gm-Features: Ac12FXx5b4SkRyivmeumpyy1hPkwx_2MizrBQEAH_5KP5izuBh4_VosS6gNuxWw
-Message-ID: <CALW65jYgDYxXfWFmwYBjXfNtqWqZ7VDWPYsbzAH_EzcRtyn0DQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] ppp: enable TX scatter-gather
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Felix Fietkau <nbd@nbd.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915184123.505d2bb8@kernel.org>
 
-Hi Jakub,
+On Mon, Sep 15, 2025 at 06:41:23PM -0700, Jakub Kicinski wrote:
+> On Mon, 15 Sep 2025 08:37:41 +0000 Hangbin Liu wrote:
+> > The active-backup bonding mode supports XFRM ESP offload. However, when
+> > a bond is added using command like `ip link add bond0 type bond mode 1
+> > miimon 100`, the `ethtool -k` command shows that the XFRM ESP offload is
+> > disabled. This occurs because, in bond_newlink(), we change bond link
+> > first and register bond device later. So the XFRM feature update in
+> > bond_option_mode_set() is not called as the bond device is not yet
+> > registered, leading to the offload feature not being set successfully.
+> > 
+> > To resolve this issue, we can modify the code order in bond_newlink() to
+> > ensure that the bond device is registered first before changing the bond
+> > link parameters. This change will allow the XFRM ESP offload feature to be
+> > correctly enabled.
+> 
+> This reportedly doesn't apply.. I suppose we want it to go via net?
 
-On Tue, Sep 16, 2025 at 9:10=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
-> Seems a bit racy. We can't netdev_update_features() under the spin lock
-> so there's going to be a window of time where datapath will see new
-> state but netdev flags won't be cleared, yet?
->
-> We either need to add a explicit linearization check in the xmit path,
-> or always reset the flags to disabled before we start tweaking the
-> config and re-enable after config (tho the latter feels like a bit of
-> a hack).
+Ah, yes. I forgot to add the target repo. I need to write a git format-patch
+wrapper to remind me adding it...
 
-Can I modify dev->features directly under the spin lock (without
-.ndo_fix_features) ?
-
-> --
-> pw-bot: cr
+Regards
+Hangbin
 
