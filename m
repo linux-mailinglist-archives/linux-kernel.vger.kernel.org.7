@@ -1,211 +1,212 @@
-Return-Path: <linux-kernel+bounces-818431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE32B5919E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:04:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C8DB591A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20DCE1BC557B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:04:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5E657A2D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF8529B214;
-	Tue, 16 Sep 2025 09:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="Q+E7CeTt"
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8F928CF42
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D47628CF42;
+	Tue, 16 Sep 2025 09:02:46 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16B2BE033
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013343; cv=none; b=Ry1EIgszOpdzW87TT631FZN3YEWnS6Qy4HqhWkTBvO8Z3sV6/p3girV1JAzq6bKbQ9Ya96ilXpVTgUpcH9LevKH547M4/N6uLni3QjTVwXI9fkx9B4iM5uPnyme4RgcNt6vZ13vaevuUK7TiVolryVBTijtdNlj8dAdpX2+gwwM=
+	t=1758013365; cv=none; b=WUtZcFukvWEoff515KEmadwpI43sRa8CDDfqp2Bnb2QrWTdWGK3HkZZgJKMcj6RNgyAruAAYBcv+LIT2w+Nx+tY6DzRVadx6fYRajlhzJ5jneychHieUTStbnx/RKM3IfdgCA8I7Lqs8W76zKMIYPZfE0CZJqDcsyBvfaMm/Ke4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013343; c=relaxed/simple;
-	bh=0Vpn586g2Rf3xwgZqTtECSZVCszHpKgDLJcRU12/5Es=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xzi2/0n+W7t+44Fv2xAAgk8lGWQdJAA7ttlFfCC2kWstYIdWCM9cmbIgbVZcS1u8iCOuia/UtUbmpvM/gZ68V+vqpTL0CzyWR/qzc27h9WAaEpSzl1YbRSQ3YW8ERsybqqqLocd04xCDmbeLUfmzfYWYtk/NOwT7k8U1147QBfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=Q+E7CeTt; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=iH1qUO4aNBEKYkB0AJOgosv4x+Ue22Qn3EpBolYH968=;
-	b=Q+E7CeTtkGNAvGVlgMcuKS3tjcgH6xoKhOBp3y4LlcFeZNyDJX+ZbrmkYRcjxhw2rosgWGy6u
-	Sgn7r0OVEcD0AFTsNcsTPmvCV2xHpsrIfvr/sk2++lvLvKkHs30wJB89zvs92Amho2W26At0DXF
-	hNaOMvf0hBOLRByzDF2Q7rQ=
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cQwrF6ZhxzYl7XN;
-	Tue, 16 Sep 2025 17:01:49 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 17:02:09 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 17:02:09 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <chao@kernel.org>
-CC: <bintian.wang@honor.com>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
-	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in __insert_extent_tree()
-Date: Tue, 16 Sep 2025 17:02:09 +0800
-Message-ID: <20250916090209.240852-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <71872583-0d81-48a4-a148-184963a24fd4@kernel.org>
-References: <71872583-0d81-48a4-a148-184963a24fd4@kernel.org>
+	s=arc-20240116; t=1758013365; c=relaxed/simple;
+	bh=iyOGR5OjdcJcruEoDj50e0N6pXuQVeGejPadiPYFKV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hv4Hb5bAVDFA7sAUnf4tuKceIIZjTsRUVEjjYsSMepw1/axTe4t2BUY+m4vf97P9VRVIO0wdWd9Ly+vtutXJ3zSEPE8unwp+BRp2ATQWI4gzbQ4GwtWhaube5To/1jG3CZlst7Id1YKQlaFMC5TgmdB+Ru+P6bBOAVGoWtATLEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [209.85.219.177])
+	by gateway (Coremail) with SMTP id _____8BxXNKrJ8loKOEKAA--.23450S3;
+	Tue, 16 Sep 2025 17:02:36 +0800 (CST)
+Received: from mail-yb1-f177.google.com (unknown [209.85.219.177])
+	by front1 (Coremail) with SMTP id qMiowJCxH8KmJ8losAyZAA--.41033S3;
+	Tue, 16 Sep 2025 17:02:33 +0800 (CST)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea5aa2fdac8so459156276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:02:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtwnOEJjbkjVbQMXQnk2rkTByf3lrcMs6HgAGMV4S92vU9ICCjEAoMkrPrieE08gHAhq9X8sdzSK6gu80=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2qK2TtdydLFcWSl6suP9nicrHzY0YkuGzcasv2EdlJp7PYi8Y
+	1sPGORlghBs3lf0ppASioQPZ4e2WH8U2bd5ZkEPlRrnX/2dhYHMALo3BOVSXq0U7d6KbY+gIpE0
+	86DDVcGlSbwmcYQo/ldm83kepklfKRLn1wUCi/EKRNQ==
+X-Google-Smtp-Source: AGHT+IGGHRxmXOWaJAAygIfBjG9V73Ij3pe802twnw9XNH3Zr+pFQkBur6uu/hjKgXPTVwuAsWHJdWtS4p+VNQ5WHRw=
+X-Received: by 2002:a05:6902:124e:b0:ea5:ae89:4468 with SMTP id
+ 3f1490d57ef6-ea5ae895b6emr817879276.41.1758013349641; Tue, 16 Sep 2025
+ 02:02:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w002.hihonor.com (10.68.28.120) To a011.hihonor.com
- (10.68.31.243)
+References: <20250916061117.32315-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20250916061117.32315-1-yangtiezhu@loongson.cn>
+From: WANG Rui <wangrui@loongson.cn>
+Date: Tue, 16 Sep 2025 17:02:19 +0800
+X-Gmail-Original-Message-ID: <CAHirt9jbY4yX84Kfzax71rCvPY--SQpDKrjqWsDCHMVnuUuD0g@mail.gmail.com>
+X-Gm-Features: AS18NWBxdv3kvW4jqwIz5er8Ma5qQhQbAuQvQ8nyLqYfZsUPrt-rPn9UxPQ1rPo
+Message-ID: <CAHirt9jbY4yX84Kfzax71rCvPY--SQpDKrjqWsDCHMVnuUuD0g@mail.gmail.com>
+Subject: Re: [PATCH v1] objtool/LoongArch: Mark special atomic instruction as
+ INSN_BUG type
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	rust-for-linux@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:qMiowJCxH8KmJ8losAyZAA--.41033S3
+X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxZF4rJw1rWryDWw15WrykWFX_yoWrWr13pa
+	1DZ3s8Gr48Wrn3KwnrJ3yUurW3trs3WrWIgFnxG3s2krWaqr97XF1kKry0yFn5Jw4rKFyI
+	9rn5Zw17uF1jyagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1wL05UUUUU==
 
->On 9/16/25 16:26, wangzijie wrote:
->>> On 9/16/25 15:09, wangzijie wrote:
->>>>> On 9/16/25 13:22, wangzijie wrote:
->>>>>>> On 09/15, wangzijie wrote:
->>>>>>>> When we get wrong extent info data, and look up extent_node in rb tree,
->>>>>>>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
->>>>>>>> return NULL.
->>>>>>>
->>>>>>> This is the exact buggy case which we should fix the original one. Have
->>>>>>> you seen this error? In that case, can we consider writing some kernel
->>>>>>> message and handle the error properly?
->>>>>>
->>>>>> Hi Jaegeuk,
->>>>>> The original one is the bug I mentioned in the first patch of this patch set
->>>>>> ("f2fs: fix zero-sized extent for precache extents"). 
->>>>>
->>>>> Zijie,
->>>>>
->>>>> Did you suffer this problem in product? right?
->>>>
->>>> Hi Chao,
->>>> Yes, and I can confirm that infinite loop cases I suffered are caused by the bug I
->>>> mentioned in the first patch of this patch set. But I'm not sure if there are
->>>> other cases that can cause this infinite loop.
->>>>
->>>>>>
->>>>>> When we use a wrong extent_info(zero-sized) to do update, and there exists a
->>>>>> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
->>>>>> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
->>>>>> which cause the infinite loop in __insert_extent_tree().
->>>>>>
->>>>>> So we can add f2fs_bug_on() when there occurs zero-sized extent
->>>>>> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
->>>>>> extent update to handle other unknown buggy cases. Do you think this will be better?
->>>>>>
->>>>>> And do we need to solve this infinite loop?
->>>>>
->>>>> IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
->>>>> avoid kernel hang, no matter it is caused by software bug or hardware flaw
->>>>> potentially.
->>>>>
->>>>> Thanks,
->>>>
->>>> And do you think we need this?
->>>> "add f2fs_bug_on() when there occurs zero-sized extent in f2fs_update_read_extent_cache_range(),
->>>> and give up this zero-sized extent update to handle other unknown buggy cases".
->>>
->>> Oh, I was testing below patch..., does this what you want to do?
->>>
->>> I think we can keep all your patches, and appending below patch to detect any
->>> potential cases who will update a zero-sized extent.
->>>
->>> >From 439d61ef3715fafa5c9f2d1b7f8026cdd2564ca7 Mon Sep 17 00:00:00 2001
->>> From: Chao Yu <chao@kernel.org>
->>> Date: Tue, 16 Sep 2025 11:52:30 +0800
->>> Subject: [PATCH] f2fs: add sanity check on ei.len in
->>> __update_extent_tree_range()
->>>
->>> Add a sanity check in __update_extent_tree_range() to detect any
->>> zero-sized extent update.
->>>
->>> Signed-off-by: Chao Yu <chao@kernel.org>
->>> ---
->>> fs/f2fs/extent_cache.c | 9 +++++++++
->>> 1 file changed, 9 insertions(+)
->>>
->>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->>> index 199c1e7a83ef..9544323767be 100644
->>> --- a/fs/f2fs/extent_cache.c
->>> +++ b/fs/f2fs/extent_cache.c
->>> @@ -664,6 +664,15 @@ static void __update_extent_tree_range(struct inode *inode,
->>> 	if (!et)
->>> 		return;
->>>
->>> +	if (unlikely(len == 0)) {
->>> +		f2fs_bug_on(sbi, 1);
->>> +		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
->>> +			"extent [%u, %u, %u], age [%llu, %llu]",
->>> +			__func__, type, tei->fofs, tei->blk, tei->len,
->>> +			tei->age, tei->last_blocks);
->>> +		return;
->>> +	}
->>> +
->>> 	if (type == EX_READ)
->>> 		trace_f2fs_update_read_extent_tree_range(inode, fofs, len,
->>> 						tei->blk, 0);
->>> -- 
->>> 2.49.0
->> 
->> Yes, that's exactly what I want to do.
->> Maybe we should relocate f2fs_bug_on()?
->> 
->> 	if (unlikely(len == 0)) {
->> 		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
->> 			"extent [%u, %u, %u], age [%llu, %llu]",
->> 			__func__, type, tei->fofs, tei->blk, tei->len,
->> 			tei->age, tei->last_blocks);
->> 		f2fs_bug_on(sbi, 1);
->> 		return;
->> 	}
+On Tue, Sep 16, 2025 at 2:11=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
 >
->Yeah, looks better.
+> When compiling with LLVM and CONFIG_RUST is set, there exists the
+> following objtool warning:
 >
->I don't see any problem in my test, will send a formal patch, let me add
->Signed-off-by of you if you don't mind. :)
+>   rust/compiler_builtins.o: warning: objtool: __rust__unordsf2(): unexpec=
+ted end of section .text.unlikely.
 >
->Thanks,
+> objdump shows that the end of section .text.unlikely is a atomic
+> instruction:
+>
+>   amswap.w        $zero, $ra, $zero
+>
+> According to the LoongArch Reference Manual, if the amswap.w atomic
+> memory access instruction has the same register number as rd and rj,
+> the execution will trigger an Instruction Non-defined Exception, so
+> mark the above instruction as INSN_BUG type to fix the warning.
 
-OK, thanks for your help.
+LLVM lowers `llvm.trap()` to `amswap.w R0, R1, R0`. For x86, it lowers
+to `ud2`, and objtool marks it as INSN_BUG.
 
->> 
->>>>
->>>>
->>>>
->>>>>>
->>>>>>
->>>>>>>>
->>>>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>>>>>>> ---
->>>>>>>>  fs/f2fs/extent_cache.c | 1 +
->>>>>>>>  1 file changed, 1 insertion(+)
->>>>>>>>
->>>>>>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->>>>>>>> index 199c1e7a8..6ed6f3d1d 100644
->>>>>>>> --- a/fs/f2fs/extent_cache.c
->>>>>>>> +++ b/fs/f2fs/extent_cache.c
->>>>>>>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
->>>>>>>>  			leftmost = false;
->>>>>>>>  		} else {
->>>>>>>>  			f2fs_bug_on(sbi, 1);
->>>>>>>> +			return NULL;
->>>>>>>>  		}
->>>>>>>>  	}
->>>>>>>>  
->>>>>>>> -- 
->>>>>>>> 2.25.1
->>>>
->> 
+https://github.com/llvm/llvm-project/blob/788a25a0f71bfa5e5e1c12ad093993b11=
+5d10e7a/llvm/lib/Target/LoongArch/LoongArchInstrInfo.td#L1376-L1381
+
+LLVM and GCC handle this differently, GCC lowers it to a break
+instruction. Since the break instruction has other uses, can objtool
+mark all break instructions as INSN_BUG? or it should mark different
+types based on the break immediate code.
+
+https://github.com/torvalds/linux/blob/46a51f4f5edade43ba66b3c151f0e25ec8b6=
+9cb6/tools/objtool/arch/loongarch/decode.c#L315-L317
+
+>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  tools/arch/loongarch/include/asm/inst.h | 12 ++++++++++++
+>  tools/objtool/arch/loongarch/decode.c   | 21 +++++++++++++++++++++
+>  2 files changed, 33 insertions(+)
+>
+> diff --git a/tools/arch/loongarch/include/asm/inst.h b/tools/arch/loongar=
+ch/include/asm/inst.h
+> index c25b5853181d..d68fad63c8b7 100644
+> --- a/tools/arch/loongarch/include/asm/inst.h
+> +++ b/tools/arch/loongarch/include/asm/inst.h
+> @@ -51,6 +51,10 @@ enum reg2i16_op {
+>         bgeu_op         =3D 0x1b,
+>  };
+>
+> +enum reg3_op {
+> +       amswapw_op      =3D 0x70c0,
+> +};
+> +
+>  struct reg0i15_format {
+>         unsigned int immediate : 15;
+>         unsigned int opcode : 17;
+> @@ -96,6 +100,13 @@ struct reg2i16_format {
+>         unsigned int opcode : 6;
+>  };
+>
+> +struct reg3_format {
+> +       unsigned int rd : 5;
+> +       unsigned int rj : 5;
+> +       unsigned int rk : 5;
+> +       unsigned int opcode : 17;
+> +};
+> +
+>  union loongarch_instruction {
+>         unsigned int word;
+>         struct reg0i15_format   reg0i15_format;
+> @@ -105,6 +116,7 @@ union loongarch_instruction {
+>         struct reg2i12_format   reg2i12_format;
+>         struct reg2i14_format   reg2i14_format;
+>         struct reg2i16_format   reg2i16_format;
+> +       struct reg3_format      reg3_format;
+>  };
+>
+>  #define LOONGARCH_INSN_SIZE    sizeof(union loongarch_instruction)
+> diff --git a/tools/objtool/arch/loongarch/decode.c b/tools/objtool/arch/l=
+oongarch/decode.c
+> index b6fdc68053cc..707f339b1840 100644
+> --- a/tools/objtool/arch/loongarch/decode.c
+> +++ b/tools/objtool/arch/loongarch/decode.c
+> @@ -278,6 +278,25 @@ static bool decode_insn_reg2i16_fomat(union loongarc=
+h_instruction inst,
+>         return true;
+>  }
+>
+> +static bool decode_insn_reg3_fomat(union loongarch_instruction inst,
+> +                                  struct instruction *insn)
+> +{
+> +       switch (inst.reg3_format.opcode) {
+> +       case amswapw_op:
+> +               if (inst.reg3_format.rd =3D=3D LOONGARCH_GPR_ZERO &&
+> +                   inst.reg3_format.rk =3D=3D LOONGARCH_GPR_RA &&
+> +                   inst.reg3_format.rj =3D=3D LOONGARCH_GPR_ZERO) {
+> +                       /* amswap.w $zero, $ra, $zero */
+> +                       insn->type =3D INSN_BUG;
+> +               }
+> +               break;
+> +       default:
+> +               return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+>  int arch_decode_instruction(struct objtool_file *file, const struct sect=
+ion *sec,
+>                             unsigned long offset, unsigned int maxlen,
+>                             struct instruction *insn)
+> @@ -309,6 +328,8 @@ int arch_decode_instruction(struct objtool_file *file=
+, const struct section *sec
+>                 return 0;
+>         if (decode_insn_reg2i16_fomat(inst, insn))
+>                 return 0;
+> +       if (decode_insn_reg3_fomat(inst, insn))
+> +               return 0;
+>
+>         if (inst.word =3D=3D 0)
+>                 insn->type =3D INSN_NOP;
+> --
+> 2.42.0
+>
+>
+
 
