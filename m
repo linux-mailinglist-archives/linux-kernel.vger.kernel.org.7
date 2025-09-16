@@ -1,283 +1,121 @@
-Return-Path: <linux-kernel+bounces-818202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8BDB58E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ED65B58E2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6BEB17D822
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88BBC3AF30D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF15E2DEA6F;
-	Tue, 16 Sep 2025 05:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BCeTEXEM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1D82DCF62;
+	Tue, 16 Sep 2025 05:59:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FDFAD2C;
-	Tue, 16 Sep 2025 05:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCB7AD2C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758002162; cv=none; b=MqyWbDDF9NH4k5NiuGRNPonkLT+XXVEkV08ZosLUascK+DCjptfb1ivja3lj6FaTiQgG5dAOB69kdFpZ07qeSQzjzmWPIDxKlsMb+629YdcyeSG65fEjCSE9DlGWNsDy7BViGPCUTRx+9vLewAsiPbgh03FcIRW10JEWFW+vH6I=
+	t=1758002346; cv=none; b=XhPiz7am/3ePyalkaX/P14gS2y95rjeAs+BsPfnjnFGtG8xSYDrF4PmIuQ97/m4Ld/3/qHC0t4iSg1KZLElSITuPD8+XVSX9uSxKNeqf+OKTWQpItpupZuPyuKsbfjxSD8xNyXZvTeo5+6QcJ9WA6S7ZnyfOS0HAmNK6pCkHOS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758002162; c=relaxed/simple;
-	bh=wu6bU/KO03onjSI0MOAjOnCKmp6Vw1VX8ZqN526KOMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JcxucudilGvswnLx20KUr7J43tAamhoer5kQFQAKVqNLGVnaelx/QbVrNCIRYnyoZGa3RQmQluqy1othrT6c91nKUnuK9UtfFc4LRHM8bX4oskNoDhdYagz7jw6MA+s8OwJxUmLo7n2ai+jLcqIWh4mbQo7jUZycV3VNGmsqrMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BCeTEXEM; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758002161; x=1789538161;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wu6bU/KO03onjSI0MOAjOnCKmp6Vw1VX8ZqN526KOMM=;
-  b=BCeTEXEMy9JHggfpPd9KykrmT/YH3VrojcL/okjXJPVMKZeWpZTe8RWa
-   VGG5IKI4bvdN3RMghaM6zAHTaMN4RT8J0sEBTRyfq0Zy2QU8giZMtes0B
-   LLCkfjM5yAQffzyZZp4DfaBm6ReKUOt3tln5oDOV3zJTPyp7jFT41fy3E
-   11W//Ei79aOxxm4ecR8wBEnLIzEjPkHMBYvpB1WCfujNfJBk2wSEbEcd/
-   lah0cleRH1W9Z1IvSWFtRAzLf0rhCAGMq0l1En4+qzEBzoGYUlcHaSqzk
-   wu5y57xp2qylTqZVWE3MIHRkXYRYB7RaclgiMrqM44zY/E9qDxU+GpLg/
-   Q==;
-X-CSE-ConnectionGUID: 5fDug2QAQhOEjf//dGBC2w==
-X-CSE-MsgGUID: dPMjIB2NRV6BJKNzJWszSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70520748"
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="70520748"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 22:55:54 -0700
-X-CSE-ConnectionGUID: 4cZH8160TbCLJ4fD4SAk7g==
-X-CSE-MsgGUID: v3Gp01YyR5GU4xDEiNleWw==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 5b01dd97f97c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 15 Sep 2025 22:55:51 -0700
-Received: from kbuild by 5b01dd97f97c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyOfM-00012J-39;
-	Tue, 16 Sep 2025 05:55:48 +0000
-Date: Tue, 16 Sep 2025 13:55:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vladimir Moravcevic <vmoravcevic@axiado.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
-	Tzu-Hao Wei <twei@axiado.com>,
-	Axiado Reviewers <linux-maintainer@axiado.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Vladimir Moravcevic <vmoravcevic@axiado.com>
-Subject: Re: [PATCH 2/3] spi: axiado: Add driver for Axiado SPI DB controller
-Message-ID: <202509161348.JWCcODvq-lkp@intel.com>
-References: <20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-2-814a1fa2a83e@axiado.com>
+	s=arc-20240116; t=1758002346; c=relaxed/simple;
+	bh=MWfdbzgpU8/9GBR6cLeUg3tQ9SK2I5/GBE1TBepnshs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KEM/Ki8nVmNkUvM1YlvBbq1kDUzE8V5IhubWZa12Xi/gYhZ5U11XDofA6w09l4FSHiLSUiFNWVLv68MFBLR4bNez6YSkiVsMixDLeUzPPJeg8YszbsT8hws3r1NrKV9lbdXoDnD4vU3V+O2YQe4x853qYLf04cLOj1VkLip29sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-423feb240a7so60072725ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:59:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758002344; x=1758607144;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rn1WXMN90WN84KblkMUwtHEVkm9nS34GsVkttjfa3dk=;
+        b=kxjzpPR+9tCvUBTBgb3Z4iYeNNKRHfqKeBFll7CajLPSBVwrF12HU5W2uepHbLOeaA
+         CLAR/NPuzIfe5a4Ob25AMk0+TPTIn4OKposY+eEoEjaqgVHwXv1KgAxExC3aeJKIZRN4
+         uZJty3Q2xLQkWuJYyQc2DkOLyhhz1GiY8oXkigpFfB3D3GnwY+aq9s8ANS0CXxGI9QD7
+         YUCo04Y57wCjWegG5mwYB3BIRHqTqaN4+V8WFlytHvYN+gZlkrTTzT6KEbRSiLzYChk9
+         JuRXFmmMMt02/o4zwoVv5xrkst17FlQtKAvXKKlRCLvB9G3YycvZqS9bshAa/uHq5/nO
+         i0JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoFz+IVOGkU58bDSAMZBhCJG+AWYsKRKzonI78Fs9SkKJ3qwjJdQ2J5s33KzhoZEOvcHoNS24AUINzgng=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+JfUsXEVZeFCJofql8juMLsnrWO1jnZnmQjfyqlN9X3x40flY
+	yO5V2AZXhbyYL7hG9d6xUjvcf8dCYeKkW7g2F4iOi41l8JsehzE355vw4nAXGuYLAgQAoEMOgd3
+	NYyJWI/us9/6jcXFPnWatBfJk+Dy3kE46wLdoCWbiZoHaAJLBlOMix0BoNYI=
+X-Google-Smtp-Source: AGHT+IEbOfS+sZRFRzFD/UiZLmZu+y4ZY7rjXTAj9z4GM1gVzg6AffcPSP3y4OT9AFl/qh5Oiz6b9tt/4Old2Ss9T9c/XlUNIg9K
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-2-814a1fa2a83e@axiado.com>
+X-Received: by 2002:a05:6e02:1805:b0:415:fe45:3dfe with SMTP id
+ e9e14a558f8ab-4209d7e0f1bmr180407605ab.3.1758002344454; Mon, 15 Sep 2025
+ 22:59:04 -0700 (PDT)
+Date: Mon, 15 Sep 2025 22:59:04 -0700
+In-Reply-To: <a3dcd664-b39c-47ff-a61c-f834ba130a16@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c8fca8.050a0220.3c6139.0d2b.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Vladimir,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in gid_table_release_one
 
-[auto build test WARNING on e6b9dce0aeeb91dfc0974ab87f02454e24566182]
+------------[ cut here ]------------
+GID entry ref leak for dev syz1 index 2 ref=391, state: 3
+WARNING: CPU: 0 PID: 36 at drivers/infiniband/core/cache.c:813 release_gid_table drivers/infiniband/core/cache.c:810 [inline]
+WARNING: CPU: 0 PID: 36 at drivers/infiniband/core/cache.c:813 gid_table_release_one+0x34e/0x4f0 drivers/infiniband/core/cache.c:890
+Modules linked in:
+CPU: 0 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: ib-unreg-wq ib_unregister_work
+RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:810 [inline]
+RIP: 0010:gid_table_release_one+0x34e/0x4f0 drivers/infiniband/core/cache.c:890
+Code: 4c 89 f0 48 c1 e8 03 42 0f b6 04 20 84 c0 75 64 45 8b 06 48 c7 c7 60 4b 71 8c 48 8b 74 24 20 44 89 fa 89 e9 e8 13 81 fa f8 90 <0f> 0b 90 90 e9 ab fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+RSP: 0018:ffffc90000ac78f8 EFLAGS: 00010246
+RAX: 4a34fa8552892100 RBX: ffff888031fba0d8 RCX: ffff88801d6f3c00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 0000000000000187 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa24c R12: dffffc0000000000
+R13: ffff888031fba000 R14: ffff8880744f8990 R15: 0000000000000002
+FS:  0000000000000000(0000) GS:ffff888125c16000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f44957d5fa4 CR3: 000000002849e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+ device_release+0x9c/0x1c0 drivers/base/core.c:-1
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22b/0x480 lib/kobject.c:737
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vladimir-Moravcevic/dt-bindings-spi-axiado-ax3000-spi-Add-binding-for-Axiado-SPI-DB-controller/20250915-211453
-base:   e6b9dce0aeeb91dfc0974ab87f02454e24566182
-patch link:    https://lore.kernel.org/r/20250915-axiado-ax3000-soc-spi-db-controller-driver-v1-2-814a1fa2a83e%40axiado.com
-patch subject: [PATCH 2/3] spi: axiado: Add driver for Axiado SPI DB controller
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250916/202509161348.JWCcODvq-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 65ad21d730d25789454d18e811f8ff5db79cb5d4)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509161348.JWCcODvq-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509161348.JWCcODvq-lkp@intel.com/
+Tested on:
 
-All warnings (new ones prefixed by >>):
+commit:         067ce8f1 RDMA/rxe: Add logs to find out the root cause
+git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+console output: https://syzkaller.appspot.com/x/log.txt?x=16304e42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-   In file included from <built-in>:3:
-   In file included from include/linux/compiler_types.h:171:
-   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
-      28 | #define __SANITIZE_ADDRESS__
-         |         ^
-   <built-in>:371:9: note: previous definition is here
-     371 | #define __SANITIZE_ADDRESS__ 1
-         |         ^
->> drivers/spi/spi-axiado.c:480:6: warning: variable 'total_tx_bytes_for_op' set but not used [-Wunused-but-set-variable]
-     480 |         int total_tx_bytes_for_op, bytes_to_discard_from_rx;
-         |             ^
-   2 warnings generated.
-
-
-vim +/total_tx_bytes_for_op +480 drivers/spi/spi-axiado.c
-
-   470	
-   471	static int ax_spi_mem_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
-   472	{
-   473		struct spi_device *spi = mem->spi;
-   474		struct ax_spi *xspi = spi_controller_get_devdata(spi->controller);
-   475		u32 reg_val;
-   476		int ret = 0;
-   477		u8 cmd_buf[AX_SPI_COMMAND_BUFFER_SIZE];
-   478		int cmd_len = 0;
-   479		int i = 0, timeout = AX_SPI_TRX_FIFO_TIMEOUT;
- > 480		int total_tx_bytes_for_op, bytes_to_discard_from_rx;
-   481		u8 *rx_buf_ptr = (u8 *)op->data.buf.in;
-   482		u8 *tx_buf_ptr = (u8 *)op->data.buf.out;
-   483		u32 rx_count_reg = 0;
-   484	
-   485		dev_dbg(&spi->dev,
-   486			"%s: cmd:%02x mode:%d.%d.%d.%d addr:%llx len:%d\n",
-   487			__func__, op->cmd.opcode, op->cmd.buswidth, op->addr.buswidth,
-   488			op->dummy.buswidth, op->data.buswidth, op->addr.val,
-   489			op->data.nbytes);
-   490	
-   491		/* Validate operation parameters: Only 1-bit bus width supported */
-   492		if (op->cmd.buswidth != 1 ||
-   493		    (op->addr.nbytes && op->addr.buswidth != 0 &&
-   494		    op->addr.buswidth != 1) ||
-   495		    (op->dummy.nbytes && op->dummy.buswidth != 0 &&
-   496		    op->dummy.buswidth != 1) ||
-   497		    (op->data.nbytes && op->data.buswidth != 1)) {
-   498			dev_err(&spi->dev, "Unsupported bus width, only 1-bit bus width supported\n");
-   499			return -EOPNOTSUPP;
-   500		}
-   501	
-   502		/* Initialize controller hardware */
-   503		ax_spi_init_hw(xspi);
-   504	
-   505		/* Assert chip select (pull low) */
-   506		ax_spi_chipselect(spi, false);
-   507	
-   508		/* Build command phase: Copy opcode to cmd_buf */
-   509		if (op->cmd.nbytes == 2) {
-   510			cmd_buf[cmd_len++] = (op->cmd.opcode >> 8) & 0xFF;
-   511			cmd_buf[cmd_len++] = op->cmd.opcode & 0xFF;
-   512		} else {
-   513			cmd_buf[cmd_len++] = op->cmd.opcode;
-   514		}
-   515	
-   516		/* Put address bytes to cmd_buf */
-   517		if (op->addr.nbytes) {
-   518			for (i = op->addr.nbytes - 1; i >= 0; i--) {
-   519				cmd_buf[cmd_len] = (op->addr.val >> (i * 8)) & 0xFF;
-   520				cmd_len++;
-   521			}
-   522		}
-   523	
-   524		/* Configure controller for desired operation mode (write/read) */
-   525		reg_val = ax_spi_read(xspi, AX_SPI_CR2);
-   526		reg_val |= AX_SPI_CR2_SWD | AX_SPI_CR2_SRI | AX_SPI_CR2_SRD;
-   527		ax_spi_write(xspi, AX_SPI_CR2, reg_val);
-   528	
-   529		/* Calculate total bytes to clock out and fill TX FIFO */
-   530		total_tx_bytes_for_op = cmd_len;
-   531		if (op->data.dir == SPI_MEM_DATA_IN) {
-   532			total_tx_bytes_for_op += op->dummy.nbytes;
-   533			total_tx_bytes_for_op += op->data.nbytes;
-   534		} else {
-   535			total_tx_bytes_for_op += op->data.nbytes;
-   536		}
-   537	
-   538		/* Write command and address bytes to TX_FIFO */
-   539		for (i = 0; i < cmd_len; i++)
-   540			ax_spi_write_b(xspi, AX_SPI_TXFIFO, cmd_buf[i]);
-   541	
-   542		/* Add dummy bytes (for clock generation) or actual data bytes to TX_FIFO */
-   543		if (op->data.dir == SPI_MEM_DATA_IN) {
-   544			for (i = 0; i < op->dummy.nbytes; i++)
-   545				ax_spi_write_b(xspi, AX_SPI_TXFIFO, 0x00);
-   546			for (i = 0; i < op->data.nbytes; i++)
-   547				ax_spi_write_b(xspi, AX_SPI_TXFIFO, 0x00);
-   548		} else {
-   549			for (i = 0; i < op->data.nbytes; i++)
-   550				ax_spi_write_b(xspi, AX_SPI_TXFIFO, tx_buf_ptr[i]);
-   551		}
-   552	
-   553		/* Start the SPI transmission */
-   554		reg_val = ax_spi_read(xspi, AX_SPI_CR2);
-   555		reg_val |= AX_SPI_CR2_HTE;
-   556		ax_spi_write(xspi, AX_SPI_CR2, reg_val);
-   557	
-   558		/* Wait for TX FIFO to become empty */
-   559		while (timeout-- > 0) {
-   560			u32 tx_count_reg = ax_spi_read(xspi, AX_SPI_TX_FBCAR);
-   561	
-   562			if (tx_count_reg == 0) {
-   563				udelay(1);
-   564				break;
-   565			}
-   566			udelay(1);
-   567		}
-   568	
-   569		/* Handle Data Reception (for read operations) */
-   570		if (op->data.dir == SPI_MEM_DATA_IN) {
-   571			/* Reset the internal RX byte buffer for this new operation.
-   572			 * This ensures ax_spi_get_rx_byte starts fresh for each exec_op call.
-   573			 */
-   574			xspi->bytes_left_in_current_rx_word = 0;
-   575			xspi->current_rx_fifo_word = 0;
-   576	
-   577			timeout = AX_SPI_TRX_FIFO_TIMEOUT;
-   578			while (timeout-- > 0) {
-   579				rx_count_reg = ax_spi_read(xspi, AX_SPI_RX_FBCAR);
-   580				if (rx_count_reg >= op->data.nbytes)
-   581					break;
-   582				udelay(1); // Small delay to prevent aggressive busy-waiting
-   583			}
-   584	
-   585			if (timeout < 0) {
-   586				ret = -ETIMEDOUT;
-   587				goto out_unlock;
-   588			}
-   589	
-   590			/* Calculate how many bytes we need to discard from the RX FIFO.
-   591			 * Since we set SRI, we only need to discard the address bytes and
-   592			 * dummy bytes from the RX FIFO.
-   593			 */
-   594			bytes_to_discard_from_rx = op->addr.nbytes + op->dummy.nbytes;
-   595			for (i = 0; i < bytes_to_discard_from_rx; i++)
-   596				ax_spi_get_rx_byte(xspi);
-   597	
-   598			/* Read actual data bytes into op->data.buf.in */
-   599			for (i = 0; i < op->data.nbytes; i++) {
-   600				*rx_buf_ptr = ax_spi_get_rx_byte(xspi);
-   601				rx_buf_ptr++;
-   602			}
-   603		} else if (op->data.dir == SPI_MEM_DATA_OUT) {
-   604			timeout = AX_SPI_TRX_FIFO_TIMEOUT;
-   605			while (timeout-- > 0) {
-   606				u32 tx_fifo_level = ax_spi_read(xspi, AX_SPI_TX_FBCAR);
-   607	
-   608				if (tx_fifo_level == 0)
-   609					break;
-   610				udelay(1);
-   611			}
-   612			if (timeout < 0) {
-   613				ret = -ETIMEDOUT;
-   614				goto out_unlock;
-   615			}
-   616		}
-   617	
-   618	out_unlock:
-   619		/* Deassert chip select (pull high) */
-   620		ax_spi_chipselect(spi, true);
-   621	
-   622		return ret;
-   623	}
-   624	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: no patches were applied.
 
