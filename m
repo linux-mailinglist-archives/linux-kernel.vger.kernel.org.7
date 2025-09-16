@@ -1,171 +1,126 @@
-Return-Path: <linux-kernel+bounces-818414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13477B59173
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:59:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF57B59177
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3043AAA42
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE7232189C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A3B28D8FD;
-	Tue, 16 Sep 2025 08:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC7F28C84F;
+	Tue, 16 Sep 2025 08:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="p/B+WJFJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kZSbvBvX"
-Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="EKCJTAgE"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B598D275B1F;
-	Tue, 16 Sep 2025 08:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013139; cv=none; b=lwlSpGC7XDQMIfDOX9sLB6QiqnV+sBLp+fOE4pNaPbzvIZtMBqMAlIntPxI/pfx167+zd+we70676XQ6CvpkuTs1X2hW7gypfaFtCHgknjulfD/wbwugHbqVCtB9PVEL09A7jZTWEx149h7a1lPVwF6vq4scdQUabgZCe6eBpQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013139; c=relaxed/simple;
-	bh=RDFVS/12vlPEvpAPazD0+caxnLwdBqgtuPi/RSkpkIE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jHGPNkiRpIL4Cofn2PXWC5/gTijneB6X31P/fjW0SDcsqb3RTT6WwU/SN22+QQTkvhnP4mDkbTJ7VZ/gTrCR/hhDwQXdRiLc9RnYlIBuGuwKYlNYzcPKTSH5rNQnk5idt+hVNRN1kTNKvuQ0qM8J+1ZtsnI3/M08is7NIzshBcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=p/B+WJFJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kZSbvBvX; arc=none smtp.client-ip=202.12.124.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id 5ED701300B79;
-	Tue, 16 Sep 2025 04:58:54 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 16 Sep 2025 04:58:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1758013134;
-	 x=1758020334; bh=9M1JEPa5y3WON6Gl+eiqRK9O7fk6z6pQgd71K0v19EU=; b=
-	p/B+WJFJ3zvsd0DyDuUadqyZnXAI6cYiqhiv6unBmCXntIE8psMAM6DfQy7CG4tu
-	dwuUTBcBHSAmSEokKeGyllqybSHONkBvptXBA49szippYTJiD18aJSwaXIGwCtNY
-	M4Vexja9gLMW6tG7GZSUPNj3XbnBGmnMLH8EJxrwOk1Pupiwv1Y8zd0I3brVRvq4
-	D9DwKD12EGhlSPUUQlTZtgs7UmYHav2Vee+sSpz2O3FkdqJ04sN2DYT0Fa261rdJ
-	zUCK8nQojIxcEGwn8mnKjGJLQ7OKURxhnaFzwYgYF5uPtmLhEztOEtqrDnlAIMa6
-	KsXxnW3BCtMxV2+qIVjtRw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758013134; x=
-	1758020334; bh=9M1JEPa5y3WON6Gl+eiqRK9O7fk6z6pQgd71K0v19EU=; b=k
-	ZSbvBvXbZuuI9RT3eGTsfHKByF+ZYaWJ2C56VraoQgu7pifGWWofVsbIIEVdktZD
-	Zgq9DAEqiHxGxdfMtJ+kR7aKKqn1sPCY8D596jXBIhNGyK/SBEeXdScxW0InqE6O
-	qrY5nRnQXuYODkZ3xzAIHdQT7dtovownRaXBEC5LhXtolsSjNT+UIzmLu3WT+1ie
-	x36JKxShesGDBx1YNAhv4/BnouYSGpy6XplG4rLes4MUUJXHfdacX4Qc+hwgSNTq
-	edzDF2TvkCrNunZbdVxobnKXzw5lWyp1YcjOcWz+B929Qbl+ty+UkBq+ymJtzfNC
-	L+YLd5TA9UfPFkMGA66Kg==
-X-ME-Sender: <xms:zCbJaEaLHcyIvWW6yAWebvipT0oeBmOpqiAOk2PxnEu8TuEJOpTtHQ>
-    <xme:zCbJaPZMM9QRAWhJwYx9hvmc0gwpjKOD1eLOaoGD2PqomqH5rQvWYoIzG3axry8pT
-    DOXKryxEXEd8GyNWIU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtdduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeehtddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtoheptggrthgrlhhinh
-    drmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopehmrghrkhdrrhhuthhlrghn
-    ugesrghrmhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvg
-    htpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehjuhhsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehmohhrsg
-    hosehgohhoghhlvgdrtghomhdprhgtphhtthhopehnuggvshgruhhlnhhivghrshesghho
-    ohhglhgvrdgtohhmpdhrtghpthhtohepshgrlhhilhdrmhgvhhhtrgeshhhurgifvghird
-    gtohhm
-X-ME-Proxy: <xmx:zSbJaFqf1ylLAb5gbeCOgjC42fcc-bcdMn6ok2S1qEyqHza2sq_ESg>
-    <xmx:zSbJaKHheu5wueAQCpzv6yMqp8xGn9dh1VJoHL0vji4s96JlMLoipQ>
-    <xmx:zSbJaP6YqZyPZevTNB4oava3p0DgaX1jC7Tr_5cyKn-xfAkjAP_DDw>
-    <xmx:zSbJaABJudgqO6Fn60G_MknxnUxo0wlD6rpwQbgzC-V0LETDssng-A>
-    <xmx:zibJaGV2CuE5GYECVXMv7P9FR615dxHK3VuxLkHNVBVgrh4Vls-mjUw3>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E3F0B700069; Tue, 16 Sep 2025 04:58:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E64D283FD8;
+	Tue, 16 Sep 2025 08:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758013147; cv=pass; b=cB0NY+xu39hxRLic97acKbwnFQt3HKImfOj2mMJvSR92SDJR61h3XQ9xjLnRuggu7XChBandtD4Of+cQ1/hWUzIo0ZoMd7GFruiYJ41eXna5L3qWCdNTa0iqWM7JART7LEmOwXhf3GxQqlULrebSPFCOiOJNO91TI4MYlgCMVZ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758013147; c=relaxed/simple;
+	bh=3DpbfjhNcYPny3opqvxM/G0alwk8XIxFrvBqhZGsL8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F6DjlRBavpEAEEk2M4pjUNWFAiai9A2c7C+AKQ3xeZu2xZ8g6YJ0RmLtgRCbZkvZBxnQ5DeLJuibNaAYkQ/UI8qvRj/1tzhZubUbBoYjCcDKT296JQx7VjDkUiGp3iEGfWp4Vf/T+BVc7tYNDQ/zR0nPwgwoSD/4MQaq3t9p/w8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=EKCJTAgE; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758013129; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DlGRx1sHBM1VjFZpqb9GzXR45EgfBj1Alpk5uB/oOv1djKJcxWenWpKpt7+ZoxNMKIVPa6UoHsBtZFzwsZf3MYlZfjPqY2x9L1/lQqwKrHr7j1nx5Og0UfTtIVAMO1hhW3nQVoFPcIN+1WGOYjq0yaqBdRJjOahhvTAGX5QrdgI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758013129; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3DpbfjhNcYPny3opqvxM/G0alwk8XIxFrvBqhZGsL8g=; 
+	b=g3OfcSn+hvsE6ovT+pY8HmViqNxCJqrCgdfr0k0I01HhvyNUkJcN7UMEODto/NSjt4zmSbku1VPnw3qK7xljqItoTGVvu7aTq0PnFV3p2C7opzPFb9TlRWezRxoFj4mecuJWGP9m8okQCXNb9SQx87ilotwjcGW6cz+KXyhzkOs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758013129;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=3DpbfjhNcYPny3opqvxM/G0alwk8XIxFrvBqhZGsL8g=;
+	b=EKCJTAgEdkqU7Xe8Bg88E/fUzojbXLWOgtO1T9xuaGhnprD5noQ0A0/y2xKVzoXk
+	Qqfp0RzbwKZsu48yBY9cXoQ1uc+7Xc52tt4uA7hrvBmsL4uvnDPnTb0IIrMUs/Jwn+l
+	FAGYlOnUXncaxY9t0Y9Towffbv8lrrxU00c9ezEM=
+Received: by mx.zohomail.com with SMTPS id 1758013127114512.6864936718232;
+	Tue, 16 Sep 2025 01:58:47 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Conor Dooley <conor@kernel.org>, Chia-I Wu <olvaffe@gmail.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/2] dt-bindings: gpu: mali-valhall-csf: add MediaTek MT8196
+ compatible
+Date: Tue, 16 Sep 2025 10:58:40 +0200
+Message-ID: <6418135.lOV4Wx5bFT@workhorse>
+In-Reply-To:
+ <CAPaKu7TEjG3sWamy3k_YLig=208oXLPhMmbCvPOf96iEL0-uig@mail.gmail.com>
+References:
+ <20250913002155.1163908-1-olvaffe@gmail.com>
+ <20250915-deodorize-proxy-b18e41fa8668@spud>
+ <CAPaKu7TEjG3sWamy3k_YLig=208oXLPhMmbCvPOf96iEL0-uig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ApGCQqXJ7W6B
-Date: Tue, 16 Sep 2025 10:58:32 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Patrisious Haddad" <phaddad@nvidia.com>,
- "Nathan Chancellor" <nathan@kernel.org>, "Jason Gunthorpe" <jgg@nvidia.com>
-Cc: "Tariq Toukan" <tariqt@nvidia.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Andrew Lunn" <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>,
- "Saeed Mahameed" <saeedm@nvidia.com>,
- "Leon Romanovsky" <leon@kernel.org>, "Mark Bloch" <mbloch@nvidia.com>,
- "Sabrina Dubroca" <sd@queasysnail.net>, Netdev <netdev@vger.kernel.org>,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Gal Pressman" <gal@nvidia.com>, "Leon Romanovsky" <leonro@nvidia.com>,
- "Michael Guralnik" <michaelgur@nvidia.com>,
- "Moshe Shemesh" <moshe@nvidia.com>, "Will Deacon" <will@kernel.org>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Gerald Schaefer" <gerald.schaefer@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Heiko Carstens" <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Justin Stitt" <justinstitt@google.com>, linux-s390@vger.kernel.org,
- llvm@lists.linux.dev, "Ingo Molnar" <mingo@redhat.com>,
- "Bill Wendling" <morbo@google.com>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Salil Mehta" <salil.mehta@huawei.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, x86@kernel.org,
- "Yisen Zhuang" <yisen.zhuang@huawei.com>,
- "Leon Romanovsky" <leonro@mellanox.com>,
- Linux-Arch <linux-arch@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- "Mark Rutland" <mark.rutland@arm.com>,
- "Michael Guralnik" <michaelgur@mellanox.com>, patches@lists.linux.dev,
- "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Jijie Shao" <shaojijie@huawei.com>
-Message-Id: <9d4cd8d2-343e-4448-ab59-65e69728c850@app.fastmail.com>
-In-Reply-To: <d259ffa9-6c9e-488f-a64f-81025deba75c@nvidia.com>
-References: <1757925308-614943-1-git-send-email-tariqt@nvidia.com>
- <20250915221859.GB925462@ax162> <20250915222758.GC925462@ax162>
- <20250915224810.GM1024672@nvidia.com> <20250915231506.GA973819@ax162>
- <d259ffa9-6c9e-488f-a64f-81025deba75c@nvidia.com>
-Subject: Re: [PATCH net-next V2] net/mlx5: Improve write-combining test reliability for
- ARM64 Grace CPUs
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Sep 16, 2025, at 10:39, Patrisious Haddad wrote:
-> On 9/16/2025 2:15 AM, Nathan Chancellor wrote:
->> External email: Use caution opening links or attachments
->
-> ifeq ($(ARCH),arm64)
->  =C2=A0 =C2=A0 =C2=A0 =C2=A0 CFLAGS_lib/neon_iowrite64_copy.o +=3D -ff=
-reestanding
->  =C2=A0 =C2=A0 =C2=A0 =C2=A0 CFLAGS_REMOVE_lib/neon_iowrite64_copy.o +=
-=3D -mgeneral-regs-only
-> endif
->
-> Which is actually equivalent to the diff you sent, Thanks for the=20
-> heads-up will fix and resend.
->
+On Tuesday, 16 September 2025 06:21:10 Central European Summer Time Chia-I =
+Wu wrote:
+> On Mon, Sep 15, 2025 at 10:52=E2=80=AFAM Conor Dooley <conor@kernel.org> =
+wrote:
+> >
+> > On Mon, Sep 15, 2025 at 06:51:16PM +0100, Conor Dooley wrote:
+> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > Hmm, actually there seems to be a more complete binding proposed here:
+> > https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250912=
+=2Dmt8196-gpufreq-v2-1-779a8a3729d9@collabora.com/
+> Right. I tried to add the compatible to the binding (this patch)
+> before adding it to the driver (next patch).
+>=20
+> If this patch is not a prerequisite for the driver change, I can drop
+> this. Or perhaps there is a better way?
+>=20
 
-I think it's better to handle this inside of the inline asm itself
-by adding
+Depends on what you want to do with the driver change; I could pull it
+into my patch series (I need it as a prerequisite now anyway, as v3
+will get rid of the clocks for MT8196 in the binding, which means it
+needs to have a flag for this in the soc_data struct you've added)
 
-      ".arch_extension simd;\n\t"
+I think that would be the easiest solution so that we don't step on
+each other's toes, as long as you think the driver change is
+basically in its final form right now and does not need major
+revisions you'd still like to make yourself without having to
+coordinate submission through me.
 
-at the start of it.
+Or, the most roundabout option: I split the bindings I submitted
+into a separate series, and then we can both declare them as deps
+for our driver changes. That might thoroughly confuse maintainers
+though. But then you can declare a dep on the bindings series and
+I can declare a dep on the bindings series and your patch.
 
-     Arnd
+Kind regards,
+Nicolas Frattaroli
+
+
 
