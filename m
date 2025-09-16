@@ -1,200 +1,124 @@
-Return-Path: <linux-kernel+bounces-818195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B432B58E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:51:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1948B58E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 601827A4685
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0331B24757
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C01D2DE6FB;
-	Tue, 16 Sep 2025 05:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972DC2DE714;
+	Tue, 16 Sep 2025 05:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OZIIWg39"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="VVj2sbGN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="AG+nWoDZ"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA659221DAD;
-	Tue, 16 Sep 2025 05:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF882DCF62;
+	Tue, 16 Sep 2025 05:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758001881; cv=none; b=DouNZ83jz7yo7udqwTIV+plFpjSIV54NEd6n631TrxzGly+LWZ/2TbV4KkcKXOvw7rOy7BRnpEJSQ8HPDn3mnYzvjD2Kv8dPJ5z+1OYoWC9yeBfW3WvZs2zkV7g7vfdVSlBn52CVxpEoEjm4qdslBY2ezIvqoR0dSUk7uBIEXyA=
+	t=1758001906; cv=none; b=AR8becQnYkKoJzcOiEHUOKZGP6NSaLz03cuM5tXcYzr3y2POK0kXKN+BkevlILl5CBMDox5uEuB5dybSW8LkUo8BMvFeNzdNAptidHoQozwO1yy7AkSy5rmJRpT6MIwFrnmlVbWkCCqNnETpydmBxDH0ieffDQ9BAQ4IyU7qbVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758001881; c=relaxed/simple;
-	bh=GOvPbzq9dY/FzbYpF7NQUdMvLRGlwu3UfHnUlsJK2j0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FsybqqB/SfAzEif0vL4zYQP5h6hNVLOoBnDgHRyqc04rmCauF7d1ZeidejQc5sCBOZZfjW+k7s+oBMCgKWMTLIGvkRkNy0R9Jb8IqyL0lb4hST87qGzMkWspXs9/9lEllIEDs/oekfYRf7xLAWoMJYr54I2+EzEauULUjmGX4as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OZIIWg39; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G38QFB017396;
-	Tue, 16 Sep 2025 05:50:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ccT1bC
-	7lYbAG6exxdO3CkV7Hot/4KAxkJYvN55BT0zo=; b=OZIIWg39Dwp/vQG8Ux0lVN
-	sdJ9ZFaqVu7FThJv7doPD24vzEt6thLBDI+fM14u5YeBZGwpI5rHa0SH7/1ft9Ui
-	xvrxs0I4OJy0ODpGcImX+SzHamtticZiaVdGb1KRCp2lEX+9w3otUtVZ4KL7Uwvo
-	tX1wQbrc53kpsXzE+ibQCXq4/mLm1ofjslAAqOwoMbLecW1e39gOfc5YvRx2jL8E
-	lHIeXqMB875hgFSsKJpXGADWX1zL4jLE5sEYlbXsMt4EujxxCVwiXGM/wKsrcpWf
-	1YjJXoFPQV5MujyMbKR8GTWkxIVTgwrxtcXKhX9HKT+EmGXIKNU77FeZoh4E6cng
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g53584e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 05:50:57 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58G5ouVf002958;
-	Tue, 16 Sep 2025 05:50:56 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g53584d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 05:50:56 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G5mWKK005963;
-	Tue, 16 Sep 2025 05:50:56 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxu2ha3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 05:50:56 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58G5otru30868196
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 05:50:55 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F4205805A;
-	Tue, 16 Sep 2025 05:50:55 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB6D15805C;
-	Tue, 16 Sep 2025 05:50:50 +0000 (GMT)
-Received: from [9.109.215.183] (unknown [9.109.215.183])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Sep 2025 05:50:50 +0000 (GMT)
-Message-ID: <7dcfab94-753a-4e60-b350-2a5f09613c34@linux.ibm.com>
-Date: Tue, 16 Sep 2025 11:20:49 +0530
+	s=arc-20240116; t=1758001906; c=relaxed/simple;
+	bh=WUGAi70PXBeJRCBddUZ0SRPuJjxG5ZxaG5bUha55cnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eH3r1ILqtTbLkihruXZRFsaLe+IS2LKFUn8O2CBzxSzC7wnwtKizMfVhIF3vv45XQXkZjnHGY+9iF6adsZlTfuGq4uoB1C/XSuW7ASqWONUpVxDyFQPJbjstFT3h5FP2VbkLn52K7oEMV3hrkAoEKo2aGmyqYnhyPlu8J7iGC5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=VVj2sbGN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=AG+nWoDZ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1758001904; x=1789537904;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Zf0rlUPIS9TkW6EtEY94PGkcqdgP6qxZVUo3leDvhyo=;
+  b=VVj2sbGNazim4jDJDR2637cVTKfCoCraMAHg6DDRVajLuURlOexdb2s9
+   vilmtYjugIkE5iSgCmuBlqchEtwUhp3nYNeFhhqdiQ03rEN/5Zi4EOB4j
+   4rKiDh6yNvarc+H460anVx26Iy4ENxhUUWbu+lSAPTTpHdYtQyHOw1EqM
+   0a5LsMYNSfAuRWH4YWJPV/cKpQmINLihit9WTaBdPrNYuBHtS3bca2Soq
+   hz55ayNwaarkYc+vlmopolipmKgTJMcXL/M3uF0TbErHIQNJeTNWimyDV
+   GDp6MAJsjCHaRrLxA2II94eSgOl2QsxtP19Wct4Mm7/lwZXKO/ymW8JLr
+   A==;
+X-CSE-ConnectionGUID: GqKwsJ/FSj2dNT/lNi7LJw==
+X-CSE-MsgGUID: j/DEDTUjTNW4Hmviq9tODw==
+X-IronPort-AV: E=Sophos;i="6.18,268,1751234400"; 
+   d="scan'208";a="46161273"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 16 Sep 2025 07:51:35 +0200
+X-CheckPoint: {68C8FAE6-59-C678C473-E36DAEF9}
+X-MAIL-CPID: DCEDB426389384B9BB85DC10A71F1436_5
+X-Control-Analysis: str=0001.0A2D035C.68C8FAE7.0083,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BB3F4166CD5;
+	Tue, 16 Sep 2025 07:51:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1758001890; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=Zf0rlUPIS9TkW6EtEY94PGkcqdgP6qxZVUo3leDvhyo=;
+	b=AG+nWoDZtUHcldDs2EaC7re+Y5WymxigPUzfof2xilIK7b7VtyoBCTJM6vzrLJTFuGmG1j
+	f3TvgG0BZABcRmP6vRphn9u3knvBmifL1FIVJkqBfbEHKQysW8uxagI7E9GqDCj9pYWzs8
+	AecoUa+/QjoM/apFDbQbxZUVUhgnI98ZxvTgXuUJXLp+S6L3mlxA5ZM1mRVD49BHFI78VJ
+	vYoMfVKYLanruLB7s3m2OeQGhCpDqTqPvZ1xeP8OmuTn/ToIT8mpxJdYvix8gqRdxxIgOP
+	Qcqv0PVJYhSbYOODS1di7CG4OO6ndVtXhsiI9XgD0tLi39lqrI3RignDAu16Ww==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] arm64: dts: tqma8mpql-mba8mpxl: Add MicIn routing
+Date: Tue, 16 Sep 2025 07:51:18 +0200
+Message-ID: <20250916055119.135637-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
- mm_struct during fork
-To: Sasha Levin <sashal@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
-        stable@vger.kernel.org, Joe Perches <joe@perches.com>
-References: <cover.1757946863.git.donettom@linux.ibm.com>
- <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
- <20250915164248.788601c4dc614913081ec7d7@linux-foundation.org>
- <aMjohar0r-nffx9V@laps>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <aMjohar0r-nffx9V@laps>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: LFh1igVw5leCDBK86GUUJvHhLChJTO9N
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfXxgQQSHweHzxG
- k4h/GPcfLMPV+IWwJfSpfOJ5dqvba4B1kx+E70IFyvGtvJ5KtiCCkfA17s9bbUouirXhtOHk4A1
- zaYjzVN1lJljVEwl6wcH9t+7AY/XCfvOxx83to2rbgbM58JjsipA9kA0xMEh3k8HGtmWvWIfnUH
- MyDxY4++iDrvzHSAPPy5Yi08x1RpWD9vU7iwZ/WZFX+luJYMzHLKiZX247L8U1Nt6idkSgE/b1Q
- mUBY40pydAOq7FSnbF0reezdz1b6kuWWm8dFM6s7MNc+LDCmSu4hY8yxb4bUZXMuNy1irY4QXuu
- biBou/V8OM/olt9BDyyhz0yC0WvPdP3fweG2DlabevyT7NMHs5E7F/rmnO5QyHjqOgsFurlxf+4
- MofpqGRH
-X-Proofpoint-ORIG-GUID: FdAcikb9w6k-2Q621R_EORuMfP_2YG66
-X-Authority-Analysis: v=2.4 cv=UJ7dHDfy c=1 sm=1 tr=0 ts=68c8fac1 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
- a=PrHmRqyh15Ml7F08pAgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_01,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- clxscore=1011 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
+X-Last-TLS-Session-Version: TLSv1.3
 
+MicIn is connected to IN3_L. Add routing including the Mic Bias.
 
-On 9/16/25 10:03 AM, Sasha Levin wrote:
-> On Mon, Sep 15, 2025 at 04:42:48PM -0700, Andrew Morton wrote:
->> On Mon, 15 Sep 2025 20:33:04 +0530 Donet Tom <donettom@linux.ibm.com> 
->> wrote:
->>
->>> Currently, the KSM-related counters in `mm_struct`, such as
->>> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
->>> inherited by the child process during fork. This results in 
->>> inconsistent
->>> accounting.
->>>
->>> When a process uses KSM, identical pages are merged and an rmap item is
->>> created for each merged page. The `ksm_merging_pages` and
->>> `ksm_rmap_items` counters are updated accordingly. However, after a
->>> fork, these counters are copied to the child while the corresponding
->>> rmap items are not. As a result, when the child later triggers an
->>> unmerge, there are no rmap items present in the child, so the counters
->>> remain stale, leading to incorrect accounting.
->>>
->>> A similar issue exists with `ksm_zero_pages`, which maintains both a
->>> global counter and a per-process counter. During fork, the per-process
->>> counter is inherited by the child, but the global counter is not
->>> incremented. Since the child also references zero pages, the global
->>> counter should be updated as well. Otherwise, during zero-page unmerge,
->>> both the global and per-process counters are decremented, causing the
->>> global counter to become inconsistent.
->>>
->>> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
->>> during fork, and the global ksm_zero_pages counter is updated with the
->>> per-process ksm_zero_pages value inherited by the child. This ensures
->>> that KSM statistics remain accurate and reflect the activity of each
->>> process correctly.
->>>
->>> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
->>
->> Linux-v5.19
->>
->>> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each 
->>> process")
->>
->> Linux-v6.1
->>
->>> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
->>
->> Linux-v6.10
->>
->>> cc: stable@vger.kernel.org # v6.6
->>
->> So how was Linux-v6.6 arrived at?
->
-> e2942062e01d is in v6.6, not in v6.10 - I suspect that this is why the 
-> "# v6.6"
-> part was added.
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* Rebased to next-20250912
+* Removed dependency from local patches
 
+ .../arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Yes, e2942062e01d is in v6.6, which is why I mentioned that we need to 
-backport it up to v6.6.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+index 4eedd00d83b9f..59642a8a2c445 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+@@ -238,6 +238,13 @@ sound {
+ 		audio-asrc = <&easrc>;
+ 		audio-cpu = <&sai3>;
+ 		audio-codec = <&tlv320aic3x04>;
++		audio-routing =
++			"IN3_L", "Mic Jack",
++			"Mic Jack", "Mic Bias",
++			"IN1_L", "Line In Jack",
++			"IN1_R", "Line In Jack",
++			"Line Out Jack", "LOL",
++			"Line Out Jack", "LOR";
+ 	};
+ 
+ 	thermal-zones {
+-- 
+2.43.0
 
-
->
->> I think the most important use for Fixes: is to tell the -stable
->> maintainers which kernel version(s) we believe should receive the
->> patch.  So listing multiple Fixes: targets just causes confusion.
->
-> Right - there's no way of communicating if all the commits listed in 
-> multiple
-> Fixes tags should exist in the tree, or any one of them, for the new 
-> fix to be
-> applicable.
->
 
