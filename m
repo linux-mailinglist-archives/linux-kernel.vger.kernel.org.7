@@ -1,135 +1,369 @@
-Return-Path: <linux-kernel+bounces-818711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E8FB59589
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:52:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F06B5958C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683FA2A5DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505F04E2B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C40305943;
-	Tue, 16 Sep 2025 11:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92D7307AD9;
+	Tue, 16 Sep 2025 11:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEqBsvqP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WHV51jrm"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4787F2877CF;
-	Tue, 16 Sep 2025 11:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8232D9EF6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023530; cv=none; b=Qt4oKidPrMxGTvMpiwkeSa7G0MhD1h20WCf8HVX5SyLR4ReLKX7/LsAV1AUy64JMx0csuMJPJVJus3zYiPjgmLBj7o2Zf7NCnZYk+/YV2kRQha+Kl6Ceoeo1Zbiij7lyfPz/Rgpq6O5thfZJpsHB2h3vweirlUH+IfgbdSHmGfM=
+	t=1758023589; cv=none; b=Roo3ud8aPxQ1sYiYynov9AAvnoNe6QICCwGyoJF4F2eRhxngjHoSPj9HrwTfFRHhGSMERTxDLbxLu/WfHO9vd6P+3R/E0caF3jeYIHsNo9EcVfXwa8fA4OBSI0hEZpKb0JgT9isZLOr5JIXfNLtsHPgG+TF9FeLYaSdDVPwZ8mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023530; c=relaxed/simple;
-	bh=uJbIiJv24vaUhiW5Rf3jsrKdADpkLVXM9KALYs09blc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V8mLjveYMnjail3ZoN6553knHndHE4PX448Ach7arh1v5lq6c/HUiiEGHeccrcS9zvVfDQqPgBfLSxD7BkLM4xdht/S/QxY4cAJJRvYAARgPZKDoLxKIwLGNp+Xok4i2PMgJslEcc97xvqV4ReIxLJbFZSDla2PfFQy1/fwXqiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEqBsvqP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20E81C4CEEB;
-	Tue, 16 Sep 2025 11:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758023529;
-	bh=uJbIiJv24vaUhiW5Rf3jsrKdADpkLVXM9KALYs09blc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tEqBsvqP+0XFFUiJaDHBDRqlOUHQfvJhmrLmq+ONXPNM77t9YpceYPD1CVO4kFyh9
-	 D64YaTeOUs1IWAQzuWvZjEjMEdT7yC8buvEIdHBIthZILoFPplvgyf+WKYl36jXjPl
-	 mInJ/AbSPN8gJAVKyewZwV+RgdI1nupdKBkhH6tOH65IMgt7gp5UFDn3bRbgCEaXPB
-	 K5u3wSvpoj/8ugvoEsXVof7kLsCbQbUU2IM5LsgDhz0qWktHSxsyjzdWyNRvJff73j
-	 1mgDF5RYsyXXARAFxzQUT2PmMLybOllhqM/lLKOhsPv05mVlU06csNDwyun74vQDQr
-	 0Jz6hXPbp5VQQ==
-Date: Tue, 16 Sep 2025 12:52:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Xin Li <xin@zytor.com>
-Subject: linux-next: manual merge of the kvm-x86 tree with the tip-fixes tree
-Message-ID: <aMlPZcYlk7hRlMkE@sirena.org.uk>
+	s=arc-20240116; t=1758023589; c=relaxed/simple;
+	bh=583/hmqJ8eEWyKq8TXCVMJ+6+XDWxXL4HMDpvfqgTK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IWwDa10pkgqlpzwnI5NgRp66fDraOD/A+zStApTkXP2LVDT1qgBCcGC2skZ6enwgxCP36BuC+jHa2PokyHwVVXxNoDbuYlvdsDzU99+voNJ583iO+Zvak6FXlQF4wOam6hJ92RpJ/FxRNkPnegnZCTaOuX2ZAmkQqpcDwACuzgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WHV51jrm; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1C7DFC6F;
+	Tue, 16 Sep 2025 13:51:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758023506;
+	bh=583/hmqJ8eEWyKq8TXCVMJ+6+XDWxXL4HMDpvfqgTK8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WHV51jrmtSw+PxCRCVa/GNneiw16HJ81U/2oCLmsHxYodqasyvBPLz2OfOPr8wntV
+	 31gYSuMdx/ccsSIoUrMzb+FV9DG+feHKo64rr6oqS58pcfii7nd1fapv/fLAG4Sy85
+	 5iT6eGp6GHDWTx86yXifY0zYouBbjPYK9qHmb+Jc=
+Message-ID: <2a3fdf17-7f99-472c-83b7-e4049ff1512e@ideasonboard.com>
+Date: Tue, 16 Sep 2025 14:53:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o++B5AeyijXALTFS"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] drm/tidss: Remove max_pclk_khz from tidss display
+ features:
+To: Swamil Jain <s-jain1@ti.com>
+Cc: h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, praneeth@ti.com,
+ u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jyri.sarha@iki.fi,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, aradhya.bhatia@linux.dev
+References: <20250911110715.2873596-1-s-jain1@ti.com>
+ <20250911110715.2873596-3-s-jain1@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250911110715.2873596-3-s-jain1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
---o++B5AeyijXALTFS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/09/2025 14:07, Swamil Jain wrote:
+> From: Jayesh Choudhary <j-choudhary@ti.com>
+> 
+> TIDSS hardware, by itself, does not have variable max pixel clock for
+> each VP. The maximum pixel clock is determined by the SoC's clocking
+> architecture.
+> 
+> The limitation that has been modeled until now comes from the SoC's
+> clocking architecture (PLL can only be programmed to a particular max
+> value). Instead of putting it as a constant field in dispc_features,
+> we can use clk_round_rate() to see if requested clock can be set or not.
+> 
+> Remove the constant "max_pclk_khz" from dispc_features. In mode_valid()
+> call, check if a best frequency match for the mode clock can be found
+> or not using clk_round_rate().
+> 
+> Since TIDSS display controller provides clock tolerance of 5%, we use
+> this while checking if the requested pixel clock is supported. Also,
+> move up dispc_pclk_diff() before it is called.
 
-Hi all,
+I think in the next version you could add a patch on top which changes
+the limit to 0.5% as discussed.
 
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
+> This will make the existing compatibles reusable if DSS features are
+> the same across two SoCs with the only difference being the pixel clock.
+> 
+> Note:
+> This uses clk_round_rate() to validate all modes and ensure that the
+> driver enumerates only those whose clocking requirements are well
+> within the tolerance range. However, this incurs a slight delay, as for
+> each mode, clk_round_rate() is called, which takes ~100 us. So, for a
+> monitor supporting 30 modes, it takes an extra 3.5 ms to do
+> clk_round_rate() to enumerate all modes. If the user wants to bypass
+> this validation logic, they can manually modify the driver to bypass
+> these calls selectively. For example, they can just do a
+> clk_round_rate() check for the highest resolution mode and bypass it
+> for the rest of the modes, as done here [1].
 
-  arch/x86/include/asm/cpufeatures.h
+A more important topic to cover in the description is the change of
+behavior: does the driver behave differently now, and how?
 
-between commits:
+I think there's a chance that this change produces issues, but if that
+realized we need to deal with them by some other way than having the
+max-pclk in dispc. The possible issue is that e.g. SoC's DPI output has
+limitations on how fast the clock can be. So the PLL could go up to,
+say, 600 MHz, and DSS could do that, but the DPI path would probably
+have trouble somewhere around 200-300MHz. Now, there's a good chance
+that the DPI peripheral (panel, bridge) will already limit the pclk. But
+if not, we might get into a case where tidss driver thinks the clock is
+fine, but the SoC can't really output that via DPI.
 
-  2f8f173413f1c ("x86/vmscape: Add conditional IBPB mitigation")
-  e19c06219985f ("x86/cpufeatures: Add support for Assignable Bandwidth Mon=
-itoring Counters (ABMC)")
+> [1]: https://lore.kernel.org/all/20250704094851.182131-3-j-choudhary@ti.com/
+> 
+> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
 
-=66rom the tip-fixes tree and commit:
+What bug does this fix?
 
-  3c7cb84145336 ("x86/cpufeatures: Add a CPU feature bit for MSR immediate =
-form instructions")
+> Tested-by: Michael Walle <mwalle@kernel.org>
+> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/tidss_dispc.c | 78 +++++++++++------------------
+>  drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
+>  drivers/gpu/drm/tidss/tidss_drv.h   |  1 -
+>  3 files changed, 30 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 7c8c15a5c39b..1cd83a6763ba 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -59,10 +59,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>  const struct dispc_features dispc_k2g_feats = {
+>  	.min_pclk_khz = 4375,
+>  
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 150000,
+> -	},
+> -
+>  	/*
+>  	 * XXX According TRM the RGB input buffer width up to 2560 should
+>  	 *     work on 3 taps, but in practice it only works up to 1280.
+> @@ -145,11 +141,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>  };
+>  
+>  const struct dispc_features dispc_am65x_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -		[DISPC_VP_OLDI_AM65X] = 165000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 1280,
+>  		.in_width_max_3tap_rgb = 2560,
+> @@ -245,11 +236,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>  };
+>  
+>  const struct dispc_features dispc_j721e_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 170000,
+> -		[DISPC_VP_INTERNAL] = 600000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 2048,
+>  		.in_width_max_3tap_rgb = 4096,
+> @@ -316,11 +302,6 @@ const struct dispc_features dispc_j721e_feats = {
+>  };
+>  
+>  const struct dispc_features dispc_am625_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -		[DISPC_VP_INTERNAL] = 170000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 1280,
+>  		.in_width_max_3tap_rgb = 2560,
+> @@ -377,15 +358,6 @@ const struct dispc_features dispc_am625_feats = {
+>  };
+>  
+>  const struct dispc_features dispc_am62a7_feats = {
+> -	/*
+> -	 * if the code reaches dispc_mode_valid with VP1,
+> -	 * it should return MODE_BAD.
+> -	 */
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_TIED_OFF] = 0,
+> -		[DISPC_VP_DPI] = 165000,
+> -	},
+> -
+>  	.scaling = {
+>  		.in_width_max_5tap_rgb = 1280,
+>  		.in_width_max_3tap_rgb = 2560,
+> @@ -442,10 +414,6 @@ const struct dispc_features dispc_am62a7_feats = {
+>  };
+>  
+>  const struct dispc_features dispc_am62l_feats = {
+> -	.max_pclk_khz = {
+> -		[DISPC_VP_DPI] = 165000,
+> -	},
+> -
+>  	.subrev = DISPC_AM62L,
+>  
+>  	.common = "common",
+> @@ -1331,25 +1299,50 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
+>  			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+>  }
+>  
+> +/*
+> + * Calculate the percentage difference between the requested pixel clock rate
+> + * and the effective rate resulting from calculating the clock divider value.
+> + */
+> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+> +{
+> +	int r = rate / 100, rr = real_rate / 100;
+> +
+> +	return (unsigned int)(abs(((rr - r) * 100) / r));
+> +}
+> +
+> +static int check_pixel_clock(struct dispc_device *dispc,
+> +			     u32 hw_videoport, unsigned long clock)
+> +{
+> +	unsigned long round_clock;
+> +
+> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
+> +		return 0;
+> +	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
+> +	/*
+> +	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
+> +	 * use the same 5% check here.
+> +	 */
 
-=66rom the kvm-x86 tree.
+This is fine for now, but I think we need to revisit this in a future
+patch. We should check the clock here in mode_valid, but also in
+atomic_check. The clock we finally set in dispc_vp_set_clk_rate() should
+be a "rounded" rate, know to work.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+> +	if (dispc_pclk_diff(clock, round_clock) > 5)
+> +		return -EINVAL;
+> +	return 0;
+> +}
+> +
+>  enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>  					 u32 hw_videoport,
+>  					 const struct drm_display_mode *mode)
+>  {
+>  	u32 hsw, hfp, hbp, vsw, vfp, vbp;
+>  	enum dispc_vp_bus_type bus_type;
+> -	int max_pclk;
+>  
+>  	bus_type = dispc->feat->vp_bus_type[hw_videoport];
+>  
+> -	max_pclk = dispc->feat->max_pclk_khz[bus_type];
+> -
+> -	if (WARN_ON(max_pclk == 0))
+> +	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
+>  		return MODE_BAD;
+>  
+>  	if (mode->clock < dispc->feat->min_pclk_khz)
+>  		return MODE_CLOCK_LOW;
+>  
+> -	if (mode->clock > max_pclk)
+> +	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
+>  		return MODE_CLOCK_HIGH;
 
-diff --cc arch/x86/include/asm/cpufeatures.h
-index b2a562217d3ff,8738bd783de22..0000000000000
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@@ -495,8 -496,7 +496,9 @@@
-  #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TS=
-A-SQ */
-  #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TS=
-A-L1 */
-  #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers usin=
-g VERW before VMRUN */
- -#define X86_FEATURE_MSR_IMM		(21*32+14) /* MSR immediate form instruction=
-s */
- +#define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-u=
-serspace, see VMSCAPE bug */
- +#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring C=
-ounters */
-++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instruction=
-s */
- =20
-  /*
-   * BUG word(s)
+I think you can just inline check_pixel_clock() here, and return
+MODE_CLOCK_HIGH or MODE_CLOCK_LOW depending on the rounded rate.
 
---o++B5AeyijXALTFS
-Content-Type: application/pgp-signature; name="signature.asc"
+ Tomi
 
------BEGIN PGP SIGNATURE-----
+>  
+>  	if (mode->hdisplay > 4096)
+> @@ -1421,17 +1414,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
+>  	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
+>  }
+>  
+> -/*
+> - * Calculate the percentage difference between the requested pixel clock rate
+> - * and the effective rate resulting from calculating the clock divider value.
+> - */
+> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+> -{
+> -	int r = rate / 100, rr = real_rate / 100;
+> -
+> -	return (unsigned int)(abs(((rr - r) * 100) / r));
+> -}
+> -
+>  int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
+>  			  unsigned long rate)
+>  {
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+> index 60c1b400eb89..fbfe6e304ac8 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+> @@ -78,7 +78,6 @@ enum dispc_dss_subrevision {
+>  
+>  struct dispc_features {
+>  	int min_pclk_khz;
+> -	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
+>  
+>  	struct dispc_features_scaling scaling;
+>  
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+> index e1c1f41d8b4b..f82e282e17a7 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.h
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
+> @@ -26,7 +26,6 @@ struct tidss_device {
+>  	struct dispc_device *dispc;
+>  	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
+>  
+> -
+>  	unsigned int num_crtcs;
+>  	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
+>  
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJT2QACgkQJNaLcl1U
-h9Abywf8Cx3bVmLRE6DmhIYhL3zv0Kx2o7krQsdmmt2Zb29EDLufknvHmgVw6cTx
-1EwvDqxx0OaynKFyVs7VswIfEZw416laH6Q0+4/j+AvAUBHApi3Quocd6hMo7WpY
-Zg21cGBS7wkiNdAbQqb8mIp/56WCC72J2Scm16hml7XKBSSTJOcMYqCwV8MI/WUw
-IMweaQL19hL3uKDHUPD2WWEtwIseJ64XoF97cOSys19IDcrFgww7qgHkmOXuGY4S
-NkyuGg4sZtS+7tzQylSf6Vkzydm9EN9mzLQGpRieZ/r6OlUUckcnjFLibIJ3em0M
-xSPQJ0n0ZVrydUjgD/CbNbZp+APpXQ==
-=Or9m
------END PGP SIGNATURE-----
-
---o++B5AeyijXALTFS--
 
