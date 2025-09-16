@@ -1,78 +1,98 @@
-Return-Path: <linux-kernel+bounces-819701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839E1B7FF57
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 16:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 548B7B7F4CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 15:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 645997B561E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:28:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C5A37B82D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A95532E2FE;
-	Tue, 16 Sep 2025 22:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E7228469B;
+	Tue, 16 Sep 2025 22:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpBtF2Ie"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D58sC2Pv"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F4632E2F1;
-	Tue, 16 Sep 2025 22:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EF1292B2E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758061750; cv=none; b=ckaCpJQeTiOQW/FF7406z2GkzysBjdger+w26+Ex25qzzyvz53ddIhut+cNTD+S4m2MdnLELld9T051a8EGi8i7DO7mlGdzQB+h7FVimcoANXF8hEJyr03omJUxZBOdwd3k/rXRMFUgiSWEQnrwNZrZXeg+p/DK2xL2Y/53XZMI=
+	t=1758061837; cv=none; b=avufleXGhVsrBg126/jN6ABDPzmqX5VasOEBr2INFDMFae08CpC0Hy4l4z+BEXAbLvrMc5THGvEjtJSJYjUGPYJ/E0PG+Y3L1e2OkNTCgMSWv50QE7hSlnWqTwIUtt+9XaNqQM23rLnlzlWe1hW+lu2deF3ekYR1OqmgJdWCg8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758061750; c=relaxed/simple;
-	bh=LoRaHXiFjX2WaXLaWJDJkSFx4i3UDMK7friz1RJycoQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=QkY8kr28QVrtM+9TezuNL8NGfKKmpXbdGIK69saLjIpWF39KzB+fr3FMLxC2NWaPg1IBKLR3SZYCdA54clM7HUfdyHKLSvpa1ONnBcb35lAxICxO5STyWyK/+R4R4+CzYUGLmSPWyY6qqjNnm4anIG6u2adttdCl8h2rgbQzDeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpBtF2Ie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE2EEC4CEEB;
-	Tue, 16 Sep 2025 22:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758061750;
-	bh=LoRaHXiFjX2WaXLaWJDJkSFx4i3UDMK7friz1RJycoQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=YpBtF2IeMb5z9Lds4H1EZfyK0gJMi53AuuAS8UfFK91/hGiV7oxELA2oXTHYbE6Cz
-	 wWPVJ5OxgwgWev5hEy5nsCR0yEGIw5j98PmT1FFlUu5F2vUuS+exGFdtDVANf15eit
-	 8VTe5Neev5YPjca4mxrrq7iDEk9ybqt8MKNAvrvN+oM7TObLhzAYoNcmTMoHDuACn9
-	 EPNhPbPVE2b8aCZ2GOPzihA+VrscaNVqs8UmomfYwOIEm8/oFGeeCAnLZjdZhUp6eW
-	 Nqb3PfCV2a+t1OK5ydvLKK/wNLPY4PAfQEeKIBn4UWuWyhCPyovT5XnQTVdgOYfnLJ
-	 7MN84lZ5F9Bxw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FEB39D0C1A;
-	Tue, 16 Sep 2025 22:29:10 +0000 (UTC)
-Subject: Re: [GIT PULL] perf-tools fixes for v6.17-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250916215921.773759-1-namhyung@kernel.org>
-References: <20250916215921.773759-1-namhyung@kernel.org>
-X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250916215921.773759-1-namhyung@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-09-16
-X-PR-Tracked-Commit-Id: 20c9ccffccd61b37325a0519fb6d485caeecf7fa
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5aca7966d2a7255ba92fd5e63268dd767b223aa5
-Message-Id: <175806174872.1382555.6890730749007353152.pr-tracker-bot@kernel.org>
-Date: Tue, 16 Sep 2025 22:29:08 +0000
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+	s=arc-20240116; t=1758061837; c=relaxed/simple;
+	bh=fQSYWiW5H33VlAd/DMAPALF6CQ5aBsMUQZ2tRC+sRDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WV64UM3KRC2wP9+yjHEIOphdE6M2nih9GShaIYHdYSqtxmZUVFAMnkihbOAqbudPzyHCky38QmoJUSr56tSDMeEjm+jZ3dVMgiFVoobMKEGZbz3B8qGVyWVwI/mv2iH/yXmNVLSpTl5qMQR2VIaOCRsnIXc/8PRnKOiBK2QQYEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D58sC2Pv; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758061821;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ID8Oe+mxN4A1QCIZ/4llDDSDl+ekwYLMldOlIQM4grM=;
+	b=D58sC2Pv7eR2dD/zcbyqknCMunhU+2xiA5Yu9JHFzAQ8wikP4F15bN9QZriREN59C/AODw
+	XiODe49wTn52aG58rN9fSz5IH4a6rln0m/UBJ7FxKGr12jcK9CjYngONNDsR6dN59Q+cZG
+	BxyEu7ZCUAthgIKu/DsZEJVLR/IS3hY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] docs: maintainer: Fix ambiguous subheading formatting
+Date: Wed, 17 Sep 2025 00:29:44 +0200
+Message-ID: <20250916222944.2547948-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Tue, 16 Sep 2025 14:59:21 -0700:
+Add a newline after both subheadings to avoid any ambiguous formatting,
+especially in htmldocs. Without the newline, subheadings are rendered as
+part of the following paragraphs, which can be confusing to read.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.17-2025-09-16
+Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Changes in v2:
+- Fix subheading formatting with newlines as suggested by Randy
+- Link to v1: https://lore.kernel.org/r/20250915192235.2414746-2-thorsten.blum@linux.dev/
+---
+ Documentation/maintainer/maintainer-entry-profile.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5aca7966d2a7255ba92fd5e63268dd767b223aa5
-
-Thank you!
-
+diff --git a/Documentation/maintainer/maintainer-entry-profile.rst b/Documentation/maintainer/maintainer-entry-profile.rst
+index cda5d691e967..d36dd892a78a 100644
+--- a/Documentation/maintainer/maintainer-entry-profile.rst
++++ b/Documentation/maintainer/maintainer-entry-profile.rst
+@@ -59,6 +59,7 @@ week) that patches might be considered for merging and when patches need to
+ wait for the next -rc. At a minimum:
+ 
+ - Last -rc for new feature submissions:
++
+   New feature submissions targeting the next merge window should have
+   their first posting for consideration before this point. Patches that
+   are submitted after this point should be clear that they are targeting
+@@ -68,6 +69,7 @@ wait for the next -rc. At a minimum:
+   submissions should appear before -rc5.
+ 
+ - Last -rc to merge features: Deadline for merge decisions
++
+   Indicate to contributors the point at which an as yet un-applied patch
+   set will need to wait for the NEXT+1 merge window. Of course there is no
+   obligation to ever accept any given patchset, but if the review has not
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.51.0
+
 
