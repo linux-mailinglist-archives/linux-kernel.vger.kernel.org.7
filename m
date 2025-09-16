@@ -1,108 +1,140 @@
-Return-Path: <linux-kernel+bounces-818781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566AEB59663
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:42:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43027B59660
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 878AC7A3EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774D6188E823
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AF828D83E;
-	Tue, 16 Sep 2025 12:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B4130E0CD;
+	Tue, 16 Sep 2025 12:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p1BHP+kF"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgGCR0PQ"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE15321CC59
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6791021CC59
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026528; cv=none; b=V+pNtlMMM8FWBu2clWFhpiW1OeFjsq3wU1C70Fe7jUhn0ZU3wroJDU28UeFV+FT4Tak/Jcl3H8+fHvAAb5kww+UQnhxBETFXQ9lXRds2hCCs4dMVCeaIeegJDO47LqJCNhXffVx6Jwpoy8aWKPA3DaZ9DVJRkVd6Rywa5n+qwxQ=
+	t=1758026483; cv=none; b=u8Phtava1nSLOcavPS6wBV54cirCW0dQWbWAMsc1EhAJCse/a7dy2rq4V135HdL1Fwmi80ZnCf7OZu5Pt3bEMaIxTj3E75hPNw3doSitSlM4N1yye0frmqHjut2T91/8qNhKuxuQG2KFYAtTou0Y+WPfTQnJXq4leBJ/3VbLiU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026528; c=relaxed/simple;
-	bh=xV6c4xU+fLhW9GO5Uf+hdtT9Gy4K5wxlXEfxI6H2CKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UWvr7IQnEUMplkM7Ejif6S7GSB0DAMnhMHv9mKu+SAmKF51doDjz7qx1P/O7tYVjRWPVl6oOFQlsa4n5ySGaG3Y3u3h1ThcZUl63p3zVjMSeIxHczvpn/8fvzH9xu0P7SCh8T7me2pliFyxM7xdblkFtxGOutSMzYVhEsAgHUt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p1BHP+kF; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758026511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bPCT1+TcCxAxBd09Xa6o7zuOImvO2FpODExXiYxCmOw=;
-	b=p1BHP+kFWiRNGPEZuCadMZQDTJ9B6l+VcKizdydVaak8Mo7dRFDvV1i4/H88/8aljzECUV
-	hhZ/FaeGwBe3lqoApCLVQGDkCMODzWeV+ud1mZ8F8Lc56UtcgEUfUcWMnXwLlF755EwaBq
-	X/Cb1cywqKnWDOyZ2uv2yILieL0bjZs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Dmitry Osipenko <digetx@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PM / devfreq: tegra30: use min to simplify actmon_cpu_to_emc_rate
-Date: Tue, 16 Sep 2025 14:40:58 +0200
-Message-ID: <20250916124059.2489125-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758026483; c=relaxed/simple;
+	bh=iuY67WVePs9KiduC+k9AQZP60zJpeVxjLxorW0CY2MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p/amE2qQK+ZtKfWFqJlnIw4BSwLE+fyl8n1oLm97uRYgHZxF93rMtj+CizglT5jDybvD5DCrO6Dntdt9yDe/3el3OQxv5V60BUOSDLC7hgUlWS/FCDKHsPV4sPlpTIj0XE4DHA3EvquTSxl9F5fbSLLaGeqpYCaXQJEUJWvpUmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgGCR0PQ; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b54a8c2eb5cso4279225a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758026481; x=1758631281; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2tqvSw+O2QuvnDz6ws7PU1PREoECQAI/OBK+RkGaDJo=;
+        b=PgGCR0PQojYebOE2e2JVaOvKTutdVoeMy9HniSlQf5Kj0MtLreNrtD8fw9KSEvdkS0
+         Kq2qPwogbZc5bkjW9ImyhwTmcY1+hwWeRjzL36DzanNpSO4nrJjq+me4JC8XDakA1gKr
+         5TFVNDp+wtwfHbkFSkRS7+GJofGRI/pqIO7SuAw6MZXXSipCW0AYBaW68EtcWaqMMMno
+         ZDwOueL7YZA87bqG3RQohNqlqkqyqTkcq8/pTxffRRQxWpg5MQySbN2FNF9ENxqF/i+e
+         GlM5otOS28pnQECmhscGZglPJDGJxdAhtjPWteVdY3I/KIanS+oUJbD6iWAj86W1Ao0T
+         nvXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758026481; x=1758631281;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2tqvSw+O2QuvnDz6ws7PU1PREoECQAI/OBK+RkGaDJo=;
+        b=oI6w6yS5C28Enmchq8Mufc03iIF6zzElSW5u6n/ldVJTjIzcSC+YoVEyDU6DNSqq01
+         kdDd1+liPNYeg8qiBIJOXPA6vKyTuZ4aAAb2+UpMu46EYXXjRbQe/EiuhGDiQBxkHm9Z
+         pp65tGgJjxGksIJkIOEBj0pRyN5Srg53tbA6MeLutc0/tzMQQaYZHaGPYFhfbRfzmTq0
+         9qqKE6auUmpDcERjHbmVsf5FZaQtFsUVVK6kKUQ9jxmkk4ot8zeXptdKJRPnDFuQkcro
+         I1J2gNZ2ddIcfSW+SfZTTAveyDidOESmfZF/XyhpWyk4O4mAtSx+gMTO4TNPh7ouNKsQ
+         Kqnw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+KfB0oehNt2CCeAl11PlXNqxx4K1w8fg0ngUOoIQwGrdGng9Ip2/hWU7SNg02fe7eUXsNjcqaelgM5/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO6oHi7Fjo1qOl+oRO3xvwRcZg6v3P0bA7+nSw3SC41WK328/1
+	eNnKsNW+IMHhxXTSLNi1Y3wDO2M5kiGMgyZJfnrzlRi7LhPWpLcp6rA=
+X-Gm-Gg: ASbGncsBgsSn8xzEhi+YkDth/uZKf1kYW++xsQfMEsoXHBbH8Rn7jFFNzCATTKioN9F
+	Uhsup4rMMx9C8fwD0t7GWEZy1EgM/IORrYKZRlfDfmKuEHmfBKUZZvtD0gLuSbMbGBiEYNG+jVg
+	+BPshGVnkD0j8zlIAc+xRwD6j2G5bQ79b+8jawRXs3Vvr4psitsSDhGoyCSbyKVRLUO/+sEPjHk
+	tK1ICOvkSus4rjYNEyhS73dhNtLZLl5cWFKsebPjTi8I14AQ2sl74kqlLG4ie1SEbTx18WLtJ5O
+	Pa62iVu4cDaxxYHH7X/7FBvYIDW/wc00jS9zxg2/edJB7fzEVi1SsKNKjZkS0hyyKbGM/jvwDuh
+	QaivKFO8y2903CpQPmE2lDjr/n1Y4IHnhgc4sf0p8e++rPXS+5OGK7K2wvbNVidDoNwc38WBLGM
+	HZ9aEHToPZuzkJ/bcyInO6
+X-Google-Smtp-Source: AGHT+IHgUg6djFhXrbzUFkEtt+EVn1UGwMgH0i5j+uCXI/1jMyPy/YHcFq03zuX4cZSzyNY+bhbKsQ==
+X-Received: by 2002:a17:902:d2ca:b0:265:ff71:401c with SMTP id d9443c01a7336-265ff714151mr102482135ad.27.1758026480624;
+        Tue, 16 Sep 2025 05:41:20 -0700 (PDT)
+Received: from codespaces-8c10cd.ktkhmpmw22vebpok31ngjx2qsb.ix.internal.cloudapp.net ([23.97.62.114])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26175efc667sm97050945ad.112.2025.09.16.05.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 05:41:20 -0700 (PDT)
+From: JaimeF <jaimefine6@gmail.com>
+To: gregkh@linuxfoundation.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com
+Cc: david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	leon@kernel.org,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jaime Fan <jaimefine6@gmail.com>,
+	onur-ozkan <work@onurozkan.dev>
+Subject: [PATCH] rust: auxiliary: fix "initialialized" typo
+Date: Tue, 16 Sep 2025 12:41:02 +0000
+Message-ID: <20250916124102.14182-1-jaimefine6@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Use min() to improve the readability of actmon_cpu_to_emc_rate() and
-remove any unnecessary curly braces.
+From: Jaime Fan <jaimefine6@gmail.com>
 
-No functional changes intended.
+Fixes a spelling mistake in a comment: "initialialized" → "initialized".
+This improves clarity in the documentation and avoids confusion for readers.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Suggested-by: onur-ozkan <work@onurozkan.dev>
+Link: https://github.com/Rust-for-Linux/linux/issues/1187
+Signed-off-by: Jaime Fan <jaimefine6@gmail.com>
 ---
- drivers/devfreq/tegra30-devfreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ rust/kernel/auxiliary.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 890990e03335..a4041b9d0052 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-+#include <linux/minmax.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -326,14 +327,9 @@ static unsigned long actmon_cpu_to_emc_rate(struct tegra_devfreq *tegra,
- 	unsigned int i;
- 	const struct tegra_actmon_emc_ratio *ratio = actmon_emc_ratios;
+diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+index 58be09871397..129eae8ff2e7 100644
+--- a/rust/kernel/auxiliary.rs
++++ b/rust/kernel/auxiliary.rs
+@@ -317,12 +317,12 @@ pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: &CStr) -> Res
  
--	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++) {
--		if (cpu_freq >= ratio->cpu_freq) {
--			if (ratio->emc_freq >= tegra->max_freq)
--				return tegra->max_freq;
--			else
--				return ratio->emc_freq;
--		}
--	}
-+	for (i = 0; i < ARRAY_SIZE(actmon_emc_ratios); i++, ratio++)
-+		if (cpu_freq >= ratio->cpu_freq)
-+			return min(ratio->emc_freq, tegra->max_freq);
+         // SAFETY:
+         // - `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`, which has
+-        //   been initialialized,
++        //   been initialized,
+         // - `modname.as_char_ptr()` is a NULL terminated string.
+         let ret = unsafe { bindings::__auxiliary_device_add(adev, modname.as_char_ptr()) };
+         if ret != 0 {
+             // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
+-            // which has been initialialized.
++            // which has been initialized.
+             unsafe { bindings::auxiliary_device_uninit(adev) };
  
- 	return 0;
- }
+             return Err(Error::from_errno(ret));
 -- 
-2.51.0
+2.50.1
 
 
