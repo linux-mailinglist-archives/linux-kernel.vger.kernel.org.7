@@ -1,87 +1,72 @@
-Return-Path: <linux-kernel+bounces-819583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708E3B5A35E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:40:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25D6B5A369
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E80577B47CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83797A39F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970E835950;
-	Tue, 16 Sep 2025 20:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0AB283145;
+	Tue, 16 Sep 2025 20:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XwPmf7+6"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013014.outbound.protection.outlook.com [40.93.196.14])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fHPtAqg+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WxlwnHu5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A163631BCA3;
-	Tue, 16 Sep 2025 20:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758055228; cv=fail; b=DLigrimVwD+NdsI9VjOsarqOrOoiwDqkslBxvXiaAfvSwnqUkDgpcxntqWXp8WtchLyDvcih6WNkrihYKtFTV5mRT74Pqn+DU89YGvKDbfZcfdhB2nVdiCdsvG+kPxr2AGUrIqYBgPNJLJssxRAQvFrYofwpmdwgv075/igjWlI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758055228; c=relaxed/simple;
-	bh=jAsKY+p/lzDK1S37c/fjbqQ1a4tBfGnOTYVkeIcXjAw=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VPQH/3MuKD5qJoaco+qeP2IwHAvni34xZlujHuir2tTs0UrlPOvHvMT8b/OjpQJhL2E4ndEidynZE8gnYvyPG/7Ufy1TJDPckc18YOlGeo7oZNURF5wLPcTQhTxgF5cKS1FdfpcVsA8vCQLJt31Ieu1DsQmNJFX2/C8UQ3QjwTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XwPmf7+6; arc=fail smtp.client-ip=40.93.196.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TJpeuOs7K+knBJpYfXGXP69CfNkDuWQlwwskw6U8MoMv8ZtHtuoqcKIwzCzzhP2IFmc3vyze84EI6xKh85CaFM5BJmg2iuvRLkNpw7eLy2fz3nkfvnJev5fEmMLbygeimef2tObWxnETzYlOTF+Wp3oa+fA7IejqDlAtZ49pvAGgFlWHDAo30/X4PBe2tc/ouD5H1NV1i79Y6kMFVnigB7oX+hR0k2P+hI44MgfP18m7AYzRWh2Z67r+Gc/DLTEZaMuk7bqaX+R+jpXBOqSPqCAqQDdEjeGN6AqeFYoZOWNNCrS4YEGPsrTWGXLQRY6UoZe+pD3lSGjzMA9bDgP8LQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3+7X+nngBAI7T6NRV9aLgPy04CrqFx1yFtsCdf+A8XQ=;
- b=JXSzCGf8TnVh8zOeedwFpI8mXiiyK9/0jnVJDG2W6HKZFxAa4BaJZXaJWjV0UmrKIaRluCKsM/zn/J/GGk0aMkELApD2cNhzgwr4DKk8oIrSvwbkifHbcgxJoDE2j6MRMIfqn/4tXkgM69Qd05EVjaP9TBPPGwUfwPB9LGiy6iHoHqcAEStQpg5rNGt8YEwcvVkZCCbym+e1wDa1z8gRzAYnjjsnP6s12F5wyNeL8F7cNzEkZfKxeNzSNj1zR++bktI/XOSjzMjmFZd4MciHpRtnSaphJd0RnO1y+OkUbA0wE4Zozacf87IA85hpSx/uPOWz9isixT3WGY1ZrOaRig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 165.204.84.17) smtp.rcpttodomain=huawei.com smtp.mailfrom=amd.com;
- dmarc=temperror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3+7X+nngBAI7T6NRV9aLgPy04CrqFx1yFtsCdf+A8XQ=;
- b=XwPmf7+69YJ8Zbi6nCSdioRQ/dcTpj96SOoNcOAXXkUmcXSBTR5LNtXL+8W+XtYEDmqRHuQWG/aXu4u+3BC0No6U4CEM+eDl+M7lMeMfinPN5eNywi/LF1T3isD4kgL244n+uDWSQ46g83NP6jnoAvEUk5pfksFmZB2u4ARKmio=
-Received: from SA9PR13CA0024.namprd13.prod.outlook.com (2603:10b6:806:21::29)
- by BL1PR12MB5827.namprd12.prod.outlook.com (2603:10b6:208:396::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Tue, 16 Sep
- 2025 20:40:19 +0000
-Received: from SN1PEPF00026369.namprd02.prod.outlook.com
- (2603:10b6:806:21:cafe::b2) by SA9PR13CA0024.outlook.office365.com
- (2603:10b6:806:21::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.11 via Frontend Transport; Tue,
- 16 Sep 2025 20:40:19 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=amd.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of amd.com: DNS Timeout)
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF00026369.mail.protection.outlook.com (10.167.241.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 20:40:17 +0000
-Received: from localhost (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 16 Sep
- 2025 13:40:16 -0700
-From: Nathan Lynch <nathan.lynch@amd.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: Vinod Koul <vkoul@kernel.org>, Wei Huang <wei.huang2@amd.com>, "Mario
- Limonciello" <mario.limonciello@amd.com>, Bjorn Helgaas
-	<bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <dmaengine@vger.kernel.org>
-Subject: Re: [PATCH RFC 08/13] dmaengine: sdxi: Context creation/removal,
- descriptor submission
-In-Reply-To: <20250915151257.0000253b@huawei.com>
-References: <20250905-sdxi-base-v1-0-d0341a1292ba@amd.com>
- <20250905-sdxi-base-v1-8-d0341a1292ba@amd.com>
- <20250915151257.0000253b@huawei.com>
-Date: Tue, 16 Sep 2025 15:40:10 -0500
-Message-ID: <87a52uxhat.fsf@AUSNATLYNCH.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A741D88A4;
+	Tue, 16 Sep 2025 20:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758055425; cv=none; b=Epq7i7af3yDSGe9qzSI78rJEfZ6oHzBmLLjMoN+h1ss6LJczQqFnq19aVJibqIqFpQnDSmnBUe5ozisJfpKCbM4KpKIEkrww6KLh0tH4EKtL+J0buEmG+LD9jN6ZDBE8WYqe90X6IymmPtzeCTOGvL/6bMpD0w/LECggiA5C7q0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758055425; c=relaxed/simple;
+	bh=G4qi7O3CksgJSiBo3p6k5QYAY8HBAkE6FGj0OG3ESdM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OBFU72+WZxiD1ARarAHqoKQ1zdCGRzuwtPfyalh1Kq0CKlkFPKgjaUsN+/ZZbZ4NKD3H0GnIIYsExtA9+hFUp04oLQqBJlKEWQbltihiHlHm4QvBKG4DEo99+rq5/0fbp70CU8daH6ujCiHLr53dy06tGuXbjvRwmfC1P4FV3HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fHPtAqg+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WxlwnHu5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758055421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AmwiWlv0Ck+IJdd3Cks26VCoCBj9MKGyMc1abZ8u9bc=;
+	b=fHPtAqg+sMLZLZm4bRBdG+NiQpOen4eY6FYi8WhQrq19OvXZnf2i/z2g5rtCmo0qHGtLB+
+	SeT7RZAk5FllzyIV1UyDvSAMM994Ex8at8LZHYteYOaPRhs6lS+WvGOPmw655mWBH5clU5
+	IOjibH494K6t2MobsKztgrRJ+NAdU4Ff+eu5Rl49LjTLNTxsHPnvl5qHARxH/EEMdJEZiC
+	+WIu8Al2sjL+EXjE4Njq3tBtKpetXd2HHl3g1BotVyH8956ySuA60kl8n3BV759LfRhQK5
+	JOAXot8OcYRkSoxO6N1w9UO4uDCsuipPa8OMIdLEk0EAzGDgh8gH8jE56BBNlQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758055421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AmwiWlv0Ck+IJdd3Cks26VCoCBj9MKGyMc1abZ8u9bc=;
+	b=WxlwnHu5OHd/bgNf03lRyfpAkm1XZWwyZSTeEMav+PPR2rXHI/bzmT7JiwFUd4uG6OVxel
+	xAvZFpDnubaIGQAw==
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 2/6] kbuild: Disable asm goto on clang < 17
+In-Reply-To: <20250916184440.GA1245207@ax162>
+References: <20250916163004.674341701@linutronix.de>
+ <20250916163252.100835216@linutronix.de> <20250916184440.GA1245207@ax162>
+Date: Tue, 16 Sep 2025 22:43:39 +0200
+Message-ID: <87ikhi9lhg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,379 +74,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00026369:EE_|BL1PR12MB5827:EE_
-X-MS-Office365-Filtering-Correlation-Id: e00794af-edeb-42e1-89fe-08ddf5613f18
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nyF154hcooTa4hcLkZSZFS6w/m5GUefb+AArxgD6xfppLvDu0f6GGASo9pOX?=
- =?us-ascii?Q?FKh05j1fOtqAjHoaX11KlnPdh4PFsd7iR6D7L9Y+yFFNyd4ezmd5AY/qpaw+?=
- =?us-ascii?Q?FpPu8Pg8ppUjA1k6xwCG8PtIOkGaiot0WXzSe5fYJVechPKq1KtudO+r7O0v?=
- =?us-ascii?Q?BLr2mLrxQmrpRGgR7MAqBOLI7sdTVrsOai18raBcTYJhcweHdt2OgZntVKgq?=
- =?us-ascii?Q?v7XhNRTj180bW/N4zjBpS0RZq5fLTPNUbM2Io08Yc8RSxejHAdoMwNkiyNiG?=
- =?us-ascii?Q?y2EBwtsqevzNJokGx1tO9vK03jGQrcgwn8u9yq1QYu/gQqzxWqgq7bamKj1y?=
- =?us-ascii?Q?+7KEpI69CnUEckDV21s3g2lefsHyhzPxVYKZ/1qiBvSZsqOuwx6rjIfP/EHZ?=
- =?us-ascii?Q?N6QcTE0F6mg1/u+vo9NXLU5hP/Zb5UefFTnUT3/xJNRcJlxzirbDMaX3yjt3?=
- =?us-ascii?Q?6JLq6X2XN8m74ikGYD1QoM6AZvB3FhGLxL3r3KslOs3HhSjObjhrm/3qNH1o?=
- =?us-ascii?Q?5T/g/BWSoDso97j/VnfuGOyTQZ8pDCKicCigmlMfyngCH+IiqMjnslcfFG6/?=
- =?us-ascii?Q?kVPIn5Sxcy13js6SGFrIhHt57g7gb9bPCNdPgZfqp48IgND1GgW9b6NLnyoX?=
- =?us-ascii?Q?2a2Tx4+fTUUryfBDSiY7t5RCDxBq5ZzzgNhgvqXbmAE/k4cl5do7jaaT/leq?=
- =?us-ascii?Q?PCH4hs9W+8THdelPQ5fPF2mDekipo055Y4nXWxLGtyNTFnw6TER848q63ERs?=
- =?us-ascii?Q?7yRtY0g04s1BDE7KrZNFKZ6ZsRcNCULBvbsYKXfe2NBHSEUor+UMVW6pnBo4?=
- =?us-ascii?Q?15h6ymYOyjGC1Wh0Zdg3uXIlQcu7T7wa0EkQjc5Xp4bxOy3y0wiRjD+f4o/o?=
- =?us-ascii?Q?CdZl0kx8yTdhL66C9+e+Oxu3PE9RxxkQs+7PSmM3anwYNBPZBS4WOA4ruYaS?=
- =?us-ascii?Q?byADIGdF7sWhhpyodrDGdo2Y6/va03WYGE0L43W6oAkahcc38C/jr5Lj6m9F?=
- =?us-ascii?Q?+5HyqTd00W3AJaj7DhF1PuQteWSl4827M6/+itYjpUUetg0TC5jDXWC81VQ+?=
- =?us-ascii?Q?bAIayf+56+LQJ/hbGBQP29N+c3PjocX7U8rM7s4mMW8M08r5VAsR0cXl7lbo?=
- =?us-ascii?Q?wmJvN5Ht8m7t+UiUoE7IjoGUmTNMl7Yi2yEfxrbyEFiYw/BxZipH4qJLo+Oi?=
- =?us-ascii?Q?KCs4lAOMMBsYPN1l7NfUSnGNgWnmAbmIjSjLcNQYw81jvoY/esgyx0AURSQ+?=
- =?us-ascii?Q?rYiXgoOB7uXafhz5w214eP08VmtYPZxxjWkgrADlMkuJPg4IQPLpm/hhGX8k?=
- =?us-ascii?Q?5PSZ7xjahZp/O67HXbqbPnFyujW5pfHNbDRkfvhL8o4cV9cipdQtuefiZGfR?=
- =?us-ascii?Q?MOw3woy/KX/Pm2xtWFwkednQgyhvkDFLyDlKAYXkLThRwgkRg3IfCym95PNT?=
- =?us-ascii?Q?1tmdF8+6hB85gplWh2qff2rLnUTkycXzulwoxHZB6AgLYOMJDLKRH70vVtbt?=
- =?us-ascii?Q?JoIHDdvKeYq+qcyBX6w/K3MA7wcORuAAk3jW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 20:40:17.5291
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e00794af-edeb-42e1-89fe-08ddf5613f18
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00026369.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5827
 
-Jonathan Cameron <jonathan.cameron@huawei.com> writes:
-> On Fri, 05 Sep 2025 13:48:31 -0500
-> Nathan Lynch via B4 Relay <devnull+nathan.lynch.amd.com@kernel.org> wrote:
->
->> From: Nathan Lynch <nathan.lynch@amd.com>
+Nathan!
+
+On Tue, Sep 16 2025 at 11:44, Nathan Chancellor wrote:
+> First of all, sorry you got bit by this issue.
+
+The real annoying thing was that I could not makes sense of the error
+messages and when I started shuffling code around for analysis it got
+worse by failing reliably even with one instance or it exposed random
+other incomprehensible errors which did not help analysis either.
+
+Sh*t happens :)
+
+> On Tue, Sep 16, 2025 at 06:33:11PM +0200, Thomas Gleixner wrote:
+>> clang < 17 fails to use scope local labels with asm goto:
 >> 
->> Add functions for creating and removing SDXI contexts and submitting
->> descriptors against them.
+>>      {
+>>      	__label__ local_lbl;
+>> 	...
+>> 	unsafe_get_user(uval, uaddr, local_lbl);
+>> 	...
+>> 	return 0;
+>> 	local_lbl:
+>> 		return -EFAULT;
+>>      }
 >> 
->> An SDXI function supports one or more contexts, each of which has its
->> own descriptor ring and associated state. Each context has a 16-bit
->> index. A special context is installed at index 0 and is used for
->> configuring other contexts and performing administrative actions.
+>> when two such scopes exist in the same function:
 >> 
->> The creation of each context entails the allocation of the following
->> control structure hierarchy:
->> 
->> * Context L1 Table slot
->>   * Access key (AKey) table
->>   * Context control block
->>     * Descriptor ring
->>     * Write index
->>     * Context status block
->> 
->> Co-developed-by: Wei Huang <wei.huang2@amd.com>
->> Signed-off-by: Wei Huang <wei.huang2@amd.com>
->> Signed-off-by: Nathan Lynch <nathan.lynch@amd.com>
-> Some superficial stuff inline.
+>>   error: cannot jump from this asm goto statement to one of its possible targets
 >
-> I haven't yet reread the spec against this (and it's been a while
-> since I looked at sdxi!) but overall seems reasonable.
->> ---
->>  drivers/dma/sdxi/context.c | 547 +++++++++++++++++++++++++++++++++++++++++++++
->>  drivers/dma/sdxi/context.h |  28 +++
->>  2 files changed, 575 insertions(+)
->> 
->> diff --git a/drivers/dma/sdxi/context.c b/drivers/dma/sdxi/context.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..50eae5b3b303d67891113377e2df209d199aa533
->> --- /dev/null
->> +++ b/drivers/dma/sdxi/context.c
->> @@ -0,0 +1,547 @@
+> For the record, this is not specific to local labels, unique function
+> labels could trigger this error as well, as demonstrated by Nick's test
+> case:
 >
+> https://github.com/ClangBuiltLinux/linux/issues/1886#issuecomment-1636342477
+
+Ah! I somehow failed to find this one.
+
+I was actually trying to create a simple reproducer for using in the
+depends on $(success,echo...) magic and could not manage.
+
+The test case in the issue tracker is really helpful as it can be
+condensed into the obfuscated C-code contest format required for
+'depends on' checks. So we don't need the version number hack for
+detecting it. That's definitely preferred as it catches potential
+misbehaviour of later versions and of other compilers as well.
+
+I'll send out a revised patch to that effect later.
+
+>> That prevents using local labels for a cleanup based user access mechanism.
 >
->> +
->> +static struct sdxi_cxt *alloc_cxt(struct sdxi_dev *sdxi)
->> +{
->> +	struct sdxi_cxt *cxt;
->> +	u16 id, l2_idx, l1_idx;
->> +
->> +	if (sdxi->cxt_count >= sdxi->max_cxts)
->> +		return NULL;
->> +
->> +	/* search for an empty context slot */
->> +	for (id = 0; id < sdxi->max_cxts; id++) {
->> +		l2_idx = ID_TO_L2_INDEX(id);
->> +		l1_idx = ID_TO_L1_INDEX(id);
->> +
->> +		if (sdxi->cxt_array[l2_idx] == NULL) {
->> +			int sz = sizeof(struct sdxi_cxt *) * L1_TABLE_ENTRIES;
->> +			struct sdxi_cxt **ptr = kzalloc(sz, GFP_KERNEL);
->> +
->> +			sdxi->cxt_array[l2_idx] = ptr;
->> +			if (!(sdxi->cxt_array[l2_idx]))
->> +				return NULL;
->> +		}
->> +
->> +		cxt = (sdxi->cxt_array)[l2_idx][l1_idx];
->> +		/* found one empty slot */
->> +		if (!cxt)
->> +			break;
->> +	}
->> +
->> +	/* nothing found, bail... */
->> +	if (id == sdxi->max_cxts)
->> +		return NULL;
->> +
->> +	/* alloc context and initialize it */
->> +	cxt = kzalloc(sizeof(struct sdxi_cxt), GFP_KERNEL);
+> Indeed. This has only popped up a couple of times in the past couple of
+> years and each time it has been easy enough to work around by shuffling
+> the use of asm goto but as cleanup gets used in more places, this is
+> likely to cause problems.
+
+Yes. I noticed that moving the label around or rearraning code slightly
+makes it go away or even worse, but that's not a real solution :)
+
+>> As there is no way to provide a simple test case for the 'depends on' test
+>> in Kconfig, mark ASM goto broken on clang versions < 17 to get this road
+>> block out of the way.
 >
-> sizeof(*ctx) usually preferred as it saves anyone checking types
-> match.
+> That being said, the commit title and message always references asm goto
+> in the general sense but this change only affects asm goto with
+> outputs.
 
-yep, will fix.
+Right, that's misleading.
 
+> Is it sufficient to resolve the issues you were seeing? As far as I
+> understand it, the general issue can affect asm goto with or without
+> outputs but I assume x86 won't have any issues because the label is not
+> used in __get_user_asm when asm goto with outputs is not supported?
 
->> +	if (!cxt)
->> +		return NULL;
->> +
->> +	cxt->akey_table = dma_alloc_coherent(sdxi_to_dev(sdxi),
->> +					     sizeof(*cxt->akey_table),
->> +					     &cxt->akey_table_dma, GFP_KERNEL);
->> +	if (!cxt->akey_table) {
->> +		kfree(cxt);
+I haven't seen a problem with that yet. So yes, as things stand that
+seems to be a ASM_GOTO_OUTPUT issue.
+
+>> +config CLANG_ASM_GOTO_OUTPUT_BROKEN
+>> +	bool
+>> +	depends on CC_IS_CLANG
+>> +	default y if CLANG_VERSION < 170000
 >
-> Similar to below. You could use a DEFINE_FREE() to auto cleanup up ctx
-> on error.
-
-OK, I've been hesitant to try the cleanup stuff so far but I'll give it
-a shot (here and other places).
-
-
->> +		return NULL;
->> +	}
->> +
->> +	cxt->sdxi = sdxi;
->> +	cxt->id = id;
->> +	cxt->db_base = sdxi->dbs_bar + id * sdxi->db_stride;
->> +	cxt->db = sdxi->dbs + id * sdxi->db_stride;
->> +
->> +	sdxi->cxt_array[l2_idx][l1_idx] = cxt;
->> +	sdxi->cxt_count++;
->> +
->> +	return cxt;
->> +}
+> Assuming this change sticks, please consider including links to the
+> original bug report and the fix in LLVM:
 >
->> +struct sdxi_cxt *sdxi_working_cxt_init(struct sdxi_dev *sdxi,
->> +				       enum sdxi_cxt_id id)
->> +{
->> +	struct sdxi_cxt *cxt;
->> +	struct sdxi_sq *sq;
->> +
->> +	cxt = sdxi_cxt_alloc(sdxi);
->> +	if (!cxt) {
->> +		sdxi_err(sdxi, "failed to alloc a new context\n");
->> +		return NULL;
->> +	}
->> +
->> +	/* check if context ID matches */
->> +	if (id < SDXI_ANY_CXT_ID && cxt->id != id) {
->> +		sdxi_err(sdxi, "failed to alloc a context with id=%d\n", id);
->> +		goto err_cxt_id;
->> +	}
->> +
->> +	sq = sdxi_sq_alloc_default(cxt);
->> +	if (!sq) {
->> +		sdxi_err(sdxi, "failed to alloc a submission queue (sq)\n");
->> +		goto err_sq_alloc;
->> +	}
->> +
->> +	return cxt;
->> +
->> +err_sq_alloc:
->> +err_cxt_id:
->> +	sdxi_cxt_free(cxt);
->
-> Might be worth doing a DEFINE_FREE() then you can use return_ptr(ctx); instead
-> of return ctx.  Will allow you to simply return on any errors.
->
->> +
->> +	return NULL;
->> +}
->> +
->> +static const char *cxt_sts_state_str(enum cxt_sts_state state)
->> +{
->> +	static const char *const context_states[] = {
->> +		[CXTV_STOP_SW]  = "stopped (software)",
->> +		[CXTV_RUN]      = "running",
->> +		[CXTV_STOPG_SW] = "stopping (software)",
->> +		[CXTV_STOP_FN]  = "stopped (function)",
->> +		[CXTV_STOPG_FN] = "stopping (function)",
->> +		[CXTV_ERR_FN]   = "error",
->> +	};
->> +	const char *str = "unknown";
->> +
->> +	switch (state) {
->> +	case CXTV_STOP_SW:
->> +	case CXTV_RUN:
->> +	case CXTV_STOPG_SW:
->> +	case CXTV_STOP_FN:
->> +	case CXTV_STOPG_FN:
->> +	case CXTV_ERR_FN:
->> +		str = context_states[state];
->
-> I'd do a default to make it explicit that there are other states. If
-> there aren't then just return here and skip the return below. A
-> compiler should be able to see if you handled them all and complain
-> loudly if a new one is added that you haven't handled.
+>   https://github.com/ClangBuiltLinux/linux/issues/1886
+>   https://github.com/llvm/llvm-project/commit/f023f5cdb2e6c19026f04a15b5a935c041835d14
 
-The CXTV_... values are the only valid states that an SDXI device is
-allowed to report for a context, but this function is intended to be
-resilient against unspecified values in case of implementation bugs (in
-the caller, or firmware, whatever). That's why it falls back to
-returning "unknown".
+Sure! That's indeed useful.
 
-But it's coded without a default label so that -Wswitch (which is
-enabled by -Wall and so is generally active for kernel code) will warn
-on an unhandled case. The presence of a default label will actually
-defeat this unless the compiler is invoked with -Wswitch-enum, which
-even W=1 doesn't enable.
+Thanks,
 
-I really do want warnings on unhandled cases of this sort, so I suppose
-at the very least this code deserves a comment to deter well-meaning
-people from trying to add a default label. Or I could add the default
-label and see how painful it is to use -Wswitch-enum throughout the
-driver. There are several similar functions in the error reporting code
-so this isn't the only instance of this pattern in the driver.
-
-
->> +	}
->> +
->> +	return str;
->> +}
->> +
->> +int sdxi_submit_desc(struct sdxi_cxt *cxt, const struct sdxi_desc *desc)
->> +{
->> +	struct sdxi_sq *sq;
->> +	__le64 __iomem *db;
->> +	__le64 *ring_base;
->> +	u64 ring_entries;
->> +	__le64 *rd_idx;
->> +	__le64 *wr_idx;
->> +
->> +	sq = cxt->sq;
->> +	ring_entries = sq->ring_entries;
->> +	ring_base = sq->desc_ring[0].qw;
->> +	rd_idx = &sq->cxt_sts->read_index;
->> +	wr_idx = sq->write_index;
->> +	db = cxt->db;
-> I'm not sure the local variables add anything, but if you really want
-> to keep them, then at least combine with declaration.
->
-> 	struct sdxi_sq *sq = ctx->sq;
-> 	__le64 __iomem *db = ctx->db;
->
->
-> just to keep thing code more compact.
->
-> Personally I'd just have a local sq and do the rest in the call
->
-> 	return sdxi_enqueue(desc->qw, 1, sq->desc_ring[0].wq,
-> etc
-
-Yeah, that makes sense.
-
->
->
->> +
->> +	return sdxi_enqueue(desc->qw, 1, ring_base, ring_entries,
->> +			    rd_idx, wr_idx, db);
-> 				
->> +}
->> +
->> +static void sdxi_cxt_shutdown(struct sdxi_cxt *target_cxt)
->> +{
->> +	unsigned long deadline = jiffies + msecs_to_jiffies(1000);
->> +	struct sdxi_cxt *admin_cxt = target_cxt->sdxi->admin_cxt;
->> +	struct sdxi_dev *sdxi = target_cxt->sdxi;
->> +	struct sdxi_cxt_sts *sts = target_cxt->sq->cxt_sts;
->> +	struct sdxi_desc desc;
->> +	u16 cxtid = target_cxt->id;
->> +	struct sdxi_cxt_stop params = {
->> +		.range = sdxi_cxt_range(cxtid),
->> +	};
->> +	enum cxt_sts_state state = sdxi_cxt_sts_state(sts);
->> +	int err;
->> +
->> +	sdxi_dbg(sdxi, "%s entry: context state: %s",
->> +		 __func__, cxt_sts_state_str(state));
->> +
->> +	err = sdxi_encode_cxt_stop(&desc, &params);
->> +	if (err)
->> +		return;
->> +
->> +	err = sdxi_submit_desc(admin_cxt, &desc);
->> +	if (err)
->> +		return;
->> +
->> +	sdxi_dbg(sdxi, "shutting down context %u\n", cxtid);
->> +
->> +	do {
->> +		enum cxt_sts_state state = sdxi_cxt_sts_state(sts);
->> +
->> +		sdxi_dbg(sdxi, "context %u state: %s", cxtid,
->> +			 cxt_sts_state_str(state));
->> +
->> +		switch (state) {
->> +		case CXTV_ERR_FN:
->> +			sdxi_err(sdxi, "context %u went into error state while stopping\n",
->> +				cxtid);
->> +			fallthrough;
->
-> I'd just return unless a later patch adds something more interesting to the next
-> cases.
-
-Agreed.
-
-
->> +		case CXTV_STOP_SW:
->> +		case CXTV_STOP_FN:
->> +			return;
->> +		case CXTV_RUN:
->> +		case CXTV_STOPG_SW:
->> +		case CXTV_STOPG_FN:
->> +			/* transitional states */
->> +			fsleep(1000);
->> +			break;
->> +		default:
->> +			sdxi_err(sdxi, "context %u in unknown state %u\n",
->> +				 cxtid, state);
->> +			return;
->> +		}
->> +	} while (time_before(jiffies, deadline));
->> +
->> +	sdxi_err(sdxi, "stopping context %u timed out (state = %u)\n",
->> +		cxtid, sdxi_cxt_sts_state(sts));
->> +}
->> +
->> +void sdxi_working_cxt_exit(struct sdxi_cxt *cxt)
->> +{
->> +	struct sdxi_sq *sq;
->> +
->> +	if (!cxt)
-> Superficially this looks like defensive programming that we don't need
-> as it makes not sense to call this if ctx is NULL.  Add a comment if
-> there is a path where this actually happens.
->> +		return;
->> +
->> +	sq = cxt->sq;
->> +	if (!sq)
-> Add a comment on why this might happen, or drop teh cehck.
-
-Yeah we can probably remove these checks.
-
+        tglx
 
