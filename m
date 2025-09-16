@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-819743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9040DB7DE46
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CADB7DE5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF010325B85
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:37:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BA416B2A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B712BEFEB;
-	Tue, 16 Sep 2025 23:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504AB2ED853;
+	Tue, 16 Sep 2025 23:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFissD2j"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTK4PiKK"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6152C028D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91EE2D46B1
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 23:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758065821; cv=none; b=Pxb70xImmc9vOUslj+abz0noW/fov/K5Ri5590olfiLLFqKR/KKTz24NtxsYKIKJLLEcip+7ckIaEycXWcP5r67fGZlVO4SjAow5MFbTGsmXG1YjrCOeO0p5oh2qr9iTaApyzYrJsZUJek9E522BscNbLlYhgBDbbwD87bPJGoo=
+	t=1758065825; cv=none; b=BTktU5DflDTCT4nIJUjivcSXEow5aGPpK9Pq/N7CM4gqqN7dEmFkfGKCysW1iFqrObtac03bDodnpf1xVSebLKGkl+2i7/i1tYJderQoQ+MX/yztGl+mcg5N24URIHOIAtCJTrPpNMXvHgTuFYe8ikZ3Jp8shpZ+4TEM25Q+Eac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758065821; c=relaxed/simple;
-	bh=M1s1m3iq89uxSoc78wmRurFmWQynoYBHcX0VWF9o798=;
+	s=arc-20240116; t=1758065825; c=relaxed/simple;
+	bh=jmIFrzhuCkeTq8aoCDJ2rAhb/3DfzKmeBEvuiDdglA8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q+tPt7qiSBM5thEjPwOmTbxDKwf7Wvirk1wao+T/fTCDh25JuLjeiKzMM64oTrIRG1b0E69p2V3ESoaooVv3AdLW+QP2uBhQXYhC+9ecrVW3cBugnF4k2qFq0loUp3fgoWmfJGWGbU1SQeHOmucuJ5zhd8T635dSOrdRwqQaIIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFissD2j; arc=none smtp.client-ip=209.85.214.174
+	 In-Reply-To:To:Cc; b=FpZeYJA4k8hCArMvU14Hxrr0hva1b5qGy0NpM3sHDHRke2IIpChUSb3WTBMbiJHKrQosKMK85c/0zYne17+wxDCuSeU7f41icb3Kbv0ZsjGo6FTdMiO4sXUh6fxIzzX8i61z/CklYUn3uwJYWF4P171Um7sZXr09Ip81nNDZar4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTK4PiKK; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-264417f3a26so24588235ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:36:59 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b54c707374fso2081797a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758065819; x=1758670619; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758065823; x=1758670623; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HePRzNs2UbkOt2+sPLTXgLhse/WALYkVHJtElcyX+vk=;
-        b=MFissD2jpT+isOARLR02bMnJtRNsD4YPxiTqmG7Ysut4+EIB+Tu8co0SY2w5XfExoh
-         Ww1StJdXyymYaCCTdtyCvpUJYJXFMOl0tvtocRbMfXbfXEkgPDg/N3fid6l3YNCEw3Ks
-         017eTnt5IvKExghELoy7U1AcSKLwpZqu/3YPEgQBu9Sl2hk6836E3zaTe0UL1Q29RBry
-         EHuoPu3hir3lkrWWyfe/nMkiaHviMdvpIwmi9dGabRof0E1N5229MEwsMJwZZjtIi3a/
-         5RmIq0faH37yMeizCnaQnNJ/hHjCojXW5lN4GufrcvVO5E2I3V00w5dSo4dBWBw1UkTJ
-         YaOg==
+        bh=lxdcHcBGjhOznZ861gxh1q71v55lbCXoAFjQMQ3zSXI=;
+        b=fTK4PiKKBcMBx3xOI1xivxXwdJF4lt1JDhbQpQpWyyfDzqnkbkDETQMoxV3hxUSNDF
+         fw4RqLMbWHjBgoAx2OZWnlI3f965OV+OVM1iE5znn+PgxLJgQeBTFmLsARI3/p8PWB2T
+         xcj/4+jBgbZzFsNWV2kRuue86gCXl2NHy309ZptcnMM0+2ALnljmNY3h/LYvrpoZhNrL
+         q7zHrttD09wAbUuz4A0eQZMi1sO+c9hwN4UlwAIAQpDWEr1XHhvRMPTpIEmry5fezaV5
+         bxB0COo+sys19JUS4T90RnIq5jsFoVrHv7z5RiuE4IJepP3aduv5UGP60Al5176jkx0n
+         y9Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758065819; x=1758670619;
+        d=1e100.net; s=20230601; t=1758065823; x=1758670623;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HePRzNs2UbkOt2+sPLTXgLhse/WALYkVHJtElcyX+vk=;
-        b=wS2FpdJQc2zhs0BPu3xPaDSY2kkaZvr4vhcZ3GmVGVmn39H8D8IgQ3yHFf/tCT6JXD
-         e0UVRexC3oNXEeSapEP4ss3G3NF3I2zv2RRiXcO4C6TmMsfDCfdN14we8nftWLeIR/se
-         RFL8TcMZeRIGw7eadRQZbt9pYR2k+cWovp2Alm7/ajPZajl8CsZKaRS8dIHWqDQzpR5A
-         Ta4AN4ShdzhpO8NAIsz72mSgXc9Mb5BASia6LVr0q5fUOfyaMCA97PQ784rcn/EGznpH
-         IxkwvwP/vcvJ8iNuQ5mF/AVfXF6IEgHn+ezZmUoHYORj4fC7GUdbXwXzXxGDxJ1u0VXr
-         ABFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVf3U+qIukA9ib5X1ChQcMM2MkOIFFwp470oAOaTAnBoOm3QoeEBks+8mC4LZaOqpkMQC54yY2rKuvLepU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV4IRJ1YU6vA0MTG/k8xHdWrULDfe9QU48GMCIiPjSXsj+7VOJ
-	Gi84ZvT25Fd6P/pDCytnOXoPe3fx//bf7DEJuD+5SagvoyQjryXly4PN
-X-Gm-Gg: ASbGncthvOgsEyjOQTzmy6Ewn4bDRUoDSRHNX7VEK8Z7ZUVfAGeTBYwihs8agpvBVdA
-	VIptiBzPapJ/0TTHYbDBB+0qOvPOyOG7Tod8wjED4zDUmmA6GJQmhIpMZK7+AjMOer2s/gam0A5
-	x/CaZba1ywPtKGdsDHFCfHzW12iQfmakQtO+tALKQtmVphzVhoHKj4rBoRqPFByHrEhgm1+3cp1
-	SLFTwXBcCg0clcDeWWGof/SR4XuDcnkRs1cFnwsU/gqa16IxRs8bWSflYeYbcGB42GsIzR5nxuM
-	WqjUuXSf95F76i7t8vnRvQVdP2/sb+K/rpiSAczujhPlWiOXJVAFU56pPix7A3cv6AAnFXwuw1c
-	0kgGhHI0DC7A4noHSyTyGm9kbNg==
-X-Google-Smtp-Source: AGHT+IFHtMRUGXeHJi3OLzDfgW8g8ODU5lFddtb8TBcAEPq4UOVSWpFXpYtCLxUE33vkxFluY3dfxg==
-X-Received: by 2002:a17:902:e746:b0:25c:a9a0:ea4c with SMTP id d9443c01a7336-268137ee348mr566205ad.34.1758065818657;
-        Tue, 16 Sep 2025 16:36:58 -0700 (PDT)
+        bh=lxdcHcBGjhOznZ861gxh1q71v55lbCXoAFjQMQ3zSXI=;
+        b=sOmaAhRAFlQp/Xv60fJNQ52RrVJgtI1lAMLzkBqKn+QuaxYlQU1zoMLoHx/s1Nywbh
+         c+1QgGI0SB/qoHzNmt5iKyyCgdOW72vkRZxqQ5KpURygJLOPgMstsm6IeQaj0DQARwOS
+         pHXCMoYLpQ5iIDv4456Gm8VrOEostrmUS05GhXM9K19JsQw/3KDDcGn+H2x0f1tmfSav
+         mTH+hmL9x2OuBNEVGp7JklZ74HBg/5Vec4vvw3RXFtxH7cQK+CkaTTkgDIor6AX4MTrc
+         2ceoEuIvUEZlCHE5FCLjNhSDSFuOArnb/yXeQSEAHshS/xRH7aJEbatFNb6+T6fpZxLC
+         Zebw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaDpghfjXHsptwskTW5Uh9JAFZwetHxkgsNXhlqJaIJfdtvsvv7KD+jNLfv/qwD8orNKKj+0dSX41jMws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIeQBs9qBkpjTQ/K7SbnDNIXlRuZKbB2BzayzLnd6RuNcuO8kV
+	zRlKXoKRNLYG5a9a+4rFq/R9OVCN32YlMEykh6KZ6ABBQZL59eUKGwiVRzxjPLke
+X-Gm-Gg: ASbGnctsc4Vy8yeb9Fb8fhJ39YEnthlkK7vWx4JzcAVW3LyHk00ZUVUClBj7A3OkFad
+	0FdhbKMrfStmK51SAO2eg8IovSfb2Og2rRJPWNGNI70Grtam3ogj+e62Qmaeiku5rHIKJ2c8t86
+	UyU66QXkE4vlXNHZnllHDskIvGIBQbyv09OvWuaR5JmZ3AGmaKrvd1fREAIEtviHTqm30DvkpDs
+	coq8q4r+TKz6j2f4CR71BAYeGdhHYdPYHnYAZE5SX78LLVTEZFcdQ2wqg+23HoPhRkgf6YNwIhT
+	s5j/Jo60pg8wdtTdFlF+wZFqzgl6xDczcJm1cz8GbO72mPAqjCPQNZ8prhBZpOQB0sS36eOP4gU
+	Kh8glEZUbvFHR4HAfkAHTdoToWw==
+X-Google-Smtp-Source: AGHT+IHxLbxAZnUj1CScDSKSM3GL/HL/XAd0FoSZ3hZKt/QN7icZfLqKgH8sOlEwoiR3+HsctkbmDg==
+X-Received: by 2002:a17:902:7448:b0:249:2318:7a2d with SMTP id d9443c01a7336-26811d9273fmr669685ad.19.1758065823035;
+        Tue, 16 Sep 2025 16:37:03 -0700 (PDT)
 Received: from [192.168.1.135] ([2804:14d:90a8:4498::371])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b8eb4737sm10108298a12.9.2025.09.16.16.36.55
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b8eb4737sm10108298a12.9.2025.09.16.16.36.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 16:36:58 -0700 (PDT)
+        Tue, 16 Sep 2025 16:37:02 -0700 (PDT)
 From: Gustavo Silva <gustavograzs@gmail.com>
-Date: Tue, 16 Sep 2025 20:38:23 -0300
-Subject: [PATCH v6 1/2] iio: imu: bmi270: add support for motion events
+Date: Tue, 16 Sep 2025 20:38:24 -0300
+Subject: [PATCH v6 2/2] iio: ABI: document accelerometer event attributes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-bmi270-v6-1-6acd8d26a862@gmail.com>
+Message-Id: <20250916-bmi270-v6-2-6acd8d26a862@gmail.com>
 References: <20250916-bmi270-v6-0-6acd8d26a862@gmail.com>
 In-Reply-To: <20250916-bmi270-v6-0-6acd8d26a862@gmail.com>
 To: Alex Lanzano <lanzano.alex@gmail.com>, 
@@ -93,572 +93,108 @@ To: Alex Lanzano <lanzano.alex@gmail.com>,
 Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Gustavo Silva <gustavograzs@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758065905; l=17419;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758065905; l=4613;
  i=gustavograzs@gmail.com; s=20250915; h=from:subject:message-id;
- bh=M1s1m3iq89uxSoc78wmRurFmWQynoYBHcX0VWF9o798=;
- b=P31oahiP9Aft1LnwCO1UdpWEIr9ls5wFSqV/DLz7nIKN/3/d8vN8hzyiH6REx8t24Ft55Pfsu
- rIVAwYvINbWA8NgfSvN+lrTASeyIV0xuw9uu7GpP8fL1ybeofOr0AZ+
+ bh=jmIFrzhuCkeTq8aoCDJ2rAhb/3DfzKmeBEvuiDdglA8=;
+ b=Pz5QdTxcOVElNPSF9gagWNFeCT0go4cKUSZtUVWmRX7pfVomIz+MtkCJhuk3gUlW8dyVHoF0e
+ uTCnfZmfcpeAoVWI7dqKKfFtc1B47Sh45wyLi4nxkiEuhOsbYo+YMR4
 X-Developer-Key: i=gustavograzs@gmail.com; a=ed25519;
  pk=kYkFqZEIlab+1AaYMvpqhTQxwPXcJiTXdMaBQbfORrg=
 
-Any-motion event can be enabled on a per-axis basis and triggers a
-combined event when motion is detected on any axis.
-
-No-motion event is triggered if the rate of change on all axes falls
-below a specified threshold for a configurable duration. A fake channel
-is used to report this event.
-
-Threshold and duration can be configured from userspace.
+Add ABI documentation for accelerometer event-related sysfs attributes
+exposed by the bmi270 driver. These include threshold, period, and
+enable controls for adaptive magnitude (any-motion) and rate of change
+(no-motion) event detection.
 
 Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
 ---
- drivers/iio/imu/bmi270/bmi270_core.c | 381 +++++++++++++++++++++++++++++++++--
- 1 file changed, 361 insertions(+), 20 deletions(-)
+ Documentation/ABI/testing/sysfs-bus-iio | 34 +++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-index 519f1c9d466dceb301b53efee905f1b8fc4468c0..2ad230788532c5bed1f18a4933b661e0807121f9 100644
---- a/drivers/iio/imu/bmi270/bmi270_core.c
-+++ b/drivers/iio/imu/bmi270/bmi270_core.c
-@@ -31,6 +31,8 @@
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+index 2fb2cea4b19249743398b1ff0b538b03ced0340b..b45d1ba6972848a6024746d7d741146e35a55ebb 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -908,6 +908,7 @@ What:		/sys/.../iio:deviceX/events/in_accel_y_roc_rising_en
+ What:		/sys/.../iio:deviceX/events/in_accel_y_roc_falling_en
+ What:		/sys/.../iio:deviceX/events/in_accel_z_roc_rising_en
+ What:		/sys/.../iio:deviceX/events/in_accel_z_roc_falling_en
++What:		/sys/.../iio:deviceX/events/in_accel_x&y&z_roc_rising_en
+ What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_rising_en
+ What:		/sys/.../iio:deviceX/events/in_anglvel_x_roc_falling_en
+ What:		/sys/.../iio:deviceX/events/in_anglvel_y_roc_rising_en
+@@ -991,6 +992,7 @@ What:		/sys/.../events/in_accel_y_raw_thresh_rising_value
+ What:		/sys/.../events/in_accel_y_raw_thresh_falling_value
+ What:		/sys/.../events/in_accel_z_raw_thresh_rising_value
+ What:		/sys/.../events/in_accel_z_raw_thresh_falling_value
++What:		/sys/.../events/in_accel_mag_adaptive_rising_value
+ What:		/sys/.../events/in_anglvel_x_raw_thresh_rising_value
+ What:		/sys/.../events/in_anglvel_x_raw_thresh_falling_value
+ What:		/sys/.../events/in_anglvel_y_raw_thresh_rising_value
+@@ -1129,6 +1131,7 @@ Description:
+ 		will get activated once in_voltage0_raw goes above 1200 and will become
+ 		deactivated again once the value falls below 1150.
  
- #define BMI270_INT_STATUS_0_REG				0x1c
- #define BMI270_INT_STATUS_0_STEP_CNT_MSK		BIT(1)
-+#define BMI270_INT_STATUS_0_NOMOTION_MSK		BIT(5)
-+#define BMI270_INT_STATUS_0_MOTION_MSK			BIT(6)
++What:		/sys/.../events/in_accel_roc_rising_value
+ What:		/sys/.../events/in_accel_x_raw_roc_rising_value
+ What:		/sys/.../events/in_accel_x_raw_roc_falling_value
+ What:		/sys/.../events/in_accel_y_raw_roc_rising_value
+@@ -1177,6 +1180,7 @@ Description:
  
- #define BMI270_INT_STATUS_1_REG				0x1d
- #define BMI270_INT_STATUS_1_ACC_GYR_DRDY_MSK		GENMASK(7, 6)
-@@ -81,6 +83,8 @@
- #define BMI270_INT1_MAP_FEAT_REG			0x56
- #define BMI270_INT2_MAP_FEAT_REG			0x57
- #define BMI270_INT_MAP_FEAT_STEP_CNT_WTRMRK_MSK		BIT(1)
-+#define BMI270_INT_MAP_FEAT_NOMOTION_MSK		BIT(5)
-+#define BMI270_INT_MAP_FEAT_ANYMOTION_MSK		BIT(6)
+ What:		/sys/.../events/in_accel_x_thresh_rising_period
+ What:		/sys/.../events/in_accel_x_thresh_falling_period
++What:		/sys/.../events/in_accel_roc_rising_period
+ What:		/sys/.../events/in_accel_x_roc_rising_period
+ What:		/sys/.../events/in_accel_x_roc_falling_period
+ What:		/sys/.../events/in_accel_y_thresh_rising_period
+@@ -1187,6 +1191,7 @@ What:		/sys/.../events/in_accel_z_thresh_rising_period
+ What:		/sys/.../events/in_accel_z_thresh_falling_period
+ What:		/sys/.../events/in_accel_z_roc_rising_period
+ What:		/sys/.../events/in_accel_z_roc_falling_period
++What:		/sys/.../events/in_accel_mag_adaptive_rising_period
+ What:		/sys/.../events/in_anglvel_x_thresh_rising_period
+ What:		/sys/.../events/in_anglvel_x_thresh_falling_period
+ What:		/sys/.../events/in_anglvel_x_roc_rising_period
+@@ -1344,6 +1349,15 @@ Description:
+ 		number or direction is not specified, applies to all channels of
+ 		this type.
  
- #define BMI270_INT_MAP_DATA_REG				0x58
- #define BMI270_INT_MAP_DATA_DRDY_INT1_MSK		BIT(2)
-@@ -106,6 +110,25 @@
- #define BMI270_STEP_SC26_RST_CNT_MSK			BIT(10)
- #define BMI270_STEP_SC26_EN_CNT_MSK			BIT(12)
- 
-+#define BMI270_FEAT_MOTION_DURATION_MSK			GENMASK(12, 0)
-+#define BMI270_FEAT_MOTION_X_EN_MSK			BIT(13)
-+#define BMI270_FEAT_MOTION_Y_EN_MSK			BIT(14)
-+#define BMI270_FEAT_MOTION_Z_EN_MSK			BIT(15)
-+#define BMI270_FEAT_MOTION_XYZ_EN_MSK			GENMASK(15, 13)
-+#define BMI270_FEAT_MOTION_THRESHOLD_MSK		GENMASK(10, 0)
-+#define BMI270_FEAT_MOTION_OUT_CONF_MSK			GENMASK(14, 11)
-+#define BMI270_FEAT_MOTION_ENABLE_MSK			BIT(15)
++What:		/sys/.../iio:deviceX/events/in_accel_x_mag_adaptive_rising_en
++What:		/sys/.../iio:deviceX/events/in_accel_y_mag_adaptive_rising_en
++What:		/sys/.../iio:deviceX/events/in_accel_z_mag_adaptive_rising_en
++KernelVersion:	2.6.37
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Similar to in_accel_x_thresh[_rising|_falling]_en, but here the
++		magnitude of the channel is compared to the adaptive threshold.
 +
-+#define BMI270_MOTION_XYZ_MSK				GENMASK(2, 0)
+ What:		/sys/.../iio:deviceX/events/in_accel_mag_referenced_en
+ What:		/sys/.../iio:deviceX/events/in_accel_mag_referenced_rising_en
+ What:		/sys/.../iio:deviceX/events/in_accel_mag_referenced_falling_en
+@@ -2386,3 +2400,23 @@ Description:
+ 		Value representing the user's attention to the system expressed
+ 		in units as percentage. This usually means if the user is
+ 		looking at the screen or not.
 +
-+/* See pages 92 and 93 of the datasheet */
-+#define BMI270_MOTION_THRES_FULL_SCALE			GENMASK(10, 0)
-+#define BMI270_MOTION_DURAT_SCALE			50
-+#define BMI270_MOTION_DURAT_MAX				162
++What:		/sys/.../events/in_accel_value_available
++KernelVersion:	6.18
++Contact:	linux-iio@vger.kernel.org
++Description:
++		List of available threshold values for acceleration event
++		generation. Applies to all event types on in_accel channels.
++		Units after application of scale and offset are m/s^2.
++		Expressed as:
 +
-+/* 9.81 * 1000000 m/s^2 */
-+#define BMI270_G_MICRO_M_S_2				9810000
++		- a range specified as "[min step max]"
 +
- /* See datasheet section 4.6.14, Temperature Sensor */
- #define BMI270_TEMP_OFFSET				11776
- #define BMI270_TEMP_SCALE				1953125
-@@ -114,6 +137,11 @@
- #define BMI270_STEP_COUNTER_FACTOR			20
- #define BMI270_STEP_COUNTER_MAX				20460
- 
-+#define BMI270_INT_MICRO_TO_RAW(val, val2, scale) \
-+	((val) * (scale) + ((val2) * (scale)) / MEGA)
-+#define BMI270_RAW_TO_MICRO(raw, scale) \
-+	((((raw) % (scale)) * MEGA) / scale)
++What:		/sys/.../events/in_accel_period_available
++KernelVersion:	6.18
++Contact:	linux-iio@vger.kernel.org
++Description:
++		List of available periods for accelerometer event detection in
++		seconds, expressed as:
 +
- #define BMI260_INIT_DATA_FILE "bmi260-init-data.fw"
- #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
- 
-@@ -309,6 +337,13 @@ static const struct  bmi270_odr_item bmi270_odr_table[] = {
- };
- 
- enum bmi270_feature_reg_id {
-+	/* Page 1 registers */
-+	BMI270_ANYMO1_REG,
-+	BMI270_ANYMO2_REG,
-+	/* Page 2 registers */
-+	BMI270_NOMO1_REG,
-+	BMI270_NOMO2_REG,
-+	/* Page 6 registers */
- 	BMI270_SC_26_REG,
- };
- 
-@@ -318,6 +353,22 @@ struct bmi270_feature_reg {
- };
- 
- static const struct bmi270_feature_reg bmi270_feature_regs[] = {
-+	[BMI270_ANYMO1_REG] = {
-+		.page = 1,
-+		.addr = 0x3c,
-+	},
-+	[BMI270_ANYMO2_REG] = {
-+		.page = 1,
-+		.addr = 0x3e,
-+	},
-+	[BMI270_NOMO1_REG] = {
-+		.page = 2,
-+		.addr = 0x30,
-+	},
-+	[BMI270_NOMO2_REG] = {
-+		.page = 2,
-+		.addr = 0x32,
-+	},
- 	[BMI270_SC_26_REG] = {
- 		.page = 6,
- 		.addr = 0x32,
-@@ -439,6 +490,121 @@ static int bmi270_step_wtrmrk_en(struct bmi270_data *data, bool state)
- 					     state));
- }
- 
-+static int bmi270_motion_reg(enum iio_event_type type, enum iio_event_info info)
-+{
-+	switch (info) {
-+	case IIO_EV_INFO_PERIOD:
-+		switch (type) {
-+		case IIO_EV_TYPE_MAG_ADAPTIVE:
-+			return BMI270_ANYMO1_REG;
-+		case IIO_EV_TYPE_ROC:
-+			return BMI270_NOMO1_REG;
-+		default:
-+			return -EINVAL;
-+		}
-+	case IIO_EV_INFO_VALUE:
-+		switch (type) {
-+		case IIO_EV_TYPE_MAG_ADAPTIVE:
-+			return BMI270_ANYMO2_REG;
-+		case IIO_EV_TYPE_ROC:
-+			return BMI270_NOMO2_REG;
-+		default:
-+			return -EINVAL;
-+		}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int bmi270_anymotion_event_en(struct bmi270_data *data,
-+				     struct iio_chan_spec const *chan,
-+				     bool state)
-+{
-+	u16 axis_msk, axis_field_val, regval;
-+	int ret, irq_reg;
-+	bool axis_en;
-+
-+	irq_reg = bmi270_int_map_reg(data->irq_pin);
-+	if (irq_reg < 0)
-+		return irq_reg;
-+
-+	guard(mutex)(&data->mutex);
-+
-+	ret = bmi270_read_feature_reg(data, BMI270_ANYMO1_REG, &regval);
-+	if (ret)
-+		return ret;
-+
-+	switch (chan->channel2) {
-+	case IIO_MOD_X:
-+		axis_msk = BMI270_FEAT_MOTION_X_EN_MSK;
-+		axis_field_val = FIELD_PREP(BMI270_FEAT_MOTION_X_EN_MSK, state);
-+		axis_en = FIELD_GET(BMI270_FEAT_MOTION_Y_EN_MSK, regval) |
-+			  FIELD_GET(BMI270_FEAT_MOTION_Z_EN_MSK, regval);
-+		break;
-+	case IIO_MOD_Y:
-+		axis_msk = BMI270_FEAT_MOTION_Y_EN_MSK;
-+		axis_field_val = FIELD_PREP(BMI270_FEAT_MOTION_Y_EN_MSK, state);
-+		axis_en = FIELD_GET(BMI270_FEAT_MOTION_X_EN_MSK, regval) |
-+			  FIELD_GET(BMI270_FEAT_MOTION_Z_EN_MSK, regval);
-+		break;
-+	case IIO_MOD_Z:
-+		axis_msk = BMI270_FEAT_MOTION_Z_EN_MSK;
-+		axis_field_val = FIELD_PREP(BMI270_FEAT_MOTION_Z_EN_MSK, state);
-+		axis_en = FIELD_GET(BMI270_FEAT_MOTION_X_EN_MSK, regval) |
-+			  FIELD_GET(BMI270_FEAT_MOTION_Y_EN_MSK, regval);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = bmi270_update_feature_reg(data, BMI270_ANYMO1_REG, axis_msk,
-+					axis_field_val);
-+	if (ret)
-+		return ret;
-+
-+	ret = bmi270_update_feature_reg(data, BMI270_ANYMO2_REG,
-+					BMI270_FEAT_MOTION_ENABLE_MSK,
-+					FIELD_PREP(BMI270_FEAT_MOTION_ENABLE_MSK,
-+						   state || axis_en));
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(data->regmap, irq_reg,
-+				  BMI270_INT_MAP_FEAT_ANYMOTION_MSK,
-+				  FIELD_PREP(BMI270_INT_MAP_FEAT_ANYMOTION_MSK,
-+					     state || axis_en));
-+}
-+
-+static int bmi270_nomotion_event_en(struct bmi270_data *data, bool state)
-+{
-+	int ret, irq_reg;
-+
-+	irq_reg = bmi270_int_map_reg(data->irq_pin);
-+	if (irq_reg < 0)
-+		return irq_reg;
-+
-+	guard(mutex)(&data->mutex);
-+
-+	ret = bmi270_update_feature_reg(data, BMI270_NOMO1_REG,
-+					BMI270_FEAT_MOTION_XYZ_EN_MSK,
-+					FIELD_PREP(BMI270_FEAT_MOTION_XYZ_EN_MSK,
-+						   state ? BMI270_MOTION_XYZ_MSK : 0));
-+	if (ret)
-+		return ret;
-+
-+	ret = bmi270_update_feature_reg(data, BMI270_NOMO2_REG,
-+					BMI270_FEAT_MOTION_ENABLE_MSK,
-+					FIELD_PREP(BMI270_FEAT_MOTION_ENABLE_MSK,
-+						   state));
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(data->regmap, irq_reg,
-+				  BMI270_INT_MAP_FEAT_NOMOTION_MSK,
-+				  FIELD_PREP(BMI270_INT_MAP_FEAT_NOMOTION_MSK,
-+					     state));
-+}
-+
- static int bmi270_set_scale(struct bmi270_data *data, int chan_type, int uscale)
- {
- 	int i;
-@@ -479,8 +645,6 @@ static int bmi270_get_scale(struct bmi270_data *data, int chan_type, int *scale,
- 	unsigned int val;
- 	struct bmi270_scale_item bmi270_scale_item;
- 
--	guard(mutex)(&data->mutex);
--
- 	switch (chan_type) {
- 	case IIO_ACCEL:
- 		ret = regmap_read(data->regmap, BMI270_ACC_CONF_RANGE_REG, &val);
-@@ -614,6 +778,20 @@ static irqreturn_t bmi270_irq_thread_handler(int irq, void *private)
- 	if (FIELD_GET(BMI270_INT_STATUS_1_ACC_GYR_DRDY_MSK, status1))
- 		iio_trigger_poll_nested(data->trig);
- 
-+	if (FIELD_GET(BMI270_INT_STATUS_0_MOTION_MSK, status0))
-+		iio_push_event(indio_dev, IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-+							     IIO_MOD_X_OR_Y_OR_Z,
-+							     IIO_EV_TYPE_MAG_ADAPTIVE,
-+							     IIO_EV_DIR_RISING),
-+			       timestamp);
-+
-+	if (FIELD_GET(BMI270_INT_STATUS_0_NOMOTION_MSK, status0))
-+		iio_push_event(indio_dev, IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-+							     IIO_MOD_X_AND_Y_AND_Z,
-+							     IIO_EV_TYPE_ROC,
-+							     IIO_EV_DIR_RISING),
-+			       timestamp);
-+
- 	if (FIELD_GET(BMI270_INT_STATUS_0_STEP_CNT_MSK, status0))
- 		iio_push_event(indio_dev, IIO_UNMOD_EVENT_CODE(IIO_STEPS, 0,
- 							       IIO_EV_TYPE_CHANGE,
-@@ -827,6 +1005,39 @@ static int bmi270_read_avail(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static ssize_t in_accel_value_available_show(struct device *dev,
-+					     struct device_attribute *attr,
-+					     char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct bmi270_data *data = iio_priv(indio_dev);
-+	int ret, scale, uscale;
-+	unsigned int step, max;
-+
-+	ret = bmi270_get_scale(data, IIO_ACCEL, &scale, &uscale);
-+	if (ret)
-+		return ret;
-+
-+	max = BMI270_G_MICRO_M_S_2 / uscale;
-+	step = max / BMI270_MOTION_THRES_FULL_SCALE;
-+
-+	return sysfs_emit(buf, "[0 %u %u]\n", step, max);
-+}
-+
-+static IIO_DEVICE_ATTR_RO(in_accel_value_available, 0);
-+
-+static IIO_CONST_ATTR(in_accel_period_available, "[0.0 0.02 162.0]");
-+
-+static struct attribute *bmi270_event_attributes[] = {
-+	&iio_dev_attr_in_accel_value_available.dev_attr.attr,
-+	&iio_const_attr_in_accel_period_available.dev_attr.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group bmi270_event_attribute_group = {
-+	.attrs = bmi270_event_attributes,
-+};
-+
- static int bmi270_write_event_config(struct iio_dev *indio_dev,
- 				     const struct iio_chan_spec *chan,
- 				     enum iio_event_type type,
-@@ -835,6 +1046,10 @@ static int bmi270_write_event_config(struct iio_dev *indio_dev,
- 	struct bmi270_data *data = iio_priv(indio_dev);
- 
- 	switch (type) {
-+	case IIO_EV_TYPE_MAG_ADAPTIVE:
-+		return bmi270_anymotion_event_en(data, chan, state);
-+	case IIO_EV_TYPE_ROC:
-+		return bmi270_nomotion_event_en(data, state);
- 	case IIO_EV_TYPE_CHANGE:
- 		return bmi270_step_wtrmrk_en(data, state);
- 	default:
-@@ -848,21 +1063,55 @@ static int bmi270_read_event_config(struct iio_dev *indio_dev,
- 				    enum iio_event_direction dir)
- {
- 	struct bmi270_data *data = iio_priv(indio_dev);
-+	bool feat_en, axis_en;
- 	int ret, reg, regval;
-+	u16 motion_reg;
- 
- 	guard(mutex)(&data->mutex);
- 
-+	reg = bmi270_int_map_reg(data->irq_pin);
-+	if (reg < 0)
-+		return reg;
-+
-+	ret = regmap_read(data->regmap, reg, &regval);
-+	if (ret)
-+		return ret;
-+
- 	switch (chan->type) {
- 	case IIO_STEPS:
--		reg = bmi270_int_map_reg(data->irq_pin);
--		if (reg)
--			return reg;
-+		return !!FIELD_GET(BMI270_INT_MAP_FEAT_STEP_CNT_WTRMRK_MSK, regval);
-+	case IIO_ACCEL:
-+		switch (type) {
-+		case IIO_EV_TYPE_ROC:
-+			return !!FIELD_GET(BMI270_INT_MAP_FEAT_NOMOTION_MSK, regval);
-+		case IIO_EV_TYPE_MAG_ADAPTIVE:
-+			ret = bmi270_read_feature_reg(data, BMI270_ANYMO1_REG,
-+						      &motion_reg);
-+			if (ret)
-+				return ret;
- 
--		ret = regmap_read(data->regmap, reg, &regval);
--		if (ret)
--			return ret;
--		return FIELD_GET(BMI270_INT_MAP_FEAT_STEP_CNT_WTRMRK_MSK,
--				 regval) ? 1 : 0;
-+			feat_en = FIELD_GET(BMI270_INT_MAP_FEAT_ANYMOTION_MSK,
-+					    regval);
-+			switch (chan->channel2) {
-+			case IIO_MOD_X:
-+				axis_en = FIELD_GET(BMI270_FEAT_MOTION_X_EN_MSK,
-+						    motion_reg);
-+				break;
-+			case IIO_MOD_Y:
-+				axis_en = FIELD_GET(BMI270_FEAT_MOTION_Y_EN_MSK,
-+						    motion_reg);
-+				break;
-+			case IIO_MOD_Z:
-+				axis_en = FIELD_GET(BMI270_FEAT_MOTION_Z_EN_MSK,
-+						    motion_reg);
-+				break;
-+			default:
-+				return -EINVAL;
-+			}
-+			return axis_en && feat_en;
-+		default:
-+			return -EINVAL;
-+		}
- 	default:
- 		return -EINVAL;
- 	}
-@@ -876,20 +1125,50 @@ static int bmi270_write_event_value(struct iio_dev *indio_dev,
- 				    int val, int val2)
- {
- 	struct bmi270_data *data = iio_priv(indio_dev);
--	unsigned int raw;
-+	unsigned int raw, mask, regval;
-+	int ret, reg, scale, uscale;
-+	u64 tmp;
- 
- 	guard(mutex)(&data->mutex);
- 
--	switch (type) {
--	case IIO_EV_TYPE_CHANGE:
-+	if (type == IIO_EV_TYPE_CHANGE) {
- 		if (!in_range(val, 0, BMI270_STEP_COUNTER_MAX + 1))
- 			return -EINVAL;
- 
- 		raw = val / BMI270_STEP_COUNTER_FACTOR;
--		return bmi270_update_feature_reg(data, BMI270_SC_26_REG,
--						 BMI270_STEP_SC26_WTRMRK_MSK,
--						 FIELD_PREP(BMI270_STEP_SC26_WTRMRK_MSK,
--							    raw));
-+		mask = BMI270_STEP_SC26_WTRMRK_MSK;
-+		regval = FIELD_PREP(BMI270_STEP_SC26_WTRMRK_MSK, raw);
-+		return bmi270_update_feature_reg(data, BMI270_SC_26_REG, mask,
-+						 regval);
-+	}
-+
-+	reg = bmi270_motion_reg(type, info);
-+	if (reg < 0)
-+		return reg;
-+
-+	switch (info) {
-+	case IIO_EV_INFO_VALUE:
-+		ret = bmi270_get_scale(data, IIO_ACCEL, &scale, &uscale);
-+		if (ret)
-+			return ret;
-+
-+		if (!in_range(val, 0, (BMI270_G_MICRO_M_S_2 / uscale) + 1))
-+			return -EINVAL;
-+
-+		tmp = (u64)val * BMI270_MOTION_THRES_FULL_SCALE * uscale;
-+		raw = DIV_ROUND_CLOSEST_ULL(tmp, BMI270_G_MICRO_M_S_2);
-+		mask = BMI270_FEAT_MOTION_THRESHOLD_MSK;
-+		regval = FIELD_PREP(BMI270_FEAT_MOTION_THRESHOLD_MSK, raw);
-+		return bmi270_update_feature_reg(data, reg, mask, regval);
-+	case IIO_EV_INFO_PERIOD:
-+		if (!in_range(val, 0, BMI270_MOTION_DURAT_MAX + 1))
-+			return -EINVAL;
-+
-+		raw = BMI270_INT_MICRO_TO_RAW(val, val2,
-+					      BMI270_MOTION_DURAT_SCALE);
-+		mask = BMI270_FEAT_MOTION_DURATION_MSK;
-+		regval = FIELD_PREP(BMI270_FEAT_MOTION_DURATION_MSK, raw);
-+		return bmi270_update_feature_reg(data, reg, mask, regval);
- 	default:
- 		return -EINVAL;
- 	}
-@@ -903,14 +1182,14 @@ static int bmi270_read_event_value(struct iio_dev *indio_dev,
- 				   int *val, int *val2)
- {
- 	struct bmi270_data *data = iio_priv(indio_dev);
-+	int ret, reg, scale, uscale;
- 	unsigned int raw;
- 	u16 regval;
--	int ret;
-+	u64 tmp;
- 
- 	guard(mutex)(&data->mutex);
- 
--	switch (type) {
--	case IIO_EV_TYPE_CHANGE:
-+	if (type == IIO_EV_TYPE_CHANGE) {
- 		ret = bmi270_read_feature_reg(data, BMI270_SC_26_REG, &regval);
- 		if (ret)
- 			return ret;
-@@ -918,6 +1197,36 @@ static int bmi270_read_event_value(struct iio_dev *indio_dev,
- 		raw = FIELD_GET(BMI270_STEP_SC26_WTRMRK_MSK, regval);
- 		*val = raw * BMI270_STEP_COUNTER_FACTOR;
- 		return IIO_VAL_INT;
-+	}
-+
-+	reg = bmi270_motion_reg(type, info);
-+	if (reg < 0)
-+		return reg;
-+
-+	switch (info) {
-+	case IIO_EV_INFO_VALUE:
-+		ret = bmi270_read_feature_reg(data, reg, &regval);
-+		if (ret)
-+			return ret;
-+
-+		ret = bmi270_get_scale(data, IIO_ACCEL, &scale, &uscale);
-+		if (ret)
-+			return ret;
-+
-+		raw = FIELD_GET(BMI270_FEAT_MOTION_THRESHOLD_MSK, regval);
-+		tmp = (u64)raw * BMI270_G_MICRO_M_S_2;
-+		*val = DIV_ROUND_CLOSEST_ULL(tmp,
-+					     BMI270_MOTION_THRES_FULL_SCALE * uscale);
-+		return IIO_VAL_INT;
-+	case IIO_EV_INFO_PERIOD:
-+		ret = bmi270_read_feature_reg(data, reg, &regval);
-+		if (ret)
-+			return ret;
-+
-+		raw = FIELD_GET(BMI270_FEAT_MOTION_DURATION_MSK, regval);
-+		*val = raw / BMI270_MOTION_DURAT_SCALE;
-+		*val2 = BMI270_RAW_TO_MICRO(raw, BMI270_MOTION_DURAT_SCALE);
-+		return IIO_VAL_INT_PLUS_MICRO;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -929,6 +1238,20 @@ static const struct iio_event_spec bmi270_step_wtrmrk_event = {
- 	.mask_shared_by_type = BIT(IIO_EV_INFO_ENABLE) | BIT(IIO_EV_INFO_VALUE),
- };
- 
-+static const struct iio_event_spec bmi270_anymotion_event = {
-+	.type = IIO_EV_TYPE_MAG_ADAPTIVE,
-+	.dir = IIO_EV_DIR_RISING,
-+	.mask_separate = BIT(IIO_EV_INFO_ENABLE),
-+	.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE) | BIT(IIO_EV_INFO_PERIOD),
-+};
-+
-+static const struct iio_event_spec bmi270_nomotion_event = {
-+	.type = IIO_EV_TYPE_ROC,
-+	.dir = IIO_EV_DIR_RISING,
-+	.mask_separate = BIT(IIO_EV_INFO_ENABLE),
-+	.mask_shared_by_type = BIT(IIO_EV_INFO_VALUE) | BIT(IIO_EV_INFO_PERIOD),
-+};
-+
- static const struct iio_info bmi270_info = {
- 	.read_raw = bmi270_read_raw,
- 	.write_raw = bmi270_write_raw,
-@@ -937,6 +1260,7 @@ static const struct iio_info bmi270_info = {
- 	.read_event_config = bmi270_read_event_config,
- 	.write_event_value = bmi270_write_event_value,
- 	.read_event_value = bmi270_read_event_value,
-+	.event_attrs = &bmi270_event_attribute_group,
- };
- 
- #define BMI270_ACCEL_CHANNEL(_axis) {				\
-@@ -956,6 +1280,8 @@ static const struct iio_info bmi270_info = {
- 		.storagebits = 16,				\
- 		.endianness = IIO_LE,				\
- 	},	                                                \
-+	.event_spec = &bmi270_anymotion_event,			\
-+	.num_event_specs = 1,					\
- }
- 
- #define BMI270_ANG_VEL_CHANNEL(_axis) {				\
-@@ -1000,6 +1326,14 @@ static const struct iio_chan_spec bmi270_channels[] = {
- 		.num_event_specs = 1,
- 	},
- 	IIO_CHAN_SOFT_TIMESTAMP(BMI270_SCAN_TIMESTAMP),
-+	{
-+		.type = IIO_ACCEL,
-+		.modified = 1,
-+		.channel2 = IIO_MOD_X_AND_Y_AND_Z,
-+		.scan_index = -1, /* Fake channel */
-+		.event_spec = &bmi270_nomotion_event,
-+		.num_event_specs = 1,
-+	},
- };
- 
- static int bmi270_int_pin_config(struct bmi270_data *data,
-@@ -1107,6 +1441,13 @@ static int bmi270_trigger_probe(struct bmi270_data *data,
- 		return dev_err_probe(data->dev, ret,
- 				     "Trigger registration failed\n");
- 
-+	/* Disable axes for motion events */
-+	ret = bmi270_update_feature_reg(data, BMI270_ANYMO1_REG,
-+					BMI270_FEAT_MOTION_XYZ_EN_MSK,
-+					FIELD_PREP(BMI270_FEAT_MOTION_XYZ_EN_MSK, 0));
-+	if (ret)
-+		return ret;
-+
- 	data->irq_pin = irq_pin;
- 
- 	return 0;
++		- a range specified as "[min step max]"
 
 -- 
 2.51.0
