@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-817988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C5BB58B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:30:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18967B58B31
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 596277A9C65
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDFE4605E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734A821FF48;
-	Tue, 16 Sep 2025 01:30:11 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677141DF265;
-	Tue, 16 Sep 2025 01:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760831991B6;
+	Tue, 16 Sep 2025 01:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLdgGRcv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C0A1DE8AF;
+	Tue, 16 Sep 2025 01:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757986211; cv=none; b=QiavSt2pbrwrEByiMAgAYg9eM3vs8icCyYOOLIJsgmenIl58O3nRNWKqPy3KDr/Vp/AFsUS+5Y0NyxYonL/Gb8PohVwxQCfs6i/msDtxUNaGMoSkyfAbQiEgNPs34m4b1BkTs2hsK6snnVmpQPLtdpNVnjQlkQcYqhPYF1IZwDw=
+	t=1757986218; cv=none; b=MCSu1fmJsr2zepde7xp58z55D7WIh5UdkC5wfkVumzIK9pELQ/DGH2bLG46kARs/ZMsHH9buyUN9irzMiexeAB97jq4u/5smjg3ZiA6QMggOOi6Jn9VXdwSuqgoja/2rkQSw3a2fMYLLLjoF5EX/W3zicP0YTJBSnKeUjZbVcc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757986211; c=relaxed/simple;
-	bh=Rm0gHAfk+FjEIZWY7YKRbPW4JOwxvHlJnH3iKfsrlHY=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CkuZ0cO3xhJrM9skK4Ged5yMsIiYddUUTGFf0yFZrpgzF/PGL7sCX0PXZ/CKHUxsP5WIMpPxJhH+CSi163LDbtYo0Wixq3n1TfEh7K6cl+oNo1n5m7rvu4eFWxnmwi8vPU8Sm71EdYUx5aHx2Kp0Ooef1KglET/1wb7/mZImxAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxaNGXvcho2cUKAA--.23230S3;
-	Tue, 16 Sep 2025 09:29:59 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowJAxvsGVvcho7lSYAA--.49454S3;
-	Tue, 16 Sep 2025 09:29:59 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: rework pch_pic_update_batch_irqs()
-To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Xianglai Li <lixianglai@loongson.cn>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250913002907.69703-1-yury.norov@gmail.com>
-From: Bibo Mao <maobibo@loongson.cn>
-Message-ID: <0e330fc0-1200-6a02-7b21-78064fc63a2e@loongson.cn>
-Date: Tue, 16 Sep 2025 09:27:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1757986218; c=relaxed/simple;
+	bh=TEwGEXAiXPihZpryiTp34CJavZYQMOxb4M1Wre0+0Nw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NN6+RJAP/k9EqLR+eahfaeJyQdmdUqCOAE1yt6efpyqpngVWl/WTRVSctUlSUdZZgleK1b8svPPhR/239odhHGGZ+vOHGjWTeBPEMh4BWbDwdDMEvcb+C5xdv/s2rSvDObNLFwxcImfIsA4z8TfxBqZg37bSD+VwGBNMjGrhDbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLdgGRcv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF07CC4CEF1;
+	Tue, 16 Sep 2025 01:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757986216;
+	bh=TEwGEXAiXPihZpryiTp34CJavZYQMOxb4M1Wre0+0Nw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=kLdgGRcvSYMBKpv2MZevGrA2MMFTohQd3RpZckKOnJQx58NwFu9SaaM4XI2EKYK7e
+	 cDxa8aWf/goNUsQLpum8tS1MSlwwPTWrp3NnsGfXB6lIEt60qavIaeSgrdcczX5CCy
+	 tHfB5bg6MlxmUTfzhfG1izVnnN/7ipCSNTMBrPyOITvwmsugvX/0En/N9IWlFQZ78M
+	 cCeguwnJzCcxMuZeFsxxd1/3BefhaiYk3i989H9vIIepgXGTRg/TR7uqtuhk7mC3Q1
+	 lyRGFmcouGZM2UQyWXD/hAno8Kk1eXN28oPiIqHc8orXuzicft45b3O5BhH6m6xOT/
+	 +Gui56xLpH4tw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7156839D0C17;
+	Tue, 16 Sep 2025 01:30:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250913002907.69703-1-yury.norov@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxvsGVvcho7lSYAA--.49454S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CF1DGFW5AF47WFyDtr4UJrc_yoW8GF1UpF
-	W5uanIkFs5Gr1DXFy8uayUtF4ayrnrtr1SgF9F934xKrnxtr1FvF1kGrWkX3W5K393GF4I
-	vrs3tr1Sqa47AacCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4
-	CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
-	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
-	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
-	14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJV
-	W8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jUsqXU
-	UUUU=
+Subject: Re: [PATCH net 0/5] mptcp: pm: nl: announce deny-join-id0 flag
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175798621825.559370.16652026022818101575.git-patchwork-notify@kernel.org>
+Date: Tue, 16 Sep 2025 01:30:18 +0000
+References: 
+ <20250912-net-mptcp-pm-uspace-deny_join_id0-v1-0-40171884ade8@kernel.org>
+In-Reply-To: 
+ <20250912-net-mptcp-pm-uspace-deny_join_id0-v1-0-40171884ade8@kernel.org>
+To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Cc: martineau@kernel.org, geliang@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ donald.hunter@gmail.com, fw@strlen.de, kishen.maloor@intel.com,
+ shuah@kernel.org, dmytro@shytyi.net, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, marek@cloudflare.com
 
+Hello:
 
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2025/9/13 上午8:29, Yury Norov (NVIDIA) wrote:
-> Use proper bitmap API and drop all the housekeeping code.
+On Fri, 12 Sep 2025 14:52:19 +0200 you wrote:
+> During the connection establishment, a peer can tell the other one that
+> it cannot establish new subflows to the initial IP address and port by
+> setting the 'C' flag [1]. Doing so makes sense when the sender is behind
+> a strict NAT, operating behind a legacy Layer 4 load balancer, or using
+> anycast IP address for example.
 > 
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->   arch/loongarch/kvm/intc/pch_pic.c | 11 +++--------
->   1 file changed, 3 insertions(+), 8 deletions(-)
+> When this 'C' flag is set, the path-managers must then not try to
+> establish new subflows to the other peer's initial IP address and port.
+> The in-kernel PM has access to this info, but the userspace PM didn't,
+> not letting the userspace daemon able to respect the RFC8684.
 > 
-> diff --git a/arch/loongarch/kvm/intc/pch_pic.c b/arch/loongarch/kvm/intc/pch_pic.c
-> index 119290bcea79..57e13ae51d24 100644
-> --- a/arch/loongarch/kvm/intc/pch_pic.c
-> +++ b/arch/loongarch/kvm/intc/pch_pic.c
-> @@ -35,16 +35,11 @@ static void pch_pic_update_irq(struct loongarch_pch_pic *s, int irq, int level)
->   /* update batch irqs, the irq_mask is a bitmap of irqs */
->   static void pch_pic_update_batch_irqs(struct loongarch_pch_pic *s, u64 irq_mask, int level)
->   {
-> -	int irq, bits;
-> +	DECLARE_BITMAP(irqs, 64) = { BITMAP_FROM_U64(irq_mask) };
-> +	unsigned int irq;
->   
-> -	/* find each irq by irqs bitmap and update each irq */
-> -	bits = sizeof(irq_mask) * 8;
-> -	irq = find_first_bit((void *)&irq_mask, bits);
-> -	while (irq < bits) {
-> +	for_each_set_bit(irq, irqs, 64)
->   		pch_pic_update_irq(s, irq, level);
-> -		bitmap_clear((void *)&irq_mask, irq, 1);
-> -		irq = find_first_bit((void *)&irq_mask, bits);
-> -	}
->   }
->   
->   /* called when a irq is triggered in pch pic */
-> 
-Thanks for doing this.
+> [...]
 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+Here is the summary with links:
+  - [net,1/5] mptcp: set remote_deny_join_id0 on SYN recv
+    https://git.kernel.org/netdev/net/c/96939cec9940
+  - [net,2/5] mptcp: pm: nl: announce deny-join-id0 flag
+    https://git.kernel.org/netdev/net/c/2293c57484ae
+  - [net,3/5] selftests: mptcp: userspace pm: validate deny-join-id0 flag
+    https://git.kernel.org/netdev/net/c/24733e193a0d
+  - [net,4/5] mptcp: tfo: record 'deny join id0' info
+    https://git.kernel.org/netdev/net/c/92da495cb657
+  - [net,5/5] selftests: mptcp: sockopt: fix error messages
+    https://git.kernel.org/netdev/net/c/b86418beade1
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
