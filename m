@@ -1,82 +1,195 @@
-Return-Path: <linux-kernel+bounces-819488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8379DB5A18C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:36:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4707EB5A18F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8181748820E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:36:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F13A64E2A15
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BD92DF6F8;
-	Tue, 16 Sep 2025 19:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FC92DF125;
+	Tue, 16 Sep 2025 19:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TYbtWmQd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOGTohGg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63582D7DF2;
-	Tue, 16 Sep 2025 19:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68D527F19B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758051397; cv=none; b=ttPHb71W9C0Z7zMb0C6LzrZsN/eNbt2UYHYforEKJ6eJhnKP+IlUTkb4QbcVSVMd4/hr34Vx1e1IC9wnIueohzjE9Qmo5cu4eg2Oj834jEo3Pq+gUYwOrfY/FUufYZaNmWwow5LmNAsYEt/UJBIFXSxhaV3g/VZW5C9GO1sbuv0=
+	t=1758051426; cv=none; b=mV9apvwDU6L+DNbqheThkBtv6vOsaLnlZRHLtm9SPAV3sqb9gGp6EakJo2nHXW72YokUQsM8sDZ7Q0q4X3GN6ena/74pU4DfpuwEUScQAzt4VWWOTJR5N6wO+e3t16kVRwFMrsn+r2NTPdx3oOmXShTSSWQMfGD4wPeiVSPBchU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758051397; c=relaxed/simple;
-	bh=Wvf3CRlex5A67yULWvZhkX7JJVibOm8kYl97GzFho6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1KbIG/d3YMx88hXMyUl8odvDxkSQ7ZcJvTGFAQcbeYpa2IRYvVjKG38Xpbc9BUFORyZs6hSPR5ANwwDAs7wy6DnA4MxTo8MorEiTLGoS76uSa7pR8z+hJ/bzTQs64LLeXDJ5mdZplwyvzcYCiVGWIMTfdi0Xb2GXGUtSKE5vso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TYbtWmQd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AaJPIyH7F5dhR2/nGCajaIe+q8ITXHr5yM5P7k34RUc=; b=TYbtWmQdNFR82w4Oap0ApPXaPR
-	gmPIH/gQA9ze2JJem0CyqdqRddcPJ2BPJGxGrK5eYB4gnHTdpBTwL6KobOsgW6H/pSd0QFbUTJfRB
-	yH2bfIuSTliTwH+EsuQgDYU5mhOVIsWoCoApRo5LEJqa2gxGWOVhWywAewn5u8eMKh7A=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uybTY-008bTd-NZ; Tue, 16 Sep 2025 21:36:28 +0200
-Date: Tue, 16 Sep 2025 21:36:28 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v3 2/2] net: dlink: handle copy_thresh allocation
- failure
-Message-ID: <6ab6f484-5ad0-4135-97cd-e5b0af6f691f@lunn.ch>
-References: <20250916183305.2808-1-yyyynoom@gmail.com>
- <20250916183305.2808-3-yyyynoom@gmail.com>
+	s=arc-20240116; t=1758051426; c=relaxed/simple;
+	bh=V1PBA0ipVR6RHL4l+EzKcfMj25cy8Hz5q4i26ppeCjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JJeMufszawdBlsWgqzCWi4q322dZmMg4uOJGuz3hSA2tO+4OASxjKAV/0b3zcqqmbyZ22+pKBztnqi9rXCZsm1PkyFpHrsMCfu33zq02MsS5L8pTlVxAreVdIyhYvANswCltsSZVFSzhUXD17+EWIBXbXuGFZul1wTKp12Zkrr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOGTohGg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E16BC4CEF0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758051425;
+	bh=V1PBA0ipVR6RHL4l+EzKcfMj25cy8Hz5q4i26ppeCjo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eOGTohGgX7Tmmk1lvNGtHro1rjwkkc/bkGX/n0xDtR00icaCqjSRTOuE2/qxeQziG
+	 E/aFGSKGTKCCv2sxCFqXiYU+Ij1q+VVSMdseB993mqeVWpiFwKE+54D5YngvenKd/F
+	 iUC3xq75Vrg8Q2mCmPErlzFkSOdvVdGl71r5XD+C97n6Qejy1WsbNOEdKlFtrs6JiK
+	 o0l119madXk2f+Idhh6pAoB1+GO5uxKVM6ccjPGqQWVd1WVj9WN0AzcjPG1wgmeA9f
+	 Ykj3eOa1nzKCoB5avxZsR5pFLYK1TSD56/GM1DgdrHq1zZeuP1BdjrovGM717fDArG
+	 vcHbKy+Q1aNfw==
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-80e3612e1a7so974874585a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:37:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVV1KH/c7RJIUeVv2/gw8dbHjXv/G/fOXwuH/wulOpI9oYycxZA1XxjbjSe/iRvBJe61Vo4KgpDuPaErok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNHh0offBXekDAcunhCkAI8Lszyzh9pH5IXe66x7t8Eaqliu5X
+	f/W6WqXUcW2KHF61KiX7Au0BaD6JHeE2rlJ17yq1xSbS0jOMEYErf+4Xcj1ordqRaRhlMRkY7NY
+	nww9ZurfsF/itDSHQyyw5QYprRuLEocc=
+X-Google-Smtp-Source: AGHT+IFgFeA2/tPbCnmIP2m5qCivYDfdZRboW/Hyk9eCaMRvYb6yHkgdxTP1UNEdSYkv+Hz2ELx4cc3yItcdSkZ3n/U=
+X-Received: by 2002:a05:620a:a00f:b0:7e9:f820:2b4c with SMTP id
+ af79cd13be357-82400943aa3mr2131013485a.68.1758051424741; Tue, 16 Sep 2025
+ 12:37:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916183305.2808-3-yyyynoom@gmail.com>
+References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
+ <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
+ <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
+ <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
+ <CAEXv5_g2xMwSXGJ=X1FEiA8_YQnSXKwHFW3Cv5Ki5wwLkhAfuA@mail.gmail.com>
+ <CAADnVQLuUGaWaThSb94nv8Bb_qgA0cyr9=YmZgxuEtLaQLWzKw@mail.gmail.com>
+ <CAEXv5_griDfE03D1wDLH8chgCz0R2qZ5dAeiG0Rcg5sAicnMsg@mail.gmail.com>
+ <CAEXv5_hKQqFH_7zmxr7moBpt07B-+ZWB=qfWOb+Rn9Vj=7EX+g@mail.gmail.com>
+ <CAPhsuW6vSkYLyjGm60YZvruVKHrT+0tf4ZUdyp5ftd3hZB6cxg@mail.gmail.com>
+ <CAEXv5_jCXKm4L6tJy5X6kjoLpoPqkbRLuhGuEMYNwoW=EYYtsw@mail.gmail.com>
+ <CAPhsuW6qFXKiZ4+kMWtKK9PO_-Z7=GQLa3wYF73GcXgkDgZVLg@mail.gmail.com> <CAEXv5_h=DoexdK4ZtFGS1Ya3NSM146qxxKyLhO9R736TS7=idg@mail.gmail.com>
+In-Reply-To: <CAEXv5_h=DoexdK4ZtFGS1Ya3NSM146qxxKyLhO9R736TS7=idg@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 16 Sep 2025 12:36:51 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5dEqMBPxvh03dc=K6az0Z6TP-aXCpiowLoTxDHxCvTsw@mail.gmail.com>
+X-Gm-Features: AS18NWDHXBjO6dPwyTm8QXiBBhPo69cLDotnh2cAnHI_TY5kkgwTYWgyTsAuIbg
+Message-ID: <CAPhsuW5dEqMBPxvh03dc=K6az0Z6TP-aXCpiowLoTxDHxCvTsw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
+To: David Windsor <dwindsor@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 03:33:05AM +0900, Yeounsu Moon wrote:
-> The driver did not handle failure of `netdev_alloc_skb_ip_align()`.
-> If the allocation failed, dereferencing `skb->protocol` could lead to a
-> NULL pointer dereference.
-> 
-> This patch adds proper error handling by falling back to the `else` clause
-> when the allocation fails.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Tested-on: D-Link DGE-550T Rev-A3
-> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
+On Tue, Sep 16, 2025 at 11:49=E2=80=AFAM David Windsor <dwindsor@gmail.com>=
+ wrote:
+>
+>
+>
+> On Tue, Sep 16, 2025 at 1:47=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> >
+> > On Tue, Sep 16, 2025 at 9:36=E2=80=AFAM David Windsor <dwindsor@gmail.c=
+om> wrote:
+> > >
+> > > On Tue, Sep 16, 2025 at 12:16=E2=80=AFPM Song Liu <song@kernel.org> w=
+rote:
+> > > >
+> > > > On Tue, Sep 16, 2025 at 8:25=E2=80=AFAM David Windsor <dwindsor@gma=
+il.com> wrote:
+> > > > [...]
+> > > > > >
+> > > > > > makes sense thanks
+> > > > > >
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > Thinking about this more, hashmaps are still problematic for this=
+ case.
+> > > > >
+> > > > > Meaning, placing a hook on security_cred_free alone for garbage
+> > > > > collection / end-of-life processing isn't enough - we still have =
+to
+> > > > > deal with prepare/commit_creds. This flow works by having
+> > > > > prepare_creds clone an existing cred object, then commit_creds wo=
+rks
+> > > > > by swapping old creds with new one atomically, then later freeing=
+ the
+> > > > > original cred. If we are not very careful there will be a period =
+of
+> > > > > time during which both cred objects could be valid, and I think t=
+his
+> > > > > is worth the feature alone.
+> > > >
+> > > > With cred local storage, we still need to deal with prepare/commit =
+creds,
+> > > > right? cred local storage only makes sure the storage is allocated =
+and
+> > > > freed. The BPF LSM programs still need to initiate the data properl=
+y
+> > > > based on the policy. IOW, whether we have cred local storage or not=
+,
+> > > > it is necessary to handle all the paths that alloc/free the cred. D=
+id I miss
+> > > > something here?
+> > > >
+> > >
+> > > Yes each LSM will have to do whatever it feels it should. Some will
+> > > initialize their blob's data with one type of data, some another,
+> > > depends on the LSM's use case. We're just here to provide the storage
+> > > - bpf cannot use the "classic" LSM storage blob.
+> > >
+> > > I was referring to the fact that if we use a hashmap to track state o=
+n
+> > > a per-cred basis there may be a period of time when it could be come
+> > > stale during the state change from commit -> prepare_creds.
+> >
+> > I still don't see how cred local storage will make a difference here. I=
+f the
+> > cred is stale, the data attached to it is also stale. As long as we fre=
+e the
+> > attached data together with the cred, it should just work, no?
+> >
+>
+> If we use local storage, the cred being stale will still be possible but =
+its attached object will at least be consistent.
+>
+> In this case, a cred object has been replaced with a new instance, but un=
+der RCU readers may still legally see the old pointer for some time.
+>
+> If we're tracking state in a side map keyed by the pointer and you=E2=80=
+=99ve already removed the old entry (after copying state to the new one), t=
+hose readers will get a miss even though the old object is still valid:
+>
+> CPU0 (commit_creds)        CPU1 (BPF hook)         Hashmap
+> -------------------------  ----------------------  ----------------------=
+------
+> task->cred =3D old_pointer                           entry[old_pointer] =
+=3D blob_old
+>
+> rcu_assign_pointer(new_pointer)
+>
+>                            still sees old_pointer
+>                            lookup(old_pointer) -> blob_old
+>
+> map_update(new_pointer, blob_old)                  entry[new_pointer] =3D=
+ blob_old
+> map_delete(old_pointer)                            del entry[old_pointer]
+>
+>                            still sees old_pointer
+>                            lookup(old_pointer) -> NULL (this is a failure=
+)
+>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This is a problem because we are calling map_delete(old_pointer)
+at commit_creds time. If we instead calls map_delete(old_pointer)
+at security_cred_free, it will be the same as cred local storage.
 
-    Andrew
+Does this make sense?
+
+Thanks,
+Song
 
