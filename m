@@ -1,118 +1,182 @@
-Return-Path: <linux-kernel+bounces-818268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B06B58F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:31:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7638B58F20
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B41C7A7EE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:29:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E92B1B220FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3072E8B81;
-	Tue, 16 Sep 2025 07:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBA82E36FB;
+	Tue, 16 Sep 2025 07:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Qg/yyuyP"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCwihVVo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93999DDC3;
-	Tue, 16 Sep 2025 07:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8889265CAB
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758007856; cv=none; b=Btbbikr2r1eMuozN4OsbATyGabaXxWvv8DF6X1DXS7F8BjmiBPN6Ugk2lTrA3oNdK4ZmGoEJS3fPkVERRT+79X2LiPv5b62jjRepjgrY3WRdGE9UYx+S/dESVC+uc2WX3gML243iTjElsIIK3Pb9EK6tO8Rt9o8Y1xXAQ0ggsQw=
+	t=1758007714; cv=none; b=Lmp+mQxNnn4HJWYItX95bLl/dUAT70oyFc8GFtJXcKX58ViydtvDvinh6gJ3jceAjSVa7Xot98psVikNdaJ5cXdThoTwraEsFu6qQ1RJnPK/gmvU1UgC2Gb5SYAcJKCLudi73npI3/uuIdHPlN5sm0roy6P+4pN3mWOV5IxyYJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758007856; c=relaxed/simple;
-	bh=wPde9TMwBGkziAuGp2yA+MirGEH2dlnMkHkt0kJI6hI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZ8fuqM6lFSELczUOR0S7z7XMdIjjQVUgls3xxqP206fk/nnUSC5mJsC+9pIl43yvUWt/9UJgFtNmIxvjLFhwb/nSwq6YsM3ffcV02t6CytSN/F6FpjAJJwMRhHKo1YmhB0OPa/jVtF58Lrk/axAxBtqTtcfGlzRkx+l9xbycwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Qg/yyuyP; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id E760FBDC2C;
-	Tue, 16 Sep 2025 10:30:52 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 01183BCF50;
-	Tue, 16 Sep 2025 10:30:52 +0300 (EEST)
-Received: from antheas-z13 (x5996a832.customers.hiper-net.dk [89.150.168.50])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 1702E1FE646;
-	Tue, 16 Sep 2025 10:30:49 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1758007851;
-	bh=d/UIKDx5Gt/ffx4MsbsrnzAol/o1JTVv1V+uDA3j8Rg=; h=From:To:Subject;
-	b=Qg/yyuyPdG34/xdxwNSLjJ6oOrz+Guoajiw0jjwcoep4SYb+z1ewfb7EUaHUSROck
-	 Nmg++RcvDYjF5W2LccsIDXlNhYU/WMkJLlgDfZeAq8KnNj0rpYdu9GPKMtC6d2YWvx
-	 ekwQR0uP00Ttxjz3Jhpfz0lb7awqUKD4Rf9SbGq3uRl+eOrJZe1k2SrDLzWp6dQqzZ
-	 +0gYYhPFfEKAb11p2X1ZK0NQIvyL0UUERGcbi7NIHpioQLtOoQ2zF/5IKZjgJQLOfZ
-	 woRX4cccnZxoHanFPLnZPTND/bRYCqREwam1kIqZFoHHx1r+AACU1zia3R2WYi1sXg
-	 YLDdeKJirHryw==
-Authentication-Results: linux3247.grserver.gr;
-	spf=pass (sender IP is 89.150.168.50) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>,
-	Rahul Chandra <rahul@chandra.net>,
-	stable@kernel.org
-Subject: [PATCH v1] platform/x86: asus-wmi: Re-add extra keys to
- ignore_key_wlan quirk
-Date: Tue, 16 Sep 2025 09:28:18 +0200
-Message-ID: <20250916072818.196462-1-lkml@antheas.dev>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758007714; c=relaxed/simple;
+	bh=DYAXQCcr75Fy8fYpNafpW9dWhyLeE+JscgT1dXk3NdM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fr2pjoLOGoFvlqwVL5qZ3egnfIm1JyIAg4Ae7tbke28Qxlc8pnHTPl5ZZ+U861nG4njW+UvUZZPnvxA53mQ2j7BShy1bCY0DFFLB57Ijut2aiSYwDLALU4J2QsWvm1XqnJxbsWw2HncPx4ggujSt7HPx/jQlhDlDBKgySnOMhOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCwihVVo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D972FC4CEEB;
+	Tue, 16 Sep 2025 07:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758007714;
+	bh=DYAXQCcr75Fy8fYpNafpW9dWhyLeE+JscgT1dXk3NdM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=RCwihVVoCEMEZy0QGLPEtqnRHMl82oj9JD8ScaARQCN0K9DldLxgZA8aBies5hi+d
+	 UxPaq7mnGqY7VeTOhp/vVLvY6x4nr79Ci3X/WXjDS1W/FotCWusHE27z/hIa0nv/LP
+	 2n2Kxh8Le6D8wYrJPKf5QpjhZn3AYjJgvDuVaF3Fj0WR+h7wIlPK1GqP19pygXIqI2
+	 gbIlELwW4kNxAW0Bhl28z8XWiJTpFOtcotgUpKGz9grO8M6aq1zc7EwOITUm1DZPqB
+	 +MS9+/GjR3dtUfWjXRA6qyIXipHdDUZ0DHOM67CgliII5V8HIioPkJHWC3SsYAVaOz
+	 qYuxMoRn+EdqA==
+Message-ID: <62d7f4d3-cc9c-429f-8b7e-0e80e2aa24e4@kernel.org>
+Date: Tue, 16 Sep 2025 15:28:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <175800785164.3205569.9673175359798985343@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, bintian.wang@honor.com, feng.han@honor.com,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in
+ __insert_extent_tree()
+To: wangzijie <wangzijie1@honor.com>
+References: <f6b74555-f10c-4a8e-8caa-1797a3d7a7cf@kernel.org>
+ <20250916070946.231825-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250916070946.231825-1-wangzijie1@honor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It turns out that the dual screen models use 0x5E for attaching and
-detaching the keyboard instead of 0x5F. So, re-add the codes by
-reverting commit cf3940ac737d ("platform/x86: asus-wmi: Remove extra
-keys from ignore_key_wlan quirk"). For our future reference, add a
-comment next to 0x5E indicating that it is used for that purpose.
+On 9/16/25 15:09, wangzijie wrote:
+>> On 9/16/25 13:22, wangzijie wrote:
+>>>> On 09/15, wangzijie wrote:
+>>>>> When we get wrong extent info data, and look up extent_node in rb tree,
+>>>>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
+>>>>> return NULL.
+>>>>
+>>>> This is the exact buggy case which we should fix the original one. Have
+>>>> you seen this error? In that case, can we consider writing some kernel
+>>>> message and handle the error properly?
+>>>
+>>> Hi Jaegeuk,
+>>> The original one is the bug I mentioned in the first patch of this patch set
+>>> ("f2fs: fix zero-sized extent for precache extents"). 
+>>
+>> Zijie,
+>>
+>> Did you suffer this problem in product? right?
+> 
+> Hi Chao,
+> Yes, and I can confirm that infinite loop cases I suffered are caused by the bug I
+> mentioned in the first patch of this patch set. But I'm not sure if there are
+> other cases that can cause this infinite loop.
+> 
+>>>
+>>> When we use a wrong extent_info(zero-sized) to do update, and there exists a
+>>> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
+>>> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
+>>> which cause the infinite loop in __insert_extent_tree().
+>>>
+>>> So we can add f2fs_bug_on() when there occurs zero-sized extent
+>>> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
+>>> extent update to handle other unknown buggy cases. Do you think this will be better?
+>>>
+>>> And do we need to solve this infinite loop?
+>>
+>> IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
+>> avoid kernel hang, no matter it is caused by software bug or hardware flaw
+>> potentially.
+>>
+>> Thanks,
+> 
+> And do you think we need this?
+> "add f2fs_bug_on() when there occurs zero-sized extent in f2fs_update_read_extent_cache_range(),
+> and give up this zero-sized extent update to handle other unknown buggy cases".
 
-Fixes: cf3940ac737d ("platform/x86: asus-wmi: Remove extra keys from ignore_key_wlan quirk")
-Reported-by: Rahul Chandra <rahul@chandra.net>
-Closes: https://lore.kernel.org/all/10020-68c90c80-d-4ac6c580@106290038/
-Cc: stable@kernel.org
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+Oh, I was testing below patch..., does this what you want to do?
+
+I think we can keep all your patches, and appending below patch to detect any
+potential cases who will update a zero-sized extent.
+
+From 439d61ef3715fafa5c9f2d1b7f8026cdd2564ca7 Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao@kernel.org>
+Date: Tue, 16 Sep 2025 11:52:30 +0800
+Subject: [PATCH] f2fs: add sanity check on ei.len in
+ __update_extent_tree_range()
+
+Add a sanity check in __update_extent_tree_range() to detect any
+zero-sized extent update.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/f2fs/extent_cache.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index 3a488cf9ca06..6a62bc5b02fd 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -673,6 +673,8 @@ static void asus_nb_wmi_key_filter(struct asus_wmi_driver *asus_wmi, int *code,
- 		if (atkbd_reports_vol_keys)
- 			*code = ASUS_WMI_KEY_IGNORE;
- 		break;
-+	case 0x5D: /* Wireless console Toggle */
-+	case 0x5E: /* Wireless console Enable / Keyboard Attach, Detach */
- 	case 0x5F: /* Wireless console Disable / Special Key */
- 		if (quirks->key_wlan_event)
- 			*code = quirks->key_wlan_event;
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 199c1e7a83ef..9544323767be 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -664,6 +664,15 @@ static void __update_extent_tree_range(struct inode *inode,
+ 	if (!et)
+ 		return;
 
-base-commit: 46a51f4f5edade43ba66b3c151f0e25ec8b69cb6
++	if (unlikely(len == 0)) {
++		f2fs_bug_on(sbi, 1);
++		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
++			"extent [%u, %u, %u], age [%llu, %llu]",
++			__func__, type, tei->fofs, tei->blk, tei->len,
++			tei->age, tei->last_blocks);
++		return;
++	}
++
+ 	if (type == EX_READ)
+ 		trace_f2fs_update_read_extent_tree_range(inode, fofs, len,
+ 						tei->blk, 0);
 -- 
-2.51.0
+2.49.0
 
+
+> 
+> 
+> 
+>>>
+>>>
+>>>>>
+>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>>> ---
+>>>>>  fs/f2fs/extent_cache.c | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>>>>> index 199c1e7a8..6ed6f3d1d 100644
+>>>>> --- a/fs/f2fs/extent_cache.c
+>>>>> +++ b/fs/f2fs/extent_cache.c
+>>>>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+>>>>>  			leftmost = false;
+>>>>>  		} else {
+>>>>>  			f2fs_bug_on(sbi, 1);
+>>>>> +			return NULL;
+>>>>>  		}
+>>>>>  	}
+>>>>>  
+>>>>> -- 
+>>>>> 2.25.1
+> 
 
 
