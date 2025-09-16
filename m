@@ -1,76 +1,53 @@
-Return-Path: <linux-kernel+bounces-819124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCD2B59BD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE2DB59BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354F1171AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A959188F4DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C5333A01D;
-	Tue, 16 Sep 2025 15:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888D31DDBC;
+	Tue, 16 Sep 2025 15:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QAbuB6Jv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M9PZw4mR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DE522DFBA
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0F034167D;
+	Tue, 16 Sep 2025 15:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035661; cv=none; b=X1LKASzkoWQpW98+q45kZeQ8wJ2OqSKqkLOJCt8KqXAtm14yKOR7xPV2eIZBoMt6JUtP4NmgtIp+62u0TQGlm80yxCCrHJU6Kr0U86Floxt5cKIZcbjFcOZH2Rb9pNLE1EtjpXxJtHSJsq+sGBS2zlTXNzICkgzn459Oc3a2Yjg=
+	t=1758035663; cv=none; b=Iy8Zgy5A7SLfUM9Fz6j6BvYdjge3QnnU8fJtHng4d9lXhUgldceBoXKBEMdF+Uu/WJQEevHL2kJIo1aeq0lOTDNWaCuZINCfvmrAdM9kx6Plp2SyJDQGD24QvhmOeq91m19DaEbMlSqb/yzh5oZCpEf9idGA/GNdXkVUo7LTyUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035661; c=relaxed/simple;
-	bh=TF6yDTkTIFtB1LLtZfYKERR2ZcwJswQ2soyQcfqzZhs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PKaY1U1fmD2oFrLSINphs2Qhmch9QMfvlk0+dAbAKndcO+dI1b+nvKgupg+uAtjsVIKMkTXkv80pGZ7B01EU7ehNL4/MsyjJsg+Km9NvNWTFrLWpa2tE5Swm4DZpJLgJrgvXacFoN1xnYXidElDx9FZA6SfUzWnve11RtVrSJ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QAbuB6Jv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758035659;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=wn6ssVhWxqRhAb1qyW/68AnLxAzdOlSixZFYsqgN2sI=;
-	b=QAbuB6JvOVMa5G5rsw1/41woSRPVMH7+z2BPvJ66wzcTqtKTfJbe9fK+aBTDL0F7tXteDa
-	hBgmiom50lFEzTnEax9xfKDOsr3ZXUUQQbf9GW7+3mCG0juQp+w9nwRDMV8SBPKs/Ts2fq
-	DJZ58BlbYjz9/uDMlP0q2/WfDdbvrK4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-602-a_ehIVgMPaaPBiBcjv1HsA-1; Tue,
- 16 Sep 2025 11:14:15 -0400
-X-MC-Unique: a_ehIVgMPaaPBiBcjv1HsA-1
-X-Mimecast-MFC-AGG-ID: a_ehIVgMPaaPBiBcjv1HsA_1758035653
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88C3D180047F;
-	Tue, 16 Sep 2025 15:14:12 +0000 (UTC)
-Received: from localhost (unknown [10.22.80.155])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 59A141800586;
-	Tue, 16 Sep 2025 15:14:11 +0000 (UTC)
-Date: Tue, 16 Sep 2025 12:14:09 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.244-rt138
-Message-ID: <aMl-wduCwQOAp3cU@uudg.org>
+	s=arc-20240116; t=1758035663; c=relaxed/simple;
+	bh=iuHBraZ6RVFjDpHf88PWAP4EJDMCcCZNFb7fBK+tG28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vjf2I9sgKHQaN9K7/AncXQFzgXUeimxMt8WBFiBZDueBSi6+/DHKUBIDGwaaMKzVwEboeUI/l7B3KTr0eGRkp+ILZcrm6HRNckIWs8wvzJAF6ZyFHSeujBpBzrxgVlagLFS+SkqepXDryH5k6DeZP1txafRgOrpMW/TTT+pUU3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M9PZw4mR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A9FC4CEF0;
+	Tue, 16 Sep 2025 15:14:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758035663;
+	bh=iuHBraZ6RVFjDpHf88PWAP4EJDMCcCZNFb7fBK+tG28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M9PZw4mRWwUGN2uoIRyD5QHhIsd5xvE2ptwYG89Kw31BYX1c1tceTWc9FykYYR9Sv
+	 g5M2NkrzI4lFQEIKyO1vY93SS7s0mhxje9wR1il1T9A4+XThVuDS8nlgqHMPPks4EY
+	 XVAbeKMhc2ezxiMq8lMU1DLi5RZUqv3+IR66LfFo=
+Date: Tue, 16 Sep 2025 17:14:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: zhangfei.gao@linaro.org, wangzhou1@hisilicon.com,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linuxarm@openeuler.org, fanghao11@huawei.com, shenyang39@huawei.com,
+	liulongfang@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
+Message-ID: <2025091620-theft-glue-5e7f@gregkh>
+References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
+ <20250916144811.1799687-2-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,40 +56,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250916144811.1799687-2-huangchenghai2@huawei.com>
 
-Hello RT-list!
+On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
+> From: Wenkai Lin <linwenkai6@hisilicon.com>
+> 
+> If cdev_device_add failed, it is hard to determine
+> whether cdev_del has been executed, which lead to a
+> memory leak issue, so we use cdev_init to avoid it.
 
-I'm pleased to announce the 5.10.244-rt138 stable release.
+I do not understand, what is wrong with the current code?  It checks if
+add fails:
 
-You can get this release via the git tree at:
+> 
+> Fixes: 015d239ac014 ("uacce: add uacce driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
+> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+> ---
+>  drivers/misc/uacce/uacce.c | 13 ++++---------
+>  include/linux/uacce.h      |  2 +-
+>  2 files changed, 5 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
+> index 42e7d2a2a90c..12370469f646 100644
+> --- a/drivers/misc/uacce/uacce.c
+> +++ b/drivers/misc/uacce/uacce.c
+> @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
+>  	if (!uacce)
+>  		return -ENODEV;
+>  
+> -	uacce->cdev = cdev_alloc();
+> -	if (!uacce->cdev)
+> -		return -ENOMEM;
 
-This release is just an update to the new stable 5.10.244 version and
-no RT-specific changes have been made.
+This is the check.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-  branch: v5.10-rt
-  Head SHA1: 54256839470a39c368c97be0344d72f6f8749307
+> -
+> -	uacce->cdev->ops = &uacce_fops;
+> -	uacce->cdev->owner = THIS_MODULE;
+> +	cdev_init(&uacce->cdev, &uacce_fops);
+> +	uacce->cdev.owner = THIS_MODULE;
+>  
+> -	return cdev_device_add(uacce->cdev, &uacce->dev);
+> +	return cdev_device_add(&uacce->cdev, &uacce->dev);
 
-Or to build 5.10.244-rt138 directly, the following patches should be applied:
+And so is this.  So what is wrong here?
 
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
 
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.244.xz
+>  }
+>  EXPORT_SYMBOL_GPL(uacce_register);
+>  
+> @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
+>  		unmap_mapping_range(q->mapping, 0, 0, 1);
+>  	}
+>  
+> -	if (uacce->cdev)
+> -		cdev_device_del(uacce->cdev, &uacce->dev);
+> +	cdev_device_del(&uacce->cdev, &uacce->dev);
+>  	xa_erase(&uacce_xa, uacce->dev_id);
+>  	/*
+>  	 * uacce exists as long as there are open fds, but ops will be freed
+> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
+> index e290c0269944..98b896192a44 100644
+> --- a/include/linux/uacce.h
+> +++ b/include/linux/uacce.h
+> @@ -126,7 +126,7 @@ struct uacce_device {
+>  	bool is_vf;
+>  	u32 flags;
+>  	u32 dev_id;
+> -	struct cdev *cdev;
+> +	struct cdev cdev;
+>  	struct device dev;
 
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.244-rt138.patch.xz
+You can not do this, you now have 2 different reference counts
+controlling the lifespan of this one structure.  That is just going to
+cause so many more bugs...
 
-Signing key fingerprint:
+How was this tested?  What is currently failing that requires this
+change?
 
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+thanks,
 
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+greg k-h
 
