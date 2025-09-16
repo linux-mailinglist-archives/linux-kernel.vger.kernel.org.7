@@ -1,110 +1,95 @@
-Return-Path: <linux-kernel+bounces-819462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97328B5A100
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:10:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82703B5A105
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D48087AE9B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C7D46017B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FDA32D5D4;
-	Tue, 16 Sep 2025 19:10:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113712DF14A;
+	Tue, 16 Sep 2025 19:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xpoy/I++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F262F261B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6619032D5D4;
+	Tue, 16 Sep 2025 19:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758049806; cv=none; b=mcuaNhk0Um640+sibZL0wh6Xpkow6B0+7p5ffw09CIx4ztRBolAyCyF5P4dBi8Mwpy1c7icBkprBs1yFGQqxyAvFQsUAEzU/ODryCBQaCLVrFjUkK/ttE3EYBxCtaA2GUCkJZrPTz48SsJ6kewQ3/pIQ3dEWA+fCK7C7hZ5WnBU=
+	t=1758049908; cv=none; b=PzihxJFzIChuiYQmUunrx1e9rNwVkQXXiqaCsWZ9bQTlzYhzPOrUk02PEU986LPCCDmrN4eBtE/WnMHJ34asRjfbKOtnwmLXm4HZcNQ/h9KLvJ9g60/AfYojNdfqS1P/m5cYVpiBJy1l7FrgPTHhaCJ84ekH/8zG6DJdi8AcfbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758049806; c=relaxed/simple;
-	bh=nM6DpWsueZkUbDDfvkR4rDHXWEICHV7P289l+Lw7Mr4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OWyGuLDF6wKKLU68Kk2Rr20XVWbs+WfmuqCp/mHm3cZ+qcmqCXeWpdApc3RAnQpxQyRAr0NBFBUJG+5cLtGbSGjQ3M3qAkzp9q3f1BAkrY3riTQJnP4ong7OrOX134cC3GTaT90pGqkmOdoqayBwVMOmiAiGG/IPtrYNKlivlUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-424122b50aeso11735725ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:10:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758049803; x=1758654603;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNkw8a3ojsvCsHpIE7q9bdjplgTl+UjdQk+nrThjcjk=;
-        b=vGxRKh/8dalHC+PLEYZ2SOgiKp0yMWveyKuYavDAssJAUi/wC+dLmHfOykOgT9eSd4
-         4CmbBX0DsBDlNjDlUVGXqcvJ2sX1cQp72jRNg+157q4cfC622J2xm/sSLX3J+7rX5f7e
-         4WuBT/l5/DSS9aP0zfdCPOdBoCBFtmCN1LCLLXCBk1BlTSzHxkt/CGWc0qpo5xCXFiSq
-         SKpPGebAAt+5YrnLmw+f8dw2DbO/KkLIfkoDwg7EBT8GMYpJWHxAJ3H85awBmPGoct3W
-         ZyoVkj+YJY5zz6X85Dhyh7NQCxyRRZt8gx3HceWdW1PxWFANPLJkiSezpiw5Z4VXnyCI
-         oxkg==
-X-Gm-Message-State: AOJu0YxEqQTRwOFaQEqiHYHROwix8ir97rpKerBEr+4XKza4NTDb3KuB
-	4/5VsnpJjpJjMy088o+WS3xK3dlrR7yNx/ylQ72ax4+ql4cCUq75HAO4rvZY5qXw2MCW0wNfnGj
-	wLfD35uZz0JPLO8uVw9uwwVQTCULBqsBkyAO08ZtPifZzSlDzIPVvmfsirFU=
-X-Google-Smtp-Source: AGHT+IFhlPNozhd2AGj94QBxW3FnYHNHxOiuwNhsk6uAwLNIY48M1sBTcv5KkN4mfw7EUm2UY+NrRdxV+lwMiBG3bUHG3Uy8XCMn
+	s=arc-20240116; t=1758049908; c=relaxed/simple;
+	bh=77LfXigEtGlbgD9o+XCEovUBSCV7wv0QPbV2QyOTQ74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dl0ktaAx2G2qbE37WTSBuF9Jc2VW8zC53JOl5QjQoxFtAJLuof+KyCICUaqMDaFdgySI+MY/FEHwrNMvsTJW4WS5JLF0bQXRuCN1ysjSBqLTfM/7uVYwl2DWcctpnNUgWORgwGf3e0RIjeEYYksi1YOGqaRQZAaK02dxITkRZ6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xpoy/I++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F31C4CEEB;
+	Tue, 16 Sep 2025 19:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758049908;
+	bh=77LfXigEtGlbgD9o+XCEovUBSCV7wv0QPbV2QyOTQ74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xpoy/I++lGP4rRlLa+mbG+YXAQcVFWba92OSiuz6fksltvX59u6uUZiU0MqRbTAK4
+	 1bBEGJ5alG/ARQintuFBaRx1v6jb4L3uM0Go0xzo/kVYZPPhRDst4UV6WSA/dwwTdP
+	 nO/PhE/kIHj66LcLqrfIG9I69x00Qs6nB+oQL8/7weTODHjg/H9m19IYSzU5DXpntC
+	 3iAK7sufS9Bm5+zkzenff1IJb57AJMbWOqgRjtRQl4H0wFjNqDh6rITBoFnlV4tTvU
+	 SHnrlYB+kV0ZGUOSKCU/ypaBBNX7DPRuLSXUtdHglNa/v74nG7lyib5pNTq//6E5Is
+	 01JquE6PHMfuA==
+Date: Tue, 16 Sep 2025 20:11:42 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Paul Sajna <sajattack@postmarketos.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
+	Amir Dahan <system64fumo@protonmail.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: display: panel: panel-simple: Add
+ lg,sw49410 compatible
+Message-ID: <20250916-lazily-postage-f673a5cc6a26@spud>
+References: <20250915-judyln-panel-v2-0-01ab2199fea5@postmarketos.org>
+ <20250915-judyln-panel-v2-3-01ab2199fea5@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214b:b0:423:fd07:d3f0 with SMTP id
- e9e14a558f8ab-423fd07d535mr88139905ab.26.1758049802911; Tue, 16 Sep 2025
- 12:10:02 -0700 (PDT)
-Date: Tue, 16 Sep 2025 12:10:02 -0700
-In-Reply-To: <68c85874.050a0220.50883.0017.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c9b60a.050a0220.50883.001d.GAE@google.com>
-Subject: Forwarded: Sending for testing
-From: syzbot <syzbot+fa7122891ab9e0bbc6a7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0DFJbOukSxWiYyHE"
+Content-Disposition: inline
+In-Reply-To: <20250915-judyln-panel-v2-3-01ab2199fea5@postmarketos.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+--0DFJbOukSxWiYyHE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Subject: Sending for testing
-Author: kriish.sharma2006@gmail.com
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-#syz test
+--0DFJbOukSxWiYyHE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index b677c0e6b9ab..5fdde7d4a393 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -2284,10 +2284,21 @@ static void dump_holder(struct seq_file *seq, const
-struct gfs2_holder *gh,
-  if (gh_owner)
-  comm = gh_owner->comm;
-  }
-- gfs2_print_dbg(seq, "%s H: s:%s f:%s e:%d p:%ld [%s] %pS\n",
--       fs_id_buf, state2str(gh->gh_state),
--       hflags2str(flags_buf, gh->gh_flags, gh->gh_iflags),
--       gh->gh_error, (long)owner_pid, comm, (void *)gh->gh_ip);
-+
-+ if(seq){
-+        gfs2_print_dbg(seq, "%s H: s:%s f:%s e:%d p:%ld [%s] %pS\n",
-+    fs_id_buf, state2str(gh->gh_state),
-+    hflags2str(flags_buf, gh->gh_flags, gh->gh_iflags),
-+    gh->gh_error, (long)owner_pid, comm, (void *)gh->gh_ip);
-+ }
-+
-+ else{
-+        gfs2_print_dbg(seq, "%s H: s:%s f:%s e:%d p:%ld [%s] %p\n",
-+                fs_id_buf, state2str(gh->gh_state),
-+                hflags2str(flags_buf, gh->gh_flags, gh->gh_iflags),
-+                gh->gh_error, (long)owner_pid, comm,
-+                (void *)gh->gh_ip);
-+ }
-  rcu_read_unlock();
- }
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.34.1
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMm2bgAKCRB4tDGHoIJi
+0saIAP0Se5/ZuR1n68jiyM3j4srO+TBLhsWyZ2N+aqiYkKml6gEA2nMhDo+He3bJ
+NbVdDObz6e5yqG1+j59AkbmHVZCkuwk=
+=rbRy
+-----END PGP SIGNATURE-----
+
+--0DFJbOukSxWiYyHE--
 
