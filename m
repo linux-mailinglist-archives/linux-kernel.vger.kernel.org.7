@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-818452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F50B591E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:16:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58179B591D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62DC4189ACB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18FCC16406C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2678285C88;
-	Tue, 16 Sep 2025 09:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C281C285C9E;
+	Tue, 16 Sep 2025 09:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b="WHVn/UDh"
-Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 2CFB913D521;
-	Tue, 16 Sep 2025 09:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HBQ4MuCH"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FD01E47B3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014164; cv=none; b=V9qiT2fOhOur55oYZ5IIp8t9ZzkPs1RU072S6jGtPG0snEUll4iZvi+qxSKTB0jgioYMZ/TQ3OJZlwQWOlK3rET8jM7Io2w+joQOxo5zeM9ZuMjpPxtCoEKfaW14VAbaAS6yZpg4E7hnhbNG6Cw2/DqXFMngvecwbKgrIf7Qt/M=
+	t=1758013987; cv=none; b=FaLlvRAauLWR1A7RWlGyeLmELPQ1bufu7cC29IotfVIznwz0Ql8Ai0FNffW1pifMN3PvkWBJ3IfrctVw4kcJSo5jqMVUub0udTUZj316zsTE/AYQZctNyDL4KEAH/OtzM1aGNHaQuxET/g6KaT6mEg96bchuHnZ0RY96DZ9p0YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014164; c=relaxed/simple;
-	bh=vE0FUyT5oH1hcr2hQGwiIk13m1P6obpxXLjw7VqLXqU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version; b=O5GyFbmcKH7AJk3Tg0lS49t7aB2y2qs6/5wNK9+Ft4LBQd8MEw6IqJPpBchIJBPc9Tn/1q1fRyflJxqXvXbPPUFwuBzl7jg/FLymhNqC8Mo4cMw7Nr47yVxXWL5qSBtw56EuIHlZEVbgouPz3qTk/dNWv0A9L0DgPm0NF+A+EMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; dkim=pass (1024-bit key) header.d=didiglobal.com header.i=@didiglobal.com header.b=WHVn/UDh; arc=none smtp.client-ip=111.202.70.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.65.20])
-	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 2DD8E1867FB8B3;
-	Tue, 16 Sep 2025 17:11:16 +0800 (CST)
-Received: from BJ02-ACTMBX-01.didichuxing.com (10.79.65.19) by
- BJ02-ACTMBX-02.didichuxing.com (10.79.65.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Tue, 16 Sep 2025 17:12:39 +0800
-Received: from BJ02-ACTMBX-01.didichuxing.com ([fe80::3bf1:97df:b93f:7b9a]) by
- BJ02-ACTMBX-01.didichuxing.com ([fe80::3bf1:97df:b93f:7b9a%7]) with mapi id
- 15.02.1748.010; Tue, 16 Sep 2025 17:12:39 +0800
-X-MD-Sfrom: tiozhang@didiglobal.com
-X-MD-SrcIP: 10.79.65.20
-From: =?utf-8?B?5byg5YWD54CaIFRpbyBaaGFuZw==?= <tiozhang@didiglobal.com>
-To: "wang.yaxin@zte.com.cn" <wang.yaxin@zte.com.cn>, "peterz@infradead.org"
-	<peterz@infradead.org>
-CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"fan.yu9@zte.com.cn" <fan.yu9@zte.com.cn>, "corbet@lwn.net" <corbet@lwn.net>,
-	"bsingharora@gmail.com" <bsingharora@gmail.com>, "yang.yang29@zte.com.cn"
-	<yang.yang29@zte.com.cn>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "juri.lelli@redhat.com"
-	<juri.lelli@redhat.com>, "vincent.guittot@linaro.org"
-	<vincent.guittot@linaro.org>, "dietmar.eggemann@arm.com"
-	<dietmar.eggemann@arm.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"bsegall@google.com" <bsegall@google.com>, "mgorman@suse.de"
-	<mgorman@suse.de>, "vschneid@redhat.com" <vschneid@redhat.com>,
-	"jiang.kun2@zte.com.cn" <jiang.kun2@zte.com.cn>, "xu.xin16@zte.com.cn"
-	<xu.xin16@zte.com.cn>, "zyhtheonly@gmail.com" <zyhtheonly@gmail.com>,
-	"zyhtheonly@yeah.net" <zyhtheonly@yeah.net>
-Subject: Re: [PATCH v3] delayaccy/sched: add SOFTIRQ delay
-Thread-Topic: [PATCH v3] delayaccy/sched: add SOFTIRQ delay
-Thread-Index: AQHcF/3osvkJybP17kqnkBalFYy+0LR6ONoAgBtrQgA=
-Date: Tue, 16 Sep 2025 09:12:39 +0000
-Message-ID: <C126DFBF-863E-46AB-BD62-A9E720B3E68F@didiglobal.com>
-In-Reply-To: <20250830142944929e1M6lffs_PwvPfl7J-R1g@zte.com.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <13F1C55F83C8894A97D7ADE59C983E49@didichuxing.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1758013987; c=relaxed/simple;
+	bh=bkv+tJjo7XJN0MAP+Ja6gowNQtLlHpJVPlj9L5CX7QU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZX3zNUbsZDTo539XfK1obUXPEJ7+yYtG45qqPww13Hsf6rZj9JcvXwI+pr72NrAUJuCW9mZi7YsoC41ImdWhQmUL1iQHY0BPgDLivAT28lFw27NpNYlbFx7Y/yNrrTQyheTCiiW55oIZFJHD9nCQ+qIMpG6tL4Y6XoXobyi7A4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HBQ4MuCH; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 0F43A4E408C8
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:13:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D86716061E;
+	Tue, 16 Sep 2025 09:13:00 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 576C5102F16A1;
+	Tue, 16 Sep 2025 11:12:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758013980; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=0Dah1yQtnf/tnnK+SFWBAA57wMzVPD3ViO+H3LJ6Y8k=;
+	b=HBQ4MuCHNOLPpzeT4qCb6GruhWtHmXBCqli/r9EAPdJtMsE410vum1MKQWOFFbuVwCcEDu
+	770ZAx9fffv0/nohWBSAg8EEJzBUbJgdIC5q4bkBxseEUeORi3i/04mzFklWJ7Tf88Ag+K
+	QGgGFtVci70Irk85Bi1m4yd+aBHS2BatyYTTmR1E6KzKm6+6haXsFhQICyzr5UR2ns2FMD
+	S0oBZJJhe5ikEMku+cw/ee/dhSKwwTKJXd9Lk7iEQzQiAfi+mtyVzFBkyGwgrfE1tOXHHV
+	wLzOA8l8gWCrktBTtURKLYiBLq27TGVmbdFrr6Gj3VNgyLe7z10bjrQDcOrwuA==
+From: alexandre.belloni@bootlin.com
+To: Jorge Marques <jorge.marques@analog.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>
+Cc: linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i3c: master: adi: fix header location
+Date: Tue, 16 Sep 2025 11:12:51 +0200
+Message-ID: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=didiglobal.com;
-	s=2025; t=1758013881;
-	bh=vE0FUyT5oH1hcr2hQGwiIk13m1P6obpxXLjw7VqLXqU=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type;
-	b=WHVn/UDh+SVnJhTusjLUM5qeR7XNSQfqd7OVT4DiXtEcLHXs6FhO/75fzMvnqXDeZ
-	 Tb/FkVNiAxB5Vd08Xai+AdevqWi4611W2jV56YTt5u0d5sf6JMAAzZzo6OMzySIZBv
-	 XA8CdvAVnpk4RsY2uGfjfyVH74JcJo362jzuXZl4=
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-DQo+PkludHJvIFNPRlRJUlEgZGVsYXksIHNvIHdlIGNhbiBzZXBhcmF0ZSBzb2Z0aXJxIGFzIFNP
-RlRJUlEgZGVsYXkNCj4+YW5kIGhhcmRpcnEgYXMge0lSUSAtIFNPRlRJUlF9IGRlbGF5Lg0KPj4N
-Cj4+QSB0eXBpY2FsIHNjZW5hcmlvIGlzIHdoZW4gdGFza3MgZGVsYXllZCBieSBuZXR3b3JrLA0K
-Pj5pZiB0aGV5IGRlbGF5ZWQgYnkgcnggbmV0IHBhY2tldHMsIGkuZSwgbmV0X3J4X2FjdGlvbigp
-LA0KPj5TT0ZUSVJRIGRlbGF5IGlzIGFsbW9zdCBzYW1lIGFzIElSUSBkZWxheTsNCj4+aWYgdGhl
-eSBkZWxheWVkIGJ5LCBlLmcsIGJhZCBkcml2ZXIgb3IgYnJva2VuIGhhcmR3YXJlLA0KPj5TT0ZU
-SVJRIGRlbGF5IGlzIGFsbW9zdCAwIHdoaWxlIElSUSBkZWxheSByZW1haW5zIGJpZy4NCj4+DQo+
-PkV4YW1wbGVzIHRvb2wgdXNhZ2UgY291bGQgYmUgZm91bmQgaW4NCj4+RG9jdW1lbnRhdGlvbi9h
-Y2NvdW50aW5nL2RlbGF5LWFjY291bnRpbmcucnN0DQo+Pg0KPj5TaWduZWQtb2ZmLWJ5OiBUaW8g
-WmhhbmcgPHRpb3poYW5nQGRpZGlnbG9iYWwuY29tIDxtYWlsdG86dGlvemhhbmdAZGlkaWdsb2Jh
-bC5jb20+Pg0KDQoNCj5SZXZpZXdlZC1ieTogV2FuZyBZYXhpbiA8d2FuZy55YXhpbkB6dGUuY29t
-LmNuIDxtYWlsdG86d2FuZy55YXhpbkB6dGUuY29tLmNuPj4NCg0KDQo+VGhhbmtzDQo+WWF4aW4N
-Cg0KSGkgUGV0ZXIsDQoNCkdlbnRsZSBwaW5nLiBXb25kZXJpbmcgaWYgeW91IGhhdmUgYW55IGZ1
-cnRoZXIgY29tbWVudHM/DQoNClRoYW5rcyBmb3IgeW91ciB0aW1lLg0KDQpCZXN0LA0KVGlvIFpo
-YW5nDQoNCg==
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+The adi-axi-common header has been moved to the upper directory.
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/i3c/master/adi-i3c-master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi-i3c-master.c
+index 162f9eed39aa..18597ba1f1c3 100644
+--- a/drivers/i3c/master/adi-i3c-master.c
++++ b/drivers/i3c/master/adi-i3c-master.c
+@@ -10,7 +10,7 @@
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/errno.h>
+-#include <linux/fpga/adi-axi-common.h>
++#include <linux/adi-axi-common.h>
+ #include <linux/i3c/master.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+-- 
+2.51.0
+
 
