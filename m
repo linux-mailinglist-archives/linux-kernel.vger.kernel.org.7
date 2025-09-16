@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-819425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DF7B5A083
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:30:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B77B5A084
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ABC5584F24
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:30:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2201C043EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2461A2F5A17;
-	Tue, 16 Sep 2025 18:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2549274B42;
+	Tue, 16 Sep 2025 18:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcLZIk4Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9gb090R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EE62DBF45;
-	Tue, 16 Sep 2025 18:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4685932D5CF;
+	Tue, 16 Sep 2025 18:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758047413; cv=none; b=bxom1l9JVX8vgWL8xy3+016wQV5gkyTaV4d+HJ22jygP2hC2iUm0hpJCpz+Gng7MkcvOcnP11LxTWsa5VUbgvz4cXIoZH34H6+HbU2guryvcDWOGU5IgvbtcwTDrOTmfWHPOOyC7+gM1oU9PWcFFDZBA5Xy2r9RSGFX34EpvXYg=
+	t=1758047491; cv=none; b=ZHZ2Z8EjE3RhOb4YRi6pVrUGiPSxAWfo+HFMmKQGGoQ4AN1GpP074fFXAjcFcRWb44NT25KZtd0H+9nbcWL9zA7fUNnpwP2SBpb5Mj0T5iHIEqKBz059ZI9KSttX0rkgY3P7XEHrr2NiiqCujG6LVCpKL7xd/Axn60Mz5mO1Ibo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758047413; c=relaxed/simple;
-	bh=/60SfQxaLsYIsKPNHgxsvyMnMI3qJ6/je9Dcc85USXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YGnQL6XgDJ9I4Yrg8FZa3ZD9/055ZDpR185LMimzmUnbhNghU+qcyMFg5GHDyo+ZPYbzjiHIHBKczoKUmvWknN6YRySX7Kp+rd5P8euxoTAPT/id8dlvi/6E9u6L39GDXc7t0U2CS5Iqq4yuzc97SCrpw6e6IYUf17TpIb21SWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NcLZIk4Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA528C4CEEB;
-	Tue, 16 Sep 2025 18:30:11 +0000 (UTC)
+	s=arc-20240116; t=1758047491; c=relaxed/simple;
+	bh=zRA7NzE2dfOJUv7we74p+H9MxXbTZALm/bBalZg7Shw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JeHxZoAwDRHysU7dJoR7xey0IPQTnErVsopQTVHPOTxXI0Zn5I88xzHtVivtXKss8ld6farXyvF30XGv0CWoW17GWeYHGz17RsDvjykab4Noo5T5qDu/9q86VZ+b6OcLT+8IxhXPZvK9LJUYHPqC+aTmDdqn6Fy+RrUidsJhzlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9gb090R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA99EC4CEEB;
+	Tue, 16 Sep 2025 18:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758047412;
-	bh=/60SfQxaLsYIsKPNHgxsvyMnMI3qJ6/je9Dcc85USXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NcLZIk4QG8OaXaSJ6ufu602atIlGG4XngoCeveTzoBf0H5s4S/4ATiIAFhg+GsW2M
-	 fW/hAwaRfqoyUpisKvnIScAAkVvMzyym7vkGoVqnfq4bNlCkeksiZMxbdF1seehl8f
-	 +fHiL8pnW5UPKuMS9qDEAspXz5A8CV4zayuab9X1bYDHOGseWTZUr8IKZ4Reasb26w
-	 5gnDUNeJPxXAuwT1qYNUKvMT3J5yfBwTYW0jdPknCs20Ke5dYwTeEcsOxudBTuNMXX
-	 eypasJchs+QTE1Z4JxfppJNo5VzbVkjFFfbYNJ/ZMMlo2TLlLf/KSI5uIN92oluPSb
-	 RVH9i2BbTS1LA==
-Date: Tue, 16 Sep 2025 11:30:10 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	oe-kbuild-all@lists.linux.dev,
-	Kornel =?utf-8?Q?Dul=C4=99ba?= <mindal@semihalf.com>,
-	Adrien Ricciardi <aricciardi@baylibre.com>,
-	James Morse <james.morse@arm.com>,
-	Atish Kumar Patra <atishp@rivosinc.com>,
-	Atish Patra <atish.patra@linux.dev>,
-	Vasudevan Srinivasan <vasu@rivosinc.com>, guo.wenjia23@zte.com.cn,
-	liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] RISC-V: Add support for srmcfg CSR from Ssqosid
- ext
-Message-ID: <aMmssvhxw+oH32OA@x1>
-References: <20250915-ssqosid-v6-17-rc5-v2-3-2d4b0254dfd6@kernel.org>
- <202509162355.wByessnb-lkp@intel.com>
+	s=k20201202; t=1758047490;
+	bh=zRA7NzE2dfOJUv7we74p+H9MxXbTZALm/bBalZg7Shw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=A9gb090RsE07mCO9Y33W/36nq4GLOSQVtHGp+4RNpeKz96L1yb8NUM5809CbwhRhN
+	 IxmkXRoJL9LJBtYW8PNSiCMb+C0wRjwa6Vvzwy3w9+CqKJTJK/eJ7IgbjpUqJuqxs1
+	 kBa5QnQrlM+Gdx+iZ7O99oOSbab8DRCV+dljqnZcDyeOqPJUq2t7WgbzP4avJ/D9L9
+	 4Ut5iyrgsFTWrUzSWnoj0ql+UkexNrn1YZAYyAqS389OOhSzTWef1ZE2bSRYBIPgiM
+	 367w6e3Y9Vf47Cb6YyFvKam+Bs5P5Jmc/3tKQsWrEQ3uDYS1Z9WSaC5JzIREKSZvK1
+	 eQ5Vj07ObeI+w==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/2] mm/damon/stat: expose auto-tuned intervals and non-idle ages
+Date: Tue, 16 Sep 2025 11:31:25 -0700
+Message-Id: <20250916183127.65708-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202509162355.wByessnb-lkp@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 11:55:39PM +0800, kernel test robot wrote:
-> Hi Drew,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Drew-Fustini/dt-bindings-riscv-Add-Ssqosid-extension-description/20250916-131818
-> base:   76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-> patch link:    https://lore.kernel.org/r/20250915-ssqosid-v6-17-rc5-v2-3-2d4b0254dfd6%40kernel.org
-> patch subject: [PATCH v2 3/3] RISC-V: Add support for srmcfg CSR from Ssqosid ext
-> config: riscv-allnoconfig (https://download.01.org/0day-ci/archive/20250916/202509162355.wByessnb-lkp@intel.com/config)
-> compiler: riscv64-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509162355.wByessnb-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202509162355.wByessnb-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    kernel/sched/core.c: In function 'context_switch':
-> >> kernel/sched/core.c:5357:35: error: macro '__switch_to_srmcfg' passed 1 arguments, but takes just 0
->     5357 |         switch_to(prev, next, prev);
->          |                                   ^
+DAMON_STAT is intentionally providing limited information for easy
+consumption of the information.  From production fleet level usages,
+below limitations are found, though.
 
-It seems I had incorrectly defined __switch_to_srmcfg() in the case
-where CONFIG_RISCV_ISA_SSQOSID is not defined. I was able to reproduce
-the error locally and this change seems to resolve it:
+The aggregation interval of DAMON_STAT represents the granularity of the
+memory_idle_ms_percentiles.  But the interval is auto-tuned and not
+exposed to users, so users cannot know the granularity.
+
+All memory regions of non-zero (positive) nr_accesses are treated as
+having zero idle time.  A significant portion of production systems have
+such zero idle time.  Hence breakdown of warm and hot data is nearly
+impossible.
+
+Make following changes to overcome the limitations.  Expose the
+auto-tuned aggregation interval with a new parameter named
+aggr_interval_us.  Expose the age of non-zero nr_accesses (how long >0
+access frequency the region retained) regions as a negative idle time.
+
+Changes from RFC
+(https://lore.kernel.org/20250910040022.168223-1-sj@kernel.org)
+- Rebase on latest mm-new
+- Wordsmith commit messages
+
+SeongJae Park (2):
+  mm/damon/stat: expose the current tuned aggregation interval
+  mm/damon/stat: expose negative idle time
+
+ mm/damon/stat.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 
-diff --git a/arch/riscv/include/asm/qos.h b/arch/riscv/include/asm/qos.h
-index 7371e53e9e91..84830d7c6dc4 100644
---- a/arch/riscv/include/asm/qos.h
-+++ b/arch/riscv/include/asm/qos.h
-@@ -35,7 +35,7 @@ static __always_inline bool has_srmcfg(void)
- #else /* ! CONFIG_RISCV_ISA_SSQOSID  */
-
- static __always_inline bool has_srmcfg(void) { return false; }
--#define __switch_to_srmcfg() do { } while (0)
-+#define __switch_to_srmcfg(__next) do { } while (0)
-
- #endif /* CONFIG_RISCV_ISA_SSQOSID */
- #endif /* _ASM_RISCV_QOS_H */
-
-
-I'll include this change in the next revision.
-
-Thanks,
-Drew
+base-commit: ae4745146347aef91dc328d1d9a39f0643ee244d
+-- 
+2.39.5
 
