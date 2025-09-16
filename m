@@ -1,127 +1,245 @@
-Return-Path: <linux-kernel+bounces-818791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9856B59680
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:46:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CE7B5968B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8813A174B66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:46:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D238F1BC7B65
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CC419049B;
-	Tue, 16 Sep 2025 12:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53061E832E;
+	Tue, 16 Sep 2025 12:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RWaVcdZC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="G4Xr4jmo"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D523BA3D;
-	Tue, 16 Sep 2025 12:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69211A238F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026805; cv=none; b=KM/FTumobIx+5c1cE5NvwIbnnm8Mv2OV8gQ/QSDINr+yOR0CVUw3SegfdSM3aTq5RI9a+w6ecQ4Q/mqM4lCkTl24m/l4g0grCJ7Khb4W7c/8l+OZu6O1Yn1CRIu6IxGGuygLio+Qtv9P5b6RlqeDbJ+v2umgRCcxKtVVvkht68o=
+	t=1758026864; cv=none; b=kRKQap4RwfeJhlOjSg8YZuGek7Nc8OjP+EW1rMwqR4Y9zzPt9hxgLMQUxBs66zKO+Iv1WpWhKQRq7lZeG/jMr9jLU1KcYneDJUaji1dTUmiG2pvrwaYR5YZf3eA+6+UFyECsKvKK4zBkIJsYZRyT0bUg+DIEZhr4NJYGhSu5zgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026805; c=relaxed/simple;
-	bh=nwScGAY3uk6BstJjdXFCDWsHVbJJw6Q/kJemK8x6EvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/QfQnmBgRsSUwtLW3XuJUcFh+HvLZKsisstQk1spSWuUdBK5dSppaCdqH8Z+JpN4nkbOiG84aAd/xbPZTAz7OnV5GZpeKKA1ip40M8PyW+qH2L3NqGlcvRDSrar4Gq5q+WNkrOl6avQFvVNpqW/j3St/RrcWzIc/6tPVF4kArw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RWaVcdZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A08BC4CEEB;
-	Tue, 16 Sep 2025 12:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758026805;
-	bh=nwScGAY3uk6BstJjdXFCDWsHVbJJw6Q/kJemK8x6EvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RWaVcdZCy2qnyYlieK+MYx/fCRrTlPZJlwDFZb8v4bKwTxNQmNBDsJSiGzYqUKAP2
-	 3PtESY8d3VJon5kzm6X5FxxBSNl9f2P2RiBOEdUZzPZ4tJKP6A1uWqcV2blTcU7+EX
-	 apVgtn3gJXhfXdSeNAwQNO9+ST4xM7MIilS6UHGk=
-Date: Tue, 16 Sep 2025 14:46:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: JaimeF <jaimefine6@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, david.m.ertman@intel.com,
-	ira.weiny@intel.com, leon@kernel.org, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	dakr@kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, onur-ozkan <work@onurozkan.dev>
-Subject: Re: [PATCH] rust: auxiliary: fix "initialialized" typo
-Message-ID: <2025091622-overlap-antitoxic-b8a0@gregkh>
-References: <20250916124102.14182-1-jaimefine6@gmail.com>
+	s=arc-20240116; t=1758026864; c=relaxed/simple;
+	bh=shHE9KW7BesZUfFO29sYZ6kumc0tpGrToLz2fQbyJ+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u+vJc1woytnsCBveH9HLGdR+GiR/Prkemtr9iqzytbJOp0bIK4vr9XfDXbilr0KxUjfMrtji/JZF0P4WTnS7bl9373Rq+a1c3tL8SAANKDe/olMaUt5s/rDwdR6f+9zHvC0abwwIK7WUjNtz5bocn5+bFt8jSXct4Iqf8HKA1W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=G4Xr4jmo; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
+	by cmsmtp with ESMTPS
+	id yT6du9WP9v724yV5ruHli7; Tue, 16 Sep 2025 12:47:35 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id yV5quEkmWe8uwyV5qu1Yip; Tue, 16 Sep 2025 12:47:34 +0000
+X-Authority-Analysis: v=2.4 cv=JIk7s9Kb c=1 sm=1 tr=0 ts=68c95c66
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rgnGs0SnPH8AdDS9O6an6A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=hq4P9umPRdET-EkN_ZoA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Ir3vWjqrv49zXSLgiZpFEkxlPef9vckMUxhUY+rQbQo=; b=G4Xr4jmohwUGtFlp5kciSaLmxc
+	V4jusRpsg85n2MNX/y4uPmANn4XnAq2Mkn4CEEQ36ZB1c/MbYGO2Vzo41jCOd4UP6rUOZ5P6/Nmu6
+	m6L6KsdxWpQcM7HCHXWNRTFdnAkpTgpLgksqFv3gtZg7iHxYCCUsLfXEacp/d7UGeR+NY+KEU6c2P
+	FkiN1DsdSEy2KI6sMPwdh7FFz0u3womxRSNhWrNvCDbKrjaLoGRxphCTQYZf9zEu/W56dj/D/aN/0
+	GC5i4UxC3/lZ65KnYnzzUqTnMXfDhlA3tOvX1e+9R4bM0JQ3KWu8+Hud1NX5Af99jhwK4e6/EC96g
+	Kt1yI7IQ==;
+Received: from [185.7.52.72] (port=52888 helo=[172.30.86.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1uyV5n-00000003enU-2svP;
+	Tue, 16 Sep 2025 07:47:32 -0500
+Message-ID: <015cb465-6e4e-4242-8898-981721347050@embeddedor.com>
+Date: Tue, 16 Sep 2025 14:47:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250916124102.14182-1-jaimefine6@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] virtio_net: Fix alignment and avoid
+ -Wflex-array-member-not-at-end warning
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Simon Horman <horms@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Akihiko Odaki <akihiko.odaki@daynix.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aLiYrQGdGmaDTtLF@kspp> <20250904091315.GB372207@horms.kernel.org>
+ <cac19beb-eefb-4a6a-9eec-b414199ce339@embeddedor.com>
+ <20250904172951-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250904172951-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.7.52.72
+X-Source-L: No
+X-Exim-ID: 1uyV5n-00000003enU-2svP
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([172.30.86.44]) [185.7.52.72]:52888
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfH2uA1mVHNI5OppWAB69iErfZ8HrRcn0ivrM57ShWd30OYAwTyqlapDDxTygn3q8YJbMgUZNLonmTLoGaTcMOzPDnKf2gHNhUs8CJCet7HaH+sOj3ZBy
+ Not/I4yUBDN7tiu2Cex/NIocyWUfvwsn4APV1GhWPOD53l/hj4MeSOzPy82uMUPKvnn4WTARPMmH36KSAOFizD1Fq7Qqkm9h4t+Iiijn7kG9cT2zkgU7e51X
 
-On Tue, Sep 16, 2025 at 12:41:02PM +0000, JaimeF wrote:
-> From: Jaime Fan <jaimefine6@gmail.com>
+
+
+On 9/4/25 23:31, Michael S. Tsirkin wrote:
+> On Thu, Sep 04, 2025 at 08:53:31PM +0200, Gustavo A. R. Silva wrote:
+>>
+>>
+>> On 9/4/25 11:13, Simon Horman wrote:
+>>> On Wed, Sep 03, 2025 at 09:36:13PM +0200, Gustavo A. R. Silva wrote:
+>>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>>>> getting ready to enable it, globally.
+>>>>
+>>>> Use the new TRAILING_OVERLAP() helper to fix the following warning:
+>>>>
+>>>> drivers/net/virtio_net.c:429:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+>>>>
+>>>> This helper creates a union between a flexible-array member (FAM)
+>>>> and a set of members that would otherwise follow it (in this case
+>>>> `u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];`). This
+>>>> overlays the trailing members (rss_hash_key_data) onto the FAM
+>>>> (hash_key_data) while keeping the FAM and the start of MEMBERS aligned.
+>>>> The static_assert() ensures this alignment remains, and it's
+>>>> intentionally placed inmediately after `struct virtnet_info` (no
+>>>> blank line in between).
+>>>>
+>>>> Notice that due to tail padding in flexible `struct
+>>>> virtio_net_rss_config_trailer`, `rss_trailer.hash_key_data`
+>>>> (at offset 83 in struct virtnet_info) and `rss_hash_key_data` (at
+>>>> offset 84 in struct virtnet_info) are misaligned by one byte. See
+>>>> below:
+>>>>
+>>>> struct virtio_net_rss_config_trailer {
+>>>>           __le16                     max_tx_vq;            /*     0     2 */
+>>>>           __u8                       hash_key_length;      /*     2     1 */
+>>>>           __u8                       hash_key_data[];      /*     3     0 */
+>>>>
+>>>>           /* size: 4, cachelines: 1, members: 3 */
+>>>>           /* padding: 1 */
+>>>>           /* last cacheline: 4 bytes */
+>>>> };
+>>>>
+>>>> struct virtnet_info {
+>>>> ...
+>>>>           struct virtio_net_rss_config_trailer rss_trailer; /*    80     4 */
+>>>>
+>>>>           /* XXX last struct has 1 byte of padding */
+>>>>
+>>>>           u8                         rss_hash_key_data[40]; /*    84    40 */
+>>>> ...
+>>>>           /* size: 832, cachelines: 13, members: 48 */
+>>>>           /* sum members: 801, holes: 8, sum holes: 31 */
+>>>>           /* paddings: 2, sum paddings: 5 */
+>>>> };
+>>>>
+>>>> After changes, those members are correctly aligned at offset 795:
+>>>>
+>>>> struct virtnet_info {
+>>>> ...
+>>>>           union {
+>>>>                   struct virtio_net_rss_config_trailer rss_trailer; /*   792     4 */
+>>>>                   struct {
+>>>>                           unsigned char __offset_to_hash_key_data[3]; /*   792     3 */
+>>>>                           u8         rss_hash_key_data[40]; /*   795    40 */
+>>>>                   };                                       /*   792    43 */
+>>>>           };                                               /*   792    44 */
+>>>> ...
+>>>>           /* size: 840, cachelines: 14, members: 47 */
+>>>>           /* sum members: 801, holes: 8, sum holes: 35 */
+>>>>           /* padding: 4 */
+>>>>           /* paddings: 1, sum paddings: 4 */
+>>>>           /* last cacheline: 8 bytes */
+>>>> };
+>>>>
+>>>> As a last note `struct virtio_net_rss_config_hdr *rss_hdr;` is also
+>>>> moved to the end, since it seems those three members should stick
+>>>> around together. :)
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>>> ---
+>>>>
+>>>> This should probably include the following tag:
+>>>>
+>>>> 	Fixes: ed3100e90d0d ("virtio_net: Use new RSS config structs")
+>>>>
+>>>> but I'd like to hear some feedback, first.
+>>>
+>>> I tend to agree given that:
+>>>
+>>> On the one hand:
+>>>
+>>> 1) in virtnet_init_default_rss(), netdev_rss_key_fill() is used
+>>>      to write random data to .rss_hash_key_data
+>>>
+>>> 2) In virtnet_set_rxfh() key data written to .rss_hash_key_data
+>>>
+>>> While
+>>>
+>>> 3) In virtnet_commit_rss_command() virtio_net_rss_config_trailer,
+>>>      including the contents of .hash_key_data based on the length of
+>>>      that data provided in .hash_key_length is copied.
+>>>
+>>> It seems to me that step 3 will include 1 byte of uninitialised data
+>>> at the start of .hash_key_data. And, correspondingly, truncate
+>>> .rss_hash_key_data by one byte.
+>>>
+>>> It's unclear to me what the effect of this - perhaps they key works
+>>> regardless. But it doesn't seem intended. And while the result may be
+>>> neutral, I do  suspect this reduces the quality of the key. And I more
+>>> strongly suspect it doesn't have any positive outcome.
+>>>
+>>> So I would lean towards playing it safe and considering this as a bug.
+>>>
+>>> Of course, other's may have better insight as to the actual effect of this.
+>>
+>> Yeah, in the meantime I'll prepare v2 with both the 'Fixes' and 'stable'
+>> tags.
+>>
+>> Thanks for the feedback!
+>> -Gustavo
+>>
+>>
 > 
-> Fixes a spelling mistake in a comment: "initialialized" → "initialized".
-> This improves clarity in the documentation and avoids confusion for readers.
 > 
-> Suggested-by: onur-ozkan <work@onurozkan.dev>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1187
-> Signed-off-by: Jaime Fan <jaimefine6@gmail.com>
-> ---
->  rust/kernel/auxiliary.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-> index 58be09871397..129eae8ff2e7 100644
-> --- a/rust/kernel/auxiliary.rs
-> +++ b/rust/kernel/auxiliary.rs
-> @@ -317,12 +317,12 @@ pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: &CStr) -> Res
->  
->          // SAFETY:
->          // - `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`, which has
-> -        //   been initialialized,
-> +        //   been initialized,
->          // - `modname.as_char_ptr()` is a NULL terminated string.
->          let ret = unsafe { bindings::__auxiliary_device_add(adev, modname.as_char_ptr()) };
->          if ret != 0 {
->              // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
-> -            // which has been initialialized.
-> +            // which has been initialized.
->              unsafe { bindings::auxiliary_device_uninit(adev) };
->  
->              return Err(Error::from_errno(ret));
-> -- 
-> 2.50.1
-> 
+> I agree. It looks like that commit completely broke RSS
+> configuration. Akihiko do you mind sharing how that was
+> tested? Maybe help testing the fix? Thanks!
 
+I've been waiting for Akihiko's comments on this, but I
+guess I'll now go ahead and submit v2 with the Fixes and
+stable tags included.
 
-Hi,
+Thanks for the feedback, Michael.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+-Gustavo
 
