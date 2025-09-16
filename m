@@ -1,67 +1,76 @@
-Return-Path: <linux-kernel+bounces-819323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FDEB59EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:01:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594A8B59EB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8A71898023
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:01:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296534819BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F3D32B4A8;
-	Tue, 16 Sep 2025 16:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209E532D5B6;
+	Tue, 16 Sep 2025 16:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hX/wJur+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufGW4ipa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FD932B48E;
-	Tue, 16 Sep 2025 16:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAB1329517;
+	Tue, 16 Sep 2025 16:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758041917; cv=none; b=HyayqB7ovfkTXh8PAg7b5hDHbSIdDKLZl673ce0TGstTdISLBqwiNMnop/m7A60TIXmfGFb5LtlMOHYRNas1GVcZ8APGVzAyXwVs+dRneoF70qzjbawVcNOeQUpY6Eu9qiKSaleuTlbtbGLtNHS+TzZT0YsZa9qDdkcxcSr/pB4=
+	t=1758041919; cv=none; b=DUXq8vthkEBxBGZPYTU3tHm+myshRgQN8K0CgXJZt6I+UbVgTCCbLgRxSmuhET2b6g1ohxjhPviWXSjxNytzxN3fIkaN4fVsrW2junZKcVkMgDumAphRZ1CPLX/6+9r7K3X3lL8d2ytlPUYNKG5b2KG+xi3moIuLDoCUuvmu0jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758041917; c=relaxed/simple;
-	bh=OSicBpBNsKlVFlmTTmpMLFOpWDIRczZmZ/BFMowjpMo=;
+	s=arc-20240116; t=1758041919; c=relaxed/simple;
+	bh=cN2ZRIwpPuuTuFydKsuswQytPt7ZVYZueiDnIohjvxg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lfedi16Isny35QIFpO31vlfYBMsKuryRo6xI4rTUPTxN2QqA9Hv/f13vDJ+Iq1zyrYFc6X9Qk6RS+ey7aenuIpBS62s496umRPbZA1BX/xeYlJ8vqDNk++ULiE2vbVHtNjYf8vx34090IGMBFfzKIH980B2hF2pTQUA7MvnSi3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hX/wJur+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B835DC4CEF0;
-	Tue, 16 Sep 2025 16:58:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Zia4YqMQgCEV9MFnkqQFQMpYvuZpLaDNbOwiXJmgItyd9Sz/Sgt/SBrqvYFAjJWoI+j7t61cdevfwmXyE+plCgzQFyq90dRQWFkHNCRdblWSrsKtgw5YoSoAEvbnUXft/vr8XRfOWXBGg1PUXae2Y6ggn2xbvmkGIjmzhE4eYgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufGW4ipa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B765AC4CEF7;
+	Tue, 16 Sep 2025 16:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758041916;
-	bh=OSicBpBNsKlVFlmTTmpMLFOpWDIRczZmZ/BFMowjpMo=;
+	s=k20201202; t=1758041919;
+	bh=cN2ZRIwpPuuTuFydKsuswQytPt7ZVYZueiDnIohjvxg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hX/wJur+zKgXj1n4dyBi46m0HOb6Rblv3vjGDFmDxFkMQu1FJDjSkYzRLZia52crO
-	 amujgGOmB5vDKWXATjZjaH3B1naQkRJQnTJW744SN2RLL/WXk4uPF6Kah5wH6q4Vab
-	 eMcuHlQdAoySvC4y/zFksl0dDRTJqnUALmOD2CsXO67/OwK8V7XX2zhnc2QU/ikT9R
-	 gEdk0GRO1eJ0kxDbrR8gILHfb21xHKfHmUgrrXD8ZAMKeIeBcBnYFMJng8S9zc3C6A
-	 2cAgNOm1AF/KAbMzm3dvrZi3QqszC/J41srf9I8JYZ09pdJkrVBevlRGcc/tqOXNiM
-	 AcOs305GxlyZA==
+	b=ufGW4ipaBuqkZumNSbHozdOrPtbsJc8gOophMG/yqg6lu3A61SeJaSBfuxc/Rfoqz
+	 7HlzyPzelhOESnR9HvCdsZNEJSi0JGD8fNAsXzEEQIFoRTSAwhZcdWAv9sfxBiHIa+
+	 QsQOlGSghSU+nZNF2/mgsoKRKupQOzyAmoiHjNrT2lu9yNP/GsbWi/27oN/DI1AAfl
+	 zhkF9YltDSNt97izaa1CNRYiHmiKhHSE3sYTraXEXL+suTLKc3XHHn/EbzUMw00Lcm
+	 wpZyb0qfI6x5YGMxPsO/qMDVtdIuHtZCvSyscPc5RJV+CeIM+h3vbjB92oM0yZBh+Z
+	 f+0pQYAh9+jHA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+Cc: kernel@oss.qualcomm.com,
+	linux-mmc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	Anthony Ruhier <aruhier@mailbox.org>,
-	Stefan Schmidt <stefan.schmidt@linaro.org>
-Subject: Re: [PATCH v2 0/9] arm64: dts: qcom: x1e80100: Add IRIS video codec
-Date: Tue, 16 Sep 2025 11:58:19 -0500
-Message-ID: <175804189849.3983789.13739066498256926566.b4-ty@kernel.org>
+	linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Monish Chunara <quic_mchunara@quicinc.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+	Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
+	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+	Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+Subject: Re: [PATCH v5 00/10] arm64: dts: qcom: lemans-evk: Extend board support for additional peripherals
+Date: Tue, 16 Sep 2025 11:58:21 -0500
+Message-ID: <175804189844.3983789.17270960228782770722.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250915-x1e-iris-dt-v2-0-1f928de08fd4@linaro.org>
-References: <20250915-x1e-iris-dt-v2-0-1f928de08fd4@linaro.org>
+In-Reply-To: <20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com>
+References: <20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,43 +81,46 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 15 Sep 2025 12:06:11 +0200, Stephan Gerhold wrote:
-> Add the necessary definitions to enable the IRIS video codec for
-> accelerated video decoding on the X1E CRD, Lenovo ThinkPad T14s, Lenovo
-> Yoga Slim 7x, Dell Inspiron 14 Plus 7441, Dell Latitude 7455 and Dell XPS
-> 13 9345. The additions are largely copied as-is from sm8550.dtsi with some
-> minor changes necessary for X1E.
+On Tue, 16 Sep 2025 16:16:48 +0530, Wasim Nazir wrote:
+> This series extend support for additional peripherals on the Qualcomm
+> Lemans EVK board to enhance overall hardware functionality.
 > 
-> The PAS interface used to boot the IRIS firmware works only when running
-> the usual setup with the Gunyah hypervisor in EL2 and Linux in EL1. It does
-> not work when booting Linux/KVM in EL2. The code to start it without using
-> PAS exists already in the Venus driver, but was not ported over to IRIS
-> yet. Discussions how to model the video-firmware IOMMU are still ongoing,
-> so disable IRIS in x1-el2.dtso for now to avoid regressions when running
-> with KVM.
+> It includes:
+>   - New peripherals like:
+>     - I2C based devices like GPIO I/O expander and EEPROM.
+>     - GPI (Generic Peripheral Interface) DMA controllers and QUPv3 controllers
+>       for peripheral communication.
+>     - PCIe HW with required regulators and PHYs.
+>     - Remoteproc subsystems for supported DSPs.
+>     - Iris video codec.
+>     - First USB controller in device mode.
+>     - SD card support on SDHC v5.
+>     - Qca8081 2.5G Ethernet PHY.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/9] arm64: dts: qcom: sm8550/sm8650: Fix typo in IRIS comment
-      commit: 893e2abc1ae35f67f29909cd062cff978bf26b44
-[2/9] arm64: dts: qcom: x1e80100: Add IRIS video codec
-      commit: 9065340ac04dd8a1b07da0f024aa3a1e4dd2cffb
-[3/9] arm64: dts: qcom: x1-el2: Disable IRIS for now
-      commit: c0f045e303e014cec5d883edf82fe5de74769944
-[4/9] arm64: dts: qcom: x1e80100-crd: Enable IRIS video codec
-      commit: e2367a67b3de64e1972cd6fdb8029c974fc3b2fc
-[5/9] arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Enable IRIS
-      commit: ee2d56bb33d5fe17155e933326fb0f9b7ff1d034
-[6/9] arm64: dts: qcom: x1e80100-lenovo-yoga-slim7x: Enable IRIS
-      commit: 98180f6796925abdfce26e44671048fd05387190
-[7/9] arm64: dts: qcom: x1e80100-dell-inspiron-14-plus-7441: Enable IRIS
-      commit: 647198bd7101cd399b3dbae96630d72db68b8752
-[8/9] arm64: dts: qcom: x1e80100-dell-latitude-7455: Enable IRIS
-      commit: a80ead38c51e93ed6f19733f2cbdb93abab4dbf8
-[9/9] arm64: dts: qcom: x1e80100-dell-xps13-9345: Enable IRIS
-      commit: c4376ad753566e44f8e9198b7f05f79145419cd3
+[01/10] arm64: dts: qcom: lemans: Add SDHC controller and SDC pin configuration
+        commit: dfdbe4bf6ff386d96c1dc8c7407201d882fc4113
+[02/10] arm64: dts: qcom: lemans-evk: Enable GPI DMA and QUPv3 controllers
+        commit: 5bc646aa0c7a444d4e81d8e3cae4baf463e1a018
+[03/10] arm64: dts: qcom: lemans-evk: Add TCA9534 I/O expander
+        commit: 6ae6381f871803246e9f655537999f163656de33
+[04/10] arm64: dts: qcom: lemans-evk: Add EEPROM and nvmem layout
+        commit: 81618ba3fe33017be5e1fce99891abd220a775b8
+[05/10] arm64: dts: qcom: lemans-evk: Enable PCIe support
+        commit: 94d7d37f6ac34bd683a93fbf1013736616fc3677
+[06/10] arm64: dts: qcom: lemans-evk: Enable remoteproc subsystems
+        commit: cac44c46970adb4553bab5c5aa528462a5fe98d0
+[07/10] arm64: dts: qcom: lemans-evk: Enable Iris video codec support
+        commit: fd32b5d586ac650ce1c6f58535ec79cd2632be09
+[08/10] arm64: dts: qcom: lemans-evk: Enable first USB controller in device mode
+        commit: 7bd68ef80661a9436120702e1300b56904fdd022
+[09/10] arm64: dts: qcom: lemans-evk: Enable SDHCI for SD Card
+        commit: c3f107b514c357cbc08ae70a69700222e7d1192d
+[10/10] arm64: dts: qcom: lemans-evk: Enable 2.5G Ethernet interface
+        commit: 71ee90ed1756724d62cb55873555e006372792c7
 
 Best regards,
 -- 
