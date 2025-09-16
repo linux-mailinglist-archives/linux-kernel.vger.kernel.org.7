@@ -1,165 +1,112 @@
-Return-Path: <linux-kernel+bounces-818832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EA0B596F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:06:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85518B596F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1743016AF24
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:05:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8451891FB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65736312821;
-	Tue, 16 Sep 2025 13:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2E5315D2A;
+	Tue, 16 Sep 2025 13:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m8uZ4vnQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oPCGfQyg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m8uZ4vnQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oPCGfQyg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7VYfevE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EB52DC32C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F8A313E39;
+	Tue, 16 Sep 2025 13:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027918; cv=none; b=KBKBTeOO6UzfV+aSMJWM1aFttew5CkSStzGJmjS5yf6eoBvsLh8HiX77CmjtpMJbYIhrWfnnyE/HolYvpX+aGmlXVjK5qy5Su1p7TNM44oj00jnXCi+B9m9FULINVFg0B4XhBRgsQcbFlWNwo6AfV3yRHDeK7yDAgzD3rrSysso=
+	t=1758027920; cv=none; b=H9f4IKHkkcHqMtxK6USyzONQb/9hrF384bVJecCNF+EKzUY8ocn8h+nERdxIk0hk5ZUvsmyFVllrNY7JTi+YBeHLEblwGwxxBpXuERzpcD0U5k4oHfy3SBfjkwPdNFCkYQMGRIcT9F6bfeVn4xL0Uoy1hdZFli1vnKzus+F7A5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027918; c=relaxed/simple;
-	bh=r5/fVGUqR5HFq3vZ6jzZGnPxFTJWkyAAbjkTFFzkg/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=srWqXyEJAIadUYi61J+RWtrCFXFnsUI2gbn+sG4uqLqig2VPIfNFcZqK6ZaNw0evKty+fk/kypN3eH9Lsnyo2olBsDTXNKPLnqrR5hMU0AjLE9dW/mnB2EIj5dGHMXp5oWMcTrwznN4YyTqeFvrRZX+4L0PapWBSNDGm7k9HOpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m8uZ4vnQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oPCGfQyg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m8uZ4vnQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oPCGfQyg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 35D5A2285F;
-	Tue, 16 Sep 2025 13:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758027915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9A36b/S0SgJ3ZG9RQ8biclrjxz+wbguqohO1hbWIE+g=;
-	b=m8uZ4vnQE1zjwjbdlDny+v1H3oz4YmrTFGp6HpHPSf5CboZShTGyHPnPBUpCB5jSggp9Oi
-	//XJLJe2XQvYRxXajkl0SrUSDnPxZUmkpg3CopZ2VIf/xIlmWJZtG/mTxCwViYi45O984C
-	SH2n4gq1xeUD6nckgNH910cUkIEUChY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758027915;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9A36b/S0SgJ3ZG9RQ8biclrjxz+wbguqohO1hbWIE+g=;
-	b=oPCGfQyghRK4oZdMQzenU12tiuFL6w91f1jKeOpG7gchJFVCaG+gA0g0qW7Xciy5GETPVP
-	gEnzfcVHGzB7qxDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758027915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9A36b/S0SgJ3ZG9RQ8biclrjxz+wbguqohO1hbWIE+g=;
-	b=m8uZ4vnQE1zjwjbdlDny+v1H3oz4YmrTFGp6HpHPSf5CboZShTGyHPnPBUpCB5jSggp9Oi
-	//XJLJe2XQvYRxXajkl0SrUSDnPxZUmkpg3CopZ2VIf/xIlmWJZtG/mTxCwViYi45O984C
-	SH2n4gq1xeUD6nckgNH910cUkIEUChY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758027915;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9A36b/S0SgJ3ZG9RQ8biclrjxz+wbguqohO1hbWIE+g=;
-	b=oPCGfQyghRK4oZdMQzenU12tiuFL6w91f1jKeOpG7gchJFVCaG+gA0g0qW7Xciy5GETPVP
-	gEnzfcVHGzB7qxDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1CFDA139CB;
-	Tue, 16 Sep 2025 13:05:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id biARB4tgyWgLCgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 16 Sep 2025 13:05:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9D3CFA0A83; Tue, 16 Sep 2025 15:05:14 +0200 (CEST)
-Date: Tue, 16 Sep 2025 15:05:14 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, chaitanyas.prakash@arm.com, davem@davemloft.net, 
-	david@redhat.com, edumazet@google.com, hdanton@sina.com, horms@kernel.org, 
-	jack@suse.cz, kuba@kernel.org, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.com, willemb@google.com
-Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
-Message-ID: <lqzgi7abe2onda3faavn5ays6gdw4syiu32hmrfaibrh6cmozs@pjf3llvnnefk>
-References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
- <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
+	s=arc-20240116; t=1758027920; c=relaxed/simple;
+	bh=ma+EU55+6vAx5dd7uibo0FDmRcI1W0AHuXTIJN1dG8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kenzG+lV84S2sQ4o6bt5zvURGMrOb6JESnrm+mmVTVIs+d+2w8VgX2Xwn3DAzwrS+g02Ka9+0FJcn+sFs6FLdBizu010XzAzY6Zx0YoJe/aHOjrg5UYIHPvkCokHraJYHBY4g46Bc7q/SAZUQxbg6Qg8+aiEC00i5a13ju0Txc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7VYfevE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 180E6C4CEEB;
+	Tue, 16 Sep 2025 13:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758027920;
+	bh=ma+EU55+6vAx5dd7uibo0FDmRcI1W0AHuXTIJN1dG8M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=h7VYfevEN/xTbO2dBz1dfazu42QkNEQIBpEB85+9p1pkwiXcVdDu4fLBpJ8jFTlVm
+	 m+ItljtDz5+PDqurKHNEVNL0rIvYd5JuvNDaUVWsvm3GBUyoyHtXMLrV5VqgiS+iuG
+	 0dh/YFYxCFWL7bJKsnmV3p8zt62ugg/h88d3ewD8pjO5iNbYe363UNOEYteT8d7NIo
+	 GtIDD7/t733fbLzyzWlHTw9einOt3tu7xVqBHLeX6ZtkH5xO3UyNP/zFUcf5Wd8OpR
+	 lT02M23CVrT9w8ktNpGV76C/yAT6doobUYzELeSUBfCxgMebWaJZ30l4te5ZCzBVOt
+	 0Xb4H6VVAYnPw==
+Date: Tue, 16 Sep 2025 14:05:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Tamir Duberstein <tamird@gmail.com>
+Subject: linux-next: manual merge of the rust tree with the drm-nova tree
+Message-ID: <aMlgjL0ZKsrvwQcB@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="B41DWEp7YHC36pzP"
+Content-Disposition: inline
+
+
+--B41DWEp7YHC36pzP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[263f159eb37a1c4c67a4];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[sina.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[syzkaller.appspotmail.com,linux-foundation.org,arm.com,davemloft.net,redhat.com,google.com,sina.com,kernel.org,suse.cz,vger.kernel.org,perex.cz,googlegroups.com,suse.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,arm.com:email,suse.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 16-09-25 13:50:08, Ryan Roberts wrote:
-> On 14/09/2025 11:51, syzbot wrote:
-> > syzbot suspects this issue was fixed by commit:
-> > 
-> > commit bdb86f6b87633cc020f8225ae09d336da7826724
-> > Author: Ryan Roberts <ryan.roberts@arm.com>
-> > Date:   Mon Jun 9 09:27:23 2025 +0000
-> > 
-> >     mm/readahead: honour new_order in page_cache_ra_order()
-> 
-> I'm not sure what original bug you are claiming this is fixing? Perhaps this?
-> 
-> https://lore.kernel.org/linux-mm/6852b77e.a70a0220.79d0a.0214.GAE@google.com/
+Hi all,
 
-I think it was:
+Today's linux-next merge of the rust tree got a conflict in:
 
-https://lore.kernel.org/all/684ffc59.a00a0220.279073.0037.GAE@google.com/
+  drivers/gpu/nova-core/regs/macros.rs
 
-at least that's what the syzbot email replies to... And it doesn't make a
-lot of sense but it isn't totally off either. So I'd just let the syzbot
-bug autoclose after some timeout.
+between commit:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+  6ecd6b73e0845 ("gpu: nova-core: register: improve `Debug` implementation")
+
+=66rom the drm-nova tree and commit:
+
+  4b4d06a7630e1 ("gpu: nova-core: use `kernel::{fmt,prelude::fmt!}`")
+
+=66rom the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/nova-core/regs/macros.rs
+index 754c14ee7f401,6b9df4205f469..0000000000000
+--- a/drivers/gpu/nova-core/regs/macros.rs
++++ b/drivers/gpu/nova-core/regs/macros.rs
+
+--B41DWEp7YHC36pzP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJYIsACgkQJNaLcl1U
+h9Af1Qf/RehicUPQWdQbHcw6U+0JuR4pr/FsQlPnbw9MkQbRwWPHRsXTaoL57S6m
+6OGfslO4s4fHzc+DwySl8WJW0CzSzk4kz+5iBJsSiEwdrFPPGkXujE1RdUYl4VEJ
+db3G1GXph5cnD0pO7lICCo58YYgp9VV2wDvzBje00YpOgz3fDIyNVkU0SA/Fw9B9
+sLPaKxwK+ZtZQPQISzxMF43gY0LjtcCuMspxBNdkqvOipdrCzgwVT5WcJnHge9Wf
+2wpOLJwwVT4kySZlm7Mocg7NPZywTMoFukRF8AEmqysDFevPS64ngyEnHAVNBY1i
+FgOtLMorwEef/e2sS0V0zHM/+AcQGA==
+=+7oc
+-----END PGP SIGNATURE-----
+
+--B41DWEp7YHC36pzP--
 
