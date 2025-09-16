@@ -1,130 +1,125 @@
-Return-Path: <linux-kernel+bounces-818977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E282B59929
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:16:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052E4B5993A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9AE16C15B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:12:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD1867A527F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A4C28315A;
-	Tue, 16 Sep 2025 14:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB573568FE;
+	Tue, 16 Sep 2025 14:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mOCGnvwg"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/B8vubw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E164B211460
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D9A3568FB
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031944; cv=none; b=TYge9y8Ks+OHygDypxtxYPNspcc/1BFawRVimWu13Ui7KWV/pjtkYJkBx7NVxvZt+wBVyg9IkcuoVqcy0vmai2euBK8BXh1Ltk/WZYSAoj4ZqL3v00F4T8GNx706H/ceZHc0WfGzzbqvWYYcrUA+C3AhfEbBrCX+RPdrz1FGKOA=
+	t=1758032016; cv=none; b=H1VWRKXhCA44z51cO8RU9+g8ML1tNjJ2jZqrXecfulOqtyzVDpUwdfQ8V9x7Th94ohzWpRZCIoKizfpsBBtsojqsnEZ+JZN+bRKEBXNWFR3Fgr5DR32ApUb1i1yzKZwcy2XysBbTpO6RPpu2gbqpCnvyXsTHY8Yj9GJhwe1twjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758031944; c=relaxed/simple;
-	bh=fVduY9ChM+XTiJ/WxOZb5vLjE0k0RtwqZkyUiEW8pZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QoB6YuhvL/xprn+TGQlqY80B61moraAgO6dALWe3+yWyXsEfaIpRmj4opz9T+z8+iARgjXfl0GTFd3QTEdUftIV94qGQEnNbjsgPS3I0xYERjY1HfmUiJiShM4zFll8usniiFdPz4VgIFspWHZm8JCE9r6NvtxglWWdHox1xU8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mOCGnvwg; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so52889935e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758031941; x=1758636741; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5ihTrH7t7gLzKRumooOOczb4IBjokkGyHJ2+QxNRMxY=;
-        b=mOCGnvwgcrU5KMtGEYRdZSbfkuz1xSxEYBDr0cn6QPZPfHN3Ekbdo2d4sqORAIe5Md
-         BWG3CUqFvXoePD6D2vMNjzRJMlxt/DDkXlXbSKT3p5XRGysYXw98oGzaUSF5L6m8FEMr
-         OzIjEKCneuEMM6RXtPw1JcA8qF/6eUN6Rax4+x3DVn4TB+Lpx5JbC0Tz1QpCl9QGDrlJ
-         jreFR6TE2YU7/XEPu0u7ag1n+bpDl5msFmnjdxhllhSaZT2vxM2Xl6QklzlghUipVSZC
-         HGZ2Ad3FDOmHkSwgdSdNuh0hpoJSHa5xvXNmLqPaVA+zLmlYR1hEyGuK9VPacYtdSF2M
-         K09w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758031941; x=1758636741;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ihTrH7t7gLzKRumooOOczb4IBjokkGyHJ2+QxNRMxY=;
-        b=KG9nnKKbtmJH4p2Gk6f0+UvsbebKraot3mrCFr8m2Et7vdduJtaE5BBpY4jnxqtpye
-         NVquQmcLR2xMJiDndpjvypCH7ZoySCUA+VGS77RgFyWIkdBxMaPjGhKzWbrnOnEAEB9s
-         VuCGTJqLtzgBxk5JyxDOJYEhk/OUriXu6+mcimtW29s+LvX32rwHqi2cRnlTTMlQlBKW
-         1lcEAHSmlTrCVgMxoiUchM9vRBSjaefyW4j4CLqUhaqW+/Kd5oxlKtaRxe+wBm1oV3TD
-         9tCdeMH+hI7nfEO75eMlatqy1O51Px7JBzQWX5wLVnW9fUPG1SmtABIVvoONYIpIgIEj
-         NT6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUkmOTkUZMWFicuwRBDJaswPv0nZZUeUELETH/5FksVuMdxLelUplO42ibMbHaw3NzT6OLa9uQGHPimFwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuQkaMggbcRSaES340lCm0mqkz80sGMniabZAO3FR4G8W0jyLA
-	2TrWmu8dgkqQZg8ANDbowpssgskiAQzOVK9BDDidOC+XXUMojqFVxEb0UvQk5g7/eEs=
-X-Gm-Gg: ASbGncveKq+L8iRCdmEM5Dpazme71FgL9K7Pox0JSuDI4/Vm4W5MeIfaxhnhMuspKUx
-	UearpjjbbEfO3xmW/LpN1ODqdQbjsJfR7YHqIyl+fu9fKELtGUwTg4jSsIVgjndMdM/yAvMaJC1
-	EGWwDlr+HX8zfr7Vypv/id1Xes2Tyjq+SSsSHUulToAB7XuWmjMt2DshoCo+hSpdhF1kaIrq6Aq
-	F8qH9+QuPpz07bA2w1clHKAsbZd/LvmEqs+s2LA0rR2UU9IDHqfUxyj0y+ZnIVDW6uitUujtbup
-	7MARyHsq2d73FJe9d7zS+qKwtmbpn4GZDuHjGbhCbLpGQ0Ff1kTfaMUJSX4XvEAKIicRT3TzqSC
-	mGxiwDn7bo/Cs+UQYsJ4T+2l6R8F8ygPRYj76+03JkgpcsAUK5WZvpXU9NvEw3aClWTTdzNWKDW
-	j1w8+YDDY7T5zc04XIafk=
-X-Google-Smtp-Source: AGHT+IGmb1kHFNHQ4frPlib14MxI7w4SRTDLbyi2XJON83MQa2TxlNaD5uBHUokreLL+hCdD46cN6Q==
-X-Received: by 2002:a05:600c:1546:b0:458:bc3f:6a77 with SMTP id 5b1f17b1804b1-45f211c4c03mr137113085e9.2.1758031941271;
-        Tue, 16 Sep 2025 07:12:21 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8c7375fb7sm14091558f8f.14.2025.09.16.07.12.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 07:12:20 -0700 (PDT)
-Message-ID: <ca511d42-0381-41d1-bea0-0d766e04f9f4@linaro.org>
-Date: Tue, 16 Sep 2025 15:12:16 +0100
+	s=arc-20240116; t=1758032016; c=relaxed/simple;
+	bh=n+L4pa4V4TakMOivf0PlUU/bqhDI8BGO+P5AG4JZQQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOwvbzPFi5LE7EYf+49SrLk44kH9pjk9r33eWfXm1BGdCOvpq5aiN2IiWN1fpo6PnrTglwUbZ3R5+otVE1bGaAYMgTS9+eXuNzTs6y3ZaJdLwxt/ISF4UYI1+EFW91C4waKxStRefo0jprDqBr2YUjgNXzxvwkeYgLgu6BW55lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/B8vubw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036EEC4CEF0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758032016;
+	bh=n+L4pa4V4TakMOivf0PlUU/bqhDI8BGO+P5AG4JZQQM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=I/B8vubw8mOUtF56jAAeGQovtfs1DA2gXr8P9VLkiXTUnZpsVnsA4DyYohrQBG2H6
+	 kPweJARy54G6JTmETMuG7VaNb055flLF8xFxQBa1aE/DET/RX6QBuy91b+tOJ5OkDv
+	 6ek1PQi/++qNYywqVtzZ6l6tnBZVkKBzizWa9JxClXlo9NP7bToN+SI0LpEN6Esf5A
+	 2s5lNcr2BOVRv7s/PIb+pIebhnj8xj1iY1kMAZcWjEkUZFyyr+gWs6fotjStSdEM9Q
+	 53nsoGyy/MKlYtuCagi9PxN84eTv9EvxKwRpYJ5rKXfDP/sQfmwfofOteb+SnmVeyz
+	 EiAxPqjDnZEaw==
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-621c69d767aso1734542eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:13:35 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yykf4Ur11VbNI0g4CAhfr2Zrt2UVQwJKn7qoIsc/H/HkDKgVMa9
+	Wo9+aysAE4JVX+Z+LZqvn0UUvZP6tLwdLpH/HQFzMH4DvaS/wxOM8mZCm+be5lyjNc/t0KIadk2
+	uZUvhVl7M+xYlckfwW1EWDU+/w1Eihgg=
+X-Google-Smtp-Source: AGHT+IHgL22hJWIWVWxwVkIJFyclD7ftmrFNiS+18ltenSf2m8t46VEFJCl+fupooSj/e/UfhG/QBLNnbAdxNRXQz0s=
+X-Received: by 2002:a05:6808:1a19:b0:438:22cd:298e with SMTP id
+ 5614622812f47-43b8d86ef61mr9296271b6e.1.1758032015284; Tue, 16 Sep 2025
+ 07:13:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] tty: serial: qcom_geni_serial: Fix error handling for
- RS485 mode
-To: Anup Kulkarni <anup.kulkarni@oss.qualcomm.com>,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, johan+linaro@kernel.org,
- dianders@chromium.org, quic_ptalari@quicinc.com, quic_zongjian@quicinc.com,
- quic_jseerapu@quicinc.com, quic_vdadhani@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Cc: mukesh.savaliya@oss.qualcomm.com, viken.dadhaniya@oss.qualcomm.com,
- stable@vger.kernel.org
-References: <20250916093957.4058328-1-anup.kulkarni@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20250916093957.4058328-1-anup.kulkarni@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <6191405.lOV4Wx5bFT@rafael.j.wysocki>
+In-Reply-To: <6191405.lOV4Wx5bFT@rafael.j.wysocki>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 16 Sep 2025 16:13:24 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gEh-xoKdgAgUvnGzPV6AO51=ZagHXNCrC4BfRZk6Oydw@mail.gmail.com>
+X-Gm-Features: AS18NWApZZiOkxgsLld9dGt1_5dhQy0WIEt4DE2pKcqACnVsrSqQnCBhdLuWkV4
+Message-ID: <CAJZ5v0gEh-xoKdgAgUvnGzPV6AO51=ZagHXNCrC4BfRZk6Oydw@mail.gmail.com>
+Subject: Re: [PATCH v1] smp: Fix up and expand the smp_call_function_many() kerneldoc
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Randy Dunlap <rdunlap@infradead.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 16/09/2025 10:39, Anup Kulkarni wrote:
-> If uart_get_rs485() fails, the driver returns without detaching
-> the PM domain list.
-> 
-> Fix the error handling path in uart_get_rs485_mode() to ensure the
-> PM domain list is detached before exiting.
-> 
-> Fixes: 86fa39dd6fb7 ("serial: qcom-geni: Enable Serial on SA8255p Qualcomm platforms")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Anup Kulkarni <anup.kulkarni@oss.qualcomm.com>
+On Tue, Sep 9, 2025 at 1:44=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
+> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The smp_call_function_many() kerneldoc comment got out of sync with the
+> function definition (bool parameter "wait" is incorrectly described as a
+> bitmask in it), so fix it up by copying the "wait" description from the
+> smp_call_function() kerneldoc and add information regarding the handling
+> of the local CPU to it.
+>
+> Fixes: 49b3bd213a9f ("smp: Fix all kernel-doc warnings")
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+It's been a week and no feedback.
+
+Well, in the further absence of any, I'll assume no concerns and just
+queue this up.
+
 > ---
->   drivers/tty/serial/qcom_geni_serial.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 9c7b1cea7cfe..0fc0f215b85c 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -1928,7 +1928,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
->   
->   	ret = uart_get_rs485_mode(uport);
->   	if (ret)
-> -		return ret;
-> +		goto error;
->   
->   	devm_pm_runtime_enable(port->se.dev);
->   
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>  kernel/smp.c |   11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+>
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -884,16 +884,15 @@ static void smp_call_function_many_cond(
+>   * @mask: The set of cpus to run on (only runs on online subset).
+>   * @func: The function to run. This must be fast and non-blocking.
+>   * @info: An arbitrary pointer to pass to the function.
+> - * @wait: Bitmask that controls the operation. If %SCF_WAIT is set, wait
+> - *        (atomically) until function has completed on other CPUs. If
+> - *        %SCF_RUN_LOCAL is set, the function will also be run locally
+> - *        if the local CPU is set in the @cpumask.
+> - *
+> - * If @wait is true, then returns once @func has returned.
+> + * @wait: If true, wait (atomically) until function has completed
+> + *        on other CPUs.
+>   *
+>   * You must not call this function with disabled interrupts or from a
+>   * hardware interrupt handler or from a bottom half handler. Preemption
+>   * must be disabled when calling this function.
+> + *
+> + * @func is not called on the local CPU even if @mask contains it.  Cons=
+ider
+> + * using on_each_cpu_cond_mask() instead if this is not desirable.
+>   */
+>  void smp_call_function_many(const struct cpumask *mask,
+>                             smp_call_func_t func, void *info, bool wait)
+>
+>
+>
+>
 
