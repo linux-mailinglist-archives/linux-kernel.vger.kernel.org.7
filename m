@@ -1,133 +1,151 @@
-Return-Path: <linux-kernel+bounces-818543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE705B59319
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DC3B59321
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F25437A9699
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:13:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD23A7B290A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1812F83B0;
-	Tue, 16 Sep 2025 10:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzuD4Nu/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B935C2F7AC0;
+	Tue, 16 Sep 2025 10:15:11 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DAF281356;
-	Tue, 16 Sep 2025 10:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE9C2F9985
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758017684; cv=none; b=aWAsOYKlRgEaNtI93L7XOp7JDrSXgto/vDY4NO/3l2iXbjD+1Aplqe+bKc8HGCvhiTW939qKj0txMLmDXl3bZ6dOmM88w5oU/uDQYXJ8sG+8jiy1ehvCk2D2u24oIZJX8D7egPZFPt/n0FdHjDuEPJa+kU+ArillC7LkekZTFsI=
+	t=1758017711; cv=none; b=D/2TyMg3lJNSj4Hd3XnMCoU3x86We6zmbtcqVTarXox1+JJf1YFLfnydrRBk0RAaRKCRp35IdXiBVzzOw3QZpnEgtg7eMciAe3b3TbMeUF/w6hFduicULzTGQm44Y4HTHNPuYfmdAaPn+lTY+VGxQ2Sdf9+jP1iRHeER18h6G14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758017684; c=relaxed/simple;
-	bh=arzOWVmuLmMGxUl6lo77+C7iboIEFTgklaWej9NK1PU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqZc5Lt6V8Z5LKIhN7Sl/2q0t8VvfeI5cIoO4t+PBo2NkpE7X2atO5fjkG2YxDVhzVWLp/227xTI6LMQdxFsLMRdvoELVjCapqLTEjvTIrewiYtLbqTbPW7JfephJMlpAix4xCMhka0UZ0fg3rAYOJfxuacqnACgqss1O72OXgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzuD4Nu/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7362DC4CEEB;
-	Tue, 16 Sep 2025 10:14:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758017683;
-	bh=arzOWVmuLmMGxUl6lo77+C7iboIEFTgklaWej9NK1PU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qzuD4Nu/adR5HeASBSkVzFa/K441a5afdSrjOjgbhIjYbJpTxBjoSnLF+kG7QRtKy
-	 pQd1pHGsz51bPLanIzzeH1btbEhCi/bbhs/4wyN3te+bLjKdYZKbKLBr+bhxzC6xKp
-	 O5E0MIT8Q3gMrDAgZyKzEvy8L7gQJKxpZ0VeBVr+t07gS6/0f6dakTJUS+WehO7T30
-	 mgNDfWP5MsA8cRHx1GBmVMm+NTx4G83vGR/rQBk+xS619dC4VRCP0AFkj8yOXSMER+
-	 guDUXfTuFNwrQZnQljVyZLyyAJ1+UyurnQMiWW+FRQW9KGIAZi2bLr4Zo3/0TsSWXO
-	 vwTvrVgmop+1A==
-Date: Tue, 16 Sep 2025 11:14:38 +0100
-From: Lee Jones <lee@kernel.org>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>
-Cc: Corey Minyard <minyard@acm.org>, Huacai Chen <chenhuacai@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io,
-	kexybiscuit@aosc.io, wangyao@lemote.com
-Subject: Re: (subset) [PATCH v11 0/3] LoongArch: Add Loongson-2K BMC support
-Message-ID: <20250916101438.GA3585920@google.com>
-References: <cover.1756987761.git.zhoubinbin@loongson.cn>
- <175760122164.1552180.16853979882678693472.b4-ty@kernel.org>
- <CAMpQs4JbQU3D-Bs2687BXSC=FKJBS6RMvWAKb6AJEtzit6hWqw@mail.gmail.com>
- <20250916084002.GF1637058@google.com>
- <CAMpQs4+J2zYgZaGYBSaf4UwzKZY-qMoD1oe2vmgJQXAfghqu=w@mail.gmail.com>
+	s=arc-20240116; t=1758017711; c=relaxed/simple;
+	bh=HROZpllWSaMccM/VLWuB0kpy0TJhHwHU9kTqwzxCWc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PmPScHWDYZ+L84NKQae67b74so8EoR8S4eO5+sebnRJw3JmkSkK6YIJp19b6GysNz6d+jZDMhlJ3ScLxrtms+Gx+5aJYvwRDqkg6VT0sOkRp9dFcLoP8dXVdpye3F5XocKlUN9Avz95C0K/M8pr5DEN8Fu+O28aOfyH9mevX4b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-8dee4d26944so662244241.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:15:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758017708; x=1758622508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/yxShZZXYgWMyGx047XJbFO5W2W4XcJcCx4gW4jVWvk=;
+        b=tYpNWuGdh1ZG0iA+jKmCsOtAM7tui2lT9GP/7hfh0/BBWP2ULEt5LpzGenkjN7jMus
+         W8RyZ/z8C3Jj50k9V6SYVire7OoH2rPh0FDO7SXtNdgTU93pUFXf12vH5T/LSDmzb1rr
+         QKKfDvcSBgYUx+rbI4VIl52OKKHdXXVYqAIdod8RKEYKYWakp/VgpCm2yiZfcjbvYOVA
+         DOEMFLFmZ5fzsdbGRBXu8ps3EedS7ZPuhek7NQc2J+oMatq5x60SDm+IguWQ8IAa3XRI
+         pzt/GP77sGSNJW1joBQXidSvProzypUQJgQ4He9SpbLaE2R8xrfnH1snRt8IDLvJxf2a
+         7/Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKF6b2f+6d5pONVZNxnmgznglUVpbGMYwLk+NZuhcdw0cezuL+3epkL6DzeEuO8PO4slgx1nIyuL9lKgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1gHbeLQfGvgmymCqMFLvzeqGcKKIzF/hkgaqwAocwGZCRX75C
+	Vrk7jtOmp6PtItZHynFyOSSnCa2yQGgCvgVbRSCv7jUTMRHDJgpdYniPZxOkAlrc
+X-Gm-Gg: ASbGnctyYCWJyw7bZ8rSSLFuIsZjcQKpSziZ5g3ZY0Vl97kUdN+DwzGp4G7wco/LWGC
+	7E2TqBlAUj25/mjqBn+W+ULJfh/5G/HDKuBW035GFHTPccWmGNo9L3ozjV36VSgZ3c37AysLblY
+	sYHykSzHrE/v5Y1YXAPYxW5cJYc4EwcYA2MyBTJY2za9v5lABZJtN97gEuSiaiV5aiuDt+GhDuO
+	W6Y9pUQon+u0PyGr8/U8UgYAJMe2+QBqBsCT8mHDk+4fuGVa3Jy2kouSW5DVHe6b8coWNOp91DX
+	T87h5W4hrmniFmPSertHrIpn+J8ixL1b9j9LrJnmO8rHVLBgRaq2wpzYfxXKHzz/UNQEe4Ifjue
+	7EHxfDH6d4CfibaEszG090kTq9HcAxU+F6LhXOEh4DqiiLww+EW8cBD+2nAJB
+X-Google-Smtp-Source: AGHT+IHgEmrLNUtHRv6dLoMTvVbTF8GbvmX7Tm6n8Qst/aO+Ie347hhH1ccKVrgv+ozbYW+PD2NXeA==
+X-Received: by 2002:a05:6102:510f:b0:523:759e:b0bf with SMTP id ada2fe7eead31-5560e9cd190mr6146103137.20.1758017708275;
+        Tue, 16 Sep 2025 03:15:08 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8ccd38f8c8asm2628213241.12.2025.09.16.03.15.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 03:15:07 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8e0c90cac25so233490241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:15:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDint/DTsM58EWgF+ac46W5PavInwiI/eY7h5XHueaYx1xPlNgisthMlE9/yPSDw5X2g5bDMjb+ojNwd8=@vger.kernel.org
+X-Received: by 2002:a67:ff90:0:b0:569:1c73:46c5 with SMTP id
+ ada2fe7eead31-5691c735ffbmr267311137.2.1758017707282; Tue, 16 Sep 2025
+ 03:15:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMpQs4+J2zYgZaGYBSaf4UwzKZY-qMoD1oe2vmgJQXAfghqu=w@mail.gmail.com>
+References: <20250902105710.00512c6d@booty> <aLkiNdGIXsogC6Rr@zatzit>
+ <337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org> <aL5dNtzwiinq_geg@zatzit>
+ <20250908145155.4f130aec@bootlin.com> <aL-2fmYsbexEtpNp@zatzit>
+ <20250909114126.219c57b8@bootlin.com> <aMD_qYx4ZEASD9A1@zatzit>
+ <20250911104828.48ef2c0e@bootlin.com> <aMebXe-yJy34kST8@zatzit> <20250916084631.77127e29@bootlin.com>
+In-Reply-To: <20250916084631.77127e29@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 Sep 2025 12:14:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXXi97HN-G_Ozbs7vc141GmbMTPD6Ew6U_0ERj5wh6gvg@mail.gmail.com>
+X-Gm-Features: AS18NWCbl1r2QYO00aPBgisYLqrkmJmQ3Y4JYZGczVS7GzKJm4yKut71Lemfvns
+Message-ID: <CAMuHMdXXi97HN-G_Ozbs7vc141GmbMTPD6Ew6U_0ERj5wh6gvg@mail.gmail.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion at ELCE
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: David Gibson <david@gibson.dropbear.id.au>, Ayush Singh <ayush@beagleboard.org>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 16 Sep 2025, Binbin Zhou wrote:
+Hi Herv=C3=A9,
 
-> Hi Lee:
-> 
-> Thanks for your reply.
-> 
-> On Tue, Sep 16, 2025 at 4:40 PM Lee Jones <lee@kernel.org> wrote:
+On Tue, 16 Sept 2025 at 08:46, Herve Codina <herve.codina@bootlin.com> wrot=
+e:
+> On Mon, 15 Sep 2025 14:51:41 +1000
+> David Gibson <david@gibson.dropbear.id.au> wrote:
+> > On Thu, Sep 11, 2025 at 10:48:28AM +0200, Herve Codina wrote:
+> > > From the addon board point of view, the only think we can
+> > > say is "me, as an addon board, I need a connector of type 'foo' and a
+> > > connector of type 'bar'".
 > >
-> > On Fri, 12 Sep 2025, Binbin Zhou wrote:
+> > Agreed.
 > >
-> > > Hi Lee:
+> > > Also, at base board level, statically defined in the DT
+> > > connA is described (type 'foo'), connB and connC are
+> > > described (type 'bar').
 > > >
-> > > On Thu, Sep 11, 2025 at 10:33 PM Lee Jones <lee@kernel.org> wrote:
-> > > >
-> > > > On Thu, 04 Sep 2025 20:35:04 +0800, Binbin Zhou wrote:
-> > > > > This patchset introduces the Loongson-2K BMC.
-> > > > >
-> > > > > It is a PCIe device present on servers similar to the Loongson-3 CPUs.
-> > > > > And it is a multifunctional device (MFD), such as display as a sub-function
-> > > > > of it.
-> > > > >
-> > > > > For IPMI, according to the existing design, we use software simulation to
-> > > > > implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
-> > > > >
-> > > > > [...]
-> > > >
-> > > > Applied, thanks!
-> > > >
-> > > > [1/3] mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
-> > > >       commit: 67c2639e1fc1a07b45d216af659c0dd92a370c68
-> > > > [2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function support
-> > > >       commit: 2364ccc827e44064e9763f2ae2d1dcc5f945fdf3
-> > >
-> > > Thanks for acknowledging my patchset.
-> > >
-> > > I can't confirm why you didn't apply the IPMI patch, but this appears
-> > > to break the patchset's integrity, potentially causing missing Kconfig
-> > > dependencies (IPMI_LS2K select MFD_LS2K_BMC_CORE).
+> > > The choice to map connA to the type 'foo' connector expected by the a=
+ddon
+> > > and the choice to map connB or connC to the type 'bar' connector expe=
+cted by
+> > > the addon can only be done at runtime and probably with the help of a=
+ driver
+> > > that have the knowledge of the 3 connectors.
 > >
-> > Pretty sure this doesn't break anything.
+> > Agreed.
 > >
-> > What build errors do you see as a result?
+> > > I have the feeling that the choice of physical connectors to which th=
+e addon
+> > > board is connected to is a human choice when the board is connected.
 > >
-> > > Additionally, as Corey previously explained[1], this patch can be
-> > > applied through your side.
-> > >
-> > > [1]: https://lore.kernel.org/all/aFVtNAY4u2gDiLDS@mail.minyard.net/
-> >
-> > We only apply cross-subsystem patch-sets to a single tree if there are
-> > good reasons to do so.  In this instance, I can't see any reason why the
-> > IPMI driver cannot go in via it's own repo.
-> 
-> However, there still seems to be a text dependency issue. The IPMI
-> patch modifies the MAINTAINERS, which depends on the first patch.
-> If the entire series of patches cannot be merged together, does this
-> mean the IPMI patch can only be merged after the MFD patch has been
-> merged into the mainline?
+> > Yes.  Although if the addons have an EEPROM, or some other sort of ID
+> > register, it may be possible for some connector drivers to probe this.
+>
+> Right, I think we agree that a driver is needed to help in the mapping at
+> least when multiple connectors are involved.
 
-No, not at all.  So long as all patches come together during the
-merge-window, there is no issue.
+I agree you need a driver to read an ID EEPROM.
+But why would you need a driver if no ID EEPROM is involved?
+If the connector types on base board and add-on match, it should work.
 
--- 
-Lee Jones [李琼斯]
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
