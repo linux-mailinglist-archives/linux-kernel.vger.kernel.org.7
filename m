@@ -1,220 +1,116 @@
-Return-Path: <linux-kernel+bounces-818794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603B4B5968C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:48:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E87B59669
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB621C003B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:48:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68E1C4E0EC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4536719C553;
-	Tue, 16 Sep 2025 12:48:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149BEBA3D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507C830EF8F;
+	Tue, 16 Sep 2025 12:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Abw9u3am"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A774B30E0CD;
+	Tue, 16 Sep 2025 12:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026888; cv=none; b=Pok23DOqEAGSR7iDHpUQ/UFZGJVb3ikzpuFC2F088sTYOa1mHS7Y1JfgI0uGbDopUmdIheG4ewYqNtaoXlzk7aisAETjn78YVWALHsxmPcugYAD8MsRlUboujVmqFtsJB2VqqgD/VVPeSN7qhgDa1YO7kiRLagVcA1gGq9Vn+R4=
+	t=1758026602; cv=none; b=ZDHNNoE/uaZ0/6fI2mdgq0x/zgItbi8Ukhhcgf5JmtZXDn73kB+/jmpi0dy1ZPBU3ERFfL0Asb2cvQNK/zKmXbfw9DTHiCJtKyBDC+urbWiw2mN9ECr5FXN6Aj20Emd+fKRlEN6ccROP9dnZOpTfrR+QKP7+UfmrQ1Nw54cPpRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026888; c=relaxed/simple;
-	bh=7trFf5hhjGM8vRlPjzsKSeNmc4/I1VBnBBsERnwfJG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCEbLHbOAH9yc5oeV922hmKcQrvhktHN7Bqz2IqsJyIMfVGQF5vkyJokYZCU1EIPG/9gGyEMvZ30HxyPsLbcUaJ76lH+O2KDLypDU9QHVMHhkJ1b+pJO4lsAwtnJeT9iU/ylbACXKwGlVqdRleEIUKHH2xaRioxD5Fanae/3oac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 472F62B;
-	Tue, 16 Sep 2025 05:47:58 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DCCC3F673;
-	Tue, 16 Sep 2025 05:48:03 -0700 (PDT)
-Date: Tue, 16 Sep 2025 13:47:59 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, broonie@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
-	ardb@kernel.org, scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
- operation
-Message-ID: <aMlcf5oUNZU65u_I@J2N7QTR9R3.cambridge.arm.com>
-References: <20250816151929.197589-1-yeoreum.yun@arm.com>
- <20250816151929.197589-5-yeoreum.yun@arm.com>
- <aMRQIeIdyiWVR8a0@arm.com>
- <aMfrR0vserl/hfZ3@e129823.arm.com>
- <aMhrscd1gz_syMtL@arm.com>
- <aMh4q4-xAPHnaOul@willie-the-truck>
- <aMkLb6jPiSbzeRWL@arm.com>
- <aMk1qxS3htyaTgEQ@e129823.arm.com>
+	s=arc-20240116; t=1758026602; c=relaxed/simple;
+	bh=a2g51RqxqAs5N7O2K7ul82m3FpPbeyFhxNQODFhCkEw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTxu5DaV7+e3UdvSckQGYVVfWvMx9t4j5pBi8nyTIHss7j1VNEAGCohyDNeE39EKwdeHlgWWtbKEsYf7kkvu2CtJ2I9HMOTvh4uq99bChhcO7Lhew5LpbgeI5ygL8CcmD8kz7NJ+mRV7Bz/fQ6KhR0hdZnrd7T3Xy41eptkJZ04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Abw9u3am; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758026601; x=1789562601;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=a2g51RqxqAs5N7O2K7ul82m3FpPbeyFhxNQODFhCkEw=;
+  b=Abw9u3amOoP1rRnXW2mDYN8yTL3hS9EUiQF1pz3BVG9ZCFDlkzsW7+at
+   lLGfecfvuSW0/mWBwKkfr7DO654Ff98UMEwLa1pjyCoJTXsvq0dEFtvhN
+   hx5nEckXwR593QeUfe48hMBbas0xjazsfJ85gRR139PKszTIOTPtV53y8
+   L20xmMFyBoEc/SuFvSZ0poso0WaHlzLWs1aN0jMh4qZPKTukSKs4k+kyC
+   hBs4ERt1iXjd3jBybSLkGNgfCE8UmRX9zZkAQPvlUK46m6fxfPjKef+s4
+   7RA7VRvzk+xcvz+/FQf3CITNtqjlkCc5FvF9ShpYPbjgEjpNG5ANbuq6L
+   A==;
+X-CSE-ConnectionGUID: VqMHmfrrQiyRrvAxPTC2rg==
+X-CSE-MsgGUID: xPZbkxOoTmCd30pYq4nblw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="85741996"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="85741996"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:43:20 -0700
+X-CSE-ConnectionGUID: 2B9ToNttQi+1/GknYfeQCw==
+X-CSE-MsgGUID: Q8CfMI/yTCSorqhABQ27cg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="174043160"
+Received: from gklab-kleszczy-dev.igk.intel.com ([10.102.25.215])
+  by orviesa006.jf.intel.com with ESMTP; 16 Sep 2025 05:43:17 -0700
+From: Konrad Leszczynski <konrad.leszczynski@intel.com>
+To: davem@davemloft.net,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cezary.rojewski@intel.com,
+	sebastian.basierski@intel.com,
+	Konrad Leszczynski <konrad.leszczynski@intel.com>
+Subject: [PATCH net-next v3 0/3] net: stmmac: new features
+Date: Tue, 16 Sep 2025 14:48:05 +0200
+Message-Id: <20250916124808.218514-1-konrad.leszczynski@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMk1qxS3htyaTgEQ@e129823.arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 11:02:19AM +0100, Yeoreum Yun wrote:
-> Hi,
-> > On Mon, Sep 15, 2025 at 09:35:55PM +0100, Will Deacon wrote:
-> > > On Mon, Sep 15, 2025 at 08:40:33PM +0100, Catalin Marinas wrote:
-> > > > On Mon, Sep 15, 2025 at 11:32:39AM +0100, Yeoreum Yun wrote:
-> > > > > So I think it would be better to keep the current LLSC implementation
-> > > > > in LSUI.
-> > > >
-> > > > I think the code would look simpler with LL/SC but you can give it a try
-> > > > and post the code sample here (not in a new series).
-> > >
-> > > If you stick the cas*t instruction in its own helper say, cmpxchg_user(),
-> > > then you can do all the shifting/masking in C and I don't reckon it's
-> > > that bad. It means we (a) get rid of exclusives, which is the whole
-> > > point of this and (b) don't have to mess around with PAN.
-> >
-> > We get rid of PAN toggling already since FEAT_LSUI introduces
-> > LDTXR/STTXR. But, I'm all for CAS if it doesn't look too bad. Easier
-> > I think if we do a get_user() of a u64 and combine it with the futex u32
-> > while taking care of CPU endianness. All in a loop. Hopefully the
-> > compiler is smart enough to reduce masking/or'ing to fewer instructions.
-> >
-> 
-> Sorry for my wrong previous email.
-> 
-> Here is what i intened with CAS operation:
-> 
-> diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
-> index 1d6d9f856ac5..0aeda7ced2c0 100644
-> --- a/arch/arm64/include/asm/futex.h
-> +++ b/arch/arm64/include/asm/futex.h
-> @@ -126,6 +126,60 @@ LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
->  LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
->  LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
-> 
-> +
-> +#define LSUI_CMPXCHG_HELPER(suffix, start_bit)                                 \
-> +static __always_inline int                                                     \
-> +__lsui_cmpxchg_helper_##suffix(u64 __user *uaddr, u32 oldval, u32 newval)      \
-> +{                                                                              \
-> +       int ret = 0;                                                            \
-> +       u64 oval, nval, tmp;                                                    \
-> +                                                                               \
-> +       asm volatile("//__lsui_cmpxchg_helper_" #suffix "\n"                    \
-> +       __LSUI_PREAMBLE                                                         \
-> +"      prfm    pstl1strm, %2\n"                                                \
-> +"1:    ldtr    %x1, %2\n"                                                      \
-> +"      mov     %x3, %x1\n"                                                     \
-> +"      bfi     %x1, %x5, #" #start_bit ", #32\n"                               \
-> +"      bfi     %x3, %x6, #" #start_bit ", #32\n"                               \
-> +"      mov     %x4, %x1\n"                                                     \
-> +"2:    caslt   %x1, %x3, %2\n"                                                 \
-> +"      sub     %x1, %x1, %x4\n"                                                \
-> +"      cbz     %x1, 3f\n"                                                      \
-> +"      mov     %w0, %w7\n"                                                     \
-> +"3:\n"                                                                         \
-> +"      dmb     ish\n"                                                          \
-> +"4:\n"                                                                         \
-> +       _ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)                                   \
-> +       _ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)                                   \
-> +       : "+r" (ret), "=&r" (oval), "+Q" (*uaddr), "=&r" (nval), "=&r" (tmp)    \
-> +       : "r" (oldval), "r" (newval), "Ir" (-EAGAIN)                            \
-> +       : "memory");                                                            \
-> +                                                                               \
-> +       return ret;                                                             \
-> +}
-> +
-> +LSUI_CMPXCHG_HELPER(lo, 0)
-> +LSUI_CMPXCHG_HELPER(hi, 32)
-> +
-> +static __always_inline int
-> +__lsui_cmpxchg_helper(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-> +{
-> +       int ret;
-> +       unsigned long uaddr_al;
-> +
-> +       uaddr_al = ALIGN_DOWN((unsigned long)uaddr, sizeof(u64));
-> +
-> +       if (uaddr_al != (unsigned long)uaddr)
-> +               ret = __lsui_cmpxchg_helper_hi((u64 __user *)uaddr_al, oldval, newval);
-> +       else
-> +               ret = __lsui_cmpxchg_helper_lo((u64 __user *)uaddr_al, oldval, newval);
-> +
-> +       if (!ret)
-> +               *oval = oldval;
-> +
-> +       return ret;
-> +}
+This series adds three new patches which introduce features such as VLAN
+protocol detection, TC flower filter support and enhanced descriptor
+printing.
 
-I think Will expects that you do more of this in C, e.g. have a basic
-user cmpxchg on a 64-bit type, e.g.
+Patchset has been created as a result of discussion at [1].
 
-/*
- * NOTE: *oldp is NOT updated if a fault is taken.
- */
-static __always_inline int
-user_cmpxchg64_release(u64 __usr *addr, u64 *oldp, u64 new)
-{
-	int err = 0;
+v2 can be found at [2].
 
-	asm volatile(
-	__LSUI_PREAMBLE
-	"1:	caslt	%x[old], %x[new], %[addr]\n"
-	"2:\n"
-	_ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0) 
-	: [addr] "+Q" (addr),
-	  [old] "+r" (*oldp)
-	: [new] "r" (new)
-	: "memory"
-	);
+[1] https://lore.kernel.org/netdev/20250826113247.3481273-1-konrad.leszczynski@intel.com/
+[2] https://lore.kernel.org/netdev/20250828144558.304304-1-konrad.leszczynski@intel.com/
 
-	return err;
-}
+v2 -> v3:
+- removed ARP offload patches
+- add patch for enhanced descriptor printing
 
-That should be the *only* assembly you need to implement.
+v1 -> v2:
+- add missing SoB lines
+- place ifa_list under RCU protection
 
-Atop that, have a wrapper that uses get_user() and that helper above to
-implement the 32-bit user cmpxchg, with all the bit manipulation in C:
+Karol Jurczenia (1):
+  net: stmmac: add TC flower filter support for IP EtherType
 
-/*
- * NOTE: *oldp is NOT updated if a fault is taken.
- */
-static int user_cmpxchg32_release(u32 __user *addr, u32 *oldp, u32 new)
-{
-	u64 __user *addr64 = PTR_ALIGN_DOWN(addr, sizeof(u64));
-	u64 old64, new64;
-	int ret;
+Piotr Warpechowski (2):
+  net: stmmac: enhance VLAN protocol detection for GRO
+  net: stmmac: correct Tx descriptors debugfs prints
 
-	if (get_user(old64, uaddr64))
-		return -EFAULT;
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  1 +
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 40 +++++++++++++------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 19 ++++++++-
+ 3 files changed, 47 insertions(+), 13 deletions(-)
 
-	/*
-	 * TODO: merge '*oldp' into 'old64', and 'new' into 'new64',
-	 * taking into account endianness and alignment
-	 */
+-- 
+2.34.1
 
-	ret = user_cmpxchg64_release(uaddr64, &old64, new64);
-	if (ret)
-		return ret;
-
-	/*
-	 * TODO: extract '*oldp' from 'old64', taking into account
-	 * endianness and alignment.
-	 */
-
-	return 0;
-}
-
-Then use that 32-bit user cmpxchg for any cases which need it.
-
-As the compiler will have visiblity of all of the bit manipulation, it
-will hopefully be able to fold that together appropriately.
-
-Mark.
 
