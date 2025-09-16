@@ -1,137 +1,165 @@
-Return-Path: <linux-kernel+bounces-819523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEA8B5A209
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E60CB5A1E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A345A1C04D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:11:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5FF1BC792E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6432F7459;
-	Tue, 16 Sep 2025 20:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BfoKt/L/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A266B284B29;
+	Tue, 16 Sep 2025 20:09:35 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9463A284B29;
-	Tue, 16 Sep 2025 20:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4062C11F4
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758053408; cv=none; b=VOKoZ0OwYtQszS78NEoaWCoTGClBJX47QCb6T7i/1g75IHscB8dL6+gYvA77DFDtRJAHOU0VGTi5+VgS8K8sVXmSnQDVDCUoiTRehhfPxA5MsE283vKHcVqCNPrRP/3Cghyrd3X+N1PiY9TrFMPAQ7Uvpx/3yXPDB7rzaqbPEQU=
+	t=1758053375; cv=none; b=boFfNkHrH1LuWXdHsMb1jeS8OnJZnjz5asrNFbcOQ7TL4sfRvUoN/zumGHAedOcsASZzUPCaJcl2g7HtDC/2T8jntbZpBLX56FirCmKDaB8f33BHPwOQcMftBUSBViKVGf7Am7yVV/QbvIVB8CcAuTZQsJ7p12d3jQOtIofN+oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758053408; c=relaxed/simple;
-	bh=sG1UguvSYSALefbAtByxqgdIGq4a3+WwUJhHmXPgZfI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kP3cYPBSNOZ3VK9T5J2yGfHE2XE+xxudUZiDyOLcvMEwjEFPqVMCW7C0SNrjJIVI+cgmE5lu6QuHlE7jDAD7nL9Y5mOVkDeF/6CJ9SfB6406UtUmwyylLlUqHAqqmX6+fdgDYw1IreqnRJz6ISeMo6YWbuF5DIhNja1s7u/ki7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BfoKt/L/; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758053406; x=1789589406;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=sG1UguvSYSALefbAtByxqgdIGq4a3+WwUJhHmXPgZfI=;
-  b=BfoKt/L/J11MEDsQMKH2E2whppU0pmglb6YZ50qiSuPnCXVsgNocVhtF
-   HXY+m7Lgb+Y4WFFg3oGtS5eeflzCSsnUhK8V8V/YzoQK7/VcS4Q+qJyG4
-   zCDIyMR2djqsizmakBReqTIbNMeqoupDHPlrXrCkDNio6QJR5+qT5+ycB
-   j5H8xeOmpMRzRBoIGnL47tbAUmTkdmP8Syj1u6e05DSJJpTJCUpVgl5UF
-   HgZR6NScyQfdGd+udh+EP34h7FIJU6wb6WjqrRZXRB95nvx71Vamuleua
-   DnGyITKPHbp7a+ubPaD4QxogPof9g1zTva91cfvNNYGGEubfd4IaTdx12
-   g==;
-X-CSE-ConnectionGUID: Kjxxa4kZSsqL54rd8dDQnA==
-X-CSE-MsgGUID: Aq2bgQy2Rx6sVtvZWShVzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="85788647"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="85788647"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 13:10:05 -0700
-X-CSE-ConnectionGUID: vn90qRE9QhSC/MRX6GTXUA==
-X-CSE-MsgGUID: S98OtFRQQvm6Vf0Ma9eNNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="174606731"
-Received: from orcnseosdtjek.jf.intel.com (HELO [10.166.28.70]) ([10.166.28.70])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 13:10:06 -0700
-From: Jacob Keller <jacob.e.keller@intel.com>
-Date: Tue, 16 Sep 2025 13:09:20 -0700
-Subject: [PATCH iwl-net] libie: fix string names for AQ error codes
+	s=arc-20240116; t=1758053375; c=relaxed/simple;
+	bh=qzzecwpESccFuFNo7R6BWAlARHDuDtXA1zzB8Fv/bWw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E4NydxPQ0FzEwu6xqy4ctZIetp70tg/nhpjtNlMROKwFM8qxgnYO6GzLLj8DLM3+b4JulDcBXFjvLR6Oiw6s1fe44n2QZRa0UA6II3QmiJ/VTtK+KvczWZqWven8f6tyaXQDzQkpSVn4jj8GvUYRh1PpOzbgEF4jy7y6LceBlOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4020e59b735so160211095ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:09:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758053372; x=1758658172;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uigoYBYRLLUFTGVUhaRkWpUMCR0hrpQWRdx1/7NNXXg=;
+        b=hdvtYz2qaDwi7MaRyFOjgpeKtf0DBIoktjip7AT89qzwylgwdSsi0j/AqFtO2It/h8
+         VCJ919cI1zS0oZ+IRdifyezbQjddpuLmcgb9MsbiuJ+MIzu76lMhtOmtaErIgCbKSgmW
+         N3YwF/oj9MHnK3dEa/3SMRYBAsFOrnldZCT5COg/zrwIj5eLlb7l1Rf3mWboQdDjI+Ra
+         yPgqLfMKYNcZGEf5HuOzJZdpEF0f0XwvACYhiK0heHNaEX0s2larXbRqFI1hY01f6Ia0
+         Hygc5LJ5r8M1SueAPLo+rxbrAeYfLl60S4IIs+eo7QZYwtE+hGuLOcVJKLcxi2o7AGcb
+         IkRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCSgOkX6EJGlKk1Pi60ylVvMC+/FAEgfL6HNGNbyn0PnpFHm1x9XO1v3ZAL4JfSEVGXo+EFiM4pj0fYHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYlzx94sC4QX/1E3QDcUBIIWZYuNlI81g5lAEexV6IucsMqpVS
+	vjAkSGS/6EpA9i0maVKSq8NmMCnMbaGCDcKP8Lsnq/uUuo87xPO0jOZaPRnAJwmUzebMuUn6e73
+	jFJYvb9t8GSgmjxxb9ByfDaSm/5+UyVbkZcYYP/7A9tlhYAQoRUcAY6F5Qmg=
+X-Google-Smtp-Source: AGHT+IEEVmKLfNRiKV3Z/I2lgiOGH+2DKtHA2AqpYMGHFguDp9CqVFvehaAi1vAC1d6hRchv7aFkun5KhrURZf8EnDgtoGFFkDtj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-jk-fix-missing-underscore-v1-1-a64be25ec2ac@intel.com>
-X-B4-Tracking: v=1; b=H4sIAPDDyWgC/x2MzQ6CQAwGX4X0bBNYFMVXMR7M8i3Un0JaFRLCu
- 7vxOMnMrOQwgdO5WMnwFZdRM1S7guJw0x4sXWYKZTiUbdXw/cFJFn6Ju2jPH+1gHkcDI6QUj6j
- bfX2i3E+GbP7fF5L5yYo3XbftB79OuVt0AAAA
-X-Change-ID: 20250916-jk-fix-missing-underscore-e2ffc7e39438
-To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
- Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>
-X-Mailer: b4 0.15-dev-cbe0e
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1709;
- i=jacob.e.keller@intel.com; h=from:subject:message-id;
- bh=sG1UguvSYSALefbAtByxqgdIGq4a3+WwUJhHmXPgZfI=;
- b=owGbwMvMwCWWNS3WLp9f4wXjabUkhoyTRyQ/61pyhXNnxYsLe2xZ8/H+b/28r5bhKVP7CnsO2
- DmGqW3pKGVhEONikBVTZFFwCFl53XhCmNYbZzmYOaxMIEMYuDgFYCJyBgz/lHOuvAhMzrx5TLPe
- ULB0u8MWyWYNbkNPwRenhLd2a0jFMfzTfHx1y5XfhbuWBHc3qUZZvzv59cymewtSLubqqC9yNWl
- mAgA=
-X-Developer-Key: i=jacob.e.keller@intel.com; a=openpgp;
- fpr=204054A9D73390562AEC431E6A965D3E6F0F28E8
+X-Received: by 2002:a05:6e02:1567:b0:424:388:6ced with SMTP id
+ e9e14a558f8ab-42403886eadmr116067025ab.14.1758053372134; Tue, 16 Sep 2025
+ 13:09:32 -0700 (PDT)
+Date: Tue, 16 Sep 2025 13:09:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c9c3fc.050a0220.3c6139.0e66.GAE@google.com>
+Subject: [syzbot] [ext4?] WARNING in ext4_xattr_block_set (3)
+From: syzbot <syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-The LIBIE_AQ_STR macro() introduced by commit 5feaa7a07b85 ("libie: add
-adminq helper for converting err to str") is used in order to generate
-strings for printing human readable error codes. Its definition is missing
-the separating underscore ('_') character which makes the resulting strings
-difficult to read. Additionally, the string won't match the source code,
-preventing search tools from working properly.
+Hello,
 
-Add the missing underscore character, fixing the error string names.
+syzbot found the following issue on:
 
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Fixes: 5feaa7a07b85 ("libie: add adminq helper for converting err to str")
+HEAD commit:    46a51f4f5eda Merge tag 'for-v6.17-rc' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1709747c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c9d23743a2409b80293
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1089747c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100fcf62580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/230712d5bcfe/disk-46a51f4f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c02b11d16746/vmlinux-46a51f4f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c1526fd71bea/bzImage-46a51f4f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/c8e39bedb73d/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=17b2fb12580000)
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4c9d23743a2409b80293@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 512
+EXT4-fs (loop0): orphan cleanup on readonly fs
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6102 at fs/ext4/xattr.c:1906 ext4_xattr_block_set+0x25b5/0x2ac0 fs/ext4/xattr.c:1906
+Modules linked in:
+CPU: 1 UID: 0 PID: 6102 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:ext4_xattr_block_set+0x25b5/0x2ac0 fs/ext4/xattr.c:1906
+Code: 00 00 00 e8 dd 71 a2 ff f0 80 63 28 fd eb 28 e8 71 34 43 ff 31 db 48 c7 44 24 20 00 00 00 00 e9 88 f1 ff ff e8 5c 34 43 ff 90 <0f> 0b 90 e9 0e dc ff ff e8 4e 34 43 ff 48 8b 5c 24 10 4c 8b 74 24
+RSP: 0018:ffffc90003e77220 EFLAGS: 00010293
+RAX: ffffffff827b39b4 RBX: ffffc90003e77548 RCX: ffff88802e9a8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003e77408 R08: 0000000000000000 R09: 0000000000000000
+R10: ffff88805487c400 R11: ffff88805487c000 R12: 0000000000000000
+R13: 1ffff920007ceeaa R14: 1ffff920007ceea9 R15: ffffc90003e77550
+FS:  000055556e470500(0000) GS:ffff8881269bc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005624941c2138 CR3: 000000004081c000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ext4_xattr_move_to_block fs/ext4/xattr.c:2659 [inline]
+ ext4_xattr_make_inode_space fs/ext4/xattr.c:2734 [inline]
+ ext4_expand_extra_isize_ea+0x12d5/0x1ea0 fs/ext4/xattr.c:2822
+ __ext4_expand_extra_isize+0x30d/0x400 fs/ext4/inode.c:6385
+ ext4_try_to_expand_extra_isize fs/ext4/inode.c:6428 [inline]
+ __ext4_mark_inode_dirty+0x46c/0x700 fs/ext4/inode.c:6506
+ ext4_evict_inode+0x80d/0xee0 fs/ext4/inode.c:254
+ evict+0x504/0x9c0 fs/inode.c:810
+ ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:474
+ __ext4_fill_super fs/ext4/super.c:5609 [inline]
+ ext4_fill_super+0x57fa/0x60b0 fs/ext4/super.c:5728
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
+ do_mount fs/namespace.c:4136 [inline]
+ __do_sys_mount fs/namespace.c:4347 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4324
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f976e92034a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc3b5e27e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc3b5e2870 RCX: 00007f976e92034a
+RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007ffc3b5e2830
+RBP: 0000200000000180 R08: 00007ffc3b5e2870 R09: 000000000080078b
+R10: 000000000080078b R11: 0000000000000246 R12: 00002000000001c0
+R13: 00007ffc3b5e2830 R14: 0000000000000473 R15: 0000200000000680
+ </TASK>
+
+
 ---
-I found this recently while reviewing the libie code. I believe this
-warrants a net fix because it is both simple, and because users may attempt
-to pass printed error codes into search tools like grep, and will be unable
-to locate the error values without manually adding the missing '_'.
----
- drivers/net/ethernet/intel/libie/adminq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/ethernet/intel/libie/adminq.c b/drivers/net/ethernet/intel/libie/adminq.c
-index 55356548e3f0..7b4ff479e7e5 100644
---- a/drivers/net/ethernet/intel/libie/adminq.c
-+++ b/drivers/net/ethernet/intel/libie/adminq.c
-@@ -6,7 +6,7 @@
- 
- static const char * const libie_aq_str_arr[] = {
- #define LIBIE_AQ_STR(x)					\
--	[LIBIE_AQ_RC_##x]	= "LIBIE_AQ_RC" #x
-+	[LIBIE_AQ_RC_##x]	= "LIBIE_AQ_RC_" #x
- 	LIBIE_AQ_STR(OK),
- 	LIBIE_AQ_STR(EPERM),
- 	LIBIE_AQ_STR(ENOENT),
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: 93ab4881a4e2b9657bdce4b8940073bfb4ed5eab
-change-id: 20250916-jk-fix-missing-underscore-e2ffc7e39438
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
---  
-Jacob Keller <jacob.e.keller@intel.com>
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
