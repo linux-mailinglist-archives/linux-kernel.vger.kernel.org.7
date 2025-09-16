@@ -1,44 +1,80 @@
-Return-Path: <linux-kernel+bounces-818326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9452B58FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:03:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6DAB58FF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE503AC765
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7A803A474C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBE1283121;
-	Tue, 16 Sep 2025 08:02:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4912853F7;
+	Tue, 16 Sep 2025 08:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mst3Nk8q"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39A035950;
-	Tue, 16 Sep 2025 08:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B457D28504C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758009746; cv=none; b=upO7xZ0O2eiXEbKBmwvrvvuNqMqx8bauZTirKBr/CmyZf4vcjuT5fRR6it9WmE1fiJ+DLyQVDYj6CP358pzFIkT/tWsQbPVaWoQblVA3mmErfRa7ojXijaD2NmQefSb3JUOhLYgNJGmjBeDAfJTpxhEDlHbTnz9KXDE64dQHGY4=
+	t=1758009861; cv=none; b=qMmYP9zvlZ8CUmmlvAjNvSBPxbI8TLsJh7IKzph2qAq7i5hysj/UF3tA7DN0puH9U5CXCxcdl6z4gjVGHrrgzeVxGXBnp3ZKGtfckAmKaooq96hKxaLRgUxaD36uEZO83rE/SOzqeOVOPviwXhmjb1kv7Fk1qj0bwGoUecKS2Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758009746; c=relaxed/simple;
-	bh=NDowxoHyjvn7mhhgjiaojNZOrdeAy6ObkXIbQtgn9G0=;
+	s=arc-20240116; t=1758009861; c=relaxed/simple;
+	bh=MNvlhLg8T5jVTXPi8BC/ZgKt7EeQ5fPjlU+o+01GoDM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n+XbZbk+Lff5MUDJUkxj1cjWGqdba1fkub1aV14SlCGVmiq7PU91ohmBp0W7Ot7rLNeSkEYsxOthJffdPAQXspmo9agnkwpOv+awE0/7tiNVSjgzpTMxxnxLxCqZvbTC9zRU14RVWg03bx3QQe0X6C32eYm2zTew6+rXaAuNuSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cQvWf6cb9zYQtG4;
-	Tue, 16 Sep 2025 16:02:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 841871A1ABE;
-	Tue, 16 Sep 2025 16:02:21 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgBHko6NGcloY_K7Cg--.29687S2;
-	Tue, 16 Sep 2025 16:02:21 +0800 (CST)
-Message-ID: <a7296ecc-7d29-41aa-abc1-eec0900ce351@huaweicloud.com>
-Date: Tue, 16 Sep 2025 16:02:20 +0800
+	 In-Reply-To:Content-Type; b=Fe0fIvQzz1HB4qtPEiNYV2MwixsXxRQDiJB0lXqgVJEpydVEk54W1u4xRXHbIjXl4mwS5njq1cKSN1+0IhoSFeQFaaxcmp2sAFyT3ZH5lQv9co4wXPZApg6nCQJn6eQWro0O06gdprXQRbBLD+eV8WLUm7lOIzAdkAbu8bjSa4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mst3Nk8q; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f6017004dso5157934e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758009858; x=1758614658; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4P7S8hmaYihFI7uhYTzYx531ZGw0hfreIoPsZI54Jik=;
+        b=Mst3Nk8qVk6BIgxv9hLCjRiOb2bmMOtJ7Eig+RU1Zaf52nJP8N/8511kIruOVzARSM
+         OgHAJ4GcCQP3uWshzLg8a7CRXTJSBdvMY4lbVtrvJlCvgamjsmz2cCxY37TO/pI27c13
+         J8yDapUFRDGZmivqiX7Lf7iN2gsid89YY/LyE242AcaJMay+f0tfXFzxW3xALORHXeqx
+         akiFlc6hsKXzrX04tg9lW4FJ1KrC3tszNAT8O7b0S+LFNMQilsPiC4FrNh7+E1zSURww
+         xoxV1dKLKlUlsu+tEX2LOQhKAuzYEiq+1zG0zR+MViucV0xB0/M6+Kg6riwmRTm9eHBb
+         oFQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758009858; x=1758614658;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4P7S8hmaYihFI7uhYTzYx531ZGw0hfreIoPsZI54Jik=;
+        b=VLMN6CjgAOiNka/jjylb453pKHWJjKmY9RZPU2O6I7wBi+My8rmHMO3SXC0hnL1FqL
+         E8HzhDMBITPY+Juou4bb7N5HgZ/hgFL6Wa5gQnGNHxd2kPN9BoKbV1oodHO1M4CmEah0
+         2fDRseRXWq+E5Ye1NNLhUQdZMMtA6P9xDnJeZ6ZwarJ7HKqZZqq/RES0LVNQcL50uPHQ
+         TuBf4OEnifLDFWyRaPN4INuRkVOjjBILwHKt8/FhvLWlG3z+obIf2Lov4hoPBNjFf5dX
+         J2uMsJqKKzpjH5MKqGgQKG42JTL6mynu5FO9KRvLZ+WA/EO88RdMMfpfhbKp9og62zWW
+         u6/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW/8PRrYkuUCOhKXef1bjcuPaGm2kYUBj3ExqDIWM4tFGmQ2oIKzmOfB5tqmD1LpVlRSJMRZccr9nyZNkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCnEHw5EH5AMD9pjSvNt86oCRzgxuO3OuvCasmRB/pbgDFUOMO
+	m2rY1U60UkfDVi2nIZMp3/OJOrRKNNeELg4H48sHInyj4gDPQDHCWwK/
+X-Gm-Gg: ASbGncsILldayzs5cm0Y5cBGU8qsRss/T1iwSOmhwBOYlIsYNMi17mHu2/IJycnXR1j
+	gs1f8Pfxzk+dMG+DBJfRcFNaiWuNmlWEPTwOdZaDxPhnoOxvJd6DWIMHVgRB8cvSaMnCs2Aemyz
+	8gfdviltfDptUMhwD2hwvlHazSa2JuQS+LsYCiZUe1SleVY75CeLhP4pSqsotMkPz2BsIDnT44/
+	1vM0GGU2L/2QcphzKIvpic4obzJyz/zvi4Gj8AFm+vPzvoakBvs0Bo0l+dQ9iGUotKhwN//AFZw
+	1H4MdDR2ZUdJHrAVcga2x8BMMkkhBh0bDK5/nqJhBhJfMXGA6yxC/p4ov9ab+tlqDSaTBBkpsTf
+	NUlVSgTHZ2Drkj1PKynF6rQD+tES90RM0iT/rnlvh7Q0fuQy9YuKk/DbGq8qW+i19NAq0vj0grg
+	i5vG+g
+X-Google-Smtp-Source: AGHT+IFIOSeqw4PYtMvjdrOVsg9klefu6E0u1vhsc82aTrTg6jl010DCPH8XGwIGvu11SJLHEXDYIg==
+X-Received: by 2002:ac2:4e99:0:b0:56e:53bc:7465 with SMTP id 2adb3069b0e04-5704e723ebbmr3896222e87.43.1758009857617;
+        Tue, 16 Sep 2025 01:04:17 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a6d1c5absm3115808e87.40.2025.09.16.01.04.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 01:04:17 -0700 (PDT)
+Message-ID: <b35bd683-27b9-4a82-8a57-ed5bb1758ece@gmail.com>
+Date: Tue, 16 Sep 2025 11:04:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,109 +82,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next RFC -v2 11/11] cpuset: use partition_cpus_change for
- setting exclusive cpus
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
- <20250909033233.2731579-12-chenridong@huaweicloud.com>
- <7937af93-9652-4032-93c9-7d7d8571c52b@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <7937af93-9652-4032-93c9-7d7d8571c52b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com>
+ <20250915-bd79112-v5-2-a74e011a0560@gmail.com>
+ <aMge0jYwYCiY72Yb@smile.fi.intel.com>
+ <0b97adc3-4d77-480f-ace9-a53403c62216@gmail.com>
+ <CAHp75Vcwy47iqNYd4Q4A_X+BSLrFrHyqA2E2kcwbshm1badFqQ@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAHp75Vcwy47iqNYd4Q4A_X+BSLrFrHyqA2E2kcwbshm1badFqQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHko6NGcloY_K7Cg--.29687S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr45tr4UXw48uFyrtF15CFg_yoW5KF48pF
-	18JrW7JrWUJw18Gw1UXr1DXryUJwsrJ3WDJr1DJF1rJF17AF12qr1UXw1vgr4UJw4xJr18
-	JF1UJrnrZFy5ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1aZX5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-
-
-On 2025/9/16 4:05, Waiman Long wrote:
-> On 9/8/25 11:32 PM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
+On 16/09/2025 10:39, Andy Shevchenko wrote:
+> On Tue, Sep 16, 2025 at 7:48 AM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+>> On 15/09/2025 17:12, Andy Shevchenko wrote:
+>>> On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:
+> ...
+> 
+>>>> +    devm_spi_optimize_message(dev, spi, &data->read_msg);
+>>>
+>>> And if it fails?..
 >>
->> Previous patches have refactored partition_cpus_change. Now replace the
->> exclusive cpus setting logic with this helper function.
-> Nit: The term "refactor" usually mean updating the code of an existing function, sometimes
-> extracting out code into new helper functions. In your case, partition_cpus_change() is a new helper
-> function. This is also an issue in some of the earlier patches. I would prefer using phrase like "A
-> previous patch has introduced a new helper function partition_cpus_change()"
+>> I am not really sure under what conditions this would fail. Without
+>> taking a further look at that - then we just use unoptimized SPI
+>> transfers(?). Could warrant a warning print though.
+> 
+> What is the point of having devm_ variant for it if it never fails, please?
 
-Thank you, will update.
+I didn't say it never fails. I said that I don't know what can cause the 
+failure. Because I don't know this, I can't say if it is reasonable to 
+assume the SPI (or the system in general) are in unusable state making 
+the failure a show-stopper for this driver.
 
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 29 ++---------------------------
->>   1 file changed, 2 insertions(+), 27 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 785a2740b0ea..6a44dfabe9dd 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -2562,8 +2562,6 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset *trialcs,
->>   {
->>       int retval;
->>       struct tmpmasks tmp;
->> -    struct cpuset *parent = parent_cs(cs);
->> -    bool invalidate = false;
->>       bool force = false;
->>       int old_prs = cs->partition_root_state;
->>   @@ -2595,32 +2593,9 @@ static int update_exclusive_cpumask(struct cpuset *cs, struct cpuset
->> *trialcs,
->>       if (alloc_tmpmasks(&tmp))
->>           return -ENOMEM;
->>   -    if (old_prs) {
->> -        if (cpumask_empty(trialcs->effective_xcpus)) {
->> -            invalidate = true;
->> -            cs->prs_err = PERR_INVCPUS;
->> -        } else if (prstate_housekeeping_conflict(old_prs, trialcs->effective_xcpus)) {
->> -            invalidate = true;
->> -            cs->prs_err = PERR_HKEEPING;
->> -        } else if (tasks_nocpu_error(parent, cs, trialcs->effective_xcpus)) {
->> -            invalidate = true;
->> -            cs->prs_err = PERR_NOCPUS;
->> -        }
->> +    trialcs->prs_err = PERR_NONE;
->> +    partition_cpus_change(cs, trialcs, &tmp);
->>   -        if (is_remote_partition(cs)) {
->> -            if (invalidate)
->> -                remote_partition_disable(cs, &tmp);
->> -            else
->> -                remote_cpus_update(cs, trialcs->exclusive_cpus,
->> -                           trialcs->effective_xcpus, &tmp);
->> -        } else if (invalidate) {
->> -            update_parent_effective_cpumask(cs, partcmd_invalidate,
->> -                            NULL, &tmp);
->> -        } else {
->> -            update_parent_effective_cpumask(cs, partcmd_update,
->> -                        trialcs->effective_xcpus, &tmp);
->> -        }
->> -    }
->>       spin_lock_irq(&callback_lock);
->>       cpumask_copy(cs->exclusive_cpus, trialcs->exclusive_cpus);
->>       cpumask_copy(cs->effective_xcpus, trialcs->effective_xcpus);
-> Reviewed-by: Waiman Long <longman@redhat.com>
+If the failure is indicating "only" a failure of "optimization" this 
+call does, then the driver should still be able to do it's job even if 
+the SPI performance was reduced. Hence aborting the probe might not be 
+necessary but the driver could proceed - although emitting a warning 
+should make sense.
 
--- 
-Best regards,
-Ridong
+Well, I presume failing of the devm_spi_optimize_message() is not likely 
+to happen if system is working correctly. Thus I'm not against 
+Jonathan's edit which aborts the probe.
 
+Yours,
+	-- Matti
 
