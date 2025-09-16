@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-818825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A614B596D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:03:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CA3B596D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3511C01399
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:01:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FB07AEBB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EF730CDA3;
-	Tue, 16 Sep 2025 13:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040852D7DF7;
+	Tue, 16 Sep 2025 13:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKfGMmid"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qYNe58LI"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7162D7803
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D051581EE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027685; cv=none; b=Q6DzM6VUujEzyyKk3Ehhd9CVR1QMURm0wePbBJ6i/F9Ro140vgLi5wse+elTIErzRPcUy4G2loXVvVjBRqiJ/fGTGswxNkTBUeDA3+E56E9oj0GgJcl64c+OC1x4fzD9IAZWbevkXlNnuoTmD+qxv4NZtDRJ3H8Nx2UTjsaXRUI=
+	t=1758027722; cv=none; b=rKxNikkAKrHaELPhHmAJDTuuIQFOHJ1QSlEJOjDgoXGFlMRUVZOCDpXJA5lR4KnyGAR7Zu1Nkpj41xxt1rEQf3HRQuo1ZESZqkc1BAR90qUbrLlxKLyhSL+bsYZM8Y5IwwlbHyvsXZ0UZkZw8mLelV3y9p/CYjCKtQznIPJIEts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027685; c=relaxed/simple;
-	bh=ijEVJ3RCDJHNXQSSFS2h6wbG7e51k5u2dlJCJBgiy94=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TvFJwZfGDTVHoSMQKInuhaRImQE/PkecBiYgk8ZAfJZCj0SWuEiE+91QQ5KiOaUo6QN0i/ltaQwXK4FOdHsLKO8voOuKErVGohUswnBqXsPbUUNquy5Joai+asc100FmKpD72Sm+l9HnwVqJsNI0+m/rdhgpvXkvU0dGM2W7B8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKfGMmid; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-32e1c68d806so2088992a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758027683; x=1758632483; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RP5wUBXQx/eVCQg8WvT3qU6fnoKH5dLQkp1auUt9HmA=;
-        b=DKfGMmidbaHtpq0zdXluCaHXxr4QGJeK4IoHqc6wd7tbN+ZWPLq85OsqoGbSnb3z3J
-         Ba3rJTeWADUCvHJF0tUJMPkw/DkrEIMXIGga1sdReu9BnBzAuX4VLuMiuWi1q2AFXeYR
-         jQ201KK3mjKve1b20TR6etrMbw4A0T3TnKJTywQrAIO0POSfGyAVgwSHG3xmPBpSr1ii
-         o3fU/tnvvn16rNG958QbQBw+N+ACbjXf6DFoMFxMuKmJjE9VzvjzHvMTjFL74vlm/eYe
-         KZxtrOQL5ZUYjK4gHRjJPyV+dmjlTNtFm8H4px08VtXldiyhAxseCq259f36d5EPqOjl
-         bM5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758027684; x=1758632484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RP5wUBXQx/eVCQg8WvT3qU6fnoKH5dLQkp1auUt9HmA=;
-        b=o5ijloRMbDQIxJn6wLHEqh6HO2j2QqRlVDQY7haTOJS0haFnc7S/cBZAK/NmCl5LAU
-         GIQFukVWh4wVxTlEc0stGkkCpLUFBfctl/+wjdjxcw1fy2ru9Gcz8mQW+HQY22Jy3J+X
-         M9Kh3ePCOaM8DF/Gn9JrZh8xmuQ9EZwIOPU7PsHWIluN5NBB6RDJtAMkJPDNe9VfMSiP
-         LkUHrUMjJFOQh+bbcAHEdPyr7sWfmgCe5foOjMk5ypafBy1aQLoms0N52N5NgACqptaa
-         di3XyFC4yxqMGHSBzUgxdAH8QA4xC0UX1LsXmL2UcDTj8ITKJxOQ+zxPsXE6qHkLBXeX
-         33xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQoWiGoI4SOoX2xt9aOwbDyprvKNNwCBwJGW2Tltw9kYq4Qhhp61SKqVOn51KHGOVre86TXVkLfmuM5s0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEqL+/4t7iMPcIKC0lL/ra4nQCQG6Nkzf9VlIt3n7XiF6D/t+C
-	0Zo+rSxvFpkuA1H/xDtG/UlpIpi99dcdYVs579Pfr9sVMmGb8vyRjzk=
-X-Gm-Gg: ASbGncvBsRwFrWOurZcsBivedvK1ifg2r6nH6J9HgKMdn2eHe2EWjmxap2QgGwtQc1X
-	U45H9ovICAmxkjax1mHKmU8oOwQibi7S3JMvQovmXwmq0U32+5GJVGIf1SrxVyjE/YR6XT+CWtj
-	/TY4ZpC7XzA+4CoFo1tYEcV5sveVh8BFgjYAaI5a1O1IozcQxX40zzTgcLh26kKLzmk9g3OwDmq
-	s2CdtV7NBkF8ii3h3hHxHznzvhNSyRdod8eIis548uFjB94TfWjcxvg2dAxlcnG7QeSFEPLGz4j
-	qJPFi3ZD782sI/MfA4YjN/0z6wSdPrzdGeu7JpJxzcWGVLnJbtdn1OtzCcBWGGxuiSHIfTF8G9p
-	Q6p5fDpNPfjOoWUoFAjwNXCcEe3XGkXjHYaO81JSQ9za8RW88ueH8vTs4L+Ww3oQcAs4dwkLQAQ
-	TVYhWwDjOoc5iuNWTGp8Tp+GwWbqxqZvU=
-X-Google-Smtp-Source: AGHT+IEC7TPSUCMJ+hGpDzxTsleVcYPGSvPYPtbVhAREzZU+U2F/nc42NnIvVKgmDSI3sK1x+yqX7g==
-X-Received: by 2002:a17:90a:d40c:b0:32b:cb15:5fdc with SMTP id 98e67ed59e1d1-32de4fba102mr18651053a91.30.1758027683204;
-        Tue, 16 Sep 2025 06:01:23 -0700 (PDT)
-Received: from codespaces-8c10cd.ktkhmpmw22vebpok31ngjx2qsb.ix.internal.cloudapp.net ([23.97.62.114])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32e1e5ad768sm9345943a91.0.2025.09.16.06.01.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 06:01:22 -0700 (PDT)
-From: JaimeF <jaimefine6@gmail.com>
-To: gregkh@linuxfoundation.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com
-Cc: david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	leon@kernel.org,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jaime Fan <jaimefine6@gmail.com>,
-	onur-ozkan <work@onurozkan.dev>
-Subject: [PATCH v2] rust: auxiliary: fix "initialialized" typo
-Date: Tue, 16 Sep 2025 13:01:03 +0000
-Message-ID: <20250916130103.22946-1-jaimefine6@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1758027722; c=relaxed/simple;
+	bh=cWjHIZx4N3gxIdbHVSGE4LMNnD9sgtogPlptxrE1hlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ngYk72R0MB5Nk8co7yoOBHcPPNY39iMAl0C2Oz6VTbHDx4TPdNs0yEi4JZ2mGHUQ59xq6hU7BiUeGQf7TJ03Q9JTri6T4RWgX3Wrq5ZFxj5hrL0ECZkrOrm6yQ8iDWWaai1X1uWPIwHBAmmqppu4Ewlf82EJZTTQL7P6emtke2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qYNe58LI; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 73F971A0D84;
+	Tue, 16 Sep 2025 13:01:56 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 43A5E6061E;
+	Tue, 16 Sep 2025 13:01:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5F99A102F16E7;
+	Tue, 16 Sep 2025 15:01:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758027714; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=k9M61n3kgzP2GV1QhxaccbFiJSqMOAJaomD40tqnjhY=;
+	b=qYNe58LIJbjugz0DRC9rB3+gaAO55rAlDyzyo/ScR5dC3Ce0Edm5vWdbLQckVZCwNgGUOO
+	ABqJao4X4oksQm/R27ggwiEEKngnyu424VWl88MTDHH8FDqb7k+b4rE92M/QPed8J2Vcko
+	lk5jW0Xh+KBESeIX6GfRzS8sibHlWrn3v44NMaAQigEUoXM3l1tjABqTFGATYSMuj6KgtR
+	rZM1pixQWIpEnRAZLkXPs0dAV0GTOHTn5Skt62umrXOmnEFUi1Ym7aKwjkC9Dr+XIgweom
+	EnY1LEmAZvuoySyzidhW1pEtoKkdbAR2B+H2JKd0u34EiQh7oNER0ehfF/HpvA==
+Date: Tue, 16 Sep 2025 15:01:50 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jorge Marques <gastmaier@gmail.com>
+Cc: Jorge Marques <jorge.marques@analog.com>, Frank Li <Frank.Li@nxp.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: master: adi: fix header location
+Message-ID: <20250916130150ed797d53@mail.local>
+References: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
+ <jmfzuymhxvxnjwk73nmsfaaadnmy5uy4uanh4jegwgdvgfr22e@2iqtifbsgxmu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jmfzuymhxvxnjwk73nmsfaaadnmy5uy4uanh4jegwgdvgfr22e@2iqtifbsgxmu>
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Jaime Fan <jaimefine6@gmail.com>
+On 16/09/2025 12:45:57+0200, Jorge Marques wrote:
+> On Tue, Sep 16, 2025 at 11:12:51AM +0200, alexandre.belloni@bootlin.com wrote:
+> > From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > 
+> > The adi-axi-common header has been moved to the upper directory.
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> 
+> Acked-by: Jorge Marques <jorge.marques@analog.com>
+> 
+>   Commit: 2ad26b7bedcd4941e6dafa1851e2054b369b9d25
+>   Link: https://lore.kernel.org/r/20250519-dev-axi-clkgen-limits-v6-3-bc4b3b61d1d4@analog.com
+> 
 
-Fixes a spelling mistake in a comment: "initialialized" → "initialized".
-This improves clarity in the documentation and avoids confusion for readers.
+Yeah, I'm a bit wary of adding the commit id here as there is no
+guarantee the branch is not going to be rebased before the pull request
+is sent to Linus.
 
-Suggested-by: onur-ozkan <work@onurozkan.dev>
-Link: https://github.com/Rust-for-Linux/linux/issues/1187
-Signed-off-by: Jaime Fan <jaimefine6@gmail.com>
----
-v2:
-  - Fixed Signed-off-by name to match From: line
-  - Added explanatory changelog paragraph before tags
-  
- rust/kernel/auxiliary.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > ---
+> >  drivers/i3c/master/adi-i3c-master.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi-i3c-master.c
+> > index 162f9eed39aa..18597ba1f1c3 100644
+> > --- a/drivers/i3c/master/adi-i3c-master.c
+> > +++ b/drivers/i3c/master/adi-i3c-master.c
+> > @@ -10,7 +10,7 @@
+> >  #include <linux/clk.h>
+> >  #include <linux/err.h>
+> >  #include <linux/errno.h>
+> > -#include <linux/fpga/adi-axi-common.h>
+> > +#include <linux/adi-axi-common.h>
+> >  #include <linux/i3c/master.h>
+> >  #include <linux/interrupt.h>
+> >  #include <linux/io.h>
+> > -- 
+> > 2.51.0
+> > 
 
-diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-index 58be09871397..129eae8ff2e7 100644
---- a/rust/kernel/auxiliary.rs
-+++ b/rust/kernel/auxiliary.rs
-@@ -317,12 +317,12 @@ pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: &CStr) -> Res
- 
-         // SAFETY:
-         // - `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`, which has
--        //   been initialialized,
-+        //   been initialized,
-         // - `modname.as_char_ptr()` is a NULL terminated string.
-         let ret = unsafe { bindings::__auxiliary_device_add(adev, modname.as_char_ptr()) };
-         if ret != 0 {
-             // SAFETY: `adev` is guaranteed to be a valid pointer to a `struct auxiliary_device`,
--            // which has been initialialized.
-+            // which has been initialized.
-             unsafe { bindings::auxiliary_device_uninit(adev) };
- 
-             return Err(Error::from_errno(ret));
 -- 
-2.50.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
