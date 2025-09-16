@@ -1,117 +1,275 @@
-Return-Path: <linux-kernel+bounces-819455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBE6B5A0EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:04:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE58B5A0E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 285865219DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9713E1C04E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2662D73B9;
-	Tue, 16 Sep 2025 19:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DBC2DAFDD;
+	Tue, 16 Sep 2025 19:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aQEk3/vf"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEsjOtGg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23D92D0C97
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED92B276022;
+	Tue, 16 Sep 2025 19:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758049465; cv=none; b=kNU9EcZmDIYM3vpt5gAuRJUnKD4nyYwlzV0i4xezDFFW0xmHdP9flZDg/KS+/wJ63WDAg+z4K4tX3dY7jBj1HxdMQnsnFYnBfDfVSoBqq0j/e1njHdeIs3Ope4aAIGjGVn5UAkFKoApDloKbByahP0fb8YwrH2XE4vrwHi9dCAc=
+	t=1758049454; cv=none; b=nsMVAwBAmq2HyhBbTmGP5fQWC7KB/6/j8YgOrEt870iOdLN8E8nXH+TsgqcIJxIDYBqWF/B8CJaMYHujblxIaOoFlqZ0slqOQ2ueS5VQfcltQ6gbSQDMyRw9sIgTfC8iWQdaeOBErV9RucUCgJe5VobQUcAlEgKHDsr/ZYUKVVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758049465; c=relaxed/simple;
-	bh=eVMZ8aJw3wzjCNrVys1HEp1kSdur0B6Zj2ywjbkTItM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XCxwNEh3XW3odp4VuxuAFuK7oSrlWO8fAvJIxxS5keAPG/Y0WmNKltHUbeSdZiXcXNHvxGdGMl0pOvPEvsuEokPrH00PRzw440DTF/jz9IrwxC99jeW0eK7ANSjzmuXqoAc1P+xbKGcVFAi84ukW+1FkqV3n74LVyfXhg9WmWA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aQEk3/vf; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d605d4af-69dc-491d-85a3-b1681b89abd7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758049451;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HXOAPEjzekOAjE4mciNBEhLhGsM198o+7B85xHhnuzA=;
-	b=aQEk3/vfn2molZrZKNuI31cy6yCYMkCI7CiNCMpqf1iPYO5lrulrKVailmopFUznZ86QU7
-	tsSsgwMKsfaAuhZf5ARVKNEwUicYVqghTmaaeLua0aGGC7zp4jipiFyRfROryJqLfIEkKh
-	XLiC2oDRJgC3dygNGBLNW4+Vblncp8k=
-Date: Tue, 16 Sep 2025 20:04:04 +0100
+	s=arc-20240116; t=1758049454; c=relaxed/simple;
+	bh=oOCz4ZC/B3OEba2UZc9WhRkO6LSkANYZ35eQnGNQPRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJ9C6upwsni/ZfE6FT6Wm+foJLAxAK9+93dBZJ6zhXJx9Vn5auS97q8DWOfe6258NR9UkS4N1OTttxOD5EPGkO1iu9UaDoqh3/X/I++4wBm5gCC3Ryza2f9LKOZOO0ONPeBPncxDEB7/eVlgTWQQX5W52lAMipjIkvAJHJrmMT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEsjOtGg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02CFC4CEEB;
+	Tue, 16 Sep 2025 19:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758049453;
+	bh=oOCz4ZC/B3OEba2UZc9WhRkO6LSkANYZ35eQnGNQPRg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vEsjOtGg7HrAlew/LSmyJwGxMAOUtPHnwkwT4+Ahfr+XhqRGg3VXcrC/u0wfcCRnx
+	 9Dq1JGWmBX5+doX0GLaRisNWXCss/hpmYQ9wYBa1qifiP9T7PVIOCDVCUT8Y0vwHAv
+	 V7pc+btB81P5BsfVAHRNsamAkINUm5vPTUpLMi/f3YmpquqlO1KFrXF0fyWXA9Td+V
+	 O1chmanXcIK274Izz7tBDZbeBsG5qGWe8tJQarCHxu5CvzviHwWVtgdqjNhHduQF3m
+	 vn1bZcteVYkGwyNCDKm0YkYy+bWghYAMrKoG7XPu3YWD01eZ++cjCfuroV7pWg2+xN
+	 8tk1RewYDrOuA==
+Date: Tue, 16 Sep 2025 16:04:09 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] perf test: Don't leak workload gopipe in
+ PERF_RECORD_*
+Message-ID: <aMm0qUcdeDJmwuyI@x1>
+References: <20250821221834.1312002-1-irogers@google.com>
+ <20250821221834.1312002-3-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next] libie: fix linking with libie_{adminq,fwlog}
- when CONFIG_LIBIE=n
-To: Alexander Lobakin <aleksander.lobakin@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>,
- kernel test robot <lkp@intel.com>, Naresh Kamboju
- <naresh.kamboju@linaro.org>, nxne.cnse.osdt.itp.upstreaming@intel.com,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250916160118.2209412-1-aleksander.lobakin@intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250916160118.2209412-1-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250821221834.1312002-3-irogers@google.com>
 
-On 16/09/2025 17:01, Alexander Lobakin wrote:
-> Initially, libie contained only 1 module and I assumed that new modules
-> in its folder would depend on it.
-> However, Michał did a good job and libie_{adminq,fwlog} are completely
-> independent, but libie/ is still traversed by Kbuild only under
-> CONFIG_LIBIE != n.
-> This results in undefined references with certain kernel configs.
+On Thu, Aug 21, 2025 at 03:18:32PM -0700, Ian Rogers wrote:
+> The test starts a workload and then opens events. If the events fail
+> to open, for example because of perf_event_paranoid, the gopipe of the
+> workload is leaked and the file descriptor leak check fails when the
+> test exits. To avoid this cancel the workload when opening the events
+> fails.
 > 
-> Tell Kbuild to always descend to libie/ to be able to build each module
-> regardless of whether the basic one is enabled.
-> If none of CONFIG_LIBIE* is set, Kbuild will just create an empty
-> built-in.a there with no side effects.
+> Before:
+> ```
+> $ perf test -vv 7
+>   7: PERF_RECORD_* events & perf_sample fields:
+> --- start ---
+
+⬢ [acme@toolbx perf-tools-next]$ patch -p1 < b
+patching file tools/perf/tests/perf-record.c
+Hunk #1 succeeded at 130 (offset 15 lines).
+Hunk #2 succeeded at 142 with fuzz 1 (offset 15 lines).
+Hunk #3 succeeded at 154 (offset 15 lines).
+Hunk #4 succeeded at 167 (offset 15 lines).
+⬢ [acme@toolbx perf-tools-next]$ 
+⬢ [acme@toolbx perf-tools-next]$ git log --oneline -5 tools/perf/tests/perf-record.c
+576bd7a8c90c48e9 (x1/perf-tools-next, x1/HEAD, five/perf-tools-next, five/HEAD) perf tests record: Update testcase to fix usage of affinity for machines with #CPUs > 1K
+b4c658d4d63d6149 perf target: Remove uid from target
+dc6d2bc2d893a878 perf sample: Make user_regs and intr_regs optional
+fd8d5a3b076c033f perf tests: Add missing event.h include
+9823147da6c893d9 perf tools: Move 'struct perf_sample' to a separate header file to disentangle headers
+⬢ [acme@toolbx perf-tools-next]$
+
+Can you please check that it is still ok?
+
+I processed the first in the series and now I'm going thru the other
+two.
+
+- Arnaldo
+
+> test child forked, pid 1189568
+> Using CPUID GenuineIntel-6-B7-1
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   config                           0xa00000000 (cpu_atom/PERF_COUNT_HW_CPU_CYCLES/)
+>   disabled                         1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8
+> sys_perf_event_open failed, error -13
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   config                           0xa00000000 (cpu_atom/PERF_COUNT_HW_CPU_CYCLES/)
+>   disabled                         1
+>   exclude_kernel                   1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8 = 3
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   config                           0x400000000 (cpu_core/PERF_COUNT_HW_CPU_CYCLES/)
+>   disabled                         1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8
+> sys_perf_event_open failed, error -13
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   config                           0x400000000 (cpu_core/PERF_COUNT_HW_CPU_CYCLES/)
+>   disabled                         1
+>   exclude_kernel                   1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8 = 3
+> Attempt to add: software/cpu-clock/
+> ..after resolving event: software/config=0/
+> cpu-clock -> software/cpu-clock/
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             1 (PERF_TYPE_SOFTWARE)
+>   size                             136
+>   config                           0x9 (PERF_COUNT_SW_DUMMY)
+>   sample_type                      IP|TID|TIME|CPU
+>   read_format                      ID|LOST
+>   disabled                         1
+>   inherit                          1
+>   mmap                             1
+>   comm                             1
+>   enable_on_exec                   1
+>   task                             1
+>   sample_id_all                    1
+>   mmap2                            1
+>   comm_exec                        1
+>   ksymbol                          1
+>   bpf_event                        1
+>   { wakeup_events, wakeup_watermark } 1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid 1189569  cpu 0  group_fd -1  flags 0x8
+> sys_perf_event_open failed, error -13
+> perf_evlist__open: Permission denied
+> ---- end(-2) ----
+> Leak of file descriptor 6 that opened: 'pipe:[14200347]'
 > 
-> Fixes: 641585bc978e ("ixgbe: fwlog support for e610")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/all/202509140606.j8z3rE73-lkp@intel.com
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Closes: https://lore.kernel.org/all/CA+G9fYvH8d6pJRbHpOCMZFjgDCff3zcL_AsXL-nf5eB2smS8SA@mail.gmail.com
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---- unexpected signal (6) ----
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+> Failed to read build ID for //anon
+>     #0 0x565358f6666e in child_test_sig_handler builtin-test.c:311
+>     #1 0x7f29ce849df0 in __restore_rt libc_sigaction.c:0
+>     #2 0x7f29ce89e95c in __pthread_kill_implementation pthread_kill.c:44
+>     #3 0x7f29ce849cc2 in raise raise.c:27
+>     #4 0x7f29ce8324ac in abort abort.c:81
+>     #5 0x565358f662d4 in check_leaks builtin-test.c:226
+>     #6 0x565358f6682e in run_test_child builtin-test.c:344
+>     #7 0x565358ef7121 in start_command run-command.c:128
+>     #8 0x565358f67273 in start_test builtin-test.c:545
+>     #9 0x565358f6771d in __cmd_test builtin-test.c:647
+>     #10 0x565358f682bd in cmd_test builtin-test.c:849
+>     #11 0x565358ee5ded in run_builtin perf.c:349
+>     #12 0x565358ee6085 in handle_internal_command perf.c:401
+>     #13 0x565358ee61de in run_argv perf.c:448
+>     #14 0x565358ee6527 in main perf.c:555
+>     #15 0x7f29ce833ca8 in __libc_start_call_main libc_start_call_main.h:74
+>     #16 0x7f29ce833d65 in __libc_start_main@@GLIBC_2.34 libc-start.c:128
+>     #17 0x565358e391c1 in _start perf[851c1]
+>   7: PERF_RECORD_* events & perf_sample fields                       : FAILED!
+> ```
+> 
+> After:
+> ```
+> $ perf test 7
+>   7: PERF_RECORD_* events & perf_sample fields                       : Skip (permissions)
+> ```
+> 
+> Fixes: 16d00fee7038 ("perf tests: Move test__PERF_RECORD into separate object")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
-> Sending directly to net-next to quickly unbreak net-next and
-> linux-next builds.
-> Also to net-next as the blamed commit landed recently and is
-> not present in any other tree.
-> ---
->   drivers/net/ethernet/intel/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  tools/perf/tests/perf-record.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/drivers/net/ethernet/intel/Makefile b/drivers/net/ethernet/intel/Makefile
-> index 04c844ef4964..9a37dc76aef0 100644
-> --- a/drivers/net/ethernet/intel/Makefile
-> +++ b/drivers/net/ethernet/intel/Makefile
-> @@ -4,7 +4,7 @@
->   #
->   
->   obj-$(CONFIG_LIBETH) += libeth/
-> -obj-$(CONFIG_LIBIE) += libie/
-> +obj-y += libie/
->   
->   obj-$(CONFIG_E100) += e100.o
->   obj-$(CONFIG_E1000) += e1000/
-
-
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
+> index 0b3c37e66871..8c79b5166a05 100644
+> --- a/tools/perf/tests/perf-record.c
+> +++ b/tools/perf/tests/perf-record.c
+> @@ -115,6 +115,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
+>  	if (err < 0) {
+>  		pr_debug("sched__get_first_possible_cpu: %s\n",
+>  			 str_error_r(errno, sbuf, sizeof(sbuf)));
+> +		evlist__cancel_workload(evlist);
+>  		goto out_delete_evlist;
+>  	}
+>  
+> @@ -126,6 +127,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
+>  	if (sched_setaffinity(evlist->workload.pid, cpu_mask_size, &cpu_mask) < 0) {
+>  		pr_debug("sched_setaffinity: %s\n",
+>  			 str_error_r(errno, sbuf, sizeof(sbuf)));
+> +		evlist__cancel_workload(evlist);
+>  		goto out_delete_evlist;
+>  	}
+>  
+> @@ -137,6 +139,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
+>  	if (err < 0) {
+>  		pr_debug("perf_evlist__open: %s\n",
+>  			 str_error_r(errno, sbuf, sizeof(sbuf)));
+> +		evlist__cancel_workload(evlist);
+>  		goto out_delete_evlist;
+>  	}
+>  
+> @@ -149,6 +152,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
+>  	if (err < 0) {
+>  		pr_debug("evlist__mmap: %s\n",
+>  			 str_error_r(errno, sbuf, sizeof(sbuf)));
+> +		evlist__cancel_workload(evlist);
+>  		goto out_delete_evlist;
+>  	}
+>  
+> -- 
+> 2.51.0.rc2.233.g662b1ed5c5-goog
 
