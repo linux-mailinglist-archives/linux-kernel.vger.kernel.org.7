@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-819204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79D3B59CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:04:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC3FB59CDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17213161F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14F99173E00
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4563127713;
-	Tue, 16 Sep 2025 16:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D973304BAE;
+	Tue, 16 Sep 2025 16:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/uQ8Rc2"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AX4Hp+c7"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1154424DD00
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2963B2C11CE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038494; cv=none; b=Y9IHOLD4fi8EMB5GwDBnrM4ucWNimEkWVjE60CJJEVwwMtwKdkM7GMiAXxzoBtC7GxNSZyP9lgRfP1mqHclqOrqEAYMNl+7YdVrbRf3Ot2uJcEXz8UuCOnVDfH9R0wUfH2E5d6X8w7ZZ88IfkItLZ3oXAGULcY9HlKMfsiBV1dA=
+	t=1758038499; cv=none; b=qGlvixmSSHbpUnkXcKonpogF306mNd+r/QWvKxvcoyprzg0zvT4/G4GBppe39DdgsDkL/u/xuBHPbVyE+gwLTOWrkgx6JTwMRishvWQrvQjEClkZpiBcjd+esmZmCh4JwErdD5PZ5y+nU8MUogVXcuvKPcJ42ciklXps3thq05s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038494; c=relaxed/simple;
-	bh=Khh5987+1u6MVC/NKJ8ASpt3UuFIKNSR0pBiIhzVLUQ=;
+	s=arc-20240116; t=1758038499; c=relaxed/simple;
+	bh=iOB1NvD3fZfO+f3XO4KmMG2pU/dIrJPJARyo3yMa57U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PFDKsSdyDUwabKZJcUPAEkN7RCGy08v3FpH/0UBIYeZuqqoNBzQ1FpLs8AazVzeDA98U5QBeN/Qy5dG8cLDsH5gkYrvh7H3bM5+t3i7icfeIhnoq+Bc+cMwM7W8LGBUVPINGjufx/p/5wn7LRH8gnxDaY9CrFc9J7yw0igu8v0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/uQ8Rc2; arc=none smtp.client-ip=74.125.224.43
+	 MIME-Version; b=WgYe7DMUeeKGxG635DMB2p+b369+7Z3MLnDUmVmOB2sYaNIP5y1mP+HFLMgwtCNL6ywTyvyFO1TY9MY7nik8vGmjeOhpHE+eOweSlyp2Ork/bf6pkcbexOPrpJOo5zvjVlsK9LoMpC3k+jz+G5HopVbz6ni0LlV28EB4svqveL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AX4Hp+c7; arc=none smtp.client-ip=209.85.222.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6294ff16bacso1656406d50.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:31 -0700 (PDT)
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-82884bb66d6so1395085a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758038491; x=1758643291; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758038497; x=1758643297; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=xvXia67Cq9g+cEA2tdQsRO5nx9SORMf8wIBhDb/3W4o=;
-        b=c/uQ8Rc2gmptwcLCkmmxAB5JgpM+s/6WnQ/XtpBQCWoniynK22xzsx5IvR3bLu3gZK
-         v5ZhUIGLRH4wfFd8LPu0vjn2jFXnYzOLZtt6Wfr29dUgM8tUBT6OzovasKIZipziRaIz
-         /V9f8X+Y/49unfmKeqKJiSHCC2CtMRcinnJvU6o1TPHyzYfhl9KjLXGxUSWDjY7CQsvu
-         mMwQa0/s0uqq6LZ+tfZvN5Dj0jzHX8VxRv/IZJOuRTcjXMrIgWhTpp4z56D6zkYhux0z
-         mZTkTSAo+/dBs3Xph16f0rL52H95lgV4hK9Pl6+liAWDVunpNivHUpQCV9BxRYb9mIlQ
-         jsqw==
+        bh=QHfOln/VR8uFzgqsT6uF/KmaET9pjaPTDRMh4vKV700=;
+        b=AX4Hp+c7q4+WhBptyRPOA7mMOxCztPfkSo4wJGDTcCFbBWG1zTzzrz9W8Bi0280dpm
+         O98HhTKx2glF/3XSSkrmunyOWJddqo0aSf2ZpwA/VW5QiXabUwyjTn2YmO6SDb7HhJW7
+         5i4l0t/CV1mH5AymE89NZ3FqL1KSuLczAZ9csDdfRCsQGp3J7gkrankF1I+1Gw1TMiMo
+         CE2oKpscvBzgUkoklCuKx+8Rgt9KebF7nx7aM/CtOjFXCYFRWediIioO7lwTQvAIGE9g
+         d1MPBCG+D2YZfSvwfCQVxKZfDvNquVHZTioxK66ahNt3XK1h73kVyxnHoSn9DNAvYM9S
+         Imow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758038491; x=1758643291;
+        d=1e100.net; s=20230601; t=1758038497; x=1758643297;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xvXia67Cq9g+cEA2tdQsRO5nx9SORMf8wIBhDb/3W4o=;
-        b=kgevRlDNqg46A3naAaIAr8xg6RdP1H5FzhHsgfjbFCwk6Q2DIYoQVY5NuQtqbGO9AZ
-         PxMIF5ZERMwBfQp1Gvu7WhJF5+vxgRJJOCy113njfQGxUEUM+hDMtANM/ThMlfBaiKDj
-         mHtRjyzs8rDLDP6pgU3Lk7dFEBCJdJm9h2QWkzwDmFAV8jrsShE9ni+XG+MMQQZ6ehqw
-         GICH2yGnAtwZ7qsztKQluOpUj2oRBEY6JL1VDAHCSjhKZM5tIDrIMykq/GHJFORHvgvP
-         W7Qw4OG/NJgh5Px31SHhDvWrNNGx1VcsFNYG0cyTe8NMEnucPUvvUtKPGwdToCMev7so
-         UIsw==
-X-Forwarded-Encrypted: i=1; AJvYcCViCGLYWHOs5yCC4DmpvFYSb9AgeTpfaqEMCgtZ0hQQNvMTxhRwVOE4yHqcL6hhqIUGab0SLCGZvXMlSls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWs9qtDtYzBaTDhPiaErHhMQPlAMrRjVH1U9zwTL4QjtG7Dxkz
-	gyuLzgdazchOvvcP+ypRquaTWNazBl1B1XaZJ8gF99RDtZkg1mpc5iyh
-X-Gm-Gg: ASbGncvaxE8aW3LZjjgbfN+6F9wQx1uaTXNqdbEtqzCODPCf11CZwOieDriL9pi6rcf
-	7R3XkDf8PEUgwmpTHicAvkvYFW74GPZypOI4T7iz9StNGaVD/j7FXker2ueFfsy37uwR3IvNJXz
-	CJ60AxwF+qPEcb8VcZgCE0e9NAxW4pr/EPfVh/ExqYz33dKD1dpAh6TxOeMRsIyGzh04pgnA/bu
-	Whti2PAwYQALX5KKFLFLQDjnkdPmZsd7ZDqcal7++EnOdUJyRT4IDUIGIBZt+kITy/1oycuCbp4
-	i/zzsIyrEGWZ5gIgetp9Wl443i9INfvBJJ2b8hI9A1UNAASTGtZSqVfv/bLVs90FlYsH0iFbi1E
-	kMuXZ+XAqmVFUD/geRVb/85oNWfT8uJuNUrEbLbfR8RkowRE=
-X-Google-Smtp-Source: AGHT+IEH+JurO6Pqf+3vm5jI9TQTunBdyoFl7E4dFaoXc2kYbDIILkBmSJJMNdbYEyyRHGeHv0wzRQ==
-X-Received: by 2002:a53:864f:0:b0:600:d00d:f4eb with SMTP id 956f58d0204a3-6271c5cfcc6mr11388302d50.12.1758038490342;
-        Tue, 16 Sep 2025 09:01:30 -0700 (PDT)
+        bh=QHfOln/VR8uFzgqsT6uF/KmaET9pjaPTDRMh4vKV700=;
+        b=twUZmE3E7iSXY5UGgMe30AvrdB58uYuRq352QQDC9vroLvde+pooSEzzbHGgQQqaMn
+         G3dx0LaqdOd38nQ0/57+A+iIjCFu0xQ5bjJXUSmNannuQrXGhGbZg5vbpXH9M/WszS57
+         vs8/QTdMgoVqEBUASGtkhfdGdapJmTkgkcStpje2SYTRLr/PGXt8cztbg0WU2U3F3yQc
+         Q1TxBeZ3Ofk5GgaJVauyjNGB96FO9WTHTyJVs+OUKB5SFN005usIp/SvlhCAzOrN0am2
+         TGJ33DfGN0JGglxqNJBFaNMHZfbRS3XTikS8IRc0D9fagSQGyjlDhVgD5qa/kg/ovuIY
+         9Ixg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGMjMCgbom97sD5Ks4X94/3nrUQgB0xDAONU8wKmvL/98XFGfr0G7mxuvf1j3SI1VQIMmI6zAsOeSUj7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiyxswoHXaqZKFtXm9JfEm8aYH0s+W9xdzbjGtXBq2ir6xIbpc
+	vwwn15tH8ScZUmAt+C/AO7HNSRwh0ojY2OmXdy20SB7QlXc21PqwPACL
+X-Gm-Gg: ASbGncvMZgMrI4fBns7wVZxN7DUzLKKfBjI2NWdtuHKL9Tr1Auub+OptUNEjADExcUu
+	TlYvvDD3sjVnv9qrIuN1LE0Ta1MOYgHv0SclgbcpUDhjhSS9HSR7CSjpyd771wni3uXpi5meZ/C
+	HFpoRP92QBBu3Z/HM3y8ZPoSZjnVziBKhAPGwwUqbrL55U2KdHNoDHML1jxDeg+6Xrcn9jeDVLE
+	GUaGssfnXhAT7Sf/vtvSPm/ktnL6JORXOQ8Uo0l4jsHci6HrQmOttS/KNNX+uVp7Xp3qs2lz8q9
+	L/KqSSpQICWtm5ycXEqozH52jC8GlwEMJAKuSsD72Gd+eUSOXLhG0uPCA6s9x6MfJFubVo4YIhA
+	fLUshKuKRNxrHwlCt87nuy6cHMQRiBq2mO3Qxo6LuPI7xJPI=
+X-Google-Smtp-Source: AGHT+IGAZRkBIeKRz5NtoJB/djuVWVXhL/G4pUd3uLXDSdbMDwhCdTxwRhwBYAhwJr9GLp1bon/fKg==
+X-Received: by 2002:a05:620a:2a08:b0:81d:9079:3d22 with SMTP id af79cd13be357-82b9c180de5mr320092785a.8.1758038496724;
+        Tue, 16 Sep 2025 09:01:36 -0700 (PDT)
 Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cd703f54sm969765485a.37.2025.09.16.09.01.24
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cd703f54sm969765485a.37.2025.09.16.09.01.30
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 16 Sep 2025 09:01:29 -0700 (PDT)
+        Tue, 16 Sep 2025 09:01:36 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Kairui Song <ryncsn@gmail.com>,
@@ -92,9 +92,9 @@ Cc: Kairui Song <ryncsn@gmail.com>,
 	Zi Yan <ziy@nvidia.com>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v4 03/15] mm, swap: fix swap cache index error when retrying reclaim
-Date: Wed, 17 Sep 2025 00:00:48 +0800
-Message-ID: <20250916160100.31545-4-ryncsn@gmail.com>
+Subject: [PATCH v4 04/15] mm, swap: check page poison flag after locking it
+Date: Wed, 17 Sep 2025 00:00:49 +0800
+Message-ID: <20250916160100.31545-5-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250916160100.31545-1-ryncsn@gmail.com>
 References: <20250916160100.31545-1-ryncsn@gmail.com>
@@ -109,55 +109,86 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-The allocator will reclaim cached slots while scanning. Currently, it
-will try again if reclaim found a folio that is already removed from
-the swap cache due to a race. But the following lookup will be using the
-wrong index. It won't cause any OOB issue since the swap cache index is
-truncated upon lookup, but it may lead to reclaiming of an irrelevant
-folio.
+Instead of checking the poison flag only in the fast swap cache lookup
+path, always check the poison flags after locking a swap cache folio.
 
-This should not cause a measurable issue, but we should fix it.
+There are two reasons to do so.
 
-Fixes: fae8595505313 ("mm, swap: avoid reclaiming irrelevant swap cache")
+The folio is unstable and could be removed from the swap cache anytime,
+so it's totally possible that the folio is no longer the backing folio
+of a swap entry, and could be an irrelevant poisoned folio. We might
+mistakenly kill a faulting process.
+
+And it's totally possible or even common for the slow swap in path
+(swapin_readahead) to bring in a cached folio. The cache folio could be
+poisoned, too. Only checking the poison flag in the fast path will miss
+such folios.
+
+The race window is tiny, so it's very unlikely to happen, though.
+While at it, also add a unlikely prefix.
+
 Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-Acked-by: Nhat Pham <nphamcs@gmail.com>
 Acked-by: Chris Li <chrisl@kernel.org>
 Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 ---
- mm/swapfile.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ mm/memory.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 4b8ab2cb49ca..4baebd8b48f4 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -212,7 +212,7 @@ static bool swap_is_last_map(struct swap_info_struct *si,
- static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 				 unsigned long offset, unsigned long flags)
- {
--	swp_entry_t entry = swp_entry(si->type, offset);
-+	const swp_entry_t entry = swp_entry(si->type, offset);
- 	struct swap_cluster_info *ci;
- 	struct folio *folio;
- 	int ret, nr_pages;
-@@ -240,13 +240,13 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 	 * Offset could point to the middle of a large folio, or folio
- 	 * may no longer point to the expected offset before it's locked.
- 	 */
--	entry = folio->swap;
--	if (offset < swp_offset(entry) || offset >= swp_offset(entry) + nr_pages) {
-+	if (offset < swp_offset(folio->swap) ||
-+	    offset >= swp_offset(folio->swap) + nr_pages) {
- 		folio_unlock(folio);
- 		folio_put(folio);
- 		goto again;
- 	}
--	offset = swp_offset(entry);
-+	offset = swp_offset(folio->swap);
+diff --git a/mm/memory.c b/mm/memory.c
+index 10ef528a5f44..94a5928e8ace 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4661,10 +4661,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 		goto out;
  
- 	need_reclaim = ((flags & TTRS_ANYWAY) ||
- 			((flags & TTRS_UNMAPPED) && !folio_mapped(folio)) ||
+ 	folio = swap_cache_get_folio(entry);
+-	if (folio) {
++	if (folio)
+ 		swap_update_readahead(folio, vma, vmf->address);
+-		page = folio_file_page(folio, swp_offset(entry));
+-	}
+ 	swapcache = folio;
+ 
+ 	if (!folio) {
+@@ -4735,20 +4733,13 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 		ret = VM_FAULT_MAJOR;
+ 		count_vm_event(PGMAJFAULT);
+ 		count_memcg_event_mm(vma->vm_mm, PGMAJFAULT);
+-		page = folio_file_page(folio, swp_offset(entry));
+-	} else if (PageHWPoison(page)) {
+-		/*
+-		 * hwpoisoned dirty swapcache pages are kept for killing
+-		 * owner processes (which may be unknown at hwpoison time)
+-		 */
+-		ret = VM_FAULT_HWPOISON;
+-		goto out_release;
+ 	}
+ 
+ 	ret |= folio_lock_or_retry(folio, vmf);
+ 	if (ret & VM_FAULT_RETRY)
+ 		goto out_release;
+ 
++	page = folio_file_page(folio, swp_offset(entry));
+ 	if (swapcache) {
+ 		/*
+ 		 * Make sure folio_free_swap() or swapoff did not release the
+@@ -4761,6 +4752,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 			     page_swap_entry(page).val != entry.val))
+ 			goto out_page;
+ 
++		if (unlikely(PageHWPoison(page))) {
++			/*
++			 * hwpoisoned dirty swapcache pages are kept for killing
++			 * owner processes (which may be unknown at hwpoison time)
++			 */
++			ret = VM_FAULT_HWPOISON;
++			goto out_page;
++		}
++
+ 		/*
+ 		 * KSM sometimes has to copy on read faults, for example, if
+ 		 * folio->index of non-ksm folios would be nonlinear inside the
 -- 
 2.51.0
 
