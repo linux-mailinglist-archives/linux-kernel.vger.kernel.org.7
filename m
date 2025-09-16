@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-817975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED781B58AE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:10:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C167B58AE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D93D17E53A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:10:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6413816B21D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0870B1E5714;
-	Tue, 16 Sep 2025 01:10:31 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8061E47B7;
+	Tue, 16 Sep 2025 01:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uO2/3J0s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9981C84C0;
-	Tue, 16 Sep 2025 01:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B6E1D31B9
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757985030; cv=none; b=kk6OtZiC3/KuE9W6M4YJW0XI+FVsZYP85aXG8DNXEeRSQSWgHxuDhh57A0Pqr5Rmd7MM9Hbp60LjtwAiew021rv+2poRqacu57k+XIaoN4jJgDKKCom1AHDNS8+hhqNEgPwRwxrLo1Uk+yTl1eoggeRA26CffS4Wcgm+6INpU6g=
+	t=1757985090; cv=none; b=Xa/KVDEXYXoWkjHhCqKUAsKSVuxbi2rLwtOXZjlWOML6yaG5voMES/PXICVl+SJ/voLGTl1+fhlTuUO2gimCVphzOF5MdxpOxaP2zdveIF+8ht1b5jqz+irKo5pjsz3OME2W93ILgCmHZxsvqJHB/O/JjhLOHI/SGJKvuxurm8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757985030; c=relaxed/simple;
-	bh=y3MeIsefnG5tLWf7LJp6Nrk2brtQsFgp+68E4kEaiDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JxwRiwWESSco8z4jN1unpFcjV0QBuVO4vEs7pRE3K+Gbce/NVPWumYr4whyM7Zb3BUg+H7UqgVghv8R3uL9R8o0+uAX9VTLHEcH1DG5BA/BA+pqIrwlpwd6Z1C1FdzRgU1pc2P/RAy4eA/y3XoMd2D2/Ekvb2IuILMoCCeu/4iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cQkJP1973z2VRcm;
-	Tue, 16 Sep 2025 09:07:01 +0800 (CST)
-Received: from kwepemr500004.china.huawei.com (unknown [7.202.195.141])
-	by mail.maildlp.com (Postfix) with ESMTPS id 495251400CB;
-	Tue, 16 Sep 2025 09:10:24 +0800 (CST)
-Received: from [10.67.121.58] (10.67.121.58) by kwepemr500004.china.huawei.com
- (7.202.195.141) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 09:10:23 +0800
-Message-ID: <bdc702db-a898-4b92-bc5f-db802fe235b5@hisilicon.com>
-Date: Tue, 16 Sep 2025 09:10:22 +0800
+	s=arc-20240116; t=1757985090; c=relaxed/simple;
+	bh=pywoNX5Fj0ThFie7i1F+fNV/378eQvTd2KEdBeM7gXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eLFWCieC0pxMIZAKy2XAEh7MYbUpRnK3JGCwvnXnwoFGXdXECRYYiIAtSnTRcCnz0bbkrNSQ5B4/HbStIfRIUieCQe5e2IN+m2pq9wpIfnZ3cfOwqMIte/W/0Z2jeDmXDYuPEOPVmIT8FHU8Gs12mHoWyVWxpM66Y3J0PGm4idw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uO2/3J0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B65EC4CEF5
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757985089;
+	bh=pywoNX5Fj0ThFie7i1F+fNV/378eQvTd2KEdBeM7gXQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uO2/3J0sejlTx7uljyYcFXBbeycir04KbUK3Wusg06qN5AW0kt90eJw4mZAAWZFVY
+	 uf1lFJyU6PtI6cLUKvIruG2a+WwdjU1cAQYuHXO6uT3hwFcPYv+BKwmlww7eRBm7t6
+	 IrSapVaiLbTgDAvL2pi3X181/dcsOMXafK5sqj9KV1Tbbg+E3x8nneyk4yerP2ub28
+	 uJwgJy8w+FiwqA9bjb9XaiTne8Z8OfLKNiso2o9RP+SpyVYOBVmU0+VNl/8wiCC2CI
+	 DHr6I1DS1RJf/u7ZU/+3Bbb5cbfkPv2hUvEBbhdTGQvQmNcUgHyeEo/bZcxaVOXYtP
+	 Zejnj6qIZJbrw==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6228de280ccso9772769a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:11:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWpDOt9MSL64d1Bc+exfNSwRG7SamSMQ4kV2hOBqeqaVDyivhO4BAkHqtxenIPsAkQ/hUNl0fq6cpr+0uI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUzkIwpVTroU2jPYPgPEl8zy0J/rWXVNqdhjjG89ftEmtCoejv
+	xwiad8twXE9tux4zspgAB2ESZTLwC0w2jSYnIsEAzqKKSdAiUNDYOPXXetHj+G1IaskXC1mk0pd
+	IWcMkwbbRT98y+4di5Agu0kvkGBAbuug=
+X-Google-Smtp-Source: AGHT+IHv/n1JN8GWUKal59MvrweGIKVpUCxC3bbV7i0oHx+AET14Dl7KMMRsAqGMDIFeX1Yo7dHDbI6e6oQsgP709IY=
+X-Received: by 2002:a05:6402:2711:b0:62f:6713:1b22 with SMTP id
+ 4fb4d7f45d1cf-62f67131cdcmr207838a12.24.1757985087942; Mon, 15 Sep 2025
+ 18:11:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PM / devfreq: hisi: Fix potential UAF in OPP handling
-To: Pengjie Zhang <zhangpengjie2@huawei.com>, <myungjoo.ham@samsung.com>,
-	<kyungmin.park@samsung.com>, <cw00.choi@samsung.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhenglifeng1@huawei.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
-	<linhongye@h-partners.com>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>
-References: <20250915062135.748653-1-zhangpengjie2@huawei.com>
-Content-Language: en-US
-From: Jie Zhan <zhanjie9@hisilicon.com>
-In-Reply-To: <20250915062135.748653-1-zhangpengjie2@huawei.com>
+References: <20250915224408.1132493-2-ysk@kzalloc.com>
+In-Reply-To: <20250915224408.1132493-2-ysk@kzalloc.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 16 Sep 2025 10:11:16 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_h9otb5kfixtwAgXfeFbmsvc5xmuoBsDNovmHFwGOEEQ@mail.gmail.com>
+X-Gm-Features: AS18NWDcKPBMDX2P_tfLuiBXo4aQ7qWNaXQnQMmtVrPehIGjufNwmyIx6u-D74E
+Message-ID: <CAKYAXd_h9otb5kfixtwAgXfeFbmsvc5xmuoBsDNovmHFwGOEEQ@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Fix race condition in RPC handle list access
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Steve French <smfrench@gmail.com>, Norbert Szetei <norbert@doyensec.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
+	Jinjie Ruan <ruanjinjie@huawei.com>, Dawei Li <set_pte_at@outlook.com>, 
+	linux-cifs@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemr500004.china.huawei.com (7.202.195.141)
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 9/15/2025 2:21 PM, Pengjie Zhang wrote:
-> Ensure all required data is acquired before calling dev_pm_opp_put(opp)
-> to maintain correct resource acquisition and release order.
-> 
-> Fixes: 7da2fdaaa1e6 ("PM / devfreq: Add HiSilicon uncore frequency scaling driver")
-> Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
-> ---
->  drivers/devfreq/hisi_uncore_freq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-Hi Pengjie,
-
-Yeah dev_pm_opp_put() should be after dev_pm_opp_get_freq().
-Thanks for spotting this.
-
-Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
-> 
-> diff --git a/drivers/devfreq/hisi_uncore_freq.c b/drivers/devfreq/hisi_uncore_freq.c
-> index 96d1815059e3..c1ed70fa0a40 100644
-> --- a/drivers/devfreq/hisi_uncore_freq.c
-> +++ b/drivers/devfreq/hisi_uncore_freq.c
-> @@ -265,10 +265,11 @@ static int hisi_uncore_target(struct device *dev, unsigned long *freq,
->  		dev_err(dev, "Failed to get opp for freq %lu hz\n", *freq);
->  		return PTR_ERR(opp);
->  	}
-> -	dev_pm_opp_put(opp);
->  
->  	data = (u32)(dev_pm_opp_get_freq(opp) / HZ_PER_MHZ);
->  
-> +	dev_pm_opp_put(opp);
-> +
->  	return hisi_uncore_cmd_send(uncore, HUCF_PCC_CMD_SET_FREQ, &data);
->  }
->  
+On Tue, Sep 16, 2025 at 7:44=E2=80=AFAM Yunseong Kim <ysk@kzalloc.com> wrot=
+e:
+>
+> The 'sess->rpc_handle_list' XArray manages RPC handles within a ksmbd
+> session. Access to this list is intended to be protected by
+> 'sess->rpc_lock' (an rw_semaphore). However, the locking implementation w=
+as
+> flawed, leading to potential race conditions.
+>
+> In ksmbd_session_rpc_open(), the code incorrectly acquired only a read lo=
+ck
+> before calling xa_store() and xa_erase(). Since these operations modify
+> the XArray structure, a write lock is required to ensure exclusive access
+> and prevent data corruption from concurrent modifications.
+>
+> Furthermore, ksmbd_session_rpc_method() accessed the list using xa_load()
+> without holding any lock at all. This could lead to reading inconsistent
+> data or a potential use-after-free if an entry is concurrently removed an=
+d
+> the pointer is dereferenced.
+>
+> Fix these issues by:
+> 1. Using down_write() and up_write() in ksmbd_session_rpc_open()
+>    to ensure exclusive access during XArray modification, and ensuring
+>    the lock is correctly released on error paths.
+> 2. Adding down_read() and up_read() in ksmbd_session_rpc_method()
+>    to safely protect the lookup.
+>
+> Fixes: a1f46c99d9ea ("ksmbd: fix use-after-free in ksmbd_session_rpc_open=
+")
+> Fixes: b685757c7b08 ("ksmbd: Implements sess->rpc_handle_list as xarray")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+Applied it to #ksmbd-for-next-next.
+Thanks!
 
