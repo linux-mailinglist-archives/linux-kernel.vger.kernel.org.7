@@ -1,212 +1,173 @@
-Return-Path: <linux-kernel+bounces-818433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C8DB591A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:04:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C7FB591B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5E657A2D72
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5EA5280B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D47628CF42;
-	Tue, 16 Sep 2025 09:02:46 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16B2BE033
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B04298CC9;
+	Tue, 16 Sep 2025 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iL7oN6ib"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6448299A84;
+	Tue, 16 Sep 2025 09:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013365; cv=none; b=WUtZcFukvWEoff515KEmadwpI43sRa8CDDfqp2Bnb2QrWTdWGK3HkZZgJKMcj6RNgyAruAAYBcv+LIT2w+Nx+tY6DzRVadx6fYRajlhzJ5jneychHieUTStbnx/RKM3IfdgCA8I7Lqs8W76zKMIYPZfE0CZJqDcsyBvfaMm/Ke4=
+	t=1758013424; cv=none; b=Q2rwZwQ9hFj96EBRl7z/vfxMsf21cN7uexDgsXXuT8q1wMhaBhYwBielQejL4Awu+3LslnXBrY/GiClrTXqFc9bJSyTxPOwIuSDL06cLrjLpB288c/Bpvdl/tJTvzXKlOMDUev4CP2rF1GL+T1ubpRWbZXxxawapwHjJ0MBHQ/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013365; c=relaxed/simple;
-	bh=iyOGR5OjdcJcruEoDj50e0N6pXuQVeGejPadiPYFKV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hv4Hb5bAVDFA7sAUnf4tuKceIIZjTsRUVEjjYsSMepw1/axTe4t2BUY+m4vf97P9VRVIO0wdWd9Ly+vtutXJ3zSEPE8unwp+BRp2ATQWI4gzbQ4GwtWhaube5To/1jG3CZlst7Id1YKQlaFMC5TgmdB+Ru+P6bBOAVGoWtATLEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [209.85.219.177])
-	by gateway (Coremail) with SMTP id _____8BxXNKrJ8loKOEKAA--.23450S3;
-	Tue, 16 Sep 2025 17:02:36 +0800 (CST)
-Received: from mail-yb1-f177.google.com (unknown [209.85.219.177])
-	by front1 (Coremail) with SMTP id qMiowJCxH8KmJ8losAyZAA--.41033S3;
-	Tue, 16 Sep 2025 17:02:33 +0800 (CST)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea5aa2fdac8so459156276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:02:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVtwnOEJjbkjVbQMXQnk2rkTByf3lrcMs6HgAGMV4S92vU9ICCjEAoMkrPrieE08gHAhq9X8sdzSK6gu80=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2qK2TtdydLFcWSl6suP9nicrHzY0YkuGzcasv2EdlJp7PYi8Y
-	1sPGORlghBs3lf0ppASioQPZ4e2WH8U2bd5ZkEPlRrnX/2dhYHMALo3BOVSXq0U7d6KbY+gIpE0
-	86DDVcGlSbwmcYQo/ldm83kepklfKRLn1wUCi/EKRNQ==
-X-Google-Smtp-Source: AGHT+IGGHRxmXOWaJAAygIfBjG9V73Ij3pe802twnw9XNH3Zr+pFQkBur6uu/hjKgXPTVwuAsWHJdWtS4p+VNQ5WHRw=
-X-Received: by 2002:a05:6902:124e:b0:ea5:ae89:4468 with SMTP id
- 3f1490d57ef6-ea5ae895b6emr817879276.41.1758013349641; Tue, 16 Sep 2025
- 02:02:29 -0700 (PDT)
+	s=arc-20240116; t=1758013424; c=relaxed/simple;
+	bh=MZwGrBHn7fPx6J7jWScTagGw2ALfjMRVbO4DtaIYdUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DdrDbeuwFEA1NdHs7XaMb8OZCEYhVOPPHQhKtPc6FFYGuXEh+xlQ+NXCb3VIM8k5cgP2PsoU0O5mc/Q1YNGaaDzaA3SdwkojTp/kw8pOXPvi+6RdoeNVt05kUZdAXMXoPSufqhxyjzWgbCZH46SCUSsV3T2yggkp6EKmqNbGlI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iL7oN6ib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9CFBC4CEEB;
+	Tue, 16 Sep 2025 09:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758013424;
+	bh=MZwGrBHn7fPx6J7jWScTagGw2ALfjMRVbO4DtaIYdUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iL7oN6ibPnr6d7GQE8OAHny60zW/mzn/tDXnzQgFQR7+vf2SJVb4P4Pq5N2+VyJUG
+	 q7ANJyAG8L2AIho1rgjoEgGTOQJcmfJXQWpXocWsG+Q+e4sHI13OChBO2D2azFuFyu
+	 MlfXpicvnoSPlFkzfLAZK14fWTbrgOHxOyyYsM5qH/gWjyj+BDmKa2LBV0mXJxThxC
+	 hoFfQB1gsnY0bax6j42NeJNHVcN/fQsf72WZGC8iJFwJC4U2a8d4Lv3+1lQeUZzWhJ
+	 N0EtDzFu/OAo5+Wy/9GuV0qie36ilqZ1A4xlnZPNmvCLdSqERVsiMEWq+XUPC2bdYm
+	 8JOGBUzdFdIjQ==
+Date: Tue, 16 Sep 2025 11:03:41 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2 7/9] drm/bridge: remove drm_for_each_bridge_in_chain()
+Message-ID: <20250916-jade-seal-of-cleaning-5ee2bd@houat>
+References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
+ <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-7-edb6ee81edf1@bootlin.com>
+ <20250915-optimal-hornet-of-potency-efa54a@penduick>
+ <20250915175805.6e8df6ef@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916061117.32315-1-yangtiezhu@loongson.cn>
-In-Reply-To: <20250916061117.32315-1-yangtiezhu@loongson.cn>
-From: WANG Rui <wangrui@loongson.cn>
-Date: Tue, 16 Sep 2025 17:02:19 +0800
-X-Gmail-Original-Message-ID: <CAHirt9jbY4yX84Kfzax71rCvPY--SQpDKrjqWsDCHMVnuUuD0g@mail.gmail.com>
-X-Gm-Features: AS18NWBxdv3kvW4jqwIz5er8Ma5qQhQbAuQvQ8nyLqYfZsUPrt-rPn9UxPQ1rPo
-Message-ID: <CAHirt9jbY4yX84Kfzax71rCvPY--SQpDKrjqWsDCHMVnuUuD0g@mail.gmail.com>
-Subject: Re: [PATCH v1] objtool/LoongArch: Mark special atomic instruction as
- INSN_BUG type
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	rust-for-linux@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="j5gg2kqgg6e4zl3s"
+Content-Disposition: inline
+In-Reply-To: <20250915175805.6e8df6ef@booty>
+
+
+--j5gg2kqgg6e4zl3s
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:qMiowJCxH8KmJ8losAyZAA--.41033S3
-X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxZF4rJw1rWryDWw15WrykWFX_yoWrWr13pa
-	1DZ3s8Gr48Wrn3KwnrJ3yUurW3trs3WrWIgFnxG3s2krWaqr97XF1kKry0yFn5Jw4rKFyI
-	9rn5Zw17uF1jyagCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1wL05UUUUU==
+Subject: Re: [PATCH v2 7/9] drm/bridge: remove drm_for_each_bridge_in_chain()
+MIME-Version: 1.0
 
-On Tue, Sep 16, 2025 at 2:11=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> When compiling with LLVM and CONFIG_RUST is set, there exists the
-> following objtool warning:
->
->   rust/compiler_builtins.o: warning: objtool: __rust__unordsf2(): unexpec=
-ted end of section .text.unlikely.
->
-> objdump shows that the end of section .text.unlikely is a atomic
-> instruction:
->
->   amswap.w        $zero, $ra, $zero
->
-> According to the LoongArch Reference Manual, if the amswap.w atomic
-> memory access instruction has the same register number as rd and rj,
-> the execution will trigger an Instruction Non-defined Exception, so
-> mark the above instruction as INSN_BUG type to fix the warning.
+On Mon, Sep 15, 2025 at 05:58:05PM +0200, Luca Ceresoli wrote:
+> On Mon, 15 Sep 2025 14:22:24 +0200
+> Maxime Ripard <mripard@kernel.org> wrote:
+> > On Fri, Aug 08, 2025 at 04:49:14PM +0200, Luca Ceresoli wrote:
+> > > All users have been replaced by drm_for_each_bridge_in_chain_scoped().
+> > >=20
+> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > ---
+> > >  .clang-format            |  1 -
+> > >  include/drm/drm_bridge.h | 14 --------------
+> > >  2 files changed, 15 deletions(-)
+> > >=20
+> > > diff --git a/.clang-format b/.clang-format
+> > > index 1cac7d4976644c8f083f801e98f619782c2e23cc..d5c05db1a0d96476b711b=
+95912d2b82b2e780397 100644
+> > > --- a/.clang-format
+> > > +++ b/.clang-format
+> > > @@ -167,7 +167,6 @@ ForEachMacros:
+> > >    - 'drm_connector_for_each_possible_encoder'
+> > >    - 'drm_exec_for_each_locked_object'
+> > >    - 'drm_exec_for_each_locked_object_reverse'
+> > > -  - 'drm_for_each_bridge_in_chain'
+> > >    - 'drm_for_each_bridge_in_chain_scoped'
+> > >    - 'drm_for_each_connector_iter'
+> > >    - 'drm_for_each_crtc'
+> > > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> > > index a8e2f599aea764c705da3582df0ca428bb32f19c..6adf9221c2d462ec8e0e4=
+e281c97b39081b3da24 100644
+> > > --- a/include/drm/drm_bridge.h
+> > > +++ b/include/drm/drm_bridge.h
+> > > @@ -1358,20 +1358,6 @@ drm_bridge_chain_get_first_bridge(struct drm_e=
+ncoder *encoder)
+> > >  						       struct drm_bridge, chain_node));
+> > >  }
+> > > =20
+> > > -/**
+> > > - * drm_for_each_bridge_in_chain() - Iterate over all bridges present=
+ in a chain
+> > > - * @encoder: the encoder to iterate bridges on
+> > > - * @bridge: a bridge pointer updated to point to the current bridge =
+at each
+> > > - *	    iteration
+> > > - *
+> > > - * Iterate over all bridges present in the bridge chain attached to =
+@encoder.
+> > > - *
+> > > - * This is deprecated, do not use!
+> > > - * New drivers shall use drm_for_each_bridge_in_chain_scoped().
+> > > - */
+> > > -#define drm_for_each_bridge_in_chain(encoder, bridge)			\
+> > > -	list_for_each_entry(bridge, &(encoder)->bridge_chain, chain_node)
+> > > - =20
+> >=20
+> > I think I'd go a step further and rename
+> > drm_for_each_bridge_in_chain_scoped to drm_for_each_bridge_in_chain,
+> > there's no need to have a "scoped" variant if it's our only variant.
+> >=20
+> > It can be done in a subsequent patch though.
+>=20
+> Sure, that's the plan. There's a note in patch 3:
+>=20
+> Note 1: drm_for_each_bridge_in_chain_scoped() could be renamed removing t=
+he
+>         _scoped suffix after removing all the users of the current macro
+>         and eventually the current macro itself. Even though this series =
+is
+>         converting all users, I'd at least wait one kernel release before
+>         renaming, to minimize issues with existing patches which would fa=
+il
+>         building.
 
-LLVM lowers `llvm.trap()` to `amswap.w R0, R1, R0`. For x86, it lowers
-to `ud2`, and objtool marks it as INSN_BUG.
+No need to wait that long, and the best time to do it is right now
+actually, about the time we start collecting the patches for a new
+release.
 
-https://github.com/llvm/llvm-project/blob/788a25a0f71bfa5e5e1c12ad093993b11=
-5d10e7a/llvm/lib/Target/LoongArch/LoongArchInstrInfo.td#L1376-L1381
+Maxime
 
-LLVM and GCC handle this differently, GCC lowers it to a break
-instruction. Since the break instruction has other uses, can objtool
-mark all break instructions as INSN_BUG? or it should mark different
-types based on the break immediate code.
+--j5gg2kqgg6e4zl3s
+Content-Type: application/pgp-signature; name="signature.asc"
 
-https://github.com/torvalds/linux/blob/46a51f4f5edade43ba66b3c151f0e25ec8b6=
-9cb6/tools/objtool/arch/loongarch/decode.c#L315-L317
+-----BEGIN PGP SIGNATURE-----
 
->
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  tools/arch/loongarch/include/asm/inst.h | 12 ++++++++++++
->  tools/objtool/arch/loongarch/decode.c   | 21 +++++++++++++++++++++
->  2 files changed, 33 insertions(+)
->
-> diff --git a/tools/arch/loongarch/include/asm/inst.h b/tools/arch/loongar=
-ch/include/asm/inst.h
-> index c25b5853181d..d68fad63c8b7 100644
-> --- a/tools/arch/loongarch/include/asm/inst.h
-> +++ b/tools/arch/loongarch/include/asm/inst.h
-> @@ -51,6 +51,10 @@ enum reg2i16_op {
->         bgeu_op         =3D 0x1b,
->  };
->
-> +enum reg3_op {
-> +       amswapw_op      =3D 0x70c0,
-> +};
-> +
->  struct reg0i15_format {
->         unsigned int immediate : 15;
->         unsigned int opcode : 17;
-> @@ -96,6 +100,13 @@ struct reg2i16_format {
->         unsigned int opcode : 6;
->  };
->
-> +struct reg3_format {
-> +       unsigned int rd : 5;
-> +       unsigned int rj : 5;
-> +       unsigned int rk : 5;
-> +       unsigned int opcode : 17;
-> +};
-> +
->  union loongarch_instruction {
->         unsigned int word;
->         struct reg0i15_format   reg0i15_format;
-> @@ -105,6 +116,7 @@ union loongarch_instruction {
->         struct reg2i12_format   reg2i12_format;
->         struct reg2i14_format   reg2i14_format;
->         struct reg2i16_format   reg2i16_format;
-> +       struct reg3_format      reg3_format;
->  };
->
->  #define LOONGARCH_INSN_SIZE    sizeof(union loongarch_instruction)
-> diff --git a/tools/objtool/arch/loongarch/decode.c b/tools/objtool/arch/l=
-oongarch/decode.c
-> index b6fdc68053cc..707f339b1840 100644
-> --- a/tools/objtool/arch/loongarch/decode.c
-> +++ b/tools/objtool/arch/loongarch/decode.c
-> @@ -278,6 +278,25 @@ static bool decode_insn_reg2i16_fomat(union loongarc=
-h_instruction inst,
->         return true;
->  }
->
-> +static bool decode_insn_reg3_fomat(union loongarch_instruction inst,
-> +                                  struct instruction *insn)
-> +{
-> +       switch (inst.reg3_format.opcode) {
-> +       case amswapw_op:
-> +               if (inst.reg3_format.rd =3D=3D LOONGARCH_GPR_ZERO &&
-> +                   inst.reg3_format.rk =3D=3D LOONGARCH_GPR_RA &&
-> +                   inst.reg3_format.rj =3D=3D LOONGARCH_GPR_ZERO) {
-> +                       /* amswap.w $zero, $ra, $zero */
-> +                       insn->type =3D INSN_BUG;
-> +               }
-> +               break;
-> +       default:
-> +               return false;
-> +       }
-> +
-> +       return true;
-> +}
-> +
->  int arch_decode_instruction(struct objtool_file *file, const struct sect=
-ion *sec,
->                             unsigned long offset, unsigned int maxlen,
->                             struct instruction *insn)
-> @@ -309,6 +328,8 @@ int arch_decode_instruction(struct objtool_file *file=
-, const struct section *sec
->                 return 0;
->         if (decode_insn_reg2i16_fomat(inst, insn))
->                 return 0;
-> +       if (decode_insn_reg3_fomat(inst, insn))
-> +               return 0;
->
->         if (inst.word =3D=3D 0)
->                 insn->type =3D INSN_NOP;
-> --
-> 2.42.0
->
->
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMkn4gAKCRAnX84Zoj2+
+diPbAYCE0rN0Hys4v3lgLLkZRuYYI0Gb8t/xeW3MGR8DoeSuRalFsZbza8OQj62I
+uKDA+8ABgMfMlLq3E2nNIB21uXhtaO+otkyU/nIntjQV4yQTEzi8wU1GnNHMU2H9
+nilJreknJg==
+=KvpI
+-----END PGP SIGNATURE-----
 
+--j5gg2kqgg6e4zl3s--
 
