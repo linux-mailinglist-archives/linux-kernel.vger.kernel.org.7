@@ -1,155 +1,171 @@
-Return-Path: <linux-kernel+bounces-818252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E72B58ED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:10:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049AEB58EDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD72188E283
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:10:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8C3F4E10A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825B12E424F;
-	Tue, 16 Sep 2025 07:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B962E4278;
+	Tue, 16 Sep 2025 07:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PmGD89DH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psp5bO/F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D702BAF9;
-	Tue, 16 Sep 2025 07:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651B12DEA6F;
+	Tue, 16 Sep 2025 07:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758006629; cv=none; b=EjpEk8MHnMsplzGweJVk0pZEH7Ghb+5p8/G4kr5qLqWk1Q+eLI6lnEbxPN7csKUM9SYatL39ABcwQkHGY/0PnfHIZOED8GpVYI6LzXCXm57a7t8hQhAYyziaTODwuZATMZlUNioWiImdJrNeNpCpv/oTDwbfzIpYvHcuppRvJa0=
+	t=1758006748; cv=none; b=u7WNEiPPq4+hP+YThu8iJ0hDfRKuQJEy1tR9zlBZdCalihZK7q2fFbk2yK0kY2JyvYvB8bcFeES9bzAajJYEk5PoxvJB6UwnM7o9GMcMPiqxgNcy0nojNDOlbx5Ov1S/0xi1RMJPVybEsR3X1e4JttREsdgix7MDbaPT8+Upr10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758006629; c=relaxed/simple;
-	bh=t0ogTC/JUAL5SrNtFmzKazdF3tZ0foxtSqDAIAX5u1k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PFYB+UwyBWyMzEAeS0GbENSeMU10zIUQrDQrPVer79baUnlczwG+IhxzFPBkEGkpq/2pDIPM8noIxzWEw6AMRZ4dlgh1TMvYP0Hdv+KXjM/zT7PDB3oOLTrU97OwMrhRRUmZIvIXTA5AK6sKI1l3D4zBsrKddez57IYtD0Bgxk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PmGD89DH; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758006628; x=1789542628;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=t0ogTC/JUAL5SrNtFmzKazdF3tZ0foxtSqDAIAX5u1k=;
-  b=PmGD89DHQPYrd9bHEQVjJbbvMU0Sq5EaFYxjEADW0lAgrrywQtlyfGvn
-   T2XnXD/OmLX2nALuYdrmSLhry210YYJf/GG4+DtTC7BZXkPUZqDDZ8u8U
-   y9dFm4Kv7rzGuJT8HuvHGCnqqVE3g7oCGRGw0H26pjXoFO2eyi/oj2fU6
-   25I3NxmlDpsWBTcwE9wi3sXP5+rKQeMrCn1orxl9AzsvndgIGXZbTTq21
-   agXxcKWsz/VOcAtFlGuclbVTzsenwlhs08JNH/Zx0lYzuraMYQzNMmQVc
-   4iWPD2o+aI34BP3vfxqgkuVjc5CtQljB82n2ymjIiir4ae1mKcbSWTU6p
-   Q==;
-X-CSE-ConnectionGUID: V2jaW3Z/S3mVG2WgpSczYg==
-X-CSE-MsgGUID: 3/AZoOIPR+qLrxucqAed5g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70898961"
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="70898961"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:10:27 -0700
-X-CSE-ConnectionGUID: 01L6Fw3BTCq9ibVHQ/qLkQ==
-X-CSE-MsgGUID: POnf6OzLT8Sad3ZuBmfd7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="173981684"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:10:24 -0700
-Message-ID: <b3fae3e0-1337-430c-beeb-290dc185b8bf@linux.intel.com>
-Date: Tue, 16 Sep 2025 15:10:21 +0800
+	s=arc-20240116; t=1758006748; c=relaxed/simple;
+	bh=oU7VvkqktkVNm/KzNrVro7cjiuBKEqIXf9EnmXfNqrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQQ+Wqp9G6k9XU4icvK0yrgavZSurICZ1U/NbNpxLa8k167iUjwi4BDDZJNZ85qWIu+EmD2cHL7zpIek4rBlkHSaFMeXzTRFIT0RdIcGOdf1ir+jIkc5cxCfKIEI/g5tVs7uW9kBjyt4ylbHy8fh8/KqnjOasQI32TUII61I6+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psp5bO/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B238DC4CEEB;
+	Tue, 16 Sep 2025 07:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758006747;
+	bh=oU7VvkqktkVNm/KzNrVro7cjiuBKEqIXf9EnmXfNqrg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=psp5bO/FZW/iyXU/LKpkMlICcpyAt3VX7ZKbABuO9tVK15McJy+5OJowkicZksuln
+	 yZFBMkmAkhKrtl2cS4yanL4usmxSc8kddAt7daP9GOlusbHJ8kj5YOQPpWGDcu4gBp
+	 XsnyHOw0ZtmQm55Jan1g4GUNvVHbNb+EqkTmAY5rqxtKQm3drNnGsBzCiutRQ7YAm8
+	 Sk/wQQmeLWb08x4FLcR3zz9E/hDGexpTCiPLD2gIyccS9ecgi6A/akq/KLblK4abj8
+	 AzBJgf6Q2TFrauF0/mt/GZDsJ+UCVVW4jslTuEhSRybzoSqgf7ZIt4OSf1OzUGMlr+
+	 7u0hKreUOi1FQ==
+Date: Tue, 16 Sep 2025 09:12:22 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aMkN1m55vejTii_H@example.org>
+References: <cover.1755535876.git.legion@kernel.org>
+ <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
+ <aMeqgPVfJcjBLhl8@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 04/41] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs
- support
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-5-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250912232319.429659-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMeqgPVfJcjBLhl8@levanger>
 
+On Mon, Sep 15, 2025 at 07:56:16AM +0200, Nicolas Schier wrote:
+> On Mon, Aug 18, 2025 at 06:54:57PM +0200, Alexey Gladkov wrote:
+> > From: Masahiro Yamada <masahiroy@kernel.org>
+> > 
+> > Keep the .modinfo section during linking, but strip it from the final
+> > vmlinux.
+> > 
+> > Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
+> > 
+> > This change will allow the next commit to extract the .modinfo section
+> > from the vmlinux.unstripped intermediate.
+> > 
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >  include/asm-generic/vmlinux.lds.h | 2 +-
+> >  scripts/Makefile.vmlinux          | 2 +-
+> >  scripts/mksysmap                  | 3 +++
+> >  3 files changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> > index ae2d2359b79e9..cfa63860dfd4c 100644
+> > --- a/include/asm-generic/vmlinux.lds.h
+> > +++ b/include/asm-generic/vmlinux.lds.h
+> > @@ -831,6 +831,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+> >  
+> >  /* Required sections not related to debugging. */
+> >  #define ELF_DETAILS							\
+> > +		.modinfo : { *(.modinfo) }				\
+> >  		.comment 0 : { *(.comment) }				\
+> >  		.symtab 0 : { *(.symtab) }				\
+> >  		.strtab 0 : { *(.strtab) }				\
+> > @@ -1044,7 +1045,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+> >  	*(.discard.*)							\
+> >  	*(.export_symbol)						\
+> >  	*(.no_trim_symbol)						\
+> > -	*(.modinfo)							\
+> >  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
+> >  	*(.gnu.version*)						\
+> >  
+> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > index 4f2d4c3fb7372..e2ceeb9e168d4 100644
+> > --- a/scripts/Makefile.vmlinux
+> > +++ b/scripts/Makefile.vmlinux
+> > @@ -86,7 +86,7 @@ endif
+> >  # vmlinux
+> >  # ---------------------------------------------------------------------------
+> >  
+> > -remove-section-y                                   :=
+> > +remove-section-y                                   := .modinfo
+> >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> >  
+> >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > diff --git a/scripts/mksysmap b/scripts/mksysmap
+> > index 3accbdb269ac7..a607a0059d119 100755
+> > --- a/scripts/mksysmap
+> > +++ b/scripts/mksysmap
+> > @@ -79,6 +79,9 @@
+> >  / _SDA_BASE_$/d
+> >  / _SDA2_BASE_$/d
+> >  
+> > +# MODULE_INFO()
+> > +/ __UNIQUE_ID_modinfo[0-9]*$/d
+> > +
+> >  # ---------------------------------------------------------------------------
+> >  # Ignored patterns
+> >  #  (symbols that contain the pattern are ignored)
+> > -- 
+> > 2.50.1
+> > 
+> 
+> Hi Alexey,
+> 
+> with this patch applied, I still get a warning from objcpy as Masahiro
+> and Stephen wrote [1,2]
+> 
+>   SORTTAB vmlinux.unstripped
+> + sorttable vmlinux.unstripped
+> + nm -S vmlinux.unstripped
+> + ./scripts/sorttable -s .tmp_vmlinux.nm-sort vmlinux.unstripped
+> + is_enabled CONFIG_KALLSYMS
+> + grep -q ^CONFIG_KALLSYMS=y include/config/auto.conf
+> + cmp -s System.map .tmp_vmlinux2.syms
+> + echo vmlinux.unstripped: ../scripts/link-vmlinux.sh
+> # OBJCOPY vmlinux
+>   objcopy --remove-section=.modinfo vmlinux.unstripped vmlinux
+> objcopy: vmlinux.unstripped: warning: empty loadable segment detected at vaddr=0xffff8000807a0000, is this intentional?
+> 
+> (arm64, allnoconfig)
+> 
+> Kind regards,
+> Nicolas
+> 
+> 
+> [1]: https://lore.kernel.org/linux-kbuild/CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com/
+> [2]: https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
+> 
 
+Hm. I missed that. I need to investigate how to fix this. Nothing comes
+to mind right now.
 
-On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Enable KVM_{G,S}ET_ONE_REG uAPIs so that userspace can access MSRs and
-> other non-MSR registers through them, along with support for
-> KVM_GET_REG_LIST to enumerate support for KVM-defined registers.
->
-> This is in preparation for allowing userspace to read/write the guest SSP
-> register, which is needed for the upcoming CET virtualization support.
->
-> Currently, two types of registers are supported: KVM_X86_REG_TYPE_MSR and
-> KVM_X86_REG_TYPE_KVM. All MSRs are in the former type; the latter type is
-> added for registers that lack existing KVM uAPIs to access them. The "KVM"
-> in the name is intended to be vague to give KVM flexibility to include
-> other potential registers.  More precise names like "SYNTHETIC" and
-> "SYNTHETIC_MSR" were considered, but were deemed too confusing (e.g. can
-> be conflated with synthetic guest-visible MSRs) and may put KVM into a
-> corner (e.g. if KVM wants to change how a KVM-defined register is modeled
-> internally).
->
-> Enumerate only KVM-defined registers in KVM_GET_REG_LIST to avoid
-> duplicating KVM_GET_MSR_INDEX_LIST, and so that KVM can return _only_
-> registers that are fully supported (KVM_GET_REG_LIST is vCPU-scoped, i.e.
-> can be precise, whereas KVM_GET_MSR_INDEX_LIST is system-scoped).
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Link: https://lore.kernel.org/all/20240219074733.122080-18-weijiang.yang@intel.com [1]
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+-- 
+Rgrds, legion
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
-One nit below.
-
-> ---
->   Documentation/virt/kvm/api.rst  |   6 +-
->   arch/x86/include/uapi/asm/kvm.h |  26 +++++++++
->   arch/x86/kvm/x86.c              | 100 ++++++++++++++++++++++++++++++++
->   3 files changed, 131 insertions(+), 1 deletion(-)
-[...]
-> +
-> +#define KVM_X86_REG_ENCODE(type, index)				\
-Nit:
-Is it better to use KVM_X86_REG_ID so that when searching with the string
-non-case sensitively, the encoding and its structure can be related to each
-other?
-
-
-> +	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type, index) | index)
-> +
-[...]
->   
-> +struct kvm_x86_reg_id {
-> +	__u32 index;
-> +	__u8  type;
-> +	__u8  rsvd1;
-> +	__u8  rsvd2:4;
-> +	__u8  size:4;
-> +	__u8  x86;
-> +};
-> +
->
 
