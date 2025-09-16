@@ -1,77 +1,149 @@
-Return-Path: <linux-kernel+bounces-819627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453B3B5A3C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F276DB5A3C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D225807B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6A9486533
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C93283FF0;
-	Tue, 16 Sep 2025 21:16:54 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399322877C1;
+	Tue, 16 Sep 2025 21:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b="UaKh37wl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EZ7tx/gM"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231419FA93
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26222283FF0;
+	Tue, 16 Sep 2025 21:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758057414; cv=none; b=JK6yfmd/+unUH/FnYJ3T3nNdJ0oVuMQ95mFUTYTJmHVcdBdfftHfThn1fEMzapwZhgT6nA/lgs3G9zoqRx12ctzPbwWSf/LdHqmZDWG1Vc2SG+kMaoqzl0gM8eiA6VDQY7nsjHaXGeQUPV8ymB0y6cDaZvarFOHMkxlbO3/QoWk=
+	t=1758057731; cv=none; b=nyXj0SeOrYPqZjbhH7vIbt6NBjzLAwUtvFxzAneODsTtqv/1CX3cS9u8JKRfju4GJ0sfF/OpB36awi+L3YoBbwoD67hPx4Hx4tY2OpoGDu9h5YCvyq8Xu7TItncXPAnV8YSD5Vf/qf5cDI6llwjfJrzJf0e0ivANLmJwwcio6wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758057414; c=relaxed/simple;
-	bh=Ieq1ck0qvm3ZmRsGLSRgTwo5ZTOdLuFi0WGVB/YIMwQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=laAyS4YAIluwUrCFiX8Rg69q1oDz/1rmoQuR7+U8TnMgMN+CW98Mo4TgQUe2jWHjNujHxMOwKJb0QhBwr1Vq18CIyiKtaLoz/HkQ8kebRMqmVGnwe0QAceBZDIT8fC+H4PSS5KPTLM58E9/kAmJs2kKqwsTopJ2YhhUJ+04Exbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-401eba8efecso4411835ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:16:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758057412; x=1758662212;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OV9FnEIMn3tAb3e2Fleb7GR+066UTYm6BepX40jlcc8=;
-        b=qiuM9cC5ljrxsI68plCCSywlCDytAQUYuTvA3EFjPDCvFquuj7y+BOTtRNkkuQFSwG
-         g0IUXKI/m6MkgNXFUQczyYImvDJHP+hsmxniRplLXJ455itLqpJitx9H03bN6v5Gkuxo
-         HiFsrTCttPDb4m5q3WW1AU9EOgeuZZ5lSL5G5lC18l5upmvSYW5tYHp1sWNW9lZ4bRXH
-         OXOntBkZlQdZpTIIZ4z7SQpoKcCx74iVkpBEsnCMtGWbxZi3uH3iM7Ay00lLXQ8/cfQ9
-         e3f3XqMTdmlfcWTYgRVvVUErqBhhQPp99S+rr0PDBmnJbgw2ZV4OMbuPuKnUQuzcHKCn
-         nVZA==
-X-Gm-Message-State: AOJu0Yzyi9jTQ6GlkdkbD2R7WVlkQOEnLVIJ5PwKrX4nxDbLw7grD7pE
-	b5Gk1kU5ABaefgxg62WCLpgsnljuyGOoT+bU3tCm39KSb8hQGqTuBAOyv6/0nOyx6CXFcdPA//p
-	WmNza54yslCUnCRI/lvj1CqFrxiT+tBGTuvG31dlIe9LdHHDaB+979SIm62w=
-X-Google-Smtp-Source: AGHT+IEQkoz9JlOolvEGnKG6K92hpbaqIz1+b7Hn/1+dY3TbD6MvdfZ5OtoOpKefXeMK74Kr79bJie6jlM2PU76ih1oAy997wfh1
+	s=arc-20240116; t=1758057731; c=relaxed/simple;
+	bh=3SbTO4vzXD864bsh3AB7JLbIIijaYBcFvEXTUelLAvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+rbENo5uxGnBRU+M+y7lQAPwHwDyVXfIWdl+PqF/wBQ16yzPq9WfnH5E1XL4ckt/Qznpdo0mKGeEgBvUlPq2uCLPUcXyzE9M6fi1teEy2vo/yzlYEGB0vPcAXEPGuPqI/cUEiLF0KprItUPva3IsfLStyUZe89j0+QUrFbbs5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com; spf=fail smtp.mailfrom=bsdio.com; dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b=UaKh37wl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EZ7tx/gM; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bsdio.com
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id E98EC1D00013;
+	Tue, 16 Sep 2025 17:22:07 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 16 Sep 2025 17:22:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsdio.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1758057727;
+	 x=1758144127; bh=FNr3jSgck4Jl1pEEorXXSsO/QSdN0TeOX27XjWwmQk4=; b=
+	UaKh37wlbPKHlBiGONx3UjBj5NgdojVqfo8d3QxGRsauJnwIXj2jgGCNgDCp25qa
+	/B5KIWykoM13chpDfbneih6g5Zo+29Z/NtOgFFLKU0uJ4w7GtvepB2ul7AAQFB8p
+	1+kvgKyD/JhPoojC2vUD/N5GPwIh9/7Lu6unmB3nhtDa0KWYVkdKBoXb5Y0s0w/a
+	4WyXyWKs2RX3KC1rb66QyV1+xy6uHucOrU/iCLu+wMjBaZIApHT97VMbYdiN7IlW
+	95YVLa2XxiJOGf2BYtLS89u6ElOGY+o8cr2+fyA5nEmaRc/UxmhD3jV5hYBEfV+s
+	eyDA4UT/XOQN6QlG3nOS0Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758057727; x=
+	1758144127; bh=FNr3jSgck4Jl1pEEorXXSsO/QSdN0TeOX27XjWwmQk4=; b=E
+	Z7tx/gMX+JHnfBo28xUh1LQhXMbww/GQURpZbheyiYKUde1AonfnGScS0+OYzFOv
+	jzWuH0Lb28j67bJBhujQVR488bNfaWAu3EVAE9UL4pioiV5gv2ZF8/1SsnyMozGs
+	acHErhAmLXUYwHlFYhBAeuCRkVz4KGg+08Ez5JOs2XPSJfIjhtI0rAbwY+iY+ybV
+	pIXrasuNQRa8RkY57Gt/X11jQtj5TWkotsGWF3cNqJiX/I+VHJASeIJNCeIL6sh3
+	BfsJiY4WTZSj0YvWDuSPeqieYXK4dWB9UMRWDPhPxyMajBwQCmb3BFfdNZQSQetH
+	i9IqCVJ9LzbHqQJv6Sv3w==
+X-ME-Sender: <xms:_tTJaAKQKp7Zx4a7W-0SuIKbrn4Bbn4qt7HlFyGLUFnS45Hr4me-3A>
+    <xme:_tTJaPU3JOP9QYcDrO8NSjeqRuXYaH48mIe0V78puLRtATa_7psA-UUwPLauP5PJh
+    noT7ED6IlmZQ4CLDow>
+X-ME-Received: <xmr:_tTJaDZcvwkXms7lKTTYJvyhdOqy2qX2s3qBXipxcxf9KCGMawsg2CXnOsjjfkAgjI3F4gQR>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegudeigecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptfgvsggvtggt
+    rgcuvehrrghnuceorhgvsggvtggtrgessghsughiohdrtghomheqnecuggftrfgrthhtvg
+    hrnhephfekvdekvdfhtddvteehueeuleetjefhieehjeeuhfdtuddtvdeguddtkeevlefh
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgvsg
+    gvtggtrgessghsughiohdrtghomhdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhope
+    hrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehjohgvlhesjhhmshdrihgurdgruhdprhgtphhtthhopegrnhgurhgvfies
+    tghouggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghpthhtohepuggvvhhitggvth
+    hrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghr
+    mhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqrghsphgvvggusehlihhsthhsrdhoiihlrggsshdrohhrgh
+X-ME-Proxy: <xmx:_tTJaGwAbLGEIWQxH1_sErMKpB4r7kcgnDzjmrYpHY9WofmhEt3joA>
+    <xmx:_tTJaD1zm9G09z0Bz4RuXAMs5vHrs9mDe4HL6Wkg2Q8vOtRzv0togQ>
+    <xmx:_tTJaHl1f1GFfbgnQKogxvFKOQk8RaHDvyUO4u5Jt2wfqTCugEdmPQ>
+    <xmx:_tTJaC-MWptvSdycC-vRg_NaG9Rd3YNHQsUMXVLnP6c_P9DPQgbnPw>
+    <xmx:_9TJaPLRa3mNp1XgIDDKwGqhASuZQIht9nOJpR7B8O5flWLDdlVBYBJi>
+Feedback-ID: i5b994698:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 16 Sep 2025 17:22:05 -0400 (EDT)
+Message-ID: <e9b0d9c8-9117-4c75-93a7-1c334d823d99@bsdio.com>
+Date: Tue, 16 Sep 2025 15:22:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1688:b0:424:f8c:5c71 with SMTP id
- e9e14a558f8ab-42411463ac9mr33501985ab.9.1758057411872; Tue, 16 Sep 2025
- 14:16:51 -0700 (PDT)
-Date: Tue, 16 Sep 2025 14:16:51 -0700
-In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c9d3c3.050a0220.3c6139.0e69.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
+ ALTRAD8 BMC
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250911051009.4044609-1-rebecca@bsdio.com>
+ <20250911051009.4044609-3-rebecca@bsdio.com>
+ <58a092c5-5dd0-4718-831a-e25ecb184087@lunn.ch>
+ <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
+ <74e68c53-2696-4f86-97d3-c0b0a74d4669@lunn.ch>
+ <92bcdac9-44b1-4fc8-892a-01ef0ed0b7e0@bsdio.com>
+ <3f5e82ec-d96e-4258-b117-9876313f5402@lunn.ch>
+Content-Language: en-US
+From: Rebecca Cran <rebecca@bsdio.com>
+In-Reply-To: <3f5e82ec-d96e-4258-b117-9876313f5402@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 9/16/25 13:07, Andrew Lunn wrote:
 
-***
+> Now, it looks like all other aspeed-g5 boards also don't link to the
+> PHY. But the driver does seem to support adding an 'mdio' node within
+> the ethernet node, and listing the PHYs. Something like:
+>
+>         mdio {
+>                  #address-cells = <1>;
+>                  #size-cells = <0>;
+>
+>                  ethphy0: ethernet-phy@0 {
+>                          reg = <0>;
+>                  };
+>          };
+>
+> And then you can add a phy-handle to point to it.
+>
+> Then the question is, did Aspeed mess up the RGMII delays for g5? You
+> can try phy-mode = 'rgmii-id' and see if it works.
 
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-Author: yanjun.zhu@linux.dev
+I can't get that to work, with either 'rgmii-id' or 'rgmii'.
 
-#syz test: https://github.com/zhuyj/linux.git 
-v6.17_fix_gid_table_release_one
+It says "Failed to connect to phy".
+
+
+-- 
+Rebecca Cran
+
 
