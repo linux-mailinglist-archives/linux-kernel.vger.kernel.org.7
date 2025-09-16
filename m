@@ -1,245 +1,124 @@
-Return-Path: <linux-kernel+bounces-819221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53EB8B59CFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17695B59D69
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD0B3B350D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BE74E4DE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB10329D293;
-	Tue, 16 Sep 2025 16:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DD53728BF;
+	Tue, 16 Sep 2025 16:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bjxtoCp/"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010001.outbound.protection.outlook.com [52.101.84.1])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="KNyRqtGW"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3B920DD42;
-	Tue, 16 Sep 2025 16:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038605; cv=fail; b=c7Re6wfIWM+ZpNtIsFScE+dmuaxF2Fg0aUrz3vF+rDztuH9gwUjw3BgDJuPstMm1upPPGEHXaMk0feVwuiZ1VPdXpOI9jHDCgmch+gKvbOrchB/yFPiH4VCW4uMU8DJcQxTd3SjoLhyC3ahC3ecIWXHAMSU/AHaMt5/wSknOfvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038605; c=relaxed/simple;
-	bh=XwObYrXJGJlkbMf5HFGXcHxVW0sVLhQu7Bx2hZBxXcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=O+H3kmcUL7V2AATHkSf+N0Vug/XQS1Hrhse2pgkfHO9gnhrwHc5MZH/cDf4QBTyOBoTE42qWTQc+oAeUj3ZuzDyUoTW6who4BFxhIaaQ/cyctiRza5DaHTQCPNMuBDeziQQwStPXubiOAjYDhdcrCQoHDihGuVs1gdI4IDgn2ik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bjxtoCp/; arc=fail smtp.client-ip=52.101.84.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PEsZvtTPMUk6jr4wDPLCaZhOuzM4rqEOf9tOhKf1GK0wHhxdQhFPvbAH/YvPjlPVA0TNEwfL65xW251F2M2up3TyQ8Nod9YWdsMID8nPV8WLTJPz5n5x+wWMRXU38wUFskDqyCxG0MuxOwIA9F7fdg2QZJIcA5pZpHuDbhygzRVKI2otCRbzW3inFPgzjmqpnzXkgCUg01alXL1/Aohj+YmfrdGZnWvFod1s7KEYSvFTguL2E9q37WHk6LqKwlEGYr1tuj3LI91Z2OzYsSXkSaDIwfRGujFuKvXWzajJmG8dm0ntQ1qMgLGABFYZs6/eVcIDcDqMblIFVus/b5gWxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yw31PENNinYdnNFtS1wgxbhjPaUvreZrvu0B9Vmw3+Q=;
- b=fYt2StS/4BuhCbZIRT/BzZCJ9JAlpIqRNmAGY8+dWnk/UX9BGVFrtqXh1lXLbNThrXOczhc2LDbG8cMk3yT5ukSpRkQbfTjfdEMMgiSK7bfYLQFxtqipqr4oCxqQDppWjr4JsTXGDO56lstN5zIKvUJ7jF0GSewfFOw8j8HLrIAwDMMPXmbwVri60p84olHDuxBH6yBMfn71N2s6xCGf73jR+X5nW8iT4cdKldwSVEjj9N1XqnyXmXK243dEt2kV32XxnGowlAIgH+aADhoqfCwya4mWu466WIEbtjC3eLA8kbdZDtSfuzKkv7x/xd9nG+uIwd5kzWrUVA/vARFgoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yw31PENNinYdnNFtS1wgxbhjPaUvreZrvu0B9Vmw3+Q=;
- b=bjxtoCp/oXvcy2SPtyXxQHBtzFFq0VYlJJxSFudlIkYitRPUC0zL9iXQrMBDwxNg8zC12wt6FXmVhex35ekBqgpNW961rwcykf5LMgjPfPGbDjXRFbcyi6MaQYigghiIcFbbMWOecIGe18ohsgRZ4I2Dfw8XVWAaP0qsqdyWYj4zH6vk1X5WqP+twfBFHO8Og67IV4JFWsBlTMUu0Ryk4s20wIEgpS2JOCqrw6+Y9wEAFjREvuhraRxgIKtXyj+FOgJKTyevC8taCZM1Er3TtPNKhHwpOp+HzJ4hagx8jJOP3bjgjT8XEcMj7sPqsy9wW4Hqq84i58N+wAA7nz/fRQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by DB8PR04MB7098.eurprd04.prod.outlook.com (2603:10a6:10:fd::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Tue, 16 Sep
- 2025 16:03:09 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
- 16:03:09 +0000
-Date: Tue, 16 Sep 2025 12:03:01 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] dt-bindings: touchscreen: fsl,imx6ul-tsc: support
- glitch thresold
-Message-ID: <aMmKNYjxolrCb1yC@lizhi-Precision-Tower-5810>
-References: <20250914171608.1050401-1-dario.binacchi@amarulasolutions.com>
- <20250914171608.1050401-5-dario.binacchi@amarulasolutions.com>
- <aMgjAjfydIbYexkE@lizhi-Precision-Tower-5810>
- <20250915-tinker-music-03cff49a41a7@spud>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915-tinker-music-03cff49a41a7@spud>
-X-ClientProxiedBy: PH8PR22CA0014.namprd22.prod.outlook.com
- (2603:10b6:510:2d1::29) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959C92F616D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758039554; cv=none; b=PP8bQwozcHfe3bwrOb1fCY+8AA7WNiPnkilpGLHfYivwIoq/A0S/emkiGCW7bHEvZNYhq8bvVoz1ZoWPv8AcmcXTe9jG6DhHlVCG3YmlQgAUz9bL5FsS86x4qfUoXpaMTdcekAoACOyI93OHycU7MN+bjcSd3yUR99UB9rGTUT0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758039554; c=relaxed/simple;
+	bh=yK/Ydl3etOzjTdRkXqTdWHtWEHYqCZ/j4b9gW0Qz+QY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hqi+n5KiXb2nR4fZ86reWtKLFYKkkoJdwTTUW32V/tGZOiKfr4v6zT0wqqRc0jOiryoAlgO6FjjoORA9oluLjMm1rAgMfyDyNxAzbvIrkVIYtBIGTiKdSKjzL6o1NmcmS9exyyNPlCMltpl7xaZxH4ycsmQHhKcIDIV+n51qYCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=KNyRqtGW reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id IfZtsNituApaZ9Fi; Tue, 16 Sep 2025 12:04:11 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=+j1F478vcj92uMdblBqQoeReNdWWKE441rh+Ff31m+U=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:Content-Language:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID; b=KNyRqtGWzpzZ7imU5qid
+	jyCP3EEZsm/8CWiZ/NqDMwewWquo1A+KJMxS62NYet5Z28A0OLV32CZH9FbtNJrto4+LZzLLbuN8P
+	+XBO94TsyVabILQsQXcYAmM6AmYyZGqrHkgF4vcMBWiUL38h/ogQxZrxvHtsgQRMc1g/4z5SlY=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14200077; Tue, 16 Sep 2025 12:04:11 -0400
+Message-ID: <526d0d1b-79f1-47fd-bc44-6727898f381c@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Tue, 16 Sep 2025 12:04:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|DB8PR04MB7098:EE_
-X-MS-Office365-Filtering-Correlation-Id: 006e3724-2607-45c6-16ad-08ddf53a87bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|19092799006|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?J7U5jr3bFdIoVeF7KjB//5JoYLIHUdOmm99p4LgM444b7aFgBDlMRSHjtLEO?=
- =?us-ascii?Q?wfi58ABpfmV918ZBX9VYzUUxLweSFI4pbUd2ceixRdr5O6tIHxi7BVm5QoRw?=
- =?us-ascii?Q?W6kDyPf/fOM7SgoNT69IW4a95inV3lr91Qlxshau81V/GOlub42SllDekzTO?=
- =?us-ascii?Q?WGGZSMxCvGT0Lmf1FFF9awlut2ajjQ6RriE7fini/6DtZ8pfluq+0mYQ68Dn?=
- =?us-ascii?Q?QmwC7FJhMNm+eAXt/e/IgaH8/IRsX6/oFnxfccZP3lVKK8Zgfe8n9JF1OaIB?=
- =?us-ascii?Q?i8s+u246BE2Iri9viZkugeXFFrKDMbSj8oWrren6VGx4Il9cvd0pPfVMA7TH?=
- =?us-ascii?Q?YmLIQ8xtaYGhqPD+3sEQ8GZwoCNtBucXzmnCJm+ANfFAg6ceLEXtmoU6j1JS?=
- =?us-ascii?Q?x+FwVcUteSmY2Xv7rRb1+BKcjHa1jsCac8EBRSsiknFBuJSKgMmMCSxiAXrK?=
- =?us-ascii?Q?l6HEuXxlYjVHm6+gL2KV2tajjrrmBDvXOduVHkiQ0ncdQIoeZO+iz3t/Ha+K?=
- =?us-ascii?Q?UMaS+uRLYsFR4Px1yTRsK6k8bbfII3/wCI2iSQcw87x+FZS2crwKpU546dgw?=
- =?us-ascii?Q?bztscjZr/gicbnC4bx97Rj54/ozUTIlyRzyqs9FqzYZ54qq+qjnPipOU1HFX?=
- =?us-ascii?Q?lF6odRhlHt4mXRyMk+jd9+GU8XI2heCtFXB7DsUp4PqVkJZaQTQWrygIRSpr?=
- =?us-ascii?Q?orwY7Lk2wBIg9wnVYn3+Yj6qJoi9GEKAbPKCK6NXDTougc7HA2xXErRI4mJE?=
- =?us-ascii?Q?rRj8KcPd53FcBnYh/2QCckalla1whGKy38E5mnFW/e+hZ0dHdHTt5bt9HPbe?=
- =?us-ascii?Q?4YdCyAuKfPgN2LyHIlmbkfIi/odur9nNGg9ZJXymMy9QEIs8pACQD78CZK95?=
- =?us-ascii?Q?EbYrKOoTpaXA0nQ0VaYx6qcBnjZZM5KIT5Y5AJX20r8LgjxSWCKty8KPbxX5?=
- =?us-ascii?Q?odjFu9GZhs0KoRLUKXIYlX9j+6662C3UeFrK5bDFmiDyvvZmxECKseKs3ljd?=
- =?us-ascii?Q?CUWUqb7ypbtYpTdlGP50fOTYDzRMCpW1bT5VKz4Ns8ZewlNUtwd1MU6KxRjn?=
- =?us-ascii?Q?2i/GEZyEAfs0vN8oS/1J8AN5xbgUCV4oQnsWKOyHR93i2Bty5PQjRwdvSMOx?=
- =?us-ascii?Q?bYk/0oABurfBoUZFRfGk9w4ndlbD4/2MgxpYSOtfRbiNcXN3/nXGxYbY6eeq?=
- =?us-ascii?Q?L9XGebExeMr/5to0tr14g4K3/SCauZmqcvZ6gNTb23Z6a5nmVnxMKeheXZg2?=
- =?us-ascii?Q?wU6gqR3mlCCNir3M/LiVQkbKBuAwPx04gC3ov4b1aRB2zY2hTmkvQ7zJ6EVL?=
- =?us-ascii?Q?+6L8YulICrz7844wC04zzWjCw9hZ4WSRCC0aK/aHfMWb8bAUiynjdAm65sMK?=
- =?us-ascii?Q?KkOLLRAW3RTT2mT4pmur5aUNOFdCURQImEfecyah5+wUHZ7OBjRHczRkK2/3?=
- =?us-ascii?Q?qB1DHJZupgUHedT9OrdFH4rHfwDNLQLXNpNJOQD7WP4cyMoODH9kOA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(19092799006)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Yovnb/KP1qUzSoHvkA0bTPK8AkTAXTM/KJGBz2yvd8JWDNn/eQos4sIJNEvs?=
- =?us-ascii?Q?f+R9taWpie3LhUErzZiaxjlfYM6BO/FJfSu02HR54J5fHXgku6RxazXGWlen?=
- =?us-ascii?Q?UQZhjHiBeX7umpPMzFFxtIgSFUqWA7op3zsW3Fww7pm7z5viQztQrL2ZkPH8?=
- =?us-ascii?Q?hBW+PkuTjS1FtHinbf+hTS0JSalnxaUpbOANnRPCCSwCbkzMQTQzNykzSXBF?=
- =?us-ascii?Q?r64Y4AQqltEMHGAPK9F0rz/PgvnOaNt2YQ9lFSbT6Q3fTH3PIjmUEfHU5BPD?=
- =?us-ascii?Q?YvKP6DbXCoI3J1XBnwJmTyukzX7G2nI8g8jlNBEKpOYWmRlGnaWJ4GmJIhAc?=
- =?us-ascii?Q?TTdUEqxXL/zK9dpc91RhSiLPduT1hNyv64D3i+kgTyyx7nn+3ygWaGcuBguy?=
- =?us-ascii?Q?2y9GAH20dQeEsyN2zAUE/i4hJOPJNN+WO3EzeCprIbQuIN6jjesCZhU4R0zs?=
- =?us-ascii?Q?k6jiQ+XprAGxgceZoAN/rxMo7ZxTqe+LwsjU+k9WkHLnkGsWaAN5yd22Ktoc?=
- =?us-ascii?Q?VkMtKoYNbpteApsLh10x7fbRbHXuvNtv31S6M8R6Uv07/fP1KskPiOUob3UK?=
- =?us-ascii?Q?TpY68OyluDmx7FNV9GkVKfrg2UcI4+I6vdD6eWPObbKqR9iFwNz8UyNPFuOm?=
- =?us-ascii?Q?GkhoTH9gF4bEGffWtPr/ICDxztxLfJNAnHQ1iPkCpjfJOSZan5ETG8Zj8jkK?=
- =?us-ascii?Q?q9nsFWAhYTg1GkwrCuGVZIkO8hlVuBz9NwkKRluGcAg7Xu7ZGVHkA/1Os5dI?=
- =?us-ascii?Q?2JdhlRwZ59QSf7uFvXuipOMxrQIeLvUiDTr4fWNq8g/g114zzbA22Yq+ihmB?=
- =?us-ascii?Q?KIRO9EqsfpbU11fE5MOjyJF9luL45/S4U41BBAOwULwHFTrGBLalY77y96GK?=
- =?us-ascii?Q?dIsdzWH792eizAuPScUUWIjMPRohpIge6ojkU/lsMbtD7EZTRMxIu8GQTk0I?=
- =?us-ascii?Q?eTXYwx6LC6H+/tdBgkoksZp+AOf1YPTCToaGO+mViPiO45PCqLknyIjYkg6k?=
- =?us-ascii?Q?0SRaUIGkXolQ25xQjX/NzUnm2GQSB/0ghw1kgNeFfg5dUs56LDZKv+a/Afgu?=
- =?us-ascii?Q?6oeOX6eaVBl4I8Mp62qV4CScUNatIo/q9BGI2G5eVWsuOpHZxtIGXVRbH021?=
- =?us-ascii?Q?uasa8ej0kR0KnZp0RJZoRXevi3nkCHcDQoDvWQcTL/WwxtnNJmgsYV32NRHr?=
- =?us-ascii?Q?VwUrMK7+qBcbCM/VYmbzextuulew6fBuzFvGRG7F880kucmHk0ufcbrd2Kvv?=
- =?us-ascii?Q?q+vJLRq2AtO4R8hfCtDGVlhwCgBGYxzjW6/v5LNY7/d4cW9OP0h8wqeiXGD5?=
- =?us-ascii?Q?TfbPBQro6ihKF0eUWV79ft9daNmDiPEn/AqnAPVrThc9Y5U3XdLUdwnHMP0C?=
- =?us-ascii?Q?IOXKqKMyjGMgJTvVBHyuyHz3zbXLR0MlAfUfirLci3PuGkGCUqTQs3w1vCWn?=
- =?us-ascii?Q?JoDr0GENhjjg5hkfar0tE1R+tnGTIZyMaEEa87dC/E9HWt38EN3p4y2bNw0y?=
- =?us-ascii?Q?6nAcfay9jfdrnuUlQ+1pJVRCSt1VBMLxuHUrF3kFTz3G1HVsJHLtKakoF5zX?=
- =?us-ascii?Q?hCAtkXhF79cX/A06vzBzGJ8OrPaMNG13IFUs0YVf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 006e3724-2607-45c6-16ad-08ddf53a87bd
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 16:03:09.2277
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MlCIZ9ta9YkvahaZ1Rx46ejOn9WwIbg7nSHJPs3aiUXy2IDbiUgEp43RtxqXBtfdxzJoRBepjexNBhw3TmC36Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7098
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/15] scsi: qla2xxx: fix TMR failure handling
+To: Dmitry Bogdanov <d.bogdanov@yadro.com>
+X-ASG-Orig-Subj: Re: [PATCH 10/15] scsi: qla2xxx: fix TMR failure handling
+Cc: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
+ <f7f93110-bd53-4ebc-9aed-abe5de82028d@cybernetics.com>
+ <20250912143615.GB624@yadro.com>
+Content-Language: en-US
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <20250912143615.GB624@yadro.com>
+Content-Type: text/plain; charset=UTF-8
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1758038651
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 0
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1482
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1758038651-1cf43947df3553c0001-xx1T2L
 
-On Mon, Sep 15, 2025 at 06:42:13PM +0100, Conor Dooley wrote:
-> On Mon, Sep 15, 2025 at 10:30:26AM -0400, Frank Li wrote:
-> > On Sun, Sep 14, 2025 at 07:16:01PM +0200, Dario Binacchi wrote:
-> > > Support the touchscreen-glitch-threshold-ns property. Unlike the
-> > > generic description in touchscreen.yaml, this controller maps the
-> > > provided value to one of four discrete thresholds internally.
-> > >
-> > > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > > ---
-> > >
-> > > (no changes since v1)
-> > >
-> > >  .../input/touchscreen/fsl,imx6ul-tsc.yaml         | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-tsc.yaml
-> > > index 678756ad0f92..310af56a0be6 100644
-> > > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-tsc.yaml
-> > > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6ul-tsc.yaml
-> > > @@ -62,6 +62,21 @@ properties:
-> > >      description: Number of data samples which are averaged for each read.
-> > >      enum: [ 1, 4, 8, 16, 32 ]
-> > >
-> > > +  touchscreen-glitch-threshold-ns:
-> > > +    description: |
-> > > +      Unlike the generic property defined in touchscreen.yaml, this
-> > > +      controller does not allow arbitrary values. Internally the value is
-> > > +      converted to IPG clock cycles and mapped to one of four discrete
-> > > +      thresholds exposed by the TSC_DEBUG_MODE2 register:
-> > > +
-> > > +        0: 8191 IPG cycles
-> > > +        1: 4095 IPG cycles
-> > > +        2: 2047 IPG cycles
-> > > +        3: 1023 IPG cycles
-> >
-> > you should use ns
-> >    enum:
-> >       - 1023
-> >       - 2047
-> >       - 4095
-> >       - 8191
-> >
-> > you can limit only 4 values, but unit have to ns. your driver map it to
-> > register value.
->
-> Looking at the driver change, I think Dario is already doing that. The
-> text here is just talking about how the controller doesn't support
-> anything other than these 4 glitch threshold and mapping must be done in
-> some way.
+On 9/12/25 10:36, Dmitry Bogdanov wrote:
+> On Mon, Sep 08, 2025 at 03:02:49PM -0400, Tony Battersby wrote:
+>> If handle_tmr() fails (e.g. -ENOMEM):
+>> - qlt_send_busy() makes no sense because it sends a SCSI command
+>>   response instead of a TMR response.
+> There is not only -ENOMEM can be returned by handle_tmr.
 
-Thanks, but descripton is confused.
-"Unlike the generic property defined in touchscreen.yaml", which let me
-think value is 0..3, instead of ns.
+Indeed.=C2=A0 I will remove mention of -ENOMEM since it isn't really rele=
+vant.
 
-Suggest Remove
+>> +               mcmd->fc_tm_rsp =3D FCP_TMF_REJECTED;
+>>
+> FCP_TMF_REJECTED means that this TMF is not supported, FCP_TMF_FAILED i=
+s
+> more appretiate here.
 
-"Unlike the generic property defined in touchscreen.yaml, this
-controller does not allow arbitrary values"
+I will make that change.
 
-Frank
->
-> > > +
-> > > +      Any value provided in device tree is converted to cycles and rounded
-> > > +      up to the next supported threshold, or to 8191 if above 4095.
->
-> This seems to be the implementation details of one particular driver,
-> and does not belong in a binding.
->
-> > > +
-> > >  required:
-> > >    - compatible
-> > >    - reg
-> > > --
-> > > 2.43.0
-> > >
+>> - Calling mempool_free() directly can lead to memory-use-after-free.
+> No, it is a API contract between modules. If handle_tmr returned an err=
+or,
+> then the caller of handle_tmr is responsible to make a cleanup.
+> Otherwise, target module (tcm_qla2xxx) is responsible. The same rule is
+> for handle_cmd.
+>> +               qlt_xmit_tm_rsp(mcmd);
+> qlt_xmit_tm_rsp does not free mcmd for TMF ABORT. So you introduce a me=
+mleak.
 
+I just tested it, and there is no memleak.=C2=A0 qlt_build_abts_resp_iocb=
+()
+sets req->outstanding_cmds[h] to mcmd, and then
+qlt_handle_abts_completion() calls ->free_mcmd after getting a response
+from the ISP.
+
+The original code had a memory-use-after-free by calling
+qlt_build_abts_resp_iocb() and then mempool_free(), and
+then=C2=A0qlt_handle_abts_completion() used the freed mcmd.=C2=A0 I can r=
+eword the
+commit message to make this clearer.
+
+Tony
 
 
