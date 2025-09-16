@@ -1,336 +1,172 @@
-Return-Path: <linux-kernel+bounces-818541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2CFB59311
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:12:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C82BB5931C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 793201BC16BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B4A188F159
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E1E2F8BDA;
-	Tue, 16 Sep 2025 10:12:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AAA2F7ACB;
-	Tue, 16 Sep 2025 10:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B02F8BD0;
+	Tue, 16 Sep 2025 10:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ZapZ3uEp"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2B82773E9;
+	Tue, 16 Sep 2025 10:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758017544; cv=none; b=tEAJFonY7o8cd3rDEA3mWc8Ex87sDXmwSSKfkQutYw2w+LSAn5+R1vhOLMcLagRdJXGX0JNRgGa0ecgACGHvvJXvy/AtK6JT9iZMesATj+z2mGhs0AZ2CUgJW3ztqxd1QLJ4gDo/Nq34ucAOtBrh00vGbqcqkvghPmk8XgkkxeE=
+	t=1758017685; cv=none; b=jjjNZ+PEKQvxXxyUmI4W2cphuG7nbKIMW9oEaIWgjk1YdjzRdYvB8V3v4vySRnRhPYKdgLb/mqfnD6NeGlsYHryuMev4GFk9JwnX4NsKKo9FqWyOk+b3X2rgvViR5vnCmuKJa1pHUnKsS/SNMY0eN/LdgvqYkbWXLma9voZX898=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758017544; c=relaxed/simple;
-	bh=+jBhf7v7FWI9SUvmU0eP8Ap7x6YsUlvlITRjlGy9t8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AC/ZNedjtcFPy3KVHETDyoWmKClT4mZdxsGjdcUrcVel6twVjZgBtT6fh0HANAd9wDQeVKTNFYXxEFpoeFec6ekUdu3WwdARbdcfzcuvtihKdlyeSFZgRa7gtuQKXWeHBcfe17x8+6tNTZll9hPZi6dNWOmz81sVj9gyCcLgYAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35CE912FC;
-	Tue, 16 Sep 2025 03:12:10 -0700 (PDT)
-Received: from [10.163.42.157] (unknown [10.163.42.157])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA3FE3F673;
-	Tue, 16 Sep 2025 03:12:09 -0700 (PDT)
-Message-ID: <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
-Date: Tue, 16 Sep 2025 15:42:07 +0530
+	s=arc-20240116; t=1758017685; c=relaxed/simple;
+	bh=kU4fC88JBHAp0zYfJSbS98oDp1yi1/hICgQxsaUH6hM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=EIlVgnQWgkuH1Kz+yQHlxYXPd2Qpcti/pBrNJrj8XhNq/YEwLrh2qss61+d6yc53G4LaENZ81FmsEdWUfSiNy66fUR/92f2ZwH+talHkjmdjx6L/MahPIEDUVIenNTzN+eVcrG6pOXH5WmGukt9dggbpIvdrikR82vxH5sMU89I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ZapZ3uEp reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=9r47YpNtLDGnmu9MOq0uHzZ3Aq3g0W9pPUXAi/LnBFQ=; b=Z
+	apZ3uEpnncAPLxsqchcfOGWIxhpZD/lRTziSBpcEoAogYTKT1p4CpRdqmkq50FYO
+	9ov7c5xIGkypEoEH4is0KRWQBK9u38fZPIBQFKWwJBobTBbi7nk/OE+XpCsCXiW0
+	aR+3m7IYGqaqEm1N+VaqCnRb/vnDdeLSJ+VHY1GQe8=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-132 (Coremail) ; Tue, 16 Sep 2025 18:13:14 +0800
+ (CST)
+Date: Tue, 16 Sep 2025 18:13:14 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Quentin Schulz" <quentin.schulz@cherry.de>
+Cc: "Quentin Schulz" <quentin.schulz@cherry.de>,
+	"Chaoyi Chen" <kernel@airkyi.com>,
+	"Heiko Stuebner" <heiko@sntech.de>,
+	"Andy Yan" <andy.yan@rock-chips.com>,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Dragan Simic" <dsimic@manjaro.org>,
+	"FUKAUMI Naoki" <naoki@radxa.com>, "Jonas Karlman" <jonas@kwiboo.se>,
+	"Peter Robinson" <pbrobinson@gmail.com>,
+	"chaoyi.chen@rock-chips.com" <chaoyi.chen@rock-chips.com>,
+	"Geert Uytterhoeven" <geert+renesas@glider.be>,
+	"Cristian Ciocaltea" <cristian.ciocaltea@collabora.com>,
+	"Sebastian Reichel" <sebastian.reichel@collabora.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH] arm64: dts: rockchip: Enable DisplayPort for
+ rk3588-evb2
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <0884990e-f349-49d5-804a-932125aca1cf@rock-chips.com>
+References: <20250916080802.125-1-kernel@airkyi.com>
+ <50379c05-c8b7-4858-98ff-da7ebdc06863@cherry.de>
+ <352856bb-76b6-4861-8a3f-80f94f7c7375@rock-chips.com>
+ <72ddffd6-bd8f-418e-996d-70267d3ca7e4@cherry.de>
+ <0884990e-f349-49d5-804a-932125aca1cf@rock-chips.com>
+X-NTES-SC: AL_Qu2eCvyauE0i4iSabekfmUgWjuw/WsG1v/Ul1YBSP556jAPoxxw8QE5yE3nd79OjGy6SgCG5YAlI2Nlmf4dhWoA56gnBH63NZzQMYzV9RE1SfA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
- HugeTLB pages
-To: Kyle Meyer <kyle.meyer@hpe.com>, akpm@linux-foundation.org,
- corbet@lwn.net, david@redhat.com, linmiaohe@huawei.com, shuah@kernel.org,
- tony.luck@intel.com, jane.chu@oracle.com, jiaqiyan@google.com
-Cc: Liam.Howlett@oracle.com, bp@alien8.de, hannes@cmpxchg.org, jack@suse.cz,
- joel.granados@kernel.org, laoar.shao@gmail.com, lorenzo.stoakes@oracle.com,
- mclapinski@google.com, mhocko@suse.com, nao.horiguchi@gmail.com,
- osalvador@suse.de, rafael.j.wysocki@intel.com, rppt@kernel.org,
- russ.anderson@hpe.com, shawn.fan@intel.com, surenb@google.com,
- vbabka@suse.cz, linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org
-References: <aMiu_Uku6Y5ZbuhM@hpe.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <aMiu_Uku6Y5ZbuhM@hpe.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <5e94042f.9278.1995203a448.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:hCgvCgDXr1Y6OMloJJALAA--.2564W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwDKXmjJMDLeaAADsx
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 16/09/25 5:57 AM, Kyle Meyer wrote:
-> Soft offlining a HugeTLB page reduces the HugeTLB page pool.
-> 
-> Commit 56374430c5dfc ("mm/memory-failure: userspace controls soft-offlining pages")
-> introduced the following sysctl interface to control soft offline:
-> 
-> /proc/sys/vm/enable_soft_offline
-> 
-> The interface does not distinguish between page types:
-> 
->     0 - Soft offline is disabled
->     1 - Soft offline is enabled
-> 
-> Convert enable_soft_offline to a bitmask and support disabling soft
-> offline for HugeTLB pages:
-> 
-> Bits:
-> 
->     0 - Enable soft offline
->     1 - Disable soft offline for HugeTLB pages
-> 
-> Supported values:
-> 
->     0 - Soft offline is disabled
->     1 - Soft offline is enabled
->     3 - Soft offline is enabled (disabled for HugeTLB pages)
-> 
-> Existing behavior is preserved.
-> 
-> Update documentation and HugeTLB soft offline self tests.
-> 
-> Reported-by: Shawn Fan <shawn.fan@intel.com>
-> Suggested-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
-> ---
-> 
-> Tony's patch:
-> * https://lore.kernel.org/all/20250904155720.22149-1-tony.luck@intel.com
-> 
-> v1:
-> * https://lore.kernel.org/all/aMGkAI3zKlVsO0S2@hpe.com
-> 
-> v1 -> v2:
-> * Make the interface extensible, as suggested by David.
-> * Preserve existing behavior, as suggested by Jiaqi and David.
-> 
-> Why clear errno in self tests?
-> 
-> madvise() does not set errno when it's successful and errno is set by madvise()
-> during test_soft_offline_common(3) causing test_soft_offline_common(1) to fail:
-> 
-> # Test soft-offline when enabled_soft_offline=1
-> # Hugepagesize is 1048576kB
-> # enable_soft_offline => 1
-> # Before MADV_SOFT_OFFLINE nr_hugepages=7
-> # Allocated 0x80000000 bytes of hugetlb pages
-> # MADV_SOFT_OFFLINE 0x7fd600000000 ret=0, errno=95
-> # MADV_SOFT_OFFLINE should ret 0
-> # After MADV_SOFT_OFFLINE nr_hugepages=6
-> not ok 2 Test soft-offline when enabled_soft_offline=1
-> 
-> ---
->  .../ABI/testing/sysfs-memory-page-offline     |  3 ++
->  Documentation/admin-guide/sysctl/vm.rst       | 28 ++++++++++++++++---
->  mm/memory-failure.c                           | 17 +++++++++--
->  .../selftests/mm/hugetlb-soft-offline.c       | 19 ++++++++++---
->  4 files changed, 56 insertions(+), 11 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-memory-page-offline b/Documentation/ABI/testing/sysfs-memory-page-offline
-> index 00f4e35f916f..d3f05ed6605e 100644
-> --- a/Documentation/ABI/testing/sysfs-memory-page-offline
-> +++ b/Documentation/ABI/testing/sysfs-memory-page-offline
-> @@ -20,6 +20,9 @@ Description:
->  		number, or a error when the offlining failed.  Reading
->  		the file is not allowed.
->  
-> +		Soft-offline can be controlled via sysctl, see:
-> +		Documentation/admin-guide/sysctl/vm.rst
-> +
-
-This update is applicable right away without other changes proposed.
-Probably can be moved into a separate patch in itself ?
->  What:		/sys/devices/system/memory/hard_offline_page
->  Date:		Sep 2009
->  KernelVersion:	2.6.33
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> index 4d71211fdad8..ace73480eb9d 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -309,19 +309,39 @@ physical memory) vs performance / capacity implications in transparent and
->  HugeTLB cases.
->  
->  For all architectures, enable_soft_offline controls whether to soft offline
-> -memory pages.  When set to 1, kernel attempts to soft offline the pages
-> -whenever it thinks needed.  When set to 0, kernel returns EOPNOTSUPP to
-> -the request to soft offline the pages.  Its default value is 1.
-> +memory pages.
-> +
-> +enable_soft_offline is a bitmask:
-> +
-> +Bits::
-> +
-> +	0 - Enable soft offline
-> +	1 - Disable soft offline for HugeTLB pages
-> +
-> +Supported values::
-> +
-> +	0 - Soft offline is disabled
-> +	1 - Soft offline is enabled
-> +	3 - Soft offline is enabled (disabled for HugeTLB pages)
-
-This looks very adhoc even though existing behavior is preserved.
-
-- Are HugeTLB pages the only page types to be considered ?
-- How the remaining bits here are going to be used later ?
-
-Also without a bit-wise usage roadmap, is not changing a procfs
-interface (ABI) bit problematic ?
-> +
-> +The default value is 1.
-> +
-> +If soft offline is disabled for the requested page type, EOPNOTSUPP is returned.
->  
->  It is worth mentioning that after setting enable_soft_offline to 0, the
->  following requests to soft offline pages will not be performed:
->  
-> +- Request to soft offline from sysfs (soft_offline_page).
-> +
->  - Request to soft offline pages from RAS Correctable Errors Collector.
->  
-> -- On ARM, the request to soft offline pages from GHES driver.
-> +- On ARM and X86, the request to soft offline pages from GHES driver.
->  
->  - On PARISC, the request to soft offline pages from Page Deallocation Table.
->  
-> +Note:
-> +	Soft offlining a HugeTLB page reduces the HugeTLB page pool.
-> +
->  extfrag_threshold
->  =================
->  
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index fc30ca4804bf..0ad9ae11d9e8 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -64,11 +64,14 @@
->  #include "internal.h"
->  #include "ras/ras_event.h"
->  
-> +#define SOFT_OFFLINE_ENABLED		BIT(0)
-> +#define SOFT_OFFLINE_SKIP_HUGETLB	BIT(1)
-> +
->  static int sysctl_memory_failure_early_kill __read_mostly;
->  
->  static int sysctl_memory_failure_recovery __read_mostly = 1;
->  
-> -static int sysctl_enable_soft_offline __read_mostly = 1;
-> +static int sysctl_enable_soft_offline __read_mostly = SOFT_OFFLINE_ENABLED;
->  
->  atomic_long_t num_poisoned_pages __read_mostly = ATOMIC_LONG_INIT(0);
->  
-> @@ -150,7 +153,7 @@ static const struct ctl_table memory_failure_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= proc_dointvec_minmax,
->  		.extra1		= SYSCTL_ZERO,
-> -		.extra2		= SYSCTL_ONE,
-> +		.extra2		= SYSCTL_THREE,
->  	}
->  };
->  
-> @@ -2799,12 +2802,20 @@ int soft_offline_page(unsigned long pfn, int flags)
->  		return -EIO;
->  	}
->  
-> -	if (!sysctl_enable_soft_offline) {
-> +	if (!(sysctl_enable_soft_offline & SOFT_OFFLINE_ENABLED)) {
->  		pr_info_once("disabled by /proc/sys/vm/enable_soft_offline\n");
->  		put_ref_page(pfn, flags);
->  		return -EOPNOTSUPP;
->  	}
->  
-> +	if (sysctl_enable_soft_offline & SOFT_OFFLINE_SKIP_HUGETLB) {
-> +		if (folio_test_hugetlb(pfn_folio(pfn))) {
-> +			pr_info_once("disabled for HugeTLB pages by /proc/sys/vm/enable_soft_offline\n");
-> +			put_ref_page(pfn, flags);
-> +			return -EOPNOTSUPP;
-> +		}
-> +	}
-> +
->  	mutex_lock(&mf_mutex);
->  
->  	if (PageHWPoison(page)) {
-> diff --git a/tools/testing/selftests/mm/hugetlb-soft-offline.c b/tools/testing/selftests/mm/hugetlb-soft-offline.c
-> index f086f0e04756..b87c8778cadf 100644
-> --- a/tools/testing/selftests/mm/hugetlb-soft-offline.c
-> +++ b/tools/testing/selftests/mm/hugetlb-soft-offline.c
-> @@ -5,6 +5,8 @@
->   *   offlining failed with EOPNOTSUPP.
->   * - if enable_soft_offline = 1, a hugepage should be dissolved and
->   *   nr_hugepages/free_hugepages should be reduced by 1.
-> + * - if enable_soft_offline = 3, hugepages should stay intact and soft
-> + *   offlining failed with EOPNOTSUPP.
->   *
->   * Before running, make sure more than 2 hugepages of default_hugepagesz
->   * are allocated. For example, if /proc/meminfo/Hugepagesize is 2048kB:
-> @@ -32,6 +34,9 @@
->  
->  #define EPREFIX " !!! "
->  
-> +#define SOFT_OFFLINE_ENABLED		(1 << 0)
-> +#define SOFT_OFFLINE_SKIP_HUGETLB	(1 << 1)
-> +
->  static int do_soft_offline(int fd, size_t len, int expect_errno)
->  {
->  	char *filemap = NULL;
-> @@ -56,6 +61,7 @@ static int do_soft_offline(int fd, size_t len, int expect_errno)
->  	ksft_print_msg("Allocated %#lx bytes of hugetlb pages\n", len);
->  
->  	hwp_addr = filemap + len / 2;
-> +	errno = 0;
->  	ret = madvise(hwp_addr, pagesize, MADV_SOFT_OFFLINE);
->  	ksft_print_msg("MADV_SOFT_OFFLINE %p ret=%d, errno=%d\n",
->  		       hwp_addr, ret, errno);
-> @@ -83,7 +89,7 @@ static int set_enable_soft_offline(int value)
->  	char cmd[256] = {0};
->  	FILE *cmdfile = NULL;
->  
-> -	if (value != 0 && value != 1)
-> +	if (value < 0 || value > 3)
->  		return -EINVAL;
->  
->  	sprintf(cmd, "echo %d > /proc/sys/vm/enable_soft_offline", value);
-> @@ -155,13 +161,17 @@ static int create_hugetlbfs_file(struct statfs *file_stat)
->  static void test_soft_offline_common(int enable_soft_offline)
->  {
->  	int fd;
-> -	int expect_errno = enable_soft_offline ? 0 : EOPNOTSUPP;
-> +	int expect_errno = 0;
->  	struct statfs file_stat;
->  	unsigned long hugepagesize_kb = 0;
->  	unsigned long nr_hugepages_before = 0;
->  	unsigned long nr_hugepages_after = 0;
->  	int ret;
->  
-> +	if (!(enable_soft_offline & SOFT_OFFLINE_ENABLED) ||
-> +	     (enable_soft_offline & SOFT_OFFLINE_SKIP_HUGETLB))
-> +		expect_errno = EOPNOTSUPP;
-> +
->  	ksft_print_msg("Test soft-offline when enabled_soft_offline=%d\n",
->  		       enable_soft_offline);
->  
-> @@ -198,7 +208,7 @@ static void test_soft_offline_common(int enable_soft_offline)
->  	// No need for the hugetlbfs file from now on.
->  	close(fd);
->  
-> -	if (enable_soft_offline) {
-> +	if (expect_errno == 0) {
->  		if (nr_hugepages_before != nr_hugepages_after + 1) {
->  			ksft_test_result_fail("MADV_SOFT_OFFLINE should reduced 1 hugepage\n");
->  			return;
-> @@ -219,8 +229,9 @@ static void test_soft_offline_common(int enable_soft_offline)
->  int main(int argc, char **argv)
->  {
->  	ksft_print_header();
-> -	ksft_set_plan(2);
-> +	ksft_set_plan(3);
->  
-> +	test_soft_offline_common(3);
->  	test_soft_offline_common(1);
->  	test_soft_offline_common(0);
->  
-
+CgpIZWxsbyBRdWVudGlu77yMCgrlnKggMjAyNS0wOS0xNiAxNzo0ODo0Me+8jCJDaGFveWkgQ2hl
+biIgPGNoYW95aS5jaGVuQHJvY2stY2hpcHMuY29tPiDlhpnpgZPvvJoKPk9uIDkvMTYvMjAyNSA1
+OjI0IFBNLCBRdWVudGluIFNjaHVseiB3cm90ZToKPgo+PiBPbiA5LzE2LzI1IDExOjE4IEFNLCBD
+aGFveWkgQ2hlbiB3cm90ZToKPj4+IEhpIFF1ZW50aW4sCj4+Pgo+Pj4gT24gOS8xNi8yMDI1IDQ6
+NDEgUE0sIFF1ZW50aW4gU2NodWx6IHdyb3RlOgo+Pj4+IEhpIENoYW95aSBDaGVuLAo+Pj4+Cj4+
+Pj4gT24gOS8xNi8yNSAxMDowOCBBTSwgQ2hhb3lpIENoZW4gd3JvdGU6Cj4+Pj4+IEZyb206IENo
+YW95aSBDaGVuIDxjaGFveWkuY2hlbkByb2NrLWNoaXBzLmNvbT4KPj4+Pj4KPj4+Pj4gVGhlIHJr
+MzU4OCBldmIyIGJvYXJkIGhhcyBhIGZ1bGwgc2l6ZSBEaXNwbGF5UG9ydCBjb25uZWN0b3IsIGVu
+YWJsZQo+Pj4+PiBmb3IgaXQuCj4+Pj4+Cj4+Pj4+IFNpZ25lZC1vZmYtYnk6IENoYW95aSBDaGVu
+IDxjaGFveWkuY2hlbkByb2NrLWNoaXBzLmNvbT4KPj4+Pj4gLS0tCj4+Pj4+IMKgIC4uLi9ib290
+L2R0cy9yb2NrY2hpcC9yazM1ODgtZXZiMi12MTAuZHRzwqDCoMKgwqAgfCAzOSArKysrKysrKysr
+KysrKysrKysrCj4+Pj4+IMKgIDEgZmlsZSBjaGFuZ2VkLCAzOSBpbnNlcnRpb25zKCspCj4+Pj4+
+Cj4+Pj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1l
+dmIyLXYxMC5kdHMgYi9hcmNoLyBhcm02NC9ib290L2R0cy9yb2NrY2hpcC9yazM1ODgtZXZiMi12
+MTAuZHRzCj4+Pj4+IGluZGV4IDkxZmU4MTBkMzhkOC4uMGU1YWY2MWY2NmZlIDEwMDY0NAo+Pj4+
+PiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OC1ldmIyLXYxMC5kdHMK
+Pj4+Pj4gKysrIGIvYXJjaC9hcm02NC9ib290L2R0cy9yb2NrY2hpcC9yazM1ODgtZXZiMi12MTAu
+ZHRzCj4+Pj4+IEBAIC0yNSw2ICsyNSwxOCBAQCBjaG9zZW4gewo+Pj4+PiDCoMKgwqDCoMKgwqDC
+oMKgwqAgc3Rkb3V0LXBhdGggPSAic2VyaWFsMjoxNTAwMDAwbjgiOwo+Pj4+PiDCoMKgwqDCoMKg
+IH07Cj4+Pj4+IMKgICvCoMKgwqAgZHAtY29uIHsKPj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGNvbXBh
+dGlibGUgPSAiZHAtY29ubmVjdG9yIjsKPj4+Pj4gK8KgwqDCoMKgwqDCoMKgIGxhYmVsID0gIkRQ
+IE9VVCI7Cj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCB0eXBlID0gImZ1bGwgc2l6ZSI7Cj4+Pj4KPj4+
+PiBUaGlzIGlzbid0IHZhbGlkIGFjY29yZGluZyB0byB0aGUgZHQgYmluZGluZy4gSXQgc2hvdWxk
+IGJlICJmdWxsLXNpemUiIGluc3RlYWQuCj4+Pgo+Pj4gV2lsbCBmaXggaW4gdjIuCj4+Pgo+Pj4K
+Pj4+Pgo+Pj4+PiArCj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCBwb3J0IHsKPj4+Pj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgZHBfY29uX2luOiBlbmRwb2ludCB7Cj4+Pj4+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgcmVtb3RlLWVuZHBvaW50ID0gPCZkcDBfb3V0X2Nvbj47Cj4+Pj4+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH07Cj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCB9Owo+Pj4+
+PiArwqDCoMKgIH07Cj4+Pj4+ICsKPj4+Pj4gwqDCoMKgwqDCoCBoZG1pLWNvbiB7Cj4+Pj4+IMKg
+wqDCoMKgwqDCoMKgwqDCoCBjb21wYXRpYmxlID0gImhkbWktY29ubmVjdG9yIjsKPj4+Pj4gwqDC
+oMKgwqDCoMKgwqDCoMKgIHR5cGUgPSAiYSI7Cj4+Pj4+IEBAIC0xMDYsNiArMTE4LDI0IEBAIHZj
+YzV2MF91c2JkY2luOiByZWd1bGF0b3ItdmNjNXYwLXVzYmRjaW4gewo+Pj4+PiDCoMKgwqDCoMKg
+IH07Cj4+Pj4+IMKgIH07Cj4+Pj4+IMKgICsmZHAwIHsKPj4+Pj4gK8KgwqDCoCBwaW5jdHJsLTAg
+PSA8JmRwMG0wX3BpbnM+Owo+Pj4+PiArwqDCoMKgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7
+Cj4+Pj4+ICvCoMKgwqAgc3RhdHVzID0gIm9rYXkiOwo+Pj4+PiArfTsKPj4+Pj4gKwo+Pj4+PiAr
+JmRwMF9pbiB7Cj4+Pj4+ICvCoMKgwqAgZHAwX2luX3ZwMjogZW5kcG9pbnQgewo+Pj4+PiArwqDC
+oMKgwqDCoMKgwqAgcmVtb3RlLWVuZHBvaW50ID0gPCZ2cDJfb3V0X2RwMD47Cj4+Pj4+ICvCoMKg
+wqAgfTsKPj4+Pj4gK307Cj4+Pj4+ICsKPj4+Pj4gKyZkcDBfb3V0IHsKPj4+Pj4gK8KgwqDCoCBk
+cDBfb3V0X2NvbjogZW5kcG9pbnQgewo+Pj4+PiArwqDCoMKgwqDCoMKgwqAgcmVtb3RlLWVuZHBv
+aW50ID0gPCZkcF9jb25faW4+Owo+Pj4+PiArwqDCoMKgIH07Cj4+Pj4+ICt9Owo+Pj4+PiArCj4+
+Pj4+IMKgICZncHUgewo+Pj4+PiDCoMKgwqDCoMKgIG1hbGktc3VwcGx5ID0gPCZ2ZGRfZ3B1X3Mw
+PjsKPj4+Pj4gwqDCoMKgwqDCoCBzcmFtLXN1cHBseSA9IDwmdmRkX2dwdV9tZW1fczA+Owo+Pj4+
+PiBAQCAtOTE2LDYgKzk0Niw4IEBAICZ1c2JfaG9zdDFfeGhjaSB7Cj4+Pj4+IMKgIH07Cj4+Pj4+
+IMKgIMKgICZ2b3Agewo+Pj4+PiArwqDCoMKgIGFzc2lnbmVkLWNsb2NrcyA9IDwmY3J1IERDTEtf
+Vk9QMl9TUkM+Owo+Pj4+PiArwqDCoMKgIGFzc2lnbmVkLWNsb2NrLXBhcmVudHMgPSA8JmNydSBQ
+TExfVjBQTEw+Owo+Pj4+Cj4+Pj4gVGhpcyBpcyBzdXJwcmlzaW5nLCB0aGUgb25seSBvdGhlciBi
+b2FyZCB3aGljaCBoYXMgdGhlIERQMCBlbmFibGVkICh0aGUgQ29vbFBpIDRCKSBkb2Vzbid0IHNl
+dCB0aGVzZSB0d28uCj4+Pj4KPj4+PiBEb2VzIEhETUkgc3RpbGwgd29yayBhcyB3ZWxsIGFzIGl0
+IHVzZWQgdG8gd2l0aCB0aGVzZSBuZXcgcHJvcGVydGllcz8gV2h5IGFyZSB0aG9zZSBuZWVkZWQ/
+IFNvbWUgY29udGV4dCBpbiB0aGUgY29tbWl0IGxvZyBvciBhcyBhIGNvbW1lbnQgaW4gdGhlIERU
+IHdvdWxkIGJlIG1vc3Qgd2VsY29tZSEKPj4+Cj4+PiBZZXMsIEhETUkgYW5kIERQIGNhbiB3b3Jr
+IG5vcm1hbGx5IHdoZXRoZXIgdGhlc2UgbmV3wqBwcm9wZXJ0aWVzIHJlbW92ZWQgb3Igbm90Lgo+
+Pj4KPj4+IFRoZSBrZXkgcG9pbnQgaXMgdGhhdCB3aGVuIHVzaW5nIFYwUExMLCB3ZSBjYW4gZ2V0
+IG1vcmUgdXNhYmxlIHJlc29sdXRpb24gYmVjYXVzZSBEUCByZXF1aXJlcyBhIHByZWNpc2UgY2xv
+Y2suIElmIFYwUExMIGlzIG5vdCBleHBsaWNpdGx5IHNwZWNpZmllZCBoZXJlLCB0aGVuIGRjbGtf
+dm9wMiAoVlAyKSBtYXkgYmUgZGl2aWRlZCBkb3duIG9uIEdQTEwsIENQTEwsIGV0Yy4gSW4gdGhp
+cyBjYXNlLCBvbmx5IGEgZmV3IGZyZXF1ZW5jeSBwb2ludHMgYXJlIGF2YWlsYWJsZS4gSW4gbXkg
+Y2FzZSwgd2hlbiBWMFBMTCBpcyBub3QgdXNlZCwgb25seSByZXNvbHV0aW9ucyBzdWNoIGFzIDEw
+MjR4NzY4IGFuZCA2NDB4NDgwIGFyZSBhdmFpbGFibGUuCj4KPk9oISBUaGlzIGlzIGJlY2F1c2Ug
+R1BMTCB3YXMgbm90IGluaXRpYWxpemVkIHRvIHRoZSBjb3JyZWN0IGZyZXF1ZW5jeSBkdXJpbmcg
+dGhlIFUtQm9vdCBzdGFnZS4gSXQgc2hvdWxkIHN1cHBvcnQgdHlwaWNhbCBmcmVxdWVuY2llcyBz
+dWNoIGFzIDEwODBQICgxNDguNU0pLCA0SyAoNTk0TSkgLgo+Cj4KPj4+Cj4+PiBGb3IgSERNSSwg
+SSB0aGluayBpdCB3aWxsIHVzZSBjbGtfaGRtaXBoeV9waXhlbDAvMSBhcyBjbG9jayBwYXJlbnQg
+d2hpY2ggaXMgcHJvdmlkZWQgYnkgdGhlIEhETUkgUEhZIHdoZW4gaXQgd29yayBvbiBUTURTIG1v
+ZGUgc28gdGhhdCB3ZSBkb24ndCBuZWVkIHRvIHNldCBpdCAuCj4+Pgo+Pgo+PiBDb25zaWRlcmlu
+ZyB0aGUgY2xvY2tzIGFyZSBhbGwgaW50ZXJuYWwgdG8gdGhlIFNvQywgc2hvdWxkbid0IGFsbCB5
+b3UgaGF2ZSBleHBsYWluZWQgYmUgYXBwbGljYWJsZSB0byB0aGUgQ29vbFBpIDRCIHRvbyAoYW5k
+IG90aGVyIGJvYXJkcyB3aXRoIERQKT8gSSdtIHRyeWluZyB0byB1bmRlcnN0YW5kIGlmIHdlIHNo
+b3VsZCBhZGQgc29tZXRoaW5nIHNpbWlsYXIgdG8gQ29vbFBpIDRCIERUUyBhcyB3ZWxsPwo+Cj5Z
+ZXMsIEkgdGhpbmsgdGhpcyBtb2RpZmljYXRpb24gaXMgbmVjZXNzYXJ5IGJlY2F1c2Ugc29tZSBy
+ZXNvbHV0aW9ucyB1c2Ugc3BlY2lhbCBmcmVxdWVuY2llcy4KPgo+Cj4+Cj4+IEBBbmR5LCB5b3Un
+cmUgdGhlIG9uZSB3aG8gYWRkZWQgc3VwcG9ydCBmb3IgRFAgdG8gQ29vbFBpIDRCLCB3aXRob3V0
+IHRoZXNlIHByb3BlcnRpZXMsIGlzIHRoZXJlIHNvbWV0aGluZyB3ZSBuZWVkIHRvIGRvIHRoZXJl
+IGFzIHdlbGw/CgpPbiB0aGUgQ29vbFBJIDRCLCBzaW5jZSBubyBkZWRpY2F0ZWQgUExMIHdhcyBz
+cGVjaWZpZWQsIHRoZSBHUExMIHdvdWxkIGJlIGF1dG9tYXRpY2FsbHkgYXNzaWduZWQgYXMgdGhl
+IFBMTCBzb3VyY2UgZm9yIGRjbGtfdm9wMi4gCkFzIHRoZSBmcmVxdWVuY3kgb2YgR1BMTCBpcyAx
+MTg4IE1Ieiwgd2UgY2FuIG9ubHkgZ2V0IHR5cGljYWwgY2xvY2sgZnJlcXVlbmNpZXMgc3VjaCBh
+cyA3NC4yNSwgMTQ4LjUsIDI5NywgNTk0TUh6LCB3aGljaCBjb3JyZXNwb25kCnRvIHR5cGljYWwg
+cmVzb2x1dGlvbnMgb2YgNzIwUCwgMTA4MFAsIDRLMzAvNjAuIElmIHRoZXJlIGFyZSBzb21lIG1v
+cmUgc3BlY2lhbCByZXNvbHV0aW9ucywgc3VjaCBhcyBhIDM4NDB4MjE2MCA1OS45NEh6IERQIHJl
+c29sdXRpb24KdGhhdCByZXF1aXJlcyBhIGRjbGsgY2xvY2sgb2YgNTkzLjQwNyBNSHosIHRoZW4g
+aXQgY2Fubm90IGJlIHN1cHBvcnRlZC4KIEkgd2lsbCBjb25kdWN0IG1vcmUgdGVzdHMgbGF0ZXIg
+YW5kIHRoZW4gc3VibWl0IGEgcGF0Y2ggdG8gc3BlY2lmeSBWMFBMTCBmb3IgQ29vbFBpIDRCJ3Mg
+VlAyLiAKCkFuZCBDaGFveWkncyAgcGF0Y2ggaXMgY29ycmVjdC4KCgo+Pgo+PiBUaGFua3MhCj4+
+IFF1ZW50aW4KPj4KPj4K
 
