@@ -1,131 +1,203 @@
-Return-Path: <linux-kernel+bounces-818402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205D3B5914A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 570AAB5914B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0405483F82
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1382D486F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABAB2877E9;
-	Tue, 16 Sep 2025 08:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FF02848B4;
+	Tue, 16 Sep 2025 08:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZHgWa1E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJgZut2q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67753275B1F;
-	Tue, 16 Sep 2025 08:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29B8280A51
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758012582; cv=none; b=X+hvGa0nZ40vnTGg0GMOlaKqhBRU33npH43z8dBw89HNuPM7UDQFR7LmuhKayrrHzD6R5rgS5i9GI4N8ObHFff1KehkAFZTqhT1+GYfzwbcmGtfq7prSQrI7gykmzvTisYad3qhdSDMHtHG0VK4JIrxzM/ClLbBmvVN3b8MODYk=
+	t=1758012587; cv=none; b=qRmZisqp+nUKN2eGF1smXenJnwNVYc8tC0Uv3bd/+AsBzSrxD2QXG2Hs3v/piBVLXMUas0zm4FuRHd8FfygOePxUGN7mTR6XwLMoUQHENJYOC745jygMMGcYA+egYh5urnrKHGxnZ2myVJZ9ijE/exxEpnZ3hzJVn9hiKdcm1Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758012582; c=relaxed/simple;
-	bh=XACujb/waoNFbdX5lO9KBlT7ea7U5VOdh7HZFWCOvL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlgB9V3bqbgpeNqMBsrblTyjhu4scC4AQp0ieK3pNXywZI1nnYIzA48C4UW3/pe+hK4/ZsDdKkIhd5+IPl8SFYsYxIJL3koV05ITmPlukzOeiq7Uh0bmgs27GnjZJGQWlF7byKaCSyfi8frsitrupYbSgM61+TkdZjcWNjoKfF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZHgWa1E; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758012580; x=1789548580;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XACujb/waoNFbdX5lO9KBlT7ea7U5VOdh7HZFWCOvL4=;
-  b=AZHgWa1EXq4i6Nf9aiHqx5JyBPlJv5b7bYEorUlzlQAik5EOnRZnKaY2
-   znA9NSO2r8Eejxx5WZXbdYan7753rXOYI821fgg7WqjN6uLa85EzZ4KkW
-   wNhvjqrpk69mcFFeWTPfsOAKVC7a0aoVZuNlbXc+FcVsMSkVCHPSqvTEj
-   SJTwdXYO1pRbve0aLe4UFvX9dYXDS2zo504xfdlUHMspcLNtTnNKLMX3n
-   /yR0aZDJnLK75cCB4Xrk8U1LXZq7RvG/XS9YMbP+AUWxlxWLgUDy052rH
-   d3F0Su/10r7xVKlG/2hgJGULL1mspb9QWnmL9Cukpj5cHGC7E/pT1Vuud
-   A==;
-X-CSE-ConnectionGUID: FFRJOw+zTkyd61KcLrTcBw==
-X-CSE-MsgGUID: 7DGdWtKbQw6c6j0tP+a4kw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64091780"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64091780"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:49:39 -0700
-X-CSE-ConnectionGUID: iMcBTyxSTY+AF/kGEVSfKQ==
-X-CSE-MsgGUID: wtHeKtfCR6+LKmTF7+B/RQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="180131267"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 16 Sep 2025 01:49:37 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uyRNW-00007R-2l;
-	Tue, 16 Sep 2025 08:49:34 +0000
-Date: Tue, 16 Sep 2025 16:48:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mark Brown <broonie@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Amir Goldstein <amir73il@gmail.com>,
-	buildfailureaftermergeofthevfstree@sirena.org.uk,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure in the vfs tree
-Message-ID: <202509161649.GzVNYeqs-lkp@intel.com>
-References: <aMhzi0WpakpN7oH5@sirena.org.uk>
+	s=arc-20240116; t=1758012587; c=relaxed/simple;
+	bh=XT//xB5BsnRO7b9jA3tUjxJE+zfdPQurSrN5Zvz4B3Q=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NK0VzMmTvKXlvQPfzDyCQk2SwtScgWqrZNQE/GpzPMgfWwUppGrm/PmUbYd9X+I3WohqvNxbWLfPcfr5DP/bq0c7q3/zoB8QpJeEXZ3movDokmSi22oMSxNKC9xYsLHr2rW8cUdH0sCFrRiDUIwh1uW54k9/2OiFURf87x+NGJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BJgZut2q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA543C4CEF7;
+	Tue, 16 Sep 2025 08:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758012587;
+	bh=XT//xB5BsnRO7b9jA3tUjxJE+zfdPQurSrN5Zvz4B3Q=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=BJgZut2qAlkxZAS9VUYSV1hQA79kL0GWqKpx93cvtyqS77qm8TSmM5IFpozAzjO7w
+	 9hM2deFeG+FD7ueKaDc9Smr5NfpUn2I41xzEC6mrMepmEV/m8e3xduBFYphwebj0YM
+	 a1HI+zTsSeuVXnSJFxFnmiJ2aVhPJVGlqaT5e0euwQ2+SbbaBRRORnte3CBX16yKvA
+	 Fnubac0uwSkAxthvRiJZ5GN16uLHhuscLnhPa4FjfckbsrKfc7PDNtwshOCtQxqOVG
+	 wFycZFmgC4FKr1dnwbrkdOUxis4ttb70dg2R3tsqi+zuGijKs6lysSc0GT3cYT0bLi
+	 2uw9ObTw3oA8Q==
+Message-ID: <71872583-0d81-48a4-a148-184963a24fd4@kernel.org>
+Date: Tue, 16 Sep 2025 16:49:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMhzi0WpakpN7oH5@sirena.org.uk>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, bintian.wang@honor.com, feng.han@honor.com,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in
+ __insert_extent_tree()
+To: wangzijie <wangzijie1@honor.com>
+References: <62d7f4d3-cc9c-429f-8b7e-0e80e2aa24e4@kernel.org>
+ <20250916082636.237935-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250916082636.237935-1-wangzijie1@honor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mark,
+On 9/16/25 16:26, wangzijie wrote:
+>> On 9/16/25 15:09, wangzijie wrote:
+>>>> On 9/16/25 13:22, wangzijie wrote:
+>>>>>> On 09/15, wangzijie wrote:
+>>>>>>> When we get wrong extent info data, and look up extent_node in rb tree,
+>>>>>>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
+>>>>>>> return NULL.
+>>>>>>
+>>>>>> This is the exact buggy case which we should fix the original one. Have
+>>>>>> you seen this error? In that case, can we consider writing some kernel
+>>>>>> message and handle the error properly?
+>>>>>
+>>>>> Hi Jaegeuk,
+>>>>> The original one is the bug I mentioned in the first patch of this patch set
+>>>>> ("f2fs: fix zero-sized extent for precache extents"). 
+>>>>
+>>>> Zijie,
+>>>>
+>>>> Did you suffer this problem in product? right?
+>>>
+>>> Hi Chao,
+>>> Yes, and I can confirm that infinite loop cases I suffered are caused by the bug I
+>>> mentioned in the first patch of this patch set. But I'm not sure if there are
+>>> other cases that can cause this infinite loop.
+>>>
+>>>>>
+>>>>> When we use a wrong extent_info(zero-sized) to do update, and there exists a
+>>>>> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
+>>>>> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
+>>>>> which cause the infinite loop in __insert_extent_tree().
+>>>>>
+>>>>> So we can add f2fs_bug_on() when there occurs zero-sized extent
+>>>>> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
+>>>>> extent update to handle other unknown buggy cases. Do you think this will be better?
+>>>>>
+>>>>> And do we need to solve this infinite loop?
+>>>>
+>>>> IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
+>>>> avoid kernel hang, no matter it is caused by software bug or hardware flaw
+>>>> potentially.
+>>>>
+>>>> Thanks,
+>>>
+>>> And do you think we need this?
+>>> "add f2fs_bug_on() when there occurs zero-sized extent in f2fs_update_read_extent_cache_range(),
+>>> and give up this zero-sized extent update to handle other unknown buggy cases".
+>>
+>> Oh, I was testing below patch..., does this what you want to do?
+>>
+>> I think we can keep all your patches, and appending below patch to detect any
+>> potential cases who will update a zero-sized extent.
+>>
+>> >From 439d61ef3715fafa5c9f2d1b7f8026cdd2564ca7 Mon Sep 17 00:00:00 2001
+>> From: Chao Yu <chao@kernel.org>
+>> Date: Tue, 16 Sep 2025 11:52:30 +0800
+>> Subject: [PATCH] f2fs: add sanity check on ei.len in
+>> __update_extent_tree_range()
+>>
+>> Add a sanity check in __update_extent_tree_range() to detect any
+>> zero-sized extent update.
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>> fs/f2fs/extent_cache.c | 9 +++++++++
+>> 1 file changed, 9 insertions(+)
+>>
+>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>> index 199c1e7a83ef..9544323767be 100644
+>> --- a/fs/f2fs/extent_cache.c
+>> +++ b/fs/f2fs/extent_cache.c
+>> @@ -664,6 +664,15 @@ static void __update_extent_tree_range(struct inode *inode,
+>> 	if (!et)
+>> 		return;
+>>
+>> +	if (unlikely(len == 0)) {
+>> +		f2fs_bug_on(sbi, 1);
+>> +		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
+>> +			"extent [%u, %u, %u], age [%llu, %llu]",
+>> +			__func__, type, tei->fofs, tei->blk, tei->len,
+>> +			tei->age, tei->last_blocks);
+>> +		return;
+>> +	}
+>> +
+>> 	if (type == EX_READ)
+>> 		trace_f2fs_update_read_extent_tree_range(inode, fofs, len,
+>> 						tei->blk, 0);
+>> -- 
+>> 2.49.0
+> 
+> Yes, that's exactly what I want to do.
+> Maybe we should relocate f2fs_bug_on()?
+> 
+> 	if (unlikely(len == 0)) {
+> 		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
+> 			"extent [%u, %u, %u], age [%llu, %llu]",
+> 			__func__, type, tei->fofs, tei->blk, tei->len,
+> 			tei->age, tei->last_blocks);
+> 		f2fs_bug_on(sbi, 1);
+> 		return;
+> 	}
 
-kernel test robot noticed the following build errors:
+Yeah, looks better.
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[cannot apply to linus/master v6.17-rc6 next-20250915]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I don't see any problem in my test, will send a formal patch, let me add
+Signed-off-by of you if you don't mind. :)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mark-Brown/linux-next-build-failure-in-the-vfs-tree/20250916-041652
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/aMhzi0WpakpN7oH5%40sirena.org.uk
-patch subject: linux-next: build failure in the vfs tree
-config: hexagon-randconfig-002-20250916 (https://download.01.org/0day-ci/archive/20250916/202509161649.GzVNYeqs-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 65ad21d730d25789454d18e811f8ff5db79cb5d4)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250916/202509161649.GzVNYeqs-lkp@intel.com/reproduce)
+Thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509161649.GzVNYeqs-lkp@intel.com/
+> 
+>>>
+>>>
+>>>
+>>>>>
+>>>>>
+>>>>>>>
+>>>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>>>>> ---
+>>>>>>>  fs/f2fs/extent_cache.c | 1 +
+>>>>>>>  1 file changed, 1 insertion(+)
+>>>>>>>
+>>>>>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>>>>>>> index 199c1e7a8..6ed6f3d1d 100644
+>>>>>>> --- a/fs/f2fs/extent_cache.c
+>>>>>>> +++ b/fs/f2fs/extent_cache.c
+>>>>>>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+>>>>>>>  			leftmost = false;
+>>>>>>>  		} else {
+>>>>>>>  			f2fs_bug_on(sbi, 1);
+>>>>>>> +			return NULL;
+>>>>>>>  		}
+>>>>>>>  	}
+>>>>>>>  
+>>>>>>> -- 
+>>>>>>> 2.25.1
+>>>
+> 
 
-All errors (new ones prefixed by >>):
-
->> fs/nsfs.c:582:11: error: incompatible function pointer types initializing 'struct file *(*)(struct path *, unsigned int)' with an expression of type 'struct file *(const struct path *, unsigned int)' [-Wincompatible-function-pointer-types]
-     582 |         .open           = nsfs_export_open,
-         |                           ^~~~~~~~~~~~~~~~
-   1 error generated.
-
-
-vim +582 fs/nsfs.c
-
-06c4ff965e95b0b Christian Brauner 2025-09-12  578  
-06c4ff965e95b0b Christian Brauner 2025-09-12  579  static const struct export_operations nsfs_export_operations = {
-06c4ff965e95b0b Christian Brauner 2025-09-12  580  	.encode_fh	= nsfs_encode_fh,
-06c4ff965e95b0b Christian Brauner 2025-09-12  581  	.fh_to_dentry	= nsfs_fh_to_dentry,
-06c4ff965e95b0b Christian Brauner 2025-09-12 @582  	.open		= nsfs_export_open,
-06c4ff965e95b0b Christian Brauner 2025-09-12  583  	.permission	= nsfs_export_permission,
-06c4ff965e95b0b Christian Brauner 2025-09-12  584  };
-06c4ff965e95b0b Christian Brauner 2025-09-12  585  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
