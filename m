@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-819125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE2DB59BDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:18:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E346B59BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A959188F4DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:15:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3BF7AB0E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888D31DDBC;
-	Tue, 16 Sep 2025 15:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M9PZw4mR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8619B33EB1C;
+	Tue, 16 Sep 2025 15:14:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0F034167D;
-	Tue, 16 Sep 2025 15:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6D920DD42;
+	Tue, 16 Sep 2025 15:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035663; cv=none; b=Iy8Zgy5A7SLfUM9Fz6j6BvYdjge3QnnU8fJtHng4d9lXhUgldceBoXKBEMdF+Uu/WJQEevHL2kJIo1aeq0lOTDNWaCuZINCfvmrAdM9kx6Plp2SyJDQGD24QvhmOeq91m19DaEbMlSqb/yzh5oZCpEf9idGA/GNdXkVUo7LTyUs=
+	t=1758035687; cv=none; b=P2YHezqoSl14Vc2wEjEXoTg5TZWGvL/bIwXDqy8etCwkvHThnMj7QuQ02cQ5Z75B1PQiS6/CrdBoWgmnTjeagjw72xO6AN1cTJHzJ5iiPX44S34o8P4ao6+cyyiggVwIAfy4Lc6VQICs3PA07K1MUA6gEyjO4jbMXcHq7Zgazzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035663; c=relaxed/simple;
-	bh=iuHBraZ6RVFjDpHf88PWAP4EJDMCcCZNFb7fBK+tG28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vjf2I9sgKHQaN9K7/AncXQFzgXUeimxMt8WBFiBZDueBSi6+/DHKUBIDGwaaMKzVwEboeUI/l7B3KTr0eGRkp+ILZcrm6HRNckIWs8wvzJAF6ZyFHSeujBpBzrxgVlagLFS+SkqepXDryH5k6DeZP1txafRgOrpMW/TTT+pUU3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M9PZw4mR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A9FC4CEF0;
-	Tue, 16 Sep 2025 15:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758035663;
-	bh=iuHBraZ6RVFjDpHf88PWAP4EJDMCcCZNFb7fBK+tG28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M9PZw4mRWwUGN2uoIRyD5QHhIsd5xvE2ptwYG89Kw31BYX1c1tceTWc9FykYYR9Sv
-	 g5M2NkrzI4lFQEIKyO1vY93SS7s0mhxje9wR1il1T9A4+XThVuDS8nlgqHMPPks4EY
-	 XVAbeKMhc2ezxiMq8lMU1DLi5RZUqv3+IR66LfFo=
-Date: Tue, 16 Sep 2025 17:14:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: zhangfei.gao@linaro.org, wangzhou1@hisilicon.com,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linuxarm@openeuler.org, fanghao11@huawei.com, shenyang39@huawei.com,
-	liulongfang@huawei.com, qianweili@huawei.com
-Subject: Re: [PATCH v2 1/4] uacce: fix for cdev memory leak
-Message-ID: <2025091620-theft-glue-5e7f@gregkh>
-References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
- <20250916144811.1799687-2-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1758035687; c=relaxed/simple;
+	bh=20RBLfRYEQ3Ms+slM0SmtO9IunpLQPQy9nACa/Usmtw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pQxoy0dnLH+tioHanz67OBo93IKv+K4tsBdCZzO95yZWGHEpusSQTDKKDI7cOaeOrqtLBLx/sbhuGbI0MjpzZz8uSWmwjvAr/N7i6kxI5QZ9JZN6wnCtjiris4IVQLA9a4K/4VIYb4GN44duQVqi7SwgDvu9DeH1jdEw6yAszvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cR51H4rn2z6K6F8;
+	Tue, 16 Sep 2025 23:10:11 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E3CB31402F5;
+	Tue, 16 Sep 2025 23:14:40 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 16 Sep
+ 2025 17:14:40 +0200
+Date: Tue, 16 Sep 2025 16:14:38 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
+ Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
+	<james.clark@linaro.org>
+Subject: Re: [PATCH v2 01/25] irqdomain: Add firmware info reporting
+ interface
+Message-ID: <20250916161438.00007ba0@huawei.com>
+In-Reply-To: <20250915085702.519996-2-maz@kernel.org>
+References: <20250915085702.519996-1-maz@kernel.org>
+	<20250915085702.519996-2-maz@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916144811.1799687-2-huangchenghai2@huawei.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Sep 16, 2025 at 10:48:08PM +0800, Chenghai Huang wrote:
-> From: Wenkai Lin <linwenkai6@hisilicon.com>
+On Mon, 15 Sep 2025 09:56:38 +0100
+Marc Zyngier <maz@kernel.org> wrote:
+
+> Allow an irqdomain callback to report firmware-provided information
+> that is otherwise not available in a generic way. This is reported
+> using a new data structure (struct irq_fwspec_info).
 > 
-> If cdev_device_add failed, it is hard to determine
-> whether cdev_del has been executed, which lead to a
-> memory leak issue, so we use cdev_init to avoid it.
-
-I do not understand, what is wrong with the current code?  It checks if
-add fails:
-
+> This callback is optional and the only information that can be
+> reported currently is the affinity of an interrupt. However, the
+> containing structure is designed to be extensible, allowing other
+> potentially relevant information to be reported in the future.
 > 
-> Fixes: 015d239ac014 ("uacce: add uacce driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wenkai Lin <linwenkai6@hisilicon.com>
-> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+Hi Marc,
+
 > ---
->  drivers/misc/uacce/uacce.c | 13 ++++---------
->  include/linux/uacce.h      |  2 +-
->  2 files changed, 5 insertions(+), 10 deletions(-)
+>  include/linux/irqdomain.h | 28 ++++++++++++++++++++++++++++
+>  kernel/irq/irqdomain.c    | 32 +++++++++++++++++++++++++++-----
+>  2 files changed, 55 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
-> index 42e7d2a2a90c..12370469f646 100644
-> --- a/drivers/misc/uacce/uacce.c
-> +++ b/drivers/misc/uacce/uacce.c
-> @@ -522,14 +522,10 @@ int uacce_register(struct uacce_device *uacce)
->  	if (!uacce)
->  		return -ENODEV;
+> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+> index 4a86e6b915dd6..34993bf8293c4 100644
+> --- a/include/linux/irqdomain.h
+> +++ b/include/linux/irqdomain.h
+> @@ -44,6 +44,24 @@ struct irq_fwspec {
+>  	u32			param[IRQ_DOMAIN_IRQ_SPEC_PARAMS];
+>  };
 >  
-> -	uacce->cdev = cdev_alloc();
-> -	if (!uacce->cdev)
-> -		return -ENOMEM;
+> +/**
+> + * struct irq_fwspec_info - firmware provided IRQ information structure
+> + *
+> + * @fwspec:		Firmware-specific interrupt specifier
 
-This is the check.
+Not aligning with what is in the structure that I can see.
+
+> + * @cpumask:		Affinity mask for this interrupt
+> + * @flags:		Information validity flags
+> + *
+> + * This structure reports firmware-specific information about an
+> + * interrupt. The only significant information is the affinity of a
+> + * per-CPU interrupt, but this is designed to be extended as required.
+> + */
+> +struct irq_fwspec_info {
+> +	unsigned long		flags;
+> +	const struct cpumask	*affinity;
+> +};
 
 
-> -
-> -	uacce->cdev->ops = &uacce_fops;
-> -	uacce->cdev->owner = THIS_MODULE;
-> +	cdev_init(&uacce->cdev, &uacce_fops);
-> +	uacce->cdev.owner = THIS_MODULE;
->  
-> -	return cdev_device_add(uacce->cdev, &uacce->dev);
-> +	return cdev_device_add(&uacce->cdev, &uacce->dev);
-
-And so is this.  So what is wrong here?
-
-
->  }
->  EXPORT_SYMBOL_GPL(uacce_register);
->  
-> @@ -568,8 +564,7 @@ void uacce_remove(struct uacce_device *uacce)
->  		unmap_mapping_range(q->mapping, 0, 0, 1);
->  	}
->  
-> -	if (uacce->cdev)
-> -		cdev_device_del(uacce->cdev, &uacce->dev);
-> +	cdev_device_del(&uacce->cdev, &uacce->dev);
->  	xa_erase(&uacce_xa, uacce->dev_id);
->  	/*
->  	 * uacce exists as long as there are open fds, but ops will be freed
-> diff --git a/include/linux/uacce.h b/include/linux/uacce.h
-> index e290c0269944..98b896192a44 100644
-> --- a/include/linux/uacce.h
-> +++ b/include/linux/uacce.h
-> @@ -126,7 +126,7 @@ struct uacce_device {
->  	bool is_vf;
->  	u32 flags;
->  	u32 dev_id;
-> -	struct cdev *cdev;
-> +	struct cdev cdev;
->  	struct device dev;
-
-You can not do this, you now have 2 different reference counts
-controlling the lifespan of this one structure.  That is just going to
-cause so many more bugs...
-
-How was this tested?  What is currently failing that requires this
-change?
-
-thanks,
-
-greg k-h
 
