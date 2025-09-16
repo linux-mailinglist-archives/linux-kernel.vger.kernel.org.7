@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-819380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFE8B59FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7A7B59FB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC161C00F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2191C00F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A6827990C;
-	Tue, 16 Sep 2025 17:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E157E273D60;
+	Tue, 16 Sep 2025 17:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1+ixcXx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yn4UqOCD"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1954326B77D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B927F25A2CF
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758044836; cv=none; b=J1V4rPYN7sZ1ZGbT2wX/+jajd0N2pCqdAo2nFoNEZpZb5TETnL68AXyOcYKaQ4Sqfdpjq20z6q3k6DWJ8XFLg9uyRn8nbiLiln/hnHRObf7+UORW1NZjZ+ZnpVM8VEHveO6H6JV/ei2QOOIrF6EF5u8MgDLaBPtffS2XIusLUz0=
+	t=1758044864; cv=none; b=D+Fm8+pfUVQVG3sUe4vQYulCgsOMF4xtjLwTzt7TyIo2C2ylKdAA+FHpXL29PT3JWifLsXZVuywfm+E/UExJkN1G71Q53ta6M0oV8Vxdt+qFskCa0roLf9OTVTK8XcAAUY1RAk0xydHTPoPa8jNfhliIZ9i4HtQM49au/Ax+NhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758044836; c=relaxed/simple;
-	bh=aLmbkZlhz1WS9XpqHbrwfjTUeFYT2Q1NHeUwS7oznZk=;
+	s=arc-20240116; t=1758044864; c=relaxed/simple;
+	bh=ytYn1xpYuNF6QYhgFt/snGrQld+uXtsG0hvu+3ooxIQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ljjhMSa8IlVph7UMOGULWIMAgS1p8n7mip+ILJhxHaqbsbvRwxLXjjQJ5JVPu5fc6OktClSUd4ckCBfiiQZAg9Mqgd+IewiMLkUAStW46WkA6axRl68Ok5DdsnN/CiunYD0raEm7wLPYaX53CQfMOGwxbu+Q/ilGtTg3aKyBNao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1+ixcXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DF6C4CEF9
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758044835;
-	bh=aLmbkZlhz1WS9XpqHbrwfjTUeFYT2Q1NHeUwS7oznZk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=c1+ixcXxM8sQfs4XzFUJLvPebbv2IfIgNOPhJlESuUQt2/59lq6vQ6fxHGoRSTXDx
-	 hlv2Fzt73lEr1tRaMLnYDeIGprHu0iju6XpyfQDhfayKLbvTsWHObGV9EEIIJX5x1+
-	 IkTL9AjPwk/XPHVlRRsNr38CEayCdT7eUxFI4mHgPQgwAzprfDWnu1I6s5cly+REiT
-	 aTBiJHkUe2a15t4VvckBw44DJVJCf30emdUPMGfpcYk/IJd5UKsoSHfCSlVUojRbwk
-	 yDIHD/PaCF3qWTE/E6Kycs787oH5DwUBrUQekNH6cBuWBOJbEBlnRGuDsVsDzQ6uwC
-	 g76YBugSqDo/w==
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-80b7a6b2b47so545555485a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:47:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWD3wShBUoIXhzeMSTkDuX2fHC0Nr1z14LIw12fv2LgjxPZL8LTpF5LpK0BoxfMwoaL8GFLRYqifiYtyT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq/9bBwi/+BLI1+JjR0L3m0M0WWgcMH/vlBM3LyLP/Q8CagWga
-	War0/aAF5i7hL4s6Szo8WcGezI3vTuNtuH04d+N6sxYj8jIqYrZcxY2uyVsfsVd0jYJ6wpCkJHj
-	0YYzgQSvBmUdzlMPA0Fnh+HyeNDpVorc=
-X-Google-Smtp-Source: AGHT+IFezjxFE8oQGXb4mz1uQF6IRvxcY+qF9XaG71lkSWfOy8S3Hq2ksW15fYl1JMPaUJijUrjDvOLcG9O8nCAq79E=
-X-Received: by 2002:a05:620a:4891:b0:82b:f16b:274a with SMTP id
- af79cd13be357-82bf16b2cacmr414668385a.50.1758044834715; Tue, 16 Sep 2025
- 10:47:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=OlE0JmXUTrLCpbhL4vXOXcMv+8bOT0R6QJVFq5t3tS7bEGebgcVY7XFGKN9X8vfyhzqsA7jxth4ooXEqSIw2yDDLhxDiRUaq/XJ8IfFMR/O87/nZYMTm2bWOhUVsXjAQhpBFfXxdzBaipZ2v5otiOHrfMmCsQCqm4gBVFs9kFZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yn4UqOCD; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-267c90c426dso18405ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758044862; x=1758649662; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WV8PZeNRScOuv4YluUBiR/tynYHUDyQLkirKhaJTO4E=;
+        b=yn4UqOCDODnVitMhzAl57ZXsqmfdq8kJeuYTM4TJSvaRPMTvIvO6vSdvogM+lYPZFc
+         gzFt03tFDWVO3K9mvVicpVqc+MweUd1VRzVMK5FH03r8tU3On2XkiaO+7ac6H3bmfFHb
+         oGWOzg04z4Asw4fzBd1XmaOSZROVpHrN4mHK7dRROQ6J044RzJbGphbUgb5GWxr/Kuko
+         aYAZUOKyPbABm2ysH+obm2PriBneK3iEoc3akRmM7RvmTQNQk43O4B8sH1cX7y9OutGi
+         YMr2etzRTga0d/m0BDs6QkNlvP+riVwnZbE6QXISwmUHsQtvJeEOXIOuL749Kgi/Mt8g
+         xhzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758044862; x=1758649662;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WV8PZeNRScOuv4YluUBiR/tynYHUDyQLkirKhaJTO4E=;
+        b=THfvu2r1FU2RB/rCKtPvztzvcua3JU0EWyb/sB68GjmqXm2eN8Zs7edj/Hx5RyvoRU
+         6RvOniWylWrWxIptw5p8Tnfo+kgJCNq/x2JEb8DcaidH2bI0EkM6xqF4QnrjNTabuIZc
+         4b3Sy6PRU37Ngj0MSRq82BSqoSLSQBcnd7Xizi3ehiiqRblIVAuVNyI6exB56PQVzQ+h
+         o+6o1dTd+YkQw1NEIB6GcX7HLZx2PCJZSl2YhUTkGRNLMLjrK71WOsysjHT+Gzf2gbSo
+         Wbrp4fAja6l6OimMaG6YZzjP+T+l5ejFmJykMg0/CUs0y38Fas/+YE3havmDDYcmuP6q
+         /Yqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIYMDN+4KihYKi5NxX3lsNHtDNFXYjPRDzIm7Y7vy46juFTmkV9pu2onA6uzPGBqggi6NeIeOymM4EZ0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN4O1Fz24Tc3pRwaAEj90GCxwDAus7Pl07qha6Ghl0YSGpwXmz
+	Nxl7Z0WGoc5rzGCVKjQd8gvZO4Eam2rUBy3duXnBoNTa7EHsifWnWTvIxqu/F19++TiSiRCl1NA
+	KfPySufoPzZSWRo4WqCpFbWUxMmzHi0BKVdbsMINQIHH5WRKrAPc5dG5vFfJx9A==
+X-Gm-Gg: ASbGnctixWZwTFrOA/yXWBtd78/NsgzWHfUswTjrVjw/+6Hx7I1jMILSarPNAqaatfq
+	3We9zTcc2CJUpwEY4/UQQU1/T5zCIa7845S11lBwXKzOQzISfxUmaiK5Mp8pbfgWPTTkVxrW1Ws
+	fk9z+8p6iCAyfIOVCJ9qPdgtbHrUiYGHehz7GG809mkOuuxKpBR/AlC58GlUr6/E1DJ2JJd7jah
+	gSkA/TLuoWrlye6dW6wdiya1/GOjyjmq0g++22oJ4V0YK4iUAmOKt8=
+X-Google-Smtp-Source: AGHT+IH481Ptt6TGK3gOl1kWB0jZ6sD/yNX/MW49IQWxuVmUns01xHRPJ06rIkyHQhotda3n4zze0byfKtMf1L55b6o=
+X-Received: by 2002:a17:902:ea06:b0:267:912b:2b4d with SMTP id
+ d9443c01a7336-26801263c77mr123545ad.7.1758044861731; Tue, 16 Sep 2025
+ 10:47:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
- <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
- <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
- <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
- <CAEXv5_g2xMwSXGJ=X1FEiA8_YQnSXKwHFW3Cv5Ki5wwLkhAfuA@mail.gmail.com>
- <CAADnVQLuUGaWaThSb94nv8Bb_qgA0cyr9=YmZgxuEtLaQLWzKw@mail.gmail.com>
- <CAEXv5_griDfE03D1wDLH8chgCz0R2qZ5dAeiG0Rcg5sAicnMsg@mail.gmail.com>
- <CAEXv5_hKQqFH_7zmxr7moBpt07B-+ZWB=qfWOb+Rn9Vj=7EX+g@mail.gmail.com>
- <CAPhsuW6vSkYLyjGm60YZvruVKHrT+0tf4ZUdyp5ftd3hZB6cxg@mail.gmail.com> <CAEXv5_jCXKm4L6tJy5X6kjoLpoPqkbRLuhGuEMYNwoW=EYYtsw@mail.gmail.com>
-In-Reply-To: <CAEXv5_jCXKm4L6tJy5X6kjoLpoPqkbRLuhGuEMYNwoW=EYYtsw@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 16 Sep 2025 10:47:03 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6qFXKiZ4+kMWtKK9PO_-Z7=GQLa3wYF73GcXgkDgZVLg@mail.gmail.com>
-X-Gm-Features: AS18NWC8lfPBhjeqHEkvNBXjAkocXr4VFwolRxWKLxCfZWFUN9hHNAHjHoLMGXo
-Message-ID: <CAPhsuW6qFXKiZ4+kMWtKK9PO_-Z7=GQLa3wYF73GcXgkDgZVLg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
-To: David Windsor <dwindsor@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915153401.61cbd5120871ee7a4e5b9cae@linux-foundation.org> <aa95777a-8012-4d08-abcf-7175f9e2691c@lucifer.local>
+In-Reply-To: <aa95777a-8012-4d08-abcf-7175f9e2691c@lucifer.local>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Tue, 16 Sep 2025 10:47:30 -0700
+X-Gm-Features: AS18NWAFaSQqFXRnUy8iH8cngSLpkM9xdFvTXyHLo_pUfxdfSq_22GyY9mLtXWo
+Message-ID: <CAC_TJvdwt_66v_A3RnuUBS_XJ7xMwWhEwHEEeLpu2_M5aVQ=Fg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] vma count: fixes, test and improvements
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, minchan@kernel.org, david@redhat.com, 
+	Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
+	kernel-team@android.com, android-mm@google.com, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 9:36=E2=80=AFAM David Windsor <dwindsor@gmail.com> =
-wrote:
+On Tue, Sep 16, 2025 at 3:12=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
 >
-> On Tue, Sep 16, 2025 at 12:16=E2=80=AFPM Song Liu <song@kernel.org> wrote=
-:
-> >
-> > On Tue, Sep 16, 2025 at 8:25=E2=80=AFAM David Windsor <dwindsor@gmail.c=
-om> wrote:
-> > [...]
-> > > >
-> > > > makes sense thanks
-> > > >
-> > >
-> > > Hi,
-> > >
-> > > Thinking about this more, hashmaps are still problematic for this cas=
-e.
-> > >
-> > > Meaning, placing a hook on security_cred_free alone for garbage
-> > > collection / end-of-life processing isn't enough - we still have to
-> > > deal with prepare/commit_creds. This flow works by having
-> > > prepare_creds clone an existing cred object, then commit_creds works
-> > > by swapping old creds with new one atomically, then later freeing the
-> > > original cred. If we are not very careful there will be a period of
-> > > time during which both cred objects could be valid, and I think this
-> > > is worth the feature alone.
-> >
-> > With cred local storage, we still need to deal with prepare/commit cred=
-s,
-> > right? cred local storage only makes sure the storage is allocated and
-> > freed. The BPF LSM programs still need to initiate the data properly
-> > based on the policy. IOW, whether we have cred local storage or not,
-> > it is necessary to handle all the paths that alloc/free the cred. Did I=
- miss
-> > something here?
+> On Mon, Sep 15, 2025 at 03:34:01PM -0700, Andrew Morton wrote:
+> > Anyhow, this -rc cycle has been quite the firehose in MM and I'm
+> > feeling a need to slow things down for additional stabilization and so
+> > people hopefully get additional bandwidth to digest the material we've
+> > added this far.  So I think I'll just cherrypick [1/7] for now.  A
+> > great flood of positive review activity would probably make me revisit
+> > that ;)
 > >
 >
-> Yes each LSM will have to do whatever it feels it should. Some will
-> initialize their blob's data with one type of data, some another,
-> depends on the LSM's use case. We're just here to provide the storage
-> - bpf cannot use the "classic" LSM storage blob.
+> Kalesh - I do intend to look at this series when I have a chance. My revi=
+ew
+> workload has been insane so it's hard to keep up at the moment.
 >
-> I was referring to the fact that if we use a hashmap to track state on
-> a per-cred basis there may be a period of time when it could be come
-> stale during the state change from commit -> prepare_creds.
+> Andrew - This cycle has been crazy, speaking from point of view of somebo=
+dy
+> doing a lot of review, it's been very very exhausting from this side too,
+> and this kind of work can feel a little... thankless... sometimes :)
+>
+> I feel like we maybe need a way to ask people to slow down, sometimes at
+> least.
+>
+> Perhaps being less accepting of patches during merge window is one aspect=
+,
+> as the merge window leading up to this cycle was almost the same review
+> load as when the cycle started.
+>
+> Anyway, TL;DR: I think we need to be mindful of reviewer sanity as a fact=
+or
+> in all this too :)
+>
+> (I am spekaing at Kernel Recipes then going on a very-badly-needed 2.5 we=
+ek
+> vacataion afterwards over the merge window so I hope to stave off burnout
+> that way. Be good if I could keep mails upon return to 3 digits, but I ha=
+ve
+> my doubts :P)
 
-I still don't see how cred local storage will make a difference here. If th=
-e
-cred is stale, the data attached to it is also stale. As long as we free th=
-e
-attached data together with the cred, it should just work, no?
+Hi Lorenzo,
 
-Song
+Absolutely, take care of yourself. We all appreciate the  amount of
+work you put into reviewing :)
+
+Have a good talk and enjoy your vacation. Don't worry about the backlog.
+
+-- Kalesh
+
+>
+> Cheers, Lorenzo
 
