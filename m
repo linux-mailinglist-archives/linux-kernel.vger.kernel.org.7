@@ -1,124 +1,215 @@
-Return-Path: <linux-kernel+bounces-819024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C4AB59A83
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:41:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CFF9B59A5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20DC24A3E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD12E466C19
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057D9321F3A;
-	Tue, 16 Sep 2025 14:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA58334375;
+	Tue, 16 Sep 2025 14:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2HBtTeB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VMcZpzKY"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DBD258ED4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93BC286890;
+	Tue, 16 Sep 2025 14:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758032841; cv=none; b=u6E9uD7RltPztVw2lSqIBbvrqQY0F8f9/mx61jL/CyC1C6aJNM377Vx4IAney9/93T7pULX+gl2bJnud6iFBbzGHhRJBZ3nWvEmquFZQl6ifYeXw+7tc3kegmMGjVLf9SA9n5BJYlRtJooo7siQS12G+/dSXZolBWs1oM+OQHwM=
+	t=1758032856; cv=none; b=LJZbui2mANKFouq6fBZhB8W7OoP6D8/nnGjiJ4POMLUJkauP4/rPTKMHwmDtFfZFXkmm2Bz8tWiL2+rc0Mkr/kisF9oLnfHS4lza3NVnxFlPWVMEJE9XPgM7hBv4EmWmXQfkIMq4B7y4FZP03DdHr1zZ6a60/No0yPgx9C2BOqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758032841; c=relaxed/simple;
-	bh=q4rUfcvmiJb32MQczGG3S+6Y8g30PLS6+e2uvzs7O0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvkkeMeoeXgzLlTuJgpr6N4Bce2GAYHta0wTZc0uWZjgzXDrbiTcbYpaetWzTcFs4DXVqYpqSZ6sxvls3h8GyNvfTgJYLj65ehK0dAufQ7mXTcz4IFbXd0hn3VENOoJG8OlpJrWjMUJ6hdZwFCYPcBiNDFJCh1eHcG0eIsHyVuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2HBtTeB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B40C4CEF0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758032841;
-	bh=q4rUfcvmiJb32MQczGG3S+6Y8g30PLS6+e2uvzs7O0M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l2HBtTeBHdKqoiSy/dakxKQFFR+ZTEnNdB7CiUwhGGPxzleXSvXfSEOUF/2vwKUd0
-	 XFh32KsO7sSvnfeUQQzjB6Z07+N/JYGE2XNJFsudIpGQVSGEVOVsphFyygErU/hYgq
-	 bbuWI3rjpW8lKc300skBAduIV+ZJvIUGWem1rBRkCyK54FV/Y9pb/YcUkD9R9fIshH
-	 JliGhH0cFRnxHTdW2ffvlzeiIGQPUQ7jZQZF/LZ5KJ6iU/eUM34xcpYNn8ogP1xpyA
-	 QM9lHiN9A7ULv3M3YNa9+XDSDCj06GC+FOwCeweCpp1h3XUKWlQZFxeucNnCJiReNI
-	 eh8bJccsQWreQ==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b00a9989633so1067409966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:27:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW0g3NrtAxi2ry8pUeRkpgmvKXvm33SpyUgGi9ohLL5rmyTjaR48+d2ZyJ2iAk7LECvyuVHbtSaOxQYsgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDCSCPQLQH/f5zQS0GFt6vrmQC7t4jfG5JXGSLBFj6EWtKe1mM
-	RN1FW0RCDLVRd+uR8E10DKLD56AHcd6e1t2yGAUaPcAm6dZ+YOjEpr1ogV6HX77Zb86TZj64vZy
-	mgXf587nwohvXQu2GXBq6bvdoVbdIPtg=
-X-Google-Smtp-Source: AGHT+IFqP0fpUqt1ZWajzstj84vE34u4JkQD1agA/3Q1+0riSlytXGPjdEylj+SXW1TR5p7NMwNV5e+mGbeyV8m0vps=
-X-Received: by 2002:a17:907:3d02:b0:b04:7eba:1b55 with SMTP id
- a640c23a62f3a-b1680591430mr301532466b.19.1758032839546; Tue, 16 Sep 2025
- 07:27:19 -0700 (PDT)
+	s=arc-20240116; t=1758032856; c=relaxed/simple;
+	bh=f8t73w3AtLY7hnhFS/dR1I/Uz6Yqv3oI3PWml5zdfPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LW+AaafmgsdNjPSPp1LU28ukcY2R28c5P5Ns+pwDIJ6WKVbrzd7wotADj6pffi8cy6Wb+v1+FaXkznCNfWZ5kQliWu1iKZE6kiGEaTHu7bxhVg83E4aY9olv/Rl+PDjPVNanDkCQReHG6VGoNJjOgMtkyIKRMndsVIp+deGMrw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VMcZpzKY; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0112443B69;
+	Tue, 16 Sep 2025 14:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1758032846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ATSeLNX+owPZ3aCBXlyQeAZTuD9FLYcDCEAlmuoDnYg=;
+	b=VMcZpzKYgJxyHzS9TlLOGlGOWZAuukPoVdElAz/IsHnkD28ri0z6Dl26f6yEcm03LoIXmc
+	0zQC8uhQcQaI/cV7DPVFX/wurMAqa84y+MWubHU1UbGR1oB+/hT/cMQQjXkdvBLtqLC7kK
+	SSiaJdrmQpgtN7fUNoDNzUDZEXV/VaXPktqIgDUlRv4pK8DMqxLpeQ/Y8QuiBsI93dvvs2
+	ZUf05fY1fUQFq/egHXBWK/ZT7InJ8j4Xl3ahtL7wgr17rmFCulWfvB3ULz3FWNUNtWVEpF
+	3R3BK3IxOzRI4i+J06yX0dBF4HYjUWwDBnidKqAorSphdBrqwgy7tQo0AH80Ig==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject:
+ Re: [PATCH 4/4] regulator: ltm8054: Support output current limit control
+Date: Tue, 16 Sep 2025 16:27:25 +0200
+Message-ID: <8772650.T7Z3S40VBb@fw-rgant>
+In-Reply-To: <aMlj1OcfH8r9Zz6x@smile.fi.intel.com>
+References:
+ <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-4-fd4e781d33b9@bootlin.com>
+ <aMlj1OcfH8r9Zz6x@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913002907.69703-1-yury.norov@gmail.com> <0e330fc0-1200-6a02-7b21-78064fc63a2e@loongson.cn>
-In-Reply-To: <0e330fc0-1200-6a02-7b21-78064fc63a2e@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 16 Sep 2025 22:27:07 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6yyM+tDhVix=3RH6VtDMs3E-B7jW1K6Xbn7mryBDW74A@mail.gmail.com>
-X-Gm-Features: AS18NWCwWelxSFwVvkzr8lZM6L2aWGgaUs1snDVHDrpyA8a8UYAEXIM94XsZF0M
-Message-ID: <CAAhV-H6yyM+tDhVix=3RH6VtDMs3E-B7jW1K6Xbn7mryBDW74A@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: KVM: rework pch_pic_update_batch_irqs()
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	WANG Xuerui <kernel@xen0n.name>, Xianglai Li <lixianglai@loongson.cn>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; boundary="nextPart10916593.nUPlyArG6x";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtdekudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhri
+ ihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihgtvdefsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegulhgvtghhnhgvrhessggrhihlihgsrhgvrdgtohhm
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Tue, Sep 16, 2025 at 9:30=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
->
->
-> On 2025/9/13 =E4=B8=8A=E5=8D=888:29, Yury Norov (NVIDIA) wrote:
-> > Use proper bitmap API and drop all the housekeeping code.
-> >
-> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> > ---
-> >   arch/loongarch/kvm/intc/pch_pic.c | 11 +++--------
-> >   1 file changed, 3 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/arch/loongarch/kvm/intc/pch_pic.c b/arch/loongarch/kvm/int=
-c/pch_pic.c
-> > index 119290bcea79..57e13ae51d24 100644
-> > --- a/arch/loongarch/kvm/intc/pch_pic.c
-> > +++ b/arch/loongarch/kvm/intc/pch_pic.c
-> > @@ -35,16 +35,11 @@ static void pch_pic_update_irq(struct loongarch_pch=
-_pic *s, int irq, int level)
-> >   /* update batch irqs, the irq_mask is a bitmap of irqs */
-> >   static void pch_pic_update_batch_irqs(struct loongarch_pch_pic *s, u6=
-4 irq_mask, int level)
-> >   {
-> > -     int irq, bits;
-> > +     DECLARE_BITMAP(irqs, 64) =3D { BITMAP_FROM_U64(irq_mask) };
-> > +     unsigned int irq;
-> >
-> > -     /* find each irq by irqs bitmap and update each irq */
-> > -     bits =3D sizeof(irq_mask) * 8;
-> > -     irq =3D find_first_bit((void *)&irq_mask, bits);
-> > -     while (irq < bits) {
-> > +     for_each_set_bit(irq, irqs, 64)
-> >               pch_pic_update_irq(s, irq, level);
-> > -             bitmap_clear((void *)&irq_mask, irq, 1);
-> > -             irq =3D find_first_bit((void *)&irq_mask, bits);
-> > -     }
-> >   }
-> >
-> >   /* called when a irq is triggered in pch pic */
-> >
-> Thanks for doing this.
->
-> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
-Queued, thanks.
+--nextPart10916593.nUPlyArG6x
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Date: Tue, 16 Sep 2025 16:27:25 +0200
+Message-ID: <8772650.T7Z3S40VBb@fw-rgant>
+In-Reply-To: <aMlj1OcfH8r9Zz6x@smile.fi.intel.com>
+MIME-Version: 1.0
 
-Huacai
+On Tuesday, 16 September 2025 15:19:16 CEST Andy Shevchenko wrote:
+> On Tue, Sep 16, 2025 at 12:24:09PM +0200, Romain Gantois wrote:
+> > The LTM8054 supports setting a fixed output current limit using a sense
+> > resistor connected to a dedicated pin. This limit can then be lowered
+> > dynamically by varying the voltage level of the CTL pin.
+> > 
+> > Support controlling the LTM8054's output current limit.
+> 
+> ...
+> 
+> > in microvolts
+> 
+> Yeah, using _mV postfix will make it visible that those are in micro-Volts.
+> 
+> ...
+> 
+> > +static int ltm8054_set_current_limit(struct regulator_dev *rdev, int
+> > min_uA, int max_uA) +{
+> > +	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
+> > +	u64 vdac_uV;
+> > +
+> > +	min_uA = clamp_t(int, min_uA, priv->min_uA, priv->max_uA);
+> > +
+> > +	/* adjusted current limit = Rsense current limit * CTL pin voltage / 
+max
+> > CTL pin voltage */ +	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_V;
+> > +	do_div(vdac_uV, priv->max_uA);
+> > +
+> > +	dev_dbg(&rdev->dev,
+> > +		"Setting current limit to %duA, CTL pin to %duV\n", min_uA,
+> > (int)vdac_uV);
+> Why casting?
+> 
 
->
->
+This one is indeed unnecessary.
+
+> > +	/* Standard IIO voltage unit is mV, scale accordingly. */
+> > +	return iio_write_channel_processed_scale(priv->ctl_dac, vdac_uV, 
+1000);
+> > +}
+> 
+> ...
+> 
+> > +	ret = of_property_read_u32(np, "lltc,iout-rsense-micro-ohms", 
+&rsense);
+> 
+> device_property_read_u32()
+> 
+> > +	if (ret < 0) {
+> 
+> Be consistent with a style, in the previous patch it was 'if (ret)'.
+> 
+> > +		dev_err(dev, "failed to get sense resistor value\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	if (rsense == 0) {
+> > +		dev_err(dev, "invalid value zero for sense resistor\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* The maximum output current limit is the one set by the Rsense
+> > resistor */ +	tmp = 1000000 * (u64)LTM8054_VOUT_IOUT_MAX;
+> 
+> Yo may use MICRO and drop the casting.
+> 
+> > +	do_div(tmp, rsense);
+> > +	priv->max_uA = tmp;
+> > +
+> > +	/* Applying a voltage below LTM8054_MAX_CTL_V on the CTL pin reduces
+> > +	 * the output current limit. If this level drops below
+> > +	 * LTM8054_MIN_CTL_V the regulator stops switching
+> > +	 */
+> 
+> /*
+>  * Besides missing period at the end this is not correct multi-line style of
+> * the comments. Use this example.
+>  */
+> 
+> > +	tmp = LTM8054_MIN_CTL_V * (u64)priv->max_uA;
+
+This cast avoids an overflow of the multiplication, since the result may 
+easily exceed 32 bytes in size.
+
+> > +	do_div(tmp, (u32)LTM8054_MAX_CTL_V);
+> 
+> Why casting?
+
+Since do_div() is a macro, I casted the second argument just to be safe, but 
+it seems that do_div() already does this internally, so I'll just drop the 
+cast.
+
+Thanks,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart10916593.nUPlyArG6x
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjJc80ACgkQKCYAIARz
+eA61ExAAm6vav4r+FXBHUpKS9vLntfh3NIx00BPF8pPYQM4zEuaYCvc4VPq36Tja
+07CMt07iGbiwm1UwYvq2hh6CBsihK8ZhvmbfxPNx9ZnnFSPHFXOjctiYSIOg5uXK
+gStU0vgpTaxafCo6lL0fAJs0wy2655wECGHinA8wTRW5pfjv/JIy4DL8+8MVSjjF
+k4XLlJ37mlN9EF62UneaP9mifiwYS82nZa8odsz4H36nker8tUGWD+981hs0SvzV
+e/HKkETrnf7Zm+CPnNcQYMbxn9jRn0nAk+35IS0EBuIiS1ddqmp4EU9MFpBRCrQ5
+MPYX9ymanXy5TgoJxz0nA/f2V1vyd09+UPZ8nhGbrsWrkxwpc+5mhhrbPdBMoy6E
+YGMNnU1zdHnDCGYGQSb4ck+4Bv/isJxOfW07MrBGohlQNIF7JS6Nz4rlRQlF7LAi
+oBqZXHkoR4J46QTxguF2NEYe7BKiUyFaIzUjh6+LS2zw09ExCcHbCAhArrZ5FXx7
+XWXD9N18QFSB+67dl70HaLrjKQ4EYtL1iT5NYR2mrBal08g3ycFtVkn9o+TfvHjT
+gtIZzktI0gG1BK4+oyOFggIpXg3CgDgNvEgDDliyMnP1OLE5m7EMPs3Wyqknn1uQ
+Apw1euRSOig2b/kWCCaoBnIfDOrku1U9WjkNBHxy9nEhEJSziF8=
+=HfwT
+-----END PGP SIGNATURE-----
+
+--nextPart10916593.nUPlyArG6x--
+
+
+
 
