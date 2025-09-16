@@ -1,238 +1,195 @@
-Return-Path: <linux-kernel+bounces-819295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC733B59E2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:48:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837AEB59E2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1975D581DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:47:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DC2D46092A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5D2D0298;
-	Tue, 16 Sep 2025 16:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEAE2F7AA6;
+	Tue, 16 Sep 2025 16:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KAz0Zr9x"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010022.outbound.protection.outlook.com [52.101.69.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dyIEiICP"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C1C1C7009;
-	Tue, 16 Sep 2025 16:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758041262; cv=fail; b=cQWHPFcSyXnKQY7cJk29Q1GK2faBfZd0JeiWnDIdJ0uV77PsiyNAq6aZp/kYlL1LjJCPIqAiIHBLNNH+xeRURYjVkF5Nip0gyn0+gTDxp9Yp0FARbVFFMLHCJjKEW7CgkyaoqYCJD+NoNGmIyQNuTRlAh1oaJ1b+wUBLXY1n3Wc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758041262; c=relaxed/simple;
-	bh=Tn6+8Un9xBtQnlkqaEC2jQ28jKjFQAwk8oIVaq0itWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jKT+vClceTHvkj3IyFgJqcRbDGgQmnSQ4i1K/kG8tO2AwnV+p/HjQJRPsgEY/ARsCmquuJNvxR6KfiMwkFISjx1aXhL0STFLa2wLnnraNyEnf5p1XljFBBQDxxiE9N6krSA/lKnS8tWIynVs8nOrizB6L/1I57nKlQu8zdRdjyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KAz0Zr9x; arc=fail smtp.client-ip=52.101.69.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GNyvUQV5I6yDKCUbd46a4260g9+ja7QnAGzveL6Rj61R8lCkBzF5O1HoriOfk2WPjEZbfPbLOx2nkbkpkp0/HQH51tG4GZGOfDNiXI1xB6H2jXSlslJEzvQzY1f/mxwkCbWtCLNaIL8u2kCfk8HaIFhiYCR+T3CUAUEgAX64kcV2jXOx4DftTdga9SUAtsm7fFSdadn2L3+Zrt6z7+yuDSlS+1ujjMcxsXnJ/BTIO76NxCDJk5sbEki2/ZO0Wu0NNGdCw8pdGiiOmaarNNyMpUJsY8l6WEwqu9AQEQapDf5EU6uugpBB60nqKCWTpu9uXCwV5poV6/6FN8TWnEv/1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LzblFypY5hBzoeIBwO/gFf+itVdCk0RSI+9shAZksYI=;
- b=jaBmzq8GuO04ButVf2yfTSifXyiD0c3oTIpHYns6HNtfv8qcbbvm4cMvpfYJd8QJGynhPFeSrwNoKZuYCP521LpUIUDhdfFDiejBfttKhvsbPu0XqbMxGFPL3r/FzU/QWjcArRr8VLQEEcrf7rYZ4kjcS88sXyn/7CafWiXws5JaMkwys7sgchFylpfRTAW7PSFnahJ+Hgb7985/D+EXaClZlTOXtU81cASPD9pkjVQ02BOvKwtnK1sstys2YeOTlE9CDP3s3d8jr1dKrrRqApXVn2maeDZIPVLvuCfmW7PdpCwCkKF1rvcXDxPt2l43GB6GRTcLurUgLzRuv8tazA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LzblFypY5hBzoeIBwO/gFf+itVdCk0RSI+9shAZksYI=;
- b=KAz0Zr9xtkhIuBDA1kNPxGZJ0GeHhKUlQzcpawvCmZzWrelerNawFsGdimUlbtImSNsgo4rutSYkDZCSyiEINDEp1X9s0d34a9EvAdd3wyQBA1IvIIkXArixLEjtpuVPfav8KA7al6MJHz1TuchksxcA8nxf6DhMMGoVsUDrvPag/5GIWVYlmpcZRULvBwjxXhx77u8hhoFVlDujlxyowFIQ6w2+DwcRHafOLKzg5t1NCBgbJRZQjrz7TwRQBuZfjdXLjVovFMuNhbFrZWn2hf0/BvCSAjqxWhqCI7QwvFOqNciK97VGNN3FxkASybVdvsf3WiydEGZjeneN9PqRlg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
- by AS8PR04MB8866.eurprd04.prod.outlook.com (2603:10a6:20b:42d::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
- 2025 16:47:37 +0000
-Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
- ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
- 16:47:37 +0000
-Date: Tue, 16 Sep 2025 12:47:29 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 9/9] arm64: dts: ls1046a-qds: describe the two
- on-board SFP+ cages
-Message-ID: <aMmUoUUQYPGQQdRU@lizhi-Precision-Tower-5810>
-References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
- <20250915122354.217720-10-ioana.ciornei@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915122354.217720-10-ioana.ciornei@nxp.com>
-X-ClientProxiedBy: SJ0PR05CA0005.namprd05.prod.outlook.com
- (2603:10b6:a03:33b::10) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C1F2F2605
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758041281; cv=none; b=DAq+n6eMJ7Ogz935QNYg22KQ7d0VP8rMt5gGmpZGT1fYaZGFMwpbgtqBJw9cXAsId9gXl2oohsqPp0yVY6VdzSqvhcayu7a96cp+9Xn5A8694H/SlkvBcJh+x1P9lO9++Bx/50sQnlbGtxwzdkKoVk8l1MSXMuJFXlcrUkUWopg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758041281; c=relaxed/simple;
+	bh=71RTH5dtO3mKhxi62YpmdZ3mPiuAXTAABtxH+Y5Q4WY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rXZuKapYyyIJ4NPv9FwTEVCLP0gEm5B8l3h7CW4w85SzsoUeRUFe8utlhoogdvMXk3EDPmDbpVbhW4F+x7hMD3XXgtneP61pH5dcu+2ThSyPTTGUBv5i4p0rYQkDQpushzMuCeKSYZbwgQDVHplxCYtCwzKj+iij5aJn0FDNzzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dyIEiICP; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d603acc23so40198757b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1758041278; x=1758646078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ETmZDpbYmqIU0hIW51Fx0lZCbZYUtcEVM1kLaNYVSU=;
+        b=dyIEiICP6ZyCyzDD5nAbP+ENRdLWmV4wu4OKbQU2lusvsdGQtWZahEiYIKUsoOc+Kz
+         mPaWA2SA5Kk/W1O6rdpi4ZI1o7ytKv+X8y62tdKwYqeXS86W+4rzYk24XjvMLcT1s6B3
+         iuWf+7CQ+Z2l+9it4pp0qP1FvIhV8ExG1RDes=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758041278; x=1758646078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ETmZDpbYmqIU0hIW51Fx0lZCbZYUtcEVM1kLaNYVSU=;
+        b=U27J/OcdrFy2eifpLtb96hTOFAqLtJT3IbFjLpWCzXwv1Eb9wy4NLkGElkHWcAeSnm
+         4NB0+Wuytxd9rDPZFF3lXmlHSsd9H9jrQRSOHIoPxoIw9q0vtLSCK0dQlBRef/9SIKsI
+         z+MalRaF9+jvIMJrqgxnXcpa86LrTu4T/b/urxqz74FEkNZs4nft1xWRnaR6xualAa2E
+         Q4bDlXEl6p8waoHiV1+rDYs98pXmFF+7npE//pleC7OC8IofA7p6j+BcpXFsXcXWAiD7
+         xdVDAP2qybjCIZrpWz3kK/snIKJOGGKDxUmmEN+Z8QBjV+3C/uKBhoOfIWxlP6blV+mn
+         WtVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWi+HC90QPtzfhdNjQIE2CPVoEA/7umWEFOlC3wCA3vx+um4plOPBseiu5Uw15XAQ9eN6wIUyV3oO2RuzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3IuN3rwyq6JMPmznZRE7v3rCj80hQuwWSdzfRJbC2Iv+SZclX
+	u+TH9E9xRJMJ2Tuhi3bOTkArg4tVHyZVUxZhgxBAQpJcmOw6Qiwlkwf26/Ok9Lwf+YgJERuOzLx
+	fRv3yOWLlZMFrW2KKuUKYWYLFU+QViEdqWN1/31ko
+X-Gm-Gg: ASbGncu3D5sWKoLoQhnsUhdmNXYgjxnUuvcSyNGWXxy+xBJ+wWgDshfLpTl2oer0BWU
+	HrmlUSwmMxgJVf/1kIbSoXZ2VhbTuNHvza03ENf7XySdnJg6AXHOJvcIXxjO/xzm5E2SpbccE1d
+	DW1L758IFjIFV+tTxQfz573dmjwy6CiAv0N8+iBRPEQ5NwLdYeMrHtBWtV67z8LxW8MOL/7qLVB
+	URHqrM=
+X-Google-Smtp-Source: AGHT+IFZt1kfGdCyhiAecc8NbMlubsrrYf2Bl36ioKqJQz0ak2LxPjQCNPumVJf96dL1uLcuYz1CuE3rsG4iLt7nm2E=
+X-Received: by 2002:a05:690c:314:b0:722:6c4d:a46c with SMTP id
+ 00721157ae682-730654cd3c3mr154591707b3.48.1758041278330; Tue, 16 Sep 2025
+ 09:47:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS8PR04MB8866:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5fce3f78-8437-4fd8-2c6c-08ddf540be4f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zPAF9dSU7Fb8+tvnhcUskM+wq0JKgflA3i25hdPaOH6JVfm1kD6O2DzzQIyJ?=
- =?us-ascii?Q?Z4d9ruWMwtKgxXW6nxRYUrL1sT+oQ3/miuWqKdvciyy3mT60lyUx5yI7GMxw?=
- =?us-ascii?Q?Lfa2daRJUHAc2DScvOSjaF0zDgCs2sAlRVD4ap0IokqnR44YXkPJLEUtQu3J?=
- =?us-ascii?Q?+79T5j24PyVbOdfk04k1PjVkBk9LQ6B4VedfzcMnyO7doZnZt/6rXSU4BZ5e?=
- =?us-ascii?Q?QAgHU87E/Y+a4Q7RsRFs48Jnv809WHDUV2rKJxS/Gi/J9cb1EOw+qe1jBaG+?=
- =?us-ascii?Q?kGMM8KZvYT1Em5Z5qgGFwkeE+4cX3CTiZZwkPYzpi5KhzfvvRI5HgKLLAHSS?=
- =?us-ascii?Q?A+ACYxsvzjpiA1A3Qca5bKYMfYIlErNgBzPAu7zzEJPdnLCTa5OCj5FHxiL+?=
- =?us-ascii?Q?CJxmBrN3XMEXdMmgciZn12DKLws0BfYTUaVR2SG/cgjNeHHW8JF6Np/b7OA4?=
- =?us-ascii?Q?7ElWls5VGkTgws3MD2N/qRqxUdU5ii9ADxWUp0Imn2KobhJTb/9q5UTkpgbn?=
- =?us-ascii?Q?AYoR3F1tuhw0ewdQvpZ6BFeYttD5GAPAB311YBK+M7yEiN467NwDAyijM9GE?=
- =?us-ascii?Q?vDx8cYNHAu+fdDKrQPT8Nk+rRLHBmf/JzZTQPK96bFffd0JAB9iCmgByLbIi?=
- =?us-ascii?Q?GtewGaPvcFh765CiKJhuQTNWWs2It/Jrtt4BWz2DzyFbetU3Y1etxRw6+RtS?=
- =?us-ascii?Q?xY1UIOIfUID8CZ73UFZuKT8PXYQdD/Wk9gMvrmmF+ikoWgfKzaxCU20M/BwL?=
- =?us-ascii?Q?kYpQnxf9J9afrKhcBPtkKkMq/ms/T+xZ5KpVKC1fUYYZo0P9vhuOU/zS5J+Z?=
- =?us-ascii?Q?3wkX269UsXWQlddypP+ica+roDXjRBemOCmh7jENoDE0z1pnpE3n2Y2fdvVs?=
- =?us-ascii?Q?xdafr2wACsKa02ulRL02D/OR+dZFJMnsZKyDYpEdjvWHJn6/lk0OjCFwIyxz?=
- =?us-ascii?Q?mhYSVDD+9ygHNZCdBGwzJqCOqKlHJmUzjEAmQX669rocAwfYvUH7AHWrzv90?=
- =?us-ascii?Q?t+SfyYFb9r9XKo3NJ9oOlOw7Bm0bf8+j4L5cHAIRTdoptyCCwxsT2YkU/Fww?=
- =?us-ascii?Q?UidGPwZYiRwLyGcE8EAfpU7ChY+sG1cjavDtxUWFV61KUcAx645shXzjbx6y?=
- =?us-ascii?Q?RxkdNAYTKLEqMOV6+B2tnAUko7U6diZzhmo/cPaZVfWZPc+dY0bBhMHG06+S?=
- =?us-ascii?Q?HmDzUXyLsm/IEvcUSSdnL8JuoK5tGYfwQ4yjWcvgHbIm39dLAJlI0IxH+ER9?=
- =?us-ascii?Q?V47WDeAQPdJDvlHkhzsFNg1w1GyaZ1ZNrtesMpCPS2YXWay/GYXAQS7Bt7K2?=
- =?us-ascii?Q?MGFw3RQiBEWdunrfWgYWK6rNZMF8mYgEyNfwbn+9aBn4GixDepDFsTOxafX1?=
- =?us-ascii?Q?joWuYnEWJOyw71SKnOCjh+zLlLSpOTqoV2pJZ7jsaC1C8XRMfpZ8FqF63A+e?=
- =?us-ascii?Q?DtZbKtI6sgqCf98M1Jv7z5KZiRZJM/VkrnwuHNt3bbpApydG37rzuQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xY5Yog01JG+UeMEKY9+PP8N7Qq37q4M2bArmND0hzjexyhOWAmyg21ZFjoY+?=
- =?us-ascii?Q?noSG2QEgncYxtCsrU5U80ZhkI3vFv6/1pnR21xQtKczpe3Xke1MqA/q25BjG?=
- =?us-ascii?Q?Ye8cTjii/QUYwegz6jZye3y7qZm2m9p8Rr89r50Nui0981gQMUunx1ooNHBj?=
- =?us-ascii?Q?fue6Zs1Nni8345wkZyIhgfWiKvtViJwoIhoVfNuohzK3K0f2e8ALt5Op8WEu?=
- =?us-ascii?Q?v9OWEv5CQKLuNxnb9EAqUZXbD1lvfVHjM13C3IIZv9e8UtOfvmu26lD/1OqE?=
- =?us-ascii?Q?OJsMXnRf6dpyLvI4ITuq4DcIdc4P7XeCnuS2uU+H6tvxbuxVXzzXgSJwBRty?=
- =?us-ascii?Q?4x5YWbY6NCaBAOM6x5onvLBAw4N7oVei/ArSNXgFHK0UPToJaf2jXCJ888yT?=
- =?us-ascii?Q?K0jcunW/WsTHL959Aji2GT+Qt1R4JS0fm5CR6P25R7VetO2os1Aj1ViNjtAa?=
- =?us-ascii?Q?tS9zn25v5Dse1xGTMGd6NEWAbMNavFnkMkdsUSBC7Fb29mfKyQSTUVuOwQlz?=
- =?us-ascii?Q?u92cx4Mbvrb7+JaFbjMoV0wDt9BIQ2jji2Uugk6O3SBiIenPV8e4oov1tiwT?=
- =?us-ascii?Q?J94CYto9boZi7V/p2Vt/7sdPqrwJOpcsnfuB6spMqnsF0urhwvvhFNtIp/hY?=
- =?us-ascii?Q?l7ToK6TrwmMUSlzM8mGCAmbYJ71Kaq1TtOTsK4kti6YI9CC4AQeRCM5g1uWt?=
- =?us-ascii?Q?95pPeCW7xyg80GKLghyhxjCRUwlvBIpWrXivDVPMdWmhj+xY5x+j1e3oJgbc?=
- =?us-ascii?Q?1Ba96e4f9k7eCS3cd6JvEnFQBRiBYiC043SecAt0li2lhM+xTI/myKBNVb+o?=
- =?us-ascii?Q?iGOJdfVjWHQWHKJKOAhz+3Pc8v+u3pskfOJr4FTZHeRgxrGgxhMi+Wei3DxB?=
- =?us-ascii?Q?N5mxGPrqvt3x8B8k1lMLeoNKl62Dn33t7BMKaCGOEvfOoJF8Jx2x7zLg51xY?=
- =?us-ascii?Q?ga7UR+FIc5tBXzs+LBdy6I/EzjhklMSoaQvRRPPN+wzbdybNAzQAGt5OTkdZ?=
- =?us-ascii?Q?HyQIoWiL3kQ3YAJcGsYdXrWmx7aNWZP1N40pwudrL5r4zHQJbxJQs2d0JF2U?=
- =?us-ascii?Q?h7iR1j26A9ykRqngjE3rc29SBnLYtAVoY02gvK+/V0M8R5E33s3D2rENsxMl?=
- =?us-ascii?Q?nySzS1VEPdF8RAHPCMXGqvUJCzRuZHhE6cS9tqSbh6AJnMGNILDL05AOr7EI?=
- =?us-ascii?Q?O9Vl/aVFK3P/bzoNzMRK60fVUh8OHP30PuUlSBBhy336kOWPCfKyfRkzyzG+?=
- =?us-ascii?Q?iwzr97wnEy2PMBG67mQk45nxPo2Pr429AtsQdm0+r5QCwg9kP6oJCj9ybngz?=
- =?us-ascii?Q?f+wbReIouo/1OTcvIvM6Q/d87cqxfILNR9EFI3amM5I0wVNlqYkNfS9Sp3sN?=
- =?us-ascii?Q?B4GMazBEoALjQt8mFknKUcYoYVogRtj3ZedOWzhq+iBgdufMlZtQkHQ3PTC/?=
- =?us-ascii?Q?34M+Vmulx4Qmx48QNSgd9qnhTlDycfsVnrDuU5vaRunsknvN0Wlr6cfxk64F?=
- =?us-ascii?Q?6/qCBYu3vy3aPNQVkxfsv13ZcrcD46PqMm3wIa6lk5q2DD5iSrCLhQ1i1nOc?=
- =?us-ascii?Q?kXZ+qw+kxGmJhW/fkw7q27tGxqJiybg6KxMtfvCM?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fce3f78-8437-4fd8-2c6c-08ddf540be4f
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 16:47:37.7575
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NbNld5aXABrmjky79Uh/EfBe7G+Pw+Y728/mK/lOe8OGzlPMotbG0c1NORggUPXQVLJb97JfaZZQcAbjnzXZlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8866
+References: <20250909123028.2127449-1-akuchynski@chromium.org> <aMliLCWFKy5Esl0-@kuha.fi.intel.com>
+In-Reply-To: <aMliLCWFKy5Esl0-@kuha.fi.intel.com>
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date: Tue, 16 Sep 2025 09:47:44 -0700
+X-Gm-Features: AS18NWAU9Wq6pK_RLACFVUfRmWbdIPmVUr2iNMaa6noro-Cml5cKdRX1otFdb8w
+Message-ID: <CANFp7mXvpNXr=01nQR54d+Z+vSiiwiDLB+3B+1eR6Ks7b37gtg@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] USB Type-C alternate mode selection
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Andrei Kuchynski <akuchynski@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 03:23:54PM +0300, Ioana Ciornei wrote:
-> Describe the two SFP+ cages present on the LS1046AQDS board and their
-> associated I2C buses and GPIO lines.
+On Tue, Sep 16, 2025 at 6:12=E2=80=AFAM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
 >
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
-> Changes in v2:
-> - none
+> On Tue, Sep 09, 2025 at 12:30:23PM +0000, Andrei Kuchynski wrote:
+> > This patch series introduces a flexible mechanism for USB Type-C mode
+> > selection, enabling into USB4 mode, Thunderbolt alternate mode, or
+> > DisplayPort alternate mode.
+> >
+> > New sysfs `mode_selection` attribute is exposed to provide user control
+> > over mode selection. It triggers an alternate mode negotiation.
+> > The mode selection logic attempts to enter prioritized modes sequential=
+ly.
+> > A mode is considered successfully negotiated only when its alternate mo=
+de
+> > driver explicitly reports a positive status. Alternate mode drivers are
+> > required to report their mode entry status (either successful or failed=
+).
+> > If the driver does not report its status within a defined timeout perio=
+d,
+> > the system automatically proceeds to attempt entry into the next prefer=
+red
+> > mode.
 >
->  .../boot/dts/freescale/fsl-ls1046a-qds.dts    | 40 +++++++++++++++++++
->  1 file changed, 40 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-> index 64133e63da96..c188977a901e 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
-> @@ -42,6 +42,21 @@ aliases {
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	sfp1: sfp-1 {
-> +		compatible = "sff,sfp";
-> +		i2c-bus = <&sfp1_i2c>;
-> +		maximum-power-milliwatt = <2000>;
-> +		mod-def0-gpios = <&stat_pres2 6 GPIO_ACTIVE_LOW>;
-> +	};
-> +
-> +	sfp2: sfp-2 {
-> +		compatible = "sff,sfp";
-> +		i2c-bus = <&sfp2_i2c>;
-> +		maximum-power-milliwatt = <2000>;
-> +		mod-def0-gpios = <&stat_pres2 7 GPIO_ACTIVE_LOW>;
-> +	};
-> +
->  };
->
->  &dspi {
-> @@ -139,6 +154,31 @@ temp-sensor@4c {
->  				reg = <0x4c>;
->  			};
->  		};
-> +
-> +		i2c@7 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0x7>;
+> I'm still struggling to understand what is the benefit from this - why
+> would you want the user space to explicitly start the entry process
+> like this? Instead why would you not just take full control over the
+> alt modes in user space by enabling the them one by one in what ever
+> order you want?
 
-reg should be before #address-cells
+I think after the many patch iterations we went through upstreaming,
+we may have lost the point a little bit wrt/ the mode selection task.
+We talked about this on the very first iteration of this patchset
+here: https://lore.kernel.org/linux-usb/CANFp7mVWo4GhiYqfLcD_wFV34WMkmXncMT=
+OnmMfnKH4vm2X8Hg@mail.gmail.com/
 
-Frank
-> +
-> +			i2c-mux@76 {
-> +				compatible = "nxp,pca9547";
-> +				reg = <0x76>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				sfp1_i2c: i2c@6 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x6>;
-> +				};
-> +
-> +				sfp2_i2c: i2c@7 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0x7>;
-> +				};
-> +			};
-> +		};
->  	};
->  };
+The motivation behind it was to allow the kernel driver to own mode
+selection entirely and not need user space intervention. The current
+alt-mode drivers attempt to own the mode entry process and this fails
+when you have two or more altmode drivers loaded (i.e. displayport,
+thunderbolt). The original goal of the mode selection task was to move
+the mode entry decision away from the alt-mode driver and to the port
+driver instead.
+
+What's missing in the current patch series to show this is probably
+actually calling mode_selection once all partner modes are added :)
+Andrei should be adding that to this patch series in the next patch
+version.
+
+Adding the mode_selection sysfs trigger is for another reason: to
+re-run mode selection after priorities have been changed in userspace
+and there is no partner hotplug. We specifically have some security
+policies around PCI tunnels that result in the following need:
+* When we enable pci tunneling, we PREFER tbt over dp and would like
+to select the preferred mode. When we disable it, we PREFER dp over
+TBT and would like to select the preferred mode.
+* When users are logged out, we always prefer DP over TBT.
+* When the system is locked, we prefer DP over TBT for new connections
+(but existing connections can be left as TBT). When we unlock, we want
+to enter the most preferred mode (TBT > DP).
+
+While this is do-able with the alt-mode active sysfs field, we would
+basically be re-creating the priority selection done in the kernel in
+user space again. Hence why we want to expose the mode selection
+trigger as done here.
+
+>
+> I don't believe you can make this approach scale much if and when in
+> the future the use cases change. Right now I don't feel comfortable
+> with this at all.
+>
+> thanks,
+>
+> > This series was tested on an Android OS device with kernel 6.16.
+> > This series depends on the 'USB Type-C alternate mode priorities' serie=
+s:
+> > https://lore.kernel.org/all/20250905142206.4105351-1-akuchynski@chromiu=
+m.org/
+> >
+> > Andrei Kuchynski (5):
+> >   usb: typec: Implement mode selection
+> >   usb: typec: Expose mode_selection attribute via sysfs
+> >   usb: typec: Report altmode entry status via callback
+> >   usb: typec: ucsi: displayport: Propagate DP altmode entry result
+> >   platform/chrome: cros_ec_typec: Propagate altmode entry result
+> >
+> >  Documentation/ABI/testing/sysfs-class-typec  |  11 +
+> >  drivers/platform/chrome/cros_ec_typec.c      |   9 +
+> >  drivers/platform/chrome/cros_typec_altmode.c |  32 +-
+> >  drivers/platform/chrome/cros_typec_altmode.h |   6 +
+> >  drivers/usb/typec/altmodes/displayport.c     |  19 +-
+> >  drivers/usb/typec/altmodes/thunderbolt.c     |  10 +
+> >  drivers/usb/typec/class.c                    |  37 ++
+> >  drivers/usb/typec/class.h                    |   4 +
+> >  drivers/usb/typec/mode_selection.c           | 345 +++++++++++++++++++
+> >  drivers/usb/typec/mode_selection.h           |  25 ++
+> >  drivers/usb/typec/ucsi/displayport.c         |  10 +-
+> >  include/linux/usb/typec_altmode.h            |  11 +
+> >  include/linux/usb/typec_dp.h                 |   2 +
+> >  include/linux/usb/typec_tbt.h                |   3 +
+> >  14 files changed, 516 insertions(+), 8 deletions(-)
+> >
+> > --
+> > 2.51.0.384.g4c02a37b29-goog
 >
 > --
-> 2.25.1
->
+> heikki
 
