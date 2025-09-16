@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-819005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DCAB599F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:29:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B55B599DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0389E4A0EDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81A73A468A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF16327A2E;
-	Tue, 16 Sep 2025 14:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4BF34A332;
+	Tue, 16 Sep 2025 14:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/W6kloe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oZuIufPN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE40D1A0728;
-	Tue, 16 Sep 2025 14:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B0345724;
+	Tue, 16 Sep 2025 14:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758032288; cv=none; b=qDEjy6Q9xc+CoUBi7QEjqNfF0V6OqQm/DWfagFOv5T6pbv2E8ILPkPjRzmFXVetTU8Yubk4XWBeQBY6Q4apg4kbVsnxiqG28A7kRf+lG7p6agIKN3tHzYvSoLO4BStkwEGli35XMZWBdm8ls8pquOZWlfBARrxCHp7OCdUeJvk8=
+	t=1758032304; cv=none; b=cjWLhjRszqghRcW9xe0d3CIvwWzYRCcUdW01ehfzUupQsAkDzGJ3zlBUsSZPwq2pjxueBrxtQl7hR1YbA5CkFAlth9+wYJ1UJqIm7tMXp+5IAYW9zfHritnfIfEBWO4Bm7Ky1fLN6PZ7e4t05894uouvap0KV5YLvLltB7+mEXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758032288; c=relaxed/simple;
-	bh=MHGfGuchcAt29gAf8ZZAge+ONTorOmrLa6kSLpgeWZI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iYnW6BQHeXdUiT41oPhCb4b7oxAyOegeHLWqDZpWSffnmwneiQSZPBUPszvDbwbBk0IZjDgDJt6SVOEn+OQtVG8cmkXeBuqVabHVarmDRhDB6AXwjNUI7QA9xgCeV+ZZvpKAnp/zbge+htqYv8Mn91VMjub2+yMkvBLVcVUNv6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/W6kloe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4A3C4CEFC;
-	Tue, 16 Sep 2025 14:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758032287;
-	bh=MHGfGuchcAt29gAf8ZZAge+ONTorOmrLa6kSLpgeWZI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=F/W6kloe5Ooa5vCU4qDrZO3r1d7KJtj+Gak0Q9Me8sYdmZ1CBp12ReGezCg9qiVIq
-	 3WdX/lPq/AakhJYk4OsmNboW/hypMsRQUOMZBOqhAXdQ2YHSGQScugk282pdoy4C8W
-	 V78jhgk+QUnlPUs2Q6S0LfMLfMoFHmQ98wCc3xx4EaMKWWAaDBMjhJgYpQLukDOaF1
-	 P+P/Y1+1q2fal5LAaK9hmBES3nMwan/jbYnrV+72oiMWJ3zCHHpjM90NEmH8jzzUrM
-	 7vvmSbi+eHXMjSXibDCV1WvG7OpN2r/lGun4yvA3/PjgTD0bJ+XuFF/XMtA/hsXJIx
-	 OCumt0iWlbyyQ==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@intel.com>, 
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
- =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- James Cowgill <james.cowgill@blaize.com>, 
- Matt Redfearn <matt.redfearn@blaize.com>, 
- Neil Jones <neil.jones@blaize.com>, 
- Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, 
- Hoan Tran <hoan@os.amperecomputing.com>, Yang Shen <shenyang39@huawei.com>, 
- Imre Kaloz <kaloz@openwrt.org>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
- Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev, 
- linux-unisoc@lists.infradead.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-In-Reply-To: <20250910-make-compound-literals-normal-again-v1-1-076ee7738a0b@linaro.org>
-References: <20250910-make-compound-literals-normal-again-v1-1-076ee7738a0b@linaro.org>
-Subject: Re: (subset) [PATCH 1/3] mfd: vexpress-sysreg: use more common
- syntax for compound literals
-Message-Id: <175803227904.3821457.282370095352768515.b4-ty@kernel.org>
-Date: Tue, 16 Sep 2025 15:17:59 +0100
+	s=arc-20240116; t=1758032304; c=relaxed/simple;
+	bh=eqK4d+G2NOIhzzGaMqoXVh5YuTyL3wC3hknNUwYzKeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=boNQcD266IZXC+VUwFC9uGSSeYV70piKe1pdDRhuawr3uB52Adlr+tzmZXNswInN9uv3O989Qu6X5huAYKL590ACujcVDeYxq8yLaltHhp//XBwfNH8W7ZAAep/D21GMChwVjzikkNxZalin4tpGc4BHXmuYd0EZYKTWaFQ9e08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oZuIufPN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YdFZdtYONbOUHd6TcI51QatiXFVH3+hJsrSaEoyT4Xg=; b=oZuIufPNTQ+oVJYCz5z2VFFymi
+	3XQ43Zgx6TPjrSkrKaYzIRhkq3IGXfmVaA9tPB75z9st5ZQrF4cD0vfWCsATrjsIcEApaICpWJ1u4
+	CqiKmr8hJSUNzIAt+Py98QJ43bKCN78A5vgQVvF1lLNVYzLFTls0kE8W4w/trcJxkIfv8FSl7OFGt
+	iIw3Wl4vrmAlKgPQ5x6a/TI0A4t9myJtnK1EOcye8PVDEInXFaFSHrCvPZohOkbK8BtC2brR6IR/+
+	pqN1sAveL2L7jtkXo7efs9bop5MEapfuy3H1NxoS4nXZ1CBMPFahG/iQYOeQr3KyYGXAn6vN1h1aW
+	1j70sJmg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyWVY-00000007DPQ-1YUw;
+	Tue, 16 Sep 2025 14:18:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E0EFA300328; Tue, 16 Sep 2025 16:18:11 +0200 (CEST)
+Date: Tue, 16 Sep 2025 16:18:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Yuzhuo Jing <yuzhuo@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Barret Rhoden <brho@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Guo Ren <guoren@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 0/7] perf bench: Add qspinlock benchmark
+Message-ID: <20250916141811.GK3245006@noisy.programming.kicks-ass.net>
+References: <20250729022640.3134066-1-yuzhuo@google.com>
+ <aJDDfCKFXFQOJ134@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aJDDfCKFXFQOJ134@J2N7QTR9R3>
 
-On Wed, 10 Sep 2025 09:25:45 +0200, Bartosz Golaszewski wrote:
-> The (typeof(foo)) construct is unusual in the kernel, use a more typical
-> syntax by explicitly spelling out the type.
+On Mon, Aug 04, 2025 at 03:28:12PM +0100, Mark Rutland wrote:
+> On Mon, Jul 28, 2025 at 07:26:33PM -0700, Yuzhuo Jing wrote:
+> > As an effort to improve the perf bench subcommand, this patch series
+> > adds benchmark for the kernel's queued spinlock implementation.
+> > 
+> > This series imports necessary kernel definitions such as atomics,
+> > introduces userspace per-cpu adapter, and imports the qspinlock
+> > implementation from the kernel tree to tools tree, with minimum
+> > adaptions.
 > 
+> Who is this intended to be useful for, and when would they use this?
 > 
+> This doesn't serve as a benchmark of the host kernel, since it tests
+> whatever stale copy of the qspinlock code was built into the perf
+> binary.
+> 
+> I can understand that being able to test the code in userspace may be
+> helpful when making some changes, but why does this need to be built
+> into the perf tool?
 
-Applied, thanks!
+Right, I think most of us already have a userspace version of it. I have
+a thingy that has TAS, TICKET and QSPINLOCK wrapped in a perf self
+monitor that I can run on various x86_64 to see how it behaves.
 
-[1/3] mfd: vexpress-sysreg: use more common syntax for compound literals
-      commit: f8cba973e4e51b8a166cbf81f827ff926f64d92e
+IIRC it also has a pile of 'raw' atomic ops to see the contention
+behaviour. This shows that eg. XADD is *waay* nicer than a CMPXCHG loop
+when heavily contended.
 
---
-Lee Jones [李琼斯]
-
+Anyway, that lives as a random tar file on a random machine in my house,
+I'm not sure it makes much sense to stick that in perf as such. Rather
+specific.
 
