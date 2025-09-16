@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-818120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8B0B58CEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:41:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0DA7B58D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05ED652206C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:41:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19F432192C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37A2238D22;
-	Tue, 16 Sep 2025 04:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kfde2bCK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553E8242910;
+	Tue, 16 Sep 2025 04:48:09 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163D522F74F;
-	Tue, 16 Sep 2025 04:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF94C226D1E;
+	Tue, 16 Sep 2025 04:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757997679; cv=none; b=FW9egxaW3Zk5o8rFfRCL6nglQHHRQzhl89ylU4dbEWukxg2NWefG/TKH8L/7a5M1yDkiMioaNrFK2aze+nBQaBCOrxJXW5COwBj38U/RHdInTarfBJDZU2LX+cfqgLIHG7n4MkIVbMDzmI2qY2RA1LFHl8WzgpMmiUg98DtCMmc=
+	t=1757998088; cv=none; b=lvMrJZW8SN6FE3DsbIqWqaKLYfC+In8uyEuCNEzIBt1m3+LvmyAWA8WqOoTWTBdRt3Nsvsyte9nGJznTvyTXTkpBbx6DemeKeOPzbn5YvoVEBNpZkLJDrDmyqK7imIIyIoOrys1RuzpFbruvGu7HT095ibxLyRUlgSfSZwDDGg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757997679; c=relaxed/simple;
-	bh=sNER0piXqThOPvVZ2lFH5TPIw7AbRv56V9c6OrCJQ9A=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rNz+6fg7Qu+YdRuvyTzQEeKeNyLBsojSyHZgzhXnZndGZM0G2QxaUThmGqnyZY8Ozca5j00aW7vZaxALUdrxVY3Zx59bd10u05Y8r0CLgJMgL59askgQ6XtvAWgmggfNrvBWFKkGcSg74GlQpfkqh+EJblzc1NeMGqN8oqXLJI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kfde2bCK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F91C4CEEB;
-	Tue, 16 Sep 2025 04:41:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757997678;
-	bh=sNER0piXqThOPvVZ2lFH5TPIw7AbRv56V9c6OrCJQ9A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kfde2bCK6bSYDIyOsrhYTuiq9ts/r+Q8UslL3g+/PNOzNfNI9QUaZ2gNWFz8JRet0
-	 saavCH1g6XV2gUOYRLpDvPtr1OvySz2puf6DKyAIeu10hnBDjiHtAc6mOGUCtra3m7
-	 zNoUgcL3ii6ytSLE8fbvUvOyjN8FxGCBcTMqjPq4=
-Date: Mon, 15 Sep 2025 21:41:17 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Donet Tom <donettom@linux.ibm.com>, David Hildenbrand
- <david@redhat.com>, Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin
- <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, Wei Yang
- <richard.weiyang@gmail.com>, Aboorva Devarajan <aboorvad@linux.ibm.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Giorgi Tchankvetadze
- <giorgitchankvetadze1997@gmail.com>, stable@vger.kernel.org, Joe Perches
- <joe@perches.com>
-Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
- mm_struct during fork
-Message-Id: <20250915214117.5117d339669e091b1d3fa96d@linux-foundation.org>
-In-Reply-To: <aMjohar0r-nffx9V@laps>
-References: <cover.1757946863.git.donettom@linux.ibm.com>
-	<4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
-	<20250915164248.788601c4dc614913081ec7d7@linux-foundation.org>
-	<aMjohar0r-nffx9V@laps>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757998088; c=relaxed/simple;
+	bh=ohSe0LBv/ZfwI0Trhej2IkrpHhNFT2IbP7HTp7GcMag=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gL+SL+/hWlQPxf1WbtvtkobdqIHEMiDNBp1/fD9l0FfAoZDjChNFmHxjRSE8wUVFHjvfeu6nrz2PPUSdPEI245P4XUJkh8oBScoMLLnxdfSHEDgO6VLVid0kAkim7FJOxVpPK/KZXiUif+bMl/Ra+vJiailopSneyVMvmMoxeE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=linux.spacemit.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+X-QQ-mid: zesmtpgz9t1757998021tc8a7eeeb
+X-QQ-Originating-IP: MnSHpl6i8tG0ESJoWqhVxNInKQRx7KiX/ErgMayAmkk=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 16 Sep 2025 12:46:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11306589696659165830
+X-QQ-CSender: troy.mitchell@linux.spacemit.com
+Sender: troy.mitchell@linux.spacemit.com
+From: Troy Mitchell <troy.mitchell@linux.dev>
+Subject: [PATCH 0/3] hwmon: (ctf2301) Add support for CTF2301
+Date: Tue, 16 Sep 2025 12:46:43 +0800
+Message-Id: <20250916-ctl2301-v1-0-97e7c84f2c47@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIALPryGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0Mz3eSSHCNjA0NdAxNDsyQDc+NkIwsDJaDqgqLUtMwKsEnRsbW1AIh
+ Je8dZAAAA
+X-Change-ID: 20250916-ctl2301-0416b073c280
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, Troy Mitchell <troy.mitchell@linux.dev>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757998019; l=1578;
+ i=troy.mitchell@linux.dev; s=20250710; h=from:subject:message-id;
+ bh=ohSe0LBv/ZfwI0Trhej2IkrpHhNFT2IbP7HTp7GcMag=;
+ b=fBHh0LsDUpNtptiv0hf0HLwcrk280SqDUvqWa354i4Px7ZudBO/6ecLNe+C80DDt22OtGMGqs
+ wXHWVeLCUN3AcOD5viC5WUAxwV+meSy/WnbQ1NJFZnv/pz7H7DISg6Z
+X-Developer-Key: i=troy.mitchell@linux.dev; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: OLsBWtCIHsg6TeJXuJy3v+1fPZNqJ6QP/qpsmQH6SVHVLBud8vKkXmaC
+	JGjSVCT2Nmye3b6oww+2MiUELXexk4rpf/wFY0FAyrFJO+qAFiLTxRdmlL8rurjpKsqfBJx
+	TeaTPgH9GEKBdQYrZunkT4nJ6fyZnBu41+76A3c7Z5TYaaVBQ7qtGEXFIkjMpE0Rl5c2oQd
+	0UYVz2icgnKzSnq+QGCp3Q4pn/YwHAKMk8GyUqmVDSsAjdbU+K6XKn+Fwj2YALDUz5uXqWi
+	G0StOnp9nMp3FM3lAWy1xy9Xmw5L7a3x/mtT2BBDX+mV+OJJIWLVIRsQP+mK5kiHESY4Ejw
+	ITCd4BoVVtvOg9vz8tRHuoc3qPmXNEgqe05j/3o1KYf1rDk8IhdL3HnnEYON3EuydcuUsgh
+	m23RN3S20f5DWhnB/KrbvmWGllzR8Q6bClBncQZ5eLlNrdjcb4sP582VSCGaF9A91j+VBjw
+	AahqPlZZW93VrbopKFyKsfGhaXkdBAxvi3EW9FFOAaVDroapqC0VCQb2/1Sn/TdABlJGRbS
+	BU2u4YPZYqJZxny+SldsR2qBy4LByK/OE4KWv3k3eA1hqsvK+IlQ1XZNCv3CdcWzqIl/Vzw
+	/FI8h5iMA9vIbr/XifjNXKgHhnGFg3f0Q6iOp/kJw16PvwOcI+rcIh9YX5G0Fv+vYmWVkgh
+	jKBe+XqGXNKW7UhCKck62JnybLS8Y42iFlu35tRFmNjDdU641ubic0pFto3x/Q6xNS6LES9
+	e29wgi2pXRXO0Pth25FK6GbTCvptBMYMCveTIC8EpiKiHCT9qhmjmQAu2UlmcOH100J9Fmi
+	MoF5tJKhXOE/rB5X+ltNqpLeBnMm7iwfqSe5bfpksm+22C7TtkyMjpWkAYiTLU7/lk3sXsD
+	Gum3q0HMR5yGGrScuhh8ojxiqYZNdTmQ1mI/MN5mBm79aUopQKN8j5r3Njd3np9AH+yLGJJ
+	rX5w3tV594p5k/fnwNCluV0+UtcZxjbyirWpIm7L+3UfBQx4eKljpqJznrt3ykIr+bCCK0/
+	JgFYndQ0srARYnaFUaQGelm5raj6e97ffbqnbVkAEr0rYFfs0ZqWZNSUvrJW6tcP0sgi+vF
+	1GBAu6+Yx7xuzWHDQx5+Q0=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-On Tue, 16 Sep 2025 00:33:09 -0400 Sasha Levin <sashal@kernel.org> wrote:
+Sensylink CTF2301 is a system-level thermal management solution chip.
 
-> On Mon, Sep 15, 2025 at 04:42:48PM -0700, Andrew Morton wrote:
-> >On Mon, 15 Sep 2025 20:33:04 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
-> >
-> >> Currently, the KSM-related counters in `mm_struct`, such as
-> >> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
-> >> inherited by the child process during fork. This results in inconsistent
-> >> accounting.
-> >>
-> >> When a process uses KSM, identical pages are merged and an rmap item is
-> >> created for each merged page. The `ksm_merging_pages` and
-> >> `ksm_rmap_items` counters are updated accordingly. However, after a
-> >> fork, these counters are copied to the child while the corresponding
-> >> rmap items are not. As a result, when the child later triggers an
-> >> unmerge, there are no rmap items present in the child, so the counters
-> >> remain stale, leading to incorrect accounting.
-> >>
-> >> A similar issue exists with `ksm_zero_pages`, which maintains both a
-> >> global counter and a per-process counter. During fork, the per-process
-> >> counter is inherited by the child, but the global counter is not
-> >> incremented. Since the child also references zero pages, the global
-> >> counter should be updated as well. Otherwise, during zero-page unmerge,
-> >> both the global and per-process counters are decremented, causing the
-> >> global counter to become inconsistent.
-> >>
-> >> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
-> >> during fork, and the global ksm_zero_pages counter is updated with the
-> >> per-process ksm_zero_pages value inherited by the child. This ensures
-> >> that KSM statistics remain accurate and reflect the activity of each
-> >> process correctly.
-> >>
-> >> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
-> >
-> >Linux-v5.19
-> >
-> >> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
-> >
-> >Linux-v6.1
-> >
-> >> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
-> >
-> >Linux-v6.10
-> >
-> >> cc: stable@vger.kernel.org # v6.6
-> >
-> >So how was Linux-v6.6 arrived at?
-> 
-> e2942062e01d is in v6.6, not in v6.10 - I suspect that this is why the "# v6.6"
-> part was added.
+The CTF2301 is an I2C/SMBus compatible device featuring:
+  - One local temperature sensor with ±0.5°C accuracy and 0.0625°C resolution.
+  - One remote temperature sensor for external diode-connected transistors,
+    offering ±1°C accuracy and 0.125°C resolution (temperature range: -40°C to +125°C).
+  - An integrated PWM fan controller capable of operating in two modes:
+      1. Direct-DCY: Open-loop direct duty cycle control.
+      2. Auto-Temp: Closed-loop automatic fan speed control based on measured temperature.
+  - A 1-channel fan speed monitor (TACH input) for RPM measurement.
 
-OK.
+Check CTF2301 datasheet for more details[1]
 
-> 
-> >I think the most important use for Fixes: is to tell the -stable
-> >maintainers which kernel version(s) we believe should receive the
-> >patch.  So listing multiple Fixes: targets just causes confusion.
-> 
-> Right - there's no way of communicating if all the commits listed in multiple
-> Fixes tags should exist in the tree, or any one of them, for the new fix to be
-> applicable.
+Link:
+https://www.sensylink.com/upload/1/net.sensylink.portal/1689557281035.pdf[1]
 
-So what should we do in this situation?
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
+---
+Troy Mitchell (3):
+      dt-bindings: vendor-prefixes: Add Sensylink
+      dt-bindings: Add CTF2301 devicetree bindings
+      hwmon: (ctf2301) Add support for CTF2301
+
+ .../bindings/hwmon/sensylink,ctf2301.yaml          |  49 ++++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ drivers/hwmon/Kconfig                              |  11 +
+ drivers/hwmon/Makefile                             |   1 +
+ drivers/hwmon/ctf2301.c                            | 326 +++++++++++++++++++++
+ 5 files changed, 389 insertions(+)
+---
+base-commit: 250a683466384b4d36f98b64f20412f3c26ca69e
+change-id: 20250916-ctl2301-0416b073c280
+
+Best regards,
+-- 
+Troy Mitchell <troy.mitchell@linux.dev>
+
 
