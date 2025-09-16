@@ -1,143 +1,112 @@
-Return-Path: <linux-kernel+bounces-818670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF855B594E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B0FB594EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71EEB4E08E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 677ED4E0CF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CC928315A;
-	Tue, 16 Sep 2025 11:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C50A2C2358;
+	Tue, 16 Sep 2025 11:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="jjnHESx7";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="WncKLC5s"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HPccqQnU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD54B1684B0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EB825B30D;
+	Tue, 16 Sep 2025 11:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758021385; cv=none; b=P+pAkhUpopJsTolfmMRmcC87TMD/zwKADpnRRtSFkVrLTZ0RVAU72GoqRu8T/3ARi2oM7rckqMTOYUvGuwTe8UyFzqX9PczbzmJ/Qy235e/g86t49TkejlBqOdugecDh/FaXW/MFNf/BefnhY8RQ0hlUtDD1ziRd0x+XNNOo1Pw=
+	t=1758021480; cv=none; b=BVcNTHZLtRc0TK4FBDHzoZKH5bBoSGUs7iklavs63f+yFMzZL967w/LdQdqyr/3GRgk8jTkSt5/PYjrNcnp8UHpLGPELmg+V/vRu3zU13kZHRT4y0KbLOpGsOGUfPGs2B142LeOlmI85WJyu2RtqrB1KNGeJFdd0+gwlPOoxonk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758021385; c=relaxed/simple;
-	bh=hVpykSd8UsUvRbvpzYppVu1X+SxOaq8Fc8w4svXwdpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QrDUn1ogfpalM474F+n+TsNLIqzG2Md24bLp5RjQFEGyNJCcWJnTZ9KbHSaLkuCe+S/z6ad/BKRYXl54/FbPrH7SayfbYHK4A7ATCCXkk++bVASTxZ58Jb+pAr4gvvPj+NzGfyAie4eWfcpdiGIOdpYWekkSJACFd/nr8G7vJgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=jjnHESx7; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=WncKLC5s; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758021367; x=1758626167;
-	d=konsulko.se; s=rsa2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=pP90yeaFqjeMBYG9e5yov+4PvbWY+bRrEFrDgqvDYnU=;
-	b=jjnHESx7Xjtip5gTpkigaliDQOOBC0kGJQS07xdIR8XEv8pp5RYgYARz6asFJfCdI2FGtMhMNPG9Y
-	 w68YhrJkkNldZQ7FHueWY+TnDkA1WSaUS7aEg9pqDDFpEReEn/NET0e87B0yPFZAlLye2UdISqxQpb
-	 4pC+FA0H2FTvU3gHPCw4MF3Ei1zhtpOHORvHyva/+7qLZJ9rkTt1t+Q6zivSB+9kV8TduUmkOQZ3Bp
-	 PRxVkf9JhNvouhKn5SPa+CwKnAFt6TmoLbIPsfIXGS1r6vSuO+1L+Xm64yUNldJMYjMqXC5ZiKxB0v
-	 CB0hRWwONCp0ohcGGidW1LHU/K7qE+g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1758021367; x=1758626167;
-	d=konsulko.se; s=ed2;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=pP90yeaFqjeMBYG9e5yov+4PvbWY+bRrEFrDgqvDYnU=;
-	b=WncKLC5sQQIoPcUhDtoVTqr2wAuEUC4ig2CqozfmaMPwCyyXFHcSxy3Hp4qqUAuQGZxDwUzsX4jBN
-	 l73vdKIDw==
-X-HalOne-ID: 8932b5ba-92ee-11f0-aadb-494313b7f784
-Received: from [192.168.10.245] (host-95-203-13-255.mobileonline.telia.com [95.203.13.255])
-	by mailrelay6.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
-	id 8932b5ba-92ee-11f0-aadb-494313b7f784;
-	Tue, 16 Sep 2025 11:16:06 +0000 (UTC)
-Message-ID: <be7fbc94-cd3b-41b3-ac20-5c46aad9aa84@konsulko.se>
-Date: Tue, 16 Sep 2025 13:16:06 +0200
+	s=arc-20240116; t=1758021480; c=relaxed/simple;
+	bh=CTjPrnm5eHCp0MoEimtBQ1qh43ZfQU9K48Rja20O4c4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EybFyuoXQNC/xy0qbc6jwjhOZPagkhhqY9KISydrPG3pvmXrw6U6Wv5mRf+QTov/2hT/FIkPXDc0zllNBY9KYQ37gfCOaohuRkRL3pKdRiQCtOnond1k+4HkrYFei4JtoZBLAS0lYWdcPUrxeIu50DnSYJAeJEP8qi6EBjGbIc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HPccqQnU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758021475; x=1789557475;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CTjPrnm5eHCp0MoEimtBQ1qh43ZfQU9K48Rja20O4c4=;
+  b=HPccqQnUD49ieY2nSx/Es1HSrXo5FKEjWJUhyJnqCPDq23NtUHB1+7x4
+   bdEWE2fplPTcTezeW5kRsBTGHP7rrb95DJEofb38wiPlmM8MQiHYuTFTw
+   eDkI8wHF3qQbuV5KQ8zsLhZjkdBl0a1R980eP2uPyN+4sTs44Y7Xcq3kl
+   rBE5I0o7hexLQO7OjTI0t2rA1Jvy3Xiorr5sjxKEE6fWtkTBG5MDbm0jt
+   582wT2tkSsPgQ67crhBLvRQ7ew5glN/M+E0Pjcyy4kshgVS8L2107pNLg
+   uO0EDM5I6aJDD4dCwStVxEmssHOGUFViIpA3xGIcdlb2gJZTPDgbtFvbx
+   g==;
+X-CSE-ConnectionGUID: j3fBAkW6S7OqkXgcNNr3MQ==
+X-CSE-MsgGUID: /PykqSVFSh2QrcUPn+oFAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="62935311"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="62935311"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 04:17:54 -0700
+X-CSE-ConnectionGUID: YOmZPaRGSNiOTJBbCfjT4w==
+X-CSE-MsgGUID: UPSOZh2bR9a8cHnYeb12QA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="180167887"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 04:17:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyTgy-00000003Vdh-3drX;
+	Tue, 16 Sep 2025 14:17:48 +0300
+Date: Tue, 16 Sep 2025 14:17:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Jan Kara <jack@suse.cz>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v1 1/1] lock_mount(): Remove unused function
+Message-ID: <aMlHXBswxpy0D7s9@smile.fi.intel.com>
+References: <20250915160221.2916038-1-andriy.shevchenko@linux.intel.com>
+ <20250916012537.GL39973@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm: remove zpool
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
- Vlastimil Babka <vbabka@suse.cz>, hannes@cmpxchg.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Hellwig <hch@infradead.org>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250904093325.2768507-1-vitaly.wool@konsulko.se>
- <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
- <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
- <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
- <dh74mr7bjtpzk7frviv6iqqno2u2b27p7jiagp2dtnsz2wrfhr@wlb5vqg4majs>
- <tbvushbdn7nzitey3uy6humdndd6247r4544ngqkds3cr447e6@prnla4edwxmk>
- <f3ufcsjvvxhi5gzw2wglkpedgyyi6tiaje7em3tbxkzhklphvh@sv3dbo4yba5p>
- <98B3AFB0-EBD5-4779-A5DB-FFA6717E83C3@konsulko.se>
- <fui4gqm6pealaxooz3xv3dnnqxscefyvhw5bhntedwh4tgjvdq@ootmbuoc3dpa>
-Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <fui4gqm6pealaxooz3xv3dnnqxscefyvhw5bhntedwh4tgjvdq@ootmbuoc3dpa>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916012537.GL39973@ZenIV>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Tue, Sep 16, 2025 at 02:25:37AM +0100, Al Viro wrote:
+> On Mon, Sep 15, 2025 at 06:02:21PM +0200, Andy Shevchenko wrote:
+> > clang is not happy about unused function:
+> > 
+> > /fs/namespace.c:2856:20: error: unused function 'lock_mount' [-Werror,-Wunused-function]
+> >  2856 | static inline void lock_mount(const struct path *path,
+> >       |                    ^~~~~~~~~~
+> > 1 error generated.
+> > 
+> > Fix the compilation breakage (`make W=1` build) by removing unused function.
+> > 
+> > Fixes: d14b32629541 ("change calling conventions for lock_mount() et.al.")
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Folded into commit in question to avoid bisect hazard
+
+Thank you!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 9/15/25 21:37, Yosry Ahmed wrote:
-> On Sat, Sep 13, 2025 at 03:55:16PM +0200, Vitaly Wool wrote:
->>
->>
->>> On Sep 9, 2025, at 10:12 PM, Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
->>>
->>> On Mon, Sep 08, 2025 at 09:18:01PM +0900, Sergey Senozhatsky wrote:
->>>> On (25/09/06 14:25), Sergey Senozhatsky wrote:
->>>>> On (25/09/05 19:57), Yosry Ahmed wrote:
->>>>>> I think Android uses zram+zsmalloc with 16K pages. Perhaps Sergey could
->>>>>> confirm.
->>>>>
->>>>> I'm not working on android directly,
->>>>>
->>>>> I can confirm that android uses zram+zsmalloc.  As of 16K pages, there
->>>>> was a way to toggle 16k pages on android (via system settings), I don't
->>>>> know if this is the default now.
->>>>
->>>> While I don't know what zsmalloc struggles Vitaly is referring to in
->>>> particular, off the top of my head, zsmalloc does memcpy()'s for objects
->>>> that span multiple pages, when zsmalloc kmap()'s both physical pages and
->>>> memcpy()'s chunks of the object into a provided buffer. With 16K pages
->>>> we can have rather larger compressed objects, so those memcpy() are likely
->>>> more visible.  Attacking this would be a good idea, I guess.
->>>
->>> Yeah I personally think attacking whatever problems zsmalloc has with
->>> 16K pages is the way to go.
->>
->> Well, there is a way out for 16+K pages, that being:
->> * restricting zsmalloc to not have objects spanning across 2 pages
->> * reworking size_classes based allocation to have uneven steps
->> * as a result of the above, organising binary search for the right size object
->>
->> This will effectively turn zsmalloc into zblock, with some extra cruft that makes it far less comprehensible.
-> 
-> I think the way to go would be this, identifying problems with 16K on
-> zsmalloc, and addressing them one by one in a data-driven way.
-> 
-> I don't believe there will be opposition to this, or even adding more
-> tunables / config options to alter zsmalloc's behavior based on the
-> environment. If there's indeed extra cruft, we can either clean it up or
-> hide it behind config/tunabels so that it's only enabled when needed.
-> 
->>
->> Another option would be to leave zsmalloc do its job on 4K pages and use zblock for bigger pages. But it is not possible at the moment because zpool api has been removed. Thats’s why I NACK’ed the zpool removal, at least until we have a replacement for it ready.
-> 
-> I think having a separate allocator that's better for each page size is
-> not a good option tbh.
-
-I don't think anyone has been talking about a separate allocator for 
-each page size. The idea was that zsmalloc (as a well-tested and 
-well-performing _on 4K pages_ allocator) stays the default option for 4K 
-pages, and zblock becomes the default for other page sizes.
 
