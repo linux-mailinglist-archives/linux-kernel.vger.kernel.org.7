@@ -1,178 +1,276 @@
-Return-Path: <linux-kernel+bounces-818601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FB14B593C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED618B593DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A58316DD7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C02C3B68E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AA030507B;
-	Tue, 16 Sep 2025 10:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F182F7AB3;
+	Tue, 16 Sep 2025 10:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fB8G4bd9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnCKAVOG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBCD2F83D8
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D44222585;
+	Tue, 16 Sep 2025 10:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758018659; cv=none; b=EhiZB7X9a8FKTEgD7PYk2caKpGRJwzC2zdbz5G7bzahgnJRyC7+vomAGsNt98b9KB5LsmqTP51U4P62urozgUDWtbGSJzR75ZtoTYsE2Uf524Api/tlk11MLp4CcgP9WU+9nIzKM4egxFt3yD1e8V4Z6EQOHvTnhIZiFbG9YVNs=
+	t=1758018720; cv=none; b=qqkSNLlwl7iE5jMVZAf0xPS5usBTOD6122e5ylXbY5t1mUTRKCh1TVSlHNkzRLSo4nUyhQ4BPfE+fDIzzmcLfQ9jkPwpvM9KPd5/mD5AawlwN7pWjqXQ44ye4O54/q3l4sL+rjprAqpHudwumkYCGMSHdEA5whb8Bm6xkIBV+wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758018659; c=relaxed/simple;
-	bh=d+jlDndG8PP0VyxXRuLeSowh6XAYCHEbZtNNt9LInjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awX6yRbxuZ0GCi9GrJd39818RVvN+yYGPcurpex2D2Un7pwOZtwh0cns8A50ndZVZJxWqFwUhVnkFG5P7480RrZ2/+4f/pvWW0qpFkjmpAJ/unnsjlK8oxJUjDswYkMXeakG9OvaQeLpo6sh8C10N4xWj4RS+HZXf0Mwnafp3MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fB8G4bd9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GA3GBL010797
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:30:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=hFFUoRiJ78Rh8btpYL7GdR2P
-	u0JpEw7JoBrZPpXAZnY=; b=fB8G4bd9aD9w406wGvEWnNt8+rBWANai4uGMUWz/
-	VGNjGRH7UH9QXP7vsQbavyKLtcZdCTtw2gn26NQfFAXyqNa5lfHKAU2vZZOBX3XO
-	hF4iJ5/zs4INnBZzovffbtR7fHlm0QiFqIKlVPu7GkYuw9n1lpJjUXxL9qniNEtr
-	ckFyO84Q1uEmQDb3ppTcN79DEbg46eHMVcgiNeB49g8XH3RL1D4PQvBZszgoevPj
-	CneMBF4bLp8FDf4Tb0f7EqnmZ1H+bn5zANLrIXbd155gF2jvqYAF4QfjxB57jNys
-	r3dWZ20NqTNepZLAF/mPFmDtT/kaKex07AyIEyBoLJviEg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951snrat3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:30:56 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b60d5eca3aso127498041cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:30:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758018655; x=1758623455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hFFUoRiJ78Rh8btpYL7GdR2Pu0JpEw7JoBrZPpXAZnY=;
-        b=hiruqvmMcduvYzdIlom1HqtvVudvbd5PQj7/AXfWthD9Etdo5vBsET9Qh9WuOFmoFP
-         vlUVPdDq8OCBEeSDgU1kcynFh9+vTN58jus71aYePI/js9XGllouHGdF133kJXml0rzb
-         nGBq/FuxMinu5gO61XcnxDldIQMABwwcS1DoQmGbRxdjJrRoNs+bIHDzfqXIh9KRe7Bw
-         CeRbqEQkqkWIfFiEQh6p/n3WOSt0/G/Dq+eSOG1KoXVQtpMhVK6E8Ew3oIbvhoiMUhkt
-         Qj8hHjaIMymOir2OPDtydCXL8Od26l49bNq5pLE+cxEhUIP9MmuzaQv10+GH/Q3LcugA
-         1w0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUasuc8MQJ64KviJdZZfcww11i3yly1SVsYMbTrEEC/rRAe1uaCm/bCC9bhUQI6kOzTKvb/OU8yoRFd8lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmEW1IPcT6gj37h37hu7SbILP9+OrIzbyFq8k2IxS1vXHlb4GU
-	p2yZebMIr7E5OkB9I4IVTJAqulXkCqp46Q7OIYFuntlEDqe9EwqL1+KyPP4EC0xqaI13mUIK67X
-	jROQ5KFMrNarrpuvb7tpg+WtT1uz5UNLjRmKj6XaxU0Xrof9DOcHRUjk841i5VmLoDPo=
-X-Gm-Gg: ASbGnct8siB9kxh0G6vfRisRRUcJhzXlcRlkC+fPC8l6k4MLp6efZrmCsNVWaiKytVb
-	6xQU0r/0wA5SRQJYgc+ZY1hto9Ar3vsIPF1dCksJTZPkl7VK3AfUr4dAXw9bH45Fg60Jy5AARkJ
-	om1FJMfgjtUam2aFYRQVw4j8m3x5jzq6+5Jx+32w/3bQUcUgi8zwPOkJGQEELCBuhabfyoR0nHL
-	1C5cfR2Y53uI9SQzuN84DSIb4SPechW0SFwT4gbHWdgtJJBJLln+aXNA23xMlY/r+dCLqXwEEqp
-	W2IIi2hSATAaD+64mzgT9ID0ftP5bBd8wLna70h0Xu8Ecuo26j6ppUl22/kNI/dClNAiOrwR3w2
-	KX4vfpTHNoPBKI2DTUxnm4vgXbRVTBFswRReKCQIzyV9SDVcdUe5Q
-X-Received: by 2002:a05:622a:4a88:b0:4b5:f1e0:2a6 with SMTP id d75a77b69052e-4b77d149fe8mr238375581cf.58.1758018654830;
-        Tue, 16 Sep 2025 03:30:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdY1Dpsn8FimyyZ6UijUGgh2Ys02k7KvtgljBEo3Py8dqNj3GXgL5jFMIYMFu4+u73BXFHUA==
-X-Received: by 2002:a05:622a:4a88:b0:4b5:f1e0:2a6 with SMTP id d75a77b69052e-4b77d149fe8mr238375171cf.58.1758018654360;
-        Tue, 16 Sep 2025 03:30:54 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-572a5cde069sm2566664e87.13.2025.09.16.03.30.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 03:30:53 -0700 (PDT)
-Date: Tue, 16 Sep 2025 13:30:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: qcm6490: Introduce Particle Tachyon
-Message-ID: <22qi2loql3zbxrpxlu6hfxxeesxloxxmt7ohit5qtp6awpnzky@tplw7mirrk3r>
-References: <20250910-tachyon-v1-0-5090bfd133e0@oss.qualcomm.com>
- <2tnzsjw3xy5jct4bcmahcwhjbzlmyxgcx6fzlz5qrzxume2uoy@phpcz6mnydlt>
- <nweaxuma3dkhzcc46ztfhmxxrchgidxjprc2tz5eahle6sxsuy@qvczmexs4qnn>
- <2bc767td7gw4bxts4k4xwhdiv5tgxmpyjwwv6nqeatvncdov6c@u7gfilzxgomp>
- <4gx66y2oncjppqjhap5q2fmwlgkhv74rupeo4iwbyqw6ipoddn@fpp56byglnwe>
+	s=arc-20240116; t=1758018720; c=relaxed/simple;
+	bh=ZLPLivDTAutjPFOUV+q9lUE51DcX3BO/iRXmITTKbv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zo1CH1izukrabclSaczWmsLGXWHr40okFMMHDbvaS2R27QKt7bCir/3FPginNZYIT4GrphUcVIkXOVVRLoaUiCprRsb1VIjcOXlOzm/dYJWILaHv58sXfdPub8V5CWBWvcyXDiMuQ9KmMs53FqHSgnOMmPBywAnxr6qnbEIXBz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnCKAVOG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08BAEC4CEEB;
+	Tue, 16 Sep 2025 10:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758018719;
+	bh=ZLPLivDTAutjPFOUV+q9lUE51DcX3BO/iRXmITTKbv8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LnCKAVOGVmM30keYkt2BiIdZr593g2UUFMPMJI5X/gcqw1yOT3/u7xcIpzqk7tZ2d
+	 BLkpbKPGssCyevSfRpsOWsJen5dDP2CkYLd30+yrkKC187M/OzrvI8YcF6SWRbE3Z7
+	 CMTuqleKSMGm3I1hOENv0YoW0Ok+LtRslCGQSgw2iv28bhCuFDXoyiOi0ZiL/gDgyH
+	 nC4v3+YdNsMRjIUBXDZB/B91auBqbqnpGnySmF5/FNmn+iJ1g0L7k6I4wsJtel/X75
+	 gpUif8SSy7WRtetMN1QA1TLwCbKGOqzLjsX27I1p2UkBspHxzDyYEjgaslfd4apOsW
+	 gfzv3qx4EEafg==
+Date: Tue, 16 Sep 2025 12:31:56 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/21] Split sphinx call logic from docs Makefile
+Message-ID: <20250916123156.4434aa19@foz.lan>
+In-Reply-To: <cover.1758018030.git.mchehab+huawei@kernel.org>
+References: <cover.1758018030.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4gx66y2oncjppqjhap5q2fmwlgkhv74rupeo4iwbyqw6ipoddn@fpp56byglnwe>
-X-Authority-Analysis: v=2.4 cv=JO87s9Kb c=1 sm=1 tr=0 ts=68c93c60 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=7AODkVuKAAAA:8 a=Dt7FPFtFWm7D6XesEFMA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=sRHRY8H3vKB1GfNvUtpx:22
-X-Proofpoint-ORIG-GUID: T1nnRBirrznq7Tslnft919jVYWOoyeQZ
-X-Proofpoint-GUID: T1nnRBirrznq7Tslnft919jVYWOoyeQZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDA0MCBTYWx0ZWRfXzqwh18KLVkdt
- vMZ5LvnDykYNnb2DXXTg6EPztoPtv9Ju2TqTlMpzdYhWKCJyaphTWRCzk9GtQI2xJO8lo/e3it9
- hlqD1nQkXqdR51IFd9TGe9Tf9vLfnaKhicDwF3PSb9tGeaqa31bAagTUYcHiswGUDbBZIo9E3be
- tDAr4kaQPDiO5vqtr2qDnEqf50gMJYlXpC93S3J9S/mQBB21txouLKBLvJ2rFvwIn8NhZAucfj9
- 19na7o4GHE/LS29w9wwGMqVyppP6Bsl6qS5cFjlm1X2NedpMG0LDuHut4hzHlTVQGaFsqDNM8xL
- HT1KazQ0P35tdy2qiNm31o/fer7KZfmMou5G7Po0AUaGbjiE+CsGMGLkXILjqUeredZCK9U2d1y
- mTQrLkwK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 adultscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130040
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 10:26:30PM -0500, Bjorn Andersson wrote:
-> On Fri, Sep 12, 2025 at 04:22:18AM +0300, Dmitry Baryshkov wrote:
-> > On Thu, Sep 11, 2025 at 02:19:39PM -0500, Bjorn Andersson wrote:
-> > > On Thu, Sep 11, 2025 at 03:01:35AM +0300, Dmitry Baryshkov wrote:
-> > > > On Wed, Sep 10, 2025 at 06:05:36PM -0500, Bjorn Andersson wrote:
-> > > > > Introduce the Particle Tachyon board (https://www.particle.io/tachyon/),
-> > > > > a single board compute with 5G connectivity and AI accelerator.
-> > > > > 
-> > > > > The boards currently ships with the Android Boot Loader, but replacing
-> > > > > this with abl2esp allows writing a EFI System Parition and OS partitions
-> > > > > to all of LUN0, and a more UEFI boot experience. A prebuilt version of
-> > > > > abl2esp is provided at [1], as abl2esp-v6.elf.
-> > > > > 
-> > > > > With a (very) recent version of QDL, a flash programmer from a Tachyon
-> > > > > software release, and a full distro image, this can be achieved with:
-> > > > > 
-> > > > >   qdl prog_firehose_ddr.elf write abl_a abl2esp-v6.elf write abl_b abl2esp-v6.elf write 0 image.raw
-> > > > > 
-> > > > > The following firmware files are currently used, on top of what's in
-> > > > > linux-firmware already:
-> > > > >   qcom/qcm6490/particle/tachyon/a660_zap.mbn
-> > > > >   qcom/qcm6490/particle/tachyon/adsp.mbn
-> > > > >   qcom/qcm6490/particle/tachyon/cdsp.mbn
-> > > > >   qcom/qcm6490/particle/tachyon/ipa_fws.mbn
-> > > > >   qcom/qcm6490/particle/tachyon/modem.mbn
-> > > > 
-> > > > Is it locked?
-> > > 
-> > > It doesn't look that way.
-> > 
-> > Then anything preventing us from using the default, non-signed FW?
-> > 
+Em Tue, 16 Sep 2025 12:22:36 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+
+> Hi Jon,
 > 
-> Looking at the version, they are not from the same branch or year.
+> This series should probably be called:
 > 
-> I suggest that we stick with the firmware that the vendor has validated
-> on their piece of hardware together with the other pieces of firmware,
-> at least for now.
+>     "Move the trick-or-treat build hacks accumulated over time
+>      into a single place and document them."
 > 
-> Once/if we built confidence in the QLI firmware, we can replace these
-> paths.
+> as this reflects its main goal. As such:
+> 
+> - it places the jobserver logic on a library;
+> - it removes sphinx/parallel-wrapper.sh;
+> - the code now properly implements a jobserver-aware logic
+>   to do the parallelism when called via GNU make, failing back to
+>   "-j" when there's  no jobserver;
+> - converts check-variable-fonts.sh to Python and uses it via
+>   function call;
+> - drops an extra script to generate man pages, adding a makefile
+>   target for it;
+> - ensures that return code is 0 when PDF successfully builds;
+> - about half of the script is comments and documentation.
+> 
+> I tried to do my best to document all tricks that are inside the
+> script. This way, the docs build steps is now documented.
+> 
+> It should be noticed that it is out of the scope of this series
+> to change the implementation. Surely the process can be improved,
+> but first let's consolidate and document everything on a single
+> place.
+> 
+> Such script was written in a way that it can be called either
+> directly or via a Makefile. Running outside Makefile is
+> interesting specially when debug is needed. The command line
+> interface replaces the need of having lots of env vars before
+> calling sphinx-build:
+> 
+>     $ ./tools/docs/sphinx-build-wrapper --help
+>     usage: sphinx-build-wrapper [-h]
+>            [--sphinxdirs SPHINXDIRS [SPHINXDIRS ...]] [--conf CONF]
+>            [--builddir BUILDDIR] [--theme THEME] [--css CSS] [--paper {,a4,letter}] [-v]
+>            [-j JOBS] [-i] [-V [VENV]]
+>            {cleandocs,linkcheckdocs,htmldocs,epubdocs,texinfodocs,infodocs,mandocs,latexdocs,pdfdocs,xmldocs}
+> 
+>     Kernel documentation builder
+> 
+>     positional arguments:
+>       {cleandocs,linkcheckdocs,htmldocs,epubdocs,texinfodocs,infodocs,mandocs,latexdocs,pdfdocs,xmldocs}
+>                             Documentation target to build
+> 
+>     options:
+>       -h, --help            show this help message and exit
+>       --sphinxdirs SPHINXDIRS [SPHINXDIRS ...]
+>                             Specific directories to build
+>       --conf CONF           Sphinx configuration file
+>       --builddir BUILDDIR   Sphinx configuration file
+>       --theme THEME         Sphinx theme to use
+>       --css CSS             Custom CSS file for HTML/EPUB
+>       --paper {,a4,letter}  Paper size for LaTeX/PDF output
+>       -v, --verbose         place build in verbose mode
+>       -j, --jobs JOBS       Sets number of jobs to use with sphinx-build
+>       -i, --interactive     Change latex default to run in interactive mode
+>       -V, --venv [VENV]     If used, run Sphinx from a venv dir (default dir: sphinx_latest)
+> 
+> the only mandatory argument is the target, which is identical with
+> "make" targets.
+> 
+> The call inside Makefile doesn't use the last four arguments. They're
+> there to help identifying problems at the build:
+> 
+>     -v makes the output verbose;
+>     -j helps to test parallelism;
+>     -i runs latexmk in interactive mode, allowing to debug PDF
+>        build issues;
+>     -V is useful when testing it with different venvs.
+> 
+> When used with GNU make (or some other make which implements jobserver),
+> a call like:
+> 
+>     make -j <targets> htmldocs
+> 
+> will make the wrapper to automatically use POSIX jobserver to claim 
+> the number of available job slots, calling sphinx-build with a
+> "-j" parameter reflecting it. ON such case, the default can be
+> overriden via SPHINXDIRS argument.
+> 
+> Visiable changes when compared with the old behavior:
+
+Visiable -> Visible
+
+> When V=0, the only visible difference is that:
+> - pdfdocs target now returns 0 on success, 1 on failures.
+>   This addresses an issue over the current process where we
+>   it always return success even on failures;
+> - it will now print the name of PDF files that failed to build,
+>   if any.
+> 
+> In verbose mode, sphinx-build-wrapper and sphinx-build command lines
+> are now displayed.
+
+It will also print a summary of all PDF built files, for pdfdocs
+target in verbose mode.
+
+> 
+> ---
+> 
+> v6:
+> - On success, PDF output is identical as before when V=0;
+> - when V=1 is used, PDF output will print a build summary,
+>   as on v5;
+> - solved a problem when multiple PDF files have the same
+>   basename but are located on different directories;
+> - merged a patch series converting check-variable-fonts.sh
+>   to Python. Its logic is now called directly without running
+>   a subprocess.
+> - venv patch moved to the end.
+> 
+> v5:
+> - merged comments with the script;
+> - placed n_jobs on a separate function;
+> - nitpick: dropped a for loop used instead of list append.
+> 
+> v4:
+> - updated references for sphinx-pre-install after its rename;
+> - added some extra patches to add more options to python_version,
+>   allowing it to bail out and suggest alternatives;
+> - added a patch at the end to explicitly break doc builds when
+>   python3 points to python3.6 or older.
+> 
+> v3:
+> - rebased on the top of docs-next;
+> - added two patches to build man files that were on a separate
+>   patch series.
+> 
+> v2:
+> - there's no generic exception handler anymore;
+> - it moves sphinx-pre-install to tools/docs;
+> - the logic which ensures a minimal Python version got moved
+>   to a library, which is now used by both pre-install and wrapper;
+> - The first wrapper (05/13) doesn't contain comments (except for
+>   shebang and SPDX). The goal is to help showing the size increase
+>   when moving from Makefile to Python. Some file increase is
+>   unavoidable, as Makefile is more compact: no includes, multple
+>   statements per line, no argparse, etc;
+> - The second patch adds docstrings and comments. It has almost
+>   the same size of the code itself;
+> - I moved the venv logic to a third wrapper patch;
+> - I fixed an issue at the paraller build logic;
+> - There are no generic except blocks anymore.
+> 
+> 
+> Mauro Carvalho Chehab (21):
+>   scripts/jobserver-exec: move the code to a class
+>   scripts/jobserver-exec: move its class to the lib directory
+>   scripts/jobserver-exec: add a help message
+>   scripts: check-variable-fonts.sh: convert to Python
+>   tools/docs: check-variable-fonts.py: split into a lib and an exec file
+>   scripts: sphinx-pre-install: move it to tools/docs
+>   tools/docs: python_version: move version check from sphinx-pre-install
+>   tools/docs: python_version: drop a debug print
+>   tools/docs: python_version: allow check for alternatives and bail out
+>   tools/docs: sphinx-build-wrapper: add a wrapper for sphinx-build
+>   docs: parallel-wrapper.sh: remove script
+>   docs: Makefile: document latex/PDF PAPER= parameter
+>   tools/docs: sphinx-build-wrapper: add an argument for LaTeX
+>     interactive mode
+>   tools/docs,scripts: sphinx-*: prevent sphinx-build crashes
+>   tools/docs: sphinx-build-wrapper: allow building PDF files in parallel
+>   tools/docs: sphinx-build-wrapper: Fix output for duplicated names
+>   docs: add support to build manpages from kerneldoc output
+>   tools: kernel-doc: add a see also section at man pages
+>   scripts: kdoc_parser.py: warn about Python version only once
+>   tools/docs: sphinx-* break documentation bulds on openSUSE
+>   tools/docs: sphinx-build-wrapper: add support to run inside venv
+> 
+>  Documentation/Makefile                        | 136 +--
+>  Documentation/doc-guide/kernel-doc.rst        |  29 +-
+>  Documentation/doc-guide/sphinx.rst            |   4 +-
+>  Documentation/sphinx/kerneldoc-preamble.sty   |   2 +-
+>  Documentation/sphinx/parallel-wrapper.sh      |  33 -
+>  .../translations/it_IT/doc-guide/sphinx.rst   |   4 +-
+>  .../translations/zh_CN/doc-guide/sphinx.rst   |   4 +-
+>  Documentation/translations/zh_CN/how-to.rst   |   2 +-
+>  MAINTAINERS                                   |   4 +-
+>  Makefile                                      |   2 +-
+>  scripts/check-variable-fonts.sh               | 115 ---
+>  scripts/jobserver-exec                        |  88 +-
+>  scripts/lib/jobserver.py                      | 149 ++++
+>  scripts/lib/kdoc/kdoc_files.py                |   5 +-
+>  scripts/lib/kdoc/kdoc_output.py               |  84 +-
+>  scripts/lib/kdoc/kdoc_parser.py               |   7 +-
+>  scripts/split-man.pl                          |  28 -
+>  tools/docs/check-variable-fonts.py            |  23 +
+>  tools/docs/lib/latex_fonts.py                 | 162 ++++
+>  tools/docs/lib/python_version.py              | 178 ++++
+>  tools/docs/sphinx-build-wrapper               | 791 ++++++++++++++++++
+>  {scripts => tools/docs}/sphinx-pre-install    | 135 +--
+>  22 files changed, 1502 insertions(+), 483 deletions(-)
+>  delete mode 100644 Documentation/sphinx/parallel-wrapper.sh
+>  delete mode 100755 scripts/check-variable-fonts.sh
+>  create mode 100755 scripts/lib/jobserver.py
+>  delete mode 100755 scripts/split-man.pl
+>  create mode 100755 tools/docs/check-variable-fonts.py
+>  create mode 100755 tools/docs/lib/latex_fonts.py
+>  create mode 100644 tools/docs/lib/python_version.py
+>  create mode 100755 tools/docs/sphinx-build-wrapper
+>  rename {scripts => tools/docs}/sphinx-pre-install (93%)
+> 
 
 
-Ack.
 
-
--- 
-With best wishes
-Dmitry
+Thanks,
+Mauro
 
