@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-818197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C952FB58E1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:52:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409A8B58E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C08D0321535
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28B616773A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1C12DEA78;
-	Tue, 16 Sep 2025 05:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111D22DE6E9;
+	Tue, 16 Sep 2025 05:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1l0zY/p"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMdHxslb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA662221DAD
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65391E9B12;
+	Tue, 16 Sep 2025 05:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758001930; cv=none; b=UeTkH3+oDC8Pr85RLTwXfjDgjHUBSzu2nhNEgJFmSxampvb0ooa1efgvf41SEGirFw7392nziT1+qsz8Sq8v2tLW62TI+IQzzh+IXNVqOntOajU4YtkjIOIKUqum+IFMoQE2NLoDQ9BN/e8+vCaHG54QVntoQuEaab6+PCa52K4=
+	t=1758001964; cv=none; b=rkzeZuaiF781fUYpKvXE6MoiVecirrf3yEn4dMQmG6G9T5PxLWNkXr7taG/flr1tRihEmqj1eYftnb0STgNjPHe+u40ANGqG4M9qzhqK92xUBFbH4irfGtIUJdE1gH5kSFcPQhZQT0b7pQCk/x9o3Jdtt1ZAlmrouBCHRAzFJ9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758001930; c=relaxed/simple;
-	bh=B1oUZP8waaEIk7UTkyk/mKdtup1ZwGy+j1eXPDksBZ4=;
+	s=arc-20240116; t=1758001964; c=relaxed/simple;
+	bh=H/YPUdnUnEI/UdRxVPLVDcuWuPFJCqxFolqeBXJ/mgM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JhScK9hLYUV0rY+2ksafF4CWyiZbVL5KpxQM4yo85i4RJ3TfCEN3un+lUko1bMJSJ0um3NC+RbLBuH/HEiB0m4nOJ8hXLlVygvOcqSw3j+Nt2Ijx7MLCUjI6FnDG9kAhEZ6ff5zadg/zO1KKgfcnXeIXcmLCjKZM1X3ygGGyHeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U1l0zY/p; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7724df82cabso5179561b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758001928; x=1758606728; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gpZRIFoTAHmXmcz+RPeHFyLEepqUsFQgFiLuliI0yME=;
-        b=U1l0zY/pNulIaXPUYgRXC8uk5Y3GmomIeSXuVMwrA/vjLwQ0sSYcmw/H0WYYrQNRu+
-         BI92dXBBymItA8fr1XNQKEcoONJ5PJLmETBRevFtxQbkY53NgCcYYWYcQmDagwArajdE
-         IOaLs6VKu1Bd41xuj83802zwMhLSc8RON5TSYD7hYPwASwksAx60r9/DLEOfVpFHSmSE
-         INM4MLDn1FrCT6ldChByceEi4OPPq0O5uKMev5qdFnDHnzLZtNT1+vv+itHBqW146BGq
-         xMIuz9oIfiK2rQEs2dhaKXO2Rw43e4F8rpFXgWEPgt4CpGKshX6EBLa+r4K1CV9nM9TI
-         q9Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758001928; x=1758606728;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpZRIFoTAHmXmcz+RPeHFyLEepqUsFQgFiLuliI0yME=;
-        b=Zz5qAHesCEHVf6w9uij+LaZvwFuD3HJZd4JgS20/Op/l0tayTeSJuSWOmAEAlRlRMJ
-         xtJ7mmVvbxxmgYjPKLbuwJX7CVn22mncFuSHNQzmFklCGiHfuDrx+/PWZImLx/IhK/n+
-         tAJi1vRrOH6Fqi2MGGFnRR14gjSF1CSlbIzBqcLRkXfHaTMV8utR9UKP63VUhuUSkUXR
-         1DEdMHCXIDGEzipjCKATHMU5LH4zPcKXiyRzNhUPHM2tMrjUokDAoXj34GH7KcV38MHE
-         0ZARMq3uNBVkZ2C8b/PMrOsqvrqubl/+FqRaEXBdVZsVNi/m7a1fVUet1EqpeX1tGkJF
-         nQNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXi06hbHHCrABeZprxca3swlUHXebbRAIpsNj8F9nECyJigOsXzrHK62iElrOBIaDkRiiL+sx67P28+tH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcD1ScXpKY91SP7WmsyMP4/3dKmcipeYUuPM0954d7MkkqMN1F
-	JTr03ii5Prr7t7QiUALE6Uad6pDuhR846pdtTEhNCSwnO2vI3MOYG0km
-X-Gm-Gg: ASbGncstKAYXDQIpc607ZeLJoGNMRwBWkggWZVL7PJSPCBuaSYuIn7CmcNh3sZYd106
-	3PfzAYo+m3bOlo+SG80Yk+Uc4BCt1nXkR6r5rpQKcVglaIz62+RpaH7rASdm+zNm/wAw9KQYyHC
-	x9uE4Wheic1KZAPblEiCZyK5lW829jhpa0uPshWjkhxdFeZxep/YDn89sYiYDOccc6tQ3SW6/YY
-	i99OC5apcbe/Rd45IROCVaSdUCJUrvVpBS4TS7il5nLtMFMlrOfDBdbPt31o+sm4g9AT/PXh4Pi
-	R5YMj3nz5h9SYSDg9oLcAjFE94AmjXeXdDawqV4JU0ECNqiItMlVykmTEf54/3TBQeQ1nkrm1XD
-	8EXv6J0E5P3n7W3a+YU9myXk/kUPO/5CRD6VW9bNrIo4=
-X-Google-Smtp-Source: AGHT+IE/kLdbOgpWgBTLrdiu4noVgOkN/CCFxQ3NkHPaboe1sSNvoUGI3AbYiDUAH4rSbt5mulq2BQ==
-X-Received: by 2002:a05:6a00:2307:b0:772:4b05:78c1 with SMTP id d2e1a72fcca58-77612079eeamr16347975b3a.3.1758001927877;
-        Mon, 15 Sep 2025 22:52:07 -0700 (PDT)
-Received: from [172.17.44.75] ([49.249.92.90])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-776158bc82fsm11695898b3a.23.2025.09.15.22.52.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Sep 2025 22:52:07 -0700 (PDT)
-Message-ID: <70c2f78b-c3ce-4b7b-a961-9f3957ce40f8@gmail.com>
-Date: Tue, 16 Sep 2025 11:22:02 +0530
+	 In-Reply-To:Content-Type; b=QZjSbs98vkonnTVmkEyyK0w6+JD5Ozivw2NPBf1cRTqBSXTxyPSKIHlp+ByO8kMKjl4Mmj2+3E0/4NStBRGjGNoVfG6fKu1cp8+zFSINWAZAGlcUrkI/UP1RyfCIUnFXoh5qUYio60qyExu5hZuifB5Dr25Ws5ezRC1vatEVgdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMdHxslb; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758001963; x=1789537963;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=H/YPUdnUnEI/UdRxVPLVDcuWuPFJCqxFolqeBXJ/mgM=;
+  b=QMdHxslbeW2JWsCUog5u0+UIHLef3t7Lj2CaLWYmo0Y9kPiTl2VCfb2W
+   Ci8LdtvONmO6fbKC+aFNkWjeax2DyLzRODt5kfghZS/L3GIZpD2fUmWa1
+   FdGH6w6pFAs1WUBDO+6kM4ZXzW2N8MODABbuN+zJJqB/IwoX5+6rYZvQq
+   krX9EaZskjxQhYcNICkaiuiYI8nNqWUL+9cgRHv/8+eKb9km6iRBssgax
+   vAGXI0XyfLQpkFaIKSI+KQm1xMrj8H+UGwtcdHpm6KkF+wUMfJocy1cNM
+   221FZyeKbfZfPB3qL3Ymo19+kLoBKCaJHmEtbINl8kdObeXx6OH5s+na3
+   w==;
+X-CSE-ConnectionGUID: RmIphdViRwysmR2581ctKA==
+X-CSE-MsgGUID: RIu9NhNXRO6RmCEfVfMuLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="82866294"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="82866294"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 22:52:42 -0700
+X-CSE-ConnectionGUID: d905ExmrSaew3FdMmXNsnw==
+X-CSE-MsgGUID: XtBJ7krpT1G97wGjsmhK9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="174776240"
+Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 22:52:38 -0700
+Message-ID: <d1bfb652-19ff-434f-bd51-b990543d14d6@intel.com>
+Date: Tue, 16 Sep 2025 13:52:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,556 +66,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for QCS615 talos evk
- board
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: konradybcio@kernel.org, andersson@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- tingweiz@qti.qualcomm.com
-References: <20250909125255.1124824-1-tessolveupstream@gmail.com>
- <20250909125255.1124824-2-tessolveupstream@gmail.com>
- <v2d4e6py34xb2hjrfnmlrmd7xme45equ76zb2c5cmftgylk7w6@5lmexwfupj4e>
+Subject: Re: [PATCH v15 13/41] KVM: x86: Enable guest SSP read/write interface
+ with new uAPIs
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-14-seanjc@google.com>
+ <aca9d389-f11e-4811-90cf-d98e345a5cc2@intel.com>
+ <aMiPTEu_WfmEZiqT@google.com>
 Content-Language: en-US
-From: Tessolve Upstream <tessolveupstream@gmail.com>
-In-Reply-To: <v2d4e6py34xb2hjrfnmlrmd7xme45equ76zb2c5cmftgylk7w6@5lmexwfupj4e>
-Content-Type: text/plain; charset=UTF-8
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <aMiPTEu_WfmEZiqT@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 9/16/2025 6:12 AM, Sean Christopherson wrote:
+> On Mon, Sep 15, 2025, Xiaoyao Li wrote:
+>> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+>>> @@ -6097,11 +6105,22 @@ static int kvm_get_set_one_reg(struct kvm_vcpu *vcpu, unsigned int ioctl,
+>>>    static int kvm_get_reg_list(struct kvm_vcpu *vcpu,
+>>>    			    struct kvm_reg_list __user *user_list)
+>>>    {
+>>> -	u64 nr_regs = 0;
+>>> +	u64 nr_regs = guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ? 1 : 0;
+>>
+>> I wonder what's the semantic of KVM returning KVM_REG_GUEST_SSP on
+>> KVM_GET_REG_LIST. Does it ensure KVM_{G,S}ET_ONE_REG returns -EINVAL on
+>> KVM_REG_GUEST_SSP when it's not enumerated by KVM_GET_REG_LIST?
+>>
+>> If so, but KVM_{G,S}ET_ONE_REG can succeed on GUEST_SSP even if
+>> !guest_cpu_cap_has() when @ignore_msrs is true.
+> 
+> Ugh, great catch.  Too many knobs.  The best idea I've got it to to exempt KVM-
+> internal MSRs from ignore_msrs and report_ignored_msrs on host-initiated writes.
+> That's unfortunately still a userspace visible change, and would continue to be
+> userspace-visible, e.g. if we wanted to change the magic value for
+> MSR_KVM_INTERNAL_GUEST_SSP.
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index c78acab2ff3f..6a50261d1c5c 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -511,6 +511,11 @@ static bool kvm_is_advertised_msr(u32 msr_index)
+>          return false;
+>   }
+>   
+> +static bool kvm_is_internal_msr(u32 msr)
+> +{
+> +       return msr == MSR_KVM_INTERNAL_GUEST_SSP;
+> +}
+> +
+>   typedef int (*msr_access_t)(struct kvm_vcpu *vcpu, u32 index, u64 *data,
+>                              bool host_initiated);
+>   
+> @@ -544,6 +549,9 @@ static __always_inline int kvm_do_msr_access(struct kvm_vcpu *vcpu, u32 msr,
+>          if (host_initiated && !*data && kvm_is_advertised_msr(msr))
+>                  return 0;
+>   
+> +       if (host_initiated && kvm_is_internal_msr(msr))
+> +               return ret;
+> +
+>          if (!ignore_msrs) {
+>                  kvm_debug_ratelimited("unhandled %s: 0x%x data 0x%llx\n",
+>                                        op, msr, *data);
+> 
+> Alternatively, simply exempt host writes from ignore_msrs.  Aha!  And KVM even
+> documents that as the behavior:
+> 
+> 	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled MSRs.
+> 			Default is 0 (don't ignore, but inject #GP)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index c78acab2ff3f..177253e75b41 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -544,7 +544,7 @@ static __always_inline int kvm_do_msr_access(struct kvm_vcpu *vcpu, u32 msr,
+>          if (host_initiated && !*data && kvm_is_advertised_msr(msr))
+>                  return 0;
+>   
+> -       if (!ignore_msrs) {
+> +       if (host_initiated || !ignore_msrs) {
+>                  kvm_debug_ratelimited("unhandled %s: 0x%x data 0x%llx\n",
+>                                        op, msr, *data);
+>                  return ret;
+> 
+> So while it's technically an ABI change (arguable since it's guarded by an
+> off-by-default param), I suspect we can get away with it.  Hmm, commit 6abe9c1386e5
+> ("KVM: X86: Move ignore_msrs handling upper the stack") exempted KVM-internal
+> MSR accesses from ignore_msrs, but doesn't provide much in the way of justification
+> for _why_ that's desirable.
+> 
+> Argh, and that same mini-series extended the behavior to feature MSRs, again
+> without seeming to consider whether or not it's actually desirable to suppress
+> bad VMM accesses.  Even worse, that decision likely generated an absurd amount
+> of churn and noise due to splattering helpers and variants all over the place. :-(
+> 
+> commit 12bc2132b15e0a969b3f455d90a5f215ef239eff
+> Author:     Peter Xu <peterx@redhat.com>
+> AuthorDate: Mon Jun 22 18:04:42 2020 -0400
+> Commit:     Paolo Bonzini <pbonzini@redhat.com>
+> CommitDate: Wed Jul 8 16:21:40 2020 -0400
+> 
+>      KVM: X86: Do the same ignore_msrs check for feature msrs
+>      
+>      Logically the ignore_msrs and report_ignored_msrs should also apply to feature
+>      MSRs.  Add them in.
+> 
+> For 6.18, I think the safe play is to go with the first path (exempt KVM-internal
+> MSRs), and then try to go for the second approach (exempt all host accesses) for
+> 6.19.  KVM's ABI for ignore_msrs=true is already all kinds of messed up, so I'm
+> not terribly concerned about temporarily making it marginally worse.
 
-
-On 09/09/25 19:28, Dmitry Baryshkov wrote:
-> On Tue, Sep 09, 2025 at 06:22:55PM +0530, Sudarshan Shetty wrote:
->> Introduce the device tree support for the QCS615-based talos-evk
->> platform, which follows the SMARC (Smart Mobility ARChitecture)
->> standard. The platform is composed of two main hardware
->> components: the IQ-QCS615-SOM and the talos-evk carrier board.
->>
->> The IQ-QCS615-SOM is a compact System on Module that integrates the
->> QCS615 SoC, PMIC, and essential GPIO connectivity. It follows the
->> SMARC standard, which defines a modular form factor allowing the SoM
->> to be paired with different carrier boards for varied applications.
->>
->> The talos-evk is one such carrier board, designed for evaluation
->> and development purposes. It provides additional peripherals
->> such as UART, USB, and other interfaces to enable rapid
->> prototyping and hardware bring-up.
->>
->> This initial device tree provides the basic configuration needed
->> to boot the platform to a UART shell. Further patches will extend
->> support for additional peripherals and subsystems.
->>
->> The initial device tree includes basic support for:
->>
->> - CPU and memory
->>
->> - UART
->>
->> - GPIOs
->>
->> - Regulators
->>
->> - PMIC
->>
->> - Early console
->>
->> - AT24MAC602 EEPROM
->>
->> - MCP2515 SPI to CAN
-> 
-> No WiFi/BT/ethernet?
-
-Networking peripherals such as WiFi/BT and Ethernet will be enabled in follow-up patches.
-> 
->>
->> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
->> ---
->>
->> This series depend on the below patch changes
->> https://lore.kernel.org/linux-arm-msm/20250625063213.1416442-1-quic_ziyuzhan@quicinc.com/T/#t
->> https://lore.kernel.org/all/20241224-fix-board-clocks-v3-0-e9b08fbeadd3@linaro.org/
-> 
-> This has been merged 9 months ago. Why do you mention it here?
-> 
->> https://lore.kernel.org/linux-arm-msm/20250604-qcs615-sm6150-v1-0-2f01fd46c365@oss.qualcomm.com/T/#t
-> 
-> This one has been picked up in June.
-> 
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile        |   1 +
->>  arch/arm64/boot/dts/qcom/qcs615-som.dtsi | 414 +++++++++++++++++++++++
->>  arch/arm64/boot/dts/qcom/talos-evk.dts   |  42 +++
->>  3 files changed, 457 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/qcom/qcs615-som.dtsi
->>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk.dts
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 4bfa926b6a08..588dc55995c5 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -117,6 +117,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs615-ride.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
->>  
->>  qcs6490-rb3gen2-vision-mezzanine-dtbs := qcs6490-rb3gen2.dtb qcs6490-rb3gen2-vision-mezzanine.dtbo
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615-som.dtsi b/arch/arm64/boot/dts/qcom/qcs615-som.dtsi
->> new file mode 100644
->> index 000000000000..1b9b2581af42
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/qcs615-som.dtsi
-> 
-> talos-evk-som.dtsi?
-
-Ack, will rename it to talos-evk-som.dtsi, Thanks
-> 
->> @@ -0,0 +1,414 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include "sm6150.dtsi"
->> +#include "pm8150.dtsi"
->> +/ {
->> +	aliases {
->> +		mmc0 = &sdhc_1;
->> +		serial0 = &uart0;
->> +	};
->> +
->> +	chosen {
->> +		stdout-path = "serial0:115200n8";
->> +	};
->> +
->> +	clocks {
->> +		sleep_clk: sleep-clk {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <32764>;
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		xo_board_clk: xo-board-clk {
->> +			compatible = "fixed-clock";
->> +			clock-frequency = <38400000>;
->> +			#clock-cells = <0>;
->> +		};
->> +	};
->> +
->> +	regulator-usb2-vbus {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "USB2_VBUS";
->> +		gpio = <&pm8150_gpios 10 GPIO_ACTIVE_HIGH>;
->> +		pinctrl-0 = <&usb2_en>;
->> +		pinctrl-names = "default";
->> +		enable-active-high;
->> +		regulator-always-on;
->> +	};
->> +
->> +	vreg_v3p3_can: regulator-v3p3-can {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "vreg-v3p3-can";
->> +		regulator-min-microvolt = <3300000>;
->> +		regulator-max-microvolt = <3300000>;
->> +		regulator-boot-on;
->> +		regulator-always-on;
->> +	};
->> +
->> +	vreg_v5p0_can: regulator-v5p0-can {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "vreg-v5p0-can";
->> +		regulator-min-microvolt = <5000000>;
->> +		regulator-max-microvolt = <5000000>;
->> +		regulator-boot-on;
->> +		regulator-always-on;
->> +	};
->> +};
->> +
->> +&apps_rsc {
->> +	regulators-0 {
->> +		compatible = "qcom,pm8150-rpmh-regulators";
->> +		qcom,pmic-id = "a";
->> +
->> +		vreg_s3a: smps3 {
->> +			regulator-name = "vreg_s3a";
->> +			regulator-min-microvolt = <600000>;
->> +			regulator-max-microvolt = <650000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_s4a: smps4 {
->> +			regulator-name = "vreg_s4a";
->> +			regulator-min-microvolt = <1800000>;
->> +			regulator-max-microvolt = <1829000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_s5a: smps5 {
->> +			regulator-name = "vreg_s5a";
->> +			regulator-min-microvolt = <1896000>;
->> +			regulator-max-microvolt = <2040000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_s6a: smps6 {
->> +			regulator-name = "vreg_s6a";
->> +			regulator-min-microvolt = <1304000>;
->> +			regulator-max-microvolt = <1404000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l1a: ldo1 {
->> +			regulator-name = "vreg_l1a";
->> +			regulator-min-microvolt = <488000>;
->> +			regulator-max-microvolt = <852000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l2a: ldo2 {
->> +			regulator-name = "vreg_l2a";
->> +			regulator-min-microvolt = <1650000>;
->> +			regulator-max-microvolt = <3100000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l3a: ldo3 {
->> +			regulator-name = "vreg_l3a";
->> +			regulator-min-microvolt = <1000000>;
->> +			regulator-max-microvolt = <1248000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l5a: ldo5 {
->> +			regulator-name = "vreg_l5a";
->> +			regulator-min-microvolt = <875000>;
->> +			regulator-max-microvolt = <975000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l7a: ldo7 {
->> +			regulator-name = "vreg_l7a";
->> +			regulator-min-microvolt = <1800000>;
->> +			regulator-max-microvolt = <1900000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l8a: ldo8 {
->> +			regulator-name = "vreg_l8a";
->> +			regulator-min-microvolt = <1150000>;
->> +			regulator-max-microvolt = <1350000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l10a: ldo10 {
->> +			regulator-name = "vreg_l10a";
->> +			regulator-min-microvolt = <2950000>;
->> +			regulator-max-microvolt = <3312000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l11a: ldo11 {
->> +			regulator-name = "vreg_l11a";
->> +			regulator-min-microvolt = <1232000>;
->> +			regulator-max-microvolt = <1260000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l12a: ldo12 {
->> +			regulator-name = "vreg_l12a";
->> +			regulator-min-microvolt = <1800000>;
->> +			regulator-max-microvolt = <1890000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l13a: ldo13 {
->> +			regulator-name = "vreg_l13a";
->> +			regulator-min-microvolt = <3000000>;
->> +			regulator-max-microvolt = <3230000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l15a: ldo15 {
->> +			regulator-name = "vreg_l15a";
->> +			regulator-min-microvolt = <1800000>;
->> +			regulator-max-microvolt = <1904000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l16a: ldo16 {
->> +			regulator-name = "vreg_l16a";
->> +			regulator-min-microvolt = <3000000>;
->> +			regulator-max-microvolt = <3312000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
->> +			regulator-allow-set-load;
->> +			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
->> +						   RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +
->> +		vreg_l17a: ldo17 {
->> +			regulator-name = "vreg_l17a";
->> +			regulator-min-microvolt = <2950000>;
->> +			regulator-max-microvolt = <3312000>;
->> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
->> +		};
->> +	};
->> +};
->> +
->> +&gcc {
->> +	clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +		 <&rpmhcc RPMH_CXO_CLK_A>,
->> +		 <&sleep_clk>;
-> 
-> Why do you need this?
-
-This block is already present in sm6150.dtsi, will drop this in v2 patch.
-> 
->> +};
->> +
->> +&i2c5 {
->> +	status = "okay";
->> +
->> +	eeprom@57 {
->> +		compatible = "atmel,24c02";
->> +		reg = <0x57>;
->> +		pagesize = <16>;
->> +	};
->> +
->> +	eeprom@5f {
->> +		compatible = "atmel,24mac602";
->> +		reg = <0x5f>;
->> +		pagesize = <16>;
->> +	};
->> +};
->> +
->> +&pcie {
->> +	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
->> +	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
->> +
->> +	pinctrl-0 = <&pcie_default_state>;
->> +	pinctrl-names = "default";
->> +
->> +	status = "okay";
->> +};
->> +
->> +&pcie_phy {
->> +	vdda-phy-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l12a>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&pm8150_gpios {
->> +	usb2_en: usb2-en-state {
->> +		pins = "gpio10";
->> +		function = "normal";
->> +		output-enable;
->> +		power-source = <0>;
->> +	};
->> +};
->> +
->> +&qupv3_id_0 {
->> +	status = "okay";
->> +};
->> +
->> +&remoteproc_adsp {
->> +	firmware-name = "qcom/qcs615/adsp.mbn";
->> +	status = "okay";
-> 
-> Empty line before status, please.
-
-Sure, will take care in v2 patch.
-> 
->> +};
->> +
->> +&remoteproc_cdsp {
->> +	firmware-name = "qcom/qcs615/cdsp.mbn";
->> +	status = "okay";
->> +};
->> +
->> +&rpmhcc {
->> +	clocks = <&xo_board_clk>;
-> 
-> Why do you need this?
-
-This block is already present in sm6150.dtsi, will drop this in v2 patch.
-> 
->> +};
->> +
->> +&tlmm {
->> +	pcie_default_state: pcie-default-state {
->> +		clkreq-pins {
->> +			pins = "gpio90";
->> +			function = "pcie_clk_req";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +
->> +		perst-pins {
->> +			pins = "gpio101";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-down;
->> +		};
->> +
->> +		wake-pins {
->> +			pins = "gpio100";
->> +			function = "gpio";
->> +			drive-strength = <2>;
->> +			bias-pull-up;
->> +		};
->> +	};
->> +};
->> +
->> +&sdhc_1 {
->> +	pinctrl-0 = <&sdc1_state_on>;
->> +	pinctrl-1 = <&sdc1_state_off>;
->> +	pinctrl-names = "default", "sleep";
->> +
->> +	bus-width = <8>;
->> +	mmc-ddr-1_8v;
->> +	mmc-hs200-1_8v;
->> +	mmc-hs400-1_8v;
->> +	mmc-hs400-enhanced-strobe;
->> +	vmmc-supply = <&vreg_l17a>;
->> +	vqmmc-supply = <&vreg_s4a>;
->> +
->> +	non-removable;
->> +	no-sd;
->> +	no-sdio;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&spi6 {
->> +	status = "okay";
->> +
->> +	mcp2515@0 {
->> +		compatible = "microchip,mcp2515";
->> +		reg = <0>;
->> +		clock-frequency = <20000000>;
->> +		interrupts-extended = <&tlmm 87 IRQ_TYPE_LEVEL_LOW>;
->> +		spi-max-frequency = <10000000>;
->> +		vdd-supply = <&vreg_v3p3_can>;
->> +		xceiver-supply = <&vreg_v5p0_can>;
->> +	};
->> +};
->> +
->> +&uart0 {
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_hsphy {
->> +	vdd-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l12a>;
->> +	vdda-phy-dpdm-supply = <&vreg_l13a>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_qmpphy {
->> +	vdda-phy-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l12a>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_1 {
->> +	status = "okay";
->> +};
->> +
->> +&usb_1_dwc3 {
->> +	dr_mode = "host";
-> 
-> Is it actually the host-only interface?
-
-Yes, It is host-only interface.
-> 
->> +};
->> +
->> +&usb_hsphy_2 {
->> +	vdd-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l12a>;
->> +	vdda-phy-dpdm-supply = <&vreg_l13a>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&usb_2 {
->> +	status = "okay";
->> +};
->> +
->> +&usb_2_dwc3 {
->> +	dr_mode = "host";
-> 
-> And this one?
-
-Yes, It is host-only interface.
-> 
->> +};
->> +
->> +&ufs_mem_hc {
->> +	reset-gpios = <&tlmm 123 GPIO_ACTIVE_LOW>;
->> +	vcc-supply = <&vreg_l17a>;
->> +	vcc-max-microamp = <600000>;
->> +	vccq2-supply = <&vreg_s4a>;
->> +	vccq2-max-microamp = <600000>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&ufs_mem_phy {
->> +	vdda-phy-supply = <&vreg_l5a>;
->> +	vdda-pll-supply = <&vreg_l12a>;
->> +
->> +	status = "okay";
->> +};
->> +
->> +&watchdog {
->> +	clocks = <&sleep_clk>;
-> 
-> Why do you need this?
-
-This block is already present in sm6150.dtsi, will drop this in v2 patch.
-> 
->> +};
-> 
-
+Looks OK to me.
 
