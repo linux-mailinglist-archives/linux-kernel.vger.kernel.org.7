@@ -1,206 +1,129 @@
-Return-Path: <linux-kernel+bounces-818888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E80FB597AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:30:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11A86B597A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4635188AADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754E33A606F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78401313267;
-	Tue, 16 Sep 2025 13:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F9C315D53;
+	Tue, 16 Sep 2025 13:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpzVsbJn"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXpURD3E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF3D3081AE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B704E315D23;
+	Tue, 16 Sep 2025 13:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029390; cv=none; b=rdQAfmnPQzRSehyhlO9imxnqakVKDb+ZJKh8TZgqwiD5GLpM2f5iPesOJBdZb72E6s3eqRZeqGv46IpNCVAUeNTk3Y5h7ph4v38eDTViq8nOtsrb0t9jcbdsZNybzPsTqAhIMSNJ6ix2S75V6KdDDmM59FYV1PRpj4ntk7gn7tw=
+	t=1758029413; cv=none; b=uYryRoXYuO3ZsaCIE/f1v97Jel2au++Xr5B+q3RP5X/TLBKOsOQsOrV+CgY8LBwBARAmresybcuQlSB5MebATLMof/o0du7Sw8URUhSe+Nfoe4Jfd0+7bKPYeI+O0BFpC+KM20nmTSd7i3X56LiEfrgW6vnU3IihNer0teanqgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029390; c=relaxed/simple;
-	bh=/dlRa3fJmDKHfHaLN7gvlMCOjbtBNW/Z1+IbKo1HKVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Op00WmZYdUWgl5pxXhemTragN4eWFfZ/k0G4+7e/bEzLIrEx92Kjz0yb6a4ESYUVeZ+gUl9qgZsDgUdyPB1JtM2PLS1xZpDIBC/BGyL7ffv5pKkSVBGRhr+I2XAoQTxFvRx4jzh228XO3QXcydfKVFBSyFIpW+736dbMBO7FbTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpzVsbJn; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62f0411577aso6218767a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758029387; x=1758634187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nUBl38KozCd2EM6dPQpNsN7WfMcH/uyK4YoPI5ee8s=;
-        b=YpzVsbJnoFX/l+brAgnsXam5Tq79FkQm5NERsg2M3IMIz1h5/8wmAlaHgwd7M88rN8
-         I3al5vkyhDoy4R8wnOfNTyUDjt54ABRBWy3znkYemO0ClP8TSo2B3UMbcFC28Z5W26a7
-         xNsha9PDLH19lqhbbMV7R7cRVWTSJ5pjR9TN6KlRymBQh/GCUEqgrbD3DXpJTbJdmVOU
-         ZRIeoixcXZ+NkL656p8AB4BJPJjxGLvDifEKq5ZEHLM4fCBSBlDWIKUEu0iIiuPtcUGl
-         O2XAdmERgavlDO92bx9XqAnPn6pHZItVz1rnvRoHhNe4bqZ1tBZIUbgsTxbiIqz8kO5l
-         d3nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758029387; x=1758634187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8nUBl38KozCd2EM6dPQpNsN7WfMcH/uyK4YoPI5ee8s=;
-        b=GsH0gr34qTE6WdhCVjxA5FHZducTNwCt5IL/mSjnC0bS/Jd5DNCZFC0G+D8mUSn/9x
-         uwBQ2FXAOgBzGbAcW8CoT1pjEz/8SLIc2UlVML6gBwDRKt2AfscGAzMyCB+AL4i+WRgl
-         RCmrtbyKmbHxgQ6hSptuLcooCl2kyu4Poh59LoamQxYfjNn2daOpdgRaXfg2S7/zwDsb
-         VX5UJ0lmsFzNc/nDF4PiUxCoh92V1CU6kwH3FwDn2I0vDnwlFPVAua+k8xlTo0KiEHqj
-         hcTWFPfUtPKYVhAa+cg7KL2mRNvxNpCBh46DExhGM5GuoX1LAR11TGKBDkxmf9Kjp7AV
-         4JEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXd9KzHvdO1C/4T2ZMZ0UptElXhvmZsBrUFUUNlX6vpCpXZ2F1X7pCpvkOY+h3kWtkIhVtnihYyqBU+cAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrm4XfG6m0IHOH7WjCH48hZhCi1ueva8SOc+OGSTzOwAZ2mQAs
-	YK7wYhm+eR7G+K7eHeo9poUJ+t6dP4uMa6MdCIcYRcXPCQnP10cEpFheq4tCVv2GQb1Nj7gyu98
-	GM5rQhhJvmBBACffhZNi9JBkXI2j+DBA=
-X-Gm-Gg: ASbGnctR4by8vN78FcrQNLt4vJFeDhjKgwrJyMLysyOM0Khk2A9OhwHU0MtWbB1p/Az
-	xagdOlhQb7/GXrJXNHhJ9avQVin/bFRGqAaAnWSJxUILF61WVkjb6dsBfL5q5LrD1ly6N4H9QAV
-	bUX8k4ij/8HQRHl2WA1P0LCzRZAPkudYNtFT2Kn9ZkOBstpuUvklTmtTFdMrq+ksSGYihFAhf7g
-	cBPfM54xjA4MN2N6dndluwt5yF8eo3ZDCamjLoynks+Ud5Hsu4=
-X-Google-Smtp-Source: AGHT+IFx9yd4PB/vn4IjXsoACWwoeCb/LEf5nz0y3KpLeNZ2RitKABUZYjPvumidUpl8exgSkmnuKsZ7bjrh8cCbDhE=
-X-Received: by 2002:a05:6402:a0cd:b0:629:54af:4f53 with SMTP id
- 4fb4d7f45d1cf-62ed82c6656mr16233534a12.18.1758029386970; Tue, 16 Sep 2025
- 06:29:46 -0700 (PDT)
+	s=arc-20240116; t=1758029413; c=relaxed/simple;
+	bh=YlWUfhY+fHGgWcOdSCwJl+jwZZ2bGestw2/sLcvPGJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MOGiwDvSJS1zqrcKtoJcSl3+/xTqWL7+smlte69FQLtsI6qF5IcU8PfXDJD/vbA3S6ZM7F5ioVHQ9U5Re97Tenas0cj2OcBO1Y7ktM6pdLpIswl56iYBnQae8ZaOK/GD2iJSEvbE25UEe5g8HNR+yJndhyrELFQKPfBh+dX1t5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXpURD3E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA637C4CEEB;
+	Tue, 16 Sep 2025 13:30:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758029413;
+	bh=YlWUfhY+fHGgWcOdSCwJl+jwZZ2bGestw2/sLcvPGJY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mXpURD3E9qE85AFe6RjsKLE42ttAV5sys/DoR/VDsjjrc+ZhxpYBlZEFcWUG7dnIc
+	 9y58QEe9AUIgRL34wZx+dIuszL94sCB/hWHlN1K3KMld0EEmyjnuM23M7g5vvTa/6b
+	 hqf9crxmqi/Jj1nNSSpmlYaR9cL2n9TfJRKVcaGQAHiPVTVOAntWa8easPHAVQWSAQ
+	 30kUBu1lG0uxZ54/LqyHZ3fV5QRvkCrOy85uXUGp1tTCBhWbP/n7Qs0jD4fwhtw4zh
+	 RRCsdXFyKjY5B9oEzrc3r01cdPp/9zU6gDRTjqf1wxpUALgF71Gz6T8svf5Zhv2IV4
+	 8FTPgYHYRRFMA==
+Date: Tue, 16 Sep 2025 14:30:09 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>,
+	Shankari Anand <shankari.ak0208@gmail.com>,
+	Tamir Duberstein <tamird@gmail.com>
+Subject: linux-next: manual merge of the rust tree with the vfs-brauner tree
+Message-ID: <aMlmYa5UjLe_ATl_@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915101510.7994-1-acsjakub@amazon.de> <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
- <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
- <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com> <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
-In-Reply-To: <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 16 Sep 2025 15:29:35 +0200
-X-Gm-Features: AS18NWAPAV01WXyNb64OPEzkKEyOkzIVEVp3wm-eCN6oWp1E8_sj0VUWGpMMb0M
-Message-ID: <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
-Subject: Re: [PATCH] ovl: check before dereferencing s_root field
-To: Jan Kara <jack@suse.cz>
-Cc: Jakub Acs <acsjakub@amazon.de>, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ANOFwsJ639CcKaXb"
+Content-Disposition: inline
+
+
+--ANOFwsJ639CcKaXb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 1:30=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 15-09-25 17:29:40, Amir Goldstein wrote:
-> > On Mon, Sep 15, 2025 at 4:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > > > > diff --git a/fs/overlayfs/export.c b/fs/overlayfs/export.c
-> > > > > index 83f80fdb1567..424c73188e06 100644
-> > > > > --- a/fs/overlayfs/export.c
-> > > > > +++ b/fs/overlayfs/export.c
-> > > > > @@ -195,6 +195,8 @@ static int ovl_check_encode_origin(struct ino=
-de *inode)
-> > > > >         if (!ovl_inode_lower(inode))
-> > > > >                 return 0;
-> > > > >
-> > > > > +       if (!inode->i_sb->s_root)
-> > > > > +               return -ENOENT;
-> > > >
-> > > > For a filesystem method to have to check that its own root is still=
- alive sounds
-> > > > like the wrong way to me.
-> > > > That's one of the things that should be taken for granted by fs cod=
-e.
-> > > >
-> > > > I don't think this is an overlayfs specific issue, because other fs=
- would be
-> > > > happy if encode_fh() would be called with NULL sb->s_root.
-> > >
-> > > Actually, I don't see where that would blow up? Generally references =
-to
-> > > sb->s_root in filesystems outside of mount / remount code are pretty =
-rare.
-> > > Also most of the code should be unreachable by the time we set sb->s_=
-root
-> > > to NULL because there are no open files at that moment, no exports et=
-c. But
-> > > as this report shows, there are occasional surprises (I remember simi=
-lar
-> > > issue with ext4 sysfs files handlers using s_root without checking co=
-uple
-> > > years back).
-> > >
-> >
-> > I am not sure that I understand what you are arguing for.
-> > I did a very naive grep s_root fs/*/export.c and quickly found:
->
-> You're better with grep than me ;). I was grepping for '->s_root' as well
-> but all the hits I had looked into were related to mounting and similar a=
-nd
-> eventually I got bored. Restricting the grep to export ops indeed shows
-> ceph, gfs2 and overlayfs are vulnerable to this kind of problem.
->
-> > static int gfs2_encode_fh(struct inode *inode, __u32 *p, int *len,
-> >                           struct inode *parent)
-> > {
-> > ...
-> >         if (!parent || inode =3D=3D d_inode(sb->s_root))
-> >                 return *len;
-> >
-> > So it's not an overlayfs specific issue, just so happens that zysbot
-> > likes to test overlayfs.
-> >
-> > Are you suggesting that we fix all of those one by one?
->
-> No. I agree we need to figure out a way to make sure export ops are not
-> called on a filesystem being unmounted. Standard open_by_handle() or NFS
-> export cannot race with generic_shutdown_super() (they hold the fs mounte=
-d)
-> so fsnotify is a special case here.
->
-> I actually wonder if fanotify event (e.g. from inode deletion postponed t=
-o
-> some workqueue or whatever) cannot race with umount as well and cause the
-> same problem...
->
+Hi all,
 
-Oy. I was thinking that all event happen when holding some mnt ref
-but yeh fsnotify_inoderemove() does look like it could be a problem
-from sb shutdown context.
+Today's linux-next merge of the rust tree got a conflict in:
 
-How about skipping fsnotify_inoderemove() in case sb is in shutdown?
+  rust/kernel/fs/file.rs
 
-> > > > Can we change the order of generic_shutdown_super() so that
-> > > > fsnotify_sb_delete(sb) is called before setting s_root to NULL?
-> > > >
-> > > > Or is there a better solution for this race?
-> > >
-> > > Regarding calling fsnotify_sb_delete() before setting s_root to NULL:
-> > > In 2019 (commit 1edc8eb2e9313 ("fs: call fsnotify_sb_delete after
-> > > evict_inodes")) we've moved the call after evict_inodes() because oth=
-erwise
-> > > we were just wasting cycles scanning many inodes without watches. So =
-moving
-> > > it earlier wouldn't be great...
-> >
-> > Yes, I noticed that and I figured there were subtleties.
->
-> Right. After thinking more about it I think calling fsnotify_sb_delete()
-> earlier is the only practical choice we have (not clearing sb->s_root isn=
-'t
-> much of an option - we need to prune all dentries to quiesce the filesyst=
-em
-> and leaving s_root alive would create odd corner cases). But you don't wa=
-nt
-> to be iterating millions of inodes just to clear couple of marks so we'll
-> have to figure out something more clever there.
+between commits:
 
-I think we only need to suppress the fsnotify_inoderemove() call.
-It sounds doable and very local to fs/super.c.
+  eed8e4c07d85c ("rust: fs: update ARef and AlwaysRefCounted imports from s=
+ync::aref")
+  c37adf34a5dc5 ("rust: file: use to_result for error handling")
 
-Regarding show_mark_fhandle() WDYT about my suggestion to
-guard it with super_trylock_shared()?
+=66rom the vfs-brauner tree and commit:
 
-Thanks,
-Amir.
+  e6aedde22dc42 ("rust: file: use `kernel::{fmt,prelude::fmt!}`")
+
+=66rom the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc rust/kernel/fs/file.rs
+index f1a3fa6987451,67a3654f0fd37..0000000000000
+--- a/rust/kernel/fs/file.rs
++++ b/rust/kernel/fs/file.rs
+@@@ -10,9 -10,9 +10,10 @@@
+  use crate::{
+      bindings,
+      cred::Credential,
+ -    error::{code::*, Error, Result},
+ +    error::{code::*, to_result, Error, Result},
++     fmt,
+ -    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
+ +    sync::aref::{ARef, AlwaysRefCounted},
+ +    types::{NotThreadSafe, Opaque},
+  };
+  use core::ptr;
+ =20
+
+--ANOFwsJ639CcKaXb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJZmAACgkQJNaLcl1U
+h9ClrAf8CbiTOxg0tm9NSzWsqAB0YKNGpm3mKNhJyMpjWfk8SRVZwWuNi+pznqLb
+NVf0jZD69Q0zdEbHKcdx12WX+LjHlol7jU0J+EF7ZlMg/Tv8nSdBvvW8mAju9GLW
+QJwhoF54VFrcoO8aI5LnEV716Lj6OyeN3F4YxTz0kiXlNCLwqkWg0s30Ltgm6G6t
+x4QMPVz68UDjJYGwrjEtjRVpFEKq9LFqbBLA8ovfiNkqXw2McFhQ2/md8ppB5sA1
+JI5er1wReuqW740kLPyR5b4snndy+/YlXZSj0SVT7+pCbUrM4lxaGvPeIK23pN9s
+dJtAANlimd0Dfduq3dWUqv+hgLCovw==
+=YzX+
+-----END PGP SIGNATURE-----
+
+--ANOFwsJ639CcKaXb--
 
