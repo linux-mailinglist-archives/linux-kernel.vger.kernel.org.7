@@ -1,271 +1,152 @@
-Return-Path: <linux-kernel+bounces-817966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A2D0B58A21
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:51:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CE6B58A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 924171B25D8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FACB2A6153
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EED41E32D6;
-	Tue, 16 Sep 2025 00:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96D519EEC2;
+	Tue, 16 Sep 2025 00:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNEOGaDC"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJ5isoPc"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6951D7984
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C9F2BB13
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983889; cv=none; b=rAbmBJG8uX25JXO5etwgcefq285lAfX/2WaseNC25LYbejZh0OPqfFxsOfFG8M5IOtGi6NnFnppJRktgUpnMdJ1Su719QG5Imn1DTz6BgvKSHVpzgp0kIoEoGqPFjafzHEr6Nkq2IPvkE/fWfXwXi6Rfu+D7WIDL7l4AU4GMSG4=
+	t=1757984210; cv=none; b=UqvrxBHWUF2F2fHj0HzM81yDiqNG89KmnLW/Tjf4cLRpbLczNERhi3+mIN5Df2kzZqG6RzWDbkcSBcCl86+LG9jYSxjj4ApaqYzJa+e8OQeVIehuGBDu/Nbkt4EIxCa7LDFvubWiHfwsqPuCTPxCTiz241UzzVTJshO9Dwa0VrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983889; c=relaxed/simple;
-	bh=YLCihjsyYiQD+cNgW9fZK+mXNOGLMd4fjRAzjU1EsjQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=snLRC0PGuhGVsdRZ0Y4WQwQsbTS8mwbGD6sOUP4tka8mAoBT7tnezKNA97fyJGbqKI4Qt0kOF129fPLpy/lRkdrBoNHQ0aBRs7MGSVioo1XO1J4Cwy55xjJ316iOeAZFRZ2zRFhlpiWb+r62DuABqYsa9QVCfGqHYzUcLGR7Z00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNEOGaDC; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1757984210; c=relaxed/simple;
+	bh=Qy71Ms5YFMmHBNBNOUjSdAy0OrAHc4jC5Kj1qyilACU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g/L/A1g8FfuxXKOxb0sNnlv3gMLRQrDwU14gFuCtkAWG+BBQ+3nkcvzogJWKIOtqbCIUArBy22sUD0/Un1zfyNfqt969jJOtG4n7/oSdTHZj+AyuDWH3265b5Nn3Pac0Yr0VBgR6qxpAcRzmJ8ZPmTyQD7T2TA949YrKsKBdfGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJ5isoPc; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0e7bc49263so271182966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:51:27 -0700 (PDT)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b5229007f31so3237015a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:56:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757983886; x=1758588686; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1OpZgX9tytLoNm6IprJcc0k2pObmzkvGtIN3dOD3Knw=;
-        b=dNEOGaDCJSqpBsgqJq+IP2QqCeUDYwk1gjtjaX0Pgr4RC9oRVHFamMuK4fOKim4sTB
-         yewlL7/9JGlAX5MBcwrtMDoXoNLrQY49WgAd2Pj+rfl9Gp12za6PBpAI4eexPAqE8vJo
-         tU1xkbyTMnxvj0b7NNmka6QTp8IVtBig+/kX2cuYVi+oRqez/0oJVbDBNjNkcY29GAO5
-         oXO+v1iGulzPrV+g9kk+BWun+kHkFDyCkpd6mPG9Qal9rQXUkXaJ5OpYyEXIhv9AkoQe
-         rPyarPuKwSsx9QBLgqaad1TpXDxgnW3Plp2gZg/epDD7/O1uMrrtenflsvYEo32cfBMr
-         teRw==
+        d=gmail.com; s=20230601; t=1757984208; x=1758589008; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LeqZlInGPp3SGFJdjB62EJO8F13RY/cKYxhUSIsMLkk=;
+        b=cJ5isoPcANlYKlvWzR31Fs2Psy0B7Xog+os6vGPtYS1cDylkbduXb6tGRjipGgfT2N
+         mXRn/9+30bvQ9RPtLU8aY2QJmUcOJGY0cZY6bCwNzQ9cMwhwahzencI7QjVdcsCJLk2D
+         bLNUUJNjPTsS0tZIXRz1RRA8/ubnnIdX5ZmTrUb2NrMCi6lW3gnHUbKxQj0ZLjsV/SmU
+         r1iHursjSt0DIwXG2kurdXbDEKzMjj9dy6RC7rP2EGIN5roB+3eBQsNioEkO/jUAH/CT
+         IhBQofsfUDEfEpRqq9t398JJc82jVWqCojiBCb39iRb1WxK6rzD+nYwnhZlVnEiZPcxy
+         fxaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757983886; x=1758588686;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1OpZgX9tytLoNm6IprJcc0k2pObmzkvGtIN3dOD3Knw=;
-        b=w5T4vAk1mB6zsNG78ODYjn64Oc8REf06Bos38Jr39pJfXalTgGKoXMt+GYn4bSHRdX
-         lsG34hzi7ZdezFVMZ7W/azZgcyZ+e8pkFxQl6snea5SRV+x286v+Ihn4sY1Zj0baZw1v
-         GODN8l3csVjuTff8NqIpNkYzLgign7QcT4qZCfjmFJCSEHZSHKykq8yuAwouAHoG5ba6
-         TiW1BBvc/DYGVjrGnbY5CeY2O+ZWuKuq8EvnKG1zGyRUHpHcFcAXzO4z+Ie1l8L634Ib
-         umD0J+kAx8EeodH1+OaB04vfXDsJvh3/pH9xJ/Dauf9Y8o5GNc89x1/J4iiEAW6rzohf
-         +N/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAWqYvGBNK8c2GYF11eMQhg/WwUeaNC53Mrde12M0qnHkv9nrcgKoRJ6ACG+v7wWqkzZIiC3KEhgZ7nLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc7Ol59/E5s4kYZDZNEvf0GyqxXUVWcqYfOzuBFQT3LgTTedef
-	14YMf0ZA4WoBbOVZWNTY4P2uz93ALhSW7bzSdQjLLE2reTLTSWT0xYDpEsecVbOIopfvsI4/v8d
-	GmRpsaEU7CGSPhUZuhxAUhLBq1qztnY4=
-X-Gm-Gg: ASbGncvmgvyS90KqwXBHayxrFyasfJKFPCZz7gN/UoXOG2DD30irhfgU+h3X2atJX1u
-	+O6bxChm3jVrAv1smN02eDOODHLrko5k8egCr5M1xRMc7+tvFxAXq3vrxacEFhKTCDSFMyc9n9u
-	3M/g+0TQLn1o4y7QHQmvojfEvBReVCE7/g8+RRX7WSg656WhTdbK2INWmTOKJp/f9y8obNXqo/T
-	ijKQP/3GRhifHdQXVW5w4rEtuvsDM4Pk9bzxg==
-X-Google-Smtp-Source: AGHT+IHPJv+bTBNTeL/MVnMWVNgygry+A18f2/vKjgIuOgWGXPTmc9yHqTETAd2lHq94TaKCPdNN9pZ7qI2l7kdueMA=
-X-Received: by 2002:a17:907:2d2c:b0:b07:9c13:153e with SMTP id
- a640c23a62f3a-b07c353e3f8mr1471142666b.2.1757983885391; Mon, 15 Sep 2025
- 17:51:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757984208; x=1758589008;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LeqZlInGPp3SGFJdjB62EJO8F13RY/cKYxhUSIsMLkk=;
+        b=RWmyK8l/POXR+pYFJ0Zu65D4A8odZ1MD93knT4IysIfNCwe4h9Q5760rG5aoUG1hMU
+         mP21lo20OvFxtTkNFIaGnz2jOvoL+OCeV19+9oX5fx07qLdm05/TL/BVtjMNNi7v9pR+
+         +EkkvcBpez1RiSxBoy9qrqIRMyhKI7oIKPU9UqofpcY2kJa56JZBgw372PcDTx44nSPr
+         d6yj7rPNhUrM5f7pOCXUl3u8Y+gIopERFQuHOxW3BVgMkJ7le+0fQ+trWFOM00UQvvy7
+         FJqKgnL4wyJQvMYjZVhE8mXt0UyJRS/uQhowx6Q5YDzcdQrj4pbAjA/P1CAgKHjZwK1V
+         Yy0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUvckui/ZoyUr7Pmx6VOOg4oXGbXYZ+ugxPgLe7b/sjxwAooUwa6LEtgfxPNXvDPlxprHpTQfulYvU434c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM+pms8F1eLcOhuvMIngi/ZSGcGeN2DqzbJuzeQCNzTIwpu79x
+	nSCDIbneFsfxFGsD/vVVCa9LgDdN62X2+5Nw2tYWv01yQCsqcdBlVuE1
+X-Gm-Gg: ASbGncu0lsOxAddgK1yJRh1wY6PeXl0FJqXSKA8XKMRei+s9l17MQ+h6ExsESS7todn
+	qejs4IoSTsx1u777wU9lvyQrK8tzRz0mz7BnjE/yfhuste2PEP6c3N00rIFBMgXC5RAW4ZhPJmM
+	+y96XhiGw48/iz3UFnhT0RmLHcIF2cjhjeu5u154x/xSby8xOWvBh9JgxrUNm2ckWluE7OSvLYK
+	qWWoGYUKXutK6mDAKqqyfs+23xrlC2Y5ODdfgii/Ef84CPiidm4fJhzKWINpKSOomIbHbcPlIME
+	g88QbzGhLf6qWV1y58qcXjwrmkLUNmlGaXHMTAhV33UXfA44UeqrSntdFQk4cBkBhzQT3WS8+MT
+	dS0kgcy5fUPebCiPFFIVLeBBAUejSU+qnzDMBvXUw
+X-Google-Smtp-Source: AGHT+IG8hhTJUBQOJBQwfVlneT/Gr2URBGX24fPocs1cx/+EfgjCvVldYUoFdG5SzWtoUpwFLFSGRQ==
+X-Received: by 2002:a17:90b:1dce:b0:32d:d714:b3eb with SMTP id 98e67ed59e1d1-32de4e63c46mr18038247a91.4.1757984207847;
+        Mon, 15 Sep 2025 17:56:47 -0700 (PDT)
+Received: from cortexauth ([2401:4900:1c7b:db3a:1c7b:a123:6d26:f0bd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b3603asm14142918b3a.84.2025.09.15.17.56.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 17:56:47 -0700 (PDT)
+From: Deepak Sharma <deepak.sharma.472935@gmail.com>
+To: jikos@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Deepak Sharma <deepak.sharma.472935@gmail.com>,
+	syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Subject: [PATCH] HID: cp2112: Add parameter validation to data length
+Date: Tue, 16 Sep 2025 06:24:51 +0530
+Message-ID: <20250916005451.303072-1-deepak.sharma.472935@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905024659.811386-1-alistair.francis@wdc.com>
- <68e45231-8344-447d-95cc-4b95a13df353@suse.de> <CAN-5tyFpuEieD8x83vFGgHy8KZBCsAsm7LiZmzpc6OpWPHVFgA@mail.gmail.com>
-In-Reply-To: <CAN-5tyFpuEieD8x83vFGgHy8KZBCsAsm7LiZmzpc6OpWPHVFgA@mail.gmail.com>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Tue, 16 Sep 2025 10:50:59 +1000
-X-Gm-Features: AS18NWBZ9XgG75BX61NTXxYXdSD62EA-LC37QqP65E-mYxfkmPX6bvhZKH0LJnQ
-Message-ID: <CAKmqyKPajmBva5n1qfQ-iQKCtOyD7CsFAdhEiwP8BXV98_OSiw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] nvme-tcp: Support receiving KeyUpdate requests
-To: Olga Kornievskaia <aglo@umich.edu>
-Cc: Hannes Reinecke <hare@suse.de>, chuck.lever@oracle.com, hare@kernel.org, 
-	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
-	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 2:31=E2=80=AFAM Olga Kornievskaia <aglo@umich.edu> =
-wrote:
->
-> On Mon, Sep 15, 2025 at 7:46=E2=80=AFAM Hannes Reinecke <hare@suse.de> wr=
-ote:
-> >
-> > On 9/5/25 04:46, alistair23@gmail.com wrote:
-> > > From: Alistair Francis <alistair.francis@wdc.com>
-> > >
-> > > The TLS 1.3 specification allows the TLS client or server to send a
-> > > KeyUpdate. This is generally used when the sequence is about to
-> > > overflow or after a certain amount of bytes have been encrypted.
-> > >
-> > > The TLS spec doesn't mandate the conditions though, so a KeyUpdate
-> > > can be sent by the TLS client or server at any time. This includes
-> > > when running NVMe-OF over a TLS 1.3 connection.
-> > >
-> > > As such Linux should be able to handle a KeyUpdate event, as the
-> > > other NVMe side could initiate a KeyUpdate.
-> > >
-> > > Upcoming WD NVMe-TCP hardware controllers implement TLS support
-> > > and send KeyUpdate requests.
-> > >
-> > > This series builds on top of the existing TLS EKEYEXPIRED work,
-> > > which already detects a KeyUpdate request. We can now pass that
-> > > information up to the NVMe layer (target and host) and then pass
-> > > it up to userspace.
-> > >
-> > > Userspace (ktls-utils) will need to save the connection state
-> > > in the keyring during the initial handshake. The kernel then
-> > > provides the key serial back to userspace when handling a
-> > > KeyUpdate. Userspace can use this to restore the connection
-> > > information and then update the keys, this final process
-> > > is similar to the initial handshake.
-> > >
-> > > Link: https://datatracker.ietf.org/doc/html/rfc8446#section-4.6.3
-> > >
-> > > v2:
-> > >   - Change "key-serial" to "session-id"
-> > >   - Fix reported build failures
-> > >   - Drop tls_clear_err() function
-> > >   - Stop keep alive timer during KeyUpdate
-> > >   - Drop handshake message decoding in the NVMe layer
-> > >
-> > > Alistair Francis (7):
-> > >    net/handshake: Store the key serial number on completion
-> > >    net/handshake: Make handshake_req_cancel public
-> > >    net/handshake: Expose handshake_sk_destruct_req publically
-> > >    nvmet: Expose nvmet_stop_keep_alive_timer publically
-> > >    net/handshake: Support KeyUpdate message types
-> > >    nvme-tcp: Support KeyUpdate
-> > >    nvmet-tcp: Support KeyUpdate
-> > >
-> > >   Documentation/netlink/specs/handshake.yaml |  19 +++-
-> > >   Documentation/networking/tls-handshake.rst |   4 +-
-> > >   drivers/nvme/host/tcp.c                    |  88 +++++++++++++++--
-> > >   drivers/nvme/target/core.c                 |   1 +
-> > >   drivers/nvme/target/tcp.c                  | 104 ++++++++++++++++++=
-+--
-> > >   include/net/handshake.h                    |  17 +++-
-> > >   include/uapi/linux/handshake.h             |  14 +++
-> > >   net/handshake/genl.c                       |   5 +-
-> > >   net/handshake/handshake.h                  |   1 -
-> > >   net/handshake/request.c                    |  18 ++++
-> > >   net/handshake/tlshd.c                      |  46 +++++++--
-> > >   net/sunrpc/svcsock.c                       |   3 +-
-> > >   net/sunrpc/xprtsock.c                      |   3 +-
-> > >   13 files changed, 289 insertions(+), 34 deletions(-)
-> > >
-> >
-> > Hey Alistair,
-> > thanks for doing this. While the patchset itself looks okay-ish, there
-> > are some general ideas/concerns for it:
-> >
-> > - I have posted a patch for replacing the current 'read_sock()'
-> > interface with a recvmsg() base workflow. That should give us
-> > access to the 'real' control message, so it would be good if you
-> > could fold it in.
+Syzkaller reported a stack OOB access in cp2112_write_req caused by lack
+of parameter validation for the user input in I2C SMBUS ioctl codeflow
+in the report
 
-Thanks for sending that. I'll rebase my changes on top of the patch
-and update it all.
+I2C device drivers are "responsible for checking all the parameters that
+come from user-space for validity" as specified at Documentation/i2c/dev-interface
 
-> > - Olga has send a patchset fixing a security issue with control
-> > messages; the gist is that the network code expects a 'kvec' based
-> > msg buffer when receiving a control message. So essentially one
-> > has to receive a message _without_ a control buffer, check for
-> > MSG_CTRUNC, and then read the control message via kvec.
+Add the parameter validation for the data->block[0] to be bounded by 32
+or return EINVAL
 
-Oh interesting. I'll see if I can find the patchset and update my
-series to follow that.
+Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7617e19c8a59edfbd879
+Signed-off-by: Deepak Sharma <deepak.sharma.472935@gmail.com>
+---
+ drivers/hid/hid-cp2112.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-> > Can you ensure that your patchset follows these guidelines?
-> > - There is no method to trigger a KeyUpdate, making it really hard
-> > to test this feature (eg by writin a blktest for it). Ideally we
+diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
+index 482f62a78c41..90292ce3d363 100644
+--- a/drivers/hid/hid-cp2112.c
++++ b/drivers/hid/hid-cp2112.c
+@@ -689,7 +689,10 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 			count = cp2112_write_read_req(buf, addr, read_length,
+ 						      command, NULL, 0);
+ 		} else {
+-			count = cp2112_write_req(buf, addr, command,
++			if (data->block[0] > 32)
++				count = -EINVAL;
++			else
++				count = cp2112_write_req(buf, addr, command,
+ 						 data->block + 1,
+ 						 data->block[0]);
+ 		}
+@@ -700,7 +703,10 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 						      I2C_SMBUS_BLOCK_MAX,
+ 						      command, NULL, 0);
+ 		} else {
+-			count = cp2112_write_req(buf, addr, command,
++			if (data->block[0] > 32)
++				count = -EINVAL;
++			else
++				count = cp2112_write_req(buf, addr, command,
+ 						 data->block,
+ 						 data->block[0] + 1);
+ 		}
+@@ -709,7 +715,10 @@ static int cp2112_xfer(struct i2c_adapter *adap, u16 addr,
+ 		size = I2C_SMBUS_BLOCK_DATA;
+ 		read_write = I2C_SMBUS_READ;
+ 
+-		count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
++		if (data->block[0] > 32)
++			count = -EINVAL;
++		else
++			count = cp2112_write_read_req(buf, addr, I2C_SMBUS_BLOCK_MAX,
+ 					      command, data->block,
+ 					      data->block[0] + 1);
+ 		break;
+-- 
+2.51.0
 
-I have some patches that do send a KeyUpdate [1] which is what I'm
-using to test. It allows me to send a KeyUpdate from either side.
-
-> > should be able to trigger it from both directions, but having just
-> > one (eg on the target side) should be enough for starters.
-> > A possible interface would be to implement write support to the
-> > 'tls_key' debugfs attribute; when writing the same key ID as
-> > the one currently in use the KeyUpdate mechanism could be started.
-
-That's a good point about allowing userspace and blktest to initiate a
-KeyUpdate. I'll look at adding support for a debugfs attribute
-
-> >
-> > But thanks for doing the work!
->
-> Hi Alistart,
->
-> I would like to pingy-pack on this message and ask a few questions as
-> I'm a bit confused about this implemenation.
->
-> NFS is also interested in being able to handle KeyUpdate functionality
-> of TLS and having NvME doing it serves as an example. But the general
-> approach confuses me.
->
-> All messages go thru a TLS (kernel) layer portion of sock_recvmsg
-> (kernel_recvmsg). When the TLS kernel layer detects that it's
-> non-TLS-data payload, it does various things depending on whether or
-> not control buffer was set up prior to the call to sock_recvmsg.
-> KeyUpdate message is a type of HANDSHAKE message and thus non-TLS-data
-> payload. While I was doing my changes to NvME code I noticed that
-> there are multiple places NvME (target) calls into kernel_recvmsg()
-> and thus those places would need to handle receiving non-TLS-data
-> payloads. Previously there was a TLS alert which is non-data but now
-> there is Handshake (specifically Keyupdate, but not others).
->
-> I guess where I'm going is I don't see how NvMe is connecting
-> receiving KeyUpdate (ie, identifying that it received specifically
-> that and not other handshake type) and its handling of KeyUpdate from
-> kernel_recvmsg the when NvME is just normally receiving data.
-
-The kernel TLS layer is handling the KeyUpdate [2]. The current
-upstream Linux TLS layer will decode a KeyUpdate and mark a
-`key_update_pending`. Note that upstream doesn't actually do a
-KeyUpdate, hence this series.
-
->
-> This patch series reads to me as it is expecting KeyUpdate to be a
-> part of the Handshake process (ie., there is a patch to "cancel" an
-> ongoing handshake, there is an upcall to tlshd with the KeyUpdate?).
-
-No, KeyUpdate can't be part of the handshake process
-
-> This doesn't make sense to me. KeyUpdate, while a type of Handshake
-> message, is not done during the handshake -- it is done after sending
-> the Finished message which concludes the handshake flow (and
-> involvement of tlshd) and can happen at any time during normal TLS
-> encrypted message exchange after the handshake. Here's a snippet from
-> the TLS spec:
-
-Exactly, KeyUpdate can happen at any time after the handshake.
-
-The general idea is that the TLS layer will detect a KeyUpdate [2],
-then report EKEYEXPIRED to the NVMe layer which then asks
-ktls-utils/gnutls in user space to update the keys. Does that make
-more sense?
-
->
-> The KeyUpdate handshake message is used to indicate that the sender
->    is updating its sending cryptographic keys.  This message can be sent
->    by either peer after it has sent a Finished message.  Implementations
->    that receive a KeyUpdate message prior to receiving a Finished
->    message MUST terminate the connection with an "unexpected_message"
->    alert.
->
-
-1: https://github.com/alistair23/linux/commit/714d58a0aed5d49fb24ea22497024=
-c3d958a60b8
-2: https://github.com/torvalds/linux/blob/46a51f4f5edade43ba66b3c151f0e25ec=
-8b69cb6/net/tls/tls_sw.c#L1775
-
-Alistair
 
