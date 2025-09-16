@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-818440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F36B591C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BACB591C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148AB3A46FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0931516C2DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675F8287271;
-	Tue, 16 Sep 2025 09:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E741B291C1E;
+	Tue, 16 Sep 2025 09:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UREZ0rDx"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDSoRoCx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC74E1891AB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E7E1891AB;
+	Tue, 16 Sep 2025 09:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013791; cv=none; b=rQMals4qj3i7ryaiBcCGs3w0todAJJpy7RfjmHZwCJVz+jZH9xAC3Idax0pzMwaIrQI5PR7dYq6I6exQoIsFuN0admes1TVTMVdKlwl20Dj2llOoa5GiKXaoQLh8x4LHft16TaNXHKtpwfQOJIvGXP0LPbvxJjEChiWXNAenCTA=
+	t=1758013824; cv=none; b=MDSiFIvW2atwqNyzGWw7044W7WEG0lUlYWdHgQ/hJTs0yScqf+1NsFQT271R45vn3ornTH2a/mZtF2ztW4M0iq+DHLqpKLx0dG6mky0khqTzwc/uEtkx1+LTS6xCMTxuXY4tDn40qxxNcQ/1hbNwvlRHpNNe0cMWvcR5BgRdKhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013791; c=relaxed/simple;
-	bh=lOHXQvIUSxAv+i/2v6FmlZCTC48RTraw3Eaj90AyRPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTcVYwM1rbTH8n7Kz7nMN6A/9EP+eAnzMCuLgHcTWR+i1l211+Ocd4mo+fgf6gQsDOYT+V1UEeEsjN+I0wLUceo85gmB/n3xb/bj2Gte3cMhnXh9Qp79TFs06rvOnopRHvEgn11ndpYg05CEt7Dzx+bXcSqk0WKRuvDdo5qVuqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UREZ0rDx; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ecbcc16948so228738f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758013788; x=1758618588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lOHXQvIUSxAv+i/2v6FmlZCTC48RTraw3Eaj90AyRPs=;
-        b=UREZ0rDxYGUl2e+TF9Ae6QufMr37T4LUIk77l2VHs1xz9gyVFKe7OytXPevEJ62VtL
-         HZB+hK3WZFyDTLlsPhZa7Ai8NCcg8ahkEUy1PiFBuw8C98Eu9vJMyrrsrbqqvnt6/M1c
-         VwpUzjQ7o0U9dpOUCxzg7IQVI8ubH3F8uiCgVv2NIwiEhd5hm2RI4SA8q13BFSq8oe0l
-         WdWD75nVo8eLs6BGTCcQH9ECNBe37i1wzkpXfApCRyVMMIxdo2RJWW+OA4QvuhIDJGXc
-         G/3VNY6h++kmaMHbFnb98EZZE2wnFSxoKXxZFiyfizJ9QyG81s2XGf6EFkiB0Nwcbldi
-         txFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758013788; x=1758618588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lOHXQvIUSxAv+i/2v6FmlZCTC48RTraw3Eaj90AyRPs=;
-        b=T3xbs6LpDuZqvacyFevQZj6C4B1CrV9ltnzEJHYqGUtauf3KNX4wQ5sowakzMYGFw1
-         hU/ik0a16boa3qcBvpkliIiZSbx+iWWw+eN0VleXOkBQ6pIkxWTIZ8afFmFgGBPzg9ce
-         7P/qLJkowq8ZdtC3DyaOM/Pft3E812pleff9v3vqOxFSqPaOT28uw+7DAwbe2x13ehuy
-         ULMncCzfhRhDGWiMQOt8h7AkAqAx48fGzbxAWAg0eH0CGsWgaQzu33sLOvS3QJ111n9J
-         ekeSNTUzE9LtjTUL/GZ4mk43CmzNUf6tNg/nSOAKmwl0FIOOW/TqOk9ewYpVkb73KeXb
-         +fEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLBPpFplz+TaIXKAPl+c7KjrogQVBBKV78id3RbxA38g4BoCbU5tcZ2Unc+pISzVAao5KQ2JQCjjDlsmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8so64qJMapQHCIWaJT4GI5Dx6jhVE5tLr4StpLWIgX6ltvv+R
-	q3gJnr/f+uvOAKbhWifdYFuCp5XKNNZ2PifqY4rTXRa4njRPgH9RDpRVXBFZbWtqLLM=
-X-Gm-Gg: ASbGncueNXLhIxdEGh2Jz3f2c+yvMhLmllJRBAbUCh3XAERGaX4W48Ilq8biocYd8BY
-	YMpP/R1G2pR9FxpWbAwj8ZsVMjBpkaBSsL2PYx7jcrMpXIUKAtH+4Lbe2Rp5L66LJg6X32A7g/I
-	+iYfNRjQDFtBf53bZIVtwunv6oE1VjXVRiXc9yb+zvhJYVXo/lvjU1kGbTVNSY6CVoHEU4G1CuW
-	3kn4+taoKlUD8K7lQ/LXbZQfNjH1SkQ1AY/Dqda+rwzJEwL05l9+Ok06CZcK8E0aUXCigYghrPR
-	6tCW0Y51Jtydc6NQN8hOGa0qrN0u0xIXeBD8Fc61G1koTBOtwPbZKSlNFKFbKKj8iBloeU1nnw9
-	qRRsZDT02FhUwvgT29x+8h0nVPbP4t0m3lOuQThyoknE=
-X-Google-Smtp-Source: AGHT+IHRX2AFKU0LKzCoZznAC/kheMtWYH3iHVIEQVTnsevoAP+gCVTmNB8FKkGRPN1HQbOz5LP8yQ==
-X-Received: by 2002:a5d:5f94:0:b0:3d8:7c6e:8ad4 with SMTP id ffacd0b85a97d-3e765781242mr15404357f8f.10.1758013787976;
-        Tue, 16 Sep 2025 02:09:47 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7e645d1fcsm15364025f8f.48.2025.09.16.02.09.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 02:09:47 -0700 (PDT)
-Date: Tue, 16 Sep 2025 11:09:45 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Aaron Tomlin <atomlin@atomlin.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	shashank.mahadasyam@sony.com, longman@redhat.com, tj@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/core: Report failed rt migrations to non-root
- cgroup without rt bandwidth under RT_GROUP_SCHED
-Message-ID: <6zi6fp2kgs2hjychav3rrf22qwwskegdq53ew33tfn7rylueik@slugq2khaakw>
-References: <20250916011146.4129696-1-atomlin@atomlin.com>
+	s=arc-20240116; t=1758013824; c=relaxed/simple;
+	bh=kuJAKoB9pXWwUKKACzc17S2FgoaepkoZ3hJBpHeLLDg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pJ0gBV+7R+7yZXoQ0es7MIx6OT/Giz/YYKQqW0/Vpcz9DGzAh7YI4AiMM+dmDL7IHKwuIjuCcGiteu2VCqPNPnIE4wX7lgBxL7fniGJZurUxIFRzRZhfwbaRcgGPVUj6kxoPsjql5n8wbfPnHOIc2pmIhlNBscX5WABAxsUbtgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDSoRoCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4B68C4CEEB;
+	Tue, 16 Sep 2025 09:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758013823;
+	bh=kuJAKoB9pXWwUKKACzc17S2FgoaepkoZ3hJBpHeLLDg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=QDSoRoCxBfKcnd1tAo4tGRMdxCoWeBCzzg9AZE5qxKAEFgApoUDbETYnbOoSnX08/
+	 tLEVkKXrb0mB7ikPTGcKpxBiH3I67vqHOGM2EpFAp1yRpF08giwcEssnbpChK8mj6c
+	 RXMw3ZRm8IDGnUDiRoPsuG4GIwM12GEQc5Z6eGGnvhb44vTcaWYdyUU++24VdRfPya
+	 iTJRDi8nLBntLKGGeSabDPnCRBZH3S55d8JVgXMvYyS0K/I2kPSp7IuiIbA9F+tq0g
+	 CY4KY0v9n5yv3P5n7X2mB0tWA/ccyAzTgqDeRo7PFcrkZ0GENfmpVdzsHenVXO3yi5
+	 UwsZ/WGKOaLTg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CCE39D0C1A;
+	Tue, 16 Sep 2025 09:10:26 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hbf7oqequ4mdexeh"
-Content-Disposition: inline
-In-Reply-To: <20250916011146.4129696-1-atomlin@atomlin.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v06 00/14] net: hinic3: Add a driver for Huawei
+ 3rd
+ gen NIC - sw and hw initialization
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175801382500.673413.8933950320451913033.git-patchwork-notify@kernel.org>
+Date: Tue, 16 Sep 2025 09:10:25 +0000
+References: <cover.1757653621.git.zhuyikai1@h-partners.com>
+In-Reply-To: <cover.1757653621.git.zhuyikai1@h-partners.com>
+To: Fan Gong <gongfan1@huawei.com>
+Cc: zhuyikai1@h-partners.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch,
+ linux-doc@vger.kernel.org, corbet@lwn.net, helgaas@kernel.org,
+ luosifu@huawei.com, guoxin09@huawei.com, shenchenyang1@hisilicon.com,
+ zhoushuai28@huawei.com, wulike1@huawei.com, shijing34@huawei.com,
+ luoyang82@h-partners.com, meny.yossefi@huawei.com, gur.stavi@huawei.com,
+ lee@trager.us, mpe@ellerman.id.au, vadim.fedorenko@linux.dev,
+ sumang@marvell.com, przemyslaw.kitszel@intel.com, jdamato@fastly.com,
+ christophe.jaillet@wanadoo.fr
+
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 12 Sep 2025 14:28:17 +0800 you wrote:
+> This is [3/3] part of hinic3 Ethernet driver initial submission.
+> With this patch hinic3 becomes a functional Ethernet driver.
+> 
+> The driver parts contained in this patch:
+> Memory allocation and initialization of the driver structures.
+> Management interfaces initialization.
+> HW capabilities probing, initialization and setup using management
+> interfaces.
+> Net device open/stop implementation and data queues initialization.
+> Register VID:DID in PCI id_table.
+> Fix netif_queue_set_napi usage.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v06,01/14] hinic3: HW initialization
+    https://git.kernel.org/netdev/net-next/c/cdb096c41b7d
+  - [net-next,v06,02/14] hinic3: HW management interfaces
+    https://git.kernel.org/netdev/net-next/c/8a1c655f55c8
+  - [net-next,v06,03/14] hinic3: HW common function initialization
+    https://git.kernel.org/netdev/net-next/c/069e42485e53
+  - [net-next,v06,04/14] hinic3: HW capability initialization
+    https://git.kernel.org/netdev/net-next/c/a0543a79359e
+  - [net-next,v06,05/14] hinic3: Command Queue flush interfaces
+    https://git.kernel.org/netdev/net-next/c/b92e6c734db8
+  - [net-next,v06,06/14] hinic3: Nic_io initialization
+    https://git.kernel.org/netdev/net-next/c/8133788d023f
+  - [net-next,v06,07/14] hinic3: Queue pair endianness improvements
+    https://git.kernel.org/netdev/net-next/c/6b822b658aaf
+  - [net-next,v06,08/14] hinic3: Queue pair resource initialization
+    https://git.kernel.org/netdev/net-next/c/73f37a7e1993
+  - [net-next,v06,09/14] hinic3: Queue pair context initialization
+    https://git.kernel.org/netdev/net-next/c/97dcb914a25b
+  - [net-next,v06,10/14] hinic3: Tx & Rx configuration
+    https://git.kernel.org/netdev/net-next/c/b83bb584bc97
+  - [net-next,v06,11/14] hinic3: Add Rss function
+    https://git.kernel.org/netdev/net-next/c/1f3838b84a63
+  - [net-next,v06,12/14] hinic3: Add port management
+    https://git.kernel.org/netdev/net-next/c/45f97ae93de2
+  - [net-next,v06,13/14] hinic3: Fix missing napi->dev in netif_queue_set_napi
+    https://git.kernel.org/netdev/net-next/c/4404f6af8108
+  - [net-next,v06,14/14] hinic3: Fix code style (Missing a blank line before return)
+    https://git.kernel.org/netdev/net-next/c/d5aeec592154
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
---hbf7oqequ4mdexeh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH] sched/core: Report failed rt migrations to non-root
- cgroup without rt bandwidth under RT_GROUP_SCHED
-MIME-Version: 1.0
-
-On Mon, Sep 15, 2025 at 09:11:46PM -0400, Aaron Tomlin <atomlin@atomlin.com> wrote:
-> Following on from commit c7461cca91 ("cgroup, docs: Be explicit about
-> independence of RT_GROUP_SCHED and non-cpu controllers"), this patch
-> introduces an explicit error message that informs the user why the
-> task migration failed. Now user-mode has a clear and actionable reason
-> for the failure, greatly assisting with debugging.
-
-The action in this case should be to assign non-trivial quota to target
-task_group (or un-rt the task), no?
-
-What setup do you envision for this message? (CONFIG_RT_GROUP_SCHED and
-cgroup v2?)
-
-Thanks,
-Michal
-
---hbf7oqequ4mdexeh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaMkpVxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQfj0C55Tb+AgawAD/fVZXRaDm/1vyXRu5p1CA
-yc8c92xBpXDGU0+/2mayaIkA/2jKhCAETP4kIAxg9/kKEyHShtcxOfExGoBod/hv
-vP8H
-=YcfG
------END PGP SIGNATURE-----
-
---hbf7oqequ4mdexeh--
 
