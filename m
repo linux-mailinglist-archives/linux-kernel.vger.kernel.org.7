@@ -1,169 +1,97 @@
-Return-Path: <linux-kernel+bounces-818922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E34B5981F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:49:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71948B59824
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 892CB7B61F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A7E4E6E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616E431D74F;
-	Tue, 16 Sep 2025 13:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA34E3128C7;
+	Tue, 16 Sep 2025 13:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mvv+TWpc"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8BV94p7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D72E314A62;
-	Tue, 16 Sep 2025 13:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF24101F2;
+	Tue, 16 Sep 2025 13:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030495; cv=none; b=LDTFs7LsSQaW5vODGwrgfFnzzx+bYJ7UfB9ivybmdqDhhQRNOHZBqQytY6qMANjFWV9JhcfhpgRkBXNJHTBLKugi9Tbt3zxMnVD44/CslYr1xiTduDg1eBbZ8ZlFmrVWChGDzIWAuf+J2iB90NQ+Zfe3/cX2DT4UMZOtyPPGyYU=
+	t=1758030561; cv=none; b=R5n49zv/3O3FsntTUzPWmTIz29oOvdCtRYDlnMCATGTPUXKE1FflLTAB+ps0EhQJrB8dEK+t3FXI3M+51lYbvjA5nPa0QO32q0J4Z5CH10hlVTKkGRvONLnSSna3DZVC1Mi3CVanB0MsLBqwUg1jdUf0Fcd6uQWGU9v84ToDI2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030495; c=relaxed/simple;
-	bh=EGoRHm1AjdpF4qXWjotViM/Oqd6Csf2a+j9muOz8+oY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c7j5qfVLxGdzAhMucLDtFFmN9d3fJqRSfPzFYklOp8WZSo2IG+eVhAm9Zq5i8CazEWVTWTK7+8mhsUdBZpL/XYpnE2RNk28knQ7pLdwA1Iijwu0Z68p5amSWAT4P+J938ENYtNbyyesUvEq2edXrjyoy19pDhPK8ZdJlan62tFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mvv+TWpc; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G6WECw018938;
-	Tue, 16 Sep 2025 13:48:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=GZWixmiRGJYwZ6gnK
-	KhMrk/ZZIF2LkvvtIFicnLWZSI=; b=Mvv+TWpcGH0LN/uSwaAPNfFQif1X6oBVH
-	o3xXnJVhrqPlMt4J3SKP9CocGQDZqN1MBqOdfzp2LT32BZmBv6HAQhpkvdN+Vq2O
-	lgnLRxCk5LabP/mkWuNs72gk2L3YIvDHejJnLsljM8ETDy8WZ6BY2buk77WWIxqc
-	ODv2xhlLAy8u/P7+17KgYNFznEDyFzmQuLoZqtqh/ac850HgPftAHEXJVp5jkkxy
-	TfmhvyWLFB//MxV/Ybqv55nHv9UheJhxCq9DBpQWPJd2R5ShoKVnOVgPPbryYcFC
-	ub2qdcAwiUqd4R/fgakeu8A9bYXfPaAZt/oDg8fyXGypL3Ae2K8pQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat7w7k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 13:48:10 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58GDFuKB020217;
-	Tue, 16 Sep 2025 13:48:09 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496gat7w7f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 13:48:09 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAMqMr022297;
-	Tue, 16 Sep 2025 13:48:08 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kxpm44p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 13:48:08 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58GDm4lu61800848
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 13:48:04 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 732962004B;
-	Tue, 16 Sep 2025 13:48:04 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 43A5C2004E;
-	Tue, 16 Sep 2025 13:48:04 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Sep 2025 13:48:04 +0000 (GMT)
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-        Kees Cook <kees@kernel.org>,
-        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Juergen Christ <jchrist@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: [PATCH v2 4/4] s390/bitops: Cleanup __flogr()
-Date: Tue, 16 Sep 2025 15:48:03 +0200
-Message-ID: <20250916134803.874580-5-hca@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250916134803.874580-1-hca@linux.ibm.com>
-References: <20250916134803.874580-1-hca@linux.ibm.com>
+	s=arc-20240116; t=1758030561; c=relaxed/simple;
+	bh=3tFDQ5PXjECZreGW2Mg6CH8zpQKyQ9QK7iQR7ImTgwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRQ395NXFQUBj61pGWPUbGwu2l3UebvRvT1oYamp8kTJdx6NTcldtu1HTOi3SScaUBRSeyjUI+XV9yeWPx8/DqnCi5O92t82rBaTi7n0M6MitFAqy6fhSmPEsSjXvq2sMvmEu0YbzA4Fpssv8g74nGLIOMK46R5ewrZA2+Nar5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l8BV94p7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52035C4CEEB;
+	Tue, 16 Sep 2025 13:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758030560;
+	bh=3tFDQ5PXjECZreGW2Mg6CH8zpQKyQ9QK7iQR7ImTgwo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l8BV94p7UmQOOxN8y5wmI618lyCl4HmnCC4dPceeHbjEXcop4lrKlIHqr1Jhpam6B
+	 8vEFCVf45kyObxowpSeeZBQLbmkAqZGN0oMXsHHDJDMhMofikVoKZZbV1ejR7Hgqo+
+	 1VWW5m+zm30ugJHpHizGh5zsndh0fc9S9Inzjz4bj0697uDZk6AW3zYvg3TxXNk5QS
+	 nG+FCZfa/vlV6nt3h7iF/iDB4EQggcFww046utrTeUej4jhL4flMGHNoZ1VJ6A4Xbe
+	 FZSwq7AHfvBD4rBmcw1rBNW9/VgenQ6XioBXa1Gr3fDvD2gLD28rFwZTnuLfxHxDGC
+	 ejMRCkH9w2L+Q==
+Date: Tue, 16 Sep 2025 16:49:15 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: YanLong Dai <dyl_wlc@163.com>
+Cc: selvin.xavier@broadcom.com, kalesh-anakkur.purayil@broadcom.com,
+	jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, daiyanlong <daiyanlong@kylinos.cn>
+Subject: Re: [PATCH] drivers: fix the exception was not returned
+Message-ID: <20250916134915.GC82444@unreal>
+References: <20250916091154.11421-1-dyl_wlc@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=BKWzrEQG c=1 sm=1 tr=0 ts=68c96a9a cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=WNZe2jjSjyEjSw6ZzqkA:9
-X-Proofpoint-GUID: Gt8n49tE_-xJqXxB-bNjnwxnk47POVex
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX2HGr8igbeyNB
- GRIwXDJXUzo6aRUG36MI1G02Tp3zsXbQ2iElLry3cNM/6afuM9f1plehbUI52g5ffSyD8Q6k1Q5
- BdYdAuOSugtxk2BlYD3ZVsY5PI45ol03qpn8IWhrZedFlkGbrTzqQYeKtnifBEQ05meRDhCv7s3
- 3R4NIFKutfMYrvKCYkeKfv2bQ14VCoTXh/lz1ykEvGZZngDrqzV+z0kAX2C1cNKsuRcdeHNp6EA
- ZvqkJGgUpqDj/iD9w4tJN4Q8rAqnCAFJITyGzEskPCpHDMgpn/k9dEoHO70siJC6PAH6F1p6/yf
- Qa44fTgceTgIy69sFLSE341cPOleE2NEkLCqdW95whiNuW5smKYeDjupXmPhCf7zNcIyPrJthC2
- BTe/mcNP
-X-Proofpoint-ORIG-GUID: w-Dvi7ZrPluW_AOxAnObND3DaTwvTrDr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0
- suspectscore=0 impostorscore=0 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916091154.11421-1-dyl_wlc@163.com>
 
-The flogr() inline assembly has no side effects and generates the same
-output if the input does not change. Therefore remove the volatile
-qualifier to allow the compiler to optimize the inline assembly away,
-if possible.
+On Tue, Sep 16, 2025 at 05:11:54PM +0800, YanLong Dai wrote:
+> From: daiyanlong <daiyanlong@kylinos.cn>
+> 
+> The return value rc of bnxt_qplib_destroy_qp is abnormal and no return
 
-Also remove the superfluous '\n' which makes the inline assembly appear
-larger than it is according to compiler heuristics (number of lines).
+And what is wrong with that? This is expected behavior - do not fail if
+destroy fails.
 
-Furthermore change the return type of flogr() to unsigned long and add the
-const attribute to the function.
+Thanks
 
-This reduces the kernel image size by 994 bytes (defconfig, gcc 15.2.0).
-
-Suggested-by: Juergen Christ <jchrist@linux.ibm.com>
-Reviewed-by: Juergen Christ <jchrist@linux.ibm.com>
-Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
----
- arch/s390/include/asm/bitops.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/s390/include/asm/bitops.h b/arch/s390/include/asm/bitops.h
-index 5ff069fe9526..0908bab20d7f 100644
---- a/arch/s390/include/asm/bitops.h
-+++ b/arch/s390/include/asm/bitops.h
-@@ -130,7 +130,7 @@ static inline bool test_bit_inv(unsigned long nr,
-  * where the most significant bit has bit number 0.
-  * If no bit is set this function returns 64.
-  */
--static __always_inline unsigned char __flogr(unsigned long word)
-+static __always_inline __attribute_const__ unsigned long __flogr(unsigned long word)
- {
- 	unsigned long bit;
- 
-@@ -167,9 +167,8 @@ static __always_inline unsigned char __flogr(unsigned long word)
- 		union register_pair rp __uninitialized;
- 
- 		rp.even = word;
--		asm volatile(
--			"       flogr   %[rp],%[rp]\n"
--			: [rp] "+d" (rp.pair) : : "cc");
-+		asm("flogr	%[rp],%[rp]"
-+		    : [rp] "+d" (rp.pair) : : "cc");
- 		bit = rp.even;
- 		/*
- 		 * The result of the flogr instruction is a value in the range
--- 
-2.48.1
-
+> 
+> Signed-off-by: daiyanlong <daiyanlong@kylinos.cn>
+> ---
+>  drivers/infiniband/hw/bnxt_re/ib_verbs.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+> index 260dc67b8b87..d52cfb50b1b8 100644
+> --- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+> +++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+> @@ -971,8 +971,10 @@ int bnxt_re_destroy_qp(struct ib_qp *ib_qp, struct ib_udata *udata)
+>  	bnxt_qplib_flush_cqn_wq(&qp->qplib_qp);
+>  
+>  	rc = bnxt_qplib_destroy_qp(&rdev->qplib_res, &qp->qplib_qp);
+> -	if (rc)
+> +	if (rc) {
+>  		ibdev_err(&rdev->ibdev, "Failed to destroy HW QP");
+> +		return rc;
+> +	}
+>  
+>  	if (rdma_is_kernel_res(&qp->ib_qp.res)) {
+>  		flags = bnxt_re_lock_cqs(qp);
+> -- 
+> 2.43.0
+> 
 
