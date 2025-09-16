@@ -1,121 +1,281 @@
-Return-Path: <linux-kernel+bounces-819382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60D3B59FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33058B59FBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BA12A53B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:48:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D91466CB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DF32877D2;
-	Tue, 16 Sep 2025 17:47:48 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7C9248F40;
+	Tue, 16 Sep 2025 17:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ke8zvgBQ"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012055.outbound.protection.outlook.com [52.101.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F7D27E04F;
-	Tue, 16 Sep 2025 17:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758044868; cv=none; b=h373A98JkU+2yup64zykIUCjVXYCxUj+ikCzjwPKXtzgOkwV8S8xs6Q2KZD2f5gZhM71/T6d+bqcZYVE/TqTBoU0WLD9czAsBj2fC61YObW3+UpVXHPq9x+Ck/4Wv7UpOkMSleaT8Ug9kVco5YnQk1vwiLzWMKMyEKgCOAAlUis=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758044868; c=relaxed/simple;
-	bh=YqjelYCPt3ItQZeVSwG5EOEY2H7o04PZ4x8dk0USZ4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mn6+iEkQYb8RPvLrnIghqZ0BgVJRo/HvfbiKeiTdJzDm6hLcGvjLY7lWTBvFlI8Y251wOMLs9PzSUgZMQZYZAH0TRx3+d2v2AoZF1rJchKa4iVvcvnmnynzUFGxXGJtPxfXLOxD7dhGktDZvK3V2J7yqV9geenn9RCAS/z8xRtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 2F291160281;
-	Tue, 16 Sep 2025 17:47:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id EA69C1B;
-	Tue, 16 Sep 2025 17:47:29 +0000 (UTC)
-Date: Tue, 16 Sep 2025 13:48:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org,
- lorenzo.stoakes@oracle.com, david@redhat.com, Liam.Howlett@oracle.com,
- rppt@kernel.org, pfalcato@suse.de, kernel-team@android.com,
- android-mm@google.com, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
- Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook
- <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan
- <shuah@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded
- trace event
-Message-ID: <20250916134833.281e7f8b@gandalf.local.home>
-In-Reply-To: <CAC_TJvdkVPcw+aKEjUOmTjwYfe8BevR51X_JPOo69hWSQ1MGcw@mail.gmail.com>
-References: <20250915163838.631445-1-kaleshsingh@google.com>
-	<20250915163838.631445-8-kaleshsingh@google.com>
-	<20250915194158.472edea5@gandalf.local.home>
-	<CAC_TJvconNNKPboAbsfXFBboiRCYgE2AN23ask1gdaj9=wuHAQ@mail.gmail.com>
-	<20250916115220.4a90c745@batman.local.home>
-	<CAC_TJvdkVPcw+aKEjUOmTjwYfe8BevR51X_JPOo69hWSQ1MGcw@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6429E32D5B6
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758044948; cv=fail; b=qdVxMDWMb6RumW4O9fdGgcdWvfPFgpoeK0hQCSK8dNaVm2vraUCXOwXPnQFjhqLaMxZFHjDPi3qIOXhNo6B43DrasEqcnIjT8r6C2jgVwS5FkqVHs9r9QxgE/3oMTPuZv3UkLHWYJOWaYq6dMxAt/1rr6P1PcO5DawzgQ650EAE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758044948; c=relaxed/simple;
+	bh=hk3FSkgUDT4gL7WImjGJ4xdVKV7Z9VZ5BOfIH9s5c1g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lGkrS9op98Xc6Exn/gNUpXP7EILzN0LDeJhIQgB2BNBOTFoefZwjRUesxBpdycRuhjnmmS+hcbf2/QY/5jKeFq3ADWUQUTX6HODWpy/YZCwD0+3cyO9AZ6g1Sd4/IRwlTWcBoBuA4zBkVPsh2fj426SAgrKX5U7Rv2aJuoYzUGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ke8zvgBQ; arc=fail smtp.client-ip=52.101.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EyIbdyoBSNZbkIhlPkqTEgyOU7q+Muxo76gJJbKrj/BwCSSJ7YriR/Xi8CF5r4Yrdh65WcZj/pE6l3tJKM24Pt69kMmdixrqvQpuIptVxAHy4KOdsYPRjFH6AE55J8SCdL9RLeHz8Kr1wTAFcGFZjISFtKYUopirYtZPXpxBDeu6RMS3DtJ+igMYOzTUpVyZ00uW5bQhfdsGlD+OiKkY5wJqXXanV63kTKPRd/U8PHFi+ppnr/+DgrMNcouJoEsAljAbdfKuPI72QnGVwMl0IEFap5Bom152ntvjcg4TvIfESy2U7s+fXwOQqP5VicxuFJBM3wR33jy3pHMN3DU7dA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NowBLbPpI/HduxwbxPHGhB1TlCWr1tQKsBKE//N5KP4=;
+ b=qho6yqH7FBUQbYLif2tcPjwrVAXIIYmZRLXqXPcS44bA9pK0eRlwVLz59CyNrQ9DIQz8WnwMpZfBB4FH58FYJ4xRir1N8nAgV4/YUZ4hjrg3rzC9l5O+a1BnHOllKj0JADMZVUIqZKpNUjHjVyBuUCfTEICNu4PXxu2eOv5D/FNtqehLtFczEsJHQG0h6kzaUoCZv0KotLXRGTRgrtqTQEri3uzatzVmkrvv84M+NNFJfhanddBtdAkTb5aaTRY066WjX68EQO15TEzTqZxPfEceGuBhPvgVg7RkpGwAzVnZ0XNpPItltl0DnQSKpeWkSydXbzgrZsy5mksHAfamuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NowBLbPpI/HduxwbxPHGhB1TlCWr1tQKsBKE//N5KP4=;
+ b=ke8zvgBQ56uov+NUpeJlN0QZbYH8rFxigg+H7W5OO61xnrSXCjfnhtsrzDA3K64bL9u0+w7ZcmNB4LZUUGFKrx7jGfknE/HaZs5b38FIZfMbJ08bgWnCiaAgo/vMt6N2VttKgaeQko+0IK2iOPuVHk4lqW3/GZE1q0KvRc9s1jc=
+Received: from SJ0PR03CA0389.namprd03.prod.outlook.com (2603:10b6:a03:3a1::34)
+ by CY5PR12MB6646.namprd12.prod.outlook.com (2603:10b6:930:41::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Tue, 16 Sep
+ 2025 17:48:56 +0000
+Received: from SJ1PEPF00002313.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1:cafe::36) by SJ0PR03CA0389.outlook.office365.com
+ (2603:10b6:a03:3a1::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Tue,
+ 16 Sep 2025 17:48:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ1PEPF00002313.mail.protection.outlook.com (10.167.242.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 17:48:55 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 16 Sep
+ 2025 10:48:55 -0700
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 16 Sep 2025 10:48:54 -0700
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
+Subject: [PATCH V2] accel/amdxdna: Call dma_buf_vmap_unlocked() for imported object
+Date: Tue, 16 Sep 2025 10:48:42 -0700
+Message-ID: <20250916174842.234709-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 5uqotgt5cqbtb693tzenck8fsp784zbq
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: EA69C1B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19fYVEo+TQfqoFVoPY0drWwFJ5ox6HfaHo=
-X-HE-Tag: 1758044849-648048
-X-HE-Meta: U2FsdGVkX18pAhXbWHugGNFQkb4HsbkpHA3LSK9XLE+vsmwTM7qPsZjE2Q1AkokCaSSM3kECB5AtJoNuafNVa4c24DllJqRZBRvH3Zmhy5wNh7TxTIkWD37LWX+bmFtCcebRBnxRuw3/k7vvz39wmpkcHu/7IwevVpAu7R0GogngimDsXGbeq53gsFUSv11MEKrEXvPbk4fw2Y+CyjjJq7TcrXucdUHUeHf7eiqw5uLSPBWimQmNj30QjsGtyMec/D0hb09wfSYgY56Wz5pEFnLq6GYNKSiHSG5mPzJ0+9udgkbbXo4zTaOyLKWUXBfDcE7VEMWXx80P+tQi6apDTcgD1TYy32eR2VKzLPG+ZszbApg+pHDZug==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|CY5PR12MB6646:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e94677d-1d83-4e4c-7b31-08ddf5494edd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4CGoq3k2/F5hDxXfyr4otq9PcGsAcm4wPA10duSRf9qW5mU8Mk3ptzQ1qk0a?=
+ =?us-ascii?Q?u5lGZodJke+BDz/Mi/KAbu7gnLYt40fC/+p5/QHDb68jgWMX0YeXHCTeoKCW?=
+ =?us-ascii?Q?Y3bR3sEfqMdLMla/rLSkMO4Im6zf5HKZF6Cp16VVUcERS7YOgIFWxLwMDw4e?=
+ =?us-ascii?Q?wM0UOHt++ou09VuV868RvALOAWZH6no/mUlO0soySkUbaWR1kaTYxlcBUkeq?=
+ =?us-ascii?Q?ZGGWb9rXQGzgNxQMbqcNV++1ywSY4mf1TyhOoee7OVz5ta6A94e22IvHnbVs?=
+ =?us-ascii?Q?VO6LTLfG97gD+7YWHpbuwe17uIf8ixp+JT77lTIqS59FIuQ/iAfx+raLe7Vt?=
+ =?us-ascii?Q?sbB90/6E3dbTb8tM4oUe5QVnvBCVJZ7p7pM5DHadl+4vYiXHkLdLV5YhgXK3?=
+ =?us-ascii?Q?pfot+xifHxlrYY399sTGhkgWSW8ZDgdRMwgQNGDDF7XWRq27qfIM1C32BpnU?=
+ =?us-ascii?Q?qW5D6UPrgB66AWR8sUQ2TQfOLNhskdEnl0srdCB2JDy0ug7Ln3D/OAbgjaEy?=
+ =?us-ascii?Q?akngvcsXIBJ+cjPDoSviZ1FmXM6kxAgqKL7G25BZrW0ysQwJuC2ivgqHLs18?=
+ =?us-ascii?Q?QGp2w+5dCIyCq+8LoReggOeunpiXu0tFA8momPCoal7JvrLoR6HIA+kymhqa?=
+ =?us-ascii?Q?AJESJLAwnrr4Ggk+0g/t9k87vjyDsgBUMya6yauXTuY+5mnT5SSW16BjXcL/?=
+ =?us-ascii?Q?62txkQ+OX1AzZOAT5E1Gd/PukJ/t08LxFViIMbiZrimVcapH0fT2+ZyFSLcd?=
+ =?us-ascii?Q?ZzS+F19TeAU/3bU7OUEXgvWwNvJB9byzOMKN1U/TA3cO5i8gNVtYzkZqQiWg?=
+ =?us-ascii?Q?7BNFP1vd0owvsUBuGddUcgmIwyfZHsGE9iCcpnjSatpijvmR/Ha//NJksd07?=
+ =?us-ascii?Q?acmMr8FWZG60ok2m+V/Nf8rBN3iDorrNq58AfGdLHRirtjku1LCZUwxPeBqq?=
+ =?us-ascii?Q?7BumBn5Jqz/Jl+hMwegyKa66zRgykBggUgT/PJsI5QhG1zw/E9gW7DhxAhTJ?=
+ =?us-ascii?Q?JWYRbwsYylIYLi0dGJkNSPKuCsSR3QQk5d8FeNHy6eHLXL1ru0JRsev8nnru?=
+ =?us-ascii?Q?M6bI7UPptpFbt3DUXvTU6WUTbcUmqjDCCUwImRuVVLZ/plKUaAH0PKCNoQcv?=
+ =?us-ascii?Q?d/XLXwcc+fwBOa0RCLGv/2p/eJ1GTTp6BvT9m8XYcZYC2Vd+Lk1bsB+d82q7?=
+ =?us-ascii?Q?yQk3GKedxHFFZjf7bKEwLcywv0Uzf8NY5CoWhWqQFtHtprhIe08Ae7H6MSVY?=
+ =?us-ascii?Q?Ee4odeqENgOE9wq2h81mrASdz7Fs6YSyWVh7i++gugqu5+4cmJZjHYf9TkAE?=
+ =?us-ascii?Q?1Z+4p9CZfJmA4dBOEquetMYeXiC6dfWM2Ub6m0YuVWk1z/6+fyuiKkpivDbp?=
+ =?us-ascii?Q?s8xgycr/H8YCy1KZnb47pQ6vsTVSGEFoEoae6vcurVW19P8bBPYGwSx2DR0g?=
+ =?us-ascii?Q?FyYaD/f1ZPV0x0yYWByujZ9s5x8SJTQsDc8zEkWjKDrjdd3NNGjXWV+pf+dO?=
+ =?us-ascii?Q?3KE1AJT/nn9Lwq53pNG3snaB7KZkV5jD8X8+?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 17:48:55.9671
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e94677d-1d83-4e4c-7b31-08ddf5494edd
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002313.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6646
 
-On Tue, 16 Sep 2025 10:36:57 -0700
-Kalesh Singh <kaleshsingh@google.com> wrote:
+In amdxdna_gem_obj_vmap(), calling dma_buf_vmap() triggers a kernel
+warning if LOCKDEP is enabled. So for imported object, use
+dma_buf_vmap_unlocked(). Then, use drm_gem_vmap() for other objects.
+The similar change applies to vunmap code.
 
-> I completely agree with the principle that static tracepoints
-> shouldn't be used as markers if a dynamic probe will suffice. The
-> intent here is to avoid introducing overhead in the common case to
-> avoid regressing mmap, munmap, and other syscall latencies; while
-> still providing observability for the max vma_count exceeded failure
-> condition.
-> 
-> The original centralized check (before previous review rounds) was
-> indeed in a dedicated function, exceeds_max_map_count(), where a
-> kprobe/fprobe could have been easily attached without impacting the
-> common path. This was changed due to previous review feedback to the
-> capacity based vma_count_remaining() which necessitated the check to
-> be done externally by the callers:
-> 
-> https://lore.kernel.org/r/20250903232437.1454293-1-kaleshsingh@google.com/
-> 
-> Would you be ok with something like:
-> 
-> trace_max_vma_count_exceeded(mm);
-> 
-> TP_STRUCT__entry(
-> __field(unsigned int, mm_id)
-> __field(unsigned int vma_count)
-> )
-> 
-> mm_id would be the hash of the mm_struct ptr similar to rss_stat and
-> the vma_count is the current vma count (some syscalls have different
-> requirements on the capacity remaining: mremap requires 6 available
-> slots, other syscalls require 1).
-> 
+Fixes: bd72d4acda10 ("accel/amdxdna: Support user space allocated buffer")
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+---
+ drivers/accel/amdxdna/amdxdna_gem.c | 47 ++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 27 deletions(-)
 
-BTW, why the hash of the mm pointer and not the pointer itself? We save
-pointers in lots of places, and if it is the pointer, you could use an
-eprobe to attache to the trace event to dereference its fields.
+diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
+index d407a36eb412..7f91863c3f24 100644
+--- a/drivers/accel/amdxdna/amdxdna_gem.c
++++ b/drivers/accel/amdxdna/amdxdna_gem.c
+@@ -392,35 +392,33 @@ static const struct dma_buf_ops amdxdna_dmabuf_ops = {
+ 	.vunmap = drm_gem_dmabuf_vunmap,
+ };
+ 
+-static int amdxdna_gem_obj_vmap(struct drm_gem_object *obj, struct iosys_map *map)
++static int amdxdna_gem_obj_vmap(struct amdxdna_gem_obj *abo, void **vaddr)
+ {
+-	struct amdxdna_gem_obj *abo = to_xdna_obj(obj);
+-
+-	iosys_map_clear(map);
+-
+-	dma_resv_assert_held(obj->resv);
++	struct iosys_map map = IOSYS_MAP_INIT_VADDR(NULL);
++	int ret;
+ 
+ 	if (is_import_bo(abo))
+-		dma_buf_vmap(abo->dma_buf, map);
++		ret = dma_buf_vmap_unlocked(abo->dma_buf, &map);
+ 	else
+-		drm_gem_shmem_object_vmap(obj, map);
+-
+-	if (!map->vaddr)
+-		return -ENOMEM;
++		ret = drm_gem_vmap(to_gobj(abo), &map);
+ 
+-	return 0;
++	*vaddr = map.vaddr;
++	return ret;
+ }
+ 
+-static void amdxdna_gem_obj_vunmap(struct drm_gem_object *obj, struct iosys_map *map)
++static void amdxdna_gem_obj_vunmap(struct amdxdna_gem_obj *abo)
+ {
+-	struct amdxdna_gem_obj *abo = to_xdna_obj(obj);
++	struct iosys_map map;
++
++	if (!abo->mem.kva)
++		return;
+ 
+-	dma_resv_assert_held(obj->resv);
++	iosys_map_set_vaddr(&map, abo->mem.kva);
+ 
+ 	if (is_import_bo(abo))
+-		dma_buf_vunmap(abo->dma_buf, map);
++		dma_buf_vunmap_unlocked(abo->dma_buf, &map);
+ 	else
+-		drm_gem_shmem_object_vunmap(obj, map);
++		drm_gem_vunmap(to_gobj(abo), &map);
+ }
+ 
+ static struct dma_buf *amdxdna_gem_prime_export(struct drm_gem_object *gobj, int flags)
+@@ -455,7 +453,6 @@ static void amdxdna_gem_obj_free(struct drm_gem_object *gobj)
+ {
+ 	struct amdxdna_dev *xdna = to_xdna_dev(gobj->dev);
+ 	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
+-	struct iosys_map map = IOSYS_MAP_INIT_VADDR(abo->mem.kva);
+ 
+ 	XDNA_DBG(xdna, "BO type %d xdna_addr 0x%llx", abo->type, abo->mem.dev_addr);
+ 
+@@ -468,7 +465,7 @@ static void amdxdna_gem_obj_free(struct drm_gem_object *gobj)
+ 	if (abo->type == AMDXDNA_BO_DEV_HEAP)
+ 		drm_mm_takedown(&abo->mm);
+ 
+-	drm_gem_vunmap(gobj, &map);
++	amdxdna_gem_obj_vunmap(abo);
+ 	mutex_destroy(&abo->lock);
+ 
+ 	if (is_import_bo(abo)) {
+@@ -489,8 +486,8 @@ static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
+ 	.pin = drm_gem_shmem_object_pin,
+ 	.unpin = drm_gem_shmem_object_unpin,
+ 	.get_sg_table = drm_gem_shmem_object_get_sg_table,
+-	.vmap = amdxdna_gem_obj_vmap,
+-	.vunmap = amdxdna_gem_obj_vunmap,
++	.vmap = drm_gem_shmem_object_vmap,
++	.vunmap = drm_gem_shmem_object_vunmap,
+ 	.mmap = amdxdna_gem_obj_mmap,
+ 	.vm_ops = &drm_gem_shmem_vm_ops,
+ 	.export = amdxdna_gem_prime_export,
+@@ -663,7 +660,6 @@ amdxdna_drm_create_dev_heap(struct drm_device *dev,
+ 			    struct drm_file *filp)
+ {
+ 	struct amdxdna_client *client = filp->driver_priv;
+-	struct iosys_map map = IOSYS_MAP_INIT_VADDR(NULL);
+ 	struct amdxdna_dev *xdna = to_xdna_dev(dev);
+ 	struct amdxdna_gem_obj *abo;
+ 	int ret;
+@@ -692,12 +688,11 @@ amdxdna_drm_create_dev_heap(struct drm_device *dev,
+ 	abo->mem.dev_addr = client->xdna->dev_info->dev_mem_base;
+ 	drm_mm_init(&abo->mm, abo->mem.dev_addr, abo->mem.size);
+ 
+-	ret = drm_gem_vmap(to_gobj(abo), &map);
++	ret = amdxdna_gem_obj_vmap(abo, &abo->mem.kva);
+ 	if (ret) {
+ 		XDNA_ERR(xdna, "Vmap heap bo failed, ret %d", ret);
+ 		goto release_obj;
+ 	}
+-	abo->mem.kva = map.vaddr;
+ 
+ 	client->dev_heap = abo;
+ 	drm_gem_object_get(to_gobj(abo));
+@@ -748,7 +743,6 @@ amdxdna_drm_create_cmd_bo(struct drm_device *dev,
+ 			  struct amdxdna_drm_create_bo *args,
+ 			  struct drm_file *filp)
+ {
+-	struct iosys_map map = IOSYS_MAP_INIT_VADDR(NULL);
+ 	struct amdxdna_dev *xdna = to_xdna_dev(dev);
+ 	struct amdxdna_gem_obj *abo;
+ 	int ret;
+@@ -770,12 +764,11 @@ amdxdna_drm_create_cmd_bo(struct drm_device *dev,
+ 	abo->type = AMDXDNA_BO_CMD;
+ 	abo->client = filp->driver_priv;
+ 
+-	ret = drm_gem_vmap(to_gobj(abo), &map);
++	ret = amdxdna_gem_obj_vmap(abo, &abo->mem.kva);
+ 	if (ret) {
+ 		XDNA_ERR(xdna, "Vmap cmd bo failed, ret %d", ret);
+ 		goto release_obj;
+ 	}
+-	abo->mem.kva = map.vaddr;
+ 
+ 	return abo;
+ 
+-- 
+2.34.1
 
--- Steve
 
