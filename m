@@ -1,347 +1,189 @@
-Return-Path: <linux-kernel+bounces-818630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2859FB5945B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:52:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2555BB59464
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7BB1881367
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8001BC7CDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F4E2C21C3;
-	Tue, 16 Sep 2025 10:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873ED2D0C69;
+	Tue, 16 Sep 2025 10:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F4QTMlmO"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010011.outbound.protection.outlook.com [52.101.201.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AbLSsMHN"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95492C031B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758019859; cv=fail; b=QzLGGJ+w/6lK/pyYh7Yk8V5m8JxecgZkN1hoGik6VmZtrrAHTFJJ060djJi6gqJlN9W0uPSYrg01OAoZDRy8kn57M4+DVNPep1wlT0uRKmC1zMwym7jXP0zEpxIuz5yURMPTQV63An/e1RQaklH6C0xyR47dCLeq0Gv2OrYJGYE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758019859; c=relaxed/simple;
-	bh=EUQzUUUqbe9MCx8k/658BWXB4kxlEiNenJm1RSmvDvE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ni/KTTK4GhexsGW91uYe0i/WvSQN1S4cxSg+t2Bd+X8eYp3zAzY/69uNCVU7FB3dBpI1vUPKwqWT2LgHotbMsGonWDuz9rOX0Bsu4pmchyh/QyTtJA+MYJE4AvrTo5xtRUF2MwzEBntV4zG+xgJ3wf+BB92iJtprPoYg3iHB/dc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F4QTMlmO; arc=fail smtp.client-ip=52.101.201.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YKNmOCQPMGSGwtkN64P2zg8Mye+MDKSmjDtxuCUVWLaPVUO+2KBicTfUoCjg/Iy+EDkzrBp7eZEeXZN8+GLN6arjlLbK8VHQ7ln8H6WkPvyOlx60SLWx9jNbnDMHIiP6/0smzPL2hl2Sx8nuJCZqlJ7qOV3Mm6OWPana3w2dHdr+LTk3nHtXLqYoC3zSGUEDmnRwNu0GTvhZyNRnLVgIYw+ZOecLBxrPUWhMscoh3t2KN+YcMTOEH2p44mWWCFXdGxXfZ/JrHmJRoYapKJf9FwK1PotXMAgIUUkdEDutVp78PYuY/o/GuzIKGBQyRgz8fy+wgZGor6PxS9Tn1NfOMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAI4LZnx1aRNT8IXRHr9KjBjibwG0EmXNaCHRMUQ6js=;
- b=cqE5Qe4o8dr5CFKIqNAVfFbpJ55YVRmVBRLzNH87q0qficYt+4uy1YvGnkQh02ZVboV0VAbIeDV2xgG1sGXgYUe3mu9e9sTYyV5nZVBViyd7l/q92EVxzb3DVscJyvTI/FfKa5KQc9sajTrrX3ITeGoOfCCSLkdsilSF3yUgG9EhXviMBUDzTxxXMmi5DQL4qk6ePZoqPit9OA/LZ9+oDGLNZnCuomRHSY/2Kbxs9ESGSXyry/PpnglbE3ItwhLH9LQfDOAdtoN+LlQiFmr4dU9jqquO7TD3u4l7ORIQwYaGgTRIYPjNNjZqyF8ei0lNAktVbuCI9aIox/qXyez0yA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAI4LZnx1aRNT8IXRHr9KjBjibwG0EmXNaCHRMUQ6js=;
- b=F4QTMlmOsXXLTQ7VDzY10xWTLhC+WMBCt7MUcLUfWo9xjnkeTGGxqnrJPMPj3r+hmFB7Y2cOIKML7b1VNAVjgUaklVLogJTVypB1Ib4xStdGvn4W+5GYazb+miIbBw3LuI1yKE+P7D8p8EKkNAoylkN7jaeTA6xnmx2mI6MmPoPfVDQbX+IhftJYTraubsytt9W2bebE/Kdju+k9JeUVNYBJQZx96rke9r44T+n0VZp9udVF2KYrDDG0qGoI/yrkOT38urMcg9vxfr7MjtWwLaDs9BNbxMClx1ICKhjIOgD859SxVyhoSHdUG45uNdteS5m549UYn4AArpvS6fhkHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by PH0PR12MB8005.namprd12.prod.outlook.com (2603:10b6:510:26c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
- 2025 10:50:54 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9115.018; Tue, 16 Sep 2025
- 10:50:53 +0000
-Message-ID: <388ddd8a-c71c-41f1-8706-12ebeea0fc7b@nvidia.com>
-Date: Tue, 16 Sep 2025 20:50:45 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 06/15] mm/migrate_device: implement THP migration of zone
- device pages
-To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250908000448.180088-1-balbirs@nvidia.com>
- <20250908000448.180088-7-balbirs@nvidia.com>
- <d35eea42-ed32-481f-9dcf-704d22eb8706@redhat.com>
- <49039b9d-4c42-480f-a219-daf0958be28e@nvidia.com>
- <4cc2ba18-e7de-448f-aaee-043ed68dc6e3@redhat.com>
- <06a0e258-2c68-43ee-ab53-313a13ed0d68@redhat.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <06a0e258-2c68-43ee-ab53-313a13ed0d68@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0354.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::29) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3F82877D3;
+	Tue, 16 Sep 2025 10:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758019894; cv=none; b=dZtWuA/SOPSca4/AsYzSGEEtPXUZIMqBCCBmGU+CrWwJjgAV2GLgHI2AkmTNOd0VTNGICfMnMw19PGePrv2xKGlJpli1H95mtpuIYAlvLfTCSMpwXJSPHTyYAB7347jCFe6PA21pA2gYlA1uIE2pMtqQ5GmB4s9cvppfEyqPjCU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758019894; c=relaxed/simple;
+	bh=nGtXyRb3El3m6A0XnwTidWGk9rdKsvA5L58wZQPcKTY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=lHjrjMNfnvVB4sYUJHzttMSvzlMZUHJzG7GVwSKI8+O+0tOYp1pKbFKmitqyYANhxB5q6/Y8D/x2/MjxtSnGaaqn6RfTJJAyu9zpVDuJlJkWjHYgUbhY1PXxC7jY2UfeOfGnY7HHEmbudniH1h6imN1b0MvOGqSw66ANumxJ32I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AbLSsMHN; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G7VubJ017774;
+	Tue, 16 Sep 2025 10:51:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=6tiMzpFySb6QheQKIvDTH6bfs6J9A1FW2+JoAuxFTeI=; b=AbLSsMHN4/7x
+	K1xNMtFDrE+TOYW1iIsk4Mpi83HqtjESBjZwkWHJ8kKIL6P1kWFgRbg5RHL/Vc3/
+	3gNiaqucIq+Hh51NRfzWX0tQi6l43nWNKIrpYWsuJRM6WFMkpMIumQPjbiBNolvo
+	Y5C7x/SgZ+Lg+AIaq8uXUg7N+k5h9pT/2jo/OiBPLGzNJmqVQ/uNJdo/uDuDiSBq
+	WEnHzpMxwUc0R/63Kg2X/G4mqzS8whBtZo73nJ9nqat9v/gFpoDFgpa6HdDBi/35
+	ZZtv0zCsk+pBvAE/vE0jbXVqaj9ApqBocZnQJNjhIpUknqNLYl+7NU0hbSMUKozo
+	aSRGgR2Zog==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g536k9u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 10:51:09 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58GAp8j4018605;
+	Tue, 16 Sep 2025 10:51:08 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g536k9s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 10:51:08 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G85k50009486;
+	Tue, 16 Sep 2025 10:51:07 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 495nn3b4fg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 10:51:07 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58GAp6EK11011482
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 16 Sep 2025 10:51:06 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6406D5803F;
+	Tue, 16 Sep 2025 10:51:06 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4345B58055;
+	Tue, 16 Sep 2025 10:51:04 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 16 Sep 2025 10:51:04 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|PH0PR12MB8005:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e54f6f4-83eb-484a-5473-08ddf50ee858
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZkJuWEVxZ0J0R3c4UnE2dTdYamlBdVRZejV4d0h2NDVaZnNYeCtXQnVNSWdH?=
- =?utf-8?B?MDUwY3FzanB1N0ZDZlpPY0t4dm52cGQ0Zm9DVzZ1dHFWakFmMFVuS29WNnNo?=
- =?utf-8?B?MklKV1JPM3YwWlhuUHZBRlVNY3lsY29GL1VlY3BaUy94MFUxYVBydmFiWGRa?=
- =?utf-8?B?aGtvVzZtenFtZ0hKektsQUhCTzhRcFN2NXhaSHluQW9OZHVGUm11UU5TK2wy?=
- =?utf-8?B?bUlGR2drUVJJSmI0emZpQnBrUy8rUUt1QVdpbldtVFNwTUErUU5PWHdsV2Fv?=
- =?utf-8?B?SEFJK1Y5NnBvZnJDOXk5RGhISjFIZkFOTjJKMnY5UGQ0NG5UNkNodlVvMFFh?=
- =?utf-8?B?OUV1RXE4NkwwRGVkek9xUEg1bTdhUHFBMUZsUWJ6czNHTC9DMTZub1RKajhn?=
- =?utf-8?B?Slh1emRuNEtEK0U0dEhiOHlDcjhqSjRHUXgyeEFMRUdsUnIraVkxa3VhN3hC?=
- =?utf-8?B?WEZCY1ljLzFzSFBybnU4TEhLNXROcXFzejE0YXlXb2d3L0tCNWdjcFE3SGxJ?=
- =?utf-8?B?TTN2b1Y1anBtTXdRcGVORXRhL1k5bGVUSnhraU9xTXJrc0pjL1hPS2Q3N2JB?=
- =?utf-8?B?RWwrU3dqaUMzanZ4RmdJQWtMbnF0dE9GZWd6ZGZtQXRranpWK0U2SUhUS2tK?=
- =?utf-8?B?NytGZitCdHJIMzlnWXNPZTR0Rll5Yjg3L3FJSzVOV0hZMmhPL2d4Sm8yZHVE?=
- =?utf-8?B?SU5XTmpuazY3bnNwOFRYdFMzWkFFbHZJNi8vclpnN1ZxMmR2K0NBNVBOWW9w?=
- =?utf-8?B?MXR2QmxSbWR5UDNORFFhS2QxZWZvRkgyTm00VURPNFAvd2pXSmtIRWFWejBQ?=
- =?utf-8?B?cnVqcnEvd1RiMjVGQlBXbFhFVkRKN2d5anFXM2M3MHpEM2I5a2F1a3E0Vm04?=
- =?utf-8?B?ZzNLeUNhMG02ZlRRaWk2N2hydndNbmpKMmRBOUc0aVNxcWFmbGN2MHhrT0xG?=
- =?utf-8?B?YzNJN3VGeDdDWWVxUkErbGZDb3o4cHJVcFphRDVxRzF3NklhM0t1MlhWeFVh?=
- =?utf-8?B?T0xKeXdUN0Z4MFFEYmxabmN1Vm1Ua3lsUnl5ZmdpUUNaZm1zZGxCYWtKQ2RW?=
- =?utf-8?B?ZFBsQWgrTzVwajhHK0tHeDZMdy9pRWh2THkwWEtpeDYzOThYdEtUbHJvM01j?=
- =?utf-8?B?NFZybWZPRkZhUi9rR1ZMakVkQkR2UDhGTldOc3oxVGxidUxiR3RIc3NjRXV2?=
- =?utf-8?B?a3A4NlNuYW1qZ2RydXlvaG1kS3dUQWt5aFJYbUFqY2g3T3lkelJnZnM1d3BB?=
- =?utf-8?B?eFdJZWVjTElvSWFoNk5rblBZak5LYVJLTE9nSndPQmZpdG5CNTZTWDNBOG15?=
- =?utf-8?B?SGxReTVBS1Nhelk3U0RtbVhkemxSUnpYRmZZaGpKY2l6WXVVai9aNEY0Wldr?=
- =?utf-8?B?Q1JxVUlxL3lRK0xDbDQvRTFHYmpFYUgwNlNsM1E4MWZ5YVZ5c1JSUU5nczN2?=
- =?utf-8?B?OEkyK3B6ZVN2UXJ4QjdGa2l4MklsbGRFSkljMGpuRXJCRy8zSUFPbUc1RmVx?=
- =?utf-8?B?Rk8wU2ZrT2Iyb3dMMTZveit2YnRZTnMxYThRbEhCNWdhVWMzaEw4OVRQMkdr?=
- =?utf-8?B?dDNJSWIzQlhMQ2NYREk4cXZDbHJYbklqcEl2ejhpQXBteDlTenpTeEs3WUpF?=
- =?utf-8?B?YkFxTmV1ZFlTcy9DbzFWZkE4TkZRUTljcmszaHpHNWxmeXZSUXVYb2QxNTN5?=
- =?utf-8?B?MHlGaUhlUWZuYzM3QTl2RDdPSWkxYmdnZ0NiOWExc0V3YW5Zdm16NVUxcDVn?=
- =?utf-8?B?Y0w3TzZOV05Ha3lTVDd4dUljb0poS0N2OU1DRmY0Y1JETmVvTmFkdzBpdnk4?=
- =?utf-8?B?Wmh3RTZoTysvSUF3SzVBRU1MOVdyV0M0Q3lTTitUMkdJS0lIbWFYaHZmRHZs?=
- =?utf-8?B?VktmaUJ6L1Qyc1J3Z1VIWk01bXZPSkJMUmdEOHhONlkxemdBV0M1OStNSlZB?=
- =?utf-8?Q?Q9gGVVGiYJk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SVFjU01yNExJb3huS3lXZmpMbXVGN3dmQklPYmI2OUNPUFl1SVAya2F5ckFD?=
- =?utf-8?B?U0xVMDgvbjArbEhGU29pb0lzeUpSbmZPR3NONmVUUE1wUUxXY0o1cnowOFlB?=
- =?utf-8?B?NVI3VFZnSGRwNjlmMFlveEgyZFpCd1pyYVNFMEk0VnErM2NtOWM3ZFhlL2NG?=
- =?utf-8?B?bmVyRURPOWNGVmdaOTJOaS92UTdrbTNzNk13TUdxSUorSGZMWkJQbkkxRmsr?=
- =?utf-8?B?QUNMcWNDajcrYmNXQTdMWmhlUFcyeFNSbGhNTytibkRpdUlycVk0K3lFanlX?=
- =?utf-8?B?cW40bGxIaVBibDhNOEEzbFpodGNBdGJoRnU3R3doUGtUY2k5Rys0MThXeEZS?=
- =?utf-8?B?bU85b29kYVZKVnEwTUtlSjkrLzF2MW1CZ094YTV1b3h3NGJuN3d0WGhqbnJZ?=
- =?utf-8?B?bXpVVzlDQkh6cG9QZ2RKY0JNeDlKelNCRUNMQnZuenJ0V2NaNUVUU1lIcmox?=
- =?utf-8?B?cDVXSXZObVJDeE9lMVZFaDRGaXlqNW1iK0xHS0NGeTRkUytjNTdaR05tTE5x?=
- =?utf-8?B?c2h4WDBOR2V6WXROVTdiTTUzV0Fjb3lwS0hscFFPRXU4ZzV6bEo5K3VZbndr?=
- =?utf-8?B?UHVjTUVvMlV0M0gvVVNRdnFtM1Z2V1BWOFNxYTczRmJnWk5heWd6N1RiOGRo?=
- =?utf-8?B?L1BrTFVTTkR3Unh4YW44b1pvdFZMMlZmaGRXbDFKOExxZEFUL2V1RjVhZ1Y4?=
- =?utf-8?B?WU1sUkk0U25JRkFYVC9SZFhPdHRYT0o3WGlEZ09SaFMzL0tYRllwR0I2TUFy?=
- =?utf-8?B?RE9CR2JRWm9UZEVvYm55NERHYUtWNmkxcitqN1NNbWVtQm8zRTRaMXlDMmVk?=
- =?utf-8?B?TGpMSmpXZ2FlSVlNVnAzT2tLeGlaYWFvTzhONlVZaitrOVpZVnJTRUNSMlR2?=
- =?utf-8?B?SXpVL1RTbnl2bHZpNnVuTmFGakNwcGJ2RmY2V2RrMnBRd20xczhXQVpxSGFY?=
- =?utf-8?B?QmZZWTY3MHdZbENkME8wMGU3MVFTVnRuY3EzL05EY1dZSG5ub1dzM1QrQU9o?=
- =?utf-8?B?S1krZnVzYk1pYkZZaFBtL25lRm05MEJWT2JkZnEzRVVYSnlpejRNV0FraTl0?=
- =?utf-8?B?bWgwOE03RUZrZk9BZjVRZTRTeTF1S00xVytlc3ZFN0RZK1FqbSs0a1R1MkdX?=
- =?utf-8?B?RERmWTJGbkFiR0RZR2pTRlhFUWFYc0p5MnhoZGFSQTBWK0w5QTdtREoyVFJW?=
- =?utf-8?B?WklOZ015Y3I0UGliK05hazl3cXpWMHNsWW5KbXp2TnEvaXJKdnFqM0pJUTZw?=
- =?utf-8?B?cDZRSnhZeEF4T2RDYmxXSmtncTFhdU8zUTBNQTFHeDRDWkN4UHdTSWhHcFAv?=
- =?utf-8?B?UzJtZTdkckpoSHVnblR3TWVjRElPMkFVTmlldVZGS0dHUmdGYm95R3daNEU3?=
- =?utf-8?B?WUJ0TWpSOUxwVG1SeEZQV2M0bk4vMFFLdXRmUlNMcDExRHVEcDJEUUZBZWFN?=
- =?utf-8?B?cmh5OFMvT0hOdHVsVGlsOTQ1UXhQekVDVlJjVHNCMU5RTE1nOE80ZkZTMEMz?=
- =?utf-8?B?VThwSHVXOWF1eWlCY2xNTHJkQnRZTnlUc0kwRUpkeWFHRzNBUVBRZ0JWNlNG?=
- =?utf-8?B?R01OYlJ0N0JGOFpwaHloZFdJT1I1L3RYNW14UURzM21MWG92RThQcDlXRHVY?=
- =?utf-8?B?YkpxYk4xRmVMZjlrNjdJVXcyTkQ3c21nSVZHU1VlbG8zWU5yOHlGcE51ejBz?=
- =?utf-8?B?eXlqbGhmZGFYQlptNVNHU1l6bDRNUXEwS2FDcnNjRE4vSVdUUitkQmlETVpS?=
- =?utf-8?B?T3dlck93alhTcXl3WTBVaVYwcFQ1YzNtU3dKcjVpYld3dXRyQjJRSEJMWTBT?=
- =?utf-8?B?WjN3a3FZeHZUZUdRTGExT2E2cWRHRFBpLzFzeG9yS290K3dpYjQ1K29CMXJE?=
- =?utf-8?B?Z010Z2E2OXl5a05uT1pIZHBIMXl2Skh3REFjQm5pYitGNU1zV2xjYkhHQVJP?=
- =?utf-8?B?RTNMSllhTHQyai83ZGNmMmdkY2Y2c2JVUmpWQTl5eDNHOEM3NTFEQm5MamZv?=
- =?utf-8?B?YkxQS3ArZnZiUTJoSjlOOFVERTlwV2h5a08xOHBoZ2o2ZWZneFZualU1QzNh?=
- =?utf-8?B?S2psZTE2b1hNNzVaYkJwa3I3SlYxSzZ1M1NnVU84YlRvTlZ3aFN3dUVaZXR2?=
- =?utf-8?B?QlNRNGhGcFBVUzZxSlR5QjNvbUo1ZzhZSmRwb2FieEl5ZkxUY1dCTnVJTnpt?=
- =?utf-8?Q?il4QYyLmnGWQzlUSnj5wSTGDylFKxZBtMn3BuJ0N6XGO?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e54f6f4-83eb-484a-5473-08ddf50ee858
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 10:50:53.7283
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9iUoHP5YPrSXEg4NxICc/6zQsKy/l1uIBEBto47GpOQNLFANH6fWvN+jhh8mrLCxtq8kuNawiK+rItbCcnZz0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8005
+Date: Tue, 16 Sep 2025 12:51:03 +0200
+From: Harald Freudenberger <freude@linux.ibm.com>
+To: pengdonglin <dolinux.peng@gmail.com>
+Cc: tj@kernel.org, tony.luck@intel.com, jani.nikula@linux.intel.com,
+        ap420073@gmail.com, jv@jvosburgh.net, bcrl@kvack.org,
+        trondmy@kernel.org, longman@redhat.com, kees@kernel.org,
+        bigeasy@linutronix.de, hdanton@sina.com, paulmck@kernel.org,
+        linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+        linux-nfs@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-wireless@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-s390@vger.kernel.org, cgroups@vger.kernel.org,
+        Holger Dengler <dengler@linux.ibm.com>,
+        Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        pengdonglin <pengdonglin@xiaomi.com>
+Subject: Re: [PATCH v3 05/14] s390/pkey: Remove redundant
+ rcu_read_lock/unlock() in spin_lock
+Reply-To: freude@linux.ibm.com
+Mail-Reply-To: freude@linux.ibm.com
+In-Reply-To: <20250916044735.2316171-6-dolinux.peng@gmail.com>
+References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+ <20250916044735.2316171-6-dolinux.peng@gmail.com>
+Message-ID: <31be6bb6541bb3e338e3025ac9e8fce5@linux.ibm.com>
+X-Sender: freude@linux.ibm.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: dUB5GxZDVKC_6J2Ylb023C_3mzK49UHc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfX5K5HvLPe748s
+ 1a0iccxe5DzHqpq2HHVExtQN3K3dDZAHmx+plczsOrZBuez8PS/bGeKlwxmdko1vp27MiJETJTG
+ rWBkahKjm6E+Lehe9W5AsUAlfhXLzBCKZl91u4s5pKGLTilBgre1vFNiCO4KLvO9XrWU1Caav6A
+ LP5y7FEjU/NnADi5ucPQYwViKT2GmRSmRBhcRXXpZEfspZ5l5uxEmXVcbW4As4eHjzGuflsj31H
+ fsacgfENVa2S7hh4yS1XXPBx2rL5+dQv2gYhPIFTz7huQ8NQh9IyA9t8ZyRl7UxTDbk1vmK6jmT
+ k/dl/Zv55pKlRrfw9Ym17kI1XWuEyzglymXJjQwZlfbaExngRAMTnR8i/K+0vtUxACA7W2YSZzh
+ NNpGuSjP
+X-Proofpoint-ORIG-GUID: okqK8s0OaduvH8SS01anEhfn0Ac3dkSd
+X-Authority-Analysis: v=2.4 cv=UJ7dHDfy c=1 sm=1 tr=0 ts=68c9411d cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=IeNN-m2dAAAA:8 a=VnNF1IyMAAAA:8
+ a=pGLkceISAAAA:8 a=6zuzY4jPHNdFWWqqfRgA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ clxscore=1011 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-On 9/12/25 15:38, Mika Penttilä wrote:
+On 2025-09-16 06:47, pengdonglin wrote:
+> From: pengdonglin <pengdonglin@xiaomi.com>
 > 
-> On 9/12/25 08:28, Mika Penttilä wrote:
+> Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side
+> function definitions")
+> there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
+> rcu_read_lock_sched() in terms of RCU read section and the relevant 
+> grace
+> period. That means that spin_lock(), which implies 
+> rcu_read_lock_sched(),
+> also implies rcu_read_lock().
 > 
->> On 9/12/25 08:04, Balbir Singh wrote:
->>
->>> On 9/11/25 21:52, Mika Penttilä wrote:
->>>> sending again for the v5 thread..
->>>>
->>>> On 9/8/25 03:04, Balbir Singh wrote:
->>>>
->>>>> MIGRATE_VMA_SELECT_COMPOUND will be used to select THP pages during
->>>>> migrate_vma_setup() and MIGRATE_PFN_COMPOUND will make migrating
->>>>> device pages as compound pages during device pfn migration.
->>>>>
->>>>> migrate_device code paths go through the collect, setup
->>>>> and finalize phases of migration.
->>>>>
->>>>> The entries in src and dst arrays passed to these functions still
->>>>> remain at a PAGE_SIZE granularity. When a compound page is passed,
->>>>> the first entry has the PFN along with MIGRATE_PFN_COMPOUND
->>>>> and other flags set (MIGRATE_PFN_MIGRATE, MIGRATE_PFN_VALID), the
->>>>> remaining entries (HPAGE_PMD_NR - 1) are filled with 0's. This
->>>>> representation allows for the compound page to be split into smaller
->>>>> page sizes.
->>>>>
->>>>> migrate_vma_collect_hole(), migrate_vma_collect_pmd() are now THP
->>>>> page aware. Two new helper functions migrate_vma_collect_huge_pmd()
->>>>> and migrate_vma_insert_huge_pmd_page() have been added.
->>>>>
->>>>> migrate_vma_collect_huge_pmd() can collect THP pages, but if for
->>>>> some reason this fails, there is fallback support to split the folio
->>>>> and migrate it.
->>>>>
->>>>> migrate_vma_insert_huge_pmd_page() closely follows the logic of
->>>>> migrate_vma_insert_page()
->>>>>
->>>>> Support for splitting pages as needed for migration will follow in
->>>>> later patches in this series.
->>>>>
->>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>>> Cc: David Hildenbrand <david@redhat.com>
->>>>> Cc: Zi Yan <ziy@nvidia.com>
->>>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->>>>> Cc: Rakie Kim <rakie.kim@sk.com>
->>>>> Cc: Byungchul Park <byungchul@sk.com>
->>>>> Cc: Gregory Price <gourry@gourry.net>
->>>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->>>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>>> Cc: Oscar Salvador <osalvador@suse.de>
->>>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>>>> Cc: Nico Pache <npache@redhat.com>
->>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>>> Cc: Dev Jain <dev.jain@arm.com>
->>>>> Cc: Barry Song <baohua@kernel.org>
->>>>> Cc: Lyude Paul <lyude@redhat.com>
->>>>> Cc: Danilo Krummrich <dakr@kernel.org>
->>>>> Cc: David Airlie <airlied@gmail.com>
->>>>> Cc: Simona Vetter <simona@ffwll.ch>
->>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>>>> Cc: Matthew Brost <matthew.brost@intel.com>
->>>>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>>>
->>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>>> ---
->>>>>  include/linux/migrate.h |   2 +
->>>>>  mm/migrate_device.c     | 456 ++++++++++++++++++++++++++++++++++------
->>>>>  2 files changed, 395 insertions(+), 63 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
->>>>> index 1f0ac122c3bf..41b4cc05a450 100644
->>>>> --- a/include/linux/migrate.h
->>>>> +++ b/include/linux/migrate.h
->>>>> @@ -125,6 +125,7 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
->>>>>  #define MIGRATE_PFN_VALID	(1UL << 0)
->>>>>  #define MIGRATE_PFN_MIGRATE	(1UL << 1)
->>>>>  #define MIGRATE_PFN_WRITE	(1UL << 3)
->>>>> +#define MIGRATE_PFN_COMPOUND	(1UL << 4)
->>>>>  #define MIGRATE_PFN_SHIFT	6
->>>>>  
->>>>>  static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
->>>>> @@ -143,6 +144,7 @@ enum migrate_vma_direction {
->>>>>  	MIGRATE_VMA_SELECT_SYSTEM = 1 << 0,
->>>>>  	MIGRATE_VMA_SELECT_DEVICE_PRIVATE = 1 << 1,
->>>>>  	MIGRATE_VMA_SELECT_DEVICE_COHERENT = 1 << 2,
->>>>> +	MIGRATE_VMA_SELECT_COMPOUND = 1 << 3,
->>>>>  };
->>>>>  
->>>>>  struct migrate_vma {
->>>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
->>>>> index f45ef182287d..1dfcf4799ea5 100644
->>>>> --- a/mm/migrate_device.c
->>>>> +++ b/mm/migrate_device.c
->>>>> @@ -14,6 +14,7 @@
->>>>>  #include <linux/pagewalk.h>
->>>>>  #include <linux/rmap.h>
->>>>>  #include <linux/swapops.h>
->>>>> +#include <linux/pgalloc.h>
->>>>>  #include <asm/tlbflush.h>
->>>>>  #include "internal.h"
->>>>>  
->>>>> @@ -44,6 +45,23 @@ static int migrate_vma_collect_hole(unsigned long start,
->>>>>  	if (!vma_is_anonymous(walk->vma))
->>>>>  		return migrate_vma_collect_skip(start, end, walk);
->>>>>  
->>>>> +	if (thp_migration_supported() &&
->>>>> +		(migrate->flags & MIGRATE_VMA_SELECT_COMPOUND) &&
->>>>> +		(IS_ALIGNED(start, HPAGE_PMD_SIZE) &&
->>>>> +		 IS_ALIGNED(end, HPAGE_PMD_SIZE))) {
->>>>> +		migrate->src[migrate->npages] = MIGRATE_PFN_MIGRATE |
->>>>> +						MIGRATE_PFN_COMPOUND;
->>>>> +		migrate->dst[migrate->npages] = 0;
->>>>> +		migrate->npages++;
->>>>> +		migrate->cpages++;
->>>>> +
->>>>> +		/*
->>>>> +		 * Collect the remaining entries as holes, in case we
->>>>> +		 * need to split later
->>>>> +		 */
->>>>> +		return migrate_vma_collect_skip(start + PAGE_SIZE, end, walk);
->>>>> +	}
->>>>> +
->>>> seems you have to split_huge_pmd() for the huge zero page here in case
->>>> of !thp_migration_supported() afaics
->>>>
->>> Not really, if pfn is 0, we do a vm_insert_page (please see if (!page) line 1107) and
->>> folio  handling in migrate_vma_finalize line 1284
->> Ok actually seems it is handled by migrate_vma_insert_page() which does
->>
->>         if (!pmd_none(*pmdp)) {
->>                 if (pmd_trans_huge(*pmdp)) {
->>                         if (!is_huge_zero_pmd(*pmdp))
->>                                 goto abort;
->>                         folio_get(pmd_folio(*pmdp));
->>                         split_huge_pmd(vma, pmdp, addr);   <----- here
->>                 } else if (pmd_leaf(*pmdp))
->>                         goto abort;
->>         }
->>
-> While at it, think the folio_get(pmd_folio(*pmdp)); is wrong for here,
-> we split the pmd for huge zero page.
+> There is no need no explicitly start a RCU read section if one has 
+> already
+> been started implicitly by spin_lock().
 > 
+> Simplify the code and remove the inner rcu_read_lock() invocation.
+> 
+> Cc: Harald Freudenberger <freude@linux.ibm.com>
+> Cc: Holger Dengler <dengler@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+> ---
+>  drivers/s390/crypto/pkey_base.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/pkey_base.c 
+> b/drivers/s390/crypto/pkey_base.c
+> index b15741461a63..4c4a9feecccc 100644
+> --- a/drivers/s390/crypto/pkey_base.c
+> +++ b/drivers/s390/crypto/pkey_base.c
+> @@ -48,16 +48,13 @@ int pkey_handler_register(struct pkey_handler 
+> *handler)
+> 
+>  	spin_lock(&handler_list_write_lock);
+> 
+> -	rcu_read_lock();
+>  	list_for_each_entry_rcu(h, &handler_list, list) {
+>  		if (h == handler) {
+> -			rcu_read_unlock();
+>  			spin_unlock(&handler_list_write_lock);
+>  			module_put(handler->module);
+>  			return -EEXIST;
+>  		}
+>  	}
+> -	rcu_read_unlock();
+> 
+>  	list_add_rcu(&handler->list, &handler_list);
+>  	spin_unlock(&handler_list_write_lock);
 
-Ack, will do
-
-Thanks for the review
-Balbir
-
+Acked-by: Harald Freudenberger <freude@linux.ibm.com>
 
