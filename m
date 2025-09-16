@@ -1,215 +1,181 @@
-Return-Path: <linux-kernel+bounces-818257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F78B58EF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD6BB58EFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13BBB4E0357
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D7D2A8635
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A2927FB30;
-	Tue, 16 Sep 2025 07:18:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5672028134C;
+	Tue, 16 Sep 2025 07:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="C2QTNGim"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43012B93
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3393B27AC57
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758007112; cv=none; b=ZWXhBkwFUwZnkgI9vKEK0VH+oLsygGTIhY6hhht+I3Mx0NN2vsHNqpSfUr/Gvb0cPt5w+Tt8dejILy9PoRL0SVulWk0xVGe6oYVz/xYBpKQQtBqY86yAlEp4bh2wLjQz3UGxhAaay951fdKjPDfib2El3ajiRbARhFPV+X+Q2/s=
+	t=1758007122; cv=none; b=tk0sWUHMKDBomhkELxEttRx/9tZJHJnkCXA5Scr/sAFL0OknAOU/kY/bknVbnZ0mqEtcTrU4SpoZ/O58n43UAhbIb9uryWapOO9TmzYjeu+PkV4vD6shIfzBTh4BX8n52F+0nR90zCmcWF6Ic+kk4v0RE7r7nOdcB7m56oeGM7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758007112; c=relaxed/simple;
-	bh=/n5L0zuim9T9324maodQZtpPeiOd0fceXfQP+n+Thx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dhvfi7G93yLHMYdjWHXKLkNCFOnVwDgOXkZO+AoxYCIioOoAZjBGy4N/LcloiizbZPg3S1/3+dC5JrP2dW1ZThrq7l2zhkkONDXoCb/G/HF81rxgnhV6h4KF/aCJBZ35T97/mA11yte0+kgnMTrJRWOut1Cor7ppubXKqyqWHag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uyPx6-0007Fb-L3; Tue, 16 Sep 2025 09:18:12 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uyPx4-001Y7t-0T;
-	Tue, 16 Sep 2025 09:18:10 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uyPx3-00BTqe-3A;
-	Tue, 16 Sep 2025 09:18:10 +0200
-Date: Tue, 16 Sep 2025 09:18:09 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <aMkPMa650kfKfmF4@pengutronix.de>
-References: <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
- <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
- <aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
- <20250911075513.1d90f8b0@kernel.org>
- <aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
- <22773d93-cbad-41c5-9e79-4d7f6b9e5ec0@rowland.harvard.edu>
- <aMPawXCxlFmz6MaC@shell.armlinux.org.uk>
- <a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
- <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
- <aMUS8ZIUpZJ4HNNX@pengutronix.de>
+	s=arc-20240116; t=1758007122; c=relaxed/simple;
+	bh=dNrHKdHCvZRO4rxtXLAcTpH4HfxC/JtqxV+gB/yed4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H87reTF3Z01W0WBaztv7C5/8Aib04UkGP/L6IfK2Uk7ltN88XDrsoZ0CW1/HiBfXLDqD+IN2tgr35SGFEq86C3hNe6GtpgNgHct1ZLSBsu1PkOIoMK8HPD2VQEiA4SoWfP2ATOcCkc4Zn9gke0MtNN/4mrLUoVBksK8BDT6aie4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=C2QTNGim; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758007111; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=jEIJopGBHha5mxI192yQ8swZlaL8UDF92y3iDqtrvSw=;
+	b=C2QTNGim5GM0h+aM6japy8pL+YfGku0cMC/3tdEVPSymK4cZJUNowCR6QOCCHoQf/Fc44jObWNCtWB7Pb4/8fdY/fziZ/zSkq3hk/Lf0gX5PN3oSf3J/TMzXknbDF7tnRS/xfn6alQHtJu+BXh41s541kjciqAzMGEVmc0if9Wg=
+Received: from 30.74.146.196(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wo7PMF3_1758007109 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 16 Sep 2025 15:18:29 +0800
+Message-ID: <6ebb5cd0-0897-4de7-9303-422d0caa18cb@linux.alibaba.com>
+Date: Tue, 16 Sep 2025 15:18:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: vmscan: remove folio_test_private() check in
+ pageout()
+To: Hugh Dickins <hughd@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, david@redhat.com, mhocko@kernel.org,
+ zhengqi.arch@bytedance.com, lorenzo.stoakes@oracle.com, willy@infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1757648598.git.baolin.wang@linux.alibaba.com>
+ <b8c0fe71982aa1cafafd59d8e71064efaac16007.1757648598.git.baolin.wang@linux.alibaba.com>
+ <qe56xt2natnxnkht7wgknsb5nqjhinaaajomvvvgnfpwry2jih@hsj2w5zqj6wv>
+ <02798d6c-1ad3-4109-be3a-e09feb5e4eda@linux.alibaba.com>
+ <9b01a2cc-7cdb-e008-f5bc-ff9aa313621a@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <9b01a2cc-7cdb-e008-f5bc-ff9aa313621a@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMUS8ZIUpZJ4HNNX@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sat, Sep 13, 2025 at 08:45:05AM +0200, Oleksij Rempel wrote:
-> On Fri, Sep 12, 2025 at 03:37:52PM +0100, Russell King (Oracle) wrote:
-> > On Fri, Sep 12, 2025 at 10:29:47AM -0400, Alan Stern wrote:
-> > > On Fri, Sep 12, 2025 at 09:33:05AM +0100, Russell King (Oracle) wrote:
-> > > > On Thu, Sep 11, 2025 at 10:30:09PM -0400, Alan Stern wrote:
-> > > > > The USB subsystem uses only one pair of callbacks for suspend and resume 
-> > > > > because USB hardware has only one suspend state.  However, the callbacks 
-> > > > > do get an extra pm_message_t parameter which they can use to distinguish 
-> > > > > between system sleep transitions and runtime PM transitions.
-> > > > 
-> > > > Unfortunately, this isn't the case. While a struct usb_device_driver's
-> > > > suspend()/resume() methods get the pm_message_t, a struct usb_driver's
-> > > > suspend()/resume() methods do not:
-> > > > 
-> > > > static int usb_resume_interface(struct usb_device *udev,
-> > > >                 struct usb_interface *intf, pm_message_t msg, int reset_resume)
-> > > > {
-> > > >         struct usb_driver       *driver;
-> > > > ...
-> > > >         if (reset_resume) {
-> > > >                 if (driver->reset_resume) {
-> > > >                         status = driver->reset_resume(intf);
-> > > > ...
-> > > >         } else {
-> > > >                 status = driver->resume(intf);
-> > > > 
-> > > > vs
-> > > > 
-> > > > static int usb_resume_device(struct usb_device *udev, pm_message_t msg)
-> > > > {
-> > > >         struct usb_device_driver        *udriver;
-> > > > ...
-> > > >         if (status == 0 && udriver->resume)
-> > > >                 status = udriver->resume(udev, msg);
-> > > > 
-> > > > and in drivers/net/usb/asix_devices.c:
-> > > > 
-> > > > static struct usb_driver asix_driver = {
-> > > > ...
-> > > >         .suspend =      asix_suspend,
-> > > >         .resume =       asix_resume,
-> > > >         .reset_resume = asix_resume,
-> > > > 
-> > > > where asix_resume() only takes one argument:
-> > > > 
-> > > > static int asix_resume(struct usb_interface *intf)
-> > > > {
-> > > 
-> > > Your email made me go back and check the code more carefully, and it 
-> > > turns out that we were both half-right.  :-)
-> > > 
-> > > The pm_message_t argument is passed to the usb_driver's ->suspend 
-> > > callback in usb_suspend_interface(), but not to the ->resume callback in 
-> > > usb_resume_interface().  Yes, it's inconsistent.
-> > > 
-> > > I suppose the API could be changed, at the cost of updating a lot of 
-> > > drivers.  But it would be easier if this wasn't necessary, if there was 
-> > > some way to work around the problem.  Unfortunately, I don't know 
-> > > anything about how the network stack handles suspend and resume, or 
-> > > what sort of locking it requires, so I can't offer any suggestions.
-> > 
-> > I, too, am unable to help further as I have no bandwidth available
-> > to deal with this. Sorry.
+
+
+On 2025/9/16 12:00, Hugh Dickins wrote:
+> On Sat, 13 Sep 2025, Baolin Wang wrote:
+>> On 2025/9/13 00:13, Shakeel Butt wrote:
+>>> On Fri, Sep 12, 2025 at 11:45:07AM +0800, Baolin Wang wrote:
+>>>> Currently, we no longer attempt to write back filesystem folios in
+>>>> pageout(),
+>>>> and only tmpfs/shmem folios and anonymous swapcache folios can be written
+>>>> back.
+>>>> Moreover, tmpfs/shmem and swapcache folios do not use the PG_private flag,
+>>>> which means no fs-private private data is used. Therefore, we can remove
+>>>> the
+>>>> redundant folio_test_private() checks and related buffer_head release
+>>>> logic.
+>>>>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>>    mm/vmscan.c | 16 +---------------
+>>>>    1 file changed, 1 insertion(+), 15 deletions(-)
+>>>>
+>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>>> index f1fc36729ddd..8056fccb9cc4 100644
+>>>> --- a/mm/vmscan.c
+>>>> +++ b/mm/vmscan.c
+>>>> @@ -697,22 +697,8 @@ static pageout_t pageout(struct folio *folio, struct
+>>>> address_space *mapping,
+>>>>      * swap_backing_dev_info is bust: it doesn't reflect the
+>>>>      * congestion state of the swapdevs.  Easy to fix, if needed.
+>>>>      */
+>>>> -	if (!is_page_cache_freeable(folio))
+>>>> +	if (!is_page_cache_freeable(folio) || !mapping)
+>>>>    		return PAGE_KEEP;
+>>>> -	if (!mapping) {
+>>>> -		/*
+>>>> -		 * Some data journaling orphaned folios can have
+>>>> -		 * folio->mapping == NULL while being dirty with clean
+>>>> buffers.
+>>>> -		 */
+>>>
+>>> Can this case not happen anymore and try_to_free_buffers is not needed?
+>>
+>> For dirty file folios, pageout() will return PAGE_KEEP and put them back on
+>> the LRU list. So even if mapping = NULL, background workers for writeback will
+>> continue to handle them, rather than in shrink_folio_list().
 > 
-> Thanks for all the valuable input.
+> You've persuaded everyone else, but I'm still not convinced:
+> what are those "background workers for writeback",
+> that manage to work on orphaned folios with NULL mapping?
+
+Sorry for not being clear. The ‘background workers for writeback’ here 
+refer to the workers responsible for handling the writeback of dirty 
+data (see wb_workfn()).
+
+> I think *this* is the place which deals with that case, and you're
+> now proposing to remove it (and returning PAGE_KEEP not PAGE_CLEAN,
+> so it misses the filemap_release_folio() below the switch(pageout())).
 > 
-> I’ll process the feedback and investigate possible ways to proceed. As a
-> first step I’ll measure the actual power savings from USB auto-suspend
-> on AX88772 to see if runtime PM is worth the added complexity.
+> There's even a comment over in migrate_folio_unmap():
+> "Everywhere else except page reclaim, the page is invisible to the vm".
+> 
+> And your argument that the code *afterwards* rejects everything but
+> shmem or anon, and neither of those would have folio_test_private(),
+> certainly did not convince me.
+> 
+> Please persuade me.  But I've no evidence that this case does or does
+> not still arise; and agree that there must be cleaner ways of doing it.
 
-I ran quick power measurements to check whether USB autosuspend is worth the
-added complexity.
+I did some further analysis, and seems you are right. The flush worker 
+does check the folio mapping when writeback, but it does not further 
+release the private data, for example, in mpage_prepare_extent_to_map():
 
-Meaning:
-- "admin up/down" = ip link set dev <if> up/down.
-- No link partner was attached, so the physical link was down in all tests.
+/*
+  * If the page is no longer dirty, or its mapping no
+  * longer corresponds to inode we are writing (which
+  * means it has been truncated or invalidated), or the
+  * page is already under writeback and we are not doing
+  * a data integrity writeback, skip the page
+  */
+if (!folio_test_dirty(folio) ||
+     (folio_test_writeback(folio) &&
+      (mpd->wbc->sync_mode == WB_SYNC_NONE)) ||
+     unlikely(folio->mapping != mapping)) {
+	folio_unlock(folio);
+	continue;
+}
 
-Setups:
-- Debian 5.10 (USB autosuspend present, no phylib).
-- Debian 6.1 (phylib present, no regression).
-- Power meter: Fnirsi FNB58.
-- Env: QEMU 9.2.1 (USB passthrough)
-       xHCI host Intel 100/C230
-       device ASIX AX88772B (0b95:772b)
+This is somewhat beyond my expectations. I expected the flush worker 
+could handle such cases, allowing page reclaim to skip from handling 
+dirty file folios to improve reclaim efficiency. Obviously, I overlooked 
+this corner case.
 
-Legend:
-- "RT: active" = runtime PM on;
-- "RT: suspended" = runtime PM auto (device suspended).
+Additionally, I'm still struggling to understand this case where a folio 
+is dirty but has a NULL mapping, but I might understand that ext3 
+journaling might do this from the comments in truncate_cleanup_folio().
 
-Results:
-- Kernel 5.10.237-1
-  admin up (link down): 0.453 W (RT: active)
-  admin down: 0.453 W (RT: active)
-  admin down: 0.453 W (RT: suspended)
+But I still doubt whether this case exists because the refcount check in 
+is_page_cache_freeable() considers the pagecache. This means if this 
+dirty folio's mapping is NULL, the following check would return false. 
+If it returns true, it means that even if we release the private data 
+here, the orphaned folio's refcount still doesn't meet the requirements 
+for being reclaimed. Please correct me if I missed anything.
 
-- Kernel 6.1.148-1
-  admin up (link down): 0.453 W (RT: active)
-  admin down: 0.248 W (RT: active)
-  admin down: 0.248 W (RT: suspended)
+static inline int is_page_cache_freeable(struct folio *folio)
+{
+         /*
+          * A freeable page cache folio is referenced only by the caller
+          * that isolated the folio, the page cache and optional filesystem
+          * private data at folio->private.
+          */
+         return folio_ref_count(folio) - folio_test_private(folio) ==
+                 1 + folio_nr_pages(folio);
+}
 
-Observations:
-In this setup, USB autosuspend did not reduce power further (admin-down power
-is identical with/without autosuspend).
-
-The drop from ~0.453 W -> ~0.248 W on 6.1 appears to come from the phylib
-migration (PHY powered down on admin-down), not from autosuspend.
-
-Proposal:
-Given autosuspend brings no measurable benefit here, and it hasn’t been
-effectively functional for this device in earlier kernels, I suggest a minimal
--stable patch that disables USB autosuspend for ASIX driver to avoid the
-PM/RTNL/MDIO issues. If someone needs autosuspend-based low-power later, they
-can implement a proper device low-power sequence and re-enable it.
-
-Would this minimal -stable patch be acceptable?
-
-Best Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
