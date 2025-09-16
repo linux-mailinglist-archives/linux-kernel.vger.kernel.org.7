@@ -1,88 +1,266 @@
-Return-Path: <linux-kernel+bounces-818150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0DFB58DA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:58:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05445B58DB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24061BC4B66
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91274871CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B291248F40;
-	Tue, 16 Sep 2025 04:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822D726F471;
+	Tue, 16 Sep 2025 04:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vJo1rW7o"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LtsrrG2k"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78131C75E2;
-	Tue, 16 Sep 2025 04:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CE2244691
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998523; cv=none; b=X8y08rTIdxw2MbsmPWVU1xf3X1UfXGyjBVbIzxI7tMh0gWbyUGZBCXzAb5dWWNAlrO6cCB5UqSFcGQ+AXeuVAAWlKFYdW6TXfinbvZrclzCUEv0mxLI1g6pBZghXmFLmPjo7YtZw1XsJ2pL/rDjT7vDsY2AHZ9a3prZfEVaeKZw=
+	t=1757998545; cv=none; b=h1uMx1t3WVBXciXvloD5Ohf10B5ZTiOulwJNG6NoytsLe5Vc0j2x4ElRANnkK/Kha7BDVxK8cfMUUtfuQixkX1IWHvq+3MJNQgx+oj0sJhLK2zp6eEavvOlUVSDXCHKpiU9Nxh+nEblTc8mPXazjah1n1alkqri9bMEllUaUv8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998523; c=relaxed/simple;
-	bh=StiPQtnvbkOQeER7YWId2jlb+ZLI0M7NP2wd91RD+B4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmlAd0M0joeHKoZmWRoFuDkoUwT2NbOX1MrWFkG/js8AbW9E/gKkBG6tdHVPtUbYG/SpRYXnjuIytJilHvrQG+MLSOwVK/XGC0PGuzuWiip4HN+iHY/CuW/rrwub1NO4fZ0qnyspdfrmbazirNBSfJ56QsS46mfdbNv9l1iHzrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vJo1rW7o; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=StiPQtnvbkOQeER7YWId2jlb+ZLI0M7NP2wd91RD+B4=; b=vJo1rW7olNwfuNc5FR0pjMX6/9
-	qC+ZZ61UqHO7M9LtWzS3LWXKjnfcvuwaOa5Qc8Y6b7q3DhI5HpAV7gvAUIzHnHeCynmW4WfTIOl0g
-	nINC1N8m7RIt6nq8NnqUfHa4tvWhP6vp1LnBAJ93G8FU5DvWFNZvi0SprrHKQxpeBEERwzleTPUWL
-	Ff3hVuMyE/7X5j7QIxvW4Ju5dBbQFuk9B0Je8gRsA6dmzOreHhHY0uzFKMfrRoemNejTtQiFwfDy9
-	N/3en7D+hJGJhpeBshYW5pbFaIHSjQieAExsjN1iYKs3c4idvVqx5lcJZHm0UFFCOVnmrpLzjnCty
-	p7K951cg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uyNio-00000006Zf2-2k8M;
-	Tue, 16 Sep 2025 04:55:18 +0000
-Date: Tue, 16 Sep 2025 05:55:18 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>, Jens Axboe <axboe@kernel.dk>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	netdev@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 00/33] ns: support file handles
-Message-ID: <20250916045518.GQ39973@ZenIV>
-References: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
+	s=arc-20240116; t=1757998545; c=relaxed/simple;
+	bh=5rE76gQgJQKBWzXKcgUF0aME2xKJUWOEZnpj27dj58s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oO7Pvm9SKDgUiGGFJNLceHlnT78m5dqOPZid9xXVoY3hYDT8H4HBBGk8jv3gmU8az+g8ZuC6wdZTheBHqGC3aCulpUmpXWtlezYgNaSMP5rOBLTJyABiquvD1sJxWvlQesK2L2UH2eIlzNz0DM4bfql6O4PujyX2TIeS4VMSQEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LtsrrG2k; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-ea41621f73fso1717928276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757998543; x=1758603343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GBcjRbm3FVwYUlOZdbgLY3RSHrk0clAp1Nkb0I9SPZU=;
+        b=LtsrrG2kPLIwwR71JmQyCe02cf4X+I8llghjpAOPsRFd+h62zT3iDIyz0ravAftmCo
+         cFXlr5+JvP/6sfBg8IgjHtLNQx7wufqxyjtsnZb9kRq6xPMVRagc2UnVNJNZgoFxuLkO
+         zm4F2IgBryMCEupRBBW0FYNW5ngtfpZ6hpnm8pGXCuDMjUohc/RPZ5r4bv9Fxhe/DRID
+         Bv95sldw4iQE0cwmtUodxEpfpRqvaWW4yugQ+I2fERAtUYyGVhShMs01dUkemLBXZrSQ
+         QXprEfM7HpqNKZTC3pZDmxJy9/d65zKOBTRyOkW5jgCAO9BYn2uKCBmcO/pv+xiGrcOG
+         LiFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757998543; x=1758603343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GBcjRbm3FVwYUlOZdbgLY3RSHrk0clAp1Nkb0I9SPZU=;
+        b=gxDQWxeXY1QgkvTeBvulnijD3//fmbVs3LvcbcDWnTeiL9yXONJ7gz/LlmIR/vKTvW
+         TQG/ckt2m4W9m006gcyvtkMmoPN/oPOyQm3yRKPp7BLsXg9Sbr2CVZY/ejUtQhVvZnRi
+         ROTPAj0sMI2lrzkslLLTAPciko19w56ReqGZYcSc6Wq67eQeezUiys7JCr8/ikclMTrE
+         IJDw6tgYQfwMjznpVxys5UGSOgNLkQxZdyhS/xmCTtIEhoV8jqVJvlfWf1Nb9Dsvv5dO
+         aFAcS0V7nCSgz98wSEUTasrVXbmGCIuK5B+/Hi5LKhpzyRlkfpzwT7Aa0H/m1dKrtY1m
+         CsZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR0KjVcqnZt59RzjEA0Yta5ES8xfDhgIjec/FUgTxA+FWfCNFJsyrAa40YIP3EKEMOD822xWNhc6wEgwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV3kUY0Ozpw1qjdWaTf3bG92yqDZqB4vsE6A8hFZ87lhWmrLwP
+	oyHxiQd5BkicTFFYIL4HJTIGMQsFcPeBGm9eQ0zflu3dOB9NsXytuVgR0yRY0hNWKGENdlcet8X
+	OQIIgD23ZJAc+eIy1wHzcyVOrPb5fq+CCzMvC
+X-Gm-Gg: ASbGncuIttt9ibcTSExaKaRwSxHlJ4ccrlPkmJq6trcIQQZsJ+6/yyzBsctd3JXDP1N
+	s+EpAWBQpipCBoTD/YtYsTMwvhjkR4DfG59FhN4njkrYC5ao3KE+L3uPgnLi9NMPewixA/CQku9
+	ovSToqbjUhaiz7JCHuKq7uIxiFGUGnHx9uLk2x3XoG/+dwMQ/mGdoYnavR1nbFhSb7qwq70Clko
+	esG5sWi4aUwFcUx+lxpyt3VmswQcxmluK2SjPgv+ipsVfF1SbW+uQ7K8biXhICIadieQK/4
+X-Google-Smtp-Source: AGHT+IFXVrlkAw4hIUMkjDUsgYvyK7EgpmYsPWpx/dWgsCW+cokg9VHakZyQIrCx9AHlixfNXCZ76u+Wtg35mXq2D/U=
+X-Received: by 2002:a53:cb41:0:b0:612:891a:9ecc with SMTP id
+ 956f58d0204a3-627202230a3mr10138013d50.9.1757998542602; Mon, 15 Sep 2025
+ 21:55:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-work-namespace-v2-0-1a247645cef5@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com>
+ <20250912-mt8196-gpufreq-v2-5-779a8a3729d9@collabora.com> <CAPaKu7Q+KAzEtKBWy8KO2Kp+H4y-Mqo34uo=jgH1_iooaDq3hA@mail.gmail.com>
+ <8577914.T7Z3S40VBb@workhorse>
+In-Reply-To: <8577914.T7Z3S40VBb@workhorse>
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Mon, 15 Sep 2025 21:55:30 -0700
+X-Gm-Features: AS18NWCUMIgi23a5SaUlUvMdo-ihykJDXaO9mGCW6rE2ZLrI7uXsuBJkrMkP79E
+Message-ID: <CAPaKu7STDDp6D_fDGVfAKFrb5aWcxtwsT3nYtYDQQYCs7G9upA@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] mailbox: add MediaTek GPUEB IPI mailbox
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 01:52:23PM +0200, Christian Brauner wrote:
-
-A nit on whatever script you are using:
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-
-is less convenient than
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585 (v6.17-rc1)
+On Mon, Sep 15, 2025 at 6:34=E2=80=AFAM Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> On Saturday, 13 September 2025 00:11:10 Central European Summer Time Chia=
+-I Wu wrote:
+> > On Fri, Sep 12, 2025 at 11:38=E2=80=AFAM Nicolas Frattaroli
+> > <nicolas.frattaroli@collabora.com> wrote:
+> > <snipped>
+> > > +static irqreturn_t mtk_gpueb_mbox_thread(int irq, void *data)
+> > > +{
+> > > +       struct mtk_gpueb_mbox_chan *ch =3D data;
+> > > +       int status;
+> > > +
+> > > +       status =3D atomic_cmpxchg(&ch->rx_status,
+> > > +                               MBOX_FULL | MBOX_CLOGGED, MBOX_FULL);
+> > > +       if (status =3D=3D (MBOX_FULL | MBOX_CLOGGED)) {
+> > > +               mtk_gpueb_mbox_read_rx(ch);
+> > > +               writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ=
+_CLR);
+> > > +               mbox_chan_received_data(&ch->ebm->mbox.chans[ch->num]=
+,
+> > > +                                       ch->rx_buf);
+> > Given what other drivers do, and how mtk_mfg consumes the data, we shou=
+ld
+> >
+> >   char buf[MAX_OF_RX_LEN]; //  MAX_OF_RX_LEN is 32; we can also
+> > allocate it during probe
+> >   mtk_gpueb_mbox_read_rx(ch);
+> >   mbox_chan_received_data(..., buf);
+> >
+> > mtx_mfg makes a copy eventually anyway.
+>
+> We don't right now, at least not until after the callback returns.
+> So we need to have the copy in the mtk_mfg callback, not after the
+> completion. That's fine and I do want to do this as this is what
+> the mailbox framework seems to expect clients to do.
+>
+> > We don't need to maintain any
+> > extra copy.
+> >
+> > Then we might not need rx_status.
+>
+> We can probably get rid of it if we keep the per-channel
+> interrupt handler. Otherwise, we may still need clogged,
+> as we don't want to process interrupts on channels we have
+> no user for.
+>
+> >
+> > > +               atomic_set(&ch->rx_status, 0);
+> > > +               return IRQ_HANDLED;
+> > > +       }
+> > > +
+> > > +       return IRQ_NONE;
+> > > +}
+> > > +
+> > > +static int mtk_gpueb_mbox_send_data(struct mbox_chan *chan, void *da=
+ta)
+> > > +{
+> > > +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
+> > > +       int i;
+> > > +       u32 *values =3D data;
+> > > +
+> > > +       if (atomic_read(&ch->rx_status))
+> > > +               return -EBUSY;
+> > > +
+> > > +       /*
+> > > +        * We don't want any fancy nonsense, just write the 32-bit va=
+lues in
+> > > +        * order. memcpy_toio/__iowrite32_copy don't work here, becau=
+se fancy.
+> > > +        */
+> > > +       for (i =3D 0; i < ch->c->tx_len; i +=3D 4)
+> > > +               writel(values[i / 4], ch->ebm->mbox_mmio + ch->c->tx_=
+offset + i);
+> > > +
+> > > +       writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_SET);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static int mtk_gpueb_mbox_startup(struct mbox_chan *chan)
+> > > +{
+> > > +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
+> > > +       int ret;
+> > > +
+> > > +       atomic_set(&ch->rx_status, 0);
+> > > +
+> > > +       ret =3D clk_enable(ch->ebm->clk);
+> > > +       if (ret) {
+> > > +               dev_err(ch->ebm->dev, "Failed to enable EB clock: %pe=
+\n",
+> > > +                       ERR_PTR(ret));
+> > > +               goto err_clog;
+> > > +       }
+> > > +
+> > > +       writel(BIT(ch->num), ch->ebm->mbox_ctl + MBOX_CTL_IRQ_CLR);
+> > > +
+> > > +       ret =3D devm_request_threaded_irq(ch->ebm->dev, ch->ebm->irq,=
+ mtk_gpueb_mbox_isr,
+> > > +                                       mtk_gpueb_mbox_thread, IRQF_S=
+HARED | IRQF_ONESHOT,
+> > > +                                       ch->full_name, ch);
+> > I don't think this warrants a per-channel irq thread.
+> >
+> > mbox_chan_received_data is atomic. I think wecan start simple with
+> > just a devm_request_irq for all channels. mtk_gpueb_mbox_isr can
+> >
+> >   read bits from MBOX_CTL_RX_STS
+> >   for each bit set:
+> >     read data from rx
+> >     mbox_chan_received_data
+> >   write bits to MBOX_CTL_IRQ_CLR
+> >
+>
+> I don't like this approach. It brings us back to having to process
+> multiple channels per ISR, keep track of when the interrupt should
+> be enabled and disabled based on how many channels are in use, and
+> also is not in line with what e.g. omap-mailbox.c does.
+>
+> Remember that `mbox_chan_received_data` synchronously calls the
+> mailbox client's rx_callback. In mediatek_mfg's case, this is
+> fairly small, though with the request to not make the rx buffer
+> persist beyond the rx_callback it will gain an additional memory
+> copy. But we can't guarantee that someone isn't going to put a
+> slow operation in the path. Sure, it's going to be atomic, but
+> waiting for a spinlock is atomic and not something an ISR would
+> enjoy. I don't think mailbox clients would expect that if they
+> take their time they'll stall the interrupt handler for every
+> other channel.
+>
+> So we'd keep the interrupt disabled for all channels until the
+> client that received a message has processed it.
+>
+> I can see myself getting rid of the handler and just having the
+> thread function as the bottom half, but I'd really like to keep
+> the one-IRQ-request-per-channel thing I've got going now as it
+> made the code a lot easier to reason about. However, doing this
+> would mean the interrupt is re-enabled after the generic upper
+> half, when all the business logic that needs to not run
+> concurrently for an individual channel is in the bottom half.
+>
+> As far as I can tell, this would then mean we'd have to add
+> some concurrency exclusion mechanism to the bottom half.
+>
+> Moving all the logic into the upper half handler function
+> would make that handler somewhat longer, and I don't know
+> if IRQF_ONESHOT masks the interrupt for all users of that
+> IRQ number or just for those with that dev_id. If it's per
+> dev_id, then I'm fine with moving stuff up there. But from
+> my reading of the core IRQ handling code, that does not
+> appear to be the case; one channel getting a reply would
+> mask *all* channels of the mailbox until the upper half is
+> completed, and if the upper half calls into a driver
+> callback synchronously, that may take a hot minute.
+>
+> Put differently: Is there a problem with one thread per used
+> channel, or are we going off vibes here? The way it currently
+> works uses the shared interrupt to mark just that one channel
+> as busy with rx_status before letting the IRQ for all channels
+> be unmasked again, which seems ideal to me.
+No, one thread per used channel can work. I can't say I like it, but I
+also don't know the hw as well as you do.
 
