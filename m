@@ -1,243 +1,249 @@
-Return-Path: <linux-kernel+bounces-818408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6259B5915B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:55:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3B9B59166
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5704C17081A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823ED3A6B14
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F9428C860;
-	Tue, 16 Sep 2025 08:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB19C2874F0;
+	Tue, 16 Sep 2025 08:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b="cIf8yvt8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H8t1WVWb"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ucb4zgsb"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012034.outbound.protection.outlook.com [40.93.195.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B90D280A56;
-	Tue, 16 Sep 2025 08:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758012914; cv=none; b=uDUyrxS4KxTgbegATzu9y5lBQMSPYs0a47aVxD5NieRnV0VaZu7g0XiYKcbAHJ4ML3Pn0Nn4PuGo3DEXflmC38Ge3wv8aqyD6ejsDdKyA5kgrK1be1atM7ACJnnkEHwslnuBAqKVcWI/PNgZHKwZPOjf38fLv7NkqhDltjzKY/Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758012914; c=relaxed/simple;
-	bh=bTZ+VfeWzw63KZ3vzCqQwXjBV8fgJ+HHfsa0rsa7Jq8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=P10uGZ3EH7mUwh0JRAnK3zvYqrhiN0+EZqGq3b2Uu4uEtePtItkARq0Krj3VeXtZxJPl8AjBD/T9esTd7guyduNQiKfvce4RlgUgpD85BGYsuEjPSd98Mj4WIuLXOMBgyqcV28IJuGFjQOBMNDfB9CP1ysuKJqH6fEF807MIu8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl; spf=pass smtp.mailfrom=whynothugo.nl; dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b=cIf8yvt8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H8t1WVWb; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whynothugo.nl
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 1C87C1D00221;
-	Tue, 16 Sep 2025 04:55:10 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 16 Sep 2025 04:55:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=whynothugo.nl;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1758012909; x=1758099309; bh=1ulH8g7Li7zG++T0/MO6PWY+rqx4PTpm
-	j/wnHfCR1vg=; b=cIf8yvt860x+aSG4LH3Oqr2DL6nm0bWQq+p8JOW3CBdYHpvy
-	6GmhQOgJKKarCcLBe3hEaze2RBDc7epTklge/Pjco2mjpFPi/fL/NooAWBk6Rqp4
-	HZl7zvzjdSIr83Q1fyJrOONd4Sl1qyx44MQ3O9f6COd8nYE6mSW90H/7LCW+IC5g
-	eUtkZ1NY7bm6gPUSbm1sfKjEFmvMb+XklB0/oMWGxx84L7+9E+GJJf9s4LLrBY3V
-	NLt5E24ZfH1d8j0iGT6tKIG2WnstFqYeTj72DCoJA66OdY4DYjAEsQlhjzc2vfYI
-	25Zfzt0Bf6fTGtZFfOf1JgyM+thdGmXRJbbmXg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758012909; x=
-	1758099309; bh=1ulH8g7Li7zG++T0/MO6PWY+rqx4PTpmj/wnHfCR1vg=; b=H
-	8t1WVWbjCaYevmG2g3boG4+rszZVsqTXZ5EH7fmKgCkBNdGu/bwAHRxkf+fTxbsn
-	XayVDXTNOaNFVdk+X3Tnqn9ZrbFzvcKIiFuAAl6cW2Jdzh6dj9xU0r84lJAersqq
-	WUiN89pgvHdXnohzlbOIuRSmIxDOIJCyAMxSdn/oZVoF9YoTdUiCT+Z0/nByUSYk
-	4cUDOZAg46p8TRS/lE8Vee+htpNfjPYNBClVJA+C6qPksasjiJlkhuCTzW9AvTeW
-	WRM2Q6XZ1tPhwRH8ezxxmfPhSMZeGlsx2fVNU+bL+xRrqHkBN0qTex4tPzQEH2bJ
-	D+myToFwvCAAL8Aoo0XOQ==
-X-ME-Sender: <xms:7SXJaOcBgfc3hyy0V88jYTz2X9R83srQUbkwCv2g4BaoEwRw34r30A>
-    <xme:7SXJaIN1jaTyjV9yTLM3yEKvJFztBwjE0J1CwPq5pRvFURwBJ_wCfCtBMD_zD32zF
-    tP1HB41g97kUWvsKQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtddugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfjuhhgohcu
-    qfhsvhgrlhguohcuuegrrhhrvghrrgdfuceohhhughhoseifhhihnhhothhhuhhgohdrnh
-    hlqeenucggtffrrghtthgvrhhnpeffleffgfdtkeffudekudeghfdtledukeeguefgteel
-    udeukedtueekgeegfffgudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthh
-    husgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehhuhhgohesfihhhihnohhthhhughhordhnlhdpnhgspghrtghpthhtohepudefpd
-    hmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgt
-    phhtthhopegsrghgrghsughothhmvgesghhmrghilhdrtghomhdprhgtphhtthhopehrug
-    hunhhlrghpsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghruggssehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvgdrhhgr
-    nhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheptghorhgsvghtse
-    hlfihnrdhnvghtpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:7SXJaJCx4hOenCD6YBq1wodpfVv5l3S0CmnP-QJT8npHWgOqlg_r-w>
-    <xmx:7SXJaGCCN9MBaAEbU_XTW4fTBinQxrPMmw6H0hlHhUDWsWB2v4lMHQ>
-    <xmx:7SXJaAECY9xR7D9MjMhPKFmrUROQPOK9t0dISAmchwjNDhASBIx2EQ>
-    <xmx:7SXJaN5TXGPLxDr6udiwC9I4Gor-431BL5Udl1F6Uf_LT4HDyOApcg>
-    <xmx:7SXJaPisxNyG8PZ--U6qVWJoUJG86k8sszX3jJPBo0TNYLj8m4roOjiE>
-Feedback-ID: ib8c04050:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 795541B4006D; Tue, 16 Sep 2025 04:55:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0084B296BBD;
+	Tue, 16 Sep 2025 08:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758013055; cv=fail; b=B13a1oCN/egFr19XGpi9Tqs8qcMxX+nQDJqGcK9g/p2tPY+huyYDxYu4XKZEW5JQn0hq2b9iyrx5lbwMLPxnrd5Gy1vcZfC0sl1BtoYC5la91VfseiHjkalCT71dnBu7jEexkWxvxNrrKDaiG75NL34BXOL8A91aoXTnj7Qzrt0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758013055; c=relaxed/simple;
+	bh=jXtfrgBDPxg/ES4cjkH0A6NW0zKYpHQYI0ulzLangYM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QckrZvRZxw3UyIS9yvXxonSG+pr6yTzj6HW8VYi2sWagjpbi61JoD2a6Yy01n4YTw812lflO14iqBXIbcyfeI1tPr/QNAUpTcoAxP4zZ9Cf+swaHeh2J5FZOTRMDp9kBNyLQlgYFqXij2K6yEkK/r20If7hA8kbRllmeD5FhMQI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ucb4zgsb; arc=fail smtp.client-ip=40.93.195.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KB02nQjh4yINaZel187GrjCvkEbejZ9WAtI0FFPLxczEHJhXukyjG2eRLwCeBYyi4dfiwhrI7TJkM/nCTsUp+MsYu2BZlUBW5PoDm1IcFVEqIlQRISv9IPMTMHvP6RNNw2X+ltIOfbme9MeEt2NlW/G4ZI29GFygUC2jsSlKuAdBKmRQxgdtOr4SRblaTf26YgpDyKHgxYEaaIr7oluFS8UV6/pnFSbo2BqktE0qCtcloBqN52a9m7oYs5y3XF/91+bCqh2O149iH18D3YEme13PfnxDcaVvo+dZQTUuLk6G1jl/SFeDo6PiS4U5vNEx15si/PTlEmzNmVnR897ifA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gc5w1UC54cFNmdl2DUbXP9oPX4r/cbrYMAT30mzalN0=;
+ b=Upst9L1QFNvxeef32Zio0wXICzuR55BHD9GLRjfqG9LJfa6Lrfu7oqAzhpDwSgykAci5IVq1A6CxbIijoOCtzbKKi+DbXoVlUPT+6vE9fjGl77MFbZewEFNwfBgZ8wAUNCKLYXYaK6MIICi48Xp5CYzkiL2gi3Ad4iGkWmOSuFEkRzzTcLcFebib9wM5V304L9ZH386uq3wp7Z4eql1baDt/obbfFeYzhgwfezmjcMsefaE1SPLep3A7+EtaYD6tUFnRtU2CstvZ3rOlhKW3lqmAR4Bvsup2RCFVEETsOIRgqSq68MWQEGTERkSDgGhRrMTh5KoR5Y1W8qScSqwkog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gc5w1UC54cFNmdl2DUbXP9oPX4r/cbrYMAT30mzalN0=;
+ b=ucb4zgsboFKtRX/2S34VbEHAyXEej0wj0Rj1FbebQQCO9RJ1o8DuC2BZ7st+r9K2L5z+kEJMBNplzKt9fIZCknqV0koMGhJMFsUMjSJi3V7Rz7jXXDxY29cZ3SfXAzQOcXFDxwFcrakGRHCjsx3TiASgufc8Kx92EFApo1r1lO0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DM4PR12MB6160.namprd12.prod.outlook.com (2603:10b6:8:a7::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Tue, 16 Sep
+ 2025 08:57:31 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
+ 08:57:31 +0000
+Message-ID: <77b76efa-60fe-4629-8828-5a56b254a92b@amd.com>
+Date: Tue, 16 Sep 2025 10:57:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/11] drm/i915/gt: Use pci_rebar_size_supported()
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Andi Shyti <andi.shyti@kernel.org>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
+ Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org,
+ David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ Tvrtko Ursulin <tursulin@ursulin.net>,
+ ?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Michael J . Ruhl" <mjruhl@habana.ai>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250915091358.9203-1-ilpo.jarvinen@linux.intel.com>
+ <20250915091358.9203-7-ilpo.jarvinen@linux.intel.com>
+ <b918053f6ac7b4a27148a1cbf10eb8402572c6c9@intel.com>
+ <ewypjj64siaswcfvfzgxihwrflb6k6pz2mrfuu4ursdldwnqlm@ignlhd73keck>
+ <aMhzougLzpfw2wWw@intel.com>
+ <58fb988207c4d5c5ba25338c1281189e12c009c3@intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <58fb988207c4d5c5ba25338c1281189e12c009c3@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT4PR01CA0010.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d1::17) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ar2Xryr4sLlg
-Date: Tue, 16 Sep 2025 10:54:39 +0200
-From: "Hugo Osvaldo Barrera" <hugo@whynothugo.nl>
-To: "Bagas Sanjaya" <bagasdotme@gmail.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- "Linux Documentation" <linux-doc@vger.kernel.org>,
- "Linux EFI" <linux-efi@vger.kernel.org>
-Cc: "Ard Biesheuvel" <ardb@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Randy Dunlap" <rdunlap@infradead.org>
-Message-Id: <b629ff7e-a223-467f-8e32-78f825bd31ac@app.fastmail.com>
-In-Reply-To: <20250916073244.590483-1-bagasdotme@gmail.com>
-References: <20250916073244.590483-1-bagasdotme@gmail.com>
-Subject: Re: [PATCH v2] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM4PR12MB6160:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee7a6aca-8a39-415d-029f-08ddf4ff11d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmZ5RGRHKzJCenljdCtDOFJ0SGh1bGkvL3RxMGpxdyt3em9EY0hQWEVuQnFK?=
+ =?utf-8?B?bXJnQStYMndHeE1OaUJQWlpxenJIMkhhcTNtMTdZK2E2N0tBZlNxWlZrSHJ6?=
+ =?utf-8?B?QWJCdHAzYjhoL0hnSFpIQzFGVlBIS3hsdjdyOEsxUm1UdmRRWWxJWC9VZlVl?=
+ =?utf-8?B?Yy9CWEFBeHVXUGJxTWQ0RUhKUnZJeGhlUDNvSHVTNDk4Nmd2RXFBcDBPaFkr?=
+ =?utf-8?B?cmwvYTdObkY1bnVUY1ZNQlRtUWNQL0NpM3p4bGdOdTVoN2NPTGg3TEo4eDNH?=
+ =?utf-8?B?Ukh3SUtQVnpCYjUvaWxaV1IvZWNDai9tdjFtZnR1ZDA5dHg1aElGZXhpNVFt?=
+ =?utf-8?B?R1d3aGl6YVhHQnMvNzdXeUYyM3o5Mkt4LzcvamU1aldVaCtNYVJjU3NGQlN6?=
+ =?utf-8?B?N0o0YlJmS25pOTc4VTdaVFRzOTdYZmhEeU9HNEEyc3ZSTnJvRGg1ejZGSjQy?=
+ =?utf-8?B?T3hrTHcyWVVhNDlZNWtlZVVuaGFlQy94QzBteTd0YW9SeE50M2xUK1VqckpP?=
+ =?utf-8?B?TkJ3V2FXVmVnaVFRa2JYRUZTSE0yOFNSUktNbFF4c1NObzVNYTZrVzg3dzBL?=
+ =?utf-8?B?anZlZ2tDVEUwazVEelVISTRVenQ1KytDNy9pOGh1SUZPK0wzOXZNK0NRMFk4?=
+ =?utf-8?B?dHYyQXBtWWFHSDF2dmdRT3lkc1lQV0R0TUxHb0RqbnhEWXBiNWtuNjB6SVB0?=
+ =?utf-8?B?NkRRN3gzQzc2WHJJYVZhOE92dExyQU5HUVRWZXNhczBrL0hEenhFeEEwRW1a?=
+ =?utf-8?B?RG9RVjNwRG5Od3RXME9lRWVFci9KV0FrR21MSk1VWFQ3amQ0emZEcGJyQWZI?=
+ =?utf-8?B?RjlEdmN6d2NPZGlTSFFGQ2xPamUzamtWdDZZdnF1V3VpK1dOa0lGOEpvZDJx?=
+ =?utf-8?B?QjhucW16bktyb0c4WG4yd2VlR2FpS3NqK00vK2ovakxnc3FQbjh0THAyWkpv?=
+ =?utf-8?B?MVBORjZMdkVmd3VFVzFIL1VVYjMzdjRja2VZOEtmVUhjNzlubjlBeUpueVNp?=
+ =?utf-8?B?ZUVJenpDblBtdUhvV2x3MVNNY21oY3NHUDlUSGYveFBwWGluMUorYWtsUFFU?=
+ =?utf-8?B?Q0k3eDZYYVNVbDFxbFpweTA0QmpIY2FCT0dUOCtjelhUeVdmWlJxWGJDNllN?=
+ =?utf-8?B?ank2L2EzZ2c4bFVnbkJhZWRGMUUyN0FQeUJZVE5kcFhmM0orNHpDaDc5cTNk?=
+ =?utf-8?B?RERWQm1LcUFObTc4QnJPVzg0Zi90Tjk0aUQvaTVwTktVcmZBbERuRDhubmp3?=
+ =?utf-8?B?SlFqWXZkZjJybzFHdTY1cXNXQnpFTnBwNVNRY0cwZkxBVlJyQ3M1bmx4OXM0?=
+ =?utf-8?B?Q1FheWQ0c2QyWHcvMGh0VjY2VWJ4TnlWTXhyK2tPVjJSdWhmcU5uaGRBWGJq?=
+ =?utf-8?B?aXQzSU5FbC8vVjMrWGZGVnBVZ0lxNG0zNVhhUHlOR1Vlakg0d0RyR2x2Zks3?=
+ =?utf-8?B?NXM3dkc1WURsQTYrSUsrVHJvY3FHU3lwN3pTaXNPWUhCdTBtQ2VsSGsvR2pN?=
+ =?utf-8?B?R2hud2VucmdwaFp3RFhCUnVJRmVnYnRSM3pCNlI3amNCWmtDblFKQjFJVzRU?=
+ =?utf-8?B?bEdjVlVOZlVaOEFlbDZURHAzakthMmF5dkpRSDRycG42Vy80OS92cTdNckZD?=
+ =?utf-8?B?V3UzMUVaQkcreVppWTViL3ZIQzk5aVFXbTgySDlrYlc0M2FvekhNSk9GanM4?=
+ =?utf-8?B?R1I2ZTB6UUJnWWxOcFlEMFE1TFM2NlovakN4clVUZ1ljN3ordHByRk1MSUc2?=
+ =?utf-8?B?YUowQlZBRk05VmtOQ1U4S0dzdCtrM3R2Qmt5b01idWZDWTRyeXRCMEMvQWVa?=
+ =?utf-8?B?NWZoV2NNd2pPMGdJYkw2a0l6c2dsd2tKeDEzbXBVVmE4VCtoSTlaOFB5aklj?=
+ =?utf-8?B?bXlYYy9ZODNmL2hDaytDL1Z3TDhGZTJjRGhYTEdJem1YR2hCcVcyemswbjNF?=
+ =?utf-8?Q?WjxqMMGwonQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V0M2MHd6Vm5GVURRWlM3a0FFVlhtUWo0WnZBU2pVSjg5RWxodHlyU2p4NTJU?=
+ =?utf-8?B?NEVHZ0swZG5SSUhvamJOUnhkSlpzemlWUjJ1cWZiN0VnQXFGelRVNDY2djlL?=
+ =?utf-8?B?ZmdJZEN2YXJSVlQxejlaNzFobitDQ2F3ZXBCQ2Y1NnlLa3UwVWYrWXQ2UjQ3?=
+ =?utf-8?B?aVhFZ2R3S080WlNPR3FUVHl1SVhqSTJzZlFXdXBsSnJVTSt2UWNGZ3N3dVR2?=
+ =?utf-8?B?NWxRWG1qUXB6L3RXK1YzbjROYjdpbnRlOUpjbEE3U1BUejZoYzcxOGtGWGNi?=
+ =?utf-8?B?OUNjNFBkU2F4SzhRNUZtRmNCMlgrbVA0V2pSaUMzTGpMb0l2Ty85WHpnK0Fs?=
+ =?utf-8?B?Zlg2ejdia0o2aThQcU9lNk9sWnlPQ0N1UkpOaDdJTWd6TEUwZmp6Z3Vpby92?=
+ =?utf-8?B?Yi91MUJPSzZFSGpvSGFVYkMyMytjNnF3Y1Rrb0hTUW5US1JadklhU3hpZFhO?=
+ =?utf-8?B?YWlTYldrWmN5QWg2ZG9VclZhT1pRZ0I5WmRXR09DSS9xV3pSeWllVUt0d1hI?=
+ =?utf-8?B?R1dCeDFwby9POE9lR3FoVmR6WnpYdGZjUjhOcmpWYUZsK3BFVTZCWXpuZjBL?=
+ =?utf-8?B?OHlIWHBKdHVkcFUvS1ZFR3I0RDV0MWtCNC9vSlloWkl6U0JlbEpDOUFSb2Vu?=
+ =?utf-8?B?dVRzVHBuWGNsRlUzbVdsRFRQZHdTeHBTQnlwQXlHRFcrS3Jtc3U4a0szN29T?=
+ =?utf-8?B?SVFtSEdYcEpEK0Z2WE5HWTFOTVJOSDloTUJQWC9jV29tc1VLRHRPMWNZd2Ir?=
+ =?utf-8?B?NHc3ZnN0UDQvdDZGSFk2d3JKVlExZXhtYnBMMGZmRFJ4Y3UwR3R2dXJYdmFT?=
+ =?utf-8?B?MDEvOFp4TldYa0lrYU5CaDE1VmtveXc5OGp3a2hicm9tdE4rV3hmU005MCto?=
+ =?utf-8?B?ay94NWtPcGppRnd2THlBWmVCbGIyRzlad3hzeWpXR1U3ZTVGWHBxcFptZWI4?=
+ =?utf-8?B?dWJBTnA4SUNMRkRXVHkrbVRpM3cxV2RLaXB4c3FyMGoyaTl6RThKU2tMU2tU?=
+ =?utf-8?B?Y25ZNEdMVTkxVTdHaTBwdUtmTHc0d0h6S3Jyakx1bWMyOUdMVUQwVjJvUUVm?=
+ =?utf-8?B?QnAvZjdzMjcxVWFGVGxwT0NiUXVGcTVoUXh0b3VhOHZVN3NMN3ZBaXg0YkZJ?=
+ =?utf-8?B?S1F5LzlyRkFEWHVOZTMxYkdkSFcrbnZvVFFjMnlCbGIrL1pUeWdyeTJpTmt0?=
+ =?utf-8?B?Sm1Udy90d1Q1eHRiYlppNlRtNjluN0IwTWRUM3BsVGdsemRvVmVUMHNVbjRP?=
+ =?utf-8?B?UWdNTUZYTTV1MC95M1V5NFN0dGp6SXRMT2F2Y0ZJT29QblNCTUZIOUhpeDdj?=
+ =?utf-8?B?SWxwcXA2cFhSVkVYZFFFMVdFbUhSQjUwQ0Jzcks1WEJTUWNzdGRIMTBBTUR4?=
+ =?utf-8?B?blRFdVNXeElzWWFkbnZyWENCM0dpRmJQT1M0ekxTYmtIbnBlbE4xSHpWZk13?=
+ =?utf-8?B?QTVheXRPdVh0cGdiYXp2TFprZi9FVm01dzFaUzZvbmZmS2I2NXBMeGdRaHFC?=
+ =?utf-8?B?SDFFbWxGQXhPVkd4aitrUVM2REtNSFk4b2wzM24vaVM4TTI4ZjNBYnJqSDY3?=
+ =?utf-8?B?TXg5c3V0SzZKdlprZzZ5V2NhR1pBRDRjUE82cXFTWjZrMDhLajhWVGdMdk53?=
+ =?utf-8?B?ck9lc1BnbEwyb0FqSlhEcStvZThjbzcvbzNDQmZkQTZNVHRxK2RwRzRObXVn?=
+ =?utf-8?B?eTR1b0JDNGQ1aHN3RVVlRmkrMU9JYWFDd1pEcDhYMzVjaEtuL3JRVlFkcER2?=
+ =?utf-8?B?N0lHcnBIcFFRS0VHRkZMQ1Q2alJmZ3RTVWtyRDg0MnVmU3IrR1JFZ1FVeHpj?=
+ =?utf-8?B?RW9scWlZc1g4dHBtMDJNb3hRUzBtWmdQcENMRzV6aWZTMDVPU1JPWndOVUdu?=
+ =?utf-8?B?cVdocWpPNEhyNUlyRktoV3ZMU3dHSFBWS2JVY0l1Z0MwcWdicytVd29DQ3Zv?=
+ =?utf-8?B?TVVmUHEwRlFtc2w0RDdvTWFoM2pHalgzaVRFU0s3N1JXeWdYcHh3bU9qSS9U?=
+ =?utf-8?B?NVYxRUQ1R1pFMXh1SWxBeG8rRzRtK01mSE13UXA1M0J3UzhrbFdkZTFaK0ho?=
+ =?utf-8?B?Y1V3Mklwayt6N0k0a1haaFpmWktrV0dtTTJ5TUxUSkZCNEZCYXBLeVQyYjZu?=
+ =?utf-8?Q?A1UIfTXFQImfn/kJyujqPz5I/?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee7a6aca-8a39-415d-029f-08ddf4ff11d7
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 08:57:31.1177
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TwgNE+DXpXRj1G60wDCvNJ5vGnC7zjERqfTdYVIZg8GsPdNVmsZDeP1AnIjXpMwc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6160
 
-
-
-On Tue, 16 Sep 2025, at 09:32, Bagas Sanjaya wrote:
-> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
->
-> Since the Handover Protocol was deprecated, the recommended approach is
-> to provide an initrd using a UEFI boot service with the
-> LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
-> approach has been no more than an admonition with a link to an existing
-> implementation.
->
-> Provide a short explanation of this functionality, to ease future
-> implementations without having to reverse engineer existing ones.
->
-> Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-> Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
-> [Bagas: Don't use :ref: link to EFI stub documentation and refer to
-> OVMF/edk2 implementation]
-> Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> Changes since v1 [1]:
->
->   * Apply wording suggestion (Ard)
->   * Replace candyboot reference with OVMF (Ard)
->   * Invert patch subject prefix
->
-> [1]: 
-> https://lore.kernel.org/linux-doc/20250910015738.14848-2-bagasdotme@gmail.com/
->
->  Documentation/admin-guide/efi-stub.rst |  3 ++
->  Documentation/arch/x86/boot.rst        | 38 ++++++++++++++++++++------
->  2 files changed, 33 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/admin-guide/efi-stub.rst 
-> b/Documentation/admin-guide/efi-stub.rst
-> index 090f3a185e1897..f8e7407698bd2a 100644
-> --- a/Documentation/admin-guide/efi-stub.rst
-> +++ b/Documentation/admin-guide/efi-stub.rst
-> @@ -79,6 +79,9 @@ because the image we're executing is interpreted by 
-> the EFI shell,
->  which understands relative paths, whereas the rest of the command line
->  is passed to bzImage.efi.
+On 16.09.25 10:12, Jani Nikula wrote:
+> On Mon, 15 Sep 2025, Rodrigo Vivi <rodrigo.vivi@intel.com> wrote:
+>> On Mon, Sep 15, 2025 at 07:24:10PM +0200, Andi Shyti wrote:
+>>> Hi,
+>>>
+>>> On Mon, Sep 15, 2025 at 03:42:23PM +0300, Jani Nikula wrote:
+>>>> On Mon, 15 Sep 2025, Ilpo Järvinen <ilpo.jarvinen@linux.intel.com> wrote:
+>>>>> PCI core provides pci_rebar_size_supported() that helps in checking if
+>>>>> a BAR Size is supported for the BAR or not. Use it in
+>>>>> i915_resize_lmem_bar() to simplify code.
+>>>>>
+>>>>> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+>>>>> Acked-by: Christian König <christian.koenig@amd.com>
+>>>>
+>>>> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+>>>>
+>>>> and
+>>>>
+>>>> Acked-by: Jani Nikula <jani.nikula@intel.com>
+>>>
+>>> Just for some random noise on commit log's bureaucracy: why do we
+>>> need both Ack and R-b? I think R-b covers Ack making it
+>>> redundant. Right?
+>>
+>> reviewed-by is a more formal attestation of the entries in the
+>> submitting-patches doc, saying that he carefully reviewed the work.
+>>
+>> acked by is to state that from the maintainer perspective of that file
+>> the file can be merged through any tree.
+>>
+>> in the drm trees nowdays our tooling is enforcing acked-by tag if
+>> the patch is touching domains outside that drm branch itself.
+>>
+>> if a committer tries to push a patch without ack from the maintainer
+>> of that domain it will be blocked.
+>>
+>> So I believe it is a good idea to keep a separation of the meaning.
+>> Carrying a technical review of the patch in question doesn't necessarily
+>> mean that you, as maintainer, is okay of getting that patch merged
+>> through other trees.
 > 
-> +.. hint::
-> +   It is also possible to provide an initrd using a Linux-specific UEFI
-> +   protocol at boot time. See :ref:`pe-coff-entry-point` for details.
+> Yes, all of the above. I just wanted to be explicit to avoid the
+> follow-up questions "thanks for the review, but is it okay to merge via
+> pci" or "thanks for the ack, but does this need review also", and move
+> on from this whole thread. (Which is a nice cleanup, btw, thanks.)
+
+Mhm, that's a really good point.
+
+My understanding of an Acked-by by a maintainer is also "go a head and merge it through your tree", but I think we never formally documented that.
+
+At least I can't find any reference to that in the "When to use Acked-by:, Cc:, and Co-developed-by:" section of Documentation/process/submitting-patches.rst.
+
+Regards,
+Christian.
+
 > 
->  The "dtb=" option
->  -----------------
-> diff --git a/Documentation/arch/x86/boot.rst 
-> b/Documentation/arch/x86/boot.rst
-> index 77e6163288db08..32eea3d2807e1c 100644
-> --- a/Documentation/arch/x86/boot.rst
-> +++ b/Documentation/arch/x86/boot.rst
-> @@ -1431,12 +1431,34 @@ The boot loader *must* fill out the following 
-> fields in bp::
->  All other fields should be zero.
+> BR,
+> Jani.
 > 
->  .. note::
-> -     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
-> -     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
-> -     loading protocol (refer to [0] for an example of the bootloader side of
-> -     this), which removes the need for any knowledge on the part of the EFI
-> -     bootloader regarding the internal representation of boot_params or any
-> -     requirements/limitations regarding the placement of the command line
-> -     and ramdisk in memory, or the placement of the kernel image itself.
-> +   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
-> +   entry point described below.
-> 
-> -[0] 
-> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
-> +.. _pe-coff-entry-point:
-> +
-> +PE/COFF entry point
-> +===================
-> +
-> +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed 
-> as a
-> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
-> +implementation details.
 
-I must insist that it's a terrible idea to replace an actual link with the
-name of the source file.
-
-This might be (marginally) more convenient for somebody who's editing the
-documentation, but it becomes completely useless for somebody who's READING
-the documentation. Documentation needs to target readers.
-
-For someone reading https://www.kernel.org/doc/html/latest/arch/x86/boot.html,
-the above filename conveys no useful information.
-
-> +
-> +The stub loader can request the initrd via a UEFI protocol. For this 
-> to work,
-> +the firmware or bootloader needs to register a handle which carries
-> +implementations of the ``EFI_LOAD_FILE2`` protocol and the device path
-> +protocol exposing the ``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media 
-> device path.
-> +In this case, a kernel booting via the EFI stub will invoke
-> +``LoadFile2::LoadFile()`` method on the registered protocol to 
-> instruct the
-> +firmware to load the initrd into a memory location chosen by the 
-> kernel/EFI
-> +stub.
-> +
-> +This approach removes the need for any knowledge on the part of the EFI
-> +bootloader regarding the internal representation of boot_params or any
-> +requirements/limitations regarding the placement of the command line 
-> and
-> +ramdisk in memory, or the placement of the kernel image itself.
-> +
-> +For sample implementations, refer to `the original u-boot 
-> implementation`_ or
-> +`the OVMF implementation`_.
-> +
-> +.. _the original u-boot implementation: 
-> https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
-> +.. _the OVMF implementation: 
-> https://github.com/tianocore/edk2/blob/1780373897f12c25075f8883e073144506441168/OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.c
->
-> base-commit: f44a29784f685804d9970cfb0d3439c9e30981d7
-> -- 
-> An old man doll... just what I always wanted! - Clara
-
--- 
-Hugo
 
