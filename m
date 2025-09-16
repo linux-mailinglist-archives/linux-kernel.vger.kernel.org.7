@@ -1,138 +1,182 @@
-Return-Path: <linux-kernel+bounces-818962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11C7B598F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:11:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29CBB598E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0DAD1C0376C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050DA4E4627
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B685F335BAF;
-	Tue, 16 Sep 2025 14:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458F5338F55;
+	Tue, 16 Sep 2025 14:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="SuXOcAbL"
-Received: from fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.64.237.68])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZKh2TdbB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F3717B505
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.64.237.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51C1321F3F;
+	Tue, 16 Sep 2025 14:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031386; cv=none; b=aEyeDKuiqelViO4FWx8VZ5L7ERo8pxPLwqnCDHiYU9dZ23C/QkZ9VAWLwKQKhOpr+9ZzvnhV66mB09RHWAMIyDY7P8+JsRAaAUzNudWgmrfjYJke3CQ5RtztgqDwKPCucn3CvwjNCsWIHBRiQ/BMDYactXB2LhK5fQskDc5LICk=
+	t=1758031386; cv=none; b=rAirzRjtxgTl95cMuN0K40tVEuPC6S5QC/iY7fv1kk47OghpHnPo+wOMDbf2OOAX2Iuu4qRgWxiO4BEBwjh1mjEgAxWRrDjtwKiFB+Q3qmiChuY2LR/oz3pgtZuo6RKEqRaabkFgdlzPsbMcIJYWNGwE+c8GGdAwcwrBagK8J7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758031386; c=relaxed/simple;
-	bh=jGx/Yw223g22/u19/WDb3LAhoaall0qC9TKyMGM8Gv0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iIaHiHmb9rW4XPAybcJvaHTGL0mIJ+DPYKNjxSC9vPe0cmMCTgZtm7WslggRW9DfuQIUQbhpQesP+/QvhM/H7E3FyN1snakBPVQN5c94v41wFgVbJqx+S1kxfj1x0cellvfsaaMUEW+xUOdn4aTC9B9ri5ANRz+gSAPycghfjeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=SuXOcAbL; arc=none smtp.client-ip=3.64.237.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758031384; x=1789567384;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yXWJn+oefsllBzSrWFdG2E5Pn0uf2RzuWYH2maZwKuo=;
-  b=SuXOcAbL6UxlQwl8WCgGnQQ/7JZSRpt0j3Q2Y6jX1e1pPoJ+11HX9MEF
-   Rlxk/ZnAZWh0qGqsbfnaOjYYaUK8QQyH0LpB74RyNrq6PqggSo5dEeOYZ
-   VKspLKt+Xr5VFMbZ7T68Be8ORYcyIwR/Ew1QcMer6yz3OZwAgAVBzusz+
-   wB4V/LDkJRUQRWguJcArr9ToWur1oteDt1/SWDRiciUv7h0GeMnxVciQ6
-   tOkrzM268J81WWuy20aQUeZy5GK2DcHVHqzFfxYhKRyUMAgrlDQppJ3rz
-   o1oS91BTr4zxlt5XdzkLiVzJTQqdUnOTKxUBbCz1ofAp+W8cdLzaE7l7X
-   g==;
-X-CSE-ConnectionGUID: u1Wy0rsxTS20oyEQLrs05Q==
-X-CSE-MsgGUID: qLEzx/aERB2Tapzm9dqbKA==
-X-IronPort-AV: E=Sophos;i="6.18,269,1751241600"; 
-   d="scan'208";a="2092820"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-009.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 14:02:53 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [54.240.197.232:14199]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.0.240:2525] with esmtp (Farcaster)
- id d22f9d81-188b-4362-acd2-884bd29253a8; Tue, 16 Sep 2025 14:02:53 +0000 (UTC)
-X-Farcaster-Flow-ID: d22f9d81-188b-4362-acd2-884bd29253a8
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 16 Sep 2025 14:02:51 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.108) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 16 Sep 2025 14:02:44 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <peterz@infradead.org>
-CC: <mingo@redhat.com>, <vincent.guittot@linaro.org>, <juri.lelli@redhat.com>,
-	<dietmar.eggemann@arm.com>, <bsegall@google.com>, <graf@amazon.com>,
-	<jschoenh@amazon.de>, <dwmw@amazon.co.uk>, <wangtao554@huawei.com>,
-	<tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <vineethr@linux.ibm.com>
-Subject: [PATCH v2] sched/fair: Forfeit vruntime on yield
-Date: Tue, 16 Sep 2025 16:02:28 +0200
-Message-ID: <20250916140228.452231-1-sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250911095113.203439-1-sieberf@amazon.com>
-References: <20250911095113.203439-1-sieberf@amazon.com>
+	bh=+yRQ9oonAF8T7vZkFL2jQ52Qo7+EmpAEbpXPQLkSqCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oE3qUcuiHdsnsRVVQ60QA/UwKmS93DvK8bBevoeDMU9c3G/9zHNbyLSKwlQksN2spcvg7zKMirbzkiZ2LYhL7fmrZDU0QsgspHzfyz/sCqVa1YN/FD0gRRW/fPUyBdI8Xl1wOpPenVorB8iOpjHcUSa3M5zEeFfNJUtGqqovzKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZKh2TdbB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAGQxn012287;
+	Tue, 16 Sep 2025 14:02:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QW0FlAn8J5dMbTfSiA/mX2MJhAU8mCp/skcnKKG70UQ=; b=ZKh2TdbBzhFReJ9C
+	dttgqL9Z05dh8Qb/0ixuQxUotK76GShwZMjjqtLc79u+dXEOeq/ZM6JjHIOH0QDI
+	5H6dASBA+dluoVQgj2KHF+C1EjhenjxlFdN3Y2PoTuSL2GNB/melqIAZ0crzwwG+
+	tHzUTlH0KQ4W8vbTeRRkjCMo8GGdY9R7EZ5tWawkfRBDYmMwwT1MypBW5W42TkRr
+	xCCbdELvoKv4SXR8plqtsPqoap4NT3uRYpseVHQiXNvjCURBG12Z+8Vm5/VJ7fGR
+	SRU7eZHWtHVnfufRbi0ug+1Umtg5enmpqB6lx8CBUVkt+DkCTtTVB/n6AfXp64JB
+	TNZ72Q==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496g12mqy1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 14:02:57 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58GE2tvu016238
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 16 Sep 2025 14:02:55 GMT
+Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 16 Sep
+ 2025 07:02:53 -0700
+Message-ID: <0b1f0a51-3bed-4e66-9285-61f110707ebf@quicinc.com>
+Date: Tue, 16 Sep 2025 22:02:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D038UWB002.ant.amazon.com (10.13.139.185) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11] Bluetooth: hci_qca: Fix SSR (SubSystem Restart) fail
+ when BT_EN is pulled up by hw
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <marcel@holtmann.org>, <luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>
+References: <20250827102519.195439-1-quic_shuaz@quicinc.com>
+ <5kjgeb2a2sugm34io7ikws7xy4jroc7g2jxlrydfc4ipvdpl5z@ckbdxxnjoh2d>
+Content-Language: en-US
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <5kjgeb2a2sugm34io7ikws7xy4jroc7g2jxlrydfc4ipvdpl5z@ckbdxxnjoh2d>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Kga5QlJPLMzF_8yv4TGOaeTQlIThXTjU
+X-Proofpoint-GUID: Kga5QlJPLMzF_8yv4TGOaeTQlIThXTjU
+X-Authority-Analysis: v=2.4 cv=E5PNpbdl c=1 sm=1 tr=0 ts=68c96e11 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
+ a=zbsBYyxTTkarEyjW37MA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfXy75IZJHjhB56
+ ENTxSN9nE55ujvYM/+Lka6YPcZM76+Osh78I5ZZgEHZ5eySsDIwvlKQqaRXLu8xycemPIMDck92
+ M4opZSVxBDjOVTdNGJknv+/1fIuyZK5yscwvOZjCLIREGziIilRpwnZrdHscqyWGImMvxiZAOTY
+ SWgOf8CMkdz9cJcUlFnO91ypw9FzEf3Ch8LSBVSbRownfZ5Dlm0R4qFHxu92gmzM3IhFrNrh4GI
+ ySAIgLVmna5tm20wDoSdOcUmW9M/D+z03UwzCNr9N9kB2/XamCizOrn3WRack61+Al4ZyMiaylw
+ hkCnmH3D85+BqYdxy3lOLaiKxNfBnvmyCUjFTIf+G89SuXfRik64axW6eahW+aFbLeKQXcPbMVz
+ /RAS8oUi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
+ spamscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
 
-If a task yields, the scheduler may decide to pick it again. The task in
-turn may decide to yield immediately or shortly after, leading to a tight
-loop of yields.
+Hi Dmitry
 
-If there's another runnable task as this point, the deadline will be
-increased by the slice at each loop. This can cause the deadline to runaway
-pretty quickly, and subsequent elevated run delays later on as the task
-doesn't get picked again. The reason the scheduler can pick the same task
-again and again despite its deadline increasing is because it may be the
-only eligible task at that point.
+On 9/15/2025 8:45 PM, Dmitry Baryshkov wrote:
+> On Wed, Aug 27, 2025 at 06:25:19PM +0800, Shuai Zhang wrote:
+>> When the host actively triggers SSR and collects coredump data,
+>> the Bluetooth stack sends a reset command to the controller. However, due
+>> to the inability to clear the QCA_SSR_TRIGGERED and QCA_IBS_DISABLED bits,
+>> the reset command times out.
+> 
+> Why? Does it apply to all platforms (as it seems from your text)?
+> 
+> Please write the commit message in the form that is easy to
+> udnerstand for somebody who doesn't know Qualcomm _specifics_.
+> 
+> - Decribe the issue first. The actual issue, not just the symtoms.
+>   Provide enough details to understand whether the issue applies to one
+>   platform, to a set of platforms or to all platforms.
+> 
+> - Describe what needs to be done. Use imperative language (see
+>   Documentation/process/submitting-patches.rst). Don't use phrases like
+>   'This patch does' or 'This change does'.
+> 
+>>
+>> To address this, this patch clears the QCA_SSR_TRIGGERED and
+>> QCA_IBS_DISABLED flags and adds a 50ms delay after SSR, but only when
+>> HCI_QUIRK_NON_PERSISTENT_SETUP is not set. This ensures the controller
+>> completes the SSR process when BT_EN is always high due to hardware.
+>>
+>> For the purpose of HCI_QUIRK_NON_PERSISTENT_SETUP, please refer to
+>> the comment in `include/net/bluetooth/hci.h`.
+> 
+> Which comment?
+> 
+>>
+>> The HCI_QUIRK_NON_PERSISTENT_SETUP quirk is associated with BT_EN,
+>> and its presence can be used to determine whether BT_EN is defined in DTS.
+>>
+>> After SSR, host will not download the firmware, causing
+>> controller to remain in the IBS_WAKE state. Host needs
+>> to synchronize with the controller to maintain proper operation.
+>>
+>> Multiple triggers of SSR only first generate coredump file,
+>> due to memcoredump_flag no clear.
+>>
+>> add clear coredump flag when ssr completed.
+>>
+>> When the SSR duration exceeds 2 seconds, it triggers
+>> host tx_idle_timeout, which sets host TX state to sleep. due to the
+>> hardware pulling up bt_en, the firmware is not downloaded after the SSR.
+>> As a result, the controller does not enter sleep mode. Consequently,
+>> when the host sends a command afterward, it sends 0xFD to the controller,
+>> but the controller does not respond, leading to a command timeout.
+>>
+>> So reset tx_idle_timer after SSR to prevent host enter TX IBS_Sleep mode.
+> 
+> The whole commit message can be formulated as:
+> 
+> On XYZ there is no way to control BT_EN pin and as such trigger a cold
+> reset in case of firmware crash. The BT chip performs a warm restart on
+> its own (without reloading the firmware, foo, bar baz). This triggers
+> bar baz foo in the driver. Tell the driver that the BT controller has
+> undergone a proper restart sequence:
+> 
+> - Foo
+> 
+> - Bar
+> 
+> - Baz
+> 
+Appreciate your patient guidance. I have implemented and integrated
+the proposed changes into v12, and it awaits your review.
 
-Fix this by making the task forfeiting its remaining vruntime and pushing
-the deadline one slice ahead. This implements yield behavior more
-authentically.
-
-Fixes: 147f3efaa24182 ("sched/fair: Implement an EEVDF-like scheduling  policy")
-Link: https://lore.kernel.org/r/20250401123622.584018-1-sieberf@amazon.com
-Link: https://lore.kernel.org/r/20250911095113.203439-1-sieberf@amazon.com
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
-
-Changes in v2:
-- Implement vruntime forfeiting approach suggested by Peter Zijlstra
-- Updated commit name
-- Previous Reviewed-by tags removed due to algorithm change
----
- kernel/sched/fair.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7a14da5396fb..cc4ef7213d43 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9036,6 +9036,7 @@ static void yield_task_fair(struct rq *rq)
- 	 */
- 	rq_clock_skip_update(rq);
-
-+	se->vruntime = se->deadline;
- 	se->deadline += calc_delta_fair(se->slice, se);
- }
-
---
-2.34.1
-
-
-
-
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
+BR,
+Shuai
 
 
