@@ -1,246 +1,248 @@
-Return-Path: <linux-kernel+bounces-819291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC9DB59E19
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:47:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EEFB59E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A9F7B27DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B6D460C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0002FFFA9;
-	Tue, 16 Sep 2025 16:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21CC1C7009;
+	Tue, 16 Sep 2025 16:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="XH3XAUBv"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IE1pZCtx"
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013028.outbound.protection.outlook.com [40.107.159.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324302FFF82;
-	Tue, 16 Sep 2025 16:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758041192; cv=none; b=tsoBAyFX4SgZAraSaRr+q5BOMM6nJX0/KbzsXkqdwaHoMOyubk0XzEB23izoBviIOYn9p6WZtnH/o/fA5ljzs3LFW3iPrrIWZrQDGYAv+72oecioFj7ov89Pd26QvQGSD0lcqNtG+pshxYqf0d0Z8lnsQpkSl2jxRuUcx8a1xdU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758041192; c=relaxed/simple;
-	bh=8AESY8DFg+P8p5pZuaMkvp80UwJ/QTg4ZdEEHu0ICgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afYyWofjo4wfur2ku2pwtP51K5GdrvcqlYLlyfvlkhoEQdRMQBbGoU6wGzYjfkEGnUPxGhr8XHQh4S/4Mc18l1Wg7NGqsSy232vUzx/1JPo1p8AU/gHikzLMK00G2he2YirbT7tyiRJ+KFtKW6RuLpzmhXHy2qDg9Jrds2fLGig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=XH3XAUBv; arc=none smtp.client-ip=212.227.17.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1758041168; x=1758645968; i=christian@heusel.eu;
-	bh=D5WjKsYzC/8TQ4xzES5ykkMKYMccrsD0qleFS2sZfIY=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XH3XAUBvlVuoIRcY7m680tuNZ03tgyN+4N0tBMtCv76BTXKk9+VqfLuC4Gs62kMG
-	 1lZ5CkctZd6kNOJ6c/dawjVwJ5lSgZuAxqSpBEQe5CArt8Bz4BW6z31Yz7p4YOXxz
-	 k6Mi/T8v+wtyS2AoaZPVUc4Qwx7oTQWOvzXKcmbNc8ImiA36QyNxlue1N0eeiXmqU
-	 TAlmZHeXEB8GFp7R7baD+6AckHiyd3hs+X60U6tS4tgXPxwKSuSL3bmeED+EB8VtK
-	 mprG27iM4NTgOeSqFJ9G3LSDadzCTHtUwKin8fP9aF0PlJO+C/SGinprMPAWbDOVG
-	 TuKtPasnj+kN8Se0YQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([94.31.75.247]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1N1Ok1-1uEcGy2Dmd-00re1b; Tue, 16 Sep 2025 18:46:07 +0200
-Date: Tue, 16 Sep 2025 18:46:06 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: rust-for-linux@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, Linux Regressions <regressions@lists.linux.dev>, 
-	lkft-triage@lists.linaro.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Benno Lossin <lossin@kernel.org>, Elle Rhumsaa <elle@weathered-steel.dev>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250915: error[E0425]: cannot find function
- `atomic_read_acquire` in crate `bindings`
-Message-ID: <27366f94-67d4-4b73-b420-cacdbe9d603f@heusel.eu>
-References: <CA+G9fYtT7HNBM2XBbePeZ-Fw+ig7SJ+JE_NpQ1VuHR_TvAjX2w@mail.gmail.com>
- <CA+G9fYs4JB0ngq+aryXHVQSq-f05cb4agCfyM9zN0SgprQf0_A@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FC92FFF82;
+	Tue, 16 Sep 2025 16:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758041200; cv=fail; b=ZsIwi1g6ftLhewjLvCHwm/7g44ImwWKzDrmR+upKecwQqAuZEj+8ewqo8pZBZKtKWoBmwqBzTpDPwescwpIM1YO+xxsudtfwnWDnYynGXprqZuryo8J2L7KaYyTEi1A7M8TavIPwCDLXvIw4R6voiD5YUVkCxA/LmMHpK+FmhUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758041200; c=relaxed/simple;
+	bh=JTu+esReVlmiGromDLtlrQFmkxRVZo+MJqz4A/X4LS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Pr5z3+0j7y2FTQC8vBP4RFEiq7GmVBapUIAIKJu4pn78ShobcZmsxcdDyh54BfMKaLrm+/d+1bfHO/TouWmogDe1I0qurewZD7WvBgdk9GWGjlcL+D/KoS1CR+CDbXB2SY7nFZ1rHM4m/rsl1ACTY+/Do81bQB4QMKkk+glJ1qc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IE1pZCtx; arc=fail smtp.client-ip=40.107.159.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dz7DOahraGZ54LvZy/mn95bV5IuKeAyedCUqaeTS3hz0+LeBwC+OteTexHRx/3BBC5yki52Ge6Q/li7caXiMt2kPNkKwENCgt5LGkYO+MAawt45oX7szaaFrKzckkkY9Wv/DGmxuC43g6xdLyjrA3oWzJqSXFr2+YlgtX0JdQaFjypN19gkgq64qNsnk0doE3wexC1elIX+CwlFX1koOS1C/a5uu/AOKPjxn5hXlxa0rgxe46GWYRYgjHD+yF7kfKaz1u+DUXr4j7TBE0mF8/VH1YRrAeVyNcKA8AFNCgsZ22K6vkqmU81aHecOWBEIDfY95aTGWdY32gFZ7FJ5oiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UlB0AQTCZ2oNxdYvl+MyET2PO3NmXgkqMJTw3WcWsfE=;
+ b=MPt27ZIgoIx+IX3rs+10sSnjfpMu4HMqTwS/VE86SxG0c6+A4pJ7Q0ggxd1G3zDI+YO+xkpev9iNP+v1gzCNCoZUbrcmU9yrkX7Vs/Bodne7ixiHzaFdwcIaiAUhmDmgqlMYr+JSnpyBnmf9Y4aZ3WlWxa4GEjvxMmsyLL4hnKtQGUYPe/2ygvnWUjZ7lHdYR/oYuTvRuWJ5g9KrHJ5V84ck1d+NXXWUIHt+soE3BTamY2BlquLXe7tdUOO2cFK1kv2bSDln61h2jWKGcLwFuBTFzdkiW5hpX3OXpOBxYqCP/OKrrUP8HcDYxPPmHuPWo5kSdZoutuSpNZWQ/E5RxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UlB0AQTCZ2oNxdYvl+MyET2PO3NmXgkqMJTw3WcWsfE=;
+ b=IE1pZCtx9DqMMIoyUM0RFSgPd+fLQxuSVKjePmPSbqUeKkAE0ougdC9y/cWfz+FCuR8SONa45GdZGuIlt4TT3WfIpHYW+P+U38xbGr0yN0TTX+WE3Os8MfMa7aLE6+KU4sTtcTtmLIKS11mBN27KPw36U5Q6GigAucxd0O87XKIvMjco9ojKkgtXIWRlzxc53JkEKND6xg2bQ7AWicc4gIQ54Z+hsz4fhjoBZtFnzf8oSLODuefjns7tzuaGX3rqa7D9XyLWMR+pa0bmZ9AxXlI52U0hpLSgLZyFgAD1WcNHATWTZ87pUMlPiyQXPym7tRAPf1x7Uuc/IfcRNBJwAA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AS8PR04MB8866.eurprd04.prod.outlook.com (2603:10a6:20b:42d::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
+ 2025 16:46:34 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
+ 16:46:34 +0000
+Date: Tue, 16 Sep 2025 12:46:26 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Shawn Guo <shawnguo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 8/9] arm64: dts: lx2160a-rdb: fully describe the two
+ SFP+ cages
+Message-ID: <aMmUYmIFOsue+rkK@lizhi-Precision-Tower-5810>
+References: <20250915122354.217720-1-ioana.ciornei@nxp.com>
+ <20250915122354.217720-9-ioana.ciornei@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915122354.217720-9-ioana.ciornei@nxp.com>
+X-ClientProxiedBy: BY3PR03CA0024.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::29) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tl3l7oscxlsmmgsi"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYs4JB0ngq+aryXHVQSq-f05cb4agCfyM9zN0SgprQf0_A@mail.gmail.com>
-X-Provags-ID: V03:K1:UpdFU2uAahLiZS0wyFOe047oO8Z6N4yaaZevfwl69BxlOKmVI5k
- Cgj6pSGwHNT9Wyn0Vx7mDgtGhn3Zk/4a25sJlxqf/hKiHXDUdW/euurFTZAdFV0m48DQslK
- 2i/ZJgNlkv93YdGp4SVmccBF7Km0ridR+I4uvcBKIlxOnwqFOXw/4GFSE+yilEJWUlF+UvP
- Ctyoo8hItlmcuaYFRZpWg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EdEoQslSM8U=;5/+m8JTvQKztS6MwM8VFz0OO90Z
- 3333JO4PbuKbyzEKOas9k6j1fbDlwnP+dFMGaibtEjynmB6ljSXayoGvv/FGb761uAp8taUZz
- wk359JQ0WcWcdMqg62r0898FBWZnQTzvjFpLEUYfoP5rw7Yl8PstsJoYWme4wMMF6QBXdXZ5Q
- NudX0eVeznO+TOUv6y2CVGIeCGvXPQ+H4GRlyswcmbIjp8rpANzZFuynaQWKH6bkmTQU0wCjF
- bBsr0IHrk6Pwl8jeP3Dw+JjrWzvTWd9wf3WSBFKKgJyfpKdMnce28xsuNjX5R5q9zyMUbh9kC
- KnUZtMIjWzBWQnfD8O+M1fXYV074hJv5Y9Alci72g+28BfK+/BzZPDv6T0G9ZK0A2qjR+It/d
- /jvovKQ5l8JRZaj88DPTjpE3b2ZFU6dh4baCz8D9/yHXleweual5kmALpZ+dUmXcdIGc9aX9X
- 61ZRpTjyKLs2qOU+hx/R7U9bS7MQjN+zFIr+jej2BYHEf7wFjIZl07n0wHqYnYzSYfQ7wirlx
- aN8gw1plpX2zXTnGD3mlo25tehrnLnQeTHeTDYBZQQSQk58YQmXbIAtGs4NarrKvnUpBJFJg4
- d1XjijcHDzbyExmf+qS6I4LkrjSnRGfYSz3IazJGajj4eaWrtmXAcPO9oSIwM2AvbTRIqypRi
- Mkz68n7Qd9vyWeDdB6cdByRB1TMQTm74az9GrB1GKDl03pv+ErxGDzip3GuagLyzBUYjZ4ETM
- UYqlPFqEnB8M+x7htteNaS+hsxf6lZ0ZDD2p8R6Ht1zlDKKEHZ5zBhIaUl1FI7Yhc2q+0pYJ2
- y0zWYR0wHyIcC27Oo3kCaloABjZ3Kn/ozM7lq5GdVEH3PFbYu5iAZWDrqGoPYpsweLZgi58CM
- 04As2FAtzIGFED8w+EeJxCZYsT9/qIeFZQQGpl4VC9pXwOLfOT3foT2vc38IqXyZCXsrY01eg
- lVOJ9fbhxV7XcYLOL77L1mwTRPTAzv4oECPJXX2EJAibqV4f78nU+XblDMFh/FlR6uNLQpJe6
- J2HK8ti0IQffmOwKQ/zjY9z58g2jvtPWoomPazJngj/raiNd0YGDsK6zwoGxzkmb4spwxMiyl
- wEBbdB92fPDixr79tur3Bj2hCvt77C+YURtjky2nyaPFx86hnX6plp5mZMcNNdv0q8z9G0KQD
- NYVLFxzCgW9/X3JYr1VOE59GlE8XQajvmMtk8Rw09jBHOPBJNDGEsfrwvhrZNhvbXc6DIbGh7
- UnlVClsy07mp3eq4uZMTCwus6JkGKAboqGS6wv+RO37gdxdCssPpwMLJj1i3BNEzrYMYI0W0F
- HkyorK2W6dErra/k3z1jQRUk7NzlkAX2t6PUAmVDVjaPis4vmB6aN0HUtod/VteWSLnNE8jvz
- Zqz2O09RGsG/I6VaBqxbrrLkux1bfs4eEh7GVuM3odTp9aFpUw/hUTQ0DXCV8bNY82AuE0ViD
- XvNY4GZylKlfT8e69Nr1JS33vUWYA//367tI3NX6/+eE6B7o26YkUDmkttLMnb+E7YPX/Bzhc
- vFnjN7RAz77Ac91uztjqhCXiFII2I3ffh8YFoLU65Li/pGSU1+Mxt9roF/dxR/1IE/bCEJroI
- jTkq203T6h/6hFDwqwueJhofkEK/SnoRVCp8okhjtUHTRm0vv+yz7eolnBZVtnZ66fVuoE/QK
- OBCFS7mA7mKqNIT5saW4HH1mOpPhmFa2u5w6RKZQlPoKBstr/WKzEkqSZI5BJ/3jwsAUhQhb4
- eeSU4XtKnEfczoitKcy572af5bloh0eONImFMB2RdZA+LSFbA9HGV3qU=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AS8PR04MB8866:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2050cc7c-b4ad-4296-8533-08ddf5409867
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|376014|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zBc05YgS9Tg+aE3HhmarLXC5dH8a4BTAf2M7ldPcUqIDbTMI/VqSNq7xisom?=
+ =?us-ascii?Q?VeKXpRo7/QGOGcq/kEdMET5Bpi7JIdjXbwDwT6hcBpZdHM6PccXl+fZ/AO7j?=
+ =?us-ascii?Q?EqBZmW8HXc5WEtSqby0nsBMklu+xTHTUK43n9ikxlUYzgeGp3PExv0unyexW?=
+ =?us-ascii?Q?WbU2TUvZYDVy5e60pKOsSjabmNdO8xKeuh1y8YIGrxzFjiePGzCJd8EkmbKA?=
+ =?us-ascii?Q?vkBloFOTH7NLgPZfQDVlH6QY+JtWJBMwSCxLhLLXqlV3+QMPX6R1uIQuaU32?=
+ =?us-ascii?Q?8WloElNWyQ3LS4nzILVZAKWAYrRyiiMcvDwa529sVQuLMpftYInH3X8f0pzZ?=
+ =?us-ascii?Q?8i+X7xaiNgeXotL0bP5d1x6r2ac6fHhIseEqjmg/33/ju4bLfSAfP0QkaAPd?=
+ =?us-ascii?Q?RpoQedvtriZAyC1c52bHINGi78l6HFoNjP+8/ceAcQHVT9xNpbdyFMDDdssF?=
+ =?us-ascii?Q?wLIHe9A/EsAs9+vjtXemIDMwda3fUQt1mniESQIj8GXJ5A2YJSVE8kFmY5hJ?=
+ =?us-ascii?Q?HcJ06dCSe9a2zI+CeDOGDO/Fec0fkh4sosWaNGtgBXTMiyTrfpmSoMQhM7Cv?=
+ =?us-ascii?Q?3O372eaOb2atXD4h6oYrXHtmPw8pu0FbvNSItLtg591AGKqVrQlEQhC5ixBJ?=
+ =?us-ascii?Q?/XVceCsD/sxnSWBbUaM04hNsUGk4HNg3iHjB1b9uayJuCY/PGjqvMwKXs2n7?=
+ =?us-ascii?Q?3Zve2c8+Ta1rjx8/Ch0RaCZqq8GZhSAkdOaf5lUdyQeNe5j570AWtXidHftD?=
+ =?us-ascii?Q?n3bmM0wwePIkWZAcGXBkCvieX2cGYufzi6ZaZGWwnBUEVLxVVgLPOl8n88o7?=
+ =?us-ascii?Q?O36Tw10D/fQC/Pedi0tydE03OGDc4AyTpYAL/CTju1oqvSzABGY7gZaweJgp?=
+ =?us-ascii?Q?rZCecmIdW77UQ0nNSm/S49FgDw43DC4uuzIVNOGQUFYOKJFNgvcodCw/tvv7?=
+ =?us-ascii?Q?yVWQWJfLD2hFModaZDQFNXMOZ85nzjcXoAZMttCgJFnNR3UgQ1AGIGq8a9N3?=
+ =?us-ascii?Q?uOBJGNHXxCWXunxLunqPmy65PNUc8DZfWefC/d4lvv/x0u34jVzRLf0/Qk4E?=
+ =?us-ascii?Q?baDf+BlfR/Kl0CD+CuZ0Q3u+9oiMvCyHDbIWLm4e+XPIsFnuJwGL/MrmJo6S?=
+ =?us-ascii?Q?GkldyYeGZhilPjEjmhCMVgKmNWI38e/iVqDHjvbcwYuo8iKd17MPouOGA+id?=
+ =?us-ascii?Q?gHY7cWQ6xY5GnRQMcvz9cx1zMo1yea+9GNwPxcyGLIBFuNUHfGeqWiKgJRgR?=
+ =?us-ascii?Q?ZT/xUHa0e4TmpkTQG/dvv3X4UbVTKT2KXeM7BVXhgM0PX/lKTIWZNah+awdk?=
+ =?us-ascii?Q?U605vm/XNdQoyiSbWXCjMoqrQAo6MyA44BZLNg0/SFq7w8Xmnm5aWsuwe6WU?=
+ =?us-ascii?Q?AXT2kT+PZRR/IMUyDL1ahVbA4lsDXhbIM594iPGvnv3J21zZYFmY9EZV63pl?=
+ =?us-ascii?Q?DYqGxER2cLYf2wMQ9xHvnwnRzphG5R1s+JCW1PCYqsBqvNFnLORawg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Iqdfkshxe6xRbLow+3leA1iR9e6D5+PHcOEIfEtmlVvUHi1nWsPHI+eDkdJz?=
+ =?us-ascii?Q?Ax5tg2zlhfPrsiO1cQ1Q8uWzcQqGIqMHm8WG2/c1+t0G450SB3B4B9RLtdrk?=
+ =?us-ascii?Q?beArvAnMUegX/1q4juzLCSA5peeHHJKuuQ9y2HyNyxTvkgl4C0QSSBwVUmer?=
+ =?us-ascii?Q?bus084fM8YF5//YmLr4Z2ztXY0V4ai9Loosyg9gdQuBUKUZiRGh93qSatmyL?=
+ =?us-ascii?Q?rlWR0ZeuhYvwjn9R7WjJ6x0k+7gzfrPlRj+rD0wSwy37bZouVGd0wBaIL9p0?=
+ =?us-ascii?Q?ziraQCnPr75+j+Cx7vE9GBT94RVJL987O8w5/7FaBcWtB9yVuGgOYdU0AxN9?=
+ =?us-ascii?Q?lH+opKxm7O8C+d+YFg1qbeNb6XRn4HnJLgSLrS+oz1WJJgSn3kTsgzuQH12y?=
+ =?us-ascii?Q?Tdou1zSKmDVucczQYupZ8RvBqBN+3gCHE1I4xz9iZprnFPVh+j2cqOdHEWGy?=
+ =?us-ascii?Q?vTxbbTqJ9uCoT8P+WEISnloRhwJt3Bypk5UY/3hfqt0sBRrAoJWA9uzw+0xx?=
+ =?us-ascii?Q?hAcDNmuapbq5XFADLtBUSpPISVX/N635xZaPwLZfrksAPRoO5hznARvWmdPX?=
+ =?us-ascii?Q?ZmeSx5AoEBWmoNxGoAjFz0xVHTbOhZrxC/Q9UtLnamloBg1KWHGXePe9E2pw?=
+ =?us-ascii?Q?AgvKAyFVZ7WV7fLMO4UTe9moGJHdHWrn9WqqYMtJBVkD5PDPfxXhae6TIjbB?=
+ =?us-ascii?Q?11Tl1rNuMY7ZFLVFozvEls9o4kCFF+mJPr0w1TPvbHzNhlxUuyWsNHKoJ1pZ?=
+ =?us-ascii?Q?4uhCXdfmf8ku8+ow27g9fhMLqknOkQ5hF0qGLLsq66tZhDqxez4qImgzg2gy?=
+ =?us-ascii?Q?t3GZM2cMxm2/cvrr/RfmfQkK/HO6jRrjtDUT5J3wVcc1afBTvMGQUxvaSGxP?=
+ =?us-ascii?Q?TOBTZEWQQqnm7idZNvk3svHiwZGypqi6VnP6eFsM0crmYUKPlDTNMgpo9BNy?=
+ =?us-ascii?Q?PibNGYRXctxSz+h583yKFzdxa5gR5A0sqLLEX441iBG0tf+0iyq4rADE5KjH?=
+ =?us-ascii?Q?Q+afFhwXHwYVtgsHlFlybIeN04g+35w0DnTzcs6NQ2fqZSY0A25I6u9Txcba?=
+ =?us-ascii?Q?8GUv2RD4Jkf3cL8QFZQs++IYARehrdLHlyVHbNK0QxyUsFSD1H9VEKmY07ya?=
+ =?us-ascii?Q?kZNuA6U+Fqrq/LuuNqHlvFMZQ8aAU6RSZvnZhf3L09Sj85vks85j5HqD+8VB?=
+ =?us-ascii?Q?BOcfls9q346XilJ9F6oSJqJmyZcEQxWrw18g0PWhs56d4/shO59RgJT1HCui?=
+ =?us-ascii?Q?RVtI3q7gVrUyFw9zblmhgztw/63nSXKInoFSY7P+TRAiI6B12Fr2VAmWTlYd?=
+ =?us-ascii?Q?PEMT1DLw9ZMH82lUbsY8ZWHLxEEl4LV6+fmo+QPOhKfM0tpdk+Lm+MalA5e6?=
+ =?us-ascii?Q?K1pFfONWqdeFsXkXpR9wphy+H5QAE3JFl5oVWB6rASQXPKjYmXFeEWUa6kqG?=
+ =?us-ascii?Q?JVJFKRvLMJX+BRLGM3M44+o9eL07Z/b72tEdBtPCf6t2YXQ8MEoL+vqSkYRu?=
+ =?us-ascii?Q?3cz4eSyvUAZTjEylIiv0bpRoY+RAOZitb1LmE3yGZHTg+WwjfZI/jP/LbYGE?=
+ =?us-ascii?Q?aedC8Vx/ONVOOXrQk10xzqBDIOLrIq8wmtvY5E5M?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2050cc7c-b4ad-4296-8533-08ddf5409867
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 16:46:34.2850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xfUlbcOl7yllBmkKZ+dO2Q2bk8ChqAnLwxPOo8ay532aSMs0lq6hurXsUbe06KK/4te0XnFUdREwcdT0G7Iaow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8866
 
+On Mon, Sep 15, 2025 at 03:23:53PM +0300, Ioana Ciornei wrote:
+> Describe the two SFP+ cages found on the LX2160ARDB board with their
+> respective I2C buses and GPIO lines.
+>
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> ---
+> Changes in v2:
+> - none
+>
+>  .../boot/dts/freescale/fsl-lx2160a-rdb.dts    | 47 +++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> index 4ede1295f29d..62329a93a67a 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -31,6 +31,28 @@ sb_3v3: regulator-sb3v3 {
+>  		regulator-boot-on;
+>  		regulator-always-on;
+>  	};
+> +
+> +	sfp2: sfp-2 {
+> +		compatible = "sff,sfp";
+> +		i2c-bus = <&sfp2_i2c>;
+> +		maximum-power-milliwatt = <2000>;
+> +		/* Leave commented out if using DPMAC_LINK_TYPE_FIXED mode */
+> +		/* tx-disable-gpios = <&sfp2_csr 0 GPIO_ACTIVE_HIGH>; */
+> +		los-gpios = <&sfp2_csr 4 GPIO_ACTIVE_HIGH>;
+> +		tx-fault-gpios = <&sfp2_csr 5 GPIO_ACTIVE_HIGH>;
+> +		mod-def0-gpios = <&sfp2_csr 7 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> +	sfp3: sfp-3 {
+> +		compatible = "sff,sfp";
+> +		i2c-bus = <&sfp3_i2c>;
+> +		maximum-power-milliwatt = <2000>;
+> +		/* Leave commented out if using DPMAC_LINK_TYPE_FIXED mode */
+> +		/* tx-disable-gpios = <&sfp3_csr 0 GPIO_ACTIVE_HIGH>; */
+> +		los-gpios = <&sfp3_csr 4 GPIO_ACTIVE_HIGH>;
+> +		tx-fault-gpios = <&sfp3_csr 5 GPIO_ACTIVE_HIGH>;
+> +		mod-def0-gpios = <&sfp3_csr 7 GPIO_ACTIVE_LOW>;
+> +	};
+>  };
+>
+>  &crypto {
+> @@ -236,6 +258,31 @@ temperature-sensor@4d {
+>  				vcc-supply = <&sb_3v3>;
+>  			};
+>  		};
+> +
+> +		i2c@7 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0x7>;
 
---tl3l7oscxlsmmgsi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: next-20250915: error[E0425]: cannot find function
- `atomic_read_acquire` in crate `bindings`
-MIME-Version: 1.0
+reg should be first property.
 
-On 25/09/16 09:56PM, Naresh Kamboju wrote:
-> On Tue, 16 Sept 2025 at 11:17, Naresh Kamboju <naresh.kamboju@linaro.org>=
- wrote:
-> >
-> > The following build warnings / errors noticed on the arm arm64 and x86_=
-64
-> > with rust config build on the Linux next-20250915 tag.
-> >
-> > First seen on next-20250915
-> > Good: next-20250912
-> > Bad: next-20250915
-> >
-> > Regression Analysis:
-> > - New regression? yes
-> > - Reproducibility? yes
-> >
-> > * arm, build
-> >   - rustclang-lkftconfig-kselftest
-> >   - rustgcc-lkftconfig-kselftest
-> >
-> > * arm64, build
-> >   - rustclang-lkftconfig-kselftest
-> >   - rustgcc-lkftconfig-kselftest
-> >
-> > * x86_64, build
-> >   - rustgcc-lkftconfig-kselftest
-> >   - rustclang-nightly-lkftconfig-kselftest
-> >
-> > Build regression: next-20250915: error[E0425]: cannot find function
-> > `atomic_read_acquire` in crate `bindings`
->=20
-> Anders bisected this build regressions and found,
->=20
-> # first bad commit:
->  [eb57133305f61b612252382d0c1478bba7f57b67]
->  rust: sync: Add basic atomic operation mapping framework
+> +
+> +			i2c-mux@75 {
+> +				compatible = "nxp,pca9547";
+> +				reg = <0x75>;
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				sfp2_i2c: i2c@4 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <0x4>;
 
-Is this still an issue on next-20250916? As far as I can tell this has
-been fixed, but now there is another rust build issue, see
-https://lore.kernel.org/regressions/0fee48bb-7411-4414-b4e7-395a8c3d0f6c@he=
-usel.eu/
-for more information.
+the same here.
 
-Cheers,
-Chris
-
->=20
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > ## Build log
-> > error[E0425]: cannot find function `atomic_read_acquire` in crate `bind=
-ings`
-> >    --> rust/kernel/sync/atomic/internal.rs:124:37
-> >     |
-> > 124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_a=
-rg,)*) }
-> >     |                                       ^^^^^^^^^^^^^^^^^^^^ not
-> > found in `bindings`
-> > ...
-> > 201 | / declare_and_impl_atomic_methods!(
-> > 202 | |     /// Basic atomic operations
-> > 203 | |     pub trait AtomicBasicOps {
-> > 204 | |         /// Atomic read (load).
-> > ...   |
-> > 216 | | );
-> >     | |_- in this macro invocation
-> >     |
-> >     =3D note: this error originates in the macro `impl_atomic_method`
-> > which comes from the expansion of the macro
-> > `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z
-> > macro-backtrace for more info)
-> > error: aborting due to 34 previous errors
-> >
-> > For more information about this error, try `rustc --explain E0425`.
-> > make[3]: *** [rust/Makefile:553: rust/kernel.o] Error 1
-> >
-> >
-> > ## Source
-> > * Kernel version: 6.17.0-rc6
-> > * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/ne=
-xt/linux-next.git
-> > * Git describe: 6.17.0-rc6-next-20250915
-> > * Git commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-> > * Architectures: arm, arm64 and x86_64
-> > * Toolchains: gcc (Debian 15.2.0-3) 15.2.0
-> > * Kconfigs: rust config
-> >
-> > ## Build
-> > * Build log: https://qa-reports.linaro.org/api/testruns/29894207/log_fi=
-le/
-> > * Build details:
-> > https://regressions.linaro.org/lkft/linux-next-master/next-20250915/bui=
-ld/rustgcc-lkftconfig-kselftest/
-> > * Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkf=
-t/builds/32l4UDzp0FMtS73JeG3kWpcoQrm
-> > * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32=
-l4UDzp0FMtS73JeG3kWpcoQrm/
-> > * Kernel config:
-> > https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UDzp0FMtS73J=
-eG3kWpcoQrm/config
-> >
-> > --
-> > Linaro LKFT
->=20
-> - Naresh
->=20
-
---tl3l7oscxlsmmgsi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmjJlEoACgkQwEfU8yi1
-JYUh2hAAyo0MneTix6hFjD8ruKiMvRwwgbkfjDjj29QW0/pOaq/WyxT8FBGvJWSv
-JUZSBSS3HsoM+KPqhlRwbv9TheDGNnNCYqM5w4P83XgmzYWC4zjl/ITX8H3UH28s
-14/vPbYTC8are1EdkDGzrBw/wRg7ekqQE75BOVxPqTMOJ4IQlcTKkVaMZWwH6L7Y
-XdECQomFGuD24WQ0ezkhHPkkEmg+VDqYYH5s+Q8hRn4w+uYDGWGegrjSfXUYzoj6
-/vl6dkxmx9kQj99lFDebsvw6piNyAfSeS37EuYDE+uz0qf+dU1yWO7RMDsbcZY0K
-Jdkpv0GRJt/p3WaOhO2P6iT0BGgz8dYG0B6I65UdqZUPT0Z/YMjmH6gsG5ShSyrm
-RH+K8JV90VTgXa1USh2wjG7mGas9gEfGeLSogZNCjWjgiPa5sFXS3xx/e4KX6stF
-KTFaW6GxdMsmeqy1F9cr4/CzyI1Tek9e985VOrsuHmnGqEK3rQb7eeXueYM5VIXR
-yoJL3DcuSyOAVlt+/jhmOUZQeN3sok2K+ke8ApNzQBU6XyeY5ErlWndKjIfNtY/4
-hsw/Q6VVQfiyIdXqinb+tIdL753aViGusuOFh4fU5/9tEjkXdg9oFqU7INj62x8A
-b34zElsjs/uGjkVbAR/0RujA6kedS7k3SMFKqX6z/1MfmcfYqZ8=
-=+ihB
------END PGP SIGNATURE-----
-
---tl3l7oscxlsmmgsi--
+Frank
+> +				};
+> +
+> +				sfp3_i2c: i2c@5 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <0x5>;
+> +				};
+> +			};
+> +		};
+>  	};
+>  };
+>
+> --
+> 2.25.1
+>
 
