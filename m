@@ -1,97 +1,197 @@
-Return-Path: <linux-kernel+bounces-819185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0465B59C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:53:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9C7B59C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131E6324174
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:53:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A74E7AEED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C6D3705A7;
-	Tue, 16 Sep 2025 15:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C324371E8D;
+	Tue, 16 Sep 2025 15:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="H55oyeaW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YZcT1ORf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529D03570B4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF9919E992
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758037997; cv=none; b=TpDNe3R+sn6xRY8H6HpDcQQrDDZeqgmVYwLFCY/FQS6civnwxjrR+V3hUMmRsVmYHxQOkf3r+LWj6XqRCYahLuibMRI/UTikh87HNBrZXoaExqbjRbtk2qXxN/oqgBoRRbdSK3sXnMvjO8iO267cuE0lihx0gfScnaKsr7qvMkg=
+	t=1758038125; cv=none; b=JRLllUlAJinmjxsue0qf6LvMJDCfJjBStDXxdg6JwXZjKr4fVrnIzkMqMWCcSMMOSBanxol/dAgvumOfP0rS89K8OTXZ9+BtNiaZWprIH+QMd9n6zutO9xp9S5P/si+wWiD96yQ14X8orMKU314/BF5zf0S99HCLxHAYKT6uEm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758037997; c=relaxed/simple;
-	bh=QdhsLLTi6x2P00SOdHfDzgBCCPRrEZ2OxxiHXGo3X0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FJ22FYPNlFkGsNbOGuMAyhDIjAyqOtoU6vqjmqDfXDdTnCpvMJ1hRAGOCCyg5emlRnz4ebDRujbzJ8hHWHX0Jc0amIRNGFF5r4JhmBcU+qgep1BhWopqNkEo6WrqrP/kTpZnGmMRkIpVCORAg/8MvaPkhi9p5PMFyARKK9DvWCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=H55oyeaW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98DF7C4CEEB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:53:16 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="H55oyeaW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1758037993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdhsLLTi6x2P00SOdHfDzgBCCPRrEZ2OxxiHXGo3X0U=;
-	b=H55oyeaWjML93nNQVTWuh7rT6YX1P61S2Dhz77e91JuQjlzvZTw1SqL1oOhgOnbzbXVzjf
-	lBepXGG5uizyEm2OggZsooXC5KUCOjngNwQd9jwbXDCQAiEYsjJC8lxG7qLao1O1JK8IXv
-	2doy5ngRPBcWsrqAj+QeNQy9rhXLzls=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 12170c4f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-kernel@vger.kernel.org>;
-	Tue, 16 Sep 2025 15:53:13 +0000 (UTC)
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-32bd4f1b671so2488fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:53:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWyP+BDBnhhXAo/+JJVWoMqQiXWMiKsSj/v4M5MAyGDTH8kHqD3du0KWww6BcEK1JRta/iOFQi50SUcxDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs80z5lP0RhTHZOgJ1AnyVL/qH1j5C7qj5447qg8sT+f8U3xQL
-	uA+wOxsTTQ7ZDROvSHtKpMWeb6rIe4kgfUwjFQgskj13SfBC/ZkMjzVpOsUcG9yA8UsAfsAti77
-	7jjdQ0ySxHO0zB2HvT0Yp6oLsKSdoq/g=
-X-Google-Smtp-Source: AGHT+IHIsWlCqXP6w2ex+u5oDjE8Qk5JpGJiSn5HO81iROUQUIe3rwbuy+iUOnTAxJz5JFUcLFFDPdjI0OFKgCB57WE=
-X-Received: by 2002:a05:6870:15c3:b0:318:70e5:3ce with SMTP id
- 586e51a60fabf-33453569978mr1595607fac.21.1758037992013; Tue, 16 Sep 2025
- 08:53:12 -0700 (PDT)
+	s=arc-20240116; t=1758038125; c=relaxed/simple;
+	bh=ejGimSrqJ4B5tkiLt5URRUekzamq8tqyslt/pMg8kOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rYBTYdRW8m3RW+PzwBNTTZpdwtpvW5NlE9tZAibnWeDE0jrh36SLSQw+GNiaGUChaEp79WhmBcI3MSvyy22G3rZuIrGYBRi7e1CHoZmS6KLFaeSbB0qsvXB+s97I9uN5xG6WO2y60Jpk8yNUsUScMp5YzHapCarv20lAb8YRs0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YZcT1ORf; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758038124; x=1789574124;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ejGimSrqJ4B5tkiLt5URRUekzamq8tqyslt/pMg8kOw=;
+  b=YZcT1ORfY6vRN8r692mTc/ferH2dczk1ORu721sI4Fp6xikli8pm0bTs
+   i9ionXbvKE6SuulV5hCCvtrtVZEshettq0NDzYddj7xGsJeCPM2b5by3y
+   7VCZQn1y6+BW5SnRRvR5JvHv6UFDeTqFtRTUkiKgqaZqDRRDqKUS4JBO6
+   4cFUisDzTDHw0OadHc8PDWfEfeJr1YJp0FY/9TZOm0e3bowXf1octxcrB
+   rzwwZ9hRT4xzv1+w9pIAuZ/xh/CvQ/pNuSSDjySGlQ2m3Omt60D8p5o1k
+   oeM02I8/2LCl/u/YbKSHQWPEURN0HLlOnO+uFrkrbyIvQ84KzdEi6vpvQ
+   g==;
+X-CSE-ConnectionGUID: iPawiFcnRbuv6Th7ZHctQQ==
+X-CSE-MsgGUID: RMmKf8Y1Sjq+6iRPCCl6EA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64127064"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64127064"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 08:55:22 -0700
+X-CSE-ConnectionGUID: sP87AbSOQQqivrWYBPa4tw==
+X-CSE-MsgGUID: roSA1V6PQw+zPai7xl0ktg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="175757352"
+Received: from mfalkows-mobl.ger.corp.intel.com (HELO [10.245.121.109]) ([10.245.121.109])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 08:55:18 -0700
+Message-ID: <50380149-c9cd-4478-9fe0-93d95a1016af@linux.intel.com>
+Date: Tue, 16 Sep 2025 17:55:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915144301.725949-1-ast@fiberby.net>
-In-Reply-To: <20250915144301.725949-1-ast@fiberby.net>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Tue, 16 Sep 2025 17:53:00 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rf9NGRVtJBnjUJVPraGKL6dk0nRxzXmSi-7X6Y1zjmsA@mail.gmail.com>
-X-Gm-Features: AS18NWDjjoLajNux7GbGPgbtVGxD8CQj2DjICrmFvFsHsH0-lOTbkqsL1kkKnR4
-Message-ID: <CAHmME9rf9NGRVtJBnjUJVPraGKL6dk0nRxzXmSi-7X6Y1zjmsA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 00/11] tools: ynl: prepare for wireguard
-To: =?UTF-8?B?QXNiasO4cm4gU2xvdGggVMO4bm5lc2Vu?= <ast@fiberby.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Simon Horman <horms@kernel.org>, 
-	Jacob Keller <jacob.e.keller@intel.com>, Sabrina Dubroca <sd@queasysnail.net>, wireguard@lists.zx2c4.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH V1] accel/amdxdna: Call dma_buf_vmap_unlocked() for
+ imported object
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
+ mario.limonciello@amd.com
+References: <20250915161046.135243-1-lizhi.hou@amd.com>
+Content-Language: en-US
+From: "Falkowski, Maciej" <maciej.falkowski@linux.intel.com>
+In-Reply-To: <20250915161046.135243-1-lizhi.hou@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Asbjorn,
+On 9/15/2025 6:10 PM, Lizhi Hou wrote:
 
-On Mon, Sep 15, 2025 at 4:47=E2=80=AFPM Asbj=C3=B8rn Sloth T=C3=B8nnesen <a=
-st@fiberby.net> wrote:
+> In amdxdna_gem_obj_vmap(), calling dma_buf_vmap() triggers a kernel
+> warning if LOCKDEP is enabled. So for imported object, use
+> dma_buf_vmap_unlocked(). Then, use drm_gem_vmap() for other objects.
+> The similar change applies to vunmap code.
 >
-> This series contains the last batch of YNL changes to support
-> the wireguard YNL conversion.
+> Fixes: bd72d4acda10 ("accel/amdxdna: Support user space allocated buffer")
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> ---
+>   drivers/accel/amdxdna/amdxdna_gem.c | 38 +++++++++++------------------
+>   1 file changed, 14 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
+> index d407a36eb412..50950be189ae 100644
+> --- a/drivers/accel/amdxdna/amdxdna_gem.c
+> +++ b/drivers/accel/amdxdna/amdxdna_gem.c
+> @@ -392,35 +392,25 @@ static const struct dma_buf_ops amdxdna_dmabuf_ops = {
+>   	.vunmap = drm_gem_dmabuf_vunmap,
+>   };
+>   
+> -static int amdxdna_gem_obj_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+> +static int amdxdna_gem_obj_vmap(struct amdxdna_gem_obj *abo, struct iosys_map *map)
+>   {
+> -	struct amdxdna_gem_obj *abo = to_xdna_obj(obj);
+> -
+>   	iosys_map_clear(map);
+>   
+> -	dma_resv_assert_held(obj->resv);
+> -
+>   	if (is_import_bo(abo))
+> -		dma_buf_vmap(abo->dma_buf, map);
+> -	else
+> -		drm_gem_shmem_object_vmap(obj, map);
+> -
+> -	if (!map->vaddr)
+> -		return -ENOMEM;
+> +		return dma_buf_vmap_unlocked(abo->dma_buf, map);
+Hi,
 
-"the wireguard YNL conversion"
+The dma_buf_vmap_unlocked() will call iosys_map_clear at its start so that
+in this case it will be called twice. Probably it will be optimize out, 
+but maybe
+its something to better omit.
+>   
+> -	return 0;
+> +	return drm_gem_vmap(to_gobj(abo), map);
+>   }
+>   
+> -static void amdxdna_gem_obj_vunmap(struct drm_gem_object *obj, struct iosys_map *map)
+> +static void amdxdna_gem_obj_vunmap(struct amdxdna_gem_obj *abo, struct iosys_map *map)
+>   {
+> -	struct amdxdna_gem_obj *abo = to_xdna_obj(obj);
+> -
+> -	dma_resv_assert_held(obj->resv);
+> +	if (iosys_map_is_null(map))
+> +		return;
+>   
+>   	if (is_import_bo(abo))
+> -		dma_buf_vunmap(abo->dma_buf, map);
+> -	else
+> -		drm_gem_shmem_object_vunmap(obj, map);
+> +		return dma_buf_vunmap_unlocked(abo->dma_buf, map);
+I do also wonder what is the convention here on clearing iosys_map when 
+returning.
+The function drm_gem_vunmap will clear the map for callers while the 
+other not.
+I think at least comment explaining the logic will be necessary.
 
-Did I miss some conversation about this? I figure I must have. I must
-say I'm not too keen on wireguard (and apparently only wireguard?)
-being a guinea pig for this.
+Best regards,
+Maciej
 
-Jason
+> +
+> +	return drm_gem_vunmap(to_gobj(abo), map);
+>   }
+>   
+>   static struct dma_buf *amdxdna_gem_prime_export(struct drm_gem_object *gobj, int flags)
+> @@ -468,7 +458,7 @@ static void amdxdna_gem_obj_free(struct drm_gem_object *gobj)
+>   	if (abo->type == AMDXDNA_BO_DEV_HEAP)
+>   		drm_mm_takedown(&abo->mm);
+>   
+> -	drm_gem_vunmap(gobj, &map);
+> +	amdxdna_gem_obj_vunmap(abo, &map);
+>   	mutex_destroy(&abo->lock);
+>   
+>   	if (is_import_bo(abo)) {
+> @@ -489,8 +479,8 @@ static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
+>   	.pin = drm_gem_shmem_object_pin,
+>   	.unpin = drm_gem_shmem_object_unpin,
+>   	.get_sg_table = drm_gem_shmem_object_get_sg_table,
+> -	.vmap = amdxdna_gem_obj_vmap,
+> -	.vunmap = amdxdna_gem_obj_vunmap,
+> +	.vmap = drm_gem_shmem_object_vmap,
+> +	.vunmap = drm_gem_shmem_object_vunmap,
+>   	.mmap = amdxdna_gem_obj_mmap,
+>   	.vm_ops = &drm_gem_shmem_vm_ops,
+>   	.export = amdxdna_gem_prime_export,
+> @@ -692,7 +682,7 @@ amdxdna_drm_create_dev_heap(struct drm_device *dev,
+>   	abo->mem.dev_addr = client->xdna->dev_info->dev_mem_base;
+>   	drm_mm_init(&abo->mm, abo->mem.dev_addr, abo->mem.size);
+>   
+> -	ret = drm_gem_vmap(to_gobj(abo), &map);
+> +	ret = amdxdna_gem_obj_vmap(abo, &map);
+>   	if (ret) {
+>   		XDNA_ERR(xdna, "Vmap heap bo failed, ret %d", ret);
+>   		goto release_obj;
+> @@ -770,7 +760,7 @@ amdxdna_drm_create_cmd_bo(struct drm_device *dev,
+>   	abo->type = AMDXDNA_BO_CMD;
+>   	abo->client = filp->driver_priv;
+>   
+> -	ret = drm_gem_vmap(to_gobj(abo), &map);
+> +	ret = amdxdna_gem_obj_vmap(abo, &map);
+>   	if (ret) {
+>   		XDNA_ERR(xdna, "Vmap cmd bo failed, ret %d", ret);
+>   		goto release_obj;
 
