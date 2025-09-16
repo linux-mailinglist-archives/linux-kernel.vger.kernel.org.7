@@ -1,80 +1,103 @@
-Return-Path: <linux-kernel+bounces-818760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55631B5961D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:26:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9F7B59617
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BFE11C000FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88E8E7A9618
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B8130CD9B;
-	Tue, 16 Sep 2025 12:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430C530CD92;
+	Tue, 16 Sep 2025 12:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKZNRfcQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iTr63tg6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192CB222585
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E277B21D5BC
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758025487; cv=none; b=YjC//BEHYrrR8PV2F/qcyujTY3sKfwIP6VszzlQzUFSmCFweaRwbjbOhE672fnqmr02EbSTK7oaoVSsysvObkgrGbcedkyje8RS2zyq7peR0Z/VrIjBOiJ0PSwGuX9WO6T6rsihp76eRICa/kjXNNpHgjehqp3ZmoC26n7VIoZM=
+	t=1758025515; cv=none; b=WhSqPRySxe9oaYHbfyeBfIMoiezJ24n2f/a/w6H2ixg9Gu3MGvh0huopGX+3z/wkti6oa5Metg78mDFvBdOm4111ldOVnXxDewEtc8GSBu/XOq9A59/OjVeWOaZJtme2s0w0mAK7AaXJfsy1NIleSgwEJFxDF0yHgqmw27qS4YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758025487; c=relaxed/simple;
-	bh=ID/SUPHO379yH7YmVkyZCjkRQuJKKK5YrFKRKXZY9gQ=;
+	s=arc-20240116; t=1758025515; c=relaxed/simple;
+	bh=pYVRyG3Ofnpb0L1Y2+cXoG7kxZMxzvU+i1cFXSKD3ck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAHAsEjqu6n9AnKZ5KECQuigj8dKCJhq4r13bZ1okNeeaf7L5EkvMW2HKCg6EJKFIY8T0yXJ0rSa8wAnuWyewFMeZB+ddpWBvEy+S/Bzo/XOvTnk9db2FRKJqL2p24iBXPrQHO2ZQJfbrsOC4QNCGSuhG76vBBPhQCvzRAnhlNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKZNRfcQ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758025487; x=1789561487;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ID/SUPHO379yH7YmVkyZCjkRQuJKKK5YrFKRKXZY9gQ=;
-  b=fKZNRfcQEd+qCxMeKmx0gHKnJDZNE0q31v8BAanZEncgCzelMSO9Rp+w
-   N06e5rTQ+t3Usw1p60UuTedkpJX7OnELJidCNswUzSYmqrTavQd3e5nYd
-   FXqySozzqJduVWL13UnUTPHZaJ/6Y4N9woXMhRv2/2+1Vx2AhpNMVJZTb
-   wAXiQyoGvU6RMD1wB5HwQeKT3SfkKEzNwx3fx3C9Big2x98LszmwrVkzF
-   VjUu7CYxaKhvAdBEmQprX8uVlkSbQz9FMeMApZ3JiovNjMNdr6yE4u71S
-   GBUMphqeza5ihQp/wab9DLVpOx2HCVn4MuuWCq4x9H9uyYY2a/O824E5+
-   A==;
-X-CSE-ConnectionGUID: O2Sa/wWARYaaJVOIzDYecA==
-X-CSE-MsgGUID: zeG5eu81T+aLUgiS41IHZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="63935522"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="63935522"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:24:46 -0700
-X-CSE-ConnectionGUID: DFEXcNlxSwGShB5ye47W8g==
-X-CSE-MsgGUID: SUlbrvTVQLiXVdPiJyRWPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="174864948"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:24:43 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uyUjg-00000003WU9-2wPR;
-	Tue, 16 Sep 2025 15:24:40 +0300
-Date: Tue, 16 Sep 2025 15:24:40 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] kexec: Remove unused code in
- kimage_load_cma_segment()
-Message-ID: <aMlXCODJ4SqS_Bci@smile.fi.intel.com>
-References: <20250915155543.2912469-1-andriy.shevchenko@linux.intel.com>
- <20250915221436.GA925462@ax162>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttTiEYJYItUjYWfYcioAnpdulzJZV6NdpV+jh5Vtqrom3kxgFUSjyz3ZvoEI5X/VuxttFy5f9WLK18AnJ7BwNfY3F5lLQ1IErKw6PqEmmgsV9lg1kwgGnLonlpNssBhq+1ayPLj2GLVoYGrXLrvfw+0l0fdYQepm/AnPp18n/Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iTr63tg6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9evQN007324
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:25:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=rUHJ99Nhm6wc+crxDOeKRLBG
+	ZdaCl2Lm6idkXPgbi40=; b=iTr63tg6bMh/8ofkmItHfBDoTgbgkxSsxeqAobW8
+	RqPWU8Y+xuPemF9vlVaLLIJ480fs1yz1skKfhGckN0oN2LwYZXNizIaGotZJeLXM
+	GV6E/+zuLBGKqjalpqqNanWrZDMWqz6pcjwzQVZpCIyvPyTWree1pcH8gPVrnbTL
+	zspHCchPYTwaX/N/8OC9gfZGJXbhELE8htESKG1DEDJBWYNEyxcp+WgEirNU8N71
+	ogIHxk9eHPC4QwDPhslpzqhBY914vcrJYiCuLjlLn83DnZsArXtkpS5D6nwZ0E4I
+	whX++uOYCNM0LpldlBfCXLHAWrJXwzjuhT2tCt4tc4y0cw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496g5n4fvh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:25:13 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24ced7cfa07so56990935ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:25:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758025512; x=1758630312;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rUHJ99Nhm6wc+crxDOeKRLBGZdaCl2Lm6idkXPgbi40=;
+        b=UVsUQBVeUHzN/gmw2hNjGo8CVWMaqZtKx1pMNlymSnlie/QIl8HygveEzBelNP4nAe
+         zRwvh6MnkWFjVxCOcxwvBiP/HnrNTyN03B9BIRs1PHXNyDaLr41cm+mvDbxXsF4ZAj0a
+         j+vgLrLajl0mscE0HHLseruoR6v5hWI0A0SPOIzayt1HBE2eFXefkqdWBRl8SuRe91Zf
+         pU6+GaHoK+EYSscrBOCX+oTdUuiLoqk+pXXy0c3xtw9Jd27RNmXzMjJnhXVTdwnAZBeg
+         6aJY+TRt1fDF7AMpb0toZZB7mR9oaxWXJaTr9ELM/D/nwZvHzHVO6xogZN6T4nd05/T+
+         jPnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUS8OxP207Iqx+OcRw0isOxKiJ49BJbX0pRiX2kUGDuHknC+4T88SFYJicaWnTCGW/ZnZMe7cy1jPOTHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhkoNno9pxzb0Z+5auPbZ8ro9bYsuDLswHkTkmGYpk+VJJaZUF
+	ht130qOrQMO3GJoNHcVGkFMq/+5Qp6CL0EVOHNebg7tG1fYk8X+cRcFLcGMe8VSCgyejZpudMUF
+	jLP+yhL0BV3qB62VN74m99sfbtEyuZh5ubpWQ33+h4fTtERgy3lbHm81UPqQHB0AAZIE=
+X-Gm-Gg: ASbGncvpmMvQdFTD2tGYuCdHrK8qpO2ea7lz1dgtgJaBL9NWmBWoEciu9u6ntR720kV
+	6tmFVVQIJrgr+GAAurhpGJQDmaFV3b0R9+YljHlaM2YMMNe6rAiAkijFWP1oB+cYuejbB9i+REV
+	7Trp1G403P7sA+dLXBQcvsTYN7reuAwKljC4jgEKbRfOjeIdgCIKW7Z6P/TZ1GYGC5+37yBhj0L
+	RrQ9U8e/fVu7XzRPg7MgK3fNqrkBbUpaTB3zlxhMbq6klOMAP5jUoNXrppcx8YbAd0Amp75Qesq
+	GNddV0uIKmeQBEZnAzqPBkQsWpIYdivSbv3/NyIqEE5IPDXJJFMZ1Ab+8Lxp3wz4Hx87
+X-Received: by 2002:a17:903:b0b:b0:249:1156:31f3 with SMTP id d9443c01a7336-25d243e7fd8mr146599035ad.8.1758025512281;
+        Tue, 16 Sep 2025 05:25:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfC+HYU/Gm0Yu1cZZREqssXTo+RveyP0dKwPWuRl4HJg2G55Yk2LtJ6nUVxaGFtw1OspyhKw==
+X-Received: by 2002:a17:903:b0b:b0:249:1156:31f3 with SMTP id d9443c01a7336-25d243e7fd8mr146598795ad.8.1758025511851;
+        Tue, 16 Sep 2025 05:25:11 -0700 (PDT)
+Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2676a14c514sm51154825ad.103.2025.09.16.05.25.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 05:25:11 -0700 (PDT)
+Date: Tue, 16 Sep 2025 17:55:05 +0530
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, kernel@oss.qualcomm.com,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
+Subject: Re: [PATCH v5 02/10] arm64: dts: qcom: lemans-evk: Enable GPI DMA
+ and QUPv3 controllers
+Message-ID: <aMlXIdgavXT6Ndt9@hu-wasimn-hyd.qualcomm.com>
+References: <20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com>
+ <20250916-lemans-evk-bu-v5-2-53d7d206669d@oss.qualcomm.com>
+ <n4p4www37qz4hw75l6z2opeqks4g3u26brceyxi6golam7f5aw@raandspcihi6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,50 +106,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915221436.GA925462@ax162>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <n4p4www37qz4hw75l6z2opeqks4g3u26brceyxi6golam7f5aw@raandspcihi6>
+X-Proofpoint-GUID: G5WPvu35x3_ed8DfNWCqdiYKKfB2MTbk
+X-Proofpoint-ORIG-GUID: G5WPvu35x3_ed8DfNWCqdiYKKfB2MTbk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NyBTYWx0ZWRfX3KdRlQwsZo1r
+ If7NkYyfK34fsJSgpYySV3t8SkwbmEw9JDLwqxUrtQ3ux0CSBX7XBJeeo93a681mHC+6oRR6IpH
+ 9bMvrYbNp5kP8MuPq86H3sAQrJJZsjDjc5hon9o70GTbhK1LdAnL9CPe2kPlnngaPoWi+nmPao3
+ XlNKezXeTZYB5Wn7S5jWyjsa6dtrRvSIsAmQByn3A/ab4JqRsc3qLsyu5noQw0FI0nRFEYLJwTG
+ LiMU0SgsA9V3CXJpi8CzqSZcy9mthxDhj36zCNIg30KWRSKXxNfCr2EzkgEjjoiEPNKHxuUuZon
+ L854ny5mRYgBf40V0InozABfb2i3RtPYPs9pgDEwFBUZkiUHntYvh9WrdThMZgkmv7D/D5HA2Sh
+ sUz3/q8G
+X-Authority-Analysis: v=2.4 cv=SaD3duRu c=1 sm=1 tr=0 ts=68c95729 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=jsWzJFLPBp6GKZhRWDUA:9
+ a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 malwarescore=0 phishscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150087
 
-On Mon, Sep 15, 2025 at 03:14:36PM -0700, Nathan Chancellor wrote:
-> Hi Andy,
-> 
-> On Mon, Sep 15, 2025 at 05:55:43PM +0200, Andy Shevchenko wrote:
-> > clang is not happy about set but unused variable:
+On Tue, Sep 16, 2025 at 01:59:20PM +0300, Dmitry Baryshkov wrote:
+> On Tue, Sep 16, 2025 at 04:16:50PM +0530, Wasim Nazir wrote:
+> > From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
 > > 
-> > kernel/kexec_core.c:745:16: error: variable 'maddr' set but not used [-Werror,-Wunused-but-set-variable]
-> >   745 |         unsigned long maddr;
-> >       |                       ^
-> > 1 error generated.
+> > Enable GPI DMA controllers (gpi_dma0, gpi_dma1, gpi_dma2) and QUPv3
+> > interfaces (qupv3_id_0, qupv3_id_2) in the device tree to support
+> > DMA and peripheral communication on the Lemans EVK platform.
 > > 
-> > Fix the compilation breakage (`make W=1` build) by removing unused variable.
-> > 
-> > Fixes: 07d24902977e ("kexec: enable CMA based contiguous allocation")
+> > qupv3_id_0 provides access to I2C/SPI/UART instances 0-5.
 > 
-> I don't think this fixes tag is right. maddr definitely looks used in
-> that diff. I think it is a follow up simplification that introduces
-> this.
+> Nit: used for foo, bar, baz and slot ZYX.
+
+Ack.
+
+I will change it to:
+
+qupv3_id_0 is used for I2C, SPI, UART, and slots 0 to 5.
+
 > 
-> Fixes: f4fecb50d6e1 ("kexec_core: remove superfluous page offset handling in segment loading")
-
-Oh, you are right!
-
-> Otherwise, this patch looks correct to me and GCC 16 will warn on this
-> as well.
+> > qupv3_id_2 provides access to I2C/SPI/UART instances 14-20.
 > 
->   kernel/kexec_core.c: In function 'kimage_load_cma_segment':
->   kernel/kexec_core.c:745:23: error: variable 'maddr' set but not used [-Werror=unused-but-set-variable=]
->     745 |         unsigned long maddr;
->         |                       ^~~~~
+> Ditto
 
-I'll add this as well to the commit message (in shorter form).
+qupv3_id_2 is used for I2C, SPI, UART, and slots 14 to 20.
 
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-Thank you! I'm going to send a v2 soon.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Wasim
 
