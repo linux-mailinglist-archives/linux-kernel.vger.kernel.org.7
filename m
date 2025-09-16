@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-818798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380D3B59698
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:50:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B6DB5969A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7D1517B700
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7B9322E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015851DB122;
-	Tue, 16 Sep 2025 12:50:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAAF3A1D2;
-	Tue, 16 Sep 2025 12:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305081CDFD5;
+	Tue, 16 Sep 2025 12:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VhOiTeGb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C59A927
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027016; cv=none; b=PmIC4yMvF854hrnUkYltCd5vPrMFkk7QWi1ZVhKsYbHJMpLb0sb7UkQ2ukgD4fK7245rkFvLKk///3xXzQtyDK+A65Un8mu8xwbM2uB4r4U798+22xp1hyFNlXXQ8lSEZ0xcCY1g9VjJx+9Ka73b9NoBHmQNvqcR9DczUo6jbcY=
+	t=1758027054; cv=none; b=mVh0gCmimcLBjomkvMxL3PureVRc0nb+Ls65THxppBcIvD5mtDREemQdvtu1ghcXtkChY5X6Uh/HA7+YcvIPiSUZZyimm7e5g9TCmtuSIkgyYOfSmEBEdMP1neTQlzxJSTzlwZuVtPNTD8SkJtXIbkJ9pwltHdHzeHvDYXZFLbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027016; c=relaxed/simple;
-	bh=uFtjepYjm5+nQjKzH3LSpGOqC5GBj0n7yBC1XHaSZE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=su1QC++TKbHsnAQvS1aa55b/uqs9oaQQoJ9zyCoLQY4xVqCbL9+/ZHchnLurVczRKgtiac+gTjcKI22hB8539h6JHRYzruL/WdxoFX7t86Ju3ED7qD3UEcidTC14Wsohff5c3g0Fy5rQ+YcFPsiTrd4KaBBh/eO3LqzzwszfiZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BAC02B;
-	Tue, 16 Sep 2025 05:50:04 -0700 (PDT)
-Received: from [10.1.31.217] (XHFQ2J9959.cambridge.arm.com [10.1.31.217])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8F0B3F673;
-	Tue, 16 Sep 2025 05:50:09 -0700 (PDT)
-Message-ID: <80840307-942d-4e7b-849d-2ca9bb4bbefa@arm.com>
-Date: Tue, 16 Sep 2025 13:50:08 +0100
+	s=arc-20240116; t=1758027054; c=relaxed/simple;
+	bh=VxM/cdUE+MegHutCDt81ETLB7ynUxqJX6Yz1kpPrbhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oH+4sXougowat4z348j3p9Fa1NX68FO6To+TnzZhNQFX52I+5TqQ/aXRiSSG+J/vrHiVY9/3aut9WVPA98NMatIbNtdRhgrTeXgfww2axsLwV7e7u7X1AaFDWoriiehgZVj5e9vKZg+SIpNgvhcdrVgJ1qIj6kOo3aDetVjiirQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VhOiTeGb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758027053; x=1789563053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VxM/cdUE+MegHutCDt81ETLB7ynUxqJX6Yz1kpPrbhQ=;
+  b=VhOiTeGbYVu2bPwdayYYpaM7HrhuPYee/ZUcb6n8C7QriSTbTv5aKDcc
+   i7OjGS95bQLRmbfp8LyVs3AHe0HiAEJhyCvVjDGTMAcxVmHuGD1Ba0RdS
+   +QH9h+xrX7Gp83Pe8mZ0jUjtSsC8D5k98rR63cdDwjUpuXtADrGmDvwzm
+   O4pTX0CarW+jB/4KW2cBYvI50/AfvO5//boQibbgqwruVP7bZs7xvbt5J
+   YfScyiwgZWgFiKFB78rtGXpaF0MjBs8h+rD4OoDSNsLEd9EIUpc8rTGjW
+   Z+zFUhUal6ue8v1dyr46KyfbGTA1CNCzcKsjND22KJI9oIiLSsEKTIzPl
+   A==;
+X-CSE-ConnectionGUID: 0V1/vbx2T0O6+9jNP9AIcA==
+X-CSE-MsgGUID: 7e6G5G8/Q/yhz2q86wCvSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="85742574"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="85742574"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:50:52 -0700
+X-CSE-ConnectionGUID: Sfghzwj2RRG2AEz6CPxh+w==
+X-CSE-MsgGUID: dr1e4I5gRCGdNtLcOWHJew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="174044636"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:50:48 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyV8u-00000003WoJ-2sRO;
+	Tue, 16 Sep 2025 15:50:44 +0300
+Date: Tue, 16 Sep 2025 15:50:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, grom@black.igk.intel.com,
+	07110bfd5785d3bff71cebd710db42d6f5c4a643@black.igk.intel.com,
+	Mon@black.igk.intel.com, Sep@black.igk.intel.com,
+	17@black.igk.intel.com, 2001@black.igk.intel.com
+Subject: Re: From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Message-ID: <aMldJJktQVvkcMub@smile.fi.intel.com>
+References: <20250916123048.3058824-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [sound?] kernel BUG in filemap_fault (2)
-Content-Language: en-GB
-To: syzbot <syzbot+263f159eb37a1c4c67a4@syzkaller.appspotmail.com>,
- akpm@linux-foundation.org, chaitanyas.prakash@arm.com, davem@davemloft.net,
- david@redhat.com, edumazet@google.com, hdanton@sina.com, horms@kernel.org,
- jack@suse.cz, kuba@kernel.org, kuniyu@google.com,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, perex@perex.cz,
- syzkaller-bugs@googlegroups.com, tiwai@suse.com, willemb@google.com
-References: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <68c69e17.050a0220.3c6139.04e1.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916123048.3058824-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 14/09/2025 11:51, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit bdb86f6b87633cc020f8225ae09d336da7826724
-> Author: Ryan Roberts <ryan.roberts@arm.com>
-> Date:   Mon Jun 9 09:27:23 2025 +0000
-> 
->     mm/readahead: honour new_order in page_cache_ra_order()
+On Tue, Sep 16, 2025 at 02:29:49PM +0200, Andy Shevchenko wrote:
 
-I'm not sure what original bug you are claiming this is fixing? Perhaps this?
+My gosh, the Subject is mangled, sorry, I resend it ASAP after double checking
+it's fine looking.
 
-https://lore.kernel.org/linux-mm/6852b77e.a70a0220.79d0a.0214.GAE@google.com/
+-- 
+With Best Regards,
+Andy Shevchenko
 
-If so, the fix for that was squashed into the original patch before it was
-merged upstream. That is now Commit 38b0ece6d763 ("mm/filemap: allow arch to
-request folio size for exec memory").
-
-Thanks,
-Ryan
-
-
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1100b934580000
-> start commit:   b4911fb0b060 Merge tag 'mmc-v6.16-rc1' of git://git.kernel..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3f6ddf055b5c86f8
-> dashboard link: https://syzkaller.appspot.com/bug?extid=263f159eb37a1c4c67a4
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157cf48c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146a948c580000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
-> #syz fix: mm/readahead: honour new_order in page_cache_ra_order()
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 
