@@ -1,290 +1,261 @@
-Return-Path: <linux-kernel+bounces-819340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C65B59EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2327B59F04
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239B23AE11F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465701C00854
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB512FFFB2;
-	Tue, 16 Sep 2025 17:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6AE3016F2;
+	Tue, 16 Sep 2025 17:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KBAt/bks"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vd+9Mpq2"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013018.outbound.protection.outlook.com [52.101.72.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5718C2F7457
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758042766; cv=none; b=TO6TaiN/sUD0mWIF1fbcx4pHJ6ZXYpsMwuTO0PuytvKn+a6/NkrnF6Coq6W/B57729ptdmzaX8/HyvnmuJ4PzzvQ7hWqjA0YSkoXZykoMY/jwu3/COjo3W9b4B7E6DzlGNZoqrI4LZXAjtkpXNnraVJ+Kz3CoGejj62wxSZo3EE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758042766; c=relaxed/simple;
-	bh=Df+/LaMxpKWk0GPaLhm0ZV3PeANKFNnwG3l6SViBXok=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=UjHNt3Q3aNb+tSz7ZV8lZleZIA60/5FMNxD50IEckeLlvPOC/P8GAieb+bzMugIUmCRx7w6Itrvb7G+IpptB+AVCrY4ZVRdjqbMbKUxquJ439ucgbEPn2jyGNp9RsULcn+FwORY6xXnV/fbFOFOTitfJ5mfRJ6m9rORa5patUiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KBAt/bks; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3c46686d1e6so3971165f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758042763; x=1758647563; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LqaF18q5/4RPXd/sNMBkEVcv6NngmKxTCLkka1/HN3A=;
-        b=KBAt/bksKE9Vtg4QSCj3YaQRNsLGZBaURip8+xCsDvXT+txeavqZMkA2U9d+YA0UCY
-         K+yqy5VdWBX5N3iG+OrOm1ccRtBTUqV59l2t59R84xD1ZyovZaruNwKq9weGCsYzzcX0
-         c+jYkwPOhTNV1N8593jPZlgy5zXRdye1iRe8zFbj2j1ddPVq4ju+JbLIX5q7boSGDxNj
-         JuNYSveJh1X3bc4uMvR9Z56S54V2QcFU5v00jg/9e177RROQXwbIh3EVre3UbZCBVdU/
-         OHs/12pIgzRsVeOGavBOflkUN/95i/sYooYzrFr1+BeXijXdlkSzR2TL4HWO2tnm8KgF
-         prBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758042763; x=1758647563;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LqaF18q5/4RPXd/sNMBkEVcv6NngmKxTCLkka1/HN3A=;
-        b=gmhWxUA32WklTsOe9ha3PNItOwhJlKtMI9YJBU6WLlwzNLTSSnDGvbrnkjf0Q5l4US
-         es4+Vf4Lriap5tcLOGVxc7Uz0LVwabkzW/SJek7Mgn8mXLYo22B9GF+MJ2jcdl9XR0ZD
-         siDk1DcPe71/tSP347OGpa7EttJPAu8YbM6TmXbiQ9/HAGhF5HTc3BU3uToS4ry2r0+4
-         ISIn3Wb/PTjI/wqE/+6L7dmUUCzQveEm5YwkvT7cSftjrdnQrJ4vuvoYtCC7GyLCQkzA
-         WdYgvDIsRyHUB251Qc8hnXchWdruabLz84FOnzQC6al0VPnpLBQDzKnDczOf/rV0FRO4
-         ao3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJuCaBV7GuaawIn+JP0R59fdnWxprAWXnW26hTD08t2dau8KrDd6PSMB+UeBd0qLIpKLtPbl+baWVyY48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCZpgF9FoAtf/DKrKTf6QiUla+X1i+i/i+pO9t+Jtu9PZY8yxf
-	tXYPVX3BGc3QqkCTQI6mWTVcshZMz3ptm25t0IQk3zOWClReZB9p8wCZIfLnbrVvufU=
-X-Gm-Gg: ASbGncuLuhGtGhE+dYOoOx0KqWX0giF9EGHCQRny7cPyDZaSGHcKHugz79T3Jj9PM13
-	kuX3XMXOjmjQp4rXjtuk5CdIF81qLQsLBCxS8xJRgfT2VsvVmUvuRDMUw6anI7PKD9GumMi3vTD
-	7OzDUgVlksLuNnYQSonfUA9S9JLUAoB6LS7RAQZ66OqqRRpg3pKrX1/J7nlKWA5pGWacpWNCTxy
-	gJSGHicW6eFAmTGAXEGm09F9VHH0Jsnem6iGt2xV3Wg+gcakR9aB4sCvxsoRDbxNCQqlbsFTxsA
-	aNaWOwaZpZiLHVmxIkYVSK0EXg0YFC4bbXfHCszbBEVrgcsWJWGQGcbzgBAdK9VwSSPZPh6oa/C
-	O48HaoL3Fe1tZ+uQj+dv+2fNgIEAaW7O4i2f2NQ==
-X-Google-Smtp-Source: AGHT+IEvkFgtWL+kn+C4oAbEu7W8XPOmrkC2CA2oPkt3zTFfSB2E6147xEPwjsNR2v12L4eZwv8+xQ==
-X-Received: by 2002:a05:6000:25c2:b0:3ec:1edb:97a9 with SMTP id ffacd0b85a97d-3ec1edb9a47mr4026382f8f.33.1758042762513;
-        Tue, 16 Sep 2025 10:12:42 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:75ac:2ea2:dfdc:89c7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd43csm22183897f8f.29.2025.09.16.10.12.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 10:12:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27334222575;
+	Tue, 16 Sep 2025 17:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758042831; cv=fail; b=AJuCWU1pxdaeZ3pMgj5HOokuRWyn6QbdFg+qn3pNyHFziIG+4toBKWjyq78IoaKoUcHASOuhlxoutTaQgZAB9G1jizuIfVtSA4DevtWBbfR5jLilY/5RlSo0o6mA6oUGTFdc349bbXj9AqnFfrsz1ZpQGUcfwL8M8uC5sEaYO9o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758042831; c=relaxed/simple;
+	bh=YW9K12BZr3U75DDTX9cGptGLttUKkxlgzXo6yqeeNe8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=L5GE3cmHsSb/ArcgAJqLfk7Uto3X3HTcd2bKrX/mlACX7PpgRjz4SBgNLmeSdM5PeCD1D6IC+BBk1yPTxlSn83FaxsGeRpq2CFRwFwmQl7D/svrurAmiLP2U5xLaKS7umF9dMXeqiWCeqnfqyR/n3D4lfw2T9MHAmNJlrsbT7J0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Vd+9Mpq2; arc=fail smtp.client-ip=52.101.72.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OZdjiQe/4R25FBovH1P2jlN3XVq2bgoAfjVO6rKs3bexVzPh8tA8oEHI6VH7KLfnRF7gX6t0hmaQ5EloSQBATmn18Pzpd9Cu8QkgOSULuY+OTDsSIWzbDnau3WEXHQpjQsQKviuk2qX6AXJDZY2ISKEs/Z20t3oyo1qKalNde8WpgV3C2b5JxVwQzsbY76YkiEaZXA/3e+0Wr1MbaLD0VbUJQWR2h1NRt0rUVsYHFNUEB0AntbvosIDxuwwBfOEYgR/t841QYlxRlU7eVygFJ8f6pH0cYl7tjrZ5Em4c3lH8gz9XREIvo32I7p0qnoYY/5s5/Mv/YDBgV9GieLNctQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kd53B0DDd+sCElPXdFSTQlPzJV3VP2CDPR9WbBT96x8=;
+ b=QhDjOy4KvfapS+gPm9UQJgBSlf4zWj0JsnZ4hSV5ObL++y5Ozl8dHnPu2dsmh2ucvynGVR7/ghg9PwixisKxrz9j3vZ9Bnk4ywcwI+acgseTNxhH7AMIZtkY81ZXACQL4N3+/rszctOpl0QbKjF2/DWS6iAavjg2WMYQjs7CRf+jZb1vN99KbZtJ+QvQjNAfZXrTWwWAq6furSLe2/frsYEzRzGoafZMSjpTnD1Nfx+YxB5k1QqOeuFnrtTewT6tQCbPR1v26SNiWjyr2xxAfBYJMHdknB1pR4+jOeCaoGkejnrnMTIxPnprBWV6yh0HVuskQ0slK1nQmtXhgHI1Pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kd53B0DDd+sCElPXdFSTQlPzJV3VP2CDPR9WbBT96x8=;
+ b=Vd+9Mpq2RveHMrohYFGHvmpQMqeNFSiDkIXDHY9BdggE5mZjQR6vgV616k+UUnMj8aTAOnc/POkP7rCWPMmi0hvwD5/KocCkdbHJigDkv8VXSg85WAZjJvhwWhFEqpDMwK+bBOOzdhLVNcJtYTsVN8EXL91oJPjsLkOd7j0t77Rsye2Ze6ixmaZvGZ1S+mu2WRs5q5rb6wbp+P94m5Vvl9PKcZShRb4qdNiLvxHnbwJd2IGFqsuwIx4XAcd+rAuH4GEw+2gYcwyrsYqAGuMfX1L3vGZ3x2yyGFq1LRHv9vyVad2A3AZuQICDJUyZqQgxXUwIuafO/EbY6ZsQhAYAug==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM0PR04MB7075.eurprd04.prod.outlook.com (2603:10a6:208:19e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
+ 2025 17:13:45 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
+ 17:13:45 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 1/1] dt-bindings: input: convert tca8418_keypad.txt to yaml format
+Date: Tue, 16 Sep 2025 13:13:26 -0400
+Message-Id: <20250916171327.3773620-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0144.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d::29) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 16 Sep 2025 18:12:41 +0100
-Message-Id: <DCUE5AXJ99BG.150SRQMY7EJG6@linaro.org>
-Cc: "Jorge Ramirez" <jorge.ramirez@oss.qualcomm.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Jiri Slaby" <jirislaby@kernel.org>, "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
- <psodagud@quicinc.com>, <djaggi@quicinc.com>, <quic_msavaliy@quicinc.com>,
- <quic_vtanuku@quicinc.com>, <quic_arandive@quicinc.com>,
- <quic_shazhuss@quicinc.com>, <krzk@kernel.org>
-Subject: Re: [PATCH v1] serial: qcom-geni: Fix pinctrl deadlock on runtime
- resume
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Praveen Talari" <praveen.talari@oss.qualcomm.com>, "Praveen Talari"
- <quic_ptalari@quicinc.com>
-X-Mailer: aerc 0.20.0
-References: <20250908164532.2365969-1-praveen.talari@oss.qualcomm.com>
- <DCNLSFVPCKMV.K1UE3J3K6JQD@linaro.org>
- <DCOJFRU8KNFL.14VPXK9QZC9T4@linaro.org>
- <5b7b8c9f-48c5-45cd-8366-c8c048eaa757@oss.qualcomm.com>
- <DCPUJPHR8NUB.1SRB4D7ONSRBY@linaro.org>
- <2c5fd01a-543b-4108-ac54-80d1d87b65a3@oss.qualcomm.com>
- <DCT9VWQYD4VM.1NV5FJJCJG4PI@linaro.org>
- <cb96f3cd-7427-4644-b7ca-26b763867db4@oss.qualcomm.com>
- <df05da7e-fd9d-48a6-bffc-e84749cd8e96@oss.qualcomm.com>
- <aMl2hOYTjBuCo4AM@trex> <aMl9Fbuyq7hdXvQC@trex>
-In-Reply-To: <aMl9Fbuyq7hdXvQC@trex>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM0PR04MB7075:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c7d9d25-bce9-4716-c10f-08ddf54464d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|19092799006|366016|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LDyqizBP/JBsFAivflMSzK1p+jKr/lzTJ1x2FDlbpVEGtcVp4T98LmAtNlPv?=
+ =?us-ascii?Q?7xZvadjUtlq8oSTA/gu9Bsq1zoo3G2MaL4JmFDutR/ZAYoBDbJZAPaAWHCbJ?=
+ =?us-ascii?Q?kylJzmDSevdohdmlJpcbB2GPDf26LnvYmAgeCMvrDTfF46C6nYikgVydMNAv?=
+ =?us-ascii?Q?der8Q90F4Doy7QjoQ4pVPE7MZuSYi2lK7g0icngIUBjFW5DEZjXmAJuQbHdG?=
+ =?us-ascii?Q?TvfeJc1Np1P/5wVm67KGK9fQabGOqkhuZI0mjrpsayjN6u7CdCvjr2QY4CpT?=
+ =?us-ascii?Q?uII0YTmuvNsxvmf0vae+vdYIawvdm0A68uSiwEX2LtRd/9+C058Hru9SDOri?=
+ =?us-ascii?Q?KJK/a5yknMWQe1/SN/HT3Vv9yLi9g6F8JIkDPmhDl7QGQRS+1jZFYboRPocL?=
+ =?us-ascii?Q?u+YYVe5tdaL2h8f6SM+2JrTEzqK8GtD6D42ufunCMIXXRdKDfHZi00r6M8Jf?=
+ =?us-ascii?Q?3khXm6QMM3BS19+URKqcbmbE1v1VtnbIKp54trII/l70jJKILAGJBd1kayrH?=
+ =?us-ascii?Q?m9Y+8Uy2QNYqjnVZxTmqwy2SKjn9j+rJ2bE9+CNaKCjFjiEyNLivTGoEc9ga?=
+ =?us-ascii?Q?Ok8OjfatFpvQq3sOY7FtaLB8mKNQpw4MS1wvl3TuljLFdoAqku8hyGaRmJU1?=
+ =?us-ascii?Q?fbd7gxJW1/3YQiZ7fyjTbOvB9Z4XZsSuJAamKGZl4cl5JQ4zrquZmVRDXEEm?=
+ =?us-ascii?Q?ZHk+dI8SCTmObVKNDw3LJejcMmGBz44hLGOcs7/xdVr32kAj3/qDBWsT6tpw?=
+ =?us-ascii?Q?d6USKR+hjgYUwrvV1f0baVbjzU0a5cFMrmNCpyPKO61HqlJ3meXDSPfe4qq+?=
+ =?us-ascii?Q?bRkH2xguPyLEDe5mveaEoFIArQRLzVYLK9Ac7m1xZ4XmPnpnsh006F9TWts3?=
+ =?us-ascii?Q?9eKx36vciiDkiLqufObq8eph1651Y/K2C6P9X8FswyRicSP77Q0wUNQz7c+w?=
+ =?us-ascii?Q?Vyh754cKLYlVQmw7l7RyCifS/7mWzyC/8LAvU1aO2rzfBBundMcjUCvbhoeP?=
+ =?us-ascii?Q?FVXU/ff5kAe8T82alW9KlVZXbBo5LymHEPUGFc0dcHG66ENsew+HIyuPqDyc?=
+ =?us-ascii?Q?qleE+U7lPP4yUfzk4iZfECJDaZccLiyf9p0H8y1szrafkvjduQlHzoNch8M8?=
+ =?us-ascii?Q?kYPY5jogH+FRtt748vul2A7a1V93GajZBCo7Ime13S5+aHxLGZWM1Nik7gtN?=
+ =?us-ascii?Q?wxx9KHlo47fdmioVGttgUNzoVynTbFlzT2/rWvck8LBQxGA7o2rUWku5UiIy?=
+ =?us-ascii?Q?++gIGxasV+BBruNFiNwUOt3aFCVY4V1taFnwhbk/pP2C0kxAHiibvrPxq03h?=
+ =?us-ascii?Q?nxd/bv5uTq0EunhTBmYtxwuqlXQRE+7Tq/3Ypp72OQrB7jghntpfvKlmycDG?=
+ =?us-ascii?Q?CUErNQIroPldfrW4/f0Wk3MdETzU5L3wdK3eYDKtoQMCneIUccsjleyCxhQ2?=
+ =?us-ascii?Q?m3sds8KXMPS0MDr0W1dHptak0peLlkFNq6tO8+DGJkh7YacSrBemnJC0aB08?=
+ =?us-ascii?Q?k7nP/y+wm4UN0ZwqToKsaDjeHOVomapJ7VQSxYHnBj+ecWqJQ4Bve00xAW8V?=
+ =?us-ascii?Q?InM1f3xTHr8gPMD/RO0ZlMGtqm+VccJT8afopMDXza9uWq/HQ+66wNrRNJwb?=
+ =?us-ascii?Q?iZvExHr6EpG7DmunlXEZaau3pteMgJOflxTyLdFGQ1K803ygBmpST2zL8MiQ?=
+ =?us-ascii?Q?yXCRVeDrGO8IH+P+bcIWidncqSF2roUESiIoO7RW1FqQLBfj6s++O5AAZrnd?=
+ =?us-ascii?Q?M/a230RguA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(19092799006)(366016)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?28ahXiNqkzXrNPzWiXHj4uAfxlDjECY5NhGgcutr14+jrXNMOgwiY24iOeMC?=
+ =?us-ascii?Q?440gXMafuBbgjWwJygA2eedXw2HxZ6ac14Q3EXL1kD7WXtdpv2HvJivHqEJN?=
+ =?us-ascii?Q?5Ph/OyPE+qvvYeR7xNzkqTYiwzSkLib/UyrohFGlJX6+7JG91156FNHEC39j?=
+ =?us-ascii?Q?jZEkDbW+iTzikYjXfs5+gYAJ4OKTeaIxfe4O+D1IkDFMP8H/KAu4RC5f8EcR?=
+ =?us-ascii?Q?ebS5i/XCPD5Slo7vhFbrSrz1bkS/XhezESavKatWvDR+daEqic8pix6u5WDE?=
+ =?us-ascii?Q?ypXK4OtMiOzeBlcCvvB/ox3tMDLH+ldDx/xDq3ZbVjtHuBXwVVFibbm793Jt?=
+ =?us-ascii?Q?7RDneV/i3891DY5P11lga/JzGt6KrPx9nDDPtPSAJBXf0DKVWnykwzmMjtZu?=
+ =?us-ascii?Q?cdldRep8Y5IDMDY+c5UqNlrw9iMdGRGC9nU1jQ0QmRJT9UBudz7L+Cfbcf+x?=
+ =?us-ascii?Q?w66xZVfpD8A+8oxRIMGIUDSjcrrGOC2sLFzhzPYCfnqbbZRCy3GZOgbHqvkB?=
+ =?us-ascii?Q?Mi0pgTbZNBNOBHP5H3voL8WIDoXPC3EUVpkwCyGXWqMftIL4RI5sJkAkWY5F?=
+ =?us-ascii?Q?628aUY6ynmr62q3c1k/HjUMyRnf0vJwFEyAlrZLdk2AdaIPp0Kx9HXAijBkP?=
+ =?us-ascii?Q?MLDpysCweklDWQYeYiVotNq7B+BGAfCdtzOOjlQKC8NyHCpXHl7Mg6ymqCNP?=
+ =?us-ascii?Q?+SORze37+2zolhqvzSwBf5qw5ajAvRtgyXqhxBvG7m/bPcT7TwX9syg4bNKW?=
+ =?us-ascii?Q?Y/Pgcv8D57uwkUgBrqUII9LtwPdGVZE8pNJ885DDmu2r8vtt1m967EcfSfY8?=
+ =?us-ascii?Q?ap0Etgu39y9I/qCG+VpJ0SYCaiQDWabqTEimiSuyRpdzbvnMmzZ1IIKupX7T?=
+ =?us-ascii?Q?l7lDFc2jKmsZ9X85BugIWgIpAwadeJvirkez9fLBH3BsW81wFFvoOVQieDOP?=
+ =?us-ascii?Q?PvSKGKzAT/rOCyfVRitimZBZV66w8XDSnLNOBbykUG7sgnk/ryD7fpq5BfTJ?=
+ =?us-ascii?Q?rOzraP9ey0Crd/Q3DxJsVg4ZDTGJ3rcWrbv+SPLb9P+L/xRsoZQ34EVjwxd7?=
+ =?us-ascii?Q?KPJwmjiPIt7Acgkd5StmDPFkURBhfU0hll40wmPEXyyGwLd3+H0iKRGie3jq?=
+ =?us-ascii?Q?ZDGm0a/mgLvn7qEzWTlUcRhiehJva3JWNhTrG68eSheJxyeNvA8Q2FzgI4n3?=
+ =?us-ascii?Q?8UWJZX3/Jm+/QaI1/45yYE8KzJVzb3bspPlJuflzL0P2kRKURkHCs8VUTIQF?=
+ =?us-ascii?Q?U4w9NFw5T95vbE/aOcAAg6eeZNiGBkLcpEW674PtF1waavdnbfuBW2y2c47A?=
+ =?us-ascii?Q?/jBx05SbmZuqgPIuVHiS9h1PIlFkASecHodcVDxzCURz2wELQv5Yuvnq/XHr?=
+ =?us-ascii?Q?jRDWLdt9nsyV/KqeuhvP50rpDrHqJnbFSktThDeoL4+fEuvXPVjjYMVtQald?=
+ =?us-ascii?Q?xaT2kWDCLrQPl8XS2nNet8EksSdSC7tlCyVc2IJ/rCuxKDrKdBWDsIuiU0ye?=
+ =?us-ascii?Q?+rMmAEid9ZSdeE8qWOS+hrcXk60NLhJyx5Wov4iDF8QDv4ROLq6sMaeNTuDw?=
+ =?us-ascii?Q?ErsCCJkFDJRANjvDhZgguVvAfPTWRzhFq73Jfu8D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c7d9d25-bce9-4716-c10f-08ddf54464d2
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 17:13:45.6224
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gM9vcjfJ6A9Q6VRm1JJLiInM2dSNVzDh5qyw7CV7X5LNF6/xbdfwKFlnGoOKQiiI+0LfnNYhk0D1EREpvZD3bQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7075
 
-Hi Praveen,
+Convert tca8418_keypad.txt to yaml format.
 
-On Tue Sep 16, 2025 at 4:07 PM BST, Jorge Ramirez wrote:
-> On 16/09/25 16:39:00, Jorge Ramirez wrote:
->> On 16/09/25 12:20:25, Praveen Talari wrote:
->> > Hi Alexey
->> >=20
->> > Thank you for your support.
->> >=20
->> > On 9/15/2025 7:55 PM, Praveen Talari wrote:
->> > > Hi Alexey,
->> > >=20
->> > > On 9/15/2025 3:09 PM, Alexey Klimov wrote:
->> > > > (removing <quic_mnaresh@quicinc.com> from c/c -- too many mail not
->> > > > delivered)
->> > > >=20
->> > > > Hi Praveen,
->> > > >=20
->> > > > On Mon Sep 15, 2025 at 7:58 AM BST, Praveen Talari wrote:
->> > > > > Hi Alexey,
->> > > > >=20
->> > > > > Really appreciate you waiting!
->> > > > >=20
->> > > > > On 9/11/2025 2:30 PM, Alexey Klimov wrote:
->> > > > > > Hi Praveen,
->> > > > > >=20
->> > > > > > On Thu Sep 11, 2025 at 9:34 AM BST, Praveen Talari wrote:
->> > > > > > > Hi Alexy,
->> > > > > > >=20
->> > > > > > > Thank you for update.
->> > > > > > >=20
->> > > > > > > On 9/10/2025 1:35 AM, Alexey Klimov wrote:
->> > > > > > > >=20
->> > > > > > > > (adding Krzysztof to c/c)
->> > > > > > > >=20
->> > > > > > > > On Mon Sep 8, 2025 at 6:43 PM BST, Alexey Klimov wrote:
->> > > > > > > > > On Mon Sep 8, 2025 at 5:45 PM BST, Praveen Talari wrote:
->> > > > > > > > > > A deadlock is observed in the
->> > > > > > > > > > qcom_geni_serial driver during runtime
->> > > > > > > > > > resume. This occurs when the pinctrl
->> > > > > > > > > > subsystem reconfigures device pins
->> > > > > > > > > > via msm_pinmux_set_mux() while the serial device's int=
-errupt is an
->> > > > > > > > > > active wakeup source. msm_pinmux_set_mux() calls disab=
-le_irq() or
->> > > > > > > > > > __synchronize_irq(), conflicting with the active wakeu=
-p state and
->> > > > > > > > > > causing the IRQ thread to enter an uninterruptible (D-=
-state) sleep,
->> > > > > > > > > > leading to system instability.
->> > > > > > > > > >=20
->> > > > > > > > > > The critical call trace leading to the deadlock is:
->> > > > > > > > > >=20
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Call trace:
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __switch_to+0xe0/=
-0x120
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __schedule+0x39c/=
-0x978
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 schedule+0x5c/0xf=
-8
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __synchronize_irq=
-+0x88/0xb4
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 disable_irq+0x3c/=
-0x4c
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msm_pinmux_set_mu=
-x+0x508/0x644
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinmux_enable_set=
-ting+0x190/0x2dc
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl_commit_st=
-ate+0x13c/0x208
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl_pm_select=
-_default_state+0x4c/0xa4
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 geni_se_resources=
-_on+0xe8/0x154
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 qcom_geni_serial_=
-runtime_resume+0x4c/0x88
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_generic_runtim=
-e_resume+0x2c/0x44
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __genpd_runtime_r=
-esume+0x30/0x80
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 genpd_runtime_res=
-ume+0x114/0x29c
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __rpm_callback+0x=
-48/0x1d8
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rpm_callback+0x6c=
-/0x78
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rpm_resume+0x530/=
-0x750
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __pm_runtime_resu=
-me+0x50/0x94
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 handle_threaded_w=
-ake_irq+0x30/0x94
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 irq_thread_fn+0x2=
-c/xa8
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 irq_thread+0x160/=
-x248
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kthread+0x110/x11=
-4
->> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret_from_fork+0x1=
-0/x20
->> > > > > > > > > >=20
->> > > > > > > > > > To resolve this, explicitly manage the wakeup IRQ stat=
-e within the
->> > > > > > > > > > runtime suspend/resume callbacks. In the
->> > > > > > > > > > runtime resume callback, call
->> > > > > > > > > > disable_irq_wake() before enabling resources. This pre=
-emptively
->> > > > > > > > > > removes the "wakeup" capability from the IRQ, allowing=
- subsequent
->> > > > > > > > > > interrupt management calls to proceed
->> > > > > > > > > > without conflict. An error path
->> > > > > > > > > > re-enables the wakeup IRQ if resource enablement fails=
-.
->> > > > > > > > > >=20
->> > > > > > > > > > Conversely, in runtime suspend, call
->> > > > > > > > > > enable_irq_wake() after resources
->> > > > > > > > > > are disabled. This ensures the interrupt is configured=
- as a wakeup
->> > > > > > > > > > source only once the device has fully
->> > > > > > > > > > entered its low-power state. An
->> > > > > > > > > > error path handles disabling the wakeup IRQ
->> > > > > > > > > > if the suspend operation
->> > > > > > > > > > fails.
->> > > > > > > > > >=20
->> > > > > > > > > > Fixes: 1afa70632c39 ("serial: qcom-geni:
->> > > > > > > > > > Enable PM runtime for serial driver")
->> > > > > > > > > > Signed-off-by: Praveen Talari <praveen.talari@oss.qual=
-comm.com>
->> > > > > > > > >=20
->> > > > > > > > > You forgot:
->> > > > > > > > >=20
->> > > > > > > > > Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
->> > > > > > > > >=20
->> > > > > > > > > Also, not sure where this change will go, via
->> > > > > > > > > Greg or Jiri, but ideally
->> > > > > > > > > this should be picked for current -rc cycle since regres=
-sion is
->> > > > > > > > > introduced during latest merge window.
->> > > > > > > > >=20
->> > > > > > > > > I also would like to test it on qrb2210 rb1 where this r=
-egression is
->> > > > > > > > > reproduciable.
->> >=20
->> > Since I don't have this board, could you kindly validate the new chang=
-e and
->> > run a quick test on your end?
->> >=20
->> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c
->> > b/drivers/pinctrl/qcom/pinctrl-msm.c
->> > index 83eb075b6bfa..3d6601dc6fcc 100644
->> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
->> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
->> > @@ -215,7 +215,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev
->> > *pctldev,
->> >          */
->> >         if (d && i !=3D gpio_func &&
->> >             !test_and_set_bit(d->hwirq, pctrl->disabled_for_mux))
->> > -               disable_irq(irq);
->> > +               disable_irq_nosync(irq);
->> >=20
->> >         raw_spin_lock_irqsave(&pctrl->lock, flags);
->>=20
->>=20
->> sorry Praveen, didnt see this proposal. testing on my end as well.
->>=20
->
-> just tested on my end and all modules load - deadlocked before this
-> update so there is progress (now we can load the network driver)
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+change in v2
+- add TCA8418 to title
+---
+ .../bindings/input/tca8418_keypad.txt         | 10 ---
+ .../devicetree/bindings/input/ti,tca8418.yaml | 61 +++++++++++++++++++
+ 2 files changed, 61 insertions(+), 10 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/tca8418_keypad.txt
+ create mode 100644 Documentation/devicetree/bindings/input/ti,tca8418.yaml
 
-Is it supposed to be orginal patch here plus disable_irq_nosync()?
-Meaning changes for qcom_geni_serial_runtime_{suspend,resume}
-+ disable_irq_nosync() in msm_pinmux_set_mux()?
-
-It seems to work here but let me know few more runs.
-
-Best regards,
-Alexey
-
-
+diff --git a/Documentation/devicetree/bindings/input/tca8418_keypad.txt b/Documentation/devicetree/bindings/input/tca8418_keypad.txt
+deleted file mode 100644
+index 2551850091678..0000000000000
+--- a/Documentation/devicetree/bindings/input/tca8418_keypad.txt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-This binding is based on the matrix-keymap binding with the following
+-changes:
+-
+-keypad,num-rows and keypad,num-columns are required.
+-
+-Required properties:
+-- compatible: "ti,tca8418"
+-- reg: the I2C address
+-- interrupts: IRQ line number, should trigger on falling edge
+-- linux,keymap: Keys definitions, see keypad-matrix.
+diff --git a/Documentation/devicetree/bindings/input/ti,tca8418.yaml b/Documentation/devicetree/bindings/input/ti,tca8418.yaml
+new file mode 100644
+index 0000000000000..624a1830d0b0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/ti,tca8418.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/ti,tca8418.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI TCA8418 I2C/SMBus keypad scanner
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - ti,tca8418
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++allOf:
++  - $ref: matrix-keymap.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/input/input.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        keypad@34 {
++            compatible = "ti,tca8418";
++            reg = <0x34>;
++            interrupt-parent = <&gpio5>;
++            interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
++            keypad,num-rows = <4>;
++            keypad,num-columns = <4>;
++            linux,keymap = < MATRIX_KEY(0x00, 0x01, BTN_0)
++                             MATRIX_KEY(0x00, 0x00, BTN_1)
++                             MATRIX_KEY(0x01, 0x01, BTN_2)
++                             MATRIX_KEY(0x01, 0x00, BTN_3)
++                             MATRIX_KEY(0x02, 0x00, BTN_4)
++                             MATRIX_KEY(0x00, 0x03, BTN_5)
++                             MATRIX_KEY(0x00, 0x02, BTN_6)
++                             MATRIX_KEY(0x01, 0x03, BTN_7)
++                             MATRIX_KEY(0x01, 0x02, BTN_8)
++                             MATRIX_KEY(0x02, 0x02, BTN_9)
++            >;
++        };
++    };
+-- 
+2.34.1
 
 
