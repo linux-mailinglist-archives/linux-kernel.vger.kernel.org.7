@@ -1,151 +1,183 @@
-Return-Path: <linux-kernel+bounces-818128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC28B58D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:48:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D8DB58D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 721E04E225F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9B181BC50AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3377A242D76;
-	Tue, 16 Sep 2025 04:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D186B2248AE;
+	Tue, 16 Sep 2025 04:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbmqKM+a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOkH/q82"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7F022E3F0
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FA072610
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998064; cv=none; b=Oc4OL0LTgyleBcC+TqFkR1/Nfw1BTGel6C9bfacFt6sXOsv7r/bNmxjGQUU0cet73V0PObd07eSmHn8ZZJmjAHXKzGyH+2HjNgobiL/SKC7D2yTY8leYfAFB1evYC4OGnq2rT57sJodtUT8qHT2uchrp6H/xipT10j3qlSUS8u8=
+	t=1757998089; cv=none; b=okz5eY/HLb9MJKfZ8ViFCLvutL52mN9SXHGGbpzlLPpNnyOTxwMF89AKl4UDD1q/LgHEQvaSuoQlZZ4cP3abj4gg+8zOEdYViLiHzONztlg/4H/SEqMs6Oe6PdgFZNk28CXK3mM4jOEgeDk/T4wprW7rQKMiTNX7ttFXIc0ImN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998064; c=relaxed/simple;
-	bh=vT4jRgNOKJGO9pduYqW5rUZpbUZTqMnVAbx3caTHA90=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QdOxUp909PXZ3O3W6FChQANP4yTgZiCsTOSoiUBT9GCQHegTrPij0hvD7N/z293yDPWUmcqdpBxNygBNhTytm7yPcDfGVJZ59xq4W5L/PRLJbFCbZk44B4nlGnoTmzfYmdW55tWlC+J0Ytl2d3ZXOrENUWvCEcfhiiDAvEJA4+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbmqKM+a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F08E7C4CEF9;
-	Tue, 16 Sep 2025 04:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757998064;
-	bh=vT4jRgNOKJGO9pduYqW5rUZpbUZTqMnVAbx3caTHA90=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YbmqKM+aJFiPL/CEkd9DKxwMtH57EeTk3TkqlPvcFOhmMjRQJ77IvAsJ/Nn7UeIG9
-	 R55ZvXf7GQC5fIj6QHz3/EctXKdAnMDadTJwzoltTgeRigr3P3Q44IS8NoC5xjdol5
-	 iIKmxg6OGvW/k5h5+DfXGRl16c+dbVQanItA1z/jjNtvPyuBo1rc2Ywk+Z7agi1Flp
-	 aDYR0EXiDujCt8mGx8unxtdzUQt9/kFhL0SYZ4e6TVLXCzu+iUyAGfGXkoGI3IipMj
-	 EDzjYtASKvBG+/aiR5HLwem5oOmZ1Z2Kim5TjvrH6vYf0a/LJ2qqQzKTC05AJV/tcx
-	 ysLGeJiZbxcmA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9441CAC599;
-	Tue, 16 Sep 2025 04:47:43 +0000 (UTC)
-From: Hermes Wu via B4 Relay <devnull+Hermes.wu.ite.com.tw@kernel.org>
-Date: Tue, 16 Sep 2025 12:47:45 +0800
-Subject: [PATCH RESEND v3 5/5] drm/bridge: it6505: skip auto training when
- previous try fail
+	s=arc-20240116; t=1757998089; c=relaxed/simple;
+	bh=4lljxmCPotEpCOZhE7upKppTMYl9dHu/d2b81w17SEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d/GXTtLfuJ/Ye5nYMiB8gyStdvS+3LtzP6C78oviLB+ma0pD/OzTbMEtzIM1bOpMYkE/caEWY4EfhT8Ovby3SM9R0S/PPOoNXmUoyzx0Uw+EWY7661wD1KIUhMo2SLHSonzaHLJb5U8/eUEYjalqJj86NcwsqXK5HVy80mM0vr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOkH/q82; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-55f6f434c96so5608511e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:48:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757998085; x=1758602885; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nva31CQb9RnyQWaIyMrnWR4lvFSnR44SZz1OrBIg3bw=;
+        b=mOkH/q82NRjqy6+0jm7e27z0/deUYJZHoFFGa6b7ewSKl1beyBCmJEPj3besC2vufb
+         IPV0XQuV+XyRnjatgOwReU0Xu4dTvRJiiXRgw/LlIoSlFmbt+TMTksTbzMlWGcGtJB/Y
+         tktH2rSyfAKIcVVDxTL4mwCOHXV7WvNtGTFahChQa4R11qiMego+ljmD6d7IiDTnpBnV
+         05Ae+x8goyOyQvdFjIJjhjVQc6dF2F8bmEHEDn3nMhwMvidhB04oF1w40OiZehJwrLcj
+         ew+M1slSleRkpF0tUOk12llcpm0s7sjzdY0gnpFg4uM4ndmfQ1iU8vQCI1MLHvo78RrH
+         7nnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757998085; x=1758602885;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nva31CQb9RnyQWaIyMrnWR4lvFSnR44SZz1OrBIg3bw=;
+        b=DzfeEnaeqLsvsBj/gH4FwfYUL3BKocQueHtnCru4R8+hsip3VFm+F/P4/6MMYK5Ygv
+         8s/PQ1kaBfygsc6usSicrO8ssfIRBUmcHAZ1Ap1Yzpv2wTxEeALfhvh5wxdgSLk/OFZq
+         YKOBrlAh7m9oVJ/hE2IFZv+Sk0ke41pOBndkjt+lUAFExS6NqI17VgEqX1qRtOdDQrmT
+         AlaEjDEocOAwa3HEio2xBb9vPi/Te3vGg9DJp3kTQ0P+bJD2DT0x5PuDTBR1WNn+oUqS
+         Ja2mQ4dBLzaCkdMzcB/pmqZRxZzMathrRPM9mmcfc/1dMwapJIcG5JM7BRezTfBTYbqf
+         ug8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsBaMx4faJj6NKY1SGi3ZKWJDotNO6kyG5rMdZLOR01ZTPHSefJbhuiM5d+78g7scqR3pKEnBvADpzjp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp6u6J5CbAJCgFxmQeLPP839EAz8grsm4EOnRZl8xm05MzMnc4
+	ISIuelRWEC6YUB9mRO4o97GZOWPHlqGkobg+eZ+CP3iJ/L2HAPaI2VY0
+X-Gm-Gg: ASbGncvU965FuPJ9EXy2PFHvio490vPwYbtz32y7t48Vlar+y9CJhzD8AojDWnEXpho
+	0LsSCDBP2DGyX7t7BCNLVRUZ15Pua7hQCPcsHLM+7BzSi9jJo2AQgZtUwtjWa8somsjnPWfI3OH
+	G7D0RGx8mqaImfTbddUsF3bJV2s8vMOEkzIrGliet3xw1QPR8U2gpKxbRjB/inzJhq6cz1W35HR
+	YM1ZECCdNcfoH2hYBoZTaTwTcrLBx6ykhOHXACtgZHTesF0WoL681svO7N5Ga7Zs3rqeY1D2Y0B
+	w3n6T5RaNl7FoKwP8Jlb7I2/Jz7fGjj/Dy4yBRdwKe0FFQqrFnh2fcfpAO+o28fw2xZPTGKs2f1
+	vb4CfF8l8L156Zmy5XEyMHded7cB/rk1rADTBt0NPJhrIFRLanRdwkZ1Q6njGdMFNb/M23V/aFV
+	rZ5/dj
+X-Google-Smtp-Source: AGHT+IHo4ALErq+Xx1bjNqpiiFLemDYjjyezLrlBYACjFEDZuKcuTSOA/KJFI2YP161fK5ZvVyw5EA==
+X-Received: by 2002:a19:6a13:0:b0:56a:4f7:6756 with SMTP id 2adb3069b0e04-5704a3e6c5cmr3236714e87.9.1757998085119;
+        Mon, 15 Sep 2025 21:48:05 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e6460d4b5sm4179446e87.97.2025.09.15.21.48.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Sep 2025 21:48:04 -0700 (PDT)
+Message-ID: <0b97adc3-4d77-480f-ace9-a53403c62216@gmail.com>
+Date: Tue, 16 Sep 2025 07:48:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com>
+ <20250915-bd79112-v5-2-a74e011a0560@gmail.com>
+ <aMge0jYwYCiY72Yb@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <aMge0jYwYCiY72Yb@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-fix-link-training-v3-5-0f55bfdb272a@ite.com.tw>
-References: <20250916-fix-link-training-v3-0-0f55bfdb272a@ite.com.tw>
-In-Reply-To: <20250916-fix-link-training-v3-0-0f55bfdb272a@ite.com.tw>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Pet.Weng@ite.com.tw, Kenneth.Hung@ite.com.tw, treapking@chromium.org, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Hermes Wu <Hermes.wu@ite.com.tw>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757998107; l=2181;
- i=Hermes.wu@ite.com.tw; s=20241230; h=from:subject:message-id;
- bh=pLytI76dbGjTNwcbsSYeds6mdd5OwXNWVjluMga6s9U=;
- b=JY8tgX+eYXvPeTbxNaV7UrIwPK91wF7/U5zi8MM9ecEKoV2Bl2728E4KvmmBeAPdGcyAZrKS7
- PS+CLxRC/6jDOShl424eq7Mu0xWPm6aPsdfVu2xsvX2W6xKc5+B/AcH
-X-Developer-Key: i=Hermes.wu@ite.com.tw; a=ed25519;
- pk=qho5Dawp2WWj9CGyjtJ6/Y10xH8odjRdS6SXDaDAerU=
-X-Endpoint-Received: by B4 Relay for Hermes.wu@ite.com.tw/20241230 with
- auth_id=310
-X-Original-From: Hermes Wu <Hermes.wu@ite.com.tw>
-Reply-To: Hermes.wu@ite.com.tw
 
-From: Hermes Wu <Hermes.wu@ite.com.tw>
+On 15/09/2025 17:12, Andy Shevchenko wrote:
+> On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:
+>> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
+>> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
+>>
+>> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
+>> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
+>> daisy-chain configuration) and maximum sampling rate is 1MSPS.
+>>
+>> The IC does also support CRC but it is not implemented in the driver.
+> 
+> ...
+> 
+>> +static int bd79112_probe(struct spi_device *spi)
+>> +{
+>> +	struct bd79112_data *data;
+>> +	struct iio_dev *iio_dev;
+>> +	struct iio_chan_spec *cs;
+>> +	struct device *dev = &spi->dev;
+>> +	unsigned long gpio_pins, pin;
+>> +	unsigned int i;
+>> +	int ret;
+>> +
+>> +	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+>> +	if (!iio_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	data = iio_priv(iio_dev);
+>> +	data->spi = spi;
+>> +	data->dev = dev;
+>> +	data->map = devm_regmap_init(dev, NULL, data, &bd79112_regmap);
+>> +	if (IS_ERR(data->map))
+>> +		return dev_err_probe(dev, PTR_ERR(data->map),
+>> +				     "Failed to initialize Regmap\n");
+>> +
+>> +	ret = devm_regulator_get_enable_read_voltage(dev, "vdd");
+>> +	if (ret < 0)
+>> +		return dev_err_probe(dev, ret, "Failed to get the Vdd\n");
+> 
+>> +	data->vref_mv = ret / 1000;
+> 
+> I still think moving to _mV is the right thing to do.
+> There is no 'mv' in the physics for Volts.
 
-When connect to device which can only training done by
-step training, skip auto training when link training restart,
-usually happen when display resolution is changed.
+I can see you think so :) For me it doesn't look good. This is in-kernel 
+C-code not physics textbook. For the kernel C it has been convention to 
+_not_ use capital letters (or CamelCase) for variables. This convention 
+is strong enough reason for me to avoid mV in a variable name because 
+the capital letter instantly requires my attention and makes me need to 
+consider if this is "just a variable". What comes to the vref_mv, there 
+really are no true downside. It is clear what the _mv suffix denotes and 
+"there is no 'mv' in physics" is really an artificial problem.
 
-Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
----
- drivers/gpu/drm/bridge/ite-it6505.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+>> +	ret = devm_regulator_get_enable(dev, "iovdd");
+>> +	if (ret < 0)
+>> +		return dev_err_probe(dev, ret, "Failed to enable I/O voltage\n");
+>> +
+>> +	data->read_xfer[0].tx_buf = &data->read_tx[0];
+>> +	data->read_xfer[0].len = sizeof(data->read_tx);
+>> +	data->read_xfer[0].cs_change = 1;
+>> +	data->read_xfer[1].rx_buf = &data->read_rx;
+>> +	data->read_xfer[1].len = sizeof(data->read_rx);
+>> +	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
+> 
+>> +	devm_spi_optimize_message(dev, spi, &data->read_msg);
+> 
+> And if it fails?..
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index bff5f18fb5ae7192242308f034b60af9807c192c..20eae23cb46a4cb3fc18dd2ed3b764f2265262ca 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -467,6 +467,7 @@ struct it6505 {
- 	struct delayed_work hdcp_work;
- 	struct work_struct hdcp_wait_ksv_list;
- 	struct completion extcon_completion;
-+	u8 step_train_only;
- 	bool hdcp_desired;
- 	bool is_repeater;
- 	u8 hdcp_down_stream_count;
-@@ -2452,11 +2453,13 @@ static void it6505_link_step_train_process(struct it6505 *it6505)
- 				     ret ? "pass" : "failed", i + 1);
- 		if (ret) {
- 			it6505_link_train_ok(it6505);
-+			it6505->step_train_only = true;
- 			return;
- 		}
- 	}
- 
- 	DRM_DEV_DEBUG_DRIVER(dev, "training fail");
-+	it6505->step_train_only = false;
- 	it6505->link_state = LINK_IDLE;
- 	it6505_video_reset(it6505);
- }
-@@ -2473,14 +2476,14 @@ static void it6505_link_training_work(struct work_struct *work)
- 	if (!it6505_get_sink_hpd_status(it6505))
- 		return;
- 
--	for (retry = AUTO_TRAIN_RETRY; retry > 0; retry--) {
-+	for (retry = AUTO_TRAIN_RETRY; retry > 0 && !it6505->step_train_only; retry--) {
- 		it6505_link_training_setup(it6505);
- 		it6505_reset_hdcp(it6505);
- 		it6505_aux_reset(it6505);
- 
- 		ret = it6505_link_start_auto_train(it6505);
- 		DRM_DEV_DEBUG_DRIVER(dev, "auto train %s,",
--				     ret ? "pass" : "failed");
-+					ret ? "pass" : "failed");
- 		if (ret) {
- 			it6505_link_train_ok(it6505);
- 			return;
-@@ -2594,6 +2597,7 @@ static void it6505_irq_hpd(struct it6505 *it6505)
- 			it6505_variable_config(it6505);
- 			it6505_parse_link_capabilities(it6505);
- 		}
-+		it6505->step_train_only = false;
- 
- 		it6505_drm_dp_link_set_power(&it6505->aux, &it6505->link,
- 					     DP_SET_POWER_D0);
+I am not really sure under what conditions this would fail. Without 
+taking a further look at that - then we just use unoptimized SPI 
+transfers(?). Could warrant a warning print though.
 
--- 
-2.34.1
+Thanks for taking a look at this again :)
+
+Yours,
+	-- Matti
+
 
 
 
