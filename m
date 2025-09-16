@@ -1,305 +1,355 @@
-Return-Path: <linux-kernel+bounces-819236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB669B59CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:09:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B645B59D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 727344E17BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D311E3B4884
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E04328584;
-	Tue, 16 Sep 2025 16:09:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7332032859C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8393527E074;
+	Tue, 16 Sep 2025 16:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1EE+nP5L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7vC6bWcK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hISESrwM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SsYRJ+1V"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DD4328567
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038946; cv=none; b=Ltr4MPdx0PfzZmjwedbN8sOS2V5Vk4CnA+oHqYdF+I4UwTkQpx18nIiLkJwzzQPRZeDMa1MUbCUDm6QNP72yJNjh1qnJFfq50+aOsLFJlYFnfmVZ4hGzwSJuxQzYh3DIkD5oggaJtLagAu5HNo6J2W9FSvjgMVbSZzDxqxSlmBI=
+	t=1758038963; cv=none; b=P86T2Ctsq5j8yjwXv2MiQXO6JpdWm63O3ByP8L4FOCUSwyG89cuXIaU1h239/okhVgPGoqUX44ZZcFhXdKiJrvFV2L7XtzeYORQbwIxajaYQdz+VsC+bGND0OSSnflovPiOQ7LJwaz8XNH5lGHN2GOb6PhnBKTl6uVGgtyvsMOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038946; c=relaxed/simple;
-	bh=MtmIYB06xrhuRPmfuSALu8pn29uvvBv6mbGjxzA5UqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DT0hGgdLR0Y1c+Jl2jU0q+j1D8MtUXAyZh/OHd3WRn/RIgE1Wo4REPAiEmgg6seqg2AkJHfRAVGkXNtICUPuJr7nrR/865q9MXerKe/Db6V2E5GJTort4cRNT9WCshn3JdqlWpIhii35lZbrTPkdbPFSCqlfCAd30As0X4g4bPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55EFA2F;
-	Tue, 16 Sep 2025 09:08:55 -0700 (PDT)
-Received: from [10.57.4.241] (unknown [10.57.4.241])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 027E73F673;
-	Tue, 16 Sep 2025 09:09:01 -0700 (PDT)
-Message-ID: <6fbd24b2-3315-45e6-bff2-2c39e899e8f5@arm.com>
-Date: Tue, 16 Sep 2025 17:09:01 +0100
+	s=arc-20240116; t=1758038963; c=relaxed/simple;
+	bh=gHBFPGLxpgeIbpqz53lBnp+GFhA6FFof1/8vmOqOGoE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kFaLIdHl6zlpoGHE0IVXLpMKSMhPzDSUkLe46i5vF9I2YgxJP97ZTtjPC5FZRcmQXIlPq3GRDTWewV39Rk/YHy+mqB36F5mjhlRwm2Siwh3a2scgB7QsfBS77iImUTCneY1WT5spG16LwNyGMH3RJck9TbUrXHiQn3BejswxhhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1EE+nP5L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7vC6bWcK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hISESrwM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SsYRJ+1V; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EAB2F1F453;
+	Tue, 16 Sep 2025 16:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758038959; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sk5AEI/paeTqJ+QNDnjHg/KvAsKlZn9pZI9pJzQwMJ0=;
+	b=1EE+nP5LkZNQAD1UiiG13D4lO1RGbKhrjLlO2fhVPILTDBJeMfs5+tjg+VxgmU+HfhYV13
+	bs4TGizkhW1fGuTCUN7YtE55hbG66vO2b1IP3HFtXef8X8ICQGIakJcR1RcZo8KPNLBURg
+	hnopb4muD5oABBxfDR3C/RKyuTs0m0k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758038959;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sk5AEI/paeTqJ+QNDnjHg/KvAsKlZn9pZI9pJzQwMJ0=;
+	b=7vC6bWcKz1O2YREeyLf4QpftmnlLqeaPZ4plTqGvbPxdmbNNBXH3dqRRFWsXQ9s8s4jx/e
+	lTK+9LEQOu6e07Cw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hISESrwM;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SsYRJ+1V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758038958; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sk5AEI/paeTqJ+QNDnjHg/KvAsKlZn9pZI9pJzQwMJ0=;
+	b=hISESrwM1LjUKFjEDprbKKbLOW4F3yNktMqhMR6RqIb8igdiCyTLXh3KohubKC05AjCXyA
+	q8EptqWsQfigsBmjAi4PlaSKHmk2aR3Dew3ZhdVmkngeuRcG+zcGTDAz1pKdlfXidJye63
+	PlkNLEtnlQ3/n7VUXfFLSGQqv2I7Aos=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758038958;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Sk5AEI/paeTqJ+QNDnjHg/KvAsKlZn9pZI9pJzQwMJ0=;
+	b=SsYRJ+1VYrIEeso//o0izaLeJGA/0iyU3ENs4m9KHZv4KYXO8r68EH6KWsKVQpsSdv68EH
+	EQZqtoHXwR8FwBCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 873BF13A63;
+	Tue, 16 Sep 2025 16:09:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TgeOH66LyWhhSwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 16 Sep 2025 16:09:18 +0000
+Date: Tue, 16 Sep 2025 18:09:18 +0200
+Message-ID: <87o6raxtu9.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Luca Weiss" <luca.weiss@fairphone.com>
+Cc: "Arnd Bergmann" <arnd@arndb.de>,
+	"Takashi Iwai" <tiwai@suse.de>,
+	"Arnd Bergmann" <arnd@kernel.org>,
+	"Mark Brown" <broonie@kernel.org>,
+	"Wesley Cheng" <quic_wcheng@quicinc.com>,
+	"Jaroslav Kysela"
+ <perex@perex.cz>,
+	"Takashi Iwai" <tiwai@suse.com>,
+	"Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,
+	"Dan Carpenter" <dan.carpenter@linaro.org>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
+In-Reply-To: <DCU39JVDVFAG.2EOCQ37KAS3N0@fairphone.com>
+References: <20250513123442.159936-1-arnd@kernel.org>
+	<20250513123442.159936-4-arnd@kernel.org>
+	<DBR2363A95M1.L9XBNC003490@fairphone.com>
+	<87v7n72pg0.wl-tiwai@suse.de>
+	<DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com>
+	<87ms8j2on6.wl-tiwai@suse.de>
+	<DCKUCB8A1JCV.1GK0TW2YMXNZP@fairphone.com>
+	<87bjnpqe45.wl-tiwai@suse.de>
+	<a2a6843f-7e03-4b7e-b5fc-415ac9fc6621@app.fastmail.com>
+	<DCU39JVDVFAG.2EOCQ37KAS3N0@fairphone.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] coresight: Fix possible deadlock in coresight_panic_cb
-Content-Language: en-GB
-To: Leo Yan <leo.yan@arm.com>, Sean Anderson <sean.anderson@linux.dev>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yeoreum Yun <yeoreum.yun@arm.com>, Mike Leach <mike.leach@linaro.org>,
- Linu Cherian <lcherian@marvell.com>, linux-kernel@vger.kernel.org,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- James Clark <james.clark@linaro.org>
-References: <20250912151314.3761026-1-sean.anderson@linux.dev>
- <20250915095820.GH12516@e132581.arm.com>
- <3e618117-96bd-44f3-bede-7cadfe0264dd@linux.dev>
- <20250916160027.GK12516@e132581.arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250916160027.GK12516@e132581.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: EAB2F1F453
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-On 16/09/2025 17:00, Leo Yan wrote:
-> On Mon, Sep 15, 2025 at 10:31:24AM -0400, Sean Anderson wrote:
->> On 9/15/25 05:58, Leo Yan wrote:
->>> On Fri, Sep 12, 2025 at 11:13:14AM -0400, Sean Anderson wrote:
->>>> coresight_panic_cb is called with interrupts disabled during panics.
->>>> However, bus_for_each_dev calls bus_to_subsys which takes
->>>> bus_kset->list_lock without disabling IRQs. This may cause a deadlock.
->>>
->>> I would rephrase it to make it clearer for anyone reading it later:
->>>
->>>    coresight_panic_cb() is called during panics, which can preempt a flow
->>>    that triggers exceptions (such as data or instruction aborts).
->>
->> I don't see what exceptions have to do with it. You can also panic
->> during a regular interrupt.
+On Tue, 16 Sep 2025 10:41:01 +0200,
+Luca Weiss wrote:
 > 
-> The commit mentioned "without disabling IRQs" gives the impression that
-> the deadlock is caused by IRQ-unsafe locking, which might mislead into
-> thinking why the issue cannot be fixed with IRQ-safe locking.
+> Hi Arnd,
 > 
-> Regardless of whether IRQs are disabled, and regardless of the context
-> (interrupt, bottom-half, or normal thread), the conditions for the
-> deadlock are only about:
+> On Fri Sep 5, 2025 at 4:54 PM CEST, Arnd Bergmann wrote:
+> > On Fri, Sep 5, 2025, at 14:26, Takashi Iwai wrote:
+> >> On Fri, 05 Sep 2025 13:47:28 +0200,
+> >
+> >> @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct 
+> >> snd_usb_substream *subs,
+> >>  	if (!xfer_buf)
+> >>  		return -ENOMEM;
+> >> 
+> >> -	/* Remapping is not possible if xfer_buf is outside of linear map */
+> >> -	xfer_buf_pa = virt_to_phys(xfer_buf);
+> >> -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+> >> -		ret = -ENXIO;
+> >> -		goto unmap_sync;
+> >> -	}
+> >>  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+> >>  			xfer_buf_dma, len);
+> >> 
+> >>  	/* map the physical buffer into sysdev as well */
+> >> +	/* note: 0 is passed to pa argument as we use sgt */
+> >>  	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> >> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> >> +					       0, len, &xfer_buf_sgt);
+> >>  	if (!xfer_buf_dma_sysdev) {
+> >>  		ret = -ENOMEM;
+> >>  		goto unmap_sync;
+> >
+> >
+> > Makes sense. I had to rework the code a little more to actually
+> > understand how it fits together, for reference the below version
+> > (I don't expect it to build cleanly) would split up
+> > uaudio_iommu_map() into one function that takes a physical
+> > address and another function that takes an sg table.
 > 
->    (a) The bus lock has been acquired;
->    (b) A panic is triggered to try to acquire the same lock.
+> Are you planning to post this as a proper patch? It's a bit late in the
+> 6.17 cycle already but good to still get this fixed for final release.
 > 
-> [...]
+> Or revert the original commit that broke it for now.
 > 
->>> When I review this patch, I recognize we can consolidate panic notifier
->>> in coresight-tmc-core.c, so we don't need to distribute the changes
->>> into ETF and ETR drivers (sorry if I misled you in my previous reply).
->>
->> And this kind of thing is why I went with the straightforward fix
->> initially. I do not want to bikeshed the extent that this gets removed.
->> IMO the whole "panic ops" stuff should be done directly with the panic
->> notifier, hence this patch. If you do not agree with that, then ack v2
->> and send a follow up of your own to fix it how you see fit.
-> 
-> I would fix it in one go.
-> 
-> I agree with you that "the whole panic ops stuff should be done directly
-> with the panic". The only difference between us is that I would keep the
-> `panic_ops` callback. To me, this encapsulates panic callbacks into
-> different modules, to make the code more general.
-> 
-> Could you check if the drafted patch below looks good to you? If so, I
-> will send out a formal patch.
-> 
-> ---8<---
-> 
->  From ea78dd22cbdd97f709c5991d5bd3be97be6e137e Mon Sep 17 00:00:00 2001
-> From: Sean Anderson <sean.anderson@linux.dev>
-> Date: Tue, 16 Sep 2025 16:03:58 +0100
-> Subject: [PATCH] coresight: Fix possible deadlock in coresight_panic_cb()
-> 
-> coresight_panic_cb() is called during a panic. It invokes
-> bus_for_each_dev(), which then calls bus_to_subsys() and takes the
-> 'bus_kset->list_lock'. If a panic occurs after the lock has been
-> acquired, it can lead to a deadlock.
-> 
-> Instead of using a common panic notifier to iterate the bus, this commit
-> directly registers the TMC device's panic notifier. This avoids bus
-> iteration and effectively eliminates the race condition that could cause
-> the deadlock.
+> I couldn't really test your patch since there's a couple of compile
+> errors where I wasn't sure how to resolve them correctly.
 
-Well, if you are going that far, why not register the notifier from
-coresight-core ? We could always check the panic_ops->sync, and
-then register/unregister the callback. Add the notifer to the csdev.
-Otherwise, there is no point in keeping the panic_ops in
-coresight_device, it is just for the TMC device.
-
-Suzuki
+Could you check the patch below, then?  At least it compiles without
+errors.
 
 
+Takashi
 
-> 
-> Fixes: 46006ceb5d02 ("coresight: core: Add provision for panic callbacks")
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->   drivers/hwtracing/coresight/coresight-core.c  | 42 -------------------
->   .../hwtracing/coresight/coresight-tmc-core.c  | 26 ++++++++++++
->   drivers/hwtracing/coresight/coresight-tmc.h   |  2 +
->   3 files changed, 28 insertions(+), 42 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index 3267192f0c1c..cb0cc8d77056 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -21,7 +21,6 @@
->   #include <linux/property.h>
->   #include <linux/delay.h>
->   #include <linux/pm_runtime.h>
-> -#include <linux/panic_notifier.h>
->   
->   #include "coresight-etm-perf.h"
->   #include "coresight-priv.h"
-> @@ -1566,36 +1565,6 @@ const struct bus_type coresight_bustype = {
->   	.name	= "coresight",
->   };
->   
-> -static int coresight_panic_sync(struct device *dev, void *data)
-> -{
-> -	int mode;
-> -	struct coresight_device *csdev;
-> -
-> -	/* Run through panic sync handlers for all enabled devices */
-> -	csdev = container_of(dev, struct coresight_device, dev);
-> -	mode = coresight_get_mode(csdev);
-> -
-> -	if ((mode == CS_MODE_SYSFS) || (mode == CS_MODE_PERF)) {
-> -		if (panic_ops(csdev))
-> -			panic_ops(csdev)->sync(csdev);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int coresight_panic_cb(struct notifier_block *self,
-> -			       unsigned long v, void *p)
-> -{
-> -	bus_for_each_dev(&coresight_bustype, NULL, NULL,
-> -				 coresight_panic_sync);
-> -
-> -	return 0;
-> -}
-> -
-> -static struct notifier_block coresight_notifier = {
-> -	.notifier_call = coresight_panic_cb,
-> -};
-> -
->   static int __init coresight_init(void)
->   {
->   	int ret;
-> @@ -1608,20 +1577,11 @@ static int __init coresight_init(void)
->   	if (ret)
->   		goto exit_bus_unregister;
->   
-> -	/* Register function to be called for panic */
-> -	ret = atomic_notifier_chain_register(&panic_notifier_list,
-> -					     &coresight_notifier);
-> -	if (ret)
-> -		goto exit_perf;
-> -
->   	/* initialise the coresight syscfg API */
->   	ret = cscfg_init();
->   	if (!ret)
->   		return 0;
->   
-> -	atomic_notifier_chain_unregister(&panic_notifier_list,
-> -					     &coresight_notifier);
-> -exit_perf:
->   	etm_perf_exit();
->   exit_bus_unregister:
->   	bus_unregister(&coresight_bustype);
-> @@ -1631,8 +1591,6 @@ static int __init coresight_init(void)
->   static void __exit coresight_exit(void)
->   {
->   	cscfg_exit();
-> -	atomic_notifier_chain_unregister(&panic_notifier_list,
-> -					     &coresight_notifier);
->   	etm_perf_exit();
->   	bus_unregister(&coresight_bustype);
->   }
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> index 36599c431be6..108ed9daf56d 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> @@ -21,6 +21,7 @@
->   #include <linux/slab.h>
->   #include <linux/dma-mapping.h>
->   #include <linux/spinlock.h>
-> +#include <linux/panic_notifier.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/of.h>
->   #include <linux/of_address.h>
-> @@ -769,6 +770,21 @@ static void register_crash_dev_interface(struct tmc_drvdata *drvdata,
->   			"Valid crash tracedata found\n");
->   }
->   
-> +static int tmc_panic_cb(struct notifier_block *nb, unsigned long v, void *p)
-> +{
-> +	struct tmc_drvdata *drvdata = container_of(nb, struct tmc_drvdata,
-> +						   panic_notifier);
-> +	struct coresight_device *csdev = drvdata->csdev;
-> +
-> +	if (coresight_get_mode(csdev) == CS_MODE_DISABLED)
-> +		return 0;
-> +
-> +	if (panic_ops(csdev))
-> +		panic_ops(csdev)->sync(csdev);
-> +
-> +	return 0;
-> +}
-> +
->   static int __tmc_probe(struct device *dev, struct resource *res)
->   {
->   	int ret = 0;
-> @@ -885,6 +901,12 @@ static int __tmc_probe(struct device *dev, struct resource *res)
->   		goto out;
->   	}
->   
-> +	if (panic_ops(drvdata->csdev)) {
-> +		drvdata->panic_notifier.notifier_call = tmc_panic_cb;
-> +		atomic_notifier_chain_register(&panic_notifier_list,
-> +					       &drvdata->panic_notifier);
-> +	}
-> +
->   out:
->   	if (is_tmc_crashdata_valid(drvdata) &&
->   	    !tmc_prepare_crashdata(drvdata))
-> @@ -929,6 +951,10 @@ static void __tmc_remove(struct device *dev)
->   {
->   	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
->   
-> +	if (panic_ops(drvdata->csdev))
-> +		atomic_notifier_chain_unregister(&panic_notifier_list,
-> +						 &drvdata->panic_notifier);
-> +
->   	/*
->   	 * Since misc_open() holds a refcount on the f_ops, which is
->   	 * etb fops in this case, device is there until last file
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> index cbb4ba439158..873c5427673c 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> @@ -243,6 +243,7 @@ struct tmc_resrv_buf {
->    *		(after crash) by default.
->    * @crash_mdata: Reserved memory for storing tmc crash metadata.
->    *		 Used by ETR/ETF.
-> + * @panic_notifier: Notifier used to clean up during a panic
->    */
->   struct tmc_drvdata {
->   	struct clk		*atclk;
-> @@ -273,6 +274,7 @@ struct tmc_drvdata {
->   	struct etr_buf		*perf_buf;
->   	struct tmc_resrv_buf	resrv_buf;
->   	struct tmc_resrv_buf	crash_mdata;
-> +	struct notifier_block	panic_notifier;
->   };
->   
->   struct etr_buf_operations {
-
+--- a/sound/usb/qcom/qc_audio_offload.c
++++ b/sound/usb/qcom/qc_audio_offload.c
+@@ -538,38 +538,33 @@ static void uaudio_iommu_unmap(enum mem_type mtype, unsigned long iova,
+ 			umap_size, iova, mapped_iova_size);
+ }
+ 
++static int uaudio_iommu_map_prot(bool dma_coherent)
++{
++	int prot = IOMMU_READ | IOMMU_WRITE;
++
++	if (dma_coherent)
++		prot |= IOMMU_CACHE;
++	return prot;
++}
++
+ /**
+- * uaudio_iommu_map() - maps iommu memory for adsp
++ * uaudio_iommu_map_pa() - maps iommu memory for adsp
+  * @mtype: ring type
+  * @dma_coherent: dma coherent
+  * @pa: physical address for ring/buffer
+  * @size: size of memory region
+- * @sgt: sg table for memory region
+  *
+  * Maps the XHCI related resources to a memory region that is assigned to be
+  * used by the adsp.  This will be mapped to the domain, which is created by
+  * the ASoC USB backend driver.
+  *
+  */
+-static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+-				      phys_addr_t pa, size_t size,
+-				      struct sg_table *sgt)
++static unsigned long uaudio_iommu_map_pa(enum mem_type mtype, bool dma_coherent,
++					 phys_addr_t pa, size_t size)
+ {
+-	struct scatterlist *sg;
+ 	unsigned long iova = 0;
+-	size_t total_len = 0;
+-	unsigned long iova_sg;
+-	phys_addr_t pa_sg;
+ 	bool map = true;
+-	size_t sg_len;
+-	int prot;
+-	int ret;
+-	int i;
+-
+-	prot = IOMMU_READ | IOMMU_WRITE;
+-
+-	if (dma_coherent)
+-		prot |= IOMMU_CACHE;
++	int prot = uaudio_iommu_map_prot(dma_coherent);
+ 
+ 	switch (mtype) {
+ 	case MEM_EVENT_RING:
+@@ -583,20 +578,41 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+ 				     &uaudio_qdev->xfer_ring_iova_size,
+ 				     &uaudio_qdev->xfer_ring_list, size);
+ 		break;
+-	case MEM_XFER_BUF:
+-		iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
+-				     &uaudio_qdev->xfer_buf_iova_size,
+-				     &uaudio_qdev->xfer_buf_list, size);
+-		break;
+ 	default:
+ 		dev_err(uaudio_qdev->data->dev, "unknown mem type %d\n", mtype);
+ 	}
+ 
+ 	if (!iova || !map)
+-		goto done;
++		return 0;
+ 
+-	if (!sgt)
+-		goto skip_sgt_map;
++	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
++
++	return iova;
++}
++
++static unsigned long uaudio_iommu_map_xfer_buf(bool dma_coherent, size_t size,
++					       struct sg_table *sgt)
++{
++	struct scatterlist *sg;
++	unsigned long iova = 0;
++	size_t total_len = 0;
++	unsigned long iova_sg;
++	phys_addr_t pa_sg;
++	size_t sg_len;
++	int prot = uaudio_iommu_map_prot(dma_coherent);
++	int ret;
++	int i;
++
++	prot = IOMMU_READ | IOMMU_WRITE;
++
++	if (dma_coherent)
++		prot |= IOMMU_CACHE;
++
++	iova = uaudio_get_iova(&uaudio_qdev->curr_xfer_buf_iova,
++			       &uaudio_qdev->xfer_buf_iova_size,
++			       &uaudio_qdev->xfer_buf_list, size);
++	if (!iova)
++		goto done;
+ 
+ 	iova_sg = iova;
+ 	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
+@@ -618,11 +634,6 @@ static unsigned long uaudio_iommu_map(enum mem_type mtype, bool dma_coherent,
+ 		uaudio_iommu_unmap(MEM_XFER_BUF, iova, size, total_len);
+ 		iova = 0;
+ 	}
+-	return iova;
+-
+-skip_sgt_map:
+-	iommu_map(uaudio_qdev->data->domain, iova, pa, size, prot, GFP_KERNEL);
+-
+ done:
+ 	return iova;
+ }
+@@ -1061,8 +1072,8 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 			xfer_buf_dma, len);
+ 
+ 	/* map the physical buffer into sysdev as well */
+-	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+-					       xfer_buf_pa, len, &xfer_buf_sgt);
++	xfer_buf_dma_sysdev = uaudio_iommu_map_xfer_buf(dma_coherent,
++							len, &xfer_buf_sgt);
+ 	if (!xfer_buf_dma_sysdev) {
+ 		ret = -ENOMEM;
+ 		goto unmap_sync;
+@@ -1143,8 +1154,8 @@ uaudio_endpoint_setup(struct snd_usb_substream *subs,
+ 	sg_free_table(sgt);
+ 
+ 	/* data transfer ring */
+-	iova = uaudio_iommu_map(MEM_XFER_RING, dma_coherent, tr_pa,
+-			      PAGE_SIZE, NULL);
++	iova = uaudio_iommu_map_pa(MEM_XFER_RING, dma_coherent, tr_pa,
++				   PAGE_SIZE);
+ 	if (!iova) {
+ 		ret = -ENOMEM;
+ 		goto clear_pa;
+@@ -1207,8 +1218,8 @@ static int uaudio_event_ring_setup(struct snd_usb_substream *subs,
+ 	mem_info->dma = sg_dma_address(sgt->sgl);
+ 	sg_free_table(sgt);
+ 
+-	iova = uaudio_iommu_map(MEM_EVENT_RING, dma_coherent, er_pa,
+-			      PAGE_SIZE, NULL);
++	iova = uaudio_iommu_map_pa(MEM_EVENT_RING, dma_coherent, er_pa,
++				   PAGE_SIZE);
+ 	if (!iova) {
+ 		ret = -ENOMEM;
+ 		goto clear_pa;
 
