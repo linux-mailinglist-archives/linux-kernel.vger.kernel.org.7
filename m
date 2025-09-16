@@ -1,154 +1,139 @@
-Return-Path: <linux-kernel+bounces-818341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05171B5902C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:16:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CBDB5902D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 286A77ACD5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:14:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1290717B5DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E852868BA;
-	Tue, 16 Sep 2025 08:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809FA23E229;
+	Tue, 16 Sep 2025 08:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JvebwpEc"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qK9yMZfU"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2597723E229;
-	Tue, 16 Sep 2025 08:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317AC287242
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758010566; cv=none; b=pDu8jkroLNjWv9JbFBuBtmi8DwDZx7zqD778yRV/szazPkWnCxlSPw0ZCAgP4HCKnJJJXdJA9srO2fKI3uy22B9jMURuHvCnnwWfUiU9TVbFnzL3D/kfm8ctk/40viF5ErQK/mXaKJwbQzwKaYq8xnZYmHXF+RelGszU5MzZCws=
+	t=1758010568; cv=none; b=nffBuPiUD/AY5QpeKU0KTnebbLqj7r5FiDnocJc2iEQXYdbfSehMpvaHX+2OgNgVMdE6ikZiN3RIIDvetK7YkuE/pe1H9tAJjvE0F/PhatWFb26hi5SMPfcS6/UbvAAg8+mZGpOZzyIQCtHAc6QxbnPmRdAS9x/FQp41hSsYfK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758010566; c=relaxed/simple;
-	bh=Q/+oIBGch8qZShTfC7m3G/faLlMwyE1AHNhUGc+5LCk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nPFldt8jbj3LraY3mAlepqLY7/DtsRliz4rHEx2Joeny5xBu67V71vHcbzc4O22LPGRzur8UqsUyJLCCwXZW1/lXx6VwLgZR3s93BBatLOUXIjw6UxvhkmH4gmJO84Ig48bwNZSEC4iPVVA3tY/fv8tG9iTPEzbj6A2Edau877E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JvebwpEc; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 600abe5492d511f0bd5779446731db89-20250916
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=vKGd3v+/MNTZFBly663z0CRc24GoxcHKINEmL/tLaUE=;
-	b=JvebwpEc9DQL1i5ZpV+gvhvFltmlSGOqe2iA0co1i35kJb7GgUT2nvDUZg6e9L/KVztFTviAt8L/ySeg20w6Rk/nYy3OkROwzOTqsHIoKt1DZJ45CvrX//8z9oumtIWIrtvx3xxORYGJKkaJe8f5myK001cFG8TdiM4GqLz4jTU=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.4,REQID:3e1d9aaa-8765-4b9f-b6f9-179efad1c66d,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:1ca6b93,CLOUDID:aff4d684-5317-4626-9d82-238d715c253f,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:-5,Content:0|15|50,EDM:-3,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 600abe5492d511f0bd5779446731db89-20250916
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-	(envelope-from <tim.kuo@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 265731134; Tue, 16 Sep 2025 16:15:58 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 16 Sep 2025 16:15:56 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 16 Sep 2025 16:15:56 +0800
-From: Tim Kuo <Tim.Kuo@mediatek.com>
-To: Mark Brown <broonie@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Steven Liu <Steven.Liu@mediatek.com>, Sky Huang <Skylake.Huang@mediatek.com>,
-	Tim Kuo <Tim.Kuo@mediatek.com>
-Subject: [PATCH] spi: mt65xx: add dual and quad mode for standard spi device
-Date: Tue, 16 Sep 2025 16:15:15 +0800
-Message-ID: <20250916081515.324130-1-Tim.Kuo@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1758010568; c=relaxed/simple;
+	bh=m871iIeOfCazaoSPmTALTlNsX9LyCc0jz8OY6/Cozzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bz4lrFzF9xF27kfI0pRX5o44fOjPpV0uwQBxZZVSkEf5f0v7b19V8J8AO9ZHtaBWBop1xAfCc6Th4EIyCVN3ckmYht0lYr8cO+esQ28O8bN2PDsxtxkaHy/3QxPerUt/TqZCChN2JTqcvkWfTtAHyIhD5N1j4O+ES+Fc3Q2Cylc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qK9yMZfU; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45f2f894632so32225e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758010565; x=1758615365; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=meShyEXsOGbbZChp3RRq7DlLygLq0PznBxg+g8h90lU=;
+        b=qK9yMZfUFhomlZOxP5M9uB3D5i1WaJVdnheFuvyzrmRcn9GxDLN4q49ilSYUbET+qr
+         kHM/VtPWZBqpTv6R8nMYIucJZINuuVIg0NuSJqJazlpmhkg5rq56tExo+7EdLKsVHozL
+         Ln9RDObO+kUJz7D9LqK69HNi4fC/WHwR1FQdZXqZYY6g+vo2i8jvSDVU8wS+vvzHxUbJ
+         HoBc1gFDEvJb0F4MtvzO0OxEBrVCeIUhQYvaa6ST1GyXDlkYWRj4G1Lq1vur3/yzi2JV
+         it5oG+O69+65Gm6InXBSYSV1PwV9x2MIoKkrYQYmqN2wsd2xqQPWvNpQANkBvbHw4Vzx
+         hv5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758010565; x=1758615365;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=meShyEXsOGbbZChp3RRq7DlLygLq0PznBxg+g8h90lU=;
+        b=nV5kq7z4bBL6YyZnw9TXp0bUsjdHa/eICTFIsLEumXPtCf1ZUacLRuYY2EwUYjVtkk
+         EfvaDGX1I0y9GyUm3oPc5aBEgAad8kF0t7qOum1pVyldKJc2WVPR0tuYDxGBE9z8J0Go
+         dLbxNA3Bd+ije/VqtF246P2FsABkQzvML/5hPwelN4uh0DD3rDr11p8EXk5EqTbAn0eA
+         Tatk2LDd+DHLTj1Pnmih1IPPclOlkuYQFd8yaNon/gJZkJRjf0ui9pkvDA1dmwSiPo+l
+         EmEw0hPzb9BIZgm5TidBR031bWM+UQeSRigwFwwWdX+S4YBDxry+14a20BvxCkQ4QXiF
+         rLGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV3bsYeAFOjvq17HfrBNE+6eeZIu2vYJv0WlMpwOsWDX6ZMsjqyO6ZV0CeSBv8Tixx71okujsU9cbD3HA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGQzfR5BsvLxSsVaIqVQEemAI3NisMr9xKE/EQ8neaiZ1lbPSA
+	oX2NVw4oMiDZKKqqtg73KNrse9FSPiILgaagHNEStNkKZu/gAFRtcabN7fqdn+uUJA==
+X-Gm-Gg: ASbGncvXn53hVBGq4ev4oQAvbX3T3DvtxBmc/wm+ruZbs95v0jTdFj565dGx98MSbBQ
+	n9IMptyujjES5nhd81h9eCz66ez5etWTFcmcXl4Ni2aBfYwRXpKsWqYSsYad5EUBVfxDEtys0bJ
+	/cjBM1joj7q9fiIRAOElnUuT22eCGJ1/LabSc39GWEsh8PGi98cyc8/tHpsU5z2wvyIP9Od+Z70
+	KpOR4BD1gHVDPxfY6IsQeHbS1JbjZdHIfV53n3J7devd7yjz6QJlSa8tnTBLaLuciHej5O5LcYh
+	l3+GnyL1kESIl/cBTKNRE7ohbcPTtKIqztpzucoWMzG6/P26Ga84Szmx6fB4BMP0hlPAycNda8r
+	4dqINZ880EaGriaOp4vX2jMJXGCRyCY0hutRKzmjFKp/oj1/M8vYxaW6TXW3/3W55mL3uGA==
+X-Google-Smtp-Source: AGHT+IHNkoboGHrMun5G1DUGWBcXZWuBWQV4A74ZxNJ1t1bghrprssY/hv3V1PDkdyjCOmCzxhKQPQ==
+X-Received: by 2002:a05:600c:2d08:b0:45f:2e6d:c9ee with SMTP id 5b1f17b1804b1-45f320ea054mr964325e9.6.1758010565354;
+        Tue, 16 Sep 2025 01:16:05 -0700 (PDT)
+Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372aea2sm217980535e9.7.2025.09.16.01.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 01:16:04 -0700 (PDT)
+Date: Tue, 16 Sep 2025 08:16:01 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
+ memory
+Message-ID: <aMkcwZpr84eMc4fF@google.com>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-5-aneesh.kumar@kernel.org>
+ <aMfQCoLuVeR0nf02@google.com>
+ <yq5a348n823t.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <yq5a348n823t.fsf@kernel.org>
 
-From: "Tim Kuo" <Tim.Kuo@mediatek.com>
+On Tue, Sep 16, 2025 at 09:45:18AM +0530, Aneesh Kumar K.V wrote:
+> Mostafa Saleh <smostafa@google.com> writes:
+> 
+> > Hi Aneesh,
+> >
+> > On Mon, Jul 28, 2025 at 07:21:41PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> >> Currently, we enforce the use of bounce buffers to ensure that memory
+> >> accessed by non-secure devices is explicitly shared with the host [1].
+> >> However, for secure devices, this approach must be avoided.
+> >
+> >
+> > Sorry this might be a basic question, I just started looking into this.
+> > I see that “force_dma_unencrypted” and “is_swiotlb_force_bounce” are only
+> > used from DMA-direct, but it seems in your case it involves an IOMMU.
+> > How does it influence bouncing in that case?
+> >
+> 
+> With the current patchset, the guest does not have an assigned IOMMU (no
+> Stage1 SMMU), so guest DMA operations use DMA-direct.
+> 
+> For non-secure devices:
+>  - Streaming DMA uses swiotlb, which is a shared pool with the hypervisor.
+>  - Non-streaming DMA uses DMA-direct, and the attributes of the allocated
+>    memory are updated with dma_set_decrypted().
+> 
+> For secure devices, neither of these mechanisms is needed.
 
-Mediatek SPI hardware natively supports dual and quad modes, and these
-modes are already enabled for SPI flash devices under spi-mem framework
-in MTK SPI controller spi-mt65xx. However, other SPI devices, such as
-touch panels, are limited to single mode because spi-mt65xx lacks SPI
-mode argument parsing from SPI framework for these SPI devices outside
-spi-mem framework.
+I see, thanks for the explanation!
 
-This patch adds dual and quad mode support for these SPI devices by
-introducing a new API, mtk_spi_set_nbits, for SPI mode argument parsing.
+Thanks,
+Mostafa
 
-Signed-off-by: Tim Kuo <Tim.Kuo@mediatek.com>
----
- drivers/spi/spi-mt65xx.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 8a3c00c3af42..591740805740 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -563,6 +563,27 @@ static void mtk_spi_setup_packet(struct spi_controller *host)
- 	writel(reg_val, mdata->base + SPI_CFG1_REG);
- }
- 
-+inline u32 mtk_spi_set_nbit(u32 nbit)
-+{
-+	u32 ret = 0;
-+
-+	switch (nbit) {
-+	case SPI_NBITS_SINGLE:
-+		ret = 0x0;
-+		break;
-+	case SPI_NBITS_DUAL:
-+		ret = 0x1;
-+		break;
-+	case SPI_NBITS_QUAD:
-+		ret = 0x2;
-+		break;
-+	default:
-+		pr_info("unknown spi nbit mode, use single mode!");
-+		break;
-+	}
-+	return ret;
-+}
-+
- static void mtk_spi_enable_transfer(struct spi_controller *host)
- {
- 	u32 cmd;
-@@ -729,10 +750,16 @@ static int mtk_spi_transfer_one(struct spi_controller *host,
- 
- 	/* prepare xfer direction and duplex mode */
- 	if (mdata->dev_comp->ipm_design) {
--		if (!xfer->tx_buf || !xfer->rx_buf) {
-+		if (xfer->tx_buf && xfer->rx_buf) {
-+			reg_val &= ~SPI_CFG3_IPM_HALF_DUPLEX_EN;
-+		} else if (xfer->tx_buf) {
-+			reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_EN;
-+			reg_val &= ~SPI_CFG3_IPM_HALF_DUPLEX_DIR;
-+			reg_val |= mtk_spi_set_nbit(xfer->tx_nbits);
-+		} else {
- 			reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_EN;
--			if (xfer->rx_buf)
--				reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_DIR;
-+			reg_val |= SPI_CFG3_IPM_HALF_DUPLEX_DIR;
-+			reg_val |= mtk_spi_set_nbit(xfer->rx_nbits);
- 		}
- 		writel(reg_val, mdata->base + SPI_CFG3_IPM_REG);
- 	}
--- 
-2.45.2
-
+> 
+> -aneesh
 
