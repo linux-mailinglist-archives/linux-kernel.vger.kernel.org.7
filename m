@@ -1,183 +1,150 @@
-Return-Path: <linux-kernel+bounces-818262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EADFB58F14
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8682AB58F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6DC481457
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DF5482D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CB82E3B10;
-	Tue, 16 Sep 2025 07:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B6F28150A;
+	Tue, 16 Sep 2025 07:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmyX/1s/"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nlxg2PMN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17AF2DF141
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B1619AD48;
+	Tue, 16 Sep 2025 07:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758007375; cv=none; b=jilvmUu2KkO75ERwhX90xE5bqqokz0jS9qW88w9tJNww23/s9Ig89elM/BIcZyBURpr0qDtM9F21qJgjcbqlWfZyqiuswVS3tIy543E8XQZtty7KRkNB1LwUg0YWwq5OjoREXjPmvae6+l07RV/RgsZOsMZCm47nHLFi4NkMWQ4=
+	t=1758007429; cv=none; b=e4JYpALcmp89cyCH7pLCtPgbWMYnPZh++vPcI5yL5cESBkpcT7DsdoPZzxQGyhAzp6P020WotlVutseHQ1ZxK9abuCDcl+J4uyptn3xdqzjKrvpmrYBqE/Dav1TrAsWMRF5dRQ9vUrnxNMrmTVN10X4haplE+lDbSMhtSfCkRgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758007375; c=relaxed/simple;
-	bh=uyrGvi+dOJ8WEWpanikuzwBeyQzxDulRlvIFpz30cQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOfvmzedXFTy1upbyAhMHg9V3GGfX9/COYJQci9KcdbRylV5t7XENKrFkOpCunq2oY7v0a3W3DETGP28T1tc9xk7e3UibRGxlmvOabu/fy6jGZ6JvrGSf+B33JVqbqFDZ/NcqFixcG53qWbo0r0XgjrzFU0ORm2gvdT47EyQWA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmyX/1s/; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b523af71683so4182337a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:22:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758007373; x=1758612173; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Spk+L+URf4FDnPrwupmkOtAzkHXeSWum03yPbQAWrZA=;
-        b=OmyX/1s/4hB3DQqPvJI46i4ERXhCq3MzRnqbtqiB5fsxnpWKbLQi4zXP0m2Z0Xu5dA
-         8NX4Yd124LnZWdpiKxCxQzgHGFNDGcip/gbSttR2bCYaZbXCKQkSMjrV4UFNEn6IDvw0
-         yjWecvst3C8ubhTGWsDx/svHZeeyB40dpkWUyWWZTncJSQ7XyrUKlSncuTq7DQzczzz5
-         vDwicRCNUFtvxNEkcdjppuhRQYmTea1qbIPfMozGp5MOnPkVMkvDhgV/yA29SmgXMt1e
-         sYgynkWKL6cKm90PxDJy4cMUqHZI0U+yrdkJEMdLBiTh9Ac53Lr2Tky9F80/HmNZ6YXt
-         VUqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758007373; x=1758612173;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Spk+L+URf4FDnPrwupmkOtAzkHXeSWum03yPbQAWrZA=;
-        b=VoXLI3z0m618sRqE96ZEC/jSzEUDC+EAXFfV982xvfmQQqoTQjPQrt9a0W/sw1x2uR
-         lRsSkac/NC2InuG1lUslL5hr2lhldB63rDDJuUktvtbi9TlMeXQ5w8eUM6MmRLUn4tnj
-         WvO17RhyAVunw9PgJBI0GPoUDbyQF2pIKAYHYHmH4zoEMY2CdbZU4AQvA+3+OCKf8YEv
-         PBEjKhYRo/MwYDQIHx+cH7oAtA36q4No/9nZAuKyjsgSuv/0sGqhteBjeTaIcK4HeqiH
-         YLUFATryQJRSZyClpAJSAndrxBtCaFVMs9dGk6BScJ+VuX+mgcezTdmGpPVbzxyrsnCd
-         tqMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKbFcUSvs0cbdx5IrWCyP4wo2wwWyji4yNuTTiCmbirUDXZs6+NM3y1xstBpSCW3aF/PGg8a5DdTwUXOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPzmknRLoaGW0F6+FFA0Hg0QojoRcYTtfcrHAlSMxN6ltyP2I6
-	VeuuVDanpuq1SOsiQQWHEQUP9/HlSJvnBOrkTe4LJLiX9fIv5/k68Odn
-X-Gm-Gg: ASbGnctQ6+fchcYlCXgm1J1odqC2A8BqdR3Q7qSsp8YffpLLE/o1htkSA7E9MWm2tZ/
-	C5lcMfNC06lhVJbQTvc+f90KizH5YBHKUNDKTQYj2JxXsPABoklvlbXnt4qEUy8uWjl9OkPTatc
-	L7jqQKJwVdqS6P956ncG6PMudlArozX7cUCGa0hJUqoQ9D7QG38bJDDEC1MC1YfGyQCyiLlkiBM
-	fGscfnDZjxKKDl6pff/Ly87UxFZ/diVpETlwOHrLRBwbEli4aT6De0wAzXz7FfSxgWxsXpGPUdW
-	fN6mO+pLIfc0clf8H/CmdF7jLPpZrpiOLv+cg/Sop4LdmIJLODXH//MDadA9FvcWa3UNbSEamA6
-	atOJ95vdVP9Aja63tpArmfMUQYykHaS/zfhahlyhSCf9jxpOGj3ns7boZVZZn
-X-Google-Smtp-Source: AGHT+IE+ovHzdEZ0Rb3pICHfqDJkMW30WK0/jUJIjArPYj7OENVv548+kflQE35w1soKYEhXuKbDjQ==
-X-Received: by 2002:a17:902:f606:b0:264:8a8d:92e8 with SMTP id d9443c01a7336-2648a8da599mr101953445ad.59.1758007373082;
-        Tue, 16 Sep 2025 00:22:53 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-265e18ea009sm55155295ad.74.2025.09.16.00.22.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 00:22:52 -0700 (PDT)
-Date: Tue, 16 Sep 2025 15:22:48 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
-	axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org,
-	hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
-	jaegeuk@kernel.org, kbusch@kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
-	xiubli@redhat.com
-Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
- performance
-Message-ID: <aMkQSIw4eHoDAED/@visitorckw-System-Product-Name>
-References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
- <20250911073204.574742-1-409411716@gms.tku.edu.tw>
- <CADUfDZqe2x+xaqs6M_BZm3nR=Ahu-quKbFNmKCv2QFb39qAYXg@mail.gmail.com>
- <aML4FLHPvjELZR4W@visitorckw-System-Product-Name>
- <aML6/BuXLf4s/XYX@visitorckw-System-Product-Name>
- <20250914211243.74bdee2a@pumpkin>
- <aMfFOoQIIdMkVdYl@visitorckw-System-Product-Name>
- <20250915120220.6bab7941@pumpkin>
+	s=arc-20240116; t=1758007429; c=relaxed/simple;
+	bh=Yf/8hYPN/q0LzDANImUzGnbKSGWsKsddfBmnlqg34+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nuSQLrFaQRBZox04eJYXBPViZAVk2vCmVvvnKTCuUVRW6zTc3YpJkTW5ufd/vuAasqmLfb2S3AdVPX5XaCniYhVxc2tqfOEL4iRGuzuidc4q5QhF73jEDU/el0bJrp8yHSKQy/RB1qU/voJMKnYOUZ1AqMVs/Dl1TAJn2E8oS9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nlxg2PMN; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758007426; x=1789543426;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Yf/8hYPN/q0LzDANImUzGnbKSGWsKsddfBmnlqg34+A=;
+  b=nlxg2PMNB1yFkppi4zceGKOaAZubLNmwKCAJRFHuzOw7LaIE4DV1ZoJn
+   IuAuTRys6DAH35MsIf1Bb9myq62ZknhG7che25SYf9aUgYag054kbd4xW
+   lHg7G03o3sgLm2ELubRYs18FSTFruxZYZQVVzqVv6BQxHS8dFONcRd5UG
+   Nev66wIt+1YKQ0Rs7hIPs3OCfmF/Q81EMTnp8tNBebf2yGWZNJ8Q9my3y
+   KE0BIP+gfLPfJ6Ys+Ob3d6Sd+zmC1YCFydX7iJ19C72RReV1gIH8l4RNG
+   NSDIMMMvJCmsvAFfMtyM0rvSlv1eFbQdxflL4Fw9mZ2xq5PLoH8wsOMl+
+   Q==;
+X-CSE-ConnectionGUID: d0S8w3R7QM+ZMJ2biOD0Rg==
+X-CSE-MsgGUID: OnprL7brRI+YLUiqOwSu7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70899869"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="70899869"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:23:45 -0700
+X-CSE-ConnectionGUID: w09WolwjRpu4HNhfiLngIg==
+X-CSE-MsgGUID: 0oXGfAkORmKuTHlUQ0CJMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="174678520"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:23:42 -0700
+Message-ID: <41c80c3f-d05e-4cbd-9564-1cc5e0724690@linux.intel.com>
+Date: Tue, 16 Sep 2025 15:23:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250915120220.6bab7941@pumpkin>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 07/41] KVM: x86: Refresh CPUID on write to guest
+ MSR_IA32_XSS
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-8-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250912232319.429659-8-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 12:02:20PM +0100, David Laight wrote:
-> On Mon, 15 Sep 2025 15:50:18 +0800
-> Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-> 
-> > On Sun, Sep 14, 2025 at 09:12:43PM +0100, David Laight wrote:
-> > > On Fri, 12 Sep 2025 00:38:20 +0800
-> > > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-> > > 
-> > > ...   
-> > > > Or I just realized that since different base64 tables only differ in the
-> > > > last two characters, we could allocate a 256 entry reverse table inside
-> > > > the base64 function and set the mapping for those two characters. That
-> > > > way, users wouldn't need to pass in a reverse table. The downside is that
-> > > > this would significantly increase the function's stack size.  
-> > > 
-> > > How many different variants are there?  
-> > 
-> > Currently there are 3 variants:
-> > RFC 4648 (standard), RFC 4648 (base64url), and RFC 3501.
-> > They use "+/", "-_", and "+," respectively for the last two characters.
-> 
-> So always decoding "+-" to 62 and "/_," to 63 would just miss a few error
-> cases - which may not matter.
-> 
-> > 
-> > > IIRC there are only are two common ones.
-> > > (and it might not matter is the decoder accepted both sets since I'm
-> > > pretty sure the issue is that '/' can't be used because it has already
-> > > been treated as a separator.)
-> > > 
-> > > Since the code only has to handle in-kernel users - which presumably
-> > > use a fixed table for each call site, they only need to pass in
-> > > an identifier for the table.
-> > > That would mean they can use the same identifier for encode and decode,
-> > > and the tables themselves wouldn't be replicated and would be part of
-> > > the implementation.
-> > >   
-> > So maybe we can define an enum in the header like this:
-> > 
-> > enum base64_variant {
-> >     BASE64_STD,       /* RFC 4648 (standard) */ 
-> >     BASE64_URLSAFE,   /* RFC 4648 (base64url) */ 
-> >     BASE64_IMAP,      /* RFC 3501 */ 
-> > };
-> > 
-> > Then the enum value can be passed as a parameter to base64_encode/decode,
-> > and in base64.c we can define the tables and reverse tables like this:
-> > 
-> > static const char base64_tables[][64] = {
-> >     [BASE64_STD] = "ABC...+/",
-> >     [BASE64_URLSAFE] = "ABC...-_",
-> >     [BASE64_IMAP] = "ABC...+,",
-> > };
-> > 
-> > What do you think about this approach?
-> 
-> That is the sort of thing I was thinking about.
-> 
-> It even lets you change the implementation without changing the callers.
-> For instance BASE64_STD could actually be a pointer to an incomplete
-> struct that contains the lookup tables.
-> 
-> Initialising the decode table is going to be a PITA.
-> You probably want 'signed char' with -1 for the invalid characters.
-> Then if any of the four characters for a 24bit output are invalid
-> the 24bit value will be negative.
-> 
-Thanks for the feedback.
-so for the next version of the patch, I plan to use a 3×64 encode
-table and a 3×256 reverse table.
-Does this approach sound good to everyone?
 
-Regards,
-Kuan-Wei
+
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+>
+> Update CPUID.(EAX=0DH,ECX=1).EBX to reflect current required xstate size
+> due to XSS MSR modification.
+> CPUID(EAX=0DH,ECX=1).EBX reports the required storage size of all enabled
+> xstate features in (XCR0 | IA32_XSS). The CPUID value can be used by guest
+> before allocate sufficient xsave buffer.
+>
+> Note, KVM does not yet support any XSS based features, i.e. supported_xss
+> is guaranteed to be zero at this time.
+>
+> Opportunistically skip CPUID updates if XSS value doesn't change.
+>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   arch/x86/kvm/cpuid.c | 3 ++-
+>   arch/x86/kvm/x86.c   | 2 ++
+>   2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 46cf616663e6..b5f87254ced7 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -316,7 +316,8 @@ static void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+>   	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
+>   	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+>   		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+> -		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+> +		best->ebx = xstate_required_size(vcpu->arch.xcr0 |
+> +						 vcpu->arch.ia32_xss, true);
+>   }
+>   
+>   static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 5a5af40c06a9..519d58b82f7f 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -3993,6 +3993,8 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		 */
+>   		if (data & ~vcpu->arch.guest_supported_xss)
+>   			return 1;
+> +		if (vcpu->arch.ia32_xss == data)
+> +			break;
+>   		vcpu->arch.ia32_xss = data;
+>   		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+>   		break;
 
 
