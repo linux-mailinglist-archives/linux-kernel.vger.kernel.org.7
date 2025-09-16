@@ -1,166 +1,229 @@
-Return-Path: <linux-kernel+bounces-819147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811C8B59C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E079B59C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315903222AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F136E323E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9172E30C372;
-	Tue, 16 Sep 2025 15:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F0729898B;
+	Tue, 16 Sep 2025 15:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTQyijc/"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HM7OXRT+"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011010.outbound.protection.outlook.com [40.107.130.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D75820B81B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758036534; cv=none; b=o0ORCYbxn7NEDTLDVDqaM9ib3g8ataoY4p1yB9W9Q32hBenYOwFamINKqbZqusaQegneomp6MK+scF93eTfT9SmcZQF/9S6xfkafpC41DGGglwlfajQRSrei4I3cwgdp93w2FmR8j7wN2eVYIq/j2HhOywo0z1DByOHxE5lx1i8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758036534; c=relaxed/simple;
-	bh=ZLrXHuO5JPlfORruq1YX5Wwdp87X6JTNMvWIVnA+YX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zq4CGjzfq9gmDcCbIzqGvJU7nw7uOZ5xsvAm2Do4cwldqOAav7S8xJb76O5hlddL3N+gtl8u5O4OQltweCmwybVfsbWwy+rJ1g8HBYT4i3TReur5F0AkkuKqhzS3PlGofQI3MNT+ma82BZLjexaep43BzmcO8XJw2mvLrMR8Xdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTQyijc/; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b07c081660aso817350366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758036531; x=1758641331; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RF3WI9lwfvZNWeJ7kfn1lRX1BxBApCYMK3bTcDdRZGI=;
-        b=GTQyijc/Yzdos8TYbXpmA0ba54cyTWnccJihkyOc/IBlfirTqnuDoSD9K+x/5NiqGe
-         za+8ulGD/UoAox/wdtGdyEfybS7SfzGab6qomjl8aiNNw6x9kag29zyt31nQOxzzAmyO
-         xabAu8ySgMfLw4I6kxYD7eOtG+dDNyv8Uj4Q8mAW6YVfE0haW8LoP+2y4bTVG7/Ltn8I
-         IoS9RrrOoKNxeftnUfmV87ijnoRQIUo+MUdM9F4kFEAVOe+vaddhy9fMYv079bh5rni8
-         JgLcZgEadI2JLBpOdJ2zdGVxsfpBSDYAJb8phRMWkf6BKnGR7FoC9r158SeoHGOmryIA
-         BCMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758036531; x=1758641331;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RF3WI9lwfvZNWeJ7kfn1lRX1BxBApCYMK3bTcDdRZGI=;
-        b=R6xd8W7KmvDV+oW0ihMOwiu65jMbxn3nCzIvJ1bFxTbZTNqbuCD4IuemZfepPYr4fG
-         pnDBsOwQFRD8vkZk8jimdceHH3J2M6hSLZPFNHYDU1/Y20iHDzcOAzNM5A3RaUiL4AAp
-         M0Z7QQ9hqki7KrzJ7u7cmuOJokZix3YHJkuwuXmFz6eMSt/GVvNko3CzT0Xq/fDKbDQ3
-         znS0Il0QLNHSw2JG1TpeDKdiGESqsVmLbC+0zuRtbB13Hk7u7UmneO+fwhYmZUlgycBq
-         CeO1BBQ68VtkAEvIEUNE+02rA8OVWVRHPKqYIc/5ok9X+hpRHqzG1Wlgc3zdC6cghZLP
-         R/xA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9vgDXpp08Br3TYutcMSgxiZN6tek5UMeO6O12oLEJyiYitOBp9Smq/mwlUSehbkNaZjor1wvvkly4r5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCRvRnC2+dQtamI0pYqUU0d4M0qY1Q+UKtzo1h2ankIsVbMiJp
-	TPatyNpgQfWi0Meiu0RagffhxpBU2gCdODoYViOL16sOpaXC6Y9IM7MO
-X-Gm-Gg: ASbGncshsfZqQM6PXWdAiPBeOFrbH1Vb78I1XjTTauwzaxeBh7v8WuaKu73BXP1UHp4
-	Hwm7u6dpAFJmCn3S+22AJgqU4CJZ/qx/ROFUVhlA0EVNcztISW6PTPbbX/Tklr92CnU1NPigpkZ
-	HLn3w63xaQ3AtMYW9yKLo+sGuEqm+Pg+4As5DHIoSFtdW+PVs7f+qYzp0YLlwgmVfvIiTC/3r4A
-	cv2hll5pd7xtM9WtDWJlAw3pD3unV/zZDpJuuiylgWnlkP2JsWNBqfPImfVtL1wd2S6IUaRs2fK
-	F/5pOLMK9arou4f6Gs0++MpH+awYQKibl4f49tIeE6+Lal1CrOtFiAF19Y6db59oYPOpaAnAOiu
-	3vfqm11qaHaEL74f9N5filw5oPYRnUHVVEQnRYjn8JbdncDEyXKVeCuT0pBGxDNs/0Ci/BERCV2
-	7dsbvxYSwIpHrqccca
-X-Google-Smtp-Source: AGHT+IH6lZbtHxH/7gxxN1MDdzkJX12I6R0YroM7gEIo/uBKwFu86PByiOXZ3s0NICwjy+v5YWGGwg==
-X-Received: by 2002:a17:906:fe0b:b0:b04:392e:7168 with SMTP id a640c23a62f3a-b07c37fd0f2mr1648080766b.42.1758036531087;
-        Tue, 16 Sep 2025 08:28:51 -0700 (PDT)
-Received: from [10.0.0.176] (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da27esm1198473066b.6.2025.09.16.08.28.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 08:28:50 -0700 (PDT)
-Message-ID: <6e886700-24a8-4127-9324-7245b6cbf6b7@gmail.com>
-Date: Tue, 16 Sep 2025 17:28:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131F21990C7;
+	Tue, 16 Sep 2025 15:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758036709; cv=fail; b=oWf2mRi8olOMYUAkbIELtXWr2VgAEsWDycdKKB+dzTL4Ovn4KA88x/cRjSBUO6MtkoV3I+ZOnZdTkbXI5cBQfE07erX0+nPPwwfhLFPvUEEUanlo6BQvnO4LYgMsoXoYZLDR44eZkhi3j24SWLgRozG6R05vVMrghRj9mvX98N8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758036709; c=relaxed/simple;
+	bh=T2RS6HF9KcVF11wvrCy06Uq4nQxAztdnq6AKSrVELMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Bvw4SH9RDyzp6ZpEcvD5KcOz7cAENmWD9QdtuyetXGwO7p38EomRRzxPueC3WREJR4pd5EAmZUmKqoLVZKu2lSTbhiAEH/+TA3O7UbItWQbqUXt659kO/ZOMI4iKTP2sDm2qy9KIAcaFI1Y/uaDvFM2pIeVBj5ncC1xpWe5jSl4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HM7OXRT+; arc=fail smtp.client-ip=40.107.130.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CWoLehad30RccnK2G6wacTKqGDCP6zpmX/OjdMTzMPACsed43PENbZJSi+NXIR3x0Bfp6uVbQjf1xA0hGA//dctp1CmRWJdyjnbwMmXMnbciUoC+xTH3QlvK3qezrJmMN5hBWU0Rkh4cPVzhK6ZUk6P2qTMTm6F2GE8+4cfl9TUnHejj57mzH6ZCeSERViK/yaxN+PKpqqkAaYyd77Zstg/Pns4vrSZm9QRnEATu6ZjCQrwWjfe4XeRQZhFCHmkHM67/FYKETryQDT+QRh3k9MXDhJY+koUnePE8rPJuQ4qMYfDsK8zJ0YTblcFXPhphjcPf1A7oQ2bTa5psqV8LFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ISNIkFiNpgox0bWTneW8hV0btr4Rv9mzU/90v3fncWc=;
+ b=T9sYN5mwJ/GFiXCIQKGEx0cjM7knf67oKEiwUkMUY6P9Fj9Wh7BOnSdm5HwhtVO9NL7nC8w1PXE8friM1dJMmPel+JIiTeZFK9+SrBA11hoKVzot2d3F1zbz9n27DTHK/gRYF9htVbd4F9KJffLkLqVtjoJRA2CDphTArrambhXS652WYhGEEZqIfrLzyOwAung5yNLh/Ve4mCmW10cm/tZr4loj2CCh0Xr/oI8QX600S0/m2Ma39NIUT3mVAeY3nZ2fRWj4/08JEfd+mGxsBUQchfB5gnF7+yshN1uqz4LFYxLknNXxj2ZeodbPY2PMmVe+la5SAX08OO9rlA6ihw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ISNIkFiNpgox0bWTneW8hV0btr4Rv9mzU/90v3fncWc=;
+ b=HM7OXRT+1/TRtzKtI2GWS5Mi+nt5zWtQuxUOokgHjJbPHlhGcXZtqDkOe6Ldtrul6xEQIj3O3kikLSo6Fl+OYWcX5jrF/4XtJS/L8RkDrx5bIExdij9k5wOHX1XuVt7XPPZurfLLHgT3m9fGNG5N9wwtt1gDTLeq1RVYDKvodA0wUsgAxzwexTLHN39o6HrtGjtO4/j10II5M3X7PAa57wudnQ1O1qK82yVYokJ357yrSqc1FMX0eU8Q2OjhVxrmnLOgHBtayUD1YCHwnXzG6/gCZBDtlmijuTo2A8hHWn0SjiJO1WYihgWFMeMez93SCMw+1z4YDAq1+++3LoMi/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM9PR04MB8892.eurprd04.prod.outlook.com (2603:10a6:20b:40b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
+ 2025 15:31:44 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
+ 15:31:43 +0000
+Date: Tue, 16 Sep 2025 11:31:35 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Haibo Chen <haibo.chen@nxp.com>
+Cc: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] spi: spi-nxp-fspi: Add the DDR LUT command support
+Message-ID: <aMmC167rzSYrIeTd@lizhi-Precision-Tower-5810>
+References: <20250916-flexspi-ddr-v1-0-69358b5dc862@nxp.com>
+ <20250916-flexspi-ddr-v1-2-69358b5dc862@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-flexspi-ddr-v1-2-69358b5dc862@nxp.com>
+X-ClientProxiedBy: BY3PR10CA0001.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::6) To AS4PR04MB9621.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] drm/bridge: ti-sn65dsi86: Transition to LP mode on
- every video line
-To: Doug Anderson <dianders@chromium.org>
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jayesh Choudhary <j-choudhary@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250916142047.3582018-1-ghidoliemanuele@gmail.com>
- <CAD=FV=Uftrv=x6CuG7edLCSAi16Kv=ka7qxPViuLM=BEG8pC3Q@mail.gmail.com>
-Content-Language: en-US
-From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
-In-Reply-To: <CAD=FV=Uftrv=x6CuG7edLCSAi16Kv=ka7qxPViuLM=BEG8pC3Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM9PR04MB8892:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91fc0e03-ed69-4890-ad22-08ddf53623e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hmlcA9yzHqhOqehwV9GbR0PrpsMSEpzO1r4bwwO9e3PqKjBH5mceCBH61np3?=
+ =?us-ascii?Q?ixC2EI4b1K1rg55N74UfNV5Ru08SM6heFajA4vk9MBXmmpL1Ooc64JwEdKth?=
+ =?us-ascii?Q?R7cvH5UI6278EcHaOXrCdd8O00GY2TYuJO67r+Vr9nFFXO2D2ZXhW3p4GBJi?=
+ =?us-ascii?Q?dS8x+Iacgr74SQiqhbcxL9ZiHs8OMiPrnx1ZiNyJL8O75j+PnHwmh8sIdM+r?=
+ =?us-ascii?Q?ZSdHnui4iyqNvcXgQpWOoBE0ke1oFQYltkFct8YZLWTgjy6an1vOtAsgSnZk?=
+ =?us-ascii?Q?cb5lVm0C53OGCy+/rHyk/jJsuWPbQ+5mNO/1h7xtbySRbix9MLEo7iTlWPmS?=
+ =?us-ascii?Q?sWqSeAts2ZtLnzrVPN77DBq+vj2LDvsaPkglFrTwSl6cvtj1ZTgY4g060g6/?=
+ =?us-ascii?Q?cd6h1FytqpebmG6g0/M5HXX8wvciBhdPF8G/k3WVFpBmnqaJHTGcM8XO5ogM?=
+ =?us-ascii?Q?QDrlZmnZeD8vnVwSCDSAccqIxrbl9kHSWY0ugpAaS+e1cc48E5JxbLzTMBC0?=
+ =?us-ascii?Q?1bx6dkVtXsL7NyDsgiva1eASKCxktPEJVmRmGSSJNua228ZKwpMZ5IMWw3ag?=
+ =?us-ascii?Q?7sVwTwzpjw6ubC+iiQ1TSpJ7KVkDlQaOxdrzcrvIBYs9wmIQcmhROd51GEd3?=
+ =?us-ascii?Q?mJw4KE6TE+j3bQx1L/ZpC89LhUuQWDnO+FHfqv7o/EeZUYQtQO9DkuH6r4IV?=
+ =?us-ascii?Q?QFc/KY2BTzaHR7DqB/LjRMmqTQMe8BdEYn3avREfvlzTt+gwAkOj136IuoV1?=
+ =?us-ascii?Q?QJyYTZgi3jmGueoSNqcV782yrPYFYT69VmJtaI5HbOB8RZ5WpPO9GupRscOi?=
+ =?us-ascii?Q?xdEKVcKBmIGw+/8pUomMFNncDn/DLvEV9qTzhOB51pH5g0FSr5h8WaGDGhK/?=
+ =?us-ascii?Q?7Pu5cR904LFHaypUKUqXrUE3R2O/khWp9lgpFe1vqWq/H/M4swCs35BDDeYv?=
+ =?us-ascii?Q?M9Ufy8WOmK/9XXd3QnkYnTUWnb0+7/HHvCEq1xelqAnLL1zOUK7fFnggUrY4?=
+ =?us-ascii?Q?8QdXa6l9BJyfsDVySE9LfbXGOCLS7TjjJsZyhAxlt+6dZMmy3MJcyQwihqLw?=
+ =?us-ascii?Q?YO/yJ/9jnM8QeVo2FTb/mUApYGK8qmCzmiZCvHwJm9t/i9uVuXQUn+P4el0t?=
+ =?us-ascii?Q?u5kY8JPB7m9JNhhBTamPwbh9xeJtOE3qUmqmI0IyvSlrXdZvOhCVNERH0wzM?=
+ =?us-ascii?Q?kjJ+S5IE3Ig8YgZGDo+nHTZFa9byJ05xpfpnZzVJrhIuAOVCxKVUdyahamDA?=
+ =?us-ascii?Q?HjWii8rIQXqBrb+YIR3CF48thKmG+0PTXx+Q9Bru0Kp8S+mVHXtz25pSxvnr?=
+ =?us-ascii?Q?PJMuV2qWWCLBUCzuZ+jFQ7aZcPhm7V3fxreFd4MEwh2/J1dt5FS2ZkIImCKW?=
+ =?us-ascii?Q?a1VdzwiH40wVnHsw+cvmeqf+XjfA7oKpCaDjGtFYkHT1OxCwHI1NuU8NcrKB?=
+ =?us-ascii?Q?iWU1a1t7ff6j1E8VvIjOcEPNb2gVWY+1+ryJ29DiTRYe+DeSNGBYDg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?R13UPEWU4ueWUR2zn8Q9cKKrJFfjtPOkhIL6PYUEHlssy2f012V23p7vYErv?=
+ =?us-ascii?Q?/6jFkVtsNCejSAQ0EzJ+yUJwFVSgY2DkeNors04RMkr1t1B3rSPauCCXMGAL?=
+ =?us-ascii?Q?omiyH8u3eIJtk6emksE2dx/HdD+joYJxzamRhTjOhGIeCp20BNcnRZdfnEFa?=
+ =?us-ascii?Q?JTjf1RVvaJjg4wGNSk6kRidNlzeNQCe61PiEFtNeWesk5J3SlcNDgE61WDqL?=
+ =?us-ascii?Q?c5Mm3ERzLZO8F2/bDJkVBwOfXPnS67P+hEn0rYKGtQYJmah98HS+s3bTfspQ?=
+ =?us-ascii?Q?Tcm594iguPzVFMpx0dZlBEojMW+ljbQmkWJs0z7W2hKy0bWbz7ESVqY+MV0D?=
+ =?us-ascii?Q?VbHDOsyURfF5oJr4YvpRW4gFqcQDZrjamk+YxQOcRDu0VlXLY8o1ebRiJSrp?=
+ =?us-ascii?Q?tMDbjhQDr0iVET08IHMf0+gcj8IrGunloq+i7ttnNoqZ66kZSRgMhG4rvRtJ?=
+ =?us-ascii?Q?3ehKhoLp8PJArOnlB6nrLckp7L73x5VtL21VK/HP8OnEVxIk4xFTC9teF1nV?=
+ =?us-ascii?Q?PeX159wqt8gvYZGMtDUQk1s6j9V93nYV/v5m6eTYnIgxY7OA8euGl4sh4KOR?=
+ =?us-ascii?Q?6wznX0W/7Gpdoy2/HHu5vIJJ9vC5men6qyWZttA850zpIT/qWnpHIrq0tv5R?=
+ =?us-ascii?Q?sRGKyUqBn0N8FHUZrrK3ympuKotZ4/frIL9eLhVnzQx5KJKuys21HDPqcWKd?=
+ =?us-ascii?Q?sWieeibNtKCsul2U4YCz2LN2g4HuYgOm2XOlmw3Sc9LrUDpuS574E5hkwpaW?=
+ =?us-ascii?Q?V1cQ5CoebIu9Sy1/LI9Miv3+fwkTxMUsA+qhVb0IuNuiccm6ZzXfNmnyXSnV?=
+ =?us-ascii?Q?maQlGD74IA/u1YZoQMnF34QD23jF5K6qCbQHqWVxjcbbTxi0WBnzPriBhrr7?=
+ =?us-ascii?Q?O9j7S32AjfTMCNINsbGky+BYTT3IJcner2VLgfnCn5UaSWWX/k7m/ePcojuu?=
+ =?us-ascii?Q?7DvA4zUL19fbFUDWxrgLPqnSSRHp922mDlCqC0lUW3emKs8yOT+ndsG7TFXl?=
+ =?us-ascii?Q?3sKUY1mSptOpBmrTmNzVMVoIJGYIfjDSbyFuHD/w7qOEFumdnP/Hck1gKON8?=
+ =?us-ascii?Q?LbqwQQVeQv7qeEBR05qfixKBWmfRp0ndenCflA7Aji3u7oNTE8KeVQGk6TCl?=
+ =?us-ascii?Q?wgTC0R18SP1yAFafKozNuM/FfwbcbDOWn+gBeQbXo4+3MSVQDWqd07H+nOl9?=
+ =?us-ascii?Q?n44q80x4G7pb1fpPrdqC6F/bcIYp7smLlZkT5UmIS+adR4dzXBOZl8g87GPZ?=
+ =?us-ascii?Q?GSPJb5Nx4W7kndLQM2U4NVrxtMV/Ixf1ABW8QEZXR+knM94glZR+dIxvrW6c?=
+ =?us-ascii?Q?YqNxILs49trAeSvVpaYOwJ95EzIWXd4m/A0cZSKmz3sH864jo80M6cYX5Wcn?=
+ =?us-ascii?Q?b8H3ks/nvkdjAaqrIBSauycQFljiyzqnNLsX+lRC8e2U+jIV/aZ9auwG8lwr?=
+ =?us-ascii?Q?GPU3DduIg4wH1inVP4lmL45fVvjy3FIDHHebRkViYScqXAW7cdlJusaGWu74?=
+ =?us-ascii?Q?MRa6tKUSxoJKvd2+0LXaswJn/v/ybEkr2jUd4746hOuxIecz/POW+nSgDYFq?=
+ =?us-ascii?Q?SlSmdf9dI56Lr8JDjrKO0ywTxNsrEnWFDEl+rdYa?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91fc0e03-ed69-4890-ad22-08ddf53623e7
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:31:43.8706
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m1jSBmwcTuwklWc/gBIkbzisryb52noMcnCViVahWuwi0VnCvee4pyS4cTk+35+/jtKnjYQoS4899p6ZCudxZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8892
 
+On Tue, Sep 16, 2025 at 03:56:41PM +0800, Haibo Chen wrote:
+> For DTR mode, flexspi need to use DDR LUT command, flexspi will switch
+> to DDR mode when detect the DDR LUT command.
+>
+> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> ---
+>  drivers/spi/spi-nxp-fspi.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+> index a1c9ad03379682dc1fc2908fbd83e1ae8e91588f..6b3e6b427ba84734a2359a964635a8f05cd146fd 100644
+> --- a/drivers/spi/spi-nxp-fspi.c
+> +++ b/drivers/spi/spi-nxp-fspi.c
+> @@ -559,12 +559,22 @@ static void nxp_fspi_prepare_lut(struct nxp_fspi *f,
+>  	u32 target_lut_reg;
+>
+>  	/* cmd */
+> -	lutval[0] |= LUT_DEF(0, LUT_CMD, LUT_PAD(op->cmd.buswidth),
+> -			     op->cmd.opcode);
+> +	if (op->cmd.dtr) {
+> +		lutval[0] |= LUT_DEF(0, LUT_CMD_DDR, LUT_PAD(op->cmd.buswidth),
+> +				     op->cmd.opcode >> 8);
+> +		lutval[lutidx / 2] |= LUT_DEF(lutidx, LUT_CMD_DDR,
+> +					      LUT_PAD(op->cmd.buswidth),
+> +					      op->cmd.opcode & 0xFF);
+> +		lutidx++;
+> +	} else {
+> +		lutval[0] |= LUT_DEF(0, LUT_CMD, LUT_PAD(op->cmd.buswidth),
+> +				     op->cmd.opcode);
+> +	}
+>
+>  	/* addr bytes */
+>  	if (op->addr.nbytes) {
+> -		lutval[lutidx / 2] |= LUT_DEF(lutidx, LUT_ADDR,
+> +		lutval[lutidx / 2] |= LUT_DEF(lutidx, op->addr.dtr ?
+> +					      LUT_ADDR_DDR : LUT_ADDR,
 
+					      op->addr.dtr ?  UT_ADDR_DDR : LUT_ADDR,
 
-On 16/09/2025 16:45, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Sep 16, 2025 at 7:22 AM Emanuele Ghidoli
-> <ghidoliemanuele@gmail.com> wrote:
->>
->> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
->>
->> The component datasheet recommends, to reduce power consumption,
->> transitioning to LP mode on every video line.
->>
->> Enable the MIPI_DSI_MODE_VIDEO_NO_HFP and MIPI_DSI_MODE_VIDEO_NO_HBP
->> flags so that the bridge can enter LP mode during the horizontal front
->> porch and back porch periods.
->>
->> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
->> ---
->> Cc: Douglas Anderson <dianders@chromium.org>
->> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
->> Cc: Neil Armstrong <neil.armstrong@linaro.org>
->> Cc: Robert Foss <rfoss@kernel.org>
->> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
->> Cc: Jonas Karlman <jonas@kwiboo.se>
->> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
->> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->> Cc: Maxime Ripard <mripard@kernel.org>
->> Cc: Thomas Zimmermann <tzimmermann@suse.de>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Jayesh Choudhary <j-choudhary@ti.com>
->> Cc: <dri-devel@lists.freedesktop.org>
->> Cc: <linux-kernel@vger.kernel.org>
->> ---
->>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> I put this on a sc7180-trogdor based Chromebook and the display no
-> longer comes up. I don't personally know the MIPI side of the spec too
-> well so I have no idea why that would be.
-> 
-> -Doug
+put ? to one line to look better.
 
-Hi Doug,
-thanks for the test.
-According to the datasheet, LP is recommended for the front porch and optional
-for the back porch.
-Could you please run another test by keeping only MIPI_DSI_MODE_VIDEO_NO_HFP
-and removing MIPI_DSI_MODE_VIDEO_NO_HBP?
+>  					      LUT_PAD(op->addr.buswidth),
+>  					      op->addr.nbytes * 8);
+>  		lutidx++;
+> @@ -572,7 +582,8 @@ static void nxp_fspi_prepare_lut(struct nxp_fspi *f,
+>
+>  	/* dummy bytes, if needed */
+>  	if (op->dummy.nbytes) {
+> -		lutval[lutidx / 2] |= LUT_DEF(lutidx, LUT_DUMMY,
+> +		lutval[lutidx / 2] |= LUT_DEF(lutidx, op->dummy.dtr ?
+> +					      LUT_DUMMY_DDR : LUT_DUMMY,
 
-dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_NO_HFP;
+the same here.
 
-Kind regards,
-Emanuele
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-
-
-
-
+>  		/*
+>  		 * Due to FlexSPI controller limitation number of PAD for dummy
+>  		 * buswidth needs to be programmed as equal to data buswidth.
+> @@ -587,7 +598,8 @@ static void nxp_fspi_prepare_lut(struct nxp_fspi *f,
+>  	if (op->data.nbytes) {
+>  		lutval[lutidx / 2] |= LUT_DEF(lutidx,
+>  					      op->data.dir == SPI_MEM_DATA_IN ?
+> -					      LUT_NXP_READ : LUT_NXP_WRITE,
+> +					      (op->data.dtr ? LUT_READ_DDR : LUT_NXP_READ) :
+> +					      (op->data.dtr ? LUT_WRITE_DDR : LUT_NXP_WRITE),
+>  					      LUT_PAD(op->data.buswidth),
+>  					      0);
+>  		lutidx++;
+>
+> --
+> 2.34.1
+>
 
