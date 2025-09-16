@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-819157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D957B59C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2F4B59C43
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29104522F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543AF1C034D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A765F35AAA5;
-	Tue, 16 Sep 2025 15:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SpC8htl2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6854D362063;
+	Tue, 16 Sep 2025 15:38:44 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD2A22689C;
-	Tue, 16 Sep 2025 15:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0F22689C;
+	Tue, 16 Sep 2025 15:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758037083; cv=none; b=UmfnvmBBygB+4GI9FknHLV5urDH4vdaI3GRhRBXG2ae0Pnrq3xV4D0ZUYddvxbiTqD+9fP6r9WaH3uiTzPAWotcndN+95VxucKqU/tNsEXYeja2mUGZCd5YlImz1sUUi0ovcrIoqBsSzAadmyeAvs4gYVRuwBSlTX70jlkLBwA4=
+	t=1758037124; cv=none; b=sablU0iargURazhOlFJa4OeUnfMs/w4SMXGl20POtAIaes1SjZPIChAwpfyAuvJ8JymEzMrcTLu6Gfust0JVfoDdXAP7axaghAvO0ld5BM5qEot+ZRDq15REcE6h/9vHdltdsWf04d+pNsYMuoas61jqYrxMTFqR53L57U8mJUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758037083; c=relaxed/simple;
-	bh=ZV1/ZgIDRprs7axQ6TQnrVXYxz9AalJXylNl+cUmS9E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pyTmTCtkpBjMef2Kry8dvX9/GToGU3PfIp19f9G7J3A6WZsLDcrxTlDdhJHzZUPKZIEHLMC22mJ7pZS5Owi22+iQsukdRS4cd2b+RoXgR62Qfdz4F0CLqgIYxM5M0WMRp5vU2MKEKTeAQfo7HRLWy5CMJMMDDexDHHIwFnfGSCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SpC8htl2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78CA4C4CEEB;
-	Tue, 16 Sep 2025 15:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758037082;
-	bh=ZV1/ZgIDRprs7axQ6TQnrVXYxz9AalJXylNl+cUmS9E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SpC8htl2dZYhzkI/LEZ9wRT+2WVngbKP3PssF0IAMmyghFhx9H8g0pdZmDUynt+TM
-	 ssj1ZhMEZ4/OPVihcn/OfncjMrhdvNusZIolYVN6cWJnWrtQF/bsCPmUcW9cQUm69M
-	 y5PeuCk7TtJUlF+12ay53vpt5u1UaTMrGf4peN4ALNp1QrY9Thmh3q8KZyx68Batv2
-	 aNSiiOKIORqw9hhSiqcVg3w/ckL0X3MwoOTdawXNTH1fOFUG72QYOLBIkbdWBdNpj1
-	 vU7syqgU/jOWfczM37Cn1BKRkI1K5ha8saIQ2hofPsAzjHf23P6z4RuUx2Kqo1dzXR
-	 JVW7phFNgr34A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF7F39D0C1A;
-	Tue, 16 Sep 2025 15:38:04 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758037124; c=relaxed/simple;
+	bh=olLEWoU8xXNIWQksINaCPJN3u78iS+CoZuFDPinOIn8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YP6aK38XLoZ/HInTQdSsQweMRqSXV3mOoyPRtl8TDfvASQxJxzeKBt+tLqgwFwlcqocGlM0ZpPy+SdJQ+fT31KSf6NlHYbsG4DWmfpzR+tUbTbe1HbKx1ngMRTFvfi0QiI4TD4Sz+XQV3myKbPem+XNcBfwfE4ZaTEofBOob/jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cR5Zx1tSCz6K9Kp;
+	Tue, 16 Sep 2025 23:35:53 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 864E9140517;
+	Tue, 16 Sep 2025 23:38:40 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 16 Sep
+ 2025 17:38:39 +0200
+Date: Tue, 16 Sep 2025 16:38:38 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
+ Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
+	<james.clark@linaro.org>
+Subject: Re: [PATCH v2 11/25] genirq: Kill handle_percpu_devid_fasteoi_nmi()
+Message-ID: <20250916163838.00003791@huawei.com>
+In-Reply-To: <20250915085702.519996-12-maz@kernel.org>
+References: <20250915085702.519996-1-maz@kernel.org>
+	<20250915085702.519996-12-maz@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v5 00/11] tools: ynl: prepare for wireguard
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175803708374.1166060.16728108514341236086.git-patchwork-notify@kernel.org>
-Date: Tue, 16 Sep 2025 15:38:03 +0000
-References: <20250915144301.725949-1-ast@fiberby.net>
-In-Reply-To: <20250915144301.725949-1-ast@fiberby.net>
-To: =?utf-8?b?QXNiasO4cm4gU2xvdGggVMO4bm5lc2VuIDxhc3RAZmliZXJieS5uZXQ+?=@codeaurora.org
-Cc: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, donald.hunter@gmail.com,
- horms@kernel.org, jacob.e.keller@intel.com, sd@queasysnail.net,
- wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hello:
+On Mon, 15 Sep 2025 09:56:48 +0100
+Marc Zyngier <maz@kernel.org> wrote:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 15 Sep 2025 14:42:45 +0000 you wrote:
-> This series contains the last batch of YNL changes to support
-> the wireguard YNL conversion.
+> There is no in-tree user of this flow handler anymore, so simply
+> remove it.
 > 
-> The wireguard changes, to be applied on top of this series,
-> has been posted as an RFC series here:
->   https://lore.kernel.org/netdev/20250904-wg-ynl-rfc@fiberby.net/
-> 
-> [...]
+> Suggested-by: Will Deacon <will@kernel.org>
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
 
-Here is the summary with links:
-  - [net-next,v5,01/11] tools: ynl-gen: allow overriding name-prefix for constants
-    https://git.kernel.org/netdev/net-next/c/3ff5258b9781
-  - [net-next,v5,02/11] tools: ynl-gen: generate nested array policies
-    https://git.kernel.org/netdev/net-next/c/d0bdfe36d777
-  - [net-next,v5,03/11] tools: ynl-gen: add sub-type check
-    https://git.kernel.org/netdev/net-next/c/8df78d97e498
-  - [net-next,v5,04/11] tools: ynl-gen: refactor local vars for .attr_put() callers
-    https://git.kernel.org/netdev/net-next/c/db4ea3baa484
-  - [net-next,v5,05/11] tools: ynl-gen: avoid repetitive variables definitions
-    https://git.kernel.org/netdev/net-next/c/099902fc66f8
-  - [net-next,v5,06/11] tools: ynl-gen: validate nested arrays
-    https://git.kernel.org/netdev/net-next/c/1d99aa4ed707
-  - [net-next,v5,07/11] tools: ynl-gen: rename TypeArrayNest to TypeIndexedArray
-    https://git.kernel.org/netdev/net-next/c/a44a93ea6f06
-  - [net-next,v5,08/11] tools: ynl: move nest packing to a helper function
-    https://git.kernel.org/netdev/net-next/c/328c13426240
-  - [net-next,v5,09/11] tools: ynl: encode indexed-arrays
-    https://git.kernel.org/netdev/net-next/c/5c51ae2446c2
-  - [net-next,v5,10/11] tools: ynl: decode hex input
-    https://git.kernel.org/netdev/net-next/c/52550d518d24
-  - [net-next,v5,11/11] tools: ynl: add ipv4-or-v6 display hint
-    https://git.kernel.org/netdev/net-next/c/1b255e1beabf
+> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+> index 0d0276378c707..869068ec6ac91 100644
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -892,7 +892,8 @@ void handle_percpu_irq(struct irq_desc *desc)
+>   *
+>   * action->percpu_dev_id is a pointer to percpu variables which
+>   * contain the real device id for the cpu on which this handler is
+> - * called
+> + * called. This is also used for per-CPU NMIs, so special care is
+> + * required.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Probably belongs in previous patch as not really related to removing
+the unused code, but meh.
 
+>   */
 
 
