@@ -1,176 +1,155 @@
-Return-Path: <linux-kernel+bounces-818722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51C4B595AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:59:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3423B595B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A75E482087
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D834E5451
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C2B3074AA;
-	Tue, 16 Sep 2025 11:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17BD30CD92;
+	Tue, 16 Sep 2025 12:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H1cnPYD1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OLolk+bk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374EF13D638
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9A127EFE3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023943; cv=none; b=IMew2eAwUQgs4tag2w3kmGXepo5iYdrvHabkx0mElRvOEQEcA0a1ZCpWlVo4xWSG9fAyjq4lEXr5Wq1ms3dttfBNoETxzOLtxPBt24Va9TvvV8r5eqlT1euiWVGHMq4hGTq4Hle14LxSUkJ/wFk0FvxpIhEnLi3glMofN4GbTNE=
+	t=1758024287; cv=none; b=fdhyRFwkCexGqgOkV20iZwYamOEQuwl9//3R9nkvnkClPHUak/77szUCTxXqWOT1/tYF2GgctonmkZMBIHU8By5HdGDKWKp3PfFop/4x0vIpe6kywKURggANb4S09fEFpstdv7Epn1WFgVGsji0RLTj1mOMIHS6AnNkA58xpeK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023943; c=relaxed/simple;
-	bh=l0akH1pOI7VHWCI32nI6OFz/8zDEY4ma6aLvch4pKm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FXLH4TVqAVHipwBbOJg/9nF7j/9t2ghT3qmnCuzR790xet0w3lj/YpsH2YSIkd3sqzr3VgqvaMpL383VUnTCg0zK+C049iE3Yb32jDeZsaw6mMXnaaG108ChTRFqaKtMdlqB8Iaz4v8lx5Ly2CPAVcEfpEWo/QJ3UcdkPn1eFtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H1cnPYD1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6E9EAC6F;
-	Tue, 16 Sep 2025 13:57:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758023862;
-	bh=l0akH1pOI7VHWCI32nI6OFz/8zDEY4ma6aLvch4pKm0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H1cnPYD14k7okOcUrX1s98xea3/yOeNpMPPAOGMw3jLJiTsKuWkuyecIS3r1PMUA6
-	 ynaOIe1Y4jwztbWi3nzheob7UwxkFFhI91U6xqj7PaPyyd/BhC3nlniui2VSuBjwU3
-	 Iu78CK13sjz5T5H57TFfy5QIkIkS+qlxdq92X8IA=
-Message-ID: <b82accff-d43d-4cac-a97a-764d0b31501c@ideasonboard.com>
-Date: Tue, 16 Sep 2025 14:58:56 +0300
+	s=arc-20240116; t=1758024287; c=relaxed/simple;
+	bh=xUh5XUbBjpOpz0SoXD7lETMxuGColdpkGmfgztO7nrQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BnTicjxrAm3PQQ2rGTWBMG3diK1VO+leZQatZVM+pzylAdXkfOCqA9MB51Qn417DfhHs0dE+zLbdHrix7cGVP0kFUScXeZix01FTH/NYGjq7pIEpkcMpFeNAasdsP8PFesOmhm9mvMT9Pwxa/qv3x668Z2ksTqyUEuft7N56Q5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OLolk+bk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9mlNK013874
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:04:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=w+W9oth6fhri0HzfV/QBf6Xhmg/maZtyf8O
+	bMO2KriM=; b=OLolk+bkWS3tsltlBtTTNwucVc5+5K/F5bGXLZ3kfo8dlgxBfZ/
+	EruoXh6WoFUtta1aKrdqXAGg7YG/TAUtdruTJcQPzCm0sTinTz7sGoQ6b8YPypw6
+	YV6Rgz76xsM1xar0LsGAqCUa6hVjoqZTmjVMIOcN/xivE6RdKpOM8zRd9kAHzxgQ
+	BEE8VmRnLLGejjmSfys9DtN8xo0t/7Kb5UWH4/8fd91qcxyyH+Ag7O7q9fe4D5IY
+	i3eUj7NIwOsoa9dBDwAEGbX7ai2Ykb26ZRw8IKQlnb2NXCSJcuUqfigZ5jZ6xsVz
+	Qx5Nz9hdBckURcyDonSp1GNJT+MslF9KNYg==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496x5asvrc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:04:44 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b54a2ab0f2aso3084071a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:04:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758024283; x=1758629083;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w+W9oth6fhri0HzfV/QBf6Xhmg/maZtyf8ObMO2KriM=;
+        b=QZ3N40m8O2Ct48m+DvqN35MhxpPClAunsN1lE0SyUmhn6UIPfFqR7NgUADodjHGdOF
+         7w6zC4RLt54t0ffx4vpzSrJevE68nz7iyQI+4XBOvTdDa234Ex88rSvhnx5eaq7QgwhB
+         Y9knoogfQ3pUTkMhew8N6TPLqdkPTKo/D/g+SIE7b3HImCed0ncUQmxO2exL1zaV3eWS
+         oF+kIYsi9+sQHX/x647g5zG5gG1q9+7mAWKMBSBy8F2HrouJIkuBbDbvfppJTr8QHoEM
+         GcEeO2+3DMIKGkw+LA4L9MethYN/hZ3lrabE1ev69Bos8bmnoMxixLfEK1yO6e8OSTJH
+         IfQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFhWI6uHXfEtTWI6BwovZ2GBrzfj3BaEXmS1gY3CnDEZ5HyGsEt4WrUKchirwO7B9/4tvHl1LQsU92W54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDuh6YW4nfSQK5xgNYOGA1pIg/5iRRwznqjmyXAKE7XOx8XJlG
+	IyiGaRkb0vzXUtDwHGppx7j+Uox+bvxnvq2qO4fiDY8DQPzTBtL1jRcQfHdFdlxEjJ8gmlJM9vT
+	EpOja28rxaWiD1y9OQ9T1zJT0bWw1KnzxS9NzEmnGUL8xLd3w/tw8qwNkIyBcNddWVQI=
+X-Gm-Gg: ASbGncudNnW21hMBpkK0gIwQnZIwGR0lSAfQT2Pb5MjmS3OtlGT+nvpjazLHqiDVPI0
+	Jhhh8476XRCbm/7hMBzlhxNMQRdWXI6STtIBpNJVYq6KA0roSDMgGeDJwetGBLfEDQNMQ9BbyeI
+	YVw9nrbRiCKCdEZBEy/3Jxczp7fEOy9S7Mg3jA3dzjLCFbepdts2+0Rz2CGA+wwXH1lY38bClJ1
+	qKGy/s7OTiEu1xDOnb5tGQEvMrlB8yIFcAtv4N3UfDoqZwx7KVytD0lOoL6f4B2fTsRy+lHNzkO
+	PcvRafjIkQguN9z1qC4Og6pugYog5AW74vi6cIKsNBFf+HJObKcdkf0Qrhy65UMkDAUz/WC7RCi
+	F1g==
+X-Received: by 2002:a05:6a20:729c:b0:246:ba:2d9c with SMTP id adf61e73a8af0-266f4bdfa24mr3552855637.16.1758024283189;
+        Tue, 16 Sep 2025 05:04:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIqXSj4l9GAjmL9lt59m63rsw5wiZleFNjvUVePTkoUn5anrZpPBsI/29/AsNEwgoAx3fnPQ==
+X-Received: by 2002:a05:6a20:729c:b0:246:ba:2d9c with SMTP id adf61e73a8af0-266f4bdfa24mr3552792637.16.1758024282667;
+        Tue, 16 Sep 2025 05:04:42 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a3a9e9ddsm14128397a12.51.2025.09.16.05.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 05:04:42 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH v5] usb: xhci: plat: Facilitate using autosuspend for xhci plat devices
+Date: Tue, 16 Sep 2025 17:34:36 +0530
+Message-Id: <20250916120436.3617598-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/3] drm/tidss: oldi: Add atomic_check hook for oldi
- bridge
-To: Swamil Jain <s-jain1@ti.com>
-Cc: h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, praneeth@ti.com,
- u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, jyri.sarha@iki.fi,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, aradhya.bhatia@linux.dev
-References: <20250911110715.2873596-1-s-jain1@ti.com>
- <20250911110715.2873596-4-s-jain1@ti.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20250911110715.2873596-4-s-jain1@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: -3bHMvtAFeBOyGhiRA9GnB_gzdwmfNIH
+X-Proofpoint-ORIG-GUID: -3bHMvtAFeBOyGhiRA9GnB_gzdwmfNIH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDAxMCBTYWx0ZWRfX/n8PdjaxqASs
+ YsvSnMorgJvue+T17QnY5FghsBNLopxOxcXN3UyYZIMa4MBruOoLkc1w3bqbQHvAbg0OIXwb1G8
+ ZryIQalVh4z8unXZUhFFkCBR1rS028+uAclRvVmzVnbJaAjGte6Tbe9H8a/JsHcB2u6Yn/8W+zP
+ FUu9pb3MCPESx6JaRlpLzp46ZYAsNPYBlPXDTi10q4uSG6mRHSbPwndno8vy+vW0WdG8dN7edhA
+ PGO7TMPSDWW0sXjoHBgv5QvEeuwg9dP/xJ1fD0kO9uV0/f212RQXEw0A7+H1hz3RIrV4F1+pMtq
+ +PuQGWI4hMgla4N8yQ+Y1gVsWL72CdqvVYS3nKxW551HUySlSqZS0yvDQlr7LAAIfiIsDnkwbi2
+ MFcUeHbE
+X-Authority-Analysis: v=2.4 cv=WpQrMcfv c=1 sm=1 tr=0 ts=68c9525c cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=dywq_Bg9ifu0WOeA0n0A:9
+ a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160010
 
-Hi,
+Allow autosuspend to be used by xhci plat device. For Qualcomm SoCs,
+when in host mode, it is intended that the controller goes to suspend
+state to save power and wait for interrupts from connected peripheral
+to wake it up. This is particularly used in cases where a HID or Audio
+device is connected. In such scenarios, the usb controller can enter
+auto suspend and resume action after getting interrupts from the
+connected device.
 
-On 11/09/2025 14:07, Swamil Jain wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
-> 
-> Since OLDI consumes DSS VP clock directly as serial clock, mode_valid()
-> check cannot be performed in tidss driver which should be checked
-> in OLDI driver.
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+---
+Changes in v5:
+Rebased on top of latest usb-next.
+The first two patches in v4 have been sent separately and merged.
+Sending the third patch independently now.
 
-Please explain here a bit more what's going on here. You say
-mode_valid() cannot be done in tidss. Why not? Then you add atomic_check
-to oldi driver here, why is that the same as model_valid in tidss?
+Link to v4:
+https://lore.kernel.org/all/20250812055542.1588528-4-krishna.kurapati@oss.qualcomm.com/
 
-> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
+ drivers/usb/host/xhci-plat.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-What bug does this fix?
-
-> Tested-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_oldi.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-> index 7ecbb2c3d0a2..ada691839ef3 100644
-> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
-> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-> @@ -309,6 +309,26 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->  	return input_fmts;
->  }
->  
-> +static int tidss_oldi_atomic_check(struct drm_bridge *bridge,
-> +				   struct drm_bridge_state *bridge_state,
-> +				   struct drm_crtc_state *crtc_state,
-> +				   struct drm_connector_state *conn_state)
-> +{
-> +	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-> +	struct drm_display_mode *adjusted_mode;
-> +	unsigned long round_clock;
-> +
-> +	adjusted_mode = &crtc_state->adjusted_mode;
-> +	round_clock = clk_round_rate(oldi->serial, adjusted_mode->clock * 7 * 1000);
-> +	/*
-> +	 * To keep the check consistent with dispc_vp_set_clk_rate(),
-> +	 * we use the same 5% check here.
-> +	 */
-> +	if (dispc_pclk_diff(adjusted_mode->clock * 7 * 1000, round_clock) > 5)
-> +		return -EINVAL;
-> +	return 0;
-> +}
-> +
->  static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
->  	.attach	= tidss_oldi_bridge_attach,
->  	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
-> @@ -317,6 +337,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
->  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->  	.atomic_reset = drm_atomic_helper_bridge_reset,
-> +	.atomic_check = tidss_oldi_atomic_check,
->  };
->  
->  static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 5eb51797de32..dd57ffedcaa2 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -171,6 +171,7 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 		return ret;
+ 
+ 	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_noresume(&pdev->dev);
+ 
+-- 
+2.34.1
 
 
