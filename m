@@ -1,338 +1,111 @@
-Return-Path: <linux-kernel+bounces-818320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A79CB58FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F65B58FD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3413F3A6120
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1631BC4DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81992820DB;
-	Tue, 16 Sep 2025 07:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRSpgTW8"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C73284695;
+	Tue, 16 Sep 2025 08:00:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A107F86344
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E127228467B;
+	Tue, 16 Sep 2025 07:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758009592; cv=none; b=h1nUh5VO7tUMIbQsj3ClCrnahb8FU9iZ7NqjVTQn0guE1Ndq3Q2eGjPqqDy7bCsw2ZZXhv/R1emIf/zVTF8+0zN6uCF0jogZElKeakAABazJ+um8GKzMgNnaFN+sETvzGchP7353zjhKNaimoM1Fh8Up0K4WPaQjY6agCh2Z2Cc=
+	t=1758009601; cv=none; b=KoLiajz+0pY0cmkTPGP/qP0FCCZLevcdWXxcZDom3eosaEqFEt53DJ47FE+JI1nmeuatUuMhpIcAWRfGddQnowK77sK64dJjEekLgc9qUJhcUDBAUsTQhHwKiv5UETD0tld8hXc/PQ5SudvZMHgC6XsFfYO+LcpkvF3qWmBZVg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758009592; c=relaxed/simple;
-	bh=TtnZBTASvLhdRRLZiwEu/JWKL5OFEkyqkcVu21bPEaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p0cw4YZIPGwI7wTN8qIxGU9j3jtxAyToi5r79z0k+bF3ywy7l4Ta57o5ZD54BttX7P5/TuO1GEQnlY1iumPqbZZWD8UkLUjFO50O2/pn6oWxSgkqjKXxNw05GvgGmff7xiV9iNSMqY49GIf/oEjyqEk1nyaCntExAGp2X9THNR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRSpgTW8; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62f1987d44aso3880397a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758009589; x=1758614389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wIHjXFWbOKCITt8QPNNKdlOfY3f92cfnrG7nxMx9n6o=;
-        b=hRSpgTW8QwBEpFUVrXdwAyq8tiRO17oRNn/vqHiy+uBRSlNY5kAOnEUrDP9BVBaLpM
-         gMmi5qlpmCZKzVdJZ2ETktdzWe+5mVoT6NVTCLQBSE34xOyeGrBVLjYvSrspbNoggTAT
-         EiFUZhLYVaDSI6EZm7S4QJ6McJxqUMGPxkIspUGqmR3o4DnnrnQcELwQVuIhG1cUvCS/
-         8/j4of5rnfyW26aistSqogwZyVpZqldUcywM1TJ14rCSlPH3+fa8VJGiJfQwnu4vqGiT
-         qdiX1mS/eFyaEio4OSLQtXENUYMl0PuTs3S9fRXOaWd/vkMXofJqw/PthJMypnsEVvRe
-         8SJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758009589; x=1758614389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wIHjXFWbOKCITt8QPNNKdlOfY3f92cfnrG7nxMx9n6o=;
-        b=ITNjukIf8UG4s1CGY18WKZVKsj16ZOZz5s2zYBz0UXKesUvI/cOXUhHdZaN7XnLWeh
-         IUT8rfx7PL23V0kHyeSGZqU+PdrtguDq/LB9tbHOYHdJZ3B10nRWAO8mDIYdBkK3YRya
-         2nYHzYRIHndKhM/z0fnP0jNrfzjb59oYWOevFE9Ti2kGxGL/RcqVHwaliLbRYKlumJaN
-         jcd6yylA8yiuV7BttcxxQRTTh9NgCwWXdJ/q4qZVM17g3AQ+hZMgmDYDDNhTmUdX6WUa
-         DG1Ro6te6+OyuhfbGP7f+nH1wVnith0MNYsMqr4sVZAqY7v8PRvnMwV9AVpLgJ9rR0nl
-         ISCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpdkd+SKZLhaMnAdRQsQqSXyORGopfTmiYbondpQEXH8nV8TfMcmmSnC9AhZ+6YOUMoEP21/fztvousv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR7uF7w1xR2C5b1IVWgcVELOJyoXWaXvKkSmcXNxuGPipEgu5K
-	wekVBds/jZOfdX7mNsdoTzyle82vZITGtPwuH1eANgMoDPflGI/0zyRXCFDA7LhcZ6DQeebM66G
-	Hjj5U4LG9zPA5on7zauZQzNL4dqHySN4=
-X-Gm-Gg: ASbGncvM0GHVfk2OmmlQUH4Kez6xMN82CnUHgpgVpRSjmf4Lc6o3wEepOB/+jOfaiAq
-	mrrtY75hBOMVggalT9W7TJaZoFPTeUezIBSDnXCwwyr1PGv5vnZ3aAg23H3oJflZY0LIn4RQE76
-	rzEOylSoeBVFX+Mt9CFzSL41JR0iLKrevYf78a+zfrSw1BHhn2M5yZOjwzLpmSDO9c7ydmwv7jU
-	rBAubClXvMJ++poOmh5i6wzEK5+jeKex6iVtiuQ/g==
-X-Google-Smtp-Source: AGHT+IHd6fXhtt4yBjMo9KJEDYXunMMdmxQDJxbW+f0rTHOPS5NJ+zw34QVkzeoHN3EPo2wEvEleYNLZFtx83712wSs=
-X-Received: by 2002:a05:6402:35cc:b0:62f:259f:af43 with SMTP id
- 4fb4d7f45d1cf-62f259fb180mr8593437a12.17.1758009588562; Tue, 16 Sep 2025
- 00:59:48 -0700 (PDT)
+	s=arc-20240116; t=1758009601; c=relaxed/simple;
+	bh=upYn1SaDh/dxXAW/6acZeEgVJxzVW91u/xRUFgUHzHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oI01xVhnGzuETVtIfg6+T7ssqw073e7uyVVBC9FN3d/pY0D+owABiTOrcFYpdNd3H9lMGwbBnOhj9QWrf+tJ5svbNzYIAZfSM+mJ27STAS1YYcAI4eFXJU6//RTQlPvXn4Ztq8GpJIrQ7u91EeQ10e/NHSEamGsbWID39G+geDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cQvSl1tkJzYQvQM;
+	Tue, 16 Sep 2025 15:59:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id D220C1A0AB8;
+	Tue, 16 Sep 2025 15:59:49 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgAX1nv0GMloYU2MCg--.11477S2;
+	Tue, 16 Sep 2025 15:59:49 +0800 (CST)
+Message-ID: <76e3163d-f323-46db-af3a-06bbd755243b@huaweicloud.com>
+Date: Tue, 16 Sep 2025 15:59:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731130458.GE273706@mit.edu> <20250731173858.GE2672029@frogsfrogsfrogs>
- <8734abgxfl.fsf@igalia.com> <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
- <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
- <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com> <20250912145857.GQ8117@frogsfrogsfrogs>
- <CAOQ4uxhm3=P-kJn3Liu67bhhMODZOM7AUSLFJRiy_neuz6g80g@mail.gmail.com>
- <2e1db15f-b2b1-487f-9f42-44dc7480b2e2@bsbernd.com> <CAOQ4uxg8sFdFRxKUcAFoCPMXaNY18m4e1PfBXo+GdGxGcKDaFg@mail.gmail.com>
- <20250916025341.GO1587915@frogsfrogsfrogs>
-In-Reply-To: <20250916025341.GO1587915@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 16 Sep 2025 09:59:36 +0200
-X-Gm-Features: AS18NWCpeTG2b8ETVNvhbEv8NvuXpcOrguQdTZuibDiO29yM2fGcCRTwlek8bHY
-Message-ID: <CAOQ4uxhLM11Zq9P=E1VyN7puvBs80v0HrPU6HqY0LLM6HVc_ZQ@mail.gmail.com>
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Luis Henriques <luis@igalia.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC -v2 06/11] cpuset: introduce cpus_excl_conflict
+ and mems_excl_conflict helpers
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250909033233.2731579-1-chenridong@huaweicloud.com>
+ <20250909033233.2731579-7-chenridong@huaweicloud.com>
+ <7085a2a8-0f03-4222-9ba8-9281e25d8daf@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <7085a2a8-0f03-4222-9ba8-9281e25d8daf@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX1nv0GMloYU2MCg--.11477S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKF47Gw47Kr1kJr1DuFyxAFb_yoWfKrgEgr
+	s5ArnF93s5AF4fta4fJa1kCrZxCrn8Aa1UJw1UXrs8Xw1rXFZ3G3y0y3yYk3yjkFWSqryk
+	ua4YqFZxJ347KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Tue, Sep 16, 2025 at 4:53=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> On Mon, Sep 15, 2025 at 10:41:31AM +0200, Amir Goldstein wrote:
-> > On Mon, Sep 15, 2025 at 10:27=E2=80=AFAM Bernd Schubert <bernd@bsbernd.=
-com> wrote:
-> > >
-> > >
-> > >
-> > > On 9/15/25 09:07, Amir Goldstein wrote:
-> > > > On Fri, Sep 12, 2025 at 4:58=E2=80=AFPM Darrick J. Wong <djwong@ker=
-nel.org> wrote:
-> > > >>
-> > > >> On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
-> > > >>>
-> > > >>>
-> > > >>> On 9/12/25 13:41, Amir Goldstein wrote:
-> > > >>>> On Fri, Sep 12, 2025 at 12:31=E2=80=AFPM Bernd Schubert <bernd@b=
-sbernd.com> wrote:
-> > > >>>>>
-> > > >>>>>
-> > > >>>>>
-> > > >>>>> On 8/1/25 12:15, Luis Henriques wrote:
-> > > >>>>>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
-> > > >>>>>>
-> > > >>>>>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote=
-:
-> > > >>>>>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wr=
-ote:
-> > > >>>>>>>>>
-> > > >>>>>>>>> Just speaking for fuse2fs here -- that would be kinda nifty=
- if libfuse
-> > > >>>>>>>>> could restart itself.  It's unclear if doing so will actual=
-ly enable us
-> > > >>>>>>>>> to clear the condition that caused the failure in the first=
- place, but I
-> > > >>>>>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe r=
-estarts
-> > > >>>>>>>>> aren't totally crazy.
-> > > >>>>>>>>
-> > > >>>>>>>> I'm trying to understand what the failure scenario is here. =
- Is this
-> > > >>>>>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  I=
-f so, what
-> > > >>>>>>>> is supposed to happen with respect to open files, metadata a=
-nd data
-> > > >>>>>>>> modifications which were in transit, etc.?  Sure, fuse2fs co=
-uld run
-> > > >>>>>>>> e2fsck -fy, but if there are dirty inode on the system, that=
-'s going
-> > > >>>>>>>> potentally to be out of sync, right?
-> > > >>>>>>>>
-> > > >>>>>>>> What are the recovery semantics that we hope to be able to p=
-rovide?
-> > > >>>>>>>
-> > > >>>>>>> <echoing what we said on the ext4 call this morning>
-> > > >>>>>>>
-> > > >>>>>>> With iomap, most of the dirty state is in the kernel, so I th=
-ink the new
-> > > >>>>>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTA=
-RTED, which
-> > > >>>>>>> would initiate GETATTR requests on all the cached inodes to v=
-alidate
-> > > >>>>>>> that they still exist; and then resend all the unacknowledged=
- requests
-> > > >>>>>>> that were pending at the time.  It might be the case that you=
- have to
-> > > >>>>>>> that in the reverse order; I only know enough about the desig=
-n of fuse
-> > > >>>>>>> to suspect that to be true.
-> > > >>>>>>>
-> > > >>>>>>> Anyhow once those are complete, I think we can resume operati=
-ons with
-> > > >>>>>>> the surviving inodes.  The ones that fail the GETATTR revalid=
-ation are
-> > > >>>>>>> fuse_make_bad'd, which effectively revokes them.
-> > > >>>>>>
-> > > >>>>>> Ah! Interesting, I have been playing a bit with sending LOOKUP=
- requests,
-> > > >>>>>> but probably GETATTR is a better option.
-> > > >>>>>>
-> > > >>>>>> So, are you currently working on any of this?  Are you impleme=
-nting this
-> > > >>>>>> new NOTIFY_RESTARTED request?  I guess it's time for me to hav=
-e a closer
-> > > >>>>>> look at fuse2fs too.
-> > > >>>>>
-> > > >>>>> Sorry for joining the discussion late, I was totally occupied, =
-day and
-> > > >>>>> night. Added Kevin to CC, who is going to work on recovery on o=
-ur
-> > > >>>>> DDN side.
-> > > >>>>>
-> > > >>>>> Issue with GETATTR and LOOKUP is that they need a path, but on =
-fuse
-> > > >>>>> server restart we want kernel to recover inodes and their looku=
-p count.
-> > > >>>>> Now inode recovery might be hard, because we currently only hav=
-e a
-> > > >>>>> 64-bit node-id - which is used my most fuse application as memo=
-ry
-> > > >>>>> pointer.
-> > > >>>>>
-> > > >>>>> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just=
- re-sends
-> > > >>>>> outstanding requests. And that ends up in most cases in sending=
- requests
-> > > >>>>> with invalid node-IDs, that are casted and might provoke random=
- memory
-> > > >>>>> access on restart. Kind of the same issue why fuse nfs export o=
-r
-> > > >>>>> open_by_handle_at doesn't work well right now.
-> > > >>>>>
-> > > >>>>> So IMHO, what we really want is something like FUSE_LOOKUP_FH, =
-which
-> > > >>>>> would not return a 64-bit node ID, but a max 128 byte file hand=
-le.
-> > > >>>>> And then FUSE_REVALIDATE_FH on server restart.
-> > > >>>>> The file handles could be stored into the fuse inode and also u=
-sed for
-> > > >>>>> NFS export.
-> > > >>>>>
-> > > >>>>> I *think* Amir had a similar idea, but I don't find the link qu=
-ickly.
-> > > >>>>> Adding Amir to CC.
-> > > >>>>
-> > > >>>> Or maybe it was Miklos' idea. Hard to keep track of this rolling=
- thread:
-> > > >>>> https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTO=
-YNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
-> > > >>>
-> > > >>> Thanks for the reference Amir! I even had been in that thread.
-> > > >>>
-> > > >>>>
-> > > >>>>>
-> > > >>>>> Our short term plan is to add something like FUSE_NOTIFY_RESTAR=
-T, which
-> > > >>>>> will iterate over all superblock inodes and mark them with fuse=
-_make_bad.
-> > > >>>>> Any objections against that?
-> > > >>
-> > > >> What if you actually /can/ reuse a nodeid after a restart?  Consid=
-er
-> > > >> fuse4fs, where the nodeid is the on-disk inode number.  After a re=
-start,
-> > > >> you can reconnect the fuse_inode to the ondisk inode, assuming rec=
-overy
-> > > >> didn't delete it, obviously.
-> > > >
-> > > > FUSE_LOOKUP_HANDLE is a contract.
-> > > > If fuse4fs can reuse nodeid after restart then by all means, it sho=
-uld sign
-> > > > this contract, otherwise there is no way for client to know that th=
-e
-> > > > nodeids are persistent.
-> > > > If fuse4fs_handle :=3D nodeid, that will make implementing the look=
-up_handle()
-> > > > API trivial.
-> > > >
-> > > >>
-> > > >> I suppose you could just ask for refreshed stat information and ei=
-ther
-> > > >> the server gives it to you and the fuse_inode lives; or the server
-> > > >> returns ENOENT and then we mark it bad.  But I'd have to see code
-> > > >> patches to form a real opinion.
-> > > >>
-> > > >
-> > > > You could make fuse4fs_handle :=3D <nodeid:fuse_instance_id>
-> > > > where fuse_instance_id can be its start time or random number.
-> > > > for auto invalidate, or maybe the fuse_instance_id should be
-> > > > a native part of FUSE protocol so that client knows to only invalid=
-ate
-> > > > attr cache in case of fuse_instance_id change?
-> > > >
-> > > > In any case, instead of a storm of revalidate messages after
-> > > > server restart, do it lazily on demand.
-> > >
-> > > For a network file system, probably. For fuse4fs or other block
-> > > based file systems, not sure. Darrick has the example of fsck.
-> > > Let's assume fuse4fs runs with attribute and dentry timeouts > 0,
-> > > fuse-server gets restarted, fsck'ed and some files get removed.
-> > > Now reading these inodes would still work - wouldn't it
-> > > be better to invalidate the cache before going into operation
-> > > again?
-> >
-> > Forgive me, I was making a wrong assumption that fuse4fs
-> > was using ext4 filehandle as nodeid, but of course it does not.
->
-> Well now that you mention it, there /is/ a risk of shenanigans like
-> that.  Consider:
->
-> 1) fuse4fs mount an ext4 filesystem
-> 2) crash the fuse4fs server
-> <fuse4fs server restart stalls...>
-> 3) e2fsck -fy /dev/XXX deletes inode 17
-> 4) someone else mounts the fs, makes some changes that result in 17
->    being reallocated, user says "OOOOOPS", unmounts it
-> 5) fuse4fs server finally restarts, and reconnects to the kernel
->
-> Hey, inode 17 is now a different file!!
->
-> So maybe the nodeid has to be an actual file handle.  Oh wait, no,
-> everything's (potentially) fine because fuse4fs supplied i_generation to
-> the kernel, and fuse_stale_inode will mark it bad if that happens.
->
-> Hm ok then, at least there's a way out. :)
->
 
-Right.
 
-> > The reason I made this wrong assumption is because fuse4fs *can*
-> > already use ext4 (64bit) file handle as nodeid, with existing FUSE prot=
-ocol
-> > which is what my fuse passthough library [1] does.
-> >
-> > My claim was that although fuse4fs could support safe restart, which
-> > cannot read from recycled inode number with current FUSE protocol,
-> > doing so with FUSE_HANDLE protocol would express a commitment
->
-> Pardon my na=C3=AFvete, but what is FUSE_HANDLE?
->
-> $ git grep -w FUSE_HANDLE fs
-> $
+On 2025/9/16 2:42, Waiman Long wrote:
+> 
+> On 9/8/25 11:32 PM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> This patch adds cpus_excl_conflict() and mems_excl_conflict() helper
+>> functions to improve code readability and maintainability. The exclusive
+>> conflict checking follows these rules:
+>>
+>> 1. If either cpuset has the 'exclusive' flag set, their user_xcpus must
+>>     not have any overlap.
+>> 2. If both cpusets are non-exclusive, their 'cpuset.cpus.exclusive' values
+>>     must not intersect.
+> 
+> The term "non-exclusive" is somewhat confusing. I suppose you mean that the exclusive flag isn't
+> set. However, exclusive flag is a cpuset v1 only feature and cpus.exclusive is a v2 only feature.
+> They will not coexist. You may need to update the wording.
+> 
+> After you fix that, you can add
+> 
+> Reveiwed-by: Waiman Long <longman@redhat.com>
 
-Sorry, braino. I meant LOOKUP_HANDLE (or FUSE_LOOKUP_HANDLE):
-https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yU=
-Y4L2JRAEKxEwOQ@mail.gmail.com/
+Thank you, Longman, I will update.
 
-Which means to communicate a variable sized "nodeid"
-which can also be declared as an object id that survives server restart.
+-- 
+Best regards,
+Ridong
 
-Basically, the reason that I brought up LOOKUP_HANDLE is to
-properly support NFS export of fuse filesystems.
-
-My incentive was to support a proper fuse server restart/remount/re-export
-with the same fsid in /etc/exports, but this gives us a better starting poi=
-nt
-for fuse server restart/re-connect.
-
-Thanks,
-Amir.
 
