@@ -1,199 +1,121 @@
-Return-Path: <linux-kernel+bounces-818275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1E3B58F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:33:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BC2B58F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC01321D9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A621BC40D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC912E62C0;
-	Tue, 16 Sep 2025 07:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8AA2E7BC9;
+	Tue, 16 Sep 2025 07:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2Qa4Ijn"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJ3cEDld"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736A02E62CB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C2B2E0935
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758007972; cv=none; b=Wc/o0ao5IOFYQHCWBZdJpnRIxyyaKvuyPTkNj0opFgCYBzYcS7uTc0BH76WaJFSlSD41TVglKnFaK5mPm6rornGl35j0bia2ucd11sl6o2JW6hmUnBPcH/Hiq6bmFoGa8la4MXjkfERRck882psN27XlpWCNBxbykt9R3/fRXpI=
+	t=1758008006; cv=none; b=V0ztrw4ru93bA5eAyslr7ahOYbaAsJGk4O7BytH9kCcYlreH+uQH5+ko7OXC5FNnskh0EMSDpZmoKUYXkTN8BvfORZ0KATGw0G+2UQXY2o6NC/m8frk2ke+omqFe2sfvcVRv9qVNX4cnhfPhOqHDFOc2e9b0ka6GlugAvUVIhmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758007972; c=relaxed/simple;
-	bh=N9FJ77KjbInqACHNXJGNItslR4IJ1lfdL0wiP4soTAQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LIqWZQW2aCH27w2Eb0G8z1kDdO9uXAgKqFQ1igPEqRj0lxop1g4yiiw6tRn7a17NIBNfDXn0C4INggdZU6HgxMe8NnuLYG9syeVS78XEt4Zk/a2pmvhGM0KpCLM7QQpCiyWxIWi7Am4f+YoZrRj+HC1Kb7zZZBLQ61SolltAvJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2Qa4Ijn; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1758008006; c=relaxed/simple;
+	bh=xCeRAMSeik3Ij+GYUSuPeX8oLZZe8/JHQM9MhsrFjbE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pYiIWAepTml7BQPoAgkKG1MLkG1l0jy0xGf1OAG9pyEzrg/IWWV7zgq5QwzqE0DFiy5nJxzyOzctJti3beb5POw0FXsxu5Y05XyomhS/yc83A5nJorFuc90dnM5/nb64Ogx0xrc2c2i8Aab2iYxjPYTtYvcEURoJvXp2n8VdLNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJ3cEDld; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-244582738b5so42349775ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:32:50 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-337e5daf5f5so54412261fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:33:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758007970; x=1758612770; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qd6DcxlmgvS9aQ39BofpAaJyzv4vGOwbyL9YtDUN+E=;
-        b=m2Qa4Ijn2mxy8enfCvmeaMmg9GFqbOHxXc3MuIU/4bMbexqAKgaZbnX9tSKVw18hk+
-         8gfSxH9ZaJyXKZbMMvdo0LlR07vf7W8fzD8k7gF1JvChlyPHO/AtrWTj6bjWNdck05U7
-         7J870ZLkA6DnxAvjl0VcxPLC0OktYncMk2CHJlcGVJaUvo4mDi0zhuPa+DQ5H+Ry7L1X
-         MZOApOBQMuIm8zart8vdAEQz7CFR39hwkU5iFSDXIhZWVVuCEqFzkPnAidiuP2Mjjwb7
-         KCniv3rHwEu7i57aG1Tc22Oj3aQb9sChE0iywl2qPlDVCOQlFUaf0TGtWsOVAtW7ZZd0
-         mmIw==
+        d=gmail.com; s=20230601; t=1758008002; x=1758612802; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KRaB0QRQ+CwkntAtDL6wAD1iaM0SOq9+/31jrQixXeE=;
+        b=IJ3cEDldfEGaKcTaMUddrPQbdPf9nJwHdM5eIWA6xe9d+ifNGskeFHIzZk8v5OH2yM
+         xMNmbjEv/g1qksXD487rOluL+6LDSXf3BMu8OnUGCdLqx0gs4bTaSD2Pr+iIwp6ilhpb
+         Lzw8lcH9ab33xpshZANrz4lklvLM1YAz8BGyKXRxu/3/snVu1iBgHmCJRjk7SKhEDcJp
+         fR9JMw2c/tpMEb2tg5RaoMGpHG3joAMHO3s2Y18wRWLc/hMdEW4Wq9EZYX+vQxYudpjT
+         7EbEHm4IZXUkCDsE4GcTdqHtvVZKTff1w/o15ogr00tbck41HSpzZoDsOxT5f9w/98m3
+         CFxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758007970; x=1758612770;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0qd6DcxlmgvS9aQ39BofpAaJyzv4vGOwbyL9YtDUN+E=;
-        b=CAKrWhO9B/iDtsvelA7k1Aoepka4Xrq0ycSApfn3rPqrFe/tFiqSOxmCwGqn+qHcJI
-         lzqenmcV8EounJrd+q5ofI4L0LRJqsnDgj1NtvP/scmHS5JfG0oVafOg45qIERR2xDYf
-         dysOVCYUv/sI/4GsoRDOHnQyOlAEM9xcxDltlt2iJZIiOlSmN4Wfr9uhfUoSz2izA33h
-         nAVjxi+NprkgqHKKa/AWIVZhy+NkGssMEeh3d7Ta/sOJuwG988UZOST1uo+mJDSQRzZs
-         kUE3WjuNjH2pf2QqeT2jbXXS8grQaMrtBpZfD+qEmY8dFZVAweymYkw6gvcEcfup09ax
-         OJzg==
-X-Gm-Message-State: AOJu0Yx7kEY53p+wnX85NNOmKSdY1/Ge64TMLx5KuDj2yT1kMrzHdCzq
-	ypLoENlUN1naxCJxHKuO7dihMNai9Pz1qorilRI6jt0ezPgBH8IwfrPQ
-X-Gm-Gg: ASbGnctTJGUD//Ru6vznvAq8/BWzKf5ngVAbzuVS2dzN87cRVF1o0euhQkpr9juihKx
-	DfOWXkIsmC1hfZk4CQiHj/qmyb9zaqEdNESt9yMFr1NcJ/KZQqSS3z1RuhzxvY8rQMUFrLoJXlL
-	Ju8xmG00mJEHGEwaun2FN5TFbeFNqAVAkZkpWCZPdfKQrNH8fOvyIt2xuGalyKmndYx59uC2Qju
-	15tOmkJGCzpoDiHkWtbaW7LfbvnEpkAQVWKun3AiE1yafjkyV0khMbRIj/tPrV5vxEbmM/8XXZi
-	9/uV1T0od5z+ApccPXXEg+mrG4G7BXVY7EBlQJU3xXRl85xqL2lRzNBX3eXiP2Od59vx3mHHk+u
-	MlYG7q8qPhEMAAiZAkJmLu4xWJA==
-X-Google-Smtp-Source: AGHT+IHlbmq3NUjDyNUWNQ8tAOhUsvQKoh9Ue8wE7ppuENj9P3s/gzDN/spStNwgHsIAuFNeDLKPCw==
-X-Received: by 2002:a17:902:d552:b0:260:df70:f753 with SMTP id d9443c01a7336-260df70fbdcmr155594815ad.38.1758007969606;
-        Tue, 16 Sep 2025 00:32:49 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2651d2df15esm62519565ad.45.2025.09.16.00.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 00:32:48 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id C3A3D420A809; Tue, 16 Sep 2025 14:32:46 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux EFI <linux-efi@vger.kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Hugo Osvaldo Barrera <hugo@whynothugo.nl>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH v2] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
-Date: Tue, 16 Sep 2025 14:32:44 +0700
-Message-ID: <20250916073244.590483-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1758008002; x=1758612802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KRaB0QRQ+CwkntAtDL6wAD1iaM0SOq9+/31jrQixXeE=;
+        b=rQeOgld891E/9aKn/yyQjrdc4LbHm0FA58bos679KWcafe8D8C3G2o4CuZok685iUg
+         HcqMUo/m1Vp4gt4iFj35wbzZR+vGJ4NR+Nis/Cs7tH1SYkMdcDF9Z9wFvwqDuileYa1F
+         udJpe1/RVdwOrkaxvHF8fDvVg+XrmWqvkaUiemQc/QGr1Q1BCRjcbou0LuTVgFQMyAx1
+         KMqAhduSk9F7jIM/QaUy/9aJvMR+Pns9YU07ip+wpQKG40aqHZNYfSVZ6RTSr0fxakKu
+         awPJ5cU7cRGJIGN6zY71CFjuaxcbLnzYQv0b2WOLrUJpnDZTHZQkKjib0nYMH37Rx33y
+         Ms9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXohxQ+wV0PWliTgSWvnGiaJR/Ty6DkC08NZAfrAKdBPBxaNBqq2uWaYV5/ZwMVZskMRtF7vMV5oUbzKME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4hxaogeT9fhdv10uRwjigZZ8FbV4F1OH87/EnAScEnvurHpWP
+	8V4argbDrF1VNxE/8pwGovg6D1nq9MoCeHBDTbtsEk6pcrokFzumvZSLNix9QTim70ATEIMUr6x
+	K9naLnNXk8pPRWEv2k4LDIlMSxCIGEaw=
+X-Gm-Gg: ASbGncs57xTc/7OxpunPOgrwojBZIxYYUJl4zRtSV4Gro0PZ0XnADhkC+APBgqc0cfo
+	VJ2BzJrTV1pI9tvm5EQQidkTEL0JBUZdLtSAvhZQda5jN8eyb7Pj+cnBDv0dvTb6vKvovbNzuRj
+	tuF5QkfKZLRJV1Ix65FyZ8xIv4wpB+OzjZH82ggdPNotq3Om3G7I+eq3kuNnqED243enKyeq1Qf
+	xryM4M=
+X-Google-Smtp-Source: AGHT+IG7pjCLsgXwD5N0VxlPDgIAlAe43EQY6konXmywpkCawCRcZViVf5KqJj0G3f36rR6VMBI3m9oWeXKQcQHVTPw=
+X-Received: by 2002:a05:651c:b1e:b0:333:f25b:2900 with SMTP id
+ 38308e7fff4ca-35cc02b7981mr4653811fa.5.1758008002137; Tue, 16 Sep 2025
+ 00:33:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4501; i=bagasdotme@gmail.com; h=from:subject; bh=aM5ZPpX4fqugAwD2VJ1FrGnAK405eAtLfQy6ZZ52Yw0=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBknhWZFd3WWtGtoM9yXDbww+3fr66cpFqfUHhvJL1B4b 7c0WJi/o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABOZvIThn/Jabq7HecJ/DS5a xCfKC2cIWgRuZtcsXP5+/05pNakER0aGxudvNxw2E3l3m+NU+fddXTwvq9hfbvN+dO2vn9LuFda FDAA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com> <20250915-bd79112-v5-2-a74e011a0560@gmail.com>
+ <aMge0jYwYCiY72Yb@smile.fi.intel.com> <20250915211321.47865d3d@jic23-huawei>
+In-Reply-To: <20250915211321.47865d3d@jic23-huawei>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 16 Sep 2025 10:32:45 +0300
+X-Gm-Features: AS18NWCO2CWCadsZfD4Zx3x2Kk_cH8eq1ZHLhEBNLfL8EtEvcHNkIFb9wcymKKQ
+Message-ID: <CAHp75VdJ8MH=S4GbEbuky0-gFFxhKbBHsNiiajh-+jxCSPMDXw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+On Mon, Sep 15, 2025 at 11:13=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> On Mon, 15 Sep 2025 17:12:34 +0300
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:
 
-Since the Handover Protocol was deprecated, the recommended approach is
-to provide an initrd using a UEFI boot service with the
-LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
-approach has been no more than an admonition with a link to an existing
-implementation.
+...
 
-Provide a short explanation of this functionality, to ease future
-implementations without having to reverse engineer existing ones.
+> > > +   data->vref_mv =3D ret / 1000;
+> >
+> > I still think moving to _mV is the right thing to do.
+> > There is no 'mv' in the physics for Volts.
+>
+> I'm not disagreeing with this review but I'm also not going to hold a
+> driver back for that given timing is pretty much such that I merge it
+> today or it sits a cycle and this one is very near...
 
-Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
-[Bagas: Don't use :ref: link to EFI stub documentation and refer to
-OVMF/edk2 implementation]
-Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-Changes since v1 [1]:
+Sure, nothing in my last reply is anyhow a serious obstacle.
 
-  * Apply wording suggestion (Ard)
-  * Replace candyboot reference with OVMF (Ard)
-  * Invert patch subject prefix
+> I'll get fussier on this once we have written up some guidance and may
+> well send a patch to modify existing recent cases like this one!
 
-[1]: https://lore.kernel.org/linux-doc/20250910015738.14848-2-bagasdotme@gmail.com/
-
- Documentation/admin-guide/efi-stub.rst |  3 ++
- Documentation/arch/x86/boot.rst        | 38 ++++++++++++++++++++------
- 2 files changed, 33 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/admin-guide/efi-stub.rst b/Documentation/admin-guide/efi-stub.rst
-index 090f3a185e1897..f8e7407698bd2a 100644
---- a/Documentation/admin-guide/efi-stub.rst
-+++ b/Documentation/admin-guide/efi-stub.rst
-@@ -79,6 +79,9 @@ because the image we're executing is interpreted by the EFI shell,
- which understands relative paths, whereas the rest of the command line
- is passed to bzImage.efi.
- 
-+.. hint::
-+   It is also possible to provide an initrd using a Linux-specific UEFI
-+   protocol at boot time. See :ref:`pe-coff-entry-point` for details.
- 
- The "dtb=" option
- -----------------
-diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-index 77e6163288db08..32eea3d2807e1c 100644
---- a/Documentation/arch/x86/boot.rst
-+++ b/Documentation/arch/x86/boot.rst
-@@ -1431,12 +1431,34 @@ The boot loader *must* fill out the following fields in bp::
- All other fields should be zero.
- 
- .. note::
--     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
--     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
--     loading protocol (refer to [0] for an example of the bootloader side of
--     this), which removes the need for any knowledge on the part of the EFI
--     bootloader regarding the internal representation of boot_params or any
--     requirements/limitations regarding the placement of the command line
--     and ramdisk in memory, or the placement of the kernel image itself.
-+   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
-+   entry point described below.
- 
--[0] https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
-+.. _pe-coff-entry-point:
-+
-+PE/COFF entry point
-+===================
-+
-+When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
-+regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
-+implementation details.
-+
-+The stub loader can request the initrd via a UEFI protocol. For this to work,
-+the firmware or bootloader needs to register a handle which carries
-+implementations of the ``EFI_LOAD_FILE2`` protocol and the device path
-+protocol exposing the ``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media device path.
-+In this case, a kernel booting via the EFI stub will invoke
-+``LoadFile2::LoadFile()`` method on the registered protocol to instruct the
-+firmware to load the initrd into a memory location chosen by the kernel/EFI
-+stub.
-+
-+This approach removes the need for any knowledge on the part of the EFI
-+bootloader regarding the internal representation of boot_params or any
-+requirements/limitations regarding the placement of the command line and
-+ramdisk in memory, or the placement of the kernel image itself.
-+
-+For sample implementations, refer to `the original u-boot implementation`_ or
-+`the OVMF implementation`_.
-+
-+.. _the original u-boot implementation: https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
-+.. _the OVMF implementation: https://github.com/tianocore/edk2/blob/1780373897f12c25075f8883e073144506441168/OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.c
-
-base-commit: f44a29784f685804d9970cfb0d3439c9e30981d7
--- 
-An old man doll... just what I always wanted! - Clara
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
