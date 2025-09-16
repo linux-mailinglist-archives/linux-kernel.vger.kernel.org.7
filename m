@@ -1,159 +1,122 @@
-Return-Path: <linux-kernel+bounces-818587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DA5B59396
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:27:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C06BB593AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:30:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0F6B4E1A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691C04E2094
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD34730DEC8;
-	Tue, 16 Sep 2025 10:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A27A2EA17F;
+	Tue, 16 Sep 2025 10:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRb5xgl7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JYGvdWVU"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382E23074AC;
-	Tue, 16 Sep 2025 10:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38860303C87
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758018219; cv=none; b=uQ06tAaOyk0IMQKj2sENsocITUsaHKxjKVULZKShQjWtkdOgsiz+RFchK8LcSk5/FY3hM70lhXS3NWMQVV5UXPIDCpJJFHV8m3z5ErJmkWvRL6DSBKU5i56nfltcEYgbVQESjaaaGPyKr3c0DQn2CgMUOKuX7deUI/2QUprMfMM=
+	t=1758018260; cv=none; b=GLV0Q/+uNR08J522JLSFNB1z0HET+qUpnHH5r3ae1x/PTELtdntIjFkMn7YUPm9vimI8vZIUl3rYVmGQxeocQUbOfE29+y2S1z3L92REkhys96PxZsqyaqhX+dTZ+Sz5/IGFoI0MWtzmPAir8XW3xHE+DkzQgnHAhmb5a5iEFQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758018219; c=relaxed/simple;
-	bh=bnuRSZ5VgKW9EMMlXkntotHnx/AGBzkicE3rznCRcFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CL4SvJHTeqRXQ8ZSSu6hxOFnYV9Ujr//3K33DNevpYlaTa3ewUK5cbSnTgcct68ssrM0v3zKWbm3fgpmketln9U6HbcB25fiJs8mXenwclDTF8d1WJrvCLbYubiQB0VXnPm/E73gOom4YreuMLImZUskBaCe+SNvqGlfNpRGkpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRb5xgl7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C258C4CEFC;
-	Tue, 16 Sep 2025 10:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758018219;
-	bh=bnuRSZ5VgKW9EMMlXkntotHnx/AGBzkicE3rznCRcFo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jRb5xgl7PPXB7EK9MnwOf50HWPqF+ocDRYlkoxRCNngylzFiMF9qxFcSEl7IlK4KM
-	 xBJJpM614AGPB5eOK82A3H9GXAbo5pUGG8+DomfsJ7lDOmK8HtSJW5x0fGlEaQbANP
-	 fjoYXOSvXgXrrU9XI67Yv+FFupqUI4pwlOSDTaoxlXvugDd0uU6OLes/ekhFKFxGw5
-	 eT/AzIgIIPcRci7mVxHinPJ0scPUCXwFzKYq+yZPZl68Xz23AnHBCn+XMpQ313Hp2F
-	 6SO7vdrVXmAbtKZ9SlUvRTRSgJR4mkcQkQjiDprV/0dp7Kwtw2dp024CV7e30UpwIM
-	 ozCVBbbtMGd5A==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uySqT-0000000BBQA-1IE7;
-	Tue, 16 Sep 2025 12:23:33 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 21/21] tools/docs: sphinx-build-wrapper: add support to run inside venv
-Date: Tue, 16 Sep 2025 12:22:57 +0200
-Message-ID: <da30965e88d5b3ec6a69414b6d19546ee7f0e24a.1758018030.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1758018030.git.mchehab+huawei@kernel.org>
-References: <cover.1758018030.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758018260; c=relaxed/simple;
+	bh=UU/Il9qgUqeyEMGZumr+Zlcvwvbdz3o+XMKlW396uVY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kELu+OhZxZAmYknGzIym+wanwgnIA635Fev+677bVNXvYxZmlDohS5aynnIwjufkXQq/yM9d2Su3ZgtaS/z7Yx8Gw5yzH0TQ9ng2EzFW7nmHm4f6gmJmWB76iDc+JV7LAk1TQzthqxKnvIiTBiQ9qlArJMWlZDR8y5lFuD7U3Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JYGvdWVU; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 353DE1A0C11;
+	Tue, 16 Sep 2025 10:24:15 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 096F26061E;
+	Tue, 16 Sep 2025 10:24:15 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15D78102F16D4;
+	Tue, 16 Sep 2025 12:24:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758018253; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=4KzDfp80Dzw2CTpAAfNCIAbjQ4ZVlMxWuyH9CtD5l14=;
+	b=JYGvdWVU3yZsRdAlkLHmu8xkLWvKSaUXtFBeQmU7FDgFL+LHfEPMfrtbbn3jd+t4fL435U
+	4OcypYk8D1VCrUyk6WWODX4GCJ9gD+XM0ksCbw6bLTognSaQyfbSzDjYUYuWqA/nuq0KUQ
+	BTq2ato1jRfE7eN/98NzIjkxn9P0/gnV4cPNiWeoQ6T69YGGbkhA1zR6tKYagi80nNT9bG
+	MGBmHJtYRDfvLSknK4tUZOdDX1YN+B/T4VqnT2U3FlH3uSxrsP5hDL87Ngta+0K64GOm38
+	myv3meHgL3qyQ3PnbEIUx7hTgXKcvWvPC1QhpAvUoQY7vNOw8evh2vMCckWLFg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH 0/4] Add support for the LTM8054 voltage regulator
+Date: Tue, 16 Sep 2025 12:24:05 +0200
+Message-Id: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMY6yWgC/x3MQQqAIBBA0avErBNUtKKrRAuxsQbKYowIxLsnL
+ d/i/wwJmTDB2GRgfCjRGStU24DfXFxR0FINWmorez2I/T4GaY1YmB5koZQPzvRGyc5CjS7GQO8
+ /nOZSPhbOHExgAAAA
+X-Change-ID: 20250728-ltm8054-driver-11cfa4741065
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-iio@vger.kernel.org, Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-Sometimes, it is desired to run Sphinx from a virtual environment.
-Add a command line parameter to automatically build Sphinx from
-such environment.
+Hello everyone,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+This series adds initial support of the Linear Technology LTM8054 voltage
+regulator. The driver supports a fixed voltage and a tunable output current
+limit using a DAC-controlled pin.
+
+I'd say that the only unusual part of this series is the usage of the IIO
+consumer API in a regulator driver. I think this makes sense here, since
+the regulator driver has to access a DAC to read/set the output current
+limit.
+
+Since the regulator driver writes microvolts and the IIO consumer API takes
+millivolts, the reads and writes to the CTL DAC have to be scaled by a
+factor of 1000. Scaled reads are already supported in IIO, but scaled
+writes are not, which is why I've implemented them in patch 2/4.
+
+Please let me know what you think.
+
+Thanks,
+
+Romain
+
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
 ---
- tools/docs/sphinx-build-wrapper | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+Romain Gantois (4):
+      regulator: dt-bindings: Add Linear Technology LTM8054 regulator
+      iio: add processed write API
+      regulator: Support the LTM8054 voltage regulator
+      regulator: ltm8054: Support output current limit control
 
-diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
-index 90ad0b22b472..b611dbe250f9 100755
---- a/tools/docs/sphinx-build-wrapper
-+++ b/tools/docs/sphinx-build-wrapper
-@@ -69,6 +69,7 @@ from jobserver import JobserverExec         # pylint: disable=C0413,C0411,E0401
- #
- #  Some constants
- #
-+VENV_DEFAULT = "sphinx_latest"
- MIN_PYTHON_VERSION = PythonVersion("3.7").version
- PAPER = ["", "a4", "letter"]
- 
-@@ -179,8 +180,10 @@ class SphinxBuilder:
-         if not verbose:
-             self.sphinxopts += ["-q"]
- 
--    def __init__(self, builddir, verbose=False, n_jobs=None, interactive=None):
-+    def __init__(self, builddir, venv=None, verbose=False, n_jobs=None,
-+                 interactive=None):
-         """Initialize internal variables"""
-+        self.venv = venv
-         self.verbose = None
- 
-         #
-@@ -230,6 +233,21 @@ class SphinxBuilder:
- 
-         self.get_sphinx_extra_opts(n_jobs)
- 
-+        #
-+        # If venv command line argument is specified, run Sphinx from venv
-+        #
-+        if venv:
-+            bin_dir = os.path.join(venv, "bin")
-+            if not os.path.isfile(os.path.join(bin_dir, "activate")):
-+                sys.exit(f"Venv {venv} not found.")
-+
-+            # "activate" virtual env
-+            self.env["PATH"] = bin_dir + ":" + self.env["PATH"]
-+            self.env["VIRTUAL_ENV"] = venv
-+            if "PYTHONHOME" in self.env:
-+                del self.env["PYTHONHOME"]
-+            print(f"Setting venv to {venv}")
-+
-     def run_sphinx(self, sphinx_build, build_args, *args, **pwargs):
-         """
-         Executes sphinx-build using current python3 command.
-@@ -264,7 +282,12 @@ class SphinxBuilder:
-             if self.n_jobs:
-                 n_jobs = str(self.n_jobs)
- 
--            cmd = [sys.executable, sphinx_build]
-+            if self.venv:
-+                cmd = ["python"]
-+            else:
-+                cmd = [sys.executable,]
-+
-+            cmd += [sphinx_build]
-             cmd += [f"-j{n_jobs}"]
-             cmd += self.sphinxopts
-             cmd += build_args
-@@ -748,12 +771,16 @@ def main():
-     parser.add_argument('-i', '--interactive', action='store_true',
-                         help="Change latex default to run in interactive mode")
- 
-+    parser.add_argument("-V", "--venv", nargs='?', const=f'{VENV_DEFAULT}',
-+                        default=None,
-+                        help=f'If used, run Sphinx from a venv dir (default dir: {VENV_DEFAULT})')
-+
-     args = parser.parse_args()
- 
-     PythonVersion.check_python(MIN_PYTHON_VERSION, show_alternatives=True,
-                                bail_out=True)
- 
--    builder = SphinxBuilder(builddir=args.builddir,
-+    builder = SphinxBuilder(builddir=args.builddir, venv=args.venv,
-                             verbose=args.verbose, n_jobs=args.jobs,
-                             interactive=args.interactive)
- 
+ .../bindings/regulator/lltc,ltm8054.yaml           |  77 +++++++
+ MAINTAINERS                                        |   6 +
+ drivers/iio/inkern.c                               |  99 +++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/ltm8054-regulator.c              | 229 +++++++++++++++++++++
+ include/linux/iio/consumer.h                       |  17 ++
+ 7 files changed, 438 insertions(+)
+---
+base-commit: f87c2b34768828c4ff535ba7d50dd938838caab9
+change-id: 20250728-ltm8054-driver-11cfa4741065
+
+Best regards,
 -- 
-2.51.0
+Romain Gantois <romain.gantois@bootlin.com>
 
 
