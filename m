@@ -1,185 +1,130 @@
-Return-Path: <linux-kernel+bounces-818198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409A8B58E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DB1B58E27
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28B616773A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B43487E4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111D22DE6E9;
-	Tue, 16 Sep 2025 05:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9B82DAFA1;
+	Tue, 16 Sep 2025 05:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMdHxslb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X65Ls3C+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65391E9B12;
-	Tue, 16 Sep 2025 05:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2157AD2C;
+	Tue, 16 Sep 2025 05:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758001964; cv=none; b=rkzeZuaiF781fUYpKvXE6MoiVecirrf3yEn4dMQmG6G9T5PxLWNkXr7taG/flr1tRihEmqj1eYftnb0STgNjPHe+u40ANGqG4M9qzhqK92xUBFbH4irfGtIUJdE1gH5kSFcPQhZQT0b7pQCk/x9o3Jdtt1ZAlmrouBCHRAzFJ9A=
+	t=1758002102; cv=none; b=Q7tANNuP2TAXor4qD2+XdYNW3qZzsNUaWPVXdVK66RpvdLCptLyqG9dtqdKSZSoorQIxHwgfcqYctxP4GIWZAtPr4BsHmZkS62MpnIHzW61vn3Vgumr9x6VpJH6nwRNf9pW2rGfMMXxWcRZ6te9aR6i3Txtlz0iiTqYm7QEzXGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758001964; c=relaxed/simple;
-	bh=H/YPUdnUnEI/UdRxVPLVDcuWuPFJCqxFolqeBXJ/mgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZjSbs98vkonnTVmkEyyK0w6+JD5Ozivw2NPBf1cRTqBSXTxyPSKIHlp+ByO8kMKjl4Mmj2+3E0/4NStBRGjGNoVfG6fKu1cp8+zFSINWAZAGlcUrkI/UP1RyfCIUnFXoh5qUYio60qyExu5hZuifB5Dr25Ws5ezRC1vatEVgdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMdHxslb; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758001963; x=1789537963;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=H/YPUdnUnEI/UdRxVPLVDcuWuPFJCqxFolqeBXJ/mgM=;
-  b=QMdHxslbeW2JWsCUog5u0+UIHLef3t7Lj2CaLWYmo0Y9kPiTl2VCfb2W
-   Ci8LdtvONmO6fbKC+aFNkWjeax2DyLzRODt5kfghZS/L3GIZpD2fUmWa1
-   FdGH6w6pFAs1WUBDO+6kM4ZXzW2N8MODABbuN+zJJqB/IwoX5+6rYZvQq
-   krX9EaZskjxQhYcNICkaiuiYI8nNqWUL+9cgRHv/8+eKb9km6iRBssgax
-   vAGXI0XyfLQpkFaIKSI+KQm1xMrj8H+UGwtcdHpm6KkF+wUMfJocy1cNM
-   221FZyeKbfZfPB3qL3Ymo19+kLoBKCaJHmEtbINl8kdObeXx6OH5s+na3
-   w==;
-X-CSE-ConnectionGUID: RmIphdViRwysmR2581ctKA==
-X-CSE-MsgGUID: RIu9NhNXRO6RmCEfVfMuLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="82866294"
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="82866294"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 22:52:42 -0700
-X-CSE-ConnectionGUID: d905ExmrSaew3FdMmXNsnw==
-X-CSE-MsgGUID: XtBJ7krpT1G97wGjsmhK9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="174776240"
-Received: from junlongf-mobl.ccr.corp.intel.com (HELO [10.238.1.52]) ([10.238.1.52])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 22:52:38 -0700
-Message-ID: <d1bfb652-19ff-434f-bd51-b990543d14d6@intel.com>
-Date: Tue, 16 Sep 2025 13:52:36 +0800
+	s=arc-20240116; t=1758002102; c=relaxed/simple;
+	bh=G1s+w5/epe5dweVcgrOSpM0OcqT3aFt3572hnVdOnOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ra9waP50wq/MFivn0db/4pNFtUtaMr2gCHQW+e2q0RgXCskktpU9iNrYqQmgcR8DEDtAjfSiIVSiz0YXeWZI2QHPkTxBAATMC+05PrCSeC9l6xmG5AE3IwdL191uXZt1hNv8k4Ekqz4vOMkj4TZNwdpMYVXwoBbXvA66HWs98tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X65Ls3C+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 321B9C4CEEB;
+	Tue, 16 Sep 2025 05:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758002101;
+	bh=G1s+w5/epe5dweVcgrOSpM0OcqT3aFt3572hnVdOnOY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=X65Ls3C+eQ/thh83WoE9yI3nadq4ds7VGgb6X+0TnQ1j4cm2jIWFXYSuyHhjta0zw
+	 JA9nyuqVKM7o/g5oJes8OMPiUHmD4x4NPSmqHklfErth3+ggkiKUz/MrG+WDA8FI2o
+	 maXklA1mRL3PSO4HBPfpH1FQ/kqkdcNr5W39VkCCgSo+4CvRoZzal2gzjVjK2jiiHr
+	 zMqdZwGMQ7DLt0AQIBk3g1lF2EMbhpXvZITWx5oIqXS7V4wFyFcXhi8FKX/3ar022y
+	 UHLkNt2Vj0I8FaK8Q8+UwCXaH5wIC/1PE6+rG4DlYwErkfan0bWJagg+wFH1zZwIIT
+	 4jlxL+oWvqTfg==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 0/7] mm/damon: define and use DAMON initialization check function
+Date: Mon, 15 Sep 2025 22:54:57 -0700
+Message-Id: <20250916055458.118498-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250915213312.12892156442f3a795a0a01f5@linux-foundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 13/41] KVM: x86: Enable guest SSP read/write interface
- with new uAPIs
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-14-seanjc@google.com>
- <aca9d389-f11e-4811-90cf-d98e345a5cc2@intel.com>
- <aMiPTEu_WfmEZiqT@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <aMiPTEu_WfmEZiqT@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/16/2025 6:12 AM, Sean Christopherson wrote:
-> On Mon, Sep 15, 2025, Xiaoyao Li wrote:
->> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
->>> @@ -6097,11 +6105,22 @@ static int kvm_get_set_one_reg(struct kvm_vcpu *vcpu, unsigned int ioctl,
->>>    static int kvm_get_reg_list(struct kvm_vcpu *vcpu,
->>>    			    struct kvm_reg_list __user *user_list)
->>>    {
->>> -	u64 nr_regs = 0;
->>> +	u64 nr_regs = guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ? 1 : 0;
->>
->> I wonder what's the semantic of KVM returning KVM_REG_GUEST_SSP on
->> KVM_GET_REG_LIST. Does it ensure KVM_{G,S}ET_ONE_REG returns -EINVAL on
->> KVM_REG_GUEST_SSP when it's not enumerated by KVM_GET_REG_LIST?
->>
->> If so, but KVM_{G,S}ET_ONE_REG can succeed on GUEST_SSP even if
->> !guest_cpu_cap_has() when @ignore_msrs is true.
-> 
-> Ugh, great catch.  Too many knobs.  The best idea I've got it to to exempt KVM-
-> internal MSRs from ignore_msrs and report_ignored_msrs on host-initiated writes.
-> That's unfortunately still a userspace visible change, and would continue to be
-> userspace-visible, e.g. if we wanted to change the magic value for
-> MSR_KVM_INTERNAL_GUEST_SSP.
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c78acab2ff3f..6a50261d1c5c 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -511,6 +511,11 @@ static bool kvm_is_advertised_msr(u32 msr_index)
->          return false;
->   }
->   
-> +static bool kvm_is_internal_msr(u32 msr)
-> +{
-> +       return msr == MSR_KVM_INTERNAL_GUEST_SSP;
-> +}
-> +
->   typedef int (*msr_access_t)(struct kvm_vcpu *vcpu, u32 index, u64 *data,
->                              bool host_initiated);
->   
-> @@ -544,6 +549,9 @@ static __always_inline int kvm_do_msr_access(struct kvm_vcpu *vcpu, u32 msr,
->          if (host_initiated && !*data && kvm_is_advertised_msr(msr))
->                  return 0;
->   
-> +       if (host_initiated && kvm_is_internal_msr(msr))
-> +               return ret;
-> +
->          if (!ignore_msrs) {
->                  kvm_debug_ratelimited("unhandled %s: 0x%x data 0x%llx\n",
->                                        op, msr, *data);
-> 
-> Alternatively, simply exempt host writes from ignore_msrs.  Aha!  And KVM even
-> documents that as the behavior:
-> 
-> 	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled MSRs.
-> 			Default is 0 (don't ignore, but inject #GP)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c78acab2ff3f..177253e75b41 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -544,7 +544,7 @@ static __always_inline int kvm_do_msr_access(struct kvm_vcpu *vcpu, u32 msr,
->          if (host_initiated && !*data && kvm_is_advertised_msr(msr))
->                  return 0;
->   
-> -       if (!ignore_msrs) {
-> +       if (host_initiated || !ignore_msrs) {
->                  kvm_debug_ratelimited("unhandled %s: 0x%x data 0x%llx\n",
->                                        op, msr, *data);
->                  return ret;
-> 
-> So while it's technically an ABI change (arguable since it's guarded by an
-> off-by-default param), I suspect we can get away with it.  Hmm, commit 6abe9c1386e5
-> ("KVM: X86: Move ignore_msrs handling upper the stack") exempted KVM-internal
-> MSR accesses from ignore_msrs, but doesn't provide much in the way of justification
-> for _why_ that's desirable.
-> 
-> Argh, and that same mini-series extended the behavior to feature MSRs, again
-> without seeming to consider whether or not it's actually desirable to suppress
-> bad VMM accesses.  Even worse, that decision likely generated an absurd amount
-> of churn and noise due to splattering helpers and variants all over the place. :-(
-> 
-> commit 12bc2132b15e0a969b3f455d90a5f215ef239eff
-> Author:     Peter Xu <peterx@redhat.com>
-> AuthorDate: Mon Jun 22 18:04:42 2020 -0400
-> Commit:     Paolo Bonzini <pbonzini@redhat.com>
-> CommitDate: Wed Jul 8 16:21:40 2020 -0400
-> 
->      KVM: X86: Do the same ignore_msrs check for feature msrs
->      
->      Logically the ignore_msrs and report_ignored_msrs should also apply to feature
->      MSRs.  Add them in.
-> 
-> For 6.18, I think the safe play is to go with the first path (exempt KVM-internal
-> MSRs), and then try to go for the second approach (exempt all host accesses) for
-> 6.19.  KVM's ABI for ignore_msrs=true is already all kinds of messed up, so I'm
-> not terribly concerned about temporarily making it marginally worse.
+On Mon, 15 Sep 2025 21:33:12 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-Looks OK to me.
+> On Mon, 15 Sep 2025 20:35:04 -0700 SeongJae Park <sj@kernel.org> wrote:
+> 
+> > If DAMON is tried to be used by its API callers when it is not yet
+> > successfully initialized, the callers could be crashed.  Such issues
+> > actually happened and were fixed [1].  DAMON API callers are therefore
+> > having their own hacks for seeing if it is safe to use DAMON or not.
+> > Those built on an untreliable assumption that DAMON should be ready to
+> > be used on module init time.  DAMON initialization could fail if
+> > KMEM_CACHE() fails, though.
+> 
+> Wait.  Is there any realistic expectation that KMEM_CACHE() will fail
+> when DAMON uses it?
+
+Not really.  The commit message is saying just a theoretical and unlikely
+possibility.
+
+> We do have the convention of assuming that
+> __init-time allocations do not fail.  If they do, an oops or panic is
+> an acceptable response.
+> 
+> Are these problems actually real-world demonstrable things, or has
+> someone been playing with fault injection or, ...?
+
+I don't have a way to demonstrate it.  The commit message was only for
+discussing a theoretical and unlikely case.  Maybe it was better to just not
+mention.
+
+> 
+> > Also those are basically duplications that
+> > make their maintenance difficult.
+> 
+> Unclear.  This means that the client hacks are no longer necessary after
+> these changes?
+
+You're correct.
+
+Sorry for the poor cover letter message.  If I have to post a new version of
+this patch series, I would update the cover letter message as below.  Does it
+look better?  If so, could you please update the cover letter part of the
+commit on the mm tree?
+
+"""
+DAMON is initialized in subsystem initialization time, by damon_init().  If
+DAMON API functions are called before the initialization, the system could
+crash.  Actually such issues happened and were fixed [1] in the past.  For the
+fix, DAMON API callers have updated to check if DAMON is initialized or not,
+using their own hacks.  The hacks are unnecessarily duplicated on every DAMON
+API callers and therefore it would be difficult to reliably maintain in the
+long term.
+
+Make it reliable and easy to maintain.  For this, implement a new DAMON core
+layer API function that returns if DAMON is successfully initialized.  If it
+returns true, it means DAMON API functions are safe to be used.  After the
+introduction of the new API, update DAMON API callers to use the new function
+instead of their own hacks.
+
+[1] https://lore.kernel.org/20250909022238.2989-1-sj@kernel.org
+"""
+
+As always, please let me know if there is anything I can help.
+
+
+Thanks,
+SJ
 
