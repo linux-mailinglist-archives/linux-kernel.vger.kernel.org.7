@@ -1,440 +1,203 @@
-Return-Path: <linux-kernel+bounces-818691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20CA9B59537
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:32:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E63B59524
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DBF7B11D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:30:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3CCC2A7CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C973019DF;
-	Tue, 16 Sep 2025 11:31:02 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC5F2D877A;
+	Tue, 16 Sep 2025 11:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJWv7pYz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71DC2E9753;
-	Tue, 16 Sep 2025 11:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D152D7DD9;
+	Tue, 16 Sep 2025 11:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758022261; cv=none; b=oQq/BsoslQ6uyeaoS2x9snZPHjiMcHei+u7f/OOI5/CnON9XdZZ+IT35IfKgc71Tl3vNikDOujO/wOuc1qnvaV9IvEpibG6EwanQRFyXNipFrc0DYqi9gV1tBqkCKJgVC4u3/NhPcqxzu+rpOTFwavtMBgC3/qP6ZeFGa6Hd7VI=
+	t=1758022227; cv=none; b=E40+pdI7sqBbDoK/o+B7JR+KDWdQzTKb2msZsFTBWK/7nirPezgehmzSiLhsFryCEstbWiWVx8O9XdrmefDn/3ifdt9TFzeFH5l60ubxykcPHmJ+tOt2MLfUHMm3bviZvWhd8jJMpScaKwVyOXTARddIij8PRAwtsSj/HlkDGU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758022261; c=relaxed/simple;
-	bh=jXKevkqhcx0uEobr3SlGukquHmW07+f+NZ3gXQGqnxs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OcfUPSD24/UhEriu9i5G1/oGKWdOtY/yw0yO7Btl2rrq9mrgpI27kNSvgHgcDV2CunfAtvP1475T6F8g0MeOimvrx641S7/Uw40IsjGpJEDnlb4F7MNGHBPJsaWqUskZGpWBK75JQoO7z6UlK4CUNX4SaZLgZUh4aLYikC1zr8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz17t1758022231tbd375955
-X-QQ-Originating-IP: AHOsMto06A05fs3q4UWYhinGoxxa9Y2vv4GIE1dnvdo=
-Received: from localhost.localdomain ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 16 Sep 2025 19:30:27 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1886107155999213277
-EX-QQ-RecipientCnt: 29
-From: Dong Yibo <dong100@mucse.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	corbet@lwn.net,
-	gur.stavi@huawei.com,
-	maddy@linux.ibm.com,
-	mpe@ellerman.id.au,
-	danishanwar@ti.com,
-	lee@trager.us,
-	gongfan1@huawei.com,
-	lorenzo@kernel.org,
-	geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com,
-	lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com,
-	richardcochran@gmail.com,
-	kees@kernel.org,
-	gustavoars@kernel.org,
-	rdunlap@infradead.org,
-	vadim.fedorenko@linux.dev,
-	joerg@jo-so.de
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	dong100@mucse.com
-Subject: [PATCH net-next v12 5/5] net: rnpgbe: Add register_netdev
-Date: Tue, 16 Sep 2025 19:29:52 +0800
-Message-Id: <20250916112952.26032-6-dong100@mucse.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250916112952.26032-1-dong100@mucse.com>
-References: <20250916112952.26032-1-dong100@mucse.com>
+	s=arc-20240116; t=1758022227; c=relaxed/simple;
+	bh=7AJ9SosdEk5i+W5nY4k1TcpdprbApX10Mjk/qkDMzKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMP75xlwyAHVt0ytNn070LFbOXKTWFOC8A3S1KtVYVDOuj4ZtMbazlnF7RhOm14k5ZHQTw8ittmiYjscBKQsuW/eBk4ZAbRRHBGA6NgA8hvlXHheeS8cPDM/lDafz1HjcwoyJdubIykCnPtPmCuzrdIruaL5KZqCE8C+5R1yZ50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJWv7pYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52CDAC4CEEB;
+	Tue, 16 Sep 2025 11:30:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758022226;
+	bh=7AJ9SosdEk5i+W5nY4k1TcpdprbApX10Mjk/qkDMzKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tJWv7pYzjnz9AgGz7GlLduVeiX96rkxfOM2efkdioY9vI3Ha+7F42iNpd/x0rdL8N
+	 NbzxzJNS+/ZkLGClPURCk4vLTgUKXKMbiUkl/cWOiZrBvDGYIzJewbLkwISd7pIIBD
+	 +DquBLYCy19dtblssKgBy1Ggp6r5agRf8D8Gly+dWR9axyOHY50se4fIaLupEk1PYz
+	 ibyJRZ5AEo29JXQ+vUaYuhqFZTH5sSk3OpnHxbeGKzNmGzMvUGfCiH1jqZpARuZwgt
+	 8Jc479DR9Q+/YVfDQB9sah/GXh83vBStGxf9OErB3Z41IvtGnd9rhwUKxR+ZATGfQM
+	 MWijYO5zuuyIg==
+Date: Tue, 16 Sep 2025 13:30:20 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Nicolas Schier <nsc@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
+ vmlinux.unstripped
+Message-ID: <aMlKTPpNXrRW6v_7@example.org>
+References: <cover.1755535876.git.legion@kernel.org>
+ <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
+ <aMeqgPVfJcjBLhl8@levanger>
+ <aMkN1m55vejTii_H@example.org>
+ <aMkvtg55F1gJ5feM@levanger>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MgQY1K25Ph0mmG79HVMILE4Gptg5KMQ0l1M/huamHvovc9rKr/LvIE4R
-	wIEa4u07dFfHkGNMi5hz9OYnsbCVI+XzDyO4asOIWcsicZKNIp1U02Kx+16ylks6sRCl9MP
-	QenpU4YFOjYTosEmgo0xqAunWeANXhMbAwELGdaf70zmRfNFeKmJet05SPI+nA0Hrpo2a5p
-	NEIaDDFedeBj29W8Nwn/bUwA0Au70Z472Y2JuAKwr9FyDrvKHE1fB3y+6ngs0rC5OqCy4An
-	Yda/Fbxmlwxn7fy+/9O4TIDxPzlZWtBVjUzjTiBJjFGvk5ilbhfqgf9mFg/2B8CmofbzR4H
-	Cdim/OhZ3BwLOaKKYPvYjQtswf1a2IuisMWTgZoUnqxuCCNYFJVb8Nwfe2ZCK0waQTnQKzD
-	9o2DJzJpEcP3UVJ1xUoh8namDqFbkzbp2EsdFv+hfnNA+oKnmb4onCmv4yibna1NcKsl0h5
-	GTHiqIZUsOlEe20IFG6DsGF/KEoibbfyzAJhOWw8UUBbPcqf/kD55Tyi3/GXUYwbDEHfMvD
-	uLYTuUwl3ZibBA7EUdKEx+fF6DyHHLTJJyyDB3/a4sCgtuZruikv6cHd19dMMgXELKkymlN
-	OGbssoiDaSEWqexzSqFe81DW2yJDiYplDL7sHJh+Nt7qwdxvNde6lkvvsXNFPX+9SXjWvfB
-	ff9tTyvOv2DFFVo8jzmpP5dFS5eoUZYhC5LAkigVnvfzFAP3ugYYGRvjD2GtVYVURfyZihy
-	tXsRK9liL7xW5gGXljuIbzdTk5LtC6gsIFil8u5C7Kpi8/3Fs1OX4ej4pxBStyspJ+nenRa
-	A8MAISiWSHryVsKFq8unIa1QVF3MhVPSFYVfW2IbQ1QhX+Y36xzmgzQIVutYUvLIpBnImss
-	UaVmqkR/IkiWp9fZ4K5Z/LntzL4b4rnok0i5JVswczlHfuvEyhiOMUepTHL2g4ujVyA/1ew
-	ZowliBTheuWJXMPwI8lhYDJO0OItvVFySJapXmeG/4+I8fQlxienXLfay4d+BEOdpmZKKKX
-	noHJp+vdTbG7Z4mbT0zjF/QJ7Usv8=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMkvtg55F1gJ5feM@levanger>
 
-Complete the network device (netdev) registration flow for Mucse Gbe
-Ethernet chips, including:
-1. Hardware state initialization:
-   - Send powerup notification to firmware (via echo_fw_status)
-   - Sync with firmware
-   - Reset hardware
-2. MAC address handling:
-   - Retrieve permanent MAC from firmware (via mucse_mbx_get_macaddr)
-   - Fallback to random valid MAC (eth_random_addr) if not valid mac
-     from Fw
+On Tue, Sep 16, 2025 at 11:36:54AM +0200, Nicolas Schier wrote:
+> On Tue, Sep 16, 2025 at 09:12:22AM +0200, Alexey Gladkov wrote:
+> > On Mon, Sep 15, 2025 at 07:56:16AM +0200, Nicolas Schier wrote:
+> > > On Mon, Aug 18, 2025 at 06:54:57PM +0200, Alexey Gladkov wrote:
+> > > > From: Masahiro Yamada <masahiroy@kernel.org>
+> > > > 
+> > > > Keep the .modinfo section during linking, but strip it from the final
+> > > > vmlinux.
+> > > > 
+> > > > Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
+> > > > 
+> > > > This change will allow the next commit to extract the .modinfo section
+> > > > from the vmlinux.unstripped intermediate.
+> > > > 
+> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > > ---
+> > > >  include/asm-generic/vmlinux.lds.h | 2 +-
+> > > >  scripts/Makefile.vmlinux          | 2 +-
+> > > >  scripts/mksysmap                  | 3 +++
+> > > >  3 files changed, 5 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> > > > index ae2d2359b79e9..cfa63860dfd4c 100644
+> > > > --- a/include/asm-generic/vmlinux.lds.h
+> > > > +++ b/include/asm-generic/vmlinux.lds.h
+> > > > @@ -831,6 +831,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+> > > >  
+> > > >  /* Required sections not related to debugging. */
+> > > >  #define ELF_DETAILS							\
+> > > > +		.modinfo : { *(.modinfo) }				\
+> > > >  		.comment 0 : { *(.comment) }				\
+> > > >  		.symtab 0 : { *(.symtab) }				\
+> > > >  		.strtab 0 : { *(.strtab) }				\
+> > > > @@ -1044,7 +1045,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+> > > >  	*(.discard.*)							\
+> > > >  	*(.export_symbol)						\
+> > > >  	*(.no_trim_symbol)						\
+> > > > -	*(.modinfo)							\
+> > > >  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
+> > > >  	*(.gnu.version*)						\
+> > > >  
+> > > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > > > index 4f2d4c3fb7372..e2ceeb9e168d4 100644
+> > > > --- a/scripts/Makefile.vmlinux
+> > > > +++ b/scripts/Makefile.vmlinux
+> > > > @@ -86,7 +86,7 @@ endif
+> > > >  # vmlinux
+> > > >  # ---------------------------------------------------------------------------
+> > > >  
+> > > > -remove-section-y                                   :=
+> > > > +remove-section-y                                   := .modinfo
+> > > >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+> > > >  
+> > > >  quiet_cmd_strip_relocs = OBJCOPY $@
+> > > > diff --git a/scripts/mksysmap b/scripts/mksysmap
+> > > > index 3accbdb269ac7..a607a0059d119 100755
+> > > > --- a/scripts/mksysmap
+> > > > +++ b/scripts/mksysmap
+> > > > @@ -79,6 +79,9 @@
+> > > >  / _SDA_BASE_$/d
+> > > >  / _SDA2_BASE_$/d
+> > > >  
+> > > > +# MODULE_INFO()
+> > > > +/ __UNIQUE_ID_modinfo[0-9]*$/d
+> > > > +
+> > > >  # ---------------------------------------------------------------------------
+> > > >  # Ignored patterns
+> > > >  #  (symbols that contain the pattern are ignored)
+> > > > -- 
+> > > > 2.50.1
+> > > > 
+> > > 
+> > > Hi Alexey,
+> > > 
+> > > with this patch applied, I still get a warning from objcpy as Masahiro
+> > > and Stephen wrote [1,2]
+> > > 
+> > >   SORTTAB vmlinux.unstripped
+> > > + sorttable vmlinux.unstripped
+> > > + nm -S vmlinux.unstripped
+> > > + ./scripts/sorttable -s .tmp_vmlinux.nm-sort vmlinux.unstripped
+> > > + is_enabled CONFIG_KALLSYMS
+> > > + grep -q ^CONFIG_KALLSYMS=y include/config/auto.conf
+> > > + cmp -s System.map .tmp_vmlinux2.syms
+> > > + echo vmlinux.unstripped: ../scripts/link-vmlinux.sh
+> > > # OBJCOPY vmlinux
+> > >   objcopy --remove-section=.modinfo vmlinux.unstripped vmlinux
+> > > objcopy: vmlinux.unstripped: warning: empty loadable segment detected at vaddr=0xffff8000807a0000, is this intentional?
+> > > 
+> > > (arm64, allnoconfig)
+> > > 
+> > > Kind regards,
+> > > Nicolas
+> > > 
+> > > 
+> > > [1]: https://lore.kernel.org/linux-kbuild/CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com/
+> > > [2]: https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
+> > > 
+> > 
+> > Hm. I missed that. I need to investigate how to fix this. Nothing comes
+> > to mind right now.
+> 
+> Same here.  Only thing I could find until now is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/diff/scripts/link-vmlinux.sh?id=90ceddcb495008ac8ba7a3dce297841efcd7d584
+> 
+> where '2>/dev/null' is appended exactly to prevent this very warning.
+> But for me, it doesn't feel good doing that when stripping to vmlinux.
 
-Signed-off-by: Dong Yibo <dong100@mucse.com>
----
- drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  18 +++
- .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  80 ++++++++++++++
- drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |   2 +
- .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 103 ++++++++++++++++++
- 4 files changed, 203 insertions(+)
+Yes, that's not a very good approach. It will hide other errors that will
+definitely need to be seen. I think the commit you mentioned is actually
+incorrect. I think there should be a different solution.
 
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-index 41b580f2168f..4c4b2f13cb4a 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-@@ -6,6 +6,7 @@
+I think in the case of .modinfo, we can change the flag in the section
+since we are going to delete it anyway.
+
+diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+index dbbe3bf0cf23..9a118b31d0dc 100644
+--- a/scripts/Makefile.vmlinux
++++ b/scripts/Makefile.vmlinux
+@@ -87,7 +87,8 @@ remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
+ remove-symbols := -w --strip-symbol='__mod_device_table__*'
  
- #include <linux/types.h>
- #include <linux/mutex.h>
-+#include <linux/netdevice.h>
+ quiet_cmd_strip_relocs = OBJCOPY $@
+-      cmd_strip_relocs = $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
++      cmd_strip_relocs = $(OBJCOPY) $(patsubst %,--set-section-flags %=noload,$(remove-section-y)) $< && \
++                         $(OBJCOPY) $(addprefix --remove-section=,$(remove-section-y)) \
+                          $(remove-symbols) $< $@
  
- enum rnpgbe_boards {
- 	board_n500,
-@@ -34,12 +35,26 @@ struct mucse_mbx_info {
- 	u32 fwpf_ctrl_base;
- };
- 
-+enum {
-+	mucse_fw_powerup,
-+};
-+
- struct mucse_hw {
- 	void __iomem *hw_addr;
-+	struct pci_dev *pdev;
-+	const struct mucse_hw_operations *ops;
- 	struct mucse_mbx_info mbx;
-+	int port;
-+	u8 perm_addr[ETH_ALEN];
- 	u8 pfvfnum;
- };
- 
-+struct mucse_hw_operations {
-+	int (*reset_hw)(struct mucse_hw *hw);
-+	int (*get_perm_mac)(struct mucse_hw *hw);
-+	int (*mbx_send_notify)(struct mucse_hw *hw, bool enable, int mode);
-+};
-+
- struct mucse {
- 	struct net_device *netdev;
- 	struct pci_dev *pdev;
-@@ -54,4 +69,7 @@ int rnpgbe_init_hw(struct mucse_hw *hw, int board_type);
- #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
- #define PCI_DEVICE_ID_N210 0x8208
- #define PCI_DEVICE_ID_N210L 0x820a
-+
-+#define mucse_hw_wr32(hw, reg, val) \
-+	writel((val), (hw)->hw_addr + (reg))
- #endif /* _RNPGBE_H */
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-index 86f1c75796b0..667e372387a2 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-@@ -1,11 +1,88 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright(c) 2020 - 2025 Mucse Corporation. */
- 
-+#include <linux/pci.h>
- #include <linux/errno.h>
-+#include <linux/etherdevice.h>
- 
- #include "rnpgbe.h"
- #include "rnpgbe_hw.h"
- #include "rnpgbe_mbx.h"
-+#include "rnpgbe_mbx_fw.h"
-+
-+/**
-+ * rnpgbe_get_permanent_mac - Get permanent mac
-+ * @hw: hw information structure
-+ *
-+ * rnpgbe_get_permanent_mac tries to get mac from hw
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ **/
-+static int rnpgbe_get_permanent_mac(struct mucse_hw *hw)
-+{
-+	struct device *dev = &hw->pdev->dev;
-+	u8 *mac_addr = hw->perm_addr;
-+	int err;
-+
-+	err = mucse_mbx_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->port);
-+	if (err) {
-+		dev_err(dev, "Failed to get MAC from FW %d\n", err);
-+		return err;
-+	}
-+
-+	if (!is_valid_ether_addr(mac_addr)) {
-+		dev_err(dev, "Failed to get valid MAC from FW\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * rnpgbe_reset - Do a hardware reset
-+ * @hw: hw information structure
-+ *
-+ * rnpgbe_reset calls fw to do a hardware
-+ * reset, and cleans some regs to default.
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ **/
-+static int rnpgbe_reset(struct mucse_hw *hw)
-+{
-+	mucse_hw_wr32(hw, RNPGBE_DMA_AXI_EN, 0);
-+	return mucse_mbx_reset_hw(hw);
-+}
-+
-+/**
-+ * rnpgbe_mbx_send_notify - Echo fw status
-+ * @hw: hw information structure
-+ * @enable: true or false status
-+ * @mode: status mode
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ **/
-+static int rnpgbe_mbx_send_notify(struct mucse_hw *hw,
-+				  bool enable,
-+				  int mode)
-+{
-+	int err;
-+
-+	switch (mode) {
-+	case mucse_fw_powerup:
-+		err = mucse_mbx_powerup(hw, enable);
-+		break;
-+	default:
-+		err = -EINVAL;
-+	}
-+
-+	return err;
-+}
-+
-+static const struct mucse_hw_operations rnpgbe_hw_ops = {
-+	.reset_hw = rnpgbe_reset,
-+	.get_perm_mac = rnpgbe_get_permanent_mac,
-+	.mbx_send_notify = rnpgbe_mbx_send_notify,
-+};
- 
- /**
-  * rnpgbe_init_n500 - Setup n500 hw info
-@@ -50,6 +127,9 @@ int rnpgbe_init_hw(struct mucse_hw *hw, int board_type)
- {
- 	struct mucse_mbx_info *mbx = &hw->mbx;
- 
-+	hw->ops = &rnpgbe_hw_ops;
-+	hw->port = 0;
-+
- 	mbx->pf2fw_mbx_ctrl = MUCSE_GBE_PFFW_MBX_CTRL_OFFSET;
- 	mbx->fwpf_mbx_mask = MUCSE_GBE_FWPF_MBX_MASK_OFFSET;
- 
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-index aad4cb2f4164..8d0f6352a251 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
-@@ -11,5 +11,7 @@
- #define MUCSE_N210_FWPF_CTRL_BASE 0x29400
- #define MUCSE_N210_FWPF_SHM_BASE 0x2d900
- 
-+#define RNPGBE_DMA_AXI_EN 0x0010
-+
- #define RNPGBE_MAX_QUEUES 8
- #endif /* _RNPGBE_HW_H */
-diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-index c6cfb54f7c59..d8b9e7e3b01c 100644
---- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-+++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-@@ -7,6 +7,7 @@
- 
- #include "rnpgbe.h"
- #include "rnpgbe_hw.h"
-+#include "rnpgbe_mbx_fw.h"
- 
- static const char rnpgbe_driver_name[] = "rnpgbe";
- 
-@@ -28,6 +29,56 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
- 	{0, },
- };
- 
-+/**
-+ * rnpgbe_open - Called when a network interface is made active
-+ * @netdev: network interface device structure
-+ *
-+ * The open entry point is called when a network interface is made
-+ * active by the system (IFF_UP).
-+ *
-+ * Return: 0
-+ **/
-+static int rnpgbe_open(struct net_device *netdev)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * rnpgbe_close - Disables a network interface
-+ * @netdev: network interface device structure
-+ *
-+ * The close entry point is called when an interface is de-activated
-+ * by the OS.
-+ *
-+ * Return: 0, this is not allowed to fail
-+ **/
-+static int rnpgbe_close(struct net_device *netdev)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * rnpgbe_xmit_frame - Send a skb to driver
-+ * @skb: skb structure to be sent
-+ * @netdev: network interface device structure
-+ *
-+ * Return: NETDEV_TX_OK
-+ **/
-+static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
-+				     struct net_device *netdev)
-+{
-+	dev_kfree_skb_any(skb);
-+	netdev->stats.tx_dropped++;
-+
-+	return NETDEV_TX_OK;
-+}
-+
-+static const struct net_device_ops rnpgbe_netdev_ops = {
-+	.ndo_open = rnpgbe_open,
-+	.ndo_stop = rnpgbe_close,
-+	.ndo_start_xmit = rnpgbe_xmit_frame,
-+};
-+
- /**
-  * rnpgbe_add_adapter - Add netdev for this pci_dev
-  * @pdev: PCI device information structure
-@@ -68,11 +119,55 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
- 	}
- 
- 	hw->hw_addr = hw_addr;
-+	hw->pdev = pdev;
-+
- 	err = rnpgbe_init_hw(hw, board_type);
- 	if (err) {
- 		dev_err(&pdev->dev, "Init hw err %d\n", err);
- 		goto err_free_net;
- 	}
-+	/* Step 1: Send power-up notification to firmware (no response expected)
-+	 * This informs firmware to initialize hardware power state, but
-+	 * firmware only acknowledges receipt without returning data. Must be
-+	 * done before synchronization as firmware may be in low-power idle
-+	 * state initially.
-+	 */
-+	err = hw->ops->mbx_send_notify(hw, true, mucse_fw_powerup);
-+	if (err) {
-+		dev_warn(&pdev->dev, "Send powerup to hw failed %d\n", err);
-+		dev_warn(&pdev->dev, "Maybe low performance\n");
-+	}
-+	/* Step 2: Synchronize mailbox communication with firmware (requires
-+	 * response) After power-up, confirm firmware is ready to process
-+	 * requests with responses. This ensures subsequent request/response
-+	 * interactions work reliably.
-+	 */
-+	err = mucse_mbx_sync_fw(hw);
-+	if (err) {
-+		dev_err(&pdev->dev, "Sync fw failed! %d\n", err);
-+		goto err_free_net;
-+	}
-+
-+	netdev->netdev_ops = &rnpgbe_netdev_ops;
-+	err = hw->ops->reset_hw(hw);
-+	if (err) {
-+		dev_err(&pdev->dev, "Hw reset failed %d\n", err);
-+		goto err_free_net;
-+	}
-+
-+	err = hw->ops->get_perm_mac(hw);
-+	if (err == -EINVAL) {
-+		dev_warn(&pdev->dev, "Using random MAC\n");
-+		eth_random_addr(hw->perm_addr);
-+	} else if (err) {
-+		dev_err(&pdev->dev, "get perm_addr failed %d\n", err);
-+		goto err_free_net;
-+	}
-+
-+	eth_hw_addr_set(netdev, hw->perm_addr);
-+	err = register_netdev(netdev);
-+	if (err)
-+		goto err_free_net;
- 
- 	return 0;
- 
-@@ -141,11 +236,17 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- static void rnpgbe_rm_adapter(struct pci_dev *pdev)
- {
- 	struct mucse *mucse = pci_get_drvdata(pdev);
-+	struct mucse_hw *hw = &mucse->hw;
- 	struct net_device *netdev;
-+	int err;
- 
- 	if (!mucse)
- 		return;
- 	netdev = mucse->netdev;
-+	unregister_netdev(netdev);
-+	err = hw->ops->mbx_send_notify(hw, false, mucse_fw_powerup);
-+	if (err)
-+		dev_warn(&pdev->dev, "Send powerdown to hw failed %d\n", err);
- 	free_netdev(netdev);
- }
- 
-@@ -176,6 +277,8 @@ static void rnpgbe_dev_shutdown(struct pci_dev *pdev)
- 
- 	rtnl_lock();
- 	netif_device_detach(netdev);
-+	if (netif_running(netdev))
-+		rnpgbe_close(netdev);
- 	rtnl_unlock();
- 	pci_disable_device(pdev);
- }
+ targets += vmlinux
 -- 
-2.25.1
+Rgrds, legion
 
 
