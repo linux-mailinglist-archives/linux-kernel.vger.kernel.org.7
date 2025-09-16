@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-819325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8880EB59EBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:04:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C0DB59EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC1B582270
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78AE189609D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B71371E96;
-	Tue, 16 Sep 2025 16:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B39C2F5A07;
+	Tue, 16 Sep 2025 16:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eNU2i1yR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="FhD3smbx"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD8932D5D7
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758041941; cv=none; b=f7LwvIiY7AIy1FwNRXgd84hh2GYCqdPHNRyBVvjWHvoMUfLH3Ai6NgfnGYkNGZOJtT8zNjdcxuN4oa6BoUlcOLrnqgRpuH1KkrGMrR55b/t8/xhmKQK9g86oRnhixcxTf7JZ1uPF3FfdhpOhozrNVGm3yy4ay8Tol9wqrGHt0Yk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758041941; c=relaxed/simple;
-	bh=1ESSDa9T5TZiLkRJ/FOm3n3uUjBAWGWKFOXKlYOnIc4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LUUK8qwDhj5JxIJ8fptAa4eWjIdJ2JovtN77Y5AzXbhvBi8mJNTzK1r94HO2yLySl3ZzxwjWbrRN3oykvJ1AcgdLEr2VkBIvcSOXrkZszLdl4f9F+1HOiiQoKAIsmAhkqS6QQQWafmDF2CoELmgJl0nwkXBD71Zs1I2NXONONXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eNU2i1yR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758041939;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V/EZc4VD3I6Rvd/hwPueys9LNwaukhCSs8uHwuxzrAI=;
-	b=eNU2i1yRmNSUlxF1calqB8PLVXOzm8AZkkPymFeMVGv+fZapDhPnm1QFbJlGY34Hm+wUmR
-	2g8uy7UsaLKyBnyBIltvZapa5JRC6aNVLDlpG+Jr74T7AdnzkZ/MSz2HGu/rhc/ClR+cOH
-	gAmCKB3D/z0Fm0NQmF4atVeeleEsLKI=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-487-gpm-o4_HONuUpjUskPdwAA-1; Tue, 16 Sep 2025 12:58:57 -0400
-X-MC-Unique: gpm-o4_HONuUpjUskPdwAA-1
-X-Mimecast-MFC-AGG-ID: gpm-o4_HONuUpjUskPdwAA_1758041937
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-77766aadfd4so34200586d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:58:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758041937; x=1758646737;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V/EZc4VD3I6Rvd/hwPueys9LNwaukhCSs8uHwuxzrAI=;
-        b=DSuJVGGkLld3E1GSbPykkuop8qjTspblMOh9AwUEcGi4wICyBRthzVeBVhnv/D+NW4
-         tNMlxqG+dsPA7PZI5l5nsJfbHBT6nJMrtpUCxVP3uE6UdJquU6jM7/LwOIIJIg8+2PBR
-         PczSXGwrkFcRVKqZm8FdV4i+yjBbJpjus8yyRZnt/yiG7VujPR/Iw1WVucGzLNz3aRjR
-         G3KFPNIMAmOSHOdkfjqb+E9jqOt3AsAnLRg9e9O/E8XkxanDtkLlUP4BPuDneD9mRP/q
-         x46TngEH3GSYJzmnRQScRY7XnkTJEviLPAjvqn2hpmQquuTt6K9E265uGL6UXtWDiIQ3
-         tHeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl3YmXCgGbVQV7a2vNZcnO0qLAaSJ0dul2wnrHwXgWWlfTFcuc7VsEmtuOCWn78dkv98xE86F/bFJuvSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSm7p5+ybgKPkDzuqqdc6wmWfIAXXiB8W883QVlWuchYESyH+m
-	8OKwK5ZIRoc2WbSqmfpMIwkFS/bT372yXmykqXCra9IrTbiKABrgxrUwn10auRQAkNoyCKOCvVR
-	CD/EM/GuAJC2wkHrpxY7KJXaLjKQfvJkC/LpN/5UbN3unaDmVRklApZPp/Qd/Zc22Kw==
-X-Gm-Gg: ASbGncuvUFaZ6B3xUDvsCm2Ost9VEOU8PN1gA+t5nERnHL3I0VX9Ff6mNVCeuN0ymcd
-	HGlycsubPeIm9bGl26vu73VFLTO0pgIXlyR7RmwKU0r0dluXafl+qtVjP3TGoD2YjGG6fRrjc+7
-	grLqwHSuZhg635vDNqTeODjVl4IAcyYCjy7hbtHIduyY5y876dpHOUUEUpyxRhu3HA52aGVISHa
-	7kHEGhvxbCA5v4LzQqoyovhEeinYcGAZ+3ljRPOv+osb+mE2SH1YthzExqyK+9cgIvUgN/jLqEh
-	641Ltj9okktDxdwMgqNEI7roXYnMp6jNG9tdyhcFJhOxFUmGnLNSodJy1ySSaCNZ0XMUAaempkO
-	ImSgLC12qWQ==
-X-Received: by 2002:a05:6214:e85:b0:758:2117:887a with SMTP id 6a1803df08f44-767c5622e1bmr202158836d6.58.1758041937113;
-        Tue, 16 Sep 2025 09:58:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxei0FEEqUvZjdq9XLJMNLngrWTypPoizScTxs9as/2F2uiQ+je0ZPIhRgPrZ72mzjcrKQNw==
-X-Received: by 2002:a05:6214:e85:b0:758:2117:887a with SMTP id 6a1803df08f44-767c5622e1bmr202158396d6.58.1758041936534;
-        Tue, 16 Sep 2025 09:58:56 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7843978ab05sm37136006d6.30.2025.09.16.09.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 09:58:56 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <f971b01a-2d76-4511-8880-0f4de2a042d9@redhat.com>
-Date: Tue, 16 Sep 2025 12:58:54 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FA132D5D7;
+	Tue, 16 Sep 2025 16:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758041964; cv=pass; b=Sj9GaDTgj7YBlw80rIXGsn/6HfNcDlMSU0W10jaC91cm2pUUdUWJwcwIpj683616TYhQmjzDBi/66oBlt10dJwmD6kIg0b6B7W9/UJBat13Ysy9pz6yBTRSwFJOZ3FNXRKVzXRopdX9Bt4AzcGOS+Wkur0377QlRsgwcQhRUUiM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758041964; c=relaxed/simple;
+	bh=BFapEZR7pLvRKQtMme0T8FJgGqNk+b5ibCXvTJHCk0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aswJgm77YI3Mt/M0QoStn5RexrtoQaiJtuV4SX9z0ZQ7ROMBg7O9aRjmWDIS+4yj42xDsh7GlAWTUkRQE0Jj6JuJ52xxU9O5gT6JQfZOehVVkSRbZClUgX/wc9hG4bG//+JME3ioDIt4gCkYqImIefuXzuQHwHaUexxhG6UxJrU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=FhD3smbx; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758041956; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZZ0SjVIzPYCJPUMIv0mkGc/PdOQwwgsBzvVNKyAWwP2a/W3w6duOmRvspsiY/KjAVEGK3LBhKiBvRqeC81esltXLBS0uNUyIXq5xR7+a+YXN0eFJuzJnOLEw9I8EmIEX0NTXTu0Aa0md7lK7WFtcEaAD7a2GPPQKMlESMdgOfRQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758041956; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YMjpeCVb969PSdBMAhTwISsWBnqQEgSO6YXUyj0ox1o=; 
+	b=L1vobNcpcri3sP68MsM8hr/gd6CAFb/9KDgSd9MEWHIFekiPFOuXsJihYZZoJxzElnfncfDmS+4jsG/qZzLLCitMqRJMj72SSc2+JtR98CFXXACkeoIQI2S76w9N4JCcZ6OG/Nf8jLOYNoH5Ch3BKPeelzafmkc7qI/BHdm6Zvc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758041956;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=YMjpeCVb969PSdBMAhTwISsWBnqQEgSO6YXUyj0ox1o=;
+	b=FhD3smbxZTuRE7Qlf5AApxW9DtW5dB9wEib1P7UfXeiY4hcom9+jah3cyQESNXGM
+	k37QU4j9PiW6/AgMRpoZIXi0Ehp0Lngvm20Sk/C4GumX78WcDA/ibZJtwyNWBHvRQi6
+	m7gOvNkm87OKnmv9BF334t3y7hyC6vL8B1V253T8=
+Received: by mx.zohomail.com with SMTPS id 1758041954603314.0056103351336;
+	Tue, 16 Sep 2025 09:59:14 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 98B7E180733; Tue, 16 Sep 2025 18:59:03 +0200 (CEST)
+Date: Tue, 16 Sep 2025 18:59:03 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/1] dt-bindings: power: supply: bq24190: document
+ charge enable pin
+Message-ID: <km7thoeguhkdp23gatn3w4kibgazzxi7s3cbkhueuokychqcbq@nabzlmfg3dmi>
+References: <20250912065146.28059-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] locking/qspinlock: use xchg with _mb in slowpath for
- arm64
-To: Peter Zijlstra <peterz@infradead.org>, pengyu <pengyu@kylinos.cn>
-Cc: mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com,
- linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
- t.haas@tu-bs.de, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
- luc.maranget@inria.fr, paulmck@kernel.org, jonas.oberhauser@huaweicloud.com,
- r.maseli@tu-bs.de, lkmm@lists.linux.dev, stern@rowland.harvard.edu
-References: <20250916033903.3374794-1-pengyu@kylinos.cn>
- <20250916141032.GJ3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-In-Reply-To: <20250916141032.GJ3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jsjxjam7qlnfhjfv"
+Content-Disposition: inline
+In-Reply-To: <20250912065146.28059-1-clamor95@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/258.4.7
+X-ZohoMailClient: External
 
-On 9/16/25 10:10 AM, Peter Zijlstra wrote:
-> On Tue, Sep 16, 2025 at 11:39:03AM +0800, pengyu wrote:
->> From: Yu Peng <pengyu@kylinos.cn>
->>
->> A hardlock detected on arm64: rq->lock was released, but a CPU
->> blocked at mcs_node->locked and timed out.
->>
->> We found xchg_tail and atomic_try_cmpxchg_relaxed used _relaxed
->> versions without memory barriers. Suspected insufficient coherence
->> guarantees on some arm64 microarchitectures, potentially leading to
->> the following issues occurred:
->>
->> CPU0:                                           CPU1:
->> // Set tail to CPU0
->> old = xchg_tail(lock, tail);
->>
->> //CPU0 read tail is itself
->> if ((val & _Q_TAIL_MASK) == tail)
->>                                                  // CPU1 exchanges the tail
->>                                                  old = xchg_tail(lock, tail)
->> //assuming CPU0 not see tail change
->> atomic_try_cmpxchg_relaxed(
->> 	  &lock->val, &val, _Q_LOCKED_VAL)
->> //released without notifying CPU1
->> goto release;
->>                                                  //hardlock detected
->>                                                  arch_mcs_spin_lock_contended(
->>                                                        &node->locked)
->>
->> Therefore, xchg_tail and atomic_try_cmpxchg using _mb to replace _relaxed.
-> Yeah, no. We do not apply patches based on suspicion. And we most
-> certainly do not sprinkle #ifdef ARM64 in generic code.
->
-> There is this thread:
->
->    https://lkml.kernel.org/r/cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu-bs.de
 
-Ah, I was not cc'ed on this email thread. That is why I was not aware of 
-this discussion about xchg_tail(). It is an interesting read.
+--jsjxjam7qlnfhjfv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 0/1] dt-bindings: power: supply: bq24190: document
+ charge enable pin
+MIME-Version: 1.0
 
-Anyway, this particular problem may be about the clarity of the arm64 
-memory model and whether any microarch's strictly follow it or not.
+Hi,
 
-Cheers,
-Longman
+On Fri, Sep 12, 2025 at 09:51:45AM +0300, Svyatoslav Ryhel wrote:
+> Document active low Charge Enable pin. Battery charging is enabled when
+> REG01[5:4] =3D 01 and CE pin =3D Low. CE pin must be pulled high or low.
+>=20
+> Svyatoslav Ryhel (1):
+>   dt-bindings: power: supply: bq24190: document charge enable pin
+>=20
+>  Documentation/devicetree/bindings/power/supply/bq24190.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
+No driver change?
+
+Greetings,
+
+-- Sebastian
+
+--jsjxjam7qlnfhjfv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjJl1cACgkQ2O7X88g7
++pqzGA//XxqUyw5jYxT0uD4bpHiIMEA6rqkwQfHGBsEHgX0htoOkYGbbAAB2Sj/I
+CasgAwv0mLdvdcxrXINxP7dtimKHGgO+HWClgvhAcreDED2EznPevkXIBea7QDoU
+Cjgd2TCNdRfdNL4d46DXsPjWb/4MJJ+fYQsoYk8nl8n+Oza5BNfNGL6HteB1QnrJ
+LgAujfff+WO2RwpqPESCP+wRwH0p/IcYxv0/A26WrvYDd1H94enTuKMAPQ5jlrtj
+/6/InNeO8wsXyXDEgMMvtttxU96064NoETPicB2ylkMWf3ZjsNlKvrLsmTQcaxPV
+7OUmpe6OhdzP37rpoMeHjCpYyJYCcK/mGyJAtZ4WvZ4AD03joM/FqcxO0xVUk7mU
+Ikdl6+yDgnZs7mf2plq9eOKfZHRbVjlt6pS1hD+S3/TGBKhlzB3wlahhZVm30TVD
+NIhVlwzmDUMEj2DRjh00GCb+7uNfsZiJlNqwbzWx9bsMw/ATLIqWmVwkGj9Awbgt
+fjzC/aOvVXXANVT47Vyg/xyrBN7p5swLUg2p5Zn8m9/zDzciBor9jCE9bQ6E26HF
+ShrTaNFNbz9+p/GGU2yrXsDSPpPdhJXBqUXQ9PzXFhPbZ7JnnkCeAbOtBYhh4p8l
+UcPhET+6014FhEx+gXn6ZA8VZ7EkMbXsUghW0wYo/GAQcg8ujCA=
+=oJ1Z
+-----END PGP SIGNATURE-----
+
+--jsjxjam7qlnfhjfv--
 
