@@ -1,154 +1,168 @@
-Return-Path: <linux-kernel+bounces-819432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4161BB5A090
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:34:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C073B5A093
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 125951C04694
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:34:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791B11C049F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF70C290DBB;
-	Tue, 16 Sep 2025 18:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44612D24B8;
+	Tue, 16 Sep 2025 18:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcji2MQq"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEj+1PqE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CE92DF15D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3952F143756;
+	Tue, 16 Sep 2025 18:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758047609; cv=none; b=Gynazo1R66C1mh2NpPQX843NQBIKiCGrWvRyzXe5fBMJ0w6qGDIrZbW6Cu27ybTTbWpv8DV+ThDL89D4CXwwvcuMUAj9p4VVLZnU0yLn3y68xJGV5MmH8zsqQuyj9XMulSU04CYK1TvHw7tl+diqW7d1tW1BSv3kQCgst+iTsUI=
+	t=1758047703; cv=none; b=lfKbkFNZXNwKKdB69ehBqA8E11vkDyXPgR0c7vOntHhx8FQ85RtfgiJj0bE5UtVTVaAsHZgWp9BYnG+zrf3HsI/rB53PedfRr61ZdbWbWtmsMBUAA9g2/RWaTP8IZcA3AsQcp+OhbPzb59+VJmQSZCdcKB6ZJvYz6tMaES+ilbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758047609; c=relaxed/simple;
-	bh=ngLz/4Ezk/tubDYx/Lgk6Dje8hW93S4AUSflPV17tVs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DSqK5shClT/nqiars4NaKs+7NRZozx2ZqbyhL+JY1t8vUcvrJZEQi82yv3bshVfQ+HmZd1COp/McA5d++1R6CltG4jCdJxgsds/LAIKfPL5uVdhZtb8lBKIfwdR3PUClGAedE1iba8PknSAzTjRX62zueFpPHBaxthBik7dCk9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcji2MQq; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-32e6f3ed54dso2050612a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758047607; x=1758652407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e6Ht+bpIkPjtMXWp9XgtcAPi+mKoELdBIJyuizZRIWY=;
-        b=kcji2MQquAD2JVt3OJKRrf1p8vg5M4YNXVvx/2sM60eL32dFKXxY9sAi32XwlFC6Gf
-         xUyyBj1T3CueFhlzMzSNXRYYDTbvAaZLyNiru5ePn9r9k8olxyGvoqWvESAQCXLXVE5J
-         RiV4OPRX9MlwEgUFB4NwJFtUxXN8mBFEpSJuqV//oFXYe2teuzvo0DBjrOpsRuWMS33m
-         UZWgGPujhPQy410EPBa5z8tX+7TpD8iW3/y1fWxWlxoYqjmGnMIrflmwrmD+EHx4rwAs
-         EaCcVZcru25bg9LQ5dDL7NzDF2TcyYEdWulvl5uyKvLZPulaCG+6jL16TCNZSBc19tSg
-         BgUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758047607; x=1758652407;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e6Ht+bpIkPjtMXWp9XgtcAPi+mKoELdBIJyuizZRIWY=;
-        b=Xm8OovtbS8bsKbdjc39B0FkVZusVE1GXf2AW9oIsuXHdOqC8JPiuDcdGOhiaIVCc9S
-         V/MmuicgMzLZa4wwiAvnz8b+pe+48qSNrYDhFrWULxsZB+jkCGjx5tC6YbPmzu4C1MsE
-         duz1kQ90x13WcMKvjIVRas7xxGn33+Yn1rG1Ea7lSaRefEi6LpEqPHzztgwdNOtIPeoP
-         dRcKkEtNu4pOOBJWWDYu+1lzMQ7e1Y9QGBkej1F4/mtERO9KtD5ZqN+MHEX32VU6ePky
-         EZV/yjPPblzbX/5BEt4/QJZ0WSzv2yiEvSa0iM5vAk4xWld7rnO1B9kgnM3owywMvpIM
-         /LPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWb9dfwmvYS9zQQQF2F4It4DPNA1n3Xei4NAhnGynMSUAaer9N4/J7wLVNcsmC47aHMbpkiGGJxs6KeZ10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzkvl5EFDv17+PxQkw3e0fYPGgg0DOxT/hlpBJPLg9Wo3sUagQb
-	oXLG3pgXav7pPiELld0tyKh+2as01USsCJxZPgBeB3TEavZbKtBtqzmr
-X-Gm-Gg: ASbGncuZqBU8keXZT1JAKlKyOCximTXiwSNnqXUfWLAWPq8ZtpFaTGUNgdmN5b3df1W
-	d+1TypJJcLR2dqRimtVpmfOIRYvL9Lwxkwt95cJtJe2yBBOBMcJ/VRXUGHKIbeLrfpo9Ym30i+M
-	y9SRJeEDb/4AuiqTUSlTdrDFGKDVA9rHDMhq0bNb1zjfSAsoGXbALx4MZOPEj5OYxJhpwmIJhwS
-	1T/j6I0cjzMgr220K6EDKQ4lH4p8i8qvZwsT16zJZh2SBwmfHg2IrUSt7UVKWtTRv6kVGMU5KzF
-	WKmre/KqqDlwUhbJJ11GIturMImGGSpXmO5T1dxpdhf0wATY9wVdCNKyI7IRkruU4UJdZpij/zr
-	PxlX8LPywx53wqPjaq5wGcPMWxG1VW4S5uE2FR7CRDK5TWRuiHpBCEZPY
-X-Google-Smtp-Source: AGHT+IE60FRNbaIgGLpS7RTlhNopZLjGLrwDqgS+R4ggALxBYN8fkG1Oyxxw7C+bn8mbnje6yiDdYg==
-X-Received: by 2002:a17:90b:1fc6:b0:32e:1ff5:5af4 with SMTP id 98e67ed59e1d1-32e20049fbcmr14219148a91.35.1758047606752;
-        Tue, 16 Sep 2025 11:33:26 -0700 (PDT)
-Received: from mythos-cloud ([121.159.229.173])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a387b543sm14915968a12.33.2025.09.16.11.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 11:33:26 -0700 (PDT)
-From: Yeounsu Moon <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yeounsu Moon <yyyynoom@gmail.com>
-Subject: [PATCH net v3 2/2] net: dlink: handle copy_thresh allocation failure
-Date: Wed, 17 Sep 2025 03:33:05 +0900
-Message-ID: <20250916183305.2808-3-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250916183305.2808-1-yyyynoom@gmail.com>
-References: <20250916183305.2808-1-yyyynoom@gmail.com>
+	s=arc-20240116; t=1758047703; c=relaxed/simple;
+	bh=0Y8Vr3AraQV82DBR8zHGaa4Zevj4KNfd9r6qP5JbGp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKntRlda2X+oqWHeyrJYGB62oYn8ccPAs+LRz3gq5g75TU3UcrPQkXkkoa6IKBeinL1ViG3ZlP5sRM0fEKkOQLlhcZLENLQ5ya9sVnt8XeGDEmMmbjf+phGdj3XYfe/GrtQvDuwL8mZ9DY/R4zEB8gCiqa2MIvvsORqUeZw45pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEj+1PqE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97714C4CEEB;
+	Tue, 16 Sep 2025 18:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758047702;
+	bh=0Y8Vr3AraQV82DBR8zHGaa4Zevj4KNfd9r6qP5JbGp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QEj+1PqE2kTzK5pEFOvkzZz7HK+lpwKmVkFwbSQbw/+kwTOdxIDt+mCZHZDnbh4P9
+	 ZeRE8o7LaTsZpPef8AUn96IdwpABMmvWisAMZlElSgvGaQR6d5CCy+z9XM2lPW4VRM
+	 mmCp+iyckzTuspuVGzh1ENLePdlF4+XpLB3llxUGgFFxX2XHQTd5P1DyPnnFlsa5+C
+	 4o/Hua5mcMg9v0gVsuz36e5Q275RvfFOlCeqJnzGza7NVPstP7b5kCACcNhRuGfmNQ
+	 teQ0aLihmp5AhuAyrZcDklOGFXEqLM2JwQAcmJc/0Qa2qXNzDVpeGDrBzFer9TweOB
+	 wdZ+XQT2WMaOQ==
+Date: Tue, 16 Sep 2025 19:34:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] dt-bindings: touchscreen: fsl,imx6ul-tsc: support
+ glitch thresold
+Message-ID: <20250916-bonus-wildness-608ec9a83546@spud>
+References: <20250914171608.1050401-1-dario.binacchi@amarulasolutions.com>
+ <20250914171608.1050401-5-dario.binacchi@amarulasolutions.com>
+ <aMgjAjfydIbYexkE@lizhi-Precision-Tower-5810>
+ <20250915-tinker-music-03cff49a41a7@spud>
+ <aMmKNYjxolrCb1yC@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rYWN0tYwjxMqonNZ"
+Content-Disposition: inline
+In-Reply-To: <aMmKNYjxolrCb1yC@lizhi-Precision-Tower-5810>
 
-The driver did not handle failure of `netdev_alloc_skb_ip_align()`.
-If the allocation failed, dereferencing `skb->protocol` could lead to a
-NULL pointer dereference.
 
-This patch adds proper error handling by falling back to the `else` clause
-when the allocation fails.
+--rYWN0tYwjxMqonNZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Tested-on: D-Link DGE-550T Rev-A3
-Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
----
- drivers/net/ethernet/dlink/dl2k.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+On Tue, Sep 16, 2025 at 12:03:01PM -0400, Frank Li wrote:
+> On Mon, Sep 15, 2025 at 06:42:13PM +0100, Conor Dooley wrote:
+> > On Mon, Sep 15, 2025 at 10:30:26AM -0400, Frank Li wrote:
+> > > On Sun, Sep 14, 2025 at 07:16:01PM +0200, Dario Binacchi wrote:
+> > > > Support the touchscreen-glitch-threshold-ns property. Unlike the
+> > > > generic description in touchscreen.yaml, this controller maps the
+> > > > provided value to one of four discrete thresholds internally.
+> > > >
+> > > > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > > > ---
+> > > >
+> > > > (no changes since v1)
+> > > >
+> > > >  .../input/touchscreen/fsl,imx6ul-tsc.yaml         | 15 +++++++++++=
+++++
+> > > >  1 file changed, 15 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/fs=
+l,imx6ul-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/fsl=
+,imx6ul-tsc.yaml
+> > > > index 678756ad0f92..310af56a0be6 100644
+> > > > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6u=
+l-tsc.yaml
+> > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6u=
+l-tsc.yaml
+> > > > @@ -62,6 +62,21 @@ properties:
+> > > >      description: Number of data samples which are averaged for eac=
+h read.
+> > > >      enum: [ 1, 4, 8, 16, 32 ]
+> > > >
+> > > > +  touchscreen-glitch-threshold-ns:
+> > > > +    description: |
+> > > > +      Unlike the generic property defined in touchscreen.yaml, this
+> > > > +      controller does not allow arbitrary values. Internally the v=
+alue is
+> > > > +      converted to IPG clock cycles and mapped to one of four disc=
+rete
+> > > > +      thresholds exposed by the TSC_DEBUG_MODE2 register:
+> > > > +
+> > > > +        0: 8191 IPG cycles
+> > > > +        1: 4095 IPG cycles
+> > > > +        2: 2047 IPG cycles
+> > > > +        3: 1023 IPG cycles
+> > >
+> > > you should use ns
+> > >    enum:
+> > >       - 1023
+> > >       - 2047
+> > >       - 4095
+> > >       - 8191
+> > >
+> > > you can limit only 4 values, but unit have to ns. your driver map it =
+to
+> > > register value.
+> >
+> > Looking at the driver change, I think Dario is already doing that. The
+> > text here is just talking about how the controller doesn't support
+> > anything other than these 4 glitch threshold and mapping must be done in
+> > some way.
+>=20
+> Thanks, but descripton is confused.
+> "Unlike the generic property defined in touchscreen.yaml", which let me
+> think value is 0..3, instead of ns.
+>=20
+> Suggest Remove
+>=20
+> "Unlike the generic property defined in touchscreen.yaml, this
+> controller does not allow arbitrary values"
 
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index faf8a9fc7ed1..cff90417c05c 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -965,14 +965,11 @@ receive_packet (struct net_device *dev)
- 			struct sk_buff *skb;
- 
- 			/* Small skbuffs for short packets */
--			if (pkt_len > copy_thresh) {
--				dma_unmap_single(&np->pdev->dev,
--						 desc_to_dma(desc),
--						 np->rx_buf_sz,
--						 DMA_FROM_DEVICE);
--				skb_put(skb = np->rx_skbuff[entry], pkt_len);
--				np->rx_skbuff[entry] = NULL;
--			} else if ((skb = netdev_alloc_skb_ip_align(dev, pkt_len))) {
-+			if (pkt_len <= copy_thresh) {
-+				skb = netdev_alloc_skb_ip_align(dev, pkt_len);
-+				if (!skb)
-+					goto fallback_to_normal_path;
-+
- 				dma_sync_single_for_cpu(&np->pdev->dev,
- 							desc_to_dma(desc),
- 							np->rx_buf_sz,
-@@ -985,6 +982,14 @@ receive_packet (struct net_device *dev)
- 							   desc_to_dma(desc),
- 							   np->rx_buf_sz,
- 							   DMA_FROM_DEVICE);
-+			} else {
-+fallback_to_normal_path:
-+				dma_unmap_single(&np->pdev->dev,
-+						 desc_to_dma(desc),
-+						 np->rx_buf_sz,
-+						 DMA_FROM_DEVICE);
-+				skb_put(skb = np->rx_skbuff[entry], pkt_len);
-+				np->rx_skbuff[entry] = NULL;
- 			}
- 			skb->protocol = eth_type_trans (skb, dev);
- #if 0
--- 
-2.51.0
+Yeah, I agree this should be removed. It's unlikely that /any/
+touchscreen will support completely arbitrary values, so stating it is
+redundant.
 
+--rYWN0tYwjxMqonNZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMmtwwAKCRB4tDGHoIJi
+0vWEAP9UHTO+GfZtI6OXbDcxvcOVWmp8z5NqbCA7ni7xXVlEUwD8CF4puz+dHm6q
+a65TXq2kfo1U+B29pPxvngMosikvjA4=
+=Sldc
+-----END PGP SIGNATURE-----
+
+--rYWN0tYwjxMqonNZ--
 
