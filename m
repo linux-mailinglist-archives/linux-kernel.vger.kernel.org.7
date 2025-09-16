@@ -1,114 +1,145 @@
-Return-Path: <linux-kernel+bounces-818277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2DBB58F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93837B58F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04F9618831EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3764C321BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AACB2E6CA2;
-	Tue, 16 Sep 2025 07:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26832E717B;
+	Tue, 16 Sep 2025 07:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="nWPVUPfN"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CtmzkV96"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986033A1DB;
-	Tue, 16 Sep 2025 07:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822B2E6127
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758008088; cv=none; b=Z3kytwcDZ1Djj3sjwNYOJMdnCAU8oz4aZrA3tPGroJI/DHyuNNtN6ZoH1jgdLFB7N07R7Rexk6dzqVKC247W2CDpASV13udz+7fVB/M4JWpe7IbO2mZhhNCOv+7VeWIHWbC0oj2p2vgTXIf5duVc/rZ7RvGLBNHzb7ySJUpPTl4=
+	t=1758008112; cv=none; b=oY6yQSqHXMWWCQZ1wn5jboiWvHq7TbdHNdtYBqL4ww7xcVCcZuwJ2cJMrT6RTqslM2LcknxdkWy7O7Fp8khb6VUbvq/CH7aHb9DAfKcXKRog2aEE+m8NyXpMMk3f+tw0SKXfI+Yd6Qe6fUf8NQ6WRNQIwPOnJMVJym9jZOIeEWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758008088; c=relaxed/simple;
-	bh=2tvWpy9//f4u6Qkza2AV+2NNgm7HG+OKTo/m7egh1Fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NUZnNR2f+ef6E2XEMF5QhtbgbEIeWF0UxM8EKKOatPHGKOGjLnOH7j2gpsk8LwnmKvEWukeJzlqLpabSajraTHqiZDY7y+5zetstkTKQ4B3oc4j8sQsiUATZwmXADVlwvzX5zxOwzfKOHB5692vRl9Sd/cgqaEMh/qXkxaydgQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=nWPVUPfN; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=/d8NPHHoHLLLmfSMKxDnV22O73BappyZrrJ8bU33Oq4=; b=nWPVUPfN5V9OJZVJkYajiP2J7z
-	n7rLQ8eY3R8jFRO4V8BbRorqcFQMSOjp3y0hBD+AvTBcS4x2NfEuIQ/j8o9E+mGiWhPMOXGDCBt6F
-	vuPV42fW4SRZv+r1VTBNfZgFcPJkKbyJbK5mVqmay2y3o12STWu82wMw/5KNZLuhLYcRPq6ts2gDs
-	OO8KT2QOU9lgVcisSBM6Tq4b/VV1WQUBWtzcWgTyribLGpUXFRi0v7bXv8brcjYSfG2pinDj2IfCA
-	2uCV5clSNof+eLiy+B2GK0zuFSd0cQoMF8HPrfZIrPIaD6FnpZ/6sDFnWO/VbZbbeF8GhtiMMLMV6
-	8Lf289rg==;
-Received: from i53875bfd.versanet.de ([83.135.91.253] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uyQCw-00066R-7K; Tue, 16 Sep 2025 09:34:34 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Kaison Deng <dkx@t-chip.com.cn>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Peter Robinson <pbrobinson@gmail.com>, Jimmy Hon <honyuenkwun@gmail.com>,
- linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Jonas Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org,
- Andrew Lunn <andrew@lunn.ch>, Dragan Simic <dsimic@manjaro.org>,
- Wayne Chou <zxf@t-chip.com.cn>, Kaison Deng <dkx@t-chip.com.cn>,
- FUKAUMI Naoki <naoki@radxa.com>, Conor Dooley <conor+dt@kernel.org>
-Subject:
- Re: [PATCH v3 1/2] dt-bindings: arm: rockchip: Add Firefly ROC-RK3588-RT
-Date: Tue, 16 Sep 2025 09:34:32 +0200
-Message-ID: <3034003.o0KrE1Onz3@diego>
-In-Reply-To:
- <EEABCC59F39E8FC5+04995f9826d047eeb5f4bada25c3dd93e50983b0.camel@t-chip.com.cn>
-References:
- <cover.1757902513.git.dkx@t-chip.com.cn>
- <175794446144.2732898.9504412064423841025.robh@kernel.org>
- <EEABCC59F39E8FC5+04995f9826d047eeb5f4bada25c3dd93e50983b0.camel@t-chip.com.cn>
+	s=arc-20240116; t=1758008112; c=relaxed/simple;
+	bh=D6d9ekdBEhyb3G2A9aDEOXln00Ab2y76UPi2l9PmD4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S0WN3pNHBk93XARxDCwGvcHrzqSCyynnwxd/JveiFKbBtxrsYUbakkRQaA9Fqe69c61vLDgcuA01J1LYYiddXpXTDl5PJkpgJppIIZkF1m0MZqxGwWoWUQxu893cRj51TYq5vAfNQBACgsFmbA8O2ofCNhPqt6l6QVWkq48LG7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CtmzkV96; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758008109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D6d9ekdBEhyb3G2A9aDEOXln00Ab2y76UPi2l9PmD4M=;
+	b=CtmzkV96Vv9ucMAcc22Rj07rWdIGUiyaQx4PBF7z8JMTzInlBsh4LLNKQizorBhB/pism+
+	zTxvvUOWxMV4MBVcbLuqPdjU9iMZrivUVutuxxMPCtvACniZABhlBJrMb3ptwPCJkigJj0
+	gQY9E8JWnltHuQ6E0MUQkLsd2EKVnoA=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-159-3XqeCxgTO7yc72cgtyrG2w-1; Tue, 16 Sep 2025 03:35:05 -0400
+X-MC-Unique: 3XqeCxgTO7yc72cgtyrG2w-1
+X-Mimecast-MFC-AGG-ID: 3XqeCxgTO7yc72cgtyrG2w_1758008105
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-329dca88b5aso6144556a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:35:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758008104; x=1758612904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D6d9ekdBEhyb3G2A9aDEOXln00Ab2y76UPi2l9PmD4M=;
+        b=fTX1XFO6eXrgb8UUVmPDy+5Rra9nWL/7W6zn5sxONULSwyNOaT3mAJExq4iUvrZN+3
+         Syf2zhmAq9OAGbtBKPEAESX6dgfPF8TswuILbqPylIzvKzKG1FHXEBZHAlGvitgCpBpg
+         EbIOoR4RFCeF94LCHhPQsjVZcRc8oug5Q2/Bb/O/+N0qpC+LqKZeuB2Dsa5XZpqjbS5z
+         YDD9ApPMkF4vLCB3m/TPnUtaLipRTf+9tI+XpyroFqJ6JBJuwigEhxh8z/eqknUqh/Fi
+         oTnelQHp9mZ+NzYLkm5BFlE17b70YtKzCofQy4otiLBTO/SbKA2a82KTpATcYbBvB/fU
+         puBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhHIr5tE8Vwuw493EkvlDT5k868jyngH5NPaBq5TRZ+3URwdiXJet9blHzXPw+XCRk4QaObJGB1EHRhTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXnX4a2MNi0mKRaruryDqe2jQ+6e/n0JHxTa71O+7E4cNJY//c
+	4Rd9+DvDQPhRxKAz1kercI0Hrt3KH+v+NQT0c4Vjag4aVH6QZexVg/XSp4q+UReIotROKUGdsh0
+	RzJfbrviJaYPDZT1X8i/1fdL1FCZ/n1TmUVF2mQcwRgZNI8WvXcQgOQ4oM7WARdm0QTbEw3oT46
+	IVfc8uVt5I4tW1R/l5TsEFp40+8KB+/TNqWm71skcI
+X-Gm-Gg: ASbGncvSGmwmZg2+2e1W4opr/vMisIF8ffLLLNn1vzCi0+cFWHgtVvQsmbV7lpPC8EC
+	GNtxvrKr6ZtmKQy6EemEo3J8BhQOTxjlMhmCS6Xzqr6T7vtNvNpMPddzG44InN2d+NKl6kdO3M0
+	17hpDYhiEA/t3z6dNWMg==
+X-Received: by 2002:a17:90b:268b:b0:32d:e027:9b26 with SMTP id 98e67ed59e1d1-32ea61f40eemr1655233a91.13.1758008104599;
+        Tue, 16 Sep 2025 00:35:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE41+0nEZ7uR68Mnvkj3byTsvAEGDCXOwLITAVl6OsB+Oh86L0Un50ZLiDd2YqmZSU5tm/eVC4SN1t81Pb26VA=
+X-Received: by 2002:a17:90b:268b:b0:32d:e027:9b26 with SMTP id
+ 98e67ed59e1d1-32ea61f40eemr1655196a91.13.1758008103710; Tue, 16 Sep 2025
+ 00:35:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250915073429.54027-1-sheng.zhao@bytedance.com>
+ <CACGkMEvWNOjFU0pgiS=LF2B+yEC-y_RU3w_P5_dr10RPH+5xrg@mail.gmail.com> <328b3f8f-cca7-4d8f-9335-24341b40b2d5@bytedance.com>
+In-Reply-To: <328b3f8f-cca7-4d8f-9335-24341b40b2d5@bytedance.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 16 Sep 2025 15:34:52 +0800
+X-Gm-Features: AS18NWCI_RI0SXTKAt8c2DrKB370dG1BgGK6HWboIC6YYEbwdDnxbL9kobwsFbc
+Message-ID: <CACGkMEvXH+VpA-2sJ39QL4Rb3Gg0VCOKn5BApRpft=583Qcp2g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] vduse: Use fixed 4KB bounce pages for
+ arm64 64KB page size
+To: Sheng Zhao <sheng.zhao@bytedance.com>
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	xieyongji@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi,
+On Mon, Sep 15, 2025 at 7:07=E2=80=AFPM Sheng Zhao <sheng.zhao@bytedance.co=
+m> wrote:
+>
+>
+>
+> =E5=9C=A8 2025/9/15 16:21, Jason Wang =E5=86=99=E9=81=93:
+> > On Mon, Sep 15, 2025 at 3:34=E2=80=AFPM <sheng.zhao@bytedance.com> wrot=
+e:
+> >>
+> >> From: Sheng Zhao <sheng.zhao@bytedance.com>
+> >>
+> >> The allocation granularity of bounce pages is PAGE_SIZE. This may caus=
+e
+> >> even small IO requests to occupy an entire bounce page exclusively.
+> >
+> > This sounds more like an issue of the IOVA allocating that use the
+> > wrong granular?
+> >
+>
+> Sorry, the previous email has a slight formatting issue.
+>
+> The granularity of the IOVA allocator is customized during the
+> initialization of the vduse domain, and this value is also modified in
+> this commit.
 
-Am Dienstag, 16. September 2025, 05:28:33 Mitteleurop=C3=A4ische Sommerzeit=
- schrieb Kaison Deng:
-> On Mon, 2025-09-15 at 08:54 -0500, Rob Herring (Arm) wrote:
-> > On Mon, 15 Sep 2025 10:22:04 +0800, Kaison Deng wrote:
-> > > This documents Firefly ROC-RK3588-RT which is a SBC based on RK3588
-> > > SoC.
-> > >=20
-> > > Link: https://en.t-firefly.com/product/industry/rocrk3588rt
-> > >=20
-> > > Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
-> > > ---
-> > >  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >=20
-> >=20
-> > Please add Acked-by/Reviewed-by tags when posting new versions.
-> > However,
-> > there's no need to repost patches *only* to add the tags. The
-> > upstream
-> > maintainer will do that for acks received on the version they apply.
-> >=20
-> > If a tag was not added on purpose, please state why and what changed.
-> >=20
-> > Missing tags:
-> >=20
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >=20
-> >=20
->=20
-> Ok. Do I need to resend the next version for the missed tags?
+Ok, let's add this to the changelog.
 
-nope, that is not necessary, I can pick up the one from v2.
+Btw, do you have perf numbers to demonstrate the benefit?
 
-Heiko
+Thanks
 
+>
+> Thanks
+>
+> >> The
+> >> kind of memory waste will be more significant on arm64 with 64KB pages=
+.
+> >>
+> >> So, optimize it by using fixed 4KB bounce pages.
+> >>
+> >> Signed-off-by: Sheng Zhao <sheng.zhao@bytedance.com>
+> >
+> > Thanks
+> >
+>
 
 
