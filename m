@@ -1,245 +1,220 @@
-Return-Path: <linux-kernel+bounces-818793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CE7B5968B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 603B4B5968C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D238F1BC7B65
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB621C003B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53061E832E;
-	Tue, 16 Sep 2025 12:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="G4Xr4jmo"
-Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69211A238F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4536719C553;
+	Tue, 16 Sep 2025 12:48:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149BEBA3D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758026864; cv=none; b=kRKQap4RwfeJhlOjSg8YZuGek7Nc8OjP+EW1rMwqR4Y9zzPt9hxgLMQUxBs66zKO+Iv1WpWhKQRq7lZeG/jMr9jLU1KcYneDJUaji1dTUmiG2pvrwaYR5YZf3eA+6+UFyECsKvKK4zBkIJsYZRyT0bUg+DIEZhr4NJYGhSu5zgk=
+	t=1758026888; cv=none; b=Pok23DOqEAGSR7iDHpUQ/UFZGJVb3ikzpuFC2F088sTYOa1mHS7Y1JfgI0uGbDopUmdIheG4ewYqNtaoXlzk7aisAETjn78YVWALHsxmPcugYAD8MsRlUboujVmqFtsJB2VqqgD/VVPeSN7qhgDa1YO7kiRLagVcA1gGq9Vn+R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758026864; c=relaxed/simple;
-	bh=shHE9KW7BesZUfFO29sYZ6kumc0tpGrToLz2fQbyJ+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+vJc1woytnsCBveH9HLGdR+GiR/Prkemtr9iqzytbJOp0bIK4vr9XfDXbilr0KxUjfMrtji/JZF0P4WTnS7bl9373Rq+a1c3tL8SAANKDe/olMaUt5s/rDwdR6f+9zHvC0abwwIK7WUjNtz5bocn5+bFt8jSXct4Iqf8HKA1W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=G4Xr4jmo; arc=none smtp.client-ip=44.202.169.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5006b.ext.cloudfilter.net ([10.0.29.217])
-	by cmsmtp with ESMTPS
-	id yT6du9WP9v724yV5ruHli7; Tue, 16 Sep 2025 12:47:35 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id yV5quEkmWe8uwyV5qu1Yip; Tue, 16 Sep 2025 12:47:34 +0000
-X-Authority-Analysis: v=2.4 cv=JIk7s9Kb c=1 sm=1 tr=0 ts=68c95c66
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rgnGs0SnPH8AdDS9O6an6A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=hq4P9umPRdET-EkN_ZoA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ir3vWjqrv49zXSLgiZpFEkxlPef9vckMUxhUY+rQbQo=; b=G4Xr4jmohwUGtFlp5kciSaLmxc
-	V4jusRpsg85n2MNX/y4uPmANn4XnAq2Mkn4CEEQ36ZB1c/MbYGO2Vzo41jCOd4UP6rUOZ5P6/Nmu6
-	m6L6KsdxWpQcM7HCHXWNRTFdnAkpTgpLgksqFv3gtZg7iHxYCCUsLfXEacp/d7UGeR+NY+KEU6c2P
-	FkiN1DsdSEy2KI6sMPwdh7FFz0u3womxRSNhWrNvCDbKrjaLoGRxphCTQYZf9zEu/W56dj/D/aN/0
-	GC5i4UxC3/lZ65KnYnzzUqTnMXfDhlA3tOvX1e+9R4bM0JQ3KWu8+Hud1NX5Af99jhwK4e6/EC96g
-	Kt1yI7IQ==;
-Received: from [185.7.52.72] (port=52888 helo=[172.30.86.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1uyV5n-00000003enU-2svP;
-	Tue, 16 Sep 2025 07:47:32 -0500
-Message-ID: <015cb465-6e4e-4242-8898-981721347050@embeddedor.com>
-Date: Tue, 16 Sep 2025 14:47:00 +0200
+	s=arc-20240116; t=1758026888; c=relaxed/simple;
+	bh=7trFf5hhjGM8vRlPjzsKSeNmc4/I1VBnBBsERnwfJG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCEbLHbOAH9yc5oeV922hmKcQrvhktHN7Bqz2IqsJyIMfVGQF5vkyJokYZCU1EIPG/9gGyEMvZ30HxyPsLbcUaJ76lH+O2KDLypDU9QHVMHhkJ1b+pJO4lsAwtnJeT9iU/ylbACXKwGlVqdRleEIUKHH2xaRioxD5Fanae/3oac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 472F62B;
+	Tue, 16 Sep 2025 05:47:58 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DCCC3F673;
+	Tue, 16 Sep 2025 05:48:03 -0700 (PDT)
+Date: Tue, 16 Sep 2025 13:47:59 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
+ operation
+Message-ID: <aMlcf5oUNZU65u_I@J2N7QTR9R3.cambridge.arm.com>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-5-yeoreum.yun@arm.com>
+ <aMRQIeIdyiWVR8a0@arm.com>
+ <aMfrR0vserl/hfZ3@e129823.arm.com>
+ <aMhrscd1gz_syMtL@arm.com>
+ <aMh4q4-xAPHnaOul@willie-the-truck>
+ <aMkLb6jPiSbzeRWL@arm.com>
+ <aMk1qxS3htyaTgEQ@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] virtio_net: Fix alignment and avoid
- -Wflex-array-member-not-at-end warning
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Simon Horman <horms@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Akihiko Odaki <akihiko.odaki@daynix.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, virtualization@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aLiYrQGdGmaDTtLF@kspp> <20250904091315.GB372207@horms.kernel.org>
- <cac19beb-eefb-4a6a-9eec-b414199ce339@embeddedor.com>
- <20250904172951-mutt-send-email-mst@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20250904172951-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.7.52.72
-X-Source-L: No
-X-Exim-ID: 1uyV5n-00000003enU-2svP
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([172.30.86.44]) [185.7.52.72]:52888
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfH2uA1mVHNI5OppWAB69iErfZ8HrRcn0ivrM57ShWd30OYAwTyqlapDDxTygn3q8YJbMgUZNLonmTLoGaTcMOzPDnKf2gHNhUs8CJCet7HaH+sOj3ZBy
- Not/I4yUBDN7tiu2Cex/NIocyWUfvwsn4APV1GhWPOD53l/hj4MeSOzPy82uMUPKvnn4WTARPMmH36KSAOFizD1Fq7Qqkm9h4t+Iiijn7kG9cT2zkgU7e51X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMk1qxS3htyaTgEQ@e129823.arm.com>
 
-
-
-On 9/4/25 23:31, Michael S. Tsirkin wrote:
-> On Thu, Sep 04, 2025 at 08:53:31PM +0200, Gustavo A. R. Silva wrote:
->>
->>
->> On 9/4/25 11:13, Simon Horman wrote:
->>> On Wed, Sep 03, 2025 at 09:36:13PM +0200, Gustavo A. R. Silva wrote:
->>>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->>>> getting ready to enable it, globally.
->>>>
->>>> Use the new TRAILING_OVERLAP() helper to fix the following warning:
->>>>
->>>> drivers/net/virtio_net.c:429:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>>>
->>>> This helper creates a union between a flexible-array member (FAM)
->>>> and a set of members that would otherwise follow it (in this case
->>>> `u8 rss_hash_key_data[VIRTIO_NET_RSS_MAX_KEY_SIZE];`). This
->>>> overlays the trailing members (rss_hash_key_data) onto the FAM
->>>> (hash_key_data) while keeping the FAM and the start of MEMBERS aligned.
->>>> The static_assert() ensures this alignment remains, and it's
->>>> intentionally placed inmediately after `struct virtnet_info` (no
->>>> blank line in between).
->>>>
->>>> Notice that due to tail padding in flexible `struct
->>>> virtio_net_rss_config_trailer`, `rss_trailer.hash_key_data`
->>>> (at offset 83 in struct virtnet_info) and `rss_hash_key_data` (at
->>>> offset 84 in struct virtnet_info) are misaligned by one byte. See
->>>> below:
->>>>
->>>> struct virtio_net_rss_config_trailer {
->>>>           __le16                     max_tx_vq;            /*     0     2 */
->>>>           __u8                       hash_key_length;      /*     2     1 */
->>>>           __u8                       hash_key_data[];      /*     3     0 */
->>>>
->>>>           /* size: 4, cachelines: 1, members: 3 */
->>>>           /* padding: 1 */
->>>>           /* last cacheline: 4 bytes */
->>>> };
->>>>
->>>> struct virtnet_info {
->>>> ...
->>>>           struct virtio_net_rss_config_trailer rss_trailer; /*    80     4 */
->>>>
->>>>           /* XXX last struct has 1 byte of padding */
->>>>
->>>>           u8                         rss_hash_key_data[40]; /*    84    40 */
->>>> ...
->>>>           /* size: 832, cachelines: 13, members: 48 */
->>>>           /* sum members: 801, holes: 8, sum holes: 31 */
->>>>           /* paddings: 2, sum paddings: 5 */
->>>> };
->>>>
->>>> After changes, those members are correctly aligned at offset 795:
->>>>
->>>> struct virtnet_info {
->>>> ...
->>>>           union {
->>>>                   struct virtio_net_rss_config_trailer rss_trailer; /*   792     4 */
->>>>                   struct {
->>>>                           unsigned char __offset_to_hash_key_data[3]; /*   792     3 */
->>>>                           u8         rss_hash_key_data[40]; /*   795    40 */
->>>>                   };                                       /*   792    43 */
->>>>           };                                               /*   792    44 */
->>>> ...
->>>>           /* size: 840, cachelines: 14, members: 47 */
->>>>           /* sum members: 801, holes: 8, sum holes: 35 */
->>>>           /* padding: 4 */
->>>>           /* paddings: 1, sum paddings: 4 */
->>>>           /* last cacheline: 8 bytes */
->>>> };
->>>>
->>>> As a last note `struct virtio_net_rss_config_hdr *rss_hdr;` is also
->>>> moved to the end, since it seems those three members should stick
->>>> around together. :)
->>>>
->>>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->>>> ---
->>>>
->>>> This should probably include the following tag:
->>>>
->>>> 	Fixes: ed3100e90d0d ("virtio_net: Use new RSS config structs")
->>>>
->>>> but I'd like to hear some feedback, first.
->>>
->>> I tend to agree given that:
->>>
->>> On the one hand:
->>>
->>> 1) in virtnet_init_default_rss(), netdev_rss_key_fill() is used
->>>      to write random data to .rss_hash_key_data
->>>
->>> 2) In virtnet_set_rxfh() key data written to .rss_hash_key_data
->>>
->>> While
->>>
->>> 3) In virtnet_commit_rss_command() virtio_net_rss_config_trailer,
->>>      including the contents of .hash_key_data based on the length of
->>>      that data provided in .hash_key_length is copied.
->>>
->>> It seems to me that step 3 will include 1 byte of uninitialised data
->>> at the start of .hash_key_data. And, correspondingly, truncate
->>> .rss_hash_key_data by one byte.
->>>
->>> It's unclear to me what the effect of this - perhaps they key works
->>> regardless. But it doesn't seem intended. And while the result may be
->>> neutral, I do  suspect this reduces the quality of the key. And I more
->>> strongly suspect it doesn't have any positive outcome.
->>>
->>> So I would lean towards playing it safe and considering this as a bug.
->>>
->>> Of course, other's may have better insight as to the actual effect of this.
->>
->> Yeah, in the meantime I'll prepare v2 with both the 'Fixes' and 'stable'
->> tags.
->>
->> Thanks for the feedback!
->> -Gustavo
->>
->>
+On Tue, Sep 16, 2025 at 11:02:19AM +0100, Yeoreum Yun wrote:
+> Hi,
+> > On Mon, Sep 15, 2025 at 09:35:55PM +0100, Will Deacon wrote:
+> > > On Mon, Sep 15, 2025 at 08:40:33PM +0100, Catalin Marinas wrote:
+> > > > On Mon, Sep 15, 2025 at 11:32:39AM +0100, Yeoreum Yun wrote:
+> > > > > So I think it would be better to keep the current LLSC implementation
+> > > > > in LSUI.
+> > > >
+> > > > I think the code would look simpler with LL/SC but you can give it a try
+> > > > and post the code sample here (not in a new series).
+> > >
+> > > If you stick the cas*t instruction in its own helper say, cmpxchg_user(),
+> > > then you can do all the shifting/masking in C and I don't reckon it's
+> > > that bad. It means we (a) get rid of exclusives, which is the whole
+> > > point of this and (b) don't have to mess around with PAN.
+> >
+> > We get rid of PAN toggling already since FEAT_LSUI introduces
+> > LDTXR/STTXR. But, I'm all for CAS if it doesn't look too bad. Easier
+> > I think if we do a get_user() of a u64 and combine it with the futex u32
+> > while taking care of CPU endianness. All in a loop. Hopefully the
+> > compiler is smart enough to reduce masking/or'ing to fewer instructions.
+> >
 > 
+> Sorry for my wrong previous email.
 > 
-> I agree. It looks like that commit completely broke RSS
-> configuration. Akihiko do you mind sharing how that was
-> tested? Maybe help testing the fix? Thanks!
+> Here is what i intened with CAS operation:
+> 
+> diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+> index 1d6d9f856ac5..0aeda7ced2c0 100644
+> --- a/arch/arm64/include/asm/futex.h
+> +++ b/arch/arm64/include/asm/futex.h
+> @@ -126,6 +126,60 @@ LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
+>  LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
+>  LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
+> 
+> +
+> +#define LSUI_CMPXCHG_HELPER(suffix, start_bit)                                 \
+> +static __always_inline int                                                     \
+> +__lsui_cmpxchg_helper_##suffix(u64 __user *uaddr, u32 oldval, u32 newval)      \
+> +{                                                                              \
+> +       int ret = 0;                                                            \
+> +       u64 oval, nval, tmp;                                                    \
+> +                                                                               \
+> +       asm volatile("//__lsui_cmpxchg_helper_" #suffix "\n"                    \
+> +       __LSUI_PREAMBLE                                                         \
+> +"      prfm    pstl1strm, %2\n"                                                \
+> +"1:    ldtr    %x1, %2\n"                                                      \
+> +"      mov     %x3, %x1\n"                                                     \
+> +"      bfi     %x1, %x5, #" #start_bit ", #32\n"                               \
+> +"      bfi     %x3, %x6, #" #start_bit ", #32\n"                               \
+> +"      mov     %x4, %x1\n"                                                     \
+> +"2:    caslt   %x1, %x3, %2\n"                                                 \
+> +"      sub     %x1, %x1, %x4\n"                                                \
+> +"      cbz     %x1, 3f\n"                                                      \
+> +"      mov     %w0, %w7\n"                                                     \
+> +"3:\n"                                                                         \
+> +"      dmb     ish\n"                                                          \
+> +"4:\n"                                                                         \
+> +       _ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0)                                   \
+> +       _ASM_EXTABLE_UACCESS_ERR(2b, 4b, %w0)                                   \
+> +       : "+r" (ret), "=&r" (oval), "+Q" (*uaddr), "=&r" (nval), "=&r" (tmp)    \
+> +       : "r" (oldval), "r" (newval), "Ir" (-EAGAIN)                            \
+> +       : "memory");                                                            \
+> +                                                                               \
+> +       return ret;                                                             \
+> +}
+> +
+> +LSUI_CMPXCHG_HELPER(lo, 0)
+> +LSUI_CMPXCHG_HELPER(hi, 32)
+> +
+> +static __always_inline int
+> +__lsui_cmpxchg_helper(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+> +{
+> +       int ret;
+> +       unsigned long uaddr_al;
+> +
+> +       uaddr_al = ALIGN_DOWN((unsigned long)uaddr, sizeof(u64));
+> +
+> +       if (uaddr_al != (unsigned long)uaddr)
+> +               ret = __lsui_cmpxchg_helper_hi((u64 __user *)uaddr_al, oldval, newval);
+> +       else
+> +               ret = __lsui_cmpxchg_helper_lo((u64 __user *)uaddr_al, oldval, newval);
+> +
+> +       if (!ret)
+> +               *oval = oldval;
+> +
+> +       return ret;
+> +}
 
-I've been waiting for Akihiko's comments on this, but I
-guess I'll now go ahead and submit v2 with the Fixes and
-stable tags included.
+I think Will expects that you do more of this in C, e.g. have a basic
+user cmpxchg on a 64-bit type, e.g.
 
-Thanks for the feedback, Michael.
+/*
+ * NOTE: *oldp is NOT updated if a fault is taken.
+ */
+static __always_inline int
+user_cmpxchg64_release(u64 __usr *addr, u64 *oldp, u64 new)
+{
+	int err = 0;
 
--Gustavo
+	asm volatile(
+	__LSUI_PREAMBLE
+	"1:	caslt	%x[old], %x[new], %[addr]\n"
+	"2:\n"
+	_ASM_EXTABLE_UACCESS_ERR(1b, 4b, %w0) 
+	: [addr] "+Q" (addr),
+	  [old] "+r" (*oldp)
+	: [new] "r" (new)
+	: "memory"
+	);
+
+	return err;
+}
+
+That should be the *only* assembly you need to implement.
+
+Atop that, have a wrapper that uses get_user() and that helper above to
+implement the 32-bit user cmpxchg, with all the bit manipulation in C:
+
+/*
+ * NOTE: *oldp is NOT updated if a fault is taken.
+ */
+static int user_cmpxchg32_release(u32 __user *addr, u32 *oldp, u32 new)
+{
+	u64 __user *addr64 = PTR_ALIGN_DOWN(addr, sizeof(u64));
+	u64 old64, new64;
+	int ret;
+
+	if (get_user(old64, uaddr64))
+		return -EFAULT;
+
+	/*
+	 * TODO: merge '*oldp' into 'old64', and 'new' into 'new64',
+	 * taking into account endianness and alignment
+	 */
+
+	ret = user_cmpxchg64_release(uaddr64, &old64, new64);
+	if (ret)
+		return ret;
+
+	/*
+	 * TODO: extract '*oldp' from 'old64', taking into account
+	 * endianness and alignment.
+	 */
+
+	return 0;
+}
+
+Then use that 32-bit user cmpxchg for any cases which need it.
+
+As the compiler will have visiblity of all of the bit manipulation, it
+will hopefully be able to fold that together appropriately.
+
+Mark.
 
