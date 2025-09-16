@@ -1,160 +1,91 @@
-Return-Path: <linux-kernel+bounces-819079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B99B59AED
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:55:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34E7B59B09
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F843A07D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:55:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F06C4603E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995623191B9;
-	Tue, 16 Sep 2025 14:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4F333EB1C;
+	Tue, 16 Sep 2025 14:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABAuFL4i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8BnDxmd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B1E43147;
-	Tue, 16 Sep 2025 14:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BCA21CA02
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758034502; cv=none; b=dD1TmoyCGWG3q2goLaE1astu8scJmCvy3BvPPJIY2+vNUqrAMwO64lNuSHQj/pHxLJxwpgYvPM/wUCaq/9mX8duxFt62ntsoPNCzSAhMbDDt/ZJNE7aynK3dxjeambu2sIMVMLSJRJ6lJVQ9FuTa6mThz+/Dax3DFl7GcUIXXZc=
+	t=1758034525; cv=none; b=XZywTIUsfywO1t/KRL6eCsb0YOLKRGMLYXl4n5WrKnUQAlRRy2Qrwmc0Q1zsievXuysnU+/P6r7v8XfoChCcY+qa7OTJ+Iio9snhrs27dIXvyIgk2XiaP4e02V33hZBupHsFmpyw9uTdz+6QRqQ1afiT61IbTJT8PLgfOTJVfG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758034502; c=relaxed/simple;
-	bh=DUMnhP3cZuk8gcAnDo/SGtQVimDnEe99wMrbQBW2Yyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odgl3zhtVhAlKtigu3f+1Aa/YwdUo1aJDcmHXdKmuaS8OWQKyd2bs6kpX5cCE9brLq+HkdOwE32QrsvswbO5qp89X38HZbgfhga0CdHbzI4o+/VMqScuve3NFV5ezifTmMI5HsaBFPcKgY64xekECdqE39a++/qV11/RAmwK25A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABAuFL4i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07669C4CEEB;
-	Tue, 16 Sep 2025 14:54:58 +0000 (UTC)
+	s=arc-20240116; t=1758034525; c=relaxed/simple;
+	bh=+h0GgC3LWghF6oM5gQKsTZ5ZQF+Tvm787123O9K2VnI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S+KEt8+U7J2tDDJkS3aZ6m9V7isM+wEsDivz8Y7i4pm/hxToA5RgNiQN0w1ibFEd/k/ygB9auST06maMkMgKLacPAL1JbjRtvcRHBkFb0DISsGmpD+HGXPiQJQWSWXZ14cLakwBxvs3RL7sxi+Yo0DhiRLqJpZ8qjX/Pfol26Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8BnDxmd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B12B7C4CEEB;
+	Tue, 16 Sep 2025 14:55:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758034501;
-	bh=DUMnhP3cZuk8gcAnDo/SGtQVimDnEe99wMrbQBW2Yyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ABAuFL4iXSsJZkjLwzgXKpIlYFNUqnKqUjcRpOPiCxZi3TnU0nvZNP3V4mTGQ0F4L
-	 jbal0NlhgdJu+ChOQg/YMACVUGxUwx8oueZIEqmYS3an3lvpT7N4cQPj71+0oV8WQZ
-	 oFiusvf1TmHGciCqVKAfSwB74gmhaQuvhBE0CQf74Q4tG7O6WYIQ+CZUc9XA/nchaM
-	 fvo8iDCVyVqt/dJnPEygKRLtEKKX2qBDbObl/ipnKkSEZ1jA3Mv+8JzDvy1SSBpMkT
-	 4kaawzpzsKTNi3path/QT2YNDrhhXlMRHvbDGLKqm49wnGH2DQwROdpyO5TaGuCmjN
-	 CbvGuPo/ApxrA==
-Date: Tue, 16 Sep 2025 15:54:57 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
-	vikas.gupta@broadcom.com,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: Re: [v7, net-next 03/10] bng_en: Add initial support for CP and NQ
- rings
-Message-ID: <20250916145457.GH224143@horms.kernel.org>
-References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
- <20250911193505.24068-4-bhargava.marreddy@broadcom.com>
+	s=k20201202; t=1758034524;
+	bh=+h0GgC3LWghF6oM5gQKsTZ5ZQF+Tvm787123O9K2VnI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=F8BnDxmdN1uLoWQamCkXCpbCbGajjH+Z+Eg8tkf1UcJKxqTTVmOev//JQa5hWNpwQ
+	 i8HcFmF6APK2Li5miaU/G5IkGv+kmRhTGx+ussnfLk7X83mGUzB2bwKyvgUGg8cW/q
+	 baII0v+rlbsJ2MwA1IYCgdvx+L6RRPiwlvJHlIts93SEPz8bytiW7lMKzjLSVjDuXW
+	 PMWCX2Iv1vzFPsDTHZ+b135cCz/pXlvVTtbp8b1O2yccMTIyYK9VrmtEQ0aRldQv69
+	 77xlzKdpRw3QPhyd18JUFu2d1oKDWMhgxpWtzgxjeSQYpXtFFeYOGSYfhjyMjKqLdu
+	 50PtUC1KkbM3w==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Alexander Graf <graf@amazon.com>,
+  Changyuan Lyu <changyuanl@google.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Baoquan He <bhe@redhat.com>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  Jason Gunthorpe <jgg@nvidia.com>,  Chris Li
+ <chrisl@kernel.org>,  Jason Miu <jasonmiu@google.com>,
+  linux-kernel@vger.kernel.org,  kexec@lists.infradead.org,
+  linux-mm@kvack.org
+Subject: Re: [PATCH] kho: make sure folio being restored is actually from KHO
+In-Reply-To: <aMl2H3BLpH3xFCOw@kernel.org>
+References: <20250910153443.95049-1-pratyush@kernel.org>
+	<aMl2H3BLpH3xFCOw@kernel.org>
+Date: Tue, 16 Sep 2025 16:55:21 +0200
+Message-ID: <mafs0h5x2h2g6.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911193505.24068-4-bhargava.marreddy@broadcom.com>
+Content-Type: text/plain
 
-On Fri, Sep 12, 2025 at 01:04:58AM +0530, Bhargava Marreddy wrote:
-> Allocate CP and NQ related data structures and add support to
-> associate NQ and CQ rings. Also, add the association of NQ, NAPI,
-> and interrupts.
-> 
-> Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-> Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
-> Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
+On Tue, Sep 16 2025, Mike Rapoport wrote:
 
-...
+> On Wed, Sep 10, 2025 at 05:34:40PM +0200, Pratyush Yadav wrote:
+>> When restoring a folio using kho_restore_folio(), no sanity checks are
+>> done to make sure the folio actually came from a kexec handover. The
+>> caller is trusted to pass in the right address. If the caller has a bug
+>> and passes in a wrong address, an in-use folio might be "restored" and
+>> returned, causing all sorts of memory corruption.
+>> 
+>> Harden the folio restore logic by stashing in a magic number in
+>> page->private along with the folio order. If the magic number does not
+>> match, the folio won't be touched. page->private is an unsigned long.
+>> The union kho_page_info splits it into two parts, with one holding the
+>> order and the other holding the magic number.
+>
+> I think the sanity checks belongs to the core kho_restore_page() function
+> and kho_restore_folio() should be a thin wrapper for that, at least until
+> we'd need to allocate struct folio there.
 
-> +static int bnge_alloc_nq_tree(struct bnge_net *bn)
-> +{
-> +	int i, j, ulp_msix, rc = -ENOMEM;
-> +	struct bnge_dev *bd = bn->bd;
-> +	int tcs = 1;
-> +
-> +	ulp_msix = bnge_aux_get_msix(bd);
-> +	for (i = 0, j = 0; i < bd->nq_nr_rings; i++) {
-> +		bool sh = !!(bd->flags & BNGE_EN_SHARED_CHNL);
-> +		struct bnge_napi *bnapi = bn->bnapi[i];
-> +		struct bnge_nq_ring_info *nqr;
-> +		struct bnge_cp_ring_info *cpr;
-> +		struct bnge_ring_struct *ring;
-> +		int cp_count = 0, k;
-> +		int rx = 0, tx = 0;
-> +
-> +		nqr = &bnapi->nq_ring;
-> +		nqr->bnapi = bnapi;
-> +		ring = &nqr->ring_struct;
-> +
-> +		rc = bnge_alloc_ring(bd, &ring->ring_mem);
-> +		if (rc)
-> +			goto err_free_nq_tree;
-> +
-> +		ring->map_idx = ulp_msix + i;
-> +
-> +		if (i < bd->rx_nr_rings) {
-> +			cp_count++;
-> +			rx = 1;
-> +		}
-> +
-> +		if ((sh && i < bd->tx_nr_rings) ||
-> +		    (!sh && i >= bd->rx_nr_rings)) {
-> +			cp_count += tcs;
-> +			tx = 1;
-> +		}
-> +
-> +		nqr->cp_ring_arr = kcalloc(cp_count, sizeof(*cpr),
-> +					   GFP_KERNEL);
-> +		if (!nqr->cp_ring_arr)
+Hmm, okay. I can do that for the next version.
 
-I think that rc should be set to a negative return value, say -ENOMEM,
-here. The function returns rc. And as is, rc is 0 at this point.
-
-Flagged by Smatch.
-
-> +			goto err_free_nq_tree;
-> +
-> +		nqr->cp_ring_count = cp_count;
-> +
-> +		for (k = 0; k < cp_count; k++) {
-> +			cpr = &nqr->cp_ring_arr[k];
-> +			rc = alloc_one_cp_ring(bn, cpr);
-> +			if (rc)
-> +				goto err_free_nq_tree;
-> +
-> +			cpr->bnapi = bnapi;
-> +			cpr->cp_idx = k;
-> +			if (!k && rx) {
-> +				bn->rx_ring[i].rx_cpr = cpr;
-> +				cpr->cp_ring_type = BNGE_NQ_HDL_TYPE_RX;
-> +			} else {
-> +				int n, tc = k - rx;
-> +
-> +				n = BNGE_TC_TO_RING_BASE(bd, tc) + j;
-> +				bn->tx_ring[n].tx_cpr = cpr;
-> +				cpr->cp_ring_type = BNGE_NQ_HDL_TYPE_TX;
-> +			}
-> +		}
-> +		if (tx)
-> +			j++;
-> +	}
-> +	return 0;
-> +
-> +err_free_nq_tree:
-> +	bnge_free_nq_tree(bn);
-> +	return rc;
-> +}
-> +
->  static bool bnge_separate_head_pool(struct bnge_rx_ring_info *rxr)
->  {
->  	return rxr->need_head_pool || PAGE_SIZE > BNGE_RX_PAGE_SIZE;
+-- 
+Regards,
+Pratyush Yadav
 
