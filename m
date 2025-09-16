@@ -1,256 +1,165 @@
-Return-Path: <linux-kernel+bounces-819515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95038B5A1E0
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF0DB5A1E1
 	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 996AD327183
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8601BC786F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BF72DC775;
-	Tue, 16 Sep 2025 20:08:33 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83722E7165;
+	Tue, 16 Sep 2025 20:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zIsO8RsE"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB422DBF43
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8272DE1E3
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758053312; cv=none; b=f8gZ3sTTt0cMNYqXVJ2ZkS3XMLu8zUIRxAbZRBLsRUDQUpq8Y1mBO50yBmtoy4r36Ipwrqtnq6I+AqslSHMV8mswvC6M4PLvg3i4pfyh1yN9TggSRygYt3+xD3/Tyai5ceC7mKSGIVPNmecGlx+3YfT64XBKjDtOs0uggVf/D/o=
+	t=1758053324; cv=none; b=PqELe3qWXj7hy8vghmmV5GjEpR5n29zxKIiAMpo1ZMKW3eCBbBgGLkIXNFz/SQq32wXNnNuDILjfPWBLzhxBG8iRTQ6z5U3igEyGM01KvKJ9PXqoThWEUPmHIADOYlHuT68ZjygxT4B95D77pJ7Ol+r+QkPd+EBSiwAWRKr13sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758053312; c=relaxed/simple;
-	bh=+VbOzmMwhChUFxAZ7NkPIust3f3E44H4BRbQcZAgMW0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ssdxsTg/hWhR8ZPPxgcaT+aKY3UbYnXo7FM2P/XKFnHrfjnhjLfBeki9J3T7g5dPEX6yWgDw4I5lK3677G6C88QEVOcSMsGJFVzKlTPgQzh1pFkLgg+PHEYvrpuH/Q8oG2z4F3HRpRA7ftEZRNu8pW4YQrJBnApXgYRMTvceOwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-424122ae369so23714515ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:08:30 -0700 (PDT)
+	s=arc-20240116; t=1758053324; c=relaxed/simple;
+	bh=G6CklpEIQ7Jb943ATNScD0+tWQkQ7nBD/btfivKvGhA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f5HylhJnWjVQQ9L2ikp8tE+lDOzyZYMxWO433/1DQAdQNUBZH7dd5Dc1uwYttzqXFKMy5KgkY7LTzWjIaSGdjOEi4czVvOMNe3uVbSGhhAksvodVnHRreXZ2u3FQpMnFcbub8xHp2E9gC5Q/6J+W0/edWRBLtQum6Bvhjys8dDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zIsO8RsE; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-265abad93bfso42445ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758053321; x=1758658121; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x9Lkzd2qHU0WJpoFh7WhpO5uCyrQhSbia0bX3ioP2o8=;
+        b=zIsO8RsEJUD145hvelYKaRsx+Qzp3myczur3fTapMhPMe8OLfWYGEiqq+GcZGCrZbh
+         6t2PEOuPETyirK648hJm39rPPifyTwFGUkvxjnXUx+6x7ySOVRPYM3RsNrUqR/1eP9Xs
+         IT1EYvr8SVx5HImaqGGOixVUpRYlu0fblK6fLIyEermjTwmzKjetgRXUhLJAnq9e6jLr
+         ViZMKxZ+ER0UVe1W6adZTxDTdi0t5hdouLsnkKJpGq93pgRVet6eQqE8aMfV1qs7SekM
+         6dhu9MdNDUF/n+arUEFaJlawiZmrobf8Oa+9uqwKRTSc7qFjzy+KhkCh4LHgwSI8y8M1
+         RsXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758053309; x=1758658109;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GJsA9OZjGr8DbvBujYNFSUu+r6i18upHMvEVi8Iu7o4=;
-        b=ZhoY/7pvKGmNFBVDuIJ+4jwIVzr+WIwH01kzta7QWOWMk2Lgf70yg3Nan+Lbass13O
-         e7WPY03ltNZx3TSSnv/hNCZHmxoqhs5GZ1MP4YIjiD1JHuBArlqtIuU/XbUrqPHOA7K7
-         CIng4MvV2QR5ChXYzhEbriMjIC+8i4Hcax3PGNTL741+guOfp615PJlvW16vuvE53yCH
-         caib50lR2hY0yAqHoy92tahfp0OAdV9lmYlqkPM26uBTDOuEiarJGf0D/QkloT+mZSQt
-         Tt/4WXMX4QC4L62v7nYYc89mwSGbaNufqio1jER1xvvFcC/ySGi0rUQHn7Wb81OKbW3E
-         TGfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVD4E2AbnG30GnSed5zx+aBDm42o+GSqgnSfRQWjcAPQ5uo2yDO1ZRyJokcRd4ZM+t9lepp7E+rup+sc8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF+LOnoL89SpLyQAHu19TfSZ3Jh60TKscsPIxW9Rk28lYeOMRH
-	MF58A63/yD3bI9QscOIm8xrMBa7YI7DNjcG8sSo0eOeLpLe8GQZWyssbZkHzwg9H7q2+oNZSlMA
-	0VDi46V9skPMwe4Ybow2y4aeMUr+vZ896Qf7qRxWrOKvkWwp/X6dtYPPNx3M=
-X-Google-Smtp-Source: AGHT+IED0AkiLTjhjufPfprbW49u9ynQdGZp++3d8CFWvG6ir58nhui1QCotT8b6s6wMU2y4Z5EdFBjI6G34x++CVH7FGnxvU5Ni
+        d=1e100.net; s=20230601; t=1758053321; x=1758658121;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x9Lkzd2qHU0WJpoFh7WhpO5uCyrQhSbia0bX3ioP2o8=;
+        b=bM+BN3HXwu0S+903B3bX/NSbG8hYSbPeJeo60/63+ZasEYAv359W2jJRD8gAu2oOfH
+         K06il3M3PRnEPFNrL5zsWMC60/3K+FCnCvVUwO+KOWgC06mmvDBGy0R2zUfY2sXFsWPq
+         t8Cq8EpvMNNsGGwzTiMDJ3P/D1Z0RtwP6d8fYmJ7TDuFr6saLSVMQOCWgYYYJRFO9PoH
+         wuA+rU7/+h8d3D1MRQ+vUxH1dkl4jmlYYocJF/zeizhKej/PjBbdcQMiw8U4gOEfV3OS
+         s0MFy5wO864vjGDLEIF7/wC02Y35Oz9YNV/MnO3Irtj/h7rYaMGgDtoSGtWghP7rcNsc
+         js2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPk8HW7LOBYq/zSnnpVUnR6B+Je5goCRwGIHFo6QOEQn2qK8/Ykzo+amgDkQJ6K3PqjUg9Q5OKqgknZ7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKBYWPwyheqkQHjZ6ed5LAYu7xOMrgwb0kA8ZNgAqkbH4fn8xk
+	dDt4eCdPy9Ixd+jSWVKhLoXA39DMxE+ZT6n58tpLUWuqitfyATIadrqpGiDk0b7tkaDwTeKGM6G
+	+UYxLgBAgc9yW/TfLuq7k6rfEjJOnoyODYJnvhiZ7
+X-Gm-Gg: ASbGncvCXOYIb6i72V+3NmgtI6evVRA9KIiTAhFqxT7lyWt++L614Tcnn7TgnTsMEzn
+	R4/nhp0KeS/ykU4GWGlFB52FfAAQdFOWrSOWzCHcdXNXv0dtORn+Y7ujLuXXHCRMT1/YV8EO+pE
+	Em5Tmjhz3Ht+eXqfxSYJZ7+NaPpg+WL2Na6YGyJZ7VOjYXYfZSPKr/BCwrGwuNuMpi6Vx1l4746
+	EMWbYq2UBvgqS9DE8GJWIC0+rs1XXEFYQZ/iIbCCEi5V1Uxx1s=
+X-Google-Smtp-Source: AGHT+IHB+zIC9M5csK1y9pYvqYGZ9e1a8g5vFs0VSlYor4LBlSAEw+sh6AmBy5K67UD64uBbR+RJ2cXCghc/d1plz/M=
+X-Received: by 2002:a17:902:d2c9:b0:266:b8a2:f605 with SMTP id
+ d9443c01a7336-26808a2fc00mr122185ad.3.1758053321270; Tue, 16 Sep 2025
+ 13:08:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1986:b0:410:f09a:28a6 with SMTP id
- e9e14a558f8ab-4209e64b594mr197212455ab.13.1758053309576; Tue, 16 Sep 2025
- 13:08:29 -0700 (PDT)
+References: <20250915163838.631445-1-kaleshsingh@google.com>
+ <20250915163838.631445-8-kaleshsingh@google.com> <20250915194158.472edea5@gandalf.local.home>
+ <CAC_TJvconNNKPboAbsfXFBboiRCYgE2AN23ask1gdaj9=wuHAQ@mail.gmail.com>
+ <20250916115220.4a90c745@batman.local.home> <CAC_TJvdkVPcw+aKEjUOmTjwYfe8BevR51X_JPOo69hWSQ1MGcw@mail.gmail.com>
+ <20250916134833.281e7f8b@gandalf.local.home> <CAC_TJvc6aqjBRZ05wyGb49AU+-aKpSph=ZSk3fdV2xraXi-_nQ@mail.gmail.com>
+ <20250916140245.5894a2aa@gandalf.local.home> <CAC_TJvfAQDiL9PydWnKE6TDMcCzw0xrsLMZVZLe6eO0R1LODhA@mail.gmail.com>
+ <20250916145146.046f56a8@batman.local.home>
+In-Reply-To: <20250916145146.046f56a8@batman.local.home>
+From: Kalesh Singh <kaleshsingh@google.com>
 Date: Tue, 16 Sep 2025 13:08:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c9c3bd.050a0220.3c6139.0e65.GAE@google.com>
-Subject: [syzbot] [ext4?] INFO: rcu detected stall in ext4_file_mmap_prepare
-From: syzbot <syzbot+fc241a3fa60015afb3d1@syzkaller.appspotmail.com>
-To: jack@suse.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+X-Gm-Features: AS18NWCVdunjcrUP7tBqVqoMShUmOYlO_Ndh14lC0p7nbWIxXHPwlnQ10YTDEow
+Message-ID: <CAC_TJvc2MwQHvY_ry=a4CGA_zEw2TE8R_K520Eizjt83At0N_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] mm/tracing: introduce max_vma_count_exceeded trace event
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
+	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de, 
+	kernel-team@android.com, android-mm@google.com, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Sep 16, 2025 at 11:51=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+>
+> On Tue, 16 Sep 2025 11:23:03 -0700
+> Kalesh Singh <kaleshsingh@google.com> wrote:
+>
+> > > When it comes to tracing, you already lost. If it goes into the ring =
+buffer
+> > > it's a raw pointer. BPF doesn't use the output of the trace event, so=
+ you
+> > > are exposing nothing from that. It uses the proto directly.
+> >
+> > My understanding is that the BPF tracepoint type uses the trace event
+> > fields from TP_STRUCT__entry(); whereas the raw tracepoint type has
+> > access to the proto arguments. Please CMIW: Isn't what we'd be adding
+> > to the trace buffer is the hashed mm_id value?
+>
+> Ah, right. Can't the BPF infrastructure protect against it?
+>
+> >
+> > >
+> > > Heck, if you enable function tracing, you are exposing every function
+> > > address it traces via the raw data output.
+> >
+> > Right, security doesn't allow compiling CONFIG_FUNCTION_TRACER  in
+> > Android production kernels.
+>
+> Does it block all the other trace events that share pointers?
+>
+> Like nmi handler tracepoints, x86_fpu tracepoints, page_fault kernel
+> tracepoint, tasklet tracepoints, cpu hot plug tracepoints, timer
+> tracepoints, work queue tracepoints, ipi tracepoints, scheduling
+> tracepoints, locking tracepoints, rcu tracepoints, dma tracepoints,
+> module tracepoints, xdp tracepoints, filemap tracepoints, page map
+> tracepoints, vmscan tracepoints, percpu tracepoints, kmem_cache
+> tracepoints, mmap lock tracepoints, file lock tracepoints, and many
+> more! (I got tired of looking them up).
 
-syzbot found the following issue on:
+Hi Steve,
 
-HEAD commit:    c3067c2c3831 Add linux-next specific files for 20250915
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15464e42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e269dbc7717119a2
-dashboard link: https://syzkaller.appspot.com/bug?extid=fc241a3fa60015afb3d1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d7b47c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d7b47c580000
+I see your point :)  I'll use the raw pointer and handle not exposing
+it from the BPF side.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/753ebccc7349/disk-c3067c2c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/62984b0c436c/vmlinux-c3067c2c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/301e0d2bfc64/bzImage-c3067c2c.xz
+Thanks for discussing.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fc241a3fa60015afb3d1@syzkaller.appspotmail.com
+--Kalesh
 
-sched: DL replenish lagged too much
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	1-...!: (1 GPs behind) idle=3aa4/1/0x4000000000000000 softirq=15601/15602 fqs=59
-rcu: 	(detected by 0, t=10505 jiffies, g=10297, q=397 ncpus=2)
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 6042 Comm: sed Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__lock_acquire+0x870/0xd20 kernel/locking/lockdep.c:5232
-Code: f0 41 89 cf 41 c1 c7 13 29 ce 41 31 f7 01 c1 44 29 f8 44 01 f9 41 c1 c7 04 41 31 c7 49 c1 e7 20 49 09 cf 83 3d e4 f0 26 0e 00 <0f> 85 36 02 00 00 48 83 7c 24 28 00 0f 84 bc 01 00 00 41 8b 46 f8
-RSP: 0018:ffffc90000a08b70 EFLAGS: 00000046
-RAX: 00000000d6871fb1 RBX: 0000000000000003 RCX: 0000000079909773
-RDX: 00000000001caf3d RSI: 00000000afae91f8 RDI: ffff88802c3c3c80
-RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff81adbfa2
-R10: dffffc0000000000 R11: fffffbfff1f88787 R12: 0000000000000073
-R13: ffff88802c3c47b0 R14: ffff88802c3c4828 R15: 4346289379909773
-FS:  0000000000000000(0000) GS:ffff888125ae0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc34ea224e8 CR3: 00000000720e8000 CR4: 00000000003526f0
-Call Trace:
- <IRQ>
- lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0xa2/0xf0 kernel/locking/spinlock.c:170
- __run_hrtimer kernel/time/hrtimer.c:1781 [inline]
- __hrtimer_run_queues+0x602/0xc60 kernel/time/hrtimer.c:1841
- hrtimer_interrupt+0x45b/0xaa0 kernel/time/hrtimer.c:1903
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1041 [inline]
- __sysvec_apic_timer_interrupt+0x10b/0x410 arch/x86/kernel/apic/apic.c:1058
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1052 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1052
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:697
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa8/0x110 kernel/locking/spinlock.c:194
-Code: 74 05 e8 db e5 40 f6 48 c7 44 24 20 00 00 00 00 9c 8f 44 24 20 f6 44 24 21 02 75 4f f7 c3 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> f3 7c 09 f6 65 8b 05 ac 68 3d 07 85 c0 74 40 48 c7 04 24 0e 36
-RSP: 0018:ffffc90002ef6fa0 EFLAGS: 00000206
-RAX: c40c4dc7bc3a9000 RBX: 0000000000000a02 RCX: c40c4dc7bc3a9000
-RDX: 0000000000000007 RSI: ffffffff8dbc0fba RDI: 0000000000000001
-RBP: ffffc90002ef7028 R08: ffffffff8fc43c37 R09: 1ffffffff1f88786
-R10: dffffc0000000000 R11: fffffbfff1f88787 R12: dffffc0000000000
-R13: 0000000000000d40 R14: ffffffff8eae95b0 R15: 1ffff920005dedf4
- stack_depot_save_flags+0x41b/0x860 lib/stackdepot.c:720
- kasan_save_stack mm/kasan/common.c:57 [inline]
- kasan_save_track+0x4f/0x80 mm/kasan/common.c:77
- unpoison_slab_object mm/kasan/common.c:342 [inline]
- __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:368
- kasan_slab_alloc include/linux/kasan.h:252 [inline]
- slab_post_alloc_hook mm/slub.c:4927 [inline]
- slab_alloc_node mm/slub.c:5226 [inline]
- kmem_cache_alloc_noprof+0x367/0x6e0 mm/slub.c:5233
- journal_alloc_journal_head fs/jbd2/journal.c:2826 [inline]
- jbd2_journal_add_journal_head+0x95/0x4b0 fs/jbd2/journal.c:2894
- jbd2_journal_get_write_access+0x1c9/0x230 fs/jbd2/transaction.c:1237
- __ext4_journal_get_write_access+0x1c3/0x570 fs/ext4/ext4_jbd2.c:242
- ext4_reserve_inode_write+0x294/0x360 fs/ext4/inode.c:6326
- __ext4_mark_inode_dirty+0x15b/0x700 fs/ext4/inode.c:6501
- ext4_dirty_inode+0xd0/0x110 fs/ext4/inode.c:6538
- __mark_inode_dirty+0x2ec/0xe10 fs/fs-writeback.c:2567
- generic_update_time fs/inode.c:2087 [inline]
- inode_update_time fs/inode.c:2100 [inline]
- touch_atime+0x59b/0x6d0 fs/inode.c:2172
- file_accessed include/linux/fs.h:2675 [inline]
- ext4_file_mmap_prepare+0x24d/0x440 fs/ext4/file.c:828
- vfs_mmap_prepare include/linux/fs.h:2412 [inline]
- call_mmap_prepare mm/vma.c:2593 [inline]
- __mmap_region mm/vma.c:2671 [inline]
- mmap_region+0xb38/0x1c70 mm/vma.c:2764
- do_mmap+0xc45/0x10d0 mm/mmap.c:558
- vm_mmap_pgoff+0x2a6/0x4d0 mm/util.c:580
- ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:604
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc34ea53242
-Code: 08 00 04 00 00 eb e2 90 41 f7 c1 ff 0f 00 00 75 27 55 89 cd 53 48 89 fb 48 85 ff 74 33 41 89 ea 48 89 df b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5e 5b 5d c3 0f 1f 00 c7 05 46 40 01 00 16 00
-RSP: 002b:00007ffc758046c8 EFLAGS: 00000206 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007fc34e7ad000 RCX: 00007fc34ea53242
-RDX: 0000000000000005 RSI: 000000000014e000 RDI: 00007fc34e7ad000
-RBP: 0000000000000812 R08: 0000000000000003 R09: 0000000000028000
-R10: 0000000000000812 R11: 0000000000000206 R12: 00007ffc75804718
-R13: 00007fc34ea275f0 R14: 00007ffc75804f00 R15: 00000fff8eb008dc
- </TASK>
-rcu: rcu_preempt kthread starved for 10210 jiffies! g10297 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:26696 pid:16    tgid:16    ppid:2      task_flags:0x208040 flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5360 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6964
- __schedule_loop kernel/sched/core.c:7046 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7061
- schedule_timeout+0x12b/0x270 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x301/0x1540 kernel/rcu/tree.c:2083
- rcu_gp_kthread+0x99/0x390 kernel/rcu/tree.c:2285
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 0 UID: 0 PID: 5873 Comm: udevd Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:csd_lock_wait kernel/smp.c:342 [inline]
-RIP: 0010:smp_call_function_many_cond+0xd33/0x12d0 kernel/smp.c:877
-Code: 45 8b 2c 24 44 89 ee 83 e6 01 31 ff e8 e6 7f 0b 00 41 83 e5 01 49 bd 00 00 00 00 00 fc ff df 75 07 e8 91 7b 0b 00 eb 38 f3 90 <42> 0f b6 04 2b 84 c0 75 11 41 f7 04 24 01 00 00 00 74 1e e8 75 7b
-RSP: 0000:ffffc900039f7700 EFLAGS: 00000293
-RAX: ffffffff81b457ab RBX: 1ffff110170e8005 RCX: ffff88801ffb1e40
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc900039f7880 R08: ffffffff8fc43c37 R09: 1ffffffff1f88786
-R10: dffffc0000000000 R11: fffffbfff1f88787 R12: ffff8880b8740028
-R13: dffffc0000000000 R14: ffff8880b863b240 R15: 0000000000000001
-FS:  00007f45a83bc880(0000) GS:ffff8881259e0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005593b3898568 CR3: 000000007210a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1044
- __flush_tlb_multi arch/x86/include/asm/paravirt.h:91 [inline]
- flush_tlb_multi arch/x86/mm/tlb.c:1361 [inline]
- flush_tlb_mm_range+0x6b1/0x12d0 arch/x86/mm/tlb.c:1451
- flush_tlb_page arch/x86/include/asm/tlbflush.h:324 [inline]
- ptep_clear_flush+0x120/0x170 mm/pgtable-generic.c:101
- wp_page_copy mm/memory.c:3780 [inline]
- do_wp_page+0x1bc2/0x5800 mm/memory.c:4175
- handle_pte_fault mm/memory.c:6233 [inline]
- __handle_mm_fault+0x102e/0x5440 mm/memory.c:6360
- handle_mm_fault+0x40a/0x8e0 mm/memory.c:6529
- do_user_addr_fault+0xa81/0x1390 arch/x86/mm/fault.c:1336
- handle_page_fault arch/x86/mm/fault.c:1476 [inline]
- exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
-RIP: 0033:0x7f45a7cb5b69
-Code: 10 48 81 f9 ff 03 00 00 76 28 48 8b 57 20 48 85 d2 74 1f 48 3b 7a 28 75 76 48 8b 4f 28 48 3b 79 20 75 6c 48 83 78 20 00 74 17 <48> 89 4a 28 48 89 51 20 48 83 c4 08 c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffca257670 EFLAGS: 00010202
-RAX: 00007f45a7df21d0 RBX: 00005593b3898540 RCX: 00005593b3898540
-RDX: 00005593b3898540 RSI: 00007f45a7df21d0 RDI: 00005593b3898540
-RBP: 00007f45a7df1ac0 R08: 0000000000002760 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 00000000000049c0
-R13: 00005593b389cf00 R14: 0000000000002020 R15: 00007f45a7df1ac0
- </TASK>
+>
+> Again, are you really protecting anything if this one trace point
+> hashes the pointer? Most other tracepoints expose this. If BPF can
+> access a tracepoint entry struct, it can access the raw address and
+> break KASLR.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Kalesh
+>
+> -- Steve
 
