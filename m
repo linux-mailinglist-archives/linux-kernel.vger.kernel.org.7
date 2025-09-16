@@ -1,93 +1,212 @@
-Return-Path: <linux-kernel+bounces-819434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547A4B5A094
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03EA2B5A099
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55293AFA8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:35:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7CE3B4D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D722C11E9;
-	Tue, 16 Sep 2025 18:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B162D63E2;
+	Tue, 16 Sep 2025 18:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dY3xQnWF"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Oiv5S6dK"
+Received: from smtp.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C72BD58A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF94D14E2E2;
+	Tue, 16 Sep 2025 18:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758047714; cv=none; b=bRo5YK/9YATXzwUCJSi5n0/gIkXwFCt0rY6OSeggl4PqNta9TN4F4vlz0m8RN6eSm2CQSc+Q269czB/uT9Bom/+IGCpT+/x5QCFMw2U6eyOx26Gwl/6hdHrIXv+X8JVKOmY+P4Aa74Z5sARDK17Z3Shr00Q9ofOxhiidn88PKmM=
+	t=1758047808; cv=none; b=ULh0skkc/UIfg8JWKXr/jTyA3gPPpz3KnDDhPhtupm+KzCnz98UBzZiqgypZeO/KYMvHyYdUrbwZFZ+6YRCBoYSOORw3NfnJbvB7NwK0vhYfkTkJKF/dfem6neEjk0+Ff0lnXrVAUKq5weEcblbWHODidtuTS9wF4bhbW0OlPRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758047714; c=relaxed/simple;
-	bh=p2L+BoGjF7funf1kKzdI2zSzLPq5TYcZXKpLPTIH8Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QlVPLf/9Syc8vVlDVHG0iUznYPX2lrF5+EJBYPu450IbX36otNlLnYXAnZ/HKo4ifEPEDSox5x9KoEMSkF0kgblJg9juc7k/hteWT2eIIc/UT0uRXGXsvxum+PRjqnATLbzlrSFORafFmU4uRoeXNgvtQ3pp6otnAMsfB/XSivY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dY3xQnWF; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5rkvZwt85N53PHekOoIC3Lo9zWtABx+bQZ+hiuLk1wg=; b=dY3xQnWF/2ii/HdaPXcRLU7fY9
-	4YvgPSlZfO/cmb3NwOBlJdMgH8Z8P60HTEQkJx+H4S4kjmK3lILP0EWwxsyhOwvHitoVtezXJ79aR
-	5GPTc6uoHkmz7KLQXTlHjmoY0fJfeodm4erslkE5qXiwZT1McT8GkWCnWrbLG8KC8ZinbNAb0H4c+
-	3W8U9Keoml7w3+WdQboVCJDniMDRysLs1d+LPkWbRUrxPchXxLPnspgw4YcufZOYnQftROFngWJZY
-	FufktfRb8RJXj/aGPHYNjt8LtDQ7TiuR4ag0SAart9spW3lJxQJjxQYyperjyqlMUumbz7HNH2s5n
-	+Wvj1BPg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uyaW7-00000007FhL-3D0e;
-	Tue, 16 Sep 2025 18:35:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9ED8A300328; Tue, 16 Sep 2025 20:35:02 +0200 (CEST)
-Date: Tue, 16 Sep 2025 20:35:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Andr?? Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v2 0/3] selftest/futex: Collected mpol fixes
-Message-ID: <20250916183502.GA2800598@noisy.programming.kicks-ass.net>
-References: <20250915212630.965328-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1758047808; c=relaxed/simple;
+	bh=T1kePwdeNQXNVSEeE9ckLT57VuktYjKYkdyxWbs1t04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VB1vYAyCHEETLeBQoA7ExrH7538gtzkXf4Adeu1CHMJurNK31TbLEw+HyINf+nVmUjn2XTYt2VblvvWGZwhyOXs4KhD7KG8QNGGlZ1AvX7xe/W74rSJljkftrxPKbemb5aqDyqyobSDkFKnxlPbEQCZIc3Lwh56hcp7Swyc8gx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Oiv5S6dK; arc=none smtp.client-ip=80.12.242.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id yaWWu64lLqEwUyaWXuWKCx; Tue, 16 Sep 2025 20:35:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1758047730;
+	bh=zv/XOsxsCMorm9VtcC5Pc/3O++i5spJT7NpfLDn0xng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Oiv5S6dKfmgpQV8zzdeifbLa1pbHT2OihN6tvDgB5BYtpe74lstadanLVy3YUyuA5
+	 s4FGbeP9bXtBde9WNSD/uCpzAFNl2b5xTY4McdZMKL9fjBM7xveO4E9LkxuMo5B/fj
+	 Ud2XavwPgQGgYZfI7SOAKWNFA8WzvKGOC0Oz+hKa/NwefkDECvuohmTZ+NbKy+IUhA
+	 a8R6ouNYtA4G8vAE0WTRnDEpairy/Gfh38/stHkn4iQgnSMsjLc1ocOlWqraTE9gfx
+	 Sq655ek9al7L+YStFOyvxT144kIa4nE/3kiSaBLga9N7rz+i7sU9dVD1OgUTVCpJv0
+	 uWjEN0Kh0pcug==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 16 Sep 2025 20:35:30 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <ed2a1b51-782b-4ee1-be75-06a0a742525c@wanadoo.fr>
+Date: Tue, 16 Sep 2025 20:35:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915212630.965328-1-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] can: raw: use bitfields to store flags in struct
+ raw_sock
+To: Vincent Mailhol <mailhol@kernel.org>,
+ Oliver Hartkopp <socketcan@hartkopp.net>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250915-can-raw-repack-v1-0-5ea293bc6d33@kernel.org>
+ <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <20250915-can-raw-repack-v1-2-5ea293bc6d33@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 15, 2025 at 11:26:27PM +0200, Sebastian Andrzej Siewior wrote:
-> I collected Andr??'s two mpol related fixes and reworded slightly the
-> description of #1.
-> Patch #3 was also on the list for a while and now does no longer apply
-> so I rebased it on top.
+Le 15/09/2025 à 11:23, Vincent Mailhol a écrit :
+> The loopback, recv_own_msgs, fd_frames and xl_frames fields of struct
+> raw_sock just need to store one bit of information.
 > 
-> Andr?? Almeida (2):
->   selftest/futex: Make the error check more precise for futex_numa_mpol
->   selftest/futex: Reintroduce "Memory out of range" numa_mpol's subtest
+> Declare all those members as a bitfields of type unsigned int and
+> width one bit.
 > 
-> Sebastian Andrzej Siewior (1):
->   selftest/futex: Compile also with libnuma < 2.0.16
+> Add a temporary variable to raw_setsockopt() and raw_getsockopt() to
+> make the conversion between the stored bits and the socket interface.
 > 
->  .../selftests/futex/functional/Makefile       |  5 +-
->  .../futex/functional/futex_numa_mpol.c        | 61 +++++++++++--------
->  2 files changed, 40 insertions(+), 26 deletions(-)
+> This reduces struct raw_sock by eight bytes.
+> 
+> Statistics before:
+> 
+>    $ pahole --class_name=raw_sock net/can/raw.o
+>    struct raw_sock {
+>    	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
+> 
+>    	/* XXX last struct has 1 bit hole */
+> 
+>    	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
+>    	int                        bound;                /*   776     4 */
+>    	int                        ifindex;              /*   780     4 */
+>    	struct net_device *        dev;                  /*   784     8 */
+>    	netdevice_tracker          dev_tracker;          /*   792     0 */
+>    	struct list_head           notifier;             /*   792    16 */
+>    	int                        loopback;             /*   808     4 */
+>    	int                        recv_own_msgs;        /*   812     4 */
+>    	int                        fd_frames;            /*   816     4 */
+>    	int                        xl_frames;            /*   820     4 */
+>    	struct can_raw_vcid_options raw_vcid_opts;       /*   824     4 */
+>    	canid_t                    tx_vcid_shifted;      /*   828     4 */
+>    	/* --- cacheline 13 boundary (832 bytes) --- */
+>    	canid_t                    rx_vcid_shifted;      /*   832     4 */
+>    	canid_t                    rx_vcid_mask_shifted; /*   836     4 */
+>    	int                        join_filters;         /*   840     4 */
+>    	int                        count;                /*   844     4 */
+>    	struct can_filter          dfilter;              /*   848     8 */
+>    	struct can_filter *        filter;               /*   856     8 */
+>    	can_err_mask_t             err_mask;             /*   864     4 */
+> 
+>    	/* XXX 4 bytes hole, try to pack */
+> 
+>    	struct uniqframe *         uniq;                 /*   872     8 */
+> 
+>    	/* size: 880, cachelines: 14, members: 20 */
+>    	/* sum members: 876, holes: 1, sum holes: 4 */
+>    	/* member types with bit holes: 1, total: 1 */
+>    	/* forced alignments: 1 */
+>    	/* last cacheline: 48 bytes */
+>    } __attribute__((__aligned__(8)));
+> 
+> ...and after:
+> 
+>    $ pahole --class_name=raw_sock net/can/raw.o
+>    struct raw_sock {
+>    	struct sock                sk __attribute__((__aligned__(8))); /*     0   776 */
+> 
+>    	/* XXX last struct has 1 bit hole */
+> 
+>    	/* --- cacheline 12 boundary (768 bytes) was 8 bytes ago --- */
+>    	int                        bound;                /*   776     4 */
+>    	int                        ifindex;              /*   780     4 */
+>    	struct net_device *        dev;                  /*   784     8 */
+>    	netdevice_tracker          dev_tracker;          /*   792     0 */
+>    	struct list_head           notifier;             /*   792    16 */
+>    	unsigned int               loopback:1;           /*   808: 0  4 */
+>    	unsigned int               recv_own_msgs:1;      /*   808: 1  4 */
+>    	unsigned int               fd_frames:1;          /*   808: 2  4 */
+>    	unsigned int               xl_frames:1;          /*   808: 3  4 */
+> 
+>    	/* XXX 4 bits hole, try to pack */
+>    	/* Bitfield combined with next fields */
+> 
+>    	struct can_raw_vcid_options raw_vcid_opts;       /*   809     4 */
+> 
+>    	/* XXX 3 bytes hole, try to pack */
+> 
+>    	canid_t                    tx_vcid_shifted;      /*   816     4 */
+>    	canid_t                    rx_vcid_shifted;      /*   820     4 */
+>    	canid_t                    rx_vcid_mask_shifted; /*   824     4 */
+>    	int                        join_filters;         /*   828     4 */
+>    	/* --- cacheline 13 boundary (832 bytes) --- */
+>    	int                        count;                /*   832     4 */
+>    	struct can_filter          dfilter;              /*   836     8 */
+> 
+>    	/* XXX 4 bytes hole, try to pack */
+> 
+>    	struct can_filter *        filter;               /*   848     8 */
+>    	can_err_mask_t             err_mask;             /*   856     4 */
+> 
+>    	/* XXX 4 bytes hole, try to pack */
+> 
+>    	struct uniqframe *         uniq;                 /*   864     8 */
+> 
+>    	/* size: 872, cachelines: 14, members: 20 */
+>    	/* sum members: 860, holes: 3, sum holes: 11 */
+>    	/* sum bitfield members: 4 bits, bit holes: 1, sum bit holes: 4 bits */
+>    	/* member types with bit holes: 1, total: 1 */
+>    	/* forced alignments: 1 */
+>    	/* last cacheline: 40 bytes */
+>    } __attribute__((__aligned__(8)));
+> 
+> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+> ---
+>   net/can/raw.c | 47 ++++++++++++++++++++++++++++-------------------
+>   1 file changed, 28 insertions(+), 19 deletions(-)
+> 
+> diff --git a/net/can/raw.c b/net/can/raw.c
+> index db21d8a8c54d1b6a25a72c7a9d11d5c94f3187b5..cec580ecd58e36931d1be05716e6beb9c93aa271 100644
+> --- a/net/can/raw.c
+> +++ b/net/can/raw.c
+> @@ -87,10 +87,10 @@ struct raw_sock {
+>   	struct net_device *dev;
+>   	netdevice_tracker dev_tracker;
+>   	struct list_head notifier;
+> -	int loopback;
+> -	int recv_own_msgs;
+> -	int fd_frames;
+> -	int xl_frames;
+> +	unsigned int loopback:1;
+> +	unsigned int recv_own_msgs:1;
+> +	unsigned int fd_frames:1;
+> +	unsigned int xl_frames:1;
+>   	struct can_raw_vcid_options raw_vcid_opts;
+>   	canid_t tx_vcid_shifted;
+>   	canid_t rx_vcid_shifted;
 
-Queued these for tip/locking/futex, if they were intended for another
-branch, please holler.
+[...]
 
-Thanks!
+Hi,
+
+just in case, it looks like bound and join_filters could also be defined 
+in the bitfield.
+
+just my 2c.
+
+CJ
 
