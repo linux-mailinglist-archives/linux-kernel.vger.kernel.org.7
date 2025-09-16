@@ -1,156 +1,305 @@
-Return-Path: <linux-kernel+bounces-819235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F35FFB59D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:13:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB669B59CFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C4A3A43FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:08:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 727344E17BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D077F223DEA;
-	Tue, 16 Sep 2025 16:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ua1hLY+X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2152420DD42;
-	Tue, 16 Sep 2025 16:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E04328584;
+	Tue, 16 Sep 2025 16:09:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7332032859C
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038931; cv=none; b=Inn2olHD3Y0gXR9JfOhw4y3GfH/OZbgKnJddVAhg2Fl5M7l5RFNQzYB+m7/lmFzBtQS/JWDazh6qMEdH3oyg6dTHBzcNnTyF6sSSkrWrzVMcLAkptl4QQn74OuMe21bJJDZOS/evVEQh3FoOBFBmtv2pdsreO2D526jIbRdrXRA=
+	t=1758038946; cv=none; b=Ltr4MPdx0PfzZmjwedbN8sOS2V5Vk4CnA+oHqYdF+I4UwTkQpx18nIiLkJwzzQPRZeDMa1MUbCUDm6QNP72yJNjh1qnJFfq50+aOsLFJlYFnfmVZ4hGzwSJuxQzYh3DIkD5oggaJtLagAu5HNo6J2W9FSvjgMVbSZzDxqxSlmBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038931; c=relaxed/simple;
-	bh=5hX+MeZ8vcEMEurO6Y40AR819qOTZbK9YJY3iGxx6k4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNdrYPnYCI5Ck9gUT5KOSe5SVbF2p2sEvq4LSfN80gA2q1T1gJ2wgpmEISKbTev1TykJ/OSz/NTkmPM8Sj8+N7npw0IjLI0IJ5slPR22QfWMx6aZ+UnO+AGI5+BwSgyE4kf3WB2H4WVSNAc1oQkrxlwa4eZCf8Uphmcm39fxBEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ua1hLY+X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCF7C4CEEB;
-	Tue, 16 Sep 2025 16:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758038930;
-	bh=5hX+MeZ8vcEMEurO6Y40AR819qOTZbK9YJY3iGxx6k4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ua1hLY+XBsg8eXHWBeeCokC451ULHY3woDF80vGCLpv8zvT5OXl9RngvHcXv1QyWa
-	 +iFodlFuB4pfDZ8xLk11FndVKtk9JhvYb0mWGE5B94JrqmFrFeJxGipBlibYu5zal5
-	 nOikZ0ATXBUFHmfB7V+I/5aWpjtSDlXy4Qcq7oOT6QBBMLse2pCmqU9OCEsKusiohp
-	 O85BEqEmHM51ATbJZcYPJ2UuzPG0soFxApgfQKuxzQJex38+csItNRoEJrVqKdHW4U
-	 lDzYjx/6hyh46yGuOeypN5dnd4CKnmCJMJ+wcajPaNA6Yt7uLHTC/EtLW6Or4GJrM2
-	 yxwOwNITszBYA==
-Date: Tue, 16 Sep 2025 17:08:45 +0100
-From: Lee Jones <lee@kernel.org>
-To: Corey Minyard <corey@minyard.net>
-Cc: Binbin Zhou <zhoubb.aaron@gmail.com>, Corey Minyard <minyard@acm.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net, jeffbai@aosc.io,
-	kexybiscuit@aosc.io, wangyao@lemote.com
-Subject: Re: (subset) [PATCH v11 0/3] LoongArch: Add Loongson-2K BMC support
-Message-ID: <20250916160845.GB3893363@google.com>
-References: <cover.1756987761.git.zhoubinbin@loongson.cn>
- <175760122164.1552180.16853979882678693472.b4-ty@kernel.org>
- <CAMpQs4JbQU3D-Bs2687BXSC=FKJBS6RMvWAKb6AJEtzit6hWqw@mail.gmail.com>
- <20250916084002.GF1637058@google.com>
- <CAMpQs4+J2zYgZaGYBSaf4UwzKZY-qMoD1oe2vmgJQXAfghqu=w@mail.gmail.com>
- <20250916101438.GA3585920@google.com>
- <CAMpQs4+kj0i1BpJ4Nk+Z=Ov-AMEWcqPmkbruNhD--TmycX4z-Q@mail.gmail.com>
- <aMl_47OOOotywm0U@mail.minyard.net>
+	s=arc-20240116; t=1758038946; c=relaxed/simple;
+	bh=MtmIYB06xrhuRPmfuSALu8pn29uvvBv6mbGjxzA5UqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DT0hGgdLR0Y1c+Jl2jU0q+j1D8MtUXAyZh/OHd3WRn/RIgE1Wo4REPAiEmgg6seqg2AkJHfRAVGkXNtICUPuJr7nrR/865q9MXerKe/Db6V2E5GJTort4cRNT9WCshn3JdqlWpIhii35lZbrTPkdbPFSCqlfCAd30As0X4g4bPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55EFA2F;
+	Tue, 16 Sep 2025 09:08:55 -0700 (PDT)
+Received: from [10.57.4.241] (unknown [10.57.4.241])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 027E73F673;
+	Tue, 16 Sep 2025 09:09:01 -0700 (PDT)
+Message-ID: <6fbd24b2-3315-45e6-bff2-2c39e899e8f5@arm.com>
+Date: Tue, 16 Sep 2025 17:09:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMl_47OOOotywm0U@mail.minyard.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] coresight: Fix possible deadlock in coresight_panic_cb
+Content-Language: en-GB
+To: Leo Yan <leo.yan@arm.com>, Sean Anderson <sean.anderson@linux.dev>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Yeoreum Yun <yeoreum.yun@arm.com>, Mike Leach <mike.leach@linaro.org>,
+ Linu Cherian <lcherian@marvell.com>, linux-kernel@vger.kernel.org,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ James Clark <james.clark@linaro.org>
+References: <20250912151314.3761026-1-sean.anderson@linux.dev>
+ <20250915095820.GH12516@e132581.arm.com>
+ <3e618117-96bd-44f3-bede-7cadfe0264dd@linux.dev>
+ <20250916160027.GK12516@e132581.arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250916160027.GK12516@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 16 Sep 2025, Corey Minyard wrote:
-
-> On Tue, Sep 16, 2025 at 06:51:25PM +0800, Binbin Zhou wrote:
-> > On Tue, Sep 16, 2025 at 6:14 PM Lee Jones <lee@kernel.org> wrote:
-> > >
-> > > On Tue, 16 Sep 2025, Binbin Zhou wrote:
-> > >
-> > > > Hi Lee:
-> > > >
-> > > > Thanks for your reply.
-> > > >
-> > > > On Tue, Sep 16, 2025 at 4:40 PM Lee Jones <lee@kernel.org> wrote:
-> > > > >
-> > > > > On Fri, 12 Sep 2025, Binbin Zhou wrote:
-> > > > >
-> > > > > > Hi Lee:
-> > > > > >
-> > > > > > On Thu, Sep 11, 2025 at 10:33 PM Lee Jones <lee@kernel.org> wrote:
-> > > > > > >
-> > > > > > > On Thu, 04 Sep 2025 20:35:04 +0800, Binbin Zhou wrote:
-> > > > > > > > This patchset introduces the Loongson-2K BMC.
-> > > > > > > >
-> > > > > > > > It is a PCIe device present on servers similar to the Loongson-3 CPUs.
-> > > > > > > > And it is a multifunctional device (MFD), such as display as a sub-function
-> > > > > > > > of it.
-> > > > > > > >
-> > > > > > > > For IPMI, according to the existing design, we use software simulation to
-> > > > > > > > implement the KCS interface registers: Stauts/Command/Data_Out/Data_In.
-> > > > > > > >
-> > > > > > > > [...]
-> > > > > > >
-> > > > > > > Applied, thanks!
-> > > > > > >
-> > > > > > > [1/3] mfd: ls2kbmc: Introduce Loongson-2K BMC core driver
-> > > > > > >       commit: 67c2639e1fc1a07b45d216af659c0dd92a370c68
-> > > > > > > [2/3] mfd: ls2kbmc: Add Loongson-2K BMC reset function support
-> > > > > > >       commit: 2364ccc827e44064e9763f2ae2d1dcc5f945fdf3
-> > > > > >
-> > > > > > Thanks for acknowledging my patchset.
-> > > > > >
-> > > > > > I can't confirm why you didn't apply the IPMI patch, but this appears
-> > > > > > to break the patchset's integrity, potentially causing missing Kconfig
-> > > > > > dependencies (IPMI_LS2K select MFD_LS2K_BMC_CORE).
-> > > > >
-> > > > > Pretty sure this doesn't break anything.
-> > > > >
-> > > > > What build errors do you see as a result?
-> > > > >
-> > > > > > Additionally, as Corey previously explained[1], this patch can be
-> > > > > > applied through your side.
-> > > > > >
-> > > > > > [1]: https://lore.kernel.org/all/aFVtNAY4u2gDiLDS@mail.minyard.net/
-> > > > >
-> > > > > We only apply cross-subsystem patch-sets to a single tree if there are
-> > > > > good reasons to do so.  In this instance, I can't see any reason why the
-> > > > > IPMI driver cannot go in via it's own repo.
-> > > >
-> > > > However, there still seems to be a text dependency issue. The IPMI
-> > > > patch modifies the MAINTAINERS, which depends on the first patch.
-> > > > If the entire series of patches cannot be merged together, does this
-> > > > mean the IPMI patch can only be merged after the MFD patch has been
-> > > > merged into the mainline?
-> > >
-> > > No, not at all.  So long as all patches come together during the
-> > > merge-window, there is no issue.
-> > 
-> > OK, I see, thanks.
-> > 
-> > Hi Corey:
-> > 
-> > What do you think about it?
+On 16/09/2025 17:00, Leo Yan wrote:
+> On Mon, Sep 15, 2025 at 10:31:24AM -0400, Sean Anderson wrote:
+>> On 9/15/25 05:58, Leo Yan wrote:
+>>> On Fri, Sep 12, 2025 at 11:13:14AM -0400, Sean Anderson wrote:
+>>>> coresight_panic_cb is called with interrupts disabled during panics.
+>>>> However, bus_for_each_dev calls bus_to_subsys which takes
+>>>> bus_kset->list_lock without disabling IRQs. This may cause a deadlock.
+>>>
+>>> I would rephrase it to make it clearer for anyone reading it later:
+>>>
+>>>    coresight_panic_cb() is called during panics, which can preempt a flow
+>>>    that triggers exceptions (such as data or instruction aborts).
+>>
+>> I don't see what exceptions have to do with it. You can also panic
+>> during a regular interrupt.
 > 
-> I thought my ack would be sufficient, but I've pulled this into my tree.
-> I can't apply the MAINTAINERS portion of this, but that can go in
-> later; you can send me a patch for that after the next kernel release.
+> The commit mentioned "without disabling IRQs" gives the impression that
+> the deadlock is caused by IRQ-unsafe locking, which might mislead into
+> thinking why the issue cannot be fixed with IRQ-safe locking.
 > 
-> I'll make a note to Linus that this depends on the MFD changes.
+> Regardless of whether IRQs are disabled, and regardless of the context
+> (interrupt, bottom-half, or normal thread), the conditions for the
+> deadlock are only about:
+> 
+>    (a) The bus lock has been acquired;
+>    (b) A panic is triggered to try to acquire the same lock.
+> 
+> [...]
+> 
+>>> When I review this patch, I recognize we can consolidate panic notifier
+>>> in coresight-tmc-core.c, so we don't need to distribute the changes
+>>> into ETF and ETR drivers (sorry if I misled you in my previous reply).
+>>
+>> And this kind of thing is why I went with the straightforward fix
+>> initially. I do not want to bikeshed the extent that this gets removed.
+>> IMO the whole "panic ops" stuff should be done directly with the panic
+>> notifier, hence this patch. If you do not agree with that, then ack v2
+>> and send a follow up of your own to fix it how you see fit.
+> 
+> I would fix it in one go.
+> 
+> I agree with you that "the whole panic ops stuff should be done directly
+> with the panic". The only difference between us is that I would keep the
+> `panic_ops` callback. To me, this encapsulates panic callbacks into
+> different modules, to make the code more general.
+> 
+> Could you check if the drafted patch below looks good to you? If so, I
+> will send out a formal patch.
+> 
+> ---8<---
+> 
+>  From ea78dd22cbdd97f709c5991d5bd3be97be6e137e Mon Sep 17 00:00:00 2001
+> From: Sean Anderson <sean.anderson@linux.dev>
+> Date: Tue, 16 Sep 2025 16:03:58 +0100
+> Subject: [PATCH] coresight: Fix possible deadlock in coresight_panic_cb()
+> 
+> coresight_panic_cb() is called during a panic. It invokes
+> bus_for_each_dev(), which then calls bus_to_subsys() and takes the
+> 'bus_kset->list_lock'. If a panic occurs after the lock has been
+> acquired, it can lead to a deadlock.
+> 
+> Instead of using a common panic notifier to iterate the bus, this commit
+> directly registers the TMC device's panic notifier. This avoids bus
+> iteration and effectively eliminates the race condition that could cause
+> the deadlock.
 
-Feel free to separate that from that patch and I'll happily apply it.
+Well, if you are going that far, why not register the notifier from
+coresight-core ? We could always check the panic_ops->sync, and
+then register/unregister the callback. Add the notifer to the csdev.
+Otherwise, there is no point in keeping the panic_ops in
+coresight_device, it is just for the TMC device.
 
--- 
-Lee Jones [李琼斯]
+Suzuki
+
+
+
+> 
+> Fixes: 46006ceb5d02 ("coresight: core: Add provision for panic callbacks")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-core.c  | 42 -------------------
+>   .../hwtracing/coresight/coresight-tmc-core.c  | 26 ++++++++++++
+>   drivers/hwtracing/coresight/coresight-tmc.h   |  2 +
+>   3 files changed, 28 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+> index 3267192f0c1c..cb0cc8d77056 100644
+> --- a/drivers/hwtracing/coresight/coresight-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-core.c
+> @@ -21,7 +21,6 @@
+>   #include <linux/property.h>
+>   #include <linux/delay.h>
+>   #include <linux/pm_runtime.h>
+> -#include <linux/panic_notifier.h>
+>   
+>   #include "coresight-etm-perf.h"
+>   #include "coresight-priv.h"
+> @@ -1566,36 +1565,6 @@ const struct bus_type coresight_bustype = {
+>   	.name	= "coresight",
+>   };
+>   
+> -static int coresight_panic_sync(struct device *dev, void *data)
+> -{
+> -	int mode;
+> -	struct coresight_device *csdev;
+> -
+> -	/* Run through panic sync handlers for all enabled devices */
+> -	csdev = container_of(dev, struct coresight_device, dev);
+> -	mode = coresight_get_mode(csdev);
+> -
+> -	if ((mode == CS_MODE_SYSFS) || (mode == CS_MODE_PERF)) {
+> -		if (panic_ops(csdev))
+> -			panic_ops(csdev)->sync(csdev);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int coresight_panic_cb(struct notifier_block *self,
+> -			       unsigned long v, void *p)
+> -{
+> -	bus_for_each_dev(&coresight_bustype, NULL, NULL,
+> -				 coresight_panic_sync);
+> -
+> -	return 0;
+> -}
+> -
+> -static struct notifier_block coresight_notifier = {
+> -	.notifier_call = coresight_panic_cb,
+> -};
+> -
+>   static int __init coresight_init(void)
+>   {
+>   	int ret;
+> @@ -1608,20 +1577,11 @@ static int __init coresight_init(void)
+>   	if (ret)
+>   		goto exit_bus_unregister;
+>   
+> -	/* Register function to be called for panic */
+> -	ret = atomic_notifier_chain_register(&panic_notifier_list,
+> -					     &coresight_notifier);
+> -	if (ret)
+> -		goto exit_perf;
+> -
+>   	/* initialise the coresight syscfg API */
+>   	ret = cscfg_init();
+>   	if (!ret)
+>   		return 0;
+>   
+> -	atomic_notifier_chain_unregister(&panic_notifier_list,
+> -					     &coresight_notifier);
+> -exit_perf:
+>   	etm_perf_exit();
+>   exit_bus_unregister:
+>   	bus_unregister(&coresight_bustype);
+> @@ -1631,8 +1591,6 @@ static int __init coresight_init(void)
+>   static void __exit coresight_exit(void)
+>   {
+>   	cscfg_exit();
+> -	atomic_notifier_chain_unregister(&panic_notifier_list,
+> -					     &coresight_notifier);
+>   	etm_perf_exit();
+>   	bus_unregister(&coresight_bustype);
+>   }
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> index 36599c431be6..108ed9daf56d 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> @@ -21,6 +21,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/dma-mapping.h>
+>   #include <linux/spinlock.h>
+> +#include <linux/panic_notifier.h>
+>   #include <linux/pm_runtime.h>
+>   #include <linux/of.h>
+>   #include <linux/of_address.h>
+> @@ -769,6 +770,21 @@ static void register_crash_dev_interface(struct tmc_drvdata *drvdata,
+>   			"Valid crash tracedata found\n");
+>   }
+>   
+> +static int tmc_panic_cb(struct notifier_block *nb, unsigned long v, void *p)
+> +{
+> +	struct tmc_drvdata *drvdata = container_of(nb, struct tmc_drvdata,
+> +						   panic_notifier);
+> +	struct coresight_device *csdev = drvdata->csdev;
+> +
+> +	if (coresight_get_mode(csdev) == CS_MODE_DISABLED)
+> +		return 0;
+> +
+> +	if (panic_ops(csdev))
+> +		panic_ops(csdev)->sync(csdev);
+> +
+> +	return 0;
+> +}
+> +
+>   static int __tmc_probe(struct device *dev, struct resource *res)
+>   {
+>   	int ret = 0;
+> @@ -885,6 +901,12 @@ static int __tmc_probe(struct device *dev, struct resource *res)
+>   		goto out;
+>   	}
+>   
+> +	if (panic_ops(drvdata->csdev)) {
+> +		drvdata->panic_notifier.notifier_call = tmc_panic_cb;
+> +		atomic_notifier_chain_register(&panic_notifier_list,
+> +					       &drvdata->panic_notifier);
+> +	}
+> +
+>   out:
+>   	if (is_tmc_crashdata_valid(drvdata) &&
+>   	    !tmc_prepare_crashdata(drvdata))
+> @@ -929,6 +951,10 @@ static void __tmc_remove(struct device *dev)
+>   {
+>   	struct tmc_drvdata *drvdata = dev_get_drvdata(dev);
+>   
+> +	if (panic_ops(drvdata->csdev))
+> +		atomic_notifier_chain_unregister(&panic_notifier_list,
+> +						 &drvdata->panic_notifier);
+> +
+>   	/*
+>   	 * Since misc_open() holds a refcount on the f_ops, which is
+>   	 * etb fops in this case, device is there until last file
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index cbb4ba439158..873c5427673c 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -243,6 +243,7 @@ struct tmc_resrv_buf {
+>    *		(after crash) by default.
+>    * @crash_mdata: Reserved memory for storing tmc crash metadata.
+>    *		 Used by ETR/ETF.
+> + * @panic_notifier: Notifier used to clean up during a panic
+>    */
+>   struct tmc_drvdata {
+>   	struct clk		*atclk;
+> @@ -273,6 +274,7 @@ struct tmc_drvdata {
+>   	struct etr_buf		*perf_buf;
+>   	struct tmc_resrv_buf	resrv_buf;
+>   	struct tmc_resrv_buf	crash_mdata;
+> +	struct notifier_block	panic_notifier;
+>   };
+>   
+>   struct etr_buf_operations {
+
 
