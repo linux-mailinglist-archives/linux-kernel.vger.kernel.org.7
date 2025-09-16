@@ -1,338 +1,183 @@
-Return-Path: <linux-kernel+bounces-818478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320D1B59243
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FA9B5923E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F5701B268C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BD5189EE08
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD3829AB15;
-	Tue, 16 Sep 2025 09:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9892BE035;
+	Tue, 16 Sep 2025 09:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G7JV+FYr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="YZNuJBqu"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CD5288C89
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153B529ACCD
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758015093; cv=none; b=QqZJ1iNWUQTvtPYAM4/wJE8uudZ+AyTGhcC/jeZ0ADRUHy3pQVDTFcaGkpKZKp6WJWnhJbK59EquTG5RNiF3NdjDCt069kT+QIP+zY1Dlu132+g+tABPjopuymxq4aHrA4w6GydjxJIfWaQyyLfQIsFEW+/O0jzNpnzAaWbCxGc=
+	t=1758015075; cv=none; b=qRJge6DjM23vLTXTLGyTilSKXOCzzsYqBOmIEatWs9/aV2tOnpRCXJ5c8fHWuBwsmfjdKUfZ0OOQkM3XonDf59gThnzCBHWzD7/ow+4IEZ/7SoOIV0uyGQEdxO5KkE7i8i10wsgUuDyP9DXSf8OOuYMY7OtdpZpqR0b8LoBWjuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758015093; c=relaxed/simple;
-	bh=hs4DU9bmjMgMN4EJLnSEmFWC7qoZT1F8YHGBKhnSsp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y6WtiL0JajI3VdRxwZN0fK0uJDBIwQtkhrf2rup8p+PfzJnWpDqNCisfcxhwYtZo/TUEUonqqyriEs8BSsY9Dfx/CWmd6u7eKSRFZZRK+z4wq6wKDGFq1v09LCi0UFBut0bIeJw0ZsWs1pqPCk3LCtmFiR52HSyMYnLyA/tMtfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G7JV+FYr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758015089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ib4Tkdqhm4azNwwchCLarf6pLs2hvhojrtVUk6fGM8s=;
-	b=G7JV+FYrtWzW8cC7Cec26cir/ORNR69RE2FQF0Eg1umDt/WimADzJ4RQ1pu7XzPXtD/qj9
-	DJGCpYAR3XKVwJralgu88MMOmS4enp4uLvPSWTsFNHul8imVdGPJHhJHDpt8f/oO/zM/YO
-	Ov4H5DIc4Uw1ohkKSVdKljiD6XXK85Q=
-Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com
- [74.125.224.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-153-RcoboODbPB2f-lU2c6IneQ-1; Tue, 16 Sep 2025 05:31:28 -0400
-X-MC-Unique: RcoboODbPB2f-lU2c6IneQ-1
-X-Mimecast-MFC-AGG-ID: RcoboODbPB2f-lU2c6IneQ_1758015088
-Received: by mail-yx1-f69.google.com with SMTP id 956f58d0204a3-60f47bb49f1so4564386d50.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:31:28 -0700 (PDT)
+	s=arc-20240116; t=1758015075; c=relaxed/simple;
+	bh=G5DKJK3CELjgpndrNA/+eHqI1RVUDy7+NIgwgAlKssg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4YR2W3O0vzTm9fw9kxSeVD8ow5SIlqiAet6cHxK/325lh3r+7nUloGVEIQb5QTH1rBnvLEIFc/W7tyICPqc8sjQN60ydBtaLGzW8JlLxDppk/vwoLxxtBUeR9RtRi4Rz+oZsnACs2Vmfh8W4KLfn5AL9RZB/uBwU/UgHRgY2ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=YZNuJBqu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de56a042dso34403105e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1758015071; x=1758619871; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ACpTvDk4rKkRfQ2RQ4sxr8j1UikIa22f7RQMKzB/pRg=;
+        b=YZNuJBquxbhPFirZrZK7NYrrhJrCjpOG0kGgAY47Lr7F0TXTMcCVUdtjFuhDb88l51
+         2BszKTLLZnttGF7JJCiX9urlimaYhq2mA3nRKB7P16jim67VSirJ1MSqOS/YCpxPpU3N
+         JMrSkC1yarTUQ6Iu0TEjD8qke4gl+zLXsSN9YxP3rNJPBDjnIn814v0ZPPysHE37iMyi
+         n47vbPjX8wjZ5es8QWIbrtA5v6DCXorVwW+lL6keMhUW9KufG3KkNbYLJx5kRGmFB4h0
+         XLpxdS2G9uxm1jUYIItn0FsRG00A7rIPQKfTFi9Mn6KXU+9FXoiRvyDhTRHGoUySTLgz
+         0s3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758015088; x=1758619888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ib4Tkdqhm4azNwwchCLarf6pLs2hvhojrtVUk6fGM8s=;
-        b=abmwCJd/99FNlpwdYd7EuRK+TIusTqsgpVB1rWQG1nuUj4zrJhErJGN9Z33ds75lwW
-         HEka7JgFWmaiGswRK7fZFgqK7GowXCTY9xXukpLZlix/wB5MB9caLDg9C11266YuuTPn
-         Gbf9JW/TxeO29wQgkha7Y21KkeWnjxCSIxLDLsYXlna/ERiXFGY7xn96zX1v+3Opezvs
-         ysImb5f6aMzP9rvSquI1aO6QtNeuCvddMOYXcWhaUNqcDGWK4DHH5vsMt6sF4rAzToTH
-         h294kKbyiLTwu27W1NowfF9C+gmdPpFN5zUOFKlvIQhm15nbVSz3Z4ETdLD+3uloyIe1
-         jQ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU0vjaLjEWBCLGDRv6g+kS3DEo4Q3GPM3I055tOFXo+CI6fHMxQa/hn7z8w2moNq9u0Jr3qtMey6g6uaZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDMsKjWbFJF9XG+7j29roimUrsNsvrBMDb3bTYKItBa9w6Ep25
-	SuSo8m/x89qBHld9Z7/Br5ztCzPBUu3Fn51JBVztULII301a47JmbXahapx073ROii9/Qcd6YzW
-	oKrQ6ekeF0WPNu18SGtZyvEdBwvD3/AuSP3qgLmhoXoQC9JH0sf3aYU5ZsobNcf9K0VMSZQWrdU
-	hP7xmgpYyrDJaNC+4CGh7uhGNxXRHXUJaqGjkM9rxN
-X-Gm-Gg: ASbGnctWt6XIsfW+92wTjBTPeGuZB3cPivsMbFSY6suYmOfEJ1NCcZGM3aR56lRWJvB
-	oHisiwRKhwuGmJzR9dQHiPGUls6VaCuNrjSSihScQ3BlfrFSHaG/KZZhBmlNJ9Wqe7p0N5JQDO8
-	2ErkGmzpnviQsKWgWfgWYYf/aguM2dVFtYNLoOqFtjxENvXTOW1FfNj7D7UF7cVydGq/ACrn7xs
-	y4u+q5JCtPaIM/ViUKuVoGf2m3GYozW7JSnd9a/pHjs
-X-Received: by 2002:a53:d645:0:b0:633:a1c7:ab72 with SMTP id 956f58d0204a3-633a1c7b2c1mr1153638d50.37.1758015087822;
-        Tue, 16 Sep 2025 02:31:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHAexSGu+ClNoQwUCXj+/rxG2mNjZgHnV3uExzz15hIyPbt5ZC4oCv1dZGdaL2PHef1hHIpFp3VWGN3PNfPYrQ=
-X-Received: by 2002:a53:d645:0:b0:633:a1c7:ab72 with SMTP id
- 956f58d0204a3-633a1c7b2c1mr1153616d50.37.1758015087273; Tue, 16 Sep 2025
- 02:31:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758015071; x=1758619871;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ACpTvDk4rKkRfQ2RQ4sxr8j1UikIa22f7RQMKzB/pRg=;
+        b=aTKovDJPMVLiAhAIb1tLh6XMKyHH3QBhdUUfJJxAqvwd8uYytEXYzLl11q7Smo9jta
+         hB+mx2mUiWmjkfF58LF7Gn55Omfdj7RLJOR2QBgYUs3wseFbGLmnDCTgFs6Dfi5f8v9z
+         dvcx19ITSa9FiFtiYgZRVTWtM6/kxZj5LAab9b3CQKs0FWK2Hm7bHBhHFSFms8qbrFvw
+         LnMZNn8JFj0vjmcctq8nckOFcz02WIt0Ed61z/Eq64KFU8QBjwDljX/RyxRb3RnDni1K
+         St5y4CKsaCDc45PUgbYLCPuSRCB73vP4s7Gw3W72xBB1T/eX/yx67XaSOqM3a5RDH8h5
+         dZxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaeHPHubz7fw1z5as93dVakzIx4Z1WYcqz2Veke2yVDKVBM2+RvewsJxKSQ7nkaE8bftHPxiweijndh5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7Yq6oq3/DMGQV825b1X9vEIfiIv8NwO+JgmOdUI/A/W+MveDw
+	snpqi4xj5Wk11rjoiRhvP0EgJ2mbaE2+IpUZiGRYcKTHsPaHxdg0P2v/gPFAHsSlOL4=
+X-Gm-Gg: ASbGncucdS5DYFtXKiQB5eGVSkaxqyt8sDMNzHP4VaGec0UXLsmYlMB1wdskh/PAWy/
+	QgnvsOtyj+Rp65YiDo20C9ZRQJ5VJp8gP0fN304ljZRYepIdx/QOhHE3Pw2BnL8NnwXfkVl1Bkt
+	+XLKuZ6akuKaLgPQDrEUQXdPBBLPpgg5hRDV5SZza2lZnFveo3UJ45qsJWTlPUzs9R65R/Til1a
+	wCi1swEiqIZIKtwxxKi2jwy1ZJzxSlglIh7SAnJ4pVR5yrSREE7uE+vuakX1pvicWEnH4NKX8M1
+	fA2X+9FoG8ieMchomm7ei++dP3JUa8g8OvuwpiB6ZR0xsYRnvMNhPhPHdhxdsmb+4nxnI5imPN7
+	9F/489afhM8FxZUphBUbvx4De
+X-Google-Smtp-Source: AGHT+IH8DCDGESmWObhYAAet3S0BhH1Fzzukf1zx3cCjpw50+fa6UzbNTX5giSJQmy/9uVP0YCa3Ow==
+X-Received: by 2002:a05:600c:828c:b0:45d:98be:ee95 with SMTP id 5b1f17b1804b1-45f211caa67mr130397715e9.3.1758015071252;
+        Tue, 16 Sep 2025 02:31:11 -0700 (PDT)
+Received: from jiri-mlt ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f325a32f6sm13224245e9.2.2025.09.16.02.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 02:31:10 -0700 (PDT)
+Date: Tue, 16 Sep 2025 11:31:02 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	netdev@vger.kernel.org, mschmidt@redhat.com, poros@redhat.com, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prathosh Satish <Prathosh.Satish@microchip.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next] dt-bindings: dpll: Add per-channel Ethernet
+ reference property
+Message-ID: <nj6wipqud7gnaiuvj6cl4sum7zfyp7jdvjb63op6ff4ruz7rjx@5rtkshsuxojl>
+References: <20250815144736.1438060-1-ivecera@redhat.com>
+ <20250820211350.GA1072343-robh@kernel.org>
+ <5e38e1b7-9589-49a9-8f26-3b186f54c7d5@redhat.com>
+ <CAL_JsqKui29O_8xGBVx9T2e85Dy0onyAp4mGqChSuuwABOhDqA@mail.gmail.com>
+ <bc39cdc9-c354-416d-896f-c2b3c3b64858@redhat.com>
+ <CAL_JsqL5wQ+0Xcdo5T3FTyoa2csQ9aW8ZxxMxVOhRJpzc7fGhA@mail.gmail.com>
+ <4dc015f7-63ad-4b44-8565-795648332ada@redhat.com>
+ <350cecaf-9e41-4c34-8bc0-4b1c93b0ddfe@lunn.ch>
+ <dcca9d10-b2b7-4534-abe6-999a9013a8e9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826112709.1051172-1-eperezma@redhat.com> <20250826112709.1051172-6-eperezma@redhat.com>
- <CACycT3v=_Nm6fefJGFEyoU+Xf5G=Kzi0sXhhaBHnJQZcG-4EqA@mail.gmail.com>
-In-Reply-To: <CACycT3v=_Nm6fefJGFEyoU+Xf5G=Kzi0sXhhaBHnJQZcG-4EqA@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Tue, 16 Sep 2025 11:30:50 +0200
-X-Gm-Features: Ac12FXyKW3pAidVDIyPsFhtkbmaLjnspz5U_JhnATocRp1FZQ9QX7hGc72YwNsM
-Message-ID: <CAJaqyWeKmxM=DDLka-QBv35YwXn4eJeLJOqxJ_3HnRz_mq8K6g@mail.gmail.com>
-Subject: Re: [PATCH 5/6] vduse: add vq group asid support
-To: Yongji Xie <xieyongji@bytedance.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Stefano Garzarella <sgarzare@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel <linux-kernel@vger.kernel.org>, Jason Wang <jasowang@redhat.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dcca9d10-b2b7-4534-abe6-999a9013a8e9@redhat.com>
 
-On Mon, Sep 8, 2025 at 2:12=E2=80=AFPM Yongji Xie <xieyongji@bytedance.com>=
- wrote:
+Wed, Sep 10, 2025 at 02:51:33PM +0200, ivecera@redhat.com wrote:
+>On 09. 09. 25 3:50 odp., Andrew Lunn wrote:
+>> > > > Yesterday I was considering the implementation from the DPLL driver's
+>> > > > perspective and encountered a problem when the relation is defined from
+>> > > > the Ethernet controller's perspective. In that case, it would be
+>> > > > necessary to enumerate all devices that contain a “dpll” property whose
+>> > > > value references this DPLL device.
+>> > > 
+>> > > Why is that?
+>> > 
+>> > Because the DPLL driver has to find a mac-address of the ethernet
+>> > controller to generate clock identity that is used for DPLL device
+>> > registration.
+>> 
+>> Maybe this API is the wrong way around? Maybe what you want is that
+>> the MAC driver says to the DPLL driver: hey, you are my clock
+>> provider, here is an ID to use, please start providing me a clock?
 >
-> Hi Eugenio,
+>Yes, this could be fine but there is a problem because clock id is part
+>of DPLL device and pins registration and it is not possible to change
+>the clock id without full de-re-registration. I have provided in zl3073x
+>a user to change the clock id via devlink but it means that the driver
+>has to unregister all dpll devices and pins and register them under
+>different clock id.
 >
-> On Tue, Aug 26, 2025 at 7:27=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
-at.com> wrote:
-> >
-> > Add support for assigning Address Space Identifiers (ASIDs) to each VQ
-> > group.  This enables mapping each group into a distinct memory space.
-> >
-> > Now that the driver can change ASID in the middle of operation, the
-> > domain that each vq address point is also protected by domain_lock.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> > v3:
-> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
-> >   value to reduce memory consumption, but vqs are already limited to
-> >   that value and userspace VDUSE is able to allocate that many vqs.
-> > * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
-> >   VDUSE_IOTLB_GET_INFO.
-> > * Use of array_index_nospec in VDUSE device ioctls.
-> > * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
-> > * Move the umem mutex to asid struct so there is no contention between
-> >   ASIDs.
-> >
-> > v2:
-> > * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
-> >   part of the struct is the same.
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 290 +++++++++++++++++++++--------
-> >  include/uapi/linux/vduse.h         |  52 +++++-
-> >  2 files changed, 259 insertions(+), 83 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index 7d2a3ed77b1e..2fb227713972 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -92,6 +92,7 @@ struct vduse_as {
-> >  };
-> >
-> >  struct vduse_vq_group_int {
-> > +       struct vduse_iova_domain *domain;
-> >         struct vduse_dev *dev;
-> >  };
-> >
-> > @@ -99,7 +100,7 @@ struct vduse_dev {
-> >         struct vduse_vdpa *vdev;
-> >         struct device *dev;
-> >         struct vduse_virtqueue **vqs;
-> > -       struct vduse_as as;
-> > +       struct vduse_as *as;
-> >         char *name;
-> >         struct mutex lock;
-> >         spinlock_t msg_lock;
-> > @@ -127,6 +128,7 @@ struct vduse_dev {
-> >         u32 vq_num;
-> >         u32 vq_align;
-> >         u32 ngroups;
-> > +       u32 nas;
-> >         struct vduse_vq_group_int *groups;
-> >         unsigned int bounce_size;
-> >         struct mutex domain_lock;
-> > @@ -317,7 +319,7 @@ static int vduse_dev_set_status(struct vduse_dev *d=
-ev, u8 status)
-> >         return vduse_dev_msg_sync(dev, &msg);
-> >  }
-> >
-> > -static int vduse_dev_update_iotlb(struct vduse_dev *dev,
-> > +static int vduse_dev_update_iotlb(struct vduse_dev *dev, u32 asid,
-> >                                   u64 start, u64 last)
-> >  {
-> >         struct vduse_dev_msg msg =3D { 0 };
-> > @@ -326,8 +328,14 @@ static int vduse_dev_update_iotlb(struct vduse_dev=
- *dev,
-> >                 return -EINVAL;
-> >
-> >         msg.req.type =3D VDUSE_UPDATE_IOTLB;
-> > -       msg.req.iova.start =3D start;
-> > -       msg.req.iova.last =3D last;
-> > +       if (dev->api_version < VDUSE_API_VERSION_1) {
-> > +               msg.req.iova.start =3D start;
-> > +               msg.req.iova.last =3D last;
-> > +       } else {
-> > +               msg.req.iova_v2.start =3D start;
-> > +               msg.req.iova_v2.last =3D last;
-> > +               msg.req.iova_v2.asid =3D asid;
-> > +       }
-> >
-> >         return vduse_dev_msg_sync(dev, &msg);
-> >  }
-> > @@ -439,14 +447,28 @@ static __poll_t vduse_dev_poll(struct file *file,=
- poll_table *wait)
-> >         return mask;
-> >  }
-> >
-> > +/* Force set the asid to a vq group without a message to the VDUSE dev=
-ice */
-> > +static void vduse_set_group_asid_nomsg(struct vduse_dev *dev,
-> > +                                      unsigned int group, unsigned int=
- asid)
-> > +{
-> > +       guard(mutex)(&dev->domain_lock);
-> > +       dev->groups[group].domain =3D dev->as[asid].domain;
-> > +}
-> > +
-> >  static void vduse_dev_reset(struct vduse_dev *dev)
-> >  {
-> >         int i;
-> > -       struct vduse_iova_domain *domain =3D dev->as.domain;
-> >
-> >         /* The coherent mappings are handled in vduse_dev_free_coherent=
-() */
-> > -       if (domain && domain->bounce_map)
-> > -               vduse_domain_reset_bounce_map(domain);
-> > +       for (i =3D 0; i < dev->nas; i++) {
-> > +               struct vduse_iova_domain *domain =3D dev->as[i].domain;
-> > +
-> > +               if (domain && domain->bounce_map)
-> > +                       vduse_domain_reset_bounce_map(domain);
-> > +       }
-> > +
-> > +       for (i =3D 0; i < dev->ngroups; i++)
-> > +               vduse_set_group_asid_nomsg(dev, i, 0);
-> >
-> >         down_write(&dev->rwsem);
-> >
-> > @@ -620,6 +642,29 @@ static union virtio_map vduse_get_vq_map(struct vd=
-pa_device *vdpa, u16 idx)
-> >         return ret;
-> >  }
-> >
-> > +static int vduse_set_group_asid(struct vdpa_device *vdpa, unsigned int=
- group,
-> > +                               unsigned int asid)
-> > +{
-> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > +       struct vduse_dev_msg msg =3D { 0 };
-> > +       int r;
-> > +
-> > +       if (dev->api_version < VDUSE_API_VERSION_1 ||
-> > +           group >=3D dev->ngroups || asid >=3D dev->nas)
-> > +               return -EINVAL;
-> > +
-> > +       msg.req.type =3D VDUSE_SET_VQ_GROUP_ASID;
-> > +       msg.req.vq_group_asid.group =3D group;
-> > +       msg.req.vq_group_asid.asid =3D asid;
-> > +
-> > +       r =3D vduse_dev_msg_sync(dev, &msg);
-> > +       if (r < 0)
-> > +               return r;
-> > +
-> > +       vduse_set_group_asid_nomsg(dev, group, asid);
-> > +       return 0;
-> > +}
-> > +
-> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
-> >                                 struct vdpa_vq_state *state)
-> >  {
-> > @@ -818,13 +863,13 @@ static int vduse_vdpa_set_map(struct vdpa_device =
-*vdpa,
-> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> >         int ret;
-> >
-> > -       ret =3D vduse_domain_set_map(dev->as.domain, iotlb);
-> > +       ret =3D vduse_domain_set_map(dev->as[asid].domain, iotlb);
-> >         if (ret)
-> >                 return ret;
-> >
-> > -       ret =3D vduse_dev_update_iotlb(dev, 0ULL, ULLONG_MAX);
-> > +       ret =3D vduse_dev_update_iotlb(dev, asid, 0ULL, ULLONG_MAX);
-> >         if (ret) {
-> > -               vduse_domain_clear_map(dev->as.domain, iotlb);
-> > +               vduse_domain_clear_map(dev->as[asid].domain, iotlb);
-> >                 return ret;
-> >         }
-> >
-> > @@ -867,6 +912,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
-ig_ops =3D {
-> >         .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
-> >         .reset                  =3D vduse_vdpa_reset,
-> >         .set_map                =3D vduse_vdpa_set_map,
-> > +       .set_group_asid         =3D vduse_set_group_asid,
-> >         .get_vq_map             =3D vduse_get_vq_map,
-> >         .free                   =3D vduse_vdpa_free,
-> >  };
-> > @@ -876,8 +922,10 @@ static void vduse_dev_sync_single_for_device(union=
- virtio_map token,
-> >                                              enum dma_data_direction di=
-r)
-> >  {
-> >         struct vduse_dev *vdev =3D token.group->dev;
-> > -       struct vduse_iova_domain *domain =3D vdev->as.domain;
-> > +       struct vduse_iova_domain *domain;
-> >
-> > +       guard(mutex)(&vdev->domain_lock);
-> > +       domain =3D token.group->domain;
-> >         vduse_domain_sync_single_for_device(domain, dma_addr, size, dir=
-);
-> >  }
-> >
-> > @@ -886,8 +934,10 @@ static void vduse_dev_sync_single_for_cpu(union vi=
-rtio_map token,
-> >                                              enum dma_data_direction di=
-r)
-> >  {
-> >         struct vduse_dev *vdev =3D token.group->dev;
-> > -       struct vduse_iova_domain *domain =3D vdev->as.domain;
-> > +       struct vduse_iova_domain *domain;
-> >
-> > +       guard(mutex)(&vdev->domain_lock);
-> > +       domain =3D token.group->domain;
-> >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
-> >  }
-> >
-> > @@ -897,8 +947,10 @@ static dma_addr_t vduse_dev_map_page(union virtio_=
-map token, struct page *page,
-> >                                      unsigned long attrs)
-> >  {
-> >         struct vduse_dev *vdev =3D token.group->dev;
-> > -       struct vduse_iova_domain *domain =3D vdev->as.domain;
-> > +       struct vduse_iova_domain *domain;
-> >
-> > +       guard(mutex)(&vdev->domain_lock);
+>> So it is the MAC driver which will follow the phandle, and then make a
+>> call to bind the dpll to the MAC, and then provide it with the ID?
 >
-> Won't this mutex lock hurt the performance? Can we use rw_lock/rcu_lock i=
-nstead?
+>In fact that would be enough to expose from the DPLL core a function
+>to change clock id of the existing DPLL devices.
 >
+>E.g.
+>
+>int dpll_clock_id_change(struct module *module, u64 clock_id,
+>			 u64 new_clock_id)
+>{
+>	struct dpll_device *dpll_pos;
+>	struct dpll_pin *pin_pos;
+>	unsigned long i;
+>
+>	mutex_lock(&dpll_lock);
+>	/* Change clock_id of all devices registered by given module
+>	 * with given clock_id.
+>	 */
+>	xa_for_each(&dpll_device_xa, i, dpll_pos) {
+>		if (dpll->clock_id == clock_id &&
+>		    dpll->module == module)
+>			dpll_pos->clock_id = new_clock_id;
+>		}
+>	}
+>	/* Change clock_id of all pins registered by given module
+>	 * with given clock_id.
+>	 */
+>	xa_for_each(&dpll_pin_xa, i, pos) {
+>		if (pin_pos->clock_id == clock_id &&
+>		    pin_pos->module == module) {
+>			pos->clock_id = new_clock_id;
+>		}
+>	}
+>	mutex_unlock(&dpll_lock);
+>}
+>
+>With this, the standalone DPLL driver can register devices and pins with
+>arbitrary clock_id and then the MAC driver can change it.
+>
+>Thoughts?
 
-I think RCU is not valid as the driver expects iotlb changes to be
-done when it returns, and do not allow in-flight requests to access
-the old data.
+The clock_id in dpll is basically a property. It is not used in uapi
+(other then for show and obtaining the device id). So if you introduce
+a mean the change this property, I don't see a problem with that.
 
-Using rwlock for the next version, thanks!
 
+>
+>Thanks,
+>Ivan
+>
 
