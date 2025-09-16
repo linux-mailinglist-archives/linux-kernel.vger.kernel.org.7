@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-819490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C77B5A190
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E19B5A194
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C34E1B284EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A630F527232
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA892C11E3;
-	Tue, 16 Sep 2025 19:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EF42DFA4A;
+	Tue, 16 Sep 2025 19:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WuRAgW41"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vAzFDOVG"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D00D32D5C1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CCF238178
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 19:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758051540; cv=none; b=GIIsusSmpAzmHuIVd6gK6HFEPAxjHOXATgjUYEoo++AxneHfr4PzoJlXjZZ3IHVOHfDtPEOrzqLUnbZeHbIpi6Frtjt97ONdBj2ek4Ubf2itg5kOZaDaXEZQPtEwMHLVJhulQfVm42xL7HBL1gfk70ZzpqkL2P9JJNm2K2PK9KY=
+	t=1758051888; cv=none; b=uWi6Npf3oclA+R0i171XEx+wTYBl5MC11BP5Ydi/vnL6zwt55B487gTrbwxw99yVwt7pKG9Y8pz7S8jCpV7WLLE/4zErOzjJZV6WlxhbbIdR+3sG5Quq/Xnaf8X6YsMNO/GrjcOxCrpFKHD7NvmFXCy2lhrlkRAHRxnpPTNYExU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758051540; c=relaxed/simple;
-	bh=Q4kVru8i8IIfSOoE84wSITyzfCl6oFTOK7yBiPxJkJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P33uKOjjD8Y7OJ/Pg9O5i4W8JU2FpZHqFVxMcRMYA3PtmvEOLJ6XGr2764ovD4kXA6+aIG68GzgXa2bo7QboGouzXRNyyrX+bO41/DP+A3IGftgC7JXUeg1fIA62DcuJAVMW3FUTlpO+FjvW+TYcG2D5dj/fmFMDl3M2w0Fwtfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WuRAgW41; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758051537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+7hKGgfCrcGGIhnxPu7A9Ry/ZimHce+9evBu/ut+yg4=;
-	b=WuRAgW41Fb1aFdtD8Z4gVYISBDnfhiQpzQQ10ODkAjXJjY/oQK4xBcAsC9Gd67fy7D+t5l
-	sU9HXeXJALyx50Z3KtIHR6JQ3DRIiL4+pVP99VZ+IRfnC7i4+R87BOvHvvi22hBH4vsD1q
-	i//5kPF2SBTJatyPN5dxE2xiCvEoq2E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-481-P4f2Hq3UPwCRNeYxT_NYNg-1; Tue,
- 16 Sep 2025 15:38:55 -0400
-X-MC-Unique: P4f2Hq3UPwCRNeYxT_NYNg-1
-X-Mimecast-MFC-AGG-ID: P4f2Hq3UPwCRNeYxT_NYNg_1758051534
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D3A1A19560AF;
-	Tue, 16 Sep 2025 19:38:54 +0000 (UTC)
-Received: from lszubowi.mht.redhat.com (unknown [10.17.16.237])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B40C30001A4;
-	Tue, 16 Sep 2025 19:38:53 +0000 (UTC)
-From: Lenny Szubowicz <lszubowi@redhat.com>
-To: ardb@kernel.org
-Cc: linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] efi/x86: Memory protection on EfiGcdMemoryTypeMoreReliable
-Date: Tue, 16 Sep 2025 15:38:53 -0400
-Message-ID: <20250916193853.410189-1-lszubowi@redhat.com>
+	s=arc-20240116; t=1758051888; c=relaxed/simple;
+	bh=Bj5UJz56fZYcozZfKjnd0X0pC7phusQmPamMJPmrBCs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lzZNwM+l99GcIU5U9yjXPIxcjmi9ptyvOs9ds4W3Rn/dh35I97ip6FpsmT4h7Ztw0A61uAQzTT7jwzGgfBXjFzpiNXNAAHixmObfiAyR00ERlfem/OD/0We/M4pOLYyk/dTISvsnEZUQ5tBqju1eD5rHH/agqwvxTGByrfesGdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vAzFDOVG; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32db3d5f20aso5011872a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:44:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758051886; x=1758656686; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=blJ1+eWWzlJEt2GGVDQEpISmZA9TNH9W/hvuPdFhLSk=;
+        b=vAzFDOVGNO3CDwgF4Co1OPkuXz3ExM75Y7slKHIRHgi4TBGZzAG7Ev2Uf1h3w6FGsY
+         B1ihqw7K+zraKVpFvpC976E5le28F7nYpQtrqyE63kkl+Ms8ZLNP7Taz6mHa1lU1Omqh
+         YBUIQMfNh1PPXmqDWGf2+vFuLmcVXFSwhFwpWe/xFDu2/UvF2i3wD3scOAZ3Y+KAqbnL
+         lAaM8/rK1PE7zzL09CMJgL3g1kX5n8bg2IbLjNrSQ0JT4rhALd3daI/XIYAYFXHy3EMR
+         fNx1800puSQbBjSwKVkS62qnuicQhSE10y4DTseIzhH2tu+jLpYqUHJR7b/qJ1rLgQ1U
+         /Xzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758051886; x=1758656686;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=blJ1+eWWzlJEt2GGVDQEpISmZA9TNH9W/hvuPdFhLSk=;
+        b=iPByrNlpFySl5HNXK+a8GtpSO15D6NvZyNCuloGyIjrBpZishdzMQ9GAYlolxFOnS7
+         qr5uhNHfoAjSVmPZRJtVE85T8tBIQUbtwiOKcKWnONricluin1QXV1zhwfHcI+Wk3yK4
+         5A2FHTG5CAw9e1eRAMQ263lq59h2mbx1D9Nb6Mf7MhRuS35z8DXeuD6UafXxV4gL9XKi
+         lBULkl88ws40oKlVIql8iiHuAkNwOzMf7yOtxeoAvOtqTuSleEIpPeaMmnpIFgzBDApI
+         hC9JECy914HdBOIi+gW8bYAN1v/w6BilNh5KMcWEfHTzGQkVW7Jt1jlasAod2HOHbjc0
+         1i0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUBOW6Xe+Hcfrmuxd93gnDF6YjGiamdlxQFZA2U9YbsN4k+KI7S1C9Fr94O1ALzUoRIbLlyCTYGGTFnpYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk/t9VazywiYJPKH1isP2tHsHl4aZ+J4P1DadQutUkiuLp0Byp
+	k9DwLqzHuffr6YesN5AOIvAJTlvUs/fUxxKwqJgHDmE8JEV6hlIWEQtqk33PRV15Q+z79IFwTM5
+	YyEibPQ==
+X-Google-Smtp-Source: AGHT+IEPKdyex7jz8in5XFqN4DYJcVLlKPHGMJXbamUaBHBfxWZpWsWJt7RliMxdJnu3mE2/a/pWQBJaGPY=
+X-Received: from pjv14.prod.google.com ([2002:a17:90b:564e:b0:32d:69b3:b7b0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3904:b0:32e:7123:7076
+ with SMTP id 98e67ed59e1d1-32e712371d6mr9405723a91.11.1758051886069; Tue, 16
+ Sep 2025 12:44:46 -0700 (PDT)
+Date: Tue, 16 Sep 2025 12:44:44 -0700
+In-Reply-To: <797c84fe-aec7-3e29-a581-d6d1a3878aaa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Mime-Version: 1.0
+References: <20250908202034.98854-1-john.allen@amd.com> <20250908202034.98854-3-john.allen@amd.com>
+ <797c84fe-aec7-3e29-a581-d6d1a3878aaa@amd.com>
+Message-ID: <aMm-LMjCeXguOhay@google.com>
+Subject: Re: [PATCH v2 2/2] x86/sev-es: Include XSS value in GHCB CPUID request
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: John Allen <john.allen@amd.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, pbonzini@redhat.com, dave.hansen@intel.com, 
+	rick.p.edgecombe@intel.com, mlevitsk@redhat.com, weijiang.yang@intel.com, 
+	chao.gao@intel.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	mingo@redhat.com, tglx@linutronix.de
+Content-Type: text/plain; charset="us-ascii"
 
-Check for needed memory protection changes on EFI DXE GCD memory space
-descriptors with type EfiGcdMemoryTypeMoreReliable in addition to
-EfiGcdMemoryTypeSystemMemory.
+On Tue, Sep 09, 2025, Tom Lendacky wrote:
+> On 9/8/25 15:20, John Allen wrote:
+> > When a guest issues a cpuid instruction for Fn0000000D_{x00,x01}, the
+> > hypervisor will be intercepting the CPUID instruction and will need to access
+> > the guest XSS value. For SEV-ES, the XSS value is encrypted and needs to be
+> > included in the GHCB to be visible to the hypervisor.
+> > 
+> > Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> > Signed-off-by: John Allen <john.allen@amd.com>
+> > ---
+> >  arch/x86/coco/sev/vc-shared.c | 11 +++++++++++
+> >  arch/x86/include/asm/svm.h    |  1 +
+> >  2 files changed, 12 insertions(+)
+> > 
+> > diff --git a/arch/x86/coco/sev/vc-shared.c b/arch/x86/coco/sev/vc-shared.c
+> > index 2c0ab0fdc060..079fffdb12c0 100644
+> > --- a/arch/x86/coco/sev/vc-shared.c
+> > +++ b/arch/x86/coco/sev/vc-shared.c
+> > @@ -1,5 +1,9 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  
+> > +#ifndef __BOOT_COMPRESSED
+> > +#define has_cpuflag(f)                  boot_cpu_has(f)
+> > +#endif
+> > +
+> >  static enum es_result vc_check_opcode_bytes(struct es_em_ctxt *ctxt,
+> >  					    unsigned long exit_code)
+> >  {
+> > @@ -452,6 +456,13 @@ static enum es_result vc_handle_cpuid(struct ghcb *ghcb,
+> >  		/* xgetbv will cause #GP - use reset value for xcr0 */
+> >  		ghcb_set_xcr0(ghcb, 1);
+> >  
+> > +	if (has_cpuflag(X86_FEATURE_SHSTK) && regs->ax == 0xd && regs->cx <= 1) {
 
-This fixes a fault on entry into the decompressed kernel from the
-EFI stub that occurs when the memory allocated for the decompressed
-kernel is more reliable memory, has NX/XP set, and the kernel needs
-to use the EFI DXE protocol to adjust memory protections.
+Only CPUID.0xD.1 consumes XSS.  CPUID.0xD.0 only consumes XCR0.  I.e. this could
+be "&& regs->cx == 1".
 
-The memory descriptors returned by the DXE protocol
-GetMemorySpaceDescriptor() service use a different GCD memory type
-to distinguish more reliable memory ranges from their conventional
-counterparts. This is in contrast to the EFI memory descriptors
-returned by the EFI GetMemoryMap() service which use the
-EFI_MEMORY_MORE_RELIABLE memory attributes flag to identify
-EFI_CONVENTIONAL_MEMORY type regions that have this additional
-property.
+> Just a nit, but I wonder if we should be generic here and just do
+> has_cpuflag(X86_FEATURE_XSAVES) since that should be set if shadow stack
+> is enabled, right? And when X86_FEATURE_XSAVES is set, we don't
+> intercept XSS access (see sev_es_recalc_msr_intercepts()).
 
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
----
- drivers/firmware/efi/libstub/x86-stub.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index cafc90d4caaf..0f60a12401c2 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -300,7 +300,7 @@ efi_status_t efi_adjust_memory_range_protection(unsigned long start,
- 		return EFI_SUCCESS;
- 
- 	/*
--	 * Don't modify memory region attributes, they are
-+	 * Don't modify memory region attributes, if they are
- 	 * already suitable, to lower the possibility to
- 	 * encounter firmware bugs.
- 	 */
-@@ -315,11 +315,13 @@ efi_status_t efi_adjust_memory_range_protection(unsigned long start,
- 		next = desc.base_address + desc.length;
- 
- 		/*
--		 * Only system memory is suitable for trampoline/kernel image placement,
--		 * so only this type of memory needs its attributes to be modified.
-+		 * Only system memory and more reliable memory are suitable for
-+		 * trampoline/kernel image placement. So only those memory types
-+		 * may need to have attributes modified.
- 		 */
- 
--		if (desc.gcd_memory_type != EfiGcdMemoryTypeSystemMemory ||
-+		if ((desc.gcd_memory_type != EfiGcdMemoryTypeSystemMemory &&
-+		     desc.gcd_memory_type != EfiGcdMemoryTypeMoreReliable) ||
- 		    (desc.attributes & (EFI_MEMORY_RO | EFI_MEMORY_XP)) == 0)
- 			continue;
- 
--- 
-2.51.0
-
+On the other hand, by exposing XSS to the host only on CPUID #VCs, you've already
+"optimized" this code based on presumed usage of XSS by the hypervisor.
 
