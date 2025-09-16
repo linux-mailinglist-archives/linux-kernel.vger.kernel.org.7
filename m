@@ -1,331 +1,197 @@
-Return-Path: <linux-kernel+bounces-818175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F12B58DDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2FCB58DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4A32A85CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8A2484186
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFEA2C0303;
-	Tue, 16 Sep 2025 05:25:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7042D2C0F93;
+	Tue, 16 Sep 2025 05:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OJ36b35G"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013035.outbound.protection.outlook.com [40.93.196.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4in03emM"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18E9286435;
-	Tue, 16 Sep 2025 05:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758000354; cv=fail; b=QMYsGT89OOGBj+ffTXsIYjdvsy5oOieWY/VbakRwI83HzpZZRrsbAJVi2URWH0jixlZ1F0aULWZsiXEwlK4d1fjjzGf+4dBZM72HWnNK32leV15GkxbflI6n7yooq1KstzgYRHPFDojPVT0TzO/cOll0xUzh01P1qySpF244RF4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758000354; c=relaxed/simple;
-	bh=z/CGSI9XzVurcyA+LwmmfkJHpAPD4+PuKLvab8feV8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PuIjr/h9ZFv9avMysFOzK0WYvjEhQMZV4Ulo6RSlvI16pl5EDr1B0GMgSkjiO2KilQCfn5e+u90O7pXtC/74a49ANix5Oix/pUhkroMjqMSw0c/0LbdnWCYUE2mGqDH/DOCpIKxLLznAGgbgk+HTeOY5VDx0zNq8/GnDE3jg1TQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OJ36b35G; arc=fail smtp.client-ip=40.93.196.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ELPpWOicYOO6+vt0/owfVwLPLKlHyFZt+8Ci1fao/ghHBrgLICc76Vd/YFP8T+XpfVbSMUqp2YPFTyQ8zPvcOX4MBgATM4dlOGOua8xd8cMs37jSkg5nJ3n2N8OzOIdI3mQEy8jcoItxcvO0qtRpQ+cE288rUDaPlssdnTET9IRIEKp9ukeAjQY22nVX9ya4bLuttXpHUbKb86jkHHeEFmIEvQ0wbOyM9nCcUc4ncOPl5pnR5qqbVOuN1GKf6fl2buQK1leZTXlxG4niRDHwtvHWOszYjIiu7Bz9lsNBOGRxwsPsVq/YWxW6RdKE74sldxX1TbPxsEjLtXdAaby6XQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yMI446Nq6vcqSIOQTBfXI6zhxj3aAZZyad4dYZ92k9I=;
- b=Vp/SnBZBQ0ewkurJlme3TE74sUKqxKe1gOLCBCKvfWywevV2tlNGLt4/UoPJc5S5I9D4h9vuSC8s4t9BgIV0jkQKuQ34O7tW7QUWUZG4ipSqa239NcGQDQfepczcF+msnzMQKxBRC41Cjc9Bh3O8/WO8CcIpzJbkwXxfpOoB54iUD32XAgg7pBSzfYHqxHk+OH9OelbY9eF3yEBlEOEoUUedU5MbSLR6MGMzoUrQkc/4NDN9+ez8GD+bhOYVkdtcni7G8E91e6L98WwxL3oN2zIYuzCGdA9s7ltwvtWTEqW9APy9z+LPCkKo822f40aLLoB4RybG5ZVVPJUivMNYjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yMI446Nq6vcqSIOQTBfXI6zhxj3aAZZyad4dYZ92k9I=;
- b=OJ36b35GwCIzLzJYmsdq6R+8BaJTUicP3GnZQYisjcoP+7zi9FqGVsBfgp11kZIMQyaHjb4JA33g4/RRjLDCqUklzgmtYesrztSQnBfa9MRS1AwEMX45NNIt+qLjbThtqBRlu8yMMjUEIhgMAWPpr6yp0/ZyyEF93vJzNWPKiXmnFT184xN33bzfRXJAwtX11A0w1Uw/A0Xeyw13I0GpPwizMr24pDK5I8svx6Rtnv84PPTMAfnYO7Rn7TJ3TO49rmdcc2CNFUa7mAVrXWSY0n2Sd5oj5VdkrjElkL2im/155ozinZh3fGsIf94qEDpC1dQ9i4FtpvPNX4ZtnK4wBw==
-Received: from BY3PR04CA0008.namprd04.prod.outlook.com (2603:10b6:a03:217::13)
- by SN7PR12MB7812.namprd12.prod.outlook.com (2603:10b6:806:329::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Tue, 16 Sep
- 2025 05:25:48 +0000
-Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
- (2603:10b6:a03:217:cafe::bb) by BY3PR04CA0008.outlook.office365.com
- (2603:10b6:a03:217::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12 via Frontend Transport; Tue,
- 16 Sep 2025 05:25:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 05:25:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
- 2025 22:25:29 -0700
-Received: from [10.221.203.222] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
- 2025 22:25:21 -0700
-Message-ID: <d9bea817-279c-4024-9bff-c258371b3de7@nvidia.com>
-Date: Tue, 16 Sep 2025 08:24:16 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F43450FE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758000559; cv=none; b=fc7AIb1I512KKoC/PGw21THPWZxa6VvZZ2jVgOn1JF3aPMhVWfAc+0SufH4hQkoBGSKdncoQIvm1+z87PRF9WD/tfUOc2YPhVPnJKQTwI07cMWLp1jfmUkp7olUMaq4ygqPTS+XgwUIRAKm7KAnk6of9Zr3WiWE+uDuOVvmWzlg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758000559; c=relaxed/simple;
+	bh=GaZS/VpqznuFoj0yVp2cj2IVeejlfPxwR9QMsx6P4/o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VKREmlVEWpq5ArGv3dy15srExy44wnCtffE6ZJ2MuFNJ5VBedcFTcKHKSDlWPY6ZrhpNATDZDUmplpkVyJgaHyI9H0loyrUigpjgIl6uCwyrAO7Xg0uOa/7wXJMGf9rau8NuVlD2dX6A9X3rudDKY3h8ssPeUWvKYbgxGhwyqEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4in03emM; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-252afdfafe1so53303415ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:29:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758000555; x=1758605355; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oc/sOKvvEyLnVdsFqJE9Br4DNR1GO1Iuj3m1tYjKDlI=;
+        b=4in03emMoQ6vPJmZoj3O0xNuabKzOkZU6tt4brhhbX2jYAFc1foGvIa01g4/86i+kY
+         0XMOVEUwLPHceQgEnbqHJb3hYi9n3i/EVM4MeBhNceMyC/3yjVufCGK+jxtJrDdATn3O
+         u/Gxdz2BOclpcHuyUU0lCtsefDaRzqjcJGbY10qItd04pro8Gm4dL/mANaZtbahyVjF/
+         lWYnX0A0wL/COu93TzYlMy4VNRpVOWz+AmfYIRIuGDHQlFf1hgj2lY6W+WKfVcLkaEkJ
+         fvDwFM0ASBvBqBNMYGek4cDEggCqMRG58Og77WexsoTi2CU9OWcC4siqd5+4EBuiTOfw
+         Oi0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758000555; x=1758605355;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oc/sOKvvEyLnVdsFqJE9Br4DNR1GO1Iuj3m1tYjKDlI=;
+        b=slDwD2InhbM+apqxqcPJxWDCX6bu/cQ/CYnTdk8hI42I3RVCyMqmAwg119VCS1c7s1
+         BLvnimiBa0xh4dgSCViYLQoZXr0vHGkFGSXGsWnXuURjg5jvCc8eYTejD8og/VQRRazi
+         1mKlyd+3uCDWleGgMJS3kz0LnQGxq9BQbY6tjiT8H9h+9j4NiJBzuaGUdSXu+65YpfDb
+         aUUBbk2dLrH7po3YF8Mu7BlUZr7ioD8cT9LHacWw4dnohQLkMUFIRBiFG81ffh1PNHFG
+         BLqcM5QsIdxaY4CtSg06dNcU6zQAzp+lWN4wKuMp0YxAWOqSyPvhipyRYtLpIghRJp+/
+         qtmA==
+X-Gm-Message-State: AOJu0YziC3v7Xcl0o0ZLw9COep61b30/IwpHH+VALKiF4SrdwWAPxNo0
+	6VIBjqQ3y/LQaXONcqXMYz52zTe1kHirFr4HIlJakiydnyyXAuTZnI+h0EwIxx72yD5lJECw3YS
+	RsgWTQAP56db5U9hrfHpNty5h9+JeJcWK0bRhYRUUGlrw5yBY+49hbioFWYPeaQff9ikgqyoF4T
+	CGHCbnpTvbYcPZwmCJJAa7VnNHNpRLwCNds2Go7Fx3IO9rkpfW
+X-Google-Smtp-Source: AGHT+IFjajGzvkT8hFJRYWtEOMGpoWWsJS1eQvaW/ltr8HUagS35cqut04mfNzzgWSTwdPDZEWeTefVp2v6V
+X-Received: from pjbsn7.prod.google.com ([2002:a17:90b:2e87:b0:325:220a:dd41])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ebc5:b0:256:3dfa:1c98
+ with SMTP id d9443c01a7336-25d23e13e2emr184133025ad.11.1758000555135; Mon, 15
+ Sep 2025 22:29:15 -0700 (PDT)
+Date: Tue, 16 Sep 2025 05:28:09 +0000
+In-Reply-To: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/1] net/mlx5: Clean up only new IRQ glue on
- request_irq() failure
-To: Mohith Kumar Thummaluru <mohith.k.kumar.thummaluru@oracle.com>,
-	"saeedm@nvidia.com" <saeedm@nvidia.com>, "leon@kernel.org" <leon@kernel.org>,
-	"tariqt@nvidia.com" <tariqt@nvidia.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"jacob.e.keller@intel.com" <jacob.e.keller@intel.com>, "elic@nvidia.com"
-	<elic@nvidia.com>, "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Anand Khoje
-	<anand.a.khoje@oracle.com>, Manjunath Patil <manjunath.b.patil@oracle.com>,
-	Rama Nichanamatlu <rama.nichanamatlu@oracle.com>, Rajesh Sivaramasubramaniom
-	<rajesh.sivaramasubramaniom@oracle.com>, Rohit Sajan Kumar
-	<rohit.sajan.kumar@oracle.com>, Moshe Shemesh <moshe@nvidia.com>, Mark Bloch
-	<mbloch@nvidia.com>, Qing Huang <qing.huang@oracle.com>
-References: <1eda4785-6e3e-4660-ac04-62e474133d71@oracle.com>
-Content-Language: en-US
-From: Shay Drori <shayd@nvidia.com>
-In-Reply-To: <1eda4785-6e3e-4660-ac04-62e474133d71@oracle.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|SN7PR12MB7812:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad589519-71ca-4a45-3d57-08ddf4e17e5f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VzRhZ0hQU2tDcnRUTEtrUlJFb1hEQlhoTlpGS2tMNzF3elR5cHA2dXU4SnpG?=
- =?utf-8?B?K3hPTnBBQ0w2MDNwQ1NIRUdxQkg2SWpmdjZCQlRaZXI0UUZKWWFaVTkxYzEy?=
- =?utf-8?B?bHNvZm5PVE8rN0lzR0lkcm8vWTVmNFYyNWxuNksySmFqbmpuaEt5YjJ1OUJ5?=
- =?utf-8?B?VjFIUE1vaUhZZVluWHlHVXpuQkNuWHZVZE1VSTBIUWwyZmdud2lTYWFudUtG?=
- =?utf-8?B?VFV0NDhYWW83bGVZM3lTZnVzUmd3UWp6ZG40U2pKUTdPcE5Da3M0bnRjR2Q3?=
- =?utf-8?B?WW4yNGRpSzlHUGhNZnJhclRJNVRFVW9sT0FLYm8yOXNyNEo1OGQzY3VTY0NT?=
- =?utf-8?B?UzZYYnhCSXlSUEJvUWk4ZTg0aDc3akhPaVJMT2VkR3N1amZDbGVDYmwydEd4?=
- =?utf-8?B?UW4xOUZITW1hNXdrSytjeEVhWTlsT0M4dWtEa0NRZ1M4bmNtdEkxcVZ4UStB?=
- =?utf-8?B?NlV2QVBWK1c5ZWFDVDRWK2h1bEpQaEE3eTdGY00vd0gwOHUzTGh1MHVIbjRD?=
- =?utf-8?B?dDFHQVB5UCtiaEw0SnZ2TUNqdTNnTTcxWFJwMnduQjlLQ3JvTmUyV1Jmbmph?=
- =?utf-8?B?dXgrTkNiaklmdGxmV1JuNGhxMDVsSkd3OWNGVndVVDd3enlzdE5iY3NtV0Vq?=
- =?utf-8?B?YkhqOGR0aStXOWZxdzByYXNpUWRhU1dkVklqU1hDYlJFTGQraThCTTdtcWZj?=
- =?utf-8?B?M1dSQWorUExNTlJhUjBHa2JWSE9FYlNOK2FPN2pyQVFNbnNRMGtPdTdkc0N3?=
- =?utf-8?B?ZEs2TXpSby9SVmpsYzk4OEh2SitXaU5LSlF2dk1xb2hzSks4czNHUkkwVldV?=
- =?utf-8?B?U0diT1NhMlI1a3gyZEkxNjYzSnRBUHRRdVFFRUNJb1FNZTNnWjN0bnJhRXBK?=
- =?utf-8?B?b0I4M0pJM0p0bjF4MTRMT2tRT0FrSlBxN3M5aUcyMFRyQzl5MEtGNFpTb0c5?=
- =?utf-8?B?MnlaMUg0SHNVa3hsNG85dkNsUy9pTzY2UFZwdDhlT1JwSk45RmFHS2o5VlB0?=
- =?utf-8?B?blN1RmVmN2xWTXJ0VEtMd1RBN29xdkU5ZSt6bHR0OFZKdlZTRlJZRWdEZU90?=
- =?utf-8?B?VW9ITGdZTXhWVnlPSjdQWVNJdjRhdlJTNDRPSUFUSGVVOExFbmQzU1pPdGpF?=
- =?utf-8?B?NUk2TDVTMENscUljL25FbUh6YXNoeFB0TUx1TUt6SG5LRUVSRnhXVFRtM3J6?=
- =?utf-8?B?RGx3MGd4YkxZZzBWb01pdEJ1U24vcGZ4KzU0OFFiWEUyOHRYcnBobG83Q1J6?=
- =?utf-8?B?bHo0RHRFeGlVUHFaS0E2NlBka0ZBbW9mZjlKaDhOeHE1ZTliWmsxMWdQZFB2?=
- =?utf-8?B?Q1R2L21DYXJtQUxQN3ZhUzN2NTIwekVXWUc2dnNXVndUSTJURHQ0R3U3MFFs?=
- =?utf-8?B?VzhSR0Jqem1nNkhyQ0tWd3BvU0lYQWdqSWNtbHFpREN2bFpaTXF1em1BM2dS?=
- =?utf-8?B?YVVhaHJGc1oyTSszMWFKZkZaRnBucnZubytJMjYyS3JueHlMbE1kempBdng1?=
- =?utf-8?B?SEdJR2hBZUw0MTUvU25pVGExQUkvM2huYmdiNTNIUldHOGU3OW9QUk1oaTYz?=
- =?utf-8?B?djV0S2d0NllvaXYweHpFTFdWMC9KRkUzWHNOZWx2UXlrRkRvWXZGSXdoa1B1?=
- =?utf-8?B?SFpHZDVYdzdyZGM4bko2Q1BtQmh5RlRvdXBVVTYzZ1puRlQxZWhRclpXd3Yy?=
- =?utf-8?B?anFHcGJ6U0t3SS91dXFnRUp1bWJMUFpJRmlUV2Y4TVBaVXJZOVN6VUJySXcw?=
- =?utf-8?B?RWZSL2JlUFMxc2hCekJvYWkydVRmZEFGcE9ac2FibHJCelkrdkRqc2xOa3Nh?=
- =?utf-8?B?K0hjNUo4V3EySWpQcDI3b3hzbS9uZVhndGd5dEo5bFZvS1BDMkRqcVkybEw0?=
- =?utf-8?B?RjZDbFZuK2N1YytPTDE5VHFSNnBCbnoxZHkzTHJKcUNNZnRHd3ZyY2I4U0J3?=
- =?utf-8?B?eTdBVnhmRGQ0TjhHVGNHTG9WZVE3Z0FFNHA2SGQxbGVFZkxvcFBoREhiSzRC?=
- =?utf-8?B?ZEo4MXZQTVBiRkpoNVFPRkIxaTljNFF3cGR2QzAwUnRQM0prV0k5TW4yVGhj?=
- =?utf-8?Q?E+WLIP?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 05:25:48.0533
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad589519-71ca-4a45-3d57-08ddf4e17e5f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCC5.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7812
+Mime-Version: 1.0
+References: <CANDhNCreD8f6pPjUa--UzXicJr=xnEGGbKdZhmJCeVPgkEV-Ag@mail.gmail.com>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250916052904.937276-1-jstultz@google.com>
+Subject: [RFC][PATCH] sched/deadline: Fix dl_server getting stuck, allowing
+ cpu starvation
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Suleiman Souhlal <suleiman@google.com>, Qais Yousef <qyousef@layalina.io>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, kuyo chang <kuyo.chang@mediatek.com>, 
+	hupu <hupu.gm@gmail.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, sorry for the late response :(
+With 6.17-rc6, I found when running with locktorture enabled, on
+a two core qemu VM, I could easily hit some lockup warnings:
 
-On 27/06/2025 9:50, Mohith Kumar Thummaluru wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> The mlx5_irq_alloc() function can inadvertently free the entire rmap
-> and end up in a crash[1] when the other threads tries to access this,
-> when request_irq() fails due to exhausted IRQ vectors. This commit
-> modifies the cleanup to remove only the specific IRQ mapping that was
-> just added.
-> 
-> This prevents removal of other valid mappings and ensures precise
-> cleanup of the failed IRQ allocation's associated glue object.
-> 
-> Note: This error is observed when both fwctl and rds configs are enabled.
-> 
-> [1]
-> mlx5_core 0000:05:00.0: Successfully registered panic handler for port 1
-> mlx5_core 0000:05:00.0: mlx5_irq_alloc:293:(pid 66740): Failed to
-> request irq. err = -28
-> infiniband mlx5_0: mlx5_ib_test_wc:290:(pid 66740): Error -28 while
-> trying to test write-combining support
-> mlx5_core 0000:05:00.0: Successfully unregistered panic handler for port 1
-> mlx5_core 0000:06:00.0: Successfully registered panic handler for port 1
-> mlx5_core 0000:06:00.0: mlx5_irq_alloc:293:(pid 66740): Failed to
-> request irq. err = -28
-> infiniband mlx5_0: mlx5_ib_test_wc:290:(pid 66740): Error -28 while
-> trying to test write-combining support
-> mlx5_core 0000:06:00.0: Successfully unregistered panic handler for port 1
-> mlx5_core 0000:03:00.0: mlx5_irq_alloc:293:(pid 28895): Failed to
-> request irq. err = -28
-> mlx5_core 0000:05:00.0: mlx5_irq_alloc:293:(pid 28895): Failed to
-> request irq. err = -28
-> general protection fault, probably for non-canonical address
-> 0xe277a58fde16f291: 0000 [#1] SMP NOPTI
-> 
-> RIP: 0010:free_irq_cpu_rmap+0x23/0x7d
-> Call Trace:
->    <TASK>
->    ? show_trace_log_lvl+0x1d6/0x2f9
->    ? show_trace_log_lvl+0x1d6/0x2f9
->    ? mlx5_irq_alloc.cold+0x5d/0xf3 [mlx5_core]
->    ? __die_body.cold+0x8/0xa
->    ? die_addr+0x39/0x53
->    ? exc_general_protection+0x1c4/0x3e9
->    ? dev_vprintk_emit+0x5f/0x90
->    ? asm_exc_general_protection+0x22/0x27
->    ? free_irq_cpu_rmap+0x23/0x7d
->    mlx5_irq_alloc.cold+0x5d/0xf3 [mlx5_core]
->    irq_pool_request_vector+0x7d/0x90 [mlx5_core]
->    mlx5_irq_request+0x2e/0xe0 [mlx5_core]
->    mlx5_irq_request_vector+0xad/0xf7 [mlx5_core]
->    comp_irq_request_pci+0x64/0xf0 [mlx5_core]
->    create_comp_eq+0x71/0x385 [mlx5_core]
->    ? mlx5e_open_xdpsq+0x11c/0x230 [mlx5_core]
->    mlx5_comp_eqn_get+0x72/0x90 [mlx5_core]
->    ? xas_load+0x8/0x91
->    mlx5_comp_irqn_get+0x40/0x90 [mlx5_core]
->    mlx5e_open_channel+0x7d/0x3c7 [mlx5_core]
->    mlx5e_open_channels+0xad/0x250 [mlx5_core]
->    mlx5e_open_locked+0x3e/0x110 [mlx5_core]
->    mlx5e_open+0x23/0x70 [mlx5_core]
->    __dev_open+0xf1/0x1a5
->    __dev_change_flags+0x1e1/0x249
->    dev_change_flags+0x21/0x5c
->    do_setlink+0x28b/0xcc4
->    ? __nla_parse+0x22/0x3d
->    ? inet6_validate_link_af+0x6b/0x108
->    ? cpumask_next+0x1f/0x35
->    ? __snmp6_fill_stats64.constprop.0+0x66/0x107
->    ? __nla_validate_parse+0x48/0x1e6
->    __rtnl_newlink+0x5ff/0xa57
->    ? kmem_cache_alloc_trace+0x164/0x2ce
->    rtnl_newlink+0x44/0x6e
->    rtnetlink_rcv_msg+0x2bb/0x362
->    ? __netlink_sendskb+0x4c/0x6c
->    ? netlink_unicast+0x28f/0x2ce
->    ? rtnl_calcit.isra.0+0x150/0x146
->    netlink_rcv_skb+0x5f/0x112
->    netlink_unicast+0x213/0x2ce
->    netlink_sendmsg+0x24f/0x4d9
->    __sock_sendmsg+0x65/0x6a
->    ____sys_sendmsg+0x28f/0x2c9
->    ? import_iovec+0x17/0x2b
->    ___sys_sendmsg+0x97/0xe0
->    __sys_sendmsg+0x81/0xd8
->    do_syscall_64+0x35/0x87
->    entry_SYSCALL_64_after_hwframe+0x6e/0x0
-> RIP: 0033:0x7fc328603727
-> Code: c3 66 90 41 54 41 89 d4 55 48 89 f5 53 89 fb 48 83 ec 10 e8 0b ed
-> ff ff 44 89 e2 48 89 ee 89 df 41 89 c0 b8 2e 00 00 00 0f 05 <48> 3d 00
-> f0 ff ff 77 35 44 89 c7 48 89 44 24 08 e8 44 ed ff ff 48
-> RSP: 002b:00007ffe8eb3f1a0 EFLAGS: 00000293 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007fc328603727
-> RDX: 0000000000000000 RSI: 00007ffe8eb3f1f0 RDI: 000000000000000d
-> RBP: 00007ffe8eb3f1f0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007ffe8eb3f3c8 R15: 00007ffe8eb3f3bc
->    </TASK>
-> ---[ end trace f43ce73c3c2b13a2 ]---
-> RIP: 0010:free_irq_cpu_rmap+0x23/0x7d
-> Code: 0f 1f 80 00 00 00 00 48 85 ff 74 6b 55 48 89 fd 53 66 83 7f 06 00
-> 74 24 31 db 48 8b 55 08 0f b7 c3 48 8b 04 c2 48 85 c0 74 09 <8b> 38 31
-> f6 e8 c4 0a b8 ff 83 c3 01 66 3b 5d 06 72 de b8 ff ff ff
-> RSP: 0018:ff384881640eaca0 EFLAGS: 00010282
-> RAX: e277a58fde16f291 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: ff2335e2e20b3600 RSI: 0000000000000000 RDI: ff2335e2e20b3400
-> RBP: ff2335e2e20b3400 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 00000000ffffffe4 R12: ff384881640ead88
-> R13: ff2335c3760751e0 R14: ff2335e2e1672200 R15: ff2335c3760751f8
-> FS:  00007fc32ac22480(0000) GS:ff2335e2d6e00000(0000)
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f651ab54000 CR3: 00000029f1206003 CR4: 0000000000771ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> PKRU: 55555554
-> Kernel panic - not syncing: Fatal exception
-> Kernel Offset: 0x1dc00000 from 0xffffffff81000000 (relocation range:
-> 0xffffffff80000000-0xffffffffbfffffff)
-> kvm-guest: disable async PF for cpu 0
-> 
-> 
-> Fixes: 3354822cde5a ("net/mlx5: Use dynamic msix vectors allocation")
-> Signed-off-by: Mohith Kumar
-> Thummaluru<mohith.k.kumar.thummaluru@oracle.com>
-> Tested-by: Mohith Kumar Thummaluru<mohith.k.kumar.thummaluru@oracle.com>
-> Reviewed-by: Moshe Shemesh<moshe@nvidia.com>
-> ---
->    drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c | 3 +--
->    1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> b/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> index 40024cfa3099..822e92ed2d45 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c
-> @@ -325,8 +325,7 @@ struct mlx5_irq *mlx5_irq_alloc(struct mlx5_irq_pool
-> *pool, int i,
->    err_req_irq:
->    #ifdef CONFIG_RFS_ACCEL
->        if (i && rmap && *rmap) {
-> -        free_irq_cpu_rmap(*rmap);
-> -        *rmap = NULL;
-> +        irq_cpu_rmap_remove(*rmap, irq->map.virq);
->        }
+[   92.301253] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 42s!
+[   92.305170] Showing busy workqueues and worker pools:
+[   92.307434] workqueue events_power_efficient: flags=0x80
+[   92.309796]   pwq 2: cpus=0 node=0 flags=0x0 nice=0 active=1 refcnt=2
+[   92.309834]     pending: neigh_managed_work
+[   92.314565]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=4 refcnt=5
+[   92.314604]     pending: crda_timeout_work, neigh_managed_work, neigh_periodic_work, gc_worker
+[   92.321151] workqueue mm_percpu_wq: flags=0x8
+[   92.323124]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=1 refcnt=2
+[   92.323161]     pending: vmstat_update
+[   92.327638] workqueue kblockd: flags=0x18
+[   92.329429]   pwq 7: cpus=1 node=0 flags=0x0 nice=-20 active=1 refcnt=2
+[   92.329467]     pending: blk_mq_timeout_work
+[   92.334259] Showing backtraces of running workers in stalled CPU-bound worker pools:
 
-now that the condition is only one line, you need to remove the
-parenthesis.
+I bisected it down to commit cccb45d7c429 ("sched/deadline: Less
+agressive dl_server handling"), and in debugging it seems there
+is a chance where we end up with the dl_server dequeued, with
+dl_se->dl_server_active. This causes dl_server_start() to
+return without enqueueing the dl_server, thus it fails to run
+when RT tasks starve the cpu.
 
-other than that.
-Reviewed-by: Shay Drory <shayd@nvidia.com>
+I found when this happens, the dl_timer hrtimer is set and calls
+ dl_server_timer(), which catches on the
+  `if (!dl_se->server_has_tasks(dl_se))`
+case, which then calls replenish_dl_entity() and
+dl_server_stopped() and finally returns HRTIMER_NORESTART.
 
->    err_irq_rmap:
->    #endif
-> -- 
-> 2.43.5
-> 
-> 
-> 
+The problem being, dl_server_stopped() will set
+dl_se->dl_server_idle before returning false (and notably not
+calling dl_server_stop() which would clear dl_server_active).
+
+After this, we end up in a situation where the timer doesn't
+fire again. And nothing enqueues the dl_server entity back onto
+the runqueue, so it never picks from the fair sched and we see
+the starvation on that core.
+
+So in dl_server_timer() call dl_server_stop() instead of
+dl_server_stopped(), as that will ensure dl_server_active
+gets cleared when we are dequeued.
+
+Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+NOTE: I'm not confident this is the right fix, but I wanted
+to share for feedback and testing.
+
+Also, this resolves the lockup warnings and problematic behavior
+I see with locktorture, but does *not* resolve the behavior
+change I hit with my ksched_football test (which intentionally
+causes RT starvation) that I bisected down to the same
+problematic change and mentioned here:
+  https://lore.kernel.org/lkml/20250722070600.3267819-1-jstultz@google.com/
+This may be just a problem with my test, but I'm still a bit
+wary that this behavior change may bite folks.
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Valentin Schneider <vschneid@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Suleiman Souhlal <suleiman@google.com>
+Cc: Qais Yousef <qyousef@layalina.io>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: kuyo chang <kuyo.chang@mediatek.com>
+Cc: hupu <hupu.gm@gmail.com>
+Cc: kernel-team@android.com
+---
+ kernel/sched/deadline.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index f25301267e471..215c3e2cee370 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1152,8 +1152,6 @@ static void __push_dl_task(struct rq *rq, struct rq_flags *rf)
+ /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
+ static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
+ 
+-static bool dl_server_stopped(struct sched_dl_entity *dl_se);
+-
+ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
+ {
+ 	struct rq *rq = rq_of_dl_se(dl_se);
+@@ -1173,7 +1171,7 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+ 
+ 		if (!dl_se->server_has_tasks(dl_se)) {
+ 			replenish_dl_entity(dl_se);
+-			dl_server_stopped(dl_se);
++			dl_server_stop(dl_se);
+ 			return HRTIMER_NORESTART;
+ 		}
+ 
+-- 
+2.51.0.384.g4c02a37b29-goog
 
 
