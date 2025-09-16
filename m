@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-818121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BB1B58CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8B0B58CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:41:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560CC1693BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05ED652206C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C18242D60;
-	Tue, 16 Sep 2025 04:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37A2238D22;
+	Tue, 16 Sep 2025 04:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UIEjXAJb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kfde2bCK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31189D2FB;
-	Tue, 16 Sep 2025 04:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163D522F74F;
+	Tue, 16 Sep 2025 04:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757997679; cv=none; b=VSwjWHEBKmwrTX5H8TwV1w2yvnqhvmXBGOIRKO0+ZpsB/x6WsOpPdh8VtErtbqSREDQGem1Az/smCO3CRMWHflVCbxWbliYnaeb0YnYNKlZ892YOjQQ8vVxm3kYOpkYNMuqr3SAlatlh+q4rOSEYartIddAd65ubOMD69hSiYQI=
+	t=1757997679; cv=none; b=FW9egxaW3Zk5o8rFfRCL6nglQHHRQzhl89ylU4dbEWukxg2NWefG/TKH8L/7a5M1yDkiMioaNrFK2aze+nBQaBCOrxJXW5COwBj38U/RHdInTarfBJDZU2LX+cfqgLIHG7n4MkIVbMDzmI2qY2RA1LFHl8WzgpMmiUg98DtCMmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757997679; c=relaxed/simple;
-	bh=bYfqrxycnxV0HTrz1zQsr4bkM+LSPUuSRyUNXr4SpFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MyLJuOFRRy19eTdEJhqmxTyzTYM9mFAyCK9yjwzBLULnP+g/Za25xM0xh3thKk3H90kYG5bJ7b7i+RcuEdCanCCiMQxFMGHB4NgpmMTY6jlbeebJZiNinvj+gOB+rjddA2DBK3dS0zUVNIT7qXRIuIfaud4+Kmyi91pydXb3lxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UIEjXAJb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58FI187D031553;
-	Tue, 16 Sep 2025 04:41:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=pAfgq7DC16Q2Tgxbp
-	JzO5Fd/wYYcfpRe1dodp200UJ4=; b=UIEjXAJbBmCKFmfotzZhPiLPTFVJcICZ+
-	/7jGioRiNYKHMSjwslYYAkf7MJEUnVYyr1dABMYvUG6LmcOHYJ2/OdovXOqrJuNd
-	gIRt+XELke2kVj9EClX2BFCFNex8sQhV7ML+Mc6f2PKHM8AV12+xf4ns//qE7I+7
-	BFxWapCIBK2+z9VMShVXf9uGNyQxAMxYnTbq9vnSmIUN7XzMBYqzMBksDDcMK4fL
-	8BtUB/LgvJqD2xOs5VDErmdTYs2P0j7ITfNBkrz0irdUMpJFwuoKwfPvuCMajyny
-	8anLSKE4E6r98zL+t7jgHZ1yRr8SI8hk15YuHT0pUn4KpKBwjvneg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1te9g8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 04:41:02 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58G4f276011843;
-	Tue, 16 Sep 2025 04:41:02 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 494x1te9g2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 04:41:02 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G4DnUE009363;
-	Tue, 16 Sep 2025 04:41:01 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 495nn39r1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 04:41:01 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58G4etLT24052030
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 04:40:55 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5DDAA20043;
-	Tue, 16 Sep 2025 04:40:55 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6E40F20040;
-	Tue, 16 Sep 2025 04:40:49 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.61.243.165])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 16 Sep 2025 04:40:48 +0000 (GMT)
-From: Aditya Bodkhe <adityab1@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, rostedt@goodmis.org, mhiramat@kernel.org,
-        mark.rutland@arm.com, Hari Bathini <hbathini@linux.ibm.com>,
-        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-        Aditya Bodkhe <aditya.b1@linux.ibm.com>
-Subject: [PATCH v4 2/2] powerpc/fprobe: fix updated fprobe for function-graph tracer
-Date: Tue, 16 Sep 2025 10:10:35 +0530
-Message-ID: <20250916044035.29033-2-adityab1@linux.ibm.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250916044035.29033-1-adityab1@linux.ibm.com>
-References: <20250916044035.29033-1-adityab1@linux.ibm.com>
+	bh=sNER0piXqThOPvVZ2lFH5TPIw7AbRv56V9c6OrCJQ9A=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rNz+6fg7Qu+YdRuvyTzQEeKeNyLBsojSyHZgzhXnZndGZM0G2QxaUThmGqnyZY8Ozca5j00aW7vZaxALUdrxVY3Zx59bd10u05Y8r0CLgJMgL59askgQ6XtvAWgmggfNrvBWFKkGcSg74GlQpfkqh+EJblzc1NeMGqN8oqXLJI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kfde2bCK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F91C4CEEB;
+	Tue, 16 Sep 2025 04:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757997678;
+	bh=sNER0piXqThOPvVZ2lFH5TPIw7AbRv56V9c6OrCJQ9A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kfde2bCK6bSYDIyOsrhYTuiq9ts/r+Q8UslL3g+/PNOzNfNI9QUaZ2gNWFz8JRet0
+	 saavCH1g6XV2gUOYRLpDvPtr1OvySz2puf6DKyAIeu10hnBDjiHtAc6mOGUCtra3m7
+	 zNoUgcL3ii6ytSLE8fbvUvOyjN8FxGCBcTMqjPq4=
+Date: Mon, 15 Sep 2025 21:41:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Donet Tom <donettom@linux.ibm.com>, David Hildenbrand
+ <david@redhat.com>, Ritesh Harjani <ritesh.list@gmail.com>, Xu Xin
+ <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, Wei Yang
+ <richard.weiyang@gmail.com>, Aboorva Devarajan <aboorvad@linux.ibm.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Giorgi Tchankvetadze
+ <giorgitchankvetadze1997@gmail.com>, stable@vger.kernel.org, Joe Perches
+ <joe@perches.com>
+Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
+ mm_struct during fork
+Message-Id: <20250915214117.5117d339669e091b1d3fa96d@linux-foundation.org>
+In-Reply-To: <aMjohar0r-nffx9V@laps>
+References: <cover.1757946863.git.donettom@linux.ibm.com>
+	<4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+	<20250915164248.788601c4dc614913081ec7d7@linux-foundation.org>
+	<aMjohar0r-nffx9V@laps>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=OMsn3TaB c=1 sm=1 tr=0 ts=68c8ea5e cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=eJdZZeSqwtc_5qrUTOUA:9
-X-Proofpoint-ORIG-GUID: bhQoXvQwD7WJrUGm602XjEeZUkpTQq4u
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAwMSBTYWx0ZWRfX9zRL0YAeXKdw
- M8bz4r564F3Jo6NHAfsJYYqjWo8u44HRh7NSYVOsZjQMxPOC9yx79JSzEehsS5/mP/+oyGgyXaE
- IJvNob4X9ccQpqcHjCCnU3CUpZb3lWodiFf+D3rSacpHFormfhAr7EKEeXN88hUpIYAzkHJLeqM
- zPpbXZS9b5ww6cjIM1u8lHsU8wsoUXqnF5BBWlVKWXBT2I6uz86OB4IzshJ7W+sEag/47KVdqFU
- PK+yIxBsjHwx3dWP0TPeKHV4c+HWNBIFCbo4MCoe137Riz/O/isSCFlyXTbv+IMmU5bVF8DG03n
- NSsh7hDVteLbnLbNJh/DUnFoYY1XsBFKipEfKfKfOAV3HmZsE362stwtNxO4eiUOm702regwoLe
- ALDV70ki
-X-Proofpoint-GUID: IePM3FrU7ydYMVXovTR2jtZ_DJ5IYsJp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_01,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 clxscore=1011 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130001
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Hari Bathini <hbathini@linux.ibm.com>
+On Tue, 16 Sep 2025 00:33:09 -0400 Sasha Levin <sashal@kernel.org> wrote:
 
-Since commit 4346ba160409 ("fprobe: Rewrite fprobe on function-graph
-tracer"), FPROBE depends on HAVE_FUNCTION_GRAPH_FREGS. With previous
-patch adding HAVE_FUNCTION_GRAPH_FREGS for powerpc, FPROBE can be
-enabled on powerpc. But with the commit b5fa903b7f7c ("fprobe: Add
-fprobe_header encoding feature"), asm/fprobe.h header is needed to
-define arch dependent encode/decode macros. The fprobe header MSB
-pattern on powerpc is not 0xf. So, define FPROBE_HEADER_MSB_PATTERN
-expected on powerpc.
+> On Mon, Sep 15, 2025 at 04:42:48PM -0700, Andrew Morton wrote:
+> >On Mon, 15 Sep 2025 20:33:04 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
+> >
+> >> Currently, the KSM-related counters in `mm_struct`, such as
+> >> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
+> >> inherited by the child process during fork. This results in inconsistent
+> >> accounting.
+> >>
+> >> When a process uses KSM, identical pages are merged and an rmap item is
+> >> created for each merged page. The `ksm_merging_pages` and
+> >> `ksm_rmap_items` counters are updated accordingly. However, after a
+> >> fork, these counters are copied to the child while the corresponding
+> >> rmap items are not. As a result, when the child later triggers an
+> >> unmerge, there are no rmap items present in the child, so the counters
+> >> remain stale, leading to incorrect accounting.
+> >>
+> >> A similar issue exists with `ksm_zero_pages`, which maintains both a
+> >> global counter and a per-process counter. During fork, the per-process
+> >> counter is inherited by the child, but the global counter is not
+> >> incremented. Since the child also references zero pages, the global
+> >> counter should be updated as well. Otherwise, during zero-page unmerge,
+> >> both the global and per-process counters are decremented, causing the
+> >> global counter to become inconsistent.
+> >>
+> >> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
+> >> during fork, and the global ksm_zero_pages counter is updated with the
+> >> per-process ksm_zero_pages value inherited by the child. This ensures
+> >> that KSM statistics remain accurate and reflect the activity of each
+> >> process correctly.
+> >>
+> >> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
+> >
+> >Linux-v5.19
+> >
+> >> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
+> >
+> >Linux-v6.1
+> >
+> >> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
+> >
+> >Linux-v6.10
+> >
+> >> cc: stable@vger.kernel.org # v6.6
+> >
+> >So how was Linux-v6.6 arrived at?
+> 
+> e2942062e01d is in v6.6, not in v6.10 - I suspect that this is why the "# v6.6"
+> part was added.
 
-Also, commit 762abbc0d09f ("fprobe: Use ftrace_regs in fprobe exit
-handler") introduced HAVE_FTRACE_REGS_HAVING_PT_REGS for archs that
-have pt_regs in ftrace_regs. Advertise that on powerpc to reuse
-common definitions like ftrace_partial_regs().
+OK.
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
-Signed-off-by: Aditya Bodkhe <aditya.b1@linux.ibm.com>
----
- arch/powerpc/Kconfig              |  1 +
- arch/powerpc/include/asm/fprobe.h | 12 ++++++++++++
- 2 files changed, 13 insertions(+)
- create mode 100644 arch/powerpc/include/asm/fprobe.h
+> 
+> >I think the most important use for Fixes: is to tell the -stable
+> >maintainers which kernel version(s) we believe should receive the
+> >patch.  So listing multiple Fixes: targets just causes confusion.
+> 
+> Right - there's no way of communicating if all the commits listed in multiple
+> Fixes tags should exist in the tree, or any one of them, for the new fix to be
+> applicable.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 449404d3932b..325c1171894d 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -243,6 +243,7 @@ config PPC
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select HAVE_GUP_FAST
- 	select HAVE_FTRACE_GRAPH_FUNC
-+	select HAVE_FTRACE_REGS_HAVING_PT_REGS
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_FUNCTION_DESCRIPTORS	if PPC64_ELF_ABI_V1
- 	select HAVE_FUNCTION_ERROR_INJECTION
-diff --git a/arch/powerpc/include/asm/fprobe.h b/arch/powerpc/include/asm/fprobe.h
-new file mode 100644
-index 000000000000..d64bc28fb3d3
---- /dev/null
-+++ b/arch/powerpc/include/asm/fprobe.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_PPC_FPROBE_H
-+#define _ASM_PPC_FPROBE_H
-+
-+#include <asm-generic/fprobe.h>
-+
-+#ifdef CONFIG_64BIT
-+#undef FPROBE_HEADER_MSB_PATTERN
-+#define FPROBE_HEADER_MSB_PATTERN	(PAGE_OFFSET & ~FPROBE_HEADER_MSB_MASK)
-+#endif
-+
-+#endif /* _ASM_PPC_FPROBE_H */
--- 
-2.51.0
-
+So what should we do in this situation?
 
