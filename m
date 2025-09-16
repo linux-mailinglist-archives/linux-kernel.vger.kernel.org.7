@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-818132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC24BB58D15
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:49:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5661B58D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79901BC51B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44937B37F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8BF27E1C5;
-	Tue, 16 Sep 2025 04:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0812D6E62;
+	Tue, 16 Sep 2025 04:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="isoHk3lp"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgiTKs98"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6C023E354
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10172C3261
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998094; cv=none; b=WPeAJG1nUM1x3RPoq0T22athCkd4nORjBv43eq2XrYwY9eu7WItZ0Ghupv4sWnZACeuw4jzqtAGXkbOP4SAatjczUFD0dxuium67tXD5aw8u0zeyYnp4ON97PppNnYbjeInhcm18pvC7qDAuhYu/PhMLvZDvRnzofIGVUDDnmFw=
+	t=1757998104; cv=none; b=gPtuoIhVsVVmKzLiwFBrbgnAAK++Fkt6TV4z/fr/An8P5DYct/cws9XsFmyIOf6ixnd+EepaH22pj/Pbqu1kCxICAeWgaU5wltAOSFn0NtEjmtEU5JwQpSzxn+pKIQES59cidYbFSRnxapYxIOsxaAKjONlrgKBqLsxCtNK48oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998094; c=relaxed/simple;
-	bh=VmO2kvinS3A1vRaM0G0YEMkRq/84D/KeYXH2dYVRBxo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ARR2Bl//ofqV24Uz4/7+n9U+oRWeLS/qi39hJa9disxLw+COYUNxHlZs01K5BvbaCQ3UDz/3lGCsVqtUXb0HhjA3MydY5x0mJdtDz6uXABdkfQZXASGmbC91Mfgi6iyQqfutH/Bv/3tQc7dyGxogSQutJe1Rd33JmOoHRaKn9xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=isoHk3lp; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1757998104; c=relaxed/simple;
+	bh=psJk8MWkw4yWUzhoGl6iC+/oKrIajPgKeNxYtGpbGJs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ph27U6nSo/E/fSMmLjOgT6bbcv0mvTBWa9cQKW/brKJR0BEmmxfUCXX2k7aD+/98JpYJRSDpEIt04Zdavt0jSfVvkV47pZqE2omCM7D5tyyxi+NClEYCO8u/3ojC8frSKLYvlaReh4bLx5jGw7u8lfJChazE9NuxOnxoMzG2nhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UgiTKs98; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2616549b925so23780335ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:48:11 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24456ce0b96so56441435ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757998091; x=1758602891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTEHvDm/IKR4tm1Bmr0HolxO+dzLmKu0Q858we1M/so=;
-        b=isoHk3lp/kmFTFnaHeJYBE80r7sNHEqVqjZ+45wb6IrmWrMuz2flgeColLovQOaDuf
-         NAUEFM9ecfmQSoQDeE3u58V7ghpBpdv4KxGtxqBh30vKMmepgvfCq+7U9/cFrLVukYUy
-         wCdIUGtwK53qcFRptBDC3bX9az7dK/Rm58f0Z7lcEN69v0Aq9ZW1Tla134rQD+4diuKQ
-         U1mOcz+P1CMlczkDX+mozr45Fo25Vl1zNXr8PZEeNHO2dwYuEZcfQruKhKuhy7ccFLfp
-         wjsvIEAE32onlHyrYQyak2+zcwEanV+eHJlD8AgPCiVP3AOf/bJjYCePLjhBDFEI6CeG
-         rMRQ==
+        d=gmail.com; s=20230601; t=1757998101; x=1758602901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOaEQ/7pID9TluLY7/w8zgk+8Z8ChedlXZfnOV6tq/0=;
+        b=UgiTKs98TYt0zah/UeSi4De4R5qcPuP9nE+oBFiDNrhtI0JRukYpwBGkrD1qMj8YZJ
+         zxAPGGH9qL2hIdPkF9Ps9Xnd7Jvxf/ZVlkbnd47UidqnLrPiaPttc/PPgcfGNO4KSZFH
+         MII8pjx2Ab32A8kOPiHi/IVq0+PdVSk9AH6nKylqP4ciHrUFZteDTLfbAAMcPsfOW9/9
+         SxBLWNNbByPGH2KJGO4I8tQi++oIv91NAcecNWvFFImMV/zfHb4u5kUEiUYwITx8m6l+
+         PbhcI71UPtGbN3T10jjL7ELy4EIjkaG/PtU6I9mrth/K43lLg7JX0O8z0A9pbbonH3JS
+         zeIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757998091; x=1758602891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MTEHvDm/IKR4tm1Bmr0HolxO+dzLmKu0Q858we1M/so=;
-        b=p8D2Ztb5YTTbXhfTurAF7v5BsW442csMrP0oYlWtdcd0kCTCADFCNzCOLHcqHViIo7
-         f+eHpFeApTLxjM5t7rLVuz1B5PjyYlg1omz0i6gzGmwBLFaNv3nh2N0FFg0tToJOKOX/
-         hhmZAR85zk/xL3pkI/0G0gL2woRmuJwr0EBWVh0pExgGIyWGBaxtIIcifKgdXp9Kgzd0
-         kd4vn0IAj5ka9AVyKekRJHxvdtt5no4VnsvX0hYrIZ/A+1c9S/mAe2f234c2W8jdRwFk
-         BcTKkIEx9IprvsmNmIqp7k3/jhuVhm2ikXMZGmpiw3Pi/vFh9Sexs7PjXP6Np0TcSyFr
-         8mog==
-X-Forwarded-Encrypted: i=1; AJvYcCXhxrmMXws/T/5/wPzALpgXJ6Smp1Iot8bNRYHJnAhfMPCu3uttWbzm6HT+p7b+z180j6gTOTVx8SfVkXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0R31EAgctcdK3SYOJ/rpexcAYXQveU9+59iBp/JZ4AJflGrPW
-	njT76GQ4gxgMyf4XIcw13LDvu+bK62s8gV1PpDTHTvqX9Ibf7jUUIO/g
-X-Gm-Gg: ASbGncsVIZC7Xtbk2NKr8Ze4ezADHvmjZhre4OHAM9IE73YgPjf18wni3iJNOlSQa5a
-	Fy16eQJhwA1rqCEm6nEmZHjK5+bkx8SXQScXbRE5oZ97QVCdZR+bdxCBkCviBkRTFaoF/j1cEPB
-	EEDsvpHW1gQ/sbhicBnvixJNyE2FKDmbYN87wqP2daAa7MOosnd3ANDMTGZuILirIxd/GNr1p28
-	nHdlfYPwUfpHMe4vwrfOaVZlANIStUY/tAdrURsBMrNrHvqRjNi28DSE/tjlkqYrbo+oiWEe3iV
-	BXutTbUAMYuarSo/emL1732Xa1KPhzQ3xI8cU9uW4PTIVWuDlI0GAW+CQJQFqxxF/qnYjb/gB96
-	r9dYqXNv8h+5xSApwUGGWxJjBpPIjjyAaafPukKw=
-X-Google-Smtp-Source: AGHT+IEF2ZVvpNxJJFMqOknMo3Fo0PQL8lIHY8yKPy5AwqV+Fi26iyI0GpvDt9oGgKPIwk00E+AHOw==
-X-Received: by 2002:a17:902:e790:b0:267:95b2:9c0f with SMTP id d9443c01a7336-26795b29cb0mr59076565ad.28.1757998090662;
-        Mon, 15 Sep 2025 21:48:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757998101; x=1758602901;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vOaEQ/7pID9TluLY7/w8zgk+8Z8ChedlXZfnOV6tq/0=;
+        b=FrytnYCqSMig7vwrkxyrH1wsUeRx98wjS1MydX5x6zveozfYxnXG3XEfw9MDbvYeFJ
+         tv+XPI5lHEXlu0BEVb9oH1OpcjSP/kHf0q1A57Hjia3IuUIxVr09/MmaYwBq3BQrOAdT
+         Q5Hzj0WeoqUka2DA4giplInZgNaV1DBD7tESwTX+QNMsI7Ly6+zEdzeRd1+E++xcwoJ5
+         d+XSRtc402AOUiuyzEIJDqOTC+hU0Pc5HlXJlxB8mtm95VcyNDGEiEL0jAvSYJbkFC2T
+         zO/AjCKNHHYSS5fv6OpLnsVvgabGqnnZ5H401e2tj0f0g3GkijJ+a3ylKR7YUH6Pb1y9
+         WSEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWR2AD9xgbx86flsiuphJ1XL+L8CCYsM7fsdTcuRdWm8AxeX7aC7AGUeqy6wRld+/DAQhUIQY2tHIRzDMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd3rRRjGqDthbwSxuNP6Alh9xlydZ5J1b5FxnM77o4uCjeVqmB
+	dGmjVV8U+SP9QpkoOGzV70wcDoL54cUBUVVZMZow/mUkpbFbeqfVeGdl
+X-Gm-Gg: ASbGnctXHA1xmiIHNhqAFRTyDMcr89z5ppXCX/54GwavFneWQ6IHX4ikIkeDgJf+HTt
+	X/hS/Nig+VlZDryKyFCuldI5YKCi1/IO9ACQGV3lGt31v8JUrcI2ZWLFr+akesZ4cbc4R9PvK5k
+	xHQ94WEbSePGZVaKO9VNCMKZKNhYqRW/VWnD2njF0ZnwFiqSrGavcgFWI5uCe5pF+PKLoapN+Y+
+	pNzFcAqi9ymXHM2Wm2XzTKYbuF7ilfydF4NUHmn65+BpyWLb+rPtVMNseoiDL6zMoavxTA0e/rT
+	gI9+oYzZv0Rkv8Tm+1ZD3siTpGv2EneRxIhtbDKev1OJriUnlFOU/8epTwlScmIhEBfCxr7s6ZO
+	CmwRO8VfK6P6z8h50g6P5NXoU7L3V6T8ETy15MtA=
+X-Google-Smtp-Source: AGHT+IFncLMpEiSXyRV3g2udd9oLTip5CIZ6fjiDS7nm0eY3IrUPzgwzagMuf9PJuGmIj5O4nns0xw==
+X-Received: by 2002:a17:903:2f87:b0:249:71f5:4e5a with SMTP id d9443c01a7336-267d161e3b9mr10726455ad.26.1757998100825;
+        Mon, 15 Sep 2025 21:48:20 -0700 (PDT)
 Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25ef09c77f8sm104600605ad.15.2025.09.15.21.48.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:48:09 -0700 (PDT)
+        Mon, 15 Sep 2025 21:48:20 -0700 (PDT)
 From: pengdonglin <dolinux.peng@gmail.com>
 To: tj@kernel.org,
 	tony.luck@intel.com,
@@ -96,11 +98,16 @@ Cc: bigeasy@linutronix.de,
 	linux-acpi@vger.kernel.org,
 	linux-s390@vger.kernel.org,
 	cgroups@vger.kernel.org,
-	pengdonglin <dolinux.peng@gmail.com>
-Subject: [PATCH v3 00/14] Remove redundant rcu_read_lock/unlock() in spin_lock
-Date: Tue, 16 Sep 2025 12:47:21 +0800
-Message-Id: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+	pengdonglin <dolinux.peng@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	pengdonglin <pengdonglin@xiaomi.com>
+Subject: [PATCH v3 01/14] ACPI: APEI: Remove redundant rcu_read_lock/unlock() in spin_lock
+Date: Tue, 16 Sep 2025 12:47:22 +0800
+Message-Id: <20250916044735.2316171-2-dolinux.peng@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250916044735.2316171-1-dolinux.peng@gmail.com>
+References: <20250916044735.2316171-1-dolinux.peng@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,6 +115,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+
+From: pengdonglin <pengdonglin@xiaomi.com>
 
 Since commit a8bb74acd8efe ("rcu: Consolidate RCU-sched update-side function definitions")
 there is no difference between rcu_read_lock(), rcu_read_lock_bh() and
@@ -120,54 +129,32 @@ been started implicitly by spin_lock().
 
 Simplify the code and remove the inner rcu_read_lock() invocation.
 
-[1] https://elixir.bootlin.com/linux/v6.17-rc5/source/Documentation/RCU/rcu_dereference.rst#L407
-[2] https://lore.kernel.org/lkml/20180829222021.GA29944@linux.vnet.ibm.com/
-[3] https://lwn.net/Articles/777036/
-[4] https://lore.kernel.org/lkml/6435833a-bdcb-4114-b29d-28b7f436d47d@paulmck-laptop/
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Hanjun Guo <guohanjun@huawei.com>
+Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
+---
+ drivers/acpi/apei/ghes.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-pengdonglin (14):
-  ACPI: APEI: Remove redundant rcu_read_lock/unlock() in spin_lock
-  drm/i915/gt: Remove redundant rcu_read_lock/unlock() in spin_lock
-  fs: aio: Remove redundant rcu_read_lock/unlock() in spin_lock
-  nfs: Remove redundant rcu_read_lock/unlock() in spin_lock
-  s390/pkey: Remove redundant rcu_read_lock/unlock() in spin_lock
-  ipc: Remove redundant rcu_read_lock/unlock() in spin_lock
-  yama: Remove redundant rcu_read_lock/unlock() in spin_lock
-  cgroup: Remove redundant rcu_read_lock/unlock() in spin_lock
-  cgroup/cpuset: Remove redundant rcu_read_lock/unlock() in spin_lock
-  wifi: mac80211: Remove redundant rcu_read_lock/unlock() in spin_lock
-  net: ncsi: Remove redundant rcu_read_lock/unlock() in spin_lock
-  net: amt: Remove redundant rcu_read_lock/unlock() in spin_lock
-  net: bonding: Remove redundant rcu_read_lock/unlock() in spin_lock
-  wifi: ath9k: Remove redundant rcu_read_lock/unlock() in spin_lock
-
- drivers/acpi/apei/ghes.c                        |  2 --
- drivers/gpu/drm/i915/gt/intel_ring_submission.c |  2 --
- drivers/net/amt.c                               |  8 --------
- drivers/net/bonding/bond_3ad.c                  |  2 --
- drivers/net/wireless/ath/ath9k/xmit.c           |  2 --
- drivers/s390/crypto/pkey_base.c                 |  3 ---
- fs/aio.c                                        |  6 ++----
- fs/nfs/callback_proc.c                          |  2 --
- fs/nfs/nfs4state.c                              |  2 --
- fs/nfs/pnfs.c                                   | 12 +-----------
- fs/nfs/pnfs_dev.c                               |  4 ----
- ipc/msg.c                                       |  1 -
- ipc/sem.c                                       |  1 -
- ipc/shm.c                                       |  1 -
- ipc/util.c                                      |  2 --
- kernel/cgroup/cgroup.c                          |  2 --
- kernel/cgroup/cpuset.c                          |  6 ------
- kernel/cgroup/debug.c                           |  4 ----
- net/mac80211/cfg.c                              |  2 --
- net/mac80211/debugfs.c                          |  2 --
- net/mac80211/debugfs_netdev.c                   |  2 --
- net/mac80211/debugfs_sta.c                      |  2 --
- net/mac80211/sta_info.c                         |  2 --
- net/ncsi/ncsi-manage.c                          |  2 --
- security/yama/yama_lsm.c                        |  4 ----
- 25 files changed, 3 insertions(+), 75 deletions(-)
-
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index a0d54993edb3..97ee19f2cae0 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1207,12 +1207,10 @@ static int ghes_notify_hed(struct notifier_block *this, unsigned long event,
+ 	int ret = NOTIFY_DONE;
+ 
+ 	spin_lock_irqsave(&ghes_notify_lock_irq, flags);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(ghes, &ghes_hed, list) {
+ 		if (!ghes_proc(ghes))
+ 			ret = NOTIFY_OK;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_irqrestore(&ghes_notify_lock_irq, flags);
+ 
+ 	return ret;
 -- 
 2.34.1
 
