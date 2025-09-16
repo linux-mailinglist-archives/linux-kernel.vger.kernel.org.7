@@ -1,363 +1,121 @@
-Return-Path: <linux-kernel+bounces-818021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019A0B58BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:06:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A57AB58BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD312A4507
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759701BC24C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723EC1A2389;
-	Tue, 16 Sep 2025 02:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abY2U5cd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067BB2222AA;
+	Tue, 16 Sep 2025 02:10:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8171F7575;
-	Tue, 16 Sep 2025 02:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DBD136E37
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757988389; cv=none; b=KXmd9V2q8v7IZ5KDXmUhyJJioGOhFWUhs8ZF/c3Y8erl2gXhxaDjsSW8odlyWw+QRfbEO181Xh/+4eEmSd2NL/Vm3fnbuR+RBD1UmVU6KIdeD0PbB1CfFzicORDVWAIVJMkKawuY9qa60tqz5M02y+fV4lFMlSwy0Toivv8Przs=
+	t=1757988606; cv=none; b=WIZWVOujCcHfkd/9QrOQ16OS8HTNvUgDovxKTNmWtjxClKVb2S6ceafJh748x7hlVHNqJRnSQ1adH30A2gLHgablhoKbWVAX77ayzKkWp9P5DkcoVIJeV0YeYodZ83a/14Nlu3z9lbe3+00tGKGCbDYUZGCWMRM/SdMx2M61hOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757988389; c=relaxed/simple;
-	bh=mxa2ge1Pa588T0qc00m0cplT9m07ics72F3zATKyQGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=szzvWRcBoj7S2RQEWL7D6Dt5MxAWH55lr1cUqbLJWRImO89mL36SlSAdNb6gGFl70JuiIJN0bzU6kwNowj5xUYJvXx8kkTp+vzJ/q+A7dLKMBsowoYcIpk2mwPiqdlFfBU3z2lP/H+NQDkYPXvr6YkNi8fxajMrm3CYWEJhslyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abY2U5cd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0164DC4CEF5;
-	Tue, 16 Sep 2025 02:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757988389;
-	bh=mxa2ge1Pa588T0qc00m0cplT9m07ics72F3zATKyQGg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=abY2U5cdcn/WbQvN8td23yfz4eHMR+7D+/T8oRB3l3WTZOkhBx7u0oDaR0MNFBE8J
-	 01B/OHTk8f8AcT8rca8sI5sDQcGs9lB/+y1q2ql9N7DOCdaICA24dQG7C5TDjedZlR
-	 xzvIBfsfAvQVtxv3YI/idAARcInV3z6wnY5a+G2SXhK6ElbFEw1U7JcAwMNwx287Pa
-	 oVPGtNSaZ6F6Q0SstCnQ1Q2PcTqKAxZnIV1vw3LbSyqWQRXNNZXUrSaciJyJ9ywbhi
-	 OAzqHhGdKzTDS7nfpCgDbELCOSw0GyHMsNMWulULlZpn4uQAlYrsJ58JDGKs4y5wqs
-	 eQp/i050x7KPQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E553DCAC597;
-	Tue, 16 Sep 2025 02:06:28 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Tue, 16 Sep 2025 10:06:07 +0800
-Subject: [PATCH v5 2/2] clk: amlogic: add video-related clocks for S4 SoC
+	s=arc-20240116; t=1757988606; c=relaxed/simple;
+	bh=WVLKRmRcwE7oDH8Ir87NBhjCJQ9Qwc9y6TF7GV33cQ8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Je6sDsvsxpjyVNdx1t+WInJmSHBUwYa2iSYK8yHtepfn1rkZfTvQm9Ka8C/FM/1hNBCQQy6Rjhk+gPc5wVhi5sVCngF3sS3FLlakHMAw0JQnllia+kntDK1na96oRYBUgCN69ZmhW4ssjHPnConEycQ4jGjvkN/ojz4Pq71auuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-423f9d1ea61so74239805ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:10:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757988603; x=1758593403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b1AtsoW9FinNvk/ea3367p68ehG6wxDT38SCJypxuk0=;
+        b=R/YKRnAZ2C3fLe/jqSzVUj5yu15Zi+3dPUGUUACkeMUc7lGtIsjexZW5iD4PprOuv2
+         dkNY4qhPyjf5a9NOUwlax+g2Y1dl9J/7ZbqetiZwct4c1qy3cyBMbEnoFST+Wl9g4N+J
+         6K7yQ3ejWV63j3CQulC4GyNyBJkXVeyBZaWWL0Uq6DNUd2gUn2Iv8sBovFIfsdRmWVy5
+         E+kDemYTslJPxv6FaexBkkJc3WKfTlb3YcI9fKJ45nIh49nTm/rng0XmdC4KBCD3Msyh
+         K2S36Q3cOj73F+WJmIf8SkphI00pKfQBgWh8JpFrZWaP0Uc/pOdVtk2oV5pXjxVHys5w
+         vATQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhUJPZid+6ra6Kyn16VgI4bbEjD4d+Y3tV1H5m6GYl4vR7WZBrg6Ut82EUKYpeZJQwkkbYwusxN/Xz4Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS4dAANepqvE0eFNIT1LsYmi4nzWdnIu528CwCLVVwLHZ17QkQ
+	++/3Ht/HVlziQxLPrE8wwvBQjHcIJejKO3cPsR/RZf3Xc4pbucKg6cr7vv7YfkgjkuDsNpvfDPs
+	54CgruCc/ut7B2fs5ML1K5Xy00YD27Q7G3YHQJdEhOgF3wL2VCMtCF8RPOfw=
+X-Google-Smtp-Source: AGHT+IE+nG+Bf2HxNyXkL7AohIZgmJoGDrwaAw8QHaoykp0kzrXUaxXzcVR1UohTbk5dQQYAajiPAp8w7jJDd6SiD9Fi1NuDrxzU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-add_video_clk-v5-2-e25293589601@amlogic.com>
-References: <20250916-add_video_clk-v5-0-e25293589601@amlogic.com>
-In-Reply-To: <20250916-add_video_clk-v5-0-e25293589601@amlogic.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757988387; l=7840;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=XH2c+vl3VULVSg3x8U7T7qdAJtfPHe8TywXeWVH9qHE=;
- b=d2sAq3y6Do6R/tqSFTZHXjTvjMLeVqY1z6Ig1/NSVZX8Kilrp9q+if88PyS1RSfktbuU6SzO7
- gINQ1pOhAO/DsJwFBr9bNfIbUU2kQcu2uMcjG0Pn8dCOjYm/73hKyjQ
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+X-Received: by 2002:a05:6e02:1908:b0:424:9a5:855b with SMTP id
+ e9e14a558f8ab-42409a58679mr37727095ab.16.1757988603761; Mon, 15 Sep 2025
+ 19:10:03 -0700 (PDT)
+Date: Mon, 15 Sep 2025 19:10:03 -0700
+In-Reply-To: <6aed82d8-8e65-402d-909e-b8cfbfbb41e4@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c8c6fb.050a0220.2ff435.03ba.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+Hello,
 
-Add video encoder, demodulator and CVBS clocks.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in gid_table_release_one
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/meson/s4-peripherals.c | 206 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 202 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 6d69b132d1e1..ba41fcd90588 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -44,6 +44,7 @@
- #define CLKCTRL_VDIN_MEAS_CLK_CTRL                 0x0f8
- #define CLKCTRL_VAPBCLK_CTRL                       0x0fc
- #define CLKCTRL_HDCP22_CTRL                        0x100
-+#define CLKCTRL_CDAC_CLK_CTRL                      0x108
- #define CLKCTRL_VDEC_CLK_CTRL                      0x140
- #define CLKCTRL_VDEC2_CLK_CTRL                     0x144
- #define CLKCTRL_VDEC3_CLK_CTRL                     0x148
-@@ -1106,7 +1107,6 @@ static struct clk_regmap s4_cts_enci_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_cts_parents,
- 		.num_parents = ARRAY_SIZE(s4_cts_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1122,7 +1122,21 @@ static struct clk_regmap s4_cts_encp_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_cts_parents,
- 		.num_parents = ARRAY_SIZE(s4_cts_parents),
--		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_cts_encl_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = CLKCTRL_VIID_CLK_DIV,
-+		.mask = 0xf,
-+		.shift = 12,
-+		.table = s4_cts_parents_val_table,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cts_encl_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = s4_cts_parents,
-+		.num_parents = ARRAY_SIZE(s4_cts_parents),
- 	},
- };
- 
-@@ -1138,7 +1152,6 @@ static struct clk_regmap s4_cts_vdac_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_cts_parents,
- 		.num_parents = ARRAY_SIZE(s4_cts_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1169,7 +1182,6 @@ static struct clk_regmap s4_hdmi_tx_sel = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_hdmi_tx_parents,
- 		.num_parents = ARRAY_SIZE(s4_hdmi_tx_parents),
--		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1205,6 +1217,22 @@ static struct clk_regmap s4_cts_encp = {
- 	},
- };
- 
-+static struct clk_regmap s4_cts_encl = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = CLKCTRL_VID_CLK_CTRL2,
-+		.bit_idx = 3,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cts_encl",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cts_encl_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static struct clk_regmap s4_cts_vdac = {
- 	.data = &(struct clk_regmap_gate_data){
- 		.offset = CLKCTRL_VID_CLK_CTRL2,
-@@ -2735,6 +2763,165 @@ static struct clk_regmap s4_gen_clk = {
- 	},
- };
- 
-+/* CVBS DAC */
-+static struct clk_regmap s4_cdac_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal", },
-+			{ .fw_name = "fclk_div5" },
-+		},
-+		.num_parents = 2,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.shift = 0,
-+		.width = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_cdac = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_CDAC_CLK_CTRL,
-+		.bit_idx = 20,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cdac",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_cdac_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x3,
-+		.shift = 9,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "fclk_div4" }
-+		},
-+		.num_parents = 3,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 0,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_demod_core = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 8
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "demod_core",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_demod_core_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+/* CVBS ADC */
-+static struct clk_regmap s4_adc_extclk_in_sel = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.mask = 0x7,
-+		.shift = 25,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "xtal" },
-+			{ .fw_name = "fclk_div4" },
-+			{ .fw_name = "fclk_div3" },
-+			{ .fw_name = "fclk_div5" },
-+			{ .fw_name = "fclk_div7" },
-+			{ .fw_name = "mpll2" },
-+			{ .fw_name = "gp0_pll" },
-+			{ .fw_name = "hifi_pll" }
-+		},
-+		.num_parents = 8,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in_div = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.shift = 16,
-+		.width = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap s4_adc_extclk_in = {
-+	.data = &(struct clk_regmap_gate_data) {
-+		.offset = CLKCTRL_DEMOD_CLK_CTRL,
-+		.bit_idx = 24
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "adc_extclk_in",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&s4_adc_extclk_in_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- static const struct clk_parent_data s4_pclk_parents = { .hw = &s4_sys_clk.hw };
- 
- #define S4_PCLK(_name, _reg, _bit, _flags) \
-@@ -3028,6 +3215,17 @@ static struct clk_hw *s4_peripherals_hw_clks[] = {
- 	[CLKID_HDCP22_SKPCLK_SEL]	= &s4_hdcp22_skpclk_sel.hw,
- 	[CLKID_HDCP22_SKPCLK_DIV]	= &s4_hdcp22_skpclk_div.hw,
- 	[CLKID_HDCP22_SKPCLK]		= &s4_hdcp22_skpclk.hw,
-+	[CLKID_CTS_ENCL_SEL]		= &s4_cts_encl_sel.hw,
-+	[CLKID_CTS_ENCL]		= &s4_cts_encl.hw,
-+	[CLKID_CDAC_SEL]		= &s4_cdac_sel.hw,
-+	[CLKID_CDAC_DIV]		= &s4_cdac_div.hw,
-+	[CLKID_CDAC]			= &s4_cdac.hw,
-+	[CLKID_DEMOD_CORE_SEL]		= &s4_demod_core_sel.hw,
-+	[CLKID_DEMOD_CORE_DIV]		= &s4_demod_core_div.hw,
-+	[CLKID_DEMOD_CORE]		= &s4_demod_core.hw,
-+	[CLKID_ADC_EXTCLK_IN_SEL]	= &s4_adc_extclk_in_sel.hw,
-+	[CLKID_ADC_EXTCLK_IN_DIV]	= &s4_adc_extclk_in_div.hw,
-+	[CLKID_ADC_EXTCLK_IN]		= &s4_adc_extclk_in.hw,
- };
- 
- static const struct meson_clkc_data s4_peripherals_clkc_data = {
-
--- 
-2.42.0
+------------[ cut here ]------------
+GID entry ref leak for dev syz1 index 2 ref=450
+WARNING: CPU: 1 PID: 59 at drivers/infiniband/core/cache.c:813 release_gid_table drivers/infiniband/core/cache.c:810 [inline]
+WARNING: CPU: 1 PID: 59 at drivers/infiniband/core/cache.c:813 gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:890
+Modules linked in:
+CPU: 1 UID: 0 PID: 59 Comm: kworker/u8:4 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: ib-unreg-wq ib_unregister_work
+RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:810 [inline]
+RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:890
+Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 60 4b 71 8c 4c 89 e6 44 89 fa e8 1b 81 fa f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+RSP: 0018:ffffc9000210f908 EFLAGS: 00010246
+RAX: 1a406f1d516b1b00 RBX: ffff88807d4a44d8 RCX: ffff88801bbf9e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 1ffff1100fa9489b R08: ffff8880b8724253 R09: 1ffff110170e484a
+R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff8880202c6e80
+R13: ffff88807d4a4400 R14: ffff88802566aa00 R15: 0000000000000002
+FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000240 CR3: 0000000024970000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+ device_release+0x9c/0x1c0 drivers/base/core.c:-1
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22b/0x480 lib/kobject.c:737
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
+Tested on:
+
+commit:         10a39576 RDMA/rxe: Add logs to find out the root cause
+git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+console output: https://syzkaller.appspot.com/x/log.txt?x=114d8e42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
 
