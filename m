@@ -1,62 +1,81 @@
-Return-Path: <linux-kernel+bounces-819647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261D2B5A40A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:32:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C574EB5A404
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAB5732780F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805D35272B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25722DC783;
-	Tue, 16 Sep 2025 21:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2F928643F;
+	Tue, 16 Sep 2025 21:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TZ0QM5V+"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="M/gP6cZ0"
+Received: from fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com [52.28.197.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C40528643F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05A531BCA4;
+	Tue, 16 Sep 2025 21:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.28.197.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758058358; cv=none; b=O7NwDYHjaMB8NczIN5vieC6wqp04rl/clfhdTs1xq9l0/33md/ozNMg6Ag1i18vAFdJhpCR2EMw3GEyFs2QUwuq0uaxhTpjiZvglhF1f0ZPlUnPmgrvMpku24LFYtcQJ4mQr1VH5vw74tIiAGeOSwlcgxGhIgxb7aP2CU/C7XMo=
+	t=1758058326; cv=none; b=jnQiXjRuTTnXybaO3nrxgRsBiafXs1xjlbbRaVAcabX0EbJ6gNShjdpAQIMYSKXSFOClVq461NMfQbGad4RdFhUWEegYq4BrGwlsjJjlrwZCABTQUL2QzTaJUXFzFMpWWNqorfyDQHnNw7cqG+K+WWldh9fiN2vl0gOWPdOE+r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758058358; c=relaxed/simple;
-	bh=Kk49ApA/Sw1WrwYfa2bmO0HYL/FPSDP1t188CDIzXfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZBUd7bKwSYP6lccBNEPwgIZ8Y0MOqNBhM+0psMahSZmkV+/S6nf225kufrHSfmtVgFH28wf3bZdZ+9OTudx0/KfrhKb50YMFwblNJ8RG1svCwyRlALDaNBjsQefm4pH6tuOVKjgF14PTaUnc3VASaiC/bzdXIyoSIbZnKn1t5fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TZ0QM5V+; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758058344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XfJHrhxnXCwu8VguJr9watkzFIkd93AK9ZwsyplW0KI=;
-	b=TZ0QM5V+YcLbuWR4DPMKbgYjsVzUWOmjdk1Q5Eu1ZwTDT4O6scttC8O7sZc0iD7iD9Ohff
-	MgP3tS+g4HHdbHZDVC8tS+uyYBNYhk5qEf/dXOincXcGhidOYJ7VNJ6Dv9aQX1SzQ6HXzV
-	L+LxKeK2MStRuJNzI9cQwOOanmPeIgs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: [PATCH] KVM: TDX: Replace kmalloc + copy_from_user with memdup_user in tdx_td_init
-Date: Tue, 16 Sep 2025 23:31:29 +0200
-Message-ID: <20250916213129.2535597-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758058326; c=relaxed/simple;
+	bh=xAyJyvI3Chdm0LibZ0qZvePCJKD//koP1PX+zfGnUyo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hy+IfXRdVZ9VTqVDJpGmSuNEzj2sclXWo+c5M6bsaG1ww0BZ9Xo0hb0fpB8Pb3Of/RvXjua0XCIxO2wyVAdbOkjtEjkczpwAAZAIutEPSjjBsOUpTvvUZ1IZgT3+0Av3l/Pa4UO3k09W9Bn1Bo/lBgIjWhPUabtfKXS7RQxz11A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=M/gP6cZ0; arc=none smtp.client-ip=52.28.197.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1758058324; x=1789594324;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4aJJPYONPd+kj3l3iGncjKsidkoAi36aQ8s7TgvVC6s=;
+  b=M/gP6cZ0FRPve94MA9ZJNQ/9EDB2vzh5djIiZJ0U1YA3ulD18g1cWN3S
+   3zonJifRAVJ79KcEmVvyVP+y24v2ieudcLcnR1XBnifCVGlzH9ZjAhkz6
+   NUWi2uomSj9x5xdfdM/6lAa2thTUS2CFA5NAflWv9diuCl6hOn8XBcLu9
+   z2YQF36A205bBZ/dYFsaK+olBrAqu2WEtwSOzhg1NhDI2nhF1CdB7z8E3
+   Al83/gEtXQsjhdJVzEgoFsMXbseeqiSJ68MEQDulrJG+eMF2wj2PURODx
+   KvoWd9ivT/H7eCSz5+Iv4pbXoMCWFW+W/YNtnsa6qly/lYma8iUv6mvAi
+   g==;
+X-CSE-ConnectionGUID: 2iyve+uIQ5GAUjP7fEzvWw==
+X-CSE-MsgGUID: DisTkKPqQp+NRl2B8PauVA==
+X-IronPort-AV: E=Sophos;i="6.18,270,1751241600"; 
+   d="scan'208";a="2107650"
+Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
+  by internal-fra-out-011.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 21:32:01 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [54.240.197.228:10913]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.36.68:2525] with esmtp (Farcaster)
+ id e5138796-ffee-4094-98a2-1235ad90a042; Tue, 16 Sep 2025 21:32:00 +0000 (UTC)
+X-Farcaster-Flow-ID: e5138796-ffee-4094-98a2-1235ad90a042
+Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 16 Sep 2025 21:32:00 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Tue, 16 Sep 2025
+ 21:31:55 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: <luc.vanoostenryck@gmail.com>, <rostedt@goodmis.org>, <mingo@redhat.com>,
+	<akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>, <sj@kernel.org>,
+	<David.Laight@ACULAB.COM>, <Jason@zx2c4.com>,
+	<andriy.shevchenko@linux.intel.com>, <bvanassche@acm.org>,
+	<keescook@chromium.org>, <linux-sparse@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jonnyc@amazon.com>, <farbere@amazon.com>, <stable@vger.kernel.org>,
+	Christoph Hellwig <hch@infradead.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>, "Matthew Wilcox (Oracle)"
+	<willy@infradead.org>
+Subject: [PATCH 6/7 5.10.y] minmax: allow comparisons of 'int' against 'unsigned char/short'
+Date: Tue, 16 Sep 2025 21:31:49 +0000
+Message-ID: <20250916213149.9637-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,82 +83,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWA002.ant.amazon.com (10.13.139.121) To
+ EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-Use get_user() to retrieve the number of entries instead of allocating
-memory for 'init_vm' with the maximum size, copying 'cmd->data' to it,
-only to then read the actual entry count 'cpuid.nent' from the copy.
+From: David Laight <David.Laight@ACULAB.COM>
 
-Return -E2BIG early if 'nr_user_entries' exceeds KVM_MAX_CPUID_ENTRIES.
+commit 4ead534fba42fc4fd41163297528d2aa731cd121 upstream.
 
-Use memdup_user() to allocate just enough memory to fit all entries and
-to copy 'cmd->data' from userspace. Use struct_size() instead of
-manually calculating the number of bytes to allocate and copy.
+Since 'unsigned char/short' get promoted to 'signed int' it is safe to
+compare them against an 'int' value.
 
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Link: https://lkml.kernel.org/r/8732ef5f809c47c28a7be47c938b28d4@AcuMS.aculab.com
+Signed-off-by: David Laight <david.laight@aculab.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+(cherry picked from commit 4ead534fba42fc4fd41163297528d2aa731cd121)
+Signed-off-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Eliav Farber <farbere@amazon.com>
 ---
-Compile-tested only.
----
- arch/x86/kvm/vmx/tdx.c | 32 ++++++++++++--------------------
- 1 file changed, 12 insertions(+), 20 deletions(-)
+ include/linux/minmax.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 66744f5768c8..87510541d2a2 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -2742,8 +2742,10 @@ static int tdx_read_cpuid(struct kvm_vcpu *vcpu, u32 leaf, u32 sub_leaf,
- static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- {
- 	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-+	struct kvm_tdx_init_vm __user *user_init_vm;
- 	struct kvm_tdx_init_vm *init_vm;
- 	struct td_params *td_params = NULL;
-+	u32 nr_user_entries;
- 	int ret;
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index 501fab582d68..f76b7145fc11 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -25,8 +25,9 @@
+ 	__builtin_choose_expr(__is_constexpr(is_signed_type(typeof(x))),	\
+ 		is_signed_type(typeof(x)), 0)
  
- 	BUILD_BUG_ON(sizeof(*init_vm) != 256 + sizeof_field(struct kvm_tdx_init_vm, cpuid));
-@@ -2755,28 +2757,18 @@ static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- 	if (cmd->flags)
- 		return -EINVAL;
+-#define __types_ok(x, y) \
+-	(__is_signed(x) == __is_signed(y))
++#define __types_ok(x, y) 			\
++	(__is_signed(x) == __is_signed(y) ||	\
++		__is_signed((x) + 0) == __is_signed((y) + 0))
  
--	init_vm = kmalloc(sizeof(*init_vm) +
--			  sizeof(init_vm->cpuid.entries[0]) * KVM_MAX_CPUID_ENTRIES,
--			  GFP_KERNEL);
--	if (!init_vm)
--		return -ENOMEM;
--
--	if (copy_from_user(init_vm, u64_to_user_ptr(cmd->data), sizeof(*init_vm))) {
--		ret = -EFAULT;
--		goto out;
--	}
-+	user_init_vm = u64_to_user_ptr(cmd->data);
-+	ret = get_user(nr_user_entries, &user_init_vm->cpuid.nent);
-+	if (ret)
-+		return ret;
- 
--	if (init_vm->cpuid.nent > KVM_MAX_CPUID_ENTRIES) {
--		ret = -E2BIG;
--		goto out;
--	}
-+	if (nr_user_entries > KVM_MAX_CPUID_ENTRIES)
-+		return -E2BIG;
- 
--	if (copy_from_user(init_vm->cpuid.entries,
--			   u64_to_user_ptr(cmd->data) + sizeof(*init_vm),
--			   flex_array_size(init_vm, cpuid.entries, init_vm->cpuid.nent))) {
--		ret = -EFAULT;
--		goto out;
--	}
-+	init_vm = memdup_user(user_init_vm,
-+			      struct_size(user_init_vm, cpuid.entries, nr_user_entries));
-+	if (IS_ERR(init_vm))
-+		return PTR_ERR(init_vm);
- 
- 	if (memchr_inv(init_vm->reserved, 0, sizeof(init_vm->reserved))) {
- 		ret = -EINVAL;
+ #define __cmp_op_min <
+ #define __cmp_op_max >
 -- 
-2.51.0
+2.47.3
 
 
