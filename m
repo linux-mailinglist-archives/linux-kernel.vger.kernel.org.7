@@ -1,141 +1,143 @@
-Return-Path: <linux-kernel+bounces-818328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01435B58FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:06:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69F3B590AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EEA1BC26FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A6A17B72D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A6028643B;
-	Tue, 16 Sep 2025 08:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FD8271479;
+	Tue, 16 Sep 2025 08:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PTKaJdoI"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="I4ErOmQa"
+Received: from cp2.siel.si (cp2.siel.si [46.19.12.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13BF1E3DF2;
-	Tue, 16 Sep 2025 08:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371021BE871;
+	Tue, 16 Sep 2025 08:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.12.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758009981; cv=none; b=dFQ7eIRlK2pbnqLHou4MGRRKA4QumxsbEIbg9i7sQNUc5ztb1WfMPQd/8oZbHWykZtQlLPE8QTXYhQvljNg4A5mwtvE/HnsFla+H5KxaGQN//7PM1dr3FUCzrW4SYe3TyJc51idghjVtcvRBmO7YTY2+bS1L5O+IPX8kMfpZZmg=
+	t=1758011451; cv=none; b=WS65Is7OY9Ch4rSvFus04OYZ2ypbmt4nsoHiHFCjcu6XJniHnJWLF+mxDsOfH2tumdqSQwZM6GOY7oeskgL07f3Wpcb0IpfRCsENEaAXIf9P18EhDdo56dgPuAaEXaFnyQ+nWxPJVUhIun4N+x8vthZafg9hxFT+thMJQ4CSRTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758009981; c=relaxed/simple;
-	bh=2HvgqnCWu6vD9o+dQNKrpVQGiN92X+M5lXcfuTr3M5k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gtumfgz6lZ/oG1bInWtrDUBYgJrcWGDeuA41R1tihEJk4dd9QubkB1F/9OsDDOWGkxXSKNiaCQxPO4+j1AvsNzBORoitWe1ze627VR6BBapt7VYDb+G715ie7CeMiVS0P3f5gaeGWno/beabR46CveGpCuE4mm3BkAdBQU7+Fh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PTKaJdoI; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758009980; x=1789545980;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2HvgqnCWu6vD9o+dQNKrpVQGiN92X+M5lXcfuTr3M5k=;
-  b=PTKaJdoIA53sEZsgIpxaaCchAy6W9avLw/B2UR1h2KybD09Aa0KXxNy2
-   IEK5wcrvfMv4aQvvY5tSaZHQjazRm0LRQ7iDOOXIZ1dRHEVp3dqqZYNSM
-   FNMskL57GkXhvogktbPQ6XpHqqzqzSx2Yqro6txmosyf6w2ZUgnffL7WO
-   Sbrk38Wa7RswnLHkceUoHqmRflIoBjwy2rU2q9mYqR6y+ORMAszQpIR/D
-   vpLFwUc3xEz1Wi3nZk2cO0kWBygiTucIq/RZmEyOfJrrOPsmUbzFBtz7d
-   j89mzaAegy2UTqU6sFwZPbrByBhzccCfh18zzCj0Q+ul8W+4NvSo01Xs0
-   Q==;
-X-CSE-ConnectionGUID: IlaZyL1DRjGitiwYikcNJw==
-X-CSE-MsgGUID: oPT62oZvQfyTdsjTrtimDA==
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="46559090"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 01:06:18 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 16 Sep 2025 01:06:02 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Tue, 16 Sep 2025 01:06:00 -0700
-From: <nicolas.ferre@microchip.com>
-To: <sboyd@kernel.org>, <mturquette@baylibre.com>, <linux-clk@vger.kernel.org>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Linux Kernel list
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, "Claudiu
- Beznea" <claudiu.beznea@tuxon.dev>
-Subject: [GIT PULL] ARM: microchip: clk for 6.18 #1
-Date: Tue, 16 Sep 2025 10:05:44 +0200
-Message-ID: <20250916080545.9310-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758011451; c=relaxed/simple;
+	bh=4wsksbPJvdzOs0Q/GUgi8mJkvyCPp3MeG6V+HD6zlEE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ig+UyLSfZ8VCczEIJ/iiz9UI1c5jLecnVjUGgi51n9Smo179EQWfpn36VCvEpe2ELu6AtJbeQ5lFtpcsviETIx11xOJfE/R1JHlFUm24ZA60J5b6yHPkgXs8+SwuZAaxemAs1+Oxpj0fdI/h/eCCRPg3QcBoXjeYlHel/gpE97g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=I4ErOmQa; arc=none smtp.client-ip=46.19.12.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BkwsvX2mih3Bl3T0kiwBdBTpuq596F+gY6R6yhLMVYk=; b=I4ErOmQaWuUZh+AkBJsyJYNadh
+	B5QYfcEuJxOA45LgcJHiCWhNG9zqoTLDhAP77ZkmC1PdW5pU5zn/tnbapJzULiytenVz9MHEPe5Ug
+	QCnX3uUjfWmCqJoXT0Ahfd5/rkpm4en1NrUNWGOc37jB4Nw/VXRHYNSiHdwifigrRh4TmKQOhfriI
+	3IxGXhaAXXQ/610duragA0eE+Ncl9MxkcngikuD/z1oicxzmHSskEpoc14lcashqlKQvzAov4ePCO
+	2I8rJ2nirS+/Zc5433KfUSzNxrb2/S54QZ8+zyrRLDWuzKwCnHTBQeOuLimGknPnyfOZQL2yyThch
+	KdMpFIYg==;
+Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:37984 helo=localhost.localdomain)
+	by cp2.siel.si with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <primoz.fiser@norik.com>)
+	id 1uyQhx-0000000DK9c-3JVv;
+	Tue, 16 Sep 2025 10:06:36 +0200
+From: Primoz Fiser <primoz.fiser@norik.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	upstream@lists.phytec.de
+Subject: [PATCH 1/2] arm64: dts: freescale: imx93-phyboard-nash: Add USB vbus regulators
+Date: Tue, 16 Sep 2025 10:06:34 +0200
+Message-Id: <20250916080635.1520551-1-primoz.fiser@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: microchip
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cp2.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cp2.siel.si: authenticated_id: primoz.fiser@norik.com
+X-Authenticated-Sender: cp2.siel.si: primoz.fiser@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Add USB vbus regulators to silence the following kernel warnings:
 
-Dear clock maintainers,
+  usb_phy_generic usbphynop1: dummy supplies not allowed for exclusive requests (id=vbus)
+  usb_phy_generic usbphynop2: dummy supplies not allowed for exclusive requests (id=vbus)
 
-Here are the first clk changes for 6.18.
-I don't think they have conflict with changes for the deprecated round_rate()
-to determine_rate() topic.
-They are in linux-next for a couple of days.
+Because generic USB PHY driver requires exclusive vbus regulators since
+commit 75fd6485ccce ("usb: phy: generic: Get the vbus supply").
 
-Please pull. Thanks, best regards,
-  Nicolas
+Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+---
+ .../dts/freescale/imx93-phyboard-nash.dts     | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.18
-
-for you to fetch changes up to e3130c2a9a0c8e549e044e659be6f762a1b1f725:
-
-  ARM: at91: remove default values for PMC_PLL_ACR (2025-09-15 16:24:25 +0200)
-
-----------------------------------------------------------------
-Microchip clock updates for v6.18
-
-This update includes:
-- add one clock for sam9x75
-- new meaning for MCR register field in clk-master
-- use force-write to PLL update register to ensure
-  reliable programming sequence
-- update Analog Control Register (ACR) management to accommodate
-  differences across SoCs
-
-----------------------------------------------------------------
-Balamanikandan Gunasundar (1):
-      clk: at91: sam9x7: Add peripheral clock id for pmecc
-
-Cristian Birsan (2):
-      clk: at91: add ACR in all PLL settings
-      ARM: at91: remove default values for PMC_PLL_ACR
-
-Nicolas Ferre (1):
-      clk: at91: clk-sam9x60-pll: force write to PLL_UPDT register
-
-Ryan Wanner (1):
-      clk: at91: clk-master: Add check for divide by 3
-
- drivers/clk/at91/clk-master.c      |  3 ++
- drivers/clk/at91/clk-sam9x60-pll.c | 82 +++++++++++++++++------------------
- drivers/clk/at91/pmc.h             |  1 +
- drivers/clk/at91/sam9x60.c         |  2 +
- drivers/clk/at91/sam9x7.c          |  6 +++
- drivers/clk/at91/sama7d65.c        |  4 ++
- drivers/clk/at91/sama7g5.c         |  2 +
- include/linux/clk/at91_pmc.h       |  2 -
- 8 files changed, 59 insertions(+), 43 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
+index 5599e296919f..9e875e082ee8 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash.dts
+@@ -71,6 +71,22 @@ iio-hwmon {
+ 		io-channels = <&curr_sens 0>;
+ 	};
+ 
++	reg_usb1_vbus: regulator-usb1-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "USB1_VBUS";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
++	reg_usb2_vbus: regulator-usb2-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "USB2_VBUS";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
++
+ 	reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		compatible = "regulator-fixed";
+ 		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
+@@ -187,6 +203,14 @@ &lpuart7 {
+ };
+ 
+ /* USB */
++&usbphynop1 {
++	vbus-supply = <&reg_usb1_vbus>;
++};
++
++&usbphynop2 {
++	vbus-supply = <&reg_usb2_vbus>;
++};
++
+ &usbotg1 {
+ 	disable-over-current;
+ 	dr_mode = "otg";
 -- 
-Nicolas Ferre
+2.34.1
+
 
