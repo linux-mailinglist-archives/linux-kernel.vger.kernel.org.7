@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-818844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D84B59714
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:12:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698A3B5971B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408AB1C00479
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A381C01484
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF4731D74F;
-	Tue, 16 Sep 2025 13:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681FD30C35D;
+	Tue, 16 Sep 2025 13:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WI4e49J2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8QXL0U4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C668631D728
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16D53019BE;
+	Tue, 16 Sep 2025 13:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028162; cv=none; b=Jpy9R7uMqJD5/amymPwYmQmISM0/us2xSt02EXyxwBSpdZlpMb+blavi6MVmjjs1+I9wbK6zL9N2Einsf6Xq3knQDZPE60+09kbm0ADktWS9ict0fH5ZIo/V5e6RunlA71OIVdQknRF6nw9Q7RREm3fAjioraYhljkxMapKBWdo=
+	t=1758028200; cv=none; b=MQybbOVkQm5+JaGbLGj55dG24yoKPs25Qx9WwwYmrTLUGyKj5RaBgJRCnjMiiAiC1vlYQxW9cJedYCrWOHJgcwfy0yQBwzYLDU4oDogwUvG3AiUDTmXmoxLbxbfCWe2udP5F2OBevFmXWV86juWu8Wx6n48z/o9WoGVtsGcEX34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028162; c=relaxed/simple;
-	bh=yNbddk/LPvzfkPrV9y5hG4H42GsSxK1SYVRooxnUSoY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TeXSl1QgK28GcvyOpCDdsWXJ4HHknjd33xc190NuGChab4MKRFMMkcvZNrvVMDp3IaOIGLZm90mmhtSsezxsfJ7R0Curu7wLlWDjif9yPQZKBnUcodxe6L95XSXG+37bFm/QyLoQBqbMEpVCBu2lm8X2s0DJXzXvRWG01qNrTrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WI4e49J2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758028159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mpep6nqvwYnlF3jq6jfNozm2GQkJFdMgDRzXN6d9G1A=;
-	b=WI4e49J2gRByKoRegiGI4brsgLwKW1WdyqfUVbp1BTvnNvbf8cvW4QD2/s8E2LGulXqh7H
-	lPfcM52qOCM22Y2/m/D61jkEhHBH6xdEIqMZb3lE1YyMCFYkNGbcsbSa2WRG3pLKlo6pMr
-	qrcSJN2cIR//pLoKSSGq901OB1lqdyQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-Ek6LlDM0NKKm9vVScxbUjg-1; Tue,
- 16 Sep 2025 09:09:18 -0400
-X-MC-Unique: Ek6LlDM0NKKm9vVScxbUjg-1
-X-Mimecast-MFC-AGG-ID: Ek6LlDM0NKKm9vVScxbUjg_1758028156
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C45DB195608A;
-	Tue, 16 Sep 2025 13:09:16 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.44.34.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 980F519560B8;
-	Tue, 16 Sep 2025 13:09:12 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: "Michael S . Tsirkin " <mst@redhat.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	jasowang@redhat.com,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	Cindy Lu <lulu@redhat.com>,
-	Laurent Vivier <lvivier@redhat.com>,
-	virtualization@lists.linux.dev,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-Subject: [PATCH v2 7/7] vduse: bump version number
-Date: Tue, 16 Sep 2025 15:08:33 +0200
-Message-ID: <20250916130833.329087-8-eperezma@redhat.com>
-In-Reply-To: <20250916130833.329087-1-eperezma@redhat.com>
-References: <20250916130833.329087-1-eperezma@redhat.com>
+	s=arc-20240116; t=1758028200; c=relaxed/simple;
+	bh=JfnbUyOXxXuZP7KeNYZ4F9btUQDCypXExEHwkTv5H30=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bWRtq7Yjx5cQOQp5NouMU9HW/Ng2K/V/jYw5Wc2OUGSy/rNWmkg2ZNk7jMnbOGL6/WQR7rXhNuBGRRbZP7IDg0Z/9CpdoCbZbmA07LWDI5uipEsfI98UAN/d87z6DzA1KmrNUn1u2nNs27Tvkg0SgPNqiPcy1XMooURSyY1A9H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8QXL0U4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC81C4CEEB;
+	Tue, 16 Sep 2025 13:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758028200;
+	bh=JfnbUyOXxXuZP7KeNYZ4F9btUQDCypXExEHwkTv5H30=;
+	h=Date:From:To:Cc:Subject:From;
+	b=t8QXL0U4/Yqzinre9DcXmIpFRMm9ShhN8jeIgx3tLGdARqtD4o9/YhAulSpT1L2xi
+	 TvfSmILtanPYJramBrjfM1lOaFxJsBn1rJUjc1zsjh7GblPto1bUZTmL0I+ySrS799
+	 E0w1wH9mkYfymMgGqN8ba+l4Rp2ph+A6ye7hEFGmZw4jql9KaReVXrB12Wz3+q2Ptk
+	 w38p9s8wMEP0+VW7lMVBSj0gLDn2+tIf798A6e1l5T5zIq2z0Va3deSAjp6HFlht4k
+	 I+TyyyWl2jlLz92Wxi13njJO4Oi2iEffaHszqalDUc5Xd3F+avD/tpT8Ez6zz0g9cf
+	 8uH6q88ScJB4g==
+Date: Tue, 16 Sep 2025 14:09:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Tamir Duberstein <tamird@gmail.com>
+Subject: linux-next: manual merge of the rust tree with the drm-rust tree
+Message-ID: <aMlhpIhjbrDR4C8L@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bjxim9GexlkTfTNm"
+Content-Disposition: inline
 
-Finalize the series by advertising VDUSE API v1 support to userspace.
 
-Now that all required infrastructure for v1 (ASIDs, VQ groups,
-update_iotlb_v2) is in place, VDUSE devices can opt in to the new
-features.
+--bjxim9GexlkTfTNm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
- drivers/vdpa/vdpa_user/vduse_dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index 06b7790380b7..07ef309ed7f7 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -2121,7 +2121,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
- 			break;
- 
- 		ret = -EINVAL;
--		if (api_version > VDUSE_API_VERSION)
-+		if (api_version > VDUSE_API_VERSION_1)
- 			break;
- 
- 		ret = 0;
-@@ -2188,7 +2188,7 @@ static int vduse_open(struct inode *inode, struct file *file)
- 	if (!control)
- 		return -ENOMEM;
- 
--	control->api_version = VDUSE_API_VERSION;
-+	control->api_version = VDUSE_API_VERSION_1;
- 	file->private_data = control;
- 
- 	return 0;
--- 
-2.51.0
+Today's linux-next merge of the rust tree got a conflict in:
 
+  rust/kernel/alloc/kvec.rs
+
+between commit:
+
+  779db37373a38 ("rust: alloc: kvec: implement AsPageIter for VVec")
+
+=66rom the drm-rust tree and commit:
+
+  1f96115f502ab ("rust: alloc: use `kernel::{fmt,prelude::fmt!}`")
+
+=66rom the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc rust/kernel/alloc/kvec.rs
+index 38ed271b1d045,dfc101e03f358..0000000000000
+--- a/rust/kernel/alloc/kvec.rs
++++ b/rust/kernel/alloc/kvec.rs
+@@@ -3,14 -3,13 +3,14 @@@
+  //! Implementation of [`Vec`].
+ =20
+  use super::{
+ -    allocator::{KVmalloc, Kmalloc, Vmalloc},
+ +    allocator::{KVmalloc, Kmalloc, Vmalloc, VmallocPageIter},
+      layout::ArrayLayout,
+ -    AllocError, Allocator, Box, Flags,
+ +    AllocError, Allocator, Box, Flags, NumaNode,
+  };
+ +use crate::page::AsPageIter;
++ use crate::fmt;
+  use core::{
+      borrow::{Borrow, BorrowMut},
+-     fmt,
+      marker::PhantomData,
+      mem::{ManuallyDrop, MaybeUninit},
+      ops::Deref,
+
+--bjxim9GexlkTfTNm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJYaMACgkQJNaLcl1U
+h9B3lQf9FABvWloM/fSwnVkkxDiXEPfqF6FwQoA2CWc8EMQOonfD6+ZzhRZcPruJ
+CIbLm8jrRyISSTLs3b6AwvKvQlY9ng+fyVr0wRAVevdpkz4n65TjT8aqYyyIGFTf
+0merjI82xsVm37OiMG19F6p5QrrRq6WicK17w3AxuFE+61Asi7uxa2TlOOPAp+nl
+zasSdf7etU4A+Ftquso0GxZT4V7D7se4bpEa1ah+I1u8iiggcpwejX6XHoJiuCiB
+iK4JuGESvrBnQ5vojOVpDCU+2/ox7Uari0bREjVuZluINLGA+yOeO7tE8rkS9/99
+YGIVRqJ3RR60O/QsjSfVOJeZnvPoaw==
+=EYEA
+-----END PGP SIGNATURE-----
+
+--bjxim9GexlkTfTNm--
 
