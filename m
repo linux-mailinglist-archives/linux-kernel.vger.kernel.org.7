@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-819136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DCCB59BFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:23:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07046B59BFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F683AB95C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:23:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F6A176355
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989330C624;
-	Tue, 16 Sep 2025 15:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1637317708;
+	Tue, 16 Sep 2025 15:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kuYuso/H"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PE/VZWHY"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508B9158545
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE642266A7
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758036188; cv=none; b=mch6i6V42Mrcx5fteSaXq0ztme+dg6teIaeuA7ULu4AA72pVLPfaN4Tgv8c4Ut/sQZBYuvlDXpvFXLTlDeqwqW/nNJNoOW5LRc78igBrT/9OdfSjnXrU7udlW8YX4GwafesQhANC7bpCwMAL5M0kbpKLXb5b0Lj9I+SJa+vkd/M=
+	t=1758036198; cv=none; b=XuZNBl410TU3GCHdk8gllLfdpWdEdB35pkrCiwafKxlkfuurq5+mhzQ11WOqxHBfpzd/YdElnshILwWNMm4mKx4Ysg2rqLwxLH9cdCwJ2jQOVCgLsUQREF0rjdWotlfKFQ0uLB3uwaWpvXRDTWvuizjhRrMJb6WsDtoGnp1/cc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758036188; c=relaxed/simple;
-	bh=Fa0Dr4dfGCPnuqxyzWaU5/riMvOQE/XL+WP+SmmUJ9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/Eud7IZ9sQU5I7tZV+DA4vknyjnTEhO6JD3luRz4BgROuQnA6j2wVLn7vM5Jdzvq8Ws1V645WsJ009H0rxqDofZoNDRQZU9HT8o8lhmHVlvWEDXl/Taby6H0CwCBkx3XyHG9Ccr3OBNEhHBSdsBY1EVdokQoAmsGmpoYP4c6tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kuYuso/H; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3eb0a50a60aso1705301f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:23:06 -0700 (PDT)
+	s=arc-20240116; t=1758036198; c=relaxed/simple;
+	bh=n/Yap0mMZI6PAfAGNazMJTaTVHxM9I1l1vU8l5AZ8fM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czmfuN9oy89WZn+7RvqwboJYRXxzMgQtbEBNaMUzh+O64LHFNOSLqkLphMsW4gzmymao4L0AIU5C4JtzYkfNK+xXWXD5w98pq6Z14ST7XfRNGRU9Wg3J264lwRChDOhp3XrBExh0ygZ4Awaaj5HyIdGyuyK9T6PQKPumngOtvOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PE/VZWHY; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-336c86796c0so45706651fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:23:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758036185; x=1758640985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=texts6YK6dHVfgZZeSBQl5brt53L42uPuX8uB3l26sA=;
-        b=kuYuso/Hc7HXiwf0sWv54DUN46+b1/qPDv2uKpry4S8CwsD2dUCLnvQuCIT3es3a8n
-         7/L/buyCO5ph0jTvPsthOqk83DVfHUMpvxc6LzNQPT4bwZtqSAZRUYf/sF1XlRsundft
-         o6SiEOHA4WI4yCyjzHIZ9f+op+6HAx/rHKwv4tOqh+ArXDk4l+7VQ6IZ01rJJ/WFx1dl
-         ry5+11ab6QRWeSZtYuVUtOOYCamY/pj78nN61bOGcDgj78arS/pCK9GwAjkqHtbnsrBm
-         EgbwgmVfa6E/Oq9WGLns1cvDahmpsbrNl4VY9pcariYd2RD3BmhXuZXIt6OVwYzmjoM+
-         NLCw==
+        d=gmail.com; s=20230601; t=1758036195; x=1758640995; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/nuSVLC68nX8Z52Tryz9BLSU3qdeaRF6+fP5+6ZIUdA=;
+        b=PE/VZWHYyV5u30/UfWkQEkBNvtBfI/Yg23H7oWR6CTsFgqfFqJEjsyqCvMWdeoij/i
+         7fennR3XUUGVWjzAYCvnXUklPP0Rs+L1qnvfXm6ZYglmdTkByQs9PPVWjzajr3d2dZ4R
+         3XGcB8xtuy/EjPJx9Acmyt4NuBP57s2NSNjB2tTKxxucheeUhDVR6gVgtNstak5Jkmv0
+         PJEAmQbzOCe+mwhurW60tZzm6ji2T90Nhf+mYdf0Iqb95YCFk68cuA2UYG6DwuGTV9xb
+         Bwj8l/PrdJZ+kJgJ3a03kA5BWWhSvRVMC/oiv7Vr4WKh0nwL23ugmaCoea+ZIOaYlqtW
+         T1nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758036185; x=1758640985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=texts6YK6dHVfgZZeSBQl5brt53L42uPuX8uB3l26sA=;
-        b=CDpIzx40gXF0J+sXeI6u8/1zXEmMIKWLA2GcyBHHybzsZP168CFTuPZhIw50phWPu+
-         W+UCLMwy/VMq5oUkxi2TZaxBJB8VWm5JkLrUzL+QjmXLRcpkNOxAbso469JDF81LY6sH
-         E5fAb5RntOHl29zAvRb/u29Vq+KXIrlRAiyE3fMVR5IwjwweEDfcLj1Cjk5aEzBUXQL4
-         /WX7wPaYJ7kiLdW1OAuBZIiHObfURzoPcZK8X+6yE6qGmVCwmpuEiSo59s3e/B95Khgo
-         eW2FnysXDSR3bgftzoXuc5BJ3pGdG1x+INLUCxaL2y08L3TG2Z4u7VSu8TErADcDS+91
-         E4hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXz6aYy8TD1nj8DOB1ry2DxK+iv2Yb9kZ49hC88caHe54omraRpjm+nqT0xoUKzM+8D4+m8H2Fkra0BtEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0fD+Sz9gqpfvg2vG3JXNoMgQtCCTlWk3witt5DfcSzlEknprs
-	dNh3uOj5eN+2boZpdkd2QcczHn+pUKsn/D4NXXSVAb28t68asrOaSkgvCA+8flwpi8PyAQibn05
-	dxzvq4Kn+X0nWVpQ2AZDZILsKr21qEB1I0yL6D14u
-X-Gm-Gg: ASbGncv4rVTmRmXWHhjj1rkC6ui6DMK3whLzNxfCBFGCNW/0oUAqIAhf/Ck3s8ud7y4
-	2RLlpavnJdB6jXFTgjnQQukVLWFm/9ppLZaD8haaayhB7nHhkfMIZ9/JgNKJfZtdh3FmvsqU5D+
-	kUib+KrGggNttOewTFbxwiA/zl376l7wCnlkwrMg6nqUZ/QI5NU7XQq5C8OMHzllNZuZ9WjV+sx
-	abKDH91BekzuZMTvRyIix5Z2lX+CEei6vZSaFKHajexMg==
-X-Google-Smtp-Source: AGHT+IFy1RlL1SatJgBFIBvGoq3npIwG8d6Cn+4HJd5+MSUy27ddCNOgybatr+aQ4jtPxVHl995CYHsAfpJttecW+Y4=
-X-Received: by 2002:a05:6000:1865:b0:3eb:9447:b97a with SMTP id
- ffacd0b85a97d-3eb9447bb52mr6106858f8f.54.1758036184384; Tue, 16 Sep 2025
- 08:23:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758036195; x=1758640995;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/nuSVLC68nX8Z52Tryz9BLSU3qdeaRF6+fP5+6ZIUdA=;
+        b=S3L/n67GpeBYZfn9oYnnSXVZNpdsNSVHh4TKJgqYc91UvkN3f5tXuyEfi4LtlEZsH9
+         zDE3R3mWRIPcFxxNqv6J4xhQX4IUQ29hwzF+Ifdyv7RLM2M1lDmZfmweIudhoOsqhvTU
+         gI22yIPCv5iamt6r0/qsYT3tw9pLJ9PIJ4j+z+z3Y2wVvOnK8nLpdy15nYSmmblkBeGc
+         6t+zZE2SS7kScONIAkv6WuOdeRPekNHjRM/o8V/YOKyVWrF48sxmyHC3X+EYhQEajj1l
+         zCDFuE06zAsIRQSHfDA913r2syn8kvzcA/7NpebyfSq6yy86WKP8cqrEqg9RtqjWybFi
+         8Ipg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2nYg72J1tHIjLY2Mmy8BdDaHpL6eoyGEVegvBT72JHlEjcIEWNItzYObAMgb3lrC79YksxCD7wL/5QrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv3eyd4mLgi8f5DNh3iGe5B9epWKKsbjmVIEVIxvsbr7WqS3XF
+	FypiIZrfeHVxJNuKRUs7WRMnc/lDiLRz8jpssYOENCZGWHRHT7ncsJUa
+X-Gm-Gg: ASbGncuqBpqmmeDO+oRIZ8OlOCB3qCbd8R+gDsB95SnxbfPdbYoIbpcFpILEuZl4F/F
+	7OpwBC7DpzHGZinvnp+75lJYTikiQD0zJJIMmIrXRJkM98biwg3HunvKS6RvEmwi96rOeRPZ/+k
+	JRLT62hU0FKp7m1NfmZ86Q09fDn/xbvbTtlmlrmKb+D07pJCcM8z2pe3/JZmzGiNR68T23KuIVk
+	lJ5a4v6I463tMO38wJiVZwUHh5x6tsD36e0JBbOiZYjJOScC2W2ZDXlDz9AXTOL4IHIt87qpdcv
+	PzS4e7JrlOaqcgh4UuyzY1gjGNLuzcphk9PGjeZ9dvsSobEjtkmRUbBb17wh3Rh5xQ==
+X-Google-Smtp-Source: AGHT+IHB4r5cBNsmY9gvwcEAPOYB1cQlVCkB6XSDMxPrU8k2LqqAODvmkpEHD11QK026BXiH3iN/YQ==
+X-Received: by 2002:a05:651c:3245:20b0:336:e176:cd3c with SMTP id 38308e7fff4ca-351403ed5aamr39716711fa.38.1758036194420;
+        Tue, 16 Sep 2025 08:23:14 -0700 (PDT)
+Received: from milan ([2001:9b1:d5a0:a500::24b])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-350a153c10fsm31333581fa.3.2025.09.16.08.23.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 08:23:13 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@milan>
+Date: Tue, 16 Sep 2025 17:23:12 +0200
+To: Michal Hocko <mhocko@suse.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 09/10] mm: Skip might_alloc() warnings when
+ PF_MEMALLOC is set
+Message-ID: <aMmA4Fnvpd9Szyq2@milan>
+References: <20250915134041.151462-1-urezki@gmail.com>
+ <20250915134041.151462-10-urezki@gmail.com>
+ <aMhKAnO1MmkKHTO-@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915221248.3470154-1-cmllamas@google.com>
-In-Reply-To: <20250915221248.3470154-1-cmllamas@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 16 Sep 2025 17:22:50 +0200
-X-Gm-Features: AS18NWBLONbGoOBW37qrDmhLX61Yut1ndwXCKLgmrwXKz5E_ZpMaR_KAfK0teGc
-Message-ID: <CAH5fLghdcCx_OrCY-xq2gxug4j4RTMnmZsoB-Y18tLRp=Z5R-g@mail.gmail.com>
-Subject: Re: [PATCH] binder: fix double-free in dbitmap
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Tiffany Yang <ynaffit@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMhKAnO1MmkKHTO-@tiehlicka>
 
-On Tue, Sep 16, 2025 at 12:12=E2=80=AFAM Carlos Llamas <cmllamas@google.com=
-> wrote:
+On Mon, Sep 15, 2025 at 07:16:50PM +0200, Michal Hocko wrote:
+> On Mon 15-09-25 15:40:39, Uladzislau Rezki wrote:
+> > might_alloc() catches invalid blocking allocations in contexts
+> > where sleeping is not allowed.
+> > 
+> > However when PF_MEMALLOC is set, the page allocator already skips
+> > reclaim and other blocking paths. In such cases, a blocking gfp_mask
+> > does not actually lead to blocking, so triggering might_alloc() splats
+> > is misleading.
+> > 
+> > Adjust might_alloc() to skip warnings when the current task has
+> > PF_MEMALLOC set, matching the allocator's actual blocking behaviour.
+> > 
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> 
+> I would probably just bail out early for PF_MEMALLOC to not meddle with
+> might_sleep_if condition as it seems to read better but I do not insist.
+> Acked-by: Michal Hocko <mhocko@suse.com>
 >
-> A process might fail to allocate a new bitmap when trying to expand its
-> proc->dmap. In that case, dbitmap_grow() fails and frees the old bitmap
-> via dbitmap_free(). However, the driver calls dbitmap_free() again when
-> the same process terminates, leading to a double-free error:
->
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   BUG: KASAN: double-free in binder_proc_dec_tmpref+0x2e0/0x55c
->   Free of addr ffff00000b7c1420 by task kworker/9:1/209
->
->   CPU: 9 UID: 0 PID: 209 Comm: kworker/9:1 Not tainted 6.17.0-rc6-dirty #=
-5 PREEMPT
->   Hardware name: linux,dummy-virt (DT)
->   Workqueue: events binder_deferred_func
->   Call trace:
->    kfree+0x164/0x31c
->    binder_proc_dec_tmpref+0x2e0/0x55c
->    binder_deferred_func+0xc24/0x1120
->    process_one_work+0x520/0xba4
->   [...]
->
->   Allocated by task 448:
->    __kmalloc_noprof+0x178/0x3c0
->    bitmap_zalloc+0x24/0x30
->    binder_open+0x14c/0xc10
->   [...]
->
->   Freed by task 449:
->    kfree+0x184/0x31c
->    binder_inc_ref_for_node+0xb44/0xe44
->    binder_transaction+0x29b4/0x7fbc
->    binder_thread_write+0x1708/0x442c
->    binder_ioctl+0x1b50/0x2900
->   [...]
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Fix this issue by marking proc->map NULL in dbitmap_free().
->
-> Cc: stable@vger.kernel.org
-> Fixes: 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+Thank you, i will apply it and place the check into separate "if"
+condition.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+--
+Uladzislau Rezki
 
