@@ -1,372 +1,220 @@
-Return-Path: <linux-kernel+bounces-818519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED94AB592D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:59:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F54B592DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53173231C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D66A3BDB8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EE023ABB9;
-	Tue, 16 Sep 2025 09:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FC72BE656;
+	Tue, 16 Sep 2025 10:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kc0uQTjN"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012025.outbound.protection.outlook.com [52.101.53.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ltBWmCDG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5FD2248BE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758016766; cv=fail; b=fRU6RXZgLI4+s+HQOGiZIKNjs+GdLDCJyoGlM9Ay6WgtYaD3KmPu++pMJWAErAE0C5OlW+8XYNhLz7dCgW4/9pkQ4XS6bb5xKUVJ9XnV9drb81kYue04JxDU1cWIxCiaFejYIVY3dUrF6C2SmVWpSel8FMYVv0sE6JqvBaRlXsY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758016766; c=relaxed/simple;
-	bh=asu6hKRJiCt7g8KYLXxpLo+kWOeV0j2F8o+aZFrLSqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kgNDY1sUPuPpud9xDQqELWQ4In0OwP2vf+ZVAXAubuCD5QpxvWQjRQuOysqeKhYRXeQJVabb9/MsZ6Bj3qkn8/Wm+IeScoRGmhZWQbYYrMGsKvqLOmbbPWzjfLyK49mVWfy6AfZvdOJRUSLMwzXUUMafFRZqErB4vTrZNeI9i3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kc0uQTjN; arc=fail smtp.client-ip=52.101.53.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fW/vubzFzTV4FNq79GNXzjr6GZkQ0xri6+h07DSdwodIwLz/4bNZdgO8Z50EmppvuIiLR2kM8rTI686chsnvUlXO2crIGgxQ3gDVCCcRi92W7tReOrNCUWKf1HUb3xzBsX2//XEVyVgVCS21f4Ttdt3yuOWOQOos5pENX4Mq1ZjxbvgYoCdC1Qp9NhWcPckrWVXvxT1z1uheYJr+D9ceslJQ1rpIUyIbiHAwNUERzFNhKCYP5pc1hj/aWSl9qZc8ckrj8iABXHlxfOqJ22UzG7kB2oQORHYSmwmRUC7zCuuldeRnWtKx4MUCUskoXKf2gCL3gPfEgCBp74P+ZMSsjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2fPf6ew2r2gTyG1Te26ghIKQq23sD9F6YIh9SCIJANc=;
- b=PMXixRljL2isXR3HZmfwW+H+6Y0fqX6mVQZpGXL1B82RcYZFWqK4It7mWpkr7O1oAMU0seaHcm8nCU9EmxJkBsWmBuIsL8W0sRbYR5+eLJFKb8mU5mUX+RMOILZAl1e+y26j8NI9MfF+PM4d+a84LLSk185RdlLx8cN7dIoAKzlbDfOV4KrD9elwY5SR5kO3nOXJR0LQR9D/nJLurNiwrFzxeIxQrhPc7+ZepkLJZ3VG7YKwj9jaOK0ULnf/IEFAxLPhsYoyy5gwUcxvNJuVmlDMnlgn5r3DwWon7i9sNuPHQYpz5U9Mms2oprOt7NOsurcuiFYLGdo3CvpufCz74w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2fPf6ew2r2gTyG1Te26ghIKQq23sD9F6YIh9SCIJANc=;
- b=kc0uQTjNGg5yf3A5c8ToZXLCOYTaSN6bJAxNN+mzpkENexd3uq+YE3tLy16tf9gdHib70Oe1wxhzwMhJunZFvkSRcENxXgOCYhZ4ZMh1MsmNUzBIypNY40NJdWPjHKMiGcJ0YQ/1ulkUvH4YMHGWB7uTYJ4fJFfaFtEk/mEFexdLf7sAhr1PTwa983COOJrSQdr5CZCrOrp4PrJQgn85ZA03JnxZsWRo94fzaOFcQEQcfTEijxOmeEOC7VBEeNZJVNLZ4Klp8T/MTwEsr65cBwIkyhj/lXW43teqFkgZcNsK0F4OhSV3Aw2IxBg9nvj2/JUko7lmiyhuwE4eXR6Fdw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB8056.namprd12.prod.outlook.com (2603:10b6:510:269::21)
- by PH7PR12MB5950.namprd12.prod.outlook.com (2603:10b6:510:1d9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
- 2025 09:59:20 +0000
-Received: from PH7PR12MB8056.namprd12.prod.outlook.com
- ([fe80::5682:7bec:7be0:cbd6]) by PH7PR12MB8056.namprd12.prod.outlook.com
- ([fe80::5682:7bec:7be0:cbd6%4]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 09:59:20 +0000
-Date: Tue, 16 Sep 2025 05:59:18 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v3 5/5] rust: Add KUNIT tests for bitfield
-Message-ID: <20250916095918.GA1647262@joelbox2>
-References: <20250909212039.227221-1-joelagnelf@nvidia.com>
- <20250909212039.227221-6-joelagnelf@nvidia.com>
- <aMDq2ln1ivFol_Db@yury>
- <bbd6c5f8-8ad2-4dac-a3a4-b08de52f187b@nvidia.com>
- <aMIqGBoNaJ7rUrYQ@yury>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMIqGBoNaJ7rUrYQ@yury>
-X-ClientProxiedBy: BN9PR03CA0974.namprd03.prod.outlook.com
- (2603:10b6:408:109::19) To PH7PR12MB8056.namprd12.prod.outlook.com
- (2603:10b6:510:269::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71592DC790;
+	Tue, 16 Sep 2025 10:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758016852; cv=none; b=nml1mK3venldWcFxuKUsCzpShzErqiKbaKj04qzIMSy8AhLYWba6rQIoNiW8X/tyOn59VxyaVDo25lYiSxlOT3cz0yFL8tJBs/dIAhXSvGno/kf88sewhS0B1eWpsS8ZE3NEm+6Q5H48Sq2SvOmIzWG4200SICn+ijVileToXhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758016852; c=relaxed/simple;
+	bh=nnWkI+m8+0vYJKqfeJTqSu3Ryof79mvbjAFUpnfISi0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OCRVkUTp+EpZSPtB3shvisLHEaRDa2qmZCnUtMiGYoyQiYIlXFs+sjoKYi9Y8+1d1HwM7wsFA0Agdf50QvrRWel7EzVRMNePwEKCRQCg6FrgCKsMB+C5xM34SiDx62xeRhKMK/oTA3R38CguC7JdUyIPckc7SvJ1YgM/bNVl84c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ltBWmCDG; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758016851; x=1789552851;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=nnWkI+m8+0vYJKqfeJTqSu3Ryof79mvbjAFUpnfISi0=;
+  b=ltBWmCDGR4betB+nrYLxAErjzZV7cssee8KJIVFslaVQK+dsfFVRO5CO
+   Z3I/npG18Z036eAoxGEwfnso5Ihm+q5EuwomonEtC2AXsS6pBMdtgnULw
+   YQLLppZprntCrI5PXYNGkq/umWjwSdT9qoRfu4FPNvnvdlBUIdFaqBMXR
+   64xiiXO0Rug8bMl5ofmEI/ojQatO2yx+zUpGiVlUteEFkyZK/l2iiJZdE
+   bDiDQFc6QFFbbuoZE0jpjUrOOGqdcuGTmSpxtZTXjanVFY4ngXlTtVAoC
+   qtymRf8yZvC/CcrXfHKri4VKcl/pu6bqKDx7edP86nGAjIgttEYXl/rEm
+   g==;
+X-CSE-ConnectionGUID: L/J7B8hbQ4CulhbRfe3z3g==
+X-CSE-MsgGUID: 6UOP2e5OSCi4scNQ65LIAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="47864320"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="47864320"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 03:00:50 -0700
+X-CSE-ConnectionGUID: 9GZO1RTbQ3ym2PTWmdN9zQ==
+X-CSE-MsgGUID: 6mcQDqfQStmbofMssFefnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="175328592"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.195])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 03:00:47 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 16 Sep 2025 13:00:43 +0300 (EEST)
+To: Ciju Rajan K <crajank@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+cc: christophe.jaillet@wanadoo.fr, platform-driver-x86@vger.kernel.org, 
+    vadimp@nvidia.com
+Subject: Re: [PATCH platform-next 2/2] platform/mellanox: mlxreg-hotplug:
+ Add support for handling interrupt storm
+In-Reply-To: <20250916054731.1412031-3-crajank@nvidia.com>
+Message-ID: <34d028ac-f907-1505-a2fc-f455a10cfa5e@linux.intel.com>
+References: <20250916054731.1412031-1-crajank@nvidia.com> <20250916054731.1412031-3-crajank@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB8056:EE_|PH7PR12MB5950:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8349468-d5b1-47f4-a671-08ddf507b4d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vqCHg2uA9MOMOXHanXW7DNwsbw61Hhg8Sz0Q02gAOy3tDf4qjPnYdvFsXsGE?=
- =?us-ascii?Q?/q/JxAhqb0dT/Qu+/YQrhhfIuxMvU0XNLpyzk+VSPQVCQCGFkAlirCRUGEF3?=
- =?us-ascii?Q?oMq1MWZ3zK+FyYGoYzp7XQRw9ny8RBKj2m2n34Ir/cr2lfyF8kAph4RUija9?=
- =?us-ascii?Q?+EuGZSlktOjLEvFLgsKLDx11AsQtU7HfWCtH7IyWbaA+0qoVC01BMzr+2muM?=
- =?us-ascii?Q?eLTfMJIUpupCcxH3owbZ7kwD9j3/uBn2AY0+WtLAFg9QWm7Az8zoiY5fO11u?=
- =?us-ascii?Q?1CYkNYXSGYOA5PxQsW2DTeallFTI18T80+1xIqwSq/4wxxc391fsSXwU/8lP?=
- =?us-ascii?Q?sf3c4iczVil2kGtR3bxONDEj38axUf36P6suE8dusuJkYNGe10HljUDNJNvT?=
- =?us-ascii?Q?a6OZ7/nYNiuMU3hbH0/9RWXmPANXe4veKtFG0WDlEidb0+mH9pXRHQ0UtrAT?=
- =?us-ascii?Q?zAlFGjqqMwJYxI0BUQaOZH/UhOlfRhG7nqeJ8Wykd8RHgGSKfsLeC9vKypFR?=
- =?us-ascii?Q?hK9XKlEvEPvEpcnNHDATdgnPtdZhLTJ0Y/1B6Z3ob7jeukdwo1HZiv5BtoRb?=
- =?us-ascii?Q?ZAl1bKRCtkqRshIWZk1MhZJ+NypVN447BK6XwaIThpkvydII3xGTlytDryYn?=
- =?us-ascii?Q?YXeJUe8Vgiqe0EG5ixDin1P6AaOBNzNOYlQpRWGW4cx6CZQo+kUmEZNIG4xE?=
- =?us-ascii?Q?wkOENRgBnfp41ln8ELCGTteSpUVZI38J/d7la+UWxUscLoeG797PaVxATA31?=
- =?us-ascii?Q?XfSHpVNctS66bmMR1ex8FU6soAudHlezPYptwnBIkpaUI5miSvBXskMT1/UK?=
- =?us-ascii?Q?ow/iEalo+PX8G2lYfOmKxYidvU8p59E7k4lfF8hFfPOXp0WYoVw1xXZGZFBp?=
- =?us-ascii?Q?/KQPN768ZYlwW6rZ1FJXXTB7u4g2nzv6tA5KvaVPrxp7dzzaAGs/aJpTQ9w8?=
- =?us-ascii?Q?1VmkS8FWzjdiLQiKxlT9BbgpJ8jKCHw+s7K4TdU8STlo1Ilaub9OrAo+LlTZ?=
- =?us-ascii?Q?OBWqk2T3D6968O2ejZjJId7wP3nDwEjajQyFMY0AgTEnIguQFtVVWMuYrpNj?=
- =?us-ascii?Q?w9ipdQ7XzWqACQCYTbE4ve/aOZIMYClM4bddZkNF7H07Ud3zKJ3jkT2ItqJp?=
- =?us-ascii?Q?FBLD5ob2i/8t/6vNjWo+GQfVzO53wXTNc+yKxpqHx90NBgIRDJ1t1hJjEAll?=
- =?us-ascii?Q?IJT9/kf8L4LQNv1A4Y/lFWOlJmb1I8/TwhjX5j9EgKTC0KnqlflHzl9QQRlK?=
- =?us-ascii?Q?3gS4tNw0EVhGhd3UNqY4xERPykCxSEvb3aN3i/AGRlC/ClUAIAcWejfYjByB?=
- =?us-ascii?Q?oe7w8fMxvBKGmm5BcfK9TblN9usim24IjyWkc/HwIgHpy/Auf/AE6QbDO+aG?=
- =?us-ascii?Q?mgu56Awp7IqAyJHt9K6SuMh4cV+Yqzbt5FDl7jeorSsHejg6xdGb1R1hTepH?=
- =?us-ascii?Q?p3pX0xYkAlE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8056.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?F067gDTJd3EOhXJWrsWHfm/s4hhmlHZDtQ870hx5cWU6uguquit/+NGyGMM5?=
- =?us-ascii?Q?rAZDXChvRblZdrce+FfnZpIe/GOGkmVmWakiK0Tv4n9allbkyaPJkDZzJFjv?=
- =?us-ascii?Q?iCNGFI4CWdO1XXoNvXY+li0MHxlzts6qANZgKR/wRLxOYcxyPRe5SSsJXHuX?=
- =?us-ascii?Q?sfNBgbNG6JoaFQMVtmd1tLaXHJeBwEP+lkbLdo7JLXRYNeN9/OJplVFtRf30?=
- =?us-ascii?Q?LNEeaxvEvdnq4o+tOdmVtmcgXqTEY1U7bFyAd3jiqJIIhB4KZbJK7gCQssfI?=
- =?us-ascii?Q?Y0Q2LDhoW5mLtJUZ33vdwEq3PJ7tFzzJw4ISqGM+o/JCbXV/op3b5hYfNoXr?=
- =?us-ascii?Q?4PlbTlYic1RslPeS9a8IIrKkt8ST1LTo3k+cTqk0q6AlXgMg4YSpRK0mMqWw?=
- =?us-ascii?Q?bKEi8xfuxU3OSHfHagb1bb0aRP8Dved33Puc6C3v84ZJzmaF5S3/kEzXhPaj?=
- =?us-ascii?Q?tTrEHwBpQussbwu3di+WLe3mBwviuIwRAr1mugnHOEgxLs1pk2EKC4G6H9MO?=
- =?us-ascii?Q?Y2tgCp/zW1yiEgz2JvIC5XCieabe66zsTOjFKDg+vF6gsWJGGw0cr+OKKP0E?=
- =?us-ascii?Q?xWlZq+ApIkr3oybScI1qQMeMSIjW+OuAql4hGa1n4vpO+9F42FoJO5EY2qlK?=
- =?us-ascii?Q?w08IDB3pj09NbU5gixSR44Keuu6oj/zO0coYPPBsBLxyMsMI3pC6vpFkpYnZ?=
- =?us-ascii?Q?L28tfbf1wgCGfvlv5OZyaRN+7sf6aUJZ4a0nhW5hzJgXP0A0xkiGpbKmdFmb?=
- =?us-ascii?Q?bNG7/akZYcTZDCxdGKnHD755/lmdMyI//YiTNI74Qyr8kVdlOSQGyY1/2wuA?=
- =?us-ascii?Q?1ITe3Gqh6Mkp42T05u95iN/iz8T2LcsAwj8GotqzsN+tiZxTq0sICLD6r8p1?=
- =?us-ascii?Q?E1wqnrzSS/JEKv4Afdxof6xiEZ0hzAK7e17IrzLNqee/2MJAuVmCu+XYdYRw?=
- =?us-ascii?Q?Hr1BRUsn3LVZCzda3YY8tEg8whwRfrw12GtKvgWNLAV4KfV/u1ZZ9dy0s16p?=
- =?us-ascii?Q?qWYSowyYeC1MkewW8NBaGEcE7lAqoJLHPV7Kw7b8rlQqbGfds968yuTRraiC?=
- =?us-ascii?Q?mnEwxWp4YRcvBmq1nkDQd4A6XLtc6eaAPGIqcNGTjkcd9/lgL05r7Zf8eTxY?=
- =?us-ascii?Q?3q9Bu9uyQ4rlikWbnHVyY4C0a3EMgiVg4WVTe/tmi372jzi+tJ9rZFvWacTL?=
- =?us-ascii?Q?p3Y/6wLJXIiOZwyFaS9UoF7n9/LZPnvGqm+sYIgtT+o4+0SqQJ8TRUYq2w4Y?=
- =?us-ascii?Q?rLQ4ZKnuaWDhpAqfxDH0ntzgA1H2n/tkIX63ZDSJQOUzLQj8ak60XPBrA2DJ?=
- =?us-ascii?Q?GinuLQSleY/Rys7voZryYcZrnWWUWSuCeYZt/fRsNjVc5DxiheMCgeYrhFfH?=
- =?us-ascii?Q?b0DZmpGyuKibwlDU6m26t6Eg1DJV/jEAuav2NnJnVrjpSX2AIC305F7P8uug?=
- =?us-ascii?Q?rYHW07dnFjTrqoQUPwNR4T65vT8GSS1ESuhX/S6AY6qSsHzNOaTrLa+81RBq?=
- =?us-ascii?Q?FKK5yfn4L+INMxLBhFRNtYlPeopaNh0gE0YFoG9cpnTQEp5qKR3s6ua8NWns?=
- =?us-ascii?Q?DRzJqqiAkRnjk9dg/dy/3kLYb0HO5SFWAgFU8M3R?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8349468-d5b1-47f4-a671-08ddf507b4d4
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8056.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 09:59:20.7212
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AKibaiIdEcb1BevX2r9T6LASHl0OdJMUWYlZMHsqIgID85UfgzD+EsCzv4tpF3ScukTSwmWTeHWm5TDPS0oJ7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5950
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Jury,
-Sorry for late reply, I was busy with conference travel. Now I found a 3 hour
-break before my train journey. :-)
++ Thomas, lkml
 
-On Wed, Sep 10, 2025 at 09:47:04PM -0400, Yury Norov wrote:
-> On Wed, Sep 10, 2025 at 07:08:43PM -0400, Joel Fernandes wrote:
-> > > You've got only one negative test that covers the .from() method.
-> > > Can you add more?
-> > 
-> > Sure, but note that we can only add negative tests if there is a chance of
-> > failure, which at runtime can mainly happen with the fallible usage (?=>
-> > pattern). Also just to note, we already at ~300 lines of test code now :)
-> > 
-> > > 
-> > > What if I create a bitfield from a runtime value that exceeds
-> > > the capacity?
-> > > 
-> > >     bitfield! {
-> > >         struct bf: u8 {
-> > >             0:0       ready       as bool;
-> > >             1:1       error       as bool;
-> > >             3:2       state       as u32;
-> > Here you mean 'as u8', otherwise it wont compile.
+On Tue, 16 Sep 2025, Ciju Rajan K wrote:
+
+> In case of broken hardware, it is possible that broken device will
+> flood interrupt handler with false events. For example, if fan or
+> power supply has damaged presence pin, it will cause permanent
+> generation of plugged in / plugged out events. As a result, interrupt
+> handler will consume a lot of CPU resources and will keep raising
+> "UDEV" events to the user space.
 > 
-> No, I meant u32. Can you explain this limitation in docs please? From
-> a user perspective, the 'state' is a 2-bit variable, so any type wider
-> than that should be OK to hold the data. If it's just an implementation
-> limitation, maybe it's worth to relax it?
-
-Yes it is a limitation because of the way the code does mask and shifts, it
-requires the width to not exceed the width of the struct itself. Yes, I can
-add a comment.
-
-I think to do what you want, you have to write it as 'as u8 => u32'.
-Otherwise it wont compile.
-
-Just to note, the bitfield code reused the code in the register macro, so it
-is existing code in nova-core. We can improve it, but I just did a code
-movement with few features on top (sizes other than u32 for the overall
-struct, visibility etc) so I look at such changes as an improvement on top
-(which will be other patches in this series or later). We can certainly
-improve the bitfield support now and as we go.
-
-> > >        }
-> > >     }
-> > > 
-> > >     let raw_value: u8 = 0xff;
-> > >     let bf = bf::from(raw_value);
-> > > 
-> > > I guess you'd return None or similar.
-> > 
-> > No, we would ignore the extra bits sent. There is a .raw() method and 'bf' is
-> > 8-bits, bf.raw() will return 0xff. So it is perfectly valid to do so.
+> This patch provides a mechanism to detect device causing interrupt
+> flooding and mask interrupt for this specific device, to isolate
+> from interrupt handling flow. Use the following criteria: if the
+> specific interrupt was generated 'N' times during 'T' seconds,
+> such device is to be considered as broken and will be closed for
+> getting interrupts. User will be notified through the log error
+> and will be instructed to replace broken device.
 > 
-> So I'm lost. Do you ignore or keep untouched?
+> Reviewed-by: Vadim Pasternak <vadimp@nvidia.com>
+> Signed-off-by: Ciju Rajan K <crajank@nvidia.com>
 
-It would be ignored for the field, but kept in the struct. So .raw() will
-return the full 8 bits, and the field will return a subset.
+I've a general question on this approach, probably more directed towards 
+Hans, Thomas, or others who might have some insight.
 
-> Imagine a code relying on the behavior you've just described. So, I
-> create a 5-bit bitfield residing in a u8 storage, and my user one
-> day starts using that 3-bit tail for his own purposes.
-> 
-> Is that OK? Can you guarantee that any possible combination of methods
-> that you've implemented or will implement in future will keep the tail
-> untouched?
-> 
-> In bitmaps, even for a single-bit bitmap the API reserves the whole word,
-> thus we have a similar problem. And we state clearly that any bit beyond
-> the requested area is 'don't care'. It's OK for C. Is it OK for rust?
-> 
-> (And even that, we have a couple of functions that take care of tails
-> for some good reasons.)
-> 
-> So the question is: do you
->  - provide the same minimal guarantees as C does (undefined behavior); or
->  - preserve tails untouched, so user can play with them; or
->  - clean the tails for user; or
->  - reject such requests?
-> 
-> Or something else? Whichever option you choose, please describe
-> it explicitly.
+Are drivers expected to build their own workarounds for interrupt storms 
+due to broken HW such as this? It sounds something that should be at least 
+in part handled by something generic, while the lower-most level masking 
+and detection might still need to be done by the driver to handle the HW 
+specific aspects, there seems to be a generic aspect in all this.
 
-I feel this is macro-user's policy, if the user wants to use hidden bits,
-they should document it in their struct. They could mention it is 'dont care'
-or 'do not touch' in code comments. Obviously if they decide not to expose it
-in the fields, that would be one way to deter users of the struct from
-touching it without knowing what they are done.  In that sense it is
-undefined behavior, it is up to the user I'd say. Does that sound reasonable?
+Is there something generic for this already? If not, should there be 
+instead of adding this in full into an end-of-the-food-chain driver?
 
-> > I don't
-> > think we should return None here, this is also valid in C.
+
+> ---
+>  drivers/platform/mellanox/mlxreg-hotplug.c | 35 ++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 3 deletions(-)
 > 
-> This doesn't sound like an argument in the rust world, isn't? :) I've
-> been told many times that the main purpose of rust is the bullet-proof
-> way of coding. Particularly: "rust is free of undefined behavior gray
-> zone".  
+> diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
+> index d246772aafd6..97b84c584d5e 100644
+> --- a/drivers/platform/mellanox/mlxreg-hotplug.c
+> +++ b/drivers/platform/mellanox/mlxreg-hotplug.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/hwmon-sysfs.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/jiffies.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_data/mlxreg.h>
+>  #include <linux/platform_device.h>
+> @@ -30,6 +31,11 @@
+>  #define MLXREG_HOTPLUG_ATTRS_MAX	128
+>  #define MLXREG_HOTPLUG_NOT_ASSERT	3
+>  
+> +/* Interrupt storm definitions */
+> +#define MLXREG_HOTPLUG_WM_COUNTER 100
+> +/* Time window in milliseconds */
+> +#define MLXREG_HOTPLUG_WM_WINDOW 3000
+
+Define's name should indicate the unit so please postfix it with _MS.
+
+> +
+>  /**
+>   * struct mlxreg_hotplug_priv_data - platform private data:
+>   * @irq: platform device interrupt number;
+> @@ -344,7 +350,7 @@ mlxreg_hotplug_work_helper(struct mlxreg_hotplug_priv_data *priv,
+>  			   struct mlxreg_core_item *item)
+>  {
+>  	struct mlxreg_core_data *data;
+> -	unsigned long asserted;
+> +	unsigned long asserted, wmark_low_ts_window;
+>  	u32 regval, bit;
+>  	int ret;
+>  
+> @@ -366,11 +372,34 @@ mlxreg_hotplug_work_helper(struct mlxreg_hotplug_priv_data *priv,
+>  	for_each_set_bit(bit, &asserted, 8) {
+>  		int pos;
+>  
+> +		/* Skip already marked storming bit. */
+> +		if (item->storming_bits & BIT(bit))
+> +			continue;
+> +
+>  		pos = mlxreg_hotplug_item_label_index_get(item->mask, bit);
+>  		if (pos < 0)
+>  			goto out;
+>  		data = item->data + pos;
+> +
+> +		/* Interrupt storm handling logic. */
+> +		if (data->wmark_low_cntr == 0)
+> +			data->wmark_low_ts = jiffies;
+> +
+> +		if (data->wmark_low_cntr == MLXREG_HOTPLUG_WM_COUNTER - 1) {
+> +			data->wmark_high_ts = jiffies;
+
+Why does this timestamp have to be saved?
+
+> +			wmark_low_ts_window = data->wmark_low_ts +
+> +					      msecs_to_jiffies(MLXREG_HOTPLUG_WM_WINDOW);
+
+Why not just calculate the ending of the window right at the beginning?
+I'd call the member e.g. ->wmark_window (or ->wmark_window_end).
+
+> +			if (time_after(data->wmark_high_ts, wmark_low_ts_window)) {
+> +				dev_err(priv->dev, "Storming bit %d (label: %s) - interrupt masked permanently. Replace broken HW.",
+> +					bit, data->label);
+> +				/* Mark bit as storming. */
+> +				item->storming_bits |= BIT(bit);
+
+Why not using continue here for consistency with the other skip above?
+
+If you add the continue, you can remove the else and deindent the zero 
+assignment by one level:
+
+> +			} else {
+> +				data->wmark_low_cntr = 0;
+> +			}
+> +		}
+> +		data->wmark_low_cntr++;
+>  		if (regval & BIT(bit)) {
+>  			if (item->inversed)
+>  				mlxreg_hotplug_device_destroy(priv, data, item->kind);
+> @@ -390,9 +419,9 @@ mlxreg_hotplug_work_helper(struct mlxreg_hotplug_priv_data *priv,
+>  	if (ret)
+>  		goto out;
+>  
+> -	/* Unmask event. */
+> +	/* Unmask event, exclude storming bits. */
+>  	ret = regmap_write(priv->regmap, item->reg + MLXREG_HOTPLUG_MASK_OFF,
+> -			   item->mask);
+> +			   item->mask & ~item->storming_bits);
+>  
+>   out:
+>  	if (ret)
 > 
 
-Since we only partially quoted my reply, lets take a step back and paste the
-code snip here again. The following should not return None IMO:
 
-     bitfield! {
-         struct bf: u8 {
-             0:0       ready       as bool;
-             1:1       error       as bool;
-             3:2       state       as u32;
-        }
-     }
+-- 
+ i.
 
-     let raw_value: u8 = 0xff;
-     let b = bf::from(raw_value);
-
-Maybe I used 'ignore' incorrectly in my last reply. The above code snip is
-perfectly valid code IMO. Because b.raw() will return 0xff. The fact that we
-don't have defined bitfields for the value should not prevent us from
-accessing the entire raw value right? If we want, we can set it up as policy
-that there are really no undefined bits, everything is defined even if only a
-few of them have accessors, and '.raw()' is the ultimate catch-all. Does that
-sound reasonable?
-
-> > Sure, I added such a test.
-> > 
-> > > The same question for the setters. What would happen for this:
-> > > 
-> > >     let bf = bf::default()
-> > >              .set_state(0xf)
-> > >              .set_ready(true);
-> > > 
-> > > I think that after the first out-of-boundary in set_state(), you
-> > > should abort the call chain, make sure you're not touching memory
-> > > in set_ready() and returning some type of error.
-> > 
-> > Here, on out of boundary, we just ignore the extra bits passed to set_state. I
-> > think it would be odd if we errored out honestly. We are using 'as u8' in the
-> > struct so we would accept any u8 as input, but then if we complained that extra
-> > bits were sent, that would be odd.
-> 
-> That really depends on your purpose. If your end goal is the safest API
-> in the world, and you're ready to sacrifice some performance (which is
-> exactly opposite to the C case), then you'd return to your user with a
-> simple question: are you sure you can fit this 8-bit number into a 3-bit
-> storage?   
-
-I think personally I am OK with rejecting requests about this, so we can
-agree on this.
-
-> > In C also this is valid. If you passed a
-> > higher value than what the bitfield can hold, the compiler will still just use
-> > the bits that it needs and ignore the rest.
-> 
-> In C we've got FIELD_{PREP,GET,MODIFY}, implementing the checks.
-> So those who want to stay on safe side have a choice.
-
-Ah ok. We can add these checks then for the accessors, I will do so in v4.
-
-> > I added another test here as well, to ensure the behavior is as I describe.
-> > 
-> > > 
-> > > And for this:
-> > > 
-> > >     let ret: u32 = -EINVAL;
-> > >     bf = bf::default();
-> > >     bf = bf.set_state(ret);
-> > > 
-> > > For compile-time initializes, it should be a compile-time error, right?
-> > 
-> > Yes, since the struct in this example is u8, this wont compile. Yes, I will add
-> > a comment.
-> 
-> So, the following would work?
-> 
->      bitfield! {
->          struct bf: u32 {
->              0:0       ready       as bool;
->              1:1       error       as bool;
->              3:2       state       as u32;
->              ...
->          }
->      }
-> 
->      let state: u32 = some_C_wrapper(); // returns 0..3 or -EINVAL
->      bf = bf::default();
->      bf = bf.set_state(state);
-> 
-> That doesn't look right...
-
-I agree with you, a better approach is to reject anything great than 2 bits.
-We do agree on that, and I can make that change. *Currently* what happens is
-we mask and shift ignoring all extra bits passed, instead of rejecting.
-
-I hope we're on the same page now, but let me know any other concerns. Just
-to emphasize again, I moved *existing* code out of the register macro related
-to bitfields, so this has been mostly a code move. That said, we can
-certainly improve it incrementally.
-
-Thanks!
-
- - Joel
 
