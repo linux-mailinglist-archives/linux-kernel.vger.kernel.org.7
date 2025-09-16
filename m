@@ -1,463 +1,332 @@
-Return-Path: <linux-kernel+bounces-818159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18376B58DB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5959BB58DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AC92A1468
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:03:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03F604803EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F28A72610;
-	Tue, 16 Sep 2025 05:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C40253B67;
+	Tue, 16 Sep 2025 05:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bGhrMo3q"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PRNtdPEd"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B657F2264CC
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E81A236A73
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998976; cv=none; b=HxgK45DL5JVu5O2FyX6CX1kJ+61HXODDh0WgqAV9d9Gdl3jmXUrA0UPBe1ePv7ULZguJBtzZ7CMVTfjFggL9WdmKkuexPw20e5eNUhtfF0jB3MgH8Km6z0aov5/8nWsaURxoTWeofBANbiPyQQQdnvs16G56yNy97QP9xICo0g4=
+	t=1757999272; cv=none; b=gCeYF5gyl55kdMxebHRHFD1J9YeXPzHj0+Or39DuWAMnNCOxPkm4z5GwwHfnOMoaS/7WdRQDoGETjKnYjl+C0ZjlG+z8Xacpk/dZE+9vqIyBRmWuTIS/Rw0zvnjKLXHKgJU1sJVqx+xHtYH/h2u4uWQOpW0cY7eqqtN5rl9gIcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998976; c=relaxed/simple;
-	bh=7Ond/6XS/Qp7aJ1U5Qboqmdb13ttXet1eJuaYoicB7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cq80uhLUPWlG2Qs/8WGXUqnRLc51YTntQaqpaIMf/MA4C7eVm4FIUv46Xa+8xqRcuALilFTnXJtDsdKdS9ym16SbZZvWu4lVuhwip95oEF4ZDV2zaWp/Opd3IAps0mARh5LavhFnR5C/P2Lfs/8c+uUl2pdqVLcMarlHdSWP/K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bGhrMo3q; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 16 Sep 2025 13:02:45 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757998971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=utxZJdq4SZsBiWUz44H+KI3zwoW+fq5Bdwpbp1UmMaM=;
-	b=bGhrMo3qD7K+HCnofyyIIrfk4PBklpsnn6mhm+nnnomjkuhNbl0aMLhDgOXLuQVZRjbGQh
-	zPuKa+I1UyTPucizOnKO7cvvz1qTlbMNVYeAvHAWXZIgfXv0Cp3NYBQqQf6jHBhIUND63T
-	nwHnPzMNNWdOvrV+MPAxAymAScWdD4M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.dev>
-Subject: Re: [PATCH 3/3] hwmon: (ctf2301) Add support for CTF2301
-Message-ID: <aMjvdWUNF6vXH65_@LT-Guozexi>
-References: <20250916-ctl2301-v1-0-97e7c84f2c47@linux.dev>
- <20250916-ctl2301-v1-3-97e7c84f2c47@linux.dev>
+	s=arc-20240116; t=1757999272; c=relaxed/simple;
+	bh=daFiBDhD3aJ48E9jadgGLfvb3skhIggquyhgw7ndih0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=nIruZCpLvLCxvz5jWFuSKteZOH57T6aSkn3DrZtmWtgejW+j0scP+ViGOSUL/N85jcXI3fPrMPhsi0BXumL6g1kffCZ9uepQETeRxqLYrCF3MtgVXs7yZpEXzBfhDJoi7jIpg6q29ik/jrfFF0j5dTheblyubYnSztZe9Rqi/oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PRNtdPEd; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7762021c574so2690971b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 22:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757999269; x=1758604069; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+qmsLaQYfIFnfOnViE0APxpYe9wnZszmNaZLIS/hLg=;
+        b=PRNtdPEd8WpWwECsDkJSaBeYDQ53h7kcQdDAyyh+kjM3SSzeSHc1WF6mURj18sE6cU
+         5dYChqCLaMMeaZ4Q3plt26FJV2zkACH3lb0GW4saCbzj3Ny/qyedYrRZqgG7CgNLcVCn
+         TcSiBxWuGiJ7F8mx0cSeSQHQexnbeHeXwZWcxFhcvcANuoNZtHMZV6RqwU/dv6PDfDlY
+         V//9dhyQdxZ/9drEs+RN6Q7vUHamW3TO0TUZhiC3fR4vnMvWS/E5C+EL2uQsFh5eEgGh
+         lN9MCxKA2kowdLdX7Ufgg1YBAWfSc8CO4+A832+amZuMZXZiirn+nzexrT8qMAW7sEP9
+         WxFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757999269; x=1758604069;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+qmsLaQYfIFnfOnViE0APxpYe9wnZszmNaZLIS/hLg=;
+        b=V1pNGgFANJtAm1ctlrx03q6D9XIpzUpl4OHtbEdeOhHhzGatgw4lHkiQTO9tx/AWH8
+         KectTrBXkODjikyhzHVNapHchCQDAnA4o/PFhKi5XBUzDa+Xz1DW9E6M09qv2VxOOedA
+         jhh3pyyEm9Y8dZ2+X/VumawNJ8UC0eLF2rM7rJJRB4U6BPsf6eYeZ0WVCFT++M+LKKwG
+         jnxs9CaDRPz/OO/gl6snampUOpPX+t5/p6O1UpoicUUDrXf46rHttzZpQzRADaU2QUUn
+         CDNGybWl9W6G+g7/rZHV2C4/gNRAyn53s9vk04UFpNkfCD9hFabAr4JfsgAf3MFmWNQl
+         x9Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXreK3nvBj9p4qaudWfXVh3mS1q249NSPgkL2j6ZRERugJFwRSNTCehdhhb99v/QKYcbc1pytDHtwKNyMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz73XwZI1eguF+jXR0CoAlHuq4cRMU0Gv5EGjjiPT+mUQQL2ywP
+	v5RlMCuRjG5fGmMVfX5tj9FKVs+2pJuTTaX8SNtGob5eKTiSnRxjLhO+/wC/SJB/HQ==
+X-Gm-Gg: ASbGncvHYly5zGcdKNdw6So/e/xWeDgByKEXdDRvS/hqBEcpEOZAqRz9JTYgUAqSWhL
+	q8+GG9gjFLBSh5G//oMMWXwIF+SXl3d7sM1erkc7O3fuI5PVG9O4unlJi9uHYYmj/DUwFqYd9Cz
+	sYn+R2KeXvo63+JROpemCcpghL23xLyTyYVoBq1T9UVGEBiwwxfWS3lpjFVcXKlxbln7JP8/juA
+	wWj23t2W0ScuOyrykfc3GKiaNyyLjepOxOG4UtyyhcnVUuTqi8yEls8PD8xyqdEZe38x5y55mRx
+	LBphchzm5zJJC8KgoFT+wB51CEjzN+EfH4Mlwa5HIkxgwIoIfjN4e3ycm+CyBxSbvr67/F5sXFU
+	575waNLfLz9/cVz9aQlIFwXEr++KRh4ik+Td+rzR89AqFSifDZmgDw0tXNqxHosRJ9wdFoQewc+
+	KpiMzU5BhLN0NCQdvrFMWc++xD
+X-Google-Smtp-Source: AGHT+IE67V0/Q7PMyxtMDe4Dx+1Y/Qbj1MBm0zEQYVlSQIpIVrmBipbiYSmuQN2+gYdoKBRHHyil8Q==
+X-Received: by 2002:a05:6a00:a88f:b0:776:139d:cccb with SMTP id d2e1a72fcca58-776139dcdf7mr17285388b3a.28.1757999269172;
+        Mon, 15 Sep 2025 22:07:49 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a47310sm14496490b3a.27.2025.09.15.22.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 22:07:48 -0700 (PDT)
+Date: Mon, 15 Sep 2025 22:06:52 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Paul Moore <paul@paul-moore.com>
+cc: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+    James Morris <jmorris@namei.org>, 
+    Stephen Smalley <stephen.smalley.work@gmail.com>, 
+    Hugh Dickins <hughd@google.com>, Jeff Vander Stoep <jeffv@google.com>, 
+    Nick Kralevich <nnk@google.com>, Jeff Xu <jeffxu@google.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH] memfd,selinux: call security_inode_init_security_anon
+In-Reply-To: <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
+Message-ID: <92255d5e-7e0a-6ca3-3169-114ae7f6247f@google.com>
+References: <20250826031824.1227551-1-tweek@google.com> <6afc91a9f5caef96b2ca335b6d143670@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-ctl2301-v1-3-97e7c84f2c47@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/mixed; boundary="-1463770367-1767593222-1757999268=:21221"
 
-On Tue, Sep 16, 2025 at 12:46:46PM +0800, Troy Mitchell wrote:
-> This commit introduces driver for the Sensylink CTF2301
-> system-level thermal management solution chip.
-> 
-> Currently, the driver does NOT support the Auto-Temp mode of the PWM
-> fan controller, which provides closed-loop automatic fan speed control
-> based on temperature.
-> 
-> Now this driver supports:
->   - Reading local temperature.
->   - Reading remote temperature.
->   - Controlling the PWM fan output in Direct-DCY mode (direct duty cycle control).
->   - Monitoring fan speed via the TACH input (RPM measurement).
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.dev>
-> ---
->  drivers/hwmon/Kconfig   |  11 ++
->  drivers/hwmon/Makefile  |   1 +
->  drivers/hwmon/ctf2301.c | 326 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 338 insertions(+)
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index 9d28fcf7cd2a6f9e2f54694a717bd85ff4047b46..2120d891e549795c3f3416d08f71916af714f6b6 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -537,6 +537,17 @@ config SENSORS_CROS_EC
->  	  This driver can also be built as a module. If so, the module
->  	  will be called cros_ec_hwmon.
->  
-> +config SENSORS_CTF2301
-> +	tristate "Sensylink CTF2301"
-> +	depends on I2C
-> +	select REGMAP
-> +	help
-> +	  If you say yes here you get support for Sensylink CTF2301
-> +	  sensor chip.
-> +
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called ctf2301.
-> +
->  config SENSORS_DRIVETEMP
->  	tristate "Hard disk drives with temperature sensors"
->  	depends on SCSI && ATA
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index cd8bc4752b4dbf015c6eb46157626f4e8f87dfae..12f2894ce8d5fbfd942409f6c43d78fbdece57b4 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_SENSORS_CORETEMP)	+= coretemp.o
->  obj-$(CONFIG_SENSORS_CORSAIR_CPRO) += corsair-cpro.o
->  obj-$(CONFIG_SENSORS_CORSAIR_PSU) += corsair-psu.o
->  obj-$(CONFIG_SENSORS_CROS_EC)	+= cros_ec_hwmon.o
-> +obj-$(CONFIG_SENSORS_CTF2301)	+= ctf2301.o
->  obj-$(CONFIG_SENSORS_DA9052_ADC)+= da9052-hwmon.o
->  obj-$(CONFIG_SENSORS_DA9055)+= da9055-hwmon.o
->  obj-$(CONFIG_SENSORS_DELL_SMM)	+= dell-smm-hwmon.o
-> diff --git a/drivers/hwmon/ctf2301.c b/drivers/hwmon/ctf2301.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2fea4d195519ea34c1d4bf67456098b225d4d13c
-> --- /dev/null
-> +++ b/drivers/hwmon/ctf2301.c
-> @@ -0,0 +1,326 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Driver for CTF2301 system-level thermal management solution chip
-> + * Datasheet: https://www.sensylink.com/upload/1/net.sensylink.portal/1689557281035.pdf
-> + *
-> + * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.dev>
-> + */
-> +
-> +#include <linux/hwmon.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/regmap.h>
-> +
-> +#define PWM_PARENT_CLOCK			360000
-> +
-> +#define CTF2301_LOCAL_TEMP_MSB			0x00
-> +#define CTF2301_RMT_TEMP_MSB			0x01
-> +#define CTF2301_ALERT_STATUS			0x02
-> +#define CTF2301_GLOBAL_CFG			0x03
-> +#define CTF2301_RMT_TEMP_LSB			0x10
-> +#define CTF2301_LOCAL_TEMP_LSB			0x15
-> +#define CTF2301_ALERT_MASK			0x16
-> +#define	CTF2301_ENHANCED_CFG			0x45
-> +#define CTF2301_TACH_COUNT_LSB			0x46
-> +#define CTF2301_TACH_COUNT_MSB			0x47
-> +#define CTF2301_PWM_AND_TACH_CFG		0x4a
-> +#define CTF2301_PWM_VALUE			0x4c
-> +#define CTF2301_PWM_FREQ			0x4d
-> +#define CTF2301_RMT_DIODE_TEMP_FILTER		0xbf
-> +
-> +/* remote diode fault alarm */
-> +#define ALERT_STATUS_RDFA			BIT(2)
-> +
-> +/* alert interrupts enable  */
-> +#define GLOBAL_CFG_ALERT_MASK			BIT(7)
-> +/* tach input enable  */
-> +#define GLOBAL_CFG_TACH_SEL			BIT(2)
-> +
-> +/* local high temperature alarm mask */
-> +#define ALERT_MASK_LHAM				BIT(6)
-> +/* remote high temperature alarm mask */
-> +#define ALERT_MASK_RHAM				BIT(4)
-> +/* remote low temperature alarm mask */
-> +#define ALERT_MASK_RLAM				BIT(3)
-> +/* remote t_crit alarm mask */
-> +#define ALERT_MASK_RCAM				BIT(1)
-> +/* tachometer alarm mask */
-> +#define ALERT_MASK_TCHAM			BIT(0)
-> +
-> +#define ALERT_MASK_ALL				(ALERT_MASK_LHAM | ALERT_MASK_RHAM | \
-> +						ALERT_MASK_RLAM | ALERT_MASK_RCAM | \
-> +						ALERT_MASK_TCHAM)
-> +
-> +/* enables signed format for high and t_crit setpoints */
-> +#define ENHANGCED_CFG_USF			BIT(3)
-> +
-> +/* PWM Programming enable */
-> +#define PWM_AND_TACH_CFG_PWPGM			BIT(5)
-> +
-> +#define PWM_DEFAULT_FREQ_CODE			0x17
-> +
-> +
-> +struct ctf2301 {
-> +	struct i2c_client *client;
-> +
-> +	struct regmap *regmap;
-> +
-> +	unsigned int pwm_freq_code;
-> +};
-> +
-> +static int ctf2301_read_temp(struct device *dev, u32 attr, int channel, long *val)
-> +{
-> +	int regval[2], raw, err, flag = 1, shift = 4, scale = 625;
-> +	struct ctf2301 *ctf2301 = dev_get_drvdata(dev);
-> +	unsigned int reg_msb = CTF2301_LOCAL_TEMP_MSB,
-> +		     reg_lsb = CTF2301_LOCAL_TEMP_LSB;
-> +
-> +	switch (attr) {
-> +	case hwmon_temp_input:
-> +		if (channel != 0 && channel != 1)
-> +			return -EOPNOTSUPP;
-> +
-> +		if (channel == 1) {
-> +			err = regmap_read(ctf2301->regmap, CTF2301_ALERT_STATUS, regval);
-> +			if (err)
-> +				return err;
-> +
-> +			if (regval[0] & ALERT_STATUS_RDFA)
-> +				return -ENODEV;
-> +
-> +			shift = 5;
-> +			scale = 1250;
-> +			reg_msb = CTF2301_RMT_TEMP_MSB;
-> +			reg_lsb = CTF2301_RMT_TEMP_LSB;
-> +		}
-> +
-> +		err = regmap_read(ctf2301->regmap, reg_msb, regval);
-> +		if (err)
-> +			return err;
-> +
-> +		err = regmap_read(ctf2301->regmap, reg_lsb, regval + 1);
-> +		if (err)
-> +			return err;
-> +
-> +		dev_err(dev, "local temp: lsb->0x%x, msb->0x%x", regval[1], regval[0]);
-Sry I forget to remove debug info.
-I'll remove them in the next version.
-There are some more below, please ignore.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-                    - Troy
-> +
-> +		raw = (s16)((regval[0] << 8) | regval[1]);
-> +
-> +		raw >>= shift;
-> +
-> +		*val = raw * scale * flag;
-> +
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ctf2301_read_fan(struct device *dev, u32 attr, long *val)
-> +{
-> +	struct ctf2301 *ctf2301 = dev_get_drvdata(dev);
-> +	int regval[2], err, speed;
-> +
-> +	switch (attr) {
-> +	case hwmon_fan_input:
-> +		err = regmap_read(ctf2301->regmap, CTF2301_TACH_COUNT_MSB, regval);
-> +		if (err)
-> +			return err;
-> +
-> +		err = regmap_read(ctf2301->regmap, CTF2301_TACH_COUNT_LSB, regval + 1);
-> +		if (err)
-> +			return err;
-> +
-> +		speed = (regval[0] << 8) | regval[1];
-> +
-> +		*val = (unsigned int)(1 * (5400000 / speed));
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ctf2301_write_pwm(struct device *dev, u32 attr, long val)
-> +{
-> +	struct ctf2301 *ctf2301 = dev_get_drvdata(dev);
-> +	int err, map_val;
-> +
-> +	dev_err(dev, "write pwm: %d", attr);
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		map_val = (val * ctf2301->pwm_freq_code * 2) / 255;
-> +		dev_err(dev, "val:%ld, map_val: %d", val, map_val);
-> +		err = regmap_write(ctf2301->regmap, CTF2301_PWM_VALUE, map_val);
-> +		if (err)
-> +			return err;
-> +		break;
-> +	case hwmon_pwm_freq:
-> +		ctf2301->pwm_freq_code = DIV_ROUND_UP(PWM_PARENT_CLOCK, val) / 2;
-> +		dev_err(dev, "pwm_freq_code: %d", ctf2301->pwm_freq_code);
-> +		err = regmap_write(ctf2301->regmap, CTF2301_PWM_FREQ, ctf2301->pwm_freq_code);
-> +		if (err)
-> +			return err;
-> +		break;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static umode_t ctf2301_is_visible(const void *drvdata,
-> +				 enum hwmon_sensor_types type,
-> +				 u32 attr, int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_temp:
-> +		switch (attr) {
-> +		case hwmon_temp_input:
-> +			return 0444;
-> +		default:
-> +			return 0;
-> +		}
-> +	case hwmon_fan:
-> +		switch (attr) {
-> +		case hwmon_fan_input:
-> +			return 0444;
-> +		default:
-> +			return 0;
-> +		}
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_input:
-> +		case hwmon_pwm_freq:
-> +			return 0644;
-> +		default:
-> +			return 0;
-> +		}
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int ctf2301_read(struct device *dev, enum hwmon_sensor_types type,
-> +		       u32 attr, int channel, long *val)
-> +{
-> +	switch (type) {
-> +	case hwmon_temp:
-> +		return ctf2301_read_temp(dev, attr, channel, val);
-> +	case hwmon_fan:
-> +		return ctf2301_read_fan(dev, attr, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int ctf2301_write(struct device *dev, enum hwmon_sensor_types type,
-> +			 u32 attr, int channel, long val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return ctf2301_write_pwm(dev, attr, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static const struct hwmon_channel_info * const ctf2301_info[] = {
-> +	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT, HWMON_T_INPUT),
-> +	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_FREQ),
-> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops ctf2301_hwmon_ops = {
-> +	.is_visible = ctf2301_is_visible,
-> +	.read = ctf2301_read,
-> +	.write = ctf2301_write
-> +};
-> +
-> +static const struct hwmon_chip_info ctf2301_chip_info = {
-> +	.ops = &ctf2301_hwmon_ops,
-> +	.info = ctf2301_info,
-> +};
-> +
-> +static const struct regmap_config ctf2301_regmap_config = {
-> +	.max_register = CTF2301_RMT_DIODE_TEMP_FILTER,
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +
-> +static int ctf2301_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct device *hwmon_dev;
-> +	struct ctf2301 *ctf2301;
-> +	int err;
-> +
-> +	ctf2301 = devm_kzalloc(dev, sizeof(*ctf2301), GFP_KERNEL);
-> +	if (!ctf2301)
-> +		return -ENOMEM;
-> +	ctf2301->client = client;
-> +
-> +	ctf2301->regmap = devm_regmap_init_i2c(client, &ctf2301_regmap_config);
-> +	if (IS_ERR(ctf2301->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(ctf2301->regmap),
-> +				     "failed to allocate register map");
-> +
-> +	err = regmap_write(ctf2301->regmap, CTF2301_GLOBAL_CFG,
-> +			   GLOBAL_CFG_ALERT_MASK | GLOBAL_CFG_TACH_SEL);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to write CTF2301_GLOBAL_CFG register");
-> +
-> +	/*err = regmap_write(ctf2301->regmap, CTF2301_ALERT_MASK, ALERT_MASK_ALL);*/
-> +	/*if (err)*/
-> +		/*return dev_err_probe(dev, err,*/
-> +				     /*"failed to write CTF2301_ALERT_MASK");*/
-> +
-> +	err = regmap_write(ctf2301->regmap, CTF2301_ENHANCED_CFG, ENHANGCED_CFG_USF);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to write CTF2301_ENHANCED_CFG");
-> +
-> +	err = regmap_write(ctf2301->regmap, CTF2301_PWM_AND_TACH_CFG, PWM_AND_TACH_CFG_PWPGM);
-> +	if (err)
-> +		return dev_err_probe(dev, err,
-> +				     "failed to write CTF2301_PWM_AND_TACH_CFG");
-> +
-> +	ctf2301->pwm_freq_code = PWM_DEFAULT_FREQ_CODE;
-> +
-> +	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ctf2301,
-> +							 &ctf2301_chip_info,
-> +							 NULL);
-> +	if (IS_ERR(hwmon_dev))
-> +		return dev_err_probe(dev, PTR_ERR(hwmon_dev),
-> +				     "failed to register hwmon device");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id ctf2301_of_match[] = {
-> +	{ .compatible = "sensylink,ctf2301", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ctf2301_of_match);
-> +
-> +static struct i2c_driver ctf2301_driver = {
-> +	.driver = {
-> +		.name	= "ctf2301",
-> +		.of_match_table = of_match_ptr(ctf2301_of_match),
-> +	},
-> +	.probe		= ctf2301_probe,
-> +};
-> +module_i2c_driver(ctf2301_driver);
-> +
-> +MODULE_AUTHOR("Troy Mitchell <troy.mitchell@linux.dev>");
-> +MODULE_DESCRIPTION("ctf2301 driver");
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.51.0
-> 
+---1463770367-1767593222-1757999268=:21221
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Wed, 3 Sep 2025, Paul Moore wrote:
+> On Aug 25, 2025 "=3D?UTF-8?q?Thi=3DC3=3DA9baud=3D20Weksteen?=3D" <tweek@g=
+oogle.com> wrote:
+> >=20
+> > Prior to this change, no security hooks were called at the creation of =
+a
+> > memfd file. It means that, for SELinux as an example, it will receive
+> > the default type of the filesystem that backs the in-memory inode. In
+> > most cases, that would be tmpfs, but if MFD_HUGETLB is passed, it will
+> > be hugetlbfs. Both can be considered implementation details of memfd.
+> >=20
+> > It also means that it is not possible to differentiate between a file
+> > coming from memfd_create and a file coming from a standard tmpfs mount
+> > point.
+> >=20
+> > Additionally, no permission is validated at creation, which differs fro=
+m
+> > the similar memfd_secret syscall.
+> >=20
+> > Call security_inode_init_security_anon during creation. This ensures
+> > that the file is setup similarly to other anonymous inodes. On SELinux,
+> > it means that the file will receive the security context of its task.
+> >=20
+> > The ability to limit fexecve on memfd has been of interest to avoid
+> > potential pitfalls where /proc/self/exe or similar would be executed
+> > [1][2]. Reuse the "execute_no_trans" and "entrypoint" access vectors,
+> > similarly to the file class. These access vectors may not make sense fo=
+r
+> > the existing "anon_inode" class. Therefore, define and assign a new
+> > class "memfd_file" to support such access vectors.
+> >=20
+> > Guard these changes behind a new policy capability named "memfd_class".
+> >=20
+> > [1] https://crbug.com/1305267
+> > [2] https://lore.kernel.org/lkml/20221215001205.51969-1-jeffxu@google.c=
+om/
+> >=20
+> > Signed-off-by: Thi=C3=A9baud Weksteen <tweek@google.com>
+> > Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> > Changes since RFC:
+> > - Remove enum argument, simply compare the anon inode name
+> > - Introduce a policy capability for compatility
+> > - Add validation of class in selinux_bprm_creds_for_exec
+> >=20
+> >  include/linux/memfd.h                      |  2 ++
+> >  mm/memfd.c                                 | 14 +++++++++--
+> >  security/selinux/hooks.c                   | 27 ++++++++++++++++++----
+> >  security/selinux/include/classmap.h        |  2 ++
+> >  security/selinux/include/policycap.h       |  1 +
+> >  security/selinux/include/policycap_names.h |  1 +
+> >  security/selinux/include/security.h        |  5 ++++
+> >  7 files changed, 46 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/include/linux/memfd.h b/include/linux/memfd.h
+> > index 6f606d9573c3..cc74de3dbcfe 100644
+> > --- a/include/linux/memfd.h
+> > +++ b/include/linux/memfd.h
+> > @@ -4,6 +4,8 @@
+> > =20
+> >  #include <linux/file.h>
+> > =20
+> > +#define MEMFD_ANON_NAME "[memfd]"
+> > +
+> >  #ifdef CONFIG_MEMFD_CREATE
+> >  extern long memfd_fcntl(struct file *file, unsigned int cmd, unsigned =
+int arg);
+> >  struct folio *memfd_alloc_folio(struct file *memfd, pgoff_t idx);
+> > diff --git a/mm/memfd.c b/mm/memfd.c
+> > index bbe679895ef6..63b439eb402a 100644
+> > --- a/mm/memfd.c
+> > +++ b/mm/memfd.c
+> > @@ -433,6 +433,8 @@ static struct file *alloc_file(const char *name, un=
+signed int flags)
+> >  {
+> >  =09unsigned int *file_seals;
+> >  =09struct file *file;
+> > +=09struct inode *inode;
+> > +=09int err =3D 0;
+> > =20
+> >  =09if (flags & MFD_HUGETLB) {
+> >  =09=09file =3D hugetlb_file_setup(name, 0, VM_NORESERVE,
+> > @@ -444,12 +446,20 @@ static struct file *alloc_file(const char *name, =
+unsigned int flags)
+> >  =09}
+> >  =09if (IS_ERR(file))
+> >  =09=09return file;
+> > +
+> > +=09inode =3D file_inode(file);
+> > +=09err =3D security_inode_init_security_anon(inode,
+> > +=09=09=09&QSTR(MEMFD_ANON_NAME), NULL);
+> > +=09if (err) {
+> > +=09=09fput(file);
+> > +=09=09file =3D ERR_PTR(err);
+> > +=09=09return file;
+> > +=09}
+> > +
+> >  =09file->f_mode |=3D FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
+> >  =09file->f_flags |=3D O_LARGEFILE;
+> > =20
+> >  =09if (flags & MFD_NOEXEC_SEAL) {
+> > -=09=09struct inode *inode =3D file_inode(file);
+> > -
+> >  =09=09inode->i_mode &=3D ~0111;
+> >  =09=09file_seals =3D memfd_file_seals_ptr(file);
+> >  =09=09if (file_seals) {
+>=20
+> Hugh, Baolin, and shmem/mm folks, are you okay with the changes above? If
+> so it would be nice to get an ACK from one of you.
+
+So far as I can tell, seems okay to me:
+Acked-by: Hugh Dickins <hughd@google.com>
+
+If I'd responded earlier (sorry), I would have asked for it just to use
+&QSTR("[memfd]") directly in the call, rather than indirecting through
+unnecessary #define MEMFD_ANON_NAME "[memfd]"; never mind, that's all.
+
+Please do take this, along with the rest, through your security tree:
+mm.git contains no conflicting change to mm/memfd.c at present.
+
+Thanks,
+Hugh
+
+>=20
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index c95a5874bf7d..429b2269b35a 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -93,6 +93,7 @@
+> >  #include <linux/fanotify.h>
+> >  #include <linux/io_uring/cmd.h>
+> >  #include <uapi/linux/lsm.h>
+> > +#include <linux/memfd.h>
+> > =20
+> >  #include "avc.h"
+> >  #include "objsec.h"
+> > @@ -2366,9 +2367,12 @@ static int selinux_bprm_creds_for_exec(struct li=
+nux_binprm *bprm)
+> >  =09ad.type =3D LSM_AUDIT_DATA_FILE;
+> >  =09ad.u.file =3D bprm->file;
+> > =20
+> > +=09if (isec->sclass !=3D SECCLASS_FILE && isec->sclass !=3D SECCLASS_M=
+EMFD_FILE)
+> > +=09=09return -EPERM;
+>=20
+> In the interest of failing fast, this should probably be moved up in the
+> function to just after where @isec is set.  There are also a number of
+> checks that happen prior to this placement, but after the isec assignment=
+=2E
+> While I don't think any of those checks should be an issue, I'd rather
+> not to have to worry about those and just fail the non-FILE/MEMFD_FILE
+> case as soon as we can in selinux_bprm_creds_for_exec().
+>=20
+> >  =09if (new_tsec->sid =3D=3D old_tsec->sid) {
+> > -=09=09rc =3D avc_has_perm(old_tsec->sid, isec->sid,
+> > -=09=09=09=09  SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
+> > +=09=09rc =3D avc_has_perm(old_tsec->sid, isec->sid, isec->sclass,
+> > +=09=09=09=09  FILE__EXECUTE_NO_TRANS, &ad);
+> >  =09=09if (rc)
+> >  =09=09=09return rc;
+> >  =09} else {
+> > @@ -2378,8 +2382,8 @@ static int selinux_bprm_creds_for_exec(struct lin=
+ux_binprm *bprm)
+> >  =09=09if (rc)
+> >  =09=09=09return rc;
+> > =20
+> > -=09=09rc =3D avc_has_perm(new_tsec->sid, isec->sid,
+> > -=09=09=09=09  SECCLASS_FILE, FILE__ENTRYPOINT, &ad);
+> > +=09=09rc =3D avc_has_perm(new_tsec->sid, isec->sid, isec->sclass,
+> > +=09=09=09=09  FILE__ENTRYPOINT, &ad);
+> >  =09=09if (rc)
+> >  =09=09=09return rc;
+> > =20
+> > @@ -2974,10 +2978,18 @@ static int selinux_inode_init_security_anon(str=
+uct inode *inode,
+> >  =09struct common_audit_data ad;
+> >  =09struct inode_security_struct *isec;
+> >  =09int rc;
+> > +=09bool is_memfd =3D false;
+> > =20
+> >  =09if (unlikely(!selinux_initialized()))
+> >  =09=09return 0;
+> > =20
+> > +=09if (name !=3D NULL && name->name !=3D NULL &&
+> > +=09    !strcmp(name->name, MEMFD_ANON_NAME)) {
+> > +=09=09if (!selinux_policycap_memfd_class())
+> > +=09=09=09return 0;
+> > +=09=09is_memfd =3D true;
+> > +=09}
+> > +
+> >  =09isec =3D selinux_inode(inode);
+> > =20
+> >  =09/*
+> > @@ -2996,6 +3008,13 @@ static int selinux_inode_init_security_anon(stru=
+ct inode *inode,
+> > =20
+> >  =09=09isec->sclass =3D context_isec->sclass;
+> >  =09=09isec->sid =3D context_isec->sid;
+> > +=09} else if (is_memfd) {
+> > +=09=09isec->sclass =3D SECCLASS_MEMFD_FILE;
+> > +=09=09rc =3D security_transition_sid(
+> > +=09=09=09sid, sid,
+> > +=09=09=09isec->sclass, name, &isec->sid);
+> > +=09=09if (rc)
+> > +=09=09=09return rc;
+> >  =09} else {
+> >  =09=09isec->sclass =3D SECCLASS_ANON_INODE;
+> >  =09=09rc =3D security_transition_sid(
+>=20
+> We're duplicating the security_transition_sid() call which seems less
+> than ideal, how about something like this?
+>=20
+>   if (context_inode) {
+>     /* ... existing stuff ... */
+>   } else {
+>     if (is_memfd)
+>       isec->sclass =3D SECCLASS_MEMFD_FILE;
+>     else
+>       isec->sclass =3D SECCLASS_ANON_INODE;
+>     rc =3D security_transition_sid(...);
+>     if (rc)
+>       return rc;
+>   }
+>=20
+> --
+> paul-moore.com
+---1463770367-1767593222-1757999268=:21221--
 
