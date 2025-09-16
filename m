@@ -1,189 +1,136 @@
-Return-Path: <linux-kernel+bounces-819473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00B82B5A158
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:22:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB30B5A149
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6FB0581062
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E00A2A7D4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A376313D51;
-	Tue, 16 Sep 2025 19:21:33 +0000 (UTC)
-Received: from s1.jo-so.de (s1.jo-so.de [37.221.195.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FAA2F5A05;
+	Tue, 16 Sep 2025 19:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeiRSBEr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A561FBEA2;
-	Tue, 16 Sep 2025 19:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.221.195.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B661FBEA2;
+	Tue, 16 Sep 2025 19:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758050492; cv=none; b=WsvAGpLrVMWaVX9ill/wHab4Y6fsPaNjkrNftVaNr6VDuDQh26sVRHYxIbJ/UAWV5NgcsjULW+jXthd+rgiQDY32uBKculfmgPV3gWnYqbjBxAyNFd4SsdrPRork6KN9uDyk4nWGee0yJQZlbq6NGKT0D/VOiaVcvF7THwiWzn4=
+	t=1758050464; cv=none; b=XU7eT9FlZU4ePmH3REd8rTQnfIdj+DOjRl+eS6ufTXXpw/LM9HcgWRdUrLsXTSW4y5Lht7b3v4DyR1F2sW3wV5yXzHja1C1esh523RFgoYRQCyL8+PPMaah6LyVP1K4nM7zyS2A7Vj7f05TzXlYJIlA8vgaz6Ur+fAFqsVlONfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758050492; c=relaxed/simple;
-	bh=VVgIyIvhFIRGLe9aaJKQZNnY2mT71sn0CpTCBtep7UY=;
+	s=arc-20240116; t=1758050464; c=relaxed/simple;
+	bh=+5w/cHHsMi3HiFOnCiVNH48CuMDOqzyQSHdW+O7wiys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpZ+gsRSnSajLP1ZBD0Y0Xn8LWEv8+QoId1MCwHldiIU16IHCZ+q3TMre9CBS0of/wwpy+qxV8k6z0DZyFznWQBt32Wt3D6tgNsKkWqv9iiFTsFYvUAYX7Xm5txd30rk2VJA5zEx0Hgvz0FcKg03cbHqTh6m30R5amNSaYdh/us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jo-so.de; spf=pass smtp.mailfrom=jo-so.de; arc=none smtp.client-ip=37.221.195.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jo-so.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jo-so.de
-Received: from mail-relay (helo=jo-so.de)
-	by s1.jo-so.de with local-bsmtp (Exim 4.98.2)
-	(envelope-from <joerg@jo-so.de>)
-	id 1uybEV-00000001VFD-2hyk;
-	Tue, 16 Sep 2025 21:20:55 +0200
-Received: from joerg by zenbook.jo-so.de with local (Exim 4.98.2)
-	(envelope-from <joerg@jo-so.de>)
-	id 1uybEU-000000028Ed-48e9;
-	Tue, 16 Sep 2025 21:20:54 +0200
-Date: Tue, 16 Sep 2025 21:20:54 +0200
-From: =?utf-8?B?SsO2cmc=?= Sommer <joerg@jo-so.de>
-To: Dong Yibo <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net, 
-	gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com, 
-	lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be, 
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com, alexanderduyck@fb.com, 
-	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org, rdunlap@infradead.org, 
-	vadim.fedorenko@linux.dev, netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v12 2/5] net: rnpgbe: Add n500/n210 chip support
- with BAR2 mapping
-Message-ID: <qbvrpeywjv6jvngkdtfcducex4jpsgqktfqs6ar2plc5bcgt5o@7bsfau64w3om>
-OpenPGP: id=7D2C9A23D1AEA375; url=https://jo-so.de/pgp-key.txt;
- preference=signencrypt
-References: <20250916112952.26032-1-dong100@mucse.com>
- <20250916112952.26032-3-dong100@mucse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ps8aa2HWjPntQnxZgnHBLR5KgdhW/nPnk5eqAo7NHv/nveyr8wyMiyu5ZpuSyRvY3CTadcBnPd9k0Mj9nkRWCe0q4sjOkQhXzampz1dwmyUaI2GITAMClthIz+ZDS24WmJ+uczzgOfrdcclXwL+tpIYtPXssUGaCqhjzoZ1XqLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeiRSBEr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8547C4CEEB;
+	Tue, 16 Sep 2025 19:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758050464;
+	bh=+5w/cHHsMi3HiFOnCiVNH48CuMDOqzyQSHdW+O7wiys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OeiRSBErvqz+cliurvNo/ueg+bmVv0SgHKS8A8gYdoRKcab503nyRx/ENiM4pNdon
+	 LmkoFHuwsgW/Q8ckdNbYNSwHqiYd3u3+CZ1Jfx/rJ9hDfB05/JQspJWcVhaT8Y5DyM
+	 lc9v/euHCZKwFh3nb9mxGzSI8jbnvlRpcBHuGJpcJyE9KUCIHugdfDH9+7SqV6vs3+
+	 uDNvHhOhb2NrI/8SJlpHkDjgU5njFSuC4XukG5kFpYxuiU2L2+74gcnsP2ulvcbIkW
+	 tQMm2jOpM06LAdHZbEJTHR4hFxNQjKAC2GMxp/nW2MOEDAS7AP9UudwTQ4U7++dmt2
+	 vcDxMIM4yMWDg==
+Date: Tue, 16 Sep 2025 20:20:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v11 1/3] dt-bindings: iio: adc: add max14001
+Message-ID: <20250916-alto-vaseline-f8dafbab03e9@spud>
+References: <cover.1757971454.git.marilene.agarcia@gmail.com>
+ <30f33a64da0339eccc1474406afb2b1d02a0cd6b.1757971454.git.marilene.agarcia@gmail.com>
+ <8e88b601-1329-4cdb-bbd7-feb998c552e8@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="knfqrve42bbn7g3c"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NwfCVTRFvQ7doDJR"
 Content-Disposition: inline
-In-Reply-To: <20250916112952.26032-3-dong100@mucse.com>
+In-Reply-To: <8e88b601-1329-4cdb-bbd7-feb998c552e8@baylibre.com>
 
 
---knfqrve42bbn7g3c
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--NwfCVTRFvQ7doDJR
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next v12 2/5] net: rnpgbe: Add n500/n210 chip support
- with BAR2 mapping
-MIME-Version: 1.0
 
-Dong Yibo schrieb am Di 16. Sep, 19:29 (+0800):
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/ne=
-t/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> index 60bbc806f17b..0afe39621661 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> @@ -2,8 +2,11 @@
->  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
-> =20
->  #include <linux/pci.h>
-> +#include <net/rtnetlink.h>
-> +#include <linux/etherdevice.h>
-> =20
->  #include "rnpgbe.h"
-> +#include "rnpgbe_hw.h"
-> =20
->  static const char rnpgbe_driver_name[] =3D "rnpgbe";
-> =20
-> @@ -25,6 +28,54 @@ static struct pci_device_id rnpgbe_pci_tbl[] =3D {
->  	{0, },
->  };
-> =20
-> +/**
-> + * rnpgbe_add_adapter - Add netdev for this pci_dev
-> + * @pdev: PCI device information structure
-> + * @board_type: board type
-> + *
-> + * rnpgbe_add_adapter initializes a netdev for this pci_dev
-> + * structure. Initializes Bar map, private structure, and a
-> + * hardware reset occur.
-> + *
-> + * Return: 0 on success, negative errno on failure
-> + **/
-> +static int rnpgbe_add_adapter(struct pci_dev *pdev,
-> +			      int board_type)
-> +{
-> +	struct net_device *netdev;
-> +	void __iomem *hw_addr;
-> +	struct mucse *mucse;
-> +	struct mucse_hw *hw;
-> +	int err;
-> +
-> +	netdev =3D alloc_etherdev_mq(sizeof(struct mucse), RNPGBE_MAX_QUEUES);
-> +	if (!netdev)
-> +		return -ENOMEM;
-> +
-> +	SET_NETDEV_DEV(netdev, &pdev->dev);
-> +	mucse =3D netdev_priv(netdev);
-> +	mucse->netdev =3D netdev;
-> +	mucse->pdev =3D pdev;
-> +	pci_set_drvdata(pdev, mucse);
-> +
-> +	hw =3D &mucse->hw;
-> +	hw_addr =3D devm_ioremap(&pdev->dev,
-> +			       pci_resource_start(pdev, 2),
-> +			       pci_resource_len(pdev, 2));
-> +	if (!hw_addr) {
-> +		err =3D -EIO;
-> +		goto err_free_net;
-> +	}
-> +
-> +	hw->hw_addr =3D hw_addr;
-> +
-> +	return 0;
-> +
-> +err_free_net:
-> +	free_netdev(netdev);
-> +	return err;
-> +}
-> +
->  /**
->   * rnpgbe_probe - Device initialization routine
->   * @pdev: PCI device information struct
-> @@ -37,6 +88,7 @@ static struct pci_device_id rnpgbe_pci_tbl[] =3D {
->   **/
->  static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id=
- *id)
->  {
-> +	int board_type =3D id->driver_data;
->  	int err;
-> =20
->  	err =3D pci_enable_device_mem(pdev);
-> @@ -63,6 +115,9 @@ static int rnpgbe_probe(struct pci_dev *pdev, const st=
-ruct pci_device_id *id)
->  		dev_err(&pdev->dev, "pci_save_state failed %d\n", err);
->  		goto err_free_regions;
->  	}
-> +	err =3D rnpgbe_add_adapter(pdev, board_type);
+On Tue, Sep 16, 2025 at 11:40:47AM -0500, David Lechner wrote:
+> On 9/15/25 5:16 PM, Marilene Andrade Garcia wrote:
 
-Would an empty line before this assignment make the code more readable?
+> >=20
+> > The MAX14001 and MAX14002 both have the COUT output pin and the FAULT
+> > output pin, and work the same. I have decided to declare them as interr=
+upts
+> > because I think some action should be done when they are hit. However, =
+the
+> > implementation of these features is not present in the v11 driver code,=
+ as
+> > it was not in v9. But I plan to submit it in the next steps.
+>=20
+> The devicetree bindings should be as complete as possible and not care
+> if the driver doesn't use everything. So adding them now is the right
+> thing to do.
 
+> > +  interrupts:
+> > +    minItems: 1
+> > +    items:
+> > +      - description: |
+> > +          Asserts high when ADC readings exceed the upper threshold an=
+d low
+> > +          when below the lower threshold. Must be connected to the COU=
+T pin.
+> > +      - description: |
+> > +          Alert output that asserts low during a number of different e=
+rror
+> > +          conditions. The interrupt source must be attached to FAULT p=
+in.
 
+These descriptions read wrong to me. They __are__ the COUT and FAULT
+pins, given what David responded to above, not something that can be
+connected to these pins (if they were, they would be represented as
+-gpios rather than interrupts most likely). Unless you mean that these
+pins can have some other use and are only available on the COUT/FAULT
+pins when some register value is set - but even in that case saying
+"must be" doesn't fit since the interrupt property could be used to
+configure the device accordingly.
 
---=20
-Professor: =E2=80=9AGott=E2=80=98, unverst=C3=A4ndliches und mythisches Wes=
-en, das sich einmal
-  pro Woche im Kreis der Sterblichen manifestiert um Weisheit auf Folien
-  unter das Volk zu bringen.		(Dschungelbuch=C2=A011, FSU=C2=A0Jena)
-
---knfqrve42bbn7g3c
+--NwfCVTRFvQ7doDJR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABEIAB0WIQS1pYxd0T/67YejVyF9LJoj0a6jdQUCaMm4kwAKCRB9LJoj0a6j
-dcomAPwK0FbLAeUxOE6JiQpjcigplrvqMi5jCaJJvPAK7Fxo2QD/SnaCTg1bNL5B
-nDsd8Xyg2CtKj9MluTtobPMagELo2nw=
-=fT2B
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMm4mgAKCRB4tDGHoIJi
+0imOAP0ZC2aY5vECp3LF3rgrn/fkRX8Lr8A7hdrfivq83WcRyQEA4KSSTzqFwflb
+3PcXNE5a3VYZFeq924CIasGoN631dwY=
+=Z0Ld
 -----END PGP SIGNATURE-----
 
---knfqrve42bbn7g3c--
+--NwfCVTRFvQ7doDJR--
 
