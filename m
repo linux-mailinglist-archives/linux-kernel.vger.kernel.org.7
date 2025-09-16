@@ -1,1046 +1,132 @@
-Return-Path: <linux-kernel+bounces-818114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3D8B58CD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E296B58CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 369B87AB58E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26465211DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5109726FA4E;
-	Tue, 16 Sep 2025 04:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449F11F1518;
+	Tue, 16 Sep 2025 04:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fJ7Di0Hr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UA4pT+Xx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF622C15B6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBE92A1CF;
+	Tue, 16 Sep 2025 04:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757996668; cv=none; b=aj7d2wW9mQXDwt/1QuNQ6uZFcg7T2V5oSpoQ886SjMzqFz3TsoZ001IkPcUePzXiIY/5OFysaO0rGIpBYYYAUKQkTBD/Dn9fQU07kf92UEf2jCdgxt3mwIkg2jASHNJkBTjrUAeU5TCTUK8OS+K/ymetOygyXdPi5ZfUURmkrPY=
+	t=1757997191; cv=none; b=NbQ0nVWWm7IdA5iFchW2rzMGTxfNi/SAy2ODhlweg3HAfyhDNZgjhXew/up9wWK1bis+vgB67a/u4nNrQT0nVPEXKu92ENW+TTMEYGizmKJe/nC6deUe/8cHCHxC6+ARPOSKJb8zvaV1N+Xae4snUTQLBZkkQCUFTkOvjmB1F/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757996668; c=relaxed/simple;
-	bh=x3qQy8HpoT+optWnjlhThI0ThOY6lVKqrGFc/cO34Eo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nY1ftsOqmO0PqKmnij0O75TLky/FuR3XrUm8If3XGyhuok0CxnWM+4sWTIX96GKvZu62DmdGqKKAiqtEIvecZBy05TgmZzFihmV7u+zdeZXV7Q/RbJtaqelQQbfI/S9Exq//zx9BaTFCxWmZj3E822ojrLrxaVVkek80f9PmL38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fJ7Di0Hr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G3pj0S012555
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:24:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Nerev66aTGRn8FjGrxMS3h5z5q19EWXELtXKnOa+Heo=; b=fJ7Di0HroE7RtLaX
-	0KHw1jAgL2ReUf7XfgeCsrusNjIZvS/rYJ3teEFgGHx49K/ONiYcpnH6pBpKs1Ik
-	64dEhO/b+ANrwzlyPAli62niyXPZnq9L8zNaMQ+nKINrnm+Bc64Qk38GCvWv20nm
-	xEuLih/mlayDOWJN1mAMWodVGKO8gSda/HvaSv+r0NKy7mb14GcK/Ahz4mU0UMnf
-	ZYuVTeJjv9Tdgel0OA9OB2ez3Mnr7W1lVioJGRoq7+4VhGSgxC7LSRxglvixcD/X
-	R+5vhJEliO9JRUQ5VP7/gpwZbdcnblXHqCSrq3FLqZWh3QqIfedkj+U3EWp9rkM4
-	0gx3wg==
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495072qc5m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:24:25 +0000 (GMT)
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-4382445ed76so3322377b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:24:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757996664; x=1758601464;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nerev66aTGRn8FjGrxMS3h5z5q19EWXELtXKnOa+Heo=;
-        b=QdAwkeRecWUtucLL/Zlp2Q/I7H0Xagr6/I4jyCiDrUn9acwUcWOLwLhAOceCEPtF+Y
-         t6nQXbcThB1qNxuqBDOViZxnpzPzbixCg8T48DOMaa7HFMPONT7DyuTzHNfLPHRsk1SB
-         18m7yyEAEklulrxCvg1aQfoftrZOaZgmkaj9wqQ+6YTI1H3k3/+Ja4hFTQ9lLW4/iIjz
-         uBfnwhBW/Ph3ayQnco8GEgNBGTg941TXihx3xEhcwxJvIwuGbQkq1r0lxbLRAvEirqoF
-         LH+k4V+aNAyya5fE2R4zJkX4GDrvP5iUyO3GSKaJUuyKelyEvevHn/PhfO2gBzW7pFGD
-         pBAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNsJ+FhZqCbTO0oHWh3kv1axCQIrgFXNaw+ATpBpty1g6tl9b1EsZccBhmTL7VMO1d2esqkp16O4gt5fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9fOP12MZJSNjHf3e3+Cr/8kxFgrztqUG5913c+Bu7Vsb8nKZG
-	2oqixAzAXJICiOcyLz/9YpwlwzcRYmNBEnkMj6Bt29y4Yd659luGRMCkhj6I9bd/Ucpe3eeNBvO
-	L9Cm/J93EYlmviuj6Z7Hkt6QYDDxFTv/CclAFpLQpCAGwX9jL6EbfsuRaLPW4yq147zakvjjiFx
-	o=
-X-Gm-Gg: ASbGncuGUW+6Ji30a98T664WLVRG9mhEle+6Zbl53z5JgwPTN/63CA8qI9dtN/l8yVz
-	Y0M9oiatShc0c0wtmyRnYHCQftsgAEDddYX4vnWr6IRfG2VkXW8SdkST7fmANmYtk9a73WfU0pO
-	dS0zHLWk+XRp5wjn/BzlciZkEDxijNo8GyPkQkeawBZ64H1o28JFQALbU0O7JSv7+x0L2RVBjUV
-	3LFBDnVmKEQRJHMvnQs6lVOZPgml/WfmPIFjQprIVRncioHOltsITaHpQH415cs6E8S94VsCLUA
-	VKdMXAFSvfVuLOI1NEqH5II0wmROYlsex7SNVctycm5W6w7qYm45wc5nU+x5ZRO/o3JwV2pG0qY
-	5x3UUdOegk5Ds5U3lETPm473XoGnl0+sPRp8Ai2w=
-X-Received: by 2002:a05:6808:190a:b0:437:7578:9c44 with SMTP id 5614622812f47-43b8da70129mr6859043b6e.42.1757996663973;
-        Mon, 15 Sep 2025 21:24:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGqhxtAaJCcfHq9qGuMGRREclxGyfoBHonCPlYamBCdzyNhWFOEKa8eFPm3H6WlSZE0ouPew==
-X-Received: by 2002:a05:6808:190a:b0:437:7578:9c44 with SMTP id 5614622812f47-43b8da70129mr6859022b6e.42.1757996663365;
-        Mon, 15 Sep 2025 21:24:23 -0700 (PDT)
-Received: from [192.168.86.59] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b82a73075sm2772862b6e.19.2025.09.15.21.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 21:24:22 -0700 (PDT)
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Date: Mon, 15 Sep 2025 23:24:17 -0500
-Subject: [PATCH v2 3/3] arm64: dts: qcom: qcm6490: Introduce the Particle
- Tachyon
+	s=arc-20240116; t=1757997191; c=relaxed/simple;
+	bh=XUv2PggEgcd7aiSvIefqjmLXrdWBq5ZtfvsjcSnF6Ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jlZLfVGQksd9lEltBSL+p0VvyboS07thVd68EeiQqzjYLwWBfp8yYah5LVJMJskKjKcjUC2K48kwYklfoyE4RwI/6lfedLeKHUihsipoIH2gp8HPVa/1ZEm569yXaYWbHUwD/JPhoGllLlYZvZYGJG0T3Pgp9WKtpx+C8UqE1UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UA4pT+Xx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA138C4CEEB;
+	Tue, 16 Sep 2025 04:33:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757997191;
+	bh=XUv2PggEgcd7aiSvIefqjmLXrdWBq5ZtfvsjcSnF6Ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UA4pT+XxdcvTwEXm0XQVMVK4IeeqDbY7dO/AZA7fAeL9BZlVOrkBtl9586nWqhkit
+	 fEkVxPoPy009mzMJg2WqrM7m5GFCL161QrthTG+XB1OHtQ/sncY+fKBcq9IWtfaFdv
+	 4Zos33vOsW2M9yPRjEznTzzxr6vPBWDL5Kiopuql9MOcVGBJ3PrzJOA0RiPiJMwGDp
+	 TX3sx9Sqd43Lm344yY4+U2wvV5fYdb00S3j/giclSX62pecxjwbq0lkY/wEzyO2LJQ
+	 8bJ7BpxlVNzY/ZtqSab19+Ggpge+n2hOyyJq1VzrYQhCdqldnvwgAa+ANrZJo8Y+Cu
+	 zrQw1c1t8/Kmg==
+Date: Tue, 16 Sep 2025 00:33:09 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Donet Tom <donettom@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>,
+	stable@vger.kernel.org, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v2 1/3] mm/ksm: Fix incorrect KSM counter handling in
+ mm_struct during fork
+Message-ID: <aMjohar0r-nffx9V@laps>
+References: <cover.1757946863.git.donettom@linux.ibm.com>
+ <4044e7623953d9f4c240d0308cf0b2fe769ee553.1757946863.git.donettom@linux.ibm.com>
+ <20250915164248.788601c4dc614913081ec7d7@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-tachyon-v2-3-4f8b02a17512@oss.qualcomm.com>
-References: <20250915-tachyon-v2-0-4f8b02a17512@oss.qualcomm.com>
-In-Reply-To: <20250915-tachyon-v2-0-4f8b02a17512@oss.qualcomm.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=22154;
- i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
- bh=x3qQy8HpoT+optWnjlhThI0ThOY6lVKqrGFc/cO34Eo=;
- b=owEBgwJ8/ZANAwAKAQsfOT8Nma3FAcsmYgBoyOZzUrQjFf6C3HDce48LHQOpmq6pKUkPGWpGV
- FANnwdmxUaJAkkEAAEKADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCaMjmcxUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcVCtRAAor+F+zoYD2Lmqxts+1vQrVXtfqs4EheQZRCnTGV
- Rkts64mdIA/xwbH2DFSPkTmv6/pNmfb64Nx8l7z/bEMdhDv2z0EirTWBQ1VqiBD7vEs8LWvnFp2
- /UyCjpjeQgD4/IsjwIhdrZFBDAF7ELbeCDqZHx5zHr5MF5ximyeFmABX2lP8DcFjZvpxmJyAwOz
- hm2wOFRxD219vdUje38nVVPLnfyfbdCOIZN/VjWVXwh0bXlnKIeJMxrOL2NTOEblZwJ2uvufyL7
- vcv+oPHxL/8FzDdYuFC6g9B8BgzDzlsz3kKMJpdBM9xBH8a7t9uopRpHf/GYyFHvLvHGlOLWfEK
- 6945813uzyC5KcbrX78+3nVPqJuLBLW9RtU6ELhMyVFpOBbu3yNKtdK8xIBsd024N5ejqhIsnuO
- 7Tjgfkwvo/ECc2wIeoUsi9UdDq5mWYdr5fZukSaz5c0171Rj4TDCRy9qH+cizcy3q5uiq13RGNp
- M5p0iftuIDeuMdYpWfE747zjnVqkCFIv+qaqTri81z9z1dCenZvgm7zNDekc0RYeVOHJwxjutIX
- wH6Grr4HMuwgwapZohKOYb16hzf+/2KhsF85XK0r38lucLeoF5+/WmXoFo0p38Ak/x/j+6pbE1k
- WtP6aD2pMXY6vVUpCPEhK4x1zl2Njrzfwx+4GuclHv7Y=
-X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyNSBTYWx0ZWRfXxvYAlhaMrgx6
- nzD8AC1uY/i1sf+sNS2m56MONEsSq15ia3SvHOMfIlH50rpiDk0oU7EOqqU6lQvud3X0we1XxDA
- WPPBidRBT9oCGxsNIiSY0LY2dVlmbps69mxz9l6mK7RfiU34GTGLufPUaQuZE66lsOzRURJwU5B
- zjKqgqXYFNUvLwjZIKPUBdOlkWeKmM6nOqsYpRH6m91fOwQ4JQCGndk7k5enIanc1G7Z/93sAKa
- Zo6+W5Dw+vlZxnwi6mZmElyTwGe8FqjXefHCL0+ccBG74NM+11gUVpgkpZFu2xd7FEvPGWvmFdM
- oh8C3FaA5L7H8Uycg5yhSdTEStETNCvhtOopLsCAYMqirnF4li6pcvOM+ltr5A1qDa69fa3qRYX
- pi29s7pW
-X-Proofpoint-GUID: cijE0Z03Z83VBgagIHnnU25Bzve9fazt
-X-Authority-Analysis: v=2.4 cv=WcsMa1hX c=1 sm=1 tr=0 ts=68c8e679 cx=c_pps
- a=AKZTfHrQPB8q3CcvmcIuDA==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8
- a=V4SrPvAJSiTePHaaKYkA:9 a=QEXdDO2ut3YA:10 a=pF_qn-MSjDawc0seGVz6:22
- a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: cijE0Z03Z83VBgagIHnnU25Bzve9fazt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_01,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0 spamscore=0
- suspectscore=0 phishscore=0 clxscore=1011 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130025
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250915164248.788601c4dc614913081ec7d7@linux-foundation.org>
 
-The Particle Tachyon is a single board computer with 5G connectivity
-with AI accelerator, based on the Qualcomm QCM6490 platform.
+On Mon, Sep 15, 2025 at 04:42:48PM -0700, Andrew Morton wrote:
+>On Mon, 15 Sep 2025 20:33:04 +0530 Donet Tom <donettom@linux.ibm.com> wrote:
+>
+>> Currently, the KSM-related counters in `mm_struct`, such as
+>> `ksm_merging_pages`, `ksm_rmap_items`, and `ksm_zero_pages`, are
+>> inherited by the child process during fork. This results in inconsistent
+>> accounting.
+>>
+>> When a process uses KSM, identical pages are merged and an rmap item is
+>> created for each merged page. The `ksm_merging_pages` and
+>> `ksm_rmap_items` counters are updated accordingly. However, after a
+>> fork, these counters are copied to the child while the corresponding
+>> rmap items are not. As a result, when the child later triggers an
+>> unmerge, there are no rmap items present in the child, so the counters
+>> remain stale, leading to incorrect accounting.
+>>
+>> A similar issue exists with `ksm_zero_pages`, which maintains both a
+>> global counter and a per-process counter. During fork, the per-process
+>> counter is inherited by the child, but the global counter is not
+>> incremented. Since the child also references zero pages, the global
+>> counter should be updated as well. Otherwise, during zero-page unmerge,
+>> both the global and per-process counters are decremented, causing the
+>> global counter to become inconsistent.
+>>
+>> To fix this, ksm_merging_pages and ksm_rmap_items are reset to 0
+>> during fork, and the global ksm_zero_pages counter is updated with the
+>> per-process ksm_zero_pages value inherited by the child. This ensures
+>> that KSM statistics remain accurate and reflect the activity of each
+>> process correctly.
+>>
+>> Fixes: 7609385337a4 ("ksm: count ksm merging pages for each process")
+>
+>Linux-v5.19
+>
+>> Fixes: cb4df4cae4f2 ("ksm: count allocated ksm rmap_items for each process")
+>
+>Linux-v6.1
+>
+>> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
+>
+>Linux-v6.10
+>
+>> cc: stable@vger.kernel.org # v6.6
+>
+>So how was Linux-v6.6 arrived at?
 
-Introduce the board, with support for UFS, USB, USB Type-C PD and
-altmode (DisplayPort), GPU, charger/battery status, PCIe shield,
-SD-card, and remoteprocs.
+e2942062e01d is in v6.6, not in v6.10 - I suspect that this is why the "# v6.6"
+part was added.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/Makefile                  |   1 +
- .../boot/dts/qcom/qcm6490-particle-tachyon.dts     | 864 +++++++++++++++++++++
- 2 files changed, 865 insertions(+)
+>I think the most important use for Fixes: is to tell the -stable
+>maintainers which kernel version(s) we believe should receive the
+>patch.  So listing multiple Fixes: targets just causes confusion.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 5b52f9e4e5f31ac5a398d0762337a0a31af1f4dd..76d275991e83c013698dd98b467d42e74f2c21e6 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -116,6 +116,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-sony-xperia-yoshino-poplar.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-xiaomi-sagit.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-fairphone-fp5.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-idp.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-particle-tachyon.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-particle-tachyon.dts b/arch/arm64/boot/dts/qcom/qcm6490-particle-tachyon.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..251e72f11428774ed6712b9c77ecb56a6b00a4f7
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-particle-tachyon.dts
-@@ -0,0 +1,864 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ * Copyright (c) 2023, Luca Weiss <luca.weiss@fairphone.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/iio/qcom,spmi-adc7-pmk8350.h>
-+#include <dt-bindings/iio/qcom,spmi-adc7-pm7325.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include "sc7280.dtsi"
-+#include "pm8350c.dtsi"
-+#include "pmk8350.dtsi"
-+
-+/delete-node/ &ipa_fw_mem;
-+/delete-node/ &rmtfs_mem;
-+/delete-node/ &xbl_mem;
-+/delete-node/ &adsp_mem;
-+/delete-node/ &cdsp_mem;
-+/delete-node/ &wpss_mem;
-+
-+/ {
-+	model = "Particle Tachyon";
-+	compatible = "particle,tachyon", "qcom,qcm6490";
-+	chassis-type = "embedded";
-+
-+	aliases {
-+		serial0 = &uart5;
-+		serial1 = &uart12;
-+		serial2 = &uart7;
-+		serial3 = &uart8;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		pinctrl-0 = <&activity_led_state>;
-+		pinctrl-names = "default";
-+
-+		led-activity {
-+			function = LED_FUNCTION_ACTIVITY;
-+			color = <LED_COLOR_ID_RED>;
-+			gpios = <&tlmm 14 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+			panic-indicator;
-+		};
-+	};
-+
-+	pmic-glink {
-+		compatible = "qcom,qcm6490-pmic-glink", "qcom,pmic-glink";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		orientation-gpios = <&tlmm 140 GPIO_ACTIVE_HIGH>;
-+
-+		connector@0 {
-+			compatible = "usb-c-connector";
-+			reg = <0>;
-+			power-role = "dual";
-+			data-role = "dual";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					pmic_glink_hs_in: endpoint {
-+						remote-endpoint = <&usb_1_dwc3_hs>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					pmic_glink_ss_in: endpoint {
-+						remote-endpoint = <&usb_dp_qmpphy_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_sbu_in: endpoint {
-+						remote-endpoint = <&usbdp_sbu_mux>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
-+	vreg_power_5v: regulator-power-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "power_5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&tlmm 13 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+	};
-+
-+	reserved-memory {
-+		xbl_mem: xbl@80700000 {
-+			reg = <0x0 0x80700000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		tz_stat_mem: tz-stat@c0000000 {
-+			reg = <0x0 0xc0000000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		tags_mem: tags@c0100000 {
-+			reg = <0x0 0xc0100000 0x0 0x1200000>;
-+			no-map;
-+		};
-+
-+		qtee_mem: qtee@c1300000 {
-+			reg = <0x0 0xc1300000 0x0 0x500000>;
-+			no-map;
-+		};
-+
-+		trusted_apps_mem: trusted-apps@c1800000 {
-+			reg = <0x0 0xc1800000 0x0 0x1c00000>;
-+			no-map;
-+		};
-+
-+		debug_vm_mem: debug-vm@d0600000 {
-+			reg = <0x0 0xd0600000 0x0 0x100000>;
-+			no-map;
-+		};
-+
-+		adsp_mem: adsp@86100000 {
-+			reg = <0x0 0x86700000 0x0 0x2800000>;
-+			no-map;
-+		};
-+
-+		cdsp_mem: cdsp@88900000 {
-+			reg = <0x0 0x88f00000 0x0 0x1e00000>;
-+			no-map;
-+		};
-+
-+		wpss_mem: wpss@9ae00000 {
-+			reg = <0x0 0x9ae00000 0x0 0x1900000>;
-+			no-map;
-+		};
-+
-+		mpss_mem: mpss@8b800000 {
-+			reg = <0x0 0x8b800000 0x0 0xf600000>;
-+			no-map;
-+		};
-+
-+		ipa_fw_mem: ipa-fw@8b300000 {
-+			reg = <0x0 0x8b700000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		ipa_gsi_mem: ipa-gsi@8b310000 {
-+			reg = <0x0 0x8b710000 0x0 0xa000>;
-+			no-map;
-+		};
-+
-+		rmtfs_mem: memory@f8500000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0x0 0xf8500000 0x0 0x600000>;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>, <QCOM_SCM_VMID_NAV>;
-+		};
-+	};
-+
-+
-+	usbdp-sbu-mux {
-+		compatible = "pericom,pi3usb102", "gpio-sbu-mux";
-+
-+		enable-gpios = <&tlmm 108 GPIO_ACTIVE_HIGH>;
-+		select-gpios = <&tlmm 42 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-0 = <&usbdp_sbu_default>;
-+		pinctrl-names = "default";
-+
-+		mode-switch;
-+		orientation-switch;
-+
-+		port {
-+			usbdp_sbu_mux: endpoint {
-+				remote-endpoint = <&pmic_glink_sbu_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm7325-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-l1-l4-l12-l15-supply = <&vreg_s7b_0p972>;
-+		vdd-l2-l7-supply = <&vreg_bob_3p296>;
-+		vdd-l6-l9-l10-supply = <&vreg_s8b_1p272>;
-+		vdd-l8-supply = <&vreg_s7b_0p972>;
-+		vdd-l11-l17-l18-l19-supply = <&vreg_s1b_1p872>;
-+		vdd-l13-supply = <&vreg_s7b_0p972>;
-+		vdd-l14-l16-supply = <&vreg_s8b_1p272>;
-+
-+		vreg_s1b_1p872: smps1 {
-+			regulator-name = "vreg_s1b_1p872";
-+			regulator-min-microvolt = <1840000>;
-+			regulator-max-microvolt = <2040000>;
-+		};
-+
-+		vreg_s7b_0p972: smps7 {
-+			regulator-name = "vreg_s7b_0p972";
-+			regulator-min-microvolt = <535000>;
-+			regulator-max-microvolt = <1120000>;
-+		};
-+
-+		vreg_s8b_1p272: smps8 {
-+			regulator-name = "vreg_s8b_1p272";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1500000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_RET>;
-+		};
-+
-+		vreg_l1b_0p912: ldo1 {
-+			regulator-name = "vreg_l1b_0p912";
-+			regulator-min-microvolt = <825000>;
-+			regulator-max-microvolt = <925000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2b_3p072: ldo2 {
-+			regulator-name = "vreg_l2b_3p072";
-+			regulator-min-microvolt = <2700000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3b_0p504: ldo3 {
-+			regulator-name = "vreg_l3b_0p504";
-+			regulator-min-microvolt = <312000>;
-+			regulator-max-microvolt = <910000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6b_1p2: ldo6 {
-+			regulator-name = "vreg_l6b_1p2";
-+			regulator-min-microvolt = <1140000>;
-+			regulator-max-microvolt = <1260000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7b_2p952: ldo7 {
-+			regulator-name = "vreg_l7b_2p952";
-+			regulator-min-microvolt = <2952000>;
-+			regulator-max-microvolt = <2952000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8b_0p904: ldo8 {
-+			regulator-name = "vreg_l8b_0p904";
-+			regulator-min-microvolt = <870000>;
-+			regulator-max-microvolt = <970000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9b_1p2: ldo9 {
-+			regulator-name = "vreg_l9b_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-allow-set-load;
-+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
-+						   RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l11b_1p504: ldo11 {
-+			regulator-name = "vreg_l11b_1p504";
-+			regulator-min-microvolt = <1504000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l12b_0p751: ldo12 {
-+			regulator-name = "vreg_l12b_0p751";
-+			regulator-min-microvolt = <751000>;
-+			regulator-max-microvolt = <824000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l13b_0p53: ldo13 {
-+			regulator-name = "vreg_l13b_0p53";
-+			regulator-min-microvolt = <530000>;
-+			regulator-max-microvolt = <824000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l14b_1p08: ldo14 {
-+			regulator-name = "vreg_l14b_1p08";
-+			regulator-min-microvolt = <1080000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l15b_0p765: ldo15 {
-+			regulator-name = "vreg_l15b_0p765";
-+			regulator-min-microvolt = <765000>;
-+			regulator-max-microvolt = <1020000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l16b_1p1: ldo16 {
-+			regulator-name = "vreg_l16b_1p1";
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1300000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l17b_1p7: ldo17 {
-+			regulator-name = "vreg_l17b_1p7";
-+			regulator-min-microvolt = <1700000>;
-+			regulator-max-microvolt = <1900000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l18b_1p8: ldo18 {
-+			regulator-name = "vreg_l18b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l19b_1p8: ldo19 {
-+			regulator-name = "vreg_l19b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8350c-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+		vdd-l1-l12-supply = <&vreg_s1b_1p872>;
-+		vdd-l2-l8-supply = <&vreg_s1b_1p872>;
-+		vdd-l3-l4-l5-l7-l13-supply = <&vreg_bob_3p296>;
-+		vdd-l6-l9-l11-supply = <&vreg_bob_3p296>;
-+		vdd-l10-supply = <&vreg_s7b_0p972>;
-+		vdd-bob-supply = <&vph_pwr>;
-+
-+		vreg_s1c_2p19: smps1 {
-+			regulator-name = "vreg_s1c_2p19";
-+			regulator-min-microvolt = <2190000>;
-+			regulator-max-microvolt = <2210000>;
-+		};
-+
-+		vreg_s9c_1p084: smps9 {
-+			regulator-name = "vreg_s9c_1p084";
-+			regulator-min-microvolt = <1084000>;
-+			regulator-max-microvolt = <1170000>;
-+		};
-+
-+		vreg_l1c_1p8: ldo1 {
-+			regulator-name = "vreg_l1c_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1980000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2c_1p62: ldo2 {
-+			regulator-name = "vreg_l2c_1p62";
-+			regulator-min-microvolt = <1620000>;
-+			regulator-max-microvolt = <1980000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3c_2p8: ldo3 {
-+			regulator-name = "vreg_l3c_2p8";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3540000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l4c_1p62: ldo4 {
-+			regulator-name = "vreg_l4c_1p62";
-+			regulator-min-microvolt = <1620000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5c_1p62: ldo5 {
-+			regulator-name = "vreg_l5c_1p62";
-+			regulator-min-microvolt = <1620000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6c_2p96: ldo6 {
-+			regulator-name = "vreg_l6c_2p96";
-+			regulator-min-microvolt = <1650000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7c_3p0: ldo7 {
-+			regulator-name = "vreg_l7c_3p0";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8c_1p62: ldo8 {
-+			regulator-name = "vreg_l8c_1p62";
-+			regulator-min-microvolt = <1620000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l9c_2p96: ldo9 {
-+			regulator-name = "vreg_l9c_2p96";
-+			regulator-min-microvolt = <2960000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l10c_0p88: ldo10 {
-+			regulator-name = "vreg_l10c_0p88";
-+			regulator-min-microvolt = <720000>;
-+			regulator-max-microvolt = <1050000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l11c_2p8: ldo11 {
-+			regulator-name = "vreg_l11c_2p8";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l12c_1p65: ldo12 {
-+			regulator-name = "vreg_l12c_1p65";
-+			regulator-min-microvolt = <1650000>;
-+			regulator-max-microvolt = <2000000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l13c_2p7: ldo13 {
-+			regulator-name = "vreg_l13c_2p7";
-+			regulator-min-microvolt = <2700000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_bob_3p296: bob {
-+			regulator-name = "vreg_bob_3p296";
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3960000>;
-+		};
-+	};
-+};
-+
-+&i2c1 {
-+	clock-frequency = <100000>;
-+
-+	status = "okay";
-+};
-+
-+&ipa {
-+	firmware-name = "qcom/qcm6490/particle/tachyon/ipa_fws.mbn";
-+	qcom,gsi-loader = "self";
-+	memory-region = <&ipa_fw_mem>;
-+
-+	status = "okay";
-+};
-+
-+&gcc {
-+	protected-clocks = <GCC_CFG_NOC_LPASS_CLK>,
-+			   <GCC_MSS_CFG_AHB_CLK>,
-+			   <GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>,
-+			   <GCC_MSS_OFFLINE_AXI_CLK>,
-+			   <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-+			   <GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+			   <GCC_MSS_SNOC_AXI_CLK>,
-+			   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
-+			   <GCC_QSPI_CORE_CLK>,
-+			   <GCC_QSPI_CORE_CLK_SRC>,
-+			   <GCC_SEC_CTRL_CLK_SRC>,
-+			   <GCC_WPSS_AHB_BDG_MST_CLK>,
-+			   <GCC_WPSS_AHB_CLK>,
-+			   <GCC_WPSS_RSCP_CLK>;
-+};
-+
-+&gpu {
-+	status = "okay";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/qcm6490/particle/tachyon/a660_zap.mbn";
-+};
-+
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dp {
-+	status = "okay";
-+};
-+
-+&mdss_dp_out {
-+	data-lanes = <0 1>;
-+};
-+
-+&pcie0 {
-+	perst-gpios = <&tlmm 87 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 89 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie0_reset_n>, <&pcie0_wake_n>, <&pcie0_clkreq_n>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
-+
-+	pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>, <&pcie1_clkreq_n>;
-+	pinctrl-names = "default";
-+
-+	vddpe-3v3-supply = <&vreg_power_5v>;
-+
-+	status = "okay";
-+};
-+
-+&pcie1_phy {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pmk8350_adc_tm {
-+	status = "okay";
-+
-+	xo-therm@0 {
-+		reg = <0>;
-+		io-channels = <&pmk8350_vadc PMK8350_ADC7_AMUX_THM1_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time-us = <200>;
-+	};
-+};
-+
-+&pmk8350_rtc {
-+	status = "okay";
-+};
-+
-+&pmk8350_vadc {
-+	status = "okay";
-+
-+	channel@44 {
-+		reg = <PMK8350_ADC7_AMUX_THM1_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time = <200>;
-+		qcom,pre-scaling = <1 1>;
-+		label = "pmk8350_xo_therm";
-+	};
-+};
-+
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
-+&qupv3_id_1 {
-+	status = "okay";
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/qcm6490/particle/tachyon/adsp.mbn";
-+	status = "okay";
-+};
-+
-+&remoteproc_cdsp {
-+	firmware-name = "qcom/qcm6490/particle/tachyon/cdsp.mbn";
-+	status = "okay";
-+};
-+
-+&remoteproc_mpss {
-+	firmware-name = "qcom/qcm6490/particle/tachyon/modem.mbn";
-+	status = "okay";
-+};
-+
-+&sdc2_clk {
-+	bias-disable;
-+	drive-strength = <16>;
-+};
-+
-+&sdc2_cmd {
-+	bias-pull-up;
-+	drive-strength = <10>;
-+};
-+
-+&sdc2_data {
-+	bias-pull-up;
-+	drive-strength = <10>;
-+};
-+
-+&sdhc_2 {
-+	vmmc-supply = <&vreg_l9c_2p96>;
-+	vqmmc-supply = <&vreg_l6c_2p96>;
-+
-+	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	activity_led_state: activity-led-state {
-+		pins = "gpio14";
-+		function = "gpio";
-+		bias-disable;
-+	};
-+
-+	bt_en_state: bt-default-state {
-+		pins = "gpio84";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-low;
-+		bias-pull-up;
-+	};
-+
-+	pcie0_reset_n: pcie0-reset-n-state {
-+		pins = "gpio87";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-low;
-+		bias-disable;
-+	};
-+
-+	pcie0_wake_n: pcie0-wake-n-state {
-+		pins = "gpio89";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	pcie1_reset_n: pcie1-reset-n-state {
-+		pins = "gpio2";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-low;
-+		bias-disable;
-+	};
-+
-+	pcie1_wake_n: pcie1-wake-n-state {
-+		pins = "gpio3";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
-+		pins = "gpio28";
-+		function = "gpio";
-+		/*
-+		 * Configure a bias-bus-hold on CTS to lower power
-+		 * usage when Bluetooth is turned off. Bus hold will
-+		 * maintain a low power state regardless of whether
-+		 * the Bluetooth module drives the pin in either
-+		 * direction or leaves the pin fully unpowered.
-+		 */
-+		bias-bus-hold;
-+	};
-+
-+	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
-+		pins = "gpio29";
-+		function = "gpio";
-+		/*
-+		 * Configure pull-down on RTS. As RTS is active low
-+		 * signal, pull it low to indicate the BT SoC that it
-+		 * can wakeup the system anytime from suspend state by
-+		 * pulling RX low (by sending wakeup bytes).
-+		 */
-+		bias-pull-down;
-+	};
-+
-+	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
-+		pins = "gpio30";
-+		function = "gpio";
-+		/*
-+		 * Configure pull-up on TX when it isn't actively driven
-+		 * to prevent BT SoC from receiving garbage during sleep.
-+		 */
-+		bias-pull-up;
-+	};
-+
-+	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
-+		pins = "gpio31";
-+		function = "gpio";
-+		/*
-+		 * Configure a pull-up on RX. This is needed to avoid
-+		 * garbage data when the TX pin of the Bluetooth module
-+		 * is floating which may cause spurious wakeups.
-+		 */
-+		bias-pull-up;
-+	};
-+
-+	usbdp_sbu_default: usbdp-sbu-state {
-+		oe-n-pins {
-+			pins = "gpio108";
-+			function = "gpio";
-+			bias-disable;
-+			drive-strength = <16>;
-+			output-high;
-+		};
-+
-+		sel-pins {
-+			pins = "gpio42";
-+			function = "gpio";
-+			bias-disable;
-+			drive-strength = <16>;
-+		};
-+	};
-+
-+	wlan_en_state: wlan-default-state {
-+		pins = "gpio85";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-low;
-+		bias-pull-up;
-+	};
-+};
-+
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&uart7 {
-+	/delete-property/ interrupts;
-+	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
-+			      <&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-+
-+	pinctrl-1 = <&qup_uart7_sleep_cts>,
-+		    <&qup_uart7_sleep_rts>,
-+		    <&qup_uart7_sleep_tx>,
-+		    <&qup_uart7_sleep_rx>;
-+	pinctrl-names = "default", "sleep";
-+
-+	status = "okay";
-+};
-+
-+&uart8 {
-+	status = "okay";
-+};
-+
-+&uart12 {
-+	status = "okay";
-+};
-+
-+&ufs_mem_hc {
-+	reset-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
-+	vcc-supply = <&vreg_l7b_2p952>;
-+	vcc-max-microamp = <800000>;
-+	vccq-supply = <&vreg_l9b_1p2>;
-+	vccq-max-microamp = <900000>;
-+	vccq2-supply = <&vreg_l9b_1p2>;
-+	vccq2-max-microamp = <900000>;
-+
-+	status = "okay";
-+};
-+
-+&ufs_mem_phy {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3_hs {
-+	remote-endpoint = <&pmic_glink_hs_in>;
-+};
-+
-+&usb_1_hsphy {
-+	vdda-pll-supply = <&vreg_l10c_0p88>;
-+	vdda33-supply = <&vreg_l2b_3p072>;
-+	vdda18-supply = <&vreg_l1c_1p8>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1_qmpphy {
-+	vdda-phy-supply = <&vreg_l6b_1p2>;
-+	vdda-pll-supply = <&vreg_l1b_0p912>;
-+
-+	status = "okay";
-+};
-+
-+&usb_2 {
-+	dr_mode = "host";
-+
-+	status = "okay";
-+};
-+
-+&usb_2_hsphy {
-+	vdda-pll-supply = <&vreg_l10c_0p88>;
-+	vdda18-supply = <&vreg_l1c_1p8>;
-+	vdda33-supply = <&vreg_l2b_3p072>;
-+
-+	status = "okay";
-+};
-+
-+&usb_dp_qmpphy_out {
-+	remote-endpoint = <&pmic_glink_ss_in>;
-+};
+Right - there's no way of communicating if all the commits listed in multiple
+Fixes tags should exist in the tree, or any one of them, for the new fix to be
+applicable.
 
 -- 
-2.51.0
-
+Thanks,
+Sasha
 
