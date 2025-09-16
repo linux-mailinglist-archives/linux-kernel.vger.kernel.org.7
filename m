@@ -1,275 +1,126 @@
-Return-Path: <linux-kernel+bounces-819454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE58B5A0E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:04:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86FCB5A0EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9713E1C04E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874382A81B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DBC2DAFDD;
-	Tue, 16 Sep 2025 19:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEsjOtGg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B422DAFDD;
+	Tue, 16 Sep 2025 19:05:17 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED92B276022;
-	Tue, 16 Sep 2025 19:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD6E1E0DEA;
+	Tue, 16 Sep 2025 19:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758049454; cv=none; b=nsMVAwBAmq2HyhBbTmGP5fQWC7KB/6/j8YgOrEt870iOdLN8E8nXH+TsgqcIJxIDYBqWF/B8CJaMYHujblxIaOoFlqZ0slqOQ2ueS5VQfcltQ6gbSQDMyRw9sIgTfC8iWQdaeOBErV9RucUCgJe5VobQUcAlEgKHDsr/ZYUKVVU=
+	t=1758049517; cv=none; b=V7mF7AdL/vtFJe/4lFrOgzk65h7eoqKO+Ooan0BU3JcG3cVPogdmxn1vBWQIGmcCqSoKNZv/og6oY2zS3wQaB6pplqTwdDG25ZYCvStAZl8ITV2U8SItbQc5GpxiHAJlEAwie+sm5v3Hk/WOkTo5KiPLVeqJHZDoWtWKfWmQv5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758049454; c=relaxed/simple;
-	bh=oOCz4ZC/B3OEba2UZc9WhRkO6LSkANYZ35eQnGNQPRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJ9C6upwsni/ZfE6FT6Wm+foJLAxAK9+93dBZJ6zhXJx9Vn5auS97q8DWOfe6258NR9UkS4N1OTttxOD5EPGkO1iu9UaDoqh3/X/I++4wBm5gCC3Ryza2f9LKOZOO0ONPeBPncxDEB7/eVlgTWQQX5W52lAMipjIkvAJHJrmMT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEsjOtGg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02CFC4CEEB;
-	Tue, 16 Sep 2025 19:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758049453;
-	bh=oOCz4ZC/B3OEba2UZc9WhRkO6LSkANYZ35eQnGNQPRg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vEsjOtGg7HrAlew/LSmyJwGxMAOUtPHnwkwT4+Ahfr+XhqRGg3VXcrC/u0wfcCRnx
-	 9Dq1JGWmBX5+doX0GLaRisNWXCss/hpmYQ9wYBa1qifiP9T7PVIOCDVCUT8Y0vwHAv
-	 V7pc+btB81P5BsfVAHRNsamAkINUm5vPTUpLMi/f3YmpquqlO1KFrXF0fyWXA9Td+V
-	 O1chmanXcIK274Izz7tBDZbeBsG5qGWe8tJQarCHxu5CvzviHwWVtgdqjNhHduQF3m
-	 vn1bZcteVYkGwyNCDKm0YkYy+bWghYAMrKoG7XPu3YWD01eZ++cjCfuroV7pWg2+xN
-	 8tk1RewYDrOuA==
-Date: Tue, 16 Sep 2025 16:04:09 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Chun-Tse Shao <ctshao@google.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] perf test: Don't leak workload gopipe in
- PERF_RECORD_*
-Message-ID: <aMm0qUcdeDJmwuyI@x1>
-References: <20250821221834.1312002-1-irogers@google.com>
- <20250821221834.1312002-3-irogers@google.com>
+	s=arc-20240116; t=1758049517; c=relaxed/simple;
+	bh=BocNEQlJuQpTpdJ+perq7Zf+f5uddM0lcHE0m9ROn5U=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=abLQSuUWUZ04r0iOrR4V8L9Jnu+3jqeubE7OXTq2nW9SCLkJMisUaDT8kV+ry2pGamPvXc8LcL8LWfDuG/EwR7lCNngM16NpcZU8v61TurIKDG634buc15HA6SbdGmSKqJfFG+wjFl0/jdYnHOO4Fx0ouxdMP5069AhxIrtdjkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.103] (213.87.161.48) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 16 Sep
+ 2025 22:04:53 +0300
+Message-ID: <ed43a751-3b02-46db-9fe1-da6c9f79fd80@omp.ru>
+Date: Tue, 16 Sep 2025 22:04:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250821221834.1312002-3-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10.y] cpufreq: scmi: Fix null-ptr-deref in
+ scmi_cpufreq_get_rate()
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Henry Martin <bsdhenrymartin@gmail.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>,
+	<lvc-project@linuxtesting.org>
+References: <b6ebf19c-8328-44de-a695-157061a9d8a8@omp.ru>
+Content-Language: en-US
+Organization: Open Mobile Platform
+In-Reply-To: <b6ebf19c-8328-44de-a695-157061a9d8a8@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/16/2025 18:41:44
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 196326 [Sep 16 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 66 0.3.66
+ fc5dda3b6b70d34b3701db39319eece2aeb510fb
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {Tracking_spam_in_reply_from_match_msgid}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.161.48 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;marc.info:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.161.48
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/16/2025 18:45:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/16/2025 4:28:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Thu, Aug 21, 2025 at 03:18:32PM -0700, Ian Rogers wrote:
-> The test starts a workload and then opens events. If the events fail
-> to open, for example because of perf_event_paranoid, the gopipe of the
-> workload is leaked and the file descriptor leak check fails when the
-> test exits. To avoid this cancel the workload when opening the events
-> fails.
+On 9/12/25 11:35 PM, Sergey Shtylyov wrote:
+
+> From: Henry Martin <bsdhenrymartin@gmail.com>
 > 
-> Before:
-> ```
-> $ perf test -vv 7
->   7: PERF_RECORD_* events & perf_sample fields:
-> --- start ---
-
-⬢ [acme@toolbx perf-tools-next]$ patch -p1 < b
-patching file tools/perf/tests/perf-record.c
-Hunk #1 succeeded at 130 (offset 15 lines).
-Hunk #2 succeeded at 142 with fuzz 1 (offset 15 lines).
-Hunk #3 succeeded at 154 (offset 15 lines).
-Hunk #4 succeeded at 167 (offset 15 lines).
-⬢ [acme@toolbx perf-tools-next]$ 
-⬢ [acme@toolbx perf-tools-next]$ git log --oneline -5 tools/perf/tests/perf-record.c
-576bd7a8c90c48e9 (x1/perf-tools-next, x1/HEAD, five/perf-tools-next, five/HEAD) perf tests record: Update testcase to fix usage of affinity for machines with #CPUs > 1K
-b4c658d4d63d6149 perf target: Remove uid from target
-dc6d2bc2d893a878 perf sample: Make user_regs and intr_regs optional
-fd8d5a3b076c033f perf tests: Add missing event.h include
-9823147da6c893d9 perf tools: Move 'struct perf_sample' to a separate header file to disentangle headers
-⬢ [acme@toolbx perf-tools-next]$
-
-Can you please check that it is still ok?
-
-I processed the first in the series and now I'm going thru the other
-two.
-
-- Arnaldo
-
-> test child forked, pid 1189568
-> Using CPUID GenuineIntel-6-B7-1
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   config                           0xa00000000 (cpu_atom/PERF_COUNT_HW_CPU_CYCLES/)
->   disabled                         1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8
-> sys_perf_event_open failed, error -13
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   config                           0xa00000000 (cpu_atom/PERF_COUNT_HW_CPU_CYCLES/)
->   disabled                         1
->   exclude_kernel                   1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8 = 3
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   config                           0x400000000 (cpu_core/PERF_COUNT_HW_CPU_CYCLES/)
->   disabled                         1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8
-> sys_perf_event_open failed, error -13
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   config                           0x400000000 (cpu_core/PERF_COUNT_HW_CPU_CYCLES/)
->   disabled                         1
->   exclude_kernel                   1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 0  cpu -1  group_fd -1  flags 0x8 = 3
-> Attempt to add: software/cpu-clock/
-> ..after resolving event: software/config=0/
-> cpu-clock -> software/cpu-clock/
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             1 (PERF_TYPE_SOFTWARE)
->   size                             136
->   config                           0x9 (PERF_COUNT_SW_DUMMY)
->   sample_type                      IP|TID|TIME|CPU
->   read_format                      ID|LOST
->   disabled                         1
->   inherit                          1
->   mmap                             1
->   comm                             1
->   enable_on_exec                   1
->   task                             1
->   sample_id_all                    1
->   mmap2                            1
->   comm_exec                        1
->   ksymbol                          1
->   bpf_event                        1
->   { wakeup_events, wakeup_watermark } 1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 1189569  cpu 0  group_fd -1  flags 0x8
-> sys_perf_event_open failed, error -13
-> perf_evlist__open: Permission denied
-> ---- end(-2) ----
-> Leak of file descriptor 6 that opened: 'pipe:[14200347]'
+> [ Upstream commit 484d3f15cc6cbaa52541d6259778e715b2c83c54 ]
 > 
-> ---- unexpected signal (6) ----
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
-> Failed to read build ID for //anon
->     #0 0x565358f6666e in child_test_sig_handler builtin-test.c:311
->     #1 0x7f29ce849df0 in __restore_rt libc_sigaction.c:0
->     #2 0x7f29ce89e95c in __pthread_kill_implementation pthread_kill.c:44
->     #3 0x7f29ce849cc2 in raise raise.c:27
->     #4 0x7f29ce8324ac in abort abort.c:81
->     #5 0x565358f662d4 in check_leaks builtin-test.c:226
->     #6 0x565358f6682e in run_test_child builtin-test.c:344
->     #7 0x565358ef7121 in start_command run-command.c:128
->     #8 0x565358f67273 in start_test builtin-test.c:545
->     #9 0x565358f6771d in __cmd_test builtin-test.c:647
->     #10 0x565358f682bd in cmd_test builtin-test.c:849
->     #11 0x565358ee5ded in run_builtin perf.c:349
->     #12 0x565358ee6085 in handle_internal_command perf.c:401
->     #13 0x565358ee61de in run_argv perf.c:448
->     #14 0x565358ee6527 in main perf.c:555
->     #15 0x7f29ce833ca8 in __libc_start_call_main libc_start_call_main.h:74
->     #16 0x7f29ce833d65 in __libc_start_main@@GLIBC_2.34 libc-start.c:128
->     #17 0x565358e391c1 in _start perf[851c1]
->   7: PERF_RECORD_* events & perf_sample fields                       : FAILED!
-> ```
+> cpufreq_cpu_get_raw() can return NULL when the target CPU is not present
+> in the policy->cpus mask. scmi_cpufreq_get_rate() does not check for
+> this case, which results in a NULL pointer dereference.
 > 
-> After:
-> ```
-> $ perf test 7
->   7: PERF_RECORD_* events & perf_sample fields                       : Skip (permissions)
-> ```
+> Add NULL check after cpufreq_cpu_get_raw() to prevent this issue.
 > 
-> Fixes: 16d00fee7038 ("perf tests: Move test__PERF_RECORD into separate object")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/tests/perf-record.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> [Sergey: resolved reject (reordering the local variables).]
 > 
-> diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-> index 0b3c37e66871..8c79b5166a05 100644
-> --- a/tools/perf/tests/perf-record.c
-> +++ b/tools/perf/tests/perf-record.c
-> @@ -115,6 +115,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  	if (err < 0) {
->  		pr_debug("sched__get_first_possible_cpu: %s\n",
->  			 str_error_r(errno, sbuf, sizeof(sbuf)));
-> +		evlist__cancel_workload(evlist);
->  		goto out_delete_evlist;
->  	}
->  
-> @@ -126,6 +127,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  	if (sched_setaffinity(evlist->workload.pid, cpu_mask_size, &cpu_mask) < 0) {
->  		pr_debug("sched_setaffinity: %s\n",
->  			 str_error_r(errno, sbuf, sizeof(sbuf)));
-> +		evlist__cancel_workload(evlist);
->  		goto out_delete_evlist;
->  	}
->  
-> @@ -137,6 +139,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  	if (err < 0) {
->  		pr_debug("perf_evlist__open: %s\n",
->  			 str_error_r(errno, sbuf, sizeof(sbuf)));
-> +		evlist__cancel_workload(evlist);
->  		goto out_delete_evlist;
->  	}
->  
-> @@ -149,6 +152,7 @@ static int test__PERF_RECORD(struct test_suite *test __maybe_unused, int subtest
->  	if (err < 0) {
->  		pr_debug("evlist__mmap: %s\n",
->  			 str_error_r(errno, sbuf, sizeof(sbuf)));
-> +		evlist__cancel_workload(evlist);
->  		goto out_delete_evlist;
->  	}
->  
-> -- 
-> 2.51.0.rc2.233.g662b1ed5c5-goog
+> Fixes: 99d6bdf33877 ("cpufreq: add support for CPU DVFS based on SCMI message protocol")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+
+   Probably should have noted that this patch fixes CVE-2025-37830:
+
+https://marc.info/?l=linux-cve-announce&m=174668615621702
+
+   (Sorry, lore doesn't work for me anymre...]
+
+MBR, Sergey
+
 
