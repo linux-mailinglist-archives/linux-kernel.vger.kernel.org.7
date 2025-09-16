@@ -1,126 +1,142 @@
-Return-Path: <linux-kernel+bounces-819109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8EEB59BA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:12:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77201B59B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C8E16D15F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B5D580003
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63C1341AD5;
-	Tue, 16 Sep 2025 15:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703AB3164D5;
+	Tue, 16 Sep 2025 15:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YiNzQjov"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fFzKO8jA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8A9320A38
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F622AD16;
+	Tue, 16 Sep 2025 15:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035093; cv=none; b=PqjoKiDzhnaWjxSKOjY0TRcUCTFCfoISWAx2rNbkDhQ/foyol6o2wZS4PVPOc9Dp0HHw1UNWzcm0sKuaFqXr1IT5PIJpvo1ylBrCvKGMzSCcb7qIC3TsBE493lJ+aR1RbZTBJidYGJcGUfNIvgaow42AnctctaOe0EuqfmHPjw4=
+	t=1758035047; cv=none; b=pQLjVrLGEhPuW36/MA0cP75XeJj1b8/6Wabg12qFkhjtiRrv0n5gxNe6DPR1RyTG3o/1zRR6XHc8ubQa9NzgTCtYNTUEWMKnuXz9t8tF8wwQW7hQz53GCA67Dp/TTCIYwHu7OuTy1WwAKaz9kxBL3XsM/f1cBGQPNbdRAH7wSoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035093; c=relaxed/simple;
-	bh=22msJI66Kn4S5p8RuJrtuGtfpaKspAeILuZQoci+SlQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lELPp9sg4qpyOsdo1m/mcBcGSis2SHPou3IqQA9COJcH6YtcuMPtVvdFGy8GQnG2uSaynJoMYZJ+hg1a9xgqWcWjR0x4oQqq+IWA1u+FDBjA1PTWYst9KNvVvayGoncJbvd7LS4pYQYlbyuob3mA5ZhaexuVQHv5pspvpQysJuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YiNzQjov; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758035091; x=1789571091;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=22msJI66Kn4S5p8RuJrtuGtfpaKspAeILuZQoci+SlQ=;
-  b=YiNzQjovVDKu/5k5yqQzW07bDXHab3NG8R+4aIbb1XSCAilZr+DvHXG0
-   hUG7Lw2mQPiJMe2eEwae6OeyI0xHUTZFPNQEMazJREu6Pwy0uI1jqW5dp
-   AiR7UO7i3HUpewlMeUoOjIcsQONiWwp1NpOeAN3cvcRJ8oZ24RsAy61B8
-   1StGE0v0SHk/+GzH5miJqbimAr9TvajUy20ltKah8PTZyHC0RjKowQPuw
-   bRZVmireSTH5Dolm6rhemejhYIKF338954CMsiYCRWI8margekXRZjk6/
-   cA5seBKTDMr7GOswb5lzNDPDw70WjFU+PKhHBCrgTF2mgoBDqfgX2OFNc
-   A==;
-X-CSE-ConnectionGUID: 37c0yGb2SSCtsg11K/lYzw==
-X-CSE-MsgGUID: 1trTaR7qScuOZQidJ24XAg==
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="47114855"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 08:04:51 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 16 Sep 2025 08:03:32 -0700
-Received: from ROU-LL-M43238.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Tue, 16 Sep 2025 08:03:30 -0700
-From: <nicolas.ferre@microchip.com>
-To: Arnd Bergmann <arnd@arndb.de>, <arm@kernel.org>, <soc@kernel.org>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Linux Kernel list
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [GIT PULL] ARM: microchip: soc for 6.18 #1
-Date: Tue, 16 Sep 2025 17:03:28 +0200
-Message-ID: <20250916150328.27015-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758035047; c=relaxed/simple;
+	bh=A8E8x5fuXpCM+FBWZSmn2EAMAcnZvznNPoDqYpcEXng=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=rw0o9Kolx5+Cx1v3xjO6PHBuqXU6u7KncJ2TFzinTttpoX87Om3vYeNf3WMgNAEkUI1wOywnTmpo+Av93jTixofzpcJUOac7R1cXy3ujUE/60VzOrDdHCvnaK9T70Rr6MKFGsILgsvxTYZz8HuQ4+Smr7FimYSGv0FkhWAozZH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fFzKO8jA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19055C4CEEB;
+	Tue, 16 Sep 2025 15:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758035047;
+	bh=A8E8x5fuXpCM+FBWZSmn2EAMAcnZvznNPoDqYpcEXng=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fFzKO8jAs8H5xWrhfkZOrVRr462W8nP6fV2ip/6A0skP/Q5+zuC28nyTToNBiD9Pz
+	 I1R6QYUqLCHES8szK7QsqgG+5FNwiP14cv3am+J7iPyroHEuYAAGoPKAdsTjz91vkS
+	 /Cfo8xS8Dmby6E9ij+ekHr8n+io2PIj/qd6SX0zSCXpc+TEgXMIw9sInuOs8azx72C
+	 2dWtXT4nIVMndH8Fg9EembSo2fVN/vYmsOVujbdbjTN9kMulpUgnXv213oW9StKMKR
+	 rTP8U161NQrdqMzU67GJ4ec3NrQd/32CVzJGdTuJwYPqUDkhIk4ApdLAMWEDsTQ9m2
+	 uwyNPCY+Itrng==
+Date: Tue, 16 Sep 2025 10:04:05 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Devendra K Verma <devendra.verma@amd.com>
+Cc: bhelgaas@google.com, mani@kernel.org, vkoul@kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michal.simek@amd.com
+Subject: Re: [PATCH v2 1/2] dmaengine: dw-edma: Add AMD MDB Endpoint Support
+Message-ID: <20250916150405.GA1796861@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: microchip
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916104320.9473-2-devendra.verma@amd.com>
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Tue, Sep 16, 2025 at 04:13:18PM +0530, Devendra K Verma wrote:
+> AMD MDB PCIe endpoint support. For AMD specific support
+> added the following
+>   - AMD supported PCIe Device IDs and Vendor ID (Xilinx).
+>   - AMD MDB specific driver data
+>   - AMD MDB specific VSEC capability to retrieve the device DDR
+>     base address.
 
-Dear arm-soc maintainers,
+> +/* Synopsys */
+>  #define DW_PCIE_VSEC_DMA_ID			0x6
+>  #define DW_PCIE_VSEC_DMA_BAR			GENMASK(10, 8)
+>  #define DW_PCIE_VSEC_DMA_MAP			GENMASK(2, 0)
+>  #define DW_PCIE_VSEC_DMA_WR_CH			GENMASK(9, 0)
+>  #define DW_PCIE_VSEC_DMA_RD_CH			GENMASK(25, 16)
+>  
+> +/* AMD MDB specific defines */
+> +#define DW_PCIE_XILINX_MDB_VSEC_DMA_ID		0x6
+> +#define DW_PCIE_XILINX_MDB_VSEC_ID		0x20
+> +#define PCI_DEVICE_ID_AMD_MDB_B054		0xb054
+> +#define DW_PCIE_AMD_MDB_INVALID_ADDR		(~0ULL)
 
-Here are the at91 soc changes for 6.18. They are move specific to at91 product
-line and are all related to PM code.
+> @@ -120,9 +213,22 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
+>  	u32 val, map;
+>  	u16 vsec;
+>  	u64 off;
+> +	u16 vendor = pdev->vendor;
+> +	int cap;
+>  
+> -	vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+> -					DW_PCIE_VSEC_DMA_ID);
+> +	/*
+> +	 * Synopsys and AMD (Xilinx) use the same VSEC ID for the purpose
+> +	 * of map, channel counts, etc.
+> +	 */
+> +	if (vendor != PCI_VENDOR_ID_SYNOPSYS ||
+> +	    vendor != PCI_VENDOR_ID_XILINX)
+> +		return;
+> +
+> +	cap = DW_PCIE_VSEC_DMA_ID;
+> +	if (vendor == PCI_VENDOR_ID_XILINX)
+> +		cap = DW_PCIE_XILINX_MDB_VSEC_ID;
+> +
+> +	vsec = pci_find_vsec_capability(pdev, vendor, cap);
 
-Please pull. Thanks, best regards,
-  Nicolas
+This looks correct, so it's OK as-is.  But it does require more
+analysis to verify than it would if you did it like this:
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+  vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+                                  DW_PCIE_SYNOPSYS_VSEC_DMA_ID);
+  if (!vsec) {
+    vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_XILINX,
+                                    DW_PCIE_XILINX_VSEC_DMA_ID);
+    if (!vsec)
+      return;
+  }
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+This way it's obvious from the pci_find_vsec_capability() calls
+themselves (and could potentially be checked by coccinelle, etc) that
+we're using the Vendor ID and VSEC ID correctly.
 
-are available in the Git repository at:
+> +	/* AMD specific VSEC capability */
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/at91-soc-6.18
+This should say "Xilinx specific VSEC capability" because the Vendor
+ID in the device is PCI_VENDOR_ID_XILINX.  We shouldn't have to look
+up the corporate ownership history and figure out that AMD acquired
+Xilinx.  That's not relevant in this context.
 
-for you to fetch changes up to 747436750bc0ef73be32391bd5d0d7dcd185da7f:
+> +	vsec = pci_find_vsec_capability(pdev, vendor,
+> +					DW_PCIE_XILINX_MDB_VSEC_ID);
 
-  ARM: at91: pm: Remove 2.5V regulator (2025-09-16 16:57:03 +0200)
+But this one is wrong.  We do know that the device Vendor ID is either
+PCI_VENDOR_ID_SYNOPSYS or PCI_VENDOR_ID_XILINX from above, but we
+*don't* know what VSEC ID 0x20 means for Synopsys devices.
 
-----------------------------------------------------------------
-Microchip arm-soc updates for v6.18
+We only know what VSEC ID 0x20 means for Xilinx devices.  So this has
+to be:
 
-This update includes:
-- low priority fixes to the PM code, in relation to recent addition of
-  sam9x75 or sama7d65 SoCs
-- removal of the 2.5V regulator for low power modes since this is
-  no longer supported
+  vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_XILINX,
+                                  DW_PCIE_XILINX_MDB_VSEC_ID);
 
-----------------------------------------------------------------
-Nicolas Ferre (3):
-      ARM: at91: pm: fix .uhp_udp_mask specification for current SoCs
-      ARM: at91: pm: fix MCKx restore routine
-      ARM: at91: pm: save and restore ACR during PLL disable/enable
-
-Ryan Wanner (1):
-      ARM: at91: pm: Remove 2.5V regulator
-
- arch/arm/mach-at91/pm.c         |  2 +-
- arch/arm/mach-at91/pm_suspend.S | 41 ++++++++---------------------------
- include/soc/at91/sama7-sfrbu.h  |  7 ------
- 3 files changed, 10 insertions(+), 40 deletions(-)
-
--- 
-Nicolas Ferre
+Bjorn
 
