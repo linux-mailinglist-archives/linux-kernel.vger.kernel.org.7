@@ -1,304 +1,192 @@
-Return-Path: <linux-kernel+bounces-819175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C9EB59C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E183B59C84
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E85CD7AC675
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30DBB1C037E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B28F3705B5;
-	Tue, 16 Sep 2025 15:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B09370590;
+	Tue, 16 Sep 2025 15:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BENlAFr/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dq/TiEgJ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3660C38DE1;
-	Tue, 16 Sep 2025 15:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435E73451AA
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758037815; cv=none; b=bWUjSSCK/jRVp2GtaYE5amQ2LWa+jp3gRTqPIJyd8HdF1xzJNZ1Fn6t0bOEQo6JUOsk7emRTBpAnLlxQ2rtJ0LOSRp2TtgX560lOOTn+LfbIXoCodTsNU9hjWjl4bC2oH9DNRqPeVqyaV4Xn1b148br1oaMm7HeqmNOAVQrBMgA=
+	t=1758037859; cv=none; b=t31vpiSgdsty8BA8G8PjGFUNTHcNueu9DthBrgPcmxiY1qoM7zE9rxbf1eSfbg2me0JaOjDw9fAzabtByq17K2Q7Ne1PJ+2FQROMS7xQ/+/JS7vg2DLfYoQetcCu2vUOg2QaF1ktTiA3gbab2iMl0cXz0DBMpwljpQUNyQ1KRZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758037815; c=relaxed/simple;
-	bh=3KoryAxr6Svd8fLp3XSHCXgsOwaACFiZ4QTZ3soPyRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tw8US4U8YsRM/rfxthhQkuklsI/gtET2jLQaBswhZx5LIQIbdl0rl4uIEgGepW2QCWu+2uITABAhnOW5hhH5SB4h98zyDrI2gVXt3dnoCHs6PsLqyLBW7hJrAWEY1HL249y5A9h/3Yy/uDc3dlEU3XSaY4vTINJeWVjKkgR87hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BENlAFr/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F542C4CEEB;
-	Tue, 16 Sep 2025 15:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758037814;
-	bh=3KoryAxr6Svd8fLp3XSHCXgsOwaACFiZ4QTZ3soPyRs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=BENlAFr/oFel1GF5GFPtU6oxWpWfzfStVPue8IstxyUsG7Fj9lLDTP68RAnHHPWNp
-	 3weMqWp3xfO18Izf+tYI18UTMjiJebfCVqGy2N8OMUvS/Lm7EO7ocrKiB+JCgXmurI
-	 /JERjnllW4rsjlrlvWN5PBIYn/VwqYQo0omGanX6HKEm4Euo2rGi5PTGDnOz2QH2JF
-	 CUo3zeMJhv9jJ+sWRmhN8s5gDS9lrxZaSxB6enAei8oC4TCwWubQ+UD7kLx7z7aOOa
-	 o8CW5BQ68zUX0TG0kJvnK96r8dw+scJ+NC99L+TRdEzeSJSdIySAE1LcAVXDF0T9YH
-	 Dv35WtzjQh/Tg==
-Date: Tue, 16 Sep 2025 10:50:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Mukesh Rathor <mrathor@linux.microsoft.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-arch@vger.kernel.org, virtualization@lists.linux.dev,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	jikos@kernel.org, bentiss@kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	dmitry.torokhov@gmail.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, bhelgaas@google.com,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	gregkh@linuxfoundation.org, deller@gmx.de, arnd@arndb.de,
-	sgarzare@redhat.com, horms@kernel.org
-Subject: Re: [PATCH v2 1/2] Driver: hv: Add CONFIG_HYPERV_VMBUS option
-Message-ID: <20250916155013.GA1800495@bhelgaas>
+	s=arc-20240116; t=1758037859; c=relaxed/simple;
+	bh=XlfGJ0myBd1CUShqRIzs6Qf3uvtdbW25i4uOaLilOdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BWndp+pzn+G1ZvPmKi8iPMx/lEWLF18e63qvMGVpqsKA9nknGOa0iwaJBjgLir011dsiHVqzhTLccgwbNw2MVeFdr/9wWNRxQ/1O0HvnON1Mr/lABjRjLceB6A8L6MTBm4KltvN31zJdBTRyjs4pvP1dnSrrcCGt5bSlVqvGdXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Dq/TiEgJ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77251d7cca6so5360362b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1758037857; x=1758642657; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XlfGJ0myBd1CUShqRIzs6Qf3uvtdbW25i4uOaLilOdg=;
+        b=Dq/TiEgJ7A0qXZGRJEywvvEeYQ8pKnUhoVr/YUQleYo0V/k8+T4Eb8K1p/z33KOgMo
+         pY+ZXDa3BGQDlgkcXJnQX0cMMRm+eL5g1Jt4kDg8t+iQ0CZRHwnVL0Gh9q0yMrMnopUc
+         iWKoCiFYH/tU0F6LTGoivBJ8mh5Zo4DGs2zEE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758037857; x=1758642657;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XlfGJ0myBd1CUShqRIzs6Qf3uvtdbW25i4uOaLilOdg=;
+        b=CbcB8Ka7iOlfMsqMjtLP2e5xNrNZg+jRqACcCcjCetLaQq9siHdKbFzAfAxjnUGXwx
+         NHRu1822edNm3G872e14QuZX3JriEkavPcS3sbB1iATT89Ys40FCUAsjvXo53eMjTjyh
+         qE+s3SOu5UHFO30n1YBdVrCrLNk87b6AL3IlOUS5ygCkZnqFewcbCBbCjEHcn7jEIKu6
+         eHawVPAlgnKUaVqOlszgHF/0LAjJmykhrkb/NmyEeuN98L/axQ1RbM/+PmT7eEaAXDN9
+         jitCajuFrA9sbwSuerUov0iX82VHz+ufhYSHXaCie5snXS2+I9ws6EeNksJpkrcLHBjH
+         DJDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuxJPnceCOArkXrllqIzUtYLOpUWIcy9679CJgSsM41fHXaNISpxOB20HNMfVxXuG0+xbhKAxwCJ3JhqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUIFN1Od3Z1lx+G8k3V8F5bVIgW44SxQNBrmcUHE+1zBZehO4x
+	g5FOfyAqm8MvmdiBllj1SthhaRc9jHqUPmPdgZt0SRcts/hchZYBgCba/RxFArCFGkaccQmAXHO
+	2IyE=
+X-Gm-Gg: ASbGncv1gk1PnO1miUooeA/S+5buRk+kSdPyEuGvifZ/AS0m3cAMIdLzdupbTq/E+9T
+	5K8BnvL9qeq7wc04JsdbF16Z25I2llaxNfcvNtz6NSrIRaDE27ii0BR/sUuhHCqcP+uxl0G16LG
+	gXeH6ftnhM1NOCunVBfxfl68qxrXfS1nWMucsR1nZwNpNSMmhVwQ2yBVPFWhuunWBHDH8/xrJV0
+	szBezYo/Nh45wPj14qbE/aBAQE1JvNqTqho4UIBFbwGv2+jyr9Rohckx6zFXcyHIyucy3zjBb+a
+	ipQkjROZnbDuQnH1s5asCVT8Ih+ius5kA5hJraa2iyhd6LLqBbVQ1HYWP4HAOLOdFkV4cjFgC7j
+	ZdYFwHr1kCejqBTcwkqciCRWWmUmUJ3+zBQVZUK4gAvsR0JSmhnpaIgHQKnRCcBIyj/Px0VGh6b
+	je
+X-Google-Smtp-Source: AGHT+IGs7GzD3POaWbxuJmF3yrhYdT60JycvYiJFb8oTsk6GWsDnxbpmQc1LhP1phEo8aFCE5xlAIg==
+X-Received: by 2002:a05:6a21:3286:b0:24e:e270:2f53 with SMTP id adf61e73a8af0-2602aa89c7fmr21265223637.13.1758037857596;
+        Tue, 16 Sep 2025 08:50:57 -0700 (PDT)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com. [209.85.215.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a35b7b53sm14564369a12.7.2025.09.16.08.50.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 08:50:57 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso3455178a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:50:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWyXMUHS5u0PNy6/oASU3L0hRaO4Xfnf+gxIv1jtZBWoJbhWuNDOjjbdhPfkiVkipNVngbJDauCH50oXmg=@vger.kernel.org
+X-Received: by 2002:a17:903:2ec6:b0:25c:982e:2b22 with SMTP id
+ d9443c01a7336-25d27134267mr159143535ad.61.1758037856437; Tue, 16 Sep 2025
+ 08:50:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915234604.3256611-2-mrathor@linux.microsoft.com>
+References: <20250915035355.10846-1-cuiyunhui@bytedance.com>
+ <aMfpwYPX6_i6ROOY@willie-the-truck> <20250915103506.GA3245006@noisy.programming.kicks-ass.net>
+ <CAD=FV=Vr67+uRK2bYu34MDXRJN4w_VH_EO7OW4eVLJ3wqUUBog@mail.gmail.com> <20250916074217.GF3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250916074217.GF3245006@noisy.programming.kicks-ass.net>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 16 Sep 2025 08:50:44 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UEhVCD6JehQi1wor2sSmtTLDyf=37xfo-DOTK1=u1xzA@mail.gmail.com>
+X-Gm-Features: AS18NWAxT21ffANYOVAuTiBZ-JCuPw16bE4J4Dn2ocVjGgCvD3aQkxhG7dvBAPs
+Message-ID: <CAD=FV=UEhVCD6JehQi1wor2sSmtTLDyf=37xfo-DOTK1=u1xzA@mail.gmail.com>
+Subject: Re: [PATCH] watchdog: remove HARDLOCKUP_DETECTOR_PERF
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>, akpm@linux-foundation.org, 
+	catalin.marinas@arm.com, maddy@linux.ibm.com, mpe@ellerman.id.au, 
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, kees@kernel.org, 
+	masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, xur@google.com, ruanjinjie@huawei.com, 
+	gshan@redhat.com, maz@kernel.org, suzuki.poulose@arm.com, 
+	zhanjie9@hisilicon.com, yangyicong@hisilicon.com, gautam@linux.ibm.com, 
+	arnd@arndb.de, zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com, 
+	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com, 
+	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org, 
+	wangjinchao600@gmail.com, yury.norov@gmail.com, thorsten.blum@linux.dev, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 15, 2025 at 04:46:03PM -0700, Mukesh Rathor wrote:
-> At present VMBus driver is hinged off of CONFIG_HYPERV which entails
-> lot of builtin code and encompasses too much. It's not always clear
-> what depends on builtin hv code and what depends on VMBus. Setting
-> CONFIG_HYPERV as a module and fudging the Makefile to switch to builtin
-> adds even more confusion. VMBus is an independent module and should have
-> its own config option. Also, there are scenarios like baremetal dom0/root
-> where support is built in with CONFIG_HYPERV but without VMBus. Lastly,
-> there are more features coming down that use CONFIG_HYPERV and add more
-> dependencies on it.
-> 
-> So, create a fine grained HYPERV_VMBUS option and update Kconfigs for
-> dependency on VMBus.
-> 
-> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+Hi,
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# drivers/pci
+On Tue, Sep 16, 2025 at 12:42=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> > > Yeah, this. I've run into this case waaay too many times to think it
+> > > reasonable to remove the perf/NMI based lockup detector.
+> >
+> > I am a bit curious how this comes to be in cases where you've seen it.
+> > What causes all CPUs to be stuck looping all with interrupts disabled
+> > (but still able to execute NMIs)? Certainly one can come up with a
+> > synthetic way to make that happen, but I would imagine it to be
+> > exceedingly rare in real life. Maybe all CPUs are deadlocked waiting
+> > on spinlocks or something? There shouldn't be a lot of other reasons
+> > that all CPUs should be stuck indefinitely with interrupts disabled...
+>
+> The simplest one I often run into is rq->lock getting stuck and then all
+> the other CPUs piling up on that in various ways.
+>
+> Getting stop_machine() stuck is also a fun one.
+>
+> I mean, it really isn't that hard. If, as a full time kernel dev, you
+> don't get into this situation at least a few time a year, you're just
+> not doing your job right ;-)
 
-> ---
->  drivers/gpu/drm/Kconfig        |  2 +-
->  drivers/hid/Kconfig            |  2 +-
->  drivers/hv/Kconfig             | 11 +++++++++--
->  drivers/hv/Makefile            |  2 +-
->  drivers/input/serio/Kconfig    |  4 ++--
->  drivers/net/hyperv/Kconfig     |  2 +-
->  drivers/pci/Kconfig            |  2 +-
->  drivers/scsi/Kconfig           |  2 +-
->  drivers/uio/Kconfig            |  2 +-
->  drivers/video/fbdev/Kconfig    |  2 +-
->  include/asm-generic/mshyperv.h |  8 +++++---
->  net/vmw_vsock/Kconfig          |  2 +-
->  12 files changed, 25 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index f7ea8e895c0c..58f34da061c6 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -398,7 +398,7 @@ source "drivers/gpu/drm/imagination/Kconfig"
->  
->  config DRM_HYPERV
->  	tristate "DRM Support for Hyper-V synthetic video device"
-> -	depends on DRM && PCI && HYPERV
-> +	depends on DRM && PCI && HYPERV_VMBUS
->  	select DRM_CLIENT_SELECTION
->  	select DRM_KMS_HELPER
->  	select DRM_GEM_SHMEM_HELPER
-> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-> index a57901203aeb..fe3dc8c0db99 100644
-> --- a/drivers/hid/Kconfig
-> +++ b/drivers/hid/Kconfig
-> @@ -1162,7 +1162,7 @@ config GREENASIA_FF
->  
->  config HID_HYPERV_MOUSE
->  	tristate "Microsoft Hyper-V mouse driver"
-> -	depends on HYPERV
-> +	depends on HYPERV_VMBUS
->  	help
->  	Select this option to enable the Hyper-V mouse driver.
->  
-> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-> index e24f6299c376..29f8637f441a 100644
-> --- a/drivers/hv/Kconfig
-> +++ b/drivers/hv/Kconfig
-> @@ -45,18 +45,25 @@ config HYPERV_TIMER
->  
->  config HYPERV_UTILS
->  	tristate "Microsoft Hyper-V Utilities driver"
-> -	depends on HYPERV && CONNECTOR && NLS
-> +	depends on HYPERV_VMBUS && CONNECTOR && NLS
->  	depends on PTP_1588_CLOCK_OPTIONAL
->  	help
->  	  Select this option to enable the Hyper-V Utilities.
->  
->  config HYPERV_BALLOON
->  	tristate "Microsoft Hyper-V Balloon driver"
-> -	depends on HYPERV
-> +	depends on HYPERV_VMBUS
->  	select PAGE_REPORTING
->  	help
->  	  Select this option to enable Hyper-V Balloon driver.
->  
-> +config HYPERV_VMBUS
-> +	tristate "Microsoft Hyper-V VMBus driver"
-> +	depends on HYPERV
-> +	default HYPERV
-> +	help
-> +	  Select this option to enable Hyper-V Vmbus driver.
-> +
->  config MSHV_ROOT
->  	tristate "Microsoft Hyper-V root partition support"
->  	depends on HYPERV && (X86_64 || ARM64)
-> diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-> index 976189c725dc..4bb41663767d 100644
-> --- a/drivers/hv/Makefile
-> +++ b/drivers/hv/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -obj-$(CONFIG_HYPERV)		+= hv_vmbus.o
-> +obj-$(CONFIG_HYPERV_VMBUS)	+= hv_vmbus.o
->  obj-$(CONFIG_HYPERV_UTILS)	+= hv_utils.o
->  obj-$(CONFIG_HYPERV_BALLOON)	+= hv_balloon.o
->  obj-$(CONFIG_MSHV_ROOT)		+= mshv_root.o
-> diff --git a/drivers/input/serio/Kconfig b/drivers/input/serio/Kconfig
-> index 17edc1597446..c7ef347a4dff 100644
-> --- a/drivers/input/serio/Kconfig
-> +++ b/drivers/input/serio/Kconfig
-> @@ -276,8 +276,8 @@ config SERIO_OLPC_APSP
->  
->  config HYPERV_KEYBOARD
->  	tristate "Microsoft Synthetic Keyboard driver"
-> -	depends on HYPERV
-> -	default HYPERV
-> +	depends on HYPERV_VMBUS
-> +	default HYPERV_VMBUS
->  	help
->  	  Select this option to enable the Hyper-V Keyboard driver.
->  
-> diff --git a/drivers/net/hyperv/Kconfig b/drivers/net/hyperv/Kconfig
-> index c8cbd85adcf9..982964c1a9fb 100644
-> --- a/drivers/net/hyperv/Kconfig
-> +++ b/drivers/net/hyperv/Kconfig
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config HYPERV_NET
->  	tristate "Microsoft Hyper-V virtual network driver"
-> -	depends on HYPERV
-> +	depends on HYPERV_VMBUS
->  	select UCS2_STRING
->  	select NLS
->  	help
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index 9a249c65aedc..7065a8e5f9b1 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -221,7 +221,7 @@ config PCI_LABEL
->  
->  config PCI_HYPERV
->  	tristate "Hyper-V PCI Frontend"
-> -	depends on ((X86 && X86_64) || ARM64) && HYPERV && PCI_MSI && SYSFS
-> +	depends on ((X86 && X86_64) || ARM64) && HYPERV_VMBUS && PCI_MSI && SYSFS
->  	select PCI_HYPERV_INTERFACE
->  	select IRQ_MSI_LIB
->  	help
-> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> index 5522310bab8d..19d0884479a2 100644
-> --- a/drivers/scsi/Kconfig
-> +++ b/drivers/scsi/Kconfig
-> @@ -589,7 +589,7 @@ config XEN_SCSI_FRONTEND
->  
->  config HYPERV_STORAGE
->  	tristate "Microsoft Hyper-V virtual storage driver"
-> -	depends on SCSI && HYPERV
-> +	depends on SCSI && HYPERV_VMBUS
->  	depends on m || SCSI_FC_ATTRS != m
->  	default HYPERV
->  	help
-> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
-> index b060dcd7c635..6f86a61231e6 100644
-> --- a/drivers/uio/Kconfig
-> +++ b/drivers/uio/Kconfig
-> @@ -140,7 +140,7 @@ config UIO_MF624
->  
->  config UIO_HV_GENERIC
->  	tristate "Generic driver for Hyper-V VMBus"
-> -	depends on HYPERV
-> +	depends on HYPERV_VMBUS
->  	help
->  	  Generic driver that you can bind, dynamically, to any
->  	  Hyper-V VMBus device. It is useful to provide direct access
-> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-> index c21484d15f0c..72c63eaeb983 100644
-> --- a/drivers/video/fbdev/Kconfig
-> +++ b/drivers/video/fbdev/Kconfig
-> @@ -1774,7 +1774,7 @@ config FB_BROADSHEET
->  
->  config FB_HYPERV
->  	tristate "Microsoft Hyper-V Synthetic Video support"
-> -	depends on FB && HYPERV
-> +	depends on FB && HYPERV_VMBUS
->  	select DMA_CMA if HAVE_DMA_CONTIGUOUS && CMA
->  	select FB_IOMEM_HELPERS_DEFERRED
->  	help
-> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-> index dbd4c2f3aee3..64ba6bc807d9 100644
-> --- a/include/asm-generic/mshyperv.h
-> +++ b/include/asm-generic/mshyperv.h
-> @@ -163,6 +163,7 @@ static inline u64 hv_generate_guest_id(u64 kernel_version)
->  	return guest_id;
->  }
->  
-> +#if IS_ENABLED(CONFIG_HYPERV_VMBUS)
->  /* Free the message slot and signal end-of-message if required */
->  static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
->  {
-> @@ -198,6 +199,10 @@ static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
->  	}
->  }
->  
-> +extern int vmbus_interrupt;
-> +extern int vmbus_irq;
-> +#endif /* CONFIG_HYPERV_VMBUS */
-> +
->  int hv_get_hypervisor_version(union hv_hypervisor_version_info *info);
->  
->  void hv_setup_vmbus_handler(void (*handler)(void));
-> @@ -211,9 +216,6 @@ void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
->  void hv_remove_crash_handler(void);
->  void hv_setup_mshv_handler(void (*handler)(void));
->  
-> -extern int vmbus_interrupt;
-> -extern int vmbus_irq;
-> -
->  #if IS_ENABLED(CONFIG_HYPERV)
->  /*
->   * Hypervisor's notion of virtual processor ID is different from
-> diff --git a/net/vmw_vsock/Kconfig b/net/vmw_vsock/Kconfig
-> index 56356d2980c8..8e803c4828c4 100644
-> --- a/net/vmw_vsock/Kconfig
-> +++ b/net/vmw_vsock/Kconfig
-> @@ -72,7 +72,7 @@ config VIRTIO_VSOCKETS_COMMON
->  
->  config HYPERV_VSOCKETS
->  	tristate "Hyper-V transport for Virtual Sockets"
-> -	depends on VSOCKETS && HYPERV
-> +	depends on VSOCKETS && HYPERV_VMBUS
->  	help
->  	  This module implements a Hyper-V transport for Virtual Sockets.
->  
-> -- 
-> 2.36.1.vfs.0.0
-> 
+Wow, so I either suck at my job or I'm not a full time kernel dev? Ouch.
+
+
+> > If that's what's happening, (just spitballing) I wonder if hooking
+> > into the slowpath of spinlocks to look for lockups would help? Maybe
+> > every 10000 failures to acquire the spinlock we check for a lockup?
+> > Obviously you could still come up with synthetic ways to make a
+> > non-caught watchdog, but hopefully in those types of cases we can at
+> > least reset the device with a hardware watchdog?
+>
+> Now, why would I want to make the spinlock code worse if I have a
+> perfectly functional NMI watchdog?
+
+There's cost and tradeoffs everywhere. Using the perf-backed NMI
+watchdog has real downsides in terms of resource and power costs.
+Certainly touching the spinlock code would also have costs involved
+but, at least to this poor kernel engineer it doesn't seem like a
+forgone conclusion that one set of costs is better than the other.
+
+
+> > Overall the issue is that it's really awkward to have both types of
+> > lockup detectors, especially since you've got to pick at compile time.
+>
+> Well, then go fix that. Surely this isn't rocket science.
+
+Looks like Jinchao has already sent a proposal for that.
+
+
+> > The perf lockup detector has a pile of things that make it pretty
+> > awkward and it seems like people have been toward the buddy detector
+> > because of this...
+>
+> There's nothing awkward about the perf one, except that it takes one
+> counter, and some people are just greedy and want all of them. At the
+> same time, there are people posting patches that use the PMU for
+> page-promotion like things, so these same greedy people are going to
+> hate on that too.
+
+The weird cpufreq stuff that the perf detector needs to handle is
+awkward too. I suppose that plus the eating up of the perf counter
+(which gets awkward when you try to virtualize) is not exactly a pile.
+I think I was also remembering that people were trying to transition
+away from the perf detector for power saving reasons to save the extra
+wakeups/interrupts, but I guess that's not something *awkward* but
+just a plain-old normal downside...
+
+
+-Doug
 
