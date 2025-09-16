@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-818891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1628B597B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:31:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2284BB597DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FB7167881
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:31:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2BF51624E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB10C311C2D;
-	Tue, 16 Sep 2025 13:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R+1zHJBl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840C7313297;
+	Tue, 16 Sep 2025 13:38:41 +0000 (UTC)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889A72DAFB5;
-	Tue, 16 Sep 2025 13:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C6331326B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029484; cv=none; b=R06rrkcfNDw7tFop46Vcz7auYxHP0L/Ao3IuH05eMd5he0Cx7RzLCbdIk4jMqpf4lwyY1/3rF+1GO6SBHI4FI+Z7YXtPIaWGcv7RTSeGWugv8acMPXt4EWar6BOpnHami0Xmrbgt0Wd1Xw0Z89WZXIWQd51J77L1KkOTf5piKIo=
+	t=1758029921; cv=none; b=Sv7N5cDOCwHPZazkAaqs5RZmkeldPifOXtljAidlpkQZ5wVbrRVUg9Sga7jySdYv5AIhT4+CvfUA/YP1HWjP4t7+S28VOdCk40CH6/dkygvq6jkhjgsTvWQoxiwYeeFaOuoin5Iyw90N+CxE1DlwCSOK84EhJ7hZRYFsX0GZhAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029484; c=relaxed/simple;
-	bh=eaiguNiv3IiJurV7vpMt3YJy2iyvkR3xDYI9wQMO+Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8a3hKiujWiM6v2AqOPMuQZY4RX2JaSarZYy7ZDz1LPSu69o8gOeL0gu4ngk4ymhm6NNbXbhGOcMAuZWmAxs3mRADI3F+J5sqeLgRjxiKxW7rJFxov+5KI4nHHMkQqblHxQ9c7/+C3sl++4P2h0aYeqCSsbIVeOKOpLUL0Dsmlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=R+1zHJBl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G6uIXG020960;
-	Tue, 16 Sep 2025 13:31:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=eaiguNiv3IiJurV7vpMt3YJy2iyvkR
-	3xDYI9wQMO+Co=; b=R+1zHJBlGqTxw4PIUT8ZZCSBbpQTFg2KTY3fjbR4nY2RYv
-	fde7eIwUx7US2Pt3iwT4QzJEbA+HH1BjCDsw6SK5OihAisE6vvb8rOJzEPE19OGN
-	bIzWH5vKddGEH8parhZUo5LYFtrG6hrcF36zWrCFpCpbRKp7suZDmXtCRX2Sg4te
-	Fu/6BS+6cnSjrI643V+7Ur79RdV3niM3cabvzGXWVW0HaMmyJ85CQzDNodfovqw7
-	qcAwgncBKTjcFkxUKeUH7TSB963MZafTJOwX4lxztuoytpoL910tldAEGDiMz3d4
-	8KKOKoB5boXq5/Ej8OP5mX2UvUhgYDWw5q5+NSEQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g537c0p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 13:31:06 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58GCeO5a022467;
-	Tue, 16 Sep 2025 13:31:05 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 496g537c0h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 13:31:05 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9vsnn005929;
-	Tue, 16 Sep 2025 13:31:04 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 495jxu48fg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 13:31:04 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58GDV3KU26542484
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 16 Sep 2025 13:31:03 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3791120040;
-	Tue, 16 Sep 2025 13:31:03 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2884F20043;
-	Tue, 16 Sep 2025 13:31:00 +0000 (GMT)
-Received: from mac.in.ibm.com (unknown [9.109.215.35])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 16 Sep 2025 13:30:59 +0000 (GMT)
-Date: Tue, 16 Sep 2025 19:00:48 +0530
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: maddy@linux.ibm.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] perf python: Add an example for sampling
-Message-ID: <aMlmiHATn5WHUcSM@mac.in.ibm.com>
-References: <20250728055937.58531-1-gautam@linux.ibm.com>
+	s=arc-20240116; t=1758029921; c=relaxed/simple;
+	bh=lRwGS+EzOykdHSjihfKZFNIAo3QDxUC71G1I5pU5mBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcEvUSV9LQq8dZRAoB8zwe5EyTLOYxYtbU2jCvwDSHfgK6hC+iL+GYXSpMNwSjCZo6L+MW/GKURKwE48++xLpJom1LUxarJj2mafYBqYGxPSL63SkmPt9m3cpkwXcwjrOcF+MfE90Jp7FH+25FK1DTGkskPWX1Mmb/HZcFkkfU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-77d253914d0so19262896d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:38:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758029918; x=1758634718;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aDQooxDkD5fz4sLWBIH6i0SDIPVUTbpTi303GssaIAI=;
+        b=nlPDYsl62ZyB/KUiiFq3Wa7vShTg9nQ19bXNQoa1pcQtygdxsqxG/r7LYQxZmqI4Sh
+         f6mwY+pAkz3N2PcARpzulEwGpuV59wqSLJYwwKZp8ldx/WovCuYYMhEHaFOoDeAN346N
+         IFWC8tBK/3nq/vp04dc750vwGI21HZL2ixhpFTxzlZuCB8hOMLH0fYp9Nft8ahzjHyRM
+         0IYQEcUOxNfRvIBomnZnH5AAXYWe3/ZHpL/aADw0Rvc6A4JownTuXk/xc6hL1Ov+/nC7
+         NtRjFIzGZ4ujcQ1gqDXYhAaTMsVL+E+JOyQfpSXOasubz/s/pC+4pWc3FzE29jO6fOCO
+         ycsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5YPQNkfgxnW47U+8l7Ij+cPy2XuPB+Sxt1MpBiAjmTSfuhFbvfwpyLG/ElgF+rgAumZ/ewWCHl/A/tZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRo7wu0dyw36DXHPeDaEfRZz5tRElliEpv2SkzNwgVxEdtjnOY
+	0dMlSBVQk8OzvRZqRRh/7Psubd5zfFVc4De3LyKYhOTy4WkpN4hc/uxtQs+aZcsE
+X-Gm-Gg: ASbGnctXfQrtU70Qns3ZL1ziMLQ4shWLmAuotXnNgcQD3uSObS+gVa5FYvM2TfOKM1u
+	NaeXh2ulsiSBtVCLAn4Y/sltctYA2FLuPQdOtoLKjpaliq40nGOKHKR5B0S6fpZDsk7Brldg0Jy
+	U5ACxFn3hjx2yCUx+xon4r+UeMaI7HUKBemjpAVHSLRDYOu6TUn3rm87oEvcyUDORshioALa8EV
+	3PeUciVLYKyzSifR4MF7MznH9aAHJ78d1PwJLkZKAa5JEmx9cGg56IYEAl3IeiuJUuMMe3HzJEI
+	wuUAg/8Bk/ZVGo83TTo9yWf3s2mLMMgNbO8ubs9LX3zD3QxQkiqg7G3TiiZaNTfkwd4SaJUivI9
+	VAcx6P8wEnKeTDOP7/1SMS707b0n54nSEs2lEj41mkqHUSF9fwsJYTaPjtxi1BtHV
+X-Google-Smtp-Source: AGHT+IHni7ZsO0r3VLNIrZCFd35biqrcyPNh4ZM0ogaZXP+bS6NaWiYuUHgwb3DquAhp7RD8LCqGfQ==
+X-Received: by 2002:a05:6214:400d:b0:786:d65c:1c3e with SMTP id 6a1803df08f44-786d65c1c6bmr77176846d6.30.1758029917964;
+        Tue, 16 Sep 2025 06:38:37 -0700 (PDT)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com. [209.85.222.177])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763b549866dsm94221736d6.19.2025.09.16.06.38.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Sep 2025 06:38:37 -0700 (PDT)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-826311c1774so384090185a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:38:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVe4O4VLkS1JZpGWABwq9/lpDcl88tTiby8aXi6uKsTnd0o98sk81vj1JYtUORxuvzjiG09EPMCMJ/OP8c=@vger.kernel.org
+X-Received: by 2002:a05:6122:1d8c:b0:53b:174d:98f2 with SMTP id
+ 71dfb90a1353d-54a16b20009mr5200853e0c.3.1758029474999; Tue, 16 Sep 2025
+ 06:31:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728055937.58531-1-gautam@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vRJY6iQXGbzEferAhLtEWP6AL0cK4Xap
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE1MDA4NiBTYWx0ZWRfXzLmlqbRrP6wS
- pxd8eGkg8nTEPPLsRnAlGpFtxDl7FiUZD9e4mewOR7xmWtyt+o7fRTiWc8jPgbJgIdfY1WTggxn
- U3MdoztUEFHyw/5QY4+q74EeNKIwbjaNIrkAOwrOu0qF6FLXiVDXAgHaoZXtmA3Jbb5cpiy2iFE
- P1Z1LwgmFaLigZHQ3mdFRljCZVu0+YofXAUqMiK9miQUeTuJ5saNYLWXrN6agNv2hR6tLEXJRWV
- IZNxcuW/jFWRN+Ljd3V9bdnXyvzs/STVP7/fYsl6IbFJYllcA0mtbt2e8AZoOJub9EOMOZos148
- 52n6iRuhbY4pq3gBwaonJattNwD0mBVUC+mDZZbjtxl8wzzsNBBXuyvp0ccnS6dgHbn5hG3tfAj
- s8Y6t0MS
-X-Proofpoint-ORIG-GUID: TRA8eS2hPVamDhbfiBHzGwjl3nUTmpW0
-X-Authority-Analysis: v=2.4 cv=UJ7dHDfy c=1 sm=1 tr=0 ts=68c9669a cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=4H6ACr21Ec4LRm_unsIA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509150086
+References: <20250908105901.3198975-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250908105901.3198975-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <aMlgg_QpJOEDGcEA@monster>
+In-Reply-To: <aMlgg_QpJOEDGcEA@monster>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 Sep 2025 15:31:04 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXWVXd5FauMYNq0yXgQa87F4Z9HcGOu2O_ercQg48GNoQ@mail.gmail.com>
+X-Gm-Features: AS18NWCih78Z1mvXR97O_iR6cJDURxsOD6O73Iub1rATQe0jxKnm2iY0iJuCAa8
+Message-ID: <CAMuHMdXWVXd5FauMYNq0yXgQa87F4Z9HcGOu2O_ercQg48GNoQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 3/3] net: stmmac: dwmac-renesas-gbeth: Add
+ support for RZ/T2H SoC
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Russell King <linux@armlinux.org.uk>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ian/Arnaldo,
+Hi Anders,
 
-Can you please review this series and let me know if any changes are
-needed?
+On Tue, 16 Sept 2025 at 15:05, Anders Roxell <anders.roxell@linaro.org> wrote:
+> On 2025-09-08 11:59, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Extend the Renesas GBETH stmmac glue driver to support the RZ/T2H SoC,
+> > where the GMAC is connected through a MIIC PCS. Introduce a new
+> > `has_pcs` flag in `struct renesas_gbeth_of_data` to indicate when PCS
+> > handling is required.
+> >
+> > When enabled, the driver parses the `pcs-handle` phandle, creates a PCS
+> > instance with `miic_create()`, and wires it into phylink. Proper cleanup
+> > is done with `miic_destroy()`. New init/exit/select hooks are added to
+> > `plat_stmmacenet_data` for PCS integration.
+> >
+> > Update Kconfig to select `PCS_RZN1_MIIC` when building the Renesas GBETH
+> > driver so the PCS support is always available.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3:
+> > - Dropped passing STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP flag in stmmac_flags
+> >   as it is always set for all the SoCs.
+> > - Updated Kconfig to include RZ/T2H and RZ/N2H.
+> >
+> > v1->v2:
+> > - No changes.
+>
+> The following warning is seen when doing a defconfig build (make
+> defconfig) for arm64 on the Linux next-20250915 tag.
+>
+> First seen on next-20250915
+> Good: next-20250912
+> Bad: next-20250915
+>
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+>
+> Build regression: WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
+>
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>
+> This is the build warning:
+> WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
+>   Depends on [n]: NETDEVICES [=y] && OF [=y] && (ARCH_RZN1 [=n] || COMPILE_TEST [=n])
+>   Selected by [m]:
+>   - DWMAC_RENESAS_GBETH [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_STMICRO [=y] && STMMAC_ETH [=m] && STMMAC_PLATFORM [=m] && OF [=y] && (ARCH_RENESAS [=y] || COMPILE_TEST [=n])
+>
+> WARNING: unmet direct dependencies detected for PCS_RZN1_MIIC
+>   Depends on [n]: NETDEVICES [=y] && OF [=y] && (ARCH_RZN1 [=n] || COMPILE_TEST [=n])
+>   Selected by [m]:
+>   - DWMAC_RENESAS_GBETH [=m] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_STMICRO [=y] && STMMAC_ETH [=m] && STMMAC_PLATFORM [=m] && OF [=y] && (ARCH_RENESAS [=y] || COMPILE_TEST [=n])
+> I: config: PASS in 0:00:01.592356
 
-Thanks,
-Gautam
+Thanks for your report!
+
+    config DWMAC_RENESAS_GBETH
+        depends on OF && (ARCH_RENESAS || COMPILE_TEST)
+        select PCS_RZN1_MIIC
+
+    config PCS_RZN1_MIIC
+        depends on ARCH_RZN1 || ARCH_R9A09G077 || ARCH_R9A09G087 || COMPILE_TEST
+
+"ARCH_RENESAS" is wider than "ARCH_RZN1 || ARCH_R9A09G077 || ARCH_R9A09G087".
+I would just change the latter to ARCH_RENESAS.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
