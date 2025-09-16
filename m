@@ -1,140 +1,164 @@
-Return-Path: <linux-kernel+bounces-819197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433E0B59CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E79D3B59CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 262902A12A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17213161F37
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD7246799;
-	Tue, 16 Sep 2025 16:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4563127713;
+	Tue, 16 Sep 2025 16:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JF93v5NA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/uQ8Rc2"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12745126C02;
-	Tue, 16 Sep 2025 16:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1154424DD00
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038451; cv=none; b=NqFqr1kF8dNM4M7I3BrD5eVlW8RSc2ONv3suY+Mbr5nv0+daWQ9gLO9E+LxfbUKSpBqu063IzLzCWOIC0OkrM6FAKeO5Xan4zCgzc3rLkzqigSzqloA1JeBXTYcbaQWHNCJagrSoIts3N00V1aEGvOzn6q81vLhEkSTquhtpoBk=
+	t=1758038494; cv=none; b=Y9IHOLD4fi8EMB5GwDBnrM4ucWNimEkWVjE60CJJEVwwMtwKdkM7GMiAXxzoBtC7GxNSZyP9lgRfP1mqHclqOrqEAYMNl+7YdVrbRf3Ot2uJcEXz8UuCOnVDfH9R0wUfH2E5d6X8w7ZZ88IfkItLZ3oXAGULcY9HlKMfsiBV1dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038451; c=relaxed/simple;
-	bh=HMPTLgr233HLTCdKhCopfRE55dgfVIBSIEdZyziNLKA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bvDUIudy9Mq6X2pbogmKoDtkv8SLfrpZSiZliu0QQ+DYlR9RrZPlAM5BIdGIit5BxZrrlUalVpR2npxf9GOzSjleYm1yxO42LgaJqjxklUXubEucsAHjLeiqvFoYId5YpZ6+u9xDuoyly4XvY8VAX4czgiP0fhC7NrO4DGxu9/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JF93v5NA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F699C4CEEB;
-	Tue, 16 Sep 2025 16:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758038450;
-	bh=HMPTLgr233HLTCdKhCopfRE55dgfVIBSIEdZyziNLKA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JF93v5NA60LOG+PgpudZNJuSz0LE5SKMq9WONOWpdNgGgMULwHA/hD7WOCgQ6JiBE
-	 UpNSaB+1M7drHO6EyDcVW6vI/BrBEWM7c+HPdRgCwSs8OYJFEfLAbF/xiZpePwBpUU
-	 qvulcDKdS9utjgPAJO/A+pxn8THi5lxMqq3RUNDaUdO/VAaIRm0bbl8N5OnyK8fzHa
-	 p+PfZNUXyuVIU9sTuxk7CWoG4vUr8092gOjcKfXK+l1zXc8IvgW4p8CVTM44XCmtIR
-	 vWibHJT7JQ/p2bDvFsGyfXaXPpiNhhhaPagYGl8haxnzpB7eG1fg90LqKddfc5XfmA
-	 ZwCPIyPRFUFRw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uyY6q-00000006mMO-1LSP;
-	Tue, 16 Sep 2025 16:00:48 +0000
-Date: Tue, 16 Sep 2025 17:00:47 +0100
-Message-ID: <86segm1j68.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Mark\
- Rutland" <mark.rutland@arm.com>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J.\
- Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	"Saravana\
- Kannan" <saravanak@google.com>,
-	Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-	Sven Peter <sven@kernel.org>,
-	Janne Grunau
-	<j@jannau.net>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Clark
-	<james.clark@linaro.org>
-Subject: Re: [PATCH v2 01/25] irqdomain: Add firmware info reporting interface
-In-Reply-To: <20250916161438.00007ba0@huawei.com>
-References: <20250915085702.519996-1-maz@kernel.org>
-	<20250915085702.519996-2-maz@kernel.org>
-	<20250916161438.00007ba0@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1758038494; c=relaxed/simple;
+	bh=Khh5987+1u6MVC/NKJ8ASpt3UuFIKNSR0pBiIhzVLUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PFDKsSdyDUwabKZJcUPAEkN7RCGy08v3FpH/0UBIYeZuqqoNBzQ1FpLs8AazVzeDA98U5QBeN/Qy5dG8cLDsH5gkYrvh7H3bM5+t3i7icfeIhnoq+Bc+cMwM7W8LGBUVPINGjufx/p/5wn7LRH8gnxDaY9CrFc9J7yw0igu8v0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/uQ8Rc2; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6294ff16bacso1656406d50.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758038491; x=1758643291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xvXia67Cq9g+cEA2tdQsRO5nx9SORMf8wIBhDb/3W4o=;
+        b=c/uQ8Rc2gmptwcLCkmmxAB5JgpM+s/6WnQ/XtpBQCWoniynK22xzsx5IvR3bLu3gZK
+         v5ZhUIGLRH4wfFd8LPu0vjn2jFXnYzOLZtt6Wfr29dUgM8tUBT6OzovasKIZipziRaIz
+         /V9f8X+Y/49unfmKeqKJiSHCC2CtMRcinnJvU6o1TPHyzYfhl9KjLXGxUSWDjY7CQsvu
+         mMwQa0/s0uqq6LZ+tfZvN5Dj0jzHX8VxRv/IZJOuRTcjXMrIgWhTpp4z56D6zkYhux0z
+         mZTkTSAo+/dBs3Xph16f0rL52H95lgV4hK9Pl6+liAWDVunpNivHUpQCV9BxRYb9mIlQ
+         jsqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758038491; x=1758643291;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xvXia67Cq9g+cEA2tdQsRO5nx9SORMf8wIBhDb/3W4o=;
+        b=kgevRlDNqg46A3naAaIAr8xg6RdP1H5FzhHsgfjbFCwk6Q2DIYoQVY5NuQtqbGO9AZ
+         PxMIF5ZERMwBfQp1Gvu7WhJF5+vxgRJJOCy113njfQGxUEUM+hDMtANM/ThMlfBaiKDj
+         mHtRjyzs8rDLDP6pgU3Lk7dFEBCJdJm9h2QWkzwDmFAV8jrsShE9ni+XG+MMQQZ6ehqw
+         GICH2yGnAtwZ7qsztKQluOpUj2oRBEY6JL1VDAHCSjhKZM5tIDrIMykq/GHJFORHvgvP
+         W7Qw4OG/NJgh5Px31SHhDvWrNNGx1VcsFNYG0cyTe8NMEnucPUvvUtKPGwdToCMev7so
+         UIsw==
+X-Forwarded-Encrypted: i=1; AJvYcCViCGLYWHOs5yCC4DmpvFYSb9AgeTpfaqEMCgtZ0hQQNvMTxhRwVOE4yHqcL6hhqIUGab0SLCGZvXMlSls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWs9qtDtYzBaTDhPiaErHhMQPlAMrRjVH1U9zwTL4QjtG7Dxkz
+	gyuLzgdazchOvvcP+ypRquaTWNazBl1B1XaZJ8gF99RDtZkg1mpc5iyh
+X-Gm-Gg: ASbGncvaxE8aW3LZjjgbfN+6F9wQx1uaTXNqdbEtqzCODPCf11CZwOieDriL9pi6rcf
+	7R3XkDf8PEUgwmpTHicAvkvYFW74GPZypOI4T7iz9StNGaVD/j7FXker2ueFfsy37uwR3IvNJXz
+	CJ60AxwF+qPEcb8VcZgCE0e9NAxW4pr/EPfVh/ExqYz33dKD1dpAh6TxOeMRsIyGzh04pgnA/bu
+	Whti2PAwYQALX5KKFLFLQDjnkdPmZsd7ZDqcal7++EnOdUJyRT4IDUIGIBZt+kITy/1oycuCbp4
+	i/zzsIyrEGWZ5gIgetp9Wl443i9INfvBJJ2b8hI9A1UNAASTGtZSqVfv/bLVs90FlYsH0iFbi1E
+	kMuXZ+XAqmVFUD/geRVb/85oNWfT8uJuNUrEbLbfR8RkowRE=
+X-Google-Smtp-Source: AGHT+IEH+JurO6Pqf+3vm5jI9TQTunBdyoFl7E4dFaoXc2kYbDIILkBmSJJMNdbYEyyRHGeHv0wzRQ==
+X-Received: by 2002:a53:864f:0:b0:600:d00d:f4eb with SMTP id 956f58d0204a3-6271c5cfcc6mr11388302d50.12.1758038490342;
+        Tue, 16 Sep 2025 09:01:30 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cd703f54sm969765485a.37.2025.09.16.09.01.24
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 16 Sep 2025 09:01:29 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Kairui Song <ryncsn@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Hugh Dickins <hughd@google.com>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <baohua@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v4 03/15] mm, swap: fix swap cache index error when retrying reclaim
+Date: Wed, 17 Sep 2025 00:00:48 +0800
+Message-ID: <20250916160100.31545-4-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250916160100.31545-1-ryncsn@gmail.com>
+References: <20250916160100.31545-1-ryncsn@gmail.com>
+Reply-To: Kairui Song <ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: jonathan.cameron@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, tglx@linutronix.de, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 16 Sep 2025 16:14:38 +0100,
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
-> 
-> On Mon, 15 Sep 2025 09:56:38 +0100
-> Marc Zyngier <maz@kernel.org> wrote:
-> 
-> > Allow an irqdomain callback to report firmware-provided information
-> > that is otherwise not available in a generic way. This is reported
-> > using a new data structure (struct irq_fwspec_info).
-> > 
-> > This callback is optional and the only information that can be
-> > reported currently is the affinity of an interrupt. However, the
-> > containing structure is designed to be extensible, allowing other
-> > potentially relevant information to be reported in the future.
-> > 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Hi Marc,
-> 
-> > ---
-> >  include/linux/irqdomain.h | 28 ++++++++++++++++++++++++++++
-> >  kernel/irq/irqdomain.c    | 32 +++++++++++++++++++++++++++-----
-> >  2 files changed, 55 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-> > index 4a86e6b915dd6..34993bf8293c4 100644
-> > --- a/include/linux/irqdomain.h
-> > +++ b/include/linux/irqdomain.h
-> > @@ -44,6 +44,24 @@ struct irq_fwspec {
-> >  	u32			param[IRQ_DOMAIN_IRQ_SPEC_PARAMS];
-> >  };
-> >  
-> > +/**
-> > + * struct irq_fwspec_info - firmware provided IRQ information structure
-> > + *
-> > + * @fwspec:		Firmware-specific interrupt specifier
-> 
-> Not aligning with what is in the structure that I can see.
+From: Kairui Song <kasong@tencent.com>
 
-Ah crap, I missed that one. I'll stash another fix for the next
-version.
+The allocator will reclaim cached slots while scanning. Currently, it
+will try again if reclaim found a folio that is already removed from
+the swap cache due to a race. But the following lookup will be using the
+wrong index. It won't cause any OOB issue since the swap cache index is
+truncated upon lookup, but it may lead to reclaiming of an irrelevant
+folio.
 
-Thanks,
+This should not cause a measurable issue, but we should fix it.
 
-	M.
+Fixes: fae8595505313 ("mm, swap: avoid reclaiming irrelevant swap cache")
+Signed-off-by: Kairui Song <kasong@tencent.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Acked-by: Nhat Pham <nphamcs@gmail.com>
+Acked-by: Chris Li <chrisl@kernel.org>
+Acked-by: David Hildenbrand <david@redhat.com>
+---
+ mm/swapfile.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 4b8ab2cb49ca..4baebd8b48f4 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -212,7 +212,7 @@ static bool swap_is_last_map(struct swap_info_struct *si,
+ static int __try_to_reclaim_swap(struct swap_info_struct *si,
+ 				 unsigned long offset, unsigned long flags)
+ {
+-	swp_entry_t entry = swp_entry(si->type, offset);
++	const swp_entry_t entry = swp_entry(si->type, offset);
+ 	struct swap_cluster_info *ci;
+ 	struct folio *folio;
+ 	int ret, nr_pages;
+@@ -240,13 +240,13 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
+ 	 * Offset could point to the middle of a large folio, or folio
+ 	 * may no longer point to the expected offset before it's locked.
+ 	 */
+-	entry = folio->swap;
+-	if (offset < swp_offset(entry) || offset >= swp_offset(entry) + nr_pages) {
++	if (offset < swp_offset(folio->swap) ||
++	    offset >= swp_offset(folio->swap) + nr_pages) {
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 		goto again;
+ 	}
+-	offset = swp_offset(entry);
++	offset = swp_offset(folio->swap);
+ 
+ 	need_reclaim = ((flags & TTRS_ANYWAY) ||
+ 			((flags & TTRS_UNMAPPED) && !folio_mapped(folio)) ||
 -- 
-Without deviation from the norm, progress is not possible.
+2.51.0
+
 
