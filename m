@@ -1,121 +1,151 @@
-Return-Path: <linux-kernel+bounces-818070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBA4B58C5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:29:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E551B58C60
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6065F16D596
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:29:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54313522336
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2DD2550CA;
-	Tue, 16 Sep 2025 03:29:45 +0000 (UTC)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADBA2550CA;
+	Tue, 16 Sep 2025 03:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XMPF0ipN"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69896CA5E;
-	Tue, 16 Sep 2025 03:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F582376F8
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757993384; cv=none; b=PyoDYLDSIz9lAAxG1MDeWjtUuK1tbq7ZAlr2EVMshK1uOTY1Oa80cNmJlf52V1RpeAT/66vkdCM7CazUuCE+FAF9/193i6Oy1hyisqyP/92H1eTPWHUwCZkGxA8Zj/4Ksb5Mv6ufOWtAJJB+5jTdrmBL0Oztl/EjEF0NeGb8B70=
+	t=1757993398; cv=none; b=rU6Sc3gXVzg4NSU3F3cNOlLxTQMUGkJyclVuhhkaMyNRh/VhhWmum2DNZsXaCqh7PHJMucOFQRRc9sUcXSXOtKJt0hGhhiQPh63sZBnFsyd/EOFQv5unFNeG7KNnbYQfLv0bCF1PkwwGspiHSkaYhyBG619WVJIn2O4FWxGjFHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757993384; c=relaxed/simple;
-	bh=EhWdJEf2wBD7X3jzz/fAR+SIbs7mi1J+rFqwmwmk+nw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rvdJuFZPwEQgZiD62kIh+THsRnwwuBiBFXRRhJCGiEpGkvfXnnF/IItPWs/lcKXctTfeewYN0CdC7kjQRDls2xkoOkgpbjvpPjBkC3q1CijE65ajrqZwUNPWaHvqLzpjCy+aLQ6lhMkdb68EKlX8ouVL3fxVuauAEkYizKJoJ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn; spf=pass smtp.mailfrom=t-chip.com.cn; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=t-chip.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-chip.com.cn
-X-QQ-mid: esmtpgz11t1757993315t735adbf3
-X-QQ-Originating-IP: bCdIXwVAGF6MwENTPw+HEEysn9sINOX+5ML4W6MDpzk=
-Received: from dkx-H410M-H-V2 ( [183.51.122.206])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 16 Sep 2025 11:28:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14883937900501578486
-EX-QQ-RecipientCnt: 17
-Message-ID: <EEABCC59F39E8FC5+04995f9826d047eeb5f4bada25c3dd93e50983b0.camel@t-chip.com.cn>
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: rockchip: Add Firefly
- ROC-RK3588-RT
-From: Kaison Deng <dkx@t-chip.com.cn>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Robinson
- <pbrobinson@gmail.com>, Jimmy Hon <honyuenkwun@gmail.com>, 
- linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jonas
- Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org, Andrew Lunn
- <andrew@lunn.ch>, Dragan Simic <dsimic@manjaro.org>, Wayne Chou
- <zxf@t-chip.com.cn>, Kaison Deng <dkx@t-chip.com.cn>, FUKAUMI Naoki
- <naoki@radxa.com>, Heiko Stuebner <heiko@sntech.de>, Conor Dooley
- <conor+dt@kernel.org>
-Date: Tue, 16 Sep 2025 11:28:33 +0800
-In-Reply-To: <175794446144.2732898.9504412064423841025.robh@kernel.org>
-References: <cover.1757902513.git.dkx@t-chip.com.cn>
-	 <27b2ce7950fdbf28c6c8404c3f8be3c1c35d6b3c.1757902513.git.dkx@t-chip.com.cn>
-	 <175794446144.2732898.9504412064423841025.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+	s=arc-20240116; t=1757993398; c=relaxed/simple;
+	bh=8csgOyWqwFedICGI8KuEV1/4Kho5ECv92muZvbd3/P8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4vWB2qXxLUV1q/MThgDDrJSs2fZLKIAacnuC1VGuRYzqqeuO/Lpq7Vt6ItTyhnmhBTq1suHcccXnuNcexUEl8Oz7VvufbESZP06LklL2f7BzeV5ihdO3/O2jmu0IoodDqqLzV+R9Fhyjvk/Wz392VA+E2M+zw5mb/DUFXm/YEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XMPF0ipN; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-776b0100de0so1764758b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 20:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757993396; x=1758598196; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxUjhwR9VEHGUYwboJUS57OxMHHZMq7UtIv/Sk4NGQY=;
+        b=XMPF0ipNjVqmQidmR7u2rf1J3gdKyFuBhLRaOpvp3wrFtigQv+P5CbzkyxEqJCRI1s
+         9Do4PtRMQVrU1nvQ15ihU3+JKwEexOAob0yCLMzxKkT6B5apotErDRt6O7OIomqbUAg5
+         LlMpAtDlSbeQe98BLHJl6kI6shmBGvw8x76YI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757993396; x=1758598196;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dxUjhwR9VEHGUYwboJUS57OxMHHZMq7UtIv/Sk4NGQY=;
+        b=lyGnWWBZlWCGjGrryatBmzm2d+Oc60FXA/8T41RPC5Vokvpq3vtqOtj8qbLxknaeAo
+         wm+uEP7C8IicaMmDFGXB2sKcDBwmAdnX3rPn3L4nduB57ysNzE/2RPJrMRYfhBs27+1C
+         XHkbkmudIriR0zDm3WX9Horj6Sq7d9hP7k183W/WldCZdXyEtqHBeoPLvi3qUmojYYbz
+         a/vr6gkmSPdQEmlcZIq8Ns5KkyAOmATWIibanzefeK2fDhl7Rba9lB0s63QCQ1BNzJOl
+         E+meZJbBmO6qVikD9FpIEoGlhJJFwZy8E0oI+VjmzYKuhby1akXy13GHoD2jbZ71sLLU
+         QEAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXY6RTjo2UsVF8qZJEf6iW3ZgHjSgwf8pWii7p+xgNlE0NLl1Kfw42SB/ENIyGa1ipn2WelU6OototQ5jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPEgelGbWdPSHbihLBDRaNd5pbD2IcXb0nUP38+EQ88ukmS7/W
+	UbQl7N+B/6rCgGyaVtaVFNqnuT8MAm36TFZvsnCpY3it90urGt3fbaX8r3J9JdxGYw==
+X-Gm-Gg: ASbGncvZ7keGNF74oHKmkBgCPyzh/2b6Qv0obzsGt/ralVMM9gmu4SoxWMgpJXS395I
+	ybK800F0H/zIslxI/CQVF7Z9rtqN6qd2MwJFrPKSr4C7nUtLUXnP6jo36ehirHXauutOZ83nr4G
+	HYosAMjIZWhcanAu9bh9kxA4qQwTtgijejj7XheYe8yUxYIhga3z3asn7G5m9c9bI88JmQ5efJD
+	2IG/5VnwmDKQ6rlt1YqeWqDvvG8dkvRm3KYyMkqo0dXXb12T13JN9QXG9W6r2NtznE9yFW+UzaF
+	I/VlUQXzy9iPUCSeKkF/VpxHlcA1P9RPX4HO7XK4HDqa09hDRJWY7vcCqryNOyQV/h6q+Zomqr2
+	Oy0Ozild0CEzIIfgZzR0YDaLizQ==
+X-Google-Smtp-Source: AGHT+IHUdGvf+grPzySU6sU1K6kv4ITsptEWc28oqLzHAsC2Xe4Nyh/n5AaIqBF2emksjORbwfcs7g==
+X-Received: by 2002:a05:6a20:729c:b0:246:ba:2d9c with SMTP id adf61e73a8af0-266f4bdfa24mr1303797637.16.1757993396177;
+        Mon, 15 Sep 2025 20:29:56 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:c321:7d8a:f9b8:7671])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a36bf815sm13259169a12.15.2025.09.15.20.29.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 20:29:55 -0700 (PDT)
+Date: Tue, 16 Sep 2025 12:29:51 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Vitaly Wool <vitaly.wool@konsulko.se>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Vlastimil Babka <vbabka@suse.cz>, hannes@cmpxchg.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 0/3] mm: remove zpool
+Message-ID: <u2kujkv47egugef25at3rykkwuztel6tg6rjqqadacv2nj3pkg@qmxkftyzmayd>
+References: <20250829162212.208258-1-hannes@cmpxchg.org>
+ <20250904093325.2768507-1-vitaly.wool@konsulko.se>
+ <7b1ca42d-1b89-44f4-bffb-e6b09f86fdc5@suse.cz>
+ <1d42c513-cc83-4f08-a10c-cbd6206070f4@konsulko.se>
+ <girukcvvzgbtkxt4aftfz3lw3glvf2qsof4mx6wf5perolck5n@vaxlrtaeuzw7>
+ <dh74mr7bjtpzk7frviv6iqqno2u2b27p7jiagp2dtnsz2wrfhr@wlb5vqg4majs>
+ <tbvushbdn7nzitey3uy6humdndd6247r4544ngqkds3cr447e6@prnla4edwxmk>
+ <f3ufcsjvvxhi5gzw2wglkpedgyyi6tiaje7em3tbxkzhklphvh@sv3dbo4yba5p>
+ <98B3AFB0-EBD5-4779-A5DB-FFA6717E83C3@konsulko.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:t-chip.com.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: MXE8fio8Dejk8AUu/Aqvn7gY26XHjU32xF0F+vEcnzxjI2i5enOzEo6u
-	B+Dh6kz80uah8B8wUaswfzDCl99idnuFMqxfqBmD0+Ozp1sdWfDcwP+omq8ENC20yjP/RPv
-	sR3xDVUXXXsKQm0eoJCp51cc0OTFTG6g2omqHKYDPWy9IrGrpNbvj5APrDb4Y0SZi22En3y
-	spzi1xIJjOgOdtkprq+niRa135qZMS/dheINQIHfKMc3aC+mhvWt+9oCtHxRyACbUKMh4S3
-	zVvxDSykETpXHoObUGt09y+dhaGorYk1CC2ih+d6eKc+lNMedI0qPaUabqB0Qg8QRO9RmrW
-	xhryliCL+TufmiSVO7yYQ8Puh2bGAs74td43hoEkNBIh34ks7eGfJsTAzeYHlO/jVvw8L5Z
-	aSzDPiWoqD7BjY8yqD7pwN/IJl0MErhI+RLTeehgAsU66aqS0ZKu4yCJKvt96J7aUOOYe5g
-	HltZQAr89sq7tbcOlQzBQ3ZCTmPUUX/bOvCY23ptl0oTOltYRHyqqT87ey4fWKlRxJ/eoLB
-	7Mw1ay3A3qTJXxZ0hqNSmEIsZ42nExMzvc6aOrUPBXLMuU4fpCQ1AdXbgzp08zlfwUpXZtA
-	Z4u/htrpaxMF6n3rgEEFhNLw2BnmmNZoMJVduT3C0+g2MpdHu6ZjBx+Xr+gR/KRRWZ2wmPx
-	zFJoZcv/wQKaBKdudUUoiBtz2ibMrYLbxCAYYWj6zKFqQnaWLix1tDtz4wzuNkHIYEVQO3L
-	jAV1peDbst0RDjfc2FJol4FKi8Lsn0lX547hpJ6Gsf88XAgZ71CE/XzAUclfDLITIGJ8E0z
-	7V0EOeVvsvDIx544wcZiRj4U2u1T2FboByeh52UqYuephd1BwtfXXHy0B9QfGxkk4ZF3fm0
-	JcfhmDYIm+Xig8tryg2jDRD/gSxC9GFYLqPCX32hs3nq5h3BtlGrYI43Cd/Iq6gmvjqb5xo
-	5SJPcLaKNJJKYyxgGXpM9b8aBqC8Wqo8vD5tCoRtZFQ7JUm4lh5l8ha8jYq4xJR+k3/a0Mo
-	mte8wVBFwqnZp/spPEfRFyDyhGKaDkvuLZlVCfWJKRXaz3QiJC
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98B3AFB0-EBD5-4779-A5DB-FFA6717E83C3@konsulko.se>
 
-On Mon, 2025-09-15 at 08:54 -0500, Rob Herring (Arm) wrote:
-> On Mon, 15 Sep 2025 10:22:04 +0800, Kaison Deng wrote:
-> > This documents Firefly ROC-RK3588-RT which is a SBC based on RK3588
-> > SoC.
+On (25/09/13 15:55), Vitaly Wool wrote:
+> >>> I can confirm that android uses zram+zsmalloc.  As of 16K pages, there
+> >>> was a way to toggle 16k pages on android (via system settings), I don't
+> >>> know if this is the default now.
+> >> 
+> >> While I don't know what zsmalloc struggles Vitaly is referring to in
+> >> particular, off the top of my head, zsmalloc does memcpy()'s for objects
+> >> that span multiple pages, when zsmalloc kmap()'s both physical pages and
+> >> memcpy()'s chunks of the object into a provided buffer. With 16K pages
+> >> we can have rather larger compressed objects, so those memcpy() are likely
+> >> more visible.  Attacking this would be a good idea, I guess.
 > > 
-> > Link: https://en.t-firefly.com/product/industry/rocrk3588rt
-> > 
-> > Signed-off-by: Kaison Deng <dkx@t-chip.com.cn>
-> > ---
-> >  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
+> > Yeah I personally think attacking whatever problems zsmalloc has with
+> > 16K pages is the way to go.
 > 
-> Please add Acked-by/Reviewed-by tags when posting new versions.
-> However,
-> there's no need to repost patches *only* to add the tags. The
-> upstream
-> maintainer will do that for acks received on the version they apply.
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> 
-> Missing tags:
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> 
+> Well, there is a way out for 16+K pages, that being:
+> * restricting zsmalloc to not have objects spanning across 2 pages
 
-Ok. Do I need to resend the next version for the missed tags?
+Yeah, the big problem with spanning objects is memcpy()-s, which we
+currently need to do because zsmalloc() users expect linear address
+from zs_map().  This doesn't need to be so, however [1], as zsmalloc()
+can return SG-list instead and then upper layers (crypto/zcomp) should
+handle that.
 
-Kaison
+I have to admit, I haven't looked at zblock, so I don't know how
+zblock handles it.  I'll try to look at it.
 
+> * reworking size_classes based allocation to have uneven steps
 
+If I understand you correctly, I thought about it briefly while
+working on configurable zspage chain size [2], I think I even briefly
+chatted with Minchan on "should we open code size classes instead?".
+Then I looked at clustering (size_classes grouping and distribution)
+and it wasn't too bad.  However, I don't think I looked at 16K setups,
+things might be sad there.  Another thing in my to-look-at list.
+
+While looking at size-classes clustering, I also sort of thought
+about limiting zspages to one single page, so that zspages would
+be a collection of fixed size chunks and each zspage would maintain
+a bitmap of used/unused chinks, so that we can pack any objects into
+zspage instead of "one particular size class".  But this has never
+been materialized in any way,
+
+> * as a result of the above, organising binary search for the right size object
+>
+> This will effectively turn zsmalloc into zblock, with some extra cruft that makes it far less comprehensible.
+
+Is v4 [3] the most recent zblock version?
+
+[1] https://lore.kernel.org/all/Z8K10w-6fIpDhYc6@gondor.apana.org.au
+[2] https://lore.kernel.org/all/20230118005210.2814763-4-senozhatsky@chromium.org
+[3] https://lore.kernel.org/all/20250412154207.2152667-1-vitaly.wool@konsulko.se
 
