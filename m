@@ -1,133 +1,119 @@
-Return-Path: <linux-kernel+bounces-819579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0E2B5A359
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:40:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051DEB5A361
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF8148494B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0EF3218AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E621E2820B7;
-	Tue, 16 Sep 2025 20:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8FB31BCA3;
+	Tue, 16 Sep 2025 20:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpp5cQ8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PhWPBu1J"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B9931BC8F;
-	Tue, 16 Sep 2025 20:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5EC31BC8E;
+	Tue, 16 Sep 2025 20:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758054941; cv=none; b=G1DP1fLCMq3tTm2JmBootjmQpFKoYDBFaG699eLfYLB6Zib64krNN472NfJlDMFKSCAa7wJRs3La9MAmUJhZO2gLth0/Rtb7Cs0KXXTjHGrZza02+zvs7TCDhNY/Y7fibxDUpVsh9wUZbPs+IMzqqNSTlRY3rkjb8SrzXxdDSLY=
+	t=1758055132; cv=none; b=p1pOEqI+HUQup7ex9f7IbhhKwNt/ru052X5cVZavkIZzdv9tvfssHk6rfKzpMy31UKWMwX5K7AaD2hWHWzfdxVIHhakb9gtHJu/EAysWTxBXtkpSLSdqFWf6i6DS5q6HFB05c+OMTjIIVZfOt2hDxdSCiyi47MBeWm90aYFVxIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758054941; c=relaxed/simple;
-	bh=KqfC65wNBi+Y/C3HaiesaaDgdsXgozVufkjtOAiu4hM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BfzbexwznLCPkNGwbicJxk5WRPXtCeTw5eoU3oa2KIF443Ga0H6O7aD3GJgA8TOVRpXWSpptkO9pf18dMG928QP1Nkp8/LRHy3Hgcz3o7POcpBPVTRHTTkHtNrfWv7LseML17GI3irwlgsfdZaCcDecqqrq9j85oYtBWmyrBb4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpp5cQ8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8304C4CEEB;
-	Tue, 16 Sep 2025 20:35:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758054940;
-	bh=KqfC65wNBi+Y/C3HaiesaaDgdsXgozVufkjtOAiu4hM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gpp5cQ8MDuThAKuE8YpdMV+sVmG1CQsK86y/CmAihJJHE7cjHFOtU+vBlylCrbI/B
-	 lkY285P/FU7qaXK1zTJsd0Uy9haUzrsSnqAKTj9pxM3bxqo491TsNsOl9LfISl5v+3
-	 dCUmflIjzOaN8eacQOndiOs4z+ePCcVHzgG8AQdQD2SB9IgOACAVpGSI/q18Z++lMp
-	 i5FYXY9WRiRyOlU7eo3XUR7kQuJT1uYmRXwaj9L/VhQ50qoSiW9SeCH+MAImQa9z2F
-	 ONE1Tn7ylJq2aVqatsdhE9zACAPUYCJw5cNPtF6AVXbcNBe+SKpSyJ/qE4CHEQMRHA
-	 NHRiyZI6sn0yg==
-Date: Tue, 16 Sep 2025 15:35:39 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
-	nic_swsd@realtek.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Wang, Crag" <Crag.Wang@dell.com>,
-	"Chen, Alan" <Alan.Chen6@dell.com>,
-	"Alex Shen@Dell" <Yijun.Shen@dell.com>, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] r8169: enable ASPM on Dell platforms
-Message-ID: <20250916203539.GA1815401@bhelgaas>
+	s=arc-20240116; t=1758055132; c=relaxed/simple;
+	bh=hJyIPXfNJ1aunH4FVAYee6rlV40lzbNU3+JYVrCnYpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRmM3Rm4+gRggx1bAx+mmQfkzoLp+PXJSUmMiAFHq/OA81OT9tZCCTUIu8Uae7a5SVU3I0974o0bkHpF9ZZhemp6+nXnKYp1/wfAMr5CRwzMyfYlps3uMqV3QZdkdq4sq/UGT9kxdHqHEpVIP6KnvRJh8jv1CdwvdfrN8p6ox7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PhWPBu1J; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hJyIPXfNJ1aunH4FVAYee6rlV40lzbNU3+JYVrCnYpc=; b=PhWPBu1JkXx81hXaEuPiJUtrWc
+	tLuXIsYDUR1mNdJlEtdyFtn9oX2PN2YW1aR3MF0q5Fk+v7IwI4nNuxdqmFK4BSvUkQxDSRIhv3yy7
+	JDm+ZeoJ0L5F/ezTS3RAJFhBeJjs5wPMJatvGx3wHK794TgaKJKWtrXP6Hbzbzz6Fei6nTfZYWkol
+	6qiIOo213NmHQPaUKNaIcLkR4V1tjEoEOnlRBLUz+Ujdvs2hVm/TMnUgD1l/3AH/HBCt3v+LHVEe5
+	asbCRvsgw9mNtTEeiF6tYMWITfWfxv1ll9sWWCyx0AQ1YeZ9chDWpXO66XN9DwYlvJ5XK1Jo7TViU
+	yoZWYoCA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uycRk-0000000Cj0C-2bRq;
+	Tue, 16 Sep 2025 20:38:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5B515300230; Tue, 16 Sep 2025 22:38:39 +0200 (CEST)
+Date: Tue, 16 Sep 2025 22:38:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Yuzhuo Jing <yuzhuo@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Barret Rhoden <brho@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Guo Ren <guoren@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 0/7] perf bench: Add qspinlock benchmark
+Message-ID: <20250916203839.GB2800598@noisy.programming.kicks-ass.net>
+References: <20250729022640.3134066-1-yuzhuo@google.com>
+ <aJDDfCKFXFQOJ134@J2N7QTR9R3>
+ <20250916141811.GK3245006@noisy.programming.kicks-ass.net>
+ <CAP-5=fVec0Wp-d489aWE6Tk=W4dz-r6O+JUiqSPLcEZ7TK6FJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec602131-ed22-44a8-a356-03729764a690@gmail.com>
+In-Reply-To: <CAP-5=fVec0Wp-d489aWE6Tk=W4dz-r6O+JUiqSPLcEZ7TK6FJA@mail.gmail.com>
 
-[+cc linux-pci]
+On Tue, Sep 16, 2025 at 10:00:13AM -0700, Ian Rogers wrote:
 
-On Mon, Sep 15, 2025 at 09:25:39PM +0200, Heiner Kallweit wrote:
-> On 9/15/2025 3:37 AM, Chia-Lin Kao (AceLan) wrote:
-> > On Fri, Sep 12, 2025 at 05:30:52PM +0200, Heiner Kallweit wrote:
-> >> On 9/12/2025 9:29 AM, Chia-Lin Kao (AceLan) wrote:
-> >>> Enable PCIe ASPM for RTL8169 NICs on Dell platforms that have been
-> >>> verified to work reliably with this power management feature. The
-> >>> r8169 driver traditionally disables ASPM to prevent random link
-> >>> failures and system hangs on problematic hardware.
-> >>>
-> >>> Dell has validated these product families to work correctly with
-> >>> RTL NIC ASPM and commits to addressing any ASPM-related issues
-> >>> with RTL hardware in collaboration with Realtek.
-> >>>
-> >>> This change enables ASPM for the following Dell product families:
-> >>> - Alienware
-> >>> - Dell Laptops/Pro Laptops/Pro Max Laptops
-> >>> - Dell Desktops/Pro Desktops/Pro Max Desktops
-> >>> - Dell Pro Rugged Laptops
-> >>>
-> >> I'd like to avoid DMI-based whitelists in kernel code. If more system
-> >> vendors do it the same way, then this becomes hard to maintain.
-> >
-> > I totally understand your point; I also don’t like constantly adding DMI
-> > info to the list. But this list isn’t for a single product name, it’s a
-> > product family that covers a series of products, and it probably won’t
-> > change anytime soon.
-> > 
-> >> There is already a mechanism for vendors to flag that they successfully
-> >> tested ASPM. See c217ab7a3961 ("r8169: enable ASPM L1.2 if system vendor
-> >> flags it as safe").
-> >
-> > Right, but writing the flag is not applicable for Dell manufacturing
-> > processes.
-> > 
-> Can you elaborate on why this doesn't work for Dell?
-> 
-> >> Last but not least ASPM can be (re-)enabled from userspace, using sysfs.
-> >
-> > That doesn't sound like a good solution to push the list to userspace.
-> > 
-> > Dell has already been working with Canonical for more than a decade to
-> > ship their products with r8169 ASPM enabled. Dell has also had lengthy
-> > discussions with Realtek to have this feature enabled by default in the
-> > r8169 driver. I think this is a good opportunity for Dell to work with
-> > Realtek to spot bugs and refine the r8169 driver.
->
-> One more option to avoid having to change kernel code with each new
-> and successfully ASPM-tested system family from any system vendor:
-> 
-> We could define a device property which states that ASPM has been
-> successfully tested on a system. This device property could be set
-> via device tree or via ACPI. Then a simple device_property_present()
-> in the driver would be sufficient.
-> A device property would also have the advantage that vendors can
-> control behavior per device, not only per device family.
-> An ACPI device property could be rolled out via normal BIOS update
-> for existing systems.
-> 
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/firmware-guide/acpi/DSD-properties-rules.rst?h=v6.16.7
+> The inspiration for adding a benchmark this way comes from the
+> existing perf bench memcpy benchmark. The reason to care is that, as
+> with memcpy, there are subtle effects from things like RISC-V's
+> non-temporal atomics (ARM near-far atomics) and the size of CPU cores.
 
-Related conversation:
-https://lore.kernel.org/r/5b00870c-be1a-42d6-8857-48b89716d5e2@gmail.com
+But the patch as proposed was very much x86 only. No RISC-V or ARM64
+support.
+
+> In general queued spinlock is preferred in the kernel, a benchmark of
+> queued spinlock and ticket spinlock may reveal that ticket spinlock
+> would be a better default for certain configurations.
+
+And didn't do ticket, even though we have a generic implementation in
+the kernel too (IIRC I have a few patches for that as well.. someday I
+might have time).
+
+And yeah, ticket is very good and hard to beat for 'smaller' systems.
+
+There is a reason for commit: a8ad07e5240c :-)
+
+> Does it make sense to have this in perf? It makes it easier to tune
+> the implementations, keep code in sync with the kernel, etc. Does it
+> make sense for perf to have a memcpy benchmark? Maybe not these days
+> of having a more reliable rep movsb. Anyway, in general the bar to
+> getting things into perf bench hasn't been hugely high and I don't see
+> disagreement that on some occasions a benchmark like this is useful.
+> As someone who cares about this kind of performance tuning, I care
+> about having the benchmark.
+
+Yeah, not convinced we should stuff all that in perf. But also, the
+benchmark doesn't actually seem to do what you say you wanted, so meh.
 
