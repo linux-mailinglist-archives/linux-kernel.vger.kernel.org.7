@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-818951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CC4B598A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:04:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B570B598A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CC81C02916
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:03:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89AA3B5326
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A22434A33C;
-	Tue, 16 Sep 2025 13:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BD934F47A;
+	Tue, 16 Sep 2025 13:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLBo2LB5"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7wk0/Ug"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E5633EB10
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFF7343217
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758031188; cv=none; b=NW/u0Rf6cCYkzen1wsegl5re3H3TK4PpfTU9gOFqt55VQ/bSguh6oiibPHXkEvozoq4UnE397eS0GUFOc8Sd9GBOQR/QeC40rvjC/uvll0evV0LIpdrACDWASZ25mTBb3uaeCswlLB+PXuEzXkCbysrGyb53mKJw2qBfVikX1hY=
+	t=1758031191; cv=none; b=YZgfSB8woX8DQCb+N4S1FObyTxaqBtK6GDwvmgZE4R6dBr7fD6hGsdTdx8w5T3EgHzr9d+a2UScwE94lP0kJohiQNbfiSgpWzvpEtH+30ulq9Om3lmBYjRUHwjoEpoeWySMRm7jVVwA/QV1Pvu5x9wlDWr033/Iu+LDsuxqcERs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758031188; c=relaxed/simple;
-	bh=zBN9BldLXuQYafbepgbsRKYJCNw2ZdSE8TIiThiLfW4=;
+	s=arc-20240116; t=1758031191; c=relaxed/simple;
+	bh=Yt34Z65QEVjBY3vs7drEeyweXMdM1iPHPiVqjl9uXys=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZVB0NU0bTTvhWKco3PhT+1pGR5/nGhcC8+wx+rSPgK4d5u4Vy3ZR7NF/PP0B9J/hOwWYeO1+DeLMuTSn/xN1FIiZ5shNDmns/BzkuH7XxEZUJbD8sR28Wf0JLAQMJiJ6yrl6/EzV2/29tJ/yWJm5fyYmq9Txz3fBTKD3I+jfRiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLBo2LB5; arc=none smtp.client-ip=209.85.221.47
+	 MIME-Version; b=RCyK3qz0DcyljSCWzRB6E8nQEjqjrJtzUmtgr8DIRoMo6GsBvHIGyKtmLbRM87ff+g/gXIKtMxcJ7CM8kL8V5kcForoDHoq0PV3qsnl3v3Ea91DzKRVDGpMMr8bde5D+IrsJV1+YcYqdyuiSoUIdNItLSwEP/eN1eTRkMmhynt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7wk0/Ug; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ecbcc16948so459628f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:59:44 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45f31adf368so10032165e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:59:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758031182; x=1758635982; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758031185; x=1758635985; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rbghKwI6RgQqtHuzp8YIKipmqQLga/vSj80h86fMMYM=;
-        b=BLBo2LB5PHvFexWoLIYT5WrIPilki61efSEs5c0jKV5SbQmSndN00mauMoB88EsbHy
-         EbW3RDHt6qEcAhbdRfU/nR0p3s4ponYl6Od3MsYa3toqlYwc4dPCmvXQinYcjsWKkpoY
-         1OgiiIhCNypynnEVbf6HaKtZAZIkbWWGkbYJOw9CwmaKGdEyGmqorR3wDJtsmNIg8YRE
-         BKy9Gtsw/o9jXEw+WYSZBaiWgv7q56SpVfUBc0goRKHiTm6Drm8X62FsntD6u0YWyDak
-         Ksngv81i03MZ/WRkd+u6vWvTeo51lmVGNs53sBwSK6FgmtujqQgh7j1VFNMk147g/McU
-         8Mhg==
+        bh=ObYBkDignaJBOFN/sAdt6zRe1zmiqWFfHHsl18X4Hr4=;
+        b=V7wk0/UgOUBi3ueEEU+LXUqtB/Weg76XmS9vT2711ZjVaqkH3GWkv1kxx3dXkouPsy
+         qcbsm25Fy9QNhmA8kg8dpDlVItHBg0DI/JgOCRsrY2Osl1ZZD7dlunq/8dXS1q3sL5eU
+         FUnmBdSjow3L/WC6mAc64Nr+Vnae5k8KThZj1Mvr16Q6ie+0+1dSTYF+4PmlbP3p049G
+         KN+gJwPKm45md4B4UEN+2a8zBamvAGQwYQnS74R+FN3IJ2r1jDRzxtFgcgHJJS2vI1oT
+         zbZkXY8pHfJmVy7GJMz6tyTHzIM6sbM+ZHLE+v42zdBIldr3bBKT1fjZJcIS7kQ0QPNH
+         m72A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758031182; x=1758635982;
+        d=1e100.net; s=20230601; t=1758031185; x=1758635985;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rbghKwI6RgQqtHuzp8YIKipmqQLga/vSj80h86fMMYM=;
-        b=OPW4zRq0DGzTKfUe/DzBlrHv3dTtT7Kdfd4+FTKv0K2tEiLItZkyceFUrfJlXxbmRI
-         eAC/eDF3DFiR5eV1LVRjXe9hStG3fVA/AAhwMna/RpecuNQc4qN0ArUNXnk+Ar5QckQo
-         AOhhWf9ClG7CRj89RVrAahrouAXIYjbeox5sVla2UEsO7ZQiVWM3ukTTy9GYkJUNns/7
-         nhlACBpR+AgRfPXrN+TP4rDOsjHLU8NRuUT0AEFN6ppc2Oj6W8E6fKUnWkL77RI7KFk0
-         Xe3/dUyD9UPgSrcgo5ePMS679/LPr5D9+EXXiya8Z6vZdkF/gAk50DCOqDf3PsgGozPb
-         pXaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ53xMRjse0DfyZZasmbaXHuUer25nGJAMeWPomMuaNEik0PWLYWrRsrLlptqHrGAc7UlwzZdiGHDMJdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfcpCbL0GUi+DVtYugUx1MPkbXlQAUVrjH5EASBqXv1MLZnY0m
-	NB9ftf2Bww5dpao297VOoxo7D1ktY3pPVXeE0iK3J/5ZeZLV7B/4+w6U
-X-Gm-Gg: ASbGnctKYzCj/EoF17IB358kALW8zFiAG0oZEaR8PeB5BGcpfQ7hrE2F0FGHMMx5+Yu
-	h6qqxmhtTcILz5kvaM47dx3SmIzMD2Cqm6W8OK/7BLP9cXSgMZk1sIZE2x1AbcJNALBDWnCasyl
-	zgcVgnaBHSeGj1WxHETocKYIPNAaZi2eg9mwtthrrK9q2N+aNhLh9vyoAV+KbbbwqSp1Hft5NiO
-	HscljMj5ateiLVYlzqcw8xJvJeXvOA4y8x4S7TZjQyXOa4QUOxZd9v4qRfpFEL1yvkREGXIEBVD
-	grxwCWX17TGvjxpNJ5kGhYX/8TE0jrwb/osKRKu5lnZwD+oHFThEEMVW7tvgfT0ZMVA0HK5NZNm
-	rh8wSXt4IRlVsE30CmH2OlLERPksfUYYCf20rzdNPwJFcKJ5jr/v6uhB9+z8ltPm7vfXfN/ac
-X-Google-Smtp-Source: AGHT+IE5shqQIUKbOw6hlw6cRTrcBtFVXG2OEPPmead9j/NTizmYAzcuhQc64qnxQ9XZRhrVFrM2rw==
-X-Received: by 2002:a05:6000:310f:b0:3ec:d7c4:25a5 with SMTP id ffacd0b85a97d-3ecd7c4282emr1856689f8f.42.1758031181954;
-        Tue, 16 Sep 2025 06:59:41 -0700 (PDT)
+        bh=ObYBkDignaJBOFN/sAdt6zRe1zmiqWFfHHsl18X4Hr4=;
+        b=LkX+je2bbQNcYrsHlOSDJEwURKjs/4D1iMbwBgxnKjrnFTpnKPBFtMRl7Z5To34PIF
+         mnnzqDW05l9uNESLCHE14mA8u8jzXvSjK6jWVrvmAL2tzhdxAZ2lVKwNSonNGZcQ9q1Z
+         zrfo9IXPxHOCdyLI8KrqSe4bnudUj7TzXj688B58SuXVWeFXjlYzxnFJ+INhbl0XXX79
+         BItHzRJQTVG8CbIWdqxupbcpBllH3re8THYbLTGqVmz7mVVUfBJ/sX5rmIrHaAGrAQG0
+         7stGqC885eOljkuCiiDBdhuGljf67L4416QNORPEsdiwNyQaftWe9v57IjxvdnQdZ5Yc
+         Chmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDbzMo71+p7nT1e32oEtjT/GToaJrmh+l7UfeUQdyaKOm5mFDgZcRjYhpfN6SL3BCqtzIiy/0NmiIlE8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTZ0c8JX9XaX0nkEd65eDrkFlNTOQW1sHQqlJbcC3wuNYmpEvD
+	0MPbLzFVG/8Fy9d4aZ6FklzHKZtWNt3LfLeT1JLSY1Jf/QkfcLLYvkCR83o4C/Uh
+X-Gm-Gg: ASbGncvNqGQxxebw0jkfWcbRVaQNwjn+OCSzjC6FwZ6/t8tsCVcpPMZNHRJI4J9/VHF
+	AJL4duLe7zqN9N5pYmLPDwtazq6lo8c+dFdp3Tyo1C0ToXxcmrZY6+4r3raX3FEokl/IV8i4ceS
+	XClo8CzPREpzc9+R5f3W/b+0laFzMLiL3gkCmaJe3CDOOa0OI3V2KB6XOzCwW2S85QhGiAcbFtP
+	IQF9YbC0+qnUjmKGZliHKux89bW50FV0Va9+mZL4+sD/UAtOKNXU/BR0RicDKn8GZxeOMKutk9C
+	aMGfrn684xuF/zmaUZBpDlNFaQe22N9SpuU7qKWz4ZCOQJl78kWYHHPVZprapIUVwBTNbuW9kmI
+	bQN0BESziq+7c/7F2vxOQVwLlv2jRegzTu3KmHcL8zl2sBm+Lx3Ut5mPwNFUyrvgSD1xZGgog7U
+	4VPtmYFGs=
+X-Google-Smtp-Source: AGHT+IGgH2HnoMas7BAKGXCBN0be+CTcvCaVE6b26oEMoWsrV0RJv59JPtcah/8oOhuanNH0DCd/AQ==
+X-Received: by 2002:a05:6000:4021:b0:3ce:f0a5:d594 with SMTP id ffacd0b85a97d-3e76578f304mr16479215f8f.13.1758031185077;
+        Tue, 16 Sep 2025 06:59:45 -0700 (PDT)
 Received: from f.. (cst-prg-88-146.cust.vodafone.cz. [46.135.88.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7cde81491sm16557991f8f.42.2025.09.16.06.59.39
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7cde81491sm16557991f8f.42.2025.09.16.06.59.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 06:59:41 -0700 (PDT)
+        Tue, 16 Sep 2025 06:59:44 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -87,9 +88,9 @@ Cc: viro@zeniv.linux.org.uk,
 	ceph-devel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v4 05/12] netfs: use the new ->i_state accessors
-Date: Tue, 16 Sep 2025 15:58:53 +0200
-Message-ID: <20250916135900.2170346-6-mjguzik@gmail.com>
+Subject: [PATCH v4 06/12] nilfs2: use the new ->i_state accessors
+Date: Tue, 16 Sep 2025 15:58:54 +0200
+Message-ID: <20250916135900.2170346-7-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250916135900.2170346-1-mjguzik@gmail.com>
 References: <20250916135900.2170346-1-mjguzik@gmail.com>
@@ -122,57 +123,114 @@ inode->i_state |= (I_A | I_B)   => inode_state_add_raw(inode, I_A | I_B)
 inode->i_state &= ~(I_A | I_B)  => inode_state_del_raw(inode, I_A | I_B)
 inode->i_state = I_A | I_B      => inode_state_set_raw(inode, I_A | I_B)
 
- fs/netfs/misc.c        | 8 ++++----
- fs/netfs/read_single.c | 6 +++---
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ fs/nilfs2/cpfile.c |  2 +-
+ fs/nilfs2/dat.c    |  2 +-
+ fs/nilfs2/ifile.c  |  2 +-
+ fs/nilfs2/inode.c  | 10 +++++-----
+ fs/nilfs2/sufile.c |  2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 20748bcfbf59..f0f23887d350 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -147,10 +147,10 @@ bool netfs_dirty_folio(struct address_space *mapping, struct folio *folio)
- 	if (!fscache_cookie_valid(cookie))
- 		return true;
+diff --git a/fs/nilfs2/cpfile.c b/fs/nilfs2/cpfile.c
+index bcc7d76269ac..4bbdc832d7f2 100644
+--- a/fs/nilfs2/cpfile.c
++++ b/fs/nilfs2/cpfile.c
+@@ -1148,7 +1148,7 @@ int nilfs_cpfile_read(struct super_block *sb, size_t cpsize,
+ 	cpfile = nilfs_iget_locked(sb, NULL, NILFS_CPFILE_INO);
+ 	if (unlikely(!cpfile))
+ 		return -ENOMEM;
+-	if (!(cpfile->i_state & I_NEW))
++	if (!(inode_state_read_once(cpfile) & I_NEW))
+ 		goto out;
  
--	if (!(inode->i_state & I_PINNING_NETFS_WB)) {
-+	if (!(inode_state_read_once(inode) & I_PINNING_NETFS_WB)) {
- 		spin_lock(&inode->i_lock);
--		if (!(inode->i_state & I_PINNING_NETFS_WB)) {
--			inode->i_state |= I_PINNING_NETFS_WB;
-+		if (!(inode_state_read(inode) & I_PINNING_NETFS_WB)) {
-+			inode_state_add(inode, I_PINNING_NETFS_WB);
- 			need_use = true;
- 		}
- 		spin_unlock(&inode->i_lock);
-@@ -192,7 +192,7 @@ void netfs_clear_inode_writeback(struct inode *inode, const void *aux)
- {
- 	struct fscache_cookie *cookie = netfs_i_cookie(netfs_inode(inode));
+ 	err = nilfs_mdt_init(cpfile, NILFS_MDT_GFP, 0);
+diff --git a/fs/nilfs2/dat.c b/fs/nilfs2/dat.c
+index c664daba56ae..674380837ab9 100644
+--- a/fs/nilfs2/dat.c
++++ b/fs/nilfs2/dat.c
+@@ -506,7 +506,7 @@ int nilfs_dat_read(struct super_block *sb, size_t entry_size,
+ 	dat = nilfs_iget_locked(sb, NULL, NILFS_DAT_INO);
+ 	if (unlikely(!dat))
+ 		return -ENOMEM;
+-	if (!(dat->i_state & I_NEW))
++	if (!(inode_state_read_once(dat) & I_NEW))
+ 		goto out;
  
--	if (inode->i_state & I_PINNING_NETFS_WB) {
-+	if (inode_state_read_once(inode) & I_PINNING_NETFS_WB) {
- 		loff_t i_size = i_size_read(inode);
- 		fscache_unuse_cookie(cookie, aux, &i_size);
+ 	err = nilfs_mdt_init(dat, NILFS_MDT_GFP, sizeof(*di));
+diff --git a/fs/nilfs2/ifile.c b/fs/nilfs2/ifile.c
+index c4cd4a4dedd0..99eb8a59009e 100644
+--- a/fs/nilfs2/ifile.c
++++ b/fs/nilfs2/ifile.c
+@@ -188,7 +188,7 @@ int nilfs_ifile_read(struct super_block *sb, struct nilfs_root *root,
+ 	ifile = nilfs_iget_locked(sb, root, NILFS_IFILE_INO);
+ 	if (unlikely(!ifile))
+ 		return -ENOMEM;
+-	if (!(ifile->i_state & I_NEW))
++	if (!(inode_state_read_once(ifile) & I_NEW))
+ 		goto out;
+ 
+ 	err = nilfs_mdt_init(ifile, NILFS_MDT_GFP,
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 87ddde159f0c..51bde45d5865 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -365,7 +365,7 @@ struct inode *nilfs_new_inode(struct inode *dir, umode_t mode)
+ 
+  failed_after_creation:
+ 	clear_nlink(inode);
+-	if (inode->i_state & I_NEW)
++	if (inode_state_read_once(inode) & I_NEW)
+ 		unlock_new_inode(inode);
+ 	iput(inode);  /*
+ 		       * raw_inode will be deleted through
+@@ -562,7 +562,7 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	if (!(inode->i_state & I_NEW)) {
++	if (!(inode_state_read_once(inode) & I_NEW)) {
+ 		if (!inode->i_nlink) {
+ 			iput(inode);
+ 			return ERR_PTR(-ESTALE);
+@@ -591,7 +591,7 @@ struct inode *nilfs_iget_for_gc(struct super_block *sb, unsigned long ino,
+ 	inode = iget5_locked(sb, ino, nilfs_iget_test, nilfs_iget_set, &args);
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+-	if (!(inode->i_state & I_NEW))
++	if (!(inode_state_read_once(inode) & I_NEW))
+ 		return inode;
+ 
+ 	err = nilfs_init_gcinode(inode);
+@@ -631,7 +631,7 @@ int nilfs_attach_btree_node_cache(struct inode *inode)
+ 				  nilfs_iget_set, &args);
+ 	if (unlikely(!btnc_inode))
+ 		return -ENOMEM;
+-	if (btnc_inode->i_state & I_NEW) {
++	if (inode_state_read_once(btnc_inode) & I_NEW) {
+ 		nilfs_init_btnc_inode(btnc_inode);
+ 		unlock_new_inode(btnc_inode);
  	}
-diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
-index fa622a6cd56d..f728aae9bde9 100644
---- a/fs/netfs/read_single.c
-+++ b/fs/netfs/read_single.c
-@@ -36,12 +36,12 @@ void netfs_single_mark_inode_dirty(struct inode *inode)
+@@ -686,7 +686,7 @@ struct inode *nilfs_iget_for_shadow(struct inode *inode)
+ 			       nilfs_iget_set, &args);
+ 	if (unlikely(!s_inode))
+ 		return ERR_PTR(-ENOMEM);
+-	if (!(s_inode->i_state & I_NEW))
++	if (!(inode_state_read_once(s_inode) & I_NEW))
+ 		return inode;
  
- 	mark_inode_dirty(inode);
+ 	NILFS_I(s_inode)->i_flags = 0;
+diff --git a/fs/nilfs2/sufile.c b/fs/nilfs2/sufile.c
+index 330f269abedf..83f93337c01b 100644
+--- a/fs/nilfs2/sufile.c
++++ b/fs/nilfs2/sufile.c
+@@ -1226,7 +1226,7 @@ int nilfs_sufile_read(struct super_block *sb, size_t susize,
+ 	sufile = nilfs_iget_locked(sb, NULL, NILFS_SUFILE_INO);
+ 	if (unlikely(!sufile))
+ 		return -ENOMEM;
+-	if (!(sufile->i_state & I_NEW))
++	if (!(inode_state_read_once(sufile) & I_NEW))
+ 		goto out;
  
--	if (caching && !(inode->i_state & I_PINNING_NETFS_WB)) {
-+	if (caching && !(inode_state_read_once(inode) & I_PINNING_NETFS_WB)) {
- 		bool need_use = false;
- 
- 		spin_lock(&inode->i_lock);
--		if (!(inode->i_state & I_PINNING_NETFS_WB)) {
--			inode->i_state |= I_PINNING_NETFS_WB;
-+		if (!(inode_state_read(inode) & I_PINNING_NETFS_WB)) {
-+			inode_state_add(inode, I_PINNING_NETFS_WB);
- 			need_use = true;
- 		}
- 		spin_unlock(&inode->i_lock);
+ 	err = nilfs_mdt_init(sufile, NILFS_MDT_GFP, sizeof(*sui));
 -- 
 2.43.0
 
