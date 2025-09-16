@@ -1,87 +1,213 @@
-Return-Path: <linux-kernel+bounces-818772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D73B5963B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:31:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51469B5964E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 529E87AA13A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974631889323
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF07830594E;
-	Tue, 16 Sep 2025 12:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3146A30BF71;
+	Tue, 16 Sep 2025 12:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0d/Dj5o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0gE8fCwS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BwoxRnAy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0gE8fCwS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BwoxRnAy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070991EDA2C;
-	Tue, 16 Sep 2025 12:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB5F14658D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758025902; cv=none; b=rcK6rUutC1Jnkmg9LTFzJ2y1XQwuqiMrFBF0NtKLBghZ4hWfbAl1bRXiSwC/7HkvVBtKIp0w2ZAdWJ27W7eGNGpfL4o+o+PHYYeuxlJ19t6omptcuKRgYLLmT7MOZerj4dI3nozVo2rJBpv/a4XeLlwZBqvvBQGEDoVGKgkihKk=
+	t=1758026132; cv=none; b=F5ivLheuGk/pqKUcRAiYz1YTVtOhTlHtbXWqfaoa1qDwQGlvBPTC+nWItcBVx7eqF1erY2NA8XLZ5KtOXLyndBt8HnhTs9br27Wn4xwJ0TYnLhttQsHYoqkMd6rur/HDXwX1QtfUS5M6KN4EWJ0TdbSl0sDRIL80H+pWtmMY5aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758025902; c=relaxed/simple;
-	bh=AvnnFeLhqa+1N7BjqrcIXNBRXqWXQHi29E1hGGjkXRE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EQhf6u24y4wbm+b5X39cr2OgyXgMFP1r5Od1q4AUEPu4pg1p1LvBsp/nEKxmGX06suCLiVKzs+IwcO9qqECe39ozvDRKgQFH9ytgrww710AyV6yrhNsSjxUdsoHkF/+mRoZ2mUS5CoTAvct5bTmozIM2j5nzdMcND/BVHQRvvOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0d/Dj5o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F9FC4CEEB;
-	Tue, 16 Sep 2025 12:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758025901;
-	bh=AvnnFeLhqa+1N7BjqrcIXNBRXqWXQHi29E1hGGjkXRE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P0d/Dj5oRlUj845mYfjKZ7ng1gm7rIXqPdU+u9b31iZhME+rs9C71GZZpLgHYxn6y
-	 9puhWpjl36fzXN654GNREQI6cxnY28F49FElwXS3Z5/QgVQEbnuEg0KhcpOZPPcugQ
-	 Hr8MPAE2+SqMpSLBtf4o5E9LKaX1PRIsbCldX2zc+bBTnzdXHHnCUq92b7IaDplx/e
-	 8uzxxsAdcdKpEcnFr4g8E3y9d9bFcWKR2I/ABFomxlDgZ/vLtuI6L9hQccv/92sN7x
-	 DkA27NRhwK50x6mDctSm6HKXaVPRXFGj8oJw//6Aro6Skcy8jK5U03rNa90Ml/IQOR
-	 gswxS2axnp1qw==
-From: Lee Jones <lee@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- "Kirill A. Shutemov" <kas@kernel.org>, 
- Dave Hansen <dave.hansen@linux.intel.com>, 
- Rick Edgecombe <rick.p.edgecombe@intel.com>, 
- Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-kernel@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev, 
- kvm@vger.kernel.org
-In-Reply-To: <20250909-max77705-fix_interrupt_handling-v3-1-233c5a1a20b5@gmail.com>
-References: <20250909-max77705-fix_interrupt_handling-v3-1-233c5a1a20b5@gmail.com>
-Subject: Re: (subset) [PATCH v3] mfd: max77705: rework interrupts
-Message-Id: <175802589907.3682989.11860525884258012047.b4-ty@kernel.org>
-Date: Tue, 16 Sep 2025 13:31:39 +0100
+	s=arc-20240116; t=1758026132; c=relaxed/simple;
+	bh=lwi2obLnuTy4miBhvrKB0Nx4KYbRv2fpvveCdi+9Tzs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hNY+a4zPEBILf1IWJGonednV85BW4xSDdioakMxfHPqH1wLj535DTlndrzFZ6LkMCKdiD/QZl5kiKs+wD+QbY+Y2ql/XY1gqSffk8HY9KQjSyKb6E6gnteNnZ+Q88g9okLB5EML5stu8JzrNLDwv4kCNWz4ppfCFrNRystROeCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0gE8fCwS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BwoxRnAy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0gE8fCwS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BwoxRnAy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 70A3E22958;
+	Tue, 16 Sep 2025 12:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758026128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aN3GDP1sxLfuXqNUNI8BUA96vurHTxKamsWO8AnEyMk=;
+	b=0gE8fCwSXO5ORwUHYBJUurMqzB10EcjBrOeElDwIF96FwhfdfLhq9vakmXGh5rR4eJhIHo
+	fdoOMy6Tyf+zDWXk5sUXGg4sbUVSEd2xnbzoczg3uwVVXl8KRpVwa6LM3JUUt4R4F1hKFC
+	+OaH89SaYhfrD30H9hTA3JZxrfvbm+0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758026128;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aN3GDP1sxLfuXqNUNI8BUA96vurHTxKamsWO8AnEyMk=;
+	b=BwoxRnAy5yjDbp1Ha1eGVATyWEKYPOMvIb94dNvXB9858FETvYNcpTX9r4MZRYwjBYyRxy
+	27zoLzT3ELe0tdAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0gE8fCwS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BwoxRnAy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758026128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aN3GDP1sxLfuXqNUNI8BUA96vurHTxKamsWO8AnEyMk=;
+	b=0gE8fCwSXO5ORwUHYBJUurMqzB10EcjBrOeElDwIF96FwhfdfLhq9vakmXGh5rR4eJhIHo
+	fdoOMy6Tyf+zDWXk5sUXGg4sbUVSEd2xnbzoczg3uwVVXl8KRpVwa6LM3JUUt4R4F1hKFC
+	+OaH89SaYhfrD30H9hTA3JZxrfvbm+0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758026128;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aN3GDP1sxLfuXqNUNI8BUA96vurHTxKamsWO8AnEyMk=;
+	b=BwoxRnAy5yjDbp1Ha1eGVATyWEKYPOMvIb94dNvXB9858FETvYNcpTX9r4MZRYwjBYyRxy
+	27zoLzT3ELe0tdAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5616B13A63;
+	Tue, 16 Sep 2025 12:35:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BrCqFJBZyWiLfAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 16 Sep 2025 12:35:28 +0000
+Message-ID: <01108e4b-9586-4147-9b8a-c3435f6a98d6@suse.cz>
+Date: Tue, 16 Sep 2025 14:35:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fixes for slab->obj_exts allocation failure handling
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, cl@gentwo.org, rientjes@google.com,
+ roman.gushchin@linux.dev, harry.yoo@oracle.com, shakeel.butt@linux.dev,
+ alexei.starovoitov@gmail.com, usamaarif642@gmail.com, 00107082@163.com,
+ souravpanda@google.com, kent.overstreet@linux.dev, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250915200918.3855580-1-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250915200918.3855580-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 70A3E22958
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,163.com,kvack.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.01
 
-On Tue, 09 Sep 2025 21:23:07 +0300, Dzmitry Sankouski wrote:
-> Current implementation describes only MFD's own topsys interrupts.
-> However, max77705 has a register which indicates interrupt source, i.e.
-> it acts as an interrupt controller. There's 4 interrupt sources in
-> max77705: topsys, charger, fuelgauge, usb type-c manager.
+On 9/15/25 22:09, Suren Baghdasaryan wrote:
+> Fixes for several issues noticed by Shakeel pertaining to slab->obj_exts
+> allocation failure handling in [1].
 > 
-> Setup max77705 MFD parent as an interrupt controller. Delete topsys
-> interrupts because currently unused.
+> Patchset is based on mm-new.
 > 
-> [...]
+> Please route it via vbabka/slab.git as it's relevant to Alexei's patches
+> in that branch.
 
-Applied, thanks!
+Thanks, added to slab/for-6.18/fixes
 
-[1/1] mfd: max77705: rework interrupts
-      commit: e3f56377ff69b0944da8780f2c5a14f10de71c13
-
---
-Lee Jones [李琼斯]
+> [1] https://lore.kernel.org/all/jftidhymri2af5u3xtcqry3cfu6aqzte3uzlznhlaylgrdztsi@5vpjnzpsemf5/
+> 
+> Suren Baghdasaryan (2):
+>   slab: prevent warnings when slab obj_exts vector allocation fails
+>   slab: mark slab->obj_exts allocation failures unconditionally
+> 
+>  mm/slab.h | 8 ++++++--
+>  mm/slub.c | 3 +--
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> 
+> base-commit: 9a9318f95d63805868bd21e1381d68c3a75d03a7
 
 
