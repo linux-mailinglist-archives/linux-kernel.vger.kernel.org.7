@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-819188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E888B59CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F15B59CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00151B24385
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD943B735F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0619371E90;
-	Tue, 16 Sep 2025 15:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44A0371E83;
+	Tue, 16 Sep 2025 15:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9Hlf1Vd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="i4T0pmca"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469AB34167D;
-	Tue, 16 Sep 2025 15:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE049371E8D;
+	Tue, 16 Sep 2025 15:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038159; cv=none; b=RqNoo+LG+UMPFvKOdFrpeVEzrcOIR/BZ+EP821bvKnSVprFEqt/8j6Rz8UViXnDDXxh0sfskXJbozDMtiW9nlmRyoZ8FPfnGRrP3JwLXMKN1ADhpdC08uiVA2nThO1eFZSTkeC3UV6BHvPLP7fscRWQHNWWa1+HnFP/lZ+MwzVM=
+	t=1758038176; cv=none; b=MoyRXKiZ/wNAKxDIyFI5iXGt39y2D7oBJ8CCSyLojo3O1oFengCA+CnO5nIYfifxTxMgEKvW6nKPrD+lEVDvR0y+vhYEa+6h4G9v3+izMICtgxorelgp+GwUqWRe8W8Bc45ujE2jEyALFIKlwnt3IlgNVIAkDARISXWKL9NQ7WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038159; c=relaxed/simple;
-	bh=1aQLI3N+v4KCkYrGwa/1zSx8nmkzO1iW/T0ekZORUQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwsDoqVk01AWeA5kWTBzirzPKzNPBQqvXk0QQSVfspjxP1OL+kq+sSZqWcxehlWmTEWnC0+r1leUxOf9tD5AsVSWP+l/vetDTyCeicWu1eMc7yJTtnOEyay4sBBM3O2n4+Ij2dDRPpYwWheL/JUSWYr0xlXmKJB7llChiYt0ROI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9Hlf1Vd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C21C4CEEB;
-	Tue, 16 Sep 2025 15:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758038159;
-	bh=1aQLI3N+v4KCkYrGwa/1zSx8nmkzO1iW/T0ekZORUQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i9Hlf1Vd3Oi8xPpxHXzOMCNIPRuHj04/HtnNCapH/Bv8ielmI0+pkmQ4Ojf94c/Sn
-	 wkCkRwBwlzb1Vm1D10+aHkodvd8obKwqHOMBSX/1Sz7Jak2QWO0GTWzQy7LJZPiOmK
-	 ymtjjz7+xTWfcrem3DFz0KO/QGk4J+jiZ5/bSWTwOKlli4fIq5kuVwjYmb7I15hLRQ
-	 SLSaqyV6cTHCzV6cMF3lrnxVP6uslGumSLAL4/G3nDqZHUWSL6lrbliFeNxOd41VAY
-	 qx3gwMF4l4nttROnULkSqqwQA9sb5ZT9wOHGe1Z5/KE4cRN2dQR+7AIa4kKdhUOtTM
-	 X/M5EgZs3RoKg==
-Date: Tue, 16 Sep 2025 16:55:53 +0100
-From: Lee Jones <lee@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/7] mfd: sec: add support for s2mps16 pmic
-Message-ID: <20250916155553.GB3837873@google.com>
-References: <20250914124227.2619925-1-ivo.ivanov.ivanov1@gmail.com>
- <20250914124227.2619925-5-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1758038176; c=relaxed/simple;
+	bh=wTJvJj6eRWdAYGjzYG9t3lToK4EhOXbyRLNUZQvHDHo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kgvT3WOxOxCryr/ZvjglAdFQQHeh0dyPV687xZDqq5rhyZCYIpEvestAMdaT7EpRwlvcjCzAy069du4S7xpiLPK4hK9mzw46cbaumz6R/1GOk5pYxw022bOD22McaqWvEFDbcZQ3IaByV5JH1Km02e5Bh/OB5Q3M3a4dngpP3vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=i4T0pmca; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8F58840ADA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758038172; bh=GNHipi3gqWjiz9s6uaIWvAOuFHTUfXew1Fob6o15eC8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=i4T0pmca4X/i+thMId7o+uDdMshe2mNRNvC3ZOmwcWzRCL9xdat83Ub2OvoHslzb7
+	 5j/cEt2hBRDCBy4NtRUjyFXKfwtKQAY7+dtPit2qSV8u2A/o10LsQdLOFRxT/2P1bT
+	 1Zs+2ls84dPcY115coSq3dIRPdW70nPoBSM6ql8cjvoeOM2UXKruIOjGOvg3237JQU
+	 5F8UxmaPSDkWa8hByQZ2o+iG4UKQ2+hdBvzWlipsBj3Ee/uF0zS/8q/5NE10vkYRhr
+	 /mfGczc8JPWnXukSgt0vSygfybpNDjlGYnjB3qKtytfT61/M+wUyY7dJis90te16sl
+	 KgHMSzdzehNqg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 8F58840ADA;
+	Tue, 16 Sep 2025 15:56:12 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Taimoor Zaeem <taimoorzaeem@gmail.com>, andersson@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] Documentation: staging: fix spelling error in
+ remoteproc.rst
+In-Reply-To: <CANQcFN1s_iM8p5tYNz3Q_WyZki6Aw9_3HyoKwyoCVA9JeqG0eA@mail.gmail.com>
+References: <CANQcFN1s_iM8p5tYNz3Q_WyZki6Aw9_3HyoKwyoCVA9JeqG0eA@mail.gmail.com>
+Date: Tue, 16 Sep 2025 09:56:11 -0600
+Message-ID: <87bjnafl2c.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250914124227.2619925-5-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain
 
-On Sun, 14 Sep 2025, Ivaylo Ivanov wrote:
+Taimoor Zaeem <taimoorzaeem@gmail.com> writes:
 
-> Add support for Samsung's s2mps16 pmic. It's the primary PMIC used by
-> exynos8890 devices. It houses regulators (38 LDOs and 11 BUCKs), three
-> 32.768KHz clock outputs and an RTC device.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> From 10321c75f8fc1296775942f13cb3af78fdc8dcc8 Mon Sep 17 00:00:00 2001
+> From: Taimoor Zaeem <taimoorzaeem@gmail.com>
+> Date: Sun, 14 Sep 2025 16:31:56 +0500
+> Subject: [PATCH] Documentation: staging: fix spelling error in remoteproc.rst
+>
+> Fix typo 'implementors' to 'implementers' in remote processor framework
+> documentation.
+>
+> Signed-off-by: Taimoor Zaeem <taimoorzaeem@gmail.com>
 > ---
->  drivers/mfd/sec-common.c            |  10 ++
->  drivers/mfd/sec-i2c.c               |  16 +++
->  drivers/mfd/sec-irq.c               |  46 +++++++
->  include/linux/mfd/samsung/core.h    |   1 +
->  include/linux/mfd/samsung/irq.h     |  66 ++++++++++
->  include/linux/mfd/samsung/s2mps16.h | 195 ++++++++++++++++++++++++++++
->  6 files changed, 334 insertions(+)
->  create mode 100644 include/linux/mfd/samsung/s2mps16.h
+>  Documentation/staging/remoteproc.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+> index 348ee7e508ac..5c226fa076d6 100644
+> --- a/Documentation/staging/remoteproc.rst
+> +++ b/Documentation/staging/remoteproc.rst
+> @@ -104,7 +104,7 @@ Typical usage
+>  	rproc_shutdown(my_rproc);
+>    }
+>  
+> -API for implementors
+> +API for implementers
+>  ====================
 
-Looks okay.  Once you have the Regulator Ack we can merge this through MFD.
+Applied, thanks.
 
--- 
-Lee Jones [李琼斯]
+jon
 
