@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-818258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD6BB58EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98799B58EFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9D7D2A8635
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 475CB2A84A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5672028134C;
-	Tue, 16 Sep 2025 07:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74688281356;
+	Tue, 16 Sep 2025 07:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="C2QTNGim"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l6IQULo+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3393B27AC57
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B6B262FF6;
+	Tue, 16 Sep 2025 07:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758007122; cv=none; b=tk0sWUHMKDBomhkELxEttRx/9tZJHJnkCXA5Scr/sAFL0OknAOU/kY/bknVbnZ0mqEtcTrU4SpoZ/O58n43UAhbIb9uryWapOO9TmzYjeu+PkV4vD6shIfzBTh4BX8n52F+0nR90zCmcWF6Ic+kk4v0RE7r7nOdcB7m56oeGM7I=
+	t=1758007233; cv=none; b=C4h1zPxuOoulFxtSBLS+/9RMxGBxxMcUSnzTk5bqFvwpZGUc+y/7Grc4rpQlNRonEgHt+9dHxxe4KvloCeCPZKWupUWGMRICWWBe7fBrv2mL5V9H4yIpunmSeViDXuxfIP3fNfjkOfBn2PRS9k/Cg0pf8KrgTlIgxNrRSSCS2IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758007122; c=relaxed/simple;
-	bh=dNrHKdHCvZRO4rxtXLAcTpH4HfxC/JtqxV+gB/yed4g=;
+	s=arc-20240116; t=1758007233; c=relaxed/simple;
+	bh=37Fy6N+KfsDikO4TqwR4OWfPbZGWzuU4xuF6iKlsq8Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H87reTF3Z01W0WBaztv7C5/8Aib04UkGP/L6IfK2Uk7ltN88XDrsoZ0CW1/HiBfXLDqD+IN2tgr35SGFEq86C3hNe6GtpgNgHct1ZLSBsu1PkOIoMK8HPD2VQEiA4SoWfP2ATOcCkc4Zn9gke0MtNN/4mrLUoVBksK8BDT6aie4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=C2QTNGim; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758007111; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=jEIJopGBHha5mxI192yQ8swZlaL8UDF92y3iDqtrvSw=;
-	b=C2QTNGim5GM0h+aM6japy8pL+YfGku0cMC/3tdEVPSymK4cZJUNowCR6QOCCHoQf/Fc44jObWNCtWB7Pb4/8fdY/fziZ/zSkq3hk/Lf0gX5PN3oSf3J/TMzXknbDF7tnRS/xfn6alQHtJu+BXh41s541kjciqAzMGEVmc0if9Wg=
-Received: from 30.74.146.196(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wo7PMF3_1758007109 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 16 Sep 2025 15:18:29 +0800
-Message-ID: <6ebb5cd0-0897-4de7-9303-422d0caa18cb@linux.alibaba.com>
-Date: Tue, 16 Sep 2025 15:18:28 +0800
+	 In-Reply-To:Content-Type; b=EDMCoBPWBBq6fdhBCUa+H9ZBxMwUtRHLQLAlzleAHx/4QqvqxTu83wCUqdXyy/YUbmdJHEHeMpQhGMdiAJzqpXm+PAXQp6JLiw7rYgUFupWypToAJxSgX/OgmnIgxhX26rqVVoKZ+wOM2NhjDV3odnc2RKjf3T0aGSOkaDQoKRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l6IQULo+; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758007232; x=1789543232;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=37Fy6N+KfsDikO4TqwR4OWfPbZGWzuU4xuF6iKlsq8Y=;
+  b=l6IQULo+rAGkpyjBOgzjvIisqWGZah+LeYiwLySiGxaRYbgWTTbsfUep
+   mCwXDSUoz0ganH9gLvdbniuZS+svOMrXMpWgxUsJUq0sEksHDqz77RmnI
+   q1nzFsOGeRLf1FKptrbyK+qsfC52eUsTqt7tW00NaDcn40XpK0Rf5fLSP
+   9oabLWjbSp6eDfoB/2xFlUQebh+f2bpoydGRv9YKrLK1G5Va3IBKErAkG
+   4pmuiozprA/wNAfoWhKSZoJGQ39XoJAa2HLNdwispveI3yaNr464Za0nr
+   R+3vWsrcr7H1Bcsh5k3PyIni+i4IOyqwfbg5FmuCKx0LsPGNpjqkXK+3x
+   w==;
+X-CSE-ConnectionGUID: 8OU0KaHLQuSZ10thYvh2RA==
+X-CSE-MsgGUID: pDtg81EtT2S4FzYxPI+Yjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="71704915"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="71704915"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:20:31 -0700
+X-CSE-ConnectionGUID: W4Z+oqg6TPqTeg691iEvkQ==
+X-CSE-MsgGUID: bohQPtd2QFiN9wRdst0C6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="205644703"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:20:29 -0700
+Message-ID: <fd6f995a-ce95-4dde-88ef-06678dd18744@linux.intel.com>
+Date: Tue, 16 Sep 2025 15:20:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,135 +66,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: vmscan: remove folio_test_private() check in
- pageout()
-To: Hugh Dickins <hughd@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, akpm@linux-foundation.org,
- hannes@cmpxchg.org, david@redhat.com, mhocko@kernel.org,
- zhengqi.arch@bytedance.com, lorenzo.stoakes@oracle.com, willy@infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1757648598.git.baolin.wang@linux.alibaba.com>
- <b8c0fe71982aa1cafafd59d8e71064efaac16007.1757648598.git.baolin.wang@linux.alibaba.com>
- <qe56xt2natnxnkht7wgknsb5nqjhinaaajomvvvgnfpwry2jih@hsj2w5zqj6wv>
- <02798d6c-1ad3-4109-be3a-e09feb5e4eda@linux.alibaba.com>
- <9b01a2cc-7cdb-e008-f5bc-ff9aa313621a@google.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <9b01a2cc-7cdb-e008-f5bc-ff9aa313621a@google.com>
+Subject: Re: [PATCH v15 06/41] KVM: x86: Check XSS validity against guest
+ CPUIDs
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-7-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250912232319.429659-7-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2025/9/16 12:00, Hugh Dickins wrote:
-> On Sat, 13 Sep 2025, Baolin Wang wrote:
->> On 2025/9/13 00:13, Shakeel Butt wrote:
->>> On Fri, Sep 12, 2025 at 11:45:07AM +0800, Baolin Wang wrote:
->>>> Currently, we no longer attempt to write back filesystem folios in
->>>> pageout(),
->>>> and only tmpfs/shmem folios and anonymous swapcache folios can be written
->>>> back.
->>>> Moreover, tmpfs/shmem and swapcache folios do not use the PG_private flag,
->>>> which means no fs-private private data is used. Therefore, we can remove
->>>> the
->>>> redundant folio_test_private() checks and related buffer_head release
->>>> logic.
->>>>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> ---
->>>>    mm/vmscan.c | 16 +---------------
->>>>    1 file changed, 1 insertion(+), 15 deletions(-)
->>>>
->>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
->>>> index f1fc36729ddd..8056fccb9cc4 100644
->>>> --- a/mm/vmscan.c
->>>> +++ b/mm/vmscan.c
->>>> @@ -697,22 +697,8 @@ static pageout_t pageout(struct folio *folio, struct
->>>> address_space *mapping,
->>>>      * swap_backing_dev_info is bust: it doesn't reflect the
->>>>      * congestion state of the swapdevs.  Easy to fix, if needed.
->>>>      */
->>>> -	if (!is_page_cache_freeable(folio))
->>>> +	if (!is_page_cache_freeable(folio) || !mapping)
->>>>    		return PAGE_KEEP;
->>>> -	if (!mapping) {
->>>> -		/*
->>>> -		 * Some data journaling orphaned folios can have
->>>> -		 * folio->mapping == NULL while being dirty with clean
->>>> buffers.
->>>> -		 */
->>>
->>> Can this case not happen anymore and try_to_free_buffers is not needed?
->>
->> For dirty file folios, pageout() will return PAGE_KEEP and put them back on
->> the LRU list. So even if mapping = NULL, background workers for writeback will
->> continue to handle them, rather than in shrink_folio_list().
-> 
-> You've persuaded everyone else, but I'm still not convinced:
-> what are those "background workers for writeback",
-> that manage to work on orphaned folios with NULL mapping?
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> From: Chao Gao <chao.gao@intel.com>
+>
+> Maintain per-guest valid XSS bits and check XSS validity against them
+> rather than against KVM capabilities. This is to prevent bits that are
+> supported by KVM but not supported for a guest from being set.
+>
+> Opportunistically return KVM_MSR_RET_UNSUPPORTED on IA32_XSS MSR accesses
+> if guest CPUID doesn't enumerate X86_FEATURE_XSAVES. Since
+> KVM_MSR_RET_UNSUPPORTED takes care of host_initiated cases, drop the
+> host_initiated check.
+>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Sorry for not being clear. The ‘background workers for writeback’ here 
-refer to the workers responsible for handling the writeback of dirty 
-data (see wb_workfn()).
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-> I think *this* is the place which deals with that case, and you're
-> now proposing to remove it (and returning PAGE_KEEP not PAGE_CLEAN,
-> so it misses the filemap_release_folio() below the switch(pageout())).
-> 
-> There's even a comment over in migrate_folio_unmap():
-> "Everywhere else except page reclaim, the page is invisible to the vm".
-> 
-> And your argument that the code *afterwards* rejects everything but
-> shmem or anon, and neither of those would have folio_test_private(),
-> certainly did not convince me.
-> 
-> Please persuade me.  But I've no evidence that this case does or does
-> not still arise; and agree that there must be cleaner ways of doing it.
-
-I did some further analysis, and seems you are right. The flush worker 
-does check the folio mapping when writeback, but it does not further 
-release the private data, for example, in mpage_prepare_extent_to_map():
-
-/*
-  * If the page is no longer dirty, or its mapping no
-  * longer corresponds to inode we are writing (which
-  * means it has been truncated or invalidated), or the
-  * page is already under writeback and we are not doing
-  * a data integrity writeback, skip the page
-  */
-if (!folio_test_dirty(folio) ||
-     (folio_test_writeback(folio) &&
-      (mpd->wbc->sync_mode == WB_SYNC_NONE)) ||
-     unlikely(folio->mapping != mapping)) {
-	folio_unlock(folio);
-	continue;
-}
-
-This is somewhat beyond my expectations. I expected the flush worker 
-could handle such cases, allowing page reclaim to skip from handling 
-dirty file folios to improve reclaim efficiency. Obviously, I overlooked 
-this corner case.
-
-Additionally, I'm still struggling to understand this case where a folio 
-is dirty but has a NULL mapping, but I might understand that ext3 
-journaling might do this from the comments in truncate_cleanup_folio().
-
-But I still doubt whether this case exists because the refcount check in 
-is_page_cache_freeable() considers the pagecache. This means if this 
-dirty folio's mapping is NULL, the following check would return false. 
-If it returns true, it means that even if we release the private data 
-here, the orphaned folio's refcount still doesn't meet the requirements 
-for being reclaimed. Please correct me if I missed anything.
-
-static inline int is_page_cache_freeable(struct folio *folio)
-{
-         /*
-          * A freeable page cache folio is referenced only by the caller
-          * that isolated the folio, the page cache and optional filesystem
-          * private data at folio->private.
-          */
-         return folio_ref_count(folio) - folio_test_private(folio) ==
-                 1 + folio_nr_pages(folio);
-}
+> ---
+>   arch/x86/include/asm/kvm_host.h |  3 ++-
+>   arch/x86/kvm/cpuid.c            | 12 ++++++++++++
+>   arch/x86/kvm/x86.c              |  7 +++----
+>   3 files changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 2762554cbb7b..d931d72d23c9 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -815,7 +815,6 @@ struct kvm_vcpu_arch {
+>   	bool at_instruction_boundary;
+>   	bool tpr_access_reporting;
+>   	bool xfd_no_write_intercept;
+> -	u64 ia32_xss;
+>   	u64 microcode_version;
+>   	u64 arch_capabilities;
+>   	u64 perf_capabilities;
+> @@ -876,6 +875,8 @@ struct kvm_vcpu_arch {
+>   
+>   	u64 xcr0;
+>   	u64 guest_supported_xcr0;
+> +	u64 ia32_xss;
+> +	u64 guest_supported_xss;
+>   
+>   	struct kvm_pio_request pio;
+>   	void *pio_data;
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index ad6cadf09930..46cf616663e6 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -263,6 +263,17 @@ static u64 cpuid_get_supported_xcr0(struct kvm_vcpu *vcpu)
+>   	return (best->eax | ((u64)best->edx << 32)) & kvm_caps.supported_xcr0;
+>   }
+>   
+> +static u64 cpuid_get_supported_xss(struct kvm_vcpu *vcpu)
+> +{
+> +	struct kvm_cpuid_entry2 *best;
+> +
+> +	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 1);
+> +	if (!best)
+> +		return 0;
+> +
+> +	return (best->ecx | ((u64)best->edx << 32)) & kvm_caps.supported_xss;
+> +}
+> +
+>   static __always_inline void kvm_update_feature_runtime(struct kvm_vcpu *vcpu,
+>   						       struct kvm_cpuid_entry2 *entry,
+>   						       unsigned int x86_feature,
+> @@ -424,6 +435,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+>   	}
+>   
+>   	vcpu->arch.guest_supported_xcr0 = cpuid_get_supported_xcr0(vcpu);
+> +	vcpu->arch.guest_supported_xss = cpuid_get_supported_xss(vcpu);
+>   
+>   	vcpu->arch.pv_cpuid.features = kvm_apply_cpuid_pv_features_quirk(vcpu);
+>   
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 3b4258b38ad8..5a5af40c06a9 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -3984,15 +3984,14 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		}
+>   		break;
+>   	case MSR_IA32_XSS:
+> -		if (!msr_info->host_initiated &&
+> -		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> -			return 1;
+> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
+> +			return KVM_MSR_RET_UNSUPPORTED;
+>   		/*
+>   		 * KVM supports exposing PT to the guest, but does not support
+>   		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
+>   		 * XSAVES/XRSTORS to save/restore PT MSRs.
+>   		 */
+> -		if (data & ~kvm_caps.supported_xss)
+> +		if (data & ~vcpu->arch.guest_supported_xss)
+>   			return 1;
+>   		vcpu->arch.ia32_xss = data;
+>   		vcpu->arch.cpuid_dynamic_bits_dirty = true;
 
 
