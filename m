@@ -1,123 +1,73 @@
-Return-Path: <linux-kernel+bounces-817981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B73B58AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E661CB58AE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91C03B25DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF8718973E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2697E1E3DCD;
-	Tue, 16 Sep 2025 01:19:42 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651820E005;
+	Tue, 16 Sep 2025 01:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgGFrS2o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F5670808;
-	Tue, 16 Sep 2025 01:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBD61397;
+	Tue, 16 Sep 2025 01:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757985581; cv=none; b=FK91xyo290OWjXJarP4L1cCFkCmmYGKHUpbXyCm7CVSld2C3xjLjZ6bqdlmo/uMGkpN7bvTuI51mr1JSx4iHzHRgafnPv7SAp/K1ESWkf16lMywC2hlASOIWvpoQkTDHxIjIOJQUqF3P4rZ+OlyU8ugLXoLRJK8/ICPrAmxK77Q=
+	t=1757985022; cv=none; b=LJynRJAnTogV30FJGL1OTxDwHwnUd2aCrHPcnepYk8xO49pyQPwV4Sk9SwzMXef19l5Nvi+BuM6nGr631giRC2pVzL72vr1VMAaR3x3F8UF+jgDpAj0TSexfi9K6IY8+aMY922Uhp/4fgNNuQJhmA8XD1pCLssZExxdpSax6kVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757985581; c=relaxed/simple;
-	bh=U8IR5UvODudAhu7jZXRZ8Pcm3iD0tyERJBfX+nm8YNs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S/YqL6EN6cOB0CfaiZiLtBO9+Dd6lplqZpeOppTr2BrGF+VkT28oTunCyWhBPNlD9HPy4DUcAhuRcB1uxWK6eHFbLwCXoav2PyEGd+ExRHHZUX2mO3De7x/Twrs86QVuA/AbQKXmmHFxXe2NinDSCk8IWwhFYeP5ujqC4QG9Lrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cQkZv5sqZzKHLxP;
-	Tue, 16 Sep 2025 09:19:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6ECFA1A0D19;
-	Tue, 16 Sep 2025 09:19:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDXIY4ku8hoMgGcCg--.12643S4;
-	Tue, 16 Sep 2025 09:19:34 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: tj@kernel.org,
-	josef@toxicpanda.com,
-	axboe@kernel.dk,
-	liangjie@lixiang.com,
-	yukuai3@huawei.com,
-	hanguangjiang@lixiang.com
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] blk-throttle: fix throtl_data leak during disk release
-Date: Tue, 16 Sep 2025 09:09:47 +0800
-Message-Id: <20250916010947.2891471-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1757985022; c=relaxed/simple;
+	bh=ZQTPa4qCqNPQcCVuZYmnA0IF9BNND4cuu2KqMd7rREY=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=GLasAFlM2dTq7ZDBLQ+iCpYv5mgr6giXzXppA2UqsxGtKbTpnbdebcuITjSa9TzlOmanoPErzF5OB3xWPHGe9Or55D8pRYaCX+ItPzWr1KfXwmdV9JEyjPdY4sJy6SuosFX6yU6plyU5GBYHRrQ3VHjpW5YtBr1caUC2hdLskzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgGFrS2o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1223C4CEF1;
+	Tue, 16 Sep 2025 01:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757985021;
+	bh=ZQTPa4qCqNPQcCVuZYmnA0IF9BNND4cuu2KqMd7rREY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=AgGFrS2o4WwL1ZKfZEFpXhEgHGnfqzHJ5gPlKTVGVLbKnf48eNvoW8T4HWu2WGiRQ
+	 IRSKpfiFSjcYxi1I67e7sPy5XWTK0xp12ueSiJnvHaHuNOnp9yrwzqMBHBb5u8KS6W
+	 klI3eHO7Id/R7cC1jT3yb8EbKtGWj23dPa7wQmGsYtLXk6oQxqk+6G0F3K+yIncUne
+	 MyRvo/3wPzeZrV2gwYCz521jYW5SEqNsYIIOefxrDlKi3HpzSbYzh/cLeJDZ8XSpJY
+	 YZr+4+L9lQhKpXXcK2hcZ7wZri53neY5F6phvsCxGKwUS9McCoWf+1DWP5QyQOEgJV
+	 2A98CeTju/0wA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXIY4ku8hoMgGcCg--.12643S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1xZrWrKr4rCFy5AFyxXwb_yoW8XF15pF
-	W5Zw4UKry5CFnrWayUtr13uFW0ka97JryrJ3s0yr4SkrW2kw18twnFvw1UCF4kAFs2yF4f
-	Zr1rtry0yF1qkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250906201657.1734462-1-robh@kernel.org>
+References: <20250906201657.1734462-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: silabs,si5341: Add missing properties
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Mike Looijmans <mike.looijmans@topic.nl>, Rob Herring (Arm) <robh@kernel.org>
+Date: Mon, 15 Sep 2025 18:10:08 -0700
+Message-ID: <175798500854.4354.9264692780454178471@lazor>
+User-Agent: alot/0.11
 
-From: Yu Kuai <yukuai3@huawei.com>
+Quoting Rob Herring (Arm) (2025-09-06 13:16:56)
+> Add "clock-output-names" which is a standard property for clock
+> providers.
+>=20
+> Add the "always-on" boolean property which was undocumented, but
+> already in use for some time. The flag prevents a clock output from
+> being disabled.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-Tightening the throttle activation check in blk_throtl_activated() to
-require both q->td presence and policy bit set introduced a memory leak
-during disk release:
-
-blkg_destroy_all() clears the policy bit first during queue deactivation,
-causing subsequent blk_throtl_exit() to skip throtl_data cleanup when
-blk_throtl_activated() fails policy check.
-
-Fix by reordering operations in disk_release() to call blk_throtl_exit()
-while throttle policy is still active. We avoid modifying blk_throtl_exit()
-activation check because it's intuitive that blk-throtl start from
-blk_throtl_init() and end in blk_throtl_exit().
-
-Fixes: bd9fd5be6bc0 ("blk-throttle: fix access race during throttle policy activation")
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/all/CAHj4cs-p-ZwBEKigBj7T6hQCOo-H68-kVwCrV6ZvRovrr9Z+HA@mail.gmail.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-cgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 7246fc256315..64a56c8697f9 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -1539,8 +1539,8 @@ int blkcg_init_disk(struct gendisk *disk)
- 
- void blkcg_exit_disk(struct gendisk *disk)
- {
--	blkg_destroy_all(disk);
- 	blk_throtl_exit(disk);
-+	blkg_destroy_all(disk);
- }
- 
- static void blkcg_exit(struct task_struct *tsk)
--- 
-2.39.2
-
+Applied to clk-next
 
