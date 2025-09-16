@@ -1,98 +1,77 @@
-Return-Path: <linux-kernel+bounces-819625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE518B5A3BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:16:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453B3B5A3C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF197580675
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D225807B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A60285CB2;
-	Tue, 16 Sep 2025 21:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V22XGrXJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CqWJ884f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C93283FF0;
+	Tue, 16 Sep 2025 21:16:54 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAAB31BC9F;
-	Tue, 16 Sep 2025 21:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231419FA93
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758057398; cv=none; b=XNaaZWWpC00iAH1eHtBeWn71jGK5FpJGIBbLM+/ldg4ZyhdGLYMUUQrrB+65xj/mCmjBg5Z9wCsthp3WOZBtNjmUZ/RoYxXtHicdqA5q8flf81uzZoVC3zrPyq086wun+hVgAKan13g2xmJ0nZReR2cnO9VjqMCnG1csXkHeSPU=
+	t=1758057414; cv=none; b=JK6yfmd/+unUH/FnYJ3T3nNdJ0oVuMQ95mFUTYTJmHVcdBdfftHfThn1fEMzapwZhgT6nA/lgs3G9zoqRx12ctzPbwWSf/LdHqmZDWG1Vc2SG+kMaoqzl0gM8eiA6VDQY7nsjHaXGeQUPV8ymB0y6cDaZvarFOHMkxlbO3/QoWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758057398; c=relaxed/simple;
-	bh=DTBneYKEQ1LXUX1rMxvyffo49ndM+WKAW2jsCAZP/J0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XqKXNIn73Mh+IHmOl8F5Msj2uYjpkLTkkM2D8i9tcGe+LgFq7WwMENCEk4YK8IAL8SHqWpXX92Uk5mibugpRZV0l2c1J6yR1o2nF09Yj+p99s2PNUvHhpK48Uaj9JLLkyWMoNv/PdZEgZUFTrqMXnTfykfmO+PdRm2fAU5ouiSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V22XGrXJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CqWJ884f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758057395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cdBjosARmBSEo7aiSHM+dIdoMHfCZY2WlWe0Fb0A5eI=;
-	b=V22XGrXJlCZ5AQ9pe37LMtlOlaa5uG8osxrLsqv/+DC/Jbi/gaOpvLPA0WMtTQxFy0AUdp
-	ocZJsSczCxILdgsmO4GMKTUFDP0xpwY6AtIXURDTCI7YBHO2vUnZPIuwtJw2bNKQ43jRR/
-	SrnGkYVy74kqALkz23Q9mSMTMN61R3tuGvD3/VSh+ybJMd55BYszvtovTcZU3B8sWL/oxK
-	m7Yx3U3wdB0a8EHseRTc6f9n1GflXL/nu61iIYkP98BgbC6HF97j1UXSi1XiE2URbMvERJ
-	DzKL9myXEOmPWxsz4yNEbIW3+Ka6Elq8rzhi9TN1pUtrkyuBilYL6aLIOL/JOQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758057395;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cdBjosARmBSEo7aiSHM+dIdoMHfCZY2WlWe0Fb0A5eI=;
-	b=CqWJ884fvJ8/FWHJRwkFwD617d0BLRtMBNrP3oVIvDrTlG1B/A3pQgDgnF+3bJQdmfDYNc
-	0I7SSpqMR6U7YOCg==
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
- pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
- mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, Eugen Hristev <eugen.hristev@linaro.org>
-Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
-In-Reply-To: <87cy7q9k8y.ffs@tglx>
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
-Date: Tue, 16 Sep 2025 23:16:34 +0200
-Message-ID: <87a52u9jyl.ffs@tglx>
+	s=arc-20240116; t=1758057414; c=relaxed/simple;
+	bh=Ieq1ck0qvm3ZmRsGLSRgTwo5ZTOdLuFi0WGVB/YIMwQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=laAyS4YAIluwUrCFiX8Rg69q1oDz/1rmoQuR7+U8TnMgMN+CW98Mo4TgQUe2jWHjNujHxMOwKJb0QhBwr1Vq18CIyiKtaLoz/HkQ8kebRMqmVGnwe0QAceBZDIT8fC+H4PSS5KPTLM58E9/kAmJs2kKqwsTopJ2YhhUJ+04Exbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-401eba8efecso4411835ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:16:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758057412; x=1758662212;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OV9FnEIMn3tAb3e2Fleb7GR+066UTYm6BepX40jlcc8=;
+        b=qiuM9cC5ljrxsI68plCCSywlCDytAQUYuTvA3EFjPDCvFquuj7y+BOTtRNkkuQFSwG
+         g0IUXKI/m6MkgNXFUQczyYImvDJHP+hsmxniRplLXJ455itLqpJitx9H03bN6v5Gkuxo
+         HiFsrTCttPDb4m5q3WW1AU9EOgeuZZ5lSL5G5lC18l5upmvSYW5tYHp1sWNW9lZ4bRXH
+         OXOntBkZlQdZpTIIZ4z7SQpoKcCx74iVkpBEsnCMtGWbxZi3uH3iM7Ay00lLXQ8/cfQ9
+         e3f3XqMTdmlfcWTYgRVvVUErqBhhQPp99S+rr0PDBmnJbgw2ZV4OMbuPuKnUQuzcHKCn
+         nVZA==
+X-Gm-Message-State: AOJu0Yzyi9jTQ6GlkdkbD2R7WVlkQOEnLVIJ5PwKrX4nxDbLw7grD7pE
+	b5Gk1kU5ABaefgxg62WCLpgsnljuyGOoT+bU3tCm39KSb8hQGqTuBAOyv6/0nOyx6CXFcdPA//p
+	WmNza54yslCUnCRI/lvj1CqFrxiT+tBGTuvG31dlIe9LdHHDaB+979SIm62w=
+X-Google-Smtp-Source: AGHT+IEQkoz9JlOolvEGnKG6K92hpbaqIz1+b7Hn/1+dY3TbD6MvdfZ5OtoOpKefXeMK74Kr79bJie6jlM2PU76ih1oAy997wfh1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1688:b0:424:f8c:5c71 with SMTP id
+ e9e14a558f8ab-42411463ac9mr33501985ab.9.1758057411872; Tue, 16 Sep 2025
+ 14:16:51 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:16:51 -0700
+In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c9d3c3.050a0220.3c6139.0e69.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 16 2025 at 23:10, Thomas Gleixner wrote:
-> On Fri, Sep 12 2025 at 18:08, Eugen Hristev wrote:
->> nr_irqs is required for debugging the kernel, and needs to be
->> accessible for kmemdump into vmcoreinfo.
->
-> That's a patently bad idea.
->
-> Care to grep how many instances of 'nr_irqs' variables are in the
-> kernel?
->
-> That name is way too generic to be made global.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Aside of that there is _ZERO_ justification to expose variables globaly,
-which have been made file local with a lot of effort in the past.
+***
 
-I pointed you to a solution for that and just because David does not
-like it means that it's acceptable to fiddle in subsystems and expose
-their carefully localized variables.
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Author: yanjun.zhu@linux.dev
 
-Thanks
-
-        tglx
+#syz test: https://github.com/zhuyj/linux.git 
+v6.17_fix_gid_table_release_one
 
