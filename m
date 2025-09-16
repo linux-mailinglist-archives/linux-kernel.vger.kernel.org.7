@@ -1,138 +1,180 @@
-Return-Path: <linux-kernel+bounces-818552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8FEB59344
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:19:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8A8B59341
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293591BC4713
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F9C3B616D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC583043A0;
-	Tue, 16 Sep 2025 10:19:29 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3A524338F;
-	Tue, 16 Sep 2025 10:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE987303C9D;
+	Tue, 16 Sep 2025 10:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EtLbXwhP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5B4303A21
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758017969; cv=none; b=QD4u6b3m+bfMoKxOgTYwZeS1F40p9509TF/87oYH8DKkCVQ2UCsmGGcMWLwhuCk+SdrMgz3Xm2amZDDrUEsD4E3kZOBEr3Q3xPswvnQSHvH9J15LL/HRfbb0IOIWcqF1DNcYIUpGXsrkRELynRNDTVm+5J07c/trU6T8T+Ajeqg=
+	t=1758017966; cv=none; b=ohF2zFLTZwkJxix6gpBYe7E6X/ehjyu2SvukaQR0c8BkCG4Mmwu7yIuabYZKtfpSHdQSHOLzG4hi6O6Tx+SDR0kzxoWNYMPAYaC07gGzyFr7g572XrCPWQHFtCoORyFzpYfMPHaut4gWnqm50uFMwOcvHx12z1NOkeGJ8niyJaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758017969; c=relaxed/simple;
-	bh=W5YIT3+BDwsaliPJO5D4/+GpNuefOW/D5AS/xsXGfms=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=QmHSpXLRm96k0ddiZGknVvfTl+97N8L4tDR97dFlw4bVtO7Ypa7Iv+UEvg1ky0sOFGIiKbGopPGEyDpEx25U/hmTVMozHspxZuktCcJ/M+A047xSrZotFNNADw+PM8wP/dXNO1m3ZWTe1h1tBoNhA8bRSV0ynv4zoflrfVwmbbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=13.75.44.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [106.117.98.100])
-	by mtasvr (Coremail) with SMTP id _____wD34GqZOclo2ro9Ag--.591S3;
-	Tue, 16 Sep 2025 18:19:06 +0800 (CST)
-Received: from duoming$zju.edu.cn ( [106.117.98.100] ) by
- ajax-webmail-mail-app2 (Coremail) ; Tue, 16 Sep 2025 18:19:04 +0800
- (GMT+08:00)
-Date: Tue, 16 Sep 2025 18:19:04 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: duoming@zju.edu.cn
-To: "Jakub Kicinski" <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com,
-	edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch
-Subject: Re: [PATCH net] cnic: Fix use-after-free bugs in cnic_delete_task
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.3-cmXT6 build
- 20250620(94335109) Copyright (c) 2002-2025 www.mailtech.cn zju.edu.cn
-In-Reply-To: <20250915182235.77a556c4@kernel.org>
-References: <20250914034335.35643-1-duoming@zju.edu.cn>
- <20250915182235.77a556c4@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1758017966; c=relaxed/simple;
+	bh=0FM9OkE2a0680o9LMFE/4uvss6jn9QpaCDiB+I50lPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPC72qL8H6PwFbHLwRaXRMtAQsPi3gPdP7hT4cLiKTPx6OPHvaj266E7AvMxDY0fInQpPvVD/nXtUMnFZMUOpFyJk/jK1ZMaZAr1rzGLS270drQMY+FQiH6wc6o1kGSLJ6IKD7gsJgaxIB9RTwM/+ZRkOzfJfjypnWOUk6TE9e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EtLbXwhP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G9emwH001535
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:19:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=sl2TOog3kB9QFbelgSf5eIFg
+	UTi8GDmmk/d1oNtHYxc=; b=EtLbXwhPk6zfkjc8UtKVO/aB+5tuueVqBzcWHv/n
+	ywQeLa/Pz9TBq8bpIjMlt9FItt2kfsEzIMDS0pXE8GkgJfeeE//5uZWeABCDzAGG
+	blL5pJ7zTQf0GFenVwvXXVNmPSLeXxlTvmIkN0GlyUrcvZo2LYfCgmGpqAmfx0Nu
+	9FZJhfo4DV0KuUB3Ywk/dPRsPUTWhz9yDTtBv6ui9JrZzIr1GhCSopEC8eDaxsQd
+	snmSLLHSqP+2xAdIQUoByYSOjNgrGJvfTI8jO6d2VPtvrV44b8XXafnFYq2UIjQO
+	6F1nwo34SrUK0SdhfWniNH4sIyQMunJ4S+jtXcHN+Cilgw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 495eqpyfp9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:19:23 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b60dd9634dso126291551cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 03:19:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758017962; x=1758622762;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sl2TOog3kB9QFbelgSf5eIFgUTi8GDmmk/d1oNtHYxc=;
+        b=HFUxTCG345GzDyf4JW8WJvdFUr7s9FYFI23uOB/BqedRhVWm3Hv06ldGQxsh39euB0
+         xx16IhzUGl8jPlioP9RjME3/0cSuWy5QvqueDSWQzzUjoGyPvkyc1Ntl2ljHW3LwR7h7
+         gH8xGEfl2+ty2FoNXx9NwV1vcPsriYgJOuug7Q1ATJ+ecFB65/k+S1N6MiSuw+zJV7gG
+         vvsMOQgid5sWa950vQalwCBwzxYf4tyI8IpHLxtQWvBwoQDu1euBKrYMwJlKxYE6T3gj
+         iCL7BIWeumh4oAAB3gjYUu8zr4qH+SHkTV1hlgvXN+TKQhzlMqRoGg+KfC5kR43vExpn
+         4zrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZkXmLV4LOa6vusE5RzcKrgLEoJ7pXw9RAx73XuKAcGN0Uz9vlqGzy28IVb7I2K5KfgMqAGduwTZOPEYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx4rQMqVWRo6X5jF7bxtqbxziaDp8+MHIqPCcmhnE78xIBw48w
+	9NmNlY81xdofHzzenK4gv3wM+c1BjS+vnkMDedqttE7/+cxLNdRkWYQXHiLFU5CGVVnKZFKBgMF
+	NVE0VwiXqbigS9q4cOnLyNMZ48FzFu0QrCmNFsYz8W0j8ZGRDQ59E+6hfNLlQ7vSHv0c=
+X-Gm-Gg: ASbGncvEIp8zMogFeXzWAI8X2blIDNmGDzfJVGkbkAsYCJ/d+NJ5Z9aPHCNaDWlptXv
+	zYTwsAtq4pm5fjjmod7AKcoEuz6v1WHXAzkujPb7gBVgD5OwzRRzZsp9beMgVFmYh6bt+GsqoVI
+	cjfPyhL7CIGeYXbyYhz+2dGNRF+LGtdTpW3D/lMIyiNLmSroiZqhgH0KSAGhhs8eJCcXcQawFmO
+	vQvmVkLhEoQ6dXkSzcfn6VnSmBhmlLeLVM0LuVuGMGs5SIdct2cMTio2DMll6o2f9sq63zcwv3/
+	bWmT/f6s3gkCt0xWu4vjMQoCp1foPYWlEO+qMjhOvZwFPJDUr9vOwc3Re6PEV6ED9ActaF+/ORs
+	+deu0F2hIjaNflVvCmzRo1kMxhXh9wwE8AUuUrBqK7r4GkDsxpPon
+X-Received: by 2002:a05:622a:5e18:b0:4b7:8cf8:21a1 with SMTP id d75a77b69052e-4b78cf8257dmr87539331cf.82.1758017962612;
+        Tue, 16 Sep 2025 03:19:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRX7VgG6Mvq4kDoTzOqcrX9aymRenqpozVFQTu+puYSIYn8Xg/8lhSfWflWu0YJbAs1S+Zjg==
+X-Received: by 2002:a05:622a:5e18:b0:4b7:8cf8:21a1 with SMTP id d75a77b69052e-4b78cf8257dmr87539111cf.82.1758017962162;
+        Tue, 16 Sep 2025 03:19:22 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e65754ab0sm4211645e87.132.2025.09.16.03.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 03:19:21 -0700 (PDT)
+Date: Tue, 16 Sep 2025 13:19:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 3/4] regulator: rpmh-regulator: Add support for new
+ resource name format
+Message-ID: <yjal62st6dx3x7jv7lz42xfkw6xyzc6b4sfcvdzigcf6ivkyp7@xmwy647h3ohm>
+References: <20250916-glymur-rpmh-regulator-driver-v1-0-bb9b00e93a61@oss.qualcomm.com>
+ <20250916-glymur-rpmh-regulator-driver-v1-3-bb9b00e93a61@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1bb984a1.4455.1995208fc7b.Coremail.duoming@zju.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:zC_KCgAHIUWYOclo47sEAg--.52277W
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwELAWjIa-sOCQAIs3
-X-CM-DELIVERINFO: =?B?ejjX0AXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR1/7cgVV3ofNmrvLphm9h9KSdQ6gWx4m7N3E1IpYaFopor/Utk1b8mb/TyWa9iv/7g5Ij
-	NyuI6fTO1uy65bQUXPJDvr+MbXTmyfN4WXPfTHGra/VIiW8Xv3q7tH0yCShV1w==
-X-Coremail-Antispam: 1Uk129KBj93XoWxGw4kAr1UurWxKF4DWFyUJwc_yoW5ZFy8pr
-	WfW345XFZ7Jr18twsaqr48XF1Y9w4vya47Grs5Jrs2y34rJF1YgryfKFWruaykurWkZF4x
-	ZFn8ZFZxZFyqkFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUmvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxM4xvF2IEb7IF0Fy264kE64k0F24lFcxC0VAYjxAxZF0Ex2IqxwAK
-	zVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r12
-	6r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UMVCEFcxC0VAYjxAxZFUvcSsGvf
-	C2KfnxnUUI43ZEXa7IU848BUUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-glymur-rpmh-regulator-driver-v1-3-bb9b00e93a61@oss.qualcomm.com>
+X-Proofpoint-GUID: 5KPeUXUBkf1vCsUzJToiUFiRNq6HOMSs
+X-Proofpoint-ORIG-GUID: 5KPeUXUBkf1vCsUzJToiUFiRNq6HOMSs
+X-Authority-Analysis: v=2.4 cv=XJIwSRhE c=1 sm=1 tr=0 ts=68c939ac cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=9nMCXy-jIdBvRpzB-YEA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDE4NiBTYWx0ZWRfXxFtCHpO/sePp
+ YykA5NPwgb24Y+4KN6xqmAL2ePz8OQAqgrlTHDatL9VYcCB1uC2k9QxSCi6ys9X22ebc8wSJn/I
+ y4+2fFtE94mlaGE7ELsPwIvr9c0unKRnY5S3fWJdBYoOl6yOTrRxYs2DAa3w9JYkenFr0+L4D33
+ C3RWQpM7YAsFScm6LlKIPXcBjTzDNmlJ92cjUJOHGSMv1I8fNS8aXmWYHQ/IGL3ghkpY+tuzyq4
+ +9+sk/+sc3UNicyhJD54FVKfI/43tuKh9NhHZ0Hzs9wTsFpHeZghVO2jHID1XPF8neEM51SPYXu
+ RkIKEX8xXc6Gdoo4Qe4/2zspCBoCdRr8SYM3dSuz/S1dTENOTJeCU5bfgfyYcHr6SbiiyY89nDx
+ +x6OEMlb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509130186
 
-T24gTW9uLCAxNSBTZXAgMjAyNSAxODoyMjozNSAtMDcwMCBKYWt1YiBLaWNpbnNraSB3cm90ZToK
-PiA+IFRoZSBvcmlnaW5hbCBjb2RlIHVzZXMgY2FuY2VsX2RlbGF5ZWRfd29yaygpIGluIGNuaWNf
-Y21fc3RvcF9ibngyeF9odygpLAo+ID4gd2hpY2ggZG9lcyBub3QgZ3VhcmFudGVlIHRoYXQgdGhl
-IGRlbGF5ZWQgd29yayBpdGVtICdkZWxldGVfdGFzaycgaGFzCj4gPiBmdWxseSBjb21wbGV0ZWQg
-aWYgaXQgd2FzIGFscmVhZHkgcnVubmluZy4gQWRkaXRpb25hbGx5LCB0aGUgZGVsYXllZCB3b3Jr
-Cj4gPiBpdGVtIGlzIGN5Y2xpYywgZmx1c2hfd29ya3F1ZXVlKCkgaW4gY25pY19jbV9zdG9wX2Ju
-eDJ4X2h3KCkgY291bGQgbm90Cj4gPiBwcmV2ZW50IHRoZSBuZXcgaW5jb21pbmcgb25lcy4gVGhp
-cyBsZWFkcyB0byB1c2UtYWZ0ZXItZnJlZSBzY2VuYXJpb3MKPiA+IHdoZXJlIHRoZSBjbmljX2Rl
-diBpcyBkZWFsbG9jYXRlZCBieSBjbmljX2ZyZWVfZGV2KCksIHdoaWxlIGRlbGV0ZV90YXNrCj4g
-PiByZW1haW5zIGFjdGl2ZSBhbmQgYXR0ZW1wdCB0byBkZXJlZmVyZW5jZSBjbmljX2RldiBpbiBj
-bmljX2RlbGV0ZV90YXNrKCkuCj4gCj4gW3NuaXBdCj4gCj4gPiBSZXBsYWNlIGNhbmNlbF9kZWxh
-eWVkX3dvcmsoKSB3aXRoIGNhbmNlbF9kZWxheWVkX3dvcmtfc3luYygpIHRvIGVuc3VyZQo+ID4g
-dGhhdCB0aGUgZGVsYXllZCB3b3JrIGl0ZW0gaXMgcHJvcGVybHkgY2FuY2VsZWQgYW5kIGFueSBl
-eGVjdXRpbmcgZGVsYXllZAo+ID4gd29yayBoYXMgZmluaXNoZWQgYmVmb3JlIHRoZSBjbmljX2Rl
-diBpcyBkZWFsbG9jYXRlZC4KPiAKPiBIYXZlIHlvdSB0ZXN0ZWQgdGhpcyBvbiByZWFsIEhXPyBQ
-bGVhc2UgYWx3YXlzIGluY2x1ZGUgaW5mb3JtYXRpb24gb24KPiBob3cgeW91IGRpc2NvdmVyZWQg
-dGhlIHByb2JsZW0gYW5kIHdoZXRoZXIgeW91IG1hbmFnZWQgdG8gdGVzdCB0aGUgZml4LgoKVG8g
-cmVwcm9kdWNlIHRoZSBpc3N1ZSwgSSBlbXVsYXRlZCB0aGUgY25pYyBkZXZpY2UgaW4gUUVNVSBh
-bmQgbWFudWFsbHkKdHJpZ2dlcmVkIHRoZSBwcm9ibGVtIGJ5IGludHJvZHVjaW5nIGRlbGF5cywg
-c3VjaCBhcyBjYWxscyB0b8Kgc3NsZWVwKCksIAp3aXRoaW4gdGhlwqBjbmljX2RlbGV0ZV90YXNr
-KCnCoGZ1bmN0aW9uLgoKV2hpbGUgdGhlIGRlbGF5ZWQgd29yayB3YXMgZXhlY3V0aW5nLMKgY2Fu
-Y2VsX2RlbGF5ZWRfd29yaygpwqBmYWlsZWQgdG8gCnRlcm1pbmF0ZSBpdC4gRnVydGhlcm1vcmUs
-IHNpbmNlwqBjbmljX2RlbGV0ZV90YXNrKCnCoGlzIGEgcmVjdXJyaW5nCmRlbGF5ZWQgd29yayBp
-dGVtLMKgZmx1c2hfd29ya3F1ZXVlKCnCoG9ubHkgYmxvY2tzIGFuZCB3YWl0cyBmb3Igd29yawpp
-dGVtcyB0aGF0IHdlcmUgYWxyZWFkeSBxdWV1ZWQgdG8gdGhlIHdvcmtxdWV1ZSBwcmlvciB0byBp
-dHMgaW52b2NhdGlvbi4gCkFueSB3b3JrIGl0ZW1zIHN1Ym1pdHRlZCBhZnRlcsKgZmx1c2hfd29y
-a3F1ZXVlKCnCoGlzIGNhbGxlZCBhcmUgbm90CmluY2x1ZGVkIGluIHRoZSBzZXQgb2YgdGFza3Mg
-dGhhdCB0aGUgZmx1c2ggb3BlcmF0aW9uIGF3YWl0cy4gVGhpcwptZWFucyB0aGF0IGFmdGVyIHRo
-ZSBjeWNsaWMgd29yayBpdGVtcyBoYXZlIGZpbmlzaGVkIGV4ZWN1dGluZywgCmEgZGVsYXllZCB3
-b3JrIGl0ZW0gbWF5IHN0aWxsIGV4aXN0IGluIHRoZSB3b3JrIHF1ZXVlLgoKWW91IGNhbiBzZWUg
-dGhlIGRldGFpbCBpbiB0aGUgZm9sbG93aW5nIGxpbms6Cmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4u
-Y29tL2xpbnV4L3Y2LjE3LXJjNi9zb3VyY2Uva2VybmVsL3dvcmtxdWV1ZS5jI0wzOTM3CgpGdXJ0
-aGVybW9yZSwgSSB3cm90ZSBhIGtlcm5lbCBtb2R1bGUgdG8gdGVzdCB3aGV0aGVyIHRoZSBjb21i
-aW5hdGlvbiBvZgpjYW5jZWxfZGVsYXllZF93b3JrKCnCoGFuZMKgZmx1c2hfd29ya3F1ZXVlKCnC
-oGNhbiBzYWZlbHkgdGVybWluYXRlIHJlY3VycmluZwpkZWxheWVkIHdvcmsgaXRlbXMuIFRoZSBy
-ZXN1bHQgaXMgbmVnYXRpdmUsIGluZGljYXRpbmcgdGhhdCB0aGUgYWZvcmVtZW50aW9uZWQKY29t
-YmluYXRpb24gY2FycmllcyBwb3RlbnRpYWwgcmlza3MuCgpUaGUgY2FuY2VsX2RlbGF5ZWRfd29y
-a19zeW5jwqBjYWxsc8KgX19jYW5jZWxfd29yayh3b3JrLCAuLi4gfCBXT1JLX0NBTkNFTF9ESVNB
-QkxFKQp0byBhdHRlbXB0IHRvIHJlbW92ZSB0aGUgd29yayBpdGVtIGZyb20gdGhlIHF1ZXVlIGFu
-ZCBzZXRzIHRoZcKgV09SS19DQU5DRUxfRElTQUJMRQpmbGFnLCBwcmV2ZW50aW5nIHRoZSB3b3Jr
-IGl0ZW0gZnJvbSBiZWluZyBleGVjdXRlZCBhZ2Fpbi4gTWVhbndoaWxlLCBpdCB1c2VzCl9fZmx1
-c2hfd29yayh3b3JrLCB0cnVlKcKgdG8gcGVyZm9ybSBhIHN5bmNocm9ub3VzIG9wZXJhdGlvbiwg
-d2FpdGluZyBmb3IgYW55CmN1cnJlbnRseSBleGVjdXRpbmcgd29yayBpdGVtIHRvIGZpbmlzaCBy
-dW5uaW5nLgoKWW91IGNhbiBzZWUgdGhlIGRldGFpbCBpbiB0aGUgZm9sbG93aW5nIGxpbms6Cmh0
-dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y2LjE3LXJjNi9zb3VyY2Uva2VybmVsL3dv
-cmtxdWV1ZS5jI0w0MzQ4Cgo+ID4gRml4ZXM6IGZkZjI0MDg2ZjQ3NSAoImNuaWM6IERlZmVyIGlz
-Y3NpIGNvbm5lY3Rpb24gY2xlYW51cCIpCj4gPiBTaWduZWQtb2ZmLWJ5OiBEdW9taW5nIFpob3Ug
-PGR1b21pbmdAemp1LmVkdS5jbj4KPiAKPiA+ICAJY25pY19ibngyeF9kZWxldGVfd2FpdChkZXYs
-IDApOwo+ID4gIAo+ID4gLQljYW5jZWxfZGVsYXllZF93b3JrKCZjcC0+ZGVsZXRlX3Rhc2spOwo+
-ID4gKwljYW5jZWxfZGVsYXllZF93b3JrX3N5bmMoJmNwLT5kZWxldGVfdGFzayk7Cj4gPiAgCWZs
-dXNoX3dvcmtxdWV1ZShjbmljX3dxKTsKPiAKPiBBRkFJQ1QgeW91ciBwYXRjaCBpcyBhIG5vcCwg
-ZG91YnQgdGhpcyBpZiBmaXhpbmcgYW55dGhpbmcKClRoaXMgcGF0Y2ggaXMgbm90IGEgbm9wLCBh
-bHRob3VnaCB0aGUgcHJvYmFiaWxpdHkgb2YgdHJpZ2dlcmluZwp0aGlzIGlzc3VlIGlzIGxvdywg
-dGhpcyBwYXRjaCBpbmRlZWQgZml4ZXMgdGhlIHVuZGVybHlpbmcKcHJvYmxlbS4KCkJlc3QgcmVn
-YXJkcywKRHVvbWluZyBaaG91Cg==
+On Tue, Sep 16, 2025 at 01:28:17PM +0530, Kamal Wadhwa wrote:
+> Currently rpmh-regulator resource name follows this format:
 
+Mention that it's a resource name inside cmd-db.
+
+With that fixed
+
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+
+> `^(ldo|smp|bob|vs)[a-n][1-9][0-9]?$`
+> 
+> (eg - ldob11, smpa2, bobc1 etc)
+> 
+> Here `[a-n]` in the resource name signifies the `pmic-id`.
+> However, newer firmware follows a different format that also
+> includes the `bus_id` as well in the resource name.
+> 
+> New format:
+> `^(L|S|B)[1-9][0-9]?[A-N]_E[0-3]$`
+> 
+> (eg - L11B_E1, S2A_E0, B1C_E0 etc)
+> 
+> Here `_E[0-3]` at the end is the `bus_id`, and upper case `[A-N]`
+> is used to denote `pmic-id`, while the regulator `(ldo|smp|bob)`
+> is replaced with their initials in upper case `(L|S|B|VA)`.
+> 
+> To handle this properly, do the following:
+> 
+> - Remove the `resource_name` member from vreg init data
+> 
+> - Add `index` and `regulator_hw_type` new members, which will
+> contain the index number and the regulator hardware type
+> (SMPS/LDO/BOB/VS) which can be combined with the pmic-id read
+> from the devicetree to generate the resource_name.
+> 
+> - Choose new resource name format if `pmic-id` contains `_E`
+> in it, else fallback to old format.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> ---
+>  drivers/regulator/qcom-rpmh-regulator.c | 1134 ++++++++++++++++---------------
+>  1 file changed, 586 insertions(+), 548 deletions(-)
+> 
+
+-- 
+With best wishes
+Dmitry
 
