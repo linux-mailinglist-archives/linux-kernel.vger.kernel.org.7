@@ -1,344 +1,162 @@
-Return-Path: <linux-kernel+bounces-818717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150E2B5959E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:56:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C70CB595A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48235481DEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7822A742E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5C527E06D;
-	Tue, 16 Sep 2025 11:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B53307AD9;
+	Tue, 16 Sep 2025 11:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="q9cflKHi"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTN/35BN"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C1113D638
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41348305077
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023763; cv=none; b=EYlgBiZ3LNVA/gWhM/FBqbiBLxhmNXGw1xJGy0NdRvtF2VeTPsx82YYO1Vg33niazAe6feRldhozxSevhLPDnGim2zhac+u/1kzkHCjSoGwZ7cQDQbINrIRj2HxdfYGDTW40al8o346EPApOWQL89wRfEt/c5XGj8g4X2sCcf4c=
+	t=1758023826; cv=none; b=S6rijP/caYK1Qaoal5pO51mfI2ZVv9MZf3uuITYolooIaa7m+i/NhI7kq6fFTA8wvN+XusmAycXoBmgaZAR6Ew1GuxEAVKyuEkQQdBAZN5hMlB54jOBX+SEmdeAIJZkPkCQeQ92526lnYy+udbZgKOvNYOfMFUghqt/DgNiAUkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023763; c=relaxed/simple;
-	bh=E70mRgsySmWMcNTWDpJAM0GT3t885KA187Y/u1PLE1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kHMLqIX4nx/YMRU9GVvTm0lXTeWpw0fOKlmrGYXEWHr0//rbmLeNqz2lbgFgKydhwD2bFSouF1TrnRbxfu4S5GMl9OOQyyU5p7AQ6t+zB6pGlKJXqnbspR/8M4TIFHbw+LhBzdzirsQCYXX6cVwRXuEnDeNNrGvmQW+nUMKT0ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=q9cflKHi; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C0A63C6F;
-	Tue, 16 Sep 2025 13:54:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758023681;
-	bh=E70mRgsySmWMcNTWDpJAM0GT3t885KA187Y/u1PLE1c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q9cflKHigtXDz5CPYt9E+FQ2kyluKCs73hXPjOPEVab4wQJ3TB56yu7WNZClp71Mf
-	 i31j8f+KbdXXteWfBJ7oThe8wDX6hYSjCvloYj6Eor16dK6RzIOteKmjz2gNRvhKX3
-	 aPLaJSM2nP0+W52pKOg3MWL32orQwuaK11mQ+p+0=
-Message-ID: <1ad79486-b756-4abf-94c7-ab68c2585a7d@ideasonboard.com>
-Date: Tue, 16 Sep 2025 14:55:56 +0300
+	s=arc-20240116; t=1758023826; c=relaxed/simple;
+	bh=DhwkCUF4dudkXP7+wY51z+786KhHrdUbmAB0Gd0fdow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gf0+FFfyNVV3MAJWEylHL5vX9/7W+oQ0/UlypkU/+rLWhxFXh9IJYbJWXSyn1LqqbVnFfnvRYINWab2Adq8xlo7NxCBbg4TT2UNRu6NJzc1ELYxO/4kphfSI6f+mwOh2x0TN0fmIqy57xca5Mz/bfo4gMrlPWXb/iMGZvmKEOlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RTN/35BN; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45f2f894632so46005e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758023822; x=1758628622; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ySSczih2oIxRE/mCuJE87rsnZpN4MGD71PRCDCNKi2s=;
+        b=RTN/35BNWCzFhL5XvT06vAqs+LWvPH8J88irDti3bqW9vTzAWPJmYpunDMpmLah8dB
+         WEYLdSBWyKKjrnIlGZccENp5uXJS56FgSwQuWzYuHdJN6r8Y5jM630+UAIXHAkWiCN2+
+         jMhlwskb6BKElzX5k5WiDoWAjkiXVSlKPFKxlsLFoFFBLP1LVUGtHNK/CMRlK5jaw9ZJ
+         IPZ8tycVOr7303n2Doi3h6vZQevuudqFb+ofQkMdwvN5F5zIUbgJ02nWxFXnTQR2hkJi
+         FDUNhY55thBsvceRo3vttNUZhKxnj4Umjl4IIsokccIoG9KGjkpNFv204q2t5sJiVoAz
+         9w6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758023822; x=1758628622;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ySSczih2oIxRE/mCuJE87rsnZpN4MGD71PRCDCNKi2s=;
+        b=tsWEaV+kL8U/bTepLbFV0AkQDRaV8UNaLw6Eog8EWBWsM1i+D/a22Npc9rrmxL5pZ6
+         NIs+Oeu08xX6lAzrxgNr3woBmYhzkzR3DQzXC2xQqW8MtnlwSRnMC62WX2bkTkquehOJ
+         k2P5C23/O/Bcg7Y0WkVAzMwbkJbEOckfjck5xwWtkf4Y8AjHrZnq9yG/8POlYRb902nR
+         SaP38Swx/iD4Hn3anbcAzQSr4R/zM8KAfPv0sFF+WToRPU7+5f57kNKHBnA2WiStwdli
+         JpK6alZIJcwVeAPmqb/IuMsteoGarMxWvG1l44TYb3v5jg7Mb4Dc5sgKpBa9sGj0WsBV
+         2tFg==
+X-Gm-Message-State: AOJu0YwF26rHgrkGKb01xtP0/eUuyHMgquZxsJmembJDVeZ6nTiygp4y
+	QBZVJWXa0VnuJybDyB9f3BrT15Sv0s7s/YjTxbpc18S2gWLGLddXAgk68uCdnGdZIA==
+X-Gm-Gg: ASbGncsa/PQBtY8nAtuTUTZE1Fk3FVoDlHlgLPq7elFOM0ICUr+jCdtWRsrg+WQOXRk
+	/AY8ongKolrWdNIjQI536gEAdGZTRB/ukJW6QFE7sCvVCP7NKZhkZi0gMgFd0duAzjOQGDV+0B0
+	UTKv2kxvDWLMEQZXXQtjw6LgjW1csLjayvthpCDBFn5klpGuSNk3Fg/cSMar86aUwKzM4qc6dZg
+	tEJND3cJn2jzVsjhSeLbYGj6Q0jZ5BHPxKIXHy54X1LocU+sueSnOamuN2skdEnGasD2plKXzfN
+	OE8J4ZfgPmrWbnE5BzY9IScG/P9r8WaFa5lgwvAXr5kzvwaDt0dbT5ibyclIKBDu3Cs+uMZmH++
+	/3fRZzuQO14A2RFRzNJrYhbvar7ZxIMnW26Ad1iCCXpEYrBxCwThzlDgoKnMFF1Z0Gwi1KQ==
+X-Google-Smtp-Source: AGHT+IHVAA1mnayi87cRkdBzWdXwnComM1Vq5NxdtVwd631wdxx6byWBLXjdkxRQfsfT6Te7gJR0sQ==
+X-Received: by 2002:a05:600c:4689:b0:43d:409c:6142 with SMTP id 5b1f17b1804b1-45f320079e2mr1709505e9.0.1758023822383;
+        Tue, 16 Sep 2025 04:57:02 -0700 (PDT)
+Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f3260a1ddsm15806845e9.5.2025.09.16.04.57.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 04:57:01 -0700 (PDT)
+Date: Tue, 16 Sep 2025 11:56:58 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 01/28] KVM: arm64: Add a new function to donate memory
+ with prot
+Message-ID: <aMlQivFvqf1FGK_T@google.com>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-2-smostafa@google.com>
+ <aMAvwlMQ-Jf2MWzd@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] drm/tidss: Remove max_pclk_khz from tidss display
- features:
-To: Swamil Jain <s-jain1@ti.com>
-Cc: h-shenoy@ti.com, devarsht@ti.com, vigneshr@ti.com, praneeth@ti.com,
- u-kumar1@ti.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, jyri.sarha@iki.fi,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, aradhya.bhatia@linux.dev
-References: <20250911110715.2873596-1-s-jain1@ti.com>
- <20250911110715.2873596-3-s-jain1@ti.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250911110715.2873596-3-s-jain1@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMAvwlMQ-Jf2MWzd@willie-the-truck>
 
-Hi,
+On Tue, Sep 09, 2025 at 02:46:42PM +0100, Will Deacon wrote:
+> On Tue, Aug 19, 2025 at 09:51:29PM +0000, Mostafa Saleh wrote:
+> > Soon, IOMMU drivers running in the hypervisor might interact with
+> > non-coherent devices, so it needs a mechanism to map memory as
+> > non cacheable.
+> > Add ___pkvm_host_donate_hyp() which accepts a new argument for prot,
+> > so the driver can add KVM_PGTABLE_PROT_NORMAL_NC.
+> > 
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
+> >  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 11 +++++++++--
+> >  2 files changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> > index 5f9d56754e39..52d7ee91e18c 100644
+> > --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> > +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+> > @@ -36,6 +36,7 @@ int __pkvm_prot_finalize(void);
+> >  int __pkvm_host_share_hyp(u64 pfn);
+> >  int __pkvm_host_unshare_hyp(u64 pfn);
+> >  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages);
+> > +int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot);
+> >  int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
+> >  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
+> >  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > index 8957734d6183..861e448183fd 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > @@ -769,13 +769,15 @@ int __pkvm_host_unshare_hyp(u64 pfn)
+> >  	return ret;
+> >  }
+> >  
+> > -int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
+> > +int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
+> >  {
+> >  	u64 phys = hyp_pfn_to_phys(pfn);
+> >  	u64 size = PAGE_SIZE * nr_pages;
+> >  	void *virt = __hyp_va(phys);
+> >  	int ret;
+> >  
+> > +	WARN_ON(prot & KVM_PGTABLE_PROT_X);
+> 
+> Should this actually just enforce that the permissions are
+> KVM_PGTABLE_PROT_RW:
+> 
+> 	WARN_ON((prot & KVM_PGTABLE_PROT_RWX) != KVM_PGTABLE_PROT_RW);
+> 
+> ?
+> 
+> Since the motivation is about the memory type rather than the
+> permissions, it would be best to preserve the current behaviour.
 
-On 11/09/2025 14:07, Swamil Jain wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
-> 
-> TIDSS hardware, by itself, does not have variable max pixel clock for
-> each VP. The maximum pixel clock is determined by the SoC's clocking
-> architecture.
-> 
-> The limitation that has been modeled until now comes from the SoC's
-> clocking architecture (PLL can only be programmed to a particular max
-> value). Instead of putting it as a constant field in dispc_features,
-> we can use clk_round_rate() to see if requested clock can be set or not.
-> 
-> Remove the constant "max_pclk_khz" from dispc_features. In mode_valid()
-> call, check if a best frequency match for the mode clock can be found
-> or not using clk_round_rate().
-> 
-> Since TIDSS display controller provides clock tolerance of 5%, we use
-> this while checking if the requested pixel clock is supported. Also,
-> move up dispc_pclk_diff() before it is called.
-> 
-> This will make the existing compatibles reusable if DSS features are
-> the same across two SoCs with the only difference being the pixel clock.
-> 
-> Note:
-> This uses clk_round_rate() to validate all modes and ensure that the
-> driver enumerates only those whose clocking requirements are well
-> within the tolerance range. However, this incurs a slight delay, as for
-> each mode, clk_round_rate() is called, which takes ~100 us. So, for a
-> monitor supporting 30 modes, it takes an extra 3.5 ms to do
-> clk_round_rate() to enumerate all modes. If the user wants to bypass
-> this validation logic, they can manually modify the driver to bypass
-> these calls selectively. For example, they can just do a
-> clk_round_rate() check for the highest resolution mode and bypass it
-> for the rest of the modes, as done here [1].
-> 
-> [1]: https://lore.kernel.org/all/20250704094851.182131-3-j-choudhary@ti.com/
-> 
-> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-> Tested-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 78 +++++++++++------------------
->  drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
->  drivers/gpu/drm/tidss/tidss_drv.h   |  1 -
->  3 files changed, 30 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index 7c8c15a5c39b..1cd83a6763ba 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -59,10 +59,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->  const struct dispc_features dispc_k2g_feats = {
->  	.min_pclk_khz = 4375,
->  
-> -	.max_pclk_khz = {
-> -		[DISPC_VP_DPI] = 150000,
-> -	},
-> -
->  	/*
->  	 * XXX According TRM the RGB input buffer width up to 2560 should
->  	 *     work on 3 taps, but in practice it only works up to 1280.
-> @@ -145,11 +141,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->  };
->  
->  const struct dispc_features dispc_am65x_feats = {
-> -	.max_pclk_khz = {
-> -		[DISPC_VP_DPI] = 165000,
-> -		[DISPC_VP_OLDI_AM65X] = 165000,
-> -	},
-> -
->  	.scaling = {
->  		.in_width_max_5tap_rgb = 1280,
->  		.in_width_max_3tap_rgb = 2560,
-> @@ -245,11 +236,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
->  };
->  
->  const struct dispc_features dispc_j721e_feats = {
-> -	.max_pclk_khz = {
-> -		[DISPC_VP_DPI] = 170000,
-> -		[DISPC_VP_INTERNAL] = 600000,
-> -	},
-> -
->  	.scaling = {
->  		.in_width_max_5tap_rgb = 2048,
->  		.in_width_max_3tap_rgb = 4096,
-> @@ -316,11 +302,6 @@ const struct dispc_features dispc_j721e_feats = {
->  };
->  
->  const struct dispc_features dispc_am625_feats = {
-> -	.max_pclk_khz = {
-> -		[DISPC_VP_DPI] = 165000,
-> -		[DISPC_VP_INTERNAL] = 170000,
-> -	},
-> -
->  	.scaling = {
->  		.in_width_max_5tap_rgb = 1280,
->  		.in_width_max_3tap_rgb = 2560,
-> @@ -377,15 +358,6 @@ const struct dispc_features dispc_am625_feats = {
->  };
->  
->  const struct dispc_features dispc_am62a7_feats = {
-> -	/*
-> -	 * if the code reaches dispc_mode_valid with VP1,
-> -	 * it should return MODE_BAD.
-> -	 */
-> -	.max_pclk_khz = {
-> -		[DISPC_VP_TIED_OFF] = 0,
-> -		[DISPC_VP_DPI] = 165000,
-> -	},
-> -
->  	.scaling = {
->  		.in_width_max_5tap_rgb = 1280,
->  		.in_width_max_3tap_rgb = 2560,
-> @@ -442,10 +414,6 @@ const struct dispc_features dispc_am62a7_feats = {
->  };
->  
->  const struct dispc_features dispc_am62l_feats = {
-> -	.max_pclk_khz = {
-> -		[DISPC_VP_DPI] = 165000,
-> -	},
-> -
->  	.subrev = DISPC_AM62L,
->  
->  	.common = "common",
-> @@ -1331,25 +1299,50 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
->  			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
->  }
->  
-> +/*
-> + * Calculate the percentage difference between the requested pixel clock rate
-> + * and the effective rate resulting from calculating the clock divider value.
-> + */
-> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
-> +{
-> +	int r = rate / 100, rr = real_rate / 100;
-> +
-> +	return (unsigned int)(abs(((rr - r) * 100) / r));
-> +}
-> +
-> +static int check_pixel_clock(struct dispc_device *dispc,
-> +			     u32 hw_videoport, unsigned long clock)
-> +{
-> +	unsigned long round_clock;
-> +
-> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
-> +		return 0;
-> +	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
-> +	/*
-> +	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
-> +	 * use the same 5% check here.
-> +	 */
-> +	if (dispc_pclk_diff(clock, round_clock) > 5)
-> +		return -EINVAL;
-> +	return 0;
-> +}
-> +
->  enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
->  					 u32 hw_videoport,
->  					 const struct drm_display_mode *mode)
->  {
->  	u32 hsw, hfp, hbp, vsw, vfp, vbp;
->  	enum dispc_vp_bus_type bus_type;
-> -	int max_pclk;
->  
->  	bus_type = dispc->feat->vp_bus_type[hw_videoport];
->  
-> -	max_pclk = dispc->feat->max_pclk_khz[bus_type];
-> -
-> -	if (WARN_ON(max_pclk == 0))
-> +	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
->  		return MODE_BAD;
->  
->  	if (mode->clock < dispc->feat->min_pclk_khz)
->  		return MODE_CLOCK_LOW;
->  
+Yes, this series doesn't do any permisson changes, I was not sure if
+that would be needed in the future or not (some RO mappings), but I will
+update the check as suggested to be more strict.
 
-Shouldn't we drop the min_pclk_khz too?
+Thanks,
+Mostafa
 
- Tomi
-
-
-> -	if (mode->clock > max_pclk)
-> +	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
->  		return MODE_CLOCK_HIGH;
->  
->  	if (mode->hdisplay > 4096)
-> @@ -1421,17 +1414,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
->  	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
->  }
->  
-> -/*
-> - * Calculate the percentage difference between the requested pixel clock rate
-> - * and the effective rate resulting from calculating the clock divider value.
-> - */
-> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
-> -{
-> -	int r = rate / 100, rr = real_rate / 100;
-> -
-> -	return (unsigned int)(abs(((rr - r) * 100) / r));
-> -}
-> -
->  int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
->  			  unsigned long rate)
->  {
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-> index 60c1b400eb89..fbfe6e304ac8 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-> @@ -78,7 +78,6 @@ enum dispc_dss_subrevision {
->  
->  struct dispc_features {
->  	int min_pclk_khz;
-> -	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
->  
->  	struct dispc_features_scaling scaling;
->  
-> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-> index e1c1f41d8b4b..f82e282e17a7 100644
-> --- a/drivers/gpu/drm/tidss/tidss_drv.h
-> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
-> @@ -26,7 +26,6 @@ struct tidss_device {
->  	struct dispc_device *dispc;
->  	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
->  
-> -
->  	unsigned int num_crtcs;
->  	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
->  
-
+> 
+> Will
 
