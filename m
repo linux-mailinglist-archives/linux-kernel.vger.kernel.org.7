@@ -1,154 +1,253 @@
-Return-Path: <linux-kernel+bounces-819022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA02B59A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:33:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 702B4B59A67
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B7217ECAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:26:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34C117D35B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4415280A56;
-	Tue, 16 Sep 2025 14:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A4B19E98C;
+	Tue, 16 Sep 2025 14:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5qR3kuQ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Iaqxauxe"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010066.outbound.protection.outlook.com [52.101.84.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C7E1C8632
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758032770; cv=none; b=YmsvjQN0xB1zvqmtrHdhCYgtMsapAi8uq9+caG8P64uBGYziFnr3zQBhMP1gGTw8NFNiSkRD2X0YJVdPLxYzX01p5xmkZQrA1w0C+HnQdXPVCx6PDY78ZsQKYtAdZOLPffzaEGShPXHZ8I5X6lRrrmrpkGixUVNSDEvKmHEQsSg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758032770; c=relaxed/simple;
-	bh=uMcNijcnMhNAb21qUVKzkgNAFVxzUGHz23fC60dNeIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCHqzvQQ0CCbElK3c9AxhmC5Lg+qPuVrQ0R8y/lrgMXxzNjI8kqLJFmtAvcm7/mClVwCTa9qM5eVBIAaS26qN/830fc8yH9S4XKlmzcMDucdzU6mfLDM8gY+vk4Ia1C9JqoAaxxZUG04bp7X357tv0UvRJVU0DfZngJZNyeOPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5qR3kuQ; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77616dce48cso3057247b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758032768; x=1758637568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uMcNijcnMhNAb21qUVKzkgNAFVxzUGHz23fC60dNeIw=;
-        b=i5qR3kuQul7ReRtJ1G689EkiiLGo4VjWuui5IT8xFrpYrkc6PTtOIk0m4yzjYJojCj
-         je0uJOYIKVPyOsOToWRO0SnwhV+nDJo+EolO0Pfwc7TkUAskgpQ4MS0IJSQFfsWBonW+
-         lcfeSHFOaZW+DzSDbvb94tXc+GF6t6pnzwvwWApUYDiCCT/zTvrE4alKa6FKDgml63BL
-         StXy9hvUlJRrOPlg8KMZec5BPca6SRcNCBc7SMjrG8EZA7vsYzIpIUiNw8rkieCcri16
-         T4Hb/YjYnOcRCnueAmAdXTixYVmDKQekNAvapwQiEFL2HZE3p+1HgfTZ/FKggc/wSx+Z
-         eDqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758032768; x=1758637568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uMcNijcnMhNAb21qUVKzkgNAFVxzUGHz23fC60dNeIw=;
-        b=mXa36JSZWBVMgc9fws943y3ahx8SGdhMISexOv59TaRxCN+b8l/CHsui8rzIUebsEm
-         1oYZWAYBkXcfYfdQYcOwlraDf5fNHsnFUA/V58fX0XZk7V/b4ix9/vXi05iMmtKM/yA8
-         UuZtqGVV4pVyBDIY6JbUyIr+69vj5/bK9jx0YZTAaHPNa8BiFw3SyR/zgAFBI+kR6e68
-         nrBM+gX4c6Tv6/xuwWVqWtUkjPDj55fLoEoti+5DJ0CjvWGGY/PYPsCLLlxEFCABxsae
-         24PbuUdaAc7IjwwRxZd4QgsjreTuyp7ljSdvq5Hwdo7uLZqcK4iV5qBzmuW75oZ5u3pg
-         CSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1j+VOL76yAWkwBKm7Oks102OXE7WOiUw5TDMyKNDIMTo1P5ZsHfxqm5+bvvfqHxKKGoIplq/j64H5+44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy43/EyNOnZJI/RXD6WYZlCFUUnD3jyCR/zyUNCNiiEpFgi6n4s
-	fZEZjGe/7LoBoVfhAxfB4J17fhgjROaqmbodr1iDlHOS8VzN7ynwN9QN
-X-Gm-Gg: ASbGncsihi/ZpKvB/Y1ujVVhiXqxhiq/63zBic3a9Eox7qR5pFSUFD5sUfrjr3+xrVX
-	F77s9vshqdQv/+yYe7gIa22pub92CopG9/6eblHltvZLSbFJL4ggEPOSzz0Uzsx+mQ5X5pQTZJq
-	inXfAAG9BB1L+xkBqO8xtpJEYQU+7vGuWL2WQ7346ef82PxRo7EbjzZFXBv/ED1RNsckVZhOZt3
-	ozJ1UfBKO+pt2K7Mwzguq6Q/2A2p1PqNLba7Bjt4TNDzPoyjRr+nYftQ0T6+2cop9HfBrGcXTkX
-	rSIKOPhIwFcQbH7Vp+QcjPjOPxnQArFE7NorE8rFM4gLSnhhYt1DIEdcIUIBvmQXd3Ycnje3onG
-	lVfkptA7dibib0JMy3sDw3C8BPYwmWDN00hg4
-X-Google-Smtp-Source: AGHT+IGvai1R9UV5qW0JLRvwDFGRIhjqqVqH1mBx2L0LjYmLE/VS4NAz9iq4LkE/Qr5K0/uaq6wsQw==
-X-Received: by 2002:a05:6a20:1590:b0:263:52cb:bc49 with SMTP id adf61e73a8af0-26352cbbd14mr11711099637.35.1758032767863;
-        Tue, 16 Sep 2025 07:26:07 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ac02de2bsm12128980a12.17.2025.09.16.07.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 07:26:06 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 9679A41F4135; Tue, 16 Sep 2025 21:26:03 +0700 (WIB)
-Date: Tue, 16 Sep 2025 21:26:03 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Hugo Osvaldo Barrera <hugo@whynothugo.nl>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux EFI <linux-efi@vger.kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
-Message-ID: <aMlzeyu5Apwfp-1j@archie.me>
-References: <20250916073244.590483-1-bagasdotme@gmail.com>
- <b629ff7e-a223-467f-8e32-78f825bd31ac@app.fastmail.com>
- <87zfaufrcq.fsf@trenco.lwn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF4D3081BB;
+	Tue, 16 Sep 2025 14:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758032781; cv=fail; b=XoPK9WVP2ky1g/IqxIcMKeyo2rSWPm2g0tMrcHdBm03btyja8Qu9hV+XtUTsk0xqdlGR9Jk5t+hBiyV4Oglb3sJEx7QAGira6+vs/j+ZlxVpvJfHMit8rPvvHm9ogNc5EIbMG2xmVrSOP1691h+BuLxuS3gzG2V4xnT5LlU0oWQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758032781; c=relaxed/simple;
+	bh=AFuToyTbzSkpuK2llj+sDqvjNQPLD0MHiniyfjGM+EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=scqpA1bZVL8Ome4S9Pqb0i6iPdoctd5QtwtyksUsMfKNVm53C27KwY2fYbZFd25cy++yB7halR5YkAdSSHPwDN2TEos5R1VEApSgEN4+7Aw6N87vBM+VsLDhROcN5FCTrYeMWN+vKlqnp0r5pcibu+c5xwgV6CSkEGqrg13LxZ8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Iaqxauxe; arc=fail smtp.client-ip=52.101.84.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lOScx/SwuJSl/zFFmdpkUA92b6sitpmFWRDZGjorUiJp9h0dxRsoKO2fa2NeLs77ILX0KV/4BsyVhbJ8yAVI+jTlTEIBFZS/+3lOY/fTMwmN2PFF3yQTYc9OB/y3Ri9gLUhjU4t5ttNRILmzmO/Pb9/oYDBm133vESR4x5nW8k5emHgr575/VULO5+RY8N44+yX9ZIPhdMvLRU3DNKIs9UoxWqnx4Zu9fOLt8VknAt2/3+1v1tEfIuGcVDuH/EEu5y2ZjVzLN3l+DFdyR5h2dpFYtCVlKqDw/tE1Soo8d1Ges2UOBka9qaDvOPkjbYvbQJowua7tyTRtbCFd+XC6zQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1Behbrvo3ApvCvj+bC4n9hN44jfWkLLWqnrq/efyLMg=;
+ b=lpQAxvbqYjUntum6FkOPYmNPD6p7w4KVYraw771d4sXM68WNz9UETpXdeOrQxecYD04XHr9b43QEWCUMgt6DwZ5Ue1+LKGMHta9zGWa1bjH1dlyGV+G1/7wrpWrnh3jLn8eRNs5anMOOwpGzNEptAs5vnit9DNkygy0fYDB47nKlh0MXIXx1gTgJuaq2QlblE0XlnG48gnbgASWM1GeURZtLo0sG5b9VUiV+4olqH+o3k2MK/66bM1NiZAhEF2aIlLRJRWuK2ZTJt5rZra3WzQnKFcP+TVZ96l+UsmqHoty46tbkk+zKLbDtvWEHNvmviKnMt2d8aYhdusdvsyGyxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1Behbrvo3ApvCvj+bC4n9hN44jfWkLLWqnrq/efyLMg=;
+ b=IaqxauxedeM4Nicw57TzK1HIMxQSn+GJpSu/Tw9Gos5y3qkOylF6vhJVUIBF6vtaZt+HOmKH0+JGzeL7fZhdP6ohkNHRxxzI2RXptlblqPR/2gnlmU9R1IrMLgxT8fTpvpXJOWdcmNmCta10StbgPmoCj2oPrh5sWC29y2lQrGM4Ex3r/ISUJcUFcXRuiC4Ld6fFg5ARuwI5oqYsSds2fEXVXLL1CPQ5hI6CBACv5NCxZwAdvwAIsx5guWgbZWTRMCJ00lbdlEOF22euFQJkYGHrnKviwFMv81bMqEubF88qFrdwkF8RJxqe8JoT2A5eHseQnV99aoKfIzamE/22qQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by PR3PR04MB7228.eurprd04.prod.outlook.com (2603:10a6:102:8c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Tue, 16 Sep
+ 2025 14:26:14 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
+ 14:26:14 +0000
+Date: Tue, 16 Sep 2025 10:26:06 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Guoniu Zhou <guoniu.zhou@nxp.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v3 3/4] media: i2c: ds90ub953: use devm_mutex_init() to
+ simplify code
+Message-ID: <aMlzfludCGR/zOzY@lizhi-Precision-Tower-5810>
+References: <20250916-ds90ub953-v3-0-bb7bc6545da7@nxp.com>
+ <20250916-ds90ub953-v3-3-bb7bc6545da7@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-ds90ub953-v3-3-bb7bc6545da7@nxp.com>
+X-ClientProxiedBy: BYAPR01CA0035.prod.exchangelabs.com (2603:10b6:a02:80::48)
+ To AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pXurbY7g+wD8W3os"
-Content-Disposition: inline
-In-Reply-To: <87zfaufrcq.fsf@trenco.lwn.net>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|PR3PR04MB7228:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1e1135c-7981-4c20-4562-08ddf52cfdf1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XykC6yhvqujEgJbzPBHV3Xz8XvjKErnkIBtCJnyQtPMpQuA2OKefNhBNNJwV?=
+ =?us-ascii?Q?iLl3jXmKSPGx7JGq1RMKW/j3Oy37KgvrRnApDDmtiNmvt2IY1ALqeEtZWQ9l?=
+ =?us-ascii?Q?8WHFwIa5gRthE76UaX/fiEk99q1fF9fwDVfA2+BkiOMEAOY8er2IOwncxDIC?=
+ =?us-ascii?Q?XeXUysmnwAjx92I3PMx9RnmZM1q+Udc42hjKKVqzvShfVLDhE5jtgMMIb0mx?=
+ =?us-ascii?Q?m4BrVyxcO357lhCVzr/ftTNyLTziJ6H5eouzHG2NUSx/AibXW4WIxsGbsd57?=
+ =?us-ascii?Q?orkZa/gVcU8nYC1bSMWv4ErjSjRzN+aJk5ZD9MtdP8dHjewEjEoM3YBjsbEV?=
+ =?us-ascii?Q?wOpQot1jVjkh3JOmdOyhMP7+viiE0mTVWMLgbKuSK5QwW6Ku3yeQURrdgK2E?=
+ =?us-ascii?Q?mH2sPZoXzvm+8bwoiv43rQS0gmgtvWe+kIQIu6IHQAdyFuZttGl2Osj+gpHC?=
+ =?us-ascii?Q?sIiTlpVjO7opU/ixS7Q50n0PxYNaANHnYC8q5OUYQJeMIbOIqysl2rZ1VfkI?=
+ =?us-ascii?Q?MarkMpEa2JetdPsPFNgl4Ug78d0gyZNPGpYzEoBC33qQIwpER2dAt1590Drm?=
+ =?us-ascii?Q?/OyTE0hbOSNd5tGg6HgXI3f4dh3gCc9dZEOXeAtnDFha6JXq3ulfviGtzepG?=
+ =?us-ascii?Q?W0Ui33+yMEzUcgVTtD7s+YRV2Jvr2Dz6BXj4s2Q4OGCk4zoi189NHL+5d1WN?=
+ =?us-ascii?Q?gmW8k7Ns6PycglxuiXVZmsFsY4dpbq8Qj0JNeh9NYaFRWJBd9Yuygqy6GGNG?=
+ =?us-ascii?Q?z1MZPOF1+Pq/DMq7JxbK/epkquThiJkeL7AwR+8TYgHhqtnw3mOGcCzlcd8r?=
+ =?us-ascii?Q?Wtxow30Soc7sYFDKqUIKTKbrzaI5tP4xpx60wqNXR69Dr229oPWTHlQso+u+?=
+ =?us-ascii?Q?tHfvFFSoH8iESTU0sQ5EgZsIPaBMYr7KvntflC2eRf3xuMcpeZsPQGiV3I7z?=
+ =?us-ascii?Q?gPEy7mN10DKEX9eIy/abbkUgnhXyBjlWIBNbhktaIFnfvonEwV2tkBWx9jIe?=
+ =?us-ascii?Q?8jpyqRWSJg3I1QrD0Wjohbh++oMxYrvHYZ9ANcok6XJ6iHIbjFfa6YZwE5nF?=
+ =?us-ascii?Q?hy0ozM8wncri9e3fpUwQqh3zFOsI4nTNfh1fqT5n7W2hOt2AQEGZkx2bOgVE?=
+ =?us-ascii?Q?2Zw+eRbZzgO6L8uGDh4Dx0kTT8p4Q41+YeBymfrHRAqnWy5V6MNUMIfgRW5a?=
+ =?us-ascii?Q?ZBugxW/jn3eLdV/r6w4mlZbU69knF1w4pW42DHHiDsmTuctmkubzJLYAlWIT?=
+ =?us-ascii?Q?9UESnQa/sakuBVBk+Iyr0rZOx09M0nqpUOH29RYvqmelWbinjvZDsWq9IG5N?=
+ =?us-ascii?Q?lON7ok52bKfMUR9ElHRhKZKc9vEF072KTyxf6rNsmUXx0h8OgAbFHhnbUByP?=
+ =?us-ascii?Q?I2t/BsiE9rNNfhmcxAZfZDXmVmsGktV+4g62acwcgyFjMM9RAlL8B8ewakba?=
+ =?us-ascii?Q?ULs1XNF+gaY5FmBZGLf303UNiEXzm7G7JunzqS5VNR4sCnmQYeJiDg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?seB1LvamMADh7t0hyVqTGC01iTDSm2OEG9YfqijW5rbk/988cfpCIJV4j1wl?=
+ =?us-ascii?Q?d2ks5JX8KLnQD6jhX7Qe0FY03yuIKv2x257v76niIfMdIAXtnTrLo1aqxh6X?=
+ =?us-ascii?Q?0p8S1xBHDEFhgWtG1sTjtUSBoYwksTG0eSIq5lvYDnkbcziLaAMvhloWX/jk?=
+ =?us-ascii?Q?clCc3fv1IhaPfsRi2jGQ47/T5qwFhJKZOp0FwD1lf1D5yTOm55uNnBwPGvTE?=
+ =?us-ascii?Q?g3zsuQSDxsBIsrzsyF9aj4YF2bQaJ9bPYNGx1GeaLCKkcj6dS8oRHIK0uE/5?=
+ =?us-ascii?Q?qNnTQTWt+1eyq1q5b9DiIQ4BlXKafXLsKpyRUwNGxOQ1kGab8QYHNNagljZt?=
+ =?us-ascii?Q?v9CZDxVUHZNrkRbBd0BXa+wJ7VbT5TUWtZGDk9cWkYj0m1pYC5Ba5c4Szj2m?=
+ =?us-ascii?Q?tKGoRtATHXpiwvUq139CZijYG9yE3QeYx3vsW4G8b+yx8LcxrigXjAbiCjPa?=
+ =?us-ascii?Q?WYrnupPoujoslnPIOGl5E0beXaQtZVeMOlAAcT+eS81WpXtuMSFRH9PbZpi3?=
+ =?us-ascii?Q?xtglCx7S3T5fTxE0GGZZLL/Ddr0yfxv5l1yEn2fyZelvhBsb38SYe04UNzjU?=
+ =?us-ascii?Q?y9FeWs2y7QauXjg1kZEoTMbBOAUmVYCGmozXxSf4moJu+3Ingkd5GpYfF5bW?=
+ =?us-ascii?Q?t5oVfM4omYQFi8jX9OLVqFoNPaqOF51u9RM55OU1Ub2OsdVHs13P3i1IqNZy?=
+ =?us-ascii?Q?TIvaeiuoqs5bpbLn8FQvAAJsy7qGYQ46p5ofcHKLgKPgCzOSXeB/oMqDA+rE?=
+ =?us-ascii?Q?WGSL8/8ghgM3NfhnlgiD9XC0/wVzcdh7De+hMnEAuicVU1fMHuMmGkBX9K2h?=
+ =?us-ascii?Q?x09KPYXj0OaNF9lweFsn6by8BIuakHp8L0xF7t5Pe3lOBBZMULIHnMvlg//B?=
+ =?us-ascii?Q?i68Kn+7xTHgnsDN/ZHNBn7RK8pPXImiL4SXL5pAHm/tYljYT2fElPqxjrF3v?=
+ =?us-ascii?Q?bOYctVxvomnhW8qpCq1MCaWAzCRqANyhmSLBnjvdqcwhKi9DtRii8AcI6VTu?=
+ =?us-ascii?Q?u6camoG7sDBwbRTbxuEx48M4ZDt8xxUCj0FR314fXD/YmsLByh7o4G2xJj/s?=
+ =?us-ascii?Q?sV9KL1hlooxPXSEPnNvoJzls1M3jzCNkmmKrr5PiES/SW02Uz+0kL9ivA5Hh?=
+ =?us-ascii?Q?Qdg1epP7Vk23nPvOY+iaJZDaI4oAmTiZeqvug7z1Tjycpcwg+K+bRSqnkOou?=
+ =?us-ascii?Q?ZWkp0BilXcYqiQ85p+ZkAg9+oXGCEyM2SpVU+Zg3fyy9FNwDuIosrjJgx/lM?=
+ =?us-ascii?Q?riG9VxwRjNHUipiJTCh6k/0CsnJQkMAOrGmbo0MHG2y8ptgimUAYLdHctpvL?=
+ =?us-ascii?Q?stY1/3pzP76DRopjJu78tq9o5+e0IMbCjcxeIvir2YS2oLJpyTjnr7bIZus5?=
+ =?us-ascii?Q?AosEbJqyU8wRnmn7mHwLf9hEipkIIJr0BpXvAklryfhoSkjTDXcnzvof5/hi?=
+ =?us-ascii?Q?TXdsnCje9dybA7umQ8H+T9eAc8BTS3uIGh08hzayJ6NUlpoDvZYu1NQ+tg79?=
+ =?us-ascii?Q?fZh6BVdJ0cVoAM70YoeOeUCiOGgVMdVwNGHthEmTRqHyHlFnNgacitXbkAEc?=
+ =?us-ascii?Q?sBlRvz7WB66aiK0vZAk=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1e1135c-7981-4c20-4562-08ddf52cfdf1
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 14:26:14.5725
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FUROaidI2S7lgO2jAX2fR+PA4MH4J3fKKvRUslkBmgTKzcYkamZMpqdBP7mZDCPnHL70Kep3+0UrLsFEzCtqlw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7228
 
+On Tue, Sep 16, 2025 at 05:43:45PM +0800, Guoniu Zhou wrote:
+> Use devm_mutex_init() to simplify the code. No functional change.
 
---pXurbY7g+wD8W3os
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use devm_mutex_init() and dev_err_probe() to ...
 
-On Tue, Sep 16, 2025 at 07:40:21AM -0600, Jonathan Corbet wrote:
-> "Hugo Osvaldo Barrera" <hugo@whynothugo.nl> writes:
->=20
-> >> +When compiled with ``CONFIG_EFI_STUB=3Dy``, the kernel can be execute=
-d=20
-> >> as a
-> >> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
-> >> +implementation details.
-> >
-> > I must insist that it's a terrible idea to replace an actual link with =
-the
-> > name of the source file.
-> >
-> > This might be (marginally) more convenient for somebody who's editing t=
-he
-> > documentation, but it becomes completely useless for somebody who's REA=
-DING
-> > the documentation. Documentation needs to target readers.
-> >
-> > For someone reading https://www.kernel.org/doc/html/latest/arch/x86/boo=
-t.html,
-> > the above filename conveys no useful information.
->=20
-> When the documentation is rendered into HTML, that file reference will
-> be turned into a link automatically, and people reading it on kernel.org
-> will not notice the difference.
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-That's why I keep the file cross-reference...
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---pXurbY7g+wD8W3os
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMlzdgAKCRD2uYlJVVFO
-o+8YAQCQPDGTVdHgN6kNhi8fzWdgDD87slM6RKRQ2aBrU7sBWgD/arfkPpsyhNCy
-ne5Fs6gwrSn7y2ClBkaa/KtkpD7cGQs=
-=bvi7
------END PGP SIGNATURE-----
-
---pXurbY7g+wD8W3os--
+Frank
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  drivers/media/i2c/ds90ub953.c | 33 +++++++++++++--------------------
+>  1 file changed, 13 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ds90ub953.c b/drivers/media/i2c/ds90ub953.c
+> index c6b77e4982a3449896e564a288ff1562cb1dcb79..47e7c0a5aae7737182e6a1f2797be01e7ecc8142 100644
+> --- a/drivers/media/i2c/ds90ub953.c
+> +++ b/drivers/media/i2c/ds90ub953.c
+> @@ -1342,7 +1342,9 @@ static int ub953_probe(struct i2c_client *client)
+>  	if (!priv->plat_data)
+>  		return dev_err_probe(dev, -ENODEV, "Platform data missing\n");
+>
+> -	mutex_init(&priv->reg_lock);
+> +	ret = devm_mutex_init(dev, &priv->reg_lock);
+> +	if (ret)
+> +		return ret;
+>
+>  	/*
+>  	 * Initialize to invalid values so that the first reg writes will
+> @@ -1351,32 +1353,26 @@ static int ub953_probe(struct i2c_client *client)
+>  	priv->current_indirect_target = 0xff;
+>
+>  	priv->regmap = devm_regmap_init_i2c(client, &ub953_regmap_config);
+> -	if (IS_ERR(priv->regmap)) {
+> -		ret = PTR_ERR(priv->regmap);
+> -		dev_err_probe(dev, ret, "Failed to init regmap\n");
+> -		goto err_mutex_destroy;
+> -	}
+> +	if (IS_ERR(priv->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
+> +				     "Failed to init regmap\n");
+>
+>  	priv->clkin = devm_clk_get_optional(dev, "clkin");
+> -	if (IS_ERR(priv->clkin)) {
+> -		ret = PTR_ERR(priv->clkin);
+> -		dev_err_probe(dev, ret, "failed to parse 'clkin'\n");
+> -		goto err_mutex_destroy;
+> -	}
+> +	if (IS_ERR(priv->clkin))
+> +		return dev_err_probe(dev, PTR_ERR(priv->clkin),
+> +				     "Failed to parse 'clkin'\n");
+>
+>  	ret = ub953_parse_dt(priv);
+>  	if (ret)
+> -		goto err_mutex_destroy;
+> +		return ret;
+>
+>  	ret = ub953_hw_init(priv);
+>  	if (ret)
+> -		goto err_mutex_destroy;
+> +		return ret;
+>
+>  	ret = ub953_gpiochip_probe(priv);
+> -	if (ret) {
+> -		dev_err_probe(dev, ret, "Failed to init gpiochip\n");
+> -		goto err_mutex_destroy;
+> -	}
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to init gpiochip\n");
+>
+>  	ret = ub953_register_clkout(priv);
+>  	if (ret) {
+> @@ -1400,8 +1396,6 @@ static int ub953_probe(struct i2c_client *client)
+>  	ub953_subdev_uninit(priv);
+>  err_gpiochip_remove:
+>  	ub953_gpiochip_remove(priv);
+> -err_mutex_destroy:
+> -	mutex_destroy(&priv->reg_lock);
+>
+>  	return ret;
+>  }
+> @@ -1416,7 +1410,6 @@ static void ub953_remove(struct i2c_client *client)
+>  	ub953_subdev_uninit(priv);
+>
+>  	ub953_gpiochip_remove(priv);
+> -	mutex_destroy(&priv->reg_lock);
+>  }
+>
+>  static const struct ub953_hw_data ds90ub953_hw = {
+>
+> --
+> 2.34.1
+>
 
