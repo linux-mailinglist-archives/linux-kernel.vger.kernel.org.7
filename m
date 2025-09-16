@@ -1,139 +1,192 @@
-Return-Path: <linux-kernel+bounces-819258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3076B59D7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:24:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0577FB59D84
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945273B0517
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB48C1888C8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264C3728BE;
-	Tue, 16 Sep 2025 16:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C741437429D;
+	Tue, 16 Sep 2025 16:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rg/NP985"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKfx5b2C"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E6629B78E
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA463629AC
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758039822; cv=none; b=CVggsz2tEjm6KjHKg4ZIBQIwU3E6+vajf8XBW3YY/NwUhyKrtddgnPGpWr4HtkTL5d92G1zZra948XiG+rCOUqgCNAI6xVkLm3U1HcY9bcNGdit3Pm/fiGBTJ8d2BfZvwLpUpyR3G6AZnEa6nTdCgexaK+W/Qmu9xefbdWiyAaQ=
+	t=1758039907; cv=none; b=tpIYKFCGPKHvBWEhGS46aHQHxQEwiUlnKeeFTRXi8RJvJHRINcrKt9tWU2bElx6aNZmuR/025J0GIf8ebNeTqXwmzUzjQjt7RSx/L9Xv+jEWEFG6rWqAtND9W6iIezpigCkjH80jyNX8b3LuwwfG7AtOpkiZ7S82PF+CyC+MBjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758039822; c=relaxed/simple;
-	bh=LrD6BrLgpUvSdcLR7Skt26zZgEQ2s0Ux2XOn4YPB7Pc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t5f+kvZfClGmLL1EixZS8P2PjzMWwAwCfqWZzCjKs/GMdweIkbVHIlVg929+R9ipWCgtOCWsD/RWam7YBVV1LFn8cirFGxYB64J+GMqXDZJ3V/nSUj9RcXAi+cV4mU7E8h54n525C3WNuNx7QGILC/ThJlKBBaih2i1qQ3+y3ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rg/NP985; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1758039907; c=relaxed/simple;
+	bh=4bZfUcu3hp/JB4J0y/5p9andv/NKPL6V7hMbzL5vopg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PBmvL2EPk3TRqnCp3wSBW0zx/fGJPpjiz2RU+KA8lcJlqLsPAqQYpn2JgTJG9tFxcD/Bb+0HXvItmawrKDgLDBtdqD6HoiJ9PBvMPHSvwbx+D3X/DKSMTCvsMudp1QpXwtnh1DKou6D8tfJ0t0SpWTDNOL8B9IS9j/MRTarfyJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKfx5b2C; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so328445e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:23:40 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45dd5e24d16so54647105e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758039819; x=1758644619; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K/7fckWG4F5rhCUIhkg35WDPQwJJKTQY1bkq1rzEfW4=;
-        b=Rg/NP985qniJZy3QUCuAo6thS9AAPa08TGk6Vbr024serU+stSllIgdaQcy/BK55fF
-         knf56vz1cWIOssfKS2VZEc1R6c1durXcX1dcUz/b0+wLlXZRt6Cb+AIM67bUzWL5k+ok
-         TCaKX4JtfYOoz69vc5UqOR4Yo+sSRPIWK2C8yXuv3t02yTud/EfYu0sRudaNaXgT9Gvc
-         mOs7ot7NrTnR9/hPq3t/nyT4sWjGmcw2ua7ILhqLoyPK1WSHLIY1by95n7fsrn36kKNv
-         486/YNUTXVPM3SQgDi0nQWbwPduSOX1ejvSDbrFXms9jRfifr156AdKsDzXZLij2JOuO
-         +RAQ==
+        d=gmail.com; s=20230601; t=1758039904; x=1758644704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DU6pi+jQiHmP3RrytVdY83shq/RxcYi5dWlcWv2Gn9U=;
+        b=PKfx5b2Cr8wbMLdOGmQAVDpmUwQqc2ALiO9uql+bNly8gmsyRonj5IF1PBcUtSf4XO
+         SZmX+3Q1qe7E61CXabv8n59ncUjfQ+kisE+5MMBo8Zne/Cw/mTB29ydqq4Jkx9MQDvQJ
+         XdONhkbOaa95HJbmgAAa9pDEPhJbZb6uzttBdph6yFIvi79ruf7yvHlPGecrf4cOjTgF
+         gYrvMF/osBn0jHtVzHwR2mCzWoJEC2Q2eGttLIINhsjzg59JkGPbiDWIyAJG1Yc1rtkF
+         IXnIUbccneyvl9UiTebHvztkWsAiZZV8XQJvpZZ6MYZM6DWhqqDQVFybD5GFCDuQm1C/
+         7dbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758039819; x=1758644619;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K/7fckWG4F5rhCUIhkg35WDPQwJJKTQY1bkq1rzEfW4=;
-        b=OXZq+hL35gYxOQqij2unxUXbRof4mc4g4teNmbL5Y402KTMv8qyVzC694Lma8ByBbx
-         N22kRUc4fVrCun0WgizkuHGUhViNA1NMrHvFpLyXIY1R0QYV6nAIxsI6tSYmFgzViEza
-         wYylEbSHKMHfpVNOu8zyknk6kR5suss5kqZAzGiJeKGY/L9P9cdM95+lqeek8RuKah31
-         0H7F1krzhePI2u2KN5H+ao5cvOyTSOBpkJuvqeV8alnCQVzHKVPvYMKTvKArVxVV4TnY
-         YCWXl5ydPiTEH31dju35VasMxF8bSv6CBL4wssnQy9L7HQJ+W5r1Kus3snrqs9R/xmLT
-         Dj2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1xYZuXj6H8PoBVg9LcHrJTdyB3l+jkNtZEd0tReCB2jZXt1Ayw0kKBEoL2emqPPo8wF4YAIwHjwFUQWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwufoHhvAixEDDAs2O8UYGNnRGvTEh8bhS7RKa6UpcFycbTz3iU
-	Zn2KjThn7qPvu7BQg4d0ZldgD/EX1vnN9G5Rv7+xap8/jQieecm5LkCp
-X-Gm-Gg: ASbGnctE7W5r5L3R/Fav0qB7g8RA/rCOkD/MLDeB66xi00yG9U1X9VnwmMPco8DCWi8
-	m8lkUcMYraCHFN0EC8N4BPDxWxW62im381YfdGMOp6VQ0oLf7fvbFvxcn+TO+/ZdX/sFhAfJ6zE
-	dfS5fBROzWPvzLmRll3WUmsV64DbE8CxBI1W8sWiheCcbP0+a2wpovWv/nJ4JVJjFQtqUbN/KdT
-	sJRFlcy58RpdJcPrGQbmqjDrpnaNBisgzxMAJlo/f5nrG64EVOl2iNIE1dPxwvvJUsG3GvsV74n
-	kU6MKXTdVFwVR8TzmNqkHMaHUz34Wbsox/i1c1+rnmxv/Ngr081nCtUb4+PUe2ktGZ80BiF9ObE
-	amKaNsGUhkMUcO72vsltR8cHu5pPDEMDki7t42FM8MqUByQM=
-X-Google-Smtp-Source: AGHT+IHHuSYAzUDnzV8A0W3K4WH+E5KPEEi2k/OrYuXUvaclai/18lUV90Qfo4UZxkj86ARB8Jf7Jg==
-X-Received: by 2002:a05:600c:3505:b0:45f:2d7b:7953 with SMTP id 5b1f17b1804b1-45f32d512b8mr29544545e9.18.1758039818697;
-        Tue, 16 Sep 2025 09:23:38 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:ddad:97b9:9e9b:bb33])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32083729sm21385035e9.0.2025.09.16.09.23.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 09:23:38 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Linux Kernel Functional Testing <lkft@linaro.org>
-Subject: [PATCH net-next] net: pcs: Kconfig: Fix unmet dependency warning
-Date: Tue, 16 Sep 2025 17:23:35 +0100
-Message-ID: <20250916162335.3339558-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1758039904; x=1758644704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DU6pi+jQiHmP3RrytVdY83shq/RxcYi5dWlcWv2Gn9U=;
+        b=pXWY9ERvsr/SekCJTousZZRKkKCGJiNyNjI0laqiQSWjiQ6d73hZOKdMFtPvUvWDvf
+         559MFn8oIHISRFzcvK9xothMaZWIpftOX9pun37bybJjsU6qt4V5DoQR5j2N6gVMWDeE
+         g+Lfi1dczTWLagvdTKd0c9UuiL+/PwVlVAu25A4enXhQFf+8gm703m4JLHd6PyU/4nU5
+         4jdadiIj/AmroHzrk8xhdjEkMJCSLt+s0Bx4e3OuP9aggN8zzU6ieSE53QKKysVRwK5E
+         CfrRq0HrroyRKv7sbPB4+Vh8lLGQLYOanly/ZnbziJZUvw4lT7vwOsWnCGsjngET1GJ+
+         mloA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBoS6V60O07aHM+CHcQ2K9bLC4QscY3FLaXuEnZ9eac0ZWMMnkJ7VQQJEvFPR9g2URSdndjLBzL7WhuBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkNboT1fw2x8QT6tYcZGxUpI/OCzRzeB9NEOZRVGR8N6iG8Ef+
+	wB1j08sOXux+Rr5QBtTDwpx7+LjzxQV5ZMyp55XPueGxccwmENPbFso2xURIqJaPmcKojRHSMbW
+	1K50lD3vcCtUQQrmhFqGNFjIEGk6g/Fo=
+X-Gm-Gg: ASbGncsJl71KTUErFWYKEBVNg5K73KwS8afkE33AlGdV6WuT3lSWLZXM5yEMkO+njPc
+	JSLNZ1J2D3yiTUDG36y6lrQ+DViAXipXGveJwHdKPle/x2YrTlHrun0U1GPpvbTomeUMcbIZKL+
+	WK+1uqbYaF0c5y8Pn7eRRimpnk4aoocEn537wmGasZAmSNqrsnGosgRnMVZddEHwJ8QI69rAC+y
+	47wfOBx
+X-Google-Smtp-Source: AGHT+IFnC+ZB8Y8EWWSgcq7DryM/idg50aJ/eE+AB8zfjBLAVoKc5lX8wjY+HH9LKTM1j4AoLgwSfNow1JOz5yHjF94=
+X-Received: by 2002:a7b:c857:0:b0:45b:7be1:be1f with SMTP id
+ 5b1f17b1804b1-45f211f300dmr100112085e9.32.1758039903439; Tue, 16 Sep 2025
+ 09:25:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250906135345.241229-1-clamor95@gmail.com> <20250906135345.241229-12-clamor95@gmail.com>
+ <20250916180418.3fa270a9@booty>
+In-Reply-To: <20250916180418.3fa270a9@booty>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 16 Sep 2025 19:24:52 +0300
+X-Gm-Features: AS18NWDUsY2rg2kwucuKEpR6QKEKIqi67u-AOuSpm9Dlzkb81_NunB_TLA1wgsc
+Message-ID: <CAPVz0n1Nvun5yBf_i3NB=kDmLfNFRjbFt1uTUW-hpLbp-h0g4w@mail.gmail.com>
+Subject: Re: [PATCH v2 11/23] staging: media: tegra-video: csi: add a check to tegra_channel_get_remote_csi_subdev
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Osipenko <digetx@gmail.com>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Charan Pedumuru <charan.pedumuru@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+=D0=B2=D1=82, 16 =D0=B2=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:04 Luca=
+ Ceresoli <luca.ceresoli@bootlin.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Hello Svyatoslav,
+>
+> On Sat,  6 Sep 2025 16:53:32 +0300
+> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+>
+> > By default tegra_channel_get_remote_csi_subdev returns next device in p=
+ipe
+> > assuming it is CSI but in case of Tegra20 and Tegra30 it can also be VI=
+P
+> > or even HOST. Lets check if returned device is actually CSI by comparin=
+g
+> > subdevice operations.
+>
+> This is just for extra safety, or is there a real case where the lack
+> of this check creates some issues in your use case?
+>
+> > --- a/drivers/staging/media/tegra-video/csi.c
+> > +++ b/drivers/staging/media/tegra-video/csi.c
+> > @@ -445,6 +445,22 @@ static const struct v4l2_subdev_ops tegra_csi_ops =
+=3D {
+> >       .pad    =3D &tegra_csi_pad_ops,
+> >  };
+> >
+> > +struct v4l2_subdev *tegra_channel_get_remote_csi_subdev(struct tegra_v=
+i_channel *chan)
+> > +{
+> > +     struct media_pad *pad;
+> > +     struct v4l2_subdev *subdev;
+> > +
+> > +     pad =3D media_pad_remote_pad_first(&chan->pad);
+> > +     if (!pad)
+> > +             return NULL;
+> > +
+> > +     subdev =3D media_entity_to_v4l2_subdev(pad->entity);
+> > +     if (!subdev)
+> > +             return NULL;
+> > +
+> > +     return subdev->ops =3D=3D &tegra_csi_ops ? subdev : NULL;
+> > +}
+>
+> I tested your series on a Tegra20 with a parallel camera, so using the
+> VIP for parallel input.
+>
+> The added check on subdev->ops breaks probing the video device:
+>
+>   tegra-vi 54080000.vi: failed to setup channel controls: -19
+>   tegra-vi 54080000.vi: failed to register channel 0 notifier: -19
+>
+> This is because tegra20_chan_capture_kthread_start() is also calling
+> tegra_channel_get_remote_csi_subdev(), but when using VIP subdev->ops
+> points to tegra_vip_ops, not tegra_csi_ops.
+>
 
-Fix the Kconfig dependencies for PCS_RZN1_MIIC to avoid the unmet direct
-dependency warning when enabling DWMAC_RENESAS_GBETH. The PCS driver is
-used on multiple Renesas SoCs including RZ/N1, RZ/N2H and RZ/T2H, but the
-existing condition only allowed ARCH_RZN1, ARCH_R9A09G077, or
-ARCH_R9A09G087. This conflicted with the GBETH/GMAC driver which selects
-PCS_RZN1_MIIC under ARCH_RENESAS.
+Your assumption is wrong. 'tegra_channel_get_remote_csi_subdev' is
+designed to get next device which is expected to be CSI, NOT VIP
+(obviously, Tegra210 has no VIP). It seems that VIP implementation did
+not take into account that CSI even exists.  -19 errors are due to
+tegra_vi_graph_notify_complete not able to get next media device in
+the line. Correct approach would be to add similar helper for VIP and
+check if next device is VIP. Since I have no devices with VIP support
+I could not test this properly. I can add this in next iteration if
+you are willing to test.
 
-Update the dependency to ARCH_RENESAS || COMPILE_TEST so that the PCS
-driver is available on all Renesas platforms.
+Best regards,
+Svyatoslav R.
 
-Fixes: 08f89e42121d ("net: pcs: rzn1-miic: Add RZ/T2H MIIC support")
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Closes: https://lore.kernel.org/all/aMlgg_QpJOEDGcEA@monster/
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/net/pcs/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig
-index 76dbc11d9575..ecbc3530e780 100644
---- a/drivers/net/pcs/Kconfig
-+++ b/drivers/net/pcs/Kconfig
-@@ -28,7 +28,7 @@ config PCS_MTK_LYNXI
- config PCS_RZN1_MIIC
- 	tristate "Renesas RZ/N1, RZ/N2H, RZ/T2H MII converter"
- 	depends on OF
--	depends on ARCH_RZN1 || ARCH_R9A09G077 || ARCH_R9A09G087 || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  This module provides a driver for the MII converter available on
- 	  Renesas RZ/N1, RZ/N2H, and RZ/T2H SoCs. This PCS converts MII to
--- 
-2.51.0
-
+> Surely the "csi" infix in the function name here is misleading. At
+> quick glance I don't see a good reason for its presence however, as the
+> callers are not CSI-specific.
+>
+> If such quick analysis is correct, instead of this diff we should:
+>  * not move the function out of vi.c
+>  * rename the function toremove the "_csi" infix
+>  * if a check is really needed (see comment above), maybe extend it:
+>    return (subdev->ops =3D=3D &tegra_csi_ops ||
+>            subdev->ops =3D=3D &tegra_vip_ops) ? subdev : NULL;
+>
+> Let me know your thoughts.
+>
+> Best regards,
+> Luca
+>
+> --
+> Luca Ceresoli, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
