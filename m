@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-819351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98363B59F28
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:21:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B663B59F2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8AC463654
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FAE6463A58
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385B825F97C;
-	Tue, 16 Sep 2025 17:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABC7261B65;
+	Tue, 16 Sep 2025 17:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbtS+8sJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nK69Sf8A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6963B247281;
-	Tue, 16 Sep 2025 17:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DE424E00F;
+	Tue, 16 Sep 2025 17:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758043278; cv=none; b=DaAt40B0Q/qrc7vRJHjdIAMO1uG2nZNirpQzI7BZH3VJ8p6TmXxuPvN+vX86zvvlrJY62XgmKThnOD9NYvyRrSWd57z8AgZINKvjRAW3pAw/FVWYmfjj5hoqGtMrEy2CKVF7iJLdWcKHXu8cBZBe50CUQvJN/eLIRfC3PkVlBh4=
+	t=1758043303; cv=none; b=jkOe8MkuB5ed0JXOGPE0sKXD4wwQrxaTi7lpfrnomlNUz+7CRJ2f72lgMApFLEXoEI4aqTw8sd494a5XJpuImec9CPAd3QQ4iY0hEXw9lw1oRS5C2p8zY6ba5y9U8u4pgk9knGYxwRg75SDMIy9vYCKL0NiXRxy0XygEsmxWo4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758043278; c=relaxed/simple;
-	bh=v9PZrVZhFy0HSlGw35h9CD/JQawJe2ljdG3SUb0+F4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ZucIP/jVSP8SkvOVOJ00BY0Y9L0APo7w06rYMkRPZgo/m9CwYnUDob04wENG1cHOROjkGubn2kjPnGX/A31kO9a38kaL08Yz1W4SQc70HubRyPpHJN5i3NCcENMGDg5WMPizR5jgeVF8B9QRTx2w9+o0pi48TpUa57Gi1orOi6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbtS+8sJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A5BC4CEEB;
-	Tue, 16 Sep 2025 17:21:18 +0000 (UTC)
+	s=arc-20240116; t=1758043303; c=relaxed/simple;
+	bh=DJ5Z50X5vQEdBklBEnK9nMQ+7I1JuqRFkk4wtkg6jd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvm3td+Kog3wWJpqDgXtdf6jZjICDyVzURPuTRAYMwU6ifDqULzTNDwZIfNiQm1ZPpk7o4uB7bZbvC+eZsSQss6epQadn/5We39yhV6OY3r4LzZgDZEILs4Nvt++eDtWvEZ/o1cJiRLMpirjcaYVR3Zp/0CNdiEcS/VhxWtwiic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nK69Sf8A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0DFCC4CEEB;
+	Tue, 16 Sep 2025 17:21:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758043278;
-	bh=v9PZrVZhFy0HSlGw35h9CD/JQawJe2ljdG3SUb0+F4o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=MbtS+8sJp3hz64X9CM9moepnjqS4AC4oqLhYkLH0OtClenOBgBUeHpLKZqeS4nAy2
-	 GANHYdVSGZPliYt3KKE8VyFLMEdmQGrhSHf0xBBdgnk4mK6MF0H52pMK1ZclSlRIrd
-	 5glKDSYi0xRaLTaaZOuACs5Q+2EK8xleQC6eTbzHWNwWRcnapmuMtcYsqmOp6X223r
-	 KAXwFb7zrMQgfzAr+qPvpasRzJSY20aQS5Qy4UKIC2qMkMhUHsjpSeiTtp/23Yr5Sn
-	 xURFMs8sq7a3TAZ0sJplqy2yMk9x4Eqnwey8SXxJ3rtwMKXCRtyDdAAigKHlULG0E5
-	 G9mTPlJ2586YA==
-Date: Tue, 16 Sep 2025 12:21:16 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: manivannan.sadhasivam@oss.qualcomm.com
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 0/2] PCI/ASPM: Enable ASPM and Clock PM by default on
- devicetree platforms
-Message-ID: <20250916172116.GA1808269@bhelgaas>
+	s=k20201202; t=1758043302;
+	bh=DJ5Z50X5vQEdBklBEnK9nMQ+7I1JuqRFkk4wtkg6jd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nK69Sf8A1+xQNLJPVP5BMJ34gDV+ob4401QWkOJn2E0veRXaRdI6Ugl/7gQMNL9YY
+	 anIZ70kGc1KRSKOY7lYBBFLIc3oVLaEQG5u+XQsGg6UkFhzdHFZhV87Lyw1zyt7AlA
+	 7gDO+7SbCDSrk37n8XlySD3fJoNGfvj4br40D3f0NLU1JzZ/omxvw+vMXLrCyaxvt3
+	 ofyTDfzZnSMOzU+VJV8DuOetScgLJ4QskNO31s515siQCddQoY/EwZQGf8yc6zkwfK
+	 Msnm+vTz0q53ELGYhldIzo9lkjCsWqdWScOrKmVo8727WeaPkUBZyl/ZaoMF0Qayrj
+	 fODObCWXRQNHQ==
+Date: Tue, 16 Sep 2025 18:21:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Asuna Yang <spriteovo@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Jason Montleon <jmontleo@redhat.com>,
+	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kbuild@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3] RISC-V: re-enable gcc + rust builds
+Message-ID: <20250916-getaway-grew-46e4fb956a78@spud>
+References: <20250914-gcc-rust-v3-v3-1-34d4d5864144@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ovMXMPQdHm2Jci7/"
+Content-Disposition: inline
+In-Reply-To: <20250914-gcc-rust-v3-v3-1-34d4d5864144@gmail.com>
+
+
+--ovMXMPQdHm2Jci7/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916-pci-dt-aspm-v1-0-778fe907c9ad@oss.qualcomm.com>
 
-[+cc Kai-Heng, Rafael; thread at
-https://lore.kernel.org/r/20250916-pci-dt-aspm-v1-0-778fe907c9ad@oss.qualcomm.com]
+On Sun, Sep 14, 2025 at 03:16:40PM +0800, Asuna Yang wrote:
+> +config TOOLCHAIN_MATCHES_ZICSR_ZIFENCEI
+> +	def_bool y
+> +	# https://github.com/llvm/llvm-project/commit/22e199e6afb1263c943c0c0d4498694e15bf8a16
+> +	depends on TOOLCHAIN_NEEDS_OLD_ISA_SPEC || !TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI || RUST_BINDGEN_LIBCLANG_VERSION >= 170000
+> +	help
+> +	  LLVM/Clang >= 17.0.0 starts recognizing Zicsr/Zifencei in -march, passing
+> +	  them to -march doesn't generate an error anymore, and passing them or not
+> +	  doesn't have any real difference, it still follows ISA before version
+> +	  20190608 - Zicsr/Zifencei are included in base ISA.
+> +
+> +	  The current latest version of LLVM/Clang still does not require explicit
+> +	  Zicsr/Zifencei to enable these two extensions, Clang just accepts them in
+> +	  -march and then silently ignores them.
 
-On Tue, Sep 16, 2025 at 09:42:51PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> Hi,
-> 
-> This series is one of the 'let's bite the bullet' kind, where we have decided to
-> enable all ASPM and Clock PM states by default on devicetree platforms [1]. The
-> reason why devicetree platforms were chosen because, it will be of minimal
-> impact compared to the ACPI platforms. So seemed ideal to test the waters.
-> 
-> Problem Statement
-> =================
-> 
-> Historically, PCI subsystem relied on the BIOS to enable ASPM and Clock PM
-> states for PCI devices before the kernel boot. This was done to avoid enabling
-> ASPM for the buggy devices that are known to create issues with ASPM (even
-> though they advertise the ASPM capability). But BIOS is not at all a thing on
-> most of the non-x86 platforms. For instance, the majority of the Embedded and
-> Compute ARM based platforms using devicetree have something called bootloader,
-> which is not anyway near the standard BIOS used in x86 based platforms. And
-> these bootloaders wouldn't touch PCIe at all, unless they boot using PCIe
-> storage, even then there would be no guarantee that the ASPM states will get
-> enabled. Another example is the Intel's VMD domain that is not at all configured
-> by the BIOS. But, this series is not enabling ASPM/Clock PM for VMD domain. I
-> hope it will be done similarly in the future patches.
-> 
-> Solution
-> ========
-> 
-> So to avoid relying on BIOS, it was agreed [2] that the PCI subsystem has to
-> enable ASPM and Clock PM states based on the device capability. If any devices
-> misbehave, then they should be quirked accordingly.
-> 
-> First patch of this series introduces two helper functions to enable all ASPM
-> and Clock PM states if CONFIG_OF is enabled. Second patch drops the custom ASPM
-> enablement code from the pcie-qcom driver as it is no longer needed.
-> 
-> Testing
-> =======
-> 
-> This series is tested on Lenovo Thinkpad T14s based on Snapdragon X1 SoC. All
-> supported ASPM states are getting enabled for both the NVMe and WLAN devices by
-> default.
-> 
-> [1] https://lore.kernel.org/linux-pci/a47sg5ahflhvzyzqnfxvpk3dw4clkhqlhznjxzwqpf4nyjx5dk@bcghz5o6zolk
-> [2] https://lore.kernel.org/linux-pci/20250828204345.GA958461@bhelgaas
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> ---
-> Manivannan Sadhasivam (2):
->       PCI/ASPM: Override the ASPM and Clock PM states set by BIOS for devicetree platforms
->       PCI: qcom: Remove the custom ASPM enablement code
-> 
->  drivers/pci/controller/dwc/pcie-qcom.c | 32 -----------------------
->  drivers/pci/pcie/aspm.c                | 48 ++++++++++++++++++++++++++++++----
->  2 files changed, 43 insertions(+), 37 deletions(-)
-> ---
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> change-id: 20250916-pci-dt-aspm-8b3a7e8d2cf1
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> 
-> 
+I still don't really like the name of this option, but I don't really
+have any good suggestions for what to call this.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--ovMXMPQdHm2Jci7/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMmcigAKCRB4tDGHoIJi
+0rfDAP9q+R3zLBj2lwiOj46Ay1jJrWFrzRnaLIF9CVcqW7Tq6gEAhYmZWcMRrz3+
+1MPkLLx2PkcE4kEft2ZLozNAEw1LCww=
+=UxeS
+-----END PGP SIGNATURE-----
+
+--ovMXMPQdHm2Jci7/--
 
