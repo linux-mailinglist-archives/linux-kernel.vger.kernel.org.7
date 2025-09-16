@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-818882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D3CB5979A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:27:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F338EB5979D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F361BC695A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:28:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D303F1BC6D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092CE30C365;
-	Tue, 16 Sep 2025 13:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DD830F529;
+	Tue, 16 Sep 2025 13:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EN2fQACk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="aJKP3blV"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563E6313296;
-	Tue, 16 Sep 2025 13:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758029252; cv=none; b=TSmrMs4ESXBfqWK8ojf342Vv4SodWX8hHInqRly//I/kLAzqoZL/8o3EkRBLEOIdHJGLuWOwosdJtsQQGX5VBB/OS0RFh/uSVEzyp729p+EGnypjboLUI3Pw97scLHkFrxH3DvocPCXQnqKvyVT/gac5qxFCXheomsLSytEIz9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758029252; c=relaxed/simple;
-	bh=ErN6HnTAqvbC8aDztnEdt32hRdQoSloMFcYtkBtalp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Vy6dqHNZr+Q0mb6i2v9Wa5bCVOPpPqpmL/opxdBqYoy4Wf9DGHPqxsU74KZuUf9vYjd1xCYfQ76EhknwSQaoyA3tjwITL9jwJ3Kfi1/XAoW2YmY4Ad4uWi+UmWZbvEGE6of1yG4f3ioLdPTa3nUHoYwAEC/1tKdMFa9w8qMXpLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EN2fQACk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34DA2C4CEEB;
-	Tue, 16 Sep 2025 13:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758029251;
-	bh=ErN6HnTAqvbC8aDztnEdt32hRdQoSloMFcYtkBtalp4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EN2fQACkO5p1uIuZ7gjDBDF0JIVQzMm3pmQPUpcy+1kfytpPriHFFE4Z6qsLuy6Xc
-	 CIgD5PetYiLbk/YBTMfhW+7Z/+Kq5nRE3hWHx5VZwb4iNjuJrLOwKbtWIRJQ/spM8f
-	 dzeqzGn5abtMsQgwaccxUwJPVGikrqTqgo6j1we5rLxB1nAeCm21x264NU74jgP2dJ
-	 B5UBkoq4ebJCPN6CdnUHLIHb1OdyTB9c5L7QkuA7rgd2BRFtWNamDXKQvLBfjHr8CR
-	 fR1ZwayqLsbHjkn3xBb3FW7OMGVacvGySb1l/ZwkabziajiXoGgApRFIwWjBe8NHv3
-	 h0Zqzf226193g==
-Date: Tue, 16 Sep 2025 14:27:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>,
-	Tamir Duberstein <tamird@gmail.com>
-Subject: linux-next: manual merge of the rust tree with the driver-core tree
-Message-ID: <aMllv3_nDxAAidQg@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219EE1A9FAA;
+	Tue, 16 Sep 2025 13:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758029278; cv=pass; b=hW17lE+3HgV9vMENcQcPGAQnp3vFW4MnmkGGD9naa1OhNlOh+rza1Ne4oKron+RQ2veKb6EArfQuttUM+ROQ6BE9+rcG4KeItWtOGBuTIXh0ofXY2hSZC7ah6x/jlmcEcBLItqI/+JoehLrJyKMdzDxl9llt53VfH+fVGv6m5Oc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758029278; c=relaxed/simple;
+	bh=ZKGaBXz0dirkpFmQ20Dt7lwNCKmmAwoFe1wxgn8JQNU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T6fEuNSx144pgY1cRvvDisT/gXqFXer0/KMmg6SJ7/BbzqhjVPyJ0xoYsLbf0p1GSaH5ZXmrVPlTyqA8LNVHosDRXqtNzd4yR7IyXFOlfWsdnkHvJpJxXR0BEmOrroy4iklsy0wyLLD2q3xdDs6yfoCanKQ2TzmpsbbRV6bS5vg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=aJKP3blV; arc=pass smtp.client-ip=81.169.146.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1758029257; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=NICNy7MM5WvmWtThUQQhPs00UVzxGo+/AFA68CwWS/E+DXocyNj+AdKK8d7YS1KGO2
+    eTRngWC69iEEd8H+arMn2A4k8mWKcmTFopsRjnXyT5RGmvv/jRlLtcVQ7IjMoN0tRGpR
+    chk+CLMcwzKadbZDX8GGNT+CUqZ3Pd7WVGN17EhGQVJHzQCMbhWLnpjredqpJNXHXx5e
+    4exBlUg9gdlptVm7I1I6ANShrdzep0kNPtE8g0oGBx6rB/iEDLdx+OOh5BgJp4U3VW1I
+    cdCgZSMc/RAc+xzaBqwoCikD6FoTnrFknSDm//fzGqc+ZhrRchCPaHTBYrUeGMdic1+3
+    CRWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758029257;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=ZKGaBXz0dirkpFmQ20Dt7lwNCKmmAwoFe1wxgn8JQNU=;
+    b=ARadL9LgBCAF02ifZGeyLJRJyTqvGUV5qvP5rENzpM337TUDW/hlYjsRAf7O/JL+8L
+    WWVLPzz2VQar/U5SJHZYm1ZbfDX5kNNu3Kq6h5jFVKw5rBGlEIWJAFEWDx3uwo47Lf9S
+    HxAGlnRtvYUuyBWu+BPBvMUBQHrpr0T1TA63A4cxVesEXA1bgDAQELzEA2KQS01KvWML
+    U0KKFG67vxw9HxBVtnZ+foNidnbiLRkSWKD4lB6ngtKGmvHGYkszG0HD5XObLcFiLPLG
+    sxBLFLSP3WX9pUUSH7KHX+9kRFFphggyNu2ukqcZiIuAEKycWgD8YkdQVpoBEpjoOAXc
+    MVxg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758029257;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=ZKGaBXz0dirkpFmQ20Dt7lwNCKmmAwoFe1wxgn8JQNU=;
+    b=aJKP3blV0spaU5VBv306FDMdHu0YsvLOY4fct9L/LqKtJ0JefM+3RCFDu1m/k1v398
+    XbgaTCyTwkKn08kA3IyK3K4xx4YLJ/kDBdYhIpz4jA45tnyyad9lJU2pm5brj6Oe2zmx
+    8xDvh2gYFh7ykkGb+rDMvrvtl3KoqDQcXRvlSMVkeIm7vMLdpyte5MIPQkcm4fdquqrt
+    zch8vLin7GjU+j+rbopFGLqpCd+1ilCoSJfzrHkxHKWMdn2snVQxmP35gHEDzkkzX9P6
+    Ygy1B81bR2x3LWq6JxkKNQYF1mlZtgQlhIj4AN6FGFy1i21blC+jKi6Um5ymSBoE9de4
+    w7rQ==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0DBslXBtZUxPOub3IZqk"
+Received: from [10.176.235.211]
+    by smtp.strato.de (RZmta 52.1.2 AUTH)
+    with ESMTPSA id z039d318GDRZ786
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 16 Sep 2025 15:27:35 +0200 (CEST)
+Message-ID: <d80650f1b6515c4d97c4f34754d0328d38fb8a0d.camel@iokpp.de>
+Subject: Re: [RFC PATCH v1 2/2] scsi: ufs: core: Add OP-TEE based RPMB
+ driver for UFS devices
+From: Bean Huo <beanhuo@iokpp.de>
+To: Bart Van Assche <bvanassche@acm.org>, avri.altman@wdc.com, 
+	alim.akhtar@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+	can.guo@oss.qualcomm.com, ulf.hansson@linaro.org, jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mikebi@micron.com,  lporzio@micron.com, Bean Huo <beanhuo@micron.com>
+Date: Tue, 16 Sep 2025 15:27:34 +0200
+In-Reply-To: <0f08376b-569a-48d6-a551-e10b72b32354@acm.org>
+References: <20250915214614.179313-1-beanhuo@iokpp.de>
+	 <20250915214614.179313-3-beanhuo@iokpp.de>
+	 <0f08376b-569a-48d6-a551-e10b72b32354@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Q7K+ibzzMAsNesrF"
-Content-Disposition: inline
 
 
---Q7K+ibzzMAsNesrF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Bart,=20
 
-Hi all,
+On Mon, 2025-09-15 at 15:06 -0700, Bart Van Assche wrote:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Use serial number as devi=
+ce ID. Copy ASCII serial number data.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * This provides a unique de=
+vice identifier for RPMB operations.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0strncpy((char *)cid, sn, siz=
+eof(cid) - 1);
+>=20
+> strncpy() into an u32 array? Really? There are multiple alternatives
+> available in the kernel that are better than strncpy(). Are you sure
+> that you want to use strncpy()? Additionally, does copying a string into
+> a u32 array introduce any endianness issues?
+>=20
 
-Today's linux-next merge of the rust tree got a conflict in:
+I will change to:
 
-  rust/kernel/device.rs
+u8 cid[16] =3D { };
 
-between commit:
+/* Copy ASCII serial number into device ID (max 15 chars + NUL). */
+strscpy(cid, sn, sizeof(cid));
 
-  1e180614b3608 ("rust: driver-core: Update ARef and AlwaysRefCounted impor=
-ts from sync::aref")
 
-=66rom the driver-core tree and commit:
+> > +MODULE_DESCRIPTION("UFS RPMB integration into the RPBM framework using=
+ SCSI Secure In/Out");
+>=20
+> RPBM or RPMB?
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0str =3D kmemdup(uc_str, uc_str->len, GFP_KERNEL);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0str =3D kmemdup(uc_str->uc, uc_str->len, GFP_KERNEL);
+>=20
+> Is the above change perhaps a bug fix that is completely independent of
+> the rest of this patch?
 
-  97bcbe585476e ("rust: device: use `kernel::{fmt,prelude::fmt!}`")
+sure, will be added in next version. thanks for Reviewing!
 
-=66rom the rust tree.
+Kind regards,
+Bean
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc rust/kernel/device.rs
-index c2a6f5c203f04,303af0ef9bf73..0000000000000
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@@ -5,11 -5,10 +5,11 @@@
-  //! C header: [`include/linux/device.h`](srctree/include/linux/device.h)
- =20
-  use crate::{
--     bindings,
-+     bindings, fmt,
- -    types::{ARef, ForeignOwnable, Opaque},
- +    sync::aref::ARef,
- +    types::{ForeignOwnable, Opaque},
-  };
-- use core::{fmt, marker::PhantomData, ptr};
-+ use core::{marker::PhantomData, ptr};
- =20
-  #[cfg(CONFIG_PRINTK)]
-  use crate::c_str;
-
---Q7K+ibzzMAsNesrF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJZb4ACgkQJNaLcl1U
-h9AIJgf/VmyfdOVI7FvbdDguDm/Rod8CJ64pZiNz7Gk9xOzNjrj/gjvdFUlJjiPS
-yXU3qJuq4tD2pefhUrQoFcLdCTw73C8dI0zYPdhgr8EBwUXr9Zk+D5B2KDx7cWvr
-BGFkflEUEB+wm7l4TVFPQVB9NzWrp1dq99TrT3MK96rWGCib7lCIOBzc3ULRmurZ
-3y6epS8gkUgWHm/Za4uImyaIRPyVIFLyP7/+QjmFlkFnAxUu5vY+cvTRdXrjjxkS
-DrXSckHZNaEbpUzyPSXjvD0WrPeH+uj3mmbO1dtV8oNsCMHEks8ZurJsLbmVd4Jp
-6JLHpn8cXPI7ywcAhbI5jfh5zD2tkw==
-=0L8K
------END PGP SIGNATURE-----
-
---Q7K+ibzzMAsNesrF--
 
