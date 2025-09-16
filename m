@@ -1,133 +1,96 @@
-Return-Path: <linux-kernel+bounces-818728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF8FB595BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:06:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA0BB595C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28901BC7317
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:06:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099623A548E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1D530C372;
-	Tue, 16 Sep 2025 12:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B327E06D;
+	Tue, 16 Sep 2025 12:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CtUxyuc9"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Utf/5/ks"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411BE27FB34;
-	Tue, 16 Sep 2025 12:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D572C3272;
+	Tue, 16 Sep 2025 12:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758024318; cv=none; b=B1y8N/9JUQGvpDrGPgjfoykHQ0Xsno/zHLoiK5xULo5XG6mb3lhLa6V0f+OjidAE1Cuf0proDZgEklNLjnZLc4Byn7RFfom7zPVk2JB5urvW1uyjXrWEpfTJRjmup8wA5xMqKMokpFi4tnZZ6X3O7pjZWCha/750soYOPPQhB70=
+	t=1758024384; cv=none; b=PrPYFNGac1+rjqdqi05aL/h+6qlEsqCrjN2BXhhNgfhTZnyXAzVSecKobXP3RBmIWT9BcnqKebhgEGbFOEncjWVDz4BicV1G1Bx7czm8O9+xXC/GuUGLyMk980Sn7774f7tggChcidDQKo8NEzaKNbNEQ2wWTRVFy4t6GUJMKUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758024318; c=relaxed/simple;
-	bh=a5njBTmEgug3G3Ok23bq68P9JRhVH2bCJAN2vRzHr2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JwVqpvwSzZ6hBGOA81Gv7bOEiSvdjpB3TAtaj1gvtcqDnpmELrdvS2PrrtOnKv7cCmfbubJheO1lxTy0+XNmZ1OV1R11uwhUJ2KhIs0soeDdNO97Dy7/zOAQxsKRchtcAKUMULF29rAcThMthza91URZfPrvjY1UvC6fplb2Vmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CtUxyuc9; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4DF7F40E00DD;
-	Tue, 16 Sep 2025 12:05:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vUfVhyUm7pLN; Tue, 16 Sep 2025 12:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758024304; bh=1o0RJkSvj8cwhvvVa4ruxsgxt1D6l+YszBJI0+bCypo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CtUxyuc9J0E5EzFvm4DLmybZeWGSL1i/5RbtkrJvFWu3n6RdtMKrqUqmkZTCn33Ld
-	 ZvuPnZO++gyooLka60B50DaprW8M45iktAY465oruMGDMm4BLOqYlf9YVRKftYFm9c
-	 AG+D+mndnHtloyuqnAOVjx2hwGq/2Rxu+xNJ/WwhXNeaD93To0c2UCDMooNuXUKD23
-	 15WrqcvlIT4TlFfIA/6iholNtxjw81MgxwY8UxbAXReSolcNEBScr+uf0l/rnp/sBy
-	 61GyqbtF2e5e2rgqk6akNI+rk/Ws1clTDZirhGHLDKHjRy3xsgXNyll1F0WIr/5NPz
-	 49NADYr4wpQjmzKcE5vgKQjo3u49d4B0X2R5QuG+RqExpdOeZoVOBzt0zdcbAYbEVb
-	 7ZlOpZmMFEZ9DWsSCPDaGzKjsAsI5IYcOQ0c2YXXlnpf2cI/bO+yQKqmvkPxI5NSdj
-	 HA4TMtNFEyzxcO4tIwBf2h3ct74rAKRnKz5lPnHPG7dWiTeDzkk5TLBhBGDnKkFBLG
-	 TM36Wi4emVYzFK7y+2FGfPWN/SXodAZ2Uuqwbb8cy5w9rhBjX8hafdBCJN9ITYATxQ
-	 gMJ0JLBSGJu0nRirEd0dtmjgOejq5FJCObv7niM+c85z58Sa9zJ/gUS5Goxetu7L+G
-	 1uJ+x5xHNqyArfGt/ZnQAPyE=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 95AE740E01A3;
-	Tue, 16 Sep 2025 12:04:56 +0000 (UTC)
-Date: Tue, 16 Sep 2025 14:04:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Xin Li <xin@zytor.com>
-Subject: Re: linux-next: manual merge of the kvm-x86 tree with the tip-fixes
- tree
-Message-ID: <20250916120450.GFaMlSYuNse-UBiXD2@fat_crate.local>
-References: <aMlPZcYlk7hRlMkE@sirena.org.uk>
+	s=arc-20240116; t=1758024384; c=relaxed/simple;
+	bh=aV81kExVrMjIzYolLKVaKcqJpjPt7J0SUF+mvWDVe0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EhCLwlPxMKRKebrQyeGcL8dfVbK9iUTktdDW5B/kgoY3kLbnywCyZI+U+fuXeGE9wsxu+PQhsK8cKfF/glHaiYDM609Six9CzUnSrHlAKA1n9FubeBUyQwvZEbySNeagvbNE1f0MkHs97C7RhdNrfRj/3Ggj5paoUxchGdUufN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Utf/5/ks; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-67.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-67.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:6148:0:640:ada2:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id BFBED81BD9;
+	Tue, 16 Sep 2025 15:06:12 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-67.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 76PUUpCLo0U0-uhFlNXOP;
+	Tue, 16 Sep 2025 15:06:11 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1758024371;
+	bh=fGrVfPGr5w2/y6PdLHlBhzXjj9KC99u7DtBE5Ei4Fxk=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=Utf/5/ksFeV3Um+mYQUc7YGcyN3HjYuszJRXk3ONQQQ3Nnr5iQkegNu/G5AY8Kp7P
+	 roC8/d9dKSi3aOIjXi9YaitvGyHJszwBWPvsXUrofmUx5NRk07UsBlWt4GRVbE2TcJ
+	 iH73SI3HICJuZmOPT1vxujlP18Z6td31v/+Q9UPI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-67.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Tue, 16 Sep 2025 15:06:07 +0300
+From: Onur <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org
+Cc: ojeda@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
+ masahiroy@kernel.org, aliceryhl@google.com,
+ thomas.weissschuh@linutronix.de, tamird@gmail.com,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org,
+ tmgross@umich.edu, dakr@kernel.org
+Subject: Re: [PATCH v2 0/1] rust: add `rustcheck` make target for check-only
+ builds
+Message-ID: <20250916150607.1133894d@nimda.home>
+In-Reply-To: <20250915115311.3025-1-work@onurozkan.dev>
+References: <20250915115311.3025-1-work@onurozkan.dev>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aMlPZcYlk7hRlMkE@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 12:52:05PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm-x86 tree got a conflict in:
-> 
->   arch/x86/include/asm/cpufeatures.h
-> 
-> between commits:
-> 
->   2f8f173413f1c ("x86/vmscape: Add conditional IBPB mitigation")
->   e19c06219985f ("x86/cpufeatures: Add support for Assignable Bandwidth Monitoring Counters (ABMC)")
-> 
-> from the tip-fixes tree and commit:
-> 
->   3c7cb84145336 ("x86/cpufeatures: Add a CPU feature bit for MSR immediate form instructions")
-> 
-> from the kvm-x86 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc arch/x86/include/asm/cpufeatures.h
-> index b2a562217d3ff,8738bd783de22..0000000000000
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@@ -495,8 -496,7 +496,9 @@@
->   #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TSA-SQ */
->   #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TSA-L1 */
->   #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers using VERW before VMRUN */
->  -#define X86_FEATURE_MSR_IMM		(21*32+14) /* MSR immediate form instructions */
->  +#define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-userspace, see VMSCAPE bug */
->  +#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
-> ++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
+On Mon, 15 Sep 2025 14:53:10 +0300
+Onur =C3=96zkan <work@onurozkan.dev> wrote:
 
-Thanks Mark, LGTM.
+> Changes in v2:
+>   - Couple of indentation fixes in rust/Makefile.
+>=20
+> Onur =C3=96zkan (1):
+>   rust: add `rustcheck` make target for check-only builds
+>=20
+>  Makefile      |  7 +++++
+>  rust/Makefile | 73
+> +++++++++++++++++++++++++++++++++++++++++++++++++++ 2 files changed,
+> 80 insertions(+)
+>=20
 
-We'll mention this in our pull requests so that Linus merges stuff correctly.
+Should we document this target on [0]? I think it will be used quite
+frequently by Rust developers on the kernel once we land it, so I
+think it's worth documenting. I can include a patch for that if others
+would agree.
 
--- 
-Regards/Gruss,
-    Boris.
+[0]: https://docs.kernel.org/rust/quick-start.html
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+Onur
 
