@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-818081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D75B58C6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:37:02 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313EAB58C6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86442A72AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:37:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 118864E1ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E8E248F4E;
-	Tue, 16 Sep 2025 03:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3894A24C076;
+	Tue, 16 Sep 2025 03:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CNf7AHxN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BHxiUCsG"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2AA2DC78E;
-	Tue, 16 Sep 2025 03:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A3D2DC78E;
+	Tue, 16 Sep 2025 03:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757993815; cv=none; b=dL0J4oJQbSwpbfPkGUBaW7uII5bvSywJn9NbO2y0lrq2DIoyxBrj+OjyvB7m3hx1GwGSjn5NrcY7zC+HqkN/k7rPOStcBdgVj7V+Jr4u1W4pGqx6VxK+j1HCOJ/IbmA/3ezgnf47Fskf+jIH9ajjAPd0LGoo0LAVtxNG6CJ/1u8=
+	t=1757993868; cv=none; b=ku3G4aFkvjDPtid6eZLE1KuwwaX5d49iFVaUypYaKb+bzfrLlgT5VthXpLCYwcbuz/j+j9EBWd+pdeuywW2+Dqj6qVIXzZSThFK+KwAQOOBop6l0eSa3u0SJpGHkR6oYYg23izb3wowWZ314a3N0TAeWQor85TYzI4B4y13PiR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757993815; c=relaxed/simple;
-	bh=CfVil0FdRSS0PaXQXnEL2MuMd3+XojlUadD8GRWQi7w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lWaNExEOINSJiYchYCOC5M5M9aohNp8Ue92UacxyeBg9F6Wuotr1Qzdx5ebVZaErEMFK7i7MS0llscolIejxHbvVGWSr2JYzV1XQ7E4eE41uwZHhn1ZGbAFzNcmlEy7nvbhA3ZEMojtlmARMR0AgnDGLmeL7SmEJSx0ikURb7b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CNf7AHxN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04DAC4CEEB;
-	Tue, 16 Sep 2025 03:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1757993814;
-	bh=CfVil0FdRSS0PaXQXnEL2MuMd3+XojlUadD8GRWQi7w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CNf7AHxNVzyFResUYW5usorS95/1cgWEfQBxIXzVgEh5LcEryf/UaE9d6FXnmevp/
-	 hUOvt/SIiD7/Xfzhk6DVSSkzymHadep7a/+dLaY5Vb+n0WLbUQmf5rY9iYjBaJbYhP
-	 EK//AR137efTrjN+qYgc2VP+Ya6Cv8E6hGsRI3+Y=
-Date: Mon, 15 Sep 2025 20:36:53 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>, ryabinin.a.a@gmail.com,
- christophe.leroy@csgroup.eu, bhe@redhat.com, hca@linux.ibm.com,
- zhangqing@loongson.cn, chenhuacai@loongson.cn, davidgow@google.com,
- glider@google.com, dvyukov@google.com, alexghiti@rivosinc.com,
- alex@ghiti.fr, agordeev@linux.ibm.com, vincenzo.frascino@arm.com,
- elver@google.com, kasan-dev@googlegroups.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-um@lists.infradead.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 1/2] kasan: introduce ARCH_DEFER_KASAN and unify
- static key across modes
-Message-Id: <20250915203653.c17d501a5f4b68936a0e3ea9@linux-foundation.org>
-In-Reply-To: <CACzwLxh4pJOBbU2fHKCPWkHHCuLtDW-rh52788u2Q6+nG-+bTA@mail.gmail.com>
-References: <20250810125746.1105476-1-snovitoll@gmail.com>
-	<20250810125746.1105476-2-snovitoll@gmail.com>
-	<CA+fCnZdFp69ZHbccLSEKYH3i7g6r2WdQ0qzyf+quLnA0tjfXJg@mail.gmail.com>
-	<CACzwLxh4pJOBbU2fHKCPWkHHCuLtDW-rh52788u2Q6+nG-+bTA@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757993868; c=relaxed/simple;
+	bh=DnwM+DNIezG6uRTSjV7Xuwxap01opZOQvveqLeHwhSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H1cpGHKoQ0gZWkkVWmh66FHDLcFDyGly6ni3KpsZHUaJ1LzNtCGwnNcEfeRgmo7XGpaXXcBU94T/v8trxbQznXgk1NQxdUIpUOmVeMi2kKpsEHzfC38g5Ko6kF/Iwvx9JtRDlvwftVReTNJZVvRmM/Xr8aqBWY8ms3ccRZjlVJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BHxiUCsG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=SHXVcB+MgSUzgb/L1IQrcZLOr0QNwhlIqJqUrwYWeO4=; b=BHxiUCsGkhz9h2MCiKe/6rfi4f
+	9ocEA7IgI0qGOI7u5kbNalRUV4ikPE/99AD4hKAhlb5QLuANIxMulKo4J5u917QHU7s9mCYocHOpH
+	4LG5mCXMusxDSV/A6f6y+Sw3E5L6yVfO54TkYu64UTI7iUwpvfCZr8i5gz09StGOk4WggGvflHmvb
+	VSdksX9CVv0S3ExapoAEsognAW3OyrXRrcBRvz4w18xymYkT+dSezDpNdvRgEbqjUBroCPb3PkCwF
+	lA7ghjKyot10FNHgK+pWOrKnkwfLycZZ/l4gOblCUc4C9KlgDjZo0hpvts78+r2vHqYdtBJ+tuTnH
+	7kHBPNyA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyMVh-00000006bqf-2j4o;
+	Tue, 16 Sep 2025 03:37:41 +0000
+Message-ID: <6a2f324d-5be3-48d4-a787-2c3bc76a56ad@infradead.org>
+Date: Mon, 15 Sep 2025 20:37:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: maintainer: Fix capitalization
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jonathan Corbet <corbet@lwn.net>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>
+References: <20250915192235.2414746-2-thorsten.blum@linux.dev>
+ <c85881bd-a159-4bb3-9615-b87ce4ab0575@infradead.org>
+ <E32E7460-02E4-4E85-8482-E91D3FD12253@linux.dev>
+ <8a9b2f36-963a-4d10-9aa1-10f8dcb4bc31@infradead.org>
+ <DBCAF005-F4C6-44D2-8DB3-71B002501770@linux.dev>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <DBCAF005-F4C6-44D2-8DB3-71B002501770@linux.dev>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On Mon, 15 Sep 2025 09:30:03 +0500 Sabyrzhan Tasbolatov <snovitoll@gmail.com> wrote:
 
-> On Wed, Sep 3, 2025 at 6:01 PM Andrey Konovalov <andreyknvl@gmail.com> wrote:
->
 
-[400+ lines removed - people, please have mercy]
-
->
-> > > @@ -246,7 +255,7 @@ static inline void poison_slab_object(struct kmem_cache *cache, void *object,
-> > >  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
-> > >                                 unsigned long ip)
-> > >  {
-> > > -       if (!kasan_arch_is_ready() || is_kfence_address(object))
-> > > +       if (is_kfence_address(object))
-> > >                 return false;
-> >
-> > Why is the check removed here and in some other places below? This
-> > need to be explained in the commit message.
+On 9/15/25 1:06 PM, Thorsten Blum wrote:
+> On 15. Sep 2025, at 21:43, Randy Dunlap wrote:
+>> On 9/15/25 12:35 PM, Thorsten Blum wrote:
+>>>
+>>> On 15. Sep 2025, at 21:29, Randy Dunlap wrote:
+>>>> On 9/15/25 12:22 PM, Thorsten Blum wrote:
+>>>>> The sentence starts at the previous line: s/Indicate/indicate/
+>>>>
+>>>> Are you sure?
+>>>> ISTM that the entire line is a "sub-heading".
+>>
+>> After I sent this I saw that I should have added that it's ambiguous
+>> and needs some formatting help, so I'm not surprised to see this:
+>>
+>>> Hm maybe, but then the layout/rendering on the web is very confusing:
+>>>
+>>> https://docs.kernel.org/maintainer/maintainer-entry-profile.html#key-cycle-dates
 > 
-> kasan_arch_is_ready which was unified with kasan_enabled, was removed
-> here because
-> __kasan_slab_pre_free is called from include/linux/kasan.h [1] where
-> there's already kasan_enabled() check.
+> I think the entire line is meant to be a sub-heading. If it were a
+> single sentence, it should be either "Deadline ... indicates" or
+> "Deadlines ... indicate", but not "Deadline ... indicate".
 > 
-> [1] https://elixir.bootlin.com/linux/v6.16.7/source/include/linux/kasan.h#L198
-> 
-> Please let me know if v7 is required with the change in the git commit
-> message only.
+> Maybe the author of 4699c504e603 (cc Dan Williams) can confirm this?
 
-Neither works - please send along the appropriate paragraph and I'll
-paste it in, can't get easier than that.
+I think all that is needed is a blank line after each of these sub-headings.
+That makes the html output readable and more understandable.
+Would you submit that patch, Thorsten?
 
-> >
->
-> [another ~250 lines snipped]
->
+thanks.
+-- 
+~Randy
+
 
