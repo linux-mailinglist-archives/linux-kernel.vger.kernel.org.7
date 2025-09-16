@@ -1,125 +1,159 @@
-Return-Path: <linux-kernel+bounces-819119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D62BB59BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:15:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E974DB59BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC12C16CCE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D9816FB25
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F05B3191BA;
-	Tue, 16 Sep 2025 15:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E933469F6;
+	Tue, 16 Sep 2025 15:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="flAGKLeT"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fARFydGW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9105023AB8F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8973375B5
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035472; cv=none; b=G8eCCOC+Ak8djFlarCSGMz22e+i/F1zA3cZDhCatA1wHGCMSu8j/koaaznAKkxDbxBFrSyB9PFqTjVwrO1cPbvZMDvVj6vXZDuJgUKywMyVNDlEXuSMw2Un/AfkKJbqnsZf4Vdfs2H6+3o0jRfCkoPMom/wM7ASGvPhmU3ejIC0=
+	t=1758035474; cv=none; b=Ato8e7PwL64PklnN5GLWRLMrGb6KqaWJ0+/d+BL8LzpK04YrE6UsVojtZ9xVmy4IiMQbmm1/a9n+cAGMoKFggZNGA4sBqvY8cThCnCcxl8bPeEHuIjkgg5lNSU5kFOtxrcYEF3zhb+QABHbeZdD7b2BvBIblvsIXS+LZngpyxA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035472; c=relaxed/simple;
-	bh=L+u5QAY/g53mrNOSFhQziio6E/nTTNyYqNyfrjO4mGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaimCwc1s1Exd91S2Nc1vDsMzUv6ItNXI3SaQnSRsGYO/I2PvrCT5kMEWPSwaVXwmkjMKSLuK6Vyoc/6LmncvJ+TvRYBMK99sTjnmboGtlWOag27aD/+M8MquwvodZ6EGngtbSmTDMdBfUzS2+2IyiuGWAFn6JE8Jsc4Zh38Htw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=flAGKLeT; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0787fdb137so837247566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:11:10 -0700 (PDT)
+	s=arc-20240116; t=1758035474; c=relaxed/simple;
+	bh=rmOaDep9iDvIkVV5SOO3btdvNEg4fjn3ZIsqxvgs9l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KTRPbHsS1xNn5HWdY9IXtGAyLDqyzCSydp93CQbWzLHvzGTlfjtjg/S0+lsHh3KJWRvlybRg+WqonwUxxpurof3HuJx063/V+wLb5f1ZxhoXrUNTmTndUOjkUVnW56xSV3Pl8f43dm9Lm8nkuy3o9Eb59pJ/EzKUpgzZe6YEgQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fARFydGW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-460e01ee031so1364465e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758035469; x=1758640269; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WSIWZxM7MhxYYBISjP+LvVgOq0iQr9M2pD8SpX1vq/Y=;
-        b=flAGKLeT+J9p4d2hqYyuaWIPGT4YM1qjViT7ZexoZ/Dbeal6QF53Kpj2DTLu8wdt9N
-         4x1WDSeEywW72lLwprO3QlvsmFB70/yvuMxFa4/N5/nQw04FGkKULzwry0W8cDxgGab1
-         ahdXCaRPxhMB2f6CeKiSDqTewJMwqnF+c0BhOuFKqTcias8rV70P5nVkUdmqLPuYKUL5
-         S2+DZW5ntExtG6vDl3cT6XPqj3K4kuOYJ8RoBF8chTD0x4QaCMgg1lq86fMwis9Ar1zg
-         PY3+a5q91O7euFyecT2h1S1Hi+aan7ikGcH3yt4ROowR5OX5L11fMh0T3EviLy8XCAq6
-         aQoA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758035471; x=1758640271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmOaDep9iDvIkVV5SOO3btdvNEg4fjn3ZIsqxvgs9l0=;
+        b=fARFydGWUDs3Y1yIu9PeJvgd9JeExzEDi0HEQ3gzKF7bRe7OC5iIjm8aeOVBS1lJ73
+         k+stB81Cnwgt0KMjGGxj1F28HgeCc6wyYirwWIhI/CBqrGJevPQ9v5sMo6yCM4wyEhB7
+         xBzhqVMyCwgpc6Tm9Nz7dtOVPIKwq7IyRRQDYrq2uvoGtklHivAzYuD0zz1uOBtCtk7i
+         2uzEExAYgGUQTPx8LfDfjAUF6QxieX4CpS0Mrnt1ftjM+bb+mcfvRJaKFD/kCVD5yWcY
+         W/JnSUvYy2vIOACce4BTthGLdKKjt4Nsyp/20TM8aZ/doWkpdpY9dTNc3KxcZrFSwUSO
+         BW/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758035469; x=1758640269;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSIWZxM7MhxYYBISjP+LvVgOq0iQr9M2pD8SpX1vq/Y=;
-        b=IyHcxx4HSoPTlJvRYudNiNogzAJ+p8Ws1GOpt/vDdT09NnqDcvbSlSepHXlEA+zzDB
-         d3S+CkbjLEPdBq+FnG5qnhwz7PM0ErNHiG/46Lm3Vn5p2Swn3RROSujgCWdvQtDg+a/3
-         PTG068UWrlEPDf16cp5wYyzgZahxtZug0bmzWAXh8sEe1OGLyZoIKlnUIfev68Wp76kH
-         CkWsoOTksgoGNdkwAUl9FPYZCE+2TOKcKVSG9Vi6HDrjfRQLszpxh/1Y6TmLDuVU60dK
-         7Fz0Z+nm7YGYYsx9JfCBl3et87gA586R3odSe8yGmRlCbzzlHztpn6iTv7WFw6DTFxEM
-         h7vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXg0OcKxXcV1UiPt2l9wbcsj2TiJidcKQiFPDq6iNcE+xQfy58eRvtBxrn89FtXr81MvllnEHDLIrInSxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIxW09LQOpXGvQTdEFevHhpmwK6xlxGkCIMI+3AcOD93VfY8xs
-	J2KELf6mCcIWqW1uLi4BBJK/87u0Pq7cg/4J1OCtZvB4JHnUPkXcRO9Zvm38zxFd2wU=
-X-Gm-Gg: ASbGncukJ+Y/0OSoHbN35aQ8dBkrltS3RdUNV0A5tRxjNp9R6sSoLRCPRdY0msQbr3W
-	iWk6xMyx09NuT4NAlrBVhTXgfdx5L6bqGvAaEQ6WC3vCuHAC2UwbTE5E4GAdxzugxo0kdTOgYEx
-	5/Go/Clw15HGibL53NlYjB5ZJxXUuwQK7K4KIJuQVgp0C1fkAIxPk2ZSfsGXx6h0K5Z6zp+HREw
-	Pn6nSzVQTiQ4uNBbGWUnXKa8Gmm9aufH7XiLWcXzwT0VsOigPuKnAEmUH5ocSTEreUiHwgyBSev
-	8PkK2ddXKi09eDJj5e3ywq6hzX1LRbUWSJia9+mM02s9AXlrTbAv35w99rlyh90ljlzaro1WKiX
-	ZbpH3v+tU7TQySf+eYf5c4xSg1xAZPw==
-X-Google-Smtp-Source: AGHT+IGE38GAQpAlNcaY6PmQ2ym8i+fHkW59Dfqvwtzp8Gs5cBbakiisuLH5KtCDcSUCd890i3tcSA==
-X-Received: by 2002:a17:906:fe44:b0:b0d:5e0d:eaa4 with SMTP id a640c23a62f3a-b0d5e2c7bcbmr1075066466b.16.1758035468798;
-        Tue, 16 Sep 2025 08:11:08 -0700 (PDT)
-Received: from [192.168.0.24] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62f5da1c32esm1989288a12.38.2025.09.16.08.11.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 08:11:08 -0700 (PDT)
-Message-ID: <9d74713c-00fc-4a17-92ed-b3e3420160e1@linaro.org>
-Date: Tue, 16 Sep 2025 18:11:07 +0300
+        d=1e100.net; s=20230601; t=1758035471; x=1758640271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmOaDep9iDvIkVV5SOO3btdvNEg4fjn3ZIsqxvgs9l0=;
+        b=RM3D4ERuShjnxuWqP/A2ZPkWQgXQBU7FdSxAkUiSwecGHJbW5iSSeceMi5tESyWneF
+         6rFBvrDgwtGTbu9A0EoYGBONVFvjbm6LRR+ZQ/aujBK0AF9Nxuu0RCrC90kmrXwCbIaQ
+         9DiRyQMEKCm9S7ktStBo3ZypGY0jzd5At1HvhR/u8KrWhtvXGyqAn/1PzcHN1slPH6hX
+         Yi9UDTc2WfpPohaxdNLmT3FR3Z14f49AU3RHMOUchNwwsc7emi193Q3GTrXyn0eOx47v
+         7Vw231X3NcnLidVv/L4OgYayi2GOMPDQNXIvta5dx6K+oJdljhZ0yUpf5tcEsx6qWSGt
+         4eXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFhQdgSsDk3m++7dwWWgKFogWWtAmYzfnw1LpCG+4wa7FMymBWmiGwe62RXzrQBeEOjLkvYlAc2ehtPQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynYzxj96Fp9OlKkEl9ssgoBeefDJ1O9oBkmTuzBVjSTVwgbvcp
+	eJXVUxNbX5otHJf2pLCsvalvUGwVOAnpQKnuIx5oTulLGQzQRhwjtYqcHUWoplYsZqZLrhzmKKy
+	5QNCG
+X-Gm-Gg: ASbGnctY6Ei2QndhWkRxGjZ2A/p6Me472RZeTNt3C3OBxZIxPFuaegvt7ySgMVa53E3
+	0r0Lusm75a/Eo/ZD//oZRgWKOTjAwNSZRRriwplZDVNfUD3yE5TAiqJS2A9MqY+OVSFTFzK4aaK
+	u5rsiaKJSd1uCsQeWMygxLyDTwlS+SxVNfEvWciSNJiPuW2NsKKROK5gTS+YGOigSvaRuSyo5qI
+	DJ7tVm+mZ3c7GFsGOntdUrLXYUNEMGXizTJ/ci0KjPSaORoEzKqAWewyM7mFVC9WAp1ag6cR5DH
+	RgXyaFomwXP/ejYUV5CE8BQXRdwB29tqWHdDIVpxYaAzG1D8ipM/Yt+0TzHKFuNCKGtCFvQHXQs
+	/6it9lSxW01yEjVwYjYmM4OiGhg1Q2qxf5v7hYcXbpYx/DeuG8oE6UYgDgMQ5958S
+X-Google-Smtp-Source: AGHT+IFjwopgYVPo6VKMtYSKedXcVrli8pwqzXpfa37U2o4471Lcz0KQL5QMmQQhJ8xqhKe1X6WGiQ==
+X-Received: by 2002:a05:600c:1992:b0:456:fc1:c26d with SMTP id 5b1f17b1804b1-45f211c8437mr143544675e9.2.1758035470631;
+        Tue, 16 Sep 2025 08:11:10 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e01578272sm241914915e9.9.2025.09.16.08.11.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 08:11:09 -0700 (PDT)
+Date: Tue, 16 Sep 2025 17:11:08 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	sboyd@kernel.org, jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, srini@kernel.org, 
+	vkoul@kernel.org, kishon@kernel.org, sre@kernel.org, 
+	krzysztof.kozlowski@linaro.org, linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
+	kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <mknxgesog6aghc6cjzm63g63zqbqvysxf6ktmnbrbtafervveg@uoiohk3yclso>
+References: <20250916084445.96621-1-angelogioacchino.delregno@collabora.com>
+ <20250916084445.96621-3-angelogioacchino.delregno@collabora.com>
+ <t3uk3k4h3l53yajoe3xog2njmdn3jhkmdphv3c4wnpvcqniz4n@opgigzazycot>
+ <aMlnp4x-1MUoModr@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: lemans: Remove unnecessary cells from
- DSI nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250916141931.601957-1-eugen.hristev@linaro.org>
- <kday4tlzjmycgfexiaxgwnan3a3nfxt7sgslncsktcyw5bmr7d@nmjtdm3gd2sk>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <kday4tlzjmycgfexiaxgwnan3a3nfxt7sgslncsktcyw5bmr7d@nmjtdm3gd2sk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cy5a22gjj6esxnjr"
+Content-Disposition: inline
+In-Reply-To: <aMlnp4x-1MUoModr@smile.fi.intel.com>
 
 
+--cy5a22gjj6esxnjr
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 2/7] nvmem: qcom-spmi-sdam: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+MIME-Version: 1.0
 
-On 9/16/25 18:03, Dmitry Baryshkov wrote:
-> On Tue, Sep 16, 2025 at 05:19:31PM +0300, Eugen Hristev wrote:
->> Fix warnings
->> Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@ae00000/dsi@ae94000:
->> unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
->>
->> Fixes: 73db32b01c9f ("arm64: dts: qcom: sa8775p: add Display Serial Interface device nodes")
->> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
->> ---
->> I haven't found a pending patch for this, so here it goes, sorry if someone
->> already sent.
-> 
-> Thanks, but no. The nodes are correct. I don't think we should be having
-> the -cells boilerplate each time somebody adds a panel under the DSI
-> node.
-> 
+On Tue, Sep 16, 2025 at 04:35:35PM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 16, 2025 at 03:24:56PM +0200, Uwe Kleine-K=F6nig wrote:
+> > On Tue, Sep 16, 2025 at 10:44:40AM +0200, AngeloGioacchino Del Regno wr=
+ote:
+>=20
+> ...
+>=20
+> > > +MODULE_IMPORT_NS("SPMI");
+> >=20
+> > If it's exactly the files that #include <linux/spmi.h> should have that
+> > namespace import, you can put the MODULE_IMPORT_NS into that header.
+>=20
+> Which makes anyone to import namespace even if they just want to use some=
+ types
+> out of the header.
 
-I understand your point. But leaving out warnings for a possible future
-node is not ok from my point of view.
+Notice that I carefully formulated my suggestion to cope for this case.
 
->>
->>  arch/arm64/boot/dts/qcom/lemans.dtsi | 6 ------
->>  1 file changed, 6 deletions(-)
->>
-> 
+> This is not good solution generally speaking. Also this will
+> diminish one of the purposes of _NS variants of MODULE*/EXPORT*, i.e. mak=
+e it
+> invisible that some of the code may become an abuser of the API just by s=
+omeone
+> include the header (for a reason or by a mistake).
 
+Yeah, opinions differ. In my eyes it's quite elegant.
+
+Best regards
+Uwe
+
+--cy5a22gjj6esxnjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjJfgkACgkQj4D7WH0S
+/k5bVwgAg+5I7FGikPiLyM6nJF2xieob+ruwdkRFDohxfb7PQp4RA3i332VcbQXW
+uPoXcpVKI3rBmxcqdXznCt5nec30ko8fgwZAb31BtOXwOf+VPlXIz5wDU5CdFQs+
+35qgGyJnn48yhisyQx02GgDm/7esFho8zJOIaKvERuPGZ391HpLD4+z6Nxavy5JH
+ZgxR7eIMcsnuF9vidUZhFi25abs7LFmJ72MF4i2N41OEdA/SMG9rpkEFBk5moBvK
+qRRqVUDpCMxyDH6MddhP5CmgVUiW+3ucV17tdWKlnjjxMJx5rFb8BJD+jZx0Iuo+
+HRtugRPqfdauF5Que8FvEqOdkDDLIw==
+=R2qg
+-----END PGP SIGNATURE-----
+
+--cy5a22gjj6esxnjr--
 
