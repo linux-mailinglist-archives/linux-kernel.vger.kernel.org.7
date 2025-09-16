@@ -1,93 +1,244 @@
-Return-Path: <linux-kernel+bounces-818734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C3EB595D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:12:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB9CB595D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C9A16B074
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02CDC1B2848A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9DA3081A9;
-	Tue, 16 Sep 2025 12:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E20A30C35F;
+	Tue, 16 Sep 2025 12:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6o5n9q8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="k5xivCmX"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2121EDA2C
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C727740855
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 12:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758024751; cv=none; b=IM2IuqY1CXi+knucUpTP7WUwqCPRGb0DzDMew85hkFLP6KS0F4n6FSEcQxRkD4UZlqNQPo947RinNWtH7k08LDMVbUq7Kbo3SgULH3pcpaplyY8YVagdo6uCARupMPDug5D6VTS8wLJpDhWseKXYyxt6l5N4lwtrmEBFNlrWShU=
+	t=1758024844; cv=none; b=kzMoCJH/S4lRftrAghjuukYcVZ1d0ZjxTDZnaTwap6JLf0SJIYUKxgJR72qS/BTwmabjQ2SKujrJoH/0S+li34gZ8JLRpfGHJ6+gAxsjxpv0bRWfwb2oEPM0Tf7ijxwys3wj2/QltFWz17IUoOcrbP1lBB88kmApgdmht2TVfis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758024751; c=relaxed/simple;
-	bh=hiXSWzOiLhbz/0pwI+JJnR5U2ggEanH7kVkF3wl+d2g=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sm8kTwVLzh66iT/9NLnllQtXsyGnJYI1bzj+1g2ufCDWyzTe/+dWUc1AUUpgzLR/c6nqeAFr8Zh5VAFMz96qodE+odM73xGQSdgTYV5i8mUj61X1A15pczAGLGQxYWnBIq+QqyX6LVlvUd0s5lcL2IcBomQ81sharRapBz0zi9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6o5n9q8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3F8C4CEEB;
-	Tue, 16 Sep 2025 12:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758024751;
-	bh=hiXSWzOiLhbz/0pwI+JJnR5U2ggEanH7kVkF3wl+d2g=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Z6o5n9q8YjO9Rz5PItEdYUznt8kXuXdGCBIDrPVXDXBRz/MIh6taeVUZSkzvJ597y
-	 Mbm1F+/78/i9YwkPU3LeVgPWmP+ROhuqC65FIvQjqOOs4E5EL+erH3QGnILcD1Yq2I
-	 8V+r4Xmnc8ION2Z+ZR6ki3Vrr28i2iI9WkW5T7g+boRpT26909Eg5+NOQk91kgHLHj
-	 4aGeKai14dC3XoWljOv8xbebYqXMvqkCZqxaTtbxzcl0XHIcxrp7v/VyXwjXNSi5ZG
-	 8TRm63KZGzauivwYq7Spd3ymX4FQmaJtBz86juUcR5RjnwxBWOY6+Q3/G9lZE0O7dp
-	 J16ugFZDuOIBQ==
-Message-ID: <1f80bc3f-845f-49f4-93d7-cc1be8a781f5@kernel.org>
-Date: Tue, 16 Sep 2025 20:12:27 +0800
+	s=arc-20240116; t=1758024844; c=relaxed/simple;
+	bh=cjkrNPcMPrn7Xz2O5IanrnqJQCxQtQkOWRXXc5JOZZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTpHolxTShVtfnFPjs3bM3LMgTEMgHnsdDzGaEe1MtJXDBaG+0h5uvSphX36I72crc1yz3ehzd344+Fe6yvcWq2K1d9TRmaSXLQrLtDQ9E8IiTiG8FbHqB7LonKy82Xef8vPVIR9b6U4oZDFEVIFmx8JI+H/zz/I1lyJ0T9euSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=k5xivCmX; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3e9ca387425so1965017f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 05:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1758024841; x=1758629641; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xF9f665i5VOqFhIxUjK1vRZHiWUJdODBvAOyo/CpsuU=;
+        b=k5xivCmXi2L2kJPrCUE7zkf+vvYDFRktHAu3K8NVK9MB0BqfOOMrQDzolwvrKhC5Jf
+         YLi2aB3SAPZGlmgmOQc1u6N2RZBqfCt/7rqCo1v6lHV1nbYqAW21MXC8VG0PIMS2DTw0
+         bdRO+5VjoOtHGk8059qsjyTfTFkOqPZWnMyML1tZwxTW+KbA+ZbQD5mHIpLncwKmKIWi
+         Z/YwmfRXH6kszfZwBAcGC6jiVOfa0kyVzTtzts8JD+wZ5PWp4ezfwk2rAwL7FdvwU4R1
+         0bdHZLRjp0jYB6AeSmXbnEZPlIStN0z8b7luLdfqi3z25R8Y6TDPR2/2pPg+Xp4Th2HV
+         gPtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758024841; x=1758629641;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xF9f665i5VOqFhIxUjK1vRZHiWUJdODBvAOyo/CpsuU=;
+        b=Gpz3LrYDGnjhNnfB2FxaJdIBSjvmURaOZCt8OL9flohvk/DFh28lp7w/uA62WwBXBt
+         UyzoLj8pWor9KIEOBQAoxZ+ydBbiYYyRBVk9Y2+96ThnxQgyr2UsTNLA5LEvnh+QpZ5Y
+         AP9ggU8JfC5ax5fqRtcQGj5e9r8QHAXbae9MoN6mbkM4O6Goa7/yZi0aCcqs/nLciQt7
+         4rPPZID+3jv4TuwUgMqT+/7If/ALT07vXa5PzdGAv2BRGuU02LM+IcqfWfiGDP5Fjg5A
+         sVi4RG1QWGRDVK3mpP4XttGp4osVbc8zs3KFhQwBy/z+emnYyuSMXlXCjcHJy9WLTgut
+         zB8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnI1Ea4MXZVzHV3MKOyyBnbdfsuEefe4p3FeFG6ezCPEejGG104TnjzL5cspdOtp9ZkHnH7t+ogT1V+jQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWdKt/ne04t+IAILxc9Za6qKxHGk6J3P9R3ZppbYS1PkmAjLZD
+	WZDMTmO7+j0WJ1BDgC0k2ZERB55HZrhhATAGfPXzZhYJj18lFwo9FPrSygUO/BU2pZk=
+X-Gm-Gg: ASbGncsPP1S16FJIaxNvy7a5rcO7wsyRibAATIcIowdn7yaHDgtLdcOGqohqS9Elwyy
+	vLYVLiMofg0cEOYeQQxjzJNw0v2qYB9ycZSI5+8yKSHmrzcZrdzcC5Wbj++mPZXT8V/hNK9Dp6i
+	PM2pxqLAVUUTuIvAAz7dxsycOvgd+372yXB63bhpURyS8VH21eUVx2nbnC6WABHWkLOORfV8Xr6
+	LOpfI/AYqGG++/nf6KoiLY+xvEyDTgngR/jJ06NV2zKYGXwUwNYoqz1DZANErgjo6sTHFTkRZ0Z
+	3VHtFrGKMkQWn50J/SIffAnmfjW65OChu5MGoPzZXEk7bBFJqjxTmLuxWxX0ChL/1cJWPkvcrO+
+	J5DIdbOlZfe6Z1do+A+AmCFqS
+X-Google-Smtp-Source: AGHT+IFTV2DDOatWbyPnRVs2gISj9wRvF75+40aO26WS2GjblmHiB5pJ8t3ljkM39Gi336PDUEg+5A==
+X-Received: by 2002:a05:6000:4313:b0:3e4:64b0:a779 with SMTP id ffacd0b85a97d-3e765a0adbcmr14740644f8f.53.1758024840702;
+        Tue, 16 Sep 2025 05:14:00 -0700 (PDT)
+Received: from jiri-mlt ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8b7b6ff8fsm13681048f8f.61.2025.09.16.05.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 05:14:00 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:13:50 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Ivan Vecera <ivecera@redhat.com>
+Cc: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, 
+	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, 
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>, 
+	"pabeni@redhat.com" <pabeni@redhat.com>, "horms@kernel.org" <horms@kernel.org>, 
+	"sdf@fomichev.me" <sdf@fomichev.me>, "almasrymina@google.com" <almasrymina@google.com>, 
+	"asml.silence@gmail.com" <asml.silence@gmail.com>, "leitao@debian.org" <leitao@debian.org>, 
+	"kuniyu@google.com" <kuniyu@google.com>, "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2] net: add net-device TX clock source selection
+ framework
+Message-ID: <psjeuxy3ofoh544u4ag6xcfosb72bsfvfcnfzip3swprn4mzua@2owku2txa5oi>
+References: <20250828164345.116097-1-arkadiusz.kubalewski@intel.com>
+ <20250828153157.6b0a975f@kernel.org>
+ <SJ2PR11MB8452311927652BEDDAFDE8659B3AA@SJ2PR11MB8452.namprd11.prod.outlook.com>
+ <20250829173414.329d8426@kernel.org>
+ <SJ2PR11MB8452D62C5F94C87C6659C5989B03A@SJ2PR11MB8452.namprd11.prod.outlook.com>
+ <a20848db-868c-457b-bb6b-9959922a3d56@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, bintian.wang@honor.com, feng.han@honor.com
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in
- __insert_extent_tree()
-To: wangzijie <wangzijie1@honor.com>, jaegeuk@kernel.org
-References: <20250915035246.98055-1-wangzijie1@honor.com>
- <20250915035246.98055-2-wangzijie1@honor.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250915035246.98055-2-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a20848db-868c-457b-bb6b-9959922a3d56@redhat.com>
 
-On 9/15/25 11:52, wangzijie wrote:
-> When we get wrong extent info data, and look up extent_node in rb tree,
-> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
-> return NULL.
-> 
-> Signed-off-by: wangzijie <wangzijie1@honor.com>
-> ---
->  fs/f2fs/extent_cache.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 199c1e7a8..6ed6f3d1d 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
->  			leftmost = false;
->  		} else {
+Fri, Sep 05, 2025 at 04:09:52PM +0200, ivecera@redhat.com wrote:
+>On 05. 09. 25 1:14 odp., Kubalewski, Arkadiusz wrote:
+>> > From: Jakub Kicinski <kuba@kernel.org>
+>> > Sent: Saturday, August 30, 2025 2:34 AM
+>> > On Fri, 29 Aug 2025 07:49:46 +0000 Kubalewski, Arkadiusz wrote:
+>> > > > From: Jakub Kicinski <kuba@kernel.org>
+>> > > > Sent: Friday, August 29, 2025 12:32 AM
+>> > > > 
+>> > > > On Thu, 28 Aug 2025 18:43:45 +0200 Arkadiusz Kubalewski wrote:
+>> > > > > Add support for user-space control over network device transmit clock
+>> > > > > sources through a new extended netdevice netlink interface.
+>> > > > > A network device may support multiple TX clock sources (OCXO, SyncE
+>> > > > > reference, external reference clocks) which are critical for
+>> > > > > time-sensitive networking applications and synchronization protocols.
+>> > > > 
+>> > > > how does this relate to the dpll pin in rtnetlink then?
+>> > > 
+>> > > In general it doesn't directly. However we could see indirect relation
+>> > > due to possible DPLL existence in the equation.
+>> > > 
+>> > > The rtnetlink pin was related to feeding the dpll with the signal,
+>> > > here is the other way around, by feeding the phy TX of given interface
+>> > > with user selected clock source signal.
+>> > > 
+>> > > Previously if our E810 EEC products with DPLL, all the ports had their
+>> > > phy TX fed with the clock signal generated by DPLL.
+>> > > For E830 the user is able to select if the signal is provided from: the
+>> > > EEC DPLL(SyncE), provided externally(ext_ref), or OCXO.
+>> > > 
+>> > > I assume your suggestion to extend rtnetlink instead of netdev-netlink?
+>> > 
+>> > Yes, for sure, but also I'm a little worried about this new API
+>> > duplicating the DPLL, just being more "shallow".
+>> > 
+>> > What is the "synce" option for example? If I set the Tx clock to SyncE
+>> > something is feeding it from another port, presumably selected by FW or
+>> > some other tooling?
+>> > 
+>> 
+>> In this particular case the "synce" source could point to a DPLL device of EEC
+>> type, and there is a sense to have it together in one API. Like a two pins
+>> registered with a netdev, one is input and it would be used for clock recovery,
+>> second is output - for tx-clk control - either using the DPLL device produced
+>> signal or not. Probably worth to mention this is the case with 'external' DPLL,
+>> where ice driver doesn't control a DPLL device but it could use the output as
+>> is this 'synce' one doing.
+>
+>Yes, this simply describes a diagram I described in my DT RFC [1] that
+>defines relationship between DPLL device and network card.
+>
+>		   +-----------+
+>		+--|   NIC 1   |<-+
+>		|  +-----------+  |
+>		|                 |
+>		| RxCLK     TxCLK |
+>		|                 |
+>		|  +-----------+  |
+>		+->| channel 1 |--+
+>+------+	   |-- DPLL ---|
+>| GNSS |---------->| channel 2 |--+
+>+------+  RefCLK   +-----------+  |
+>				  |
+>			    TxCLK |
+>				  |
+>		   +-----------+  |
+>		   |   NIC 2   |<-+
+>		   +-----------+
+>
+>Here we have 2 scenarios... The first (NIC1) is a SyncE one where NIC1
+>feeds some DPLL input reference with recovered clock and consumes the
+>synchronized signal from the DPLL output pin as Tx clock. In the second
+>(NIC2) case the NIC uses some DPLL output pin signal as Tx clock and
+>the DPLL is synchronized with some external source.
+>
+>If I understand well your comment, the RxCLK above is the dpll_pin
+>currently present in net_device. The TxCLK for the first case (NIC1)
+>should be the dpll_pin you are calling as "synce" source. And TxCLK for
+>the second case (NIC2) should be the dpll_pin you are calling "ext-ref".
+>Is it correct?
+>
+>If so there should be another dpll_pin in the net_device let's call it
+>tx_dpll_pin... The existing one should be some input pin of some DPLL device
+>and the tx_dpll_pin should be some output pin of that device.
+>
+>A user could set the tx_dpll_pin by ip link command like:
+>
+># ip link set eth0 txclk <dpll-pin-id>
 
-Need to print some messages here as Jaegeuk suggested, IIUC.
+Makes sense. We have dpll to model this and connection between dpll and
+netdev worlds over the pin-link (RX/source). To extend this to add the
+other direction seems correct.
 
-Thanks,
 
->  			f2fs_bug_on(sbi, 1);
-> +			return NULL;
->  		}
->  	}
->  
-
+>
+>[1] https://patchwork.kernel.org/project/netdevbpf/patch/20250815144736.1438060-1-ivecera@redhat.com/
+>
+>> > Similar on ext-ref, there has to be a DPLL somewhere in the path,
+>> > in case reference goes away? We assume user knows what "ext-ref" means,
+>> > it's not connected to any info within Linux, DPLL or PTP.
+>> > 
+>> 
+>> Adding control over 'ext-ref' muds up the clean story of above.. The 'ext-ref'
+>> source is rather an external pin, which have to be provided with external
+>> clock signal, not defined anywhere else, or connected directly to DPLL device.
+>> Purely HW/platform dependent. User needs to know the HW connections, the
+>> signal to this pin could be produced with external signal generator, same host
+>> but a different DPLL device, or simply different host and device. There can be
+>> a PLL somewhere between generator and TX PHY but there is no lock status, thus
+>> adding new dpll device just to model this seemed an overshot.
+>> 
+>> Exactly because of nature of 'ext-ref' decided to go with extending the
+>> net device itself and made it separated from DPLL subsystem.
+>> 
+>> Please share your thoughts, right now I see two ways forward:
+>> - moving netdev netlink to rt-netlink,
+>> - kind of hacking into dpll subsystem with 'ext-ref' and output netdev pin.
+>
+>You are mentioning above the case where an external DPLL device that is
+>not under control of network driver (e.g. DPLL chip on motherboard and
+>some LOM NIC). In this case is currently impossible for the NIC driver
+>to report dpll_pin used for recovered clock as it does not control the
+>DPLL device and all dpll_devices and dpll_pins are registered by the
+>different driver.
+>
+>There could be defined some DT schema for the relations between ethernet
+>controller and used DPLL device. Then the system firmware (DT/ACPI...)
+>could provide the wiring info (e.g. DPLL pin REF0P is used for recovered
+>clock from NIC1 and output pin OUT4P for the Tx clock by NIC1 etc.)
+>
+>...and also there should be some DPLL API for the drivers that would
+>allow to access DPLL devices and pins. E.g. NIC driver reads from its
+>fwnode that possible tx-clock pins could be out_pin1, 3, 5 but it needs
+>to translate fwnode_handles of these pins to registered DPLL pin IDs.
+>
+>Thanks,
+>Ivan
+>
 
