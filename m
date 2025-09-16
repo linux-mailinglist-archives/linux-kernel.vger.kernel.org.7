@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-819218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13748B59CDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:05:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B692FB59CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8DB14E0351
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:05:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1491D3A624F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368FB31FEF0;
-	Tue, 16 Sep 2025 16:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF1B3054FC;
+	Tue, 16 Sep 2025 16:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KoUAnWBY"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ugsrz9iG"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9424931FEE7
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F180D31FEFE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 16:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758038567; cv=none; b=ItghqrABmnWecq86XhjfDf0ZQlhVy7L+KI8ulrS2/3/mBkwB/e+zzG4Dia/tREcvC69EgaXW6gMttbfdiU+FCoHUHtPJ6UqHNy3XHB8hRSQQYbFpv+7uv7ea+zk8xNOjRNiWgEJIRZyOsoelUsTFxOIYluneQS8eB1JyDWVpFtg=
+	t=1758038573; cv=none; b=tAeGxdax0X3TnuqMkBKlcfehT124B/IR90bk0RCpfymldtPcVQjA/sTMTz6NFI15g5MLRoIPT6ZlD31KhjzrA17cfAlY3MVuw0A0nyVOFg30TD9nW459Ckl7SThxMJ3GwnTi+dcHv66JgsTa5vhDWGsC900z7ZPiEv/BpeHskuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758038567; c=relaxed/simple;
-	bh=gF3WipM5tnCkis9n2GbV/37i8mWESOx5rcBH76U/0Zg=;
+	s=arc-20240116; t=1758038573; c=relaxed/simple;
+	bh=ESgZ4Pu7dz4sQrjEgwaAL/nLhTL2WCOWrRvYy9cFBe0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LciRrhMe5eqF+nn8JUFZ7WhyGrshpxbZFDYhXlit80drBczRMgxo/PM0+kLEJFBOhWbl7yE1lLR1uyAvL5tQWGiTT7ZyOVkCHdol612sqwk8OAOAc75Wa9mCPAqcbwCWu7fzAko3ReeOoUfrhinOpKifBJqFk9nxhjEIfQT0Sl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KoUAnWBY; arc=none smtp.client-ip=209.85.222.170
+	 MIME-Version; b=Gn+p4uJ+2RLavR8lj9t9gZr8ja7CDPAZketh2m1AzLOaV+lxcimlvYO3A82eaSbDlx3cKu51axpsSLZ7vPuXQJEb6hRh7nRMw0O28cJmc9T7ZQuHorZRD7Jt6Clh8+PravKT2GCxz+msB9PHyuCGnGzm470JcAObUqKoF0/+Nus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ugsrz9iG; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-82884bb66d6so1530585a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:45 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-80a6937c8c6so674021085a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:02:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758038564; x=1758643364; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758038571; x=1758643371; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=gTSGPwTupsl07mG7Sko3GwC2DzpjYWJjLeYVvC9wd5M=;
-        b=KoUAnWBYMGW6drAY7kVyU5VhJYUIW0GNk+JPy+ammylXe6y1aPOie/kGUt7Sl22/Pw
-         DTDe/IkLjLU1JXNPDJAhQT6uy//7GV1zgzc90ttCqYV/i77HYvpB5JePzwoLk9omKwB+
-         Nk5RYaFspLKqs8xkkY0OCqk+LFAnThYWc99D4/IzMdDC/kRaUMQF1deWfOG66YhQeEKH
-         2SKPYlopjeNJVvQvCZtlIlSlOT1NLdIC/TzdL4TTGpYozPFzXoeLfDO8dYfGVrRLvIhY
-         KLiSqTg+jLRt7NAMoJcamrG9hAfUF+UzG9nzHfnit9D6NGEzzy2j6eKR4c4tIeuuL6NA
-         uCWw==
+        bh=Y9A/r73fYL/BjndHTsKAtIDgbtMgmgaZIN32sPZEUv0=;
+        b=Ugsrz9iGfbnRe5g2nxE+ZRFLbSePFf+omaLxB6LHtHOxL7CfKhAlZW0LgzoCDfeO6D
+         +WodREt0eNPOt83WZQG5FJmXrvOg88mJvzj0lJylKhgG9kvRs8IQLOgzh/EghxNrIWxU
+         clXe7gQdvTDkbNIaXSrDpR/669cT+Th+O6VhOBt4O7cJxgEaoIjvRg1DJy8MLL61eYiR
+         OMHLdXsjiS2CFec6P4KZXj+fsAMDUfLfD3hCiLiDJ4nK6DJ0GIwqaegdvoZXI5kkuAnC
+         uXAQGzlLXLhea9uXGY1l3VgQK6/SloMTaNs2wRqHU4ErddHOoMc7RNSUZYMFBJGkTNJB
+         4J3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758038564; x=1758643364;
+        d=1e100.net; s=20230601; t=1758038571; x=1758643371;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gTSGPwTupsl07mG7Sko3GwC2DzpjYWJjLeYVvC9wd5M=;
-        b=J4OchmjC6+mXrAx4j52O4zJZ581OoMSBGaVJhApR/pqFxmqpQSDsmw01Dz/wJ/TLtt
-         Ykxb10/23HtP6WPMBcIuxQIIKqaTXKv5dgQUNWufZYpX3mWiUjE3/EBVpX07q6P3IMTc
-         6KEjR48GRJ0FG9oKBH+Cmtq3OA1avZ1kpy47pM295yUvFtMX0Ja8JbqaYmh5XghSoNDe
-         Ia8mouMZRFf3DyiQ2vk56asByRBkgZqt8rnNyxfL+Fy3ytIJn6lh/IOtUECPGNTQMfMA
-         tqYNXlnkxs99rC1hvf6jIIxAws/97T8D/OShV+wjQhXGcUvrkPgBAhwAQWgeSnf8/JhL
-         zwMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW3wthXB8j0d4iAnQp+cHTK5mveALR2ab9d0r33a7Rgc2ZMAHYrj3sQI7jXqbMekqooh4/Use5Q7GmleQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8VyEgx2CUu+lnBwS+9kPvlWsqoMJSA7hZrEu0FnqR8DbNs0jz
-	ydyXnukgzOfGNLlKc5vjMUnJN4olgn6FoUh//EN7vn42Ovt0uhGWPDnN
-X-Gm-Gg: ASbGnctPXJLEL11+W9P3ROuCrngZclQEvv4CvZINVLk9AJIINaF4avKqfZyV8t9pgJz
-	ys1ddPh+EA1Rjc+Bp4ZODRACfJCTLa9QJ4Z7/TBl12OoJPPBmGiKhmNttPL0WDiLIScftIFKlUG
-	2CtxW9cmUfUEjDEKS4/zIERC7zDDa+aHWKGV0FWn/Rj4QsUPduxugX+HmgFxT8cVRaSDiaZXMtC
-	K279iFfn3sUbB+So90nC+dBD8/ll6zltM2TlBLDwJxKpEUh8rUWGmVstzqiBTNK2hRZUKr2dGmm
-	+WCHMxy+Jl8KxvqPPFvK7tMDP97rSe7fvsWZp3IVO+q9Y+gQMINNB60BtaryhrCDYaN8LgH9oYm
-	8mUr4fHdr1QhTLXaMc/8/obuTb023hwbNSo/6DVW5S4G0NBluVMSUV+qonA==
-X-Google-Smtp-Source: AGHT+IGsq3cAoMQCpRVCszGVkcOQBHFep3v4Kswe//NGVefOdyjKK7yL5pcrQVxxAUWszoihv1qb/g==
-X-Received: by 2002:a05:620a:170f:b0:81a:c1cc:b01b with SMTP id af79cd13be357-82b9d2fe192mr314137685a.27.1758038564020;
-        Tue, 16 Sep 2025 09:02:44 -0700 (PDT)
+        bh=Y9A/r73fYL/BjndHTsKAtIDgbtMgmgaZIN32sPZEUv0=;
+        b=nW/YZ9ZKwdyS/ATVSMeybwbPw8kcwNH22XDSKnA/MxwTkvq2DePVODYH3MOvicS4Bh
+         QsOWYKmGXLopHKZbDMiS0UNJSZt/IdwY9U+3P4E7kXj2cfhNdY7K8KhcF4exSpiU46OJ
+         v4/9cIwrPbzNiA6+G3g2i8Jvxz4ITq8130QE+BTCF0d061nHoNGYOTDf3TA8DKx/60/L
+         nj0B/bKGBaIOtBUd8clB78BAfbDxtl5uUZQ6HA9KmX4sKSSUwzoTw75Nqv63W5sLRAcF
+         UjYALU+8qshZBd7yraI8GsT94WHrZlcsOH1e+QVnWe6pLWTRhiYDdBb7qInQPj0s73jV
+         F2RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmjdvNTUyE2Wt9NWh146Nf32fNj6S5yV0jGfz1zkJT65/5/sjsV7oT3DKSgKO6GUxUJWh4NUZ6qcc75Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF858HrbszZwr9uPYQLom1kGoGbzpzjMFyiTqqMjFQjCw7jqlP
+	CIB3dRLD3nF7Ps9xOAhQ6eRrgd0QABu5XKaIWc64KTCKCviCKe0JfROF
+X-Gm-Gg: ASbGncsSoU5cWcoQDi1kNe7PrP/p9I19xf37ofKrNvtG+zLlw/26vFOriL1yRktDi0a
+	NUauRxE4H8JBObz229QZHR8OXT7kNslIPd9lst7tJ8rw+XUbtN+Uc1cS5uJQet56f1Zx4iGlWTX
+	Gj770ANPR8M84sme32l2AO7QRLOFGMA2cETd0fw6WhfGz6k9zCS5Svv4Eh0zVqcL0d2OpW72Z6/
+	sX95KLmidEOx+lQTqfOxwPiTlAsPHtOTtEC806vygdjj1gaM3k4+zKxYMphNuvRXfrDAq4y8tLr
+	eNCR9WNoZlNLNn1EwpRYsi/pi036MMz7j7D9TIWUTlBw47UmdKz1U//0Hpj5iJzcZVvu61moijp
+	o2IDTy77RLNc20QV+1pd1DpA8LwFWW8Wh/LBh4/wtMtm2N5Q=
+X-Google-Smtp-Source: AGHT+IF5wX/REvlgTwvjKzwh4z5xhh7WT1WZw3CdRiSULPQtDINM9vMmX/dyP5zoX4P09Uasw0kMqw==
+X-Received: by 2002:a05:620a:2951:b0:82b:3775:666e with SMTP id af79cd13be357-82b37756728mr503323685a.36.1758038570391;
+        Tue, 16 Sep 2025 09:02:50 -0700 (PDT)
 Received: from KASONG-MC4.tencent.com ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cd703f54sm969765485a.37.2025.09.16.09.02.37
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820cd703f54sm969765485a.37.2025.09.16.09.02.44
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 16 Sep 2025 09:02:43 -0700 (PDT)
+        Tue, 16 Sep 2025 09:02:49 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Kairui Song <ryncsn@gmail.com>,
@@ -92,9 +92,9 @@ Cc: Kairui Song <ryncsn@gmail.com>,
 	Zi Yan <ziy@nvidia.com>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v4 14/15] mm, swap: implement dynamic allocation of swap table
-Date: Wed, 17 Sep 2025 00:00:59 +0800
-Message-ID: <20250916160100.31545-15-ryncsn@gmail.com>
+Subject: [PATCH v4 15/15] mm, swap: use a single page for swap table when the size fits
+Date: Wed, 17 Sep 2025 00:01:00 +0800
+Message-ID: <20250916160100.31545-16-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250916160100.31545-1-ryncsn@gmail.com>
 References: <20250916160100.31545-1-ryncsn@gmail.com>
@@ -109,521 +109,138 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-Now swap table is cluster based, which means free clusters can free its
-table since no one should modify it.
+We have a cluster size of 512 slots. Each slot consumes 8 bytes in swap
+table so the swap table size of each cluster is exactly one page (4K).
 
-There could be speculative readers, like swap cache look up, protect
-them by making them RCU protected. All swap table should be filled with
-null entries before free, so such readers will either see a NULL pointer
-or a null filled table being lazy freed.
-
-On allocation, allocate the table when a cluster is used by any order.
-
-This way, we can reduce the memory usage of large swap device
-significantly.
-
-This idea to dynamically release unused swap cluster data was initially
-suggested by Chris Li while proposing the cluster swap allocator and
-it suits the swap table idea very well.
+If that condition is true, allocate one page direct and disable the slab
+cache to reduce the memory usage of swap table and avoid fragmentation.
 
 Co-developed-by: Chris Li <chrisl@kernel.org>
 Signed-off-by: Chris Li <chrisl@kernel.org>
 Signed-off-by: Kairui Song <kasong@tencent.com>
+Acked-by: Chris Li <chrisl@kernel.org>
 ---
- mm/swap.h       |   2 +-
- mm/swap_state.c |   9 +--
- mm/swap_table.h |  37 ++++++++-
- mm/swapfile.c   | 197 +++++++++++++++++++++++++++++++++++++-----------
- 4 files changed, 194 insertions(+), 51 deletions(-)
+ mm/swap_table.h |  2 ++
+ mm/swapfile.c   | 51 +++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 43 insertions(+), 10 deletions(-)
 
-diff --git a/mm/swap.h b/mm/swap.h
-index fe5c20922082..8d8efdf1297a 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -36,7 +36,7 @@ struct swap_cluster_info {
- 	u16 count;
- 	u8 flags;
- 	u8 order;
--	atomic_long_t *table;	/* Swap table entries, see mm/swap_table.h */
-+	atomic_long_t __rcu *table;	/* Swap table entries, see mm/swap_table.h */
- 	struct list_head list;
- };
- 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index a1478cbff384..b13e9c4baa90 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -91,8 +91,8 @@ struct folio *swap_cache_get_folio(swp_entry_t entry)
- 	struct folio *folio;
- 
- 	for (;;) {
--		swp_tb = __swap_table_get(__swap_entry_to_cluster(entry),
--					  swp_cluster_offset(entry));
-+		swp_tb = swap_table_get(__swap_entry_to_cluster(entry),
-+					swp_cluster_offset(entry));
- 		if (!swp_tb_is_folio(swp_tb))
- 			return NULL;
- 		folio = swp_tb_to_folio(swp_tb);
-@@ -115,11 +115,10 @@ void *swap_cache_get_shadow(swp_entry_t entry)
- {
- 	unsigned long swp_tb;
- 
--	swp_tb = __swap_table_get(__swap_entry_to_cluster(entry),
--				  swp_cluster_offset(entry));
-+	swp_tb = swap_table_get(__swap_entry_to_cluster(entry),
-+				swp_cluster_offset(entry));
- 	if (swp_tb_is_shadow(swp_tb))
- 		return swp_tb_to_shadow(swp_tb);
--
- 	return NULL;
- }
- 
 diff --git a/mm/swap_table.h b/mm/swap_table.h
-index e1f7cc009701..52254e455304 100644
+index 52254e455304..ea244a57a5b7 100644
 --- a/mm/swap_table.h
 +++ b/mm/swap_table.h
-@@ -2,8 +2,15 @@
- #ifndef _MM_SWAP_TABLE_H
- #define _MM_SWAP_TABLE_H
+@@ -11,6 +11,8 @@ struct swap_table {
+ 	atomic_long_t entries[SWAPFILE_CLUSTER];
+ };
  
-+#include <linux/rcupdate.h>
-+#include <linux/atomic.h>
- #include "swap.h"
- 
-+/* A typical flat array in each cluster as swap table */
-+struct swap_table {
-+	atomic_long_t entries[SWAPFILE_CLUSTER];
-+};
++#define SWP_TABLE_USE_PAGE (sizeof(struct swap_table) == PAGE_SIZE)
 +
  /*
   * A swap table entry represents the status of a swap slot on a swap
   * (physical or virtual) device. The swap table in each cluster is a
-@@ -76,22 +83,46 @@ static inline void *swp_tb_to_shadow(unsigned long swp_tb)
- static inline void __swap_table_set(struct swap_cluster_info *ci,
- 				    unsigned int off, unsigned long swp_tb)
- {
-+	atomic_long_t *table = rcu_dereference_protected(ci->table, true);
-+
-+	lockdep_assert_held(&ci->lock);
- 	VM_WARN_ON_ONCE(off >= SWAPFILE_CLUSTER);
--	atomic_long_set(&ci->table[off], swp_tb);
-+	atomic_long_set(&table[off], swp_tb);
- }
- 
- static inline unsigned long __swap_table_xchg(struct swap_cluster_info *ci,
- 					      unsigned int off, unsigned long swp_tb)
- {
-+	atomic_long_t *table = rcu_dereference_protected(ci->table, true);
-+
-+	lockdep_assert_held(&ci->lock);
- 	VM_WARN_ON_ONCE(off >= SWAPFILE_CLUSTER);
- 	/* Ordering is guaranteed by cluster lock, relax */
--	return atomic_long_xchg_relaxed(&ci->table[off], swp_tb);
-+	return atomic_long_xchg_relaxed(&table[off], swp_tb);
- }
- 
- static inline unsigned long __swap_table_get(struct swap_cluster_info *ci,
- 					     unsigned int off)
- {
-+	atomic_long_t *table;
-+
- 	VM_WARN_ON_ONCE(off >= SWAPFILE_CLUSTER);
--	return atomic_long_read(&ci->table[off]);
-+	table = rcu_dereference_check(ci->table, lockdep_is_held(&ci->lock));
-+
-+	return atomic_long_read(&table[off]);
-+}
-+
-+static inline unsigned long swap_table_get(struct swap_cluster_info *ci,
-+					unsigned int off)
-+{
-+	atomic_long_t *table;
-+	unsigned long swp_tb;
-+
-+	rcu_read_lock();
-+	table = rcu_dereference(ci->table);
-+	swp_tb = table ? atomic_long_read(&table[off]) : null_to_swp_tb();
-+	rcu_read_unlock();
-+
-+	return swp_tb;
- }
- #endif
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 314c5c10d3bd..094e3e75849f 100644
+index 094e3e75849f..890b410d77b6 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -59,6 +59,9 @@ static void swap_entries_free(struct swap_info_struct *si,
- static void swap_range_alloc(struct swap_info_struct *si,
- 			     unsigned int nr_entries);
- static bool folio_swapcache_freeable(struct folio *folio);
-+static void move_cluster(struct swap_info_struct *si,
-+			 struct swap_cluster_info *ci, struct list_head *list,
-+			 enum swap_cluster_flags new_flags);
- 
- static DEFINE_SPINLOCK(swap_lock);
- static unsigned int nr_swapfiles;
-@@ -105,6 +108,8 @@ static DEFINE_SPINLOCK(swap_avail_lock);
- 
- struct swap_info_struct *swap_info[MAX_SWAPFILES];
- 
-+static struct kmem_cache *swap_table_cachep;
-+
- static DEFINE_MUTEX(swapon_mutex);
- 
- static DECLARE_WAIT_QUEUE_HEAD(proc_poll_wait);
-@@ -401,10 +406,17 @@ static inline bool cluster_is_discard(struct swap_cluster_info *info)
- 	return info->flags == CLUSTER_FLAG_DISCARD;
- }
- 
-+static inline bool cluster_table_is_alloced(struct swap_cluster_info *ci)
-+{
-+	return rcu_dereference_protected(ci->table, lockdep_is_held(&ci->lock));
-+}
-+
- static inline bool cluster_is_usable(struct swap_cluster_info *ci, int order)
- {
- 	if (unlikely(ci->flags > CLUSTER_FLAG_USABLE))
- 		return false;
-+	if (!cluster_table_is_alloced(ci))
-+		return false;
- 	if (!order)
- 		return true;
- 	return cluster_is_empty(ci) || order == ci->order;
-@@ -422,32 +434,90 @@ static inline unsigned int cluster_offset(struct swap_info_struct *si,
+@@ -434,6 +434,38 @@ static inline unsigned int cluster_offset(struct swap_info_struct *si,
  	return cluster_index(si, ci) * SWAPFILE_CLUSTER;
  }
  
--static int swap_cluster_alloc_table(struct swap_cluster_info *ci)
-+static void swap_cluster_free_table(struct swap_cluster_info *ci)
- {
--	WARN_ON(ci->table);
--	ci->table = kzalloc(sizeof(unsigned long) * SWAPFILE_CLUSTER, GFP_KERNEL);
--	if (!ci->table)
--		return -ENOMEM;
--	return 0;
-+	unsigned int ci_off;
-+	struct swap_table *table;
++static struct swap_table *swap_table_alloc(gfp_t gfp)
++{
++	struct folio *folio;
 +
-+	/* Only empty cluster's table is allow to be freed  */
-+	lockdep_assert_held(&ci->lock);
-+	VM_WARN_ON_ONCE(!cluster_is_empty(ci));
-+	for (ci_off = 0; ci_off < SWAPFILE_CLUSTER; ci_off++)
-+		VM_WARN_ON_ONCE(!swp_tb_is_null(__swap_table_get(ci, ci_off)));
-+	table = (void *)rcu_dereference_protected(ci->table, true);
-+	rcu_assign_pointer(ci->table, NULL);
++	if (!SWP_TABLE_USE_PAGE)
++		return kmem_cache_zalloc(swap_table_cachep, gfp);
 +
-+	kmem_cache_free(swap_table_cachep, table);
- }
- 
--static void swap_cluster_free_table(struct swap_cluster_info *ci)
-+/*
-+ * Allocate swap table for one cluster. Attempt an atomic allocation first,
-+ * then fallback to sleeping allocation.
-+ */
-+static struct swap_cluster_info *
-+swap_cluster_alloc_table(struct swap_info_struct *si,
-+			 struct swap_cluster_info *ci)
- {
--	unsigned int ci_off;
--	unsigned long swp_tb;
-+	struct swap_table *table;
- 
--	if (!ci->table)
--		return;
-+	/*
-+	 * Only cluster isolation from the allocator does table allocation.
-+	 * Swap allocator uses percpu clusters and holds the local lock.
-+	 */
-+	lockdep_assert_held(&ci->lock);
-+	lockdep_assert_held(&this_cpu_ptr(&percpu_swap_cluster)->lock);
++	folio = folio_alloc(gfp | __GFP_ZERO, 0);
++	if (folio)
++		return folio_address(folio);
++	return NULL;
++}
 +
-+	/* The cluster must be free and was just isolated from the free list. */
-+	VM_WARN_ON_ONCE(ci->flags || !cluster_is_empty(ci));
++static void swap_table_free_folio_rcu_cb(struct rcu_head *head)
++{
++	struct folio *folio;
 +
-+	table = kmem_cache_zalloc(swap_table_cachep,
-+				  __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
-+	if (table) {
-+		rcu_assign_pointer(ci->table, table);
-+		return ci;
++	folio = page_folio(container_of(head, struct page, rcu_head));
++	folio_put(folio);
++}
++
++static void swap_table_free(struct swap_table *table)
++{
++	if (!SWP_TABLE_USE_PAGE) {
++		kmem_cache_free(swap_table_cachep, table);
++		return;
 +	}
 +
-+	/*
-+	 * Try a sleep allocation. Each isolated free cluster may cause
-+	 * a sleep allocation, but there is a limited number of them, so
-+	 * the potential recursive allocation is limited.
-+	 */
-+	spin_unlock(&ci->lock);
-+	if (!(si->flags & SWP_SOLIDSTATE))
-+		spin_unlock(&si->global_cluster_lock);
-+	local_unlock(&percpu_swap_cluster.lock);
++	call_rcu(&(folio_page(virt_to_folio(table), 0)->rcu_head),
++		 swap_table_free_folio_rcu_cb);
++}
 +
-+	table = kmem_cache_zalloc(swap_table_cachep,
-+				  __GFP_HIGH | __GFP_NOMEMALLOC | GFP_KERNEL);
-+
-+	/*
-+	 * Back to atomic context. We might have migrated to a new CPU with a
-+	 * usable percpu cluster. But just keep using the isolated cluster to
-+	 * make things easier. Migration indicates a slight change of workload
-+	 * so using a new free cluster might not be a bad idea, and the worst
-+	 * could happen with ignoring the percpu cluster is fragmentation,
-+	 * which is acceptable since this fallback and race is rare.
-+	 */
-+	local_lock(&percpu_swap_cluster.lock);
-+	if (!(si->flags & SWP_SOLIDSTATE))
-+		spin_lock(&si->global_cluster_lock);
-+	spin_lock(&ci->lock);
- 
--	for (ci_off = 0; ci_off < SWAPFILE_CLUSTER; ci_off++) {
--		swp_tb = __swap_table_get(ci, ci_off);
--		if (!swp_tb_is_null(swp_tb))
--			pr_err_once("swap: unclean swap space on swapoff: 0x%lx",
--				    swp_tb);
-+	/* Nothing except this helper should touch a dangling empty cluster. */
-+	if (WARN_ON_ONCE(cluster_table_is_alloced(ci))) {
-+		if (table)
-+			kmem_cache_free(swap_table_cachep, table);
-+		return ci;
- 	}
- 
--	kfree(ci->table);
--	ci->table = NULL;
-+	if (!table) {
-+		move_cluster(si, ci, &si->free_clusters, CLUSTER_FLAG_FREE);
-+		spin_unlock(&ci->lock);
-+		return NULL;
-+	}
-+
-+	rcu_assign_pointer(ci->table, table);
-+	return ci;
- }
- 
- static void move_cluster(struct swap_info_struct *si,
-@@ -479,7 +549,7 @@ static void swap_cluster_schedule_discard(struct swap_info_struct *si,
- 
- static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info *ci)
+ static void swap_cluster_free_table(struct swap_cluster_info *ci)
  {
--	lockdep_assert_held(&ci->lock);
-+	swap_cluster_free_table(ci);
- 	move_cluster(si, ci, &si->free_clusters, CLUSTER_FLAG_FREE);
- 	ci->order = 0;
- }
-@@ -494,15 +564,11 @@ static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info
-  * this returns NULL for an non-empty list.
-  */
- static struct swap_cluster_info *isolate_lock_cluster(
--		struct swap_info_struct *si, struct list_head *list)
-+		struct swap_info_struct *si, struct list_head *list, int order)
- {
--	struct swap_cluster_info *ci, *ret = NULL;
-+	struct swap_cluster_info *ci, *found = NULL;
+ 	unsigned int ci_off;
+@@ -447,7 +479,7 @@ static void swap_cluster_free_table(struct swap_cluster_info *ci)
+ 	table = (void *)rcu_dereference_protected(ci->table, true);
+ 	rcu_assign_pointer(ci->table, NULL);
  
- 	spin_lock(&si->lock);
--
--	if (unlikely(!(si->flags & SWP_WRITEOK)))
--		goto out;
--
- 	list_for_each_entry(ci, list, list) {
- 		if (!spin_trylock(&ci->lock))
- 			continue;
-@@ -514,13 +580,19 @@ static struct swap_cluster_info *isolate_lock_cluster(
- 
- 		list_del(&ci->list);
- 		ci->flags = CLUSTER_FLAG_NONE;
--		ret = ci;
-+		found = ci;
- 		break;
- 	}
--out:
- 	spin_unlock(&si->lock);
- 
--	return ret;
-+	if (found && !cluster_table_is_alloced(found)) {
-+		/* Only an empty free cluster's swap table can be freed. */
-+		VM_WARN_ON_ONCE(list != &si->free_clusters);
-+		VM_WARN_ON_ONCE(!cluster_is_empty(found));
-+		return swap_cluster_alloc_table(si, found);
-+	}
-+
-+	return found;
+-	kmem_cache_free(swap_table_cachep, table);
++	swap_table_free(table);
  }
  
  /*
-@@ -653,17 +725,27 @@ static void relocate_cluster(struct swap_info_struct *si,
-  * added to free cluster list and its usage counter will be increased by 1.
-  * Only used for initialization.
-  */
--static void inc_cluster_info_page(struct swap_info_struct *si,
-+static int inc_cluster_info_page(struct swap_info_struct *si,
- 	struct swap_cluster_info *cluster_info, unsigned long page_nr)
- {
- 	unsigned long idx = page_nr / SWAPFILE_CLUSTER;
-+	struct swap_table *table;
- 	struct swap_cluster_info *ci;
+@@ -470,8 +502,7 @@ swap_cluster_alloc_table(struct swap_info_struct *si,
+ 	/* The cluster must be free and was just isolated from the free list. */
+ 	VM_WARN_ON_ONCE(ci->flags || !cluster_is_empty(ci));
+ 
+-	table = kmem_cache_zalloc(swap_table_cachep,
+-				  __GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
++	table = swap_table_alloc(__GFP_HIGH | __GFP_NOMEMALLOC | __GFP_NOWARN);
+ 	if (table) {
+ 		rcu_assign_pointer(ci->table, table);
+ 		return ci;
+@@ -487,8 +518,7 @@ swap_cluster_alloc_table(struct swap_info_struct *si,
+ 		spin_unlock(&si->global_cluster_lock);
+ 	local_unlock(&percpu_swap_cluster.lock);
+ 
+-	table = kmem_cache_zalloc(swap_table_cachep,
+-				  __GFP_HIGH | __GFP_NOMEMALLOC | GFP_KERNEL);
++	table = swap_table_alloc(__GFP_HIGH | __GFP_NOMEMALLOC | GFP_KERNEL);
+ 
+ 	/*
+ 	 * Back to atomic context. We might have migrated to a new CPU with a
+@@ -506,7 +536,7 @@ swap_cluster_alloc_table(struct swap_info_struct *si,
+ 	/* Nothing except this helper should touch a dangling empty cluster. */
+ 	if (WARN_ON_ONCE(cluster_table_is_alloced(ci))) {
+ 		if (table)
+-			kmem_cache_free(swap_table_cachep, table);
++			swap_table_free(table);
+ 		return ci;
+ 	}
+ 
+@@ -734,7 +764,7 @@ static int inc_cluster_info_page(struct swap_info_struct *si,
  
  	ci = cluster_info + idx;
-+	if (!ci->table) {
-+		table = kmem_cache_zalloc(swap_table_cachep, GFP_KERNEL);
-+		if (!table)
-+			return -ENOMEM;
-+		rcu_assign_pointer(ci->table, table);
-+	}
-+
- 	ci->count++;
- 
- 	VM_BUG_ON(ci->count > SWAPFILE_CLUSTER);
- 	VM_BUG_ON(ci->flags);
-+
-+	return 0;
- }
- 
- static bool cluster_reclaim_range(struct swap_info_struct *si,
-@@ -845,7 +927,7 @@ static unsigned int alloc_swap_scan_list(struct swap_info_struct *si,
- 	unsigned int found = SWAP_ENTRY_INVALID;
- 
- 	do {
--		struct swap_cluster_info *ci = isolate_lock_cluster(si, list);
-+		struct swap_cluster_info *ci = isolate_lock_cluster(si, list, order);
- 		unsigned long offset;
- 
- 		if (!ci)
-@@ -870,7 +952,7 @@ static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
- 	if (force)
- 		to_scan = swap_usage_in_pages(si) / SWAPFILE_CLUSTER;
- 
--	while ((ci = isolate_lock_cluster(si, &si->full_clusters))) {
-+	while ((ci = isolate_lock_cluster(si, &si->full_clusters, 0))) {
- 		offset = cluster_offset(si, ci);
- 		end = min(si->max, offset + SWAPFILE_CLUSTER);
- 		to_scan--;
-@@ -1018,6 +1100,7 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- done:
- 	if (!(si->flags & SWP_SOLIDSTATE))
- 		spin_unlock(&si->global_cluster_lock);
-+
- 	return found;
- }
- 
-@@ -1885,7 +1968,13 @@ swp_entry_t get_swap_page_of_type(int type)
- 	/* This is called for allocating swap entry, not cache */
- 	if (get_swap_device_info(si)) {
- 		if (si->flags & SWP_WRITEOK) {
-+			/*
-+			 * Grab the local lock to be complaint
-+			 * with swap table allocation.
-+			 */
-+			local_lock(&percpu_swap_cluster.lock);
- 			offset = cluster_alloc_swap_entry(si, 0, 1);
-+			local_unlock(&percpu_swap_cluster.lock);
- 			if (offset) {
- 				entry = swp_entry(si->type, offset);
- 				atomic_long_dec(&nr_swap_pages);
-@@ -2679,12 +2768,21 @@ static void wait_for_allocation(struct swap_info_struct *si)
- static void free_cluster_info(struct swap_cluster_info *cluster_info,
- 			      unsigned long maxpages)
- {
-+	struct swap_cluster_info *ci;
- 	int i, nr_clusters = DIV_ROUND_UP(maxpages, SWAPFILE_CLUSTER);
- 
- 	if (!cluster_info)
- 		return;
--	for (i = 0; i < nr_clusters; i++)
--		swap_cluster_free_table(&cluster_info[i]);
-+	for (i = 0; i < nr_clusters; i++) {
-+		ci = cluster_info + i;
-+		/* Cluster with bad marks count will have a remaining table */
-+		spin_lock(&ci->lock);
-+		if (rcu_dereference_protected(ci->table, true)) {
-+			ci->count = 0;
-+			swap_cluster_free_table(ci);
-+		}
-+		spin_unlock(&ci->lock);
-+	}
- 	kvfree(cluster_info);
- }
- 
-@@ -2720,6 +2818,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	struct address_space *mapping;
- 	struct inode *inode;
- 	struct filename *pathname;
-+	unsigned int maxpages;
- 	int err, found = 0;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -2826,8 +2925,8 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	p->swap_map = NULL;
- 	zeromap = p->zeromap;
- 	p->zeromap = NULL;
-+	maxpages = p->max;
- 	cluster_info = p->cluster_info;
--	free_cluster_info(cluster_info, p->max);
- 	p->max = 0;
- 	p->cluster_info = NULL;
- 	spin_unlock(&p->lock);
-@@ -2839,6 +2938,7 @@ SYSCALL_DEFINE1(swapoff, const char __user *, specialfile)
- 	p->global_cluster = NULL;
- 	vfree(swap_map);
- 	kvfree(zeromap);
-+	free_cluster_info(cluster_info, maxpages);
- 	/* Destroy swap account information */
- 	swap_cgroup_swapoff(p->type);
- 
-@@ -3217,11 +3317,8 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
- 	if (!cluster_info)
- 		goto err;
- 
--	for (i = 0; i < nr_clusters; i++) {
-+	for (i = 0; i < nr_clusters; i++)
- 		spin_lock_init(&cluster_info[i].lock);
--		if (swap_cluster_alloc_table(&cluster_info[i]))
--			goto err_free;
--	}
- 
- 	if (!(si->flags & SWP_SOLIDSTATE)) {
- 		si->global_cluster = kmalloc(sizeof(*si->global_cluster),
-@@ -3240,16 +3337,23 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
- 	 * See setup_swap_map(): header page, bad pages,
- 	 * and the EOF part of the last cluster.
+ 	if (!ci->table) {
+-		table = kmem_cache_zalloc(swap_table_cachep, GFP_KERNEL);
++		table = swap_table_alloc(GFP_KERNEL);
+ 		if (!table)
+ 			return -ENOMEM;
+ 		rcu_assign_pointer(ci->table, table);
+@@ -4072,9 +4102,10 @@ static int __init swapfile_init(void)
+ 	 * only, and all swap cache readers (swap_cache_*) verifies
+ 	 * the content before use. So it's safe to use RCU slab here.
  	 */
--	inc_cluster_info_page(si, cluster_info, 0);
-+	err = inc_cluster_info_page(si, cluster_info, 0);
-+	if (err)
-+		goto err;
- 	for (i = 0; i < swap_header->info.nr_badpages; i++) {
- 		unsigned int page_nr = swap_header->info.badpages[i];
+-	swap_table_cachep = kmem_cache_create("swap_table",
+-			    sizeof(struct swap_table),
+-			    0, SLAB_PANIC | SLAB_TYPESAFE_BY_RCU, NULL);
++	if (!SWP_TABLE_USE_PAGE)
++		swap_table_cachep = kmem_cache_create("swap_table",
++				    sizeof(struct swap_table),
++				    0, SLAB_PANIC | SLAB_TYPESAFE_BY_RCU, NULL);
  
- 		if (page_nr >= maxpages)
- 			continue;
--		inc_cluster_info_page(si, cluster_info, page_nr);
-+		err = inc_cluster_info_page(si, cluster_info, page_nr);
-+		if (err)
-+			goto err;
-+	}
-+	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++) {
-+		err = inc_cluster_info_page(si, cluster_info, i);
-+		if (err)
-+			goto err;
- 	}
--	for (i = maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i++)
--		inc_cluster_info_page(si, cluster_info, i);
- 
- 	INIT_LIST_HEAD(&si->free_clusters);
- 	INIT_LIST_HEAD(&si->full_clusters);
-@@ -3963,6 +4067,15 @@ static int __init swapfile_init(void)
- 
- 	swapfile_maximum_size = arch_max_swapfile_size();
- 
-+	/*
-+	 * Once a cluster is freed, it's swap table content is read
-+	 * only, and all swap cache readers (swap_cache_*) verifies
-+	 * the content before use. So it's safe to use RCU slab here.
-+	 */
-+	swap_table_cachep = kmem_cache_create("swap_table",
-+			    sizeof(struct swap_table),
-+			    0, SLAB_PANIC | SLAB_TYPESAFE_BY_RCU, NULL);
-+
  #ifdef CONFIG_MIGRATION
  	if (swapfile_maximum_size >= (1UL << SWP_MIG_TOTAL_BITS))
- 		swap_migration_ad_supported = true;
 -- 
 2.51.0
 
