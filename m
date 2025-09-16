@@ -1,168 +1,93 @@
-Return-Path: <linux-kernel+bounces-819433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C073B5A093
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:35:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547A4B5A094
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791B11C049F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:35:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55293AFA8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44612D24B8;
-	Tue, 16 Sep 2025 18:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D722C11E9;
+	Tue, 16 Sep 2025 18:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEj+1PqE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dY3xQnWF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3952F143756;
-	Tue, 16 Sep 2025 18:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C72BD58A
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758047703; cv=none; b=lfKbkFNZXNwKKdB69ehBqA8E11vkDyXPgR0c7vOntHhx8FQ85RtfgiJj0bE5UtVTVaAsHZgWp9BYnG+zrf3HsI/rB53PedfRr61ZdbWbWtmsMBUAA9g2/RWaTP8IZcA3AsQcp+OhbPzb59+VJmQSZCdcKB6ZJvYz6tMaES+ilbc=
+	t=1758047714; cv=none; b=bRo5YK/9YATXzwUCJSi5n0/gIkXwFCt0rY6OSeggl4PqNta9TN4F4vlz0m8RN6eSm2CQSc+Q269czB/uT9Bom/+IGCpT+/x5QCFMw2U6eyOx26Gwl/6hdHrIXv+X8JVKOmY+P4Aa74Z5sARDK17Z3Shr00Q9ofOxhiidn88PKmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758047703; c=relaxed/simple;
-	bh=0Y8Vr3AraQV82DBR8zHGaa4Zevj4KNfd9r6qP5JbGp0=;
+	s=arc-20240116; t=1758047714; c=relaxed/simple;
+	bh=p2L+BoGjF7funf1kKzdI2zSzLPq5TYcZXKpLPTIH8Fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKntRlda2X+oqWHeyrJYGB62oYn8ccPAs+LRz3gq5g75TU3UcrPQkXkkoa6IKBeinL1ViG3ZlP5sRM0fEKkOQLlhcZLENLQ5ya9sVnt8XeGDEmMmbjf+phGdj3XYfe/GrtQvDuwL8mZ9DY/R4zEB8gCiqa2MIvvsORqUeZw45pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEj+1PqE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97714C4CEEB;
-	Tue, 16 Sep 2025 18:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758047702;
-	bh=0Y8Vr3AraQV82DBR8zHGaa4Zevj4KNfd9r6qP5JbGp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QEj+1PqE2kTzK5pEFOvkzZz7HK+lpwKmVkFwbSQbw/+kwTOdxIDt+mCZHZDnbh4P9
-	 ZeRE8o7LaTsZpPef8AUn96IdwpABMmvWisAMZlElSgvGaQR6d5CCy+z9XM2lPW4VRM
-	 mmCp+iyckzTuspuVGzh1ENLePdlF4+XpLB3llxUGgFFxX2XHQTd5P1DyPnnFlsa5+C
-	 4o/Hua5mcMg9v0gVsuz36e5Q275RvfFOlCeqJnzGza7NVPstP7b5kCACcNhRuGfmNQ
-	 teQ0aLihmp5AhuAyrZcDklOGFXEqLM2JwQAcmJc/0Qa2qXNzDVpeGDrBzFer9TweOB
-	 wdZ+XQT2WMaOQ==
-Date: Tue, 16 Sep 2025 19:34:57 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>, Haibo Chen <haibo.chen@nxp.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] dt-bindings: touchscreen: fsl,imx6ul-tsc: support
- glitch thresold
-Message-ID: <20250916-bonus-wildness-608ec9a83546@spud>
-References: <20250914171608.1050401-1-dario.binacchi@amarulasolutions.com>
- <20250914171608.1050401-5-dario.binacchi@amarulasolutions.com>
- <aMgjAjfydIbYexkE@lizhi-Precision-Tower-5810>
- <20250915-tinker-music-03cff49a41a7@spud>
- <aMmKNYjxolrCb1yC@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QlVPLf/9Syc8vVlDVHG0iUznYPX2lrF5+EJBYPu450IbX36otNlLnYXAnZ/HKo4ifEPEDSox5x9KoEMSkF0kgblJg9juc7k/hteWT2eIIc/UT0uRXGXsvxum+PRjqnATLbzlrSFORafFmU4uRoeXNgvtQ3pp6otnAMsfB/XSivY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dY3xQnWF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5rkvZwt85N53PHekOoIC3Lo9zWtABx+bQZ+hiuLk1wg=; b=dY3xQnWF/2ii/HdaPXcRLU7fY9
+	4YvgPSlZfO/cmb3NwOBlJdMgH8Z8P60HTEQkJx+H4S4kjmK3lILP0EWwxsyhOwvHitoVtezXJ79aR
+	5GPTc6uoHkmz7KLQXTlHjmoY0fJfeodm4erslkE5qXiwZT1McT8GkWCnWrbLG8KC8ZinbNAb0H4c+
+	3W8U9Keoml7w3+WdQboVCJDniMDRysLs1d+LPkWbRUrxPchXxLPnspgw4YcufZOYnQftROFngWJZY
+	FufktfRb8RJXj/aGPHYNjt8LtDQ7TiuR4ag0SAart9spW3lJxQJjxQYyperjyqlMUumbz7HNH2s5n
+	+Wvj1BPg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyaW7-00000007FhL-3D0e;
+	Tue, 16 Sep 2025 18:35:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9ED8A300328; Tue, 16 Sep 2025 20:35:02 +0200 (CEST)
+Date: Tue, 16 Sep 2025 20:35:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Andr?? Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v2 0/3] selftest/futex: Collected mpol fixes
+Message-ID: <20250916183502.GA2800598@noisy.programming.kicks-ass.net>
+References: <20250915212630.965328-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rYWN0tYwjxMqonNZ"
-Content-Disposition: inline
-In-Reply-To: <aMmKNYjxolrCb1yC@lizhi-Precision-Tower-5810>
-
-
---rYWN0tYwjxMqonNZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250915212630.965328-1-bigeasy@linutronix.de>
 
-On Tue, Sep 16, 2025 at 12:03:01PM -0400, Frank Li wrote:
-> On Mon, Sep 15, 2025 at 06:42:13PM +0100, Conor Dooley wrote:
-> > On Mon, Sep 15, 2025 at 10:30:26AM -0400, Frank Li wrote:
-> > > On Sun, Sep 14, 2025 at 07:16:01PM +0200, Dario Binacchi wrote:
-> > > > Support the touchscreen-glitch-threshold-ns property. Unlike the
-> > > > generic description in touchscreen.yaml, this controller maps the
-> > > > provided value to one of four discrete thresholds internally.
-> > > >
-> > > > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > > > ---
-> > > >
-> > > > (no changes since v1)
-> > > >
-> > > >  .../input/touchscreen/fsl,imx6ul-tsc.yaml         | 15 +++++++++++=
-++++
-> > > >  1 file changed, 15 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/fs=
-l,imx6ul-tsc.yaml b/Documentation/devicetree/bindings/input/touchscreen/fsl=
-,imx6ul-tsc.yaml
-> > > > index 678756ad0f92..310af56a0be6 100644
-> > > > --- a/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6u=
-l-tsc.yaml
-> > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/fsl,imx6u=
-l-tsc.yaml
-> > > > @@ -62,6 +62,21 @@ properties:
-> > > >      description: Number of data samples which are averaged for eac=
-h read.
-> > > >      enum: [ 1, 4, 8, 16, 32 ]
-> > > >
-> > > > +  touchscreen-glitch-threshold-ns:
-> > > > +    description: |
-> > > > +      Unlike the generic property defined in touchscreen.yaml, this
-> > > > +      controller does not allow arbitrary values. Internally the v=
-alue is
-> > > > +      converted to IPG clock cycles and mapped to one of four disc=
-rete
-> > > > +      thresholds exposed by the TSC_DEBUG_MODE2 register:
-> > > > +
-> > > > +        0: 8191 IPG cycles
-> > > > +        1: 4095 IPG cycles
-> > > > +        2: 2047 IPG cycles
-> > > > +        3: 1023 IPG cycles
-> > >
-> > > you should use ns
-> > >    enum:
-> > >       - 1023
-> > >       - 2047
-> > >       - 4095
-> > >       - 8191
-> > >
-> > > you can limit only 4 values, but unit have to ns. your driver map it =
-to
-> > > register value.
-> >
-> > Looking at the driver change, I think Dario is already doing that. The
-> > text here is just talking about how the controller doesn't support
-> > anything other than these 4 glitch threshold and mapping must be done in
-> > some way.
->=20
-> Thanks, but descripton is confused.
-> "Unlike the generic property defined in touchscreen.yaml", which let me
-> think value is 0..3, instead of ns.
->=20
-> Suggest Remove
->=20
-> "Unlike the generic property defined in touchscreen.yaml, this
-> controller does not allow arbitrary values"
+On Mon, Sep 15, 2025 at 11:26:27PM +0200, Sebastian Andrzej Siewior wrote:
+> I collected Andr??'s two mpol related fixes and reworded slightly the
+> description of #1.
+> Patch #3 was also on the list for a while and now does no longer apply
+> so I rebased it on top.
+> 
+> Andr?? Almeida (2):
+>   selftest/futex: Make the error check more precise for futex_numa_mpol
+>   selftest/futex: Reintroduce "Memory out of range" numa_mpol's subtest
+> 
+> Sebastian Andrzej Siewior (1):
+>   selftest/futex: Compile also with libnuma < 2.0.16
+> 
+>  .../selftests/futex/functional/Makefile       |  5 +-
+>  .../futex/functional/futex_numa_mpol.c        | 61 +++++++++++--------
+>  2 files changed, 40 insertions(+), 26 deletions(-)
 
-Yeah, I agree this should be removed. It's unlikely that /any/
-touchscreen will support completely arbitrary values, so stating it is
-redundant.
+Queued these for tip/locking/futex, if they were intended for another
+branch, please holler.
 
---rYWN0tYwjxMqonNZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMmtwwAKCRB4tDGHoIJi
-0vWEAP9UHTO+GfZtI6OXbDcxvcOVWmp8z5NqbCA7ni7xXVlEUwD8CF4puz+dHm6q
-a65TXq2kfo1U+B29pPxvngMosikvjA4=
-=Sldc
------END PGP SIGNATURE-----
-
---rYWN0tYwjxMqonNZ--
+Thanks!
 
