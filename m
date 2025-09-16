@@ -1,173 +1,564 @@
-Return-Path: <linux-kernel+bounces-818646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7246B5949D
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B48AB594A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2F03B0BD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39C71BC60F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034DB2C0F7B;
-	Tue, 16 Sep 2025 11:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8312C08CD;
+	Tue, 16 Sep 2025 11:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mZ6riIwC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MnYu2Vbm"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D544A275878
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF1D221DAC
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758020523; cv=none; b=GpNfv9iM24Cj04QExHg1hPJMD6pVJUMR4fPd+2kaaMD/vKnQJBRJ1n4An957TquYNDZcF3aMsOHRoRzQJeZEckpgFVse7wGDlckvH1W/g47mXusTssUtK1VgNNWAxBZdkICP1KbVuGOqN9NV+uMLE5s0NWJ79csGI6yeE58lEIo=
+	t=1758020552; cv=none; b=KxaJSmHbYQkIQfhVUl26BMuWr74eU+K340fTlrbJY5hqTnIIHM43NYCtieOVF7varG1vh8X9pJoa4G/arFdl1DeLtO1eOTcY5N8KTCHQDFzZoqwBwFfkonsUYZdtCb3LSSfIIeFNcXMHmqY/mzpMPwshssOL7bsmAI6Peu4eyNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758020523; c=relaxed/simple;
-	bh=JecI4baRKbxg9mlRZPX14WKgBFLLGnH9ACj7lbwRX78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZjCkaUrkGO7WKjXkfdK82TsCFQTzom3Lf0TRv9twK14FP9Mk3+Pr0e7vJk3288wSEpYST2Dn21ZFkW0oPmYtuM6gYeh/7CRX5nDO8i+VqcZbf2U7v5M1wWEGowYQyHWPPaWbrrb7KrnasZX2ZPTFtADMJQGN1D+UzkxYE3bmAVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mZ6riIwC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAI5wG020376
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:02:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=OWBe468scwOzFXQ4FxY74VVg
-	9u9BX5oCReSyR7Jc2vg=; b=mZ6riIwCeVoyP9biCabTnNSPvQyOeOZmDSXFkNgu
-	c9HT8QqkzJYfxPZiSKYzkQEG+ALrKKM1nwYKwXlyRZi9cJtIQ7pvWFhS9MqC6WRh
-	4YG7jHroAaC6ZMkUlcwInkZ3CNTllvyQLbvJrjMtD/Vg9GAfMc81ddILUn+FjERc
-	4M+Yyxp7Hzg2Hl+th7HmfrShx/7DaUh3h02xfMf7LN/HNtlpRT/xiMc41fRfnSA2
-	Bys3yD6jE0iplgnAfucmVWEw5pIk65V+b+revqmyYX8n684cgD8/lEUM2COjifd4
-	6d/xEsT/Oh2dBvrCMEjm2ZQcCO5NN513W2mGCwMqnKx8Xg==
-Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951chghrk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:02:01 +0000 (GMT)
-Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-54a1a08af5cso4943646e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:02:01 -0700 (PDT)
+	s=arc-20240116; t=1758020552; c=relaxed/simple;
+	bh=UZtz5b/uUgoUD1UwpAGVyYuThc4jme+i123H5BliUBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fus1TBCjntuZjQ9HdF3ISKxnAzZZB0DzXBb9wRzzHoWXx9lHYlayMDc3TDMUXFq8Tri5bgd0OL/KwEg45qMykOtdihdLIZ6ylhqzWzK5nm/0H+trW+03lIq7MLEVDWk1JaQwe+lVhXYVzzpHgryfuTsOzXeNaBN1pqXeC9e0AUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MnYu2Vbm; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so3548613a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758020550; x=1758625350; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wuvxZ5Qbf3VnowqeNrmAPCbnKQuU23fVm2H12Ns0vlk=;
+        b=MnYu2VbmJiwO3syDHIURg24jZb/DlyMboHV9l8wdi/mFw5y8kQvRBNur0voJp1nZ5G
+         f5/uXg6jYIqOv7VEGGM9R4/9ZQThOVC3zkGftm05nhIAPR+y4Jfq2s8uTi7dVc3GkcDv
+         rbGlzTxzHbade19Rvzo+5+IGElUd/ZPxUf1Fy8Lb4mF2590CtVWn7xGuPd2sjh+5DgTN
+         +bzFzEAh6W1CqURbr1nsFak5EW4iGc+G4MYP31UYvITlAS1+/weBtmq+UjRWzboCGS1b
+         OYYnkEihz5cmTqjOdY3vEnooRTrFckB/fhANjRLC5HNOzbtV3M6fsi7zBTGlgjiF3zwt
+         lYqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758020520; x=1758625320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OWBe468scwOzFXQ4FxY74VVg9u9BX5oCReSyR7Jc2vg=;
-        b=KKrEYcKTDyBmyHbByb9wWgHyIfHkl05PbvraUzYoeYJKc8RZCZTWgeeZ1O+YuZMlBv
-         eoejMWIqoC1zc7HJvGrdfhSTEpPYOa8riJoWPZR2b0wR0i0pWgglkxz17FWZgdDFYFlT
-         o9GDFpJj+5C5litgGoj3fz6bkNQGyTQe5wgPtecnYxuMpswyzQUe6gNqa3lXlzr6zB3n
-         DjrDBUNIpXfGFPU80MIX4gxgTlimXeW6k0MNfyIPfDRDW6xn/Zd2WihI2xAqbT1+m65J
-         hIZ3udqYGzkYLE4dfWC41NmabOH8/BomeytXdIJ1+NeyKZT54/+NRI0Lm+I8a+rMgpPw
-         ZqnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZT3I/Q7+WrBJF/mV47+6Xx/mQ0HCkjHNJztP8o1DVBraFIbkav3vWqAgSli5TeYGF+zUYAjpetROZbxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ70AJRwnowWQTlYb+MBiEVYP4GqARH4vPqAYPiCOBQP6evQKY
-	ydzxFwJvGYELdqqYCbVOsGB4aCzwFGX4Yk0s2C08rnWm3LmytA6pVj/EMTcKZBGhx+S+fjC8Jhe
-	+RU0/wolOqvdvC3uco1KdJxjKVQy1fP9rzCRyRzJR7RAY8AxQ0vlroMCbWOllgD7g14A=
-X-Gm-Gg: ASbGncuVncKmLZooo7a5CJkQeBmhyqIF+Vr3WETi0VrPXsoUtAJYemPoUN4TekO1IQ0
-	oVtTBcGIAI3elJtAo7YfIsY03s83bnXTbkxOjVgUgDCCyieqLYx1VNhfi0Dt6Q5zhjKe9iG3Y2W
-	QPZXaBr0mY+eCzzVFe1UpsgxdTM0BHC0u0GysSsxVWVm0krp794BX82KKwtdSvwD0MtXnlme9nO
-	Pay7QUwFjs4glWn0G++3HcNOL389+Zia2KDalfxH6HS1DP+0TQDD5ri+2CPWfOVOVDlKDWtRXMT
-	Epyx3BgVie4zWI/MLzoJotPo4WzP+NGHW2nN9TPqvEyNmlW+PbxzbDql6BLk7u1Gx7C0/AyVNd1
-	iLN/ubgCiIUjPTRxaUl7jGuEHrhG859Uj+zfhY/6f4+STyRjDQbn4
-X-Received: by 2002:a05:6122:250b:b0:537:3e5b:9f66 with SMTP id 71dfb90a1353d-54a16cb4b3emr5739181e0c.12.1758020519592;
-        Tue, 16 Sep 2025 04:01:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIhQ74kakQxgpRzO0ONsKwulv83qkPHfKj7TAFJZhqWDBg4A4PoFyYmOJehH1fow8stkNEhQ==
-X-Received: by 2002:a05:6122:250b:b0:537:3e5b:9f66 with SMTP id 71dfb90a1353d-54a16cb4b3emr5739122e0c.12.1758020519115;
-        Tue, 16 Sep 2025 04:01:59 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-353725e1bc6sm26001481fa.27.2025.09.16.04.01.57
+        d=1e100.net; s=20230601; t=1758020550; x=1758625350;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wuvxZ5Qbf3VnowqeNrmAPCbnKQuU23fVm2H12Ns0vlk=;
+        b=dkvBjQzwkxQhaeCd8FY/bs4fGBoZUoDEsVJAemUGHUU4Hb2mFwvYT+s5QXI1j2BWb4
+         c0f/KZ+4mzRFB6woqiF5NiAyqzosNWNqES8fbJdElyCnB+FkxQSZdVT3SXwYs5biANkY
+         P/FiTOFarbs32b4snob2CjaICIxmLS85uLiAtN+zF3knOEgcUagJJ1JyTPuejrYl4S4I
+         5hIFBsbNvIKUuABN3eQ07NkK7Y1G3XhvEg4owIzUIqQi2LLpPmRioRfDnfLDtQGjZCq9
+         qeLQyxT4FdZWi5ePKOy5rAwYWCL/WLX6slvtmv0DcLfc9T67qE2N6iqJR8reZIoHk3Fo
+         tpEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEDrGlzkBfPsxLCkIygZnctR0IiBSlnULm7odkzPwo//9UePDhzya3T+ebhfyFliXyDW7NRf6CaaAtHGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV6fbuBhJQomd0c9hDlWFTyJa2HLQTfgPXDUkgUC1wPfMAgAT7
+	zwLn5tIURP/vnq7Aaao9umZSO9pP00XZVWcJukEOC2BVN72roTSm1AHg
+X-Gm-Gg: ASbGncsywlIlGtqdzZyzXZd6pAJVhF/kfKHfoySVKgYliYB1eCfwXF3dgi1jyUjc7QE
+	bzYrvH6m2mV4frD0ipx72aG+yX7DvCee0lVp+UOABBT+gghod88kTIiN06+lU5xyaRchV2nMnLv
+	GJ7Q+EvZUxXY19ixrIQP8rSJEkQZCdzBdprJVGFTOJaHLmUcH2QgwZXGmWo7osgzQmYHsU+5tUP
+	3jwvtPXistZgp4Aj2cglpJtKL2G2nOKl/kOaLQKoxk4347RxkYkRaQuv+oPkP+2sqjCZaYCPxDB
+	4oHXOD8WrMSnpvWRQhDX6ZdCR1ZekZyJhIrhvK/2FpvW5sTXG8b/3sYFGgxdFesP833I7rdmcev
+	3CyLTx/VGUFszUGKaXLSTyW40n+yqT3waKCVgVOuOlSRC
+X-Google-Smtp-Source: AGHT+IHm7P16AkmvE9Ap6smzkwxN5DL0cMYK6QWf4VMyRep6FnevitN+4+XVPxTgGmxiX5YBjKXnhQ==
+X-Received: by 2002:a17:903:2ac6:b0:242:9bc6:6bc0 with SMTP id d9443c01a7336-25d27c1c8c4mr186394785ad.55.1758020549491;
+        Tue, 16 Sep 2025 04:02:29 -0700 (PDT)
+Received: from MRSPARKLE.localdomain ([206.83.103.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b304ce8sm158761725ad.128.2025.09.16.04.02.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 04:01:58 -0700 (PDT)
-Date: Tue, 16 Sep 2025 14:01:56 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, kernel@oss.qualcomm.com,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 08/10] arm64: dts: qcom: lemans-evk: Enable first USB
- controller in device mode
-Message-ID: <nz2dsvc6qyz47dxfbj4deo5xttnegv2qmueo4k5mhrvnkqh3oo@ddakv5hphfw3>
-References: <20250916-lemans-evk-bu-v5-0-53d7d206669d@oss.qualcomm.com>
- <20250916-lemans-evk-bu-v5-8-53d7d206669d@oss.qualcomm.com>
+        Tue, 16 Sep 2025 04:02:29 -0700 (PDT)
+From: Jonathan Brophy <professorjonny98@gmail.com>
+To: lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Jonathan Brophy <professor_jonny@hotmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH 1/5] leds: Add Virtual Color LED Group driver
+Date: Tue, 16 Sep 2025 23:02:13 +1200
+Message-ID: <20250916110217.45894-1-professorjonny98@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-lemans-evk-bu-v5-8-53d7d206669d@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=eeo9f6EH c=1 sm=1 tr=0 ts=68c943a9 cx=c_pps
- a=wuOIiItHwq1biOnFUQQHKA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=B3P4ua6ZyXwAq7e7NPAA:9 a=CjuIK1q_8ugA:10
- a=XD7yVLdPMpWraOa8Un9W:22
-X-Proofpoint-ORIG-GUID: XIMs4eCdqMhjK7qboYy86jcryFrGIYw7
-X-Proofpoint-GUID: XIMs4eCdqMhjK7qboYy86jcryFrGIYw7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAzNiBTYWx0ZWRfX726J0T/Y4IkN
- GRd8SsJCXPDm+O57XHXkrhLAyolgn2v+Bu5dbW/1zyBsfQ4cqOkfP4LRcfhnlIPrxmUNikYjGXa
- zzFKZKWUUsb/QcWydjaMCgCRenA2sRsH/l4EFaRsuqnclEKdgj423qTCSA5eWZNgZ1ZMrh0jn5Z
- viZ+MOU3Q9hoQw1/1N9eQ3/0vvFl9CAar4HmCpROB+xgpBS8X6B5noVuHOXzJdWGOqqndRfsOcM
- cmV7IwW/VfLKGbMGOvGSc13CiGfquG1jNmKG8qQ1AChC6vBkyaB+lb2ziCZPB6IsGQvEl5Tshjr
- ss2pthD8FxWn/Jk5IYQSNmGJsO6D3+odqhWBSlEX5Z2jsDcARdRRgW9bfPVN/wLE3cvonxUN2jG
- oRxG6KKu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 phishscore=0 spamscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130036
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 04:16:56PM +0530, Wasim Nazir wrote:
-> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> 
-> Enable the first USB controller in device mode on the Lemans EVK
-> board and configure the associated LDO regulators to power
-> the PHYs accordingly.
-> 
-> The USB port is a Type-C port controlled by HD3SS3320 port controller.
-> The role switch notifications would need to be routed to glue driver by
-> adding an appropriate usb-c-connector node in DT. However in the design,
-> the vbus supply that is to be provided to connected peripherals when
-> port is configured as an DFP, is controlled by a GPIO.
-> 
-> There is also one ID line going from Port controller chip to GPIO-50 of
-> the SoC. As per the datasheet of HD3SS3320:
-> 
-> "Upon detecting a UFP device, HD3SS3220 will keep ID pin high if VBUS is
-> not at VSafe0V. Once VBUS is at VSafe0V, the HD3SS3220 will assert ID
-> pin low. This is done to enforce Type-C requirement that VBUS must be
-> at VSafe0V before re-enabling VBUS."
-> 
-> The current HD3SS3220 driver doesn't have this functionality present. So,
-> putting the first USB controller in device mode for now. Once the vbus
-> control based on ID pin is implemented in hd3ss3220.c, the
-> usb-c-connector will be implemented and dr mode would be made OTG.
-> 
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/lemans-evk.dts | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
+From: Jonathan Brophy <professor_jonny@hotmail.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This commit introduces a new driver that implements virtual LED groups
+by aggregating multiple monochromatic LEDs. The driver provides
+priority-based control to manage concurrent LED activation requests,
+ensuring that only the highest-priority LED group's state is active at
+any given time.
 
+This driver is useful for systems that require coordinated control over
+multiple LEDs, such as RGB indicators or status LEDs that reflect
+complex system states.
 
--- 
-With best wishes
-Dmitry
+Co-developed-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
+Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>
+---
+ drivers/leds/rgb/leds-group-virtualcolor.c | 441 +++++++++++++++++++++
+ 1 file changed, 441 insertions(+)
+ create mode 100644 drivers/leds/rgb/leds-group-virtualcolor.c
+
+diff --git a/drivers/leds/rgb/leds-group-virtualcolor.c b/drivers/leds/rgb/leds-group-virtualcolor.c
+new file mode 100644
+index 000000000000..248ac69d6515
+--- /dev/null
++++ b/drivers/leds/rgb/leds-group-virtualcolor.c
+@@ -0,0 +1,441 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Virtual LED Group Driver with Priority Control
++ *
++ * This driver implements virtual LED groups by aggregating multiple
++ * monochromatic LEDs. It provides priority-based control for managing
++ * concurrent LED activation requests, ensuring only the highest-priority
++ * LED state is active at any given time.
++ *
++ * Code create by Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
++ * Copyright (C) 2024 Jonathan Brophy <professor_jonny@hotmail.com>
++ *
++ */
++
++#include <linux/gpio/consumer.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++struct virtual_led {
++	struct led_classdev cdev;
++	struct led_classdev **monochromatics;
++	struct leds_virtualcolor *vc_data;
++	int num_monochromatics;
++	int priority;
++	unsigned long blink_delay_on;
++	unsigned long blink_delay_off;
++	struct list_head list;
++};
++
++struct leds_virtualcolor {
++	struct virtual_led *vleds;
++	int num_vleds;
++	struct list_head active_leds;
++	struct mutex lock; // Protects access to active LEDs
++};
++
++static void virtual_set_monochromatic_brightness(struct virtual_led *vled,
++						 enum led_brightness brightness)
++{
++	int i;
++
++	if (vled->blink_delay_on || vled->blink_delay_off) {
++		unsigned long blink_mask = (BIT(LED_BLINK_SW) | BIT(LED_BLINK_ONESHOT) |
++					    BIT(LED_SET_BLINK));
++
++		/*
++		 * Make sure the LED is not already blinking.
++		 * We don't want to call led_blink_set multiple times.
++		 */
++		if (!(vled->cdev.work_flags & blink_mask))
++			led_blink_set(&vled->cdev, &vled->blink_delay_on, &vled->blink_delay_off);
++
++		/* Update the blink delays if they have changed */
++		if (vled->blink_delay_on != vled->cdev.blink_delay_on ||
++		    vled->blink_delay_off != vled->cdev.blink_delay_off) {
++			vled->cdev.blink_delay_on = vled->blink_delay_on;
++			vled->cdev.blink_delay_off = vled->blink_delay_off;
++		}
++	}
++
++	for (i = 0; i < vled->num_monochromatics; i++)
++		led_set_brightness(vled->monochromatics[i], brightness);
++}
++
++static ssize_t priority_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct virtual_led *vled = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%d\n", vled->priority);
++}
++
++static ssize_t priority_store(struct device *dev, struct device_attribute *attr, const char *buf,
++			      size_t count)
++{
++	struct virtual_led *vled = dev_get_drvdata(dev);
++	int new_priority;
++	int ret;
++
++	ret = kstrtoint(buf, 10, &new_priority);
++	if (ret < 0)
++		return ret;
++
++	vled->priority = new_priority;
++	return count;
++}
++
++static DEVICE_ATTR_RW(priority);
++
++static ssize_t blink_delay_on_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct virtual_led *vled = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%lu\n", vled->blink_delay_on);
++}
++
++static ssize_t blink_delay_on_store(struct device *dev, struct device_attribute *attr,
++				    const char *buf, size_t count)
++{
++	struct virtual_led *vled = dev_get_drvdata(dev);
++	unsigned long new_delay;
++	int ret;
++
++	ret = kstrtoul(buf, 10, &new_delay);
++	if (ret < 0)
++		return ret;
++
++	/* Apply new delay immediately */
++	vled->blink_delay_on = new_delay;
++	virtual_set_monochromatic_brightness(vled, vled->cdev.brightness);
++
++	return count;
++}
++
++static ssize_t blink_delay_off_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct virtual_led *vled = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%lu\n", vled->blink_delay_off);
++}
++
++static ssize_t blink_delay_off_store(struct device *dev, struct device_attribute *attr,
++				     const char *buf, size_t count)
++{
++	struct virtual_led *vled = dev_get_drvdata(dev);
++	unsigned long new_delay;
++	int ret;
++
++	ret = kstrtoul(buf, 10, &new_delay);
++	if (ret < 0)
++		return ret;
++
++	/* Apply new delay immediately */
++	vled->blink_delay_off = new_delay;
++	virtual_set_monochromatic_brightness(vled, vled->cdev.brightness);
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(blink_delay_on);
++static DEVICE_ATTR_RW(blink_delay_off);
++
++static void restore_sysfs_write_access(void *data)
++{
++	struct led_classdev *led_cdev = data;
++
++	mutex_lock(&led_cdev->led_access);
++	led_sysfs_enable(led_cdev);
++	mutex_unlock(&led_cdev->led_access);
++}
++
++static bool virtual_led_is_active(struct list_head *head, struct virtual_led *vled)
++{
++	struct virtual_led *entry;
++
++	list_for_each_entry(entry, head, list) {
++		if (entry == vled)
++			return true;
++	}
++
++	return false;
++}
++
++static int virtual_led_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
++{
++	struct virtual_led *vled = container_of(cdev, struct virtual_led, cdev);
++	struct leds_virtualcolor *vc_data = vled->vc_data;
++	struct virtual_led *active;
++
++	mutex_lock(&vc_data->lock);
++
++	active = list_first_entry_or_null(&vc_data->active_leds, struct virtual_led, list);
++	if (active) {
++		/*
++		 * If the currently active LED has a higher priority,
++		 * ignore the new request.
++		 */
++		if (active->priority > vled->priority)
++			goto out_unlock;
++
++		/*
++		 * The currently active LED is going to be replaced,
++		 * turn off it's monochromatic LEDs.
++		 */
++		virtual_set_monochromatic_brightness(active, LED_OFF);
++	}
++
++	if (brightness == LED_OFF) {
++		/*
++		 * If the LED is already active, remove it from the active list
++		 * and update the brightness of the next highest priority LED.
++		 */
++		if (virtual_led_is_active(&vc_data->active_leds, vled))
++			list_del(&vled->list);
++
++		active = list_first_entry_or_null(&vc_data->active_leds, struct virtual_led, list);
++		if (active)
++			virtual_set_monochromatic_brightness(active, active->cdev.brightness);
++	} else {
++		/* Add the LED to the active list and update the brightness */
++		if (!virtual_led_is_active(&vc_data->active_leds, vled))
++			list_add(&vled->list, &vc_data->active_leds);
++
++		active = list_first_entry_or_null(&vc_data->active_leds, struct virtual_led, list);
++		if (active)
++			virtual_set_monochromatic_brightness(active, brightness);
++	}
++
++out_unlock:
++	mutex_unlock(&vc_data->lock);
++
++	return 0;
++}
++
++static int leds_virtualcolor_init_vled(struct device *dev, struct device_node *child,
++				       struct virtual_led *vled, struct leds_virtualcolor *vc_data)
++{
++	struct fwnode_handle *child_fwnode = of_fwnode_handle(child);
++	struct led_init_data init_data = {};
++	u32 blink_interval;
++	u32 phandle_count;
++	u32 max_brightness;
++	int ret, i;
++
++	ret = of_property_read_u32(child, "priority", &vled->priority);
++	if (ret)
++		vled->priority = 0;
++
++	ret = of_property_read_u32(child, "blink", &blink_interval);
++	if (!ret) {
++		vled->blink_delay_on = blink_interval;
++		vled->blink_delay_off = blink_interval;
++	}
++
++	phandle_count = fwnode_property_count_u32(child_fwnode, "leds");
++	if (phandle_count <= 0) {
++		dev_err(dev, "No monochromatic LEDs specified for virtual LED %s\n",
++			vled->cdev.name);
++		return -EINVAL;
++	}
++
++	vled->num_monochromatics = phandle_count;
++	vled->monochromatics = devm_kcalloc(dev, vled->num_monochromatics,
++					    sizeof(*vled->monochromatics), GFP_KERNEL);
++	if (!vled->monochromatics)
++		return -ENOMEM;
++
++	for (i = 0; i < vled->num_monochromatics; i++) {
++		struct led_classdev *led_cdev;
++
++		led_cdev = of_led_get(child, i);
++		if (IS_ERR_OR_NULL(led_cdev)) {
++			/*
++			 * If the LED is not available yet, defer the probe.
++			 * The probe will be retried when the it becomes available.
++			 */
++			if (PTR_ERR(led_cdev) == -EPROBE_DEFER || !led_cdev) {
++				return -EPROBE_DEFER;
++			} else {
++				ret = PTR_ERR(led_cdev);
++				dev_err(dev, "Failed to get monochromatic LED for %s, error %d\n",
++					vled->cdev.name, ret);
++				return ret;
++			}
++		}
++
++		vled->monochromatics[i] = led_cdev;
++	}
++
++	ret = of_property_read_u32(child, "max-brightness", &max_brightness);
++	if (ret)
++		vled->cdev.max_brightness = LED_FULL;
++	else
++		vled->cdev.max_brightness = max_brightness;
++
++	vled->cdev.brightness_set_blocking = virtual_led_brightness_set;
++	vled->cdev.max_brightness = LED_FULL;
++	vled->cdev.flags = LED_CORE_SUSPENDRESUME;
++
++	init_data.fwnode = child_fwnode;
++	ret = devm_led_classdev_register_ext(dev, &vled->cdev, &init_data);
++	if (ret) {
++		dev_err(dev, "Failed to register virtual LED %s\n", vled->cdev.name);
++		return ret;
++	}
++
++	ret = device_create_file(vled->cdev.dev, &dev_attr_priority);
++	if (ret) {
++		dev_err(dev, "Failed to create sysfs attribute for priority\n");
++		return ret;
++	}
++
++	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_on);
++	if (ret) {
++		dev_err(dev, "Failed to create sysfs attribute for blink_delay_on\n");
++		return ret;
++	}
++
++	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_off);
++	if (ret) {
++		dev_err(dev, "Failed to create sysfs attribute for blink_delay_off\n");
++		return ret;
++	}
++
++	vled->vc_data = vc_data;
++
++	return 0;
++}
++
++static int leds_virtualcolor_disable_sysfs_access(struct device *dev, struct virtual_led *vled)
++{
++	int i;
++
++	for (i = 0; i < vled->num_monochromatics; i++) {
++		struct led_classdev *led_cdev = vled->monochromatics[i];
++
++		mutex_lock(&led_cdev->led_access);
++		led_sysfs_disable(led_cdev);
++		mutex_unlock(&led_cdev->led_access);
++
++		devm_add_action_or_reset(dev, restore_sysfs_write_access, led_cdev);
++	}
++
++	return 0;
++}
++
++static int leds_virtualcolor_probe(struct platform_device *pdev)
++{
++	struct leds_virtualcolor *vc_data;
++	struct device *dev = &pdev->dev;
++	struct device_node *child;
++	int count = 0;
++	int ret;
++
++	vc_data = devm_kzalloc(dev, sizeof(*vc_data), GFP_KERNEL);
++	if (!vc_data)
++		return -ENOMEM;
++
++	mutex_init(&vc_data->lock);
++	INIT_LIST_HEAD(&vc_data->active_leds);
++
++	vc_data->num_vleds = of_get_child_count(dev->of_node);
++	if (vc_data->num_vleds == 0) {
++		dev_err(dev, "No virtual LEDs defined in device tree\n");
++		ret = -EINVAL;
++		goto err_mutex_destroy;
++	}
++
++	vc_data->vleds = devm_kcalloc(dev, vc_data->num_vleds, sizeof(*vc_data->vleds), GFP_KERNEL);
++	if (!vc_data->vleds) {
++		ret = -ENOMEM;
++		goto err_mutex_destroy;
++	}
++
++	for_each_child_of_node(dev->of_node, child) {
++		struct virtual_led *vled = &vc_data->vleds[count];
++
++		ret = leds_virtualcolor_init_vled(dev, child, vled, vc_data);
++		if (ret) {
++			if (ret != -EPROBE_DEFER)
++				dev_err(dev, "Failed to initialize virtual LED %d\n", count);
++
++			of_node_put(child);
++			goto err_node_put;
++		}
++
++		count++;
++	}
++
++	platform_set_drvdata(pdev, vc_data);
++
++	if (of_property_read_bool(dev->of_node, "monochromatics-ro")) {
++		int i;
++
++		for (i = 0; i < count; i++) {
++			struct virtual_led *vled = &vc_data->vleds[i];
++
++			ret = leds_virtualcolor_disable_sysfs_access(dev, vled);
++			if (ret)
++				goto err_node_put;
++		}
++	}
++
++	return 0;
++
++err_node_put:
++	of_node_put(child);
++err_mutex_destroy:
++	mutex_destroy(&vc_data->lock);
++
++	return ret;
++}
++
++static void leds_virtualcolor_remove(struct platform_device *pdev)
++{
++	struct leds_virtualcolor *vc_data = platform_get_drvdata(pdev);
++	int i;
++
++	for (i = 0; i < vc_data->num_vleds; i++) {
++		struct virtual_led *vled = &vc_data->vleds[i];
++		int j;
++
++		device_remove_file(vled->cdev.dev, &dev_attr_priority);
++		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_on);
++		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_off);
++
++		for (j = 0; j < vled->num_monochromatics; j++) {
++			if (vled->monochromatics[j]) {
++				led_put(vled->monochromatics[j]);
++				vled->monochromatics[j] = NULL;
++			}
++		}
++	}
++
++	mutex_destroy(&vc_data->lock);
++}
++
++static const struct of_device_id leds_virtualcolor_of_match[] = {
++	{ .compatible = "leds-group-virtualcolor" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, leds_virtualcolor_of_match);
++
++static struct platform_driver leds_virtualcolor_driver = {
++	.probe  = leds_virtualcolor_probe,
++	.remove = leds_virtualcolor_remove,
++	.driver = {
++		.name           = "leds_virtualcolor",
++		.of_match_table = leds_virtualcolor_of_match,
++	},
++};
++
++module_platform_driver(leds_virtualcolor_driver);
++
++MODULE_AUTHOR("Radoslav Tsvetkov <rtsvetkov@gradotech.eu>");
++MODULE_DESCRIPTION("LEDs Virtual Color Driver with Priority Handling");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:leds-group-virtualcolor");
+--
+2.43.0
 
