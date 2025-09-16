@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-818423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B6F4B59197
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:02:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCBAB5918F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1F28321B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6DD31BC51E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D41829BD96;
-	Tue, 16 Sep 2025 09:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C84429C343;
+	Tue, 16 Sep 2025 09:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E89ov6kE"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNhub0gK"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED1929B204
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ED229B229
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013290; cv=none; b=ntnQwykfIvYlFQrzsOp+RHE3ByC/FmDrlAZV7IeRtPPH1EmQWY0P+cMJJ85YeOEJmfSKHm+AEArZvAezL8PnRqjuFEVnBPVs85sW3809tA557KmgieXro2oMIcIpWUenp6M+kb4C8C4LxdmsP+9a8rtnq+3gA2ih30tIGs13yks=
+	t=1758013291; cv=none; b=uMRzaiCaHRG94bpMsdWuKlWcNj9Tzr2CkudDyvI8r7c5AU3gmJvffj0p7ZMnG9+1V1SHc+94qI1/NqJAJ4HMWmTEeRLFlMRDzdisgNMbr1b9bLHQmusi9LM3LPJ68ie3ScqyMpo6FiVUjBhdhgVRrD7AlXkj9OGWcBLnwUUPNXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013290; c=relaxed/simple;
-	bh=6hHHbFntCUYSD3HBZLJcRkhdW7KpSm3FgA41veMYbnA=;
+	s=arc-20240116; t=1758013291; c=relaxed/simple;
+	bh=5p5lfP6HUCJ6tM1PM09VVWmrB48/epMFUrdxYERWB00=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eOH9/1mjQS4KfxEXE6opkGyQ4J4fs1Y0mjuOst4GnBgWRWuEMjtWPOKN5bcbWXapPteUfyCcNYpkQ6mxz5YCBy4opJx/OxEpei1x5XqOxrk+10MG0syau0v/n1K4MJ1h8re5zdnqZpsDYPEbDD0tWE3yGlGMiXdzesQ+goko7Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E89ov6kE; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=U1IMICA7s/XpZkf95LZO5EuKKqV4vaOBTx7EwCH4Z8yRRJJLiayL3hkuUiQdyTEZCaGa4CfytZ5IFJ7eJyH9jJIsPS8gRC5trvU7dfR8KrQkJjsDgIzmBOdf/6bdDbK7lQ2djYWMYLlkDaiQKjai79lv2s62l/hac1gzapBB9rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNhub0gK; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso38101005e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:01:27 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so47335425e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:01:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758013286; x=1758618086; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758013287; x=1758618087; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xdmcBIJJ/dIrmboz2dj1USPN5mnOnIS9n3oFxB4eaBc=;
-        b=E89ov6kEPJR1H4p5K3KteNzcEruBDSpuqzB/I2CNsZfLVymoTGmOr6ISsEI1FBqYFK
-         8n6XaNzI/doOn/EWtnZjh2JiV9UBC+KyInwr6KZZD7blGK0b+inTCw380reab8cEk4g0
-         3mQvhDY2TiZt99HjqBtc+sGAeZNAuhkzKR+tMYh0PUrLVJgenjM3feSJ9c+0RFUbbmJI
-         BvnbCT9qCEmFpmoUfCe/WPyux6Y2Exw7uLC6nWrk05zfMMpjJ96fgE4NLPQ+pXOcGmVJ
-         dOocydVLBu7AaKAcJFyOzqvNYC7mS/kEud8XpkCBrzncRRmx2TPEyL8TZH2OTKKp4jnM
-         eVfQ==
+        bh=eX0GE1tFaVdaJ+X5gME1f6NzrpcsI0lAH1DHePnNN9I=;
+        b=eNhub0gK53w/8PQl8swXPk2s3Pgx4dAqnxvF+BhC+yC3xIHLj604WLYHi/IgLjoLtR
+         K9Swk5/TdaIAI5sKGeni7och0LAR3GOJGAVXQ5HDSJpltdrXu3OWlNdPzxbehmmSZXg5
+         +PzmpUJl53IYz0BankVyAahGr7KVBxI1plPHuq93lNRZNNl5jaRSHGow5Qhv/eKO+o7N
+         rcJiUVfuQ52ZZfLPaz06nZKGzwMLnbTF9Hg74vjmlJT+8cPXQsxkxv5Y7M6H03jVcpUz
+         ZHJi4QbJCD9fxyORvZ5tfbiVWwtQouY/eSfQZEq8cBhkjJU7Hj/1p6BJyteczbpStW5i
+         XJ1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758013286; x=1758618086;
+        d=1e100.net; s=20230601; t=1758013287; x=1758618087;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xdmcBIJJ/dIrmboz2dj1USPN5mnOnIS9n3oFxB4eaBc=;
-        b=t/Cb2W5m976HsXdCBA//NVvOS/A21xqmU49b+429DRp1WTXBeLkWDmV/lrPhExm0Yh
-         0uLrRI4Pyjd58Igy32hMQqlviBU48Hwjd2Afdx7ykO7Wn1UAoautQFsW7+d5lnthkC8y
-         z4EVHclRh2eS5LY17p2AkXNQUWAIsnvJguChMHAcQw3Iob6ZDw/TUcRHb0KuW1t6YFVs
-         9lbH6yGOMGs9Migd3PKA3uIyAGclt9BWxTx45RxJkJ9gOodLzlTtkIkuXJNm0PUrx/t9
-         rLHn4uQu9lQeF1FIjGtngdS0Ejb8paapsN65Ssz8o69d0L9xM7p1vop/hgC7Hbna/HqA
-         9JfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvk7n1BkARFonmJr/u7iwoNjJ2uoMU6u2dMv3FZ2PmFZ0Ty6PXHqItaaRUB8VDArkytZbPlYGnDcDQyPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtYVthThD0/BUEQyBAmviYRyRsO5Xtnn7Fu4qrN1LN7f/VGAXI
-	KhbBEJaw/I89MDXfaUJwcQPEMgXWTRq5SZOOhcfUOu+JCoerSGZKf/bJ
-X-Gm-Gg: ASbGncuTn+mvvNGRcp+PdYMGFTP+FXyZuihhVLtwA0u7gp8CaUXGMCHiRr9yp4xKdqv
-	GpZ7VBlrMApHVKn10/YwWtoQ7UFmOChd4YNugA49tlbB2IEhfXr81SkfPGbJhu1+hSevHwqPute
-	vklXYPXo7+h9BiIghJXoWmCiO6z1nN1Sd5E4FKKJNQdQh+qwl9YijxOWVV1JjqAeyL9KEVDbz5e
-	UKi65iVQxm5TXplAOcUgcpEexP/QSBe/+zS0jNUgYvcabSSWgqM2XpmxuD10yyoM53dBf4Dpdn4
-	pytw6GUkIQ7stNhoGk/UTq5sl3gh3kUEUOSucZAxNM0S9x7ZO2o6cO/pspSCAKac55ugv/umsXo
-	7f57OmFR2qWhE0m8TkDurMsxYHqVZe5zx0iujcaOjwp2MrAig7E7pvWRWl+AFfzEmOJsDr3atL6
-	xHr1Yxytgni5vp
-X-Google-Smtp-Source: AGHT+IEadfbP3jNYyOIN5QPnIDkgoE5rEixgqXRhdDXaUoboFgkfVk5OQ6KluvW7vDOuiRH8ZlKDbQ==
-X-Received: by 2002:a05:600c:12c8:b0:459:d645:bff7 with SMTP id 5b1f17b1804b1-45f211d075emr98840705e9.12.1758013285667;
-        Tue, 16 Sep 2025 02:01:25 -0700 (PDT)
+        bh=eX0GE1tFaVdaJ+X5gME1f6NzrpcsI0lAH1DHePnNN9I=;
+        b=sNCq3Zf8+MhStIdDQ9ZnLN5eYk4MiCJkKXbfglCDHzjvhqZ5rVqwQrpDg1r5hEF6p5
+         zic2/yeKUrJ5JILxBHnSaaf+40TwNO9wkrpnnh33R0gMCtd+Z26cC86Ue2uUK2tnrPFk
+         qmHrgbXxRK/1VC3qV2GBBEyKAMsijJVW9lms7HOI3d5OWTdE9nEr1LYSFwMSfVOhaM11
+         O6IDJcVlxmpwg/cuQtPbEpl96nIjALJ8bCfSGrV2ejMF6UnZVUBA7jAAQPInOI953AxK
+         ER3KC421NsgazDQYn/YJvDtQuEFEYly0jXsU9lFf74kvfUTUAaiyvqRa1rVlI5F7DmCJ
+         J7lA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7IPqE8kXwJF0T6M7nwwTjTTLsGDG3D/0qtgX41vpZj5hYyZ1p8acUp6C4iwXSHA//maqOKIJEm3eNwEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgjEdredrMw0v9Uiig/u+p0yyMjvI6AhC24j6xMhDQKXuk6dih
+	2QVoHLaLuJso+9pU9U9P4p9mmSwF1CuUNutSR61HnT6Ma3o3lZrCYRXM
+X-Gm-Gg: ASbGncvdBwOdJUTbe0U8+aataep5+oF382iJAXg2Nr9ETxqRxGHlx8Vb53ZB0vJj0VO
+	CaUHsM/OKGIFJgRMaTx7ujG/QxZ+VCpz0VnGIXBMZQO8zcdMUSK9iv72CR0fYj3sfS16sBRDt8G
+	LIdx7RdO57uGSCQ3HlEkmULeCRKnBeR61YHH+gTWUNSdaYnpFKJx6zYrXQ+4Ucn5p9ozBLuxwGy
+	a1UQa7DO3BsZ2RfFr4yt0oiQ8PBUQC7F9WLesXsYj/p5eP3uc31jdGFeUTJL1MSo4FI+viDblcJ
+	JFYzKB9w4JbHavN02lQrO+DRiCL8GK1dsdmGUx7+tAWBYaYmJHsRBJQMH+Buq02ReisRFkNAaLw
+	WofothkghJ0/r6Nx+0GBMv6v65AmyewXe599vzjXYVSciGgz3/24Q+P4tWtkW8DqW4o//mAvu6f
+	WsA91yjpWf5Upet5ptvawnw2E=
+X-Google-Smtp-Source: AGHT+IG4rWU9dUsfNI/GTT2ZfR/FJQxnX0XoO3ls2sTIzkMGJlfRV3ER/lT2KNe6XIHz3tv6/6a9lw==
+X-Received: by 2002:a05:6000:2001:b0:3eb:86fb:bcd9 with SMTP id ffacd0b85a97d-3eb86fbbfb9mr4536453f8f.12.1758013287060;
+        Tue, 16 Sep 2025 02:01:27 -0700 (PDT)
 Received: from xl-nested.c.googlers.com.com (42.16.79.34.bc.googleusercontent.com. [34.79.16.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037186e5sm212975035e9.5.2025.09.16.02.01.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037186e5sm212975035e9.5.2025.09.16.02.01.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 02:01:24 -0700 (PDT)
+        Tue, 16 Sep 2025 02:01:26 -0700 (PDT)
 From: Ethan Graham <ethan.w.s.graham@gmail.com>
 To: ethangraham@google.com,
 	glider@google.com
@@ -100,9 +100,9 @@ Cc: andreyknvl@gmail.com,
 	rmoar@google.com,
 	shuah@kernel.org,
 	tarasmadan@google.com
-Subject: [PATCH v1 06/10] kfuzztest: add KFuzzTest sample fuzz targets
-Date: Tue, 16 Sep 2025 09:01:05 +0000
-Message-ID: <20250916090109.91132-7-ethan.w.s.graham@gmail.com>
+Subject: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
+Date: Tue, 16 Sep 2025 09:01:06 +0000
+Message-ID: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 In-Reply-To: <20250916090109.91132-1-ethan.w.s.graham@gmail.com>
 References: <20250916090109.91132-1-ethan.w.s.graham@gmail.com>
@@ -116,210 +116,154 @@ Content-Transfer-Encoding: 8bit
 
 From: Ethan Graham <ethangraham@google.com>
 
-Add two simple fuzz target samples to demonstrate the KFuzzTest API and
-provide basic self-tests for the framework.
+Add KFuzzTest targets for pkcs7_parse_message, rsa_parse_pub_key, and
+rsa_parse_priv_key to serve as real-world examples of how the framework
+is used.
 
-These examples showcase how a developer can define a fuzz target using
-the FUZZ_TEST(), constraint, and annotation macros, and serve as runtime
-sanity checks for the core logic. For example, they test that
-out-of-bounds memory accesses into poisoned padding regions are
-correctly detected in a KASAN build.
+These functions are ideal candidates for KFuzzTest as they perform
+complex parsing of user-controlled data but are not directly exposed at
+the syscall boundary. This makes them difficult to exercise with
+traditional fuzzing tools and showcases the primary strength of the
+KFuzzTest framework: providing an interface to fuzz internal functions.
 
-These have been tested by writing syzkaller-generated inputs into their
-debugfs 'input' files and verifying that the correct KASAN reports were
-triggered.
+To validate the effectiveness of the framework on these new targets, we
+injected two artificial bugs and let syzkaller fuzz the targets in an
+attempt to catch them.
+
+The first of these was calling the asn1 decoder with an incorrect input
+from pkcs7_parse_message, like so:
+
+- ret = asn1_ber_decoder(&pkcs7_decoder, ctx, data, datalen);
++ ret = asn1_ber_decoder(&pkcs7_decoder, ctx, data, datalen + 1);
+
+The second was bug deeper inside of asn1_ber_decoder itself, like so:
+
+- for (len = 0; n > 0; n--)
++ for (len = 0; n >= 0; n--)
+
+syzkaller was able to trigger these bugs, and the associated KASAN
+slab-out-of-bounds reports, within seconds.
+
+The targets are defined within /lib/tests, alongside existing KUnit
+tests.
 
 Signed-off-by: Ethan Graham <ethangraham@google.com>
-Acked-by: Alexander Potapenko <glider@google.com>
----
- samples/Kconfig                               |  7 ++
- samples/Makefile                              |  1 +
- samples/kfuzztest/Makefile                    |  3 +
- samples/kfuzztest/overflow_on_nested_buffer.c | 71 +++++++++++++++++++
- samples/kfuzztest/underflow_on_buffer.c       | 59 +++++++++++++++
- 5 files changed, 141 insertions(+)
- create mode 100644 samples/kfuzztest/Makefile
- create mode 100644 samples/kfuzztest/overflow_on_nested_buffer.c
- create mode 100644 samples/kfuzztest/underflow_on_buffer.c
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 6e072a5f1ed8..5209dd9d7a5c 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -320,6 +320,13 @@ config SAMPLE_HUNG_TASK
- 	  Reading these files with multiple processes triggers hung task
- 	  detection by holding locks for a long time (256 seconds).
+---
+v3:
+- Change the fuzz target build to depend on CONFIG_KFUZZTEST=y,
+  eliminating the need for a separate config option for each individual
+  file as suggested by Ignat Korchagin.
+- Remove KFUZZTEST_EXPECT_LE on the length of the `key` field inside of
+  the fuzz targets. A maximum length is now set inside of the core input
+  parsing logic.
+v2:
+- Move KFuzzTest targets outside of the source files into dedicated
+  _kfuzz.c files under /crypto/asymmetric_keys/tests/ as suggested by
+  Ignat Korchagin and Eric Biggers.
+---
+---
+ crypto/asymmetric_keys/Makefile               |  2 +
+ crypto/asymmetric_keys/tests/Makefile         |  2 +
+ crypto/asymmetric_keys/tests/pkcs7_kfuzz.c    | 22 +++++++++++
+ .../asymmetric_keys/tests/rsa_helper_kfuzz.c  | 38 +++++++++++++++++++
+ 4 files changed, 64 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/tests/Makefile
+ create mode 100644 crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
+ create mode 100644 crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
+
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index bc65d3b98dcb..77b825aee6b2 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -67,6 +67,8 @@ obj-$(CONFIG_PKCS7_TEST_KEY) += pkcs7_test_key.o
+ pkcs7_test_key-y := \
+ 	pkcs7_key_type.o
  
-+config SAMPLE_KFUZZTEST
-+	bool "Build KFuzzTest sample targets"
-+	depends on KFUZZTEST
-+	help
-+	  Build KFuzzTest sample targets that serve as selftests for input
-+	  deserialization and inter-region redzone poisoning logic.
++obj-y += tests/
 +
- source "samples/rust/Kconfig"
- 
- source "samples/damon/Kconfig"
-diff --git a/samples/Makefile b/samples/Makefile
-index 07641e177bd8..3a0e7f744f44 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -44,4 +44,5 @@ obj-$(CONFIG_SAMPLE_DAMON_WSSE)		+= damon/
- obj-$(CONFIG_SAMPLE_DAMON_PRCL)		+= damon/
- obj-$(CONFIG_SAMPLE_DAMON_MTIER)	+= damon/
- obj-$(CONFIG_SAMPLE_HUNG_TASK)		+= hung_task/
-+obj-$(CONFIG_SAMPLE_KFUZZTEST)		+= kfuzztest/
- obj-$(CONFIG_SAMPLE_TSM_MR)		+= tsm-mr/
-diff --git a/samples/kfuzztest/Makefile b/samples/kfuzztest/Makefile
+ #
+ # Signed PE binary-wrapped key handling
+ #
+diff --git a/crypto/asymmetric_keys/tests/Makefile b/crypto/asymmetric_keys/tests/Makefile
 new file mode 100644
-index 000000000000..4f8709876c9e
+index 000000000000..4ffe0bbe9530
 --- /dev/null
-+++ b/samples/kfuzztest/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_SAMPLE_KFUZZTEST) += overflow_on_nested_buffer.o underflow_on_buffer.o
-diff --git a/samples/kfuzztest/overflow_on_nested_buffer.c b/samples/kfuzztest/overflow_on_nested_buffer.c
++++ b/crypto/asymmetric_keys/tests/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_KFUZZTEST) += pkcs7_kfuzz.o
++obj-$(CONFIG_KFUZZTEST) += rsa_helper_kfuzz.o
+diff --git a/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c b/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
 new file mode 100644
-index 000000000000..2f1c3ff9f750
+index 000000000000..37e02ba517d8
 --- /dev/null
-+++ b/samples/kfuzztest/overflow_on_nested_buffer.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * This file contains a KFuzzTest example target that ensures that a buffer
-+ * overflow on a nested region triggers a KASAN OOB access report.
++ * PKCS#7 parser KFuzzTest target
 + *
 + * Copyright 2025 Google LLC
 + */
-+
-+/**
-+ * DOC: test_overflow_on_nested_buffer
-+ *
-+ * This test uses a struct with two distinct dynamically allocated buffers.
-+ * It checks that KFuzzTest's memory layout correctly poisons the memory
-+ * regions and that KASAN can detect an overflow when reading one byte past the
-+ * end of the first buffer (`a`).
-+ *
-+ * It can be invoked with kfuzztest-bridge using the following command:
-+ *
-+ * ./kfuzztest-bridge \
-+ *   "nested_buffers { ptr[a] len[a, u64] ptr[b] len[b, u64] }; \
-+ *   a { arr[u8, 64] }; b { arr[u8, 64] };" \
-+ *   "test_overflow_on_nested_buffer" /dev/urandom
-+ *
-+ * The first argument describes the C struct `nested_buffers` and specifies that
-+ * both `a` and `b` are pointers to arrays of 64 bytes.
-+ */
++#include <crypto/pkcs7.h>
 +#include <linux/kfuzztest.h>
 +
-+static void overflow_on_nested_buffer(const char *a, size_t a_len, const char *b, size_t b_len)
-+{
-+	size_t i;
-+	pr_info("a = [%px, %px)", a, a + a_len);
-+	pr_info("b = [%px, %px)", b, b + b_len);
-+
-+	/* Ensure that all bytes in arg->b are accessible. */
-+	for (i = 0; i < b_len; i++)
-+		READ_ONCE(b[i]);
-+	/*
-+	 * Check that all bytes in arg->a are accessible, and provoke an OOB on
-+	 * the first byte to the right of the buffer which will trigger a KASAN
-+	 * report.
-+	 */
-+	for (i = 0; i <= a_len; i++)
-+		READ_ONCE(a[i]);
-+}
-+
-+struct nested_buffers {
-+	const char *a;
-+	size_t a_len;
-+	const char *b;
-+	size_t b_len;
++struct pkcs7_parse_message_arg {
++	const void *data;
++	size_t datalen;
 +};
 +
-+/**
-+ * The KFuzzTest input format specifies that struct nested buffers should
-+ * be expanded as:
-+ *
-+ * | a | b | pad[8] | *a | pad[8] | *b |
-+ *
-+ * where the padded regions are poisoned. We expect to trigger a KASAN report by
-+ * overflowing one byte into the `a` buffer.
-+ */
-+FUZZ_TEST(test_overflow_on_nested_buffer, struct nested_buffers)
++FUZZ_TEST(test_pkcs7_parse_message, struct pkcs7_parse_message_arg)
 +{
-+	KFUZZTEST_EXPECT_NOT_NULL(nested_buffers, a);
-+	KFUZZTEST_EXPECT_NOT_NULL(nested_buffers, b);
-+	KFUZZTEST_ANNOTATE_LEN(nested_buffers, a_len, a);
-+	KFUZZTEST_ANNOTATE_LEN(nested_buffers, b_len, b);
++	KFUZZTEST_EXPECT_NOT_NULL(pkcs7_parse_message_arg, data);
++	KFUZZTEST_ANNOTATE_ARRAY(pkcs7_parse_message_arg, data);
++	KFUZZTEST_ANNOTATE_LEN(pkcs7_parse_message_arg, datalen, data);
 +
-+	overflow_on_nested_buffer(arg->a, arg->a_len, arg->b, arg->b_len);
++	pkcs7_parse_message(arg->data, arg->datalen);
 +}
-diff --git a/samples/kfuzztest/underflow_on_buffer.c b/samples/kfuzztest/underflow_on_buffer.c
+diff --git a/crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c b/crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
 new file mode 100644
-index 000000000000..02704a1bfebb
+index 000000000000..bd29ed5e8c82
 --- /dev/null
-+++ b/samples/kfuzztest/underflow_on_buffer.c
-@@ -0,0 +1,59 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * This file contains a KFuzzTest example target that ensures that a buffer
-+ * underflow on a region triggers a KASAN OOB access report.
++ * RSA key extract helper KFuzzTest targets
 + *
 + * Copyright 2025 Google LLC
 + */
-+
-+/**
-+ * DOC: test_underflow_on_buffer
-+ *
-+ * This test ensures that the region between the metadata struct and the
-+ * dynamically allocated buffer is poisoned. It provokes a one-byte underflow
-+ * on the buffer, which should be caught by KASAN.
-+ *
-+ * It can be invoked with kfuzztest-bridge using the following command:
-+ *
-+ * ./kfuzztest-bridge \
-+ *   "some_buffer { ptr[buf] len[buf, u64]}; buf { arr[u8, 128] };" \
-+ *   "test_underflow_on_buffer" /dev/urandom
-+ *
-+ * The first argument describes the C struct `some_buffer` and specifies that
-+ * `buf` is a pointer to an array of 128 bytes. The second argument is the test
-+ * name, and the third is a seed file.
-+ */
 +#include <linux/kfuzztest.h>
++#include <crypto/internal/rsa.h>
 +
-+static void underflow_on_buffer(char *buf, size_t buflen)
-+{
-+	size_t i;
-+
-+	pr_info("buf = [%px, %px)", buf, buf + buflen);
-+
-+	/* First ensure that all bytes in arg->b are accessible. */
-+	for (i = 0; i < buflen; i++)
-+		READ_ONCE(buf[i]);
-+	/*
-+	 * Provoke a buffer overflow on the first byte preceding b, triggering
-+	 * a KASAN report.
-+	 */
-+	READ_ONCE(*((char *)buf - 1));
-+}
-+
-+struct some_buffer {
-+	char *buf;
-+	size_t buflen;
++struct rsa_parse_pub_key_arg {
++	const void *key;
++	size_t key_len;
 +};
 +
-+/**
-+ * Tests that the region between struct some_buffer and the expanded *buf field
-+ * is correctly poisoned by accessing the first byte before *buf.
-+ */
-+FUZZ_TEST(test_underflow_on_buffer, struct some_buffer)
++FUZZ_TEST(test_rsa_parse_pub_key, struct rsa_parse_pub_key_arg)
 +{
-+	KFUZZTEST_EXPECT_NOT_NULL(some_buffer, buf);
-+	KFUZZTEST_ANNOTATE_LEN(some_buffer, buflen, buf);
++	KFUZZTEST_EXPECT_NOT_NULL(rsa_parse_pub_key_arg, key);
++	KFUZZTEST_ANNOTATE_ARRAY(rsa_parse_pub_key_arg, key);
++	KFUZZTEST_ANNOTATE_LEN(rsa_parse_pub_key_arg, key_len, key);
 +
-+	underflow_on_buffer(arg->buf, arg->buflen);
++	struct rsa_key out;
++	rsa_parse_pub_key(&out, arg->key, arg->key_len);
++}
++
++struct rsa_parse_priv_key_arg {
++	const void *key;
++	size_t key_len;
++};
++
++FUZZ_TEST(test_rsa_parse_priv_key, struct rsa_parse_priv_key_arg)
++{
++	KFUZZTEST_EXPECT_NOT_NULL(rsa_parse_priv_key_arg, key);
++	KFUZZTEST_ANNOTATE_ARRAY(rsa_parse_priv_key_arg, key);
++	KFUZZTEST_ANNOTATE_LEN(rsa_parse_priv_key_arg, key_len, key);
++
++	struct rsa_key out;
++	rsa_parse_priv_key(&out, arg->key, arg->key_len);
 +}
 -- 
 2.51.0.384.g4c02a37b29-goog
