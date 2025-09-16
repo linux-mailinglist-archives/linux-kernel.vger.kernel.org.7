@@ -1,203 +1,269 @@
-Return-Path: <linux-kernel+bounces-818416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A655EB59178
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32339B59187
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B20E321229
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D09E487415
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7B628C85B;
-	Tue, 16 Sep 2025 09:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B8028C85B;
+	Tue, 16 Sep 2025 09:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3Zo5m4D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdlrIIIU"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A60222566;
-	Tue, 16 Sep 2025 09:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBCA10E9
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758013261; cv=none; b=Y9RzpPiUsXniLGHLu3p9al0RGw4YKgMcoiseeNPNAyKwlKDzaEo7J1Hgo0P6Ud4W1BAVldRGX6GpFthPOkV+4mS0EjdgCOjg+w71u9iFAFJJu9Z2utBtQquFpQiyMpGq6G6iKDCVRNAVHRLJNb5JGFwY3aw3G5ywRDvCvWjOQpU=
+	t=1758013282; cv=none; b=kGQUyrSqqgaKsteS6KMMbxIRgvs+h3TsjHWKPP+irC+iunMd8G4y5XorR8Z9AYDbZCtMzzlFrrFe5fWfY2r16x/VqKpItAfki6n8B5gBwE+xkRi4H+G/yCUildoE0/4c5+RrkEq4X46ZUwTkVMyS3k4iLKBgKgro+ueypAHlVnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758013261; c=relaxed/simple;
-	bh=VaPGPN4sNkzZCieQe1ppVzBXnQbc0jSLL06ZRxkEbSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pn3OY2rnHAXI1G2GoHd0uHmu5S1sDRAMBNfp26eMEI4pmswd1uPhIpkWbaIkPSS0bXSREj0UOETduNzYFcUd5p/kBooTRlKxQzTgbUF1XuXowbt2zNfPCcjh161MUanXB6XLeL+trVwof9igkfVFm1GQLmIGfbkz6ncCGuLeIFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3Zo5m4D; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758013260; x=1789549260;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VaPGPN4sNkzZCieQe1ppVzBXnQbc0jSLL06ZRxkEbSQ=;
-  b=K3Zo5m4D0+myzZykUIpEjHRP/s37A1j6f2lHP8/eiswzAIil/VMYLjmg
-   seytsXXTZDareP5+U1c3jsraay71oEDu4LZ8jAI+lSUYs9lG/80Qm5tdq
-   1+hO9nolxLKc9IySjDBRVrKd1aJbwH+OJ/Cfi4WEXZerY1qkn5YM6BOfA
-   3X+BhrI0uzYqBiCY+q8lrwDEAKEHNKKwgpNCOemoRB2ldFscU7Ri1d8GH
-   la8cnT1A9MIJOXSXNZGNJm9MzjTmKsQzb7lRsAr4ULPZxtGVkp/lBHyNU
-   YBOp7YvPeQ+zILJRS0j2fug1nI5/BaZQizMCGvHrYL/y+GN2OSgiS43Mg
-   g==;
-X-CSE-ConnectionGUID: wJsT6TJyRrCqKSY+R0Kjcg==
-X-CSE-MsgGUID: lUORnVfxQiWOgAHZQ3IQ2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="63918574"
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="63918574"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 02:00:59 -0700
-X-CSE-ConnectionGUID: doz86orBSxGGmFrsT2JHDQ==
-X-CSE-MsgGUID: WDZmb+ePTSuLs8kbY+lU/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="175302937"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 02:00:56 -0700
-Message-ID: <48a597f9-a1eb-400b-81ae-244b6b1f76a3@linux.intel.com>
-Date: Tue, 16 Sep 2025 17:00:54 +0800
+	s=arc-20240116; t=1758013282; c=relaxed/simple;
+	bh=HW+lZGTNSVb7t+WVX4jnc1u0gcEJsOxGllDVrbzZpXo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UEuSqKbGK+ZFB3+z6rCebkcm6+cA6dHwxbeMAjr2t/KEx8HXbhMaB3WRv/5XSdLdGV68o6utubQE+hyYJlalUAVj5F/pcPQZywmQC06ezLTHE8du8+KXokfUtOh+2GWW4WSdugDDE1uKmzZDoRdTY2eGTZ1biqUVsRBFnPw5ghI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdlrIIIU; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45f2c5ef00fso19209955e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758013279; x=1758618079; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=upMhvQF//L2bSGTsud4VXsSZCTKFm60OzLUP07Pokt0=;
+        b=WdlrIIIUDWhAxCGNpcS9nvnj2OEdlzKn+c4Qk/OwfAl4vp2NU/4ghvAgjyA5D4wZh/
+         idq/J3XKqFRj5BBATZplvfmbblf+Jj8DQB8evH3Ci1MoPs4pHAFJ2/So7c9rBgBlJ8+V
+         SfA6If2Ub87op7hQldTnIfUnyssS+0gKnr27ryf+CYoxqAQqo/5ObS0HT17Ve3C+5YiV
+         tldWgPkmn1GA5F/43FLP9NUxwlRevXievcNW0xRNzSE+x+sn7Y3MxOZ1ESkNNsuGqf//
+         YABrhx4ixj62gGdavYX0EYP4yOAsO66GDgv+rm5mBvjlc8Aysj5kDZJN50elRp5EaB8X
+         OWMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758013279; x=1758618079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=upMhvQF//L2bSGTsud4VXsSZCTKFm60OzLUP07Pokt0=;
+        b=p3IOzN9jsMtedB/XyYqdfp6HgR9GMfgKLoapvyczZGpe8380zOn5DY9ivYBekx2qkV
+         nBdCvUjbDQNW30wafRNSpnINkoZULCpqRss9iq3/icogU3Z7dFZIUuxk+QhapiqjixEo
+         lm/ZPZSb0CMvH0hnGSxyHP9gCc1M3rBKfrsjLe8lej6YMy4J68/6bbTd+wNHRPHy3WJg
+         pxfDfNWIgRz/5iA83yTkm9phw/iW9W++EG/E8H7kW4YuURBHWF42hWEev8KWCRAjvrCp
+         LJRRHcSmaLchaTLoMKLMNijwPv8lkPPeCSoYPD0oMFbPpXadbVIm/P4RnSDplcWEI806
+         lspw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHPIkRGE6MtPu1KX3/N4QKu3zfVWu3JIQx6ad2imJ0LqHy2nCohE065fWX7QH1RUuIPCLN4nZOUwGEVW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRMMW2HSspvJl7Y2MLtmnekn+KW/sh77nnejaVFGIJvCu32Wt3
+	c47TYN2UTJJAlBgOC4IsxL/f/whD4x3QM9oQNfACRa4rKXPGutneQN0t
+X-Gm-Gg: ASbGncsdOAoS4t0zB9qOT+6lDnvffrfEHMYM5H8RrQPegrT5kGYTmenant5lzk6KxKw
+	VNrD2B4SZYTrMlC2Az485lJIN/2qTAGrGjhlb+ra9SOCZnfYcbkUnj1jO8OO7zgYzIe/FOj2BXb
+	aBWdsWbM5MZrmFYukTLRqf8AJxBgo2CypR1lZk4mte+EHuInOA6s7zXvdw3fhKjoJoRlzR4v5hG
+	KCz9EL+5l8FAyQYfpoZDAISKmci4fW07kFrLVd2d1A8g0NabHFna3qJ+ET6V8Pk1JOz1BaNPZvk
+	K1H4xLa1p8Ke8LruQnkOaO1lZ26s3TMTZVvIviXHgRA3Iljgmc+YnUsJ80hp+XQVashTmQ8PXYJ
+	1iGopP1w7H0liGiduEPF1janrmZ+hRYFEaNBDu0kHIGOKhXQzFFh6KjrMRtTiNHM1YC8pS0fN16
+	60cefJX23VGaVSQMTyy7RVQs4=
+X-Google-Smtp-Source: AGHT+IFclWAKbjGgLv2K4m6q+aAL6mre53m9qB7bPaj17wvwDzoWsbTz12D9JPu/yEQ6xkF20lstyw==
+X-Received: by 2002:a05:600c:a0b:b0:45b:74fc:d6ec with SMTP id 5b1f17b1804b1-45f211ca9dbmr161780395e9.8.1758013278551;
+        Tue, 16 Sep 2025 02:01:18 -0700 (PDT)
+Received: from xl-nested.c.googlers.com.com (42.16.79.34.bc.googleusercontent.com. [34.79.16.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037186e5sm212975035e9.5.2025.09.16.02.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 02:01:17 -0700 (PDT)
+From: Ethan Graham <ethan.w.s.graham@gmail.com>
+To: ethangraham@google.com,
+	glider@google.com
+Cc: andreyknvl@gmail.com,
+	andy@kernel.org,
+	brauner@kernel.org,
+	brendan.higgins@linux.dev,
+	davem@davemloft.net,
+	davidgow@google.com,
+	dhowells@redhat.com,
+	dvyukov@google.com,
+	elver@google.com,
+	herbert@gondor.apana.org.au,
+	ignat@cloudflare.com,
+	jack@suse.cz,
+	jannh@google.com,
+	johannes@sipsolutions.net,
+	kasan-dev@googlegroups.com,
+	kees@kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lukas@wunner.de,
+	rmoar@google.com,
+	shuah@kernel.org,
+	tarasmadan@google.com
+Subject: [PATCH v1 0/10] KFuzzTest: a new kernel fuzzing framework
+Date: Tue, 16 Sep 2025 09:00:59 +0000
+Message-ID: <20250916090109.91132-1-ethan.w.s.graham@gmail.com>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 12/41] KVM: VMX: Introduce CET VMCS fields and control
- bits
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-13-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250912232319.429659-13-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Ethan Graham <ethangraham@google.com>
 
+This patch series introduces KFuzzTest, a lightweight framework for
+creating in-kernel fuzz targets for internal kernel functions.
 
-On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Control-flow Enforcement Technology (CET) is a kind of CPU feature used
-> to prevent Return/CALL/Jump-Oriented Programming (ROP/COP/JOP) attacks.
-> It provides two sub-features(SHSTK,IBT) to defend against ROP/COP/JOP
-> style control-flow subversion attacks.
->
-> Shadow Stack (SHSTK):
->    A shadow stack is a second stack used exclusively for control transfer
->    operations. The shadow stack is separate from the data/normal stack and
->    can be enabled individually in user and kernel mode. When shadow stack
->    is enabled, CALL pushes the return address on both the data and shadow
->    stack. RET pops the return address from both stacks and compares them.
->    If the return addresses from the two stacks do not match, the processor
->    generates a #CP.
->
-> Indirect Branch Tracking (IBT):
->    IBT introduces instruction(ENDBRANCH)to mark valid target addresses of
->    indirect branches (CALL, JMP etc...). If an indirect branch is executed
->    and the next instruction is _not_ an ENDBRANCH, the processor generates
->    a #CP. These instruction behaves as a NOP on platforms that have no CET.
+The primary motivation for KFuzzTest is to simplify the fuzzing of
+low-level, relatively stateless functions (e.g., data parsers, format
+converters) that are difficult to exercise effectively from the syscall
+boundary. It is intended for in-situ fuzzing of kernel code without
+requiring that it be built as a separate userspace library or that its
+dependencies be stubbed out. Using a simple macro-based API, developers
+can add a new fuzz target with minimal boilerplate code.
 
-These -> The
+The core design consists of three main parts:
+1. A `FUZZ_TEST(name, struct_type)` macro that allows developers to
+   easily define a fuzz test.
+2. A binary input format that allows a userspace fuzzer to serialize
+   complex, pointer-rich C structures into a single buffer.
+3. Metadata for test targets, constraints, and annotations, which is
+   emitted into dedicated ELF sections to allow for discovery and
+   inspection by userspace tools. These are found in
+   ".kfuzztest_{targets, constraints, annotations}".
 
->
-> Several new CET MSRs are defined to support CET:
->    MSR_IA32_{U,S}_CET: CET settings for {user,supervisor} CET respectively.
->
->    MSR_IA32_PL{0,1,2,3}_SSP: SHSTK pointer linear address for CPL{0,1,2,3}.
->
->    MSR_IA32_INT_SSP_TAB: Linear address of SHSTK pointer table, whose entry
-> 			is indexed by IST of interrupt gate desc.
->
-> Two XSAVES state bits are introduced for CET:
->    IA32_XSS:[bit 11]: Control saving/restoring user mode CET states
->    IA32_XSS:[bit 12]: Control saving/restoring supervisor mode CET states.
->
-> Six VMCS fields are introduced for CET:
->    {HOST,GUEST}_S_CET: Stores CET settings for kernel mode.
->    {HOST,GUEST}_SSP: Stores current active SSP.
->    {HOST,GUEST}_INTR_SSP_TABLE: Stores current active MSR_IA32_INT_SSP_TAB.
->
-> On Intel platforms, two additional bits are defined in VM_EXIT and VM_ENTRY
-> control fields:
-> If VM_EXIT_LOAD_CET_STATE = 1, host CET states are loaded from following
-> VMCS fields at VM-Exit:
->    HOST_S_CET
->    HOST_SSP
->    HOST_INTR_SSP_TABLE
->
-> If VM_ENTRY_LOAD_CET_STATE = 1, guest CET states are loaded from following
-> VMCS fields at VM-Entry:
->    GUEST_S_CET
->    GUEST_SSP
->    GUEST_INTR_SSP_TABLE
->
-> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+To demonstrate this framework's viability, support for KFuzzTest has been
+prototyped in a development fork of syzkaller, enabling coverage-guided
+fuzzing. To validate its end-to-end effectiveness, we performed an
+experiment by manually introducing an off-by-one buffer over-read into
+pkcs7_parse_message, like so:
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+- ret = asn1_ber_decoder(&pkcs7_decoder, ctx, data, datalen);
++ ret = asn1_ber_decoder(&pkcs7_decoder, ctx, data, datalen + 1);
 
-> ---
->   arch/x86/include/asm/vmx.h | 8 ++++++++
->   1 file changed, 8 insertions(+)
->
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index cca7d6641287..ce10a7e2d3d9 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -106,6 +106,7 @@
->   #define VM_EXIT_CLEAR_BNDCFGS                   0x00800000
->   #define VM_EXIT_PT_CONCEAL_PIP			0x01000000
->   #define VM_EXIT_CLEAR_IA32_RTIT_CTL		0x02000000
-> +#define VM_EXIT_LOAD_CET_STATE                  0x10000000
->   
->   #define VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR	0x00036dff
->   
-> @@ -119,6 +120,7 @@
->   #define VM_ENTRY_LOAD_BNDCFGS                   0x00010000
->   #define VM_ENTRY_PT_CONCEAL_PIP			0x00020000
->   #define VM_ENTRY_LOAD_IA32_RTIT_CTL		0x00040000
-> +#define VM_ENTRY_LOAD_CET_STATE                 0x00100000
->   
->   #define VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR	0x000011ff
->   
-> @@ -369,6 +371,9 @@ enum vmcs_field {
->   	GUEST_PENDING_DBG_EXCEPTIONS    = 0x00006822,
->   	GUEST_SYSENTER_ESP              = 0x00006824,
->   	GUEST_SYSENTER_EIP              = 0x00006826,
-> +	GUEST_S_CET                     = 0x00006828,
-> +	GUEST_SSP                       = 0x0000682a,
-> +	GUEST_INTR_SSP_TABLE            = 0x0000682c,
->   	HOST_CR0                        = 0x00006c00,
->   	HOST_CR3                        = 0x00006c02,
->   	HOST_CR4                        = 0x00006c04,
-> @@ -381,6 +386,9 @@ enum vmcs_field {
->   	HOST_IA32_SYSENTER_EIP          = 0x00006c12,
->   	HOST_RSP                        = 0x00006c14,
->   	HOST_RIP                        = 0x00006c16,
-> +	HOST_S_CET                      = 0x00006c18,
-> +	HOST_SSP                        = 0x00006c1a,
-> +	HOST_INTR_SSP_TABLE             = 0x00006c1c
->   };
->   
->   /*
+A syzkaller instance fuzzing the new test_pkcs7_parse_message target
+introduced in patch 7 successfully triggered the bug inside of
+asn1_ber_decoder in under 30 seconds from a cold start. Similar
+experiements on the other new fuzz targets (patches 8-9) also
+successfully identified injected bugs, proving that KFuzzTest is
+effective when paired with a coverage-guided fuzzing engine.
+
+A note on build system integration: several new fuzz targets (patches
+7-9) are included by conditionally importing a .c file when
+CONFIG_KFUZZTEST=y. While this may seem unusual, it follows a pattern
+used by some KUnit tests (e.g., in /fs/binfmt_elf.c). We considered
+defining macros like VISIBLE_IF_KFUZZTEST, but believe the final
+integration approach is best decided by subsystem maintainers. This
+avoids creating a one-size-fits-all abstraction prematurely.
+
+The patch series is structured as follows:
+- Patch 1 adds and exposes kasan_poison_range for poisoning memory
+  ranges with an unaligned start address and KASAN_GRANULE_SIZE aligned
+  end address.
+- Patch 2 introduces the core KFuzzTest API and data structures.
+- Patch 3 adds the runtime implementation for the framework.
+- Patch 4 adds a tool for sending structured inputs into a fuzz target.
+- Patch 5 adds documentation.
+- Patch 6 provides sample fuzz targets.
+- Patch 7 defines fuzz targets for several functions in /crypto.
+- Patch 8 defines a fuzz target for parse_xy in /drivers/auxdisplay.
+- Patch 9 defines a fuzz target for load_script in /fs.
+- Patch 10 adds maintainer information for KFuzzTest.
+
+Changes since RFC v2:
+- Per feedback from Ignat Korchagin a fuzz target has been defined for
+  the load_script function in binfmt_script.c, and all fuzz targets are
+  built with CONFIG_KFUZZTEST=y rather than a specialized configuration
+  option per module.
+- Per feedback from David Gow and Alexander Potapenko, KFuzzTest linkage
+  definitions have been moved into the generic linkage header so that
+  the framework isn't bound to x86_64.
+
+Ethan Graham (10):
+  mm/kasan: implement kasan_poison_range
+  kfuzztest: add user-facing API and data structures
+  kfuzztest: implement core module and input processing
+  tools: add kfuzztest-bridge utility
+  kfuzztest: add ReST documentation
+  kfuzztest: add KFuzzTest sample fuzz targets
+  crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
+  drivers/auxdisplay: add a KFuzzTest for parse_xy()
+  fs/binfmt_script: add KFuzzTest target for load_script
+  MAINTAINERS: add maintainer information for KFuzzTest
+
+ Documentation/dev-tools/index.rst             |   1 +
+ Documentation/dev-tools/kfuzztest.rst         | 385 ++++++++++++++
+ MAINTAINERS                                   |   8 +
+ crypto/asymmetric_keys/Makefile               |   2 +
+ crypto/asymmetric_keys/tests/Makefile         |   2 +
+ crypto/asymmetric_keys/tests/pkcs7_kfuzz.c    |  22 +
+ .../asymmetric_keys/tests/rsa_helper_kfuzz.c  |  38 ++
+ drivers/auxdisplay/charlcd.c                  |   8 +
+ drivers/auxdisplay/tests/charlcd_kfuzz.c      |  20 +
+ fs/binfmt_script.c                            |   8 +
+ fs/tests/binfmt_script_kfuzz.c                |  51 ++
+ include/asm-generic/vmlinux.lds.h             |  22 +-
+ include/linux/kasan.h                         |  11 +
+ include/linux/kfuzztest.h                     | 498 ++++++++++++++++++
+ lib/Kconfig.debug                             |   1 +
+ lib/Makefile                                  |   2 +
+ lib/kfuzztest/Kconfig                         |  20 +
+ lib/kfuzztest/Makefile                        |   4 +
+ lib/kfuzztest/main.c                          | 240 +++++++++
+ lib/kfuzztest/parse.c                         | 204 +++++++
+ mm/kasan/shadow.c                             |  34 ++
+ samples/Kconfig                               |   7 +
+ samples/Makefile                              |   1 +
+ samples/kfuzztest/Makefile                    |   3 +
+ samples/kfuzztest/overflow_on_nested_buffer.c |  71 +++
+ samples/kfuzztest/underflow_on_buffer.c       |  59 +++
+ tools/Makefile                                |  15 +-
+ tools/kfuzztest-bridge/.gitignore             |   2 +
+ tools/kfuzztest-bridge/Build                  |   6 +
+ tools/kfuzztest-bridge/Makefile               |  48 ++
+ tools/kfuzztest-bridge/bridge.c               | 103 ++++
+ tools/kfuzztest-bridge/byte_buffer.c          |  87 +++
+ tools/kfuzztest-bridge/byte_buffer.h          |  31 ++
+ tools/kfuzztest-bridge/encoder.c              | 391 ++++++++++++++
+ tools/kfuzztest-bridge/encoder.h              |  16 +
+ tools/kfuzztest-bridge/input_lexer.c          | 242 +++++++++
+ tools/kfuzztest-bridge/input_lexer.h          |  57 ++
+ tools/kfuzztest-bridge/input_parser.c         | 397 ++++++++++++++
+ tools/kfuzztest-bridge/input_parser.h         |  81 +++
+ tools/kfuzztest-bridge/rand_stream.c          |  77 +++
+ tools/kfuzztest-bridge/rand_stream.h          |  57 ++
+ 41 files changed, 3325 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/dev-tools/kfuzztest.rst
+ create mode 100644 crypto/asymmetric_keys/tests/Makefile
+ create mode 100644 crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
+ create mode 100644 crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c
+ create mode 100644 drivers/auxdisplay/tests/charlcd_kfuzz.c
+ create mode 100644 fs/tests/binfmt_script_kfuzz.c
+ create mode 100644 include/linux/kfuzztest.h
+ create mode 100644 lib/kfuzztest/Kconfig
+ create mode 100644 lib/kfuzztest/Makefile
+ create mode 100644 lib/kfuzztest/main.c
+ create mode 100644 lib/kfuzztest/parse.c
+ create mode 100644 samples/kfuzztest/Makefile
+ create mode 100644 samples/kfuzztest/overflow_on_nested_buffer.c
+ create mode 100644 samples/kfuzztest/underflow_on_buffer.c
+ create mode 100644 tools/kfuzztest-bridge/.gitignore
+ create mode 100644 tools/kfuzztest-bridge/Build
+ create mode 100644 tools/kfuzztest-bridge/Makefile
+ create mode 100644 tools/kfuzztest-bridge/bridge.c
+ create mode 100644 tools/kfuzztest-bridge/byte_buffer.c
+ create mode 100644 tools/kfuzztest-bridge/byte_buffer.h
+ create mode 100644 tools/kfuzztest-bridge/encoder.c
+ create mode 100644 tools/kfuzztest-bridge/encoder.h
+ create mode 100644 tools/kfuzztest-bridge/input_lexer.c
+ create mode 100644 tools/kfuzztest-bridge/input_lexer.h
+ create mode 100644 tools/kfuzztest-bridge/input_parser.c
+ create mode 100644 tools/kfuzztest-bridge/input_parser.h
+ create mode 100644 tools/kfuzztest-bridge/rand_stream.c
+ create mode 100644 tools/kfuzztest-bridge/rand_stream.h
+
+-- 
+2.51.0.384.g4c02a37b29-goog
 
 
