@@ -1,88 +1,112 @@
-Return-Path: <linux-kernel+bounces-817958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2E0B589C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:37:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E601B589C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D823BCA17
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D232A3EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75981C3BE0;
-	Tue, 16 Sep 2025 00:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F37D15665C;
+	Tue, 16 Sep 2025 00:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="E2LjKSHH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lfczR8kW"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E8CD528;
-	Tue, 16 Sep 2025 00:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DE819F40B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757983043; cv=none; b=ridDf8ah21V6jdZlrcFfgDNoliY/WM2ctFWQHDsoKeC8A1/r8Vpt+E8a7nImZ4+K2VS+xk2BFt/YwlJ3x6ahfWvh6L0lm5OoVoiXrohKAeZzJl+FJE6PIimqDUfosgRyjfEaEpOZk88DQ+Kc8aODNPMr1rkJcrZyicN8YPkj1cg=
+	t=1757983118; cv=none; b=D7A/bOSJgEXe6JmN0zzoo6eYyK20GOpePJIQA1f9dM6JxdlT/1HF4W52rzFcsfa+y5D4OUg6/I8aH6Q++r9ePbX/1E8i8KlC4SigvSglM8Y8RN/BpPyYKPUObo6sCp/b3bRBc8bbztIXhBtkalcLCv11oVx2jNYbFvA5mPjhyjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757983043; c=relaxed/simple;
-	bh=ikTm6uj0+srWdypX4iIZg25AU+MD0sFfVNG1DiPazbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVmuCYgCaJTJ8KqXN58MxGHgFjrByaCbisk0WL+HvRn10VPeU9+Xytjy0NcVYzbXncY+jjGhQt+64EzEpe+8gfvWnXbvMsRRvPMjiRAkKYjMlA5zB2Zd/c21YUJ7H7iIg3IAKhIQNK3pfqW+s4IlCct3GY1wo8LJs4IVpLBE/Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=E2LjKSHH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=wJr+506HYavhLyAPNE14fMgJgbHbAikFhnzPhM0kVTM=; b=E2LjKSHHRSkxB/9Njm9q50MF83
-	5VIRQcjknoMGoSETEPmq1ef9Bm/AV5jPSVpEYvzAaLcUJXhg10I9yN6duT7TuNjN+S7adLuZLbRLy
-	tEvYLVQ0qxx+nfDYqjXvQHhOjUC17HFMHdR6O5up+6uOgNsk857c0y41t4QQwibbvQQA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uyJgs-008V93-Hj; Tue, 16 Sep 2025 02:37:02 +0200
-Date: Tue, 16 Sep 2025 02:37:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rebecca Cran <rebecca@bsdio.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
- ALTRAD8 BMC
-Message-ID: <74e68c53-2696-4f86-97d3-c0b0a74d4669@lunn.ch>
-References: <20250911051009.4044609-1-rebecca@bsdio.com>
- <20250911051009.4044609-3-rebecca@bsdio.com>
- <58a092c5-5dd0-4718-831a-e25ecb184087@lunn.ch>
- <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
+	s=arc-20240116; t=1757983118; c=relaxed/simple;
+	bh=lY8GwaCMi3yL6eor2HIlNkytFZaiNvCLkZjHU1cmdGQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HUGOdbdPgNQzsayMGo5Wi/Ub+kKHbnaIRmPiOFAShbh0m38pZaWXaEhrld4PFCwa/Lfvwt8/CD3O6TXzzXlyfcGgsV/Yqfo1Qvh0//M23LAaW6nuEtuwhZKQSA7LGN4CEVKoGrQjUuQUNVUaD5KH1o2SLyybYhoit1Gnynbl1U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lfczR8kW; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445806b18aso46206155ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757983116; x=1758587916; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DYW48A8ZfmbRdubUzd99a/MPRiGKsics+FOUrVX4GOY=;
+        b=lfczR8kWgPhX2xOp1UlIy+rQhh+ctbSFy0BpPjfU4CD7tmpeNNKFcu1YL9ngAjLW6o
+         DOGCoGCJOjKjYuIGu1qY3yquqlUs1lRejoxaTHCszWykFu8eP2ygP4lfKhcDL7O0sz5T
+         klK6fQaDEOZsDHZlhnpnj1ToV3+nxjKwik5DhyktBH1kwJJXl2SW8CwO7JIbNWy/pDjG
+         fZ3f+hoUTKfrye8hU/DLA8AhHrMyR//eye1oZ6A5tmAnEvfr59cVssANIPGTO6g10vSC
+         Sxo+eF71HbFVmE2qSWMmMkIU8e3sIsIL3ODXKrAOlBZf/jKd1NjNK0JN1bHfDNqmvdKo
+         JIEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757983116; x=1758587916;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DYW48A8ZfmbRdubUzd99a/MPRiGKsics+FOUrVX4GOY=;
+        b=pfcTt+4hfLLPrHNnNaTck4leeVAgzAXkBqAnV751syXOXwoQ4PxatxbAUganKXlEIs
+         YeRnHhpgKXWVPrLrQMfS3AJKyKPZE/0BKhvSvyUmFKqogchBhYiOZ42j6OpnKm0oxo9G
+         uQGLfUAmfe6RTsel0ct1ZLUd6oAY2nQnFkVDh3jKMoNa6gro9XhIQTRKsSH0Rk5rHLt/
+         O2utFVz9I/viDDHriFvmKGUGa06FEoInhPvveWipI17mH4DYCe4ILEfFlq/UVnrtyxcK
+         P77pIeJKZzYSXMobRSkxHYEbRMs3i8/rj95Qf/E9zMmsNLek51lYSh8Ad0zQGf7V3nxl
+         Afag==
+X-Forwarded-Encrypted: i=1; AJvYcCXUkdQ2M/D2uY85GYIW/twP4AFX60T1SEbXrYvdQQ5xeu0TWoNQbS9cWfsdJ60ec7n7sMxsSnJF5J3TI4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3riq2iknNO11WZq2yzPqwR6ycIO3Xi+q4yXpE4EDzQdxNo2B2
+	32UMhF18JAYv5MvWQj5g6R/M55727/MlJq0sJ9aNsZo/xrhvQ2ycnK6/4WEQZSBQiH1dfX4uYzb
+	43EhtBg==
+X-Google-Smtp-Source: AGHT+IEEJtqj7LGKOGahSkhskOAxGFYu/wYgOwkvODUB3Ot1p+obyCbsuwmeiSpa2Wc5Jmgj4+aKlGFYyWY=
+X-Received: from pjbsz7.prod.google.com ([2002:a17:90b:2d47:b0:329:b272:45a7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:19e5:b0:267:d14d:3b31
+ with SMTP id d9443c01a7336-267d14d3dcemr5897695ad.49.1757983115877; Mon, 15
+ Sep 2025 17:38:35 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Mon, 15 Sep 2025 17:38:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ccc4945-87f6-4325-b034-ca3f2f90257a@bsdio.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250916003831.630382-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: AVIC vTPR fix for 6.17
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 15, 2025 at 06:26:04PM -0600, Rebecca Cran wrote:
-> On 9/11/25 08:09, Andrew Lunn wrote:
-> > There is no phy-handle here, and no mdio node in this file. What is
-> > the MAC connected to? Does it connect to the hosts Ethernet interface?
-> 
-> Yes, it's connected to one of the host's 10Gb Ethernet interfaces.
+Please grab a single fix for 6.17.  The bug has existed for some time, so it's
+not super critical that it get into 6.17, but it'd be nice to get this on its
+way to LTS kernels sooner than later.  Thanks!
 
-O.K. Maybe add a comment please.
+The following changes since commit 42a0305ab114975dbad3fe9efea06976dd62d381:
 
-> > RGMII pinctrl is referenced here. This opens up the question about
-> > RGMII delays. What is this MAC connected to?
-> 
-> It's the AST2500 MAC2, connected to the management LAN ethernet port.
+  Merge tag 'kvmarm-fixes-6.17-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2025-08-29 12:57:31 -0400)
 
-And does it have a PHY? On an MDIO bus? Unless i'm mistaken, you don't
-describe the PHY, a phy-handle pointing to the PHY, and don't have
-phy-mode = 'rgmii-id'.
+are available in the Git repository at:
 
-	Andrew
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.17-rcN
+
+for you to fetch changes up to d02e48830e3fce9701265f6c5a58d9bdaf906a76:
+
+  KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR even if AVIC is active (2025-09-10 12:04:16 -0700)
+
+----------------------------------------------------------------
+KVM x86 fix for 6.17-rcN
+
+Sync the vTPR from the local APIC to the VMCB even when AVIC is active, to fix
+a bug where host updates to the vTPR, e.g. via KVM_SET_LAPIC or emulation of a
+guest access, effectively get lost and result in interrupt delivery issues in
+the guest.
+
+----------------------------------------------------------------
+Maciej S. Szmigiero (1):
+      KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR even if AVIC is active
+
+ arch/x86/kvm/svm/svm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
