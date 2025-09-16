@@ -1,106 +1,95 @@
-Return-Path: <linux-kernel+bounces-818090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3249CB58C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D36B58C7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 05:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C22553B1FDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BCD3AB7B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C916E2877D4;
-	Tue, 16 Sep 2025 03:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6719E285C8A;
+	Tue, 16 Sep 2025 03:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="earyzcES"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OsQN2Jzt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F6E285042;
-	Tue, 16 Sep 2025 03:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BE0221F2D;
+	Tue, 16 Sep 2025 03:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757994763; cv=none; b=UR0JUUa87kiWl4XlIK7Jf8CaVwsoI8T+N6VW+AeoF2ClFwuVyqiikZW9mqR0JLj1D5XJ8rwHtutwyF+DhU4VoMfNUEqDCq57RQVMFqkZdQIRYNXgMqYEnwkPMa4ysgtK4kkhAeLNi/KB84dWvZM5HlA9Xry8GfN7VwRGn65U2ks=
+	t=1757994745; cv=none; b=fcakGjdCuzKZBOyGDBgTBUeflw5VOecs6R2RxIuKAwFWc5wGs9A8JI+atia7zhVM5hWQ+hT5zdlFM2ITuzDGvFBPJA+tdHrsz4VjEhA6ousavBbuw7V66JGlsj75H/VlAyGxNiPmIE4vtdiFD369YfcOroqR1Lm0eeEc439qmME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757994763; c=relaxed/simple;
-	bh=/Q31haFNhMzgKU6vsqp97bRX+yuDFmh0XBAxkXV5Xjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fsa1aM1tV7pA2lg1jeDlB3LeBvKp4wnIN6W58vs+kDqcxG0R+GNzJhe/Wn3vTMdVs3OTQGsOKxtTnuZBNA3WdSziOR1xKx/nDVhL7GJuziegCwHyuNTA5Mg+zuFQX8A1rrA8BEDKhR+CZ9qVkg6v1XjGV3N42SWQSSIC2mD4nGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=earyzcES; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=cPs8AC+pY9AbZ6VyY+Zilio8cae40dF7NZxvYJ4FZko=; b=earyzcESf/+qtQ9xJ2SBg2mAsx
-	n20xqgRZbCP/k4TIU0eXcRJ4jwTcfA28WZcu8Exay9/gVq+FOGC2WfvuM/may4JH8RHTljMjIxo5B
-	wZ/EYzXXglrtJwMVB/vHyS9WdrVFGGlUfvW9UHvVcWGmWmbVkiO430GjTLf82K60txG2LdslbBhJ+
-	zNGM+5XZeVqefN527N7YRiBrLap768kfnL6rAQazE46OtGZs3SlG0jjh7pW9Rag3lm0ymDMNPWu+M
-	YJ4AoSlk1Le/4wxQFa19JRfn8G7tGZxro9W0WrY51dX3f2c92SYIFSBpug6QwCuHqBVME/ZZehRVP
-	UrwDkVMQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uyMTy-005l38-2n;
-	Tue, 16 Sep 2025 11:51:52 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 16 Sep 2025 11:51:51 +0800
-Date: Tue, 16 Sep 2025 11:51:51 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Ashish Kalra <Ashish.Kalra@amd.com>, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, pbonzini@redhat.com, thomas.lendacky@amd.com,
-	nikunj@amd.com, davem@davemloft.net, aik@amd.com, ardb@kernel.org,
-	john.allen@amd.com, michael.roth@amd.com, Neeraj.Upadhyay@amd.com,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] x86/sev: Add new dump_rmp parameter to
- snp_leak_pages() API
-Message-ID: <aMje1_nDBX-VWCXZ@gondor.apana.org.au>
-References: <cover.1757543774.git.ashish.kalra@amd.com>
- <c6d2fbe31bd9e2638eaefaabe6d0ffc55f5886bd.1757543774.git.ashish.kalra@amd.com>
- <20250912155852.GBaMRDPEhr2hbAXavs@fat_crate.local>
- <aMRnxb68UTzId7zz@google.com>
- <20250913105528.GAaMVNoJ1_Qwq8cfos@fat_crate.local>
+	s=arc-20240116; t=1757994745; c=relaxed/simple;
+	bh=U6JxDMkVHB3XlX/9cQ/I2sPNKBRRoZiFmbtNoTrXKa4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=OfodFccp4eIade1ve5dSMuJqewwFq4NPfdOYHlQStSMnELE3x1g+ROAwuFLZrotUn0YbIXb9GL0o+jluuEzVLx3LifGMuzgKhxkRMsMVMk7feY8Gv9048kXfO8DefBYXHBNztC2vNOKWAxu222jkbHjEULuAX1J2vKq1pBcHb4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OsQN2Jzt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0802AC4CEEB;
+	Tue, 16 Sep 2025 03:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1757994745;
+	bh=U6JxDMkVHB3XlX/9cQ/I2sPNKBRRoZiFmbtNoTrXKa4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OsQN2JztTjwkSYM58ujeukp87a4ECEkelesp8ge0DINPmvZSy5h/p1xe4h9mURfSv
+	 FQiqDNxLHR4XatBx12+aIJ0QPxbZlpILve6PDnMXpemSMLwq91AIpoPya0owAU45WA
+	 b9ZaFNFNdB7wMxMhO0pbZYH7WY269Sbd9PMrOpEA=
+Date: Mon, 15 Sep 2025 20:52:24 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, damon@lists.linux.dev,
+ kernel-team@meta.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/6] mm/damon/core: reset age if nr_accesses changes
+ between non-zero and zero
+Message-Id: <20250915205224.aa2de8de6dad1bb4c048cec8@linux-foundation.org>
+In-Reply-To: <20250915182652.110173-1-sj@kernel.org>
+References: <20250915145158.1425390-1-joshua.hahnjy@gmail.com>
+	<20250915182652.110173-1-sj@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913105528.GAaMVNoJ1_Qwq8cfos@fat_crate.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 13, 2025 at 12:55:28PM +0200, Borislav Petkov wrote:
->
-> Right, I guess Tom's on that one...
-> 
-> As to the other two:
-> 
-> https://lore.kernel.org/r/e7807012187bdda8d76ab408b87f15631461993d.1757543774.git.ashish.kalra@amd.com
-> https://lore.kernel.org/r/7be1accd4c0968fe04d6efe6ebb0185d77bed129.1757543774.git.ashish.kalra@amd.com
-> 
-> Herbert, how do you want to proceed here?
-> 
-> Do you want me to give you an immutable branch with the first patch and you
-> can base the other two ontop or should I carry all three through tip?
-> 
-> Yeah, it is time for patch tetris again... :-P
+On Mon, 15 Sep 2025 11:26:51 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-Hi Boris:
+> > Thank you for the patch, I think the goal of the patch makes sesne to me.
+> > I have a small nit / idea which I think makes the code a bit clearer, at least
+> > for me. It seems that we basically want to XOR the two values's zero-ness, so
+> > maybe something like 
+> > 
+> > (!!r->nr_accesses) ^ (!!r->last_nr_access) or
+> > (r->nr_accesses == 0) ^ (r->last_nr_access == 0)
+> > 
+> > Can achieve the goal?
+> 
+> Thank you for the idea, this makes sense!
+> 
+> > I know bitwise operations are sometimes harder to
+> > understand, so I am just throwing the idea out there : -) 
+> 
+> To be honest I'm one of people who are not familiar with XOR.  I had to spend a
+> minute to understand the above.  Maybe we can replace '^' with '!=', and it is
+> easier to read for me.  If you don't mind, I will use below in the next
+> version:
+> 
+>    else if ((r->nr_accesses == 0) != (r->last_nr_accesses == 0))
+> 
+> Please let me know if I'm missing something or you have other opinions.
 
-You can take those two patches directly with my ack:
+I have to say, using xor as a shorthand for what-was-really-intended
+always bursts my brain.  I have to stop, think about it and mentally
+turn the implementation back into what-was-really-intended.  Maybe
+that's just me.
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Ditto less-than-utterly-trivial :?  expressions.  Perhaps it's because
+if-then-else best suits how our minds work.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
