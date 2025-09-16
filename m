@@ -1,217 +1,148 @@
-Return-Path: <linux-kernel+bounces-817954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A2FB58996
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:33:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2891B5899C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35FE51896C6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEF23AB3F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 00:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10641B532F;
-	Tue, 16 Sep 2025 00:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3610445C0B;
+	Tue, 16 Sep 2025 00:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcu/LODr"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtPGscus"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665EF18C933
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887592032D
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757982779; cv=none; b=IslUkEiPrIbMGMRHjfPPw2kxfdC3pH9Vl4K/B2tnCgAS6ZYjiFy1oO2U4tVUA+1UqnuaK3s8Bf3+4koVjJorZqj7EGnMfsCZVWEtDEVAPALmDvwTxuLpW57Yg7t2v3GVoovrvs6sswXCVonk0Fbe0TiKFvLey/nBY771axuIhHo=
+	t=1757982817; cv=none; b=GREVz96rTzkeVc8lov0RUrl6jxPzBhkA22mwx12KdnmCnj/tvFaTiR3b2XsIqaxNGQgL82mY3AsOM9DztyWVXTGvjK8tolayM9KPiBuCBrYxXVwz9wsxHtRPqh5cDCMfj4kha45Zjn3OblJkPpyHNiKPvuc/5k2CMAW5Wu12gmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757982779; c=relaxed/simple;
-	bh=H/DVaXzoxcFzLSBp3bmejd4XBPWWM0Rk1MFhKzvuDiY=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=SwvQyRq9LsLeXBkaSigwwGjViwhAyZkswhRQUAIEFRq8oEtC0QYoCIVVNp3jDwBmjdKVC+kSXY7yyzIHC9NhVU9elvQLrYvMTAwPNw2fExsLaUu+OzkL79zj+vezw+gk0e83dOXwz4IpQB+71OeQYjpmaw/+kPnKESNCnUNa2kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcu/LODr; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-77766aae1abso18852736d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 17:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757982776; x=1758587576; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4r12V2PoKHZmPaH2sw9C5YGo3JgG0KLZK8dsUu+0xYo=;
-        b=kcu/LODr0KKea8Eok2ilwc3S7wwvx64nkOa/NprsHF3V6xbVe24CRjl63plt+Nv+e1
-         k430JTWh8H4GGaMvb9ajJkoV7n18TPT5uKHCPJHsXzc7MhyWAgXqYqkiEhT8zpQtWT9m
-         nEDLn14uslGVGrYAxnyV6TPJthP5DYIex2TOrpeYgkFY4mGgW0CotawErOVlhbawCye6
-         5A+/nbYXqgDpMa0qPCaeeWWXErtQrXO71dUoXtSKY7brSszzgzdOGGBdo4wIsBa0RHkY
-         3MNMDdrKo6AP6Evfvv7utb/NhAwcab+342b992rm+ajJS08WfaCw5pP6xNNTDlJjM0FQ
-         xkNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757982776; x=1758587576;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4r12V2PoKHZmPaH2sw9C5YGo3JgG0KLZK8dsUu+0xYo=;
-        b=MNv6nI1XUQcUKvoEQwJy35XX9RBCkQsj8kAO6P1SXRYZVYIqlnq+hietWaVetKgt1z
-         eSR78e/WXPdOf0MvZedMyQt+mVwitiJTkHDUbLSqZ5YWP59wGZgLX75dHkRizQS9i7Cy
-         UbnxQRcT3SVpvKK4w/eVh6MZVI4D47IMPsp4PL70d6tJwviOLHrtsbKzUyut2SZbTokh
-         RiTAeoKZx+QRxhQ27CIr+SV4MRzuGH9KYdOCarPP14rhCVi5NTqcwairulcNQoyWZZ5P
-         8Q6ccHKeKcTvkUkkMxsr9FEBTobLy5RVwqQvTSbaNQr0Sd/RgVE2pF7uOHVuBrf1E0AI
-         tPsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFycsYn/DDv2cE9HSArsxRJGXP1AaGFXWGlZthxPbTtOb5rOw+W7p2pgavMtaKhWSa8XOiJjZNpCQS2IY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYY+gGGpwBr4D4HzBLekTURcY5BxsUZw3CMNTx1WbYlXSjHGHp
-	enZQ+nC582d6iNpvzuVfIrqSjD0vWjMYPy1dbpGohrZKI4mywzfNMzL0
-X-Gm-Gg: ASbGnctHwZtqsplZegzM8UKLtP6D567f0+d/qZ5HIXuVLD4pZHu7f7ygkS1CDrFvKIN
-	ZLQ/MRT/zDekAXr3M8e0zyIN4oveNRVmLtaqXrMWr+Fxq6kJoF8kPo2C+n2uPJGs02/rCA+KH83
-	DwYfk2Ft4Gp77PX1QrRcCFqAkGmK+hjOlz2BBZiXiZ/q2bTaT8LWXuICNrYPd4oVOD9MQQQDovA
-	cIV+asMb2yOguVCqntSboUNimTK7orY4Rk09fzPslNHiuGgkjKrXidEycbLzPU/csCSXxKpPYaz
-	CjBVLsMeB6PhqKLYMZJti4qZtYPHclvsItSej5pZBaT11A5BCMOOZLAdTtO6/4Deod2ZDZD8c9L
-	sidCk0yL1t582PcnBJpGpb8Pv3lW67Zt8UzEVqvuSwsOxTgNX24eobKnOyne0uJF/yuGc20Hd2T
-	890A==
-X-Google-Smtp-Source: AGHT+IH1M0sijyP+94ZdZqgyXYx7IsKtO5xYHyE5Jb5WJ71L1gBlS5xl+86mFGCqvmvr4JiXj97CiQ==
-X-Received: by 2002:ad4:5942:0:b0:764:c753:c57e with SMTP id 6a1803df08f44-767c5aeeca1mr160391206d6.64.1757982776117;
-        Mon, 15 Sep 2025 17:32:56 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-763c03a7fa1sm84738776d6.59.2025.09.15.17.32.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 17:32:55 -0700 (PDT)
-Date: Mon, 15 Sep 2025 20:32:55 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Richard Gobert <richardbgobert@gmail.com>, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- ecree.xilinx@gmail.com, 
- willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- horms@kernel.org, 
- corbet@lwn.net, 
- saeedm@nvidia.com, 
- tariqt@nvidia.com, 
- mbloch@nvidia.com, 
- leon@kernel.org, 
- dsahern@kernel.org, 
- ncardwell@google.com, 
- kuniyu@google.com, 
- shuah@kernel.org, 
- sdf@fomichev.me, 
- aleksander.lobakin@intel.com, 
- florian.fainelli@broadcom.com, 
- alexander.duyck@gmail.com, 
- linux-kernel@vger.kernel.org, 
- linux-net-drivers@amd.com, 
- Richard Gobert <richardbgobert@gmail.com>
-Message-ID: <willemdebruijn.kernel.d5fd7a312fe9@gmail.com>
-In-Reply-To: <20250915113933.3293-5-richardbgobert@gmail.com>
-References: <20250915113933.3293-1-richardbgobert@gmail.com>
- <20250915113933.3293-5-richardbgobert@gmail.com>
-Subject: Re: [PATCH net-next v5 4/5] net: gro: remove unnecessary df checks
+	s=arc-20240116; t=1757982817; c=relaxed/simple;
+	bh=2kJvMz0dBmm0szegM5HnmZW3wdSVfUl1a4IWQWdik2Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gF65RPGf3IdZqFT1QwKSiBfOzyhOHcb6A8sJ97GTXL9KE+XcCLSa+zChX1c0AOq+a3DEqsJw5R+JoXHA/dQhw/wDaKRF5SM2gTCa91ykxHq4qLBXSEIwKR6+BcnnxlTrtGeyYEgGDDgjVCBXTuikhFBOqrsjceGV1VICVVDMxCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtPGscus; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 67C79C4CEF1;
+	Tue, 16 Sep 2025 00:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757982817;
+	bh=2kJvMz0dBmm0szegM5HnmZW3wdSVfUl1a4IWQWdik2Q=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=rtPGscusfIYxKisZD1Tym03GoAdh4LPe6Z97QpnKY/CiM0+4QPQ2F510dMPEAHOV+
+	 ulkEbfqeDBy6x6LAarL/ExFu9DrjKfmwUeXa4lAYIaTomaD3vDjgluuUMZ/TqojSJb
+	 6UFwucZ+OZcArESAZ1IvNEyAY+p045vjnh16TgyYxNZHE6mb+DUufPlhWhBWpnQF9g
+	 Tt9dIzZoBxlpjXqASKeMNn5VfOlQDlZu15ZchzMBvWHRA/8A+vVdSdQJ+FKu9viPjl
+	 2Ag038Hx8ruDo9EYAQqoYlg7HX+u32hjgb4UvVaGRuzrRkMct3PIXW8GzkvlFATkvg
+	 tW+xYlX1rQqzQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586D1CAC599;
+	Tue, 16 Sep 2025 00:33:37 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Tue, 16 Sep 2025 02:33:36 +0200
+Subject: [PATCH] drm/panel: samsung-sofef00: clean up panel description
+ after s6e3fc2x01 removal
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250916-sofef00-cleanup-v1-1-b29e1664e898@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIAF+wyGgC/x3MQQqAIBBA0avErBMmw6iuEi3UZmogLJQiCO+et
+ HyL/19IFIUSjNULkW5JcoSCpq7AbzaspGQpBo3a4NB0Kh1MjKj8TjZcp/LYG+u5ddoZKNUZieX
+ 5j9Oc8weA+4LuYQAAAA==
+X-Change-ID: 20250916-sofef00-cleanup-c085acf3b2b5
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Casey Connolly <casey.connolly@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2248; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=vo30ySEKbwVLd4wJGZXK3DYrwb+5uoOUHN9Z3tkw/RA=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoyLBgQisV2RZYzpW9l4L7c2tCagnZkiNAjX5b9
+ 325Qg8xWkCJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaMiwYAAKCRBgAj/E00kg
+ cqklEADFxFkk6JcLnrtONGgJ8vcty5k0M/XCKuwWdupm27YgtftI5wqj0uBwNoGJ4XSfqCvhINg
+ vTiubUVj/FRdBWl+5NCzRSHFwjLm5UJTbb1+ek5Ie9lfbyF3RWm4/xhKnxxGGwgWYRLA2OHfIP+
+ 5oexo0x0VQ7DhVy1EWmLcs53SUkAXXvZ/G74LxJyrMQSenvH/VFLi+4KmLA1dogJ3VBKwmdMv9a
+ XxLsYrZt/nkp3B9iO1us4d819dvlQ5hKThKHfyUZsPuLHkBWQINLRoGZ4N3tljS7i0ps5d/9L7G
+ 6MRwWfEnU3lEZzgwqamExt3gkhu7fAi7rdT9aK1ttNxBBSjU+/ePnFFROWBEEkprlbRhcKMqqJJ
+ gMXtvclSji21QIy/5zlBmK/5daTgDe800ZxaFMzDuyz31crpRv2WehBMhYOa+m3fRR0X47u2FVC
+ 1uZe4OkC9E7TGMjR+ZS5NGpRjCmnsB3Ak6ICHdW1eA30GydnphTBXNgIIwbr4LhDoL2yulIla5g
+ IgInBT1lxCGLL8fQ0qhsfiu4gpqOP+tkjsNJGqsPU2IXr40YY/J+HGoUpkfHEAvkpaE/5f2wrO9
+ fAbtThhZVE2ZDkgQuVa6qYJu/RgDMC2UrJ0CfCf0X+kjeZ6FbOCGLWQ2LsWDn5gN4Yy0R5+Txl+
+ 8VIp1uv2v5TcARQ==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-Richard Gobert wrote:
-> Currently, packets with fixed IDs will be merged only if their
-> don't-fragment bit is set. This restriction is unnecessary since packets
-> without the don't-fragment bit will be forwarded as-is even if they were
-> merged together.
+From: David Heidelberg <david@ixit.cz>
 
-Please expand why this is true.
+Remove leftover from s6e3fc2x01 support drop.
 
-Because either NETIF_F_TSO_MANGLEID is set or segmentation
-falls back onto software GSO which handles the two FIXEDID
-variants correctly now, I guess?
+Fixes: e1eb7293ab41 ("drm/panel: samsung-sofef00: Drop s6e3fc2x01 support")
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ drivers/gpu/drm/panel/Kconfig                 | 6 +++---
+ drivers/gpu/drm/panel/panel-samsung-sofef00.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-> If packets are merged together and then fragmented, they will first be
-> re-split into segments before being further fragmented, so the behavior
-> is identical whether or not the packets were first merged together.
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 407c5f6a268b2ec66e5d0eddae26b3368e4cb2cb..d9c472534214f8bdf74545bc6b439354559d5d12 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -868,16 +868,16 @@ config DRM_PANEL_SAMSUNG_S6E8AA5X01_AMS561RA01
+ 	  DSI protocol with 4 lanes.
+ 
+ config DRM_PANEL_SAMSUNG_SOFEF00
+-	tristate "Samsung sofef00/s6e3fc2x01 OnePlus 6/6T DSI cmd mode panels"
++	tristate "Samsung sofef00 OnePlus 6 DSI cmd mode panel"
+ 	depends on OF
+ 	depends on DRM_MIPI_DSI
+ 	depends on BACKLIGHT_CLASS_DEVICE
+ 	select VIDEOMODE_HELPERS
+ 	help
+ 	  Say Y or M here if you want to enable support for the Samsung AMOLED
+-	  command mode panels found in the OnePlus 6/6T smartphones.
++	  command mode panel found in the OnePlus 6 smartphone.
+ 
+-	  The panels are 2280x1080@60Hz and 2340x1080@60Hz respectively
++	  This panel resolution is 2280x1080@60Hz
+ 
+ config DRM_PANEL_SEIKO_43WVF1G
+ 	tristate "Seiko 43WVF1G panel"
+diff --git a/drivers/gpu/drm/panel/panel-samsung-sofef00.c b/drivers/gpu/drm/panel/panel-samsung-sofef00.c
+index 064258217d50ad6f02d27a97f8aff2e298260d4b..c181ff3c7d761263b289a46781a3041372dac656 100644
+--- a/drivers/gpu/drm/panel/panel-samsung-sofef00.c
++++ b/drivers/gpu/drm/panel/panel-samsung-sofef00.c
+@@ -260,5 +260,5 @@ static struct mipi_dsi_driver sofef00_panel_driver = {
+ module_mipi_dsi_driver(sofef00_panel_driver);
+ 
+ MODULE_AUTHOR("Casey Connolly <casey.connolly@linaro.org>");
+-MODULE_DESCRIPTION("DRM driver for Samsung AMOLED DSI panels found in OnePlus 6/6T phones");
++MODULE_DESCRIPTION("DRM driver for Samsung AMOLED DSI panel found in OnePlus 6 phone");
+ MODULE_LICENSE("GPL v2");
 
-I don't follow this scenario. Fragmentation of a GSO packet after GRO
-and before GSO?
+---
+base-commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+change-id: 20250916-sofef00-cleanup-c085acf3b2b5
 
-> Clean up the code by removing the unnecessary don't-fragment checks.
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
-> ---
->  include/net/gro.h                 | 5 ++---
->  net/ipv4/af_inet.c                | 3 ---
->  tools/testing/selftests/net/gro.c | 9 ++++-----
->  3 files changed, 6 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/net/gro.h b/include/net/gro.h
-> index 6aa563eec3d0..f14b7e88dbef 100644
-> --- a/include/net/gro.h
-> +++ b/include/net/gro.h
-> @@ -448,17 +448,16 @@ static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *ip
->  	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
->  	const u16 ipid_offset = (id >> 16) - (id2 >> 16);
->  	const u16 count = NAPI_GRO_CB(p)->count;
-> -	const u32 df = id & IP_DF;
->  
->  	/* All fields must match except length and checksum. */
-> -	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF)))
-> +	if ((iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | ((id ^ id2) & IP_DF))
->  		return true;
->  
->  	/* When we receive our second frame we can make a decision on if we
->  	 * continue this flow as an atomic flow with a fixed ID or if we use
->  	 * an incrementing ID.
->  	 */
-> -	if (count == 1 && df && !ipid_offset)
-> +	if (count == 1 && !ipid_offset)
->  		NAPI_GRO_CB(p)->ip_fixedid |= 1 << inner;
->  
->  	return ipid_offset ^ (count * !(NAPI_GRO_CB(p)->ip_fixedid & (1 << inner)));
-> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-> index fc7a6955fa0a..c0542d9187e2 100644
-> --- a/net/ipv4/af_inet.c
-> +++ b/net/ipv4/af_inet.c
-> @@ -1393,10 +1393,7 @@ struct sk_buff *inet_gso_segment(struct sk_buff *skb,
->  
->  	segs = ERR_PTR(-EPROTONOSUPPORT);
->  
-> -	/* fixed ID is invalid if DF bit is not set */
->  	fixedid = !!(skb_shinfo(skb)->gso_type & (SKB_GSO_TCP_FIXEDID << encap));
-> -	if (fixedid && !(ip_hdr(skb)->frag_off & htons(IP_DF)))
-> -		goto out;
->  
->  	if (!skb->encapsulation || encap)
->  		udpfrag = !!(skb_shinfo(skb)->gso_type & SKB_GSO_UDP);
-> diff --git a/tools/testing/selftests/net/gro.c b/tools/testing/selftests/net/gro.c
-> index d5824eadea10..3d4a82a2607c 100644
-> --- a/tools/testing/selftests/net/gro.c
-> +++ b/tools/testing/selftests/net/gro.c
-> @@ -670,7 +670,7 @@ static void send_flush_id_case(int fd, struct sockaddr_ll *daddr, int tcase)
->  		iph2->id = htons(9);
->  		break;
->  
-> -	case 3: /* DF=0, Fixed - should not coalesce */
-> +	case 3: /* DF=0, Fixed - should coalesce */
->  		iph1->frag_off &= ~htons(IP_DF);
->  		iph1->id = htons(8);
->  
-> @@ -1188,10 +1188,9 @@ static void gro_receiver(void)
->  			correct_payload[0] = PAYLOAD_LEN * 2;
->  			check_recv_pkts(rxfd, correct_payload, 1);
->  
-> -			printf("DF=0, Fixed - should not coalesce: ");
-> -			correct_payload[0] = PAYLOAD_LEN;
-> -			correct_payload[1] = PAYLOAD_LEN;
-> -			check_recv_pkts(rxfd, correct_payload, 2);
-> +			printf("DF=0, Fixed - should coalesce: ");
-> +			correct_payload[0] = PAYLOAD_LEN * 2;
-> +			check_recv_pkts(rxfd, correct_payload, 1);
->  
->  			printf("DF=1, 2 Incrementing and one fixed - should coalesce only first 2 packets: ");
->  			correct_payload[0] = PAYLOAD_LEN * 2;
-> -- 
-> 2.36.1
-> 
+Best regards,
+-- 
+David Heidelberg <david@ixit.cz>
 
 
 
