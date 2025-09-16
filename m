@@ -1,161 +1,134 @@
-Return-Path: <linux-kernel+bounces-819702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E71B7E0C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:40:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA265B7DE28
+	for <lists+linux-kernel@lfdr.de>; Wed, 17 Sep 2025 14:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511163B1D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:30:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1EE462F10
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72632D5A0;
-	Tue, 16 Sep 2025 22:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15278296BDB;
+	Tue, 16 Sep 2025 22:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/O/NeCg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MWft4ecl"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ABF329505;
-	Tue, 16 Sep 2025 22:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC551E7C2E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 22:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758061798; cv=none; b=LIPnLcrrD01puM6M0ZIrLj9elzAHz7IpNwPzIiEwwHX+Dw4qOdoNoItEnOtuq2+8FDqf6SMdnF+jxTlZ+KPTY3MM8ULy60nqvhdvij5+bzs4OtoGA0aFJAJr+u/gjTDpZe6rGk4YrsJ5De4XvJR9cWJk/A9XfWgjEzjgRjSrV8E=
+	t=1758061875; cv=none; b=ArHChZ7iYFKphv/sFjJrtmyWJ8yCl8Teb2GOOMGsXQuL0YozNOYZ9y5qOQoibW8tYWRe6vl1YK5bza0SKY/rL0XAUREm55lb+N4xNGOdgJMFd8JeKili2GWUXZA48GbX1jRjM3N+GTplRKbwNQsfSO2xSzjwGUS8TPgRo0v3d7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758061798; c=relaxed/simple;
-	bh=sEec13Mbx+SxIexwpu14BHrpJdUoMGzVVxqGMEicV34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UzjE9M3v2Y8IcgmGCXj+76ywgPJ1BJffio+IMQYVop29ZvRtByD8RyGq71uNQDB5iBvY/Nwa9ho3c1TjdBjQD9Rqd9NuJFWvTYKeZFEZ2xNl4AzOJOowQFCseTI0Goy8/rvcPJKC/UakZnaEA4+WyNJg/fOkOt5iqG1Pqx8un4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/O/NeCg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340DFC4CEEB;
-	Tue, 16 Sep 2025 22:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758061798;
-	bh=sEec13Mbx+SxIexwpu14BHrpJdUoMGzVVxqGMEicV34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/O/NeCgg+iFJNCbBs0fvuYeCDPoJoHoTf0XDNE97Kp1E+ajnFQgiizN9oR801rOT
-	 oJ/C/wluoMU4qmS4em+FQzwFl+C/8wCBT6XRKE/ZtrQY4gZ4F43b6v05yWy3atehRR
-	 2xvhhYY2sG2zrheBqry1KcBaWK8cDa7FpEUfjVWZpOaP3QntC8D13uaToWIrzcNhk1
-	 kJExXfw8W7exK75h6HBdYLAaa6fNJhleP78Z4zwxXY7eQdppVJ0DKK2Uw3wxO634tA
-	 Ocw4rylFAsfa6tvcug3pqZq/Tp2NYPwjvNRFjO7NigezZNiAFvS5WrjMUxXr+PlBSm
-	 sRkcqrCjWbijA==
-Date: Tue, 16 Sep 2025 12:29:57 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <aMnk5Wcdr2q6BWqR@slm.duckdns.org>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
- <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
- <aMRexZ_SIUVgkIpZ@slm.duckdns.org>
- <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1758061875; c=relaxed/simple;
+	bh=70euft8nNaEavx97tmBiq2s9K/PdZiNtorux+6Y5OhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jz+AvL8X2tUw6niA4Iz3+NGkTN3NTBengQt3dgCQbdU7vs3/YxB+QvubxQfKqSCk7oHzmhKN8DAHB/mOY7Z1rkorRwO5gu66v5x0PKnDyIcegnNj1eDX5qybMUnhmMyDrZXKX/e/b+dNX4enLK361lO74+XXMp4DdY70pPzOGsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MWft4ecl; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-8127215a4c6so37729985a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758061872; x=1758666672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wVu791aZ8rwgtxvUL5SlLK827bghZulSR52djuOwSHo=;
+        b=MWft4eclkGSXZq2fpuh24kiUhAhuaIH7SUSVkE5+kDtjhR5W8gehelneQR41YdrnTx
+         0nOLQ9TBDltackM9FZL9Oy5CpHXyaYEeGFMrpRI15U0TYHqTMjOwzyeS/P9nEFvlDHRc
+         j7b/gm/XUaNfIpWjWIZSErWenGqyN5fmi57YcGcc8tFGYSYvWdKuya03S+ZFLMJVxGFH
+         gSXQZ/fDVW7RC2MqVGxf+7CmmwkYMlI2ClC+u6vlZfSphOKo1HuWcvkLh6ElFLHIfZox
+         D3231YzgKbugAuMoq9P6TyotLKD+A7EvqAcTJOftZRRTaQBZ/Scva2EOE3J6qGojKqor
+         Z1GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758061872; x=1758666672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wVu791aZ8rwgtxvUL5SlLK827bghZulSR52djuOwSHo=;
+        b=Jfh4pubB1HyJJOQUQiWBReL+7L5nTKyJI3HYOjRQwiGOV1nHG3BUfvrycAW/fcFmJM
+         lnA8qDA+JRLCyBKgbrfk28QiqglzZJqF+T/ZYaUnAKpjhjwd4Vbs4qYIq6uNxgoiLJ0/
+         yrM40JelB9nWwxXpkSWnXn0T1VLpghPnDmmKfzxKzzSnw1LyRzBshkDIRMAe+NDQZ2rt
+         QOgEO5ak+6rQwTPaDes7s9ZFm1AxrS8u+ZrNANDx4QUu+EG8vjwh/RON8kBpsQAJHAMV
+         s+gOT5fzE33hp8u+b/4CjTAckz5FU7nIwhgN22FIlQcLDRucSE8YXKjPcBZ2JzC4qp3L
+         ykrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5vttNIaHp2Qdo8oe3894Y7rnHe1oad9J0nxridr82kfRCQI3ff8e+Z8m3SBuvs+jcjAZ2F6SpkHFnEOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTZsWZ/A8P1CBJ3C1leXHj5r9lrPm+RqLRQR8zeQqQPgHw/+f+
+	J14P5o/FmSH+dDtW99pUAhCM67UiRLkL8FO9cb51ILNqwqOSdZKihNm4tMBq5gYm6EiW664FB+I
+	vf25oyqd+TqV6M4Eh3Ix5qkVaNc2FLEw=
+X-Gm-Gg: ASbGncszAnd5mwi10/NjhRRzGluAvIUpDrQDWk4srOk6AQqYJv8Q9NoZ1FZqkH2831E
+	cM/4S9rO+Z8yEvrEEO5N1OjsdCkuGqvI4Zkxvrbrb9a5ussjTKdwOwCNHBWXhBq3RWxzM4nqOFX
+	ZjT+3AJLpjMFveGi7y0igzBqcu43d3RlYBmRb5m8RlcdUpToS7kyXfIT0nAIK7MU5FpO3INi0rs
+	GU0jlnPq3Yhp4mKQannNZ0ZtDInBgBJe0khiP6IJg==
+X-Google-Smtp-Source: AGHT+IFIRssh1dOgOKjza1bMxgt39yDVYAyE4daOrN2DtM1F7DovO/IaysRsYWeYGfTW4CsCPbmXrBVEP2SojZmKhqQ=
+X-Received: by 2002:a05:620a:4624:b0:81a:bbce:6d39 with SMTP id
+ af79cd13be357-82b9ed54ab3mr492130085a.40.1758061871739; Tue, 16 Sep 2025
+ 15:31:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915083815.GB3289052@noisy.programming.kicks-ass.net>
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-16-ryncsn@gmail.com>
+In-Reply-To: <20250916160100.31545-16-ryncsn@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 17 Sep 2025 06:30:59 +0800
+X-Gm-Features: AS18NWB7adgYb7oVzvL1zIv7CnUkXbq-89QDCv2evtv_By4LbIsvCSvGNRnSMr0
+Message-ID: <CAGsJ_4yrDFAe-3sMj1K2JeWrqNXCBvYvULY06b6B3ogSYjqasg@mail.gmail.com>
+Subject: Re: [PATCH v4 15/15] mm, swap: use a single page for swap table when
+ the size fits
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Sep 17, 2025 at 12:02=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
+te:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> We have a cluster size of 512 slots. Each slot consumes 8 bytes in swap
+> table so the swap table size of each cluster is exactly one page (4K).
+>
+> If that condition is true, allocate one page direct and disable the slab
+> cache to reduce the memory usage of swap table and avoid fragmentation.
+>
+> Co-developed-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Acked-by: Chris Li <chrisl@kernel.org>
 
-On Mon, Sep 15, 2025 at 10:38:15AM +0200, Peter Zijlstra wrote:
-> On Fri, Sep 12, 2025 at 07:56:21AM -1000, Tejun Heo wrote:
-> > It *seems* that way to me. There are two other scenarios tho.
-> > 
-> > - A task can move from a non-local DSQ to another non-local DSQ at any time
-> >   while queued. As this doesn't cause rq migration, we can probably just
-> >   overwrite p->srq_lock to the new one. Need to think about it a bit more.
-> 
-> It can use task_on_rq_migrating(), exactly like 'normal' rq-to-rq
-> migration:
-> 
-> 	LOCK src_dsq->lock
-> 	p->on_rq = TASK_ON_RQ_MIGRATING;
-> 	task_unlink_from_dsq();
-> 	UNLOCK src_dsq->lock
-> 
-> 	LOCK dst_dsq->lock
-> 	dispatch_enqueue()
-> 	p->on_rq = TASK_ON_RQ_QUEUED;
-> 	UNLOCK dst_dsq->lock
-> 
-> Same reasoning as for the pick_task_scx() migration, if it observes
-> !p->srq_lock, then it must observe MIGRATING and we'll spin-wait until
-> QUEUED. At which point we'll see the new srq_lock.
+looks good to me, with just a minor nit noted below.
 
-I see.
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-> > - A task can be queued on a BPF data structure and thus may not be on any
-> >   DSQ. I think this can be handled by adding a raw_spinlock to task_struct
-> >   and treating the task as if it's on its own DSQ by pointing to that one,
-> >   and grabbing that lock when transferring that task from BPF side.
-> 
-> Hmm, and BPF data structures cannot have a lock associated with them?
-> I'm thinking they must, something is serializing all that.
-> 
-> > So, it *seems* solvable but I'm afraid it's becoming too subtle. How about
-> > doing something simpler and just add a per-task lock which nests inside rq
-> > lock which is always grabbed by [__]task_rq_lock() and optionally grabbed by
-> > sched classes that want to migrate tasks without grabbing the source rq
-> > lock? That way, we don't need to the lock pointer dancing while achieving
-> > about the same result. From sched_ext's POV, grabbing that per-task lock is
-> > likely going to be cheaper than doing the rq lock switching, so it's way
-> > simpler and nothing gets worse.
-> 
-> I *really* don't like that. Fundamentally a runqueue is 'rich' data
-> structure. It has a container (list, tree, whatever) but also a pile of
-> statistics (time, vtime, counts, load-sums, averages). Adding/removing a
-> task from a runqueue needs all that serialized. A per-task lock simply
-> cannot do this.
-> 
-> If you've hidden this lock inside BPF such that C cannot access it, then
-> your abstraction needs fixing. Surely it is possible to have a C DSQ to
-> mirror whatever the BPF thing does. Add a few helpers for BPF to
-> create/destroy DSQs (IDs) and a callback to map a task to a DSQ. Then
-> the C part can use the DSQ lock, and hold it while calling into whatever
-> BPF.
+> ---
+> +static void swap_table_free(struct swap_table *table)
+> +{
+> +       if (!SWP_TABLE_USE_PAGE) {
+> +               kmem_cache_free(swap_table_cachep, table);
+> +               return;
+> +       }
+> +
+> +       call_rcu(&(folio_page(virt_to_folio(table), 0)->rcu_head),
+> +                swap_table_free_folio_rcu_cb);
+> +}
 
-Most current schedulers (except for scx_qmap which is there just to demo how
-to use BPF side queueing) use use DSQs to handle tasks the way you're
-describing. However, BPF arena is becoming more accessible and gaining wider
-usage, paired with purely BPF side synchronization constructs (spinlock or
-some lockless data structure).
+Can=E2=80=99t it simply be:
+virt_to_page(table)->rcu_head ?
 
-Long term, I think maintaining flexibility is of higher importance for
-sched_ext than e.g. small performance improvements or even design or
-implementation aesthetics. The primary purpose is enabling trying out new,
-sometimes wild, things after all. As such, I don't think it'd be a good idea
-to put strict restrictions on how the BPF side operates unless it affects
-the ability to recover the system from a malfunctioning BPF scheduler, of
-course.
-
-> Additionally, it can sanity check the BPF thing, tasks cannot go
-> 'missing' without C knowing wtf they went -- which is that bypass
-> problem, no?
-
-They are orthogonal. Even if all tasks are on DSQs, the scheduler may still
-fail to dispatch some DSQs for too long, mess up the ordering inside, cause
-excessive bouncing across them, and what not. So, the kernel side still
-needs to be able to detect and contain failures. The only difference between
-a task being on a DSQ or BPF side is that there needs to be extra per-task
-state tracking to ensure that tasks only transit states in orderly fashion
-(ie. don't dispatch the same task twice).
-
-Thanks.
-
--- 
-tejun
+Thanks
+Barry
 
