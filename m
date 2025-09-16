@@ -1,224 +1,267 @@
-Return-Path: <linux-kernel+bounces-818099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81649B58CA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6667B58CAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42BF75243F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:09:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9407C3BF318
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B072BFC8F;
-	Tue, 16 Sep 2025 04:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2MYafGSJ"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012012.outbound.protection.outlook.com [40.93.195.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D2E2BDC35;
+	Tue, 16 Sep 2025 04:11:20 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0288248B
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757995743; cv=fail; b=rwCFueLaHFdp33OV3X5a3/FcmGbDB7VR/1QM96xxvE6wmC4h9LoPv5cW8bZvgsmghMTvHbnhSZM4DuJHL2ERMpDce3VIhoNf0ZSPS35g2BlLBjXCBabVwZh4CiIxnM4FIKoeAuJnBPgu3U201UkJNS+CSLrZ88+25WjrWmP/2R0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757995743; c=relaxed/simple;
-	bh=8DQUyOkl70jSzoojLI/1dpge2PCEeqGb0EZ34mMoNQQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qhloJy7fi5+szy+72wwwqoDVQ9Qvey2C/E5PgePnnZINJnemMHk3SzCuMUsN6BgG0+p72pFf7wx6I2G99LKi2TIZpBrxACraxJKdhmk9AX0tNXCthzl57L96763iDLzgktSQgjcWXhZAgUzwTwHpf/NLAH0euLt64cr9mckKZMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2MYafGSJ; arc=fail smtp.client-ip=40.93.195.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JfGDoIPG9h0IZBlCtGTZuHsnLCkFf2qIaNfkR/ZtWZvaUVbtDLO8a7NjynxVQkMbGT/ZUFgzoE+GY25pySqAbxnXgRARxaDfY337D1Aav8d3Y1EuA5tZ++uIWjLsQzEbI9wYAAxMf0u3KAmP7kyWZ3ZB8sn5aswDOIxs73sC+ycLIb/0lrstHwQIwdoKSp9rwak67XUTTx58d7ZahsQ3yEvyKtzwkThnAG7L7+RUXnPmWA48JyYkCgLfSDdL1boXbbCtN5xHuujO4W6NIPAUCqlcNS7KhU7d+bJN2IErzZUlz6ccDlArMPOog+78fiwCpmeuv2oSKSp/NTiRAY5X9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fvD0BrsqBAGLT3CHrXkK8JEgSuRl7WGPeSC8BCwVZWY=;
- b=XLhsRvFG8IoLYZei6tqccdEmUXvLR0sIZPuzyHOcoqgBxoZLAcjCmmSy8A4STyJ/YvooaPw/kL8MfAV3+hZi73P50sh8/QjX0q88E6BFsP8ALE9ocsNiOeWZPRTnYM3ARAnyxNKowLtxZ0hf8gNVO8a2q4Ntgu6nCNqjHjAZn1I3HMd/y2kw9cyCHMyQl9oY6cgCr0fEZYHd5dfOApr7f0LJmPnK6EDiqCdhxIq8O0mU6vUdSS3KRDJqVp91PGQOl2BdZf6PVDqPVSnaSxmadbsT8wEXUlCYXrpskGjHbEH1rw6W7za2tJ2UzbP8KNaTN7V3RIYZ+ze1nQSdxxrBcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fvD0BrsqBAGLT3CHrXkK8JEgSuRl7WGPeSC8BCwVZWY=;
- b=2MYafGSJceDlaGRPnH3LRxc4urMyRnNnCsZnGYhFIbQkgSPr7N22megQnU88cW7Hs4iY6LUD9QzLV0iWJN/X8Lmx0OdCOp6mPg2mEAzcQY01HS2pkrzqlQw4kra7rCI8x7ATCBsLf3ZlpjyUwhamNzZzMEIOSxNKElaKwni3L1I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com (2603:10b6:8:17e::15)
- by CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Tue, 16 Sep
- 2025 04:08:58 +0000
-Received: from DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1]) by DM4PR12MB8476.namprd12.prod.outlook.com
- ([fe80::2ed6:28e6:241e:7fc1%7]) with mapi id 15.20.9115.018; Tue, 16 Sep 2025
- 04:08:58 +0000
-Message-ID: <ce6cab60-30e0-429c-bce2-7aa5e5ffc09a@amd.com>
-Date: Mon, 15 Sep 2025 22:08:55 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/amd/display: Use kmalloc_array() instead of kmalloc()
-To: James Flowers <bold.zone2373@fastmail.com>, harry.wentland@amd.com,
- sunpeng.li@amd.com, siqueira@igalia.com, alexander.deucher@amd.com,
- christian.koenig@amd.com, airlied@gmail.com, simona@ffwll.ch,
- roman.li@amd.com, alvin.lee2@amd.com, skhan@linuxfoundation.org
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
-References: <20250913052109.2638-1-bold.zone2373@fastmail.com>
-Content-Language: en-US
-From: Alex Hung <alex.hung@amd.com>
-In-Reply-To: <20250913052109.2638-1-bold.zone2373@fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P223CA0018.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:303:80::23) To DM4PR12MB8476.namprd12.prod.outlook.com
- (2603:10b6:8:17e::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96472E573
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757995879; cv=none; b=DfIhdVQEJdu5KZ3mtcaT9yVDN1PqYUT+HpawaYxHp4AEI9aHY1KInBzkcwUNY1hUKDzrufq9fN0jIEpoPaUDsbzGcLCikbf9WiYvrFRDInWkuY2l1Uv93ZVBRdElvmPKlFXzqyVxOssT5RW5Ze3350OeWxvWhUnuD5E41GIG6sY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757995879; c=relaxed/simple;
+	bh=Yyh1TKjZ4aF77cxg9p+ydym/WYGQPQztqiksf9c8cQw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SEOBYo4fGNsks7dc9bc2o6kHClSPGRvn/Znhw7+EgLE2Svoq9G2yAuRlLNmrEDwsEuFgi46stnh2zeB3FF/zb42LknBdIjEbx6P86oF80osumsctwpA+QWwEb192ED8OXRLcFKBvLxgzdAhWgNNn6a6BHQq2YksJogaweihnA/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88778bf677cso1069447339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 21:11:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757995875; x=1758600675;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8MljzUXM1vATWsIbGEvjlHnEf5L6dw5G6Lb00gvwMuM=;
+        b=Sfi2+MmbFCibF2DUSB8M3EBadcpfas1+7Wty97QPOjdqLJuOyxRMElp4LjDqGdxhKG
+         qtoVXgvTAa3AS00x/c2gOJzXS/XUZQMObJC1pX9aG8xhYpauh/a35hrwGpWSVT+1wWMl
+         73Vjipr5u/OfhFBawruua79w4yPCvXHbWLJAkqcEmfEERdJ5Nxu2oyLLbUH1cbCxp/Q1
+         99vcgHxLB2RP1dNUuRhfCYyE2w8kCem01aYncPYkE/Tl2ZnyTxbs7kc05wzsUFBgpz/d
+         Ebup3gNjSV+HSc17CuQXAUeXqNChxzk1qoQZdjCrGxo0jXGq8oGt6h0EaDXIe7y509mu
+         cgtA==
+X-Gm-Message-State: AOJu0YwihAvZx9tHMWLIaNfx8vmQ70y4NWlWUKVTm6bqSyuUwMq492+d
+	TOYWRjuenA9fevVJyH8zt33q7zCRJ5V9yrmKqIQKSsZ+8afZ+jaPxoOkxaoAEHnGFg7zqywrXLE
+	Ogd4Yh85gAo0JZFi2+S5K59UlT8gt7I/mMWsBbdMZS+9ErAjk5rFO8338QiaK0g==
+X-Google-Smtp-Source: AGHT+IEwu9YioQX23aZnJfw15DWVEAxiO00YZ/g3ecjn62Xcq+LlaujK2JmXBpWbehqm4S1c6HKyLUxcwYJUYf1sORovhzITld8m
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB8476:EE_|CY5PR12MB6405:EE_
-X-MS-Office365-Filtering-Correlation-Id: a09da266-123a-419d-e820-08ddf4d6c29e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q2FPL05kNUNZbHlNTlBqTHZpVHl5ZHhMbjd5NFQ3L1YyKzdBZ2hNVmdMaXBm?=
- =?utf-8?B?RGlrT1hnbDQ2bFVBNG9hd0k0cmxiTmluTlI2RU55WVZ6L0hBLzVzRVBXTkpy?=
- =?utf-8?B?dC82SnY0NHcyOWt2aWVTd3dSRHhHbVRFdjg0MGlmb0hVY0Jic2pUeHIvR2Jj?=
- =?utf-8?B?ekVkT1VKS3FiMitCQTEyc3hPTXVqa3A4aDg0UVEvREs4ZWF4Y09qalh1bmVv?=
- =?utf-8?B?STAvazVhR1pCSm9JWXNjclNLdGRvM3ljdTNEa2l3ZVhpelJFRm5mSzVCcnFR?=
- =?utf-8?B?OVdPUm1kdnpBQVlwNzEvRzY0QzdJbXR5QUg0T0VnVUZSSHE4SzJWd1hJWnhI?=
- =?utf-8?B?TjR1MDdOS08rTWNBY2EyRzRnNnFadWRIWGVYR2JycEFReWFMR2M0UitUZjZT?=
- =?utf-8?B?UzF6WkFJcUpqcWJmRWk4dnM0eUd2bDFtQzJXa1VWUHhSK0tzVzVEaWpSTHBP?=
- =?utf-8?B?VUI2cDAzU2w1Yzd3M2RJaldZRFRoMGl0Z1J3b0lGS0F3ajBEcVNDdXhsS0FT?=
- =?utf-8?B?UFdOUEowNkJ0Zng1Y2JaaDJaN0c0UzJtQ0hMUkJyU2JaNzdZeVNjeTZlZEZO?=
- =?utf-8?B?bHJJUENvMFdRT0liSnR2blFFMEs2K0tJNkRPcnI4R1RTZGNxUGFwNlpBeElC?=
- =?utf-8?B?d1Y5UWxyOVo1RjZNWEU4YWtvYUp5LzlCUmlnTDlpTXkwcFVwQkRtbzczZHgy?=
- =?utf-8?B?M1JJZzNYRWJjQ2lBQ3pKSGVIdkp0c0piUVJvVUJET0ZqQ1JOUXEvV0FLQXFk?=
- =?utf-8?B?SXJMQ2pPTkk2U0VwOTVPV1RCQUdZRlFGR0pyNVowbW5uemM0b1IxVWpIdUh3?=
- =?utf-8?B?NVRWTjA3RjNkRTY5MFl4WEh6NHQ4Q09NVWY2UmZVWE56TEF2S2FBNXhkUjRN?=
- =?utf-8?B?cnRWaWRYN015OE9xdUZSVWg5UVA5WEYzeUtEVVY5WEsvUUdFMjZJMUNwSGds?=
- =?utf-8?B?QjRNTzMzd1cxbVp4TXZCMUU0VndsWmdWYnV1alFnQWxqanZ2VGkrWE1LQWpG?=
- =?utf-8?B?OXgxeldNRFVVQm84bnNWSmxhRkgxbnhjRjBFbTNSTEpCV0h6ZnZlYUpyOWZT?=
- =?utf-8?B?dXR1WGJmT3BhM1pHY05jYVhtdWZSTlRQNVBzbFgxcHpDTU02aFVhSVpncVpX?=
- =?utf-8?B?NzhaYzRnWFk5ZXBlVVpFdEJQQ3I5UFBuL05RQXRVQW1hR21NVHRCVzhIQXhY?=
- =?utf-8?B?elptMTVZLzJwRStNZGNMMzhuV3dSV2tISzVlVTc1UTg1RE1ub054YkJ5ZzFr?=
- =?utf-8?B?c2ozUGJ3a0tiRE12aEJVbDVPNXhIQUxrb1V6TmhQajdHeHR0NW1yZ25ZeWZW?=
- =?utf-8?B?Wmx2SkhqMVFPY3JrcVZhbHZDMkF4K0JjOWJQWloxTTZJUHkxdlFZMzRDR1hL?=
- =?utf-8?B?N3hSNnk4eWpyRWdBNEpZSkcwNlN4d2RwZW4vakMxUWhoSzVkdkJmdFB3MnI5?=
- =?utf-8?B?NmJldkFZcWNqcHdQaWJMWkczd1dFeGVId2x1ZUZ4OENJQ2UzWW1kVjk5cmRS?=
- =?utf-8?B?T1E4T3pEeEhNbnhqdktnTDFXVjVwUnJ6YmNGSWlDM1JDV2VWWGFTMXd1QWwr?=
- =?utf-8?B?VVB1OXRrVVZxMmFaQ3pDOUJwaEVqL2oveDdRN1kyYWlncmRwSU9BZEZNMDAz?=
- =?utf-8?B?RnFsV1hYcXUwRC95YUpFV0ZSSjVjRzhnVGd1N25jSTEwRlY2WjhMOStLOXpH?=
- =?utf-8?B?d3FTdlhxZC91S2Q1MmZxQmtQWmJSZjlHLzd3L0hmN0xwVEd1VjhMRzl5d3Ni?=
- =?utf-8?B?T0krV0lBZ3kxYlhrcWlxUnlpRlVqem5lS0VBRWQwTE15K0ZicTdRQjErdTBI?=
- =?utf-8?B?OWk5ZlZEUC9wWW5PUVlkRmNuNVJaa3lFdy8ycC80MnpWN2ZhUWJyZWkxcHlj?=
- =?utf-8?B?TE1CUTBXNVoxSHh6L0pHaE5HNk15VHNzRFRVUHBISTJXTlBBdWZzL0pOZUtV?=
- =?utf-8?B?ZFZra3ZwUUVlVnR5YXZrRTl0Q0V1S1N1dUVOTHFxYTVJZjNaZ2VGTVg4VkZQ?=
- =?utf-8?B?NTJQV20rSDVBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB8476.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YUw0a09kbHpNK05XZkRLeFdHTzZYWE92a001ZEtxelR3YVd5YVcxRnVhWFhZ?=
- =?utf-8?B?TFl0ekNvbUVYdE56dGRJd3BUdnN6eVJFcHN1aTN0NEN2VHhxRllUa2xGdk5m?=
- =?utf-8?B?T0VDOVduRWNhTGJvS1paRm8ydkxhNGY2aC9lcWNacnliNFZzdmVoYmN4dlI5?=
- =?utf-8?B?M09EUU5aT1Vyc2hSQ2hIRXVmOWRTN0VScVJMNkdyMHlpa0xjTStma1JSM2tm?=
- =?utf-8?B?VWhrZFE2V1RCWTI4bjZxRTV2Y2hxQ0Joa0ZxcXRHaHV4YXI2MW13Mm1nSmNv?=
- =?utf-8?B?WjhFa2lhbjlQRHJpMG4yWG1OOUVTdXJBenFiWHZRSEN4eUU5WDBLam0xTjR6?=
- =?utf-8?B?ZnVQVUNXUGIvbHU3Q0o4SHN0WTVsN1JYSUZoVnNqZWx5ZDdZOVVtb2FoeUtU?=
- =?utf-8?B?cXEzc2lsZkZZQXV6bTRaYWN2Q0gxK1JNRVdCUDVPZDZKMkZOTzBMQmxoNG1y?=
- =?utf-8?B?TzQ2Zldjb1ViSk82NmFOU2dNUEMxUEYrMWpyb1BPY2NpekcwcVovQm9XT2pE?=
- =?utf-8?B?V3FxOEp2dHgzeUJCa0lKeW15ZlVTZ0VwRUpBVWVia3hNVlBjSURhbFBkVXQr?=
- =?utf-8?B?aW4xMWVrNW00dlFWc1JLK3JkWDlkZ2ptWkRXZGZXd2xxbHgxeDRKK25NMEE5?=
- =?utf-8?B?d1grcmcvY0tBTXdYcExrUEZ3UHRwNVp4ME96QjZ3Wm1vZ3o3Nm8yK2NiVHpX?=
- =?utf-8?B?UTdMaTN1UUdLWUVaM1BWVlVIT2ZLdm54M016UWtpZjU3MFp4aDBobnFPUlFT?=
- =?utf-8?B?YlYwTEtheVpDQkYyWVV0OUNtVUxmT0Y0cVlyWDUxUXI5bVVJaVg5bi9GelVQ?=
- =?utf-8?B?L1ovd1hlK01iOWdQa250aG9nbWpWKzByQTNPMzAvS3RnR3JzWEpnL3lrUVRE?=
- =?utf-8?B?V0xRT1hHK2hIY3JIQU1ENkpqS0RySXRCak9mbEhldmdtY003VXYwRE5hTklh?=
- =?utf-8?B?bzBDVmc0amg0OUFubFY4VDczdnNVQ2U3K3lCYWtKWmlNRWZvT2RyOXZ4SDgx?=
- =?utf-8?B?Y0J5Zk9rM1JFcStSdmZzeERkd29jSmxzaktvTXdqc1M1N1JHQkphTlpKeEdm?=
- =?utf-8?B?VWsvODVGMTE3bHhxYVZ4aU8rQm5JbXAvTVNuc09iUlA2bkJXUVFzUkFEdHpF?=
- =?utf-8?B?YjI0QkdOcW5QLzZsb3JoSllGZU5uRzdCN2g0L0oxOVZsVHcydkJzOHdKQVpB?=
- =?utf-8?B?UFlOUXptcDRnMFVMWVNxWVN6UEpONUZVZi91Mk9MTWd5R3p0QzNLMWlaSHkz?=
- =?utf-8?B?N2xCbGFmazBFWXBxa1JqTkpKS1hPTHhzZjJMeXlIN3gxUExDWTZNQVZRUmho?=
- =?utf-8?B?aEpVa1RiV0JLOVVMZXRVc2ZsRFcrWDg0VG5CMHFIUVV5S2xKM0x6L3Y4QVJP?=
- =?utf-8?B?VDBVN2hqVitVUm5hNzhtb3FtUjNiaU4zYW9GcDUydnM5VzFYL3hJVU5HMThF?=
- =?utf-8?B?aVBlYldXL2RqdEFGSEViK0tjOGNtbXBmLzIzYXdiaXNMZHF2bjdmRzVBaVl2?=
- =?utf-8?B?Mnk0RU50d25HWVJ6V1h0QzM0TnVPeEp5YThwUHBmVjlYRTBCS205WjBZTmkz?=
- =?utf-8?B?QkhVbmJQbDZWSllKRDEzRXlVVHp0ME5QVDJpeGRhVk5OZkhYMjIvNHpQeHh3?=
- =?utf-8?B?VmtaYXpwS09zOHhLSXNsUXk0YUJuS3Nzai9tbG0rZmlzaTNBYXRZaGNvMU9L?=
- =?utf-8?B?aXNVU0djc09xNHVuSGNmSG1VK0xGOFk1NXIrcUEwd3dNc2YzS3RldUIvTEd5?=
- =?utf-8?B?S1NpeXhLM3N0UlBEd3ZWMGZ0N09MSk50T2Zyc01vaEhFVGRqS2taQWhkQmZh?=
- =?utf-8?B?WjBlcEpIcVZQMHJ6T2RHMVBXTVJuRWUzbys4RFR2Ym96V2NLdUdoNlZsOFdF?=
- =?utf-8?B?dlNsY3p0Vk84YUtobjgvU3piS1JDYkRrY013dlgrQXdzSUxCbDBtWEZVK2hJ?=
- =?utf-8?B?RnpqV0ZNa1NyVEVFY3VadmM0V0FDODJyZEtNcVRZNXFWQkl4azB4aERmZDRZ?=
- =?utf-8?B?eTBzcGlTOUl3RXljRktYQk93L0EycmVEU01rUzFlaWMzNThZRFFWdlZrNnFN?=
- =?utf-8?B?TEphNEZvTWpPSHJ4OFppNm4wRFp2dWJNM0lsMktMQnh3UzVPNmtLM0k4ejhV?=
- =?utf-8?Q?aF16wNbG04oFAW1+Ps3ulOIoa?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a09da266-123a-419d-e820-08ddf4d6c29e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB8476.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 04:08:58.4244
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EKqCuZlIYI7hnbgqdGLANOezvvZP4LIEpV496m0GskfrDPAYtu2X+WgwDxxlLRZy4R+028wkirmmYDmSlfS2yA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6405
+X-Received: by 2002:a05:6e02:16cc:b0:424:57d:1a50 with SMTP id
+ e9e14a558f8ab-424057d1bfamr61373445ab.11.1757995875637; Mon, 15 Sep 2025
+ 21:11:15 -0700 (PDT)
+Date: Mon, 15 Sep 2025 21:11:15 -0700
+In-Reply-To: <68c85874.050a0220.50883.0016.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c8e363.050a0220.3c6139.0d28.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [input?] KASAN: stack-out-of-bounds Read in cp2112_xfer
+From: syzbot <syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Alex Hung <alex.hung@amd.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On 9/12/25 23:19, James Flowers wrote:
-> Documentation/process/deprecated.rst recommends against the use of kmalloc
-> with dynamic size calculations due to the risk of overflow and smaller
-> allocation being made than the caller was expecting. This could lead to
-> buffer overflow in code similar to the memcpy in
-> amdgpu_dm_plane_add_modifier().
-> 
-> Signed-off-by: James Flowers <bold.zone2373@fastmail.com>
+***
+
+Subject: Re: [syzbot] [input?] KASAN: stack-out-of-bounds Read in cp2112_xf=
+er
+Author: deepak.takumi.120@gmail.com
+
+#syz test
+
+On Mon, Sep 15, 2025 at 11:48=E2=80=AFPM syzbot
+<syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    5cd64d4f9268 Merge tag 'ceph-for-6.17-rc6' of https://git=
+h..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16c0db1258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4d8792ecb6308=
+d0f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D7617e19c8a59edf=
+bd879
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11240762580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1552db6258000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/3840aa3ff580/dis=
+k-5cd64d4f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/aa965f106402/vmlinu=
+x-5cd64d4f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/88839eb3c76c/b=
+zImage-5cd64d4f.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+7617e19c8a59edfbd879@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: stack-out-of-bounds in cp2112_write_req drivers/hid/hid-cp211=
+2.c:477 [inline]
+> BUG: KASAN: stack-out-of-bounds in cp2112_xfer+0x713/0xf10 drivers/hid/hi=
+d-cp2112.c:692
+> Read of size 34 at addr ffffc90003c0fd21 by task syz.0.17/6028
+>
+> CPU: 1 UID: 0 PID: 6028 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 08/18/2025
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0xca/0x240 mm/kasan/report.c:482
+>  kasan_report+0x118/0x150 mm/kasan/report.c:595
+>  check_region_inline mm/kasan/generic.c:-1 [inline]
+>  kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
+>  __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+>  cp2112_write_req drivers/hid/hid-cp2112.c:477 [inline]
+>  cp2112_xfer+0x713/0xf10 drivers/hid/hid-cp2112.c:692
+>  __i2c_smbus_xfer+0x5b6/0x1e50 drivers/i2c/i2c-core-smbus.c:591
+>  i2c_smbus_xfer+0x275/0x3c0 drivers/i2c/i2c-core-smbus.c:546
+>  i2cdev_ioctl_smbus+0x43d/0x6d0 drivers/i2c/i2c-dev.c:389
+>  i2cdev_ioctl+0x5d3/0x7f0 drivers/i2c/i2c-dev.c:478
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:598 [inline]
+>  __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f44e378eba9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffcb2858658 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f44e39d5fa0 RCX: 00007f44e378eba9
+> RDX: 0000200000000040 RSI: 0000000000000720 RDI: 0000000000000004
+> RBP: 00007f44e3811e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f44e39d5fa0 R14: 00007f44e39d5fa0 R15: 0000000000000003
+>  </TASK>
+>
+> The buggy address belongs to stack of task syz.0.17/6028
+>  and is located at offset 33 in frame:
+>  i2cdev_ioctl_smbus+0x0/0x6d0 drivers/i2c/i2c-dev.c:317
+>
+> This frame has 1 object:
+>  [32, 66) 'temp'
+>
+> The buggy address belongs to a vmalloc virtual mapping
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5724=
+d
+> memcg:ffff888026b61482
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000001ffffffff ffff888026b61482
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(G=
+FP_KERNEL|__GFP_HIGHMEM|__GFP_ZERO|__GFP_NOWARN), pid 5953, tgid 5953 (syz.=
+0.10), ts 82929749894, free_ts 82841187973
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+>  prep_new_page mm/page_alloc.c:1859 [inline]
+>  get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+>  __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+>  alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+>  alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
+>  alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2507
+>  vm_area_alloc_pages mm/vmalloc.c:3642 [inline]
+>  __vmalloc_area_node mm/vmalloc.c:3720 [inline]
+>  __vmalloc_node_range_noprof+0x97d/0x12f0 mm/vmalloc.c:3893
+>  __vmalloc_node_noprof+0xc2/0x110 mm/vmalloc.c:3956
+>  alloc_thread_stack_node kernel/fork.c:311 [inline]
+>  dup_task_struct+0x3e7/0x860 kernel/fork.c:881
+>  copy_process+0x54b/0x3c00 kernel/fork.c:2004
+>  kernel_clone+0x21e/0x840 kernel/fork.c:2605
+>  __do_sys_clone3 kernel/fork.c:2909 [inline]
+>  __se_sys_clone3+0x256/0x2d0 kernel/fork.c:2888
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> page last free pid 5941 tgid 5941 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1395 [inline]
+>  __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+>  vfree+0x25a/0x400 mm/vmalloc.c:3434
+>  kcov_put kernel/kcov.c:439 [inline]
+>  kcov_close+0x28/0x50 kernel/kcov.c:535
+>  __fput+0x449/0xa70 fs/file_table.c:468
+>  task_work_run+0x1d1/0x260 kernel/task_work.c:227
+>  exit_task_work include/linux/task_work.h:40 [inline]
+>  do_exit+0x6b5/0x2300 kernel/exit.c:961
+>  do_group_exit+0x21c/0x2d0 kernel/exit.c:1102
+>  get_signal+0x1286/0x1340 kernel/signal.c:3034
+>  arch_do_signal_or_restart+0x9a/0x750 arch/x86/kernel/signal.c:337
+>  exit_to_user_mode_loop+0x75/0x110 kernel/entry/common.c:40
+>  exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+>  syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+>  syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+>  do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> Memory state around the buggy address:
+>  ffffc90003c0fc00: 00 00 00 00 f1 f1 f1 f1 00 f3 f3 f3 00 00 00 00
+>  ffffc90003c0fc80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >ffffc90003c0fd00: f1 f1 f1 f1 00 00 00 00 02 f3 f3 f3 f3 f3 f3 f3
+>                                            ^
+>  ffffc90003c0fd80: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+>  ffffc90003c0fe00: 04 f2 00 00 f2 f2 00 00 f3 f3 f3 f3 00 00 00 00
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>
 > ---
-> I see that in amdgpu_dm_plane_get_plane_modifiers, capacity is initialized to
-> only 128, but it is probably preferable to refactor.
->   
-> Tested on a Steam Deck OLED with no apparent regressions using these test suites from
-> igt-gpu-tools:
-> 1) kms_plane
-> 2) amd_plane
-> 3) amd_fuzzing
-> 4) testdisplay
-> 
->   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> index b7c6e8d13435..b587d2033f0b 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-> @@ -146,7 +146,7 @@ static void amdgpu_dm_plane_add_modifier(uint64_t **mods, uint64_t *size, uint64
->   
->   	if (*cap - *size < 1) {
->   		uint64_t new_cap = *cap * 2;
-> -		uint64_t *new_mods = kmalloc(new_cap * sizeof(uint64_t), GFP_KERNEL);
-> +		uint64_t *new_mods = kmalloc_array(new_cap, sizeof(uint64_t), GFP_KERNEL);
->   
->   		if (!new_mods) {
->   			kfree(*mods);
-> @@ -732,7 +732,7 @@ static int amdgpu_dm_plane_get_plane_modifiers(struct amdgpu_device *adev, unsig
->   	if (adev->family < AMDGPU_FAMILY_AI)
->   		return 0;
->   
-> -	*mods = kmalloc(capacity * sizeof(uint64_t), GFP_KERNEL);
-> +	*mods = kmalloc_array(capacity, sizeof(uint64_t), GFP_KERNEL);
->   
->   	if (plane_type == DRM_PLANE_TYPE_CURSOR) {
->   		amdgpu_dm_plane_add_modifier(mods, &size, &capacity, DRM_FORMAT_MOD_LINEAR);
-
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/syzkaller=
+-bugs/68c85874.050a0220.50883.0016.GAE%40google.com.
 
