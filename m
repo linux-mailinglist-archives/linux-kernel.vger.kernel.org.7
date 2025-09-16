@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-819613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBC9B5A3A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:10:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB818B5A3A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42EFE188D20F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0FB3254C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C8231E8B2;
-	Tue, 16 Sep 2025 21:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ECE323F46;
+	Tue, 16 Sep 2025 21:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is7gZpT6"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lj8CimeS"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B312F9DB4
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7571C30648F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758056922; cv=none; b=BfUKMKuBWhTswl1YtvGCIXLD1ctXmZrv6SSnOXMpZnpwmZtkpdvOyGEvW9yLy5ckr09GqFKiz6BLtbuk5nxMvxh0ZA9saixgwODk/NotuHTegV8gqwpqOkz/UQNcOcBBSCgpwscwup0FgvX1EkcsqW6eZEeJUqBGI4cqBXHWx64=
+	t=1758056924; cv=none; b=bKXDTvF0kgOwPioCCT8+CBlmZnHXOB6/gA1EP1PAKkgbCoS8CRpC2Y3wrUYNM9tLgSfGmWQXtka8muGbvwz+w3GO4J4qYWECIGNHAkV+1RujzjpqE1mpGfQ40BEE05EgqS0GlWNnwK3Yr65xHxByNZ+E3w6h6zeBntenr9f4214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758056922; c=relaxed/simple;
-	bh=SP2sHPp0DkDMUcw5AMcR0cHu5SZWLKKZ3sGqnoWbl8A=;
+	s=arc-20240116; t=1758056924; c=relaxed/simple;
+	bh=qY7msXy/MP9JfKkgO6BWwtHtUS96caUQxQ1g+mMIzak=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aMuQk6XQdq6ysZzpCbRQCbRn8LoLuySMfK/NsJfcN7RqM1Rz0TBu4hrOddpwljff8/5Wxhl/Fuyt5ZPQ9dXuCzK0VlDkCVyXx6yRJQFjRoz67EuyXTNbdNPPfb7Qi/QtJJzUn1ldPGzG5eYJfBQBvE+ZlzDwIzRZqxcSMfal2j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is7gZpT6; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=UIWMRSPi0tPTBuFcXTWw3CAut9eMiOrSl4h1SxaLmZq4zuKK/wlw5TZv4jQmrxRw10KfUIAcZY8GQblJafzCsmKCllTM1cKQcMn5FHKrZyf5uco53jPZLFGboiZf4buj+NxpDPNxqrKY7CZaPVEgRk5tEQUgOEGEKsF0ElbWgWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lj8CimeS; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b5229007f31so4048376a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:41 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7726c7ff7e5so4781978b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:08:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758056921; x=1758661721; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758056922; x=1758661722; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1ajRjJ63Iy7rbFQ9znyyl9iKKEEIo81WL5RMkNMmqG0=;
-        b=is7gZpT6RV9XY10M6B442yAqGaYbYunChwL+JsAW7euVPNhz8v1Bg60LDeZ5FRkzkk
-         3GkxSpEYbx+KFvaeBPvJ2VHQnOL/PCJjsUkL04PmyfqVAk3dp0PvQ4RSD+30C0rvsF55
-         107SFj965yX1HZifkbrLEenMpHWBLx7ZgwjeEyTFSwAAiDGN6whXk1t2pQ26SvL1rpze
-         tPb7UbmyI345Si4oLRKmtoY/pwiGRNeNH2Mwl4wv/c6OU/NNXoY8klPv1Y9gSSekT2yF
-         cTpTMZMhi96ri5TrxNR2ZziWaH7gkjRXDBHEfUk3MjMExZbT4m33jKTMCOTaCzq8hHvN
-         5gAw==
+        bh=5mKuDRdJJO0qDbnGjgA4rHMGy6EHP4eBLakbjsfvnkc=;
+        b=Lj8CimeSFRfF1UChiy++u1Mi61Z6LHZNLmcisrs6UZWVKDPofR6vGCoTzmVk3xK5KR
+         RDUyCpC44oK4tojPnSbob8jmo0KPsW1aUK1uckMCwEtVEHPxnS6fc17pHX350rP3J87b
+         C7atIJiHAs0JhXiSyeagOzO8tx9cFFX8YRzSQGI9zXdcsdJi94Wb6o630pSyhga8+zHb
+         tm1KebR0uZOKD0nNDW4JJbURnsHXj7i8Ba0A5IQX0JG2/zPXPyWuSQLsVYBvw+HfNxNv
+         +qThq4GqwYTnZahFnegFQhfYaaF3Aci2iIwmQcypuomuCRhAFnFdxQbuYyZywPtJv+ML
+         rGkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758056921; x=1758661721;
+        d=1e100.net; s=20230601; t=1758056922; x=1758661722;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1ajRjJ63Iy7rbFQ9znyyl9iKKEEIo81WL5RMkNMmqG0=;
-        b=JoZKLUK0SzcSSKs9wX1uvL1WGir2wE9rboXW7qXst1j6uxXVmlunbgXlSE0mexHeCq
-         J5y9HaiN8KDD0+M4BRiPsfbYG65t298D+pnFqedfDSD8o04RJP3eGfnprKWMVoPztdcb
-         pfWX3g2JL4kWRE9Sy69YgU6qfYI0WnsnIYp4Oyi0LO1822UuJg1ZFEOcoLSXbRW+e+qQ
-         O+pQ7yYhXRiFpEijhGp/Q0aNnjwuHD90vLZBvPbxKY53yCUAtx3fwsyGDMk6UPcfMZ/P
-         /32YQ1aKnYYQIGvKKqC7Pv1A/c6nmlGjEopjVH1GCaKyW6pwcWk0hIv2Luxr8kiJCG69
-         BbKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVp1WEjMZ5cl3cSXcqIjrKl/qeGo2zfcWZw2h/+jsjj5/kpL3B7rpTHd+Sgwl8UZIbkSb8Rh3m8gChqExE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKv/xUjyL37LzhT2jQgnlhboc/01jQogkXM/0QYAeoncShxLRO
-	GH2/SQrUc6ONojCmwG9Ylrj42a/rIg/SA9jjsRtBO9M3I8xVyZxY7SDS
-X-Gm-Gg: ASbGnctri+fJNyyAA2NGhbGdU1IDB5s4MAoJxFsOsPAx/YaC8czae8MzGQ8jM6/Atfl
-	GVRMH2rd6u7If/7otu3LwWVoGp4fVPyJZuBeJTF81Mt7cIsphyBwsac3d7lUjP0bD0scLEYrLNP
-	ySqpxa5+Mw4u5q3b7qTHRUMZLToMlyFkRylhm+SfOhzREHBfL9QCcY6UHrSNCetnikZji8DOyLQ
-	auHnRhaCm6SgrYROP7doM74W7M8m/KUOW4i0h2iC91WjdWxv4Hwt0BWTzvqkymfo8LNH8DgWKrg
-	/SEKzyObvhZqZf0iM6vlCGB7nbovIzfjejXyx6HUZ8aEWaM7L+S3zrP9IAaiLJst0Ep1Xjw+yT+
-	eDuNZlDaLBSGDMHETX8FVzE+7XX/HehOWm0lV0WpYeLSvDNkbM8gudnKpxah3rq4iLO2MqxpItG
-	4tWOamEnhraQ==
-X-Google-Smtp-Source: AGHT+IHhPDuS6+StVaolktNXBb79Xxy3Tz7vX4HDANHKZKnch8Zg/57u1MSLxGZamhZZWwIp1u8D3A==
-X-Received: by 2002:a17:903:3585:b0:246:b46b:1b09 with SMTP id d9443c01a7336-25d2686604amr200001855ad.30.1758056920763;
-        Tue, 16 Sep 2025 14:08:40 -0700 (PDT)
+        bh=5mKuDRdJJO0qDbnGjgA4rHMGy6EHP4eBLakbjsfvnkc=;
+        b=p/KGhNeQ8ffLrOteUgC5akDf30Ag4ijVcW7l7xgvdp/JvYpav3v2jcKu9Ts93r2vvr
+         QIoJMMC5YKCb+WgB9wxPYWPUhdO1EL0A6CV2pGKZ7IBvAP9MCnPt2lZXrxisL5uJ1Oa3
+         IUqo2/vtaQdy+yumYAyhxAjMpx57Ki00lfrQFO+isSZnxTA6NO+sLso9tW7OUPDZ2e+9
+         c8BAFUbZf1y9JiVyaxVP3XgdMODwZiPlGhYTBZ/iy5cLtQola5jWUbATi9aVyuxH05Z9
+         9aMFgQKFaKzJUbZJj6Ze8wzK/KxIjQRSypPbHrRqd1fMZM078Uu0re8dDdwk/EMdMCqD
+         5LDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN/K0OtzCj7njfCnLKLnhfv5EAHX4/MrNopG9wZGqp6vjGjdGlU7WfhGZ4anvhorkfiYQg7HBZ6vNTjkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsGYcK4etluVQQjQyn3aN7xr17179Buk3bzLWMRmth7WTQuzmH
+	4/UxWbFnimcI7JPD9BXRTg+93s8Y2xmSKr9YLGERLtQbfdBRi5toPMSl
+X-Gm-Gg: ASbGnctgTVT87sOb5UBJ1DrwR9XKuj924l+GOPaJ9FqKPvAVElqogB5Dgke3Nkv3tPp
+	WccmeW+NbQ1PvBqed4Qcq58iZtb4E1NT8D3F4yLoXi8OzdSGuDLIvwzUSHWTCu83otv4ggEgYis
+	af3AkuIAJkjk9esofFdjb/gy6ymS9fmp2whAj+y5A9pPoSQc7G721HJwbjjpZKNaqf0sXGL+AIK
+	Hz5IyeUgCTIk7jycKSwLVu16vJqoIKpnrMGm+0R9GWoE72jb4V/V1xxCAKvAYGeHIQZv3YEVJZZ
+	MFImk+0BC2nOwTpAvB/hqSpN1vhOqhIXS3xnkKreY2UsGDJvgLJjyFuY4k/5R3aXz2gNwvh7Kqh
+	X20GYdmRjroDqotFoJVV6/EL30vondPE0bHJMSzj8hlHMsLi3jzI58g1X5z7izqk2XLNrwe7FqI
+	hMSbcQgudQ7LjikMnKiG+i
+X-Google-Smtp-Source: AGHT+IEDixYIXoVhgvzO78eXbNMXUTFn5Eh7QdDPXuCG2AzTfJIo/tAuDVPaJEutqDntn6kKaRGWXA==
+X-Received: by 2002:a05:6a20:728e:b0:243:f5ba:aa9c with SMTP id adf61e73a8af0-2602b084850mr22828169637.25.1758056921753;
+        Tue, 16 Sep 2025 14:08:41 -0700 (PDT)
 Received: from localhost (185.3.125.34.bc.googleusercontent.com. [34.125.3.185])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32ed26876ffsm492508a91.3.2025.09.16.14.08.40
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77607a48c19sm17032735b3a.36.2025.09.16.14.08.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 14:08:40 -0700 (PDT)
+        Tue, 16 Sep 2025 14:08:41 -0700 (PDT)
 From: Chia-I Wu <olvaffe@gmail.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
@@ -86,9 +86,9 @@ To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Heiko Stuebner <heiko@sntech.de>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 09/10] drm/panthor: move size check to mmu_hw_flush_caches
-Date: Tue, 16 Sep 2025 14:08:22 -0700
-Message-ID: <20250916210823.4033529-10-olvaffe@gmail.com>
+Subject: [PATCH 10/10] drm/panthor: simplify mmu_hw_flush_caches
+Date: Tue, 16 Sep 2025 14:08:23 -0700
+Message-ID: <20250916210823.4033529-11-olvaffe@gmail.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 In-Reply-To: <20250916210823.4033529-1-olvaffe@gmail.com>
 References: <20250916210823.4033529-1-olvaffe@gmail.com>
@@ -100,36 +100,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We can early return from mmu_hw_flush_caches when size is 0.
+Simplify flush op to a bool to control whether LSC is
+flushed/invalidated. Remove mmu_hw_do_operation helper.
 
 Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
 ---
- drivers/gpu/drm/panthor/panthor_mmu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/panthor/panthor_mmu.c | 42 ++++++---------------------
+ 1 file changed, 9 insertions(+), 33 deletions(-)
 
 diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index 436a54e30a36d..743e9342eece7 100644
+index 743e9342eece7..5418f079444ce 100644
 --- a/drivers/gpu/drm/panthor/panthor_mmu.c
 +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -570,9 +570,6 @@ static void mmu_hw_cmd_lock(struct panthor_device *ptdev, u32 as_nr, u64 region_
- 	u64 region;
- 	u64 region_end = region_start + size;
+@@ -613,33 +613,20 @@ static void mmu_hw_cmd_unlock(struct panthor_device *ptdev, u32 as_nr)
+  * @as_nr: AS to issue command to.
+  * @iova: Start of the region.
+  * @size: Size of the region.
+- * @op: AS_COMMAND_FLUSH_*
++ * @flush_lsc: True if LSC should be flushed/invalidated.
+  *
+  * Issue LOCK/GPU_FLUSH_CACHES/UNLOCK commands in order to flush and
+  * invalidate L2/MMU/LSC caches for a region.
+  *
+  * Return: 0 on success, a negative error code otherwise.
+  */
+-static int mmu_hw_flush_caches(struct panthor_device *ptdev, int as_nr, u64 iova, u64 size, u32 op)
++static int mmu_hw_flush_caches(struct panthor_device *ptdev, int as_nr, u64 iova, u64 size,
++			       bool flush_lsc)
+ {
+ 	const u32 l2_flush_op = CACHE_CLEAN | CACHE_INV;
+-	u32 lsc_flush_op;
++	const u32 lsc_flush_op = flush_lsc ? l2_flush_op : 0;
+ 	int ret;
  
--	if (!size)
--		return;
+-	lockdep_assert_held(&ptdev->mmu->as.slots_lock);
 -
- 	/*
- 	 * The locked region is a naturally aligned power of 2 block encoded as
- 	 * log2 minus(1).
-@@ -643,7 +640,7 @@ static int mmu_hw_flush_caches(struct panthor_device *ptdev, int as_nr, u64 iova
- 		return -EINVAL;
- 	}
- 
--	if (as_nr < 0)
-+	if (as_nr < 0 || !size)
+-	switch (op) {
+-	case AS_COMMAND_FLUSH_MEM:
+-		lsc_flush_op = CACHE_CLEAN | CACHE_INV;
+-		break;
+-	case AS_COMMAND_FLUSH_PT:
+-		lsc_flush_op = 0;
+-		break;
+-	default:
+-		drm_WARN(&ptdev->base, 1, "Unexpected AS_COMMAND: %d", op);
+-		return -EINVAL;
+-	}
+-
+ 	if (as_nr < 0 || !size)
  		return 0;
  
- 	/*
+@@ -671,25 +658,12 @@ static int mmu_hw_flush_caches(struct panthor_device *ptdev, int as_nr, u64 iova
+ 	return ret;
+ }
+ 
+-static int mmu_hw_do_operation(struct panthor_vm *vm,
+-			       u64 iova, u64 size, u32 op)
+-{
+-	struct panthor_device *ptdev = vm->ptdev;
+-	int ret;
+-
+-	mutex_lock(&ptdev->mmu->as.slots_lock);
+-	ret = mmu_hw_flush_caches(ptdev, vm->as.id, iova, size, op);
+-	mutex_unlock(&ptdev->mmu->as.slots_lock);
+-
+-	return ret;
+-}
+-
+ static int panthor_mmu_as_enable(struct panthor_device *ptdev, u32 as_nr,
+ 				 u64 transtab, u64 transcfg, u64 memattr)
+ {
+ 	int ret;
+ 
+-	ret = mmu_hw_flush_caches(ptdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
++	ret = mmu_hw_flush_caches(ptdev, as_nr, 0, ~0ULL, true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -706,7 +680,7 @@ static int panthor_mmu_as_disable(struct panthor_device *ptdev, u32 as_nr)
+ {
+ 	int ret;
+ 
+-	ret = mmu_hw_flush_caches(ptdev, as_nr, 0, ~0ULL, AS_COMMAND_FLUSH_MEM);
++	ret = mmu_hw_flush_caches(ptdev, as_nr, 0, ~0ULL, true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -962,7 +936,9 @@ static int panthor_vm_flush_range(struct panthor_vm *vm, u64 iova, u64 size)
+ 	if (!drm_dev_enter(&ptdev->base, &cookie))
+ 		return 0;
+ 
+-	ret = mmu_hw_do_operation(vm, iova, size, AS_COMMAND_FLUSH_PT);
++	mutex_lock(&ptdev->mmu->as.slots_lock);
++	ret = mmu_hw_flush_caches(ptdev, vm->as.id, iova, size, false);
++	mutex_unlock(&ptdev->mmu->as.slots_lock);
+ 
+ 	drm_dev_exit(cookie);
+ 	return ret;
 -- 
 2.51.0.384.g4c02a37b29-goog
 
