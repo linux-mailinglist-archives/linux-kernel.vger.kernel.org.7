@@ -1,171 +1,137 @@
-Return-Path: <linux-kernel+bounces-818254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049AEB58EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56109B58EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8C3F4E10A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:12:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C876320309
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B962E4278;
-	Tue, 16 Sep 2025 07:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F332E540C;
+	Tue, 16 Sep 2025 07:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psp5bO/F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NOqEFT0h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651B12DEA6F;
-	Tue, 16 Sep 2025 07:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F522E11B0;
+	Tue, 16 Sep 2025 07:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758006748; cv=none; b=u7WNEiPPq4+hP+YThu8iJ0hDfRKuQJEy1tR9zlBZdCalihZK7q2fFbk2yK0kY2JyvYvB8bcFeES9bzAajJYEk5PoxvJB6UwnM7o9GMcMPiqxgNcy0nojNDOlbx5Ov1S/0xi1RMJPVybEsR3X1e4JttREsdgix7MDbaPT8+Upr10=
+	t=1758006764; cv=none; b=H4NEeCYBhj0qPaXa93ANIyO/EMAuOChMb13XfkCn44hoMemNvySKjuLaH8Jvgs8A/FTr7X4QuqzjWbVdPEp1KAgRGg+hu0FXJRubceY6HWBg89bx2w+58qTlW/dXLzw/wmogBsUYXa2ruSFszJo3+tKIoXqhw4DfxRMM4EcZSiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758006748; c=relaxed/simple;
-	bh=oU7VvkqktkVNm/KzNrVro7cjiuBKEqIXf9EnmXfNqrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQQ+Wqp9G6k9XU4icvK0yrgavZSurICZ1U/NbNpxLa8k167iUjwi4BDDZJNZ85qWIu+EmD2cHL7zpIek4rBlkHSaFMeXzTRFIT0RdIcGOdf1ir+jIkc5cxCfKIEI/g5tVs7uW9kBjyt4ylbHy8fh8/KqnjOasQI32TUII61I6+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psp5bO/F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B238DC4CEEB;
-	Tue, 16 Sep 2025 07:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758006747;
-	bh=oU7VvkqktkVNm/KzNrVro7cjiuBKEqIXf9EnmXfNqrg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psp5bO/FZW/iyXU/LKpkMlICcpyAt3VX7ZKbABuO9tVK15McJy+5OJowkicZksuln
-	 yZFBMkmAkhKrtl2cS4yanL4usmxSc8kddAt7daP9GOlusbHJ8kj5YOQPpWGDcu4gBp
-	 XsnyHOw0ZtmQm55Jan1g4GUNvVHbNb+EqkTmAY5rqxtKQm3drNnGsBzCiutRQ7YAm8
-	 Sk/wQQmeLWb08x4FLcR3zz9E/hDGexpTCiPLD2gIyccS9ecgi6A/akq/KLblK4abj8
-	 AzBJgf6Q2TFrauF0/mt/GZDsJ+UCVVW4jslTuEhSRybzoSqgf7ZIt4OSf1OzUGMlr+
-	 7u0hKreUOi1FQ==
-Date: Tue, 16 Sep 2025 09:12:22 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Nicolas Schier <nsc@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v7 3/8] kbuild: keep .modinfo section in
- vmlinux.unstripped
-Message-ID: <aMkN1m55vejTii_H@example.org>
-References: <cover.1755535876.git.legion@kernel.org>
- <4d53c72293d88b663257a0d723ebf3473a08b374.1755535876.git.legion@kernel.org>
- <aMeqgPVfJcjBLhl8@levanger>
+	s=arc-20240116; t=1758006764; c=relaxed/simple;
+	bh=s95beaMcaffmyAeVE0mYN7MSCkKmMJwMmOYNqz3JrNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sgml9leRdAASLICo1eI4bQCru5KyJirLnfF7nvRX7DgfsvjZegaHqNObDXCt835jgjCk62l5rS+HoqUDuEE3q6gPlKh74lUXpZ9Kzk2cAKVpb+HBOY78hq7UZ0STGKWVniuOI3VF+7pwLe3xAPYkHfiudW44QDpR/6edCcrrh1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NOqEFT0h; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758006763; x=1789542763;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s95beaMcaffmyAeVE0mYN7MSCkKmMJwMmOYNqz3JrNE=;
+  b=NOqEFT0hST83bWiWd5Nzil7A9ZASv0/aXXB8ijq2IMHrT0IXO9lK3jKc
+   MkThR0F+1/XUifEJ/Bwsa90mnzXPno/PtqwNyV+aiKiuDJvl0FKmeJ7XW
+   lNYpiGdEJx4X1w0ZZv3oyAOFfdXMUZfCFusX7uMmoGoPeGkYElr6elLP5
+   eqv/oV+hOcaVHslQdcTVpEOH4zS48lb6xaOlv10cpA7MT+yDyzPzB02+9
+   GVN161ssN8Fo7a5c9O3VfzObTCpAxNN9oe51HE0ip4CKr+DhS+VJEjsTC
+   qF9AG4y+XhDwMYM4+6445Nu+cdeJoUAACeq4UO8YcL6vEKY/FomRFIGau
+   A==;
+X-CSE-ConnectionGUID: ts77xjOcT7qnX7ic9vZ3sQ==
+X-CSE-MsgGUID: xb0o6BDSSsaSDG4FW/vE+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="70526493"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="70526493"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:12:43 -0700
+X-CSE-ConnectionGUID: oMyjekWTTgGplDC4lDzylg==
+X-CSE-MsgGUID: 02/409JsSDGe3zVVV41UOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="175650122"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 00:12:39 -0700
+Message-ID: <28a6fa6f-26ab-458d-9f63-547d51dd6aa9@linux.intel.com>
+Date: Tue, 16 Sep 2025 15:12:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMeqgPVfJcjBLhl8@levanger>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 05/41] KVM: x86: Report XSS as to-be-saved if there
+ are supported features
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-6-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250912232319.429659-6-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 07:56:16AM +0200, Nicolas Schier wrote:
-> On Mon, Aug 18, 2025 at 06:54:57PM +0200, Alexey Gladkov wrote:
-> > From: Masahiro Yamada <masahiroy@kernel.org>
-> > 
-> > Keep the .modinfo section during linking, but strip it from the final
-> > vmlinux.
-> > 
-> > Adjust scripts/mksysmap to exclude modinfo symbols from kallsyms.
-> > 
-> > This change will allow the next commit to extract the .modinfo section
-> > from the vmlinux.unstripped intermediate.
-> > 
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >  include/asm-generic/vmlinux.lds.h | 2 +-
-> >  scripts/Makefile.vmlinux          | 2 +-
-> >  scripts/mksysmap                  | 3 +++
-> >  3 files changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > index ae2d2359b79e9..cfa63860dfd4c 100644
-> > --- a/include/asm-generic/vmlinux.lds.h
-> > +++ b/include/asm-generic/vmlinux.lds.h
-> > @@ -831,6 +831,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> >  
-> >  /* Required sections not related to debugging. */
-> >  #define ELF_DETAILS							\
-> > +		.modinfo : { *(.modinfo) }				\
-> >  		.comment 0 : { *(.comment) }				\
-> >  		.symtab 0 : { *(.symtab) }				\
-> >  		.strtab 0 : { *(.strtab) }				\
-> > @@ -1044,7 +1045,6 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
-> >  	*(.discard.*)							\
-> >  	*(.export_symbol)						\
-> >  	*(.no_trim_symbol)						\
-> > -	*(.modinfo)							\
-> >  	/* ld.bfd warns about .gnu.version* even when not emitted */	\
-> >  	*(.gnu.version*)						\
-> >  
-> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > index 4f2d4c3fb7372..e2ceeb9e168d4 100644
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -86,7 +86,7 @@ endif
-> >  # vmlinux
-> >  # ---------------------------------------------------------------------------
-> >  
-> > -remove-section-y                                   :=
-> > +remove-section-y                                   := .modinfo
-> >  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*'
-> >  
-> >  quiet_cmd_strip_relocs = OBJCOPY $@
-> > diff --git a/scripts/mksysmap b/scripts/mksysmap
-> > index 3accbdb269ac7..a607a0059d119 100755
-> > --- a/scripts/mksysmap
-> > +++ b/scripts/mksysmap
-> > @@ -79,6 +79,9 @@
-> >  / _SDA_BASE_$/d
-> >  / _SDA2_BASE_$/d
-> >  
-> > +# MODULE_INFO()
-> > +/ __UNIQUE_ID_modinfo[0-9]*$/d
-> > +
-> >  # ---------------------------------------------------------------------------
-> >  # Ignored patterns
-> >  #  (symbols that contain the pattern are ignored)
-> > -- 
-> > 2.50.1
-> > 
-> 
-> Hi Alexey,
-> 
-> with this patch applied, I still get a warning from objcpy as Masahiro
-> and Stephen wrote [1,2]
-> 
->   SORTTAB vmlinux.unstripped
-> + sorttable vmlinux.unstripped
-> + nm -S vmlinux.unstripped
-> + ./scripts/sorttable -s .tmp_vmlinux.nm-sort vmlinux.unstripped
-> + is_enabled CONFIG_KALLSYMS
-> + grep -q ^CONFIG_KALLSYMS=y include/config/auto.conf
-> + cmp -s System.map .tmp_vmlinux2.syms
-> + echo vmlinux.unstripped: ../scripts/link-vmlinux.sh
-> # OBJCOPY vmlinux
->   objcopy --remove-section=.modinfo vmlinux.unstripped vmlinux
-> objcopy: vmlinux.unstripped: warning: empty loadable segment detected at vaddr=0xffff8000807a0000, is this intentional?
-> 
-> (arm64, allnoconfig)
-> 
-> Kind regards,
-> Nicolas
-> 
-> 
-> [1]: https://lore.kernel.org/linux-kbuild/CAK7LNAR-gD2H6Kk-rZjo0R3weTHCGTm0a=u2tRH1WWW6Sx6=RQ@mail.gmail.com/
-> [2]: https://lore.kernel.org/lkml/20250730164047.7c4a731a@canb.auug.org.au/
-> 
 
-Hm. I missed that. I need to investigate how to fix this. Nothing comes
-to mind right now.
 
--- 
-Rgrds, legion
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> Add MSR_IA32_XSS to list of MSRs reported to userspace if supported_xss
+> is non-zero, i.e. KVM supports at least one XSS based feature.
+>
+> Before enabling CET virtualization series, guest IA32_MSR_XSS is
+> guaranteed to be 0, i.e., XSAVES/XRSTORS is executed in non-root mode
+> with XSS == 0, which equals to the effect of XSAVE/XRSTOR.
+>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   arch/x86/kvm/x86.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 771b7c883c66..3b4258b38ad8 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -332,7 +332,7 @@ static const u32 msrs_to_save_base[] = {
+>   	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
+>   	MSR_IA32_UMWAIT_CONTROL,
+>   
+> -	MSR_IA32_XFD, MSR_IA32_XFD_ERR,
+> +	MSR_IA32_XFD, MSR_IA32_XFD_ERR, MSR_IA32_XSS,
+>   };
+>   
+>   static const u32 msrs_to_save_pmu[] = {
+> @@ -7499,6 +7499,10 @@ static void kvm_probe_msr_to_save(u32 msr_index)
+>   		if (!(kvm_get_arch_capabilities() & ARCH_CAP_TSX_CTRL_MSR))
+>   			return;
+>   		break;
+> +	case MSR_IA32_XSS:
+> +		if (!kvm_caps.supported_xss)
+> +			return;
+> +		break;
+>   	default:
+>   		break;
+>   	}
 
 
