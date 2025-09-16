@@ -1,232 +1,214 @@
-Return-Path: <linux-kernel+bounces-819141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0022EB59C06
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:25:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DB3B59C0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738391B281C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:25:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 397647AEB32
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B17220B81B;
-	Tue, 16 Sep 2025 15:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD0D30C372;
+	Tue, 16 Sep 2025 15:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqSCHljv"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N6EYow8M"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40033315D2A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758036317; cv=none; b=rxWWV68OTx0F/CpzwVVIaez34HYqxXOsAhwEbQTwLQ2Hib7m3RttFo17l8YwS8wN6CZ+Li8/1ZgMpK8wZ6JFDSyYoj2WE2x4KSJJFueIAvIFHagjtnViXPfOv12RFoOtfyqfIwHtwRDrD4q9yCg9se+nIlfv7Dd8/wutoqVXRH0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758036317; c=relaxed/simple;
-	bh=/luls4gIlkzY0q88TLuslOsp59hW9QK709W2wFxEZh8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XneSH7irhDWcXeZtaWixmtMXDojF4aHdjihMjpuiyHaP0COl5AAYqKkaET3xDnOSj2ZD+JjvaIsGn1GYsahUjvwZb6FMBY3rZ5GoA1Ko0QK02cVUydMSf5LM+fLmptfqLPAa5+70wJfaUAE4nOcaAWH/cNFDaXFxCMM5qT9k8uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqSCHljv; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-7227bc08c97so40124697b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758036315; x=1758641115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O0CN37Sd0cYVaSTUFD34oLWNYYkEOvdYhiUF+fG/Gts=;
-        b=ZqSCHljvySWtsAkK9PntABSUgThW6gfDz8qeYMbdSHWTWDxm3N+B9fCp9o0XQ8bleS
-         wrHPV+Tb2KK3/BxWllVl7/ZmmV7nZV82DhvnMKH/YaeVX2CcjLzKk6OpM6F5oNqUACQ2
-         CTDF+hHDlQ4WXHaFvJrMc60sLiPaS7UMPSYccNjjik7qKaz0S5cRD4NerkSejJS5yDQI
-         wgkWnuU8sDW+U9+PllZDDc/hkZXx6ftCE8IzJU3Y/uKGLuu0JY9tzucL3l9F/t76XYjf
-         g6QnkCR2A67Jln4jz/VyXQwzxagOy0IOtaZu6WsVu7oPKXZEO8PUAtVp69kCKyQpAdAu
-         wGkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758036315; x=1758641115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O0CN37Sd0cYVaSTUFD34oLWNYYkEOvdYhiUF+fG/Gts=;
-        b=QT7gwFYh3JChI8jj/XWZyKBv5dDJbpQwBInV0d8GPP9scLt2nq17FcHzavM7jSu7SZ
-         04HwJunUXBWZq+VFIyJtgt/cn1LbrF4Y+ZjQq/bpO42hKRV0Rxpx0d/fO9uRAGnHj4eX
-         oEx1G1Xot0nwWtM10rw1wHsc2Q3mdSR4GCT+j9Ok/iiRbAIIt+bBPmVAUGW9MOWC0DPb
-         wynrIc8iAdHYQK1Sn0gdemfLMoU4X01kqFF9YzfkyYuPSJKPxjP4/GJPRcqYYFcSRinQ
-         8ewjG1C3ZialsjFZeJnuEsyyvvkc4JZVQH6RVjI4OFjEhS6LK7vqxzQk7MHDYbSjWFAB
-         3XXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsstryrCr3xojH5YNkBTSJoy0WNhzyaGe4EIRDXOcBIH/cb3xJ6kyydCoDSo/qaPo6akApPRUurcsdBzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYYGqSb0QmsVc2jvbbH41xGQHdaJ5ElivdddDFRrwOtDxT38By
-	gnpmmgvxFoSydRmkQJ2TmYfcMRIOVuunbS2df+BZtgRnZRevTs2Wk/daniuvg2xvXXQyZop0XOF
-	Qsx+JK06yYnyrpv92ADG9RmCLUl1Vvic=
-X-Gm-Gg: ASbGncvfpe2xW3VgMdPPA6a58hg+kRClvjWcaSPAmy1B8xNu7rZz13gkfjE6uvNy6jr
-	giJTXEopPrPEUeCwJbPlN0cNvpxLgTQptkXaHYTq0MiRBb2KOUmqQU4h5WP9GatW2k5lEPaNO4C
-	dsS1Nh5BvNbRqK9aZG+3SFUCbKuzhN5vueOvxsdgYCxAs7B8oYMnL/VX2Hef279zyvflN9C0Chb
-	df+zwAS3KUWJtOjALtjilcn39Rhn5LdC9lOGECBzvFc9euvw1zCLlvQ/6gdIw==
-X-Google-Smtp-Source: AGHT+IG+Vr+0KTJcUpSOFsKadmEByVjhhHvih2H7TiR13xbcSMjpY2FBWnQx59o/IX+v2wbe+0jT8ntwYLBXpQNjQqU=
-X-Received: by 2002:a05:690c:6c01:b0:731:1bc7:782d with SMTP id
- 00721157ae682-7372017a432mr22922887b3.18.1758036314672; Tue, 16 Sep 2025
- 08:25:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF44341AA1;
+	Tue, 16 Sep 2025 15:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758036322; cv=fail; b=K0lEz6pzYbq2F4YxD+Yk3LwPK2J0q8FNbpdjpsRajQ5ZkY5iv9JbRcgBO4e9DkfCLGodloW99qLA//5TFwtnEglg2eTco7kbkSG8thFLl1aFY7On5s1ANRGqV++SAvXUEFyoFdibnFKdfg1jUqNzJcNPqa3jT1Z180YOzpUz4MQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758036322; c=relaxed/simple;
+	bh=bTf3fcQau+LVYwnzK2ZYYqI9NbVOsfkyFmcKgtKSdWA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UgP+sfhuF4vztt6T//2dxK5HPPsZstaHUEGcC9aDPFgcP0ZIT8ZNckpEeijXcjv+F6HccKHJ/tqcRcEtGooG8L7VEdnbUzekhnK5DUVhJMUP0m2drRN8CXwjvOUtrtap+fQ+LXTDWAZCQ8dJ6cABBubNZK9viPFmU9iOygevqKM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N6EYow8M; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758036321; x=1789572321;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=bTf3fcQau+LVYwnzK2ZYYqI9NbVOsfkyFmcKgtKSdWA=;
+  b=N6EYow8ME9QQTwQ+eGKKVYn0OiwyycbTgNeGA7vr+PR7DpQVBqLC0nDJ
+   J8Pbjd6U38fMXcB71UrHYJRvVHmvLpNvDpF1nAegsuP6zlGHm6JByRmwh
+   3p9v094RJli4YYFqsJBcPoeyiYwlBR4WMrDtGUKRg2i3o+xe9DoTx+ssk
+   YLwKYDZPEb3OqubML7B4rZKv6TqpZs59tWRHHvdtOYuDYtsmMJc7Iw8qH
+   N+URhlk8owNxAJnUlHLGr8Uo8X4k0G0T5ZXXXwGz88fgSaz5vhDBHI/HJ
+   D4AH6zRE0Lq9gNIKeqXHD/gBYrSvOvZ2smveEglLMLFfDr2AA0J0KYIbH
+   Q==;
+X-CSE-ConnectionGUID: mh+j7EmFSGCkLBy82O5IBQ==
+X-CSE-MsgGUID: ZyUgySl4TYCNb7dYINT8DA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60390660"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="60390660"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 08:25:19 -0700
+X-CSE-ConnectionGUID: pE6OAuJsR2qX8vpaoLlzFg==
+X-CSE-MsgGUID: cbWJtLiIQfyp8ceVEdH6Qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="205930071"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 08:25:19 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 16 Sep 2025 08:25:18 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 16 Sep 2025 08:25:18 -0700
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.0) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 16 Sep 2025 08:25:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qPzeKrwvs8TN17AohmAmXdYwP50N1E0l0itVofOyBgHS7uROp+QYvqEHwPNMPMm1Gu1xfJpwWfbqWMt58mDM/DAWHGXSZfeSsK2LxbWMjUHT9XtFEC0lG2ZLZACdPjixbgo2Y54Sm9lrjnaUgUJAW3KovRmgBaLLErVXM3hZ3P4luzoaP9KKUcApRnyADKWk+PJz5hmltDz3FwNJTPV79MIjNDCSAqrYyyws1bFHMKUi1wE/RbSERNWcLDIy0g7w5kUn0bmlTAp9S0VqAPNng3e307+0BpAvXqL1afIJ+DKl46Rk6EckZmwzo021qFvCv2Hpc9g9S4wrdhv1hMPlQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bTf3fcQau+LVYwnzK2ZYYqI9NbVOsfkyFmcKgtKSdWA=;
+ b=eRUTwYKybh2sAWY+HgHirDqsY3BNn9cosj6hy6NLX2b7sR2v4jsS3gZMeLCkvZIwBEQJnkX57ODERkXFqfkXt0TG0NMdPt5rlLxGuhhtWpV+kZFwIMhJmWGRf8+klYocdsVs/gbRJ7RHmXiQ7pkUoaDFLxnNXDyj0zILiCxRfTxU+upT2XQY4EYzjN8dxKMW7ajO91DXOQiLAIrOQym5V8ONNfh2xHp+7FFMS5JWlPO/rhRi0OPklx0umirrSv4BLUhDAEGmnvu9Gw6PloZfYn0x3CSE52R+UsGCRq50i6agVIZz/Zlip5wm+MzLwygm17rOPR/xQoBpuYfNvCk4fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by IA1PR11MB7272.namprd11.prod.outlook.com (2603:10b6:208:428::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Tue, 16 Sep
+ 2025 15:25:14 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
+ 15:25:13 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Eugen Hristev
+	<eugen.hristev@linaro.org>
+CC: "kees@kernel.org" <kees@kernel.org>, "gpiccoli@igalia.com"
+	<gpiccoli@igalia.com>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "andersson@kernel.org"
+	<andersson@kernel.org>, "pmladek@suse.com" <pmladek@suse.com>,
+	"rdunlap@infradead.org" <rdunlap@infradead.org>, "corbet@lwn.net"
+	<corbet@lwn.net>, "david@redhat.com" <david@redhat.com>, "mhocko@suse.com"
+	<mhocko@suse.com>, "tudor.ambarus@linaro.org" <tudor.ambarus@linaro.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "jonechou@google.com"
+	<jonechou@google.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [RFC][PATCH v3 00/16] Introduce kmemdump
+Thread-Topic: [RFC][PATCH v3 00/16] Introduce kmemdump
+Thread-Index: AQHcJt6CGFV9LA+gJEOPoFdaXeWob7SV7XyQ
+Date: Tue, 16 Sep 2025 15:25:13 +0000
+Message-ID: <SJ1PR11MB6083477193D9EF7CD10DE9EAFC14A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250916074929.xiait75tbnbyjt4c@hu-mojha-hyd.qualcomm.com>
+In-Reply-To: <20250916074929.xiait75tbnbyjt4c@hu-mojha-hyd.qualcomm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|IA1PR11MB7272:EE_
+x-ms-office365-filtering-correlation-id: 65c83f01-3e27-444d-ef2f-08ddf5353b93
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024|38070700021;
+x-microsoft-antispam-message-info: =?us-ascii?Q?3i1dWxSy6xfbRXQDcTfneSYG7PU2Sd3DI4V8xptQ6kdxCQVHebOhBntxL4sY?=
+ =?us-ascii?Q?7dvxZWr2VmCdlolPDDgudLbrOXEHg+881i913kVheFPgCSZMISNF4leDTKs8?=
+ =?us-ascii?Q?i7LT58m/m06fgtDQrPjwIJHH4oHgZTWlWVK6MRDy3T870EWOnO5CHmmevpXE?=
+ =?us-ascii?Q?hp0Zq+CsOt29ySPo1T4yyhQ7b4UjdcldIr8KAJZHRW2No5B/n9rj5JuEg81C?=
+ =?us-ascii?Q?2n/ZSqe/8vjLkcLqmYG9VXSOKs1tReXctLjxf0O82Ga4gZ7Ft4a4Kfv2gMjD?=
+ =?us-ascii?Q?/+gHhA2688fEALshivTQKlB+Yo9vIk3AQDXt5aMWYXOEcBE0oC+3eM+iqwD1?=
+ =?us-ascii?Q?Vr8suivp89kqUgEgzplvVrZ4JYQSF8g9e5PLIJ9wmSBy7zMIyYsK4jX0GXKu?=
+ =?us-ascii?Q?6EEJXfugwC5pVw/JKMRer6eKUtWc+4AcBRgX/WI3A+EcG5hvUIsLyOGD4Wyx?=
+ =?us-ascii?Q?K/ZXrPDI8EYDd/34ObdHRr27IUZuvXC58B9yoPT/U/uT8nTR16+AxEkoeVTw?=
+ =?us-ascii?Q?inu2/AN8+yppm7wv3w6lYzSKdN3N9SK5tTViz/4KA7BGMRFOYYbYfYmdoVLO?=
+ =?us-ascii?Q?eVRC6+XAzO6sImlN/s2X9dVZyCjR5fSjkRlllQC0ww050DD4TyucBVcg+waU?=
+ =?us-ascii?Q?tRdG+Xtt4KsLWD/wejw3Z87mCZVcSchj56lLjwEDSLXzQ1RKeUO+xWtsboql?=
+ =?us-ascii?Q?nae7W4UsBKCFRJu8EMxigP445vCWzdVATOlyc6krNf+Pe9NHiYNo4Lqyu8UV?=
+ =?us-ascii?Q?Wh6g5nCDImMAaqRBBUHbTRvM+ThNDaz7sKoC2G2AYea6e0GmjqrtYCfAssuH?=
+ =?us-ascii?Q?O7Mj4Igeki4H5OuOlACUdaCq2Z6ZBRtWErs5KYzcCkJJh+v51vYQWNhUFPWt?=
+ =?us-ascii?Q?ERx9ZRwMbwlmA4xEa162+gjWO6QVuS01bfHETovP8U/b/2S62/3S6OJUCpZO?=
+ =?us-ascii?Q?mHgB9hvquBKVAsz74u/TBAows2uP2JcuqoagtHsEaMUVUYwWM8OfBuyMbzBs?=
+ =?us-ascii?Q?8YWkblV5+XpEk8j3WzcDkn5KYCCafHSOsxQxwTBgyxjDklL8ISf611JvLYw7?=
+ =?us-ascii?Q?nNgb4sd+tztQvYj0nPfoz/BmpRFgKoNxRaX1eRdVA71OA+FuKejWsOaGxr8B?=
+ =?us-ascii?Q?Yr3VmOolTHrT9Dez/7n/Kc8H2vkedw/KI0nhdqnftUY3HQtC5xkAb9e2NSKo?=
+ =?us-ascii?Q?9zskxdP8ftMgMzp6RkLBevqyp6KQJBjYok3KrOUMvupjn/pvoBSJX24glZcs?=
+ =?us-ascii?Q?IQcgcvRy4PY6deS6DGkP7kCXo5K5S6pvXLOXj1j8R7M+7uC44CuKbWidVFlh?=
+ =?us-ascii?Q?2d84uEEv2kK3rnYmqgAcUC08yYiuqn5eAAxuMEYhGDfGugV59zVyBFJM1E0a?=
+ =?us-ascii?Q?Kymocyvzhc95wbJgRRXkfnmEeJ3kfRow5lPgsV+IWPj1sjNrfkqzcgQAP6ls?=
+ =?us-ascii?Q?ipcCCRCmXOtnrzW6Cs0uVxATN7wC6FnQ8U55kZf4DhiyRSwcuhsI9Q=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?WLQkpjYKu8SMAF7gxugdD39VcX+QNzh+zwM63i5/1302pkN1qfNhMqoMyuZu?=
+ =?us-ascii?Q?5HPkFk7S0y7os5JhEqjzVuUcYQKPsA+7+i98Oy4VIIRLh7HmplGK2Jl3mBjO?=
+ =?us-ascii?Q?jKKotq1G7tnhk2ircKXPMFT9s/P5Z4TbSMuY5VJqXUhQlUeNrhWdgC/vLvSO?=
+ =?us-ascii?Q?YSIfZubW4x3vYI/5ZHt9rQbJh1YzKc5TRZzFr+kj2xLamENmNCxRdUctlBSE?=
+ =?us-ascii?Q?1BxRx9wplkXgO/L2+yFvNGB8Aggn5bCS2VvXUfO9RAdbvvVdjuc244iW4yuF?=
+ =?us-ascii?Q?g+EjhorHhf7Uba97vppx8zA0wjhan2Ah88J23J71fOvHCzG0ExTR+GRMnKE3?=
+ =?us-ascii?Q?V1VN5vu7DZ/KTuCXpY6A87+Y3BxLZLv0ObBhmcjxjVAPopbH+WoH8xoQ6/GG?=
+ =?us-ascii?Q?QKkQfDeM3fxtUamN4TuEJ3GfwkmVVKd7Xk6yjYjQyG/nvojlouXiJWzYk6pZ?=
+ =?us-ascii?Q?cdnaRxGTOCa6gTsiLWNtO06G2pD2dQiZAGpxFLOWrSanb4QeoCoYnQ4GMca8?=
+ =?us-ascii?Q?HV0vhF/qEEM5Olx/k8bRySnee/hESBS25PVM9nA3k6Kq5XGtLRf/uY/fLxXa?=
+ =?us-ascii?Q?LT8PahQscF+8XnS79nRzHnD0auaWs/ZEQUhni3pJV2IvFTA0IZzAk4m8OA81?=
+ =?us-ascii?Q?QZqPqI6iFvXb7KzFi2jWA4GczLkeB5ln4qmM2JTn9mH62O+y1unSgd/7NvWR?=
+ =?us-ascii?Q?hZFieV0M5HtRcUTy0Bn6sV3qPZLb9HuSBjRddzJiBAiIhDi6Lf4IM/NarDww?=
+ =?us-ascii?Q?MtYpa0w2W1RXph54suvm/2sTRzlQ97olrJbt3I90Us/HhSlKdPzw6Erhw44X?=
+ =?us-ascii?Q?9qfvxM8gZOq7VhBe/1Bf8lQnkVe798lNdelPSKp+uAL/4KrpCRalJ4XUjJgY?=
+ =?us-ascii?Q?jAmVzQEGXDjedVm7CGnJhCeHDH+edhz5xnI7AZmEuJ45ph89ODG3mZ0YTlQ+?=
+ =?us-ascii?Q?QBvPWi7+d92zBR776WqjeysQQcyvzkiJBdqOAKXbyOAKT+15QjkqJ+ZvbYhe?=
+ =?us-ascii?Q?Ut5aTdTOvKTkFl9psxhH6GYnGp6j8R1hCBGUX63BS0UHqrVspJ/dmThXuwY1?=
+ =?us-ascii?Q?+ll1SjcDbfO8kHtGz7RXM2hpAj6t3caJzs1Ke9Kyapwp3ytboWeyg8q6S7Sx?=
+ =?us-ascii?Q?oeiYWDUHYwxXk+7yORAGSiUHktgTz5zcl5eN3fiqpRr6H8Pgk/6IjQUfkgow?=
+ =?us-ascii?Q?RS5SKxqfQRq/dgNGDKnhQIlcJEr+vl0hdZ/OUhKkw7sl9lP+OAzE0VoEtItu?=
+ =?us-ascii?Q?ZspRjIkuvQE5ylfNRetrmNIQ3jxjL+svA/JlenPwaWYOXTdTQEFdti/Hzzyc?=
+ =?us-ascii?Q?ij9cIGTRqAXr5P3YHqpEojQTPXmz8eEEug5W2b7z/ZpxXm7G5o4N3KlyQtOf?=
+ =?us-ascii?Q?UyoZvhpQnba0wBaZP1LGFTUGYOP6PlUB64Du/CP26ZaDKA3bfloajJ6AR2jf?=
+ =?us-ascii?Q?0wx9skW/8jUVv0V+34DVDde+AAOtmbTkv2yoETebc0fWsJXqqU+uIpkGjmGe?=
+ =?us-ascii?Q?EnprfxFNKZeiZaOoNVeRGLdcH3+ATYlfo4mLOCfugTgz84XvTgFkf95HyuNi?=
+ =?us-ascii?Q?FPWP0OXcn7Sq+k4pnbnJ0jLbqB2Ix4wipVgUeBDN?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
- <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
- <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
- <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
- <CAEXv5_g2xMwSXGJ=X1FEiA8_YQnSXKwHFW3Cv5Ki5wwLkhAfuA@mail.gmail.com>
- <CAADnVQLuUGaWaThSb94nv8Bb_qgA0cyr9=YmZgxuEtLaQLWzKw@mail.gmail.com> <CAEXv5_griDfE03D1wDLH8chgCz0R2qZ5dAeiG0Rcg5sAicnMsg@mail.gmail.com>
-In-Reply-To: <CAEXv5_griDfE03D1wDLH8chgCz0R2qZ5dAeiG0Rcg5sAicnMsg@mail.gmail.com>
-From: David Windsor <dwindsor@gmail.com>
-Date: Tue, 16 Sep 2025 11:25:03 -0400
-X-Gm-Features: AS18NWCDT1fo9Q_SScWx2srqmzTJIxk06hwdbw2tk2Uh1xwaeYevlco27hFBxxs
-Message-ID: <CAEXv5_hKQqFH_7zmxr7moBpt07B-+ZWB=qfWOb+Rn9Vj=7EX+g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65c83f01-3e27-444d-ef2f-08ddf5353b93
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2025 15:25:13.7920
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TFxB7x0VsxYfmwuuxixnyQeBlcXjf9dLJS8DZPIQe0qqmehH3tNHItZsU6esLRtHvFydIbfzxPHxDee1ZkNkPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7272
+X-OriginatorOrg: intel.com
 
-On Sun, Sep 14, 2025 at 10:10=E2=80=AFPM David Windsor <dwindsor@gmail.com>=
- wrote:
->
-> On Sun, Sep 14, 2025 at 9:10=E2=80=AFPM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Sat, Sep 13, 2025 at 3:27=E2=80=AFPM David Windsor <dwindsor@gmail.c=
-om> wrote:
-> > >
-> > >
-> > >
-> > > On Sat, Sep 13, 2025 at 5:58=E2=80=AFPM Song Liu <song@kernel.org> wr=
-ote:
-> > >>
-> > >> On Fri, Sep 12, 2025 at 5:27=E2=80=AFPM David Windsor <dwindsor@gmai=
-l.com> wrote:
-> > >> [...]
-> > >> > >
-> > >> > > Maybe I missed something, but I think you haven't addressed Alex=
-ei's
-> > >> > > question in v1: why this is needed and why hash map is not suffi=
-cient.
-> > >> > >
-> > >> > > Other local storage types (task, inode, sk storage) may get a la=
-rge
-> > >> > > number of entries in a system, and thus would benefit from objec=
-t
-> > >> > > local storage. I don't think we expect too many creds in a syste=
-m.
-> > >> > > hash map of a smallish size should be good in most cases, and be
-> > >> > > faster than cred local storage.
-> > >> > >
-> > >> > > Did I get this right?
-> > >> > >
-> > >> > > Thanks,
-> > >> > > Song
-> > >> > >
-> > >> >
-> > >> > Yes I think I addressed in the cover letter of -v2:
-> > >> >
-> > >> > "Like other local storage types (task, inode, sk), this provides a=
-utomatic
-> > >> > lifecycle management and is useful for LSM programs tracking crede=
-ntial
-> > >> > state across LSM calls. Lifetime management is necessary for detec=
-ting
-> > >> > credential leaks and enforcing time-based security policies."
-> > >> >
-> > >> > You're right it's faster and there aren't many creds, but I feel l=
-ike
-> > >> > in this case, it'll be a nightmare to manual cleanup with hashmaps=
-. I
-> > >> > think the correctness we get with lifetime management is worth it =
-in
-> > >> > this case, but could be convinced otherwise. Many cred usage patte=
-rns
-> > >> > are short lived and a hash map could quickly become stale...
-> > >>
-> > >> We can clean up the hashmap in hook cred_free, no? The following
-> > >> check in security_cred_free() seems problematic:
-> > >>
-> > >>         if (unlikely(cred->security =3D=3D NULL))
-> > >>                 return;
-> > >>
-> > >> But as far as I can tell, it is not really useful, and can be remove=
-d.
-> > >> With this removed, hash map will work just as well. Did I miss
-> > >> something?
-> > >
-> > >
-> > > No I think actually this is easier.
-> > >
-> > > I will prepare a patch for the race in cleanup I stumbled on earlier =
-which is still there and could affect other users.
-> > >
-> > > That said, is there any use case for local storage for these structs:
-> > >
-> > > - struct file
-> > > - struct msg_msg
-> > > - struct ipc
-> > >
-> > > I can off the top of my head think of some security use cases for the=
-se but not sure if hashmaps are needed, perhaps struct file
-> >
-> > Sorry, no. This is not a copy paste territory.
->
-> no i get it's not copy/paste but I have the series for struct file
-> ready for submission, with selftests. this is also a performance
-> critical use case and there will be numerous struct file on edge
-> servers.
->
-> > The existing local storage maps were added because
-> > performance was critical for those use cases,
-> > but we made a few mistakes. There is a performance
-> > cliff that has to be fixed before we adopt it to
-> > other kernel objects.
->
-> ahh wasn't aware of this.
->
-> > Please use hash map and consider wrapping rhashtable
-> > as a new bpf map type if fixed max_entries is problematic.
-> >
->
-> makes sense thanks
->
+> +Adding some pstore experts to bring this to their attention if this can
+> be followed and if they find it useful.
 
-Hi,
+Depends on the capabilities of the pstore backend. Some of them
+(ERST, EFI variables) have tiny capacity (just a few kilobytes) so
+well suited for saving the tail of the console log, but if the user specifi=
+ed
+more than a couple of pages to be dumped using this mechanism, that
+would exceed the persistent store capacity.
 
-Thinking about this more, hashmaps are still problematic for this case.
-
-Meaning, placing a hook on security_cred_free alone for garbage
-collection / end-of-life processing isn't enough - we still have to
-deal with prepare/commit_creds. This flow works by having
-prepare_creds clone an existing cred object, then commit_creds works
-by swapping old creds with new one atomically, then later freeing the
-original cred. If we are not very careful there will be a period of
-time during which both cred objects could be valid, and I think this
-is worth the feature alone.
-
-Also, the main reason we want local storage for these structs is that
-LSMs use them. Every classic LSM (SELinux, Smack, AppArmor, TOMOYO,
-Landlock, Yama) has a cred blob, all of them have file blobs, ipc
-blobs, superblock blobs, etc. struct cred is the basis for subject
-identities in at least SELinux, probably others I'm sure.
-
-With respect to performance issues, correct thing to do is still build
-out these local storage types for in-kernel LSMs but then fix the
-performance issue.
-
-kp do you have any thoughts on this?
-
-> > pw-bot: cr
+-Tony
 
