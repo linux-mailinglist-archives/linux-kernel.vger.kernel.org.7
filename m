@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-819126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E346B59BBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:15:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7355AB59BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3BF7AB0E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:13:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8787B16C313
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8619B33EB1C;
-	Tue, 16 Sep 2025 15:14:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F8834A311;
+	Tue, 16 Sep 2025 15:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TaGmHdk3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6D920DD42;
-	Tue, 16 Sep 2025 15:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DE420B81B;
+	Tue, 16 Sep 2025 15:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758035687; cv=none; b=P2YHezqoSl14Vc2wEjEXoTg5TZWGvL/bIwXDqy8etCwkvHThnMj7QuQ02cQ5Z75B1PQiS6/CrdBoWgmnTjeagjw72xO6AN1cTJHzJ5iiPX44S34o8P4ao6+cyyiggVwIAfy4Lc6VQICs3PA07K1MUA6gEyjO4jbMXcHq7Zgazzk=
+	t=1758035730; cv=none; b=CwhxJj8NIz5PWx3GrXYnGHUWwIGDiTllEf3XjSpK9tparxQFB+bFFSGbdxeYV3PAz9WS3Z03PO/hNja5ER1I/8JaZ6laIRsF32U1H82AvRo9N7N7Kgur6xlaB8DFdHiAPNWiNGek93O7mpO2YkkRJulaSViLETWUnGgz4w2E29w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758035687; c=relaxed/simple;
-	bh=20RBLfRYEQ3Ms+slM0SmtO9IunpLQPQy9nACa/Usmtw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pQxoy0dnLH+tioHanz67OBo93IKv+K4tsBdCZzO95yZWGHEpusSQTDKKDI7cOaeOrqtLBLx/sbhuGbI0MjpzZz8uSWmwjvAr/N7i6kxI5QZ9JZN6wnCtjiris4IVQLA9a4K/4VIYb4GN44duQVqi7SwgDvu9DeH1jdEw6yAszvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cR51H4rn2z6K6F8;
-	Tue, 16 Sep 2025 23:10:11 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E3CB31402F5;
-	Tue, 16 Sep 2025 23:14:40 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 16 Sep
- 2025 17:14:40 +0200
-Date: Tue, 16 Sep 2025 16:14:38 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
- Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
-	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
-	<james.clark@linaro.org>
-Subject: Re: [PATCH v2 01/25] irqdomain: Add firmware info reporting
- interface
-Message-ID: <20250916161438.00007ba0@huawei.com>
-In-Reply-To: <20250915085702.519996-2-maz@kernel.org>
-References: <20250915085702.519996-1-maz@kernel.org>
-	<20250915085702.519996-2-maz@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1758035730; c=relaxed/simple;
+	bh=2lcTw4C7fqN2W7CHQ26kx1ZwB7S9YNJhj6YNlOeL4fM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ARHUpSLRJihKuLuApiLGQoO0UHOp+nHJzloFTXYWjOFv9A63SAnevSc7yrOB1Ptpa6kgqcdDhRmgFM3q41C67T+mHJkuV9AjamOOLstw/pQVlSzBWnFmjTJjqxqVHEGuZ37SKbROaOBdjw+iNjv/bl8V2pgZ/W1iIEtNqZdIaRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TaGmHdk3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0DEC4CEEB;
+	Tue, 16 Sep 2025 15:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758035730;
+	bh=2lcTw4C7fqN2W7CHQ26kx1ZwB7S9YNJhj6YNlOeL4fM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TaGmHdk3RM+MwEz3zWyKQZNgXU5cqDbYL4dMp/18WDuTcF1yoiC7jYAqYwkpSIFKk
+	 ODd1P4sxMPUPjnU56HkKeQvupeLqQQkX6rO7fsZNLken56MQsQ7egJzrRq20cn5I5K
+	 9O2M0Nu8L76sKKSx1jg0PF0ui7p3LgiHSLpddMB8=
+Date: Tue, 16 Sep 2025 17:15:26 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: zhangfei.gao@linaro.org, wangzhou1@hisilicon.com,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linuxarm@openeuler.org, fanghao11@huawei.com, shenyang39@huawei.com,
+	liulongfang@huawei.com, qianweili@huawei.com
+Subject: Re: [PATCH v2 2/4] uacce: fix isolate sysfs check condition
+Message-ID: <2025091633-antacid-gluten-0a61@gregkh>
+References: <20250916144811.1799687-1-huangchenghai2@huawei.com>
+ <20250916144811.1799687-3-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916144811.1799687-3-huangchenghai2@huawei.com>
 
-On Mon, 15 Sep 2025 09:56:38 +0100
-Marc Zyngier <maz@kernel.org> wrote:
-
-> Allow an irqdomain callback to report firmware-provided information
-> that is otherwise not available in a generic way. This is reported
-> using a new data structure (struct irq_fwspec_info).
+On Tue, Sep 16, 2025 at 10:48:09PM +0800, Chenghai Huang wrote:
+> The uacce supports device isolation feature. If the driver
+> implements the isolate_err_threshold_read and
+> isolate_err_threshold_write callbacks, the uacce will create sysfs
+> files. Users can read and configure isolation policies through
+> sysfs. Currently, if either isolate_err_threshold_read or
+> isolate_err_threshold_write callback exists, sysfs files are
+> created.
 > 
-> This callback is optional and the only information that can be
-> reported currently is the affinity of an interrupt. However, the
-> containing structure is designed to be extensible, allowing other
-> potentially relevant information to be reported in the future.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-Hi Marc,
+> However, accessing a non-existent callback may cause a system panic.
 
-> ---
->  include/linux/irqdomain.h | 28 ++++++++++++++++++++++++++++
->  kernel/irq/irqdomain.c    | 32 +++++++++++++++++++++++++++-----
->  2 files changed, 55 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-> index 4a86e6b915dd6..34993bf8293c4 100644
-> --- a/include/linux/irqdomain.h
-> +++ b/include/linux/irqdomain.h
-> @@ -44,6 +44,24 @@ struct irq_fwspec {
->  	u32			param[IRQ_DOMAIN_IRQ_SPEC_PARAMS];
->  };
->  
-> +/**
-> + * struct irq_fwspec_info - firmware provided IRQ information structure
-> + *
-> + * @fwspec:		Firmware-specific interrupt specifier
+Where is the callback happening that fails?  Shouldn't that be checked
+instead of doing this change?
 
-Not aligning with what is in the structure that I can see.
+> Therefore, sysfs files are only created when both
+> isolate_err_threshold_read and isolate_err_threshold_write are
+> present.
 
-> + * @cpumask:		Affinity mask for this interrupt
-> + * @flags:		Information validity flags
-> + *
-> + * This structure reports firmware-specific information about an
-> + * interrupt. The only significant information is the affinity of a
-> + * per-CPU interrupt, but this is designed to be extended as required.
-> + */
-> +struct irq_fwspec_info {
-> +	unsigned long		flags;
-> +	const struct cpumask	*affinity;
-> +};
+What if a device only has 1?  That should still work properly?
 
+And why not just create the file if it is going to be used, that is the
+real solution here.
 
+thanks,
+
+greg k-h
 
