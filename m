@@ -1,312 +1,178 @@
-Return-Path: <linux-kernel+bounces-819182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55871B59C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1EDB59C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F3E3B04F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99D8F3240C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E31A3705A7;
-	Tue, 16 Sep 2025 15:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6669315D28;
+	Tue, 16 Sep 2025 15:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="isX2h82H"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="iyHw8xrA"
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011020.outbound.protection.outlook.com [52.101.57.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8405625A2C6
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758037926; cv=none; b=HNKaJ41zxdToj84JK5TtkjGZg/fvJKL3NAolCuyNpconFZ04O7O5NsLgB0YBPMVeIjxMae4LUNajnRqRcLcqJPtt5E+471hKYJp89dfDXpzMQZvU/+I/f6rKt6HI4TBICtOwFfbqYb25jHaWO6jei7LLYsryw4oFNlaGS3HaHhA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758037926; c=relaxed/simple;
-	bh=nAry1h/Q3YXqvteB4iARFRxmZBjn+smO8M7Q60bmvCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VliOJ+u0p52zNj9J3tMj5XvVCXt6EhKvs3/xGqBXKGKfNWhiYVfwxjGMu9Eb1YnwGtW+7B0UsaSewX5Bew5S+99NsgMjBG02ZHiniSefFTzwHKEOTH6Fp5eozBnzIXuOvSiB7Lq1lcTduIoMmH1TQIKQShme2FTR1zL1eqsRUFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=isX2h82H; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b4bcb9638aso531191cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758037923; x=1758642723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8+oASOLPx95oNqK0F5924YvyG+WYdsyr2luDMG22ugY=;
-        b=isX2h82HnSE8GzdhByoOIHZRF4eHLHUhs2DKqykFbIS4pOXDe/cRZuHICEwqR4Yr//
-         JfYb7tSjv7l+kUQL5/AIb/G/YbOYYcpXvuey4qmOFLmlFRfII0+iQTDh3653duGbdn3l
-         peP0hHoJG4JK2uQvzImWmZK8wf2UjN07Ml4l8y0FKjqzAD6dxUFRExk3xHn7jLfj9c4L
-         l+gzvnjhlVVE7v8mT/rgfuPJT9VcbUN9+Z7Gyu7TEaGUWZLxAmFONkiFaaFelS0vkp4l
-         14RqgJ/4EMU7NWMZSDAk7D3XDwLUyjB1vCteNeEhx+VV/pL2vlPbRKvfuQsjoccTBdKF
-         bF8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758037923; x=1758642723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8+oASOLPx95oNqK0F5924YvyG+WYdsyr2luDMG22ugY=;
-        b=DGputZMH5xVqiMviu4gwWWYTKhGnda3BRSU+wyKdRSDvkSGi8T1YgLsYyNNaBz/EPO
-         M2sRxYBSeQy25tX2PZh/wACRadkPO6X8C5b1v5Od2/xhau/j0mSYSz++yNgIExP5StZ1
-         Rv8GZZ3P7uczsbkyHM3XRmJ4sCaLmUdCAyStFkRFoZkwAKDUtX1jl9bp+2nlL6Z0FwGI
-         NyOZNxi/ojW6/umi4OZuZ9i8wg493wUBqU8OedaLGG8FkowgdZ1nKluUZzTWLw0C7IRD
-         3eFpalodISpjdRKY9ud/IXx5McBiIQydZRdrmkXZK4UWI73TemdWyrEAtNXVzsREKBFN
-         nuhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUio7TAHv17scThHMAhrGjhZ4cWWNFCmsS12Qb7O1jANb38BJ7kivLt0xEtZlv1J9QHFfiZmKlnPeSoh3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycuqoza4+n0/EH13sM1EXh8mZDoQuPKC4NQWvrW4KBSFZJkxP4
-	FsWWNaUs38B0jj58i1njvWQLOqZyD/O39twwgpl/8Trr1fz7K/qwM58xdl/V24e08MZMidqeSAS
-	snTzPcCYj+0VpO7M+fV06HL+2yHmacIwxEtl7f1/5
-X-Gm-Gg: ASbGncuY5Vy28x31eV2IMQAJlVXKRvzTmQRhQXfUHCeCeSlBoYO4K7dsQK/+5/6UUpC
-	Qax+9dh3taYfU6sT6kaOGbXGe5oeHTaJaY37sycbLjOkbDiH3qcHy+KMFIJnJDXyDEZKnRZc7JR
-	T5C1aHGfuMxzGax3FcSJ5DOoSXBJp+Vcy9W//Gzk/O0ch6kKbIfKMMaxSXIqiCp0M8XIvt2JmnJ
-	ysQyP+DJ742K9+gx0QUsc2J0aOB02HD0jUGTHDnuyTm
-X-Google-Smtp-Source: AGHT+IGQjGkUGRtAuf74uHX8AQBwF11GPpY2256/5dvWRpDeCbKTt5r9xOaAnclS0s+qrjOTODrM7eRbOWkwcSu0DaY=
-X-Received: by 2002:a05:622a:1882:b0:4b5:d6bb:f29b with SMTP id
- d75a77b69052e-4b7b1cc603emr7225521cf.8.1758037922864; Tue, 16 Sep 2025
- 08:52:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7B8309DB0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 15:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758037924; cv=fail; b=hKZU1aAXfFbnQ9t0MU0OQlM0eNPDg5r1Xanpg0x6dlpdQMRmGEIkm6bPLfMzu0+27IJi35dXbugQ5HRVE1WrahEkyyFcxBQSdfuSkDqAeg1No6e3AhfuZEmgpSvFnTlFt/Py9HR8upG3LwMT63LX3ks5xxZ9Y+cioQLCWGbFrdE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758037924; c=relaxed/simple;
+	bh=zA7hAbGw2+fwGLWqqJ55/UFfbCMYe2FwTDIr8XRf79o=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UKgQPX9d2kcJI/gVSlGEJJsifFs+YIYvvteJWFMIY2s2peYPc+cNsU+SfbAqxiEznvW9t0TXosL0Ng7gbxTo8PxouXOLiuX5qPfNxG/OmGnJKMLcKQHvtQst/YtKAn0I1HMYq8JtOWwQg4vhKl0uM7EST9yF30zWzZ5OlVLc+B0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=iyHw8xrA; arc=fail smtp.client-ip=52.101.57.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fqUNcQmLLtdqpYYqwW6oGZzfcQ52W18gmZUGh1pRS+wNeffhVbpAYe0EeaIn4s+SDX/ObkKbDLgJLlGD6HySEjxPDZlrN4o0AyxNqAvuLhpW7vakJiHl1dWC9NwZLAlR4Xi7L6OC+ER5+cXLUFSZ6ULWHTEHouQMyB6S8ItejpjlwiBzspzpeTFcBNwt+i0RRWmXheqjSZY7NVFpLsx+43txd9OAv8Oyi+Wmp97Ewkgc2m5u8msjefa4axupa6ltQcY+q2HKDHQvjGcD1SDO5NQDwZSDK2mk01aqpiUymx4MyZTju89Az1Idkf6zweIQYFncmq19YScBE1RDJXu6Nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X93WleMYoA3TfEJpZimh+X5R02K5hSZVqqQ2U3AMqSg=;
+ b=Xsj5YVYcGLtiK4w+y74mBnOtG+a/MiWNM35VOac2Fq3XK1lZxFhQ8slyeFD/4yT6CGFK7OuyC6jRkhCpwyjcZQzAoQuSDmzfCo2zPzE+5Ahn49NCCw9m9RQGE2Awp7WDHAYjUn7x8B416pbFjmm0MIeLglaMqCcyCJsWYsMzejzXLAO3jPqgZXaRj5B9wdnL2Oqvy9jROxEmcshJc3QAJmNV6o/K0sXxa3Ie49NEs8rzRgB5KF/1lv7yrDZaYt49JZi/zXgmM2vYyNPy2AkWva8ZA1qS6yHjb1luoqOQTPMo5lIDds31J3Rkg2VThJCdTDHsRBC2SeYk5DoHCDJD7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X93WleMYoA3TfEJpZimh+X5R02K5hSZVqqQ2U3AMqSg=;
+ b=iyHw8xrAtYwVzcqxmiX2WD6BBLbuQZn3SRcscPowDLGQ81ijfPiJ4KbiIztrZ1a+N2qSbOzUmD869mbrzDg58aJsrDSkc3i8032p86Igdu2qAzNM1iJ1RIx8NAx1Wy+N7i13fT8CORaDwK/M9czm7VciyyrVfUnippdkl0fXT1RV5exr6nBipwTJhRVI9Cj/xRFfPlFcnEjK2Pc10qDjcAqFkPn98fTWPIvuUukMO8+rxErTwRHD+0dYBqGUCxGxrHEtqZSOOIeBEeniHKmojZtZztK/9MLUSXF86DT6lOtA9O7pBwCU8vOYiQn20IpDMqhYlZnOM+TbhC7u9FaT8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
+ by DS0PR03MB7727.namprd03.prod.outlook.com (2603:10b6:8:1f1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Tue, 16 Sep
+ 2025 15:51:58 +0000
+Received: from BYAPR03MB3461.namprd03.prod.outlook.com
+ ([fe80::79f:ee0b:809c:4efb]) by BYAPR03MB3461.namprd03.prod.outlook.com
+ ([fe80::79f:ee0b:809c:4efb%6]) with mapi id 15.20.9137.010; Tue, 16 Sep 2025
+ 15:51:58 +0000
+From: Matthew Gerlach <matthew.gerlach@altera.com>
+To: yilun.xu@intel.com,
+	linux-kernel@vger.kernel.org
+Cc: Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: [PATCH] MAINTAINERS: change maintainer for Intel MAX10 BMC secure updates
+Date: Tue, 16 Sep 2025 08:51:52 -0700
+Message-ID: <20250916155152.411121-1-matthew.gerlach@altera.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR17CA0066.namprd17.prod.outlook.com
+ (2603:10b6:a03:167::43) To BYAPR03MB3461.namprd03.prod.outlook.com
+ (2603:10b6:a02:b4::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915230224.4115531-1-surenb@google.com> <2d8eb571-6d76-4a9e-8d08-0da251a73f33@suse.cz>
-In-Reply-To: <2d8eb571-6d76-4a9e-8d08-0da251a73f33@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 16 Sep 2025 08:51:51 -0700
-X-Gm-Features: AS18NWA1aMQcro0nHI_awSa8XDDhwp0fYBTaz-bm5DsoeJH_N8UZACj67AWvxw0
-Message-ID: <CAJuCfpHXAhGZb1aOPyHOPiTWSwQJi570THqJQcjrVPf=4Dt3xQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, hannes@cmpxchg.org, 
-	usamaarif642@gmail.com, rientjes@google.com, roman.gushchin@linux.dev, 
-	harry.yoo@oracle.com, shakeel.butt@linux.dev, 00107082@163.com, 
-	pyyjason@gmail.com, pasha.tatashin@soleen.com, souravpanda@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|DS0PR03MB7727:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5327a85b-fc2e-496d-b782-08ddf538f7b3
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1xJgxI9lu5SwViL90rguiI3LGzz6w25G7f/5trtj+/kqIva9pXogAl2WDyR0?=
+ =?us-ascii?Q?sCiHZtFPIYHpQazx7diR0fzPV3JjtkFlqRKONsZkRBmNumqWpzfT5GObG1be?=
+ =?us-ascii?Q?jwZuv74QeO9rUfYs9P1b0sSQwUK8Km3X/QnXV/YBHeoo35jlxhadmLcMj2jc?=
+ =?us-ascii?Q?j/PSEzUMPSZubTpTqHGNSbHd4yf16twR4EkSSyK33/e/qxi4j5UcIF2ghYzr?=
+ =?us-ascii?Q?2tJ+iq/rBr+CJity0+Y7mFPnKseuV0nwhMS4U4suRrvWoLUTCFpm+0XIFqJD?=
+ =?us-ascii?Q?4cxPSd1xOw1y27vfEY31sYEuAvS3C1r6f+FKkYc+F/fNzZ+s0QNDPdpdH2DU?=
+ =?us-ascii?Q?r1S/QWRYd5xniojqHMZ+3IOmpO/PKb+hV7aVCZtjFUVQT1V2crdEHrTh6gIE?=
+ =?us-ascii?Q?M2skISIJBpnzJ5a9mic0JFZF+dVNzJQZLSJt4bf7oQ4u6xDbmCdX31FIDRrv?=
+ =?us-ascii?Q?YGaVf11V4Yl7BPLXGejDnVxP0Jxm+v9mdOAm9TEBZl1KnkHv9QDJ9+kn+feG?=
+ =?us-ascii?Q?gfAH3iq6+vfPFdIg3pcVbmDykG/DZ/e0uvWh/W4ZYTCexuns7HGGh+6e5FWb?=
+ =?us-ascii?Q?YoVbtXDxJ1eSr5il5P/TmG8N97XpJwqkjRqPRfvVwmBFQ4dOX7QYyLVdYZs/?=
+ =?us-ascii?Q?glfSwPynUmK/V2YDAlzv/e5fmnnD+ttWhj8wGEjNo2g69waW5W1RMY0rTO0j?=
+ =?us-ascii?Q?AyqlvRyl3CR6Uaocj5sNaYm0COuUlbUmSKJdmxuR/z22v+MywQE5rX68nb+N?=
+ =?us-ascii?Q?J7B5qxOd+EKTfRZBP88ulUgskSYSqt1M9rrU5BDyagXMiGhkGKm5zj07QyCZ?=
+ =?us-ascii?Q?qV75KgWLU1FdcKzDeeJsanwpJiwFfHkeS9vL0NHwKYincZYlkeISqOpIafrF?=
+ =?us-ascii?Q?Xrt987lu0rgBd2XEWhQiawIP+XujtzLufpEGqyeUAJhFDc6rD79ZEprF0I3S?=
+ =?us-ascii?Q?aqyeeN0iV+sqh+XP0zcuOduhhy0Qd3avsBGTVlESWrC4rf5MSR9JGC99gGgm?=
+ =?us-ascii?Q?p8BL/61uKH4We6dlF+fvnTlvZwmMFczppgcaLeP4Df6l/CahNW7gdqwoem5S?=
+ =?us-ascii?Q?91E2/NGwqnAZA6Q0YPmy6RpF8t6Ne7Qm/Tg1Ix6Hpfp6spd+yIuiZpx0yyQX?=
+ =?us-ascii?Q?GHdcKhORgEQLz7fvxFCzdYsqvcIwQhbkpUknM7++GsQGgrGlbGkvS0szr+ls?=
+ =?us-ascii?Q?plGVGQIVXKrLdEgtVa3k7/OlvhCAUeInnURnsR7sj0KpIDvFQ77MyBLwOPhE?=
+ =?us-ascii?Q?eVrwSOaRSmNm1i21OZBNNrE5zDn92ccX7OEJ46LlGMynDvjVU7I+K07HZvZf?=
+ =?us-ascii?Q?KBVvmHD4e7gPHqGVwdnm2M9XcHy5J0Vrpr3IMdJ91L/ExgpPccuVL7accUs+?=
+ =?us-ascii?Q?PC8SdXaekZgW+h8ExDKWD6xSUn7dO6nmenux9lRS95abM9Ypx/Zsmuf66K2f?=
+ =?us-ascii?Q?fqLLTThEYsI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?R40LN3SVmQglochOu4WiMULxkT/mjfRI+e1YCilXyHjhduQi3ZMVZV2te+fw?=
+ =?us-ascii?Q?6r/mZmmmCvBRfbCS2nomha/aOkHQKYa/uaUTBf/R4Jcu9fPT3MEqvSCO8qM4?=
+ =?us-ascii?Q?oJlSdK7PL4n6wdTcLZer2mWLgkjl1rK3ZxUhZy2naIcEVkrkPJXX19c9w2I1?=
+ =?us-ascii?Q?zta8bXpAVhns7myGfU1B+dP/aUb5yN8sxrcAx0Up60DX9hrBeswIOMLxbJQt?=
+ =?us-ascii?Q?nM4yYWHnyY81KYazg4Xdpk93Y0wRGFbQGyBNFxsphl7hzATxyDMs1SdmAOO8?=
+ =?us-ascii?Q?tBs3VxdNHBHQvczXxM/0IWpaCgL1ZZ2IevO3afHepw9M8s/zPGfogwUJ8KWw?=
+ =?us-ascii?Q?qbEf/UG+HWlnB/gMjz50zm9Vab/7cQ0YGgrHC6u/1/TiyB59fdAwdATxARor?=
+ =?us-ascii?Q?h8BlVhT6NXgG38zletaihL1hHbHuawQiI6ROMe5ssWNqp8qwtlExop+7jIMy?=
+ =?us-ascii?Q?bTjF2UHE0Rhrm9C6DlR6/woI3itigIXx0A1OJsbx1helZKo0TXaXrScas2AY?=
+ =?us-ascii?Q?Kr/fAfUTRM63oHRu5GqqDjSBBiISnwq8GZoIPew1hYBnZW/JanOSFX5oLbaz?=
+ =?us-ascii?Q?WJ4uhcj2N78yk1DWs+464lQI59DZ+ZU0Cx8eOSrkxU3leliKq/UVXoovY7Yc?=
+ =?us-ascii?Q?5urg+AghVPSkHJUVnSNACw0c8e4CXx/953j5tHjZl0GTFyr24nTRaSjPEHmI?=
+ =?us-ascii?Q?5u1QAzVvbhCkplcvyVzFDQbrLNMnJIJU5VfJd20UYq9FDRRthdttWCVRXz+q?=
+ =?us-ascii?Q?S4bpLz5EXUxzjXVw0XMmD3wX4Xx1bq4QAnbwsuM/eQLC2BAGv5cw2XI3wul7?=
+ =?us-ascii?Q?g2Ly9xDmHtwBywsGRUF96fXkNpEzA2je6q/94Sab+y52MobxNB1zF7Bjk5Jx?=
+ =?us-ascii?Q?YD+cUZibZ+hxSFXtAtJtWSVF/qeciLGm1eE8nlFjnB6w6WOEO1ULFXpcXGAT?=
+ =?us-ascii?Q?P439PUyEwjhsbPQyJprKvjWl73eaAECP0NYonDmikULXolZw8aJizKsttyxD?=
+ =?us-ascii?Q?/G/LTBbqB0bVc5kC8OS8aqhcSqbr6UPa1KpQegjSDZlSpxAWTV5DE39/PTQf?=
+ =?us-ascii?Q?Z2Ho0FSX/O6rY6LQ0pTXtvKawo6VZbuLceITsRdPShc0EjV+NXHLjoGF/D8u?=
+ =?us-ascii?Q?pTwpbz5Z7AEvKGoPfayOnRAywpYivUOPaKyxtWsI7eFN7k0r9AR5T1s+gExA?=
+ =?us-ascii?Q?AwlKXPnTQhkMjJUa3L4CXHi/kP5fH84EX4BOJhWXqlXvXjjDlRzseiMbEPLn?=
+ =?us-ascii?Q?MJrEnMrAMRdKkOx1XT5AZ8c3YHcLZO0X/X5vyavZGDuE4v88l97zvICKslCz?=
+ =?us-ascii?Q?XoF1FGhYtgPctq8mt5mAaZliInqdMDWpeTm+4WaQX9bC1/gyCS+eh7t+f/ke?=
+ =?us-ascii?Q?DNEu40PM0Y0kjDZNHsj0dqD75uo0XFdQwO3ifUwX+hJFqkkcJrXK3DX3yAhy?=
+ =?us-ascii?Q?9B6h3c6zNwhsHRqqKCO2Ou89Gayv3lISTNCahnspVOxdfjMgI34pP2Y0FyR4?=
+ =?us-ascii?Q?/i7gVbHNBkuyAYL4DQuCuMiLlzUDzr7KQ23WWHpcUqAt/o8T6w4eQ72OuN2G?=
+ =?us-ascii?Q?n0aSFw0haAjd2Le6v047STDqGKPXllfXsrZitp/TwOjZ12SA6iv1+31Al4TY?=
+ =?us-ascii?Q?dQ=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5327a85b-fc2e-496d-b782-08ddf538f7b3
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:51:58.5111
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d+EnRM+q3sCCMlAJtmS3mydNBHZ8Oq9ehHEGIj16ScdLim0n9g0CXsEGWTl4Ble9iaJXdAp2TJJF4i3VxuCaMrIY3FFu+GfVbLkzwe9r0Xc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR03MB7727
 
-On Tue, Sep 16, 2025 at 5:57=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 9/16/25 01:02, Suren Baghdasaryan wrote:
-> > While rare, memory allocation profiling can contain inaccurate counters
-> > if slab object extension vector allocation fails. That allocation might
-> > succeed later but prior to that, slab allocations that would have used
-> > that object extension vector will not be accounted for. To indicate
-> > incorrect counters, "accurate:no" marker is appended to the call site
-> > line in the /proc/allocinfo output.
-> > Bump up /proc/allocinfo version to reflect the change in the file forma=
-t
-> > and update documentation.
-> >
-> > Example output with invalid counters:
-> > allocinfo - version: 2.0
-> >            0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_=
-data_nodes
-> >            0        0 arch/x86/kernel/alternative.c:2090 func:alternati=
-ves_smp_module_add
-> >            0        0 arch/x86/kernel/alternative.c:127 func:__its_allo=
-c accurate:no
-> >            0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_=
-set
-> >            0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_re=
-alloc
-> >            0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_en=
-able_hybrid_capacity_scale
-> >            0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:=
-init_amd_l3_attrs
-> >        49152       48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_devi=
-ce_create accurate:no
-> >        32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_ge=
-n_pool_create
-> >            0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_thres=
-hold_create_device
-> >
-> > Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > Acked-by: Usama Arif <usamaarif642@gmail.com>
-> > Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->
-> With this format you could instead print the accumulated size of allocati=
-ons
-> that could not allocate their objext (for the given tag). It should be th=
-en
-> an upper bound of the actual error, because obviously we cannot recognize
-> moments where these allocations are freed - so we don't know for which ta=
-g
-> to decrement. Maybe it could be more useful output than the yes/no
-> information, although of course require more storage in struct codetag, s=
-o I
-> don't know if it's worth it.
+Xu Yilun has kindly agreed to take over maintaining Intel MAX10 BMC secure
+updates, since I will be leaving Altera.
 
-Yeah, I'm reluctant to add more fields to the codetag and increase the
-overhead until we have a usecases. If that happens and with the new
-format we can add something like error_size:<value> to indicate the
-amount of the error.
+Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Maybe a global counter of sum size for all these missed objexts could be
-> also maintained, and that wouldn't be an upper bound but an actual curren=
-t
-> error, that is if we can precisely determine that when freeing an object,=
- we
-> don't have a tag to decrement because objext allocation had failed on it =
-and
-> thus that allocation had incremented this global error counter and it's
-> correct to decrement it.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9da37c8dee69..b9c1bf9b9dee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12689,7 +12689,7 @@ F:	drivers/mfd/intel-m10-bmc*
+ F:	include/linux/mfd/intel-m10-bmc.h
+ 
+ INTEL MAX10 BMC SECURE UPDATES
+-M:	Matthew Gerlach <matthew.gerlach@altera.com>
++M:	Xu Yilun <yilun.xu@intel.com>
+ L:	linux-fpga@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/ABI/testing/sysfs-driver-intel-m10-bmc-sec-update
+-- 
+2.35.3
 
-That's a good idea and should be doable without too much overhead. Thanks!
-For the UAPI... I think for this case IOCTL would work and the use
-scenario would be that the user sees the "accurate:no" mark and issues
-ioctl command to retrieve this global counter value.
-Usama, since you initiated this feature request, do you think such a
-counter would be useful?
-
->
-> > ---
-> > Changes since v1[1]:
-> > - Changed the marker from asterisk to accurate:no pair, per Andrew Mort=
-on
-> > - Documented /proc/allocinfo v2 format
-> > - Update the changelog
-> > - Added Acked-by from v2 since the functionality is the same,
-> > per Shakeel Butt, Usama Arif and Johannes Weiner
-> >
-> > [1] https://lore.kernel.org/all/20250909234942.1104356-1-surenb@google.=
-com/
-> >
-> >  Documentation/filesystems/proc.rst |  4 ++++
-> >  include/linux/alloc_tag.h          | 12 ++++++++++++
-> >  include/linux/codetag.h            |  5 ++++-
-> >  lib/alloc_tag.c                    |  4 +++-
-> >  mm/slub.c                          |  2 ++
-> >  5 files changed, 25 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesys=
-tems/proc.rst
-> > index 915a3e44bc12..1776a06571c2 100644
-> > --- a/Documentation/filesystems/proc.rst
-> > +++ b/Documentation/filesystems/proc.rst
-> > @@ -1009,6 +1009,10 @@ number, module (if originates from a loadable mo=
-dule) and the function calling
-> >  the allocation. The number of bytes allocated and number of calls at e=
-ach
-> >  location are reported. The first line indicates the version of the fil=
-e, the
-> >  second line is the header listing fields in the file.
-> > +If file version is 2.0 or higher then each line may contain additional
-> > +<key>:<value> pairs representing extra information about the call site=
-.
-> > +For example if the counters are not accurate, the line will be appende=
-d with
-> > +"accurate:no" pair.
-> >
-> >  Example output.
-> >
-> > diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-> > index 9ef2633e2c08..d40ac39bfbe8 100644
-> > --- a/include/linux/alloc_tag.h
-> > +++ b/include/linux/alloc_tag.h
-> > @@ -221,6 +221,16 @@ static inline void alloc_tag_sub(union codetag_ref=
- *ref, size_t bytes)
-> >       ref->ct =3D NULL;
-> >  }
-> >
-> > +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag)
-> > +{
-> > +     tag->ct.flags |=3D CODETAG_FLAG_INACCURATE;
-> > +}
-> > +
-> > +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag)
-> > +{
-> > +     return !!(tag->ct.flags & CODETAG_FLAG_INACCURATE);
-> > +}
-> > +
-> >  #define alloc_tag_record(p)  ((p) =3D current->alloc_tag)
-> >
-> >  #else /* CONFIG_MEM_ALLOC_PROFILING */
-> > @@ -230,6 +240,8 @@ static inline bool mem_alloc_profiling_enabled(void=
-) { return false; }
-> >  static inline void alloc_tag_add(union codetag_ref *ref, struct alloc_=
-tag *tag,
-> >                                size_t bytes) {}
-> >  static inline void alloc_tag_sub(union codetag_ref *ref, size_t bytes)=
- {}
-> > +static inline void alloc_tag_set_inaccurate(struct alloc_tag *tag) {}
-> > +static inline bool alloc_tag_is_inaccurate(struct alloc_tag *tag) { re=
-turn false; }
-> >  #define alloc_tag_record(p)  do {} while (0)
-> >
-> >  #endif /* CONFIG_MEM_ALLOC_PROFILING */
-> > diff --git a/include/linux/codetag.h b/include/linux/codetag.h
-> > index 457ed8fd3214..8ea2a5f7c98a 100644
-> > --- a/include/linux/codetag.h
-> > +++ b/include/linux/codetag.h
-> > @@ -16,13 +16,16 @@ struct module;
-> >  #define CODETAG_SECTION_START_PREFIX "__start_"
-> >  #define CODETAG_SECTION_STOP_PREFIX  "__stop_"
-> >
-> > +/* codetag flags */
-> > +#define CODETAG_FLAG_INACCURATE      (1 << 0)
-> > +
-> >  /*
-> >   * An instance of this structure is created in a special ELF section a=
-t every
-> >   * code location being tagged.  At runtime, the special section is tre=
-ated as
-> >   * an array of these.
-> >   */
-> >  struct codetag {
-> > -     unsigned int flags; /* used in later patches */
-> > +     unsigned int flags;
-> >       unsigned int lineno;
-> >       const char *modname;
-> >       const char *function;
-> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> > index 79891528e7b6..12ff80bbbd22 100644
-> > --- a/lib/alloc_tag.c
-> > +++ b/lib/alloc_tag.c
-> > @@ -80,7 +80,7 @@ static void allocinfo_stop(struct seq_file *m, void *=
-arg)
-> >  static void print_allocinfo_header(struct seq_buf *buf)
-> >  {
-> >       /* Output format version, so we can change it. */
-> > -     seq_buf_printf(buf, "allocinfo - version: 1.0\n");
-> > +     seq_buf_printf(buf, "allocinfo - version: 2.0\n");
-> >       seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
-> >  }
-> >
-> > @@ -92,6 +92,8 @@ static void alloc_tag_to_text(struct seq_buf *out, st=
-ruct codetag *ct)
-> >
-> >       seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
-> >       codetag_to_text(out, ct);
-> > +     if (unlikely(alloc_tag_is_inaccurate(tag)))
-> > +             seq_buf_printf(out, " accurate:no");
-> >       seq_buf_putc(out, ' ');
-> >       seq_buf_putc(out, '\n');
-> >  }
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index af343ca570b5..9c04f29ee8de 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -2143,6 +2143,8 @@ __alloc_tagging_slab_alloc_hook(struct kmem_cache=
- *s, void *object, gfp_t flags)
-> >        */
-> >       if (likely(obj_exts))
-> >               alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size=
-);
-> > +     else
-> > +             alloc_tag_set_inaccurate(current->alloc_tag);
-> >  }
-> >
-> >  static inline void
->
 
