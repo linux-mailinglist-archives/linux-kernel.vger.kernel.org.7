@@ -1,96 +1,118 @@
-Return-Path: <linux-kernel+bounces-819034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07CC2B59A70
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:39:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596D2B59A71
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 16:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F150D18834AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:34:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E6A3A7766
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9C2321F3A;
-	Tue, 16 Sep 2025 14:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FC431D74F;
+	Tue, 16 Sep 2025 14:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYE8Efn+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfJbw1SS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E625928C84F
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2B22C15AA;
+	Tue, 16 Sep 2025 14:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758033259; cv=none; b=ZR06t7PN+tOl9wjKsy4mync/pY0jXsCLs9tSS+qlfO7j9rA8vto9V/pXtAVkWMb5KeYOI6sGfONZSMgfAjQPPeHs0fe+5/c5gWMDsekXMnTR8xxGHYK+CMwvVIQ1AuKZOy2mC6eYs71olLaPfT4NApN+nRh99QYvA53CxWHU6bw=
+	t=1758033296; cv=none; b=TkyuWRiXFeCMKG3+L/An3oipx5GZubALENQVJCMP3ButdZ+IoRO2XAyPCPrcleL5G+/z85r+zv5VbukKhJkcVjxFGA1K8lw4mkeX4ju2q3K1cCRZSA7kNL0I6ebFDU8WfGnKfedq+kBVvCTKIrFX/GzFM3eO4BAE6vVxGgi8QiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758033259; c=relaxed/simple;
-	bh=3MH7gD+Tsr6/+WWbc5XNbhhMDRlAVwAmSiICzgleW9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=byKABeQPHxPxb8P6bib867N/m2Jk2rdffeEAwS0bMaCSzJfqvvFGJ4exp+zvCn9RDR74HBCSHyxBNutP8V3cSooNDGXb0oajlSvb5756qO89GDpqwLvuKmvph8MrXOkQ0BeKUBqrjea5a0wepUJHZNGcvRz0TIgLQDdUQY7fsY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYE8Efn+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF58C4AF09;
-	Tue, 16 Sep 2025 14:34:14 +0000 (UTC)
+	s=arc-20240116; t=1758033296; c=relaxed/simple;
+	bh=E7bATN9G95lxsMIscr5CR3AgS3iZbRXC94zT1FqKkco=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cdSqpyZ/ke+Hle6g+LnsNQblAo+gsSR/wGgX3MmLXOByEALgHeR9gOyvnoXMtIlMKIbYq0J+dLrenuYrqHf8eG/TyVXjr2dSUZE7ZTTcxqEP+o1QBQglf4fZAgvyFxYROMS4l97gl8BMR0rCAadVVgreUDNKW5Cz20vrpbM8Jkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfJbw1SS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF7DC4CEFB;
+	Tue, 16 Sep 2025 14:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758033258;
-	bh=3MH7gD+Tsr6/+WWbc5XNbhhMDRlAVwAmSiICzgleW9A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QYE8Efn+Rtz49VyeXFT+OA9QWcbqM6ZXeDrJnDya8oYEdZbQzubfb9N/1S8hoNNCX
-	 gp9rau+XytOIg1+un9Mguc/q1TX8w4O/yPllotB9qGt5PXIOpqIXJjaVFVSKy5T/Js
-	 hRokgc0yIP2bQL9tlVDvbUDm6WUC6w22W6TJv3jNOc6eznzrEo36jFDnLYTKiXnvCx
-	 gsRzOcL5ehCcUdEQDnpGsSGqwV9EdD+BaSUTy2xuxwEU8JRJutD7k2bDjreQ6HIXdT
-	 utIlA1mGCdnleTYeWeuuFajS3OxCIufVPpSy4JBfMgNdWXy+4bXnz5Gk7otR7W0T7n
-	 ym5FukQVNHB5w==
-Date: Tue, 16 Sep 2025 17:34:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <me@yadavpratyush.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
-	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	kexec@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] kho: add support for preserving vmalloc
- allocations
-Message-ID: <aMl1Yj7_iw1kCU2D@kernel.org>
-References: <20250908103528.2179934-1-rppt@kernel.org>
- <20250908103528.2179934-2-rppt@kernel.org>
- <mafs0ldmon784.fsf@kernel.org>
- <mafs0ldmnlmq0.fsf@yadavpratyush.com>
- <aMgey9qEC_XUejXm@kernel.org>
- <20250915144335.GL1024672@nvidia.com>
- <aMhAiR6qnXMA-c8r@kernel.org>
- <20250916130516.GB1086830@nvidia.com>
+	s=k20201202; t=1758033295;
+	bh=E7bATN9G95lxsMIscr5CR3AgS3iZbRXC94zT1FqKkco=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qfJbw1SSMhRTOFhtklfkqYwNyMsVkgO6RLUbzmCqhU/+Grz6ndApZd9GoR0LsfXJT
+	 HNLudIegbN10afHnwlUEjXXlvIvL7E8BBpiG2S29qzKn5d6ApfJHGX0KNQcu7nCWy0
+	 fMpgPProKpcrkkcntG999fMxCHMd2ad4nWhMLB4GQCcTo+62WR+euBuO/R1BcRM8+o
+	 3UbLylFWMO8XzXVbBwdYXhHFlMjU5DAiKFKEp20rC2IA51//+ANJrYC5ji7lKQadHZ
+	 ZUUL06RU1ZH5Z+o0Hfp0lMRiC9F4sIxPFr1Y5tQldI4Clb2kGgBlJCwQGUICjLIlKY
+	 dBrL7T1T8764g==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kamel Bouhara <kamel.bouhara@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In-Reply-To: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
+References: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
+Subject: Re: [PATCH v14 00/10] Add support for MAX7360
+Message-Id: <175803329065.3832522.18087850599111439891.b4-ty@kernel.org>
+Date: Tue, 16 Sep 2025 15:34:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916130516.GB1086830@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On Tue, Sep 16, 2025 at 10:05:16AM -0300, Jason Gunthorpe wrote:
-> On Mon, Sep 15, 2025 at 07:36:25PM +0300, Mike Rapoport wrote:
-> > > Under the covers it all uses the generic folio based code we already
-> > > have, but we should have appropriate wrappers around that code that
-> > > make clear these patterns.
-> > 
-> > Right, but that does not mean that vmalloc preserve/restore should use the
-> > public KHO APIs and avoid using internal methods.
+On Sun, 24 Aug 2025 13:57:19 +0200, Mathieu Dubois-Briand wrote:
+> This series implements a set of drivers allowing to support the Maxim
+> Integrated MAX7360 device.
 > 
-> I think it does, the same way vmalloc is layered on top of the buddy
-> allocator. Why wouldn't you build things in clean understandable
-> layers like this?
+> The MAX7360 is an I2C key-switch and led controller, with following
+> functionalities:
+> - Keypad controller for a key matrix of up to 8 rows and 8 columns.
+> - Rotary encoder support, for a single rotary encoder.
+> - Up to 8 PWM outputs.
+> - Up to 8 GPIOs with support for interrupts and 6 GPOs.
+> 
+> [...]
 
-Here it's more like __vmalloc_node_range_noprof() and get_vm_area() calling
-__get_vm_area()
- 
-> Jason
+Applied, thanks!
 
--- 
-Sincerely yours,
-Mike.
+[01/10] dt-bindings: mfd: gpio: Add MAX7360
+        commit: aee814458fb98819876442f0261fad0bb9842224
+[02/10] mfd: Add max7360 support
+        commit: a22ddeef55c4df847d9ac862b6192da774948fe1
+[03/10] pinctrl: Add MAX7360 pinctrl driver
+        commit: b4b993c0e39436ffb3a9b21cabf62b5df085b2e1
+[04/10] pwm: max7360: Add MAX7360 PWM support
+        commit: d93a75d94b79ba3e664f7236ee05790e8b1d0e4b
+[05/10] gpio: regmap: Allow to allocate regmap-irq device
+        commit: 553b75d4bfe9264f631d459fe9996744e0672b0e
+[06/10] gpio: regmap: Allow to provide init_valid_mask callback
+        commit: 0627b71fa5508ab605b6e9fd74baed40805cfdda
+[07/10] gpio: max7360: Add MAX7360 gpio support
+        commit: b1a7433d857edb14b993161af9ed1ee98d4c9cee
+[08/10] input: keyboard: Add support for MAX7360 keypad
+        commit: fa6a23f1c59c67de9160b4acc5a8651ad2106fa8
+[09/10] input: misc: Add support for MAX7360 rotary
+        commit: 229c15e9a69cb3d6a303a9e20b10fb991b66895d
+[10/10] MAINTAINERS: Add entry on MAX7360 driver
+        commit: 32d4cedd24ed346edbe063323ed495d685e033df
+
+--
+Lee Jones [李琼斯]
+
 
