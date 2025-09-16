@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-818654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E163B594B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647BDB594BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF69332088F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099EA3ABCFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE4F2C0F90;
-	Tue, 16 Sep 2025 11:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089552C028E;
+	Tue, 16 Sep 2025 11:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Clk+EEY/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ytwML0GF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ADFGvhn8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xgKcjVaa"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YHpmyw7u"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EA9246BA9
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35F2246BA9
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758020691; cv=none; b=k931JflVBwzR61YPng6TKeF4a0nV4rohVsNFxyof5n9zaKvIyLU4MBlo1TGk4OdntBZNgyg2sjIVHtj8hBVSqiOBF5nZ69NcJHOixWO5QxLkX/zWeXcvzbyoS8uaKaXK19IlIlmoO644qV5Xz0X0FPjk1AGXNFjeOnIL2hU4FZg=
+	t=1758020698; cv=none; b=b0tbokJHX1uCpMA1lutQGyz5kyvov9ymkdO56IgJunv+d+OsBnuwouPoH7p9vvMWkWBKTpjV8pndKQPoK6LMOB2IcLgip+YwF2lytKWweUH0F5JTXpkFIp9zJJY+FlWeyr9j84/0eKwNxIcXR4v0GTmiBHHHsPsXh/nGlBS7wlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758020691; c=relaxed/simple;
-	bh=6iZ/hVZU+vtlEEp0FSXnhKnIBs8Acs2EWAnqw48/cAM=;
+	s=arc-20240116; t=1758020698; c=relaxed/simple;
+	bh=D9UWu/gQQnHQlPKCWZF2A1LL9fmwajVXhNbGOBRnvzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKG3wo2iwV7/9D1ByUEfiJxRa35jUex0Njv6ULQMaD0IEh6a4FUdj8/rLElGs32zLGPcGyngMVIDQ7Pt035q0aKTFABJuUasCRSNJLiqnDLYMVIruuo3Y0yW9XDzdXIXD9P1Zb2euGzrl9zROqQIdtYthx/faW7M2KFZKErCwzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Clk+EEY/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ytwML0GF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ADFGvhn8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xgKcjVaa; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 02404222A4;
-	Tue, 16 Sep 2025 11:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758020688; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uB3s75uIkNgs3ivEMPKxDsUxxOEwMyVjkPUAHjlB29Q=;
-	b=Clk+EEY/+XyLZNpY7QrN3RIYjibUWBqNZxtXJMrDon3ieCDpqQh2JnfZKi+RKyrOU60LEG
-	FP7qfvM62au2DSQ+8TmDY38UoH0sqpq5hL8XRCY+NIkmB91dtOLeohxaQuJ2gkICXzp1dD
-	nnCQnXA6gr3AnOYrOomCJmGSZNiRIGo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758020688;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uB3s75uIkNgs3ivEMPKxDsUxxOEwMyVjkPUAHjlB29Q=;
-	b=ytwML0GF7CjWKv4PZQYYPP8fvkQDech1EF33QYkPxi5T2wtVrgBiEgspeMXS0NG/hXFpdM
-	R36MqZLTjypGkSBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ADFGvhn8;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=xgKcjVaa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758020687; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uB3s75uIkNgs3ivEMPKxDsUxxOEwMyVjkPUAHjlB29Q=;
-	b=ADFGvhn8TGyBrfikNQaf6x+czHKdB2l2gBTVPQXS6ImHtS5/3EGceVwdmS2ktyJqeoc7g2
-	TT0iTTklU0jZ6mv6HZVj8bMHGSqzRqlHZFblUTVgsN39efBfKtggb9XxX2+QRjnQuv2uJT
-	dNNBqDn5MDWLkytYEzLFBIoCiu1yuHI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758020687;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uB3s75uIkNgs3ivEMPKxDsUxxOEwMyVjkPUAHjlB29Q=;
-	b=xgKcjVaahlY6F4xvT0zvJHVxkesQv4XnlpiukwTfXth/tfjg/hpVPAkFe35PXXcLMtKwsc
-	GrgIVvYz1tcAwPAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4C5D139CB;
-	Tue, 16 Sep 2025 11:04:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pQ+IN05EyWh3WwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 16 Sep 2025 11:04:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 76DECA0A56; Tue, 16 Sep 2025 13:04:42 +0200 (CEST)
-Date: Tue, 16 Sep 2025 13:04:42 +0200
-From: Jan Kara <jack@suse.cz>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: linux-block <linux-block@vger.kernel.org>, 
-	linux-fsdevel@vger.kernel.org, LTP List <ltp@lists.linux.it>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Christian Brauner <brauner@kernel.org>, 
-	chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Anuj Gupta <anuj20.g@samsung.com>, 
-	Kanchan Joshi <joshi.k@samsung.com>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: next-20250915: LTP chdir01 df01_sh stat04 tst_device.c:97:
- TBROK: Could not stat loop device 0
-Message-ID: <arfepejkmgi63wepbkfhl2jjbhleh5degel7i3o7htgwjsayqg@z3pjoszloxni>
-References: <CA+G9fYuFdesVkgGOow7+uQpw-QA6hdqBBUye8CKMxGAiwHagOA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjDy4rALgtUCwWYZ8XJHhWFP1Uwb4+bSIG0k1NBN9ronsMLM3G0tRq+ZaxfFu4KeMMm1GYupAgvm9l6v+kaCw5TG8n5dBxSjUaNLSfXgbGrqx1GkZ5NN/DmhiVkXGBB3pX+OETCM5XVG12eWAnntAcJFwsGnOc6g9htXiIpbkqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YHpmyw7u; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58GAFeT9013413
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:04:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=vHCjYO0ES8GnURwdE9zoXLkg
+	FqQQm+yrdu6ceYSTxV8=; b=YHpmyw7uP+fQICIKPP2QgKGCtFMWWngEdt0Y0dMh
+	jy+QS7CJufQf3pEjaDXXuS/akKu9a8pmN9kcqA6R/EzpUxMipGfCw/9nAx5PziT3
+	u3DmD5lILEi5fFxWEAptm2w14BuW+wdQaCYXXwBdQUM1KdW2I421OwEWfPImGNil
+	cnRtMbheWSDT2O+ZtuhbDcEBBVfDameA33pEmGXUFiGDQm+v02L0Z6HmyLkyWDvZ
+	CK1YdmDnKe4fbGUD171ZahB42E0sOQ3IFRpGL3H67tJVFd/CIspFXdmFXB0k+Sdd
+	jUwsaFBY07KF+78PROo06ejhu4lGzQ9OXiDC7DA4yczbgQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 496x5asr9e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:04:55 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b5fb1f057fso76532851cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:04:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758020695; x=1758625495;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHCjYO0ES8GnURwdE9zoXLkgFqQQm+yrdu6ceYSTxV8=;
+        b=vxM6uw4i9mdTGiCbpzVxrBea6c+tusYw+4RflEN9vkQQBE8ZDNX/rwXQtZ+6DcU7Vu
+         WY+QoHezpM/WQdNjGJorShf73A2TbcbsFsbtxllHmcbt00Op9DmZRHGIcXdEMFnE+wzf
+         iVRFlmh7It4xnel7bUGKJc2ZJ9o06unl/AEbFTWk7ISa4j48zgop3benXLZV8WjMEH7I
+         L20wR0pTWDkUkLnLPlcjh3MKQs7mCpwI4OCYsTfJyu/bCgFCGdIW5PDTZQ2lvBbWjkkg
+         OyY1K1sk/PCRfVUZxJOTrcuPE5MUhounIQhZHwi/hnO4NFmZURrPAz00KOK6WMW2KOah
+         HFgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwMAkEwf0sIkhiI+4TTJP2EuvjaGta2qjAAHSrtHNRe1HUPuWsuep83uO+rtcpT5uDGDc2KhTN9YFTfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNdzwIGgAItJb3gm+GESP98wHwFIznAb8GaE9tVwiosTUuhfV0
+	dQyOOpdw1Hgl88n7qnKfcnzJcUnREfBCU+AKa9xh/NtTCrdavG1ow8xauC83iG2Uah18baCgdLd
+	1/z47UH33uZ39XG7uunFxWFPDuqrhX9gZfSG35uE4LxEEChxtuj8L0RoUWD6cSDiPbog=
+X-Gm-Gg: ASbGncsIZzJbCcAC5tFJyVjC9xqVBajq3w0lT+3ehXzX7sP2hsDp7kiLunL0U3vlRVB
+	uzzF24zu3AzOmWHM/xwzN97mMohTLCR/k3oAWvlb+Flds6mgL+nidUF5ToHqKd4724oXLYwCIx6
+	5VIi/oL1Xp95Q3Om8ISA8H7lZ8ujmvEIi71DB350lwueyNdt6GmV5xn0zzO9l2XQN2kOP6njWhT
+	g5Ppoc64EKukG/XY1Monwy7zPSXnpgHycahM0FT1rZT/VYCJdINnQoHzNcNjqW2kuhE4CKkLYBH
+	aZMR1lY0d4bn3yREW2gVvXENH/SYEgCDhz9WCvwPWrmDJUhY05MWXYR/y/1SeidkAWJuqtMxkq1
+	ESAiDt/EBndp38MpuHRfvv881j8EaUtjftE3F2pwjPShQXUR8I+yH
+X-Received: by 2002:ac8:7d8a:0:b0:4b7:b010:9398 with SMTP id d75a77b69052e-4b7b0109485mr48756931cf.66.1758020694445;
+        Tue, 16 Sep 2025 04:04:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6CFcjOUHfVB3qDL3/3Dgy6gktvnzjviqaP5HM0+Zp284gX+z2P0MiYsdiK9Z9DwpAJOTgfw==
+X-Received: by 2002:ac8:7d8a:0:b0:4b7:b010:9398 with SMTP id d75a77b69052e-4b7b0109485mr48756191cf.66.1758020693781;
+        Tue, 16 Sep 2025 04:04:53 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-573c8330eb9sm1927373e87.60.2025.09.16.04.04.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 04:04:52 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:04:51 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yingying Tang <quic_yintang@quicinc.com>
+Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Yijie Yang <yijie.yang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yingying Tang <yingying.tang@oss.qualcomm.com>,
+        Shuai Zhang <shuaz@qti.qualcomm.com>
+Subject: Re: [PATCH v11 4/4] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+Message-ID: <umnolmlh63rgtoj4e6aubaupr3o44gxcufzele6wkxlosukskz@d5kuxk3pfkfu>
+References: <20250910-hamoa_initial-v11-0-38ed7f2015f7@oss.qualcomm.com>
+ <20250910-hamoa_initial-v11-4-38ed7f2015f7@oss.qualcomm.com>
+ <aMPhEm8PuhEofHP7@linaro.org>
+ <317ffa87-060c-4f1b-a6bf-61bb27367477@quicinc.com>
+ <jimz3qnjrcvemvgrqpwxq4zmywfo6psplsg4jefkvvpiwlffek@fwn3juynr4zx>
+ <b3bf54a2-f33b-44d5-a9e4-65ba18ea267d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,169 +107,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYuFdesVkgGOow7+uQpw-QA6hdqBBUye8CKMxGAiwHagOA@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 02404222A4
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,lists.linux.it,lists.linaro.org,lists.linux.dev,kernel.org,suse.cz,arndb.de,linaro.org,zeniv.linux.org.uk,gmail.com,oracle.com,samsung.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,linaro.org:email,linaro.org:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -4.01
+In-Reply-To: <b3bf54a2-f33b-44d5-a9e4-65ba18ea267d@quicinc.com>
+X-Proofpoint-GUID: z1k9c-2CUCziIPxYU599nxRk5FRofjFa
+X-Proofpoint-ORIG-GUID: z1k9c-2CUCziIPxYU599nxRk5FRofjFa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDAxMCBTYWx0ZWRfXx0DiIGU4gpal
+ HDH7MzrT2MkICWuvbXRyeq1Lq+dYQzf+dgzTTp48C8QJgiKBLVWToaFEguixkd9R9VWGU4XTUjG
+ 911WbCWhvgGLMfl9sSGjyDOYeUGcJhfC0DhbhYm+makE23VsTe8JXE1z7HlAnQVVuIcAztMd3WR
+ Gdz1zw7qI9usGiVYosa2wvcogtp4fMU3td7bL9TfFRuh3KUWIoQgJ/+o/cTNM8yUeWsg/qSTCHs
+ Cv1UrkE5yz4wfRG7G/VWzpSHx5Ba5Vww4VU/aYaQYONRQv32H0LmNimJiSQ5HaERd5tTdKQLXSA
+ bgbO/hcYXcns4q5VOnhYeu4ZmN+T7ypBCQiMjksRNgIaFq502Jmm++Dr5QoFPUC4SVXp1amd0Y+
+ So8u5l+Y
+X-Authority-Analysis: v=2.4 cv=WpQrMcfv c=1 sm=1 tr=0 ts=68c94457 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=JLD08uh4RoC6iUDgxfoA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160010
 
-On Tue 16-09-25 12:57:26, Naresh Kamboju wrote:
-> The following LTP chdir01 df01_sh and stat04 tests failed on the rock-pi-4b
-> qemu-arm64 on the Linux next-20250915 tag build.
+On Tue, Sep 16, 2025 at 06:29:08PM +0800, Yingying Tang wrote:
 > 
-> First seen on next-20250915
-> Good: next-20250912
-> Bad: next-20250915
 > 
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
-> 
-> * rk3399-rock-pi-4b, ltp-smoke
-> * qemu-arm64, ltp-smoke
-> * qemu-arm64-compat, ltp-smoke
->  - chdir01
->   - df01_sh
->   - stat04
-> 
-> Test regression: next-20250915: LTP chdir01 df01_sh stat04
-> tst_device.c:97: TBROK: Could not stat loop device 0
+> On 9/16/2025 6:14 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 16, 2025 at 09:42:26AM +0800, Yingying Tang wrote:
+> >>
+> >>
+> >> On 9/12/2025 5:00 PM, Stephan Gerhold wrote:
+> >>> On Wed, Sep 10, 2025 at 05:02:12PM +0800, Yijie Yang wrote:
+> >>>> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+> >>>> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+> >>>> embedded system capable of booting to UART.
+> >>>>
+> >>>> Make the following peripherals on the carrier board enabled:
+> >>>> - UART
+> >>>> - On-board regulators
+> >>>> - USB Type-C mux
+> >>>> - Pinctrl
+> >>>> - Embedded USB (EUSB) repeaters
+> >>>> - NVMe
+> >>>> - pmic-glink
+> >>>> - USB DisplayPorts
+> >>>> - Bluetooth
+> >>>> - WLAN
+> >>>> - Audio
+> >>>>
+> >>>> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
+> >>>> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
+> >>>> <quic_shuaz@quicinc.com>, Yingying Tang (WLAN) <quic_yintang@quicinc.com>,
+> >>>> and Yongxing Mou (USB DisplayPorts) <quic_yongmou@quicinc.com>.
+> >>>
+> >>> This looks like you should have Co-developed-by: tags together with
+> >>> their Signed-off-by: tags.
+> >>>
+> >>>>
+> >>>> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+> >>>> ---
+> >>>>  arch/arm64/boot/dts/qcom/Makefile          |    1 +
+> >>>>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1221 ++++++++++++++++++++++++++++
+> >>>>  2 files changed, 1222 insertions(+)
+> >>>>
+> >>>> +
+> >>>> +	vreg_wcn_3p3: regulator-wcn-3p3 {
+> >>>> +		compatible = "regulator-fixed";
+> >>>> +
+> >>>> +		regulator-name = "VREG_WCN_3P3";
+> >>>> +		regulator-min-microvolt = <3300000>;
+> >>>> +		regulator-max-microvolt = <3300000>;
+> >>>> +
+> >>>> +		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
+> >>>> +		enable-active-high;
+> >>>> +
+> >>>> +		pinctrl-0 = <&wcn_sw_en>;
+> >>>> +		pinctrl-names = "default";
+> >>>> +
+> >>>
+> >>> regulator-boot-on?
+> >>
+> >> It shoulde be regulator-always-on
+> > 
+> > Why it's not boot-on and always-on?
+> > 
+> As I described before, connectivity power is voted by UEFI in boot phase.So PCIe link between connetivity card and RC4 is established once RC4 is on.
+> If we set this node as "regulator-boot-on", connectivity power will be down first then up. That cause PCIe link down and the link can't be trained again unless you reboot board.
+> So we can't set it to "regulator-boot-on"
 
-This is really strange. Those failing tests all start to complain that
-/dev/loop0 doesn't exist (open gets ENOENT)... The fact that this is
-limited to only a few archs suggests it's some race somewhere but I don't
-see any relevant changes in linux-block in last three days...
+I've asked about it being boot-on + always-on. Any issues with that? I
+doubt that it will cause a spike on the regulator.
 
-								Honza
+> >>>
+> >>>> +		regulator-always-on;
+> >>>> +	};
+> >>>> +
+> >>
+> > 
+> 
 
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Test log
-> <8>[   53.655971] <LAVA_SIGNAL_STARTTC chdir01>
-> tst_buffers.c:57: TINFO: Test is using guarded buffers
-> tst_tmpdir.c:316: TINFO: Using /tmp/LTP_chdm4pHJb as tmpdir (tmpfs filesystem)
-> tst_device.c:98: TINFO: Found free device 0 '/dev/loop0'
-> tst_test.c:1953: TINFO: LTP version: 20250530
-> tst_test.c:1956: TINFO: Tested kernel: 6.17.0-rc6-next-20250915 #1 SMP
-> PREEMPT @1757983656 aarch64
-> tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-> tst_kconfig.c:676: TINFO: CONFIG_TRACE_IRQFLAGS kernel option detected
-> which might slow the execution
-> tst_test.c:1774: TINFO: Overall timeout per run is 0h 28m 48s
-> tst_supported_fs_types.c:97: TINFO: Kernel supports ext2
-> tst_supported_fs_types.c:62: TINFO: mkfs.ext2 does exist
-> tst_supported_fs_types.c:97: TINFO: Kernel supports ext3
-> tst_supported_fs_types.c:62: TINFO: mkfs.ext3 does exist
-> tst_supported_fs_types.c:97: TINFO: Kernel supports ext4
-> tst_supported_fs_types.c:62: TINFO: mkfs.ext4 does exist
-> tst_supported_fs_types.c:128: TINFO: Filesystem xfs is not supported
-> tst_supported_fs_types.c:97: TINFO: Kernel supports btrfs
-> tst_supported_fs_types.c:62: TINFO: mkfs.btrfs does exist
-> tst_supported_fs_types.c:105: TINFO: Skipping bcachefs because of FUSE blacklist
-> tst_supported_fs_types.c:97: TINFO: Kernel supports vfat
-> tst_supported_fs_types.c:62: TINFO: mkfs.vfat does exist
-> tst_supported_fs_types.c:128: TINFO: Filesystem exfat is not supported
-> tst_supported_fs_types.c:132: TINFO: FUSE does support ntfs
-> tst_supported_fs_types.c:62: TINFO: mkfs.ntfs does exist
-> tst_supported_fs_types.c:97: TINFO: Kernel supports tmpfs
-> tst_supported_fs_types.c:49: TINFO: mkfs is not needed for tmpfs
-> tst_test.c:1888: TINFO: === Testing on ext2 ===
-> tst_device.c:391: TWARN: Failed to clear 512k block on /dev/loop0
-> tst_test.c:1217: TBROK: tst_clear_device() failed
-> Summary:
-> passed   0
-> failed   0
-> broken   1
-> skipped  0
-> warnings 1
-> tst_device.c:283: TWARN: open(/dev/loop0) failed: ENOENT (2)
-> <8>[   53.679564] <LAVA_SIGNAL_ENDTC chdir01>
-> <8>[   53.708246] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=chdir01 RESULT=fail>
-> 
-> <8>[   53.933883] <LAVA_SIGNAL_STARTTC stat04>
-> tst_buffers.c:57: TINFO: Test is using guarded buffers
-> tst_tmpdir.c:316: TINFO: Using /tmp/LTP_staPDxElt as tmpdir (tmpfs filesystem)
-> tst_device.c:97: TBROK: Could not stat loop device 0
-> Summary:
-> passed   0
-> failed   0
-> broken   1
-> skipped  0
-> warnings 0
-> <8>[   53.947889] <LAVA_SIGNAL_ENDTC stat04>
-> <8>[   53.974024] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=stat04 RESULT=fail>
-> 
-> <8>[   54.048075] <LAVA_SIGNAL_STARTTC df01_sh>
-> df01 1 TINFO: Running: df01.sh
-> df01 1 TINFO: Tested kernel: Linux
-> runner-j2nyww-sk-project-40964107-concurrent-0
-> 6.17.0-rc6-next-20250915 #1 SMP PREEMPT @1757983656 aarch64 GNU/Linux
-> df01 1 TINFO: Using /tmp/LTP_df01.7pcwUXe1CN as tmpdir (tmpfs filesystem)
-> tst_device.c:97: TBROK: Could not stat loop device 0
-> df01 1 TBROK: Failed to acquire device
-> Summary:
-> passed   0
-> failed   0
-> broken   1
-> skipped  0
-> warnings 0
-> <8>[   54.060936] <LAVA_SIGNAL_ENDTC df01_sh>
-> <8>[   54.087630] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=df01_sh RESULT=fail>
-> 
-> ## Source
-> * Kernel version: 6.17.0-rc6
-> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-> * Git describe: 6.17.0-rc6-next-20250915
-> * Git commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-> * Architectures: arm64
-> * Toolchains: gcc-13 and gcc-8
-> * Kconfigs: lkftconfigs
-> 
-> ## Build
-> * Test log: https://qa-reports.linaro.org/api/testruns/29896973/log_file/
-> * Test details:
-> https://regressions.linaro.org/lkft/linux-next-master/next-20250915/ltp-smoke/stat04/
-> * Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/32l4Vv9hKep2EcmS18u3NBtmoAm
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UF8KltAzu6kUpW3hXaYRWjZ/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/32l4UF8KltAzu6kUpW3hXaYRWjZ/config
-> 
-> --
-> Linaro LKFT
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With best wishes
+Dmitry
 
