@@ -1,188 +1,215 @@
-Return-Path: <linux-kernel+bounces-818256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B9AB58EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:15:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F78B58EF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910A97A5824
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:14:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13BBB4E0357
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA1F2DECDF;
-	Tue, 16 Sep 2025 07:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="gzCEr1zr"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A2927FB30;
+	Tue, 16 Sep 2025 07:18:33 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74AC26AD9;
-	Tue, 16 Sep 2025 07:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB43012B93
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758006946; cv=none; b=nZusybGN31zZ7+agmpYPOb5f46arEyLj3WEiJNwIkaH3zLFpOUp06guHY+HKC6W2eZJnIxZy+ot0NMXJla58XbQXb169RhSQ06667UhgSw+qsL/yssc36cApwvNt+CoBkJTeILsPgkGB0TedS+XNo15/xl9/tLd6yYReEB8t7XA=
+	t=1758007112; cv=none; b=ZWXhBkwFUwZnkgI9vKEK0VH+oLsygGTIhY6hhht+I3Mx0NN2vsHNqpSfUr/Gvb0cPt5w+Tt8dejILy9PoRL0SVulWk0xVGe6oYVz/xYBpKQQtBqY86yAlEp4bh2wLjQz3UGxhAaay951fdKjPDfib2El3ajiRbARhFPV+X+Q2/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758006946; c=relaxed/simple;
-	bh=9TGFGRFrsZuPEdOczwxH9h20pygBGQx5NQAOCly1tfs=;
+	s=arc-20240116; t=1758007112; c=relaxed/simple;
+	bh=/n5L0zuim9T9324maodQZtpPeiOd0fceXfQP+n+Thx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NXa7sQR7q0oYN+smAxwqkEcGfsVbt7h3EyT44iOZ1Z/CqpVkc6fajwVRScT4TkTzwkczcNps4YPtU0CBdtjhmlQFNO77/0TBfP99f6D1R3kno9U7OunGAj8EeDNwBWEhfW7Ck/1Hhr21JjTnU3cEAQYfyfDOw2SV2hJeiyD9Bgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=gzCEr1zr; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134423.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58G6r2OR028366;
-	Tue, 16 Sep 2025 07:14:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=bXxgqdEdSOzYOwQL2w5UISvG0T
-	Gek76RcB1QClzkCaE=; b=gzCEr1zrEMw5QI4COvPhj9vnEAdw8clFMy0uUvpy+T
-	LDc8ZLjsAVUmtceIeVN+zJo/fqj4P8qMCObtEcq9YhowTfiSiziEGx2oonZEDsEO
-	gp/TqzMa/Q4Z3eqG1Vrm3zfKL7cb1vAQ0hL+AYUTnpwZ0Q6SSdvR/t8CrE2n84yo
-	1wFUKjP4OcHjs5RBXHKZSd7vTk8xIbFfM/BAgvR9SBs2u6rywcKllWP0rNSbKAm0
-	ELnhL6N6mDA/1fRZ4Q/8sgcQYCzDj3sLIvQ9QHZtYRmq0Wvg0tqNpoK7bRJIsCl1
-	uzFc6PajWs9xu5ZGsgUO7VdFWbCCMuQNs+cnP1vkIPLQ==
-Received: from p1lg14879.it.hpe.com (p1lg14879.it.hpe.com [16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 49730x84ps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Sep 2025 07:14:28 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 0FD0B130D0;
-	Tue, 16 Sep 2025 07:14:27 +0000 (UTC)
-Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 9B2B980898D;
-	Tue, 16 Sep 2025 07:14:21 +0000 (UTC)
-Date: Tue, 16 Sep 2025 02:14:17 -0500
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: corbet@lwn.net, david@redhat.com, linmiaohe@huawei.com, shuah@kernel.org,
-        tony.luck@intel.com, jane.chu@oracle.com, jiaqiyan@google.com,
-        Liam.Howlett@oracle.com, bp@alien8.de, hannes@cmpxchg.org,
-        jack@suse.cz, joel.granados@kernel.org, laoar.shao@gmail.com,
-        lorenzo.stoakes@oracle.com, mclapinski@google.com, mhocko@suse.com,
-        nao.horiguchi@gmail.com, osalvador@suse.de, rafael.j.wysocki@intel.com,
-        rppt@kernel.org, russ.anderson@hpe.com, shawn.fan@intel.com,
-        surenb@google.com, vbabka@suse.cz, linux-acpi@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
- HugeTLB pages
-Message-ID: <aMkOCmGBhZKhKPrI@hpe.com>
-References: <aMiu_Uku6Y5ZbuhM@hpe.com>
- <20250915201618.7d9d294a6b22e0f71540884b@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dhvfi7G93yLHMYdjWHXKLkNCFOnVwDgOXkZO+AoxYCIioOoAZjBGy4N/LcloiizbZPg3S1/3+dC5JrP2dW1ZThrq7l2zhkkONDXoCb/G/HF81rxgnhV6h4KF/aCJBZ35T97/mA11yte0+kgnMTrJRWOut1Cor7ppubXKqyqWHag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyPx6-0007Fb-L3; Tue, 16 Sep 2025 09:18:12 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyPx4-001Y7t-0T;
+	Tue, 16 Sep 2025 09:18:10 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyPx3-00BTqe-3A;
+	Tue, 16 Sep 2025 09:18:10 +0200
+Date: Tue, 16 Sep 2025 09:18:09 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
+	stable@vger.kernel.org, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
+ PM to avoid MDIO runtime PM wakeups
+Message-ID: <aMkPMa650kfKfmF4@pengutronix.de>
+References: <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
+ <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
+ <aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
+ <20250911075513.1d90f8b0@kernel.org>
+ <aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
+ <22773d93-cbad-41c5-9e79-4d7f6b9e5ec0@rowland.harvard.edu>
+ <aMPawXCxlFmz6MaC@shell.armlinux.org.uk>
+ <a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
+ <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
+ <aMUS8ZIUpZJ4HNNX@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250915201618.7d9d294a6b22e0f71540884b@linux-foundation.org>
-X-Authority-Analysis: v=2.4 cv=KaTSsRYD c=1 sm=1 tr=0 ts=68c90e54 cx=c_pps
- a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=MvuuwTCpAAAA:8 a=QyXUC8HyAAAA:8
- a=_fVqCaFjEFPFEyr0NywA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: aDOt515-H__Hl3R9V07wPh5jXDwBK7cM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDA2NSBTYWx0ZWRfXxAY3BPV9SJA6
- yOok/WQpFEjJYGXprFhNvjR/MSlEPJF8gQD+4iCExdPx/MUr0x833mkvOuHKlTeKIBoAjRLyExx
- T1D3ZDzlDFNSXfVciL1ZS43a5lWeWLSl+Qm5BBGhojcd3MR3tK4dnjyM1r+8nfdur5U22Z1nWnp
- BOqPtmAezj/CPAQTwQOht+sjD82CQtE5HH8kUuszEVLtcQuoNZwYgjGbEZRSx7ud5T+cs9Ajrlo
- Zdr3sFE7xNwfT0kvHltnSQk86vhd+J9mFAIfo4GXZKolTeRqPTORud7OzdD9Ryn2qLB7uc5993r
- egpIJ+gjBaKykyay/cEipeEu8sl4ZXGHcWsvQBz4WPsQmGWyLsNUcS7ntdTgf3z+JbhL/mpeyzc
- Et4+cJQw
-X-Proofpoint-ORIG-GUID: aDOt515-H__Hl3R9V07wPh5jXDwBK7cM
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-16_02,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015
- spamscore=0 adultscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160065
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMUS8ZIUpZJ4HNNX@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 15, 2025 at 08:16:18PM -0700, Andrew Morton wrote:
-> On Mon, 15 Sep 2025 19:27:41 -0500 Kyle Meyer <kyle.meyer@hpe.com> wrote:
+On Sat, Sep 13, 2025 at 08:45:05AM +0200, Oleksij Rempel wrote:
+> On Fri, Sep 12, 2025 at 03:37:52PM +0100, Russell King (Oracle) wrote:
+> > On Fri, Sep 12, 2025 at 10:29:47AM -0400, Alan Stern wrote:
+> > > On Fri, Sep 12, 2025 at 09:33:05AM +0100, Russell King (Oracle) wrote:
+> > > > On Thu, Sep 11, 2025 at 10:30:09PM -0400, Alan Stern wrote:
+> > > > > The USB subsystem uses only one pair of callbacks for suspend and resume 
+> > > > > because USB hardware has only one suspend state.  However, the callbacks 
+> > > > > do get an extra pm_message_t parameter which they can use to distinguish 
+> > > > > between system sleep transitions and runtime PM transitions.
+> > > > 
+> > > > Unfortunately, this isn't the case. While a struct usb_device_driver's
+> > > > suspend()/resume() methods get the pm_message_t, a struct usb_driver's
+> > > > suspend()/resume() methods do not:
+> > > > 
+> > > > static int usb_resume_interface(struct usb_device *udev,
+> > > >                 struct usb_interface *intf, pm_message_t msg, int reset_resume)
+> > > > {
+> > > >         struct usb_driver       *driver;
+> > > > ...
+> > > >         if (reset_resume) {
+> > > >                 if (driver->reset_resume) {
+> > > >                         status = driver->reset_resume(intf);
+> > > > ...
+> > > >         } else {
+> > > >                 status = driver->resume(intf);
+> > > > 
+> > > > vs
+> > > > 
+> > > > static int usb_resume_device(struct usb_device *udev, pm_message_t msg)
+> > > > {
+> > > >         struct usb_device_driver        *udriver;
+> > > > ...
+> > > >         if (status == 0 && udriver->resume)
+> > > >                 status = udriver->resume(udev, msg);
+> > > > 
+> > > > and in drivers/net/usb/asix_devices.c:
+> > > > 
+> > > > static struct usb_driver asix_driver = {
+> > > > ...
+> > > >         .suspend =      asix_suspend,
+> > > >         .resume =       asix_resume,
+> > > >         .reset_resume = asix_resume,
+> > > > 
+> > > > where asix_resume() only takes one argument:
+> > > > 
+> > > > static int asix_resume(struct usb_interface *intf)
+> > > > {
+> > > 
+> > > Your email made me go back and check the code more carefully, and it 
+> > > turns out that we were both half-right.  :-)
+> > > 
+> > > The pm_message_t argument is passed to the usb_driver's ->suspend 
+> > > callback in usb_suspend_interface(), but not to the ->resume callback in 
+> > > usb_resume_interface().  Yes, it's inconsistent.
+> > > 
+> > > I suppose the API could be changed, at the cost of updating a lot of 
+> > > drivers.  But it would be easier if this wasn't necessary, if there was 
+> > > some way to work around the problem.  Unfortunately, I don't know 
+> > > anything about how the network stack handles suspend and resume, or 
+> > > what sort of locking it requires, so I can't offer any suggestions.
+> > 
+> > I, too, am unable to help further as I have no bandwidth available
+> > to deal with this. Sorry.
 > 
-> > Soft offlining a HugeTLB page reduces the HugeTLB page pool.
-> > 
-> > Commit 56374430c5dfc ("mm/memory-failure: userspace controls soft-offlining pages")
-> > introduced the following sysctl interface to control soft offline:
-> > 
-> > /proc/sys/vm/enable_soft_offline
-> > 
-> > The interface does not distinguish between page types:
-> > 
-> >     0 - Soft offline is disabled
-> >     1 - Soft offline is enabled
-> > 
-> > Convert enable_soft_offline to a bitmask and support disabling soft
-> > offline for HugeTLB pages:
-> > 
-> > Bits:
-> > 
-> >     0 - Enable soft offline
-> >     1 - Disable soft offline for HugeTLB pages
-> > 
-> > Supported values:
-> > 
-> >     0 - Soft offline is disabled
-> >     1 - Soft offline is enabled
-> >     3 - Soft offline is enabled (disabled for HugeTLB pages)
-> > 
-> > Existing behavior is preserved.
+> Thanks for all the valuable input.
 > 
-> um, why?  What benefit does this patch provide to our users? 
-> Use-cases, before-and-after scenarios, etc?
+> I’ll process the feedback and investigate possible ways to proceed. As a
+> first step I’ll measure the actual power savings from USB auto-suspend
+> on AX88772 to see if runtime PM is worth the added complexity.
 
-Thank you for the feedback.
+I ran quick power measurements to check whether USB autosuspend is worth the
+added complexity.
 
-Some BIOS suppress ("cloak") corrected memory errors until a threshold
-is reached. Once that threshold is reached, BIOS reports a CPER with the
-"error threshold exceeded" bit set via GHES and the corresponding page is
-soft offlined.
+Meaning:
+- "admin up/down" = ip link set dev <if> up/down.
+- No link partner was attached, so the physical link was down in all tests.
 
-BIOS does not know the page type of the corresponding page. If the
-corresponding page happens to be a HugeTLB page, it will be dissolved,
-permanently reducing the HugeTLB page pool. This can be problematic for
-workloads that depend on a fixed number of HugeTLB pages.
+Setups:
+- Debian 5.10 (USB autosuspend present, no phylib).
+- Debian 6.1 (phylib present, no regression).
+- Power meter: Fnirsi FNB58.
+- Env: QEMU 9.2.1 (USB passthrough)
+       xHCI host Intel 100/C230
+       device ASIX AX88772B (0b95:772b)
 
-Currently, soft offline must be disabled to prevent HugeTLB pages from
-being soft offlined.
+Legend:
+- "RT: active" = runtime PM on;
+- "RT: suspended" = runtime PM auto (device suspended).
 
-This patch provides a middle ground. Soft offline can be disabled for
-HugeTLB pages while remaining enabled for non-HugeTLB pages, preserving
-the benefits of soft offline without the risk of BIOS soft offlining
-HugeTLB pages.
+Results:
+- Kernel 5.10.237-1
+  admin up (link down): 0.453 W (RT: active)
+  admin down: 0.453 W (RT: active)
+  admin down: 0.453 W (RT: suspended)
 
-> > Update documentation and HugeTLB soft offline self tests.
-> > 
-> > Reported-by: Shawn Fan <shawn.fan@intel.com>
-> 
-> Interesting.  What did Shawn report? (Closes:!).
+- Kernel 6.1.148-1
+  admin up (link down): 0.453 W (RT: active)
+  admin down: 0.248 W (RT: active)
+  admin down: 0.248 W (RT: suspended)
 
-Tony or Shawn, could you please point me to the original report? Thanks!
+Observations:
+In this setup, USB autosuspend did not reduce power further (admin-down power
+is identical with/without autosuspend).
 
-> > Suggested-by: Tony Luck <tony.luck@intel.com>
-> > Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
-> >
-> > ...
-> >
-> >  .../ABI/testing/sysfs-memory-page-offline     |  3 ++
-> >  Documentation/admin-guide/sysctl/vm.rst       | 28 ++++++++++++++++---
-> >  mm/memory-failure.c                           | 17 +++++++++--
-> >  .../selftests/mm/hugetlb-soft-offline.c       | 19 ++++++++++---
-> >  4 files changed, 56 insertions(+), 11 deletions(-)
-> 
-> I'll add it because testing, but please do explain why I added it?
+The drop from ~0.453 W -> ~0.248 W on 6.1 appears to come from the phylib
+migration (PHY powered down on admin-down), not from autosuspend.
 
-Thanks,
-Kyle Meyer
+Proposal:
+Given autosuspend brings no measurable benefit here, and it hasn’t been
+effectively functional for this device in earlier kernels, I suggest a minimal
+-stable patch that disables USB autosuspend for ASIX driver to avoid the
+PM/RTNL/MDIO issues. If someone needs autosuspend-based low-power later, they
+can implement a proper device low-power sequence and re-enable it.
+
+Would this minimal -stable patch be acceptable?
+
+Best Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
