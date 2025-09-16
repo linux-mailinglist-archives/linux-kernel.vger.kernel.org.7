@@ -1,100 +1,127 @@
-Return-Path: <linux-kernel+bounces-818807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7D1EB596AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5424B596AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CDD81BC8358
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A6C4E44AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B9321CC49;
-	Tue, 16 Sep 2025 12:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8147821FF3B;
+	Tue, 16 Sep 2025 12:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J9lztbWV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QAilbZSM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="plcgIPtz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4EC1CAA7D;
-	Tue, 16 Sep 2025 12:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3A741C71;
+	Tue, 16 Sep 2025 12:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027236; cv=none; b=hd6Wbcl4jxFY728ddAQK3EF8gG1pK3QL70gQT73bUwZ39ml388q0Ah6OTacPgC5JZDwU2vj0Hsr64cxTzWdPf+b2ABKVq3HuMGq+s6RgA3R+ecspK6WNqb6qswzWZDC06Lk1xfYHukx50OW61InBlASqfyJUUkZZ4Wj29imTQ54=
+	t=1758027272; cv=none; b=KkiRiu4hL0tp2SDxyjNgzEsJhn9HzlotvD1+PAXiHgtrAm1l7/h9Bt/rePO58x/wV6JrhEU5HKNIajSVkYzlAKEGtXmg0Kquxsscs8qz3gN8zrZ2ovD9DeMAiuLsxvoJVgKtbcaNn4MIG3w0nywWf6gDsAEj9ufPvVqvN3YTEdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027236; c=relaxed/simple;
-	bh=1Zbi/53ecUSSnOmf2N5VxqtKhKjyIluT57/tiPpaTLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdTB4YqTNTKsW1tglsiEF5Sy85H23XTUuhUeZ+/NlacD4oECgYJYbyNDocJdHnVUWWMVb1a8kP+bVQQnWlQX//zjl3ZiE7SZ9nad6I6nl3PjiC8pJCx36Ki4rJLcAXfkixC6dgS9on2gYtUpBVPqYknMXSc6ViLA8orSYo8Zpjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J9lztbWV; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758027235; x=1789563235;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1Zbi/53ecUSSnOmf2N5VxqtKhKjyIluT57/tiPpaTLA=;
-  b=J9lztbWVWKjRhUIuuZ2lAs92Quxf/oIsOwm2FqfJ3mMsEL6+x3uoI/aG
-   pGRInpaTJ0+eypfI1V355T8ph3hopkUxlbDtn8zOMgQvOsVi6/FIoNvEu
-   iFFfauJwA1f87AUx93Hhv0TEQ1l5CDZikjjL5n+AQLVeCTz+YUkojX/Qm
-   /bjSVRILxZ5Ql4spF65KqnNT4ox5fcsPC/h66CojZDpirv6+S3WEgcdf7
-   Y9TUxQq9ugDb1jdIw4gNGkYLZX1l2dFP3CiRSkyV+JomlWRWBV2pWq5qo
-   to5uKNTxh4AQCexH/ea45giZfS6JRe3G9atvQFYtDR2VxWW9WoMiNglwY
-   w==;
-X-CSE-ConnectionGUID: Dsq29EpJQi+nTePjGT73ig==
-X-CSE-MsgGUID: EGMTbNNqRSmyWiO0zPvaQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="85742723"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="85742723"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:53:52 -0700
-X-CSE-ConnectionGUID: DSG+MD6ZQ7uCDmOxy/Z1qQ==
-X-CSE-MsgGUID: mF3y6s1ESxSOrKDg5nDjKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="174044835"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 05:53:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uyVBq-00000003Wrk-30IW;
-	Tue, 16 Sep 2025 15:53:46 +0300
-Date: Tue, 16 Sep 2025 15:53:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
-Message-ID: <aMld2nQFIIt1aZwa@smile.fi.intel.com>
-References: <20250916124518.2857524-1-raag.jadav@intel.com>
- <aMldk7M05W77rRw_@smile.fi.intel.com>
+	s=arc-20240116; t=1758027272; c=relaxed/simple;
+	bh=U/8fdfaHcE82T/Uiw37pPdfECOQnI1BsTEGUwrPA6jk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=KzJy2F5GD9doMyp2Sfhjzh1261XTvpZCkaFkuvGAXh+WLnriphsSHVQBGtx6KOjuxHGMsz5fG8oJFB3ID2x4DFmeSbutSFqd+jSGSxQ5kAi+jOK+LZjFKYoXFPZdCXet6SeFSjTbznmpaMmyrSLU+bunLN9OEuHBFGVJtA7qubQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QAilbZSM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=plcgIPtz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 16 Sep 2025 12:54:27 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758027269;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gntQDu2gJas8S0oXrRtrwkAfMIyqUOG5whS2SGa/GBM=;
+	b=QAilbZSM8cow/OHWyFKH913MbASiByvTFtBmpd7YAFHmimudfOvfOfLtFViGxRyQsa16l9
+	B3UOsodyiXt6L14l6o0+VpAqyx/PjwSIxWWbMh5RASEgGqCvMlNCq1LnqtIbynJG8vs40g
+	z+IZkoDhM6rIj3gpzzUT67QvwfaGOjxGwQKDMVniAWMgsyuaMruZYjF+fklfMWCmfvAWCn
+	yPSnaBp7xLlepAwp/+xbX2hq8OGwqx9I3xDZv8IIi+vTfxpDGtprapD0oHINB9XCV4CHLJ
+	bQ72/PUT1ffHfYrNXfqEuC8xfF7IoYYSqxzG4RK7zIkycIfK2zzgUpE1KVeLbw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758027269;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gntQDu2gJas8S0oXrRtrwkAfMIyqUOG5whS2SGa/GBM=;
+	b=plcgIPtzCtsB3Shk4ub2RnAPOMT2B1i64hB7W75WE3IKWGbKBKsWVKfxk3KcF6wHYilk4a
+	BOleLCqh3Dbs4ZCg==
+From: "tip-bot2 for David Kaplan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/bugs] x86/bugs: Report correct retbleed mitigation status
+Cc: David Kaplan <david.kaplan@amd.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250915134706.3201818-8-david.kaplan@amd.com>
+References: <20250915134706.3201818-8-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMldk7M05W77rRw_@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Message-ID: <175802726763.709179.8421464307764384653.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 03:52:35PM +0300, Andy Shevchenko wrote:
-> On Tue, Sep 16, 2025 at 06:15:18PM +0530, Raag Jadav wrote:
-> > Convert to use devm_kmemdup_array() which is more robust.
-> 
-> FWIW,
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The following commit has been merged into the x86/bugs branch of tip:
 
-However, you might also want to use sizeof(*clks) IIUC.
+Commit-ID:     930f2361fe542a00de9ce6070b1b6edb976f1165
+Gitweb:        https://git.kernel.org/tip/930f2361fe542a00de9ce6070b1b6edb976=
+f1165
+Author:        David Kaplan <david.kaplan@amd.com>
+AuthorDate:    Mon, 15 Sep 2025 08:47:06 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 16 Sep 2025 13:32:18 +02:00
 
--- 
-With Best Regards,
-Andy Shevchenko
+x86/bugs: Report correct retbleed mitigation status
 
+On Intel CPUs, the default retbleed mitigation is IBRS/eIBRS but this
+requires that a similar spectre_v2 mitigation is applied.  If the user
+selects a different spectre_v2 mitigation (like spectre_v2=3Dretpoline) a
+warning is printed but sysfs will still report 'Mitigation: IBRS' or
+'Mitigation: Enhanced IBRS'.  This is incorrect because retbleed is not
+mitigated, and IBRS is not actually set.
 
+Fix this by choosing RETBLEED_MITIGATION_NONE in this scenario so the
+kernel correctly reports the system as vulnerable to retbleed.
+
+Signed-off-by: David Kaplan <david.kaplan@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/20250915134706.3201818-1-david.kaplan@amd.com
+---
+ arch/x86/kernel/cpu/bugs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 66dbb3b..6a526ae 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1462,8 +1462,10 @@ static void __init retbleed_update_mitigation(void)
+ 			retbleed_mitigation =3D RETBLEED_MITIGATION_EIBRS;
+ 			break;
+ 		default:
+-			if (retbleed_mitigation !=3D RETBLEED_MITIGATION_STUFF)
++			if (retbleed_mitigation !=3D RETBLEED_MITIGATION_STUFF) {
+ 				pr_err(RETBLEED_INTEL_MSG);
++				retbleed_mitigation =3D RETBLEED_MITIGATION_NONE;
++			}
+ 		}
+ 	}
+=20
 
