@@ -1,200 +1,165 @@
-Return-Path: <linux-kernel+bounces-819450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F42B5A0D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:55:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF22B5A0DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75EAC3BFC96
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:55:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A3A1C046E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A5A2D9488;
-	Tue, 16 Sep 2025 18:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DAB2DE1E3;
+	Tue, 16 Sep 2025 19:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YoG/yN1R"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011050.outbound.protection.outlook.com [40.93.194.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD/KuB1c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFFF2877F7;
-	Tue, 16 Sep 2025 18:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758048935; cv=fail; b=Ae05O1YWHhrP8EygllaVav3tUdKqO0jSq5pK4Go0e5Ta4zbNfNJqIcZNeZ8EM0kbLONY3f9Y2kD3NeKQEN3GqtkcxUO8O5Ck2PLs0VAlQps9b4IoJ/cWMIXSBlOQyE7I+0lWbWL69JV5o9VPY1+2wbLHNeomcFcyBCoPPF7WzhA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758048935; c=relaxed/simple;
-	bh=4Mpspp/vRFYd3marJwV8VjN2iap5wjaJiPLvOGKzQnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ayWf5Y+wHpfrIGYJSQZ5TGW8bYPTNHz+RcEC++4tcY+A5RXw6RCro+17wFKtu26VGi4buseFHDzwLAkKITCPYmwGOVM5mywTEpiJ43thUQrTn5zGjfXMRMvPApJ/+8lbZ7ylfRJZ6WOFxWyHkp+s6ugRj8NN1kbE9+Jn4vq+mt8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YoG/yN1R; arc=fail smtp.client-ip=40.93.194.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZxjRGjtqGEcCUoiATGtgaQf8jVtgzORyMeaE2yHKrG19kt0taDM9fc+0qfx+O7I87zzTsskMnKn7r1RfzmlEbDuL+3cW/wnNhr1zuuWUkevANqWv+6b88BbMzKouKq8akpmcRfEP4FbmRKIx/u9ldI8FSKCDyBuf5S/3ozzED4/Xl7NKdHFaV/x8hgEARPQccTMFdSVcbxU/sRSetnPZFyC74n0CqjmCpmoVwlm4skzglTWSXNRQUFtZE59g46coNFFmxschDb0HMnErpPEKJ0cUgp108+Wcbubw2cgTf3IGqiQuXqN9Mr26Ah4tN8vR7fhnE+0KnT3Mq6oZXkik8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xmZymFiEquYYlQi9bZbaC/irfxUdZcYSVrNupY/T5hE=;
- b=wzw9QSDzXayqJBbSYHJdHXv4OgdRH4CSQywqmefCMEBbktqPKHo3e1XzPxl1jObKcKbTbvr57DPMs5PGcYM1U2Gj3dacnGdLRP1ppy7ItiAd6s9RiiQGwX1Ap9KnO++EaIZIICqEhMVfd7pV1gVoDjMxT+zkyp5HNizeton7m4WtxlWgygngaYoi7I7s3fIGppu7+BeDeyqkBgbiGhkZnp42P3AYXluwkABldoU2fwWMFlwR9bwB0heF9FAIYBMD7iVp0gP0XXKtXDIIKhvbz3oq/evMT8rZNXDoWuZDQtfalkOoSwPSwjeDcK7JaHI8gtwiziFVKxetjFMJTV6qHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xmZymFiEquYYlQi9bZbaC/irfxUdZcYSVrNupY/T5hE=;
- b=YoG/yN1Rq/V9PmKLuUUG7vSDAc/ZYgvYC+i/W8S2+l3Ys6j5qq7uGeXb6W5LzgFDvfdqbO05G4/ZLlxOyAxFLp2iPOWEvk9qXLkgMGKbr7nPNUT4rIyy64R5NUPpwp//bJjhXCqK5ZiacNx+1l1ZR8SOe4ODTsGBL47NirR5pLo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
- by DS0PR12MB8768.namprd12.prod.outlook.com (2603:10b6:8:14f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Tue, 16 Sep
- 2025 18:55:31 +0000
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::4c66:bb63:9a92:a69d]) by BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::4c66:bb63:9a92:a69d%3]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 18:55:30 +0000
-Date: Tue, 16 Sep 2025 13:55:26 -0500
-From: John Allen <john.allen@amd.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Mathias Krause <minipli@grsecurity.net>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
-	Xiaoyao Li <xiaoyao.li@intel.com>,
-	Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
- GHCB when it's valid
-Message-ID: <aMmynhOnU/VkcXwI@AUSJOHALLEN.amd.com>
-References: <20250912232319.429659-1-seanjc@google.com>
- <20250912232319.429659-30-seanjc@google.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912232319.429659-30-seanjc@google.com>
-X-ClientProxiedBy: SJ2PR07CA0018.namprd07.prod.outlook.com
- (2603:10b6:a03:505::22) To BL1PR12MB5995.namprd12.prod.outlook.com
- (2603:10b6:208:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BB22DAFD2;
+	Tue, 16 Sep 2025 19:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758049207; cv=none; b=Qr7fV1KXE4SqVMxo9l3twBsKiFFMtLr+aJT0gEkvb9BtYi/WWCBj5XqAPpKD8z+nuCMg6G/MgiyxkF5C0q8FEFjh0Q/jVN0QCVj3U99z8wiRDbgqJTGHBVxERafgbq0oFtBQwchhUohUZOXAPz/SikCHsmkYddPpGFLFkwvwoTw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758049207; c=relaxed/simple;
+	bh=95l9pr64ynrwi244Oy9sUnhLG2jGgpcru4un1rfIZTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJhXlVDLAEpaWCvyMG2dYVQkN7RcQnq01K7XYCCE9TEwQjVYaqBUE2uyDF6I0Q/T0Ge6f1m14+BHNofBFynApcfEIK8rsNYziOu4Y1eBWm5H3rthybr1OBGt44WcgeKjdXL6sv8lDIUtwmBFbVHK3O1gAllbAzX98NhDPaFRK8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD/KuB1c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCE9C4CEEB;
+	Tue, 16 Sep 2025 19:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758049207;
+	bh=95l9pr64ynrwi244Oy9sUnhLG2jGgpcru4un1rfIZTE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vD/KuB1cLG7frNkpzca7V6XivhD+WriLeTqzeKRCcKjD+169sahMAf9+SPhfgXhWz
+	 mN+tyeQIFI/za346w/oGwv9o7YUWqHrVsR6ZeAxVAaaNp73SwwDv3+kSWp5LBmjhgp
+	 hQ/nmklBAQdsFikN/JFcZpGpZbYrhNOpyXJOEfxYudpS7yfknBtrQabMVqtbSah9dp
+	 pdw/QbZNJpfWNTvw2F/487xp9DWp0+x2BpRI4N+6aVjwbzbktcfVyZq7frMhVeZ/VG
+	 yPVAyWhUR709AEENjzoX4YbFbp/KpI2keCE33hJ/jjo+3AZrMDObSJkj9oGr8FOZqY
+	 yfva2OSLMTIrQ==
+Date: Tue, 16 Sep 2025 16:00:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] perf test shell lbr: Avoid failures with perf
+ event paranoia
+Message-ID: <aMmztG_F1KuAKKq9@x1>
+References: <20250821221834.1312002-1-irogers@google.com>
+ <20250821221834.1312002-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|DS0PR12MB8768:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8db6dfd5-0b7e-4b1f-2363-08ddf5529bc5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1Az2MBLj+2wqwLPdzH2QG/LTimDud4NTnwYotVKZ5HVij4Z05cgd9mjBGEB/?=
- =?us-ascii?Q?aGr5Dp9JKvkfpideTKhYhiHa7Bg9g5fWbsMmz4Em+l4NdCG81ed7oNc35tA7?=
- =?us-ascii?Q?MTXspOT57oaMu4NWYecDoaxQfzV6H0ENpm/Suh8FDdXWrezVlKuLAjWzbREV?=
- =?us-ascii?Q?Mydmp5yfSXPFzUI98uVHdiAPkqRx3VH3ZkxZkGvbePUeBVfs77f9Yuus1q4L?=
- =?us-ascii?Q?4mrG482F5Xy5FnupUow3LC5fOf/da5WnHGL+TnNbQXTiYsH95jzs8IUTuAci?=
- =?us-ascii?Q?f/3tV1ZsG7qvbdOTIQoiXYgw+HqKDa/YzHznkqa/HbFsdw31zvbk6oIuFsBW?=
- =?us-ascii?Q?m9rtrlG3W/SKL6JHZi8o0rCYGDRywv2trnXPsn+0dVg957I1XFNiruDxVnwm?=
- =?us-ascii?Q?lzNJcYssjXWq9t0YVLCraZTJslgT1JUZ+vS+vB89Mp0eIY+VXWWVuqXtQ1XR?=
- =?us-ascii?Q?AWubpHmNPXKo5j2jnNGwRIiyPk08aU1ikl5Op2L+lS7/VSb0BcONFhkewNvZ?=
- =?us-ascii?Q?zAbk/8I5SVbMye4Lq0+puh/AFC5vx8arPT/24JBDBiPTXnLHkv4kcT7IPMHf?=
- =?us-ascii?Q?5QUXUORwAbWRgWzTVhLN01ZeYXyaEpOJ4jwXJh4PZUY4jyKjCTriOSYQUE8Y?=
- =?us-ascii?Q?bOnMZW6bsQKl+riJ/oRICrStIzmxpcydOwgyUT0t+W9sg+46Jg70MjX0boZO?=
- =?us-ascii?Q?WI0EiWzHB5jBdSB5qyBdmDJSvSJ+1lFb/z9LhIYcEx1N098MG8sM7oXuQa28?=
- =?us-ascii?Q?ItBhUQa29BYcJ/moEpLRqzp+IPM8YR/knUbbN4inOI7q7JiYu2fK7dE2iIsY?=
- =?us-ascii?Q?wG9iYaBjX/nftfwjijzmuYpP501i3WmqJ8/D9qkZaSUnHyxSDYvF0BPUjxh8?=
- =?us-ascii?Q?yCOiBEXtGXc4OfZYExPdcX6tQZ7kqU5IALIZFpXGyEXkVVVkJXu0O7eVzsY/?=
- =?us-ascii?Q?PonOWUw+Wm6n9Uwd36dNdMAkXXMP5ZWv27donAq+KBwfDe/31SBlCjEtEK4G?=
- =?us-ascii?Q?OCL13Yu7ZENhQcsmxdDbQ7GBF58IDvmEUQDBhzlp9mSY5s2UQyE3/70o93rq?=
- =?us-ascii?Q?bqml9KX4IbLpr7tqbSeXsr/VhdhOee4oSiZt6suy00f+J0Be4Sm77s9uFstx?=
- =?us-ascii?Q?zkJ0AnAIFr+GkX4vkatOoRsuNL1fNj/mg6LhBQ7Mao0FlgdgNGZDMVBWPoP+?=
- =?us-ascii?Q?4pfYPEUD0rb57HzzDG8KHhoegqc957s2cEX0fj/WWcdIN276yMRgB452K8Lt?=
- =?us-ascii?Q?j+qktYzLRrFFkD8r+rTeyDM8u3u7IxsPCUtM9Q3unYUSXmAmSHS1qtVmgD//?=
- =?us-ascii?Q?5r8ukTEMP1IbORP8SbX60O1FsknZmKP/r8ux4966/83Ssd9t1r40rZIouOgj?=
- =?us-ascii?Q?fdC1/FVcGXXNaNoMZg4GRJPNa9uT6e5DIUHsmKCMsXU+QFIgKg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7XnB8Z/HekyTb+rI8uU9cgVz/0UKv9JorNssFZhWolanwYMUyoLMkJ9PgxN3?=
- =?us-ascii?Q?j1WbAm4cjw6vtV+fB2x3XbT0cmr6MjHruu+XQfyQHtOMeZ7TM7WOTQV110rn?=
- =?us-ascii?Q?PhjDJxDaHLyul7qKk7jsWL+QR1SUQrJEdPq4V3xtbIQzchu1skm1f1ljLF5a?=
- =?us-ascii?Q?5qALv3V5qv2mUZiwMrJ0lg4mnmW6xW6vG6Emt9LiYXDh1sK/aFrh2hFJ/1w/?=
- =?us-ascii?Q?qSM+IQahhirlM6MJd3slsQDDK0xmgK4jh7vlJhT/4slsJggBnJlMz0K7HZK0?=
- =?us-ascii?Q?RmaSjV6BWda+T6QH4bvIgHblQOjB7mkYDzPmU4tvX14OcHpVBQuiZZJwQ1ft?=
- =?us-ascii?Q?GuOpfp3IqaBn/8Uq/eWQvFDZ430NF00fz6JEZ8qX/G1+FRioNySFOCRGt0GM?=
- =?us-ascii?Q?+/Zdy9/lBy+qSMAH9RAlNRQilFwTVKO1sklImW63miSdy0hW05qiokW/Bo2N?=
- =?us-ascii?Q?nQ0Wi0DL+qUqsJqkYxs6xVOhVI8W4Tmat44MAunR6hY1Mj0w39CTIAi+9ORV?=
- =?us-ascii?Q?LONdHjk1Qjh+gkNDTXI4rzJ4saV6IsQp5tNl2Bs2ewzSJLzWLJuTk4Q/KL3a?=
- =?us-ascii?Q?J+o9i4QYoPb2kd0seuOEIBsit+/1NDOzGhllZSMfOeGwjbR3nxjmz7LH4tsV?=
- =?us-ascii?Q?KWZV+Tkz7Bzwjn+GWUH11QzLc7Jei6voGq/FG1/eRRylm+yP07/VVYMAIft+?=
- =?us-ascii?Q?DrG/d+mmsbehJe4kDmvWezZFroMladMrZf7O0sEyLDn+HMezRc2yenkLYl9+?=
- =?us-ascii?Q?A3aRLgswuvEhM5sG937XboLdneh8QjQveaTiBOREl0I5pEK1dfR8ywQlMQHm?=
- =?us-ascii?Q?ljlOuOy6iSjxigGzsTihsLjKOyJkL2A7OZ7PyFCe1TCJMCvgjoz+unsRjkRf?=
- =?us-ascii?Q?TF3EC0Uvvgq14o23WYKq9ELLDsCpY0BsJJhM5kurx9YT1jZPScLcVlfR5nrx?=
- =?us-ascii?Q?eE/cdoWdyhJV2GE4lGppqjJyGnwhQJ5LEf7FewzYq23xNriGhoGQ1f5qc5TK?=
- =?us-ascii?Q?RPueA2fUqIuvx8tD7pqEhxTF5qrqycnhjE5pWrh4fU2feFEZ66f2L2KzcMyB?=
- =?us-ascii?Q?isExfNGJCjH6qRHOfdkhSlbe3lcK8UdDT9A7lTygQyqFR5Sq7Y/yDaW/LzaM?=
- =?us-ascii?Q?FaZi7glw+ZRw21fa3Ki6XAWJbxT+ntC2WYZ1KL4Z5y1fEdJtbNh4AmoFUY3p?=
- =?us-ascii?Q?SpcTUoG6xukXW68ncweIlZIFe0FOZ60QGw8+AQNIurtJClrB0i7GxEslFs7a?=
- =?us-ascii?Q?bKvcxln5p7kuZ6xzzPurJODqsVSLVnw8+FQhq++GLg+nfjhDVod7Uuspcmgs?=
- =?us-ascii?Q?1thkGC1xZltSPdst7Oi19VPgN1XVq9elGqYIiX4kST1k10fLom9p/cdRNKNO?=
- =?us-ascii?Q?+RD4+PSsHb6WPGBAd+wJTQWgpSnx5BvPpQfonrZu83wAn8P/J7sQo+VK/mNp?=
- =?us-ascii?Q?SX3dA2BJhJtKWdLskYegE/dRxVpHlvWaDUGvh9B+2H2ZE5juL+nuMkzpn6jt?=
- =?us-ascii?Q?uOkiGu4+dJ4nDa6fDT7HJfQjlQM970qLIk4kcEaZAtdv0OCVxk3zRP3w3RH1?=
- =?us-ascii?Q?HfBGPQhZ13LptzRgl7SK3UdIbQL049aae1URL2oc?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8db6dfd5-0b7e-4b1f-2363-08ddf5529bc5
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 18:55:30.7977
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8jgLAZIbPrBAhHzZB7kuKnUqf2WjAHJASZ2/ZsT/Vq1jIqY/9CPYsAlnwZzKlXnm/SV31XFtKg5tkKXchgfwwQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8768
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821221834.1312002-2-irogers@google.com>
 
-On Fri, Sep 12, 2025 at 04:23:07PM -0700, Sean Christopherson wrote:
-> Synchronize XSS from the GHCB to KVM's internal tracking if the guest
-> marks XSS as valid on a #VMGEXIT.  Like XCR0, KVM needs an up-to-date copy
-> of XSS in order to compute the required XSTATE size when emulating
-> CPUID.0xD.0x1 for the guest.
-> 
-> Treat the incoming XSS change as an emulated write, i.e. validatate the
-> guest-provided value, to avoid letting the guest load garbage into KVM's
-> tracking.  Simply ignore bad values, as either the guest managed to get an
-> unsupported value into hardware, or the guest is misbehaving and providing
-> pure garbage.  In either case, KVM can't fix the broken guest.
-> 
-> Note, emulating the change as an MSR write also takes care of side effects,
-> e.g. marking dynamic CPUID bits as dirty.
-> 
-> Suggested-by: John Allen <john.allen@amd.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Thu, Aug 21, 2025 at 03:18:31PM -0700, Ian Rogers wrote:
+> When not running as root and with higher perf event paranoia values
+> the perf record LBR tests could fail rather than skipping the
+> problematic tests. Add the sensitivity to the test and confirm it
+> passes with paranoia values from -1 to 2.
+
+Thanks, applied to perf-tools-next,
+
+Committer testing:
+
+Testing with '$ perf test -vv lbr', i.e. as non root, and then comparing
+the output shows the mentioned errors before this patch:
+
+  acme@x1:~$ grep -m1 "model name" /proc/cpuinfo
+  model name    : 13th Gen Intel(R) Core(TM) i7-1365U
+  acme@x1:~$ 
+
+Before:
+
+ 132: perf record LBR tests            : Skip
+
+After:
+
+ 132: perf record LBR tests            : Ok
+
+- Arnaldo
+ 
+> Fixes: 32559b99e0f5 ("perf test: Add set of perf record LBR tests")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
->  arch/x86/kvm/svm/sev.c | 3 +++
->  arch/x86/kvm/svm/svm.h | 1 +
->  2 files changed, 4 insertions(+)
+>  tools/perf/tests/shell/record_lbr.sh | 26 ++++++++++++++++++++------
+>  1 file changed, 20 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 0cd77a87dd84..0cd32df7b9b6 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3306,6 +3306,9 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
->  	if (kvm_ghcb_xcr0_is_valid(svm))
->  		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
+> diff --git a/tools/perf/tests/shell/record_lbr.sh b/tools/perf/tests/shell/record_lbr.sh
+> index 6fcb5e52b9b4..78a02e90ece1 100755
+> --- a/tools/perf/tests/shell/record_lbr.sh
+> +++ b/tools/perf/tests/shell/record_lbr.sh
+> @@ -4,6 +4,10 @@
 >  
-> +	if (kvm_ghcb_xss_is_valid(svm))
-> +		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
+>  set -e
+>  
+> +ParanoidAndNotRoot() {
+> +  [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
+> +}
 > +
-
-It looks like this is the change that caused the selftest regression
-with sev-es. It's not yet clear to me what the problem is though.
-
-Thanks,
-John
+>  if [ ! -f /sys/bus/event_source/devices/cpu/caps/branches ] &&
+>     [ ! -f /sys/bus/event_source/devices/cpu_core/caps/branches ]
+>  then
+> @@ -23,6 +27,7 @@ cleanup() {
+>  }
+>  
+>  trap_cleanup() {
+> +  echo "Unexpected signal in ${FUNCNAME[1]}"
+>    cleanup
+>    exit 1
+>  }
+> @@ -123,8 +128,11 @@ lbr_test "-j ind_call" "any indirect call" 2
+>  lbr_test "-j ind_jmp" "any indirect jump" 100
+>  lbr_test "-j call" "direct calls" 2
+>  lbr_test "-j ind_call,u" "any indirect user call" 100
+> -lbr_test "-a -b" "system wide any branch" 2
+> -lbr_test "-a -j any_call" "system wide any call" 2
+> +if ! ParanoidAndNotRoot 1
+> +then
+> +  lbr_test "-a -b" "system wide any branch" 2
+> +  lbr_test "-a -j any_call" "system wide any call" 2
+> +fi
+>  
+>  # Parallel
+>  parallel_lbr_test "-b" "parallel any branch" 100 &
+> @@ -141,10 +149,16 @@ parallel_lbr_test "-j call" "parallel direct calls" 100 &
+>  pid6=$!
+>  parallel_lbr_test "-j ind_call,u" "parallel any indirect user call" 100 &
+>  pid7=$!
+> -parallel_lbr_test "-a -b" "parallel system wide any branch" 100 &
+> -pid8=$!
+> -parallel_lbr_test "-a -j any_call" "parallel system wide any call" 100 &
+> -pid9=$!
+> +if ParanoidAndNotRoot 1
+> +then
+> +  pid8=
+> +  pid9=
+> +else
+> +  parallel_lbr_test "-a -b" "parallel system wide any branch" 100 &
+> +  pid8=$!
+> +  parallel_lbr_test "-a -j any_call" "parallel system wide any call" 100 &
+> +  pid9=$!
+> +fi
+>  
+>  for pid in $pid1 $pid2 $pid3 $pid4 $pid5 $pid6 $pid7 $pid8 $pid9
+>  do
+> -- 
+> 2.51.0.rc2.233.g662b1ed5c5-goog
 
