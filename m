@@ -1,160 +1,105 @@
-Return-Path: <linux-kernel+bounces-818864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC32B59764
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:21:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27FFB59767
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6874F487971
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CDA7AF021
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46CB307AD5;
-	Tue, 16 Sep 2025 13:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAEE3081AE;
+	Tue, 16 Sep 2025 13:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7OhipGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jCIOYIyd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F11F307AD1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547932D4807;
+	Tue, 16 Sep 2025 13:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028855; cv=none; b=hSg8qZSb9J1SzmT321RaOp/8K6X74nXeePnrRHtgjdjYIFKzArOpN4MztK6ck3v3l1btUZQh8kaZElmmSJUm2bjFpx9RmkK276576+hkvmDjpp5DVWuY5Z8HfZBIH5S792ABfoF40W0Lk1ChewVSgbniuhn2NpAN4RnA52aa7N8=
+	t=1758028877; cv=none; b=SBgqJ5A4LY1mo0SVOb3/LP780vqD+vOoBOugMnwDXWq1ZkDqRat0zWaBlUtbVi8uKEzPeGNHJYskPGxctmmqwZF5hqRryGv5STigGPL4RfcipgMP/gs0PwFaz276Ier4HCRhcEARAR42PTHxY1TtsFfOdkx4UGrKjZKDJ7Zv7X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028855; c=relaxed/simple;
-	bh=NkEqYgbQHqBRppulOAwQLkXQ/kR/tGJDaQ28SAU/ZbE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RH1asTtDuLk6BOREDQyVNvoysqQLBK5YDdYapMkA5HEK7y7FQ1AqNb4cyk7CkbCVRo819qD6hcREawxL8t6GB9OgJvw+Xi3gHU1qtXtar2O/CF+EeXeL37tU56SitkgM2P/cvExDmtjq5SZ3pbcHCNha+AgM73+mLLcTv2LC4KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7OhipGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E2EC4CEEB;
-	Tue, 16 Sep 2025 13:20:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758028854;
-	bh=NkEqYgbQHqBRppulOAwQLkXQ/kR/tGJDaQ28SAU/ZbE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=H7OhipGoDJaVVg75Xy37xy/Gb3iNzhFXsIZqgKxxxy99QyXG14oqvwpdXzjYB6oOB
-	 Pz0Ho367YOVHIksobf0Fxb4ZsK60vbtto3ZzcXGgUjpOegEmLGYTKfR6zvX5IjCkd9
-	 +tC4O4jsuvaMlEQFuqv+ByjyZyCQFXOWFNhqDza+bRlT125FRjJ7uKyQn5HSMP5DAo
-	 b/dhH2ac393YhcPbCsP+ya3oU1SARvXXSUcAJK7L8L68mer45+vP+YZbuNVoJ7X+TZ
-	 9f4CvU+15dVkWB1BOrKADvt9Hkr7LyZIVSmneOlNsis/TIKe3K10+EKR11q58Ud2ek
-	 e315dV4Chy44w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pratyush Yadav <me@yadavpratyush.com>,  Matthew Wilcox
- <willy@infradead.org>,  Pratyush Yadav <pratyush@kernel.org>,  Alexander
- Graf <graf@amazon.com>,  Mike Rapoport <rppt@kernel.org>,  Changyuan Lyu
- <changyuanl@google.com>,  Andrew Morton <akpm@linux-foundation.org>,
-  Baoquan He <bhe@redhat.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,
-  Chris Li <chrisl@kernel.org>,  Jason Miu <jasonmiu@google.com>,
-  linux-kernel@vger.kernel.org,  kexec@lists.infradead.org,
-  linux-mm@kvack.org
-Subject: Re: [PATCH] kho: make sure folio being restored is actually from KHO
-In-Reply-To: <20250910155546.GB922064@nvidia.com>
-References: <20250910153443.95049-1-pratyush@kernel.org>
-	<aMGc-ExhkqwAyY_C@casper.infradead.org>
-	<mafs08qimjoez.fsf@yadavpratyush.com> <20250910155546.GB922064@nvidia.com>
-Date: Tue, 16 Sep 2025 15:20:51 +0200
-Message-ID: <mafs0zfauh6to.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1758028877; c=relaxed/simple;
+	bh=Ex94Vqd+zOnaciGr4nhID0352++fktvmJgYz265pFGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQVzHw0R9utIlBnKffHa6OZibFTRNJukyJWj6G1+sAykCRX28Pcu2bsMNDZC/vWa6OIknMGJ+Rf7ycRuMsieerPjxvAVH7rsCM+8QLAXCohbdqz47q4YqN+KvTnVa/zNLoPwnibyNyIsaVJoM6ZnrbQwc/XUsdzzpIF6o2VX/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jCIOYIyd; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758028876; x=1789564876;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ex94Vqd+zOnaciGr4nhID0352++fktvmJgYz265pFGY=;
+  b=jCIOYIyd/U3sEWHQ3Ti2I9Aj3M+p0i7tMqT9T0jyZEVnXtqHj1jb3JxG
+   xMN86NsxbKfoG19Vj15tQiYYuvqBxuTahjaRXCPlu/nmP54uvFGmA5RbI
+   rDOQNjH4EAvegscWPS2OPTiFuoJf+TJEW+7fEihHcT/xPINMsounmCp/4
+   6HVJ6Ll4ijVpdRQEFnXqSfs5Fgb4HVBq1Fa7ZkVjOq6F3NWRjs4tXc5O8
+   sIr8UmNATDVWzYZ71FzPiHGuXCvBw/f4dZ7tRCLDt+UWhRItYf+uM6sHq
+   7FufYVO2sVZOA/8Xu/Ja0IzHrzMi20ItGRsoXGCEeoyqtdQtp1e7xl3bt
+   g==;
+X-CSE-ConnectionGUID: 4X5GIHCfSWy55OTXxeYQQQ==
+X-CSE-MsgGUID: 7v3lE5ZTSiaTcoPG6QTtQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="77915599"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="77915599"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:21:14 -0700
+X-CSE-ConnectionGUID: uXjdHH/gR4G26j4TjZhWrA==
+X-CSE-MsgGUID: 02MW8/5mQC2Fx2ADDkBNEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="175357160"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:21:12 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1uyVcM-00000003XEz-0eM6;
+	Tue, 16 Sep 2025 16:21:10 +0300
+Date: Tue, 16 Sep 2025 16:21:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: nm@ti.com, kristo@kernel.org, ssantosh@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1] clk: keystone: sci-clk: use devm_kmemdup_array()
+Message-ID: <aMlkRSzrzUzKHMNa@smile.fi.intel.com>
+References: <20250916124518.2857524-1-raag.jadav@intel.com>
+ <aMldk7M05W77rRw_@smile.fi.intel.com>
+ <aMld2nQFIIt1aZwa@smile.fi.intel.com>
+ <aMljmOCTOLdgBWfh@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMljmOCTOLdgBWfh@black.igk.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Sep 10 2025, Jason Gunthorpe wrote:
+On Tue, Sep 16, 2025 at 03:18:16PM +0200, Raag Jadav wrote:
+> On Tue, Sep 16, 2025 at 03:53:46PM +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 16, 2025 at 03:52:35PM +0300, Andy Shevchenko wrote:
 
-> On Wed, Sep 10, 2025 at 05:52:04PM +0200, Pratyush Yadav wrote:
->> On Wed, Sep 10 2025, Matthew Wilcox wrote:
->> 
->> > On Wed, Sep 10, 2025 at 05:34:40PM +0200, Pratyush Yadav wrote:
->> >> +#define KHO_PAGE_MAGIC 0x4b484f50U /* ASCII for 'KHOP' */
->> >> +
->> >> +/*
->> >> + * KHO uses page->private, which is an unsigned long, to store page metadata.
->> >> + * Use it to store both the magic and the order.
->> >> + */
->> >> +union kho_page_info {
->> >> +	unsigned long page_private;
->> >> +	struct {
->> >> +		unsigned int order;
->> >> +		unsigned int magic;
->> >> +	};
->> >
->> > KHO is only supported on 64-bit?
->> 
->> Yes. Currently only x86_64 and ARM64. It is mainly for hypervisor live
->> update so there isn't much reason to support it on 32-bit platforms.
->
-> Presumably this will eventually change to use some special coding on the memdesc
-> pointer?
+...
 
-Maybe. I didn't think that through yet.
+> > However, you might also want to use sizeof(*clks) IIUC.
+> 
+> It's a double pointer and could lead to misinterpretation.
 
->
->> >> @@ -210,16 +226,16 @@ static void kho_restore_page(struct page *page, unsigned int order)
->> >>  struct folio *kho_restore_folio(phys_addr_t phys)
->> >>  {
->> >>  	struct page *page = pfn_to_online_page(PHYS_PFN(phys));
->> >> -	unsigned long order;
->> >> +	union kho_page_info info;
->> >>  
->> >>  	if (!page)
->> >>  		return NULL;
->> >>  
->> >> -	order = page->private;
->> >> -	if (order > MAX_PAGE_ORDER)
->> >> +	info.page_private = page->private;
->> >> +	if (info.magic != KHO_PAGE_MAGIC || info.order > MAX_PAGE_ORDER)
->
-> All the impossible checks shoudl be WARN_ON()
-
-The mental model I have is that the place that introduced the
-"impossible" situation should get the WARN(). So for an incorrect phys
-address (leading to magic mismatch) or incorrect order (say preserved
-big range using kho_preserve_phys() and restoring it using
-kho_restore_folio()), the caller is responsible so it should do the
-WARN(). Does that make sense?
-
->
->> >>  		return NULL;
->> >>  
->> >> -	kho_restore_page(page, order);
->> >> +	kho_restore_page(page, info.order);
->> >>  	return page_folio(page);
->> >
->> > This all looks very confused.  Before your patch as well as after it.
->> > I don't see anything in the current KHO code that requires the
->> > phys_addr_t to be order-aligned.
->> 
->> Right, good point. I can send that as a follow up patch. But I think
->> this patch stands on its own without that fix too.
-
-Actually, on another look, this patch implicitly makes sure that
-unaligned phys always fails. This is because deserialize_bitmap() only
-sets the magic on the head page which is always aligned by the order.
-For any unaligned phys, the magic will not match.
-
-Still, would be a good idea to do a KHO_DEBUG check for alignment if
-this implicit thing ever changes.
-
->
-> Maybe it is worth adding some KHO_DEBUG kconfig to protect some of
-> these extra checks?
->
-> phys should be pfn_valid, phys should be aligned, the page should be
-> in the right state, order should be valid, etc. All worth checking.
-
-Makes sense. Do you suggest the magic and order checks to also be under
-KHO_DEBUG, or should they always be done? I am of the opinion that it
-makes sense to do them always, but I can also understand the argument
-for disabling them in production for better performance.
+Fair enough!
 
 -- 
-Regards,
-Pratyush Yadav
+With Best Regards,
+Andy Shevchenko
+
+
 
