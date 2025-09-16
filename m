@@ -1,147 +1,128 @@
-Return-Path: <linux-kernel+bounces-819423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BFAB5A07A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697E8B5A07D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA84480C55
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:26:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7401BC6368
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4E22D29D0;
-	Tue, 16 Sep 2025 18:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8C72C0323;
+	Tue, 16 Sep 2025 18:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y9cg8I5U"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="0e3rb8TX"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437E1265CA8
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67102C0F84;
+	Tue, 16 Sep 2025 18:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758047157; cv=none; b=S07JSYhp8cZ4ulJ3ohIWxpjlboBgYMbMOZ2EU/AvwOSFWYAHfJS02dijg2++JvI0Gy++U9buyhnUUV2mBLR5bl96QwoBOsGNo+ubC1dkOl2C7cOTnm7bJAQNDwodlumqOful5KGbPLtsnlA4oqFDw3k9oaNF2rEHWemP5xkUAJw=
+	t=1758047181; cv=none; b=UPIPN8ZnmjA1zM7P0z2zyX/3/9A8C17a1+c6pihSpDryHT990Kjc6+fJ/1VSgV4RDTpu8wu1c/TDeAAuEEyHzGo8EOZfdyT4GOwx/C07C9vCqcD33TwdoffyDgiyuAoMKSbsWOp8jSKYsipb/HutJfTOMA5UN8hfw9dXKzb+0DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758047157; c=relaxed/simple;
-	bh=JnWXlQLI/J5WtQGKFgA4eTmeUFQy+BjOATh2dzHmKG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WoG7s5vBdbVV+rQDn9aGmYPgS9WbNzcHwqRW0pTVwUlHsYDwcZKfqvm2smz3XVqjacpeQneSdpHnLpd8i+jKbGQ6PBCCEb5Sjjq6iKuah0nFkgCM6FVjl0ZRZCTALpEUFeZE1+uBdVBBwtnifunm6jxKTeDTZee4gOdGIjE8A4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y9cg8I5U; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62f19b9fb8cso1591a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:25:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758047154; x=1758651954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L0VcLk74dR9yFqPkcnr7kuHB/f+/2YKwO0n6eHIar3s=;
-        b=Y9cg8I5Unkd586eexpIkkrltIOzj3xpS6i2wzcZM56N0pZ1/cCFQvQD58omsE349ZQ
-         B+5K86/dNMp7SW82VtmKRYb/eZMFfzqgAXwg2v3VHAdvAxnsSSBmOrQ4juRtw2nQmwa5
-         FbVmP4NpL448fBnfWcwGsxz9GkAYLN1ZOo3NTBCVsFZSu88cOTaQ+cQ0rZtdxpwO7slE
-         S3xe40HsnsHAqfFLr1YNSrp58RjUruMkilYgDfKkAVZCYlokf/308PG4ziSrIR7gqblf
-         sCWorwy49vsmy+pr8kypcHncY7YBwrxDdZ9npwvUVvJhkJXv9WneQ41gnLGooAd1rqN7
-         TZ8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758047154; x=1758651954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L0VcLk74dR9yFqPkcnr7kuHB/f+/2YKwO0n6eHIar3s=;
-        b=JocnfkCDChXh7tXc9A3hseQ/3Tdo8+ybYdTBXCgxBZVNxyTKhhcIYb1hOYXo3mxYyC
-         04CINOt+zANP26jop5qkW2vA5joIkAO9Gyq9MxKX1N75oav5NR9LubGuN5w5oAfCV/+r
-         5L709R/FqklCONrYFPHRmRKDrbEdEXkOV242F4gPsSLdtOjuTflVR2Fl3VVMJRugurIv
-         xwJ8OQVPFNy1Gtm6CAZXZXGhIpuiBGhWAijJZ9SukdLCsY6jQGhLbZi0SEeudDE0roU1
-         xn0igrleOi2Pu13oAuvs8of/fDjwRUHCMvMdzdXJmI45681hPcwMHMEaE8TtataG82GZ
-         nXQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJYqzhmpSNv9I0nhriYUje13JCrq+z0FmjxhF50ORR8Ro5FTPiSLKn8rMbwIagQC+WVihuq5U3Lu4fZEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNvUiJDzcFmVQU1CCldqFZX7buKGbainRH5OSCKI7LVDs4bqfr
-	Wmq47uni9ABmBMV6oln0EKeXINSwnGO+mqmRWeA1c1PaP3Q/v8qKEtg1vEe1DB601Y1o+7cLALj
-	LEqx5RRM7KK1bzGGhigOfeqIQEnJV6ogKg/Vj+ZIK
-X-Gm-Gg: ASbGncthF6erP4nAu+cVUxbnrrBz/jT65ZmWhHFy69n+Lb+Bg2L6VxP5WqJnwmWWQz0
-	A4NEZIo9Zxuv2iUBLU/UQiMlTQug0L1UkD1mWGuIWb7Zx4pdtJI8nY6/en9VD3i4WXkkTeHm3XI
-	xct7hoCyN0YswcS8guX8PpLbgkZchEcLNGXdEmsxdfnGw/73m9rzXlY+574gJ4l3c0G8eK+d8PB
-	WcRb2fGmcXM90U+lAatl9Pu
-X-Google-Smtp-Source: AGHT+IGB++uGP92/3eX+DzpcCYzC7w6FRYx7GVwU2UvS8bV9IgfnXF9imW/DEk57JYWkyi2iUzVE/ZMr5wpsPSunReQ=
-X-Received: by 2002:a05:6402:24d2:b0:62f:155b:5e8 with SMTP id
- 4fb4d7f45d1cf-62f7e2f8f92mr9478a12.3.1758047153784; Tue, 16 Sep 2025 11:25:53
- -0700 (PDT)
+	s=arc-20240116; t=1758047181; c=relaxed/simple;
+	bh=cJ0ZgA9fSOYGQwYE2169cbLnicc73+0vXxPopTPOXv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E5j2pdvrERTi7wsSC922XOGIMUR+Gz6t70C0pvF90uakUYot6fbuLrfWC9ex3SKtA5ow/KP5I/H/C1Bhj9FNkIGPHhr2zekHe78ShTV/i/cYavkyH2wia8fmaocdRGWsieA4+kuAcf2V0l+GUjS+N9TTQ4x2G53XSOM4yRbn+84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=0e3rb8TX; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pfR7Xsy4BQPLEp1myu06IGK0gA6NnQf3jtJg3r/Xogg=; b=0e3rb8TXFHuItZMejDHEA/J4qr
+	Ncudvij/fFD65016h6R73EusavImCWVjmuJt4DcY6D3nT+YL9bjjqvc2nCt9Nseo2SDVC5xvhM4tS
+	JST+mGABW9nUmN5mL8hVq8BPVGB8yK2+yhi5kL1p+LoKrYjKEiaH8h9XmxU2BMevdJrMRC1y1yI3S
+	j1hMnf8mAT6yFgJCGcZ+A694Z1TU3R1TjFf31MOt6+6aTQuY6/SC2RFcoVNizOBVBUIg2TZMZkLbN
+	MbaJBP6xep/n+a/oEjuWFCwd2LdNFgt+d8xBqXT6CdKZUbnK+H26O6OiZdObrbf2UOf9o+mzZQw9o
+	kSQ7Gxzw==;
+Received: from [63.135.74.212] (helo=[192.168.1.249])
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1uyaNM-0001Qd-FC; Tue, 16 Sep 2025 19:26:00 +0100
+Message-ID: <51960b81-d8df-423f-b24b-4b4ec1e7a245@codethink.co.uk>
+Date: Tue, 16 Sep 2025 19:25:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909182828.1542362-1-xin@zytor.com> <aMLakCwFW1YEWFG4@google.com>
- <0387b08a-a8b0-4632-abfc-6b8189ded6b4@linux.intel.com> <aMmkZlWl4TiS2qm8@google.com>
-In-Reply-To: <aMmkZlWl4TiS2qm8@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Tue, 16 Sep 2025 11:25:41 -0700
-X-Gm-Features: AS18NWA0y0Y3-CfH_AYL3ReELcTLiz_cc9fscGdmhgbQD8z2XBP9Wg0cvjgDVBk
-Message-ID: <CALMp9eTZ7TA8RLSkJYPAawQjVVT9pFxB4QzAjs6XhzHJvQ=V3w@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/5] x86/boot, KVM: Move VMXON/VMXOFF handling from
- KVM to CPU lifecycle
-To: Sean Christopherson <seanjc@google.com>
-Cc: Arjan van de Ven <arjan@linux.intel.com>, "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-pm@vger.kernel.org, pbonzini@redhat.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
-	pavel@kernel.org, brgerst@gmail.com, david.kaplan@amd.com, 
-	peterz@infradead.org, andrew.cooper3@citrix.com, kprateek.nayak@amd.com, 
-	chao.gao@intel.com, rick.p.edgecombe@intel.com, dan.j.williams@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] riscv: dts: Add Tenstorrent Blackhole A0 SoC PCIe
+ cards
+To: Drew Fustini <fustini@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Samuel Holland <samuel.holland@sifive.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Anup Patel <anup@brainfault.org>,
+ Arnd Bergmann <arnd@arndb.de>, Joel Stanley <jms@tenstorrent.com>,
+ Joel Stanley <joel@jms.id.au>, Michael Neuling <mikey@neuling.org>,
+ Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@kernel.org>,
+ Andy Gross <agross@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Drew Fustini <dfustini@tenstorrent.com>
+References: <20250913-tt-bh-dts-v1-0-ddb0d6860fe5@tenstorrent.com>
+ <20250913-tt-bh-dts-v1-6-ddb0d6860fe5@tenstorrent.com>
+ <20250915-mouth-banner-ddfb2e48bdb3@spud> <aMhSSka3gyIcND/L@x1>
+ <70241f44-2f8d-4945-9c84-71416776cefd@codethink.co.uk> <aMmd/JQAfPwKuYyB@x1>
+Content-Language: en-GB
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <aMmd/JQAfPwKuYyB@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: ben.dooks@codethink.co.uk
 
-On Tue, Sep 16, 2025 at 10:54=E2=80=AFAM Sean Christopherson <seanjc@google=
-.com> wrote:
+On 16/09/2025 18:27, Drew Fustini wrote:
+> On Tue, Sep 16, 2025 at 02:56:05PM +0100, Ben Dooks wrote:
+>> On 15/09/2025 18:52, Drew Fustini wrote:
+>>> On Mon, Sep 15, 2025 at 05:47:08PM +0100, Conor Dooley wrote:
+>>>> On Sat, Sep 13, 2025 at 02:31:05PM -0700, Drew Fustini wrote:
+>>>>> new file mode 100644
+>>>>> index 0000000000000000000000000000000000000000..b2b08023643a2cebd4f924579024290bb355c9b3
+>>>>> --- /dev/null
+>>>>> +++ b/arch/riscv/boot/dts/tenstorrent/blackhole-a0-card.dts
+>>>>> @@ -0,0 +1,14 @@
+>>>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>>>>> +/dts-v1/;
+>>>>> +
+>>>>> +#include "blackhole-a0.dtsi"
+>>>>> +
+>>>>> +/ {
+>>>>> +	model = "Tenstorrent Blackhole A0 SoC PCIe card";
+>>>>> +	compatible = "tenstorrent,blackhole-a0-card", "tenstorrent,blackhole-a0";
+>>>>> +
+>>>>> +	memory@0 {
+>>>>> +		device_type = "memory";
+>>>>> +		reg = <0x4000 0x30000000 0x1 0x00000000>;
+>>>>
+>>>> This isn't at address zero as the node address claims.
+>>>
+>>> Thanks, I'll fix the unit address.
+>>
+>> Is it time to just assume any dtc can handle a 64bit number?
+> 
+> Is it not valid for me to use the 64 bit hex number in the unit address?
+> 
 >
-> On Thu, Sep 11, 2025, Arjan van de Ven wrote:
-> > Hi,
-> > > I also want to keep the code as a module, both to avoid doing VMXON u=
-nconditionally,
-> >
-> > can you expand on what the problem is with having VMXON unconditionally=
- enabled?
->
-> Unlike say EFER.SVME, VMXON fundamentally changes CPU behavior.  E.g. blo=
-cks INIT,
-> activates VMCS caches (which aren't cleared by VMXOFF on pre-SPR CPUs, an=
-d AFAIK
-> Intel hasn't even publicly committed to that behavior for SPR+), restrict=
-s allowed
-> CR0 and CR4 values, raises questions about ucode patch updates, triggers =
-unique
-> flows in SMI/RSM, prevents Intel PT from tracing on certain CPUs, and pro=
-bably a
-> few other things I'm forgetting.
 
-Do we leave VMX operation today when applying a late-load microcode patch?
+No, the reg = < > contents. It is a right pain to read split 32bit
+numbers and I thought dtc had been updated to allow 64bit now?
 
-> > A lot of things are much simpler if it's on at cpu up, and turned off o=
-nly at the
-> > down path (be it offline of kexec).. no refcounting, no locking, etc...
->
-> For Intel.  Unless _all_ vendors and architectures follow suit, KVM will =
-need
-> the refcounting and locking.  And while it's not anyone's fault, the *vas=
-t*
-> majority of complexity around enabling virtualization in KVM is due to VM=
-X.
-> I.e. KVM added a bunch of code to deal with the aformentioned side effect=
-s of
-> VMXON, and as a result, all other vendors/architectures have had to deal =
-with
-> that complexity.
->
-> > so would be good to understand what the problem would be with having it=
- always on
->
-> Doing VMXON unconditionally is a minor objection.  My primary objection i=
-s that
-> this series does what's easiest for TDX, and leaves behind all of the VMX=
--induced
-> technical debt in KVM.
->
+
+
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
+
+https://www.codethink.co.uk/privacy.html
 
