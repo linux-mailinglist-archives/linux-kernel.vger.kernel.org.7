@@ -1,195 +1,121 @@
-Return-Path: <linux-kernel+bounces-817977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-817978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8100EB58AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:12:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033B2B58AE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 03:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274DD3AD148
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:12:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B22523AFD0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 01:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF971E00B4;
-	Tue, 16 Sep 2025 01:11:57 +0000 (UTC)
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2093.outbound.protection.outlook.com [40.107.121.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7C01EB193;
+	Tue, 16 Sep 2025 01:12:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5611DE89A
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757985117; cv=fail; b=SGQeKmZF5QrGgydVx+Jm8+fC7zm0R6BVlYt1zhmRqXiJxuOG97wpeKg89FH1sTGRLptN0qa5mjoJLdTBgmKGZJw627aiMPT6yC2ny/ooNmkRB8fSHyLsGJW+VL/r+jFPGXr++KuPBJo5uHu9dz5btDki/sHB07x4ZDNphkjFFYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757985117; c=relaxed/simple;
-	bh=1O3d+q+T8VMV9Hnh6/6pYW+lm99j3aotjZlT1B1B2SI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Ihdi7RIubZvsI15wJNQIvay0DAflD6yNZen2BcasJlSw5+5+K/Z/AjQxUkPtMqqBSwePeyMFJvKg9etG2pcdUyQFkXyFzJ8KdtdC0wMRHGPSVJqCROZMwEKXCn81cb3R0MdEQtban98jlwc3CUpb9X9Ohr2jtA0hArdnOY0ywbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=40.107.121.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JuaScLs36tCo94gKO3so3PR9BHWASaD0hiXcOojGAW+40ibYYgJl9JYxMtbFKgH+hXwOBOpx8kPW9CmZKx07dqZsCHvEi60aaLywsh319owH1qcjQTAWFT0eN68VM0sCSTogIhaZbpWMWe04BeplPAdppvjdLl7YIOns/bX5wAQYyiluCQhwGg9nksHxgIqSlJio00QbqqRQUdGB46oiVoOIlI/HTQaamMglPYoAKduqEvLnpWY6oqcPWzzkm4JpXXsRSSP7/Ipbb2fP79Y6JjqW6JFF8tjxf6jOkS1uYsOEpUWrswKQ9UbWgrIfQ84jIiX1oM1++T2z97X/UBDUHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KiPutnH1OYl9tap8TR4gBe0i/BZrbdFW+5w+vp+bByM=;
- b=LtlhONKziW0SSwXUECURHFLwc72s5UuT6ftHWvV08Al6uRw1g4Rf/tchAbNF//g4PqT0Nh5z3+PxE260BlrOFu3jRDsAHQgknd/KFAJWgUWt12yfFvxAtBnB6fTvvoCZevhs1g+7H1GFf3PV1UmzP+0Lf5RAvjKNiOHG/yyr/5ixb8P8gubj1f1Lg3v2g1QrNTbRVw5xoPbg5g71+PImchdwgXIAe/V39rDXf3qh5Xg/Ph+bpHIMr9uOzf9Slt1IkNxXT+MQx6Ha6S/Cp1E8Mvy0ox9ujH36iBBB0Nl62FoQeYrWcuLkXkP1Va+hH6iuykAAJ/qPZJ7/xmFUF/G/1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
- dkim=pass header.d=atomlin.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=atomlin.com;
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
- by LO6P123MB6721.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:2d9::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
- 2025 01:11:52 +0000
-Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 01:11:50 +0000
-From: Aaron Tomlin <atomlin@atomlin.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	shashank.mahadasyam@sony.com,
-	longman@redhat.com,
-	mkoutny@suse.com,
-	tj@kernel.org,
-	atomlin@atomlin.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/core: Report failed rt migrations to non-root cgroup without rt bandwidth under RT_GROUP_SCHED
-Date: Mon, 15 Sep 2025 21:11:46 -0400
-Message-ID: <20250916011146.4129696-1-atomlin@atomlin.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BLAPR03CA0079.namprd03.prod.outlook.com
- (2603:10b6:208:329::24) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:400:70::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A621E00B4
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 01:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757985126; cv=none; b=YZOIeXTOtnSJZKG8Q/T3bcahiNAfXLm4Q+csB3w5VexFi55xP04NdkPKZVd8dRuXGI+7LZ9I6U1pJsu3Mxup69X2MSpxJAk6iD5eaLc4fw6c7d4HQP4hvevh9v3jZjcvo375dj2Co2zJruleLhBkzlMDvD0IcgpIlv/aRtLJ7q4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757985126; c=relaxed/simple;
+	bh=LsJaxOLF22t9KbYfOUbdLMGVQGaGuPyEKfeV0SWR4NM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Hw29CKPUhLjdb6aYBqWiD9EelqevobWY5xQcJve2a2eqVcdEJaMXkd/1d8FqOA3sZd0bPtz/x80EGbg1vuYOWOH3XQ5UbKSWMO3Vhl6nEBTfTFqZtT4NFekFiUcUBPiBt2Trzcm4YHT1Uq6CNHev+UXI3neUKFqBnCflu7Pwnp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-893656f5776so164171339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 18:12:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757985124; x=1758589924;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=22IUJA0lK++Umtz1C92SGmsjZctSkach0bUg+Apios8=;
+        b=aRKwl/LiUalIuFuTp6/r8C14U8cbrZpiOYwDwlKjvVyOhzS12rvOTMfXf5gI7vDilW
+         1hmgsNNc26dYGacmbQ2Pd96oodIdCrGOtdp3XGleCFoANgZZpl1ip9IKWNLFPKx3Ph6V
+         bo7A1yfiASh9w8SMyedJ3QeApS0+xADwSWkqvqaDcNfnBnIJ8mOwjch7sLzL9pmEUdVQ
+         ZVO58rlLJwT8qlMixk6zcbI02tLeWaKHfEm35uUe12d7BBXMpGHoFkipm6fDzi+SX0vW
+         rH81rgE2xjJM+kQfF61vooIKUxof1P90P2ulV804zazaFSERH3+k/dLhqFwv6EmMmf78
+         pBVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBAClJCFcKIrI2G/ggQi8tl19MSjeugqymnNNNNCl61szUJAS2XqyTUbnCoIdNV6BLKN2tH/ysBBWSboY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgk11zM5xkIDTmSAipqWnTA5p1wgHK3LzK7lvvxhVq1ft206wx
+	z9sGhKMBF87QQhfCPs8/hJ+nGMoHx/K7KK+DVkjGqzVaLZzj060/ed92+k5hZn5cTxrLrHwuGdo
+	Dk1J42DK6KmlOVulcTkP9QauSQWyKknLJvlBPUqmJeq1w71xZiEYOjXKdpd0=
+X-Google-Smtp-Source: AGHT+IE3tAP7JPlhuDpi9ep0KPvJbwx1yHNABsVEpItsqD/phU4h+NC/ylRdsvP40DBMWOXH24v//q6mbKIhOuuRcFt5V0J2v6Ky
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|LO6P123MB6721:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4ecbca8-eb18-462e-7d7b-08ddf4be03dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eUr3JLgq9j1h9+3Nue+v0qhlVsbqKn9L5tjHXPeeLpGz8LcU86Q+X3coL+2J?=
- =?us-ascii?Q?BdYy+eewLxFEAzdJDXuvwAYiYs1TLfVDaev0PRY89wRFgNgL1n8eCEh89P8S?=
- =?us-ascii?Q?uF78yjIZF9pkHZgeZfDiUDcoJSCMHyo4dCXjJXBsXW/SZlSGuVGxRc9JyEeu?=
- =?us-ascii?Q?Ka5lncj0xALyZBq9VjqFsHkSC+Z3Z/ZPLsSgEmpMluU1gNJ4ttlVo6/xDPOS?=
- =?us-ascii?Q?zTu8sbQTNJ5N8Cz4p4sB2apLNhrNQc+6bTwehh5tt1+h/C1MaFJx4qytIaZ/?=
- =?us-ascii?Q?PcoWIRPeGYtdLrR1YkefBQ2zsAwyk2XpjBPxJCeDzPko8ctChX1j3i7GDoIo?=
- =?us-ascii?Q?kC3NHKiTl8PFq85kmaBlMo5+tzniysSD0Cyw2bdhDUkRuMAHW3f+pOuJHsUM?=
- =?us-ascii?Q?Xli5P7VsvLEF/6qcFIKm4ZjkWTTn7lbMPMR+ja9xrc9o0ei7ZIot1uLOU4os?=
- =?us-ascii?Q?bRM1qXeK+zsHVbzHdoZVbv1+Zz85L2P8KN8Z+Je9u0lHsFn15v9awe4JDQIu?=
- =?us-ascii?Q?NoaaOoOE5FWthNQ2rweFAOYq0YLm3zIhp10JKdE+a5vEdwNGn/3oJ1Xtbe7E?=
- =?us-ascii?Q?rUin/lsxN9HKvm9/cIeXFpq1DAuGjlPMjg2mpKiDrNp2ntvhqLkbaD9RPoew?=
- =?us-ascii?Q?iXNRoIQMQ42E8dXRU0Xk8WCg0iyP06w3qFQoyeLIAc9eYROHwMCgws3ZLg5x?=
- =?us-ascii?Q?LYoc0wTFvETnw1eoOWOBD95S2LUZZQw2jzA3uKz407yCHjWSPc0ICqftEmbW?=
- =?us-ascii?Q?mjlxWsk6ADlX+L/LvIO99jdWGhCzSLhfRoLgtJZngep1TaxUCBC3RHD5MdDg?=
- =?us-ascii?Q?s1a2Dq+E1qOKrqAgCMpCh41q6FXxaQXK4WcDy3vKnld3pz6CmevnfkpLKE/Y?=
- =?us-ascii?Q?3K8BH07u2N+WhC1l7gh992IBTi5vFQqDZ70IfBdss/xZh7ot/ZVM/YUrsHBh?=
- =?us-ascii?Q?jKQ2mVlRJMdAYNsMEdsAAVqY+Aul29zkaFIqtS4V4Df0+cYDnZwLnFQL7h+J?=
- =?us-ascii?Q?UkUIMx1fVGfXExW9pMFnfO1ix1wml5uz/UYnG+waH4YGEQvIY10+wgb5PaW4?=
- =?us-ascii?Q?QM9CClGfck22f0U3VL8+jllDnn7R9y02T+pZVXuju7zqZAC1v5qyYtNzwizS?=
- =?us-ascii?Q?tP1oH1JT3ig3kNTKGeuDOWfhC9Rbqw2eSh8v0Nh9AJH6q950PxzjMiCxD8Fw?=
- =?us-ascii?Q?c7exYtFW2y9MIpJ17fay/vSyYcEhPA74jqqWJB5AVzaVT8WLSKFggOAMkOAr?=
- =?us-ascii?Q?vwzgu/0oC+hSVnk/Uwhe+YaXYt573l1fGuJRjkukT3J099NYRYZPRpRDAzfI?=
- =?us-ascii?Q?FwSBaGzLDEq6WlBodXhyD+7GIZYla7GCk7DFv7k4xxseSOGK8vxIwcLNnMg/?=
- =?us-ascii?Q?Yq8fefHEE3mUfAjDTA0zc3+QuqHqsEYqOZ9YFEPXdlUBRKZUCb7hxzDd2zl7?=
- =?us-ascii?Q?AFg3+AouR+Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aPdh0RYkmouZlvCeBZc04m2e5dEPlMghYXsp+JNuEVNC8t2NLDep3LuYGwTc?=
- =?us-ascii?Q?BHSBCX21oWNRI04zoA9Ki6A/eOHcYfSJ3AVk3TDPmlCfK4uNQnO+M1mHuRXK?=
- =?us-ascii?Q?PrJmiHgsz5NE8fCGKXVkvZ2/UUbSCUF2aw1KoYN/+h/v+1VfIYUL1rZ6ThIt?=
- =?us-ascii?Q?eTwGd0gZWsL1Amba32xYC+EBX8L949DK5Dqdo82A92H6GGBJ674JrS6+7qRT?=
- =?us-ascii?Q?EWHBwwmhLZeFttgDv7OcXCNHiuRqonlkPu67h2x2qVWGtqVeFLd69yJIj8rM?=
- =?us-ascii?Q?niaWExHl+RGNtgs9gXLBIjK9qVosYeVH7MKrV+W1IiqRQiu2t72i/ShEA6QH?=
- =?us-ascii?Q?O0+vwxI27U48gTYb2yXwoFgJfZz6D54l+MGTCGFuO7jCrinU+Cj8BDe4MzNe?=
- =?us-ascii?Q?K1a4xDXmNLCtEz60/otySxeHrBO61e5ReAPLaQlNnPW6w3DcwgGQQ24V/kLg?=
- =?us-ascii?Q?BKK2Zct0vHEVRQIAIW7YHKpVcu3vEc4Om4/5ysMKhKHTjjCJIWe8fBhB4qbt?=
- =?us-ascii?Q?9LaZD6qjUQ97xWTrJTlYywD5x0Ljl9Zq9IhaN53NeCDPBI96uDpMOw09W8cT?=
- =?us-ascii?Q?ctBS7aJhO/ErMSbCDw/DkRv1SGAIuDmwhzWJy9t4tcmD3fyT7YB40tdjNgCo?=
- =?us-ascii?Q?0Sh7dP/JHxnGzBfmHef/GIeOVwVr/IH4cMSErQZKfOAMX2MfXJUadfPXzq2+?=
- =?us-ascii?Q?JyDDWnC5gN05HkyYcPreS2/va64P2Cd0va0gEnCZaCaQVTHBcFZ0iIJoZM9c?=
- =?us-ascii?Q?CKwMA0tzjOQgT4rwbu0Q6Wjh68Nzfh+FyzmWs5YgXhgtZ+wtOGttGddwyGi/?=
- =?us-ascii?Q?0oIKir2MQ5gPFzccJFOneSYRSQ49y+WXgcE0tpsG7gc2DQkROfvckuyuYAsS?=
- =?us-ascii?Q?CRSKeGjXf9OyW/HO26kVIv3keovd6PxMfgHQ95OIUaAGadZnsNo7nXPG/ify?=
- =?us-ascii?Q?Lp5Kuocm7frx3+9zW2rySZdVYNlZC9XkDLeVvxNeOGKug2JBNvEHhLpYC3pu?=
- =?us-ascii?Q?3bOK3OJ4udiJjaIzyujoc/dlCR31925BjmRBnia/WUQqQutRBq15Zk2FSlFE?=
- =?us-ascii?Q?Jr2IwJ79HZfqyLRuE8e8hOugNog4z+Z5+6pMN12F7PP9Et7Fr574MbWm+sEC?=
- =?us-ascii?Q?8NU5ejz1pm6Y2zeGpaSjBrYl7RtXIR/N6eeaOUEV7nhLenymGMx+vIzYDOgE?=
- =?us-ascii?Q?xOW3JpuIyKz4vStQlMJcoArKBMu/3Px58JwdDp6j7Sb3Cv0QVQWJkamIC2bx?=
- =?us-ascii?Q?xcnNt6uYpXPNv01l0xvGCPReE+aIqIoXMRfrz08zbNY4ZHxMr4mpHEBSJHDk?=
- =?us-ascii?Q?9v0e/vlvY4Ae33XiSoSkEUJsvLWepfv33IqQsAjskY5jq8jqZQPSuAetXLS1?=
- =?us-ascii?Q?gb+L3Cgqtp56s15dO1QqPng+yqeyrWHlt3ZVB4Tagj4yjNB8rT308JX3UNZr?=
- =?us-ascii?Q?ip0j1T9c444ILtm3ANU6APrel8YBQVlSYs3JTHnVvTmvCXPYqCSMSnGsVnjT?=
- =?us-ascii?Q?/bZx0szBGdeVnxPb5KCfdNRM8oSiq4pkeH/tb4FIUjgJBLXZQIpvYIHVlXXl?=
- =?us-ascii?Q?IbLUUT+nYmXiy25mlEleoFm5oIpB9K0c+Mj8My44?=
-X-OriginatorOrg: atomlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4ecbca8-eb18-462e-7d7b-08ddf4be03dc
-X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 01:11:50.5264
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tpvSWJxg5wRuNIm8Tk9P8iI6AxxbsmP7WVRcYxoufU7p9Zgh3oNwYs27FC6U5FIaESRAd/mwYSPv13Xe8pgKpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO6P123MB6721
+X-Received: by 2002:a05:6602:2d89:b0:892:5092:93d2 with SMTP id
+ ca18e2360f4ac-89250929d78mr842632839f.6.1757985123839; Mon, 15 Sep 2025
+ 18:12:03 -0700 (PDT)
+Date: Mon, 15 Sep 2025 18:12:03 -0700
+In-Reply-To: <d61c07c8-c5c1-4cfe-ad23-d972eaff8b9b@linux.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c8b963.050a0220.2ff435.03b8.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yanjun.zhu@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Following on from commit c7461cca91 ("cgroup, docs: Be explicit about
-independence of RT_GROUP_SCHED and non-cpu controllers"), this patch
-introduces an explicit error message that informs the user why the
-task migration failed. Now user-mode has a clear and actionable reason
-for the failure, greatly assisting with debugging.
+Hello,
 
-Signed-off-by: Aaron Tomlin <atomlin@atomlin.com>
----
- kernel/sched/core.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in gid_table_release_one
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 62b3416f5e43..b9d7689d21e4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -9185,8 +9185,18 @@ static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
- 		goto scx_check;
- 
- 	cgroup_taskset_for_each(task, css, tset) {
--		if (!sched_rt_can_attach(css_tg(css), task))
-+		struct task_group *tg = css_tg(css);
-+
-+		if (!sched_rt_can_attach(tg, task)) {
-+			if (tg != &root_task_group) {
-+				pr_err_ratelimited("cgroup: cannot attach "
-+						"cpu controller. Task "
-+						"%s:%d is not in the root "
-+						"cgroup.", task->comm,
-+						task_pid_nr(task));
-+			}
- 			return -EINVAL;
-+		}
- 	}
- scx_check:
- #endif /* CONFIG_RT_GROUP_SCHED */
--- 
-2.49.0
+------------[ cut here ]------------
+GID entry ref leak for dev syz1 index 2 ref=414
+WARNING: CPU: 1 PID: 61 at drivers/infiniband/core/cache.c:813 release_gid_table drivers/infiniband/core/cache.c:810 [inline]
+WARNING: CPU: 1 PID: 61 at drivers/infiniband/core/cache.c:813 gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:890
+Modules linked in:
+CPU: 1 UID: 0 PID: 61 Comm: kworker/u8:5 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: ib-unreg-wq ib_unregister_work
+RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:810 [inline]
+RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:890
+Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 60 4b 71 8c 4c 89 e6 44 89 fa e8 1b 81 fa f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+RSP: 0018:ffffc9000212f908 EFLAGS: 00010246
+RAX: 083e9d4088da4900 RBX: ffff888077e080d8 RCX: ffff88801cb65a00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 1ffff1100efc101b R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1bfa24c R12: ffff8880335d2fa0
+R13: ffff888077e08000 R14: ffff8880305cae00 R15: 0000000000000002
+FS:  0000000000000000(0000) GS:ffff888125d16000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c003586000 CR3: 0000000031e18000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+ device_release+0x9c/0x1c0 drivers/base/core.c:-1
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22b/0x480 lib/kobject.c:737
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
+
+Tested on:
+
+commit:         77403d3f RDMA/rxe: Add logs to find out the root cause
+git tree:       https://github.com/zhuyj/linux.git v6.17_fix_gid_table_release_one
+console output: https://syzkaller.appspot.com/x/log.txt?x=1399547c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4239c29711f936f
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Note: no patches were applied.
 
