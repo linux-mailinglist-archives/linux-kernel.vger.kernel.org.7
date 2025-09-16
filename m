@@ -1,173 +1,189 @@
-Return-Path: <linux-kernel+bounces-818720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8F0B595A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F274B595A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE421646A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C782176192
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12AF307AD9;
-	Tue, 16 Sep 2025 11:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B4E3090FB;
+	Tue, 16 Sep 2025 11:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oLRaMHFV"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b="wJMwRSgH";
+	dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b="4/0x/5Gr"
+Received: from jeth.damsy.net (jeth.damsy.net [51.159.152.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6872D661D
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 11:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517422D321A;
+	Tue, 16 Sep 2025 11:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.152.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758023888; cv=none; b=eKar9QC0H11CKxKcmCG8V+dmyksc+TG6wdYo2+gEz2MOdEFUK4bIBSnL9vJFboJDcFfeuie+1oLsSmjMCK1tkhWVPB6Dhzz5hGhE23Q/vVdVl0MlXtQlEvbn6Bh7w9C0y2gHsARIM2bulgsznRybsMSdiGfld2X04xcZW2aFxWo=
+	t=1758023903; cv=none; b=cjYd7pKKM3AvLIcAciPLeVU3BuGzv31j5cWZIVWlssK7dvG8W+FvF45lAw5FX9jyMiM/CkHFotMSDjqWa7gTQZ+/ZRG8giElAuxEugsLxmJOnVRd9cCQs1abDwXClawlif4TybIYWG/wDR5nU29ldCsNXTSRE2BJOQnvJSVKKO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758023888; c=relaxed/simple;
-	bh=uO0NCh73QWjdt5Uyj9kU6fcAnxi3vw1tE7kTtVZcrLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uK/XSNNAzDLoZUNajR3vgPvY/R9GiJxgKhEwaP8AxngyG4err9g7msex4msGFQehC3K1JO8UxWratDK7BfhvuADrBewcGD1yx5qKhIRRqfm+Ql633cGTKM++T6jYIFY67emwcIQL9nrbHinR4K/2EcFrKNtvcrwHPX1Ac2I+7us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oLRaMHFV; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45f28aba94cso43575e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758023885; x=1758628685; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3psH5CD7tcrvwMqVdIhmXfChnHfszSZCh0gJTDmLAQs=;
-        b=oLRaMHFVQMkysV66+Nu69wmZRbOiS4zzsiqqc8Bdz43D4CLu2W9hUjwiSRA67f2RAI
-         82ALpWoO9zH9WFEwS8PbsveaYoyvhDOIPRFyODemlUyh9Co7rAYU67l36X12ryCzz+VY
-         7cp+22IlCaCdAzv80G08oXk7OzfMnRiKnbflUklGwBO1y796mnRWhfL3N4vEH8r9i0lV
-         o5c4tdTqVqs1HH+peefgGn/faapJTTh93XINMqhLat70pT+ad5dqeK3F162jeILo/PKp
-         DyI1SowAEtED8ku3332fCe0jw0T2uc+tn3SnYvHl+KmlJxUJor3GE3HCYLbStQ/Ep/7i
-         vjtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758023885; x=1758628685;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3psH5CD7tcrvwMqVdIhmXfChnHfszSZCh0gJTDmLAQs=;
-        b=kAAoTXUYMLxzUdwsgbtNZP+TouUOScHs2HgStQFRVLQTI+fVc8xg77ClGXmHGt6SF9
-         8IVWEWecUg5NGJafTBctYsjCkE5TwiuZSvzqTvYlGR9lMjCRAjGfXxJfriud+Lv8S42f
-         MzpW+YyCG85W5PcWkXanyy21cYxkiOKcnjb4VdnQNI/+dV7msMVYoiGJDOAejr6Xn53a
-         27buGw/73QYuTNM5ppXS342mT2Uz82cmJYbu4iduWkFZNyhShcYZtXrFNddYXJD0dtuM
-         2tUBwc8H3R1LXbLicG6DOY4f6M+itm995zeWwakt6PtrOCrqud5raGYhfGaCxA6EKCgm
-         JZeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPHG3cWrBJhAlXLGFX9mA/Q/rG6hf4XMypKVAMn8kQg6EpbztK75MFjzDM94elXvrBdelnPwZVbsemEyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwsuE63kuJ4FdiG1nKFlKN2YhXU7EMFksa9IQYm7elDnusBAb/
-	bDRQy5Zt3Mwga3wVN6hOG9zFbJTTyivZigpAeUju1nlQfEKQK4wgjXmvQTdrA4O3CA==
-X-Gm-Gg: ASbGnctRP1507ajHjUBcguP5LpyC5fW3jzet3KyZm6My+Hk6ufKlJF1ncpgeBkhlFd3
-	H8/Kob0QZ6vRfOmkxXTtHawYit2j+rJIOAAmWuh/bJEhrIVLLXhr0wvrWdHnZowSxx3gDDqNs6e
-	sVffdbzscuOGE3FKm5LWYGnMQJReMInbfe9sCNC7HCEmLXp95a+hAmE3s7rIZxs8jkSNFH7iF3U
-	sSA4ZXQ4bIscr7o1MSmjBt2bQvUeUXcFEjss0wd11meeoO+XNehRMhZjZJ6sdGi32lzKlGGBNsF
-	sAwLZ9X6EE+5LGpAu9V+MWw6SJ1JLWdhq6N7KShhQCSBExkECv0nThQ+p9qrVo6W7P+10kaHeqJ
-	f7gFAGo6H2PBaheGCGqgcPdt5+/EM1QoR/3W/6lx49mJogYnFSD096rDqsh7h0hPHTZ8Qeg==
-X-Google-Smtp-Source: AGHT+IG7Q075/69lFtwq0hoEJKVoCNlBE4hU6CDHrnoiEI5/aWCVfJbO7FkOPky6dULeT2aGJwID/Q==
-X-Received: by 2002:a05:600c:8b6a:b0:45f:5b02:b0cb with SMTP id 5b1f17b1804b1-45f5b02b390mr996015e9.0.1758023884645;
-        Tue, 16 Sep 2025 04:58:04 -0700 (PDT)
-Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7e645d1fcsm15966584f8f.48.2025.09.16.04.58.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 04:58:03 -0700 (PDT)
-Date: Tue, 16 Sep 2025 11:58:00 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Pranjal Shrivastava <praan@google.com>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com
-Subject: Re: [PATCH v4 01/28] KVM: arm64: Add a new function to donate memory
- with prot
-Message-ID: <aMlQyEdJdJ4Q9iS5@google.com>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-2-smostafa@google.com>
- <aMAvwlMQ-Jf2MWzd@willie-the-truck>
- <aMcWIDQzi5CDNC4C@google.com>
+	s=arc-20240116; t=1758023903; c=relaxed/simple;
+	bh=1YPNFfoeAQBH+th3wqHjduaxBhKPbi+z5V6okeM97BE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JzfXjv1GqyUb1WEDQMBFIv1CXdXPnWk++5GXYJ7J/H2Qfh8YrEpk3j7dMhLmoQfim3oFAm/ZurpFPt7rzjM4g2giPuzsmwo+R8isEjsHRROIXfXPIE5YN5LPCH3mIRUbwlC8Ptp5pJI/JWp5EfMEvtIVo6ZFo+zSrV7fX1yWlvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net; spf=pass smtp.mailfrom=damsy.net; dkim=pass (2048-bit key) header.d=damsy.net header.i=@damsy.net header.b=wJMwRSgH; dkim=permerror (0-bit key) header.d=damsy.net header.i=@damsy.net header.b=4/0x/5Gr; arc=none smtp.client-ip=51.159.152.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damsy.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damsy.net
+DKIM-Signature: v=1; a=rsa-sha256; s=202408r; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1758023885; bh=Vt5D5ja1ArnEts1Avrr6X5v
+	/PXe6QruSoOeAgliPLpU=; b=wJMwRSgHL4zMOrkNn1U0JE1dhtYXuIy3dnqnvhIr+tm6vbdde5
+	4xBskxixrjONjcM9yePUW1LSp9meSFH4oyP/fo+noExysUyMpiNuO2HxTK0R9DEMNrp0zDPTwwL
+	WpX+KzcyqiPB6rEJTSD48UB9TvpteJMuWHXAz+GP82GjKfE2hDChxBd1W3N0VJNMexEUbaSVDjp
+	Db+8g2EKmUal8KFLdJ9SiFN8LO4ijAEXmjp8Ln6H1OkFFzOOmPqL1E72DdKkdrEoIF+glTu9i3I
+	BzRKtGrgPP5CzFc6QPdHqarPA1W+baIXT0auGlSSylUfC9ePvxGmmU+G5Jjt5aYaH/A==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202408e; d=damsy.net; c=relaxed/relaxed;
+	h=From:To:Subject:Date:Message-ID; t=1758023885; bh=Vt5D5ja1ArnEts1Avrr6X5v
+	/PXe6QruSoOeAgliPLpU=; b=4/0x/5GramnDSOzKXdsGKhZX/dKTSZ1R/R3zQcfE2p9/l82Z9M
+	mCNnTuQ4azA49T5jf3nO0UVO/H+8At/i8FCA==;
+Message-ID: <3b4f8837-e0a8-4e8c-9d33-5f107e41c55d@damsy.net>
+Date: Tue, 16 Sep 2025 13:58:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMcWIDQzi5CDNC4C@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] drm/amdgpu: make non-NULL out fence mandatory
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20250916070846.5107-1-pierre-eric.pelloux-prayer@amd.com>
+ <f66cc34f-b54b-4f91-a6fe-11a146c516b2@amd.com>
+ <9e1964bf-7748-4e41-9048-b1a5ad63a8c9@damsy.net>
+ <8a5f0bc8-4d3a-4e47-902e-7527759d1494@amd.com>
+Content-Language: en-US
+From: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>
+In-Reply-To: <8a5f0bc8-4d3a-4e47-902e-7527759d1494@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 14, 2025 at 07:23:12PM +0000, Pranjal Shrivastava wrote:
-> On Tue, Sep 09, 2025 at 02:46:42PM +0100, Will Deacon wrote:
-> > On Tue, Aug 19, 2025 at 09:51:29PM +0000, Mostafa Saleh wrote:
-> > > Soon, IOMMU drivers running in the hypervisor might interact with
-> > > non-coherent devices, so it needs a mechanism to map memory as
-> > > non cacheable.
-> > > Add ___pkvm_host_donate_hyp() which accepts a new argument for prot,
-> > > so the driver can add KVM_PGTABLE_PROT_NORMAL_NC.
-> > > 
-> > > Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> > > ---
-> > >  arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  1 +
-> > >  arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 11 +++++++++--
-> > >  2 files changed, 10 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> > > index 5f9d56754e39..52d7ee91e18c 100644
-> > > --- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> > > +++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
-> > > @@ -36,6 +36,7 @@ int __pkvm_prot_finalize(void);
-> > >  int __pkvm_host_share_hyp(u64 pfn);
-> > >  int __pkvm_host_unshare_hyp(u64 pfn);
-> > >  int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages);
-> > > +int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot);
-> > >  int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages);
-> > >  int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages);
-> > >  int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages);
-> > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > index 8957734d6183..861e448183fd 100644
-> > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > > @@ -769,13 +769,15 @@ int __pkvm_host_unshare_hyp(u64 pfn)
-> > >  	return ret;
-> > >  }
-> > >  
-> > > -int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
-> > > +int ___pkvm_host_donate_hyp(u64 pfn, u64 nr_pages, enum kvm_pgtable_prot prot)
-> > >  {
-> > >  	u64 phys = hyp_pfn_to_phys(pfn);
-> > >  	u64 size = PAGE_SIZE * nr_pages;
-> > >  	void *virt = __hyp_va(phys);
-> > >  	int ret;
-> > >  
-> > > +	WARN_ON(prot & KVM_PGTABLE_PROT_X);
-> > 
-> > Should this actually just enforce that the permissions are
-> > KVM_PGTABLE_PROT_RW:
-> > 
-> > 	WARN_ON((prot & KVM_PGTABLE_PROT_RWX) != KVM_PGTABLE_PROT_RW);
-> > 
-> > ?
-> > 
-> > Since the motivation is about the memory type rather than the
-> > permissions, it would be best to preserve the current behaviour.
+
+
+Le 16/09/2025 à 12:52, Christian König a écrit :
+> On 16.09.25 11:46, Pierre-Eric Pelloux-Prayer wrote:
+>>
+>>
+>> Le 16/09/2025 à 11:25, Christian König a écrit :
+>>> On 16.09.25 09:08, Pierre-Eric Pelloux-Prayer wrote:
+>>>> amdgpu_ttm_copy_mem_to_mem has a single caller, make sure the out
+>>>> fence is non-NULL to simplify the code.
+>>>> Since none of the pointers should be NULL, we can enable
+>>>> __attribute__((nonnull))__.
+>>>>
+>>>> While at it make the function static since it's only used from
+>>>> amdgpuu_ttm.c.
+>>>>
+>>>> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+>>>> ---
+>>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 17 ++++++++---------
+>>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h |  6 ------
+>>>>    2 files changed, 8 insertions(+), 15 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>>>> index 27ab4e754b2a..70b817b5578d 100644
+>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+>>>> @@ -284,12 +284,13 @@ static int amdgpu_ttm_map_buffer(struct ttm_buffer_object *bo,
+>>>>     * move and different for a BO to BO copy.
+>>>>     *
+>>>>     */
+>>>> -int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
+>>>> -                   const struct amdgpu_copy_mem *src,
+>>>> -                   const struct amdgpu_copy_mem *dst,
+>>>> -                   uint64_t size, bool tmz,
+>>>> -                   struct dma_resv *resv,
+>>>> -                   struct dma_fence **f)
+>>>> +__attribute__((nonnull))
+>>>
+>>> That looks fishy.
+>>>
+>>>> +static int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
+>>>> +                      const struct amdgpu_copy_mem *src,
+>>>> +                      const struct amdgpu_copy_mem *dst,
+>>>> +                      uint64_t size, bool tmz,
+>>>> +                      struct dma_resv *resv,
+>>>> +                      struct dma_fence **f)
+>>>
+>>> I'm not an expert for those, but looking at other examples that should be here and look something like:
+>>>
+>>> __attribute__((nonnull(7)))
+>>
+>> Both syntax are valid. The GCC docs says:
+>>
+>>     If no arg-index is given to the nonnull attribute, all pointer arguments are marked as non-null
 > 
-> +1. I believe the current `WARN_ON(prot & KVM_PGTABLE_PROT_X);` check
-> would potentially allow "Read-only" or "Write-only" donations to slide
-> through silently.
+> Never seen that before. Is that gcc specifc or standardized?
 
-True, this can only be done from the hypervisor code though, I will
-make the check stricter as Will suggested, and if needed we can relax
-that later.
+clang supports it:
 
-Thanks,
-Mostafa
+https://clang.llvm.org/docs/AttributeReference.html#id10
+
+And both syntaxes are already used in the drm subtree by i915.
+
+Pierre-Eric
 
 > 
-> > 
-> > Will
+>>
+>>
+>>>
+>>> But I think for this case here it is also not a must have to have that.
+>>
+>> I can remove it if you prefer, but it doesn't hurt to have the compiler validate usage of the functions.
 > 
-> Thanks,
-> Praan
+> Yeah it's clearly useful, but I'm worried that clang won't like it.
+> 
+> Christian.
+> 
+>>
+>> Pierre-Eric
+>>
+>>
+>>>
+>>> Regards,
+>>> Christian.
+>>>
+>>>>    {
+>>>>        struct amdgpu_ring *ring = adev->mman.buffer_funcs_ring;
+>>>>        struct amdgpu_res_cursor src_mm, dst_mm;
+>>>> @@ -363,9 +364,7 @@ int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
+>>>>        }
+>>>>    error:
+>>>>        mutex_unlock(&adev->mman.gtt_window_lock);
+>>>> -    if (f)
+>>>> -        *f = dma_fence_get(fence);
+>>>> -    dma_fence_put(fence);
+>>>> +    *f = fence;
+>>>>        return r;
+>>>>    }
+>>>>    diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+>>>> index bb17987f0447..07ae2853c77c 100644
+>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+>>>> @@ -170,12 +170,6 @@ int amdgpu_copy_buffer(struct amdgpu_ring *ring, uint64_t src_offset,
+>>>>                   struct dma_resv *resv,
+>>>>                   struct dma_fence **fence, bool direct_submit,
+>>>>                   bool vm_needs_flush, uint32_t copy_flags);
+>>>> -int amdgpu_ttm_copy_mem_to_mem(struct amdgpu_device *adev,
+>>>> -                   const struct amdgpu_copy_mem *src,
+>>>> -                   const struct amdgpu_copy_mem *dst,
+>>>> -                   uint64_t size, bool tmz,
+>>>> -                   struct dma_resv *resv,
+>>>> -                   struct dma_fence **f);
+>>>>    int amdgpu_ttm_clear_buffer(struct amdgpu_bo *bo,
+>>>>                    struct dma_resv *resv,
+>>>>                    struct dma_fence **fence);
+> 
+
 
