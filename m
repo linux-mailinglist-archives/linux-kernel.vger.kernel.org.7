@@ -1,251 +1,110 @@
-Return-Path: <linux-kernel+bounces-818048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703D2B58C13
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:57:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DA6B58C17
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2152D3B02A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BBAA1BC4221
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 02:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9DF23BCEE;
-	Tue, 16 Sep 2025 02:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394E4242D9A;
+	Tue, 16 Sep 2025 02:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iapT3KsU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M145WT4S"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78E21B7F4;
-	Tue, 16 Sep 2025 02:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F10486353
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757991438; cv=none; b=A6KunUep38dXdjf8r4PWA0xEB7K22GedWaY3lHbbQxarc0GxdkJhVfpAYf7liu6Y6d0BIe2I1GXSCrtXjbINPjhn5mGmAbCS67mrFJ1r7UITWmgwy2dRanvacI21oFvfhWgWNpFLA8pJyHpNswigScJVhCm7jZfl/dkw5qmOEN4=
+	t=1757991512; cv=none; b=GKqRyoEOk3FqOEIcGX9eloigO4nUKrEaOa0Tfg/v2OlP3KB/KzryBo9kfAv942mYWuvbI88wJR3lCE9nd+jc2IzlRplt4QP5uVYs3qlRYi1dvfe8LnE+aVC/RATQsvtnmoYStmd1ZjdEqWEfV2+Cdbz6DlBhi0wtxu4H8q0D3rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757991438; c=relaxed/simple;
-	bh=04njKUywf87voH+zu4+jgSGwh+dc0WYcRHkEwpio6Mg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C+Ru8ZzOhHX6aP831GZy9I2s9xBSSepBtdfCvcWdVnGcsMi93yExd4vcZ5SX4HDZgHKkvBePa23sTEGI3uCgn56NfLVo205PQlaqoe1hMp3RGgpvVb9dt5xhqy8QQovbi9xVpcYHMj0M1wXX3b1ueTed+s/RHI0mjTh3Gii1OSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iapT3KsU; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757991437; x=1789527437;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=04njKUywf87voH+zu4+jgSGwh+dc0WYcRHkEwpio6Mg=;
-  b=iapT3KsUFWmwapZO/blRFD1o+FTKuCBCarz+N8+NotHfVt7f6m6XMAxu
-   AL/4YujPJazX0xJGe6OEAffaREVLjfpO1HAVNSrjxdS9X3HAaICZsaFYd
-   O68cZu7LYZ8RumEc0DwHJzYAkGgal89ns3iZkdOhDidIXAF7gx4QTi/dM
-   PdzudC4CsaziEWRiY3l9/gu/7OpjcNXdjsHUK0ywKiz8UVSDHcwhbwGqM
-   GMvRm4LGVcN9Zwq+oSLmzGrQqZ9IB9ND1Xlql/aClzqZwp5UGsuXDTWJb
-   MibiCiBFUcVklODINHVjRsoDbuM4IfJbj9Lt0p3e6urVdPOO5TDC6IW2s
-   Q==;
-X-CSE-ConnectionGUID: yk42J2r9T1WyxjhCsQYqqg==
-X-CSE-MsgGUID: 069X1ozjRi629gqbLnCTww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="64082066"
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="64082066"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 19:57:16 -0700
-X-CSE-ConnectionGUID: mOp8WySdRNeWY1zZjDFYig==
-X-CSE-MsgGUID: SzuGOZNaTFinDY69BeiNfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,267,1751266800"; 
-   d="scan'208";a="174629173"
-Received: from shsensorbuild.sh.intel.com ([10.239.132.250])
-  by orviesa007.jf.intel.com with ESMTP; 15 Sep 2025 19:57:13 -0700
-From: Xinpeng Sun <xinpeng.sun@intel.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: srinivas.pandruvada@linux.intel.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	even.xu@intel.com,
-	Xinpeng Sun <xinpeng.sun@intel.com>,
-	Rui Zhang <rui1.zhang@intel.com>
-Subject: [PATCH v3] hid: intel-thc-hid: intel-quicki2c: support ACPI config for advanced features
-Date: Tue, 16 Sep 2025 10:57:21 +0800
-Message-Id: <20250916025721.3375164-1-xinpeng.sun@intel.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1757991512; c=relaxed/simple;
+	bh=0WNzQt6DCc1oCSopHUcGNsX0og3Qo+mNU8x/1pWS9J8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DbmqCs5slVL5XuYJag3qBW9rOsbhzJCjaJN4Lf9ac8wdeRRINIZA2uS23JskUpvFbeSXRWIGYhT2iUuE4fRvw0JaRfYRvvUtZ42gB7GhW+Z0aWGFm/+1yHBXQ7HepO8VLwpbeo9h0om1uJt82uSdR+YKL0wJCW5wDH58Vi3kDKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M145WT4S; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6051afbfso36419147b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 19:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757991510; x=1758596310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0WNzQt6DCc1oCSopHUcGNsX0og3Qo+mNU8x/1pWS9J8=;
+        b=M145WT4Ss1/MVQpODuXyGL91Z4sDRfDXG2y17ZS4Nbp3xb3TfZlQZ7rDnUykYpKF5L
+         iaSeF3CaoRjRbg+eHPDEB0W2sFRW4oifb1ZfQ6zlnndwhd4Q6Khnfw99SIGMGX2ReYNu
+         okUOHiG/f474zdp6NgauRr56mY5PQXzmRGIsJtYNKPUJibH+uSIFNxLGgna08wx6Sp10
+         gvG4q+NLtj2jligTfx1KxGLIZDoCPZS7lKiDdXB4S9U5Qi9Tj5KljnEf2h3Rx128tgHD
+         222jY22ZpIUovH4MLFp3j48HB0laWzhs57bPzVtrQXaNMYY2E0/FgLtDKoxsP+RpIssD
+         ibKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757991510; x=1758596310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0WNzQt6DCc1oCSopHUcGNsX0og3Qo+mNU8x/1pWS9J8=;
+        b=oX8juoTkALucyouLwRSzOSS/Io4kUr1gAwpminN0K24cOuTZVTFhoB2dFjTjuXAiSn
+         ybABG42Nh3zLIbOiJWGJGwP7Tq+b7gLG3Pgm0zv1Ttzbio70S3l/8MnuNeljRBzeP7bj
+         xIL6T/MJD/vB4dapU8l1rCvh+VFlhraw9wLyeGq0HJWc6w/7jcnQcXqhYHZRTiI/Piqi
+         M9Bl+Cbw7GrEoAX8irQlCA3VpNcn9Xf/1p/mPJriOiysE9MUwcPiq1W1ACIgtNHnTeA5
+         dmK+QPn1AB4nPObx+X8/LrjBE/EhV/dME5PxtJz4W2VegDLuI3oXU/uxlCPNYO+r5dBe
+         IdPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB17+uHjE3e4NqA2VZYoIcF5jXWe1DCLeA1t/sefxwW3jQ/K4yGL/QEI06ZplxszcL7djEIqzyl9H7jUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEBmDA0CydekAMbpeD0HPfaIGfQzomoB+nDWBs/lObJWuaDh2p
+	udADoAH14NJ7lskS20GFrQqyVkiFSwNIrzfGrspE17kL46X14PrcGdyiGRynnRtFkqJuTPQ/0iq
+	kxh24WF041Abra2yWt32lJM0y+Oc4o8U=
+X-Gm-Gg: ASbGncsbpHc2rrL5Se8auhPjeNq7f8OxFHDdKtMxNVkX0No6wABjiop2xWr8T+fK5eE
+	B6Cc8cEZM4yqH7m2S+OiBKuc+mS2rbfGYkLZPt4o3f4sBiwz6N8GrEare4d/LcrjkWgLwDkvmFB
+	lQE5ys7zlIJZGrZ4mMk02KiyqX7iB4ffl2ObGaPNVaBJra6cb7nS10ZaVFrqAdAwxiU5ka3lkV5
+	htHzhiEnGxpsy9yHWCF0yYBXvOCe9vdqE8=
+X-Google-Smtp-Source: AGHT+IFoV8QGVxMrnTri70cXeQyLaQNEjmdLeZFLqkE+amnPx3JsydwAPu1HRgnuRf2sZ6BK97hxGf+G6+9fDlrhK/A=
+X-Received: by 2002:a05:690c:6488:b0:735:4c38:34 with SMTP id
+ 00721157ae682-7354c380739mr40186397b3.27.1757991510063; Mon, 15 Sep 2025
+ 19:58:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250912095928.1532113-1-dqfext@gmail.com> <20250915181015.67588ec2@kernel.org>
+In-Reply-To: <20250915181015.67588ec2@kernel.org>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Tue, 16 Sep 2025 10:57:49 +0800
+X-Gm-Features: Ac12FXx5b4SkRyivmeumpyy1hPkwx_2MizrBQEAH_5KP5izuBh4_VosS6gNuxWw
+Message-ID: <CALW65jYgDYxXfWFmwYBjXfNtqWqZ7VDWPYsbzAH_EzcRtyn0DQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] ppp: enable TX scatter-gather
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, linux-ppp@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Felix Fietkau <nbd@nbd.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a new BIOS enhancement that adds the capability to configure the
-following two features of I2C subsystem introduced in commit 1ed0b48
-("Intel-thc: Introduce max input size control") and commit 3f2a921
-("Intel-thc: Introduce interrupt delay control"):
-- Max input size control
-- Interrupt delay control
+Hi Jakub,
 
-As BIOS is used for the configuration of these two features, change driver
-data usage to indicate hardware capability, and add corresponding ACPI
-configuration support in QuickI2C driver.
+On Tue, Sep 16, 2025 at 9:10=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+> Seems a bit racy. We can't netdev_update_features() under the spin lock
+> so there's going to be a window of time where datapath will see new
+> state but netdev flags won't be cleared, yet?
+>
+> We either need to add a explicit linearization check in the xmit path,
+> or always reset the flags to disabled before we start tweaking the
+> config and re-enable after config (tho the latter feels like a bit of
+> a hack).
 
-Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
-Tested-by: Rui Zhang <rui1.zhang@intel.com>
----
- .../intel-quicki2c/pci-quicki2c.c             | 39 +++++++++++++++----
- .../intel-quicki2c/quicki2c-dev.h             | 24 +++++++++++-
- 2 files changed, 53 insertions(+), 10 deletions(-)
+Can I modify dev->features directly under the spin lock (without
+.ndo_fix_features) ?
 
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-index 854926b3cfd4..3ce5a692b92b 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-@@ -23,6 +23,7 @@
- 
- static struct quicki2c_ddata ptl_ddata = {
- 	.max_detect_size = MAX_RX_DETECT_SIZE_PTL,
-+	.max_interrupt_delay = MAX_RX_INTERRUPT_DELAY,
- };
- 
- /* THC QuickI2C ACPI method to get device properties */
-@@ -200,6 +201,21 @@ static int quicki2c_get_acpi_resources(struct quicki2c_device *qcdev)
- 		return -EOPNOTSUPP;
- 	}
- 
-+	if (qcdev->ddata) {
-+		qcdev->i2c_max_frame_size_enable = i2c_config.FSEN;
-+		qcdev->i2c_int_delay_enable = i2c_config.INDE;
-+
-+		if (i2c_config.FSVL <= qcdev->ddata->max_detect_size)
-+			qcdev->i2c_max_frame_size = i2c_config.FSVL;
-+		else
-+			qcdev->i2c_max_frame_size = qcdev->ddata->max_detect_size;
-+
-+		if (i2c_config.INDV <= qcdev->ddata->max_interrupt_delay)
-+			qcdev->i2c_int_delay = i2c_config.INDV;
-+		else
-+			qcdev->i2c_int_delay = qcdev->ddata->max_interrupt_delay;
-+	}
-+
- 	return 0;
- }
- 
-@@ -441,17 +457,24 @@ static void quicki2c_dma_adv_enable(struct quicki2c_device *qcdev)
- 	 * max input length <= THC detect capability, enable the feature with device
- 	 * max input length.
- 	 */
--	if (qcdev->ddata->max_detect_size >=
--	    le16_to_cpu(qcdev->dev_desc.max_input_len)) {
--		thc_i2c_set_rx_max_size(qcdev->thc_hw,
--					le16_to_cpu(qcdev->dev_desc.max_input_len));
-+	if (qcdev->i2c_max_frame_size_enable) {
-+		if (qcdev->i2c_max_frame_size >=
-+		    le16_to_cpu(qcdev->dev_desc.max_input_len)) {
-+			thc_i2c_set_rx_max_size(qcdev->thc_hw,
-+						le16_to_cpu(qcdev->dev_desc.max_input_len));
-+		} else {
-+			dev_warn(qcdev->dev,
-+				 "Max frame size is smaller than hid max input length!");
-+			thc_i2c_set_rx_max_size(qcdev->thc_hw,
-+						le16_to_cpu(qcdev->i2c_max_frame_size));
-+		}
- 		thc_i2c_rx_max_size_enable(qcdev->thc_hw, true);
- 	}
- 
- 	/* If platform supports interrupt delay feature, enable it with given delay */
--	if (qcdev->ddata->interrupt_delay) {
-+	if (qcdev->i2c_int_delay_enable) {
- 		thc_i2c_set_rx_int_delay(qcdev->thc_hw,
--					 qcdev->ddata->interrupt_delay);
-+					 qcdev->i2c_int_delay * 10);
- 		thc_i2c_rx_int_delay_enable(qcdev->thc_hw, true);
- 	}
- }
-@@ -464,10 +487,10 @@ static void quicki2c_dma_adv_enable(struct quicki2c_device *qcdev)
-  */
- static void quicki2c_dma_adv_disable(struct quicki2c_device *qcdev)
- {
--	if (qcdev->ddata->max_detect_size)
-+	if (qcdev->i2c_max_frame_size_enable)
- 		thc_i2c_rx_max_size_enable(qcdev->thc_hw, false);
- 
--	if (qcdev->ddata->interrupt_delay)
-+	if (qcdev->i2c_int_delay_enable)
- 		thc_i2c_rx_int_delay_enable(qcdev->thc_hw, false);
- }
- 
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-index d412eafcf9ea..0d423d5dd7a7 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-@@ -38,6 +38,8 @@
- 
- /* PTL Max packet size detection capability is 255 Bytes */
- #define MAX_RX_DETECT_SIZE_PTL			255
-+/* Max interrupt delay capability is 2.56ms */
-+#define MAX_RX_INTERRUPT_DELAY			256
- 
- /* Default interrupt delay is 1ms, suitable for most devices */
- #define DEFAULT_INTERRUPT_DELAY_US		(1 * USEC_PER_MSEC)
-@@ -101,6 +103,10 @@ struct quicki2c_subip_acpi_parameter {
-  * @HMTD: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line Transmit HOLD Period
-  * @HMRD: High Speed Mode Plus (3.4Mbits/sec) Serial Data Line Receive HOLD Period
-  * @HMSL: Maximum length (in ic_clk_cycles) of suppressed spikes in High Speed Mode
-+ * @FSEN: Maximum Frame Size Feature Enable Control
-+ * @FSVL: Maximum Frame Size Value (unit in Bytes)
-+ * @INDE: Interrupt Delay Feature Enable Control
-+ * @INDV: Interrupt Delay Value (unit in 10 us)
-  *
-  * Those properties get from QUICKI2C_ACPI_METHOD_NAME_ISUB method, used for
-  * I2C timing configure.
-@@ -127,17 +133,22 @@ struct quicki2c_subip_acpi_config {
- 	u64 HMTD;
- 	u64 HMRD;
- 	u64 HMSL;
-+
-+	u64 FSEN;
-+	u64 FSVL;
-+	u64 INDE;
-+	u64 INDV;
- 	u8 reserved;
- };
- 
- /**
-  * struct quicki2c_ddata - Driver specific data for quicki2c device
-  * @max_detect_size: Identify max packet size detect for rx
-- * @interrupt_delay: Identify interrupt detect delay for rx
-+ * @interrupt_delay: Identify max interrupt detect delay for rx
-  */
- struct quicki2c_ddata {
- 	u32 max_detect_size;
--	u32 interrupt_delay;
-+	u32 max_interrupt_delay;
- };
- 
- struct device;
-@@ -170,6 +181,10 @@ struct acpi_device;
-  * @report_len: The length of input/output report packet
-  * @reset_ack_wq: Workqueue for waiting reset response from device
-  * @reset_ack: Indicate reset response received or not
-+ * @i2c_max_frame_size_enable: Indicate max frame size feature enabled or not
-+ * @i2c_max_frame_size: Max RX frame size (unit in Bytes)
-+ * @i2c_int_delay_enable: Indicate interrupt delay feature enabled or not
-+ * @i2c_int_delay: Interrupt detection delay value (unit in 10 us)
-  */
- struct quicki2c_device {
- 	struct device *dev;
-@@ -200,6 +215,11 @@ struct quicki2c_device {
- 
- 	wait_queue_head_t reset_ack_wq;
- 	bool reset_ack;
-+
-+	u32 i2c_max_frame_size_enable;
-+	u32 i2c_max_frame_size;
-+	u32 i2c_int_delay_enable;
-+	u32 i2c_int_delay;
- };
- 
- #endif /* _QUICKI2C_DEV_H_ */
--- 
-2.40.1
-
+> --
+> pw-bot: cr
 
