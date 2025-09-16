@@ -1,209 +1,318 @@
-Return-Path: <linux-kernel+bounces-819470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FBEB5A145
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 356B7B5A140
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1901C02EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C798A1C02D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30793081D0;
-	Tue, 16 Sep 2025 19:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9322DF71E;
+	Tue, 16 Sep 2025 19:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="VT3qMEzf"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="le81Am8p"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EC321E098;
-	Tue, 16 Sep 2025 19:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758050364; cv=pass; b=syoxRISKjmrC7RLSlkWT7jx3E7DH4Egaq1SvnVO8nQpBuJJAGnzbtO66Hx2TqO4FhWoNkhSO0X/Nt2D8dWhGkCFHqwhoNxq2WGgcprhrAsC3fDsduYj15WXe9GhE7D+6hoCp6KoKW+Gb7dPcjs4s2s2CLzDPBcu1eYQu5YUpZ0M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758050364; c=relaxed/simple;
-	bh=l2W5f1wjH+NU+wN5+BLNLhE7Zjola1cMNFKsxlO3Av4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGZERtLmSR0G2qanDBguqP4x+0eS2zfrTcinqZ2oLZqf7HkNQyUnHWL4ohcrKR3Grngn4XqneSdJqZZiTAV1XM+Zh9tYXjwOMz+MsLolehVqKQwPXg/mqN8j9XBQkqdAXw51YGvNuF58OBjmbkdKIeF8kKZ/VROmmex+AqBwr/o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=VT3qMEzf; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6EFBA4A;
+	Tue, 16 Sep 2025 19:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758050354; cv=none; b=gJLXcSaMvaFtvZZ1g1IoclndoxQ7p83AMFkIpuBCDcfl5cncC0adLmhSPNMt8PHJNdReoXqt4ZvxlBKUepk6e1qXxnEExVpUuW8zj8JvYiRPWUO+hzDX98ohW1CR01rrRK2tV/IJ3n/NThPW7tCVdnpMGE4xJkrngnk5IY1u/gc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758050354; c=relaxed/simple;
+	bh=1FFIc0vpeVt9VXVXNY5ecNtYOj5Qrah6JBWoxuGwpiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tRa67SlySMozKGCglbJ3Kg0wja/bNwy69kbekTizcTLygny0K9P6ysqG3TR/Q04t3lp64UDcUNHGMfU7xxwZ8yY7zOyYXrAku8VlDfvLEhVulTtRMrY6cKS+N8HSPFyA+6+l8eUMjuV6eGOI4V4rcSIrGX42m/dABd7FvVZvOnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=le81Am8p; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758050337; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EE/E4mBeNgVMc8CgxnaAYsuEngiFC/qBKjH/XEUsQHdzdHWhTfD0+OQVgCEj0Gu65CXuFiJAZpk5cWnk+5luHZuBZthypnISlq+ukGhyYwbQsQRrQ3HZAUgygJXQILLlswRdAKj/NOBjIAPwDBg8wx7PHo1o3vM49uc/UJWEV84=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758050337; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=M6YkaVAVR8lt6A5LvHddbSlxJ7ZMT9y1dxIlFzTD5mA=; 
-	b=Xbyg8loUBpnfHjL+bZg7jm4V5I3KRDcNQ/+KZII8KrLbFWaLRPH0sG+lPBcQWVaZ8KNiFooD9T7pZYBnVIiOsJuahFp61yB8NrMzAjSewY/V8sNUAdtxqCsHjqRdUbKTxPWr1aqbFXZtWwykOjX2vqofUUBuMdqDa02OpwUr67A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758050337;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=M6YkaVAVR8lt6A5LvHddbSlxJ7ZMT9y1dxIlFzTD5mA=;
-	b=VT3qMEzfyoYWJeqvMzN9nQAuZvKLmIWtPgg8zaj4QFZ+YDXnxWfYbBJrqIbj0BQ2
-	PHLU/GFqJSsiu/OSeStDLitodnTIiveffJuG1Nvme+wODoceJPLT0mJubl0mQMXg1pc
-	s4QZTPL+fXC1n8zMXSqsxOxWEjwhFqwxoIiwKFak=
-Received: by mx.zohomail.com with SMTPS id 1758050334998606.6949339145506;
-	Tue, 16 Sep 2025 12:18:54 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 26E81180733; Tue, 16 Sep 2025 21:18:40 +0200 (CEST)
-Date: Tue, 16 Sep 2025 21:18:40 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: fenglin.wu@oss.qualcomm.com
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, David Collins <david.collins@oss.qualcomm.com>, 
-	=?utf-8?Q?Gy=C3=B6rgy?= Kurucz <me@kuruczgy.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, kernel@oss.qualcomm.com, devicetree@vger.kernel.org, 
-	linux-usb@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v4 2/8] power: supply: core: Add state_of_health power
- supply property
-Message-ID: <5nxoadknvk5wt5gniekfinhe42dm72kbluxcmsqsw57g2xpr2a@jgury7ds6bcb>
-References: <20250915-qcom_battmgr_update-v4-0-6f6464a41afe@oss.qualcomm.com>
- <20250915-qcom_battmgr_update-v4-2-6f6464a41afe@oss.qualcomm.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758050348;
+	bh=1FFIc0vpeVt9VXVXNY5ecNtYOj5Qrah6JBWoxuGwpiU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=le81Am8pWXav/+PnA7BenD+9p1jTZ8O5TlfigdH2DK3P0T01gKhEiPUn/40BeHwku
+	 FAjWOhdAq7QMrv1zw0LyRZInYVCxzM7N5/j3OUXXwwJaTlI/2uGTA9MjmGiiMc7KjA
+	 4zkmQc9I1Llcae/J3jlewZUSETGGKwWVX4hVSkkeLqKA+Gxwg8BNQyokK3H7skHxRZ
+	 AUURGbSbVGohTY6fGnDRLB0894KYq7WknX9Dj/lcCzkImUzJ2lCaCsHW4YPZ8MnlwO
+	 x314oe3Bm6ErLiVJGUZqPXiDNSko0cG3uHAo2QPqLnKixHsYD7VN/0hkYJDRuAlytb
+	 UoxX7+B0EJuVg==
+Received: from [IPV6:2a05:1141:1fb:db00:1bb0:aff4:8ef4:466] (unknown [IPv6:2a05:1141:1fb:db00:1bb0:aff4:8ef4:466])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6643017E12AE;
+	Tue, 16 Sep 2025 21:19:07 +0200 (CEST)
+Message-ID: <ead8edf7-6ae3-46ab-ba3a-4b354e0491f7@collabora.com>
+Date: Tue, 16 Sep 2025 21:19:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="s45526ndzapes52i"
-Content-Disposition: inline
-In-Reply-To: <20250915-qcom_battmgr_update-v4-2-6f6464a41afe@oss.qualcomm.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.4.7
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 06/13] media: rockchip: add a driver for the rockchip
+ camera interface
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Mehdi Djait <mehdi.djait@bootlin.com>
+References: <20240220-rk3568-vicap-v10-0-62d8a7b209b4@collabora.com>
+ <20240220-rk3568-vicap-v10-6-62d8a7b209b4@collabora.com>
+ <3b4173cb-655d-48ea-b86a-a036f666cf40@linaro.org>
+ <23ccc744-745d-4a31-a79c-2d64bf1ed43d@collabora.com>
+ <82f447d1-89ae-450f-813e-02c3d8228895@linaro.org>
+Content-Language: en-US
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <82f447d1-89ae-450f-813e-02c3d8228895@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Bryan,
 
---s45526ndzapes52i
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 2/8] power: supply: core: Add state_of_health power
- supply property
-MIME-Version: 1.0
+On 8/28/25 16:08, Bryan O'Donoghue wrote:
+> On 28/08/2025 12:03, Michael Riesch wrote:
+>> Hi Bryan,
+>>
+>> Thanks for your comments :-)
+>>
+>> On 8/26/25 08:21, Bryan O'Donoghue wrote:
+>>> On 19/08/2025 00:25, Michael Riesch via B4 Relay wrote:
+>>
+>> [...]
+>>
+>>>> +
+>>>> +static void rkcif_dvp_stop_streaming(struct rkcif_stream *stream)
+>>>> +{
+>>>> +    struct rkcif_device *rkcif = stream->rkcif;
+>>>> +    u32 val;
+>>>> +
+>>>> +    val = rkcif_dvp_read(rkcif, RKCIF_DVP_CTRL);
+>>>
+>>> This dvp_read stuff looks a bit funny to me, you have a lookup which can
+>>> return 0 for unknown registers.
+>>>
+>>> Probably not the case with a control register like this one but, for
+>>> argument sake if RKCIF_DVP_CTRL was not a valid register i.e.
+>>> rkcif_dvp_read() would return 0 and you'd still act on that data to
+>>> write back to an unkown register.
+>>
+>> ...which would then hit the same check in rkcif_dvp_write and simply
+>> return without writing anything. Also, the WARN_ON_ONCE in the lookup
+>> would complain and indicate that the driver developer made some mistake.
+>> I hope that the driver developer is thus nudged towards fixing the code
+>> they wrote.
+>>
+>>> Would you not be better off having say callbacks to contain cases where
+>>> registers are potentially not present
+>>>
+>>> ops->update_maybe_not_present_reg();
+>>>
+>>> followed by writes to registers that would alawys be there ?
+>>
+>> I'll think about that in more detail, but right now my thoughts are that
+>> if any of the registers below are not valid, this piece of hardware is
+>> pretty useless and there is something rotten in the driver. Thus, we
+>> complain loudly to the developer.
+> The developer is you though :)
+> 
+> Anyway seems a bit weird to me to return invalid registers, you trust
+> yourself right ?
 
-Hi,
+First of all: no, not one bit :-)
 
-On Mon, Sep 15, 2025 at 04:49:54PM +0800, Fenglin Wu via B4 Relay wrote:
-> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
->=20
-> Add state_of_health power supply property to represent battery
-> health percentage.
->=20
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on Thinkpad T14S =
-OLED
-> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+But really this is just the consequence of having a lookup table (and we
+need this to account for the different variants). There is a chance that
+some invalid value comes along, and this assertion should warn about it,
+even if the chances of that happening are small.
+
+If we converted everything to HW variant specific callbacks, we would
+check whether the callback was NULL, right? Maybe consider this validity
+check as pendant to that.
+
+I gave this some thought as promised, but I still feel that looking up
+the register values but having the same code is more readable than
+having callbacks with the same code in principle but with different
+define names.
+
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CTRL,
+>>>> +            val & (~RKCIF_CTRL_ENABLE_CAPTURE));
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_INTEN, 0x0);
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_INTSTAT, 0x3ff);
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_FRAME_STATUS, 0x0);
+>>>> +
+>>>> +    stream->stopping = false;
+>>>> +}
+>>>> +
+>>>> +static void rkcif_dvp_reset_stream(struct rkcif_device *rkcif)
+>>>> +{
+>>>> +    u32 ctl = rkcif_dvp_read(rkcif, RKCIF_DVP_CTRL);
+>>>> +
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CTRL,
+>>>> +            ctl & (~RKCIF_CTRL_ENABLE_CAPTURE));
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CTRL, ctl |
+>>>> RKCIF_CTRL_ENABLE_CAPTURE);
+>>>> +}
+>>>> +
+>>>> +static void rkcif_dvp_set_crop(struct rkcif_stream *stream, u16 left,
+>>>> u16 top)
+>>>> +{
+>>>> +    struct rkcif_device *rkcif = stream->rkcif;
+>>>> +    u32 val;
+>>>> +
+>>>> +    val = RKCIF_XY_COORD(left, top);
+>>>> +    rkcif_dvp_write(rkcif, RKCIF_DVP_CROP, val);
+>>>> +}
+>>>> +
+>>>> +irqreturn_t rkcif_dvp_isr(int irq, void *ctx)
+>>>> +{
+>>>> +    struct device *dev = ctx;
+>>>> +    struct rkcif_device *rkcif = dev_get_drvdata(dev);
+>>>> +    struct rkcif_stream *stream;
+>>>> +    u32 intstat, lastline, lastpix, cif_frmst;
+>>>> +    irqreturn_t ret = IRQ_NONE;
+>>>> +
+>>>> +    if (!rkcif->match_data->dvp)
+>>>> +        return ret;
+>>>
+>>> Wouldn't you be better off conditionally registering your ISR if
+>>> match_data->dvp is true instead ?
+>>
+>> As you have surely seen, the ISR is shared between all interfaces, i.e.,
+>> DVP and MIPI. Now the currently supported models all have a DVP and your
+>> suggestion would work. However, I think the RK3562 VICAP can be easily
+>> supported by this driver but does not feature a DVP (several MIPI
+>> interfaces, though). In this case match_data->dvp evaluates to false but
+>> still there is the need to register the ISR.
+> 
+> Why not have separate ISRs then with shared code calling into a function ?
+> 
+> An ISR in my mind should fire for hardware we have a clear idea about
+> and only do so in exceptional (pun intended) circumstances.
+> 
+> So I'd suggest two ISRs calling into whatever shared code you deem
+> necessary as opposed to NULL checking in your ISR.
+
+I could imagine some nice code that calls devm_request_irq() several
+times with different callbacks, but that would be for the same IRQ, as
+there is exactly one hardware interrupt line for the VICAP including its
+IOMMU.
+
+The devm_request_irq() calls would be moved to rkcif_capture_{mipi,dvp}
+then and the base interface struct underneath the respective MIPI or DVP
+interface will be passed as argument to the ISR callback.
+
+Are you sure that we'll want to call devm_request_irq() several times
+for the very same HW IRQ?
+
+>>>> +
+>>>> +    intstat = rkcif_dvp_read(rkcif, RKCIF_DVP_INTSTAT);
+>>>> +    cif_frmst = rkcif_dvp_read(rkcif, RKCIF_DVP_FRAME_STATUS);
+>>>> +    lastline = RKCIF_FETCH_Y(rkcif_dvp_read(rkcif,
+>>>> RKCIF_DVP_LAST_LINE));
+>>>> +    lastpix = RKCIF_FETCH_Y(rkcif_dvp_read(rkcif,
+>>>> RKCIF_DVP_LAST_PIX));
+>>>> +
+>>>> +    if (intstat & RKCIF_INTSTAT_FRAME_END) {
+>>>> +        rkcif_dvp_write(rkcif, RKCIF_DVP_INTSTAT,
+>>>> +                RKCIF_INTSTAT_FRAME_END_CLR |
+>>>> +                RKCIF_INTSTAT_LINE_END_CLR);
+>>>> +
+>>>> +        stream = &rkcif->interfaces[RKCIF_DVP].streams[RKCIF_ID0];
+>>>> +
+>>>> +        if (stream->stopping) {
+>>>> +            rkcif_dvp_stop_streaming(stream);
+>>>> +            wake_up(&stream->wq_stopped);
+>>>> +            ret = IRQ_HANDLED;
+>>>> +            goto out;
+>>>> +        }
+>>>> +
+>>>> +        if (lastline != stream->pix.height) {
+>>>> +            v4l2_err(&rkcif->v4l2_dev,
+>>>> +                 "bad frame, irq:%#x frmst:%#x size:%dx%d\n",
+>>>> +                 intstat, cif_frmst, lastpix, lastline);
+>>>> +
+>>>> +            rkcif_dvp_reset_stream(rkcif);
+>>>> +        }
+>>>> +
+>>>> +        rkcif_stream_pingpong(stream);
+>>>> +
+>>>> +        ret = IRQ_HANDLED;
+>>>> +    }
+>>>> +out:
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int rkcif_dvp_register(struct rkcif_device *rkcif)
+>>>> +{
+>>>> +    struct rkcif_interface *interface;
+>>>> +    unsigned int streams_num;
+>>>> +    int ret;
+>>>> +
+>>>> +    if (!rkcif->match_data->dvp)
+>>>> +        return 0;
+>>>
+>>> If you don't register the device when match_data->dvp is false, then I
+>>> think you can relax the carry-on checks elsewhere on match_data->dvp,
+>>> not including dvp_unregister
+>>
+>> +1 I'll review all instances of this check.
+>>
+>>> The rest of the file as I breifly skim it looks OK to me, its a bit big
+>>> though.
+>>>
+>>> Would it be possible to break this patch up a little bit ? Might make it
+>>> easier for other reviewers to give an SoB for smaller chunks.
+>>
+>> I suppose what I could do is split this up into five patches, as the
+>> commit message already outlines:
+>>
+>> 1) add a basic driver (no-op skeleton only)
+>> 2) abstraction for the ping-pong scheme to allow for future extensions
+>> 3) abstraction for the INTERFACE and CROP parts to allow for future
+>>     extensions
+>> 4) support for the PX30 VIP
+>> 5) support for the RK3568 VICAP DVP
+>>
+>> Please note that in this case I would rework the patch for a final
+>> (this-time-really-final) time and drop this elaborate co-developed-by
+>> list, as the patch in question will then have nothing to do it all with
+>> anything what was before v2 of this series.
+> 
+> I'll leave that up to you, I'll still review your v11 but, a slightly
+> smaller single patch to digest would be appreciated.
+
+Working on that.
+
+Thanks and best regards,
+Michael
+
+> 
 > ---
->  Documentation/ABI/testing/sysfs-class-power | 15 +++++++++++++++
->  drivers/power/supply/power_supply_sysfs.c   |  1 +
->  include/linux/power_supply.h                |  1 +
->  3 files changed, 17 insertions(+)
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/=
-ABI/testing/sysfs-class-power
-> index cea1a38f5a8fb754d4e6323967ef6cf2e20a68ce..04f82e3e33aad6e16dc4fbace=
-066b5d26069bf44 100644
-> --- a/Documentation/ABI/testing/sysfs-class-power
-> +++ b/Documentation/ABI/testing/sysfs-class-power
-> @@ -568,6 +568,21 @@ Description:
-> =20
->  		Valid values: Represented in microohms
-> =20
-> +What:		/sys/class/power_supply/<supply_name>/state_of_health
-> +Date:		August 2025
-> +Contact:	linux-arm-msm@vger.kernel.org
-> +Description:
-> +		The state_of_health parameter quantifies the overall condition
-> +		of a battery as a percentage, reflecting its ability to deliver
-> +		rated performance relative to its original specifications. It is
-> +		dynamically computed using a combination of learned capacity
-> +		and impedance-based degradation indicators, both of which evolve
-> +		over the battery's lifecycle.
+> bod
 
-I think this should be extended by the following:
-
-Note that the exact algorithms are kept secret by most battery
-vendors and the value from different battery vendors cannot be
-compared with each other as there is no vendor-agnostic definition
-of "performance". Also this usually cannot be used for any
-calculations (i.e. this is not the factor between charge_full and
-charge_full_design).
-
--- Sebastian
-
-> +
-> +		Access: Read
-> +
-> +		Valid values: 0 - 100 (percent)
-> +
->  **USB Properties**
-> =20
->  What:		/sys/class/power_supply/<supply_name>/input_current_limit
-> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/su=
-pply/power_supply_sysfs.c
-> index cfa8f90a88ebc8fc1c7447198f138e5d2e699e5a..d96a8578308e3af60cc1a3528=
-45662aa922c29b3 100644
-> --- a/drivers/power/supply/power_supply_sysfs.c
-> +++ b/drivers/power/supply/power_supply_sysfs.c
-> @@ -221,6 +221,7 @@ static struct power_supply_attr power_supply_attrs[] =
-__ro_after_init =3D {
->  	POWER_SUPPLY_ATTR(MANUFACTURE_MONTH),
->  	POWER_SUPPLY_ATTR(MANUFACTURE_DAY),
->  	POWER_SUPPLY_ATTR(INTERNAL_RESISTANCE),
-> +	POWER_SUPPLY_ATTR(STATE_OF_HEALTH),
->  	/* Properties of type `const char *' */
->  	POWER_SUPPLY_ATTR(MODEL_NAME),
->  	POWER_SUPPLY_ATTR(MANUFACTURER),
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index 8bc3b7a67eb5693a16db9b7d123e7881711c6bf4..ccb43fe44381965069dc3bd95=
-05d45050b9b1bd8 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -175,6 +175,7 @@ enum power_supply_property {
->  	POWER_SUPPLY_PROP_MANUFACTURE_MONTH,
->  	POWER_SUPPLY_PROP_MANUFACTURE_DAY,
->  	POWER_SUPPLY_PROP_INTERNAL_RESISTANCE,
-> +	POWER_SUPPLY_PROP_STATE_OF_HEALTH,
->  	/* Properties of type `const char *' */
->  	POWER_SUPPLY_PROP_MODEL_NAME,
->  	POWER_SUPPLY_PROP_MANUFACTURER,
->=20
-> --=20
-> 2.34.1
->=20
->=20
-
---s45526ndzapes52i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjJuAkACgkQ2O7X88g7
-+pqSXA//UyXZ+wptD9xIabMfB9X1z8ivuchEpWRVY3ZHVs0mm59ceOTqnqXkXhe7
-ZZn2aIYIEdjxQWUeGH0EQwKXlOkHqt3+KpxkkSTXR2oU1bGv+7/EQq3rbnR6vg3k
-BZ9IKRuDfBnfVe7WdBrtirDDUaf803L1l+yQO/6GrafCOmtN6+IJFd/7t5UL5+4m
-G08fJXOKz6M0GUBLd0jmyXe4LL14bMIFBq2QCvR3YiEvkoCDjttSQNIIn1rTV86L
-5cBGgq5j7ndrHK0Sgtvvz45YXj4vyVYuKOOG8p5iU6GaZL45wEgkUqN7QSFrhXhf
-dckEFILjtqfW3xCrqMIX5ddnx9WMXtB00tKoUucsJfCGoyxRs2NiJIIF5D9Vjp8o
-LLCcd6LZWGVFJYYQ9B5ZAEbUE520pO5pqAb3lYJgvjcEsQbtpzslWGUN97ogAmMB
-QWpUGew+Epw4wcfMEKK8gdBy24Pe7Y4f/OfYz7fwJwvfTvMU3JdOzDR3acSnPXT5
-sHp+2vF2Ma+qoUzMF/g6zcWHLx7qLCe9JSrSly8Jz1Y3rKUwR3ulwjBa6EPwZrEK
-ZtorpEQAl66hgJuRHSeV3xiR1CQEDVYuBmqBFeof0mo141b7tbkKwX2l4517uMHd
-U/i5CMxN1X3MjDAKQU9IpMTJZRmobwu7kLuVuFnOSbqBBpLFT7Q=
-=b/Yd
------END PGP SIGNATURE-----
-
---s45526ndzapes52i--
 
