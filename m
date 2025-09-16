@@ -1,133 +1,124 @@
-Return-Path: <linux-kernel+bounces-818508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548FEB592AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:48:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC455B592A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5071717A7E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:48:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2D618911CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543DB29B8FE;
-	Tue, 16 Sep 2025 09:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A2329898B;
+	Tue, 16 Sep 2025 09:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYQz/4ja"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bo7oKQF+"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A8A29B8DD
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC6E296BCC
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758016086; cv=none; b=Y0XyTOwgzzTtE97inVnOnCQ7hxUeCKdCJ16VC4RrctbK25l3hMbsKbAtT+fwbsfSdhV1mxQUqo4gSEbu4xgDh1tn/mZZtnt/wcvstUrTrvEDN+szAF4MpYvb03noCRCclkRCcX3hSDak+/L3SgRGOJesP549blvJ/nx1wSFCZ3c=
+	t=1758016085; cv=none; b=Pl+yfYj+k8T8fV/+hNIgpHTJKisSwFjweItzuGiyxMMMvHJJlZwlVgbUDArCK9qSF8kJWqtrI2GfuK9TndS4JdwwOvWoz9slRs3XZGxyMFTgFvE1HpCvkyBi6gHXW2IFn/MCXomO7jUx9oMN0kAy7xnNM1NIorrg1PX1p5p0uEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758016086; c=relaxed/simple;
-	bh=T+Vf2dDOixMwZJgqQOACk6vB5Gd3gpAlFSucc0OqV4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DZLb9nVOc5YcMpCI+LLmbVkjUWhNKlwsUTFcsN/KFW5vgZ9IjQjuDi5t7GgDl12UFfSHid+aSFVEKyT8NNkYiAdmtnWc0FSfLggxvU+NhRHMe6hK+zG3MZvsqMkDV/j1p1f9DX2s2f9cJBeeR0hk1wROd134my959T5M6MrYuw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYQz/4ja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55F9FC4CEFB
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:48:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758016086;
-	bh=T+Vf2dDOixMwZJgqQOACk6vB5Gd3gpAlFSucc0OqV4s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AYQz/4jaHc01xp0lHsYgtxa3o3ICkaIKfmv9RTdYHBg/osvx3Ztfw3XUoEwCUd+cQ
-	 SuLctIuU6M1dxqjgBzU/6qCFGqOd9kr+4ipi2+d5ehmlRcFfVzSdeTQQnIpatOn3s7
-	 0bRpLiiAQDg2xBeAHYjbKgzey+Pwz2f7mMCrGA+dvY3CdubV6OiRK6uQ+t2wFr5O2O
-	 0bAGH/29s1xS0T6bXHG4djHdx/8D5elIXSWzjbGuJvh12QNKZ+jpGKP0YbuRd78Ly1
-	 oRBL+p7MKKGVizSTlj0yB1kCDxbE9hbk15thxkSzmRuj69TDLV4llwPbu3JCBKEHQv
-	 2o55s23PlVCFQ==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62f1987d44aso4016003a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:48:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWlQQ4pUW01hVmqUUdhtGPatWNTc+rLpAc1ezQKp7y8FolnS+U6Pbf/elMqiKWM7TDUqNnbmGWhGEkdH3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfuQQztc1Pjdy0s84Bo/5G0kdyI/HtK6/fjB5GZrvliq9v16G7
-	Rw/fuK/lNvkM04dUlUsMRBZx3GUHDXQN+xKcA7Vj8qeyCQHJy2SCQTd2Zw/tddr1hmB+UlcBCi1
-	crBUv5WaUqpMvcr3VubMjliJts2ho758=
-X-Google-Smtp-Source: AGHT+IG5MpzkyHuBeYurcLYOABwn+9j18biIyZwShzF6P5WhNTG6F2NRQfL2YCbVZrlN0DmxOAZaYM3OsJVbJ6d5aS8=
-X-Received: by 2002:a05:6402:274e:b0:62f:50cb:764d with SMTP id
- 4fb4d7f45d1cf-62f50cb78aemr3983894a12.1.1758016084874; Tue, 16 Sep 2025
- 02:48:04 -0700 (PDT)
+	s=arc-20240116; t=1758016085; c=relaxed/simple;
+	bh=Xtp6rsv0we6loXr8KX7p8CjvjrdRQN0t60CzR4y0U7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=izQvg880kBKa0kI0S9eLU/zq/GzfUkUpItbJrsuNCRooWx1C5pa39jR4AsGZbyN3kw5KXxm6fqUBmsFqm3QJM2XsSOenTVE+EAB9T/bo+j+70f7f2Z1hHTQlFmDe3GLtix6C0syoLgD8DApELUyBXDqbcUIttQtF934c8SI/4Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bo7oKQF+; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3eb0a50a4d6so1151801f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 02:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758016081; x=1758620881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZHjpXhjv6Uw0u0A/3vKysGefkTkoDLwlYIdI1qGXpMY=;
+        b=bo7oKQF+hMoLOeZ0xhUC8h3Vr1QmzZTSnGRzkAQqd+cqTnQABzLNDfnx6Z3JunihDW
+         JaYTkDfqPFYQeTh6+0KfENHjVAIJfwmwl2KWyivGLK5ewoudRBjiAXl+ytQ8ziFSOscq
+         zCMxCdwXGMbkORGA0vcmLVlqRbEfe2NpctoAp2lgrVkQ6RG2qF5j/iokKLwdjKmI5hLh
+         1RbnWfanIDYyCK8+I7pwfp9w72O4lLDHGsiEnV3iCSrqsbPVqrEEhOmidZ5FHVPr3Whe
+         kjmfhRQdA9hIM/e3VdgW6QYuGT69ll3b0w3/utrrZa789gOzcrGP/RGeTYx4HDVRMEiA
+         lQ0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758016081; x=1758620881;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZHjpXhjv6Uw0u0A/3vKysGefkTkoDLwlYIdI1qGXpMY=;
+        b=ODc43pqciPhLEMIRqnY3VbfLMBmAWLZ4Lqf+7bre7wKMujgkrA3pgNkNbWDQaI4B0Y
+         ec/Vb2gOvwXlU+au8Duic3HroLjUC/PacOYFhMLmGVSdJdMGSh+qbft6Ub2creJP35Ms
+         H+EH22cvP92Jec8G5x/qdDJLS2963gsc93fey/maNu3PyXYWup7HYK/InH6wklDB1/VJ
+         SzHY4O3i5vB3OGygQOluj1bPaZDNM3HUIfeMxAMK0brr3AXLgTJsUzpf1Q7X+vU85xNm
+         gI/TxnfVPZmUG+aEg0pC3MVRkc7geDO/5Btt/FT9pnsSc6/xqE1EAc99fcK/VL23Q6bU
+         +5Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJAt2v4wUV0XZHKFzB691ECJ1wl3YktM910f6GvhmT/NqHgnxMm/B+RSVKsqyIdT0ZCV/dhxfmqKW3oRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkDPXvyPdalctciEr/I3jRqHOBp9ikPEWOKyBqXXs8i11h+5MM
+	De14ELqv1ndz1YPyzy2FJz/2bXkLIZ4yz5ocrVW+iJKlklU7Ed5c46p6DofKQjIdYsI=
+X-Gm-Gg: ASbGncsLWut/vyA5s/CNuVgYxsg1hlkg8dowHJ3dUUr+Jg7CGCpLd/35xw7KyxErGto
+	i512hJE/Gk2QBhB0k3yi3tSDHPSvktl9Vklc29BSoQZi9FehRHkN9bHXTdqP8Ec9XpFgs5cYJJU
+	6kxqRXbcl0EqsDrG3RQhZVb4WreOHwpBqQwbD7oTqnTVaO0G0LWqck3wKNpeFTojH4jHGS2N3/1
+	bqu8UxKhDLfQ9Dtt+Wl+wGvonG2/5eQXwhN6Dd7j7n/Pa42JgHD/NxAaGJpz5MBmtYDuE4Xtehi
+	b2TmHMjxHd2/Xw6fTREomWLqa/bypvRwQEKvbJt8li40s9+r3bTG5pXLdkm/+Rc1O9PYXVja1Bi
+	jN72P1sl58FfaVCcSQ9/6kLCPDvv/5Bu7kKnu
+X-Google-Smtp-Source: AGHT+IH6+DN+2iC4Z4uhDEfr0LB6Z+tnW4YIIzn8sB9BkEp6enUX0B4DN8xSWO2nsBfkghB42HO8UQ==
+X-Received: by 2002:a05:6000:2586:b0:3e4:1e29:47db with SMTP id ffacd0b85a97d-3e765a25836mr15049192f8f.43.1758016080849;
+        Tue, 16 Sep 2025 02:48:00 -0700 (PDT)
+Received: from brgl-pocket.nice.aeroport.fr ([193.57.185.11])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760786ceasm21733718f8f.16.2025.09.16.02.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 02:48:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: gpio: fix trivial-gpio's schema id
+Date: Tue, 16 Sep 2025 11:47:53 +0200
+Message-ID: <175801606720.9656.18120314835859405070.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250912165916.3098215-1-ioana.ciornei@nxp.com>
+References: <20250912165916.3098215-1-ioana.ciornei@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8da4d540-652c-4845-9feb-0d53eeb3b5ed@kzalloc.com>
-In-Reply-To: <8da4d540-652c-4845-9feb-0d53eeb3b5ed@kzalloc.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 16 Sep 2025 18:47:52 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_ZG-ngCCtnG_Uxm=CHkWS6x+=JzM9TXpxGUiH-A7j1TQ@mail.gmail.com>
-X-Gm-Features: AS18NWC8XScJsd_6-4oai0r4YYqwaLwcCHqfar6YXOpp9Gi5A1u9ol828uKaJPc
-Message-ID: <CAKYAXd_ZG-ngCCtnG_Uxm=CHkWS6x+=JzM9TXpxGUiH-A7j1TQ@mail.gmail.com>
-Subject: Re: [RFC] ksmbd: Deprecate MD5 support and enhance AES-GCM for SMB
- 3.1.1 compliance
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 8:07=E2=80=AFAM Yunseong Kim <ysk@kzalloc.com> wrot=
-e:
->
-> Hi all,
-Hi Yunseong,
->
-> I'm looking into contributing to the ksmbd crypto module, specifically
-> around crypto handling in crypto_ctx.c. I wanted to send this RFC to gaug=
-e
-> interest and get feedback before preparing patches.
->
-> First, regarding MD5 support: The current code includes HMAC-MD5
-> (via crypto_alloc_shash("hmac(md5)")) which appears to be for legacy SMB1
-> compatibility. SMB1 is widely deprecated due to security issues, and MD5
-> itself is vulnerable to collision attacks, making it unsuitable for moder=
-n
-> use. I propose deprecating or removing this support entirely, perhaps wit=
-h
-> a config option (e.g., CONFIG_KSMBD_LEGACY_SMB1) for those who absolutely
-> need it, but defaulting to off. This would align ksmbd with security best
-> practices, similar to how Windows has disabled SMB1 by default.
-Steve answered it.
->
-> Second, for SMB 3.1.1 compliance: The code already supports AES-GCM via
-> crypto_alloc_aead("gcm(aes)"), but to fully adhere to the spec (MS-SMB2),
-> we should explicitly handle AES-128-GCM as the default cipher, with
-> AES-256-GCM as an optional stronger variant. AES-256-GCM isn't mandatory
-> but is recommended for higher security (e.g., in Windows Server 2022+).
-This cipher array in SMB2_ENCRYPTION_CAPABILITIES is ordered by
-the client's preference, with the most preferred cipher at the beginning an=
-d
-the least preferred at the end. This allows the client to signal its
-ideal choice
-to the server.
-The server chooses the first cipher in the client's array that it also supp=
-orts.
-Are you saying that the ksmbd server does have to choose AES-256-GCM
-if it is not the first cipher in the client's array ?
->
-> This would involve:
->  - Adding key length checks and setkey logic in the caller side
->    (e.g., negotiate or session setup).
->  - Updating the negotiate context to include cipher selection
->    (0x0001 for AES-128-GCM, 0x0002 for AES-256-GCM).
-I'm not sure what you're trying to change. Are you trying to change a macro
-defined in smb2pdu.h?
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
->  - Potentially separating signing (AES-CMAC) from encryption ciphers for
->    clarity.
->
-> Is this direction worth pursuing? I'd like to prepare patches for review
-> if there's consensus. Any thoughts on priorities, potential pitfalls, or
-> related work in progress?
-Could you elaborate more about the 3 items you suggested ?
->
-> Thanks for your time.
-Thanks!
->
-> Yunseong
+
+On Fri, 12 Sep 2025 19:59:16 +0300, Ioana Ciornei wrote:
+> In case the trivial-gpio schema is referenced through a $ref like
+> /schemas/trivial-gpio.yaml to match its current schema ID, the following
+> error message is displayed:
+> 
+> Error in referenced schema matching $id: http://devicetree.org/schemas/trivial-gpio.yaml
+> Tried these paths (check schema $id if path is wrong):
+> /path/to/linux/Documentation/devicetree/bindings/trivial-gpio.yaml
+> /path/to/dtchema/schemas/trivial-gpio.yaml
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] dt-bindings: gpio: fix trivial-gpio's schema id
+      https://git.kernel.org/brgl/linux/c/17628f1abbf4bd4162c655f3260d68bc1934ec73
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
