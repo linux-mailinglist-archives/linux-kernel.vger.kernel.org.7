@@ -1,361 +1,128 @@
-Return-Path: <linux-kernel+bounces-819535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4451CB5A246
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:20:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7265EB5A248
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9896A48828E
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23BDA16ACC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8E82E62BE;
-	Tue, 16 Sep 2025 20:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B942E8DE7;
+	Tue, 16 Sep 2025 20:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="NJ+tRNwY";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="NJ+tRNwY"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011043.outbound.protection.outlook.com [52.101.65.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIjFwBUT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AFF2DD60F;
-	Tue, 16 Sep 2025 20:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.43
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758054021; cv=fail; b=rjJiWWIz2aLNIJ4n0TR/grX7M1woMAfdny9jGveP+HY3RRsJl/3BCCLuxm8JKH1gX+2WxfDZ9sq8ob5miyqUTxzd93CADuPEimHej74IIlbvYkaky7gmkjgPlzHtdg16uV5XeXGzOM41KWmMcNHQjmoHZMiUsVx0pane3iJqgOY=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758054021; c=relaxed/simple;
-	bh=F0d05nARMdnqWc+Os1GU0075xtiX8PU05XlvnGZXR8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jUL0OAvBkzMpJnWdSqNBpmmziLdrp+1N3qNt3jNnWZcePVgIpq0DBFU3zmxAYkesudzq0dU9zj4O9umZXrmIClFQmgg0YWx97DOWKh+CZEO2eODeBMq+rR85XiZZYHPTbEItI3kEvgxEVcypDEXm4/wmONJQl+X/nlmBGwC+Yqo=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=NJ+tRNwY; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=NJ+tRNwY; arc=fail smtp.client-ip=52.101.65.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=Mt7MdtgdyXq+GYPSRX0N8Qkm7vnigu1qXRCVq1SjHrQUEavZMh8f10L29FJHzG6YijbwRSL7HWh58dbnftruORZijjs0wtFmajbvMLyLrxSN+iZMw9IZDe4O9Q9PStAjXBnSm9+rakEjEzbBWHFvK0az08T8qbH0mZYNWezehGQFog91Qdz/0mQOmnoGPTeFmyN5y0fmi9iIt9iC6CS+NPPTxYbR9oh1usCur3UYmA2jUlICmLjVA+h3EnKB1IYNzmV8y1UBZyE757FA2BUcZikz/gvdEH89plCuWTOYOZweqG1lpN3WyzhOrrg8u1YLxdv3E75WIcGHLP2J6Ugm/w==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C3YrmNehmqe1Ht9TRKWTelwYxC1g+CY9haqK59EB0B0=;
- b=NCPe0M5lsfkyWtCJXZi31mhed3fIR9QIFRisM38expgVOMGi+w034gIolgA52KMUuu1B231eMl1WOF/5tp8AqnV9lfLKkXDbFPXW5bZhHkFDOYedioq0f73f24B/3lix6b2iEqA20cC/xZ+aMv6mj1wvy6+YNRAS08WNXgz8gjhS8iTV0RgAeuk4xjrjLI8YAtY0twqNdB/uC7ytvuJNjSTLKwCKxWBbZqAqY07EKb4Yufh60Y96gKa6QBzEV+GiaWFiQbTcNuONhhjCA58T3OdYprdrmscT1Is42edUxERUkgM1BbgrIx6BGqU/PSvpjWrEgsRuxdYt+n6vssBa5w==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C3YrmNehmqe1Ht9TRKWTelwYxC1g+CY9haqK59EB0B0=;
- b=NJ+tRNwYnW+5cO1gKK6LjHgcdfy9RlTSFzIYeNbnuFTpaP7ofobdLkSPo3TmldWBjLwHItK+oAaPI2dJBc0znRYYHA0XNWDUYXwM/x7+6DfbwpN9g66QwGLa0F+Na7jqrokQ20VaYoG332Z3x8Uenfg1brW7l2lMoDL593lRhMc=
-Received: from DU6P191CA0031.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53f::10)
- by AM8PR08MB6578.eurprd08.prod.outlook.com (2603:10a6:20b:36a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.22; Tue, 16 Sep
- 2025 20:20:08 +0000
-Received: from DB3PEPF0000885A.eurprd02.prod.outlook.com
- (2603:10a6:10:53f:cafe::95) by DU6P191CA0031.outlook.office365.com
- (2603:10a6:10:53f::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Tue,
- 16 Sep 2025 20:20:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB3PEPF0000885A.mail.protection.outlook.com (10.167.242.5) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12
- via Frontend Transport; Tue, 16 Sep 2025 20:20:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O+dVUi6QJ8+erMATAE8/+NnNm1v8PIl61OyrfuR8i1XH8Ni48h9GYmKQR3O+Yc7V4jyzZE0ykw0EnlA5IIigBBJJz3NX34+hBB2d2D1BYUXPK2Icz1KzhjamhWFAR8NTtMPvqc0T1Tykm+d2lqTolrmIq59zqjrJszRDL932Riq1zjk16ZO+KN46tUdi5H8NZamGv3BNJ4lVUtV+UVAvukwGgFqThg/ME7GEAyyFjRlVPkvMAzMQ21JvOl+WCk9fSa+Oj/p9MSOevF0Y7wDHTP5GDT6MyqiAbDw5PLvq+SQrgK4611znNKfitFpDvCnRiVwX8iJlh2VNr7KiJuDS2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C3YrmNehmqe1Ht9TRKWTelwYxC1g+CY9haqK59EB0B0=;
- b=RM4fidqMIB5autWCGUeWxq99bUyUfEeeCNzh4hTGO0uaNJ0Cq6k5yO3AJ30Ji9lLUTDkJF8nMMQfbDmBQ4EVfibC/6+ZNCRV7mDB+Fei5EhnfUWKQZSTIKolo5+vlWON+l4CicVeiFfeUQEVPlXESLA+SpQokKb3fmN12jTM6FbSnx40Wj4BSbvXHduxvTZs/bLYMIfd79FFUKhhiev0oMmm1PRdh6xNaUIFZ23mI9YSeaN6ax8D4Jc4YgRBCtkwWao5so2Ds16T9ZsiJOAa9pNSEDGG0Lcj/cDC+xD0E1uJI05sia1SD2gQB0InYPSgWBznXV37z6eGZTdiAbOpJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C3YrmNehmqe1Ht9TRKWTelwYxC1g+CY9haqK59EB0B0=;
- b=NJ+tRNwYnW+5cO1gKK6LjHgcdfy9RlTSFzIYeNbnuFTpaP7ofobdLkSPo3TmldWBjLwHItK+oAaPI2dJBc0znRYYHA0XNWDUYXwM/x7+6DfbwpN9g66QwGLa0F+Na7jqrokQ20VaYoG332Z3x8Uenfg1brW7l2lMoDL593lRhMc=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by FRZPR08MB11097.eurprd08.prod.outlook.com
- (2603:10a6:d10:13d::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Tue, 16 Sep
- 2025 20:19:34 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
- 20:19:33 +0000
-Date: Tue, 16 Sep 2025 21:19:30 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com,
-	dvyukov@google.com, vincenzo.frascino@arm.com, corbet@lwn.net,
-	catalin.marinas@arm.com, akpm@linux-foundation.org,
-	scott@os.amperecomputing.com, jhubbard@nvidia.com,
-	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
-	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
-	james.morse@arm.com, ardb@kernel.org,
-	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
-	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v7 1/2] kasan/hw-tags: introduce kasan.write_only option
-Message-ID: <aMnGUr9zeutyPpAg@e129823.arm.com>
-References: <20250903150020.1131840-1-yeoreum.yun@arm.com>
- <20250903150020.1131840-2-yeoreum.yun@arm.com>
- <aMm69C3IGuDHF248@willie-the-truck>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMm69C3IGuDHF248@willie-the-truck>
-X-ClientProxiedBy: LO6P265CA0015.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:339::8) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9366F2F2E
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758054137; cv=none; b=YzSY4Zokus97kZmZB16uTqDhQKeUDoNNyYESsl9vSxuGOLtHjjf6zu6H0Zdd5nmgvrYSIlYoFDeqQ0kZ3AEp+7xayKMWsnz4MXETtr2t9j4q2hwRRwY4dMcoyzfkfGpzzqaxP7mXwUwSpLH2ItPL0VxvFeJa9UE2haZvzNC/X3E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758054137; c=relaxed/simple;
+	bh=+FJQmiQCgxY7sOvQwGKfrvsmjgtJg5wgc2QTdK97nhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aYxGQjCvxzs7MeC02WL9sLtsmHQ9N4bi83p6Hxaywyr66HS0ex6SOCF+Xy2Ar53HqApg/VerjVZR8ZT8tNVI8KdUl5GaDj3VWqrJNt7brhYQ/8Ef2AGRqxUgUCOk1EeQpP3jULBp4HjGOKOfNeLLuzW7aG2NGPwsHUpfing5PZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIjFwBUT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4724CC4AF0B
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758054137;
+	bh=+FJQmiQCgxY7sOvQwGKfrvsmjgtJg5wgc2QTdK97nhQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RIjFwBUTXKC8Y3+AFHMJ0zm5cb5MUddjdmG1BG11kjSBmvFCqgItaZpYvDK4j3YHt
+	 vaKcJVXfUq7oGwyAUfprSn0PUFb/DN7gX5Olz9pg2ILLf+msr124lt7AFLPW3GWomw
+	 263bMRPV36Yy3s9irnNm8M1ItDXdrIMZ2jrK147X91zTCWuq0WJPjvMZpcLyC8Wv8Y
+	 vIif5IKnhAwaaN4KqrQh453sl90f4NQbo8RM2whwbEXZuSocR+E8Lcd/rDyis2wfQ/
+	 wQ0TvoKLH1SvLb3hg0o8SCvu5YnuVuOb+f+qCPIpNsZBtq5sEdtzyL4/gcY4V34uGS
+	 Iia55Qh92cS2w==
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6234b298d84so1567702eaf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:22:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0kEYqlMhaUffwieiq36Jy4HaJy7AGkXEs7TEi4wNkjX/WjuKnntgFq8OAjCnP7XPjoUtoeUT0Z7MPCLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXQHUk3Qy7jzJ9xyJIGmoGEfH98Djfd0154decHEIP5zsqfEHz
+	3VRCMhfws9CiduKd1E8GWxSxWqDF/DH6TwzRCrHUJTjljWrbgO274LsUdOACS97HpFCHHs3VX1Y
+	zx3dV5tKdrtUeZPnehDnRw8TqfzVeYFg=
+X-Google-Smtp-Source: AGHT+IE4GuINxn6KeymGNXiv8yoxTzmxDq9RFoRe6QSRidCuJxZgzLUb2/Dx/V+3pgU6QgPZMLX1DGU4nkzEM2WLvqs=
+X-Received: by 2002:a05:6808:6714:b0:437:b63f:5b06 with SMTP id
+ 5614622812f47-43b8da457b5mr9660818b6e.34.1758054136675; Tue, 16 Sep 2025
+ 13:22:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|FRZPR08MB11097:EE_|DB3PEPF0000885A:EE_|AM8PR08MB6578:EE_
-X-MS-Office365-Filtering-Correlation-Id: 822ef14f-0e62-47d5-234c-08ddf55e6e6b
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?JNDyuGhrBv4SpZSvkhKQHrO+l7SJDZ5ZZpLETbU1RlXP8bD+56GrdrHtERch?=
- =?us-ascii?Q?ok98uh4JdtCbXVAeEgQqU6qdNXlc+iAk5olymZQEypBGlVVnhQJlkYZPvOie?=
- =?us-ascii?Q?IUNqs2H8x0JLoMDWmzEp80OhgRNkoBMH04wSe3Ctn7eUL7YKL2yNEI5UGo9T?=
- =?us-ascii?Q?GvdvRBA3vtw9vtK07zTTq5zD858aX0iu2K1eGQI8Af1YMI9PssE0qDlpQOFp?=
- =?us-ascii?Q?p4BbKFaZSXk8xNHR4ekP+Agz15aXBCWwVtoZsTvZXAqhZJKfaLyQPPgzO6Kt?=
- =?us-ascii?Q?dcSe1K0SkFyVehW2uo9JisrYSjbIJjuB8YcoVinox7CYWyZXTm3TYTafoOEe?=
- =?us-ascii?Q?jWn4ZoGSD3aClSStEQsH4gBZD808BpMpn+7j9kBIoWRBjxKquBj13wvDKzCM?=
- =?us-ascii?Q?OrvdqDb2dgkutxG+SdgQoxDBBPYAAHg7cn9kwxXwxqqpjjYf16IVjg/9AvAu?=
- =?us-ascii?Q?GYaWhYZw8+QU2NEBLYXRrKG6A4irJRKH5spRi4/R+HxgXJs5afUfv/xo0UEz?=
- =?us-ascii?Q?UZs8TaH1BXzIiUHWNritXKcO9SLN+DqkAWCk6z3jbwKdovPFU2+QmNOQjgBf?=
- =?us-ascii?Q?+Dk2tYTIBPegN3SaIVmlqYLZjItYB2+sxXHUEr/gPEgGMA24s4oBKcn3dUvh?=
- =?us-ascii?Q?wnZZH/Z9u06JeZ8NSfQl2Cnn5Ez5Ry98qvhccz9wCj78f9aLxbwlM5mXIOUK?=
- =?us-ascii?Q?hbnWn3/yKX493FQZEduyzIeFklKwxXgqmPCXASmpTrIfm7j+FU4MDpiBopzh?=
- =?us-ascii?Q?qcD+Jd5pk41jVYTorqOv2Io0Lvn6gXiUJlGSkO8jpIQdFoqkJQLjRXnw/Vyi?=
- =?us-ascii?Q?1SqXkGBKO6mkhn81glgv1IOu7VRyUqdeOSiZUWEJOg/w/MVONSeEVyBtdSd7?=
- =?us-ascii?Q?TU16V2NFBn/GtodA8klCJJVLeE+Yxd4Zv2u+j0F5iLB5jkWgn8MIwP1jZ6+A?=
- =?us-ascii?Q?AuaH/t3IYQnl5ZoaZpChjLSU7i15uWbvt812XWKkXZr3qO4dxj/AyMrZERfL?=
- =?us-ascii?Q?N3lq5lUNSpqeabdGcrSopasCYmyQA5NV8PTYFWchWFu8pffJm2baK8lEj0yx?=
- =?us-ascii?Q?pUx+QTA+Nrz1QGtkkQwBymNQHht2nUmvMRvqHt/JLi7ZODBMjPHaaZXmSS0B?=
- =?us-ascii?Q?JTnm2HmDQ/27m/1bILJS/FLe36YaJowJVFAa30dFM8GjDlavvOes0uni4QLX?=
- =?us-ascii?Q?an/7Yv1yWA20oj0l6RqVztVYbr3mSMZj9dCqG6QglwO8Hl7LKHH1Lom4FsRI?=
- =?us-ascii?Q?gcl65e9RgApJWTKuNuLEs/GbH8wo4DlnnqMJuJJVqn5d6KshqHtjvXHreosG?=
- =?us-ascii?Q?I43N196UjaZsGftuhQV79y/gh43mQf6EGmb9yigsHe2TwMySZN8MFm5uBRTx?=
- =?us-ascii?Q?l+UG76ylwzOVpxzzJdG3rS2QdHPoW++H2D7tV+OkPj8ALiViuCR36OeE+Y34?=
- =?us-ascii?Q?+Aal+mB1m0w=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRZPR08MB11097
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB3PEPF0000885A.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	c3807f4c-f252-444b-bb30-08ddf55e598e
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|14060799003|7416014|376014|82310400026|35042699022;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iGXzVzR0KlbvwFvy+AiLW/ip6uiWEGFIyaspagtumpEmJGnxf49laKFPeaXJ?=
- =?us-ascii?Q?v+ZOd9xLhOAA90jI+f08EhQWPr3FoFW8y3xCg3dH3v8hJ1rypk074C+q3sQ9?=
- =?us-ascii?Q?53mduiPCcatMdh6Z5NG/rIYboy8XIc13ogT7DDBXDXoyL0L8yTAQ8kalkkPl?=
- =?us-ascii?Q?jo0cx8/PLWxZV35g9+V2BrvI7lXxTVoWprws6NiGQK8pVZgzNDiNdJrK1tEv?=
- =?us-ascii?Q?q0uzfq1O45nNfTyLE557QPY0fyBjSsYQQPvR749KucAUcjTpy4PBONcYC+g9?=
- =?us-ascii?Q?rdS8WWSTbjAilhzQv7ilhQP98nKT0W1c0BkztCd4cjZ1DdUsW+j6+1x98+zq?=
- =?us-ascii?Q?xUxHs18c676qJn+Fdkc6rWQ9M8pLYMYZWxTPvxCynUs3pnyTJZ0yB8sm8ABa?=
- =?us-ascii?Q?mAVZEduJzcrcROpcJakLYAylOBc4U4d3IRkFiqq3JnDzsXlE2WnFgOahBeNL?=
- =?us-ascii?Q?Ktq1ebKj4Hs7jvFeK7FwdY9Na9XvdSk0KXlmajnTnH+xDgcYWNooE40lrdNo?=
- =?us-ascii?Q?kEhKvobUkb03F97jyMRjU5kL/IX9w/FMt0YQXHFWCMv49NgYcyT3WB/4Mq3R?=
- =?us-ascii?Q?hZCQGs4XjzQ9JbwfD3AN4pjwULfsN0bFdaBIFckcwsZhOww4HmXIosuYRyeW?=
- =?us-ascii?Q?vHPuJGgvNrr0satBwSp3Ry6/nQoPVfrKvDRGd1xGiOD2EOWUAYh0Tw9vMClX?=
- =?us-ascii?Q?ReMXpi3mszCEdDyDfT9h2HymEh9JZN3X0qqLm6Zfb1TVIoU3+UIJHbSvK+kv?=
- =?us-ascii?Q?melp6mjxo90BV7G6WkkyrG2nib6BmF00kl0JPPe6m8sNMQB3+pcdRI80xBMT?=
- =?us-ascii?Q?1jI9j10mUpmprkBprVXKmK+GlNxV3ExkCdlUx2luGhEvPW98Dep7v0nAUpKQ?=
- =?us-ascii?Q?e8q+1N7loWFe/La0IveOkhiOTQOovbdo6kpVLjVNqZYxu6hiM9oLd4xzmGNY?=
- =?us-ascii?Q?8Ipoe3Tpnd3BMNc97CSlbLb83gRv7HujQIxIF2R6ZqaC0V8wmYtMBgmVqNCC?=
- =?us-ascii?Q?i/eYL1VpQiaITAK6wt7AcYv3Xdp6VrL72P66jx9P69yTGNH4rGe1yRgk5X7r?=
- =?us-ascii?Q?qSUXyTx/VO3kwdS5Vfbv1TF17/0pRmp0TP7Hfx3BgcmPlvOsxsdcb58dQXjC?=
- =?us-ascii?Q?gvZLIAbp090i2QWIs1G7CGVDT8FhO1fAZT+BRFGQP2Doj/uIThRCGQ6ih/hV?=
- =?us-ascii?Q?dxoLSgX7OHYFGPTBoQBUZTL19/XvWu0Omfhm5mfFOFOSCwQsng60k737qz/d?=
- =?us-ascii?Q?qdIODzObsv/0uo/EgbzvLh3UwAor+Ks4FEF+BTUCrjs8PJzqj7MEKzMh7I1/?=
- =?us-ascii?Q?Vszh8q93k14zfxjniziao4jQhOk9vPxTZPME0iSyXRQQyy2TIb1IZSK2/rie?=
- =?us-ascii?Q?Rmfxzw2iIGGI/XKlfMZ8xH42scCetsL4qAfgFM1+v+PeVkRFK26r5r9CyEx3?=
- =?us-ascii?Q?IuGdbHvPnfOAi7Seu6kIPDDZXOVk2Tly31/iPf6RhxlR/QJvxi12+BwvXAqC?=
- =?us-ascii?Q?TnR/pUFlHB7LJkGQNgRforgRfnqLaSAVGiSU?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(14060799003)(7416014)(376014)(82310400026)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 20:20:08.3394
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 822ef14f-0e62-47d5-234c-08ddf55e6e6b
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB3PEPF0000885A.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB6578
+References: <20250911112408.1668431-1-lihuisong@huawei.com> <20250911112408.1668431-2-lihuisong@huawei.com>
+In-Reply-To: <20250911112408.1668431-2-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 16 Sep 2025 22:22:05 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iwRzbQAFmTEkq=rMeC_hjr9DAHEGbtBfgL8AU6M5PPqg@mail.gmail.com>
+X-Gm-Features: AS18NWA1kpyvkrHchUq03J9nNSLxliJNbA1jW1cK_l0W8YEIPCdvhRuzFO31tSI
+Message-ID: <CAJZ5v0iwRzbQAFmTEkq=rMeC_hjr9DAHEGbtBfgL8AU6M5PPqg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] ACPI: processor: Remove unused empty function
+ definition for processor_idle.c
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Will,
+On Thu, Sep 11, 2025 at 1:24=E2=80=AFPM Huisong Li <lihuisong@huawei.com> w=
+rote:
+>
+> If CONFIG_ACPI_PROCESSOR=3Dn and CONFIG_ACPI_PROCESSOR_IDLE=3Dn,
+> we may encounter some warnings about function defined but not
+> used. All external functions of processor_idle.c are just used
+> in processor_driver.c. And if CONFIG_ACPI_PROCESSOR is selected
+> and CONFIG_ACPI_PROCESSOR_IDLE also be selected automatically.
+> So remove these empty function definitions.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  include/acpi/processor.h | 20 --------------------
+>  1 file changed, 20 deletions(-)
+>
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index ff864c1cee3a..2976a6d0c54f 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -425,26 +425,6 @@ int acpi_processor_power_state_has_changed(struct ac=
+pi_processor *pr);
+>  int acpi_processor_hotplug(struct acpi_processor *pr);
+>  void acpi_processor_register_idle_driver(void);
+>  void acpi_processor_unregister_idle_driver(void);
+> -#else
+> -static inline int acpi_processor_power_init(struct acpi_processor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline int acpi_processor_power_exit(struct acpi_processor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline int acpi_processor_power_state_has_changed(struct acpi_pro=
+cessor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+> -
+> -static inline int acpi_processor_hotplug(struct acpi_processor *pr)
+> -{
+> -       return -ENODEV;
+> -}
+>  #endif /* CONFIG_ACPI_PROCESSOR_IDLE */
+>
+>  /* in processor_thermal.c */
+> --
 
-> On Wed, Sep 03, 2025 at 04:00:19PM +0100, Yeoreum Yun wrote:
-> > Since Armv8.9, FEATURE_MTE_STORE_ONLY feature is introduced to restrict
-> > raise of tag check fault on store operation only.
-> > Introcude KASAN write only mode based on this feature.
->
-> Typo ^^
-
-Thanks.
-
->
-> >
-> > KASAN write only mode restricts KASAN checks operation for write only and
-> > omits the checks for fetch/read operations when accessing memory.
-> > So it might be used not only debugging enviroment but also normal
-> > enviroment to check memory safty.
-> >
-> > This features can be controlled with "kasan.write_only" arguments.
-> > When "kasan.write_only=on", KASAN checks write operation only otherwise
-> > KASAN checks all operations.
-> >
-> > This changes the MTE_STORE_ONLY feature as BOOT_CPU_FEATURE like
-> > ARM64_MTE_ASYMM so that makes it initialise in kasan_init_hw_tags()
-> > with other function together.
-> >
-> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> > Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> > ---
-> >  Documentation/dev-tools/kasan.rst  |  3 ++
-> >  arch/arm64/include/asm/memory.h    |  1 +
-> >  arch/arm64/include/asm/mte-kasan.h |  6 +++
-> >  arch/arm64/kernel/cpufeature.c     |  2 +-
-> >  arch/arm64/kernel/mte.c            | 18 ++++++++
-> >  mm/kasan/hw_tags.c                 | 70 +++++++++++++++++++++++++++++-
-> >  mm/kasan/kasan.h                   |  7 +++
-> >  7 files changed, 104 insertions(+), 3 deletions(-)
->
-> [...]
->
-> > diff --git a/mm/kasan/hw_tags.c b/mm/kasan/hw_tags.c
-> > index 9a6927394b54..d5b5fb47d52b 100644
-> > --- a/mm/kasan/hw_tags.c
-> > +++ b/mm/kasan/hw_tags.c
-> > @@ -41,9 +41,16 @@ enum kasan_arg_vmalloc {
-> >  	KASAN_ARG_VMALLOC_ON,
-> >  };
-> >
-> > +enum kasan_arg_write_only {
-> > +	KASAN_ARG_WRITE_ONLY_DEFAULT,
-> > +	KASAN_ARG_WRITE_ONLY_OFF,
-> > +	KASAN_ARG_WRITE_ONLY_ON,
-> > +};
-> > +
-> >  static enum kasan_arg kasan_arg __ro_after_init;
-> >  static enum kasan_arg_mode kasan_arg_mode __ro_after_init;
-> >  static enum kasan_arg_vmalloc kasan_arg_vmalloc __initdata;
-> > +static enum kasan_arg_write_only kasan_arg_write_only __ro_after_init;
-> >
-> >  /*
-> >   * Whether KASAN is enabled at all.
-> > @@ -67,6 +74,9 @@ DEFINE_STATIC_KEY_FALSE(kasan_flag_vmalloc);
-> >  #endif
-> >  EXPORT_SYMBOL_GPL(kasan_flag_vmalloc);
-> >
-> > +/* Whether to check write accesses only. */
-> > +static bool kasan_flag_write_only = false;
-> > +
-> >  #define PAGE_ALLOC_SAMPLE_DEFAULT	1
-> >  #define PAGE_ALLOC_SAMPLE_ORDER_DEFAULT	3
-> >
-> > @@ -141,6 +151,23 @@ static int __init early_kasan_flag_vmalloc(char *arg)
-> >  }
-> >  early_param("kasan.vmalloc", early_kasan_flag_vmalloc);
-> >
-> > +/* kasan.write_only=off/on */
-> > +static int __init early_kasan_flag_write_only(char *arg)
-> > +{
-> > +	if (!arg)
-> > +		return -EINVAL;
-> > +
-> > +	if (!strcmp(arg, "off"))
-> > +		kasan_arg_write_only = KASAN_ARG_WRITE_ONLY_OFF;
-> > +	else if (!strcmp(arg, "on"))
-> > +		kasan_arg_write_only = KASAN_ARG_WRITE_ONLY_ON;
-> > +	else
-> > +		return -EINVAL;
-> > +
-> > +	return 0;
-> > +}
-> > +early_param("kasan.write_only", early_kasan_flag_write_only);
-> > +
-> >  static inline const char *kasan_mode_info(void)
-> >  {
-> >  	if (kasan_mode == KASAN_MODE_ASYNC)
-> > @@ -257,15 +284,28 @@ void __init kasan_init_hw_tags(void)
-> >  		break;
-> >  	}
-> >
-> > +	switch (kasan_arg_write_only) {
-> > +	case KASAN_ARG_WRITE_ONLY_DEFAULT:
-> > +		/* Default is specified by kasan_flag_write_only definition. */
-> > +		break;
-> > +	case KASAN_ARG_WRITE_ONLY_OFF:
-> > +		kasan_flag_write_only = false;
-> > +		break;
-> > +	case KASAN_ARG_WRITE_ONLY_ON:
-> > +		kasan_flag_write_only = true;
-> > +		break;
-> > +	}
-> > +
-> >  	kasan_init_tags();
->
-> I'm probably missing something here, but why have 'enum
-> kasan_arg_write_only' at all? What stops you from setting
-> 'kasan_flag_write_only' directly from early_kasan_flag_write_only()?
->
-> This all looks weirdly over-engineered, as though 'kasan_flag_write_only'
-> is expected to be statically initialised to something other than 'false'.
-
-For the conherent pattern for other options.
-Since other options manage arg value and internal state separately,
-I just followed former ancestor.
-
->
-> >  	/* KASAN is now initialized, enable it. */
-> >  	static_branch_enable(&kasan_flag_enabled);
-> >
-> > -	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s)\n",
-> > +	pr_info("KernelAddressSanitizer initialized (hw-tags, mode=%s, vmalloc=%s, stacktrace=%s, write_only=%s)\n",
-> >  		kasan_mode_info(),
-> >  		str_on_off(kasan_vmalloc_enabled()),
-> > -		str_on_off(kasan_stack_collection_enabled()));
-> > +		str_on_off(kasan_stack_collection_enabled()),
-> > +		str_on_off(kasan_arg_write_only));
->
-> It's also confusing, because now you appear to be passing the funny new
-> 'enum' type to str_on_off(), which expects a bool.
-
-Oops. This is my mistake from v3 :(
-Thanks to point out ///
-
---
-Sincerely,
-Yeoreum Yun
+Applied as 6.18 material under adjusted subject and with a new
+changelog, thanks!
 
