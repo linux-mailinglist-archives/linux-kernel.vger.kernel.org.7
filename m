@@ -1,84 +1,82 @@
-Return-Path: <linux-kernel+bounces-818373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FEBB590BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB2BB590C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46C516C46B
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411121BC534B
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A83428C874;
-	Tue, 16 Sep 2025 08:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB37D136E3F;
+	Tue, 16 Sep 2025 08:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t79J+gca"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bWV1U8G+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62592215F5C;
-	Tue, 16 Sep 2025 08:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366864A04
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758011555; cv=none; b=HFZxQKVXRFv8GuN4kbwElzPaVDBmcT9pPi/5kQI9GfnovIkRuZafMWm7ZibL/R8QpnMZntOvYeiqeXHLgeoQ5mGnfzdbaKIvzl7StXqPSvLvk1BP9KsR5kq7b5NfTzjgazsXA7OmrcVB8MqIRQ9knrlG7bAs0fvsI93bZSNoxDI=
+	t=1758011597; cv=none; b=Z+hTkrZjWy3gzbXd7M3N5NL/fTm1DbA3uI/dLXx3n4/cmB4mfmIZ0El8hgSdG86ifSDmb/T2QtzlCpxkUWYyK6ibs2aVst3bqg0fe+4eESnx8EZqUJW6R8nGNVZ69NvFeeF8w58PlCv/623G//VQMJym+vOfRuTnGvXBbIguBQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758011555; c=relaxed/simple;
-	bh=cKFv7ntAXKuYYS/5r/qpGiz/+cmnwART8v4KQX5vKFk=;
+	s=arc-20240116; t=1758011597; c=relaxed/simple;
+	bh=dZ9QHh+CbViuneTCKqhjLSwCnMJxoL2w16uVplJVSRg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MztLyfJaY01yjsvvgIPeH/DLhbeGt2jkKgJM2K29A9YwB/IZ1Blk99N9OaCDXBuY0AM8iuSkrzZK4oGmfbW6RSeue7xZtLB5bdkHIR4gVRvDsk0U9cXGAmN9GeGtyXOQoMgQZPFPYhb5vRpLNScXHRNu/jq+WCoCp3Pqg3T05YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t79J+gca; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D401DC4CEEB;
-	Tue, 16 Sep 2025 08:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758011554;
-	bh=cKFv7ntAXKuYYS/5r/qpGiz/+cmnwART8v4KQX5vKFk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRWWAGP2gniRav7oiC7A/VSB897H39fUxH7AJ5aAxmcc5RvczaWLiSIhrKYpURZhNjGanNaeMU259uD978qgnmkX6+XEg7dlj/RSRhcVeCT493Mdm7cRGeP5YHUMoxtl8HtSlhV8Vsp9lIs7PYFP8s7ah8QUqSZBo4HzqPxftLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bWV1U8G+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692FEC4CEEB;
+	Tue, 16 Sep 2025 08:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758011596;
+	bh=dZ9QHh+CbViuneTCKqhjLSwCnMJxoL2w16uVplJVSRg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t79J+gcaq28840dZctdvbTNCoWfQ0SvWIBRKtvrDwRkeLE4/VfbOfmvuzVD90qXqU
-	 5frjI2Yz4ERJZpcFwQOnscrcJjf7Dckx9jMJtW9nSH28oV4aYRgzRF8xkQNtNw2Vec
-	 h2qg25pLn+QCkjbsqYzauY6jLSQrbNOm7ufluP4qRGunWDy0qBAYSUivTNgx1hDAkm
-	 XFg2wmjoobbY537HWJUEz40W+LRAA6id0FlNPXYCl/jw0aY425Op+E6lcYROK28DPf
-	 u3XhdTZvVZrflZdGa1h5UBUoDZlHluSn+zN142SaXSiJRHkqnFw4w0QJNKqU37vK+c
-	 LE77QWjFoU06A==
-Date: Tue, 16 Sep 2025 09:32:31 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the gpio-brgl tree
-Message-ID: <20250916083231.GD1637058@google.com>
-References: <20250912131830.773a6929@canb.auug.org.au>
+	b=bWV1U8G+mdVFNYLJYzt8td/7ZEail7WMEAEn21DQuwcufZ8Pbt1XXehk7JXaim0QK
+	 XHIf45Naj6xAzqim+xk7g7bgyzcxkCjcMe+nAKL+QZlQ4dDxkj9jDPbmIu91p3Xrtj
+	 vbZ39VtL6iR32MUb1AbXD6m1mh1VvbcdJvJdlFbQ=
+Date: Tue, 16 Sep 2025 10:32:42 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chanwoo Choi <chanwoo@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] extcon next for 6.18
+Message-ID: <2025091633-pectin-resisting-9dd3@gregkh>
+References: <c88d98fb-cc14-435a-b943-ee3be4eaf60f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250912131830.773a6929@canb.auug.org.au>
+In-Reply-To: <c88d98fb-cc14-435a-b943-ee3be4eaf60f@kernel.org>
 
-On Fri, 12 Sep 2025, Stephen Rothwell wrote:
+On Fri, Sep 12, 2025 at 11:29:56PM +0900, Chanwoo Choi wrote:
+> Dear Greg,
+> 
+> This is extcon-next pull request. I add detailed description of
+> this pull request on below. Please pull extcon with following updates.
+> 
+> I'm sorry that I did not send the separate fixes pull request.
+> This pull request does not contain any problematic patches according to your comment.
+> 
+> Best Regards,
+> Chanwoo Choi
+> 
+> The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+> 
+>   Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.18
 
-> Hi all,
-> 
-> The following commits are also in the mfd tree as different commits
-> (but the same patches):
-> 
->   9b33bbc084ac ("mfd: vexpress-sysreg: Use new generic GPIO chip API")
->   1efbee6852f1 ("mfd: vexpress-sysreg: Check the return value of devm_gpiochip_add_data()")
-> 
-> These are commits
-> 
->   e2d401a6c9eb ("mfd: vexpress-sysreg: Use new generic GPIO chip API")
->   edfd67239981 ("mfd: vexpress-sysreg: Check the return value of devm_gpiochip_add_data()")
-> 
-> in the mfd tree.
+Pulled and pushed out, thanks.
 
--ENOPUSH.
-
--- 
-Lee Jones [李琼斯]
+greg k-h
 
