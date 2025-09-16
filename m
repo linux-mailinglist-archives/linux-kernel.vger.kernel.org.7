@@ -1,103 +1,109 @@
-Return-Path: <linux-kernel+bounces-818913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B670EB59805
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:44:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0EEB5980F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2B9461951
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C933189E3F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9FF315D38;
-	Tue, 16 Sep 2025 13:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF9731C562;
+	Tue, 16 Sep 2025 13:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljdjCTkG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTS8BzXa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F3A2F7AB1;
-	Tue, 16 Sep 2025 13:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9C52E1EFD;
+	Tue, 16 Sep 2025 13:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758030241; cv=none; b=oscjmMpf63qkcdryalQEyLLSebdu6oJCiE95NbZyGI7R48wCUQfh1jv2EQUXg6lWYTbjpxHDbP52ufu7owdrwqPEEuxr91nyOanyWKShiOGQxBUcodaUoKD/agmQuNgDLcdFT6GMn4ctMLUsrK2Y2R70SKp0oXcrIeRZMLOFmoY=
+	t=1758030267; cv=none; b=OC0ysiBLUrRFSw5RVZI0+np/BSmghw+hRlTodTaZxiuT4pWXycVIRRiBN+LT+2aajZJoRXOK2C0TZxTQavFX5Tpkc0OpBVy2M7PrFgNpLegVMZyi0S6kmyEhoQYdkS7m1vq1jRwjNLNcI0BMeaNw0MnZ89ATCt57plLn6DBr0Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758030241; c=relaxed/simple;
-	bh=PaMXEFXqCAuG12KEQ4djKfa6Cip7cabwIbwPaQn8wY0=;
+	s=arc-20240116; t=1758030267; c=relaxed/simple;
+	bh=PiqUhXW6QToZ6nQDeenBB20ifChYwsOqZj1pkylev8k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WCMQjLG39N0/ef/gExI31W7Zz6MWuCkOI4SvpM4M7y6q/McirfBV+8CTdPsmJtVDjtgfVyKytP+hyjK8t1WNOEsTp+oHB5j7WYs+9rr1zSC75ydP9k9eT+i/KIphkOi8venF928K5YE2fVYPPULt/gdnyS5JQFA7gVZiDltNHcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljdjCTkG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3966C4CEEB;
-	Tue, 16 Sep 2025 13:44:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=C6ns+IndkykldsYbuSFz4vfPRmVDpxyXtzIlcoYXYL//RnOZkV395sH7UQQ3S8CVgGgYqx4Az6sd7oajnrE9D7y8G/816fN/m7Oh/QBAMCTuF+k3hWDR4ETsISguLuLied0b76UV4sLomixNSvqqhV8k/wMJutd6Y5lldZ69QJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTS8BzXa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09390C4CEEB;
+	Tue, 16 Sep 2025 13:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758030241;
-	bh=PaMXEFXqCAuG12KEQ4djKfa6Cip7cabwIbwPaQn8wY0=;
+	s=k20201202; t=1758030266;
+	bh=PiqUhXW6QToZ6nQDeenBB20ifChYwsOqZj1pkylev8k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ljdjCTkGxZRvb0F7FEBCvF8MQvB8OpQlHE+8U5+ljM2dNkPq/jtyw3AYlywCWUB1L
-	 GD4yIqOid2EWZ5zKmN/h7A5ulypmjpBgT8ztUSUR0m/bbJal5/a/xuReQRkTYGo3PE
-	 IhmdHuKSmAFKstZdjPFBsnbr2E6wqoUgl90AIRy6/CG4dm9+haJYr13LVSD61Snai3
-	 TZ0K6/J+qkwq7cY0pYSKZDJKQgn3zX/heNEEXzrFVj7J8mC2t2fRqS2ucj5VUw6cnH
-	 QBcWHDkMmHYirrBPbcz7Z9ca4cRZZU25bWgyzUXy9eBu2zc9C1E65PQ62MXxBkBvRU
-	 pBxHVu/xdGfzA==
-Date: Tue, 16 Sep 2025 08:44:00 -0500
-From: Rob Herring <robh@kernel.org>
-To: Drew Fustini <fustini@kernel.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anup Patel <anup@brainfault.org>, Arnd Bergmann <arnd@arndb.de>,
-	Joel Stanley <jms@tenstorrent.com>, Joel Stanley <joel@jms.id.au>,
-	Michael Neuling <mikey@neuling.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@kernel.org>, Andy Gross <agross@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Conor Dooley <conor@kernel.org>,
-	Drew Fustini <dfustini@tenstorrent.com>
-Subject: Re: [PATCH 4/7] dt-bindings: timers: Add Tenstorrent Blackhole
- compatible
-Message-ID: <20250916134400.GA3654122-robh@kernel.org>
-References: <20250913-tt-bh-dts-v1-0-ddb0d6860fe5@tenstorrent.com>
- <20250913-tt-bh-dts-v1-4-ddb0d6860fe5@tenstorrent.com>
+	b=TTS8BzXaWnZ22mESEIXs1e3yx/TuBOHORy3r8nH8bkXlMdUTu5hwLKER1I5fkX912
+	 OLlv33kVMWxsxjhceEwtHFJv7EnxvHC6vRFLUIawEb49hEa9JlLGujuDkNVrNHyKuK
+	 1qYBNu7dS7o7OChnp/5d2lCXTGxzaT/XOdmGdMwd0snMoExH08Ja5eXDivsE9YkSfn
+	 PZsH0VF9jLDM8JVfd0qHM3TTU6hNXmP2r86h7fMHNKcKcwcV1K7u9odEAwu/0nEYEU
+	 aDZsEmqAAdVYdvANj2PYTc07mvpRkt+2eifr7UZZDASyI51n2Zs5YCYKsl5ijq4NdT
+	 vGLPZuPAcX4Ww==
+Date: Tue, 16 Sep 2025 14:44:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
+	andi.shyti@kernel.org, mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
+	jdelvare@suse.com, alexandre.belloni@bootlin.com,
+	a0282524688@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH RESEND v14 0/7] Add Nuvoton NCT6694 MFD drivers
+Message-ID: <20250916134419.GD3585920@google.com>
+References: <20250912091952.1169369-1-a0282524688@gmail.com>
+ <175803019322.3799290.6641375066506606941.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250913-tt-bh-dts-v1-4-ddb0d6860fe5@tenstorrent.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <175803019322.3799290.6641375066506606941.b4-ty@kernel.org>
 
-On Sat, Sep 13, 2025 at 02:31:03PM -0700, Drew Fustini wrote:
-> From: Drew Fustini <dfustini@tenstorrent.com>
-> 
-> Document clint compatible for the Tenstorrent Blackhole A0 SoC.
-> 
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
->  Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> index d85a1a088b35dabc0aa202475b926302705c4cf1..198146c59de0c95a2ffa052c8d4d7aa3f91f8e92 100644
-> --- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> +++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-> @@ -36,6 +36,7 @@ properties:
->                - starfive,jh7100-clint   # StarFive JH7100
->                - starfive,jh7110-clint   # StarFive JH7110
->                - starfive,jh8100-clint   # StarFive JH8100
-> +              - tenstorrent,blackhole-a0-clint # Tenstorrent Blackhole
+On Tue, 16 Sep 2025, Lee Jones wrote:
 
-We usually don't put Si versions (A0) in compatible strings unless later 
-versions changed in incompatible ways. Perhaps if you already knew that 
-B0 was different, then it would be appropriate. Or am I misunderstanding 
-what A0 means?
+> On Fri, 12 Sep 2025 17:19:45 +0800, a0282524688@gmail.com wrote:
+> > From: Ming Yu <a0282524688@gmail.com>
+> > 
+> > This patch series introduces support for Nuvoton NCT6694, a peripheral
+> > expander based on USB interface. It models the chip as an MFD driver
+> > (1/7), GPIO driver(2/7), I2C Adapter driver(3/7), CANfd driver(4/7),
+> > WDT driver(5/7), HWMON driver(6/7), and RTC driver(7/7).
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [1/7] mfd: Add core driver for Nuvoton NCT6694
+>       commit: 51dad33ede63618a6b425c650f3042d85e646dac
+> [2/7] gpio: Add Nuvoton NCT6694 GPIO support
+>       commit: 611a995e8ae1a52e34abb80ae02800ea100bdf84
+> [3/7] i2c: Add Nuvoton NCT6694 I2C support
+>       commit: c5cf27dbaeb6e12ea1703ee896dd4b42e92343aa
+> [4/7] can: Add Nuvoton NCT6694 CANFD support
+>       commit: 8a204684d0ffdf8d39c16d70fc6f1000e831ef27
+> [5/7] watchdog: Add Nuvoton NCT6694 WDT support
+>       commit: f9d737a7d84ff4c1df4244361e66ddda400678dc
+> [6/7] hwmon: Add Nuvoton NCT6694 HWMON support
+>       commit: 197e779d29d87961be12eb6429dda472a843830f
+> [7/7] rtc: Add Nuvoton NCT6694 RTC support
+>       commit: d463bb140583609f78f61d48c3dfb6f46c5cb062
 
-Rob
+Okay, everything applied just fine this time.
+
+Submitted for build testing, if all is well, I'll submit a PR soon.
+
+Note to self: ib-mfd-gpio-hwmon-i2c-can-rtc-watchdog-6.18
+
+-- 
+Lee Jones [李琼斯]
 
