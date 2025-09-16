@@ -1,60 +1,101 @@
-Return-Path: <linux-kernel+bounces-818826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CA3B596D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:02:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C768B596D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FB07AEBB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:00:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327CA189F5CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040852D7DF7;
-	Tue, 16 Sep 2025 13:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DD52DC32C;
+	Tue, 16 Sep 2025 13:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qYNe58LI"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hodTZTSJ"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D051581EE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98091A5B8F
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758027722; cv=none; b=rKxNikkAKrHaELPhHmAJDTuuIQFOHJ1QSlEJOjDgoXGFlMRUVZOCDpXJA5lR4KnyGAR7Zu1Nkpj41xxt1rEQf3HRQuo1ZESZqkc1BAR90qUbrLlxKLyhSL+bsYZM8Y5IwwlbHyvsXZ0UZkZw8mLelV3y9p/CYjCKtQznIPJIEts=
+	t=1758027765; cv=none; b=OzZkUr0Fzl6hfjVAgj1OW6wrWPN65FLbZAUzoza8mj18PStXyoFV8WsomEVNk4zlW4ahdrIkd75a+VrDVt2bs4dzVyjGFNhLkL8WRDD/Ays5V2jtsaSYSFUFCjBize6Txp8AcMkfJBIh0XaTZDeqKtmrMrGdE+OG4JfJ4Jbilfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758027722; c=relaxed/simple;
-	bh=cWjHIZx4N3gxIdbHVSGE4LMNnD9sgtogPlptxrE1hlc=;
+	s=arc-20240116; t=1758027765; c=relaxed/simple;
+	bh=IHIAB69PsK7W4sFK9/F4t7y6OBjeQP7F71nwjhXw+0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ngYk72R0MB5Nk8co7yoOBHcPPNY39iMAl0C2Oz6VTbHDx4TPdNs0yEi4JZ2mGHUQ59xq6hU7BiUeGQf7TJ03Q9JTri6T4RWgX3Wrq5ZFxj5hrL0ECZkrOrm6yQ8iDWWaai1X1uWPIwHBAmmqppu4Ewlf82EJZTTQL7P6emtke2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qYNe58LI; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 73F971A0D84;
-	Tue, 16 Sep 2025 13:01:56 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 43A5E6061E;
-	Tue, 16 Sep 2025 13:01:56 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5F99A102F16E7;
-	Tue, 16 Sep 2025 15:01:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758027714; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=k9M61n3kgzP2GV1QhxaccbFiJSqMOAJaomD40tqnjhY=;
-	b=qYNe58LIJbjugz0DRC9rB3+gaAO55rAlDyzyo/ScR5dC3Ce0Edm5vWdbLQckVZCwNgGUOO
-	ABqJao4X4oksQm/R27ggwiEEKngnyu424VWl88MTDHH8FDqb7k+b4rE92M/QPed8J2Vcko
-	lk5jW0Xh+KBESeIX6GfRzS8sibHlWrn3v44NMaAQigEUoXM3l1tjABqTFGATYSMuj6KgtR
-	rZM1pixQWIpEnRAZLkXPs0dAV0GTOHTn5Skt62umrXOmnEFUi1Ym7aKwjkC9Dr+XIgweom
-	EnY1LEmAZvuoySyzidhW1pEtoKkdbAR2B+H2JKd0u34EiQh7oNER0ehfF/HpvA==
-Date: Tue, 16 Sep 2025 15:01:50 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jorge Marques <gastmaier@gmail.com>
-Cc: Jorge Marques <jorge.marques@analog.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: master: adi: fix header location
-Message-ID: <20250916130150ed797d53@mail.local>
-References: <20250916091252.39265-1-alexandre.belloni@bootlin.com>
- <jmfzuymhxvxnjwk73nmsfaaadnmy5uy4uanh4jegwgdvgfr22e@2iqtifbsgxmu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fEPk94s70+H3Ma492dXwbOkWUgW+zKhJ8xFa68hFQsuAiYBxGpqHML4iXtr09x3vmdwITCgZ+AVo2rua4cf1aMBmX92Yoz1Mi6QrDK6cGHjThwWbw0LNWwOj8dj2SmsCxemjnpJMtAEWDlTx7ztyscWB42BC0B+1nd9LdOKkURs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hodTZTSJ; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-829243c1164so241712285a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 06:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1758027763; x=1758632563; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U7XVbefYP1T9aC1YC53q5bs8AZBmUU9WkTWwN/oYv1o=;
+        b=hodTZTSJs8Lw87itDVipky6dEuVVSyrKLE+TY8vq+Hkc07NqoFFOw1cysd1SNKWdpj
+         94NulaugHB2ne52+iiKvfmksKCix8MkyoBGc7jFmFHEJJgZaQwAOD5HiwW9oObzXKHm+
+         oiAgkGrN/O2dCcinzQqsgtuIBV77UuzDERTD9nhODL4ix17V34zmMxEPe4UC5TKtQ8dK
+         leHWl5Kg0o2QdCTxftQxqB/wsE3c7+A9aKp5Li6ZKz3PGp8LMjXIEgM8tKgXj8J+OLHb
+         ugRI/j3pd7YbkV17QMU77zHQV18Fb+fnVXkDpbY/gUboJ8P0AKCeZJ6+cCXo+FkRqKC5
+         mDFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758027763; x=1758632563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U7XVbefYP1T9aC1YC53q5bs8AZBmUU9WkTWwN/oYv1o=;
+        b=ozEGV9eyqXEpLwtYNIHy6Kbfr56Qc+C8pUylQtLosNSL6pgKs9aEGDKtsCOoWoJRYK
+         vK2PF5G0zxUzO7Ly/uR/r+5zXsocpqd+XVTDUsr07HxVnM64cm+tj2ApXOTmrhf6hth+
+         z1N3fuqJEUh64IXKtOD29D1/rL3jXbKlgdOsm4pHAURkKAn3upYmQR96fi/n1NReGpPR
+         Gg12gdN8TpsLQnLQPN7d0iSDAvNUEvqUCgPwJTjqcjeGaK9dR7LHC+nbIi+AaiFtT3ZO
+         rmLvhngzMipnq00PfopVWzXF9oP7w+koa2I2y7C2scd3P+DXJgeNfoCGk5iWzSt8rDhU
+         Bizw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8+nUR0ZcwopOxcZLw7nqikQt9qCYBD6yCf6FsOhGVyn1Qvay4+A/sgRLSs5hCaNSs2klzFEqRUZuV4Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvQpBA5kXM/lzoZ5PzeQw+ATzOv+RT4KlxnKv29qKm8y5Qj6HJ
+	/RpOvEOsOYWzQI3OKVVtarGD9MwP5EGUJPC1z61mdfI5lJeZEqpClEHZ6DTyMvs8E1E=
+X-Gm-Gg: ASbGncvs8zPPJbnL3iiRchGCDvdJcYLAfxwuzdPMFgSPz8TiyLBDVC+sx1q5Dms4jOQ
+	vNvY196UbvnZTS8Z2VoahBLsyz0rRTGB+CXReSP8wUqZMhqA4a4nzTI8XDMVpDpZatGsm3u0UsJ
+	kGubBUjAMilJvUxE951OUpy7Ar6mWDgXh80+LO6ygNyKgXPYzIZCJlrlFU7d4wrAD3xT3t3VIJ9
+	1BqlE6oWmN6lrNStMAaHp0MibpXRv7X4HYxDZm9GAIAj7oKrcI6WokJWAaAiD+aRuMyl2UjESQ3
+	bkGhiQKK7AQWOKA4DMN5EAoa/2fLXVxrSTCO/uEDUzcuQRSLiBRQX1oHaubqSBAuH+SbXzrF
+X-Google-Smtp-Source: AGHT+IGgSNjoagg9mR50jyVvqVknWt7pO/h98DmCtfm4l0bnsXbM49f7ZWlU8/4EiRAMYAi5HACKDw==
+X-Received: by 2002:a05:620a:a483:b0:813:4da8:8653 with SMTP id af79cd13be357-823fc1d4cb3mr1861079585a.25.1758027762539;
+        Tue, 16 Sep 2025 06:02:42 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820ce19d151sm932484485a.50.2025.09.16.06.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 06:02:41 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uyVKS-00000004ePY-3X0g;
+	Tue, 16 Sep 2025 10:02:40 -0300
+Date: Tue, 16 Sep 2025 10:02:40 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Will Deacon <will@kernel.org>
+Cc: =?utf-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	robin.murphy@arm.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, heiko@sntech.de, p.zabel@pengutronix.de,
+	mchehab@kernel.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com,
+	linux-media@vger.kernel.org
+Subject: Re: [PATCH v9 3/7] iommu: Add verisilicon IOMMU driver
+Message-ID: <20250916130240.GO882933@ziepe.ca>
+References: <20250911155720.180465-1-benjamin.gaignard@collabora.com>
+ <20250911155720.180465-4-benjamin.gaignard@collabora.com>
+ <vrngq76nnms3jyl5hnxqnkimjc6kil66o6fdyqn5vm3fpovmja@cfynipjw7ktp>
+ <694b9ba15cd67f41a38f4a65a3811f035cf8e99d.camel@collabora.com>
+ <rt6nvgazcl6mvyy4iuut3n7irf72t7rex2iwabbkuxp7cdvez5@2nanenqgxjdy>
+ <20250915225806.GM882933@ziepe.ca>
+ <aMkkYU-p2ouknnAc@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,50 +104,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <jmfzuymhxvxnjwk73nmsfaaadnmy5uy4uanh4jegwgdvgfr22e@2iqtifbsgxmu>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <aMkkYU-p2ouknnAc@willie-the-truck>
 
-On 16/09/2025 12:45:57+0200, Jorge Marques wrote:
-> On Tue, Sep 16, 2025 at 11:12:51AM +0200, alexandre.belloni@bootlin.com wrote:
-> > From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > 
-> > The adi-axi-common header has been moved to the upper directory.
-> > 
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+On Tue, Sep 16, 2025 at 09:48:33AM +0100, Will Deacon wrote:
+> > I would strongly object to trying to share map_pages, unmap_pages,
+> > iova_to_phys, free and other iommu pt related functions in some
+> > limited way instead of helping on the much more complete iommu pt
+> > work. Which is what I said to Will, but for some reason he suggested
+> > it anyhow.
 > 
-> Acked-by: Jorge Marques <jorge.marques@analog.com>
-> 
->   Commit: 2ad26b7bedcd4941e6dafa1851e2054b369b9d25
->   Link: https://lore.kernel.org/r/20250519-dev-axi-clkgen-limits-v6-3-bc4b3b61d1d4@analog.com
-> 
+> If the answer is to convert this to iommu pt, then so be it. My
+> understanding was that was still premature at this stage but you know
+> better than me.
 
-Yeah, I'm a bit wary of adding the commit id here as there is no
-guarantee the branch is not going to be rebased before the pull request
-is sent to Linus.
+We are waiting for reviews, hopefull when people return from
+vacation. You know how hard it is to wrangle people to review it. But
+the code is all done, it has all been tested by multiple vendors now,
+many people have projects blocked on it.
 
-> > ---
-> >  drivers/i3c/master/adi-i3c-master.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i3c/master/adi-i3c-master.c b/drivers/i3c/master/adi-i3c-master.c
-> > index 162f9eed39aa..18597ba1f1c3 100644
-> > --- a/drivers/i3c/master/adi-i3c-master.c
-> > +++ b/drivers/i3c/master/adi-i3c-master.c
-> > @@ -10,7 +10,7 @@
-> >  #include <linux/clk.h>
-> >  #include <linux/err.h>
-> >  #include <linux/errno.h>
-> > -#include <linux/fpga/adi-axi-common.h>
-> > +#include <linux/adi-axi-common.h>
-> >  #include <linux/i3c/master.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/io.h>
-> > -- 
-> > 2.51.0
-> > 
+If this duplication is really important to you then you are welcome to
+help review it and merge it. As is Benjamin
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> When I bothered to look at this driver side-by-side with the rockchip
+> driver which, despite apparently being totally different IP (honest!),
+> is *remarkably* similar, I summarised the similarity in the default
+> domain ops:
+
+Presumably there are more HW control bits in the PTE than just valid
+that we don't know about..
+
+> I don't think it needs to be one or the other. afaict, these drivers
+> should share the default domain ops and if the page-table code is using
+> iommu-pt then that's even better.
+
+Refactoring rockchip into an iopgtbl, and making it work with this
+driver is quite alot of throw away work in my view. I would not ask
+Benjamin to do this.
+
+This is why I offered the compromise that if he writes and tests the
+iommu pt version I will carry it and he can merge the driver
+as-is. Hopefully in a few months it can all be sorted.
+
+We can then attempt to convert rockchip as part of the followup
+activity to try to move drivers to iommupt.
+
+Jason
 
