@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-819588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525ACB5A370
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:48:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46C6B5A374
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41AAD3208F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668B9484FA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5D91B85F8;
-	Tue, 16 Sep 2025 20:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA807289340;
+	Tue, 16 Sep 2025 20:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/9mhZwU"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5r05xWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97C631BCBE
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DEB278156;
+	Tue, 16 Sep 2025 20:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758055684; cv=none; b=MG2D26Ou+7V1vhF4cZSzz7+oqmztDNmBDukqXpO8zZ7tvEwK2SLlDWuQG16bBm9tUqXikhg88vIHDI0p2vCqZfWJlsJIBc3uTpWgDy7CyfoE8rQn8qdfLbW3vpBcB7U4PtTn5YmgCDuKbAgHAVOPNAP52X3MDnlyagecTXgGyZk=
+	t=1758055693; cv=none; b=eSczvmpZpRZnM6k/UZrZDZ6VTPzcIvzGRQuEwBZgbI7RERt0maA0Mu0uRJLAahLP5HtwseFplEngq/WjqzlEK+MKpQh4w28SwS0jzwSc5vbwjzvWkUPJAe1+NYGpNHTusWz1qdFOGzpkGqwQErEHYZ3LrympZOnKnvNfX/hSR4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758055684; c=relaxed/simple;
-	bh=+KL8rfCF8REg0hsyvWX6grF3wDtueBlcvpkD+pM3Zws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JOoHq8QFFxnPgpurjNa2lyz7N7JKnrSflzz2pw6Q6yUjHIDfety43MDmz53v40F7pziRRS39wlUkZ9kOpzyMMKN/yAbL6FlNTSP3SS9NByXUEYGLWvX7TByy+agUE6FYGT3EhWdVit8UOjmGdTthzpVGhRUGUjiMx856UY32lzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/9mhZwU; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e9042021faso2362054f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758055680; x=1758660480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wnUpZJEnRBwm4SA8hacWkv0qxtpcVpis+ipIASBsxLg=;
-        b=j/9mhZwUEMJ0QRXzJ3FW3ykL6JD9I+MALkgLEalDTL7Y/MfCMo+vQ6z8ecBB+oE//b
-         Wl0N6lw/gGcc3bpirDiPkZoFnPwqVrxC93q5Y9K0MG62BWGOlVL2CQcj7GLkBXw2rH0o
-         r50uEh6AD4KWO9sW3uGdycM4s9dGPNkIMv8NS1iPYAhbBHZQr2m+tdK383B/2e+xPKFf
-         udEdvRPptcVQFkJHc7GTeqep0chHmukxbylTBvoUbtlYPide74lXHKmSaE0ptPc+Mi9E
-         iRkLKTrdwhuzKQMN3rCe1aMFjNqsxhBRflzhUPeyvejo6aZU3zXNUeX/b0gdHxXPkEr3
-         c4yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758055680; x=1758660480;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wnUpZJEnRBwm4SA8hacWkv0qxtpcVpis+ipIASBsxLg=;
-        b=n2rJSK2iWRLVE+QskKQ64FOQ9Egh/04cUJXcWUuYggfvMfaG13nM7OmGiZ87B2d0So
-         agMcW2ZMNZE4dATn0KoPrCjLfhwIUjrV+fm8/4WK5cwr2EadD7VBupDsZHwt9Vkp++bQ
-         7MZ0VbuQfLMwFOIILt+BtWO5SD1wmc8j1OsXPAGH4bjdQUB/02sUnbgLhy6FGwMLfcPS
-         /tHYWK7+3SnJJswNny6krhTapnnyAXIkCYnz+ekmy/QGvjAV4I6Uo3OaXjLrbkvOxdbJ
-         8E3cJ7E4GXMztWFrMxf4Cyyva23HgHzswfP43dpQ1zr4BAa48dXsN45GSyrp71kZ0QNC
-         DGBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZpZtTAJOhUQ8UC1Kwb2seO6aINJwdT1EBBsmJ5ROkd4Bhb91t49U/Ob7L16zg0Pz07Vq1XfmO0cEnrzw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznpl9k3qkePxEB/w62hmQe2BpX1cOa07pI0HMlEhpOVtE/WF09
-	r3nGfFQoSGH4ZPVZ1aKaaAAklV57p47WjFw7PFnLbFNVtV6eVK+Ed+nT
-X-Gm-Gg: ASbGncsjQYQRcbesXcDGuitd4a7FgZQWeCFgk43whCqnamz2Pv5/yS4m0ajJEXiHvui
-	8GUecqxQHGg2QYyeDmIHDhXIccfY21QtkRhw6fBeyyTGh1mQpa1A5Ri5A3OsFIHSVt3virAQivp
-	O41d07jRvVJZ5xOCe/P6EVJnEtrZFcQSNRWXkyL5HsNaC3NSCAx1N1rZfoTzAWFvC68BVkoRvnl
-	mdBIvhch0y8f4DkE+vZunrmbgSA1TlIHIYEszWE7WqzxzEyAzaOG9Cp0KWQ+VUFpK2m84wslAFd
-	xERQPtlrKiQLdHGZk8xfrBDG+mjZcXHA8xDhm+Lhelg1V7di2CvNyl3Bnv0UpGPAtSdLTOmAeSN
-	H8YVITrXbUaXpVFbCWRAjoFZf1l2QHu6ravM190rbRS8qwRc+gnFDdDlmiOhTfddgJuGzrTl/v2
-	hHxHSNHZoN1A6p3/vifQ==
-X-Google-Smtp-Source: AGHT+IEkxcTio6GGFoM3muCkeaaC3BaAbrW6vbBnnuCs4pDQo46lP6f91xDpDnWdbW4d1+fTPKzarQ==
-X-Received: by 2002:a05:6000:18a7:b0:3d4:eac4:9db2 with SMTP id ffacd0b85a97d-3e765782b5fmr20202818f8f.5.1758055679917;
-        Tue, 16 Sep 2025 13:47:59 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23? ([2a02:6b6f:e759:7e00:1047:5c2a:74d8:1f23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ecdb0a2752sm2366465f8f.56.2025.09.16.13.47.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Sep 2025 13:47:59 -0700 (PDT)
-Message-ID: <4429cad8-5363-4bd0-8b7a-36396d322464@gmail.com>
-Date: Tue, 16 Sep 2025 21:47:58 +0100
+	s=arc-20240116; t=1758055693; c=relaxed/simple;
+	bh=Y1IqRfSmlcIgYAclgwowutMBZed1+nhjdRTcYcMbupo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MLBVMQAb67jfS+UIbuXIiaxwEIGWqZvSyHp6pKEeJZ5XAHJX8kvi7mJ3mxl4yemFjX197iixkFOkvCYA+K5HVxBR9/xAFmobnbngBAgS/RmbXeeIg/jivH6cK5tCX6vrEVqDSIOLGImIRNffojqOGfLIbBUOmO8GWkrYN52NpXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5r05xWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52273C4CEEB;
+	Tue, 16 Sep 2025 20:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758055692;
+	bh=Y1IqRfSmlcIgYAclgwowutMBZed1+nhjdRTcYcMbupo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=A5r05xWmYvjRRzvE92m3mH2/SmzKfmpjZuLwjCsCDgkybVbpSojkwZKz7L4frT/Rb
+	 PFFZM2QFsby8HiInnpUv4UwGzS02ekBSEuSEXajuzPhoqgHOvaqCBQOmvwO5RT7Eid
+	 s0zI9vRyZeJSmj1LYOL6HZEdDn82HExVNPCvgrMdnBzKbNisSvS/Xj5iDFpm4Pix5x
+	 yFu6APZisS6AYcgAVeFP7KUp8AO0xxLrR6io9vUZIuC6yqSiRvt5Xz81ODSCBN2TM2
+	 J6+XawPw3xi8uaY56TfHIyX4+yaDwaP2I9e242ffc9QDZcsQTR7WOscNFlDeAx4kfU
+	 U6G/IW1hDA9rw==
+Date: Tue, 16 Sep 2025 15:48:10 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v3 4/4] PCI: qcom: Allow pwrctrl core to control PERST#
+ if 'reset-gpios' property is available
+Message-ID: <20250916204810.GA1814032@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] alloc_tag: avoid warnings when freeing
- non-compound "tail" pages
-Content-Language: en-GB
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
- shakeel.butt@linux.dev, 00107082@163.com, pasha.tatashin@soleen.com,
- souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250915212756.3998938-1-surenb@google.com>
- <20250915212756.3998938-4-surenb@google.com>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250915212756.3998938-4-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-pci-pwrctrl-perst-v3-4-3c0ac62b032c@oss.qualcomm.com>
 
-
-
-On 15/09/2025 22:27, Suren Baghdasaryan wrote:
-> When freeing "tail" pages of a non-compount high-order page, we properly
-> subtract the allocation tag counters, however later when these pages are
-> released, alloc_tag_sub() will issue warnings because tags for these pages
-> are NULL.
-> This issue was originally anticipated by Vlastimil in his review [1] and
-> then recently reported by David.
-> Prevent warnings by marking the tags empty.
+On Fri, Sep 12, 2025 at 02:05:04PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 > 
-> [1] https://lore.kernel.org/all/6db0f0c8-81cb-4d04-9560-ba73d63db4b8@suse.cz/
-> 
-> Suggested-by: David Wang <00107082@163.com>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->  mm/page_alloc.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
+> For historic reasons, the pcie-qcom driver was controlling the power supply
+> and PERST# GPIO of the PCIe slot.
 
-Acked-by: Usama Arif <usamaarif642@gmail.com>
+> This turned out to be an issue as the power supply requirements
+> differ between components. For instance, some of the WLAN chipsets
+> used in Qualcomm systems were connected to the Root Port in a
+> non-standard way using their own connectors.
 
+This is kind of hand-wavy.  I don't know what a non-standard connector
+has to do with this.  I assume there's still a PCIe link from Root
+Port to WLAN, and there's still a PERST# signal to the WLAN device and
+a Root Port GPIO that asserts/deasserts it.
+
+> This requires specific power sequencing mechanisms for controlling
+> the WLAN chipsets. So the pwrctrl framework (CONFIG_PWRCTRL) was
+> introduced to handle these custom and complex power supply
+> requirements for components.
+> 
+> Sooner, we realized that it would be best to let the pwrctrl driver control
+> the supplies to the PCIe slots also. As it will allow us to consolidate all
+> the power supply handling in one place instead of doing it in two. So the
+> CONFIG_PWRCTRL_SLOT driver was introduced, that just parses the Root Port
+> nodes representing slots and controls the standard power supplies like
+> 3.3v, 3.3VAux etc...
+> 
+> However, the control of the PERST# GPIOs was still within the controller
+> drivers like pcie-qcom. So the controller drivers continued to assert/
+> deassert PERST# GPIOs independent of the power supplies to the components.
+> This mostly went unnoticed as the components tolerated this non-standard
+> PERST# assertion/deassertion. But this behavior completely goes against the
+> PCIe Electromechanical specs like CEM, M.2, as these specs enforce strict
+> control of PERST# signal together with the power supplies.
+> 
+> So conform to these specs, allow the pwrctrl core to control PERST# for the
+> slots if the 'reset-gpios' property is specified in the DT bridge nodes.
+> This is achieved by populating the 'pci_host_bridge::perst_assert' callback
+> with qcom_pcie_perst_assert() function, so that the pwrctrl core can
+> control PERST# through this callback.
+> 
+> qcom_pcie_perst_assert() will find the PERST# GPIO descriptor associated
+> with the supplied 'device_node' of the component and asserts/deasserts
+> PERST# as requested by the 'assert' parameter. If PERST# is not found in
+> the supplied node of the component, the function will look for PERST# in
+> the parent node as a fallback. This is needed since PERST# won't be
+> available in the endpoint node as per the DT binding.
+> 
+> Note that the driver still asserts PERST# during the controller
+> initialization as it is needed as per the hardware documentation.
+> 
+> For preserving the backward compatibility with older DTs that still
+> specifies the Root Port resources in the host bridge DT node, the
+> controller driver still controls power supplies and PERST# for them. For
+> those cases, the 'qcom_pcie::legacy_binding' flag will be set and the
+> driver will continue to control PERST# exclusively. If this flag is not
+> set, then the pwrctrl driver will control PERST# through the callback.
 
