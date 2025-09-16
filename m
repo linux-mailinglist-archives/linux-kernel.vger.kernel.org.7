@@ -1,160 +1,179 @@
-Return-Path: <linux-kernel+bounces-818862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78A1B59759
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:19:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E8B59757
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B0A07A88FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B83AB7A86AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED90307AD5;
-	Tue, 16 Sep 2025 13:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2985307AD5;
+	Tue, 16 Sep 2025 13:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ybxI+xpW"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CIdygYf6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8791C2D12ED;
-	Tue, 16 Sep 2025 13:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2C321CA0D;
+	Tue, 16 Sep 2025 13:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028777; cv=none; b=eHrdaZsdy001Lipn1jQhuJlJPGHhn6ml7BgihCcqUo9yVHgsLvqcPpXTqMmGNIjMA7gt0NO6hfS6vk0J7lsvpiBzo9vTLU7bAQp3olyo7EvXg+yYCUEbYWpvJLch9jkUgsfpHqohzXvUoGjvg0xblQE5I60ZforQkKKKR5rit0g=
+	t=1758028765; cv=none; b=iDY/RvmhZIqKv95rMvELdiLt/je4aPxqNcAHZQZw022FoMm5Udja2MuaE30jHlYE6W+OcqUKlopWG7H4KTQsTkX12Vjy6Z6/CJJfbUKZLS5PUimcvL7aMT9s5a1hVlkPr2CKCxKwhYTeKnSNHNC/5uqSAkSzBf0JojWJ3D9drtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028777; c=relaxed/simple;
-	bh=GCqjILCeKyNT+/Gxo+qzeEjfs57+lZtCCEoAb15K/7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ih8SviGKnZCRWCOR2YaqzDisYM+69+rriYbwF5MiUwQX7vzOYqT8/XHe4vMlGzaHrWIFbnPfWgP3dRw+vqzncy8PtrX5Kc2v3tbDjU2kvI2PV8b+ErqJ80fKGc/CY9Y3BLVQX1xZAOnHDvg9/MXPX4T/pBnc5m3vSqREiHm/AN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ybxI+xpW; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1758028765; c=relaxed/simple;
+	bh=swAmRyPgI9YuMQ+XtIYDsJM9z8XrO81CMDQ/sQeaOnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nbp+SFgzeMde8CRtfCI5u+1LQb4tUKtvOEnbH/2sp/JveX2/hA7v1PpdpgEKofXyHV+qoL8lf9it5ptTFYvjswEOTKmmmxSXQ5rEbXQi3yEMYamviHlZcpKphXCZqQHQEbuh6k2jZyJwlFiZ6lsddr44fmK1UiAHImRNUHik8iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CIdygYf6; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758028775; x=1789564775;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GCqjILCeKyNT+/Gxo+qzeEjfs57+lZtCCEoAb15K/7Q=;
-  b=ybxI+xpW9lD5nmPqkFk52cvYGt5usqRZOJrZwrv8tudvOV/RpVyFlPpH
-   TrNhJGwshIgZqF/v8OzVfk3LxkGEXABXnWQ2cqajjorJ5YM37EtURTBxW
-   bZiJOBx4X2SFb/R49uCmKezytPV78dM5+EqK/KHQXB/chUzwrJ3ESQsTT
-   cFJReoIxA4H8RbMA73+70HWJge14ZXtA9VtdApJc+lVqXT+mFj/kxWemF
-   D482oxle5hU0lfhmuzR77mMFFP/11do/ZVLxtn9EjXSDvet2WuXeTtBJy
-   r0kB85ONcq1CJQlxcxWYbDP4J31uxd8pHNa3G0kdAysn7kCxc+WI+kS8g
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758028764; x=1789564764;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=swAmRyPgI9YuMQ+XtIYDsJM9z8XrO81CMDQ/sQeaOnM=;
+  b=CIdygYf61iiwfZTemSkG0lhq1iZXUBwLorpPNJr+Gbu4h8i8oaw+5USs
+   sL9awe4A6TGy1MzcpCiFGnNFyk0ss9hKU/R1xfbGkbEtMW2wvWTvnV9Qq
+   rx42YBF8+6vL0zQpd6/bUhi22gH1wVvKjE0h4anLoi1NHzRSYbuqkzPhP
+   Dg+Lepi95CQARYEMOg6zhnxQWk7CN36iknA1HdleIBBnSjUAlXnLiyzMO
+   lPtZW93XK7wRXHRA2sxcGTbndG2t/rFBcX2hC30CEzBpaOgeo3i7x+Vpt
+   ehj4zdVZJemm4DEu7ppog9+Me0pYX2J4DDqYFDVgm1QeXPjH8tUc0GGkx
    w==;
-X-CSE-ConnectionGUID: V/byoQjpSTeHg7RE9/pKtQ==
-X-CSE-MsgGUID: IY9Gcb90RGOMWsNzTufLXQ==
+X-CSE-ConnectionGUID: Cas7J+ZFSQ6JuOlTxpg+bA==
+X-CSE-MsgGUID: RxRbDKQVTS6uasvPC2mS/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60176310"
 X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
-   d="scan'208";a="52399102"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 16 Sep 2025 06:19:28 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 16 Sep 2025 06:19:15 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Tue, 16 Sep 2025 06:19:12 -0700
-Message-ID: <0695ca65-536c-48d9-ad1b-49452e67a6f9@microchip.com>
-Date: Tue, 16 Sep 2025 15:19:11 +0200
+   d="scan'208";a="60176310"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:19:23 -0700
+X-CSE-ConnectionGUID: VE4/7CRCTP6XyoIlCANxaA==
+X-CSE-MsgGUID: qwSxdJc8SZinMZtzgD2/+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; 
+   d="scan'208";a="205722716"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 06:19:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uyVaW-00000003XBG-4AZF;
+	Tue, 16 Sep 2025 16:19:16 +0300
+Date: Tue, 16 Sep 2025 16:19:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH 4/4] regulator: ltm8054: Support output current limit
+ control
+Message-ID: <aMlj1OcfH8r9Zz6x@smile.fi.intel.com>
+References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
+ <20250916-ltm8054-driver-v1-4-fd4e781d33b9@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] ARM: microchip: clk for 6.18 #1
-To: <sboyd@kernel.org>, <mturquette@baylibre.com>,
-	<linux-clk@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, SoC Team
-	<soc@kernel.org>
-CC: Linux Kernel list <linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Conor Dooley <conor@kernel.org>, Claudiu
- Beznea <claudiu.beznea@tuxon.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<llvm@lists.linux.dev>, kbuild test robot <lkp@intel.com>
-References: <20250916080545.9310-1-nicolas.ferre@microchip.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250916080545.9310-1-nicolas.ferre@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-ltm8054-driver-v1-4-fd4e781d33b9@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 16/09/2025 at 10:05, nicolas.ferre@microchip.com wrote:
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Tue, Sep 16, 2025 at 12:24:09PM +0200, Romain Gantois wrote:
+> The LTM8054 supports setting a fixed output current limit using a sense
+> resistor connected to a dedicated pin. This limit can then be lowered
+> dynamically by varying the voltage level of the CTL pin.
 > 
-> Dear clock maintainers,
-> 
-> Here are the first clk changes for 6.18.
-> I don't think they have conflict with changes for the deprecated round_rate()
-> to determine_rate() topic.
-> They are in linux-next for a couple of days.
+> Support controlling the LTM8054's output current limit.
 
-But... this series depends on this patch:
-https://lore.kernel.org/r/20250827145427.46819-4-nicolas.ferre@microchip.com
+...
 
-Which will be part of a pull-request to-be-sent soon to arm-soc (which 
-is part of linux-next, so the build error doesn't appear there).
+> in microvolts
 
-Once the pull-request is done, do you prefer that I do an immutable 
-branch between CLK and ARM, that I queue this at91 PM patch into the clk 
-pull-request or that everything goes through arm-soc?
+Yeah, using _mV postfix will make it visible that those are in micro-Volts.
 
-Thanks to the kbuild test bot.
-Regards,
-   Nicolas
+...
 
-> Please pull. Thanks, best regards,
->    Nicolas
-> 
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-> 
->    Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-> 
-> are available in the Git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.18
-> 
-> for you to fetch changes up to e3130c2a9a0c8e549e044e659be6f762a1b1f725:
-> 
->    ARM: at91: remove default values for PMC_PLL_ACR (2025-09-15 16:24:25 +0200)
-> 
-> ----------------------------------------------------------------
-> Microchip clock updates for v6.18
-> 
-> This update includes:
-> - add one clock for sam9x75
-> - new meaning for MCR register field in clk-master
-> - use force-write to PLL update register to ensure
->    reliable programming sequence
-> - update Analog Control Register (ACR) management to accommodate
->    differences across SoCs
-> 
-> ----------------------------------------------------------------
-> Balamanikandan Gunasundar (1):
->        clk: at91: sam9x7: Add peripheral clock id for pmecc
-> 
-> Cristian Birsan (2):
->        clk: at91: add ACR in all PLL settings
->        ARM: at91: remove default values for PMC_PLL_ACR
-> 
-> Nicolas Ferre (1):
->        clk: at91: clk-sam9x60-pll: force write to PLL_UPDT register
-> 
-> Ryan Wanner (1):
->        clk: at91: clk-master: Add check for divide by 3
-> 
->   drivers/clk/at91/clk-master.c      |  3 ++
->   drivers/clk/at91/clk-sam9x60-pll.c | 82 +++++++++++++++++------------------
->   drivers/clk/at91/pmc.h             |  1 +
->   drivers/clk/at91/sam9x60.c         |  2 +
->   drivers/clk/at91/sam9x7.c          |  6 +++
->   drivers/clk/at91/sama7d65.c        |  4 ++
->   drivers/clk/at91/sama7g5.c         |  2 +
->   include/linux/clk/at91_pmc.h       |  2 -
->   8 files changed, 59 insertions(+), 43 deletions(-)
-> 
+> +static int ltm8054_set_current_limit(struct regulator_dev *rdev, int min_uA, int max_uA)
+> +{
+> +	struct ltm8054_priv *priv = rdev_get_drvdata(rdev);
+> +	u64 vdac_uV;
+> +
+> +	min_uA = clamp_t(int, min_uA, priv->min_uA, priv->max_uA);
+> +
+> +	/* adjusted current limit = Rsense current limit * CTL pin voltage / max CTL pin voltage */
+> +	vdac_uV = (u64)min_uA * LTM8054_MAX_CTL_V;
+> +	do_div(vdac_uV, priv->max_uA);
+> +
+> +	dev_dbg(&rdev->dev,
+> +		"Setting current limit to %duA, CTL pin to %duV\n", min_uA, (int)vdac_uV);
+
+Why casting?
+
+> +	/* Standard IIO voltage unit is mV, scale accordingly. */
+> +	return iio_write_channel_processed_scale(priv->ctl_dac, vdac_uV, 1000);
+> +}
+
+...
+
+> +	ret = of_property_read_u32(np, "lltc,iout-rsense-micro-ohms", &rsense);
+
+device_property_read_u32()
+
+> +	if (ret < 0) {
+
+Be consistent with a style, in the previous patch it was 'if (ret)'.
+
+> +		dev_err(dev, "failed to get sense resistor value\n");
+> +		return ret;
+> +	}
+> +
+> +	if (rsense == 0) {
+> +		dev_err(dev, "invalid value zero for sense resistor\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* The maximum output current limit is the one set by the Rsense resistor */
+> +	tmp = 1000000 * (u64)LTM8054_VOUT_IOUT_MAX;
+
+Yo may use MICRO and drop the casting.
+
+> +	do_div(tmp, rsense);
+> +	priv->max_uA = tmp;
+> +
+> +	/* Applying a voltage below LTM8054_MAX_CTL_V on the CTL pin reduces
+> +	 * the output current limit. If this level drops below
+> +	 * LTM8054_MIN_CTL_V the regulator stops switching
+> +	 */
+
+/*
+ * Besides missing period at the end this is not correct multi-line style of
+ * the comments. Use this example.
+ */
+
+> +	tmp = LTM8054_MIN_CTL_V * (u64)priv->max_uA;
+> +	do_div(tmp, (u32)LTM8054_MAX_CTL_V);
+
+Why casting?
+
+> +	priv->min_uA = tmp;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
