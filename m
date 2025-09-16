@@ -1,130 +1,170 @@
-Return-Path: <linux-kernel+bounces-818471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B059DB59231
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D77B59234
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 11:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616FC164BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:29:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF4D18997C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95E229A310;
-	Tue, 16 Sep 2025 09:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DED329A31D;
+	Tue, 16 Sep 2025 09:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Oxq/qRBs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YXX6VCaB"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="GzKxFp5r"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD381F63D9
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 09:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFEB28467B;
+	Tue, 16 Sep 2025 09:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758014957; cv=none; b=tltPX+Bf/Or6wUSDVgU20HgZOtRSmMhWKY9ueFLvZAIr/aNeVe9VlYn7FbxLkRYeXC6XCq//Eir8DGeI7BRx/foXehOIrWlI5AaM6aZHUteWlhCC3tCtirabmI31q19odUZEBVN3yKh8QM67fYG1kKAw081Zljnv3un+MTmIR4g=
+	t=1758014992; cv=none; b=KBoHvTqkvq7Yg6Y8sc+m53Fbh+Mu4pCkbrAoP+ugqHfHlfPJXGFY+BJv3Kc598poCfvqT3AFyJUI6teMYeMI0pDww8nNbX2C2xPmEwz0R+jmKkpXCUfrq6CaR1zubgYrbv9+vDFhMcJiZI1Ft/4Fir1XI78bdYIOLTpbQG7QxBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758014957; c=relaxed/simple;
-	bh=lrcf1n43V1CTv5TKCaC7/1U0gBUdGPDpYdmj/r20YSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQTRKZjUY3S9exMHFjNh5e8UYkIb44kk8f8DEIJBlXm0s4nanoPH6LjQMwinpYr4CgmWS3z5IlQ72kqGaIA630bRJpjqc5lqoWmUfWP2RCBfKCimMzdT0CLAaQMc7O3z/nsAcp5mpptvsg6Z0F+G636HOqJu+rLtXpeQsSSuAk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Oxq/qRBs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YXX6VCaB; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 92C2BEC02A4;
-	Tue, 16 Sep 2025 05:29:14 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 16 Sep 2025 05:29:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1758014954; x=
-	1758101354; bh=5RahN1nKreb/kWvqsVS3VXXptJiVPO4DE4jLNfb+LCo=; b=O
-	xq/qRBsbLho52vgHeWVbG2UJWCayG7TLcwZHKz5S1S5pGQwQtx4Du8OVrtA56b1J
-	RZXL+tohI5GYmR60L7dXKVvgpn18OqOiWPlKGnfohAKtUWtpwpfwTpUehYvPptXx
-	NIPX1fxa8tUFvvFPSQ1inI6CfSbne3jLW9RCoNpFOkBE71EFmG8VOz2GheqvF6nB
-	sLRp4SEtCepRN/dE6R9IagOJixgRF4CeB20ZUrmHxD9Py/oZCLKThxPhRwbiZVOE
-	vlQ0aeBtzSCY1ah2m4a+qZt0xugn5MuySnMxMiW9XwQfwDMvBliD2nCy+wDw5X4R
-	Rp3U+YRPWNVXzr7e/uj8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758014954; x=1758101354; bh=5RahN1nKreb/kWvqsVS3VXXptJiVPO4DE4j
-	LNfb+LCo=; b=YXX6VCaBKueNu/Lsxgj0HauU9xiScWgLahxrR2WqlgF15ymBnlj
-	G+44ldfKUVHRL0zT/2LrWUmTGWX6wHdwJ8qhpBU7gYT50Iu3NeOvxCzrlCgpo9e4
-	n6/Y97VLbVSLWNMlA6E3S6gSuDPQK6I0jXJ9SmsKuBmfCS2CbT+NrDkV1o/qancL
-	911hS8E2HK7kEMdfDve3sZ1zRisRB/W94p0pNj7afPVr6x5LPp9mtsB2mVVhLyjU
-	n1qzcrNb3P8gGXP7XMQrliOpk2u0Ib08IofsCKCunc9wO3PysjfeSlD2bKsSNMMH
-	jAREwwiJwUyplZu1JJJIYYD1gjgjOaMwHhA==
-X-ME-Sender: <xms:6S3JaGwmOnh-AqDdFuT3whhLqr0u6ajgMukZckrk-FWMusBEu0h3zg>
-    <xme:6S3JaEqKSWbTUjEoqu7lJ6JXhCxs_L1vXgPT6urzr5-HpMquh_hM7O4uzJkMFgh0Z
-    In9Xf9-zwp0bwsOG-w>
-X-ME-Received: <xmr:6S3JaBlfWUHLtTVTa6H0PR4C7hyA-Ou3IOm9or1qPfXSgLkfGxWvZ5HY8FjWBQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegtddvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
-    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
-    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfedt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlrghntggvrdihrghngheslhhinh
-    hugidruggvvhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphht
-    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
-    epuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhorhgvnhiiohdrshht
-    ohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepiihihiesnhhvihguihgrrd
-    gtohhmpdhrtghpthhtohepsggrohhlihhnrdifrghngheslhhinhhugidrrghlihgsrggs
-    rgdrtghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtoh
-    hmpdhrtghpthhtohepnhhprggthhgvsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:6S3JaPqeSgPOCfaX2QbBr8B5U-EEHZGMHYEZHCK4dEwfBpdLxTLn7w>
-    <xmx:6S3JaKZVhQ2Kj8EpSlxkWZkBEKThm7uZ8qajDh96BqObdZZ5_KHEtA>
-    <xmx:6S3JaFHLhaNsFzBVAupFxxPpiwbn3BLueHfVyXX3nNVKHkbf2UkuZw>
-    <xmx:6S3JaKzt7MYYHCompAFtPR0V_pjgr-igjGoObeIFdSElYa8LtDIJig>
-    <xmx:6i3JaMNL22lJiUEyjS6wpOSMECdzy-s97p_RkvSvF9f9vPc1UH8sA0jW>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 16 Sep 2025 05:29:13 -0400 (EDT)
-Date: Tue, 16 Sep 2025 10:29:11 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, 
-	david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH mm-new 1/3] mm/khugepaged: skip unsuitable VMAs earlier
- in khugepaged_scan_mm_slot()
-Message-ID: <ol447ofo44vwtyfwg3zrdtcdlkfzzmx4rre6qhyotmwvecnec4@usa3nonuk2sn>
-References: <20250914143547.27687-1-lance.yang@linux.dev>
- <20250914143547.27687-2-lance.yang@linux.dev>
- <bc86d5f7-5b23-14fb-0365-b47f5a6f13c9@google.com>
- <a0ec4014-384b-4c04-bf0b-777c989eabcb@linux.dev>
+	s=arc-20240116; t=1758014992; c=relaxed/simple;
+	bh=pN3BP6YuPc8dinCC142EZnQ6btd+OPo8nyHYWbARw3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fbZ8bNVB/+KDdytKvB4XKXbvBssvyA0DrfMlMHVlKLitSSua7Pj9RvcocKy2ikAKSHCARruMInilbisC7EI7813rt1qig6OKGCjU8clQpEkAo2pP0RQBW7h4VznPp7UTSWlXG/SbtdVWbpKC1B2eh/XdEjhCePiJxdncQ7aGcao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=GzKxFp5r; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id D5E15534076E;
+	Tue, 16 Sep 2025 11:29:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1758014985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nImdRmsvWqLFfWBLK4h18lVd6Gvsyn5jqNa6GLW2IIM=;
+	b=GzKxFp5rNVxZL6RFWLGzNiRy4EFM9lxYUOd4J2Z54J4m0bvmNcn2sPHXBi7MI/L6E/j6lC
+	Xvzaxr1XXlwj7W5GjzzTqeb2MU3lGSwol3sre/DbAI32ElGSgeu4qXTMfASvuqFaLT5tgW
+	ADpw/ohIh4dU5BL5beMY3CZv4BWzbRg=
+Message-ID: <b223a48e-952c-4825-bf82-e8922434e3c1@ixit.cz>
+Date: Tue, 16 Sep 2025 11:29:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0ec4014-384b-4c04-bf0b-777c989eabcb@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v5 0/7] Input: synaptics-rmi4 - add quirks for
+ third party touchscreen controllers
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+ Vincent Huang <vincent.huang@tw.synaptics.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Casey Connolly <casey.connolly@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250731-synaptics-rmi4-v5-0-cd0d87d34afa@ixit.cz>
+ <aggtzmlxvj4so6t7trlo5ianjcbq2jrsodv6hlkhtrvgl2qpqj@gflvqocxjckb>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <aggtzmlxvj4so6t7trlo5ianjcbq2jrsodv6hlkhtrvgl2qpqj@gflvqocxjckb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 02:21:26PM +0800, Lance Yang wrote:
-> Users of mlock() expect low and predictable latency. THP collapse is a
-> heavy operation that introduces exactly the kind of unpredictable delays
-> they want to avoid. It has to unmap PTEs, copy data from the small folios
-> to a new THP, and then remap the THP back to the PMD ;)
+On 07/08/2025 06:29, Dmitry Torokhov wrote:
+> Hi David,
+> 
+> On Thu, Jul 31, 2025 at 11:06:50PM +0200, David Heidelberg via B4 Relay wrote:
+>> With the growing popularity of running upstream Linux on mobile devices,
+>> we're beginning to run into more and more edgecases. The OnePlus 6 is a
+>> fairly well supported 2018 era smartphone, selling over a million units
+>> in it's first 22 days. With this level of popularity, it's almost
+>> inevitable that we get third party replacement displays, and as a
+>> result, replacement touchscreen controllers.
+>>
+>> The OnePlus 6 shipped with an extremely usecase specific touchscreen
+>> driver, it implemented only the bare minimum parts of the highly generic
+>> rmi4 protocol, instead hardcoding most of the register addresses.
+>>
+>> As a result, the third party touchscreen controllers that are often
+>> found in replacement screens, implement only the registers that the
+>> downstream driver reads from. They additionally have other restrictions
+>> such as heavy penalties on unaligned reads.
+>>
+>> This series attempts to implement the necessary workaround to support
+>> some of these chips with the rmi4 driver. Although it's worth noting
+>> that at the time of writing there are other unofficial controllers in
+>> the wild that don't work even with these patches.
+>>
+>> We have been shipping these patches in postmarketOS for the last several
+>> years, and they are known to not cause any regressions on the OnePlus
+>> 6/6T (with the official Synaptics controller), however I don't own any
+>> other rmi4 hardware to further validate this.
+> 
+> Sorry for not handling the patches in the last few submissions. I am
+> planning on addressing them once merge window opens.
 
-Generally, we allow minor page faults into mlocked VMAs and avoid major.
-This is minor page fault territory in my view.
+Hello Dmitry, kind reminder about the patch series as the window is open.
 
-Also it is very similar to what compaction does and we allow compaction
-of mlocked VMA by default, unless sysctl vm.compact_unevictable_allowed
-is set to zero.
+If you'll find a time, there is also one small, but important patchset 
+improving the Linux phones/tablets experience here:
+
+https://patchwork.kernel.org/project/linux-input/list/?series=987495&state=*&archive=both
+
+David
+
+> 
+> Thanks.
+> 
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+David Heidelberg
+
 
