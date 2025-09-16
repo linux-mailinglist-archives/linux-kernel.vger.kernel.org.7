@@ -1,190 +1,270 @@
-Return-Path: <linux-kernel+bounces-819378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75C5B59FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:44:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A51B59FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 19:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1E52A6485
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541AE1C00EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 17:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932292FFF9E;
-	Tue, 16 Sep 2025 17:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXKiqZOr"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF3432D5BC;
+	Tue, 16 Sep 2025 17:46:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A87332D5D3
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04133189
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 17:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758044640; cv=none; b=P1uKKIxt+rFVjzwo+QSCfjviivp+K/mPL4JTlxZ9lK3CFfA1X2yduJ+aTQxUJf7pYZJdxgS6tGYSSPdoKesJqFuGKZG+OEMVWR+h0m0y286hQ9Cb75qkrYnakgrnUeYgA+9+5TE2ua7nSwTJsTsRdLYixom5vkoBm7GwyFQR1B0=
+	t=1758044791; cv=none; b=tNu/SzNyNHcIdg77hW7wUQftnFO7h2H9r2vnkjDFxJ7qJlcVJWvCXQjR8cJiM2lHJ8JUAveOFSVe6bCHjgNFGs/MjHuLI/oKpzkA5yNs3yJcbOcCzJN/WpMEX+Av6ztIhu0Xk2cWFxOm9L5xGBVA0PazqAxW2ukKY/ZkKslY2V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758044640; c=relaxed/simple;
-	bh=mKgs+n56LLSQMG9QE/M+UFcraHvC1S2nEabKpRewBlM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iczcU0ajwxPNiRo0mP19VMzX+RXUyxP9unyNGnLwRmGKiSQaiHUA1BeQ87Qer+HgH9h6azVAso8eVQSTM6k5WUKtMa6VfbUJXCaUuQ3OiQ0cR1/j38aBpwlN8DWgsv9auC7KddchBDpGr/CuiJiCz1wEC73tf9hTUZT+aa8UHxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXKiqZOr; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b0e7bc49263so430933866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758044638; x=1758649438; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yb9yeYyn+7ficz6XHyvPVxnyEFz7ITRXLsOtF/kZ6LU=;
-        b=VXKiqZOrGkQK9w9h/pbxSGdEPVdHf7E8rwR09aaD+BwqiQdsoKxCXD7OtXGUUy1PRC
-         BQMFZx84ZsdBk+BUAeEUAWYs8jis4+e73ndT07mVuPV+wQx8wKNDe1akcdwu8osnj9Sk
-         ajbdAx7U2gEoAQDaw2Dkj23uR2EiZIAaNa6DSvZLHy82FTUzthLLJLuQdkkYwU83IEw/
-         TGF4oVTUKQOPC1L9lWlAaABNmah2my+kc1iSg271iDSBzyKkuSInu+J5Hd72auKUFW4F
-         rzWXGDP5JUiNvMAySMEFZ9rKsitnoXYRjop74WWxeu/8fp1VtviIRBUCCcnTj7s/venB
-         Etrg==
+	s=arc-20240116; t=1758044791; c=relaxed/simple;
+	bh=ar5Z9dOHT9gL5CoSq+6v+LTh2iSvJbYGztZTmEpBqtA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nh3EOAFoqVYTF0yf3u8RcxXv8L5Fezr285IG2MbIgMK3m5mn6F9hfLHof5mMtpqNxSaJo6A/41t2Qtod1sbtYBIXsdgDzctE6xRccXFXe+k5mLOaD/sl9BZHkSaEdCW3LbDl0n5Xdm0pBesQl56letQH27J0cGOEZe59fT9RfXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-88c2ff21d59so1437782039f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 10:46:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758044638; x=1758649438;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yb9yeYyn+7ficz6XHyvPVxnyEFz7ITRXLsOtF/kZ6LU=;
-        b=lOmjxKCCKqtgCyXlSJ8YeVGHmQ+WfWRkp4l2AuN9Q9qlA7e2uWP2F/w5Qmos+JAAFa
-         k9AcQEuLaOuIQhGUbAlHtdUVnjT1Pz58j2GWQ8vpIneOV+xSMnyJ7i3WjNMmswkj7Yop
-         8mzduYX3vAAVfu7D1CqXHwWrR8eUDD20fMXqfXvGyzqWPVnqwS53Sp5AAimBTw45ty5N
-         jhaWv0dPIz84rC7p01NtcuDZfystsr0JW/KwQplocqoYnk9rWr6it+Hg/T1U51mwbYY2
-         dotoWS1uHm3UtZkmUOl/k1Pw/Rygy2gIx+A5qs73CjKpaaZC38gMsDSuo8HPp6jMyXnj
-         IK0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXgb7dvZcAzCxUopOpB0TMp0sI0tvfciXCXO8ZFwrvOHDH04eOSIjujzJlzqK63fgaEVXEsvAy/iEQp0lI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLLyhDapNf5v0r3MnSIhFRkue3KbKnEoOq/5J2SHq3frMnz5nP
-	NDE6rHzCJ821rSffEnsuOpb3ITJvM59XkBj918qjAqLCVst+pJRjEZZP3ae1DA==
-X-Gm-Gg: ASbGncuG6qSlRM8AE0CYPDaVLA2mb4gkgZ8jF2iMbm3wvhkEHMe3F8WAEQsbv9Tlk9Y
-	nh1YilfQw+mrg18BN8zFwwydnYBYB5hfFlrEx4AJ+3ZgUAc31nEC2PknG7yznwpzx7c7OQQLTbL
-	VK6/U8Eri20cyXVHCsl1agVtz88IyUnZnO6bUkbN9yxokeig0YwzkNdVvTgc4Cf2Z9sLYJdhMjT
-	rzGW2KzZkpj4UZmqjMuFjr9UTYiyUIU0AXzM9qlnyA9jNXhOS9z0OgjBvHDnpyJ3Y0i/tw+4SQT
-	ztqXNrbyG0jw0ZETyJlLaOyIPb1H/cUAh4VpwYj7rBIb6z6YDZrXxPJVjoWgvP6ze8opU3k9Ge3
-	jG7IgimSb0L9fmFFaHVKV8xlciYBfUhOYUjYMMmhpnijhg/VfCo7H
-X-Google-Smtp-Source: AGHT+IH5l1Uw6AXpT3WeVxFHCThmWlH8lQJghDeYiJ7Wq3FJZCatyS/+o80jJ1zg9OagGHYLuLMNiw==
-X-Received: by 2002:a17:906:d185:b0:b07:de95:1c70 with SMTP id a640c23a62f3a-b07de9543bdmr1258795266b.31.1758044637559;
-        Tue, 16 Sep 2025 10:43:57 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-b07b30da327sm1212806366b.11.2025.09.16.10.43.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Sep 2025 10:43:57 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Tue, 16 Sep 2025 19:43:46 +0200
-Subject: [PATCH] spi: spi-qpic-snand: simplify clock handling by using
- devm_clk_get_enabled()
+        d=1e100.net; s=20230601; t=1758044789; x=1758649589;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nYTeb9V7Le9OUpTxmFIt1ImSEtJwkUWUe+26WBC7WwY=;
+        b=Me5T8S9Q3eKQYq81eqDK/TbO/G7WMMdwKJcJkq0rT2hPRG5Sowp8Ch0TaaNEjpaFt/
+         6QLxbbjUKjl50yY9ztOv21VzXT6ieZsFxduM9qi45SRbDpGpIGOQ5LxT4EEouDlrzatV
+         XOoXApdShJWe90UZmZBZloQPXBmr/Gk8t+FRSuD5xm7VGsZduf2agmbxnLigzIGrCdAq
+         IswBPt3EkDQnvH/A0mqZxZyCkSt7ueST6DgSd6GLgD68jzRJy22GpA44ezItpGlZIZuS
+         mgIuSfCdcHAegP0yMF0DfkryveILWWaO0DTUqPvpTwaa8rSBK79UJ7bM5tgWFGUEqj7R
+         ZI2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWDNcWsbX6hgMP863jnMrMct6M+KR51xuNV9xCBzo4tjd/+gnythl8OFU8oBx7asUksm3q493iDN0lsLLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCs1utJM7ogEOmt/c30MvkwbYjnxC+5lSBvSfS+yN1iupq5LcQ
+	OrCWfaIpLWt0/paES/Dod3ERks23z5bEzHGOlBOseECzrv5URZzgooHjPFO5cAL01TC8PF/eS9c
+	PPVcg9Y+KK22QyNEXApzuo4J4NW/F9E7xcOJa0wsRpU1RuCT3xLmpYRkAs9w=
+X-Google-Smtp-Source: AGHT+IFMfBnSKA6vLmz67eaBr8NoM/DhYaF84T0IkqA8UvQ46RH8mwwBYijoIRdebWW3bhuQ2dO+mvIfOl5iU1rFE0M11n5KXz/B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250916-qpic-snand-devm_clk_get_enabled-v1-1-09953493b7f1@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANGhyWgC/y3NQQrCMBCF4auUWTuQBKzUq4iEJDOtg3Vsk1qE0
- rsb1OX3Fu/foHAWLnBuNsi8SpGnVthDA+kWdGAUqgZn3NF01uA8ScKiQQmJ14dP490PvHjWEEc
- mbOPJho7a3sUI9WXK3Mv7W7hcf848v2po+Y/7/gGmNTmghgAAAA==
-X-Change-ID: 20250910-qpic-snand-devm_clk_get_enabled-6b71a9d6f2bb
-To: Mark Brown <broonie@kernel.org>
-Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Md Sadre Alam <quic_mdalam@quicinc.com>, linux-spi@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+X-Received: by 2002:a05:6e02:1aa2:b0:41d:1dbf:268d with SMTP id
+ e9e14a558f8ab-420a42687dbmr166597435ab.24.1758044789108; Tue, 16 Sep 2025
+ 10:46:29 -0700 (PDT)
+Date: Tue, 16 Sep 2025 10:46:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c9a275.050a0220.3c6139.0e62.GAE@google.com>
+Subject: [syzbot] [net?] KASAN: slab-use-after-free Read in napi_gro_frags (2)
+From: syzbot <syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, hawk@kernel.org, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	lorenzo@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, toke@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-The devm_clk_get_enabled() function prepares and enables the
-particular clock, which then automatically gets disabled and
-unprepared on probe failure and on device removal.
+Hello,
 
-Use that function instead of devm_clk_get() and remove the
-clk_prepare_enable()/clk_disable_unprepare() calls in order
-to simplify the code.
+syzbot found the following issue on:
 
-This also ensures that the clocks are handled in the correct
-order during device removal.
+HEAD commit:    f3883b1ea5a8 selftests: net: move netlink-dumps back to pr..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=156f4642580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a6c33a7db07dbea2
+dashboard link: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1274d562580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1674d562580000
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0ee19c85bfb5/disk-f3883b1e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e4e07abc0c5d/vmlinux-f3883b1e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d4ed4e8369cf/bzImage-f3883b1e.xz
+
+The issue was bisected to:
+
+commit e6d5dbdd20aa6a86974af51deb9414cd2e7794cb
+Author: Lorenzo Bianconi <lorenzo@kernel.org>
+Date:   Mon Feb 12 09:50:56 2024 +0000
+
+    xdp: add multi-buff support for xdp running in generic mode
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17377562580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14b77562580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b77562580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com
+Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in generic mode")
+
+syz.0.17 uses obsolete (PF_INET,SOCK_PACKET)
+==================================================================
+BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
+BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
+BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
+Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
+
+CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
+ napi_frags_skb net/core/gro.c:723 [inline]
+ napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
+ tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
+ tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5c9/0xb30 fs/read_write.c:686
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2f9b98ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffe90190e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f2f9bbc5fa0 RCX: 00007f2f9b98ebe9
+RDX: 000000000000004b RSI: 0000200000000340 RDI: 0000000000000003
+RBP: 00007f2f9ba11e19 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f2f9bbc5fa0 R14: 00007f2f9bbc5fa0 R15: 0000000000000003
+ </TASK>
+
+Allocated by task 6079:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:330 [inline]
+ __kasan_mempool_unpoison_object+0xa0/0x170 mm/kasan/common.c:558
+ kasan_mempool_unpoison_object include/linux/kasan.h:388 [inline]
+ napi_skb_cache_get+0x37b/0x6d0 net/core/skbuff.c:295
+ __alloc_skb+0x11e/0x2d0 net/core/skbuff.c:657
+ napi_alloc_skb+0x84/0x7d0 net/core/skbuff.c:811
+ napi_get_frags+0x69/0x140 net/core/gro.c:673
+ tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
+ tun_get_user+0x77c/0x3e20 drivers/net/tun.c:1784
+ tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5c9/0xb30 fs/read_write.c:686
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 6079:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2422 [inline]
+ slab_free mm/slub.c:4695 [inline]
+ kmem_cache_free+0x18f/0x400 mm/slub.c:4797
+ skb_pp_cow_data+0xdd8/0x13e0 net/core/skbuff.c:969
+ netif_skb_check_for_xdp net/core/dev.c:5390 [inline]
+ netif_receive_generic_xdp net/core/dev.c:5431 [inline]
+ do_xdp_generic+0x699/0x11a0 net/core/dev.c:5499
+ tun_get_user+0x2523/0x3e20 drivers/net/tun.c:1872
+ tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x5c9/0xb30 fs/read_write.c:686
+ ksys_write+0x145/0x250 fs/read_write.c:738
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802ef22b40
+ which belongs to the cache skbuff_head_cache of size 240
+The buggy address is located 216 bytes inside of
+ freed 240-byte region [ffff88802ef22b40, ffff88802ef22c30)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2ef22
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801e29ca00 ffffea0000a31b80 dead000000000004
+raw: 0000000000000000 00000000000c000c 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 19816261324, free_ts 18915708978
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2660
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
+ __slab_alloc mm/slub.c:3992 [inline]
+ __slab_alloc_node mm/slub.c:4067 [inline]
+ slab_alloc_node mm/slub.c:4228 [inline]
+ kmem_cache_alloc_node_noprof+0x280/0x3c0 mm/slub.c:4292
+ __alloc_skb+0x112/0x2d0 net/core/skbuff.c:659
+ alloc_skb include/linux/skbuff.h:1377 [inline]
+ nlmsg_new include/net/netlink.h:1055 [inline]
+ rtmsg_ifinfo_build_skb+0x84/0x260 net/core/rtnetlink.c:4392
+ rtmsg_ifinfo_event net/core/rtnetlink.c:4434 [inline]
+ rtmsg_ifinfo+0x8c/0x1a0 net/core/rtnetlink.c:4443
+ register_netdevice+0x1712/0x1ae0 net/core/dev.c:11307
+ register_netdev+0x40/0x60 net/core/dev.c:11371
+ nr_proto_init+0x145/0x710 net/netrom/af_netrom.c:1424
+ do_one_initcall+0x233/0x820 init/main.c:1269
+ do_initcall_level+0x104/0x190 init/main.c:1331
+ do_initcalls+0x59/0xa0 init/main.c:1347
+page last free pid 920 tgid 920 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ vfree+0x25a/0x400 mm/vmalloc.c:3434
+ delayed_vfree_work+0x55/0x80 mm/vmalloc.c:3353
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff88802ef22b00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ ffff88802ef22b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88802ef22c00: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc fc
+                            ^
+ ffff88802ef22c80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802ef22d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc
+==================================================================
+
+
 ---
- drivers/spi/spi-qpic-snand.c | 29 +++--------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
-index 28755dbce399d836ab6209e44f02f05532386344..58ceea1ea8fb4e02b4c9989a38d1ea38520d88b0 100644
---- a/drivers/spi/spi-qpic-snand.c
-+++ b/drivers/spi/spi-qpic-snand.c
-@@ -1542,15 +1542,15 @@ static int qcom_spi_probe(struct platform_device *pdev)
- 
- 	snandc->props = dev_data;
- 
--	snandc->core_clk = devm_clk_get(dev, "core");
-+	snandc->core_clk = devm_clk_get_enabled(dev, "core");
- 	if (IS_ERR(snandc->core_clk))
- 		return PTR_ERR(snandc->core_clk);
- 
--	snandc->aon_clk = devm_clk_get(dev, "aon");
-+	snandc->aon_clk = devm_clk_get_enabled(dev, "aon");
- 	if (IS_ERR(snandc->aon_clk))
- 		return PTR_ERR(snandc->aon_clk);
- 
--	snandc->qspi->iomacro_clk = devm_clk_get(dev, "iom");
-+	snandc->qspi->iomacro_clk = devm_clk_get_enabled(dev, "iom");
- 	if (IS_ERR(snandc->qspi->iomacro_clk))
- 		return PTR_ERR(snandc->qspi->iomacro_clk);
- 
-@@ -1564,18 +1564,6 @@ static int qcom_spi_probe(struct platform_device *pdev)
- 	if (dma_mapping_error(dev, snandc->base_dma))
- 		return -ENXIO;
- 
--	ret = clk_prepare_enable(snandc->core_clk);
--	if (ret)
--		goto err_dis_core_clk;
--
--	ret = clk_prepare_enable(snandc->aon_clk);
--	if (ret)
--		goto err_dis_aon_clk;
--
--	ret = clk_prepare_enable(snandc->qspi->iomacro_clk);
--	if (ret)
--		goto err_dis_iom_clk;
--
- 	ret = qcom_nandc_alloc(snandc);
- 	if (ret)
- 		goto err_snand_alloc;
-@@ -1616,12 +1604,6 @@ static int qcom_spi_probe(struct platform_device *pdev)
- err_spi_init:
- 	qcom_nandc_unalloc(snandc);
- err_snand_alloc:
--	clk_disable_unprepare(snandc->qspi->iomacro_clk);
--err_dis_iom_clk:
--	clk_disable_unprepare(snandc->aon_clk);
--err_dis_aon_clk:
--	clk_disable_unprepare(snandc->core_clk);
--err_dis_core_clk:
- 	dma_unmap_resource(dev, res->start, resource_size(res),
- 			   DMA_BIDIRECTIONAL, 0);
- 	return ret;
-@@ -1636,11 +1618,6 @@ static void qcom_spi_remove(struct platform_device *pdev)
- 	spi_unregister_controller(ctlr);
- 	nand_ecc_unregister_on_host_hw_engine(&snandc->qspi->ecc_eng);
- 	qcom_nandc_unalloc(snandc);
--
--	clk_disable_unprepare(snandc->aon_clk);
--	clk_disable_unprepare(snandc->core_clk);
--	clk_disable_unprepare(snandc->qspi->iomacro_clk);
--
- 	dma_unmap_resource(&pdev->dev, snandc->base_dma, resource_size(res),
- 			   DMA_BIDIRECTIONAL, 0);
- }
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
----
-base-commit: b28a55db452edb1d997edee723d8dcbef7f065a3
-change-id: 20250910-qpic-snand-devm_clk_get_enabled-6b71a9d6f2bb
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
