@@ -1,98 +1,125 @@
-Return-Path: <linux-kernel+bounces-818156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C428B58DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDEAB58DA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 06:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F28527851
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:58:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810A11BC6DDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 04:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6D2202F70;
-	Tue, 16 Sep 2025 04:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9RCkOcU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A648823C4ED;
+	Tue, 16 Sep 2025 04:56:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA9935950
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8F821B9DB
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 04:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757998721; cv=none; b=OHZ4WJigadpbnTrLgFvObNpBdR6UnnrDCxCX/bdQDQVuk1jARN1R7ZkuOzTWGjf3id1e9LJGXkjJ7riJ0V0xyyrKCqU8mzFthh0XjyORbnPnnt3teQ2sQFKkttG1p9j0TX7W9+8yh1CjEKEcTrvVvHS218I1ouHj6OdhDneYFL0=
+	t=1757998606; cv=none; b=VL2mAH0TexEf2S65qoidY8FvYCdAbyFJ4RWVhzWuFRE6VcTP/bLegm5iNpmwNAJh/tOMztnP0zB0cP2h1XG7egdW8juUyYxhgrsiTgkV6uJvV3hT2ML8w8IrYN3uQzI4KFBQQAeW+5ydwkPjEcxA8B9qFHLew2vP7RYo7bfr24U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757998721; c=relaxed/simple;
-	bh=mLkW+UHC/cNrrlNRgkQdIRjdrZqLNM29lG0v4DTH+IQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qi5wH866IUp3/JajNpBuLukOwX9yp1mQdfOyt0XLzb62JiJ9/NfWL9T27aphZswVtFsFdGaFMUrpwJ5gI924bRU5HwgKNqFQd2WsoJWXwnme5Q647QJqgike+KNHK3RG4IknVXRZbnHmQ4oSpfMEEb4mRp8jlrwtpAnux3eCy6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9RCkOcU; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757998720; x=1789534720;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mLkW+UHC/cNrrlNRgkQdIRjdrZqLNM29lG0v4DTH+IQ=;
-  b=L9RCkOcU5A/QI/smiu60XNTDdp4KCHcSKfo7ijB3FbYyknWsZCzTTd/W
-   fc4du3HbmlWUoOV7OO3dwWyg93ZADPUrihQyd793tYbZr79mOkQRBHSZE
-   LxaIAbEmRhrr72QBeeYPYoh7+a8LOTKgQFwWTE60f/cruSFeysxXkU0Vp
-   XDUKazSD5LywbuHgRxLRcWAWZOg+MiGBxY6Wqpi9ViJRCdSy9g6Bk+x7j
-   1qgr9/oLk/vMIp6NWnPR2kcwJ5bouqrVA1+3lp3A4YOSeSzKBec5vgQZG
-   eawkBgOw/BYZSKF8tmlpo5zd14MmlGFbaqBQET86y2/dBH9L0vwLv68g7
-   w==;
-X-CSE-ConnectionGUID: 0aBnSr4dTReHcyJKMquifw==
-X-CSE-MsgGUID: jZ2YT/WGS6yRXwS2G/asIg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="59489849"
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="59489849"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 21:58:39 -0700
-X-CSE-ConnectionGUID: x0hWP9bdRIK1qULDo7Yq2w==
-X-CSE-MsgGUID: GVmznKMQSuuc9TlRwIvHTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
-   d="scan'208";a="174382759"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2025 21:58:37 -0700
-Message-ID: <7a1c334d-4fc5-49c5-9e67-b220ea073f81@linux.intel.com>
-Date: Tue, 16 Sep 2025 12:55:48 +0800
+	s=arc-20240116; t=1757998606; c=relaxed/simple;
+	bh=cEellUF89w42MfPZvNg0Pwo5l35x4ka2ztq8ivbFbok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jH7r5/QA4OEjMsH1YAi4sHgygTdL+Dxw98V6Kv51UDpZztqhig42eBSh54ox3e5ny+4zkcFtjmMHZsZM6xnmk150CAqIstiyxL1ImZw9OhPTOZTOlsoTel9yWM21U0Tk7kDVUzzqQbhS8I94GQzDCTCw4ah6C+E0jAgXRE97zJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyNju-00054e-FR; Tue, 16 Sep 2025 06:56:26 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyNjr-001Wy3-0D;
+	Tue, 16 Sep 2025 06:56:23 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uyNjq-00BRnc-2p;
+	Tue, 16 Sep 2025 06:56:22 +0200
+Date: Tue, 16 Sep 2025 06:56:22 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
+	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
+Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
+ ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+Message-ID: <aMjt9iVcNWYf0opD@pengutronix.de>
+References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
+ <20250908124610.2937939-3-o.rempel@pengutronix.de>
+ <20250911193440.1db7c6b4@kernel.org>
+ <aMPw7kUddvGPJCzx@pengutronix.de>
+ <20250912170053.24348da3@kernel.org>
+ <aMfczCuRf0bm2GgQ@pengutronix.de>
+ <20250915080720.17646515@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] iommu/vt-d: Remove LPIG from page group response
- descriptor
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250901053943.1708490-1-baolu.lu@linux.intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250901053943.1708490-1-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250915080720.17646515@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 9/1/25 13:39, Lu Baolu wrote:
-> Bit 66 in the page group response descriptor used to be the LPIG (Last
-> Page in Group), but it was marked as Reserved since Specification 4.0.
-> Remove programming on this bit to make it consistent with the latest
-> specification.
+On Mon, Sep 15, 2025 at 08:07:20AM -0700, Jakub Kicinski wrote:
+> On Mon, 15 Sep 2025 11:30:52 +0200 Oleksij Rempel wrote:
+> > On Fri, Sep 12, 2025 at 05:00:53PM -0700, Jakub Kicinski wrote:
+> > > On Fri, 12 Sep 2025 12:07:42 +0200 Oleksij Rempel wrote:  
+> > > > I would prefer to keep u64 for refresh-rate-ps and num-symbols.
+> > > > 
+> > > > My reasoning comes from comparing the design decisions of today's industrial
+> > > > hardware to the projected needs of upcoming standards like 800 Gbit/s. This
+> > > > analysis shows that future PHYs will require values that exceed the limits of a
+> > > > u32.  
+> > > 
+> > > but u64 may or may not also have some alignment expectations, which uint
+> > > explicitly excludes  
+> > 
+> > just to confirm - if we declare an attribute as type: uint in the YAML
+> > spec, the kernel side can still use nla_put_u64() to send a 64-bit
+> > value, correct? My understanding is that uint is a flexible integer
+> > type, so userspace decoders will accept both 4-byte and 8-byte encodings
+> > transparently.
 > 
-> Existing hardware all treats bit 66 of the page group response descriptor
-> as "ignored", therefore this change doesn't break any existing hardware.
-> 
-> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
-> ---
->   drivers/iommu/intel/iommu.h | 1 -
->   drivers/iommu/intel/prq.c   | 7 ++-----
->   2 files changed, 2 insertions(+), 6 deletions(-)
+> Theoretically, and yes. But why would you use put_u64 and not
+> put_uint() ?
 
-Queued for v6.18.
+rater.. rater.. rater.. (sound of rusty gears slowly moving)
+
+Right, I was thinking of uint as u32. But in NLA, NLA_UINT is handled
+like NLA_U64, so the max is U64_MAX. That clears it up, thanks!
+
+Best Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
