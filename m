@@ -1,168 +1,637 @@
-Return-Path: <linux-kernel+bounces-818860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8B4B59754
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE11B59752
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 15:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9462321A32
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2CFC17E773
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 13:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6866A2D24A1;
-	Tue, 16 Sep 2025 13:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dyKVxWHh"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCC419C553
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 13:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE79A306D37;
+	Tue, 16 Sep 2025 13:18:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D9D21CA0D;
+	Tue, 16 Sep 2025 13:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758028744; cv=none; b=cZ1pHMXQM8mHsvhstKf6Btd+cWwoQY4mwsB/yYU9ibbAJ7ear0Bwb0qwU+GzdeqoJZT/Fx6DRE71KaZvkctnwz1fa63NKjzictxX3ofytwo+qiMQyuEOoY2MsKwKgiz+I9xUZgdArZISMFZ4Mc8F+LT+4kIvif9yEVkoRpha0/E=
+	t=1758028730; cv=none; b=KuGZT1g0tCf0dlJFQ8WNOdhdvGjkYRnPjS504DptuSUJy5NHIn7YascF7lWwi3FVbwFzYnVC3g5sSJOMynHwNf/WdlxiKIlSVrdTCTXCUdZIyDqVxbPDyUwEMNqePJiLuUkXFFLBsbsN/yfqWxbKCL8IpgwONhsxf6ybAgWk+9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758028744; c=relaxed/simple;
-	bh=BkuQcbeHhp5ZKWXkLnecpeDwwZi8XUXwuZXJn+ZkKXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PJYWX0m8ai2HM2KTHM5zmBNPMFzVch6QCZNVQZUoDYcRIati8ZeC6IyFTxBQT9PVXpAbz/IsbHheTEJkJoP5S2Z4BFUCqKAlunhUdoWivz0O+Nbly7AWMpO6Pk9MNHFTh7hKFzSo8Xv90HFba232G4LChOUEMMSDTWvbNmHRDIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dyKVxWHh; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id C4399C8F462;
-	Tue, 16 Sep 2025 13:18:42 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 14D266061E;
-	Tue, 16 Sep 2025 13:18:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A876102F16EE;
-	Tue, 16 Sep 2025 15:18:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758028736; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hZcaro1fx4n72AQLpyGPBESFnCpWzT17H3DCwpOtEXY=;
-	b=dyKVxWHhl1Wixgqwi8S7OiryNCQU1TDd+uXP4raQu5n+kHknr09kNi/wdrZhP3POIhT5Xu
-	81QbBGI35IaD1yniNOt7joSVlo/tm+f/LaqWpO6UF1RpLv10aeyhrRX475H/5xNnrYpCen
-	+VB04xiHy5vDEjrlsUT5I9tmgoeHf6Y9ZKmeUT9sX4Gd1uWfrXrRHCT28aO0TDPzEI+Mfb
-	PvGwCY3x+14g42leiaLh8nb3WQwyrHkjZ+/A8SkQIMAoM00AgjIlkccIARhXCIxHS8Y0HI
-	tmhRbqMw45zAjSTW8u3zfDp/XSVV7hhBSGn+O+SxwyIJDgOxGCNfeZIbMKg6HQ==
-Date: Tue, 16 Sep 2025 15:18:35 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>, Chaoyi Chen
- <chaoyi.chen@rock-chips.com>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 7/9] drm/bridge: remove
- drm_for_each_bridge_in_chain()
-Message-ID: <20250916151835.0c0d2e7b@booty>
-In-Reply-To: <20250916-jade-seal-of-cleaning-5ee2bd@houat>
-References: <20250808-drm-bridge-alloc-getput-for_each_bridge-v2-0-edb6ee81edf1@bootlin.com>
-	<20250808-drm-bridge-alloc-getput-for_each_bridge-v2-7-edb6ee81edf1@bootlin.com>
-	<20250915-optimal-hornet-of-potency-efa54a@penduick>
-	<20250915175805.6e8df6ef@booty>
-	<20250916-jade-seal-of-cleaning-5ee2bd@houat>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758028730; c=relaxed/simple;
+	bh=0NgwJs6NqdqSWURDTVmR+ciKM80vIqAavlLbNimLXp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOMj9yjfyDlg8vbWs+p5a3nugjhqQiLqbDPtbfy+KQZF0DokNjekt3t8pQJutNboHvbuFpxD6mhB3COEyqwXWcvD3ygFcm/8LlNUVigUqL2j5JlrSm8wg0fxXkUmWaufSWPY/dw398ENMPVq//bDKcugXM7/lIrGzcU4ZKA8WHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FAE0113E;
+	Tue, 16 Sep 2025 06:18:38 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D0923F66E;
+	Tue, 16 Sep 2025 06:18:43 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:18:40 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	Atish Patra <atishp@rivosinc.com>,
+	Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>,
+	Vince Weaver <vincent.weaver@maine.edu>
+Subject: Re: [PATCH v4 20/21] perf parse-events: Add HW_CYCLES_STR as default
+ cycles event string
+Message-ID: <aMljsNZxTw5ZPfeb@J2N7QTR9R3.cambridge.arm.com>
+References: <20250914181121.1952748-1-irogers@google.com>
+ <20250914181121.1952748-21-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914181121.1952748-21-irogers@google.com>
 
-On Tue, 16 Sep 2025 11:03:41 +0200
-Maxime Ripard <mripard@kernel.org> wrote:
+On Sun, Sep 14, 2025 at 11:11:20AM -0700, Ian Rogers wrote:
+> ARM managed to significantly overload the meaning of the "cycles"
+> event in their PMU kernel drivers through sysfs. 
 
-> On Mon, Sep 15, 2025 at 05:58:05PM +0200, Luca Ceresoli wrote:
-> > On Mon, 15 Sep 2025 14:22:24 +0200
-> > Maxime Ripard <mripard@kernel.org> wrote:  
-> > > On Fri, Aug 08, 2025 at 04:49:14PM +0200, Luca Ceresoli wrote:  
-> > > > All users have been replaced by drm_for_each_bridge_in_chain_scoped().
-> > > > 
-> > > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > > > ---
-> > > >  .clang-format            |  1 -
-> > > >  include/drm/drm_bridge.h | 14 --------------
-> > > >  2 files changed, 15 deletions(-)
-> > > > 
-> > > > diff --git a/.clang-format b/.clang-format
-> > > > index 1cac7d4976644c8f083f801e98f619782c2e23cc..d5c05db1a0d96476b711b95912d2b82b2e780397 100644
-> > > > --- a/.clang-format
-> > > > +++ b/.clang-format
-> > > > @@ -167,7 +167,6 @@ ForEachMacros:
-> > > >    - 'drm_connector_for_each_possible_encoder'
-> > > >    - 'drm_exec_for_each_locked_object'
-> > > >    - 'drm_exec_for_each_locked_object_reverse'
-> > > > -  - 'drm_for_each_bridge_in_chain'
-> > > >    - 'drm_for_each_bridge_in_chain_scoped'
-> > > >    - 'drm_for_each_connector_iter'
-> > > >    - 'drm_for_each_crtc'
-> > > > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> > > > index a8e2f599aea764c705da3582df0ca428bb32f19c..6adf9221c2d462ec8e0e4e281c97b39081b3da24 100644
-> > > > --- a/include/drm/drm_bridge.h
-> > > > +++ b/include/drm/drm_bridge.h
-> > > > @@ -1358,20 +1358,6 @@ drm_bridge_chain_get_first_bridge(struct drm_encoder *encoder)
-> > > >  						       struct drm_bridge, chain_node));
-> > > >  }
-> > > >  
-> > > > -/**
-> > > > - * drm_for_each_bridge_in_chain() - Iterate over all bridges present in a chain
-> > > > - * @encoder: the encoder to iterate bridges on
-> > > > - * @bridge: a bridge pointer updated to point to the current bridge at each
-> > > > - *	    iteration
-> > > > - *
-> > > > - * Iterate over all bridges present in the bridge chain attached to @encoder.
-> > > > - *
-> > > > - * This is deprecated, do not use!
-> > > > - * New drivers shall use drm_for_each_bridge_in_chain_scoped().
-> > > > - */
-> > > > -#define drm_for_each_bridge_in_chain(encoder, bridge)			\
-> > > > -	list_for_each_entry(bridge, &(encoder)->bridge_chain, chain_node)
-> > > > -    
-> > > 
-> > > I think I'd go a step further and rename
-> > > drm_for_each_bridge_in_chain_scoped to drm_for_each_bridge_in_chain,
-> > > there's no need to have a "scoped" variant if it's our only variant.
-> > > 
-> > > It can be done in a subsequent patch though.  
-> > 
-> > Sure, that's the plan. There's a note in patch 3:
-> > 
-> > Note 1: drm_for_each_bridge_in_chain_scoped() could be renamed removing the
-> >         _scoped suffix after removing all the users of the current macro
-> >         and eventually the current macro itself. Even though this series is
-> >         converting all users, I'd at least wait one kernel release before
-> >         renaming, to minimize issues with existing patches which would fail
-> >         building.  
+Ian, please stop phrasing this as if Arm have done something wrong here.
+
+It's true that some system PMU drivers have events named 'cycles'. 
+
+It's not true that this is "overloading" the meaning of 'cycles'; those
+PMU-specific events were never intended to be conflated with the
+PERF_TYPE_HARDWARE events which have the same name.
+
+This was never a problem until the perf tool was changed to handle
+events such that it blindly assumed all events were in the same
+namespace. I have repeatedly explained that this was a bad idea.
+
+There is no reason that this should be handled in an ARM-specific way;
+if you want the bare 'cycles' event (withj no explcit PMU) to mean
+PERF_TYPE_HARDWARE:PERF_COUNT_HW_CPU_CYCLES, then *don't* match that
+with other PMU types. We cna specifically identify CPU PMUs which
+support that with the extended type ID if necessary.
+
+Mark.
+
+> In the tool use
+> "cpu-cycles" on ARM to avoid wildcard matching on different PMUS. This
+> is most commonly done in test code.
 > 
-> No need to wait that long, and the best time to do it is right now
-> actually, about the time we start collecting the patches for a new
-> release.
-
-Ah, thanks, good to know!
-
-Applied, but 'b4 ty' does not behave so no automatic notification email
-at this time, sorry.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-stat.c           |   4 +-
+>  tools/perf/tests/code-reading.c     |   4 +-
+>  tools/perf/tests/keep-tracking.c    |   2 +-
+>  tools/perf/tests/parse-events.c     | 100 ++++++++++++++--------------
+>  tools/perf/tests/perf-time-to-tsc.c |   2 +-
+>  tools/perf/tests/switch-tracking.c  |   2 +-
+>  tools/perf/util/evlist.c            |   2 +-
+>  tools/perf/util/parse-events.h      |  10 +++
+>  tools/perf/util/perf_api_probe.c    |   4 +-
+>  9 files changed, 71 insertions(+), 59 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 2c38dd98f6ca..9f522b787ad5 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -1957,7 +1957,7 @@ static int add_default_events(void)
+>  				"cpu-migrations,"
+>  				"page-faults,"
+>  				"instructions,"
+> -				"cycles,"
+> +				HW_CYCLES_STR ","
+>  				"stalled-cycles-frontend,"
+>  				"stalled-cycles-backend,"
+>  				"branches,"
+> @@ -2043,7 +2043,7 @@ static int add_default_events(void)
+>  			 * Make at least one event non-skippable so fatal errors are visible.
+>  			 * 'cycles' always used to be default and non-skippable, so use that.
+>  			 */
+> -			if (strcmp("cycles", evsel__name(evsel)))
+> +			if (strcmp(HW_CYCLES_STR, evsel__name(evsel)))
+>  				evsel->skippable = true;
+>  		}
+>  	}
+> diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+> index 9c2091310191..baa44918f555 100644
+> --- a/tools/perf/tests/code-reading.c
+> +++ b/tools/perf/tests/code-reading.c
+> @@ -649,7 +649,9 @@ static int do_test_code_reading(bool try_kcore)
+>  	struct map *map;
+>  	bool have_vmlinux, have_kcore;
+>  	struct dso *dso;
+> -	const char *events[] = { "cycles", "cycles:u", "cpu-clock", "cpu-clock:u", NULL };
+> +	const char *events[] = {
+> +		HW_CYCLES_STR, HW_CYCLES_STR ":u", "cpu-clock", "cpu-clock:u", NULL
+> +	};
+>  	int evidx = 0;
+>  	struct perf_env host_env;
+>  
+> diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
+> index eafb49eb0b56..d54ddb4db47b 100644
+> --- a/tools/perf/tests/keep-tracking.c
+> +++ b/tools/perf/tests/keep-tracking.c
+> @@ -90,7 +90,7 @@ static int test__keep_tracking(struct test_suite *test __maybe_unused, int subte
+>  	perf_evlist__set_maps(&evlist->core, cpus, threads);
+>  
+>  	CHECK__(parse_event(evlist, "dummy:u"));
+> -	CHECK__(parse_event(evlist, "cycles:u"));
+> +	CHECK__(parse_event(evlist, HW_CYCLES_STR ":u"));
+>  
+>  	evlist__config(evlist, &opts, NULL);
+>  
+> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+> index 4e55b0d295bd..7d59648a0591 100644
+> --- a/tools/perf/tests/parse-events.c
+> +++ b/tools/perf/tests/parse-events.c
+> @@ -198,7 +198,7 @@ static int test__checkevent_symbolic_name_config(struct evlist *evlist)
+>  	TEST_ASSERT_VAL("wrong number of entries", 0 != evlist->core.nr_entries);
+>  
+>  	perf_evlist__for_each_evsel(&evlist->core, evsel) {
+> -		int ret = assert_hw(evsel, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		int ret = assert_hw(evsel, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  
+>  		if (ret)
+>  			return ret;
+> @@ -884,7 +884,7 @@ static int test__group1(struct evlist *evlist)
+>  
+>  		/* cycles:upp */
+>  		evsel = evsel__next(evsel);
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -948,7 +948,7 @@ static int test__group2(struct evlist *evlist)
+>  			continue;
+>  		}
+>  		/* cycles:k */
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1085,7 +1085,7 @@ static int test__group4(struct evlist *evlist __maybe_unused)
+>  
+>  		/* cycles:u + p */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1133,7 +1133,7 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+>  	for (int i = 0; i < num_core_entries(); i++) {
+>  		/* cycles + G */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1168,7 +1168,7 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+>  	for (int i = 0; i < num_core_entries(); i++) {
+>  		/* cycles:G */
+>  		evsel = leader = evsel__next(evsel);
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1202,7 +1202,7 @@ static int test__group5(struct evlist *evlist __maybe_unused)
+>  	for (int i = 0; i < num_core_entries(); i++) {
+>  		/* cycles */
+>  		evsel = evsel__next(evsel);
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1231,7 +1231,7 @@ static int test__group_gh1(struct evlist *evlist)
+>  
+>  		/* cycles + :H group modifier */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1278,7 +1278,7 @@ static int test__group_gh2(struct evlist *evlist)
+>  
+>  		/* cycles + :G group modifier */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1325,7 +1325,7 @@ static int test__group_gh3(struct evlist *evlist)
+>  
+>  		/* cycles:G + :u group modifier */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1372,7 +1372,7 @@ static int test__group_gh4(struct evlist *evlist)
+>  
+>  		/* cycles:G + :uG group modifier */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1417,7 +1417,7 @@ static int test__leader_sample1(struct evlist *evlist)
+>  
+>  		/* cycles - sampling group leader */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1540,7 +1540,7 @@ static int test__pinned_group(struct evlist *evlist)
+>  
+>  		/* cycles - group leader */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1594,7 +1594,7 @@ static int test__exclusive_group(struct evlist *evlist)
+>  
+>  		/* cycles - group leader */
+>  		evsel = leader = (i == 0 ? evlist__first(evlist) : evsel__next(evsel));
+> -		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +		ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -1759,7 +1759,7 @@ static int test__checkevent_raw_pmu(struct evlist *evlist)
+>  static int test__sym_event_slash(struct evlist *evlist)
+>  {
+>  	struct evsel *evsel = evlist__first(evlist);
+> -	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  
+>  	if (ret)
+>  		return ret;
+> @@ -1771,7 +1771,7 @@ static int test__sym_event_slash(struct evlist *evlist)
+>  static int test__sym_event_dc(struct evlist *evlist)
+>  {
+>  	struct evsel *evsel = evlist__first(evlist);
+> -	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  
+>  	if (ret)
+>  		return ret;
+> @@ -1783,7 +1783,7 @@ static int test__sym_event_dc(struct evlist *evlist)
+>  static int test__term_equal_term(struct evlist *evlist)
+>  {
+>  	struct evsel *evsel = evlist__first(evlist);
+> -	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  
+>  	if (ret)
+>  		return ret;
+> @@ -1795,7 +1795,7 @@ static int test__term_equal_term(struct evlist *evlist)
+>  static int test__term_equal_legacy(struct evlist *evlist)
+>  {
+>  	struct evsel *evsel = evlist__first(evlist);
+> -	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
+> +	int ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, HW_CYCLES_STR);
+>  
+>  	if (ret)
+>  		return ret;
+> @@ -2006,27 +2006,27 @@ static const struct evlist_test test__events[] = {
+>  		/* 7 */
+>  	},
+>  	{
+> -		.name  = "{instructions:k,cycles:upp}",
+> +		.name  = "{instructions:k," HW_CYCLES_STR ":upp}",
+>  		.check = test__group1,
+>  		/* 8 */
+>  	},
+>  	{
+> -		.name  = "{faults:k,branches}:u,cycles:k",
+> +		.name  = "{faults:k,branches}:u," HW_CYCLES_STR ":k",
+>  		.check = test__group2,
+>  		/* 9 */
+>  	},
+>  	{
+> -		.name  = "group1{syscalls:sys_enter_openat:H,cycles:kppp},group2{cycles,1:3}:G,instructions:u",
+> +		.name  = "group1{syscalls:sys_enter_openat:H," HW_CYCLES_STR ":kppp},group2{" HW_CYCLES_STR ",1:3}:G,instructions:u",
+>  		.check = test__group3,
+>  		/* 0 */
+>  	},
+>  	{
+> -		.name  = "{cycles:u,instructions:kp}:p",
+> +		.name  = "{" HW_CYCLES_STR ":u,instructions:kp}:p",
+>  		.check = test__group4,
+>  		/* 1 */
+>  	},
+>  	{
+> -		.name  = "{cycles,instructions}:G,{cycles:G,instructions:G},cycles",
+> +		.name  = "{" HW_CYCLES_STR ",instructions}:G,{" HW_CYCLES_STR ":G,instructions:G}," HW_CYCLES_STR,
+>  		.check = test__group5,
+>  		/* 2 */
+>  	},
+> @@ -2036,27 +2036,27 @@ static const struct evlist_test test__events[] = {
+>  		/* 3 */
+>  	},
+>  	{
+> -		.name  = "{cycles,cache-misses:G}:H",
+> +		.name  = "{" HW_CYCLES_STR ",cache-misses:G}:H",
+>  		.check = test__group_gh1,
+>  		/* 4 */
+>  	},
+>  	{
+> -		.name  = "{cycles,cache-misses:H}:G",
+> +		.name  = "{" HW_CYCLES_STR ",cache-misses:H}:G",
+>  		.check = test__group_gh2,
+>  		/* 5 */
+>  	},
+>  	{
+> -		.name  = "{cycles:G,cache-misses:H}:u",
+> +		.name  = "{" HW_CYCLES_STR ":G,cache-misses:H}:u",
+>  		.check = test__group_gh3,
+>  		/* 6 */
+>  	},
+>  	{
+> -		.name  = "{cycles:G,cache-misses:H}:uG",
+> +		.name  = "{" HW_CYCLES_STR ":G,cache-misses:H}:uG",
+>  		.check = test__group_gh4,
+>  		/* 7 */
+>  	},
+>  	{
+> -		.name  = "{cycles,cache-misses,branch-misses}:S",
+> +		.name  = "{" HW_CYCLES_STR ",cache-misses,branch-misses}:S",
+>  		.check = test__leader_sample1,
+>  		/* 8 */
+>  	},
+> @@ -2071,7 +2071,7 @@ static const struct evlist_test test__events[] = {
+>  		/* 0 */
+>  	},
+>  	{
+> -		.name  = "{cycles,cache-misses,branch-misses}:D",
+> +		.name  = "{" HW_CYCLES_STR ",cache-misses,branch-misses}:D",
+>  		.check = test__pinned_group,
+>  		/* 1 */
+>  	},
+> @@ -2109,7 +2109,7 @@ static const struct evlist_test test__events[] = {
+>  		/* 6 */
+>  	},
+>  	{
+> -		.name  = "task-clock:P,cycles",
+> +		.name  = "task-clock:P," HW_CYCLES_STR,
+>  		.check = test__checkevent_precise_max_modifier,
+>  		/* 7 */
+>  	},
+> @@ -2140,17 +2140,17 @@ static const struct evlist_test test__events[] = {
+>  		/* 2 */
+>  	},
+>  	{
+> -		.name  = "cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk",
+> +		.name  = HW_CYCLES_STR "/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk",
+>  		.check = test__checkevent_complex_name,
+>  		/* 3 */
+>  	},
+>  	{
+> -		.name  = "cycles//u",
+> +		.name  = HW_CYCLES_STR "//u",
+>  		.check = test__sym_event_slash,
+>  		/* 4 */
+>  	},
+>  	{
+> -		.name  = "cycles:k",
+> +		.name  = HW_CYCLES_STR ":k",
+>  		.check = test__sym_event_dc,
+>  		/* 5 */
+>  	},
+> @@ -2160,17 +2160,17 @@ static const struct evlist_test test__events[] = {
+>  		/* 6 */
+>  	},
+>  	{
+> -		.name  = "{cycles,cache-misses,branch-misses}:e",
+> +		.name  = "{" HW_CYCLES_STR ",cache-misses,branch-misses}:e",
+>  		.check = test__exclusive_group,
+>  		/* 7 */
+>  	},
+>  	{
+> -		.name  = "cycles/name=name/",
+> +		.name  = HW_CYCLES_STR "/name=name/",
+>  		.check = test__term_equal_term,
+>  		/* 8 */
+>  	},
+>  	{
+> -		.name  = "cycles/name=l1d/",
+> +		.name  = HW_CYCLES_STR "/name=l1d/",
+>  		.check = test__term_equal_legacy,
+>  		/* 9 */
+>  	},
+> @@ -2311,7 +2311,7 @@ static const struct evlist_test test__events_pmu[] = {
+>  		/* 9 */
+>  	},
+>  	{
+> -		.name  = "cpu/cycles,period=100000,config2/",
+> +		.name  = "cpu/" HW_CYCLES_STR ",period=100000,config2/",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__checkevent_symbolic_name_config,
+>  		/* 0 */
+> @@ -2335,43 +2335,43 @@ static const struct evlist_test test__events_pmu[] = {
+>  		/* 3 */
+>  	},
+>  	{
+> -		.name  = "{cpu/instructions/k,cpu/cycles/upp}",
+> +		.name  = "{cpu/instructions/k,cpu/" HW_CYCLES_STR "/upp}",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__group1,
+>  		/* 4 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/u,cpu/instructions/kp}:p",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/u,cpu/instructions/kp}:p",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__group4,
+>  		/* 5 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/,cpu/cache-misses/G}:H",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/,cpu/cache-misses/G}:H",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__group_gh1,
+>  		/* 6 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/,cpu/cache-misses/H}:G",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/,cpu/cache-misses/H}:G",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__group_gh2,
+>  		/* 7 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/G,cpu/cache-misses/H}:u",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/G,cpu/cache-misses/H}:u",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__group_gh3,
+>  		/* 8 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/G,cpu/cache-misses/H}:uG",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/G,cpu/cache-misses/H}:uG",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__group_gh4,
+>  		/* 9 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/,cpu/cache-misses/,cpu/branch-misses/}:S",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/,cpu/cache-misses/,cpu/branch-misses/}:S",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__leader_sample1,
+>  		/* 0 */
+> @@ -2389,7 +2389,7 @@ static const struct evlist_test test__events_pmu[] = {
+>  		/* 2 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/,cpu/cache-misses/,cpu/branch-misses/}:D",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/,cpu/cache-misses/,cpu/branch-misses/}:D",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__pinned_group,
+>  		/* 3 */
+> @@ -2407,13 +2407,13 @@ static const struct evlist_test test__events_pmu[] = {
+>  		/* 5 */
+>  	},
+>  	{
+> -		.name  = "cpu/cycles/u",
+> +		.name  = "cpu/" HW_CYCLES_STR "/u",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__sym_event_slash,
+>  		/* 6 */
+>  	},
+>  	{
+> -		.name  = "cpu/cycles/k",
+> +		.name  = "cpu/" HW_CYCLES_STR "/k",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__sym_event_dc,
+>  		/* 7 */
+> @@ -2425,19 +2425,19 @@ static const struct evlist_test test__events_pmu[] = {
+>  		/* 8 */
+>  	},
+>  	{
+> -		.name  = "{cpu/cycles/,cpu/cache-misses/,cpu/branch-misses/}:e",
+> +		.name  = "{cpu/" HW_CYCLES_STR "/,cpu/cache-misses/,cpu/branch-misses/}:e",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__exclusive_group,
+>  		/* 9 */
+>  	},
+>  	{
+> -		.name  = "cpu/cycles,name=name/",
+> +		.name  = "cpu/" HW_CYCLES_STR ",name=name/",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__term_equal_term,
+>  		/* 0 */
+>  	},
+>  	{
+> -		.name  = "cpu/cycles,name=l1d/",
+> +		.name  = "cpu/" HW_CYCLES_STR ",name=l1d/",
+>  		.valid = test__pmu_cpu_valid,
+>  		.check = test__term_equal_legacy,
+>  		/* 1 */
+> diff --git a/tools/perf/tests/perf-time-to-tsc.c b/tools/perf/tests/perf-time-to-tsc.c
+> index d4437410c99f..7ebcb1f004b2 100644
+> --- a/tools/perf/tests/perf-time-to-tsc.c
+> +++ b/tools/perf/tests/perf-time-to-tsc.c
+> @@ -101,7 +101,7 @@ static int test__perf_time_to_tsc(struct test_suite *test __maybe_unused, int su
+>  
+>  	perf_evlist__set_maps(&evlist->core, cpus, threads);
+>  
+> -	CHECK__(parse_event(evlist, "cycles:u"));
+> +	CHECK__(parse_event(evlist, HW_CYCLES_STR ":u"));
+>  
+>  	evlist__config(evlist, &opts, NULL);
+>  
+> diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
+> index 5be294014d3b..ad3a87978c0d 100644
+> --- a/tools/perf/tests/switch-tracking.c
+> +++ b/tools/perf/tests/switch-tracking.c
+> @@ -332,7 +332,7 @@ static int process_events(struct evlist *evlist,
+>  static int test__switch_tracking(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+>  {
+>  	const char *sched_switch = "sched:sched_switch";
+> -	const char *cycles = "cycles:u";
+> +	const char *cycles = HW_CYCLES_STR ":u";
+>  	struct switch_tracking switch_tracking = { .tids = NULL, };
+>  	struct record_opts opts = {
+>  		.mmap_pages	     = UINT_MAX,
+> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+> index e8217efdda53..d7e935faeda0 100644
+> --- a/tools/perf/util/evlist.c
+> +++ b/tools/perf/util/evlist.c
+> @@ -112,7 +112,7 @@ struct evlist *evlist__new_default(void)
+>  		char buf[256];
+>  		int err;
+>  
+> -		snprintf(buf, sizeof(buf), "%s/cycles/%s", pmu->name,
+> +		snprintf(buf, sizeof(buf), "%s/%s/%s", pmu->name, HW_CYCLES_STR,
+>  			 can_profile_kernel ? "P" : "Pu");
+>  		err = parse_event(evlist, buf);
+>  		if (err) {
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+> index db92cd67bc0f..304676bf32dd 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -20,6 +20,16 @@ struct option;
+>  struct perf_pmu;
+>  struct strbuf;
+>  
+> +/*
+> + * The name used for the "cycles" event. A different event name is used on ARM
+> + * as many ARM PMUs define a "cycles" event.
+> + */
+> +#if defined(__aarch64__) || defined(__arm__)
+> +#define HW_CYCLES_STR "cpu-cycles"
+> +#else
+> +#define HW_CYCLES_STR "cycles"
+> +#endif
+> +
+>  const char *event_type(size_t type);
+>  
+>  /* Arguments encoded in opt->value. */
+> diff --git a/tools/perf/util/perf_api_probe.c b/tools/perf/util/perf_api_probe.c
+> index 6ecf38314f01..693bb5891bc4 100644
+> --- a/tools/perf/util/perf_api_probe.c
+> +++ b/tools/perf/util/perf_api_probe.c
+> @@ -74,9 +74,9 @@ static bool perf_probe_api(setup_probe_fn_t fn)
+>  	if (!ret)
+>  		return true;
+>  
+> -	pmu = perf_pmus__scan_core(/*pmu=*/NULL);
+> +	pmu = perf_pmus__find_core_pmu();
+>  	if (pmu) {
+> -		const char *try[] = {"cycles", "instructions", NULL};
+> +		const char *try[] = {HW_CYCLES_STR, "instructions", NULL};
+>  		char buf[256];
+>  		int i = 0;
+>  
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
 
