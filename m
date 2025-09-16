@@ -1,256 +1,117 @@
-Return-Path: <linux-kernel+bounces-818736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82822B595E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:17:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93AFB595E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 14:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E5554E0728
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:17:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A40117A2D81
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 12:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF27F2D7DCF;
-	Tue, 16 Sep 2025 12:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYaO5F2y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE9F1C695;
-	Tue, 16 Sep 2025 12:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325F82D8393;
+	Tue, 16 Sep 2025 12:18:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130041C695;
+	Tue, 16 Sep 2025 12:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758025052; cv=none; b=j+oKPo4Dp8mgtay8/izo/HHp9IosYHXbt/S2BY3PXehpjb+lStZodbRlBXIUqmEPAdW5X0k/wajOHhuiFnFgw/Aus99pCpIBQ87m9zAMOk9peo7ijOx6MPkBEUPMYIXMvZLuqa7GsnZ9TADjcCceX/wlz/UldgRcDCveNnZ0fqE=
+	t=1758025137; cv=none; b=WExsE8lS9MZjuTXnGBK8DdtZb7GtUN78blBJP+urzTRD3+o8X7jQBh+e7a/gtWqzNfV+/+szRjGFH8H6SLqVGuV7FYHL02XT8QqnmktgWPphncURzq07OMctX9uTxudusRQ5M0tMfX60S0tULzlXhGcWWVK297VSX4lU99GrP7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758025052; c=relaxed/simple;
-	bh=RLqYYazD/iAO1IRLQJ9VCcBMtighzOGzz1bZkEbf/zU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=re4vEzOOUUqNZpMtl+RD/oEEpnOlAdve7KLeD9Em0dBweOOq3HBAMXBiaVCR6dZdqYliEutRXZegu31IuHorNI8MWq0ssOrDgNf1sQZo9RwLgcfmTi9hF08SyIXheF59n5kQ/GwXMpW9b6aTQGnaxu/N2mtlV+wnmyDEnhAeFeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYaO5F2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EBDDC4CEEB;
-	Tue, 16 Sep 2025 12:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758025052;
-	bh=RLqYYazD/iAO1IRLQJ9VCcBMtighzOGzz1bZkEbf/zU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=AYaO5F2yyyg52dHqox76ZO/6p9j1S0zL0Ofam/qIwr76X0n+Eyo7fqeME/efmX1Ct
-	 ngJKjXLiFxhIT4GS/Q5Hh+3EAnBm6IYu5lKv+Jkatk6T4KzCzU1fwesdjUGfAyhq1V
-	 gvUm0YwLVgtqGX7IYQh4xSuktpSJKcawEXgb9Cyh2qRKvgJA+lrQmpVTVWxgE91wnB
-	 kPxqeTCySJbswhdwe8dc6SSiAfs09ee70qKYZ4OafsEmLyyMJj0ffRJhpZ2b8HAEbe
-	 BRFmSF1OEVS7STREcjkkbbZnE/ZfJ8DxmMEPo+TIvWs7hnwiQF0Ha+bcNtRYvzDAzS
-	 eAQztRGXoHTiQ==
-Date: Tue, 16 Sep 2025 13:17:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the vhost tree
-Message-ID: <aMlVWGqpKQRqB1_j@sirena.org.uk>
+	s=arc-20240116; t=1758025137; c=relaxed/simple;
+	bh=Qzyx6iaqieZHa1bD+k8VgtFucreEpdcW2COkAWhgJbU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pWzz9mgC3KWvctOt99OCwG8f2A5JYIDdbEWG/695R9B7DdsdL63cpMVlGoHgGsR2Pu83eAKsjmchs2F4X1sSyagNJdvLuicWRVnESuolzgYgaikVBjTi0ktUCx6XPISoyU4m8D5r/j0SluSZGSYc29a0txV9ixv0w8SpNrfamNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bx3tKqVcloH_EKAA--.23580S3;
+	Tue, 16 Sep 2025 20:18:50 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJDxrcGpVclouVKZAA--.6520S3;
+	Tue, 16 Sep 2025 20:18:49 +0800 (CST)
+Subject: Re: [PATCH v1] objtool/LoongArch: Mark special atomic instruction as
+ INSN_BUG type
+To: WANG Rui <wangrui@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ rust-for-linux@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250916061117.32315-1-yangtiezhu@loongson.cn>
+ <CAHirt9jbY4yX84Kfzax71rCvPY--SQpDKrjqWsDCHMVnuUuD0g@mail.gmail.com>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <b218d981-49a4-3ee3-6eb9-68953ec29b1e@loongson.cn>
+Date: Tue, 16 Sep 2025 20:18:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7UrL9ffD06Lmv2nZ"
-Content-Disposition: inline
+In-Reply-To: <CAHirt9jbY4yX84Kfzax71rCvPY--SQpDKrjqWsDCHMVnuUuD0g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJDxrcGpVclouVKZAA--.6520S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kw4kWw1fWrWUGryDCFy8Zwc_yoW8Xw1rpF
+	srZa4ftayDXFZFg3Z7tFZ2gayayrW3ArW7XF1rWr18t398tF13tFn0qrWUJFWrA3yY9ryj
+	qF4qva48uFyY9FXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8vApUUU
+	UUU==
 
+On 2025/9/16 下午5:02, WANG Rui wrote:
+> On Tue, Sep 16, 2025 at 2:11 PM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+>>
+>> When compiling with LLVM and CONFIG_RUST is set, there exists the
+>> following objtool warning:
+>>
+>>    rust/compiler_builtins.o: warning: objtool: __rust__unordsf2(): unexpected end of section .text.unlikely.
+>>
+>> objdump shows that the end of section .text.unlikely is a atomic
+>> instruction:
+>>
+>>    amswap.w        $zero, $ra, $zero
+>>
+>> According to the LoongArch Reference Manual, if the amswap.w atomic
+>> memory access instruction has the same register number as rd and rj,
+>> the execution will trigger an Instruction Non-defined Exception, so
+>> mark the above instruction as INSN_BUG type to fix the warning.
+> 
+> LLVM lowers `llvm.trap()` to `amswap.w R0, R1, R0`. For x86, it lowers
+> to `ud2`, and objtool marks it as INSN_BUG.
+> 
+> https://github.com/llvm/llvm-project/blob/788a25a0f71bfa5e5e1c12ad093993b115d10e7a/llvm/lib/Target/LoongArch/LoongArchInstrInfo.td#L1376-L1381
 
---7UrL9ffD06Lmv2nZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the detailed explanation from the point of view of the
+compiler.
 
-Hi all,
+> LLVM and GCC handle this differently, GCC lowers it to a break
+> instruction. Since the break instruction has other uses, can objtool
+> mark all break instructions as INSN_BUG? or it should mark different
+> types based on the break immediate code.
 
-After merging the vhost tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+If the break immediate code is 0, it should mark the type
+as INSN_TRAP. If the break immediate code is 1, it should
+mark the type as INSN_BUG. I will do it.
 
-/tmp/next/build/drivers/vhost/net.c: In function 'handle_tx_copy':
-/tmp/next/build/drivers/vhost/net.c:855:1: error: expected 'while' before 'static'
-  855 | static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
-      | ^~~~~~
-/tmp/next/build/drivers/vhost/net.c:964:13: error: invalid storage class for function 'handle_tx'
-  964 | static void handle_tx(struct vhost_net *net)
-      |             ^~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c: In function 'handle_tx':
-/tmp/next/build/drivers/vhost/net.c:982:17: error: implicit declaration of function 'handle_tx_zerocopy'; did you mean 'handle_tx_copy'? [-Wimplicit-function-declaration]
-  982 |                 handle_tx_zerocopy(net, sock);
-      |                 ^~~~~~~~~~~~~~~~~~
-      |                 handle_tx_copy
-/tmp/next/build/drivers/vhost/net.c: In function 'handle_tx_copy':
-/tmp/next/build/drivers/vhost/net.c:990:12: error: invalid storage class for function 'peek_head_len'
-  990 | static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
-      |            ^~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1011:12: error: invalid storage class for function 'vhost_net_rx_peek_head_len'
- 1011 | static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1043:12: error: invalid storage class for function 'get_rx_bufs'
- 1043 | static int get_rx_bufs(struct vhost_net_virtqueue *nvq,
-      |            ^~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1126:13: error: invalid storage class for function 'handle_rx'
- 1126 | static void handle_rx(struct vhost_net *net)
-      |             ^~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1281:13: error: invalid storage class for function 'handle_tx_kick'
- 1281 | static void handle_tx_kick(struct vhost_work *work)
-      |             ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1290:13: error: invalid storage class for function 'handle_rx_kick'
- 1290 | static void handle_rx_kick(struct vhost_work *work)
-      |             ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1299:13: error: invalid storage class for function 'handle_tx_net'
- 1299 | static void handle_tx_net(struct vhost_work *work)
-      |             ^~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1306:13: error: invalid storage class for function 'handle_rx_net'
- 1306 | static void handle_rx_net(struct vhost_work *work)
-      |             ^~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1313:12: error: invalid storage class for function 'vhost_net_open'
- 1313 | static int vhost_net_open(struct inode *inode, struct file *f)
-      |            ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1381:23: error: invalid storage class for function 'vhost_net_stop_vq'
- 1381 | static struct socket *vhost_net_stop_vq(struct vhost_net *n,
-      |                       ^~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1398:13: error: invalid storage class for function 'vhost_net_stop'
- 1398 | static void vhost_net_stop(struct vhost_net *n, struct socket **tx_sock,
-      |             ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1405:13: error: invalid storage class for function 'vhost_net_flush'
- 1405 | static void vhost_net_flush(struct vhost_net *n)
-      |             ^~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1421:12: error: invalid storage class for function 'vhost_net_release'
- 1421 | static int vhost_net_release(struct inode *inode, struct file *f)
-      |            ^~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1449:23: error: invalid storage class for function 'get_raw_socket'
- 1449 | static struct socket *get_raw_socket(int fd)
-      |                       ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1473:25: error: invalid storage class for function 'get_tap_ptr_ring'
- 1473 | static struct ptr_ring *get_tap_ptr_ring(struct file *file)
-      |                         ^~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1487:23: error: invalid storage class for function 'get_tap_socket'
- 1487 | static struct socket *get_tap_socket(int fd)
-      |                       ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1503:23: error: invalid storage class for function 'get_socket'
- 1503 | static struct socket *get_socket(int fd)
-      |                       ^~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1519:13: error: invalid storage class for function 'vhost_net_set_backend'
- 1519 | static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
-      |             ^~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1620:13: error: invalid storage class for function 'vhost_net_reset_owner'
- 1620 | static long vhost_net_reset_owner(struct vhost_net *n)
-      |             ^~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1650:12: error: invalid storage class for function 'vhost_net_set_features'
- 1650 | static int vhost_net_set_features(struct vhost_net *n, const u64 *features)
-      |            ^~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1701:13: error: invalid storage class for function 'vhost_net_set_owner'
- 1701 | static long vhost_net_set_owner(struct vhost_net *n)
-      |             ^~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1722:13: error: invalid storage class for function 'vhost_net_ioctl'
- 1722 | static long vhost_net_ioctl(struct file *f, unsigned int ioctl,
-      |             ^~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1821:16: error: invalid storage class for function 'vhost_net_chr_read_iter'
- 1821 | static ssize_t vhost_net_chr_read_iter(struct kiocb *iocb, struct iov_iter *to)
-      |                ^~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1831:16: error: invalid storage class for function 'vhost_net_chr_write_iter'
- 1831 | static ssize_t vhost_net_chr_write_iter(struct kiocb *iocb,
-      |                ^~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1841:17: error: invalid storage class for function 'vhost_net_chr_poll'
- 1841 | static __poll_t vhost_net_chr_poll(struct file *file, poll_table *wait)
-      |                 ^~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1851:27: error: initializer element is not constant
- 1851 |         .release        = vhost_net_release,
-      |                           ^~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1851:27: note: (near initialization for 'vhost_net_fops.release')
-/tmp/next/build/drivers/vhost/net.c:1852:27: error: initializer element is not constant
- 1852 |         .read_iter      = vhost_net_chr_read_iter,
-      |                           ^~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1852:27: note: (near initialization for 'vhost_net_fops.read_iter')
-/tmp/next/build/drivers/vhost/net.c:1853:27: error: initializer element is not constant
- 1853 |         .write_iter     = vhost_net_chr_write_iter,
-      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1853:27: note: (near initialization for 'vhost_net_fops.write_iter')
-/tmp/next/build/drivers/vhost/net.c:1854:27: error: initializer element is not constant
- 1854 |         .poll           = vhost_net_chr_poll,
-      |                           ^~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1854:27: note: (near initialization for 'vhost_net_fops.poll')
-/tmp/next/build/drivers/vhost/net.c:1855:27: error: initializer element is not constant
- 1855 |         .unlocked_ioctl = vhost_net_ioctl,
-      |                           ^~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1855:27: note: (near initialization for 'vhost_net_fops.unlocked_ioctl')
-/tmp/next/build/drivers/vhost/net.c:1857:27: error: initializer element is not constant
- 1857 |         .open           = vhost_net_open,
-      |                           ^~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1857:27: note: (near initialization for 'vhost_net_fops.open')
-/tmp/next/build/drivers/vhost/net.c:1867:19: error: invalid storage class for function 'vhost_net_init'
- 1867 | static int __init vhost_net_init(void)
-      |                   ^~~~~~~~~~~~~~
-In file included from /tmp/next/build/include/linux/device/driver.h:21,
-                 from /tmp/next/build/include/linux/device.h:32,
-                 from /tmp/next/build/include/linux/virtio.h:9,
-                 from /tmp/next/build/include/linux/virtio_config.h:7,
-                 from /tmp/next/build/include/uapi/linux/vhost_types.h:16,
-                 from /tmp/next/build/include/uapi/linux/vhost.h:14,
-                 from /tmp/next/build/drivers/vhost/net.c:10:
-/tmp/next/build/include/linux/module.h:132:49: error: invalid storage class for function '__inittest'
-  132 |         static inline initcall_t __maybe_unused __inittest(void)                \
-      |                                                 ^~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1873:1: note: in expansion of macro 'module_init'
- 1873 | module_init(vhost_net_init);
-      | ^~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1873:1: error: 'alias' attribute ignored [-Werror=attributes]
-/tmp/next/build/drivers/vhost/net.c:1875:20: error: invalid storage class for function 'vhost_net_exit'
- 1875 | static void __exit vhost_net_exit(void)
-      |                    ^~~~~~~~~~~~~~
-/tmp/next/build/include/linux/module.h:140:49: error: invalid storage class for function '__exittest'
-  140 |         static inline exitcall_t __maybe_unused __exittest(void)                \
-      |                                                 ^~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1879:1: note: in expansion of macro 'module_exit'
- 1879 | module_exit(vhost_net_exit);
-      | ^~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:1879:1: error: 'alias' attribute ignored [-Werror=attributes]
-/tmp/next/build/drivers/vhost/net.c:1886:1: error: expected declaration or statement at end of input
- 1886 | MODULE_ALIAS("devname:vhost-net");
-      | ^~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c: At top level:
-/tmp/next/build/drivers/vhost/net.c:620:13: error: 'vhost_exceeds_maxpend' defined but not used [-Werror=unused-function]
-  620 | static bool vhost_exceeds_maxpend(struct vhost_net *net)
-      |             ^~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:340:13: error: 'vhost_net_tx_select_zcopy' defined but not used [-Werror=unused-function]
-  340 | static bool vhost_net_tx_select_zcopy(struct vhost_net *net)
-      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
-/tmp/next/build/drivers/vhost/net.c:326:13: error: 'vhost_net_tx_packet' defined but not used [-Werror=unused-function]
-  326 | static void vhost_net_tx_packet(struct vhost_net *net)
-      |             ^~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[5]: *** [/tmp/next/build/scripts/Makefile.build:287: drivers/vhost/net.o] Error 1
-make[4]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers/vhost] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [/tmp/next/build/scripts/Makefile.build:556: drivers] Error 2
-make[2]: *** [/tmp/next/build/Makefile:2010: .] Error 2
-make[1]: *** [/tmp/next/build/Makefile:248: __sub-make] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-Command exited with non-zero status 2
-16291.57user 1243.39system 1:51.12elapsed 15780%CPU (0avgtext+0avgdata 1397196maxresident)k
-0inputs+0outputs (4572major+208444472minor)pagefaults 0swaps
+Thanks,
+Tiezhu
 
-Caused by commit
-
-   41bafbdcd27bf ("vhost-net: flush batched before enabling notifications")
-
-I have used the tree from 20250915 instead.
-
---7UrL9ffD06Lmv2nZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjJVVcACgkQJNaLcl1U
-h9B0iAf/QOKTOhkW9iFTHrUEdXSAPXuwVV3kwTSBoHBRlZilrNxrIKSHxtEAmDFe
-AiRbNT4tzSFbCtuaynU1DdtZ/lKhRDbFz10bpu+09KWmQMxxKVczFZ1wTaWZBry8
-+Ul8Lvct8TIoGe28HiR0o1kxd+BzfNzJqyt6Z5aHMyRU/7Dk+OEaGSnxYNiy20I2
-+dVZ59rLr0ETl2y7qR8S6MOh84gFO2XkOSLe0QYXkTVKCpTDMvVBhMUzs4QHxb0e
-iE5VKqB3n2w2t2GHtKOZU0+6tfu7soPaT/aI3G2FQPeNhGAkll/69L1xfWFDls+I
-3hZk2SNMZkybmGX7AnngUysOWG6zDg==
-=/+MA
------END PGP SIGNATURE-----
-
---7UrL9ffD06Lmv2nZ--
 
