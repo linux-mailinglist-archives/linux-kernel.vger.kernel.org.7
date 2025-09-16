@@ -1,554 +1,180 @@
-Return-Path: <linux-kernel+bounces-819649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415F5B5A413
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED89B5A414
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 23:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BAF9582F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F87583055
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 21:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA00628CF5E;
-	Tue, 16 Sep 2025 21:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8A52D9493;
+	Tue, 16 Sep 2025 21:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="vk3NMri/"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11021137.outbound.protection.outlook.com [40.107.208.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wpjpdlV2"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E8B2877C1
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.137
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758058687; cv=fail; b=V7bwY4gY5VAT8zBsDUZeOswRl7mg+Fo75xEYbDRH78XJn/Hr9gZJs2ZizLSKixAGzaXRPFI0rmDnu2dXnHoRaNxHx9euYJrqffqc1IiQUHHYwqOV5vzTaiW2u2jw8TRMwhcObcixFG++usGWocsMG+37BvR2OhcyekrFBiL7DOI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758058687; c=relaxed/simple;
-	bh=iGh1ARaT7nMblolDEIW6HQH1sYpguadgx7W6gQDi6W4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JMFGt1KrwhfLFYPigu1IuBKnH4Wimvt7pyw361rVG4TDvkNtUFMQBy2p09xfe3aHzzJtufRXuRxYtexIJG19O42AyocANGYHRATEhBr/gcU/ltPvCvq1OTMCp1CBscCOQXJsmjFaSPEEZgPWiLXRyT2QF5g8cXRnmKbddg3vzNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=vk3NMri/; arc=fail smtp.client-ip=40.107.208.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IND/fVtlJjp3hjlNyp3RsCKw9/L+nuUiNxFJRnQvMYef+pJ5Vz8Pw0E8deOWsIQcRgajPUi84PftoaulxKRIgIgDYSQ6BSS9Mc6OZXxMO0aOjR4HRR5UUgJC5sDecap3Q7zaRG6tDW3DY8K+Z392fyFlKVVmNEWOvTHHwl6KbEsYXBOmFCOo74gSU+6evceTvheCFknJgdziG7BoNSzT8VRRURBQ1Rk8iQoQtnylwPhLQpYVvMKgolF336cGPG2YKzfb8a8VJQgjpT+lwwGbXhj3hY8zvHx3s2DSkCsIMZyWAwhJlL2pgRRGbbapZlGH5lGq9/luSmOE7ajn+O058w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=orBFuXH7gjcPJ1rKlnogQfDJ8juaaigawOjQzApBHLE=;
- b=f7GdtMhp6KtnCnkRK0VR0e4lrVTb2kxLbAB45ZQyXMD6RjaLJtlQwJ11zhcXAfUjzd050QCL55W1mGLcq/RkHXm3OA21prEdLMT/sZVzlQjnlxjFtqsE8WGqGcUoJYIlTULRPXN1BpfoLp1yCnqbmr663g0p82vBFLmKlWY0sYlhooYBFZxMH2vx1uc+s00glyn6FqQBI+r0oFzUaNBatkmwvsOg1Jcg8nZnU1aKOLZaPvJMykRUShWOamSfoJclt9WFbPJOET6CHklxwEmWcGyZ5fEaXKbSmua4xzW0afmgqEhAd+KJ8tT1zcsYN5XELX4yz3ZCTZt2VjEpioAvZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BDA31BCAE
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 21:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758058735; cv=none; b=EdkvChOGVJ2HfRHIhMFn5jshLsAXE/4v0vLuvf5B4nqPbsXkT5uiPMi9ef467tPapj8ZHlQANN3mlk8rcKquRImNWZnXeykVo5ND05fh+VRTQ2NinC4B/RuK+ohSvJZeKiT2+3cWV60/DRMIV4kNrgBUnnBEItwKngVlLxwA+7U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758058735; c=relaxed/simple;
+	bh=ry7qkTB0pJG0crn45IaGPPnZtArUza62ClgAt7diaKQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AJP9272PgjdsNkfH6yMPfJPT8XgRUHF0o3IhCczjor97PpuJL40LXKkK6l6kgyMtdsv7d0mIggoUMk6LWQyRlGhXszXMVDoPNfYHbh8DEEfuFE900Llcz1p85B0S6+Km3Q3KMUNEDqWbPGZ6CiPwoI173eyhpriDlKCcy+ReD0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wpjpdlV2; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec2211659so678377a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 14:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=orBFuXH7gjcPJ1rKlnogQfDJ8juaaigawOjQzApBHLE=;
- b=vk3NMri/jj8SjBOjYofxHdkn+09jiPANHCqOTqt/bEOb98LTW0id9mnc1c+0WNyaZsdJaEjmky+p22NVRJ4nTM6nkiMM6ZtwxG4YMY+mdCps5/vdgeK1Q93VLmyRoQaieQgJAC+zVOc+HEDajpeuIMl8gHGtobc2Lw4h0oxzPWE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CO1PR01MB6616.prod.exchangelabs.com (2603:10b6:303:da::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.22; Tue, 16 Sep 2025 21:38:01 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9115.022; Tue, 16 Sep 2025
- 21:38:01 +0000
-Message-ID: <0eef7406-ad95-490c-b69f-e37f3f9e0a8a@os.amperecomputing.com>
-Date: Tue, 16 Sep 2025 14:37:57 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/6] arm64: Enable permission change on arm64 kernel
- block mappings
-To: Ryan Roberts <ryan.roberts@arm.com>, Jinjiang Tu <tujinjiang@huawei.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ard Biesheuvel <ardb@kernel.org>, Dev Jain <dev.jain@arm.com>,
- scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250829115250.2395585-1-ryan.roberts@arm.com>
- <20250829115250.2395585-2-ryan.roberts@arm.com>
- <7705c29b-4f08-4b56-aab3-024795ee9124@huawei.com>
- <42b3b394-a6ec-4d70-b5a1-941a0628cd25@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <42b3b394-a6ec-4d70-b5a1-941a0628cd25@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CY8PR11CA0018.namprd11.prod.outlook.com
- (2603:10b6:930:48::7) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+        d=google.com; s=20230601; t=1758058734; x=1758663534; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3b3Tk/l8MqsriYm3Qf+JFhCnUPMjiU2DQ5fPBKzlm4=;
+        b=wpjpdlV2GhQTD91Ta5eX5siWUFbN7US6sLSpp8857mx0hm+AGZEskIQEoWrtzSaHsj
+         3YS4Rt3/1BSguL9dIPA6PEZ0FhiCeTVHX28kqcaBH6Z8s84FZKVVrNiMRbWGrjZDMCj6
+         uc9LfK09Ff0968zxpYpp22Fg3aohyMIaRM8zbeEIW+OXFy/Z8zWNfvbVYnlTzkixWY7b
+         HdTMnuPplklppuPadcOZJ0Mtk0O+uwTeLJZbOkZbQ67DGEQ3Sm04KDTdUTkXByDIE8P4
+         CGFBdt1ZTeDJezKTygsKU3sIBkytXfPTSNR6jPbsgjcfoXR3soBRKdkf2x+h7HI71zna
+         UnpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758058734; x=1758663534;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3b3Tk/l8MqsriYm3Qf+JFhCnUPMjiU2DQ5fPBKzlm4=;
+        b=OWD4q5ym29s4AL6yFKwV28QakTqrKR8GauRCXm1DPiHOswDVahJnxet5SGBaodrcPf
+         UnjI83kX0chqguThI7OwV6Gtf6ywzBB1UD496vF9wg/nCqmhkFLfe2oMMO6hdfkg2ZGd
+         Fah87+eJq8zpaH3JW9n7HRN3nX85wHwbQI+4RlRg+Ma9WAhpDCCRlltOYKFhiqjS19gm
+         fjtEEB2Gp0wBambNq9wewPXRa5Xzg12bvH8s4zNYeYj0RjZ7qXCbTax7/BD24q9yYT/V
+         P+T+A8KqoKF2dn92taTCbfCOLmdf3qKikQtZhSmFFOWDsXdIUM9DycWJ2ke+Hm/OvA4i
+         D2fA==
+X-Forwarded-Encrypted: i=1; AJvYcCWuD7CzI//JqbKCqsyR/Uml8JFjy5Q3N/4DQhmmjq1wvYtD/4dROYkKEBJCpv/cCE7wsNeubmKBQIoLoOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQyM032O6uj1KJxGUP7fr1z2Gr9aDsk2NBUTNKUF4nsmgj4Dyn
+	+Se5Myu0rtk+a3TUy3uryifGHsp57kdnQFHm+dezWLwiBY+e/ECgkBEntWjVVH0jzjzIrlZJUjy
+	ME5sIUQ==
+X-Google-Smtp-Source: AGHT+IFpPyFP3pZHDiGP08zKKpUK8E7Uz0NLVkZDtHl1SG5g6WnVLCUlyN3v3omtp5YZLceLqn/eINYnI94=
+X-Received: from pjbsq6.prod.google.com ([2002:a17:90b:5306:b0:32e:834b:ea49])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c43:b0:32b:6cf2:a2cf
+ with SMTP id 98e67ed59e1d1-32de4ecfef6mr20983631a91.14.1758058733733; Tue, 16
+ Sep 2025 14:38:53 -0700 (PDT)
+Date: Tue, 16 Sep 2025 14:38:52 -0700
+In-Reply-To: <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CO1PR01MB6616:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57188e53-7882-48a5-f508-08ddf5694f90
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vm1DRHFheXRiSFlhZVVwY0djWTJ6OERkNkwzVmFUOFB6M0lsNVVvSlVydGdh?=
- =?utf-8?B?L2EvZXh0NTUvc1FzM2ZnWUl2ZTFYOStlOExyaTVBOXNsb1czdVk5VmFZRms1?=
- =?utf-8?B?Qzg4Y1ZsZ0JTdWJyd0F4d0J2eTJQMGE5QVc3Sllyb1Q3ZkZ6RStrV0oxcDNR?=
- =?utf-8?B?RFJMRGNZYjc0MVExbEp2R2s2ZC9yYkxUM1llampOQnJab3ozOGloQmd0bDJM?=
- =?utf-8?B?NDNOaFAvbE4yTDZBRU4waXM3aUdyMjZTSHZYR01CRk8yOFcxWUhXWUdiK0s0?=
- =?utf-8?B?VVlNNFgyL3lLQjNRWGJmODhKRmF6Vy8zNGgvNElXQlFNVVpZT2lZZVJESVdz?=
- =?utf-8?B?NXpQaTNpenVCTm9aR2p2MG1QR2gzSkdKQjJaMmNSY1ViWE4rTmtOd1FmdUlQ?=
- =?utf-8?B?ZFdGQzhtWHlVa0lNNHhnRm9pWFRUVHIvc2cvbHRML3piU3pycG5TMUpDUEFC?=
- =?utf-8?B?RitQOWxmb0NmSEgyUWdwemduM2RwdHJETlY0amVmUmNXTkgzQks1TExsclJK?=
- =?utf-8?B?bVJna1lFQ3JoMG1TbERuclBLV2ZOb0I1MDdwR29NZjRHcWxFeGh4a3J2dnBE?=
- =?utf-8?B?KzZnaU53Rk0yTzFYTUtUODJxV2tqVzZKeXYzQi94KzUvLzdNTi9YdVIydjFX?=
- =?utf-8?B?NytmL0J3N2ZiVzJCRFI4UzR2SGttbk9ySWRHYmVuTTZqdG04MGhZRUphRWFv?=
- =?utf-8?B?UlRxYUlvcWk5MEZRUllFckg0SDU3blR6VDV0bm5MTjZBNERPYWxObGV6d2tG?=
- =?utf-8?B?WU5QcmJHdGZISEhyM0pmd3VkaisyR1R3S0gyQS91L1V5Y3RSaldVTTdTSkpw?=
- =?utf-8?B?SVhtYkpodTk4YnZrcTd2TWlsb2FqUldyNWdFZzFFOEZnd3RxZFlFTnBhTy9t?=
- =?utf-8?B?cXBaNHV5SjZzaXF2aXJycUtiNU12TGhyRlNhOTRLSVFrZDhNKzFmT0lTcGVh?=
- =?utf-8?B?U0lnbUdnVnVjaVlqcTA4VVROL0Vwd01vdkRZRzIwSlhKcy9DVzhvUVJPR1dr?=
- =?utf-8?B?bWZyVmU1UnEwcmRCbW41Rnpad1NkOVg2dlBrc2Y5QXloc0VQc29KRXIxcWJj?=
- =?utf-8?B?enU0R3dCZTFncWtrYkt3R3Z0Q2FXaUV2Q3hDWnVJQzRGYWdFdHJMOVlmNjR2?=
- =?utf-8?B?SU43K3hVL0N0Qk8wazFObVpOSnllVUdrZmhuK2VPUU8xZW0zeXljWlJJdWE2?=
- =?utf-8?B?U0d1OTJrV21wckxXNmhiRy9EMGxTM3lJcDVWZ2lxckMrNzhrVmR6emhaTHFD?=
- =?utf-8?B?dkh6Ym5aTWRzb20xVGJDOWlsVmRBZjlpcUorV3BFelBvemZCM1lLUmlLYjJE?=
- =?utf-8?B?ZG5OQy9mKzNGbUN5Z3MxcE5FWGxGMEZGemk5RHBPdk5IT1FRUFd5QzhwYzlp?=
- =?utf-8?B?WlNoaEd2YllBZGJneDdaZXNraWZTWHlmZEV3dTYyZzJSY2IrdVlqd0pianIz?=
- =?utf-8?B?Y0lHYXMzcnlvSHF1a29iS1lHTVpBejAvcS9PQjVmNFdxejBheTNnSmZISmJa?=
- =?utf-8?B?NUtyMnhJaEVtZ0IyTFh2Q28reExrOVloelZIWWdCaitFTm9XS241aGU3NDFY?=
- =?utf-8?B?d1dOOSt2OG1KeHFUcHdNc1RJbzA1ODR3WG4zRWx2cFQraGVJcEM3eUVGSi93?=
- =?utf-8?B?MWRvckV2SFR0UHNuMklpWDNYdllSVk9PNXFuRW50Q2p4L2JiL2pHK241RFps?=
- =?utf-8?B?dis0cVVsbG1ES0szelBJQmd6Uk1ZeFVNc1l4bS9jK1ZhL3M4RWhVTHp3RTNQ?=
- =?utf-8?B?NnZuMi8rNHl3UEdxeTFtZVpha2tHVGIrZUdqa1kwRkxndFljWlpKSXJmbXpM?=
- =?utf-8?B?dnE2S2ErUFlQOXpHNGs2RmhnNHV1YjlraFk5U1pOVEQ1ZENNY2YzVmNuYmcz?=
- =?utf-8?B?UWViUVpiWGZpK3Nra3BIRnhNcU9LbU1zcy9JNEJ3UG5VL1V6YzY2V0wzcDVU?=
- =?utf-8?B?L1p1dmpITEN1Ri8yQkJVcitrZ09lQTROanFvcXc2VTVPbW55d2dGMFJjSFpI?=
- =?utf-8?B?eW1CTk5teUhnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YllaZjVybXlkU0xDVnc5aFhUWU5FdXlIVEFaNzA5d1FPQkp0WkFVU1g3eGw5?=
- =?utf-8?B?dHRGZkZtTjlKc3NSUjEvU3Y0UitQczVoWUN4YUVYc0NXTzBCUGtXK0dLRFF1?=
- =?utf-8?B?amp1bmhMblhrTVdzYkZSR1E1cDZneDB6c2FOT0Z1QTVGTDZ5MlVzOHgvZlRG?=
- =?utf-8?B?akJYbFdMK05vbGVnMEMxbHB5SGthTzJvbFg4QVErL2podUErSzNFU0JGUUtB?=
- =?utf-8?B?Yjd1WmljMVBaSkJHZkxYYitNakYrbUtlZXFIbHl2VVBsenB0aUdBeDFVd283?=
- =?utf-8?B?YitwczA0LzNTSTlWL1lOTlZEL2ljWWhab2p0d210UWxnU05MMXFMTEtLSzRM?=
- =?utf-8?B?ZVNZdTR4d2orT0tpNGVUNFNxVVZOcHZ1OVRxSkdYZTBDdzl4eGF5OGlpazhm?=
- =?utf-8?B?dzhZWWpzWkpUZ21zKzh1T25icCtrQTRwa0pZaXFTKzd3c1U4SkZGbGdQeVk0?=
- =?utf-8?B?bUJmQnEvbkRnTkQ2R0oxUVhXZys3Y0Q5WkJxZnJXQXcvQmFGTlhRcldRakN5?=
- =?utf-8?B?Qm1aYUR1N2tDUm5YMGFQdkx5WVRmN0RNR0NWeDlaZGE1T1JlYlkzQjdtMWRu?=
- =?utf-8?B?TEJ0S2p6L294V3lRNjNuU1V0bzZkQTkxMzBzUnY1WlJLbzZBUVR2N2ZCTTdI?=
- =?utf-8?B?VGdOWDVwSnp4RlUyVllLbFQ3U1Nqa1JBbXpNbklnMzEyQnlSclgwZ3BCWFZw?=
- =?utf-8?B?eFYzVThpeVhFRFlscW9hdk5NNVFiY2lQT0lYcnhGVTVQRzBCcU81UWIyOUlB?=
- =?utf-8?B?Qm1FbE00S2owNUhrc2xUNTJ4WGV4U29ZV0lhMnhtc1djL2VEUU9iTnU2ajR4?=
- =?utf-8?B?SWtMMW41cy9RUFl5emtnTkFlZ1ZGeThQNmoxdzZaYnZHMmVBa2Y3RGpmNDV4?=
- =?utf-8?B?Njd0c1hJd1pLcHp2UmEveVU4RXl0Y3hKQnRnRTA4a2IxV2ErYURKRGozSHlJ?=
- =?utf-8?B?QXZsTWt6ZHJZL3dnOXJsWk5hYVNQN3g5eldKd2hjcnZ6Z08vTVp2VngrRldq?=
- =?utf-8?B?VE9jNWV0MjVURmFhZmJQT2RDMURobEFQZkF6VmNyUVdDcDk2d2lXcmVsdWpm?=
- =?utf-8?B?QmFpbTFGcXBSSEZ0cDkzWUxZNUs4NGJjWC9la3FvNVB4RUVrbjREOEp3Q29h?=
- =?utf-8?B?cEdydGZna3JXSzY4S0cycFNuZmtPSEpHQnA4Witjb3lKL2dBSmdEZWFSNFJ4?=
- =?utf-8?B?VzFmVVpBL3JhaFJ2WVJrK0ZZUzlnVUFla2pwdXZhUDkvNWVEVGlVSnRKOHRt?=
- =?utf-8?B?Q0dYb1M1cnArdC84OGZLNFk3THVHNFRJRjVGeFN3aXZXNnRwZ1FpS2d5a0xj?=
- =?utf-8?B?bDVTWXVwdUEySTkrQUxGWUNhZ1NXRk5VWlN0T09kZWhkMVRzUDkrQm1FcUd3?=
- =?utf-8?B?N1pWRW02eWg1dU1BbGVOZU1LaGVEODNrN3FQblVDdzZXb3MzTWZEb1FqNDBq?=
- =?utf-8?B?WC9rOCtHaVVWSVkxS3BSQVRZZldwNHVFY2RsZ3dISFhCVzhRS2ZNYlBXZGtB?=
- =?utf-8?B?KzJYL2Z6R29Gdjd6VitkSmR2Zi93bWhZcHFlbmVaYSt6UTI0UjRqOFhZdjhs?=
- =?utf-8?B?SUVSMm1NOUIvcjJiUEVqeXdsd3gvejc2dmhpVFJvY0tVdWw3WlJ1eFV2aHh0?=
- =?utf-8?B?MnIvUE1zWTloelYyUGVqRWM3R1Q1SFYwOXJnWUhRczlWZ21tVjBlWmhKNkhJ?=
- =?utf-8?B?RXUxYTBzQkRidDE2andxbm9pMk1kU0g1alJpeFhPSUJlU0N3SFpMdk5ORjRT?=
- =?utf-8?B?Tm9BSGtScDhYMDdVaHBTSDBlcUh3cXVRbkJOQks4bE9sSE1zR2U0ZDNqRHZ5?=
- =?utf-8?B?QVJWblo3L1RqdXAyVjB1T0tFdURtN3lJUzlFbDlzZDNTaHQ0eUM1NFRGZnUx?=
- =?utf-8?B?MDJNWkFxWXFLSEZHYUJYeG1WYmovMVpaemRJMktqamV3VkRlSU5qZXJWYjND?=
- =?utf-8?B?akpPWEF0aDVOTm5BS2RHYm40SGtyVDZwdzdxV3I1K1RHdnZrQkVQMHhXTXUr?=
- =?utf-8?B?SGRQR09KcEdxVmllRDUwZDdBbmd0SWhaOThBNGNoRTBnbW8wVzV2YU5iVlEy?=
- =?utf-8?B?OGdWSGszeWdJc29IOGpYVG8wVDJFR1UreUJFVjluSzZ2a3BNaVdLYlF1bzBk?=
- =?utf-8?B?NUEyekJwNkZET2JGNGZvNkZzNEM3R0hKcHlyUzZBWWdZbENFTFNFRGx1S2ZW?=
- =?utf-8?Q?zGrEOW0poVXHrVhhp/wj4ZI=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57188e53-7882-48a5-f508-08ddf5694f90
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 21:38:01.4731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AODMBbITOUQpOcE4XwQPzGSysSolC47pbUUGifHvrA9O7A4JWayGOVQL7dCMSbuR/elfoJVddkGuQdUHdl9Ke4pOUq7GDXRGqdusbUJpLbw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB6616
+Mime-Version: 1.0
+References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-30-seanjc@google.com>
+ <aMmynhOnU/VkcXwI@AUSJOHALLEN.amd.com> <aMnAVtWhxQipw9Er@google.com> <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com>
+Message-ID: <aMnY7NqhhnMYqu7m@google.com>
+Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
+ GHCB when it's valid
+From: Sean Christopherson <seanjc@google.com>
+To: John Allen <john.allen@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Tue, Sep 16, 2025, John Allen wrote:
+> On Tue, Sep 16, 2025 at 12:53:58PM -0700, Sean Christopherson wrote:
+> > On Tue, Sep 16, 2025, John Allen wrote:
+> > > On Fri, Sep 12, 2025 at 04:23:07PM -0700, Sean Christopherson wrote:
+> > > > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> > > > index 0cd77a87dd84..0cd32df7b9b6 100644
+> > > > --- a/arch/x86/kvm/svm/sev.c
+> > > > +++ b/arch/x86/kvm/svm/sev.c
+> > > > @@ -3306,6 +3306,9 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
+> > > >  	if (kvm_ghcb_xcr0_is_valid(svm))
+> > > >  		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
+> > > >  
+> > > > +	if (kvm_ghcb_xss_is_valid(svm))
+> > > > +		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
+> > > > +
+> > > 
+> > > It looks like this is the change that caused the selftest regression
+> > > with sev-es. It's not yet clear to me what the problem is though.
+> > 
+> > Do you see any WARNs in the guest kernel log?
+> > 
+> > The most obvious potential bug is that KVM is missing a CPUID update, e.g. due
+> > to dropping an XSS write, consuming stale data, not setting cpuid_dynamic_bits_dirty,
+> > etc.  But AFAICT, CPUID.0xD.1.EBX (only thing that consumes the current XSS) is
+> > only used by init_xstate_size(), and I would expect the guest kernel's sanity
+> > checks in paranoid_xstate_size_valid() to yell if KVM botches CPUID emulation.
+> 
+> Yes, actually that looks to be the case:
+> 
+> [    0.463504] ------------[ cut here ]------------
+> [    0.464443] XSAVE consistency problem: size 880 != kernel_size 840
+> [    0.465445] WARNING: CPU: 0 PID: 0 at arch/x86/kernel/fpu/xstate.c:638 paranoid_xstate_size_valid+0x101/0x140
 
+Can you run with the below printk tracing in the host (and optionally tracing in
+the guest for its updates)?  Compile tested only.
 
-On 9/4/25 4:06 AM, Ryan Roberts wrote:
-> On 04/09/2025 04:40, Jinjiang Tu wrote:
->> 在 2025/8/29 19:52, Ryan Roberts 写道:
->>> From: Dev Jain <dev.jain@arm.com>
->>>
->>> This patch paves the path to enable huge mappings in vmalloc space and
->>> linear map space by default on arm64. For this we must ensure that we
->>> can handle any permission games on the kernel (init_mm) pagetable.
->>> Previously, __change_memory_common() used apply_to_page_range() which
->>> does not support changing permissions for block mappings. We move away
->>> from this by using the pagewalk API, similar to what riscv does right
->>> now. It is the responsibility of the caller to ensure that the range
->>> over which permissions are being changed falls on leaf mapping
->>> boundaries. For systems with BBML2, this will be handled in future
->>> patches by dyanmically splitting the mappings when required.
->>>
->>> Unlike apply_to_page_range(), the pagewalk API currently enforces the
->>> init_mm.mmap_lock to be held. To avoid the unnecessary bottleneck of the
->>> mmap_lock for our usecase, this patch extends this generic API to be
->>> used locklessly, so as to retain the existing behaviour for changing
->>> permissions. Apart from this reason, it is noted at [1] that KFENCE can
->>> manipulate kernel pgtable entries during softirqs. It does this by
->>> calling set_memory_valid() -> __change_memory_common(). This being a
->>> non-sleepable context, we cannot take the init_mm mmap lock.
->>>
->>> Add comments to highlight the conditions under which we can use the
->>> lockless variant - no underlying VMA, and the user having exclusive
->>> control over the range, thus guaranteeing no concurrent access.
->>>
->>> We require that the start and end of a given range do not partially
->>> overlap block mappings, or cont mappings. Return -EINVAL in case a
->>> partial block mapping is detected in any of the PGD/P4D/PUD/PMD levels;
->>> add a corresponding comment in update_range_prot() to warn that
->>> eliminating such a condition is the responsibility of the caller.
->>>
->>> Note that, the pte level callback may change permissions for a whole
->>> contpte block, and that will be done one pte at a time, as opposed to an
->>> atomic operation for the block mappings. This is fine as any access will
->>> decode either the old or the new permission until the TLBI.
->>>
->>> apply_to_page_range() currently performs all pte level callbacks while
->>> in lazy mmu mode. Since arm64 can optimize performance by batching
->>> barriers when modifying kernel pgtables in lazy mmu mode, we would like
->>> to continue to benefit from this optimisation. Unfortunately
->>> walk_kernel_page_table_range() does not use lazy mmu mode. However,
->>> since the pagewalk framework is not allocating any memory, we can safely
->>> bracket the whole operation inside lazy mmu mode ourselves. Therefore,
->>> wrap the call to walk_kernel_page_table_range() with the lazy MMU
->>> helpers.
->>>
->>> Link: https://lore.kernel.org/linux-arm-kernel/89d0ad18-4772-4d8f-
->>> ae8a-7c48d26a927e@arm.com/ [1]
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->>> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->>> ---
->>>   arch/arm64/mm/pageattr.c | 153 +++++++++++++++++++++++++++++++--------
->>>   include/linux/pagewalk.h |   3 +
->>>   mm/pagewalk.c            |  36 ++++++---
->>>   3 files changed, 149 insertions(+), 43 deletions(-)
->>>
->>> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->>> index 04d4a8f676db..6da8cbc32f46 100644
->>> --- a/arch/arm64/mm/pageattr.c
->>> +++ b/arch/arm64/mm/pageattr.c
->>> @@ -8,6 +8,7 @@
->>>   #include <linux/mem_encrypt.h>
->>>   #include <linux/sched.h>
->>>   #include <linux/vmalloc.h>
->>> +#include <linux/pagewalk.h>
->>>   
->>>   #include <asm/cacheflush.h>
->>>   #include <asm/pgtable-prot.h>
->>> @@ -20,6 +21,99 @@ struct page_change_data {
->>>   	pgprot_t clear_mask;
->>>   };
->>>   
->>> +static ptdesc_t set_pageattr_masks(ptdesc_t val, struct mm_walk *walk)
->>> +{
->>> +	struct page_change_data *masks = walk->private;
->>> +
->>> +	val &= ~(pgprot_val(masks->clear_mask));
->>> +	val |= (pgprot_val(masks->set_mask));
->>> +
->>> +	return val;
->>> +}
->>> +
->>> +static int pageattr_pgd_entry(pgd_t *pgd, unsigned long addr,
->>> +			      unsigned long next, struct mm_walk *walk)
->>> +{
->>> +	pgd_t val = pgdp_get(pgd);
->>> +
->>> +	if (pgd_leaf(val)) {
->>> +		if (WARN_ON_ONCE((next - addr) != PGDIR_SIZE))
->>> +			return -EINVAL;
->>> +		val = __pgd(set_pageattr_masks(pgd_val(val), walk));
->>> +		set_pgd(pgd, val);
->>> +		walk->action = ACTION_CONTINUE;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int pageattr_p4d_entry(p4d_t *p4d, unsigned long addr,
->>> +			      unsigned long next, struct mm_walk *walk)
->>> +{
->>> +	p4d_t val = p4dp_get(p4d);
->>> +
->>> +	if (p4d_leaf(val)) {
->>> +		if (WARN_ON_ONCE((next - addr) != P4D_SIZE))
->>> +			return -EINVAL;
->>> +		val = __p4d(set_pageattr_masks(p4d_val(val), walk));
->>> +		set_p4d(p4d, val);
->>> +		walk->action = ACTION_CONTINUE;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int pageattr_pud_entry(pud_t *pud, unsigned long addr,
->>> +			      unsigned long next, struct mm_walk *walk)
->>> +{
->>> +	pud_t val = pudp_get(pud);
->>> +
->>> +	if (pud_leaf(val)) {
->>> +		if (WARN_ON_ONCE((next - addr) != PUD_SIZE))
->>> +			return -EINVAL;
->>> +		val = __pud(set_pageattr_masks(pud_val(val), walk));
->>> +		set_pud(pud, val);
->>> +		walk->action = ACTION_CONTINUE;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int pageattr_pmd_entry(pmd_t *pmd, unsigned long addr,
->>> +			      unsigned long next, struct mm_walk *walk)
->>> +{
->>> +	pmd_t val = pmdp_get(pmd);
->>> +
->>> +	if (pmd_leaf(val)) {
->>> +		if (WARN_ON_ONCE((next - addr) != PMD_SIZE))
->>> +			return -EINVAL;
->>> +		val = __pmd(set_pageattr_masks(pmd_val(val), walk));
->>> +		set_pmd(pmd, val);
->>> +		walk->action = ACTION_CONTINUE;
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->> #define pmd_leaf(pmd)        (pmd_present(pmd) && !pmd_table(pmd))
->> #define pmd_present(pmd)	pte_present(pmd_pte(pmd))
->> #define pte_present(pte)	(pte_valid(pte) || pte_present_invalid(pte))
->>
->> When PTE_VALID is cleared, pmd_leaf() will return false. As a result, the
->> caller won't be able to set PTE_VALID for the pmd.
-> Ouch - good spot!
->
-> So this will break set_direct_map_default_noflush(), set_memory_valid() and
-> __set_memory_enc_dec(). I wonder why it doesn't cause problems with mm selftests
-> - I'll investigate.
->
-> Anyway, I think the simplest solution is to replace the pmd_leaf()/pud_leaf()
-> checks with !pmd_table()/!pud_table() checks. (and I think we can entirely
-> remove the pgd and p4d callbacks because pgd_leaf() and p4d_leaf() always return
-> false on arm64). As long as no code ever clears PTE_VALID from a table entry, I
-> think this works.
+There should be very few XSS updates, so this _shouldn't_ spam/crash your host :-)
 
-Or we can use pmd_sect()/pud_sect().
+---
+ arch/x86/kvm/svm/sev.c |  6 ++++--
+ arch/x86/kvm/x86.c     | 15 ++++++++++++---
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
-Thanks,
-Yang
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 0cd32df7b9b6..8ac87d623767 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3306,8 +3306,10 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
+ 	if (kvm_ghcb_xcr0_is_valid(svm))
+ 		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(ghcb));
+ 
+-	if (kvm_ghcb_xss_is_valid(svm))
+-		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
++	if (kvm_ghcb_xss_is_valid(svm)) {
++		if (__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(ghcb));
++			pr_warn("Dropped XSS update, val = %llx\n", data);
++	}
+ 
+ 	/* Copy the GHCB exit information into the VMCB fields */
+ 	exit_code = kvm_ghcb_get_sw_exit_code(ghcb);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index c78acab2ff3f..a846ed69ce2c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4118,13 +4118,22 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		}
+ 		break;
+ 	case MSR_IA32_XSS:
+-		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
++		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES)) {
++			pr_warn("Guest CPUID doesn't have XSAVES\n");
+ 			return KVM_MSR_RET_UNSUPPORTED;
++		}
+ 
+-		if (data & ~vcpu->arch.guest_supported_xss)
++		if (data & ~vcpu->arch.guest_supported_xss) {
++			pr_warn("Invalid XSS: supported = %llx, val = %llx\n",
++				vcpu->arch.guest_supported_xss, data);
+ 			return 1;
+-		if (vcpu->arch.ia32_xss == data)
++		}
++		if (vcpu->arch.ia32_xss == data) {
++			pr_warn("XSS already set to val = %llx, eliding updates\n", data);
+ 			break;
++		}
++
++		pr_warn("XSS updated to val = %llx, marking CPUID dirty\n", data);
+ 		vcpu->arch.ia32_xss = data;
+ 		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+ 		break;
 
->
-> Thanks,
-> Ryan
->
->>> +
->>> +static int pageattr_pte_entry(pte_t *pte, unsigned long addr,
->>> +			      unsigned long next, struct mm_walk *walk)
->>> +{
->>> +	pte_t val = __ptep_get(pte);
->>> +
->>> +	val = __pte(set_pageattr_masks(pte_val(val), walk));
->>> +	__set_pte(pte, val);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct mm_walk_ops pageattr_ops = {
->>> +	.pgd_entry	= pageattr_pgd_entry,
->>> +	.p4d_entry	= pageattr_p4d_entry,
->>> +	.pud_entry	= pageattr_pud_entry,
->>> +	.pmd_entry	= pageattr_pmd_entry,
->>> +	.pte_entry	= pageattr_pte_entry,
->>> +};
->>> +
->>>   bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED);
->>>   
->>>   bool can_set_direct_map(void)
->>> @@ -37,32 +131,35 @@ bool can_set_direct_map(void)
->>>   		arm64_kfence_can_set_direct_map() || is_realm_world();
->>>   }
->>>   
->>> -static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
->>> +static int update_range_prot(unsigned long start, unsigned long size,
->>> +			     pgprot_t set_mask, pgprot_t clear_mask)
->>>   {
->>> -	struct page_change_data *cdata = data;
->>> -	pte_t pte = __ptep_get(ptep);
->>> +	struct page_change_data data;
->>> +	int ret;
->>>   
->>> -	pte = clear_pte_bit(pte, cdata->clear_mask);
->>> -	pte = set_pte_bit(pte, cdata->set_mask);
->>> +	data.set_mask = set_mask;
->>> +	data.clear_mask = clear_mask;
->>>   
->>> -	__set_pte(ptep, pte);
->>> -	return 0;
->>> +	arch_enter_lazy_mmu_mode();
->>> +
->>> +	/*
->>> +	 * The caller must ensure that the range we are operating on does not
->>> +	 * partially overlap a block mapping, or a cont mapping. Any such case
->>> +	 * must be eliminated by splitting the mapping.
->>> +	 */
->>> +	ret = walk_kernel_page_table_range_lockless(start, start + size,
->>> +						    &pageattr_ops, NULL, &data);
->>> +	arch_leave_lazy_mmu_mode();
->>> +
->>> +	return ret;
->>>   }
->>>   
->>> -/*
->>> - * This function assumes that the range is mapped with PAGE_SIZE pages.
->>> - */
->>>   static int __change_memory_common(unsigned long start, unsigned long size,
->>> -				pgprot_t set_mask, pgprot_t clear_mask)
->>> +				  pgprot_t set_mask, pgprot_t clear_mask)
->>>   {
->>> -	struct page_change_data data;
->>>   	int ret;
->>>   
->>> -	data.set_mask = set_mask;
->>> -	data.clear_mask = clear_mask;
->>> -
->>> -	ret = apply_to_page_range(&init_mm, start, size, change_page_range,
->>> -					&data);
->>> +	ret = update_range_prot(start, size, set_mask, clear_mask);
->>>   
->>>   	/*
->>>   	 * If the memory is being made valid without changing any other bits
->>> @@ -174,32 +271,26 @@ int set_memory_valid(unsigned long addr, int numpages, int enable)
->>>   
->>>   int set_direct_map_invalid_noflush(struct page *page)
->>>   {
->>> -	struct page_change_data data = {
->>> -		.set_mask = __pgprot(0),
->>> -		.clear_mask = __pgprot(PTE_VALID),
->>> -	};
->>> +	pgprot_t clear_mask = __pgprot(PTE_VALID);
->>> +	pgprot_t set_mask = __pgprot(0);
->>>   
->>>   	if (!can_set_direct_map())
->>>   		return 0;
->>>   
->>> -	return apply_to_page_range(&init_mm,
->>> -				   (unsigned long)page_address(page),
->>> -				   PAGE_SIZE, change_page_range, &data);
->>> +	return update_range_prot((unsigned long)page_address(page),
->>> +				 PAGE_SIZE, set_mask, clear_mask);
->>>   }
->>>   
->>>   int set_direct_map_default_noflush(struct page *page)
->>>   {
->>> -	struct page_change_data data = {
->>> -		.set_mask = __pgprot(PTE_VALID | PTE_WRITE),
->>> -		.clear_mask = __pgprot(PTE_RDONLY),
->>> -	};
->>> +	pgprot_t set_mask = __pgprot(PTE_VALID | PTE_WRITE);
->>> +	pgprot_t clear_mask = __pgprot(PTE_RDONLY);
->>>   
->>>   	if (!can_set_direct_map())
->>>   		return 0;
->>>   
->>> -	return apply_to_page_range(&init_mm,
->>> -				   (unsigned long)page_address(page),
->>> -				   PAGE_SIZE, change_page_range, &data);
->>> +	return update_range_prot((unsigned long)page_address(page),
->>> +				 PAGE_SIZE, set_mask, clear_mask);
->>>   }
->>>   
->>>   static int __set_memory_enc_dec(unsigned long addr,
->>> diff --git a/include/linux/pagewalk.h b/include/linux/pagewalk.h
->>> index 682472c15495..88e18615dd72 100644
->>> --- a/include/linux/pagewalk.h
->>> +++ b/include/linux/pagewalk.h
->>> @@ -134,6 +134,9 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
->>>   int walk_kernel_page_table_range(unsigned long start,
->>>   		unsigned long end, const struct mm_walk_ops *ops,
->>>   		pgd_t *pgd, void *private);
->>> +int walk_kernel_page_table_range_lockless(unsigned long start,
->>> +		unsigned long end, const struct mm_walk_ops *ops,
->>> +		pgd_t *pgd, void *private);
->>>   int walk_page_range_vma(struct vm_area_struct *vma, unsigned long start,
->>>   			unsigned long end, const struct mm_walk_ops *ops,
->>>   			void *private);
->>> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
->>> index 648038247a8d..936689d8bcac 100644
->>> --- a/mm/pagewalk.c
->>> +++ b/mm/pagewalk.c
->>> @@ -606,10 +606,32 @@ int walk_page_range(struct mm_struct *mm, unsigned long start,
->>>   int walk_kernel_page_table_range(unsigned long start, unsigned long end,
->>>   		const struct mm_walk_ops *ops, pgd_t *pgd, void *private)
->>>   {
->>> -	struct mm_struct *mm = &init_mm;
->>> +	/*
->>> +	 * Kernel intermediate page tables are usually not freed, so the mmap
->>> +	 * read lock is sufficient. But there are some exceptions.
->>> +	 * E.g. memory hot-remove. In which case, the mmap lock is insufficient
->>> +	 * to prevent the intermediate kernel pages tables belonging to the
->>> +	 * specified address range from being freed. The caller should take
->>> +	 * other actions to prevent this race.
->>> +	 */
->>> +	mmap_assert_locked(&init_mm);
->>> +
->>> +	return walk_kernel_page_table_range_lockless(start, end, ops, pgd,
->>> +						     private);
->>> +}
->>> +
->>> +/*
->>> + * Use this function to walk the kernel page tables locklessly. It should be
->>> + * guaranteed that the caller has exclusive access over the range they are
->>> + * operating on - that there should be no concurrent access, for example,
->>> + * changing permissions for vmalloc objects.
->>> + */
->>> +int walk_kernel_page_table_range_lockless(unsigned long start, unsigned long end,
->>> +		const struct mm_walk_ops *ops, pgd_t *pgd, void *private)
->>> +{
->>>   	struct mm_walk walk = {
->>>   		.ops		= ops,
->>> -		.mm		= mm,
->>> +		.mm		= &init_mm,
->>>   		.pgd		= pgd,
->>>   		.private	= private,
->>>   		.no_vma		= true
->>> @@ -620,16 +642,6 @@ int walk_kernel_page_table_range(unsigned long start, unsigned long end,
->>>   	if (!check_ops_valid(ops))
->>>   		return -EINVAL;
->>>   
->>> -	/*
->>> -	 * Kernel intermediate page tables are usually not freed, so the mmap
->>> -	 * read lock is sufficient. But there are some exceptions.
->>> -	 * E.g. memory hot-remove. In which case, the mmap lock is insufficient
->>> -	 * to prevent the intermediate kernel pages tables belonging to the
->>> -	 * specified address range from being freed. The caller should take
->>> -	 * other actions to prevent this race.
->>> -	 */
->>> -	mmap_assert_locked(mm);
->>> -
->>>   	return walk_pgd_range(start, end, &walk);
->>>   }
->>>   
-
+base-commit: 14298d819d5a6b7180a4089e7d2121ca3551dc6c
+--
 
