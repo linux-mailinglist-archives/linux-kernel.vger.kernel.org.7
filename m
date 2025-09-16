@@ -1,150 +1,112 @@
-Return-Path: <linux-kernel+bounces-819564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D3BB5A325
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B9FB5A32F
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 22:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C2651885D5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6531891859
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FCF3054D0;
-	Tue, 16 Sep 2025 20:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9108131BC82;
+	Tue, 16 Sep 2025 20:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V20q9Xo0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b="jxhD2jXX"
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E613705BF;
-	Tue, 16 Sep 2025 20:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D6B3386F0
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 20:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758054326; cv=none; b=MyCAsV6gUL+PIc3010s3xoDl8Qa+eRlZTVFjcxot1LrXKXH477LcfRycTJkh8A1ckg0N6O51wzJaKGC3ZXmFINWZPcj7aRoUpO4QA+wu/BGBIBHe8ZC3h65LtQxLaYjQBbkDBay6CIlvOQH4hDr3IPogNvPQaBIywCfHXOVQTxo=
+	t=1758054340; cv=none; b=ZclajHAluxu6oObjMteksfTRlpMGgUeVgKRniTWoW+sL3CjUapA7HJJov5jmoHKhx6RFWD34IAHagRXTHG9N0lhRmQayQzbPydNE5fjtdRL0K1Wn8BsoLjV15PuDPRkqgr9B5NoRfnLWXPC/ROVmHHG221uhGS0QKLIEAsUixDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758054326; c=relaxed/simple;
-	bh=D+uWf9FTrNZ5XT1lEEynxKDh80jQlO2m6fXZN2h5Ado=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MSyw3juPPeGYt/yYZNAXNWfCH2cNBmsD2xp8U/MMtwslsCpbgTls0+zt6MGz/hyjMY+PWB/idZuQ0Vf4OmdYzHzPL/mMQCmNMy4keT8qmBbTweOsjqyDO5PhlaY7Ls7l8Id9ZFYczIedsetBtA52iUOg+fED8UoLtmtuGx6Qr7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V20q9Xo0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 83E3EC16AAE;
-	Tue, 16 Sep 2025 20:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758054326;
-	bh=D+uWf9FTrNZ5XT1lEEynxKDh80jQlO2m6fXZN2h5Ado=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=V20q9Xo0lEzJgC99QAWvPWoDp0uogcKMcJnek1L79qqlUGGQ261tuwpDhAOgLsEHm
-	 +/tF95jnMFPm2QpOSoV67ZI5lFw8xviG0H5ygJTmY/jIc0ayFm4qy1Smb92PdWOs3o
-	 ugJ9YsmRmOHAua+SedbO9iv1k+pAu9lHK1bAuIuFvLrPn0i8Ksix1FFXfUpJTH7ZPD
-	 aMe21cQVNlTDpyTi9OT/pOOrdJ1zjAZ+7hhWfI/pJhnP8GcjDuS33zNyDIjA8tDN8N
-	 wZGfAIbRYlpZ26df4gGH5HWGXsJ+uF3r8TxCMPNtqr8VEUk3KspQoASsUrTCH2Xs3J
-	 c+Csr1N5RV1QA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FF1CAC598;
-	Tue, 16 Sep 2025 20:25:26 +0000 (UTC)
-From: Dang Huynh via B4 Relay <devnull+dang.huynh.mainlining.org@kernel.org>
-Date: Wed, 17 Sep 2025 03:25:22 +0700
-Subject: [PATCH 25/25] dts: unisoc: orangepi-i96: Enable SD Card
+	s=arc-20240116; t=1758054340; c=relaxed/simple;
+	bh=VrrA3GHnJGk6gH4rg+SR+QXFsrBpgZZ6IRWvVmtTOOU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hXm3IfCaTif1AIhFa3PEmnqX3vOZag7SgcA8f3d67Qc3rx48504+FhGYUH+PLZ5rOQhI45EUhxHGnZNCMkzPWSPbPyFHJolaM1attTD6zI3vZU99nGLJfk7cSbKwqS1/8vwANyGS9u38M6GMMhiz7nf7gx9m+23l06kFmkVY8+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=surriel.com; dkim=pass (2048-bit key) header.d=surriel.com header.i=@surriel.com header.b=jxhD2jXX; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=surriel.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=surriel.com
+	; s=mail; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=VrrA3GHnJGk6gH4rg+SR+QXFsrBpgZZ6IRWvVmtTOOU=; b=jxhD2jXXthqh0ICJCAQC2ecIWW
+	CRzXt+3lfIOoJSTkHddIwPxFqJ1csHBaxaqlnQfMUwy5YZF9pWS+qlIB6cSAdLHq7clHjQpcGsu+H
+	kCZnCLAhTNVAqeBYJxtCujTsHjOblc3OaB9n2NoiAWjg9pYp61ScdQMwxtDbNOwQC4YPokegSAqWN
+	QZVkvQRIkUBLWtE7n6XdxFIv+Y6uIYdelQpQAQV94m2skQVkvrOAbbXBI+pJy7f06HEkgbNjsxGIQ
+	aP4XmlVg+vbuBvonpcQ16OMsP58U7m9KgI2ATQfBHGjRSw5zWozFmGnZgoGRuxAOasY0UGgBCiXuN
+	W1nj1oZg==;
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@surriel.com>)
+	id 1uycEu-000000008Rw-1ZY4;
+	Tue, 16 Sep 2025 16:25:24 -0400
+Message-ID: <34637892ccb9b4e4247103a7b141300c90cf2e42.camel@surriel.com>
+Subject: Re: [RFC PATCH 02/12] mm/cma: clean up flag handling a bit
+From: Rik van Riel <riel@surriel.com>
+To: Frank van der Linden <fvdl@google.com>, akpm@linux-foundation.org, 
+	muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: hannes@cmpxchg.org, david@redhat.com, roman.gushchin@linux.dev
+Date: Tue, 16 Sep 2025 16:25:24 -0400
+In-Reply-To: <20250915195153.462039-3-fvdl@google.com>
+References: <20250915195153.462039-1-fvdl@google.com>
+	 <20250915195153.462039-3-fvdl@google.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
+ eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
+ Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
+ lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
+ dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
+ mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
+ gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
+ r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
+ WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
+ 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
+ Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
+ +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
+ g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
+ KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
+ fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
+ 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
+ G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
+ okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
+ TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
+ cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
+ omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
+ QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
+ c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-rda8810pl-drivers-v1-25-9ca9184ca977@mainlining.org>
-References: <20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org>
-In-Reply-To: <20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org>
-To: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
- dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org, 
- linux-mmc@vger.kernel.org, Dang Huynh <dang.huynh@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758054322; l=1432;
- i=dang.huynh@mainlining.org; s=20250917; h=from:subject:message-id;
- bh=qcvVxoXavmL/qbncOuYL4/AA9pp1j7YRntSv1snSw4A=;
- b=TmsiEoRuyNtRCinPmNRJPzsRLAOD+OfUVej7sM4TKuiv/lAlcCXOZO2yuj/YlaqpZKI2qoRoe
- gli9x6SUlcyCqeLBNQVNnFpfLrzGx9+fwjvYNgu+FokiMeRoJphyvZF
-X-Developer-Key: i=dang.huynh@mainlining.org; a=ed25519;
- pk=RyzH4CL4YU/ItXYUurA51EVBidfx4lIy8/E4EKRJCUk=
-X-Endpoint-Received: by B4 Relay for dang.huynh@mainlining.org/20250917
- with auth_id=526
-X-Original-From: Dang Huynh <dang.huynh@mainlining.org>
-Reply-To: dang.huynh@mainlining.org
 
-From: Dang Huynh <dang.huynh@mainlining.org>
+On Mon, 2025-09-15 at 19:51 +0000, Frank van der Linden wrote:
+> Atomic bit operations aren't needed for the cma flags
+> field, so switch their manipulation over to normal
+> AND/OR operations.
+>=20
+> Also export the bit values in linux/cma.h, as we will
+> be adding publicly used values later.
+>=20
+> No functional change.
+>=20
+> Signed-off-by: Frank van der Linden <fvdl@google.com>
+>=20
 
-Since we have a SDMMC controller, we can use the SD card slot on the
-Orange Pi i96.
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
----
- arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts b/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts
-index a1d61ef138d12bb3ecb4b24513cc1a7dfbac3107..fbb7b5be62051627e80d940cb5e5ccff9047c13c 100644
---- a/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts
-+++ b/arch/arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts
-@@ -6,6 +6,7 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/gpio/gpio.h>
- #include "rda8810pl.dtsi"
- 
- / {
-@@ -27,6 +28,13 @@ memory@80000000 {
- 		reg = <0x80000000 0x10000000>;
- 	};
- 
-+	vdd_sdmmc: regulator-fixed {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_sdmmc";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+	};
-+
- 	uart_clk: uart-clk {
- 		compatible = "fixed-clock";
- 		clock-frequency = <921600>;
-@@ -34,6 +42,18 @@ uart_clk: uart-clk {
- 	};
- };
- 
-+&mmc1 {
-+	status = "okay";
-+	no-sdio;
-+	no-mmc;
-+	bus-width = <4>;
-+	max-frequency = <30000000>;
-+	cd-gpios = <&gpiob 4 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&vdd_sdmmc>;
-+	rda,mclk-adj = /bits/ 8 <1>;
-+	rda,mclk-inv;
-+};
-+
- &uart3 {
- 	status = "okay";
- 	clocks = <&uart_clk>;
-
--- 
-2.51.0
-
-
+--=20
+All Rights Reversed.
 
