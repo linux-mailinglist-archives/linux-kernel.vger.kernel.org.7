@@ -1,200 +1,229 @@
-Return-Path: <linux-kernel+bounces-818362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B52B59098
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:29:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90142B590B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 10:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 227ED322C74
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:29:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 684D27A3E8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 08:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78112EAB85;
-	Tue, 16 Sep 2025 08:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFAE2BDC02;
+	Tue, 16 Sep 2025 08:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="LoY39Hbh"
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b4wNBC7V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20441FBC92
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 08:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEF31FBC92;
+	Tue, 16 Sep 2025 08:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758011208; cv=none; b=ZwAGg2Ao2p5qv5m4oJ/chymavJ268mo2SZl8+U6dWVr6OpfFfY5cY6oJ50dxbsMOeFblz8/ufTapOHJ73DniiVE5bOacWanEZJT30doM/6yUkgvFR5B0tzmDgIPyJpDY9tABlZTy9HMbLQ3SBWqZvhAjeTRqnoz+t1eIhmpeyVY=
+	t=1758011323; cv=none; b=Z3g/S8qe/Syhw+VOJTByJCleXTcn9qTss2Hti0zwiH3QtCNhgpLjp9FFffGpBRgZr8dTV+AYURUif1FVA2XGf47zSNeiJtqsxvs6Fctv7yCbuYbmcsPsetqXNcVg8Au2qaMiNyW+Eujb5+N6Kel3CMgck2DwLJXAezYq7+2Y62c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758011208; c=relaxed/simple;
-	bh=IgPF4Nuwe0xYIk3jktrMRmXoet6gjSUxaBDW7cqXw+s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NNqG1q1un/M3BqRuHxp14XywIxolvonLNQvY8TVQxvv+ibEr6SKklSZxazPmFMEoiriFqsiJElrLp6S8S/rgcu3+qvumnFt1qaGwQqYIgQk8PWPJ4pKyXtK+o7O1UrvO2hTD/e4S0KDCFR7csu7bmCIz8x4MPTqGIMsXN3EjBMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=LoY39Hbh; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=CXV1ap17rYGQE0rfqZtUMLXQoKATnSSIIdYcmnSwgaU=;
-	b=LoY39HbhIKF7BvVVgbHlkDwVJA4JuuqjXWIt5nI1gQTOjyA3UVRPrt3bKvCXe735GsKy58XAy
-	uVH1qPSrbm1qisBi+nnFIkwOl5YHUDGmvireyBEGlZkT6LYutips4DJpCjhERHEpllAINfUItd1
-	H8bnFz/0NcDvj2awScH7Jq4=
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cQw3F54SVzYl1nk;
-	Tue, 16 Sep 2025 16:26:17 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 16:26:37 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 16 Sep
- 2025 16:26:37 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <chao@kernel.org>
-CC: <bintian.wang@honor.com>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
-	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: fix infinite loop in __insert_extent_tree()
-Date: Tue, 16 Sep 2025 16:26:36 +0800
-Message-ID: <20250916082636.237935-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <62d7f4d3-cc9c-429f-8b7e-0e80e2aa24e4@kernel.org>
-References: <62d7f4d3-cc9c-429f-8b7e-0e80e2aa24e4@kernel.org>
+	s=arc-20240116; t=1758011323; c=relaxed/simple;
+	bh=7rZzmcZLv9RcXOrgsLrtqR65y9Gz2zX3jgF0fEyTaGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JMfAAdjLiVENoY8gHQNImxxGKQFoBxPzsS7vJMt1BdeLrg60Fh+2OEZzjtLU31y6dkA12b6NY9U3hNo7DfNGME6xIThcqu1E/og2XesfnII79HVsqnmA4qJeE7XZclzN/Xf2ToRvxZGtqFeisjtP1lnV3wIz1qMGiyHzWwEYKiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b4wNBC7V; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758011321; x=1789547321;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7rZzmcZLv9RcXOrgsLrtqR65y9Gz2zX3jgF0fEyTaGc=;
+  b=b4wNBC7V2Lp/+2Xcr+bbkOcVyWools0bbUWIFMBTjiE4yhu85tniwTPA
+   bvw1L7NYQ+YSuMfOXvk78rB0GY46FPbC2S1ROK5xOarNdLTmvu/05gp5f
+   AEq2O7gj9GEP0BeZ8+lCVYiw35mfC6/RB+GO/DLQXQVFX4rXUF8tY7k6/
+   TyTCaz26MagSEITujCc5LQy1uztZfTTyyBePWuMxWQd521dIsd5GVT/Lz
+   jdYZIbSPDILtqJyUlxzO5Y+EE4U/NjBPjNpWmQ3m1Bp9ACDgdLYMLoj5V
+   cVzjmg+W4pZHE7JdTcl+Hn1ftfdx2u3Ss9ZuEP1UvRrShMmJzIObdckp9
+   A==;
+X-CSE-ConnectionGUID: ZWqrIchJRPKVKsBRUvE/bg==
+X-CSE-MsgGUID: lCQQ23raSouOEezfOClCsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11554"; a="60213297"
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="60213297"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:28:40 -0700
+X-CSE-ConnectionGUID: 4FJli7jeSrWQDVKFk2dTLA==
+X-CSE-MsgGUID: dRgPX5jOQTqA7hs25Hsmfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,268,1751266800"; 
+   d="scan'208";a="180126156"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2025 01:28:38 -0700
+Message-ID: <c4b9d87b-fddc-420b-ac86-7da48a42610f@linux.intel.com>
+Date: Tue, 16 Sep 2025 16:28:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a011.hihonor.com
- (10.68.31.243)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 09/41] KVM: x86: Load guest FPU state when access
+ XSAVE-managed MSRs
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Maxim Levitsky <mlevitsk@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>
+References: <20250912232319.429659-1-seanjc@google.com>
+ <20250912232319.429659-10-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250912232319.429659-10-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->On 9/16/25 15:09, wangzijie wrote:
->>> On 9/16/25 13:22, wangzijie wrote:
->>>>> On 09/15, wangzijie wrote:
->>>>>> When we get wrong extent info data, and look up extent_node in rb tree,
->>>>>> it will cause infinite loop (CONFIG_F2FS_CHECK_FS=n). Avoiding this by
->>>>>> return NULL.
->>>>>
->>>>> This is the exact buggy case which we should fix the original one. Have
->>>>> you seen this error? In that case, can we consider writing some kernel
->>>>> message and handle the error properly?
->>>>
->>>> Hi Jaegeuk,
->>>> The original one is the bug I mentioned in the first patch of this patch set
->>>> ("f2fs: fix zero-sized extent for precache extents"). 
->>>
->>> Zijie,
->>>
->>> Did you suffer this problem in product? right?
->> 
->> Hi Chao,
->> Yes, and I can confirm that infinite loop cases I suffered are caused by the bug I
->> mentioned in the first patch of this patch set. But I'm not sure if there are
->> other cases that can cause this infinite loop.
->> 
->>>>
->>>> When we use a wrong extent_info(zero-sized) to do update, and there exists a
->>>> extent_node which has same fofs as the wrong one, we will skip "invalidate all extent
->>>> nodes in range [fofs, fofs + len - 1]"(en->ei.fofs = end = tei->fofs + tei->len = tei->fofs),
->>>> which cause the infinite loop in __insert_extent_tree().
->>>>
->>>> So we can add f2fs_bug_on() when there occurs zero-sized extent
->>>> in f2fs_update_read_extent_cache_range(), and give up this zero-sized
->>>> extent update to handle other unknown buggy cases. Do you think this will be better?
->>>>
->>>> And do we need to solve this infinite loop?
->>>
->>> IMO, it's worth to end such loop if there is any corrupted extent in rbtree to
->>> avoid kernel hang, no matter it is caused by software bug or hardware flaw
->>> potentially.
->>>
->>> Thanks,
->> 
->> And do you think we need this?
->> "add f2fs_bug_on() when there occurs zero-sized extent in f2fs_update_read_extent_cache_range(),
->> and give up this zero-sized extent update to handle other unknown buggy cases".
->
->Oh, I was testing below patch..., does this what you want to do?
->
->I think we can keep all your patches, and appending below patch to detect any
->potential cases who will update a zero-sized extent.
->
->>From 439d61ef3715fafa5c9f2d1b7f8026cdd2564ca7 Mon Sep 17 00:00:00 2001
->From: Chao Yu <chao@kernel.org>
->Date: Tue, 16 Sep 2025 11:52:30 +0800
->Subject: [PATCH] f2fs: add sanity check on ei.len in
-> __update_extent_tree_range()
->
->Add a sanity check in __update_extent_tree_range() to detect any
->zero-sized extent update.
->
->Signed-off-by: Chao Yu <chao@kernel.org>
->---
-> fs/f2fs/extent_cache.c | 9 +++++++++
-> 1 file changed, 9 insertions(+)
->
->diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->index 199c1e7a83ef..9544323767be 100644
->--- a/fs/f2fs/extent_cache.c
->+++ b/fs/f2fs/extent_cache.c
->@@ -664,6 +664,15 @@ static void __update_extent_tree_range(struct inode *inode,
-> 	if (!et)
-> 		return;
->
->+	if (unlikely(len == 0)) {
->+		f2fs_bug_on(sbi, 1);
->+		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
->+			"extent [%u, %u, %u], age [%llu, %llu]",
->+			__func__, type, tei->fofs, tei->blk, tei->len,
->+			tei->age, tei->last_blocks);
->+		return;
->+	}
->+
-> 	if (type == EX_READ)
-> 		trace_f2fs_update_read_extent_tree_range(inode, fofs, len,
-> 						tei->blk, 0);
->-- 
->2.49.0
 
-Yes, that's exactly what I want to do.
-Maybe we should relocate f2fs_bug_on()?
 
-	if (unlikely(len == 0)) {
-		f2fs_err_ratelimited(sbi, "%s: extent len is zero, type: %d, "
-			"extent [%u, %u, %u], age [%llu, %llu]",
-			__func__, type, tei->fofs, tei->blk, tei->len,
-			tei->age, tei->last_blocks);
-		f2fs_bug_on(sbi, 1);
-		return;
-	}
+On 9/13/2025 7:22 AM, Sean Christopherson wrote:
+> Load the guest's FPU state if userspace is accessing MSRs whose values
+> are managed by XSAVES. Introduce two helpers, kvm_{get,set}_xstate_msr(),
+> to facilitate access to such kind of MSRs.
+>
+> If MSRs supported in kvm_caps.supported_xss are passed through to guest,
+> the guest MSRs are swapped with host's before vCPU exits to userspace and
+> after it reenters kernel before next VM-entry.
+>
+> Because the modified code is also used for the KVM_GET_MSRS device ioctl(),
+> explicitly check @vcpu is non-null before attempting to load guest state.
+> The XSAVE-managed MSRs cannot be retrieved via the device ioctl() without
+> loading guest FPU state (which doesn't exist).
+>
+> Note that guest_cpuid_has() is not queried as host userspace is allowed to
+> access MSRs that have not been exposed to the guest, e.g. it might do
+> KVM_SET_MSRS prior to KVM_SET_CPUID2.
+>
+> The two helpers are put here in order to manifest accessing xsave-managed
+> MSRs requires special check and handling to guarantee the correctness of
+> read/write to the MSRs.
+>
+> Co-developed-by: Yang Weijiang <weijiang.yang@intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> [sean: drop S_CET, add big comment, move accessors to x86.c]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
->> 
->> 
->> 
->>>>
->>>>
->>>>>>
->>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>>>>> ---
->>>>>>  fs/f2fs/extent_cache.c | 1 +
->>>>>>  1 file changed, 1 insertion(+)
->>>>>>
->>>>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->>>>>> index 199c1e7a8..6ed6f3d1d 100644
->>>>>> --- a/fs/f2fs/extent_cache.c
->>>>>> +++ b/fs/f2fs/extent_cache.c
->>>>>> @@ -605,6 +605,7 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
->>>>>>  			leftmost = false;
->>>>>>  		} else {
->>>>>>  			f2fs_bug_on(sbi, 1);
->>>>>> +			return NULL;
->>>>>>  		}
->>>>>>  	}
->>>>>>  
->>>>>> -- 
->>>>>> 2.25.1
->> 
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
+Two nits below.
+
+> ---
+>   arch/x86/kvm/x86.c | 86 +++++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 85 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index c5e38d6943fe..a95ca2fbd3a9 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -136,6 +136,9 @@ static int __set_sregs2(struct kvm_vcpu *vcpu, struct kvm_sregs2 *sregs2);
+>   static void __get_sregs2(struct kvm_vcpu *vcpu, struct kvm_sregs2 *sregs2);
+>   
+>   static DEFINE_MUTEX(vendor_module_lock);
+> +static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu);
+> +static void kvm_put_guest_fpu(struct kvm_vcpu *vcpu);
+> +
+>   struct kvm_x86_ops kvm_x86_ops __read_mostly;
+>   
+>   #define KVM_X86_OP(func)					     \
+> @@ -3801,6 +3804,66 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+>   	mark_page_dirty_in_slot(vcpu->kvm, ghc->memslot, gpa_to_gfn(ghc->gpa));
+>   }
+>   
+> +/*
+> + * Returns true if the MSR in question is managed via XSTATE, i.e. is context
+> + * switched with the rest of guest FPU state.  Note!  S_CET is _not_ context
+> + * switched via XSTATE even though it _is_ saved/restored via XSAVES/XRSTORS.
+> + * Because S_CET is loaded on VM-Enter and VM-Exit via dedicated VMCS fields,
+> + * the value saved/restored via XSTATE is always the host's value.  That detail
+> + * is _extremely_ important, as the guest's S_CET must _never_ be resident in
+> + * hardware while executing in the host.  Loading guest values for U_CET and
+> + * PL[0-3]_SSP while executing in the kernel is safe, as U_CET is specific to
+> + * userspace, and PL[0-3]_SSP are only consumed when transitioning to lower
+> + * privilegel levels, i.e. are effectively only consumed by userspace as well.
+> + */
+> +static bool is_xstate_managed_msr(struct kvm_vcpu *vcpu, u32 msr)
+> +{
+> +	if (!vcpu)
+> +		return false;
+> +
+> +	switch (msr) {
+> +	case MSR_IA32_U_CET:
+> +		return guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ||
+> +		       guest_cpu_cap_has(vcpu, X86_FEATURE_IBT);
+> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
+> +		return guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK);
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +/*
+> + * Lock and/or reload guest FPU and access xstate MSRs. For accesses initiated
+
+
+Lock is unconditional and reload is conditional.
+"and/or" seems not accurate?
+
+> + * by host, guest FPU is loaded in __msr_io(). For accesses initiated by guest,
+> + * guest FPU should have been loaded already.
+> + */
+> +static __always_inline void kvm_access_xstate_msr(struct kvm_vcpu *vcpu,
+> +						  struct msr_data *msr_info,
+> +						  int access)
+> +{
+> +	BUILD_BUG_ON(access != MSR_TYPE_R && access != MSR_TYPE_W);
+> +
+> +	KVM_BUG_ON(!is_xstate_managed_msr(vcpu, msr_info->index), vcpu->kvm);
+> +	KVM_BUG_ON(!vcpu->arch.guest_fpu.fpstate->in_use, vcpu->kvm);
+> +
+> +	kvm_fpu_get();
+> +	if (access == MSR_TYPE_R)
+> +		rdmsrq(msr_info->index, msr_info->data);
+> +	else
+> +		wrmsrq(msr_info->index, msr_info->data);
+> +	kvm_fpu_put();
+> +}
+> +
+> +static __maybe_unused void kvm_set_xstate_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> +{
+> +	kvm_access_xstate_msr(vcpu, msr_info, MSR_TYPE_W);
+> +}
+> +
+> +static __maybe_unused void kvm_get_xstate_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> +{
+> +	kvm_access_xstate_msr(vcpu, msr_info, MSR_TYPE_R);
+> +}
+> +
+>   int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   {
+>   	u32 msr = msr_info->index;
+> @@ -4551,11 +4614,25 @@ static int __msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs *msrs,
+>   		    int (*do_msr)(struct kvm_vcpu *vcpu,
+>   				  unsigned index, u64 *data))
+>   {
+> +	bool fpu_loaded = false;
+>   	int i;
+>   
+> -	for (i = 0; i < msrs->nmsrs; ++i)
+> +	for (i = 0; i < msrs->nmsrs; ++i) {
+> +		/*
+> +		 * If userspace is accessing one or more XSTATE-managed MSRs,
+> +		 * temporarily load the guest's FPU state so that the guest's
+> +		 * MSR value(s) is resident in hardware, i.e. so that KVM can
+
+Using "i.e." and "so that" together feels repetitive.[...]
 
