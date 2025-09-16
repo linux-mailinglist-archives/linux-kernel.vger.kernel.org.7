@@ -1,297 +1,176 @@
-Return-Path: <linux-kernel+bounces-819445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-819446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA06B5A0C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:49:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9175B5A0C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 20:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8044C1B2163C
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53B70166FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 18:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356C42C11F4;
-	Tue, 16 Sep 2025 18:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133802857E0;
+	Tue, 16 Sep 2025 18:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Q3fPokB2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZZFmQruQ"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012046.outbound.protection.outlook.com [40.93.195.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965B413B293;
-	Tue, 16 Sep 2025 18:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5212276022
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 18:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.46
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758048549; cv=pass; b=RAD2t626Nq3yq3eX13736wpygvPb1fhfI0vY4ORy9SW60MeneIJvzgdoQ8hTH+W6D+dkHB1WTEMl3b2LKjAdRaf5ZCFPJW+ttCO6/QmIMMTDHm6trvxNXy0/tykx71FLaSq7YU9vCbO1YzedOL2XRNU8D38cWDpq2YMls7cteaY=
+	t=1758048571; cv=fail; b=gPLzmbCKfKY0hG6BR7BYSCwtnTIRPTxyKu8JYf1eFES/cc0dDNhoVUlA/STetDLkT0QpMYPL+IkTgTL8V+Hx61kk+NVhq21U/BiFwpoSRoTYL2Z6/yIkkHsYTgYVW1GCYDbl9thUJ2TIrpFhW2CCcVSOZ3SDYQHPde2FmyhOIRI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758048549; c=relaxed/simple;
-	bh=4WLGR2PEUe/xzGimsjJlrC6ZWZOUlx5VsHQcRRX5YLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=px1cvG0wzpdvvMKzzP5qfUJA/KRLEAOYBxcCUIx9xE2xl487SMZQfv5WPsI/ApwpqZFzjNKUdpktLX/6WSF/WJkXwPDelH3E/MuVtnkElhFRNH6apjV2hxDtvWAhnFJhUWmzort8SNxkXPnJ/9ARoYBz+OSojsDdK+ihxlFZj7k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Q3fPokB2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758048524; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hOuaNoXZZWfOlDgsV2mcJcyWbXI/sr+t0ff/wa0U7GsR+e0TVEgktNcbPzROFLZ2pAOQ6ZbgwGFPCp/zHVrO+DEMxaT5q9s1QWhHPwQROuBBIFJvIRf7yOEretvcV1X3lqMLj+/vmAQ/SR3M21vfuOyygmCZjxs+qSw9omg7wjs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758048524; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=W1IJjyM9OVaQcEmkWiSOUFeaD6n08j4ucNHzBhm+qQk=; 
-	b=kzAxViRb7tuY3qv8/NQnlFlrN3pTBinQXT635SjNgoLkDaxb7hfr8mjrPScuiMioOGNM1vLXvu2QJPuoZN6eEcKPXZTIu9zyx+HFX8jghq+g1p7eubni4Wi7QflOcVwl630AbNVYG3xQq9VdnGk6HlYlG5hLmev5YmLWG/WOSCk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758048524;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=W1IJjyM9OVaQcEmkWiSOUFeaD6n08j4ucNHzBhm+qQk=;
-	b=Q3fPokB2GbhR+Ki4vWnQlVuwEGsS8+e7CSRgdDHTTQcMVPQbytMgCS54D0cOWQVa
-	mE8Tg7As2IUdbVHd29/Fag4+ZGZkxLRKF2+SK1uowiapF/WArH6my1D5CA4B8aAh1lf
-	dbv7WVwbQDPHZZ5gwNQa3Vk96OSU5zEuKR0V3KzM=
-Received: by mx.zohomail.com with SMTPS id 1758048522298948.311304452888;
-	Tue, 16 Sep 2025 11:48:42 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id BACAC180733; Tue, 16 Sep 2025 20:48:13 +0200 (CEST)
-Date: Tue, 16 Sep 2025 20:48:13 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Souvik Chakravarty <Souvik.Chakravarty@arm.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Andy Yan <andy.yan@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Vinod Koul <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
-	Stephen Boyd <swboyd@chromium.org>, Andre Draszik <andre.draszik@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	Elliot Berman <quic_eberman@quicinc.com>, Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v14 02/10] power: reset: reboot-mode: Add device tree
- node-based registration
-Message-ID: <in6bqvemnscvuxbumpxogxiiav7odmsc3iazktifninh6iqen7@qwhrhdidcx7y>
-References: <20250815-arm-psci-system_reset2-vendor-reboots-v14-0-37d29f59ac9a@oss.qualcomm.com>
- <20250815-arm-psci-system_reset2-vendor-reboots-v14-2-37d29f59ac9a@oss.qualcomm.com>
+	s=arc-20240116; t=1758048571; c=relaxed/simple;
+	bh=0RHUGGgMUu/xMTow+K6xLO2oWaWjWKFxCWOvCGDb71g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=t+hpIKGXSWT6mwXXF/KuxxE5GpOtjfWZAiKKOxpvqHxXKfis+OKwbILQHAH9sRUEE5QTuThFdGup+n5Emd5+9P9wbXJgTiNNZ1u9mgS15jfbERqbztgP2SHHeiRJAEmnmVhkaiuf694JJHvLw/OwLQshXO9ocZFNtbr38zMdQrQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZZFmQruQ; arc=fail smtp.client-ip=40.93.195.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kWW1ZNA/EeZ3BJ5ZuwJUN+9HNmCYJRJlJwR3FjOxlens6Tf/sKQs4IEaKHqM6dwnhNYC7JC4HmwTevHrR57mQd5x1BPDZsGcUf74bAMzwvW69Hn9i7pw/J02ohDFNs5bD+nSIXY5ShWvQWCVZ6OGePKEmO7eJLwUkUv0q/TAxaWoXujxpC1YX4tqPBq8OYikl1Gz/Ik67Gbc4vQccK2z3GaOh3dOIteanRxfB9yGc+PkhrEW4NWh+JKa+35K/IgB/Tkj0PU3Gtd0oRtlEMEvu0nPj+x1qn7yAdQJ1WxjLUUOkt+mUgPMuvHEW629upIb4XS2owQ5ZtPTPf3X8htzWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ku/LKKQQfQEavExraf3qmZ9yVNJv2mD+vtJUjdHeWxE=;
+ b=p2qk4npFSWLUV8AridcB3NQy3ejfJnwiOTmUoF0Iym73QG4K1Ua/2zoOEBqtlSZ14RtrucO93s9JNcYwf+nOLXnGveozjZFu5BEebcxHF0jVrCwJASPQzFLGsyXjj+XaO2SycSDFHqDhkxzXNZpwjO6I7cZaW0QAArML/MUbN73KT2CsciNBgBRJYkschZgTUD/TWtTRsGlFzJlcAFqgDGJtbe4qI4VuNPyMnIEhETvsFUPBHG8L+NOF3XEY88bRLxQDoDZroqJJnFEhoDuTl0rXAnWtJORzR2q8+iSrjRqhmJpsFGKmfmUMgTN+ELSebOXklf3VMxFd2nARx0gBTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ku/LKKQQfQEavExraf3qmZ9yVNJv2mD+vtJUjdHeWxE=;
+ b=ZZFmQruQEPCQgQv+//8QBwiefeQpZk63wCMhq/Nj/NQ7/7/S9tijtsMEGbHDUznVmBeLm3jQHnRkz81C4s1k+zoWGO6gilv0UbXzvo1L7mMfd7LSumysNRvsxQ4eeezCdN2vCSoasd0atKQVSU6Opq3JQtIqFjSc2umkUz5t2ZD3ahvLAj8qq7ca9VICHgIDYojKPp0sjGbfJ9MdKtVNGx2A87pips0VAtgItEP2AZqvAPPgXYUmi6CjXRcFj2PSzObm9z4TsTwnf21Z21YaX0cofwGZkYEgy8N1/UD1sG5PCKxPrNilGUdjuLEn/0nX+RjBhDEgOeD/QVnKN7GG3w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by CY8PR12MB7196.namprd12.prod.outlook.com (2603:10b6:930:58::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Tue, 16 Sep
+ 2025 18:49:25 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9115.022; Tue, 16 Sep 2025
+ 18:49:25 +0000
+Date: Tue, 16 Sep 2025 15:49:23 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v3 4/4] dma-mapping: remove unused mapping resource
+ callbacks
+Message-ID: <20250916184923.GX1086830@nvidia.com>
+References: <cover.1758006942.git.leon@kernel.org>
+ <087c29da71fb41245b8c03f641f53d624be10d59.1758006942.git.leon@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <087c29da71fb41245b8c03f641f53d624be10d59.1758006942.git.leon@kernel.org>
+X-ClientProxiedBy: SA0PR11CA0146.namprd11.prod.outlook.com
+ (2603:10b6:806:131::31) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="czj77t3nras3pevm"
-Content-Disposition: inline
-In-Reply-To: <20250815-arm-psci-system_reset2-vendor-reboots-v14-2-37d29f59ac9a@oss.qualcomm.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.4.7
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|CY8PR12MB7196:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5e00390-4bf7-4083-18d6-08ddf551c21a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fKiQdzI2iciI8vLbidUQ8PcE+Oq7GIXsOPXM1PvoHqZhTgDhDvDwnhdqL/k/?=
+ =?us-ascii?Q?5HfsxkQD//NR6ouNZLnisgLCKGhd8ioTminWsPdSqA0x3dvubpaPyu/LsHIH?=
+ =?us-ascii?Q?IZENgDydgVesktjfoRZvjuqXFgVP5GaRBZ0yCJr4UHBjlgDFPBfo6/+G64Mn?=
+ =?us-ascii?Q?k+FjS7CInGWK+0HbdMbD+fqjsfpZwx/8mYy/Qy5K8qgQ5jyRn2FFyoqaRCcG?=
+ =?us-ascii?Q?ldcJKLy4DopFXAUMB91bQYlz0lDbdfpFLPQ904bbe8xRadTAu1xlb3K1WTxs?=
+ =?us-ascii?Q?VxYOdgy06Y3gjVXpvcxO5n7lDsR0AB0OpDzMPNW8NcDg8oPe++19FPx5N37B?=
+ =?us-ascii?Q?3sz8naE8mQbgV3qtgnpX7W4CtDJxYlNFv0kpipbuolRAdEmZrfsLH8vc9dSm?=
+ =?us-ascii?Q?23SVBOtAeojfqgbylxTx0yMc3mR1tn+k5REs2tGdzpU85ih1Uuwpnc1Nvl7F?=
+ =?us-ascii?Q?M6uAPxnZGNYL+3NX+mnbrs/SISISF767+IswGDNC/rHsCWwfyeGh7A8S+OQ1?=
+ =?us-ascii?Q?8r+z+dlp65ECVaLp9WqnPq5NDQmatfR+c1D1ft6iyUzAqI633TDSJiqGycHV?=
+ =?us-ascii?Q?IMka0Y3R/jHc0K7NiGKh64HHao7pt9yZcGXrgmZBFt4iiLKt+EVWbgR+T0uy?=
+ =?us-ascii?Q?L9AlvZMlbCYIYosp4ZrPCZ70PwKdiSwroX9lUlDq+dkBxDMvSzQTDXrfK53w?=
+ =?us-ascii?Q?HrGU2ar/ljLsRNofTTzYATMyQAt9OHjyrtKoxoqmyj+p7JO0ZMtLTU33g20G?=
+ =?us-ascii?Q?KDwFR10N26mcGP5FWKmWs5bqZvJxeKtN5WFJx1cqkvj4OFIFs+ihU0oFXJA2?=
+ =?us-ascii?Q?Y5z5iXst59Puvv7CgHhQoDUtmnOJ1PWqPYjSivAd40dtG/l9Mn8jGY0VpocP?=
+ =?us-ascii?Q?Pw5lkTYFnQhDdbsH+q0DhYnKRzX83WZphcmWcukIM9lxL/2+P+e312O/8nAU?=
+ =?us-ascii?Q?qBAn1gWDr9ipgND4maLKAGcrezPOt10MFz8Fc3F/CZl3bq4lHeB925boMntq?=
+ =?us-ascii?Q?EfE2bpYESwXtNYqKOJLzxYRd6PQ2aN1BbSRVvQnE/CxrMmKlD7/j7xAhw3pl?=
+ =?us-ascii?Q?zJhqBUogSIsih3UgoaevfgoBwCvw7HU37gHyRXakrIdqM/nTntSU/CA3+8PP?=
+ =?us-ascii?Q?XC8JssGGBMdYkFO9/1YeirOt0+GdQwAOWu0FksiQ4Il1DTPsdGjvkNcgCx80?=
+ =?us-ascii?Q?2acSZ79gRp1BWxpL5sVGq+NKgpJG/jiML6/JudSZ8U/Ss6qIAxVSZwPlIRxm?=
+ =?us-ascii?Q?YVuFGDw26ePNfNrVvCh7R2oJP8QtWUPcGZllcuN1oivxB2pZHMwHiE7qKdil?=
+ =?us-ascii?Q?K2mbE2YXVHTX87x9UlM757Nj5VK4KRBlgGwG+EFQ5CqFUhqX/uUuHdqOLseI?=
+ =?us-ascii?Q?jLmwgYNm5qUNdwk40hC/hOjLw37s8+zt/qALLm2RFn5LNJQswHeUwMGjMIV1?=
+ =?us-ascii?Q?kM1bVsjHC10=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tV+xrkipnzKk+IlkDo5vf2MtLZIxa3ouSpYh0NAppe6v1KzgenW7elEur+fO?=
+ =?us-ascii?Q?dfK+t/JDmM7f0MVk3GNXdq5rr7OXr5fcI1Vj0ZkYS8bNYl4krUG723IOsr/+?=
+ =?us-ascii?Q?aHkjcq3TyaitzQ/JUd6qBmTBr/bxbMM9r9Abun95MtjxnRhQvjcDzRmLqNB1?=
+ =?us-ascii?Q?gTKx18KrIzymkP0fqNKDHwd/tlylExnAPwdXh9bbu428rTZ2J5fBoVDjcr3G?=
+ =?us-ascii?Q?9/MD8gh4P0EvO3GcGrlQpthO7LvzFbChzQsHimjtsZIqUbqCeJ8DJQ3d4Vy3?=
+ =?us-ascii?Q?cRC23T3/ORIMppiCSe1KSigCsiJDUdlYI6vQI4V5NHhXKWvGJAtJtQA+BjnT?=
+ =?us-ascii?Q?MMMz9zGfbIo2lqj03REv4KkEdsn3Vaa9xTwe5YI81LfqlN1f7vWwkvhPqv99?=
+ =?us-ascii?Q?cAUaOrVtlZhvCBtRZ0cBdsfxTvf0yTjtw+sr72gjgISGnnTbB8dYh5kaJYvC?=
+ =?us-ascii?Q?p7ZmjUUL76um8C/oXFGDvJ92HuTxVgZJvqg4asYNkqGCZVIKfolWWRbGztau?=
+ =?us-ascii?Q?wR2vix1eGNzCbL6xLzwRjPhNKQNObrZlc0J88o+1r/JsSsBhG8HQhFyto46D?=
+ =?us-ascii?Q?LcjrjyZwExe9Qt1SyzbIr/yFUANaJ4qkuiWkLTp70qneE6TJS6zQ5oB0o0Ac?=
+ =?us-ascii?Q?id1OIBfjKK6cT2Ue8hPXbz8k4xcg6C77qW98T89Kveov/+lwYz7BH3XN3hUm?=
+ =?us-ascii?Q?aYQzBnWoZ2X62giWhwsJ4q/tqoRAFBI62ZnwrNChwF3EVEvlDnrzF8nHpwYO?=
+ =?us-ascii?Q?TFg5QQ2PFjfNEO49BlIn9Bu1SZJOVa4WSHbtpyU4GFyf/RIq2UVykgASp1rQ?=
+ =?us-ascii?Q?UY3kJiDPTQmt75bokdhV1z/PVl669JdHuf1g1RySbYDaVUgpQLZ+QvZLqNcW?=
+ =?us-ascii?Q?bRMALsNIFfSdkmDpUryM6kGWmgePhrOAziMRXniW+lSExMjGLhzFXd7u1w1N?=
+ =?us-ascii?Q?D/SZAcR/WPDavYHp7wvCyPGAHj2TotskzpzB40e391aBvGJH865jpiLFW4Ot?=
+ =?us-ascii?Q?MOclz4sbRmcwYTZpXRanNv3pEKkZ+QfZ70NoI9SghJPMhpiv/YJHyfUoajEa?=
+ =?us-ascii?Q?N5a0VRYceIpobsz15EuhJmNFK56uF+VrEzpBqcL4xR5j6CZ0ibrcaqvavucP?=
+ =?us-ascii?Q?OSGyGh9TQ7bIpW9OQdT+gugy2LlEKg/N3cyOrA0aCrfhDdjgE6PboaXU8sEA?=
+ =?us-ascii?Q?X5XICiIWOVIyyX/ndbP+iOcX+oRXySwnp5fW7AAOARHY7lDBQNewgVaC7Fg6?=
+ =?us-ascii?Q?5MIrrWhXwZx9W8so7Vpi0O1wN2heay9DWO0QSdu0kX6sVmKZEV3OCkVO60Cj?=
+ =?us-ascii?Q?DkqWr4Srh1Ee83MYuPxgtuzaW6hZkgqXTe9PSh2vMmstmYm2LDrTFB5kHXYK?=
+ =?us-ascii?Q?8qNXg5bTRiFUIEeOdfjiEgtmMR83nQxqzPpJW6MF2Qsrhg3mFoLBGYxeLM9x?=
+ =?us-ascii?Q?vcQCmDNZjq5edfdNzcy0zWmli2kmj8fEQXybMPtnHPY3Ri0qhS/5mfIslx3Y?=
+ =?us-ascii?Q?lz7+8mSXXYcokuVy3l+oh4DyA0exjFNMhBA6ytc6iL44JGvG0OE5fZxSkym5?=
+ =?us-ascii?Q?chPXMloCsRlvWhifSwmVRsEd4XalXU99rFb7Rv6m?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5e00390-4bf7-4083-18d6-08ddf551c21a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 18:49:25.6205
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JJOq1elhzSyKDj+n5FqwobWD5IQx5Be8BsyXYT8dbv9IEpD6IseBUyc8l3Xod9iE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7196
 
-
---czj77t3nras3pevm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v14 02/10] power: reset: reboot-mode: Add device tree
- node-based registration
-MIME-Version: 1.0
-
-Hi,
-
-On Fri, Aug 15, 2025 at 08:05:07PM +0530, Shivendra Pratap wrote:
-> The reboot-mode driver does not have a strict requirement for
-> device-based registration. It primarily uses the device's of_node
-> to read mode-<cmd> properties and the device pointer for logging.
->=20
-> Remove the dependency on struct device and introduce support for
-> Device Tree (DT) node-based registration. This enables drivers
-> that are not associated with a struct device to leverage the
-> reboot-mode framework.
->=20
-> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+On Tue, Sep 16, 2025 at 10:32:07AM +0300, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> After ARM conversion to use physical addresses for the mapping,
+> there is no in-kernel users for map_resource/unmap_resource callbacks,
+> so remove it.
+> 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 > ---
+>  include/linux/dma-map-ops.h |  6 ------
+>  kernel/dma/mapping.c        | 16 ++++------------
+>  2 files changed, 4 insertions(+), 18 deletions(-)
 
-Please use fwnode instead of device_node, so that the same thing
-can be used with non DT setups, if that becomes necessary. Otherwise
-LGTM.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Greetings,
+Looks like xen_swiotlb_dma_ops will be easy enough to fix..
 
--- Sebastian
-
->  drivers/power/reset/reboot-mode.c | 37 ++++++++++++++++++++++++++-------=
-----
->  include/linux/reboot-mode.h       |  2 +-
->  2 files changed, 27 insertions(+), 12 deletions(-)
->=20
-> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/rebo=
-ot-mode.c
-> index 42bb99128ed3846d4bff62416dc31135ddeaeb90..9bb97bcd33cd3d58c75c791e9=
-b568024e810e5b0 100644
-> --- a/drivers/power/reset/reboot-mode.c
-> +++ b/drivers/power/reset/reboot-mode.c
-> @@ -3,13 +3,17 @@
->   * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
->   */
-> =20
-> +#define pr_fmt(fmt)	"reboot-mode: " fmt
-> +
->  #include <linux/device.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> +#include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/reboot.h>
->  #include <linux/reboot-mode.h>
-> +#include <linux/slab.h>
-> =20
->  #define PREFIX "mode-"
-> =20
-> @@ -75,17 +79,21 @@ static int reboot_mode_notify(struct notifier_block *=
-this,
->  /**
->   * reboot_mode_register - register a reboot mode driver
->   * @reboot: reboot mode driver
-> + * @np: Pointer to device tree node
->   *
->   * Returns: 0 on success or a negative error code on failure.
->   */
-> -int reboot_mode_register(struct reboot_mode_driver *reboot)
-> +int reboot_mode_register(struct reboot_mode_driver *reboot, struct devic=
-e_node *np)
->  {
->  	struct mode_info *info;
-> +	struct mode_info *next;
->  	struct property *prop;
-> -	struct device_node *np =3D reboot->dev->of_node;
->  	size_t len =3D strlen(PREFIX);
->  	int ret;
-> =20
-> +	if (!np)
-> +		return -EINVAL;
-> +
->  	INIT_LIST_HEAD(&reboot->head);
->  	mutex_init(&reboot->rb_lock);
-> =20
-> @@ -94,28 +102,28 @@ int reboot_mode_register(struct reboot_mode_driver *=
-reboot)
->  		if (strncmp(prop->name, PREFIX, len))
->  			continue;
-> =20
-> -		info =3D devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
-> +		info =3D kzalloc(sizeof(*info), GFP_KERNEL);
->  		if (!info) {
->  			ret =3D -ENOMEM;
->  			goto error;
->  		}
-> =20
->  		if (of_property_read_u32(np, prop->name, &info->magic)) {
-> -			dev_err(reboot->dev, "reboot mode %s without magic number\n",
-> -				info->mode);
-> -			devm_kfree(reboot->dev, info);
-> +			pr_err("reboot mode %s without magic number\n", info->mode);
-> +			kfree(info);
->  			continue;
->  		}
-> =20
->  		info->mode =3D kstrdup_const(prop->name + len, GFP_KERNEL);
->  		if (!info->mode) {
->  			ret =3D  -ENOMEM;
-> +			kfree(info);
->  			goto error;
->  		} else if (info->mode[0] =3D=3D '\0') {
->  			kfree_const(info->mode);
-> +			kfree(info);
->  			ret =3D -EINVAL;
-> -			dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
-> -				prop->name);
-> +			pr_err("invalid mode name(%s): too short!\n", prop->name);
->  			goto error;
->  		}
-> =20
-> @@ -129,8 +137,11 @@ int reboot_mode_register(struct reboot_mode_driver *=
-reboot)
->  	return 0;
-> =20
->  error:
-> -	list_for_each_entry(info, &reboot->head, list)
-> +	list_for_each_entry_safe(info, next, &reboot->head, list) {
-> +		list_del(&info->list);
->  		kfree_const(info->mode);
-> +		kfree(info);
-> +	}
-> =20
->  	mutex_unlock(&reboot->rb_lock);
->  	return ret;
-> @@ -144,12 +155,16 @@ EXPORT_SYMBOL_GPL(reboot_mode_register);
->  int reboot_mode_unregister(struct reboot_mode_driver *reboot)
->  {
->  	struct mode_info *info;
-> +	struct mode_info *next;
-> =20
->  	unregister_reboot_notifier(&reboot->reboot_notifier);
-> =20
->  	mutex_lock(&reboot->rb_lock);
-> -	list_for_each_entry(info, &reboot->head, list)
-> +	list_for_each_entry_safe(info, next, &reboot->head, list) {
-> +		list_del(&info->list);
->  		kfree_const(info->mode);
-> +		kfree(info);
-> +	}
->  	mutex_unlock(&reboot->rb_lock);
-> =20
->  	return 0;
-> @@ -178,7 +193,7 @@ int devm_reboot_mode_register(struct device *dev,
->  	if (!dr)
->  		return -ENOMEM;
-> =20
-> -	rc =3D reboot_mode_register(reboot);
-> +	rc =3D reboot_mode_register(reboot, reboot->dev->of_node);
->  	if (rc) {
->  		devres_free(dr);
->  		return rc;
-> diff --git a/include/linux/reboot-mode.h b/include/linux/reboot-mode.h
-> index b73f80708197677db8dc2e43affc519782b7146e..98f68f95c9e8460be23282c51=
-ef7fcbed73887bd 100644
-> --- a/include/linux/reboot-mode.h
-> +++ b/include/linux/reboot-mode.h
-> @@ -13,7 +13,7 @@ struct reboot_mode_driver {
->  	struct mutex rb_lock;
->  };
-> =20
-> -int reboot_mode_register(struct reboot_mode_driver *reboot);
-> +int reboot_mode_register(struct reboot_mode_driver *reboot, struct devic=
-e_node *np);
->  int reboot_mode_unregister(struct reboot_mode_driver *reboot);
->  int devm_reboot_mode_register(struct device *dev,
->  			      struct reboot_mode_driver *reboot);
->=20
-> --=20
-> 2.34.1
->=20
-
---czj77t3nras3pevm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjJsO0ACgkQ2O7X88g7
-+ppfBQ/9HMIqbVJuvwZzQo3EipYpGXXdP/CdOeC6oZnYrfQm8LfZS8TcF83agJhf
-CNUrAY2d3YH5Do+/xl+2KA2kgYHMgoDDX3f2/DWjpTadO5P7zW6vYcDNP0w0wR4S
-IdHfOPa5Ov0ybtsepYCFX5QlMzevP1Izppg76+ERDoWPSUCT9IT449rM8J7aRScT
-48JePKqtUCacNqV4zwEGcG7M2q8FVsv2xkpulVuF9XXicdSoQxvxeAMX+/E5HsWl
-+2DAfSHs+gdGWrWacr9IYceQvCQUzb6nX69ax1Jqo0tGxY8CbO6dhQjw5OFpxnXt
-RqB7W0yenJ9fNtDSWd7UEv1OtWUtN9MLb5ZDvMcjpCWWHIP8oqL7IIUaXVESEDxg
-EhJ3/ekmVpdW2oIvOyDAsT294qBpiPsZngU2SweijEZrcYTpIrjqTM7eTzB6hQbL
-K2A+VAq8+4T6UBM6Dq9DJddGtKWyG86e6aUPnnwB2pzqRH0D9kYMpv72AF+7Kcx1
-HLmvKxQrF2wKvXINw8uSN1GokRWVZOeUt00dhiWjpXcXBd+xxf4vU5ZGeVZaLuBS
-gvMF93kzoC9QTcpjw/Qa/12NY2xTD4U0oqWOklNhVjWB5vgAeEV+EylpTsb9tFXq
-gD/QuzyhxxxjrG6t0jCLYsII8Jz+aibFgJK0RGzLK3ey9QzQ9Mc=
-=5SRf
------END PGP SIGNATURE-----
-
---czj77t3nras3pevm--
+Jason
 
