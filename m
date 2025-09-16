@@ -1,128 +1,145 @@
-Return-Path: <linux-kernel+bounces-818285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-818286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D07DB58F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:42:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25B8B58F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 09:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FC113B3930
-	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:42:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E2C7A8D00
+	for <lists+linux-kernel@lfdr.de>; Tue, 16 Sep 2025 07:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587F52E6127;
-	Tue, 16 Sep 2025 07:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210522E9ED7;
+	Tue, 16 Sep 2025 07:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSVCqfFK"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EqS9SBlE"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD3D2E0B60
-	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE8727C872
+	for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 07:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758008535; cv=none; b=JD7PHhmXvjCKwH6wwIOSiWrpbEl3LBVHbSZp4NOGePE3WC+aC4eNLeqSx3QsEhaXKhtTXyV+HDDc0gQeDDsKjHv31rdjFIuh77itmnTCVAZV/1Mq0DKVqzgI0elqxVTLrjEKcW1oVe+33pYskp/gZ/qOFlkeZff7HNFV6uTRFCM=
+	t=1758008588; cv=none; b=SG3wc6FtX0Zi5Ju4/go/AQENlOEK0sj/0aTK8OT7tqGcKEl7Z2GYA5yxHdh65OD5Rgle8imwLm0xokGK3DpyMKvEXREakgcMUvFkL91XLVY4xSNdkDvs63CoscVmuLYbpmgrFsXNIMugEbIeqCltvW5D7BtNHaEXaDDeZW83aVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758008535; c=relaxed/simple;
-	bh=MajtWc/LSqmypF88GEgwsqo7vwQ0+GiL2Fw7fIStbIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHJC2V3R1/ycBKfN8v//39TBEGpwlxy+j0kctYcsOO2FOsqautHBMojaR4vX/168ojAF6ocXVXmuRLJeOQOSq0w4v7zb6WgEDWbSLcQF3fH5qLwaRAIs4yJGwNdBJ+2HWKIxfPF7osmZHKW33Igf2z2HE5f3vRPZw8+pkAA4eus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HSVCqfFK; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b00a9989633so984112166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 16 Sep 2025 00:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758008532; x=1758613332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=seiaS3SE4RcxpYiplP1sTiZbmiKfUGBNakfZvP8oRTE=;
-        b=HSVCqfFKUkYMNKW4S2JCKiOdRDkw5BhX6CAs1TvWI9o/8TZky1ungVKWsSiR9YXuV0
-         6us8oMG43j4ynyh3hxh3IYieJ+zR+LlVV+VKb3YhWYgWC6lr89r/13/U4axt4LXFA0sU
-         zF7FKZj2eLetHkIlGqN8sxWqLd8EcwdDCtYnbjeJdrAYBRmp+N0phmuvwCtf2u5k2THS
-         03h6AkUxgdSHXzket1rxAn3+mHl+uqOkPltv7Ts2TszVWT9USICGq55U6p2r9eNQkAfs
-         wSezk9eFhWuaoprubK55UrCMwAnnE3ADritSZRa7+4vDpbZJmfpetLav3XYr9cJYGpip
-         2iiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758008532; x=1758613332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=seiaS3SE4RcxpYiplP1sTiZbmiKfUGBNakfZvP8oRTE=;
-        b=qJP17Ggf314tJWccW3RA6yv2IWK/B+cTM8G218fWyN3Iot/Komlit4pfMUy2ZITWCj
-         vtmeNyZv50ywoY4jL11ykcEEFFGjLM89x0ML/sbIYFnyUgYZm7Pc5iRGWMe0yDXBhNIm
-         RRZy/il86k59Rr+QMql9Vfo1Z3nOJ8PF3umtHd2JGB2f/9lvdrDSUXv1PubtUyHK1TsD
-         W4UHuH1z/Rw/k9DrYhF2jNod/c+UTNMBx4cWsIuKZY0kJxjXg+TBAkzFWazzc7e9N+nG
-         +wahQbqBN/kOIQVmksKx5S/dueCDPELnaiwJ0WyklwZ3McSdsqBRX3E1wCaJ2gFoa623
-         dOUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUzYBNqH1ESratQjvKFL4V3e9j/Z1+ebRu5aXRnpIiOWf3Ceu619xrS274rMPHj/5Hq7WA97UZ4M6BAW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU5ggkPSV7Lthevr6rdVnwQKe8xFZdrH5XJ/ESBKMVd4+892sF
-	yXmuXxLFF31JYNQFH9h3/RvFrgzNKyCRUa/XjtPAwGUcLRsHdy2iBQqvpTgIYZrCj4mmOnzJiq/
-	XSkylnLP4BpaVuu8CEDLA0szdW3Xm4S4=
-X-Gm-Gg: ASbGnctG8WOPSdZ1OXQ3sntcclMcP5bRmT0dfDwKnYbBYO6A5emLe/IJ2bLA2WaZkzd
-	Pr/NS0AGxqnr9rs2lJtQAp9LzRl/LwTGWQyJ194Rjfk4f1iLlZDHl8I41OLNv0wlB5Yk2FP+eu3
-	HhixJ1CYzFiDFIUuTzNoly36RbtWDhCZvtn1kqRwDi8zHLdZsr/05y67TtXUeBhQ2T8ZCM7N1be
-	CEf4yI=
-X-Google-Smtp-Source: AGHT+IGZyHMyvgkDW6LuU35ofsRn0sZACfWWqhSLafHvGIMD3obwLIYTtrG+n/1NkzTnEp1u5/0DGgd/99ITtrLndkM=
-X-Received: by 2002:a17:907:da8:b0:b07:dd5e:16be with SMTP id
- a640c23a62f3a-b167deddbdcmr160525866b.4.1758008532394; Tue, 16 Sep 2025
- 00:42:12 -0700 (PDT)
+	s=arc-20240116; t=1758008588; c=relaxed/simple;
+	bh=NRUBIK6yL6+CmJm7whVUiCeOzNvGvSmxUXnZC9gySgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGvVLBxNRtPOaGRrVDC7lfIj8UB/V8ffQLKPxZ/y5oHjRbWJf20JXNu0QEdPxX2mtaEFoOz/E1h8ryUjcIzbLpicv21mie8KRjvufQ8U9/eev1KNlbUPnThJ+2b3F186lKi29q72uaJYaJsFyGQnCw2WB+ru5cU7NMyNXdP3F3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EqS9SBlE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=8sHRCjw7e9Pd75QxDAA6YpRMq4pTFEZknMvfD29JhSE=; b=EqS9SBlE80vGVB+xlDQMNuvMLV
+	0fMuIOJTRGJ4WoNMyn+3AdSEjCOd6me78zIoQA0iOD0NvscxJd49pnTIZTEgt42ARaI6WDZ3y8S7z
+	SBLHlAqRFtvoVNqyvFZXEFDVerPjCag7B2ITXdrREd9P6v9s83MVxSkEqu1y+FQd5SQIty5D/fxxG
+	Vmdy54AML2uELeHK6us0F9F0RfxqMGyjcdBEr+8LXUH1+FW+GF6V5E+oSU4yO2InaB/q4N4DHs3ey
+	aFNdNZ1IXIHr26GvZIx4rxnXVMquxgGsW1gh72uwDjaVuE1uK5NhndXG8Lys25qDbwn82Vam+yXb7
+	CPHa5dhA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyQKQ-0000000HFZv-3Lwg;
+	Tue, 16 Sep 2025 07:42:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 522A8300134; Tue, 16 Sep 2025 09:42:17 +0200 (CEST)
+Date: Tue, 16 Sep 2025 09:42:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>,
+	akpm@linux-foundation.org, catalin.marinas@arm.com,
+	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, kees@kernel.org, masahiroy@kernel.org,
+	aliceryhl@google.com, ojeda@kernel.org,
+	thomas.weissschuh@linutronix.de, xur@google.com,
+	ruanjinjie@huawei.com, gshan@redhat.com, maz@kernel.org,
+	suzuki.poulose@arm.com, zhanjie9@hisilicon.com,
+	yangyicong@hisilicon.com, gautam@linux.ibm.com, arnd@arndb.de,
+	zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com,
+	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com,
+	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org,
+	wangjinchao600@gmail.com, yury.norov@gmail.com,
+	thorsten.blum@linux.dev, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] watchdog: remove HARDLOCKUP_DETECTOR_PERF
+Message-ID: <20250916074217.GF3245006@noisy.programming.kicks-ass.net>
+References: <20250915035355.10846-1-cuiyunhui@bytedance.com>
+ <aMfpwYPX6_i6ROOY@willie-the-truck>
+ <20250915103506.GA3245006@noisy.programming.kicks-ass.net>
+ <CAD=FV=Vr67+uRK2bYu34MDXRJN4w_VH_EO7OW4eVLJ3wqUUBog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915-bd79112-v5-0-a74e011a0560@gmail.com> <20250915-bd79112-v5-2-a74e011a0560@gmail.com>
- <aMge0jYwYCiY72Yb@smile.fi.intel.com> <20250915211321.47865d3d@jic23-huawei> <c1d21e3c-b0a3-40a5-b693-a38673f8bf53@gmail.com>
-In-Reply-To: <c1d21e3c-b0a3-40a5-b693-a38673f8bf53@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 16 Sep 2025 10:41:36 +0300
-X-Gm-Features: AS18NWDftmIhKHIIy4Z72h2BuNDuK9l8wDcCPAp-uHKsQZJ2aCO3R_pGAN3uBKc
-Message-ID: <CAHp75VeoN3JCpLKS0LZMP4p2xTz_Vpi9Jfb_2bqxX7wHtQKb-A@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=Vr67+uRK2bYu34MDXRJN4w_VH_EO7OW4eVLJ3wqUUBog@mail.gmail.com>
 
-On Tue, Sep 16, 2025 at 7:52=E2=80=AFAM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
-> On 15/09/2025 23:13, Jonathan Cameron wrote:
-> > On Mon, 15 Sep 2025 17:12:34 +0300
-> > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> >> On Mon, Sep 15, 2025 at 10:12:43AM +0300, Matti Vaittinen wrote:
-
-...
-
-> >>> +   data->vref_mv =3D ret / 1000;
-> >>
-> >> I still think moving to _mV is the right thing to do.
-> >> There is no 'mv' in the physics for Volts.
+On Mon, Sep 15, 2025 at 08:42:00AM -0700, Doug Anderson wrote:
+> On Mon, Sep 15, 2025 at 3:35 AM Peter Zijlstra <peterz@infradead.org> wrote:
 > >
-> > I'm not disagreeing with this review but I'm also not going to hold a
-> > driver back for that given timing is pretty much such that I merge it
-> > today or it sits a cycle and this one is very near...
-> > I'll get fussier on this once we have written up some guidance and may
-> > well send a patch to modify existing recent cases like this one!
->
-> As I replied to Andy, I am disagreeing with this. I hope we won't start
-> renaming variables with capital letters :(
+> > On Mon, Sep 15, 2025 at 11:26:09AM +0100, Will Deacon wrote:
+> >
+> > >   | If all CPUs are hard locked up at the same time the buddy system
+> > >   | can't detect it.
+> > >
+> > > Ok, so why is that limitation acceptable? It looks to me like you're
+> > > removing useful functionality.
+> >
+> > Yeah, this. I've run into this case waaay too many times to think it
+> > reasonable to remove the perf/NMI based lockup detector.
+> 
+> I am a bit curious how this comes to be in cases where you've seen it.
+> What causes all CPUs to be stuck looping all with interrupts disabled
+> (but still able to execute NMIs)? Certainly one can come up with a
+> synthetic way to make that happen, but I would imagine it to be
+> exceedingly rare in real life. Maybe all CPUs are deadlocked waiting
+> on spinlocks or something? There shouldn't be a lot of other reasons
+> that all CPUs should be stuck indefinitely with interrupts disabled...
 
-Why not? In a new code would be nice to have the units properly spelled out=
-.
+The simplest one I often run into is rq->lock getting stuck and then all
+the other CPUs piling up on that in various ways.
 
-It seems we have one of the strongest disagreements between us, but I
-stand on my position from the angle of the scientific point of view.
+Getting stop_machine() stuck is also a fun one.
 
---=20
-With Best Regards,
-Andy Shevchenko
+I mean, it really isn't that hard. If, as a full time kernel dev, you
+don't get into this situation at least a few time a year, you're just
+not doing your job right ;-)
+
+> If that's what's happening, (just spitballing) I wonder if hooking
+> into the slowpath of spinlocks to look for lockups would help? Maybe
+> every 10000 failures to acquire the spinlock we check for a lockup?
+> Obviously you could still come up with synthetic ways to make a
+> non-caught watchdog, but hopefully in those types of cases we can at
+> least reset the device with a hardware watchdog?
+
+Now, why would I want to make the spinlock code worse if I have a
+perfectly functional NMI watchdog?
+
+> Overall the issue is that it's really awkward to have both types of
+> lockup detectors, especially since you've got to pick at compile time.
+
+Well, then go fix that. Surely this isn't rocket science.
+
+> The perf lockup detector has a pile of things that make it pretty
+> awkward and it seems like people have been toward the buddy detector
+> because of this...
+
+There's nothing awkward about the perf one, except that it takes one
+counter, and some people are just greedy and want all of them. At the
+same time, there are people posting patches that use the PMU for
+page-promotion like things, so these same greedy people are going to
+hate on that too.
 
